@@ -1,0 +1,178 @@
+{
+ "mutants": [
+  {
+   "id": "RS1",
+   "file": "tools/trust_mutants.py",
+   "claim": "an allow-only rescore runs no build at all (the control build only when a mutant runs)",
+   "source_sha256": "36c7c58987e92fa0d4f9a35adda2ce7ab05108f3de0e62e4a39a6bd6ac92977b",
+   "tests": [
+    "tests/test_trust_mutants.py::test_rescore_after_an_allow_only_edit_builds_nothing"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_rescore_after_an_allow_only_edit_builds_nothing"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 63.6,
+   "output_tail": " prev[\"inputs\"], ran\n        shim, log = tmp_path / \"home/.elan/bin/lake\", tmp_path / \"lake.log\"\n        shim.parent.mkdir(parents=True)\n        shim.write_text(f\"#!/bin/sh\\necho \\\"$*\\\" >> {log}\\nexit 97\\n\")\n        shim.chmod(0o755)\n        allow = tmp_path / \"allow.json\"\n        allow.write_text(json.dumps({\"allow\": [{\"definition\": survivor[\"definition\"], \"operator\": survivor[\"operator\"],\n                                                \"reason\": \"allowed after the run\"}]}))\n        done, data = rescored(package, tmp_path / \"run\", prefix_run, \"--max-mutants\", \"5\", \"--allow\", str(allow),\n                              home={\"HOME\": str(tmp_path / \"home\"), \"ELAN_HOME\": str(Path.home() / \".elan\")})\n>       assert not log.exists() and done.returncode == 3, done.stdout + done.stderr\nE       AssertionError: trust_mutants: 13 definitions, 41 mutants (0 to run), 4 jobs, base HEAD~1\nE         the checks fail without a mutant:\nE         []\nE         \nE       assert (not True)\nE        +  where True = exists()\nE        +    where exists = PosixPath('/tmp/pytest-of-seyran/pytest-31708/test_rescore_after_an_allow_on0/lake.log').exists\n\ntests/test_trust_mutants.py:491: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_rescore_after_an_allow_only_edit_builds_nothing\n1 failed in 30.62s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-1fvdzv52)\n"
+  },
+  {
+   "id": "RS2",
+   "file": "tools/trust_mutants.py",
+   "claim": "the UNKNOWN mutants of PREV, a build past its time limit among them, run again",
+   "source_sha256": "36c7c58987e92fa0d4f9a35adda2ce7ab05108f3de0e62e4a39a6bd6ac92977b",
+   "tests": [
+    "tests/test_trust_mutants.py::test_rescore_reruns_only_the_unknown_mutants"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_rescore_reruns_only_the_unknown_mutants"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 135.1,
+   "output_tail": ".lean:7 Demo.evens list-first: xs.filter (\u00b7 % 2 == 0) -> ((xs.filter (\u00b7 % 2 == 0)).take 1)\nE         SURVIVOR lean/Demo/Defs.lean:7 Demo.evens list-drop-last: xs.filter (\u00b7 % 2 == 0) -> ((xs.filter (\u00b7 % 2 == 0)).dropLast)\nE         SURVIVOR lean/Demo/Defs.lean:7 Demo.evens list-first: xs -> (xs.take 1)\nE         SURVIVOR lean/Demo/Defs.lean:7 Demo.evens list-drop-last: xs -> (xs.dropLast)\nE         SURVIVOR lean/Demo/Defs.lean:7 Demo.evens list-last: xs.filter (\u00b7 % 2 == 0) -> ((xs.filter (\u00b7 % 2 == 0)).reverse.take 1)\nE         SURVIVOR lean/Demo/Defs.lean:7 Demo.evens list-drop-first: xs.filter (\u00b7 % 2 == 0) -> ((xs.filter (\u00b7 % 2 == 0)).drop 1)\nE         SURVIVOR lean/Demo/Defs.lean:7 Demo.evens list-last: xs -> (xs.reverse.take 1)\nE         SURVIVOR lean/Demo/Defs.lean:7 Demo.evens list-drop-first: xs -> (xs.drop 1)\nE         trust_mutants: 12 KILLED, 21 SURVIVOR, 8 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 0 s; 41 reused from bbe3cc3c5eaf (identical inputs)\nE         \nE       assert ([] == ['M009', 'M01..., 'M022', ...]\nE         \nE         Right contains 8 more items, first extra item: 'M009'\nE         Use -v to get more diff)\n\ntests/test_trust_mutants.py:521: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_rescore_reruns_only_the_unknown_mutants\n1 failed in 57.78s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-8j2tzocu)\n"
+  },
+  {
+   "id": "RS3",
+   "file": "tools/trust_mutants.py",
+   "claim": "an ALLOWED mutant is reused by its status before --allow (raw_status), so the current --allow decides it",
+   "source_sha256": "36c7c58987e92fa0d4f9a35adda2ce7ab05108f3de0e62e4a39a6bd6ac92977b",
+   "tests": [
+    "tests/test_trust_mutants.py::test_rescore_of_evidence_whose_mutants_differ_is_a_full_run"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_rescore_of_evidence_whose_mutants_differ_is_a_full_run"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.5,
+   "output_tail": "m = trust_mutants.Mutant(\"M001\", \"Demo/Defs.lean\", 3, \"Demo.small\", \"lt-le\", 0, 1, (3, 3), \"<\", \"\u2264\")\n        row = {\"id\": \"M001\", \"file\": \"Demo/Defs.lean\", \"line\": 3, \"definition\": \"Demo.small\", \"operator\": \"lt-le\",\n               \"before\": \"<\", \"after\": \"\u2264\", \"status\": \"ALLOWED\", \"raw_status\": \"SURVIVOR\", \"detail\": \"a reason\"}\n        prev = tmp_path / \"prev.json\"\n        for rows, ok in (([row], True), ([{**row, \"after\": \"=\"}], False), ([], False),\n                         ([{**row, \"raw_status\": \"PASSED\"}], False), ([{k: v for k, v in row.items() if k != \"raw_status\"}],\n                                                                      False)):\n            prev.write_text(json.dumps({\"inputs\": {\"x\": \"1\"}, \"head\": \"h\", \"mutants\": rows}))\n            got = trust_mutants.previous(prev, {\"x\": \"1\"}, [m])\n>           assert (got == (\"h\", {\"M001\": (\"SURVIVOR\", \"\")})) if ok else isinstance(got, str), (rows, got)\nE           AssertionError: ([{'id': 'M001', 'file': 'Demo/Defs.lean', 'line': 3, 'definition': 'Demo.small', ...}], 'it cannot be read: a status or detail is not one this tool writes')\nE           assert False\n\ntests/test_trust_mutants.py:612: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_rescore_of_evidence_whose_mutants_differ_is_a_full_run\n1 failed in 0.31s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-r36p9cf0)\n"
+  },
+  {
+   "id": "RS4",
+   "file": "tools/trust_mutants.py",
+   "claim": "the lean digest covers every file the scratch copy takes and trust_map's table, not only the sources",
+   "source_sha256": "36c7c58987e92fa0d4f9a35adda2ce7ab05108f3de0e62e4a39a6bd6ac92977b",
+   "tests": [
+    "tests/test_trust_mutants.py::test_any_changed_input_gives_a_full_run[lakefile]",
+    "tests/test_trust_mutants.py::test_any_changed_input_gives_a_full_run[statements]",
+    "tests/test_trust_mutants.py::test_any_changed_input_gives_a_full_run[trust-table]"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_any_changed_input_gives_a_full_run[lakefile]",
+    "tests/test_trust_mutants.py::test_any_changed_input_gives_a_full_run[statements]",
+    "tests/test_trust_mutants.py::test_any_changed_input_gives_a_full_run[trust-table]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 32.4,
+   "output_tail": "ef digests(deep: bool = False, tests: tuple = (), base: str = base) -> dict:\n            return trust_mutants.inputs(root, base, list(tests), [root / \"outside/T.lean\"], deep)\n        prev, before = tmp_path / \"prev.json\", digests()\n        prev.write_text(json.dumps({\"inputs\": before, \"head\": \"h\", \"mutants\": []}))\n        assert trust_mutants.previous(prev, digests(), []) == (\"h\", {})\n        if change in CHANGES:\n            CHANGES[change](root)\n        now = digests(change == \"deep\", (\"Demo/Examples.lean\",) if change == \"test-option\" else (),\n                      base if change != \"base\" else base[:-1] + (\"0\" if base[-1] != \"0\" else \"1\"))\n>       assert [k for k in now if now[k] != before[k]] == [\n            {\"deep\": \"options\", \"test-option\": \"options\", \"base\": \"base\", \"test-file\": \"tests\"}.get(change, \"lean\")]\nE       AssertionError: assert [] == ['lean']\nE         \nE         Right contains one more item: 'lean'\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:577: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_any_changed_input_gives_a_full_run[lakefile]\nFAILED tests/test_trust_mutants.py::test_any_changed_input_gives_a_full_run[statements]\nFAILED tests/test_trust_mutants.py::test_any_changed_input_gives_a_full_run[trust-table]\n3 failed in 14.78s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-mnto9e_9)\n"
+  },
+  {
+   "id": "RS5",
+   "file": "tools/trust_mutants.py",
+   "claim": "a byte changed in an outside --test file is a full run",
+   "source_sha256": "36c7c58987e92fa0d4f9a35adda2ce7ab05108f3de0e62e4a39a6bd6ac92977b",
+   "tests": [
+    "tests/test_trust_mutants.py::test_any_changed_input_gives_a_full_run[test-file]"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_any_changed_input_gives_a_full_run[test-file]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 33.1,
+   "output_tail": "(\"import Demo.Defs\\n#guard Demo.small 2\\n\")\n        base = \"0123456789abcdef\" * 2 + \"01234567\"  # a commit id: `main` resolves it, `inputs` records it as it is\n    \n        def digests(deep: bool = False, tests: tuple = (), base: str = base) -> dict:\n            return trust_mutants.inputs(root, base, list(tests), [root / \"outside/T.lean\"], deep)\n        prev, before = tmp_path / \"prev.json\", digests()\n        prev.write_text(json.dumps({\"inputs\": before, \"head\": \"h\", \"mutants\": []}))\n        assert trust_mutants.previous(prev, digests(), []) == (\"h\", {})\n        if change in CHANGES:\n            CHANGES[change](root)\n        now = digests(change == \"deep\", (\"Demo/Examples.lean\",) if change == \"test-option\" else (),\n                      base if change != \"base\" else base[:-1] + (\"0\" if base[-1] != \"0\" else \"1\"))\n>       assert [k for k in now if now[k] != before[k]] == [\n            {\"deep\": \"options\", \"test-option\": \"options\", \"base\": \"base\", \"test-file\": \"tests\"}.get(change, \"lean\")]\nE       AssertionError: assert [] == ['tests']\nE         \nE         Right contains one more item: 'tests'\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:577: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_any_changed_input_gives_a_full_run[test-file]\n1 failed in 16.47s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-icfr2e59)\n"
+  },
+  {
+   "id": "RS6",
+   "file": "tools/trust_mutants.py",
+   "claim": "another --deep is a full run",
+   "source_sha256": "36c7c58987e92fa0d4f9a35adda2ce7ab05108f3de0e62e4a39a6bd6ac92977b",
+   "tests": [
+    "tests/test_trust_mutants.py::test_any_changed_input_gives_a_full_run[deep]"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_any_changed_input_gives_a_full_run[deep]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 42.7,
+   "output_tail": "t(\"import Demo.Defs\\n#guard Demo.small 2\\n\")\n        base = \"0123456789abcdef\" * 2 + \"01234567\"  # a commit id: `main` resolves it, `inputs` records it as it is\n    \n        def digests(deep: bool = False, tests: tuple = (), base: str = base) -> dict:\n            return trust_mutants.inputs(root, base, list(tests), [root / \"outside/T.lean\"], deep)\n        prev, before = tmp_path / \"prev.json\", digests()\n        prev.write_text(json.dumps({\"inputs\": before, \"head\": \"h\", \"mutants\": []}))\n        assert trust_mutants.previous(prev, digests(), []) == (\"h\", {})\n        if change in CHANGES:\n            CHANGES[change](root)\n        now = digests(change == \"deep\", (\"Demo/Examples.lean\",) if change == \"test-option\" else (),\n                      base if change != \"base\" else base[:-1] + (\"0\" if base[-1] != \"0\" else \"1\"))\n>       assert [k for k in now if now[k] != before[k]] == [\n            {\"deep\": \"options\", \"test-option\": \"options\", \"base\": \"base\", \"test-file\": \"tests\"}.get(change, \"lean\")]\nE       AssertionError: assert [] == ['options']\nE         \nE         Right contains one more item: 'options'\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:577: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_any_changed_input_gives_a_full_run[deep]\n1 failed in 19.58s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-f7h6mi4n)\n"
+  },
+  {
+   "id": "RS7",
+   "file": "tools/trust_mutants.py",
+   "claim": "a byte changed in the tool or a module it imports is a full run",
+   "source_sha256": "36c7c58987e92fa0d4f9a35adda2ce7ab05108f3de0e62e4a39a6bd6ac92977b",
+   "tests": [
+    "tests/test_trust_mutants.py::test_the_inputs_digest_the_tools_own_source"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_the_inputs_digest_the_tools_own_source"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.1,
+   "output_tail": "___\n\ntmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-31739/test_the_inputs_digest_the_too0')\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x70f1d64488a0>\n\n    def test_the_inputs_digest_the_tools_own_source(tmp_path, monkeypatch):\n        \"\"\"A byte changed in the tool, or in a module of the repository it imports, changes its `inputs`.\"\"\"\n        import types\n        import trust_mutants\n        (tmp_path / \"tools\").mkdir()\n        (tmp_path / \"lean\").mkdir()\n        source = tmp_path / \"tools/helper.py\"\n        source.write_text(\"X = 1\\n\")\n        helper = types.ModuleType(\"tm_helper\")\n        helper.__file__ = str(source)\n        monkeypatch.setattr(trust_mutants, \"ROOT\", tmp_path)\n        monkeypatch.setitem(sys.modules, \"tm_helper\", helper)\n        before = trust_mutants.inputs(tmp_path, \"b\", [], [], False)\n        source.write_text(\"X = 2\\n\")\n        after = trust_mutants.inputs(tmp_path, \"b\", [], [], False)\n>       assert [k for k in after if after[k] != before[k]] == [\"tool\"]\nE       AssertionError: assert [] == ['tool']\nE         \nE         Right contains one more item: 'tool'\nE         Use -v to get more diff\n\ntests/test_trust_mutants.py:597: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_the_inputs_digest_the_tools_own_source\n1 failed in 0.67s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-jhpl9_2a)\n"
+  },
+  {
+   "id": "RS8",
+   "file": "tools/trust_mutants.py",
+   "claim": "evidence with no inputs (written before them) is a full run, and the line says so",
+   "source_sha256": "36c7c58987e92fa0d4f9a35adda2ce7ab05108f3de0e62e4a39a6bd6ac92977b",
+   "tests": [
+    "tests/test_trust_mutants.py::test_rescore_of_an_old_or_unreadable_file_is_a_full_run[no-inputs]"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_rescore_of_an_old_or_unreadable_file_is_a_full_run[no-inputs]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 118.5,
+   "output_tail": " is a full run, said in one line.\"\"\"\n        prev = tmp_path / \"prev.json\"\n        data = json.loads(prefix_run.read_text())\n        prev.write_text(json.dumps({k: v for k, v in data.items() if k != \"inputs\"}) if old == \"no-inputs\" else \"{\")\n        done, data = rescored(package, tmp_path / \"run\", prev, \"--max-mutants\", \"2\")\n        said = [line for line in done.stdout.splitlines() if \"a full run, since\" in line]\n>       assert len(said) == 1 and (\"records no inputs\" if old == \"no-inputs\" else \"cannot be read\") in said[0], said\nE       AssertionError: [\"trust_mutants: --rescore /tmp/pytest-of-seyran/pytest-31741/test_rescore_of_an_old_or_unre0/prev.json: a full run, since it cannot be read (KeyError: 'inputs')\"]\nE       assert (1 == 1 and 'records no inputs' in \"trust_mutants: --rescore /tmp/pytest-of-seyran/pytest-31741/test_rescore_of_an_old_or_unre0/prev.json: a full run, since it cannot be read (KeyError: 'inputs')\")\nE        +  where 1 = len([\"trust_mutants: --rescore /tmp/pytest-of-seyran/pytest-31741/test_rescore_of_an_old_or_unre0/prev.json: a full run, since it cannot be read (KeyError: 'inputs')\"])\n\ntests/test_trust_mutants.py:541: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_rescore_of_an_old_or_unreadable_file_is_a_full_run[no-inputs]\n1 failed in 57.32s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-x93v3zyc)\n"
+  },
+  {
+   "id": "RS9",
+   "file": "tools/trust_mutants.py",
+   "claim": "each reused mutant is marked reused_from PREV's head in the evidence",
+   "source_sha256": "36c7c58987e92fa0d4f9a35adda2ce7ab05108f3de0e62e4a39a6bd6ac92977b",
+   "tests": [
+    "tests/test_trust_mutants.py::test_rescore_after_an_allow_only_edit_builds_nothing"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_rescore_after_an_allow_only_edit_builds_nothing"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 84.0,
+   "output_tail": ".chmod(0o755)\n        allow = tmp_path / \"allow.json\"\n        allow.write_text(json.dumps({\"allow\": [{\"definition\": survivor[\"definition\"], \"operator\": survivor[\"operator\"],\n                                                \"reason\": \"allowed after the run\"}]}))\n        done, data = rescored(package, tmp_path / \"run\", prefix_run, \"--max-mutants\", \"5\", \"--allow\", str(allow),\n                              home={\"HOME\": str(tmp_path / \"home\"), \"ELAN_HOME\": str(Path.home() / \".elan\")})\n        assert not log.exists() and done.returncode == 3, done.stdout + done.stderr\n        assert data[\"rescore\"] == {\"file\": str(prefix_run), \"head\": prev[\"head\"], \"reused\": 5, \"rerun\": 0}\n        assert f\"5 reused from {prev['head'][:12]} (identical inputs)\" in done.stdout\n        now = {m[\"id\"]: m for m in data[\"mutants\"]}\n        for m in ran:\n            mine = now[m[\"id\"]]\n>           assert (mine[\"reused_from\"], mine[\"raw_status\"], mine[\"detail\"] if m is not survivor else \"\") == (\n                    ^^^^^^^^^^^^^^^^^^^\n                prev[\"head\"], m[\"status\"], m[\"detail\"] if m is not survivor else \"\"), mine\nE           KeyError: 'reused_from'\n\ntests/test_trust_mutants.py:497: KeyError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_rescore_after_an_allow_only_edit_builds_nothing\n1 failed in 40.97s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-e4m3i0iw)\n"
+  },
+  {
+   "id": "RS10",
+   "file": "tools/trust_mutants.py",
+   "claim": "a NOT RUN mutant that now fits --max-mutants runs",
+   "source_sha256": "36c7c58987e92fa0d4f9a35adda2ce7ab05108f3de0e62e4a39a6bd6ac92977b",
+   "tests": [
+    "tests/test_trust_mutants.py::test_rescore_runs_the_not_run_mutants_that_now_fit"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_trust_mutants.py::test_rescore_runs_the_not_run_mutants_that_now_fit"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 91.2,
+   "output_tail": "ples.lean:23 loneFin lit-plus: 0 -> 1\nE         NOT RUN lean/Demo/Defs.lean:7 Demo.evens list-empty: xs -> []\nE         NOT RUN lean/Demo/Defs.lean:7 Demo.evens list-first: xs.filter (\u00b7 % 2 == 0) -> ((xs.filter (\u00b7 % 2 == 0)).take 1)\nE         NOT RUN lean/Demo/Defs.lean:7 Demo.evens list-drop-last: xs.filter (\u00b7 % 2 == 0) -> ((xs.filter (\u00b7 % 2 == 0)).dropLast)\nE         NOT RUN lean/Demo/Defs.lean:7 Demo.evens list-first: xs -> (xs.take 1)\nE         NOT RUN lean/Demo/Defs.lean:7 Demo.evens list-drop-last: xs -> (xs.dropLast)\nE         NOT RUN lean/Demo/Defs.lean:7 Demo.evens list-last: xs.filter (\u00b7 % 2 == 0) -> ((xs.filter (\u00b7 % 2 == 0)).reverse.take 1)\nE         NOT RUN lean/Demo/Defs.lean:7 Demo.evens list-drop-first: xs.filter (\u00b7 % 2 == 0) -> ((xs.filter (\u00b7 % 2 == 0)).drop 1)\nE         NOT RUN lean/Demo/Defs.lean:7 Demo.evens list-last: xs -> (xs.reverse.take 1)\nE         NOT RUN lean/Demo/Defs.lean:7 Demo.evens list-drop-first: xs -> (xs.drop 1)\nE         trust_mutants: 4 KILLED, 1 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 36 NOT RUN in 0 s; 7 reused from e079de1b1923 (identical inputs)\nE         \nE       assert (7 == 5)\n\ntests/test_trust_mutants.py:506: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_trust_mutants.py::test_rescore_runs_the_not_run_mutants_that_now_fit\n1 failed in 40.08s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-45wbuhu0)\n"
+  }
+ ]
+}
