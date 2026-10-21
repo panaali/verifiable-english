@@ -124,7 +124,15 @@ and `maxIdentifierBytes`, the files re-pinned. Then: both files rerun, 141 passe
 VE.Calc.UnitsExamples` (every guard); `regen_generated.py --check` (33 entries); `trust_map.py --check` PASS (+148);
 `trust_mutants.py` again on cfee74b09, the same 125 killed, 21 allowed, exit 0; `gate_collection.py --check
 --prebuilt`: 0 added, 0 refused, 0 stale, 0 malformed. The `limit-nodes` hand mutant was rerun on the new text:
-killed (guard 153).
+killed (guard 153; 289 after round 2).
+
+Round 2 (looprecheck1 F8, F9, F10): `mac-pytest.sh --select -- --base 768a935fcd03 --run` on 55dadbe83, on the VM
+(the Mac runner unreachable): 81 of 460 units, 0 failed, exit 0, 5,499 s; the lake build, `lake build
+ve_english_lean_bench` and `lean/audit.py` (PASS, 606 files) passed in it. `trust_mutants.py --max-mutants 1000` on
+4e91c29ce (VM): 125 killed, 0 survivors, 0 unknown, 21 allowed, exit 0. The allow file's reason for
+`Check.UnknownCause` arm-true was reworded after that run (it names the killing proof), so that one mutant's
+`detail` in `trust-mutants.json` still shows the earlier wording; no status reads it. A rerun on the VM timed out at
+3,500 s under load and was not repeated.
 
 ## Self-review against BUILDER-CHECKLIST
 
