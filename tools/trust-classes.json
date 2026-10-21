@@ -13851,8 +13851,18 @@
         },
         "VE.Acts.Lexical.dropComma",
         "VE.Acts.Lexical.fold",
-        "VE.Acts.Lexical.group",
-        "VE.Acts.Lexical.lex",
+        {
+          "name": "VE.Acts.Lexical.group",
+          "tied": [
+            "VE.Acts.Lexical.group_spec"
+          ]
+        },
+        {
+          "name": "VE.Acts.Lexical.lex",
+          "tied": [
+            "VE.Acts.Lexical.lex_spec"
+          ]
+        },
         "VE.Acts.Lexical.normal",
         "VE.Acts.Lexical.phraseToks",
         "VE.Acts.Lexical.pieceToks",
@@ -13862,11 +13872,17 @@
     },
     "VE/Acts/LexicalProofs.lean": {
       "S": [
-        "VE.Acts.Lexical.Accepts"
+        "VE.Acts.Lexical.Accepts",
+        "VE.Acts.Lexical.Grouped",
+        "VE.Acts.Lexical.expand"
       ],
       "P": [
         "VE.Acts.Lexical.decAccepts",
+        "VE.Acts.Lexical.decFixed",
+        "VE.Acts.Lexical.decGrouped",
         "VE.Acts.Lexical.decOkAnd",
+        "VE.Acts.Lexical.decPlain",
+        "VE.Acts.Lexical.decSuffixes",
         "VE.Acts.Lexical.decWord",
         "VE.Acts.Lexical.out",
         "VE.Acts.Lexical.pieceTok",
@@ -13874,7 +13890,10 @@
         "VE.Acts.Lexical.wordsL"
       ],
       "T": [
-        "VE.Acts.Lexical.acc"
+        "VE.Acts.Lexical.acc",
+        "VE.Acts.Lexical.free",
+        "VE.Acts.Lexical.grouped",
+        "VE.Acts.Lexical.seek"
       ]
     },
     "VE/Acts/LexicalExamples.lean": {

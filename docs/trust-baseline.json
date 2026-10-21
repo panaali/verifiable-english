@@ -1062,6 +1062,13 @@
    "reason": "ap-1d: VE/Acts/LexicalProofs.lean S +9 (Accepts, the independent statement of spec 1.3); VE/Acts/Lexical.lean trusted -32 (check tied by check_spec, decodeFixed tied by fixedOk_unique); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1d, 2026-10-18",
    "commit": "768a935fcd0304ab85a83f848bd9f37664664be8"
+  },
+  {
+   "class": "S",
+   "lines": 13,
+   "reason": "ap-1e: VE/Acts/LexicalProofs.lean S +13 (expand and Grouped, the grouping of spec 1.1 condition 6); VE/Acts/Lexical.lean trusted -15 (group tied by group_spec, lex tied by lex_spec); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1e, 2026-10-18",
+   "commit": "3432611041bf4ce570bf6658b9066522001e5f12"
   }
  ]
 }
