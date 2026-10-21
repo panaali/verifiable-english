@@ -114,9 +114,14 @@ DuplicateName first), and two rank ties (0 = 1, 3 = 4) that the list order hid. 
 ## Tests
 
 - **Selected tests:** `mac-pytest.sh --select -- --base 7855620f3 --run` on the Mac runner: 74 units, 0 failed (HEAD
-  `ea8e7e75`). The item adds no pytest file: its tests are the Lean guards and proofs that `lake build` checks.
+  `ea8e7e75`). After the review fixes (HEAD `4e804bd55`; the Mac was unreachable, so it ran on the VM): 74 units,
+  0 failed. The item adds no pytest file: its tests are the Lean guards and proofs that `lake build` checks, and the
+  review fixes' regression tests are those too (`lake build` of the whole library passes on `db1420f24`).
+- **Review probes:** PROBE F1 and PROBE F2 fail on `570715524` (every listed mutant survives) and pass after the fixes.
 - **Checks:** `regen_generated.py --check --skip route-cases` (no route changed), `repo_map.py --check`,
   `check_lean_imports.py`, `lean/audit.py` and `trust_map.py --check` pass.
+  After the review fixes: `lean_statements.py --check`, `lean/audit.py --check`, `trust_map.py --check` and
+  `repo_map.py --check` pass.
 - **Collection:** `gate_collection.py --check --prebuilt`: 0 added, 0 removed, 0 refused, 0 stale, 0 malformed.
 - **Full gate:** left to the chain. No test that main-known-red.txt lists failed.
 
