@@ -3,7 +3,7 @@
 growth only when "every new trusted definition is exercised by a test that can fail").
 
     uv run python tools/trust_mutants.py [--base REV] [--jobs N] [--max-mutants N] [--test FILE ...] [--deep]
-                                         [--allow FILE] [--json OUT] [--root DIR]
+                                         [--allow FILE] [--json OUT] [--root DIR] [--rescore PREV.json]
 
 Selected: each declaration tools/trust_map.py counts as trusted (not a theorem or check) whose lines hold a line
 the tree adds or changes over REV (default: the merge base of HEAD and main). The `OPERATORS` mutate it inside its
@@ -47,6 +47,13 @@ SURVIVOR and UNKNOWN print as `<STATUS> <file>:<line> <definition> <operator>: <
 FILE lists the definition and operator with a reason ({"allow": [{"definition": "VE.X.f", "operator": "lt-le",
 "reason": "one line"}]}). Exit 0: all ran, none left; 1: a survivor or UNKNOWN left; 3: none left but some NOT RUN;
 2: cannot run. Builder and reviewer evidence only: no gate, merge train or nightly reads it.
+
+--rescore PREV.json (speed-tmrescore): every --json records `inputs`, digests of the bytes every verdict is computed
+from (`inputs`), and each mutant's status before --allow (`raw_status`). When PREV's `inputs` are this run's, its
+KILLED, INVALID and SURVIVOR verdicts are the same by construction and are reused (`reused_from: <PREV head>`); only
+its UNKNOWN mutants (a build past its time limit among them) and the NOT RUN that now fit --max-mutants run, and the
+current --allow applies to all. With no mutant to run there is no build. Else (no `inputs`, other ones, a file it
+cannot read) it is a full run, and one line says why. The JSON gains `rescore: {file, head, reused, rerun}`.
 """
 from __future__ import annotations
 
@@ -55,6 +62,7 @@ from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, dataclass, field
 import difflib
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -150,6 +158,8 @@ class Mutant:
     status: str = "NOT RUN"
     detail: str = ""
     edit: tuple[int, str] = (0, "")  # what `run` writes: text[start:edit[0]] -> edit[1] (`relined`)
+    raw_status: str = "NOT RUN"  # the status before --allow, which --rescore reads
+    reused_from: str = ""  # the head of the --rescore run whose verdict this is
 
 
 def group(t: str, i: int, step: int = 1) -> int:
@@ -1051,6 +1061,58 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
             (scratch.lean / f).write_text(text)
 
 
+REUSED = ("KILLED", "INVALID", "SURVIVOR")  # the verdicts --rescore reuses: no other depends on Lean's time
+
+
+def inputs(root: Path, base: str, tests: list[str], outside: list[Path], deep: bool) -> dict[str, str]:
+    """What every verdict is computed from, as sha256 digests of bytes, which --rescore compares: the tool's own
+    source (with the modules of this repository it imports); every file of lean/ that `Scratch` copies (the sources,
+    lakefile, toolchain, manifest and the compiled lists `plan` reads), with trust_map's table and .gitignore; the
+    outside --test files; the base commit; and the options --deep and --test. --max-mutants is not one: it picks
+    which mutants run, never a verdict, so a larger one runs only the mutants that now fit."""
+    def digest(files: list[tuple[str, Path]]) -> str:
+        h = hashlib.sha256()
+        for name, path in sorted(files):
+            data = os.readlink(path).encode() if path.is_symlink() else path.read_bytes() if path.is_file() else b""
+            h.update(f"{name}\0{len(data)}\0".encode() + data)
+        return h.hexdigest()
+    tool = {Path(f).resolve() for m in list(sys.modules.values()) if isinstance(f := getattr(m, "__file__", None), str)}
+    lean = []
+    for top, dirs, names in os.walk(root / "lean"):
+        dirs[:] = [d for d in dirs if d not in (".lake", ".cache")]
+        lean += [Path(top, n) for n in names + [d for d in dirs if Path(top, d).is_symlink()]]
+    named = [(Path(os.path.relpath(p, root)).as_posix(), p) for p in outside]
+    return {"tool": digest([(p.relative_to(ROOT).as_posix(), p) for p in tool if p.is_relative_to(ROOT / "tools")
+                            or p.is_relative_to(ROOT / "lean")]),
+            "lean": digest([(p.relative_to(root).as_posix(), p) for p in [
+                *lean, root / "tools/trust-classes.json", root / ".gitignore"]]),
+            "tests": digest(named), "base": base,
+            "options": json.dumps({"deep": deep, "test": sorted(tests) + [n for n, _ in named]})}
+
+
+def previous(path: Path, now: dict[str, str], found: list[Mutant]) -> tuple[str, dict[str, tuple[str, str]]] | str:
+    """--rescore PREV: its head and, by mutant id, the verdict (status before --allow, detail) of each mutant it ran
+    when its `inputs` are `now` and its mutants are `found`; else why not (a full run)."""
+    try:
+        data = json.loads(path.read_text())
+        if not isinstance(data, dict) or "inputs" not in data:
+            return "it records no inputs"
+        if data["inputs"] != now:
+            which = [k for k in now if not isinstance(data["inputs"], dict) or data["inputs"].get(k) != now[k]]
+            return f"its inputs differ ({', '.join(which) or 'keys'})"
+        rows, head = data["mutants"], data["head"]
+        if [tuple(r[k] for k in ("id", "file", "line", "definition", "operator", "before", "after")) for r in rows] != [
+                (m.id, m.file, m.line, m.definition, m.operator, m.before, m.after) for m in found]:
+            return "its mutants are not this tree's"
+        verdicts = {r["id"]: (r["raw_status"], r["detail"] if r["raw_status"] == r["status"] else "") for r in rows}
+        if not isinstance(head, str) or not head or not all(isinstance(d, str) and s in (*REUSED, "UNKNOWN", "NOT RUN")
+                                                for s, d in verdicts.values()):
+            return "it cannot be read: a status or detail is not one this tool writes"
+        return head, verdicts
+    except (OSError, ValueError, KeyError, TypeError) as error:
+        return f"it cannot be read ({type(error).__name__}: {error})"
+
+
 def evidence(data: dict) -> str:
     """The --json text: one mutant per line."""
     rows = ",\n".join(json.dumps(m, ensure_ascii=False) for m in data["mutants"])
@@ -1073,6 +1135,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--deep", action="store_true", help="every check module of the cone, not only its directory's")
     parser.add_argument("--allow", type=Path)
     parser.add_argument("--json", type=Path)
+    parser.add_argument("--rescore", type=Path, metavar="PREV.json",
+                        help="reuse PREV's KILLED, INVALID and SURVIVOR verdicts when its inputs are this run's")
     parser.add_argument("--build-timeout", type=float, default=1800,
                         help="seconds a mutant's build may run before it is UNKNOWN (default: 1800)")
     args = parser.parse_args(argv)
@@ -1101,22 +1165,47 @@ def main(argv: list[str] | None = None) -> int:
         return print("\n".join(fatal), file=sys.stderr) or 2
     jobs = args.jobs or max(1, min(8, (os.cpu_count() or 1) - int(os.getloadavg()[1])))
     run_now, not_run = found[:max(0, args.max_mutants)], found[max(0, args.max_mutants):]
+    digests = inputs(root, git(root, "rev-parse", base).stdout.strip(), tests, outside, args.deep)
+    reused, rescore, why = "", None, ""
+    if args.rescore:
+        got = previous(args.rescore, digests, found)
+        if isinstance(got, str):
+            why = got
+            print(f"trust_mutants: --rescore {args.rescore}: a full run, since {why}", flush=True)
+        else:
+            reused, verdicts = got
+            for m in run_now:
+                if verdicts[m.id][0] in REUSED:
+                    (m.status, m.detail), m.reused_from = verdicts[m.id], reused
+    todo = [m for m in run_now if not m.reused_from]
     env = {**os.environ, "PATH": f"{Path.home() / '.elan/bin'}{os.pathsep}{os.environ.get('PATH', '')}"}
     definitions = sorted({(m.file, m.definition) for m in found})
-    print(f"trust_mutants: {len(definitions)} definitions, {len(found)} mutants ({len(run_now)} to run), {jobs} jobs, "
+    print(f"trust_mutants: {len(definitions)} definitions, {len(found)} mutants ({len(todo)} to run), {jobs} jobs, "
           f"base {base[:12]}", flush=True)
+
+    def allowed(m: Mutant) -> None:
+        """The current --allow on a verdict, run or reused, which is printed when it is left."""
+        m.raw_status = m.status
+        if m.status in ("SURVIVOR", "UNKNOWN") and (m.definition, m.operator) in allow:
+            m.status, m.detail = "ALLOWED", allow[(m.definition, m.operator)]
+        if m.status in ("SURVIVOR", "UNKNOWN"):
+            print(f"{m.status} lean/{m.file}:{m.line} {m.definition} {m.operator}: {show(m.before)} -> "
+                  f"{show(m.after)}{' (' + show(m.detail) + ')' if m.detail else ''}", flush=True)
+    for m in run_now:
+        if m.reused_from:
+            allowed(m)
     with tempfile.TemporaryDirectory(prefix="trust-mutants-") as scratch_dir:
         pool: queue.Queue = queue.Queue()
         controls: dict = {}  # the builds without a mutant, by stage and cuts: shared by every scratch
         hashes: dict = {}  # `probe`'s hash of each check without a mutant
-        if run_now:
+        if todo:  # the control build, and each check's elaboration, only for the mutants that run
             first = Scratch(root / "lean", Path(scratch_dir))
-            code, output = first.lake(env, "build", *sorted({f"+{x}" for m in run_now for x in targets(tree, m, tests,
-                                                                                                    args.deep)}))
+            code, output = first.lake(env, "build", *sorted({f"+{x}" for m in todo for x in targets(tree, m, tests,
+                                                                                                args.deep)}))
             failing = [t for t in outside if first.lake(env, "env", "lean", str(t))[0]]
             if code or failing:
                 return print(f"the checks fail without a mutant:\n{output[-3000:]}{failing}", file=sys.stderr) or 2
-            files = {f: (first.lean / f, tree.roles[f]) for f in sorted({tree.files[x] for m in run_now for x in targets(
+            files = {f: (first.lean / f, tree.roles[f]) for f in sorted({tree.files[x] for m in todo for x in targets(
                 tree, m, tests, args.deep)}) if any(r == "check" for _, _, r, _ in tree.roles.get(f, ()))}
             files.update({str(t): (t, file_roles(t)) for t in outside})
             if not install(lambda *a: first.lake(env, *a), first.lean):
@@ -1130,7 +1219,7 @@ def main(argv: list[str] | None = None) -> int:
                 hashes.update({k: v for part in executor.map(control, enumerate(files.items())) for k, v in
                                part.items()})
             pool.put(first)
-            for _ in range(min(jobs, len(run_now)) - 1):
+            for _ in range(min(jobs, len(todo)) - 1):
                 pool.put(Scratch(root / "lean", Path(scratch_dir), first))
 
         def one(m: Mutant) -> None:
@@ -1140,27 +1229,29 @@ def main(argv: list[str] | None = None) -> int:
                                          args.build_timeout)
             finally:
                 pool.put(scratch)
-            if m.status in ("SURVIVOR", "UNKNOWN") and (m.definition, m.operator) in allow:
-                m.status, m.detail = "ALLOWED", allow[(m.definition, m.operator)]
-            if m.status in ("SURVIVOR", "UNKNOWN"):
-                print(f"{m.status} lean/{m.file}:{m.line} {m.definition} {m.operator}: {show(m.before)} -> "
-                      f"{show(m.after)}{' (' + show(m.detail) + ')' if m.detail else ''}", flush=True)
+            allowed(m)
 
         with ThreadPoolExecutor(max_workers=jobs) as executor:
-            list(executor.map(one, run_now))
+            list(executor.map(one, todo))
     for m in not_run:
         print(f"NOT RUN lean/{m.file}:{m.line} {m.definition} {m.operator}: {show(m.before)} -> {show(m.after)}")
     counts = {s: sum(m.status == s for m in found) for s in ("KILLED", "SURVIVOR", "UNKNOWN", "INVALID", "ALLOWED",
                                                             "NOT RUN")}
     seconds = round(time.monotonic() - started)
-    print("trust_mutants: " + ", ".join(f"{n} {s}" for s, n in counts.items()) + f" in {seconds} s")
+    kept = len(run_now) - len(todo)
+    print("trust_mutants: " + ", ".join(f"{n} {s}" for s, n in counts.items()) + f" in {seconds} s"
+          + (f"; {kept} reused from {reused[:12]} (identical inputs)" if reused else ""))
+    if args.rescore:
+        rescore = {"file": str(args.rescore), "head": reused or None, "reused": kept, "rerun": len(todo),
+                   **({} if reused else {"full_run": why})}
     if args.json:
         args.json.write_text(evidence({
-            "base": git(root, "rev-parse", base).stdout.strip(), "head": git(root, "rev-parse", "HEAD").stdout.strip(),
+            "base": digests["base"], "head": git(root, "rev-parse", "HEAD").stdout.strip(),
             "jobs": jobs, "max_mutants": args.max_mutants, "deep": args.deep, "tests": args.test, "seconds": seconds,
-            "counts": counts, "definitions": [f"lean/{f}: {d}" for f, d in definitions],
-            "mutants": [{k: v for k, v in asdict(m).items() if k not in ("start", "end", "edit")}
-                          for m in found]}))
+            "counts": counts, "inputs": digests, **({"rescore": rescore} if rescore else {}),
+            "definitions": [f"lean/{f}: {d}" for f, d in definitions],
+            "mutants": [{k: v for k, v in asdict(m).items() if k not in ("start", "end", "edit")
+                         and (k != "reused_from" or v)} for m in found]}))
     return 1 if counts["SURVIVOR"] or counts["UNKNOWN"] else 3 if not_run else 0
 
 

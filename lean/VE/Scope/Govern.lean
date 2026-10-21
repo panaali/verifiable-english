@@ -1,11 +1,12 @@
 import VE.Layout.List
 import VE.Scope.Effects
-import VE.Discourse.Manifest
+import VE.Discourse.Access
 
 /-! Scope's GOVERN step (scope@0, docs/spec/scope.md 1.1, 1.3, 1.5 and 4.2): the reaches, the block's admission and
     `govern`, which returns the complete document with each affected unit's content composed as the chain's own
-    norm object. Two parts come later, and until then what they read is refused, never skipped: the precedence
-    graph step (sc-1ad), and the anchor and label reaches with `admitBlock`'s anchor checks (sc-3ab). -/
+    norm object, then the precedence edges into it. The anchor and label reaches and the anchor checks are the
+    layout's (`VE/Layout/Anchors.lean`, `VE/Layout/List.lean`), called here. The run path `governFast` (1.5.8) is
+    last. -/
 
 namespace VE.Scope
 open Lean
@@ -49,6 +50,7 @@ def contentOf (doc : Json) (u : String) : Json :=
 def isPart (c : Json) : Bool := keysOf c == ["part"] || keysOf c == ["cites", "part"]
 def isNorm (c : Json) : Bool := keysOf c == ["norm"] || keysOf c == ["cites", "norm"]
 def objectOf (c : Json) : Json := if isPart c then c.getObjValD "part" else c.getObjValD "norm"
+def normOf (c : Json) : Option Json := (c.getObjVal? "norm").toOption
 def partUnits (D : SDoc) : List String := (unitIds D.doc).filter (fun u => isPart (contentOf D.doc u))
 def ruleUnits (D : SDoc) : List String :=
   (unitIds D.doc).filter (fun u => isPart (contentOf D.doc u) || isNorm (contentOf D.doc u))
@@ -84,8 +86,8 @@ def coveredLayout (D : SDoc) : Reach → Except String (List String)
       let us ← VE.Layout.listRun D.layout lead
       if cn.units == us then pure us else throw s!"ManifestMismatch: scope.list_names.{n}.units"
     | none => throw s!"ScopeUnknownName: {n}"
-  | .anchor _ => throw "UnsupportedProfile: scope@0 anchor reach requires SC-3a"   -- sc-3ab: `anchorReach`
-  | .label _ => throw "UnsupportedProfile: scope@0 label reach requires SC-3a"     -- sc-3ab: `itemRun`
+  | .anchor a => VE.Layout.anchorReach D.layout D.anchors a
+  | .label i => VE.Layout.itemRun D.layout i
   | .rules _ => .ok []
   | .frontier => throw "UnsupportedProfile: scope@0 frontier reach requires SC-5"   -- SC-5: its addendum (9.4)
   | .fixed us => .ok us
@@ -147,6 +149,39 @@ def affected (D : SDoc) : List String :=
       | .yields => coversU D g u
       | _ => false)
 
+/-! Precedence: the graph step over the composed rules (SC-4) -/
+
+def edgesOf (D : SDoc) (rule : String → Option SoftNode) (g : Governor) : List (String × String) :=
+  let targets := (covered D g.reach).toOption.getD []
+  match rule g.unit with
+  | none => []
+  | some N => match g.effect with
+    | .precedes => targets.filterMap fun v => (rule v).bind fun M =>
+        if M.pred == N.pred && M.name != N.name then some (g.unit, M.name) else none
+    | .yields => targets.filterMap fun v => (rule v).bind fun M =>
+        if M.pred == N.pred && M.name != N.name then some (v, N.name) else none
+    | _ => []
+
+def edgesInto (D : SDoc) (rule : String → Option SoftNode) (u : String) : List String :=
+  (((ordered D).filter (graph ·.effect)).flatMap (edgesOf D rule)).filterMap fun (w, n) => if w == u then some n else none
+
+def ruleTable (D : SDoc) : Except String (List (String × SoftNode)) := do
+  let gs := (ordered D).filter (graph ·.effect)
+  let needed := (ruleUnits D).filter (fun u => gs.any (fun g => g.unit == u || coversU D g u))
+  needed.mapM (fun u => do pure (u, ← VE.Readings.Wire.decodeNorm D.re (← composed D u)))
+
+def edgesFor (D : SDoc) (u : String) : Except String (List String) := do
+  let t ← ruleTable D
+  pure (edgesInto D (fun v => t.lookup v) u)
+
+def addOver (names : List String) (o : Json) : Json :=
+  match o.getObjVal? "over" with
+  | .ok (.arr xs) =>
+    let old := xs.toList.filterMap (·.getStr?.toOption)
+    let fresh := names.foldl (fun acc n => if old.contains n || acc.contains n then acc else acc ++ [n]) []
+    if fresh.isEmpty then o else o.setObjVal! "over" (.arr (xs ++ (fresh.map Json.str).toArray))
+  | _ => o
+
 /-! The block's admission and `govern` -/
 
 def conditions : Effect → List Json
@@ -162,9 +197,14 @@ def firstDup : List String → Option String
   | [] => none
   | x :: xs => if xs.contains x then some x else firstDup xs
 
-/-- Spec 6.2's steps 1 to 8. Step 7 (discourse's anchor checks) and step 8's check of an anchor's heading or a
-    label's item unit are sc-3ab's; until then a block with anchors is refused, and so is an anchor or label reach
-    (`coveredLayout`). -/
+def kindOf (doc : Json) (u : String) : String :=
+  (((unitsOf doc).find? (idOf · == u)).map (fun x => (x.getObjValD "kind").getStr?.toOption.getD "")).getD ""
+
+/-- The spans of the definition units, for discourse's export check. -/
+def defSpans (D : SDoc) : List (Nat × Nat) :=
+  (D.layout.filter (fun x => kindOf D.doc x.id == "definition")).map (·.span)
+
+/-- Spec 6.2's steps 1 to 8; step 7 is discourse's anchor checks, on the block's anchors. -/
 def admitBlock (D : SDoc) : Except String Unit := do
   if D.governors.length > 256 then throw "ResourceLimit: scope governors"
   if D.listNames.length > 256 then throw "ResourceLimit: scope list names"
@@ -179,7 +219,7 @@ def admitBlock (D : SDoc) : Except String Unit := do
     unless (unitIds D.doc).contains unit do throw s!"ScopeUnknownUnit: {unit}"
     let us ← VE.Layout.listRun D.layout lead
     unless cn.units == us do throw s!"ManifestMismatch: scope.list_names.{cn.name}.units"
-  unless D.anchors.isEmpty do throw "UnsupportedProfile: scope@0 anchors require SC-3a"   -- sc-3ab: `anchorsOk`
+  VE.Layout.anchorsOk D.anchors (defSpans D) (VE.Discourse.unaryPred D.re.se.ne.rv.environment)
   for g in D.governors do
     for c in conditions g.effect do
       unless depthOk depthLimit c do throw "ResourceLimit: scope condition depth exceeds 64"
@@ -197,6 +237,12 @@ def admitBlock (D : SDoc) : Except String Unit := do
     | .precedes, .frontier => throw s!"ScopeReach: {g.id}"
     | .yields, .frontier => throw s!"ScopeReach: {g.id}"
     | _, _ => pure ()
+    match g.reach with
+    | .anchor a =>
+      unless graph g.effect || VE.Layout.headingOf D.layout D.anchors a == some g.unit do
+        throw s!"ManifestMismatch: scope.governors.{g.id}.unit"
+    | .label i => unless graph g.effect || i == g.unit do throw s!"ManifestMismatch: scope.governors.{g.id}.unit"
+    | _ => pure ()
     let us ← covered D g.reach
     unless us == g.units do throw s!"ManifestMismatch: scope.governors.{g.id}.units"
     for u in g.unit :: us do
@@ -215,8 +261,7 @@ def patch (D : SDoc) (comp : List (String × Json)) : Json :=
     | some o => u.setObjVal! "content" (newContent (u.getObjValD "content") o)
     | none => u).toArray)
 
-/-- The block is admitted first, with or without governors. The precedence graph step (`ruleTable`, `edgesOf`,
-    `ScopeNoEffect`, `addOver`) is sc-1ad's; until then a `precedes` or `yields` governor is refused. -/
+/-- The block is admitted first, with or without governors. -/
 def govern (D : SDoc) : Except String Json := do
   admitBlock D
   if D.governors.isEmpty then
@@ -226,7 +271,102 @@ def govern (D : SDoc) : Except String Json := do
   else
     orderCheck D
     let comp ← (affected D).mapM (fun u => do pure (u, ← composed D u))
-    if (ordered D).any (graph ·.effect) then throw "UnsupportedProfile: scope@0 precedence requires SC-4"   -- sc-1ad
-    pure (patch D comp)
+    let t ← ruleTable D
+    for g in (ordered D).filter (graph ·.effect) do
+      if (edgesOf D (fun v => t.lookup v) g).isEmpty then throw s!"ScopeNoEffect: {g.id}"
+    pure (patch D (comp.map fun (u, o) => (u, addOver (edgesInto D (fun v => t.lookup v) u) o)))
+
+/-! The run path (1.5.8): `govern`'s steps after the admission, reading the order, each reach (as `frameOn` reads
+    it, `lv`, and as the other steps read it, `cv`) and each rule unit's base name from tables computed once.
+    `governFast_eq` (Theorems.lean) proves that it answers as `govern`. -/
+
+deriving instance DecidableEq for Reach
+
+/-- `f x`, read from the table `t` when it has `x`. -/
+def memo [BEq α] (t : List (α × β)) (f : α → β) (x : α) : β := match t.lookup x with
+  | some v => v
+  | none => f x
+
+def frameOnF (D : SDoc) (lv : Reach → List String) (u : String) : List Governor :=
+  D.governors.filter (fun g => isFrame g.effect && (lv g.reach).contains u)
+
+def baseObjF (D : SDoc) (lv : Reach → List String) (u : String) : Except String Json :=
+  let c := contentOf D.doc u
+  if !(isPart c || isNorm c) then .error s!"ScopeNotARule: {u}" else
+  match frameOnF D lv u with
+  | [] => if isPart c then .error s!"ScopeOrphanPart: {u}" else .ok (objectOf c)
+  | [g] => match g.effect with
+    | .frame lead => mergeParts u lead (objectOf c)
+    | _ => .ok (objectOf c)
+  | g₁ :: g₂ :: _ => .error s!"ScopeOrder: {u}: {g₁.id}, {g₂.id}"
+
+def coveredBy (D : SDoc) (bn : String → Option String) : Reach → Except String (List String)
+  | .rules ns => do
+    for n in ns do
+      unless (ruleUnits D).any (fun u => bn u == some n) do throw s!"ScopeUnknownRule: {n}"
+    pure ((ruleUnits D).filter (fun u => (bn u).any ns.contains))
+  | r => coveredLayout D r
+
+def governorsOfF (os : List Governor) (cv : Reach → List String) (u : String) : List Governor :=
+  os.filter (fun g => unary g.effect && (cv g.reach).contains u)
+
+def composedF (D : SDoc) (lv : Reach → List String) (os : List Governor) (cv : Reach → List String) (u : String) :
+    Except String Json := do
+  (governorsOfF os cv u).foldlM (fun o g => applyEffect u g.effect o) (← baseObjF D lv u)
+
+def edgesOfF (cv : Reach → List String) (rule : String → Option SoftNode) (g : Governor) : List (String × String) :=
+  match rule g.unit with
+  | none => []
+  | some N => match g.effect with
+    | .precedes => (cv g.reach).filterMap fun v => (rule v).bind fun M =>
+        if M.pred == N.pred && M.name != N.name then some (g.unit, M.name) else none
+    | .yields => (cv g.reach).filterMap fun v => (rule v).bind fun M =>
+        if M.pred == N.pred && M.name != N.name then some (v, N.name) else none
+    | _ => []
+
+def orderCheckF (D : SDoc) (os : List Governor) (cv : Reach → List String) : Except String Unit := do
+  for u in unitIds D.doc do
+    let gs := governorsOfF os cv u
+    for g₁ in gs do
+      for g₂ in gs do
+        if g₁.id != g₂.id && !Commutes g₁.effect g₂.effect then throw s!"ScopeOrder: {u}: {g₁.id}, {g₂.id}"
+
+/-- `govern` after the admission, on the order `os` and the reaches `lv` and `cv`. -/
+def governBody (D : SDoc) (os : List Governor) (lv cv : Reach → List String) : Except String Json :=
+  if D.governors.isEmpty then
+    match partUnits D with
+    | [] => pure D.doc
+    | u :: _ => throw s!"ScopeOrphanPart: {u}"
+  else do
+    orderCheckF D os cv
+    let aff := (ruleUnits D).filter fun u =>
+      isPart (contentOf D.doc u) || !(frameOnF D lv u).isEmpty || !(governorsOfF os cv u).isEmpty ||
+      D.governors.any (fun g => match g.effect with
+        | .precedes => g.unit == u
+        | .yields => (cv g.reach).contains u
+        | _ => false)
+    let comp ← aff.mapM (fun u => do pure (u, ← composedF D lv os cv u))
+    let gs := os.filter (graph ·.effect)
+    let needed := (ruleUnits D).filter (fun u => gs.any (fun g => g.unit == u || (cv g.reach).contains u))
+    let t ← needed.mapM (fun u => do pure (u, ← VE.Readings.Wire.decodeNorm D.re (← composedF D lv os cv u)))
+    for g in gs do
+      if (edgesOfF cv (fun v => t.lookup v) g).isEmpty then throw s!"ScopeNoEffect: {g.id}"
+    pure (patch D (comp.map fun (u, o) => (u, addOver
+      ((gs.flatMap (edgesOfF cv (fun v => t.lookup v))).filterMap fun (w, n) => if w == u then some n else none) o)))
+
+/-- The tables: each governor's reach as a layout reach, then each rule unit's base name, then each reach. -/
+def fastReads (D : SDoc) : (Reach → List String) × (Reach → List String) :=
+  let lv := memo (D.governors.map fun g => (g.reach, (coveredLayout D g.reach).toOption.getD []))
+    (fun r => (coveredLayout D r).toOption.getD [])
+  let bn := memo ((ruleUnits D).map fun u =>
+    (u, ((baseObjF D lv u).toOption.bind fun o => (VE.Readings.Wire.decodeNorm D.re o).toOption).map (·.name)))
+    (baseName D)
+  (lv, memo (D.governors.map fun g => (g.reach, (coveredBy D bn g.reach).toOption.getD []))
+    (fun r => (covered D r).toOption.getD []))
+
+def governFast (D : SDoc) : Except String Json := do
+  admitBlock D
+  let (lv, cv) := fastReads D
+  governBody D (ordered D) lv cv
 
 end VE.Scope
