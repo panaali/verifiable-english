@@ -117,6 +117,11 @@ import VE.Calc.Wire
 import VE.Calc.Run
 import VE.Calc.RunExamples
 import VE.Calc.Poly
+import VE.Calc.Inline
+import VE.Calc.Identity
+import VE.Calc.IdentityExamples
+import VE.Calc.Lower
+import VE.Calc.LowerExamples
 import VE.Numbers.Examples
 import VE.Numbers.Phrases
 import VE.Scales.Examples
