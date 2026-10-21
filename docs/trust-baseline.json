@@ -1027,6 +1027,13 @@
    "reason": "me-6b: lean/VE/Calc/Units.lean V +60 (D[V] UnitDef 7, UnitEnv 5, decodeFactor 10, decodeUnit 13, decodeV2 14, decode 6; G[V] UnitEnv.find? 2, UnitEnv.values 3); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-6b, 2026-10-18",
    "commit": "2296317a9de7ef365523e0f69c442338d9eaf576"
+  },
+  {
+   "class": "S",
+   "lines": 21,
+   "reason": "ap-1d: VE/Acts/LexicalProofs.lean S +21 (Accepts 10, Grouped 6, expand 5: the independent statements of spec 1.3 and 1.1's grouping); VE/Acts/Lexical.lean trusted -47 (check tied by check_spec, decodeFixed by fixedOk_unique, group by group_spec, lex by lex_spec); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1d, 2026-10-18",
+   "commit": "768a935fcd0304ab85a83f848bd9f37664664be8"
   }
  ]
 }
