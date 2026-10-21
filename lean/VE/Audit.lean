@@ -4,6 +4,7 @@ import Iceberg
 import VE.Acts.Compat
 import VE.Acts.GrammarExamples
 import VE.Acts.Lexical
+import VE.Acts.LexicalProofs
 import VE.Acts.Read
 import VE.Alternatives.Admission
 import VE.Alternatives.Background
@@ -50,6 +51,7 @@ import VE.Calc.Dimension
 import VE.Calc.Eval
 import VE.Calc.Linear
 import VE.Calc.Poly
+import VE.Calc.Units
 import VE.Cardinality.Examples
 import VE.Cardinality.Ratio
 import VE.Cardinality.Syntax
@@ -92,6 +94,7 @@ import VE.Core.TableauExtendedRules
 import VE.Core.Wire
 import VE.Data.Background
 import VE.Defaults.Premises
+import VE.Defaults.Wire
 import VE.Definitions.Alias
 import VE.Definitions.Bundle
 import VE.Definitions.Elaborate
@@ -129,6 +132,7 @@ import VE.EnglishGrammar.Run
 import VE.EnglishGrammar.SensesRequest
 import VE.EnvironmentProofs
 import VE.EvaluationCounts
+import VE.Events.Calendar
 import VE.Events.Completion
 import VE.Events.Conservative
 import VE.Events.Premises
@@ -420,8 +424,60 @@ import VE.WireContract.Engine
 #print axioms Iceberg.water_unchanged
 #print axioms VE.Acts.Examples.acceptsTable_terms
 #print axioms VE.Acts.Examples.tableToks_kinds
+#print axioms VE.Acts.Lexical.actWord_chars
+#print axioms VE.Acts.Lexical.check_extends
 #print axioms VE.Acts.Lexical.check_no_join
+#print axioms VE.Acts.Lexical.clause_reserved
+#print axioms VE.Acts.Lexical.contains_mem
+#print axioms VE.Acts.Lexical.endsWith_comma
+#print axioms VE.Acts.Lexical.extract_go₁_general
+#print axioms VE.Acts.Lexical.extract_go₂_prefix
+#print axioms VE.Acts.Lexical.extract_mid
+#print axioms VE.Acts.Lexical.fold_eq_self
+#print axioms VE.Acts.Lexical.foldl_append_eq
+#print axioms VE.Acts.Lexical.get_mem
+#print axioms VE.Acts.Lexical.get_mid
+#print axioms VE.Acts.Lexical.intercalate_data
+#print axioms VE.Acts.Lexical.isEmpty_false
+#print axioms VE.Acts.Lexical.mapM_ok
+#print axioms VE.Acts.Lexical.mem_group
+#print axioms VE.Acts.Lexical.mem_intercalate
+#print axioms VE.Acts.Lexical.mem_of_mem_out
+#print axioms VE.Acts.Lexical.mem_out_of_mem
+#print axioms VE.Acts.Lexical.mem_splitL
+#print axioms VE.Acts.Lexical.mem_words
+#print axioms VE.Acts.Lexical.not_listed
+#print axioms VE.Acts.Lexical.out_append
+#print axioms VE.Acts.Lexical.out_brace
+#print axioms VE.Acts.Lexical.out_cons
+#print axioms VE.Acts.Lexical.out_cover
+#print axioms VE.Acts.Lexical.out_eq_self
+#print axioms VE.Acts.Lexical.out_fuel
+#print axioms VE.Acts.Lexical.out_induct
+#print axioms VE.Acts.Lexical.out_ne_nil
+#print axioms VE.Acts.Lexical.out_nil
+#print axioms VE.Acts.Lexical.out_slot
+#print axioms VE.Acts.Lexical.pyWhitespace_sep
+#print axioms VE.Acts.Lexical.scanSlotsAux_fuel
+#print axioms VE.Acts.Lexical.splitAux_data
+#print axioms VE.Acts.Lexical.splitL_append
+#print axioms VE.Acts.Lexical.splitL_cases
+#print axioms VE.Acts.Lexical.splitL_congr
+#print axioms VE.Acts.Lexical.splitL_cover
+#print axioms VE.Acts.Lexical.splitL_ne_nil
+#print axioms VE.Acts.Lexical.splitL_out
+#print axioms VE.Acts.Lexical.splitL_word
+#print axioms VE.Acts.Lexical.splitOnAux_data
+#print axioms VE.Acts.Lexical.splitOn_space
+#print axioms VE.Acts.Lexical.split_data
+#print axioms VE.Acts.Lexical.toLower_mem
+#print axioms VE.Acts.Lexical.utf8ByteSize_le
+#print axioms VE.Acts.Lexical.word_out
 #print axioms VE.Acts.Lexical.wording_subject_first
+#print axioms VE.Acts.Lexical.wordsL_out
+#print axioms VE.Acts.Lexical.words_cover
+#print axioms VE.Acts.Lexical.words_data
+#print axioms VE.Acts.Lexical.words_intercalate
 #print axioms VE.Acts.listing_limit
 #print axioms VE.Acts.listing_nodup
 #print axioms VE.Acts.listing_ok
@@ -850,6 +906,10 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.Rescale.of_pos
 #print axioms VE.Calc.Rescale.pos
 #print axioms VE.Calc.Step.derive_sound
+#print axioms VE.Calc.Units.checkClaim_invariant
+#print axioms VE.Calc.Units.dimE_ok
+#print axioms VE.Calc.Units.except_bind_ok
+#print axioms VE.Calc.Units.unless_ok
 #print axioms VE.Calc.Val.bin_exhausted
 #print axioms VE.Calc.Val.bin_tooLarge
 #print axioms VE.Calc.Val.div_agrees
@@ -1368,6 +1428,23 @@ import VE.WireContract.Engine
 #print axioms VE.Data.Background.premises_sat_iff
 #print axioms VE.Data.Background.string_encoding_sound
 #print axioms VE.Data.Background.totalPremise_iff
+#print axioms VE.Defaults.Wire.DefaultsView.hD
+#print axioms VE.Defaults.Wire.DefaultsView.hR
+#print axioms VE.Defaults.Wire.DefaultsView.hU
+#print axioms VE.Defaults.Wire.DefaultsView.hX
+#print axioms VE.Defaults.Wire.DefaultsView.hXw
+#print axioms VE.Defaults.Wire.DefaultsView.hl
+#print axioms VE.Defaults.Wire.ViewRest.hR
+#print axioms VE.Defaults.Wire.ViewRest.hX
+#print axioms VE.Defaults.Wire.ViewRest.hl
+#print axioms VE.Defaults.Wire.coherence_collision_named
+#print axioms VE.Defaults.Wire.coherence_collision_shown
+#print axioms VE.Defaults.Wire.decodeLayered_soften
+#print axioms VE.Defaults.Wire.decodeRightsU_soften
+#print axioms VE.Defaults.Wire.defaultsCase_other
+#print axioms VE.Defaults.Wire.defaults_coherence_sound
+#print axioms VE.Defaults.Wire.elaborateRows_eq
+#print axioms VE.Defaults.Wire.viewOf_layered
 #print axioms VE.Defaults.assumptions_sound
 #print axioms VE.Defaults.atom_wf
 #print axioms VE.Defaults.basis_needs_sound
@@ -1972,6 +2049,7 @@ import VE.WireContract.Engine
 #print axioms VE.Events.boundRole_mem
 #print axioms VE.Events.calendar_sat
 #print axioms VE.Events.chain_head
+#print axioms VE.Events.chain_pairwise
 #print axioms VE.Events.chain_positions
 #print axioms VE.Events.completion_admissible
 #print axioms VE.Events.completion_before_new
@@ -1980,11 +2058,17 @@ import VE.WireContract.Engine
 #print axioms VE.Events.completion_typed
 #print axioms VE.Events.conventions_empty
 #print axioms VE.Events.conventions_exact
+#print axioms VE.Events.countP_eq_le_one
+#print axioms VE.Events.countP_lt_le
+#print axioms VE.Events.countP_lt_lt
+#print axioms VE.Events.countP_lt_succ
 #print axioms VE.Events.dateName_data
 #print axioms VE.Events.dateName_inj
 #print axioms VE.Events.datesOrder_calendar
 #print axioms VE.Events.datesOrder_iff
 #print axioms VE.Events.dayExtension_transfer
+#print axioms VE.Events.embeddable_complete
+#print axioms VE.Events.eventsPremises_satisfiable
 #print axioms VE.Events.eventsPremises_wellFormed
 #print axioms VE.Events.events_conservative
 #print axioms VE.Events.expansion_typed
