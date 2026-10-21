@@ -88,6 +88,7 @@ module VE.Acts.GrammarExamples
 module VE.Acts.Lexical
 module VE.Acts.LexicalBase
 module VE.Acts.LexicalExamples
+module VE.Acts.LexicalProofs
 module VE.Acts.Read
 module VE.Acts.Syntax
 module VE.Alternatives.Admission
@@ -146,6 +147,8 @@ module VE.Calc.Linear
 module VE.Calc.Poly
 module VE.Calc.Render
 module VE.Calc.Syntax
+module VE.Calc.Units
+module VE.Calc.UnitsExamples
 module VE.Cardinality.Erase
 module VE.Cardinality.Examples
 module VE.Cardinality.Ratio
@@ -509,6 +512,7 @@ module VE.Scales.Syntax
 module VE.Scales.Theorems
 module VE.Scope.Effects
 module VE.Scope.Examples
+module VE.Scope.Govern
 module VE.Scope.Theorems
 module VE.SearchBudget.Budget
 module VE.SearchBudget.Demand
