@@ -180,4 +180,152 @@ def m4 (k T N : Int) : Formula := .allFromTo (.num T) (.num N) (atLeast k (.var 
     .arityMismatch "" 0, .unboundedCount].map Refusal.code =
   ["DuplicateName", "UnscopedVariable", "UnknownDefinition", "RecursiveDefinition", "ArityMismatch", "UnboundedCount"]
 
+/-! Admission at every position (review F2): each planted term or formula, at each child position of each constructor
+under up to two more constructors, in a statement, a predicate's body and a function's body, is refused as itself, and
+a sound one is admitted. -/
+namespace Positions
+
+def ok : Formula := .eq (.num 0) (.num 0)
+def z : Term := .num 0
+
+/-- One constructor around a child: the binders it adds, whether the child is a count's condition, whether it is an
+unbounded quantifier, and the constructor with the child filled. -/
+structure Step (α β : Type) where
+  binders : Nat := 0
+  count : Bool := false
+  quant : Bool := false
+  fill : α → β
+
+/-- A place in a statement: its binders, whether it lies in a count's condition or under an unbounded quantifier, and
+whether such a quantifier lies in a count's condition around it (then the statement is `UnboundedCount` whatever
+fills it). -/
+structure Place (α : Type) where
+  binders : Nat := 0
+  count : Bool := false
+  quant : Bool := false
+  refused : Bool := false
+  fill : α → Formula
+
+def Place.down (p : Place β) (s : Step α β) : Place α :=
+  ⟨p.binders + s.binders, p.count || s.count, p.quant || s.quant, p.refused || p.count && s.quant, p.fill ∘ s.fill⟩
+
+/-- Every formula child of a formula. -/
+def ff : List (Step Formula Formula) :=
+  [{ fill := .not }, { fill := (.and · ok) }, { fill := .and ok }, { fill := (.or · ok) }, { fill := .or ok },
+   { fill := (.imp · ok) }, { fill := .imp ok }, { binders := 1, quant := true, fill := .allNat },
+   { binders := 1, quant := true, fill := .exNat }, { binders := 1, quant := true, fill := .allInt },
+   { binders := 1, quant := true, fill := .exInt }, { binders := 1, fill := .allFromTo z z },
+   { binders := 1, fill := .exFromTo z z }, { binders := 1, count := true, fill := fun φ => .le z (.countFromTo z z φ) }]
+
+/-- Every term child of a formula. -/
+def tf : List (Step Term Formula) :=
+  [{ fill := (.eq · z) }, { fill := .eq z }, { fill := (.lt · z) }, { fill := .lt z }, { fill := (.le · z) },
+   { fill := .le z }, { fill := (.dvd · z) }, { fill := .dvd z }, { fill := fun t => .call "p2" [t, z] },
+   { fill := fun t => .call "p2" [z, t] }, { fill := (.allFromTo · z ok) }, { fill := (.allFromTo z · ok) },
+   { fill := (.exFromTo · z ok) }, { fill := (.exFromTo z · ok) }]
+
+/-- Every term child of a term, and a term in a count's condition. -/
+def tt : List (Step Term Term) :=
+  [{ fill := (.add · z) }, { fill := .add z }, { fill := (.sub · z) }, { fill := .sub z }, { fill := (.mul · z) },
+   { fill := .mul z }, { fill := fun t => .call "f2" [t, z] }, { fill := fun t => .call "f2" [z, t] },
+   { fill := (.countFromTo · z ok) }, { fill := (.countFromTo z · ok) },
+   { binders := 1, count := true, fill := fun t => .countFromTo z z (.eq t z) }]
+
+def formulaPlaces : List (Place Formula) :=
+  let one := ff.map (Place.down { fill := id })
+  { fill := id } :: one ++ one.flatMap fun p => ff.map p.down
+
+def termPlaces : List (Place Term) :=
+  formulaPlaces.flatMap (fun p => tf.map p.down) ++
+    ((({ fill := id } : Place Formula) :: ff.map (Place.down { fill := id })).flatMap fun p =>
+      tf.flatMap fun s => tt.map (p.down s).down)
+
+/-- The definitions every case has: the names the planted calls read, and two definitions after the host. -/
+def vocab : Defs := [.fn "f0" 0 z, .fn "f2" 2 (.add (.var 0) (.var 1)), .pred "p0" 0 ok,
+  .pred "p2" 2 (.lt (.var 0) (.var 1)), .pred "unb" 0 (.allInt ok)]
+def later : Defs := [.pred "later" 0 ok, .fn "laterf" 0 z]
+
+/-- Where the statement goes: its parameters, the binders and count around it, and the case it makes. -/
+structure Host where
+  arity : Nat
+  binders : Nat
+  count : Bool
+  pred : Option Bool
+  case : Formula → Defs × List Formula
+
+def hosts : List Host :=
+  [⟨0, 0, false, none, fun φ => (vocab ++ later, [φ])⟩,
+   ⟨1, 0, false, some true, fun φ => (vocab ++ .pred "host" 1 φ :: later, [])⟩,
+   ⟨2, 1, true, some false, fun φ => (vocab ++ .fn "host" 2 (.countFromTo (.var 0) (.var 1) φ) :: later, [])⟩]
+
+/-- A call of `later` or of the host itself: recursive in a body, and in a statement admitted or unknown. -/
+def Host.calls (h : Host) (f : String) (pred : Bool) : Option Refusal :=
+  if f = "host" then (if h.pred = some pred then some (.recursiveDefinition f) else some (.unknownDefinition f))
+  else if h.pred.isSome then some (.recursiveDefinition f) else none
+
+/-- The planted terms `d` values deep, each with its refusal (`none`: admitted). -/
+def terms (h : Host) (d : Nat) : List (Term × Option Refusal) :=
+  [(.var d, some (.unscopedVariable h.arity)), (.var (d + 2), some (.unscopedVariable (h.arity + 2))),
+   (.call "nope" [], some (.unknownDefinition "nope")), (.call "p2" [z, z], some (.unknownDefinition "p2")),
+   (.call "f2" [z], some (.arityMismatch "f2" 2)), (.call "f0" [z], some (.arityMismatch "f0" 0)),
+   (.call "laterf" [], h.calls "laterf" false), (.call "host" [z, z], h.calls "host" false),
+   (.countFromTo z z (.allInt ok), some .unboundedCount), (.countFromTo z z (.call "unb" []), some .unboundedCount),
+   (.countFromTo (.var d) z ok, some (.unscopedVariable h.arity)), (.call "f2" [z, .call "f0" []], none)] ++
+  if d = 0 then [] else [(.var 0, none), (.var (d - 1), none), (.countFromTo (.var (d - 1)) (.var 0) ok, none)]
+
+/-- The planted formulas, each with its refusal; `count`: the place is in a count's condition. -/
+def formulas (h : Host) (count : Bool) : List (Formula × Option Refusal) :=
+  [(.call "nope" [z], some (.unknownDefinition "nope")), (.call "f2" [z, z], some (.unknownDefinition "f2")),
+   (.call "p2" [z], some (.arityMismatch "p2" 2)), (.call "p0" [z], some (.arityMismatch "p0" 0)),
+   (.call "later" [], h.calls "later" true), (.call "host" [z], h.calls "host" true),
+   (.call "p2" [z, z], none), (.call "p0" [], none),
+   (.call "unb" [], if count then some .unboundedCount else none),
+   (.allInt ok, if count then some .unboundedCount else none)]
+
+/-- Each planted case is refused as its table says, or `UnboundedCount` when only its place refuses it. -/
+def refusedAs (h : Host) (p : Place α) (x : α) (r : Option Refusal) : Bool :=
+  let (D, φs) := h.case (p.fill x)
+  caseRefusal D φs = (r <|> if p.refused || h.count && p.quant then some .unboundedCount else none)
+
+#guard hosts.all fun h => formulaPlaces.all fun p =>
+  (formulas h (p.count || h.count)).all fun (φ, r) => refusedAs h p φ r
+#guard hosts.all fun h => termPlaces.all fun p =>
+  (terms h (p.binders + h.binders + h.arity)).all fun (t, r) => refusedAs h p t r
+
+/-! Boundedness at every position: a statement is bounded exactly when no unbounded quantifier, and no call of a
+definition that is unbounded itself or through an earlier one, lies anywhere in it. -/
+def unbounded : Defs := vocab ++ [.fn "unbf" 0 (.countFromTo z z (.exNat ok)), .pred "unb2" 0 (.and ok (.call "unb" []))]
+#guard formulaPlaces.all fun p => [(ok, true), (.call "p2" [z, z], true), (.allInt ok, false), (.exNat ok, false),
+    (.call "unb" [], false), (.call "unb2" [], false)].all fun (φ, b) => (p.fill φ).Bounded unbounded == (b && !p.quant)
+#guard termPlaces.all fun p => [(z, true), (.call "f2" [z, .call "f0" []], true), (.countFromTo z z (.allNat ok), false),
+    (.countFromTo z z (.call "unb" []), false), (.call "unbf" [], false), (.call "f2" [z, .call "unbf" []], false)].all
+  fun (t, b) => (p.fill t).Bounded unbounded == (b && !p.quant)
+
+/-- One fault of each refusal, in the decoder's order: in statements where it can be, and in definitions' bodies. -/
+def oneEach : List (List (Defs × List Formula × Refusal)) :=
+  [[([.pred "d" 0 ok, .fn "d" 0 z], [], .duplicateName "d"), ([], [.lt (.var 0) z], .unscopedVariable 0),
+    ([], [.call "nope" []], .unknownDefinition "nope"), ([.pred "r" 0 (.call "r" [])], [], .recursiveDefinition "r"),
+    ([.pred "a" 1 ok], [.call "a" []], .arityMismatch "a" 1), ([], [.le z (.countFromTo z z (.allInt ok))], .unboundedCount)],
+   [([.pred "d" 0 ok, .fn "d" 0 z], [], .duplicateName "d"), ([.pred "s" 1 (.lt (.var 1) z)], [], .unscopedVariable 1),
+    ([.pred "u" 0 (.call "nope" [])], [], .unknownDefinition "nope"), ([.pred "r" 0 (.call "r" [])], [], .recursiveDefinition "r"),
+    ([.pred "a" 1 ok, .pred "c" 0 (.call "a" [])], [], .arityMismatch "a" 1),
+    ([.fn "n" 0 (.countFromTo z z (.allInt ok))], [], .unboundedCount)]]
+
+/-! Each alone is refused as itself; any two, in either order, as the one earlier in the decoder's order; and
+`firstRefusal` keeps the earlier in that order of any two, whichever comes first. -/
+#guard oneEach.all fun fs => fs.zipIdx.all fun ((D, φs, r), i) => caseRefusal D φs = some r &&
+  fs.zipIdx.all fun ((D', φs', r'), j) => i == j || caseRefusal (D' ++ D) (φs' ++ φs) = some (if i < j then r else r')
+#guard (oneEach.head!.map (·.2.2)).zipIdx.all fun (r, i) => (oneEach.head!.map (·.2.2)).zipIdx.all fun (r', j) =>
+  firstRefusal [r', r] = some (if i < j then r else r') && firstRefusal [r, r'] = some (if j < i then r' else r)
+/-! `Formula.Scoped` reads the definition of the call's kind, whatever shares its name. -/
+#guard (Formula.call "x" [z]).Scoped [.fn "x" 0 z, .pred "x" 1 ok] 0 && (Term.call "x" [] |> (Formula.eq · z)).Scoped
+  [.pred "x" 1 ok, .fn "x" 0 z] 0 && !(Formula.call "x" []).Scoped [.fn "x" 0 z, .pred "x" 1 ok] 0
+/-! Two of one kind: the first in order; a name used twice across kinds, and past another definition. -/
+#guard caseRefusal [] [.call "x" [], .call "y" []] = some (.unknownDefinition "x") &&
+  caseRefusal [.fn "x" 0 z, .pred "x" 0 ok] [] = some (.duplicateName "x") &&
+  caseRefusal [.pred "x" 0 ok, .fn "y" 0 z, .pred "x" 0 ok] [] = some (.duplicateName "x") &&
+  caseRefusal [.fn "x" 0 z, .fn "x" 0 z] [] = some (.duplicateName "x")
+
+end Positions
+
 end VE.Arith.Examples
