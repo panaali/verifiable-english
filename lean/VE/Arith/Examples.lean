@@ -57,6 +57,8 @@ example : Defs.Means [] (.allInt (.or (.lt (.var 0) (lit 1)) (.le (lit 1) (.var 
   simp [Defs.Means, Holds, Term.value, lit]; exact ⟨fun n => by omega, -1, by omega⟩
 example : Defs.Means [] (.exInt (.eq (.add (.var 0) (lit 3)) (lit 0))) := by
   simp [Defs.Means, Holds, Term.value, lit]; exact ⟨-3, by omega⟩
+example : Defs.Means [] (.allFromTo (lit 1) (lit 3) (.lt (.var 0) (lit 4))) := by
+  simp [Defs.Means, Holds, Term.value, lit]; exact fun i _ _ => by omega
 example : Defs.Means [] (.allFromTo (lit 1) (lit 3) (.lt (lit 0) (.var 0))) ∧ ¬ Defs.Means [] (.allFromTo (lit 0) (lit 3) (.lt (lit 0) (.var 0))) ∧
     ¬ Defs.Means [] (.allFromTo (lit 1) (lit 3) (.lt (.var 0) (lit 3))) := by
   simp [Defs.Means, Holds, Term.value, lit]; exact ⟨fun i _ _ => by omega, ⟨0, by omega⟩, ⟨3, by omega⟩⟩
