@@ -1,12 +1,14 @@
 """Seeded bugs of ap-1e: each makes a theorem or a `#guard` of `LexicalProofs.lean` false and must break it.
 
-    uv run python docs/act-phrases/ap-1e/seed_bugs.py [--only ID ...]
+    uv run python docs/act-phrases/ap-1e/seed_bugs.py [--only ID ...] [--trust trust-mutants.json]
 
 A mutant replaces one exact text of a Lean file (it must occur once) and builds `VE.Acts.LexicalProofs`. It is
 killed only when the build fails with an error in `LexicalProofs.lean` inside one of the targets the mutant names:
 a theorem (the theorem or a lemma of its proof) or `#guard` (a fixture line). An error in the mutated definition
 itself, or only in an earlier lemma, never counts. `why` is an input on which the mutant makes the target false.
-Results go to `mutants.json` beside this script; `--only` replaces the rows it runs.
+Results go to `mutants.json` beside this script; `--only` replaces the rows it runs. `--trust` adds a row for each
+mutant `tools/trust_mutants.py` left UNKNOWN or SURVIVOR (the ap-1d tool gap: a `#guard` of a Prop reads through
+its `Decidable` instance, which Lean rebuilds from the mutated body), with its cause; it decides no exit code.
 """
 from __future__ import annotations
 
@@ -86,19 +88,35 @@ def run(mutant, env) -> dict:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--only", nargs="*")
+    parser.add_argument("--trust", type=Path)
     args = parser.parse_args()
     env = {**os.environ, "PATH": f"{Path.home()}/.elan/bin:{os.environ['PATH']}"}
     results = [run(m, env) for m in MUTANTS if not args.only or m[0] in args.only]
     for r in results:
         print("KILLED  " if r["killed"] else "SURVIVED", r["id"], "|", r["test"])
     saved = Path(__file__).parent / "mutants.json"
+    old = json.loads(saved.read_text()) if saved.exists() else []
     if args.only:
-        fresh = {r["id"]: r for r in results}
-        old = {r["id"]: r for r in json.loads(saved.read_text())}
-        results = [fresh.get(m[0]) or old[m[0]] for m in MUTANTS if m[0] in fresh or m[0] in old]
-    saved.write_text("[\n" + ",\n".join(" " + json.dumps(r, ensure_ascii=False) for r in results) + "\n]\n")
+        fresh, seeded = {r["id"]: r for r in results}, {r["id"]: r for r in old if "killed" in r}
+        results = [fresh.get(m[0]) or seeded[m[0]] for m in MUTANTS if m[0] in fresh or m[0] in seeded]
+    rows = trust_rows(args.trust) if args.trust else [r for r in old if "killed" not in r]
+    saved.write_text("[\n" + ",\n".join(" " + json.dumps(r, ensure_ascii=False) for r in results + rows) + "\n]\n")
     assert build(env).returncode == 0, "the restored tree does not build"
     raise SystemExit(0 if all(r["killed"] for r in results) else 1)
+
+
+def trust_rows(path: Path) -> list[dict]:
+    """A row per mutant trust_mutants left UNKNOWN or SURVIVOR: a `#guard` that refutes it through the rebuilt
+    `Decidable` instance (`drift`), or Lean's error on the mutated text (`does not elaborate`)."""
+    rows = []
+    for m in json.loads(path.read_text())["mutants"]:
+        if m["status"] in ("UNKNOWN", "SURVIVOR"):
+            guard = re.match(r"(\S+\.lean:\d+): Expression \((\S+), which it reads", m["detail"])
+            cause = (f"drift: the #guard at {guard.group(1)} refutes it through {guard.group(2)}" if guard
+                     else f"does not elaborate: {m['detail']}" if m["status"] == "UNKNOWN" else "survivor")
+            rows.append({"trust_mutant": m["id"], "definition": m["definition"], "file": "lean/" + m["file"],
+                         "line": m["line"], "operator": m["operator"], "status": m["status"], "cause": cause})
+    return rows
 
 
 if __name__ == "__main__":
