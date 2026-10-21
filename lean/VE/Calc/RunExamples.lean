@@ -302,6 +302,17 @@ def pad (k : Nat) : String := req "" "" s!", \"pad\": [{nulls k}]"
 def deep (d : Nat) : String := req "" "" s!", \"pad\": {String.mk (List.replicate d '[' ++ List.replicate d ']')}"
 def name64 : String := String.mk (List.replicate 64 'x')
 
+/-- Put a faulty array at the last admitted JSON level. The case object and 62 wrappers
+make the fault array level 64, so a scan with less fuel misses it without a depth refusal. -/
+def deepScanFault (fault : String) : String :=
+  let nested := (List.range 62).foldl (fun s _ => s!"[{s}]") fault
+  req x1 ok1 s!", \"pad\": {nested}"
+
+def multiByteNames : List String :=
+  [String.mk (List.replicate 32 'é'),
+   "x" ++ String.mk (List.replicate 21 '€'),
+   String.mk (List.replicate 16 '🐍')]
+
 -- Ten times the largest flat limit fixture: size must use bounded stack on a wide array.
 #guard Wire.size 2 (.arr (Array.replicate 100000 Json.null)) == (100001, 1)
 
@@ -333,6 +344,24 @@ def name64 : String := String.mk (List.replicate 64 'x')
 #guard meaning (req (stated "x" r#"["sci", "1", 64]"#) ok1) != ""
 
 #guard says (req x1 (claim name64 r#"["eq", ["val", "x"], ["lit", "1"]]"#)) == [name64 ++ " holds"]
+
+-- The name limit counts UTF-8 bytes at all three name sites. These malformed names
+-- are admitted by the limit at 64 bytes, then refused by the identifier grammar;
+-- one more byte must instead be ResourceLimit before that grammar or name lookup.
+#guard multiByteNames.all fun atLimit =>
+  let over := atLimit ++ "x"
+  atLimit.utf8ByteSize == VE.Limits.maxIdentifierBytes &&
+  over.utf8ByteSize == VE.Limits.maxIdentifierBytes + 1 &&
+  says (req (stated atLimit r#""1""#) ok1) == ["InvalidInput: values.0.name must be a name"] &&
+  says (req (stated over r#""1""#) ok1) == ["ResourceLimit: a name exceeds 64"] &&
+  says (req x1 (claim atLimit r#"["eq", ["val", "x"], ["lit", "1"]]"#)) ==
+    ["InvalidInput: claims.0.id must be a claim id"] &&
+  says (req x1 (claim over r#"["eq", ["val", "x"], ["lit", "1"]]"#)) ==
+    ["ResourceLimit: a name exceeds 64"] &&
+  says (req x1 (c1 s!"[\"eq\", [\"val\", \"{atLimit}\"], [\"lit\", \"1\"]]")) ==
+    [s!"UnknownName: {atLimit} (declare it before the value that uses it)"] &&
+  says (req x1 (c1 s!"[\"eq\", [\"val\", \"{over}\"], [\"lit\", \"1\"]]")) ==
+    ["ResourceLimit: a name exceeds 64"]
 
 #guard expect [
   ("nodes", says (pad 9995), ["InvalidInput: case.pad is unknown"]),
@@ -375,6 +404,29 @@ def name64 : String := String.mk (List.replicate 64 'x')
     (fun s _ => s!"[\"add\", {s}, [\"lit\", \"0\"]]") (s!"[\"lit\", \"{ones 41}\"]")
   says (req x1 (c1 s!"[\"eq\", {deepLit}, [\"lit\", \"1\"]]")) ==
     ["ResourceLimit: Decimal literal exceeds 40 digits"]
+
+-- Every node-local limit is found at the last admitted depth. The first check pins
+-- the shape, so a shallower JSON-depth refusal cannot make the scanner test pass.
+#guard
+  let faults := [
+    (r#"["pow", "1", 65]"#, "ResourceLimit: an exponent exceeds 64"),
+    (r#"["sci", "1", -65]"#, "ResourceLimit: an exponent exceeds 64"),
+    (s!"[\"lit\", \"{ones 41}\"]", "ResourceLimit: Decimal literal exceeds 40 digits"),
+    (s!"[\"val\", \"{name64}x\"]", "ResourceLimit: a name exceeds 64")]
+  faults.all fun (fault, want) =>
+    let input := deepScanFault fault
+    match Json.parse input with
+    | .error _ => false
+    | .ok j =>
+      let depth := (Wire.size (VE.Limits.maxJsonDepth + 1) j).2
+      depth == VE.Limits.maxDepth && says input == [want]
+
+-- A well-formed expression also needs its deep exponent checked before evaluation.
+#guard
+  let nestedPow := (List.range 25).foldl
+    (fun s _ => s!"[\"pow\", {s}, 1]") r#"["pow", ["val", "x"], 65]"#
+  says (req x1 (c1 s!"[\"eq\", {nestedPow}, [\"lit\", \"1\"]]")) ==
+    ["ResourceLimit: an exponent exceeds 64"]
 
 /-! ## The hostile set and every refusal of the decoder -/
 
