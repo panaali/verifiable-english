@@ -20,7 +20,7 @@ Q5 VE.Defaults.Wire.certFields: FAILS 5 guards
     #guard holds dβ fun L => answer (req βEnv βR "defaults-certificate" [("premises", toJson (
 Q6 VE.Defaults.Wire.CertReplay.form: FAILS 1 guards
     #guard holds dβ fun L => answer (req βEnv βR "defaults-certificate" [("premises", toJson (
-Q7 VE.Defaults.Wire.defaultsCase: FAILS 13 guards
+Q7 VE.Defaults.Wire.defaultsCase: FAILS 14 guards
     #guard answer (αCase notExc cNeeds.trace (αModels [exc1])) == follows "needs" "short" [exc
     #guard answer (αCase notExc cNeeds.trace (αModels [])) == follows "unsettled" "short" [exc
     #guard answer (αCase notExc cNeeds.trace ((αModels [exc1]).take 1)) == follows "unsettled"
@@ -33,7 +33,10 @@ Q7 VE.Defaults.Wire.defaultsCase: FAILS 13 guards
     #guard answer (γCase true) == unknownBecause "with no exception, rules r1 and r2 conflict"
     #guard answer (γCase false) == unknownBecause "no-exception coherence not checked"
     #guard answer ((γCase true).setObjVal! "certificate" .null) == unknownBecause "with no exc
+    #guard holds (layered δEnv δR) fun L => answer (req δEnv δR "defaults-certificate" [("prem
     #guard holds dβ fun L => answer (req βEnv βR "defaults-certificate" [("premises", toJson (
+Q8 VE.Defaults.Wire.CertReplay.reason: FAILS 1 guards
+    #guard holds (layered δEnv δR) fun L => answer (req δEnv δR "defaults-certificate" [("prem
 M1 VE.Defaults.Wire.forcedAt: FAILS 2 guards
     #guard holds dβ fun L => answer (modelCase βEnv βR L xAll ["urgent", exc1]) == doesNotFoll
     #guard holds (layered β2Env β2R) fun L =>
