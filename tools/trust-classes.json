@@ -13616,6 +13616,7 @@
         "VE.Calc.Budgeted",
         "VE.Calc.Budgeted.bin",
         "VE.Calc.Expr.evalB",
+        "VE.Calc.Expr.opB",
         "VE.Calc.Expr.hasDiv",
         "VE.Calc.Expr.nodesWithin",
         "VE.Calc.Frac",
