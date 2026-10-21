@@ -105,8 +105,10 @@ def baseEnvironmentJson (environment : Json) : Except String Json := do
   let preds ← fields (← vocab.getObjVal? "predicates")
   let kept := preds.filter (fun (_, e) => !(e.getObjVal? "regulated").toBool)
   let profiles ← strings (← environment.getObjVal? "profiles")
-  pure ((environment.setObjVal! "vocabulary" (vocab.setObjVal! "predicates" (Json.mkObj kept))).setObjVal!
-    "profiles" (toJson (profiles.filter (· != "norms@0"))))
+  let base := (environment.setObjVal! "vocabulary" (vocab.setObjVal! "predicates" (Json.mkObj kept))).setObjVal!
+    "profiles" (toJson (profiles.filter (· != "norms@0")))
+  -- `acts@0` and its block are the norms layer's too (act-phrases 2.8), read from the submitted list only
+  pure (if Wire.readsActs profiles then Wire.actsView base (profiles.filter (· != "norms@0")) else base)
 
 /-- The norm document hash (11.2): the canonical array of norm objects under the
 source environment id. -/
