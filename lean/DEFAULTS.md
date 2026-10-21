@@ -3,7 +3,7 @@
 Specification: [docs/spec/defeasible.md](../docs/spec/defeasible.md) sections 7.1 and 7.2 (draft 3) and
 [docs/spec/defeasible-PLAN.md](../docs/spec/defeasible-PLAN.md) batch DF-1a. This file lists the files and every
 definition and theorem built so far, in plain words. `lean/audit.py` audits every theorem: no `sorry`, only
-`propext`, `Classical.choice` and `Quot.sound`. Two answer kinds are written (`Wire.lean`), but no service route
+`propext`, `Classical.choice` and `Quot.sound`. Three answer kinds are written (`Wire.lean`), but no service route
 calls them yet (the kind-table row is df-1ad's), so no existing answer changes.
 
 A default answer is conditional on the listed assumptions. Nothing here says that the situations it ranges over are
@@ -15,8 +15,8 @@ those with the fewest exceptions; that is DF-2's theorem, not proved.
 |---|---|
 | `Premises.lean` | `Dflt_T` (`dfltOf`, `dfltLabelled`), `defaultX`, diagnostics 2 to 4 (`decisionFree`, `questionDiag`, `limitDiag`), the gate (`DefaultCoherent`, `pairChecks`, `defaultCoherenceCheck`, `collisionCheck`), the collision DE7 shows (`collisionTuple`), the basis (`assumptionsOf`, `Basis`, `basisOf`), the form (`Form`, `followsForm`) and the deciders (`decidersOf`, `giveWayDeciders`) |
 | `Examples.lean` | the fixtures of spec 8.1, 8.2 and 8.4 that these definitions decide (DF-α to DF-ζ, DF-γ′, DF-η, DF-ι, DF-κ, DF-ω, DF-σ), as `#guard`s on documents decoded by `decodeSoftU` |
-| `Wire.lean` | the view of a decoded document (`viewOf`, diagnostics 7, 1, 2, 6 and 4) and the kinds `defaults-elaborate` and `defaults-coherence` (`defaultsCase`) |
-| `WireExamples.lean` | the wire answers of DF-θ, DF-α, DF-γ, DF-γ′, DF-ω, DF-γb, DF-γ2 and DF-γ3, through `viewOf` and `defaultsCase` on JSON requests |
+| `Wire.lean` | the view of a decoded document (`viewOf`, diagnostics 7, 1, 2, 6 and 4) and the kinds `defaults-elaborate`, `defaults-coherence` and `defaults-certificate` (`defaultsCase`) |
+| `WireExamples.lean` | the wire answers of DF-θ, DF-α to DF-ω, DF-γb, DF-γ2 and DF-γ3, through `viewOf` and `defaultsCase` on JSON requests |
 
 ## Definitions
 
@@ -53,12 +53,17 @@ those with the fewest exceptions; that is DF-2's theorem, not proved.
   premises are well formed), then **`viewRest`**: diagnostic 1 (`weighing@0`), 2 (a later pack's premise names a
   decision), 6 (two generated labels coincide) and 4. It returns the document with `R`, its premises after the soft
   pack's, and the facts the theorems need.
-- **`replayCoherence`**: what a request carries, checked against the view: one optional certificate per colliding pair
-  in the listed order (diagnostic 5; a certificate that does not bind is absent) and a collision.
+- **`replayCert`**, **`replayCoherence`**: what a request carries, checked against the view: the question's premises
+  (diagnostic 3) and conclusion, a certificate bound to `defaultX`'s premise list (one that does not bind is absent),
+  one optional certificate per colliding pair in the listed order (diagnostic 5), a collision, a model of `defaultX`
+  and a strict countermodel.
+- **`CertReplay.verdict`**: FOLLOWS only with the certificate, every pair's certificate and the model checked;
+  otherwise UNKNOWN, with **`CertReplay.reason`** in this order: a checked collision, the gate, the model, the
+  certificate. With FOLLOWS the answer adds the basis, the form and the kept assumptions.
 - **`CoherenceReplay.verdict`**: COHERENT (every pair's certificate checks), COLLISION (the collision checks) or
   UNKNOWN; **`CoherenceReplay.pairs`**: each pair resolved, collision or unknown. With COLLISION the answer adds the
   pair, the tuple `collisionTuple` finds and `giveWayDeciders`.
-- **`elaborateRows`**: `Dflt_T` with its labels and the colliding pairs; **`defaultsCase`** answers the two kinds and
+- **`elaborateRows`**: `Dflt_T` with its labels and the colliding pairs; **`defaultsCase`** answers the three kinds and
   nothing else.
 
 ## Theorems
@@ -87,6 +92,10 @@ those with the fewest exceptions; that is DF-2's theorem, not proved.
 - `atom_wf` (helper): a declared atom is typed by its own sorts.
 - `decodeLayered_soften`, `viewOf_layered`: the view's document is the layered decoder's own, with `U` built on the
   softened document.
+- `defaults_follows_gated`, `defaults_certificate_sound`: FOLLOWS has its certificate, gate and model checked; it gives
+  the entailment from the document's premises and the kept assumptions, the gate, a situation where the premises hold
+  with no exception, and, with basis `strict`, the entailment from the document's own premises, with basis `needs`, a
+  countermodel of them.
 - `elaborateRows_eq`: the elaborate rows are `Dflt_T` and the colliding pairs.
 - `defaults_coherence_sound`: COHERENT gives the gate, COLLISION refutes it, and each resolved pair's coherence premise
   holds on every admissible base.
@@ -102,6 +111,5 @@ those with the fewest exceptions; that is DF-2's theorem, not proved.
 - `SoftNorms/RankProof.lean`'s helper lemmas take the substitution table, the tree and the fuel as parameters, so that
   `cohU_rank_valid` reuses soft's argument without a copy; `coh_rank_valid_unconditional` and the approved
   `coh_rank_valid` keep their statements.
-- Not yet built (df-1ad): the question kinds `defaults-certificate` (`CertReplay`, `defaults_certificate_sound`) and
-  `defaults-model` (`forcedAt`, `forcedAt_sound`, `defaults_model_sound`), the four kinds as one row of PK-1's kind
-  table, their response shapes and encoder theorems.
+- Not yet built (df-1ad): `defaults-model` (`forcedAt`, `forcedAt_sound`, `defaults_model_sound`), the four kinds as
+  one row of PK-1's kind table, their response shapes and encoder theorems.
