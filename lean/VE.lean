@@ -111,6 +111,8 @@ import VE.Calc.Examples
 import VE.Calc.Render
 import VE.Calc.DeriveExamples
 import VE.Calc.Dimension
+import VE.Calc.Units
+import VE.Calc.UnitsExamples
 import VE.Calc.Poly
 import VE.Numbers.Examples
 import VE.Numbers.Phrases
@@ -186,6 +188,7 @@ import VE.Layout.Anchors
 import VE.Layout.Discourse
 import VE.Layout.List
 import VE.Scope.Effects
+import VE.Scope.Govern
 import VE.Scope.Theorems
 import VE.Scope.Examples
 import VE.Defaults.Premises
