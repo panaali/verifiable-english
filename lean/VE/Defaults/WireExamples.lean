@@ -222,6 +222,10 @@ def γCase (collision : Bool) : Json := match dγ with
 #guard answer (γCase false) == unknownBecause "no-exception coherence not checked"
 -- the collision first, whether or not a certificate was sent
 #guard answer ((γCase true).setObjVal! "certificate" .null) == unknownBecause "with no exception, rules r1 and r2 conflict"
+-- DF-δ: a collision that names the pair but does not check (the weighing decides it) is never the reason
+#guard holds (layered δEnv δR) fun L => answer (req δEnv δR "defaults-certificate" [("premises", toJson ([] : List Json)),
+    ("conclusion", fJ notExc), ("coherence", toJson [pairJ "r1" "r2"]), ("collision", collJ L "r1" "r2")]) ==
+  unknownBecause "no-exception coherence not checked"
 
 /-- DF-β: `∀a. excepted_r1(a) → urgent(a)` uses `Dflt_T`'s premise with its stated condition (index 2 of 6). -/
 def excUrgent : VE.Formula := .all "assistant" (.implies (.unary exc1 (.var 0)) (.unary "urgent" (.var 0)))
