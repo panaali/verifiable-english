@@ -610,7 +610,7 @@ def overOf (r : Except String Json) (u : String) : Option String :=
 -- the first and the last target count; a governor with one edge passes; the second graph governor is checked too; a
 -- graph governor first in order (on the composed rules, without a frame)
 def gPf : Governor := ⟨"gPf", "u0165.s02", .precedes, .fixed ["u0165.s03", "u0165.s04"], ["u0165.s03", "u0165.s04"]⟩
-def normsDoc : Json := (gov (hcDoc parts) [g1]).toOption.getD .null
+def normsDoc : Json := hcDoc (parts.map fun (u, c) => (u, Json.mkObj [("norm", (mergeParts u leadPart (c.getObjValD "part")).toOption.getD .null)]))
 #guard [overOf (gov (hcDoc parts) [g1, gPf]) "u0165.s02", overOf (gov (hcDoc parts) [g1, {gPf with effect := .yields}]) "u0165.s03",
   overOf (gov (hcDoc parts) [g1, {gPf with effect := .yields}]) "u0165.s04",
   overOf (gov (hcDoc parts) [g1, {gPf with reach := .fixed ["u0165.s04"], units := ["u0165.s04"]}]) "u0165.s02",
