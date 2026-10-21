@@ -1,7 +1,7 @@
 # W6: quantities, unit identity, and calendar conventions
 
 > Status: **converged REVISE applied**, 2026-09-28; repository baseline
-> `9db5a20`, original draft `6923008`. This specifies W6 of [PLAN-EXPAND2](../../PLAN-EXPAND2.md#w6-quantities-in-documents-dates-scaled-decimals-counting-sugar-and-finite-traces-on-top-of-order0).
+> `9db5a20`, original draft `6923008`. This specifies W6 of [PLAN-EXPAND2](../plans/PLAN-EXPAND2.md#w6-quantities-in-documents-dates-scaled-decimals-counting-sugar-and-finite-traces-on-top-of-order0).
 > This revision applies [Astra round 2](/home/seyran/code/manage-agents/debates/design-units/astra.md#round-2-2026-09-27t2354z)
 > plus [Fable round 3(a–c)](/home/seyran/code/manage-agents/debates/design-units/fable.md#round-3-2026-09-28t0001z),
 > as selected by the writing task. Rule 10 and decision 9.3 still require
