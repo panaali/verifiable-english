@@ -1,5 +1,6 @@
 import VE.Calc.Inline
 import VE.Calc.Poly
+import VE.Limits
 
 /-! Identities over named values (spec 8.2, J3): both sides are inlined with the free values kept (spec 2.7), then
 decided by the normaliser of `Poly.lean` and the point search. The meaning `IsIdentity`, its bridge theorems and the
@@ -52,11 +53,11 @@ theorem notIdentity_of_differsAt (ds : List Decl) (h : WellFormed ds) (a b a' b'
 
 /-- A divisor whose fraction form has no terms above the line is zero wherever it denotes, so the side denotes nothing
 anywhere and an identity over it would hold only vacuously (me-9 review F3). A divisor whose form is refused counts
-as nonzero. -/
+as nonzero. Read only on a side the normaliser accepted, so within the node limit. -/
 def Expr.zeroDivisor : Expr → Bool
   | .lit _ | .val _ => false
   | .add a b | .sub a b | .mul a b => a.zeroDivisor || b.zeroDivisor
-  | .div a b => a.zeroDivisor || b.zeroDivisor || ((Frac.ofExpr? b).map (·.1.isEmpty)).getD false
+  | .div a b => a.zeroDivisor || b.zeroDivisor || ((Frac.go b).map (·.1.isEmpty)).getD false
   | .pow a _ => a.zeroDivisor
 
 theorem Expr.zeroDivisor_sound (κ : String → Rat) {e : Expr} (h : e.zeroDivisor = true) (x : Rat) :
@@ -71,23 +72,24 @@ theorem Expr.zeroDivisor_sound (κ : String → Rat) {e : Expr} (h : e.zeroDivis
       simp only [Expr.zeroDivisor, Bool.or_eq_true]; rintro ((h | h) | h)
       · exact iha h
       · exact ihb h
-      cases hf : Frac.ofExpr? b with
+      cases hf : Frac.go b with
       | none => simp [hf] at h
       | some f =>
           simp only [hf, Option.map_some, Option.getD_some, List.isEmpty_iff] at h
-          have := (Frac.ofExpr_sound κ b f.1 f.2 y hf hb).2
+          have := (Frac.go_sound κ b y hb f hf).2
           rw [h, Poly.eval_nil] at this; exact hne (by rw [this]; grind)
 
 /-- Why the normaliser gave no answer: a side past the node limit once its named values are inlined (it may still
 have one term, review F4), or a polynomial on the way past the limits of `Poly.lean`. -/
 inductive IdentityStop where
-  | nodes | form
+  | nodes | form | budget
   deriving Repr, DecidableEq
 
 def IdentityStop.text : IdentityStop → String
   | .nodes => "unknown: a side would have more than 10,000 nodes once its named values are written out"
   | .form => "unknown: a normal form on the way would have more than 10,000 terms before like terms merge, " ++
       "an exponent above 4,096 or a coefficient of more than 4,096 digits"
+  | .budget => (UnknownReason.limit .evaluations).text VE.Limits.maxEvaluations
 
 /-- The values tried, in order: point `i` gives the `j`th name the value `identityValues[i * (j + 1) % 13]`, so
 point 0 sets every name to 1. -/
@@ -128,11 +130,64 @@ def identityDecide (keep : List String) (a' b' : Expr) : IdentityRow :=
                   sides := (a'.eval (κ.lookup ·)).bind fun x => (b'.eval (κ.lookup ·)).map (x, ·) }
     | none => { outcome := .unknown .identityNotShown }
 
+/-! ### The row within the work budget (me-9c)
+
+`identityDecide` within `n` evaluation units (`Poly.lean`'s budget): one pass over each side builds its fraction form
+and finds its zero divisors, so nested divisors cost no more than their nodes; then the cross products and the points.
+Past the budget the row is `budgetRow`; within it, `identityDecide`'s row (`identityDecideB_eq`). -/
+
+/-- `Frac.go` within a budget, with `Expr.zeroDivisor` found in the same pass. -/
+def Frac.goB : Expr → Nat → Budgeted (Option (Frac × Bool))
+  | .lit q, n => charge 1 n fun _ => (Frac.go (.lit q)).map (·, false)
+  | .val x, n => charge 1 n fun _ => (Frac.go (.val x)).map (·, false)
+  | .add a b, n => Budgeted.bin (Frac.goB a n) (Frac.goB b) fun f g n => (Frac.add?B f.1 g.1 n).map fun (h, n) =>
+      (h.map (·, f.2 || g.2), n)
+  | .sub a b, n => Budgeted.bin (Frac.goB a n) (Frac.goB b) fun f g n => (Frac.add?B f.1 (Poly.neg g.1.1, g.1.2) n).map
+      fun (h, n) => (h.map (·, f.2 || g.2), n)
+  | .mul a b, n => Budgeted.bin (Frac.goB a n) (Frac.goB b) fun f g n => (Frac.mul?B f.1 g.1 n).map fun (h, n) =>
+      (h.map (·, f.2 || g.2), n)
+  | .div a b, n => Budgeted.bin (Frac.goB a n) (Frac.goB b) fun f g n => (Frac.div?B f.1 g.1 n).map fun (h, n) =>
+      (h.map (·, f.2 || g.2 || g.1.1.isEmpty), n)
+  | .pow a k, n => Budgeted.bin (Frac.goB a n) (fun n => some (some (), n)) fun f _ n => (Frac.pow?B f.1 k n).map
+      fun (h, n) => (h.map (·, f.2), n)
+
+/-- `Identity.compare` within a budget, and whether either side has a zero divisor. -/
+def Identity.compareB (a b : Expr) (n : Nat) : Budgeted (Option (Bool × Bool)) :=
+  let form (e : Expr) (n : Nat) := if (e.nodesWithin maxPolyTerms).isSome then Frac.goB e n else some (none, n)
+  Budgeted.bin (form a n) (form b) fun fa fb n =>
+    charge (2 * Poly.mulCost fa.1.1 fb.1.2 + Poly.mulCost fb.1.1 fa.1.2) n fun _ =>
+      ((Poly.mul? fa.1.1 fb.1.2).bind fun l => (Poly.mul? fb.1.1 fa.1.2).map (l == ·)).map (·, fa.2 || fb.2)
+
+/-- The first point where the sides denote and differ, with their values there, within a budget. -/
+def pointsB (a b : Expr) : List (List (String × Rat)) → Nat → Budgeted (Option (List (String × Rat) × Option (Rat × Rat)))
+  | [], n => some (none, n)
+  | κ :: ks, n => match sidesAtB a b κ n with
+    | some (s, n) => if (s.map fun s => s.1 != s.2).getD false then some (some (κ, s), n) else pointsB a b ks n
+    | none => none
+
+def budgetRow : IdentityRow := { outcome := .unknown (.limit .polyTerms), stop := some .budget }
+
+def identityDecideB (keep : List String) (a' b' : Expr) (n : Nat) : IdentityRow :=
+  match Identity.compareB a' b' n with
+  | none => budgetRow
+  | some (none, _) =>
+    { outcome := .unknown (.limit .polyTerms),
+      stop := if (a'.nodesWithin maxPolyTerms).isSome && (b'.nodesWithin maxPolyTerms).isSome then some .form else some .nodes }
+  | some (some (r, z), n) =>
+    if z then { outcome := .decided .undefined } else
+    if r then { outcome := .decided .holds } else
+    let read := a'.names ++ b'.names  -- once, not once per kept name
+    let names := keep.filter (· ∈ read)
+    match pointsB a' b' ((List.range 13).map (identityPoint names)) n with
+    | some (some (κ, s), _) => { outcome := .decided .fails, point := some κ, sides := s }
+    | some (none, _) => { outcome := .unknown .identityNotShown }
+    | none => budgetRow
+
 /-- The identity row (spec 8.2): inline both sides with the free values kept, the first faulty side naming the fault;
-then decide over the free values the sides read, in declaration order. -/
+then decide over the free values the sides read, in declaration order, within the budget. -/
 def identityRun (ds : List Decl) (a b : Expr) : IdentityRow :=
   match a.inline ds (freeNames ds), b.inline ds (freeNames ds) with
-  | .ok a', .ok b' => identityDecide (freeNames ds) a' b'
+  | .ok a', .ok b' => identityDecideB (freeNames ds) a' b' VE.Limits.maxEvaluations
   | .error .exhausted, _ | .ok _, .error .exhausted => { outcome := .unknown (.limit .evaluations) }
   | _, _ => { outcome := .decided .undefined }
 
@@ -154,6 +209,110 @@ theorem identityDecide_outcome (keep : List String) (a' b' : Expr) :
         · rename_i κ hκ; simpa using ⟨κ, List.find?_some hκ⟩
         · simp
 
+theorem Frac.flag_eq {x : Budgeted (Option Frac)} {z : Bool} {X : Option Frac} (hx : ∀ r m, x = some (r, m) → r = X)
+    {r : Option (Frac × Bool)} {m : Nat} (h : (x.map fun (h, n) => (h.map (·, z), n)) = some (r, m)) :
+    r = X.map (·, z) := by
+  simp only [Option.map_eq_some_iff] at h; obtain ⟨⟨h', n⟩, hx', he⟩ := h; cases he; rw [hx _ _ hx']
+
+/-- **Budget**: within it, a side's form and its zero divisors are `Frac.go`'s and `Expr.zeroDivisor`'s. -/
+theorem Frac.goB_eq (e : Expr) : ∀ n {r : Option (Frac × Bool)} {m : Nat}, Frac.goB e n = some (r, m) →
+    r = (Frac.go e).map (·, e.zeroDivisor) := by
+  induction e with
+  | lit q => intro n r m h; rw [charge_eq h]; rfl
+  | val x => intro n r m h; rw [charge_eq h]; rfl
+  | add a b iha ihb | sub a b iha ihb | mul a b iha ihb | div a b iha ihb =>
+      intro n r m h; simp only [Frac.goB] at h
+      rw [Budgeted.bin_eq (fun _ _ h => iha _ h) (fun _ _ _ h => ihb _ h)
+        (fun _ _ _ _ _ h => Frac.flag_eq (fun _ _ h => charge_eq h) h) h]
+      simp only [Frac.go, Expr.zeroDivisor]; cases Frac.go a <;> cases Frac.go b <;> simp
+  | pow a k iha =>
+      intro n r m h; simp only [Frac.goB] at h
+      rw [Budgeted.bin_eq (fun _ _ h => iha _ h) (Y := some ()) (fun _ _ _ h => by simp_all)
+        (fun _ _ _ _ _ h => Frac.flag_eq (fun _ _ h => Frac.pow?B_eq _ _ _ h) h) h]
+      simp only [Frac.go, Expr.zeroDivisor]; cases Frac.go a <;> simp
+
+theorem Identity.compareB_eq (a b : Expr) (n : Nat) {r : Option (Bool × Bool)} {m : Nat}
+    (h : Identity.compareB a b n = some (r, m)) : r = (Identity.compare a b).map (·, a.zeroDivisor || b.zeroDivisor) := by
+  have form : ∀ e n r m, (if (e.nodesWithin maxPolyTerms).isSome then Frac.goB e n else some (none, n)) = some (r, m) →
+      r = (Frac.ofExpr? e).map (·, e.zeroDivisor) := by
+    intro e n r m h; unfold Frac.ofExpr?; split at h
+    · rename_i hs; simp only [hs, if_true]; exact Frac.goB_eq e n h
+    · rename_i hs; simp only [hs]; cases h; rfl
+  rw [Budgeted.bin_eq (fun _ _ h => form _ _ _ _ h) (fun _ _ _ h => form _ _ _ _ h) (fun _ _ _ _ _ h => charge_eq h) h]
+  simp only [Identity.compare]
+  cases Frac.ofExpr? a <;> cases Frac.ofExpr? b <;> simp
+
+theorem pointsB_eq (a b : Expr) (ks : List (List (String × Rat))) : ∀ n {r} {m : Nat}, pointsB a b ks n = some (r, m) →
+    r = (ks.find? (differsAt a b)).map fun κ =>
+      (κ, (a.eval (κ.lookup ·)).bind fun x => (b.eval (κ.lookup ·)).map (x, ·)) := by
+  induction ks with
+  | nil => intro n r m h; simp only [pointsB, Option.some.injEq, Prod.mk.injEq] at h; simp [h.1]
+  | cons κ ks ih =>
+      intro n r m h; simp only [pointsB] at h; split at h
+      · rename_i s n' hs; obtain ⟨h1, h2⟩ := sidesAtB_eq a b κ n hs
+        simp only [List.find?_cons, h2]; split at h
+        · rename_i hd; simp only [hd]; cases h; simp [h1]
+        · rename_i hd; simp only [hd]; exact ih n' h
+      · cases h
+
+theorem identityDecide_stop (keep : List String) (a' b' : Expr) : (identityDecide keep a' b').stop ≠ some .budget := by
+  unfold identityDecide; split
+  · split <;> simp
+  · split
+    · simp
+    · split
+      · simp
+      · dsimp only; split <;> simp
+
+/-- **Budget**: the budgeted row is `identityDecide`'s row, or the budget's unknown row. -/
+theorem identityDecideB_eq (keep : List String) (a' b' : Expr) (n : Nat) :
+    identityDecideB keep a' b' n = budgetRow ∨ identityDecideB keep a' b' n = identityDecide keep a' b' := by
+  unfold identityDecideB identityDecide
+  split
+  · exact .inl rfl
+  · rename_i n' hc; have := Identity.compareB_eq a' b' n hc
+    cases hcmp : Identity.compare a' b' with
+    | none => simp
+    | some r => simp [hcmp] at this
+  · rename_i r z n' hc; have := Identity.compareB_eq a' b' n hc
+    cases hcmp : Identity.compare a' b' with
+    | none => simp [hcmp] at this
+    | some r' =>
+      simp only [hcmp, Option.map_some, Option.some.injEq, Prod.mk.injEq] at this; obtain ⟨rfl, rfl⟩ := this
+      split
+      · right; simp_all
+      · split
+        · right; simp_all
+        · rename_i hz hr; simp only [hr, Bool.false_eq_true, if_false]
+          split
+          · rename_i κ s _ hp; have := pointsB_eq a' b' _ _ hp; right
+            cases hf : List.find? (differsAt a' b') ((List.range 13).map (identityPoint (keep.filter (· ∈ a'.names ++ b'.names)))) with
+            | none => rw [hf] at this; cases this
+            | some κ' => rw [hf] at this; simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq] at this; simp [this.1, this.2]
+          · rename_i hp; have := pointsB_eq a' b' _ _ hp; right
+            cases hf : List.find? (differsAt a' b') ((List.range 13).map (identityPoint (keep.filter (· ∈ a'.names ++ b'.names)))) with
+            | none => rfl
+            | some κ' => rw [hf] at this; cases this
+          · exact .inl rfl
+
+/-- **Budget**: a row within the budget is the unbudgeted row; a row past it is the unknown row, never a verdict. -/
+theorem identityDecideB_within (keep : List String) (a' b' : Expr) (n : Nat)
+    (h : (identityDecideB keep a' b' n).stop ≠ some .budget) : identityDecideB keep a' b' n = identityDecide keep a' b' :=
+  (identityDecideB_eq keep a' b' n).resolve_left fun he => h (by rw [he]; rfl)
+
+theorem identityDecideB_exhausted (keep : List String) (a' b' : Expr) (n : Nat)
+    (h : (identityDecideB keep a' b' n).stop = some .budget) : identityDecideB keep a' b' n = budgetRow :=
+  (identityDecideB_eq keep a' b' n).resolve_right fun he => identityDecide_stop keep a' b' (he ▸ h)
+
+theorem identityDecideB_outcome (keep : List String) (a' b' : Expr) (n : Nat) :
+    ((identityDecideB keep a' b' n).outcome = .decided .holds → identityCheck a' b' = true) ∧
+    ((identityDecideB keep a' b' n).outcome = .decided .fails → ∃ κ, differsAt a' b' κ = true) ∧
+    ((identityDecideB keep a' b' n).outcome = .decided .undefined → a'.zeroDivisor ∨ b'.zeroDivisor) ∧
+    (∀ u, (identityDecideB keep a' b' n).outcome = .unknown u → u = .limit .polyTerms ∨ u = .identityNotShown) := by
+  rcases identityDecideB_eq keep a' b' n with h | h <;> rw [h]
+  · simp [budgetRow]
+  · exact identityDecide_outcome keep a' b'
+
 theorem identityRun_holds (ds : List Decl) (h : WellFormed ds) (a b : Expr)
     (hr : (identityRun ds a b).outcome = .decided .holds) : IsIdentity ds a b := by
   cases ha : a.inline ds (freeNames ds) with
@@ -163,7 +322,7 @@ theorem identityRun_holds (ds : List Decl) (h : WellFormed ds) (a b : Expr)
     | error v => cases v <;> simp [identityRun, ha, hb] at hr
     | ok b' =>
         simp only [identityRun, ha, hb] at hr
-        exact isIdentity_of_check ds h a b _ _ ha hb ((identityDecide_outcome _ _ _).1 hr)
+        exact isIdentity_of_check ds h a b _ _ ha hb ((identityDecideB_outcome _ _ _ _).1 hr)
 
 theorem identityRun_fails (ds : List Decl) (h : WellFormed ds) (a b : Expr)
     (hr : (identityRun ds a b).outcome = .decided .fails) : NotIdentity ds a b := by
@@ -174,7 +333,7 @@ theorem identityRun_fails (ds : List Decl) (h : WellFormed ds) (a b : Expr)
     | error v => cases v <;> simp [identityRun, ha, hb] at hr
     | ok b' =>
         simp only [identityRun, ha, hb] at hr
-        obtain ⟨κ, hκ⟩ := (identityDecide_outcome _ _ _).2.1 hr
+        obtain ⟨κ, hκ⟩ := (identityDecideB_outcome _ _ _ _).2.1 hr
         exact notIdentity_of_differsAt ds h a b _ _ ha hb κ hκ
 
 theorem identityRun_undefined (ds : List Decl) (h : WellFormed ds) (a b : Expr)
@@ -196,7 +355,7 @@ theorem identityRun_undefined (ds : List Decl) (h : WellFormed ds) (a b : Expr)
         · simp [identityRun, ha, hb] at hr
     | ok b' =>
         simp only [identityRun, ha, hb] at hr
-        rcases (identityDecide_outcome _ _ _).2.2.1 hr with h' | h'
+        rcases (identityDecideB_outcome _ _ _ _).2.2.1 hr with h' | h'
         · exact ⟨a, by simp, hz a a' ha h'⟩
         · exact ⟨b, by simp, hz b b' hb h'⟩
 
@@ -221,6 +380,16 @@ theorem identityRun_unknown (ds : List Decl) (a b : Expr) (u : UnknownReason)
           simpa using Or.inr (Expr.inline_exhausted ds _ b hb)
     | ok b' =>
         simp only [identityRun, ha, hb] at hr
-        rcases (identityDecide_outcome _ _ _).2.2.2 u hr with rfl | rfl <;> simp
+        rcases (identityDecideB_outcome _ _ _ _).2.2.2 u hr with rfl | rfl <;> simp
+
+/-- **Budget**: a row whose budget ran out is the unknown row `budgetRow`, never a verdict. -/
+theorem identityRun_exhausted (ds : List Decl) (a b : Expr) (h : (identityRun ds a b).stop = some .budget) :
+    identityRun ds a b = budgetRow := by
+  cases ha : a.inline ds (freeNames ds) with
+  | error v => cases v <;> simp [identityRun, ha] at h
+  | ok a' =>
+    cases hb : b.inline ds (freeNames ds) with
+    | error v => cases v <;> simp [identityRun, ha, hb] at h
+    | ok b' => simp only [identityRun, ha, hb] at h ⊢; exact identityDecideB_exhausted _ _ _ _ h
 
 end VE.Calc
