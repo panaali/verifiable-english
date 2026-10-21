@@ -94,6 +94,7 @@ import VE.Core.TableauExtendedRules
 import VE.Core.Wire
 import VE.Data.Background
 import VE.Defaults.Premises
+import VE.Defaults.Wire
 import VE.Definitions.Alias
 import VE.Definitions.Bundle
 import VE.Definitions.Elaborate
@@ -1427,6 +1428,23 @@ import VE.WireContract.Engine
 #print axioms VE.Data.Background.premises_sat_iff
 #print axioms VE.Data.Background.string_encoding_sound
 #print axioms VE.Data.Background.totalPremise_iff
+#print axioms VE.Defaults.Wire.DefaultsView.hD
+#print axioms VE.Defaults.Wire.DefaultsView.hR
+#print axioms VE.Defaults.Wire.DefaultsView.hU
+#print axioms VE.Defaults.Wire.DefaultsView.hX
+#print axioms VE.Defaults.Wire.DefaultsView.hXw
+#print axioms VE.Defaults.Wire.DefaultsView.hl
+#print axioms VE.Defaults.Wire.ViewRest.hR
+#print axioms VE.Defaults.Wire.ViewRest.hX
+#print axioms VE.Defaults.Wire.ViewRest.hl
+#print axioms VE.Defaults.Wire.coherence_collision_named
+#print axioms VE.Defaults.Wire.coherence_collision_shown
+#print axioms VE.Defaults.Wire.decodeLayered_soften
+#print axioms VE.Defaults.Wire.decodeRightsU_soften
+#print axioms VE.Defaults.Wire.defaultsCase_other
+#print axioms VE.Defaults.Wire.defaults_coherence_sound
+#print axioms VE.Defaults.Wire.elaborateRows_eq
+#print axioms VE.Defaults.Wire.viewOf_layered
 #print axioms VE.Defaults.assumptions_sound
 #print axioms VE.Defaults.atom_wf
 #print axioms VE.Defaults.basis_needs_sound
