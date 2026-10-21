@@ -19195,7 +19195,7 @@ module VE.Service.Registry b6e6b0c57a98d94cd58db8399fbc1f418ca7429bbacdea9ab6921
 74:0-74:70 theorem VE.Service.modes_complete@VE.Service.Registry
 75:0-75:67 theorem VE.Service.registry_modes@VE.Service.Registry
 76:0-76:78 theorem VE.Service.registry_names_nodup@VE.Service.Registry
-module VE.Service.ScopeExamples 2fad2ae56aa905e3399b76da2aa5f7efa3e94b50304a2d0db2db00a1f868ef73
+module VE.Service.ScopeExamples 5c36a7ef3fe2341ae2ba7a5e75f39fedec308ec7340943e885f9782bfa1e6dae
 11:0-11:76 def VE.Service.ScopeExamples.source@VE.Service.ScopeExamples
 12:0-12:103 def VE.Service.ScopeExamples.lead@VE.Service.ScopeExamples
 13:0-13:113 def VE.Service.ScopeExamples.item@VE.Service.ScopeExamples
