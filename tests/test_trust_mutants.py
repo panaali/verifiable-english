@@ -563,8 +563,7 @@ def test_any_changed_input_gives_a_full_run(package, tmp_path, change):
     shutil.copytree(package, root, symlinks=True, ignore=shutil.ignore_patterns(".lake"))
     (root / "outside").mkdir(exist_ok=True)
     (root / "outside/T.lean").write_text("import Demo.Defs\n#guard Demo.small 2\n")
-    base = subprocess.run(["git", "rev-parse", "HEAD~1"], cwd=root, capture_output=True, text=True,
-                          timeout=HANG_TIMEOUT).stdout.strip()
+    base = "0123456789abcdef" * 2 + "01234567"  # a commit id: `main` resolves it, `inputs` records it as it is
 
     def digests(deep: bool = False, tests: tuple = (), base: str = base) -> dict:
         return trust_mutants.inputs(root, base, list(tests), [root / "outside/T.lean"], deep)
