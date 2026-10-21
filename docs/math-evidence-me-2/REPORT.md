@@ -21,15 +21,15 @@ statement changed.
 
 | Row | Delivered | Where, checked by (`lean/VE/Calc/RunExamples.lean` guard line) |
 |---|---|---|
-| `lean/VE/Calc/Wire.lean`: `Case`, `Wire.decodeCase` | yes: format, values (stated or defined), claims (`eq`, `lt`, `le`, `gt`, `ge`, `within`, `rounds` with an optional rule, `rounds-down`, `rounds-up`), `rounding`, `software`, `support`, `span` | 91, 153, 188, 242, 268 |
-| Limits of 3.2 in order: 10,000 JSON values, depth 64, 512 values, 512 claims, exponents 64, literals 40 digits (W6's `parseDecimal`), names and claim ids 64 bytes; checked before anything else | yes, each on both sides, and their order (exponent before digits before names; a limit before a field error) | 153 |
-| Decoder refusals of 13.1 owned by ME-2: `InvalidInput` (with the JSON path), `ResourceLimit`, `UnknownName`, `DuplicateName`, `DuplicateClaimId`, `NoClaims` | yes | 188, 242, 268 |
-| `VerbalisationCollision`, `ValueWordsForm`, `ReservedWord` | **me-2b**, with the `line` field they serve; until then `words` is any string | 268 states it |
-| Identity 3.3 with J1: `meaning_id` through `VE.Route.Wire.meaningId ["calc@0"]`, the frozen encoder unchanged; `words` removed; values in shortest plain decimal (no `sci` left); printed numbers as `[digits, places]` canonical decimal strings; each `rounds` claim with its rule; claim ids by `ve-calc-claim-v0.2:calc@0` | yes; I-1 pinned (`b3798e85…`, and `c7cd36a4…` for the `"20000000"` spelling), R-1 and R-2 claim ids pinned | 54-55, 132-145 |
+| `lean/VE/Calc/Wire.lean`: `Case`, `Wire.decodeCase` | yes: format, values (stated or defined), claims (`eq`, `lt`, `le`, `gt`, `ge`, `within`, `rounds` with an optional rule, `rounds-down`, `rounds-up`), `rounding`, `software`, `support`, `span` | 91, 289, 333, 387, 413 |
+| Limits of 3.2 in order: 10,000 JSON values, depth 64, 512 values, 512 claims, exponents 64, literals 40 digits (W6's `parseDecimal`), names and claim ids 64 bytes; checked before anything else | yes, each on both sides, and their order (exponent before digits before names; a limit before a field error) | 289, 325 |
+| Decoder refusals of 13.1 owned by ME-2: `InvalidInput` (with the JSON path), `ResourceLimit`, `UnknownName`, `DuplicateName`, `DuplicateClaimId`, `NoClaims` | yes | 333, 387, 413 |
+| `VerbalisationCollision`, `ValueWordsForm`, `ReservedWord` | **me-2b**, with the `line` field they serve; until then `words` is any string | 413 states it |
+| Identity 3.3 with J1: `meaning_id` through `VE.Route.Wire.meaningId ["calc@0"]`, the frozen encoder unchanged; `words` removed; values in shortest plain decimal (no `sci` left); printed numbers as `[digits, places]` canonical decimal strings; each `rounds` claim with its rule; claim ids by `ve-calc-claim-v0.2:calc@0` | yes; I-1 pinned (`b3798e85…`, and `c7cd36a4…` for the `"20000000"` spelling), R-1 and R-2 claim ids pinned; one table (`identityFamilies`) holds a family per normalisation and per hashed field, at every place a literal or a printed number is read, among them the case's rule in an implicit `rounds` claim and a `lit`'s shortest spelling (round 2, review F9 and F10) | 54-55, 135-281 (`identityFaults == []` at 242) |
 | `Wire.decodeCase_wellFormed` | yes | proof; `lean/VE/Audit.lean` |
 | Spec 3.4: `Check` (claim), `Check.UnknownCause`, `Check.OutcomeMeans`, `Check.run`, `Check.run_sound`, `Row`, `Run.row`, `Run.rows`, `Run.rows_outcome`, `Run.runCaseReported`, `Run.outcomeAt`, `Run.outcome_sound`, `Run.row_sound`, `Run.verdict_sound`, `Run.unknown_named` | yes, all proved; the decided-row meaning is also decidable for route cases | 54-60, 123 |
 | Route cases V-1, V-2, V-5 (20 claims in one case), V-11, V-9, I-1, R-1, R-2 | yes, as `#guard`s with every expected result of spec 13.3 and 13.6 (R-1 and R-2 pinned whole, every field) | 54-55, 91 |
-| Hostile set: unknown name, a name defined after its use, `pow` above the limit, a literal of 41 digits, a printed spelling with a sign error, a forged `meaning_id` | yes (a forged `meaning_id` in the request is an unknown field: the identity is Lean's) | 153, 188 |
+| Hostile set: unknown name, a name defined after its use, `pow` above the limit, a literal of 41 digits, a printed spelling with a sign error, a forged `meaning_id` | yes (a forged `meaning_id` in the request is an unknown field: the identity is Lean's) | 289, 333 |
 | Plan's seeded bug: claim i + 1's verdict reported for claim i | yes: `mutants.json` `plan-seeded-bug` fails the R-1 and R-2 guards (54, 55) | `mutants.json` |
 | `calc` constructor, name, list entry, dispatch, `runMode_calc`; `MODES` (generated from the handshake) | **me-2b**: registering the mode needs `ResponseShape.Encoders.runMode_fits`' case, so the shape and encoder come with it | |
 | `lean/ResponseShape/{Schemas,Encoders}/Calc.lean`, `calc.json`, `DEADLINES` | **me-2b** | |
@@ -75,8 +75,11 @@ was reshaped: reject-only and identity code split into their own declarations, `
   per trusted definition: `plan-seeded-bug` (`Run.runCaseReported`, guards 54-55), `literal-sci-sign`,
   `operations-sub`, `comparisons-gt`, `rules-half-even`, `expr-pow`, `claim-within`, `claim-rule`, `value-stated`,
   `entry-id`, `decl-defined`, `decode-software`, `decode-rounding`, `outcome-means` (123), `rowjson-reason`,
-  `rowjson-reproduction`, `words-undefined`, `limit-nodes` and `limit-order` (153), `admit-unknown` (188),
+  `rowjson-reproduction`, `words-undefined`, `limit-nodes` and `limit-order` (289), `admit-unknown` (333),
   `identify-domain`, and `units-factor-spelling` (`lean/VE/Calc/Units.lean`, `UnitsExamples.lean` 107 and 229).
+  Round 2 (review F9, F10 and their class): 20 `identity-*` mutants of `Wire.lean`, each normalisation of 3.3 and
+  each hashed field replaced by its input or a constant, each applied alone with the proofs as they are; every one is
+  refuted by a guard (the identity table at 242, the canonical claims at 252 and 265, or the pinned answers).
   Python (`tools/layer_policy.py`, a tool): the route cases taken out of the runner layer fails
   `tools/check_lean_imports.py` ("new outward Lean import: VE.Calc.RunExamples -> VE.Calc.Run"). No Rust changed.
 
@@ -126,16 +129,16 @@ killed (guard 153).
 ## Self-review against BUILDER-CHECKLIST
 
 1. PASS (decoder side): every field of a case, a value record and a claim entry replaced by 7, true, null, [], {},
-   1.5, "" and a nested list is refused and answers no row (guard 268); deep input is the depth limit (153). No Python
+   1.5, "" and a nested list is refused and answers no row (guard 413); deep input is the depth limit (289). No Python
    reads a `calc` answer yet (me-2b/ME-3), so the relay half is N.A.
 2. PASS: plan rows table above; me-2b and ME-10 named with reasons; no Python copy of a Lean decision, no permanent
    report test; overlap: no in-flight branch edits `Wire.lean`, `Run.lean`, `Units.lean` or `layer_policy.py`; the
    shared registries (`lean/VE.lean`, `tools/trust-classes.json`, `ve/assurance-manifest.json`) are append-only.
-3. PASS: `mutants.json` 23 of 23 killed with proofs stubbed; `trust-mutants.json` exit 0.
+3. PASS: `mutants.json` 43 of 43 killed (the first 23 with proofs stubbed, the 20 `identity-*` by guards with the proofs as they are); `trust-mutants.json` exit 0.
 4. PASS: reordered keys and renamed words keep the `meaning_id`, spellings "0.30"/"0.3" as values do and as printed
-   numbers do not (132-145); `UnitsExamples` unchanged after the shared spelling. No Python or Rust implementation.
+   numbers do not, and so on for every normalisation of 3.3 (the identity table, 135-281); `UnitsExamples` unchanged after the shared spelling. No Python or Rust implementation.
 5. N.A.: no relayed field yet; inputs: undeclared names refused (`unknown-name`, `defined-after-use`,
-   `unknown-claim-name`, 188).
+   `unknown-claim-name`, 333).
 6. PASS: synced with main 768a935fc; selected run on the earlier sync, fixes rerun after; the full gate is the chain's.
 7. PASS: DELTA row 1 cites R16 with per-declaration lines; `trust_map.py --check` PASS; FOLLOW-UPS row.
 8. PASS: no public output (no mode or route); DELTA says so.
