@@ -3,9 +3,12 @@
 Lean decides every answer here: one Lean file evaluates each fixture with `VE.Calc.Poly` and `VE.Calc.Identity`, and
 the tests read its printed lines. Python only states the fixtures. R-10c waits for ME-4.
 """
+import itertools
 import json
+import math
 import shutil
 import subprocess
+from fractions import Fraction
 
 import pytest
 
@@ -102,6 +105,16 @@ def limitReaders : CoreM String := do
     if poly.isSome && env.getModuleIdxFor? n == poly && !(c matches .thmInfo _) &&
         (c.value?.map fun v => limits.any v.getUsedConstants.contains).getD false then some n.toString else none
   return String.intercalate " " (names.toArray.qsort (· < ·)).toList
+open Lean Meta in
+/-- Each constructor of an inductive, with how many of its fields are expressions: the places the tables of
+`OPERANDS` and `CLAIMS` fill (me-9b review F1). -/
+def exprFields (ind : Name) : MetaM String := do
+  let some (.inductInfo i) := (← getEnv).find? ind | throwError "no inductive {ind}"
+  let rows ← i.ctors.mapM fun c => do
+    let n ← forallTelescope (← getConstInfo c).type fun xs _ =>
+      xs.foldlM (init := 0) fun k x => return if (← inferType x).isConstOf ``VE.Calc.Expr then k + 1 else k
+    return s!"{c.components.getLast!}:{n}"
+  return " ".intercalate rows
 """
 
 # Every limit check of `VE.Calc.Poly`, by the declaration that makes it (REPORT.md, "Limit truth table"). A row is
@@ -355,7 +368,76 @@ IDENTITY_FIXTURES = [
      'some ([["x"], ["path", "light", "speed"]], VE.Numbers.Verdict.fails, VE.Numbers.Verdict.fails)'),
     ("claim-fault-undefined-first", 'fault (.within (v "x") (v "nowhere") (v "spent"))', "VE.Calc.Val.undefined"),
     ("claim-fault-exhausted-first", 'fault (.within (v "x") (v "spent") (v "nowhere"))', "VE.Calc.Val.exhausted"),
+    # me-9b review F1's examples; the tables below hold the class.
+    ("f3-numerator", 'run r6 (.div (.div (l 1) (l 0)) (v "x"), .div (.div (l 2) (l 0)) (v "x"))', UNDEFINED),
+    ("f3-left", 'run r6 (.add (.div (l 1) (l 0)) (v "x"), .add (.div (l 2) (l 0)) (v "x"))', UNDEFINED),
+    ("fault-inside-side", 'run r6 (.add (v "nowhere") (v "spent"), v "x")', UNDEFINED),
+    ("claim-fault-compare", 'fault (.compare ⟨.lt, false⟩ (v "nowhere") (v "spent"))', "VE.Calc.Val.undefined"),
+    ("claim-fault-within-e", 'fault (.within (v "nowhere") (v "spent") (v "x"))', "VE.Calc.Val.undefined"),
+    # The point reads the names of both sides, in declaration order, not the order the sides read them.
+    ("point-right-only", 'run r6 (l 2, v "y")', fails('[("y", 1)]', "(2, 1)")),
+    ("point-left-only", 'run r6 (v "y", l 2)', fails('[("y", 1)]', "(1, 2)")),
+    ("point-declaration-order", 'run r6 (v "y", v "x")', fails('[("x", 2), ("y", 3)]', "(3, 2)")),
 ]
+
+# me-9b review F1, a check with a place no fixture fills: every place of every constructor, generated from these
+# tables, which `test_the_place_tables_are_lean_s_constructors` holds to Lean's `Expr` and `Claim`. A value for each
+# place: a free value read (`x`), a missing name and a counted value whose budget ran out.
+OPERANDS = {"lit": 0, "val": 0, "add": 2, "sub": 2, "mul": 2, "div": 2, "pow": 1}
+CLAIMS = {"compare": ".compare ⟨.lt, false⟩ ({}) ({})", "within": ".within ({}) ({}) ({})",
+          "rounds": ".rounds .tiesUp ({}) ⟨2, 8⟩"}
+PLACE_VALUES = {"x": None, "nowhere": "undefined", "spent": "exhausted"}
+
+
+def node(ctor, args):
+    return f".pow ({args[0]}) 2" if ctor == "pow" else f".{ctor} ({args[0]}) ({args[1]})"
+
+
+def first_fault(names):
+    return next((PLACE_VALUES[n] for n in names if PLACE_VALUES[n]), None)
+
+
+def place_fixtures():
+    for ctor, arity in OPERANDS.items():
+        for place in range(arity):
+            # `Expr.zeroDivisor` reads every operand: 1/0 in each one, the side compared with itself.
+            side = node(ctor, ['.div (l 1) (l 0)' if i == place else 'v "x"' for i in range(arity)])
+            yield f"zero-divisor-{ctor}-{place}", f"run r6 ({side}, {side})", UNDEFINED
+        # `Expr.subst`'s fault order: the first faulty operand, left to right, names the fault.
+        for names in itertools.product(PLACE_VALUES, repeat=arity):
+            if fault := first_fault(names):
+                yield (f"subst-{ctor}-{'-'.join(names)}", f'run r6 ({node(ctor, [f'v "{n}"' for n in names])}, v "x")',
+                       UNDEFINED if fault == "undefined" else EVALUATIONS)
+    # `Claim.inline`'s fault order, in `Claim.exprs`' order.
+    for ctor, claim in CLAIMS.items():
+        for names in itertools.product(PLACE_VALUES, repeat=claim.count("{}")):
+            fault = first_fault(names)
+            yield (f"claim-{ctor}-{'-'.join(names)}", f"fault ({claim.format(*(f'v "{n}"' for n in names))})",
+                   f"VE.Calc.Val.{fault}" if fault else "ok")
+
+
+# The 13 values tried, in order (spec 8.2): point i gives a single name the ith value.
+VALUES = [Fraction(q) for q in ("1", "2", "3", "-1", "1/2", "5", "-2", "1/3", "7", "-3", "3/2", "11", "0")]
+
+
+def rat(q):
+    return str(q.numerator) if q.denominator == 1 else f"({q.numerator} : Rat)/{q.denominator}"
+
+
+def point_fixtures():
+    """For each point, a side zero at every earlier point and not at it, against 0 · x: the first differing point is
+    that one, so a search that stops early, skips a point or reorders the values is caught."""
+    yield "identity-values", "reprStr identityValues", f"[{', '.join(rat(q) for q in VALUES)}]"
+    for i, x in enumerate(VALUES):
+        side = "l 1"
+        for q in VALUES[:i]:
+            side = f'.mul ({side}) (.sub (v "x") (l ({q.numerator} / {q.denominator})))'
+        value = math.prod((x - q for q in VALUES[:i]), start=Fraction(1))
+        yield (f"point-{i + 1}{ {1: 'st', 2: 'nd', 3: 'rd'}.get(i + 1, 'th')}", f'run r6 ({side}, .mul (l 0) (v "x"))',
+               fails(f'[("x", {rat(x)})]', f"({rat(value)}, 0)"))
+
+
+IDENTITY_FIXTURES += [*place_fixtures(), *point_fixtures()]
 FIXTURES += IDENTITY_FIXTURES
 
 
@@ -375,7 +457,13 @@ def run_lean(path, fixtures, extra=""):
 @pytest.fixture(scope="module")
 def lean(tmp_path_factory):
     return run_lean(tmp_path_factory.mktemp("algebra") / "Algebra.lean", FIXTURES,
-                    '#eval show Lean.CoreM Unit from do line "limit-readers" (← limitReaders)\n')
+                    '#eval show Lean.CoreM Unit from do line "limit-readers" (← limitReaders)\n'
+                    + "".join(f'#eval show Lean.Meta.MetaM Unit from do line "{key}" (← exprFields ``VE.Calc.{ind})\n'
+                              for key, ind in EXTRA.items() if ind))
+
+
+# The lines the fixture file prints besides `FIXTURES`, with the inductive whose constructors each one lists.
+EXTRA = {"limit-readers": None, "expr-fields": "Expr", "claim-fields": "Claim"}
 
 
 @pytest.mark.parametrize("key, expected", [pytest.param(key, expected, id=key) for key, _, expected in FIXTURES])
@@ -384,7 +472,14 @@ def test_fixture(lean, key, expected):
 
 
 def test_every_fixture_printed_once(lean):
-    assert sorted(lean) == sorted([key for key, _, _ in FIXTURES] + ["limit-readers"])
+    assert sorted(lean) == sorted([key for key, _, _ in FIXTURES] + list(EXTRA))
+
+
+def test_the_place_tables_are_lean_s_constructors(lean):
+    """The place tables list every constructor of `Expr` and `Claim`, in order, with its number of expression fields,
+    so a constructor added in Lean gets its places filled (me-9b review F1)."""
+    assert lean["expr-fields"] == " ".join(f"{ctor}:{arity}" for ctor, arity in OPERANDS.items())
+    assert lean["claim-fields"] == " ".join(f"{ctor}:{claim.count('{}')}" for ctor, claim in CLAIMS.items())
 
 
 def test_every_limit_check_is_pinned_at_and_past_it(lean):
