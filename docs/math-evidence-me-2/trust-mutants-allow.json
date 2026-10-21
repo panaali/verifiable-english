@@ -51,9 +51,19 @@
       "reason": "equivalent for eq only: equality is symmetric, so swapping its operands changes no verdict; the lt, le, gt and ge flips are killed by the order fixtures"
     },
     {
-      "definition": "VE.Calc.Wire.entry",
-      "operator": "list-first",
-      "reason": "equivalent for the emptiness test: (id.take 1).isEmpty is id.isEmpty; the mutant in id.all is killed by claim-id-last"
+      "definition": "VE.Calc.Check.OutcomeMeans",
+      "operator": "eq-ne",
+      "reason": "killed by the decided-row guard (RunExamples.lean:123), run by hand with Check.run_sound and Run.verdict_sound stubbed; the tool reads it as UNKNOWN because that check decides through the instance built from the mutated definition"
+    },
+    {
+      "definition": "VE.Calc.Wire.expr",
+      "operator": "list-empty",
+      "reason": "not a program: [].lookup op has no element type (Function expected)"
+    },
+    {
+      "definition": "VE.Calc.Wire.claim",
+      "operator": "list-empty",
+      "reason": "not a program: the mutated scrutinee is an Option, not a list (Invalid field notation, Type mismatch)"
     }
   ]
 }

@@ -235,7 +235,7 @@ def entry (rule : String × Rounding) (i : Nat) (j : Json) : Except String ((Str
   let path := s!"claims.{i}"
   checkFields path j ["id", "claim"] ["span"]
   let .ok (.str id) := j.getObjVal? "id" | throw (invalid s!"{path}.id" "must be a string")
-  unless !id.isEmpty && id.all claimIdChar do throw (invalid s!"{path}.id" "must be a claim id")
+  unless id != "" && id.all claimIdChar do throw (invalid s!"{path}.id" "must be a claim id")
   let (c, cc) ← claim rule s!"{path}.claim" (j.getObjValD "claim")
   pure ((id, .claim c), cc, ← recordJson path j [("id", .str id), ("claim", cc)])
 
@@ -306,7 +306,7 @@ def decode (j : Json) : Except String (Case × String × List String) := do
   let ds := vals.map decl
   admit ds checks
   let (mid, ids) ← identify (Json.mkObj ([("format", .str "ve-calc@0"), ("values", .arr cvals.toArray),
-    ("claims", .arr entryJson.toArray)] ++ software.elim [] fun s => [("software", .str s)])) claimJson
+    ("claims", .arr entryJson.toArray)] ++ (software.elim [] fun s => [("software", .str s)]))) claimJson
   pure (⟨ds, checks, software⟩, mid, ids)
 
 /-- Decodes `ve-calc@0`: the limits of 3.2 first, then fields, names, definition order and literals. -/
