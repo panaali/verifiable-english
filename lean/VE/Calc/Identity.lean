@@ -33,10 +33,6 @@ theorem Denotes.mono {σ τ : Values} {e : Expr} {x : Rat} (h : Denotes σ e x) 
   | div _ _ hne iha ihb => exact .div iha ihb hne
   | pow _ ih => exact .pow ih
 
-theorem freeNames_mem (ds : List Decl) : ∀ n ∈ freeNames ds, n ∈ ds.map Decl.name := by
-  intro n hn; simp only [freeNames, List.mem_map, List.mem_filter] at hn ⊢
-  obtain ⟨d, ⟨hd, _⟩, rfl⟩ := hn; exact ⟨d, hd, rfl⟩
-
 /-- Over the inlined sides, the normaliser proves the identity and a differing point refutes it (J3). -/
 theorem isIdentity_of_check (ds : List Decl) (h : WellFormed ds) (a b a' b' : Expr)
     (ha : a.inline ds (freeNames ds) = .ok a') (hb : b.inline ds (freeNames ds) = .ok b')
