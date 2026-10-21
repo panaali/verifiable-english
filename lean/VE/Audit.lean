@@ -1476,9 +1476,15 @@ import VE.WireContract.Engine
 #print axioms VE.Defaults.Wire.coherence_collision_shown
 #print axioms VE.Defaults.Wire.decodeLayered_soften
 #print axioms VE.Defaults.Wire.decodeRightsU_soften
+#print axioms VE.Defaults.Wire.default_exception
 #print axioms VE.Defaults.Wire.defaultsCase_other
+#print axioms VE.Defaults.Wire.defaults_certificate_sound
 #print axioms VE.Defaults.Wire.defaults_coherence_sound
+#print axioms VE.Defaults.Wire.defaults_follows_gated
+#print axioms VE.Defaults.Wire.defaults_model_sound
 #print axioms VE.Defaults.Wire.elaborateRows_eq
+#print axioms VE.Defaults.Wire.eval_of_xModelOk
+#print axioms VE.Defaults.Wire.forcedAt_sound
 #print axioms VE.Defaults.Wire.viewOf_layered
 #print axioms VE.Defaults.assumptions_sound
 #print axioms VE.Defaults.atom_wf
