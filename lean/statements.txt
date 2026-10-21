@@ -7110,6 +7110,27 @@ theorem VE.Defaults.Wire.ViewRest.hl
     VE.Compose.Labelled.wellLabelled (VE.Defaults.dfltLabelled L.D) = Bool.true
   -- uses VE.Compose.Labelled.wellLabelled@VE.Compose.Slot VE.Defaults.Wire.ViewRest@VE.Defaults.Wire VE.Defaults.dfltLabelled@VE.Defaults.Premises VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered
   -- expr 662367307
+theorem VE.Defaults.Wire.coherence_collision_named
+  ∀ (x : VE.Defaults.Wire.CoherenceReplay),
+    (∀ (P Q : VE.SoftNorms.SoftNode),
+        ((P, Q), VE.Defaults.Wire.PairStatus.collision) ∈ x.pairs →
+          ∃ w, x.collision = Option.some w ∧ w.m = P.name ∧ w.n = Q.name) ∧
+      ∀ (c : Lean.Json),
+        ("collision", c) ∈ VE.Defaults.Wire.coherenceFields x →
+          ∃ w P Q,
+            x.collision = Option.some w ∧
+              (P, Q) ∈ VE.SoftNorms.collidingPairs x.v.L.D ∧
+                P.name = w.m ∧
+                  Q.name = w.n ∧
+                    c =
+                      Lean.Json.mkObj
+                        [("rules", Lean.ToJson.toJson [w.m, w.n]),
+                          ("tuple",
+                            VE.Defaults.Wire.entityIds
+                              ((VE.Defaults.collisionTuple x.v.L.U x.v.L.D w.S.M w.F P Q).getD [])),
+                          ("deciders", Lean.ToJson.toJson (VE.Defaults.giveWayDeciders x.v.L.D P Q))]
+  -- uses VE.Bridge.Entity@VE.Bridge VE.Defaults.Wire.CoherenceReplay.collision@VE.Defaults.Wire VE.Defaults.Wire.CoherenceReplay.pairs@VE.Defaults.Wire VE.Defaults.Wire.CoherenceReplay.v@VE.Defaults.Wire VE.Defaults.Wire.CoherenceReplay@VE.Defaults.Wire VE.Defaults.Wire.Collision.F@VE.Defaults.Wire VE.Defaults.Wire.Collision.S@VE.Defaults.Wire VE.Defaults.Wire.Collision.m@VE.Defaults.Wire VE.Defaults.Wire.Collision.n@VE.Defaults.Wire VE.Defaults.Wire.Collision@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.PairStatus.collision@VE.Defaults.Wire VE.Defaults.Wire.PairStatus@VE.Defaults.Wire VE.Defaults.Wire.coherenceFields@VE.Defaults.Wire VE.Defaults.Wire.entityIds@VE.Defaults.Wire VE.Defaults.collisionTuple@VE.Defaults.Premises VE.Defaults.giveWayDeciders@VE.Defaults.Premises VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.SituationG.M@VE.NormDefaults.Report VE.Norms.Node.name@VE.Norms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree
+  -- expr 3486102874
 theorem VE.Defaults.Wire.coherence_collision_shown
   ∀ (x : VE.Defaults.Wire.CoherenceReplay),
     (∀ (P Q : VE.SoftNorms.SoftNode),

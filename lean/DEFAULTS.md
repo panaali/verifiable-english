@@ -16,7 +16,7 @@ those with the fewest exceptions; that is DF-2's theorem, not proved.
 | `Premises.lean` | `Dflt_T` (`dfltOf`, `dfltLabelled`), `defaultX`, diagnostics 2 to 4 (`decisionFree`, `questionDiag`, `limitDiag`), the gate (`DefaultCoherent`, `pairChecks`, `defaultCoherenceCheck`, `collisionCheck`), the collision DE7 shows (`collisionTuple`), the basis (`assumptionsOf`, `Basis`, `basisOf`), the form (`Form`, `followsForm`) and the deciders (`decidersOf`, `giveWayDeciders`) |
 | `Examples.lean` | the fixtures of spec 8.1, 8.2 and 8.4 that these definitions decide (DF-α to DF-ζ, DF-γ′, DF-η, DF-ι, DF-κ, DF-ω, DF-σ), as `#guard`s on documents decoded by `decodeSoftU` |
 | `Wire.lean` | the view of a decoded document (`viewOf`, diagnostics 7, 1, 2, 6 and 4) and the kinds `defaults-elaborate` and `defaults-coherence` (`defaultsCase`) |
-| `WireExamples.lean` | the wire answers of DF-θ, DF-α, DF-γ, DF-γ′, DF-ω, DF-γb and DF-γ2, through `viewOf` and `defaultsCase` on JSON requests |
+| `WireExamples.lean` | the wire answers of DF-θ, DF-α, DF-γ, DF-γ′, DF-ω, DF-γb, DF-γ2 and DF-γ3, through `viewOf` and `defaultsCase` on JSON requests |
 
 ## Definitions
 
@@ -90,6 +90,9 @@ those with the fewest exceptions; that is DF-2's theorem, not proved.
 - `elaborateRows_eq`: the elaborate rows are `Dflt_T` and the colliding pairs.
 - `defaults_coherence_sound`: COHERENT gives the gate, COLLISION refutes it, and each resolved pair's coherence premise
   holds on every admissible base.
+- `coherence_collision_shown`: a pair shown `collision`, or a `collision` member, only with a collision that checks.
+- `coherence_collision_named`: a pair shown `collision` is the pair the collision names, by both rules, and the
+  `collision` member's tuple and deciders are those of that pair.
 - `defaultsCase_other`: a kind that does not start with `defaults-` gets no answer here.
 
 ## Deviations

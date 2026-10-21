@@ -300,6 +300,49 @@ theorem coherence_collision_shown (x : CoherenceReplay) :
       exact collision_sound _ x.v.L.wfU _ _ _ w.S.valid _ _ _ hc
     · cases hc
 
+/-- Which pair the answer shows for a collision: a pair shown `collision` is the pair the collision names, both rule
+    names, and the `collision` member's tuple and deciders are those of a colliding pair named exactly as the collision
+    names it, never a pair that shares one rule with it. -/
+theorem coherence_collision_named (x : CoherenceReplay) :
+    (∀ P Q, ((P, Q), PairStatus.collision) ∈ x.pairs → ∃ w, x.collision = some w ∧ w.m = P.name ∧ w.n = Q.name) ∧
+    (∀ c, ("collision", c) ∈ coherenceFields x → ∃ w P Q, x.collision = some w ∧
+      (P, Q) ∈ VE.SoftNorms.collidingPairs x.v.L.D ∧ P.name = w.m ∧ Q.name = w.n ∧
+      c = Json.mkObj [("rules", toJson [w.m, w.n]),
+        ("tuple", entityIds ((collisionTuple x.v.L.U x.v.L.D w.S.M w.F P Q).getD [])),
+        ("deciders", toJson (giveWayDeciders x.v.L.D P Q))]) := by
+  refine ⟨fun P Q hm => ?_, fun c h => ?_⟩
+  · unfold CoherenceReplay.pairs at hm
+    obtain ⟨i, hi, he⟩ := List.mem_mapIdx.mp hm
+    simp only [Prod.mk.injEq] at he
+    obtain ⟨hp, hs⟩ := he
+    split at hs
+    · cases hs
+    · split at hs
+      · rename_i hc
+        simp only [Bool.and_eq_true] at hc
+        obtain ⟨_, ha⟩ := hc
+        cases hw : x.collision with
+        | none => simp [hw] at ha
+        | some w =>
+          simp only [hw, Option.any_some, Bool.and_eq_true, beq_iff_eq] at ha
+          rw [hp] at ha
+          exact ⟨w, rfl, ha.1, ha.2⟩
+      · cases hs
+  · unfold coherenceFields at h
+    rw [List.mem_append] at h
+    rcases h with h | h
+    · simp at h
+    · split at h
+      · rename_i w _ hw
+        split at h
+        · rename_i P Q hf
+          simp only [List.mem_singleton, Prod.mk.injEq, true_and] at h
+          have hpq := List.find?_some hf
+          simp only [Bool.and_eq_true, beq_iff_eq] at hpq
+          exact ⟨w, P, Q, hw, List.mem_of_find?_eq_some hf, hpq.1, hpq.2, h⟩
+        · simp at h
+      · simp at h
+
 /-- The `defaults-*` kinds; `none` for any other kind (one row of PK-1's layered kind table). -/
 def defaultsCase (v : DefaultsView) (id kind : String) (j : Json) : Except String (Option Json) :=
   if kind.startsWith "defaults-" then

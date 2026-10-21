@@ -4,7 +4,8 @@ import VE.Defaults.Examples
 /-! The wire answers of DF-1a's fixtures (docs/spec/defeasible.md 8.1, 5): DF-θ, the view's diagnostics, and the
 `defaults-elaborate` and `defaults-coherence` answers of DF-γ, DF-γ′, DF-δ (DF-ω) and DF-α, each computed by `viewOf`
 and `defaultsCase` on a JSON request, with the documents of `Examples.lean`, and two more: DF-γb (DF-γ with r1
-guarded by `⊥`, so the pair is kept apart by its guard) and DF-γ2 (two pairs, a two-entity tuple).
+guarded by `⊥`, so the pair is kept apart by its guard), DF-γ2 (two pairs, a two-entity tuple) and DF-γ3 (two pairs
+that share their second rule, one kept apart by its guard).
 
 DF-γb's pair certificate is written here and bound as a producer binds it (`boundJ`). DF-δ's pair certificate is
 found by the untrusted search (df-1b). -/
@@ -148,6 +149,21 @@ def γ2Coll (L : VE.NormDefaults.Wire.LayeredU) (m n : String) : Json :=
   (γ2Coll L "r1" "r3").getObjValD "collision" == coll "r3" ["assistant", "operator"] &&
   (γ2Coll L "r1" "r2").getObjValD "pairs" == st "collision" "unknown" &&
   (γ2Coll L "r1" "r2").getObjValD "collision" == coll "r2" ["assistant"]
+
+/-- DF-γ3: r1 (guarded by `⊥`) and r2 against r3, so the pairs r1/r3 and r2/r3 share their second rule and only r2/r3
+    can collide: a collision is shown on the pair it names by both rules, with that pair's tuple (review F5). -/
+def γ3R : List String := [(ruleJ "r1" "x_required" true dfltJ).replace "[\"top\"]" "[\"bottom\"]",
+  ruleJ "r2" "x_required" true dfltJ, ruleJ "r3" "x_permitted" false dfltJ]
+def γ3Coll (L : VE.NormDefaults.Wire.LayeredU) (m n : String) : Json :=
+  answer (req αEnv γ3R "defaults-coherence" [("coherence", toJson [pairJ "r1" "r3", pairJ "r2" "r3"]),
+    ("collision", collJ L m n)])
+#guard holds (layered αEnv γ3R) fun L =>
+  let st (a b : String) : Json := toJson [Json.mkObj [("rules", toJson ["r1", "r3"]), ("status", .str a)],
+    Json.mkObj [("rules", toJson ["r2", "r3"]), ("status", .str b)]]
+  γ3Coll L "r2" "r3" == VE.Route.Wire.ok "c" [("verdict", .str "COLLISION"), ("pairs", st "unknown" "collision"),
+    ("collision", Json.mkObj [("rules", toJson ["r2", "r3"]), ("tuple", toJson ["e_assistant"]),
+      ("deciders", toJson ["assistant"])])] &&
+  γ3Coll L "r1" "r3" == VE.Route.Wire.ok "c" [("verdict", .str "UNKNOWN"), ("pairs", st "unknown" "unknown")]
 
 /-! ## Other kinds -/
 

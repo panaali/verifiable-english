@@ -992,6 +992,7 @@
 'VE.Defaults.Wire.ViewRest.hR' depends on axioms: [propext, Quot.sound]
 'VE.Defaults.Wire.ViewRest.hX' depends on axioms: [propext, Quot.sound]
 'VE.Defaults.Wire.ViewRest.hl' depends on axioms: [propext, Quot.sound]
+'VE.Defaults.Wire.coherence_collision_named' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Defaults.Wire.coherence_collision_shown' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Defaults.Wire.decodeLayered_soften' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Defaults.Wire.decodeRightsU_soften' depends on axioms: [propext, Classical.choice, Quot.sound]
