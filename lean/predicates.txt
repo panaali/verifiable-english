@@ -88,6 +88,7 @@ module VE.Acts.GrammarExamples
 module VE.Acts.Lexical
 module VE.Acts.LexicalBase
 module VE.Acts.LexicalExamples
+module VE.Acts.LexicalProofs
 module VE.Acts.Read
 module VE.Acts.Syntax
 module VE.Alternatives.Admission
@@ -142,9 +143,17 @@ module VE.Calc.Dimension
 module VE.Calc.Eval
 module VE.Calc.Examples
 module VE.Calc.FourierMotzkin
+module VE.Calc.Identity
+module VE.Calc.IdentityExamples
+module VE.Calc.Inline
 module VE.Calc.Linear
+module VE.Calc.Lower
+module VE.Calc.LowerExamples
+module VE.Calc.Poly
 module VE.Calc.Render
 module VE.Calc.Syntax
+module VE.Calc.Units
+module VE.Calc.UnitsExamples
 module VE.Cardinality.Erase
 module VE.Cardinality.Examples
 module VE.Cardinality.Ratio
@@ -201,6 +210,8 @@ module VE.Core.Wire
 module VE.Data.Background
 module VE.Defaults.Examples
 module VE.Defaults.Premises
+module VE.Defaults.Wire
+module VE.Defaults.WireExamples
 module VE.Definitions.Alias
 module VE.Definitions.Bundle
 module VE.Definitions.Elaborate
@@ -506,6 +517,7 @@ module VE.Scales.Syntax
 module VE.Scales.Theorems
 module VE.Scope.Effects
 module VE.Scope.Examples
+module VE.Scope.Govern
 module VE.Scope.Theorems
 module VE.SearchBudget.Budget
 module VE.SearchBudget.Demand
@@ -616,6 +628,7 @@ ResponseShape.KindRead@ResponseShape.Skeleton
 ResponseShape.OkFits@ResponseShape.Skeleton
 ResponseShape.OkP@ResponseShape.Skeleton
 VE.Acts.DerivedIn@VE.Acts.Read
+VE.Acts.Lexical.Accepts@VE.Acts.LexicalProofs
 VE.Alternatives.AltConflictFree@VE.Alternatives.Background
 VE.Alternatives.AltConflictFreeU@VE.Alternatives.FillWire
 VE.Alternatives.AltValid@VE.Alternatives.Inline
@@ -665,11 +678,19 @@ VE.Calc.Denotes.below@VE.Calc.Syntax
 VE.Calc.Denotes@VE.Calc.Syntax
 VE.Calc.Expr.Overflows@VE.Calc.Decls
 VE.Calc.Expr.ReadsExhausted@VE.Calc.Decls
+VE.Calc.Follows@VE.Calc.Lower
+VE.Calc.Frac.Means@VE.Calc.Poly
+VE.Calc.HasCounterexample@VE.Calc.Lower
+VE.Calc.Inlined.Agrees@VE.Calc.Inline
+VE.Calc.Inlined.Faults@VE.Calc.Inline
+VE.Calc.IsIdentity@VE.Calc.Identity
 VE.Calc.NameExhausted.below@VE.Calc.Decls
 VE.Calc.NameExhausted@VE.Calc.Decls
 VE.Calc.NameOverflows.below@VE.Calc.Decls
 VE.Calc.NameOverflows@VE.Calc.Decls
+VE.Calc.NotIdentity@VE.Calc.Identity
 VE.Calc.PhysDim.Normal@VE.Calc.Dimension
+VE.Calc.Poly.Within@VE.Calc.Poly
 VE.Calc.QFact.Holds@VE.Calc.Linear
 VE.Calc.Small@VE.Calc.Decls
 VE.Calc.Val.Agrees@VE.Calc.Decls
