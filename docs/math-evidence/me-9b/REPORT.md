@@ -78,6 +78,11 @@ and `not_isIdentity` (`mutants.json` 22 to 30), as me-2 allowed `Check.UnknownCa
   `[point-declaration-order]`). The review's examples are `[f3-numerator]`, `[f3-left]`, `[fault-inside-side]`,
   `[claim-fault-compare]` and `[claim-fault-within-e]`. The review's 7 mutants were replayed (`mutants.json` 31 to
   37): each fails the fixtures listed there; 31 and 32 also break `Expr.zeroDivisor_sound` as written.
+- **Tests for the fix** (`632a6eb6b`, the VM, the Mac runner unreachable): the review's probe fails before (no such
+  fixtures) and passes after; `select_tests.py --base 6454946a5 --run` ran 81 units, 79 to exit 0 before the call's
+  hour ran out, and the other two, `tests/test_acts_vocab_mutants.py` (643) and `tests/test_trust_mutants.py` (301),
+  were rerun alone with `-n 6` and passed; `lake build` and `lean/audit.py` pass. No Lean changed, so the trust
+  numbers and `trust-mutants.json` stand.
 - **F2 (C)** and **F3 (C)** are not changed here: F2 is ME-2's wording decision (Deviations), F3 asks the DRI to
   confirm the allow class.
 
