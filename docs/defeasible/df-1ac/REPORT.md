@@ -25,7 +25,7 @@ No text claims minimality (DF-2 is not proved).
 | --- | --- | --- |
 | (1) `DefaultsView`, `ViewRest`, `viewRest` (diagnostics 1, 2, 6, 4), `viewOf` (decoder refusals, then 7), `decodeLayered_soften`, `viewOf_layered` | yes, proved | `Wire.lean` |
 | (1) `elaborateRows`, `elaborateRows_eq` | yes | `Wire.lean` |
-| (1) `CoherenceReplay`, `PairStatus`, `pairs`, `verdict`, `replayCoherence` (diagnostic 5), `defaults_coherence_sound`, `coherence_collision_shown` (review F1) | yes, proved | `Wire.lean` |
+| (1) `CoherenceReplay`, `PairStatus`, `pairs`, `verdict`, `replayCoherence` (diagnostic 5), `defaults_coherence_sound`, `coherence_collision_shown` (review F1), `coherence_collision_named` (recheck F5) | yes, proved | `Wire.lean` |
 | (1) `defaultsCase`, `defaultsCase_other` | yes, for the two document kinds | `Wire.lean` |
 | (1) `CertReplay`, `replayCert`, `defaults_follows_gated`, `defaults_certificate_sound` | **df-1ad** (size): built, proved and fixtured on `wip/df-1ad-question` | — |
 | (1) `forcedAt`, `ModelReplay`, `replayModel`, `forcedAt_sound`, `defaults_model_sound` | **df-1ad** (size): built and proved on `wip/df-1ad-model` | — |
@@ -59,7 +59,8 @@ No text claims minimality (DF-2 is not proved).
    DF-ω's `[]` variant is diagnostic 5 on the wire, and its `[none]` variant is UNKNOWN with the pair `unknown`.
    DF-δ's pair certificate is the untrusted search's (df-1b). DF-γb, which is DF-γ with r1 guarded by `⊥`, gives
    COHERENT with a hand-written certificate bound as a producer binds one. DF-γ2 has two pairs and a two-entity
-   tuple, and kills `trust_mutants`' list mutants.
+   tuple, and kills `trust_mutants`' list mutants. DF-γ3 has two pairs that share their second rule, one kept apart by
+   its guard (recheck F5).
 5. **The wire form (this item's design; df-1b relays it).**
    - Requests: `coherence` is a list of `{"rules": [m, n], "certificate": … | null}`. `collision` is
      `{"model", "filling", "rules": [m, n]}`.
@@ -95,7 +96,7 @@ No text claims minimality (DF-2 is not proved).
 
 **Seeded bugs (Lean only).** No Python or Rust product file changed. They are in `mutants.json`, run by
 `python3 docs/defeasible/df-1a/evidence/run_mutants.py docs/defeasible/df-1ac/mutants.json`, with the saved run in
-`evidence/mutants.out`. The control has 0 failures, and all 10 mutants fail.
+`evidence/mutants.out`. The control has 0 failures, and all 12 mutants fail.
 
 | # | File, definition: bug | Fails |
 | --- | --- | --- |
@@ -107,9 +108,11 @@ No text claims minimality (DF-2 is not proved).
 | W7, W8 | `defaultsCase`: coherence answered as elaborate; an unknown `defaults-` kind answered | DF-α and DF-ω coherence; other kinds |
 | W9 | `CoherenceReplay.pairs` without `x.collides &&`: a pair shown `collision` under UNKNOWN (review F1) | DF-δ with an unchecked collision; `coherence_collision_shown` |
 | W10 | `coherenceFields` matching `true`, not the verdict: a `collision` member under UNKNOWN (review F1) | DF-δ with an unchecked collision; `coherence_collision_shown` |
+| W11 | `CoherenceReplay.pairs` matching the collision's second rule only: a pair that shares one rule shown `collision` (recheck F5) | DF-γ3; `coherence_collision_named` |
+| W12 | `coherenceFields`' `find?` on the second rule only: the tuple and deciders of the wrong pair (recheck F5) | DF-γ3; `coherence_collision_named` |
 
 `tools/trust_mutants.py --max-mutants 1000 --allow trust-mutants-allow.json --json trust-mutants.json` exits 0
-on the review-fix Lean (798 s): 84 killed, 0 survivors, 0 UNKNOWN, 6 allowed. Each allowed mutant writes an empty list that Lean cannot type there.
+on the recheck-fix Lean (HEAD 1ed5cc2a9, 1 job on a loaded VM, 5,928 s): 84 killed, 0 survivors, 0 UNKNOWN, 6 allowed. Each allowed mutant writes an empty list that Lean cannot type there.
 
 **Trust** (R16, DELTA T1): V +36, K +0, S +0, all in `Wire.lean`. FOLLOW-UPS "## df-1ac" asks for the ties pass.
 
@@ -177,6 +180,24 @@ Evidence after the fix, on HEAD 257158960:
 
 F2 to F4 (C) go to df-1ad, as the review says.
 
+## 8. Recheck fixes (`manage-agents/df-1ac-looprecheck1.final.md`, recheck of 4193af444)
+
+| Finding | Fix | Regression test | Commit |
+| --- | --- | --- | --- |
+| F5 (B): two more dropped conditions passed every guard and proof: `pairs` and `coherenceFields`' `find?` matched the collision's second rule only. DF-γ2's pairs share their first rule, so no fixture noticed, and `coherence_collision_shown` said only that some collision checked | **Class:** a collision shown on, or with the tuple of, a pair other than the one it names by both rules. New theorem `coherence_collision_named`: a pair shown `collision` is named `w.m`, `w.n` by the collision `w`, and the `collision` member's tuple and deciders are those of a colliding pair `(P, Q)` with `P.name = w.m` and `Q.name = w.n`. So any partial-key lookup in either place breaks a proof, not only the two mutants. DF-γ3 guard (r1 guarded by `⊥`; r1/r3 and r2/r3 share their second rule): a collision on r2/r3 is COLLISION, r1/r3 `unknown`, r2/r3 `collision`, tuple `[e_assistant]`; a collision on r1/r3 is UNKNOWN. W4 (the `||` lookup) now also fails DF-γ3. The only other pair-by-name check in `Wire.lean`, diagnostic 5, compares the whole `[P.name, Q.name]` list. `CoherenceReplay.pairs` is also tied to the new theorem (the budget is unchanged, V +36) | `lean/VE/Defaults/WireExamples.lean` `#guard holds (layered αEnv γ3R) …`; `mutants.json` W11, W12 (each fails the guard and the theorem, `evidence/mutants.out`); `coherence_collision_named` (`lean/VE/Audit.lean`) | 1ed5cc2a9 |
+
+PROBE F5, as the recheck gives it: before the fix `surviving: ['w.n == p.2.name', '(fun p => p.2.name == w.n)']`
+(AssertionError); after it `surviving: []`, exit 0. W1 to W10 still fail, each with at least the guards it names.
+
+Evidence after the fix, on HEAD 1ed5cc2a9:
+- `lake build` (1,054 jobs) and `python3 lean/audit.py`: PASS (599 files, 6,826 theorems).
+- `regen_generated.py --check`: 32 entries, exit 0. `trust_map.py --check`: PASS, trusted +36, unchanged.
+- `compare_statements.py`: unchanged (20 OK, 22 MISSING for df-1ad).
+- `run_mutants.py docs/defeasible/df-1ac/mutants.json`: control 0 failures, W1 to W12 fail (`evidence/mutants.out`).
+- `trust_mutants.py`: 84 killed, 6 allowed, exit 0.
+- Selected tests: `mac-pytest.sh --select -- --base c5197da78 --run`, 76 units, **0 failed** (1,503 s).
+  Pre-existing failures (`main-known-red.txt`): none failed.
+
 ## Self-review against BUILDER-CHECKLIST
 
 1. **Every Lean answer typed and contained.** N.A.: no response shape, schema, relay or service mode changes. The
@@ -187,7 +208,7 @@ F2 to F4 (C) go to df-1ad, as the review says.
    - Diff grep: no Python product file, no Python copy of a Lean decision, no permanent report test.
    - Overlap with in-flight branches: only `lean/VE.lean` (a union) and `tools/trust-classes.json` (own module
      entries).
-3. **Tests and gates can fail.** PASS. W1 to W10 cover every trusted definition but a type (`evidence/mutants.out`).
+3. **Tests and gates can fail.** PASS. W1 to W12 cover every trusted definition but a type (`evidence/mutants.out`).
    `trust_mutants.py` exits 0 (`trust-mutants.json`). The control passes.
 4. **Python, Lean and Rust agree; valid inputs pass.** N.A.: nothing reaches the new code from Python or Rust. The
    fixtures decode real JSON through `decodeSoftU`, including a two-place act (DF-γ2) and a new party (`operator`).
@@ -200,12 +221,13 @@ F2 to F4 (C) go to df-1ad, as the review says.
 8. **Every user-visible change in DELTA.** PASS. There is none besides trust: no mode, schema or pin changes
    (`regen_generated.py --check`).
 9. **Test selection.** PASS. The selected plan (76 units) includes `lake build`, which elaborates every guard, so W1
-   to W10 fail it.
+   to W12 fail it.
 10. **Lean statements say what is claimed.** PASS.
     - `evidence/compare_statements.py`: 20 OK on HEAD, 42 OK on the wip branch.
     - The comparator catches a dropped `¬`.
     - `defaults_coherence_sound` is about the returned verdict and the pairs shown `resolved`;
-      `coherence_collision_shown` is about a pair shown `collision` and the `collision` member (review F1).
+      `coherence_collision_shown` is about a pair shown `collision` and the `collision` member (review F1);
+      `coherence_collision_named` says which pair they are (recheck F5).
 11. **Budgets and limits fail closed.** PASS: diagnostic 4 (`limitDiag`) refuses through `viewRest`
     (`WireExamples.lean`, the `deepen` guard). No budget or deadline is added.
 12. **No CPU or memory regression.** N.A.: no route runs the new code; no pilot run (L70).
