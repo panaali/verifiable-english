@@ -166,7 +166,12 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool, prepare
     except Exception as exc:  # noqa: BLE001 - Lean accepted this front matter
         raise unavailable("is for a front matter Python cannot read") from exc
     try:
-        env = _environment(meta["environment"])
+        # scope@0 is a wrapper Lean's document mode runs before the chain, which reads the environment without it
+        # (`Service.Document.lowerScope`); the identities Lean answered are that environment's.
+        environment = meta["environment"]
+        if "scope@0" in listed_profiles(environment):
+            environment = {**environment, "profiles": [p for p in environment["profiles"] if p != "scope@0"]}
+        env = _environment(environment)
         senses = None
         if "senses" in meta:
             # Batch 16f: the senses route's reading of the English fences, which Lean's `document` mode composed

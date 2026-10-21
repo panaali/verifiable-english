@@ -79,6 +79,8 @@ def _split(raw: bytes):
                "contexts", "assessments", "bridges", "scoped", "completions", "senses"}
     if meta["format"] == "ve-document@2":
         allowed.add("discourse")
+    if "scope@0" in listed_profiles(meta.get("environment")):
+        allowed.add("scope")  # scope@0's block (docs/spec/scope.md 3), which Lean's document mode governs
     if set(meta) - allowed:
         raise VEError("unknown document metadata")
     if "couplings" in meta and not {"rights@0", "readings@1"}.intersection(
