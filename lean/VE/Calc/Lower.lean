@@ -129,10 +129,6 @@ theorem Claim.lower_sound (κ : String → Rat) (c : Claim) (fs : List QFact) (h
       rw [hu e _ x he hx, hu lo _ l hlo hl', hu hi _ u hhi hu'] at hxl; grind
   | rounds => simp [Claim.lower] at h
 
-theorem freeNames_mem (ds : List Decl) : ∀ n ∈ freeNames ds, n ∈ ds.map Decl.name := by
-  intro n hn; simp only [freeNames, List.mem_map, List.mem_filter] at hn ⊢; obtain ⟨d, ⟨hd, _⟩, rfl⟩ := hn
-  exact ⟨d, hd, rfl⟩
-
 theorem Claim.facts_sound (ds : List Decl) (h : WellFormed ds) (c : Claim) (fs : List QFact)
     (hf : c.facts ds = some fs) (κ : String → Rat) :
     (∀ f ∈ fs, f.Holds κ) ↔ c.Holds (values (assign ds (freeNames ds) κ)) := by
