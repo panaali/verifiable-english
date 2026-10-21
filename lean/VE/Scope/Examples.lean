@@ -635,6 +635,9 @@ def govF (doc : Json) (gs : List Governor) (ln : List (VE.Discourse.ContentName 
   ["ScopeNoEffect: gY", "ScopeOrder: u0165.s01: gN, g2", "ScopeOrder: u0165.s01: g2, g6", "ScopeOrphanPart: u0165.s01",
    "ScopeUnknownRule: r7"]
 #guard (match govF (hcDoc fourNorms) [] with | .ok o => o == hcDoc fourNorms | .error _ => false)
+-- governors of different reaches, and a `rules` reach, each read from its own table entry
+#guard (overOf (govF (hcDoc parts) [g1, gPf]) "u0165.s02", contentStr (govF (hcDoc parts) [g1, gR] hcNames) "u0165.s07") ==
+  (some "[\"hc-3\",\"hc-4\"]", some "{\"norm\":{\"guard\":[\"unary\",\"csam\",[\"var\",1]],\"name\":\"hc-csam\",\"over\":[],\"predicate\":\"csam_generation\",\"sign\":false,\"unless\":[[\"unary\",\"rules\",[\"var\",1]]]}}")
 
 -- until sc-3ab, an anchor or label reach is refused, never skipped
 #guard errorOf (gov (hcDoc parts) [g1, ⟨"gA", "u0164.s01", narrowK, .anchor "sec", []⟩]) ==
