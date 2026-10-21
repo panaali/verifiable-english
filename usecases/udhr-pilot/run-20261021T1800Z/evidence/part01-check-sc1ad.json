@@ -1,0 +1,27 @@
+{
+ "verdict": "ok",
+ "premises": "model",
+ "readings_status": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises",
+ "conflict": "CONFLICT-FREE",
+ "bytes_by_status": {
+  "CHECKED": 192,
+  "LABELLED": 265,
+  "OPEN": 1264,
+  "UNFORMALISED": 3003
+ },
+ "unit_status": {
+  "u010": "OPEN",
+  "u042": "UNFORMALISED",
+  "u043": "UNFORMALISED"
+ },
+ "label": "sc1ad",
+ "document": "usecases/udhr-pilot/run-20261021T0600Z/translation-part01.ve.md",
+ "wall_seconds": 17.1,
+ "address_space_cap_bytes": 6442450944,
+ "VE_RUST_TIMEOUT": "default (unset)",
+ "peak_child_resident_set_mb": {
+  "ve_service": 124.8,
+  "ve": 4.5
+ },
+ "peak_child_resident_set_mb_max": 124.8
+}

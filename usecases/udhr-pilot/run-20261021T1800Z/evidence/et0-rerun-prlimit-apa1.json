@@ -1,0 +1,27 @@
+{
+ "verdict": "ok",
+ "premises": "model",
+ "readings_status": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises",
+ "conflict": "CONFLICT-FREE",
+ "bytes_by_status": {
+  "CHECKED": 392,
+  "LABELLED": 265,
+  "OPEN": 1382,
+  "UNFORMALISED": 2685
+ },
+ "unit_status": {
+  "u010": "OPEN",
+  "u042": "CHECKED",
+  "u043": "OPEN"
+ },
+ "label": "prlimit-apa1",
+ "document": "usecases/udhr-pilot/run-20261020T0600Z/translation-part01.ve.md",
+ "wall_seconds": 40.1,
+ "address_space_cap_bytes": 6442450944,
+ "VE_RUST_TIMEOUT": "default (unset)",
+ "peak_child_resident_set_mb": {
+  "ve_service": 114.9,
+  "ve": 4.9
+ },
+ "peak_child_resident_set_mb_max": 114.9
+}

@@ -1,0 +1,9 @@
+{
+ "tag": "ve-green-ap-1b",
+ "what": "can a translator write an `acts@0` document (ap-1b admits the profile) and have `ve document check`/load accept it?",
+ "script": "evidence/ap1b-document-probe.py (u076 as one plain regulated act with one fixed phrase 'directly or through freely chosen representatives'); a second probe without norm-defaults@0 (completion deny) fails identically",
+ "result": "UnsupportedProfile: Unsupported profile acts@0",
+ "where": "ve/document/report.py -> ve/ast.py check_formula (typing, 'lean-base' encoding of the environment) -> the typing check mode refuses the profile; ap-1b's DELTA row 2 lists the environment mode, the norms route, the plain route and the norm-defaults route as readers, and its REPORT section 6 leaves the rest to ap-1bb (the readings route, model questions and Python's printing are refused or not wired)",
+ "consequence": "no act-phrase unit (u039, u041, u076, u079b, u082, u086, u092, u108; 1,403 B) can be upgraded: the 8 stay UNFORMALISED (other:act_phrase_grammar). Joined acts outside fixed phrases would need AP-2/AP-3 (not merged: only the AP-2 vocabulary modules, no route).",
+ "not_a_finding_about": "u085, u091, u106 (AP-0): they stay as landed (whole act phrase as one predicate's wording; no acts@0)"
+}
