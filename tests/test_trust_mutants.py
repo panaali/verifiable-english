@@ -173,10 +173,11 @@ def package(tmp_path_factory) -> Path:
     return root
 
 
-def tool(root: Path, scratch: Path, *args: str) -> tuple[subprocess.CompletedProcess, list[dict]]:
+def tool(root: Path, scratch: Path, *args: str, home: dict | None = None
+         ) -> tuple[subprocess.CompletedProcess, list[dict]]:
     out = scratch / "evidence.json"
     scratch.mkdir(parents=True, exist_ok=True)
-    env = {**os.environ, **PATH, "TMPDIR": str(scratch), "VE_LEAN_SHARE": "off"}
+    env = {**os.environ, **PATH, "TMPDIR": str(scratch), "VE_LEAN_SHARE": "off", **(home or {})}
     done = subprocess.run([sys.executable, str(ROOT / "tools/trust_mutants.py"), "--root", str(root), "--base",
                            "HEAD~1", "--jobs", "4", "--json", str(out), *args], env=env, capture_output=True,
                           text=True, timeout=HANG_TIMEOUT)
@@ -191,7 +192,9 @@ def snapshot(root: Path) -> dict[str, tuple[bytes, int]]:
 @pytest.fixture(scope="module")
 def default_run(package, tmp_path_factory):
     before = snapshot(package)
-    done, mutants = tool(package, tmp_path_factory.mktemp("run"))
+    scratch = tmp_path_factory.mktemp("run")
+    done, mutants = tool(package, scratch)
+    (tmp_path_factory.getbasetemp() / "default-evidence.json").write_text((scratch / "evidence.json").read_text())
     return done, mutants, before, snapshot(package)
 
 
@@ -451,6 +454,164 @@ def test_max_mutants_lists_the_rest_as_not_run(package, tmp_path, limit):
     printed = [line for line in done.stdout.splitlines() if line.startswith("NOT RUN ")]
     assert len(printed) == len(mutants) - limit
     assert done.returncode == (1 if any(m["status"] == "SURVIVOR" for m in ran) else 3)
+
+
+@pytest.fixture(scope="module")
+def prefix_run(package, tmp_path_factory) -> Path:
+    """The evidence of a run of the first five mutants: four of `small` (KILLED) and one of `evens` (SURVIVOR)."""
+    scratch = tmp_path_factory.mktemp("prefix")
+    tool(package, scratch, "--max-mutants", "5")
+    return scratch / "evidence.json"
+
+
+def rescored(root: Path, scratch: Path, prev: Path, *args: str, home: dict | None = None
+             ) -> tuple[subprocess.CompletedProcess, dict]:
+    done, _ = tool(root, scratch, "--rescore", str(prev), *args, home=home)
+    out = scratch / "evidence.json"
+    return done, json.loads(out.read_text()) if out.is_file() else {}
+
+
+def test_rescore_after_an_allow_only_edit_builds_nothing(package, prefix_run, tmp_path):
+    """speed-tmrescore: on an unchanged tree, a new --allow entry is all that changed. Every verdict is the last
+    run's (`reused_from` its head), the survivor it names is ALLOWED (`raw_status` SURVIVOR), and Lake never runs:
+    the `lake` first on the tool's PATH records each call and fails."""
+    prev = json.loads(prefix_run.read_text())
+    ran = [m for m in prev["mutants"] if m["status"] != "NOT RUN"]
+    (survivor,) = [m for m in ran if m["status"] == "SURVIVOR"]
+    assert len(ran) == 5 and {m["status"] for m in ran} == {"KILLED", "SURVIVOR"} and prev["inputs"], ran
+    shim, log = tmp_path / "home/.elan/bin/lake", tmp_path / "lake.log"
+    shim.parent.mkdir(parents=True)
+    shim.write_text(f"#!/bin/sh\necho \"$*\" >> {log}\nexit 97\n")
+    shim.chmod(0o755)
+    allow = tmp_path / "allow.json"
+    allow.write_text(json.dumps({"allow": [{"definition": survivor["definition"], "operator": survivor["operator"],
+                                            "reason": "allowed after the run"}]}))
+    done, data = rescored(package, tmp_path / "run", prefix_run, "--max-mutants", "5", "--allow", str(allow),
+                          home={"HOME": str(tmp_path / "home"), "ELAN_HOME": str(Path.home() / ".elan")})
+    assert not log.exists() and done.returncode == 3, done.stdout + done.stderr
+    assert data["rescore"] == {"file": str(prefix_run), "head": prev["head"], "reused": 5, "rerun": 0}
+    assert f"5 reused from {prev['head'][:12]} (identical inputs)" in done.stdout
+    now = {m["id"]: m for m in data["mutants"]}
+    for m in ran:
+        mine = now[m["id"]]
+        assert (mine["reused_from"], mine["raw_status"], mine["detail"] if m is not survivor else "") == (
+            prev["head"], m["status"], m["detail"] if m is not survivor else ""), mine
+        assert mine["status"] == ("ALLOWED" if m is survivor else m["status"]), mine
+    assert not [m for m in data["mutants"] if m["id"] not in {x["id"] for x in ran} and "reused_from" in m]
+
+
+def test_rescore_runs_the_not_run_mutants_that_now_fit(package, prefix_run, tmp_path):
+    """--max-mutants decides which mutants run, never a verdict: a larger one reuses the five and runs two more."""
+    done, data = rescored(package, tmp_path / "run", prefix_run, "--max-mutants", "7")
+    assert data["rescore"]["reused"] == 5 and data["rescore"]["rerun"] == 2, done.stdout + done.stderr
+    fresh = [m for m in data["mutants"] if m["status"] != "NOT RUN" and "reused_from" not in m]
+    assert [m["id"] for m in fresh] == ["M006", "M007"] and all(m["raw_status"] == m["status"] for m in fresh)
+
+
+def test_rescore_reruns_only_the_unknown_mutants(package, default_run, tmp_path, tmp_path_factory):
+    """The UNKNOWN mutants of the last run, and they alone, run again. Rescored with an expired build limit (0 s),
+    each of them is past it (and only they: every other verdict, KILLED ones included, is the last run's); rescored
+    once more with the default limit, those forced UNKNOWNs run alone and give the first run's verdicts back."""
+    first = tmp_path_factory.getbasetemp() / "default-evidence.json"
+    prev = {m["id"]: m for m in json.loads(first.read_text())["mutants"]}
+    unknown = sorted(i for i, m in prev.items() if m["raw_status"] == "UNKNOWN")
+    assert unknown and any(m["status"] == "KILLED" for m in prev.values())
+    done, forced = rescored(package, tmp_path / "forced", first, "--build-timeout", "0")
+    rerun = sorted(m["id"] for m in forced["mutants"] if m["status"] != "NOT RUN" and "reused_from" not in m)
+    assert rerun == unknown and forced["rescore"]["rerun"] == len(unknown), done.stdout + done.stderr
+    for m in forced["mutants"]:
+        if m["id"] in unknown:
+            assert m["status"] == "UNKNOWN" and "did not finish in 0 s" in m["detail"], m
+        else:
+            assert (m["status"], m["detail"]) == (prev[m["id"]]["status"], prev[m["id"]]["detail"]), m
+    done, again = rescored(package, tmp_path / "again", tmp_path / "forced/evidence.json")
+    assert sorted(m["id"] for m in again["mutants"] if m["status"] != "NOT RUN" and "reused_from" not in m) == unknown
+    assert [(m["status"], m["detail"].split(": ")[0]) for m in again["mutants"]] == [
+        (m["status"], m["detail"].split(": ")[0]) for m in prev.values()], done.stdout + done.stderr
+
+
+@pytest.mark.parametrize("old", ["no-inputs", "unreadable"])
+def test_rescore_of_an_old_or_unreadable_file_is_a_full_run(package, prefix_run, tmp_path, old):
+    """Evidence written before `inputs` existed, or a file that is no evidence, is a full run, said in one line."""
+    prev = tmp_path / "prev.json"
+    data = json.loads(prefix_run.read_text())
+    prev.write_text(json.dumps({k: v for k, v in data.items() if k != "inputs"}) if old == "no-inputs" else "{")
+    done, data = rescored(package, tmp_path / "run", prev, "--max-mutants", "2")
+    said = [line for line in done.stdout.splitlines() if "a full run, since" in line]
+    assert len(said) == 1 and ("records no inputs" if old == "no-inputs" else "cannot be read") in said[0], said
+    assert data["rescore"]["reused"] == 0 and data["rescore"]["rerun"] == 2 and data["rescore"]["head"] is None
+    assert not [m for m in data["mutants"] if "reused_from" in m]
+
+
+CHANGES = {  # one byte of each input, or an option or the base, changed in a copy of the package
+    "cone-file": lambda r: (r / "lean/Demo/Examples.lean").write_text(
+        (r / "lean/Demo/Examples.lean").read_text().replace("#guard small 2", "#guard small 1")),
+    "lakefile": lambda r: (r / "lean/lakefile.toml").write_text((r / "lean/lakefile.toml").read_text() + " "),
+    "statements": lambda r: (r / "lean/statements.txt").write_text((r / "lean/statements.txt").read_text() + "\n"),
+    "trust-table": lambda r: (r / "tools/trust-classes.json").write_text('{"modules": {} }\n'),
+    "test-file": lambda r: (r / "outside/T.lean").write_text("import Demo.Defs\n#guard Demo.small 1\n"),
+}
+
+
+@pytest.mark.parametrize("change", [*CHANGES, "deep", "test-option", "base"])
+def test_any_changed_input_gives_a_full_run(package, tmp_path, change):
+    """`inputs` digests the bytes, never a commit id: one byte changed in a cone file, the lakefile, a list `plan`
+    reads, trust_map's table or an outside --test file, or another --deep, --test or base, and PREV is refused."""
+    import shutil
+    import trust_mutants
+    root = tmp_path / "copy"
+    shutil.copytree(package, root, symlinks=True, ignore=shutil.ignore_patterns(".lake"))
+    (root / "outside").mkdir(exist_ok=True)
+    (root / "outside/T.lean").write_text("import Demo.Defs\n#guard Demo.small 2\n")
+    base = "0123456789abcdef" * 2 + "01234567"  # a commit id: `main` resolves it, `inputs` records it as it is
+
+    def digests(deep: bool = False, tests: tuple = (), base: str = base) -> dict:
+        return trust_mutants.inputs(root, base, list(tests), [root / "outside/T.lean"], deep)
+    prev, before = tmp_path / "prev.json", digests()
+    prev.write_text(json.dumps({"inputs": before, "head": "h", "mutants": []}))
+    assert trust_mutants.previous(prev, digests(), []) == ("h", {})
+    if change in CHANGES:
+        CHANGES[change](root)
+    now = digests(change == "deep", ("Demo/Examples.lean",) if change == "test-option" else (),
+                  base if change != "base" else base[:-1] + ("0" if base[-1] != "0" else "1"))
+    assert [k for k in now if now[k] != before[k]] == [
+        {"deep": "options", "test-option": "options", "base": "base", "test-file": "tests"}.get(change, "lean")]
+    assert "inputs differ" in trust_mutants.previous(prev, now, [])
+
+
+def test_the_inputs_digest_the_tools_own_source(tmp_path, monkeypatch):
+    """A byte changed in the tool, or in a module of the repository it imports, changes its `inputs`."""
+    import types
+    import trust_mutants
+    (tmp_path / "tools").mkdir()
+    (tmp_path / "lean").mkdir()
+    source = tmp_path / "tools/helper.py"
+    source.write_text("X = 1\n")
+    helper = types.ModuleType("tm_helper")
+    helper.__file__ = str(source)
+    monkeypatch.setattr(trust_mutants, "ROOT", tmp_path)
+    monkeypatch.setitem(sys.modules, "tm_helper", helper)
+    before = trust_mutants.inputs(tmp_path, "b", [], [], False)
+    source.write_text("X = 2\n")
+    after = trust_mutants.inputs(tmp_path, "b", [], [], False)
+    assert [k for k in after if after[k] != before[k]] == ["tool"]
+
+
+def test_rescore_of_evidence_whose_mutants_differ_is_a_full_run(tmp_path):
+    """Identical inputs give the same plan; evidence whose mutant rows are not the plan's is refused all the same."""
+    import trust_mutants
+    m = trust_mutants.Mutant("M001", "Demo/Defs.lean", 3, "Demo.small", "lt-le", 0, 1, (3, 3), "<", "≤")
+    row = {"id": "M001", "file": "Demo/Defs.lean", "line": 3, "definition": "Demo.small", "operator": "lt-le",
+           "before": "<", "after": "≤", "status": "ALLOWED", "raw_status": "SURVIVOR", "detail": "a reason"}
+    prev = tmp_path / "prev.json"
+    for rows, ok in (([row], True), ([{**row, "after": "="}], False), ([], False),
+                     ([{**row, "raw_status": "PASSED"}], False), ([{k: v for k, v in row.items() if k != "raw_status"}],
+                                                                  False)):
+        prev.write_text(json.dumps({"inputs": {"x": "1"}, "head": "h", "mutants": rows}))
+        got = trust_mutants.previous(prev, {"x": "1"}, [m])
+        assert (got == ("h", {"M001": ("SURVIVOR", "")})) if ok else isinstance(got, str), (rows, got)
+    prev.write_text(json.dumps({"inputs": {"x": "1"}, "head": "", "mutants": [row]}))
+    assert "cannot be read" in trust_mutants.previous(prev, {"x": "1"}, [m])
 
 
 def test_the_generator_cuts_every_list_a_condition_reads():
