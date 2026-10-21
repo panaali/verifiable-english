@@ -14113,6 +14113,91 @@
         "VE.Calc.RunExamples.v5Rows",
         "VE.Calc.RunExamples.x1"
       ]
+    },
+    "VE/Defaults/Wire.lean": {
+      "C": [
+        "VE.Defaults.Wire.CoherenceReplay",
+        "VE.Defaults.Wire.CoherenceReplay.coherent",
+        "VE.Defaults.Wire.CoherenceReplay.collides",
+        "VE.Defaults.Wire.Collision",
+        "VE.Defaults.Wire.DefaultsView",
+        "VE.Defaults.Wire.ViewRest",
+        "VE.Defaults.Wire.bindPair",
+        "VE.Defaults.Wire.collisionOf",
+        "VE.Defaults.Wire.pairCertsOf",
+        "VE.Defaults.Wire.pieceWith",
+        "VE.Defaults.Wire.replayCoherence",
+        "VE.Defaults.Wire.replayCoherenceOn",
+        "VE.Defaults.Wire.viewOf"
+      ],
+      "D[R]": [
+        "VE.Defaults.Wire.notWellFormedText",
+        "VE.Defaults.Wire.pairText",
+        "VE.Defaults.Wire.viewRest",
+        "VE.Defaults.Wire.weighingText"
+      ],
+      "D[V]": [
+        "VE.Defaults.Wire.PairStatus.label",
+        "VE.Defaults.Wire.coherenceFields",
+        "VE.Defaults.Wire.elaborateFields",
+        "VE.Defaults.Wire.entityIds"
+      ],
+      "G[V]": [
+        "VE.Defaults.Wire.PairStatus",
+        "VE.Defaults.Wire.defaultsCase",
+        {
+          "name": "VE.Defaults.Wire.CoherenceReplay.pairs",
+          "tied": [
+            "VE.Defaults.Wire.coherence_collision_named",
+            "VE.Defaults.Wire.coherence_collision_shown",
+            "VE.Defaults.Wire.defaults_coherence_sound"
+          ]
+        },
+        {
+          "name": "VE.Defaults.Wire.CoherenceReplay.verdict",
+          "tied": [
+            "VE.Defaults.Wire.defaults_coherence_sound"
+          ]
+        },
+        {
+          "name": "VE.Defaults.Wire.elaborateRows",
+          "tied": [
+            "VE.Defaults.Wire.elaborateRows_eq"
+          ]
+        }
+      ]
+    },
+    "VE/Defaults/WireExamples.lean": {
+      "T": [
+        "VE.Defaults.WireFixtures.ans",
+        "VE.Defaults.WireFixtures.answer",
+        "VE.Defaults.WireFixtures.boundJ",
+        "VE.Defaults.WireFixtures.collJ",
+        "VE.Defaults.WireFixtures.dγb",
+        "VE.Defaults.WireFixtures.envW",
+        "VE.Defaults.WireFixtures.fJ",
+        "VE.Defaults.WireFixtures.model",
+        "VE.Defaults.WireFixtures.pairJ",
+        "VE.Defaults.WireFixtures.pairsJ",
+        "VE.Defaults.WireFixtures.req",
+        "VE.Defaults.WireFixtures.rest",
+        "VE.Defaults.WireFixtures.rulesJ",
+        "VE.Defaults.WireFixtures.traceJ",
+        "VE.Defaults.WireFixtures.αEnv",
+        "VE.Defaults.WireFixtures.αR",
+        "VE.Defaults.WireFixtures.γ'Env",
+        "VE.Defaults.WireFixtures.γ'R",
+        "VE.Defaults.WireFixtures.γ2Coll",
+        "VE.Defaults.WireFixtures.γ2Env",
+        "VE.Defaults.WireFixtures.γ2R",
+        "VE.Defaults.WireFixtures.γ3Coll",
+        "VE.Defaults.WireFixtures.γ3R",
+        "VE.Defaults.WireFixtures.γR",
+        "VE.Defaults.WireFixtures.γbCert",
+        "VE.Defaults.WireFixtures.γbR",
+        "VE.Defaults.WireFixtures.δEnv",
+        "VE.Defaults.WireFixtures.δR"
+      ]
     }
   }
 }
