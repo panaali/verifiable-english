@@ -5934,6 +5934,7 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.Examples.unordered_join
 #print axioms VE.Scope.addOver_nil
 #print axioms VE.Scope.admit_governor
+#print axioms VE.Scope.anchor_reach_iff
 #print axioms VE.Scope.baseName_some
 #print axioms VE.Scope.baseObjF_slow
 #print axioms VE.Scope.commutes_symm
@@ -5960,6 +5961,7 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.hasOwn_mono
 #print axioms VE.Scope.impl_map_eq
 #print axioms VE.Scope.itemRule_decoder
+#print axioms VE.Scope.label_reach_iff
 #print axioms VE.Scope.lookups_absent
 #print axioms VE.Scope.lookups_fields
 #print axioms VE.Scope.lookups_spec
