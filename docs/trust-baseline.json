@@ -1132,6 +1132,13 @@
    "reason": "ap-1bb fix1 (review F1): VE/Norms/Wire.lean +10 (canonicalActs), VE/Service/Standalone.lean +6 (the environment row's acts), ResponseShape/Schemas/Environment.lean +1 (its shape); untied V +17 over the first allowance (V +35 in all), K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1bb, 2026-10-26",
    "commit": "ba2532a224a0e605a22be44917005720f4f6764c"
+  },
+  {
+   "class": "S",
+   "lines": 93,
+   "reason": "me-12a: arith@0 meaning, S +93 (VE/Arith/Holds.lean 60, VE/Arith/Syntax.lean 31, VE/Arith/Examples.lean 2), K +0, V +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-12a, 2026-10-18",
+   "commit": "7855620f3e06be59bd94730ef404689d3a18e558"
   }
  ]
 }
