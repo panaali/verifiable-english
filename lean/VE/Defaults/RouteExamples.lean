@@ -44,6 +44,12 @@ def βTwo (L : VE.NormDefaults.Wire.LayeredU) : Json :=
     .str s!"error: UnsupportedProfile: case kind {k} needs the soft premise pack"
 #guard holds dα fun L => shown (VE.NormDefaults.Wire.layeredKindCase L "c" "defaults-elaborate"
   (req αEnv αR "defaults-elaborate")) == answer (req αEnv αR "defaults-elaborate")
+-- the soft pack is looked for among all the packs, in any order
+#guard holds dα fun L => let r : VE.NormDefaults.Packs.Pack := ⟨"rights", .constraint, [], [], [], []⟩
+  [L.packs ++ [r], r :: L.packs].all (fun ps => shown (VE.NormDefaults.Wire.layeredKindCase { L with packs := ps } "c"
+    "defaults-elaborate" (req αEnv αR "defaults-elaborate")) == answer (req αEnv αR "defaults-elaborate")) &&
+  shown (VE.NormDefaults.Wire.layeredKindCase { L with packs := [r] } "c" "defaults-elaborate"
+    (req αEnv αR "defaults-elaborate")) == .str "error: UnsupportedProfile: case kind defaults-elaborate needs the soft premise pack"
 -- a `defaults-` kind outside the row, a plain norm-defaults source and a source without the profile keep the base's
 -- refusals
 def plainEnv : Json := αEnv.setObjVal! "profiles" (toJson ["norm-defaults@0", "norms@0", "relational-fol@0"])

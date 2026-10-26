@@ -99,6 +99,20 @@ theorem dispatch_okP {α : Type} (rows : List (Packs.KindRow α)) (ids : List St
     · exact OkP.ite (fun _ => hm) (fun _ => OkP.throw)
     · exact hm
 
+/-- A checked collision is the request's, and names a colliding pair. -/
+theorem collides_named (x : VE.Defaults.Wire.CoherenceReplay) (h : x.collides = true) :
+    ∃ w P Q, x.collision = some w ∧
+      (VE.SoftNorms.collidingPairs x.v.L.D).find? (fun p => p.1.name == w.m && p.2.name == w.n) = some (P, Q) := by
+  unfold VE.Defaults.Wire.CoherenceReplay.collides at h
+  split at h
+  · rename_i w hw
+    unfold VE.Defaults.collisionCheck at h
+    split at h
+    · cases h
+    · rename_i P Q hf
+      exact ⟨w, P, Q, hw, hf⟩
+  · cases h
+
 open VE.Defaults.Wire in
 theorem defaultsCase_fits (v : DefaultsView) (id kind : String) (j : Json)
     (hi : VE.Bridge.stringField j "id" = .ok id)
@@ -114,8 +128,12 @@ theorem defaultsCase_fits (v : DefaultsView) (id kind : String) (j : Json)
     CoherenceReplay.verdict, CertReplay.verdict, ModelReplay.verdict, PairStatus.label, basisLabel, formLabel,
     entityIds, VE.NormDefaults.Wire.witnessRow]
   · fits
-  · by_cases h1 : x.coherent = true <;> by_cases h2 : x.collides = true <;>
-      simp only [h1, h2, ↓reduceIte, Bool.false_eq_true, String.reduceBEq] <;> (repeat' split) <;> fits
+  · by_cases h1 : x.coherent = true
+    · simp only [h1, ↓reduceIte, String.reduceBEq]; fits
+    by_cases h2 : x.collides = true
+    · obtain ⟨w, P, Q, hw, hf⟩ := collides_named x h2
+      simp only [h1, h2, hw, hf, ↓reduceIte, Bool.false_eq_true, String.reduceBEq]; fits
+    · simp only [h1, h2, ↓reduceIte, Bool.false_eq_true, String.reduceBEq]; fits
   · by_cases h : (x.certOk && x.coherent && x.modelOk) = true <;>
       simp only [h, ↓reduceIte, Bool.false_eq_true, String.reduceBEq, beq_self_eq_true] <;> fits
   · by_cases h : x.ok = true <;> simp only [h, ↓reduceIte, Bool.false_eq_true] <;> fits
