@@ -2012,6 +2012,15 @@ theorem VE.Alternatives.zip_all_target
       ∀ {t : β}, t ∈ ts → ∃ c, f t c = Bool.true
   -- uses VE.Alternatives.altConflictFreeCheckU.match_1@VE.Alternatives.FillWire VE.Alternatives.zip_all_target.match_1@VE.Alternatives.FillWire VE.Tableau.Certificate@VE.Tableau
   -- expr 120590332
+theorem VE.Arith.Examples.bertrand_means_iff
+  VE.Arith.Examples.primeDefs.Means VE.Arith.Examples.bertrand ↔
+    ∀ (n : Nat), 1 ≤ n → ∃ p, VE.Arith.Examples.IsPrime p ∧ n < p ∧ p ≤ 2 * n
+  -- uses VE.Arith.Defs.Means@VE.Arith.Holds VE.Arith.Examples.IsPrime@VE.Arith.Examples VE.Arith.Examples.bertrand@VE.Arith.Examples VE.Arith.Examples.primeDefs@VE.Arith.Examples
+  -- expr 570097480
+theorem VE.Arith.Examples.primeBody_iff
+  ∀ (E : VE.Arith.Env) (p : Nat), VE.Arith.Holds E [↑p] VE.Arith.Examples.primeBody ↔ VE.Arith.Examples.IsPrime p
+  -- uses VE.Arith.Env@VE.Arith.Holds VE.Arith.Examples.IsPrime@VE.Arith.Examples VE.Arith.Examples.primeBody@VE.Arith.Examples VE.Arith.Holds@VE.Arith.Holds
+  -- expr 1140533882
 theorem VE.Ask.Answer.groups_view
   ∀ (a : VE.Ask.Answer), a.groups = a.view.groups
   -- uses VE.Ask.Answer.groups@VE.Ask.Render VE.Ask.Answer.view@VE.Ask.Render VE.Ask.Answer@VE.Ask.Render VE.Ask.Group@VE.Ask.Groups VE.Ask.View.groups@VE.Ask.Lines
