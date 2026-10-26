@@ -1125,6 +1125,13 @@
    "reason": "ap-1bb fix1 (review F1): VE/Norms/Wire.lean +10 (canonicalActs), VE/Service/Standalone.lean +6 (the environment row's acts), ResponseShape/Schemas/Environment.lean +1 (its shape); untied V +17 over the first allowance (V +35 in all), K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1bb, 2026-10-26",
    "commit": "ba2532a224a0e605a22be44917005720f4f6764c"
+  },
+  {
+   "class": "V",
+   "lines": 104,
+   "reason": "df-1ae: V +104 (K +0, S +0): ResponseShape/Schemas/NormDefaults.lean +80 (the four defaults-* shapes, the situation, the kind and row entries), VE/Defaults/Route.lean +22 (defaultsKinds, defaultsRows, layeredRows, layeredKindCase, runLayered moved), VE/Defaults/Wire.lean +8 (situationJson, coherenceFields, modelFields), VE/NormDefaults/Run.lean +1 (the routing), VE/NormDefaults/Layered.lean -7 (runLayered moved out)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-1ae, 2026-10-18",
+   "commit": "a547f2141a37398614fb0eeced43cfa7079c7265"
   }
  ]
 }
