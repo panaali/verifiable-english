@@ -320,11 +320,31 @@ def oneEach : List (List (Defs × List Formula × Refusal)) :=
 /-! `Formula.Scoped` reads the definition of the call's kind, whatever shares its name. -/
 #guard (Formula.call "x" [z]).Scoped [.fn "x" 0 z, .pred "x" 1 ok] 0 && (Term.call "x" [] |> (Formula.eq · z)).Scoped
   [.pred "x" 1 ok, .fn "x" 0 z] 0 && !(Formula.call "x" []).Scoped [.fn "x" 0 z, .pred "x" 1 ok] 0
+/-! `Formula.Scoped` does not read boundedness: a count of an unbounded condition is scoped (review F7). -/
+#guard (Formula.le z (.countFromTo z z (.allInt ok))).Scoped [] 0 &&
+  (Formula.le z (.countFromTo z z (.call "u" []))).Scoped [.pred "u" 0 (.allNat ok)] 0
 /-! Two of one kind: the first in order; a name used twice across kinds, and past another definition. -/
 #guard caseRefusal [] [.call "x" [], .call "y" []] = some (.unknownDefinition "x") &&
   caseRefusal [.fn "x" 0 z, .pred "x" 0 ok] [] = some (.duplicateName "x") &&
   caseRefusal [.pred "x" 0 ok, .fn "y" 0 z, .pred "x" 0 ok] [] = some (.duplicateName "x") &&
   caseRefusal [.fn "x" 0 z, .fn "x" 0 z] [] = some (.duplicateName "x")
+
+/-- The name first defined again, reading the definitions in order: the request's order of second definitions. -/
+def firstRepeat : List String → List String → Option String
+  | _, [] => none
+  | seen, n :: ns => if seen.contains n then some n else firstRepeat (n :: seen) ns
+/-- Every list of at most five names over `x`, `y`, `w`. -/
+def nameLists : List (List String) :=
+  (List.range 5).foldl (fun ls _ => ls ++ (ls.filter (·.length == ls.getLast!.length)).flatMap fun l =>
+    ["x", "y", "w"].map (l ++ [·])) [[]]
+
+/-! Several names each defined twice or more: the name defined again first is reported (`[x, y, y, x]` is `y`), with
+the definitions of either kind, alternating, and with a later fault in a statement; and only a repeat is refused. -/
+#guard nameLists.length == 364 && nameLists.all fun ns => [true, false].all fun b => [[], [.call "nope" []]].all fun φs =>
+  let D : Defs := ns.zipIdx.map fun (n, i) => if (i % 2 == 0) == b then .fn n 0 z else .pred n 0 ok
+  caseRefusal D φs == ((firstRepeat [] ns).map .duplicateName <|> if φs.isEmpty then none else some (.unknownDefinition "nope")) &&
+    D.WellFormed == (firstRepeat [] ns).isNone
+#guard caseRefusal [.fn "x" 0 z, .fn "y" 0 z, .pred "y" 0 ok, .pred "x" 0 ok] [] = some (.duplicateName "y")
 
 /-! Two of one kind in one statement or body: the one earlier in the request's order, at every place and host (a
 call's name before its arguments, each child before the next, a binder's lo before its hi before its body), with the
