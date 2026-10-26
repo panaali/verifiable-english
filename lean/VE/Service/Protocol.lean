@@ -586,6 +586,7 @@ def calcCases (text : String) : Except String (Array (Except String Json)) := do
   | _ => false
 #guard ["[{\"a\": 1, \"a\": 2}]", "[{\"a\": -1, \"a\": 2}]", "[6.4e1]", "[65.0]", "[1e-5]", "[- 7]", "[--7]",
   "[null]", "[-99999999999999999999]"].all fun t => (calcCases t).isOk == false
+#guard (calcCases "[{\"a-b\": -1, \"a b\": 2}]").isOk
 
 def decodeCases (r : Request) : Except String (Array (Except String Json)) :=
   if r.mode == .english then parseEnglishCases r.cases
