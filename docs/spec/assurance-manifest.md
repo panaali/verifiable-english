@@ -142,7 +142,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Attribution/Preflight.lean` | 457 | 457 | 1–457 | `fa6956756459…` |
 | `lean/VE/Attribution/Wire.lean` | 515 | 515 | 1–515 | `5dd9512e2a22…` |
 | `lean/VE/Bridge.lean` | 335 | 288 | 14–301 | `4f7b5313509e…` |
-| `lean/VE/CertificateWire.lean` | 307 | 181 | 46–216, 231–240 | `d7fd15723daf…` |
+| `lean/VE/CertificateWire.lean` | 321 | 181 | 46–216, 231–240 | `d81be730d087…` |
 | `lean/VE/Closure/Bridge.lean` | 100 | 58 | 10–67 | `215839deaae1…` |
 | `lean/VE/Core/Bridge.lean` | 156 | 112 | 11–122 | `778e45637441…` |
 | `lean/VE/Core/Wire.lean` | 209 | 209 | 1–209 | `1d5198a59d4c…` |

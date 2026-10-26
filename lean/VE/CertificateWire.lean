@@ -304,4 +304,18 @@ def legacyCertificate (result : Json) : Json :=
 
 def runCaseReported (j : Json) : Json := legacyCertificate (runCaseReportedSteps j)
 
+private def refusal : Except String String → String
+  | .error e => e
+  | .ok s => "ok " ++ s
+
+#guard (documentCanonical 257 (Json.mkObj [("𝔸", .null), ("b", Json.arr #[.null, true, 7]),
+  ("a", Json.mkObj [("z", "x\n"), ("y", .null)])])).toOption ==
+  some "{\"a\":{\"y\":null,\"z\":\"x\\n\"},\"b\":[null,true,7],\"𝔸\":null}"
+#guard (canonical 257 (Json.mkObj [("𝔸", "c"), ("b", Json.arr #[false, 7]),
+  ("a", Json.mkObj [("z", "x\n")])])).toOption == some "{\"a\":{\"z\":\"x\\n\"},\"b\":[false,7],\"𝔸\":\"c\"}"
+#guard refusal (canonical 257 (Json.mkObj [("a", Json.arr #[.null])])) == "null is not in certificate wire format"
+#guard refusal (canonical 257 .null) == "null is not in certificate wire format"
+#guard refusal (documentCanonical 2 (Json.arr #[Json.arr #[.null]])) == "ResourceLimit: canonical JSON depth"
+#guard refusal (canonical 2 (Json.arr #[Json.arr #[7]])) == "ResourceLimit: canonical JSON depth"
+
 end VE.CertificateWire

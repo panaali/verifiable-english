@@ -4813,7 +4813,7 @@ module VE.Cardinality.Theorems 1add26d13156953c94d0ef8e14f6dbcc501ca8e0a98d7c1f0
 941:0-945:103 theorem VE.Cardinality.countFin_eq@VE.Cardinality.Theorems
 947:0-964:75 theorem VE.Cardinality.withRegionsFinite_denote@VE.Cardinality.Theorems
 966:0-985:97 theorem VE.Cardinality.refutesC_sound@VE.Cardinality.Theorems
-module VE.CertificateWire d7fd15723dafa173aec727092ec55d76e9fd09a3d8e2984019e18f17c8667950
+module VE.CertificateWire d81be730d087e7908329df473c8e34f8b1f26afd87b8b81a294e131b6afb9add
 11:0-13:27 def VE.CertificateWire.maxSteps@VE.CertificateWire
 15:0-15:82 def VE.CertificateWire.stepLimit@VE.CertificateWire
 17:0-17:28 def VE.CertificateWire.caseCap@VE.CertificateWire
@@ -4856,6 +4856,7 @@ module VE.CertificateWire d7fd15723dafa173aec727092ec55d76e9fd09a3d8e2984019e18f
 290:0-294:54 def VE.CertificateWire.runCaseReportedSteps@VE.CertificateWire
 296:0-303:13 def VE.CertificateWire.legacyCertificate@VE.CertificateWire
 305:0-305:83 def VE.CertificateWire.runCaseReported@VE.CertificateWire
+307:0-309:23 def VE.CertificateWire.refusal@VE.CertificateWire
 module VE.Checks a59f6571f3a81848ffd1426890fe640478c49e28878f5dd907dbdff77536d5c8
 8:0-13:28 def VE.Checks.env@VE.Checks
 51:0-55:65 def VE.Checks.fullEnv@VE.Checks
