@@ -1,0 +1,9 @@
+exit 1
+trust_mutants: 3 definitions, 4 mutants (4 to run), 4 jobs, base 768a935fcd03
+SURVIVOR lean/VE/Calc/Wire.lean:195 VE.Calc.Wire.supports (D[I]) list-drop-first: ["observation", "testimony", "assumption"] -> (["observation", "testimony", "assumption"].drop 1)
+SURVIVOR lean/VE/Calc/Wire.lean:110 VE.Calc.Wire.limitFault (D[R]) lit-minus: 65 -> 64
+SURVIVOR lean/VE/Calc/Wire.lean:195 VE.Calc.Wire.supports (D[I]) list-drop-last: ["observation", "testimony", "assumption"] -> (["observation", "testimony", "assumption"].dropLast)
+SURVIVOR lean/VE/Calc/Wire.lean:210 VE.Calc.Wire.recordJson (D[I]) le-lt: ≤ -> <
+trust_mutants: 0 KILLED, 4 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 55 s
+trust_mutants: D[I]: 3 SURVIVOR
+trust_mutants: D[R]: 1 SURVIVOR

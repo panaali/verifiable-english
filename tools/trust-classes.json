@@ -974,6 +974,7 @@
         "ResponseShape.Skeletons.speechActs"
       ],
       "G[R]": [
+        "ResponseShape.Skeletons.calc",
         "ResponseShape.Skeletons.diagnose",
         "ResponseShape.Skeletons.normDefaults",
         "ResponseShape.Skeletons.words"
@@ -9853,6 +9854,7 @@
         "VE.Service.Handles.entry?",
         "VE.Service.Handles.expand",
         "VE.Service.bindResults",
+        "VE.Service.calcCases",
         "VE.Service.caseBounds",
         "VE.Service.commas",
         "VE.Service.decodeBudget",
@@ -9867,7 +9869,8 @@
         "VE.Service.registerOne",
         "VE.Service.respond",
         "VE.Service.restrictedCases",
-        "VE.Service.results"
+        "VE.Service.results",
+        "VE.Service.unsigned"
       ],
       "D[I]": [
         "VE.Service.Sha256.State",
@@ -14663,6 +14666,17 @@
         "VE.Arith.Examples.primeBody",
         "VE.Arith.Examples.primeDefs",
         "VE.Arith.Examples.tacticMeans"
+      ]
+    },
+    "ResponseShape/Schemas/Calc.lean": {
+      "G[R]": [
+        "ResponseShape.Schemas.Calc.answer",
+        "ResponseShape.Schemas.Calc.claimRow",
+        "ResponseShape.Schemas.Calc.fields",
+        "ResponseShape.Schemas.Calc.file",
+        "ResponseShape.Schemas.Calc.reasons",
+        "ResponseShape.Schemas.Calc.refusal",
+        "ResponseShape.Schemas.Calc.row"
       ]
     }
   }
