@@ -126,3 +126,52 @@ use: well over the rest of the budget, so they are me-2c.
 (the protocol queue), me-4, me-6c and ME-P2. ME-3 (the Python relay) can start on the rows delivered here.
 
 ## Final checks
+
+- Builds and static checks on the merged HEAD (main f1943fab6 merged; only the binding-answers recording conflicted,
+  re-recorded): `lake build` (whole library), `python3 lean/audit.py` (PASS, 618 files), `regen_generated.py --write`
+  then `--check` (33 entries), `trust_map.py --check` (K +0, S +0, V +25: PASS), `repo_map.py --check` (38 modes),
+  `check_lean_imports.py`, `gate_collection.py --check --prebuilt` (20 added, 0 refused, 0 stale, 0 malformed).
+- Selected tests (`mac-pytest.sh --select`, ve-mac-1): first on d4bee36e, 3 failures, all asking for `calc` in shared
+  fixtures: `test_relay_mutation_gate.py` (no `service:calc` fixture) and `test_shape_binding_mutants.py[calc]` (no
+  recorded answer); fixed by the corpus entry, the fixtures and the reproduction binding above. Then on 7a17bbe6: 2
+  failures, `test_every_json_handling_lean_file_is_classified` (the encoder's `other_json` reason) and
+  `test_random_malformed_responses_never_escape_schema[calc]` (no `calc` seed in `_SCHEMA_SEEDS`); both fixed, the two
+  files and `tests/test_calc_service.py` rerun: 363 passed. After the merge of main, the affected files on ve-mac-1
+  (`test_calc_service`, `test_route_row_schemas`, `test_relay_mutation_gate`, `test_shape_binding_mutants`,
+  `test_lean_service`, `test_lean_service_schema`, `test_assurance_manifest`, `test_enum_domains`): 732 passed;
+  `test_response_schemas.py`: 6 passed. No test in `main-known-red.txt` is touched.
+- `tools/relay_mutation_gate.py --route service:calc`: 953 mutants, 0 failures (1 allowed, `ME2B-1`).
+- `trust_mutants.py --max-mutants 1000 --allow ...` on the final Lean change (7a17bbe6; ran on the VM, no Mac slot):
+  30 KILLED, 0 SURVIVOR, 0 UNKNOWN, 4 INVALID, 11 ALLOWED, 0 NOT RUN, exit 0.
+- Not run: the full gate (the chain runs it on the final HEAD).
+
+## Self-review against BUILDER-CHECKLIST
+
+1. PASS: every field of a genuine `calc` answer dropped, retyped, emptied and mutated (`tests/test_route_row_schemas.py`,
+   `tools/relay_mutation_gate.py --route service:calc`: 953 mutants, all refused but one allowed); the decoder side is
+   me-2's guard 413 and `calcCases`' refusals (`test_duplicate_keys_are_refused`, the `calcCases` guards).
+2. PASS: the plan-row table above; me-2c named for the row fields; no Python copy of a Lean decision (the reason enum is
+   rendered from Lean); no permanent report test; overlap: no in-flight branch edits the hand-written files.
+3. PASS: `mutants.json` 13 of 13 caught (Lean and Python, the plan's bug at the service level); `trust-mutants.json`
+   exit 0; the two shape weakenings of `test_fuzz_detects_a_weakened_route_schema`.
+4. PASS: `test_route_cases_answer_their_rows` checks the service's answers equal the runner's (the expected rows are
+   RunExamples'); reordered keys and signs inside strings (`test_signs_are_read_and_strings_kept`, the key guard). No
+   Rust change.
+5. PASS: `test_answers_are_bound_to_their_request` (a foreign or rebound claim id, a dropped, added, duplicated or
+   swapped row, no rows) and `test_a_reproduction_is_unknown_exactly_under_a_software_convention`; inputs: unknown
+   names and a name defined after use are refused (route cases 13 and 14).
+6. PASS: merged main f1943fab6 and regenerated; the selected and affected tests above; the gate is the chain's.
+7. PASS: DELTA row 1 SIGNED by the DRI through SYNTHESIS 2.2's table row (the task's stated exception), row 2 R16 with
+   per-file counts; FOLLOW-UPS "## me-2b" has the ties-pass row.
+8. PASS: DELTA row 1 states the newly answered mode, the handshake's new mode and the decoder's refusals; nothing else
+   moves (no other mode's answer changed: the relay gate and route schemas pass for every route).
+9. PASS: the selected plan ran `test_relay_mutation_gate.py`, `test_shape_binding_mutants.py`,
+   `test_assurance_manifest.py` and `test_lean_service.py`, and each caught a missing `calc` entry (above).
+10. PASS: `runMode_calc` and `runCaseReported_fits` equal the reviewed text; the shape mutants `schema-kind`,
+    `schema-select-negated` and `schema-software-unbound` break `runCaseReported_fits`.
+11. PASS: limits are me-2's (each at and past its value); the mode's deadline is a `DEADLINES` row tested by
+    `test_the_deadline_keys_are_the_handshakes_modes`; no timing in tests (`HANG_TIMEOUT` only).
+12. N.A.: no runtime path of another mode changes; `calcCases` is one linear pass over the text plus the existing
+    parsers.
+13. PASS: no test removed; `gate_collection.py --check --prebuilt`: 0 refused, 0 stale, 0 malformed.
+
