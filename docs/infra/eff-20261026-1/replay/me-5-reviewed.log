@@ -1,0 +1,8 @@
+exit 1
+trust_mutants: 3 definitions, 4 mutants (4 to run), 4 jobs, base b7613541cbd3
+SURVIVOR lean/VE/Calc/FourierMotzkin.lean:10 VE.Calc.FM.maxSteps (G[R]) lit-plus: 10000 -> 10001
+SURVIVOR lean/VE/Calc/FourierMotzkin.lean:8 VE.Calc.FM.maxFacts (G[R]) lit-minus: 64 -> 63
+SURVIVOR lean/VE/Calc/FourierMotzkin.lean:8 VE.Calc.FM.maxFacts (G[R]) lit-plus: 64 -> 65
+SURVIVOR lean/VE/Calc/FourierMotzkin.lean:9 VE.Calc.FM.maxUnknowns (G[R]) lit-minus: 16 -> 15
+trust_mutants: 0 KILLED, 4 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 50 s
+trust_mutants: G[R]: 4 SURVIVOR
