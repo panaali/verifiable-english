@@ -2612,7 +2612,9 @@
 'VE.Norms.Wire.Source.wf' depends on axioms: [propext, Quot.sound]
 'VE.Norms.Wire.appendPredicates_assembly' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Norms.Wire.canonicalActIn_without_acts' depends on axioms: [propext, Quot.sound]
+'VE.Norms.Wire.decodeRegulated_plain' depends on axioms: [propext, Quot.sound]
 'VE.Norms.Wire.decodeRegulated_without_acts' depends on axioms: [propext, Quot.sound]
+'VE.Norms.Wire.ite_ok_cases' depends on axioms: [propext]
 'VE.Norms.agreesBelow_of_meanings' depends on axioms: [propext, Quot.sound]
 'VE.Norms.allF_denote' depends on axioms: [propext, Quot.sound]
 'VE.Norms.allF_wellFormed' does not depend on any axioms
