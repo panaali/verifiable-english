@@ -11,12 +11,8 @@ depth-first, left-to-right pass after its envelope (S1) and size (S2): at each n
 it run in table order, a ratio's operands are checked in full before their tags are compared (S9), and a W6a part
 is elaborated by W6a (S4). The decoded formula is then admitted by the proved `CFormula.admits`, and its identity is
 over its canonical encoding, which the answer echoes. -/
-namespace VE.Cardinality.Wire
+namespace VE.Cardinality
 open Lean
-open VE.Bridge (exactFields fields stringField strings)
-open VE.Time (QType QFormula)
-
-def format : String := "ve-cardinality@1"
 
 /-- E4's projection: the W6a environment inside a cardinality environment. It removes `cardinality_schema` and
 `cardinality`, and removes `cardinality@0` from `profiles`; nothing else changes. -/
@@ -46,13 +42,22 @@ structure CardCertificate where
   conclusionId : String
   w6 : VE.Time.Wire.W6Certificate
 
+/-- The original environment's profiles: `cardinality@0` and the projection's. -/
+def CardEnv.profiles (w : CardEnv) : List String := "cardinality@0" :: w.w6.profiles
+
+end VE.Cardinality
+
+namespace VE.Cardinality.Wire
+open Lean
+open VE.Bridge (exactFields fields stringField strings)
+open VE.Time (QType QFormula)
+
+def format : String := "ve-cardinality@1"
+
 /-! ## The environment (E1–E8) -/
 
 /-- E2: `cardinality@0` beside one of W6a's two profile lists (code point order). -/
 def profileLists : List (List String) := VE.Time.Wire.w6Profiles.map ("cardinality@0" :: ·)
-
-/-- The original environment's profiles: `cardinality@0` and the projection's. -/
-def CardEnv.profiles (w : CardEnv) : List String := "cardinality@0" :: w.w6.profiles
 
 def maxFiniteSorts : Nat := 64
 
