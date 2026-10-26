@@ -192,8 +192,12 @@ def _plain_acts(env) -> set[str]:
 
 
 def _bind_wordings(env, row) -> None:
-    """R8: a norms row's `wordings` (the family route gives none) name exactly the request's plain acts."""
-    if set(row.get("wordings", {})) != _plain_acts(env):
+    """R8: a norms row's `wordings` (the family route gives none) name exactly the request's plain acts, and the
+    slots of each name exactly its predicate's argument positions (`relay.slots_bound`)."""
+    from .backends.relay import slots_bound
+    wordings = row.get("wordings", {})
+    if set(wordings) != _plain_acts(env) or not all(
+            slots_bound(wording, len(env.predicates[p].arguments)) for p, wording in wordings.items()):
         raise CheckerUnavailable("CheckerUnavailable: norms-elaborate wordings are not bound to the request")
 
 
