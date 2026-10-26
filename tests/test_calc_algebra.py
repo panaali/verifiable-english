@@ -91,6 +91,26 @@ def run (ds : List Decl) (p : Expr × Expr) : String :=
   let r := identityRun ds p.1 p.2
   (wide (r.outcome, r.point, r.sides, r.reason 7)).replace "VE.Numbers." ""
 def κ6 (n : String) : Rat := if n = "light" then 3 else 1
+/-- me-9c (review F5): `four` with `k` more nodes `+ 0`; 1/(1/(… e)), k divisions; x, y, z and w free. -/
+def zeros (k : Nat) (e : Expr) : Expr := (List.range k).foldl (fun e _ => .add e (l 0)) e
+def nest (k : Nat) (e : Expr) : Expr := (List.range k).foldl (fun e _ => .div (l 1) e) e
+def xyzw : List Decl := ["x", "y", "z", "w"].map free
+/-- `roots` times 1 + (y0 − y0) + … + (yₖ₋₁ − yₖ₋₁), a balanced sum: the normal form is `roots`, so all 13 points
+are tried, each reading every yᵢ (x and the yᵢ free). -/
+def pairs (i j : Nat) : Expr :=
+  if j ≤ i + 1 then .sub (v s!"y{i}") (v s!"y{i}") else .add (pairs i ((i + j) / 2)) (pairs ((i + j) / 2) j)
+termination_by j - i
+def flat (k : Nat) : Expr := .mul roots (.add (l 1) (pairs 0 k))
+def ys (k : Nat) : List Decl := free "x" :: (List.range k).map fun i => free s!"y{i}"
+/-- The units the normaliser charges for both sides, and the 13 points over the names they read, of a large budget. -/
+def cost (p : Expr × Expr) : String :=
+  let n := 10 ^ 9
+  let pts := (List.range 13).map (identityPoint (p.1.names ++ p.2.names).eraseDups)
+  reprStr ((Identity.compareB p.1 p.2 n).map (n - ·.2), (pointsB p.1 p.2 pts n).map (n - ·.2))
+/-- The row over a and b free within a budget of `n` units, as `run` prints it. -/
+def runB (n : Nat) (p : Expr × Expr) : String :=
+  let r := identityDecideB ["a", "b"] p.1 p.2 n
+  (wide (r.outcome, r.point, r.sides, r.reason 7)).replace "VE.Numbers." ""
 /-- An inlined claim's names, and its verdict before and after inlining at κ6. -/
 def inl (c : Claim) : String := wide ((c.inline r6 (freeNames r6)).toOption.map fun c' =>
   (c'.exprs.map (·.names.eraseDups), c.decide (values (assign r6 (freeNames r6) κ6)), c'.decide (some ∘ κ6)))
@@ -130,7 +150,7 @@ LIMIT_CHECKS = {
     "nodes": ("VE.Calc.Frac.ofExpr?", "e.nodesWithin maxPolyTerms: at most 10,000 nodes in a side"),
     "sum": ("VE.Calc.Poly.add?", "p.length + q.length ≤ maxPolyTerms: at most 10,000 terms in a sum"),
     "product": ("VE.Calc.Poly.mul?", "p.length * q.length ≤ maxPolyTerms: at most 10,000 terms in a product"),
-    "power": ("VE.Calc.Poly.pow?", "k ≤ maxPolyExponent: a power node's exponent at most 4,096"),
+    "power": ("VE.Calc.Poly.powWithin", "k ≤ maxPolyExponent: a power node's exponent at most 4,096 (`pow?`, `pow?B`)"),
     "exponent": ("VE.Calc.Poly.fits", "each variable's exponent ≤ maxPolyExponent, in every monomial"),
     "numerator": ("VE.Calc.Poly.fits", "num.natAbs < Poly.coeffBound: at most 4,096 digits, either sign"),
     "denominator": ("VE.Calc.Poly.fits", "den < Poly.coeffBound: at most 4,096 digits"),
@@ -305,6 +325,8 @@ FIXTURES = [
 ]
 
 
+BUDGET = ('(Outcome.unknown (UnknownReason.limit (Limit.polyTerms)), none, none, '
+          'some "unknown: the budget of 1000000 evaluation steps ran out")')
 HOLDS, FAILS, UNDEFINED = (f"(Outcome.decided (Verdict.{v}), none, none, none)" for v in ("holds", "fails", "undefined"))
 EVALUATIONS = ('(Outcome.unknown (UnknownReason.limit (Limit.evaluations)), none, none, '
                'some "unknown: the budget of 7 evaluation steps ran out")')
@@ -437,7 +459,50 @@ def point_fixtures():
                fails(f'[("x", {rat(x)})]', f"({rat(value)}, 0)"))
 
 
-IDENTITY_FIXTURES += [*place_fixtures(), *point_fixtures()]
+# me-9c (me-9 review F5): the runner's work budget, `VE.Limits.maxEvaluations` units a row. Sides within the limits
+# whose work runs out of it answer the budget's unknown row at once (`zeros`: about 60 s before, at the node limit
+# about 24 minutes; a power of 2,048 steps 49 s; the 13 points over 2,401 names 16 s); those within it answer as
+# before (H-1 to H-4 and R-6 above, unchanged). Nested divisors cost their nodes: their zero divisors are found in the
+# normaliser's pass (133 s before, when each divisor was normalised again).
+BUDGET_FIXTURES = [
+    ("budget-f5-zeros", "run xyzw (zeros 400 four, four)", BUDGET),
+    ("budget-f5-node-limit", "run xyzw (zeros 4404 four, four)", BUDGET),
+    ("budget-f5-node-limit-size", "nodes (zeros 4404 four)", "some 9999"),
+    ("budget-four", "run xyzw (four, four)", HOLDS),
+    ("budget-power-2048", 'run xyzw (.pow (.add (v "x") (l 1)) 2048, .pow (.add (v "x") (l 1)) 2048)', BUDGET),
+    ("budget-power-64", 'run xyzw (.pow (.add (v "x") (l 1)) 64, .pow (.add (v "x") (l 1)) 64)', HOLDS),
+    ("budget-power-exponent", 'run xyzw (.pow (l 1) 4097, l 1)', FORM),
+    # me-5b review F1's tower of constants stops at the digit limit, before 2^262144 is computed.
+    ("budget-power-tower", "run xyzw (.pow (.pow (.pow (l (2 ^ 64)) 64) 64) 64, l 1)", FORM),
+    ("budget-nested-divisors", 'run xyzw (nest 4998 (v "x"), v "x")', HOLDS),
+    ("budget-nested-divisors-size", 'nodes (nest 4998 (v "x"))', "some 9997"),
+    ("budget-nested-zero-divisor", 'run xyzw (nest 4996 (.div (v "x") (.sub (v "x") (v "x"))), v "x")', UNDEFINED),
+    ("budget-points", "run (ys 2400) (flat 2400, l 0)", BUDGET),
+    ("budget-points-size", "nodes (flat 2400)", "some 9655"),
+    ("budget-points-within", "run (ys 30) (flat 30, l 0)", '(Outcome.unknown (UnknownReason.identityNotShown), none, '
+     'none, some "unknown: the normal forms differ and no point where the sides differ was found")'),
+    # The charges, exactly: a sum, a product, a fraction's sum and quotient, a power's steps, and each node and value
+    # the 13 points read, so a charge dropped or not taken off is caught.
+    ("budget-cost-binom", "cost binom", "(some 105, some 9)"),
+    ("budget-cost-h1", "cost h1", "(some 198, some 269)"),
+    ("budget-cost-power", 'cost (.pow (.add (v "x") (l 1)) 3, l 1)', "(some 83, some 5)"),
+    ("budget-cost-divisors", 'cost (nest 3 (v "x"), .sub (v "x") (v "y"))', "(some 48, some 10)"),
+    ("budget-cost-recip", "cost recip", "(some 30, some 17)"),
+    # 2⁶⁴ and 2⁴⁰⁹⁶ at x = 2 (a word, and 64), and a point of 9 names (a value read: 2 units).
+    # R5: the binomial's row with the budget it costs (105 units for the forms, 9 for the point) and one unit less,
+    # in each phase, and with none.
+    ("budget-binom-114", "runB 114 binom", fails('[("a", 1), ("b", 1)]', "(4, 2)")),
+    ("budget-binom-113", "runB 113 binom", BUDGET),
+    ("budget-binom-105", "runB 105 binom", BUDGET),
+    ("budget-binom-104", "runB 104 binom", BUDGET),
+    ("budget-binom-0", "runB 0 binom", BUDGET),
+    ("budget-literal-0", "runB 0 (l 1, l 1)", BUDGET),
+    ("budget-literal-10", "runB 10 (l 1, l 1)", BUDGET),
+    ("budget-literal-11", "runB 11 (l 1, l 1)", HOLDS),
+    ("budget-cost-words", 'cost (.mul (.sub (v "x") (l 1)) (.pow (.pow (v "x") 64) 64), l 0)', "(some 1041, some 144)"),
+    ("budget-cost-names", "cost (flat 8, l 0)", "(some 923, some 1521)"),
+]
+IDENTITY_FIXTURES += [*place_fixtures(), *point_fixtures(), *BUDGET_FIXTURES]
 FIXTURES += IDENTITY_FIXTURES
 
 

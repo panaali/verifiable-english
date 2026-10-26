@@ -418,11 +418,17 @@ def environmentCase (j : Json) : Except String Json := do
     return VE.Route.Wire.ok id ([("environment_id", .str envId)] ++
       (match l with
        | .v0 _ => [("profile", environment.getObjValD "profile")]
-       | _ => [("profiles", environment.getObjValD "profiles")]) ++ [("family", .str l.family)])
+       -- a frozen envelope regulates nothing: no act
+       | _ => [("profiles", environment.getObjValD "profiles")]) ++ [("family", .str l.family)] ++
+      (match l with | .v0 _ => [] | _ => [("acts", Json.mkObj [])]))
   let e ← validatedComposedEnvironment environment
-  let environmentId ← environmentIdOf e.profiles (← identityEnvironment environment e.profiles)
+  -- `environmentIdOf` of the identity environment, with the canonical acts it hashes, which Python stores
+  let canonical ← VE.Norms.Wire.canonicalEnvironmentJson (← identityEnvironment environment e.profiles)
+  let environmentId ← VE.Route.Wire.environmentId e.profiles canonical
+  let acts ← VE.Norms.Wire.canonicalActs canonical
   pure (VE.Route.Wire.ok id [("environment_id", .str environmentId),
-    ("profiles", toJson e.profiles), ("family", .str e.family.name)])
+    ("profiles", toJson e.profiles), ("family", .str e.family.name),
+    ("acts", Json.mkObj (acts.map fun (p, a) => (p, .str a)))])
 
 /-- Python sorts relation rows by typed tuple order. In the order family,
 `$int` cells compare numerically even though they travel as strings. -/
