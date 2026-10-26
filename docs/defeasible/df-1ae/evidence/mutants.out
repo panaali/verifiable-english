@@ -1,0 +1,85 @@
+control lean/VE/Defaults/Route.lean (VE.Defaults.RouteExamples): 0 failures
+control lean/VE/NormDefaults/Run.lean (VE.Defaults.RouteExamples): 0 failures
+control lean/VE/Defaults/Wire.lean (VE.Defaults.RouteExamples): 0 failures
+control lean/ResponseShape/Schemas/NormDefaults.lean (ResponseShape.DefaultsExamples): 0 failures
+RT1 VE.NormDefaults.Wire.defaultsRows: FAILS 1 guards
+    #guard holds dα fun L => ["defaults-elaborate", "defaults-model"].all fun k =>
+RT2 VE.NormDefaults.Wire.defaultsRows: FAILS 5 guards
+    #guard holds dγ fun L => [req αEnv γR "defaults-elaborate",
+    #guard run (αCase notExc cNeeds.trace (αModels [exc1])) == follows "needs" "short" [excN "
+    #guard holds dβ fun L => run (modelCase βEnv βR L xAll ["urgent", exc1]) == doesNotFollow 
+    #guard run ((αCase notExc none []).setObjVal! "premises" (toJson [fJ (exAt exc1)])) == ref
+    #guard holds dβ fun L => run (βTwo L) == VE.Route.Wire.ok "c" [("verdict", .str "DOES-NOT-
+RT3 VE.NormDefaults.Wire.layeredRows: FAILS 7 guards
+    #guard holds dγ fun L => [req αEnv γR "defaults-elaborate",
+    #guard run (αCase notExc cNeeds.trace (αModels [exc1])) == follows "needs" "short" [excN "
+    #guard holds dβ fun L => run (modelCase βEnv βR L xAll ["urgent", exc1]) == doesNotFollow 
+    #guard run ((αCase notExc none []).setObjVal! "premises" (toJson [fJ (exAt exc1)])) == ref
+    #guard holds dβ fun L => run (βTwo L) == VE.Route.Wire.ok "c" [("verdict", .str "DOES-NOT-
+    #guard holds dα fun L => ["defaults-elaborate", "defaults-model"].all fun k =>
+    #guard holds dα fun L => shown (VE.NormDefaults.Wire.layeredKindCase L "c" "defaults-elabo
+RT4 VE.NormDefaults.Wire.layeredRows: FAILS 2 guards
+    #guard holds dγ fun L => ["norm-defaults-elaborate", "norm-defaults-conflict", "norm-defau
+    #guard holds dγ fun L => run (req αEnv γR "norm-defaults-elaborate") ==
+RT5 VE.NormDefaults.Wire.layeredKindCase: FAILS 6 guards
+    #guard holds dγ fun L => [req αEnv γR "defaults-elaborate",
+    #guard run (αCase notExc cNeeds.trace (αModels [exc1])) == follows "needs" "short" [excN "
+    #guard holds dβ fun L => run (modelCase βEnv βR L xAll ["urgent", exc1]) == doesNotFollow 
+    #guard run ((αCase notExc none []).setObjVal! "premises" (toJson [fJ (exAt exc1)])) == ref
+    #guard holds dβ fun L => run (βTwo L) == VE.Route.Wire.ok "c" [("verdict", .str "DOES-NOT-
+    #guard holds dα fun L => shown (VE.NormDefaults.Wire.layeredKindCase L "c" "defaults-elabo
+RT6 VE.NormDefaults.Wire.runLayered: FAILS 5 guards
+    #guard holds dγ fun L => [req αEnv γR "defaults-elaborate",
+    #guard run (αCase notExc cNeeds.trace (αModels [exc1])) == follows "needs" "short" [excN "
+    #guard holds dβ fun L => run (modelCase βEnv βR L xAll ["urgent", exc1]) == doesNotFollow 
+    #guard run ((αCase notExc none []).setObjVal! "premises" (toJson [fJ (exAt exc1)])) == ref
+    #guard holds dβ fun L => run (βTwo L) == VE.Route.Wire.ok "c" [("verdict", .str "DOES-NOT-
+RT7 VE.NormDefaults.Wire.defaultsKinds: FAILS 3 guards
+    #guard holds dβ fun L => run (modelCase βEnv βR L xAll ["urgent", exc1]) == doesNotFollow 
+    #guard holds dβ fun L => run (βTwo L) == VE.Route.Wire.ok "c" [("verdict", .str "DOES-NOT-
+    #guard holds dα fun L => ["defaults-elaborate", "defaults-model"].all fun k =>
+RN1 VE.NormDefaults.Run.runOtherCase: FAILS 1 guards
+    #guard run (req αEnv αR "defaults-other") ==
+RN2 VE.NormDefaults.Run.runOtherCase: FAILS 5 guards
+    #guard holds dγ fun L => [req αEnv γR "defaults-elaborate",
+    #guard run (αCase notExc cNeeds.trace (αModels [exc1])) == follows "needs" "short" [excN "
+    #guard holds dβ fun L => run (modelCase βEnv βR L xAll ["urgent", exc1]) == doesNotFollow 
+    #guard run ((αCase notExc none []).setObjVal! "premises" (toJson [fJ (exAt exc1)])) == ref
+    #guard holds dβ fun L => run (βTwo L) == VE.Route.Wire.ok "c" [("verdict", .str "DOES-NOT-
+WR1 VE.Defaults.Wire.situationJson: FAILS 1 guards
+    #guard holds dβ fun L => run (βTwo L) == VE.Route.Wire.ok "c" [("verdict", .str "DOES-NOT-
+WR2 VE.Defaults.Wire.coherenceFields: FAILS 2 guards
+    #guard holds dγ fun L =>
+    #guard holds (layered αEnv γ3R) fun L =>
+WR3 VE.Defaults.Wire.modelFields: FAILS 4 guards
+    #guard holds dβ fun L => answer (modelCase βEnv βR L xAll ["urgent", exc1]) == doesNotFoll
+    #guard holds dβ fun L => [(exAt "urgent", doesNotFollow [("r1", 0)]),
+    #guard holds dα fun L => answer (modelCase αEnv αR L (.all "assistant" (.unary exc1 (.var 
+    #guard holds (layered β2Env β2R) fun L =>
+WR4 VE.Defaults.Wire.pairCertsOf: FAILS 3 guards
+    #guard holds dγ fun L => [("r9", "r2"), ("r1", "r9")].all fun (m, n) =>
+    #guard [some (toJson ([] : List Json)), some .null, none].all fun c =>
+    #guard answer (γbCase (toJson ([] : List Json))) == unknownBecause "no-exception coherence
+WR5 VE.Defaults.Wire.pairCertsOf: FAILS 1 guards
+    #guard [some (toJson ([] : List Json)), some .null, none].all fun c =>
+WR6 VE.Defaults.Wire.collisionOf: FAILS 1 guards
+    #guard holds dγ fun L => [("r9", "r2"), ("r1", "r9")].all fun (m, n) =>
+WR7 VE.Defaults.Wire.collisionOf: FAILS 1 guards
+    #guard holds dγ fun L => [("r9", "r2"), ("r1", "r9")].all fun (m, n) =>
+SH1 ResponseShape.Schemas.NormDefaults.defaults_coherence: FAILS 1 guards
+    #guard holds dγ fun L => let a := run (coll L);
+SH2 ResponseShape.Schemas.NormDefaults.defaults_coherence: FAILS 1 guards
+    #guard holds dγ fun L => let a := run (coll L);
+SH3 ResponseShape.Schemas.NormDefaults.defaults_certificate: FAILS 1 guards
+    #guard let a := run cert; let u := run certNone;
+SH4 ResponseShape.Schemas.NormDefaults.defaults_model: FAILS 1 guards
+    #guard holds dβ fun L => let a := run (βTwo L);
+SH5 ResponseShape.Schemas.NormDefaults.defaults_elaborate: FAILS 1 guards
+    #guard holds dγ fun L => [req αEnv γR "defaults-elaborate", coll L, req αEnv αR "defaults-
+SH6 ResponseShape.Schemas.NormDefaults.defaults_situation: FAILS 1 guards
+    #guard holds dβ fun L => [βTwo L, modelCase βEnv βR L xAll [exc1]].all fun j => accepts j 
+SH7 ResponseShape.Schemas.NormDefaults.kind: FAILS 1 guards
+    #guard holds dβ fun L => [βTwo L, modelCase βEnv βR L xAll [exc1]].all fun j => accepts j 
+SH8 ResponseShape.Schemas.NormDefaults.row: FAILS 1 guards
+    #guard holds dβ fun L => [βTwo L, modelCase βEnv βR L xAll [exc1]].all fun j => accepts j 
+ALL MUTANTS FAIL THEIR GUARDS
