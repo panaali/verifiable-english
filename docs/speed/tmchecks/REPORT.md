@@ -191,4 +191,5 @@ each baseline passing first). The tool's sha256 was the same before and after (`
     and no fixed deadline.
 12. N.A.: no VE runtime path; the change removes rebuilds (section 1b).
 13. PASS: one test function renamed, with its trailer (`Test-removed: tests/test_trust_mutants.py::test_any_changed_input_gives_a_full_run — ...`);
-    `tools/gate_collection.py --check --prebuilt` result in the build report.
+    after `lake build`, `tools/gate_collection.py --check --prebuilt` reports 19 added, 8 removed by a trailer, 0
+    refused, 0 stale and 0 malformed.
