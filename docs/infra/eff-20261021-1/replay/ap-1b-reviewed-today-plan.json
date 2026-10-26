@@ -1,0 +1,52 @@
+{
+ "tree": "984c7a542f744d3398d6bbe4db71f2e9af994d9e",
+ "lines": [
+  112
+ ],
+ "fatal": [],
+ "operators": [
+  "arm-true",
+  "arm-false",
+  "arm-default",
+  "body-true",
+  "body-false",
+  "not-drop",
+  "and-or",
+  "or-and",
+  "lt-le",
+  "le-lt",
+  "lt-eq",
+  "le-eq",
+  "eq-le",
+  "eq-ne",
+  "ne-eq",
+  "all-any",
+  "any-all",
+  "bool-flip",
+  "lit-plus",
+  "lit-minus",
+  "list-empty",
+  "append-left",
+  "append-right",
+  "list-first",
+  "list-drop-last",
+  "list-last",
+  "list-drop-first"
+ ],
+ "rows": [
+  {
+   "definition": "VE.Norms.Wire.actsFixed",
+   "class": "D[V]",
+   "trusted": true,
+   "changed": true,
+   "selected": true,
+   "mutants": [
+    [
+     "bool-flip",
+     "false",
+     "true"
+    ]
+   ]
+  }
+ ]
+}
