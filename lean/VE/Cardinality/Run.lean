@@ -9,9 +9,7 @@ the regenerated problem's W6a identities in the projection's environment (`CardE
 by the frozen checker on that problem (`checkCertificate_sound`). A claimed region table or erased problem must be
 the regenerated one. The runner answers the case kinds `admission` and `certificate`. -/
 namespace VE.Cardinality.Wire
-universe v
 open Lean
-open VE.Bridge (stringField)
 open VE.Time (QFormula)
 
 /-- P1–P3 (spec 4.2): counted sorts, predicates per counted sort, then W6a's aggregate node limit on the erased
@@ -27,6 +25,13 @@ def erasedIds (w : CardEnv) (ps : List CFormula) (c : CFormula) :
     ← VE.Time.Wire.statementIds w.w6 (erasedProblem w.env ps c).2)
 
 def stale : String := "cardinality certificate is stale or bound to different statements"
+
+end VE.Cardinality.Wire
+
+namespace VE.Cardinality
+universe v
+open VE.Time (QFormula)
+open Wire (problemChecks erasedIds stale)
 
 /-- The problem's limits, the binding to the cardinality statements, W6a's two bindings to the regenerated problem,
 the replay's step limit, then the frozen order replay of the erased problem. -/
@@ -77,7 +82,14 @@ theorem checkCertificate_sound {w : CardEnv} (ps : List (CAdmission w)) (c : CAd
     (VE.Time.tentails_of_entails (fun a ha => hadm a (List.mem_append_left _ ha)) (hadm _ (by simp))
       (VE.Order.Tableau.checkCertificate_sound _ _ _ _ (Except.ok.inj h)))
 
+end VE.Cardinality
+
 /-! ## The runner -/
+
+namespace VE.Cardinality.Run
+open Lean VE.Cardinality.Wire
+open VE.Bridge (stringField)
+open VE.Time (QFormula)
 
 def statementJson {w : CardEnv} (a : CAdmission w) : Json :=
   Json.mkObj [("meaning_id", .str a.meaningId), ("formula", encode a.formula)]
@@ -134,4 +146,4 @@ def runCaseReported (j : Json) : Json :=
   | .error message => Json.mkObj ([("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message)] ++
       (if (j.getObjValD "kind").getStr?.toOption == some "certificate" then [("valid", .bool false)] else []))
 
-end VE.Cardinality.Wire
+end VE.Cardinality.Run

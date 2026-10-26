@@ -8,7 +8,7 @@ Each `#guard` runs the runner on a JSON case, as the service will, and fails the
 order of two texts changes. FA1's certificate replays the trace Python's untrusted search found
 (`VE.Cardinality.Examples.fa1Trace`), bound to the identities the admission case answers. -/
 namespace VE.Cardinality.WireExamples
-open Lean VE.Cardinality VE.Cardinality.Wire
+open Lean VE.Cardinality VE.Cardinality.Wire VE.Cardinality.Run
 
 def p (s : String) : Json := (Json.parse s).toOption.getD .null
 
