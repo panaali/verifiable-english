@@ -309,13 +309,14 @@ def test_wordings_not_bound_to_the_request_are_unavailable(monkeypatch, mutant):
 
 
 @pytest.mark.parametrize("value", [None, True, 7, 7.5, "7", [], [A1_WORDING], {"heard": 7}, {"heard": None},
-                                   {"heard": [A1_WORDING]}, {"heard": {}}])
+                                   {"heard": [A1_WORDING]}, {"heard": {}}, {"heard": "\ud800"}, "deep", "deleted"])
 def test_a_retyped_wordings_field_fails_the_schema(value):
     """The `wordings` member is typed by the generated schema (`common.json` `string_map`): the genuine exchange
-    passes, and every retype of the map or of one wording is refused before a reader sees it."""
+    passes, and every retype of the map or of one wording, sent as bytes through the service's decoder, is
+    refused before a reader sees it (a lone surrogate or a 10,000-deep list by the decoder)."""
     from tests.lean_build import lean_build
     from tests.subprocesses import HANG_TIMEOUT
-    from ve.backends.lean_service import LeanService, case_digest, case_texts
+    from ve.backends.lean_service import LeanService, _decode_json, case_digest, case_texts
     from ve.backends.service_schema import Invalid, check_response
     env = Environment(environment())
     cases = [{"id": "w", "kind": "norms-elaborate", "environment": env.to_dict(), "norms": []}]
@@ -324,12 +325,16 @@ def test_a_retyped_wordings_field_fails_the_schema(value):
         _, response = service.exchange("norms", text, 1, timeout=HANG_TIMEOUT)
     request = {"id": response["id"], "mode": "norms", "cases": cases,
                "digests": [case_digest(t) for t in case_texts(text)], "bytes": len(text.encode())}
-    check_response("norms", response, request)
+    check_response("norms", _decode_json(json.dumps(response).encode()), request)
     assert response["results"][0]["result"]["wordings"] == {"heard": A1_WORDING, "paid": A2_WORDING}
     mutant = copy.deepcopy(response)
-    mutant["results"][0]["result"]["wordings"] = value
-    with pytest.raises(Invalid):
-        check_response("norms", mutant, request)
+    if value == "deleted":
+        del mutant["results"][0]["result"]["wordings"]
+    else:
+        mutant["results"][0]["result"]["wordings"] = "DEEP" if value == "deep" else value
+    line = json.dumps(mutant).replace('"DEEP"', "[" * 10_000 + "]" * 10_000).encode()
+    with pytest.raises((Invalid, ValueError)):
+        check_response("norms", _decode_json(line), request)
 
 
 def test_norm_defaults_keeps_todays_display_without_asking(monkeypatch):
