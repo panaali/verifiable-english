@@ -55,18 +55,30 @@ refusals, escapes, routing); tests: `test_signs_are_read_and_strings_kept`, `tes
 `{"status": "ok", "meaning_id", "rows"}`, whose rows are one per request claim, in order (`x-zip` over `/claims`),
 each naming the request's claim id (`x-equals`). A row is decided (`holds`, `fails`, `undefined`, reason `null`) or
 unknown (reason one of Lean's unknown texts, `Run.words` of `Run.outcomes`: the enum is computed from Lean, one owner);
-`kind` is `"claim"` (the decoder admits no other kind yet); `reproduction` is `"unknown"` or `null`.
+`kind` is `"claim"` (the decoder admits no other kind yet). `reproduction` is bound to the request: the row shape
+selects on the case (`x-select`), so a case without `software` has rows whose reproduction is `null` and a case with
+it rows whose reproduction is `"unknown"`; the encoder theorem proves it through `decode_software` (a decoded case
+names a software convention when its object has a `software` member).
 `test_answers_are_bound_to_their_request` refuses a rebound or foreign claim id, a dropped, added or swapped row, no
 rows, a reason on a decided row, an unknown row without a reason or with another text, a retyped reproduction or kind,
-and a meaning id that is no digest; `tests/test_route_row_schemas.py` drops, retypes and empties every field and
+and a meaning id that is no digest; `test_a_reproduction_is_unknown_exactly_under_a_software_convention` refuses
+`"unknown"` for R-1 and `null` for V-9; `tests/test_route_row_schemas.py` drops, retypes and empties every field and
 mutates every node, with the Lean side (`ve_response_decode`) agreeing, and detects the weakenings `calc-rows-unbound`
 and `calc-reason-free`.
 
+The relay mutation gate (`tools/relay_mutation_gate.py --route service:calc`, 6 fixtures in
+`tests/data/relay-gate-cases.jsonl` kept as `--record` keeps them, from the `calc` entry of
+`tests/lean_service_corpus.py`): 953 mutants, 952 refused, 1 allowed, 0 failures. Its first run found the
+reproduction binding above (a `"unknown"` retyped to `null` was accepted) and the allowed one: a batch decoder's case
+error (a case nested beyond 255) without its `case_index` is the runner's refusal shape. `tools/relay-gate-allow.json`
+`ME2B-1` (by design) gives the reason. `tests/data/binding-answers.jsonl.gz` was re-recorded
+(`tools/binding_census.py --answers`, as after any Lean change): 6 `calc` answers are new, and the other modes'
+recording catches up with main's relay-gate fixtures (alternatives, ask, the English modes, metered).
+
 Deviations, each in FOLLOW-UPS "## me-2b": (a) spec 3.4 says a refused case answers the common case error with
 `case_index`; the runner cannot see the index, so the refusal is `{"status", "error"}` and the service's binding
-carries `index`, `digest` and `code` (spec wording, or the protocol adds it); (b) whether `reproduction` is `"unknown"`
-follows the request's `software`, which a row shape cannot select on, so ME-3's relay binds it; (c) the reason enum is
-every unknown text of 1.5, to be narrowed per kind when ME-5/8/9 add their kinds.
+carries `index`, `digest` and `code` (spec wording, or the protocol adds it); (b) the reason enum is every unknown
+text of 1.5, to be narrowed per kind when ME-5/8/9 add their kinds.
 
 ## Trust (R16)
 
@@ -77,14 +89,15 @@ every unknown text of 1.5, to be narrowed per kind when ME-5/8/9 add their kinds
 
 ## Seeded bugs and mutants
 
-- [`mutants.json`](mutants.json): 11 seeded bugs, each applied alone and restored, all caught. Lean: the plan's bug in
+- [`mutants.json`](mutants.json): 13 seeded bugs, each applied alone and restored, all caught. Lean: the plan's bug in
   `lean/VE/Calc/Run.lean` (`Run.runCaseReported` gives row i claim i + 1's outcome; `Run.outcome_sound` stubbed so
   `ve_service` builds, the checker pin rewritten for the run) fails
   `tests/test_calc_service.py::test_route_cases_answer_their_rows`; `lean/VE/Service/Registry.lean` (`.calc` dropped:
   `modes_complete`); `lean/VE/Service/Protocol.lean` (dispatch: `runMode_calc`; `calcCases` twice, `decodeCases`,
   `unsigned` twice: their guards); `lean/ResponseShape/Schemas/Calc.lean` (`kind` "follows": `rowJson_fits`; a decided
   row's reason a string, which the skeleton does not read: six `tests/test_calc_service.py` tests refuse the genuine
-  answers). Python: `ve/backends/lean_service.py` without the `calc` deadline fails
+  answers; the software select negated, and a software case given the plain answer: `runCaseReported_fits`, and
+  `test_a_reproduction_is_unknown_exactly_under_a_software_convention`). Python: `ve/backends/lean_service.py` without the `calc` deadline fails
   `test_the_deadline_keys_are_the_handshakes_modes` and `test_handshake`. No Rust changed.
 - [`trust-mutants.json`](trust-mutants.json) with [`trust-mutants-allow.json`](trust-mutants-allow.json):
   `tools/trust_mutants.py --max-mutants 1000` over the 5 trusted definitions the branch adds or changes. The first run
@@ -96,10 +109,12 @@ every unknown text of 1.5, to be narrowed per kind when ME-5/8/9 add their kinds
 
 ## Size
 
-Hand-written lines over the merge base: Lean 140 (`Protocol.lean` 41, `Schemas/Calc.lean` 52, `Encoders/Calc.lean` 32,
-the registries 15), tests and fixtures 174 (`tests/test_calc_service.py` 146, `route-cases.jsonl` 20,
-`test_route_row_schemas.py` 8), side tables 23 (`tools/trust-classes.json` 16, the trust allowance 7), Python 2, and
-evidence and docs about 200 (this report, DELTA, `mutants.json`, the allow file, ROADMAP): about 540. Generated:
+Hand-written lines over the merge base: Lean 184 (`Protocol.lean` 41, `Schemas/Calc.lean` 59, `Encoders/Calc.lean`
+69, the registries 15), tests and fixtures 198 (`tests/test_calc_service.py` 155, `route-cases.jsonl` 20,
+`relay-gate-cases.jsonl` 6, `lean_service_corpus.py` 9, `test_route_row_schemas.py` 8), side tables 33
+(`tools/trust-classes.json` 16, the relay allow entry 10, the trust allowance 7), Python 2, and evidence and docs
+about 230 (this report, DELTA, `mutants.json`, the allow file, ROADMAP): about 650, a little over the ~600 guide
+because the relay mutation gate's finding (the reproduction binding) was fixed here rather than left to a later item. Generated:
 `calc.json`, `envelope.json`, the inventories, `trust-mutants.json`, the binding census and the mode pins. The row
 fields would add a shape change, Lean encoders for exact values, truncated displays and the line, `rests_on` (which
 needs each value's support and span, not in spec 3.4's `Case`) and words checks that refuse words the me-2 fixtures

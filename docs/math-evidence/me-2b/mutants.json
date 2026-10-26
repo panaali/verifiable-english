@@ -19,9 +19,14 @@
    "change": "a backslash never escapes", "test": "lake build VE.Service.Protocol (the escaped-quote guard)", "result": "build failed"},
   {"id": "schema-kind", "language": "lean", "file": "lean/ResponseShape/Schemas/Calc.lean", "definition": "ResponseShape.Schemas.Calc.fields",
    "change": "kind const \"follows\"", "test": "lake build ResponseShape.Encoders.Calc (rowJson_fits)", "result": "build failed"},
-  {"id": "schema-decided-reason-string", "language": "lean", "file": "lean/ResponseShape/Schemas/Calc.lean", "definition": "ResponseShape.Schemas.Calc.claim_row",
+  {"id": "schema-decided-reason-string", "language": "lean", "file": "lean/ResponseShape/Schemas/Calc.lean", "definition": "ResponseShape.Schemas.Calc.claimRow",
    "change": "a decided row's reason a string (the skeleton does not read JSON types, so the encoder theorem still builds); calc.json regenerated",
    "test": "tests/test_calc_service.py::test_route_cases_answer_their_rows and 5 more (the service's genuine answers refused)", "result": "failed"},
+  {"id": "schema-select-negated", "language": "lean", "file": "lean/ResponseShape/Schemas/Calc.lean", "definition": "ResponseShape.Schemas.Calc.row",
+   "change": "the row selects the plain answer when the case has software", "test": "lake build ResponseShape.Encoders.Calc (runCaseReported_fits)", "result": "build failed"},
+  {"id": "schema-software-unbound", "language": "lean", "file": "lean/ResponseShape/Schemas/Calc.lean", "definition": "ResponseShape.Schemas.Calc.row",
+   "change": "a case with software selects the answer whose reproduction is null; calc.json regenerated",
+   "test": "lake build ResponseShape.Encoders.Calc (runCaseReported_fits); tests/test_calc_service.py::test_a_reproduction_is_unknown_exactly_under_a_software_convention, ::test_route_cases_answer_their_rows", "result": "failed"},
   {"id": "deadline-calc", "language": "python", "file": "ve/backends/lean_service.py", "definition": "DEADLINES",
    "change": "no calc deadline", "test": "tests/test_lean_service.py::test_the_deadline_keys_are_the_handshakes_modes, ::test_handshake", "result": "failed"}
  ]}
