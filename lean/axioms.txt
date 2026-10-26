@@ -281,6 +281,8 @@
 'VE.Alternatives.wf_preds' depends on axioms: [propext]
 'VE.Alternatives.withDefinitions_relation_some' depends on axioms: [propext]
 'VE.Alternatives.zip_all_target' depends on axioms: [propext, Quot.sound]
+'VE.Arith.Examples.bertrand_means_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Arith.Examples.primeBody_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Ask.Answer.groups_view' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Ask.Asked.hbind' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Ask.Asked.hnames' depends on axioms: [propext, Classical.choice, Quot.sound]
