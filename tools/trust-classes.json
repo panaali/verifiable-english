@@ -597,7 +597,12 @@
         "ResponseShape.Schemas.NormDefaults.row",
         "ResponseShape.Schemas.NormDefaults.status",
         "ResponseShape.Schemas.NormDefaults.witness_conflict",
-        "ResponseShape.Schemas.NormDefaults.soft_admission"
+        "ResponseShape.Schemas.NormDefaults.soft_admission",
+        "ResponseShape.Schemas.NormDefaults.defaults_elaborate",
+        "ResponseShape.Schemas.NormDefaults.defaults_situation",
+        "ResponseShape.Schemas.NormDefaults.defaults_coherence",
+        "ResponseShape.Schemas.NormDefaults.defaults_certificate",
+        "ResponseShape.Schemas.NormDefaults.defaults_model"
       ],
       "G[R]": [
         "ResponseShape.Schemas.NormDefaults.norm_defaults_path"
@@ -4892,7 +4897,6 @@
         "VE.NormDefaults.Wire.layeredCase",
         "VE.NormDefaults.Wire.legacyKinds",
         "VE.NormDefaults.Wire.rightsPack",
-        "VE.NormDefaults.Wire.runLayered",
         "VE.NormDefaults.Wire.softLabelledU",
         "VE.NormDefaults.Wire.softPack",
         {
@@ -13339,6 +13343,24 @@
         "VE.Defaults.dfltOf"
       ]
     },
+    "VE/Defaults/Route.lean": {
+      "G[V]": [
+        "VE.NormDefaults.Wire.defaultsKinds",
+        "VE.NormDefaults.Wire.defaultsRows",
+        "VE.NormDefaults.Wire.layeredKindCase",
+        "VE.NormDefaults.Wire.layeredRows",
+        "VE.NormDefaults.Wire.runLayered"
+      ]
+    },
+    "VE/Defaults/RouteExamples.lean": {
+      "T": [
+        "VE.Defaults.RouteFixtures.plainEnv",
+        "VE.Defaults.RouteFixtures.refused",
+        "VE.Defaults.RouteFixtures.run",
+        "VE.Defaults.RouteFixtures.shown",
+        "VE.Defaults.RouteFixtures.βTwo"
+      ]
+    },
     "VE/Scales/Syntax.lean": {
       "S": [
         "VE.Scales.Direction",
@@ -14101,7 +14123,8 @@
         "VE.Defaults.Wire.elaborateFields",
         "VE.Defaults.Wire.entityIds",
         "VE.Defaults.Wire.formLabel",
-        "VE.Defaults.Wire.modelFields"
+        "VE.Defaults.Wire.modelFields",
+        "VE.Defaults.Wire.situationJson"
       ],
       "G[R]": [
         "VE.Defaults.Wire.CertReplay.reason"
@@ -14178,6 +14201,7 @@
         "VE.Defaults.WireFixtures.req",
         "VE.Defaults.WireFixtures.rest",
         "VE.Defaults.WireFixtures.rulesJ",
+        "VE.Defaults.WireFixtures.sitJ",
         "VE.Defaults.WireFixtures.traceJ",
         "VE.Defaults.WireFixtures.unknownBecause",
         "VE.Defaults.WireFixtures.αCase",
