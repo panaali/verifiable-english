@@ -5911,6 +5911,7 @@
     },
     "VE/Question/Run.lean": {
       "D[V]": [
+        "VE.Question.Run.caseFields",
         "VE.Question.Run.decodeCaller",
         "VE.Question.Run.questionCase"
       ],

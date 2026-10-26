@@ -66,7 +66,7 @@
     "ve/readings_verdicts.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 36867,
+    "total_lines": 36871,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -350,12 +350,12 @@
       },
       {
         "file": "lean/VE/Question/Run.lean",
-        "lines": 253,
-        "sha256": "19360285da56ef15bb2a2eb0c07b414d8f340347a18e24c082356334c46de035",
+        "lines": 257,
+        "sha256": "152c6c578335c61939a7237554e7e4834fb2259d1c838888f4341f14f70eb0ea",
         "ranges": [
           [
             1,
-            253
+            257
           ]
         ],
         "declarations": [
@@ -366,7 +366,8 @@
           "oneFields",
           "askedFields",
           "decodeCaller",
-          "modalFields"
+          "modalFields",
+          "caseFields"
         ],
         "reason": "question answering Q1.2 (docs/spec/question-answering.md 4.1, 8): english.question decodes the case (E2's decodeCase for the environment, overlay and lexicon; the question, which must be the source, authoring mode at cap 2) and writes 4.1's fields of what `ask` shows (a moved-out reading refused; the A0 line gated) and the identities; the export case answers the question contract; the full file is pinned conservatively"
       },

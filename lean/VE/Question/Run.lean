@@ -209,14 +209,18 @@ def codesCase (id : String) : Json :=
     ("fields", toJson statusFields), ("texts", toJson texts), ("callers", toJson [("speech-acts", speechPrefixes)]),
     ("question_version", .str questionVersion)])]
 
+/-- The fields a question case holds: `english.read`'s, `question`, and `caller` when it is present. -/
+def caseFields (j : Json) : List String :=
+  ["id", "environment", "lexicon", "source", "mode", "cap", "question"] ++ optionalFields j ++
+    ["caller"].filter fun k => (j.getObjVal? k).toOption.isSome
+
 def questionCase (j : Json) : Except String Json := do
   if (j.getObjVal? "export").isOk then
     VE.Bridge.exactFields j ["id", "export"]
     let id ← VE.Bridge.stringField j "id"
     unless (← VE.Bridge.stringField j "export") == "codes" do throw "InvalidInput: export is codes when present"
     return codesCase id
-  VE.Bridge.exactFields j ((["id", "environment", "lexicon", "source", "mode", "cap", "question"] ++
-    optionalFields j ++ ["caller"].filter fun k => (j.getObjVal? k).toOption.isSome))
+  VE.Bridge.exactFields j (caseFields j)
   let id ← VE.Bridge.stringField j "id"
   let q ← VE.Bridge.stringField j "question"
   unless (← VE.Bridge.stringField j "source") == q do throw "InvalidInput: the source is not the question"
