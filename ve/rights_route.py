@@ -2,9 +2,8 @@
 from __future__ import annotations
 
 from collections import Counter
-from string import Formatter
 
-from .backends.relay import decide, decide_once
+from .backends.relay import decide, decide_once, slots_bound
 from .backends.service_schema import same_json, validate_copied_rights_source
 from .ast import decimal_value
 from .errors import CheckerUnavailable
@@ -278,11 +277,8 @@ def _bind_elaboration(row, units, environment):
         if set(row['wordings']) != generated_names:
             raise ValueError('unbound generated wording')
         for name, wording in row['wordings'].items():
-            arity = len(prime_predicates[name]['arguments'])
-            for _, field, spec, conversion in Formatter().parse(wording):
-                if field is not None and (not field.isascii() or not field.isdecimal() or
-                                           decimal_value(field) >= arity or spec or conversion):
-                    raise ValueError('invalid generated wording placeholder')
+            if not slots_bound(wording, len(prime_predicates[name]['arguments'])):
+                raise ValueError('invalid generated wording placeholder')
         aimed = Counter(entry['predicate'] for entry in row['generated']
                         if entry['kind'] == 'aimed')
         bar_nodes = Counter(entry['predicate'] for entry in row['bars'])

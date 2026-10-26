@@ -2,6 +2,7 @@ import VE.Service.FamilyNorms
 import VE.EnglishGrammar.Policy
 import VE.EnglishGrammar.Encode
 import VE.Acts.LexicalExamples
+import VE.Norms.Run
 
 /-! act-phrases AP-1, the profile part (ap-1b): `acts@0` documents through the norms decoder, the environment
 mode, the family route and Lean's English (spec 2.1, 2.8, 3.1-3.3, 4.4; fixtures A1-A3, A5, A6, A19 of 11.1).
@@ -118,6 +119,49 @@ def sortedRefusal := "UnsupportedProfile: profiles must be sorted and unique"
 #guard (VE.Norms.Wire.canonicalEnvironmentJson (envA)).toOption.map (·.getObjValD "vocabulary" |>.getObjValD "acts") ==
   some (block fxs)
 
+/-! ### ap-1bb: the environment row gives the canonical act its identity hashes, by predicate, for Python to store;
+two environments with one identity have the same acts -/
+
+def environmentRow (j : Json) : Json :=
+  match VE.Service.Standalone.environmentCase (Json.mkObj [("id", .str "e"), ("environment", j)]) with
+  | .ok row => row
+  | .error m => .str m
+def curly := env actsP [("p", pred ["person", "case"] (perm "{0}  comply with the operator’s instructions in {1}"))]
+def straight := env actsP [("p", pred ["person", "case"] (perm "{0} comply with the operator's instructions in {1}"))]
+#guard (environmentRow curly).getObjValD "acts" ==
+  Json.mkObj [("p", .str "{0} comply with the operator's instructions in {1}")]
+#guard (environmentRow curly).getObjValD "environment_id" == (environmentRow straight).getObjValD "environment_id" &&
+  (environmentRow curly).getObjValD "acts" == (environmentRow straight).getObjValD "acts"
+-- the identity is `environmentIdOf`'s; every regulated act (plain and permission) is listed, in vocabulary order
+#guard (environmentRow curly).getObjValD "environment_id" ==
+  ((VE.Service.Standalone.environmentIdOf actsP curly).toOption.map Json.str).getD .null
+#guard (environmentRow envA).getObjValD "acts" == Json.mkObj [("heard", .str a1), ("paid", .str a2), ("protected", .str a3)]
+-- no regulated act: none
+#guard (environmentRow (env ["relational-fol@0"] [("p", Json.mkObj [("arguments", toJson ["person"]),
+  ("description", .str "d")])])).getObjValD "acts" == Json.mkObj []
+-- the route row's members
+def members (row : Json) : Option (List String) := row.getObj?.toOption.map (·.toList.map (·.1))
+#guard members (environmentRow envA) == some ["acts", "environment_id", "family", "id", "profiles", "status"]
+#guard [(environmentRow envA).getObjValD "id", (environmentRow envA).getObjValD "status",
+  (environmentRow envA).getObjValD "family", (environmentRow envA).getObjValD "profiles"] ==
+  [.str "e", .str "ok", .str "fol", toJson actsP]
+
+/-- A frozen envelope: `language`, then `profile` (v0) or `profiles` (ve.core@0.1), and its `spec_revision`. -/
+def frozen (language : String) (profiles : String × Json) (revision : String) : Json :=
+  Json.mkObj [("language", .str language), profiles, ("spec_revision", .str revision),
+    ("vocabulary", Json.mkObj [("sorts", Json.mkObj [("item", desc "item")]),
+      ("predicates", Json.mkObj [("rel", Json.mkObj [("arguments", toJson ["item", "item"]),
+        ("description", .str "rel")])]), ("constants", Json.mkObj [])])]
+def closure01 := frozen "ve.core@0.1" ("profiles", toJson ["closure@0", "relational-fol@0"]) "ve-v0.1-closure-2026-09-21"
+def core0 := frozen "ve.core@0" ("profile", .str "relational-fol@0") "ve-v0-draft-2026-09-20"
+-- ve.core@0.1 lists its profiles, its family and no act; v0 names its one profile and has no `acts`
+#guard members (environmentRow closure01) == some ["acts", "environment_id", "family", "id", "profiles", "status"]
+#guard [(environmentRow closure01).getObjValD "acts", (environmentRow closure01).getObjValD "family",
+  (environmentRow closure01).getObjValD "profiles"] == [Json.mkObj [], .str "closure", toJson ["closure@0", "relational-fol@0"]]
+#guard members (environmentRow core0) == some ["environment_id", "family", "id", "profile", "status"]
+#guard [(environmentRow core0).getObjValD "family", (environmentRow core0).getObjValD "profile"] ==
+  [.str "fol", .str "relational-fol@0"]
+
 /-! ### 4.4: the environment mode and the family route gate `acts@0` by its row first -/
 
 #guard err (VE.Service.Standalone.validatedComposedEnvironment envA) == "ok"
@@ -174,6 +218,26 @@ def wordings (j : Json) : List (Option String × Bool) := match Env.decode j (Js
     (some (block fxs)))).head? ==
   some (some "{0} is entitled in full equality to a fair and public hearing by an independent and impartial tribunal in {1}",
     false)
+
+/-! ### ap-1bb: the norms route's `norms-elaborate` row gives the same wording of each plain act (`wordings`), by
+its predicate, for Python to display; no other predicate has one -/
+
+def routeWordings (j : Json) : Json := match VE.Norms.Run.runCase (Json.mkObj [("id", .str "w"),
+    ("kind", .str "norms-elaborate"), ("environment", j), ("norms", Json.arr #[])]) with
+  | .ok row => row.getObjValD "wordings"
+  | .error m => .str m
+#guard routeWordings envA == Json.mkObj [
+  ("heard", .str "{0} is entitled in full equality to a fair and public hearing by an independent and impartial tribunal in {1}"),
+  ("paid", .str "{0} has the right to equal pay for equal work without any discrimination")]
+-- each is Lean's English selection (A1 109 B, A2 72 B)
+#guard ["heard", "paid"].map (fun p => (routeWordings envA).getObjValD p) ==
+  (((wordings envA).filterMap (·.1)).take 2).map Json.str
+-- A21 as a plain act: its 414-byte wording
+#guard ((routeWordings (env actsP [("heard", pred ["person"] (plain VE.Acts.LexicalExamples.a21 "has the right"))])).getObjValD
+  "heard").getStr?.toOption.map String.utf8ByteSize == some 414
+-- a permission, and every predicate without `acts@0`, has none
+#guard routeWordings (env actsP seek) == Json.mkObj []
+#guard routeWordings (env ["norms@0", "relational-fol@0"] seek) == Json.mkObj []
 
 /-! ### R16: the profile lists that tell each reader's list apart (`tools/trust_mutants.py` survivors)
 
