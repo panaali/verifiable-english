@@ -66,6 +66,10 @@ def decoded (e : Json) : Option ((String × String × String) × List String × 
 #guard match decoded env with
   | some ((c, w6, t), _) => c != w6 && c != t && w6 != t && c.length == 64
   | none => false
+-- Golden identities: the cardinality environment's, and the projection's two W6a ones.
+#guard (decoded env).map (·.1) == some ("f408745ffa417a1a3ac41ab314c85bd2c0f92262f102bc2a61c623527bc0cf6b",
+  "329a150724f6ad9d2346ef66a6e2bcb79ac8f8bb7a1ce396fc1c4e1f830a3995",
+  "f4c2ad6dafb7109c8729f6c075db8f5feeabf64e7c81cd10f3f39a167ff8350b")
 -- With `documents@1` the projection is W6a's second list, and the identity is another.
 def envDocs : Json := env.setObjVal! "profiles"
   (p r#"["cardinality@0", "documents@1", "order@0", "relational-fol@0", "time@0"]"#)
@@ -87,6 +91,9 @@ def fa1Conclusion : Json := st r#"["quantity", ["forall", "fomc_policymaker", ["
 
 #guard (decode (fa1Premises ++ [fa1Conclusion])).toOption.map (·.map (·.1)) ==
   some (Examples.fa1 ++ [Examples.fa1Conclusion])
+-- FA1's conclusion's golden meaning id: over its canonical object, in the cardinality environment's identity.
+#guard (decode [fa1Conclusion]).toOption.map (·.map (·.2)) ==
+  some ["cdc39856d173011b8acddc122c08690bc453f232202dd5813a65b54f5661b1c5"]
 -- FA1b: the problem without the exclusion premise decodes to the core's FA1b.
 #guard (decode fa1Premises.dropLast).toOption.map (·.map (·.1)) == some Examples.fa1.dropLast
 -- The canonical encoding reads back as itself, so the identity is over what was decoded.
@@ -105,6 +112,10 @@ def ratio (printed : String) : Json :=
   ["quantity", ["const", "bp", "june"]], "1"]"#)
 #guard meaningId (ratio "1") != meaningId (p r#"["rounds_to", "ties_up", ["quantity", ["const", "bp", "june"]],
   ["quantity", ["const", "bp", "sept"]], "1"]"#)
+-- The canonical encoding of ratios and printed numbers reads back as written.
+#guard ["0.30", "105", "-1.5"].all fun d =>
+  (decode [Json.mkObj [("format", .str "ve-cardinality@1"), ("formula", ratio d)]]).toOption.map (·.map (encode ·.1)) ==
+    some [ratio d]
 -- A spelling W6a canonicalises (`-0`) is the same statement.
 #guard meaningId (ratio "-0.0") == meaningId (ratio "0.0")
 
@@ -199,6 +210,8 @@ def finite (sorts : String) : Json := env.setObjVal! "cardinality" (p sorts)
   "InvalidInput: cardinality.finite_sorts must be an array of sort names"
 #guard refusal (terms 1) (finite (Json.mkObj [("finite_sorts", toJson (List.replicate 65 "x"))]).compress) ==
   "ResourceLimit: At most 64 finite sorts"
+#guard refusal (terms 1) (finite (Json.mkObj [("finite_sorts", toJson (List.replicate 64 "x"))]).compress) ==
+  "UnknownSort(x)"
 #guard refusal (terms 1) (finite r#"{"finite_sorts": ["user", "fomc_policymaker", "user"]}"#) ==
   "DuplicateDeclaration: finite sort user"
 #guard refusal (terms 1) (finite r#"{"finite_sorts": ["fomc_policymaker", "users", "users"]}"#) == "UnknownSort(users)"
