@@ -1917,6 +1917,9 @@
         "VE.CertificateWire.limit",
         "VE.CertificateWire.maxSteps",
         "VE.CertificateWire.stepLimit"
+      ],
+      "T": [
+        "VE.CertificateWire.refusal"
       ]
     },
     "VE/Checks.lean": {

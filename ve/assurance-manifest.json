@@ -215,8 +215,8 @@
       },
       {
         "file": "lean/VE/CertificateWire.lean",
-        "lines": 307,
-        "sha256": "d7fd15723dafa173aec727092ec55d76e9fd09a3d8e2984019e18f17c8667950",
+        "lines": 321,
+        "sha256": "d81be730d087e7908329df473c8e34f8b1f26afd87b8b81a294e131b6afb9add",
         "ranges": [
           [
             46,
