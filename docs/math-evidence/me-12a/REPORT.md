@@ -140,6 +140,11 @@ UnknownDefinition) or a name defined twice (DuplicateName), each of a lower rank
   `repo_map.py --check` pass.
 - **Collection:** `gate_collection.py --check --prebuilt`: 0 added, 0 removed, 0 refused, 0 stale, 0 malformed.
 - **Full gate:** left to the chain. No test that main-known-red.txt lists failed.
+- **Second fix round (HEAD `635330323`):** on the Mac runner, `mac-pytest.sh --select -- --base 7855620f3 --run`
+  ran 74 units, 0 failed. The full suite, run as the gate's arguments (`-m "not live"`) over the test files in two
+  interleaved halves, gave 10,897 + 8,265 = 19,162 passed, 3 + 7 skipped and 83 xfailed, with 0 failed. `lake build`,
+  `lean/audit.py` and `regen_generated.py --check` (all 33 entries) pass, and so does `trust_map.py --check` (K +0,
+  S +93, unclassified +0).
 
 Shared files: `lean/VE.lean` (union), `tools/trust-classes.json` and `docs/trust-baseline.json` (registries). No
 branch in flight touches `lean/VE/Arith/` or `lean/ARITH.md`.
