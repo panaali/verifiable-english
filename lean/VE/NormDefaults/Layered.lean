@@ -455,15 +455,9 @@ def legacyRows : List (Packs.KindRow LayeredU) := legacyKinds.map fun k =>
     | some a => pure a
     | none => throw "unreachable"⟩
 
-/-- The kind table's dispatch over the source's pack ids: the route's runner (`runLayered`). -/
+/-- The dispatch over today's rows and the source's pack ids. The route's table, with defeasible's row, and its runner
+`runLayered` are in `Defaults/Route.lean` (`layeredKindCase`, equal to this one on every other kind). -/
 def kindCase (L : LayeredU) (id kind : String) (j : Json) : Except String (Option Json) :=
   Packs.dispatch legacyRows (L.packs.map (·.id)) L id kind j
-
-/-- A `norm-defaults-*` case on the soft or rights branch. -/
-def runLayered (id kind : String) (j : Json) : Except String Json := do
-  let L ← decodeLayered j
-  match ← kindCase L id kind j with
-  | some a => pure a
-  | none => throw s!"UnsupportedProfile: case kind {kind} is not available on the {L.route} norm-defaults branch"
 
 end VE.NormDefaults.Wire
