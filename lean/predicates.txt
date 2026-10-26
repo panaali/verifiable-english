@@ -172,6 +172,7 @@ module VE.Cardinality.Syntax
 module VE.Cardinality.Theorems
 module VE.Cardinality.Wire
 module VE.Cardinality.WireExamples
+module VE.Cardinality.WireTheorems
 module VE.CertificateWire
 module VE.Checks
 module VE.ClaimGraph

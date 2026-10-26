@@ -10,7 +10,7 @@ decoder establishes `CEnv.WellFormed` (E5–E8), which `cardinality_elab_sound` 
 depth-first, left-to-right pass after its envelope (S1) and size (S2): at each node the checks S3–S10 that apply to
 it run in table order, a ratio's operands are checked in full before their tags are compared (S9), and a W6a part
 is elaborated by W6a (S4). The decoded formula is then admitted by the proved `CFormula.admits`, and its identity is
-over its canonical encoding. Certificates (`CardCertificate`), the problem limits P1–P3 and the case runner are
+over its canonical encoding (`WireTheorems.lean` states what the decoders establish). Certificates (`CardCertificate`), the problem limits P1–P3 and the case runner are
 QT-A3's next part (qt-a3b). -/
 namespace VE.Cardinality
 open Lean
