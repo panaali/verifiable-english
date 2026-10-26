@@ -20,6 +20,10 @@ MERGED_BASE = "f05474685f3df4313d0b264c32cf1cf673a17d97"
 RD6B_APPROVED = "6b66f08721003c390f9180ed84dfe911fe9869b6"  # the approved head merged into ve-integration by 8b9927f2
 
 
+# A seeded bug's file that later became a package (AR-16b split `ve/readings_verdicts.py` into `ve/readings_verdicts/`).
+MOVED = {"ve/readings_verdicts.py": "ve/readings_verdicts/__init__.py"}
+
+
 def saved():
     summary = json.loads((EVIDENCE / "summary.json").read_text())
     for name, digest in summary["sha256"].items():
@@ -135,7 +139,7 @@ def test_saved_latency_and_seeded_bugs():
     assert len({mutant["mutant"] for mutant in mutants}) == 3
     for mutant in mutants:
         assert mutant["exit_code"] != 0 and mutant["failed"] is True and "FAILED" in mutant["tail"]
-        assert (ROOT / mutant["file"]).is_file()
+        assert (ROOT / MOVED.get(mutant["file"], mutant["file"])).is_file()
         path, name = mutant["test"].split("::", 1)
         name = name.split("[", 1)[0]
         assert re.search(rf"^def {re.escape(name)}\(", (ROOT / path).read_text(), re.M)

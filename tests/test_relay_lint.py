@@ -142,11 +142,14 @@ def test_seeded_readings_modules(tmp_path, line, found):
 
 
 def test_every_readings_module_is_read_by_the_reserved_rule():
-    """The rule reads the glob, not a hand-kept list: every `ve/readings*.py` file, and nothing fewer."""
-    modules = sorted(ROOT.glob(relay_lint.READINGS_GLOB))
-    assert {p.name for p in modules} >= {"readings.py", "readings_route.py", "readings_s1.py",
-                                          "readings_s2_english.py", "readings_s2_wording.py",
-                                          "readings_verdicts.py", "readings_sup.py", "readings_english.py"}
+    """The rule reads the globs, not a hand-kept list: every `ve/readings*.py` file and every module of a readings
+    package (`ve/readings_verdicts/`, AR-16b), and nothing fewer."""
+    modules = relay_lint.readings_modules()
+    assert {p.relative_to(ROOT).as_posix() for p in modules} >= {
+        "ve/readings.py", "ve/readings_route.py", "ve/readings_s1.py", "ve/readings_s2_english.py",
+        "ve/readings_s2_wording.py", "ve/readings_sup.py", "ve/readings_english.py",
+        *(p.relative_to(ROOT).as_posix() for p in (ROOT / "ve/readings_verdicts").glob("*.py"))}
+    assert len(list((ROOT / "ve/readings_verdicts").glob("*.py"))) >= 6
     for path in modules:
         assert relay_lint.reserved_literals(path) == [], path
 
@@ -154,7 +157,7 @@ def test_every_readings_module_is_read_by_the_reserved_rule():
 def test_probe_a2_no_readings_module_spells_a_soft_or_unsaid_name():
     """PROBE A2 of rd-9-looprecheck2: `! grep -n 'soft__\\|unsaid__' ve/readings*.py`. The readings modules find a
     decision's name by its key in Lean's row, never by spelling it (plan SC-8)."""
-    for path in sorted(ROOT.glob(relay_lint.READINGS_GLOB)):
+    for path in relay_lint.readings_modules():
         text = path.read_text()
         assert "soft__" not in text and "unsaid__" not in text, path
 
