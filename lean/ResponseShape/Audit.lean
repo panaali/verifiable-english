@@ -4,6 +4,7 @@ import ResponseShape.CaseDeciders
 import ResponseShape.Encoders
 import ResponseShape.Encoders.Alternatives
 import ResponseShape.Encoders.Ask
+import ResponseShape.Encoders.Calc
 import ResponseShape.Encoders.Common
 import ResponseShape.Encoders.Conformance
 import ResponseShape.Encoders.Discourse
@@ -96,6 +97,8 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Ask.route_mem
 #print axioms ResponseShape.Encoders.Ask.row_fits
 #print axioms ResponseShape.Encoders.Ask.source_fits
+#print axioms ResponseShape.Encoders.Calc.rowJson_fits
+#print axioms ResponseShape.Encoders.Calc.runCaseReported_fits
 #print axioms ResponseShape.Encoders.Common.admitDocument_kinds
 #print axioms ResponseShape.Encoders.Common.caseKind_read
 #print axioms ResponseShape.Encoders.Common.claimJson_fits

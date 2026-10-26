@@ -31,6 +31,7 @@ import VE.Readings.Run
 import VE.Service.Diagnose
 import VE.Service.Document
 import VE.SearchBudget.Run
+import VE.Calc.Run
 import Std.Data.HashMap
 import Std.Data.TreeMap.Raw.Lemmas
 import VE.Limits
@@ -51,7 +52,8 @@ request error `{"digests", "error", "id", "mode", "status": "error"}`, bound lik
 response: its nonce, its mode and the digests of its cases (`null` when its cases text
 does not split into cases). Only a line whose envelope cannot be decoded gets the unbound
 line error `{"error", "id", "status": "error"}`, which answers no request. Non-English cases are decoded by `VE.JsonInput.parseCases`, the one-shot
-batch decoder; English and `risk-eval` use `Lean.Json.parse`, their one-shot runners' decoder.
+batch decoder; English and `risk-eval` use `Lean.Json.parse`, their one-shot runners' decoder;
+`calc` uses both (`calcCases`).
 
 Budgets are deterministic functions of the request: its size in bytes and its number
 of cases, each capped by the service limits; exceeding one is `ResourceLimit`. Work
@@ -126,6 +128,7 @@ def runMode : Mode → Json → Json
   | .ask, j => VE.Ask.Run.caseReported j
   | .words, j => VE.Words.Run.caseReported j
   | .metered, j => VE.Route.MeteredRun.runCaseReported j
+  | .calc, j => VE.Calc.Run.runCaseReported j
 
 /-- A case the batch decoder rejected on its own (JSON depth): the one-shot record. -/
 def caseError (m : Mode) (index : Nat) (message : String) : Json :=
@@ -559,9 +562,35 @@ private def sameCases (text : String) (allowNull : Bool := false) : Bool :=
   "[" ++ String.mk (List.replicate 300 '[') ++ String.mk (List.replicate 300 ']') ++ ",1]"].all sameCases
 #guard sameCases "[null,{\"a\":null}]" true
 
+/-- The text with every `-` outside strings read as a space: one byte for one, so the case cuts
+are the same. In JSON a `-` outside strings is only a number's sign or an exponent's. -/
+def unsigned (text : String) : String :=
+  (text.foldl (fun (out, quoted, escaped) c =>
+    if quoted then (out.push c, !(c == '"' && !escaped), !escaped && c == '\\')
+    else (out.push (if c == '-' then ' ' else c), c == '"', false)) ("", false, false)).1
+
+/-- The `calc` batch (math-evidence spec 3.1): `sci` exponents may be negative, which the restricted
+decoder refuses. Its cases are those of `restrictedCases` on the `unsigned` text, which refuses
+what it refuses in every mode (duplicate keys, fractions, exponents, `null`), each case it admits
+read again with its signs by `Lean.Json.parse`. -/
+def calcCases (text : String) : Except String (Array (Except String Json)) := do
+  let checked ← restrictedCases (unsigned text) false
+  let bounds ← caseBounds text.toUTF8
+  unless bounds.size == checked.size do throw "batch split mismatch"
+  (checked.zip bounds).mapM fun
+    | (.ok _, (a, b)) => .ok <$> Json.parse (text.extract ⟨a⟩ ⟨b⟩)
+    | (.error m, _) => pure (.error m)
+
+#guard match calcCases "[{\"e\": [\"sci\", \"-5.89\", -7]}, [-0, \"a-b\\\"-\"]]" with
+  | .ok #[.ok a, .ok b] => a.compress == "{\"e\":[\"sci\",\"-5.89\",-7]}" && b.compress == "[0,\"a-b\\\"-\"]"
+  | _ => false
+#guard ["[{\"a\": 1, \"a\": 2}]", "[{\"a\": -1, \"a\": 2}]", "[6.4e1]", "[65.0]", "[1e-5]", "[- 7]", "[--7]",
+  "[null]", "[-99999999999999999999]"].all fun t => (calcCases t).isOk == false
+
 def decodeCases (r : Request) : Except String (Array (Except String Json)) :=
   if r.mode == .english then parseEnglishCases r.cases
   else if r.mode == .riskEval || r.mode == .document then parseLeanCases r.cases
+  else if r.mode == .calc then calcCases r.cases
   else restrictedCases r.cases (r.mode == .model)
 
 /-! ## Environment handles (docs/LEAN-FIRST-PLAN.md, F2, batch 2)
@@ -825,6 +854,8 @@ theorem runMode_words (j : Json) :
 
 theorem runMode_metered (j : Json) :
     runMode .metered j = VE.Route.MeteredRun.runCaseReported j := rfl
+
+theorem runMode_calc (j : Lean.Json) : runMode .calc j = VE.Calc.Run.runCaseReported j := rfl
 
 
 theorem caseResult_ok (m : Mode) (i : Nat) (j : Json) : caseResult m i (.ok j) = runMode m j := rfl
