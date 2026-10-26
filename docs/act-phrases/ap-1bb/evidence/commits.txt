@@ -1,3 +1,11 @@
+94487786302173d69e8816d0fc8f1f8f7b1391e4 ap-1bb fix1: the restored identity tests get new names (the base's IDs stay removed by 9524e3792's trailers)
+88e4c108e83e61973ace6c9744e71973f10976f7 ap-1bb fix1: difffuzz reads the environment row's four fields (acts retyped and dropped as mutants); consolidation row 8b re-measured (Norms/Wire.lean +10)
+60fa1bd6abb6833a4ebefc0a9029dd3b4661ff04 ap-1bb fix1 evidence: delta.json re-recorded (base and head, each with its own checkout; probes for the environment row's acts and A19's read and legend), DELTA rows 1-3 updated and row 5 (the row's acts, R3)
+021def33f54442c3f90da7ac40c752676b9e2227 ap-1bb fix1 trust_mutants evidence: full run at bcf0eb54 (104 killed, 2 equivalent, 1 not elaborating), rescored with their allowances
+bcf0eb5449cf342469c18f5ee2e0303e2689f3b5 ap-1bb fix1: pin the environment row's shape and guard the frozen-envelope rows (trust_mutants survivors)
+caf80f1b16fae3d723d1d335822a73eac2e14d65 ap-1bb fix1 F1: one environment identity, one environment
+ed70a5715af2883e5a031b6c0cbe2f3c8384465c ap-1bb fix1 F2: a relayed wording's slots are its predicate's argument positions (relay.slots_bound)
+66f4fd82bdec72b0eafc5bc2f1552dfc93fafd61 ap-1bb report: trust_mutants, selected tests, size, commit list and the self-review against BUILDER-CHECKLIST
 43e51e67ad3937561462316762a636185e97f116 ap-1bb: an environment without a plain act asks Lean nothing to display (test and seeded bug py-asked-without-acts)
 71443a6da9ebfc188a7bd057277fcd6845f2a1bb ap-1bb: the wordings retype test goes through the service's decoder (a lone surrogate, a 10,000-deep list, the member deleted)
 5a42ff3967e4345824ece6982a82f4304ed93481 ap-1bb: delta.py's recording flag is --answers (a recorder of evidence, no writer of a committed file: test_regen_generated)
