@@ -11270,8 +11270,7 @@
         "VE.Time.Wire.w6Profiles"
       ],
       "D[I]": [
-        "VE.Time.Wire.canonicalText",
-        "VE.Time.Wire.statementIds"
+        "VE.Time.Wire.canonicalText"
       ],
       "G[V]": [
         "VE.Time.Wire.admissions",
@@ -11291,9 +11290,7 @@
       "G[R]": [
         "VE.Time.Wire.aggregateLimit",
         "VE.Time.Wire.depthLimit",
-        "VE.Time.Wire.quantityLimits",
-        "VE.Time.Wire.staleW6",
-        "VE.Time.Wire.staleCore"
+        "VE.Time.Wire.quantityLimits"
       ]
     },
     "VE/WireContract/Diagnose.lean": {
@@ -14679,26 +14676,20 @@
         {
           "name": "VE.Cardinality.CardEnv",
           "tied": [
-            "VE.Cardinality.checkCertificate_sound"
+            "VE.Cardinality.CAdmission.sound"
           ]
         },
         {
           "name": "VE.Cardinality.CAdmission",
           "tied": [
-            "VE.Cardinality.checkCertificate_sound"
+            "VE.Cardinality.CAdmission.sound"
           ]
         },
-        {
-          "name": "VE.Cardinality.CardCertificate",
-          "tied": [
-            "VE.Cardinality.checkCertificate_sound"
-          ]
-        },
+        "VE.Cardinality.CardCertificate",
         "VE.Cardinality.Wire.profileLists",
         "VE.Cardinality.Wire.finiteSorts",
         "VE.Cardinality.Wire.decodeEnvironment",
-        "VE.Cardinality.Wire.decodeStatement",
-        "VE.Cardinality.Wire.decodeCertificate"
+        "VE.Cardinality.Wire.decodeStatement"
       ],
       "D[R]": [
         "VE.Cardinality.Wire.checkDeclarations",
@@ -14735,62 +14726,28 @@
         "VE.Cardinality.Wire.elabFormula"
       ]
     },
-    "VE/Cardinality/Run.lean": {
-      "D[V]": [
-        {
-          "name": "VE.Cardinality.checkCertificate",
-          "tied": [
-            "VE.Cardinality.checkCertificate_sound"
-          ]
-        }
-      ],
-      "D[I]": [
-        "VE.Cardinality.Wire.erasedIds",
-        "VE.Cardinality.Run.statementJson",
-        "VE.Cardinality.Run.regionsJson",
-        "VE.Cardinality.Run.erasedJson"
-      ],
-      "G[R]": [
-        "VE.Cardinality.Wire.problemChecks",
-        "VE.Cardinality.Wire.stale",
-        "VE.Cardinality.Run.claimed"
-      ],
-      "G[V]": [
-        "VE.Cardinality.Run.runCase",
-        "VE.Cardinality.Run.runCaseReported"
-      ]
-    },
     "VE/Cardinality/WireExamples.lean": {
       "T": [
-        "VE.Cardinality.WireExamples.answer",
+        "VE.Cardinality.WireExamples.admitted",
         "VE.Cardinality.WireExamples.badCount",
-        "VE.Cardinality.WireExamples.badProportion",
-        "VE.Cardinality.WireExamples.case",
-        "VE.Cardinality.WireExamples.certificate",
-        "VE.Cardinality.WireExamples.certify",
-        "VE.Cardinality.WireExamples.colliding",
+        "VE.Cardinality.WireExamples.declaring",
+        "VE.Cardinality.WireExamples.decode",
         "VE.Cardinality.WireExamples.decoded",
+        "VE.Cardinality.WireExamples.e2",
         "VE.Cardinality.WireExamples.env",
         "VE.Cardinality.WireExamples.envDocs",
-        "VE.Cardinality.WireExamples.envErr",
-        "VE.Cardinality.WireExamples.envId",
-        "VE.Cardinality.WireExamples.erased",
-        "VE.Cardinality.WireExamples.err",
-        "VE.Cardinality.WireExamples.fa1Admission",
-        "VE.Cardinality.WireExamples.fa1Cert",
         "VE.Cardinality.WireExamples.fa1Conclusion",
         "VE.Cardinality.WireExamples.fa1Premises",
-        "VE.Cardinality.WireExamples.fa1bAdmission",
-        "VE.Cardinality.WireExamples.ids",
+        "VE.Cardinality.WireExamples.finite",
+        "VE.Cardinality.WireExamples.meaningId",
+        "VE.Cardinality.WireExamples.nested",
         "VE.Cardinality.WireExamples.p",
+        "VE.Cardinality.WireExamples.ratio",
+        "VE.Cardinality.WireExamples.ratioOf",
         "VE.Cardinality.WireExamples.refusal",
-        "VE.Cardinality.WireExamples.regions",
-        "VE.Cardinality.WireExamples.seven",
+        "VE.Cardinality.WireExamples.share",
         "VE.Cardinality.WireExamples.st",
-        "VE.Cardinality.WireExamples.targetId",
-        "VE.Cardinality.WireExamples.terms",
-        "VE.Cardinality.WireExamples.traceJson",
-        "VE.Cardinality.WireExamples.w6Id"
+        "VE.Cardinality.WireExamples.terms"
       ]
     }
   }

@@ -10,7 +10,8 @@ decoder establishes `CEnv.WellFormed` (E5–E8), which `cardinality_elab_sound` 
 depth-first, left-to-right pass after its envelope (S1) and size (S2): at each node the checks S3–S10 that apply to
 it run in table order, a ratio's operands are checked in full before their tags are compared (S9), and a W6a part
 is elaborated by W6a (S4). The decoded formula is then admitted by the proved `CFormula.admits`, and its identity is
-over its canonical encoding, which the answer echoes. -/
+over its canonical encoding. `CardCertificate`, the problem limits P1–P3 and the case runner are QT-A3's next part
+(qt-a3b). -/
 namespace VE.Cardinality
 open Lean
 
@@ -42,6 +43,9 @@ structure CardCertificate where
   conclusionId : String
   w6 : VE.Time.Wire.W6Certificate
 
+/-- An admitted statement satisfies the independent admission relation. -/
+theorem CAdmission.sound {w : CardEnv} (a : CAdmission w) : Admitted w.env a.formula := admits_sound _ _ a.admitted
+
 /-- The original environment's profiles: `cardinality@0` and the projection's. -/
 def CardEnv.profiles (w : CardEnv) : List String := "cardinality@0" :: w.w6.profiles
 
@@ -50,7 +54,7 @@ end VE.Cardinality
 namespace VE.Cardinality.Wire
 open Lean
 open VE.Bridge (exactFields fields stringField strings)
-open VE.Time (QType QFormula)
+open VE.Time (QType)
 
 def format : String := "ve-cardinality@1"
 
@@ -288,16 +292,5 @@ def decodeStatement (w : CardEnv) (j : Json) : Except String (CAdmission w) := d
   if h : f.admits w.env = true then
     pure ⟨f, h, ← VE.Route.Wire.meaningId w.profiles w.environmentId (canonical f)⟩
   else throw "TypeMismatch: statement is not admitted"
-
-def decodeCertificate (j : Json) : Except String CardCertificate :=
-  match (do
-    exactFields j ["format", "environment_id", "premise_meaning_ids", "conclusion_meaning_id", "w6"]
-    unless (← stringField j "format") == "ve-cardinality-certificate@1" do
-      throw "Unsupported cardinality certificate format"
-    pure ⟨← stringField j "environment_id", ← strings (← j.getObjVal? "premise_meaning_ids"),
-      ← stringField j "conclusion_meaning_id", ← VE.Time.Wire.decodeW6Certificate (← j.getObjVal? "w6")⟩ :
-      Except String CardCertificate) with
-  | .ok c => .ok c
-  | .error e => .error s!"Invalid cardinality certificate: {e}"
 
 end VE.Cardinality.Wire

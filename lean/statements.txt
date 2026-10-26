@@ -4378,6 +4378,10 @@ theorem VE.Cardinality.CAdmission.admitted
     VE.Cardinality.CFormula.admits w.env self.formula = Bool.true
   -- uses VE.Cardinality.CAdmission.formula@VE.Cardinality.Wire VE.Cardinality.CAdmission@VE.Cardinality.Wire VE.Cardinality.CFormula.admits@VE.Cardinality.Syntax VE.Cardinality.CardEnv.env@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire
   -- expr 2098165257
+theorem VE.Cardinality.CAdmission.sound
+  ∀ {w : VE.Cardinality.CardEnv} (a : VE.Cardinality.CAdmission w), VE.Cardinality.Admitted w.env a.formula
+  -- uses VE.Cardinality.Admitted@VE.Cardinality.Syntax VE.Cardinality.CAdmission.formula@VE.Cardinality.Wire VE.Cardinality.CAdmission@VE.Cardinality.Wire VE.Cardinality.CardEnv.env@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire
+  -- expr 312861070
 theorem VE.Cardinality.CEnv.WellFormed.finiteDeclared
   ∀ {E : VE.Cardinality.CEnv}, E.WellFormed → ∀ (s : String), s ∈ E.finite → s ∈ E.q.sorts
   -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.finite@VE.Cardinality.Syntax VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Time.QEnv.sorts@VE.Time.Syntax
@@ -4985,15 +4989,6 @@ theorem VE.Cardinality.cardinality_elab_sound
               VE.Cardinality.CEntails E ps c
   -- uses VE.Cardinality.Admitted@VE.Cardinality.Syntax VE.Cardinality.CEntails@VE.Cardinality.Semantics VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.elab@VE.Cardinality.Regions VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.erasedProblem@VE.Cardinality.Erase VE.Time.QFormula@VE.Time.Syntax VE.Time.TEntails@VE.Time.Semantics
   -- expr 2153097470
-theorem VE.Cardinality.checkCertificate_sound
-  ∀ {w : VE.Cardinality.CardEnv} (ps : List (VE.Cardinality.CAdmission w)) (c : VE.Cardinality.CAdmission w)
-    (cert : VE.Cardinality.CardCertificate),
-    VE.Cardinality.checkCertificate ps c cert = Except.ok Bool.true →
-      cert.environmentId = w.environmentId ∧
-        cert.premiseIds = List.map (fun x => x.meaningId) ps ∧
-          cert.conclusionId = c.meaningId ∧ VE.Cardinality.CEntails w.env (List.map (fun x => x.formula) ps) c.formula
-  -- uses VE.Cardinality.CAdmission.formula@VE.Cardinality.Wire VE.Cardinality.CAdmission.meaningId@VE.Cardinality.Wire VE.Cardinality.CAdmission@VE.Cardinality.Wire VE.Cardinality.CEntails@VE.Cardinality.Semantics VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.CardCertificate.conclusionId@VE.Cardinality.Wire VE.Cardinality.CardCertificate.environmentId@VE.Cardinality.Wire VE.Cardinality.CardCertificate.premiseIds@VE.Cardinality.Wire VE.Cardinality.CardCertificate@VE.Cardinality.Wire VE.Cardinality.CardEnv.env@VE.Cardinality.Wire VE.Cardinality.CardEnv.environmentId@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.checkCertificate@VE.Cardinality.Run
-  -- expr 3850057825
 theorem VE.Cardinality.countAtom_holds_iff
   ∀ {α : Type u} {E : VE.Cardinality.CEnv} {T : VE.Time.TStructure α},
     VE.Cardinality.Admissible E T →
