@@ -13361,6 +13361,16 @@
         "VE.Defaults.RouteFixtures.βTwo"
       ]
     },
+    "ResponseShape/DefaultsExamples.lean": {
+      "T": [
+        "ResponseShape.DefaultsExamples.accepts",
+        "ResponseShape.DefaultsExamples.cert",
+        "ResponseShape.DefaultsExamples.certNone",
+        "ResponseShape.DefaultsExamples.coll",
+        "ResponseShape.DefaultsExamples.drop",
+        "ResponseShape.DefaultsExamples.set"
+      ]
+    },
     "VE/Scales/Syntax.lean": {
       "S": [
         "VE.Scales.Direction",

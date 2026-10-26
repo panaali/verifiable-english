@@ -10,6 +10,7 @@ module MeteredMain
 module ResponseDecode
 module ResponseShape.Audit
 module ResponseShape.CaseDeciders
+module ResponseShape.DefaultsExamples
 module ResponseShape.Encoders.Alternatives
 module ResponseShape.Encoders.Ask
 module ResponseShape.Encoders.Common

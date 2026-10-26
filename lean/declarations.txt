@@ -160,6 +160,13 @@ module ResponseShape.CaseDeciders 1b58f0b0a9c88f49876e8f3ceb5acfe1213edbd0f35ce5
 54:0-65:89 def ResponseShape.CaseDecider.fn@ResponseShape.CaseDeciders
 67:0-67:72 def ResponseShape.CaseDecider.ofName?@ResponseShape.CaseDeciders
 74:0-75:76 def ResponseShape.decidedCase@ResponseShape.CaseDeciders
+module ResponseShape.DefaultsExamples cfe9c88f3a84aba3ae17a5c13c53a70d9f393f746b943fa939c64d99fe8b76f3
+10:0-11:104 def ResponseShape.DefaultsExamples.accepts@ResponseShape.DefaultsExamples
+12:0-12:69 def ResponseShape.DefaultsExamples.set@ResponseShape.DefaultsExamples
+13:0-14:43 def ResponseShape.DefaultsExamples.drop@ResponseShape.DefaultsExamples
+16:0-16:122 def ResponseShape.DefaultsExamples.coll@ResponseShape.DefaultsExamples
+17:0-17:61 def ResponseShape.DefaultsExamples.cert@ResponseShape.DefaultsExamples
+18:0-18:57 def ResponseShape.DefaultsExamples.certNone@ResponseShape.DefaultsExamples
 module ResponseShape.Encoders.Alternatives fbe48ba162bff204bd1beed8897c039dbb77c077753da00b79d1c76ad4989fcf
 12:0-15:69 theorem ResponseShape.Encoders.Alternatives.of_norms@ResponseShape.Encoders.Alternatives
 17:0-22:77 theorem ResponseShape.Encoders.Alternatives.premiseLabels_mem@ResponseShape.Encoders.Alternatives
