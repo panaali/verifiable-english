@@ -26,7 +26,7 @@ ROOT = Path(__file__).resolve().parents[3]
 sys.path[:0] = [str(ROOT / "tools")]
 import trust_mutants as tm  # noqa: E402
 
-SAVED = Path("/home/seyran/code/manage-agents/reviews/speed-tmchecks-inputs/sc-1b-5a0051f93.json")
+SAVED = Path(__file__).with_name("evidence") / "sc-1b-5a0051f93.json"  # sc-1b's 12:18Z run, as saved for this item
 FIRST, SECOND, BASE = "5a0051f93", "24504cdd5", "e9e63dda7ff2ca089c8d8f03e3657b76a55c1cfa"
 
 

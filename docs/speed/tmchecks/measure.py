@@ -5,8 +5,8 @@ them was check-only.
     uv run python docs/speed/tmchecks/measure.py
 
 Reads every version of each item's evidence JSON in the repository's history (all refs; git only reads), one run
-per distinct blob, in the order it was first committed, and sc-1b's three reruns as the task gives them (sc-1b
-committed no evidence JSON; its 5a0051f93 run is the saved copy). For two consecutive runs of one item it diffs
+per distinct blob, in the order it was first committed, and sc-1b's three reruns (`GIVEN`: sc-1b committed its
+evidence JSON only at the end, after this item started; its 5a0051f93 and 24504cdd5 runs are copied in evidence/). For two consecutive runs of one item it diffs
 lean/ and the --test files between the two runs' `head`s. The change is check-only when every changed file is a
 module of lean/ outside every selected declaration's file and import closure (the selected declarations are the
 second run's `definitions`; the closure is read at the second head with `check_lean_imports.imports`), an outside
@@ -24,11 +24,12 @@ from check_lean_imports import imports  # noqa: E402
 
 INVENTORIES = {"lean/declarations.txt", "lean/statements.txt", "lean/predicates.txt", "lean/axioms.txt"}
 SINCE = "2026-10-20"
-SAVED = Path("/home/seyran/code/manage-agents/reviews/speed-tmchecks-inputs/sc-1b-5a0051f93.json")
-# sc-1b's three reruns, as the task gives them (ended, minutes): 34e1a60d1 -> 5a0051f93 -> 24504cdd5, and the first
-# of the three after b548c10d2 (the 08:36Z sweep on the Mac log, 2526 s)
+SAVED = Path(__file__).with_name("evidence") / "sc-1b-5a0051f93.json"
+# sc-1b's three reruns (ended, minutes), the first two as the task gives them, the third from its evidence
+# (evidence/sc-1b-24504cdd5.json, 4761 s): each after the commit named second; the first follows the 08:36Z sweep on
+# b548c10d2 (mac-pytest.jsonl, 2526 s)
 GIVEN = [("sc-1b", "b548c10d2", "34e1a60d1", "11:03Z", 60), ("sc-1b", "34e1a60d1", "5a0051f93", "12:18Z", 67),
-         ("sc-1b", "5a0051f93", "24504cdd5", "running from 12:25Z", None)]
+         ("sc-1b", "5a0051f93", "24504cdd5", "13:44Z", 79)]
 
 
 def git(*args: str) -> str:
@@ -108,7 +109,7 @@ def main() -> None:
     for item, first, second, ended, minutes in GIVEN:
         same, note = check_only({**given, "head": first}, {**given, "head": second})
         print(f"| {item} (given) | {first} | {second} | {len(saved['mutants'])} | {'y' if same else 'n'} | "
-              f"{minutes if minutes is not None else '~65 (as the last)'} | ended {ended}; {note} |")
+              f"{minutes} | ended {ended}; {note} |")
 
 
 if __name__ == "__main__":
