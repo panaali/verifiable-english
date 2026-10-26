@@ -3173,6 +3173,15 @@ theorem VE.Calc.Budgeted.bin_eq
           ∀ {r : Option γ} {m : Nat}, x.bin y f = Option.some (r, m) → r = X.bind fun a => Y.bind (F a)
   -- uses VE.Calc.Budgeted.bin@VE.Calc.Poly VE.Calc.Budgeted@VE.Calc.Poly
   -- expr 3247572537
+theorem VE.Calc.Check.run_claim
+  ∀ (ds : List VE.Calc.Decl) (c : VE.Calc.Claim), VE.Calc.Check.run ds (VE.Calc.Check.claim c) = VE.Calc.Claim.run ds c
+  -- uses VE.Calc.Check.claim@VE.Calc.Wire VE.Calc.Check.run@VE.Calc.Run VE.Calc.Claim.run@VE.Calc.Decls VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Decl@VE.Calc.Decls VE.Numbers.Outcome@VE.Numbers.Round
+  -- expr 3753382531
+theorem VE.Calc.Check.run_sound
+  ∀ (ds : List VE.Calc.Decl),
+    VE.Calc.WellFormed ds → ∀ (k : VE.Calc.Check), VE.Calc.Check.OutcomeMeans ds k (VE.Calc.Check.run ds k)
+  -- uses VE.Calc.Check.OutcomeMeans@VE.Calc.Run VE.Calc.Check.run@VE.Calc.Run VE.Calc.Check@VE.Calc.Wire VE.Calc.Decl@VE.Calc.Decls VE.Calc.WellFormed@VE.Calc.Decls
+  -- expr 1148172859
 theorem VE.Calc.Claim.decide_fails
   ∀ (σ : VE.Calc.Values) (c : VE.Calc.Claim),
     VE.Calc.Claim.decide σ c = VE.Numbers.Verdict.fails ↔ VE.Calc.Claim.Defined σ c ∧ ¬VE.Calc.Claim.Holds σ c
@@ -3770,6 +3779,53 @@ theorem VE.Calc.Rescale.pos
   ∀ (self : VE.Calc.Rescale) (b : String), 0 < self.factor b
   -- uses VE.Calc.Rescale.factor@VE.Calc.Dimension VE.Calc.Rescale@VE.Calc.Dimension
   -- expr 3281404362
+theorem VE.Calc.Run.outcome_sound
+  ∀ (j : Lean.Json) (c : VE.Calc.Case),
+    VE.Calc.Wire.decodeCase j = Except.ok c →
+      ∀ (i : Nat) (hi : i < c.claims.length),
+        VE.Calc.Run.outcomeAt (VE.Calc.Run.runCaseReported j) i = Option.some (VE.Calc.Check.run c.decls c.claims[i].snd)
+  -- uses VE.Calc.Case.claims@VE.Calc.Wire VE.Calc.Case.decls@VE.Calc.Wire VE.Calc.Case@VE.Calc.Wire VE.Calc.Check.run@VE.Calc.Run VE.Calc.Check@VE.Calc.Wire VE.Calc.Run.outcomeAt@VE.Calc.Run VE.Calc.Run.runCaseReported@VE.Calc.Run VE.Calc.Wire.decodeCase@VE.Calc.Wire VE.Numbers.Outcome@VE.Numbers.Round
+  -- expr 1828498910
+theorem VE.Calc.Run.outcomes_words
+  ∀ (o : VE.Numbers.Outcome),
+    List.find? (fun x => VE.Calc.Run.words x == VE.Calc.Run.words o) VE.Calc.Run.outcomes = Option.some o
+  -- uses VE.Calc.Run.outcomes@VE.Calc.Run VE.Calc.Run.words@VE.Calc.Run VE.Numbers.Outcome@VE.Numbers.Round
+  -- expr 133560894
+theorem VE.Calc.Run.row_outcome
+  ∀ (c : VE.Calc.Case) (cl : String × VE.Calc.Check), (VE.Calc.Run.row c cl).outcome = VE.Calc.Check.run c.decls cl.snd
+  -- uses VE.Calc.Case.decls@VE.Calc.Wire VE.Calc.Case@VE.Calc.Wire VE.Calc.Check.run@VE.Calc.Run VE.Calc.Check@VE.Calc.Wire VE.Calc.Row.outcome@VE.Calc.Run VE.Calc.Run.row@VE.Calc.Run VE.Numbers.Outcome@VE.Numbers.Round
+  -- expr 1057588614
+theorem VE.Calc.Run.row_sound
+  ∀ (j : Lean.Json) (c : VE.Calc.Case),
+    VE.Calc.Wire.decodeCase j = Except.ok c →
+      ∀ (i : Nat) (hi : i < c.claims.length) (o : VE.Numbers.Outcome),
+        VE.Calc.Run.outcomeAt (VE.Calc.Run.runCaseReported j) i = Option.some o →
+          VE.Calc.Check.OutcomeMeans c.decls c.claims[i].snd o
+  -- uses VE.Calc.Case.claims@VE.Calc.Wire VE.Calc.Case.decls@VE.Calc.Wire VE.Calc.Case@VE.Calc.Wire VE.Calc.Check.OutcomeMeans@VE.Calc.Run VE.Calc.Check@VE.Calc.Wire VE.Calc.Run.outcomeAt@VE.Calc.Run VE.Calc.Run.runCaseReported@VE.Calc.Run VE.Calc.Wire.decodeCase@VE.Calc.Wire VE.Numbers.Outcome@VE.Numbers.Round
+  -- expr 1243167305
+theorem VE.Calc.Run.rows_outcome
+  ∀ (c : VE.Calc.Case) (i : Nat) (hi : i < c.claims.length),
+    (VE.Calc.Run.rows c)[i].outcome = VE.Calc.Check.run c.decls c.claims[i].snd
+  -- uses VE.Calc.Case.claims@VE.Calc.Wire VE.Calc.Case.decls@VE.Calc.Wire VE.Calc.Case@VE.Calc.Wire VE.Calc.Check.run@VE.Calc.Run VE.Calc.Check@VE.Calc.Wire VE.Calc.Row.outcome@VE.Calc.Run VE.Calc.Row@VE.Calc.Run VE.Calc.Run.row@VE.Calc.Run VE.Calc.Run.rows@VE.Calc.Run VE.Numbers.Outcome@VE.Numbers.Round
+  -- expr 1898017194
+theorem VE.Calc.Run.unknown_named
+  ∀ (j : Lean.Json) (c : VE.Calc.Case),
+    VE.Calc.Wire.decodeCase j = Except.ok c →
+      ∀ (i : Nat) (hi : i < c.claims.length) (u : VE.Numbers.UnknownReason),
+        VE.Calc.Run.outcomeAt (VE.Calc.Run.runCaseReported j) i = Option.some (VE.Numbers.Outcome.unknown u) →
+          VE.Calc.Check.UnknownCause c.decls c.claims[i].snd u
+  -- uses VE.Calc.Case.claims@VE.Calc.Wire VE.Calc.Case.decls@VE.Calc.Wire VE.Calc.Case@VE.Calc.Wire VE.Calc.Check.UnknownCause@VE.Calc.Run VE.Calc.Check@VE.Calc.Wire VE.Calc.Run.outcomeAt@VE.Calc.Run VE.Calc.Run.runCaseReported@VE.Calc.Run VE.Calc.Wire.decodeCase@VE.Calc.Wire VE.Numbers.Outcome.unknown@VE.Numbers.Round VE.Numbers.Outcome@VE.Numbers.Round VE.Numbers.UnknownReason@VE.Numbers.Round
+  -- expr 3194258154
+theorem VE.Calc.Run.verdict_sound
+  ∀ (j : Lean.Json) (c : VE.Calc.Case),
+    VE.Calc.Wire.decodeCase j = Except.ok c →
+      ∀ (i : Nat) (hi : i < c.claims.length) (cl : VE.Calc.Claim),
+        c.claims[i].snd = VE.Calc.Check.claim cl →
+          ∀ (v : VE.Numbers.Verdict),
+            VE.Calc.Run.outcomeAt (VE.Calc.Run.runCaseReported j) i = Option.some (VE.Numbers.Outcome.decided v) →
+              v = VE.Calc.Claim.decide (VE.Calc.values c.decls) cl
+  -- uses VE.Calc.Case.claims@VE.Calc.Wire VE.Calc.Case.decls@VE.Calc.Wire VE.Calc.Case@VE.Calc.Wire VE.Calc.Check.claim@VE.Calc.Wire VE.Calc.Check@VE.Calc.Wire VE.Calc.Claim.decide@VE.Calc.Eval VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Run.outcomeAt@VE.Calc.Run VE.Calc.Run.runCaseReported@VE.Calc.Run VE.Calc.Wire.decodeCase@VE.Calc.Wire VE.Calc.values@VE.Calc.Decls VE.Numbers.Outcome.decided@VE.Numbers.Round VE.Numbers.Outcome@VE.Numbers.Round VE.Numbers.Verdict@VE.Numbers.Round
+  -- expr 3364826247
 theorem VE.Calc.Step.derive_sound
   ∀ (links : List (String × String)) (known : List VE.Calc.QFact) (st : VE.Calc.Step) (f : VE.Calc.QFact),
     VE.Calc.Step.derive links known st = Option.some f →
@@ -3825,6 +3881,22 @@ theorem VE.Calc.Val.guard_agrees
   ∀ (q : Rat), VE.Calc.Val.Agrees✝ (VE.Calc.Val.guard q) (Option.some q)
   -- uses VE.Calc.Val.Agrees@VE.Calc.Decls VE.Calc.Val.guard@VE.Calc.Decls
   -- expr 724329628
+theorem VE.Calc.Wire.decodeCase_wellFormed
+  ∀ (j : Lean.Json) (c : VE.Calc.Case), VE.Calc.Wire.decodeCase j = Except.ok c → VE.Calc.WellFormed c.decls
+  -- uses VE.Calc.Case.decls@VE.Calc.Wire VE.Calc.Case@VE.Calc.Wire VE.Calc.WellFormed@VE.Calc.Decls VE.Calc.Wire.decodeCase@VE.Calc.Wire
+  -- expr 580149800
+theorem VE.Calc.Wire.firstDup_nodup
+  ∀ (l : List String), VE.Calc.Wire.firstDup l = Option.none → l.Nodup
+  -- uses VE.Calc.Wire.firstDup@VE.Calc.Wire
+  -- expr 101392310
+theorem VE.Calc.Wire.firstUnknown_order
+  ∀ (known : List String) (ds : List VE.Calc.Decl),
+    VE.Calc.Wire.firstUnknown known ds = Option.none →
+      ∀ (i : Nat) (hi : i < ds.length) (e : VE.Calc.Expr),
+        ds[i].source = VE.Calc.Source.defined e →
+          ∀ (n : String), n ∈ e.names → n ∈ known ++ List.map VE.Calc.Decl.name (List.take i ds)
+  -- uses VE.Calc.Decl.name@VE.Calc.Decls VE.Calc.Decl.source@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.Expr.names@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Source.defined@VE.Calc.Decls VE.Calc.Source@VE.Calc.Decls VE.Calc.Wire.firstUnknown@VE.Calc.Wire
+  -- expr 1120487184
 theorem VE.Calc.assign_wellFormed
   ∀ (ds : List VE.Calc.Decl),
     VE.Calc.WellFormed ds → ∀ (ns : List String) (κ : String → Rat), VE.Calc.WellFormed (VE.Calc.assign ds ns κ)
