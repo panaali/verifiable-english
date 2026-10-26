@@ -155,10 +155,13 @@ def _offset(text: str, line: int, column: int) -> int:
     return sum(len(x) + 1 for x in lines[:line - 1]) + column
 
 
-def _replace_ranges(text: str, edits: list[tuple[list[int], str]]) -> str:
-    """`text` with each Lean range [line, column, end line, end column] replaced, last first."""
-    spans = sorted(((_offset(text, r[0], r[1]), _offset(text, r[2], r[3]), new) for r, new in edits), reverse=True)
-    for start, end, new in spans:
+def _replace_ranges(text: str, edits: list[tuple[list[int], str, str]]) -> str:
+    """`text` with each Lean range [line, column, end line, end column] replaced, last first. Each range must hold the
+    declaration Lean names for it (`inductive Join`, `theorem table_one`): an olean older than the source fails here."""
+    spans = sorted(((_offset(text, r[0], r[1]), _offset(text, r[2], r[3]), new, decl) for r, new, decl in edits),
+                   reverse=True)
+    for start, end, new, decl in spans:
+        assert re.search(rf"^(?:{decl})\b", text[start:end], re.M), f"stale build: {decl!r} is not at its range"
         text = text[:start] + new + text[end:]
     return text
 
@@ -174,9 +177,9 @@ def assemble(shapes: dict, replaced: dict[str, list[tuple[str, list]]]) -> tuple
     imports, parts, regions, line = [], [], [], 1
     for module in (*MODULES, EXAMPLES):
         text = (LEAN / (module.replace(".", "/") + ".lean")).read_text()
-        edits = [(e["range"], render(e, replaced.get(name, constructors_of(e))))
+        edits = [(e["range"], render(e, replaced.get(name, constructors_of(e))), f"(?:inductive|structure) {name}")
                  for name, e in shapes["types"].items() if e["module"] == module]
-        edits += [(t["range"], "") for t in shapes["theorems"] if t["module"] == module]
+        edits += [(t["range"], "", f"theorem {_short(t['theorem'])}") for t in shapes["theorems"] if t["module"] == module]
         found, body = _body(_replace_ranges(text, edits))
         imports += [x for x in found if x.split()[1] not in (*MODULES, EXAMPLES) and x not in imports]
         parts.append(body)
@@ -267,3 +270,12 @@ def test_the_verdict_reads_where_each_error_is():
     out = "/t/F.lean:4:0: error(lean.unknownIdentifier): Unknown identifier `x`\n/t/F.lean:7:2: error: Expression\n  y\n"
     assert errors(out, region) == [("VE.Acts.Tree", "lean.unknownIdentifier", "Unknown identifier `x`"),
                                    (EXAMPLES, "", "Expression\n  y\n")]
+
+
+def test_a_range_that_does_not_hold_its_declaration_fails_closed():
+    """Ranges come from the oleans: when they are older than the source, nothing is replaced in the wrong place."""
+    text = "theorem a : True := trivial\ninductive Join | and\n"
+    assert _replace_ranges(text, [([2, 0, 2, 20], "inductive Join | or", "(?:inductive|structure) Join")]) == \
+        "theorem a : True := trivial\ninductive Join | or\n"
+    with pytest.raises(AssertionError, match="stale build"):
+        _replace_ranges(text, [([1, 0, 1, 27], "", "theorem b")])
