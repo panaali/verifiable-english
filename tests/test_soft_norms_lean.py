@@ -513,6 +513,12 @@ def test_admission_refuses_each_document_check_of_w2s_decoder(lean):
                       for i, d in enumerate([good, *broken.values()])])
     assert rows[0]["status"] == "ok" and rows[0]["admitted"] is True, rows[0]
     assert [(r["status"], r["error"]) for r in rows[1:]] == [("error", message) for message in broken]
+    # The decoder's data flag is the environment's `data@0` profile: under it a `$string` quantifier is refused.
+    strings = {**good, "reading_sets": [{"id": "r", "version": 1, "readings": [["forall", "$string", ["top"]]]}]}
+    data = env(profiles=("norms@0", "soft-norms@0", "data@0"))
+    rows = run(lean, [{"id": "d", "kind": "admission", "environment": data, "document": strings}])
+    assert (rows[0]["status"], rows[0]["error"]) == (
+        "error", "UnsupportedProfile: $string quantification requires data stage 2"), rows[0]
 
 
 def test_constant_wording_is_display_metadata_on_the_soft_route(lean):
