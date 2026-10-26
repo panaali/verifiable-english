@@ -1,0 +1,53 @@
+{
+ "note": "Hand mutants of the review's two classes (me-12a review F1, F2), beyond trust_mutants' operators: every place the",
+ "mutants": [
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "order: duplicates last first #1",
+   "before": "((List.range D.length).filterMap",
+   "after": "((List.range D.length).reverse.filterMap",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:343",
+    "Examples.lean:347"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "order: a duplicate reported at its first definition #1",
+   "before": "(D.take k).any (·.name == d.name)",
+   "after": "(D.drop (k + 1)).any (·.name == d.name)",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:343",
+    "Examples.lean:347"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "order: a duplicate reported at every definition #1",
+   "before": "(D.take k).any (·.name == d.name)",
+   "after": "(D.eraseIdx k).any (·.name == d.name)",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:343",
+    "Examples.lean:347"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "reads: Scoped checks boundedness #1",
+   "before": "filterMap (Site.refusal D D depth none)",
+   "after": "filterMap (Site.refusal D D depth (some D.boundedNames))",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:324"
+   ]
+  }
+ ],
+ "survived": 0
+}

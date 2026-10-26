@@ -1,0 +1,170 @@
+[mac-pytest 14:46:02Z] running on ve-mac-1: HEAD 57071552 + uncommitted changes (snapshot d003ba37) of /tmp/eff1026-work/cost-570715524; trust_mutants --base 7855620f3e06be59bd94730ef404689d3a18e558 --jobs 6 --max-mutants 1000 --json ../tm-out.json
+[mac-pytest@ve-mac-1 14:46:03Z] first run for this worktree: cloning into ve-mac-1:/home/verunner/pyt/cost-570715524-417fd34c/w
+[mac-pytest@ve-mac-1 14:46:03Z] seeding lean/.lake and rust/target from /home/verunner/jobs/gate-sc-1b-f4a9c61a/ (reflink)
+[mac-pytest@ve-mac-1 14:51:39Z] setup: lake build + checker pins for tree 896fd06f in 336s
+[mac-pytest@ve-mac-1 14:51:39Z] trustmut on ve-mac-1 (aarch64), slot 1, commit d003ba37, setup 336s: --base 7855620f3e06be59bd94730ef404689d3a18e558 --jobs 6 --max-mutants 1000 --json ../tm-out.json
+trust_mutants: 6 definitions, 163 mutants (163 to run), 6 jobs, base 7855620f3e06
+SURVIVOR lean/VE/Arith/Holds.lean:70 VE.Arith.Defs.Means (S, trusted) body-true: Holds D.env [] φ -> True
+SURVIVOR lean/VE/Arith/Holds.lean:19 VE.Arith.Term.value (S, trusted) arm-default: ρ[i]? -> none
+SURVIVOR lean/VE/Arith/Holds.lean:44 VE.Arith.Holds (S, trusted) arm-false: ∃ x y, Term.value E ρ a = some x ∧ Term.value E ρ b = some y ∧ x = y -> False
+SURVIVOR lean/VE/Arith/Holds.lean:44 VE.Arith.Holds (S, trusted) arm-true: ∃ x y, Term.value E ρ a = some x ∧ Term.value E ρ b = some y ∧ x = y -> True
+SURVIVOR lean/VE/Arith/Holds.lean:39 VE.Arith.Term.values (S, trusted) arm-default: some [] -> none
+SURVIVOR lean/VE/Arith/Examples.lean:17 VE.Arith.Examples.IsPrime (S, trusted) body-true: 2 ≤ p ∧ ∀ d : Nat, 2 ≤ d → d < p → ¬ d ∣ p -> True
+SURVIVOR lean/VE/Arith/Holds.lean:70 VE.Arith.Defs.Means (S, trusted) body-false: Holds D.env [] φ -> False
+SURVIVOR lean/VE/Arith/Examples.lean:17 VE.Arith.Examples.IsPrime (S, trusted) body-false: 2 ≤ p ∧ ∀ d : Nat, 2 ≤ d → d < p → ¬ d ∣ p -> False
+SURVIVOR lean/VE/Arith/Holds.lean:50 VE.Arith.Holds (S, trusted) not-drop: ¬ -> 
+SURVIVOR lean/VE/Arith/Examples.lean:17 VE.Arith.Examples.IsPrime (S, trusted) not-drop: ¬ -> 
+SURVIVOR lean/VE/Arith/Examples.lean:17 VE.Arith.Examples.IsPrime (S, trusted) and-or: ∧ -> ∨
+SURVIVOR lean/VE/Arith/Holds.lean:44 VE.Arith.Holds (S, trusted) and-or: ∧ -> ∨
+SURVIVOR lean/VE/Arith/Holds.lean:52 VE.Arith.Holds (S, trusted) or-and: ∨ -> ∧
+SURVIVOR lean/VE/Arith/Examples.lean:17 VE.Arith.Examples.IsPrime (S, trusted) lt-le: < -> ≤
+SURVIVOR lean/VE/Arith/Examples.lean:17 VE.Arith.Examples.IsPrime (S, trusted) le-lt: ≤ -> <
+SURVIVOR lean/VE/Arith/Holds.lean:45 VE.Arith.Holds (S, trusted) lt-le: < -> ≤
+SURVIVOR lean/VE/Arith/Holds.lean:46 VE.Arith.Holds (S, trusted) le-lt: ≤ -> <
+SURVIVOR lean/VE/Arith/Examples.lean:17 VE.Arith.Examples.IsPrime (S, trusted) lt-eq: < -> =
+SURVIVOR lean/VE/Arith/Holds.lean:45 VE.Arith.Holds (S, trusted) lt-eq: < -> =
+SURVIVOR lean/VE/Arith/Examples.lean:17 VE.Arith.Examples.IsPrime (S, trusted) le-eq: ≤ -> =
+SURVIVOR lean/VE/Arith/Holds.lean:44 VE.Arith.Holds (S, trusted) eq-le: = -> ≤
+SURVIVOR lean/VE/Arith/Holds.lean:31 VE.Arith.Term.value (S, trusted) eq-le: = -> ≤
+SURVIVOR lean/VE/Arith/Holds.lean:66 VE.Arith.Defs.env (S, trusted) eq-le: = -> ≤
+SURVIVOR lean/VE/Arith/Holds.lean:46 VE.Arith.Holds (S, trusted) le-eq: ≤ -> =
+SURVIVOR lean/VE/Arith/Holds.lean:31 VE.Arith.Term.value (S, trusted) eq-ne: = -> ≠
+SURVIVOR lean/VE/Arith/Holds.lean:44 VE.Arith.Holds (S, trusted) eq-ne: = -> ≠
+UNKNOWN lean/VE/Arith/Holds.lean:31 VE.Arith.Term.value (S, trusted) list-empty: xs -> [] (lean/VE/Arith/Holds.lean:31: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Arith/Holds.lean:49 VE.Arith.Holds (S, trusted) list-empty: xs -> [] (lean/VE/Arith/Holds.lean:49: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Arith/Holds.lean:65 VE.Arith.Defs.env (S, trusted) list-empty: D -> [] (lean/VE/Arith/Holds.lean:66: Invalid dotted identifier notation: The expected type of `.fn` could...)
+SURVIVOR lean/VE/Arith/Holds.lean:66 VE.Arith.Defs.env (S, trusted) eq-ne: = -> ≠
+SURVIVOR lean/VE/Arith/Examples.lean:17 VE.Arith.Examples.IsPrime (S, trusted) lit-minus: 2 -> 1
+SURVIVOR lean/VE/Arith/Examples.lean:17 VE.Arith.Examples.IsPrime (S, trusted) lit-plus: 2 -> 3
+SURVIVOR lean/VE/Arith/Holds.lean:35 VE.Arith.Term.value (S, trusted) lit-plus: 1 -> 2
+UNKNOWN lean/VE/Arith/Holds.lean:40 VE.Arith.Term.values (S, trusted) arm-default: match Term.value E ρ t, Term.values E ρ ts with -> none (lean/VE/Arith/Holds.lean:41: Inconsistent number of patterns in match alternatives: This alternat...)
+SURVIVOR lean/VE/Arith/Holds.lean:35 VE.Arith.Term.value (S, trusted) lit-minus: 1 -> 0
+SURVIVOR lean/VE/Arith/Holds.lean:20 VE.Arith.Term.value (S, trusted) arm-default: some n -> none
+SURVIVOR lean/VE/Arith/Holds.lean:45 VE.Arith.Holds (S, trusted) arm-true: ∃ x y, Term.value E ρ a = some x ∧ Term.value E ρ b = some y ∧ x < y -> True
+SURVIVOR lean/VE/Arith/Holds.lean:45 VE.Arith.Holds (S, trusted) arm-false: ∃ x y, Term.value E ρ a = some x ∧ Term.value E ρ b = some y ∧ x < y -> False
+SURVIVOR lean/VE/Arith/Holds.lean:44 VE.Arith.Holds (S, trusted) and-or: ∧ -> ∨
+SURVIVOR lean/VE/Arith/Examples.lean:17 VE.Arith.Examples.IsPrime (S, trusted) le-lt: ≤ -> <
+SURVIVOR lean/VE/Arith/Holds.lean:59 VE.Arith.Holds (S, trusted) le-lt: ≤ -> <
+SURVIVOR lean/VE/Arith/Holds.lean:59 VE.Arith.Holds (S, trusted) le-eq: ≤ -> =
+SURVIVOR lean/VE/Arith/Examples.lean:17 VE.Arith.Examples.IsPrime (S, trusted) le-eq: ≤ -> =
+SURVIVOR lean/VE/Arith/Holds.lean:44 VE.Arith.Holds (S, trusted) eq-le: = -> ≤
+SURVIVOR lean/VE/Arith/Holds.lean:67 VE.Arith.Defs.env (S, trusted) eq-le: = -> ≤
+UNKNOWN lean/VE/Arith/Holds.lean:35 VE.Arith.Term.value (S, trusted) list-empty: ((List.range (h - l + 1).toNat).filter fun (i : Nat) => decide (Holds E ((l + (i : Int)) :: ρ) φ)) -> [] (lean/VE/Arith/Holds.lean:35: Function expected at)
+SURVIVOR lean/VE/Arith/Holds.lean:44 VE.Arith.Holds (S, trusted) eq-ne: = -> ≠
+UNKNOWN lean/VE/Arith/Holds.lean:21 VE.Arith.Term.value (S, trusted) arm-default: match Term.value E ρ a, Term.value E ρ b with -> none (lean/VE/Arith/Holds.lean:22: Inconsistent number of patterns in match alternatives: This alternat...)
+SURVIVOR lean/VE/Arith/Holds.lean:67 VE.Arith.Defs.env (S, trusted) eq-ne: = -> ≠
+SURVIVOR lean/VE/Arith/Examples.lean:17 VE.Arith.Examples.IsPrime (S, trusted) lit-minus: 2 -> 1
+SURVIVOR lean/VE/Arith/Examples.lean:17 VE.Arith.Examples.IsPrime (S, trusted) lit-plus: 2 -> 3
+SURVIVOR lean/VE/Arith/Holds.lean:46 VE.Arith.Holds (S, trusted) arm-true: ∃ x y, Term.value E ρ a = some x ∧ Term.value E ρ b = some y ∧ x ≤ y -> True
+SURVIVOR lean/VE/Arith/Holds.lean:46 VE.Arith.Holds (S, trusted) arm-false: ∃ x y, Term.value E ρ a = some x ∧ Term.value E ρ b = some y ∧ x ≤ y -> False
+SURVIVOR lean/VE/Arith/Holds.lean:41 VE.Arith.Term.values (S, trusted) arm-default: some (x :: xs) -> none
+SURVIVOR lean/VE/Arith/Holds.lean:45 VE.Arith.Holds (S, trusted) and-or: ∧ -> ∨
+SURVIVOR lean/VE/Arith/Holds.lean:59 VE.Arith.Holds (S, trusted) le-eq: ≤ -> =
+SURVIVOR lean/VE/Arith/Holds.lean:59 VE.Arith.Holds (S, trusted) le-lt: ≤ -> <
+SURVIVOR lean/VE/Arith/Holds.lean:44 VE.Arith.Holds (S, trusted) eq-ne: = -> ≠
+SURVIVOR lean/VE/Arith/Holds.lean:44 VE.Arith.Holds (S, trusted) eq-le: = -> ≤
+SURVIVOR lean/VE/Arith/Holds.lean:47 VE.Arith.Holds (S, trusted) arm-true: ∃ x y, Term.value E ρ a = some x ∧ Term.value E ρ b = some y ∧ x ∣ y -> True
+SURVIVOR lean/VE/Arith/Holds.lean:35 VE.Arith.Term.value (S, trusted) list-empty: (List.range (h - l + 1).toNat) -> []
+SURVIVOR lean/VE/Arith/Holds.lean:22 VE.Arith.Term.value (S, trusted) arm-default: some (x + y) -> noneSURVIVOR lean/VE/Arith/Holds.lean:47 VE.Arith.Holds (S, trusted) arm-false: ∃ x y, Term.value E ρ a = some x ∧ Term.value E ρ b = some y ∧ x ∣ y -> False
+
+UNKNOWN lean/VE/Arith/Holds.lean:35 VE.Arith.Term.value (S, trusted) list-empty: (List.range (h - l + 1).toNat).filter -> [] (lean/VE/Arith/Holds.lean:35: Function expected at)
+SURVIVOR lean/VE/Arith/Holds.lean:45 VE.Arith.Holds (S, trusted) and-or: ∧ -> ∨
+SURVIVOR lean/VE/Arith/Holds.lean:45 VE.Arith.Holds (S, trusted) eq-le: = -> ≤
+SURVIVOR lean/VE/Arith/Holds.lean:61 VE.Arith.Holds (S, trusted) le-lt: ≤ -> <
+UNKNOWN lean/VE/Arith/Holds.lean:24 VE.Arith.Term.value (S, trusted) arm-default: match Term.value E ρ a, Term.value E ρ b with -> none (lean/VE/Arith/Holds.lean:25: Inconsistent number of patterns in match alternatives: This alternat...)
+SURVIVOR lean/VE/Arith/Holds.lean:61 VE.Arith.Holds (S, trusted) le-eq: ≤ -> =
+SURVIVOR lean/VE/Arith/Holds.lean:45 VE.Arith.Holds (S, trusted) eq-ne: = -> ≠
+SURVIVOR lean/VE/Arith/Holds.lean:48 VE.Arith.Holds (S, trusted) arm-true: ∃ n P xs, E.preds p = some (n, P) ∧ Term.values E ρ args = some xs ∧ xs.length = n ∧ P xs -> True
+SURVIVOR lean/VE/Arith/Holds.lean:48 VE.Arith.Holds (S, trusted) arm-false: ∃ n P xs, E.preds p = some (n, P) ∧ Term.values E ρ args = some xs ∧ xs.length = n ∧ P xs -> False
+SURVIVOR lean/VE/Arith/Holds.lean:61 VE.Arith.Holds (S, trusted) le-lt: ≤ -> <
+SURVIVOR lean/VE/Arith/Holds.lean:46 VE.Arith.Holds (S, trusted) and-or: ∧ -> ∨
+SURVIVOR lean/VE/Arith/Holds.lean:61 VE.Arith.Holds (S, trusted) le-eq: ≤ -> =
+SURVIVOR lean/VE/Arith/Holds.lean:45 VE.Arith.Holds (S, trusted) eq-le: = -> ≤
+SURVIVOR lean/VE/Arith/Holds.lean:45 VE.Arith.Holds (S, trusted) eq-ne: = -> ≠
+SURVIVOR lean/VE/Arith/Holds.lean:50 VE.Arith.Holds (S, trusted) arm-true: ¬ Holds E ρ φ -> True
+SURVIVOR lean/VE/Arith/Holds.lean:25 VE.Arith.Term.value (S, trusted) arm-default: some (x - y) -> none
+SURVIVOR lean/VE/Arith/Holds.lean:50 VE.Arith.Holds (S, trusted) arm-false: ¬ Holds E ρ φ -> False
+SURVIVOR lean/VE/Arith/Holds.lean:46 VE.Arith.Holds (S, trusted) and-or: ∧ -> ∨
+UNKNOWN lean/VE/Arith/Holds.lean:27 VE.Arith.Term.value (S, trusted) arm-default: match Term.value E ρ a, Term.value E ρ b with -> none (lean/VE/Arith/Holds.lean:28: Inconsistent number of patterns in match alternatives: This alternat...)
+SURVIVOR lean/VE/Arith/Holds.lean:46 VE.Arith.Holds (S, trusted) eq-ne: = -> ≠
+SURVIVOR lean/VE/Arith/Holds.lean:46 VE.Arith.Holds (S, trusted) eq-le: = -> ≤
+SURVIVOR lean/VE/Arith/Holds.lean:51 VE.Arith.Holds (S, trusted) arm-true: Holds E ρ φ ∧ Holds E ρ ψ -> True
+SURVIVOR lean/VE/Arith/Holds.lean:51 VE.Arith.Holds (S, trusted) arm-false: Holds E ρ φ ∧ Holds E ρ ψ -> False
+SURVIVOR lean/VE/Arith/Holds.lean:46 VE.Arith.Holds (S, trusted) eq-le: = -> ≤
+SURVIVOR lean/VE/Arith/Holds.lean:47 VE.Arith.Holds (S, trusted) and-or: ∧ -> ∨
+SURVIVOR lean/VE/Arith/Holds.lean:46 VE.Arith.Holds (S, trusted) eq-ne: = -> ≠
+SURVIVOR lean/VE/Arith/Holds.lean:52 VE.Arith.Holds (S, trusted) arm-true: Holds E ρ φ ∨ Holds E ρ ψ -> True
+SURVIVOR lean/VE/Arith/Holds.lean:52 VE.Arith.Holds (S, trusted) arm-false: Holds E ρ φ ∨ Holds E ρ ψ -> False
+SURVIVOR lean/VE/Arith/Holds.lean:28 VE.Arith.Term.value (S, trusted) arm-default: some (x * y) -> none
+UNKNOWN lean/VE/Arith/Holds.lean:30 VE.Arith.Term.value (S, trusted) arm-default: match E.funs f, Term.values E ρ args with -> none (lean/VE/Arith/Holds.lean:31: Inconsistent number of patterns in match alternatives: This alternat...)
+SURVIVOR lean/VE/Arith/Holds.lean:47 VE.Arith.Holds (S, trusted) eq-le: = -> ≤SURVIVOR lean/VE/Arith/Holds.lean:47 VE.Arith.Holds (S, trusted) and-or: ∧ -> ∨
+
+SURVIVOR lean/VE/Arith/Holds.lean:47 VE.Arith.Holds (S, trusted) eq-ne: = -> ≠SURVIVOR lean/VE/Arith/Holds.lean:53 VE.Arith.Holds (S, trusted) arm-true: Holds E ρ φ → Holds E ρ ψ -> True
+
+SURVIVOR lean/VE/Arith/Holds.lean:53 VE.Arith.Holds (S, trusted) arm-false: Holds E ρ φ → Holds E ρ ψ -> False
+SURVIVOR lean/VE/Arith/Holds.lean:48 VE.Arith.Holds (S, trusted) and-or: ∧ -> ∨
+SURVIVOR lean/VE/Arith/Holds.lean:47 VE.Arith.Holds (S, trusted) eq-le: = -> ≤
+SURVIVOR lean/VE/Arith/Holds.lean:47 VE.Arith.Holds (S, trusted) eq-ne: = -> ≠
+UNKNOWN lean/VE/Arith/Holds.lean:48 VE.Arith.Holds (S, trusted) eq-le: = -> ≤ (lean/VE/Arith/Holds.lean:48: failed to synthesize)
+SURVIVOR lean/VE/Arith/Holds.lean:54 VE.Arith.Holds (S, trusted) arm-false: ∀ n : Nat, Holds E ((n : Int) :: ρ) φ -> False
+SURVIVOR lean/VE/Arith/Holds.lean:54 VE.Arith.Holds (S, trusted) arm-true: ∀ n : Nat, Holds E ((n : Int) :: ρ) φ -> True
+UNKNOWN lean/VE/Arith/Holds.lean:33 VE.Arith.Term.value (S, trusted) arm-default: match Term.value E ρ lo, Term.value E ρ hi with -> none (lean/VE/Arith/Holds.lean:34: Inconsistent number of patterns in match alternatives: This alternat...)
+SURVIVOR lean/VE/Arith/Holds.lean:31 VE.Arith.Term.value (S, trusted) arm-default: if xs.length = n then g xs else none -> none
+SURVIVOR lean/VE/Arith/Holds.lean:48 VE.Arith.Holds (S, trusted) and-or: ∧ -> ∨
+SURVIVOR lean/VE/Arith/Holds.lean:48 VE.Arith.Holds (S, trusted) eq-ne: = -> ≠
+SURVIVOR lean/VE/Arith/Holds.lean:55 VE.Arith.Holds (S, trusted) arm-true: ∃ n : Nat, Holds E ((n : Int) :: ρ) φ -> True
+SURVIVOR lean/VE/Arith/Holds.lean:55 VE.Arith.Holds (S, trusted) arm-false: ∃ n : Nat, Holds E ((n : Int) :: ρ) φ -> False
+SURVIVOR lean/VE/Arith/Holds.lean:49 VE.Arith.Holds (S, trusted) and-or: ∧ -> ∨
+SURVIVOR lean/VE/Arith/Holds.lean:48 VE.Arith.Holds (S, trusted) eq-le: = -> ≤
+SURVIVOR lean/VE/Arith/Holds.lean:48 VE.Arith.Holds (S, trusted) eq-ne: = -> ≠
+SURVIVOR lean/VE/Arith/Holds.lean:56 VE.Arith.Holds (S, trusted) arm-true: ∀ n : Int, Holds E (n :: ρ) φ -> True
+SURVIVOR lean/VE/Arith/Holds.lean:56 VE.Arith.Holds (S, trusted) arm-false: ∀ n : Int, Holds E (n :: ρ) φ -> False
+SURVIVOR lean/VE/Arith/Holds.lean:35 VE.Arith.Term.value (S, trusted) arm-default: some ((((List.range (h - l + 1).toNat).filter fun (i : Nat) => decide (Holds E ((l + (i : Int)) :... -> none
+SURVIVOR lean/VE/Arith/Holds.lean:51 VE.Arith.Holds (S, trusted) and-or: ∧ -> ∨
+SURVIVOR lean/VE/Arith/Holds.lean:49 VE.Arith.Holds (S, trusted) eq-le: = -> ≤
+SURVIVOR lean/VE/Arith/Holds.lean:49 VE.Arith.Holds (S, trusted) eq-ne: = -> ≠
+SURVIVOR lean/VE/Arith/Holds.lean:57 VE.Arith.Holds (S, trusted) arm-true: ∃ n : Int, Holds E (n :: ρ) φ -> True
+SURVIVOR lean/VE/Arith/Holds.lean:57 VE.Arith.Holds (S, trusted) arm-false: ∃ n : Int, Holds E (n :: ρ) φ -> False
+SURVIVOR lean/VE/Arith/Holds.lean:58 VE.Arith.Holds (S, trusted) and-or: ∧ -> ∨
+SURVIVOR lean/VE/Arith/Holds.lean:58 VE.Arith.Holds (S, trusted) eq-le: = -> ≤
+SURVIVOR lean/VE/Arith/Holds.lean:58 VE.Arith.Holds (S, trusted) eq-ne: = -> ≠
+SURVIVOR lean/VE/Arith/Holds.lean:58 VE.Arith.Holds (S, trusted) arm-true: ∃ l h, Term.value E ρ lo = some l ∧ Term.value E ρ hi = some h ∧ ∀ i : Int, l ≤ i → i ≤ h → Holds... -> True
+SURVIVOR lean/VE/Arith/Holds.lean:58 VE.Arith.Holds (S, trusted) arm-false: ∃ l h, Term.value E ρ lo = some l ∧ Term.value E ρ hi = some h ∧ ∀ i : Int, l ≤ i → i ≤ h → Holds... -> False
+SURVIVOR lean/VE/Arith/Holds.lean:58 VE.Arith.Holds (S, trusted) and-or: ∧ -> ∨
+SURVIVOR lean/VE/Arith/Holds.lean:58 VE.Arith.Holds (S, trusted) eq-le: = -> ≤
+SURVIVOR lean/VE/Arith/Holds.lean:60 VE.Arith.Holds (S, trusted) arm-true: ∃ l h, Term.value E ρ lo = some l ∧ Term.value E ρ hi = some h ∧ ∃ i : Int, l ≤ i ∧ i ≤ h ∧ Holds... -> True
+SURVIVOR lean/VE/Arith/Holds.lean:58 VE.Arith.Holds (S, trusted) eq-ne: = -> ≠
+SURVIVOR lean/VE/Arith/Holds.lean:60 VE.Arith.Holds (S, trusted) arm-false: ∃ l h, Term.value E ρ lo = some l ∧ Term.value E ρ hi = some h ∧ ∃ i : Int, l ≤ i ∧ i ≤ h ∧ Holds... -> False
+SURVIVOR lean/VE/Arith/Holds.lean:60 VE.Arith.Holds (S, trusted) and-or: ∧ -> ∨
+SURVIVOR lean/VE/Arith/Holds.lean:60 VE.Arith.Holds (S, trusted) eq-le: = -> ≤
+SURVIVOR lean/VE/Arith/Holds.lean:60 VE.Arith.Holds (S, trusted) eq-ne: = -> ≠
+SURVIVOR lean/VE/Arith/Holds.lean:60 VE.Arith.Holds (S, trusted) and-or: ∧ -> ∨
+SURVIVOR lean/VE/Arith/Holds.lean:60 VE.Arith.Holds (S, trusted) eq-le: = -> ≤
+SURVIVOR lean/VE/Arith/Holds.lean:60 VE.Arith.Holds (S, trusted) eq-ne: = -> ≠
+SURVIVOR lean/VE/Arith/Holds.lean:61 VE.Arith.Holds (S, trusted) and-or: ∧ -> ∨
+SURVIVOR lean/VE/Arith/Holds.lean:31 VE.Arith.Term.value (S, trusted) list-first: xs -> (xs.take 1)
+SURVIVOR lean/VE/Arith/Holds.lean:61 VE.Arith.Holds (S, trusted) and-or: ∧ -> ∨
+SURVIVOR lean/VE/Arith/Holds.lean:65 VE.Arith.Defs.env (S, trusted) list-first: D -> (D.take 1)
+SURVIVOR lean/VE/Arith/Holds.lean:49 VE.Arith.Holds (S, trusted) list-first: xs -> (xs.take 1)
+SURVIVOR lean/VE/Arith/Holds.lean:31 VE.Arith.Term.value (S, trusted) list-drop-last: xs -> (xs.dropLast)
+SURVIVOR lean/VE/Arith/Holds.lean:49 VE.Arith.Holds (S, trusted) list-drop-last: xs -> (xs.dropLast)
+SURVIVOR lean/VE/Arith/Holds.lean:65 VE.Arith.Defs.env (S, trusted) list-drop-last: D -> (D.dropLast)
+SURVIVOR lean/VE/Arith/Holds.lean:35 VE.Arith.Term.value (S, trusted) list-first: ((List.range (h - l + 1).toNat).filter fun (i : Nat) => decide (Holds E ((l + (i : Int)) :: ρ) φ)) -> (((List.range (h - l + 1).toNat).filter fun (i : Nat) => decide (Holds E ((l + (i : Int)) :: ρ) φ...
+SURVIVOR lean/VE/Arith/Holds.lean:35 VE.Arith.Term.value (S, trusted) list-drop-last: ((List.range (h - l + 1).toNat).filter fun (i : Nat) => decide (Holds E ((l + (i : Int)) :: ρ) φ)) -> (((List.range (h - l + 1).toNat).filter fun (i : Nat) => decide (Holds E ((l + (i : Int)) :: ρ) φ...
+SURVIVOR lean/VE/Arith/Holds.lean:35 VE.Arith.Term.value (S, trusted) list-first: (List.range (h - l + 1).toNat) -> ((List.range (h - l + 1).toNat).take 1)
+SURVIVOR lean/VE/Arith/Holds.lean:35 VE.Arith.Term.value (S, trusted) list-drop-last: (List.range (h - l + 1).toNat) -> ((List.range (h - l + 1).toNat).dropLast)
+SURVIVOR lean/VE/Arith/Holds.lean:31 VE.Arith.Term.value (S, trusted) list-last: xs -> (xs.reverse.take 1)
+SURVIVOR lean/VE/Arith/Holds.lean:65 VE.Arith.Defs.env (S, trusted) list-last: D -> (D.reverse.take 1)
+SURVIVOR lean/VE/Arith/Holds.lean:49 VE.Arith.Holds (S, trusted) list-last: xs -> (xs.reverse.take 1)
+SURVIVOR lean/VE/Arith/Holds.lean:31 VE.Arith.Term.value (S, trusted) list-drop-first: xs -> (xs.drop 1)
+SURVIVOR lean/VE/Arith/Holds.lean:49 VE.Arith.Holds (S, trusted) list-drop-first: xs -> (xs.drop 1)
+SURVIVOR lean/VE/Arith/Holds.lean:65 VE.Arith.Defs.env (S, trusted) list-drop-first: D -> (D.drop 1)
+SURVIVOR lean/VE/Arith/Holds.lean:35 VE.Arith.Term.value (S, trusted) list-last: ((List.range (h - l + 1).toNat).filter fun (i : Nat) => decide (Holds E ((l + (i : Int)) :: ρ) φ)) -> (((List.range (h - l + 1).toNat).filter fun (i : Nat) => decide (Holds E ((l + (i : Int)) :: ρ) φ...
+SURVIVOR lean/VE/Arith/Holds.lean:35 VE.Arith.Term.value (S, trusted) list-last: (List.range (h - l + 1).toNat) -> ((List.range (h - l + 1).toNat).reverse.take 1)
+SURVIVOR lean/VE/Arith/Holds.lean:35 VE.Arith.Term.value (S, trusted) list-drop-first: ((List.range (h - l + 1).toNat).filter fun (i : Nat) => decide (Holds E ((l + (i : Int)) :: ρ) φ)) -> (((List.range (h - l + 1).toNat).filter fun (i : Nat) => decide (Holds E ((l + (i : Int)) :: ρ) φ...
+SURVIVOR lean/VE/Arith/Holds.lean:35 VE.Arith.Term.value (S, trusted) list-drop-first: (List.range (h - l + 1).toNat) -> ((List.range (h - l + 1).toNat).drop 1)
+trust_mutants: 0 KILLED, 147 SURVIVOR, 12 UNKNOWN, 4 INVALID, 0 ALLOWED, 0 NOT RUN in 67 s
+trust_mutants: S, trusted: 147 SURVIVOR, 12 UNKNOWN, 4 INVALID
+[mac-pytest 14:52:47Z] trust_mutants evidence -> /home/seyran/code/ve-eff-20261026-1/docs/infra/eff-20261026-1/cost/me-12a-default.json
+[mac-pytest 14:52:47Z] summary: ran on ve-mac-1 (aarch64), trust_mutants with 8 args, jobs 6; HEAD 57071552 + uncommitted changes (snapshot d003ba37); 410s; exit=1; failed/error ids=0; known Mac-only failures (mac-known-failures.txt): none
+exit 1 wall 410 s
