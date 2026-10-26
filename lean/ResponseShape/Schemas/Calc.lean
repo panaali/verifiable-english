@@ -4,12 +4,18 @@ import VE.Calc.Run
 /-! The `calc` row (math-evidence spec 3.4, ME-2): the case's `meaning_id` and one row per request claim, in
 order (`x-zip`), each naming its claim by the request's id (`x-equals`); or the case's refusal. An unknown row
 carries one of Lean's reason texts (`VE.Calc.Run.words`); every other row's reason is `null`. A row's reproduction
-is `"unknown"` exactly when the case names a software convention (`x-select` on the case). -/
+is `"unknown"` exactly when the case names a software convention (`x-select` on the case). A row's kind is its
+request entry's (`kind`). -/
 namespace ResponseShape.Schemas.Calc
 open Lean ResponseShape
 
 /-- The reason texts of an unknown row: `Run.words` of every unknown outcome. -/
 def reasons : List String := VE.Calc.Run.outcomes.filterMap (VE.Calc.Run.words · |>.2)
+
+/-- A row's kind is the form of the request's check: `"follows"` for a derivation, `"claim"` for any other entry. -/
+def kind : Shape :=
+  .anyOf [n [constS "claim", .onCase (props [("claim", .not (n [arr, .prefixItems [constS "follows"]]))])],
+    n [constS "follows", .equals "/claim/0"]]
 
 /-- A row's fields, with its outcome, reason and reproduction. -/
 def fields (outcome reason reproduction : Shape) : Shape :=
@@ -18,7 +24,7 @@ def fields (outcome reason reproduction : Shape) : Shape :=
       ("status", constS "ok"),
       ("claim", n [str, .equals "/id"]),
       ("claim_id", ref "common.json#/$defs/hex64"),
-      ("kind", constS "claim"),
+      ("kind", kind),
       ("outcome", outcome),
       ("reason", reason),
       ("reproduction", reproduction)]]

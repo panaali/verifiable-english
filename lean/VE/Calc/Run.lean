@@ -1,30 +1,82 @@
 import VE.Calc.Wire
 
 /-! The `calc` mode's runner (math-evidence spec 3.4, ME-2): what each outcome of a check states, one row per
-`claims` entry in order, and the row theorem on the wire (`Run.row_sound`). This batch has the `claim` kind only;
-ME-5, ME-8 and ME-9 add their kinds, their clauses and their cases of `Check.run_sound`. -/
+`claims` entry in order, and the row theorem on the wire (`Run.row_sound`). It has the `claim` and `follows` (ME-5)
+kinds; ME-8 and ME-9 add their kinds, their clauses and their cases of `Check.run_sound`. -/
 
 namespace VE.Calc
 open Lean VE.Numbers
 
-/-- The named cause of an unknown row (J2): a claim is unknown only at the digit limit with a value on the way
-beyond it, or at the budget with a read of an exhausted counted value (`Claim.run_unknown`'s disjunction). -/
+/-- The names a check's meaning quantifies over: the free values. -/
+def Check.keep (ds : List Decl) : Check → List String
+  | _ => freeNames ds
+
+/-- The reasons for unknown that each kind may give (1.5). -/
+def Check.reasons : Check → List UnknownReason
+  | .claim _ => [.limit .digits, .limit .evaluations]
+  | .follows .. => [.limit .derivationSteps, .derivationInconclusive, .limit .digits, .limit .evaluations]
+
+/-- The named cause of an unknown row (J2). A claim is unknown only at the digit limit with a value on the way beyond
+it, or at the budget with a read of an exhausted counted value: `Claim.run_unknown`'s disjunction. The other kinds
+may also give their own reasons (1.5); at those two limits their causes are the same, in one of their expressions,
+since they meet the digit limit only in the lowering (2.7, `Expr.inline_tooLarge`). -/
 def Check.UnknownCause (ds : List Decl) : Check → UnknownReason → Prop
   | .claim c, u => (u = .limit .digits ∧ c.Overflows ds) ∨ (u = .limit .evaluations ∧ c.ReadsExhausted ds)
+  | k, u => u ∈ k.reasons ∧ (u = .limit .digits → ∃ e ∈ k.exprs, e.Overflows ds) ∧
+      (u = .limit .evaluations → ∃ e ∈ k.exprs, e.ReadsExhausted ds)
 
 /-- What each outcome states, one clause per kind and outcome; the clauses are tried in order. -/
 def Check.OutcomeMeans (ds : List Decl) : Check → Outcome → Prop
   | .claim c, .decided v => v = c.decide (values ds)
+  | .follows P links C, .decided .holds => Follows ds P links C
+  | .follows P links C, .decided .fails => HasCounterexample ds P links C
+  | k, .decided .undefined => ∃ e ∈ k.exprs, ∀ κ x, ¬ Denotes (values (assign ds (k.keep ds) κ)) e x
   | k, .unknown u => k.UnknownCause ds u
 
+/-- The first fault inlining meets in a check's expressions, in order (2.7). -/
+def Check.fault (ds : List Decl) (k : Check) : Option Val :=
+  k.exprs.findSome? fun e => match e.inline ds (k.keep ds) with
+    | .error v => some v
+    | .ok _ => none
+
+/-- A derivation's outcome from the search over its lowered facts (spec 5): follows only with a certificate that
+replays, does not follow only with a counterexample checked by evaluation, square links included. -/
+def Derive.outcome (P : List QFact) (links : List (String × String)) (g : QFact) : Outcome :=
+  match Derive.search P links g with
+  | .follows d => if d.check P links g then .decided .holds else .unknown .derivationInconclusive
+  | .counterexample κ =>
+    if counterexampleCheck P links g (Answer.point κ) then .decided .fails else .unknown .derivationInconclusive
+  | .unknown (.limit .derivationSteps) => .unknown (.limit .derivationSteps)
+  | .unknown _ => .unknown .derivationInconclusive
+
+/-- A claim's outcome; a derivation's from its inlining's first fault (2.7), else, within `maxPolyTerms` nodes of
+each inlined expression, from the search over the lowered premises and conclusion (spec 5). -/
 def Check.run (ds : List Decl) : Check → Outcome
   | .claim c => c.run ds
+  | k@(.follows P links C) => match k.fault ds with
+    | some .undefined => .decided .undefined
+    | some .exhausted => .unknown (.limit .evaluations)
+    | some _ => .unknown (.limit .digits)
+    | none =>
+      if !k.exprs.all fun e => (e.inline ds (k.keep ds)).toOption.all (·.nodesWithin maxPolyTerms |>.isSome) then
+        .unknown (.limit .derivationSteps)
+      else match P.mapM (Claim.facts ds), C.facts ds with
+        | some fss, some [g] => Derive.outcome fss.flatten links g
+        | _, _ => .unknown .derivationInconclusive
 
-/-- A decided row's meaning is decidable, so route cases can check it. -/
-instance (ds : List Decl) (k : Check) (v : Verdict) : Decidable (k.OutcomeMeans ds (.decided v)) := by
-  cases k
-  unfold Check.OutcomeMeans
-  infer_instance
+theorem Check.outcomeMeans_claim (ds : List Decl) (c : Claim) (v : Verdict) :
+    (Check.claim c).OutcomeMeans ds (.decided v) ↔ v = c.decide (values ds) := by
+  cases v <;> rfl
+
+/-- A claim's decided row is decidable, so route cases can check it. -/
+instance (ds : List Decl) (c : Claim) (v : Verdict) : Decidable ((Check.claim c).OutcomeMeans ds (.decided v)) :=
+  decidable_of_iff _ (Check.outcomeMeans_claim ds c v).symm
+
+theorem Check.fault_some {ds : List Decl} {k : Check} {v : Val} (h : k.fault ds = some v) :
+    ∃ e ∈ k.exprs, e.inline ds (k.keep ds) = .error v := by
+  obtain ⟨e, he, hv⟩ := List.exists_of_findSome?_eq_some h
+  refine ⟨e, he, ?_⟩
+  split at hv <;> simp_all
 
 theorem Check.run_claim (ds : List Decl) (c : Claim) : (Check.claim c).run ds = c.run ds := rfl
 
@@ -35,6 +87,37 @@ theorem Check.run_sound (ds : List Decl) (h : WellFormed ds) (k : Check) : k.Out
     cases hr : c.run ds with
     | decided v => simpa [Check.run, Check.OutcomeMeans, hr] using Claim.run_decided ds h c v hr
     | unknown u => simpa [Check.run, Check.OutcomeMeans, Check.UnknownCause, hr] using Claim.run_unknown ds h c u hr
+  | follows P links C =>
+    have own : ∀ u, u ≠ .limit .digits → u ≠ .limit .evaluations → u ∈ (Check.follows P links C).reasons →
+        (Check.follows P links C).OutcomeMeans ds (.unknown u) := fun u hd he hu =>
+      ⟨hu, fun h => absurd h hd, fun h => absurd h he⟩
+    simp only [Check.run]
+    cases hf : (Check.follows P links C).fault ds with
+    | some v =>
+      obtain ⟨e, he, hv⟩ := Check.fault_some hf
+      rcases Expr.inline_error ds _ e v hv with rfl | rfl
+      · exact ⟨e, he, Expr.inline_undefined ds h _ e hv⟩
+      · show (Check.follows P links C).UnknownCause ds (.limit .evaluations)
+        exact ⟨by simp [Check.reasons], fun h => absurd h (by decide), fun _ => ⟨e, he, Expr.inline_exhausted ds _ e hv⟩⟩
+    | none =>
+      simp only
+      split
+      · exact own _ (by decide) (by decide) (by simp [Check.reasons])
+      · split
+        · rename_i fss g hP hC
+          unfold Derive.outcome
+          split
+          · rename_i d _
+            split
+            · exact follows_of_check ds h P links C fss g d hP hC (by assumption)
+            · exact own _ (by decide) (by decide) (by simp [Check.reasons])
+          · rename_i κ _
+            split
+            · exact counterexample_of_check ds h P links C fss g _ hP hC (by assumption)
+            · exact own _ (by decide) (by decide) (by simp [Check.reasons])
+          · exact own _ (by decide) (by decide) (by simp [Check.reasons])
+          · exact own _ (by decide) (by decide) (by simp [Check.reasons])
+        · exact own _ (by decide) (by decide) (by simp [Check.reasons])
 
 structure Row where
   id : String
@@ -77,8 +160,13 @@ theorem outcomes_words (o : Outcome) : outcomes.find? (words · == words o) = so
     · cases l <;> decide
     all_goals decide
 
-def rowJson (claimId : String) (r : Row) : Json :=
-  Json.mkObj [("status", .str "ok"), ("claim", .str r.id), ("claim_id", .str claimId), ("kind", .str "claim"),
+/-- A check's kind on the wire: the form of the request's check. -/
+def kind : Check → String
+  | .claim _ => "claim"
+  | .follows .. => "follows"
+
+def rowJson (claimId : String) (k : Check) (r : Row) : Json :=
+  Json.mkObj [("status", .str "ok"), ("claim", .str r.id), ("claim_id", .str claimId), ("kind", .str (kind k)),
     ("outcome", .str (words r.outcome).1), ("reason", (words r.outcome).2.elim .null Json.str),
     ("reproduction", if r.reproduction.isSome then .str "unknown" else .null)]
 
@@ -86,7 +174,7 @@ def rowJson (claimId : String) (r : Row) : Json :=
 def runCaseReported (j : Json) : Json :=
   match Wire.decode j with
   | .ok (c, mid, ids) => Json.mkObj [("status", .str "ok"), ("meaning_id", .str mid),
-    ("rows", .arr ((Run.rows c).mapIdx fun i r => rowJson (ids.getD i "") r).toArray)]
+    ("rows", .arr (c.claims.mapIdx fun i cl => rowJson (ids.getD i "") cl.2 (Run.row c cl)).toArray)]
   | .error e => Json.mkObj [("status", .str "error"), ("error", .str e)]
 
 /-- The outcome row `i` of an answer states. -/
@@ -115,20 +203,18 @@ theorem outcome_sound (j : Lean.Json) (c : Case) (h : Wire.decodeCase j = .ok c)
       simp only [Json.mkObj, Json.getObjVal?, Std.TreeMap.Raw.get?_eq_getElem?,
         Std.TreeMap.Raw.getElem?_ofList_of_mem (cmp := compare) (k_eq := Std.ReflCmp.compare_self) hp hm]
       rfl
-    have hr : i < (Run.rows d.1).length := by simpa [Run.rows] using hi
     have hrows : (runCaseReported j).getObjVal? "rows" =
-        .ok (.arr ((Run.rows d.1).mapIdx fun i r => rowJson (d.2.2.getD i "") r).toArray) := by
+        .ok (.arr (d.1.claims.mapIdx fun i cl => rowJson (d.2.2.getD i "") cl.2 (Run.row d.1 cl)).toArray) := by
       simp only [runCaseReported, hd]
       exact get _ _ _ (by simp) (by simp)
     have ho := outcomes_words ((d.1.claims[i]'hi).2.run d.1.decls)
-    rw [← Run.rows_outcome d.1 i hi] at ho ⊢
-    have hout (r : Row) : (rowJson (d.2.2.getD i "") r).getObjVal? "outcome" =
+    have hout (k : Check) (r : Row) : (rowJson (d.2.2.getD i "") k r).getObjVal? "outcome" =
         .ok (.str (words r.outcome).1) := get _ _ _ (by simp) (by simp)
-    have hreason (r : Row) : (rowJson (d.2.2.getD i "") r).getObjVal? "reason" =
+    have hreason (k : Check) (r : Row) : (rowJson (d.2.2.getD i "") k r).getObjVal? "reason" =
         .ok ((words r.outcome).2.elim .null Json.str) := get _ _ _ (by simp) (by simp)
-    simp only [outcomeAt, hrows, List.getElem?_toArray, List.getElem?_mapIdx, List.getElem?_eq_getElem hr,
-      Option.map_some, Option.bind_eq_bind, Option.bind_some, hout, hreason]
-    generalize words ((Run.rows d.1)[i]'hr).outcome = wo at ho ⊢
+    simp only [outcomeAt, hrows, List.getElem?_toArray, List.getElem?_mapIdx, List.getElem?_eq_getElem hi,
+      Option.map_some, Option.bind_eq_bind, Option.bind_some, hout, hreason, Run.row_outcome]
+    generalize words ((d.1.claims[i]'hi).2.run d.1.decls) = wo at ho ⊢
     rcases wo with ⟨w, _ | s⟩ <;> exact ho
 
 /-- The row theorem on the wire, for every kind. -/
@@ -146,7 +232,7 @@ theorem verdict_sound (j : Lean.Json) (c : Case) (h : Wire.decodeCase j = .ok c)
     v = cl.decide (values c.decls) := by
   have := row_sound j c h i hi _ hv
   rw [hk] at this
-  exact this
+  exact (Check.outcomeMeans_claim _ _ _).mp this
 
 /-- Unknown arises only from its named cause (J2). -/
 theorem unknown_named (j : Lean.Json) (c : Case) (h : Wire.decodeCase j = .ok c) (i : Nat)
@@ -154,8 +240,7 @@ theorem unknown_named (j : Lean.Json) (c : Case) (h : Wire.decodeCase j = .ok c)
     (hu : Run.outcomeAt (Run.runCaseReported j) i = some (.unknown u)) :
     (c.claims[i]'hi).2.UnknownCause c.decls u := by
   have := row_sound j c h i hi _ hu
-  cases hk : (c.claims[i]'hi).2 with
-  | claim cl => rw [hk] at this; exact this
+  cases hk : (c.claims[i]'hi).2 <;> rw [hk] at this <;> exact this
 
 end Run
 

@@ -512,16 +512,20 @@ def stringSites : List (String → String) := [
   ("claim-rule", says (req x1 (c1 r#"["rounds", ["val", "x"], "1", "half-up"]"#)),
     [r#"InvalidInput: claims.0.claim.3 must be "ties-up" or "half-even""#]),
   ("software", says (req x1 ok1 r#", "software": """#), ["InvalidInput: case.software must not be empty"]),
-  ("follows", says (req x1 (c1 r#"["follows", ["lt", ["val", "x"], ["lit", "2"]], [], []]"#)),
+  ("follows-eq", says (req x1 (c1 r#"["follows", ["eq", ["val", "x"], ["lit", "2"]], [], []]"#)),
+    ["InvalidInput: claims.0.claim.1 must be an lt, le, gt or ge claim"]),
+  ("follows-form", says (req x1 (c1 r#"["follows", ["lt", ["val", "x"], ["lit", "2"]], []]"#)),
     ["InvalidInput: claims.0.claim must be a claim"]),
   ("sqrt-rounds", says (req x1 (c1 r#"["sqrt-rounds", ["val", "x"], "1"]"#)), ["InvalidInput: claims.0.claim must be a claim"]),
   ("expression", says (req x1 (c1 r#"["eq", ["neg", ["val", "x"]], ["lit", "1"]]"#)),
     ["InvalidInput: claims.0.claim.1 must be an expression"]),
-  ("free", says (req r#"{"name": "x", "words": "the x", "free": true}"# ok1), ["InvalidInput: values.0.free is unknown"]),
+  ("free", says (req r#"{"name": "x", "words": "the x", "free": false}"# ok1), ["InvalidInput: values.0.free must be true"]),
   ("no-source", says (req r#"{"name": "x", "words": "the x"}"# ok1),
-    ["InvalidInput: values.0 must have one of stated and defined"]),
+    ["InvalidInput: values.0 must have one of stated, defined and free"]),
   ("two-sources", says (req r#"{"name": "x", "words": "the x", "stated": "1", "defined": ["lit", "1"]}"# ok1),
-    ["InvalidInput: values.0 must have one of stated and defined"]),
+    ["InvalidInput: values.0 must have one of stated, defined and free"]),
+  ("stated-free", says (req r#"{"name": "x", "words": "the x", "stated": "1", "free": true}"# ok1),
+    ["InvalidInput: values.0 must have one of stated, defined and free"]),
   ("name", says (req r#"{"name": "X", "words": "the x", "stated": "1"}"# ok1), ["InvalidInput: values.0.name must be a name"]),
   ("words", says (req r#"{"name": "x", "words": 7, "stated": "1"}"# ok1), ["InvalidInput: values.0.words must be a string"]),
   ("support", says (req r#"{"name": "x", "words": "the x", "stated": "1", "support": "rumour"}"# ok1),
@@ -588,5 +592,136 @@ def malformed : List String := ["7", "true", "null", "[]", "{}", "1.5", "\"\"", 
     -- words are any string until me-2b's words checks (W6, spec 11.2), so "" is no malformed words
     (if v == "\"\"" then [] else [req s!"\{\"name\": \"x\", \"words\": {v}, \"stated\": \"1\"}" ok1]) |>.all fun c =>
   (answer c).getObjVal? "rows" |>.toOption |>.isNone
+
+/-! ## Derivations (ME-5; spec 3.1, 5 and 13.6): R-3 (H-6) follows, R-4 (H-6n) does not -/
+
+def free (n w : String) : String := s!"\{\"name\": \"{n}\", \"words\": \"{w}\", \"free\": true}"
+def premise (i c : String) (support : String := "assumption") : String :=
+  s!"\{\"id\": \"{i}\", \"claim\": {c}, \"support\": \"{support}\"}"
+def premises (ps : List String) : String := s!", \"premises\": [{", ".intercalate ps}]"
+/-- R-3's values: the velocity ratio r, its square s and the displacement d, all free. -/
+def rsd : String := free "r" "the velocity ratio" ++ ", " ++ free "s" "the squared velocity ratio" ++ ", " ++
+  free "d" "the displacement"
+/-- H-6's premises: p1, d = 0.4 s, and p2, d < `bound`. -/
+def h6P (bound : String) : String := premises [premise "p1" r#"["eq", ["val", "d"], ["mul", ["lit", "0.4"], ["val", "s"]]]"#,
+  premise "p2" s!"[\"lt\", [\"val\", \"d\"], [\"lit\", \"{bound}\"]]"]
+/-- "r is less than 1 divided by `n`" from p1 and p2, across `links`. -/
+def h6 (n : String) (links : String := r#"[["s", "r"]]"#) : String :=
+  claim "h6" s!"[\"follows\", [\"lt\", [\"val\", \"r\"], [\"div\", [\"lit\", \"1\"], [\"lit\", \"{n}\"]]], [\"p1\", \"p2\"], {links}]"
+def r3 : String := req rsd (h6 "4") (h6P "0.02")
+def r4 : String := req rsd (h6 "5") (h6P "0.02")
+
+#guard (answer r3).compress == r#"{"meaning_id":"3c3a2954052d22eb052c63806177a653dcae39bacaf7e6e65f14816e1c87ef32","rows":[{"claim":"h6","claim_id":"9bcd6eb6e369e68ef65aec41156ba5c6707016e9af7b9f1ed1ca1478cb94b08c","kind":"follows","outcome":"holds","reason":null,"reproduction":null,"status":"ok"}],"status":"ok"}"#
+#guard (answer r4).compress == r#"{"meaning_id":"3648cca05ab8e1b20013ad47ea9648f021dada6fb32638bd495af5e049fef02e","rows":[{"claim":"h6","claim_id":"4dee606f697d7fea6bac0ab5b7eee2b2f69ba5f70d99c4d2e0d90fdede93a868","kind":"follows","outcome":"fails","reason":null,"reproduction":null,"status":"ok"}],"status":"ok"}"#
+
+/-- A case over a free `x` with these premises and one derivation `c1` of `conclusion` from them. -/
+def onX (ps : List String) (conclusion ids : String) (links : String := "[]") (values : String := free "x" "the x") :
+    String := req values (c1 s!"[\"follows\", {conclusion}, {ids}, {links}]") (premises ps)
+def xle (n : String) : String := s!"[\"le\", [\"val\", \"x\"], [\"lit\", \"{n}\"]]"
+/-- A chain of definitions, each the sum of the one before with itself: its inlined tree doubles at each step. -/
+def chain (n : Nat) : String := ", ".intercalate ((List.range n).map fun i =>
+  defined s!"v{i + 1}" s!"[\"add\", [\"val\", \"v{i}\"], [\"val\", \"v{i}\"]]")
+def steps : String := "unknown: the derivation search ran out of its 10,000 combination steps"
+def nonlinear (path : String) : List String := [s!"NonlinearPremise: {path} (declare a square link or name the product)"]
+
+#guard expect [
+  ("h6p", says (req rsd (h6 "6") (h6P "0.01")), ["h6 holds"]),
+  ("h6a-no-link", says (req rsd (h6 "4" "[]") (h6P "0.02")), ["h6 fails"]),
+  ("h6-le", says (req rsd (claim "h6" r#"["follows", ["le", ["val", "r"], ["lit", "0.25"]], ["p1", "p2"], [["s", "r"]]]"#)
+      (h6P "0.02")), ["h6 holds"]),
+  ("h6-gt", says (req rsd (claim "h6" r#"["follows", ["gt", ["lit", "0.25"], ["val", "r"]], ["p1", "p2"], [["s", "r"]]]"#)
+      (h6P "0.02")), ["h6 holds"]),
+  ("h6-gt-fails", says (req rsd (claim "h6" r#"["follows", ["gt", ["lit", "0.2"], ["val", "r"]], ["p1", "p2"], [["s", "r"]]]"#)
+      (h6P "0.02")), ["h6 fails"]),
+  -- r ≤ 1/5 does not follow either, but the claimed bound satisfies it and no step of the square rule reaches it.
+  ("h6-ge-edge", says (req rsd (claim "h6" r#"["follows", ["ge", ["lit", "0.2"], ["val", "r"]], ["p1", "p2"], [["s", "r"]]]"#)
+      (h6P "0.02")), ["h6 unknown (unknown: no certificate and no counterexample was found)"]),
+  ("no-solution", says (onX [premise "p1" (xle "1"), premise "p2" r#"["ge", ["val", "x"], ["lit", "2"]]"#]
+      r#"["lt", ["val", "x"], ["lit", "0"]]"# r#"["p1", "p2"]"#), ["c1 holds"]),
+  ("one-premise", says (onX [premise "p1" (xle "1"), premise "p2" r#"["ge", ["val", "x"], ["lit", "2"]]"#]
+      r#"["lt", ["val", "x"], ["lit", "0"]]"# r#"["p1"]"#), ["c1 fails"]),
+  ("within", says (onX [premise "p1" r#"["within", ["val", "x"], ["lit", "1"], ["lit", "2"]]"# "observation"]
+      r#"["gt", ["val", "x"], ["lit", "0.5"]]"# r#"["p1"]"#), ["c1 holds"]),
+  ("stated", says (req x1 (c1 r#"["follows", ["lt", ["val", "x"], ["lit", "2"]], [], []]"# ++ ", " ++
+      claim "c2" r#"["follows", ["lt", ["val", "x"], ["lit", "0"]], [], []]"#)), ["c1 holds", "c2 fails"]),
+  ("mixed", says (req (x1 ++ ", " ++ free "y" "the y") (ok1.replace "c1" "c0" ++ ", " ++
+      c1 r#"["follows", ["lt", ["val", "y"], ["val", "x"]], ["p1"], []]"#) (premises [premise "p1" r#"["lt", ["mul", ["lit", "2"], ["val", "y"]], ["div", ["val", "x"], ["lit", "2"]]]"#])),
+    ["c0 holds", "c1 holds"]),
+  ("lower-bound", says (onX [premise "p1" r#"["gt", ["val", "s"], ["lit", "1"]]"#]
+      r#"["gt", ["val", "x"], ["lit", "1"]]"# r#"["p1"]"# r#"[["s", "x"]]"# (free "x" "the x" ++ ", " ++ free "s" "the s")),
+    [s!"c1 unknown (unknown: no certificate and no counterexample was found)"]),
+  -- 64 facts and the negated conclusion are past the search's 64 facts; 63 are within them.
+  ("facts-64", says (onX ((List.range 64).map fun i => premise s!"p{i}" (xle (toString i)))
+      r#"["lt", ["val", "x"], ["lit", "100"]]"# (toJson ((List.range 64).map (s!"p{·}"))).compress), [s!"c1 unknown ({steps})"]),
+  ("facts-63", says (onX ((List.range 63).map fun i => premise s!"p{i}" (xle (toString i)))
+      r#"["lt", ["val", "x"], ["lit", "100"]]"# (toJson ((List.range 63).map (s!"p{·}"))).compress), ["c1 holds"]),
+  ("chain", says (onX [premise "p1" r#"["lt", ["val", "v20"], ["lit", "1"]]"#] r#"["lt", ["val", "x"], ["lit", "1"]]"#
+      r#"["p1"]"# "[]" (free "x" "the x" ++ ", " ++ defined "v0" r#"["val", "x"]"# ++ ", " ++ chain 20)),
+    [s!"c1 unknown ({steps})"]),
+  ("premises-512", says (onX ((List.range 512).map fun i => premise s!"p{i}" (xle "1")) (xle "1") "[]"), ["c1 fails"]),
+  ("premises-513", says (onX ((List.range 513).map fun i => premise s!"p{i}" (xle "1")) (xle "1") "[]"),
+    ["ResourceLimit: the number of premises exceeds 512"]),
+  ("unknown-premise", says (req rsd (claim "h6" r#"["follows", ["lt", ["val", "r"], ["lit", "1"]], ["p1", "p3"], []]"#)
+      (h6P "0.02")), ["UnknownPremise: p3"]),
+  ("unknown-link-stated", says (req (rsd ++ ", " ++ stated "k" r#""1""#) (h6 "4" r#"[["s", "r"], ["k", "r"]]"#) (h6P "0.02")),
+    ["UnknownLink: k"]),
+  ("unknown-link-name", says (req rsd (h6 "4" r#"[["s", "q"]]"#) (h6P "0.02")), ["UnknownLink: q"]),
+  ("nonlinear-square", says (onX [premise "p1" r#"["eq", ["val", "s"], ["mul", ["val", "x"], ["val", "x"]]]"#]
+      (xle "1") r#"["p1"]"# "[]" (free "x" "the x" ++ ", " ++ free "s" "the s")), nonlinear "premises.0.claim.2"),
+  ("nonlinear-pow", says (onX [premise "p1" r#"["lt", ["add", ["lit", "1"], ["pow", ["val", "x"], 2]], ["lit", "1"]]"#]
+      (xle "1") r#"["p1"]"#), nonlinear "premises.0.claim.1.2"),
+  ("nonlinear-divisor", says (onX [premise "p1" r#"["lt", ["div", ["lit", "1"], ["val", "x"]], ["lit", "1"]]"#]
+      (xle "1") r#"["p1"]"#), nonlinear "premises.0.claim.1"),
+  ("nonlinear-zero", says (onX [premise "p1" r#"["lt", ["div", ["val", "x"], ["sub", ["lit", "1"], ["lit", "1"]]], ["lit", "1"]]"#]
+      (xle "1") r#"["p1"]"#), nonlinear "premises.0.claim.1"),
+  ("nonlinear-conclusion", says (onX [] r#"["lt", ["lit", "1"], ["mul", ["val", "x"], ["val", "x"]]]"# "[]"),
+    nonlinear "claims.0.claim.1.2"),
+  ("nonlinear-defined", says (onX [premise "p1" (xle "1"), premise "p2" r#"["le", ["val", "q"], ["lit", "1"]]"#]
+      (xle "1") r#"["p1"]"# "[]" (free "x" "the x" ++ ", " ++ defined "q" r#"["mul", ["val", "x"], ["val", "x"]]"#)),
+    nonlinear "premises.1.claim.1"),
+  ("linear-constants", says (onX [premise "p1" r#"["le", ["mul", ["pow", ["lit", "2"], 3], ["div", ["val", "x"], ["lit", "4"]]], ["pow", ["val", "x"], 1]]"#]
+      (xle "0") r#"["p1"]"#), ["c1 holds"]),
+  ("rounds-premise", says (onX [premise "p1" r#"["rounds", ["val", "x"], "1"]"#] (xle "1") r#"["p1"]"#),
+    ["InvalidInput: premises.0.claim must be a comparison or a range"]),
+  ("premise-support", says (onX [r#"{"id": "p1", "claim": ["le", ["val", "x"], ["lit", "1"]]}"#] (xle "1") r#"["p1"]"#),
+    ["InvalidInput: premises.0.support is missing"]),
+  ("premise-support-form", says (onX [premise "p1" (xle "1") "rumour"] (xle "1") r#"["p1"]"#),
+    ["InvalidInput: premises.0.support must be observation, testimony or assumption"]),
+  ("premise-field", says (onX [r#"{"id": "p1", "claim": ["le", ["val", "x"], ["lit", "1"]], "support": "assumption", "words": "w"}"#]
+      (xle "1") r#"["p1"]"#), ["InvalidInput: premises.0.words is unknown"]),
+  ("premise-id", says (onX [premise "p1" (xle "1")] (xle "1") "[1]"), ["InvalidInput: claims.0.claim.2.0 must be a premise id"]),
+  ("link-form", says (onX [premise "p1" (xle "1")] (xle "1") r#"["p1"]"# r#"[["x"]]"#),
+    ["InvalidInput: claims.0.claim.3.0 must be two names"]),
+  ("premises-list", says (req (free "x" "the x") (c1 (s!"[\"follows\", {xle "1"}, [], []]")) r#", "premises": {}"#),
+    ["InvalidInput: case.premises must be a list"]),
+  ("premise-claim-id", says (onX [premise "c1" (xle "1")] (xle "1") r#"["c1"]"#), ["DuplicateClaimId: c1"]),
+  ("premise-ids", says (onX [premise "p1" (xle "1"), premise "p1" (xle "2")] (xle "1") r#"["p1"]"#), ["DuplicateClaimId: p1"]),
+  ("premise-name", says (onX [premise "p1" (xle "1"), premise "p2" r#"["le", ["val", "w"], ["lit", "1"]]"#] (xle "1") r#"["p1"]"#),
+    ["UnknownName: w (declare it before the value that uses it)"])]
+
+-- A derivation reading a value that has none is undefined, and one reading an exhausted counted value is unknown at
+-- the budget (2.7), the first fault in the conclusion and then the premises deciding. Counted values reach the wire
+-- with ME-4, so these are checked on declarations.
+#guard let ds : List Decl := [⟨"r", .free⟩, ⟨"n", .counted (Thunk.pure none) (.ok none)⟩,
+    ⟨"m", .counted (Thunk.pure none) .exhausted⟩]
+  let lt (a b : String) : Claim := .compare ⟨.lt, false⟩ (.val a) (.val b)
+  [Check.follows [] [] (lt "r" "n"), .follows [lt "r" "m"] [] (lt "r" "r"), .follows [lt "r" "n"] [] (lt "r" "m"),
+    .follows [lt "r" "m", lt "r" "n"] [] (lt "r" "r")].map (·.run ds) ==
+  [.decided .undefined, .unknown (.limit .evaluations), .unknown (.limit .evaluations), .unknown (.limit .evaluations)]
+
+-- Spec 3.3: free values, premises (their ids, claims, supports and spans) and a derivation's parts are hashed; an
+-- empty `premises` list is no premise.
+def deriv (ps : List String) (ids links : String) : String := onX ps (xle "1") ids links (free "x" "the x" ++ ", " ++ free "s" "the s")
+#guard identityFaults.isEmpty && [
+    ("premises", [[deriv [] "[]" "[]", req (free "x" "the x" ++ ", " ++ free "s" "the s") (c1 s!"[\"follows\", {xle "1"}, [], []]")],
+      [deriv [premise "p1" (xle "1")] "[]" "[]"], [deriv [premise "p1" (xle "2")] "[]" "[]"],
+      [deriv [premise "q1" (xle "1")] "[]" "[]"], [deriv [premise "p1" (xle "1") "observation"] "[]" "[]"],
+      [deriv [r#"{"id": "p1", "claim": ["le", ["val", "x"], ["lit", "1"]], "support": "assumption", "span": [3, 5]}"#] "[]" "[]"]]),
+    ("derivation", [[deriv [premise "p1" (xle "1")] r#"["p1"]"# "[]"], [deriv [premise "p1" (xle "1")] "[]" r#"[["s", "x"]]"#],
+      [deriv [premise "p1" (xle "1")] "[]" r#"[["x", "s"]]"#], [deriv [premise "p1" (xle "1")] "[]" "[]"]]),
+    ("free", [[req (free "x" "the x") (ok1.replace "eq" "le")], [req x1 (ok1.replace "eq" "le")]])].all fun (_, classes) =>
+  let ids := classes.map (·.map identity)
+  ids.all (fun c => c.all fun i => i.all (· != "") && i.length > 1 && some i == c.head?) &&
+    decide ((ids.filterMap fun c => c.head?.bind List.head?).Nodup)
 
 end VE.Calc.RunExamples
