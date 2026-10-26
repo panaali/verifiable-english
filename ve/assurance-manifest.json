@@ -66,7 +66,7 @@
     "ve/readings_verdicts.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 37804,
+    "total_lines": 37752,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -215,20 +215,21 @@
       },
       {
         "file": "lean/VE/CertificateWire.lean",
-        "lines": 312,
-        "sha256": "bf814b58737fdab33616a65a899a130e1b3a08b0564d7921fd295a4ac7b1c3c0",
+        "lines": 307,
+        "sha256": "d7fd15723dafa173aec727092ec55d76e9fd09a3d8e2984019e18f17c8667950",
         "ranges": [
           [
             46,
-            221
+            216
           ],
           [
-            236,
-            245
+            231,
+            240
           ]
         ],
         "declarations": [
           "sha256",
+          "canonicalWith",
           "canonical",
           "digest",
           "decodeTrace",
@@ -387,12 +388,12 @@
       },
       {
         "file": "lean/VE/NormDefaults/Admission.lean",
-        "lines": 367,
-        "sha256": "ccd91ae09c6073570545482dd51e135d32e3f07c20d420b9734a3a4a3edb65de",
+        "lines": 344,
+        "sha256": "ab4fe1851cdc4597e8ac052738180c28783e71bcf6abbf4d9eaccdad97d54845",
         "ranges": [
           [
             1,
-            367
+            344
           ]
         ],
         "declarations": [
@@ -626,12 +627,12 @@
       },
       {
         "file": "lean/VE/Readings/Companions.lean",
-        "lines": 924,
-        "sha256": "00b32a8d7627ad9afdda9fb7775793793af85aa7de7f30efd40ae719cfd0d240",
+        "lines": 923,
+        "sha256": "69a9b55c501a6177666596e56b0e3e217cba80e3723f77129f12a882c60ee508",
         "ranges": [
           [
             1,
-            924
+            923
           ]
         ],
         "declarations": [
@@ -1274,12 +1275,12 @@
       },
       {
         "file": "lean/VE/SoftNorms/Admission.lean",
-        "lines": 332,
-        "sha256": "5f867e8a26a78cf4b0a1aba6716354a32d9c609b0ed45d94311143e5a5e4d82b",
+        "lines": 309,
+        "sha256": "b087217d8faeb5650b63fc32101f3f31aa0f64f0ce072ace5971716d0cf338fc",
         "ranges": [
           [
             1,
-            332
+            309
           ]
         ],
         "declarations": [
