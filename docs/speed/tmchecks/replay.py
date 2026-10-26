@@ -76,7 +76,8 @@ def main() -> int:
     assert [ident(m) for m in one] == [ident(m) for m in saved["mutants"]], "the saved rows are not the first plan"
     prevs = {}
     for m, row in zip(one, saved["mutants"]):
-        m.status, m.detail = row["raw_status"], row["detail"]
+        m.status = m.raw_status = row["raw_status"]
+        m.detail = row["detail"]
         r1.verdict(m)
         prevs[ident(m), m.start] = {"status": m.status, "detail": m.detail, "reads": m.reads, "killed_at": m.killed_at}
     why, carried = Counter(), {}
@@ -84,7 +85,10 @@ def main() -> int:
         m.reads, m.killed_at, m.carried_from = "", None, ""
         p = prevs.get((ident(m), m.start))  # one line can hold two equal edits
         if p and p["reads"]:
-            r2.carry(m, p, FIRST)
+            if args.rule == "tmrerun":
+                r2.carry(m, p, FIRST)
+            elif kept := r2.carry(m, p, tm.targets(trees[SECOND][1], m, [])):  # the tool's: (status, detail)
+                (m.status, m.detail), m.carried_from = kept, FIRST
         if m.carried_from:
             why[f"carried {m.status}"] += 1
             carried[m.id] = (m.status, m.detail)
