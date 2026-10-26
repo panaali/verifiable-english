@@ -5,11 +5,12 @@
 
 `--answers` records, with the checkout it runs in (its schemas read its own service's rows), every case of this
 item's `tests/data/route-cases.jsonl` (the merge base's file: ap-1bb adds none) and the probes below, which load
-`acts@0` environments through Python (`Environment`, `EnglishVocabulary`). `--compare` pairs the records and
+`acts@0` environments through Python (`Environment`, `EnglishVocabulary`), ask the environment mode for A19's row
+and read A19's environment in English and in its legend (fix1, review F1 and F4). `--compare` pairs the records and
 classifies each difference: `wordings` (a `norms-elaborate` row that differs only by its added `wordings`, empty
-for an environment without a plain act), `loads` (a probe that was CheckerUnavailable and now answers) or
-`display` (a probe's wording). Exit 1 when any other difference exists, when nothing differs (head against head)
-or when there are no records.
+for an environment without a plain act), `acts` (an environment row that differs only by its added `acts`),
+`loads` (a probe that was CheckerUnavailable and now answers) or `display` (a probe's wording). Exit 1 when any
+other difference exists, when nothing differs (head against head) or when there are no records.
 """
 from __future__ import annotations
 
@@ -23,17 +24,41 @@ A19 = "{0} comply with the operator’s instructions in {1}"
 
 def probes():
     from tests.test_acts_profile import environment, predicate
+    from ve import english
+    from ve.backends import english_lean, relay
     from ve.english import EnglishVocabulary
     from ve.environment import Environment
+    from ve.norm_defaults_english import legend
     curly = environment(p=predicate(["person", "case"], {"role": "permission", "default": "allow", "act": A19}))
-    for name, data in [("load/A1-A3", environment()), ("load/A19", curly)]:
+    curly["vocabulary"]["constants"] = {"alice": {"sort": "person", "description": "alice"},
+                                        "trial": {"sort": "case", "description": "trial"}}
+
+    def answer(ask):
         try:
-            env = Environment(data)
-            words = EnglishVocabulary(env).predicates
-            yield name, {"environment_id": env.environment_id,
-                         "wordings": {p: words[p] for p in ("heard", "paid", "protected")}}
+            return ask()
         except Exception as exc:  # the record is what a caller sees
-            yield name, {"refused": f"{type(exc).__name__}: {exc}"}
+            return {"refused": f"{type(exc).__name__}: {exc}"}
+
+    def loaded(data):
+        env = Environment(data)
+        words = EnglishVocabulary(env).predicates
+        return {"environment_id": env.environment_id,
+                "acts": {p: d.regulated.act for p, d in env.predicates.items() if d.regulated is not None},
+                "wordings": {p: words[p] for p in ("heard", "paid", "protected", "p") if p in words}}
+
+    def read(data, source):
+        env = Environment(data)
+        [row] = relay.rows("english.read", [english_lean.request(env, source, english.EnglishVocabulary(env), {})])
+        return {"status": row.get("status"), "result": {k: row["result"].get(k) for k in ("status", "ast")}
+                if isinstance(row.get("result"), dict) else row.get("result")}
+
+    for name, data in [("load/A1-A3", environment()), ("load/A19", curly)]:
+        yield name, answer(lambda: loaded(data))
+    # review F1: the environment row (the head's gives the canonical acts its identity hashes, `acts`)
+    yield "row/A19", answer(lambda: relay.decide("environment", [{"id": "environment", "environment": curly}])[0])
+    # review F4: the U+2019 environment read in English, and its norm-defaults legend
+    yield "read/A19", answer(lambda: read(curly, "Alice may comply with the operator's instructions in trial."))
+    yield "legend/A19", answer(lambda: {"legend": list(legend(Environment(curly)))})
 
 
 def record(out: Path) -> None:
@@ -59,6 +84,9 @@ def why(key: str, base, head) -> str | None:
     if ":norms-elaborate" in key and isinstance(head, dict) and "wordings" in head and "wordings" not in base \
             and {k: v for k, v in head.items() if k != "wordings"} == base:
         return "wordings"
+    if key.startswith("probe:row/") and isinstance(head, dict) and "acts" in head and "acts" not in base \
+            and {k: v for k, v in head.items() if k != "acts"} == base:
+        return "acts"
     if key.startswith("probe:") and "refused" in base and "refused" not in head:
         return "loads"
     if key.startswith("probe:") and "refused" not in base and base["environment_id"] == head.get("environment_id"):
