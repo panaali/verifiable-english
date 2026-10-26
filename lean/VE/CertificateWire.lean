@@ -116,39 +116,34 @@ private def utf16 (s : String) : List Nat := s.toList.flatMap fun c =>
   let n := c.toNat
   if n < 65536 then [n] else [55296 + (n-65536)/1024, 56320 + (n-65536)%1024]
 
-/-- Restricted canonical JSON, including UTF-16 object-key ordering. -/
-def canonical : Nat → Json → Except String String
+/-- Restricted canonical JSON, including UTF-16 object-key ordering. JSON null is encoded as
+`null`, which is the one case where the certificate and document encodings differ. -/
+def canonicalWith (null : Except String String) : Nat → Json → Except String String
   | 0, _ => throw "ResourceLimit: canonical JSON depth"
   | fuel+1, j => match j with
     | .str s => pure (quoted s)
     | .bool b => pure (if b then "true" else "false")
     | .num _ => do pure (toString (← j.getNat?))
-    | .null => throw "null is not in certificate wire format"
+    | .null => null
     | .arr xs => do
-      let parts ← xs.toList.mapM (canonical fuel)
+      let parts ← xs.toList.mapM (canonicalWith null fuel)
       pure ("[" ++ String.intercalate "," parts ++ "]")
     | .obj obj => do
       let pairs := obj.toList.mergeSort (fun a b => compare (utf16 a.1) (utf16 b.1) != .gt)
-      let parts ← pairs.mapM fun (k,v) => do pure (quoted k ++ ":" ++ (← canonical fuel v))
+      let parts ← pairs.mapM fun (k,v) => do pure (quoted k ++ ":" ++ (← canonicalWith null fuel v))
       pure ("{" ++ String.intercalate "," parts ++ "}")
+
+/-- The certificate encoding: JSON null is not in its wire format. -/
+def canonical : Nat → Json → Except String String :=
+  canonicalWith (throw "null is not in certificate wire format")
 
 def digest (domain : String) (j : Json) : Except String String := do
   pure (sha256 (domain ++ (← canonical 257 j)).toUTF8)
 
-/-- Document front matter permits JSON null. Keep certificate canonicalisation unchanged;
-this is the same Python-compatible encoding with one additional JSON constructor. -/
-def documentCanonical : Nat → Json → Except String String
-  | 0, _ => throw "ResourceLimit: canonical JSON depth"
-  | fuel+1, j => match j with
-    | .null => pure "null"
-    | .arr xs => do
-      let parts ← xs.toList.mapM (documentCanonical fuel)
-      pure ("[" ++ String.intercalate "," parts ++ "]")
-    | .obj obj => do
-      let pairs := obj.toList.mergeSort (fun a b => compare (utf16 a.1) (utf16 b.1) != .gt)
-      let parts ← pairs.mapM fun (k,v) => do pure (quoted k ++ ":" ++ (← documentCanonical fuel v))
-      pure ("{" ++ String.intercalate "," parts ++ "}")
-    | _ => canonical (fuel+1) j
+/-- Document front matter permits JSON null: the same Python-compatible encoding, with null
+encoded as `null` at every depth. -/
+def documentCanonical : Nat → Json → Except String String :=
+  canonicalWith (pure "null")
 
 def documentDigest (domain : String) (j : Json) : Except String String := do
   pure (sha256 (domain ++ (← documentCanonical 257 j)).toUTF8)
