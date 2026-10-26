@@ -113,10 +113,14 @@ import VE.Calc.DeriveExamples
 import VE.Calc.Dimension
 import VE.Calc.Units
 import VE.Calc.UnitsExamples
+import VE.Calc.Wire
+import VE.Calc.Run
+import VE.Calc.RunExamples
 import VE.Calc.Poly
 import VE.Calc.Inline
 import VE.Calc.Identity
 import VE.Calc.IdentityExamples
+import VE.Arith.Examples
 import VE.Calc.Lower
 import VE.Calc.LowerExamples
 import VE.Numbers.Examples
