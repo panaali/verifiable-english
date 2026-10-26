@@ -5512,7 +5512,10 @@
         "VE.Norms.Wire.actsFixed",
         "VE.Norms.Wire.actsProfiles",
         "VE.Norms.Wire.actsView",
-        "VE.Norms.Wire.readsActs"
+        "VE.Norms.Wire.readsActs",
+        "VE.Norms.Wire.plainWording",
+        "VE.Norms.Wire.plainWordings",
+        "VE.Norms.Wire.canonicalActs"
       ],
       "D[I]": [
         "VE.Norms.Wire.appendPredicates",
@@ -14412,7 +14415,15 @@
         "VE.Service.ActsExamples.profilesOr",
         "VE.Service.ActsExamples.unspecified",
         "VE.Service.ActsExamples.modal",
-        "VE.Service.ActsExamples.admittedWithActs"
+        "VE.Service.ActsExamples.admittedWithActs",
+        "VE.Service.ActsExamples.routeWordings",
+        "VE.Service.ActsExamples.environmentRow",
+        "VE.Service.ActsExamples.curly",
+        "VE.Service.ActsExamples.straight",
+        "VE.Service.ActsExamples.members",
+        "VE.Service.ActsExamples.frozen",
+        "VE.Service.ActsExamples.closure01",
+        "VE.Service.ActsExamples.core0"
       ]
     },
     "VE/Calc/Wire.lean": {
