@@ -84,6 +84,61 @@ further-pack list, and no further pack's id, so a further pack's entry needs its
     (VE.NormDefaults.Packs.elaborateArrays further).all (keys.contains ·.1) &&
     !VE.NormDefaults.Packs.packOrder.any (fun i => i != "soft" && i != "rights" && keys.contains i)
 
+/-- The kind table's dispatch answers what the row it finds answers. -/
+theorem dispatch_okP {α : Type} (rows : List (Packs.KindRow α)) (ids : List String) (L : α) (id kind : String)
+    (j : Json) {P : Json → Prop} (h : ∀ r ∈ rows, r.kind = kind → OkP P (r.run L id j)) :
+    OkP (fun o => ∀ a, o = some a → P a) (Packs.dispatch rows ids L id kind j) := by
+  unfold Packs.dispatch
+  split
+  · exact OkP.pure (fun _ h => by cases h)
+  · rename_i r hf
+    have hr := h r (List.mem_of_find?_eq_some hf) (by simpa using List.find?_some hf)
+    have hm : OkP (fun o => ∀ a, o = some a → P a) (some <$> r.run L id j) :=
+      OkP.mapOf hr (fun a ha b hb => by cases hb; exact ha)
+    split
+    · exact OkP.ite (fun _ => hm) (fun _ => OkP.throw)
+    · exact hm
+
+open VE.Defaults.Wire in
+theorem defaultsCase_fits (v : DefaultsView) (id kind : String) (j : Json)
+    (hi : VE.Bridge.stringField j "id" = .ok id)
+    (hk : VE.Route.Run.caseKind j = .ok kind) (hp : usesNormDefaultsPath j = true) :
+    OkP (fun o => ∀ a, o = some a → Fits j Skeletons.normDefaults a) (defaultsCase v id kind j) := by
+  unfold defaultsCase
+  repeat' (apply OkP.ite <;> intro _)
+  all_goals first
+    | (refine OkP.map (fun x a ha => ?_); cases ha)
+    | (apply OkP.pure; intro a ha; cases ha)
+  all_goals read_kind
+  all_goals simp only [VE.Route.Wire.ok, elaborateFields, coherenceFields, certFields, modelFields, situationJson,
+    CoherenceReplay.verdict, CertReplay.verdict, ModelReplay.verdict, PairStatus.label, basisLabel, formLabel,
+    entityIds, VE.NormDefaults.Wire.witnessRow]
+  · fits
+  · by_cases h1 : x.coherent = true <;> by_cases h2 : x.collides = true <;>
+      simp only [h1, h2, ↓reduceIte, Bool.false_eq_true, String.reduceBEq] <;> (repeat' split) <;> fits
+  · by_cases h : (x.certOk && x.coherent && x.modelOk) = true <;>
+      simp only [h, ↓reduceIte, Bool.false_eq_true, String.reduceBEq, beq_self_eq_true] <;> fits
+  · by_cases h : x.ok = true <;> simp only [h, ↓reduceIte, Bool.false_eq_true] <;> fits
+
+theorem layeredKindCase_fits (L : Wire.LayeredU) (id kind : String) (j : Json)
+    (hi : VE.Bridge.stringField j "id" = .ok id)
+    (hk : VE.Route.Run.caseKind j = .ok kind) (hp : usesNormDefaultsPath j = true) :
+    OkP (fun o => ∀ a, o = some a → Fits j Skeletons.normDefaults a) (Wire.layeredKindCase L id kind j) := by
+  refine dispatch_okP _ _ L id kind j (fun r hr hrk => ?_)
+  rcases List.mem_append.mp hr with hr | hr
+  · obtain ⟨k, -, rfl⟩ := List.mem_map.mp hr
+    cases hrk
+    refine OkP.bind (fun o ho => ?_)
+    cases o with
+    | none => exact OkP.throw
+    | some a => exact OkP.pure (layeredCase_fits L id _ j hi hk hp _ ho _ rfl)
+  · obtain ⟨k, -, rfl⟩ := List.mem_map.mp hr
+    cases hrk
+    refine OkP.bind (fun v _ => OkP.bind (fun o ho => ?_))
+    cases o with
+    | none => exact OkP.throw
+    | some a => exact OkP.pure (defaultsCase_fits v id _ j hi hk hp _ ho _ rfl)
+
 theorem runLayered_fits (id kind : String) (j : Json)
     (hi : VE.Bridge.stringField j "id" = .ok id)
     (hk : VE.Route.Run.caseKind j = .ok kind) (hp : usesNormDefaultsPath j = true) :
@@ -92,12 +147,11 @@ theorem runLayered_fits (id kind : String) (j : Json)
   intro v hv
   obtain ⟨L, -, hv⟩ := VE.Order.ProfileGate.bind_ok hv
   obtain ⟨o, ho, hv⟩ := VE.Order.ProfileGate.bind_ok hv
-  rw [VE.NormDefaults.Packs.kindCase_eq] at ho
   cases o with
   | none => cases hv
   | some a =>
     cases hv
-    exact layeredCase_fits L id kind j hi hk hp _ ho _ rfl
+    exact layeredKindCase_fits L id kind j hi hk hp _ ho _ rfl
 
 /-- Every soft-branch admission's kinds are its units' rendered kinds. -/
 theorem admitDocumentX_kinds (environment document : Json) :
