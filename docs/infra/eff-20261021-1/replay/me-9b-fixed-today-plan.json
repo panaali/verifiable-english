@@ -1,0 +1,100 @@
+{
+ "tree": "6f5133e7dc2544299196b59617594fc4503c62a2",
+ "lines": [
+  63,
+  62,
+  129,
+  130,
+  41,
+  184,
+  185
+ ],
+ "fatal": [],
+ "operators": [
+  "arm-true",
+  "arm-false",
+  "arm-default",
+  "body-true",
+  "body-false",
+  "not-drop",
+  "and-or",
+  "or-and",
+  "lt-le",
+  "le-lt",
+  "lt-eq",
+  "le-eq",
+  "eq-le",
+  "eq-ne",
+  "ne-eq",
+  "all-any",
+  "any-all",
+  "bool-flip",
+  "lit-plus",
+  "lit-minus",
+  "list-empty",
+  "append-left",
+  "append-right",
+  "list-first",
+  "list-drop-last",
+  "list-last",
+  "list-drop-first"
+ ],
+ "rows": [
+  {
+   "definition": "VE.Calc.Expr.zeroDivisor",
+   "class": "C",
+   "trusted": false,
+   "changed": true,
+   "selected": false,
+   "mutants": []
+  },
+  {
+   "definition": "VE.Calc.Expr.zeroDivisor",
+   "class": "C",
+   "trusted": false,
+   "changed": true,
+   "selected": false,
+   "mutants": []
+  },
+  {
+   "definition": "VE.Calc.identityDecide",
+   "class": "C",
+   "trusted": false,
+   "changed": true,
+   "selected": false,
+   "mutants": []
+  },
+  {
+   "definition": "VE.Calc.identityDecide",
+   "class": "C",
+   "trusted": false,
+   "changed": true,
+   "selected": false,
+   "mutants": []
+  },
+  {
+   "definition": "VE.Calc.Expr.bin2",
+   "class": "C",
+   "trusted": false,
+   "changed": true,
+   "selected": false,
+   "mutants": []
+  },
+  {
+   "definition": "VE.Calc.Claim.inline",
+   "class": "C",
+   "trusted": false,
+   "changed": true,
+   "selected": false,
+   "mutants": []
+  },
+  {
+   "definition": "VE.Calc.Claim.inline",
+   "class": "C",
+   "trusted": false,
+   "changed": true,
+   "selected": false,
+   "mutants": []
+  }
+ ]
+}
