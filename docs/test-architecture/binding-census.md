@@ -68,7 +68,7 @@ A hand check refused a probed mutant; `only hand` counts the mutants the generic
 | `ve/readings_s2_english.py:named_result` | ve/readings_s2_english.py:415 | readings-route | 2 | 0 | no |
 | `ve/readings_s2_wording.py:name` | ve/readings_s2_wording.py:71 | readings-route | 1 | 0 | no |
 | `ve/readings_sup.py:slot_label` | ve/readings_sup.py:403 | readings-route | 1 | 0 | no |
-| `ve/readings_verdicts.py:conflict` | ve/readings_verdicts.py:341 (changed since the probe) | readings-route | 0 | 1 | yes |
+| `ve/readings_verdicts/superposed.py:conflict` | ve/readings_verdicts/superposed.py:341 (changed since the probe) | readings-route | 0 | 1 | yes |
 | `ve/reports.py:__init__` | ve/reports.py:45; ve/reports.py:39 | reports | 33 | 0 | no |
 | `ve/reports.py:_load_statuses` | ve/reports.py:52 | reports | 0 | 3 | yes |
 | `ve/rights.py:__init__` | ve/rights.py:199 (changed since the probe); ve/rights.py:190 (changed since the probe); ve/rights.py:192 (changed since the probe); ve/rights.py:166 | rights | 19 | 4 | no |
