@@ -1836,7 +1836,7 @@ module VE.Acts.Table 6e2d333b06c34941f953293f0a893f9cc6c61473d83e53ce3652d0e1b0c
 78:0-80:43 theorem VE.Acts.table_free_any_split@VE.Acts.Table
 81:0-83:43 theorem VE.Acts.table_free_nor@VE.Acts.Table
 84:0-88:14 theorem VE.Acts.table_needNot@VE.Acts.Table
-module VE.Acts.TableExamples 48f5bd40706bf4acc60f3289418bc32f27eb3ec4fdf5e2cdfbe905dda1b3c4a5
+module VE.Acts.TableExamples e07af9a5397acd0bfed9dd203e45af9e1ef01292ab6fb27bf4c54af9a6b6daaf
 13:0-13:47 def VE.Acts.TableExamples.w@VE.Acts.TableExamples
 15:0-16:84 def VE.Acts.TableExamples.torture@VE.Acts.TableExamples
 17:0-17:79 def VE.Acts.TableExamples.cruel@VE.Acts.TableExamples
@@ -1859,6 +1859,15 @@ module VE.Acts.TableExamples 48f5bd40706bf4acc60f3289418bc32f27eb3ec4fdf5e2cdfbe
 48:0-52:63 def VE.Acts.TableExamples.g14v@VE.Acts.TableExamples
 54:0-55:68 def VE.Acts.TableExamples.shape@VE.Acts.TableExamples
 57:0-57:97 def VE.Acts.TableExamples.reg@VE.Acts.TableExamples
+124:0-124:74 def VE.Acts.TableExamples.joinWord@VE.Acts.TableExamples
+125:0-125:93 def VE.Acts.TableExamples.partIndex@VE.Acts.TableExamples
+126:0-126:73 def VE.Acts.TableExamples.fillerParts@VE.Acts.TableExamples
+127:0-127:67 def VE.Acts.TableExamples.modifierWord@VE.Acts.TableExamples
+128:0-128:86 def VE.Acts.TableExamples.actParts@VE.Acts.TableExamples
+129:0-129:78 def VE.Acts.TableExamples.simpleParts@VE.Acts.TableExamples
+130:0-131:116 def VE.Acts.TableExamples.opWords@VE.Acts.TableExamples
+134:0-134:108 def VE.Acts.TableExamples.heldBy@VE.Acts.TableExamples
+148:0-149:118 def VE.Acts.TableExamples.joinByName@VE.Acts.TableExamples
 module VE.Acts.Tree 56383ec06ed0d6d4fd62172a660fc25bb80c23d7b3290a21f301f6beaa033bbf
 9:0-10:28 inductive VE.Acts.Join@VE.Acts.Tree
 10:11-10:22 instance VE.Acts.instDecidableEqJoin@VE.Acts.Tree

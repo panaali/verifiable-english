@@ -115,4 +115,46 @@ def reg (role : VE.Norms.Role) : VE.Norms.Regulated := ⟨"p", ["person"], false
 #guard freeTable (.one torture) == [[.atom torture]]
 #guard freeTable g11 == table .may g11 && freeTable (g9 true) == []
 
+/-! ### The trees and the table's types (5.4; review F1)
+
+Each type's constructors are matched once with no wildcard, so a constructor added or dropped fails here. Trees built
+with named arguments pin each field's name to its place: the other fixtures build them by position only.
+-/
+
+def joinWord : Join → String | .and => "and" | .or => "or" | .nor => "nor"
+def partIndex : Part → Option Nat | .slot i => some i | .fixed i => some i | .words _ => none
+def fillerParts : Filler → List Part | .one p => [p] | .joined _ ps => ps
+def modifierWord : Modifier → String | .adv w => w | .prep m _ => m
+def actParts : Act → List Atom | .one a => [a] | .all _ _ ps => ps | .any _ _ ps => ps
+def simpleParts : Simple → List Atom | .atom a => [a] | .whole A => actParts A
+def opWords : Op → String
+  | .must => "must" | .needNot => "need not" | .may => "may" | .mustNot => "must not" | .right => "has the right to"
+
+-- A filler joined by and, or and nor stays one filler of one atom (1.5).
+def heldBy (j : Join) : Atom := ⟨false, true, ["held"], [("by", .joined j [w "secret vote", .fixed 0])], []⟩
+#guard [Join.and, .or, .nor].map joinWord == ["and", "or", "nor"]
+#guard [Join.and, .or, .nor].all fun j => [Op.must, .needNot, .may, .mustNot, .right].all (table · (.one (heldBy j)) == [[.atom (heldBy j)]])
+#guard [Join.and, .or, .nor].map (fun j => (heldBy j).args.map (fillerParts ·.2)) == [[[w "secret vote", .fixed 0]], [[w "secret vote", .fixed 0]], [[w "secret vote", .fixed 0]]]
+#guard heldBy .or == held && heldBy .and != heldBy .nor
+-- An index is a natural number: 0 - 1 is 0.
+#guard [Part.slot (0 - 1), .fixed (0 - 1), w "torture"].map partIndex == [some 0, some 0, none]
+#guard [beyond, protection, .adv "directly"].map modifierWord == ["in circumstances", "for", "directly"]
+#guard [Op.must, .needNot, .may, .mustNot, .right].map opWords == ["must", "need not", "may", "must not", "has the right to"]
+#guard simpleParts (.whole g11) == [directly, through] && simpleParts (.atom held) == [held] && actParts g7 == [held]
+-- *to* and *be* as read: "be subjected", "be held", "be deprived"; "to take part", "to form", "to join".
+#guard [torture, cruel, held, deprived, denied true].all fun a => a.beWord && !a.toWord
+#guard [directly, through, form true, join].all fun a => a.toWord && !a.beWord
+-- The same trees by name.
+def joinByName : Atom :=
+  { toWord := true, beWord := false, head := ["join"], args := [("", .one (w "trade unions"))], mods := [protection] }
+#guard joinByName == join
+#guard Act.all (shared := false) (split := false) (parts := [form true, joinByName]) == g12 true
+#guard Act.any (nor := true) (split := false) (parts := [deprived, denied true]) == g9 true
+#guard Act.any (nor := false) (split := true) (parts := [torture, cruel]) == g6
+-- Their readings: a shared *to* reads each, or both together; *nor* under *may* has no reading.
+#guard table .may (Act.all (shared := true) (split := false) (parts := [form false, joinByName])) ==
+  [[.atom (form false), .atom join], [.whole (.all true false [form false, join])]]
+#guard table .may (Act.any (nor := true) (split := false) (parts := [deprived, denied true])) == []
+#guard table .must (Act.any (nor := false) (split := true) (parts := [torture, cruel])) == []
+
 end VE.Acts.TableExamples
