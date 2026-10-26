@@ -17870,7 +17870,7 @@ module VE.Scope.Wire 618b837c4a7fc2398c732805ff271357fd1def4719dc33697e6e3d3fb86
 120:0-122:81 def VE.Scope.changers@VE.Scope.Wire
 124:0-132:39 def VE.Scope.byStatus@VE.Scope.Wire
 134:0-152:104 def VE.Scope.foldGovernors@VE.Scope.Wire
-module VE.Scope.WireExamples 0b08174dbdf5c71be67f144bd70f0219b55deeb86a919ee8891e7a4987172844
+module VE.Scope.WireExamples 57b2d5aec557c8e47ec635b96088ba587adfccde4108d6699e3401e0f09bba9e
 10:0-10:80 def VE.Scope.WireExamples.st@VE.Scope.WireExamples
 11:0-13:17 def VE.Scope.WireExamples.errorOf@VE.Scope.WireExamples
 28:0-30:34 def VE.Scope.WireExamples.gov@VE.Scope.WireExamples
@@ -17879,12 +17879,12 @@ module VE.Scope.WireExamples 0b08174dbdf5c71be67f144bd70f0219b55deeb86a919ee8891
 36:0-37:117 def VE.Scope.WireExamples.decoded@VE.Scope.WireExamples
 50:0-51:42 def VE.Scope.WireExamples.listName@VE.Scope.WireExamples
 52:0-53:49 def VE.Scope.WireExamples.anchor@VE.Scope.WireExamples
-101:0-105:66 def VE.Scope.WireExamples.foldEnv@VE.Scope.WireExamples
-106:0-108:38 def VE.Scope.WireExamples.ansUnit@VE.Scope.WireExamples
-109:0-110:59 def VE.Scope.WireExamples.ansUnits@VE.Scope.WireExamples
-111:0-113:23 def VE.Scope.WireExamples.foldGov@VE.Scope.WireExamples
-114:0-122:70 def VE.Scope.WireExamples.foldDoc@VE.Scope.WireExamples
-123:0-124:93 def VE.Scope.WireExamples.answer@VE.Scope.WireExamples
+102:0-106:66 def VE.Scope.WireExamples.foldEnv@VE.Scope.WireExamples
+107:0-109:38 def VE.Scope.WireExamples.ansUnit@VE.Scope.WireExamples
+110:0-111:59 def VE.Scope.WireExamples.ansUnits@VE.Scope.WireExamples
+112:0-114:23 def VE.Scope.WireExamples.foldGov@VE.Scope.WireExamples
+115:0-128:70 def VE.Scope.WireExamples.foldDoc@VE.Scope.WireExamples
+129:0-130:93 def VE.Scope.WireExamples.answer@VE.Scope.WireExamples
 module VE.SearchBudget.Budget 700565890b6b9f9f8b6ed0ab403e42a2fd0e1a733e461693bb12a3288d165fa4
 18:0-23:22 structure VE.SearchBudget.Budget@VE.SearchBudget.Budget
 20:2-20:15 def VE.SearchBudget.Budget.maxProofSteps@VE.SearchBudget.Budget

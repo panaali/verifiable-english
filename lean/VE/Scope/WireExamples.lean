@@ -95,9 +95,10 @@ def anchor (id : String) (e : Nat) : Json := Json.mkObj [("id", .str id), ("kind
 #guard [Json.mkObj [("span", toJson [Json.str "x", toJson (5 : Nat)])],
   Json.mkObj [("span", toJson [toJson (3 : Nat), Json.str "y"])]].map (spanIn 9) == [(0, 5), (0, 0)]
 
--- The fold (1.6) on an answer: the lead-in u1 (specified, no content) hosts the frame g1 and two unary governors
--- over i1 (the first and last governors), and takes the weakest of what all three cover; i1 has content and u3 hosts
--- only a graph governor, so both keep their status; bytes counted again.
+-- The fold (1.6) on an answer: each specified unit without content takes the weakest status of what its
+-- content-changing governors cover. The anchor a1 reaches i1, a2 reaches i2. The lead-in u1 hosts unary governors
+-- over i1 (the first governor) and i2 (the last), u3 the same in the other order beside a graph governor, i2 one
+-- frame over i1; i1 has content and keeps its status. The bytes by status are counted again.
 def foldEnv : Json := Json.mkObj [("language", .str "ve.core@0.2"),
   ("profiles", toJson ["norms@0", "readings@1", "relational-fol@0"]),
   ("spec_revision", .str "ve-v0.2-expand2-2026-09-25"),
@@ -114,26 +115,31 @@ def foldGov (id unit : String) (reach effect : Json) : Json :=
 def foldDoc : Option SDoc := do
   let re ← (VE.Readings.Wire.decodeEnvironment foldEnv).toOption
   (decodeBlock (Json.mkObj [("units", toJson ansUnits), ("scope", blockWith [
-    foldGov "g4" "u1" (Json.mkObj [("label", .str "i1")]) (Json.mkObj [("reguard", toJson ["top"])]),
-    foldGov "g1" "u1" (Json.mkObj [("list", .str "u1")]) (Json.mkObj [("frame", Json.mkObj [])]),
+    foldGov "g4" "u1" (Json.mkObj [("anchor", .str "a1")]) (Json.mkObj [("reguard", toJson ["top"])]),
     foldGov "g2" "u3" (.str "frontier") (.str "precedes"),
     foldGov "g3" "i1" (Json.mkObj [("list", .str "u1")]) (Json.mkObj [("frame", Json.mkObj [])]),
-    foldGov "g5" "u1" (Json.mkObj [("label", .str "i1")]) (Json.mkObj [("carve_out", toJson ["top"])])])])
+    foldGov "g6" "u3" (Json.mkObj [("anchor", .str "a2")]) (Json.mkObj [("carve_out", toJson ["top"])]),
+    foldGov "g7" "u3" (Json.mkObj [("anchor", .str "a1")]) (Json.mkObj [("carve_out", toJson ["top"])]),
+    foldGov "g8" "i2" (Json.mkObj [("anchor", .str "a1")]) (Json.mkObj [("frame", Json.mkObj [])]),
+    foldGov "g5" "u1" (Json.mkObj [("anchor", .str "a2")]) (Json.mkObj [("reguard", toJson ["top"])])]
+    [("anchors", toJson [Json.mkObj [("id", .str "a1"), ("kind", .str "document"), ("label", .str "A"),
+      ("span", toJson [0, 25])], Json.mkObj [("id", .str "a2"), ("kind", .str "document"), ("label", .str "B"),
+      ("span", toJson [18, 34])]])])])
     "Agents must not:\n\n* Act.\n* Rest.\n\nThat is all." re).toOption
 def answer : Json := Json.mkObj [("id", .str "d"), ("status", .str "OPEN"), ("units", toJson ansUnits),
   ("coverage", Json.mkObj [("units", toJson (4 : Nat)), ("bytes_by_status", Json.mkObj [])])]
-#guard foldDoc.map (fun D => ((changers D "u1").map (·.id), (changers D "u3").map (·.id))) ==
-  some (["g4", "g1", "g5"], [])
+#guard foldDoc.map (fun D => ["u1", "u3", "i2", "i1"].map fun u => (changers D u).map (·.id)) ==
+  some [["g4", "g5"], ["g6", "g7"], ["g8"], ["g3"]]
 -- Each status is looked up by id, whatever the answer's order: u1 reads i1 (first here) and i2 (last).
 #guard foldDoc.map (fun D => ((foldGovernors D (answer.setObjVal! "units" (toJson [ansUnits[1]!, ansUnits[0]!,
   ansUnits[3]!, ansUnits[2]!]))).getObjValD "units").getArrVal? 1 |>.toOption.map (·.getObjValD "status")) ==
   some (some (.str "LABELLED"))
 #guard foldDoc.map (fun D => (foldGovernors D answer).compress) == some ("{\"coverage\":{\"bytes_by_status\":" ++
-  "{\"CHECKED\":7,\"LABELLED\":27,\"OPEN\":12},\"units\":4},\"document_id\":null,\"id\":\"d\",\"source\":null," ++
+  "{\"CHECKED\":16,\"LABELLED\":30},\"units\":4},\"document_id\":null,\"id\":\"d\",\"source\":null," ++
   "\"source_id\":null,\"status\":\"OPEN\",\"units\":[{\"id\":\"u1\",\"meaning\":\"specified\",\"span\":[0,18]," ++
   "\"status\":\"LABELLED\"},{\"content\":{},\"id\":\"i1\",\"meaning\":\"specified\",\"span\":[18,25]," ++
-  "\"status\":\"CHECKED\"},{\"id\":\"i2\",\"meaning\":\"specified\",\"span\":[25,34],\"status\":\"LABELLED\"}," ++
-  "{\"id\":\"u3\",\"meaning\":\"specified\",\"span\":[34,46],\"status\":\"OPEN\"}]}")
+  "\"status\":\"CHECKED\"},{\"id\":\"i2\",\"meaning\":\"specified\",\"span\":[25,34],\"status\":\"CHECKED\"}," ++
+  "{\"id\":\"u3\",\"meaning\":\"specified\",\"span\":[34,46],\"status\":\"LABELLED\"}]}")
 -- The bytes by status, in order of first appearance; a unit without a span counts no bytes.
 #guard byStatus [Json.mkObj [("status", .str "A"), ("span", toJson [0, 4])],
   Json.mkObj [("status", .str "B"), ("span", toJson [4, 10])],
