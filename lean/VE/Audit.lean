@@ -56,7 +56,9 @@ import VE.Calc.Linear
 import VE.Calc.Lower
 import VE.Calc.LowerExamples
 import VE.Calc.Poly
+import VE.Calc.Run
 import VE.Calc.Units
+import VE.Calc.Wire
 import VE.Cardinality.Examples
 import VE.Cardinality.Ratio
 import VE.Cardinality.Syntax
@@ -858,6 +860,8 @@ import VE.WireContract.Engine
 #print axioms VE.Bridge.tupleCheck_iff
 #print axioms VE.Bridge.vocabulary_namesValid
 #print axioms VE.Calc.Budgeted.bin_eq
+#print axioms VE.Calc.Check.run_claim
+#print axioms VE.Calc.Check.run_sound
 #print axioms VE.Calc.Claim.decide_fails
 #print axioms VE.Calc.Claim.decide_holds
 #print axioms VE.Calc.Claim.decide_undefined
@@ -964,6 +968,13 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.Rescale.of_one
 #print axioms VE.Calc.Rescale.of_pos
 #print axioms VE.Calc.Rescale.pos
+#print axioms VE.Calc.Run.outcome_sound
+#print axioms VE.Calc.Run.outcomes_words
+#print axioms VE.Calc.Run.row_outcome
+#print axioms VE.Calc.Run.row_sound
+#print axioms VE.Calc.Run.rows_outcome
+#print axioms VE.Calc.Run.unknown_named
+#print axioms VE.Calc.Run.verdict_sound
 #print axioms VE.Calc.Step.derive_sound
 #print axioms VE.Calc.Units.checkClaim_invariant
 #print axioms VE.Calc.Units.dimE_ok
@@ -973,6 +984,9 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.Val.bin_tooLarge
 #print axioms VE.Calc.Val.div_agrees
 #print axioms VE.Calc.Val.guard_agrees
+#print axioms VE.Calc.Wire.decodeCase_wellFormed
+#print axioms VE.Calc.Wire.firstDup_nodup
+#print axioms VE.Calc.Wire.firstUnknown_order
 #print axioms VE.Calc.assign_wellFormed
 #print axioms VE.Calc.bind2_some
 #print axioms VE.Calc.causes_accumulate
@@ -1527,11 +1541,22 @@ import VE.WireContract.Engine
 #print axioms VE.Defaults.Wire.ViewRest.hl
 #print axioms VE.Defaults.Wire.coherence_collision_named
 #print axioms VE.Defaults.Wire.coherence_collision_shown
+#print axioms VE.Defaults.Wire.collisionOf_request
 #print axioms VE.Defaults.Wire.decodeLayered_soften
 #print axioms VE.Defaults.Wire.decodeRightsU_soften
+#print axioms VE.Defaults.Wire.default_exception
 #print axioms VE.Defaults.Wire.defaultsCase_other
+#print axioms VE.Defaults.Wire.defaults_certificate_sound
 #print axioms VE.Defaults.Wire.defaults_coherence_sound
+#print axioms VE.Defaults.Wire.defaults_follows_gated
+#print axioms VE.Defaults.Wire.defaults_model_sound
 #print axioms VE.Defaults.Wire.elaborateRows_eq
+#print axioms VE.Defaults.Wire.eval_of_xModelOk
+#print axioms VE.Defaults.Wire.filledOf_request
+#print axioms VE.Defaults.Wire.forcedAt_sound
+#print axioms VE.Defaults.Wire.replayCertOn_request
+#print axioms VE.Defaults.Wire.replayCoherenceOn_request
+#print axioms VE.Defaults.Wire.replayModelOn_request
 #print axioms VE.Defaults.Wire.viewOf_layered
 #print axioms VE.Defaults.assumptions_sound
 #print axioms VE.Defaults.atom_wf
