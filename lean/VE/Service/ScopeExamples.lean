@@ -106,9 +106,20 @@ def errorOf (a : Except String Json) : String := match a with | .error e => e | 
   "ScopeOrphanPart: i1"
 -- The block's environment is the chain's, `readings@1` listed in order, `scope@0` lowered; a document with senses is
 -- decoded as the chain reads it.
-#guard [listed, ["norms@0", "readings@1", "relational-fol@0", "scope@0"]].map
+#guard [listed, ["norms@0", "readings@1", "relational-fol@0", "scope@0"],
+    ["norm-defaults@0", "norms@0", "relational-fol@0", "scope@0", "soft-norms@0"]].map
   (fun ps => (scopeReadings (env ps)).toOption.map (·.profiles)) ==
-  [some ["norms@0", "readings@1", "relational-fol@0"], some ["norms@0", "readings@1", "relational-fol@0"]]
+  [some ["norms@0", "readings@1", "relational-fol@0"], some ["norms@0", "readings@1", "relational-fol@0"],
+   some ["norm-defaults@0", "norms@0", "readings@1", "relational-fol@0", "soft-norms@0"]]
+-- `split` and `check` read the whole list: scope@0 anywhere in it (here first; only the environment refuses an
+-- unsorted list) admits the block, and `check` reads the governed units on the environment without scope@0.
+def unsorted : String :=
+  "---\n" ++ (front (units (some (part "r1")) (some (part "r2"))) ["scope@0", "norms@0", "relational-fol@0"]).compress ++
+    "\n---\n" ++ source
+def fullUnits : Json := toJson (units (some (Json.mkObj [("norm", (item "r1").mergeObj lead)]))
+  (some (Json.mkObj [("norm", (item "r2").mergeObj lead)])) unf)
+#guard (split unsorted (senses := true)).toOption.isSome
+#guard (check unsorted (governed := some fullUnits)).toOption.map (·.units.length) == some 4
 #guard (VE.Scope.decodeScope (case ((front (units (some (part "r1")) (some (part "r2")))).setObjVal! "senses"
   (Json.mkObj [])))).toOption.isSome
 -- The layout is read from the source bytes of exactly the document's units.
