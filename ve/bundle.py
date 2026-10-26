@@ -157,7 +157,7 @@ def _check_bundle_lean(data, mode="route"):
         cache = key("bundle", data)
     except (VEError, TypeError, ValueError, RecursionError):
         cache = None
-    return construct_after_lean(lambda: _check_bundle_python(data), cache, lambda: decide(mode, [case])[0],
+    return construct_after_lean(lambda row: _check_bundle_python(data), cache, lambda: decide(mode, [case])[0],
                                 lambda report, row: row.get("lemmas") == [r["meaning_id"] for r in report["lemmas"]],
                                 "bundle")
 
