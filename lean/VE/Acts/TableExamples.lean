@@ -118,6 +118,9 @@ def reg (role : VE.Norms.Role) : VE.Norms.Regulated := ⟨"p", ["person"], false
 -- nor under a split marker, under may: no reading.
 #guard table .may (.any true true [torture, cruel]) == [] && table .right (.any true true [torture, cruel]) == []
 #guard table .mustNot (.any true true [torture, cruel]) == [[.atom torture, .atom cruel]]
+-- `freeTable` on its own: a simple act is its one reading.
+#guard freeTable (.one torture) == [[.atom torture]]
+#guard freeTable g11 == table .may g11 && freeTable (g9 true) == []
 
 /-! ### Renderings (5.5) -/
 
@@ -143,6 +146,14 @@ def reg (role : VE.Norms.Role) : VE.Norms.Regulated := ⟨"p", ["person"], false
 #guard partAct [] .permission ⟨false, false, ["give"], [("to", .one (.slot 1)), ("", .one (w "notice"))], []⟩ ==
   "{0} give notice to {1}"
 #guard tokText ["x"] [.slot 0, .fixed 0, .comma, .word "y"] == "{0} x, y"
+#guard tokText [] (listToks .or [w "a b", w "c d"]) == "a b or c d"
+#guard tokText [] (listToks .and [w "a b", w "c", w "d e"]) == "a b, c and d e"
+-- Every adverb, then every object, then every marked argument, then every prepositional modifier, each in order.
+#guard partAct [] .obligation ⟨false, false, ["give"], [("to", .one (.slot 1)), ("", .one (w "notice")),
+    ("in", .one (w "plain writing")), ("", .one (w "a copy"))],
+    [.adv "promptly", .prep "under" (w "the rules"), .adv "fully", .prep "at the start of" (.slot 2)]⟩ ==
+  "{0} promptly fully give notice a copy to {1} in plain writing under the rules at the start of {2}"
+#guard partAct [] .plain ⟨true, true, ["heard"], [], []⟩ == "{0} to be heard"
 
 /-! ### Paraphrases (2.2, 6.2) -/
 
