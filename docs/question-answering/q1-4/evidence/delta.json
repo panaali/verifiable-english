@@ -1,0 +1,1493 @@
+{
+ "counts": {
+  "class": 23,
+  "lint": 0,
+  "verdict": 0,
+  "wording": 37
+ },
+ "records": 2048,
+ "rows": [
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is checked'. Nearest declared wordings: 'alice'; 'desk'; '\"desk1\"'.",
+    "span": {
+     "column": 6,
+     "end": 16,
+     "line": 1,
+     "start": 5
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'alice'; 'desk'; '\"desk1\"'.",
+    "span": {
+     "column": 26,
+     "end": 36,
+     "line": 1,
+     "start": 25
+    }
+   },
+   "wording": "Is it the case that atlas is checked?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 37,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Expected '.' or ', ' here. Use the English paraphrase as a writing example.",
+    "span": {
+     "column": 18,
+     "end": 21,
+     "line": 1,
+     "start": 17
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed and beacon is reviewed.\". Expected '.' or ', ' here. Use the English paraphrase as a writing example.",
+    "span": {
+     "column": 38,
+     "end": 41,
+     "line": 1,
+     "start": 37
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed and beacon is reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Phrase 'is reviewed despite remaining unreviewed' extends existing wording 'reviewed': '{0} is reviewed'; declare distinct wording by hand.",
+    "span": {
+     "column": 6,
+     "end": 46,
+     "line": 1,
+     "start": 5
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed despite remaining unreviewed.\". Phrase 'is reviewed despite remaining unreviewed' extends existing wording 'reviewed': '{0} is reviewed'; declare distinct wording by hand.",
+    "span": {
+     "column": 26,
+     "end": 66,
+     "line": 1,
+     "start": 25
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed despite remaining unreviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "Speech wording requires one sentence"
+   },
+   "class": "class",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 58,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed. Beacon is reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 39,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed?\u0000"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 39,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed?\u001c"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 39,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed?\u001f"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 39,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed?\u007f"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is vetted'. Nearest declared wordings: 'alice'; 'atlas'; 'beacon'.",
+    "span": {
+     "column": 6,
+     "end": 15,
+     "line": 1,
+     "start": 5
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is vetted.\". Unknown English phrase 'is vetted'. Nearest declared wordings: 'alice'; 'atlas'; 'beacon'.",
+    "span": {
+     "column": 26,
+     "end": 35,
+     "line": 1,
+     "start": 25
+    }
+   },
+   "wording": "Is it the case that atlas is vetted?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 is marked as a conclusion, and no earlier sentence is a premise.",
+    "span": {
+     "column": 1,
+     "end": 28,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "A question cannot contain \"therefore\", \"so\", \"hence\" or \"it follows that\".",
+    "span": {
+     "column": 1,
+     "end": 48,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is it the case that therefore atlas is reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'tom'. Nearest declared wordings: 'bob'; '\"q1\"'; 'token'.",
+    "span": {
+     "column": 1,
+     "end": 3,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"tom is a cat.\". Unknown English phrase 'tom'. Nearest declared wordings: 'bob'; '\"q1\"'; 'token'.",
+    "span": {
+     "column": 21,
+     "end": 23,
+     "line": 1,
+     "start": 20
+    }
+   },
+   "wording": "Is it the case that tom is a cat?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is checked'. Nearest declared wordings: 'is vetted'; 'alice'; 'desk'.",
+    "span": {
+     "column": 6,
+     "end": 16,
+     "line": 1,
+     "start": 5
+    }
+   },
+   "class": "wording",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'is vetted'; 'alice'; 'desk'.",
+    "span": {
+     "column": 26,
+     "end": 36,
+     "line": 1,
+     "start": 25
+    }
+   },
+   "wording": "Is it the case that atlas is checked?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 37,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Expected '.' or ', ' here. Use the English paraphrase as a writing example.",
+    "span": {
+     "column": 18,
+     "end": 21,
+     "line": 1,
+     "start": 17
+    }
+   },
+   "class": "wording",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed and beacon is reviewed.\". Expected '.' or ', ' here. Use the English paraphrase as a writing example.",
+    "span": {
+     "column": 38,
+     "end": 41,
+     "line": 1,
+     "start": 37
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed and beacon is reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Phrase 'is reviewed despite remaining unreviewed' extends existing wording 'reviewed': '{0} is reviewed'; declare distinct wording by hand.",
+    "span": {
+     "column": 6,
+     "end": 46,
+     "line": 1,
+     "start": 5
+    }
+   },
+   "class": "wording",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed despite remaining unreviewed.\". Phrase 'is reviewed despite remaining unreviewed' extends existing wording 'reviewed': '{0} is reviewed'; declare distinct wording by hand.",
+    "span": {
+     "column": 26,
+     "end": 66,
+     "line": 1,
+     "start": 25
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed despite remaining unreviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "Speech wording requires one sentence"
+   },
+   "class": "class",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 58,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed. Beacon is reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 39,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed?\u0000"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 39,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed?\u001c"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 39,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed?\u001f"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 39,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed?\u007f"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 is marked as a conclusion, and no earlier sentence is a premise.",
+    "span": {
+     "column": 1,
+     "end": 28,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "A question cannot contain \"therefore\", \"so\", \"hence\" or \"it follows that\".",
+    "span": {
+     "column": 1,
+     "end": 48,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is it the case that therefore atlas is reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'tom'. Nearest declared wordings: 'bob'; 'is classified as \"comma\"'; '\"q1\"'.",
+    "span": {
+     "column": 1,
+     "end": 3,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"tom is a cat.\". Unknown English phrase 'tom'. Nearest declared wordings: 'bob'; 'is classified as \"comma\"'; '\"q1\"'.",
+    "span": {
+     "column": 21,
+     "end": 23,
+     "line": 1,
+     "start": 20
+    }
+   },
+   "wording": "Is it the case that tom is a cat?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is checked'. Nearest declared wordings: 'check'; 'alice'; 'desk'.",
+    "span": {
+     "column": 6,
+     "end": 16,
+     "line": 1,
+     "start": 5
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'check'; 'alice'; 'desk'.",
+    "span": {
+     "column": 26,
+     "end": 36,
+     "line": 1,
+     "start": 25
+    }
+   },
+   "wording": "Is it the case that atlas is checked?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 37,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Expected '.' or ', ' here. Use the English paraphrase as a writing example.",
+    "span": {
+     "column": 18,
+     "end": 21,
+     "line": 1,
+     "start": 17
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed and beacon is reviewed.\". Expected '.' or ', ' here. Use the English paraphrase as a writing example.",
+    "span": {
+     "column": 38,
+     "end": 41,
+     "line": 1,
+     "start": 37
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed and beacon is reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Phrase 'is reviewed despite remaining unreviewed' extends existing wording 'reviewed': '{0} is reviewed'; declare distinct wording by hand.",
+    "span": {
+     "column": 6,
+     "end": 46,
+     "line": 1,
+     "start": 5
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed despite remaining unreviewed.\". Phrase 'is reviewed despite remaining unreviewed' extends existing wording 'reviewed': '{0} is reviewed'; declare distinct wording by hand.",
+    "span": {
+     "column": 26,
+     "end": 66,
+     "line": 1,
+     "start": 25
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed despite remaining unreviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "Speech wording requires one sentence"
+   },
+   "class": "class",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 58,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed. Beacon is reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 39,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed?\u0000"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 39,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed?\u001c"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 39,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed?\u001f"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 39,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed?\u007f"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is vetted'. Nearest declared wordings: 'alice'; 'atlas'; 'beacon'.",
+    "span": {
+     "column": 6,
+     "end": 15,
+     "line": 1,
+     "start": 5
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is vetted.\". Unknown English phrase 'is vetted'. Nearest declared wordings: 'alice'; 'atlas'; 'beacon'.",
+    "span": {
+     "column": 26,
+     "end": 35,
+     "line": 1,
+     "start": 25
+    }
+   },
+   "wording": "Is it the case that atlas is vetted?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 is marked as a conclusion, and no earlier sentence is a premise.",
+    "span": {
+     "column": 1,
+     "end": 28,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "A question cannot contain \"therefore\", \"so\", \"hence\" or \"it follows that\".",
+    "span": {
+     "column": 1,
+     "end": 48,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is it the case that therefore atlas is reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is a cat'. Nearest declared wordings: 'is classified as \"cat\"'; '\"q1\"'; 'tom'.",
+    "span": {
+     "column": 4,
+     "end": 12,
+     "line": 1,
+     "start": 3
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"tom is a cat.\". Unknown English phrase 'is a cat'. Nearest declared wordings: 'is classified as \"cat\"'; '\"q1\"'; 'tom'.",
+    "span": {
+     "column": 24,
+     "end": 32,
+     "line": 1,
+     "start": 23
+    }
+   },
+   "wording": "Is it the case that tom is a cat?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 6,
+     "end": 17,
+     "line": 1,
+     "start": 5
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 26,
+     "end": 37,
+     "line": 1,
+     "start": 25
+    }
+   },
+   "wording": "\tIs it the case that atlas is reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 6,
+     "end": 17,
+     "line": 1,
+     "start": 5
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 26,
+     "end": 37,
+     "line": 1,
+     "start": 25
+    }
+   },
+   "wording": "\nIs it the case that atlas is reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 6,
+     "end": 17,
+     "line": 1,
+     "start": 5
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 26,
+     "end": 37,
+     "line": 1,
+     "start": 25
+    }
+   },
+   "wording": "\u000bIs it the case that atlas is reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 6,
+     "end": 17,
+     "line": 1,
+     "start": 5
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 26,
+     "end": 37,
+     "line": 1,
+     "start": 25
+    }
+   },
+   "wording": "\fIs it the case that atlas is reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 6,
+     "end": 17,
+     "line": 1,
+     "start": 5
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 26,
+     "end": 37,
+     "line": 1,
+     "start": 25
+    }
+   },
+   "wording": "\rIs it the case that atlas is reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 6,
+     "end": 17,
+     "line": 1,
+     "start": 5
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 26,
+     "end": 37,
+     "line": 1,
+     "start": 25
+    }
+   },
+   "wording": " Is it the case that atlas is reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 37,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 6,
+     "end": 17,
+     "line": 1,
+     "start": 5
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed and beacon is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 26,
+     "end": 37,
+     "line": 1,
+     "start": 25
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed and beacon is reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is reviewed despite remaining unreviewed'. Nearest declared wordings: 'may click {1}'; 'has the recorded relation \"done_open\" to {1}'; 'may open {1}'.",
+    "span": {
+     "column": 6,
+     "end": 46,
+     "line": 1,
+     "start": 5
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed despite remaining unreviewed.\". Unknown English phrase 'is reviewed despite remaining unreviewed'. Nearest declared wordings: 'may click {1}'; 'has the recorded relation \"done_open\" to {1}'; 'may open {1}'.",
+    "span": {
+     "column": 26,
+     "end": 66,
+     "line": 1,
+     "start": 25
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed despite remaining unreviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 6,
+     "end": 17,
+     "line": 1,
+     "start": 5
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 58,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed. Beacon is reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 6,
+     "end": 17,
+     "line": 1,
+     "start": 5
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 26,
+     "end": 37,
+     "line": 1,
+     "start": 25
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 39,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed?\u0000"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 6,
+     "end": 17,
+     "line": 1,
+     "start": 5
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 26,
+     "end": 37,
+     "line": 1,
+     "start": 25
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed?\t"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 6,
+     "end": 17,
+     "line": 1,
+     "start": 5
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 26,
+     "end": 37,
+     "line": 1,
+     "start": 25
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed?\n"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 6,
+     "end": 17,
+     "line": 1,
+     "start": 5
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 26,
+     "end": 37,
+     "line": 1,
+     "start": 25
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed?\u000b"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 6,
+     "end": 17,
+     "line": 1,
+     "start": 5
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 26,
+     "end": 37,
+     "line": 1,
+     "start": 25
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed?\f"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 6,
+     "end": 17,
+     "line": 1,
+     "start": 5
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 26,
+     "end": 37,
+     "line": 1,
+     "start": 25
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed?\r"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 39,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed?\u001c"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 39,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed?\u001f"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 6,
+     "end": 17,
+     "line": 1,
+     "start": 5
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 26,
+     "end": 37,
+     "line": 1,
+     "start": 25
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed? "
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 39,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is it the case that atlas is reviewed?\u007f"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is vetted'. Nearest declared wordings: 'is checked'; 'alice'; 'atlas'.",
+    "span": {
+     "column": 6,
+     "end": 15,
+     "line": 1,
+     "start": 5
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is vetted.\". Unknown English phrase 'is vetted'. Nearest declared wordings: 'is checked'; 'alice'; 'atlas'.",
+    "span": {
+     "column": 26,
+     "end": 35,
+     "line": 1,
+     "start": 25
+    }
+   },
+   "wording": "Is it the case that atlas is vetted?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 14,
+     "end": 25,
+     "line": 1,
+     "start": 13
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"every service is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 34,
+     "end": 45,
+     "line": 1,
+     "start": 33
+    }
+   },
+   "wording": "Is it the case that every service is reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 16,
+     "end": 27,
+     "line": 1,
+     "start": 15
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"therefore atlas is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 36,
+     "end": 47,
+     "line": 1,
+     "start": 35
+    }
+   },
+   "wording": "Is it the case that therefore atlas is reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Sentence 1 has no reading with the current vocabulary. Unknown English phrase 'is a cat'. Nearest declared wordings: 'is classified as \"cat\"'; '\"q1\"'; 'tom'.",
+    "span": {
+     "column": 4,
+     "end": 12,
+     "line": 1,
+     "start": 3
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"tom is a cat.\". Unknown English phrase 'is a cat'. Nearest declared wordings: 'is classified as \"cat\"'; '\"q1\"'; 'tom'.",
+    "span": {
+     "column": 24,
+     "end": 32,
+     "line": 1,
+     "start": 23
+    }
+   },
+   "wording": "Is it the case that tom is a cat?"
+  }
+ ]
+}
