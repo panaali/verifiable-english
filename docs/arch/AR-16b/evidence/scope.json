@@ -1,10 +1,15 @@
 {
- "base": "25ac413119c8991d1385cc95c51bcaac7415f9a2",
+ "base": "110b3bf3ad801a3dc335e9b2293e5c27bb4b82eb",
  "changes": [
   {
-   "added": 15,
-   "deleted": 0,
+   "added": 17,
+   "deleted": 2,
    "path": "docs/arch/AR-16b/DELTA.md"
+  },
+  {
+   "added": 315,
+   "deleted": 3,
+   "path": "docs/arch/AR-16b/REPORT.md"
   },
   {
    "added": 180,
@@ -17,9 +22,14 @@
    "path": "docs/arch/AR-16b/evidence.toml"
   },
   {
-   "added": 137,
+   "added": 151,
    "deleted": 0,
    "path": "docs/arch/AR-16b/evidence/ab-delta.json"
+  },
+  {
+   "added": 551,
+   "deleted": 0,
+   "path": "docs/arch/AR-16b/evidence/ab.json"
   },
   {
    "added": 121,
@@ -32,8 +42,8 @@
    "path": "docs/arch/AR-16b/evidence/cycles-before.json"
   },
   {
-   "added": 208,
-   "deleted": 0,
+   "added": 232,
+   "deleted": 24,
    "path": "docs/arch/AR-16b/evidence/mutants.json"
   },
   {
@@ -47,18 +57,23 @@
    "path": "docs/arch/AR-16b/evidence/pilot-rerun.json"
   },
   {
-   "added": 544,
-   "deleted": 0,
+   "added": 603,
+   "deleted": 48,
    "path": "docs/arch/AR-16b/evidence/relay-gate-base.json"
   },
   {
-   "added": 544,
-   "deleted": 0,
+   "added": 605,
+   "deleted": 50,
    "path": "docs/arch/AR-16b/evidence/relay-gate-head.json"
   },
   {
-   "added": 21,
+   "added": 199,
    "deleted": 0,
+   "path": "docs/arch/AR-16b/evidence/scope.json"
+  },
+  {
+   "added": 23,
+   "deleted": 2,
    "path": "docs/arch/AR-16b/evidence/verbatim.json"
   },
   {
@@ -179,6 +194,14 @@
  ],
  "commits": [
   {
+   "hash": "5f5630a0c4281a13fa79f3f17fa38fcbfc6cdf30",
+   "subject": "AR-16b: REPORT, the selected tests after the sync"
+  },
+  {
+   "hash": "5157fcfcf3bda26c792cff266243aeb855f5ff21",
+   "subject": "AR-16b: REPORT, the A/B at the synced base (0 differences), scope and relay-gate evidence"
+  },
+  {
    "hash": "1f9edc4435c83a15b070494536c5789d06dfcbe1",
    "subject": "Regenerate the binding census after the merge of main (R12)"
   },
@@ -195,5 +218,5 @@
    "subject": "Split ve/readings_verdicts.py into the package ve/readings_verdicts/ (AR-16b)"
   }
  ],
- "head": "1f9edc4435c83a15b070494536c5789d06dfcbe1"
+ "head": "10ebba1c266a8ff6bd5be9f323d77bcf34d36fe6"
 }

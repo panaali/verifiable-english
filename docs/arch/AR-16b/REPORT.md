@@ -23,7 +23,7 @@ From `docs/arch/AR-16b/verbatim.py` and `cycles.py` (outputs in `evidence/`) and
 | `ve/readings_verdicts/enumerated.py` | 224 | `_NOT_SUPERPOSABLE`, `Enumerated`, `_conflict_notes` |
 | `ve/readings_verdicts/__init__.py` | 51 | the docstring, `context` and `__all__`, and the re-export of 22 names: the 18 that other modules, tests and tools import, and the module's other public names |
 
-- **Before:** one module of 1,872 lines (merge base `25ac4131`). **After:** 6 files, 1,933 lines. The extra 61 lines
+- **Before:** one module of 1,872 lines (merge base `110b3bf3`; the module is the same at `f1943fab`). **After:** 6 files, 1,933 lines. The extra 61 lines
   are the module docstrings, the import headers and the package's re-exports. **Largest module:** `superposed.py`,
   611 lines. The target was no module over 1,000 lines; the largest is 39% under it.
 - **Boundaries from the call graph.** Each module imports only the ones above it in the table, and only what it
@@ -55,7 +55,7 @@ From `docs/arch/AR-16b/verbatim.py` and `cycles.py` (outputs in `evidence/`) and
 
   | | modules | edges | cycles (sizes) | the readings/document cycle |
   |---|---:|---:|---|---:|
-  | merge base `25ac4131` | 142 | 898 | 42, 17, 2 | 17 |
+  | merge base `110b3bf3` | 142 | 898 | 42, 17, 2 | 17 |
   | merge base, each import to the module that defines the name | 142 | 899 | 42, 13, 2 | 13 |
   | head, the package's modules read as one (the old module) | 142 | 898 | 42, 17, 2 | 17, the same 17 modules |
   | head, each module of the package a node | 147 | 930 | 42, 22, 2 | 22 = the 17, with the 5 new code modules |
@@ -91,29 +91,35 @@ From `docs/arch/AR-16b/verbatim.py` and `cycles.py` (outputs in `evidence/`) and
   "_ChoiceDocument", ...)`), and the test fails with no bug planted, because the stand-in is never called. So the
   retargeted patch is the one that reaches the code.
 - **Behaviour (gate 4.1 item 2):** `tools/lean_first_diff.py` over all nine corpora of the lean-first gate. Each
-  corpus was recorded on its own, the base from a worktree of the merge base `25ac4131` and the head from a worktree
-  of `1f9edc44`, one side after the other. **Result: 0 differences.** Each of the nine corpora's recordings is
-  byte-identical between base and head, and so are the two whole files (SHA-256 `9ffbd9e5…` for both). `compare`
-  gives 100,457 records the same and 21 unavailable on both sides with identical outputs, every one listed with its
-  reason (R7, `evidence/ab-delta.json`), and 0 unlisted (`evidence/ab.json`). The 21 are the 14 constitution
-  companion documents and 7 whole-UDHR runs at the recorder's 600 s limit on both sides (DELTA rows 1 and 2). The
-  recordings are in `~/.cache/ve-ar16b-ab2/{base,head}.jsonl.gz` (7.8 MB each, over D4's 1 MB), so they stay out of
-  the tree, and `evidence/ab.json` records their SHA-256. On the first recording,
-  against the earlier base `f1943fab`, eight corpora were byte-identical. In pilots, two whole-UDHR records (runs
-  20261012T0600Z and 20261012T1800Z) hit the recorder's 600 s limit on the base, while the head answered (PIPELINE-
-  LIMITS L75). Re-run alone, one after the other (`docs/arch/AR-16a/pilot_rerun.py --timeout 1500`), both sides
-  answered with identical outputs: 635 s base against 848 s head, and 656 s against 519 s
-  (`evidence/pilot-rerun.json`). With the re-runs in, the two recordings were byte-identical (SHA-256 `a755e9f1…`
-  for both). `main` then moved to `25ac4131` (me-2b), and the whole A/B was recorded again at the new base: the result above.
+  corpus was recorded on its own, the base from a worktree of the merge base `110b3bf3` and the head from a worktree
+  of `10ebba1c`. **Result: 0 differences.** Each of the nine corpora's recordings is byte-identical between base and
+  head, and so are the two whole files (SHA-256 `1e8f670f…` for both). `compare` gives 100,460 records the same and
+  22 unavailable on both sides with identical outputs, every one listed with its reason (R7,
+  `evidence/ab-delta.json`), and 0 unlisted (`evidence/ab.json`). The 22 are the 14 constitution companion documents
+  and 8 whole-UDHR runs at the recorder's 600 s limit on both sides (DELTA rows 1 and 2). One of the 8, run
+  20261026T1800Z, is a pilot branch published during this recording. The recordings are in
+  `~/.cache/ve-ar16b-ab3/{base,head}.jsonl.gz` (7.8 MB each, over D4's 1 MB), so they stay out of the tree, and
+  `evidence/ab.json` records their SHA-256.
+  - `main` moved twice during the build, and the whole A/B was recorded again after each sync.
+  - First recording (base `f1943fab`, head `19b8c282`, one side after the other): eight corpora were
+    byte-identical. In pilots, two whole-UDHR records (runs 20261012T0600Z and 20261012T1800Z) hit the recorder's
+    600 s limit on the base, while the head answered (PIPELINE-LIMITS L75). Re-run alone, one after the other
+    (`docs/arch/AR-16a/pilot_rerun.py --timeout 1500`), both sides answered with identical outputs: 635 s base
+    against 848 s head, and 656 s against 519 s (`evidence/pilot-rerun.json`). With the re-runs in, the two
+    recordings were byte-identical (SHA-256 `a755e9f1…` for both).
+  - Second recording, after me-2b (base `25ac4131`, head `1f9edc44`): byte-identical (`9ffbd9e5…`), 100,457
+    records the same, 21 unavailable on both sides, 0 unlisted.
+  - Third recording, after ap-1f, the two sides at once: the result above.
 - **CPU, base against head** (`pilot_cpu.py`, `evidence/pilot-cpu.json`). Three constitution readings pilots, two
   alternating rounds, CPU time of the whole child process tree. The ratios of the head's minimum to the base's are:
   `all-strict-narrow` 1.018 (7.40 s base, 7.53 s head), `nd-all` 0.823 (70.3 s, 57.8 s), and `soft-chain` 0.926
   (24.8 s, 23.0 s). Every output was identical.
 - **Relay mutation gate** (`tools/relay_mutation_gate.py --json`, `evidence/relay-gate-{base,head}.json`). Base
-  `25ac4131` and head `1f9edc44` give 43 routes, 138,735 mutants and 0 failures each. Every route's counts per
+  `110b3bf3` and head `10ebba1c` give 43 routes, 138,735 mutants and 0 failures each. Every route's counts per
   verdict class and per allow-list entry are equal. The two files differ only in their `seconds` fields.
-  `tools/relay-gate-allow.json` is unchanged. Before the sync, at `f1943fab` against `becce6b8`, both sides gave
-  42 routes, 137,782 mutants and 0 failures, again equal but for `seconds`.
+  `tools/relay-gate-allow.json` is unchanged. Before the first sync, at `f1943fab` against `becce6b8`, both sides
+  gave 42 routes, 137,782 mutants and 0 failures. After the first sync, at `25ac4131` against `1f9edc44`, both gave
+  43 routes and 138,735 mutants. Each pair was equal but for `seconds`.
 - **Trust:** `uv run python tools/trust_map.py --check`: "K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted
   +0". PASS.
 - **Lean, Rust:** no change. `lean/` and `rust/` are `main`'s.
@@ -130,11 +136,11 @@ From `docs/arch/AR-16b/verbatim.py` and `cycles.py` (outputs in `evidence/`) and
 | Lazy imports stay lazy; no new cycle; submodules import their siblings, never the package | `19b8c282` | `verbatim.json` (90/90 indented imports); `cycles-*.json`; `test_no_module_imports_the_package_itself[*]` |
 | Cycle sizes before and after from an `ast` walk, saved as evidence (not a test); new modules on the cycle and why; AR-16a modules on it only through `ve.document`'s `__init__` | `docs/arch/AR-16b/cycles.py` | `evidence/cycles-before.json`, `cycles-after.json`; follow-up 1 |
 | `tools/layer_policy.py`: the new modules get `readings_verdicts`' layer | no edit needed: the `readings_verdicts` entry covers the package (`ve/readings_verdicts/*` maps to `ve.readings_verdicts`) | `uv run python tools/repo_map.py file ve/readings_verdicts/__init__.py` → "layer: 4 (tools)", and the same for `binding.py`; `tools/check_python_layers.py` "1 kept, 0 broken"; `.importlinter` unchanged |
-| Generated files through `regen_generated.py --write`; `repo_map.py --check`; `repo_map.py file ve/readings_verdicts/__init__.py` | binding census regenerated (`19b8c282`, and after the merge in `1f9edc44`) | `regen_generated.py --check`: PASS after `--write` ("wrote 33 entries"); `repo_map.py --check`: "PASS: 38 modes"; `repo_map.py route readings-route` lists `ve/readings_verdicts/binding.py (_check_answer, _check_sup_answer)` |
+| Generated files through `regen_generated.py --write`; `repo_map.py --check`; `repo_map.py file ve/readings_verdicts/__init__.py` | binding census regenerated (`19b8c282`, and after the first merge in `1f9edc44`; after the second, `--check` passed with no change) | `regen_generated.py --check`: PASS after `--write` ("wrote 33 entries"); `repo_map.py --check`: "PASS: 38 modes"; `repo_map.py route readings-route` lists `ve/readings_verdicts/binding.py (_check_answer, _check_sup_answer)` |
 | `ve/assurance-manifest.json`: the path naming `ve/readings_verdicts.py` follows the move, as its own tooling expects | `19b8c282` | its regen entry is hand-reviewed pins with check `check_assurance_pins()`; the key `ve/readings_verdicts/binding.py:relayed` keeps its place and reason; `tools/assurance_manifest.py --check` exit 0; `tests/test_assurance_manifest.py` passes in the selection |
 | Relay mutation gate: the same verdict per mutant before and after; `relay-gate-allow.json` gains no entry | evidence | `evidence/relay-gate-{base,head}.json`: equal but for `seconds`; allow-list unchanged |
 | `lean_first_diff.py` over the gate corpora, 0 differences | evidence | `evidence/ab.json`, 0 unlisted |
-| D4: no permanent report or evidence test, no per-batch mutant script; `evidence.toml`; files under 1 MB; `batch_evidence.py --check` | `docs/arch/AR-16b/` | `tests/test_readings_verdicts_split.py` pins package structure, not batch numbers; mutants run by `tools/mutants.py`; the largest evidence file is 255 KB (`pilot-rerun.json`), and the recordings (7.8 MB each, gzip) stay in `~/.cache/ve-ar16b-ab2/` with their SHA-256 in `evidence/ab.json` |
+| D4: no permanent report or evidence test, no per-batch mutant script; `evidence.toml`; files under 1 MB; `batch_evidence.py --check` | `docs/arch/AR-16b/` | `tests/test_readings_verdicts_split.py` pins package structure, not batch numbers; mutants run by `tools/mutants.py`; the largest evidence file is 255 KB (`pilot-rerun.json`), and the recordings (7.8 MB each, gzip) stay in `~/.cache/ve-ar16b-ab3/` with their SHA-256 in `evidence/ab.json` |
 | Coordination: overlaps with branches in flight | checked at start and after syncing | see "Coordination" |
 | `trust_map.py --check` shows no change | | +0 everywhere |
 | One owner per piece of logic; no weakened check; no deleted test | | `relay_lint.py` reads more modules, not fewer (M10, M11); `gate_collection.py --check --prebuilt`: 38 added, 0 removed, 0 refused, 0 stale, 0 malformed |
@@ -168,7 +174,7 @@ All of these are in `19b8c282` unless noted:
 
 ## Coordination
 
-At the start, and again after syncing with `main` at `25ac4131` (me-2b had merged; it does not touch
+At the start, and again after each sync with `main` (`25ac4131` after me-2b, `110b3bf3` after ap-1f; neither touches
 `ve/readings_verdicts.py`), every branch in flight (`git branch --list 'lean-first/*' 'feature/*' 'infra/*'
 'foundation/*'`) was checked with `git diff --name-only main...<branch>` against this batch's hand-written paths:
 
@@ -182,6 +188,10 @@ At the start, and again after syncing with `main` at `25ac4131` (me-2b had merge
   batch changes one key).
 - `feature/jt-2`: `docs/test-architecture/binding-census.{json,md}`. These are generated (R12: not an overlap), and
   `regen_generated.py --resolve` rebuilds them.
+- `foundation/me-1` (last commit 2026-10-15): `tests/test_readings_defaults_rd6b_report.py`, which this batch
+  gives a `MOVED` map. That branch already conflicts with `main` in this file and in 7 others, without this batch
+  (`git merge-tree --write-tree main foundation/me-1`: 8 conflicts). Its sync resolves the file whichever lands
+  first; this batch changes one line of it and adds the map.
 - No branch in flight edits `ve/readings_verdicts.py`, and none adds an import from it (`git diff main...<branch> |
   grep '^+' | grep -c readings_verdicts` = 0 for sc-1b, q1-4, ap-3, speed-tmchecks, eff-20261026-1 and
   arch-20261026-2).
@@ -222,11 +232,16 @@ already existed (follow-up 2). M6 now seeds the row-word check of the same funct
   185 of 462 units, exit 0, 0 failed, 3,266 s. The selection includes every test the mutants name
   (`select_tests.py`: `test_readings_sup_verdicts.py`, `test_premise_scale.py`, `test_readings_verdicts_lean.py`,
   `test_readings_rd6b_differential.py`, `test_readings_verdicts_split.py`, `test_relay_lint.py`).
-- After the sync with `main`, the seeded mutants (12/12), the relay mutation gate and the A/B were run again at the
-  new base and head. The selected tests were run again at `5157fcfc` (clean): no Mac slot was free, so they ran on
+- After each sync with `main`, the seeded mutants (12/12; each mutant's named tests pass unmutated first), the relay
+  mutation gate, the cycles, the verbatim check, the trust map, the collection check and the A/B were run again at
+  the new base and head. The selected tests were run again at `5157fcfc` (clean): no Mac slot was free, so they ran on
   the VM. All 463 of 463 units passed (exit 0, 0 failed, 8,153 s). The selection was every unit because the newest
   cached map was then `a547f214`, an older ancestor. With `25ac4131`'s map, recorded since, the same selection is
-  135/463, and it is a subset of what ran.
+  135/463, and it is a subset of what ran. After the second sync (ap-1f: `lean/VE/Norms/Wire.lean` and the
+  assurance manifest), the batch's own tests and the tests that read what it changed were run at `10ebba1c`:
+  `test_readings_verdicts_split.py`, `test_relay_lint.py`, `test_identity_lint.py`, `test_assurance_manifest.py`,
+  `test_binding_census.py`, the rd2b, rd3 and rd6b report tests, `test_readings_sup_verdicts.py`,
+  `test_readings_verdicts_lean.py` and `test_words.py`: 531 passed.
 - `tests/test_readings_verdicts_split.py` (37), `tests/test_relay_lint.py`, `tests/test_words.py`,
   `tests/test_identity_lint.py`, `tests/test_assurance_manifest.py`, `tests/test_binding_census.py` and the rd2a,
   rd2b, rd3, rd4a, rd6b and q2 report tests passed.
@@ -262,15 +277,15 @@ make one report commit that changes only `docs/arch/AR-16b/`:
 
     cp gate-result.json docs/arch/AR-16b/evidence/gate.json
     uv run python -m tools.evidence scope --base main --head <G> --out docs/arch/AR-16b/evidence/scope.json
-    gunzip -kf ~/.cache/ve-ar16b-ab2/base.jsonl.gz ~/.cache/ve-ar16b-ab2/head.jsonl.gz
-    uv run python -m tools.evidence ab ~/.cache/ve-ar16b-ab2/base.jsonl ~/.cache/ve-ar16b-ab2/head.jsonl \
-        --base-commit 25ac413119c8991d1385cc95c51bcaac7415f9a2 --head-commit <G> \
+    gunzip -kf ~/.cache/ve-ar16b-ab3/base.jsonl.gz ~/.cache/ve-ar16b-ab3/head.jsonl.gz
+    uv run python -m tools.evidence ab ~/.cache/ve-ar16b-ab3/base.jsonl ~/.cache/ve-ar16b-ab3/head.jsonl \
+        --base-commit 110b3bf3ad801a3dc335e9b2293e5c27bb4b82eb --head-commit <G> \
         --out docs/arch/AR-16b/evidence/ab.json --delta docs/arch/AR-16b/evidence/ab-delta.json
     uv run python -m tools.evidence report docs/arch/AR-16b   # paste between the markers
     uv run python tools/batch_evidence.py --check docs/arch/AR-16b --report-commit HEAD
 
-The head recording was made at `1f9edc44`. From there to `<G>`, `ve/`, `lean/`, `rust/`, `conformance/` and
-`tools/lean_first_diff.py` are unchanged: `git diff --stat 1f9edc44 <G> -- ve lean rust conformance
+The head recording was made at `10ebba1c`. From there to `<G>`, `ve/`, `lean/`, `rust/`, `conformance/` and
+`tools/lean_first_diff.py` are unchanged: `git diff --stat 10ebba1c <G> -- ve lean rust conformance
 tools/lean_first_diff.py` is empty, and the commits after it change only `docs/arch/AR-16b/`.
 
 ## Self-review against BUILDER-CHECKLIST
@@ -290,7 +305,7 @@ tools/lean_first_diff.py` is empty, and the commits after it change only `docs/a
    differences (`evidence/ab.json`), and the recordings are byte-identical.
 5. R8 binding: N.A. The binding code moved verbatim; no field read changed.
 6. Gate evidence matches the final HEAD: N.A. here. The chain gates the final HEAD, and "After the gate" lists the
-   re-save. The scope base is `git merge-base` (`25ac4131`), synced with `main` in `0865c873`.
+   re-save. The scope base is `git merge-base` (`110b3bf3`), synced with `main` in `0865c873` and `10ebba1c`.
 7. No unsigned item: PASS. DELTA's two rows cite R7. Trust +0 (`trust_map.py --check`).
 8. Every user-visible change in DELTA: PASS. The A/B is empty, so DELTA says none.
 9. Test selection: PASS. 185/462 units at `becce6b8`, and 135/463 after the sync, not every unit; the 463/463 run
@@ -306,7 +321,7 @@ tools/lean_first_diff.py` is empty, and the commits after it change only `docs/a
     38 added, 0 removed, 0 refused, 0 stale, 0 malformed.
 
 <!-- BEGIN GENERATED AR-16B NUMBERS -->
-- Scope: `25ac4131..1f9edc44 --no-merges`, 4 commits: `1f9edc44`, `7f873a0f`, `becce6b8`, `19b8c282`.
-- Corpus A/B (`25ac4131` against `1f9edc44`): 100457 records identical, 21 unavailable on both sides with identical outputs (R7, listed), 0 unlisted; pilots 631, document 3632, discourse 6350, rights 2500, readings 1137.
+- Scope: `110b3bf3..10ebba1c --no-merges`, 6 commits: `5f5630a0`, `5157fcfc`, `1f9edc44`, `7f873a0f`, `becce6b8`, `19b8c282`.
+- Corpus A/B (`110b3bf3` against `10ebba1c`): 100460 records identical, 22 unavailable on both sides with identical outputs (R7, listed), 0 unlisted; pilots 635, document 3632, discourse 6350, rights 2500, readings 1137.
 - Seeded mutants (tools/mutants.py): 12/12 killed.
 <!-- END GENERATED AR-16B NUMBERS -->
