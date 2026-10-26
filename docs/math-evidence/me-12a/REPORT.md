@@ -159,6 +159,11 @@ lowest rank, so `firstRefusal` reports it wherever it stands, and `WellFormed` r
   `lean/audit.py` and `regen_generated.py --check` (all 33 entries) pass, and so does `trust_map.py --check` (K +0,
   S +93, unclassified +0).
 
+- **Re-check fix round (HEAD `b90cd2fba`):** `mac-pytest.sh --select -- --base 7855620f3 --run` ran 74 units, 0 failed
+  (on the VM: no Mac slot). `lake build` (1065 jobs), `lean/audit.py`, `lean_statements.py --check`,
+  `repo_map.py --check`, `regen_generated.py --check --skip route-cases` (32 entries; no route changed) and
+  `trust_map.py --check` (K +0, S +93) pass. PROBE F6 gives `[False, False]` on `b423fd1ed` and `[True, True]` after.
+
 Shared files: `lean/VE.lean` (union), `tools/trust-classes.json` and `docs/trust-baseline.json` (registries). No
 branch in flight touches `lean/VE/Arith/` or `lean/ARITH.md`.
 
