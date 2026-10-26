@@ -92,8 +92,8 @@ fixes".
 
 ## Seeded bugs
 
-[mutants.json](mutants.json): 26 by hand, one per claimed behaviour, each killed and restored (19 before the review fix
-below; Lean 16: Wire.lean 9,
+[mutants.json](mutants.json): 30 by hand, one per claimed behaviour, each killed and restored (19 before the review fixes
+below, 7 for F1 and 4 for F6; Lean 16: Wire.lean 9,
 Document.lean 5, Dispatch.lean 2; Python 3: `ve/document/source.py` and `ve/document/lean.py` (environment), each
 failing `tests/test_scope_document.py::test_ve_document_check_builds_the_governed_document_from_the_bound_answer`;
 `ve/document/lean.py` (the unit id dropped from the binding), failing
@@ -201,6 +201,9 @@ Hand-written files: `lean/VE/Scope/{Wire,WireExamples}.lean`, `lean/VE/Service/{
 - **sc-1ae** (after the DRI's decision): `BlockBound`, `HasStr`, `payload`, then `decodeScope_bound` and
   `decoded_no_new_symbols` with F1-dec, beside sc-1ad's five.
 - **SC-1c** (explain route and relay) and **SC-2**; the pilot rewrite of u0164/u0165 (queue 4.4 step 2).
+- **sc-1b-soft-proposal** (recheck F6): the soft chain's proposal under `scope@0` from Lean's governed rules (a units
+  channel answering GOVERN's units before the chain); until then such a document with English fences, where governing
+  changes `E″`, is `CheckerUnavailable`.
 
 ## Review fixes
 
@@ -222,6 +225,35 @@ so a rights document with parts could not be built and a soft document held the 
 - The review's probe reads `check_document(p)["units"]`, which the check report has never had; the regression test
   checks the report and reads the units from `load_document`.
 
+**F6 (B, recheck 1): an English fence of a `scope@0` document was never read.** The case's lexicon proposal was built
+from the environment as written; with `scope@0` in it the environment refused (`UnsupportedProfile`), the error was
+swallowed and no proposal was sent, so Lean answered `CheckerUnavailable` and the retained path refused
+`Unsupported profile scope@0`, for every `scope@0` document with an English fence on every chain. The class: what the
+relay builds for Lean's chain must read the front matter as the chain reads it, not as written.
+- Fix (`ve/document/source.py`, `ve/document/lean.py`): `chain_environment` is the one place Python lowers `scope@0`
+  (Lean's `lowerScope`); the proposal (plain, senses and the soft route's `E″`) and the document built from the
+  answer both read it (the second site, `_lean_document`'s own lowering, is gone).
+- The soft chain's second half of the class: Lean reads a soft document's fences in the `E″` of the governed rules
+  (`softLayer` over `withUnits`), which the relay cannot build before Lean answers, so the proposal holds the rules
+  as written. Where governing changes `E″` (a frame over default parts adds their decision predicates), Lean refuses
+  the proposal (`InvalidInput: the lexicon names another environment`), which was relayed as the document's
+  diagnostic. That refusal is a fault of the case sent: `_lean_answer` now raises `CheckerUnavailable` for it on
+  every chain (`PROPOSAL_ELSEWHERE`, read from `decodeLexicon` by a test), never a diagnostic of a valid document. An
+  exact proposal needs Lean to answer GOVERN's units before the chain (a units channel: a new mode with its shape and
+  encoder theorem); with R16's allowance at +147 of 150 that is a follow-up (below), not this item.
+- Tests (`tests/test_scope_document.py`): the review's probe (the coverage equals the document's without
+  `scope@0`, the fence CHECKED with the same content, render works); every effect on the norms and soft chains with
+  an English fence (the proposal names the environment the answer is bound to; 12 cases); the soft frame over
+  default rules (CheckerUnavailable, while the same rules written in full are checked); a forged proposal on a
+  document without `scope@0` (CheckerUnavailable); the refusal text read from Lean; and the rights chain's boundary
+  (the mode leaves formula content in a rights document to the retained path, which refuses `scope@0`, DELTA row
+  3(e)). Four Python seeded bugs, all killed (mutants.json).
+- Not in the class: `ve ask` builds its proposal on the environment as written, as Lean's `ask` mode reads it
+  (`Ask.Run.identitiesOf`); `ask` does not admit `scope@0`, and Python refuses such a document there.
+- Size: about 165 more hand-written lines (Python 28, tests 127, ledgers 5), C1.
+- Follow-up: **sc-1b-soft-proposal**, a units channel so the soft chain's proposal under `scope@0` is the governed
+  rules' `E″` (it needs trust growth beyond R16's remaining 3 lines, so the DRI or a new item).
+
 ## Self-review against BUILDER-CHECKLIST
 
 1. Every Lean answer typed and contained: PASS. `tests/test_scope_document.py::test_every_structural_mutant_of_the_f1_answer_is_refused`
@@ -232,7 +264,7 @@ so a rights document with parts could not be built and a soft document held the 
    rule. One owner: Lean gates, governs and folds. Python only reads the `scope` member and binds on the lowered
    environment (`ve/document/lean.py`). That binding drops `scope@0` from the profile list, which is a filter for
    binding, not a Python copy of the decision. No report test was added. The size rule is broken (top of this report).
-3. Tests and gates can fail: PASS. [mutants.json](mutants.json) has 26 by hand (7 from the review fix). [trust-mutants.json](trust-mutants.json)
+3. Tests and gates can fail: PASS. [mutants.json](mutants.json) has 30 by hand (7 from review F1, 4 from recheck F6). [trust-mutants.json](trust-mutants.json)
    is the mechanical run on the final Lean (exit 0; every allowed row has its one-line reason in
    [trust-mutants-allow.json](trust-mutants-allow.json)).
 4. Python, Lean and Rust agree, valid inputs pass: PASS. Documents without `scope@0` are answered as before
