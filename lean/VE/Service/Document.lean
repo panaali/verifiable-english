@@ -1777,7 +1777,7 @@ def withUnits (j out : Json) : Json := j.setObjVal! "units" (out.getObjValD "uni
 def scopeReadings (environment : Json) : Except String VE.Readings.Wire.ReadingsEnvironment :=
   let ps := listedProfiles (lowerScope environment)
   VE.Readings.Wire.decodeEnvironment (environment.setObjVal! "profiles" (toJson
-    (if ps.contains "readings@1" then ps else ps.filter (· < "readings@1") ++ ["readings@1"] ++ ps.filter ("readings@1" < ·))))
+    (ps.filter (· < "readings@1") ++ ["readings@1"] ++ ps.filter ("readings@1" < ·))))
 
 /-- The scope block of a case's document, after its environment, as the chain reads it, is admitted. -/
 def _root_.VE.Scope.decodeScope (j : Json) : Except String VE.Scope.SDoc := do
