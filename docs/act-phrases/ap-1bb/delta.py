@@ -1,9 +1,9 @@
 """ap-1bb's delta, base against head: every record that changes, and why.
 
-    (cd <checkout> && uv run python <this file> --record OUT)      # with that checkout's own `ve` and service
+    (cd <checkout> && uv run python <this file> --answers OUT)      # with that checkout's own `ve` and service
     uv run python docs/act-phrases/ap-1bb/delta.py --compare BASE.json HEAD.json --out evidence/delta.json
 
-`--record` answers, with the checkout it runs in (its schemas read its own service's rows), every case of this
+`--answers` records, with the checkout it runs in (its schemas read its own service's rows), every case of this
 item's `tests/data/route-cases.jsonl` (the merge base's file: ap-1bb adds none) and the probes below, which load
 `acts@0` environments through Python (`Environment`, `EnglishVocabulary`). `--compare` pairs the records and
 classifies each difference: `wordings` (a `norms-elaborate` row that differs only by its added `wordings`, empty
@@ -83,12 +83,12 @@ def compare(base_file: Path, head_file: Path) -> dict:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--record", type=Path)
+    parser.add_argument("--answers", type=Path)
     parser.add_argument("--compare", nargs=2, type=Path)
     parser.add_argument("--out", type=Path)
     args = parser.parse_args()
-    if args.record:
-        record(args.record)
+    if args.answers:
+        record(args.answers)
         return 0
     report = compare(*args.compare)
     if args.out:
