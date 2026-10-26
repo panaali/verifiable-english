@@ -1,19 +1,10 @@
-"""Q1.4's A/B over the speech-acts corpus (docs/spec/question-answering-PLAN.md Q1.4, 6.4).
+"""Q1.4's A/B over the speech-acts corpus (plan Q1.4, 6.4): `parse_speech`'s content, kind and lint, or refusal.
 
-`write OUT` records `parse_speech`'s outcome for every wording of the corpus in every environment of the corpus: the
-content, kind and gloss lint it reads, or the refusal's `to_dict()` (class, text, span). It runs on the base (the
-Python polar parser) and on the head (Lean's `english.question` for the speech-acts caller reads F1 and refuses
-`Must` and `Can`; `Is <Name> …?` stays Python's until Q1.4b). `write-f2 OUT` records the head with `Is ` added to the
-prefixes the parser sends to Lean, which is Q1.4b's move, for the DRI's decision on its rows. `compare BASE HEAD OUT`
-writes the differences, by class: `verdict` (accepted on one side only, or different content or kind), `class` (both
-refuse, with different codes), `wording` (same code, different text or span) and `lint` (same reading, different
-warnings). `check DELTA` exits 1 if a row is a `verdict` or `lint` row, or a `wording` or `class` row that is neither
-R2's order rule O1 (a wording of more than one sentence is refused as not one question before any of its sentences
-is read) nor keeps R1's conditions (a) and (b): every name the base text quoted is in the head text, and the head has
-a span wherever the base had one.
-
-The corpus: the polar, `Must` and `Can` wordings of tests/test_speech_acts*.py with their case, spacing and Unicode
-variants (the conformance tests' generators), the declared-gloss fixtures, and controls of every other speech form.
+`write OUT` records the corpus (the polar, `Must` and `Can` wordings of tests/test_speech_acts*.py with case, spacing
+and Unicode variants, the declared glosses, controls) in every environment; `write-f2 OUT` adds `Is ` to the routed
+prefixes (Q1.4b's move). `compare BASE HEAD OUT` classes each difference `verdict`, `class`, `wording` or `lint`.
+`check DELTA` exits 1 on a `verdict` or `lint` row, or a row that is neither R2's rule O1 (`order_o1`) nor keeps R1's
+(a) and (b): every name the base quoted, and a span wherever the base had one.
 """
 from __future__ import annotations
 

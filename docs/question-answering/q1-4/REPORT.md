@@ -1,11 +1,8 @@
 # Q1.4 report: speech acts' F1 polar questions and `Must`/`Can` refusal read by Lean
 
 **No DRI signature is reserved in this item.** It is cut: `Is <Name> …?` (F2) stays Python's, because moving it
-changes 19 verdicts (below). That move is Q1.4b, and it needs the DRI's decision on those rows first.
-
-Branch `feature/q1-4`, merge base `c45d799f3`. Commits (`main..HEAD --no-merges`): a34ed1996, d20414bb1, f3088536a,
-2306846a3, 64ac8661c, 7cb501680, 8b6ee6098 and the docs commit. Statement gate: no new theorem statement and no
-change to an approved `VE.Question` statement; the item adds `#guard`s only.
+changes 19 verdicts (below). That move is the next item, Q1.4b, and it needs the DRI's decision on those rows first;
+Q1.3 is independent. Merge base `c45d799f3`. Statement gate: no theorem statement is added or changed (`#guard`s only).
 
 ## Plan rows (docs/spec/question-answering-PLAN.md Q1.4, 3.5, 5, 6.4)
 
@@ -45,24 +42,17 @@ line 188 and the `Is <Name>` test case.
 
 ## Evidence
 
-- Seeded bugs: [mutants.json](mutants.json), 17 entries, each planted alone, shown failing, then restored.
-  - Lean (10): `speechAuxiliaries := []` fails G24 (`Examples.lean:81`). With the text dropped, the `Must` fixture
-    fails (`Examples.lean:106`) and so does `test_a_modal_wording_gets_leans_refusal`. Also `Caller.auxs`,
-    `decodeCaller`, `speechPrefixes`, `modalWords`, `modalFields`, `caseFields`, and `questionCase`'s two dispatch
-    mutants through the pinned service.
-  - Python (7): one per binding check (`ModalQuestion` caller binding, the lone surrogate, the caller outside the
-    contract), the caller sent, the routed prefixes, `_polar`'s caller, and a relay-lint plant.
+- Seeded bugs: [mutants.json](mutants.json), each planted alone, shown failing, then restored. Lean (10):
+  `speechAuxiliaries := []` fails G24 (`Examples.lean:81`); the text dropped fails the `Must` fixture
+  (`Examples.lean:106`, `test_a_modal_wording_gets_leans_refusal`); one per other new definition. Python (7): one per
+  binding check (`ModalQuestion`'s caller, the lone surrogate, a caller outside the contract) and per routing step.
 - Trust mutants: [trust-mutants.json](trust-mutants.json), 39 KILLED, 0 survivors or UNKNOWN (exit 0).
 - Trust: V +30, K +0, S +0 (Run.lean +28 under R6, Basic.lean +2 under R16), as two allowances in
   `docs/trust-baseline.json`. `trust_map.py --check` passes.
-- Tests: `tests/test_speech_polar_lean.py` (55). A curated run of 39 files on the Mac runner (speech, question, ask,
-  relay lint, manifest, regen, trust, layers, schemas, conformance): 2,095 passed. Its 2 failures were the trust
-  budget before the allowance was recorded; both pass now. `select_tests --run` selects 374 of 462 units because
-  Lean changed; one call cannot finish it, so the chain's gate runs it.
-- Pre-existing, not this item: `tests/test_p1_amendment{9,12,15}.py` fail on the Mac runner with `httpx.ConnectError`
-  (no DNS) and pass on the VM (23 passed).
-- Pilot bytes expected to move: 0 (no pilot uses a speech-act polar question).
-- Size: about 590 hand-written lines (product, tests, the A/B script, these docs).
+- Tests: `tests/test_speech_polar_lean.py` (55) and a curated run on the final HEAD (CURATED). `select_tests --run`
+  selects 374 of 462 units (Lean changed); the chain's gate runs them. Not this item: `tests/test_p1_amendment{9,12,15}.py`
+  fail on the Mac runner (`httpx.ConnectError`, no DNS) and pass on the VM.
+- Pilot bytes expected to move: 0. Size: SIZE hand-written lines.
 
 ## Self-review against BUILDER-CHECKLIST
 
@@ -79,8 +69,3 @@ line 188 and the `Is <Name>` test case.
 11. N.A.: no new budget or limit; the speech caller reads under E2's `workBudget`, the same as `ve ask`.
 12. N.A.: one Lean call per F1 question, replacing `parse_english`'s; the A/B (2,048 records) ran in 10 s.
 13. PASS: no test removed; `gate_collection.py --check --prebuilt`: 0 refused, 0 stale, 0 malformed.
-
-## Next item
-
-Q1.3 (the reverse question corpus) is independent. Q1.4b, the F2 move, waits for the DRI's decision on
-`evidence/delta-f2.json`'s 19 verdict rows.
