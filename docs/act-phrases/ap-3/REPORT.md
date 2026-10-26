@@ -68,11 +68,26 @@ R16's "every new trusted definition is exercised by a test that can fail":
   26 ALLOWED and 0 NOT RUN, over `opOf`, `freeTable` and `table` ([trust-mutants.json](trust-mutants.json)).
 - Each allowance is a mutant that does not elaborate (a flipped pattern Bool, or `all` read as `any`, leaves a case
   missing), with its reason in [trust-mutants-allow.json](trust-mutants-allow.json).
-- `Simple`, `Op` and the act trees are data types that every fixture constructs. A mutant that changes a constructor
-  or a field of one does not elaborate, and swapping two constructors of the same arity changes no answer, since every
-  use matches by name. The tool has no operator for them.
+- The data types (`Join`, `Part`, `Filler`, `Modifier`, `Atom`, `Act`, `Simple`, `Op`) are outside the tool's
+  operators. `tests/test_acts_tree_mutants.py` (review F1) sweeps them instead. It reads each type from Lean
+  (constructors, fields, field types, ranges) and plants every mutant of five kinds: a constructor dropped, a
+  constructor added (a field, for the structure `Atom`), a field dropped, the names of two fields of one type swapped,
+  and a `Nat` field retyped `Int`. 56 mutants, one `mutants.json` row each (`kind: "type"`):
+  - 35 KILLED: only the fixtures fail. These are all the mutants of `Join`, `Part`, `Filler`, `Modifier` and `Atom`,
+    plus `Act`'s two name swaps and `Simple`'s added constructor.
+  - 21 REFUSED: Lean refuses the trusted `table`, which names that constructor or field or matches it exhaustively.
+    These are `Act`'s dropped and added constructors and dropped fields, and `Simple`'s and `Op`'s dropped
+    constructors and fields, and `Op`'s added constructor.
+  - 0 survivors.
+- Swapping two constructors is not a mutant. Every use matches them by name, and the derived `DecidableEq` and `Repr`
+  do not depend on their order.
+- Before F1, the fixtures built every tree by position and named only some constructors. On those fixtures this test
+  fails for 7 of the 8 types: `Join.and` or `Join.nor` dropped, `Act.all`'s `shared split` or `Act.any`'s `nor split`
+  swapped, `Atom.toWord`/`beWord` swapped, `Part`'s index retyped `Int`, and a constructor added to `Filler` or
+  `Simple` all survived.
 
-Only Lean product code changed, so all seeded bugs are Lean's.
+Only Lean product code changed, so all seeded bugs are Lean's. `tests/test_acts_tree_mutants.py` is a test, not
+product code.
 
 ## 4. Trust
 
@@ -85,13 +100,15 @@ recorded with `--allow` and signed by standing ruling R16. The FOLLOW-UPS "## ap
 
 - **Size** (hand-written lines added, `git diff --numstat` against the merge base):
   - Lean product: Tree.lean 35 and Table.lean 90.
-  - Fixtures: `TableExamples.lean` 118.
-  - `lean/VE.lean` +3, the trust side table `tools/trust-classes.json` +41.
-  - Evidence: `seed_bugs.py` 123, the allow file 16.
+  - Fixtures: `TableExamples.lean` 160 (118, plus 42 in fix1).
+  - `lean/VE.lean` +3, the trust side table `tools/trust-classes.json` +54 (45 before fix1, not the 41 this report
+    gave; review F4).
+  - Evidence: `seed_bugs.py` 156 (123, plus 33 in fix1), the allow file 16.
+  - Test (fix1): `tests/test_acts_tree_mutants.py` 281.
   - This report and DELTA.
-  - Total about 420, and about 660 with this report (219) and DELTA (22), so a little over the ~600 guideline
-    because of the documents. The JSON evidence is written by the scripts, and the inventories by
-    `regen_generated.py`.
+  - At review the total was about 672 with the documents. fix1 adds about 400 (the data-type test, its fixtures and
+    the seed rows), so the item is over the ~600 guideline. The JSON evidence is written by the scripts, and the
+    inventories by `regen_generated.py`.
   - The first build of this item also held the rendering and the paraphrases. With them it measured about 770
     hand-written lines before the documents, and R16's count would have been S +110. So they were cut to ap-3b (see
     `wip/ap-3b`).
@@ -155,11 +172,19 @@ recorded with `--allow` and signed by standing ruling R16. The FOLLOW-UPS "## ap
   but neither `Regulated` nor spec 6.3's `ActsDoc` carries the form: the decoder reads it from the raw declaration
   (`Norms.Wire.plainWording`). So D-23 for an *is entitled* predicate needs `ActsDoc` to carry the forms, which is
   a field the spec does not list, or it defaults to *has the right*. ap-3c should take this to the bounded re-check.
-- **Mutant tool host.** `tools/trust_mutants.py` ran directly on the VM, not through
-  `mac-pytest.sh --trustmut` (BUILDER-CHECKLIST 3, build checklist 13a). The verdicts are the tool's either way.
+- **Mutant tool host.** Before fix1, `tools/trust_mutants.py` ran directly on the VM, not through
+  `mac-pytest.sh --trustmut` (BUILDER-CHECKLIST 3, build checklist 13a). fix1's run went through
+  `mac-pytest.sh --trustmut` on ve-mac-1 (`bd3cf64fd`).
 
 ## 8. Tests
 
+- **fix1 selected tests:** `mac-pytest.sh --select -- --base 058fea806c0b --run`, on the Mac runner, on `bd3cf64fd`
+  with this report and DELTA uncommitted. 85 of 462 units ran, `tests/test_acts_tree_mutants.py` among them. Exit 0,
+  0 failed. No test in `main-known-red.txt` was hit.
+- **fix1 other checks:** `lake build` (1,070 jobs) passes; `lean/audit.py` PASS (615 files, 7,050 theorems);
+  `regen_generated.py --check` 33 entries current; `trust_map.py --check` PASS (S +64, K +0; the 9 new fixture
+  definitions are T); `gate_collection.py --check --prebuilt` 14 added, 0 removed, 0 refused, 0 stale, 0 malformed.
+- **Review F1's probe:** before fix1 it printed `surviving: ['drop and', 'drop nor']`; after it, `surviving: []`.
 - **Selected tests:** `mac-pytest.sh --select -- --base 058fea806c0b --run`, on the Mac runner, on `d449f36cc` (the
   final code; only this report and DELTA were uncommitted). 75 units ran, among them the lints, `lake build`,
   `lean/audit.py` and 70 test files. Exit 0, 0 failed. No test in `main-known-red.txt` was hit.
@@ -176,6 +201,14 @@ recorded with `--allow` and signed by standing ruling R16. The FOLLOW-UPS "## ap
   - `lean/audit.py`: PASS.
 - **Not run:** the full gate (the chain runs it on the final HEAD), AP-7 (above) and any pilot.
 
+## Review fixes (fix1, review `ap-3-review.final.md`)
+
+| Finding | Fix | Regression test |
+|---|---|---|
+| F1 (B): the data types had no mutants, and `Join.and`/`Join.nor` dropped, field names swapped, `Part`'s index retyped `Int` or a constructor added to `Filler` or `Simple` survived | The class: no mutant of a trusted data type may survive. `TableExamples.lean` names every constructor of each type once with no wildcard, builds fillers joined by *and*, *or* and *nor*, pins the `Nat` index (`0 - 1` is `0`), checks *to* and *be* by field name, and builds `Atom`, `Act.all` and `Act.any` with named arguments, with their readings. `tests/test_acts_tree_mutants.py` reads each type from Lean and generates every mutant of five kinds (section 3); a new type in either module joins the sweep. `mutants.json` has a row for each. Section 3's false claim is corrected. | `tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Join]` (and `[Part]`, `[Filler]`, `[Modifier]`, `[Atom]`, `[Act]`, `[Simple]`, `[Op]`), `::test_every_data_type_of_the_trees_and_the_table_is_swept`, `::test_every_operator_applies_somewhere` (the review's examples are named there) |
+| F2, F3 (C) | Follow-ups, not changed here (F3 is in manage-agents). | — |
+| F4 (C) | The count is corrected in section 5. The size is still over the guideline. | — |
+
 ## 9. Self-review against BUILDER-CHECKLIST
 
 1. N.A.: no relayed Lean answer. No mode, route or row is added, and no Python reads anything new.
@@ -183,7 +216,8 @@ recorded with `--allow` and signed by standing ruling R16. The FOLLOW-UPS "## ap
    and the missing ap-2b/ap-2c). Grepping the diff finds no Python or Rust change, no report test and no authority
    switch. `git diff --name-only main...<branch>` over every in-flight branch shows no overlap.
 3. PASS: [mutants.json](mutants.json) records 16 seeded bugs, all killed by `TableExamples.lean` with the theorems
-   cut, and the op sweep (20 killed, 28 refused). [trust-mutants.json](trust-mutants.json) records 159 killed, 0
+   cut, the op sweep (20 killed, 28 refused), and the 56 data-type mutants (35 killed, 21 refused by the trusted code,
+   0 survivors; `tests/test_acts_tree_mutants.py`). [trust-mutants.json](trust-mutants.json) records 159 killed, 0
    survivor, 0 unknown and 26 allowed, each allowance with its reason in
    [trust-mutants-allow.json](trust-mutants-allow.json). The plan's *must*/*or* bug fails T8.
 4. N.A.: no Python or Rust path computes the table, and no existing input changes behaviour. Nothing reaches the new
@@ -207,6 +241,10 @@ recorded with `--allow` and signed by standing ruling R16. The FOLLOW-UPS "## ap
 
 ## 10. Commits (`main..HEAD --no-merges`)
 
+- fix1: this report and DELTA (the last commit)
+- `bd3cf64fd` ap-3 fix1 evidence: trust_mutants on the final Lean (mac-pytest --trustmut): 159 killed, 0 survivor, 0 unknown, 26 allowed
+- `1e009c64b` ap-3 fix1 F1 evidence: mutants.json gains one row per data-type mutant (56: 35 killed, 21 refused by the trusted code, 0 survivor); stale-olean guard
+- `863af98fe` ap-3 fix1 F1: every data type's constructors and field names exercised; generated data-type mutants (tests/test_acts_tree_mutants.py)
 - `d449f36cc` ap-3 evidence: trust_mutants on the final Lean (mac-pytest --trustmut; VM fallback): 159 killed, 0 survivor, 0 unknown, 26 allowed
 - `c0533076c` ap-3 evidence: mutants.json re-recorded after the move (16 bugs killed; sweep 20 killed, 28 refused)
 - `c1a141b9e` ap-3: the act trees in their own module VE.Acts.Tree (Syntax.lean unchanged: ap-2's test_acts_vocab_mutants pins its list fields); R16 allowance re-recorded per file (Table +38, Tree +26)
