@@ -6,16 +6,23 @@
 in `opOf` and `table`, one occurrence at a time, by each other `Op`. Table.lean's theorems are cut first, so a row is
 shown to break a fixture, not only a proof. KILLED: every Lean error is a failed `#guard` of TableExamples.lean;
 INVALID: Lean refuses the mutated text (a redundant or missing case); SURVIVOR: the build passes. Every bug must be
-KILLED, every sweep row KILLED or INVALID. Writes mutants.json beside this file; run it on a clean lean/.
+KILLED, every sweep row KILLED or INVALID. The type rows (review F1) are the data-type mutants of
+`tests/test_acts_tree_mutants.py`, generated from Lean's reading of `Tree.lean`'s and `Table.lean`'s types, one row per
+mutant: KILLED (only the fixtures fail) or REFUSED (Lean refuses the trusted code that names the constructor or field),
+never SURVIVOR. Writes mutants.json beside this file; run it on a clean lean/.
 """
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
+sys.path[:0] = [str(ROOT), str(ROOT / "tests")]
+from tests import test_acts_tree_mutants as types  # noqa: E402
 TABLE = "lean/VE/Acts/Table.lean"
 LAKE = ["lake", "build", "VE.Acts.TableExamples"]
 
@@ -83,6 +90,30 @@ def attempt(text):
     return ("INVALID" if where and "VE/Acts/TableExamples.lean" not in where else "UNKNOWN"), lines
 
 
+def type_rows():
+    lake = shutil.which("lake", path=str(Path.home() / ".elan/bin") + os.pathsep + os.environ["PATH"])
+    where = Path(tempfile.mkdtemp())
+    try:
+        done = types._elaborate(lake, where, "ApTreeDump", types.DUMP.replace(
+            "@MODULES@", "[" + ", ".join(f"`{m}" for m in types.MODULES) + "]"))
+        dump = json.loads(done.stdout)
+        shapes = {"types": {d["type"].rsplit(".", 1)[1]: d for d in dump if "type" in d},
+                  "theorems": [d for d in dump if "theorem" in d]}
+        rows = []
+        for name in types.TYPES:
+            entry = shapes["types"][name]
+            for mid, (status, found) in types.run_type(lake, where, shapes, name).items():
+                rows.append({"id": f"type-{name}-{mid.replace(' ', '-')}", "kind": "type", "language": "Lean",
+                             "file": f"lean/{entry['module'].replace('.', '/')}.lean", "definition": entry["type"],
+                             "mutation": mid, "status": status,
+                             "test": f"tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[{name}]",
+                             "output": [f"{m}: {text.splitlines()[0]}" for m, _, text in found[:2]]})
+                print(f"{rows[-1]['id']:52} {status}", flush=True)
+        return rows
+    finally:
+        shutil.rmtree(where)
+
+
 def main():
     if subprocess.run(["git", "status", "--porcelain", "--", "lean"], cwd=ROOT, capture_output=True, text=True).stdout:
         sys.exit("the tree is not clean under lean/")
@@ -109,8 +140,10 @@ def main():
                              "mutation": {"from": m.group(0), "to": o, "occurrence": k},
                              "test": "lean/VE/Acts/TableExamples.lean", "status": status, "output": out})
                 print(f"{rid:36} {status}", flush=True)
-    restored = build().returncode
-    ok = all(r["status"] == "KILLED" if r["kind"] == "bug" else r["status"] in ("KILLED", "INVALID") for r in rows)
+    restored = build().returncode  # the oleans of the restored tree: the type rows read their ranges from Lean
+    rows += type_rows()
+    allowed = {"bug": ("KILLED",), "sweep": ("KILLED", "INVALID"), "type": ("KILLED", "REFUSED")}
+    ok = all(r["status"] in allowed[r["kind"]] for r in rows)
     counts = {s: sum(r["status"] == s for r in rows) for s in sorted({r["status"] for r in rows})}
     (Path(__file__).parent / "mutants.json").write_text(json.dumps(
         {"restored_build_exit": restored, "all_failed": ok, "counts": counts, "rows": rows}, indent=1,

@@ -3,7 +3,8 @@
  "all_failed": true,
  "counts": {
   "INVALID": 28,
-  "KILLED": 36
+  "KILLED": 71,
+  "REFUSED": 21
  },
  "rows": [
   {
@@ -173,8 +174,8 @@
    "output": [
     "error: VE/Acts/TableExamples.lean:105:0: Expression",
     "did not evaluate to `true`",
-    "error: Lean exited with code 1",
-    "error: build failed"
+    "error: VE/Acts/TableExamples.lean:155:0: Expression",
+    "did not evaluate to `true`"
    ]
   },
   {
@@ -1240,6 +1241,789 @@
     "error: VE/Acts/Table.lean:43:2: Missing cases:",
     "error: Lean exited with code 1",
     "error: build failed"
+   ]
+  },
+  {
+   "id": "type-Join-add-constructor-extra",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Join",
+   "mutation": "add-constructor extra",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Join]",
+   "output": [
+    "VE.Acts.TableExamples: Missing cases:",
+    "VE.Acts.TableExamples: cannot evaluate code because 'VE.Acts.TableExamples.joinWord' uses 'sorry' and/or contains errors"
+   ]
+  },
+  {
+   "id": "type-Join-drop-constructor-and",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Join",
+   "mutation": "drop-constructor and",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Join]",
+   "output": [
+    "VE.Acts.TableExamples: Unknown constant `VE.Acts.Join.and`",
+    "VE.Acts.TableExamples: Unknown constant `VE.Acts.Join.and`"
+   ]
+  },
+  {
+   "id": "type-Join-drop-constructor-nor",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Join",
+   "mutation": "drop-constructor nor",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Join]",
+   "output": [
+    "VE.Acts.TableExamples: Unknown constant `VE.Acts.Join.nor`",
+    "VE.Acts.TableExamples: Unknown constant `VE.Acts.Join.nor`"
+   ]
+  },
+  {
+   "id": "type-Join-drop-constructor-or",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Join",
+   "mutation": "drop-constructor or",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Join]",
+   "output": [
+    "VE.Acts.TableExamples: Unknown constant `VE.Acts.Join.or`",
+    "VE.Acts.TableExamples: cannot evaluate code because 'VE.Acts.TableExamples.held' uses 'sorry' and/or contains errors"
+   ]
+  },
+  {
+   "id": "type-Part-add-constructor-extra",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Part",
+   "mutation": "add-constructor extra",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Part]",
+   "output": [
+    "VE.Acts.TableExamples: Missing cases:",
+    "VE.Acts.TableExamples: cannot evaluate code because 'VE.Acts.TableExamples.partIndex' uses 'sorry' and/or contains errors"
+   ]
+  },
+  {
+   "id": "type-Part-drop-constructor-fixed",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Part",
+   "mutation": "drop-constructor fixed",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Part]",
+   "output": [
+    "VE.Acts.TableExamples: Unknown constant `VE.Acts.Part.fixed`",
+    "VE.Acts.TableExamples: Unknown constant `VE.Acts.Part.fixed`"
+   ]
+  },
+  {
+   "id": "type-Part-drop-constructor-slot",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Part",
+   "mutation": "drop-constructor slot",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Part]",
+   "output": [
+    "VE.Acts.TableExamples: Unknown constant `VE.Acts.Part.slot`",
+    "VE.Acts.TableExamples: Unknown constant `VE.Acts.Part.slot`"
+   ]
+  },
+  {
+   "id": "type-Part-drop-constructor-words",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Part",
+   "mutation": "drop-constructor words",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Part]",
+   "output": [
+    "VE.Acts.TableExamples: Unknown constant `VE.Acts.Part.words`",
+    "VE.Acts.TableExamples: cannot evaluate code because 'VE.Acts.TableExamples.w' uses 'sorry' and/or contains errors"
+   ]
+  },
+  {
+   "id": "type-Part-drop-field-fixed.i",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Part",
+   "mutation": "drop-field fixed.i",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Part]",
+   "output": [
+    "VE.Acts.TableExamples: Function expected at",
+    "VE.Acts.TableExamples: Function expected at"
+   ]
+  },
+  {
+   "id": "type-Part-drop-field-slot.i",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Part",
+   "mutation": "drop-field slot.i",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Part]",
+   "output": [
+    "VE.Acts.TableExamples: Function expected at",
+    "VE.Acts.TableExamples: Function expected at"
+   ]
+  },
+  {
+   "id": "type-Part-drop-field-words.ws",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Part",
+   "mutation": "drop-field words.ws",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Part]",
+   "output": [
+    "VE.Acts.TableExamples: Function expected at",
+    "VE.Acts.TableExamples: cannot evaluate code because 'VE.Acts.TableExamples.w' uses 'sorry' and/or contains errors"
+   ]
+  },
+  {
+   "id": "type-Part-retype-fixed.i-Nat-->-Int",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Part",
+   "mutation": "retype fixed.i Nat -> Int",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Part]",
+   "output": [
+    "VE.Acts.TableExamples: Application type mismatch: The argument",
+    "VE.Acts.TableExamples: cannot evaluate code because 'VE.Acts.TableExamples.partIndex' uses 'sorry' and/or contains errors"
+   ]
+  },
+  {
+   "id": "type-Part-retype-slot.i-Nat-->-Int",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Part",
+   "mutation": "retype slot.i Nat -> Int",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Part]",
+   "output": [
+    "VE.Acts.TableExamples: Application type mismatch: The argument",
+    "VE.Acts.TableExamples: cannot evaluate code because 'VE.Acts.TableExamples.partIndex' uses 'sorry' and/or contains errors"
+   ]
+  },
+  {
+   "id": "type-Filler-add-constructor-extra",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Filler",
+   "mutation": "add-constructor extra",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Filler]",
+   "output": [
+    "VE.Acts.TableExamples: Missing cases:",
+    "VE.Acts.TableExamples: cannot evaluate code because 'VE.Acts.TableExamples.fillerParts' uses 'sorry' and/or contains errors"
+   ]
+  },
+  {
+   "id": "type-Filler-drop-constructor-joined",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Filler",
+   "mutation": "drop-constructor joined",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Filler]",
+   "output": [
+    "VE.Acts.TableExamples: Unknown constant `VE.Acts.Filler.joined`",
+    "VE.Acts.TableExamples: cannot evaluate code because 'VE.Acts.TableExamples.held' uses 'sorry' and/or contains errors"
+   ]
+  },
+  {
+   "id": "type-Filler-drop-constructor-one",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Filler",
+   "mutation": "drop-constructor one",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Filler]",
+   "output": [
+    "VE.Acts.TableExamples: Unknown constant `VE.Acts.Filler.one`",
+    "VE.Acts.TableExamples: Unknown constant `VE.Acts.Filler.one`"
+   ]
+  },
+  {
+   "id": "type-Filler-drop-field-joined.j",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Filler",
+   "mutation": "drop-field joined.j",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Filler]",
+   "output": [
+    "VE.Acts.TableExamples: Application type mismatch: The argument",
+    "VE.Acts.TableExamples: cannot evaluate code because 'VE.Acts.TableExamples.held' uses 'sorry' and/or contains errors"
+   ]
+  },
+  {
+   "id": "type-Filler-drop-field-joined.ps",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Filler",
+   "mutation": "drop-field joined.ps",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Filler]",
+   "output": [
+    "VE.Acts.TableExamples: Function expected at",
+    "VE.Acts.TableExamples: cannot evaluate code because 'VE.Acts.TableExamples.held' uses 'sorry' and/or contains errors"
+   ]
+  },
+  {
+   "id": "type-Filler-drop-field-one.p",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Filler",
+   "mutation": "drop-field one.p",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Filler]",
+   "output": [
+    "VE.Acts.TableExamples: Function expected at",
+    "VE.Acts.TableExamples: Function expected at"
+   ]
+  },
+  {
+   "id": "type-Modifier-add-constructor-extra",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Modifier",
+   "mutation": "add-constructor extra",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Modifier]",
+   "output": [
+    "VE.Acts.TableExamples: Missing cases:",
+    "VE.Acts.TableExamples: cannot evaluate code because 'VE.Acts.TableExamples.modifierWord' uses 'sorry' and/or contains errors"
+   ]
+  },
+  {
+   "id": "type-Modifier-drop-constructor-adv",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Modifier",
+   "mutation": "drop-constructor adv",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Modifier]",
+   "output": [
+    "VE.Acts.TableExamples: Unknown constant `VE.Acts.Modifier.adv`",
+    "VE.Acts.TableExamples: Unknown constant `VE.Acts.Modifier.adv`"
+   ]
+  },
+  {
+   "id": "type-Modifier-drop-constructor-prep",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Modifier",
+   "mutation": "drop-constructor prep",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Modifier]",
+   "output": [
+    "VE.Acts.TableExamples: Unknown constant `VE.Acts.Modifier.prep`",
+    "VE.Acts.TableExamples: Unknown constant `VE.Acts.Modifier.prep`"
+   ]
+  },
+  {
+   "id": "type-Modifier-drop-field-adv.w",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Modifier",
+   "mutation": "drop-field adv.w",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Modifier]",
+   "output": [
+    "VE.Acts.TableExamples: Function expected at",
+    "VE.Acts.TableExamples: Function expected at"
+   ]
+  },
+  {
+   "id": "type-Modifier-drop-field-prep.m",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Modifier",
+   "mutation": "drop-field prep.m",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Modifier]",
+   "output": [
+    "VE.Acts.TableExamples: Application type mismatch: The argument",
+    "VE.Acts.TableExamples: Application type mismatch: The argument"
+   ]
+  },
+  {
+   "id": "type-Modifier-drop-field-prep.p",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Modifier",
+   "mutation": "drop-field prep.p",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Modifier]",
+   "output": [
+    "VE.Acts.TableExamples: Function expected at",
+    "VE.Acts.TableExamples: Function expected at"
+   ]
+  },
+  {
+   "id": "type-Atom-add-constructor-(a-field:-extra-:-Bool)",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Atom",
+   "mutation": "add-constructor (a field: extra : Bool)",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Atom]",
+   "output": [
+    "VE.Acts.TableExamples: Insufficient number of fields for `⟨...⟩` constructor: Constructor `VE.Acts.Atom.mk` has 6 explicit field, but only 5 were provided",
+    "VE.Acts.TableExamples: Insufficient number of fields for `⟨...⟩` constructor: Constructor `VE.Acts.Atom.mk` has 6 explicit field, but only 5 were provided"
+   ]
+  },
+  {
+   "id": "type-Atom-drop-field-mk.args",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Atom",
+   "mutation": "drop-field mk.args",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Atom]",
+   "output": [
+    "VE.Acts.TableExamples: Invalid `⟨...⟩` notation: The expected type `List Modifier` has more than one constructor",
+    "VE.Acts.TableExamples: Invalid `⟨...⟩` notation: The expected type `List Modifier` has more than one constructor"
+   ]
+  },
+  {
+   "id": "type-Atom-drop-field-mk.beWord",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Atom",
+   "mutation": "drop-field mk.beWord",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Atom]",
+   "output": [
+    "VE.Acts.TableExamples: Application type mismatch: The argument",
+    "VE.Acts.TableExamples: Application type mismatch: The argument"
+   ]
+  },
+  {
+   "id": "type-Atom-drop-field-mk.head",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Atom",
+   "mutation": "drop-field mk.head",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Atom]",
+   "output": [
+    "VE.Acts.TableExamples: Application type mismatch: The argument",
+    "VE.Acts.TableExamples: Invalid `⟨...⟩` notation: The expected type `List Modifier` has more than one constructor"
+   ]
+  },
+  {
+   "id": "type-Atom-drop-field-mk.mods",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Atom",
+   "mutation": "drop-field mk.mods",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Atom]",
+   "output": [
+    "VE.Acts.TableExamples: Invalid `⟨...⟩` notation: The expected type `List (String × Filler)` has more than one constructor",
+    "VE.Acts.TableExamples: Invalid `⟨...⟩` notation: The expected type `List (String × Filler)` has more than one constructor"
+   ]
+  },
+  {
+   "id": "type-Atom-drop-field-mk.toWord",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Atom",
+   "mutation": "drop-field mk.toWord",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Atom]",
+   "output": [
+    "VE.Acts.TableExamples: Application type mismatch: The argument",
+    "VE.Acts.TableExamples: Application type mismatch: The argument"
+   ]
+  },
+  {
+   "id": "type-Atom-swap-names-mk.toWord-mk.beWord",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Atom",
+   "mutation": "swap-names mk.toWord mk.beWord",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Atom]",
+   "output": [
+    "VE.Acts.TableExamples: Expression",
+    "VE.Acts.TableExamples: Expression"
+   ]
+  },
+  {
+   "id": "type-Act-add-constructor-extra",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Act",
+   "mutation": "add-constructor extra",
+   "status": "REFUSED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Act]",
+   "output": [
+    "VE.Acts.Table: Missing cases:",
+    "VE.Acts.Table: Missing cases:"
+   ]
+  },
+  {
+   "id": "type-Act-drop-constructor-all",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Act",
+   "mutation": "drop-constructor all",
+   "status": "REFUSED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Act]",
+   "output": [
+    "VE.Acts.Table: Unknown constant `VE.Acts.Act.all`",
+    "VE.Acts.Table: Unknown constant `VE.Acts.Act.all`"
+   ]
+  },
+  {
+   "id": "type-Act-drop-constructor-any",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Act",
+   "mutation": "drop-constructor any",
+   "status": "REFUSED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Act]",
+   "output": [
+    "VE.Acts.Table: Unknown constant `VE.Acts.Act.any`",
+    "VE.Acts.Table: Unknown constant `VE.Acts.Act.any`"
+   ]
+  },
+  {
+   "id": "type-Act-drop-constructor-one",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Act",
+   "mutation": "drop-constructor one",
+   "status": "REFUSED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Act]",
+   "output": [
+    "VE.Acts.Table: Unknown constant `VE.Acts.Act.one`",
+    "VE.Acts.Table: Unknown constant `VE.Acts.Act.one`"
+   ]
+  },
+  {
+   "id": "type-Act-drop-field-all.parts",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Act",
+   "mutation": "drop-field all.parts",
+   "status": "REFUSED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Act]",
+   "output": [
+    "VE.Acts.Table: Function expected at",
+    "VE.Acts.Table: Function expected at"
+   ]
+  },
+  {
+   "id": "type-Act-drop-field-all.shared",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Act",
+   "mutation": "drop-field all.shared",
+   "status": "REFUSED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Act]",
+   "output": [
+    "VE.Acts.Table: Function expected at",
+    "VE.Acts.Table: Function expected at"
+   ]
+  },
+  {
+   "id": "type-Act-drop-field-all.split",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Act",
+   "mutation": "drop-field all.split",
+   "status": "REFUSED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Act]",
+   "output": [
+    "VE.Acts.Table: Function expected at",
+    "VE.Acts.Table: Function expected at"
+   ]
+  },
+  {
+   "id": "type-Act-drop-field-any.nor",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Act",
+   "mutation": "drop-field any.nor",
+   "status": "REFUSED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Act]",
+   "output": [
+    "VE.Acts.Table: Function expected at",
+    "VE.Acts.Table: Function expected at"
+   ]
+  },
+  {
+   "id": "type-Act-drop-field-any.parts",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Act",
+   "mutation": "drop-field any.parts",
+   "status": "REFUSED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Act]",
+   "output": [
+    "VE.Acts.Table: Function expected at",
+    "VE.Acts.Table: Function expected at"
+   ]
+  },
+  {
+   "id": "type-Act-drop-field-any.split",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Act",
+   "mutation": "drop-field any.split",
+   "status": "REFUSED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Act]",
+   "output": [
+    "VE.Acts.Table: Function expected at",
+    "VE.Acts.Table: Function expected at"
+   ]
+  },
+  {
+   "id": "type-Act-drop-field-one.a",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Act",
+   "mutation": "drop-field one.a",
+   "status": "REFUSED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Act]",
+   "output": [
+    "VE.Acts.Table: Function expected at",
+    "VE.Acts.Table: Function expected at"
+   ]
+  },
+  {
+   "id": "type-Act-swap-names-all.shared-all.split",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Act",
+   "mutation": "swap-names all.shared all.split",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Act]",
+   "output": [
+    "VE.Acts.TableExamples: Expression"
+   ]
+  },
+  {
+   "id": "type-Act-swap-names-any.nor-any.split",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Tree.lean",
+   "definition": "VE.Acts.Act",
+   "mutation": "swap-names any.nor any.split",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Act]",
+   "output": [
+    "VE.Acts.TableExamples: Expression",
+    "VE.Acts.TableExamples: Expression"
+   ]
+  },
+  {
+   "id": "type-Simple-add-constructor-extra",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.Simple",
+   "mutation": "add-constructor extra",
+   "status": "KILLED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Simple]",
+   "output": [
+    "VE.Acts.TableExamples: Missing cases:",
+    "VE.Acts.TableExamples: cannot evaluate code because 'VE.Acts.TableExamples.simpleParts' uses 'sorry' and/or contains errors"
+   ]
+  },
+  {
+   "id": "type-Simple-drop-constructor-atom",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.Simple",
+   "mutation": "drop-constructor atom",
+   "status": "REFUSED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Simple]",
+   "output": [
+    "VE.Acts.Table: Unknown constant `VE.Acts.Simple.atom`",
+    "VE.Acts.Table: Unknown constant `VE.Acts.Simple.atom`"
+   ]
+  },
+  {
+   "id": "type-Simple-drop-constructor-whole",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.Simple",
+   "mutation": "drop-constructor whole",
+   "status": "REFUSED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Simple]",
+   "output": [
+    "VE.Acts.Table: Unknown constant `VE.Acts.Simple.whole`",
+    "VE.Acts.Table: Unknown constant `VE.Acts.Simple.whole`"
+   ]
+  },
+  {
+   "id": "type-Simple-drop-field-atom.a",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.Simple",
+   "mutation": "drop-field atom.a",
+   "status": "REFUSED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Simple]",
+   "output": [
+    "VE.Acts.Table: Function expected at",
+    "VE.Acts.Table: Application type mismatch: The argument"
+   ]
+  },
+  {
+   "id": "type-Simple-drop-field-whole.A",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.Simple",
+   "mutation": "drop-field whole.A",
+   "status": "REFUSED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Simple]",
+   "output": [
+    "VE.Acts.Table: Function expected at",
+    "VE.Acts.Table: Function expected at"
+   ]
+  },
+  {
+   "id": "type-Op-add-constructor-extra",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.Op",
+   "mutation": "add-constructor extra",
+   "status": "REFUSED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Op]",
+   "output": [
+    "VE.Acts.Table: Missing cases:",
+    "VE.Acts.TableExamples: cannot evaluate code because 'VE.Acts.table' uses 'sorry' and/or contains errors"
+   ]
+  },
+  {
+   "id": "type-Op-drop-constructor-may",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.Op",
+   "mutation": "drop-constructor may",
+   "status": "REFUSED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Op]",
+   "output": [
+    "VE.Acts.Table: Unknown constant `VE.Acts.Op.may`",
+    "VE.Acts.Table: Unknown constant `VE.Acts.Op.may`"
+   ]
+  },
+  {
+   "id": "type-Op-drop-constructor-must",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.Op",
+   "mutation": "drop-constructor must",
+   "status": "REFUSED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Op]",
+   "output": [
+    "VE.Acts.Table: Unknown constant `VE.Acts.Op.must`",
+    "VE.Acts.Table: Unknown constant `VE.Acts.Op.must`"
+   ]
+  },
+  {
+   "id": "type-Op-drop-constructor-mustNot",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.Op",
+   "mutation": "drop-constructor mustNot",
+   "status": "REFUSED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Op]",
+   "output": [
+    "VE.Acts.Table: Unknown constant `VE.Acts.Op.mustNot`",
+    "VE.Acts.Table: Unknown constant `VE.Acts.Op.mustNot`"
+   ]
+  },
+  {
+   "id": "type-Op-drop-constructor-needNot",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.Op",
+   "mutation": "drop-constructor needNot",
+   "status": "REFUSED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Op]",
+   "output": [
+    "VE.Acts.Table: Unknown constant `VE.Acts.Op.needNot`",
+    "VE.Acts.Table: Unknown constant `VE.Acts.Op.needNot`"
+   ]
+  },
+  {
+   "id": "type-Op-drop-constructor-right",
+   "kind": "type",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.Op",
+   "mutation": "drop-constructor right",
+   "status": "REFUSED",
+   "test": "tests/test_acts_tree_mutants.py::test_every_mutant_of_a_data_type_is_killed_or_refused[Op]",
+   "output": [
+    "VE.Acts.Table: Unknown constant `VE.Acts.Op.right`",
+    "VE.Acts.Table: Unknown constant `VE.Acts.Op.right`"
    ]
   }
  ]
