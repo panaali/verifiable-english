@@ -478,14 +478,22 @@ def question_problem(response, expected: dict, env, question: str, caller: str |
     return None
 
 
+def question_lines(answer: dict) -> list[str]:
+    """The lines every client shows of a checked answer that is not `one`, as Lean wrote them: its text (with its
+    advice), then each rephrasing. `read_question`'s refusal is these lines and `ve ask` prints them; `witnesses`
+    stay structured in the answer, as on `english.read`'s path."""
+    text = answer["text"] if "advice" not in answer else f'{answer["text"]} {answer["advice"]["text"]}'
+    return [text, *answer.get("rephrasings", ())]
+
+
 def read_question(env, question: str, words, options: dict, *, caller: str | None = None) -> dict:
     """Relay one yes-or-no question to Lean's `english.question` (docs/spec/question-answering.md 4.1, 8).
 
     The request is the `english.read` request for the question as its source (the same environment, overlay,
     lexicon producer and cap), with `question` added, and `caller` when it is not `ve ask` (a caller of the
     contract's `callers`: speech acts, plan Q1.4). The answer is checked by `question_problem`, whatever the
-    transport; `one` is returned, and any other status is raised as the class Lean names, with Lean's text (and
-    advice) and the answer as `lean_question`.
+    transport; `one` is returned, and any other status is raised as the class Lean names, with its
+    `question_lines` and the answer as `lean_question`.
     """
     if type(question) is not str:
         raise TypeError("question must be str")
@@ -519,7 +527,7 @@ def read_question(env, question: str, words, options: dict, *, caller: str | Non
             raise refusal
         return response
     cls = ERROR_CLASSES[response["class"]]
-    text = response["text"] if "advice" not in response else f'{response["text"]} {response["advice"]["text"]}'
+    text = "\n".join(question_lines(response))
     if issubclass(cls, CheckerUnavailable):
         error = cls(text, operation="question.read", backend="lean")
     else:

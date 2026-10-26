@@ -1,19 +1,23 @@
 """Q1.4's A/B over the speech-acts corpus (plan Q1.4, 6.4): `parse_speech`'s content, kind and lint, or refusal.
 
 `write OUT` records the corpus (the polar, `Must` and `Can` wordings of tests/test_speech_acts*.py with case, spacing
-and Unicode variants, the declared glosses, controls) in every environment; `write-f2 OUT` adds `Is ` to the routed
+and Unicode variants, the declared glosses, controls; each `Is <…>?` wording as F1 with `is` put back at every gap;
+F1 at, below and over the question limits of bytes and tokens) in every environment; set `VE_AB_ROOT` to record it
+with another checkout's parser (the merge base's, for the base); `write-f2 OUT` adds `Is ` to the routed
 prefixes (Q1.4b's move). `compare BASE HEAD OUT` classes each difference `verdict`, `class`, `wording` or `lint`.
-`check DELTA` exits 1 on a `verdict` or `lint` row, or a row that is neither R2's rule O1 (`order_o1`) nor keeps R1's
-(a) and (b): every name the base quoted, and a span wherever the base had one.
+`check DELTA` exits 1 on a `lint` row, a `verdict` row other than V1's (`over_limit`), or a `class` or `wording`
+row that is not I1's (`indefinite`), R2's rule O1 (`order_o1`) or L1 (`over_limit`), and does not keep R1's (a) and
+(b): every name the base quoted, and a span wherever the base had one. V1 and I1 are reserved for the DRI (DELTA.md).
 """
 from __future__ import annotations
 
 import json
+import os
 import re
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[4]
+ROOT = Path(os.environ.get("VE_AB_ROOT") or Path(__file__).resolve().parents[4])
 sys.path[:0] = [str(ROOT), str(ROOT / "tests")]
 
 from ve.environment import Environment  # noqa: E402
@@ -68,7 +72,7 @@ def wordings() -> list[str]:
                 "Please click check.", "Prove that atlas is reviewed using these premises.",
                 "Does it follow from these premises that atlas is reviewed?", "Which reading did you mean?",
                 "In this task, you are alice.", "Does atlas click?"]
-    variants = set(polar) | set(modal) | set(controls)
+    variants = set(polar) | set(modal) | set(controls) | {f for w in polar for f in f1_forms(w)} | set(limits())
     for base in ["Is atlas reviewed?", "Is it the case that atlas is reviewed?", "Must alice open the desk?",
                  "Can check.", "Is atlas checked?"]:
         variants |= {base.upper(), base.lower(), base.swapcase()}
@@ -76,6 +80,31 @@ def wordings() -> list[str]:
             variants |= {c + base, base + c, base.replace(" ", c, 1), base.replace(" ", c + c),
                          base.replace("s", c, 1), base.replace("k", c, 1)}
     return sorted(variants)
+
+
+def f1_forms(wording: str) -> list[str]:
+    """`Is <…>?` as F1 with `is` put back at every gap between its words (the F1 counterparts of F2's candidates)."""
+    if not wording.startswith("Is ") or not wording.endswith("?") or wording.startswith(F1):
+        return []
+    words = wording[3:-1].split(" ")
+    if not all(words):
+        return []
+    return [F1 + " ".join(words[:i] + ["is"] + words[i:]) + "?" for i in range(1, len(words) + 1)]
+
+
+def limits() -> list[str]:
+    """F1 below, at and over the question limits (`VE.Question.maxTokens` 300, `maxQuestionBytes` 4096): nested
+    negations (6 tokens each; 49 is the last that fits), and an unknown word or a run of spaces padding the
+    question to 4095, 4096 and 4097 bytes."""
+    bodies = ("atlas is reviewed", "atlas is checked", "a service is reviewed", "therefore atlas is reviewed")
+    nested = [F1 + "it is not the case that " * n + body + "?" for n in (49, 50, 55) for body in bodies]
+    padded = []
+    for size in (4095, 4096, 4097):
+        word = F1 + "atlas is "
+        padded.append(word + "x" * (size - len(word) - 1) + "?")
+        head, tail = F1 + "atlas is", "reviewed?"
+        padded.append(head + " " * (size - len(head) - len(tail)) + tail)
+    return nested + padded
 
 
 def outcome(env, wording: str) -> dict:
@@ -128,23 +157,48 @@ def quoted(text: str) -> set[str]:
 
 
 NOT_ONE = "Write one question that ends with a question mark."
+TOO_LONG = "The question is longer than VE reads. Ask a shorter question."
+INDEFINITE = re.compile(r'VE cannot tell whether "an?" here means every or some\. Ask one of these instead:\n')
+F1 = "Is it the case that "
 
 
 def order_o1(r: dict) -> bool:
-    """R2's rule O1: the head refuses a wording of more than one sentence as not one question (`NotOneQuestion`)."""
+    """R2's rule O1: the head refuses a wording of more than one sentence, or with more than one `?`, as not one
+    question (`NotOneQuestion`) before any of its sentences is lexed."""
     body = r["wording"].removeprefix("Is it the case that ")[:-1]
-    return r["head"]["message"] == NOT_ONE and re.search(r"[.?] ", body) is not None
+    return r["head"]["message"] == NOT_ONE and (re.search(r"[.?] ", body) is not None or r["wording"].count("?") > 1)
+
+
+def over_limit(r: dict) -> bool:
+    """V1 (a `verdict` row, reserved for the DRI) and R2's rule L1 (a `class` row): the head refuses an F1 question
+    over the question limits of bytes or tokens as `QuestionTooLong` before its body is read."""
+    return r["head"].get("message") == TOO_LONG and r["head"]["code"] == "ResourceLimit" and r["wording"] in limits()
+
+
+def indefinite(r: dict) -> bool:
+    """I1 (a `wording` row, reserved for the DRI): the head is the question reader's row 14 (`IndefiniteQuestion`,
+    spec 4.1), which offers the every and the some rephrasings in place of E2's diagnosis; the base's nearest declared
+    wordings are not in it."""
+    return r["class"] == "wording" and INDEFINITE.match(r["head"]["message"]) is not None
+
+
+def keeps(r: dict) -> bool:
+    """R1 (a) and (b): every name the base quoted, and a span wherever the base had one."""
+    shown = {w for q in quoted(r["head"]["message"]) for w in [q, *q.split()]} | set(r["head"]["message"].split())
+    return quoted(r["base"]["message"]) <= shown and ("span" in r["base"]) <= ("span" in r["head"])
 
 
 def check(delta_path: str) -> int:
     rows = json.loads(Path(delta_path).read_text())["rows"]
-    bad = [r for r in rows if r["class"] in ("verdict", "lint") or not order_o1(r) and (
-        not quoted(r["base"]["message"]) <= {w for q in quoted(r["head"]["message"]) for w in [q, *q.split()]}
-        | set(r["head"]["message"].split()) or ("span" in r["base"]) > ("span" in r["head"]))]
+    bad = [r for r in rows if r["class"] == "lint" or not over_limit(r) and not indefinite(r) and (
+        r["class"] == "verdict" or not order_o1(r) and not keeps(r))]
     for r in bad:
         print("fails:", r["class"], r["env"], repr(r["wording"]), r["base"].get("message"), "->",
               r["head"].get("message"))
-    print(json.dumps({"rows": len(rows), "O1": sum(map(order_o1, rows)), "failing": len(bad)}))
+    print(json.dumps({"rows": len(rows), "O1": sum(map(order_o1, rows)),
+                      "V1": sum(over_limit(r) and r["class"] == "verdict" for r in rows),
+                      "L1": sum(over_limit(r) and r["class"] != "verdict" for r in rows),
+                      "I1": sum(map(indefinite, rows)), "failing": len(bad)}))
     return 1 if bad else 0
 
 

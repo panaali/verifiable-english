@@ -12,7 +12,7 @@ import pytest
 from ve import speech_english
 from ve.backends import english_lean, relay
 from ve.english import EnglishVocabulary
-from ve.errors import CheckerUnavailable, VEError
+from ve.errors import CheckerUnavailable, ResourceLimit, VEError
 from ve.speech_english import parse_speech
 
 from test_question_reading import _mutants
@@ -87,6 +87,43 @@ def test_an_f1_refusal_is_leans_text_and_span(calls):
     assert caught.value.lean_question["code"] == "NoDerivation"
     assert str(caught.value).startswith("The question has no reading with the current vocabulary.")
     assert caught.value.span is not None and calls == [SPEECH]
+
+
+def test_an_f1_refusal_carries_leans_rephrasings(calls):
+    """Review q1-4 F2: the refusal is Lean's text and then each rephrasing, the lines `ve ask` prints, never a text
+    that ends at "Ask one of these instead:"."""
+    with pytest.raises(VEError) as caught:
+        parse_speech(ENV, "Is it the case that a service is reviewed?", ENV.speech_acts)
+    answer = caught.value.lean_question
+    assert answer["code"] == "IndefiniteQuestion" and calls == [SPEECH]
+    assert str(caught.value).splitlines() == [
+        'VE cannot tell whether "a" here means every or some. Ask one of these instead:',
+        "Is it the case that every service is reviewed?", "Is it the case that some service is reviewed?"]
+    assert str(caught.value).splitlines() == english_lean.question_lines(answer)
+
+
+NESTED = "Is it the case that " + "it is not the case that " * 49 + "atlas is reviewed?"
+
+
+@pytest.mark.parametrize("wording, read", [
+    (NESTED, True),  # 298 tokens in the body
+    (NESTED.replace("that it", "that it is not the case that it", 1), False),  # 304
+    ("Is it the case that " + "it is not the case that " * 55 + "atlas is reviewed?", False),  # review q1-4 F1
+    ("Is it the case that atlas is" + " " * 4059 + "reviewed?", True),  # 4096 bytes
+    ("Is it the case that atlas is" + " " * 4060 + "reviewed?", False),  # 4097 bytes
+], ids=["tokens-298", "tokens-304", "nested-55", "bytes-4096", "bytes-4097"])
+def test_the_question_limits_are_leans(calls, wording, read):
+    """Review q1-4 F1: an F1 question is read under Lean's question limits (300 tokens, 4,096 bytes); one over them is
+    Lean's `QuestionTooLong`, with Lean's answer riding along, and Python holds no limit of its own. The merge base read
+    the over-limit questions; DELTA.md's V1 reserves that change for the DRI."""
+    if read:
+        assert parse_speech(ENV, wording, ENV.speech_acts)[1] == "question"
+    else:
+        with pytest.raises(ResourceLimit) as caught:
+            parse_speech(ENV, wording, ENV.speech_acts)
+        assert caught.value.lean_question["code"] == "QuestionTooLong"
+        assert str(caught.value) == "The question is longer than VE reads. Ask a shorter question."
+    assert calls == [SPEECH]
 
 
 # ------------------------------------------------------------------ the ModalQuestion refusal
@@ -208,3 +245,31 @@ def test_lean_refuses_a_malformed_caller(caller):
     with pytest.raises(VEError):
         relay.decide_once(english_lean.QUESTION_MODE, {**case("Must check."), "caller": _deep(100)
                                                         if caller == "deep" else caller})
+
+
+# ------------------------------------------------------------------ the lone-surrogate check, both sides (review q1-4 F3)
+
+SURROGATES = ["\ud800", "\udbff", "\udc00", "\udfff"]
+NEAR_SURROGATES = ["\ud7ff", "\ue000", "\ufb01", "\U0001f600", "\U00010000", "\U0010ffff", "\xe9"]
+
+
+@pytest.mark.parametrize("char", SURROGATES + NEAR_SURROGATES)
+@pytest.mark.parametrize("where", ["value", "key", "nested"])
+def test_the_surrogate_check_refuses_exactly_the_surrogates(char, where):
+    value = {"value": {"text": f"a{char}b"}, "key": {f"a{char}": 1}, "nested": {"x": [[1, char]]}}[where]
+    assert english_lean._has_surrogate(value) is (char in SURROGATES)
+
+
+@pytest.mark.parametrize("char", NEAR_SURROGATES)
+@pytest.mark.parametrize("question, caller", [
+    ("Is atlas {} reviewed?", None),
+    ("Is it the case that atlas {} is reviewed?", None),
+    ("Is it the case that atlas {} is reviewed?", SPEECH),
+], ids=["ask-f2", "ask-f1", "speech-f1"])
+def test_a_genuine_answer_quoting_a_character_near_the_surrogates_is_relayed(char, question, caller):
+    """Lean's answer quotes the character back (`Unknown English phrase …`): the relay raises it as Lean's
+    `NoDerivation`, never as `CheckerUnavailable`."""
+    with pytest.raises(VEError) as caught:
+        english_lean.read_question(ENV, question.format(char), words(), {}, caller=caller)
+    assert not isinstance(caught.value, CheckerUnavailable)
+    assert caught.value.lean_question["code"] == "NoDerivation" and char in str(caught.value)
