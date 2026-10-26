@@ -149,7 +149,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Definitions/Bundle.lean` | 471 | 471 | 1–471 | `fc86d51a7f84…` |
 | `lean/VE/EnglishGrammar/Encode.lean` | 765 | 765 | 1–765 | `fcffc0224205…` |
 | `lean/VE/EnglishGrammar/Run.lean` | 735 | 735 | 1–735 | `f9355148f683…` |
-| `lean/VE/Question/Run.lean` | 219 | 219 | 1–219 | `431e6147b032…` |
+| `lean/VE/Question/Run.lean` | 253 | 253 | 1–253 | `19360285da56…` |
 | `lean/VE/Json.lean` | 141 | 141 | 1–141 | `10dcb30ca301…` |
 | `lean/VE/NormDefaults/Admission.lean` | 367 | 367 | 1–367 | `ccd91ae09c60…` |
 | `lean/VE/NormDefaults/Layered.lean` | 469 | 469 | 1–469 | `9c6c0c4beb3d…` |
@@ -203,7 +203,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Ask/PlainWire.lean` | 320 | 320 | 1–320 | `f74464e3946f…` |
 | `lean/VE/Ask/ZeroWire.lean` | 461 | 461 | 1–461 | `9a62220daa1f…` |
 | `lean/VE/Ask/Binding.lean` | 205 | 205 | 1–205 | `d681c27217de…` |
-| `lean/VE/Ask/Run.lean` | 152 | 152 | 1–152 | `fcc0c0d47f68…` |
+| `lean/VE/Ask/Run.lean` | 152 | 152 | 1–152 | `2217292ac0c9…` |
 | `lean/VE/Ask/Lines.lean` | 651 | 651 | 1–651 | `d3f48533dbce…` |
 | `lean/VE/Ask/Render.lean` | 482 | 482 | 1–482 | `c1d8d9cea3d9…` |
 | `lean/VE/Ask/PlainAnswer.lean` | 118 | 118 | 1–118 | `2c2a2a253778…` |
@@ -217,7 +217,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Alternatives/FillWire.lean` | 564 | 564 | 1–564 | `5b736870014d…` |
 | `lean/VE/Calc/Units.lean` | 229 | 229 | 1–229 | `ac0632746b31…` |
 | `lean/VE/Defaults/Wire.lean` | 359 | 359 | 1–359 | `30d728c3724d…` |
-| **total** | | **36,833** | | |
+| **total** | | **36,867** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner
