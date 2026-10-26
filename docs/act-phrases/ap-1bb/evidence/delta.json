@@ -1,0 +1,162 @@
+{
+ "records": 335,
+ "identical": 327,
+ "changed": {
+  "wordings": 3,
+  "display": 1,
+  "loads": 3,
+  "acts": 1
+ },
+ "records_changed": [
+  {
+   "key": "74:norms:norms-elaborate",
+   "why": "wordings",
+   "base": "(the head's row without `wordings`)",
+   "head": {
+    "wordings": {}
+   }
+  },
+  {
+   "key": "210:soft-norms:norms-elaborate",
+   "why": "wordings",
+   "base": "(the head's row without `wordings`)",
+   "head": {
+    "wordings": {}
+   }
+  },
+  {
+   "key": "231:speech-acts:norms-elaborate",
+   "why": "wordings",
+   "base": "(the head's row without `wordings`)",
+   "head": {
+    "wordings": {}
+   }
+  },
+  {
+   "key": "probe:load/A1-A3",
+   "why": "display",
+   "base": {
+    "acts": {
+     "heard": "{0} in full equality to a fair and public hearing by an independent and impartial tribunal in {1}",
+     "paid": "{0} to equal pay for equal work without any discrimination",
+     "protected": "{0} to the protection of the moral and material interests resulting from {1}"
+    },
+    "environment_id": "e341c436b5562bb7c49674c8d8a13a54f43d986983429f84dd4bb91b717e2485",
+    "wordings": {
+     "heard": "{0} has the recorded relation \"heard\" to {1}",
+     "paid": "{0} is paid",
+     "protected": "{0} may to the protection of the moral and material interests resulting from {1}"
+    }
+   },
+   "head": {
+    "acts": {
+     "heard": "{0} in full equality to a fair and public hearing by an independent and impartial tribunal in {1}",
+     "paid": "{0} to equal pay for equal work without any discrimination",
+     "protected": "{0} to the protection of the moral and material interests resulting from {1}"
+    },
+    "environment_id": "e341c436b5562bb7c49674c8d8a13a54f43d986983429f84dd4bb91b717e2485",
+    "wordings": {
+     "heard": "{0} is entitled in full equality to a fair and public hearing by an independent and impartial tribunal in {1}",
+     "paid": "{0} has the right to equal pay for equal work without any discrimination",
+     "protected": "{0} may to the protection of the moral and material interests resulting from {1}"
+    }
+   }
+  },
+  {
+   "key": "probe:load/A19",
+   "why": "loads",
+   "base": {
+    "refused": "CheckerUnavailable: CheckerUnavailable: Lean and Python environment identities differ"
+   },
+   "head": {
+    "acts": {
+     "heard": "{0} in full equality to a fair and public hearing by an independent and impartial tribunal in {1}",
+     "p": "{0} comply with the operator's instructions in {1}",
+     "paid": "{0} to equal pay for equal work without any discrimination",
+     "protected": "{0} to the protection of the moral and material interests resulting from {1}"
+    },
+    "environment_id": "24107e2157804d21182da4c8e60ab5de8fcc9c4d5f7f52fe4690df68b38fccce",
+    "wordings": {
+     "heard": "{0} is entitled in full equality to a fair and public hearing by an independent and impartial tribunal in {1}",
+     "p": "{0} may comply with the operator's instructions in {1}",
+     "paid": "{0} has the right to equal pay for equal work without any discrimination",
+     "protected": "{0} may to the protection of the moral and material interests resulting from {1}"
+    }
+   }
+  },
+  {
+   "key": "probe:row/A19",
+   "why": "acts",
+   "base": {
+    "environment_id": "24107e2157804d21182da4c8e60ab5de8fcc9c4d5f7f52fe4690df68b38fccce",
+    "family": "fol",
+    "id": "environment",
+    "profiles": [
+     "acts@0",
+     "norms@0",
+     "relational-fol@0"
+    ],
+    "status": "ok"
+   },
+   "head": {
+    "acts": {
+     "heard": "{0} in full equality to a fair and public hearing by an independent and impartial tribunal in {1}",
+     "p": "{0} comply with the operator's instructions in {1}",
+     "paid": "{0} to equal pay for equal work without any discrimination",
+     "protected": "{0} to the protection of the moral and material interests resulting from {1}"
+    },
+    "environment_id": "24107e2157804d21182da4c8e60ab5de8fcc9c4d5f7f52fe4690df68b38fccce",
+    "family": "fol",
+    "id": "environment",
+    "profiles": [
+     "acts@0",
+     "norms@0",
+     "relational-fol@0"
+    ],
+    "status": "ok"
+   }
+  },
+  {
+   "key": "probe:read/A19",
+   "why": "loads",
+   "base": {
+    "refused": "CheckerUnavailable: CheckerUnavailable: Lean and Python environment identities differ"
+   },
+   "head": {
+    "result": {
+     "ast": [
+      [
+       "binary",
+       "p",
+       [
+        "const",
+        "alice"
+       ],
+       [
+        "const",
+        "trial"
+       ]
+      ]
+     ],
+     "status": "one"
+    },
+    "status": "ok"
+   }
+  },
+  {
+   "key": "probe:legend/A19",
+   "why": "loads",
+   "base": {
+    "refused": "CheckerUnavailable: CheckerUnavailable: Lean and Python environment identities differ"
+   },
+   "head": {
+    "legend": [
+     "By default, it is not the case that a person is entitled in full equality to a fair and public hearing by an independent and impartial tribunal in an entity of sort \"case\".",
+     "By default, it is not the case that a person has the right to equal pay for equal work without any discrimination.",
+     "By default, a person may to the protection of the moral and material interests resulting from an entity of sort \"case\".",
+     "By default, a person may comply with the operator's instructions in an entity of sort \"case\"."
+    ]
+   }
+  }
+ ]
+}

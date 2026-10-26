@@ -915,7 +915,7 @@ def _schema_fields(surface, engine, seed, case, row):
     if engine == "rust":
         _, fields, _ = df.RUST_ROWS[df.rust_operation(case)]
     elif surface.name == "environment" and engine == "lean":
-        fields = {"environment_id": "string", "profiles": "array", "family": "string"}
+        fields = {"environment_id": "string", "profiles": "array", "family": "string", "acts": "object"}
     elif surface.name == "environment":
         fields = df.LEAN_ROUTE_FIELDS[df.lean_route(seed.root)]
     elif surface.name == "wire":
@@ -1006,7 +1006,8 @@ def test_genuine_rows_pass_their_checks_and_mutated_rows_are_not_answers(built):
 
 
 def test_route_tables_are_the_genuine_rows_fields(built):
-    """Every accepted environment row has the service's three reported fields."""
+    """Every accepted environment row has the service's four reported fields (ap-1bb: `acts`, the canonical act of
+    each regulated predicate)."""
     surface = df.EnvironmentSurface()
     seeds = [s for s in surface.seeds() if df.ROUTES[s.profile].case is not None]
     _, genuine = _genuine(surface, "lean", seeds)
@@ -1016,7 +1017,7 @@ def test_route_tables_are_the_genuine_rows_fields(built):
             seen.setdefault(seed.profile, set(row) - {"id", "status"})
     assert seen
     for route, fields in seen.items():
-        assert fields == {"environment_id", "profiles", "family"}, (route, fields)
+        assert fields == {"environment_id", "profiles", "family", "acts"}, (route, fields)
     from tests.test_wire_contract_corpus import CASES
     wire = df.Wire()
     records = [wire.python(df.Seed("wire", "demo@0", name, root), root) for name, root, _ in CASES]

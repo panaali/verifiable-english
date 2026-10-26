@@ -751,6 +751,25 @@ def test_generated_declarations_are_used_from_lean():
     assert rights.wordings == row["wordings"]
 
 
+@pytest.mark.parametrize("mutant", ["past-arity", "left-out", "zero-padded", "format-spec", "stray-brace"])
+def test_a_generated_wording_whose_slots_are_not_its_predicates_arguments_is_unavailable(monkeypatch, mutant):
+    """ap-1bb review F2, the class across relays: a generated rights predicate's wording is bound by the same check
+    as a plain act's (`relay.slots_bound`): its slots are exactly the predicate's argument positions."""
+    from ve import rights_route
+    from ve.errors import CheckerUnavailable
+    raw = rights_env()
+    units = [right(), life_limitation()]
+    rights = correlate(raw, units)
+    row = deepcopy(rights_route.run_rights_case(rights.env, units, "rights-elaborate"))
+    name, wording = next((k, v) for k, v in row["wordings"].items() if "{1}" in v)
+    row["wordings"][name] = {"past-arity": wording.replace("{1}", "{2}"), "left-out": wording.replace("{1}", "x"),
+                             "zero-padded": wording.replace("{1}", "{01}"),
+                             "format-spec": wording.replace("{1}", "{1!r}"), "stray-brace": wording + " }"}[mutant]
+    monkeypatch.setattr(rights_route, "decide_once", lambda mode, case: row)
+    with pytest.raises(CheckerUnavailable, match="invalid generated wording placeholder"):
+        rights_route.run_rights_case(rights.env, units, "rights-elaborate")
+
+
 def test_rights_row_preserves_source_line_order():
     from ve import rights_route
     raw = rights_env()

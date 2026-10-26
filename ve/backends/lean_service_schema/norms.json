@@ -122,9 +122,13 @@
           },
           "type": "array"
         },
-        "status": {"const": "ok"}
+        "status": {"const": "ok"},
+        "wordings": {
+          "$comment": "Norms.Wire.plainWordings: one wording per plain predicate with an act, by its name.",
+          "$ref": "common.json#/$defs/string_map"
+        }
       },
-      "required": ["id", "status", "order", "background", "premises", "conflict_targets", "fragment"],
+      "required": ["id", "status", "order", "background", "premises", "conflict_targets", "fragment", "wordings"],
       "type": "object"
     },
     "norms-witness": {
