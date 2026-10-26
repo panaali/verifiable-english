@@ -1,4 +1,5 @@
 import VE.Calc.Run
+import VE.Calc.Render
 
 /-! Route cases of the `calc` runner (math-evidence plan ME-2; spec 13.2, 13.3 and 13.6): each case's answer from
 `VE.Calc.Run.runCaseReported`, as `#guard`s that `lake build` evaluates, one per family. -/
@@ -698,6 +699,16 @@ def nonlinear (path : String) : List String := [s!"NonlinearPremise: {path} (dec
   ("premise-ids", says (onX [premise "p1" (xle "1"), premise "p1" (xle "2")] (xle "1") r#"["p1"]"#), ["DuplicateClaimId: p1"]),
   ("premise-name", says (onX [premise "p1" (xle "1"), premise "p2" r#"["le", ["val", "w"], ["lit", "1"]]"#] (xle "1") r#"["p1"]"#),
     ["UnknownName: w (declare it before the value that uses it)"])]
+
+-- J10: R-3's line, each square link two numbered premises after the case's (spec 13.6).
+#guard let words (n : String) : Option String :=
+    [("r", "the velocity ratio"), ("s", "the squared velocity ratio"), ("d", "the displacement")].lookup n
+  match ((Json.parse r3).toOption.bind (Wire.decodeCase · |>.toOption)).map (·.claims) with
+  | some [(_, Check.follows P links C)] => VE.Calc.English.renderFollows words P links C == some
+      ("Assume the following. 1. The displacement equals the product of 0.4 and the squared velocity ratio. " ++
+       "2. The displacement is less than 0.02. 3. The squared velocity ratio equals the square of the velocity ratio. " ++
+       "4. The velocity ratio is at least 0. From these, it follows that the velocity ratio is less than 1 divided by 4.")
+  | _ => false
 
 -- A derivation reading a value that has none is undefined, and one reading an exhausted counted value is unknown at
 -- the budget (2.7), the first fault in the conclusion and then the premises deciding. Counted values reach the wire
