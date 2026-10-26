@@ -1,0 +1,1933 @@
+{
+ "note": "Hand mutants of the review's two classes (me-12a review F1, F2), beyond trust_mutants' operators: every place the",
+ "mutants": [
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a term child read without the values #1",
+   "before": "Term.value E ρ ",
+   "after": "Term.value E [] ",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:102",
+    "Examples.lean:106",
+    "Examples.lean:116",
+    "Examples.lean:132",
+    "Examples.lean:59",
+    "Examples.lean:90",
+    "Examples.lean:99"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a term child read without the values #2",
+   "before": "Term.value E ρ ",
+   "after": "Term.value E [] ",
+   "occurrence": 2,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:90",
+    "Examples.lean:99"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a term child read without the values #3",
+   "before": "Term.value E ρ ",
+   "after": "Term.value E [] ",
+   "occurrence": 3,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:116",
+    "Examples.lean:132",
+    "Examples.lean:28",
+    "Examples.lean:90"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a term child read without the values #4",
+   "before": "Term.value E ρ ",
+   "after": "Term.value E [] ",
+   "occurrence": 4,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:116",
+    "Examples.lean:90"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a term child read without the values #5",
+   "before": "Term.value E ρ ",
+   "after": "Term.value E [] ",
+   "occurrence": 5,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:90"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a term child read without the values #6",
+   "before": "Term.value E ρ ",
+   "after": "Term.value E [] ",
+   "occurrence": 6,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:106",
+    "Examples.lean:132",
+    "Examples.lean:40",
+    "Examples.lean:42",
+    "Examples.lean:78",
+    "Examples.lean:90"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a term child read without the values #7",
+   "before": "Term.value E ρ ",
+   "after": "Term.value E [] ",
+   "occurrence": 7,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:102"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a term child read without the values #8",
+   "before": "Term.value E ρ ",
+   "after": "Term.value E [] ",
+   "occurrence": 8,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:102"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a term child read without the values #9",
+   "before": "Term.value E ρ ",
+   "after": "Term.value E [] ",
+   "occurrence": 9,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:106",
+    "Examples.lean:116",
+    "Examples.lean:40",
+    "Examples.lean:42",
+    "Examples.lean:78"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a term child read without the values #10",
+   "before": "Term.value E ρ ",
+   "after": "Term.value E [] ",
+   "occurrence": 10,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:102",
+    "Examples.lean:106",
+    "Examples.lean:59",
+    "Examples.lean:66",
+    "Examples.lean:70",
+    "Examples.lean:90",
+    "Examples.lean:99"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a term child read without the values #11",
+   "before": "Term.value E ρ ",
+   "after": "Term.value E [] ",
+   "occurrence": 11,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:90",
+    "Examples.lean:99"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a term child read without the values #12",
+   "before": "Term.value E ρ ",
+   "after": "Term.value E [] ",
+   "occurrence": 12,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:106",
+    "Examples.lean:40",
+    "Examples.lean:42",
+    "Examples.lean:57",
+    "Examples.lean:61",
+    "Examples.lean:78",
+    "Examples.lean:90"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a term child read without the values #13",
+   "before": "Term.value E ρ ",
+   "after": "Term.value E [] ",
+   "occurrence": 13,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:106",
+    "Examples.lean:116",
+    "Examples.lean:40",
+    "Examples.lean:42",
+    "Examples.lean:64",
+    "Examples.lean:78",
+    "Examples.lean:90"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a term child read without the values #14",
+   "before": "Term.value E ρ ",
+   "after": "Term.value E [] ",
+   "occurrence": 14,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:102",
+    "Examples.lean:40",
+    "Examples.lean:42",
+    "Examples.lean:90"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a term child read without the values #15",
+   "before": "Term.value E ρ ",
+   "after": "Term.value E [] ",
+   "occurrence": 15,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:102",
+    "Examples.lean:28",
+    "Examples.lean:39",
+    "Examples.lean:40",
+    "Examples.lean:41",
+    "Examples.lean:42",
+    "Examples.lean:57",
+    "Examples.lean:90"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a term child read without the values #16",
+   "before": "Term.value E ρ ",
+   "after": "Term.value E [] ",
+   "occurrence": 16,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:28",
+    "Examples.lean:30",
+    "Examples.lean:90"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a term child read without the values #17",
+   "before": "Term.value E ρ ",
+   "after": "Term.value E [] ",
+   "occurrence": 17,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:28",
+    "Examples.lean:30",
+    "Examples.lean:68",
+    "Examples.lean:90"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a term child read without the values #18",
+   "before": "Term.value E ρ ",
+   "after": "Term.value E [] ",
+   "occurrence": 18,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:99"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a term child read without the values #19",
+   "before": "Term.value E ρ ",
+   "after": "Term.value E [] ",
+   "occurrence": 19,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:99"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a term child read without the values #20",
+   "before": "Term.value E ρ ",
+   "after": "Term.value E [] ",
+   "occurrence": 20,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:132",
+    "Examples.lean:99"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a term child read without the values #21",
+   "before": "Term.value E ρ ",
+   "after": "Term.value E [] ",
+   "occurrence": 21,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:132",
+    "Examples.lean:28",
+    "Examples.lean:99"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "arguments read without the values #1",
+   "before": "Term.values E ρ ",
+   "after": "Term.values E [] ",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:106",
+    "Examples.lean:78"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "arguments read without the values #2",
+   "before": "Term.values E ρ ",
+   "after": "Term.values E [] ",
+   "occurrence": 2,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:106"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "arguments read without the values #3",
+   "before": "Term.values E ρ ",
+   "after": "Term.values E [] ",
+   "occurrence": 3,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:106",
+    "Examples.lean:116",
+    "Examples.lean:40",
+    "Examples.lean:42"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a formula child read without the values #1",
+   "before": "Holds E ρ ",
+   "after": "Holds E [] ",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:28",
+    "Examples.lean:90"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a formula child read without the values #2",
+   "before": "Holds E ρ ",
+   "after": "Holds E [] ",
+   "occurrence": 2,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:102",
+    "Examples.lean:106",
+    "Examples.lean:116",
+    "Examples.lean:28",
+    "Examples.lean:40",
+    "Examples.lean:42",
+    "Examples.lean:90",
+    "Examples.lean:99"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a formula child read without the values #3",
+   "before": "Holds E ρ ",
+   "after": "Holds E [] ",
+   "occurrence": 3,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:102",
+    "Examples.lean:106",
+    "Examples.lean:116",
+    "Examples.lean:28",
+    "Examples.lean:40",
+    "Examples.lean:42",
+    "Examples.lean:90",
+    "Examples.lean:99"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a formula child read without the values #4",
+   "before": "Holds E ρ ",
+   "after": "Holds E [] ",
+   "occurrence": 4,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:57",
+    "Examples.lean:90"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a formula child read without the values #5",
+   "before": "Holds E ρ ",
+   "after": "Holds E [] ",
+   "occurrence": 5,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:57",
+    "Examples.lean:90"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a formula child read without the values #6",
+   "before": "Holds E ρ ",
+   "after": "Holds E [] ",
+   "occurrence": 6,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:39",
+    "Examples.lean:41",
+    "Examples.lean:90"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a formula child read without the values #7",
+   "before": "Holds E ρ ",
+   "after": "Holds E [] ",
+   "occurrence": 7,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:40",
+    "Examples.lean:42",
+    "Examples.lean:90"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a binder drops the outer values ((l + (i : Int)) :: ρ) #1",
+   "before": "((l + (i : Int)) :: ρ)",
+   "after": "[(l + (i : Int))]",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:102"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a binder puts its value last ((l + (i : Int)) :: ρ) #1",
+   "before": "((l + (i : Int)) :: ρ)",
+   "after": "(ρ ++ [(l + (i : Int))])",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:102"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a binder drops the outer values ((n : Int) :: ρ) #1",
+   "before": "((n : Int) :: ρ)",
+   "after": "[(n : Int)]",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:99"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a binder drops the outer values ((n : Int) :: ρ) #2",
+   "before": "((n : Int) :: ρ)",
+   "after": "[(n : Int)]",
+   "occurrence": 2,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:40",
+    "Examples.lean:42",
+    "Examples.lean:99"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a binder puts its value last ((n : Int) :: ρ) #1",
+   "before": "((n : Int) :: ρ)",
+   "after": "(ρ ++ [(n : Int)])",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:39",
+    "Examples.lean:40",
+    "Examples.lean:41",
+    "Examples.lean:42",
+    "Examples.lean:99"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a binder puts its value last ((n : Int) :: ρ) #2",
+   "before": "((n : Int) :: ρ)",
+   "after": "(ρ ++ [(n : Int)])",
+   "occurrence": 2,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:40",
+    "Examples.lean:42",
+    "Examples.lean:99"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a binder drops the outer values (n :: ρ) #1",
+   "before": "(n :: ρ)",
+   "after": "[n]",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:99"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a binder drops the outer values (n :: ρ) #2",
+   "before": "(n :: ρ)",
+   "after": "[n]",
+   "occurrence": 2,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:99"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a binder puts its value last (n :: ρ) #1",
+   "before": "(n :: ρ)",
+   "after": "(ρ ++ [n])",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:99"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a binder puts its value last (n :: ρ) #2",
+   "before": "(n :: ρ)",
+   "after": "(ρ ++ [n])",
+   "occurrence": 2,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:99"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a binder drops the outer values (i :: ρ) #1",
+   "before": "(i :: ρ)",
+   "after": "[i]",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:99"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a binder drops the outer values (i :: ρ) #2",
+   "before": "(i :: ρ)",
+   "after": "[i]",
+   "occurrence": 2,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:28",
+    "Examples.lean:30",
+    "Examples.lean:99"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a binder puts its value last (i :: ρ) #1",
+   "before": "(i :: ρ)",
+   "after": "(ρ ++ [i])",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:99"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a binder puts its value last (i :: ρ) #2",
+   "before": "(i :: ρ)",
+   "after": "(ρ ++ [i])",
+   "occurrence": 2,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:28",
+    "Examples.lean:30",
+    "Examples.lean:99"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a function definition drops the earlier functions #1",
+   "before": "else E.funs g",
+   "after": "else none",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:106",
+    "Examples.lean:116",
+    "Examples.lean:78"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a predicate definition drops the earlier predicates #1",
+   "before": "else E.preds q",
+   "after": "else none",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:116"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a function definition clears the predicates #1",
+   "before": "{ E with funs :=",
+   "after": "{ preds := fun _ => none, funs :=",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:116"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a predicate definition clears the functions #1",
+   "before": "{ E with preds :=",
+   "after": "{ funs := fun _ => none, preds :=",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:106",
+    "Examples.lean:116",
+    "Examples.lean:78"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a body read without the earlier names #1",
+   "before": "Term.value E xs body",
+   "after": "Term.value ⟨fun _ => none, fun _ => none⟩ xs body",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:116",
+    "Examples.lean:78"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a body read without the earlier names #1",
+   "before": "Holds E xs body",
+   "after": "Holds ⟨fun _ => none, fun _ => none⟩ xs body",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:116"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a body reads its arguments reversed #1",
+   "before": "xs body",
+   "after": "xs.reverse body",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:116"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "a body reads its arguments reversed #2",
+   "before": "xs body",
+   "after": "xs.reverse body",
+   "occurrence": 2,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:106",
+    "Examples.lean:78"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a right operand skipped #1",
+   "before": "Term.sites k a ++ Term.sites k b",
+   "after": "Term.sites k a",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:292"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a right operand skipped #2",
+   "before": "Term.sites k a ++ Term.sites k b",
+   "after": "Term.sites k a",
+   "occurrence": 2,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:165",
+    "Examples.lean:166",
+    "Examples.lean:172",
+    "Examples.lean:174",
+    "Examples.lean:290",
+    "Examples.lean:292",
+    "Examples.lean:316"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a left operand skipped #1",
+   "before": "Term.sites k a ++ Term.sites k b",
+   "after": "Term.sites k b",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:292"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a left operand skipped #2",
+   "before": "Term.sites k a ++ Term.sites k b",
+   "after": "Term.sites k b",
+   "occurrence": 2,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:163",
+    "Examples.lean:168",
+    "Examples.lean:292",
+    "Examples.lean:316"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a right formula skipped #1",
+   "before": "Formula.sites k φ ++ Formula.sites k ψ",
+   "after": "Formula.sites k φ",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:290",
+    "Examples.lean:292"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a left formula skipped #1",
+   "before": "Formula.sites k φ ++ Formula.sites k ψ",
+   "after": "Formula.sites k ψ",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:290",
+    "Examples.lean:292"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "under not skipped #1",
+   "before": "  | .not φ => Formula.sites k φ\n",
+   "after": "  | .not _ => []\n",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:290",
+    "Examples.lean:292"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a binder body skipped #1",
+   "before": "Formula.sites (k + 1) φ",
+   "after": "[]",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:290",
+    "Examples.lean:292"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a binder body skipped #2",
+   "before": "Formula.sites (k + 1) φ",
+   "after": "[]",
+   "occurrence": 2,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:290",
+    "Examples.lean:292"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a binder body skipped #3",
+   "before": "Formula.sites (k + 1) φ",
+   "after": "[]",
+   "occurrence": 3,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:166",
+    "Examples.lean:290",
+    "Examples.lean:292"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a binder body read outside its binder #1",
+   "before": "Formula.sites (k + 1) φ",
+   "after": "Formula.sites k φ",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:161",
+    "Examples.lean:162",
+    "Examples.lean:172",
+    "Examples.lean:292"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a binder body read outside its binder #2",
+   "before": "Formula.sites (k + 1) φ",
+   "after": "Formula.sites k φ",
+   "occurrence": 2,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:161",
+    "Examples.lean:172",
+    "Examples.lean:292"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a binder body read outside its binder #3",
+   "before": "Formula.sites (k + 1) φ",
+   "after": "Formula.sites k φ",
+   "occurrence": 3,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:161",
+    "Examples.lean:162",
+    "Examples.lean:166",
+    "Examples.lean:167",
+    "Examples.lean:168",
+    "Examples.lean:171",
+    "Examples.lean:172",
+    "Examples.lean:177"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a binder body read two binders deep #1",
+   "before": "Formula.sites (k + 1) φ",
+   "after": "Formula.sites (k + 2) φ",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:292"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a binder body read two binders deep #2",
+   "before": "Formula.sites (k + 1) φ",
+   "after": "Formula.sites (k + 2) φ",
+   "occurrence": 2,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:292"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a binder body read two binders deep #3",
+   "before": "Formula.sites (k + 1) φ",
+   "after": "Formula.sites (k + 2) φ",
+   "occurrence": 3,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:166",
+    "Examples.lean:292"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a range or count lo skipped #1",
+   "before": "Term.sites k lo ++ ",
+   "after": "",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:292"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a range or count lo skipped #2",
+   "before": "Term.sites k lo ++ ",
+   "after": "",
+   "occurrence": 2,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:292"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a range or count hi skipped #1",
+   "before": "Term.sites k hi ++ ",
+   "after": "",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:292"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a range or count hi skipped #2",
+   "before": "Term.sites k hi ++ ",
+   "after": "",
+   "occurrence": 2,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:292"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a range or count lo read inside its binder #1",
+   "before": "Term.sites k lo",
+   "after": "Term.sites (k + 1) lo",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:292"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a range or count lo read inside its binder #2",
+   "before": "Term.sites k lo",
+   "after": "Term.sites (k + 1) lo",
+   "occurrence": 2,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:292"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a range or count hi read inside its binder #1",
+   "before": "Term.sites k hi",
+   "after": "Term.sites (k + 1) hi",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:292"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a range or count hi read inside its binder #2",
+   "before": "Term.sites k hi",
+   "after": "Term.sites (k + 1) hi",
+   "occurrence": 2,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:292"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a count condition not checked #1",
+   "before": ".count φ :: ",
+   "after": "",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:172",
+    "Examples.lean:174",
+    "Examples.lean:290",
+    "Examples.lean:292",
+    "Examples.lean:316"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "call arguments skipped #1",
+   "before": "args.length :: Term.sitesList k args",
+   "after": "args.length :: []",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:292"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "call arguments skipped #2",
+   "before": "args.length :: Term.sitesList k args",
+   "after": "args.length :: []",
+   "occurrence": 2,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:177",
+    "Examples.lean:292"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a call counts one argument #1",
+   "before": "args.length ::",
+   "after": "1 ::",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:292",
+    "Examples.lean:321"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a call counts one argument #2",
+   "before": "args.length ::",
+   "after": "1 ::",
+   "occurrence": 2,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:163",
+    "Examples.lean:171",
+    "Examples.lean:290",
+    "Examples.lean:292",
+    "Examples.lean:316",
+    "Examples.lean:321"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "arguments after the first skipped #1",
+   "before": "  | t :: ts => Term.sites k t ++ Term.sitesList k ts\n",
+   "after": "  | t :: _ => Term.sites k t\n",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:292"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "the first outer variable taken as bound #1",
+   "before": "if k ≤ i then [.free (i - k)]",
+   "after": "if k < i then [.free (i - k)]",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:166",
+    "Examples.lean:177",
+    "Examples.lean:292",
+    "Examples.lean:316"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "an unscoped variable counted from the statement #1",
+   "before": "[.free (i - k)]",
+   "after": "[.free i]",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:161",
+    "Examples.lean:162",
+    "Examples.lean:166",
+    "Examples.lean:167",
+    "Examples.lean:168",
+    "Examples.lean:171",
+    "Examples.lean:172",
+    "Examples.lean:177"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a variable one past the parameters admitted #1",
+   "before": "if j < depth then none",
+   "after": "if j ≤ depth then none",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:163",
+    "Examples.lean:165",
+    "Examples.lean:166",
+    "Examples.lean:177",
+    "Examples.lean:292",
+    "Examples.lean:316"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "the kind of a call ignored #1",
+   "before": "d.name == f && d.isPred == pred",
+   "after": "d.name == f",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:168",
+    "Examples.lean:290",
+    "Examples.lean:292"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "the kind of a call ignored #2",
+   "before": "d.name == f && d.isPred == pred",
+   "after": "d.name == f",
+   "occurrence": 2,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:321"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a later definition callable #1",
+   "before": "match earlier.find?",
+   "after": "match D.find?",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:163",
+    "Examples.lean:169",
+    "Examples.lean:170",
+    "Examples.lean:290",
+    "Examples.lean:292",
+    "Examples.lean:316"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "extra arguments admitted #1",
+   "before": "if d.arity = argc",
+   "after": "if d.arity ≤ argc",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:171",
+    "Examples.lean:290",
+    "Examples.lean:292"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "missing arguments admitted #1",
+   "before": "if d.arity = argc",
+   "after": "if argc ≤ d.arity",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:163",
+    "Examples.lean:290",
+    "Examples.lean:292",
+    "Examples.lean:316",
+    "Examples.lean:321"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a count condition admitted unbounded #1",
+   "before": "if Formula.bnd B φ then none else some .unboundedCount",
+   "after": "none",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:172",
+    "Examples.lean:174",
+    "Examples.lean:290",
+    "Examples.lean:292",
+    "Examples.lean:316"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a name across kinds not a duplicate #1",
+   "before": "(D.take k).any (·.name == d.name)",
+   "after": "(D.take k).any (fun e => e.name == d.name && e.isPred == d.isPred)",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:316",
+    "Examples.lean:324"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a duplicate of the first definition missed #1",
+   "before": "(D.take k).any (·.name == d.name)",
+   "after": "((D.take k).drop 1).any (·.name == d.name)",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:176",
+    "Examples.lean:316",
+    "Examples.lean:324"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a body without its parameters #1",
+   "before": "s.refusal D (D.take k) n",
+   "after": "s.refusal D (D.take k) 0",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:161",
+    "Examples.lean:162",
+    "Examples.lean:165",
+    "Examples.lean:167",
+    "Examples.lean:168",
+    "Examples.lean:169",
+    "Examples.lean:170",
+    "Examples.lean:171"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a body with one parameter too many #1",
+   "before": "s.refusal D (D.take k) n",
+   "after": "s.refusal D (D.take k) (n + 1)",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:165",
+    "Examples.lean:292",
+    "Examples.lean:316"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a body may call itself #1",
+   "before": "s.refusal D (D.take k) n",
+   "after": "s.refusal D (D.take (k + 1)) n",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:163",
+    "Examples.lean:169",
+    "Examples.lean:290",
+    "Examples.lean:292",
+    "Examples.lean:316"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a statement with one value in scope #1",
+   "before": "Site.refusal D D 0 (some D.boundedNames)",
+   "after": "Site.refusal D D 1 (some D.boundedNames)",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:166",
+    "Examples.lean:177",
+    "Examples.lean:292",
+    "Examples.lean:316"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a statement count not checked #1",
+   "before": "Site.refusal D D 0 (some D.boundedNames)",
+   "after": "Site.refusal D D 0 none",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:172",
+    "Examples.lean:290",
+    "Examples.lean:292",
+    "Examples.lean:316"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "rank 0 becomes 1 #1",
+   "before": "  | .duplicateName _ => 0\n",
+   "after": "  | .duplicateName _ => 1\n",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:318"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "rank 1 becomes 2 #1",
+   "before": "  | .unscopedVariable _ => 1\n",
+   "after": "  | .unscopedVariable _ => 2\n",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:177",
+    "Examples.lean:316",
+    "Examples.lean:318"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "rank 2 becomes 3 #1",
+   "before": "  | .unknownDefinition _ => 2\n",
+   "after": "  | .unknownDefinition _ => 3\n",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:316",
+    "Examples.lean:318"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "rank 3 becomes 4 #1",
+   "before": "  | .recursiveDefinition _ => 3\n",
+   "after": "  | .recursiveDefinition _ => 4\n",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:316",
+    "Examples.lean:318"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "rank 4 becomes 5 #1",
+   "before": "  | .arityMismatch .. => 4\n",
+   "after": "  | .arityMismatch .. => 5\n",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:290",
+    "Examples.lean:292",
+    "Examples.lean:316",
+    "Examples.lean:318"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "rank 0 becomes 5 #1",
+   "before": "  | .duplicateName _ => 0\n",
+   "after": "  | .duplicateName _ => 5\n",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:316",
+    "Examples.lean:318"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "the last refusal of the lowest rank #1",
+   "before": "best.all (r.rank < ·.rank)",
+   "after": "best.all (r.rank ≤ ·.rank)",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:324"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "the first refusal whatever its rank #1",
+   "before": "best.all (r.rank < ·.rank)",
+   "after": "best.isNone",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:177",
+    "Examples.lean:178",
+    "Examples.lean:290",
+    "Examples.lean:292",
+    "Examples.lean:316",
+    "Examples.lean:318"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness skips a right term #1",
+   "before": "Term.bnd B a && Term.bnd B b",
+   "after": "Term.bnd B a",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness skips a right term #2",
+   "before": "Term.bnd B a && Term.bnd B b",
+   "after": "Term.bnd B a",
+   "occurrence": 2,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness skips a right term #3",
+   "before": "Term.bnd B a && Term.bnd B b",
+   "after": "Term.bnd B a",
+   "occurrence": 3,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness skips a right term #4",
+   "before": "Term.bnd B a && Term.bnd B b",
+   "after": "Term.bnd B a",
+   "occurrence": 4,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness skips a right term #5",
+   "before": "Term.bnd B a && Term.bnd B b",
+   "after": "Term.bnd B a",
+   "occurrence": 5,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness skips a right term #6",
+   "before": "Term.bnd B a && Term.bnd B b",
+   "after": "Term.bnd B a",
+   "occurrence": 6,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:156",
+    "Examples.lean:298",
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness skips a right term #7",
+   "before": "Term.bnd B a && Term.bnd B b",
+   "after": "Term.bnd B a",
+   "occurrence": 7,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness skips a left term #1",
+   "before": "Term.bnd B a && Term.bnd B b",
+   "after": "Term.bnd B b",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness skips a left term #2",
+   "before": "Term.bnd B a && Term.bnd B b",
+   "after": "Term.bnd B b",
+   "occurrence": 2,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:156",
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness skips a left term #3",
+   "before": "Term.bnd B a && Term.bnd B b",
+   "after": "Term.bnd B b",
+   "occurrence": 3,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness skips a left term #4",
+   "before": "Term.bnd B a && Term.bnd B b",
+   "after": "Term.bnd B b",
+   "occurrence": 4,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness skips a left term #5",
+   "before": "Term.bnd B a && Term.bnd B b",
+   "after": "Term.bnd B b",
+   "occurrence": 5,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness skips a left term #6",
+   "before": "Term.bnd B a && Term.bnd B b",
+   "after": "Term.bnd B b",
+   "occurrence": 6,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness skips a left term #7",
+   "before": "Term.bnd B a && Term.bnd B b",
+   "after": "Term.bnd B b",
+   "occurrence": 7,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness skips a right formula #1",
+   "before": "Formula.bnd B φ && Formula.bnd B ψ",
+   "after": "Formula.bnd B φ",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:290",
+    "Examples.lean:292",
+    "Examples.lean:298",
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness skips a right formula #2",
+   "before": "Formula.bnd B φ && Formula.bnd B ψ",
+   "after": "Formula.bnd B φ",
+   "occurrence": 2,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:290",
+    "Examples.lean:292",
+    "Examples.lean:298",
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness skips a right formula #3",
+   "before": "Formula.bnd B φ && Formula.bnd B ψ",
+   "after": "Formula.bnd B φ",
+   "occurrence": 3,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:290",
+    "Examples.lean:292",
+    "Examples.lean:298",
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness skips a left formula #1",
+   "before": "Formula.bnd B φ && Formula.bnd B ψ",
+   "after": "Formula.bnd B ψ",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:290",
+    "Examples.lean:292",
+    "Examples.lean:298",
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness skips a left formula #2",
+   "before": "Formula.bnd B φ && Formula.bnd B ψ",
+   "after": "Formula.bnd B ψ",
+   "occurrence": 2,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:290",
+    "Examples.lean:292",
+    "Examples.lean:298",
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness skips a left formula #3",
+   "before": "Formula.bnd B φ && Formula.bnd B ψ",
+   "after": "Formula.bnd B ψ",
+   "occurrence": 3,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:290",
+    "Examples.lean:292",
+    "Examples.lean:298",
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness skips under not #1",
+   "before": "  | .not φ => Formula.bnd B φ\n",
+   "after": "  | .not _ => true\n",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:290",
+    "Examples.lean:292",
+    "Examples.lean:298",
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness skips lo #1",
+   "before": "Term.bnd B lo && Term.bnd B hi && Formula.bnd B φ",
+   "after": "Term.bnd B hi && Formula.bnd B φ",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness skips lo #2",
+   "before": "Term.bnd B lo && Term.bnd B hi && Formula.bnd B φ",
+   "after": "Term.bnd B hi && Formula.bnd B φ",
+   "occurrence": 2,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness skips lo #3",
+   "before": "Term.bnd B lo && Term.bnd B hi && Formula.bnd B φ",
+   "after": "Term.bnd B hi && Formula.bnd B φ",
+   "occurrence": 3,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness skips hi #1",
+   "before": "Term.bnd B lo && Term.bnd B hi && Formula.bnd B φ",
+   "after": "Term.bnd B lo && Formula.bnd B φ",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness skips hi #2",
+   "before": "Term.bnd B lo && Term.bnd B hi && Formula.bnd B φ",
+   "after": "Term.bnd B lo && Formula.bnd B φ",
+   "occurrence": 2,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness skips hi #3",
+   "before": "Term.bnd B lo && Term.bnd B hi && Formula.bnd B φ",
+   "after": "Term.bnd B lo && Formula.bnd B φ",
+   "occurrence": 3,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness skips a body #1",
+   "before": "Term.bnd B lo && Term.bnd B hi && Formula.bnd B φ",
+   "after": "Term.bnd B lo && Term.bnd B hi",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:156",
+    "Examples.lean:298",
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness skips a body #2",
+   "before": "Term.bnd B lo && Term.bnd B hi && Formula.bnd B φ",
+   "after": "Term.bnd B lo && Term.bnd B hi",
+   "occurrence": 2,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:156",
+    "Examples.lean:290",
+    "Examples.lean:292",
+    "Examples.lean:298",
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness skips a body #3",
+   "before": "Term.bnd B lo && Term.bnd B hi && Formula.bnd B φ",
+   "after": "Term.bnd B lo && Term.bnd B hi",
+   "occurrence": 3,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:290",
+    "Examples.lean:292",
+    "Examples.lean:298",
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "allNat counted as bounded #1",
+   "before": "  | .allNat _ => false",
+   "after": "  | .allNat _ => true",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:155",
+    "Examples.lean:290",
+    "Examples.lean:292",
+    "Examples.lean:298",
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "exNat counted as bounded #1",
+   "before": "  | .exNat _ => false",
+   "after": "  | .exNat _ => true",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:156",
+    "Examples.lean:172",
+    "Examples.lean:290",
+    "Examples.lean:292",
+    "Examples.lean:298",
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "allInt counted as bounded #1",
+   "before": "  | .allInt _ => false",
+   "after": "  | .allInt _ => true",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:158",
+    "Examples.lean:174",
+    "Examples.lean:290",
+    "Examples.lean:292",
+    "Examples.lean:298",
+    "Examples.lean:300",
+    "Examples.lean:316"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "exInt counted as bounded #1",
+   "before": "  | .exInt _ => false",
+   "after": "  | .exInt _ => true",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:290",
+    "Examples.lean:292",
+    "Examples.lean:298",
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness ignores the function called #1",
+   "before": "B f && Term.bndList B args",
+   "after": "Term.bndList B args",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:156",
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness ignores the predicate called #1",
+   "before": "B p && Term.bndList B args",
+   "after": "Term.bndList B args",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:158",
+    "Examples.lean:290",
+    "Examples.lean:292",
+    "Examples.lean:298",
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness skips function arguments #1",
+   "before": "B f && Term.bndList B args",
+   "after": "B f",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness skips predicate arguments #1",
+   "before": "B p && Term.bndList B args",
+   "after": "B p",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "boundedness skips later arguments #1",
+   "before": "  | t :: ts => Term.bnd B t && Term.bndList B ts\n",
+   "after": "  | t :: _ => Term.bnd B t\n",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a function definition forgets earlier bounds #1",
+   "before": "then Term.bnd B body else B g",
+   "after": "then Term.bnd B body else false",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:155",
+    "Examples.lean:161",
+    "Examples.lean:162",
+    "Examples.lean:290",
+    "Examples.lean:292",
+    "Examples.lean:298",
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a predicate definition forgets earlier bounds #1",
+   "before": "then Formula.bnd B body else B q",
+   "after": "then Formula.bnd B body else false",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:290",
+    "Examples.lean:292",
+    "Examples.lean:298",
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a function counted bounded whatever its body #1",
+   "before": "then Term.bnd B body else B g",
+   "after": "then true else B g",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:156",
+    "Examples.lean:300"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "a predicate counted bounded whatever its body #1",
+   "before": "then Formula.bnd B body else B q",
+   "after": "then true else B q",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:158",
+    "Examples.lean:290",
+    "Examples.lean:292",
+    "Examples.lean:298",
+    "Examples.lean:300"
+   ]
+  }
+ ],
+ "survived": 0
+}
