@@ -1,0 +1,10 @@
+{"allow": [
+ {"definition": "VE.Service.Document.check", "operator": "bool-flip", "reason": "the default `withGraph := true` is never read: its one caller, checkCore, passes withGraph; sc-1b only moved the line"},
+ {"definition": "VE.Scope.decodeReach", "operator": "list-empty", "reason": "a match pattern replaced by [] does not elaborate (its bound name is unknown); no well-typed list-empty site"},
+ {"definition": "VE.Scope.decodeReach", "operator": "arm-default", "reason": "the match replaced by its default arm does not elaborate (type mismatch)"},
+ {"definition": "VE.Scope.decodeEffect", "operator": "list-empty", "reason": "a match pattern replaced by [] does not elaborate (its bound name is unknown)"},
+ {"definition": "VE.Scope.listMember", "operator": "list-empty", "reason": "the members list replaced by [] does not elaborate (the expected type of `.arr` is unknown)"},
+ {"definition": "VE.Scope.decodeParts", "operator": "list-empty", "reason": "the members replaced by [] do not elaborate (the expected type of `.str` is unknown)"},
+ {"definition": "VE.Scope.decodeBlock", "operator": "list-empty", "reason": "an Except value replaced by [] does not elaborate (type mismatch, function expected)"},
+ {"definition": "VE.Service.Document.scopeReadings", "operator": "append-right", "reason": "dropping the left operand of ++ leaves a predicate where a list is expected (application type mismatch)"}
+]}

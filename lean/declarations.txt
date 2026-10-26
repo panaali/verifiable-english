@@ -17870,7 +17870,7 @@ module VE.Scope.Wire 618b837c4a7fc2398c732805ff271357fd1def4719dc33697e6e3d3fb86
 120:0-122:81 def VE.Scope.changers@VE.Scope.Wire
 124:0-132:39 def VE.Scope.byStatus@VE.Scope.Wire
 134:0-152:104 def VE.Scope.foldGovernors@VE.Scope.Wire
-module VE.Scope.WireExamples 7dbbbb485ac6233b6813d41d670475ec28fef61beef2738d975c0bf45f0dcb00
+module VE.Scope.WireExamples e68d2079b53590af927869f52999ef52e3574ea17131ada2df7cdf33b1861160
 10:0-10:80 def VE.Scope.WireExamples.st@VE.Scope.WireExamples
 11:0-13:17 def VE.Scope.WireExamples.errorOf@VE.Scope.WireExamples
 28:0-30:34 def VE.Scope.WireExamples.gov@VE.Scope.WireExamples
@@ -18436,7 +18436,7 @@ module VE.Service.ActsExamples fdf5b96a6fd341642fa3f14877eb58520735cf323ddde0bfa
 module VE.Service.Diagnose 0913297b59dc00e6821619a9df029ade52518172aed644518bdc48e13174622b
 13:0-25:61 def VE.Service.Diagnose.diagnoseCase@VE.Service.Diagnose
 27:0-32:29 theorem VE.Service.Diagnose.diagnoseCase_registered@VE.Service.Diagnose
-module VE.Service.Document bf323997a60c6f298a462d9dcf1611beefe6fd293f929406c87ba8415db1cb84
+module VE.Service.Document d2a6aa0e34024fe86fcf8ad6f4f08576fc566d31da6bf70ebe6dca3468ee9975
 47:0-47:74 def VE.Service.Document.unavailable@VE.Service.Document
 49:0-54:84 def VE.Service.Document.ownedProfiles@VE.Service.Document
 56:0-60:28 inductive VE.Service.Document.RightsKind@VE.Service.Document
@@ -18641,7 +18641,7 @@ module VE.Service.Document bf323997a60c6f298a462d9dcf1611beefe6fd293f929406c87ba
 1748:0-1758:115 def VE.Service.Document.checkCore@VE.Service.Document
 1768:0-1771:92 def VE.Service.Document.profilesOf@VE.Service.Document
 1773:0-1774:84 def VE.Service.Document.withUnits@VE.Service.Document
-1776:0-1780:127 def VE.Service.Document.scopeReadings@VE.Service.Document
+1776:0-1780:86 def VE.Service.Document.scopeReadings@VE.Service.Document
 1782:0-1787:73 def VE.Scope.decodeScope@VE.Service.Document
 1789:0-1797:18 def VE.Service.Document.checkDoc@VE.Service.Document
 1801:0-1822:13 def VE.Service.Document.locatedModel@VE.Service.Document
