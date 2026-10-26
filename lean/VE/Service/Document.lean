@@ -9,6 +9,7 @@ import VE.Senses.Run
 import VE.Attribution.Preflight
 import VE.Rights.Run
 import VE.Limits
+import VE.Scope.Wire
 
 /-! # The `document` service mode: the `ve-document@1` wrapper (docs/LEAN-FIRST-PLAN.md, row 16a)
 
@@ -93,6 +94,10 @@ def listedProfiles (environment : Json) : List String :=
 /-- The lower norms environment on which the readings route builds each free document. -/
 def lowerReadings (environment : Json) : Json :=
   environment.setObjVal! "profiles" (toJson ((listedProfiles environment).filter (· != "readings@1")))
+
+/-- The environment the chain reads under `scope@0`, a wrapper at step 1b (scope 1.1): without it. -/
+def lowerScope (environment : Json) : Json :=
+  environment.setObjVal! "profiles" (toJson ((listedProfiles environment).filter (· != "scope@0")))
 
 /-- A value as the restricted Lean wire reads it from Python (`_wire` in `ve/rights_route.py` and
 `ve/backends/soft_relay.py`): an object member whose value is `null` is absent. -/
@@ -353,8 +358,10 @@ def split (t : String) (senses : Bool := false) : Except String Loader.Split := 
     throw (unavailable "a ve-document@2 document is admitted by the discourse route")
   if !senses && (fm.getObjVal? "senses").isOk then
     throw (unavailable "a document with senses is read by the Lean senses route")
-  let _ ← Loader.checkMetadata Loader.documentMetadata fm
   let listed := listedProfiles (fm.getObjValD "environment")
+  -- The `scope` block is front matter of a `scope@0` document only (scope 3).
+  let _ ← Loader.checkMetadata (fun f => Loader.documentMetadata f ++ if listed.contains "scope@0" then ["scope"] else [])
+    fm
   if (fm.getObjVal? "couplings").isOk && !(listed.contains "rights@0" || listed.contains "readings@1") then
     throw "UnsupportedProfile: rights@0 is required for couplings"
   if (fm.getObjVal? "completions").isOk && !listed.contains "norm-defaults@0" then
@@ -1658,10 +1665,15 @@ structure Checked where
 
 /-- `withGraph := false` is `load_document` alone: everything but `_report`'s claim-graph part (its reading checks, W2
 admission and the narrowing choices), which `check_document` adds (batch 16b). -/
-def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := none) (packs : Option Json := none) :
-    Except String Checked := do
+def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := none) (packs : Option Json := none)
+    (governed : Option Json := none) : Except String Checked := do
   let doc ← split text (senses := true)
-  let front := doc.front
+  -- A `scope@0` document's governed units (`withUnits`), read on the environment without the wrapper (scope 1.1).
+  let front := match governed with
+    | some us => if (listedProfiles (doc.front.getObjValD "environment")).contains "scope@0" then
+        (doc.front.setObjVal! "units" us).setObjVal! "environment" (lowerScope (doc.front.getObjValD "environment"))
+      else doc.front
+    | none => doc.front
   if doc.source.isEmpty then throw "document source is empty"
   let environment := front.getObjValD "environment"
   unless environment matches .obj _ do throw "document needs an embedded environment"
@@ -1733,8 +1745,9 @@ def encode (id : String) (c : Checked) : Json :=
     ("source", .str c.source), ("units", toJson (c.rows.map unitJson)),
     ("coverage", coverageJson c.front c.units c.source.utf8ByteSize c.block)]
 
-/-- A case `{"id", "document"}`, with `"admit": false` for `load_document` alone. -/
-def documentCase (j : Json) : Except String Json := do
+/-- A case `{"id", "document"}`, with `"admit": false` for `load_document` alone: the entry without scope's branch
+(scope 8.1). -/
+def checkCore (j : Json) : Except String Json := do
   let id ← stringField j "id"
   let text ← stringField j "document"
   let withGraph ← match j.getObjVal? "admit" with
@@ -1742,7 +1755,46 @@ def documentCase (j : Json) : Except String Json := do
     | .ok _ => throw "InvalidInput: admit must be a boolean"
     | .error _ => pure true
   let lexicon := (j.getObjVal? "lexicon").toOption
-  pure (encode id (← check text withGraph lexicon (j.getObjVal? "packs").toOption))
+  pure (encode id (← check text withGraph lexicon (j.getObjVal? "packs").toOption (j.getObjVal? "units").toOption))
+
+/-! ## `scope@0` (docs/spec/scope.md 1.1, 1.6, 5.2 and 8.1; SC-1b)
+
+A document listing `scope@0` is governed before the chain: `checkDoc` gates its profiles by the profile table,
+decodes its `scope` block (`VE.Scope.decodeScope`), runs the run path `VE.Scope.governFast`, answers the case with
+the governed units (`withUnits`) on the environment without `scope@0`, and folds each governor unit's status
+(`VE.Scope.foldGovernors`). Its identities are the document's as written: the block and the parts are in its
+`document_id`. A document without `scope@0` is `checkCore`'s, as before (`scope_absent_unchanged`). -/
+
+/-- The profiles a case's document lists; none when its front matter does not read. -/
+def profilesOf (j : Json) : List String :=
+  (do let (front, _) ← Loader.frontText (← (j.getObjValD "document").getStr?)
+      pure (listedProfiles ((← frontJson front).getObjValD "environment"))).toOption.getD []
+
+/-- The case with GOVERN's units, which `check` reads in place of the front matter's under `scope@0`. -/
+def withUnits (j out : Json) : Json := j.setObjVal! "units" (out.getObjValD "units")
+
+/-- The chain's decoding environment the scope block reads (scope 8.1): the readings decoder's, `readings@1` listed. -/
+def scopeReadings (environment : Json) : Except String VE.Readings.Wire.ReadingsEnvironment :=
+  let ps := listedProfiles (lowerScope environment)
+  VE.Readings.Wire.decodeEnvironment (environment.setObjVal! "profiles" (toJson
+    (ps.filter (· < "readings@1") ++ ["readings@1"] ++ ps.filter ("readings@1" < ·))))
+
+/-- The scope block of a case's document, after its environment, as the chain reads it, is admitted. -/
+def _root_.VE.Scope.decodeScope (j : Json) : Except String VE.Scope.SDoc := do
+  let doc ← split (← stringField j "document") (senses := true)
+  let environment := doc.front.getObjValD "environment"
+  let _ ← environmentOf (lowerScope environment) (senses := (doc.front.getObjVal? "senses").isOk)
+  VE.Scope.decodeBlock doc.front doc.source (← scopeReadings environment)
+
+/-- The document mode's entry. -/
+def checkDoc (j : Json) : Except String Json :=
+  if "scope@0" ∈ profilesOf j then do
+    let _ ← VE.Compose.gateOf VE.Compose.profileTable (profilesOf j)
+    let D ← VE.Scope.decodeScope j
+    let out ← VE.Scope.governFast D
+    let a ← checkCore (withUnits j out)
+    pure (VE.Scope.foldGovernors D a)
+  else checkCore j
 
 /-! ## A distinguishing model's located diagnostic (batch 16f) -/
 
@@ -1832,7 +1884,7 @@ def locatedRow (j : Json) (message : String) (at_ : Located) : Json :=
   | .none => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message)]
 
 def runCaseReported (j : Json) : Json :=
-  match documentCase j with
+  match checkDoc j with
   | .ok result => result
   | .error message =>
     match locatedOf j message with
