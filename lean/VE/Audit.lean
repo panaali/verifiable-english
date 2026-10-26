@@ -18,6 +18,7 @@ import VE.Alternatives.Route
 import VE.Alternatives.Run
 import VE.Alternatives.Validate
 import VE.Alternatives.Wire
+import VE.Arith.Examples
 import VE.Ask.Binding
 import VE.Ask.Groups
 import VE.Ask.Lines
@@ -677,6 +678,8 @@ import VE.WireContract.Engine
 #print axioms VE.Alternatives.wf_preds
 #print axioms VE.Alternatives.withDefinitions_relation_some
 #print axioms VE.Alternatives.zip_all_target
+#print axioms VE.Arith.Examples.bertrand_means_iff
+#print axioms VE.Arith.Examples.primeBody_iff
 #print axioms VE.Ask.Answer.groups_view
 #print axioms VE.Ask.Asked.hbind
 #print axioms VE.Ask.Asked.hnames

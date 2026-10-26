@@ -8,11 +8,11 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 |---|---:|
 | leaves:bound | 248 |
 | leaves:closed domain | 264 |
-| leaves:none | 1340 |
+| leaves:none | 1344 |
 | modes | 38 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 939 |
+| today:not probed | 943 |
 | today:shape | 512 |
 | today:unbound | 137 |
 | answers | 560 |
@@ -262,6 +262,8 @@ Delegates: `/` to route.
 | `/target` | string | bound | x-equals |  | 2 | shape |
 | `/targets/*` | string | none |  |  | 15 | hand: `ve/norms.py:_bound_targets` |
 | `/verdict` | string | closed domain | enum |  | 7 | shape |
+| `/wordings/@key` | key | none |  |  | 0 | not probed |
+| `/wordings/{}` | string | none |  |  | 0 | not probed |
 
 | grammar at | grammar | bound whole by | observed |
 |---|---|---|---:|
@@ -350,6 +352,8 @@ Delegates: `/` to route.
 
 | leaf | kind | class | keyword | format | observed | bound today |
 |---|---|---|---|---|---:|---|
+| `/acts/@key` | key | none |  |  | 0 | not probed |
+| `/acts/{}` | string | none |  |  | 0 | not probed |
 | `/case_index` | integer | bound | x-index |  | 1 | shape |
 | `/environment_id` | string | none |  | pattern | 6 | hand: `ve/backends/validation.py:construct_after_lean` |
 | `/error` | string | none |  | minLength | 6 | not probed |
