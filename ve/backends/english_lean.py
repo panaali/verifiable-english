@@ -124,6 +124,17 @@ def _has_null(value) -> bool:
     return False
 
 
+def _has_surrogate(value) -> bool:
+    """A string anywhere in `value` that no UTF-8 text holds (a lone surrogate), so Lean never wrote it."""
+    if type(value) is str:
+        return any("\ud800" <= c <= "\udfff" for c in value)
+    if type(value) is dict:
+        return any(_has_surrogate(k) or _has_surrogate(item) for k, item in value.items())
+    if type(value) is list:
+        return any(_has_surrogate(item) for item in value)
+    return False
+
+
 def _span(value, source: str) -> bool:
     return (type(value) is list and len(value) == 2 and all(_nat(x) for x in value)
             and value[0] <= value[1] <= len(source))
@@ -397,6 +408,8 @@ def question_problem(response, expected: dict, env, question: str, caller: str |
         return "the response is not an object"
     if _has_null(response):
         return "the response has a null"
+    if _has_surrogate(response):
+        return "the response has a lone surrogate"
     found = response.get("identities")
     want = {**expected, "question_version": QUESTION_VERSION}
     if type(found) is not dict or found.keys() != want.keys() or \
