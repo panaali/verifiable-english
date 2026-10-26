@@ -5,7 +5,7 @@ Base: `git merge-base HEAD main` (`ba2532a22`). ap-1bb is the rest of batch AP-1
 left; what this item does not deliver is named in [REPORT.md](REPORT.md) section 6.
 
 **Everything else: no change.** Each checkout recorded its own answers with its own client ([delta.py](delta.py)
-`--record`): the 330 cases of `tests/data/route-cases.jsonl` (13 modes) through its service, and two probes that load
+`--answers`): the 330 cases of `tests/data/route-cases.jsonl` (13 modes) through its service, and two probes that load
 `acts@0` environments through Python. 327 of the 332 records are identical; the five that change are the rows below
 ([evidence/delta.json](evidence/delta.json); `--compare` exits 1 on any other difference, head against head, and on
 empty input). No theorem statement changed (`lean/statements.txt` is unchanged).
