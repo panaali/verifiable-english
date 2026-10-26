@@ -133,8 +133,9 @@ A19 = "{0} comply with the operator’s instructions in {1}"
 
 def test_an_act_with_a_curly_apostrophe_has_leans_identity():
     """ap-1bb (ap-1b deviation 4): Lean's canonical act folds U+2019 (A19), so the environment's identity is the one
-    Lean computed from its canonical environment, the same as for the act written with U+0027; Python computes none,
-    keeps the act as written, and the norms route checks a document over it."""
+    Lean computed from its canonical environment, the same as for the act written with U+0027. Python stores the
+    canonical act the environment row gives (F1), so the two are one environment, and the norms route checks a
+    document over it."""
     from ve.norms import NormDocument, check_conflict
     from tests.test_norms import rule
     curly = Environment(environment(p=predicate(["person", "case"], {"role": "permission", "default": "allow",
@@ -142,8 +143,103 @@ def test_an_act_with_a_curly_apostrophe_has_leans_identity():
     straight = Environment(environment(p=predicate(["person", "case"], {"role": "permission", "default": "allow",
                                                                         "act": A19.replace("’", "'")})))
     assert curly.environment_id == straight.environment_id
-    assert curly.predicates["p"].regulated.act == A19
+    assert curly.to_dict() == straight.to_dict()
+    assert curly.predicates["p"].regulated.act == A19.replace("’", "'")
     assert check_conflict(NormDocument(curly, [rule("m", "p", True)]), prove=True).status == "CONFLICT-FREE"
+
+
+def _spelled(act, fresh):
+    """An `acts@0` environment with the permission `p` of `act` and a predicate named `fresh`, so that no cache of
+    this process has seen its identity yet."""
+    return environment(p=predicate(["person", "case"], {"role": "permission", "default": "allow", "act": act}),
+                       **{fresh: {"arguments": ["person"], "description": "d"}})
+
+
+@pytest.mark.parametrize("first", ["curly", "straight"])
+def test_one_identity_is_one_environment_whichever_loads_first(first):
+    """ap-1bb review F1 (its probe, in both orders): every cache keyed by an environment's identity (the lexicon,
+    the encoded request, the definitions, the accepted rows) answers for the environment that has it. Two spellings
+    Lean reads as one act have one identity, so Python builds one environment of them: the same `to_dict()`, the
+    same request bytes and the same lexicon and legend, whichever was loaded first in the process."""
+    from ve import words
+    from ve.environment_wire import encoded_environment
+    from ve.norm_defaults_english import legend
+    spellings = {"curly": A19, "straight": A19.replace("’", "'")}
+    order = [first] + [k for k in spellings if k != first]
+    envs = {k: Environment(_spelled(spellings[k], f"fresh_{first}")) for k in order}
+    lexicons = {k: words.lexicon(envs[k]) for k in order}
+    legends = {k: legend(envs[k]) for k in order}
+    encoded = {k: encoded_environment(envs[k], "lean-norms", envs[k].to_dict).text for k in order}
+    assert envs["curly"].environment_id == envs["straight"].environment_id
+    assert envs["curly"].to_dict() == envs["straight"].to_dict()
+    assert lexicons["curly"] == lexicons["straight"] and "’" not in json.dumps(lexicons, ensure_ascii=False)
+    assert legends["curly"] == legends["straight"]
+    assert encoded["curly"] == encoded["straight"]
+
+
+def _environment_row(data):
+    from ve.backends.relay import decide
+    return decide("environment", [{"id": "environment", "environment": data}])[0]
+
+
+def _acts_mutants(acts):
+    """One-fault mutants of a genuine row's `acts`: a name dropped, undeclared, a declared predicate without an
+    act, renamed, the map emptied, an act changed (another canonical act, the act as written) and the member
+    deleted."""
+    yield "dropped", {k: v for k, v in acts.items() if k != "p"}
+    yield "undeclared", {**acts, "absent": acts["p"]}
+    yield "no-act", {**acts, "plain_fact": acts["p"]}
+    yield "renamed", {("p2" if k == "p" else k): v for k, v in acts.items()}
+    yield "empty", {}
+    yield "changed", {**acts, "p": acts["protected"]}
+    yield "as-written", {**acts, "p": A19}
+    yield "deleted", None
+
+
+@pytest.mark.parametrize("mutant", ["dropped", "undeclared", "no-act", "renamed", "empty", "changed", "as-written",
+                                    "deleted"])
+def test_acts_not_bound_to_the_request_are_unavailable(monkeypatch, mutant):
+    """ap-1bb F1, R8: the environment row's `acts` name exactly the request's regulated acts, and the environment
+    Python builds with them must have the row's identity; every one-fault mutant of a genuine row is
+    `CheckerUnavailable`, never an environment that another identity names."""
+    from ve.backends import relay, validation
+    from ve.errors import CheckerUnavailable
+    data = _spelled(A19, "plain_fact")
+    row = _environment_row(data)
+    assert set(row["acts"]) == {"heard", "paid", "protected", "p"}
+    acts = dict(_acts_mutants(row["acts"]))[mutant]
+    mutated = {k: v for k, v in row.items() if k != "acts"} | ({} if acts is None else {"acts": acts})
+    monkeypatch.setattr(validation, "_ACCEPTED", {})
+    monkeypatch.setattr(relay, "decide", lambda mode, cases, **kw: [mutated])
+    with pytest.raises(CheckerUnavailable):
+        Environment(data)
+
+
+@pytest.mark.parametrize("value", [None, True, 7, "7", [], ["x"], {"p": 7}, {"p": None}, {"p": []}, {"p": {}},
+                                   {"p": "\ud800"}, "deep", "deleted"])
+def test_a_retyped_acts_field_fails_the_schema(value):
+    """The environment row's `acts` is typed by the generated schema (`string_map`): the genuine exchange passes,
+    and every retype, sent as bytes through the service's decoder, is refused before Python builds anything."""
+    from tests.lean_build import lean_build
+    from tests.subprocesses import HANG_TIMEOUT
+    from ve.backends.lean_service import LeanService, _decode_json, case_digest, case_texts
+    from ve.backends.service_schema import Invalid, check_response
+    cases = [{"id": "environment", "environment": _spelled(A19, "plain_fact")}]
+    text = json.dumps(cases, ensure_ascii=False, separators=(",", ":"))
+    with LeanService(lean_build("ve_service") / "ve_service", timeout=HANG_TIMEOUT) as service:
+        _, response = service.exchange("environment", text, 1, timeout=HANG_TIMEOUT)
+    request = {"id": response["id"], "mode": "environment", "cases": cases,
+               "digests": [case_digest(t) for t in case_texts(text)], "bytes": len(text.encode())}
+    check_response("environment", _decode_json(json.dumps(response).encode()), request)
+    assert response["results"][0]["result"]["acts"]["p"] == A19.replace("’", "'")
+    mutant = copy.deepcopy(response)
+    if value == "deleted":
+        del mutant["results"][0]["result"]["acts"]
+    else:
+        mutant["results"][0]["result"]["acts"] = "DEEP" if value == "deep" else value
+    line = json.dumps(mutant).replace('"DEEP"', "[" * 10_000 + "]" * 10_000).encode()
+    with pytest.raises((Invalid, ValueError)):
+        check_response("environment", _decode_json(line), request)
 
 
 UNSORTED = [["norms@0", "acts@0", "relational-fol@0"], ["acts@0", "acts@0", "norms@0", "relational-fol@0"],
@@ -278,18 +374,31 @@ def test_the_wording_is_the_one_lean_relays(monkeypatch):
 
 def _rebound(wordings):
     """Binding mutants of a genuine `wordings` map: each name dropped, an undeclared name and a declared
-    predicate that is no plain act added, a name renamed, and the map emptied."""
+    predicate that is no plain act added, a name renamed, and the map emptied; and (review F2) the slots of a
+    wording, which name the predicate's argument positions: one pushed past the arity, one left out, one written
+    `{01}`, one with a format spec, a stray brace, and a slot `{1}` in a unary predicate's wording."""
     yield "dropped", {k: v for k, v in wordings.items() if k != "paid"}
     yield "undeclared", {**wordings, "absent": A2_WORDING}
     yield "extra-row", {**wordings, "protected": A2_WORDING}
     yield "renamed", {("heard2" if k == "heard" else k): v for k, v in wordings.items()}
     yield "empty", {}
+    yield "slot-past-arity", {**wordings, "heard": wordings["heard"].replace("{1}", "{2}")}
+    yield "slot-left-out", {**wordings, "heard": wordings["heard"].replace(" in {1}", "")}
+    yield "slot-zero-padded", {**wordings, "heard": wordings["heard"].replace("{1}", "{01}")}
+    yield "slot-format-spec", {**wordings, "heard": wordings["heard"].replace("{1}", "{1:x}")}
+    yield "stray-brace", {**wordings, "paid": wordings["paid"] + " {"}
+    yield "slot-in-unary", {**wordings, "paid": wordings["paid"] + " in {1}"}
 
 
-@pytest.mark.parametrize("mutant", ["dropped", "undeclared", "extra-row", "renamed", "empty", "field-dropped"])
+REBOUND = ["dropped", "undeclared", "extra-row", "renamed", "empty", "slot-past-arity", "slot-left-out",
+           "slot-zero-padded", "slot-format-spec", "stray-brace", "slot-in-unary"]
+
+
+@pytest.mark.parametrize("mutant", REBOUND + ["field-dropped"])
 def test_wordings_not_bound_to_the_request_are_unavailable(monkeypatch, mutant):
-    """R8: the names of `wordings` are exactly the request's plain acts, on both readers (the display's
-    `plain_wordings` and the document's `norms-elaborate` row)."""
+    """R8: the names of `wordings` are exactly the request's plain acts, and the slots of each wording exactly its
+    predicate's argument positions (`relay.slots_bound`), on both readers (the display's `plain_wordings` and the
+    document's `norms-elaborate` row)."""
     from ve.backends import relay
     from ve.errors import CheckerUnavailable
     from ve.norms import NormDocument, plain_wordings
@@ -358,3 +467,16 @@ def test_an_environment_without_a_plain_act_asks_lean_nothing_to_display(monkeyp
     monkeypatch.setattr(relay, "decide_once", lambda mode, case: pytest.fail("asked"))
     monkeypatch.setattr(relay, "decide", lambda mode, cases, **kw: pytest.fail("asked"))
     assert EnglishVocabulary(env).predicates["protected"] == A3.replace("{0} ", "{0} may ", 1)
+
+
+@pytest.mark.parametrize("template, arity, bound", [
+    ("{0} sees {1}", 2, True), ("{1} is seen by {0}", 2, True), ("{0} is", 1, True), ("it rains", 0, True),
+    ("{0} sees {2}", 2, False), ("{0} sees", 2, False), ("{0} sees {01}", 2, False), ("{0} sees {1:x}", 2, False),
+    ("{0} sees {1!r}", 2, False), ("{0} sees { 1}", 2, False), ("{0} sees {1} }", 2, False),
+    ("{0} sees {{1}}", 2, False), ("{0} sees {١}", 2, False), ("{0} sees {-1}", 2, False),
+    ("{0} sees {" + "9" * 5000 + "}", 2, False), (None, 1, False), (7, 1, False)])
+def test_slots_bound_is_the_one_slot_binding_of_every_relayed_wording(template, arity, bound):
+    """review F2: `relay.slots_bound` (used by the norms and rights relays) admits a template exactly when its braces
+    are slots `{i}` as `EnglishVocabulary.atom` replaces them and those slots are the arity's positions."""
+    from ve.backends.relay import slots_bound
+    assert slots_bound(template, arity) is bound

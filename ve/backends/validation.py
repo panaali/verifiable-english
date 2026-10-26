@@ -63,7 +63,7 @@ def _remember(key: tuple, row=True) -> None:
 
 
 def construct_after_lean(decode: Callable[[dict], object], cache: tuple | None,
-                         ask: Callable[[], dict], identity: Callable[[object, dict], bool] | None, what: str,
+                         ask: Callable[[], dict], identity: Callable[[object, dict], bool], what: str,
                          bind: Callable[[object, dict], object] | None = None):
     """Ask Lean first, then construct only the accepted environment or model from Lean's row."""
     row = _ACCEPTED.get(cache) if cache is not None else None
@@ -73,7 +73,7 @@ def construct_after_lean(decode: Callable[[dict], object], cache: tuple | None,
         built = decode(row)
     except Exception as exc:
         raise CheckerUnavailable(f"CheckerUnavailable: Python could not construct a Lean-accepted {what}") from exc
-    if identity is not None and not identity(built, row):
+    if not identity(built, row):
         raise CheckerUnavailable(f"CheckerUnavailable: Lean and Python {what} identities differ")
     if bind is not None:
         built = bind(built, row)
@@ -82,10 +82,11 @@ def construct_after_lean(decode: Callable[[dict], object], cache: tuple | None,
     return built
 
 
-def validated_environment(env, data, decode: Callable[[str], object]):
-    """`decode(environment_id)` builds `env` from `data` with the identity Lean computed from its canonical
-    environment (act-phrases 3.3, where an act's canonical form is Lean's); Python computes none. Lean decides
-    its validity."""
+def validated_environment(env, data, decode: Callable[[dict | None], object]):
+    """`decode(acts)` builds `env` from `data` with the canonical act of each regulated predicate that Lean's
+    environment row gives (act-phrases 3.3, where an act's canonical form is Lean's); Lean decides its validity.
+    The row's `environment_id` must be the identity of what Python built (R8): one identity, one environment, so
+    every cache keyed by it is keyed by the environment (ap-1bb F1)."""
     from .relay import decide
     # Restricted JSON is a wire primitive. Check the environment value itself
     # before wrapping it in a service case, so an offset names the same bytes
@@ -95,9 +96,9 @@ def validated_environment(env, data, decode: Callable[[str], object]):
         cache = key("environment", data)
     except (VEError, TypeError, ValueError, RecursionError):
         cache = None
-    return construct_after_lean(lambda row: decode(row["environment_id"]), cache,
+    return construct_after_lean(lambda row: decode(row.get("acts")), cache,
                                 lambda: decide("environment", [{"id": "environment", "environment": data}])[0],
-                                None, "environment")
+                                lambda built, row: row["environment_id"] == built.environment_id, "environment")
 
 
 def validated_model(env, wire, decode: Callable[[], object], *, claimed: dict | None = None):

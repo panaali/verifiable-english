@@ -207,13 +207,15 @@ def test_lean_names_a_rejection_both_checkers_make(monkeypatch):
         Environment(raw)
 
 
-def test_the_environment_identity_is_the_one_lean_computed(monkeypatch):
-    """ap-1bb: Python computes no environment identity; it takes the one Lean computed from its canonical
-    environment (act-phrases 3.3), and the definitions it compiles are keyed by it."""
+def test_lean_acceptance_with_wrong_identity_is_unavailable(monkeypatch):
+    """ap-1bb F1: the row's identity must be the one of the environment Python built (one identity, one
+    environment), so a row naming another identity is no answer."""
     raw = pm.raw_environment(())
+    raw["vocabulary"]["predicates"]["base"]["arguments"] = ["absent"]
     fake_lean(monkeypatch, lambda mode, case: {"id": "environment", "status": "ok",
-                                               "environment_id": "0" * 64})
-    assert Environment(raw).environment_id == "0" * 64
+                                               "environment_id": "0" * 64, "acts": {}})
+    with pytest.raises(CheckerUnavailable, match="identities differ"):
+        Environment(raw)
 
 
 def test_lean_acceptance_of_an_unconstructible_source_is_unavailable(monkeypatch):
@@ -225,12 +227,17 @@ def test_lean_acceptance_of_an_unconstructible_source_is_unavailable(monkeypatch
         Environment(raw)
 
 
-def test_acceptance_and_its_identity_are_cached(monkeypatch):
+def test_identity_mismatch_is_unavailable_and_acceptance_is_cached(monkeypatch):
     raw = pm.raw_environment(())
+    identity = Environment(raw).environment_id
     calls = fake_lean(monkeypatch, lambda mode, case: {"id": "environment", "status": "ok",
-                                                       "environment_id": "1" * 64})
-    assert Environment(raw).environment_id == "1" * 64
-    assert Environment(raw).environment_id == "1" * 64
+                                                       "environment_id": "0" * 64, "acts": {}})
+    with pytest.raises(CheckerUnavailable, match="identities differ"):
+        Environment(raw)
+    calls = fake_lean(monkeypatch, lambda mode, case: {"id": "environment", "status": "ok",
+                                                       "environment_id": identity, "acts": {}})
+    Environment(raw)
+    Environment(raw)
     assert calls == ["environment"]
 
 
