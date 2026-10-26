@@ -71,7 +71,6 @@ def regBody (D : Doc) (r : Regulated) (_ : PUnit.{1}) : Except String (ForInStep
     if (r.sorts.length == 1 || r.sorts.length == 2) = true then
       if r.sorts.all D.E.sorts.contains = true then
         match r.role, r.act with
-        | .plain, some _ => throw s!"InvalidInput: invalid regulated fields for {r.name}"
         | .permission, none => throw s!"InvalidInput: invalid regulated fields for {r.name}"
         | .obligation, none => throw s!"InvalidInput: invalid regulated fields for {r.name}"
         | _, _ =>
@@ -156,7 +155,6 @@ theorem check_eq (D : Doc) : check D = checkSteps D := rfl
 /-- The role, act and dual fields of a regulated declaration (3.1). -/
 def fieldsOK (r : Regulated) : Bool :=
   match r.role, r.act with
-  | .plain, some _ => false
   | .permission, none => false
   | .obligation, none => false
   | _, _ => !(r.role != .obligation && r.permission.isSome)
