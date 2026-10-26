@@ -1,0 +1,8 @@
+exit 1
+trust_mutants: 2 definitions, 4 mutants (4 to run), 4 jobs, base 6454946a5f54
+SURVIVOR lean/VE/Calc/Identity.lean:129 VE.Calc.identityDecide (C) append-left: ++ b'.names -> 
+SURVIVOR lean/VE/Calc/Identity.lean:130 VE.Calc.identityDecide (C) lit-minus: 13 -> 12
+SURVIVOR lean/VE/Calc/Identity.lean:62 VE.Calc.Expr.zeroDivisor (C) or-and: || -> &&
+SURVIVOR lean/VE/Calc/Identity.lean:63 VE.Calc.Expr.zeroDivisor (C) or-and: || -> &&
+trust_mutants: 0 KILLED, 4 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 60 s
+trust_mutants: C: 4 SURVIVOR

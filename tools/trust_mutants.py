@@ -49,11 +49,21 @@ FILE lists the definition and operator with a reason ({"allow": [{"definition": 
 2: cannot run. Builder and reviewer evidence only: no gate, merge train or nightly reads it.
 
 --rescore PREV.json (speed-tmrescore): every --json records `inputs`, digests of the bytes every verdict is computed
-from (`inputs`), and each mutant's status before --allow (`raw_status`). When PREV's `inputs` are this run's, its
-KILLED, INVALID and SURVIVOR verdicts are the same by construction and are reused (`reused_from: <PREV head>`); only
-its UNKNOWN mutants (a build past its time limit among them) and the NOT RUN that now fit --max-mutants run, and the
-current --allow applies to all. With no mutant to run there is no build. Else (no `inputs`, other ones, a file it
-cannot read) it is a full run, and one line says why. The JSON gains `rescore: {file, head, reused, rerun}`.
+from (`inputs`, with each file's own in `files`), each mutant's status before --allow (`raw_status`), and for each
+KILLED and INVALID one what it reads (`reads`, `killed_at`: `Reads`). When PREV's mutants are this plan's and
+- its `inputs` are this run's (mode "identical"): its KILLED, INVALID and SURVIVOR verdicts are the same by
+  construction and are reused (`reused_from: <PREV head>`); only its UNKNOWN mutants (a build past its time limit
+  among them) and the NOT RUN that now fit --max-mutants run;
+- or only checks changed (mode "checks", speed-tmchecks): the tool, base and options are the same, and every file
+  that changed is a module of lean/ outside every selected declaration's file and import closure, an outside --test
+  file or a generated inventory (`check_only`). Then a KILLED or INVALID verdict (before --allow) whose reads read
+  the same (`Reads.carry`) is carried (`reused_from`, `carried: "checks"`); every other mutant runs (a SURVIVOR,
+  UNKNOWN or ALLOWED one: a new check may kill it, and a KILLED one whose killing check, or what it reads, changed).
+  A carried KILLED stands on its unchanged check's refutation: a new check that the mutant would make fail some
+  other way (no refutation: UNKNOWN in a full run) is not looked for. That is why reviewers run without --rescore.
+The current --allow applies to all. With no mutant to run there is no build. Else (no `inputs`, no per-file digests
+for a change, any other change, a file it cannot read) it is a full run, and one line says why. The JSON gains
+`rescore: {file, head, mode, changed, reused, rerun}`.
 """
 from __future__ import annotations
 
@@ -160,6 +170,9 @@ class Mutant:
     edit: tuple[int, str] = (0, "")  # what `run` writes: text[start:edit[0]] -> edit[1] (`relined`)
     raw_status: str = "NOT RUN"  # the status before --allow, which --rescore reads
     reused_from: str = ""  # the head of the --rescore run whose verdict this is
+    carried: str = ""  # "checks" when --rescore carried it across a check-only change (`Reads.carry`)
+    reads: str = ""  # a KILLED or INVALID verdict's digest of what it reads (`Reads.verdict`)
+    killed_at: tuple[int, int] | None = None  # a KILLED verdict's killing check (first, last line)
 
 
 def group(t: str, i: int, step: int = 1) -> int:
@@ -1062,54 +1075,192 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
 
 
 REUSED = ("KILLED", "INVALID", "SURVIVOR")  # the verdicts --rescore reuses: no other depends on Lean's time
+OVERALL = ("tool", "lean", "tests", "base", "options")  # `inputs`' digests; "files" holds the per-file ones
+# the generated inventories of lean/ a check-only change regenerates: no Lean module reads them
+INVENTORIES = {"lean/declarations.txt", "lean/statements.txt", "lean/predicates.txt", "lean/axioms.txt"}
 
 
-def inputs(root: Path, base: str, tests: list[str], outside: list[Path], deep: bool) -> dict[str, str]:
+def sha(*parts: str) -> str:
+    return hashlib.sha256("\0".join(parts).encode()).hexdigest()
+
+
+class Reads:
+    """What a KILLED or INVALID verdict reads of one checkout, as digests (speed-tmrerun's rule.py, measured there
+    and in docs/speed/tmchecks): `verdict` writes them on a mutant, `carry` compares them with PREV's.
+    - INVALID reads the lines before the mutated declaration in its file and its module's import closure (`scope`);
+    - KILLED reads those, and its killing check (the file:line in its detail) with the lines before it in its file
+      and that file's import closure (`check`). A check moved by lines added above it keeps its kill.
+    Of each file every line counts as written (comments and docstrings too: a `#guard_msgs` reads its docstring;
+    blank lines dropped, so a line moved by an insertion above it reads the same) but the lines of a theorem,
+    `example` or check command (`classify`: check or proof) with no attribute and a name no counted line names:
+    nothing elaborated after them reads them. That is how a check appended before the killing one leaves it read
+    the same."""
+
+    def __init__(self, root: Path, tree: Tree, outside: list[Path]):
+        self.tree, self.memo = tree, {}
+        self.roles = {**tree.roles, **{str(t): file_roles(t) for t in outside}}
+        self.texts = {**{f: (root / "lean" / f).read_text() for f in tree.files.values()},
+                      **{str(t): t.read_text() for t in outside}}
+        codes = {f: code_only(text).split("\n") for f, text in self.texts.items()}
+        # file -> line -> the name of the theorem, `example` or check command on it with no attribute
+        self.loose: dict[str, dict[int, str | None]] = {
+            f: {n: name for s, e, r, name in self.roles.get(f, ()) if r != "other" and "@[" not in "\n".join(
+                code[s - 1:e]) for n in range(s, e + 1)} for f, code in codes.items()}
+        named = {w for f, code in codes.items() for n, line in enumerate(code, 1) if n not in self.loose[f]
+                 for w in re.findall(r"[^\W\d][\w']*", line)}
+        for lines in self.loose.values():
+            for n in [n for n, name in lines.items() if name and name.rpartition(".")[2] in named]:
+                del lines[n]
+
+    def kept(self, f: str, before: int) -> str:
+        """The digest of the lines of `f` before line `before` that count."""
+        if (f, before) not in self.memo:
+            self.memo[f, before] = sha(*(line.rstrip() for n, line in enumerate(
+                self.texts[f].split("\n")[:before - 1], 1) if line.strip() and n not in self.loose[f]))
+        return self.memo[f, before]
+
+    def imported(self, f: str) -> set[str]:
+        """The files of lean/ that `f` imports, transitively."""
+        seen, todo = set(), [f]
+        while todo:
+            new = {self.tree.files[x] for x in imports(self.texts[todo.pop()]) if x in self.tree.files} - seen
+            seen |= new
+            todo += new
+        return seen
+
+    def closure(self, f: str) -> str:
+        """The digest of every module of lean/ that `f` imports, transitively, as its lines count."""
+        if f not in self.memo:
+            self.memo[f] = sha(*(f"{x} {self.kept(x, 1 << 30)}" for x in sorted(self.imported(f))))
+        return self.memo[f]
+
+    def scope(self, m: Mutant) -> str:
+        return sha(self.kept(m.file, m.lines[0]), self.closure(m.file))
+
+    def check(self, m: Mutant, f: str, first: int, last: int) -> str:
+        return sha(self.scope(m), "\n".join(self.texts[f].split("\n")[first - 1:last]), self.kept(f, first),
+                   self.closure(f))
+
+    def killer(self, detail: str) -> tuple[str, int] | None:
+        """The file and line of the check a KILLED detail cites (`settle`)."""
+        if not (at := re.match(r"(\S+?\.lean):(\d+): ", detail)):
+            return None
+        f = at[1].removeprefix("lean/") if at[1].removeprefix("lean/") in self.tree.roles else at[1]
+        return (f, int(at[2])) if f in self.texts else None
+
+    def verdict(self, m: Mutant) -> None:
+        """m.reads (and m.killed_at) for a KILLED or INVALID verdict before --allow: what `carry` compares."""
+        m.reads, m.killed_at = "", None
+        if m.raw_status == "INVALID":
+            m.reads = self.scope(m)
+        elif m.raw_status == "KILLED" and (at := self.killer(m.detail)):
+            if span := next(((s, e) for s, e, r, _ in self.roles.get(at[0], ()) if r == "check" and s <= at[1] <= e),
+                            None):
+                m.reads, m.killed_at = self.check(m, at[0], *span), span
+
+    def carry(self, m: Mutant, p: dict, built: list[str]) -> tuple[str, str] | None:
+        """PREV's KILLED or INVALID verdict `p` on m (status before --allow, detail, reads, killed_at) when what it
+        reads reads the same here, its killing check moved to where it now is; else None (m runs: any other status
+        too). A kill's check must still be one m's build reads (`built`: `targets`)."""
+        if p["status"] == "INVALID" and p["reads"] == self.scope(m):
+            return "INVALID", p["detail"]
+        if p["status"] != "KILLED" or not p["reads"] or not p["killed_at"] or not (at := self.killer(p["detail"])):
+            return None
+        (f, n), (s0, e0) = at, p["killed_at"]
+        if f in self.tree.roles and module_name(f) not in built:
+            return None
+        for s, e, *_ in sorted((x for x in self.roles.get(f, ()) if x[2] == "check" and x[1] - x[0] == e0 - s0),
+                               key=lambda x: abs(x[0] - s0)):
+            if self.check(m, f, s, e) == p["reads"]:
+                return "KILLED", re.sub(r"(?<=\.lean:)\d+", str(n - s0 + s), p["detail"], count=1)
+        return None
+
+
+def inputs(root: Path, base: str, tests: list[str], outside: list[Path], deep: bool) -> dict:
     """What every verdict is computed from, as sha256 digests of bytes, which --rescore compares: the tool's own
     source (with the modules of this repository it imports); every file of lean/ that `Scratch` copies (the sources,
-    lakefile, toolchain, manifest and the compiled lists `plan` reads), with trust_map's table and .gitignore; the
-    outside --test files; the base commit; and the options --deep and --test. --max-mutants is not one: it picks
-    which mutants run, never a verdict, so a larger one runs only the mutants that now fit."""
-    def digest(files: list[tuple[str, Path]]) -> str:
+    lakefile, toolchain, manifest and the compiled lists `plan` reads; no `__pycache__`, which Lean never reads and
+    differs between machines: speed-tmrescore review F1), with trust_map's table and .gitignore; the outside --test
+    files; the base commit; and the options --deep and --test. --max-mutants is not one: it picks which mutants
+    run, never a verdict, so a larger one runs only the mutants that now fit. `files` holds each file's digest (the
+    lean/ ones, the table, .gitignore and the outside --test files), so a later run can tell which files changed."""
+    files: dict[str, str] = {}
+
+    def digest(named: list[tuple[str, Path]], each: bool = True) -> str:
         h = hashlib.sha256()
-        for name, path in sorted(files):
+        for name, path in sorted(named):
             data = os.readlink(path).encode() if path.is_symlink() else path.read_bytes() if path.is_file() else b""
             h.update(f"{name}\0{len(data)}\0".encode() + data)
+            if each:
+                files[name] = hashlib.sha256(data).hexdigest()
         return h.hexdigest()
     tool = {Path(f).resolve() for m in list(sys.modules.values()) if isinstance(f := getattr(m, "__file__", None), str)}
     lean = []
     for top, dirs, names in os.walk(root / "lean"):
-        dirs[:] = [d for d in dirs if d not in (".lake", ".cache")]
+        dirs[:] = [d for d in dirs if d not in (".lake", ".cache", "__pycache__")]
         lean += [Path(top, n) for n in names + [d for d in dirs if Path(top, d).is_symlink()]]
     named = [(Path(os.path.relpath(p, root)).as_posix(), p) for p in outside]
     return {"tool": digest([(p.relative_to(ROOT).as_posix(), p) for p in tool if p.is_relative_to(ROOT / "tools")
-                            or p.is_relative_to(ROOT / "lean")]),
+                            or p.is_relative_to(ROOT / "lean")], False),
             "lean": digest([(p.relative_to(root).as_posix(), p) for p in [
                 *lean, root / "tools/trust-classes.json", root / ".gitignore"]]),
             "tests": digest(named), "base": base,
-            "options": json.dumps({"deep": deep, "test": sorted(tests) + [n for n, _ in named]})}
+            "options": json.dumps({"deep": deep, "test": sorted(tests) + [n for n, _ in named]}), "files": files}
 
 
-def previous(path: Path, now: dict[str, str], found: list[Mutant]) -> tuple[str, dict[str, tuple[str, str]]] | str:
-    """--rescore PREV: its head and, by mutant id, the verdict (status before --allow, detail) of each mutant it ran
-    when its `inputs` are `now` and its mutants are `found`; else why not (a full run)."""
+def reach(reads: Reads, found: list[Mutant]) -> set[str]:
+    """Every selected declaration's file and the files of lean/ it imports, transitively."""
+    return {x for f in {m.file for m in found} for x in {f, *reads.imported(f)}}
+
+
+def check_only(changed: list[str], reach: set[str], tests: set[str]) -> str | None:
+    """Why the files that `changed` (root-relative) are no check-only change, else None: each must be a module of
+    lean/ outside `reach` (every selected declaration's file and import closure), an outside --test file (`tests`)
+    or a generated inventory (`INVENTORIES`). A lakefile, toolchain, trust_map's table or any other file is none."""
+    for name in changed:
+        if name in tests or name in INVENTORIES:
+            continue
+        if not (name.startswith("lean/") and name.endswith(".lean")):
+            return f"{name} is no module of lean/, --test file or generated inventory"
+        if name.removeprefix("lean/") in reach:
+            return f"{name} is a selected declaration's file or in its import closure"
+    return None
+
+
+def previous(path: Path, now: dict, found: list[Mutant], why_not) -> tuple[str, str, dict[str, dict], list[str]] | str:
+    """--rescore PREV: (mode, its head, by mutant id its verdict {status before --allow, detail, reads, killed_at},
+    the files that changed) when its mutants are `found` and its `inputs` are `now` (mode "identical"), or differ
+    only in files `why_not` finds no reason in (mode "checks": the tool, base and options the same, and PREV records
+    per-file digests); else why not (a full run)."""
     try:
         data = json.loads(path.read_text())
         if not isinstance(data, dict) or "inputs" not in data:
             return "it records no inputs"
-        if data["inputs"] != now:
-            which = [k for k in now if not isinstance(data["inputs"], dict) or data["inputs"].get(k) != now[k]]
-            return f"its inputs differ ({', '.join(which) or 'keys'})"
+        old, changed = data["inputs"], []
+        if not isinstance(old, dict):
+            return "its inputs differ (keys)"
+        if differ := [k for k in OVERALL if old.get(k) != now[k]]:
+            if fixed := [k for k in differ if k in ("tool", "base", "options")]:
+                return f"its inputs differ ({', '.join(fixed)})"
+            if not isinstance(old.get("files"), dict):
+                return f"its inputs differ ({', '.join(differ)}) and it records no per-file digests"
+            changed = sorted(k for k in old["files"].keys() | now["files"].keys()
+                             if old["files"].get(k) != now["files"].get(k))
+            if why := why_not(changed) if changed else "its per-file digests show no change":
+                return f"its inputs differ ({', '.join(differ)}): {why}"
         rows, head = data["mutants"], data["head"]
         if [tuple(r[k] for k in ("id", "file", "line", "definition", "operator", "before", "after")) for r in rows] != [
                 (m.id, m.file, m.line, m.definition, m.operator, m.before, m.after) for m in found]:
             return "its mutants are not this tree's"
-        verdicts = {r["id"]: (r["raw_status"], r["detail"] if r["raw_status"] == r["status"] else "") for r in rows}
-        if not isinstance(head, str) or not head or not all(isinstance(d, str) and s in (*REUSED, "UNKNOWN", "NOT RUN")
-                                                for s, d in verdicts.values()):
-            return "it cannot be read: a status or detail is not one this tool writes"
-        return head, verdicts
-    except (OSError, ValueError, KeyError, TypeError) as error:
+        verdicts = {r["id"]: {"status": r["raw_status"], "detail": r["detail"] if r["raw_status"] == r["status"] else "",
+                              "reads": r.get("reads", ""), "killed_at": r.get("killed_at")} for r in rows}
+        if not isinstance(head, str) or not head or not all(
+                isinstance(v["detail"], str) and v["status"] in (*REUSED, "UNKNOWN", "NOT RUN")
+                and isinstance(v["reads"], str) and (v["killed_at"] is None or isinstance(v["killed_at"], list) and len(
+                    v["killed_at"]) == 2 and all(type(x) is int for x in v["killed_at"])) for v in verdicts.values()):
+            return "it cannot be read: a status, detail or digest is not one this tool writes"
+        return "checks" if differ else "identical", head, verdicts, changed
+    except (OSError, ValueError, KeyError, TypeError, AttributeError) as error:
         return f"it cannot be read ({type(error).__name__}: {error})"
 
 
@@ -1136,7 +1287,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--allow", type=Path)
     parser.add_argument("--json", type=Path)
     parser.add_argument("--rescore", type=Path, metavar="PREV.json",
-                        help="reuse PREV's KILLED, INVALID and SURVIVOR verdicts when its inputs are this run's")
+                        help="reuse PREV's KILLED, INVALID and SURVIVOR verdicts when its inputs are this run's, and "
+                        "carry its KILLED and INVALID ones across a check-only change")
     parser.add_argument("--build-timeout", type=float, default=1800,
                         help="seconds a mutant's build may run before it is UNKNOWN (default: 1800)")
     args = parser.parse_args(argv)
@@ -1166,17 +1318,25 @@ def main(argv: list[str] | None = None) -> int:
     jobs = args.jobs or max(1, min(8, (os.cpu_count() or 1) - int(os.getloadavg()[1])))
     run_now, not_run = found[:max(0, args.max_mutants)], found[max(0, args.max_mutants):]
     digests = inputs(root, git(root, "rev-parse", base).stdout.strip(), tests, outside, args.deep)
-    reused, rescore, why = "", None, ""
+    reused, rescore, why, mode, changed = "", None, "", "full", []
+    reads = Reads(root, tree, outside) if args.rescore or args.json else None
     if args.rescore:
-        got = previous(args.rescore, digests, found)
+        got = previous(args.rescore, digests, found, lambda names: check_only(
+            names, reach(reads, found), {Path(os.path.relpath(t, root)).as_posix() for t in outside}))
         if isinstance(got, str):
             why = got
             print(f"trust_mutants: --rescore {args.rescore}: a full run, since {why}", flush=True)
         else:
-            reused, verdicts = got
+            mode, reused, verdicts, changed = got
             for m in run_now:
-                if verdicts[m.id][0] in REUSED:
-                    (m.status, m.detail), m.reused_from = verdicts[m.id], reused
+                p = verdicts[m.id]
+                if mode == "identical" and p["status"] in REUSED:
+                    m.status, m.detail = p["status"], p["detail"]
+                elif mode == "checks" and (kept := reads.carry(m, p, targets(tree, m, tests, args.deep))):
+                    (m.status, m.detail), m.carried = kept, "checks"
+                else:
+                    continue
+                m.reused_from = reused
     todo = [m for m in run_now if not m.reused_from]
     env = {**os.environ, "PATH": f"{Path.home() / '.elan/bin'}{os.pathsep}{os.environ.get('PATH', '')}"}
     definitions = sorted({(m.file, m.definition) for m in found})
@@ -1240,18 +1400,21 @@ def main(argv: list[str] | None = None) -> int:
     seconds = round(time.monotonic() - started)
     kept = len(run_now) - len(todo)
     print("trust_mutants: " + ", ".join(f"{n} {s}" for s, n in counts.items()) + f" in {seconds} s"
-          + (f"; {kept} reused from {reused[:12]} (identical inputs)" if reused else ""))
+          + (f"; {kept} reused from {reused[:12]} (identical inputs)" if mode == "identical" else
+             f"; {kept} carried from {reused[:12]} (check-only change: {', '.join(changed)})" if mode == "checks" else ""))
     if args.rescore:
-        rescore = {"file": str(args.rescore), "head": reused or None, "reused": kept, "rerun": len(todo),
-                   **({} if reused else {"full_run": why})}
+        rescore = {"file": str(args.rescore), "head": reused or None, "mode": mode, "changed": changed, "reused": kept,
+                   "rerun": len(todo), **({} if reused else {"full_run": why})}
     if args.json:
+        for m in found:  # what each KILLED and INVALID verdict reads, for a later --rescore
+            reads.verdict(m)
         args.json.write_text(evidence({
             "base": digests["base"], "head": git(root, "rev-parse", "HEAD").stdout.strip(),
             "jobs": jobs, "max_mutants": args.max_mutants, "deep": args.deep, "tests": args.test, "seconds": seconds,
             "counts": counts, "inputs": digests, **({"rescore": rescore} if rescore else {}),
             "definitions": [f"lean/{f}: {d}" for f, d in definitions],
             "mutants": [{k: v for k, v in asdict(m).items() if k not in ("start", "end", "edit")
-                         and (k != "reused_from" or v)} for m in found]}))
+                         and (k not in ("reused_from", "carried", "reads", "killed_at") or v)} for m in found]}))
     return 1 if counts["SURVIVOR"] or counts["UNKNOWN"] else 3 if not_run else 0
 
 

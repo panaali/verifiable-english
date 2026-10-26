@@ -2340,6 +2340,16 @@
    "kind": "follow-up",
    "id": "F11",
    "reason": "Strings the schema lets be empty (type string, hex64_or_empty or a name with no pattern): ids, digests, names, labels, generators and rendered text. Lean writes most of them non-empty; give each a non-empty type, or state the encoder's condition for the empty value, in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:calc",
+   "mutation": "drop",
+   "path": [
+    "results/*/result/case_index"
+   ],
+   "kind": "by-design",
+   "id": "ME2B-1",
+   "reason": "A batch decoder's case error (depth beyond 255) without its case_index is the calc runner's own refusal shape {status, error} (the runner does not see the case's index): both refuse the case with the same message and code, and the result's index and digest still bind it to its case (docs/math-evidence/me-2b/REPORT.md, deviation a)."
   }
  ]
 }
