@@ -169,6 +169,15 @@ def stored_identities(raw: bytes):
     return meta, source_id(source, env), _document_id(meta, source, fences)
 
 
+def chain_environment(data):
+    """The environment data Lean's `document` chain reads: `scope@0` is a wrapper the mode runs before the chain, which
+    reads the environment without it (`Service.Document.lowerScope`). The one place Python lowers it: the proposal
+    the case carries and the document built from the answer read this environment, never the one as written."""
+    if "scope@0" not in listed_profiles(data):
+        return data
+    return {**data, "profiles": [p for p in data["profiles"] if p != "scope@0"]}
+
+
 def base_environment(meta):
     """The environment data the frozen environment and document routes receive: a `@1`
     document's own (its profile gate of discourse.md 1.1 only), a `@2` document's without
