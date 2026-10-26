@@ -31,7 +31,7 @@ it unchanged. No row-field statement is proved here (cut). No statement changed.
 | Plan's seeded bug (claim i + 1's verdict for claim i) at the service level | yes | `mutants.json` `plan-seeded-bug` |
 | Row fields `line`, `display`, `sides`, `tie`, `finding`, `rests_on`; words checks `VerbalisationCollision`, `ValueWordsForm`, `ReservedWord` | **me-2c** (size rule) | FOLLOW-UPS "## me-2b" |
 | No hand-written `Dispatch.lean` rows, gate lemmas or `ve/profiles.py` rows | none written; the `calc@0` profile row stays with ME-10 (me-2's FOLLOW-UPS) | |
-| `ve/assurance-manifest.json` decoder pins | no change needed: the new decoder lines are in `lean/VE/Service/Protocol.lean`, which the manifest already classifies under `other_json` ("the service request decoder and dispatcher"); the new shape and encoder files read no JSON (`test_every_json_handling_lean_file_is_classified` passes) | `tests/test_assurance_manifest.py` (137 passed) |
+| `ve/assurance-manifest.json` decoder pins | no pin changes: the new decoder lines are in `lean/VE/Service/Protocol.lean`, which the manifest already classifies under `other_json` ("the service request decoder and dispatcher"); `lean/ResponseShape/Encoders/Calc.lean` gets its `other_json` reason (JSON access in proofs only), as the other encoders have | `tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified` |
 | `ROADMAP.md` trust-cost line | yes | |
 
 ### The mode's case decoder (me-2's open B and its spelling question)
