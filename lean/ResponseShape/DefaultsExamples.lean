@@ -17,11 +17,41 @@ def coll (L : VE.NormDefaults.Wire.LayeredU) : Json := req αEnv γR "defaults-c
 def cert : Json := αCase notExc cNeeds.trace (αModels [exc1])
 def certNone : Json := αCase notExc none (αModels [exc1])
 
--- accepted: elaborate, COLLISION with its situation, COHERENT, UNKNOWN pairs, FOLLOWS, UNKNOWN with a reason,
--- DOES-NOT-FOLLOW with a filled gap, an UNKNOWN model
-#guard holds dγ fun L => [req αEnv γR "defaults-elaborate", coll L, req αEnv αR "defaults-coherence",
-    req αEnv γR "defaults-coherence", cert, certNone].all fun j => accepts j (run j)
+/-- Each answer with one member added to one object, one leaf or array retyped, or one member dropped (but those in
+    `optional`, and a filling's tables, whose keys are open), at any depth up to `n`. -/
+def variants (optional : List String) : Nat → Json → List Json
+  | 0, _ => []
+  | n + 1, .obj kvs =>
+    let kvs := kvs.toList
+    Json.mkObj (kvs ++ [("extra", .null)]) ::
+    ((kvs.filter fun (k, _) => !optional.contains k && !k.startsWith "unsaid__").map fun (k, _) => Json.mkObj (kvs.filter (·.1 != k))) ++
+    kvs.flatMap fun (k, v) => (variants optional n v).map fun w => Json.mkObj (kvs.map fun (k', v') => (k', if k' == k then w else v'))
+  | n + 1, .arr xs => .num 0 :: (List.range xs.size).flatMap fun i => (variants optional n xs[i]!).map (.arr <| xs.set! i ·)
+  | _, .str _ => [.num 0]
+  | _, .num _ => [.str "0"]
+  | _, _ => []
+def refusesAll (j : Json) (optional : List String := []) : Bool := (variants optional 6 (run j)).all (!accepts j ·)
+
+def resolved : Json := req αEnv γbR "defaults-coherence" [("coherence", toJson [pairJ "r1" "r2" γbCert])]
+def strictJ : Json := αCase excSelf cStrict.trace (αModels [exc1])
+def unsettled : Json := αCase notExc cNeeds.trace (αModels [])
+def long : Json := βFact [exAt "urgent"] [exAt "urgent"]
+
+-- accepted: elaborate, COLLISION with its situation, COHERENT (no pair, a resolved pair), UNKNOWN pairs, FOLLOWS on
+-- each basis and form, UNKNOWN with a reason, DOES-NOT-FOLLOW with a filled gap, an UNKNOWN model
+#guard holds dγ fun L => [req αEnv γR "defaults-elaborate", coll L, req αEnv αR "defaults-coherence", resolved,
+    req αEnv γR "defaults-coherence", cert, strictJ, unsettled, long, certNone].all fun j => accepts j (run j)
 #guard holds dβ fun L => [βTwo L, modelCase βEnv βR L xAll [exc1]].all fun j => accepts j (run j)
+-- refused: every variant of each answer (a COLLISION's `collision` and `situation` may be left out)
+#guard holds dγ fun L => refusesAll (req αEnv γR "defaults-elaborate") && refusesAll (coll L) ["collision", "situation"] &&
+  refusesAll resolved && refusesAll cert && refusesAll certNone
+#guard holds dβ fun L => refusesAll (βTwo L) && refusesAll (modelCase βEnv βR L xAll [exc1])
+-- refused: an elaborate row of one or three items, a pair of one or three rule names
+#guard let a := run (req αEnv γR "defaults-elaborate"); let t := ((a.getObjValD "coherence_targets").getArrVal? 0).toOption.getD .null;
+  [set a "default_premises" (toJson [toJson ["l"]]), set a "coherence_targets" (toJson [t.getArrVal? 0 |>.toOption.getD .null]),
+    set a "coherence_targets" (toJson [toJson ["r1", "r2", "r3", "r4"]])].all (!accepts (req αEnv γR "defaults-elaborate") ·) &&
+  [toJson ["r1"], toJson ["r1", "r2", "r3"]].all fun r =>
+    !accepts resolved (set (run resolved) "pairs" (toJson [Json.mkObj [("rules", r), ("status", .str "resolved")]]))
 -- refused: a member added, a verdict outside its enum, a collision or situation without COLLISION, the collision's
 -- rules not the request's
 #guard holds dγ fun L => let a := run (coll L);
