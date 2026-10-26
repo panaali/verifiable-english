@@ -250,6 +250,15 @@ def test_admission_document_checks_are_w2s_decoder_in_both(lean_executable):
             admit_document(raw, document)
         assert (row["status"], row["error"]) == ("error", message), (message, row)
         assert str(error.value) == message, message
+    # The decoder's data flag is the source's `data@0` profile: under it a `$string` quantifier is refused.
+    data = {**raw, "profiles": sorted({*raw["profiles"], "data@0"})}
+    strings = {**good, "reading_sets": [{"id": "r", "version": 1, "readings": [["forall", "$string", ["top"]]]}]}
+    message = "UnsupportedProfile: $string quantification requires data stage 2"
+    row = route.run_cases([{"id": "d", "kind": "admission", "environment": data, "document": strings}])[0]
+    with pytest.raises(VEError) as error:
+        admit_document(data, strings)
+    assert (row["status"], row["error"]) == ("error", message), row
+    assert str(error.value) == message
 
 
 def test_profiled_admission_without_unspecified_is_w1_admission(lean_executable):
