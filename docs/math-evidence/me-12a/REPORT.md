@@ -27,7 +27,7 @@ me-12aa; on `wip/me-12aa` they match 12.2 the same way.
 | `Bounded.lean`: the fuel accounting, `maxSteps`, `decideBounded`, the evaluator proved to agree | **me-12aa** (size); built on `wip/me-12aa` with `decideBounded_sound`, `decideBounded_work` and `arithOutcome`'s three theorems | — |
 | `Examples.lean`: 12.3's vocabulary, `IsPrime`, `bertrand_means_iff` | yes | the proofs |
 | `lean/ARITH.md` | yes | — |
-| The refusals the core decides: `UnscopedVariable`, `UnknownDefinition`, `RecursiveDefinition`, `ArityMismatch`, `UnboundedCount` (and `DuplicateName`), in the decoder's order | yes: `Refusal`, `caseRefusal` | `Examples.lean:161-181`, each refused and admitted; every fault at every position, in statements and bodies, and the decoder's order pairwise `:183-329` (review F2) |
+| The refusals the core decides: `UnscopedVariable`, `UnknownDefinition`, `RecursiveDefinition`, `ArityMismatch`, `UnboundedCount` (and `DuplicateName`), in the decoder's order | yes: `Refusal`, `caseRefusal` | `Examples.lean:161-181`, each refused and admitted; every fault at every position, in statements and bodies, and the decoder's order pairwise `:183-375` (review F2; which duplicate is reported `:333-347`, re-check F6) |
 | `ShadowedVariable` | **me-12b**: shadowing is about the request's variable names, and the de Bruijn core has none | — |
 | An unbounded statement "stated, not decided" | in part: `bertrand.Bounded primeDefs = false` (`Examples.lean:155`); the row (`arithOutcome`) is me-12aa | `#guard` |
 | M-5 fails, deciding value n = 1 | in the meaning: `¬ primeDefs.Means m5`, proved with n = 1 (`Examples.lean:130`); the evaluator's 2 units and 12.5's `decidingValue` are me-12aa | the proof |
@@ -99,7 +99,7 @@ review fixes (`db1420f24`; S6 now quotes the one-pass `firstRefusal`), with thes
 | F1 (B) the meaning tested only at top level | every clause of `Term.value` and `Holds` under the outer values `[5]`, each child reading them (binders read the outer value as `var 1`; ranges start past it, so the values' order shows); `chain`: each kind of definition read past a later definition of each kind, and a two-argument function | `Examples.lean:81-117`; PROBE F1 failed before (7 survivors), passes after | `a09264c4f` |
 | F2 (B) admission tested only at shallow positions | generated cases: every child position of every constructor (`Step` tables `ff`, `tf`, `tt`) under up to two more constructors, in a statement, a predicate's body and a function's body: 237,456 cases (54,110 admitted), each fault refused as itself and each sound leaf admitted; the same places for `Formula.Bounded`; one fault of each refusal, in statements and in bodies, paired in both orders (the expected refusal comes from the table's order, not from `Refusal.rank`); `firstRefusal` on every pair; `Formula.Scoped` reads the call's kind | `Examples.lean:183-329`; PROBE F2 failed before (17 survivors), passes after | `db1420f24` |
 | F3 (C) size over the limit | recorded (Deviations, Size) | — | this commit |
-| F4 (C) `firstRefusal` quadratic | one pass: a fold that keeps the first refusal until a strictly lower rank follows | the pairwise order guards `:316-319` and the ties guard `:324`; class mutants "the last refusal of the lowest rank" and "the first refusal whatever its rank" | `5aef0866e` |
+| F4 (C) `firstRefusal` quadratic | one pass: a fold that keeps the first refusal until a strictly lower rank follows | the pairwise order guards `:316-319` and the ties guard `:327`; class mutants "the last refusal of the lowest rank" and "the first refusal whatever its rank" | `5aef0866e` |
 | F5 (C) wording | the unscoped index is relative to the body (Deviations); `ARITH.md` lists all four unbounded quantifiers | — | this commit |
 
 **Class probe** ([`tools/classprobe.py`](tools/classprobe.py), [`class-mutants.json`](class-mutants.json)): 150 hand
@@ -113,19 +113,32 @@ DuplicateName first), and two rank ties (0 = 1, 3 = 4) that the list order hid. 
 
 **Second fix round (the classes again, on `9848222cc`).** PROBE F1 (7 of 7) and PROBE F2 (17 of 17) pass. A further
 41 hand mutants of the two classes found 13 survivors, all of one gap in F2's "decoder order" class: of two refusals
-of one kind, which one is reported was pinned only between statements (`:324`). Reordering the sites of any
+of one kind, which one is reported was pinned only between statements (`:327` now). Reordering the sites of any
 constructor (a call's name after its arguments, a right child or a later argument first, a binder's hi or body
 before its lo), checking the definitions or the statements last first, or the statements before the definitions,
 changed no guard; each changes the name a refusal reports. The fix generates the ties: each two-child shape
 (`formulaPairs`, `termPairs`) with a fault of one name before a fault of another, at every formula place and every
 term place one constructor deep, in all three hosts, both ways round, must report the earlier; and one definition
-before the next, the definitions before the statements (`Examples.lean:329-355`). The 26 new mutants of
+before the next, the definitions before the statements (`Examples.lean:349-375`). The 26 new mutants of
 `classprobe.py` (13 of order, 13 more reads: the meaning's arity checks, the last definition, later statements, each
 refusal's value) are all KILLED ([`class-mutants-order.json`](class-mutants-order.json)); the 13 order mutants
 survived on `9848222cc`. One mutant is equivalent and not planted: `Defs.boundedNames (D.take k)` read as
 `Defs.boundedNames D`. A count's condition sees a later bound only by calling a later name (RecursiveDefinition or
 UnknownDefinition) or a name defined twice (DuplicateName), each of a lower rank than UnboundedCount, so neither
 `caseRefusal` nor `Defs.WellFormed` changes.
+
+**Re-check fix round (manage-agents me-12a-c260402-looprecheck1.final.md, on `b423fd1ed`).** The second round did
+not close the one-kind tie class: it pinned the sites' order and the definitions' order, but not the duplicate pass's
+own order, which no guard read when two different names are each defined twice.
+
+| Finding | Fix (the class, not the example) | Regression test | Commit |
+|---|---|---|---|
+| F6 (B) which of several duplicated names is reported | generated: every list of at most five names over three (364 lists, each name defined up to five times), with the definitions' kinds alternating both ways and with and without a later fault in a statement, must report the name defined again first, as an independent left-to-right scan (`firstRepeat`) gives it, and `WellFormed` must agree; plus `[x, y, y, x]` with both kinds (`y`) | `Examples.lean:333-347`; PROBE F6 failed before (`[False, False]`), passes after; class mutants "order: duplicates last first", "order: a duplicate reported at its first definition" and "order: a duplicate reported at every definition" KILLED ([`class-mutants-dup.json`](class-mutants-dup.json)) | this commit |
+| F7 (C) no guard that `Formula.Scoped` ignores boundedness | a count of an unbounded condition, directly and through a definition, is scoped | `Examples.lean:323-325`; class mutant "reads: Scoped checks boundedness" KILLED | this commit |
+| F8 (C) the probe leaves the last mutant's `.olean` | `classprobe.py` rebuilds `VE.Arith.Examples` from the restored source at the end. The review's PROBE one-liners are the reviewer's and are not changed: run `lake build` after them | — | this commit |
+
+One more mutant is equivalent and not planted: the duplicate pass after the sites' pass. DuplicateName has the
+lowest rank, so `firstRefusal` reports it wherever it stands, and `WellFormed` reads only emptiness.
 
 ## Tests
 

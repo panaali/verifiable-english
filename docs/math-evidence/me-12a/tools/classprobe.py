@@ -123,9 +123,17 @@ M += each(D, 'some (.arityMismatch f d.arity)', 'some (.arityMismatch f argc)', 
 M += each(D, 'some (.unscopedVariable j)', 'some (.unscopedVariable (j - depth))', 'reads: unscoped counted past the scope')
 M += each(D, 'some (.duplicateName d.name)', 'some (.duplicateName "")', 'reads: a duplicate without its name')
 M += each(D, 'else some (.unknownDefinition f)', 'else none', 'reads: an unknown call admitted')
+# Re-check F6: of several names each defined twice, which is reported (the name defined again first), and F7: Scoped
+# reads no boundedness.
+M += each(D, '((List.range D.length).filterMap', '((List.range D.length).reverse.filterMap', 'order: duplicates last first')
+M += each(D, '(D.take k).any (·.name == d.name)', '(D.drop (k + 1)).any (·.name == d.name)', 'order: a duplicate reported at its first definition')
+M += each(D, '(D.take k).any (·.name == d.name)', '(D.eraseIdx k).any (·.name == d.name)', 'order: a duplicate reported at every definition')
+M += each(D, 'filterMap (Site.refusal D D depth none)', 'filterMap (Site.refusal D D depth (some D.boundedNames))', 'reads: Scoped checks boundedness')
 # Equivalent, not planted: `Defs.boundedNames (D.take k)` -> `Defs.boundedNames D` in `Defs.refusals`. A count's
 # condition sees a later bound only by calling a later name (RecursiveDefinition or UnknownDefinition) or a name
 # defined again (DuplicateName), each of a lower rank than UnboundedCount, so `caseRefusal` and `WellFormed` agree.
+# Equivalent, not planted: the duplicate pass after the sites' pass. DuplicateName has the lowest rank, so
+# `firstRefusal` reports it wherever it stands, and `WellFormed` reads only emptiness.
 results = []
 for f, before, after, i, label in M:
     if only and label not in only: continue
@@ -145,6 +153,8 @@ for f, before, after, i, label in M:
     results.append({'file': f, 'class': label, 'before': before, 'after': after, 'occurrence': i + 1,
                     'status': status, 'errors': errs[:8]})
     print(status, label, '|', ' '.join(errs[:4]), flush=True)
+# Every mutant's source is restored; rebuild it so no mutant's .olean outlives the probe (re-check F8).
+subprocess.run(['lake', 'build', 'VE.Arith.Examples'], cwd=root / 'lean', env=env, capture_output=True, check=True)
 out.write_text(json.dumps({'note': __doc__.split('\n')[0], 'mutants': results,
                            'survived': sum(r['status'] == 'SURVIVED' for r in results)}, indent=1, ensure_ascii=False) + '\n')
 sys.exit(1 if any(r['status'] != 'KILLED' for r in results) else 0)
