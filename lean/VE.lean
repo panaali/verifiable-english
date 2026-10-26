@@ -174,6 +174,9 @@ import VE.LimitTies
 import VE.Norms.FamilySpec
 import VE.Acts.Syntax
 import VE.Acts.Read
+import VE.Acts.Linearize
+import VE.Acts.Table
+import VE.Acts.TableExamples
 import VE.Acts.GrammarExamples
 import VE.Acts.Compat
 import VE.Acts.LexicalExamples
