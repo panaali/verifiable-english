@@ -632,14 +632,6 @@ theorem VE.Acts.Lexical.words_intercalate
       VE.Norms.Wire.words (" ".intercalate ws) = ws
   -- uses VE.Norms.Wire.pyWhitespace@VE.Acts.LexicalBase VE.Norms.Wire.words@VE.Acts.LexicalBase
   -- expr 265214043
-theorem VE.Acts.distinctTexts_ok
-  ∀ (what : String) (ts us : List String), VE.Acts.distinctTexts what ts = Except.ok us ↔ us = ts ∧ ts.Nodup
-  -- uses VE.Acts.distinctTexts@VE.Acts.Table
-  -- expr 3643680838
-theorem VE.Acts.firstEqualPair_none
-  ∀ (k : Nat) (ts : List String), VE.Acts.firstEqualPair k ts = Option.none ↔ ts.Nodup
-  -- uses VE.Acts.firstEqualPair@VE.Acts.Table
-  -- expr 2471763056
 theorem VE.Acts.listing_limit
   ∀ {α : Type} [inst : DecidableEq α] (N L : Nat) (parsed : Option (List (VE.Grammar.Tree VE.Acts.Lexical.Tok)))
     (μ : VE.Grammar.Tree VE.Acts.Lexical.Tok → Option α),
@@ -669,12 +661,6 @@ theorem VE.Acts.nodup_firsts
   ∀ {α : Type} [inst : DecidableEq α] (l : List α), (VE.Acts.firsts l).Nodup
   -- uses VE.Acts.firsts@VE.Acts.Read
   -- expr 613897863
-theorem VE.Acts.paraphrases_nodup
-  ∀ {fx : List String} {op : VE.Acts.Op} {f : Option VE.Acts.Lexical.Form} {what : String}
-    {Rs : List (List VE.Acts.Simple)} {ps : List String},
-    VE.Acts.paraphrases fx op f what Rs = Except.ok ps → ps = List.map (VE.Acts.paraphrase fx op f) Rs ∧ ps.Nodup
-  -- uses VE.Acts.Lexical.Form@VE.Acts.Lexical VE.Acts.Op@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.paraphrase@VE.Acts.Table VE.Acts.paraphrases@VE.Acts.Table
-  -- expr 1377960836
 theorem VE.Acts.readIn_many
   ∀ {α : Type} [inst : DecidableEq α] {G : VE.Grammar.Grammar VE.Acts.Term}
     {μ : VE.Grammar.Meaning VE.Acts.Lexical.Tok Unit String α} {N b : Nat} {ts : Array VE.Acts.Lexical.Tok},

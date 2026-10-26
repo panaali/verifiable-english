@@ -1,7 +1,6 @@
 import VE.Acts.Table
 
-/-! Fixtures of the table, the renderings and the paraphrases (docs/spec/act-phrases.md 11.2, 11.3: T1 to T10,
-the parts of G6 and G7, E9's paraphrases, P12n, D-32).
+/-! Fixtures of the ops and the table (docs/spec/act-phrases.md 6.1 and 11.3: T1 to T10, on the act trees of 11.2).
 
 The act trees are written by hand as 11.2 gives them: the grammar's rule table and meaning (ap-2b, ap-2c) are not
 built yet, so no tree here comes from a parse. Atoms are `⟨toWord, beWord, head, args, mods⟩`.
@@ -13,13 +12,11 @@ open VE.Acts
 def w (s : String) : Part := .words (wordsOf s)
 
 /-- G6 (u027, V6): "be subjected to torture or to [cruel, …]", a split marker's *or*. -/
-def fx6 : List String := ["cruel, inhuman or degrading treatment or punishment"]
 def torture : Atom := ⟨false, true, ["subjected"], [("to", .one (w "torture"))], []⟩
 def cruel : Atom := ⟨false, true, ["subjected"], [("to", .one (.fixed 0))], []⟩
 def g6 : Act := .any false true [torture, cruel]
 
 /-- G7 (u079b, V7): one atom, "by" a joined filler (not a split marker). -/
-def fx7 : List String := ["equivalent free voting procedures"]
 def held : Atom := ⟨false, true, ["held"], [("by", .joined .or [w "secret vote", .fixed 0])], []⟩
 def g7 : Act := .one held
 
@@ -37,7 +34,6 @@ def g10 (all : Bool) : Act :=
     ⟨true, false, ["security"], [("in the event of", .one c)], if all || i == 5 then [beyond] else []⟩)
 
 /-- G11 (u076, V11): two ways, *or*, not a split marker's. -/
-def fx11 : List String := ["freely chosen representatives"]
 def directly : Atom := ⟨true, false, ["take", "part"], [("in", .one (.slot 1))], [.adv "directly"]⟩
 def through : Atom := ⟨true, false, ["take", "part"], [("in", .one (.slot 1))], [.prep "through" (.fixed 0)]⟩
 def g11 : Act := .any false false [directly, through]
@@ -56,10 +52,6 @@ def g14v : Act := .any false false
 
 /-- The number of readings and of simple acts in each. -/
 def shape (Rs : List (List Simple)) : List Nat := Rs.map List.length
-
-def errOf {α : Type} : Except String α → Option String
-  | .error e => some e
-  | .ok _ => none
 
 def reg (role : VE.Norms.Role) : VE.Norms.Regulated := ⟨"p", ["person"], false, role, none, none⟩
 
@@ -121,64 +113,5 @@ def reg (role : VE.Norms.Role) : VE.Norms.Regulated := ⟨"p", ["person"], false
 -- `freeTable` on its own: a simple act is its one reading.
 #guard freeTable (.one torture) == [[.atom torture]]
 #guard freeTable g11 == table .may g11 && freeTable (g9 true) == []
-
-/-! ### Renderings (5.5) -/
-
--- The parts of G6, as a permission's acts (no *to*), and part order kept.
-#guard [torture, cruel].map (partAct fx6 .permission) ==
-  ["{0} be subjected to torture", "{0} be subjected to cruel, inhuman or degrading treatment or punishment"]
--- G7's atom: the marker once before its joined filler.
-#guard partAct fx7 .obligation held == "{0} be held by secret vote or equivalent free voting procedures"
--- *to* exactly when plain; adverbs before the head; the object, then marked arguments, then modifiers.
-#guard partAct [] .plain (form true) == "{0} to form trade unions for the protection of their interests"
-#guard partAct [] .permission (form true) == "{0} form trade unions for the protection of their interests"
-#guard partAct fx11 .plain directly == "{0} to directly take part in {1}"
-#guard Atom.text fx11 none through == "{0} to take part in {1} through freely chosen representatives"
-#guard Atom.text fx6 none torture == "{0} be subjected to torture"
--- A19: a fixed phrase renders canonical, its curly apostrophe read as `'`.
-#guard partAct ["the operator’s  instructions"] .obligation ⟨false, false, ["comply"], [("with", .one (.fixed 0))], []⟩ ==
-  "{0} comply with the operator's instructions"
-#guard partAct ["the right to change their nationality"] .permission (denied true) ==
-  "{0} be arbitrarily denied the right to change their nationality"
-#guard partAct ["other lack of livelihood"] .plain
-    ⟨true, false, ["security"], [("in the event of", .one (.fixed 0))], [beyond]⟩ ==
-  "{0} to security in the event of other lack of livelihood in circumstances beyond their control"
--- A list of three and of two parts; the object before the other arguments, whatever their order in `args`.
-#guard tokText [] (listToks .or [w "a", w "b", w "c"]) == "a, b or c"
-#guard tokText [] (listToks .nor [w "a", w "b"]) == "a nor b"
-#guard tokText [] (listToks .and [w "a b"]) == "a b"
-#guard partAct [] .permission ⟨false, false, ["give"], [("to", .one (.slot 1)), ("", .one (w "notice"))], []⟩ ==
-  "{0} give notice to {1}"
-#guard tokText ["x"] [.slot 0, .fixed 0, .comma, .word "y"] == "{0} x, y"
-#guard tokText [] (listToks .or [w "a b", w "c d"]) == "a b or c d"
-#guard tokText [] (listToks .and [w "a b", w "c", w "d e"]) == "a b, c and d e"
--- Every adverb, then every object, then every marked argument, then every prepositional modifier, each in order.
-#guard partAct [] .obligation ⟨false, false, ["give"], [("to", .one (.slot 1)), ("", .one (w "notice")),
-    ("in", .one (w "plain writing")), ("", .one (w "a copy"))],
-    [.adv "promptly", .prep "under" (w "the rules"), .adv "fully", .prep "at the start of" (.slot 2)]⟩ ==
-  "{0} promptly fully give notice a copy to {1} in plain writing under the rules at the start of {2}"
-#guard partAct [] .plain ⟨true, true, ["heard"], [], []⟩ == "{0} to be heard"
-
-/-! ### Paraphrases (2.2, 6.2) -/
-
--- E9: G11 under *may*, the D-23 list exactly.
-#guard ((paraphrases fx11 .may none "rule r" (table .may g11)).map numbered).toOption ==
-  some "1. {0} may directly take part in {1}, and {0} may take part in {1} through freely chosen representatives. 2. {0} may directly take part in {1} or take part in {1} through freely chosen representatives, as one act done in any one of these ways (not each way on its own)."
--- Under *has the right* and *is entitled*, with *to*.
-#guard paraphrase fx11 .right none [.atom directly] == "{0} has the right to directly take part in {1}."
-#guard paraphrase fx11 .right (some .entitled) [.whole g11] == "{0} is entitled to directly take part in {1} or to take part in {1} through freely chosen representatives, as one act done in any one of these ways (not each way on its own)."
--- A whole join by *and*; a split of more than two; *must*, *need not*, *must not* without *to*.
-#guard paraphrase [] .mustNot none [.whole (g12 false)] == "{0} must not form trade unions and join trade unions for the protection of their interests, as one act done together (not each on its own)."
-#guard paraphrase [] .must none [.atom (form false), .atom join, .atom (form true)] == "{0} must form trade unions; {0} must join trade unions for the protection of their interests; and {0} must form trade unions for the protection of their interests."
-#guard paraphrase [] .needNot none [.atom (form false)] == "{0} need not form trade unions."
-#guard paraphrase fx6 .mustNot none [.whole (.any true false [torture, cruel])] == "{0} must not be subjected to torture nor be subjected to cruel, inhuman or degrading treatment or punishment, as one act done in any one of these ways (not each way on its own)."
--- P12n: G12's four readings under *must not* read as four distinct sentences.
-#guard (paraphrases [] .mustNot none "rule r" (table .mustNot (g12 false) ++ table .mustNot (g12 true))).toOption.map List.length == some 4
--- D-32: two readings that read the same are refused, naming the first equal pair.
-#guard errOf (paraphrases [] .may none "rule r" [[.atom join], [.atom (form false)], [.atom join]]) ==
-  some "InvalidInput: readings 1 and 3 of rule r read the same in English; rephrase the act"
-#guard errOf (distinctTexts "x" ["a", "b", "c", "b"]) == some "InvalidInput: readings 2 and 4 of x read the same in English; rephrase the act"
-#guard (distinctTexts "x" ["a", "b"]).toOption == some ["a", "b"]
-#guard numbered ["a", "b", "c"] == "1. a 2. b 3. c"
 
 end VE.Acts.TableExamples

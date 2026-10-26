@@ -1,6 +1,7 @@
-import VE.Acts.Linearize
+import VE.Acts.Syntax
+import VE.Norms.Tree
 
-/-! The modal × connective table and the paraphrases of readings (docs/spec/act-phrases.md 1.7, 6.1, 6.2; plan 2.3).
+/-! The modal × connective table (docs/spec/act-phrases.md 1.7, 6.1, 6.2; plan 2.3).
 
 A rule's op is fixed by its predicate's role and its sign. For an op and an act tree the table gives the readings, each
 the list of simple acts the rule stands for: `[]` is no reading (refused), two or more make the English ambiguous.
@@ -85,96 +86,5 @@ theorem table_needNot (A : Act) (h : ∀ a, A ≠ .one a) : table .needNot A = [
   | one a => exact absurd rfl (h a)
   | all => rfl
   | any => rfl
-
-/-! ### Paraphrases (2.2, 5.5, 6.2) -/
-
-/-- "A", "A and B", "A, B and C". -/
-def listText (j : String) : List String → String
-  | [] => ""
-  | [x] => x
-  | [x, y] => x ++ " " ++ j ++ " " ++ y
-  | x :: rest => x ++ ", " ++ listText j rest
-
-/-- A tree rendered from its atoms: each atom's text after its `{0} `, as a list joined by the tree's join word. -/
-def Act.text (fx : List String) (inf : Option Bool) : Act → String
-  | .one a => Atom.text fx inf a
-  | .all _ _ ps => "{0} " ++ listText "and" (ps.map (fun a => (Atom.text fx inf a).drop 4))
-  | .any nor _ ps => "{0} " ++ listText (if nor then "nor" else "or") (ps.map (fun a => (Atom.text fx inf a).drop 4))
-
-def Simple.text (fx : List String) (inf : Option Bool) : Simple → String
-  | .atom a => Atom.text fx inf a
-  | .whole A => Act.text fx inf A
-
-/-- *To* after *has the right* and *is entitled*, never after *must*, *need not*, *may* or *must not*. -/
-def Op.inf : Op → Bool
-  | .right => true
-  | _ => false
-
-/-- "must", "need not", "may", "must not"; for `.right`, the declaration's form ("has the right" when none). -/
-def modalText : Op → Option Lexical.Form → String
-  | .must, _ => "must"
-  | .needNot, _ => "need not"
-  | .may, _ => "may"
-  | .mustNot, _ => "must not"
-  | .right, f => (f.getD .right).text
-
-/-- One simple act under a modal: the subject, the modal words, the act in the modal's form. -/
-def sentence (fx : List String) (op : Op) (f : Option Lexical.Form) (x : Simple) : String :=
-  "{0} " ++ modalText op f ++ " " ++ (Simple.text fx (some op.inf) x).drop 4
-
-/-- 2.2: one simple act; a split (", and " for two, "; …; and " for more); a whole join with its gloss. -/
-def paraphrase (fx : List String) (op : Op) (f : Option Lexical.Form) : List Simple → String
-  | [.whole (.all s sp ps)] => sentence fx op f (.whole (.all s sp ps)) ++ ", as one act done together (not each on its own)."
-  | [.whole A] => sentence fx op f (.whole A) ++ ", as one act done in any one of these ways (not each way on its own)."
-  | [x] => sentence fx op f x ++ "."
-  | [x, y] => sentence fx op f x ++ ", and " ++ sentence fx op f y ++ "."
-  | xs => "; ".intercalate ((xs.dropLast).map (sentence fx op f)) ++ "; and " ++
-      (xs.getLast?.map (sentence fx op f)).getD "" ++ "."
-
-/-- "1. t₁ 2. t₂ …": each text numbered from 1, separated by one space. -/
-def numbered (ts : List String) : String :=
-  " ".intercalate ((List.range ts.length).zip ts |>.map (fun (i, t) => toString (i + 1) ++ ". " ++ t))
-
-/-- The first pair `(i, j)`, `i < j`, counted from `k`, of equal texts. -/
-def firstEqualPair : Nat → List String → Option (Nat × Nat)
-  | _, [] => none
-  | k, t :: ts => if ts.contains t then some (k, k + 1 + ts.idxOf t) else firstEqualPair (k + 1) ts
-
-/-- The texts of one listing, refused when two coincide (D-32 names the first such pair, from 1). -/
-def distinctTexts (what : String) (ts : List String) : Except String (List String) :=
-  match firstEqualPair 1 ts with
-  | some (i, j) => .error s!"InvalidInput: readings {i} and {j} of {what} read the same in English; rephrase the act"
-  | none => .ok ts
-
-/-- The paraphrases of a listing of readings (D-23). -/
-def paraphrases (fx : List String) (op : Op) (f : Option Lexical.Form) (what : String) (Rs : List (List Simple)) :
-    Except String (List String) :=
-  distinctTexts what (Rs.map (paraphrase fx op f))
-
-theorem firstEqualPair_none : ∀ (k : Nat) (ts : List String), firstEqualPair k ts = none ↔ ts.Nodup
-  | _, [] => by simp [firstEqualPair]
-  | k, t :: ts => by
-    rw [firstEqualPair, List.nodup_cons, ← firstEqualPair_none (k + 1) ts]
-    by_cases h : t ∈ ts <;> simp [h]
-
-theorem distinctTexts_ok (what : String) (ts us : List String) :
-    distinctTexts what ts = .ok us ↔ us = ts ∧ ts.Nodup := by
-  unfold distinctTexts
-  cases h : firstEqualPair 1 ts with
-  | some p =>
-    obtain ⟨i, j⟩ := p
-    simp only [reduceCtorEq, false_iff, not_and]
-    intro _ hn
-    rw [(firstEqualPair_none 1 ts).mpr hn] at h
-    cases h
-  | none =>
-    simp only [Except.ok.injEq]
-    exact ⟨fun e => ⟨e.symm, (firstEqualPair_none 1 ts).mp h⟩, fun ⟨e, _⟩ => e.symm⟩
-
-theorem paraphrases_nodup {fx : List String} {op : Op} {f : Option Lexical.Form} {what : String}
-    {Rs : List (List Simple)} {ps : List String} (h : paraphrases fx op f what Rs = .ok ps) :
-    ps = Rs.map (paraphrase fx op f) ∧ ps.Nodup := by
-  obtain ⟨e, hn⟩ := (distinctTexts_ok what _ ps).mp h
-  exact ⟨e, e ▸ hn⟩
 
 end VE.Acts
