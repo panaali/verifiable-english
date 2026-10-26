@@ -286,7 +286,7 @@ def defaults_coherence : Shape :=
         closed [("rules", n [ref "common.json#/$defs/string_pair", .equals "/collision/rules"]),
           ("tuple", ref "common.json#/$defs/strings"), ("deciders", ref "common.json#/$defs/strings")]]),
       ("situation", ref "#/$defs/defaults_situation")],
-    .ite (props [("verdict", constS "COLLISION")]) (.bool true)
+    .ite (props [("verdict", constS "COLLISION")]) (.required ["collision", "situation"])
       (.allOf [.not (.required ["collision"]), .not (.required ["situation"])])]
 
 def defaults_certificate : Shape :=

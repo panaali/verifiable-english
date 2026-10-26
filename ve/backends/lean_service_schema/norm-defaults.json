@@ -165,6 +165,7 @@
         "verdict": {"enum": ["COHERENT", "COLLISION", "UNKNOWN"]}
       },
       "required": ["id", "status", "verdict", "pairs"],
+      "then": {"required": ["collision", "situation"]},
       "type": "object"
     },
     "defaults_elaborate": {
