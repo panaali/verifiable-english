@@ -62,15 +62,15 @@ def _remember(key: tuple, row=True) -> None:
     _ACCEPTED[key] = row
 
 
-def construct_after_lean(decode: Callable[[], object], cache: tuple | None,
+def construct_after_lean(decode: Callable[[dict], object], cache: tuple | None,
                          ask: Callable[[], dict], identity: Callable[[object, dict], bool], what: str,
                          bind: Callable[[object, dict], object] | None = None):
-    """Ask Lean first, then construct only the accepted environment or model."""
+    """Ask Lean first, then construct only the accepted environment or model from Lean's row."""
     row = _ACCEPTED.get(cache) if cache is not None else None
     if row is None:
         row = ask()
     try:
-        built = decode()
+        built = decode(row)
     except Exception as exc:
         raise CheckerUnavailable(f"CheckerUnavailable: Python could not construct a Lean-accepted {what}") from exc
     if not identity(built, row):
@@ -82,8 +82,11 @@ def construct_after_lean(decode: Callable[[], object], cache: tuple | None,
     return built
 
 
-def validated_environment(env, data, decode: Callable[[], object]):
-    """`decode()` builds `env` from `data`; Lean decides its validity."""
+def validated_environment(env, data, decode: Callable[[dict | None], object]):
+    """`decode(acts)` builds `env` from `data` with the canonical act of each regulated predicate that Lean's
+    environment row gives (act-phrases 3.3, where an act's canonical form is Lean's); Lean decides its validity.
+    The row's `environment_id` must be the identity of what Python built (R8): one identity, one environment, so
+    every cache keyed by it is keyed by the environment (ap-1bb F1)."""
     from .relay import decide
     # Restricted JSON is a wire primitive. Check the environment value itself
     # before wrapping it in a service case, so an offset names the same bytes
@@ -93,11 +96,9 @@ def validated_environment(env, data, decode: Callable[[], object]):
         cache = key("environment", data)
     except (VEError, TypeError, ValueError, RecursionError):
         cache = None
-    return construct_after_lean(decode, cache,
-                    lambda: decide("environment", [{"id": "environment", "environment": data}])[0],
-                    lambda built, row: row.get("environment_id") == built.environment_id,
-                    "environment",
-                    lambda built, row: (object.__setattr__(built, "_environment_id", row["environment_id"]), built)[1])
+    return construct_after_lean(lambda row: decode(row.get("acts")), cache,
+                                lambda: decide("environment", [{"id": "environment", "environment": data}])[0],
+                                lambda built, row: row["environment_id"] == built.environment_id, "environment")
 
 
 def validated_model(env, wire, decode: Callable[[], object], *, claimed: dict | None = None):
@@ -112,7 +113,7 @@ def validated_model(env, wire, decode: Callable[[], object], *, claimed: dict | 
     except (VEError, TypeError, ValueError, RecursionError):
         cache = None
     from dataclasses import replace
-    return construct_after_lean(decode, cache,
+    return construct_after_lean(lambda row: decode(), cache,
                     lambda: decide("model", [request])[0],
                     lambda built, row: row.get("valid") is True,
                     "model", lambda built, row: replace(built, model_id=row["model_id"]))
