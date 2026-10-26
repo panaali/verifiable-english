@@ -154,6 +154,13 @@ def test_every_readings_module_is_read_by_the_reserved_rule():
         assert relay_lint.reserved_literals(path) == [], path
 
 
+def test_the_wording_rule_reads_every_readings_module():
+    """The fourth rule reads every module the second does (AR-16b: the modules of `ve/readings_verdicts/` too)."""
+    wording = {p for pattern in relay_lint.WORDING_GLOBS for p in ROOT.glob(pattern)}
+    assert set(relay_lint.readings_modules()) <= wording
+    assert ROOT / "ve/readings_verdicts/binding.py" in wording
+
+
 def test_probe_a2_no_readings_module_spells_a_soft_or_unsaid_name():
     """PROBE A2 of rd-9-looprecheck2: `! grep -n 'soft__\\|unsaid__' ve/readings*.py`. The readings modules find a
     decision's name by its key in Lean's row, never by spelling it (plan SC-8)."""
