@@ -190,6 +190,12 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool, prepare
     try:
         if row["source_id"] != source_id(source, env) or row["document_id"] != _document_id(meta, source, fences):
             raise unavailable("is not bound to the document sent")
+        governed = _governed_units(meta)
+        if governed:
+            # scope@0: the identities are the document's as written; every container below, and every later read of
+            # the front matter, reads the units Lean's chain read (`Service.Document.withUnits`), each governed rule
+            # as the bound answer composed it, never as written.
+            meta = _with_governed_units(meta, governed, units)
         rights_document = soft_document = None
         # A senses document's units are read in the senses route's projected environment.
         formula_env = env if senses is None else senses.environment
@@ -198,8 +204,9 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool, prepare
             # Batch 16f: the soft document Lean's `document` mode composed from the soft route
             # (`Service.Document.softLayer`); its units' contents and statuses are the answer's.
             from ..softnorms import SoftNormDocument
-            soft_document = ((prepared or {}).get("soft_document") or
-                             SoftNormDocument(env, _soft_contents(meta["units"])))
+            # The soft document prepared for the proposal holds the rules as written, which govern may change.
+            soft_document = ((prepared or {}).get("soft_document") if not governed else None) or \
+                SoftNormDocument(env, _soft_contents(meta["units"]))
             formula_env = soft_document.extended_env
         if "rights@0" in env.profiles:
             # Batch 16e: the containers of the rights source Lean's `document` mode decoded with the rights route
@@ -305,6 +312,7 @@ def _bind_document_answer(body, meta, declared, row, senses=None):
         read = set(formulas) | set(senses.unresolved) | senses.lines
     else:
         formulas, read = {}, set()
+    governed = _governed_units(meta)
     kinds, statuses, reasons = {}, {}, {}
     for unit, (authored, parent) in zip(units, declared, strict=True):
         require(type(unit) is dict and type(authored) is dict)
@@ -324,9 +332,9 @@ def _bind_document_answer(body, meta, declared, row, senses=None):
         require(("content" in unit) == ("meaning_id" in unit))
         if has_content and type(authored["content"]) is dict and "ast" in authored["content"]:
             require(same(unit["content"], authored["content"]["ast"]))
-        if has_content and type(authored["content"]) is dict and "norm" in authored["content"]:
-            require(_soft_bound(unit["content"], authored["content"], same) if rights or soft else
-                    same(unit["content"], authored["content"]))
+        if has_content and type(authored["content"]) is dict and {"norm", "part"} & set(authored["content"]):
+            require(_rule_bound(unit["content"], authored["content"], authored.get("id") in governed,
+                                rights or soft, same))
         if has_content and type(authored["content"]) is dict and set(authored["content"]) & set(_RIGHTS_KINDS):
             require(rights and same(unit["content"], authored["content"]))
         span = unit["span"]
@@ -375,6 +383,53 @@ def _bind_document_answer(body, meta, declared, row, senses=None):
                      "bytes_by_kind": kinds, "bytes_by_status": statuses, "unformalised_reasons": reasons,
                      "residual": residual, "residual_total": sum(residual.values())})
     require(same(coverage, expected))
+
+
+def _governed_units(meta) -> set:
+    """The units whose rule Lean's `document` mode may answer composed under `scope@0` (`VE.Scope.govern` patches the
+    content of `affected` units only, all of them rule units): every unit the request's `scope` block names, as a
+    governor's `unit` or in its recorded `units` (which Lean admits only equal to the reach it regenerates), and every
+    `part` unit. Read from the request, never recomputed: which of them a governor changes, and how, is Lean's."""
+    if "scope@0" not in listed_profiles(meta.get("environment")):
+        return set()
+    block = meta.get("scope")
+    governors = block.get("governors") if type(block) is dict else None
+    named = set()
+    for governor in governors if type(governors) is list else ():
+        if type(governor) is dict:
+            named.add(governor.get("unit"))
+            named.update(governor.get("units") if type(governor.get("units")) is list else ())
+    units = meta.get("units")
+    return {u.get("id") for u, _ in _parts(units if type(units) is list else [])
+            if type(u) is dict and (u.get("id") in named or
+                                    type(u.get("content")) is dict and "part" in u["content"])}
+
+
+def _with_governed_units(meta: dict, governed: set, rows: list) -> dict:
+    """The front matter with each governed unit's content the bound answer's (MIXED parts included), as Lean's
+    chain reads it under `scope@0` (`Service.Document.withUnits`)."""
+    answered = {row["id"]: row["content"] for row in rows if row["id"] in governed and "content" in row}
+
+    def unit(u):
+        if u.get("status") == "MIXED":
+            return {**u, "parts": [unit(p) for p in u["parts"]]}
+        return {**u, "content": answered[u["id"]]} if u.get("id") in answered else u
+    return {**meta, "units": [unit(u) for u in meta["units"]]}
+
+
+def _rule_bound(answer, authored, governed: bool, soft: bool, same) -> bool:
+    """A `norm` or `part` unit's content in Lean's answer bound to the authored content. A unit scope does not govern
+    keeps its rule: exactly as written, or a soft one as `_soft_bound` binds it. A governed unit's rule is Lean's
+    composition (`VE.Scope.newContent`): the authored members with `part` read as `norm`, every other member (`cites`)
+    as written, and the rule an object; a soft one in the form its container holds (`_soft_bound` of the rule with
+    itself), as for every soft rule Lean answers."""
+    if not governed:
+        return "part" not in authored and (_soft_bound(answer, authored, same) if soft else same(answer, authored))
+    members = {"norm" if key == "part" else key for key in authored}
+    return (type(answer) is dict and set(answer) == members and len(members) == len(authored) and
+            type(answer.get("norm")) is dict and
+            all(same(answer[key], authored[key]) for key in authored if key not in ("norm", "part")) and
+            (not soft or _soft_bound(answer, answer, same)))
 
 
 def _soft_bound(answer, authored, same) -> bool:
