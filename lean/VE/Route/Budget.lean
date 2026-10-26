@@ -413,7 +413,9 @@ def computeDefinedB (d : VE.Bridge.ModelData) (ds : List VE.Definitions.Def) :
 
 deriving instance Hashable for VE.Term
 deriving instance Hashable for VE.Paths.Kind
+instance instHashableClosureKind : Hashable VE.Closure.Kind := inferInstanceAs (Hashable VE.Paths.Kind)
 deriving instance Hashable for VE.Closure.Formula
+instance instHashableCoreKind : Hashable VE.Core.Kind := inferInstanceAs (Hashable VE.Paths.Kind)
 deriving instance Hashable for VE.Core.Formula
 
 open VE.Route.Closure (Edges Meter EdgeKey CacheOK reachValue namedClosure warshallRun forPairs)

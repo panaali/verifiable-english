@@ -19,7 +19,10 @@ theorem Path.least {α : Type u} {R : α → α → Prop} {a c : α} :
       (∀ x y, R x y → X x y) →
       (∀ x y z, R x y → X y z → X x z) → X a c := VE.Paths.Path.least
 
-abbrev Kind := VE.Paths.Kind
+def Kind := VE.Paths.Kind
+instance instDecidableEqKind : DecidableEq Kind := VE.Paths.instDecidableEqKind
+instance instBEqKind : BEq Kind := VE.Paths.instBEqKind
+instance instReprKind : Repr Kind := VE.Paths.instReprKind
 @[match_pattern] abbrev Kind.plus : Kind := VE.Paths.Kind.plus
 @[match_pattern] abbrev Kind.star : Kind := VE.Paths.Kind.star
 abbrev Reachable {α : Type u} (k : Kind) (R : α → α → Prop) (a b : α) : Prop := VE.Paths.Reachable k R a b
