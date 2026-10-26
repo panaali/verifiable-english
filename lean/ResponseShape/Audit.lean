@@ -97,7 +97,9 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Ask.route_mem
 #print axioms ResponseShape.Encoders.Ask.row_fits
 #print axioms ResponseShape.Encoders.Ask.source_fits
+#print axioms ResponseShape.Encoders.Calc.decode_software
 #print axioms ResponseShape.Encoders.Calc.rowJson_fits
+#print axioms ResponseShape.Encoders.Calc.rowJson_fits_software
 #print axioms ResponseShape.Encoders.Calc.runCaseReported_fits
 #print axioms ResponseShape.Encoders.Common.admitDocument_kinds
 #print axioms ResponseShape.Encoders.Common.caseKind_read
