@@ -149,7 +149,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Definitions/Bundle.lean` | 471 | 471 | 1–471 | `fc86d51a7f84…` |
 | `lean/VE/EnglishGrammar/Encode.lean` | 765 | 765 | 1–765 | `fcffc0224205…` |
 | `lean/VE/EnglishGrammar/Run.lean` | 735 | 735 | 1–735 | `f9355148f683…` |
-| `lean/VE/Question/Run.lean` | 257 | 257 | 1–257 | `152c6c578335…` |
+| `lean/VE/Question/Run.lean` | 257 | 257 | 1–257 | `0eb404095ecf…` |
 | `lean/VE/Json.lean` | 141 | 141 | 1–141 | `10dcb30ca301…` |
 | `lean/VE/NormDefaults/Admission.lean` | 367 | 367 | 1–367 | `ccd91ae09c60…` |
 | `lean/VE/NormDefaults/Layered.lean` | 469 | 469 | 1–469 | `9c6c0c4beb3d…` |

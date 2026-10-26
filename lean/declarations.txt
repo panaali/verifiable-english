@@ -11553,13 +11553,13 @@ module VE.Question.Basic d6d5f8e7abcba0e8349cfea59cc1f4994ff9e64feac1de569c4bd4e
 114:0-119:15 def VE.Question.addMeaning@VE.Question.Basic
 121:0-123:24 def VE.Question.firstMeanings@VE.Question.Basic
 125:0-126:91 def VE.Question.caseThatQuestion@VE.Question.Basic
-module VE.Question.Examples c703a3d911e475194ba6b2ac3484e1481362d8f0f59a719a2ff83e334c824642
+module VE.Question.Examples 64e76658f057f85e977851dba4dc7e72eded8aadbf5c31234bb97f4d58a627b6
 38:0-44:42 def VE.Question.groupEnv@VE.Question.Examples
 46:0-50:79 def VE.Question.groupLex@VE.Question.Examples
 52:0-52:77 def VE.Question.isOne@VE.Question.Examples
 53:0-53:79 def VE.Question.isNone@VE.Question.Examples
 54:0-54:91 def VE.Question.isIndefinite@VE.Question.Examples
-185:0-187:98 def VE.Question.joiningTags@VE.Question.Examples
+187:0-189:98 def VE.Question.joiningTags@VE.Question.Examples
 module VE.Question.Fixtures e8892bda6db4969c6bc25d6409a9c50e983fabdbd5354c08cc39f21b3e5f5055
 12:0-25:117 def VE.Question.Fixtures.answer@VE.Question.Fixtures
 27:0-30:21 def VE.Question.Fixtures.expect@VE.Question.Fixtures
@@ -11733,7 +11733,7 @@ module VE.Question.Read accf4caf42aa9fef55e3f10401487519df8568413d2b36a1e5083033
 67:0-71:13 def VE.Question.indefiniteSwaps@VE.Question.Read
 73:0-77:29 def VE.Question.offered@VE.Question.Read
 79:0-87:10 def VE.Question.readQuestion@VE.Question.Read
-module VE.Question.Run 152c6c578335c61939a7237554e7e4834fb2259d1c838888f4341f14f70eb0ea
+module VE.Question.Run 0eb404095ecfc924d996e26421b6acb02b5f826315866177e7812efe27f7409b
 31:0-32:63 def VE.Question.Run.questionVersion@VE.Question.Run
 34:0-35:95 def VE.Question.Run.codeClasses@VE.Question.Run
 37:0-47:60 def VE.Question.Run.statusCodes@VE.Question.Run
@@ -11760,7 +11760,7 @@ module VE.Question.Run 152c6c578335c61939a7237554e7e4834fb2259d1c838888f4341f14f
 196:0-201:11 def VE.Question.Run.modalFields@VE.Question.Run
 203:0-204:70 def VE.Question.Run.texts@VE.Question.Run
 206:0-210:49 def VE.Question.Run.codesCase@VE.Question.Run
-212:0-215:63 def VE.Question.Run.caseFields@VE.Question.Run
+212:0-215:72 def VE.Question.Run.caseFields@VE.Question.Run
 217:0-237:94 def VE.Question.Run.questionCase@VE.Question.Run
 239:0-250:11 theorem VE.Question.Run.oneFields_gated@VE.Question.Run
 252:0-255:111 def VE.Question.Run.caseReported@VE.Question.Run

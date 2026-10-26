@@ -100,6 +100,8 @@ def isIndefinite (o : Outcome) : Bool := match o with | .indefinite .. => true |
 #guard (Run.caseFields (Lean.Json.mkObj [("caller", "speech-acts")])).getLast? == some "caller"
 #guard (Run.caseFields (Lean.Json.mkObj [])).getLast? == some "question" &&
   (Run.caseFields (Lean.Json.mkObj [])).take 7 == ["id", "environment", "lexicon", "source", "mode", "cap", "question"]
+#guard Run.caseFields (Lean.Json.mkObj [("generated", true), ("caller", 1), ("overlay", 2)]) ==
+  ["id", "environment", "lexicon", "source", "mode", "cap", "question", "overlay", "generated", "caller"]
 -- The `ModalQuestion` refusal: a first word of `modalWords` followed by a space, whatever follows, and nothing else.
 #guard ["Must Ann be eligible?", "Can Ann be eligible?", "Can check.", "Must ", "Must alice?"].all fun q =>
   Run.modalFields q == some [("status", .str "modal"), ("code", .str "ModalQuestion"),
