@@ -1122,7 +1122,7 @@
   {
    "class": "S",
    "lines": 64,
-   "reason": "ap-3: lean/VE/Acts/Table.lean +38 (S: Simple, Op, opOf, freeTable, table), lean/VE/Acts/Syntax.lean +26 (S: Join, Part, Filler, Modifier, Atom, Act); K +0",
+   "reason": "ap-3: lean/VE/Acts/Table.lean +38 (S: Simple, Op, opOf, freeTable, table), lean/VE/Acts/Tree.lean +26 (S: Join, Part, Filler, Modifier, Atom, Act); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3, 2026-10-18",
    "commit": "058fea806c0bb89a1f30b6255126567ce9fd97a4"
   }

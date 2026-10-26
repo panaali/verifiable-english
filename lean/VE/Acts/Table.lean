@@ -1,4 +1,4 @@
-import VE.Acts.Syntax
+import VE.Acts.Tree
 import VE.Norms.Tree
 
 /-! The modal × connective table (docs/spec/act-phrases.md 1.7, 6.1, 6.2; plan 2.3).

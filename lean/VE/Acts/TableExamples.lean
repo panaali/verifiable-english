@@ -1,4 +1,5 @@
 import VE.Acts.Table
+import VE.Acts.Syntax
 
 /-! Fixtures of the ops and the table (docs/spec/act-phrases.md 6.1 and 11.3: T1 to T10, on the act trees of 11.2).
 
