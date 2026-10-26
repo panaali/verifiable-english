@@ -1405,6 +1405,11 @@ _SCHEMA_SEEDS = {
                       {"id": "c", "status": "ok", "max_proof_steps": 10000, "max_domain_size": 2,
                        "max_models": 10000, "max_evaluations": 100000,
                        "sorts": [None, {"sort": "t", "least": 3, "most": 3}]}),
+    "calc": ({"format": "ve-calc@0", "values": [{"name": "x", "words": "the x", "stated": "1"}],
+              "claims": [{"id": "c1", "claim": ["eq", ["val", "x"], ["lit", "1"]]}]},
+             {"status": "ok", "meaning_id": "a" * 64,
+              "rows": [{"status": "ok", "claim": "c1", "claim_id": "b" * 64, "kind": "claim", "outcome": "holds",
+                        "reason": None, "reproduction": None}]}),
 }
 
 
@@ -1440,7 +1445,7 @@ def test_random_malformed_responses_never_escape_schema(tmp_path, mode, mutation
                  "valid" if mode in ("check-certificate", "order", "norms", "model") else
                  "environment_id" if mode == "environment" else
                  "identity_id" if mode == "identity" else
-                 "meaning_id" if mode == "check" else
+                 "meaning_id" if mode in ("check", "calc") else
                  "ast" if mode == "parse" else
                  "supporting_edges" if mode == "graph" else
                  "verdict" if mode in ("readings", "readings-choices") else
