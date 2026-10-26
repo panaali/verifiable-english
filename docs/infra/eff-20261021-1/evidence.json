@@ -1,0 +1,1203 @@
+{
+ "stop_rule": {
+  "jobs": 4,
+  "max_mutants": 40,
+  "head": "82c0e6ad8f46984ba74ebaa6d5540f2efcbed9f6",
+  "base": "c5197da78807f792a47d787133f93e4c59fbe0cd",
+  "pytest": [
+   "tests/test_calc_units.py"
+  ],
+  "lean_only_seconds": 55,
+  "lean_phase_seconds": 38,
+  "pytest_phase_seconds": 569,
+  "pytest_control_seconds": 391,
+  "ratio": 10.35,
+  "pytest_kills": 0,
+  "pairs": 2,
+  "fired": [
+   "pairs",
+   "time"
+  ],
+  "decision": "STOP: 2 corpus mutants are SURVIVOR at their reviewed tree and KILLED at their fixed tree (8 needed), and the pytest phase alone takes 10.35x the Lean-only sweep (3x allowed); no implementation retained",
+  "environment": "VM (ve-mac-1 offline), --jobs 4 and VE_LEAN_SHARE=off in both sweeps (no shared build of this tree exists); each scratch copied the checkout's lean/.lake, where `lake build VE.Calc.Units` (124 s, before both sweeps) built what tests/test_calc_units.py's `lake env lean` reads",
+  "operator_plan": "prototype.patch: the tool at the merge base plus tier-4 operators (and-left, and-right, arm-wildcard, sibling-name, fault-order) and the --pytest phase, run after the Lean phase over its SURVIVORs and timed on its own"
+ },
+ "sources": {
+  "daily_efficiency_note": "absent at supplied path; L93 and review finals used"
+ },
+ "corpus": [
+  {
+   "item": "me-5",
+   "id": "review-26",
+   "reviewed_head": "7d10dfb347c0d7dd5024e43558160a4914c5940c",
+   "fixed_head": "b3bbe55b071d4551f6cb79923e34c34679872405",
+   "file": "lean/VE/Calc/FourierMotzkin.lean",
+   "line": 8,
+   "before": "def maxFacts : Nat := 64",
+   "after": "def maxFacts : Nat := 63",
+   "fixture_added": "lake build VE.Calc.DeriveExamples (no theorem statement mentions the search): #guard lean/VE/Calc/DeriveExamples.lean:93",
+   "source": "/home/seyran/code/manage-agents/me-5-review-ov.final.md",
+   "base": "b7613541cbd398208e31b4b48c01253d732aee34",
+   "replay": null,
+   "inspected_operator": "lit-minus",
+   "definition": "VE.Calc.FM.maxFacts",
+   "trust_class": "G[R]",
+   "trusted": false,
+   "measured": {
+    "reviewed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    },
+    "fixed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    }
+   },
+   "legacy_verdict": "NOT SELECTED",
+   "fixed_verdict": "NOT SELECTED",
+   "pair": false,
+   "gap": "unselected"
+  },
+  {
+   "item": "me-5",
+   "id": "review-27",
+   "reviewed_head": "7d10dfb347c0d7dd5024e43558160a4914c5940c",
+   "fixed_head": "b3bbe55b071d4551f6cb79923e34c34679872405",
+   "file": "lean/VE/Calc/FourierMotzkin.lean",
+   "line": 8,
+   "before": "def maxFacts : Nat := 64",
+   "after": "def maxFacts : Nat := 1000",
+   "fixture_added": "lake build VE.Calc.DeriveExamples (no theorem statement mentions the search): #guard lean/VE/Calc/DeriveExamples.lean:94",
+   "source": "/home/seyran/code/manage-agents/me-5-review-ov.final.md",
+   "base": "b7613541cbd398208e31b4b48c01253d732aee34",
+   "replay": null,
+   "inspected_operator": "lit-plus (same 65-fact effect)",
+   "definition": "VE.Calc.FM.maxFacts",
+   "trust_class": "G[R]",
+   "trusted": false,
+   "measured": {
+    "reviewed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    },
+    "fixed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    }
+   },
+   "legacy_verdict": "NOT SELECTED",
+   "fixed_verdict": "NOT SELECTED",
+   "pair": false,
+   "gap": "unselected"
+  },
+  {
+   "item": "me-5",
+   "id": "review-28",
+   "reviewed_head": "7d10dfb347c0d7dd5024e43558160a4914c5940c",
+   "fixed_head": "b3bbe55b071d4551f6cb79923e34c34679872405",
+   "file": "lean/VE/Calc/FourierMotzkin.lean",
+   "line": 9,
+   "before": "def maxUnknowns : Nat := 16",
+   "after": "def maxUnknowns : Nat := 15",
+   "fixture_added": "lake build VE.Calc.DeriveExamples (no theorem statement mentions the search): #guard lean/VE/Calc/DeriveExamples.lean:98, lean/VE/Calc/DeriveExamples.lean:100",
+   "source": "/home/seyran/code/manage-agents/me-5-review-ov.final.md",
+   "base": "b7613541cbd398208e31b4b48c01253d732aee34",
+   "replay": null,
+   "inspected_operator": "lit-minus",
+   "definition": "VE.Calc.FM.maxUnknowns",
+   "trust_class": "G[R]",
+   "trusted": false,
+   "measured": {
+    "reviewed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    },
+    "fixed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    }
+   },
+   "legacy_verdict": "NOT SELECTED",
+   "fixed_verdict": "NOT SELECTED",
+   "pair": false,
+   "gap": "unselected"
+  },
+  {
+   "item": "me-5",
+   "id": "review-29",
+   "reviewed_head": "7d10dfb347c0d7dd5024e43558160a4914c5940c",
+   "fixed_head": "b3bbe55b071d4551f6cb79923e34c34679872405",
+   "file": "lean/VE/Calc/FourierMotzkin.lean",
+   "line": 10,
+   "before": "def maxSteps : Nat := 10000",
+   "after": "def maxSteps : Nat := 20000",
+   "fixture_added": "lake build VE.Calc.DeriveExamples (no theorem statement mentions the search): #guard lean/VE/Calc/DeriveExamples.lean:113, lean/VE/Calc/DeriveExamples.lean:154",
+   "source": "/home/seyran/code/manage-agents/me-5-review-ov.final.md",
+   "base": "b7613541cbd398208e31b4b48c01253d732aee34",
+   "replay": null,
+   "inspected_operator": "lit-plus (same next-step effect)",
+   "definition": "VE.Calc.FM.maxSteps",
+   "trust_class": "G[R]",
+   "trusted": false,
+   "measured": {
+    "reviewed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    },
+    "fixed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    }
+   },
+   "legacy_verdict": "NOT SELECTED",
+   "fixed_verdict": "NOT SELECTED",
+   "pair": false,
+   "gap": "unselected"
+  },
+  {
+   "item": "me-5",
+   "id": "review-30",
+   "reviewed_head": "7d10dfb347c0d7dd5024e43558160a4914c5940c",
+   "fixed_head": "b3bbe55b071d4551f6cb79923e34c34679872405",
+   "file": "lean/VE/Calc/FourierMotzkin.lean",
+   "line": 44,
+   "before": "pos.length * neg.length > budget",
+   "after": "pos.length * neg.length ≥ budget",
+   "fixture_added": "lake build VE.Calc.DeriveExamples (no theorem statement mentions the search): #guard lean/VE/Calc/DeriveExamples.lean:112, lean/VE/Calc/DeriveExamples.lean:114, lean/VE/Calc/DeriveExamples.lean:139, lean/VE/Calc/DeriveExamples.lean:140, lean/VE/Calc/DeriveExamples.lean:141, lean/VE/Calc/DeriveExamples.lean:142, lean/VE/Calc/DeriveExamples.lean:143, lean/VE/Calc/DeriveExamples.lean:144, lean/VE/Calc/DeriveExamples.lean:155",
+   "source": "/home/seyran/code/manage-agents/me-5-review-ov.final.md",
+   "base": "b7613541cbd398208e31b4b48c01253d732aee34",
+   "replay": null,
+   "inspected_operator": null,
+   "definition": "VE.Calc.FM.eliminate",
+   "trust_class": "C",
+   "trusted": false,
+   "measured": {
+    "reviewed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    },
+    "fixed": {
+     "today": "TEXT CHANGED",
+     "proposed": "TEXT CHANGED"
+    }
+   },
+   "legacy_verdict": "NOT SELECTED",
+   "fixed_verdict": "TEXT CHANGED",
+   "pair": false,
+   "gap": "unselected"
+  },
+  {
+   "item": "me-9",
+   "id": "denominator-true",
+   "reviewed_head": "1b617752a9aedd0809b8a7e7fadc7c37cabc91b9",
+   "fixed_head": "d9b617a39ac0d6537669344f5be13fda76f7ff26",
+   "file": "lean/VE/Calc/Poly.lean",
+   "line": 65,
+   "before": "m.coeff.den < Poly.coeffBound",
+   "after": "true",
+   "fixture_added": "tests/test_calc_algebra.py::test_fixture[digits-den-4097]",
+   "source": "/home/seyran/code/manage-agents/me-9-review-ov.final.md",
+   "base": "2f633d7b595a1136ae647b678fec2bce87b4b77d",
+   "replay": null,
+   "inspected_operator": null,
+   "definition": "VE.Calc.Poly.fits",
+   "trust_class": "C",
+   "trusted": false,
+   "measured": {
+    "reviewed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    },
+    "fixed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    }
+   },
+   "legacy_verdict": "NOT SELECTED",
+   "fixed_verdict": "NOT SELECTED",
+   "pair": false,
+   "gap": "unselected"
+  },
+  {
+   "item": "ap-1a",
+   "id": "slots-length",
+   "reviewed_head": "74bb1ddf31a54b6baa5ed802a06569598c06697f",
+   "fixed_head": "ce7de07609f32f7978bc429aeeb231ba8fd277bd",
+   "file": "lean/VE/Acts/Lexical.lean",
+   "line": 118,
+   "before": "slots == (List.range arity).map toString",
+   "after": "slots.length == arity",
+   "fixture_added": "lean/VE/Acts/LexicalExamples.lean:110 (#guard errS (chk [] 2 \"{0} meet {0}\") == ...)",
+   "source": "/home/seyran/code/manage-agents/ap-1a-review-ov.final.md",
+   "base": "585794c9200cfca3e0ba48bec5e6e1138015b81c",
+   "replay": null,
+   "inspected_operator": null,
+   "definition": "VE.Acts.Lexical.check",
+   "trust_class": "D[V]",
+   "trusted": true,
+   "measured": {
+    "reviewed": {
+     "today": "NOT GENERATED",
+     "proposed": "NOT GENERATED"
+    },
+    "fixed": {
+     "today": "NOT GENERATED",
+     "proposed": "NOT GENERATED"
+    }
+   },
+   "legacy_verdict": "NOT GENERATED",
+   "fixed_verdict": "NOT GENERATED",
+   "pair": false,
+   "gap": "G1"
+  },
+  {
+   "item": "ap-1a",
+   "id": "form-any-role",
+   "reviewed_head": "74bb1ddf31a54b6baa5ed802a06569598c06697f",
+   "fixed_head": "ce7de07609f32f7978bc429aeeb231ba8fd277bd",
+   "file": "lean/VE/Norms/Wire.lean",
+   "line": 63,
+   "before": "(if acts && role == .plain then [",
+   "after": "(if acts then [",
+   "fixture_added": "lean/VE/Acts/LexicalExamples.lean:195 (#guard regErr actsP \"permission\" [actF, formF] == some fieldsE)",
+   "source": "/home/seyran/code/manage-agents/ap-1a-review-ov.final.md",
+   "base": "585794c9200cfca3e0ba48bec5e6e1138015b81c",
+   "replay": [
+    "and-or",
+    "&&",
+    "||"
+   ],
+   "inspected_operator": "and-or (same permission form effect)",
+   "definition": "VE.Norms.Wire.decodeRegulatedWith",
+   "trust_class": "D[V]",
+   "trusted": true,
+   "measured": {
+    "reviewed": {
+     "today": "SURVIVOR",
+     "proposed": "SURVIVOR"
+    },
+    "fixed": {
+     "today": "SURVIVOR",
+     "proposed": "SURVIVOR"
+    }
+   },
+   "legacy_verdict": "SURVIVOR",
+   "fixed_verdict": "SURVIVOR",
+   "pair": false,
+   "gap": "open (fixed tree: SURVIVOR today, SURVIVOR proposed)",
+   "reviewed_verdict_deep": "KILLED",
+   "pair_deep": false
+  },
+  {
+   "item": "ap-1a",
+   "id": "permission-canonical",
+   "reviewed_head": "74bb1ddf31a54b6baa5ed802a06569598c06697f",
+   "fixed_head": "ce7de07609f32f7978bc429aeeb231ba8fd277bd",
+   "file": "lean/VE/Norms/Wire.lean",
+   "line": 72,
+   "before": "else some <$> actCheck name",
+   "after": "else some <$> (if acts && role != .plain then VE.Norms.Wire.canonicalAct else actCheck) name",
+   "fixture_added": "lean/VE/Acts/LexicalExamples.lean:189 (#guard reg actsP \"permission\" [actF] == ...)",
+   "source": "/home/seyran/code/manage-agents/ap-1a-review-ov.final.md",
+   "base": "585794c9200cfca3e0ba48bec5e6e1138015b81c",
+   "replay": null,
+   "inspected_operator": null,
+   "definition": "VE.Norms.Wire.decodeRegulatedWith",
+   "trust_class": "D[V]",
+   "trusted": true,
+   "measured": {
+    "reviewed": {
+     "today": "NOT GENERATED",
+     "proposed": "NOT GENERATED"
+    },
+    "fixed": {
+     "today": "NOT GENERATED",
+     "proposed": "NOT GENERATED"
+    }
+   },
+   "legacy_verdict": "NOT GENERATED",
+   "fixed_verdict": "NOT GENERATED",
+   "pair": false,
+   "gap": "G1"
+  },
+  {
+   "item": "ap-1a",
+   "id": "obligation-canonical",
+   "reviewed_head": "74bb1ddf31a54b6baa5ed802a06569598c06697f",
+   "fixed_head": "ce7de07609f32f7978bc429aeeb231ba8fd277bd",
+   "file": "lean/VE/Norms/Wire.lean",
+   "line": 73,
+   "before": "else some <$> actCheck name",
+   "after": "else some <$> (if acts && role != .plain then VE.Norms.Wire.canonicalAct else actCheck) name",
+   "fixture_added": "lean/VE/Acts/LexicalExamples.lean:190 (#guard reg actsP \"obligation\" [actF] == ...)",
+   "source": "/home/seyran/code/manage-agents/ap-1a-review-ov.final.md",
+   "base": "585794c9200cfca3e0ba48bec5e6e1138015b81c",
+   "replay": null,
+   "inspected_operator": null,
+   "definition": "VE.Norms.Wire.decodeRegulatedWith",
+   "trust_class": "D[V]",
+   "trusted": true,
+   "measured": {
+    "reviewed": {
+     "today": "NOT GENERATED",
+     "proposed": "NOT GENERATED"
+    },
+    "fixed": {
+     "today": "NOT GENERATED",
+     "proposed": "NOT GENERATED"
+    }
+   },
+   "legacy_verdict": "NOT GENERATED",
+   "fixed_verdict": "NOT GENERATED",
+   "pair": false,
+   "gap": "G1"
+  },
+  {
+   "item": "me-6b",
+   "id": "factor-below-one",
+   "reviewed_head": "82c0e6ad8f46984ba74ebaa6d5540f2efcbed9f6",
+   "fixed_head": "db34c272d6a8d95eeaf79d0cda6f787869655707",
+   "file": "lean/VE/Calc/Units.lean",
+   "line": 53,
+   "before": "0 < decValue d",
+   "after": "1 ≤ decValue d",
+   "fixture_added": "tests/test_calc_units.py::test_fixture[factor-below-one]",
+   "source": "/home/seyran/code/manage-agents/me-6b-review-ov.final.md",
+   "base": "c5197da78807f792a47d787133f93e4c59fbe0cd",
+   "replay": [
+    "lit-plus",
+    "0",
+    "1"
+   ],
+   "inspected_operator": "lit-plus (same below-one effect)",
+   "definition": "VE.Calc.Units.decodeFactor",
+   "trust_class": "D[V]",
+   "trusted": true,
+   "measured": {
+    "reviewed": {
+     "today": "SURVIVOR",
+     "proposed": "SURVIVOR"
+    },
+    "fixed": {
+     "today": "KILLED",
+     "proposed": "KILLED"
+    }
+   },
+   "legacy_verdict": "SURVIVOR",
+   "fixed_verdict": "KILLED",
+   "pair": true,
+   "gap": "none (today's Lean phase kills it at the fixed tree)"
+  },
+  {
+   "item": "me-6b",
+   "id": "base-identifier",
+   "reviewed_head": "82c0e6ad8f46984ba74ebaa6d5540f2efcbed9f6",
+   "fixed_head": "db34c272d6a8d95eeaf79d0cda6f787869655707",
+   "file": "lean/VE/Calc/Units.lean",
+   "line": 74,
+   "before": "identifier s",
+   "after": "true",
+   "fixture_added": "tests/test_calc_units.py::test_fixture[refuse-base-identifier]",
+   "source": "/home/seyran/code/manage-agents/me-6b-review-ov.final.md",
+   "base": "c5197da78807f792a47d787133f93e4c59fbe0cd",
+   "replay": null,
+   "inspected_operator": null,
+   "definition": "VE.Calc.Units.decodeV2",
+   "trust_class": "D[V]",
+   "trusted": true,
+   "measured": {
+    "reviewed": {
+     "today": "NOT GENERATED",
+     "proposed": "NOT GENERATED"
+    },
+    "fixed": {
+     "today": "NOT GENERATED",
+     "proposed": "NOT GENERATED"
+    }
+   },
+   "legacy_verdict": "NOT GENERATED",
+   "fixed_verdict": "NOT GENERATED",
+   "pair": false,
+   "gap": "G1"
+  },
+  {
+   "item": "me-9b",
+   "id": "numerator-zero-divisor-dropped",
+   "reviewed_head": "40103ab6aa05e4e6c1b25951e194e4f423f8677b",
+   "fixed_head": "6f5133e7dc2544299196b59617594fc4503c62a2",
+   "file": "lean/VE/Calc/Identity.lean",
+   "line": 63,
+   "before": "| .div a b => a.zeroDivisor || b.zeroDivisor ||",
+   "after": "| .div a b => b.zeroDivisor ||",
+   "fixture_added": "tests/test_calc_algebra.py::test_fixture[f3-numerator]",
+   "source": "/home/seyran/code/manage-agents/me-9b-review-ov.final.md",
+   "base": "6454946a5f54e1eaf15e48204c3119126ebf3a78",
+   "replay": null,
+   "inspected_operator": null,
+   "definition": "VE.Calc.Expr.zeroDivisor",
+   "trust_class": "C",
+   "trusted": false,
+   "measured": {
+    "reviewed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    },
+    "fixed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    }
+   },
+   "legacy_verdict": "NOT SELECTED",
+   "fixed_verdict": "NOT SELECTED",
+   "pair": false,
+   "gap": "unselected"
+  },
+  {
+   "item": "me-9b",
+   "id": "left-operand-zero-divisor-dropped",
+   "reviewed_head": "40103ab6aa05e4e6c1b25951e194e4f423f8677b",
+   "fixed_head": "6f5133e7dc2544299196b59617594fc4503c62a2",
+   "file": "lean/VE/Calc/Identity.lean",
+   "line": 62,
+   "before": "| .add a b | .sub a b | .mul a b => a.zeroDivisor || b.zeroDivisor",
+   "after": "| .add a b | .sub a b | .mul a b => b.zeroDivisor",
+   "fixture_added": "tests/test_calc_algebra.py::test_fixture[f3-left]",
+   "source": "/home/seyran/code/manage-agents/me-9b-review-ov.final.md",
+   "base": "6454946a5f54e1eaf15e48204c3119126ebf3a78",
+   "replay": null,
+   "inspected_operator": null,
+   "definition": "VE.Calc.Expr.zeroDivisor",
+   "trust_class": "C",
+   "trusted": false,
+   "measured": {
+    "reviewed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    },
+    "fixed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    }
+   },
+   "legacy_verdict": "NOT SELECTED",
+   "fixed_verdict": "NOT SELECTED",
+   "pair": false,
+   "gap": "unselected"
+  },
+  {
+   "item": "me-9b",
+   "id": "point-names-left-only",
+   "reviewed_head": "40103ab6aa05e4e6c1b25951e194e4f423f8677b",
+   "fixed_head": "6f5133e7dc2544299196b59617594fc4503c62a2",
+   "file": "lean/VE/Calc/Identity.lean",
+   "line": 129,
+   "before": "keep.filter (· ∈ a'.names ++ b'.names)",
+   "after": "keep.filter (· ∈ a'.names)",
+   "fixture_added": "tests/test_calc_algebra.py::test_fixture[point-right-only]",
+   "source": "/home/seyran/code/manage-agents/me-9b-review-ov.final.md",
+   "base": "6454946a5f54e1eaf15e48204c3119126ebf3a78",
+   "replay": null,
+   "inspected_operator": "append-right",
+   "definition": "VE.Calc.identityDecide",
+   "trust_class": "C",
+   "trusted": false,
+   "measured": {
+    "reviewed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    },
+    "fixed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    }
+   },
+   "legacy_verdict": "NOT SELECTED",
+   "fixed_verdict": "NOT SELECTED",
+   "pair": false,
+   "gap": "unselected"
+  },
+  {
+   "item": "me-9b",
+   "id": "twelve-points",
+   "reviewed_head": "40103ab6aa05e4e6c1b25951e194e4f423f8677b",
+   "fixed_head": "6f5133e7dc2544299196b59617594fc4503c62a2",
+   "file": "lean/VE/Calc/Identity.lean",
+   "line": 130,
+   "before": "((List.range 13).map (identityPoint names))",
+   "after": "((List.range 12).map (identityPoint names))",
+   "fixture_added": "tests/test_calc_algebra.py::test_fixture[point-13th]",
+   "source": "/home/seyran/code/manage-agents/me-9b-review-ov.final.md",
+   "base": "6454946a5f54e1eaf15e48204c3119126ebf3a78",
+   "replay": null,
+   "inspected_operator": "lit-minus",
+   "definition": "VE.Calc.identityDecide",
+   "trust_class": "C",
+   "trusted": false,
+   "measured": {
+    "reviewed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    },
+    "fixed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    }
+   },
+   "legacy_verdict": "NOT SELECTED",
+   "fixed_verdict": "NOT SELECTED",
+   "pair": false,
+   "gap": "unselected"
+  },
+  {
+   "item": "me-9b",
+   "id": "bin2-right-fault-first",
+   "reviewed_head": "40103ab6aa05e4e6c1b25951e194e4f423f8677b",
+   "fixed_head": "6f5133e7dc2544299196b59617594fc4503c62a2",
+   "file": "lean/VE/Calc/Inline.lean",
+   "line": 41,
+   "before": "  | .ok a, .ok b => .ok (f a b)\n  | .ok _, .error v => .error v\n  | .error v, _ => .error v\n",
+   "after": "  | .ok a, .ok b => .ok (f a b)\n  | _, .error v => .error v\n  | .error v, .ok _ => .error v\n",
+   "fixture_added": "tests/test_calc_algebra.py::test_fixture[fault-inside-side]",
+   "source": "/home/seyran/code/manage-agents/me-9b-review-ov.final.md",
+   "base": "6454946a5f54e1eaf15e48204c3119126ebf3a78",
+   "replay": null,
+   "inspected_operator": null,
+   "definition": "VE.Calc.Expr.bin2",
+   "trust_class": "C",
+   "trusted": false,
+   "measured": {
+    "reviewed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    },
+    "fixed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    }
+   },
+   "legacy_verdict": "NOT SELECTED",
+   "fixed_verdict": "NOT SELECTED",
+   "pair": false,
+   "gap": "unselected"
+  },
+  {
+   "item": "me-9b",
+   "id": "claim-compare-second-side-first",
+   "reviewed_head": "40103ab6aa05e4e6c1b25951e194e4f423f8677b",
+   "fixed_head": "6f5133e7dc2544299196b59617594fc4503c62a2",
+   "file": "lean/VE/Calc/Inline.lean",
+   "line": 184,
+   "before": "do return .compare r (← a.inline ds keep) (← b.inline ds keep)",
+   "after": "do let b' ← b.inline ds keep; let a' ← a.inline ds keep; return .compare r a' b'",
+   "fixture_added": "tests/test_calc_algebra.py::test_fixture[claim-fault-compare]",
+   "source": "/home/seyran/code/manage-agents/me-9b-review-ov.final.md",
+   "base": "6454946a5f54e1eaf15e48204c3119126ebf3a78",
+   "replay": null,
+   "inspected_operator": null,
+   "definition": "VE.Calc.Claim.inline",
+   "trust_class": "C",
+   "trusted": false,
+   "measured": {
+    "reviewed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    },
+    "fixed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    }
+   },
+   "legacy_verdict": "NOT SELECTED",
+   "fixed_verdict": "NOT SELECTED",
+   "pair": false,
+   "gap": "unselected"
+  },
+  {
+   "item": "me-9b",
+   "id": "claim-within-lo-first",
+   "reviewed_head": "40103ab6aa05e4e6c1b25951e194e4f423f8677b",
+   "fixed_head": "6f5133e7dc2544299196b59617594fc4503c62a2",
+   "file": "lean/VE/Calc/Inline.lean",
+   "line": 185,
+   "before": "do return .within (← e.inline ds keep) (← lo.inline ds keep) (← hi.inline ds keep)",
+   "after": "do let l ← lo.inline ds keep; let e' ← e.inline ds keep; return .within e' l (← hi.inline ds keep)",
+   "fixture_added": "tests/test_calc_algebra.py::test_fixture[claim-fault-within-e]",
+   "source": "/home/seyran/code/manage-agents/me-9b-review-ov.final.md",
+   "base": "6454946a5f54e1eaf15e48204c3119126ebf3a78",
+   "replay": null,
+   "inspected_operator": null,
+   "definition": "VE.Calc.Claim.inline",
+   "trust_class": "C",
+   "trusted": false,
+   "measured": {
+    "reviewed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    },
+    "fixed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    }
+   },
+   "legacy_verdict": "NOT SELECTED",
+   "fixed_verdict": "NOT SELECTED",
+   "pair": false,
+   "gap": "unselected"
+  },
+  {
+   "item": "df-1ac",
+   "id": "W9",
+   "reviewed_head": "07db019f1e497da8a1bd9be62df7c6de6926d881",
+   "fixed_head": "4193af4442ef41002b53c126c1a1d1d86d7f77aa",
+   "file": "lean/VE/Defaults/Wire.lean",
+   "line": 206,
+   "before": "else if x.collides && x.collision.any",
+   "after": "else if x.collision.any",
+   "fixture_added": "lean/VE/Defaults/WireExamples.lean: DF-δ with an unchecked collision; coherence_collision_shown",
+   "source": "/home/seyran/code/manage-agents/df-1ac-review-ov.final.md",
+   "base": "c5197da78807f792a47d787133f93e4c59fbe0cd",
+   "replay": null,
+   "inspected_operator": "and-or (same false/true pair)",
+   "definition": "VE.Defaults.Wire.CoherenceReplay.pairs",
+   "trust_class": "G[V]",
+   "trusted": false,
+   "measured": {
+    "reviewed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    },
+    "fixed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    }
+   },
+   "legacy_verdict": "NOT SELECTED",
+   "fixed_verdict": "NOT SELECTED",
+   "pair": false,
+   "gap": "unselected"
+  },
+  {
+   "item": "df-1ac",
+   "id": "W10",
+   "reviewed_head": "07db019f1e497da8a1bd9be62df7c6de6926d881",
+   "fixed_head": "4193af4442ef41002b53c126c1a1d1d86d7f77aa",
+   "file": "lean/VE/Defaults/Wire.lean",
+   "line": 265,
+   "before": "match x.verdict == \"COLLISION\", x.collision with",
+   "after": "match true, x.collision with",
+   "fixture_added": "lean/VE/Defaults/WireExamples.lean: DF-δ with an unchecked collision; coherence_collision_shown",
+   "source": "/home/seyran/code/manage-agents/df-1ac-review-ov.final.md",
+   "base": "c5197da78807f792a47d787133f93e4c59fbe0cd",
+   "replay": [
+    "eq-ne",
+    "==",
+    "!="
+   ],
+   "inspected_operator": "eq-ne (same UNKNOWN collision effect)",
+   "definition": "VE.Defaults.Wire.coherenceFields",
+   "trust_class": "D[V]",
+   "trusted": true,
+   "measured": {
+    "reviewed": {
+     "today": "KILLED",
+     "proposed": "KILLED"
+    },
+    "fixed": {
+     "today": "KILLED",
+     "proposed": "KILLED"
+    }
+   },
+   "legacy_verdict": "KILLED",
+   "fixed_verdict": "KILLED",
+   "pair": false,
+   "gap": "G1 (the generated form at this line is killed at the reviewed tree already)"
+  },
+  {
+   "item": "me-2",
+   "id": "rounds-down-hash",
+   "reviewed_head": "9b94f192d79d3e41320e48ea5cb3f687a80b032f",
+   "fixed_head": "fc118c87995cf7399fa27d0cee197fb555fe0484",
+   "file": "lean/VE/Calc/Wire.lean",
+   "line": 184,
+   "before": "rounds \"rounds-down\" .down",
+   "after": "rounds \"rounds-up\" .down",
+   "fixture_added": "lean/VE/Calc/RunExamples.lean:242",
+   "source": "/home/seyran/code/manage-agents/me-2-review-ov.final.md",
+   "base": "768a935fcd0304ab85a83f848bd9f37664664be8",
+   "fixed_tree": "573a703c8bd2e5aeb05b3ba071817e31a6f15ac7",
+   "replay": null,
+   "inspected_operator": null,
+   "definition": "VE.Calc.Wire.claim",
+   "trust_class": "D[V]",
+   "trusted": true,
+   "measured": {
+    "reviewed": {
+     "today": "NOT GENERATED",
+     "proposed": "NOT GENERATED"
+    },
+    "fixed": {
+     "today": "NOT GENERATED",
+     "proposed": "NOT GENERATED"
+    }
+   },
+   "legacy_verdict": "NOT GENERATED",
+   "fixed_verdict": "NOT GENERATED",
+   "pair": false,
+   "gap": "G1"
+  },
+  {
+   "item": "me-2",
+   "id": "rounds-up-hash",
+   "reviewed_head": "9b94f192d79d3e41320e48ea5cb3f687a80b032f",
+   "fixed_head": "fc118c87995cf7399fa27d0cee197fb555fe0484",
+   "file": "lean/VE/Calc/Wire.lean",
+   "line": 185,
+   "before": "rounds \"rounds-up\" .up",
+   "after": "rounds \"rounds-down\" .up",
+   "fixture_added": "lean/VE/Calc/RunExamples.lean:242",
+   "source": "/home/seyran/code/manage-agents/me-2-review-ov.final.md",
+   "base": "768a935fcd0304ab85a83f848bd9f37664664be8",
+   "fixed_tree": "573a703c8bd2e5aeb05b3ba071817e31a6f15ac7",
+   "replay": null,
+   "inspected_operator": null,
+   "definition": "VE.Calc.Wire.claim",
+   "trust_class": "D[V]",
+   "trusted": true,
+   "measured": {
+    "reviewed": {
+     "today": "NOT GENERATED",
+     "proposed": "NOT GENERATED"
+    },
+    "fixed": {
+     "today": "NOT GENERATED",
+     "proposed": "NOT GENERATED"
+    }
+   },
+   "legacy_verdict": "NOT GENERATED",
+   "fixed_verdict": "NOT GENERATED",
+   "pair": false,
+   "gap": "G1"
+  },
+  {
+   "item": "me-2",
+   "id": "within-bounds",
+   "reviewed_head": "9b94f192d79d3e41320e48ea5cb3f687a80b032f",
+   "fixed_head": "fc118c87995cf7399fa27d0cee197fb555fe0484",
+   "file": "lean/VE/Calc/Wire.lean",
+   "line": 179,
+   "before": "cx, cl, ch]",
+   "after": "cx, ch, cl]",
+   "fixture_added": "lean/VE/Calc/RunExamples.lean:242",
+   "source": "/home/seyran/code/manage-agents/me-2-review-ov.final.md",
+   "base": "768a935fcd0304ab85a83f848bd9f37664664be8",
+   "fixed_tree": "573a703c8bd2e5aeb05b3ba071817e31a6f15ac7",
+   "replay": null,
+   "inspected_operator": null,
+   "definition": "VE.Calc.Wire.claim",
+   "trust_class": "D[V]",
+   "trusted": true,
+   "measured": {
+    "reviewed": {
+     "today": "NOT GENERATED",
+     "proposed": "NOT GENERATED"
+    },
+    "fixed": {
+     "today": "NOT GENERATED",
+     "proposed": "NOT GENERATED"
+    }
+   },
+   "legacy_verdict": "NOT GENERATED",
+   "fixed_verdict": "NOT GENERATED",
+   "pair": false,
+   "gap": "G1"
+  },
+  {
+   "item": "me-2",
+   "id": "span-hash",
+   "reviewed_head": "9b94f192d79d3e41320e48ea5cb3f687a80b032f",
+   "fixed_head": "fc118c87995cf7399fa27d0cee197fb555fe0484",
+   "file": "lean/VE/Calc/Wire.lean",
+   "line": 211,
+   "before": "toJson a, toJson b]",
+   "after": "toJson a, toJson a]",
+   "fixture_added": "lean/VE/Calc/RunExamples.lean:242",
+   "source": "/home/seyran/code/manage-agents/me-2-review-ov.final.md",
+   "base": "768a935fcd0304ab85a83f848bd9f37664664be8",
+   "fixed_tree": "573a703c8bd2e5aeb05b3ba071817e31a6f15ac7",
+   "replay": null,
+   "inspected_operator": null,
+   "definition": "VE.Calc.Wire.recordJson",
+   "trust_class": "D[I]",
+   "trusted": false,
+   "measured": {
+    "reviewed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    },
+    "fixed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    }
+   },
+   "legacy_verdict": "NOT SELECTED",
+   "fixed_verdict": "NOT SELECTED",
+   "pair": false,
+   "gap": "unselected"
+  },
+  {
+   "item": "me-2",
+   "id": "support-hash",
+   "reviewed_head": "9b94f192d79d3e41320e48ea5cb3f687a80b032f",
+   "fixed_head": "fc118c87995cf7399fa27d0cee197fb555fe0484",
+   "file": "lean/VE/Calc/Wire.lean",
+   "line": 204,
+   "before": "(\"support\", Json.str s)",
+   "after": "(\"support\", Json.str \"testimony\")",
+   "fixture_added": "lean/VE/Calc/RunExamples.lean:242",
+   "source": "/home/seyran/code/manage-agents/me-2-review-ov.final.md",
+   "base": "768a935fcd0304ab85a83f848bd9f37664664be8",
+   "fixed_tree": "573a703c8bd2e5aeb05b3ba071817e31a6f15ac7",
+   "replay": null,
+   "inspected_operator": null,
+   "definition": "VE.Calc.Wire.recordJson",
+   "trust_class": "D[I]",
+   "trusted": false,
+   "measured": {
+    "reviewed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    },
+    "fixed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    }
+   },
+   "legacy_verdict": "NOT SELECTED",
+   "fixed_verdict": "NOT SELECTED",
+   "pair": false,
+   "gap": "unselected"
+  },
+  {
+   "item": "me-2",
+   "id": "software-hash",
+   "reviewed_head": "9b94f192d79d3e41320e48ea5cb3f687a80b032f",
+   "fixed_head": "fc118c87995cf7399fa27d0cee197fb555fe0484",
+   "file": "lean/VE/Calc/Wire.lean",
+   "line": 310,
+   "before": "fun s => [(\"software\", .str s)]",
+   "after": "fun _ => [(\"software\", .str \"P\")]",
+   "fixture_added": "lean/VE/Calc/RunExamples.lean:242",
+   "source": "/home/seyran/code/manage-agents/me-2-review-ov.final.md",
+   "base": "768a935fcd0304ab85a83f848bd9f37664664be8",
+   "fixed_tree": "573a703c8bd2e5aeb05b3ba071817e31a6f15ac7",
+   "replay": null,
+   "inspected_operator": null,
+   "definition": "VE.Calc.Wire.decode",
+   "trust_class": "D[V]",
+   "trusted": true,
+   "measured": {
+    "reviewed": {
+     "today": "NOT GENERATED",
+     "proposed": "NOT GENERATED"
+    },
+    "fixed": {
+     "today": "NOT GENERATED",
+     "proposed": "NOT GENERATED"
+    }
+   },
+   "legacy_verdict": "NOT GENERATED",
+   "fixed_verdict": "NOT GENERATED",
+   "pair": false,
+   "gap": "G1"
+  },
+  {
+   "item": "me-2",
+   "id": "claim-id-char",
+   "reviewed_head": "9b94f192d79d3e41320e48ea5cb3f687a80b032f",
+   "fixed_head": "fc118c87995cf7399fa27d0cee197fb555fe0484",
+   "file": "lean/VE/Calc/Wire.lean",
+   "line": 239,
+   "before": "id.all claimIdChar",
+   "after": "id.all VE.Surface.identChar",
+   "fixture_added": "lean/VE/Calc/RunExamples.lean: decoder accepted claim id with hyphen",
+   "source": "/home/seyran/code/manage-agents/me-2-review-ov.final.md",
+   "base": "768a935fcd0304ab85a83f848bd9f37664664be8",
+   "fixed_tree": "573a703c8bd2e5aeb05b3ba071817e31a6f15ac7",
+   "replay": null,
+   "inspected_operator": null,
+   "definition": "VE.Calc.Wire.entry",
+   "trust_class": "D[V]",
+   "trusted": true,
+   "measured": {
+    "reviewed": {
+     "today": "NOT GENERATED",
+     "proposed": "NOT GENERATED"
+    },
+    "fixed": {
+     "today": "NOT GENERATED",
+     "proposed": "NOT GENERATED"
+    }
+   },
+   "legacy_verdict": "NOT GENERATED",
+   "fixed_verdict": "NOT GENERATED",
+   "pair": false,
+   "gap": "G1"
+  },
+  {
+   "item": "me-2",
+   "id": "supports-no-observation",
+   "reviewed_head": "9b94f192d79d3e41320e48ea5cb3f687a80b032f",
+   "fixed_head": "fc118c87995cf7399fa27d0cee197fb555fe0484",
+   "file": "lean/VE/Calc/Wire.lean",
+   "line": 195,
+   "before": "\"observation\", \"testimony\", \"assumption\"",
+   "after": "\"testimony\", \"assumption\"",
+   "fixture_added": "lean/VE/Calc/RunExamples.lean: supports observation",
+   "source": "/home/seyran/code/manage-agents/me-2-review-ov.final.md",
+   "base": "768a935fcd0304ab85a83f848bd9f37664664be8",
+   "fixed_tree": "573a703c8bd2e5aeb05b3ba071817e31a6f15ac7",
+   "replay": null,
+   "inspected_operator": "list-drop-first",
+   "definition": "VE.Calc.Wire.supports",
+   "trust_class": "D[I]",
+   "trusted": false,
+   "measured": {
+    "reviewed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    },
+    "fixed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    }
+   },
+   "legacy_verdict": "NOT SELECTED",
+   "fixed_verdict": "NOT SELECTED",
+   "pair": false,
+   "gap": "unselected"
+  },
+  {
+   "item": "me-2",
+   "id": "supports-no-assumption",
+   "reviewed_head": "9b94f192d79d3e41320e48ea5cb3f687a80b032f",
+   "fixed_head": "fc118c87995cf7399fa27d0cee197fb555fe0484",
+   "file": "lean/VE/Calc/Wire.lean",
+   "line": 195,
+   "before": "\"observation\", \"testimony\", \"assumption\"",
+   "after": "\"observation\", \"testimony\"",
+   "fixture_added": "lean/VE/Calc/RunExamples.lean: supports assumption",
+   "source": "/home/seyran/code/manage-agents/me-2-review-ov.final.md",
+   "base": "768a935fcd0304ab85a83f848bd9f37664664be8",
+   "fixed_tree": "573a703c8bd2e5aeb05b3ba071817e31a6f15ac7",
+   "replay": null,
+   "inspected_operator": "list-drop-last",
+   "definition": "VE.Calc.Wire.supports",
+   "trust_class": "D[I]",
+   "trusted": false,
+   "measured": {
+    "reviewed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    },
+    "fixed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    }
+   },
+   "legacy_verdict": "NOT SELECTED",
+   "fixed_verdict": "NOT SELECTED",
+   "pair": false,
+   "gap": "unselected"
+  },
+  {
+   "item": "me-2",
+   "id": "span-strict",
+   "reviewed_head": "9b94f192d79d3e41320e48ea5cb3f687a80b032f",
+   "fixed_head": "fc118c87995cf7399fa27d0cee197fb555fe0484",
+   "file": "lean/VE/Calc/Wire.lean",
+   "line": 210,
+   "before": "unless a ≤ b do",
+   "after": "unless a < b do",
+   "fixture_added": "lean/VE/Calc/RunExamples.lean: zero-length span",
+   "source": "/home/seyran/code/manage-agents/me-2-review-ov.final.md",
+   "base": "768a935fcd0304ab85a83f848bd9f37664664be8",
+   "fixed_tree": "573a703c8bd2e5aeb05b3ba071817e31a6f15ac7",
+   "replay": null,
+   "inspected_operator": "le-lt",
+   "definition": "VE.Calc.Wire.recordJson",
+   "trust_class": "D[I]",
+   "trusted": false,
+   "measured": {
+    "reviewed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    },
+    "fixed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    }
+   },
+   "legacy_verdict": "NOT SELECTED",
+   "fixed_verdict": "NOT SELECTED",
+   "pair": false,
+   "gap": "unselected"
+  },
+  {
+   "item": "me-2",
+   "id": "literal-form",
+   "reviewed_head": "9b94f192d79d3e41320e48ea5cb3f687a80b032f",
+   "fixed_head": "fc118c87995cf7399fa27d0cee197fb555fe0484",
+   "file": "lean/VE/Calc/Wire.lean",
+   "line": 77,
+   "before": "| [.str \"lit\", .str s] | ",
+   "after": "| ",
+   "fixture_added": "lean/VE/Calc/RunExamples.lean: 41-digit lit",
+   "source": "/home/seyran/code/manage-agents/me-2-review-ov.final.md",
+   "base": "768a935fcd0304ab85a83f848bd9f37664664be8",
+   "fixed_tree": "573a703c8bd2e5aeb05b3ba071817e31a6f15ac7",
+   "replay": null,
+   "inspected_operator": null,
+   "definition": "VE.Calc.Wire.literalFault",
+   "trust_class": "D[R]",
+   "trusted": false,
+   "measured": {
+    "reviewed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    },
+    "fixed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    }
+   },
+   "legacy_verdict": "NOT SELECTED",
+   "fixed_verdict": "NOT SELECTED",
+   "pair": false,
+   "gap": "unselected"
+  },
+  {
+   "item": "me-2",
+   "id": "scan-six",
+   "reviewed_head": "9b94f192d79d3e41320e48ea5cb3f687a80b032f",
+   "fixed_head": "fc118c87995cf7399fa27d0cee197fb555fe0484",
+   "file": "lean/VE/Calc/Wire.lean",
+   "line": 110,
+   "before": "(scan · 65 j)",
+   "after": "(scan · 6 j)",
+   "fixture_added": "lean/VE/Calc/RunExamples.lean: depth near 65",
+   "source": "/home/seyran/code/manage-agents/me-2-review-ov.final.md",
+   "base": "768a935fcd0304ab85a83f848bd9f37664664be8",
+   "fixed_tree": "573a703c8bd2e5aeb05b3ba071817e31a6f15ac7",
+   "replay": null,
+   "inspected_operator": null,
+   "definition": "VE.Calc.Wire.limitFault",
+   "trust_class": "D[R]",
+   "trusted": false,
+   "measured": {
+    "reviewed": {
+     "today": "NOT SELECTED",
+     "proposed": "NOT SELECTED"
+    },
+    "fixed": {
+     "today": "TEXT CHANGED",
+     "proposed": "TEXT CHANGED"
+    }
+   },
+   "legacy_verdict": "NOT SELECTED",
+   "fixed_verdict": "TEXT CHANGED",
+   "pair": false,
+   "gap": "unselected"
+  },
+  {
+   "item": "ap-1b",
+   "id": "acts-fixed-premise",
+   "reviewed_head": "984c7a542f744d3398d6bbe4db71f2e9af994d9e",
+   "fixed_head": "fc983051aa476794cdba83a1ce346630c9e679a1",
+   "file": "lean/VE/Norms/Wire.lean",
+   "line": 111,
+   "before": "| false, .ok block",
+   "after": "| _, .ok block",
+   "fixture_added": "tests/test_acts_profile.py::test_without_acts_an_invalid_block_is_not_read",
+   "source": "/home/seyran/code/manage-agents/ap-1b-review-ov.final.md",
+   "base": "2296317a9de7ef365523e0f69c442338d9eaf576",
+   "replay": [
+    "arm-wildcard",
+    "false",
+    "_"
+   ],
+   "inspected_operator": null,
+   "definition": "VE.Norms.Wire.actsFixed",
+   "trust_class": "D[V]",
+   "trusted": true,
+   "measured": {
+    "reviewed": {
+     "today": "NOT GENERATED",
+     "proposed": "SURVIVOR"
+    },
+    "fixed": {
+     "today": "NOT GENERATED",
+     "proposed": "KILLED-BY-PYTEST"
+    }
+   },
+   "legacy_verdict": "NOT GENERATED",
+   "fixed_verdict": "KILLED-BY-PYTEST",
+   "pair": true,
+   "gap": "G1 and G2 (a proposed operator generates it; only the pytest phase kills it at the fixed tree)"
+  }
+ ],
+ "replay": {
+  "me-6b": {
+   "pytest": [
+    "tests/test_calc_units.py"
+   ],
+   "build": {
+    "reviewed": [
+     "VE.Calc.Units"
+    ],
+    "fixed": [
+     "VE.Calc.Units"
+    ]
+   }
+  },
+  "ap-1b": {
+   "pytest": {
+    "reviewed": [
+     "tests/test_acts_profile.py::test_an_acts_environment_loads_with_its_block_and_forms_as_data",
+     "tests/test_acts_profile.py::test_a_joined_act_is_refused_with_leans_text",
+     "tests/test_acts_profile.py::test_the_rows_refusals_come_first",
+     "tests/test_acts_profile.py::test_without_acts_the_block_and_a_plain_act_are_refused_as_today",
+     "tests/test_acts_profile.py::test_the_norms_route_checks_rules_on_acts",
+     "tests/test_acts_profile.py::test_an_act_python_stores_differently_is_unavailable_never_answered"
+    ],
+    "fixed": [
+     "tests/test_acts_profile.py::test_an_acts_environment_loads_with_its_block_and_forms_as_data",
+     "tests/test_acts_profile.py::test_a_joined_act_is_refused_with_leans_text",
+     "tests/test_acts_profile.py::test_the_rows_refusals_come_first",
+     "tests/test_acts_profile.py::test_without_acts_the_block_and_a_plain_act_are_refused_as_today",
+     "tests/test_acts_profile.py::test_the_norms_route_checks_rules_on_acts",
+     "tests/test_acts_profile.py::test_an_act_python_stores_differently_is_unavailable_never_answered",
+     "tests/test_acts_profile.py::test_an_acts_list_that_is_not_sorted_and_unique_is_refused_as_the_base_refuses_it",
+     "tests/test_acts_profile.py::test_without_acts_an_invalid_block_is_not_read"
+    ]
+   },
+   "build": {
+    "reviewed": [
+     "ve_service"
+    ],
+    "fixed": [
+     "ve_service"
+    ]
+   },
+   "pytest_note": "every Lean-service test of the file; test_rust_refuses_an_acts_environment runs the Rust binary, which the replay checkouts do not build"
+  },
+  "ap-1a": {
+   "deep": true
+  }
+ },
+ "superseded": {
+  "reason": "review F1: --pytest named test_fixture[factor-below-one] and [refuse-base-identifier], which only the fix db34c272d adds, so the control errored and no mutant was built or tested; the 597 s over the Lean-only sweep was one cold control build of ve_service, and the rule compared the whole sweep, not the pytest phase",
+  "lean_only_seconds": 265,
+  "pytest_attempt_seconds": 862,
+  "invalid_attempt_seconds": 834
+ }
+}
