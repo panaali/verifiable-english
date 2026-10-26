@@ -183,3 +183,28 @@ def test_modal_mutations_inside_their_kinds_are_refused(monkeypatch, change):
     monkeypatch.setattr(english_lean, "QUESTION_TRANSPORT", lambda c: copy.deepcopy(mutant))
     with pytest.raises(CheckerUnavailable, match="malformed"):
         english_lean.read_question(ENV, "Must check.", words(), {}, caller=SPEECH)
+
+
+def _deep(depth: int = 10_000):
+    value: list = []
+    for _ in range(depth):
+        value = [value]
+    return value
+
+
+@pytest.mark.parametrize("question", ["Must check.", "Is it the case that atlas is reviewed?"])
+@pytest.mark.parametrize("value", ["\ud800", "deep"], ids=["lone-surrogate", "deep-list"])
+def test_a_surrogate_or_deep_field_is_refused(monkeypatch, question, value):
+    genuine = live(question)
+    for key in genuine:
+        mutant = {**genuine, key: _deep() if value == "deep" else value}
+        monkeypatch.setattr(english_lean, "QUESTION_TRANSPORT", lambda c, m=mutant: m)
+        with pytest.raises(CheckerUnavailable):
+            english_lean.read_question(ENV, question, words(), {}, caller=SPEECH)
+
+
+@pytest.mark.parametrize("caller", ["\ud800", "deep", 1.5, True, {}], ids=["surrogate", "deep", "float", "bool", "obj"])
+def test_lean_refuses_a_malformed_caller(caller):
+    with pytest.raises(VEError):
+        relay.decide_once(english_lean.QUESTION_MODE, {**case("Must check."), "caller": _deep(100)
+                                                        if caller == "deep" else caller})
