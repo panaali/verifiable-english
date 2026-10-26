@@ -489,7 +489,8 @@ def test_rescore_after_an_allow_only_edit_builds_nothing(package, prefix_run, tm
     done, data = rescored(package, tmp_path / "run", prefix_run, "--max-mutants", "5", "--allow", str(allow),
                           home={"HOME": str(tmp_path / "home"), "ELAN_HOME": str(Path.home() / ".elan")})
     assert not log.exists() and done.returncode == 3, done.stdout + done.stderr
-    assert data["rescore"] == {"file": str(prefix_run), "head": prev["head"], "reused": 5, "rerun": 0}
+    assert data["rescore"] == {"file": str(prefix_run), "head": prev["head"], "mode": "identical", "changed": [],
+                               "reused": 5, "rerun": 0}
     assert f"5 reused from {prev['head'][:12]} (identical inputs)" in done.stdout
     now = {m["id"]: m for m in data["mutants"]}
     for m in ran:
@@ -539,24 +540,40 @@ def test_rescore_of_an_old_or_unreadable_file_is_a_full_run(package, prefix_run,
     done, data = rescored(package, tmp_path / "run", prev, "--max-mutants", "2")
     said = [line for line in done.stdout.splitlines() if "a full run, since" in line]
     assert len(said) == 1 and ("records no inputs" if old == "no-inputs" else "cannot be read") in said[0], said
-    assert data["rescore"]["reused"] == 0 and data["rescore"]["rerun"] == 2 and data["rescore"]["head"] is None
+    assert (data["rescore"]["reused"], data["rescore"]["rerun"], data["rescore"]["head"], data["rescore"]["mode"]) == (
+        0, 2, None, "full")
     assert not [m for m in data["mutants"] if "reused_from" in m]
 
 
 CHANGES = {  # one byte of each input, or an option or the base, changed in a copy of the package
-    "cone-file": lambda r: (r / "lean/Demo/Examples.lean").write_text(
+    "check-file": lambda r: (r / "lean/Demo/Examples.lean").write_text(
         (r / "lean/Demo/Examples.lean").read_text().replace("#guard small 2", "#guard small 1")),
+    "selected-file": lambda r: (r / "lean/Demo/Defs.lean").write_text((r / "lean/Demo/Defs.lean").read_text() + " "),
     "lakefile": lambda r: (r / "lean/lakefile.toml").write_text((r / "lean/lakefile.toml").read_text() + " "),
     "statements": lambda r: (r / "lean/statements.txt").write_text((r / "lean/statements.txt").read_text() + "\n"),
     "trust-table": lambda r: (r / "tools/trust-classes.json").write_text('{"modules": {} }\n'),
     "test-file": lambda r: (r / "outside/T.lean").write_text("import Demo.Defs\n#guard Demo.small 1\n"),
+    "pycache": lambda r: (r / "lean/__pycache__").mkdir() or (r / "lean/__pycache__/audit.pyc").write_bytes(b"\0"),
 }
+# what --rescore makes of each: mode "checks" with the files that changed, mode "identical", or a full run and why
+EXPECTED = {"check-file": ["lean/Demo/Examples.lean"], "statements": ["lean/statements.txt"],
+            "test-file": ["outside/T.lean"], "pycache": [],
+            "selected-file": "its inputs differ (lean): lean/Demo/Defs.lean is a selected declaration's file",
+            "lakefile": "its inputs differ (lean): lean/lakefile.toml is no module of lean/",
+            "trust-table": "its inputs differ (lean): tools/trust-classes.json is no module of lean/",
+            "deep": "its inputs differ (options)", "test-option": "its inputs differ (options)",
+            "base": "its inputs differ (base)", "tool": "its inputs differ (tool)",
+            "no-files": "its inputs differ (lean) and it records no per-file digests"}
 
 
-@pytest.mark.parametrize("change", [*CHANGES, "deep", "test-option", "base"])
-def test_any_changed_input_gives_a_full_run(package, tmp_path, change):
-    """`inputs` digests the bytes, never a commit id: one byte changed in a cone file, the lakefile, a list `plan`
-    reads, trust_map's table or an outside --test file, or another --deep, --test or base, and PREV is refused."""
+@pytest.mark.parametrize("change", [*CHANGES, "deep", "test-option", "base", "tool", "no-files"])
+def test_any_changed_input_but_checks_gives_a_full_run(package, tmp_path, change):
+    """`inputs` digests the bytes, never a commit id (speed-tmrescore), and each file's own (speed-tmchecks). A
+    check-only change (a check module outside every selected declaration's file and import closure, an outside
+    --test file, a generated inventory) is mode "checks", with the files that changed; a `__pycache__` none at all
+    (review F1). One byte of a selected declaration's file, the lakefile or trust_map's table, or another tool,
+    --deep, --test or base, is a full run, even beside a check-only change, and so is PREV with no per-file
+    digests."""
     import shutil
     import trust_mutants
     root = tmp_path / "copy"
@@ -567,16 +584,28 @@ def test_any_changed_input_gives_a_full_run(package, tmp_path, change):
 
     def digests(deep: bool = False, tests: tuple = (), base: str = base) -> dict:
         return trust_mutants.inputs(root, base, list(tests), [root / "outside/T.lean"], deep)
+
+    def why_not(names: list[str]) -> str | None:
+        return trust_mutants.check_only(names, {"Demo/Defs.lean"}, {"outside/T.lean"})
     prev, before = tmp_path / "prev.json", digests()
     prev.write_text(json.dumps({"inputs": before, "head": "h", "mutants": []}))
-    assert trust_mutants.previous(prev, digests(), []) == ("h", {})
+    assert trust_mutants.previous(prev, digests(), [], why_not) == ("identical", "h", {}, [])
     if change in CHANGES:
         CHANGES[change](root)
+    else:  # a key no check-only change may move, beside one that may
+        CHANGES["check-file"](root)
     now = digests(change == "deep", ("Demo/Examples.lean",) if change == "test-option" else (),
                   base if change != "base" else base[:-1] + ("0" if base[-1] != "0" else "1"))
-    assert [k for k in now if now[k] != before[k]] == [
-        {"deep": "options", "test-option": "options", "base": "base", "test-file": "tests"}.get(change, "lean")]
-    assert "inputs differ" in trust_mutants.previous(prev, now, [])
+    if change == "tool":
+        now["tool"] = "0" * 64
+    if change == "no-files":
+        prev.write_text(json.dumps({"inputs": {k: v for k, v in before.items() if k != "files"}, "head": "h",
+                                    "mutants": []}))
+    got, expected = trust_mutants.previous(prev, now, [], why_not), EXPECTED[change]
+    if isinstance(expected, list):
+        assert got == ("checks" if expected else "identical", "h", {}, expected), got
+    else:
+        assert isinstance(got, str) and got.startswith(expected), got
 
 
 def test_the_inputs_digest_the_tools_own_source(tmp_path, monkeypatch):
@@ -604,14 +633,133 @@ def test_rescore_of_evidence_whose_mutants_differ_is_a_full_run(tmp_path):
     row = {"id": "M001", "file": "Demo/Defs.lean", "line": 3, "definition": "Demo.small", "operator": "lt-le",
            "before": "<", "after": "≤", "status": "ALLOWED", "raw_status": "SURVIVOR", "detail": "a reason"}
     prev = tmp_path / "prev.json"
+    now = dict.fromkeys(trust_mutants.OVERALL, "1")
     for rows, ok in (([row], True), ([{**row, "after": "="}], False), ([], False),
                      ([{**row, "raw_status": "PASSED"}], False), ([{k: v for k, v in row.items() if k != "raw_status"}],
-                                                                  False)):
-        prev.write_text(json.dumps({"inputs": {"x": "1"}, "head": "h", "mutants": rows}))
-        got = trust_mutants.previous(prev, {"x": "1"}, [m])
-        assert (got == ("h", {"M001": ("SURVIVOR", "")})) if ok else isinstance(got, str), (rows, got)
-    prev.write_text(json.dumps({"inputs": {"x": "1"}, "head": "", "mutants": [row]}))
-    assert "cannot be read" in trust_mutants.previous(prev, {"x": "1"}, [m])
+                                                                  False), ([{**row, "reads": 7}], False),
+                     ([{**row, "killed_at": [1]}], False), ([{**row, "killed_at": [1, True]}], False)):
+        prev.write_text(json.dumps({"inputs": now, "head": "h", "mutants": rows}))
+        got = trust_mutants.previous(prev, now, [m], lambda names: None)
+        assert (got == ("identical", "h", {"M001": {"status": "SURVIVOR", "detail": "", "reads": "", "killed_at": None}},
+                        [])) if ok else isinstance(got, str), (rows, got)
+    prev.write_text(json.dumps({"inputs": now, "head": "", "mutants": [row]}))
+    assert "cannot be read" in trust_mutants.previous(prev, now, [m], lambda names: None)
+
+
+LAYERED = {  # speed-tmchecks: a definition whose module imports another, and its checks
+    "Demo/Base.lean": "namespace Demo\n\ndef limit : Nat := 3\n\nend Demo\n",
+    "Demo/Defs.lean": "import Demo.Base\n\nnamespace Demo\n\ndef small (n : Nat) : Bool := n < limit\n\nend Demo\n",
+    "Demo/Examples.lean": "import Demo.Defs\nopen Demo\n\n#guard small 2\n#guard !small 3\n",
+}
+# each change to LAYERED, and whether a KILLED verdict at `#guard !small 3` and an INVALID one in `small` carry
+EDITS = [
+    ("none", {}, True, True),
+    ("a check added above the kill", {"Demo/Examples.lean": ("#guard small 2\n", "#guard small 1\n#guard small 2\n")},
+     True, True),
+    ("a definition added above the kill", {"Demo/Examples.lean": ("#guard small 2\n", "def three := 3\n#guard small 2\n")},
+     False, True),
+    ("the killing check edited", {"Demo/Examples.lean": ("!small 3", "!small 4")}, False, True),
+    ("its import closure edited", {"Demo/Base.lean": ("end Demo", "-- a comment\nend Demo")}, False, False),
+]
+
+
+def layered(root: Path, edits: dict[str, tuple[str, str]]):
+    """LAYERED with `edits` (file -> (old, new)) at `root`, and its `Reads`."""
+    import trust_mutants
+    for f, text in LAYERED.items():
+        path = root / "lean" / f
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text.replace(*edits[f]) if f in edits else text)
+    files = {lean_statements.module_name(f): f for f in LAYERED}
+    tree = trust_mutants.Tree({f: trust_mutants.file_roles(root / "lean" / f) for f in LAYERED}, {}, files, {})
+    return trust_mutants.Reads(root, tree, [])
+
+
+@pytest.mark.parametrize(("name", "edits", "kill", "invalid"), EDITS, ids=[e[0] for e in EDITS])
+def test_a_verdict_carries_only_while_what_it_reads_reads_the_same(tmp_path, name, edits, kill, invalid):
+    """speed-tmchecks (speed-tmrerun's rule.py, moved into the tool): a KILLED verdict carries while its killing
+    check, the lines before it that count and what its file imports read the same (a check added above it moves it:
+    its detail follows), and while the build still reads that check; an INVALID one while the mutated declaration's
+    file before it and its import closure read the same."""
+    import trust_mutants
+    before = layered(tmp_path / "before", {})
+    m = trust_mutants.Mutant("M001", "Demo/Defs.lean", 5, "Demo.small", "lt-le", 0, 0, (5, 5), "<", "≤")
+    m.raw_status, m.detail = "KILLED", "lean/Demo/Examples.lean:5: Expression"
+    before.verdict(m)
+    assert m.reads and m.killed_at == (5, 5), m
+    killed = {"status": "KILLED", "detail": m.detail, "reads": m.reads, "killed_at": list(m.killed_at)}
+    m.raw_status, m.detail = "INVALID", "unknown identifier"
+    before.verdict(m)
+    refused = {"status": "INVALID", "detail": m.detail, "reads": m.reads, "killed_at": None}
+    after = layered(tmp_path / "after", edits)
+    built = ["Demo.Defs", "Demo.Examples"]
+    line = 6 if name == "a check added above the kill" else 5
+    assert after.carry(m, killed, built) == (("KILLED", f"lean/Demo/Examples.lean:{line}: Expression") if kill else None)
+    assert after.carry(m, refused, built) == (("INVALID", "unknown identifier") if invalid else None)
+    assert after.carry(m, killed, ["Demo.Defs"]) is None  # a check the build no longer reads kills nothing
+    assert after.carry(m, {**killed, "status": "SURVIVOR"}, built) is None
+
+
+def test_a_check_only_change_lies_outside_every_selected_file_and_its_closure(tmp_path):
+    """speed-tmchecks: the files a check-only change may touch: a module of lean/ outside every selected
+    declaration's file and import closure (`reach`, read from the imports), an outside --test file or a generated
+    inventory; any other file is a full run."""
+    import trust_mutants
+    reads = layered(tmp_path, {})
+    m = trust_mutants.Mutant("M001", "Demo/Defs.lean", 5, "Demo.small", "lt-le", 0, 0, (5, 5), "<", "≤")
+    reach = trust_mutants.reach(reads, [m])
+    assert reach == {"Demo/Defs.lean", "Demo/Base.lean"}
+    ok = ["lean/Demo/Examples.lean", "lean/Demo/New.lean", "lean/declarations.txt", "lean/statements.txt",
+          "outside/T.lean"]
+    assert trust_mutants.check_only(ok, reach, {"outside/T.lean"}) is None
+    for name, why in (("lean/Demo/Defs.lean", "a selected declaration's file"),
+                      ("lean/Demo/Base.lean", "in its import closure"), ("lean/lakefile.toml", "no module"),
+                      ("lean/lean-toolchain", "no module"), ("lean/SCOPE.md", "no module"),
+                      ("tools/trust-classes.json", "no module"), ("outside/U.lean", "no module")):
+        assert why in (trust_mutants.check_only([*ok, name], reach, {"outside/T.lean"}) or ""), name
+
+
+def test_rescore_after_a_check_only_change_carries_the_kills_it_reads_the_same(package, default_run, tmp_path,
+                                                                                tmp_path_factory):
+    """speed-tmchecks: after a check module is added (its check kills `evens`' survivors) and a killing check is
+    edited (`half_four`, in a module of no selected declaration), --rescore carries every KILLED and INVALID verdict
+    but the edited check's (`reused_from`, `carried: "checks"`), and builds the rest: the edited check's mutants and
+    the SURVIVOR and UNKNOWN ones. Every verdict is what a full run on the same tree gives."""
+    import shutil
+    prev_path = tmp_path_factory.getbasetemp() / "default-evidence.json"
+    prev = json.loads(prev_path.read_text())
+    root = tmp_path / "copy"
+    shutil.copytree(package, root, symlinks=True, ignore=shutil.ignore_patterns(".lake"))
+    far = root / "lean/Demo/Far/Check.lean"
+    assert "Demo.half 4 = 2" in far.read_text()
+    far.write_text(far.read_text().replace("Demo.half 4 = 2", "Demo.half 5 = 2"))
+    (root / "lean/Demo/More.lean").write_text("import Demo.Defs\nopen Demo\n\n#guard evens [2, 3, 4] == [2, 4]\n")
+    (tmp_path / "dump").mkdir()
+    dump(root, tmp_path / "dump")
+    done, data = rescored(root, tmp_path / "rescore", prev_path)
+    full_done, full = tool(root, tmp_path / "full")
+    was = {m["id"]: m for m in prev["mutants"]}
+    edited = {i for i, m in was.items() if m["raw_status"] == "KILLED" and m["detail"].startswith(
+        "lean/Demo/Far/Check.lean:")}
+    survivors = {i for i, m in was.items() if m["raw_status"] == "SURVIVOR" and m["definition"] == "Demo.evens"}
+    assert edited and survivors, was
+    carried = {m["id"] for m in data["mutants"] if m.get("carried") == "checks"}
+    assert carried == {i for i, m in was.items() if m["raw_status"] in ("KILLED", "INVALID")} - edited, (
+        data["rescore"], done.stdout)
+    assert {m["reused_from"] for m in data["mutants"] if m["id"] in carried} == {prev["head"]}
+    assert not [m for m in data["mutants"] if m["id"] not in carried and ("reused_from" in m or "carried" in m)]
+    changed = ["lean/Demo/Far/Check.lean", "lean/Demo/More.lean", "lean/declarations.txt", "lean/predicates.txt",
+               "lean/statements.txt"]
+    assert {k: data["rescore"][k] for k in ("head", "mode", "changed", "reused")} == {
+        "head": prev["head"], "mode": "checks", "changed": changed, "reused": len(carried)}, data["rescore"]
+    assert f"{len(carried)} carried from {prev['head'][:12]} (check-only change: {', '.join(changed)})" in done.stdout
+    now = {m["id"]: m for m in data["mutants"]}
+    assert all(now[i]["status"] == "KILLED" and now[i]["detail"].startswith("lean/Demo/More.lean:4:")
+               for i in survivors), [now[i] for i in survivors]
+    assert all(now[i]["status"] == "KILLED" for i in edited), [now[i] for i in edited]
+    assert [(m["id"], m["status"], m["detail"].split(": ")[0]) for m in data["mutants"]] == [
+        (m["id"], m["status"], m["detail"].split(": ")[0]) for m in full], (done.stdout, full_done.stdout)
+    assert done.returncode == full_done.returncode == 1
 
 
 def test_the_generator_cuts_every_list_a_condition_reads():
