@@ -104,6 +104,13 @@ def errorOf (a : Except String Json) : String := match a with | .error e => e | 
   "ManifestMismatch: scope.governors.g1.units"
 #guard errorOf (checkDoc (case (front (units (some (part "r1")) (some (part "r2"))) listed (some (block []))))) ==
   "ScopeOrphanPart: i1"
+-- The block's environment is the chain's, `readings@1` listed in order, `scope@0` lowered; a document with senses is
+-- decoded as the chain reads it.
+#guard [listed, ["norms@0", "readings@1", "relational-fol@0", "scope@0"]].map
+  (fun ps => (scopeReadings (env ps)).toOption.map (·.profiles)) ==
+  [some ["norms@0", "readings@1", "relational-fol@0"], some ["norms@0", "readings@1", "relational-fol@0"]]
+#guard (VE.Scope.decodeScope (case ((front (units (some (part "r1")) (some (part "r2")))).setObjVal! "senses"
+  (Json.mkObj [])))).toOption.isSome
 -- The layout is read from the source bytes of exactly the document's units.
 #guard (VE.Scope.decodeScope doc).toOption.map (fun D => D.layout.map fun x => (x.id, x.lead, x.item)) ==
   some [("u1", true, none), ("i1", false, some 0), ("i2", false, some 0), ("u3", false, none)]
