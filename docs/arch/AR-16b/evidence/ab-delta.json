@@ -100,6 +100,20 @@
   },
   {
    "authority": "default",
+   "case": "pilot/udhr-20261012T0600Z:usecases/udhr-pilot/run-20261012T0600Z/experiment-whole/translation-whole.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The UDHR whole-document pilot stops at the recorder's 600 s wall-clock limit on both sides (its readings route needs F5; LEAN-FIRST-PLAN 3.5), as listed by lf-18 (docs/lean-first/b18/DELTA.json); identical outputs. Run alone with a 1,500 s limit (docs/arch/AR-16a/pilot_rerun.py, evidence/pilot-rerun.json, at the earlier base f1943fab6 and head 19b8c2825), both sides answered with identical outputs."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/udhr-20261012T1800Z:usecases/udhr-pilot/run-20261012T1800Z/experiment-whole/translation-whole.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The UDHR whole-document pilot stops at the recorder's 600 s wall-clock limit on both sides (its readings route needs F5; LEAN-FIRST-PLAN 3.5), as listed by lf-18 (docs/lean-first/b18/DELTA.json); identical outputs. Run alone with a 1,500 s limit (docs/arch/AR-16a/pilot_rerun.py, evidence/pilot-rerun.json, at the earlier base f1943fab6 and head 19b8c2825), both sides answered with identical outputs."
+  },
+  {
+   "authority": "default",
    "case": "pilot/udhr-20261014T1800Z:usecases/udhr-pilot/run-20261014T1800Z/experiment-whole/translation-whole.ve.md",
    "corpus": "pilots",
    "op": "document_check",

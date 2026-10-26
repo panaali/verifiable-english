@@ -1,0 +1,199 @@
+{
+ "base": "25ac413119c8991d1385cc95c51bcaac7415f9a2",
+ "changes": [
+  {
+   "added": 15,
+   "deleted": 0,
+   "path": "docs/arch/AR-16b/DELTA.md"
+  },
+  {
+   "added": 180,
+   "deleted": 0,
+   "path": "docs/arch/AR-16b/cycles.py"
+  },
+  {
+   "added": 30,
+   "deleted": 0,
+   "path": "docs/arch/AR-16b/evidence.toml"
+  },
+  {
+   "added": 137,
+   "deleted": 0,
+   "path": "docs/arch/AR-16b/evidence/ab-delta.json"
+  },
+  {
+   "added": 121,
+   "deleted": 0,
+   "path": "docs/arch/AR-16b/evidence/cycles-after.json"
+  },
+  {
+   "added": 106,
+   "deleted": 0,
+   "path": "docs/arch/AR-16b/evidence/cycles-before.json"
+  },
+  {
+   "added": 208,
+   "deleted": 0,
+   "path": "docs/arch/AR-16b/evidence/mutants.json"
+  },
+  {
+   "added": 71,
+   "deleted": 0,
+   "path": "docs/arch/AR-16b/evidence/pilot-cpu.json"
+  },
+  {
+   "added": 10340,
+   "deleted": 0,
+   "path": "docs/arch/AR-16b/evidence/pilot-rerun.json"
+  },
+  {
+   "added": 544,
+   "deleted": 0,
+   "path": "docs/arch/AR-16b/evidence/relay-gate-base.json"
+  },
+  {
+   "added": 544,
+   "deleted": 0,
+   "path": "docs/arch/AR-16b/evidence/relay-gate-head.json"
+  },
+  {
+   "added": 21,
+   "deleted": 0,
+   "path": "docs/arch/AR-16b/evidence/verbatim.json"
+  },
+  {
+   "added": 124,
+   "deleted": 0,
+   "path": "docs/arch/AR-16b/mutants.json"
+  },
+  {
+   "added": 68,
+   "deleted": 0,
+   "path": "docs/arch/AR-16b/pilot_cpu.py"
+  },
+  {
+   "added": 81,
+   "deleted": 0,
+   "path": "docs/arch/AR-16b/rename_probe_sites.py"
+  },
+  {
+   "added": 124,
+   "deleted": 0,
+   "path": "docs/arch/AR-16b/verbatim.py"
+  },
+  {
+   "added": 27,
+   "deleted": 5,
+   "path": "docs/test-architecture/binding-census.json"
+  },
+  {
+   "added": 31,
+   "deleted": 8,
+   "path": "docs/test-architecture/binding-census.md"
+  },
+  {
+   "added": 0,
+   "deleted": 0,
+   "path": "docs/test-architecture/binding-probes.jsonl.gz"
+  },
+  {
+   "added": 5,
+   "deleted": 1,
+   "path": "tests/test_readings_defaults_rd2b_report.py"
+  },
+  {
+   "added": 6,
+   "deleted": 2,
+   "path": "tests/test_readings_defaults_rd3_report.py"
+  },
+  {
+   "added": 5,
+   "deleted": 1,
+   "path": "tests/test_readings_defaults_rd6b_report.py"
+  },
+  {
+   "added": 7,
+   "deleted": 4,
+   "path": "tests/test_readings_sup_verdicts.py"
+  },
+  {
+   "added": 151,
+   "deleted": 0,
+   "path": "tests/test_readings_verdicts_split.py"
+  },
+  {
+   "added": 16,
+   "deleted": 6,
+   "path": "tests/test_relay_lint.py"
+  },
+  {
+   "added": 3,
+   "deleted": 3,
+   "path": "tools/identity-sites.json"
+  },
+  {
+   "added": 11,
+   "deleted": 5,
+   "path": "tools/relay_lint.py"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "ve/assurance-manifest.json"
+  },
+  {
+   "added": 0,
+   "deleted": 1872,
+   "path": "ve/readings_verdicts.py"
+  },
+  {
+   "added": 51,
+   "deleted": 0,
+   "path": "ve/readings_verdicts/__init__.py"
+  },
+  {
+   "added": 497,
+   "deleted": 0,
+   "path": "ve/readings_verdicts/binding.py"
+  },
+  {
+   "added": 407,
+   "deleted": 0,
+   "path": "ve/readings_verdicts/choice.py"
+  },
+  {
+   "added": 224,
+   "deleted": 0,
+   "path": "ve/readings_verdicts/enumerated.py"
+  },
+  {
+   "added": 143,
+   "deleted": 0,
+   "path": "ve/readings_verdicts/route.py"
+  },
+  {
+   "added": 611,
+   "deleted": 0,
+   "path": "ve/readings_verdicts/superposed.py"
+  }
+ ],
+ "commits": [
+  {
+   "hash": "1f9edc4435c83a15b070494536c5789d06dfcbe1",
+   "subject": "Regenerate the binding census after the merge of main (R12)"
+  },
+  {
+   "hash": "7f873a0f3951857689359899b977d1c4e86abf94",
+   "subject": "AR-16b: DELTA, evidence.toml, A/B delta list, pilot re-run and CPU evidence"
+  },
+  {
+   "hash": "becce6b8e93e88a251610386c004e73db30287ec",
+   "subject": "AR-16b: evidence scripts (cycles, verbatim, probe rename), seeded mutants, the wording rule's coverage test"
+  },
+  {
+   "hash": "19b8c282552f6522ebde8fe2ec1e9a726d3d3b45",
+   "subject": "Split ve/readings_verdicts.py into the package ve/readings_verdicts/ (AR-16b)"
+  }
+ ],
+ "head": "1f9edc4435c83a15b070494536c5789d06dfcbe1"
+}
