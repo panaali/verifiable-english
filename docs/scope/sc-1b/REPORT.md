@@ -54,8 +54,12 @@ units (`withUnits`: a case member `check` reads only under `scope@0`) on the env
 or carve-out then takes `governorStatus` over the statuses before the fold (none: UNFORMALISED), and the coverage's
 bytes by status are counted again. The identities are the document's as written (block and parts included; spec 3);
 source and meaning ids are those of the environment the chain reads. Python's relay reads the `scope` member under
-`scope@0` and binds the answer on that environment (`ve/document/source.py`, `ve/document/lean.py`; R8: a governed
-unit's content is bound by its presence, since its authored content is a part only Lean composes).
+`scope@0` and binds the answer on that environment (`ve/document/source.py`, `ve/document/lean.py`; R8). A unit
+the block names (a governor's `unit` or `units`) or a part is governed: its content is bound to the authored members
+(`part` read as `norm`, `cites` as written), its rule an object, and a soft rule in its container's form; the rule is
+Lean's composition, bound by its meaning id. Every other rule is bound as written. The containers Python builds
+(the soft and rights documents, and the report's lower route) read the governed units. Review fix F1: see "Review
+fixes".
 
 ## Fixtures
 
@@ -88,7 +92,8 @@ unit's content is bound by its presence, since its authored content is a part on
 
 ## Seeded bugs
 
-[mutants.json](mutants.json): 19 by hand, one per claimed behaviour, each killed and restored (Lean 16: Wire.lean 9,
+[mutants.json](mutants.json): 26 by hand, one per claimed behaviour, each killed and restored (19 before the review fix
+below; Lean 16: Wire.lean 9,
 Document.lean 5, Dispatch.lean 2; Python 3: `ve/document/source.py` and `ve/document/lean.py` (environment), each
 failing `tests/test_scope_document.py::test_ve_document_check_builds_the_governed_document_from_the_bound_answer`;
 `ve/document/lean.py` (the unit id dropped from the binding), failing
@@ -197,6 +202,26 @@ Hand-written files: `lean/VE/Scope/{Wire,WireExamples}.lean`, `lean/VE/Service/{
   `decoded_no_new_symbols` with F1-dec, beside sc-1ad's five.
 - **SC-1c** (explain route and relay) and **SC-2**; the pilot rewrite of u0164/u0165 (queue 4.4 step 2).
 
+## Review fixes
+
+**F1 (B): a governed `norm` unit was refused by the relay.** Lean's govern rewrites the content of every rule unit a
+governor affects (`VE.Scope.patch`), but the binding required a `norm` unit's content to equal the authored one, so
+`ve document check` answered `CheckerUnavailable` on Lean's `ok` for reguard, carve-out, precedes and yields, on
+every chain. The same class had a second site: the soft and rights containers were built from the authored units,
+so a rights document with parts could not be built and a soft document held the rules as written.
+- Fix (`ve/document/lean.py`): `_governed_units` reads from the request which units govern may compose (the units the
+  block names, and the parts); `_rule_bound` is the one binding of a `norm` or `part` unit (governed: the authored
+  members, an object rule, a soft rule in its container's form; otherwise as written, or `_soft_bound`), and
+  `_with_governed_units` gives every container the units Lean's chain read (`withUnits`). Which named units change is
+  Lean's `affected`, not recomputed in Python; the identities stay the document's as written.
+- Tests (`tests/test_scope_document.py`): the review's probe; every effect of the wire, read from
+  `VE.Scope.decodeEffect`, on plain norms, soft norms and rights (18 cases: Lean's rules relayed, the container's
+  rules equal to them, check and render); every one-fault mutant of each unit's content in three governed answers;
+  two-fault forgeries with the meaning id recomputed, on the plain and the soft chain. Seven Python seeded bugs, all killed (mutants.json).
+- Size: the fix adds about 245 hand-written lines (Python 55, tests 184, ledgers 7) to the 1,267 above (C1).
+- The review's probe reads `check_document(p)["units"]`, which the check report has never had; the regression test
+  checks the report and reads the units from `load_document`.
+
 ## Self-review against BUILDER-CHECKLIST
 
 1. Every Lean answer typed and contained: PASS. `tests/test_scope_document.py::test_every_structural_mutant_of_the_f1_answer_is_refused`
@@ -207,7 +232,7 @@ Hand-written files: `lean/VE/Scope/{Wire,WireExamples}.lean`, `lean/VE/Service/{
    rule. One owner: Lean gates, governs and folds. Python only reads the `scope` member and binds on the lowered
    environment (`ve/document/lean.py`). That binding drops `scope@0` from the profile list, which is a filter for
    binding, not a Python copy of the decision. No report test was added. The size rule is broken (top of this report).
-3. Tests and gates can fail: PASS. [mutants.json](mutants.json) has 19 by hand. [trust-mutants.json](trust-mutants.json)
+3. Tests and gates can fail: PASS. [mutants.json](mutants.json) has 26 by hand (7 from the review fix). [trust-mutants.json](trust-mutants.json)
    is the mechanical run on the final Lean (exit 0; every allowed row has its one-line reason in
    [trust-mutants-allow.json](trust-mutants-allow.json)).
 4. Python, Lean and Rust agree, valid inputs pass: PASS. Documents without `scope@0` are answered as before
