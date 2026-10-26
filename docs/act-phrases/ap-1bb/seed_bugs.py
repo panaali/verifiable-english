@@ -53,6 +53,10 @@ MUTANTS = [
     ("py-norm-defaults-asked", "plain_wordings", "ve/norms.py",
      "    if not _plain_acts(env) or NORM_DEFAULTS_PROFILE in env.profiles:",
      "    if not _plain_acts(env):", PY + "test_norm_defaults_keeps_todays_display_without_asking"),
+    ("py-asked-without-acts", "plain_wordings", "ve/norms.py",
+     "    if not _plain_acts(env) or NORM_DEFAULTS_PROFILE in env.profiles:",
+     "    if NORM_DEFAULTS_PROFILE in env.profiles:",
+     PY + "test_an_environment_without_a_plain_act_asks_lean_nothing_to_display"),
 ]
 ENV = dict(os.environ, PATH=os.path.expanduser("~/.elan/bin") + ":" + os.environ["PATH"])
 

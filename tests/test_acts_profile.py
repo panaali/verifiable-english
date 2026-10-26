@@ -344,3 +344,17 @@ def test_norm_defaults_keeps_todays_display_without_asking(monkeypatch):
     env = Environment(environment(["acts@0", "norm-defaults@0", "norms@0", "relational-fol@0"]))
     monkeypatch.setattr(relay, "decide_once", lambda mode, case: pytest.fail("asked"))
     assert plain_wordings(env) == {}
+
+
+def test_an_environment_without_a_plain_act_asks_lean_nothing_to_display(monkeypatch):
+    """The display's cost is unchanged where no plain act is declared (every environment before `acts@0`): no
+    call to the norms route, so the UDHR and constitution pilots' displays make none."""
+    from ve.backends import relay
+    from ve.english import EnglishVocabulary
+    data = environment()
+    for name in ("heard", "paid"):
+        del data["vocabulary"]["predicates"][name]
+    env = Environment(data)
+    monkeypatch.setattr(relay, "decide_once", lambda mode, case: pytest.fail("asked"))
+    monkeypatch.setattr(relay, "decide", lambda mode, cases, **kw: pytest.fail("asked"))
+    assert EnglishVocabulary(env).predicates["protected"] == A3.replace("{0} ", "{0} may ", 1)

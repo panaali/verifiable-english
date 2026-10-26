@@ -82,5 +82,12 @@
   "test": "ResponseShape.Encoders.Norms",
   "killed": true,
   "first_failure": "error: ResponseShape/Encoders/Norms.lean:82:44: unsolved goals"
+ },
+ "py-asked-without-acts": {
+  "definition": "plain_wordings",
+  "file": "ve/norms.py",
+  "test": "tests/test_acts_profile.py::test_an_environment_without_a_plain_act_asks_lean_nothing_to_display",
+  "killed": true,
+  "first_failure": "FAILED tests/test_acts_profile.py::test_an_environment_without_a_plain_act_asks_lean_nothing_to_display"
  }
 }
