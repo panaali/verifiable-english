@@ -1,0 +1,324 @@
+{
+ "tree": "9b94f192d79d3e41320e48ea5cb3f687a80b032f",
+ "lines": [
+  211,
+  204,
+  195,
+  195,
+  210,
+  77,
+  110
+ ],
+ "fatal": [],
+ "operators": [
+  "arm-true",
+  "arm-false",
+  "arm-default",
+  "body-true",
+  "body-false",
+  "not-drop",
+  "and-or",
+  "or-and",
+  "lt-le",
+  "le-lt",
+  "lt-eq",
+  "le-eq",
+  "eq-le",
+  "eq-ne",
+  "ne-eq",
+  "all-any",
+  "any-all",
+  "bool-flip",
+  "lit-plus",
+  "lit-minus",
+  "list-empty",
+  "append-left",
+  "append-right",
+  "list-first",
+  "list-drop-last",
+  "list-last",
+  "list-drop-first"
+ ],
+ "rows": [
+  {
+   "definition": "VE.Calc.Wire.recordJson",
+   "class": "D[I]",
+   "tied": false,
+   "trusted": false,
+   "kind": "def",
+   "changed": true,
+   "selected_default": false,
+   "selected_all": true,
+   "mutated_default": false,
+   "mutated_all": true,
+   "mutants": [
+    [
+     "list-drop-first",
+     "[(\"span\", Json.arr #[toJson a, toJson b])]",
+     "([(\"span\", Json.arr #[toJson a, toJson b])].drop 1)",
+     0
+    ],
+    [
+     "list-drop-last",
+     "[(\"span\", Json.arr #[toJson a, toJson b])]",
+     "([(\"span\", Json.arr #[toJson a, toJson b])].dropLast)",
+     0
+    ],
+    [
+     "list-empty",
+     "[(\"span\", Json.arr #[toJson a, toJson b])]",
+     "[]",
+     0
+    ]
+   ]
+  },
+  {
+   "definition": "VE.Calc.Wire.recordJson",
+   "class": "D[I]",
+   "tied": false,
+   "trusted": false,
+   "kind": "def",
+   "changed": true,
+   "selected_default": false,
+   "selected_all": true,
+   "mutated_default": false,
+   "mutated_all": true,
+   "mutants": [
+    [
+     "list-drop-first",
+     "[(\"support\", Json.str s)]",
+     "([(\"support\", Json.str s)].drop 1)",
+     0
+    ],
+    [
+     "list-drop-last",
+     "[(\"support\", Json.str s)]",
+     "([(\"support\", Json.str s)].dropLast)",
+     0
+    ],
+    [
+     "list-empty",
+     "[(\"support\", Json.str s)]",
+     "[]",
+     0
+    ]
+   ]
+  },
+  {
+   "definition": "VE.Calc.Wire.supports",
+   "class": "D[I]",
+   "tied": false,
+   "trusted": false,
+   "kind": "def",
+   "changed": true,
+   "selected_default": false,
+   "selected_all": true,
+   "mutated_default": false,
+   "mutated_all": true,
+   "mutants": [
+    [
+     "list-drop-first",
+     "[\"observation\", \"testimony\", \"assumption\"]",
+     "([\"observation\", \"testimony\", \"assumption\"].drop 1)",
+     0
+    ],
+    [
+     "list-drop-last",
+     "[\"observation\", \"testimony\", \"assumption\"]",
+     "([\"observation\", \"testimony\", \"assumption\"].dropLast)",
+     0
+    ],
+    [
+     "list-empty",
+     "[\"observation\", \"testimony\", \"assumption\"]",
+     "[]",
+     0
+    ],
+    [
+     "list-first",
+     "[\"observation\", \"testimony\", \"assumption\"]",
+     "([\"observation\", \"testimony\", \"assumption\"].take 1)",
+     0
+    ],
+    [
+     "list-last",
+     "[\"observation\", \"testimony\", \"assumption\"]",
+     "([\"observation\", \"testimony\", \"assumption\"].reverse.take 1)",
+     0
+    ]
+   ]
+  },
+  {
+   "definition": "VE.Calc.Wire.supports",
+   "class": "D[I]",
+   "tied": false,
+   "trusted": false,
+   "kind": "def",
+   "changed": true,
+   "selected_default": false,
+   "selected_all": true,
+   "mutated_default": false,
+   "mutated_all": true,
+   "mutants": [
+    [
+     "list-drop-first",
+     "[\"observation\", \"testimony\", \"assumption\"]",
+     "([\"observation\", \"testimony\", \"assumption\"].drop 1)",
+     0
+    ],
+    [
+     "list-drop-last",
+     "[\"observation\", \"testimony\", \"assumption\"]",
+     "([\"observation\", \"testimony\", \"assumption\"].dropLast)",
+     0
+    ],
+    [
+     "list-empty",
+     "[\"observation\", \"testimony\", \"assumption\"]",
+     "[]",
+     0
+    ],
+    [
+     "list-first",
+     "[\"observation\", \"testimony\", \"assumption\"]",
+     "([\"observation\", \"testimony\", \"assumption\"].take 1)",
+     0
+    ],
+    [
+     "list-last",
+     "[\"observation\", \"testimony\", \"assumption\"]",
+     "([\"observation\", \"testimony\", \"assumption\"].reverse.take 1)",
+     0
+    ]
+   ]
+  },
+  {
+   "definition": "VE.Calc.Wire.recordJson",
+   "class": "D[I]",
+   "tied": false,
+   "trusted": false,
+   "kind": "def",
+   "changed": true,
+   "selected_default": false,
+   "selected_all": true,
+   "mutated_default": false,
+   "mutated_all": true,
+   "mutants": [
+    [
+     "le-eq",
+     "≤",
+     "=",
+     0
+    ],
+    [
+     "le-lt",
+     "≤",
+     "<",
+     0
+    ]
+   ]
+  },
+  {
+   "definition": "VE.Calc.Wire.literalFault",
+   "class": "D[R]",
+   "tied": false,
+   "trusted": false,
+   "kind": "def",
+   "changed": true,
+   "selected_default": false,
+   "selected_all": true,
+   "mutated_default": false,
+   "mutated_all": true,
+   "mutants": [
+    [
+     "list-drop-first",
+     "[.str \"lit\", .str s]",
+     "([.str \"lit\", .str s].drop 1)",
+     0
+    ],
+    [
+     "list-drop-last",
+     "[.str \"lit\", .str s]",
+     "([.str \"lit\", .str s].dropLast)",
+     0
+    ],
+    [
+     "list-empty",
+     "[.str \"lit\", .str s]",
+     "[]",
+     0
+    ],
+    [
+     "list-first",
+     "[.str \"lit\", .str s]",
+     "([.str \"lit\", .str s].take 1)",
+     0
+    ],
+    [
+     "list-last",
+     "[.str \"lit\", .str s]",
+     "([.str \"lit\", .str s].reverse.take 1)",
+     0
+    ]
+   ]
+  },
+  {
+   "definition": "VE.Calc.Wire.limitFault",
+   "class": "D[R]",
+   "tied": false,
+   "trusted": false,
+   "kind": "def",
+   "changed": true,
+   "selected_default": false,
+   "selected_all": true,
+   "mutated_default": false,
+   "mutated_all": true,
+   "mutants": [
+    [
+     "list-drop-first",
+     "[exponentFault, literalFault, nameFault]",
+     "([exponentFault, literalFault, nameFault].drop 1)",
+     0
+    ],
+    [
+     "list-drop-last",
+     "[exponentFault, literalFault, nameFault]",
+     "([exponentFault, literalFault, nameFault].dropLast)",
+     0
+    ],
+    [
+     "list-empty",
+     "[exponentFault, literalFault, nameFault]",
+     "[]",
+     0
+    ],
+    [
+     "list-first",
+     "[exponentFault, literalFault, nameFault]",
+     "([exponentFault, literalFault, nameFault].take 1)",
+     0
+    ],
+    [
+     "list-last",
+     "[exponentFault, literalFault, nameFault]",
+     "([exponentFault, literalFault, nameFault].reverse.take 1)",
+     0
+    ],
+    [
+     "lit-minus",
+     "65",
+     "64",
+     0
+    ],
+    [
+     "lit-plus",
+     "65",
+     "66",
+     0
+    ]
+   ]
+  }
+ ],
+ "default_mutants": 156,
+ "all_mutants": 568
+}
