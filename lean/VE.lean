@@ -127,6 +127,7 @@ import VE.Numbers.Examples
 import VE.Numbers.Phrases
 import VE.Scales.Examples
 import VE.Cardinality.Examples
+import VE.Cardinality.WireExamples
 import VE.Risk.Cond
 import VE.Risk.Derive
 import VE.Risk.Background
