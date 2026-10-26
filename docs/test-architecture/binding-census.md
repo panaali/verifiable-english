@@ -6,16 +6,16 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 
 | | count |
 |---|---:|
-| leaves:bound | 246 |
-| leaves:closed domain | 257 |
-| leaves:none | 1341 |
-| modes | 37 |
+| leaves:bound | 248 |
+| leaves:closed domain | 264 |
+| leaves:none | 1344 |
+| modes | 38 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 940 |
-| today:shape | 503 |
+| today:not probed | 943 |
+| today:shape | 512 |
 | today:unbound | 137 |
-| answers | 554 |
+| answers | 560 |
 | probes | 10204 |
 | hand_binders | 51 |
 
@@ -3243,6 +3243,29 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 |---|---|---|---|---|
 | `/evaluation/explanation` |  |  |  |  |
 | `/evaluation/explanation/*/bindings` |  |  |  |  |
+
+## calc
+
+6 recorded answers.
+
+| leaf | kind | class | keyword | format | observed | bound today |
+|---|---|---|---|---|---:|---|
+| `/case_index` | integer | bound | x-index |  | 1 | shape |
+| `/error` | string | none |  | minLength | 4 | not probed |
+| `/meaning_id` | string | none |  | pattern | 2 | not probed |
+| `/rows/*/claim` | string | bound | x-equals |  | 2 | shape |
+| `/rows/*/claim_id` | string | none |  | pattern | 2 | not probed |
+| `/rows/*/kind` | string | closed domain | const |  | 2 | shape |
+| `/rows/*/outcome` | string | closed domain | const |  | 2 | shape |
+| `/rows/*/outcome` | string | closed domain | enum |  | 2 | shape |
+| `/rows/*/reason` | string | closed domain | enum |  | 0 | shape |
+| `/rows/*/reproduction` | string | closed domain | const |  | 1 | shape |
+| `/rows/*/status` | string | closed domain | const |  | 2 | shape |
+| `/status` | string | closed domain | const |  | 6 | shape |
+
+| array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
+|---|---|---|---|---|
+| `/rows` | x-zip | x-zip |  |  |
 
 ## Grammars
 
