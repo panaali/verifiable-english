@@ -96,14 +96,22 @@ def rest (L : VE.NormDefaults.Wire.LayeredU) : String :=
 /-! ## `defaults-coherence`: COHERENT, COLLISION, UNKNOWN (DF-γ, DF-γ′, DF-γb, DF-ω) and diagnostic 5 -/
 
 def pairsJ (st : String) : Json := toJson [Json.mkObj [("rules", toJson ["r1", "r2"]), ("status", .str st)]]
+/-- The situation shown, its `x_required` gaps filled at `rows` (these fixtures leave only `x_required` unspecified). -/
+def sitJ (rows : List (List String) := []) : Json :=
+  Json.mkObj [("filling", Json.mkObj [("unsaid__x_required", toJson rows)])]
 -- DF-γ: the collision at {} checks; the tuple Lean finds and DE7a's one decider; named reversed, it is no collision
 #guard holds dγ fun L =>
   let a := answer (req αEnv γR "defaults-coherence" [("coherence", toJson [pairJ "r1" "r2"]), ("collision", collJ L "r1" "r2")])
   a.getObjValD "verdict" == .str "COLLISION" && a.getObjValD "pairs" == pairsJ "collision" &&
   a.getObjValD "collision" == Json.mkObj [("rules", toJson ["r1", "r2"]), ("tuple", toJson ["e_assistant"]),
     ("deciders", toJson ["assistant"])] &&
+  a.getObjValD "situation" == sitJ &&
   ans (req αEnv γR "defaults-coherence" [("coherence", toJson [pairJ "r1" "r2"]), ("collision", collJ L "r2" "r1")])
     "pairs" == pairsJ "unknown"
+-- df-1ac review F3: a collision naming a rule the document does not declare is refused, first or second
+#guard holds dγ fun L => [("r9", "r2"), ("r1", "r9")].all fun (m, n) =>
+  answer (req αEnv γR "defaults-coherence" [("collision", collJ L m n)]) ==
+    .str ("InvalidInput: a collision names an undeclared rule r9")
 -- the collision's filling is decoded: a table for a predicate the text settles is refused
 #guard holds dγ fun L => answer (req αEnv γR "defaults-coherence" [("coherence", toJson [pairJ "r1" "r2"]),
     ("collision", (collJ L "r1" "r2").setObjVal! "filling" (Json.mkObj [("unsaid__x_permitted", toJson ([] : List Json))]))]) ==
@@ -120,9 +128,15 @@ def pairsJ (st : String) : Json := toJson [Json.mkObj [("rules", toJson ["r1", "
 #guard holds (layered δEnv δR) fun L => answer (req δEnv δR "defaults-coherence"
   [("coherence", toJson [pairJ "r1" "r2"]), ("collision", collJ L "r1" "r2")]) ==
   VE.Route.Wire.ok "c" [("verdict", .str "UNKNOWN"), ("pairs", pairsJ "unknown")]
--- diagnostic 5: the pair list must be `coherence_targets`, in order
-#guard [toJson ([] : List Json), toJson [pairJ "r2" "r1"], toJson [pairJ "r1" "r2", pairJ "r1" "r2"]].all fun c =>
+-- diagnostic 5: a non-empty pair list must be `coherence_targets`, in order (one pair fewer, reversed, one more)
+#guard [toJson [pairJ "r2" "r1"], toJson [pairJ "r1" "r2", pairJ "r1" "r2"], toJson [pairJ "r1" "r1"]].all fun c =>
   answer (req δEnv δR "defaults-coherence" [("coherence", c)]) == .str pairText
+-- df-1ac review F3: DF-ω's `[]`, `"coherence": null` and no member send no pair certificate: UNKNOWN, as `[none]`
+#guard [some (toJson ([] : List Json)), some .null, none].all fun c =>
+  answer (req δEnv δR "defaults-coherence" ((c.map (fun c => [("coherence", c)])).getD [])) ==
+    VE.Route.Wire.ok "c" [("verdict", .str "UNKNOWN"), ("pairs", pairsJ "unknown")]
+-- a pair list that is not a list is refused
+#guard answer (req δEnv δR "defaults-coherence" [("coherence", .str "x")]) == .str "array expected"
 -- DF-γb: the pair's certificate checks (COHERENT, resolved); without it the pair is unknown. DF-α: no pair
 def γbCert : Json := match dγb with
   | .ok L => match VE.SoftNorms.collidingPairs L.D with
@@ -170,7 +184,7 @@ def γ3Coll (L : VE.NormDefaults.Wire.LayeredU) (m n : String) : Json :=
     Json.mkObj [("rules", toJson ["r2", "r3"]), ("status", .str b)]]
   γ3Coll L "r2" "r3" == VE.Route.Wire.ok "c" [("verdict", .str "COLLISION"), ("pairs", st "unknown" "collision"),
     ("collision", Json.mkObj [("rules", toJson ["r2", "r3"]), ("tuple", toJson ["e_assistant"]),
-      ("deciders", toJson ["assistant"])])] &&
+      ("deciders", toJson ["assistant"])]), ("situation", sitJ)] &&
   γ3Coll L "r1" "r3" == VE.Route.Wire.ok "c" [("verdict", .str "UNKNOWN"), ("pairs", st "unknown" "unknown")]
 
 /-! ## `defaults-certificate` (DF-α, DF-α′, DF-ζ's basis, DF-γ, DF-η, DF-ι, DF-κ) -/
@@ -265,7 +279,8 @@ def γbCase (coherence : Json) : Json := match dγb with
 -- the pair's certificate from `coherence` resolves the gate; without it, UNKNOWN; diagnostic 5 on this kind
 #guard answer (γbCase (toJson [pairJ "r1" "r2" γbCert])) == follows "unsettled" "short" [excN "r1"]
 #guard answer (γbCase (toJson [pairJ "r1" "r2"])) == unknownBecause "no-exception coherence not checked"
-#guard answer (γbCase (toJson ([] : List Json))) == .str pairText
+#guard answer (γbCase (toJson ([] : List Json))) == unknownBecause "no-exception coherence not checked"
+#guard answer (γbCase (toJson [pairJ "r2" "r1" γbCert])) == .str pairText
 
 /-! ## `defaults-model` (DF-β (i), DF-α's default model) -/
 
@@ -274,7 +289,7 @@ def modelCase (env : Json) (rules : List String) (L : VE.NormDefaults.Wire.Layer
     (on : List String) : Json :=
   req env rules "defaults-model" [("premises", toJson ([] : List Json)), ("conclusion", fJ φ), ("model", model (modelJ L on))]
 def doesNotFollow (forced : List (String × Nat)) : Json := VE.Route.Wire.ok "c" [("verdict", .str "DOES-NOT-FOLLOW"),
-  ("forced", toJson (forced.map fun (r, i) => Json.mkObj [("rule", .str r), ("condition", toJson i),
+  ("situation", sitJ), ("forced", toJson (forced.map fun (r, i) => Json.mkObj [("rule", .str r), ("condition", toJson i),
     ("tuple", toJson ["e_assistant"])]))]
 -- DF-β (i): the countermodel {urgent, excepted_r1} checks, with r1's exception forced by condition 0 (`urgent`)
 #guard holds dβ fun L => answer (modelCase βEnv βR L xAll ["urgent", exc1]) == doesNotFollow [("r1", 0)]
@@ -308,7 +323,7 @@ def β2R : List String := [ruleJ "r1" "x_required" true (dfltJ [un "calm", un "u
   let row (r : String) (i : Nat) (e : String) : Json :=
     Json.mkObj [("rule", .str r), ("condition", toJson i), ("tuple", toJson [e])]
   answer ((modelCase β2Env β2R L xAll []).setObjVal! "model" (model two)) == VE.Route.Wire.ok "c"
-    [("verdict", .str "DOES-NOT-FOLLOW"), ("forced", toJson [row "r1" 1 "e1", row "r1" 1 "e2", row "r2" 0 "e1", row "r2" 0 "e2"])]
+    [("verdict", .str "DOES-NOT-FOLLOW"), ("situation", sitJ), ("forced", toJson [row "r1" 1 "e1", row "r1" 1 "e2", row "r2" 0 "e1", row "r2" 0 "e2"])]
 
 /-! ## Other kinds -/
 
