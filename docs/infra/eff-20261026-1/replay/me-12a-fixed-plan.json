@@ -1,0 +1,1447 @@
+{
+ "tree": "a12dd630b70cc50c1e1b92b72849e928158cbe9d",
+ "lines": [
+  36,
+  59,
+  56,
+  57,
+  54,
+  67,
+  66,
+  76,
+  77,
+  77,
+  78,
+  69,
+  67,
+  72,
+  68,
+  68,
+  79,
+  79,
+  69,
+  101,
+  103,
+  104,
+  105,
+  125
+ ],
+ "fatal": [],
+ "operators": [
+  "arm-true",
+  "arm-false",
+  "arm-default",
+  "body-true",
+  "body-false",
+  "not-drop",
+  "and-or",
+  "or-and",
+  "lt-le",
+  "le-lt",
+  "lt-eq",
+  "le-eq",
+  "eq-le",
+  "eq-ne",
+  "ne-eq",
+  "all-any",
+  "any-all",
+  "bool-flip",
+  "lit-plus",
+  "lit-minus",
+  "list-empty",
+  "append-left",
+  "append-right",
+  "list-first",
+  "list-drop-last",
+  "list-last",
+  "list-drop-first"
+ ],
+ "rows": [
+  {
+   "definition": "VE.Arith.Term.value",
+   "class": "S",
+   "tied": false,
+   "trusted": true,
+   "kind": "def",
+   "changed": true,
+   "selected_default": true,
+   "selected_all": true,
+   "mutated_default": true,
+   "mutated_all": true,
+   "mutants": []
+  },
+  {
+   "definition": "VE.Arith.Holds",
+   "class": "S",
+   "tied": false,
+   "trusted": true,
+   "kind": "def",
+   "changed": true,
+   "selected_default": true,
+   "selected_all": true,
+   "mutated_default": true,
+   "mutated_all": true,
+   "mutants": [
+    [
+     "le-eq",
+     "≤",
+     "=",
+     0
+    ],
+    [
+     "le-eq",
+     "≤",
+     "=",
+     1
+    ],
+    [
+     "le-lt",
+     "≤",
+     "<",
+     0
+    ],
+    [
+     "le-lt",
+     "≤",
+     "<",
+     1
+    ]
+   ]
+  },
+  {
+   "definition": "VE.Arith.Holds",
+   "class": "S",
+   "tied": false,
+   "trusted": true,
+   "kind": "def",
+   "changed": true,
+   "selected_default": true,
+   "selected_all": true,
+   "mutated_default": true,
+   "mutated_all": true,
+   "mutants": [
+    [
+     "arm-false",
+     "∀ n : Int, Holds E (n :: ρ) φ",
+     "False",
+     0
+    ],
+    [
+     "arm-true",
+     "∀ n : Int, Holds E (n :: ρ) φ",
+     "True",
+     0
+    ]
+   ]
+  },
+  {
+   "definition": "VE.Arith.Holds",
+   "class": "S",
+   "tied": false,
+   "trusted": true,
+   "kind": "def",
+   "changed": true,
+   "selected_default": true,
+   "selected_all": true,
+   "mutated_default": true,
+   "mutated_all": true,
+   "mutants": [
+    [
+     "arm-false",
+     "∃ n : Int, Holds E (n :: ρ) φ",
+     "False",
+     0
+    ],
+    [
+     "arm-true",
+     "∃ n : Int, Holds E (n :: ρ) φ",
+     "True",
+     0
+    ]
+   ]
+  },
+  {
+   "definition": "VE.Arith.Holds",
+   "class": "S",
+   "tied": false,
+   "trusted": true,
+   "kind": "def",
+   "changed": true,
+   "selected_default": true,
+   "selected_all": true,
+   "mutated_default": true,
+   "mutated_all": true,
+   "mutants": [
+    [
+     "arm-false",
+     "∀ n : Nat, Holds E ((n : Int) :: ρ) φ",
+     "False",
+     0
+    ],
+    [
+     "arm-true",
+     "∀ n : Nat, Holds E ((n : Int) :: ρ) φ",
+     "True",
+     0
+    ]
+   ]
+  },
+  {
+   "definition": "VE.Arith.Defs.env",
+   "class": "S",
+   "tied": false,
+   "trusted": true,
+   "kind": "def",
+   "changed": true,
+   "selected_default": true,
+   "selected_all": true,
+   "mutated_default": true,
+   "mutated_all": true,
+   "mutants": [
+    [
+     "eq-le",
+     "=",
+     "≤",
+     0
+    ],
+    [
+     "eq-ne",
+     "=",
+     "≠",
+     0
+    ]
+   ]
+  },
+  {
+   "definition": "VE.Arith.Defs.env",
+   "class": "S",
+   "tied": false,
+   "trusted": true,
+   "kind": "def",
+   "changed": true,
+   "selected_default": true,
+   "selected_all": true,
+   "mutated_default": true,
+   "mutated_all": true,
+   "mutants": [
+    [
+     "eq-le",
+     "=",
+     "≤",
+     0
+    ],
+    [
+     "eq-ne",
+     "=",
+     "≠",
+     0
+    ]
+   ]
+  },
+  {
+   "definition": "VE.Arith.Formula.sites",
+   "class": "G[R]",
+   "tied": false,
+   "trusted": false,
+   "kind": "def",
+   "changed": true,
+   "selected_default": false,
+   "selected_all": true,
+   "mutated_default": false,
+   "mutated_all": true,
+   "mutants": []
+  },
+  {
+   "definition": "VE.Arith.Formula.sites",
+   "class": "G[R]",
+   "tied": false,
+   "trusted": false,
+   "kind": "def",
+   "changed": true,
+   "selected_default": false,
+   "selected_all": true,
+   "mutated_default": false,
+   "mutated_all": true,
+   "mutants": [
+    [
+     "append-left",
+     " ++ Formula.sites k ψ",
+     "",
+     0
+    ],
+    [
+     "append-right",
+     "φ ++ ",
+     "",
+     0
+    ],
+    [
+     "list-drop-first",
+     "Formula.sites k ψ",
+     "((Formula.sites k ψ).drop 1)",
+     0
+    ],
+    [
+     "list-drop-first",
+     "φ",
+     "(φ.drop 1)",
+     0
+    ],
+    [
+     "list-drop-last",
+     "Formula.sites k ψ",
+     "((Formula.sites k ψ).dropLast)",
+     0
+    ],
+    [
+     "list-drop-last",
+     "φ",
+     "(φ.dropLast)",
+     0
+    ],
+    [
+     "list-empty",
+     "Formula.sites k ψ",
+     "[]",
+     0
+    ],
+    [
+     "list-empty",
+     "φ",
+     "[]",
+     0
+    ],
+    [
+     "list-first",
+     "Formula.sites k ψ",
+     "((Formula.sites k ψ).take 1)",
+     0
+    ],
+    [
+     "list-first",
+     "φ",
+     "(φ.take 1)",
+     0
+    ],
+    [
+     "list-last",
+     "Formula.sites k ψ",
+     "((Formula.sites k ψ).reverse.take 1)",
+     0
+    ],
+    [
+     "list-last",
+     "φ",
+     "(φ.reverse.take 1)",
+     0
+    ]
+   ]
+  },
+  {
+   "definition": "VE.Arith.Formula.sites",
+   "class": "G[R]",
+   "tied": false,
+   "trusted": false,
+   "kind": "def",
+   "changed": true,
+   "selected_default": false,
+   "selected_all": true,
+   "mutated_default": false,
+   "mutated_all": true,
+   "mutants": [
+    [
+     "append-left",
+     " ++ Formula.sites k ψ",
+     "",
+     0
+    ],
+    [
+     "append-right",
+     "φ ++ ",
+     "",
+     0
+    ],
+    [
+     "list-drop-first",
+     "Formula.sites k ψ",
+     "((Formula.sites k ψ).drop 1)",
+     0
+    ],
+    [
+     "list-drop-first",
+     "φ",
+     "(φ.drop 1)",
+     0
+    ],
+    [
+     "list-drop-last",
+     "Formula.sites k ψ",
+     "((Formula.sites k ψ).dropLast)",
+     0
+    ],
+    [
+     "list-drop-last",
+     "φ",
+     "(φ.dropLast)",
+     0
+    ],
+    [
+     "list-empty",
+     "Formula.sites k ψ",
+     "[]",
+     0
+    ],
+    [
+     "list-empty",
+     "φ",
+     "[]",
+     0
+    ],
+    [
+     "list-first",
+     "Formula.sites k ψ",
+     "((Formula.sites k ψ).take 1)",
+     0
+    ],
+    [
+     "list-first",
+     "φ",
+     "(φ.take 1)",
+     0
+    ],
+    [
+     "list-last",
+     "Formula.sites k ψ",
+     "((Formula.sites k ψ).reverse.take 1)",
+     0
+    ],
+    [
+     "list-last",
+     "φ",
+     "(φ.reverse.take 1)",
+     0
+    ]
+   ]
+  },
+  {
+   "definition": "VE.Arith.Formula.sites",
+   "class": "G[R]",
+   "tied": false,
+   "trusted": false,
+   "kind": "def",
+   "changed": true,
+   "selected_default": false,
+   "selected_all": true,
+   "mutated_default": false,
+   "mutated_all": true,
+   "mutants": [
+    [
+     "lit-minus",
+     "1",
+     "0",
+     0
+    ],
+    [
+     "lit-plus",
+     "1",
+     "2",
+     0
+    ]
+   ]
+  },
+  {
+   "definition": "VE.Arith.Term.sites",
+   "class": "G[R]",
+   "tied": false,
+   "trusted": false,
+   "kind": "def",
+   "changed": true,
+   "selected_default": false,
+   "selected_all": true,
+   "mutated_default": false,
+   "mutated_all": true,
+   "mutants": [
+    [
+     "append-left",
+     " ++ Term.sites k hi",
+     "",
+     0
+    ],
+    [
+     "append-right",
+     "lo ++ ",
+     "",
+     0
+    ],
+    [
+     "list-drop-first",
+     "Term.sites k hi",
+     "((Term.sites k hi).drop 1)",
+     0
+    ],
+    [
+     "list-drop-first",
+     "lo",
+     "(lo.drop 1)",
+     0
+    ],
+    [
+     "list-drop-last",
+     "Term.sites k hi",
+     "((Term.sites k hi).dropLast)",
+     0
+    ],
+    [
+     "list-drop-last",
+     "lo",
+     "(lo.dropLast)",
+     0
+    ],
+    [
+     "list-empty",
+     "Term.sites k hi",
+     "[]",
+     0
+    ],
+    [
+     "list-empty",
+     "lo",
+     "[]",
+     0
+    ],
+    [
+     "list-first",
+     "Term.sites k hi",
+     "((Term.sites k hi).take 1)",
+     0
+    ],
+    [
+     "list-first",
+     "lo",
+     "(lo.take 1)",
+     0
+    ],
+    [
+     "list-last",
+     "Term.sites k hi",
+     "((Term.sites k hi).reverse.take 1)",
+     0
+    ],
+    [
+     "list-last",
+     "lo",
+     "(lo.reverse.take 1)",
+     0
+    ],
+    [
+     "lit-minus",
+     "1",
+     "0",
+     0
+    ],
+    [
+     "lit-plus",
+     "1",
+     "2",
+     0
+    ]
+   ]
+  },
+  {
+   "definition": "VE.Arith.Term.sites",
+   "class": "G[R]",
+   "tied": false,
+   "trusted": false,
+   "kind": "def",
+   "changed": true,
+   "selected_default": false,
+   "selected_all": true,
+   "mutated_default": false,
+   "mutated_all": true,
+   "mutants": [
+    [
+     "append-left",
+     " ++ Term.sites k b",
+     "",
+     0
+    ],
+    [
+     "append-right",
+     "a ++ ",
+     "",
+     0
+    ],
+    [
+     "list-drop-first",
+     "Term.sites k b",
+     "((Term.sites k b).drop 1)",
+     0
+    ],
+    [
+     "list-drop-first",
+     "a",
+     "(a.drop 1)",
+     0
+    ],
+    [
+     "list-drop-last",
+     "Term.sites k b",
+     "((Term.sites k b).dropLast)",
+     0
+    ],
+    [
+     "list-drop-last",
+     "a",
+     "(a.dropLast)",
+     0
+    ],
+    [
+     "list-empty",
+     "Term.sites k b",
+     "[]",
+     0
+    ],
+    [
+     "list-empty",
+     "a",
+     "[]",
+     0
+    ],
+    [
+     "list-first",
+     "Term.sites k b",
+     "((Term.sites k b).take 1)",
+     0
+    ],
+    [
+     "list-first",
+     "a",
+     "(a.take 1)",
+     0
+    ],
+    [
+     "list-last",
+     "Term.sites k b",
+     "((Term.sites k b).reverse.take 1)",
+     0
+    ],
+    [
+     "list-last",
+     "a",
+     "(a.reverse.take 1)",
+     0
+    ]
+   ]
+  },
+  {
+   "definition": "VE.Arith.Term.sitesList",
+   "class": "G[R]",
+   "tied": false,
+   "trusted": false,
+   "kind": "def",
+   "changed": true,
+   "selected_default": false,
+   "selected_all": true,
+   "mutated_default": false,
+   "mutated_all": true,
+   "mutants": [
+    [
+     "append-left",
+     " ++ Term.sitesList k ts",
+     "",
+     0
+    ],
+    [
+     "append-right",
+     "t ++ ",
+     "",
+     0
+    ],
+    [
+     "list-drop-first",
+     "Term.sitesList k ts",
+     "((Term.sitesList k ts).drop 1)",
+     0
+    ],
+    [
+     "list-drop-first",
+     "t",
+     "(t.drop 1)",
+     0
+    ],
+    [
+     "list-drop-last",
+     "Term.sitesList k ts",
+     "((Term.sitesList k ts).dropLast)",
+     0
+    ],
+    [
+     "list-drop-last",
+     "t",
+     "(t.dropLast)",
+     0
+    ],
+    [
+     "list-empty",
+     "Term.sitesList k ts",
+     "[]",
+     0
+    ],
+    [
+     "list-empty",
+     "t",
+     "[]",
+     0
+    ],
+    [
+     "list-first",
+     "Term.sitesList k ts",
+     "((Term.sitesList k ts).take 1)",
+     0
+    ],
+    [
+     "list-first",
+     "t",
+     "(t.take 1)",
+     0
+    ],
+    [
+     "list-last",
+     "Term.sitesList k ts",
+     "((Term.sitesList k ts).reverse.take 1)",
+     0
+    ],
+    [
+     "list-last",
+     "t",
+     "(t.reverse.take 1)",
+     0
+    ]
+   ]
+  },
+  {
+   "definition": "VE.Arith.Term.sites",
+   "class": "G[R]",
+   "tied": false,
+   "trusted": false,
+   "kind": "def",
+   "changed": true,
+   "selected_default": false,
+   "selected_all": true,
+   "mutated_default": false,
+   "mutated_all": true,
+   "mutants": [
+    [
+     "bool-flip",
+     "false",
+     "true",
+     0
+    ],
+    [
+     "list-drop-first",
+     "args",
+     "(args.drop 1)",
+     0
+    ],
+    [
+     "list-drop-last",
+     "args",
+     "(args.dropLast)",
+     0
+    ],
+    [
+     "list-empty",
+     "args",
+     "[]",
+     0
+    ],
+    [
+     "list-first",
+     "args",
+     "(args.take 1)",
+     0
+    ],
+    [
+     "list-last",
+     "args",
+     "(args.reverse.take 1)",
+     0
+    ]
+   ]
+  },
+  {
+   "definition": "VE.Arith.Term.sites",
+   "class": "G[R]",
+   "tied": false,
+   "trusted": false,
+   "kind": "def",
+   "changed": true,
+   "selected_default": false,
+   "selected_all": true,
+   "mutated_default": false,
+   "mutated_all": true,
+   "mutants": [
+    [
+     "bool-flip",
+     "false",
+     "true",
+     0
+    ],
+    [
+     "list-drop-first",
+     "args",
+     "(args.drop 1)",
+     0
+    ],
+    [
+     "list-drop-last",
+     "args",
+     "(args.dropLast)",
+     0
+    ],
+    [
+     "list-empty",
+     "args",
+     "[]",
+     0
+    ],
+    [
+     "list-first",
+     "args",
+     "(args.take 1)",
+     0
+    ],
+    [
+     "list-last",
+     "args",
+     "(args.reverse.take 1)",
+     0
+    ]
+   ]
+  },
+  {
+   "definition": "VE.Arith.Formula.sites",
+   "class": "G[R]",
+   "tied": false,
+   "trusted": false,
+   "kind": "def",
+   "changed": true,
+   "selected_default": false,
+   "selected_all": true,
+   "mutated_default": false,
+   "mutated_all": true,
+   "mutants": [
+    [
+     "append-left",
+     " ++ Formula.sites (k + 1) φ",
+     "",
+     0
+    ],
+    [
+     "append-left",
+     " ++ Term.sites k hi",
+     "",
+     0
+    ],
+    [
+     "append-right",
+     "hi ++ ",
+     "",
+     0
+    ],
+    [
+     "append-right",
+     "lo ++ ",
+     "",
+     0
+    ],
+    [
+     "list-drop-first",
+     "Formula.sites (k + 1) φ",
+     "((Formula.sites (k + 1) φ).drop 1)",
+     0
+    ],
+    [
+     "list-drop-first",
+     "Term.sites k hi",
+     "((Term.sites k hi).drop 1)",
+     0
+    ],
+    [
+     "list-drop-first",
+     "hi",
+     "(hi.drop 1)",
+     0
+    ],
+    [
+     "list-drop-first",
+     "lo",
+     "(lo.drop 1)",
+     0
+    ],
+    [
+     "list-drop-last",
+     "Formula.sites (k + 1) φ",
+     "((Formula.sites (k + 1) φ).dropLast)",
+     0
+    ],
+    [
+     "list-drop-last",
+     "Term.sites k hi",
+     "((Term.sites k hi).dropLast)",
+     0
+    ],
+    [
+     "list-drop-last",
+     "hi",
+     "(hi.dropLast)",
+     0
+    ],
+    [
+     "list-drop-last",
+     "lo",
+     "(lo.dropLast)",
+     0
+    ],
+    [
+     "list-empty",
+     "Formula.sites (k + 1) φ",
+     "[]",
+     0
+    ],
+    [
+     "list-empty",
+     "Term.sites k hi",
+     "[]",
+     0
+    ],
+    [
+     "list-empty",
+     "hi",
+     "[]",
+     0
+    ],
+    [
+     "list-empty",
+     "lo",
+     "[]",
+     0
+    ],
+    [
+     "list-first",
+     "Formula.sites (k + 1) φ",
+     "((Formula.sites (k + 1) φ).take 1)",
+     0
+    ],
+    [
+     "list-first",
+     "Term.sites k hi",
+     "((Term.sites k hi).take 1)",
+     0
+    ],
+    [
+     "list-first",
+     "hi",
+     "(hi.take 1)",
+     0
+    ],
+    [
+     "list-first",
+     "lo",
+     "(lo.take 1)",
+     0
+    ],
+    [
+     "list-last",
+     "Formula.sites (k + 1) φ",
+     "((Formula.sites (k + 1) φ).reverse.take 1)",
+     0
+    ],
+    [
+     "list-last",
+     "Term.sites k hi",
+     "((Term.sites k hi).reverse.take 1)",
+     0
+    ],
+    [
+     "list-last",
+     "hi",
+     "(hi.reverse.take 1)",
+     0
+    ],
+    [
+     "list-last",
+     "lo",
+     "(lo.reverse.take 1)",
+     0
+    ],
+    [
+     "lit-minus",
+     "1",
+     "0",
+     0
+    ],
+    [
+     "lit-plus",
+     "1",
+     "2",
+     0
+    ]
+   ]
+  },
+  {
+   "definition": "VE.Arith.Formula.sites",
+   "class": "G[R]",
+   "tied": false,
+   "trusted": false,
+   "kind": "def",
+   "changed": true,
+   "selected_default": false,
+   "selected_all": true,
+   "mutated_default": false,
+   "mutated_all": true,
+   "mutants": [
+    [
+     "append-left",
+     " ++ Formula.sites (k + 1) φ",
+     "",
+     0
+    ],
+    [
+     "append-left",
+     " ++ Term.sites k hi",
+     "",
+     0
+    ],
+    [
+     "append-right",
+     "hi ++ ",
+     "",
+     0
+    ],
+    [
+     "append-right",
+     "lo ++ ",
+     "",
+     0
+    ],
+    [
+     "list-drop-first",
+     "Formula.sites (k + 1) φ",
+     "((Formula.sites (k + 1) φ).drop 1)",
+     0
+    ],
+    [
+     "list-drop-first",
+     "Term.sites k hi",
+     "((Term.sites k hi).drop 1)",
+     0
+    ],
+    [
+     "list-drop-first",
+     "hi",
+     "(hi.drop 1)",
+     0
+    ],
+    [
+     "list-drop-first",
+     "lo",
+     "(lo.drop 1)",
+     0
+    ],
+    [
+     "list-drop-last",
+     "Formula.sites (k + 1) φ",
+     "((Formula.sites (k + 1) φ).dropLast)",
+     0
+    ],
+    [
+     "list-drop-last",
+     "Term.sites k hi",
+     "((Term.sites k hi).dropLast)",
+     0
+    ],
+    [
+     "list-drop-last",
+     "hi",
+     "(hi.dropLast)",
+     0
+    ],
+    [
+     "list-drop-last",
+     "lo",
+     "(lo.dropLast)",
+     0
+    ],
+    [
+     "list-empty",
+     "Formula.sites (k + 1) φ",
+     "[]",
+     0
+    ],
+    [
+     "list-empty",
+     "Term.sites k hi",
+     "[]",
+     0
+    ],
+    [
+     "list-empty",
+     "hi",
+     "[]",
+     0
+    ],
+    [
+     "list-empty",
+     "lo",
+     "[]",
+     0
+    ],
+    [
+     "list-first",
+     "Formula.sites (k + 1) φ",
+     "((Formula.sites (k + 1) φ).take 1)",
+     0
+    ],
+    [
+     "list-first",
+     "Term.sites k hi",
+     "((Term.sites k hi).take 1)",
+     0
+    ],
+    [
+     "list-first",
+     "hi",
+     "(hi.take 1)",
+     0
+    ],
+    [
+     "list-first",
+     "lo",
+     "(lo.take 1)",
+     0
+    ],
+    [
+     "list-last",
+     "Formula.sites (k + 1) φ",
+     "((Formula.sites (k + 1) φ).reverse.take 1)",
+     0
+    ],
+    [
+     "list-last",
+     "Term.sites k hi",
+     "((Term.sites k hi).reverse.take 1)",
+     0
+    ],
+    [
+     "list-last",
+     "hi",
+     "(hi.reverse.take 1)",
+     0
+    ],
+    [
+     "list-last",
+     "lo",
+     "(lo.reverse.take 1)",
+     0
+    ],
+    [
+     "lit-minus",
+     "1",
+     "0",
+     0
+    ],
+    [
+     "lit-plus",
+     "1",
+     "2",
+     0
+    ]
+   ]
+  },
+  {
+   "definition": "VE.Arith.Term.sites",
+   "class": "G[R]",
+   "tied": false,
+   "trusted": false,
+   "kind": "def",
+   "changed": true,
+   "selected_default": false,
+   "selected_all": true,
+   "mutated_default": false,
+   "mutated_all": true,
+   "mutants": [
+    [
+     "append-left",
+     " ++ Term.sites k hi",
+     "",
+     0
+    ],
+    [
+     "append-right",
+     "lo ++ ",
+     "",
+     0
+    ],
+    [
+     "list-drop-first",
+     "Term.sites k hi",
+     "((Term.sites k hi).drop 1)",
+     0
+    ],
+    [
+     "list-drop-first",
+     "lo",
+     "(lo.drop 1)",
+     0
+    ],
+    [
+     "list-drop-last",
+     "Term.sites k hi",
+     "((Term.sites k hi).dropLast)",
+     0
+    ],
+    [
+     "list-drop-last",
+     "lo",
+     "(lo.dropLast)",
+     0
+    ],
+    [
+     "list-empty",
+     "Term.sites k hi",
+     "[]",
+     0
+    ],
+    [
+     "list-empty",
+     "lo",
+     "[]",
+     0
+    ],
+    [
+     "list-first",
+     "Term.sites k hi",
+     "((Term.sites k hi).take 1)",
+     0
+    ],
+    [
+     "list-first",
+     "lo",
+     "(lo.take 1)",
+     0
+    ],
+    [
+     "list-last",
+     "Term.sites k hi",
+     "((Term.sites k hi).reverse.take 1)",
+     0
+    ],
+    [
+     "list-last",
+     "lo",
+     "(lo.reverse.take 1)",
+     0
+    ],
+    [
+     "lit-minus",
+     "1",
+     "0",
+     0
+    ],
+    [
+     "lit-plus",
+     "1",
+     "2",
+     0
+    ]
+   ]
+  },
+  {
+   "definition": "VE.Arith.Refusal.rank",
+   "class": "G[R]",
+   "tied": false,
+   "trusted": false,
+   "kind": "def",
+   "changed": true,
+   "selected_default": false,
+   "selected_all": true,
+   "mutated_default": false,
+   "mutated_all": true,
+   "mutants": [
+    [
+     "lit-plus",
+     "0",
+     "1",
+     0
+    ]
+   ]
+  },
+  {
+   "definition": "VE.Arith.Refusal.rank",
+   "class": "G[R]",
+   "tied": false,
+   "trusted": false,
+   "kind": "def",
+   "changed": true,
+   "selected_default": false,
+   "selected_all": true,
+   "mutated_default": false,
+   "mutated_all": true,
+   "mutants": [
+    [
+     "lit-minus",
+     "2",
+     "1",
+     0
+    ],
+    [
+     "lit-plus",
+     "2",
+     "3",
+     0
+    ]
+   ]
+  },
+  {
+   "definition": "VE.Arith.Refusal.rank",
+   "class": "G[R]",
+   "tied": false,
+   "trusted": false,
+   "kind": "def",
+   "changed": true,
+   "selected_default": false,
+   "selected_all": true,
+   "mutated_default": false,
+   "mutated_all": true,
+   "mutants": [
+    [
+     "lit-minus",
+     "3",
+     "2",
+     0
+    ],
+    [
+     "lit-plus",
+     "3",
+     "4",
+     0
+    ]
+   ]
+  },
+  {
+   "definition": "VE.Arith.Refusal.rank",
+   "class": "G[R]",
+   "tied": false,
+   "trusted": false,
+   "kind": "def",
+   "changed": true,
+   "selected_default": false,
+   "selected_all": true,
+   "mutated_default": false,
+   "mutated_all": true,
+   "mutants": [
+    [
+     "lit-minus",
+     "4",
+     "3",
+     0
+    ],
+    [
+     "lit-plus",
+     "4",
+     "5",
+     0
+    ]
+   ]
+  },
+  {
+   "definition": "VE.Arith.Defs.refusals",
+   "class": "G[R]",
+   "tied": false,
+   "trusted": false,
+   "kind": "def",
+   "changed": true,
+   "selected_default": false,
+   "selected_all": true,
+   "mutated_default": false,
+   "mutated_all": true,
+   "mutants": [
+    [
+     "any-all",
+     "any",
+     "all",
+     0
+    ],
+    [
+     "eq-ne",
+     "==",
+     "!=",
+     0
+    ],
+    [
+     "list-drop-first",
+     "D",
+     "(D.drop 1)",
+     0
+    ],
+    [
+     "list-drop-first",
+     "D.take k",
+     "((D.take k).drop 1)",
+     0
+    ],
+    [
+     "list-drop-last",
+     "D",
+     "(D.dropLast)",
+     0
+    ],
+    [
+     "list-drop-last",
+     "D.take k",
+     "((D.take k).dropLast)",
+     0
+    ],
+    [
+     "list-empty",
+     "D",
+     "[]",
+     0
+    ],
+    [
+     "list-empty",
+     "D.take k",
+     "[]",
+     0
+    ],
+    [
+     "list-first",
+     "D",
+     "(D.take 1)",
+     0
+    ],
+    [
+     "list-first",
+     "D.take k",
+     "((D.take k).take 1)",
+     0
+    ],
+    [
+     "list-last",
+     "D",
+     "(D.reverse.take 1)",
+     0
+    ],
+    [
+     "list-last",
+     "D.take k",
+     "((D.take k).reverse.take 1)",
+     0
+    ]
+   ]
+  }
+ ],
+ "default_mutants": 163,
+ "all_mutants": 519
+}
