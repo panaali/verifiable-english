@@ -89,7 +89,6 @@ module VE.Acts.Lexical
 module VE.Acts.LexicalBase
 module VE.Acts.LexicalExamples
 module VE.Acts.LexicalProofs
-module VE.Acts.Linearize
 module VE.Acts.Read
 module VE.Acts.Syntax
 module VE.Acts.Table
