@@ -11,7 +11,7 @@ import pytest
 from ve import document as D
 from ve.backends.relay import answer
 
-F1 = Path(__file__).parent / "data/scope/hard-constraints.ve.md"
+F1 = Path(__file__).parent / "data/scope/hard-constraints.scope.md"
 ITEMS = [f"u0165.s0{i}" for i in range(1, 8)]
 
 
