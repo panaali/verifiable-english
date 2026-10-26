@@ -1,0 +1,71 @@
+{
+ "tree": "82c0e6ad8f46984ba74ebaa6d5540f2efcbed9f6",
+ "lines": [
+  53,
+  74
+ ],
+ "fatal": [],
+ "operators": [
+  "arm-true",
+  "arm-false",
+  "arm-default",
+  "body-true",
+  "body-false",
+  "not-drop",
+  "and-or",
+  "or-and",
+  "lt-le",
+  "le-lt",
+  "lt-eq",
+  "le-eq",
+  "eq-le",
+  "eq-ne",
+  "ne-eq",
+  "all-any",
+  "any-all",
+  "bool-flip",
+  "lit-plus",
+  "lit-minus",
+  "list-empty",
+  "append-left",
+  "append-right",
+  "list-first",
+  "list-drop-last",
+  "list-last",
+  "list-drop-first"
+ ],
+ "rows": [
+  {
+   "definition": "VE.Calc.Units.decodeFactor",
+   "class": "D[V]",
+   "trusted": true,
+   "changed": true,
+   "selected": true,
+   "mutants": [
+    [
+     "lt-le",
+     "<",
+     "≤"
+    ],
+    [
+     "lt-eq",
+     "<",
+     "="
+    ],
+    [
+     "lit-plus",
+     "0",
+     "1"
+    ]
+   ]
+  },
+  {
+   "definition": "VE.Calc.Units.decodeV2",
+   "class": "D[V]",
+   "trusted": true,
+   "changed": true,
+   "selected": true,
+   "mutants": []
+  }
+ ]
+}

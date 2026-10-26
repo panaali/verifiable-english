@@ -237,9 +237,29 @@ On every list of D-all, the table answers as `dispatch` and its base rows as `to
 #guard gateOf baseRows ["norms@0", "relational-fol@0", "ve.discourse@1"] ==
   .error "UnsupportedProfile: Unsupported profile ve.discourse@1"
 #guard gateOf profileTable ["norms@0", "relational-fol@0", "ve.discourse@1"] == .ok .discourse
-#guard environmentProfiles.length == 17 && environmentProfiles.getLast? == some "readings@1"
+#guard environmentProfiles.length == 18 && environmentProfiles.getLast? == some "readings@1"
 #guard legacyProfiles.all (fun p => profileTable.any (·.profile == p)) &&
-  profileTable.all (fun r => legacyProfiles.contains r.profile)
+  (profileTable.map (·.profile)).eraseDups.filter (!legacyProfiles.contains ·) == ["acts@0"]
+
+/-! act-phrases 4.4 (AP-1): `acts@0` requires `norms@0`, keeps the route of the list without it (`gate_acts`) and
+refuses every route whose norm decoder it does not hook, each with its own text (D-30). -/
+#guard gateOf profileTable ["acts@0", "relational-fol@0"] == .error "UnsupportedProfile: acts@0 requires norms@0"
+#guard gateOf profileTable ["acts@0", "norms@0", "relational-fol@0"] == .ok .norms
+#guard gateOf profileTable ["acts@0", "definitions@0", "norm-defaults@0", "norms@0", "relational-fol@0"] ==
+  .ok .normDefaults
+#guard gateOf profileTable ["acts@0", "norms@0", "readings@1", "relational-fol@0"] == .ok .readings
+#guard gateOf baseRows ["acts@0", "data@0", "norms@0", "relational-fol@0", "time@0"] == .ok .norms
+#guard [(["acts@0", "norms@0", "relational-fol@0", "soft-norms@0"], "acts@0 with soft-norms@0"),
+    (["acts@0", "alternatives@0", "norms@0", "relational-fol@0"], "acts@0 with alternatives@0"),
+    (["acts@0", "norms@0", "relational-fol@0", "speech-acts@0"], "acts@0 with speech-acts@0"),
+    (["acts@0", "closure@0", "norms@0", "relational-fol@0"], "acts@0 on the closure family"),
+    (["acts@0", "norms@0", "order@0", "relational-fol@0"], "acts@0 on the order family"),
+    (["acts@0", "norms@0", "relational-fol@0", "ve.discourse@1"], "acts@0 with ve.discourse@1")].all fun (ps, t) =>
+  gateOf profileTable ps == .error s!"UnsupportedProfile: {t} is not implemented"
+-- `rights@0` requires `soft-norms@0`, which `acts@0` refuses first; its own refusal is the row's data.
+#guard gateOf profileTable ["acts@0", "norms@0", "relational-fol@0", "rights@0", "soft-norms@0"] ==
+    .error "UnsupportedProfile: acts@0 with soft-norms@0 is not implemented" &&
+  actsRefuses.lookup "rights@0" == some "acts@0 with rights@0 is not implemented" && actsRefuses.length == 7
 
 /-- `TableAdmits` reads the refusals: soft-norms@0 is refused with alternatives@0, and admitted with norms@0. -/
 example : ¬ TableAdmits profileTable ["alternatives@0", "norms@0", "relational-fol@0", "soft-norms@0"] := by
