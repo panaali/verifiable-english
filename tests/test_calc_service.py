@@ -5,17 +5,15 @@ of an integer are refused, as the restricted decoder refuses them in every mode.
 from __future__ import annotations
 
 import json
-from pathlib import Path
 
 import pytest
 
 from tests.lean_build import lean_build
+from tests.lean_service_corpus import calc_cases as route_cases
 from tests.subprocesses import HANG_TIMEOUT
 from ve.backends.lean_service import LeanService, case_digest, case_texts
 from ve.backends.service_schema import Invalid, check_response
 
-ROOT = Path(__file__).resolve().parents[1]
-CASES = ROOT / "tests/data/route-cases.jsonl"
 DIGITS = "unknown: an exact value would have more than 4,096 digits"
 
 # Each calc route case's rows, in the file's order (spec 13.3 and 13.6), or its refusal.
@@ -60,11 +58,6 @@ def says(result: dict):
         return result["error"]
     return [f"{r['claim']} {r['outcome']}" + (f" ({r['reason']})" if r["reason"] else "") +
             (" reproduction unknown" if r["reproduction"] else "") for r in result["rows"]]
-
-
-def route_cases() -> list[dict]:
-    rows = (json.loads(line) for line in CASES.read_text().splitlines())
-    return [case for mode, case in rows if mode == "calc"]
 
 
 def test_route_cases_answer_their_rows(service):
@@ -131,16 +124,32 @@ def _row_mutants(rows):
     yield "meaning id not a digest", None
 
 
-def test_answers_are_bound_to_their_request(service):
-    """R8: a row per request claim, in order, naming the request's claim; an outcome with its reason only."""
-    case = route_cases()[0]
+def _bound_request(service, case):
     text = json.dumps([case], ensure_ascii=False)
     response = ask(service, text, 1)
     request = {"id": response["id"], "mode": "calc", "cases": [case],
                "digests": [case_digest(t) for t in case_texts(text)], "bytes": len(text.encode())}
     check_response("calc", response, request)
+    return request, response
+
+
+def _refused(response, request, result):
+    with pytest.raises(Invalid):
+        check_response("calc", {**response, "results": [{**response["results"][0], "result": result}]}, request)
+
+
+def test_answers_are_bound_to_their_request(service):
+    """R8: a row per request claim, in order, naming the request's claim; an outcome with its reason only."""
+    request, response = _bound_request(service, route_cases()[0])
     result = response["results"][0]["result"]
     for label, rows in _row_mutants(result["rows"]):
-        altered = {**result, "rows": rows} if rows is not None else {**result, "meaning_id": "x"}
-        with pytest.raises(Invalid):
-            check_response("calc", {**response, "results": [{**response["results"][0], "result": altered}]}, request)
+        _refused(response, request, {**result, "rows": rows} if rows is not None else {**result, "meaning_id": "x"})
+
+
+def test_a_reproduction_is_unknown_exactly_under_a_software_convention(service):
+    """The rows of a case without `software` have no reproduction (R-1); those of a case with one, `unknown` (V-9)."""
+    for case, other in ((route_cases()[0], "unknown"), (route_cases()[4], None)):
+        request, response = _bound_request(service, case)
+        result = response["results"][0]["result"]
+        assert {row["reproduction"] for row in result["rows"]} == {"unknown" if other is None else None}
+        _refused(response, request, {**result, "rows": [{**row, "reproduction": other} for row in result["rows"]]})
