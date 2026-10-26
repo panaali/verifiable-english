@@ -12529,13 +12529,7 @@
     },
     "VE/Acts/Syntax.lean": {
       "S": [
-        "VE.Acts.Act",
-        "VE.Acts.Atom",
-        "VE.Acts.Filler",
         "VE.Acts.Frame",
-        "VE.Acts.Join",
-        "VE.Acts.Modifier",
-        "VE.Acts.Part",
         "VE.Acts.Term",
         "VE.Acts.Term.accepts",
         "VE.Acts.Vocab",
@@ -14608,6 +14602,16 @@
         "VE.Acts.TableExamples.through",
         "VE.Acts.TableExamples.torture",
         "VE.Acts.TableExamples.w"
+      ]
+    },
+    "VE/Acts/Tree.lean": {
+      "S": [
+        "VE.Acts.Act",
+        "VE.Acts.Atom",
+        "VE.Acts.Filler",
+        "VE.Acts.Join",
+        "VE.Acts.Modifier",
+        "VE.Acts.Part"
       ]
     }
   }
