@@ -134,6 +134,10 @@ def reg (role : VE.Norms.Role) : VE.Norms.Regulated := ⟨"p", ["person"], false
 #guard partAct [] .permission (form true) == "{0} form trade unions for the protection of their interests"
 #guard partAct fx11 .plain directly == "{0} to directly take part in {1}"
 #guard Atom.text fx11 none through == "{0} to take part in {1} through freely chosen representatives"
+#guard Atom.text fx6 none torture == "{0} be subjected to torture"
+-- A19: a fixed phrase renders canonical, its curly apostrophe read as `'`.
+#guard partAct ["the operator’s  instructions"] .obligation ⟨false, false, ["comply"], [("with", .one (.fixed 0))], []⟩ ==
+  "{0} comply with the operator's instructions"
 #guard partAct ["the right to change their nationality"] .permission (denied true) ==
   "{0} be arbitrarily denied the right to change their nationality"
 #guard partAct ["other lack of livelihood"] .plain
