@@ -13368,7 +13368,13 @@
         "ResponseShape.DefaultsExamples.certNone",
         "ResponseShape.DefaultsExamples.coll",
         "ResponseShape.DefaultsExamples.drop",
-        "ResponseShape.DefaultsExamples.set"
+        "ResponseShape.DefaultsExamples.long",
+        "ResponseShape.DefaultsExamples.refusesAll",
+        "ResponseShape.DefaultsExamples.resolved",
+        "ResponseShape.DefaultsExamples.set",
+        "ResponseShape.DefaultsExamples.strictJ",
+        "ResponseShape.DefaultsExamples.unsettled",
+        "ResponseShape.DefaultsExamples.variants"
       ]
     },
     "VE/Scales/Syntax.lean": {
