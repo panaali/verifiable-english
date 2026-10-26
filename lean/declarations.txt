@@ -3724,7 +3724,7 @@ module VE.Attribution.Wire 5dd9512e2a22d1e0d25e266083a337402c6788e6508b7ebb44bce
 493:0-498:65 def VE.Reports.Wire.generated@VE.Attribution.Wire
 500:0-507:75 def VE.Reports.Wire.environmentReportsJson@VE.Attribution.Wire
 509:0-513:101 def VE.Reports.Wire.reportsModelVocabulary@VE.Attribution.Wire
-module VE.Audit fa166f6dc975b9dde213ac0b82c221e3fd3451bc9de69dace729036ef12ecf3a
+module VE.Audit 0bf7a12e2d4dbc24bb7b016e6c094b11c16172407bf698ec8171ba3397c734fe
 module VE.Bridge 4f7b5313509e488f647f3d8b0a7916ac28dbca6601547b44bf25eda9b833d079
 8:0-8:32 def VE.Bridge.Entity@VE.Bridge
 9:0-9:37 def VE.Bridge.Fields@VE.Bridge
@@ -4827,7 +4827,7 @@ module VE.Cardinality.Theorems 1add26d13156953c94d0ef8e14f6dbcc501ca8e0a98d7c1f0
 941:0-945:103 theorem VE.Cardinality.countFin_eq@VE.Cardinality.Theorems
 947:0-964:75 theorem VE.Cardinality.withRegionsFinite_denote@VE.Cardinality.Theorems
 966:0-985:97 theorem VE.Cardinality.refutesC_sound@VE.Cardinality.Theorems
-module VE.Cardinality.Wire 5a013bef4e90b8e7896c081b7d57d3d6fcefd7999767c04693d9a587b35ad740
+module VE.Cardinality.Wire b915d51bafd888305c369dd568125479515a1f31cf10a674ce0a67105e02f9d6
 18:0-24:104 def VE.Cardinality.projectW6@VE.Cardinality.Wire
 26:0-33:24 structure VE.Cardinality.CardEnv@VE.Cardinality.Wire
 30:2-30:4 def VE.Cardinality.CardEnv.w6@VE.Cardinality.Wire
@@ -4891,6 +4891,11 @@ module VE.Cardinality.WireExamples 8a6c33fee5d632f737d95ca6237dc19da14891e96727b
 195:0-196:112 def VE.Cardinality.WireExamples.e2@VE.Cardinality.WireExamples
 207:0-207:76 def VE.Cardinality.WireExamples.finite@VE.Cardinality.WireExamples
 237:0-237:86 def VE.Cardinality.WireExamples.badCount@VE.Cardinality.WireExamples
+module VE.Cardinality.WireTheorems 0923824c7206aebdb3c3d684dbb129e7e74761f5c27d694fa7457cd8aeef4a15
+9:0-15:37 theorem VE.Cardinality.Wire.profileLists_projected@VE.Cardinality.WireTheorems
+17:0-26:11 theorem VE.Cardinality.Wire.finiteSorts_length@VE.Cardinality.WireTheorems
+28:0-56:80 theorem VE.Cardinality.Wire.decodeEnvironment_sound@VE.Cardinality.WireTheorems
+58:0-76:10 theorem VE.Cardinality.Wire.decodeStatement_identity@VE.Cardinality.WireTheorems
 module VE.CertificateWire bf814b58737fdab33616a65a899a130e1b3a08b0564d7921fd295a4ac7b1c3c0
 11:0-13:27 def VE.CertificateWire.maxSteps@VE.CertificateWire
 15:0-15:82 def VE.CertificateWire.stepLimit@VE.CertificateWire
@@ -21989,4 +21994,4 @@ module VE.Words.Situation 4052e7ca4f76c9f7742c08560fd083d76c33a7c1d050455fa9904b
 145:0-156:13 def VE.Words.bindings@VE.Words.Situation
 158:0-169:50 def VE.Words.pairSentence@VE.Words.Situation
 186:0-188:91 def VE.Words.nounsOnly@VE.Words.Situation
-module VE 59417fa3c6f145c0c160850802f2f8ce2e910705776d0eb9163518f448706f59
+module VE 93de43b193a37c590063c0f7e7f993b00324cfb64145b102a7bae2aa21a5d656

@@ -14748,6 +14748,7 @@
         "VE.Cardinality.WireExamples.st",
         "VE.Cardinality.WireExamples.terms"
       ]
-    }
+    },
+    "VE/Cardinality/WireTheorems.lean": {}
   }
 }

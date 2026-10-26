@@ -197,7 +197,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/SpeechActs/Wire.lean` | 1008 | 1008 | 1–1008 | `3908d8db4079…` |
 | `lean/VE/Time/Document.lean` | 613 | 613 | 1–613 | `4407e998d007…` |
 | `lean/VE/Time/Wire.lean` | 844 | 844 | 1–844 | `92e7b2be4458…` |
-| `lean/VE/Cardinality/Wire.lean` | 290 | 290 | 1–290 | `5a013bef4e90…` |
+| `lean/VE/Cardinality/Wire.lean` | 290 | 290 | 1–290 | `b915d51bafd8…` |
 | `lean/VE/Readings/ComponentsWire.lean` | 614 | 614 | 1–614 | `db7769a98ff7…` |
 | `lean/VE/Norms/Family.lean` | 506 | 506 | 1–506 | `9c2429084058…` |
 | `lean/VE/Ask/Wire.lean` | 367 | 367 | 1–367 | `bfa92dd20785…` |

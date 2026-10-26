@@ -4913,6 +4913,31 @@ theorem VE.Cardinality.Examples.wellFormed_cases
       ¬VE.Cardinality.Examples.colliding.WellFormed ∧ ¬VE.Cardinality.Examples.ghost.WellFormed
   -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.Examples.colliding@VE.Cardinality.Examples VE.Cardinality.Examples.ghost@VE.Cardinality.Examples VE.Cardinality.Examples.named@VE.Cardinality.Examples VE.Cardinality.Examples.users@VE.Cardinality.Examples
   -- expr 2834057780
+theorem VE.Cardinality.Wire.decodeEnvironment_sound
+  ∀ {env : Lean.Json} {w : VE.Cardinality.CardEnv},
+    VE.Cardinality.Wire.decodeEnvironment env = Except.ok w →
+      (∃ ps, ps ∈ VE.Cardinality.Wire.profileLists ∧ VE.Route.Wire.environmentId ps env = Except.ok w.environmentId) ∧
+        (∃ j, VE.Cardinality.projectW6 env = Except.ok j ∧ VE.Time.Wire.decodeEnvironment j = Except.ok w.w6) ∧
+          ∃ finite,
+            VE.Cardinality.Wire.finiteSorts env = Except.ok finite ∧ w.env = { q := w.w6.vocab.env, finite := finite }
+  -- uses VE.Cardinality.CEnv.mk@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CardEnv.env@VE.Cardinality.Wire VE.Cardinality.CardEnv.environmentId@VE.Cardinality.Wire VE.Cardinality.CardEnv.w6@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Wire.decodeEnvironment@VE.Cardinality.Wire VE.Cardinality.Wire.finiteSorts@VE.Cardinality.Wire VE.Cardinality.Wire.profileLists@VE.Cardinality.Wire VE.Cardinality.projectW6@VE.Cardinality.Wire VE.Route.Wire.environmentId@VE.Route.Wire VE.Time.Wire.QVocab.env@VE.Time.Wire VE.Time.Wire.W6Env.vocab@VE.Time.Wire VE.Time.Wire.W6Env@VE.Time.Wire VE.Time.Wire.decodeEnvironment@VE.Time.Wire
+  -- expr 2415483866
+theorem VE.Cardinality.Wire.decodeStatement_identity
+  ∀ {w : VE.Cardinality.CardEnv} {j : Lean.Json} {a : VE.Cardinality.CAdmission w},
+    VE.Cardinality.Wire.decodeStatement w j = Except.ok a →
+      VE.Route.Wire.meaningId w.profiles w.environmentId (VE.Cardinality.Wire.canonical a.formula) = Except.ok a.meaningId
+  -- uses VE.Cardinality.CAdmission.formula@VE.Cardinality.Wire VE.Cardinality.CAdmission.meaningId@VE.Cardinality.Wire VE.Cardinality.CAdmission@VE.Cardinality.Wire VE.Cardinality.CardEnv.environmentId@VE.Cardinality.Wire VE.Cardinality.CardEnv.profiles@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Wire.canonical@VE.Cardinality.Wire VE.Cardinality.Wire.decodeStatement@VE.Cardinality.Wire VE.Route.Wire.meaningId@VE.Route.Wire
+  -- expr 3777840987
+theorem VE.Cardinality.Wire.finiteSorts_length
+  ∀ {env : Lean.Json} {xs : List String},
+    VE.Cardinality.Wire.finiteSorts env = Except.ok xs → xs.length ≤ VE.Cardinality.Wire.maxFiniteSorts
+  -- uses VE.Cardinality.Wire.finiteSorts@VE.Cardinality.Wire VE.Cardinality.Wire.maxFiniteSorts@VE.Cardinality.Wire
+  -- expr 2775985200
+theorem VE.Cardinality.Wire.profileLists_projected
+  ∀ {ps : List String},
+    ps ∈ VE.Cardinality.Wire.profileLists → List.filter (fun x => x != "cardinality@0") ps ∈ VE.Time.Wire.w6Profiles
+  -- uses VE.Cardinality.Wire.profileLists@VE.Cardinality.Wire VE.Time.Wire.w6Profiles@VE.Time.Wire
+  -- expr 4115151832
 theorem VE.Cardinality.Wire.wellFormed_of
   ∀ (v : VE.Time.Wire.QVocab) (finite : List String),
     (finite.all v.sorts.contains && v.constants.all fun c => !c.fst.startsWith VE.Cardinality.regionPrefix) = Bool.true →

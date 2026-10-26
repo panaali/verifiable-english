@@ -1,6 +1,6 @@
 {
  "item": "qt-a3",
- "how": "uv run python tools/mutants.py docs/quantities/qt-a3/mutants.json --no-baseline --evidence docs/quantities/qt-a3/evidence/mutants-run.json, after a passing `lake build VE.Cardinality.WireExamples`; each mutant is applied alone to lean/VE/Cardinality/Wire.lean, the decoders and their #guard fixtures (lean/VE/Cardinality/WireExamples.lean) are rebuilt, and the file is restored. A killed mutant fails a #guard (the build exits 1).",
+ "how": "uv run python tools/mutants.py docs/quantities/qt-a3/mutants.json --no-baseline --evidence docs/quantities/qt-a3/evidence/mutants-run.json, after a passing `lake build VE.Cardinality.WireExamples`; each mutant is applied alone to lean/VE/Cardinality/Wire.lean, the decoders and their #guard fixtures (lean/VE/Cardinality/WireExamples.lean, which does not import the theorems of WireTheorems.lean) are rebuilt, and the file is restored. A killed mutant fails a #guard (the build exits 1).",
  "mutants": [
   {
    "id": "plan-count-not-finite",
@@ -138,8 +138,8 @@
    "id": "meaningId-profiles",
    "file": "lean/VE/Cardinality/Wire.lean",
    "claim": "decodeStatement: the meaning id is in the cardinality environment's identity, with cardinality@0 in its profiles",
-   "find": "VE.Route.Wire.meaningId w.profiles w.environmentId",
-   "replace": "VE.Route.Wire.meaningId w.w6.profiles w.environmentId",
+   "find": "pure ⟨f, h, ← VE.Route.Wire.meaningId w.profiles w.environmentId",
+   "replace": "pure ⟨f, h, ← VE.Route.Wire.meaningId w.w6.profiles w.environmentId",
    "command": [
     "bash",
     "-c",
