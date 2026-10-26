@@ -49,10 +49,12 @@ line 188 and the `Is <Name>` test case.
 - Trust mutants: [trust-mutants.json](trust-mutants.json), 39 KILLED, 0 survivors or UNKNOWN (exit 0).
 - Trust: V +30, K +0, S +0 (Run.lean +28 under R6, Basic.lean +2 under R16), as two allowances in
   `docs/trust-baseline.json`. `trust_map.py --check` passes.
-- Tests: `tests/test_speech_polar_lean.py` (55) and a curated run on the final HEAD (CURATED). `select_tests --run`
+- Tests: `tests/test_speech_polar_lean.py` (55) and a curated run of 39 files on the final code (speech, question, ask,
+  relay lint, manifest, regen, trust, layers, schemas, conformance, gate collection): 2,207 passed, 0 failed. `select_tests --run`
   selects 374 of 462 units (Lean changed); the chain's gate runs them. Not this item: `tests/test_p1_amendment{9,12,15}.py`
   fail on the Mac runner (`httpx.ConnectError`, no DNS) and pass on the VM.
-- Pilot bytes expected to move: 0. Size: SIZE hand-written lines.
+- Pilot bytes expected to move: 0. Size: 645 hand-written lines (`git diff --numstat` over the merge base
+  without generated files and saved evidence JSON): over the ~600 rule by the 155-line A/B script; F2 is already cut.
 
 ## Self-review against BUILDER-CHECKLIST
 
