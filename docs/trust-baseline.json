@@ -1104,6 +1104,20 @@
    "reason": "ap-1e: VE/Acts/LexicalProofs.lean S +13 (expand and Grouped, the grouping of spec 1.1 condition 6); VE/Acts/Lexical.lean trusted -15 (group tied by group_spec, lex tied by lex_spec); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1e, 2026-10-18",
    "commit": "3432611041bf4ce570bf6658b9066522001e5f12"
+  },
+  {
+   "class": "S",
+   "lines": 14,
+   "reason": "me-2: VE/Calc/Wire.lean S +4 (Check 4), V +129 (Case 5, literal 14, operations 3, comparisons 3, rules 2, expr 20, claim 26, value 17, entry 9, decl 5, decode 25); VE/Calc/Run.lean S +10 (Check.UnknownCause 5, Check.OutcomeMeans 5), V +5 (Run.rowJson 5); new Lean-owned behaviour, the ve-calc@0 wire and the calc runner",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-2, 2026-10-18",
+   "commit": "a2c522b94bcdcff5331bd3e95092d2eaf9e4ca17"
+  },
+  {
+   "class": "V",
+   "lines": 134,
+   "reason": "me-2: VE/Calc/Wire.lean S +4 (Check 4), V +129 (Case 5, literal 14, operations 3, comparisons 3, rules 2, expr 20, claim 26, value 17, entry 9, decl 5, decode 25); VE/Calc/Run.lean S +10 (Check.UnknownCause 5, Check.OutcomeMeans 5), V +5 (Run.rowJson 5); new Lean-owned behaviour, the ve-calc@0 wire and the calc runner",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-2, 2026-10-18",
+   "commit": "a2c522b94bcdcff5331bd3e95092d2eaf9e4ca17"
   }
  ]
 }
