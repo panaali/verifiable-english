@@ -17870,7 +17870,7 @@ module VE.Scope.Wire 618b837c4a7fc2398c732805ff271357fd1def4719dc33697e6e3d3fb86
 120:0-122:81 def VE.Scope.changers@VE.Scope.Wire
 124:0-132:39 def VE.Scope.byStatus@VE.Scope.Wire
 134:0-152:104 def VE.Scope.foldGovernors@VE.Scope.Wire
-module VE.Scope.WireExamples 57b2d5aec557c8e47ec635b96088ba587adfccde4108d6699e3401e0f09bba9e
+module VE.Scope.WireExamples 8eeb08cfed1e7a7fdc5ee2bfb6c86f14c0a0cd2f41b19b744cbddeb8ba78ee76
 10:0-10:80 def VE.Scope.WireExamples.st@VE.Scope.WireExamples
 11:0-13:17 def VE.Scope.WireExamples.errorOf@VE.Scope.WireExamples
 28:0-30:34 def VE.Scope.WireExamples.gov@VE.Scope.WireExamples
