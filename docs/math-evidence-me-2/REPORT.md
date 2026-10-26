@@ -232,6 +232,10 @@ was reshaped: reject-only and identity code split into their own declarations, `
   768a935fc (df-1ac, only the shared registries overlap): `lake build`, `regen_generated.py --write`,
   `trust_map.py --check` (+148, PASS), `check_lean_imports.py`, and the two fixed test files (141 passed) after it.
 - Not run: the full gate (the chain's). No test in `main-known-red.txt` is touched.
+- Round 3, on f371ba2eb (the round's last code and evidence commit): `lake build` (1,061 jobs), `python3
+  lean/audit.py` (PASS, 606 files), PROBE F16 (exit 0), `review-ready.py --delta-dri-needed` (no row reserved), and
+  the full suite on ve-mac-1 (`mac-pytest.sh -- tests`, `VE_NATIVE_PREBUILT=1`, 6 workers): 18,994 passed, 10
+  skipped, 83 xfailed, 0 failed, exit 0.
 
 ## Size
 
