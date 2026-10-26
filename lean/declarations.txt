@@ -2370,7 +2370,7 @@ module VE.Arith.Defs f86495a2c76269e5287d3500112350f36ff7117cd2b435e529bc159782f
 138:0-138:59 def VE.Arith.Defs.WellFormed@VE.Arith.Defs
 140:0-141:71 def VE.Arith.Formula.Scoped@VE.Arith.Defs
 143:0-146:77 def VE.Arith.caseRefusal@VE.Arith.Defs
-module VE.Arith.Examples a11e64712ba58cc4cae55fb672c9698c5f0c5c336dd982441cddaeed4aa8960e
+module VE.Arith.Examples e777d9816c4c38b4c3100d95a4a31546c9b7982f5ca8e2dc385b4d7ce8e1903d
 11:0-13:108 def VE.Arith.Examples.primeBody@VE.Arith.Examples
 15:0-15:51 def VE.Arith.Examples.primeDefs@VE.Arith.Examples
 17:0-17:74 def VE.Arith.Examples.IsPrime@VE.Arith.Examples
@@ -2422,6 +2422,8 @@ module VE.Arith.Examples a11e64712ba58cc4cae55fb672c9698c5f0c5c336dd982441cddaee
 285:0-288:99 def VE.Arith.Examples.Positions.refusedAs@VE.Arith.Examples
 297:0-297:121 def VE.Arith.Examples.Positions.unbounded@VE.Arith.Examples
 304:0-312:72 def VE.Arith.Examples.Positions.oneEach@VE.Arith.Examples
+332:0-338:112 def VE.Arith.Examples.Positions.formulaPairs@VE.Arith.Examples
+339:0-344:41 def VE.Arith.Examples.Positions.termPairs@VE.Arith.Examples
 module VE.Arith.Holds 931a6cac34d85a05b92e99d681a1f20ec51e56a31fcaa2cca5dde63cf31e4edf
 9:0-12:51 structure VE.Arith.Env@VE.Arith.Holds
 11:2-11:6 def VE.Arith.Env.funs@VE.Arith.Holds

@@ -84,6 +84,48 @@ M += each(D, 'then Term.bnd B body else B g', 'then Term.bnd B body else false',
 M += each(D, 'then Formula.bnd B body else B q', 'then Formula.bnd B body else false', 'a predicate definition forgets earlier bounds')
 M += each(D, 'then Term.bnd B body else B g', 'then true else B g', 'a function counted bounded whatever its body')
 M += each(D, 'then Formula.bnd B body else B q', 'then true else B q', 'a predicate counted bounded whatever its body')
+# F2 (re-check): two refusals of one kind reported out of the request's order, and the meaning's and admission's
+# remaining reads (arity, the last definition, a later statement, a refusal's value).
+M += each(D, '| .add a b | .sub a b | .mul a b => Term.sites k a ++ Term.sites k b',
+          '| .add a b | .sub a b | .mul a b => Term.sites k b ++ Term.sites k a', 'order: term operands right first')
+M += each(D, '| .eq a b | .lt a b | .le a b | .dvd a b => Term.sites k a ++ Term.sites k b',
+          '| .eq a b | .lt a b | .le a b | .dvd a b => Term.sites k b ++ Term.sites k a', 'order: comparison right first')
+M += each(D, 'Formula.sites k φ ++ Formula.sites k ψ', 'Formula.sites k ψ ++ Formula.sites k φ', 'order: connective right first')
+M += each(D, '| t :: ts => Term.sites k t ++ Term.sitesList k ts', '| t :: ts => Term.sitesList k ts ++ Term.sites k t',
+          'order: arguments last first')
+M += each(D, '.call false f args.length :: Term.sitesList k args', 'Term.sitesList k args ++ [.call false f args.length]',
+          'order: a function call after its arguments')
+M += each(D, '.call true p args.length :: Term.sitesList k args', 'Term.sitesList k args ++ [.call true p args.length]',
+          'order: a predicate call after its arguments')
+M += each(D, 'Term.sites k lo ++ Term.sites k hi ++ .count φ :: Formula.sites (k + 1) φ',
+          'Term.sites k hi ++ Term.sites k lo ++ .count φ :: Formula.sites (k + 1) φ', 'order: a count hi before lo')
+M += each(D, 'Term.sites k lo ++ Term.sites k hi ++ .count φ :: Formula.sites (k + 1) φ',
+          'Formula.sites (k + 1) φ ++ Term.sites k lo ++ Term.sites k hi ++ [.count φ]', 'order: a count condition first')
+M += each(D, 'Term.sites k lo ++ Term.sites k hi ++ Formula.sites (k + 1) φ',
+          'Term.sites k hi ++ Term.sites k lo ++ Formula.sites (k + 1) φ', 'order: a range hi before lo')
+M += each(D, 'Term.sites k lo ++ Term.sites k hi ++ Formula.sites (k + 1) φ',
+          'Formula.sites (k + 1) φ ++ Term.sites k lo ++ Term.sites k hi', 'order: a range body first')
+M += each(D, '(List.range D.length).flatMap', '(List.range D.length).reverse.flatMap', 'order: definitions last first')
+M += each(D, 'firstRefusal (D.refusals ++ φs.flatMap', 'firstRefusal (D.refusals ++ φs.reverse.flatMap', 'order: statements last first')
+M += each(D, 'firstRefusal (D.refusals ++ φs.flatMap fun φ =>\n    (Formula.sites 0 φ).filterMap (Site.refusal D D 0 (some D.boundedNames)))',
+          'firstRefusal ((φs.flatMap fun φ =>\n    (Formula.sites 0 φ).filterMap (Site.refusal D D 0 (some D.boundedNames))) ++ D.refusals)',
+          'order: statements before definitions')
+M += each(H, 'if xs.length = n then g xs else none', 'g xs', 'reads: the meaning ignores a function arity')
+M += each(H, 'xs.length = n ∧ P xs', 'P xs', 'reads: the meaning ignores a predicate arity')
+M += each(D, '((List.range D.length).filterMap', '((List.range (D.length - 1)).filterMap', 'reads: the last duplicate missed')
+M += each(D, '(List.range D.length).flatMap', '(List.range (D.length - 1)).flatMap', 'reads: the last body unchecked')
+M += each(D, 'firstRefusal (D.refusals ++ φs.flatMap', 'firstRefusal (D.refusals ++ (φs.take 1).flatMap', 'reads: later statements unchecked')
+M += each(D, 'Term.sites 0 body', 'Term.sites 1 body', 'reads: a function body under one binder')
+M += each(D, 'Formula.sites 0 body', 'Formula.sites 1 body', 'reads: a predicate body under one binder')
+M += each(D, 'filterMap (Site.refusal D D depth none)', 'filterMap (Site.refusal D D 0 none)', 'reads: Scoped ignores its depth')
+M += each(D, '| none => some (.recursiveDefinition f)', '| none => some (.unknownDefinition f)', 'reads: recursion reported unknown')
+M += each(D, 'some (.arityMismatch f d.arity)', 'some (.arityMismatch f argc)', 'reads: the arity reported is the call\'s')
+M += each(D, 'some (.unscopedVariable j)', 'some (.unscopedVariable (j - depth))', 'reads: unscoped counted past the scope')
+M += each(D, 'some (.duplicateName d.name)', 'some (.duplicateName "")', 'reads: a duplicate without its name')
+M += each(D, 'else some (.unknownDefinition f)', 'else none', 'reads: an unknown call admitted')
+# Equivalent, not planted: `Defs.boundedNames (D.take k)` -> `Defs.boundedNames D` in `Defs.refusals`. A count's
+# condition sees a later bound only by calling a later name (RecursiveDefinition or UnknownDefinition) or a name
+# defined again (DuplicateName), each of a lower rank than UnboundedCount, so `caseRefusal` and `WellFormed` agree.
 results = []
 for f, before, after, i, label in M:
     if only and label not in only: continue

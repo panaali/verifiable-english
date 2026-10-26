@@ -326,6 +326,34 @@ def oneEach : List (List (Defs × List Formula × Refusal)) :=
   caseRefusal [.pred "x" 0 ok, .fn "y" 0 z, .pred "x" 0 ok] [] = some (.duplicateName "x") &&
   caseRefusal [.fn "x" 0 z, .fn "x" 0 z] [] = some (.duplicateName "x")
 
+/-! Two of one kind in one statement or body: the one earlier in the request's order, at every place and host (a
+call's name before its arguments, each child before the next, a binder's lo before its hi before its body), with the
+two names either way round; and each definition before the next, the definitions before the statements. -/
+def formulaPairs : List (String → String → Formula) :=
+  let c (a : String) : Formula := .call a []
+  let t (a : String) : Term := .call a []
+  [fun a b => .and (c a) (c b), fun a b => .or (c a) (c b), fun a b => .imp (c a) (c b),
+   fun a b => .eq (t a) (t b), fun a b => .lt (t a) (t b), fun a b => .le (t a) (t b), fun a b => .dvd (t a) (t b),
+   fun a b => .call a [t b], fun a b => .call "p2" [t a, t b], fun a b => .allFromTo (t a) (t b) ok,
+   fun a b => .exFromTo (t a) (t b) ok, fun a b => .allFromTo (t a) z (c b), fun a b => .exFromTo z (t a) (c b)]
+def termPairs : List (String → String → Term) :=
+  let c (a : String) : Formula := .call a []
+  let t (a : String) : Term := .call a []
+  [fun a b => .add (t a) (t b), fun a b => .sub (t a) (t b), fun a b => .mul (t a) (t b), fun a b => .call a [t b],
+   fun a b => .call "f2" [t a, t b], fun a b => .countFromTo (t a) (t b) ok, fun a b => .countFromTo (t a) z (c b),
+   fun a b => .countFromTo z (t a) (c b)]
+
+#guard hosts.all fun h => formulaPlaces.all fun p => formulaPairs.all fun mk =>
+  refusedAs h p (mk "x" "y") (some (.unknownDefinition "x")) && refusedAs h p (mk "y" "x") (some (.unknownDefinition "y"))
+#guard hosts.all fun h => (({ fill := id } : Place Formula) :: ff.map (Place.down { fill := id })).all fun p =>
+  tf.all fun s => termPairs.all fun mk => refusedAs h (p.down s) (mk "x" "y") (some (.unknownDefinition "x")) &&
+    refusedAs h (p.down s) (mk "y" "x") (some (.unknownDefinition "y"))
+#guard [("x", "y"), ("y", "x")].all fun (a, b) =>
+  caseRefusal [.pred "d" 0 (.call a []), .fn "e" 0 (.call b [])] [] = some (.unknownDefinition a) &&
+  caseRefusal [.pred "d" 0 (.call a [])] [.call b []] = some (.unknownDefinition a) &&
+  caseRefusal [.pred "d" 0 (.lt (.var 1) z)] [.lt (.var 2) z] = some (.unscopedVariable 1) &&
+  caseRefusal [] [.call a [], .call b []] = some (.unknownDefinition a)
+
 end Positions
 
 end VE.Arith.Examples
