@@ -140,7 +140,7 @@ From sc-3ab: `anchor_reach_iff` and `label_reach_iff` (spec 5.5: a heading's rea
 layout's). `title_identity` fails as spec 5.5 states it on the same objects (F-raw-title below) and waits for the
 same decision (sc-3ac).
 
-## `VE/Scope/Wire.lean` and `VE/Scope/Admission.lean`: the document mode (SC-1b)
+## `VE/Scope/Wire.lean` and `VE/Service/ScopeAdmission.lean`: the document mode (SC-1b)
 
 The Lean document mode (`VE.Service.Document.checkDoc`) admits `scope@0`, a wrapper at step 1b that AR-10's
 profile table registers (`VE/Compose/Dispatch.lean`, `gate_scope`: the list's route without it, never an outside

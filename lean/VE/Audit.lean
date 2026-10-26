@@ -329,7 +329,6 @@ import VE.Scales.Degrees
 import VE.Scales.Examples
 import VE.Scales.Intended
 import VE.Scales.Theorems
-import VE.Scope.Admission
 import VE.Scope.Examples
 import VE.Scope.Theorems
 import VE.SearchBudget.Budget
@@ -352,6 +351,7 @@ import VE.Service.Graph
 import VE.Service.Protocol
 import VE.Service.Readings
 import VE.Service.Registry
+import VE.Service.ScopeAdmission
 import VE.Service.Standalone
 import VE.SoftNorms.Admission
 import VE.SoftNorms.Coherence

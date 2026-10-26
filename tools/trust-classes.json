@@ -14379,7 +14379,7 @@
         "VE.Service.ScopeExamples.units"
       ]
     },
-    "VE/Scope/Admission.lean": {},
+    "VE/Service/ScopeAdmission.lean": {},
     "VE/Scope/Wire.lean": {
       "D[R]": [
         "VE.Scope.memberOf",

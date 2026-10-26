@@ -26,7 +26,7 @@ def block(path, marker):
 
 spec = {k: v.replace("Pinned.", "") for k, v in decls(block("docs/spec/scope.md", "theorem scope_admission")).items()}
 plan = {k: v.replace("Lean.Json", "Json") for k, v in decls(block("docs/spec/scope-PLAN.md", "theorem scope_admission")).items()}
-built = {**decls(open("lean/VE/Scope/Wire.lean").read()), **decls(open("lean/VE/Scope/Admission.lean").read())}
+built = {**decls(open("lean/VE/Scope/Wire.lean").read()), **decls(open("lean/VE/Service/ScopeAdmission.lean").read())}
 print("sc-1b statement diff (whitespace and comments ignored; spec 8.1's Pinned. resolved; plan's Lean.Json read as Json)\n")
 for name in spec:
     if name in built:
