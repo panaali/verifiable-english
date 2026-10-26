@@ -36,7 +36,20 @@
                   "then": {"$ref": "#/$defs/certificate"},
                   "when": {"$ref": "#/$defs/kind/norm-defaults-certificate"}
                 },
-                {"then": {"$ref": "#/$defs/report_row"}, "when": {"$ref": "#/$defs/kind/norm-defaults-report"}}
+                {"then": {"$ref": "#/$defs/report_row"}, "when": {"$ref": "#/$defs/kind/norm-defaults-report"}},
+                {
+                  "then": {"$ref": "#/$defs/defaults_elaborate"},
+                  "when": {"$ref": "#/$defs/kind/defaults-elaborate"}
+                },
+                {
+                  "then": {"$ref": "#/$defs/defaults_coherence"},
+                  "when": {"$ref": "#/$defs/kind/defaults-coherence"}
+                },
+                {
+                  "then": {"$ref": "#/$defs/defaults_certificate"},
+                  "when": {"$ref": "#/$defs/kind/defaults-certificate"}
+                },
+                {"then": {"$ref": "#/$defs/defaults_model"}, "when": {"$ref": "#/$defs/kind/defaults-model"}}
               ]
             }
           ]
@@ -91,6 +104,135 @@
         "valid": {"type": "boolean"}
       },
       "required": ["id", "status", "valid", "premises"],
+      "type": "object"
+    },
+    "defaults_certificate": {
+      "$comment": "Defaults.Wire.certFields (defaults-certificate): FOLLOWS with its basis, form and kept assumptions (defaults_certificate_sound), or UNKNOWN with its reason (CertReplay.reason).",
+      "additionalProperties": false,
+      "else": {
+        "allOf": [
+          {"required": ["reason"]},
+          {"not": {"required": ["basis"]}},
+          {"not": {"required": ["form"]}},
+          {"not": {"required": ["assumptions"]}}
+        ]
+      },
+      "if": {"properties": {"verdict": {"const": "FOLLOWS"}}},
+      "properties": {
+        "assumptions": {"$ref": "common.json#/$defs/strings"},
+        "basis": {"enum": ["strict", "needs", "unsettled"]},
+        "form": {"enum": ["short", "long"]},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "reason": {"type": "string"},
+        "status": {"const": "ok"},
+        "verdict": {"enum": ["FOLLOWS", "UNKNOWN"]}
+      },
+      "required": ["id", "status", "verdict"],
+      "then": {"allOf": [{"required": ["basis", "form", "assumptions"]}, {"not": {"required": ["reason"]}}]},
+      "type": "object"
+    },
+    "defaults_coherence": {
+      "$comment": "Defaults.Wire.coherenceFields (defaults-coherence): the verdict and each colliding pair's status; with COLLISION, the pair the request's collision names, the tuple Lean finds (collisionTuple), DE7's deciders (giveWayDeciders) and the situation.",
+      "additionalProperties": false,
+      "else": {"allOf": [{"not": {"required": ["collision"]}}, {"not": {"required": ["situation"]}}]},
+      "if": {"properties": {"verdict": {"const": "COLLISION"}}},
+      "properties": {
+        "collision": {
+          "additionalProperties": false,
+          "properties": {
+            "deciders": {"$ref": "common.json#/$defs/strings"},
+            "rules": {"$ref": "common.json#/$defs/string_pair", "x-equals": "/collision/rules"},
+            "tuple": {"$ref": "common.json#/$defs/strings"}
+          },
+          "required": ["rules", "tuple", "deciders"],
+          "type": "object"
+        },
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "pairs": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "rules": {"$ref": "common.json#/$defs/string_pair"},
+              "status": {"enum": ["resolved", "collision", "unknown"]}
+            },
+            "required": ["rules", "status"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "situation": {"$ref": "#/$defs/defaults_situation"},
+        "status": {"const": "ok"},
+        "verdict": {"enum": ["COHERENT", "COLLISION", "UNKNOWN"]}
+      },
+      "required": ["id", "status", "verdict", "pairs"],
+      "type": "object"
+    },
+    "defaults_elaborate": {
+      "$comment": "Defaults.Wire.elaborateFields (defaults-elaborate): Dflt_T's labelled premises, then each colliding pair's two rule names and coherence premise (Defaults.Wire.elaborateRows).",
+      "additionalProperties": false,
+      "properties": {
+        "coherence_targets": {
+          "items": {
+            "maxItems": 3,
+            "minItems": 3,
+            "prefixItems": [{"type": "string"}, {"type": "string"}, {"$ref": "common.json#/$defs/generated_formula"}],
+            "type": "array"
+          },
+          "type": "array"
+        },
+        "default_premises": {
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [{"$ref": "common.json#/$defs/text"}, {"$ref": "common.json#/$defs/generated_formula"}],
+            "type": "array"
+          },
+          "type": "array"
+        },
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "status": {"const": "ok"}
+      },
+      "required": ["id", "status", "default_premises", "coherence_targets"],
+      "type": "object"
+    },
+    "defaults_model": {
+      "$comment": "Defaults.Wire.modelFields (defaults-model): DOES-NOT-FOLLOW with the situation and each exception the text's own conditions force there (defaults_model_sound, forcedAt_sound), or UNKNOWN.",
+      "additionalProperties": false,
+      "else": {"allOf": [{"not": {"required": ["situation"]}}, {"not": {"required": ["forced"]}}]},
+      "if": {"properties": {"verdict": {"const": "DOES-NOT-FOLLOW"}}},
+      "properties": {
+        "forced": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "condition": {"$ref": "common.json#/$defs/nat"},
+              "rule": {"type": "string"},
+              "tuple": {"$ref": "common.json#/$defs/strings"}
+            },
+            "required": ["rule", "condition", "tuple"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "situation": {"$ref": "#/$defs/defaults_situation"},
+        "status": {"const": "ok"},
+        "verdict": {"enum": ["DOES-NOT-FOLLOW", "UNKNOWN"]}
+      },
+      "required": ["id", "status", "verdict"],
+      "then": {"required": ["situation", "forced"]},
+      "type": "object"
+    },
+    "defaults_situation": {
+      "$comment": "Defaults.Wire.situationJson: every unsaid table of the checked filled situation (NormDefaults.Wire.witnessRow), rows as entity ids.",
+      "additionalProperties": false,
+      "properties": {
+        "filling": {
+          "additionalProperties": {"items": {"$ref": "common.json#/$defs/strings"}, "type": "array"},
+          "type": "object"
+        }
+      },
+      "required": ["filling"],
       "type": "object"
     },
     "elaborate": {
@@ -194,6 +336,10 @@
     },
     "kind": {
       "admission": {"properties": {"kind": {"const": "admission"}}, "required": ["kind"], "type": "object"},
+      "defaults-certificate": {"properties": {"kind": {"const": "defaults-certificate"}}, "required": ["kind"], "type": "object"},
+      "defaults-coherence": {"properties": {"kind": {"const": "defaults-coherence"}}, "required": ["kind"], "type": "object"},
+      "defaults-elaborate": {"properties": {"kind": {"const": "defaults-elaborate"}}, "required": ["kind"], "type": "object"},
+      "defaults-model": {"properties": {"kind": {"const": "defaults-model"}}, "required": ["kind"], "type": "object"},
       "norm-defaults-certificate": {"properties": {"kind": {"const": "norm-defaults-certificate"}}, "required": ["kind"], "type": "object"},
       "norm-defaults-conflict": {"properties": {"kind": {"const": "norm-defaults-conflict"}}, "required": ["kind"], "type": "object"},
       "norm-defaults-elaborate": {"properties": {"kind": {"const": "norm-defaults-elaborate"}}, "required": ["kind"], "type": "object"},
