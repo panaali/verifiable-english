@@ -29,6 +29,7 @@ import atexit
 import json
 import os
 from pathlib import Path
+import re
 import threading
 import weakref
 
@@ -167,3 +168,17 @@ def decide_once(mode: str, case: dict) -> dict:
                 answers.clear()
             answers[key] = row
     return row
+
+
+# A slot `{i}` of a wording template, as `EnglishVocabulary.atom` replaces it: `i` in canonical ASCII decimal.
+_SLOT = re.compile(r"\{(0|[1-9][0-9]*)\}", re.ASCII)
+
+
+def slots_bound(template: str, arity: int) -> bool:
+    """R8 for a relayed wording template that names argument positions (a plain act's, `norms.plain_wordings`; a
+    generated rights predicate's, `rights_route`): every brace is a slot `{i}`, and its slots are exactly the
+    positions `0 … arity-1` of the request's predicate. A slot past the arity would be displayed as written and a
+    missing one would drop its argument; either is no answer to the request."""
+    if type(template) is not str or "{" in _SLOT.sub("", template) or "}" in _SLOT.sub("", template):
+        return False
+    return set(_SLOT.findall(template)) == {str(i) for i in range(arity)}

@@ -260,11 +260,10 @@ def modalForm (name : String) (args : List String) (entry : Json) (ps fx : List 
   | .error _ => pure (none, none)
   | .ok raw =>
     let r ← VE.Norms.Wire.decodeRegulatedIn ps fx name args raw
-    match r.role, r.act, (raw.getObjValD "form").getStr?.toOption.bind VE.Acts.Lexical.Form.ofText? with
-    | .permission, some act, _ => pure (some (replaceFirst act "{0} " "{0} may "), none)
-    | .obligation, some act, _ => pure (some (replaceFirst act "{0} " "{0} must "), none)
-    | .plain, some act, some f => pure (none, some (VE.Acts.Lexical.wording f act))
-    | _, _, _ => pure (none, none)
+    match r.role, r.act with
+    | .permission, some act => pure (some (replaceFirst act "{0} " "{0} may "), none)
+    | .obligation, some act => pure (some (replaceFirst act "{0} " "{0} must "), none)
+    | _, _ => pure (none, VE.Norms.Wire.plainWording r raw)
 
 /-- The modal reader's placeholder for an unspecified norm default. -/
 def placeholderEntry (entry : Json) : Json :=

@@ -143,7 +143,8 @@ def runCase (j : Json) : Except String Json := do
   if kind == "norms-elaborate" then
     let environment ← j.getObjVal? "environment"
     let src ← Wire.decodeSource environment (j.getObjValD "norms") (flags := true)
-    return VE.Route.Wire.ok id (Flagged.regenerated src)
+    return VE.Route.Wire.ok id (Flagged.regenerated src ++
+      [("wordings", Json.mkObj ((Wire.plainWordings src.ne).map fun (p, w) => (p, .str w)))])
   if kind == "norms-certificate" then
     let r ← Flagged.replayEntailment j
     let steps := VE.Route.Steps.fol r.cert.trace
