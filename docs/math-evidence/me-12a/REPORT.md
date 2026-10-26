@@ -111,6 +111,22 @@ Its first run found 5 survivors among my new tests: the bounded ∀'s range valu
 two-argument function, `Formula.Scoped`'s kind lookup (which `caseRefusal` cannot see, because a fn/pred name clash is
 DuplicateName first), and two rank ties (0 = 1, 3 = 4) that the list order hid. Each is now killed.
 
+**Second fix round (the classes again, on `9848222cc`).** PROBE F1 (7 of 7) and PROBE F2 (17 of 17) pass. A further
+41 hand mutants of the two classes found 13 survivors, all of one gap in F2's "decoder order" class: of two refusals
+of one kind, which one is reported was pinned only between statements (`:324`). Reordering the sites of any
+constructor (a call's name after its arguments, a right child or a later argument first, a binder's hi or body
+before its lo), checking the definitions or the statements last first, or the statements before the definitions,
+changed no guard; each changes the name a refusal reports. The fix generates the ties: each two-child shape
+(`formulaPairs`, `termPairs`) with a fault of one name before a fault of another, at every formula place and every
+term place one constructor deep, in all three hosts, both ways round, must report the earlier; and one definition
+before the next, the definitions before the statements (`Examples.lean:329-355`). The 26 new mutants of
+`classprobe.py` (13 of order, 13 more reads: the meaning's arity checks, the last definition, later statements, each
+refusal's value) are all KILLED ([`class-mutants-order.json`](class-mutants-order.json)); the 13 order mutants
+survived on `9848222cc`. One mutant is equivalent and not planted: `Defs.boundedNames (D.take k)` read as
+`Defs.boundedNames D`. A count's condition sees a later bound only by calling a later name (RecursiveDefinition or
+UnknownDefinition) or a name defined twice (DuplicateName), each of a lower rank than UnboundedCount, so neither
+`caseRefusal` nor `Defs.WellFormed` changes.
+
 ## Tests
 
 - **Selected tests:** `mac-pytest.sh --select -- --base 7855620f3 --run` on the Mac runner: 74 units, 0 failed (HEAD
@@ -164,5 +180,5 @@ branch in flight touches `lean/VE/Arith/` or `lean/ARITH.md`.
 10. PASS: the statements equal spec 12.1–12.3 after whitespace normalisation; `lean/audit.py` PASS; S1 breaks
     `primeBody_iff` as written.
 11. N.A.: no budget in this item (the evaluator's budget is me-12aa's).
-12. N.A.: no runtime path; `Examples.lean` builds in about 6 s.
+12. N.A.: no runtime path; `Examples.lean` builds in about 34 s (6 s before the review's generated cases).
 13. PASS: no test removed; `gate_collection.py --check --prebuilt` reports 0 refused, 0 stale and 0 malformed.
