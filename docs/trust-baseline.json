@@ -1132,6 +1132,13 @@
    "reason": "ap-1bb fix1 (review F1): VE/Norms/Wire.lean +10 (canonicalActs), VE/Service/Standalone.lean +6 (the environment row's acts), ResponseShape/Schemas/Environment.lean +1 (its shape); untied V +17 over the first allowance (V +35 in all), K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1bb, 2026-10-26",
    "commit": "ba2532a224a0e605a22be44917005720f4f6764c"
+  },
+  {
+   "class": "V",
+   "lines": 51,
+   "reason": "qt-a3: VE/Cardinality/Wire.lean +51 (D[V] decodeEnvironment 17, decodeStatement 13, finiteSorts 10, projectW6 8, profileLists 3); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3, 2026-10-18",
+   "commit": "25ac413119c8991d1385cc95c51bcaac7415f9a2"
   }
  ]
 }
