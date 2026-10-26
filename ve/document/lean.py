@@ -14,9 +14,14 @@ from ..openterms import validate_open_terms
 from ..readings import active_reading_sets, rights_meaning_id
 from ..wire import digest
 from .source import (STATUSES, _RIGHTS_KINDS, _document_id, _english_fences, _environment, _parts, _split,
-                     base_environment)
+                     base_environment, chain_environment)
 from .containers import (_content_environment, _defaults_environment, _free_norms, _reading_plan, _readings_routes,
                          _rights_block, _rights_units, _s1_attached, _soft_contents)
+
+
+# Lean's refusal of a lexicon proposal for another environment than the one it reads the fences in
+# (`VE.EnglishGrammar.Run.decodeLexicon`; `tests/test_scope_document.py` reads it from there).
+PROPOSAL_ELSEWHERE = "InvalidInput: the lexicon names another environment"
 
 
 def _document_case(raw: bytes, admit: bool, directory: Path | None = None, prepared: dict | None = None):
@@ -54,18 +59,20 @@ def _document_case(raw: bytes, admit: bool, directory: Path | None = None, prepa
                                                        for u, _ in _parts(meta["units"])):
             from ..english import EnglishVocabulary
             from ..english_grammar import export
-            profiles = listed_profiles(meta["environment"])
+            # The proposal names the environment the chain reads the fences in (`chain_environment`).
+            environment = chain_environment(meta["environment"])
+            profiles = listed_profiles(environment)
             if "soft-norms@0" in profiles and "rights@0" not in profiles:
                 # Batch 16f: a soft-norms document's fences are read in the soft route's `E″`, which the
                 # proposal names (Lean `Service.Document.softLayer`).
                 from ..softnorms import SoftNormDocument
-                soft_document = SoftNormDocument(_environment(meta["environment"]), _soft_contents(meta["units"]))
+                soft_document = SoftNormDocument(_environment(environment), _soft_contents(meta["units"]))
                 if prepared is not None:
                     prepared["soft_document"] = soft_document
                 words = soft_document.extended_env
             else:
                 # A senses document's route reads the same proposal (`read_fences`, batch 16f).
-                words = Environment(meta["environment"])
+                words = Environment(environment)
             case["lexicon"] = export(EnglishVocabulary(words))
     except (AttributeError, KeyError, TypeError, VEError, CheckerUnavailable):
         pass  # Lean checks the document before a fence needs the proposal.
@@ -89,6 +96,13 @@ def _lean_answer(raw: bytes, admit: bool, directory: Path | None = None, prepare
         # of a model the document supplies, or it is not bound to the document sent.
         raise CheckerUnavailable("CheckerUnavailable: the Lean document answer's path names no member of a "
                                  "distinguishing model of the document sent")
+    if error is not None and "lexicon" in case and str(error) == PROPOSAL_ELSEWHERE:
+        # The proposal is the relay's, built before Lean answers: Lean's chain read the fences in another environment
+        # than it names, which is a fault of the case sent, never the document's diagnostic. Under `scope@0` the soft
+        # route's `E″` is that of the governed rules (`Service.Document.softLayer` over `withUnits`), which the relay
+        # cannot read before Lean answers; it builds the proposal from the rules as written.
+        raise CheckerUnavailable("CheckerUnavailable: Lean's chain reads the English fences in another environment "
+                                 "than the lexicon proposal the case carries names")
     if error is not None and getattr(error, "span", None) is not None and not _spans_a_strict_fence(raw, error.span):
         # Batch 16f: a strict fence's located diagnostic (`Service.Document.locatedFence`) is a span in the text of a
         # strict fence the document has, with its line and column.
@@ -166,12 +180,8 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool, prepare
     except Exception as exc:  # noqa: BLE001 - Lean accepted this front matter
         raise unavailable("is for a front matter Python cannot read") from exc
     try:
-        # scope@0 is a wrapper Lean's document mode runs before the chain, which reads the environment without it
-        # (`Service.Document.lowerScope`); the identities Lean answered are that environment's.
-        environment = meta["environment"]
-        if "scope@0" in listed_profiles(environment):
-            environment = {**environment, "profiles": [p for p in environment["profiles"] if p != "scope@0"]}
-        env = _environment(environment)
+        # The identities Lean answered are those of the environment its chain reads (`chain_environment`).
+        env = _environment(chain_environment(meta["environment"]))
         senses = None
         if "senses" in meta:
             # Batch 16f: the senses route's reading of the English fences, which Lean's `document` mode composed

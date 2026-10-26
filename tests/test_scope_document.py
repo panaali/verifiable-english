@@ -304,3 +304,130 @@ def test_a_governed_soft_rule_not_in_its_containers_form_is_refused(tmp_path, mo
     monkeypatch.setattr(relay, "answer", lambda mode, case: (row, None))
     with pytest.raises(CheckerUnavailable, match="not bound to the document sent"):
         D.check_document(path)
+
+
+# ------------------------------------------------------------- sc-1b recheck F6: the proposal's environment
+# The lexicon proposal a case with English fences carries names the environment Lean's chain reads the fences in:
+# the environment without the `scope@0` wrapper (`chain_environment`, Lean's `lowerScope`), on every chain. Where
+# that environment is one the relay cannot build before Lean answers (the soft route's `E″` of governed rules), Lean's
+# refusal of the proposal is a fault of the case sent: `CheckerUnavailable`, never the document's diagnostic.
+
+PROBE_F6 = Path(__file__).parent / "data/readings_s2/constitution-nd-readings.ve.md"
+SENTENCE = "Every person may act."
+UNSTATED = {"decided_by": "unstated", "sufficient": [], "necessary": [], "factors": []}
+
+
+def _with_english(text: str) -> str:
+    """The document with an English unit at its end, its fence after its line."""
+    meta, body = _split(text)
+    start, line = len(body.encode()), SENTENCE + "\n"
+    meta["units"].append({"id": "u9", "span": [start, start + len(line.encode())], "support": "assumption",
+                          "kind": "asserted", "meaning": "specified", "content": {"fence": "u9"},
+                          "surface": "english"})
+    return _text(meta, body + line + f"```ve u9\n{SENTENCE}\n```\n")
+
+
+def _defaults(text: str, governed: bool = True) -> str:
+    """The frame document with each rule a default; without `scope@0`, each rule written in full."""
+    meta, body = _split(text)
+    for unit in meta["units"]:
+        content = unit.get("content") or {}
+        if "part" in content:
+            content["part"].update(mode="default", exception=json.loads(json.dumps(UNSTATED)))
+            if not governed:
+                unit["content"] = {"norm": {**FRAME, **content.pop("part")}}
+    if not governed:
+        del meta["scope"]
+        meta["environment"]["profiles"].remove("scope@0")
+    return _text(meta, body)
+
+
+def test_f6_probe_an_english_fence_under_scope_is_read_on_the_environment_without_it(tmp_path):
+    """The review's probe: an English fence of a `scope@0` document is read with the proposal of the environment
+    without `scope@0`, and the document is answered as without it."""
+    meta, body = _split(PROBE_F6.read_text())
+    plain = tmp_path / "plain.ve.md"
+    plain.write_text(PROBE_F6.read_text())
+    meta["environment"]["profiles"] = sorted(meta["environment"]["profiles"] + ["scope@0"])
+    meta["scope"] = {"version": "scope@0", "governors": []}
+    path = tmp_path / "s.ve.md"
+    path.write_text(_text(meta, body))
+    assert D.check_document(path)["coverage"]["bytes_by_status"] == {"CHECKED": 23, "OPEN": 359} == \
+        D.check_document(plain)["coverage"]["bytes_by_status"]
+    fence, = (u for u in D.load_document(path)["units"] if u["id"] == "u0248")
+    assert fence["status"] == "CHECKED"
+    assert fence["content"] == next(u for u in D.load_document(plain)["units"] if u["id"] == "u0248")["content"]
+    assert D.render_document(path)
+
+
+@pytest.mark.parametrize("effect", sorted(EFFECTS))
+@pytest.mark.parametrize("chain", ["norms", "soft-norms"])
+def test_each_chain_reads_an_english_fence_under_scope_with_the_proposal_of_its_environment(tmp_path, chain, effect):
+    """Every chain whose fences the mode reads, and every effect: the proposal names the environment the answer is
+    bound to (the soft route's `E″` on the soft chain), and the fence is read."""
+    path = tmp_path / "g.ve.md"
+    path.write_text(_with_english(_governed_text(chain, effect)))
+    case = D._document_case(path.read_bytes(), True)
+    doc = D.load_document(path)
+    words = doc["soft_document"].extended_env if chain == "soft-norms" else doc["environment"]
+    assert case["lexicon"]["environment_id"] == words.environment_id
+    fence, = (u for u in doc["units"] if u["id"] == "u9")
+    assert fence["status"] == "CHECKED" and fence["content"]
+    assert D.check_document(path)["coverage"]["bytes_by_status"]["CHECKED"]
+
+
+def test_a_rights_documents_fence_is_left_to_the_retained_path_which_refuses_scope(tmp_path):
+    """The mode leaves formula content in a rights document to the retained path, with or without `scope@0`; that
+    path refuses `scope@0` at the environment (DELTA row 3(e)), never a Python verdict on it."""
+    from ve.backends.relay import answer
+    from ve.errors import UnsupportedProfile
+    text = _with_english(_governed_text("rights", "carve_out"))
+    _, error = answer("document", D._document_case(text.encode(), True))
+    assert str(error) == "CheckerUnavailable: formula content in a rights document is typed in its extended environment"
+    path = tmp_path / "r.ve.md"
+    path.write_text(text)
+    with pytest.raises(UnsupportedProfile, match="Unsupported profile scope@0"):
+        D.load_document(path)
+
+
+def test_a_proposal_lean_reads_in_another_environment_is_unavailable_never_the_documents_diagnostic(tmp_path):
+    """The soft chain under a frame over default rules: Lean reads the fence in the `E″` of the governed rules, whose
+    decisions the proposal built from the rules as written does not have. The same rules written in full are
+    checked, so the refusal is the relay's, not the document's."""
+    from ve.backends.lean_service import CheckerUnavailable
+    governed = _with_english(_governed_text("soft-norms", "frame"))
+    full = tmp_path / "full.ve.md"
+    full.write_text(_defaults(governed, governed=False))
+    assert next(u for u in D.load_document(full)["units"] if u["id"] == "u9")["status"] == "CHECKED"
+    path = tmp_path / "g.ve.md"
+    path.write_text(_defaults(governed))
+    for run in (D.load_document, D.check_document):
+        with pytest.raises(CheckerUnavailable, match="another environment than the lexicon proposal"):
+            run(path)
+
+
+def test_any_proposal_for_another_environment_is_unavailable(tmp_path, monkeypatch):
+    """The class on a document without `scope@0`: a proposal naming another environment than the chain's is the
+    case's fault, whatever made it so."""
+    from ve.backends.lean_service import CheckerUnavailable
+    from ve.document import lean
+    case_of = lean._document_case
+
+    def elsewhere(*args, **kwargs):
+        case = case_of(*args, **kwargs)
+        case["lexicon"]["environment_id"] = "0" * 64
+        return case
+    path = tmp_path / "n.ve.md"
+    path.write_text(_with_english(_governed_text("norms", "title")))
+    D.check_document(path)
+    monkeypatch.setattr(lean, "_document_case", elsewhere)
+    with pytest.raises(CheckerUnavailable, match="another environment than the lexicon proposal"):
+        D.check_document(path)
+
+
+def test_the_proposal_refusal_is_leans_text():
+    """The text the relay reads as a refusal of its proposal is the one `decodeLexicon` throws."""
+    from ve.document.lean import PROPOSAL_ELSEWHERE
+    text = (Path(__file__).resolve().parents[1] / "lean/VE/EnglishGrammar/Run.lean").read_text()
+    body = text[text.index("def decodeLexicon"):text.index("theorem riskView_eq")]
+    assert f'throw "{PROPOSAL_ELSEWHERE}"' in body
