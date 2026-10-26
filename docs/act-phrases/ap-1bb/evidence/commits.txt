@@ -1,0 +1,11 @@
+43e51e67ad3937561462316762a636185e97f116 ap-1bb: an environment without a plain act asks Lean nothing to display (test and seeded bug py-asked-without-acts)
+71443a6da9ebfc188a7bd057277fcd6845f2a1bb ap-1bb: the wordings retype test goes through the service's decoder (a lone surrogate, a 10,000-deep list, the member deleted)
+5a42ff3967e4345824ece6982a82f4304ed93481 ap-1bb: delta.py's recording flag is --answers (a recorder of evidence, no writer of a committed file: test_regen_generated)
+9d9c8ccbaf1f29eb016645332237e56b3a70527c ap-1bb: R16 allowance V +18 recorded (tools/trust_map.py --allow); the superseded first trust_mutants run removed
+adcdf78a54ca2353fb84ad03810510fa614d9244 ap-1bb trust_mutants evidence (full run after the shape pin) and its allow file
+70211e80cfea7a01f9be339f0ddfe37d60942c7e Regenerate lean/declarations.txt for the shape pin (tools/lean_statements.py)
+ae2d3ff51a16f30e3a82d0a52f20208c41f80a92 ap-1bb: shape pin, re-pins and re-records the selected tests asked for; seeded bugs complete
+f6c80bc4070ab2d09b71f2bcf5bef42cd12f2532 ap-1bb evidence: delta.py (base and head recorded by their own checkouts), delta.json, seed_bugs.py, DELTA, report draft
+566262a41179f0d23d3b36900c291ac9ea5d138b ap-1bb: classify plainWording, plainWordings (D[V]) and the routeWordings fixture (T)
+2b22c93f97a11142933d7630d3180103b79697de ap-1bb (2): the norms route relays Lean's wording of each plain act; English displays it
+9524e3792473332d42b7347685dc22b16adbdcb7 ap-1bb (1): Python's environment identity is the one Lean computed from its canonical environment

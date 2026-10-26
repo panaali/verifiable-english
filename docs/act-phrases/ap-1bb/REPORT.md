@@ -41,7 +41,7 @@ The spec's statement review converged (14.3, FIX applied), the gate of ap-1a and
 ## 4. Seeded bugs
 
 [seed_bugs.py](seed_bugs.py) plants, runs and restores each; [mutants.json](mutants.json) has `file`, `test` and the
-first failure. **12 bugs, all killed** (Lean 7, Python 5).
+first failure. **13 bugs, all killed** (Lean 7, Python 6).
 
 | Definition (file) | Bug: what fails |
 |---|---|
@@ -51,23 +51,25 @@ first failure. **12 bugs, all killed** (Lean 7, Python 5).
 | `modalForm` (`EnglishGrammar/Encode.lean`) | plain wording dropped: `ActsExamples` wordings guard |
 | `validated_environment` (`ve/backends/validation.py`) | Python's hash back: `test_an_act_with_a_curly_apostrophe_has_leans_identity` |
 | `EnglishVocabulary` (`ve/english.py`) | wordings not installed: `test_a_plain_act_reads_with_the_wording_lean_selected` |
-| `_bind_wordings`, `_lean_regenerated`, `plain_wordings` (`ve/norms.py`) | binding off; document binding off; `norm-defaults@0` asked: `test_wordings_not_bound_to_the_request_are_unavailable`, `test_norm_defaults_keeps_todays_display_without_asking` |
+| `_bind_wordings`, `_lean_regenerated`, `plain_wordings` (`ve/norms.py`) | binding off; document binding off; `norm-defaults@0` asked; asked without a plain act: `test_wordings_not_bound_to_the_request_are_unavailable`, `test_norm_defaults_keeps_todays_display_without_asking`, `test_an_environment_without_a_plain_act_asks_lean_nothing_to_display` |
 
 No Rust code changed.
 
 ## 5. Trust, size, evidence and tests
 
 - **Trust:** `trust_map.py --check` PASS against `ba2532a22`: K +0, S +0, untied V +18 (per file in DELTA row 1),
-  allowance signed by R16; FOLLOW-UPS has "## ap-1bb". `trust_mutants`: TRUSTMUT.
-- **Size** (hand-written, against the merge base): product Lean 29, Python 36, Lean fixtures 21, tests 120,
-  evidence scripts 205, side table 5, DELTA and this report about 100: about 515 before this report's numbers.
+  allowance signed by R16; FOLLOW-UPS has "## ap-1bb". `trust_mutants` ([trust-mutants.json](trust-mutants.json), full run at `adcdf78a5`): 79 mutants of 4 definitions, 52 KILLED, 0 SURVIVOR, 0 UNKNOWN, 16 INVALID, 11 ALLOWED (equivalent or not elaborating, one reason each in [trust-mutants-allow.json](trust-mutants-allow.json)); `plainWording` and `modalForm` by the seeded bugs.
+- **Size** (hand-written lines added, `git diff --numstat` against the merge base): product Lean 33, Python 55, Lean
+  fixtures 21, tests 151, evidence scripts 210, side tables 19, DELTA and this report about 115: about 605.
 - **Evidence:** [evidence/delta.json](evidence/delta.json) (332 records, 327 identical; base and head each recorded
-  with its own checkout); [evidence/commits.txt](evidence/commits.txt) (`git log main..HEAD --no-merges`).
+  with its own checkout); [evidence/commits.txt](evidence/commits.txt) (`git log main..HEAD --no-merges`, through the commit before the one that adds it).
 - **Generated** (`regen_generated.py --write`): `norms.json`, inventories, `checkers.lock`, the English grammar lock
   (`actions_version` 34: `Encode.lean` changed); the binding census with its answers re-asked
   (`binding_census.py --answers`, then `--write`).
-- **Tests:** `lake build` (1,064 jobs), `lean/audit.py`, `tests/test_acts_profile.py` (38), `tests/test_stage2_validation.py`;
-  selected tests: SELECTED. The full gate is the chain's.
+- **Tests:** `lake build` (1,064 jobs), `lean/audit.py`, `tests/test_acts_profile.py` (42), `tests/test_stage2_validation.py`;
+  selected tests (`mac-pytest.sh --select`, 377 of 461 units: Lean and `checkers.lock` changed) at `9d9c8ccba`: all pass but
+  one (`test_regen_generated`: `delta.py`'s `--record` flag; renamed `--answers` in `5a42ff396`, the file passes).
+  `gate_collection.py --check --prebuilt`: 0 refused, 0 stale, 0 malformed. The full gate is the chain's.
 - **Pilot bytes expected to move:** 0 B (*estimate*): the display of entitlement lines needs ap-1bc's typing.
 
 ## 6. Next item: ap-1bc
@@ -80,4 +82,18 @@ Then AP-3.
 
 ## 7. Self-review against BUILDER-CHECKLIST
 
-SELFREVIEW
+One line per item of `manage-agents/BUILDER-CHECKLIST.md`.
+
+1. PASS: `test_a_retyped_wordings_field_fails_the_schema` (14 values through `_decode_json`: retypes, `"\ud800"`, a 10,000-deep list, the member deleted; the genuine answer passes the same path).
+2. PASS: section 2 copies each task part with its commit and test; (3)-(5) cut by the size rule to ap-1bc; no Python wording, no report test (`git diff main...HEAD`).
+3. PASS: [mutants.json](mutants.json) (13 killed), [trust-mutants.json](trust-mutants.json) (0 SURVIVOR, 0 UNKNOWN); `delta.py --compare` exits 1 head against head and on empty input.
+4. PASS: [evidence/delta.json](evidence/delta.json) (327 of 332 identical, each checkout with its own client); `test_rust_refuses_an_acts_environment` unchanged.
+5. PASS: `test_wordings_not_bound_to_the_request_are_unavailable` (undeclared, a non-plain predicate, renamed, emptied, dropped; both readers); a duplicated name is refused by `_decode_json`.
+6. PASS: `git merge-tree --write-tree HEAD main` is clean; [evidence/commits.txt](evidence/commits.txt) from `main..HEAD --no-merges`, base `git merge-base`; the gate is the chain's, on the final HEAD.
+7. PASS: DELTA rows cite R16, R3 and the DRI decision files ap-1b's DELTA row 2 cites; no signature reserved.
+8. PASS: every changed record of `evidence/delta.json` is a DELTA row (rows 2-4), counts recomputed.
+9. PASS: `select_tests` picks 377 of 461 units (Lean and `checkers.lock` changed), including `tests/test_acts_profile.py`, which every Python seeded bug fails.
+10. PASS: `runCase-wordings-renamed` fails `ResponseShape.Encoders.Norms.runCaseReported_fits`; `lean/statements.txt` unchanged.
+11. N.A.: no budget, limit or deadline code changed.
+12. PASS: `test_an_environment_without_a_plain_act_asks_lean_nothing_to_display` (no Lean call to display an environment without a plain act; seeded bug `py-asked-without-acts`); one cached call otherwise.
+13. PASS: three `Test-removed` trailers in `9524e3792`; `gate_collection.py --check --prebuilt`: 0 refused, 0 stale, 0 malformed.
