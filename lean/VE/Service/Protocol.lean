@@ -586,13 +586,20 @@ def calcCases (text : String) : Except String (Array (Except String Json)) := do
   | _ => false
 #guard ["[{\"a\": 1, \"a\": 2}]", "[{\"a\": -1, \"a\": 2}]", "[6.4e1]", "[65.0]", "[1e-5]", "[- 7]", "[--7]",
   "[null]", "[-99999999999999999999]"].all fun t => (calcCases t).isOk == false
-#guard (calcCases "[{\"a-b\": -1, \"a b\": 2}]").isOk
+-- A string ends at its first unescaped quote: a sign after an empty string, an escaped quote or an escaped
+-- backslash is still a sign, and a sign inside a key stays a character.
+#guard ["[\"\", -1]", "[\"\\\"\", -1]", "[\"a\\\\\", -1]", "[{\"a-b\": -1, \"a b\": 2}]"].all fun t =>
+  (calcCases t).isOk
 
 def decodeCases (r : Request) : Except String (Array (Except String Json)) :=
   if r.mode == .english then parseEnglishCases r.cases
   else if r.mode == .riskEval || r.mode == .document then parseLeanCases r.cases
   else if r.mode == .calc then calcCases r.cases
   else restrictedCases r.cases (r.mode == .model)
+
+-- Only the `calc` mode reads a sign.
+#guard [(Mode.calc, true), (.quantity, false), (.route, false)].all fun (m, ok) =>
+  (decodeCases { id := "r", mode := m, cases := "[[-1]]" }).isOk == ok
 
 /-! ## Environment handles (docs/LEAN-FIRST-PLAN.md, F2, batch 2)
 
