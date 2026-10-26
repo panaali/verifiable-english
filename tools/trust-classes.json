@@ -13820,7 +13820,11 @@
         "VE.Service.ActsExamples.routeWordings",
         "VE.Service.ActsExamples.environmentRow",
         "VE.Service.ActsExamples.curly",
-        "VE.Service.ActsExamples.straight"
+        "VE.Service.ActsExamples.straight",
+        "VE.Service.ActsExamples.members",
+        "VE.Service.ActsExamples.frozen",
+        "VE.Service.ActsExamples.closure01",
+        "VE.Service.ActsExamples.core0"
       ]
     },
     "VE/Events/Conservative.lean": {

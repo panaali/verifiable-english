@@ -139,6 +139,28 @@ def straight := env actsP [("p", pred ["person", "case"] (perm "{0} comply with 
 -- no regulated act: none
 #guard (environmentRow (env ["relational-fol@0"] [("p", Json.mkObj [("arguments", toJson ["person"]),
   ("description", .str "d")])])).getObjValD "acts" == Json.mkObj []
+-- the route row's members
+def members (row : Json) : Option (List String) := row.getObj?.toOption.map (·.toList.map (·.1))
+#guard members (environmentRow envA) == some ["acts", "environment_id", "family", "id", "profiles", "status"]
+#guard [(environmentRow envA).getObjValD "id", (environmentRow envA).getObjValD "status",
+  (environmentRow envA).getObjValD "family", (environmentRow envA).getObjValD "profiles"] ==
+  [.str "e", .str "ok", .str "fol", toJson actsP]
+
+/-- A frozen envelope: `language`, then `profile` (v0) or `profiles` (ve.core@0.1), and its `spec_revision`. -/
+def frozen (language : String) (profiles : String × Json) (revision : String) : Json :=
+  Json.mkObj [("language", .str language), profiles, ("spec_revision", .str revision),
+    ("vocabulary", Json.mkObj [("sorts", Json.mkObj [("item", desc "item")]),
+      ("predicates", Json.mkObj [("rel", Json.mkObj [("arguments", toJson ["item", "item"]),
+        ("description", .str "rel")])]), ("constants", Json.mkObj [])])]
+def closure01 := frozen "ve.core@0.1" ("profiles", toJson ["closure@0", "relational-fol@0"]) "ve-v0.1-closure-2026-09-21"
+def core0 := frozen "ve.core@0" ("profile", .str "relational-fol@0") "ve-v0-draft-2026-09-20"
+-- ve.core@0.1 lists its profiles, its family and no act; v0 names its one profile and has no `acts`
+#guard members (environmentRow closure01) == some ["acts", "environment_id", "family", "id", "profiles", "status"]
+#guard [(environmentRow closure01).getObjValD "acts", (environmentRow closure01).getObjValD "family",
+  (environmentRow closure01).getObjValD "profiles"] == [Json.mkObj [], .str "closure", toJson ["closure@0", "relational-fol@0"]]
+#guard members (environmentRow core0) == some ["environment_id", "family", "id", "profile", "status"]
+#guard [(environmentRow core0).getObjValD "family", (environmentRow core0).getObjValD "profile"] ==
+  [.str "fol", .str "relational-fol@0"]
 
 /-! ### 4.4: the environment mode and the family route gate `acts@0` by its row first -/
 
