@@ -412,9 +412,8 @@ def computeDefinedB (d : VE.Bridge.ModelData) (ds : List VE.Definitions.Def) :
 /-! ## Closure charges -/
 
 deriving instance Hashable for VE.Term
-deriving instance Hashable for VE.Closure.Kind
+deriving instance Hashable for VE.Paths.Kind
 deriving instance Hashable for VE.Closure.Formula
-deriving instance Hashable for VE.Core.Kind
 deriving instance Hashable for VE.Core.Formula
 
 open VE.Route.Closure (Edges Meter EdgeKey CacheOK reachValue namedClosure warshallRun forPairs)
