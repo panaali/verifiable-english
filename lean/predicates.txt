@@ -143,7 +143,12 @@ module VE.Calc.Dimension
 module VE.Calc.Eval
 module VE.Calc.Examples
 module VE.Calc.FourierMotzkin
+module VE.Calc.Identity
+module VE.Calc.IdentityExamples
+module VE.Calc.Inline
 module VE.Calc.Linear
+module VE.Calc.Lower
+module VE.Calc.LowerExamples
 module VE.Calc.Poly
 module VE.Calc.Render
 module VE.Calc.Run
@@ -534,6 +539,7 @@ module VE.Senses.Project
 module VE.Senses.Read
 module VE.Senses.Request
 module VE.Senses.Run
+module VE.Service.ActsExamples
 module VE.Service.Diagnose
 module VE.Service.Document
 module VE.Service.EnglishRun
@@ -625,6 +631,8 @@ ResponseShape.KindRead@ResponseShape.Skeleton
 ResponseShape.OkFits@ResponseShape.Skeleton
 ResponseShape.OkP@ResponseShape.Skeleton
 VE.Acts.DerivedIn@VE.Acts.Read
+VE.Acts.Lexical.Accepts@VE.Acts.LexicalProofs
+VE.Acts.Lexical.Grouped@VE.Acts.LexicalProofs
 VE.Alternatives.AltConflictFree@VE.Alternatives.Background
 VE.Alternatives.AltConflictFreeU@VE.Alternatives.FillWire
 VE.Alternatives.AltValid@VE.Alternatives.Inline
@@ -676,11 +684,17 @@ VE.Calc.Denotes.below@VE.Calc.Syntax
 VE.Calc.Denotes@VE.Calc.Syntax
 VE.Calc.Expr.Overflows@VE.Calc.Decls
 VE.Calc.Expr.ReadsExhausted@VE.Calc.Decls
+VE.Calc.Follows@VE.Calc.Lower
 VE.Calc.Frac.Means@VE.Calc.Poly
+VE.Calc.HasCounterexample@VE.Calc.Lower
+VE.Calc.Inlined.Agrees@VE.Calc.Inline
+VE.Calc.Inlined.Faults@VE.Calc.Inline
+VE.Calc.IsIdentity@VE.Calc.Identity
 VE.Calc.NameExhausted.below@VE.Calc.Decls
 VE.Calc.NameExhausted@VE.Calc.Decls
 VE.Calc.NameOverflows.below@VE.Calc.Decls
 VE.Calc.NameOverflows@VE.Calc.Decls
+VE.Calc.NotIdentity@VE.Calc.Identity
 VE.Calc.PhysDim.Normal@VE.Calc.Dimension
 VE.Calc.Poly.Within@VE.Calc.Poly
 VE.Calc.QFact.Holds@VE.Calc.Linear
