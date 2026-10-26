@@ -151,11 +151,16 @@ module VE.Calc.Identity
 module VE.Calc.IdentityExamples
 module VE.Calc.Inline
 module VE.Calc.Linear
+module VE.Calc.Lower
+module VE.Calc.LowerExamples
 module VE.Calc.Poly
 module VE.Calc.Render
+module VE.Calc.Run
+module VE.Calc.RunExamples
 module VE.Calc.Syntax
 module VE.Calc.Units
 module VE.Calc.UnitsExamples
+module VE.Calc.Wire
 module VE.Cardinality.Erase
 module VE.Cardinality.Examples
 module VE.Cardinality.Ratio
@@ -538,6 +543,7 @@ module VE.Senses.Project
 module VE.Senses.Read
 module VE.Senses.Request
 module VE.Senses.Run
+module VE.Service.ActsExamples
 module VE.Service.Diagnose
 module VE.Service.Document
 module VE.Service.EnglishRun
@@ -629,6 +635,8 @@ ResponseShape.KindRead@ResponseShape.Skeleton
 ResponseShape.OkFits@ResponseShape.Skeleton
 ResponseShape.OkP@ResponseShape.Skeleton
 VE.Acts.DerivedIn@VE.Acts.Read
+VE.Acts.Lexical.Accepts@VE.Acts.LexicalProofs
+VE.Acts.Lexical.Grouped@VE.Acts.LexicalProofs
 VE.Alternatives.AltConflictFree@VE.Alternatives.Background
 VE.Alternatives.AltConflictFreeU@VE.Alternatives.FillWire
 VE.Alternatives.AltValid@VE.Alternatives.Inline
@@ -673,6 +681,8 @@ VE.Ask.checkedWitness@VE.Ask.Render
 VE.Ask.checkedWitnessRow@VE.Ask.Lines
 VE.Bridge.JsonEntails@VE.Bridge
 VE.Calc.CausesAt@VE.Calc.Decls
+VE.Calc.Check.OutcomeMeans@VE.Calc.Run
+VE.Calc.Check.UnknownCause@VE.Calc.Run
 VE.Calc.Claim.Defined@VE.Calc.Syntax
 VE.Calc.Claim.Holds@VE.Calc.Syntax
 VE.Calc.Claim.Overflows@VE.Calc.Decls
@@ -681,7 +691,9 @@ VE.Calc.Denotes.below@VE.Calc.Syntax
 VE.Calc.Denotes@VE.Calc.Syntax
 VE.Calc.Expr.Overflows@VE.Calc.Decls
 VE.Calc.Expr.ReadsExhausted@VE.Calc.Decls
+VE.Calc.Follows@VE.Calc.Lower
 VE.Calc.Frac.Means@VE.Calc.Poly
+VE.Calc.HasCounterexample@VE.Calc.Lower
 VE.Calc.Inlined.Agrees@VE.Calc.Inline
 VE.Calc.Inlined.Faults@VE.Calc.Inline
 VE.Calc.IsIdentity@VE.Calc.Identity
