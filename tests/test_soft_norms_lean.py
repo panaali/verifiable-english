@@ -488,6 +488,33 @@ def test_admission_with_soft_units_and_regenerated_leaves(lean):
     assert rows[2]["status"] == "error" and rows[3]["status"] == "error"
 
 
+def test_admission_refuses_each_document_check_of_w2s_decoder(lean):
+    """The soft route decodes its document with W2's `VE.Route.Admission.decodeDoc` over E′ (AR-20): each
+    document check refuses with its own diagnostic, and the unbroken document is admitted."""
+    environment_json = env()
+    delta = [should("a", "x_required", True), should("b", "x_permitted", False)]
+    layer = next(p for p in elaborate(lean, environment_json, delta)["premises"]
+                 if p["label"] == "layer:norms:x_required")
+    units = [{"id": f"u{i}", "span": [10 * i, 10 * i + 5], "kind": "norm", "content": n}
+             for i, n in enumerate(delta)]
+    good = {"units": units,
+            "graph": {"root": "leaf", "nodes": [{"name": "leaf", "ast": layer["ast"],
+                                                 "label": "layer:norms:x_required"}]}}
+    lemma = {"name": "doc/layer", "conclusion": layer["ast"], "leaves": []}
+    reading_set = {"id": "r", "version": 1, "readings": [layer["ast"]]}
+    broken = {
+        "duplicate unit id": {**good, "units": [units[0], {**units[1], "id": "u0"}]},
+        "unit spans must be sorted and non-overlapping": {**good, "units": units[::-1]},
+        "duplicate lemma": {**good, "lemmas": [lemma, lemma]},
+        "duplicate reading set version": {**good, "reading_sets": [reading_set, reading_set]},
+        "invalid name": {**good, "open_terms": ["not a name"]},
+    }
+    rows = run(lean, [{"id": str(i), "kind": "admission", "environment": environment_json, "document": d}
+                      for i, d in enumerate([good, *broken.values()])])
+    assert rows[0]["status"] == "ok" and rows[0]["admitted"] is True, rows[0]
+    assert [(r["status"], r["error"]) for r in rows[1:]] == [("error", message) for message in broken]
+
+
 def test_constant_wording_is_display_metadata_on_the_soft_route(lean):
     """A constant's `verbalisation` is display metadata that Python's `Environment` admits (DF-19); the soft
     route reads it as such, so the frozen readability items R29 and R30 get Lean answers (English E2.6)."""

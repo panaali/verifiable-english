@@ -223,6 +223,35 @@ def test_admission_tampering_is_rejected_by_both(lean_executable):
         assert row["error"] == str(error.value), label
 
 
+def test_admission_document_checks_are_w2s_decoder_in_both(lean_executable):
+    """The route decodes its document with W2's `VE.Route.Admission.decodeDoc` over `E‴` (AR-20): each
+    document check refuses in Lean with its own diagnostic, as Python's admission does."""
+    doc = _document("u5a")
+    raw = doc.env.to_dict()
+    good = admission_document(doc)
+    units = [{"id": f"q{i}", "span": [10 * i, 10 * i + 5], "kind": "question"} for i in range(2)]
+    good["units"] = good["units"] + units
+    leaf = next(n for n in good["graph"]["nodes"] if n.get("label") == "layer:norms:x_required")
+    lemma = {"name": "doc/layer", "conclusion": leaf["ast"], "leaves": []}
+    reading_set = {"id": "r", "version": 1, "readings": [leaf["ast"]]}
+    broken = {
+        "duplicate unit id": {**good, "units": [units[0], {**units[1], "id": "q0"}]},
+        "unit spans must be sorted and non-overlapping": {**good, "units": units[::-1]},
+        "duplicate lemma": {**good, "lemmas": [lemma, lemma]},
+        "duplicate reading set version": {**good, "reading_sets": [reading_set, reading_set]},
+        "invalid name": {**good, "open_terms": ["not a name"]},
+    }
+    rows = route.run_cases([{"id": "good", "kind": "admission", "environment": raw, "document": good}] +
+                           [{"id": str(i), "kind": "admission", "environment": raw, "document": d}
+                            for i, d in enumerate(broken.values())])
+    assert rows[0]["status"] == "ok", rows[0]
+    for (message, document), row in zip(broken.items(), rows[1:]):
+        with pytest.raises(VEError) as error:
+            admit_document(raw, document)
+        assert (row["status"], row["error"]) == ("error", message), (message, row)
+        assert str(error.value) == message, message
+
+
 def test_profiled_admission_without_unspecified_is_w1_admission(lean_executable):
     """Conservativity (spec 6): with no `unspecified` predicate `fill U` is the author tree,
     and the profiled admission report equals W1's on the same graph."""
