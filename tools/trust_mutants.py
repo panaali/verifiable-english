@@ -1075,7 +1075,6 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
 
 
 REUSED = ("KILLED", "INVALID", "SURVIVOR")  # the verdicts --rescore reuses: no other depends on Lean's time
-CARRIED = ("KILLED", "INVALID")  # those it carries across a check-only change, when what they read is the same
 OVERALL = ("tool", "lean", "tests", "base", "options")  # `inputs`' digests; "files" holds the per-file ones
 # the generated inventories of lean/ a check-only change regenerates: no Lean module reads them
 INVENTORIES = {"lean/declarations.txt", "lean/statements.txt", "lean/predicates.txt", "lean/axioms.txt"}
@@ -1160,9 +1159,9 @@ class Reads:
                 m.reads, m.killed_at = self.check(m, at[0], *span), span
 
     def carry(self, m: Mutant, p: dict, built: list[str]) -> tuple[str, str] | None:
-        """PREV's verdict `p` on m (status before --allow, detail, reads, killed_at) when what it reads reads the same
-        here, its killing check moved to where it now is; else None (m runs). A kill's check must still be one m's
-        build reads (`built`: `targets`)."""
+        """PREV's KILLED or INVALID verdict `p` on m (status before --allow, detail, reads, killed_at) when what it
+        reads reads the same here, its killing check moved to where it now is; else None (m runs: any other status
+        too). A kill's check must still be one m's build reads (`built`: `targets`)."""
         if p["status"] == "INVALID" and p["reads"] == self.scope(m):
             return "INVALID", p["detail"]
         if p["status"] != "KILLED" or not p["reads"] or not p["killed_at"] or not (at := self.killer(p["detail"])):
@@ -1333,8 +1332,7 @@ def main(argv: list[str] | None = None) -> int:
                 p = verdicts[m.id]
                 if mode == "identical" and p["status"] in REUSED:
                     m.status, m.detail = p["status"], p["detail"]
-                elif mode == "checks" and p["status"] in CARRIED and (
-                        kept := reads.carry(m, p, targets(tree, m, tests, args.deep))):
+                elif mode == "checks" and (kept := reads.carry(m, p, targets(tree, m, tests, args.deep))):
                     (m.status, m.detail), m.carried = kept, "checks"
                 else:
                     continue

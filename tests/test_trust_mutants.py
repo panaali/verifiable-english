@@ -654,12 +654,12 @@ LAYERED = {  # speed-tmchecks: a definition whose module imports another, and it
 # each change to LAYERED, and whether a KILLED verdict at `#guard !small 3` and an INVALID one in `small` carry
 EDITS = [
     ("none", {}, True, True),
-    ("a check added above the kill", {"Demo/Examples.lean": ("#guard small 2\n", "#guard small 1\n#guard small 2\n")},
+    ("check-added-above", {"Demo/Examples.lean": ("#guard small 2\n", "#guard small 1\n#guard small 2\n")},
      True, True),
-    ("a definition added above the kill", {"Demo/Examples.lean": ("#guard small 2\n", "def three := 3\n#guard small 2\n")},
+    ("definition-added-above", {"Demo/Examples.lean": ("#guard small 2\n", "def three := 3\n#guard small 2\n")},
      False, True),
-    ("the killing check edited", {"Demo/Examples.lean": ("!small 3", "!small 4")}, False, True),
-    ("its import closure edited", {"Demo/Base.lean": ("end Demo", "-- a comment\nend Demo")}, False, False),
+    ("check-edited", {"Demo/Examples.lean": ("!small 3", "!small 4")}, False, True),
+    ("closure-edited", {"Demo/Base.lean": ("end Demo", "-- a comment\nend Demo")}, False, False),
 ]
 
 
@@ -693,7 +693,7 @@ def test_a_verdict_carries_only_while_what_it_reads_reads_the_same(tmp_path, nam
     refused = {"status": "INVALID", "detail": m.detail, "reads": m.reads, "killed_at": None}
     after = layered(tmp_path / "after", edits)
     built = ["Demo.Defs", "Demo.Examples"]
-    line = 6 if name == "a check added above the kill" else 5
+    line = 6 if name == "check-added-above" else 5
     assert after.carry(m, killed, built) == (("KILLED", f"lean/Demo/Examples.lean:{line}: Expression") if kill else None)
     assert after.carry(m, refused, built) == (("INVALID", "unknown identifier") if invalid else None)
     assert after.carry(m, killed, ["Demo.Defs"]) is None  # a check the build no longer reads kills nothing
