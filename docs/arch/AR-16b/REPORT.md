@@ -222,8 +222,11 @@ already existed (follow-up 2). M6 now seeds the row-word check of the same funct
   185 of 462 units, exit 0, 0 failed, 3,266 s. The selection includes every test the mutants name
   (`select_tests.py`: `test_readings_sup_verdicts.py`, `test_premise_scale.py`, `test_readings_verdicts_lean.py`,
   `test_readings_rd6b_differential.py`, `test_readings_verdicts_split.py`, `test_relay_lint.py`).
-- After the sync with `main` (`1f9edc44`): the seeded mutants (12/12), the relay mutation gate and the A/B were run
-  again at the new base and head. The selected tests were run again too; see the last line below.
+- After the sync with `main`, the seeded mutants (12/12), the relay mutation gate and the A/B were run again at the
+  new base and head. The selected tests were run again at `5157fcfc` (clean): no Mac slot was free, so they ran on
+  the VM. All 463 of 463 units passed (exit 0, 0 failed, 8,153 s). The selection was every unit because the newest
+  cached map was then `a547f214`, an older ancestor. With `25ac4131`'s map, recorded since, the same selection is
+  135/463, and it is a subset of what ran.
 - `tests/test_readings_verdicts_split.py` (37), `tests/test_relay_lint.py`, `tests/test_words.py`,
   `tests/test_identity_lint.py`, `tests/test_assurance_manifest.py`, `tests/test_binding_census.py` and the rd2a,
   rd2b, rd3, rd4a, rd6b and q2 report tests passed.
@@ -290,7 +293,8 @@ tools/lean_first_diff.py` is empty, and the commits after it change only `docs/a
    re-save. The scope base is `git merge-base` (`25ac4131`), synced with `main` in `0865c873`.
 7. No unsigned item: PASS. DELTA's two rows cite R7. Trust +0 (`trust_map.py --check`).
 8. Every user-visible change in DELTA: PASS. The A/B is empty, so DELTA says none.
-9. Test selection: PASS. 185/462 units, not every unit. It includes every test file the mutants name.
+9. Test selection: PASS. 185/462 units at `becce6b8`, and 135/463 after the sync, not every unit; the 463/463 run
+   is a map-vintage effect (see "Tests run"). The selection includes every test file the mutants name.
 10. Lean statements: N.A. No Lean change.
 11. Budgets, limits and deadlines: N.A. No budget path changed. `BUDGET` is one object, and M2 and M4 show that a
     test's zero still reaches it. `test_readings_budget_zero.py` passes in the selection.
