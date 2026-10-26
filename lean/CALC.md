@@ -130,3 +130,9 @@ side with a divisor whose numerator normalises to zero, `undefined` before `hold
 F3); equal normal forms, `holds` (`IsIdentity`); else the first of 13 points where both sides denote and differ,
 `fails` (`NotIdentity`), or `identityNotShown`. The names a side reads and its zero divisors are looked for only after
 the normaliser accepted it. `identityRun_holds`, `_fails`, `_undefined` and `_unknown` state what each outcome means.
+
+The row is decided within a work budget (me-9c, review F5): `identityDecideB` charges the normaliser, the powers'
+steps and the point search in evaluation units against `VE.Limits.maxEvaluations` (`Poly.lean`, "The work budget"),
+and finds the zero divisors in the normaliser's own pass (`Frac.goB`), so nested divisors cost their nodes. Past the
+budget the row is `budgetRow` (`limit .polyTerms`, stop `.budget`, whose text is the spec's budget text);
+`identityDecideB_within`: within it, the row is `identityDecide`'s; `identityRun_exhausted`: past it, only `budgetRow`.
