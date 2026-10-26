@@ -167,7 +167,6 @@ module VE.Cardinality.Erase
 module VE.Cardinality.Examples
 module VE.Cardinality.Ratio
 module VE.Cardinality.Regions
-module VE.Cardinality.Run
 module VE.Cardinality.Semantics
 module VE.Cardinality.Syntax
 module VE.Cardinality.Theorems

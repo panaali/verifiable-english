@@ -62,7 +62,6 @@ import VE.Calc.Units
 import VE.Calc.Wire
 import VE.Cardinality.Examples
 import VE.Cardinality.Ratio
-import VE.Cardinality.Run
 import VE.Cardinality.Syntax
 import VE.Cardinality.Theorems
 import VE.Cardinality.Wire
@@ -1061,6 +1060,7 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.zpowR_eq
 #print axioms VE.Calc.zpowR_mul_nat
 #print axioms VE.Cardinality.CAdmission.admitted
+#print axioms VE.Cardinality.CAdmission.sound
 #print axioms VE.Cardinality.CEnv.WellFormed.finiteDeclared
 #print axioms VE.Cardinality.CEnv.WellFormed.fresh
 #print axioms VE.Cardinality.CardEnv.wf
@@ -1118,7 +1118,6 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.bodyOfQ_spec
 #print axioms VE.Cardinality.bridge_hold
 #print axioms VE.Cardinality.cardinality_elab_sound
-#print axioms VE.Cardinality.checkCertificate_sound
 #print axioms VE.Cardinality.countAtom_holds_iff
 #print axioms VE.Cardinality.countFin_eq
 #print axioms VE.Cardinality.count_atLeast_agree
