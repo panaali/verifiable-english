@@ -8,11 +8,11 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 |---|---:|
 | leaves:bound | 246 |
 | leaves:closed domain | 257 |
-| leaves:none | 1339 |
+| leaves:none | 1341 |
 | modes | 37 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 938 |
+| today:not probed | 940 |
 | today:shape | 503 |
 | today:unbound | 137 |
 | answers | 554 |
@@ -352,6 +352,8 @@ Delegates: `/` to route.
 
 | leaf | kind | class | keyword | format | observed | bound today |
 |---|---|---|---|---|---:|---|
+| `/acts/@key` | key | none |  |  | 0 | not probed |
+| `/acts/{}` | string | none |  |  | 0 | not probed |
 | `/case_index` | integer | bound | x-index |  | 1 | shape |
 | `/environment_id` | string | none |  | pattern | 6 | hand: `ve/backends/validation.py:construct_after_lean` |
 | `/error` | string | none |  | minLength | 6 | not probed |

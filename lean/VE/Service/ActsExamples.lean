@@ -119,6 +119,27 @@ def sortedRefusal := "UnsupportedProfile: profiles must be sorted and unique"
 #guard (VE.Norms.Wire.canonicalEnvironmentJson (envA)).toOption.map (·.getObjValD "vocabulary" |>.getObjValD "acts") ==
   some (block fxs)
 
+/-! ### ap-1bb: the environment row gives the canonical act its identity hashes, by predicate, for Python to store;
+two environments with one identity have the same acts -/
+
+def environmentRow (j : Json) : Json :=
+  match VE.Service.Standalone.environmentCase (Json.mkObj [("id", .str "e"), ("environment", j)]) with
+  | .ok row => row
+  | .error m => .str m
+def curly := env actsP [("p", pred ["person", "case"] (perm "{0}  comply with the operator’s instructions in {1}"))]
+def straight := env actsP [("p", pred ["person", "case"] (perm "{0} comply with the operator's instructions in {1}"))]
+#guard (environmentRow curly).getObjValD "acts" ==
+  Json.mkObj [("p", .str "{0} comply with the operator's instructions in {1}")]
+#guard (environmentRow curly).getObjValD "environment_id" == (environmentRow straight).getObjValD "environment_id" &&
+  (environmentRow curly).getObjValD "acts" == (environmentRow straight).getObjValD "acts"
+-- the identity is `environmentIdOf`'s; every regulated act (plain and permission) is listed, in vocabulary order
+#guard (environmentRow curly).getObjValD "environment_id" ==
+  ((VE.Service.Standalone.environmentIdOf actsP curly).toOption.map Json.str).getD .null
+#guard (environmentRow envA).getObjValD "acts" == Json.mkObj [("heard", .str a1), ("paid", .str a2), ("protected", .str a3)]
+-- no regulated act: none
+#guard (environmentRow (env ["relational-fol@0"] [("p", Json.mkObj [("arguments", toJson ["person"]),
+  ("description", .str "d")])])).getObjValD "acts" == Json.mkObj []
+
 /-! ### 4.4: the environment mode and the family route gate `acts@0` by its row first -/
 
 #guard err (VE.Service.Standalone.validatedComposedEnvironment envA) == "ok"

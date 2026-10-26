@@ -5514,7 +5514,8 @@
         "VE.Norms.Wire.actsView",
         "VE.Norms.Wire.readsActs",
         "VE.Norms.Wire.plainWording",
-        "VE.Norms.Wire.plainWordings"
+        "VE.Norms.Wire.plainWordings",
+        "VE.Norms.Wire.canonicalActs"
       ],
       "D[I]": [
         "VE.Norms.Wire.appendPredicates",
@@ -13816,7 +13817,10 @@
         "VE.Service.ActsExamples.unspecified",
         "VE.Service.ActsExamples.modal",
         "VE.Service.ActsExamples.admittedWithActs",
-        "VE.Service.ActsExamples.routeWordings"
+        "VE.Service.ActsExamples.routeWordings",
+        "VE.Service.ActsExamples.environmentRow",
+        "VE.Service.ActsExamples.curly",
+        "VE.Service.ActsExamples.straight"
       ]
     },
     "VE/Events/Conservative.lean": {

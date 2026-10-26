@@ -205,6 +205,16 @@ def canonicalEnvironmentJson (environment : Json) : Except String Json := do
   pure (environment.setObjVal! "vocabulary"
     (vocab.setObjVal! "predicates" (Json.mkObj canonical)))
 
+/-- The act of each regulated predicate of `canonical` (`canonicalEnvironmentJson`'s result) by its predicate, in
+vocabulary order: the canonical acts the environment identity hashes. The environment row gives them (`acts`) and
+Python stores each as its predicate's act, so the identity determines the environment Python builds (ap-1bb). -/
+def canonicalActs (canonical : Json) : Except String (List (String × String)) := do
+  let predicates ← fields (← (← canonical.getObjVal? "vocabulary").getObjVal? "predicates")
+  predicates.filterMapM fun (p, entry) =>
+    match (entry.getObjValD "regulated").getObjVal? "act" with
+    | .ok act => do pure (some (p, ← act.getStr?))
+    | .error _ => pure none
+
 /-- Append generated predicate declarations to the actual environment vocabulary. Both
 soft-norms and rights use this operation, and the response-shape proof fixes its entries. -/
 def appendPredicates (environment : Json) (entries : List (String × Json)) : Except String Json := do

@@ -22,6 +22,11 @@ EX, ENC = "lean:VE.Service.ActsExamples", "lean:ResponseShape.Encoders.Norms"
 PY = "tests/test_acts_profile.py::"
 SHOWN, BOUND = PY + "test_a_plain_act_reads_with_the_wording_lean_selected", \
     PY + "test_wordings_not_bound_to_the_request_are_unavailable"
+SA, ENC_SA = "lean/VE/Service/Standalone.lean", "lean:ResponseShape.Encoders.Standalone"
+ACTS_BOUND, ONE_ID = PY + "test_acts_not_bound_to_the_request_are_unavailable", \
+    PY + "test_one_identity_is_one_environment_whichever_loads_first"
+SLOTS = "test_slots_bound_is_the_one_slot_binding_of_every_relayed_wording"
+RIGHTS_SLOTS = "tests/test_rights.py::test_a_generated_wording_whose_slots_are_not_its_predicates_arguments_is_unavailable"
 
 # (id, definition, file, old, new, check)
 MUTANTS = [
@@ -40,14 +45,46 @@ MUTANTS = [
     ("runCase-wordings-renamed", "Norms.Run.runCase", RUN, '[("wordings", Json.mkObj', '[("wording", Json.mkObj', ENC),
     ("modalForm-plain", "modalForm", E, "| _, _ => pure (none, VE.Norms.Wire.plainWording r raw)",
      "| _, _ => pure (none, none)", EX),
-    ("py-identity-python", "validated_environment", "ve/backends/validation.py",
-     'lambda row: decode(row["environment_id"])', "lambda row: decode()",
-     PY + "test_an_act_with_a_curly_apostrophe_has_leans_identity"),
+    # review F1: one identity, one environment (the row's canonical acts stored, bound and hashed)
+    ("py-identity-unchecked", "validated_environment", "ve/backends/validation.py",
+     'lambda built, row: row["environment_id"] == built.environment_id', "lambda built, row: True", ACTS_BOUND),
+    ("py-acts-as-written", "Environment._decode", "ve/environment.py",
+     'act = acts[name] if acts is not None else " ".join(act.split())', 'act = " ".join(act.split())', ONE_ID),
+    ("py-acts-names-unbound", "Environment._decode", "ve/environment.py",
+     "if acts is not None and set(acts) != {", "if False and set(acts) != {", ACTS_BOUND),
+    ("canonicalActs-none", "canonicalActs", W, "| .ok act => do pure (some (p, ← act.getStr?))",
+     "| .ok _ => do pure none", EX),
+    ("canonicalActs-key", "canonicalActs", W, "| .ok act => do pure (some (p, ← act.getStr?))",
+     '| .ok act => do pure (some ("p", ← act.getStr?))', EX),
+    ("environmentCase-acts-as-written", "Standalone.environmentCase", SA,
+     "let acts ← VE.Norms.Wire.canonicalActs canonical", "let acts ← VE.Norms.Wire.canonicalActs environment", EX),
+    ("environmentCase-acts-empty", "Standalone.environmentCase", SA,
+     '("acts", Json.mkObj (acts.map fun (p, a) => (p, .str a)))', '("acts", Json.mkObj [])', EX),
+    ("environmentCase-acts-renamed", "Standalone.environmentCase", SA,
+     '("acts", Json.mkObj (acts.map fun (p, a) => (p, .str a)))',
+     '("act", Json.mkObj (acts.map fun (p, a) => (p, .str a)))', ENC_SA),
+    ("environmentCase-legacy-acts-dropped", "Standalone.environmentCase", SA,
+     '| _ => [("acts", Json.mkObj [])]))', "| _ => []))", ENC_SA),
     ("py-wordings-not-shown", "EnglishVocabulary", "ve/english.py",
      "            for name, template in plain_wordings(env).items():\n",
      "            for name, template in {}.items():\n", SHOWN),
-    ("py-bind-off", "_bind_wordings", "ve/norms.py", 'if set(row.get("wordings", {})) != _plain_acts(env):',
-     "if False:", BOUND),
+    ("py-bind-off", "_bind_wordings", "ve/norms.py", "    if set(wordings) != _plain_acts(env) or not all(",
+     "    if False and set(wordings) != _plain_acts(env) or False and not all(", BOUND),
+    # review F2: a relayed wording's slots are its predicate's argument positions (`relay.slots_bound`)
+    ("py-slots-names-only", "_bind_wordings", "ve/norms.py",
+     "slots_bound(wording, len(env.predicates[p].arguments)) for p, wording in wordings.items()):",
+     "True for p, wording in wordings.items()):", BOUND),
+    ("py-slots-subset", "slots_bound", "ve/backends/relay.py",
+     "return set(_SLOT.findall(template)) == {str(i) for i in range(arity)}",
+     "return set(_SLOT.findall(template)) <= {str(i) for i in range(arity)}", PY + SLOTS),
+    ("py-slots-past-arity", "slots_bound", "ve/backends/relay.py",
+     "return set(_SLOT.findall(template)) == {str(i) for i in range(arity)}",
+     "return set(_SLOT.findall(template)) <= {str(i) for i in range(arity + 1)}", RIGHTS_SLOTS),
+    ("py-slots-braces", "slots_bound", "ve/backends/relay.py",
+     'if type(template) is not str or "{" in _SLOT.sub("", template) or "}" in _SLOT.sub("", template):',
+     "if type(template) is not str:", PY + SLOTS),
+    ("py-rights-slots-off", "_bind_elaboration", "ve/rights_route.py",
+     "if not slots_bound(wording, len(prime_predicates[name]['arguments'])):", "if False:", RIGHTS_SLOTS),
     ("py-bind-document-off", "NormDocument._lean_regenerated", "ve/norms.py",
      "            _bind_wordings(self.env, row)\n", "", BOUND),
     ("py-norm-defaults-asked", "plain_wordings", "ve/norms.py",
