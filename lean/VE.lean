@@ -120,6 +120,7 @@ import VE.Calc.Poly
 import VE.Calc.Inline
 import VE.Calc.Identity
 import VE.Calc.IdentityExamples
+import VE.Arith.Examples
 import VE.Calc.Lower
 import VE.Calc.LowerExamples
 import VE.Numbers.Examples
