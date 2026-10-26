@@ -90,5 +90,44 @@ def decoded (b : Json) : Option (List (String × String × Reach × String × Li
     Json.mkObj [("id", .str "b"), ("span", toJson [4, 99])], Json.mkObj [("id", .str "c")]])]) "x:\n\n* y").map
     (fun x => (x.id, x.span, x.lead, x.item)) ==
   [("a", (0, 4), true, none), ("b", (4, 7), false, some 0), ("c", (0, 0), false, none)]
+#guard [Json.mkObj [("span", toJson [Json.str "x", toJson (5 : Nat)])],
+  Json.mkObj [("span", toJson [toJson (3 : Nat), Json.str "y"])]].map (spanIn 9) == [(0, 5), (0, 0)]
+
+-- The fold (1.6) on an answer: the lead-in u1 (specified, no content) hosts the frame g1 and takes the weakest of
+-- its items; i1 has content and u3 hosts only a graph governor, so both keep their status; bytes counted again.
+def foldEnv : Json := Json.mkObj [("language", .str "ve.core@0.2"),
+  ("profiles", toJson ["norms@0", "readings@1", "relational-fol@0"]),
+  ("spec_revision", .str "ve-v0.2-expand2-2026-09-25"),
+  ("vocabulary", Json.mkObj [("sorts", Json.mkObj [("agent", Json.mkObj [("description", .str "agent")])]),
+    ("predicates", Json.mkObj []), ("constants", Json.mkObj [])])]
+def ansUnit (id : String) (s e : Nat) (status : String) (content : Option Json := none) : Json :=
+  Json.mkObj ([("id", .str id), ("span", toJson [s, e]), ("meaning", .str "specified"), ("status", .str status)] ++
+    content.toList.map ("content", ·))
+def ansUnits : List Json := [ansUnit "u1" 0 18 "OPEN", ansUnit "i1" 18 25 "CHECKED" (some (Json.mkObj [])),
+  ansUnit "i2" 25 34 "LABELLED", ansUnit "u3" 34 46 "OPEN"]
+def foldGov (id unit : String) (reach effect : Json) : Json :=
+  Json.mkObj [("id", .str id), ("unit", .str unit), ("reach", reach), ("units", toJson ["i1", "i2"]),
+    ("effect", effect)]
+def foldDoc : Option SDoc := do
+  let re ← (VE.Readings.Wire.decodeEnvironment foldEnv).toOption
+  (decodeBlock (Json.mkObj [("units", toJson ansUnits), ("scope", blockWith [
+    foldGov "g1" "u1" (Json.mkObj [("list", .str "u1")]) (Json.mkObj [("frame", Json.mkObj [])]),
+    foldGov "g2" "u3" (.str "frontier") (.str "precedes"),
+    foldGov "g3" "i1" (Json.mkObj [("list", .str "u1")]) (Json.mkObj [("frame", Json.mkObj [])])])])
+    "Agents must not:\n\n* Act.\n* Rest.\n\nThat is all." re).toOption
+def answer : Json := Json.mkObj [("id", .str "d"), ("status", .str "OPEN"), ("units", toJson ansUnits),
+  ("coverage", Json.mkObj [("units", toJson (4 : Nat)), ("bytes_by_status", Json.mkObj [])])]
+#guard foldDoc.map (fun D => ((changers D "u1").map (·.id), (changers D "u3").map (·.id))) == some (["g1"], [])
+#guard foldDoc.map (fun D => (foldGovernors D answer).compress) == some ("{\"coverage\":{\"bytes_by_status\":" ++
+  "{\"CHECKED\":7,\"LABELLED\":27,\"OPEN\":12},\"units\":4},\"document_id\":null,\"id\":\"d\",\"source\":null," ++
+  "\"source_id\":null,\"status\":\"OPEN\",\"units\":[{\"id\":\"u1\",\"meaning\":\"specified\",\"span\":[0,18]," ++
+  "\"status\":\"LABELLED\"},{\"content\":{},\"id\":\"i1\",\"meaning\":\"specified\",\"span\":[18,25]," ++
+  "\"status\":\"CHECKED\"},{\"id\":\"i2\",\"meaning\":\"specified\",\"span\":[25,34],\"status\":\"LABELLED\"}," ++
+  "{\"id\":\"u3\",\"meaning\":\"specified\",\"span\":[34,46],\"status\":\"OPEN\"}]}")
+-- The bytes by status, in order of first appearance; a unit without a span counts no bytes.
+#guard byStatus [Json.mkObj [("status", .str "A"), ("span", toJson [0, 4])],
+  Json.mkObj [("status", .str "B"), ("span", toJson [4, 10])],
+  Json.mkObj [("status", .str "A"), ("span", toJson [10, 11])],
+  Json.mkObj [("status", .str "B")]] == [("A", toJson (5 : Nat)), ("B", toJson (6 : Nat))]
 
 end VE.Scope.WireExamples
