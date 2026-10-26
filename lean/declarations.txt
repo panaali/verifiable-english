@@ -206,9 +206,9 @@ module ResponseShape.Encoders.Ask b0b26d8c059b76d8450397812b1ef3f280e6aebd172c38
 77:0-83:29 theorem ResponseShape.Encoders.Ask.answered_ok@ResponseShape.Encoders.Ask
 85:0-95:53 theorem ResponseShape.Encoders.Ask.askCase_fits@ResponseShape.Encoders.Ask
 97:0-101:8 theorem ResponseShape.Encoders.Ask.caseReported_fits@ResponseShape.Encoders.Ask
-module ResponseShape.Encoders.Calc 8c69403b62e5d96b9485b4c6502563d160036dd38483cfb78570ae71b9307340
+module ResponseShape.Encoders.Calc 71e97ae5f99047345b3d14a0a3d5dcbc3f65e5ba56e7333343325873de27693d
 10:0-21:18 theorem ResponseShape.Encoders.Calc.rowJson_fits@ResponseShape.Encoders.Calc
-23:0-29:8 theorem ResponseShape.Encoders.Calc.runCaseReported_fits@ResponseShape.Encoders.Calc
+23:0-30:8 theorem ResponseShape.Encoders.Calc.runCaseReported_fits@ResponseShape.Encoders.Calc
 module ResponseShape.Encoders.Common 2f6ec0e3dec8bb9d2b8ae40930ec53df37f31720e361949cef63a180ad0a7ff9
 12:0-21:10 theorem ResponseShape.Encoders.Common.rejectionCode_fits@ResponseShape.Encoders.Common
 28:0-30:46 def ResponseShape.Encoders.Common.kindSkel@ResponseShape.Encoders.Common
@@ -19171,7 +19171,7 @@ module VE.Service.ParseDiagnostic 7e27424725f2b15a76a6c438bfa5b4b27c714bf8cfa08b
 322:0-348:81 def VE.Service.ParseDiagnostic.define@VE.Service.ParseDiagnostic
 350:0-363:17 def VE.Service.ParseDiagnostic.scan@VE.Service.ParseDiagnostic
 365:0-370:53 def VE.Service.ParseDiagnostic.span@VE.Service.ParseDiagnostic
-module VE.Service.Protocol 3d736af40c84875a684133b5f29a44053a60b673189169d1163b4dfa130e854e
+module VE.Service.Protocol 1ec519e342dcf29dd03d865fea31452a32eb6f0a4e581ce3d1f8badf22da6a52
 79:0-86:84 def VE.Service.englishReported@VE.Service.Protocol
 88:0-131:45 def VE.Service.runMode@VE.Service.Protocol
 133:0-136:83 def VE.Service.caseError@VE.Service.Protocol
@@ -19295,7 +19295,7 @@ module VE.Service.Protocol 3d736af40c84875a684133b5f29a44053a60b673189169d1163b4
 849:0-850:53 theorem VE.Service.runMode_ask@VE.Service.Protocol
 852:0-853:57 theorem VE.Service.runMode_words@VE.Service.Protocol
 855:0-856:69 theorem VE.Service.runMode_metered@VE.Service.Protocol
-858:0-858:88 theorem VE.Service.runMode_calc@VE.Service.Protocol
+858:0-858:93 theorem VE.Service.runMode_calc@VE.Service.Protocol
 861:0-861:99 theorem VE.Service.caseResult_ok@VE.Service.Protocol
 863:0-875:16 theorem VE.Service.runRequest_ok@VE.Service.Protocol
 877:0-886:7 theorem VE.Service.expand_plain@VE.Service.Protocol
