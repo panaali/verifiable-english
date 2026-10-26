@@ -14569,7 +14569,17 @@
         "VE.Service.ActsExamples.members",
         "VE.Service.ActsExamples.frozen",
         "VE.Service.ActsExamples.closure01",
-        "VE.Service.ActsExamples.core0"
+        "VE.Service.ActsExamples.core0",
+        "VE.Service.ActsExamples.regulatedIn",
+        "VE.Service.ActsExamples.threeOf",
+        "VE.Service.ActsExamples.withBlock",
+        "VE.Service.ActsExamples.ab",
+        "VE.Service.ActsExamples.permEnv",
+        "VE.Service.ActsExamples.lexiconOf",
+        "VE.Service.ActsExamples.clause",
+        "VE.Service.ActsExamples.pair",
+        "VE.Service.ActsExamples.late",
+        "VE.Service.ActsExamples.dual"
       ]
     },
     "ResponseShape/Schemas/Calc.lean": {
