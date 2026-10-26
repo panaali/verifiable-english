@@ -1083,6 +1083,20 @@
    "reason": "ap-1bb: VE/Norms/Wire.lean +12 (plainWording, plainWordings), ResponseShape/Schemas/Norms.lean +6 (norms-elaborate wordings), VE/Norms/Run.lean +1, VE/EnglishGrammar/Encode.lean -1; untied V +18, K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1bb, 2026-10-18",
    "commit": "ba2532a224a0e605a22be44917005720f4f6764c"
+  },
+  {
+   "class": "V",
+   "lines": 37,
+   "reason": "df-1ad: VE/Defaults/Wire.lean V +37 (untied D[V] basisLabel, formLabel, certFields, modelFields; untied G[V] CertReplay.form, forcedAt, ModelReplay.verdict, defaultsCase's two new branches); K +0, S +0; CertReplay.verdict/assumptions/basis tied to defaults_certificate_sound, ModelReplay.forced to forcedAt_sound and defaults_model_sound; replays and checks C; CertReplay.reason G[R]",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-1ad, 2026-10-18",
+   "commit": "7855620f3e06be59bd94730ef404689d3a18e558"
+  },
+  {
+   "class": "S",
+   "lines": 13,
+   "reason": "ap-1e: VE/Acts/LexicalProofs.lean S +13 (expand and Grouped, the grouping of spec 1.1 condition 6); VE/Acts/Lexical.lean trusted -15 (group tied by group_spec, lex tied by lex_spec); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1e, 2026-10-18",
+   "commit": "3432611041bf4ce570bf6658b9066522001e5f12"
   }
  ]
 }
