@@ -198,7 +198,7 @@ import VE.Scope.Theorems
 import VE.Scope.Examples
 import VE.Scope.Wire
 import VE.Scope.WireExamples
-import VE.Scope.Admission
+import VE.Service.ScopeAdmission
 import VE.Service.ScopeExamples
 import VE.Defaults.Premises
 import VE.Defaults.Examples

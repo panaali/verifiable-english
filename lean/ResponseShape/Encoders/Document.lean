@@ -1,5 +1,5 @@
 import ResponseShape.Encoders.Common
-import VE.Scope.Admission
+import VE.Service.ScopeAdmission
 
 namespace ResponseShape.Encoders.Document
 open Lean ResponseShape ResponseShape.Skeletons
