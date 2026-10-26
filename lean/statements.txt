@@ -43551,6 +43551,10 @@ theorem VE.Service.runMode_bundle
     VE.Service.runMode VE.Service.Mode.bundle j = VE.Service.Standalone.reported VE.Service.FamilyBundle.bundleCase j
   -- uses VE.Service.FamilyBundle.bundleCase@VE.Service.FamilyBundle VE.Service.Mode.bundle@VE.Service.Registry VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
   -- expr 1295058871
+theorem VE.Service.runMode_calc
+  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.calc j = VE.Calc.Run.runCaseReported j
+  -- uses VE.Calc.Run.runCaseReported@VE.Calc.Run VE.Service.Mode.calc@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
+  -- expr 3103349118
 theorem VE.Service.runMode_check
   ∀ (j : Lean.Json),
     VE.Service.runMode VE.Service.Mode.check j = VE.Service.Standalone.reported VE.Service.Standalone.checkCase j
