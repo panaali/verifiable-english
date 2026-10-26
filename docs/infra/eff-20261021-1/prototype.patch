@@ -1,0 +1,298 @@
+diff --git a/tools/trust_mutants.py b/tools/trust_mutants.py
+index 59109591e..ed9d285e6 100644
+--- a/tools/trust_mutants.py
++++ b/tools/trust_mutants.py
+@@ -75,13 +75,15 @@ import subprocess
+ import sys
+ import tempfile
+ import time
++import xml.etree.ElementTree as ET
+ 
+ ROOT = Path(__file__).resolve().parents[1]
+ sys.path[:0] = [str(ROOT), str(ROOT / "tools"), str(ROOT / "lean")]
+ from audit import code_only  # noqa: E402
+ from check_lean_imports import imports  # noqa: E402
+ from lean_statements import declaration_list, module_name, source_hash, sources  # noqa: E402
+-from tools import lake_outputs, lean_share, trust_map  # noqa: E402
++from tools import lake_outputs, lean_share, nested_pytest, trust_map  # noqa: E402
++from tools.layer_policy import lean_executables  # noqa: E402
+ 
+ OPEN, CLOSE = "([{⟨", ")]}⟩"
+ CHECK_COMMANDS = {"guard", "guard_expr", "eval", "eval!", "reduce", "check"}
+@@ -133,7 +135,8 @@ OPERATORS = {**dict.fromkeys(("arm-true", "arm-false", "arm-default", "body-true
+                               "or-and", "lt-le", "le-lt", "lt-eq", "le-eq", "eq-le", "eq-ne", "ne-eq", "all-any",
+                               "any-all", "bool-flip", "lit-plus", "lit-minus", "list-empty", "append-left",
+                               "append-right"), 1), "list-first": 2, "list-drop-last": 2, "list-last": 3,
+-             "list-drop-first": 3}
++             "list-drop-first": 3, "and-left": 4, "and-right": 4, "arm-wildcard": 4,
++             "sibling-name": 4, "fault-order": 4}
+ LT, LE, EQ = r"(?<![<-])<(?![-|$*;=<>])", r"≤|(?<!<)<=(?!>)", r"(?<![:=!<>])=(?![=>])"
+ TOKENS = [("not-drop", r"¬\s*|(?<![\w'!?)\]⟩])!(?=[\w(·])", ""), ("and-or", "∧", "∨"),
+           ("and-or", r"(?<![&|])&&(?![&|])", "||"), ("or-and", "∨", "∧"), ("or-and", r"(?<!\|)\|\|(?!\|)", "&&"),
+@@ -160,6 +163,7 @@ class Mutant:
+     edit: tuple[int, str] = (0, "")  # what `run` writes: text[start:edit[0]] -> edit[1] (`relined`)
+     raw_status: str = "NOT RUN"  # the status before --allow, which --rescore reads
+     reused_from: str = ""  # the head of the --rescore run whose verdict this is
++    pytest_executables: dict[str, str] = field(default_factory=dict)
+ 
+ 
+ def group(t: str, i: int, step: int = 1) -> int:
+@@ -264,6 +268,28 @@ def mutants(text: str, kind: str, lo: int, hi: int) -> list[tuple[str, int, int,
+         if left is not None and right > op + 4:
+             lists += [(left, op), (op + 4, right)]
+             out += [("append-left", op, right, ""), ("append-right", left, op + 4, "")]
++    # Later-tier review forms. Bound each edit to its own expression or match arm; Lean decides type validity.
++    for m in re.finditer(r"(?<![&])&&(?![&])|∧", code):
++        s, e = lo + m.start(), lo + m.end()
++        ls = s - len(t[lo:s]) + len(t[lo:s].rstrip())
++        left = atom_before(t, ls, lo)
++        rs = e + len(t[e:hi]) - len(t[e:hi].lstrip())
++        right = atom_after(t, rs, hi)
++        if left is not None and right > rs:
++            out += [("and-left", left, rs, ""), ("and-right", ls, right, "")]
++    for m in re.finditer(r"(?m)^\s*\|([^=\n]+?)=>", code):
++        pattern = m[1]
++        for token in re.finditer(r"(?<![\w.])(?:true|false|\.ok|\.error|\d+)(?![\w'])", pattern):
++            s = lo + m.start(1) + token.start()
++            out.append(("arm-wildcard", s, s + len(token[0]), "_"))
++    for m in re.finditer(r"\b([A-Za-z_]\w*(?:\.[A-Za-z_]\w*)+)\b", code):
++        whole = m[1]
++        prefix, _, last = whole.rpartition(".")
++        siblings = sorted(set(re.findall(rf"\b{re.escape(prefix)}\.([A-Za-z_]\w*)\b", code)) - {last})
++        for sibling in siblings:
++            out.append(("sibling-name", lo + m.start(), lo + m.end(), f"{prefix}.{sibling}"))
++    for m in re.finditer(r"(?m)\b([A-Za-z_]\w*)\.fault\s*,\s*([A-Za-z_]\w*)\.fault\b", code):
++        out.append(("fault-order", lo + m.start(), lo + m.end(), f"{m[2]}.fault, {m[1]}.fault"))
+     lists += [(lo + m.start(), group(t, lo + m.start())) for m in re.finditer(r"(?<![\w'?!)\]@#])\[(?!\])", code)]
+     for s, e in dict.fromkeys(lists):
+         atom = text[s:e]
+@@ -1061,10 +1087,83 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
+             (scratch.lean / f).write_text(text)
+ 
+ 
+-REUSED = ("KILLED", "INVALID", "SURVIVOR")  # the verdicts --rescore reuses: no other depends on Lean's time
+-
+-
+-def inputs(root: Path, base: str, tests: list[str], outside: list[Path], deep: bool) -> dict[str, str]:
++REUSED = ("KILLED", "KILLED-BY-PYTEST", "INVALID", "SURVIVOR")
++
++
++def executable_paths(scratch: Scratch, choices: dict[str, str], env: dict, timeout: float
++                     ) -> tuple[dict[str, Path], str]:
++    """Build precisely the explicitly selected lake executables in this scratch tree."""
++    code, output = scratch.lake(env, "build", *choices, timeout=timeout)
++    paths = {name: scratch.lean / ".lake/build/bin" / name for name in choices}
++    if code or any(not p.is_file() for p in paths.values()):
++        return {}, f"executable build failed or binary missing: {output[-300:]}"
++    return paths, ""
++
++
++def pytest_result(root: Path, paths: dict[str, Path], choices: dict[str, str], args: list[str],
++                  env: dict, timeout: float, scratch: Path) -> tuple[str, list[str], str]:
++    """PASS, FAIL, or UNKNOWN and the failing node ids. Only an ordinary test failure is FAIL.
++
++    The temporary plugin points the service's existing exact-hash check at a scratch lock containing the
++    exact build selected here. This does not alter the checkout or turn off build verification.
++    """
++    if any(not p.is_file() for p in paths.values()):
++        return "UNKNOWN", [], "missing executable"
++    scratch.mkdir(parents=True, exist_ok=True)
++    lock = scratch / "checkers.lock"
++    pinned = json.loads((root / "lean/checkers.lock").read_text()) if (root / "lean/checkers.lock").is_file() else {}
++    for name, path in paths.items():
++        pinned[name] = [hashlib.sha256(path.read_bytes()).hexdigest()]
++    lock.write_text(json.dumps(pinned))
++    plugin = scratch / "tm_pytest_pin.py"
++    plugin.write_text("from pathlib import Path\n"
++                      "def pytest_configure(config):\n"
++                      "    import os\n"
++                      "    from ve.backends import lean_service\n"
++                      "    lean_service.BUILD_LOCK = Path(os.environ['TM_PYTEST_LOCK'])\n")
++    report = scratch / "pytest.xml"
++    test_env = nested_pytest.environment(env, VE_NATIVE_PREBUILT="1", VE_LEAN_PREBUILT="1",
++                                          VE_ANSWER_STORE="off", PYTHONDONTWRITEBYTECODE="1",
++                                          TM_PYTEST_LOCK=str(lock))
++    test_env.update({variable: str(paths[name]) for name, variable in choices.items()})
++    test_env["PYTHONPATH"] = os.pathsep.join(filter(None, (str(scratch), str(root), env.get("PYTHONPATH", ""))))
++    command = nested_pytest.command(["-q", "-p", "no:cacheprovider", "-p", "tm_pytest_pin",
++                                     f"--junitxml={report}", *args])
++    child = subprocess.Popen(command, cwd=root, env=test_env, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
++                             text=True, start_new_session=True)
++    try:
++        stdout, stderr = child.communicate(timeout=timeout)
++    except subprocess.TimeoutExpired:
++        os.killpg(child.pid, signal.SIGKILL)
++        child.communicate()
++        return "UNKNOWN", [], "pytest timed out"
++    try:
++        cases = ET.parse(report).findall(".//testcase")
++    except (OSError, ET.ParseError):
++        return "UNKNOWN", [], f"pytest wrote no usable JUnit report: {(stdout + stderr)[-200:]}"
++    if not cases or any(c.find("error") is not None or c.find("skipped") is not None for c in cases):
++        return "UNKNOWN", [], "pytest had an error, skip, or no collected tests"
++    failed = [f"{c.get('classname', '').replace('.', '/')}.py::{c.get('name', '')}" for c in cases
++              if c.find("failure") is not None]
++    if child.returncode == 0 and not failed:
++        return "PASS", [], ""
++    if child.returncode == 1 and failed:
++        return "FAIL", failed, ""
++    return "UNKNOWN", [], f"pytest exited {child.returncode}: {(stdout + stderr)[-200:]}"
++
++
++def pytest_verdict(control: tuple[str, list[str], str], mutant: tuple[str, list[str], str]
++                   ) -> tuple[str, str]:
++    """The second kill rule. Neither an invalid control nor an abnormal mutant run is a kill."""
++    if control[0] != "PASS":
++        return "UNKNOWN", f"pytest control: {control[2] or ', '.join(control[1]) or control[0]}"
++    if mutant[0] == "FAIL" and mutant[1]:
++        return "KILLED-BY-PYTEST", "pytest " + mutant[1][0]
++    return ("SURVIVOR", "") if mutant[0] == "PASS" else ("UNKNOWN", mutant[2] or mutant[0])
++
++
++def inputs(root: Path, base: str, tests: list[str], outside: list[Path], deep: bool,
++           pytest_args: list[str] = (), executables: dict[str, str] | None = None) -> dict[str, str]:
+     """What every verdict is computed from, as sha256 digests of bytes, which --rescore compares: the tool's own
+     source (with the modules of this repository it imports); every file of lean/ that `Scratch` copies (the sources,
+     lakefile, toolchain, manifest and the compiled lists `plan` reads), with trust_map's table and .gitignore; the
+@@ -1082,12 +1181,21 @@ def inputs(root: Path, base: str, tests: list[str], outside: list[Path], deep: b
+         dirs[:] = [d for d in dirs if d not in (".lake", ".cache")]
+         lean += [Path(top, n) for n in names + [d for d in dirs if Path(top, d).is_symlink()]]
+     named = [(Path(os.path.relpath(p, root)).as_posix(), p) for p in outside]
+-    return {"tool": digest([(p.relative_to(ROOT).as_posix(), p) for p in tool if p.is_relative_to(ROOT / "tools")
++    result = {"tool": digest([(p.relative_to(ROOT).as_posix(), p) for p in tool if p.is_relative_to(ROOT / "tools")
+                             or p.is_relative_to(ROOT / "lean")]),
+             "lean": digest([(p.relative_to(root).as_posix(), p) for p in [
+                 *lean, root / "tools/trust-classes.json", root / ".gitignore"]]),
+             "tests": digest(named), "base": base,
+             "options": json.dumps({"deep": deep, "test": sorted(tests) + [n for n, _ in named]})}
++    if pytest_args:
++        # Fixtures may import helpers in either tree. Digest them all: --rescore must not carry a verdict
++        # across an edit to a fixture or the Python relay it exercises.
++        files = [(p.relative_to(root).as_posix(), p) for folder in ("tests", "ve")
++                 for p in (root / folder).rglob("*.py")]
++        result["pytest"] = digest(files)
++        result["pytest_args"] = json.dumps(list(pytest_args), ensure_ascii=False)
++        result["executables"] = json.dumps(executables or {}, sort_keys=True)
++    return result
+ 
+ 
+ def previous(path: Path, now: dict[str, str], found: list[Mutant]) -> tuple[str, dict[str, tuple[str, str]]] | str:
+@@ -1132,6 +1240,10 @@ def main(argv: list[str] | None = None) -> int:
+     parser.add_argument("--jobs", type=int, help="mutants built at once (default: min(8, cores - 5-min load))")
+     parser.add_argument("--max-mutants", type=int, default=60)
+     parser.add_argument("--test", action="append", default=[], help="a Lean file that must fail for a kill too")
++    parser.add_argument("--pytest", action="append", default=[], metavar="NODE_ID",
++                        help="pytest fixture file or node id; repeat to select more tests")
++    parser.add_argument("--exe", action="append", default=[], metavar="NAME=ENV",
++                        help="lake executable and its test override variable; default ve_service=VE_LEAN_SERVICE")
+     parser.add_argument("--deep", action="store_true", help="every check module of the cone, not only its directory's")
+     parser.add_argument("--allow", type=Path)
+     parser.add_argument("--json", type=Path)
+@@ -1154,6 +1266,14 @@ def main(argv: list[str] | None = None) -> int:
+     outside = [(root / t).resolve() for t in args.test if t.removeprefix("lean/") not in tests]
+     if bad := [t for t in [*outside, *(root / "lean" / t for t in tests)] if t.suffix != ".lean" or not t.is_file()]:
+         return print(f"--test: not a Lean file: {bad}", file=sys.stderr) or 2
++    choices = dict(x.split("=", 1) for x in (args.exe or ["ve_service=VE_LEAN_SERVICE"]) if "=" in x)
++    names = lean_executables(root)
++    if args.exe and len(choices) != len(args.exe) or any(name not in names or not re.fullmatch(
++            r"[A-Z][A-Z0-9_]*", variable) for name, variable in choices.items()):
++        return print("--exe: expected a lake executable NAME=ENV override", file=sys.stderr) or 2
++    if args.pytest and (not any(variable == "VE_LEAN_SERVICE" for variable in choices.values())
++                        or any(not (root / node.split("::", 1)[0]).is_file() for node in args.pytest)):
++        return print("--pytest: name existing, worktree-relative test files or node ids; include ve_service", file=sys.stderr) or 2
+     started = time.monotonic()
+     found, tree, fatal = plan(root, base)
+     for t in outside:
+@@ -1165,7 +1285,9 @@ def main(argv: list[str] | None = None) -> int:
+         return print("\n".join(fatal), file=sys.stderr) or 2
+     jobs = args.jobs or max(1, min(8, (os.cpu_count() or 1) - int(os.getloadavg()[1])))
+     run_now, not_run = found[:max(0, args.max_mutants)], found[max(0, args.max_mutants):]
+-    digests = inputs(root, git(root, "rev-parse", base).stdout.strip(), tests, outside, args.deep)
++    control_executables: dict[str, str] = {}
++    digests = inputs(root, git(root, "rev-parse", base).stdout.strip(), tests, outside, args.deep,
++                     args.pytest, control_executables)
+     reused, rescore, why = "", None, ""
+     if args.rescore:
+         got = previous(args.rescore, digests, found)
+@@ -1194,6 +1316,7 @@ def main(argv: list[str] | None = None) -> int:
+     for m in run_now:
+         if m.reused_from:
+             allowed(m)
++    phases: dict = {}
+     with tempfile.TemporaryDirectory(prefix="trust-mutants-") as scratch_dir:
+         pool: queue.Queue = queue.Queue()
+         controls: dict = {}  # the builds without a mutant, by stage and cuts: shared by every scratch
+@@ -1229,13 +1352,60 @@ def main(argv: list[str] | None = None) -> int:
+                                          args.build_timeout)
+             finally:
+                 pool.put(scratch)
+-            allowed(m)
++            if not (args.pytest and m.status == "SURVIVOR"):
++                allowed(m)
+ 
++        lean_started = time.monotonic()
+         with ThreadPoolExecutor(max_workers=jobs) as executor:
+             list(executor.map(one, todo))
++        phases["lean_seconds"] = round(time.monotonic() - lean_started)
++        survivors = [m for m in todo if m.status == "SURVIVOR"]
++        if args.pytest and survivors:  # the pytest phase: only the Lean phase's SURVIVORs, timed on its own
++            pytest_started = time.monotonic()
++            base_scratch = pool.get()  # every scratch's files are the checkout's again: its control
++            control_paths, problem = executable_paths(base_scratch, choices, env, args.build_timeout)
++            control_pytest = ("UNKNOWN", [], problem) if problem else pytest_result(
++                root, control_paths, choices, args.pytest, env, args.build_timeout,
++                base_scratch.lean.parent / "pytest-control")
++            control_executables.update({name: hashlib.sha256(path.read_bytes()).hexdigest()
++                                        for name, path in control_paths.items()})
++            phases["pytest_control_seconds"] = round(time.monotonic() - pytest_started)
++            phases["pytest_control"] = control_pytest[0] + (f": {control_pytest[2]}" if control_pytest[2] else "")
++            second: queue.Queue = queue.Queue()
++            second.put(base_scratch)
++            for _ in range(min(jobs, len(survivors)) - 1):  # clones of the control's build: a mutant relinks
++                second.put(Scratch(root / "lean", Path(scratch_dir), base_scratch))
++
++            def kill(m: Mutant) -> None:
++                s = second.get()
++                path = s.lean / m.file
++                text = path.read_text()
++                try:
++                    if control_pytest[0] != "PASS":
++                        m.status, m.detail = pytest_verdict(control_pytest, ("UNKNOWN", [], ""))
++                        return
++                    path.write_text(text[:m.start] + m.edit[1] + text[m.edit[0]:])
++                    paths, problem = executable_paths(s, choices, env, args.build_timeout)
++                    if problem:
++                        m.status, m.detail = "UNKNOWN", problem
++                        return
++                    m.pytest_executables = {name: hashlib.sha256(p.read_bytes()).hexdigest()
++                                            for name, p in paths.items()}
++                    m.status, m.detail = pytest_verdict(control_pytest, pytest_result(
++                        root, paths, choices, args.pytest, env, args.build_timeout, s.lean.parent / "pytest-mutant"))
++                finally:
++                    path.write_text(text)
++                    second.put(s)
++                    allowed(m)
++            with ThreadPoolExecutor(max_workers=jobs) as executor:
++                list(executor.map(kill, survivors))
++            phases["pytest_seconds"] = round(time.monotonic() - pytest_started)
++        else:
++            for m in survivors if args.pytest else ():
++                allowed(m)
+     for m in not_run:
+         print(f"NOT RUN lean/{m.file}:{m.line} {m.definition} {m.operator}: {show(m.before)} -> {show(m.after)}")
+-    counts = {s: sum(m.status == s for m in found) for s in ("KILLED", "SURVIVOR", "UNKNOWN", "INVALID", "ALLOWED",
++    counts = {s: sum(m.status == s for m in found) for s in ("KILLED", "KILLED-BY-PYTEST", "SURVIVOR", "UNKNOWN", "INVALID", "ALLOWED",
+                                                             "NOT RUN")}
+     seconds = round(time.monotonic() - started)
+     kept = len(run_now) - len(todo)
+@@ -1247,7 +1417,9 @@ def main(argv: list[str] | None = None) -> int:
+     if args.json:
+         args.json.write_text(evidence({
+             "base": digests["base"], "head": git(root, "rev-parse", "HEAD").stdout.strip(),
+-            "jobs": jobs, "max_mutants": args.max_mutants, "deep": args.deep, "tests": args.test, "seconds": seconds,
++            "jobs": jobs, "max_mutants": args.max_mutants, "deep": args.deep, "tests": args.test,
++            "pytest": args.pytest, "executables": {"control": control_executables, "overrides": choices},
++            "seconds": seconds, "phases": phases,
+             "counts": counts, "inputs": digests, **({"rescore": rescore} if rescore else {}),
+             "definitions": [f"lean/{f}: {d}" for f, d in definitions],
+             "mutants": [{k: v for k, v in asdict(m).items() if k not in ("start", "end", "edit")
