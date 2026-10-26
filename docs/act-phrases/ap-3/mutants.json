@@ -2,8 +2,8 @@
  "restored_build_exit": 0,
  "all_failed": true,
  "counts": {
-  "INVALID": 100,
-  "KILLED": 48
+  "INVALID": 28,
+  "KILLED": 36
  },
  "rows": [
   {
@@ -11,18 +11,56 @@
    "kind": "bug",
    "language": "Lean",
    "file": "lean/VE/Acts/Table.lean",
+   "claim": "the plan's seeded bug: T8, must on a split marker's or, has no reading",
    "mutation": {
     "from": "| .must, .any nor sp ps => if nor || sp then [] else [[.whole (.any nor sp ps)]]",
     "to": "| .must, .any nor sp ps => if nor then [] else [ps.map Simple.atom]"
    },
-   "claim": "B1 the table (the plan's seeded bug): T8, must on a split marker's or, has no reading",
-   "test": "lean/VE/Acts/TableExamples.lean (lake build VE.Acts.TableExamples)",
+   "test": "lean/VE/Acts/TableExamples.lean",
    "status": "KILLED",
    "output": [
-    "error: VE/Acts/TableExamples.lean:94:0: Expression",
+    "error: VE/Acts/TableExamples.lean:86:0: Expression",
     "did not evaluate to `true`",
-    "error: VE/Acts/TableExamples.lean:96:0: Expression",
+    "error: VE/Acts/TableExamples.lean:88:0: Expression",
     "did not evaluate to `true`"
+   ]
+  },
+  {
+   "id": "must-or-nor-refused-only",
+   "kind": "bug",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "claim": "must on nor has no reading",
+   "mutation": {
+    "from": "if nor || sp then []",
+    "to": "if sp then []"
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "KILLED",
+   "output": [
+    "error: VE/Acts/TableExamples.lean:89:0: Expression",
+    "did not evaluate to `true`",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "id": "must-and-one-act",
+   "kind": "bug",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "claim": "must distributes over and",
+   "mutation": {
+    "from": "| .must, .all _ _ ps => [ps.map Simple.atom]",
+    "to": "| .must, .all s sp ps => [[.whole (.all s sp ps)]]"
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "KILLED",
+   "output": [
+    "error: VE/Acts/TableExamples.lean:92:0: Expression",
+    "did not evaluate to `true`",
+    "error: Lean exited with code 1",
+    "error: build failed"
    ]
   },
   {
@@ -30,283 +68,150 @@
    "kind": "bug",
    "language": "Lean",
    "file": "lean/VE/Acts/Table.lean",
+   "claim": "T9: must not on an unsplit and reads each, or only doing both",
    "mutation": {
-    "from": "| .mustNot, .all s sp ps => if sp then [ps.map Simple.atom] else [ps.map Simple.atom, [.whole (.all s sp ps)]]",
-    "to": "| .mustNot, .all s sp ps => [ps.map Simple.atom]"
+    "from": "if sp then [ps.map Simple.atom] else [ps.map Simple.atom, [.whole (.all s sp ps)]]",
+    "to": "[ps.map Simple.atom]"
    },
-   "claim": "B1 the table: T9, must not on an unsplit and has two readings",
-   "test": "lean/VE/Acts/TableExamples.lean (lake build VE.Acts.TableExamples)",
+   "test": "lean/VE/Acts/TableExamples.lean",
    "status": "KILLED",
    "output": [
-    "error: VE/Acts/TableExamples.lean:103:0: Expression",
+    "error: VE/Acts/TableExamples.lean:95:0: Expression",
+    "did not evaluate to `true`",
+    "error: VE/Acts/TableExamples.lean:96:0: Expression",
+    "did not evaluate to `true`"
+   ]
+  },
+  {
+   "id": "must-not-or-one-act",
+   "kind": "bug",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "claim": "T1, T3: prohibition distributes over or and nor",
+   "mutation": {
+    "from": "| .mustNot, .any _ _ ps => [ps.map Simple.atom]",
+    "to": "| .mustNot, .any n s ps => [[.whole (.any n s ps)]]"
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "KILLED",
+   "output": [
+    "error: VE/Acts/TableExamples.lean:70:0: Expression",
+    "did not evaluate to `true`",
+    "error: VE/Acts/TableExamples.lean:75:0: Expression",
+    "did not evaluate to `true`"
+   ]
+  },
+  {
+   "id": "need-not-reads",
+   "kind": "bug",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "claim": "T10: need not on a join has no reading",
+   "mutation": {
+    "from": "| .needNot, _ => []",
+    "to": "| .needNot, A => freeTable A"
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "KILLED",
+   "output": [
+    "error: VE/Acts/TableExamples.lean:102:0: Expression",
+    "did not evaluate to `true`",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "id": "free-own-to-together",
+   "kind": "bug",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "claim": "T6: may with own to splits",
+   "mutation": {
+    "from": "| .all false _ ps => [ps.map Simple.atom]",
+    "to": "| .all false sp ps => [ps.map Simple.atom, [.whole (.all false sp ps)]]"
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "KILLED",
+   "output": [
+    "error: VE/Acts/TableExamples.lean:82:0: Expression",
     "did not evaluate to `true`",
     "error: VE/Acts/TableExamples.lean:104:0: Expression",
     "did not evaluate to `true`"
    ]
   },
   {
-   "id": "prohibition-is-need-not",
+   "id": "free-split-and-together",
    "kind": "bug",
    "language": "Lean",
    "file": "lean/VE/Acts/Table.lean",
+   "claim": "may on a split marker's and: each",
    "mutation": {
-    "from": "| .permission, false => some .mustNot",
-    "to": "| .permission, false => some .needNot"
+    "from": "| .all true true ps => [ps.map Simple.atom]",
+    "to": "| .all true true ps => [ps.map Simple.atom, [.whole (.all true true ps)]]"
    },
-   "claim": "B2 ops: a permission with sign false is must not (opOf guards)",
-   "test": "lean/VE/Acts/TableExamples.lean (lake build VE.Acts.TableExamples)",
+   "test": "lean/VE/Acts/TableExamples.lean",
    "status": "KILLED",
    "output": [
-    "error: VE/Acts/TableExamples.lean:71:0: Expression",
+    "error: VE/Acts/TableExamples.lean:104:0: Expression",
     "did not evaluate to `true`",
     "error: Lean exited with code 1",
     "error: build failed"
    ]
   },
   {
-   "id": "part-act-always-to",
-   "kind": "bug",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "mutation": {
-    "from": "def partAct (fx : List String) (role : VE.Norms.Role) (a : Atom) : String := Atom.text fx (some (role == .plain)) a",
-    "to": "def partAct (fx : List String) (role : VE.Norms.Role) (a : Atom) : String := Atom.text fx (some true) a"
-   },
-   "claim": "B3 part rendering: a permission's part has no infinitive to (G6's parts)",
-   "test": "lean/VE/Acts/TableExamples.lean (lake build VE.Acts.TableExamples)",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:128:0: Expression",
-    "did not evaluate to `true`",
-    "error: VE/Acts/TableExamples.lean:131:0: Expression",
-    "did not evaluate to `true`"
-   ]
-  },
-  {
-   "id": "paraphrase-no-gloss",
+   "id": "free-shared-split-only",
    "kind": "bug",
    "language": "Lean",
    "file": "lean/VE/Acts/Table.lean",
+   "claim": "may with a shared to: each, or both together",
    "mutation": {
-    "from": "| [.whole A] => sentence fx op f (.whole A) ++ \", as one act done in any one of these ways (not each way on its own).\"",
-    "to": "| [.whole A] => sentence fx op f (.whole A) ++ \".\""
+    "from": "| .all true false ps => [ps.map Simple.atom, [.whole (.all true false ps)]]",
+    "to": "| .all true false ps => [ps.map Simple.atom]"
    },
-   "claim": "B4 paraphrases: a whole join by or carries its gloss (E9's D-23 text)",
-   "test": "lean/VE/Acts/TableExamples.lean (lake build VE.Acts.TableExamples)",
+   "test": "lean/VE/Acts/TableExamples.lean",
    "status": "KILLED",
    "output": [
-    "error: VE/Acts/TableExamples.lean:165:0: Expression",
+    "error: VE/Acts/TableExamples.lean:104:0: Expression",
     "did not evaluate to `true`",
-    "error: VE/Acts/TableExamples.lean:169:0: Expression",
-    "did not evaluate to `true`"
+    "error: Lean exited with code 1",
+    "error: build failed"
    ]
   },
   {
-   "id": "equal-paraphrases-listed",
+   "id": "free-nor-reads",
    "kind": "bug",
    "language": "Lean",
    "file": "lean/VE/Acts/Table.lean",
+   "claim": "T4: nor under may has no reading",
    "mutation": {
-    "from": "| k, t :: ts => if ts.contains t then some (k, k + 1 + ts.idxOf t) else firstEqualPair (k + 1) ts",
-    "to": "| k, t :: ts => firstEqualPair (k + 1) ts"
+    "from": "| .any true _ _ => []",
+    "to": "| .any true _ ps => [ps.map Simple.atom]"
    },
-   "claim": "B4 paraphrases: two readings that read the same are refused (D-32 guards)",
-   "test": "lean/VE/Acts/TableExamples.lean (lake build VE.Acts.TableExamples)",
+   "test": "lean/VE/Acts/TableExamples.lean",
    "status": "KILLED",
    "output": [
-    "error: VE/Acts/TableExamples.lean:178:0: Expression",
+    "error: VE/Acts/TableExamples.lean:77:0: Expression",
     "did not evaluate to `true`",
-    "error: VE/Acts/TableExamples.lean:180:0: Expression",
+    "error: VE/Acts/TableExamples.lean:111:0: Expression",
     "did not evaluate to `true`"
    ]
   },
   {
-   "id": "join-word-nor-as-or",
+   "id": "free-split-or-one-act",
    "kind": "bug",
    "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "claim": "T7: a split marker's or, each",
    "mutation": {
-    "from": "| .nor => \"nor\"",
-    "to": "| .nor => \"or\""
+    "from": "| .any false true ps => [ps.map Simple.atom]",
+    "to": "| .any false true ps => [ps.map Simple.atom, [.whole (.any false true ps)]]"
    },
-   "claim": "joinWord: a nor list renders nor",
-   "test": "lean/VE/Acts/TableExamples.lean (lake build VE.Acts.TableExamples)",
+   "test": "lean/VE/Acts/TableExamples.lean",
    "status": "KILLED",
    "output": [
-    "error: VE/Acts/TableExamples.lean:148:0: Expression",
+    "error: VE/Acts/TableExamples.lean:84:0: Expression",
     "did not evaluate to `true`",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ]
-  },
-  {
-   "id": "filler-one-dropped",
-   "kind": "bug",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "mutation": {
-    "from": "| .one p => p.toks",
-    "to": "| .one _ => []"
-   },
-   "claim": "Filler.toks: a one-part filler renders",
-   "test": "lean/VE/Acts/TableExamples.lean (lake build VE.Acts.TableExamples)",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:128:0: Expression",
-    "did not evaluate to `true`",
-    "error: VE/Acts/TableExamples.lean:133:0: Expression",
-    "did not evaluate to `true`"
-   ]
-  },
-  {
-   "id": "slot-number-shifted",
-   "kind": "bug",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "mutation": {
-    "from": "| .slot i => \"{\" ++ toString i ++ \"}\"",
-    "to": "| .slot i => \"{\" ++ toString (i + 1) ++ \"}\""
-   },
-   "claim": "tokStr: a slot renders as itself",
-   "test": "lean/VE/Acts/TableExamples.lean (lake build VE.Acts.TableExamples)",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:128:0: Expression",
-    "did not evaluate to `true`",
-    "error: VE/Acts/TableExamples.lean:131:0: Expression",
-    "did not evaluate to `true`"
-   ]
-  },
-  {
-   "id": "fixed-not-folded",
-   "kind": "bug",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "mutation": {
-    "from": "| .fixed i => Lexical.normal (fx.getD i \"\")",
-    "to": "| .fixed i => fx.getD i \"\""
-   },
-   "claim": "tokStr: a fixed phrase renders canonical (the curly apostrophe of A19 read as ')",
-   "test": "lean/VE/Acts/TableExamples.lean (lake build VE.Acts.TableExamples)",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:139:0: Expression",
-    "did not evaluate to `true`",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ]
-  },
-  {
-   "id": "with-to-ignored",
-   "kind": "bug",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "mutation": {
-    "from": "def Atom.withTo (inf : Option Bool) (a : Atom) : Atom := { a with toWord := inf.getD a.toWord }",
-    "to": "def Atom.withTo (inf : Option Bool) (a : Atom) : Atom := a"
-   },
-   "claim": "Atom.withTo: the modal's form sets to",
-   "test": "lean/VE/Acts/TableExamples.lean (lake build VE.Acts.TableExamples)",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:134:0: Expression",
-    "did not evaluate to `true`",
-    "error: VE/Acts/TableExamples.lean:165:0: Expression",
-    "did not evaluate to `true`"
-   ]
-  },
-  {
-   "id": "with-to-default-true",
-   "kind": "bug",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "mutation": {
-    "from": "def Atom.withTo (inf : Option Bool) (a : Atom) : Atom := { a with toWord := inf.getD a.toWord }",
-    "to": "def Atom.withTo (inf : Option Bool) (a : Atom) : Atom := { a with toWord := inf.getD true }"
-   },
-   "claim": "Atom.withTo: with no form, to as read (Atom.text … none)",
-   "test": "lean/VE/Acts/TableExamples.lean (lake build VE.Acts.TableExamples)",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:137:0: Expression",
-    "did not evaluate to `true`",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ]
-  },
-  {
-   "id": "text-without-fixed",
-   "kind": "bug",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "mutation": {
-    "from": "def Atom.text (fx : List String) (inf : Option Bool) (a : Atom) : String := tokText fx (a.withTo inf).normal",
-    "to": "def Atom.text (fx : List String) (inf : Option Bool) (a : Atom) : String := tokText [] (a.withTo inf).normal"
-   },
-   "claim": "Atom.text: fixed phrases render as declared",
-   "test": "lean/VE/Acts/TableExamples.lean (lake build VE.Acts.TableExamples)",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:128:0: Expression",
-    "did not evaluate to `true`",
-    "error: VE/Acts/TableExamples.lean:131:0: Expression",
-    "did not evaluate to `true`"
-   ]
-  },
-  {
-   "id": "to-word-misspelt",
-   "kind": "bug",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "mutation": {
-    "from": "(if a.toWord then [Tok.word \"to\"] else [])",
-    "to": "(if a.toWord then [Tok.word \"so\"] else [])"
-   },
-   "claim": "Atom.normal: the infinitive to",
-   "test": "lean/VE/Acts/TableExamples.lean (lake build VE.Acts.TableExamples)",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:133:0: Expression",
-    "did not evaluate to `true`",
-    "error: VE/Acts/TableExamples.lean:135:0: Expression",
-    "did not evaluate to `true`"
-   ]
-  },
-  {
-   "id": "be-word-dropped",
-   "kind": "bug",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "mutation": {
-    "from": "(if a.beWord then [Tok.word \"be\"] else [])",
-    "to": "([] : List Tok)"
-   },
-   "claim": "Atom.normal: be",
-   "test": "lean/VE/Acts/TableExamples.lean (lake build VE.Acts.TableExamples)",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:128:0: Expression",
-    "did not evaluate to `true`",
-    "error: VE/Acts/TableExamples.lean:131:0: Expression",
-    "did not evaluate to `true`"
-   ]
-  },
-  {
-   "id": "text-separator",
-   "kind": "bug",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "mutation": {
-    "from": "| _ => if acc.isEmpty then tokStr fx t else acc ++ \" \" ++ tokStr fx t) \"\"",
-    "to": "| _ => if acc.isEmpty then tokStr fx t else acc ++ \"  \" ++ tokStr fx t) \"\""
-   },
-   "claim": "tokText: one space between tokens",
-   "test": "lean/VE/Acts/TableExamples.lean (lake build VE.Acts.TableExamples)",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:128:0: Expression",
-    "did not evaluate to `true`",
-    "error: VE/Acts/TableExamples.lean:131:0: Expression",
+    "error: VE/Acts/TableExamples.lean:109:0: Expression",
     "did not evaluate to `true`"
    ]
   },
@@ -315,2673 +220,1027 @@
    "kind": "bug",
    "language": "Lean",
    "file": "lean/VE/Acts/Table.lean",
+   "claim": "T5: may with or reads each way, or one act",
    "mutation": {
     "from": "| .any false false ps => [ps.map Simple.atom, [.whole (.any false false ps)]]",
     "to": "| .any false false ps => [[.whole (.any false false ps)]]"
    },
-   "claim": "freeTable: may with or reads each way, or one act",
-   "test": "lean/VE/Acts/TableExamples.lean (lake build VE.Acts.TableExamples)",
+   "test": "lean/VE/Acts/TableExamples.lean",
    "status": "KILLED",
    "output": [
-    "error: VE/Acts/TableExamples.lean:87:0: Expression",
+    "error: VE/Acts/TableExamples.lean:79:0: Expression",
     "did not evaluate to `true`",
-    "error: VE/Acts/TableExamples.lean:88:0: Expression",
+    "error: VE/Acts/TableExamples.lean:80:0: Expression",
     "did not evaluate to `true`"
    ]
   },
   {
-   "id": "sweep-op-opOf-0-needNot",
-   "kind": "sweep",
+   "id": "free-one-dropped",
+   "kind": "bug",
    "language": "Lean",
    "file": "lean/VE/Acts/Table.lean",
-   "definition": "opOf",
+   "claim": "freeTable on a simple act (its own guard)",
    "mutation": {
-    "at": 1059,
-    "from": ".must",
-    "to": ".needNot"
+    "from": "| .one a => [[.atom a]]\n  | .all false",
+    "to": "| .one _ => []\n  | .all false"
    },
    "test": "lean/VE/Acts/TableExamples.lean",
    "status": "KILLED",
    "output": [
-    "error: VE/Acts/TableExamples.lean:68:0: Expression",
+    "error: VE/Acts/TableExamples.lean:114:0: Expression",
     "did not evaluate to `true`",
     "error: Lean exited with code 1",
     "error: build failed"
-   ],
-   "reason": null
+   ]
   },
   {
-   "id": "sweep-op-opOf-0-may",
-   "kind": "sweep",
+   "id": "table-one-dropped",
+   "kind": "bug",
    "language": "Lean",
    "file": "lean/VE/Acts/Table.lean",
-   "definition": "opOf",
+   "claim": "T2: a simple act is its one reading",
    "mutation": {
-    "at": 1059,
-    "from": ".must",
-    "to": ".may"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:68:0: Expression",
-    "did not evaluate to `true`",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-op-opOf-0-mustNot",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "opOf",
-   "mutation": {
-    "at": 1059,
-    "from": ".must",
-    "to": ".mustNot"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:68:0: Expression",
-    "did not evaluate to `true`",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-op-opOf-0-right",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "opOf",
-   "mutation": {
-    "at": 1059,
-    "from": ".must",
-    "to": ".right"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:68:0: Expression",
-    "did not evaluate to `true`",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-op-opOf-1-must",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "opOf",
-   "mutation": {
-    "at": 1096,
-    "from": ".needNot",
-    "to": ".must"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:69:0: Expression",
-    "did not evaluate to `true`",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-op-opOf-1-may",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "opOf",
-   "mutation": {
-    "at": 1096,
-    "from": ".needNot",
-    "to": ".may"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:69:0: Expression",
-    "did not evaluate to `true`",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-op-opOf-1-mustNot",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "opOf",
-   "mutation": {
-    "at": 1096,
-    "from": ".needNot",
-    "to": ".mustNot"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:69:0: Expression",
-    "did not evaluate to `true`",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-op-opOf-1-right",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "opOf",
-   "mutation": {
-    "at": 1096,
-    "from": ".needNot",
-    "to": ".right"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:69:0: Expression",
-    "did not evaluate to `true`",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-op-opOf-2-must",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "opOf",
-   "mutation": {
-    "at": 1135,
-    "from": ".may",
-    "to": ".must"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:70:0: Expression",
-    "did not evaluate to `true`",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-op-opOf-2-needNot",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "opOf",
-   "mutation": {
-    "at": 1135,
-    "from": ".may",
-    "to": ".needNot"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:70:0: Expression",
-    "did not evaluate to `true`",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-op-opOf-2-mustNot",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "opOf",
-   "mutation": {
-    "at": 1135,
-    "from": ".may",
-    "to": ".mustNot"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:70:0: Expression",
-    "did not evaluate to `true`",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-op-opOf-2-right",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "opOf",
-   "mutation": {
-    "at": 1135,
-    "from": ".may",
-    "to": ".right"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:70:0: Expression",
-    "did not evaluate to `true`",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-op-opOf-3-must",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "opOf",
-   "mutation": {
-    "at": 1171,
-    "from": ".mustNot",
-    "to": ".must"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:71:0: Expression",
-    "did not evaluate to `true`",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-op-opOf-3-needNot",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "opOf",
-   "mutation": {
-    "at": 1171,
-    "from": ".mustNot",
-    "to": ".needNot"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:71:0: Expression",
-    "did not evaluate to `true`",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-op-opOf-3-may",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "opOf",
-   "mutation": {
-    "at": 1171,
-    "from": ".mustNot",
-    "to": ".may"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:71:0: Expression",
-    "did not evaluate to `true`",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-op-opOf-3-right",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "opOf",
-   "mutation": {
-    "at": 1171,
-    "from": ".mustNot",
-    "to": ".right"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:71:0: Expression",
-    "did not evaluate to `true`",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-op-opOf-4-must",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "opOf",
-   "mutation": {
-    "at": 1205,
-    "from": ".right",
-    "to": ".must"
+    "from": "| _, .one a => [[.atom a]]",
+    "to": "| _, .one _ => []"
    },
    "test": "lean/VE/Acts/TableExamples.lean",
    "status": "KILLED",
    "output": [
     "error: VE/Acts/TableExamples.lean:72:0: Expression",
     "did not evaluate to `true`",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
+    "error: VE/Acts/TableExamples.lean:73:0: Expression",
+    "did not evaluate to `true`"
+   ]
   },
   {
-   "id": "sweep-op-opOf-4-needNot",
-   "kind": "sweep",
+   "id": "prohibition-is-need-not",
+   "kind": "bug",
    "language": "Lean",
    "file": "lean/VE/Acts/Table.lean",
-   "definition": "opOf",
+   "claim": "ops: a permission with sign false is must not",
    "mutation": {
-    "at": 1205,
-    "from": ".right",
-    "to": ".needNot"
+    "from": "| .permission, false => some .mustNot",
+    "to": "| .permission, false => some .needNot"
    },
    "test": "lean/VE/Acts/TableExamples.lean",
    "status": "KILLED",
    "output": [
-    "error: VE/Acts/TableExamples.lean:72:0: Expression",
+    "error: VE/Acts/TableExamples.lean:63:0: Expression",
     "did not evaluate to `true`",
     "error: Lean exited with code 1",
     "error: build failed"
-   ],
-   "reason": null
+   ]
   },
   {
-   "id": "sweep-op-opOf-4-may",
-   "kind": "sweep",
+   "id": "plain-false-has-op",
+   "kind": "bug",
    "language": "Lean",
    "file": "lean/VE/Acts/Table.lean",
-   "definition": "opOf",
+   "claim": "ops: plain, sign false, has none",
    "mutation": {
-    "at": 1205,
-    "from": ".right",
-    "to": ".may"
+    "from": "| .plain, false => none",
+    "to": "| .plain, false => some .right"
    },
    "test": "lean/VE/Acts/TableExamples.lean",
    "status": "KILLED",
    "output": [
-    "error: VE/Acts/TableExamples.lean:72:0: Expression",
+    "error: VE/Acts/TableExamples.lean:65:0: Expression",
     "did not evaluate to `true`",
     "error: Lean exited with code 1",
     "error: build failed"
-   ],
-   "reason": null
+   ]
   },
   {
-   "id": "sweep-op-opOf-4-mustNot",
+   "id": "sweep-opOf-0-needNot",
    "kind": "sweep",
    "language": "Lean",
    "file": "lean/VE/Acts/Table.lean",
-   "definition": "opOf",
+   "definition": "VE.Acts.opOf",
    "mutation": {
-    "at": 1205,
-    "from": ".right",
-    "to": ".mustNot"
+    "from": ".must",
+    "to": ".needNot",
+    "occurrence": 0
    },
    "test": "lean/VE/Acts/TableExamples.lean",
    "status": "KILLED",
    "output": [
-    "error: VE/Acts/TableExamples.lean:72:0: Expression",
+    "error: VE/Acts/TableExamples.lean:60:0: Expression",
     "did not evaluate to `true`",
     "error: Lean exited with code 1",
     "error: build failed"
-   ],
-   "reason": null
+   ]
   },
   {
-   "id": "sweep-op-table-0-must",
+   "id": "sweep-opOf-0-may",
    "kind": "sweep",
    "language": "Lean",
    "file": "lean/VE/Acts/Table.lean",
-   "definition": "table",
+   "definition": "VE.Acts.opOf",
    "mutation": {
-    "at": 1795,
+    "from": ".must",
+    "to": ".may",
+    "occurrence": 0
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "KILLED",
+   "output": [
+    "error: VE/Acts/TableExamples.lean:60:0: Expression",
+    "did not evaluate to `true`",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "id": "sweep-opOf-0-mustNot",
+   "kind": "sweep",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.opOf",
+   "mutation": {
+    "from": ".must",
+    "to": ".mustNot",
+    "occurrence": 0
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "KILLED",
+   "output": [
+    "error: VE/Acts/TableExamples.lean:60:0: Expression",
+    "did not evaluate to `true`",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "id": "sweep-opOf-0-right",
+   "kind": "sweep",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.opOf",
+   "mutation": {
+    "from": ".must",
+    "to": ".right",
+    "occurrence": 0
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "KILLED",
+   "output": [
+    "error: VE/Acts/TableExamples.lean:60:0: Expression",
+    "did not evaluate to `true`",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "id": "sweep-opOf-1-must",
+   "kind": "sweep",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.opOf",
+   "mutation": {
     "from": ".needNot",
-    "to": ".must"
+    "to": ".must",
+    "occurrence": 1
    },
    "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
+   "status": "KILLED",
    "output": [
-    "error: VE/Acts/Table.lean:42:2: Missing cases:",
+    "error: VE/Acts/TableExamples.lean:61:0: Expression",
+    "did not evaluate to `true`",
     "error: Lean exited with code 1",
     "error: build failed"
-   ],
-   "reason": null
+   ]
   },
   {
-   "id": "sweep-op-table-0-may",
+   "id": "sweep-opOf-1-may",
    "kind": "sweep",
    "language": "Lean",
    "file": "lean/VE/Acts/Table.lean",
-   "definition": "table",
+   "definition": "VE.Acts.opOf",
    "mutation": {
-    "at": 1795,
     "from": ".needNot",
-    "to": ".may"
+    "to": ".may",
+    "occurrence": 1
    },
    "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
+   "status": "KILLED",
    "output": [
-    "error: VE/Acts/Table.lean:42:2: Missing cases:",
+    "error: VE/Acts/TableExamples.lean:61:0: Expression",
+    "did not evaluate to `true`",
     "error: Lean exited with code 1",
     "error: build failed"
-   ],
-   "reason": null
+   ]
   },
   {
-   "id": "sweep-op-table-0-mustNot",
+   "id": "sweep-opOf-1-mustNot",
    "kind": "sweep",
    "language": "Lean",
    "file": "lean/VE/Acts/Table.lean",
-   "definition": "table",
+   "definition": "VE.Acts.opOf",
    "mutation": {
-    "at": 1795,
     "from": ".needNot",
-    "to": ".mustNot"
+    "to": ".mustNot",
+    "occurrence": 1
    },
    "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
+   "status": "KILLED",
    "output": [
-    "error: VE/Acts/Table.lean:42:2: Missing cases:",
+    "error: VE/Acts/TableExamples.lean:61:0: Expression",
+    "did not evaluate to `true`",
     "error: Lean exited with code 1",
     "error: build failed"
-   ],
-   "reason": null
+   ]
   },
   {
-   "id": "sweep-op-table-0-right",
+   "id": "sweep-opOf-1-right",
    "kind": "sweep",
    "language": "Lean",
    "file": "lean/VE/Acts/Table.lean",
-   "definition": "table",
+   "definition": "VE.Acts.opOf",
    "mutation": {
-    "at": 1795,
     "from": ".needNot",
-    "to": ".right"
+    "to": ".right",
+    "occurrence": 1
    },
    "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
+   "status": "KILLED",
    "output": [
-    "error: VE/Acts/Table.lean:42:2: Missing cases:",
+    "error: VE/Acts/TableExamples.lean:61:0: Expression",
+    "did not evaluate to `true`",
     "error: Lean exited with code 1",
     "error: build failed"
-   ],
-   "reason": null
+   ]
   },
   {
-   "id": "sweep-op-table-1-needNot",
+   "id": "sweep-opOf-2-must",
    "kind": "sweep",
    "language": "Lean",
    "file": "lean/VE/Acts/Table.lean",
-   "definition": "table",
+   "definition": "VE.Acts.opOf",
    "mutation": {
-    "at": 1817,
-    "from": ".must",
-    "to": ".needNot"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Table.lean:42:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-op-table-1-may",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "table",
-   "mutation": {
-    "at": 1817,
-    "from": ".must",
-    "to": ".may"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Table.lean:42:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-op-table-1-mustNot",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "table",
-   "mutation": {
-    "at": 1817,
-    "from": ".must",
-    "to": ".mustNot"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Table.lean:42:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-op-table-1-right",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "table",
-   "mutation": {
-    "at": 1817,
-    "from": ".must",
-    "to": ".right"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Table.lean:42:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-op-table-2-needNot",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "table",
-   "mutation": {
-    "at": 1864,
-    "from": ".must",
-    "to": ".needNot"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Table.lean:42:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-op-table-2-may",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "table",
-   "mutation": {
-    "at": 1864,
-    "from": ".must",
-    "to": ".may"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Table.lean:42:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-op-table-2-mustNot",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "table",
-   "mutation": {
-    "at": 1864,
-    "from": ".must",
-    "to": ".mustNot"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Table.lean:42:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-op-table-2-right",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "table",
-   "mutation": {
-    "at": 1864,
-    "from": ".must",
-    "to": ".right"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Table.lean:42:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-op-table-3-must",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "table",
-   "mutation": {
-    "at": 1947,
-    "from": ".mustNot",
-    "to": ".must"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Table.lean:42:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-op-table-3-needNot",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "table",
-   "mutation": {
-    "at": 1947,
-    "from": ".mustNot",
-    "to": ".needNot"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Table.lean:42:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-op-table-3-may",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "table",
-   "mutation": {
-    "at": 1947,
-    "from": ".mustNot",
-    "to": ".may"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Table.lean:42:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-op-table-3-right",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "table",
-   "mutation": {
-    "at": 1947,
-    "from": ".mustNot",
-    "to": ".right"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Table.lean:42:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-op-table-4-must",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "table",
-   "mutation": {
-    "at": 1997,
-    "from": ".mustNot",
-    "to": ".must"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Table.lean:42:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-op-table-4-needNot",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "table",
-   "mutation": {
-    "at": 1997,
-    "from": ".mustNot",
-    "to": ".needNot"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Table.lean:42:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-op-table-4-may",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "table",
-   "mutation": {
-    "at": 1997,
-    "from": ".mustNot",
-    "to": ".may"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Table.lean:42:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-op-table-4-right",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "table",
-   "mutation": {
-    "at": 1997,
-    "from": ".mustNot",
-    "to": ".right"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Table.lean:42:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-op-table-5-must",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "table",
-   "mutation": {
-    "at": 2110,
     "from": ".may",
-    "to": ".must"
+    "to": ".must",
+    "occurrence": 2
    },
    "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
+   "status": "KILLED",
    "output": [
-    "error: VE/Acts/Table.lean:42:2: Missing cases:",
+    "error: VE/Acts/TableExamples.lean:62:0: Expression",
+    "did not evaluate to `true`",
     "error: Lean exited with code 1",
     "error: build failed"
-   ],
-   "reason": null
+   ]
   },
   {
-   "id": "sweep-op-table-5-needNot",
+   "id": "sweep-opOf-2-needNot",
    "kind": "sweep",
    "language": "Lean",
    "file": "lean/VE/Acts/Table.lean",
-   "definition": "table",
+   "definition": "VE.Acts.opOf",
    "mutation": {
-    "at": 2110,
     "from": ".may",
-    "to": ".needNot"
+    "to": ".needNot",
+    "occurrence": 2
    },
    "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
+   "status": "KILLED",
    "output": [
-    "error: VE/Acts/Table.lean:42:2: Missing cases:",
+    "error: VE/Acts/TableExamples.lean:62:0: Expression",
+    "did not evaluate to `true`",
     "error: Lean exited with code 1",
     "error: build failed"
-   ],
-   "reason": null
+   ]
   },
   {
-   "id": "sweep-op-table-5-mustNot",
+   "id": "sweep-opOf-2-mustNot",
    "kind": "sweep",
    "language": "Lean",
    "file": "lean/VE/Acts/Table.lean",
-   "definition": "table",
+   "definition": "VE.Acts.opOf",
    "mutation": {
-    "at": 2110,
     "from": ".may",
-    "to": ".mustNot"
+    "to": ".mustNot",
+    "occurrence": 2
    },
    "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
+   "status": "KILLED",
    "output": [
-    "error: VE/Acts/Table.lean:42:2: Missing cases:",
+    "error: VE/Acts/TableExamples.lean:62:0: Expression",
+    "did not evaluate to `true`",
     "error: Lean exited with code 1",
     "error: build failed"
-   ],
-   "reason": null
+   ]
   },
   {
-   "id": "sweep-op-table-5-right",
+   "id": "sweep-opOf-2-right",
    "kind": "sweep",
    "language": "Lean",
    "file": "lean/VE/Acts/Table.lean",
-   "definition": "table",
+   "definition": "VE.Acts.opOf",
    "mutation": {
-    "at": 2110,
     "from": ".may",
-    "to": ".right"
+    "to": ".right",
+    "occurrence": 2
    },
    "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
+   "status": "KILLED",
    "output": [
-    "error: VE/Acts/Table.lean:42:2: Missing cases:",
+    "error: VE/Acts/TableExamples.lean:62:0: Expression",
+    "did not evaluate to `true`",
     "error: Lean exited with code 1",
     "error: build failed"
-   ],
-   "reason": null
+   ]
   },
   {
-   "id": "sweep-op-table-6-must",
+   "id": "sweep-opOf-3-must",
    "kind": "sweep",
    "language": "Lean",
    "file": "lean/VE/Acts/Table.lean",
-   "definition": "table",
+   "definition": "VE.Acts.opOf",
    "mutation": {
-    "at": 2137,
+    "from": ".mustNot",
+    "to": ".must",
+    "occurrence": 3
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "KILLED",
+   "output": [
+    "error: VE/Acts/TableExamples.lean:63:0: Expression",
+    "did not evaluate to `true`",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "id": "sweep-opOf-3-needNot",
+   "kind": "sweep",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.opOf",
+   "mutation": {
+    "from": ".mustNot",
+    "to": ".needNot",
+    "occurrence": 3
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "KILLED",
+   "output": [
+    "error: VE/Acts/TableExamples.lean:63:0: Expression",
+    "did not evaluate to `true`",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "id": "sweep-opOf-3-may",
+   "kind": "sweep",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.opOf",
+   "mutation": {
+    "from": ".mustNot",
+    "to": ".may",
+    "occurrence": 3
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "KILLED",
+   "output": [
+    "error: VE/Acts/TableExamples.lean:63:0: Expression",
+    "did not evaluate to `true`",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "id": "sweep-opOf-3-right",
+   "kind": "sweep",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.opOf",
+   "mutation": {
+    "from": ".mustNot",
+    "to": ".right",
+    "occurrence": 3
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "KILLED",
+   "output": [
+    "error: VE/Acts/TableExamples.lean:63:0: Expression",
+    "did not evaluate to `true`",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "id": "sweep-opOf-4-must",
+   "kind": "sweep",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.opOf",
+   "mutation": {
     "from": ".right",
-    "to": ".must"
+    "to": ".must",
+    "occurrence": 4
    },
    "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
+   "status": "KILLED",
    "output": [
-    "error: VE/Acts/Table.lean:42:2: Missing cases:",
+    "error: VE/Acts/TableExamples.lean:64:0: Expression",
+    "did not evaluate to `true`",
     "error: Lean exited with code 1",
     "error: build failed"
-   ],
-   "reason": null
+   ]
   },
   {
-   "id": "sweep-op-table-6-needNot",
+   "id": "sweep-opOf-4-needNot",
    "kind": "sweep",
    "language": "Lean",
    "file": "lean/VE/Acts/Table.lean",
-   "definition": "table",
+   "definition": "VE.Acts.opOf",
    "mutation": {
-    "at": 2137,
     "from": ".right",
-    "to": ".needNot"
+    "to": ".needNot",
+    "occurrence": 4
    },
    "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
+   "status": "KILLED",
    "output": [
-    "error: VE/Acts/Table.lean:42:2: Missing cases:",
+    "error: VE/Acts/TableExamples.lean:64:0: Expression",
+    "did not evaluate to `true`",
     "error: Lean exited with code 1",
     "error: build failed"
-   ],
-   "reason": null
+   ]
   },
   {
-   "id": "sweep-op-table-6-may",
+   "id": "sweep-opOf-4-may",
    "kind": "sweep",
    "language": "Lean",
    "file": "lean/VE/Acts/Table.lean",
-   "definition": "table",
+   "definition": "VE.Acts.opOf",
    "mutation": {
-    "at": 2137,
     "from": ".right",
-    "to": ".may"
+    "to": ".may",
+    "occurrence": 4
    },
    "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
+   "status": "KILLED",
    "output": [
-    "error: VE/Acts/Table.lean:42:2: Missing cases:",
+    "error: VE/Acts/TableExamples.lean:64:0: Expression",
+    "did not evaluate to `true`",
     "error: Lean exited with code 1",
     "error: build failed"
-   ],
-   "reason": null
+   ]
   },
   {
-   "id": "sweep-op-table-6-mustNot",
+   "id": "sweep-opOf-4-mustNot",
    "kind": "sweep",
    "language": "Lean",
    "file": "lean/VE/Acts/Table.lean",
-   "definition": "table",
+   "definition": "VE.Acts.opOf",
    "mutation": {
-    "at": 2137,
     "from": ".right",
-    "to": ".mustNot"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Table.lean:42:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-role-opOf-0-permission",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "opOf",
-   "mutation": {
-    "at": 1033,
-    "from": ".obligation",
-    "to": ".permission"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Table.lean:22:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-role-opOf-0-plain",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "opOf",
-   "mutation": {
-    "at": 1033,
-    "from": ".obligation",
-    "to": ".plain"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Table.lean:22:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-role-opOf-1-permission",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "opOf",
-   "mutation": {
-    "at": 1069,
-    "from": ".obligation",
-    "to": ".permission"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Table.lean:22:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-role-opOf-1-plain",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "opOf",
-   "mutation": {
-    "at": 1069,
-    "from": ".obligation",
-    "to": ".plain"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Table.lean:22:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-role-opOf-2-obligation",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "opOf",
-   "mutation": {
-    "at": 1109,
-    "from": ".permission",
-    "to": ".obligation"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Table.lean:22:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-role-opOf-2-plain",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "opOf",
-   "mutation": {
-    "at": 1109,
-    "from": ".permission",
-    "to": ".plain"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Table.lean:22:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-role-opOf-3-obligation",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "opOf",
-   "mutation": {
-    "at": 1144,
-    "from": ".permission",
-    "to": ".obligation"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Table.lean:22:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-role-opOf-3-plain",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "opOf",
-   "mutation": {
-    "at": 1144,
-    "from": ".permission",
-    "to": ".plain"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Table.lean:22:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-role-opOf-4-obligation",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "opOf",
-   "mutation": {
-    "at": 1184,
-    "from": ".plain",
-    "to": ".obligation"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Table.lean:22:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-role-opOf-4-permission",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "opOf",
-   "mutation": {
-    "at": 1184,
-    "from": ".plain",
-    "to": ".permission"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Table.lean:22:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-role-opOf-5-obligation",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "opOf",
-   "mutation": {
-    "at": 1216,
-    "from": ".plain",
-    "to": ".obligation"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Table.lean:22:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-role-opOf-5-permission",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Table.lean",
-   "definition": "opOf",
-   "mutation": {
-    "at": 1216,
-    "from": ".plain",
-    "to": ".permission"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Table.lean:22:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-role-partAct-0-obligation",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "partAct",
-   "mutation": {
-    "at": 2611,
-    "from": ".plain",
-    "to": ".obligation"
+    "to": ".mustNot",
+    "occurrence": 4
    },
    "test": "lean/VE/Acts/TableExamples.lean",
    "status": "KILLED",
    "output": [
-    "error: VE/Acts/TableExamples.lean:131:0: Expression",
-    "did not evaluate to `true`",
-    "error: VE/Acts/TableExamples.lean:133:0: Expression",
-    "did not evaluate to `true`"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-role-partAct-0-permission",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "partAct",
-   "mutation": {
-    "at": 2611,
-    "from": ".plain",
-    "to": ".permission"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:128:0: Expression",
-    "did not evaluate to `true`",
-    "error: VE/Acts/TableExamples.lean:133:0: Expression",
-    "did not evaluate to `true`"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Part.toks-0-fixed",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Part.toks",
-   "mutation": {
-    "at": 777,
-    "from": ".slot",
-    "to": ".fixed"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:22:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Part.toks-0-word",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Part.toks",
-   "mutation": {
-    "at": 777,
-    "from": ".slot",
-    "to": ".word"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:22:4: Unknown constant `VE.Acts.Part.word`",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Part.toks-0-comma",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Part.toks",
-   "mutation": {
-    "at": 777,
-    "from": ".slot",
-    "to": ".comma"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:22:4: Unknown constant `VE.Acts.Part.comma`",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Part.toks-1-fixed",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Part.toks",
-   "mutation": {
-    "at": 789,
-    "from": ".slot",
-    "to": ".fixed"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:135:0: Expression",
-    "did not evaluate to `true`",
-    "error: VE/Acts/TableExamples.lean:136:0: Expression",
-    "did not evaluate to `true`"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Part.toks-1-word",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Part.toks",
-   "mutation": {
-    "at": 789,
-    "from": ".slot",
-    "to": ".word"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:22:22: Application type mismatch: The argument",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Part.toks-1-comma",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Part.toks",
-   "mutation": {
-    "at": 789,
-    "from": ".slot",
-    "to": ".comma"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:22:16: Function expected at",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Part.toks-2-slot",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Part.toks",
-   "mutation": {
-    "at": 802,
-    "from": ".fixed",
-    "to": ".slot"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:22:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Part.toks-2-word",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Part.toks",
-   "mutation": {
-    "at": 802,
-    "from": ".fixed",
-    "to": ".word"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:23:4: Unknown constant `VE.Acts.Part.word`",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Part.toks-2-comma",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Part.toks",
-   "mutation": {
-    "at": 802,
-    "from": ".fixed",
-    "to": ".comma"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:23:4: Unknown constant `VE.Acts.Part.comma`",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Part.toks-3-slot",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Part.toks",
-   "mutation": {
-    "at": 815,
-    "from": ".fixed",
-    "to": ".slot"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:128:0: Expression",
-    "did not evaluate to `true`",
-    "error: VE/Acts/TableExamples.lean:131:0: Expression",
-    "did not evaluate to `true`"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Part.toks-3-word",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Part.toks",
-   "mutation": {
-    "at": 815,
-    "from": ".fixed",
-    "to": ".word"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:23:23: Application type mismatch: The argument",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Part.toks-3-comma",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Part.toks",
-   "mutation": {
-    "at": 815,
-    "from": ".fixed",
-    "to": ".comma"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:23:17: Function expected at",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Part.toks-4-Tok.slot",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Part.toks",
-   "mutation": {
-    "at": 849,
-    "from": "Tok.word",
-    "to": "Tok.slot"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:24:17: Application type mismatch: The argument",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Part.toks-4-Tok.fixed",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Part.toks",
-   "mutation": {
-    "at": 849,
-    "from": "Tok.word",
-    "to": "Tok.fixed"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:24:17: Application type mismatch: The argument",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Part.toks-4-Tok.comma",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Part.toks",
-   "mutation": {
-    "at": 849,
-    "from": "Tok.word",
-    "to": "Tok.comma"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:24:24: Application type mismatch: The argument",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-listToks-0-Tok.slot",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "listToks",
-   "mutation": {
-    "at": 999,
-    "from": "Tok.word",
-    "to": "Tok.slot"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:30:34: Application type mismatch: The argument",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-listToks-0-Tok.fixed",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "listToks",
-   "mutation": {
-    "at": 999,
-    "from": "Tok.word",
-    "to": "Tok.fixed"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:30:35: Application type mismatch: The argument",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-listToks-0-Tok.comma",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "listToks",
-   "mutation": {
-    "at": 999,
-    "from": "Tok.word",
-    "to": "Tok.comma"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:30:25: Function expected at",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-listToks-1-Tok.slot",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "listToks",
-   "mutation": {
-    "at": 1060,
-    "from": "Tok.comma",
-    "to": "Tok.slot"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:31:17: failed to synthesize",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-listToks-1-Tok.fixed",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "listToks",
-   "mutation": {
-    "at": 1060,
-    "from": "Tok.comma",
-    "to": "Tok.fixed"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:31:17: failed to synthesize",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-listToks-1-Tok.word",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "listToks",
-   "mutation": {
-    "at": 1060,
-    "from": "Tok.comma",
-    "to": "Tok.word"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:31:17: failed to synthesize",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Atom.normal-0-Tok.fixed",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Atom.normal",
-   "mutation": {
-    "at": 1227,
-    "from": "Tok.slot",
-    "to": "Tok.fixed"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:128:0: Expression",
-    "did not evaluate to `true`",
-    "error: VE/Acts/TableExamples.lean:131:0: Expression",
-    "did not evaluate to `true`"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Atom.normal-0-Tok.word",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Atom.normal",
-   "mutation": {
-    "at": 1227,
-    "from": "Tok.slot",
-    "to": "Tok.word"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:38:12: failed to synthesize",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Atom.normal-0-Tok.comma",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Atom.normal",
-   "mutation": {
-    "at": 1227,
-    "from": "Tok.slot",
-    "to": "Tok.comma"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:38:3: Function expected at",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Atom.normal-1-Tok.slot",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Atom.normal",
-   "mutation": {
-    "at": 1261,
-    "from": "Tok.word",
-    "to": "Tok.slot"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:38:46: Application type mismatch: The argument",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Atom.normal-1-Tok.fixed",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Atom.normal",
-   "mutation": {
-    "at": 1261,
-    "from": "Tok.word",
-    "to": "Tok.fixed"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:38:47: Application type mismatch: The argument",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Atom.normal-1-Tok.comma",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Atom.normal",
-   "mutation": {
-    "at": 1261,
-    "from": "Tok.word",
-    "to": "Tok.comma"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:38:37: Function expected at",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Atom.normal-2-Tok.slot",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Atom.normal",
-   "mutation": {
-    "at": 1307,
-    "from": "Tok.word",
-    "to": "Tok.slot"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:38:92: Application type mismatch: The argument",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Atom.normal-2-Tok.fixed",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Atom.normal",
-   "mutation": {
-    "at": 1307,
-    "from": "Tok.word",
-    "to": "Tok.fixed"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:38:93: Application type mismatch: The argument",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Atom.normal-2-Tok.comma",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Atom.normal",
-   "mutation": {
-    "at": 1307,
-    "from": "Tok.word",
-    "to": "Tok.comma"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:38:83: Function expected at",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Atom.normal-3-Tok.slot",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Atom.normal",
-   "mutation": {
-    "at": 1389,
-    "from": "Tok.word",
-    "to": "Tok.slot"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:39:64: Application type mismatch: The argument",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Atom.normal-3-Tok.fixed",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Atom.normal",
-   "mutation": {
-    "at": 1389,
-    "from": "Tok.word",
-    "to": "Tok.fixed"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:39:65: Application type mismatch: The argument",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Atom.normal-3-Tok.comma",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Atom.normal",
-   "mutation": {
-    "at": 1389,
-    "from": "Tok.word",
-    "to": "Tok.comma"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:39:55: Function expected at",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Atom.normal-4-Tok.slot",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Atom.normal",
-   "mutation": {
-    "at": 1426,
-    "from": "Tok.word",
-    "to": "Tok.slot"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:39:81: Application type mismatch: The argument",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Atom.normal-4-Tok.fixed",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Atom.normal",
-   "mutation": {
-    "at": 1426,
-    "from": "Tok.word",
-    "to": "Tok.fixed"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:39:81: Application type mismatch: The argument",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Atom.normal-4-Tok.comma",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Atom.normal",
-   "mutation": {
-    "at": 1426,
-    "from": "Tok.word",
-    "to": "Tok.comma"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:39:92: Application type mismatch: The argument",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Atom.normal-5-Tok.slot",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Atom.normal",
-   "mutation": {
-    "at": 1583,
-    "from": "Tok.word",
-    "to": "Tok.slot"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:41:57: Application type mismatch: The argument",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Atom.normal-5-Tok.fixed",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Atom.normal",
-   "mutation": {
-    "at": 1583,
-    "from": "Tok.word",
-    "to": "Tok.fixed"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:41:57: Application type mismatch: The argument",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Atom.normal-5-Tok.comma",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Atom.normal",
-   "mutation": {
-    "at": 1583,
-    "from": "Tok.word",
-    "to": "Tok.comma"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:41:75: Application type mismatch: The argument",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Atom.normal-6-Tok.slot",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Atom.normal",
-   "mutation": {
-    "at": 1681,
-    "from": "Tok.word",
-    "to": "Tok.slot"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:42:57: Application type mismatch: The argument",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Atom.normal-6-Tok.fixed",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Atom.normal",
-   "mutation": {
-    "at": 1681,
-    "from": "Tok.word",
-    "to": "Tok.fixed"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:42:57: Application type mismatch: The argument",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-Atom.normal-6-Tok.comma",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "Atom.normal",
-   "mutation": {
-    "at": 1681,
-    "from": "Tok.word",
-    "to": "Tok.comma"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:42:73: Application type mismatch: The argument",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-tokStr-0-slot",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "tokStr",
-   "mutation": {
-    "at": 1761,
-    "from": ".word",
-    "to": ".slot"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:45:2: Type mismatch",
-    "error: VE/Acts/Linearize.lean:45:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-tokStr-0-fixed",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "tokStr",
-   "mutation": {
-    "at": 1761,
-    "from": ".word",
-    "to": ".fixed"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:45:2: Type mismatch",
-    "error: VE/Acts/Linearize.lean:45:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-tokStr-0-comma",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "tokStr",
-   "mutation": {
-    "at": 1761,
-    "from": ".word",
-    "to": ".comma"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:45:4: Function expected at",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-tokStr-1-fixed",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "tokStr",
-   "mutation": {
-    "at": 1778,
-    "from": ".slot",
-    "to": ".fixed"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:45:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-tokStr-1-word",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "tokStr",
-   "mutation": {
-    "at": 1778,
-    "from": ".slot",
-    "to": ".word"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:45:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-tokStr-1-comma",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "tokStr",
-   "mutation": {
-    "at": 1778,
-    "from": ".slot",
-    "to": ".comma"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:46:4: Function expected at",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-tokStr-2-slot",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "tokStr",
-   "mutation": {
-    "at": 1818,
-    "from": ".fixed",
-    "to": ".slot"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:45:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-tokStr-2-word",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "tokStr",
-   "mutation": {
-    "at": 1818,
-    "from": ".fixed",
-    "to": ".word"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:47:39: Application type mismatch: The argument",
-    "error: VE/Acts/Linearize.lean:45:2: Missing cases:",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-tokStr-2-comma",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "tokStr",
-   "mutation": {
-    "at": 1818,
-    "from": ".fixed",
-    "to": ".comma"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:47:4: Function expected at",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-tokStr-3-slot",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "tokStr",
-   "mutation": {
-    "at": 1864,
-    "from": ".comma",
-    "to": ".slot"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:48:4: Type mismatch",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-tokStr-3-fixed",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "tokStr",
-   "mutation": {
-    "at": 1864,
-    "from": ".comma",
-    "to": ".fixed"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:48:4: Type mismatch",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-tokStr-3-word",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "tokStr",
-   "mutation": {
-    "at": 1864,
-    "from": ".comma",
-    "to": ".word"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:48:4: Type mismatch",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-tokText-0-slot",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "tokText",
-   "mutation": {
-    "at": 1982,
-    "from": ".comma",
-    "to": ".slot"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:52:6: Type mismatch",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-tokText-0-fixed",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "tokText",
-   "mutation": {
-    "at": 1982,
-    "from": ".comma",
-    "to": ".fixed"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:52:6: Type mismatch",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-tok-tokText-0-word",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "tokText",
-   "mutation": {
-    "at": 1982,
-    "from": ".comma",
-    "to": ".word"
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "INVALID",
-   "output": [
-    "error: VE/Acts/Linearize.lean:52:6: Type mismatch",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-join-joinWord-0-or",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "joinWord",
-   "mutation": {
-    "at": 700,
-    "from": "\"and\"",
-    "to": "\"or\""
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:154:0: Expression",
+    "error: VE/Acts/TableExamples.lean:64:0: Expression",
     "did not evaluate to `true`",
     "error: Lean exited with code 1",
     "error: build failed"
-   ],
-   "reason": null
+   ]
   },
   {
-   "id": "sweep-join-joinWord-0-nor",
+   "id": "sweep-table-0-must",
    "kind": "sweep",
    "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "joinWord",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.table",
    "mutation": {
-    "at": 700,
-    "from": "\"and\"",
-    "to": "\"nor\""
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:154:0: Expression",
-    "did not evaluate to `true`",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-join-joinWord-1-and",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "joinWord",
-   "mutation": {
-    "at": 717,
-    "from": "\"or\"",
-    "to": "\"and\""
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:131:0: Expression",
-    "did not evaluate to `true`",
-    "error: VE/Acts/TableExamples.lean:147:0: Expression",
-    "did not evaluate to `true`"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-join-joinWord-1-nor",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "joinWord",
-   "mutation": {
-    "at": 717,
-    "from": "\"or\"",
-    "to": "\"nor\""
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:131:0: Expression",
-    "did not evaluate to `true`",
-    "error: VE/Acts/TableExamples.lean:147:0: Expression",
-    "did not evaluate to `true`"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-join-joinWord-2-and",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "joinWord",
-   "mutation": {
-    "at": 734,
-    "from": "\"nor\"",
-    "to": "\"and\""
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:148:0: Expression",
-    "did not evaluate to `true`",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-join-joinWord-2-or",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "joinWord",
-   "mutation": {
-    "at": 734,
-    "from": "\"nor\"",
-    "to": "\"or\""
-   },
-   "test": "lean/VE/Acts/TableExamples.lean",
-   "status": "KILLED",
-   "output": [
-    "error: VE/Acts/TableExamples.lean:148:0: Expression",
-    "did not evaluate to `true`",
-    "error: Lean exited with code 1",
-    "error: build failed"
-   ],
-   "reason": null
-  },
-  {
-   "id": "sweep-join-joinWord-0-or",
-   "kind": "sweep",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "joinWord",
-   "mutation": {
-    "at": 692,
-    "from": ".and",
-    "to": ".or"
+    "from": ".needNot",
+    "to": ".must",
+    "occurrence": 0
    },
    "test": "lean/VE/Acts/TableExamples.lean",
    "status": "INVALID",
    "output": [
-    "error: VE/Acts/Linearize.lean:17:2: Missing cases:",
+    "error: VE/Acts/Table.lean:43:2: Missing cases:",
     "error: Lean exited with code 1",
     "error: build failed"
-   ],
-   "reason": null
+   ]
   },
   {
-   "id": "sweep-join-joinWord-0-nor",
+   "id": "sweep-table-0-may",
    "kind": "sweep",
    "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "joinWord",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.table",
    "mutation": {
-    "at": 692,
-    "from": ".and",
-    "to": ".nor"
+    "from": ".needNot",
+    "to": ".may",
+    "occurrence": 0
    },
    "test": "lean/VE/Acts/TableExamples.lean",
    "status": "INVALID",
    "output": [
-    "error: VE/Acts/Linearize.lean:17:2: Missing cases:",
+    "error: VE/Acts/Table.lean:43:2: Missing cases:",
     "error: Lean exited with code 1",
     "error: build failed"
-   ],
-   "reason": null
+   ]
   },
   {
-   "id": "sweep-join-joinWord-1-and",
+   "id": "sweep-table-0-mustNot",
    "kind": "sweep",
    "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "joinWord",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.table",
    "mutation": {
-    "at": 710,
-    "from": ".or",
-    "to": ".and"
+    "from": ".needNot",
+    "to": ".mustNot",
+    "occurrence": 0
    },
    "test": "lean/VE/Acts/TableExamples.lean",
    "status": "INVALID",
    "output": [
-    "error: VE/Acts/Linearize.lean:17:2: Missing cases:",
+    "error: VE/Acts/Table.lean:43:2: Missing cases:",
     "error: Lean exited with code 1",
     "error: build failed"
-   ],
-   "reason": null
+   ]
   },
   {
-   "id": "sweep-join-joinWord-1-nor",
+   "id": "sweep-table-0-right",
    "kind": "sweep",
    "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "joinWord",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.table",
    "mutation": {
-    "at": 710,
-    "from": ".or",
-    "to": ".nor"
+    "from": ".needNot",
+    "to": ".right",
+    "occurrence": 0
    },
    "test": "lean/VE/Acts/TableExamples.lean",
    "status": "INVALID",
    "output": [
-    "error: VE/Acts/Linearize.lean:17:2: Missing cases:",
+    "error: VE/Acts/Table.lean:43:2: Missing cases:",
     "error: Lean exited with code 1",
     "error: build failed"
-   ],
-   "reason": null
+   ]
   },
   {
-   "id": "sweep-join-joinWord-2-and",
+   "id": "sweep-table-1-needNot",
    "kind": "sweep",
    "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "joinWord",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.table",
    "mutation": {
-    "at": 726,
-    "from": ".nor",
-    "to": ".and"
+    "from": ".must",
+    "to": ".needNot",
+    "occurrence": 1
    },
    "test": "lean/VE/Acts/TableExamples.lean",
    "status": "INVALID",
    "output": [
-    "error: VE/Acts/Linearize.lean:17:2: Missing cases:",
+    "error: VE/Acts/Table.lean:43:2: Missing cases:",
     "error: Lean exited with code 1",
     "error: build failed"
-   ],
-   "reason": null
+   ]
   },
   {
-   "id": "sweep-join-joinWord-2-or",
+   "id": "sweep-table-1-may",
    "kind": "sweep",
    "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
-   "definition": "joinWord",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.table",
    "mutation": {
-    "at": 726,
-    "from": ".nor",
-    "to": ".or"
+    "from": ".must",
+    "to": ".may",
+    "occurrence": 1
    },
    "test": "lean/VE/Acts/TableExamples.lean",
    "status": "INVALID",
    "output": [
-    "error: VE/Acts/Linearize.lean:17:2: Missing cases:",
+    "error: VE/Acts/Table.lean:43:2: Missing cases:",
     "error: Lean exited with code 1",
     "error: build failed"
-   ],
-   "reason": null
+   ]
+  },
+  {
+   "id": "sweep-table-1-mustNot",
+   "kind": "sweep",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.table",
+   "mutation": {
+    "from": ".must",
+    "to": ".mustNot",
+    "occurrence": 1
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "INVALID",
+   "output": [
+    "error: VE/Acts/Table.lean:43:2: Missing cases:",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "id": "sweep-table-1-right",
+   "kind": "sweep",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.table",
+   "mutation": {
+    "from": ".must",
+    "to": ".right",
+    "occurrence": 1
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "INVALID",
+   "output": [
+    "error: VE/Acts/Table.lean:43:2: Missing cases:",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "id": "sweep-table-2-needNot",
+   "kind": "sweep",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.table",
+   "mutation": {
+    "from": ".must",
+    "to": ".needNot",
+    "occurrence": 2
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "INVALID",
+   "output": [
+    "error: VE/Acts/Table.lean:43:2: Missing cases:",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "id": "sweep-table-2-may",
+   "kind": "sweep",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.table",
+   "mutation": {
+    "from": ".must",
+    "to": ".may",
+    "occurrence": 2
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "INVALID",
+   "output": [
+    "error: VE/Acts/Table.lean:43:2: Missing cases:",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "id": "sweep-table-2-mustNot",
+   "kind": "sweep",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.table",
+   "mutation": {
+    "from": ".must",
+    "to": ".mustNot",
+    "occurrence": 2
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "INVALID",
+   "output": [
+    "error: VE/Acts/Table.lean:43:2: Missing cases:",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "id": "sweep-table-2-right",
+   "kind": "sweep",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.table",
+   "mutation": {
+    "from": ".must",
+    "to": ".right",
+    "occurrence": 2
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "INVALID",
+   "output": [
+    "error: VE/Acts/Table.lean:43:2: Missing cases:",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "id": "sweep-table-3-must",
+   "kind": "sweep",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.table",
+   "mutation": {
+    "from": ".mustNot",
+    "to": ".must",
+    "occurrence": 3
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "INVALID",
+   "output": [
+    "error: VE/Acts/Table.lean:43:2: Missing cases:",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "id": "sweep-table-3-needNot",
+   "kind": "sweep",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.table",
+   "mutation": {
+    "from": ".mustNot",
+    "to": ".needNot",
+    "occurrence": 3
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "INVALID",
+   "output": [
+    "error: VE/Acts/Table.lean:43:2: Missing cases:",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "id": "sweep-table-3-may",
+   "kind": "sweep",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.table",
+   "mutation": {
+    "from": ".mustNot",
+    "to": ".may",
+    "occurrence": 3
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "INVALID",
+   "output": [
+    "error: VE/Acts/Table.lean:43:2: Missing cases:",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "id": "sweep-table-3-right",
+   "kind": "sweep",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.table",
+   "mutation": {
+    "from": ".mustNot",
+    "to": ".right",
+    "occurrence": 3
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "INVALID",
+   "output": [
+    "error: VE/Acts/Table.lean:43:2: Missing cases:",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "id": "sweep-table-4-must",
+   "kind": "sweep",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.table",
+   "mutation": {
+    "from": ".mustNot",
+    "to": ".must",
+    "occurrence": 4
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "INVALID",
+   "output": [
+    "error: VE/Acts/Table.lean:43:2: Missing cases:",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "id": "sweep-table-4-needNot",
+   "kind": "sweep",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.table",
+   "mutation": {
+    "from": ".mustNot",
+    "to": ".needNot",
+    "occurrence": 4
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "INVALID",
+   "output": [
+    "error: VE/Acts/Table.lean:43:2: Missing cases:",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "id": "sweep-table-4-may",
+   "kind": "sweep",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.table",
+   "mutation": {
+    "from": ".mustNot",
+    "to": ".may",
+    "occurrence": 4
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "INVALID",
+   "output": [
+    "error: VE/Acts/Table.lean:43:2: Missing cases:",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "id": "sweep-table-4-right",
+   "kind": "sweep",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.table",
+   "mutation": {
+    "from": ".mustNot",
+    "to": ".right",
+    "occurrence": 4
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "INVALID",
+   "output": [
+    "error: VE/Acts/Table.lean:43:2: Missing cases:",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "id": "sweep-table-5-must",
+   "kind": "sweep",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.table",
+   "mutation": {
+    "from": ".may",
+    "to": ".must",
+    "occurrence": 5
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "INVALID",
+   "output": [
+    "error: VE/Acts/Table.lean:43:2: Missing cases:",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "id": "sweep-table-5-needNot",
+   "kind": "sweep",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.table",
+   "mutation": {
+    "from": ".may",
+    "to": ".needNot",
+    "occurrence": 5
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "INVALID",
+   "output": [
+    "error: VE/Acts/Table.lean:43:2: Missing cases:",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "id": "sweep-table-5-mustNot",
+   "kind": "sweep",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.table",
+   "mutation": {
+    "from": ".may",
+    "to": ".mustNot",
+    "occurrence": 5
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "INVALID",
+   "output": [
+    "error: VE/Acts/Table.lean:43:2: Missing cases:",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "id": "sweep-table-5-right",
+   "kind": "sweep",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.table",
+   "mutation": {
+    "from": ".may",
+    "to": ".right",
+    "occurrence": 5
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "INVALID",
+   "output": [
+    "error: VE/Acts/Table.lean:43:2: Missing cases:",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "id": "sweep-table-6-must",
+   "kind": "sweep",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.table",
+   "mutation": {
+    "from": ".right",
+    "to": ".must",
+    "occurrence": 6
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "INVALID",
+   "output": [
+    "error: VE/Acts/Table.lean:43:2: Missing cases:",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "id": "sweep-table-6-needNot",
+   "kind": "sweep",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.table",
+   "mutation": {
+    "from": ".right",
+    "to": ".needNot",
+    "occurrence": 6
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "INVALID",
+   "output": [
+    "error: VE/Acts/Table.lean:43:2: Missing cases:",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "id": "sweep-table-6-may",
+   "kind": "sweep",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.table",
+   "mutation": {
+    "from": ".right",
+    "to": ".may",
+    "occurrence": 6
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "INVALID",
+   "output": [
+    "error: VE/Acts/Table.lean:43:2: Missing cases:",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
+  },
+  {
+   "id": "sweep-table-6-mustNot",
+   "kind": "sweep",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "VE.Acts.table",
+   "mutation": {
+    "from": ".right",
+    "to": ".mustNot",
+    "occurrence": 6
+   },
+   "test": "lean/VE/Acts/TableExamples.lean",
+   "status": "INVALID",
+   "output": [
+    "error: VE/Acts/Table.lean:43:2: Missing cases:",
+    "error: Lean exited with code 1",
+    "error: build failed"
+   ]
   }
  ]
 }
