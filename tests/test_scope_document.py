@@ -85,3 +85,38 @@ def test_ve_document_check_builds_the_governed_document_from_the_bound_answer(tm
     assert units["u0164.s02"]["status"] == "OPEN"
     assert [units[u]["content"]["norm"]["name"] for u in ITEMS[:2]] == ["hc-cbrn-uplift", "hc-infrastructure-uplift"]
     assert D.check_document(path)["coverage"]["bytes_by_status"] == {"OPEN": 896, "UNFORMALISED": 472}
+
+
+def test_every_structural_mutant_of_the_f1_answer_is_refused(tmp_path, monkeypatch):
+    """The scope@0 answer is typed and bound as every document answer (R8): each one-fault structural mutant of the
+    genuine F1 row (a member dropped or added, a list element dropped or duplicated, a value retyped) is refused by
+    the response schema or by the binding, never relayed into a document."""
+    from tests.test_document_lean_switch import _structural_mutants
+    from ve.backends import relay
+    from ve.backends.lean_service import CheckerUnavailable
+    from ve.backends.service_schema import ROWS, Context, Invalid
+    path = tmp_path / "f1.ve.md"
+    path.write_text(F1.read_text())
+    case = {"id": "document", "document": path.read_text(), "admit": True}
+    row = D._lean_answer(path.read_bytes(), True)
+    lead = next(i for i, u in enumerate(row["units"]) if u["id"] == "u0164.s02")
+    rebound = [(("rename", "absent"), lambda r: r["units"][lead].update(id="absent")),
+               (("span", "+1"), lambda r: r["units"][lead].update(span=[n + 1 for n in r["units"][lead]["span"]])),
+               (("extra",), lambda r: r["units"].append({**r["units"][lead], "id": "u9999.s01"})),
+               (("source_id",), lambda r: r.update(source_id="0" * 64))]
+    accepted, count = [], 0
+    for where, mutate in [*_structural_mutants(row), *rebound]:
+        mutant = json.loads(json.dumps(row))
+        mutate(mutant)
+        count += 1
+        try:
+            ROWS["document"][0](mutant, Context(case), {})
+        except Invalid:
+            continue
+        monkeypatch.setattr(relay, "answer", lambda mode, case, mutant=mutant: (mutant, None))
+        try:
+            D.check_document(path)
+        except CheckerUnavailable:
+            continue
+        accepted.append(where)
+    assert count > 200 and not accepted, accepted
