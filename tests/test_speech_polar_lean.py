@@ -119,6 +119,13 @@ def test_lean_refuses_as_modal_only_for_the_speech_caller():
     assert live("Is it the case that atlas is reviewed?", caller=None)["status"] == "one"
 
 
+def test_lean_reads_with_the_speech_callers_auxiliaries():
+    """Speech acts read with `["is"]`: a fronted `may`, which `ve ask` reads, is a form the speech caller does not."""
+    assert live("May alice open the desk?")["code"] == "QuestionForm"
+    assert live("May alice open the desk?", caller=None)["code"] == "NoDerivation"
+    assert live("Is atlas reviewed?")["status"] == live("Is atlas reviewed?", caller=None)["status"] == "one"
+
+
 @pytest.mark.parametrize("caller", ["speech", "Speech-acts", "speech-acts ", "", 1, ["speech-acts"]])
 def test_lean_refuses_a_caller_it_does_not_know(caller):
     with pytest.raises(VEError, match='InvalidInput: caller is "speech-acts" when present'):
