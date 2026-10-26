@@ -974,6 +974,7 @@
         "ResponseShape.Skeletons.speechActs"
       ],
       "G[R]": [
+        "ResponseShape.Skeletons.calc",
         "ResponseShape.Skeletons.diagnose",
         "ResponseShape.Skeletons.normDefaults",
         "ResponseShape.Skeletons.words"
@@ -9844,6 +9845,7 @@
         "VE.Service.Handles.entry?",
         "VE.Service.Handles.expand",
         "VE.Service.bindResults",
+        "VE.Service.calcCases",
         "VE.Service.caseBounds",
         "VE.Service.commas",
         "VE.Service.decodeBudget",
@@ -9858,7 +9860,8 @@
         "VE.Service.registerOne",
         "VE.Service.respond",
         "VE.Service.restrictedCases",
-        "VE.Service.results"
+        "VE.Service.results",
+        "VE.Service.unsigned"
       ],
       "D[I]": [
         "VE.Service.Sha256.State",
@@ -14621,6 +14624,104 @@
         "VE.Acts.Join",
         "VE.Acts.Modifier",
         "VE.Acts.Part"
+      ]
+    },
+    "ResponseShape/Schemas/Calc.lean": {
+      "G[R]": [
+        "ResponseShape.Schemas.Calc.answer",
+        "ResponseShape.Schemas.Calc.claimRow",
+        "ResponseShape.Schemas.Calc.fields",
+        "ResponseShape.Schemas.Calc.file",
+        "ResponseShape.Schemas.Calc.reasons",
+        "ResponseShape.Schemas.Calc.refusal",
+        "ResponseShape.Schemas.Calc.row"
+      ]
+    },
+    "VE/Arith/Syntax.lean": {
+      "S": [
+        "VE.Arith.Def",
+        "VE.Arith.Defs",
+        "VE.Arith.Formula",
+        "VE.Arith.Term"
+      ]
+    },
+    "VE/Arith/Holds.lean": {
+      "S": [
+        "VE.Arith.Defs.Means",
+        "VE.Arith.Defs.env",
+        "VE.Arith.Env",
+        "VE.Arith.Holds",
+        "VE.Arith.Term.value",
+        "VE.Arith.Term.values"
+      ]
+    },
+    "VE/Arith/Defs.lean": {
+      "G[R]": [
+        "VE.Arith.Def.arity",
+        "VE.Arith.Def.isPred",
+        "VE.Arith.Def.name",
+        "VE.Arith.Defs.WellFormed",
+        "VE.Arith.Defs.boundedNames",
+        "VE.Arith.Defs.refusals",
+        "VE.Arith.Formula.Bounded",
+        "VE.Arith.Formula.Scoped",
+        "VE.Arith.Formula.bnd",
+        "VE.Arith.Formula.sites",
+        "VE.Arith.Refusal",
+        "VE.Arith.Refusal.code",
+        "VE.Arith.Refusal.rank",
+        "VE.Arith.Site",
+        "VE.Arith.Site.refusal",
+        "VE.Arith.Term.bnd",
+        "VE.Arith.Term.bndList",
+        "VE.Arith.Term.sites",
+        "VE.Arith.Term.sitesList",
+        "VE.Arith.caseRefusal",
+        "VE.Arith.firstRefusal"
+      ]
+    },
+    "VE/Arith/Examples.lean": {
+      "S": [
+        "VE.Arith.Examples.IsPrime"
+      ],
+      "T": [
+        "VE.Arith.Examples.Positions.Host",
+        "VE.Arith.Examples.Positions.Host.calls",
+        "VE.Arith.Examples.Positions.Place",
+        "VE.Arith.Examples.Positions.Place.down",
+        "VE.Arith.Examples.Positions.Step",
+        "VE.Arith.Examples.Positions.ff",
+        "VE.Arith.Examples.Positions.firstRepeat",
+        "VE.Arith.Examples.Positions.formulaPairs",
+        "VE.Arith.Examples.Positions.formulaPlaces",
+        "VE.Arith.Examples.Positions.formulas",
+        "VE.Arith.Examples.Positions.hosts",
+        "VE.Arith.Examples.Positions.later",
+        "VE.Arith.Examples.Positions.nameLists",
+        "VE.Arith.Examples.Positions.ok",
+        "VE.Arith.Examples.Positions.oneEach",
+        "VE.Arith.Examples.Positions.refusedAs",
+        "VE.Arith.Examples.Positions.termPairs",
+        "VE.Arith.Examples.Positions.termPlaces",
+        "VE.Arith.Examples.Positions.terms",
+        "VE.Arith.Examples.Positions.tf",
+        "VE.Arith.Examples.Positions.tt",
+        "VE.Arith.Examples.Positions.unbounded",
+        "VE.Arith.Examples.Positions.vocab",
+        "VE.Arith.Examples.Positions.z",
+        "VE.Arith.Examples.atLeast",
+        "VE.Arith.Examples.bertrand",
+        "VE.Arith.Examples.chain",
+        "VE.Arith.Examples.countDefs",
+        "VE.Arith.Examples.double",
+        "VE.Arith.Examples.lit",
+        "VE.Arith.Examples.m1",
+        "VE.Arith.Examples.m2",
+        "VE.Arith.Examples.m4",
+        "VE.Arith.Examples.m5",
+        "VE.Arith.Examples.primeBody",
+        "VE.Arith.Examples.primeDefs",
+        "VE.Arith.Examples.tacticMeans"
       ]
     }
   }
