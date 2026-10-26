@@ -62,6 +62,9 @@ def decoded (e : Json) : Option ((String × String × String) × List String × 
     ((w.environmentId, w.w6.environmentId, w.w6.targetId), w.w6.profiles, w.env.finite)
 
 #guard (projectW6 env).toOption.map (·.getObjValD "profiles") == some (p r#"["order@0", "relational-fol@0", "time@0"]"#)
+-- It removes `cardinality@0` wherever it is listed, and nothing else.
+#guard (projectW6 (env.setObjVal! "profiles" (p r#"["documents@1", "cardinality@0", "time@0"]"#))).toOption.map
+  (·.getObjValD "profiles") == some (p r#"["documents@1", "time@0"]"#)
 #guard (decoded env).map (·.2) == some (["order@0", "relational-fol@0", "time@0"], ["fomc_policymaker"])
 #guard match decoded env with
   | some ((c, w6, t), _) => c != w6 && c != t && w6 != t && c.length == 64
