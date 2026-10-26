@@ -1083,6 +1083,13 @@
    "reason": "ap-1b review F1 and C1, recheck F3: untied V +12 (K +0, S +0): Norms/Wire.lean +6, readsActs (acts@0 is read only from a sorted unique list) and actsView's premise on it; Norms/Plain.lean +1, the plain route gates the submitted acts@0 list by the profile table before it sets the statement layers aside (its family check removed); NormDefaults/Wire.lean +3, placeholderJson keeps the order of an acts@0 list from being hidden by setting norm-defaults@0 aside; EnglishGrammar/Encode.lean +2, the typing view's acts@0 stage erases acts@0 from the list the earlier stages reduced, not from the submitted list; total ap-1b V +79",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1b, 2026-10-21",
    "commit": "2296317a9de7ef365523e0f69c442338d9eaf576"
+  },
+  {
+   "class": "V",
+   "lines": 26,
+   "reason": "q1-4: VE/Question/Run.lean +24 (the caller's decoding and dispatch, speechPrefixes: replace speech_english's deleted F1 branch and Must/Can refusal), VE/Question/Basic.lean +2 (speechAuxiliaries: the speech caller's F2 words, new Lean behaviour)",
+   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md) for VE/Question/Run.lean +24 and by standing ruling R16 (DRI-RULINGS.md) for VE/Question/Basic.lean +2, q1-4, 2026-10-26",
+   "commit": "c45d799f3cf525a7a39e916240a922c5a60047ee"
   }
  ]
 }
