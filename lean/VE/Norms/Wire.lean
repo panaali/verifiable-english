@@ -97,6 +97,29 @@ theorem decodeRegulated_without_acts (ps fx : List String) (h : "acts@0" ∉ ps)
   simp only [decodeRegulatedIn, decodeRegulated, canonicalActIn_without_acts ps fx h,
     show ps.contains "acts@0" = false by simpa using h]
 
+/-- The branch an `if` that answered `.ok` took, with its condition. -/
+theorem ite_ok_cases {ε α : Type} {c : Prop} [Decidable c] {a b : Except ε α} {r : α}
+    (h : (if c then a else b) = .ok r) : (c ∧ a = .ok r) ∨ (¬c ∧ b = .ok r) := by
+  by_cases hc : c
+  · exact .inl ⟨hc, by simpa [hc] using h⟩
+  · exact .inr ⟨hc, by simpa [hc] using h⟩
+
+/-- Today's decoder never produces an act on a plain predicate, so `Tree.check`'s dropped refusal admits only
+    `acts@0` documents. -/
+theorem decodeRegulated_plain {name : String} {args : List String} {raw : Lean.Json} {r : VE.Norms.Regulated}
+    (h : decodeRegulated name args raw = .ok r) (hp : r.role = .plain) : r.act = none := by
+  -- walk the decoder one step at a time: a bind, an `if` with its condition, or a `match`; a leaf is a refusal,
+  -- or a declaration whose role and act the steps fixed
+  simp only [decodeRegulated, decodeRegulatedWith] at h
+  repeat' (first
+    | (cases h; done)
+    | (cases h; first | rfl | cases hp)
+    | (have h' := VE.Order.ProfileGate.bind_ok h; clear h; obtain ⟨_, _, h⟩ := h'; try dsimp only at h)
+    | (have h' := ite_ok_cases h; clear h
+       rcases h' with ⟨hc, h⟩ | ⟨hc, h⟩ <;> try (simp at hc; done))
+    | split at h)
+  all_goals simp_all [pure, Except.pure]
+
 /-- The wording of a plain act (act-phrases 2.1): `Lexical.wording` of the form its declaration `raw` carries; none
 for any other declaration. Lean's English (`modalForm`) and the norms route's `wordings` read it. -/
 def plainWording (r : Regulated) (raw : Json) : Option String :=
