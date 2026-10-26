@@ -18905,10 +18905,20 @@ theorem VE.Norms.Wire.canonicalActIn_without_acts
   ∀ (ps fx : List String), ¬"acts@0" ∈ ps → VE.Norms.Wire.canonicalActIn ps fx = VE.Norms.Wire.canonicalAct
   -- uses VE.Norms.Wire.canonicalAct@VE.Norms.Wire VE.Norms.Wire.canonicalActIn@VE.Norms.Wire
   -- expr 4287139776
+theorem VE.Norms.Wire.decodeRegulated_plain
+  ∀ {name : String} {args : List String} {raw : Lean.Json} {r : VE.Norms.Regulated},
+    VE.Norms.Wire.decodeRegulated name args raw = Except.ok r → r.role = VE.Norms.Role.plain → r.act = Option.none
+  -- uses VE.Norms.Regulated.act@VE.Norms.Tree VE.Norms.Regulated.role@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Role.plain@VE.Norms.Tree VE.Norms.Role@VE.Norms.Tree VE.Norms.Wire.decodeRegulated@VE.Norms.Wire
+  -- expr 825806076
 theorem VE.Norms.Wire.decodeRegulated_without_acts
   ∀ (ps fx : List String), ¬"acts@0" ∈ ps → VE.Norms.Wire.decodeRegulatedIn ps fx = VE.Norms.Wire.decodeRegulated
   -- uses VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Wire.decodeRegulated@VE.Norms.Wire VE.Norms.Wire.decodeRegulatedIn@VE.Norms.Wire
   -- expr 384187676
+theorem VE.Norms.Wire.ite_ok_cases
+  ∀ {ε α : Type} {c : Prop} [inst : Decidable c] {a b : Except ε α} {r : α},
+    (if c then a else b) = Except.ok r → c ∧ a = Except.ok r ∨ ¬c ∧ b = Except.ok r
+  -- uses
+  -- expr 1009244347
 theorem VE.Norms.agreesBelow_of_meanings
   ∀ {D : VE.Norms.Doc} {k : Nat} {S : VE.Structure}, VE.Norms.MeaningsBelow D k S → VE.Norms.AgreesBelow D k S
   -- uses VE.Norms.AgreesBelow@VE.Norms.Subst VE.Norms.Doc@VE.Norms.Tree VE.Norms.MeaningsBelow@VE.Norms.Prefix VE.Structure@VE.Semantics
