@@ -14340,6 +14340,7 @@
     },
     "VE/Scope/WireExamples.lean": {
       "T": [
+        "VE.Scope.WireExamples.anchor",
         "VE.Scope.WireExamples.ansUnit",
         "VE.Scope.WireExamples.ansUnits",
         "VE.Scope.WireExamples.answer",
@@ -14351,6 +14352,7 @@
         "VE.Scope.WireExamples.foldEnv",
         "VE.Scope.WireExamples.foldGov",
         "VE.Scope.WireExamples.gov",
+        "VE.Scope.WireExamples.listName",
         "VE.Scope.WireExamples.st"
       ]
     },
@@ -14363,6 +14365,7 @@
         "VE.Service.ScopeExamples.errorOf",
         "VE.Service.ScopeExamples.front",
         "VE.Service.ScopeExamples.full",
+        "VE.Service.ScopeExamples.fullUnits",
         "VE.Service.ScopeExamples.governor",
         "VE.Service.ScopeExamples.item",
         "VE.Service.ScopeExamples.lead",
@@ -14376,7 +14379,8 @@
         "VE.Service.ScopeExamples.unf",
         "VE.Service.ScopeExamples.unfKind",
         "VE.Service.ScopeExamples.unit",
-        "VE.Service.ScopeExamples.units"
+        "VE.Service.ScopeExamples.units",
+        "VE.Service.ScopeExamples.unsorted"
       ]
     },
     "VE/Service/ScopeAdmission.lean": {},

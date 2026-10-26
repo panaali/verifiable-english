@@ -47,13 +47,15 @@ def decoded (b : Json) : Option (List (String × String × Reach × String × Li
     ("g", "a", .anchor "s", "carve_out [\"top\"]", ["b"]), ("g", "a", .label "a", "title", ["b"]),
     ("g", "a", .rules ["r1", "r2"], "precedes", ["b"]), ("g", "a", .frontier, "yields", [])]
 -- A list name: lead and unit are scope's, the rest is discourse's ContentName; anchors are discourse's.
-#guard (decodeParts (blockWith [] [("list_names", toJson [Json.mkObj [("name", .str "the list"), ("units", toJson ["b"]),
-    ("scope", .str "doc"), ("lead", .str "a"), ("unit", .str "z")]])])).toOption.map
+def listName (n lead : String) : Json := Json.mkObj [("name", .str n), ("units", toJson ["b"]), ("scope", .str "doc"),
+  ("lead", .str lead), ("unit", .str "z")]
+def anchor (id : String) (e : Nat) : Json := Json.mkObj [("id", .str id), ("kind", .str "document"),
+  ("label", .str "Doc"), ("span", toJson [0, e])]
+#guard (decodeParts (blockWith [] [("list_names", toJson [listName "the list" "a", listName "other" "c"])])).toOption.map
     (fun (_, ls, _) => ls.map fun (cn, l, u) => (cn.name, cn.units, cn.scope, l, u)) ==
-  some [("the list", ["b"], "doc", "a", "z")]
-#guard (decodeParts (blockWith [] [("anchors", toJson [Json.mkObj [("id", .str "doc"), ("kind", .str "document"),
-    ("label", .str "Doc"), ("span", toJson [0, 5])]])])).toOption.map (fun (_, _, as) => as.map (·.span)) ==
-  some [(0, 5)]
+  some [("the list", ["b"], "doc", "a", "z"), ("other", ["b"], "doc", "c", "z")]
+#guard (decodeParts (blockWith [] [("anchors", toJson [anchor "doc" 5, anchor "doc2" 7])])).toOption.map
+    (fun (_, _, as) => as.map (·.span)) == some [(0, 5), (0, 7)]
 -- The block's faults, each with its path (3, 6.1).
 #guard errorOf (decodeParts .null) == "InvalidInput: scope@0 scope must be an object"
 #guard errorOf (decodeParts (blockWith [] [("forward", toJson ([] : List Json))])) ==
@@ -93,8 +95,9 @@ def decoded (b : Json) : Option (List (String × String × Reach × String × Li
 #guard [Json.mkObj [("span", toJson [Json.str "x", toJson (5 : Nat)])],
   Json.mkObj [("span", toJson [toJson (3 : Nat), Json.str "y"])]].map (spanIn 9) == [(0, 5), (0, 0)]
 
--- The fold (1.6) on an answer: the lead-in u1 (specified, no content) hosts the frame g1 and takes the weakest of
--- its items; i1 has content and u3 hosts only a graph governor, so both keep their status; bytes counted again.
+-- The fold (1.6) on an answer: the lead-in u1 (specified, no content) hosts the frame g1 and two unary governors
+-- over i1 (the first and last governors), and takes the weakest of what all three cover; i1 has content and u3 hosts
+-- only a graph governor, so both keep their status; bytes counted again.
 def foldEnv : Json := Json.mkObj [("language", .str "ve.core@0.2"),
   ("profiles", toJson ["norms@0", "readings@1", "relational-fol@0"]),
   ("spec_revision", .str "ve-v0.2-expand2-2026-09-25"),
@@ -111,13 +114,20 @@ def foldGov (id unit : String) (reach effect : Json) : Json :=
 def foldDoc : Option SDoc := do
   let re ← (VE.Readings.Wire.decodeEnvironment foldEnv).toOption
   (decodeBlock (Json.mkObj [("units", toJson ansUnits), ("scope", blockWith [
+    foldGov "g4" "u1" (Json.mkObj [("label", .str "i1")]) (Json.mkObj [("reguard", toJson ["top"])]),
     foldGov "g1" "u1" (Json.mkObj [("list", .str "u1")]) (Json.mkObj [("frame", Json.mkObj [])]),
     foldGov "g2" "u3" (.str "frontier") (.str "precedes"),
-    foldGov "g3" "i1" (Json.mkObj [("list", .str "u1")]) (Json.mkObj [("frame", Json.mkObj [])])])])
+    foldGov "g3" "i1" (Json.mkObj [("list", .str "u1")]) (Json.mkObj [("frame", Json.mkObj [])]),
+    foldGov "g5" "u1" (Json.mkObj [("label", .str "i1")]) (Json.mkObj [("carve_out", toJson ["top"])])])])
     "Agents must not:\n\n* Act.\n* Rest.\n\nThat is all." re).toOption
 def answer : Json := Json.mkObj [("id", .str "d"), ("status", .str "OPEN"), ("units", toJson ansUnits),
   ("coverage", Json.mkObj [("units", toJson (4 : Nat)), ("bytes_by_status", Json.mkObj [])])]
-#guard foldDoc.map (fun D => ((changers D "u1").map (·.id), (changers D "u3").map (·.id))) == some (["g1"], [])
+#guard foldDoc.map (fun D => ((changers D "u1").map (·.id), (changers D "u3").map (·.id))) ==
+  some (["g4", "g1", "g5"], [])
+-- Each status is looked up by id, whatever the answer's order: u1 reads i1 (first here) and i2 (last).
+#guard foldDoc.map (fun D => ((foldGovernors D (answer.setObjVal! "units" (toJson [ansUnits[1]!, ansUnits[0]!,
+  ansUnits[3]!, ansUnits[2]!]))).getObjValD "units").getArrVal? 1 |>.toOption.map (·.getObjValD "status")) ==
+  some (some (.str "LABELLED"))
 #guard foldDoc.map (fun D => (foldGovernors D answer).compress) == some ("{\"coverage\":{\"bytes_by_status\":" ++
   "{\"CHECKED\":7,\"LABELLED\":27,\"OPEN\":12},\"units\":4},\"document_id\":null,\"id\":\"d\",\"source\":null," ++
   "\"source_id\":null,\"status\":\"OPEN\",\"units\":[{\"id\":\"u1\",\"meaning\":\"specified\",\"span\":[0,18]," ++

@@ -651,5 +651,10 @@ the gate's own. -/
 #guard gateOf profileTable ["norms@0", "relational-fol@0", "reports@0", "scope@0"] ==
   .error "UnsupportedProfile: reports@0 with norms@0 layers"
 #guard gateOf baseRows ["norms@0", "relational-fol@0", "scope@0"] == .error "UnsupportedProfile: Unsupported profile scope@0"
+-- The row as published (ve/profile_table.json): risk@0 and reports@0 are refused by their own rows first.
+#guard (profileTable.filter (·.profile == "scope@0")).map (fun r => (r.requires, r.refuses.map (·.1), r.slot)) ==
+  [(["norms@0"], ["risk@0", "alternatives@0", "speech-acts@0", "reports@0", "ve.discourse@1"], "govern")]
+#guard gateOf profileTable ["alternatives@0", "norms@0", "relational-fol@0", "risk@0", "scope@0"] ==
+  .error "UnsupportedProfile: scope@0 with risk@0"
 
 end VE.Compose.Examples
