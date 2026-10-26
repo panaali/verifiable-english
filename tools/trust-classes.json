@@ -12529,7 +12529,13 @@
     },
     "VE/Acts/Syntax.lean": {
       "S": [
+        "VE.Acts.Act",
+        "VE.Acts.Atom",
+        "VE.Acts.Filler",
         "VE.Acts.Frame",
+        "VE.Acts.Join",
+        "VE.Acts.Modifier",
+        "VE.Acts.Part",
         "VE.Acts.Term",
         "VE.Acts.Term.accepts",
         "VE.Acts.Vocab",
@@ -14567,6 +14573,72 @@
         "VE.Calc.RunExamples.v5Rows",
         "VE.Calc.RunExamples.x1",
         "VE.Calc.RunExamples.x1c"
+      ]
+    },
+    "VE/Acts/Linearize.lean": {
+      "S": [
+        "VE.Acts.Atom.normal",
+        "VE.Acts.Atom.text",
+        "VE.Acts.Atom.withTo",
+        "VE.Acts.Filler.toks",
+        "VE.Acts.Part.toks",
+        "VE.Acts.joinWord",
+        "VE.Acts.listToks",
+        "VE.Acts.partAct",
+        "VE.Acts.tokStr",
+        "VE.Acts.tokText"
+      ]
+    },
+    "VE/Acts/Table.lean": {
+      "S": [
+        "VE.Acts.Op",
+        "VE.Acts.Simple",
+        "VE.Acts.freeTable",
+        "VE.Acts.opOf",
+        "VE.Acts.table"
+      ],
+      "G[R]": [
+        "VE.Acts.Act.text",
+        "VE.Acts.Op.inf",
+        "VE.Acts.Simple.text",
+        "VE.Acts.distinctTexts",
+        "VE.Acts.firstEqualPair",
+        "VE.Acts.listText",
+        "VE.Acts.modalText",
+        "VE.Acts.numbered",
+        "VE.Acts.paraphrase",
+        "VE.Acts.paraphrases",
+        "VE.Acts.sentence"
+      ]
+    },
+    "VE/Acts/TableExamples.lean": {
+      "T": [
+        "VE.Acts.TableExamples.beyond",
+        "VE.Acts.TableExamples.causes",
+        "VE.Acts.TableExamples.cruel",
+        "VE.Acts.TableExamples.denied",
+        "VE.Acts.TableExamples.deprived",
+        "VE.Acts.TableExamples.directly",
+        "VE.Acts.TableExamples.errOf",
+        "VE.Acts.TableExamples.form",
+        "VE.Acts.TableExamples.fx11",
+        "VE.Acts.TableExamples.fx6",
+        "VE.Acts.TableExamples.fx7",
+        "VE.Acts.TableExamples.g10",
+        "VE.Acts.TableExamples.g11",
+        "VE.Acts.TableExamples.g12",
+        "VE.Acts.TableExamples.g14v",
+        "VE.Acts.TableExamples.g6",
+        "VE.Acts.TableExamples.g7",
+        "VE.Acts.TableExamples.g9",
+        "VE.Acts.TableExamples.held",
+        "VE.Acts.TableExamples.join",
+        "VE.Acts.TableExamples.protection",
+        "VE.Acts.TableExamples.reg",
+        "VE.Acts.TableExamples.shape",
+        "VE.Acts.TableExamples.through",
+        "VE.Acts.TableExamples.torture",
+        "VE.Acts.TableExamples.w"
       ]
     }
   }
