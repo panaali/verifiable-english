@@ -9,6 +9,12 @@
   {"definition": "VE.Norms.Run.runCase", "operator": "list-empty",
    "reason": "does not elaborate: `[] fun (p, w) => …` applies a list (Function expected); the other cuts are killed by the routeWordings #guards"},
   {"definition": "VE.Norms.Wire.plainWordings", "operator": "list-empty",
-   "reason": "does not elaborate: the cuts at the lambda leave `[]` applied or typed as a list of options (Function expected, Type mismatch); the others are killed by the routeWordings #guards"}
+   "reason": "does not elaborate: the cuts at the lambda leave `[]` applied or typed as a list of options (Function expected, Type mismatch); the others are killed by the routeWordings #guards"},
+  {"definition": "VE.Service.Standalone.environmentCase", "operator": "list-first",
+   "reason": "equivalent: each branch of the frozen envelope's `match l with` (`profile` or `profiles`) is a one-member list, so its `take 1` is itself; the other cuts are killed by the closure01/core0 and envA #guards"},
+  {"definition": "VE.Service.Standalone.environmentCase", "operator": "list-last",
+   "reason": "equivalent: each branch of the frozen envelope's `match l with` is a one-member list, so its `reverse.take 1` is itself; the other cuts are killed by the #guards"},
+  {"definition": "VE.Service.Standalone.environmentCase", "operator": "list-empty",
+   "reason": "does not elaborate: `[] fun (p, a) => …` applies a list (Function expected); the other cuts are killed by the environmentRow #guards"}
  ]
 }
