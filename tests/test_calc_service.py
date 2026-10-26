@@ -11,7 +11,8 @@ import pytest
 
 from tests.lean_build import lean_build
 from tests.subprocesses import HANG_TIMEOUT
-from ve.backends.lean_service import LeanService
+from ve.backends.lean_service import LeanService, case_digest, case_texts
+from ve.backends.service_schema import Invalid, check_response
 
 ROOT = Path(__file__).resolve().parents[1]
 CASES = ROOT / "tests/data/route-cases.jsonl"
@@ -110,3 +111,36 @@ def test_an_exponent_is_an_integer_written_plainly(service, exponent):
         assert response["results"][0]["result"]["error"].startswith("InvalidInput")
     else:
         assert response["status"] == "error" and "error" in response
+
+
+def _row_mutants(rows):
+    """(label, rows) of R-1's two rows rebound or re-paired: each claim id rebound, a row dropped, added or the
+    two swapped, a decided outcome given a reason and an unknown one none, a reproduction retyped."""
+    first, second = rows
+    yield "claim rebound", [{**first, "claim": "c2"}, second]
+    yield "claim not the request's", [first, {**second, "claim": "c3"}]
+    yield "row dropped", [first]
+    yield "row added", [first, second, second]
+    yield "rows swapped", [second, first]
+    yield "no rows", []
+    yield "reason on a decided row", [{**first, "reason": DIGITS}, second]
+    yield "unknown without a reason", [{**first, "outcome": "unknown"}, second]
+    yield "unknown with another text", [{**first, "outcome": "unknown", "reason": "unknown"}, second]
+    yield "reproduction retyped", [{**first, "reproduction": "yes"}, second]
+    yield "kind retyped", [{**first, "kind": "follows"}, second]
+    yield "meaning id not a digest", None
+
+
+def test_answers_are_bound_to_their_request(service):
+    """R8: a row per request claim, in order, naming the request's claim; an outcome with its reason only."""
+    case = route_cases()[0]
+    text = json.dumps([case], ensure_ascii=False)
+    response = ask(service, text, 1)
+    request = {"id": response["id"], "mode": "calc", "cases": [case],
+               "digests": [case_digest(t) for t in case_texts(text)], "bytes": len(text.encode())}
+    check_response("calc", response, request)
+    result = response["results"][0]["result"]
+    for label, rows in _row_mutants(result["rows"]):
+        altered = {**result, "rows": rows} if rows is not None else {**result, "meaning_id": "x"}
+        with pytest.raises(Invalid):
+            check_response("calc", {**response, "results": [{**response["results"][0], "result": altered}]}, request)
