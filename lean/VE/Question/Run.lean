@@ -212,7 +212,7 @@ def codesCase (id : String) : Json :=
 /-- The fields a question case holds: `english.read`'s, `question`, and `caller` when it is present. -/
 def caseFields (j : Json) : List String :=
   ["id", "environment", "lexicon", "source", "mode", "cap", "question"] ++ optionalFields j ++
-    ["caller"].filter fun k => (j.getObjVal? k).toOption.isSome
+    (if (j.getObjVal? "caller").toOption.isSome then ["caller"] else [])
 
 def questionCase (j : Json) : Except String Json := do
   if (j.getObjVal? "export").isOk then
