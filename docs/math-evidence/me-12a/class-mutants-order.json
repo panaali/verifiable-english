@@ -1,0 +1,326 @@
+{
+ "note": "Hand mutants of the review's two classes (me-12a review F1, F2), beyond trust_mutants' operators: every place the",
+ "mutants": [
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "order: term operands right first #1",
+   "before": "| .add a b | .sub a b | .mul a b => Term.sites k a ++ Term.sites k b",
+   "after": "| .add a b | .sub a b | .mul a b => Term.sites k b ++ Term.sites k a",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:348"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "order: comparison right first #1",
+   "before": "| .eq a b | .lt a b | .le a b | .dvd a b => Term.sites k a ++ Term.sites k b",
+   "after": "| .eq a b | .lt a b | .le a b | .dvd a b => Term.sites k b ++ Term.sites k a",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:346"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "order: connective right first #1",
+   "before": "Formula.sites k φ ++ Formula.sites k ψ",
+   "after": "Formula.sites k ψ ++ Formula.sites k φ",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:346"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "order: arguments last first #1",
+   "before": "| t :: ts => Term.sites k t ++ Term.sitesList k ts",
+   "after": "| t :: ts => Term.sitesList k ts ++ Term.sites k t",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:346",
+    "Examples.lean:348"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "order: a function call after its arguments #1",
+   "before": ".call false f args.length :: Term.sitesList k args",
+   "after": "Term.sitesList k args ++ [.call false f args.length]",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:348"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "order: a predicate call after its arguments #1",
+   "before": ".call true p args.length :: Term.sitesList k args",
+   "after": "Term.sitesList k args ++ [.call true p args.length]",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:346"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "order: a count hi before lo #1",
+   "before": "Term.sites k lo ++ Term.sites k hi ++ .count φ :: Formula.sites (k + 1) φ",
+   "after": "Term.sites k hi ++ Term.sites k lo ++ .count φ :: Formula.sites (k + 1) φ",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:348"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "order: a count condition first #1",
+   "before": "Term.sites k lo ++ Term.sites k hi ++ .count φ :: Formula.sites (k + 1) φ",
+   "after": "Formula.sites (k + 1) φ ++ Term.sites k lo ++ Term.sites k hi ++ [.count φ]",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:348"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "order: a range hi before lo #1",
+   "before": "Term.sites k lo ++ Term.sites k hi ++ Formula.sites (k + 1) φ",
+   "after": "Term.sites k hi ++ Term.sites k lo ++ Formula.sites (k + 1) φ",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:346"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "order: a range body first #1",
+   "before": "Term.sites k lo ++ Term.sites k hi ++ Formula.sites (k + 1) φ",
+   "after": "Formula.sites (k + 1) φ ++ Term.sites k lo ++ Term.sites k hi",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:346"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "order: definitions last first #1",
+   "before": "(List.range D.length).flatMap",
+   "after": "(List.range D.length).reverse.flatMap",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:351"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "order: statements last first #1",
+   "before": "firstRefusal (D.refusals ++ φs.flatMap",
+   "after": "firstRefusal (D.refusals ++ φs.reverse.flatMap",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:324",
+    "Examples.lean:351"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "order: statements before definitions #1",
+   "before": "firstRefusal (D.refusals ++ φs.flatMap fun φ =>\n    (Formula.sites 0 φ).filterMap (Site.refusal D D 0 (some D.boundedNames)))",
+   "after": "firstRefusal ((φs.flatMap fun φ =>\n    (Formula.sites 0 φ).filterMap (Site.refusal D D 0 (some D.boundedNames))) ++ D.refusals)",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:351"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "reads: the meaning ignores a function arity #1",
+   "before": "if xs.length = n then g xs else none",
+   "after": "g xs",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:78"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Holds.lean",
+   "class": "reads: the meaning ignores a predicate arity #1",
+   "before": "xs.length = n ∧ P xs",
+   "after": "P xs",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:106",
+    "Examples.lean:40",
+    "Examples.lean:42",
+    "Examples.lean:78"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "reads: the last duplicate missed #1",
+   "before": "((List.range D.length).filterMap",
+   "after": "((List.range (D.length - 1)).filterMap",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:176",
+    "Examples.lean:316",
+    "Examples.lean:324"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "reads: the last body unchecked #1",
+   "before": "(List.range D.length).flatMap",
+   "after": "(List.range (D.length - 1)).flatMap",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:163",
+    "Examples.lean:165",
+    "Examples.lean:169",
+    "Examples.lean:174",
+    "Examples.lean:316",
+    "Examples.lean:351"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "reads: later statements unchecked #1",
+   "before": "firstRefusal (D.refusals ++ φs.flatMap",
+   "after": "firstRefusal (D.refusals ++ (φs.take 1).flatMap",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:178",
+    "Examples.lean:316"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "reads: a function body under one binder #1",
+   "before": "Term.sites 0 body",
+   "after": "Term.sites 1 body",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:292"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "reads: a predicate body under one binder #1",
+   "before": "Formula.sites 0 body",
+   "after": "Formula.sites 1 body",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:165",
+    "Examples.lean:292",
+    "Examples.lean:316",
+    "Examples.lean:351"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "reads: Scoped ignores its depth #1",
+   "before": "filterMap (Site.refusal D D depth none)",
+   "after": "filterMap (Site.refusal D D 0 none)",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:162"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "reads: recursion reported unknown #1",
+   "before": "| none => some (.recursiveDefinition f)",
+   "after": "| none => some (.unknownDefinition f)",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:169",
+    "Examples.lean:170",
+    "Examples.lean:290",
+    "Examples.lean:292",
+    "Examples.lean:316"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "reads: the arity reported is the call's #1",
+   "before": "some (.arityMismatch f d.arity)",
+   "after": "some (.arityMismatch f argc)",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:171",
+    "Examples.lean:290",
+    "Examples.lean:292",
+    "Examples.lean:316"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "reads: unscoped counted past the scope #1",
+   "before": "some (.unscopedVariable j)",
+   "after": "some (.unscopedVariable (j - depth))",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:165",
+    "Examples.lean:292",
+    "Examples.lean:316"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "reads: a duplicate without its name #1",
+   "before": "some (.duplicateName d.name)",
+   "after": "some (.duplicateName \"\")",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:176",
+    "Examples.lean:316",
+    "Examples.lean:324"
+   ]
+  },
+  {
+   "file": "lean/VE/Arith/Defs.lean",
+   "class": "reads: an unknown call admitted #1",
+   "before": "else some (.unknownDefinition f)",
+   "after": "else none",
+   "occurrence": 1,
+   "status": "KILLED",
+   "errors": [
+    "Examples.lean:163",
+    "Examples.lean:167",
+    "Examples.lean:168",
+    "Examples.lean:178",
+    "Examples.lean:290",
+    "Examples.lean:292",
+    "Examples.lean:316",
+    "Examples.lean:324"
+   ]
+  }
+ ],
+ "survived": 0
+}
