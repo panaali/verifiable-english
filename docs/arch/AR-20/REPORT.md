@@ -198,7 +198,9 @@ make one report commit that changes only `docs/arch/AR-20/`:
         --out docs/arch/AR-20/evidence/ab.json --delta docs/arch/AR-20/evidence/ab-delta.json
     uv run python tools/batch_evidence.py --check docs/arch/AR-20 --report-commit HEAD
 
-The head recording was made at `b10992ca` (the merge of main). From there to `<G>`, `ve/`, `lean/`, `rust/` and
+Until then, `evidence/scope.json` and `evidence/ab.json` name `29612e00`, the commit that added the evidence
+(a non-merge commit, as the scope requires); `batch_evidence.py --check docs/arch/AR-20 --report-commit HEAD`
+reports only the missing gate. The head recording was made at `b10992ca` (the merge of main). From there to `<G>`, `ve/`, `lean/`, `rust/` and
 `tools/lean_first_diff.py` are unchanged (`git diff --stat b10992ca <G> -- ve lean rust tools/lean_first_diff.py` is
 empty); the commits after it change only `docs/arch/AR-20/`.
 

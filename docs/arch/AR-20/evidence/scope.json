@@ -12,6 +12,86 @@
    "path": "docs/CONSOLIDATION-PLAN.md"
   },
   {
+   "added": 17,
+   "deleted": 0,
+   "path": "docs/arch/AR-20/DELTA.md"
+  },
+  {
+   "added": 228,
+   "deleted": 0,
+   "path": "docs/arch/AR-20/REPORT.md"
+  },
+  {
+   "added": 74,
+   "deleted": 0,
+   "path": "docs/arch/AR-20/canonical_equiv.lean"
+  },
+  {
+   "added": 22,
+   "deleted": 0,
+   "path": "docs/arch/AR-20/evidence.toml"
+  },
+  {
+   "added": 158,
+   "deleted": 0,
+   "path": "docs/arch/AR-20/evidence/ab-delta.json"
+  },
+  {
+   "added": 565,
+   "deleted": 0,
+   "path": "docs/arch/AR-20/evidence/ab.json"
+  },
+  {
+   "added": 1,
+   "deleted": 0,
+   "path": "docs/arch/AR-20/evidence/canonical-equiv.txt"
+  },
+  {
+   "added": 147,
+   "deleted": 0,
+   "path": "docs/arch/AR-20/evidence/mutants.json"
+  },
+  {
+   "added": 2128,
+   "deleted": 0,
+   "path": "docs/arch/AR-20/evidence/new-pilots.json"
+  },
+  {
+   "added": 107,
+   "deleted": 0,
+   "path": "docs/arch/AR-20/evidence/pilot-rerun.json"
+  },
+  {
+   "added": 203,
+   "deleted": 0,
+   "path": "docs/arch/AR-20/evidence/scope.json"
+  },
+  {
+   "added": 42,
+   "deleted": 0,
+   "path": "docs/arch/AR-20/evidence/statements.json"
+  },
+  {
+   "added": 25,
+   "deleted": 0,
+   "path": "docs/arch/AR-20/evidence/trust-mutants.json"
+  },
+  {
+   "added": 361,
+   "deleted": 0,
+   "path": "docs/arch/AR-20/evidence/trust.json"
+  },
+  {
+   "added": 111,
+   "deleted": 0,
+   "path": "docs/arch/AR-20/mutants.json"
+  },
+  {
+   "added": 69,
+   "deleted": 0,
+   "path": "docs/arch/AR-20/pilot_rerun.py"
+  },
+  {
    "added": 6,
    "deleted": 6,
    "path": "docs/spec/assurance-manifest.md"
@@ -159,6 +239,10 @@
  ],
  "commits": [
   {
+   "hash": "29612e0027ad8e3e1702f2424711a7d4a04e2b03",
+   "subject": "AR-20 evidence and report: DELTA (R7 rows only), A/B, statements, trust, mutants"
+  },
+  {
    "hash": "f355c3ff8991e5eef5ce8e700fc05b2a560fa8c1",
    "subject": "AR-20: record the new soft test's inputs; remeasured ledger rows 3 and 4"
   },
@@ -199,5 +283,5 @@
    "subject": "AR-20 part 1: bind_ok in VE.Kit.Except; the two old names are aliases"
   }
  ],
- "head": "b10992ca8ed2b838f97dc0f854bf3d1876d3904f"
+ "head": "29612e0027ad8e3e1702f2424711a7d4a04e2b03"
 }
