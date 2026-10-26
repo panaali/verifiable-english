@@ -10,8 +10,8 @@ decoder establishes `CEnv.WellFormed` (E5–E8), which `cardinality_elab_sound` 
 depth-first, left-to-right pass after its envelope (S1) and size (S2): at each node the checks S3–S10 that apply to
 it run in table order, a ratio's operands are checked in full before their tags are compared (S9), and a W6a part
 is elaborated by W6a (S4). The decoded formula is then admitted by the proved `CFormula.admits`, and its identity is
-over its canonical encoding. `CardCertificate`, the problem limits P1–P3 and the case runner are QT-A3's next part
-(qt-a3b). -/
+over its canonical encoding. Certificates (`CardCertificate`), the problem limits P1–P3 and the case runner are
+QT-A3's next part (qt-a3b). -/
 namespace VE.Cardinality
 open Lean
 
@@ -36,12 +36,6 @@ structure CAdmission (w : CardEnv) where
   formula : CFormula
   admitted : formula.admits w.env = true
   meaningId : String
-
-structure CardCertificate where
-  environmentId : String
-  premiseIds : List String
-  conclusionId : String
-  w6 : VE.Time.Wire.W6Certificate
 
 /-- An admitted statement satisfies the independent admission relation. -/
 theorem CAdmission.sound {w : CardEnv} (a : CAdmission w) : Admitted w.env a.formula := admits_sound _ _ a.admitted

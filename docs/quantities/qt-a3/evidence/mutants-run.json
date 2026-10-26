@@ -1,0 +1,274 @@
+{
+ "mutants": [
+  {
+   "id": "plan-count-not-finite",
+   "file": "lean/VE/Cardinality/Wire.lean",
+   "claim": "countedSort (the plan's seeded bug): a count whose sort is not in finite_sorts is refused, S5 (FA8's hostile case)",
+   "source_sha256": "5a013bef4e90b8e7896c081b7d57d3d6fcefd7999767c04693d9a587b35ad740",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 13.1,
+   "output_tail": "lean/.lake/build/ir/VE/Cardinality/WireExamples.setup.json --json\nerror: VE/Cardinality/WireExamples.lean:124:0: Expression\n  refusal \"[\\\"count\\\", \\\"user\\\", [[\\\"1\\\", [\\\"is\\\", \\\"curious\\\"]]], \\\"le\\\", \\\"2\\\"]\" == \"CardinalityNotFinite(user)\"\ndid not evaluate to `true`\nerror: VE/Cardinality/WireExamples.lean:220:0: Expression\n  refusal (terms 1) (finite \"{\\\"finite_sorts\\\": []}\") == \"CardinalityNotFinite(fomc_policymaker)\"\ndid not evaluate to `true`\nerror: VE/Cardinality/WireExamples.lean:227:0: Expression\n  refusal \"[\\\"proportion\\\", \\\"user\\\", [\\\"any\\\"], [\\\"is\\\", \\\"curious\\\"], \\\"gt\\\", \\\"3\\\", \\\"2\\\"]\" ==\n    \"CardinalityNotFinite(user)\"\ndid not evaluate to `true`\nerror: VE/Cardinality/WireExamples.lean:236:0: Expression\n  refusal (toString \"[\\\"and\\\", \" ++ toString badCount ++ toString \", \" ++ toString (share \"3\" \"2\") ++ toString \"]\") ==\n    \"CardinalityNotFinite(user)\"\ndid not evaluate to `true`\nerror: VE/Cardinality/WireExamples.lean:238:0: Expression\n  refusal\n      \"[\\\"rounds_to\\\", \\\"ties_up\\\", [\\\"count\\\", \\\"user\\\", [\\\"is\\\", \\\"curious\\\"]], [\\\"quantity\\\", [\\\"const\\\", \\\"bp\\\", \\\"sept\\\"]], \\\"296\\\"]\" ==\n    \"CardinalityNotFinite(user)\"\ndid not evaluate to `true`\nerror: VE/Cardinality/WireExamples.lean:244:0: Expression\n  match decode [st badCount, st (share \"3\" \"2\")] with\n  | Except.error \"CardinalityNotFinite(user)\" => true\n  | x => false\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.WireExamples\nerror: build failed\n"
+  },
+  {
+   "id": "projectW6-profiles",
+   "file": "lean/VE/Cardinality/Wire.lean",
+   "claim": "projectW6: the projection removes cardinality@0 from profiles (FA11)",
+   "source_sha256": "5a013bef4e90b8e7896c081b7d57d3d6fcefd7999767c04693d9a587b35ad740",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 6.3,
+   "output_tail": "evaluate to `true`\nerror: VE/Cardinality/WireExamples.lean:235:0: Expression\n  refusal (toString \"[\\\"and\\\", \" ++ toString (share \"3\" \"2\") ++ toString \", \" ++ toString badCount ++ toString \"]\") ==\n    \"ProportionRange(3 in 2)\"\ndid not evaluate to `true`\nerror: VE/Cardinality/WireExamples.lean:236:0: Expression\n  refusal (toString \"[\\\"and\\\", \" ++ toString badCount ++ toString \", \" ++ toString (share \"3\" \"2\") ++ toString \"]\") ==\n    \"CardinalityNotFinite(user)\"\ndid not evaluate to `true`\nerror: VE/Cardinality/WireExamples.lean:238:0: Expression\n  refusal\n      \"[\\\"rounds_to\\\", \\\"ties_up\\\", [\\\"count\\\", \\\"user\\\", [\\\"is\\\", \\\"curious\\\"]], [\\\"quantity\\\", [\\\"const\\\", \\\"bp\\\", \\\"sept\\\"]], \\\"296\\\"]\" ==\n    \"CardinalityNotFinite(user)\"\ndid not evaluate to `true`\nerror: VE/Cardinality/WireExamples.lean:241:0: Expression\n  refusal (toString \"[\\\"and\\\", \" ++ toString (terms 5000) ++ toString \", [\\\"bogus\\\"]]\") == Time.Wire.depthLimit\ndid not evaluate to `true`\nerror: VE/Cardinality/WireExamples.lean:242:0: Expression\n  refusal (toString \"[\\\"and\\\", \" ++ toString (terms 64) ++ toString \", [\\\"bogus\\\"]]\") ==\n    \"Unknown cardinality operator bogus\"\ndid not evaluate to `true`\nerror: VE/Cardinality/WireExamples.lean:244:0: Expression\n  match decode [st badCount, st (share \"3\" \"2\")] with\n  | Except.error \"CardinalityNotFinite(user)\" => true\n  | x => false\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.WireExamples\nerror: build failed\n"
+  },
+  {
+   "id": "profileLists-docs",
+   "file": "lean/VE/Cardinality/Wire.lean",
+   "claim": "profileLists: cardinality@0 with either of W6a's lists, documents@1 included (E2, FA11)",
+   "source_sha256": "5a013bef4e90b8e7896c081b7d57d3d6fcefd7999767c04693d9a587b35ad740",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 13.3,
+   "output_tail": "\n  simp only [Bool.and_eq_true, decide_eq_true_eq, List.length_append, List.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [133/134] Built VE.Cardinality.Wire (2.5s)\n\u2716 [134/134] Building VE.Cardinality.WireExamples (10s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3/lean/VE/Cardinality/WireExamples.lean -o /home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean/VE/Cardinality/WireExamples.olean -i /home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean/VE/Cardinality/WireExamples.ilean -c /home/seyran/code/ve-qt-a3/lean/.lake/build/ir/VE/Cardinality/WireExamples.c --setup /home/seyran/code/ve-qt-a3/lean/.lake/build/ir/VE/Cardinality/WireExamples.setup.json --json\nerror: VE/Cardinality/WireExamples.lean:76:0: Expression\n  Option.map (fun x => x.snd.fst) (decoded envDocs) == some [\"documents@1\", \"order@0\", \"relational-fol@0\", \"time@0\"]\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.WireExamples\nerror: build failed\n"
+  },
+  {
+   "id": "finiteSorts-limit",
+   "file": "lean/VE/Cardinality/Wire.lean",
+   "claim": "finiteSorts: at most 64 finite sorts, 64 allowed (E6)",
+   "source_sha256": "5a013bef4e90b8e7896c081b7d57d3d6fcefd7999767c04693d9a587b35ad740",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 15.6,
+   "output_tail": "ly [Bool.and_eq_true, decide_eq_true_eq, List.length_append, List.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [133/134] Built VE.Cardinality.Wire (2.7s)\n\u2716 [134/134] Building VE.Cardinality.WireExamples (12s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3/lean/VE/Cardinality/WireExamples.lean -o /home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean/VE/Cardinality/WireExamples.olean -i /home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean/VE/Cardinality/WireExamples.ilean -c /home/seyran/code/ve-qt-a3/lean/.lake/build/ir/VE/Cardinality/WireExamples.c --setup /home/seyran/code/ve-qt-a3/lean/.lake/build/ir/VE/Cardinality/WireExamples.setup.json --json\nerror: VE/Cardinality/WireExamples.lean:213:0: Expression\n  refusal (terms 1) (finite (Json.mkObj [(\"finite_sorts\", toJson (List.replicate 64 \"x\"))]).compress) ==\n    \"UnknownSort(x)\"\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.WireExamples\nerror: build failed\n"
+  },
+  {
+   "id": "finiteSorts-fields",
+   "file": "lean/VE/Cardinality/Wire.lean",
+   "claim": "finiteSorts: the cardinality object has exactly finite_sorts (E5)",
+   "source_sha256": "5a013bef4e90b8e7896c081b7d57d3d6fcefd7999767c04693d9a587b35ad740",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 17.2,
+   "output_tail": ", decide_eq_true_eq, List.length_append, List.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [133/134] Built VE.Cardinality.Wire (3.3s)\n\u2716 [134/134] Building VE.Cardinality.WireExamples (13s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3/lean/VE/Cardinality/WireExamples.lean -o /home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean/VE/Cardinality/WireExamples.olean -i /home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean/VE/Cardinality/WireExamples.ilean -c /home/seyran/code/ve-qt-a3/lean/.lake/build/ir/VE/Cardinality/WireExamples.c --setup /home/seyran/code/ve-qt-a3/lean/.lake/build/ir/VE/Cardinality/WireExamples.setup.json --json\nerror: VE/Cardinality/WireExamples.lean:207:0: Expression\n  refusal (terms 1) (finite \"{\\\"finite_sorts\\\": [], \\\"more\\\": 1}\") ==\n    \"InvalidInput: cardinality.finite_sorts must be an array of sort names\"\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.WireExamples\nerror: build failed\n"
+  },
+  {
+   "id": "environmentId-original",
+   "file": "lean/VE/Cardinality/Wire.lean",
+   "claim": "decodeEnvironment: the cardinality identity is over the original environment, not the projection (FA11)",
+   "source_sha256": "5a013bef4e90b8e7896c081b7d57d3d6fcefd7999767c04693d9a587b35ad740",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 15.1,
+   "output_tail": "Elem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [133/134] Built VE.Cardinality.Wire (2.0s)\n\u2716 [134/134] Building VE.Cardinality.WireExamples (11s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3/lean/VE/Cardinality/WireExamples.lean -o /home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean/VE/Cardinality/WireExamples.olean -i /home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean/VE/Cardinality/WireExamples.ilean -c /home/seyran/code/ve-qt-a3/lean/.lake/build/ir/VE/Cardinality/WireExamples.c --setup /home/seyran/code/ve-qt-a3/lean/.lake/build/ir/VE/Cardinality/WireExamples.setup.json --json\nerror: VE/Cardinality/WireExamples.lean:70:0: Expression\n  Option.map (fun x => x.fst) (decoded env) ==\n    some\n      (\"f408745ffa417a1a3ac41ab314c85bd2c0f92262f102bc2a61c623527bc0cf6b\",\n        \"329a150724f6ad9d2346ef66a6e2bcb79ac8f8bb7a1ce396fc1c4e1f830a3995\",\n        \"f4c2ad6dafb7109c8729f6c075db8f5feeabf64e7c81cd10f3f39a167ff8350b\")\ndid not evaluate to `true`\nerror: VE/Cardinality/WireExamples.lean:95:0: Expression\n  Option.map (fun x => List.map (fun x => x.snd) x) (decode [fa1Conclusion]).toOption ==\n    some [\"cdc39856d173011b8acddc122c08690bc453f232202dd5813a65b54f5661b1c5\"]\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.WireExamples\nerror: build failed\n"
+  },
+  {
+   "id": "environment-schema",
+   "file": "lean/VE/Cardinality/Wire.lean",
+   "claim": "decodeEnvironment: E3 refuses another cardinality schema, before E4",
+   "source_sha256": "5a013bef4e90b8e7896c081b7d57d3d6fcefd7999767c04693d9a587b35ad740",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 15.6,
+   "output_tail": "_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [133/134] Built VE.Cardinality.Wire (3.2s)\n\u2716 [134/134] Building VE.Cardinality.WireExamples (12s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3/lean/VE/Cardinality/WireExamples.lean -o /home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean/VE/Cardinality/WireExamples.olean -i /home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean/VE/Cardinality/WireExamples.ilean -c /home/seyran/code/ve-qt-a3/lean/.lake/build/ir/VE/Cardinality/WireExamples.c --setup /home/seyran/code/ve-qt-a3/lean/.lake/build/ir/VE/Cardinality/WireExamples.setup.json --json\nerror: VE/Cardinality/WireExamples.lean:200:0: Expression\n  refusal (terms 1)\n      ((env.setObjVal! \"cardinality_schema\" (Json.str \"ve-cardinality@2\")).setObjVal! \"spec_revision\" (Json.str \"x\")) ==\n    \"UnsupportedProfile: Unsupported cardinality schema\"\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.WireExamples\nerror: build failed\n"
+  },
+  {
+   "id": "environment-declarations",
+   "file": "lean/VE/Cardinality/Wire.lean",
+   "claim": "decodeEnvironment: E7 and E8 run, with their texts (duplicate, unknown and reserved names)",
+   "source_sha256": "5a013bef4e90b8e7896c081b7d57d3d6fcefd7999767c04693d9a587b35ad740",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 17.4,
+   "output_tail": "\nerror: VE/Cardinality/WireExamples.lean:147:0: Expression\n  refusal (terms 1) (declaring \"sorts\" \"cardinality__x\" \"{\\\"description\\\": \\\"x\\\"}\") ==\n    \"ReservedName: cardinality__ is reserved for region constants (cardinality__x)\"\ndid not evaluate to `true`\nerror: VE/Cardinality/WireExamples.lean:149:0: Expression\n  refusal (terms 1) (declaring \"predicates\" \"cardinality__p\" \"{\\\"arguments\\\": [\\\"user\\\"], \\\"description\\\": \\\"p\\\"}\") ==\n    \"ReservedName: cardinality__ is reserved for region constants (cardinality__p)\"\ndid not evaluate to `true`\nerror: VE/Cardinality/WireExamples.lean:213:0: Expression\n  refusal (terms 1) (finite (Json.mkObj [(\"finite_sorts\", toJson (List.replicate 64 \"x\"))]).compress) ==\n    \"UnknownSort(x)\"\ndid not evaluate to `true`\nerror: VE/Cardinality/WireExamples.lean:215:0: Expression\n  refusal (terms 1) (finite \"{\\\"finite_sorts\\\": [\\\"user\\\", \\\"fomc_policymaker\\\", \\\"user\\\"]}\") ==\n    \"DuplicateDeclaration: finite sort user\"\ndid not evaluate to `true`\nerror: VE/Cardinality/WireExamples.lean:217:0: Expression\n  refusal (terms 1) (finite \"{\\\"finite_sorts\\\": [\\\"fomc_policymaker\\\", \\\"users\\\", \\\"users\\\"]}\") == \"UnknownSort(users)\"\ndid not evaluate to `true`\nerror: VE/Cardinality/WireExamples.lean:218:0: Expression\n  refusal (terms 1) (finite \"{\\\"finite_sorts\\\": [\\\"users\\\", \\\"cardinality__x\\\"]}\") == \"UnknownSort(users)\"\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.WireExamples\nerror: build failed\n"
+  },
+  {
+   "id": "checkDeclarations-sorts",
+   "file": "lean/VE/Cardinality/Wire.lean",
+   "claim": "checkDeclarations: E8 covers declared sorts and predicates, not only constants",
+   "source_sha256": "5a013bef4e90b8e7896c081b7d57d3d6fcefd7999767c04693d9a587b35ad740",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 15.5,
+   "output_tail": "st.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [133/134] Built VE.Cardinality.Wire (3.1s)\n\u2716 [134/134] Building VE.Cardinality.WireExamples (12s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3/lean/VE/Cardinality/WireExamples.lean -o /home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean/VE/Cardinality/WireExamples.olean -i /home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean/VE/Cardinality/WireExamples.ilean -c /home/seyran/code/ve-qt-a3/lean/.lake/build/ir/VE/Cardinality/WireExamples.c --setup /home/seyran/code/ve-qt-a3/lean/.lake/build/ir/VE/Cardinality/WireExamples.setup.json --json\nerror: VE/Cardinality/WireExamples.lean:147:0: Expression\n  refusal (terms 1) (declaring \"sorts\" \"cardinality__x\" \"{\\\"description\\\": \\\"x\\\"}\") ==\n    \"ReservedName: cardinality__ is reserved for region constants (cardinality__x)\"\ndid not evaluate to `true`\nerror: VE/Cardinality/WireExamples.lean:149:0: Expression\n  refusal (terms 1) (declaring \"predicates\" \"cardinality__p\" \"{\\\"arguments\\\": [\\\"user\\\"], \\\"description\\\": \\\"p\\\"}\") ==\n    \"ReservedName: cardinality__ is reserved for region constants (cardinality__p)\"\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.WireExamples\nerror: build failed\n"
+  },
+  {
+   "id": "statement-size",
+   "file": "lean/VE/Cardinality/Wire.lean",
+   "claim": "decodeStatement: S2's 10,000-node preflight comes before the pass (FA13)",
+   "source_sha256": "5a013bef4e90b8e7896c081b7d57d3d6fcefd7999767c04693d9a587b35ad740",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 15.8,
+   "output_tail": "ist.\n  simp only [Bool.and_eq_true, decide_eq_true_eq, List.length_append, List.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [133/134] Built VE.Cardinality.Wire (3.3s)\n\u2716 [134/134] Building VE.Cardinality.WireExamples (12s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3/lean/VE/Cardinality/WireExamples.lean -o /home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean/VE/Cardinality/WireExamples.olean -i /home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean/VE/Cardinality/WireExamples.ilean -c /home/seyran/code/ve-qt-a3/lean/.lake/build/ir/VE/Cardinality/WireExamples.c --setup /home/seyran/code/ve-qt-a3/lean/.lake/build/ir/VE/Cardinality/WireExamples.setup.json --json\nerror: VE/Cardinality/WireExamples.lean:241:0: Expression\n  refusal (toString \"[\\\"and\\\", \" ++ toString (terms 5000) ++ toString \", [\\\"bogus\\\"]]\") == Time.Wire.depthLimit\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.WireExamples\nerror: build failed\n"
+  },
+  {
+   "id": "statement-format",
+   "file": "lean/VE/Cardinality/Wire.lean",
+   "claim": "decodeStatement: S1 refuses another format",
+   "source_sha256": "5a013bef4e90b8e7896c081b7d57d3d6fcefd7999767c04693d9a587b35ad740",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 15.8,
+   "output_tail": "th_append, List.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [133/134] Built VE.Cardinality.Wire (3.4s)\n\u2716 [134/134] Building VE.Cardinality.WireExamples (12s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3/lean/VE/Cardinality/WireExamples.lean -o /home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean/VE/Cardinality/WireExamples.olean -i /home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean/VE/Cardinality/WireExamples.ilean -c /home/seyran/code/ve-qt-a3/lean/.lake/build/ir/VE/Cardinality/WireExamples.c --setup /home/seyran/code/ve-qt-a3/lean/.lake/build/ir/VE/Cardinality/WireExamples.setup.json --json\nerror: VE/Cardinality/WireExamples.lean:182:0: Expression\n  match decode [Json.mkObj [(\"format\", Json.str \"ve-cardinality@2\"), (\"formula\", p \"[\\\"any\\\"]\")]] with\n  | Except.error \"Unsupported cardinality format\" => true\n  | x => false\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.WireExamples\nerror: build failed\n"
+  },
+  {
+   "id": "meaningId-profiles",
+   "file": "lean/VE/Cardinality/Wire.lean",
+   "claim": "decodeStatement: the meaning id is in the cardinality environment's identity, with cardinality@0 in its profiles",
+   "source_sha256": "5a013bef4e90b8e7896c081b7d57d3d6fcefd7999767c04693d9a587b35ad740",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 15.8,
+   "output_tail": " List.length_append, List.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [133/134] Built VE.Cardinality.Wire (3.2s)\n\u2716 [134/134] Building VE.Cardinality.WireExamples (12s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3/lean/VE/Cardinality/WireExamples.lean -o /home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean/VE/Cardinality/WireExamples.olean -i /home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean/VE/Cardinality/WireExamples.ilean -c /home/seyran/code/ve-qt-a3/lean/.lake/build/ir/VE/Cardinality/WireExamples.c --setup /home/seyran/code/ve-qt-a3/lean/.lake/build/ir/VE/Cardinality/WireExamples.setup.json --json\nerror: VE/Cardinality/WireExamples.lean:95:0: Expression\n  Option.map (fun x => List.map (fun x => x.snd) x) (decode [fa1Conclusion]).toOption ==\n    some [\"cdc39856d173011b8acddc122c08690bc453f232202dd5813a65b54f5661b1c5\"]\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.WireExamples\nerror: build failed\n"
+  },
+  {
+   "id": "countedSort-atoms",
+   "file": "lean/VE/Cardinality/Wire.lean",
+   "claim": "countedSort: S6 names the body atom that is not a unary predicate of the counted sort",
+   "source_sha256": "5a013bef4e90b8e7896c081b7d57d3d6fcefd7999767c04693d9a587b35ad740",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 16.1,
+   "output_tail": "lding VE.Cardinality.WireExamples (12s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3/lean/VE/Cardinality/WireExamples.lean -o /home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean/VE/Cardinality/WireExamples.olean -i /home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean/VE/Cardinality/WireExamples.ilean -c /home/seyran/code/ve-qt-a3/lean/.lake/build/ir/VE/Cardinality/WireExamples.c --setup /home/seyran/code/ve-qt-a3/lean/.lake/build/ir/VE/Cardinality/WireExamples.setup.json --json\nerror: VE/Cardinality/WireExamples.lean:125:0: Expression\n  refusal \"[\\\"count\\\", \\\"fomc_policymaker\\\", [[\\\"1\\\", [\\\"is\\\", \\\"advises\\\"]]], \\\"le\\\", \\\"2\\\"]\" ==\n    \"TypeMismatch: advises is not a unary predicate of sort fomc_policymaker\"\ndid not evaluate to `true`\nerror: VE/Cardinality/WireExamples.lean:127:0: Expression\n  refusal \"[\\\"count\\\", \\\"fomc_policymaker\\\", [[\\\"1\\\", [\\\"not\\\", [\\\"is\\\", \\\"curious\\\"]]]], \\\"le\\\", \\\"2\\\"]\" ==\n    \"TypeMismatch: curious is not a unary predicate of sort fomc_policymaker\"\ndid not evaluate to `true`\nerror: VE/Cardinality/WireExamples.lean:231:0: Expression\n  refusal ((terms 65).replace \"[\\\"any\\\"]]], \" \"[\\\"is\\\", \\\"curious\\\"]]], \") ==\n    \"TypeMismatch: curious is not a unary predicate of sort fomc_policymaker\"\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.WireExamples\nerror: build failed\n"
+  },
+  {
+   "id": "ratio-day",
+   "file": "lean/VE/Cardinality/Wire.lean",
+   "claim": "elabRatio: a ratio of calendar dates is refused with its own text (S9, FA9e)",
+   "source_sha256": "5a013bef4e90b8e7896c081b7d57d3d6fcefd7999767c04693d9a587b35ad740",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 17.4,
+   "output_tail": "_true_eq, List.length_append, List.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [133/134] Built VE.Cardinality.Wire (4.3s)\n\u2716 [134/134] Building VE.Cardinality.WireExamples (12s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3/lean/VE/Cardinality/WireExamples.lean -o /home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean/VE/Cardinality/WireExamples.olean -i /home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean/VE/Cardinality/WireExamples.ilean -c /home/seyran/code/ve-qt-a3/lean/.lake/build/ir/VE/Cardinality/WireExamples.c --setup /home/seyran/code/ve-qt-a3/lean/.lake/build/ir/VE/Cardinality/WireExamples.setup.json --json\nerror: VE/Cardinality/WireExamples.lean:156:0: Expression\n  refusal (ratioOf \"ties_up\" \"\\\"day\\\", \\\"d1\\\"\" \"\\\"day\\\", \\\"d2\\\"\") ==\n    \"TypeMismatch: a ratio of calendar dates has no meaning; durations use elapsed_day\"\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.WireExamples\nerror: build failed\n"
+  },
+  {
+   "id": "admittedRule",
+   "file": "lean/VE/Cardinality/Wire.lean",
+   "claim": "admittedRule: S10 refuses a decoded rule that is not admitted (FA9e)",
+   "source_sha256": "5a013bef4e90b8e7896c081b7d57d3d6fcefd7999767c04693d9a587b35ad740",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 16.9,
+   "output_tail": "er can be disabled with `set_option linter.unusedSimpArgs false`\n\u26a0 [133/134] Built VE.Cardinality.Wire (3.9s)\nwarning: VE/Cardinality/Wire.lean:176:18: unused variable `name`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\nwarning: VE/Cardinality/Wire.lean:176:34: unused variable `r`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\n\u2716 [134/134] Building VE.Cardinality.WireExamples (12s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3/lean/VE/Cardinality/WireExamples.lean -o /home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean/VE/Cardinality/WireExamples.olean -i /home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean/VE/Cardinality/WireExamples.ilean -c /home/seyran/code/ve-qt-a3/lean/.lake/build/ir/VE/Cardinality/WireExamples.c --setup /home/seyran/code/ve-qt-a3/lean/.lake/build/ir/VE/Cardinality/WireExamples.setup.json --json\nerror: VE/Cardinality/WireExamples.lean:159:0: Expression\n  refusal (ratioOf \"down\" \"\\\"bp\\\", \\\"sept\\\"\" \"\\\"bp\\\", \\\"june\\\"\") == \"UnsupportedRounding(down)\"\ndid not evaluate to `true`\nerror: VE/Cardinality/WireExamples.lean:160:0: Expression\n  refusal (ratioOf \"up\" \"\\\"bp\\\", \\\"sept\\\"\" \"\\\"bp\\\", \\\"june\\\"\") == \"UnsupportedRounding(up)\"\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.WireExamples\nerror: build failed\n"
+  },
+  {
+   "id": "proportion-order",
+   "file": "lean/VE/Cardinality/Wire.lean",
+   "claim": "elabFormula: within one node S5 comes before S8 (FA13)",
+   "source_sha256": "5a013bef4e90b8e7896c081b7d57d3d6fcefd7999767c04693d9a587b35ad740",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 14.5,
+   "output_tail": "ool.and_eq_true, decide_eq_true_eq, List.length_append, List.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [133/134] Built VE.Cardinality.Wire (3.3s)\n\u2716 [134/134] Building VE.Cardinality.WireExamples (10s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3/lean/VE/Cardinality/WireExamples.lean -o /home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean/VE/Cardinality/WireExamples.olean -i /home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean/VE/Cardinality/WireExamples.ilean -c /home/seyran/code/ve-qt-a3/lean/.lake/build/ir/VE/Cardinality/WireExamples.c --setup /home/seyran/code/ve-qt-a3/lean/.lake/build/ir/VE/Cardinality/WireExamples.setup.json --json\nerror: VE/Cardinality/WireExamples.lean:227:0: Expression\n  refusal \"[\\\"proportion\\\", \\\"user\\\", [\\\"any\\\"], [\\\"is\\\", \\\"curious\\\"], \\\"gt\\\", \\\"3\\\", \\\"2\\\"]\" ==\n    \"CardinalityNotFinite(user)\"\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.WireExamples\nerror: build failed\n"
+  },
+  {
+   "id": "relNames-eq",
+   "file": "lean/VE/Cardinality/Wire.lean",
+   "claim": "elabFormula: eq is read as =, so FA1 decodes to the core's statements",
+   "source_sha256": "5a013bef4e90b8e7896c081b7d57d3d6fcefd7999767c04693d9a587b35ad740",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 15.3,
+   "output_tail": "VE.Cardinality.Wire (2.8s)\n\u2716 [134/134] Building VE.Cardinality.WireExamples (12s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3/lean/VE/Cardinality/WireExamples.lean -o /home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean/VE/Cardinality/WireExamples.olean -i /home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean/VE/Cardinality/WireExamples.ilean -c /home/seyran/code/ve-qt-a3/lean/.lake/build/ir/VE/Cardinality/WireExamples.c --setup /home/seyran/code/ve-qt-a3/lean/.lake/build/ir/VE/Cardinality/WireExamples.setup.json --json\nerror: VE/Cardinality/WireExamples.lean:92:0: Expression\n  Option.map (fun x => List.map (fun x => x.fst) x) (decode (fa1Premises ++ [fa1Conclusion])).toOption ==\n    some (Examples.fa1 ++ [Examples.fa1Conclusion])\ndid not evaluate to `true`\nerror: VE/Cardinality/WireExamples.lean:98:0: Expression\n  Option.map (fun x => List.map (fun x => x.fst) x) (decode fa1Premises.dropLast).toOption == some Examples.fa1.dropLast\ndid not evaluate to `true`\nerror: VE/Cardinality/WireExamples.lean:100:0: Expression\n  Option.map (fun x => List.map (fun x => encode x.fst) x) (decode (fa1Premises ++ [fa1Conclusion])).toOption ==\n    some (List.map (fun x => x.getObjValD \"formula\") (fa1Premises ++ [fa1Conclusion]))\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.WireExamples\nerror: build failed\n"
+  },
+  {
+   "id": "encPrinted-places",
+   "file": "lean/VE/Cardinality/Wire.lean",
+   "claim": "encPrinted: the canonical object keeps a printed number's written places (identity)",
+   "source_sha256": "5a013bef4e90b8e7896c081b7d57d3d6fcefd7999767c04693d9a587b35ad740",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 15.4,
+   "output_tail": "2: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u26a0 [133/134] Built VE.Cardinality.Wire (3.1s)\nwarning: VE/Cardinality/Wire.lean:256:26: unused variable `k`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\n\u2716 [134/134] Building VE.Cardinality.WireExamples (12s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3/lean/VE/Cardinality/WireExamples.lean -o /home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean/VE/Cardinality/WireExamples.olean -i /home/seyran/code/ve-qt-a3/lean/.lake/build/lib/lean/VE/Cardinality/WireExamples.ilean -c /home/seyran/code/ve-qt-a3/lean/.lake/build/ir/VE/Cardinality/WireExamples.c --setup /home/seyran/code/ve-qt-a3/lean/.lake/build/ir/VE/Cardinality/WireExamples.setup.json --json\nerror: VE/Cardinality/WireExamples.lean:116:0: Expression\n  [\"0.30\", \"105\", \"-1.5\"].all fun d =>\n    Option.map (fun x => List.map (fun x => encode x.fst) x)\n        (decode [Json.mkObj [(\"format\", Json.str \"ve-cardinality@1\"), (\"formula\", ratio d)]]).toOption ==\n      some [ratio d]\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.WireExamples\nerror: build failed\n"
+  }
+ ]
+}
