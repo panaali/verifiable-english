@@ -145,6 +145,10 @@ def answer : Json := Json.mkObj [("id", .str "d"), ("status", .str "OPEN"), ("un
   Json.mkObj [("status", .str "B"), ("span", toJson [4, 10])],
   Json.mkObj [("status", .str "A"), ("span", toJson [10, 11])],
   Json.mkObj [("status", .str "B")]] == [("A", toJson (5 : Nat)), ("B", toJson (6 : Nat))]
+#guard byStatus [Json.mkObj [("status", .str "A"), ("span", toJson [0, 1])],
+  Json.mkObj [("status", .str "B"), ("span", toJson [1, 3])],
+  Json.mkObj [("status", .str "C"), ("span", toJson [3, 6])]] ==
+  [("A", toJson (1 : Nat)), ("B", toJson (2 : Nat)), ("C", toJson (3 : Nat))]
 #guard byStatus [Json.mkObj [("status", .str "A"), ("span", toJson [Json.str "x", toJson (4 : Nat)])],
   Json.mkObj [("status", .str "A"), ("span", toJson [toJson (0 : Nat), Json.str "y"])]] == [("A", toJson (4 : Nat))]
 
