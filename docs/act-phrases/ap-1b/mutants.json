@@ -1,0 +1,289 @@
+{
+ "actsFixed-fields": {
+  "definition": "actsFixed",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:64:0: Expression"
+ },
+ "actsFixed-unchecked": {
+  "definition": "actsFixed",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:69:0: Expression"
+ },
+ "actsProfiles-any": {
+  "definition": "actsProfiles",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:75:0: Expression"
+ },
+ "actsProfiles-flag": {
+  "definition": "actsProfiles",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:53:0: Expression"
+ },
+ "actsView-block": {
+  "definition": "actsView",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:50:0: Expression"
+ },
+ "actsView-profile": {
+  "definition": "actsView",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:50:0: Expression"
+ },
+ "actsFamilyRefusal-text": {
+  "definition": "actsFamilyRefusal",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Compose.Examples",
+  "killed": true,
+  "first_failure": "error: VE/Compose/Examples.lean:252:0: Expression"
+ },
+ "decodeNormsEnvironment-fixed": {
+  "definition": "decodeNormsEnvironment",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:50:0: Expression"
+ },
+ "decodeNormsEnvironment-profiles": {
+  "definition": "decodeNormsEnvironment",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:50:0: Expression"
+ },
+ "canonicalEnvironmentJson-act": {
+  "definition": "canonicalEnvironmentJson",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:85:0: Expression"
+ },
+ "decodeSource-acts": {
+  "definition": "decodeSource",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:75:0: Expression"
+ },
+ "decodeEnvironmentU-acts": {
+  "definition": "decodeEnvironmentU",
+  "file": "lean/VE/NormDefaults/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:94:0: Expression"
+ },
+ "decodeRegulatedAllIn-check": {
+  "definition": "decodeRegulatedAllIn",
+  "file": "lean/VE/Norms/Plain.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:81:0: Expression"
+ },
+ "plainRun-view": {
+  "definition": "Plain.run",
+  "file": "lean/VE/Norms/Plain.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:110:0: Expression"
+ },
+ "baseEnvironmentJson-view": {
+  "definition": "baseEnvironmentJson",
+  "file": "lean/VE/Norms/Replay.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:104:0: Expression"
+ },
+ "treeCheck-plain-act": {
+  "definition": "Tree.check",
+  "file": "lean/VE/Norms/Tree.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/NormDefaults/Check.lean:150:0: Not a definitional equality: the left-hand side"
+ },
+ "validatedComposed-gate": {
+  "definition": "validatedComposedEnvironment",
+  "file": "lean/VE/Service/Standalone.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:98:0: Expression"
+ },
+ "validatedComposed-checkRegulated": {
+  "definition": "validatedComposedEnvironment",
+  "file": "lean/VE/Service/Standalone.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:94:0: Expression"
+ },
+ "folView-gate": {
+  "definition": "folView",
+  "file": "lean/VE/Service/FamilyNorms.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:102:0: Expression"
+ },
+ "modalForm-plain": {
+  "definition": "modalForm",
+  "file": "lean/VE/EnglishGrammar/Encode.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:124:0: Expression"
+ },
+ "modalForm-not-modal": {
+  "definition": "modalForm",
+  "file": "lean/VE/EnglishGrammar/Encode.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:124:0: Expression"
+ },
+ "envDecode-fixed": {
+  "definition": "Env.decode",
+  "file": "lean/VE/EnglishGrammar/Encode.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:124:0: Expression"
+ },
+ "typingView-acts": {
+  "definition": "typingView",
+  "file": "lean/VE/EnglishGrammar/Encode.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:106:0: Expression"
+ },
+ "actsRefuses-speech": {
+  "definition": "actsRefuses",
+  "file": "lean/VE/Compose/Dispatch.lean",
+  "test": "VE.Compose.Examples",
+  "killed": true,
+  "first_failure": "error: VE/Compose/Dispatch.lean:1118:9: Tactic `rcases` failed: `right✝ : \"ve.discourse@1\" ∈ ps → False` is not an inductive datatype"
+ },
+ "row-requires": {
+  "definition": "profileTable (acts row)",
+  "file": "lean/VE/Compose/Dispatch.lean",
+  "test": "VE.Compose.Examples",
+  "killed": true,
+  "first_failure": "error: VE/Compose/Dispatch.lean:1115:67: unsolved goals"
+ },
+ "treeCheck-and-regBody-plain-act": {
+  "definition": "Tree.check",
+  "file": "lean/VE/Norms/Tree.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/NormDefaults/Check.lean:176:18: simp_all made no progress"
+ },
+ "py-drop-form": {
+  "definition": "Environment._decode (form)",
+  "file": "ve/environment.py",
+  "test": "tests/test_acts_profile.py::test_an_acts_environment_loads_with_its_block_and_forms_as_data",
+  "killed": true,
+  "first_failure": "FAILED tests/test_acts_profile.py::test_an_acts_environment_loads_with_its_block_and_forms_as_data"
+ },
+ "py-drop-block": {
+  "definition": "Environment._decode (acts block)",
+  "file": "ve/environment.py",
+  "test": "tests/test_acts_profile.py::test_an_acts_environment_loads_with_its_block_and_forms_as_data",
+  "killed": true,
+  "first_failure": "FAILED tests/test_acts_profile.py::test_an_acts_environment_loads_with_its_block_and_forms_as_data"
+ },
+ "py-base-keeps-acts": {
+  "definition": "NormDocument.base_environment",
+  "file": "ve/norms.py",
+  "test": "tests/test_acts_profile.py::test_the_norms_route_checks_rules_on_acts",
+  "killed": true,
+  "first_failure": "FAILED tests/test_acts_profile.py::test_the_norms_route_checks_rules_on_acts"
+ },
+ "py-model-not-kept": {
+  "definition": "MODEL_REDUCTIONS",
+  "file": "ve/profiles.py",
+  "test": "tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads",
+  "killed": true,
+  "first_failure": "FAILED tests/test_model_environment.py::test_model_environment_keeps_everything_a_model_reads[ve.core@0.2:acts@0,norms@0,relational-fol@0#1]"
+ },
+ "order-bytes-first": {
+  "definition": "Lexical.check",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "test": "VE.Acts.LexicalExamples",
+  "killed": true,
+  "first_failure": "error: VE/Acts/LexicalExamples.lean:250:0: Expression"
+ },
+ "order-phrases-first": {
+  "definition": "Lexical.decodeFixed",
+  "file": "lean/VE/Acts/Lexical.lean",
+  "test": "VE.Acts.LexicalExamples",
+  "killed": true,
+  "first_failure": "error: VE/Acts/LexicalExamples.lean:251:0: Expression"
+ },
+ "order-form-first": {
+  "definition": "decodeRegulatedWith",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Acts.LexicalExamples",
+  "killed": true,
+  "first_failure": "error: VE/Acts/LexicalExamples.lean:253:0: Expression"
+ },
+ "readsActs-sorted": {
+  "definition": "readsActs",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:81:0: Expression"
+ },
+ "actsView-premise": {
+  "definition": "actsView",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:109:0: Expression"
+ },
+ "baseEnvironmentJson-whole-list": {
+  "definition": "baseEnvironmentJson",
+  "file": "lean/VE/Norms/Replay.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:96:0: Expression"
+ },
+ "placeholderJson-acts-order": {
+  "definition": "placeholderJson",
+  "file": "lean/VE/NormDefaults/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:87:0: Expression"
+ },
+ "actsFixed-premise": {
+  "definition": "actsFixed",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:75:0: Expression"
+ },
+ "plainRun-gate": {
+  "definition": "Plain.run",
+  "file": "lean/VE/Norms/Plain.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:140:0: Expression"
+ },
+ "typingView-acts-submitted-list": {
+  "definition": "typingView",
+  "file": "lean/VE/EnglishGrammar/Encode.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:216:0: Expression"
+ },
+ "typingView-acts-reduced-premise": {
+  "definition": "typingView",
+  "file": "lean/VE/EnglishGrammar/Encode.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:221:0: Expression"
+ }
+}
