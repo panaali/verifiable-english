@@ -1090,6 +1090,48 @@
    "reason": "sc-1b: VE/Scope/Wire.lean +112, VE/Service/Document.lean +33, VE/Compose/Dispatch.lean +2 (V 147; K +0, S +0)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1b, 2026-10-18",
    "commit": "e9e63dda7ff2ca089c8d8f03e3657b76a55c1cfa"
+  },
+  {
+   "class": "S",
+   "lines": 93,
+   "reason": "me-12a: arith@0 meaning, S +93 (VE/Arith/Holds.lean 60, VE/Arith/Syntax.lean 31, VE/Arith/Examples.lean 2), K +0, V +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-12a, 2026-10-18",
+   "commit": "7855620f3e06be59bd94730ef404689d3a18e558"
+  },
+  {
+   "class": "V",
+   "lines": 37,
+   "reason": "df-1ad: VE/Defaults/Wire.lean V +37 (untied D[V] basisLabel, formLabel, certFields, modelFields; untied G[V] CertReplay.form, forcedAt, ModelReplay.verdict, defaultsCase's two new branches); K +0, S +0; CertReplay.verdict/assumptions/basis tied to defaults_certificate_sound, ModelReplay.forced to forcedAt_sound and defaults_model_sound; replays and checks C; CertReplay.reason G[R]",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-1ad, 2026-10-18",
+   "commit": "7855620f3e06be59bd94730ef404689d3a18e558"
+  },
+  {
+   "class": "S",
+   "lines": 14,
+   "reason": "me-2: VE/Calc/Wire.lean S +4 (Check 4), V +129 (Case 5, literal 14, operations 3, comparisons 3, rules 2, expr 20, claim 26, value 17, entry 9, decl 5, decode 25); VE/Calc/Run.lean S +10 (Check.UnknownCause 5, Check.OutcomeMeans 5), V +5 (Run.rowJson 5); new Lean-owned behaviour, the ve-calc@0 wire and the calc runner",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-2, 2026-10-18",
+   "commit": "a2c522b94bcdcff5331bd3e95092d2eaf9e4ca17"
+  },
+  {
+   "class": "V",
+   "lines": 134,
+   "reason": "me-2: VE/Calc/Wire.lean S +4 (Check 4), V +129 (Case 5, literal 14, operations 3, comparisons 3, rules 2, expr 20, claim 26, value 17, entry 9, decl 5, decode 25); VE/Calc/Run.lean S +10 (Check.UnknownCause 5, Check.OutcomeMeans 5), V +5 (Run.rowJson 5); new Lean-owned behaviour, the ve-calc@0 wire and the calc runner",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-2, 2026-10-18",
+   "commit": "a2c522b94bcdcff5331bd3e95092d2eaf9e4ca17"
+  },
+  {
+   "class": "V",
+   "lines": 18,
+   "reason": "ap-1bb: VE/Norms/Wire.lean +12 (plainWording, plainWordings), ResponseShape/Schemas/Norms.lean +6 (norms-elaborate wordings), VE/Norms/Run.lean +1, VE/EnglishGrammar/Encode.lean -1; untied V +18, K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1bb, 2026-10-18",
+   "commit": "ba2532a224a0e605a22be44917005720f4f6764c"
+  },
+  {
+   "class": "V",
+   "lines": 17,
+   "reason": "ap-1bb fix1 (review F1): VE/Norms/Wire.lean +10 (canonicalActs), VE/Service/Standalone.lean +6 (the environment row's acts), ResponseShape/Schemas/Environment.lean +1 (its shape); untied V +17 over the first allowance (V +35 in all), K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1bb, 2026-10-26",
+   "commit": "ba2532a224a0e605a22be44917005720f4f6764c"
   }
  ]
 }

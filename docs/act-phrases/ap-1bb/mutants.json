@@ -1,0 +1,184 @@
+{
+ "py-wordings-not-shown": {
+  "definition": "EnglishVocabulary",
+  "file": "ve/english.py",
+  "test": "tests/test_acts_profile.py::test_a_plain_act_reads_with_the_wording_lean_selected",
+  "killed": true,
+  "first_failure": "FAILED tests/test_acts_profile.py::test_a_plain_act_reads_with_the_wording_lean_selected"
+ },
+ "py-bind-off": {
+  "definition": "_bind_wordings",
+  "file": "ve/norms.py",
+  "test": "tests/test_acts_profile.py::test_wordings_not_bound_to_the_request_are_unavailable",
+  "killed": true,
+  "first_failure": "FAILED tests/test_acts_profile.py::test_wordings_not_bound_to_the_request_are_unavailable[dropped]"
+ },
+ "py-bind-document-off": {
+  "definition": "NormDocument._lean_regenerated",
+  "file": "ve/norms.py",
+  "test": "tests/test_acts_profile.py::test_wordings_not_bound_to_the_request_are_unavailable",
+  "killed": true,
+  "first_failure": "FAILED tests/test_acts_profile.py::test_wordings_not_bound_to_the_request_are_unavailable[dropped]"
+ },
+ "py-norm-defaults-asked": {
+  "definition": "plain_wordings",
+  "file": "ve/norms.py",
+  "test": "tests/test_acts_profile.py::test_norm_defaults_keeps_todays_display_without_asking",
+  "killed": true,
+  "first_failure": "FAILED tests/test_acts_profile.py::test_norm_defaults_keeps_todays_display_without_asking"
+ },
+ "plainWording-form": {
+  "definition": "plainWording",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:164:0: Expression"
+ },
+ "plainWordings-first": {
+  "definition": "plainWordings",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:186:0: Expression"
+ },
+ "plainWordings-entry": {
+  "definition": "plainWordings",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:186:0: Expression"
+ },
+ "runCase-wordings-empty": {
+  "definition": "Norms.Run.runCase",
+  "file": "lean/VE/Norms/Run.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:186:0: Expression"
+ },
+ "runCase-wordings-untyped": {
+  "definition": "Norms.Run.runCase",
+  "file": "lean/VE/Norms/Run.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:186:0: Expression"
+ },
+ "modalForm-plain": {
+  "definition": "modalForm",
+  "file": "lean/VE/EnglishGrammar/Encode.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:164:0: Expression"
+ },
+ "runCase-wordings-renamed": {
+  "definition": "Norms.Run.runCase",
+  "file": "lean/VE/Norms/Run.lean",
+  "test": "ResponseShape.Encoders.Norms",
+  "killed": true,
+  "first_failure": "error: ResponseShape/Encoders/Norms.lean:82:44: unsolved goals"
+ },
+ "py-asked-without-acts": {
+  "definition": "plain_wordings",
+  "file": "ve/norms.py",
+  "test": "tests/test_acts_profile.py::test_an_environment_without_a_plain_act_asks_lean_nothing_to_display",
+  "killed": true,
+  "first_failure": "FAILED tests/test_acts_profile.py::test_an_environment_without_a_plain_act_asks_lean_nothing_to_display"
+ },
+ "py-identity-unchecked": {
+  "definition": "validated_environment",
+  "file": "ve/backends/validation.py",
+  "test": "tests/test_acts_profile.py::test_acts_not_bound_to_the_request_are_unavailable",
+  "killed": true,
+  "first_failure": "FAILED tests/test_acts_profile.py::test_acts_not_bound_to_the_request_are_unavailable[changed]"
+ },
+ "py-acts-as-written": {
+  "definition": "Environment._decode",
+  "file": "ve/environment.py",
+  "test": "tests/test_acts_profile.py::test_one_identity_is_one_environment_whichever_loads_first",
+  "killed": true,
+  "first_failure": "FAILED tests/test_acts_profile.py::test_one_identity_is_one_environment_whichever_loads_first[curly]"
+ },
+ "py-acts-names-unbound": {
+  "definition": "Environment._decode",
+  "file": "ve/environment.py",
+  "test": "tests/test_acts_profile.py::test_acts_not_bound_to_the_request_are_unavailable",
+  "killed": true,
+  "first_failure": "FAILED tests/test_acts_profile.py::test_acts_not_bound_to_the_request_are_unavailable[undeclared]"
+ },
+ "py-slots-names-only": {
+  "definition": "_bind_wordings",
+  "file": "ve/norms.py",
+  "test": "tests/test_acts_profile.py::test_wordings_not_bound_to_the_request_are_unavailable",
+  "killed": true,
+  "first_failure": "FAILED tests/test_acts_profile.py::test_wordings_not_bound_to_the_request_are_unavailable[slot-past-arity]"
+ },
+ "py-slots-subset": {
+  "definition": "slots_bound",
+  "file": "ve/backends/relay.py",
+  "test": "tests/test_acts_profile.py::test_slots_bound_is_the_one_slot_binding_of_every_relayed_wording",
+  "killed": true,
+  "first_failure": "FAILED tests/test_acts_profile.py::test_slots_bound_is_the_one_slot_binding_of_every_relayed_wording[{0} sees-2-False]"
+ },
+ "py-slots-past-arity": {
+  "definition": "slots_bound",
+  "file": "ve/backends/relay.py",
+  "test": "tests/test_rights.py::test_a_generated_wording_whose_slots_are_not_its_predicates_arguments_is_unavailable",
+  "killed": true,
+  "first_failure": "FAILED tests/test_rights.py::test_a_generated_wording_whose_slots_are_not_its_predicates_arguments_is_unavailable[past-arity]"
+ },
+ "py-slots-braces": {
+  "definition": "slots_bound",
+  "file": "ve/backends/relay.py",
+  "test": "tests/test_acts_profile.py::test_slots_bound_is_the_one_slot_binding_of_every_relayed_wording",
+  "killed": true,
+  "first_failure": "FAILED tests/test_acts_profile.py::test_slots_bound_is_the_one_slot_binding_of_every_relayed_wording[{0} sees {1} }-2-False]"
+ },
+ "py-rights-slots-off": {
+  "definition": "_bind_elaboration",
+  "file": "ve/rights_route.py",
+  "test": "tests/test_rights.py::test_a_generated_wording_whose_slots_are_not_its_predicates_arguments_is_unavailable",
+  "killed": true,
+  "first_failure": "FAILED tests/test_rights.py::test_a_generated_wording_whose_slots_are_not_its_predicates_arguments_is_unavailable[past-arity]"
+ },
+ "canonicalActs-none": {
+  "definition": "canonicalActs",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:131:0: Expression"
+ },
+ "canonicalActs-key": {
+  "definition": "canonicalActs",
+  "file": "lean/VE/Norms/Wire.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:138:0: Expression"
+ },
+ "environmentCase-acts-as-written": {
+  "definition": "Standalone.environmentCase",
+  "file": "lean/VE/Service/Standalone.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:131:0: Expression"
+ },
+ "environmentCase-acts-empty": {
+  "definition": "Standalone.environmentCase",
+  "file": "lean/VE/Service/Standalone.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:131:0: Expression"
+ },
+ "environmentCase-acts-renamed": {
+  "definition": "Standalone.environmentCase",
+  "file": "lean/VE/Service/Standalone.lean",
+  "test": "ResponseShape.Encoders.Standalone",
+  "killed": true,
+  "first_failure": "error: ResponseShape/Encoders/Standalone.lean:21:94: unsolved goals"
+ },
+ "environmentCase-legacy-acts-dropped": {
+  "definition": "Standalone.environmentCase",
+  "file": "lean/VE/Service/Standalone.lean",
+  "test": "ResponseShape.Encoders.Standalone",
+  "killed": true,
+  "first_failure": "error: ResponseShape/Encoders/Standalone.lean:21:94: unsolved goals"
+ }
+}
