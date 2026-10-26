@@ -5,10 +5,12 @@
     uv run python docs/infra/eff-20261026-1/replay.py run --work DIR [--item ITEM ...]
     uv run python docs/infra/eff-20261026-1/replay.py derive
 
-The tool is this branch's tools/trust_mutants.py, whose default plan is main's byte for byte (evidence.json
-`default_plan`). For each corpus row of evidence.json and each of its trees (`reviewed_head`, and `fixed_tree` or
-`fixed_head`), in a detached worktree under DIR (its lean/.lake hard-linked from this checkout's build, which the
-tool only reads and copies; the same toolchain and manifest), the tool itself says:
+The tool is tools/trust_mutants.py at TOOL_COMMIT (this branch's merge base) with prototype.patch applied, in a
+worktree under DIR: `--classes` as measured, its default plan main's byte for byte (evidence.json `default_plan`).
+The stop rule fired, so the branch keeps the patch only (REPORT.md). For each corpus row of evidence.json and each
+of its trees (`reviewed_head`, and `fixed_tree` or `fixed_head`), in a detached worktree under DIR (its lean/.lake
+hard-linked from this checkout's build, which the tool only reads and copies; the same toolchain and manifest), the
+tool itself says:
 - `plan`: the declaration holding the row's `before` text, its trust_map class, whether the default selection and
   `--classes all` select it (a line changed over `base`), and every mutant `--classes all` writes on that line;
 - `run`: the verdict of the row's `replay` mutant (an operator and its own before/after text on that line: the
@@ -31,6 +33,7 @@ import sys
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
 JOBS = "4"
+TOOL_COMMIT = "058fea806c0bb89a1f30b6255126567ce9fd97a4"  # the branch's merge base: main's trust_mutants.py
 KILLS = ("KILLED",)
 
 
@@ -42,15 +45,24 @@ def trees(row: dict) -> dict[str, str]:
     return {"reviewed": row["reviewed_head"], "fixed": row.get("fixed_tree") or row["fixed_head"]}
 
 
-def worktree(work: Path, commit: str) -> Path:
+def worktree(work: Path, commit: str, lake: bool = True) -> Path:
     """A detached worktree of `commit` under `work`, its lean/.lake hard-linked from this checkout's (read only)."""
     path = work / "heads" / commit[:12]
     if not path.is_dir():
         git("worktree", "add", "-q", "--detach", str(path), commit)
-        if (ROOT / "lean/.lake").is_dir():
+        if lake and (ROOT / "lean/.lake").is_dir():
             subprocess.run(["cp", "-al", str(ROOT / "lean/.lake"), str(path / "lean/.lake")], check=True)
     if git("rev-parse", "HEAD", cwd=path) != git("rev-parse", commit):
         raise SystemExit(f"{path} is not at {commit}")
+    return path
+
+
+def tool(work: Path) -> Path:
+    """The measured tool: a worktree of TOOL_COMMIT with prototype.patch applied."""
+    path = work / "tool"
+    if not path.is_dir():
+        git("worktree", "add", "-q", "--detach", str(path), TOOL_COMMIT)
+        subprocess.run(["git", "apply", str(HERE / "prototype.patch")], cwd=path, check=True)
     return path
 
 
@@ -72,11 +84,12 @@ def drive(argv: list[str]) -> int:
     """In a child process: `plan` or `run` of the tool on one tree."""
     parser = argparse.ArgumentParser()
     parser.add_argument("what", choices=("plan", "run"))
+    parser.add_argument("--tool", type=Path, required=True)
     parser.add_argument("--root", type=Path, required=True)
     parser.add_argument("--base", required=True)
     parser.add_argument("--rows", required=True, help="JSON: [{file, line, replay}]")
     args, rest = parser.parse_known_args(argv)
-    sys.path[:0] = [str(ROOT / "tools"), str(ROOT)]
+    sys.path[:0] = [str(args.tool / "tools"), str(args.tool)]
     from tools import trust_map, trust_mutants as tm  # noqa: PLC0415
     rows = json.loads(args.rows)
     if args.what == "plan":
@@ -125,8 +138,10 @@ def drive(argv: list[str]) -> int:
     return tm.main(["--root", str(args.root), "--base", args.base, "--classes", "all", *rest])
 
 
-def child(what: str, root: Path, base: str, rows: list[dict], *rest: str) -> subprocess.CompletedProcess:
-    return subprocess.run([sys.executable, str(Path(__file__).resolve()), "drive", what, "--root", str(root),
+def child(what: str, tool_dir: Path, root: Path, base: str, rows: list[dict], *rest: str
+          ) -> subprocess.CompletedProcess:
+    return subprocess.run([sys.executable, str(Path(__file__).resolve()), "drive", what, "--tool", str(tool_dir),
+                           "--root", str(root),
                            "--base", base, "--rows", json.dumps(rows), *rest], capture_output=True, text=True,
                           check=False, env={**os.environ, "PATH": f"{Path.home() / '.elan/bin'}{os.pathsep}"
                                                                   f"{os.environ['PATH']}"})
@@ -171,10 +186,23 @@ COLUMNS = ("definition", "trust_class", "trusted", "selected_default", "selected
            "reviewed_verdict", "fixed_verdict", "pair")
 
 
+def measured(item: str, rows: list[dict], raw: Path = HERE / "replay") -> bool:
+    """Whether both trees' plans and every run a plan asks for (a generated replay mutant) are there."""
+    for kind in ("reviewed", "fixed"):
+        plan = raw / f"{item}-{kind}-plan.json"
+        if not plan.is_file():
+            return False
+        asked = any(r["replay"] and r["replay"] in x["mutants"]
+                    for r, x in zip(rows, json.loads(plan.read_text())["rows"]))
+        if asked and not (raw / f"{item}-{kind}.json").is_file():
+            return False
+    return True
+
+
 def columns(evidence: dict) -> None:
     for row in evidence["corpus"]:
         rows = [r for r in evidence["corpus"] if r["item"] == row["item"]]
-        if (HERE / "replay" / f"{row['item']}-fixed-plan.json").is_file():
+        if measured(row["item"], rows):
             for k in COLUMNS:
                 row.pop(k, None)
             row.update(derive(row, rows))
@@ -206,7 +234,7 @@ def main(argv: list[str] | None = None) -> int:
                 lines = [{"file": r["file"], "line": located((root / r["file"]).read_text(), r["before"], r["line"])
                           if (root / r["file"]).is_file() else None, "replay": r.get("replay")} for r in rows]
                 if not plan_file.is_file():
-                    done = child("plan", root, rows[0]["base"], lines)
+                    done = child("plan", tool(args.work), root, rows[0]["base"], lines)
                     if done.returncode:
                         raise SystemExit(done.stderr)
                     plan_file.write_text(json.dumps({"tree": commit, "lines": [x["line"] for x in lines],
@@ -214,8 +242,8 @@ def main(argv: list[str] | None = None) -> int:
                 plan = json.loads(plan_file.read_text())
                 todo = [x for x, p in zip(lines, plan["rows"]) if x["replay"] and x["replay"] in p["mutants"]]
                 if args.what == "run" and todo and not plan["fatal"]:
-                    done = child("run", root, rows[0]["base"], todo, "--jobs", JOBS, "--max-mutants", "1000",
-                                 "--json", str(run_file))
+                    done = child("run", tool(args.work), root, rows[0]["base"], todo, "--jobs", JOBS,
+                                 "--max-mutants", "1000", "--json", str(run_file))
                     (raw / f"{item}-{kind}.log").write_text(f"exit {done.returncode}\n{done.stdout}{done.stderr}")
                     print(f"{item} {kind}: exit {done.returncode}\n{done.stdout[-1500:]}{done.stderr[-1500:]}",
                           flush=True)

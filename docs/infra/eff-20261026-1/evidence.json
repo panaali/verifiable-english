@@ -1,4 +1,77 @@
 {
+ "sources": {
+  "corpus": "docs/infra/eff-20261021-1/evidence.json: the 21 rows whose `gap` is \"unselected\" (its REPORT says 19; the file has 21: me-5 5, me-9 1, me-9b 7, df-1ac 1, me-2 7), and the PROBE lines of /home/seyran/code/manage-agents/me-12a-review.final.md (F1: 7 mutants, F2: 17) and df-1ad-review.final.md (F1: 1), one row per mutant",
+  "task_review_file": "/home/seyran/code/manage-agents/reviews/efficiency-daily-20261026.md does not exist (improve-eff-20261026.final.md.tmp is empty); the task text carries its facts",
+  "trees": "me-12a reviewed 57071552, fixed a12dd630 (read with git only; replayed in detached scratch worktrees); df-1ad reviewed b8f32f8f, fixed 2002261e; both swept over base 7855620f3 (their own trust-mutants evidence's base)"
+ },
+ "tool": {
+  "commit": "058fea806c0bb89a1f30b6255126567ce9fd97a4",
+  "patch": "prototype.patch",
+  "what": "--classes LIST (trusted | all | trust_map class names; all = every class but P and T), the class on each line, in the JSON and in inputs' options; the default selection and every verdict rule unchanged"
+ },
+ "default_plan": {
+  "what": "plan() of main's tools/trust_mutants.py and of the prototype without --classes, compared field by field (id, file, line, definition, operator, offsets, lines, before, after, edit) on this checkout's tree at 739c18d85",
+  "head": "739c18d85dd9a540b71cf2b99ac539c6bbfee1f0",
+  "bases": {
+   "7855620f3e06be59bd94730ef404689d3a18e558": {
+    "identical": true,
+    "default_mutants": 666,
+    "all_mutants": 1491,
+    "default_definitions": 40,
+    "all_definitions": 98
+   },
+   "673c1ea57513befcaa2378fe762a131207a13dce": {
+    "identical": true,
+    "default_mutants": 1372,
+    "all_mutants": 3631,
+    "default_definitions": 80,
+    "all_definitions": 212
+   }
+  }
+ },
+ "cost": {
+  "runner": "ve-mac-1 via mac-pytest.sh --worktree <detached worktree of the HEAD, prototype.patch's tools/trust_mutants.py its only uncommitted file> --trustmut -- --base 7855620f3e06be59bd94730ef404689d3a18e558 --jobs 6 --max-mutants 1000 [--classes all] --json cost/<item>-<default|all>.json",
+  "heads": {
+   "me-12a": {
+    "head": "57071552465db62009b3c868b2db252b48489396",
+    "default": "cost/me-12a-default.json",
+    "all": "cost/me-12a-all.json"
+   },
+   "df-1ad": {
+    "head": "b8f32f8f4f2f8cd76dee9774e5e786b44364fe95",
+    "default": "cost/df-1ad-default.json",
+    "all": "cost/df-1ad-all.json"
+   }
+  },
+  "seconds": "each JSON's `seconds` (the tool's own: plan to summary); the logs add the runner's one-off setup (a lake build of the tree: 336 s and 251 s, before the first sweep of each HEAD)"
+ },
+ "stop_rule": {
+  "pairs_needed": 8,
+  "ratio_limit": 2.5,
+  "seconds_limit": 2700,
+  "pairs": 7,
+  "times": {
+   "me-12a": {
+    "default_seconds": 67,
+    "all_seconds": 202,
+    "default_mutants": 163,
+    "all_mutants": 529,
+    "ratio": 3.01
+   },
+   "df-1ad": {
+    "default_seconds": 341,
+    "all_seconds": 510,
+    "default_mutants": 80,
+    "all_mutants": 114,
+    "ratio": 1.5
+   }
+  },
+  "fired": [
+   "pairs",
+   "time"
+  ],
+  "decision": "STOP: 7 of the 46 corpus mutants are SURVIVOR at their reviewed tree and KILLED at their fixed tree under --classes all (8 needed), and on me-12a's reviewed HEAD the widened sweep takes 3.01x the default sweep (202 s / 67 s; 2.5x allowed); --classes is kept as prototype.patch only, tools/ and tests/ are the merge base's"
+ },
  "corpus": [
   {
    "item": "me-5",
@@ -20,16 +93,16 @@
     "63",
     0
    ],
+   "replay_note": "exact: the reviewer's form",
    "definition": "VE.Calc.FM.maxFacts",
    "trust_class": "G[R]",
    "trusted": false,
    "selected_default": false,
    "selected_all": true,
-   "generated": false,
-   "reviewed_verdict": "NOT GENERATED",
-   "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "exact: the reviewer's form"
+   "generated": true,
+   "reviewed_verdict": "SURVIVOR",
+   "fixed_verdict": "KILLED",
+   "pair": true
   },
   {
    "item": "me-5",
@@ -51,16 +124,16 @@
     "65",
     0
    ],
+   "replay_note": "same behaviour: the limit raised (65 for 1000); a 65-fact case refutes both",
    "definition": "VE.Calc.FM.maxFacts",
    "trust_class": "G[R]",
    "trusted": false,
    "selected_default": false,
    "selected_all": true,
-   "generated": false,
-   "reviewed_verdict": "NOT GENERATED",
-   "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "same behaviour: the limit raised (65 for 1000); a 65-fact case refutes both"
+   "generated": true,
+   "reviewed_verdict": "SURVIVOR",
+   "fixed_verdict": "KILLED",
+   "pair": true
   },
   {
    "item": "me-5",
@@ -82,16 +155,16 @@
     "15",
     0
    ],
+   "replay_note": "exact: the reviewer's form",
    "definition": "VE.Calc.FM.maxUnknowns",
    "trust_class": "G[R]",
    "trusted": false,
    "selected_default": false,
    "selected_all": true,
-   "generated": false,
-   "reviewed_verdict": "NOT GENERATED",
-   "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "exact: the reviewer's form"
+   "generated": true,
+   "reviewed_verdict": "SURVIVOR",
+   "fixed_verdict": "KILLED",
+   "pair": true
   },
   {
    "item": "me-5",
@@ -113,16 +186,16 @@
     "10001",
     0
    ],
+   "replay_note": "same behaviour: the step limit raised (10001 for 20000)",
    "definition": "VE.Calc.FM.maxSteps",
    "trust_class": "G[R]",
    "trusted": false,
    "selected_default": false,
    "selected_all": true,
-   "generated": false,
-   "reviewed_verdict": "NOT GENERATED",
-   "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "same behaviour: the step limit raised (10001 for 20000)"
+   "generated": true,
+   "reviewed_verdict": "SURVIVOR",
+   "fixed_verdict": "KILLED",
+   "pair": true
   },
   {
    "item": "me-5",
@@ -139,6 +212,7 @@
    "from": "eff-20261021-1",
    "eff_20261021_class": "C",
    "replay": null,
+   "replay_note": "not generated: no operator rewrites `>` (OPERATORS read `<` and `≤` only)",
    "definition": "VE.Calc.FM.eliminate",
    "trust_class": "C",
    "trusted": false,
@@ -147,8 +221,7 @@
    "generated": false,
    "reviewed_verdict": "NOT GENERATED",
    "fixed_verdict": "TEXT CHANGED",
-   "pair": false,
-   "replay_note": "not generated: no operator rewrites `>` (OPERATORS read `<` and `≤` only)"
+   "pair": false
   },
   {
    "item": "me-9",
@@ -170,16 +243,16 @@
     "||",
     0
    ],
+   "replay_note": "same behaviour: `num < B || den < B && ...` leaves the denominator unchecked whenever the numerator fits, as `true` does",
    "definition": "VE.Calc.Poly.fits",
    "trust_class": "C",
    "trusted": false,
    "selected_default": false,
    "selected_all": true,
-   "generated": false,
-   "reviewed_verdict": "NOT GENERATED",
-   "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "same behaviour: `num < B || den < B && ...` leaves the denominator unchecked whenever the numerator fits, as `true` does"
+   "generated": true,
+   "reviewed_verdict": "SURVIVOR",
+   "fixed_verdict": "SURVIVOR",
+   "pair": false
   },
   {
    "item": "me-9b",
@@ -201,16 +274,16 @@
     "&&",
     0
    ],
+   "replay_note": "same behaviour: with a zero divisor in the numerator alone, `a && b || c` is false, as `b || c` is",
    "definition": "VE.Calc.Expr.zeroDivisor",
    "trust_class": "C",
    "trusted": false,
    "selected_default": false,
    "selected_all": true,
-   "generated": false,
-   "reviewed_verdict": "NOT GENERATED",
-   "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "same behaviour: with a zero divisor in the numerator alone, `a && b || c` is false, as `b || c` is"
+   "generated": true,
+   "reviewed_verdict": "SURVIVOR",
+   "fixed_verdict": "SURVIVOR",
+   "pair": false
   },
   {
    "item": "me-9b",
@@ -232,16 +305,16 @@
     "&&",
     0
    ],
+   "replay_note": "same behaviour: with a zero divisor in the left operand alone, `a && b` is false, as `b` is",
    "definition": "VE.Calc.Expr.zeroDivisor",
    "trust_class": "C",
    "trusted": false,
    "selected_default": false,
    "selected_all": true,
-   "generated": false,
-   "reviewed_verdict": "NOT GENERATED",
-   "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "same behaviour: with a zero divisor in the left operand alone, `a && b` is false, as `b` is"
+   "generated": true,
+   "reviewed_verdict": "SURVIVOR",
+   "fixed_verdict": "SURVIVOR",
+   "pair": false
   },
   {
    "item": "me-9b",
@@ -263,16 +336,16 @@
     "",
     0
    ],
+   "replay_note": "exact: the reviewer's form",
    "definition": "VE.Calc.identityDecide",
    "trust_class": "C",
    "trusted": false,
    "selected_default": false,
    "selected_all": true,
-   "generated": false,
-   "reviewed_verdict": "NOT GENERATED",
-   "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "exact: the reviewer's form"
+   "generated": true,
+   "reviewed_verdict": "SURVIVOR",
+   "fixed_verdict": "SURVIVOR",
+   "pair": false
   },
   {
    "item": "me-9b",
@@ -294,16 +367,16 @@
     "12",
     0
    ],
+   "replay_note": "exact: the reviewer's form",
    "definition": "VE.Calc.identityDecide",
    "trust_class": "C",
    "trusted": false,
    "selected_default": false,
    "selected_all": true,
-   "generated": false,
-   "reviewed_verdict": "NOT GENERATED",
-   "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "exact: the reviewer's form"
+   "generated": true,
+   "reviewed_verdict": "SURVIVOR",
+   "fixed_verdict": "SURVIVOR",
+   "pair": false
   },
   {
    "item": "me-9b",
@@ -320,6 +393,7 @@
    "from": "eff-20261021-1",
    "eff_20261021_class": "C",
    "replay": null,
+   "replay_note": "not generated: no operator reorders match arms",
    "definition": "VE.Calc.Expr.bin2",
    "trust_class": "C",
    "trusted": false,
@@ -328,8 +402,7 @@
    "generated": false,
    "reviewed_verdict": "NOT GENERATED",
    "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "not generated: no operator reorders match arms"
+   "pair": false
   },
   {
    "item": "me-9b",
@@ -346,6 +419,7 @@
    "from": "eff-20261021-1",
    "eff_20261021_class": "C",
    "replay": null,
+   "replay_note": "not generated: no operator reorders effects in a `do` block",
    "definition": "VE.Calc.Claim.inline",
    "trust_class": "C",
    "trusted": false,
@@ -354,8 +428,7 @@
    "generated": false,
    "reviewed_verdict": "NOT GENERATED",
    "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "not generated: no operator reorders effects in a `do` block"
+   "pair": false
   },
   {
    "item": "me-9b",
@@ -372,6 +445,7 @@
    "from": "eff-20261021-1",
    "eff_20261021_class": "C",
    "replay": null,
+   "replay_note": "not generated: no operator reorders effects in a `do` block",
    "definition": "VE.Calc.Claim.inline",
    "trust_class": "C",
    "trusted": false,
@@ -380,8 +454,7 @@
    "generated": false,
    "reviewed_verdict": "NOT GENERATED",
    "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "not generated: no operator reorders effects in a `do` block"
+   "pair": false
   },
   {
    "item": "df-1ac",
@@ -403,16 +476,16 @@
     "||",
     0
    ],
+   "replay_note": "same behaviour: `x.collides || x.collision.any ...` answers a collision when `collides` is false, as dropping the conjunct does",
    "definition": "VE.Defaults.Wire.CoherenceReplay.pairs",
    "trust_class": "G[V] tied",
    "trusted": false,
    "selected_default": false,
    "selected_all": true,
-   "generated": false,
-   "reviewed_verdict": "NOT GENERATED",
-   "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "same behaviour: `x.collides || x.collision.any ...` answers a collision when `collides` is false, as dropping the conjunct does"
+   "generated": true,
+   "reviewed_verdict": "KILLED",
+   "fixed_verdict": "KILLED",
+   "pair": false
   },
   {
    "item": "me-2",
@@ -430,6 +503,7 @@
    "from": "eff-20261021-1",
    "eff_20261021_class": "D[I]",
    "replay": null,
+   "replay_note": "not generated: no operator replaces an argument by its sibling",
    "definition": "VE.Calc.Wire.recordJson",
    "trust_class": "D[I]",
    "trusted": false,
@@ -438,8 +512,7 @@
    "generated": false,
    "reviewed_verdict": "NOT GENERATED",
    "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "not generated: no operator replaces an argument by its sibling"
+   "pair": false
   },
   {
    "item": "me-2",
@@ -457,6 +530,7 @@
    "from": "eff-20261021-1",
    "eff_20261021_class": "D[I]",
    "replay": null,
+   "replay_note": "not generated: no operator replaces a variable by a string literal",
    "definition": "VE.Calc.Wire.recordJson",
    "trust_class": "D[I]",
    "trusted": false,
@@ -465,8 +539,7 @@
    "generated": false,
    "reviewed_verdict": "NOT GENERATED",
    "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "not generated: no operator replaces a variable by a string literal"
+   "pair": false
   },
   {
    "item": "me-2",
@@ -489,16 +562,16 @@
     "([\"observation\", \"testimony\", \"assumption\"].drop 1)",
     0
    ],
+   "replay_note": "exact: the reviewer's form",
    "definition": "VE.Calc.Wire.supports",
    "trust_class": "D[I]",
    "trusted": false,
    "selected_default": false,
    "selected_all": true,
-   "generated": false,
-   "reviewed_verdict": "NOT GENERATED",
-   "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "exact: the reviewer's form"
+   "generated": true,
+   "reviewed_verdict": "SURVIVOR",
+   "fixed_verdict": "KILLED",
+   "pair": true
   },
   {
    "item": "me-2",
@@ -521,16 +594,16 @@
     "([\"observation\", \"testimony\", \"assumption\"].dropLast)",
     0
    ],
+   "replay_note": "exact: the reviewer's form",
    "definition": "VE.Calc.Wire.supports",
    "trust_class": "D[I]",
    "trusted": false,
    "selected_default": false,
    "selected_all": true,
-   "generated": false,
-   "reviewed_verdict": "NOT GENERATED",
-   "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "exact: the reviewer's form"
+   "generated": true,
+   "reviewed_verdict": "SURVIVOR",
+   "fixed_verdict": "KILLED",
+   "pair": true
   },
   {
    "item": "me-2",
@@ -553,16 +626,16 @@
     "<",
     0
    ],
+   "replay_note": "exact: the reviewer's form",
    "definition": "VE.Calc.Wire.recordJson",
    "trust_class": "D[I]",
    "trusted": false,
    "selected_default": false,
    "selected_all": true,
-   "generated": false,
-   "reviewed_verdict": "NOT GENERATED",
-   "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "exact: the reviewer's form"
+   "generated": true,
+   "reviewed_verdict": "SURVIVOR",
+   "fixed_verdict": "KILLED",
+   "pair": true
   },
   {
    "item": "me-2",
@@ -580,6 +653,7 @@
    "from": "eff-20261021-1",
    "eff_20261021_class": "D[R]",
    "replay": null,
+   "replay_note": "not generated: no operator drops a pattern alternative (a list cut of the pattern does not bind `s`)",
    "definition": "VE.Calc.Wire.literalFault",
    "trust_class": "D[R]",
    "trusted": false,
@@ -588,8 +662,7 @@
    "generated": false,
    "reviewed_verdict": "NOT GENERATED",
    "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "not generated: no operator drops a pattern alternative (a list cut of the pattern does not bind `s`)"
+   "pair": false
   },
   {
    "item": "me-2",
@@ -612,16 +685,16 @@
     "64",
     0
    ],
+   "replay_note": "same behaviour: the scan limit lowered (64 for 6); a case at depth 65 refutes both",
    "definition": "VE.Calc.Wire.limitFault",
    "trust_class": "D[R]",
    "trusted": false,
    "selected_default": false,
    "selected_all": true,
-   "generated": false,
-   "reviewed_verdict": "NOT GENERATED",
+   "generated": true,
+   "reviewed_verdict": "SURVIVOR",
    "fixed_verdict": "TEXT CHANGED",
-   "pair": false,
-   "replay_note": "same behaviour: the scan limit lowered (64 for 6); a case at depth 65 refutes both"
+   "pair": false
   },
   {
    "item": "me-12a",
@@ -636,6 +709,7 @@
    "source": "/home/seyran/code/manage-agents/me-12a-review.final.md PROBE F1",
    "from": "eff-20261026-1",
    "replay": null,
+   "replay_note": "not generated: no operator replaces the environment `(x :: ρ)` by `[x]` (a cons is no list method, `++` operand or literal)",
    "definition": "VE.Arith.Term.value",
    "trust_class": "S",
    "trusted": true,
@@ -644,8 +718,7 @@
    "generated": false,
    "reviewed_verdict": "NOT GENERATED",
    "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "not generated: no operator replaces the environment `(x :: ρ)` by `[x]` (a cons is no list method, `++` operand or literal)"
+   "pair": false
   },
   {
    "item": "me-12a",
@@ -660,6 +733,7 @@
    "source": "/home/seyran/code/manage-agents/me-12a-review.final.md PROBE F1",
    "from": "eff-20261026-1",
    "replay": null,
+   "replay_note": "not generated: no operator replaces the environment `(x :: ρ)` by `[x]`; the line's le/arm mutants change the bound or the whole arm",
    "definition": "VE.Arith.Holds",
    "trust_class": "S",
    "trusted": true,
@@ -668,8 +742,7 @@
    "generated": false,
    "reviewed_verdict": "NOT GENERATED",
    "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "not generated: no operator replaces the environment `(x :: ρ)` by `[x]`; the line's le/arm mutants change the bound or the whole arm"
+   "pair": false
   },
   {
    "item": "me-12a",
@@ -684,6 +757,7 @@
    "source": "/home/seyran/code/manage-agents/me-12a-review.final.md PROBE F1",
    "from": "eff-20261026-1",
    "replay": null,
+   "replay_note": "not generated: no operator replaces the environment `(x :: ρ)` by `[x]`; the line's le/arm mutants change the bound or the whole arm",
    "definition": "VE.Arith.Holds",
    "trust_class": "S",
    "trusted": true,
@@ -692,8 +766,7 @@
    "generated": false,
    "reviewed_verdict": "NOT GENERATED",
    "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "not generated: no operator replaces the environment `(x :: ρ)` by `[x]`; the line's le/arm mutants change the bound or the whole arm"
+   "pair": false
   },
   {
    "item": "me-12a",
@@ -708,6 +781,7 @@
    "source": "/home/seyran/code/manage-agents/me-12a-review.final.md PROBE F1",
    "from": "eff-20261026-1",
    "replay": null,
+   "replay_note": "not generated: no operator replaces the environment `(x :: ρ)` by `[x]`; the line's le/arm mutants change the bound or the whole arm",
    "definition": "VE.Arith.Holds",
    "trust_class": "S",
    "trusted": true,
@@ -716,8 +790,7 @@
    "generated": false,
    "reviewed_verdict": "NOT GENERATED",
    "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "not generated: no operator replaces the environment `(x :: ρ)` by `[x]`; the line's le/arm mutants change the bound or the whole arm"
+   "pair": false
   },
   {
    "item": "me-12a",
@@ -732,6 +805,7 @@
    "source": "/home/seyran/code/manage-agents/me-12a-review.final.md PROBE F1",
    "from": "eff-20261026-1",
    "replay": null,
+   "replay_note": "not generated: no operator replaces the environment `(x :: ρ)` by `[x]`; the line's le/arm mutants change the bound or the whole arm",
    "definition": "VE.Arith.Holds",
    "trust_class": "S",
    "trusted": true,
@@ -740,8 +814,7 @@
    "generated": false,
    "reviewed_verdict": "NOT GENERATED",
    "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "not generated: no operator replaces the environment `(x :: ρ)` by `[x]`; the line's le/arm mutants change the bound or the whole arm"
+   "pair": false
   },
   {
    "item": "me-12a",
@@ -756,6 +829,7 @@
    "source": "/home/seyran/code/manage-agents/me-12a-review.final.md PROBE F1",
    "from": "eff-20261026-1",
    "replay": null,
+   "replay_note": "not generated: no operator replaces a branch by `none`",
    "definition": "VE.Arith.Defs.env",
    "trust_class": "S",
    "trusted": true,
@@ -764,8 +838,7 @@
    "generated": false,
    "reviewed_verdict": "NOT GENERATED",
    "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "not generated: no operator replaces a branch by `none`"
+   "pair": false
   },
   {
    "item": "me-12a",
@@ -780,6 +853,7 @@
    "source": "/home/seyran/code/manage-agents/me-12a-review.final.md PROBE F1",
    "from": "eff-20261026-1",
    "replay": null,
+   "replay_note": "not generated: no operator replaces a record update by a constant",
    "definition": "VE.Arith.Defs.env",
    "trust_class": "S",
    "trusted": true,
@@ -788,8 +862,7 @@
    "generated": false,
    "reviewed_verdict": "NOT GENERATED",
    "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "not generated: no operator replaces a record update by a constant"
+   "pair": false
   },
   {
    "item": "me-12a",
@@ -804,6 +877,7 @@
    "source": "/home/seyran/code/manage-agents/me-12a-review.final.md PROBE F2",
    "from": "eff-20261026-1",
    "replay": null,
+   "replay_note": "not generated: an arm's list result is not cut (only list-method receivers, `++` operands, `for` ranges and literals)",
    "definition": "VE.Arith.Formula.sites",
    "trust_class": "G[R]",
    "trusted": false,
@@ -812,8 +886,7 @@
    "generated": false,
    "reviewed_verdict": "NOT GENERATED",
    "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "not generated: an arm's list result is not cut (only list-method receivers, `++` operands, `for` ranges and literals)"
+   "pair": false
   },
   {
    "item": "me-12a",
@@ -833,16 +906,16 @@
     "",
     0
    ],
+   "replay_note": "exact: the reviewer's form",
    "definition": "VE.Arith.Formula.sites",
    "trust_class": "G[R]",
    "trusted": false,
    "selected_default": false,
    "selected_all": true,
-   "generated": false,
-   "reviewed_verdict": "NOT GENERATED",
-   "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "exact: the reviewer's form"
+   "generated": true,
+   "reviewed_verdict": "SURVIVOR",
+   "fixed_verdict": "UNKNOWN",
+   "pair": false
   },
   {
    "item": "me-12a",
@@ -857,6 +930,7 @@
    "source": "/home/seyran/code/manage-agents/me-12a-review.final.md PROBE F2",
    "from": "eff-20261026-1",
    "replay": null,
+   "replay_note": "not generated: append-right cuts only the atom `φ` before `++` (`Formula.sites k Formula.sites k ψ`), not the application",
    "definition": "VE.Arith.Formula.sites",
    "trust_class": "G[R]",
    "trusted": false,
@@ -865,8 +939,7 @@
    "generated": false,
    "reviewed_verdict": "NOT GENERATED",
    "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "not generated: append-right cuts only the atom `φ` before `++` (`Formula.sites k Formula.sites k ψ`), not the application"
+   "pair": false
   },
   {
    "item": "me-12a",
@@ -881,6 +954,7 @@
    "source": "/home/seyran/code/manage-agents/me-12a-review.final.md PROBE F2",
    "from": "eff-20261026-1",
    "replay": null,
+   "replay_note": "not generated: arms are not cut to `[]`; lit-plus/minus on `k + 1` shift the scope instead",
    "definition": "VE.Arith.Formula.sites",
    "trust_class": "G[R]",
    "trusted": false,
@@ -889,8 +963,7 @@
    "generated": false,
    "reviewed_verdict": "NOT GENERATED",
    "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "not generated: arms are not cut to `[]`; lit-plus/minus on `k + 1` shift the scope instead"
+   "pair": false
   },
   {
    "item": "me-12a",
@@ -905,6 +978,7 @@
    "source": "/home/seyran/code/manage-agents/me-12a-review.final.md PROBE F2",
    "from": "eff-20261026-1",
    "replay": null,
+   "replay_note": "not generated: no operator drops the tail of a cons (`:: Formula.sites ...`)",
    "definition": "VE.Arith.Term.sites",
    "trust_class": "G[R]",
    "trusted": false,
@@ -913,8 +987,7 @@
    "generated": false,
    "reviewed_verdict": "NOT GENERATED",
    "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "not generated: no operator drops the tail of a cons (`:: Formula.sites ...`)"
+   "pair": false
   },
   {
    "item": "me-12a",
@@ -934,16 +1007,16 @@
     "",
     0
    ],
+   "replay_note": "exact: the reviewer's form",
    "definition": "VE.Arith.Term.sites",
    "trust_class": "G[R]",
    "trusted": false,
    "selected_default": false,
    "selected_all": true,
-   "generated": false,
-   "reviewed_verdict": "NOT GENERATED",
-   "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "exact: the reviewer's form"
+   "generated": true,
+   "reviewed_verdict": "SURVIVOR",
+   "fixed_verdict": "UNKNOWN",
+   "pair": false
   },
   {
    "item": "me-12a",
@@ -963,16 +1036,16 @@
     "",
     0
    ],
+   "replay_note": "exact: the reviewer's form",
    "definition": "VE.Arith.Term.sitesList",
    "trust_class": "G[R]",
    "trusted": false,
    "selected_default": false,
    "selected_all": true,
-   "generated": false,
-   "reviewed_verdict": "NOT GENERATED",
-   "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "exact: the reviewer's form"
+   "generated": true,
+   "reviewed_verdict": "SURVIVOR",
+   "fixed_verdict": "UNKNOWN",
+   "pair": false
   },
   {
    "item": "me-12a",
@@ -987,6 +1060,7 @@
    "source": "/home/seyran/code/manage-agents/me-12a-review.final.md PROBE F2",
    "from": "eff-20261026-1",
    "replay": null,
+   "replay_note": "not generated: list-empty cuts `args` in `args.length` (the count), not the `Term.sitesList k args` tail",
    "definition": "VE.Arith.Term.sites",
    "trust_class": "G[R]",
    "trusted": false,
@@ -995,8 +1069,7 @@
    "generated": false,
    "reviewed_verdict": "NOT GENERATED",
    "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "not generated: list-empty cuts `args` in `args.length` (the count), not the `Term.sitesList k args` tail"
+   "pair": false
   },
   {
    "item": "me-12a",
@@ -1016,16 +1089,16 @@
     "[]",
     0
    ],
+   "replay_note": "same behaviour: the argument count a constant (`[].length` = 0 for 1), so arity is never compared with the call",
    "definition": "VE.Arith.Term.sites",
    "trust_class": "G[R]",
    "trusted": false,
    "selected_default": false,
    "selected_all": true,
-   "generated": false,
-   "reviewed_verdict": "NOT GENERATED",
-   "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "same behaviour: the argument count a constant (`[].length` = 0 for 1), so arity is never compared with the call"
+   "generated": true,
+   "reviewed_verdict": "UNKNOWN",
+   "fixed_verdict": "UNKNOWN",
+   "pair": false
   },
   {
    "item": "me-12a",
@@ -1045,16 +1118,16 @@
     "",
     0
    ],
+   "replay_note": "exact: the reviewer's form",
    "definition": "VE.Arith.Formula.sites",
    "trust_class": "G[R]",
    "trusted": false,
    "selected_default": false,
    "selected_all": true,
-   "generated": false,
-   "reviewed_verdict": "NOT GENERATED",
-   "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "exact: the reviewer's form"
+   "generated": true,
+   "reviewed_verdict": "SURVIVOR",
+   "fixed_verdict": "UNKNOWN",
+   "pair": false
   },
   {
    "item": "me-12a",
@@ -1069,6 +1142,7 @@
    "source": "/home/seyran/code/manage-agents/me-12a-review.final.md PROBE F2",
    "from": "eff-20261026-1",
    "replay": null,
+   "replay_note": "not generated: no operator writes `k + 1` for `k`",
    "definition": "VE.Arith.Formula.sites",
    "trust_class": "G[R]",
    "trusted": false,
@@ -1077,8 +1151,7 @@
    "generated": false,
    "reviewed_verdict": "NOT GENERATED",
    "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "not generated: no operator writes `k + 1` for `k`"
+   "pair": false
   },
   {
    "item": "me-12a",
@@ -1093,6 +1166,7 @@
    "source": "/home/seyran/code/manage-agents/me-12a-review.final.md PROBE F2",
    "from": "eff-20261026-1",
    "replay": null,
+   "replay_note": "not generated: no operator writes `k + 1` for `k`",
    "definition": "VE.Arith.Term.sites",
    "trust_class": "G[R]",
    "trusted": false,
@@ -1101,8 +1175,7 @@
    "generated": false,
    "reviewed_verdict": "NOT GENERATED",
    "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "not generated: no operator writes `k + 1` for `k`"
+   "pair": false
   },
   {
    "item": "me-12a",
@@ -1117,6 +1190,7 @@
    "source": "/home/seyran/code/manage-agents/me-12a-review.final.md PROBE F2",
    "from": "eff-20261026-1",
    "replay": null,
+   "replay_note": "not generated: no operator swaps two ranks; lit-plus/minus on one rank ties it with a neighbour, which the refusal order then decides (not the reviewer's swap)",
    "definition": "VE.Arith.Refusal.rank",
    "trust_class": "G[R]",
    "trusted": false,
@@ -1125,8 +1199,7 @@
    "generated": false,
    "reviewed_verdict": "NOT GENERATED",
    "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "not generated: no operator swaps two ranks; lit-plus/minus on one rank ties it with a neighbour, which the refusal order then decides (not the reviewer's swap)"
+   "pair": false
   },
   {
    "item": "me-12a",
@@ -1141,6 +1214,7 @@
    "source": "/home/seyran/code/manage-agents/me-12a-review.final.md PROBE F2",
    "from": "eff-20261026-1",
    "replay": null,
+   "replay_note": "not generated: no operator swaps two ranks; lit-plus/minus on one rank ties it with a neighbour, which the refusal order then decides (not the reviewer's swap)",
    "definition": "VE.Arith.Refusal.rank",
    "trust_class": "G[R]",
    "trusted": false,
@@ -1149,8 +1223,7 @@
    "generated": false,
    "reviewed_verdict": "NOT GENERATED",
    "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "not generated: no operator swaps two ranks; lit-plus/minus on one rank ties it with a neighbour, which the refusal order then decides (not the reviewer's swap)"
+   "pair": false
   },
   {
    "item": "me-12a",
@@ -1165,6 +1238,7 @@
    "source": "/home/seyran/code/manage-agents/me-12a-review.final.md PROBE F2",
    "from": "eff-20261026-1",
    "replay": null,
+   "replay_note": "not generated: no operator swaps two ranks; lit-plus/minus on one rank ties it with a neighbour, which the refusal order then decides (not the reviewer's swap)",
    "definition": "VE.Arith.Refusal.rank",
    "trust_class": "G[R]",
    "trusted": false,
@@ -1173,8 +1247,7 @@
    "generated": false,
    "reviewed_verdict": "NOT GENERATED",
    "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "not generated: no operator swaps two ranks; lit-plus/minus on one rank ties it with a neighbour, which the refusal order then decides (not the reviewer's swap)"
+   "pair": false
   },
   {
    "item": "me-12a",
@@ -1189,6 +1262,7 @@
    "source": "/home/seyran/code/manage-agents/me-12a-review.final.md PROBE F2",
    "from": "eff-20261026-1",
    "replay": null,
+   "replay_note": "not generated: no operator swaps two ranks; lit-plus/minus on one rank ties it with a neighbour, which the refusal order then decides (not the reviewer's swap)",
    "definition": "VE.Arith.Refusal.rank",
    "trust_class": "G[R]",
    "trusted": false,
@@ -1197,8 +1271,7 @@
    "generated": false,
    "reviewed_verdict": "NOT GENERATED",
    "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "not generated: no operator swaps two ranks; lit-plus/minus on one rank ties it with a neighbour, which the refusal order then decides (not the reviewer's swap)"
+   "pair": false
   },
   {
    "item": "me-12a",
@@ -1213,6 +1286,7 @@
    "source": "/home/seyran/code/manage-agents/me-12a-review.final.md PROBE F2",
    "from": "eff-20261026-1",
    "replay": null,
+   "replay_note": "not generated: no operator adds a conjunct to a lambda",
    "definition": "VE.Arith.Defs.refusals",
    "trust_class": "G[R]",
    "trusted": false,
@@ -1221,8 +1295,7 @@
    "generated": false,
    "reviewed_verdict": "NOT GENERATED",
    "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "not generated: no operator adds a conjunct to a lambda"
+   "pair": false
   },
   {
    "item": "df-1ad",
@@ -1237,6 +1310,7 @@
    "source": "/home/seyran/code/manage-agents/df-1ad-review.final.md PROBE F1",
    "from": "eff-20261026-1",
    "replay": null,
+   "replay_note": "not generated: no operator replaces an argument by a constant (the review names the form beyond OPERATORS)",
    "definition": "VE.Defaults.Wire.replayModelOn",
    "trust_class": "C",
    "trusted": false,
@@ -1245,8 +1319,7 @@
    "generated": false,
    "reviewed_verdict": "NOT GENERATED",
    "fixed_verdict": "NOT GENERATED",
-   "pair": false,
-   "replay_note": "not generated: no operator replaces an argument by a constant (the review names the form beyond OPERATORS)"
+   "pair": false
   }
  ]
 }
