@@ -18,22 +18,22 @@
   {
    "definition": "VE.Acts.closed",
    "operator": "list-drop-first",
-   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal; or equivalent: a nonterminal that can lack a rule (NMh; SC and the cores when there is no frame) is the first and the last symbol of some right side (ERNh -> NMh, SINGLE -> SC, LS:c -> c), so any later or earlier symbols find the same ones"
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal; or equivalent: `X -> never` rules derive nothing, and every such cut adds or drops one only for a nonterminal that has rules: the schema's first two rules are both S's and the first nonterminal of a right side is SINGLE; its last rule is MGh's and the last nonterminal to appear is MGTh; and a nonterminal that can lack a rule (NMh, or SC and the cores with no frame) is both the first and the last symbol of some right side (ERNh -> NMh, SINGLE -> SC, LS:c -> c)"
   },
   {
    "definition": "VE.Acts.closed",
    "operator": "list-drop-last",
-   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal; or equivalent: the same reason as list-drop-first, and the schema's last rule (MGh -> MELh MGTh, or a rule of terminals) names no nonterminal that lacks a rule"
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal; or equivalent: `X -> never` rules derive nothing, and every such cut adds or drops one only for a nonterminal that has rules: the schema's first two rules are both S's and the first nonterminal of a right side is SINGLE; its last rule is MGh's and the last nonterminal to appear is MGTh; and a nonterminal that can lack a rule (NMh, or SC and the cores with no frame) is both the first and the last symbol of some right side (ERNh -> NMh, SINGLE -> SC, LS:c -> c)"
   },
   {
    "definition": "VE.Acts.closed",
    "operator": "list-first",
-   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal; or equivalent: a nonterminal that can lack a rule is the first symbol of some right side (ERNh -> NMh, SINGLE -> SC, LS:c -> c)"
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal; or equivalent: `X -> never` rules derive nothing, and every such cut adds or drops one only for a nonterminal that has rules: the schema's first two rules are both S's and the first nonterminal of a right side is SINGLE; its last rule is MGh's and the last nonterminal to appear is MGTh; and a nonterminal that can lack a rule (NMh, or SC and the cores with no frame) is both the first and the last symbol of some right side (ERNh -> NMh, SINGLE -> SC, LS:c -> c)"
   },
   {
    "definition": "VE.Acts.closed",
    "operator": "list-last",
-   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal; or equivalent: a nonterminal that can lack a rule is the last symbol of some right side (ERNh -> NMh, SINGLE -> SC, LS:c -> c)"
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal; or equivalent: `X -> never` rules derive nothing, and every such cut adds or drops one only for a nonterminal that has rules: the schema's first two rules are both S's and the first nonterminal of a right side is SINGLE; its last rule is MGh's and the last nonterminal to appear is MGTh; and a nonterminal that can lack a rule (NMh, or SC and the cores with no frame) is both the first and the last symbol of some right side (ERNh -> NMh, SINGLE -> SC, LS:c -> c)"
   },
   {
    "definition": "VE.Acts.closed",
