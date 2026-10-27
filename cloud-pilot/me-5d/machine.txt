@@ -1,0 +1,6 @@
+mode=cold jobs=4 nproc=4 host=vm date=2026-10-27T14:47:37Z
+Mem:              15           0          14           0           1          15
+/dev/vda        252G  9.3G   30G  25% /
+ 14:47:37 up 2 min,  0 user,  load average: 0.71, 0.24, 0.09
+-rw-r--r-- 1 root root 459625674 Oct 27 14:47 /tmp/lean.tar.zst
+/tmp/tm-job.sh: line 33: lean: command not found

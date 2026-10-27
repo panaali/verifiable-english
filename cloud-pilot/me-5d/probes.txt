@@ -1,0 +1,2 @@
+uploads.github.com 400
+releases.lean-lang.org 302

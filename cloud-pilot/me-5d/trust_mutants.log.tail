@@ -1,0 +1,17 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+trust_mutants: 4 definitions, 123 mutants (123 to run), 4 jobs, base ab010c3f02bc
+Traceback (most recent call last):
+  File "/home/user/verifiable-english/tools/trust_mutants.py", line 1422, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/home/user/verifiable-english/tools/trust_mutants.py", line 1363, in main
+    code, output = first.lake(env, "build", *sorted({f"+{x}" for m in todo for x in targets(tree, m, tests,
+                   ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                                                                        args.deep)}))
+                                                                                        ^^^^^^^^^^^^^
+  File "/home/user/verifiable-english/tools/trust_mutants.py", line 862, in lake
+    child = subprocess.Popen([lake_outputs.lean_executable(env, "lake"), *args], cwd=self.lean, env=env,
+                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/user/verifiable-english/tools/lake_outputs.py", line 56, in lean_executable
+    raise RuntimeError(f"{name} is required to check Lake's executables against their traces")
+RuntimeError: lake is required to check Lake's executables against their traces
