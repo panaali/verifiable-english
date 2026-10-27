@@ -1645,7 +1645,6 @@ import VE.WireContract.Engine
 #print axioms VE.Defaults.MeaningFixtures.rel_unsaid
 #print axioms VE.Defaults.MeaningFixtures.rel_π
 #print axioms VE.Defaults.MeaningFixtures.soften_π
-#print axioms VE.Defaults.MeaningFixtures.startsWith_prefix
 #print axioms VE.Defaults.MeaningFixtures.switch_π
 #print axioms VE.Defaults.MeaningFixtures.switchesOff_π
 #print axioms VE.Defaults.MeaningFixtures.typed_π

@@ -8796,10 +8796,6 @@ theorem VE.Defaults.MeaningFixtures.soften_π
   VE.SoftNorms.soften VE.Defaults.MeaningFixtures.Dπ = VE.Defaults.MeaningFixtures.Sπ
   -- uses VE.Defaults.MeaningFixtures.Dπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.Sπ@VE.Defaults.MeaningExamples VE.Norms.Doc@VE.Norms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften
   -- expr 3228024758
-theorem VE.Defaults.MeaningFixtures.startsWith_prefix
-  ∀ (s p : String), s.startsWith p = Bool.true → p.data <+: s.data
-  -- uses
-  -- expr 3493648044
 theorem VE.Defaults.MeaningFixtures.switch_π
   "default:exception:r1".startsWith "default:switch:" = Bool.false
   -- uses

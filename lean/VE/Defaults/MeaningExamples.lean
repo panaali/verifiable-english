@@ -1,6 +1,5 @@
 import VE.Defaults.Meaning
 import VE.Defaults.Examples
-import VE.Question.Strings
 
 /-! DF-2's checks on decoded documents (docs/spec/defeasible.md 8.2): `softX` is the decoder's own `X` followed by
 the other packs' premises; `SwitchesOff` and the least decisions `δ_B` read at one-element situations; and
@@ -163,29 +162,13 @@ theorem Uπ_eq : Uπ = ⟨Sπ, ["x_permitted", "x_required"]⟩ := by
   show (⟨VE.SoftNorms.soften Dπ, _⟩ : UDoc) = _
   rw [soften_π]
 
-open VE.Question.Str in
-/-- What a true `startsWith` gives: a list prefix. -/
-theorem startsWith_prefix (s p : String) (h : s.startsWith p = true) : p.data <+: s.data := by
-  have hn : ({ str := s, startPos := {}, stopPos := s.endPos } : Substring).nextn p.length 0 =
-      ⟨String.utf8ByteSize.go (s.data.take p.length)⟩ := by
-    simpa [String.utf8ByteSize.go] using nextn_toSubstring s p.length [] s.data rfl
-  unfold String.startsWith at h
-  change Substring.beq _ _ = true at h
-  simp only [Substring.beq, Substring.take, Substring.bsize, String.toSubstring, Bool.and_eq_true, beq_iff_eq] at h
-  rw [hn] at h
-  obtain ⟨h1, h2⟩ := h
-  have h1' : String.utf8ByteSize.go (s.data.take p.length) = String.utf8ByteSize.go p.data := by simpa using h1
-  obtain ⟨t, ht⟩ := (substrEq_prefix s p (s.data.take p.length) [] [] (s.data.drop p.length) p.data (by simp)
-    (by simp) (Nat.le_of_eq h1')).mp (by simpa [String.utf8ByteSize.go] using h2)
-  have ht0 : t = [] := size_eq_zero (by have := congrArg String.utf8ByteSize.go ht; rw [size_append] at this; omega)
-  subst ht0
-  rw [← ht, List.append_nil]
-  exact List.take_prefix _ _
-
+/-- r1's exception label is not a switch label (`String.substrEq`'s loop unfolded through the first mismatch). -/
 theorem switch_π : "default:exception:r1".startsWith "default:switch:" = false := by
-  cases h : "default:exception:r1".startsWith "default:switch:"
-  · rfl
-  · exact absurd (startsWith_prefix _ _ h) (by decide)
+  unfold String.startsWith
+  show Substring.beq _ _ = false
+  simp only [Substring.beq, Substring.bsize, Substring.take, String.toSubstring, String.substrEq]
+  iterate 9 (unfold_substrEq_loop; try simp only [])
+  decide
 
 /-- DF-π has no switch, so every structure has its switches off. -/
 theorem switchesOff_π (B : VE.Structure.{0}) : SwitchesOff Dπ B := by
