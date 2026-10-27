@@ -11,10 +11,11 @@ for a structure), each field dropped, the names of two fields of one type swappe
 matches them by name, and the derived `DecidableEq` and `Repr` do not depend on their order.
 
 Each mutant replaces the declaration's range by the mutated declaration, rendered from Lean's reading, in one file
-with the bodies of `Tree.lean`, `Table.lean` (its theorems cut, by their ranges) and `TableExamples.lean`, elaborated
-with `lake env lean`. A mutant is KILLED when the product code elaborates and the fixtures do not, and REFUSED when
-Lean refuses the product code itself for an unknown or missing name, a missing case or a type that does not fit (the
-trusted `table` names that constructor or field, so the mutant cannot be written). No mutant may survive. The rendering
+with the bodies of `Tree.lean`, `Linearize.lean`, `Table.lean` (theorems cut, by their ranges) and
+`TableExamples.lean`, elaborated with `lake env lean`. A mutant is KILLED when the product code elaborates and the
+fixtures do not, and REFUSED when Lean refuses the product code itself for an unknown or missing name, a missing case or
+a type that does not fit (the trusted `table` or rendering (ap-3b) names that constructor or field, so the mutant
+cannot be written). No mutant may survive. The rendering
 of the unmutated types must elaborate cleanly, so a refusal is the mutant's and not the rendering's.
 """
 from __future__ import annotations
@@ -31,7 +32,7 @@ from subprocesses import HANG_TIMEOUT
 from tests.lean_build import LEAN, lean_build
 
 ACTS = LEAN / "VE/Acts"
-MODULES = ("VE.Acts.Tree", "VE.Acts.Table")
+MODULES = ("VE.Acts.Tree", "VE.Acts.Linearize", "VE.Acts.Table")
 EXAMPLES = "VE.Acts.TableExamples"
 TYPES = ("Join", "Part", "Filler", "Modifier", "Atom", "Act", "Simple", "Op")
 DERIVING = "  deriving DecidableEq, Repr"
@@ -41,7 +42,7 @@ OPERATORS = ("drop-constructor", "add-constructor", "drop-field", "swap-names", 
 # term whose type no longer fits.
 REFUSED = re.compile(r"lean\.unknownIdentifier|[Uu]nknown (?:constant|identifier)|Missing cases|Redundant alternative|"
                      r"Type mismatch|type mismatch|Invalid pattern|Invalid field|Function expected|Too many arguments|"
-                     r"Application type mismatch|has type")
+                     r"Application type mismatch|has type|is not a field of structure")
 ERROR = re.compile(r"^\S+?\.lean:(\d+):\d+: error(?:\(([\w.]+)\))?: ((?:.*)(?:\n(?!\S+?\.lean:\d+:\d+: ).*)*)", re.M)
 
 DUMP = """import Lean
@@ -253,8 +254,11 @@ def test_every_mutant_of_a_data_type_is_killed_or_refused(lake, tmp_path, shapes
     bad = {mid: found for mid, (v, found) in results.items() if v not in ("KILLED", "REFUSED")}
     assert not bad, json.dumps(bad, indent=1)
     if name in ("Join", "Part", "Filler", "Modifier", "Atom"):
-        # Nothing trusted matches these types by constructor or field, so only a fixture can catch their mutants.
-        assert all(v == "KILLED" for v, _ in results.values()), {m: v for m, (v, _) in results.items()}
+        # Only the rendering (ap-3b) matches these types, by constructor and by field name: it refuses a dropped or
+        # added constructor and a retyped index, but two fields of one type swapped by name still elaborate there, so
+        # only a fixture can catch them.
+        assert all(v == "KILLED" for m, (v, _) in results.items() if m.startswith("swap-names")), \
+            {m: v for m, (v, _) in results.items()}
 
 
 def test_the_verdict_reads_where_each_error_is():
@@ -263,6 +267,7 @@ def test_the_verdict_reads_where_each_error_is():
     assert verdict([(EXAMPLES, "", "Expression\n  x\ndid not evaluate to `true`")]) == "KILLED"
     assert verdict([("VE.Acts.Table", "lean.unknownIdentifier", "Unknown identifier `x`"),
                     (EXAMPLES, "", "x")]) == "REFUSED"
+    assert verdict([("VE.Acts.Linearize", "", "`toWord` is not a field of structure `Atom`")]) == "REFUSED"
     assert verdict([("VE.Acts.Tree", "", "unexpected token 'where'")]) == "UNKNOWN"
     assert verdict([("?", "", "x")]) == "UNKNOWN"
     assert verdict([]) == "SURVIVOR"

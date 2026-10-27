@@ -1202,6 +1202,13 @@
    "reason": "qt-a3 fix1 (review F1, F2): VE/Cardinality/Wire.lean +73 (D[V], from C as W6a's elabTerm is: elabBody 12, elabOperand 12, elabRatio 12, items 5, elabRule 5, printed 5, elabName 5, ruleNames 3, cmpNames 2, relNames 1; S2's depth, new: arrayDepth 6, sourceFits 6; decodeStatement 13 -> 12); the item's V +124; K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3 fix1, 2026-10-27",
    "commit": "110b3bf3ad801a3dc335e9b2293e5c27bb4b82eb"
+  },
+  {
+   "class": "S",
+   "lines": 46,
+   "reason": "ap-3b: lean/VE/Acts/Linearize.lean +46 (S: joinWord, Part.toks, listToks, Filler.toks, Atom.normal, tokStr, tokText, Atom.withTo, Atom.text, partAct); Table.lean paraphrases G[R] (not trusted); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3b, 2026-10-18",
+   "commit": "0e7a813e8841bbd7cf103229cf37386b8699896d"
   }
  ]
 }
