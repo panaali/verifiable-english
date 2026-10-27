@@ -165,6 +165,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Document.unit_fits
 #print axioms ResponseShape.Encoders.Document.unit_status_fits
 #print axioms ResponseShape.Encoders.Document.units_mem
+#print axioms ResponseShape.Encoders.Document.usage_fits
 #print axioms ResponseShape.Encoders.English.diagnose_fits
 #print axioms ResponseShape.Encoders.English.english_fits
 #print axioms ResponseShape.Encoders.English.eval_class
