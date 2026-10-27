@@ -19,6 +19,7 @@ import VE.Alternatives.Route
 import VE.Alternatives.Run
 import VE.Alternatives.Validate
 import VE.Alternatives.Wire
+import VE.Arith.Examples
 import VE.Ask.Binding
 import VE.Ask.Groups
 import VE.Ask.Lines
@@ -692,6 +693,8 @@ import VE.WireContract.Engine
 #print axioms VE.Alternatives.wf_preds
 #print axioms VE.Alternatives.withDefinitions_relation_some
 #print axioms VE.Alternatives.zip_all_target
+#print axioms VE.Arith.Examples.bertrand_means_iff
+#print axioms VE.Arith.Examples.primeBody_iff
 #print axioms VE.Ask.Answer.groups_view
 #print axioms VE.Ask.Asked.hbind
 #print axioms VE.Ask.Asked.hnames
@@ -3020,7 +3023,9 @@ import VE.WireContract.Engine
 #print axioms VE.Norms.Wire.Source.wf
 #print axioms VE.Norms.Wire.appendPredicates_assembly
 #print axioms VE.Norms.Wire.canonicalActIn_without_acts
+#print axioms VE.Norms.Wire.decodeRegulated_plain
 #print axioms VE.Norms.Wire.decodeRegulated_without_acts
+#print axioms VE.Norms.Wire.ite_ok_cases
 #print axioms VE.Norms.agreesBelow_of_meanings
 #print axioms VE.Norms.allF_denote
 #print axioms VE.Norms.allF_wellFormed
@@ -6240,6 +6245,7 @@ import VE.WireContract.Engine
 #print axioms VE.Service.runMode_alternatives
 #print axioms VE.Service.runMode_ask
 #print axioms VE.Service.runMode_bundle
+#print axioms VE.Service.runMode_calc
 #print axioms VE.Service.runMode_check
 #print axioms VE.Service.runMode_checkCertificate
 #print axioms VE.Service.runMode_diagnose
