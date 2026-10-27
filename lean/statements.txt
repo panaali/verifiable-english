@@ -2140,6 +2140,34 @@ theorem VE.Arith.Examples.primeBody_iff
   ∀ (E : VE.Arith.Env) (p : Nat), VE.Arith.Holds E [↑p] VE.Arith.Examples.primeBody ↔ VE.Arith.Examples.IsPrime p
   -- uses VE.Arith.Env@VE.Arith.Holds VE.Arith.Examples.IsPrime@VE.Arith.Examples VE.Arith.Examples.primeBody@VE.Arith.Examples VE.Arith.Holds@VE.Arith.Holds
   -- expr 1140533882
+theorem VE.Arith.Extends.funs
+  ∀ {O O' : VE.Arith.OpEnv},
+    VE.Arith.Extends O O' →
+      ∀ (f : String) (n : Nat) (g : List Int → Nat → Option (Int × Nat)),
+        O.funs f = Option.some (n, g) →
+          ∃ g',
+            O'.funs f = Option.some (n, g') ∧
+              ∀ (xs : List Int) (w : Nat) (r : Int × Nat), g xs w = Option.some r → g' xs w = Option.some r
+  -- uses VE.Arith.Extends@VE.Arith.Bounded VE.Arith.OpEnv.funs@VE.Arith.Bounded VE.Arith.OpEnv@VE.Arith.Bounded
+  -- expr 1326579548
+theorem VE.Arith.Extends.preds
+  ∀ {O O' : VE.Arith.OpEnv},
+    VE.Arith.Extends O O' →
+      ∀ (p : String) (n : Nat) (P : List Int → Nat → Option (Bool × Nat)),
+        O.preds p = Option.some (n, P) →
+          ∃ P',
+            O'.preds p = Option.some (n, P') ∧
+              ∀ (xs : List Int) (w : Nat) (r : Bool × Nat), P xs w = Option.some r → P' xs w = Option.some r
+  -- uses VE.Arith.Extends@VE.Arith.Bounded VE.Arith.OpEnv.preds@VE.Arith.Bounded VE.Arith.OpEnv@VE.Arith.Bounded
+  -- expr 54036355
+theorem VE.Arith.Formula.evalB_mono
+  ∀ {O O' : VE.Arith.OpEnv} {limit limit' : Nat},
+    VE.Arith.Extends O O' →
+      limit ≤ limit' →
+        ∀ (φ : VE.Arith.Formula) (ρ : List Int) (w : Nat) (r : Bool × Nat),
+          VE.Arith.Formula.evalB O limit ρ φ w = Option.some r → VE.Arith.Formula.evalB O' limit' ρ φ w = Option.some r
+  -- uses VE.Arith.Extends@VE.Arith.Bounded VE.Arith.Formula.evalB@VE.Arith.Bounded VE.Arith.Formula@VE.Arith.Syntax VE.Arith.OpEnv@VE.Arith.Bounded
+  -- expr 1300845908
 theorem VE.Arith.Formula.evalB_sound
   ∀ {E : VE.Arith.Env} {O : VE.Arith.OpEnv} {limit : Nat},
     VE.Arith.Agrees E O limit →
@@ -2148,6 +2176,30 @@ theorem VE.Arith.Formula.evalB_sound
           (VE.Arith.Holds E ρ φ ↔ b = Bool.true) ∧ (w ≤ limit → w' ≤ limit)
   -- uses VE.Arith.Agrees@VE.Arith.Bounded VE.Arith.Env@VE.Arith.Holds VE.Arith.Formula.evalB@VE.Arith.Bounded VE.Arith.Formula@VE.Arith.Syntax VE.Arith.Holds@VE.Arith.Holds VE.Arith.OpEnv@VE.Arith.Bounded
   -- expr 131736087
+theorem VE.Arith.Formula.evalB_total
+  ∀ {O : Nat → VE.Arith.OpEnv} {E : VE.Arith.Defs} {B : String → Bool} {depth : Nat},
+    VE.Arith.Total O E B →
+      ∀ (φ : VE.Arith.Formula) (k : Nat) (ρ : List Int),
+        VE.Arith.Formula.bnd B φ = Bool.true →
+          (∀ (s : VE.Arith.Site), s ∈ VE.Arith.Formula.sites k φ → VE.Arith.Site.Ok E depth s) →
+            ρ.length = k + depth →
+              ∃ b W,
+                ∀ (limit w : Nat), w + W ≤ limit → VE.Arith.Formula.evalB (O limit) limit ρ φ w = Option.some (b, w + W)
+  -- uses VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula.bnd@VE.Arith.Defs VE.Arith.Formula.evalB@VE.Arith.Bounded VE.Arith.Formula.sites@VE.Arith.Defs VE.Arith.Formula@VE.Arith.Syntax VE.Arith.OpEnv@VE.Arith.Bounded VE.Arith.Site.Ok@VE.Arith.Bounded VE.Arith.Site@VE.Arith.Defs VE.Arith.Total@VE.Arith.Bounded
+  -- expr 3217911635
+theorem VE.Arith.Site.ok_of_refusal
+  ∀ {D E : VE.Arith.Defs} {depth : Nat} {B : Option (String → Bool)} {s : VE.Arith.Site},
+    VE.Arith.Site.refusal D E depth B s = Option.none → VE.Arith.Site.Ok E depth s
+  -- uses VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Refusal@VE.Arith.Defs VE.Arith.Site.Ok@VE.Arith.Bounded VE.Arith.Site.refusal@VE.Arith.Defs VE.Arith.Site@VE.Arith.Defs
+  -- expr 148804266
+theorem VE.Arith.Term.evalB_mono
+  ∀ {O O' : VE.Arith.OpEnv} {limit limit' : Nat},
+    VE.Arith.Extends O O' →
+      limit ≤ limit' →
+        ∀ (t : VE.Arith.Term) (ρ : List Int) (w : Nat) (r : Int × Nat),
+          VE.Arith.Term.evalB O limit ρ t w = Option.some r → VE.Arith.Term.evalB O' limit' ρ t w = Option.some r
+  -- uses VE.Arith.Extends@VE.Arith.Bounded VE.Arith.OpEnv@VE.Arith.Bounded VE.Arith.Term.evalB@VE.Arith.Bounded VE.Arith.Term@VE.Arith.Syntax
+  -- expr 3547544531
 theorem VE.Arith.Term.evalB_sound
   ∀ {E : VE.Arith.Env} {O : VE.Arith.OpEnv} {limit : Nat},
     VE.Arith.Agrees E O limit →
@@ -2156,6 +2208,24 @@ theorem VE.Arith.Term.evalB_sound
           VE.Arith.Term.value E ρ t = Option.some x ∧ (w ≤ limit → w' ≤ limit)
   -- uses VE.Arith.Agrees@VE.Arith.Bounded VE.Arith.Env@VE.Arith.Holds VE.Arith.OpEnv@VE.Arith.Bounded VE.Arith.Term.evalB@VE.Arith.Bounded VE.Arith.Term.value@VE.Arith.Holds VE.Arith.Term@VE.Arith.Syntax
   -- expr 2173376614
+theorem VE.Arith.Term.evalB_total
+  ∀ {O : Nat → VE.Arith.OpEnv} {E : VE.Arith.Defs} {B : String → Bool} {depth : Nat},
+    VE.Arith.Total O E B →
+      ∀ (t : VE.Arith.Term) (k : Nat) (ρ : List Int),
+        VE.Arith.Term.bnd B t = Bool.true →
+          (∀ (s : VE.Arith.Site), s ∈ VE.Arith.Term.sites k t → VE.Arith.Site.Ok E depth s) →
+            ρ.length = k + depth →
+              ∃ x W, ∀ (limit w : Nat), w + W ≤ limit → VE.Arith.Term.evalB (O limit) limit ρ t w = Option.some (x, w + W)
+  -- uses VE.Arith.Defs@VE.Arith.Syntax VE.Arith.OpEnv@VE.Arith.Bounded VE.Arith.Site.Ok@VE.Arith.Bounded VE.Arith.Site@VE.Arith.Defs VE.Arith.Term.bnd@VE.Arith.Defs VE.Arith.Term.evalB@VE.Arith.Bounded VE.Arith.Term.sites@VE.Arith.Defs VE.Arith.Term@VE.Arith.Syntax VE.Arith.Total@VE.Arith.Bounded
+  -- expr 1766205966
+theorem VE.Arith.Term.evalBs_mono
+  ∀ {O O' : VE.Arith.OpEnv} {limit limit' : Nat},
+    VE.Arith.Extends O O' →
+      limit ≤ limit' →
+        ∀ (ts : List VE.Arith.Term) (ρ : List Int) (w : Nat) (r : List Int × Nat),
+          VE.Arith.Term.evalBs O limit ρ ts w = Option.some r → VE.Arith.Term.evalBs O' limit' ρ ts w = Option.some r
+  -- uses VE.Arith.Extends@VE.Arith.Bounded VE.Arith.OpEnv@VE.Arith.Bounded VE.Arith.Term.evalBs@VE.Arith.Bounded VE.Arith.Term@VE.Arith.Syntax
+  -- expr 1687773931
 theorem VE.Arith.Term.evalBs_sound
   ∀ {E : VE.Arith.Env} {O : VE.Arith.OpEnv} {limit : Nat},
     VE.Arith.Agrees E O limit →
@@ -2164,6 +2234,56 @@ theorem VE.Arith.Term.evalBs_sound
           VE.Arith.Term.values E ρ ts = Option.some xs ∧ (w ≤ limit → w' ≤ limit)
   -- uses VE.Arith.Agrees@VE.Arith.Bounded VE.Arith.Env@VE.Arith.Holds VE.Arith.OpEnv@VE.Arith.Bounded VE.Arith.Term.evalBs@VE.Arith.Bounded VE.Arith.Term.values@VE.Arith.Holds VE.Arith.Term@VE.Arith.Syntax
   -- expr 3446190821
+theorem VE.Arith.Term.evalBs_total
+  ∀ {O : Nat → VE.Arith.OpEnv} {E : VE.Arith.Defs} {B : String → Bool} {depth : Nat},
+    VE.Arith.Total O E B →
+      ∀ (ts : List VE.Arith.Term) (k : Nat) (ρ : List Int),
+        VE.Arith.Term.bndList B ts = Bool.true →
+          (∀ (s : VE.Arith.Site), s ∈ VE.Arith.Term.sitesList k ts → VE.Arith.Site.Ok E depth s) →
+            ρ.length = k + depth →
+              ∃ xs W,
+                xs.length = ts.length ∧
+                  ∀ (limit w : Nat), w + W ≤ limit → VE.Arith.Term.evalBs (O limit) limit ρ ts w = Option.some (xs, w + W)
+  -- uses VE.Arith.Defs@VE.Arith.Syntax VE.Arith.OpEnv@VE.Arith.Bounded VE.Arith.Site.Ok@VE.Arith.Bounded VE.Arith.Site@VE.Arith.Defs VE.Arith.Term.bndList@VE.Arith.Defs VE.Arith.Term.evalBs@VE.Arith.Bounded VE.Arith.Term.sitesList@VE.Arith.Defs VE.Arith.Term@VE.Arith.Syntax VE.Arith.Total@VE.Arith.Bounded
+  -- expr 1582978039
+theorem VE.Arith.Total.funs
+  ∀ {O : Nat → VE.Arith.OpEnv} {E : VE.Arith.Defs} {B : String → Bool},
+    VE.Arith.Total O E B →
+      ∀ (f : String) (d : VE.Arith.Def),
+        List.find? (fun d => d.name == f && d.isPred == Bool.false) E = Option.some d →
+          B f = Bool.true →
+            ∀ (xs : List Int),
+              xs.length = d.arity →
+                ∃ x W,
+                  ∀ (limit : Nat),
+                    ∃ g,
+                      (O limit).funs f = Option.some (d.arity, g) ∧
+                        ∀ (w : Nat), w + W ≤ limit → g xs w = Option.some (x, w + W)
+  -- uses VE.Arith.Def.arity@VE.Arith.Defs VE.Arith.Def.isPred@VE.Arith.Defs VE.Arith.Def.name@VE.Arith.Defs VE.Arith.Def@VE.Arith.Syntax VE.Arith.Defs@VE.Arith.Syntax VE.Arith.OpEnv.funs@VE.Arith.Bounded VE.Arith.OpEnv@VE.Arith.Bounded VE.Arith.Total@VE.Arith.Bounded
+  -- expr 2003560601
+theorem VE.Arith.Total.preds
+  ∀ {O : Nat → VE.Arith.OpEnv} {E : VE.Arith.Defs} {B : String → Bool},
+    VE.Arith.Total O E B →
+      ∀ (p : String) (d : VE.Arith.Def),
+        List.find? (fun d => d.name == p && d.isPred == Bool.true) E = Option.some d →
+          B p = Bool.true →
+            ∀ (xs : List Int),
+              xs.length = d.arity →
+                ∃ b W,
+                  ∀ (limit : Nat),
+                    ∃ P,
+                      (O limit).preds p = Option.some (d.arity, P) ∧
+                        ∀ (w : Nat), w + W ≤ limit → P xs w = Option.some (b, w + W)
+  -- uses VE.Arith.Def.arity@VE.Arith.Defs VE.Arith.Def.isPred@VE.Arith.Defs VE.Arith.Def.name@VE.Arith.Defs VE.Arith.Def@VE.Arith.Syntax VE.Arith.Defs@VE.Arith.Syntax VE.Arith.OpEnv.preds@VE.Arith.Bounded VE.Arith.OpEnv@VE.Arith.Bounded VE.Arith.Total@VE.Arith.Bounded
+  -- expr 3616096813
+theorem VE.Arith.Total.snoc
+  ∀ {E : VE.Arith.Defs} {d : VE.Arith.Def},
+    VE.Arith.Total (fun limit => VE.Arith.Defs.opEnv limit E) E E.boundedNames →
+      (List.any E fun x => x.name == d.name) = Bool.false →
+        VE.Arith.Def.SitesOk E d →
+          VE.Arith.Total (fun limit => VE.Arith.Defs.opEnv limit (E ++ [d])) (E ++ [d]) (E ++ [d]).boundedNames
+  -- uses VE.Arith.Def.SitesOk@VE.Arith.Bounded VE.Arith.Def.name@VE.Arith.Defs VE.Arith.Def@VE.Arith.Syntax VE.Arith.Defs.boundedNames@VE.Arith.Defs VE.Arith.Defs.opEnv@VE.Arith.Bounded VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Total@VE.Arith.Bounded
+  -- expr 4126633719
 theorem VE.Arith.agrees_env
   ∀ (D : VE.Arith.Defs) (limit : Nat), VE.Arith.Agrees D.env (VE.Arith.Defs.opEnv limit D) limit
   -- uses VE.Arith.Agrees@VE.Arith.Bounded VE.Arith.Defs.env@VE.Arith.Holds VE.Arith.Defs.opEnv@VE.Arith.Bounded VE.Arith.Defs@VE.Arith.Syntax
@@ -2191,11 +2311,38 @@ theorem VE.Arith.arithOutcome_unbounded_iff
       VE.Arith.Formula.Bounded D φ = Bool.false
   -- uses VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula.Bounded@VE.Arith.Defs VE.Arith.Formula@VE.Arith.Syntax VE.Arith.arithOutcome@VE.Arith.Bounded VE.Numbers.Outcome.unknown@VE.Numbers.Round VE.Numbers.Outcome@VE.Numbers.Round VE.Numbers.UnknownReason.unboundedStatement@VE.Numbers.Round
   -- expr 4139093868
+theorem VE.Arith.boundedNames_snoc
+  ∀ (E : VE.Arith.Defs) (d : VE.Arith.Def),
+    (E ++ [d]).boundedNames =
+      match (motive := VE.Arith.Def → String → Bool) d with
+      | VE.Arith.Def.fn f arity body => fun g => if g = f then VE.Arith.Term.bnd E.boundedNames body else E.boundedNames g
+      | VE.Arith.Def.pred p arity body => fun q =>
+        if q = p then VE.Arith.Formula.bnd E.boundedNames body else E.boundedNames q
+  -- uses VE.Arith.Def@VE.Arith.Syntax VE.Arith.Defs.boundedNames@VE.Arith.Defs VE.Arith.Defs.opEnv.match_1@VE.Arith.Bounded VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula.bnd@VE.Arith.Defs VE.Arith.Formula@VE.Arith.Syntax VE.Arith.Term.bnd@VE.Arith.Defs VE.Arith.Term@VE.Arith.Syntax
+  -- expr 3280137390
+theorem VE.Arith.charge_eq
+  ∀ {α : Type} {limit w : Nat} {k : Nat → Option (α × Nat)}, w < limit → VE.Arith.charge limit w k = k (w + 1)
+  -- uses VE.Arith.charge@VE.Arith.Bounded
+  -- expr 282571893
+theorem VE.Arith.charge_mono
+  ∀ {α : Type} {limit limit' w : Nat} {k k' : Nat → Option (α × Nat)} {r : α × Nat},
+    limit ≤ limit' →
+      (∀ (r : α × Nat), k (w + 1) = Option.some r → k' (w + 1) = Option.some r) →
+        VE.Arith.charge limit w k = Option.some r → VE.Arith.charge limit' w k' = Option.some r
+  -- uses VE.Arith.charge@VE.Arith.Bounded
+  -- expr 2796485684
 theorem VE.Arith.charge_some
   ∀ {α : Type} {limit w : Nat} {k : Nat → Option (α × Nat)} {r : α × Nat},
     VE.Arith.charge limit w k = Option.some r → w < limit ∧ k (w + 1) = Option.some r
   -- uses VE.Arith.charge@VE.Arith.Bounded
   -- expr 1979330727
+theorem VE.Arith.countLoop_mono
+  ∀ {step step' : Int → Nat → Option (Bool × Nat)},
+    (∀ (i : Int) (w : Nat) (r : Bool × Nat), step i w = Option.some r → step' i w = Option.some r) →
+      ∀ (n : Nat) (i : Int) (acc w : Nat) (r : Int × Nat),
+        VE.Arith.countLoop step n i acc w = Option.some r → VE.Arith.countLoop step' n i acc w = Option.some r
+  -- uses VE.Arith.countLoop@VE.Arith.Bounded
+  -- expr 80846161
 theorem VE.Arith.countLoop_sound
   ∀ (Q : Int → Prop) (step : Int → Nat → Option (Bool × Nat)) (limit : Nat),
     (∀ (i : Int) (w : Nat) (b : Bool) (w' : Nat),
@@ -2206,6 +2353,35 @@ theorem VE.Arith.countLoop_sound
             (w ≤ limit → w' ≤ limit)
   -- uses VE.Arith.countLoop@VE.Arith.Bounded
   -- expr 2059428783
+theorem VE.Arith.countLoop_total
+  ∀ (step : Nat → Int → Nat → Option (Bool × Nat)),
+    (∀ (i : Int), ∃ b W, ∀ (limit w : Nat), w + W ≤ limit → step limit i w = Option.some (b, w + W)) →
+      ∀ (n : Nat) (i : Int) (acc : Nat),
+        ∃ c W, ∀ (limit w : Nat), w + W ≤ limit → VE.Arith.countLoop (step limit) n i acc w = Option.some (c, w + W)
+  -- uses VE.Arith.countLoop@VE.Arith.Bounded
+  -- expr 3298858572
+theorem VE.Arith.decideBounded_complete
+  ∀ (D : VE.Arith.Defs),
+    D.WellFormed = Bool.true →
+      ∀ (φ : VE.Arith.Formula),
+        VE.Arith.Formula.Scoped D 0 φ = Bool.true →
+          VE.Arith.Formula.Bounded D φ = Bool.true → ∃ limit r, VE.Arith.decideBounded D limit φ = Option.some r
+  -- uses VE.Arith.Defs.WellFormed@VE.Arith.Defs VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula.Bounded@VE.Arith.Defs VE.Arith.Formula.Scoped@VE.Arith.Defs VE.Arith.Formula@VE.Arith.Syntax VE.Arith.decideBounded@VE.Arith.Bounded
+  -- expr 281495271
+theorem VE.Arith.decideBounded_covered
+  ∀ (D : VE.Arith.Defs),
+    D.WellFormed = Bool.true →
+      ∀ (φ : VE.Arith.Formula),
+        VE.Arith.Formula.Scoped D 0 φ = Bool.true →
+          VE.Arith.Formula.Bounded D φ = Bool.true →
+            ∃ b W, ∀ (limit : Nat), W ≤ limit → VE.Arith.decideBounded D limit φ = Option.some (b, W)
+  -- uses VE.Arith.Defs.WellFormed@VE.Arith.Defs VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula.Bounded@VE.Arith.Defs VE.Arith.Formula.Scoped@VE.Arith.Defs VE.Arith.Formula@VE.Arith.Syntax VE.Arith.decideBounded@VE.Arith.Bounded
+  -- expr 3829332243
+theorem VE.Arith.decideBounded_mono
+  ∀ (D : VE.Arith.Defs) (φ : VE.Arith.Formula) (limit limit' : Nat) (r : Bool × Nat),
+    VE.Arith.decideBounded D limit φ = Option.some r → limit ≤ limit' → VE.Arith.decideBounded D limit' φ = Option.some r
+  -- uses VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula@VE.Arith.Syntax VE.Arith.decideBounded@VE.Arith.Bounded
+  -- expr 2431253607
 theorem VE.Arith.decideBounded_sound
   ∀ (D : VE.Arith.Defs),
     D.WellFormed = Bool.true →
@@ -2220,6 +2396,37 @@ theorem VE.Arith.decideBounded_work
     VE.Arith.decideBounded D limit φ = Option.some (b, w) → w ≤ limit
   -- uses VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula@VE.Arith.Syntax VE.Arith.decideBounded@VE.Arith.Bounded
   -- expr 102672812
+theorem VE.Arith.foldl_rel
+  ∀ {α β γ : Type} (R : α → β → Prop) {f : α → γ → α} {g : β → γ → β},
+    (∀ (a : α) (b : β) (c : γ), R a b → R (f a c) (g b c)) →
+      ∀ (l : List γ) (a : α) (b : β), R a b → R (List.foldl f a l) (List.foldl g b l)
+  -- uses
+  -- expr 590644498
+theorem VE.Arith.opEnv_extends
+  ∀ (D : VE.Arith.Defs) {limit limit' : Nat},
+    limit ≤ limit' → VE.Arith.Extends (VE.Arith.Defs.opEnv limit D) (VE.Arith.Defs.opEnv limit' D)
+  -- uses VE.Arith.Defs.opEnv@VE.Arith.Bounded VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Extends@VE.Arith.Bounded
+  -- expr 1089477127
+theorem VE.Arith.opEnv_snoc
+  ∀ (limit : Nat) (E : VE.Arith.Defs) (d : VE.Arith.Def),
+    VE.Arith.Defs.opEnv limit (E ++ [d]) =
+      match d with
+      | VE.Arith.Def.fn f n body =>
+        have __src := VE.Arith.Defs.opEnv limit E;
+        {
+          funs := fun g =>
+            if g = f then Option.some (n, fun xs w => VE.Arith.Term.evalB (VE.Arith.Defs.opEnv limit E) limit xs body w)
+            else (VE.Arith.Defs.opEnv limit E).funs g,
+          preds := __src.preds }
+      | VE.Arith.Def.pred p n body =>
+        have __src := VE.Arith.Defs.opEnv limit E;
+        { funs := __src.funs,
+          preds := fun q =>
+            if q = p then
+              Option.some (n, fun xs w => VE.Arith.Formula.evalB (VE.Arith.Defs.opEnv limit E) limit xs body w)
+            else (VE.Arith.Defs.opEnv limit E).preds q }
+  -- uses VE.Arith.Def@VE.Arith.Syntax VE.Arith.Defs.opEnv.match_1@VE.Arith.Bounded VE.Arith.Defs.opEnv@VE.Arith.Bounded VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula.evalB@VE.Arith.Bounded VE.Arith.Formula@VE.Arith.Syntax VE.Arith.OpEnv.funs@VE.Arith.Bounded VE.Arith.OpEnv.mk@VE.Arith.Bounded VE.Arith.OpEnv.preds@VE.Arith.Bounded VE.Arith.OpEnv@VE.Arith.Bounded VE.Arith.Term.evalB@VE.Arith.Bounded VE.Arith.Term@VE.Arith.Syntax
+  -- expr 563588754
 theorem VE.Arith.quantLoop_false
   ∀ (Q : Int → Prop) (step : Int → Nat → Option (Bool × Nat)) (limit : Nat),
     (∀ (i : Int) (w : Nat) (b : Bool) (w' : Nat),
@@ -2229,6 +2436,20 @@ theorem VE.Arith.quantLoop_false
           (b = Bool.true ↔ ∃ k, k < n ∧ Q (i + ↑k)) ∧ (w ≤ limit → w' ≤ limit)
   -- uses VE.Arith.quantLoop@VE.Arith.Bounded
   -- expr 1509925809
+theorem VE.Arith.quantLoop_mono
+  ∀ (u : Bool) {step step' : Int → Nat → Option (Bool × Nat)},
+    (∀ (i : Int) (w : Nat) (r : Bool × Nat), step i w = Option.some r → step' i w = Option.some r) →
+      ∀ (n : Nat) (i : Int) (w : Nat) (r : Bool × Nat),
+        VE.Arith.quantLoop u step n i w = Option.some r → VE.Arith.quantLoop u step' n i w = Option.some r
+  -- uses VE.Arith.quantLoop@VE.Arith.Bounded
+  -- expr 299159617
+theorem VE.Arith.quantLoop_total
+  ∀ (u : Bool) (step : Nat → Int → Nat → Option (Bool × Nat)),
+    (∀ (i : Int), ∃ b W, ∀ (limit w : Nat), w + W ≤ limit → step limit i w = Option.some (b, w + W)) →
+      ∀ (n : Nat) (i : Int),
+        ∃ b W, ∀ (limit w : Nat), w + W ≤ limit → VE.Arith.quantLoop u (step limit) n i w = Option.some (b, w + W)
+  -- uses VE.Arith.quantLoop@VE.Arith.Bounded
+  -- expr 1318464532
 theorem VE.Arith.quantLoop_true
   ∀ (Q : Int → Prop) (step : Int → Nat → Option (Bool × Nat)) (limit : Nat),
     (∀ (i : Int) (w : Nat) (b : Bool) (w' : Nat),
@@ -2246,6 +2467,22 @@ theorem VE.Arith.range_ex
   ∀ (l h : Int) (Q : Int → Prop), (∃ k, k < (h - l + 1).toNat ∧ Q (l + ↑k)) ↔ ∃ i, l ≤ i ∧ i ≤ h ∧ Q i
   -- uses
   -- expr 429845774
+theorem VE.Arith.total_take
+  ∀ (D : VE.Arith.Defs),
+    D.WellFormed = Bool.true →
+      ∀ (k : Nat),
+        VE.Arith.Total (fun limit => VE.Arith.Defs.opEnv limit (List.take k D)) (List.take k D)
+          (VE.Arith.Defs.boundedNames (List.take k D))
+  -- uses VE.Arith.Def@VE.Arith.Syntax VE.Arith.Defs.WellFormed@VE.Arith.Defs VE.Arith.Defs.boundedNames@VE.Arith.Defs VE.Arith.Defs.opEnv@VE.Arith.Bounded VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Total@VE.Arith.Bounded
+  -- expr 1472254156
+theorem VE.Arith.wellFormed_at
+  ∀ {D : VE.Arith.Defs},
+    D.WellFormed = Bool.true →
+      ∀ {k : Nat} {d : VE.Arith.Def},
+        D[k]? = Option.some d →
+          ((List.take k D).any fun x => x.name == d.name) = Bool.false ∧ VE.Arith.Def.SitesOk (List.take k D) d
+  -- uses VE.Arith.Def.SitesOk@VE.Arith.Bounded VE.Arith.Def.name@VE.Arith.Defs VE.Arith.Def@VE.Arith.Syntax VE.Arith.Defs.WellFormed@VE.Arith.Defs VE.Arith.Defs@VE.Arith.Syntax
+  -- expr 3886206521
 theorem VE.Ask.Answer.groups_view
   ∀ (a : VE.Ask.Answer), a.groups = a.view.groups
   -- uses VE.Ask.Answer.groups@VE.Ask.Render VE.Ask.Answer.view@VE.Ask.Render VE.Ask.Answer@VE.Ask.Render VE.Ask.Group@VE.Ask.Groups VE.Ask.View.groups@VE.Ask.Lines
