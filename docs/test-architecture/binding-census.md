@@ -8,11 +8,11 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 |---|---:|
 | leaves:bound | 251 |
 | leaves:closed domain | 267 |
-| leaves:none | 1358 |
+| leaves:none | 1360 |
 | modes | 38 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 957 |
+| today:not probed | 959 |
 | today:shape | 518 |
 | today:unbound | 137 |
 | answers | 561 |
@@ -1721,6 +1721,8 @@ Delegates: `/` to norms.
 | `/unsaid/*/sorts/*` | string | none |  |  | 4 | hand: `ve/ast.py:formula` |
 | `/unspecified/*` | string | none |  |  | 3 | hand: `ve/norm_defaults.py:__init__` |
 | `/verdict` | string | closed domain | enum |  | 10 | shape |
+| `/wordings/@key` | key | none |  |  | 0 | not probed |
+| `/wordings/{}` | string | none |  |  | 0 | not probed |
 
 | grammar at | grammar | bound whole by | observed |
 |---|---|---|---:|
