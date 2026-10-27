@@ -48,33 +48,45 @@ theorem Claim.factsIn_eq (ds : List Decl) : Claim.factsIn (inlineTable ds (freeN
   unfold Claim.factsIn Claim.facts Claim.inline
   split <;> simp_all [Except.toOption]
 
-/-- A derivation's outcome from the search over its lowered facts (spec 5): follows only with a certificate that
-replays, does not follow only with a counterexample checked by evaluation, square links included. -/
-def Derive.outcome (P : List QFact) (links : List (String × String)) (g : QFact) : Outcome :=
+/-- What a decided derivation shows (spec 3.4): the steps of its replayed certificate, or the point of its checked
+counterexample; nothing for any other outcome or kind. -/
+inductive Shown where
+  | nothing
+  | certificate (steps : List Step)
+  | counterexample (κ : List (String × Rat))
+  deriving Repr, DecidableEq
+
+/-- A derivation's outcome from the search over its lowered facts (spec 5), with what it shows: follows only with a
+certificate that replays, does not follow only with a counterexample checked by evaluation, square links included. -/
+def Derive.shown (P : List QFact) (links : List (String × String)) (g : QFact) : Outcome × Shown :=
   match Derive.search P links g with
-  | .follows d => if d.check P links g then .decided .holds else .unknown .derivationInconclusive
+  | .follows d =>
+    if d.check P links g then (.decided .holds, .certificate d.steps) else (.unknown .derivationInconclusive, .nothing)
   | .counterexample κ =>
-    if counterexampleCheck P links g (Answer.point κ) then .decided .fails else .unknown .derivationInconclusive
-  | .unknown (.limit .derivationSteps) => .unknown (.limit .derivationSteps)
-  | .unknown _ => .unknown .derivationInconclusive
+    if counterexampleCheck P links g (Answer.point κ) then (.decided .fails, .counterexample κ)
+    else (.unknown .derivationInconclusive, .nothing)
+  | .unknown (.limit .derivationSteps) => (.unknown (.limit .derivationSteps), .nothing)
+  | .unknown _ => (.unknown .derivationInconclusive, .nothing)
 
 /-- A claim's outcome; a derivation's from its inlining's first fault (2.7), else, within `maxPolyTerms` nodes of
-each inlined expression, from the search over the lowered premises and conclusion (spec 5). One inlining table
-serves the whole derivation. -/
-def Check.run (ds : List Decl) : Check → Outcome
-  | .claim c => c.run ds
+each inlined expression, from the search over the lowered premises and conclusion (spec 5), with what it shows. One
+inlining table serves the whole derivation, and one search gives both. -/
+def Check.runShown (ds : List Decl) : Check → Outcome × Shown
+  | .claim c => (c.run ds, .nothing)
   | k@(.follows P links C) =>
     let t := inlineTable ds (k.keep ds)
     match k.fault t with
-    | some .undefined => .decided .undefined
-    | some .exhausted => .unknown (.limit .evaluations)
-    | some _ => .unknown (.limit .digits)
+    | some .undefined => (.decided .undefined, .nothing)
+    | some .exhausted => (.unknown (.limit .evaluations), .nothing)
+    | some _ => (.unknown (.limit .digits), .nothing)
     | none =>
       if !k.exprs.all fun e => (e.subst t).toOption.all (·.nodesWithin maxPolyTerms |>.isSome) then
-        .unknown (.limit .derivationSteps)
+        (.unknown (.limit .derivationSteps), .nothing)
       else match P.mapM (Claim.factsIn t), C.factsIn t with
-        | some fss, some [g] => Derive.outcome fss.flatten links g
-        | _, _ => .unknown .derivationInconclusive
+        | some fss, some [g] => Derive.shown fss.flatten links g
+        | _, _ => (.unknown .derivationInconclusive, .nothing)
+
+def Check.run (ds : List Decl) (k : Check) : Outcome := (k.runShown ds).1
 
 theorem Check.outcomeMeans_claim (ds : List Decl) (c : Claim) (v : Verdict) :
     (Check.claim c).OutcomeMeans ds (.decided v) ↔ v = c.decide (values ds) := by
@@ -97,13 +109,14 @@ theorem Check.run_sound (ds : List Decl) (h : WellFormed ds) (k : Check) : k.Out
   cases k with
   | claim c =>
     cases hr : c.run ds with
-    | decided v => simpa [Check.run, Check.OutcomeMeans, hr] using Claim.run_decided ds h c v hr
-    | unknown u => simpa [Check.run, Check.OutcomeMeans, Check.UnknownCause, hr] using Claim.run_unknown ds h c u hr
+    | decided v => simpa [Check.run, Check.runShown, Check.OutcomeMeans, hr] using Claim.run_decided ds h c v hr
+    | unknown u =>
+      simpa [Check.run, Check.runShown, Check.OutcomeMeans, Check.UnknownCause, hr] using Claim.run_unknown ds h c u hr
   | follows P links C =>
     have own : ∀ u, u ≠ .limit .digits → u ≠ .limit .evaluations → u ∈ (Check.follows P links C).reasons →
         (Check.follows P links C).OutcomeMeans ds (.unknown u) := fun u hd he hu =>
       ⟨hu, fun h => absurd h hd, fun h => absurd h he⟩
-    simp only [Check.run, Check.keep]
+    simp only [Check.run, Check.runShown, Check.keep]
     cases hf : (Check.follows P links C).fault (inlineTable ds (freeNames ds)) with
     | some v =>
       obtain ⟨e, he, hv⟩ := Check.fault_some hf
@@ -118,7 +131,7 @@ theorem Check.run_sound (ds : List Decl) (h : WellFormed ds) (k : Check) : k.Out
       · split
         · rename_i fss g hP hC
           rw [Claim.factsIn_eq] at hP hC
-          unfold Derive.outcome
+          unfold Derive.shown
           split
           · rename_i d _
             split
@@ -197,6 +210,40 @@ def line (words : String → Option String) : Check → Option String
 
 /-- An exact value as a reduced fraction "n/d", or "n" for an integer (3.4). -/
 def exact (q : Rat) : String := if q.den = 1 then toString q.num else s!"{q.num}/{q.den}"
+
+/-! ## What a decided derivation shows (spec 3.4): its certificate and its counterexample -/
+
+/-- A fact `0 ≤ L`, or `0 < L` when strict, as spec 3.4 writes it: the constant, one `[name, "n/d"]` per coefficient. -/
+def factJson (f : QFact) : Json :=
+  Json.mkObj [("const", .str (exact f.form.const)),
+    ("coeffs", .arr (f.form.coeffs.map fun p => Json.arr #[.str p.1, .str (exact p.2)]).toArray),
+    ("strict", .bool f.strict)]
+
+/-- A replayed step: a Farkas refutation's goal and its weights, one per fact in the order it combines them, or a
+square step's link and bounds. -/
+def stepJson : Step → Json
+  | .farkas goal cert => Json.mkObj [("farkas", Json.mkObj [("goal", factJson goal),
+      ("weights", .arr (cert.weights.map fun w => .str (exact w)).toArray)])]
+  | .square s r a b => Json.mkObj [("square", Json.mkObj [("square", .str s), ("root", .str r),
+      ("a", .str (exact a)), ("b", .str (exact b))])]
+
+/-- The free values a check reads, in declaration order: those its inlined expressions name and those its links name
+(as ME-9's point reads its sides'). -/
+def reads (ds : List Decl) (k : Check) : List String :=
+  let t := inlineTable ds (k.keep ds)
+  let linked := match k with
+    | .follows _ links _ => links.flatMap fun l => [l.1, l.2]
+    | _ => []
+  let read := (k.exprs.filterMap fun e => (e.subst t).toOption).flatMap Expr.names ++ linked
+  (k.keep ds).filter (· ∈ read)
+
+/-- A row's `certificate` and `counterexample` (spec 3.4): the replayed steps in order, or one `[name, "n/d"]` per
+free value read at the checked point; `null` where the outcome shows neither. -/
+def shownJson (ds : List Decl) (k : Check) : Shown → Json × Json
+  | .certificate steps => (.arr (steps.map stepJson).toArray, .null)
+  | .counterexample κ =>
+    (.null, .arr ((reads ds k).map fun n => Json.arr #[.str n, .str (exact (Answer.point κ n))]).toArray)
+  | .nothing => (.null, .null)
 
 /-- 2.5's display of `x` at `k` places: truncated toward zero, then "…" when the truncation dropped a nonzero
 remainder. -/
