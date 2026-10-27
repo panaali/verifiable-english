@@ -3265,6 +3265,18 @@ theorem VE.Calc.Budgeted.bin_eq
           ∀ {r : Option γ} {m : Nat}, x.bin y f = Option.some (r, m) → r = X.bind fun a => Y.bind (F a)
   -- uses VE.Calc.Budgeted.bin@VE.Calc.Poly VE.Calc.Budgeted@VE.Calc.Poly
   -- expr 3247572537
+theorem VE.Calc.Check.fault_some
+  ∀ {ds : List VE.Calc.Decl} {k : VE.Calc.Check} {v : VE.Calc.Val},
+    VE.Calc.Check.fault (VE.Calc.inlineTable ds (VE.Calc.Check.keep ds k)) k = Option.some v →
+      ∃ e, e ∈ k.exprs ∧ VE.Calc.Expr.inline ds (VE.Calc.Check.keep ds k) e = Except.error v
+  -- uses VE.Calc.Check.exprs@VE.Calc.Wire VE.Calc.Check.fault@VE.Calc.Run VE.Calc.Check.keep@VE.Calc.Run VE.Calc.Check@VE.Calc.Wire VE.Calc.Decl@VE.Calc.Decls VE.Calc.Expr.inline@VE.Calc.Inline VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Val@VE.Calc.Decls VE.Calc.inlineTable@VE.Calc.Inline
+  -- expr 3760766454
+theorem VE.Calc.Check.outcomeMeans_claim
+  ∀ (ds : List VE.Calc.Decl) (c : VE.Calc.Claim) (v : VE.Numbers.Verdict),
+    VE.Calc.Check.OutcomeMeans ds (VE.Calc.Check.claim c) (VE.Numbers.Outcome.decided v) ↔
+      v = VE.Calc.Claim.decide (VE.Calc.values ds) c
+  -- uses VE.Calc.Check.OutcomeMeans@VE.Calc.Run VE.Calc.Check.claim@VE.Calc.Wire VE.Calc.Claim.decide@VE.Calc.Eval VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Decl@VE.Calc.Decls VE.Calc.values@VE.Calc.Decls VE.Numbers.Outcome.decided@VE.Numbers.Round VE.Numbers.Verdict@VE.Numbers.Round
+  -- expr 33943527
 theorem VE.Calc.Check.run_claim
   ∀ (ds : List VE.Calc.Decl) (c : VE.Calc.Claim), VE.Calc.Check.run ds (VE.Calc.Check.claim c) = VE.Calc.Claim.run ds c
   -- uses VE.Calc.Check.claim@VE.Calc.Wire VE.Calc.Check.run@VE.Calc.Run VE.Calc.Claim.run@VE.Calc.Decls VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Decl@VE.Calc.Decls VE.Numbers.Outcome@VE.Numbers.Round
@@ -3289,6 +3301,11 @@ theorem VE.Calc.Claim.decide_undefined
     VE.Calc.Claim.decide σ c = VE.Numbers.Verdict.undefined ↔ ¬VE.Calc.Claim.Defined σ c
   -- uses VE.Calc.Claim.Defined@VE.Calc.Syntax VE.Calc.Claim.decide@VE.Calc.Eval VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Values@VE.Calc.Syntax VE.Numbers.Verdict.undefined@VE.Numbers.Round VE.Numbers.Verdict@VE.Numbers.Round
   -- expr 1310136358
+theorem VE.Calc.Claim.factsIn_eq
+  ∀ (ds : List VE.Calc.Decl),
+    VE.Calc.Claim.factsIn (VE.Calc.inlineTable ds (VE.Calc.freeNames ds)) = VE.Calc.Claim.facts ds
+  -- uses VE.Calc.Claim.facts@VE.Calc.Lower VE.Calc.Claim.factsIn@VE.Calc.Run VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Decl@VE.Calc.Decls VE.Calc.QFact@VE.Calc.Linear VE.Calc.freeNames@VE.Calc.Inline VE.Calc.inlineTable@VE.Calc.Inline
+  -- expr 3895595874
 theorem VE.Calc.Claim.facts_sound
   ∀ (ds : List VE.Calc.Decl),
     VE.Calc.WellFormed ds →
@@ -3540,6 +3557,13 @@ theorem VE.Calc.Expr.zeroDivisor_sound
     e.zeroDivisor = Bool.true → ∀ (x : Rat), ¬VE.Calc.Denotes (fun v => Option.some (κ v)) e x
   -- uses VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr.zeroDivisor@VE.Calc.Identity VE.Calc.Expr@VE.Calc.Syntax
   -- expr 1342338600
+theorem VE.Calc.FM.firstAppearance_spec
+  ∀ (ns acc : List String),
+    acc.Nodup →
+      (List.foldl (fun acc n => if n ∈ acc then acc else acc ++ [n]) acc ns).Nodup ∧
+        ∀ (n : String), n ∈ List.foldl (fun acc n => if n ∈ acc then acc else acc ++ [n]) acc ns ↔ n ∈ acc ∨ n ∈ ns
+  -- uses
+  -- expr 1992975206
 theorem VE.Calc.Farkas.check_sound
   ∀ (fs : List VE.Calc.QFact) (c : VE.Calc.Farkas),
     VE.Calc.Farkas.check fs c = Bool.true → ∀ (κ : String → Rat), ¬∀ (f : VE.Calc.QFact), f ∈ fs → VE.Calc.QFact.Holds κ f
@@ -3819,6 +3843,10 @@ theorem VE.Calc.QLin.eval_isConst
   ∀ (κ : String → Rat) (L : VE.Calc.QLin), L.isConst = Bool.true → VE.Calc.QLin.eval κ L = L.const
   -- uses VE.Calc.QLin.const@VE.Calc.Linear VE.Calc.QLin.eval@VE.Calc.Linear VE.Calc.QLin.isConst@VE.Calc.Lower VE.Calc.QLin@VE.Calc.Linear
   -- expr 2050223340
+theorem VE.Calc.QLin.eval_norm
+  ∀ (κ : String → Rat) (L : VE.Calc.QLin), VE.Calc.QLin.eval κ L.norm = VE.Calc.QLin.eval κ L
+  -- uses VE.Calc.QLin.eval@VE.Calc.Linear VE.Calc.QLin.norm@VE.Calc.FourierMotzkin VE.Calc.QLin@VE.Calc.Linear
+  -- expr 3840590860
 theorem VE.Calc.QLin.eval_of_cancel
   ∀ (κ : String → Rat) (L : VE.Calc.QLin),
     (∀ (n : String), n ∈ List.map (fun x => x.fst) L.coeffs → L.coeffOf n = 0) → VE.Calc.QLin.eval κ L = L.const
@@ -4365,6 +4393,21 @@ theorem VE.Calc.sidesAtB_eq
         VE.Calc.differsAt a b κ = (Option.map (fun s => s.fst != s.snd) r).getD Bool.false
   -- uses VE.Calc.Budgeted@VE.Calc.Poly VE.Calc.Expr.eval@VE.Calc.Eval VE.Calc.Expr@VE.Calc.Syntax VE.Calc.differsAt@VE.Calc.Poly VE.Calc.sidesAtB@VE.Calc.Poly
   -- expr 2994313240
+theorem VE.Calc.sum_by_names
+  ∀ (κ : String → Rat) (U : List String),
+    U.Nodup →
+      ∀ (l : List (String × Rat)),
+        (∀ (p : String × Rat), p ∈ l → p.fst ∈ U) →
+          (List.map (fun p => p.snd * κ p.fst) l).sum =
+            (List.map (fun n => (List.map (fun x => x.snd) (List.filter (fun x => x.fst == n) l)).sum * κ n) U).sum
+  -- uses
+  -- expr 372397421
+theorem VE.Calc.sum_nonzero
+  ∀ (κ c : String → Rat) (U : List String),
+    (List.map (fun p => p.snd * κ p.fst) (List.filter (fun x => x.snd != 0) (List.map (fun n => (n, c n)) U))).sum =
+      (List.map (fun n => c n * κ n) U).sum
+  -- uses
+  -- expr 1151710027
 theorem VE.Calc.sum_split
   ∀ (κ : String → Rat) (l : List (String × Rat)) (n : String),
     (List.map (fun p => p.snd * κ p.fst) l).sum =
