@@ -1230,6 +1230,20 @@
    "reason": "jt-2 merge with SC-1b (scope@0): VE/Service/Document.lean check +3 (G[V]): the document mode refuses judgments@0 with scope@0 (CheckerUnavailable: judgments@0 with scope@0 needs its composed Lean route), because scope's fold (Scope.foldGovernors) writes no judgments member; new Lean-owned behaviour, K +0, S +0; with jt-2's 117 the item is V +120",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md, 2026-10-17)",
    "commit": "ab010c3f02bca97c3d17775ba85382bf85e208eb"
+  },
+  {
+   "class": "V",
+   "lines": 26,
+   "reason": "q1-4: VE/Question/Run.lean +24 (the caller's decoding and dispatch, speechPrefixes: replace speech_english's deleted F1 branch and Must/Can refusal), VE/Question/Basic.lean +2 (speechAuxiliaries: the speech caller's F2 words, new Lean behaviour)",
+   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md) for VE/Question/Run.lean +24 and by standing ruling R16 (DRI-RULINGS.md) for VE/Question/Basic.lean +2, q1-4, 2026-10-26",
+   "commit": "c45d799f3cf525a7a39e916240a922c5a60047ee"
+  },
+  {
+   "class": "V",
+   "lines": 4,
+   "reason": "q1-4: VE/Question/Run.lean +4 (caseFields: the question case's fields with the optional caller, factored out of questionCase so #guards check it)",
+   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md), q1-4, 2026-10-26",
+   "commit": "c45d799f3cf525a7a39e916240a922c5a60047ee"
   }
  ]
 }

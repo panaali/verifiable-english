@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 38683,
+    "total_lines": 38721,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -351,12 +351,12 @@
       },
       {
         "file": "lean/VE/Question/Run.lean",
-        "lines": 219,
-        "sha256": "431e6147b032834040c2b4d78e7ce5b335c9ea87d3475b6542b2e927c0e22f29",
+        "lines": 257,
+        "sha256": "0eb404095ecfc924d996e26421b6acb02b5f826315866177e7812efe27f7409b",
         "ranges": [
           [
             1,
-            219
+            257
           ]
         ],
         "declarations": [
@@ -365,7 +365,10 @@
           "lexicalFields",
           "outcomeFields",
           "oneFields",
-          "askedFields"
+          "askedFields",
+          "decodeCaller",
+          "modalFields",
+          "caseFields"
         ],
         "reason": "question answering Q1.2 (docs/spec/question-answering.md 4.1, 8): english.question decodes the case (E2's decodeCase for the environment, overlay and lexicon; the question, which must be the source, authoring mode at cap 2) and writes 4.1's fields of what `ask` shows (a moved-out reading refused; the A0 line gated) and the identities; the export case answers the question contract; the full file is pinned conservatively"
       },
@@ -1565,7 +1568,7 @@
       {
         "file": "lean/VE/Ask/Run.lean",
         "lines": 152,
-        "sha256": "fcc0c0d47f687e02d40501847815c56bc77cac9997bdafa2395d92b1383c1759",
+        "sha256": "2217292ac0c9d92e4899a6a8b1e3c6cfaae905beadf5dd6a2b1940037feb99d6",
         "ranges": [
           [
             1,
@@ -2067,7 +2070,8 @@
       "lean/VE/Service/ScopeExamples.lean": "fixtures only: SC-1b's #guard checks build small scope@0 part documents as request JSON and run the document mode (`checkDoc`) on them; no service mode reads this file",
       "lean/VE/Defaults/RouteExamples.lean": "fixtures only: #guard checks of the defaults-* kinds through the norm-defaults mode (docs/spec/defeasible.md 8.1) build request JSON; no runner path",
       "lean/ResponseShape/DefaultsExamples.lean": "fixtures only: #guard checks of the defaults-* rows of norm-defaults.json on the mode's answers and their variants build JSON; no runner path",
-      "lean/VE/Compose/Dispatch.lean": "the profile gate's table; JT-2's withoutDocumentLayers rewrites only an environment's profile list for the decoders (documentLayers), and decodes nothing"
+      "lean/VE/Compose/Dispatch.lean": "the profile gate's table; JT-2's withoutDocumentLayers rewrites only an environment's profile list for the decoders (documentLayers), and decodes nothing",
+      "lean/VE/Question/Examples.lean": "fixtures only: question answering Q1.4's #guard checks build request objects for `decodeCaller`'s accepting and refusing sides and compare `modalFields`' rows; no runner path"
     }
   },
   "plan_operations": {

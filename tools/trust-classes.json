@@ -5895,6 +5895,9 @@
       ]
     },
     "VE/Question/Basic.lean": {
+      "G[R]": [
+        "VE.Question.Shape.offset"
+      ],
       "G[V]": [
         "VE.Question.Candidate",
         "VE.Question.Form",
@@ -5922,10 +5925,8 @@
         "VE.Question.maxTokens",
         "VE.Question.questionMarks",
         "VE.Question.shape",
+        "VE.Question.speechAuxiliaries",
         "VE.Question.whWords"
-      ],
-      "G[R]": [
-        "VE.Question.Shape.offset"
       ]
     },
     "VE/Question/Examples.lean": {
@@ -6032,6 +6033,8 @@
     },
     "VE/Question/Run.lean": {
       "D[V]": [
+        "VE.Question.Run.caseFields",
+        "VE.Question.Run.decodeCaller",
         "VE.Question.Run.questionCase"
       ],
       "G[I]": [
@@ -6043,6 +6046,7 @@
         "VE.Question.Run.codeClasses",
         "VE.Question.Run.coded",
         "VE.Question.Run.lexicalFields",
+        "VE.Question.Run.modalFields",
         "VE.Question.Run.noneAdvice",
         "VE.Question.Run.noneFields",
         "VE.Question.Run.ofQuestion",
@@ -6054,11 +6058,14 @@
         "VE.Question.Run.whole"
       ],
       "G[V]": [
+        "VE.Question.Run.Caller",
+        "VE.Question.Run.Caller.auxs",
         "VE.Question.Run.askedFields",
         "VE.Question.Run.caseReported",
         "VE.Question.Run.formName",
         "VE.Question.Run.oneFields",
-        "VE.Question.Run.outcomeFields"
+        "VE.Question.Run.outcomeFields",
+        "VE.Question.Run.speechPrefixes"
       ]
     },
     "VE/Question/Spans.lean": {
@@ -6084,6 +6091,8 @@
         "VE.Question.illTypedQuestionText",
         "VE.Question.indefiniteText",
         "VE.Question.markerText",
+        "VE.Question.modalQuestionText",
+        "VE.Question.modalWords",
         "VE.Question.movedText",
         "VE.Question.newCodeClasses",
         "VE.Question.noDerivationText",
