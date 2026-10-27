@@ -52,7 +52,26 @@
           "properties": {
             "claim": {"type": "string", "x-equals": "/id"},
             "claim_id": {"$ref": "common.json#/$defs/hex64"},
-            "kind": {"const": "claim"},
+            "kind": {
+              "anyOf": [
+                {
+                  "const": "claim",
+                  "x-case": {
+                    "not": {
+                      "properties": {"claim": {"minItems": 1, "prefixItems": [{"const": "follows"}], "type": "array"}},
+                      "required": ["claim"]
+                    }
+                  }
+                },
+                {
+                  "const": "follows",
+                  "x-case": {
+                    "properties": {"claim": {"minItems": 1, "prefixItems": [{"const": "follows"}], "type": "array"}},
+                    "required": ["claim"]
+                  }
+                }
+              ]
+            },
             "outcome": {"enum": ["holds", "fails", "undefined"]},
             "reason": {"type": "null"},
             "reproduction": {"type": "null"},
@@ -66,7 +85,26 @@
           "properties": {
             "claim": {"type": "string", "x-equals": "/id"},
             "claim_id": {"$ref": "common.json#/$defs/hex64"},
-            "kind": {"const": "claim"},
+            "kind": {
+              "anyOf": [
+                {
+                  "const": "claim",
+                  "x-case": {
+                    "not": {
+                      "properties": {"claim": {"minItems": 1, "prefixItems": [{"const": "follows"}], "type": "array"}},
+                      "required": ["claim"]
+                    }
+                  }
+                },
+                {
+                  "const": "follows",
+                  "x-case": {
+                    "properties": {"claim": {"minItems": 1, "prefixItems": [{"const": "follows"}], "type": "array"}},
+                    "required": ["claim"]
+                  }
+                }
+              ]
+            },
             "outcome": {"const": "unknown"},
             "reason": {
               "enum": [
@@ -98,7 +136,26 @@
           "properties": {
             "claim": {"type": "string", "x-equals": "/id"},
             "claim_id": {"$ref": "common.json#/$defs/hex64"},
-            "kind": {"const": "claim"},
+            "kind": {
+              "anyOf": [
+                {
+                  "const": "claim",
+                  "x-case": {
+                    "not": {
+                      "properties": {"claim": {"minItems": 1, "prefixItems": [{"const": "follows"}], "type": "array"}},
+                      "required": ["claim"]
+                    }
+                  }
+                },
+                {
+                  "const": "follows",
+                  "x-case": {
+                    "properties": {"claim": {"minItems": 1, "prefixItems": [{"const": "follows"}], "type": "array"}},
+                    "required": ["claim"]
+                  }
+                }
+              ]
+            },
             "outcome": {"enum": ["holds", "fails", "undefined"]},
             "reason": {"type": "null"},
             "reproduction": {"const": "unknown"},
@@ -112,7 +169,26 @@
           "properties": {
             "claim": {"type": "string", "x-equals": "/id"},
             "claim_id": {"$ref": "common.json#/$defs/hex64"},
-            "kind": {"const": "claim"},
+            "kind": {
+              "anyOf": [
+                {
+                  "const": "claim",
+                  "x-case": {
+                    "not": {
+                      "properties": {"claim": {"minItems": 1, "prefixItems": [{"const": "follows"}], "type": "array"}},
+                      "required": ["claim"]
+                    }
+                  }
+                },
+                {
+                  "const": "follows",
+                  "x-case": {
+                    "properties": {"claim": {"minItems": 1, "prefixItems": [{"const": "follows"}], "type": "array"}},
+                    "required": ["claim"]
+                  }
+                }
+              ]
+            },
             "outcome": {"const": "unknown"},
             "reason": {
               "enum": [

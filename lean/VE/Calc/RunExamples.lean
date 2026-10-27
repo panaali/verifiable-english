@@ -710,6 +710,14 @@ def nonlinear (path : String) : List String := [s!"NonlinearPremise: {path} (dec
        "4. The velocity ratio is at least 0. From these, it follows that the velocity ratio is less than 1 divided by 4.")
   | _ => false
 
+-- A chain of definitions lowers to one coefficient per unknown (`QLin.norm` in `Expr.linear`), so the search and the
+-- replay never meet a form as long as the chain: x + x + … + x (60 terms), then 2 (x + y) − y.
+#guard let ds : List Decl := ⟨"x", .free⟩ :: ⟨"y", .free⟩ :: ⟨"v0", .defined (.val "x")⟩ :: (List.range 59).map fun i =>
+    ⟨s!"v{i + 1}", .defined (.add (.val s!"v{i}") (.val "x"))⟩
+  (Claim.compare ⟨.le, false⟩ (.val "v59") (.lit 1)).facts ds == some [⟨⟨1, [("x", -60)]⟩, false⟩] &&
+  (Claim.compare ⟨.lt, false⟩ (.sub (.mul (.lit 2) (.add (.val "x") (.val "y"))) (.val "y")) (.lit 0)).facts ds ==
+    some [⟨⟨0, [("x", -2), ("y", -1)]⟩, true⟩]
+
 -- A derivation reading a value that has none is undefined, and one reading an exhausted counted value is unknown at
 -- the budget (2.7), the first fault in the conclusion and then the premises deciding. Counted values reach the wire
 -- with ME-4, so these are checked on declarations.
