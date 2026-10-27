@@ -1,0 +1,38 @@
+{
+ "item": "eff-20261027-1",
+ "what": "cold statement dump (tools/lean_statements.py dump_all, VE_RUN_CACHE=off): one serial Statements run against the prototype split into 8 parallel parts",
+ "machine": "VM, 32 cores, 125 GB; shared, load average recorded before and after each run",
+ "probe": "docs/infra/eff-20261027-1/probe.py (each `lake env lean` under /usr/bin/time -f '%e %M': wall seconds, peak RSS in KB)",
+ "trees": {
+  "main": {"commit": "ab010c3f02bca97c3d17775ba85382bf85e208eb", "note": "main at the start of the item"},
+  "ap3b": {"commit": "a557ff887aa6b513fdaa540c479ae304023a24a4", "note": "Merge feature/ap-3b, a recent Lean feature merge on main"},
+  "parent": {"commit": "a274d948899386de3fb36ab56b7584ab07b707b7", "note": "first parent of a557ff88 (Merge feature/df-2)"}
+ },
+ "committed_sha256": {
+  "main": ["32f848504084a6b1cfaf6af3f6730b0c71a6de36c00c265b8c83ef79c049e349", "5f1f971083f2cf7fdfc46d46f61dad68bd458c1a172157f258415825169e4e07", "129d94374535fd4d7a90d4c0576c5949834c75ec854c5b61ecbb628bc9f434b2"],
+  "ap3b": ["32f848504084a6b1cfaf6af3f6730b0c71a6de36c00c265b8c83ef79c049e349", "5f1f971083f2cf7fdfc46d46f61dad68bd458c1a172157f258415825169e4e07", "4afd0a7d9d1e41d311ac8a0550f1b8e49832b74a4fa36d0ae143f2d803e45ed6"],
+  "parent": ["fe3a50ba1a2b887424616d244c37a1d5f8872ddace9930638e67ce410bac85de", "7b999c8742f82ab88bbec0ab79bb9370036e5fd9f3cd53c8fdcaad5d90057c06", "dee6f8052d98ec654278f83671037dcb4ae2ba8ae14809f552a3fc6687faff13"]
+ },
+ "output_sha256": {
+  "_files": ["lean/statements.txt", "lean/predicates.txt", "lean/declarations.txt"],
+  "main-serial-1": ["32f848504084a6b1cfaf6af3f6730b0c71a6de36c00c265b8c83ef79c049e349", "5f1f971083f2cf7fdfc46d46f61dad68bd458c1a172157f258415825169e4e07", "129d94374535fd4d7a90d4c0576c5949834c75ec854c5b61ecbb628bc9f434b2"],
+  "main-split8-1": ["32f848504084a6b1cfaf6af3f6730b0c71a6de36c00c265b8c83ef79c049e349", "5f1f971083f2cf7fdfc46d46f61dad68bd458c1a172157f258415825169e4e07", "129d94374535fd4d7a90d4c0576c5949834c75ec854c5b61ecbb628bc9f434b2"],
+  "parent-serial": ["fe3a50ba1a2b887424616d244c37a1d5f8872ddace9930638e67ce410bac85de", "7b999c8742f82ab88bbec0ab79bb9370036e5fd9f3cd53c8fdcaad5d90057c06", "dee6f8052d98ec654278f83671037dcb4ae2ba8ae14809f552a3fc6687faff13"],
+  "parent-split8": ["fe3a50ba1a2b887424616d244c37a1d5f8872ddace9930638e67ce410bac85de", "7b999c8742f82ab88bbec0ab79bb9370036e5fd9f3cd53c8fdcaad5d90057c06", "dee6f8052d98ec654278f83671037dcb4ae2ba8ae14809f552a3fc6687faff13"],
+  "ap3b-serial": ["32f848504084a6b1cfaf6af3f6730b0c71a6de36c00c265b8c83ef79c049e349", "5f1f971083f2cf7fdfc46d46f61dad68bd458c1a172157f258415825169e4e07", "4afd0a7d9d1e41d311ac8a0550f1b8e49832b74a4fa36d0ae143f2d803e45ed6"],
+  "ap3b-split8": ["32f848504084a6b1cfaf6af3f6730b0c71a6de36c00c265b8c83ef79c049e349", "5f1f971083f2cf7fdfc46d46f61dad68bd458c1a172157f258415825169e4e07", "4afd0a7d9d1e41d311ac8a0550f1b8e49832b74a4fa36d0ae143f2d803e45ed6"]
+ },
+ "cold_dump_budget": 12,
+ "rows": [
+  {"id": "M1", "what": "baseline: 3 cold serial dumps on main", "runs": ["main-serial-1", "main-serial-2", "main-serial-3"], "median_total_seconds": 348.1, "median_statements_seconds": 244.08, "statements_peak_rss_kb_max": 1680744, "status": "pass"},
+  {"id": "M2", "what": "lean/audit.py --check (no cache) on main: its parts' peak RSS, all parts at once", "runs": ["main-audit"], "parts": 19, "parts_peak_rss_kb_sum": 24561444, "status": "pass"},
+  {"id": "M3", "what": "prototype: 3 cold dumps on main with the Statements run in 8 parallel parts", "runs": ["main-split8-1", "main-split8-2", "main-split8-3"], "median_total_seconds": 89.0, "median_statements_seconds": 16.0, "statements_peak_rss_kb_sum_max": 13113356, "status": "pass"},
+  {"id": "E1", "what": "equality on main: every dump's three texts equal the committed ones; serial and split hashes equal", "runs": ["main-serial-1", "main-serial-2", "main-serial-3", "main-split8-1", "main-split8-2", "main-split8-3"], "hashes": ["main-serial-1", "main-split8-1"], "tree": "main", "status": "pass"},
+  {"id": "E2", "what": "equality on a557ff88 (ap-3b merge)", "runs": ["ap3b-serial", "ap3b-split8"], "hashes": ["ap3b-serial", "ap3b-split8"], "tree": "ap3b", "status": "pass"},
+  {"id": "E3", "what": "equality on a274d948 (first parent of a557ff88)", "runs": ["parent-serial", "parent-split8"], "hashes": ["parent-serial", "parent-split8"], "tree": "parent", "status": "pass"},
+  {"id": "S1", "what": "stop rule (time): the median cold dump falls by at least 60 s at comparable load", "saved_seconds": 259.1, "threshold_seconds": 60, "status": "pass"},
+  {"id": "S2", "what": "stop rule (memory): the parts' peak RSS together within lean/audit.py's parallel parts", "split_kb": 13113356, "audit_kb": 24561444, "status": "pass"},
+  {"id": "S3", "what": "stop rule (equality): no output differs on any of the three trees", "status": "pass"},
+  {"id": "S4", "what": "load: at most 12 cold dumps for the measurement", "cold_dumps": 10, "status": "pass"}
+ ]
+}
