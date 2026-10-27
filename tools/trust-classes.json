@@ -14920,6 +14920,20 @@
         "VE.Scope.statusOf"
       ]
     },
+    "VE/Acts/Linearize.lean": {
+      "S": [
+        "VE.Acts.Atom.normal",
+        "VE.Acts.Atom.text",
+        "VE.Acts.Atom.withTo",
+        "VE.Acts.Filler.toks",
+        "VE.Acts.Part.toks",
+        "VE.Acts.joinWord",
+        "VE.Acts.listToks",
+        "VE.Acts.partAct",
+        "VE.Acts.tokStr",
+        "VE.Acts.tokText"
+      ]
+    },
     "VE/Acts/Table.lean": {
       "S": [
         "VE.Acts.Op",
@@ -14927,6 +14941,19 @@
         "VE.Acts.freeTable",
         "VE.Acts.opOf",
         "VE.Acts.table"
+      ],
+      "G[R]": [
+        "VE.Acts.Act.text",
+        "VE.Acts.Op.inf",
+        "VE.Acts.Simple.text",
+        "VE.Acts.distinctTexts",
+        "VE.Acts.firstEqualPair",
+        "VE.Acts.listText",
+        "VE.Acts.modalText",
+        "VE.Acts.numbered",
+        "VE.Acts.paraphrase",
+        "VE.Acts.paraphrases",
+        "VE.Acts.sentence"
       ]
     },
     "VE/Acts/TableExamples.lean": {
@@ -14938,8 +14965,12 @@
         "VE.Acts.TableExamples.denied",
         "VE.Acts.TableExamples.deprived",
         "VE.Acts.TableExamples.directly",
+        "VE.Acts.TableExamples.errOf",
         "VE.Acts.TableExamples.fillerParts",
         "VE.Acts.TableExamples.form",
+        "VE.Acts.TableExamples.fx11",
+        "VE.Acts.TableExamples.fx6",
+        "VE.Acts.TableExamples.fx7",
         "VE.Acts.TableExamples.g10",
         "VE.Acts.TableExamples.g11",
         "VE.Acts.TableExamples.g12",
@@ -14951,7 +14982,6 @@
         "VE.Acts.TableExamples.heldBy",
         "VE.Acts.TableExamples.join",
         "VE.Acts.TableExamples.joinByName",
-        "VE.Acts.TableExamples.joinWord",
         "VE.Acts.TableExamples.modifierWord",
         "VE.Acts.TableExamples.opWords",
         "VE.Acts.TableExamples.partIndex",
