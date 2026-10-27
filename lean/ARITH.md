@@ -3,8 +3,9 @@
 Specification: [docs/spec/math-evidence.md](../docs/spec/math-evidence.md) §§12.1–12.3 and the ME-12 row of
 [docs/spec/math-evidence-PLAN.md](../docs/spec/math-evidence-PLAN.md). `arith@0` states facts about whole numbers
 and integers: "for every whole number n from 1 through 161, there is a prime p with n < p and p at most twice n".
-ME-12 is split by the size rule: me-12a (this core) is the statement and its meaning; me-12aa adds the budgeted
-evaluator; me-12b the wire, the runner, the rows and the mode (spec 12.5). Nothing public reads the core yet.
+ME-12 is split by the size rule: me-12a is the statement and its meaning; me-12aa adds the budgeted evaluator
+(spec 12.2); me-12ab its monotonicity and completeness and 12.5's deciding value; me-12b the wire, the runner, the
+rows and the mode (spec 12.5). Nothing public reads the core yet.
 `lean/audit.py` audits every theorem: no `sorry`, only `propext`, `Classical.choice` and `Quot.sound`.
 
 ## Files
@@ -14,6 +15,8 @@ evaluator; me-12b the wire, the runner, the rows and the mode (spec 12.5). Nothi
 | `Syntax.lean` | `Term` (numerals, variables, sum, difference, product, calls, counts "the number of p from lo through hi such that …") and `Formula` (equals, less than, at most, divides, calls, not, and, or, if, quantifiers over all whole numbers or integers, and from lo through hi); `Def`, `Defs` (the definitions, in order) |
 | `Holds.lean` | the meaning: `Term.value`, `Holds`, `Defs.env`, `Defs.Means` |
 | `Defs.lean` | boundedness (`Formula.Bounded`); admission (`Defs.WellFormed`, `Formula.Scoped`) and the refusals the core decides, in the decoder's order (`caseRefusal`) |
+| `Bounded.lean` | the budgeted evaluator: `Formula.evalB` (one unit per formula-node visit), `maxSteps`, `decideBounded` and a statement's row `arithOutcome` |
+| `BoundedExamples.lean` | the evaluation fixtures M-1, M-1b, M-2, M-3, M-4, M-4b, M-4x and M-5 at each budget boundary, and one fixture per clause of the evaluator |
 | `Examples.lean` | the prime vocabulary, Bertrand's postulate (`bertrand`, `IsPrime`, `bertrand_means_iff`), one example per clause of the meaning in both directions, the fixture statements M-1 to M-5 and the admission guards |
 
 ## The meaning, in plain words
@@ -30,8 +33,18 @@ and a comparison of a term without a value does not hold. `Defs.Means D φ` is "
 ## Boundedness and admission
 
 A statement is bounded when it has no "for every whole number", "there is a whole number", "for every integer" or
-"there is an integer" without a range, here or in any definition it calls. A bounded statement can be decided by trying each value of each range (me-12aa); an
+"there is an integer" without a range, here or in any definition it calls. A bounded statement can be decided by trying each value of each range; an
 unbounded one is stated, not decided, and is proved only by an import (ME-13).
+
+## The budget
+
+`decideBounded D limit φ` evaluates φ and returns its value and the units spent, or none (UNKNOWN). One unit is
+charged per formula-node visit; terms are free, a count is charged through its condition once per value of its
+range, and a predicate call is one visit plus its body's. Connectives stop as soon as their left side decides, a
+bounded quantifier stops at its first decisive value, and a visit is refused once the units spent reach the limit. The
+budget is `maxSteps` = 1,000,000 by default and at most (W6's `VE.Time.maxEvaluations`). `arithOutcome` gives a
+statement's row: holds or fails when the evaluator completes, "stated, not decided" for an unbounded statement before
+any evaluation, and unknown (`limit .evaluations`) when the budget runs out. Budget 0 is always unknown.
 
 The decoder (me-12b) admits a case only when its definitions are well formed and every statement is scoped; it
 refuses the first problem in this order: a name defined twice (`DuplicateName`), a variable no quantifier or parameter
