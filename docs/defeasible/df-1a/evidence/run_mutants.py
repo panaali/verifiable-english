@@ -52,7 +52,7 @@ def run(premises: str, examples: str, keep: bool = False, used: tuple[str, ...] 
         done = subprocess.run(["lake", "env", "lean", str(path)], cwd=LEAN, capture_output=True, text=True)
     lines = text.splitlines()
     failed = []
-    for m in re.finditer(r"Mutant\.lean:(\d+):\d+: error: (.*)", done.stdout + done.stderr):
+    for m in re.finditer(r"Mutant\.lean:(\d+):\d+: error(?:\([^)]*\))?: (.*)", done.stdout + done.stderr):
         n = int(m.group(1)) - 1
         src = lines[n]
         owner = next((l for l in reversed(lines[: n + 1]) if l[:1].isalpha() or l.startswith("#")), "")

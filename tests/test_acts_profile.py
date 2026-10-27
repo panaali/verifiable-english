@@ -417,8 +417,11 @@ def test_wordings_not_bound_to_the_request_are_unavailable(monkeypatch, mutant):
         document._lean_regenerated()
 
 
-@pytest.mark.parametrize("value", [None, True, 7, 7.5, "7", [], [A1_WORDING], {"heard": 7}, {"heard": None},
-                                   {"heard": [A1_WORDING]}, {"heard": {}}, {"heard": "\ud800"}, "deep", "deleted"])
+RETYPED = [None, True, 7, 7.5, "7", [], [A1_WORDING], {"heard": 7}, {"heard": None}, {"heard": [A1_WORDING]},
+           {"heard": {}}, {"heard": "\ud800"}, "deep", "deleted"]
+
+
+@pytest.mark.parametrize("value", RETYPED)
 def test_a_retyped_wordings_field_fails_the_schema(value):
     """The `wordings` member is typed by the generated schema (`common.json` `string_map`): the genuine exchange
     passes, and every retype of the map or of one wording, sent as bytes through the service's decoder, is
@@ -446,27 +449,106 @@ def test_a_retyped_wordings_field_fails_the_schema(value):
         check_response("norms", _decode_json(line), request)
 
 
-def test_norm_defaults_keeps_todays_display_without_asking(monkeypatch):
-    """The norms route does not read `norm-defaults@0`; such an environment asks for no wording (next item)."""
+# ap-1be (1): a `norm-defaults@0` environment, which the norms route does not read, gets the same wordings from the
+# norm-defaults route's `norm-defaults-elaborate` row (`Norms.Wire.plainWordings` of the decoded source), typed by its
+# schema and bound by `_bind_wordings` on both of its readers.
+
+ND_PROFILES = ["acts@0", "norm-defaults@0", "norms@0", "relational-fol@0"]
+
+
+def _nd_case(env):
+    return {"id": "norm-defaults-elaborate", "kind": "norm-defaults-elaborate", "environment": env.to_dict(),
+            "norms": []}
+
+
+def test_a_norm_defaults_environment_reads_with_the_wording_lean_selected(monkeypatch):
+    """R3: under `norm-defaults@0` the display asks the norm-defaults route only, and shows its row's `wordings`,
+    Lean's text: the norms route's for the same acts (A1 109 B, A2); a permission keeps its modal form. The base
+    showed Python's fallback display."""
     from ve.backends import relay
+    from ve.english import EnglishVocabulary
     from ve.norms import plain_wordings
-    env = Environment(environment(["acts@0", "norm-defaults@0", "norms@0", "relational-fol@0"]))
-    monkeypatch.setattr(relay, "decide_once", lambda mode, case: pytest.fail("asked"))
-    assert plain_wordings(env) == {}
+    env = Environment(environment(ND_PROFILES))
+    row = relay.decide("norm-defaults", [_nd_case(env)])[0]
+    assert row["wordings"] == _genuine_row(Environment(environment()))["wordings"] == {
+        "heard": A1_WORDING, "paid": A2_WORDING}
+    asked = []
+    monkeypatch.setattr(relay, "decide_once", lambda mode, case: asked.append((mode, case)) or row)
+    assert plain_wordings(env) == {"heard": A1_WORDING, "paid": A2_WORDING}
+    words = EnglishVocabulary(env)
+    assert (words.predicates["heard"], words.predicates["paid"]) == (A1_WORDING, A2_WORDING)
+    assert words.predicates["protected"] == A3.replace("{0} ", "{0} may ", 1)
+    assert {(mode, json.dumps(case, sort_keys=True)) for mode, case in asked} == {
+        ("norm-defaults", json.dumps(_nd_case(env), sort_keys=True))}
+
+
+@pytest.mark.parametrize("mutant", REBOUND + ["field-dropped"])
+def test_norm_defaults_wordings_not_bound_to_the_request_are_unavailable(monkeypatch, mutant):
+    """R8 on the norm-defaults row, on both readers (the display's `plain_wordings` and the document's own row,
+    `UnspecifiedDocument`): the genuine row is accepted by each, and each binding mutant of `_rebound` is refused."""
+    from ve import norm_defaults_route
+    from ve.backends import relay
+    from ve.errors import CheckerUnavailable
+    from ve.norm_defaults import UnspecifiedDocument
+    from ve.norms import plain_wordings
+    env = Environment(environment(ND_PROFILES))
+    row = relay.decide("norm-defaults", [_nd_case(env)])[0]
+    monkeypatch.setattr(relay, "decide_once", lambda mode, case: row)
+    monkeypatch.setattr(norm_defaults_route, "run_case", lambda case: row)
+    assert plain_wordings(env) == {"heard": A1_WORDING, "paid": A2_WORDING}
+    assert UnspecifiedDocument(env, []).elaboration is row
+    row = copy.deepcopy(row)
+    if mutant == "field-dropped":
+        del row["wordings"]
+    else:
+        row["wordings"] = dict(_rebound(row["wordings"]))[mutant]
+    with pytest.raises(CheckerUnavailable, match="norm-defaults-elaborate wordings are not bound"):
+        plain_wordings(env)
+    with pytest.raises(CheckerUnavailable, match="norm-defaults-elaborate wordings are not bound"):
+        UnspecifiedDocument(env, [])
+
+
+def test_a_retyped_norm_defaults_wordings_field_fails_the_schema():
+    """`norm-defaults-elaborate`'s `wordings` is typed by the generated schema (`string_map`): the genuine exchange
+    passes, and each retype of `RETYPED`, sent as bytes through the service's decoder, is refused."""
+    from tests.lean_build import lean_build
+    from tests.subprocesses import HANG_TIMEOUT
+    from ve.backends.lean_service import LeanService, _decode_json, case_digest, case_texts
+    from ve.backends.service_schema import Invalid, check_response
+    cases = [_nd_case(Environment(environment(ND_PROFILES)))]
+    text = json.dumps(cases, ensure_ascii=False, separators=(",", ":"))
+    with LeanService(lean_build("ve_service") / "ve_service", timeout=HANG_TIMEOUT) as service:
+        _, response = service.exchange("norm-defaults", text, 1, timeout=HANG_TIMEOUT)
+    request = {"id": response["id"], "mode": "norm-defaults", "cases": cases,
+               "digests": [case_digest(t) for t in case_texts(text)], "bytes": len(text.encode())}
+    check_response("norm-defaults", _decode_json(json.dumps(response).encode()), request)
+    assert response["results"][0]["result"]["wordings"] == {"heard": A1_WORDING, "paid": A2_WORDING}
+    for value in RETYPED:
+        mutant = copy.deepcopy(response)
+        if value == "deleted":
+            del mutant["results"][0]["result"]["wordings"]
+        else:
+            mutant["results"][0]["result"]["wordings"] = "DEEP" if value == "deep" else value
+        line = json.dumps(mutant).replace('"DEEP"', "[" * 10_000 + "]" * 10_000).encode()
+        with pytest.raises((Invalid, ValueError)):
+            check_response("norm-defaults", _decode_json(line), request)
 
 
 def test_an_environment_without_a_plain_act_asks_lean_nothing_to_display(monkeypatch):
     """The display's cost is unchanged where no plain act is declared (every environment before `acts@0`): no
-    call to the norms route, so the UDHR and constitution pilots' displays make none."""
+    call to the norms route, nor (ap-1be) to the norm-defaults route under `norm-defaults@0`, so the UDHR and
+    constitution pilots' displays make none."""
     from ve.backends import relay
     from ve.english import EnglishVocabulary
-    data = environment()
-    for name in ("heard", "paid"):
-        del data["vocabulary"]["predicates"][name]
-    env = Environment(data)
-    monkeypatch.setattr(relay, "decide_once", lambda mode, case: pytest.fail("asked"))
-    monkeypatch.setattr(relay, "decide", lambda mode, cases, **kw: pytest.fail("asked"))
-    assert EnglishVocabulary(env).predicates["protected"] == A3.replace("{0} ", "{0} may ", 1)
+    for profiles in (None, ND_PROFILES):
+        data = environment(profiles)
+        for name in ("heard", "paid"):
+            del data["vocabulary"]["predicates"][name]
+        env = Environment(data)
+        monkeypatch.setattr(relay, "decide_once", lambda mode, case: pytest.fail("asked"))
+        monkeypatch.setattr(relay, "decide", lambda mode, cases, **kw: pytest.fail("asked"))
+        assert EnglishVocabulary(env).predicates["protected"] == A3.replace("{0} ", "{0} may ", 1)
+        monkeypatch.undo()
 
 
 @pytest.mark.parametrize("template, arity, bound", [

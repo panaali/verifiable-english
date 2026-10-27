@@ -4,12 +4,28 @@ growth only when "every new trusted definition is exercised by a test that can f
 
     uv run python tools/trust_mutants.py [--base REV] [--jobs N] [--max-mutants N] [--test FILE ...] [--deep]
                                          [--allow FILE] [--json OUT] [--root DIR] [--rescore PREV.json]
+                                         [--classes LIST]
 
 Selected: each declaration tools/trust_map.py counts as trusted (not a theorem or check) whose lines hold a line
-the tree adds or changes over REV (default: the merge base of HEAD and main). The `OPERATORS` mutate it inside its
-compiled range (lean/declarations.txt), comments and strings excluded, on its changed lines only (all of a new one).
-Every edit keeps each line after the declaration where it was (`relined`), so the cuts and the roles, which read
-the checkout's line numbers, read the mutated text right (review F9).
+the tree adds or changes over REV (default: the merge base of HEAD and main).
+
+--classes LIST widens the selection (`chosen`), as builder and reviewer evidence only. LIST is comma-separated:
+`trusted` (the default: the selection above, exactly), trust_map's own class names (`SELECTABLE`: trust_map's
+CLASSES but those its KIND_CLASSES give theorems and checks; each name picks its class, tied or not), or `all`
+(every class but those two, and every trusted declaration). Theorems, proof helpers (P) and checks (T) are never
+selected, whatever LIST says; an unknown name stops the run. Why: the declarations trust_map does not count as
+trusted (`trust_map.is_trusted`: reject-only and identity decoders, admission checks and limits, checked code, tied
+ones) are where reviewers plant mutants by hand. Under `all`, 17 of the 46 mutants reviewers planted in 7 items were
+SURVIVOR at the reviewed tree on that very line, in declarations the default does not select (eff-20261026-1). A
+survivor of a trusted declaration is R16's question; one of any other class is review risk. Each mutant records
+its declaration's class (`trust_class`, " tied" added) and `trusted`, the SURVIVOR, UNKNOWN and NOT RUN lines name
+it, and the summary counts the verdicts by class (`class_counts`). LIST is one of `inputs`' options, so --rescore
+never reuses or carries a verdict across another selection.
+
+The `OPERATORS` mutate each selected declaration inside its compiled range (lean/declarations.txt), comments and
+strings excluded, on its changed lines only (all of a new one). Every edit keeps each line after the declaration
+where it was (`relined`), so the cuts and the roles, which read the checkout's line numbers, read the mutated text
+right (review F9).
 
 Each mutant is built in a private scratch copy of lean/ (its build restored from tools/lean_share.py's checked build
 of this tree, else copied from lean/.lake; the checkout is only read): the mutated module, then each module that imports it and holds checks for it: a check whose compiled
@@ -43,10 +59,11 @@ every other case is UNKNOWN (review F11/F12, the DRI's note 2026-10-19c). The mu
   and a mutant that moves a line after its declaration (a longer replacement no blank line there can take: F9);
 - NOT RUN past --max-mutants (every definition and operator gets its k-th mutant before any gets its k+1-th).
 
-SURVIVOR and UNKNOWN print as `<STATUS> <file>:<line> <definition> <operator>: <before> -> <after>` unless --allow
-FILE lists the definition and operator with a reason ({"allow": [{"definition": "VE.X.f", "operator": "lt-le",
-"reason": "one line"}]}). Exit 0: all ran, none left; 1: a survivor or UNKNOWN left; 3: none left but some NOT RUN;
-2: cannot run. Builder and reviewer evidence only: no gate, merge train or nightly reads it.
+SURVIVOR and UNKNOWN print as `<STATUS> <file>:<line> <definition> (<class>) <operator>: <before> -> <after>`
+(`kind`: the class, ", trusted" added when R16 counts it), unless --allow FILE lists the definition and operator
+with a reason ({"allow": [{"definition": "VE.X.f", "operator": "lt-le", "reason": "one line"}]}). Exit 0: all ran,
+none left; 1: a survivor or UNKNOWN left; 3: none left but some NOT RUN; 2: cannot run. Builder and reviewer
+evidence only: no gate, merge train or nightly reads it.
 
 --rescore PREV.json (speed-tmrescore): every --json records `inputs`, digests of the bytes every verdict is computed
 from (`inputs`, with each file's own in `files`), each mutant's status before --allow (`raw_status`), and for each
@@ -54,11 +71,12 @@ KILLED and INVALID one what it reads (`reads`, `killed_at`: `Reads`). When PREV'
 - its `inputs` are this run's (mode "identical"): its KILLED, INVALID and SURVIVOR verdicts are the same by
   construction and are reused (`reused_from: <PREV head>`); only its UNKNOWN mutants (a build past its time limit
   among them) and the NOT RUN that now fit --max-mutants run;
-- or only checks changed (mode "checks", speed-tmchecks): the tool, base and options are the same, and every file
-  that changed is a module of lean/ outside every selected declaration's file and import closure, an outside --test
-  file or a generated inventory (`check_only`). Then a KILLED or INVALID verdict (before --allow) whose reads read
-  the same (`Reads.carry`) is carried (`reused_from`, `carried: "checks"`); every other mutant runs (a SURVIVOR,
-  UNKNOWN or ALLOWED one: a new check may kill it, and a KILLED one whose killing check, or what it reads, changed).
+- or only checks changed (mode "checks", speed-tmchecks): the tool, base and options (--deep, --test, --classes)
+  are the same, and every file that changed is a module of lean/ outside every selected declaration's file and
+  import closure, an outside --test file or a generated inventory (`check_only`). Then a KILLED or INVALID verdict
+  (before --allow) whose reads read the same (`Reads.carry`) is carried (`reused_from`, `carried: "checks"`); every
+  other mutant runs (a SURVIVOR, UNKNOWN or ALLOWED one: a new check may kill it, and a KILLED one whose killing
+  check, or what it reads, changed).
   A carried KILLED stands on its unchanged check's refutation: a new check that the mutant would make fail some
   other way (no refutation: UNKNOWN in a full run) is not looked for. That is why reviewers run without --rescore.
 The current --allow applies to all. With no mutant to run there is no build. Else (no `inputs`, no per-file digests
@@ -173,6 +191,8 @@ class Mutant:
     carried: str = ""  # "checks" when --rescore carried it across a check-only change (`Reads.carry`)
     reads: str = ""  # a KILLED or INVALID verdict's digest of what it reads (`Reads.verdict`)
     killed_at: tuple[int, int] | None = None  # a KILLED verdict's killing check (first, last line)
+    trust_class: str = ""  # its declaration's trust_map class, " tied" added for a tied one (`chosen`)
+    trusted: bool = True  # whether trust_map counts that declaration as trusted (R16's)
 
 
 def group(t: str, i: int, step: int = 1) -> int:
@@ -573,8 +593,31 @@ class Tree:
     imported: set[str] = field(default_factory=set)
 
 
-def plan(root: Path, base: str) -> tuple[list[Mutant], Tree, list[str]]:
-    """The mutants in run order, the tree's checks and imports, and the problems that stop the run."""
+# --classes (the docstring's "--classes LIST"): trust_map's class names but those its declarations' kinds fix (P, T:
+# theorems, proofs and checks), read from trust_map, and the two words.
+SELECTABLE = tuple(c for c in trust_map.CLASSES if c not in trust_map.KIND_CLASSES.values())
+TRUSTED = ("trusted",)  # the default: R16's selection
+
+
+def classes_of(text: str) -> tuple[str, ...] | None:
+    """--classes LIST as its sorted names (`all` alone when it is one: it picks every other), None when one is not
+    `trusted`, `all` or a `SELECTABLE` class."""
+    names = tuple(sorted({x.strip() for x in text.split(",")}))
+    if not names or not all(x in ("trusted", "all", *SELECTABLE) for x in names):
+        return None
+    return ("all",) if "all" in names else names
+
+
+def chosen(c: trust_map.Classified, classes: tuple[str, ...]) -> bool:
+    """Whether --classes picks the declaration: every one trust_map counts as trusted under `trusted` and `all`, and
+    one of a `SELECTABLE` class under `all` or its class's name."""
+    return c.trusted and ("trusted" in classes or "all" in classes) or c.cls in SELECTABLE and (
+        "all" in classes or c.cls in classes)
+
+
+def plan(root: Path, base: str, classes: tuple[str, ...] = TRUSTED) -> tuple[list[Mutant], Tree, list[str]]:
+    """The mutants in run order of the declarations --classes picks (`chosen`), the tree's checks and imports, and the
+    problems that stop the run."""
     classified, _, problems = trust_map.walk(root, root / "tools/trust-classes.json", root / "lean/statements.txt")
     declared, hashes = declaration_list(root / "lean/declarations.txt")
     changed = changed_lines(root, base)
@@ -590,7 +633,7 @@ def plan(root: Path, base: str) -> tuple[list[Mutant], Tree, list[str]]:
         span = "\n".join(masked[c.module][d.start - 1:d.end])
         roles.setdefault(c.module, []).append((d.start, d.end, classify(d.kind, span), d.name))
         lines = changed.get(c.module, set())
-        if not (c.trusted and d.name and d.kind not in ("theorem", "command", "unrecorded")
+        if not (chosen(c, classes) and d.name and d.kind not in ("theorem", "command", "unrecorded")
                 and lines & set(range(d.start, d.end + 1))):
             continue
         ranged = [x for x in declared.get(module_name(c.module), []) if x.name == d.name and x.start]
@@ -605,7 +648,8 @@ def plan(root: Path, base: str) -> tuple[list[Mutant], Tree, list[str]]:
             first, edit = text.count("\n", 0, s) + 1, relined(text, s, e, new, hi)
             if lines & set(range(first, first + text.count("\n", s, e) + 1)):  # its lines run over the blanks it takes
                 found.append(Mutant("", c.module, first, d.name, op, s, e, (r.start[0], max(
-                    r.end[0], text.count("\n", 0, edit[0]))), text[s:e], new, edit=edit))
+                    r.end[0], text.count("\n", 0, edit[0]))), text[s:e], new, edit=edit,
+                    trust_class=c.cls + (" tied" if c.tied else ""), trusted=c.trusted))
     seen: Counter = Counter()  # each tier in turn; in it, the k-th of every (definition, operator) first
     keys = []
     for i, m in enumerate(found):
@@ -1182,14 +1226,15 @@ class Reads:
         return None
 
 
-def inputs(root: Path, base: str, tests: list[str], outside: list[Path], deep: bool) -> dict:
+def inputs(root: Path, base: str, tests: list[str], outside: list[Path], deep: bool, classes: tuple[str, ...]) -> dict:
     """What every verdict is computed from, as sha256 digests of bytes, which --rescore compares: the tool's own
     source (with the modules of this repository it imports); every file of lean/ that `Scratch` copies (the sources,
     lakefile, toolchain, manifest and the compiled lists `plan` reads; no `__pycache__`, which Lean never reads and
     differs between machines: speed-tmrescore review F1), with trust_map's table and .gitignore; the outside --test
-    files; the base commit; and the options --deep and --test. --max-mutants is not one: it picks which mutants
-    run, never a verdict, so a larger one runs only the mutants that now fit. `files` holds each file's digest (the
-    lean/ ones, the table, .gitignore and the outside --test files), so a later run can tell which files changed."""
+    files; the base commit; and the options --deep, --test and --classes (a verdict never carries across another
+    selection). --max-mutants is not one: it picks which mutants run, never a verdict, so a larger one runs only the
+    mutants that now fit. `files` holds each file's digest (the lean/ ones, the table, .gitignore and the outside
+    --test files), so a later run can tell which files changed."""
     files: dict[str, str] = {}
 
     def digest(named: list[tuple[str, Path]], each: bool = True) -> str:
@@ -1211,7 +1256,8 @@ def inputs(root: Path, base: str, tests: list[str], outside: list[Path], deep: b
             "lean": digest([(p.relative_to(root).as_posix(), p) for p in [
                 *lean, root / "tools/trust-classes.json", root / ".gitignore"]]),
             "tests": digest(named), "base": base,
-            "options": json.dumps({"deep": deep, "test": sorted(tests) + [n for n, _ in named]}), "files": files}
+            "options": json.dumps({"deep": deep, "test": sorted(tests) + [n for n, _ in named],
+                                   "classes": list(classes)}), "files": files}
 
 
 def reach(reads: Reads, found: list[Mutant]) -> set[str]:
@@ -1282,6 +1328,11 @@ def show(text: str) -> str:
     return text if len(text) <= 100 else text[:97] + "..."
 
 
+def kind(m: Mutant) -> str:
+    """Its declaration's class as the lines and the counts by class show it: R16 asks about a trusted one only."""
+    return m.trust_class + (", trusted" if m.trusted else "")
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--base", help="the commit compared with (default: the merge base of HEAD and main)")
@@ -1297,8 +1348,14 @@ def main(argv: list[str] | None = None) -> int:
                         "carry its KILLED and INVALID ones across a check-only change")
     parser.add_argument("--build-timeout", type=float, default=1800,
                         help="seconds a mutant's build may run before it is UNKNOWN (default: 1800)")
+    parser.add_argument("--classes", default=",".join(TRUSTED), metavar="LIST",
+                        help="the declarations selected: trusted (default), all, or trust_map class names "
+                        f"({', '.join(SELECTABLE)}), comma-separated")
     args = parser.parse_args(argv)
     root = args.root.resolve()
+    if (classes := classes_of(args.classes)) is None:
+        return print(f"--classes {args.classes!r}: not a comma-separated list of trusted, all, {', '.join(SELECTABLE)}"
+                     " (theorems, proofs and checks, P and T, are never selected)", file=sys.stderr) or 2
     entries = json.loads(args.allow.read_text()).get("allow") if args.allow else []
     if not isinstance(entries, list) or not all(
             isinstance(e, dict) and set(e) == {"definition", "operator", "reason"} and e["operator"] in OPERATORS
@@ -1313,7 +1370,7 @@ def main(argv: list[str] | None = None) -> int:
     if bad := [t for t in [*outside, *(root / "lean" / t for t in tests)] if t.suffix != ".lean" or not t.is_file()]:
         return print(f"--test: not a Lean file: {bad}", file=sys.stderr) or 2
     started = time.monotonic()
-    found, tree, fatal = plan(root, base)
+    found, tree, fatal = plan(root, base, classes)
     for t in outside:
         try:
             tree.imported |= {x for x in imports(t.read_text()) if x in tree.files}
@@ -1323,7 +1380,7 @@ def main(argv: list[str] | None = None) -> int:
         return print("\n".join(fatal), file=sys.stderr) or 2
     jobs = args.jobs or max(1, min(8, (os.cpu_count() or 1) - int(os.getloadavg()[1])))
     run_now, not_run = found[:max(0, args.max_mutants)], found[max(0, args.max_mutants):]
-    digests = inputs(root, git(root, "rev-parse", base).stdout.strip(), tests, outside, args.deep)
+    digests = inputs(root, git(root, "rev-parse", base).stdout.strip(), tests, outside, args.deep, classes)
     reused, rescore, why, mode, changed = "", None, "", "full", []
     reads = Reads(root, tree, outside) if args.rescore or args.json else None
     if args.rescore:
@@ -1355,7 +1412,7 @@ def main(argv: list[str] | None = None) -> int:
         if m.status in ("SURVIVOR", "UNKNOWN") and (m.definition, m.operator) in allow:
             m.status, m.detail = "ALLOWED", allow[(m.definition, m.operator)]
         if m.status in ("SURVIVOR", "UNKNOWN"):
-            print(f"{m.status} lean/{m.file}:{m.line} {m.definition} {m.operator}: {show(m.before)} -> "
+            print(f"{m.status} lean/{m.file}:{m.line} {m.definition} ({kind(m)}) {m.operator}: {show(m.before)} -> "
                   f"{show(m.after)}{' (' + show(m.detail) + ')' if m.detail else ''}", flush=True)
     for m in run_now:
         if m.reused_from:
@@ -1400,14 +1457,19 @@ def main(argv: list[str] | None = None) -> int:
         with ThreadPoolExecutor(max_workers=jobs) as executor:
             list(executor.map(one, todo))
     for m in not_run:
-        print(f"NOT RUN lean/{m.file}:{m.line} {m.definition} {m.operator}: {show(m.before)} -> {show(m.after)}")
-    counts = {s: sum(m.status == s for m in found) for s in ("KILLED", "SURVIVOR", "UNKNOWN", "INVALID", "ALLOWED",
-                                                            "NOT RUN")}
+        print(f"NOT RUN lean/{m.file}:{m.line} {m.definition} ({kind(m)}) {m.operator}: {show(m.before)} -> "
+              f"{show(m.after)}")
+    statuses = ("KILLED", "SURVIVOR", "UNKNOWN", "INVALID", "ALLOWED", "NOT RUN")
+    counts = {s: sum(m.status == s for m in found) for s in statuses}
+    by_class = {k: {s: n for s in statuses if (n := sum(m.status == s for m in found if kind(m) == k))}
+                for k in sorted({kind(m) for m in found})}
     seconds = round(time.monotonic() - started)
     kept = len(run_now) - len(todo)
     print("trust_mutants: " + ", ".join(f"{n} {s}" for s, n in counts.items()) + f" in {seconds} s"
           + (f"; {kept} reused from {reused[:12]} (identical inputs)" if mode == "identical" else
              f"; {kept} carried from {reused[:12]} (check-only change: {', '.join(changed)})" if mode == "checks" else ""))
+    for k, n in by_class.items():
+        print(f"trust_mutants: {k}: " + ", ".join(f"{x} {s}" for s, x in n.items()))
     if args.rescore:
         rescore = {"file": str(args.rescore), "head": reused or None, "mode": mode, "changed": changed, "reused": kept,
                    "rerun": len(todo), **({} if reused else {"full_run": why})}
@@ -1417,7 +1479,8 @@ def main(argv: list[str] | None = None) -> int:
         args.json.write_text(evidence({
             "base": digests["base"], "head": git(root, "rev-parse", "HEAD").stdout.strip(),
             "jobs": jobs, "max_mutants": args.max_mutants, "deep": args.deep, "tests": args.test, "seconds": seconds,
-            "counts": counts, "inputs": digests, **({"rescore": rescore} if rescore else {}),
+            "counts": counts, "classes": list(classes), "class_counts": by_class, "inputs": digests,
+            **({"rescore": rescore} if rescore else {}),
             "definitions": [f"lean/{f}: {d}" for f, d in definitions],
             "mutants": [{k: v for k, v in asdict(m).items() if k not in ("start", "end", "edit")
                          and (k not in ("reused_from", "carried", "reads", "killed_at") or v)} for m in found]}))

@@ -8,11 +8,11 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 |---|---:|
 | leaves:bound | 251 |
 | leaves:closed domain | 267 |
-| leaves:none | 1358 |
+| leaves:none | 1366 |
 | modes | 38 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 957 |
+| today:not probed | 965 |
 | today:shape | 518 |
 | today:unbound | 137 |
 | answers | 561 |
@@ -1721,6 +1721,8 @@ Delegates: `/` to norms.
 | `/unsaid/*/sorts/*` | string | none |  |  | 4 | hand: `ve/ast.py:formula` |
 | `/unspecified/*` | string | none |  |  | 3 | hand: `ve/norm_defaults.py:__init__` |
 | `/verdict` | string | closed domain | enum |  | 10 | shape |
+| `/wordings/@key` | key | none |  |  | 0 | not probed |
+| `/wordings/{}` | string | none |  |  | 0 | not probed |
 
 | grammar at | grammar | bound whole by | observed |
 |---|---|---|---:|
@@ -2905,6 +2907,9 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/error` | string | none |  | minLength | 5 | not probed |
 | `/id` | any | bound | x-echo |  | 5 | shape |
 | `/id` | string | bound | x-equals |  | 5 | shape |
+| `/judgments/unused/*` | string | none |  | pattern | 0 | not probed |
+| `/judgments/used/*/term` | string | none |  | pattern | 0 | not probed |
+| `/judgments/used/*/units/*` | string | none |  | pattern | 0 | not probed |
 | `/path` | string | none |  | minLength | 1 | not probed |
 | `/source` | string | none |  |  | 3 | hand: `ve/document/lean.py:require` |
 | `/source_id` | string | none |  | pattern | 3 | hand: `ve/document/lean.py:_lean_document` |
@@ -3058,6 +3063,9 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/coverage/alternatives/narrowings/*/reason_spans` |  |  |  |  |
 | `/coverage/alternatives/proximate_judgments` |  |  |  | drop: accept/ve/document/lean.py:require; duplicate: accept/ve/document/lean.py:require |
 | `/coverage/alternatives/unmapped_obligations` |  |  |  |  |
+| `/judgments/unused` |  |  |  |  |
+| `/judgments/used` |  |  |  |  |
+| `/judgments/used/*/units` |  |  |  |  |
 | `/units` |  |  |  | drop: accept/accepted, accept/ve/document/lean.py:require; duplicate: accept/accepted, accept/ve/document/lean.py:require; replace: accept/accepted, accept/ve/document/lean.py:require; reverse: accept/accepted, accept/ve/document/lean.py:require |
 | `/units/*/content/cites/{}` |  |  |  |  |
 | `/units/*/content/limitation/conditions` |  |  |  |  |
@@ -3291,17 +3299,21 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/meaning_id` | string | none |  | pattern | 3 | not probed |
 | `/rows/*/claim` | string | bound | x-equals |  | 3 | shape |
 | `/rows/*/claim_id` | string | none |  | pattern | 3 | not probed |
+| `/rows/*/display` | string | none |  | pattern | 2 | not probed |
 | `/rows/*/kind` | string | closed domain | const |  | 3 | shape |
+| `/rows/*/line` | string | none |  | minLength | 2 | not probed |
 | `/rows/*/outcome` | string | closed domain | const |  | 3 | shape |
 | `/rows/*/outcome` | string | closed domain | enum |  | 3 | shape |
 | `/rows/*/reason` | string | closed domain | enum |  | 0 | shape |
 | `/rows/*/reproduction` | string | closed domain | const |  | 1 | shape |
+| `/rows/*/sides/*` | string | none |  | pattern | 2 | not probed |
 | `/rows/*/status` | string | closed domain | const |  | 3 | shape |
 | `/status` | string | closed domain | const |  | 7 | shape |
 
 | array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
 |---|---|---|---|---|
 | `/rows` | x-zip | x-zip |  |  |
+| `/rows/*/sides` |  |  |  |  |
 
 ## Grammars
 
