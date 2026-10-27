@@ -54,6 +54,21 @@ def fa1Admission : Json := answer (case "admission" env fa1Premises fa1Conclusio
   (.str "1693582034e41a1247c1992096ede677b3d42fee76465104b56d9d0836fc326f",
     .str "e038e0dd3d095b66f455c6ee7201fe3b2ed7dd76550f7912bfcd44a33335c13a",
     .str "a5e780ecae8ceccd555127a3cda629b7e732c8d3cce1d75254e49d21999d7317")
+-- Golden region table and regenerated formulas: every constant's sort and bits, and the erased conclusion's and a
+-- region premise's `Q` and `core` (QT-A4's search runs on these, and nothing outside Lean recomputes them).
+#guard fa1Admission.getObjValD "regions" == p r#"{"predicates": {"fomc_policymaker": ["expects_further_increase",
+  "expects_rates_to_stay"]}, "constants": [
+  {"constant": "cardinality__fomc_policymaker__00", "sort": "fomc_policymaker", "bits": "00"},
+  {"constant": "cardinality__fomc_policymaker__01", "sort": "fomc_policymaker", "bits": "01"},
+  {"constant": "cardinality__fomc_policymaker__10", "sort": "fomc_policymaker", "bits": "10"},
+  {"constant": "cardinality__fomc_policymaker__11", "sort": "fomc_policymaker", "bits": "11"}]}"#
+#guard let e := fa1Admission.getObjValD "erased"
+  let q := fun (j : Json) => (j.getObjValD "Q", j.getObjValD "core")
+  let all := p r#"["forall", "fomc_policymaker", ["or", ["unary", "expects_further_increase", ["var", 0]],
+    ["unary", "expects_rates_to_stay", ["var", 0]]]]"#
+  (q (e.getObjValD "conclusion"), q ((e.getObjValD "premises").getArr?.toOption.getD #[])[0]!) == ((all, all),
+    (p r#"["le", ["num", "dimensionless", "0"], ["const", "dimensionless", "cardinality__fomc_policymaker__00"]]"#,
+     p r#"["le", ["num", "0"], ["const", "cardinality__fomc_policymaker__00"]]"#))
 -- Spec 4.2's binding texts.
 #guard (stale, VE.Time.Wire.staleW6, VE.Time.Wire.staleCore) ==
   ("cardinality certificate is stale or bound to different statements",
