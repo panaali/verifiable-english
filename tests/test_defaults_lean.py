@@ -265,15 +265,20 @@ def test_flag_refusals(monkeypatch):
 def test_flag_asks_with_the_documents_norms_and_facts(monkeypatch):
     """The flag asks about the document's norms, its facts as premises (an assertion with no content is none) and its
     environment without `readings@1` (Lean's layered route refuses that profile); a document with no soft document is
-    refused (review df-1b F10's sweep: each value the flag sends is needed)."""
+    refused (review df-1b F10's sweep: each value the flag sends is needed). A unit of any other kind with content (an
+    assertion attributed to a party, an example, a question, a definition, an exposition) is neither a norm nor a
+    premise (review df-1b hunt 1)."""
     asked_with = []
     monkeypatch.setattr(defaults, "ask", lambda *arguments: asked_with.append(arguments) or _ASKED)
     doc, args = load_document(BASELINE.parents[4] / P1[0]["argv"][3]), argparse.Namespace(
         under=None, sentence=None, narrowing=None)
     [norm] = [unit["content"] for unit in doc["units"]]
     fact = ["exists", "assistant", un("urgent")]
+    quoted = ["forall", "assistant", un("urgent")]
+    others = [{"kind": kind, "content": quoted} for kind in (["attributed", "bob", "says", "asserted"], "example",
+                                                              "question", "definition", "exposition")]
     doc = {**doc, "units": [*doc["units"], {"kind": "asserted", "content": fact},
-                            {"kind": "asserted", "content": None}]}
+                            {"kind": "asserted", "content": None}, *others]}
     assert cli._assume_no_exception(doc, X_ALL, args) == _ASKED
     [(environment, norms, premises, conclusion)] = asked_with
     assert environment["profiles"] == ["documents@1", "norm-defaults@0", "norms@0", "relational-fol@0",

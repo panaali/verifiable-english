@@ -11,7 +11,7 @@ from itertools import combinations
 
 import pytest
 
-from tests.test_defaults_lean import DOCS, STRICT, UNLESS_URGENT, X_ALL, asked, env, rule, sent_kind
+from tests.test_defaults_lean import DOCS, STRICT, UNLESS_URGENT, X_ALL, asked, env, rule, sent_kind, un
 from ve import defaults
 from ve.backends import relay
 from ve.backends.lean_service import _decode_json
@@ -216,6 +216,81 @@ def test_forced_order_rule_then_tuple(monkeypatch):
     assert defaults.bind_model(case, row, source) is row
     for forced in ([r1e2, r1e1, r2e1, r2e2], [r2e1, r2e2, r1e1, r1e2], row["forced"][::-1]):
         _refused("forced order", defaults.bind_model, case, {**row, "forced": forced}, source)
+
+
+def _model_case(environment, norms, domains, relations, conclusion=X_ALL):
+    model = {"filling": {}, "model": {"complete": True, "constants": {}, "domains": domains, "relations": relations}}
+    return {"id": "m", "kind": "defaults-model", "environment": environment, "norms": norms, "premises": [],
+            "conclusion": conclusion, "model": model}
+
+
+def _binary_env():
+    """Plan 4.1's frame with the act `x_required(assistant, user)` and a binary `urgent`."""
+    environment = env()
+    vocabulary = environment["vocabulary"]
+    vocabulary["sorts"]["user"] = {"description": "user"}
+    for name in ("x_required", "x_permitted"):
+        vocabulary["predicates"][name]["arguments"] = ["assistant", "user"]
+        vocabulary["predicates"][name]["regulated"]["act"] = "{0} help {1}"
+    vocabulary["predicates"]["urgent"] = {"arguments": ["assistant", "user"], "description": "urgent"}
+    return environment
+
+
+def _forced_cases():
+    """(name, case) of `defaults-model` requests whose order no name order gives (review df-1b hunt 1): rules `rb`
+    before `ra`, a domain `[e2, e1]`, a binary act in a two-by-two model, and DF-β2 with its exceptions at e1 only."""
+    urgent = rule("rb", "x_required", True, sufficient=[un("urgent")])
+    everything = [["a1", "u1"], ["a1", "u2"], ["a2", "u1"], ["a2", "u2"]]
+    binary = ["binary", "urgent", ["var", 1], ["var", 0]]
+    return [
+        ("rules-rb-ra", _model_case(env(base=["urgent"]), [urgent, rule("ra", "x_required", True,
+                                                                        sufficient=[un("urgent")])],
+                                    {"assistant": ["e1"]}, {"urgent": [["e1"]], "soft__excepted__rb": [["e1"]],
+                                                            "soft__excepted__ra": [["e1"]]})),
+        ("domain-e2-e1", _model_case(env(base=["urgent"]), [{"norm": {**urgent["norm"], "name": "r1"}}],
+                                     {"assistant": ["e2", "e1"]}, {"urgent": [["e1"], ["e2"]],
+                                                                   "soft__excepted__r1": [["e1"], ["e2"]]})),
+        ("binary-act", _model_case(_binary_env(), [rule("r1", "x_required", True, sufficient=[binary])],
+                                   {"assistant": ["a1", "a2"], "user": ["u1", "u2"]},
+                                   {"urgent": everything, "soft__excepted__r1": everything},
+                                   ["forall", "assistant", ["forall", "user",
+                                                            ["binary", "x_required", ["var", 1], ["var", 0]]]])),
+        ("beta2-at-e1", _model_case(env(base=["calm", "urgent"]), DOCS["beta2"][1], {"assistant": ["e1", "e2"]},
+                                    {"calm": [], "urgent": [["e1"]], "soft__excepted__r1": [["e1"]],
+                                     "soft__excepted__r2": [["e1"]]})),
+    ]
+
+
+_FORCED: dict = {}
+
+
+def test_forced_entries_in_the_requests_order(monkeypatch):
+    """Lean lists the forced entries in the request's rule order, then the model's domain order, first coordinate
+    major (`forcedAt`), whatever the names: each genuine row is the answer, and the same entries in name order or
+    second-coordinate-major order are refused; an extra entry where no exception holds is refused (review df-1b
+    hunt 1: the order's sort key and the exact set were tested on fixtures where name order is the request's)."""
+    if not _FORCED:
+        _FORCED.update({name: (case, defaults.run(case), defaults.soft_source(case))
+                        for name, case in _forced_cases()})
+    expected = {"rules-rb-ra": [("rb", 0, ["e1"]), ("ra", 0, ["e1"])],
+                "domain-e2-e1": [("r1", 0, ["e2"]), ("r1", 0, ["e1"])],
+                "binary-act": [("r1", 0, ["a1", "u1"]), ("r1", 0, ["a1", "u2"]), ("r1", 0, ["a2", "u1"]),
+                               ("r1", 0, ["a2", "u2"])],
+                "beta2-at-e1": [("r1", 1, ["e1"]), ("r2", 0, ["e1"])]}
+    for name, (case, row, source) in copy.deepcopy(_FORCED).items():
+        forced = row["forced"]
+        assert [(e["rule"], e["condition"], e["tuple"]) for e in forced] == expected[name], name
+        assert defaults.bind_model(case, row, source) is row
+        if name == "binary-act":
+            reordered = [[forced[0], forced[2], forced[1], forced[3]]]
+        elif name == "beta2-at-e1":
+            reordered = [forced[::-1]]
+            _refused("forced exceptions", defaults.bind_model, case,
+                     {**row, "forced": [forced[0], {**forced[0], "tuple": ["e2"]}, forced[1]]}, source)
+        else:
+            reordered = [forced[::-1]]
+        for other in reordered:
+            _refused("forced order", defaults.bind_model, case, {**row, "forced": other}, source)
 
 
 def test_forced_tuple_sorts():
@@ -509,7 +584,7 @@ def test_strict_answer_only_when_lean_says_valid(monkeypatch):
 
 # The tests above, which tests/test_defaults_checks.py runs against each seeded bug of the binding.
 BOTH_SIDES = (test_run_binds_the_row_to_its_case, test_forced_condition_index_rule_and_tuple,
-              test_forced_order_rule_then_tuple, test_forced_tuple_sorts, test_assumptions_and_basis,
+              test_forced_order_rule_then_tuple, test_forced_entries_in_the_requests_order, test_forced_tuple_sorts, test_assumptions_and_basis,
               test_pairs_and_collision, test_collision_deciders_truth_table, test_collision_refused_field_by_field,
               test_situation_entities_of_every_sort, test_elaborate_labels_and_targets,
               test_soft_source_is_the_exception_tables, test_answer_binds_each_kind_with_its_binding,
