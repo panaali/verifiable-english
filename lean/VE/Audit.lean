@@ -6,6 +6,7 @@ import VE.Acts.GrammarExamples
 import VE.Acts.Lexical
 import VE.Acts.LexicalProofs
 import VE.Acts.Read
+import VE.Acts.Table
 import VE.Alternatives.Admission
 import VE.Alternatives.Background
 import VE.Alternatives.Decl
@@ -521,6 +522,20 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.readingsIn_exact
 #print axioms VE.Acts.readingsIn_limit
 #print axioms VE.Acts.readingsIn_nodup
+#print axioms VE.Acts.table_free_all_own
+#print axioms VE.Acts.table_free_all_shared
+#print axioms VE.Acts.table_free_all_split
+#print axioms VE.Acts.table_free_any
+#print axioms VE.Acts.table_free_any_split
+#print axioms VE.Acts.table_free_nor
+#print axioms VE.Acts.table_mustNot_all
+#print axioms VE.Acts.table_mustNot_all_split
+#print axioms VE.Acts.table_mustNot_any
+#print axioms VE.Acts.table_must_all
+#print axioms VE.Acts.table_must_any
+#print axioms VE.Acts.table_must_any_refused
+#print axioms VE.Acts.table_needNot
+#print axioms VE.Acts.table_one
 #print axioms VE.Acts.valueOf_eq_some
 #print axioms VE.Alternatives.Admission.Admitted.sound
 #print axioms VE.Alternatives.Admission.report_consequence

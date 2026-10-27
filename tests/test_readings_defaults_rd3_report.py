@@ -15,6 +15,10 @@ ROOT = Path(__file__).resolve().parents[1]
 HERE = ROOT / "docs/readings-defaults/rd3"
 
 
+# A seeded bug's file that later became a package (AR-16b split `ve/readings_verdicts.py` into `ve/readings_verdicts/`).
+MOVED = {"ve/readings_verdicts.py": "ve/readings_verdicts/__init__.py"}
+
+
 def saved():
     evidence = json.loads((HERE / "evidence/summary.json").read_text())
     comparison_bytes = (HERE / "evidence/ab-compare.json").read_bytes()
@@ -88,7 +92,7 @@ def test_saved_mutants_failed_real_tests_and_were_removed():
         path, name = mutant["test"].split("::", 1)
         name = name.split("[", 1)[0]
         assert re.search(rf"^def {re.escape(name)}\(", (ROOT / path).read_text(), re.M)
-        assert (ROOT / mutant["file"]).exists()
+        assert (ROOT / MOVED.get(mutant["file"], mutant["file"])).exists()
 
 
 def test_saved_lean_mutants_were_rejected_by_the_proofs():
@@ -146,7 +150,7 @@ def test_round3_mutants_were_rejected_and_reported():
     statements = (ROOT / "lean/statements.txt").read_text()
     assert {m["id"] for m in mutants} == {"L4", "L5", "L6", "L7", "L8", "L9", "P1", "P2", "P3"}
     for mutant in mutants:
-        assert mutant["exit_code"] != 0 and (ROOT / mutant["file"]).exists()
+        assert mutant["exit_code"] != 0 and (ROOT / MOVED.get(mutant["file"], mutant["file"])).exists()
         if mutant["id"].startswith("L"):
             assert mutant["errors"] > 0 and mutant["first_error"].startswith("VE/Readings/VerdictsWire.lean:")
             assert re.search(rf"^theorem VE\.Readings(?:\.Run)?\.{re.escape(mutant['theorem'])}$", statements, re.M)
