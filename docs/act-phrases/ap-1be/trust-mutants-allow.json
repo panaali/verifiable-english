@@ -1,0 +1,10 @@
+{
+ "allow": [
+  {"definition": "VE.Norms.Run.runCase", "operator": "list-empty",
+   "reason": "does not elaborate: `src` -> `[]` makes `Flagged.regenerated []` take a list for a Source (Application type mismatch); the cut of the `wordings` member is killed by the routeWordings #guards"},
+  {"definition": "VE.Norms.Run.runCase", "operator": "append-right",
+   "reason": "does not elaborate: dropping `src ++` applies `Flagged.regenerated` to the member list (Application type mismatch); append-left (the member dropped) is killed by the routeWordings #guards"},
+  {"definition": "VE.Norms.Run.wordingsJson", "operator": "list-empty",
+   "reason": "does not elaborate: `[] fun (p, w) => …` applies a list (Function expected); the cut of `plainWordings ne` to `[]` is killed by the ndWordings and routeWordings #guards"}
+ ]
+}
