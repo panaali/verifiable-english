@@ -899,11 +899,14 @@ import VE.WireContract.Engine
 #print axioms VE.Bridge.tupleCheck_iff
 #print axioms VE.Bridge.vocabulary_namesValid
 #print axioms VE.Calc.Budgeted.bin_eq
+#print axioms VE.Calc.Check.fault_some
+#print axioms VE.Calc.Check.outcomeMeans_claim
 #print axioms VE.Calc.Check.run_claim
 #print axioms VE.Calc.Check.run_sound
 #print axioms VE.Calc.Claim.decide_fails
 #print axioms VE.Calc.Claim.decide_holds
 #print axioms VE.Calc.Claim.decide_undefined
+#print axioms VE.Calc.Claim.factsIn_eq
 #print axioms VE.Calc.Claim.facts_sound
 #print axioms VE.Calc.Claim.inline_sound
 #print axioms VE.Calc.Claim.lower_sound
@@ -940,6 +943,7 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.Expr.subst_agrees
 #print axioms VE.Calc.Expr.subst_faults
 #print axioms VE.Calc.Expr.zeroDivisor_sound
+#print axioms VE.Calc.FM.firstAppearance_spec
 #print axioms VE.Calc.Farkas.check_sound
 #print axioms VE.Calc.Farkas.combination_eval
 #print axioms VE.Calc.Frac.add?_sound
@@ -995,6 +999,7 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.QLin.eval_add
 #print axioms VE.Calc.QLin.eval_foldl
 #print axioms VE.Calc.QLin.eval_isConst
+#print axioms VE.Calc.QLin.eval_norm
 #print axioms VE.Calc.QLin.eval_of_cancel
 #print axioms VE.Calc.QLin.eval_scale
 #print axioms VE.Calc.Rescale.factor_ne
@@ -1079,6 +1084,8 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.rpow_ne
 #print axioms VE.Calc.rsum_append
 #print axioms VE.Calc.sidesAtB_eq
+#print axioms VE.Calc.sum_by_names
+#print axioms VE.Calc.sum_nonzero
 #print axioms VE.Calc.sum_split
 #print axioms VE.Calc.valuesL_agrees
 #print axioms VE.Calc.valuesL_causes
