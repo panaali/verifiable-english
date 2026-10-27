@@ -1,0 +1,114 @@
+{
+ "tree": "07db019f1e497da8a1bd9be62df7c6de6926d881",
+ "lines": [
+  206
+ ],
+ "fatal": [],
+ "operators": [
+  "arm-true",
+  "arm-false",
+  "arm-default",
+  "body-true",
+  "body-false",
+  "not-drop",
+  "and-or",
+  "or-and",
+  "lt-le",
+  "le-lt",
+  "lt-eq",
+  "le-eq",
+  "eq-le",
+  "eq-ne",
+  "ne-eq",
+  "all-any",
+  "any-all",
+  "bool-flip",
+  "lit-plus",
+  "lit-minus",
+  "list-empty",
+  "append-left",
+  "append-right",
+  "list-first",
+  "list-drop-last",
+  "list-last",
+  "list-drop-first"
+ ],
+ "rows": [
+  {
+   "definition": "VE.Defaults.Wire.CoherenceReplay.pairs",
+   "class": "G[V]",
+   "tied": true,
+   "trusted": false,
+   "kind": "def",
+   "changed": true,
+   "selected_default": false,
+   "selected_all": true,
+   "mutated_default": false,
+   "mutated_all": true,
+   "mutants": [
+    [
+     "and-or",
+     "&&",
+     "||",
+     0
+    ],
+    [
+     "and-or",
+     "&&",
+     "||",
+     1
+    ],
+    [
+     "any-all",
+     "any",
+     "all",
+     0
+    ],
+    [
+     "eq-ne",
+     "==",
+     "!=",
+     0
+    ],
+    [
+     "eq-ne",
+     "==",
+     "!=",
+     1
+    ],
+    [
+     "list-drop-first",
+     "x.collision",
+     "(x.collision.drop 1)",
+     0
+    ],
+    [
+     "list-drop-last",
+     "x.collision",
+     "(x.collision.dropLast)",
+     0
+    ],
+    [
+     "list-empty",
+     "x.collision",
+     "[]",
+     0
+    ],
+    [
+     "list-first",
+     "x.collision",
+     "(x.collision.take 1)",
+     0
+    ],
+    [
+     "list-last",
+     "x.collision",
+     "(x.collision.reverse.take 1)",
+     0
+    ]
+   ]
+  }
+ ],
+ "default_mutants": 90,
+ "all_mutants": 383
+}

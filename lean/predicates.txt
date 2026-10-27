@@ -12,6 +12,7 @@ module ResponseShape.Audit
 module ResponseShape.CaseDeciders
 module ResponseShape.Encoders.Alternatives
 module ResponseShape.Encoders.Ask
+module ResponseShape.Encoders.Calc
 module ResponseShape.Encoders.Common
 module ResponseShape.Encoders.Conformance
 module ResponseShape.Encoders.Discourse
@@ -42,6 +43,7 @@ module ResponseShape.FitsTactic
 module ResponseShape.Schemas.Alternatives
 module ResponseShape.Schemas.Ask
 module ResponseShape.Schemas.Bundle
+module ResponseShape.Schemas.Calc
 module ResponseShape.Schemas.Check
 module ResponseShape.Schemas.CheckCertificate
 module ResponseShape.Schemas.Common
@@ -104,6 +106,10 @@ module VE.Alternatives.Route
 module VE.Alternatives.Run
 module VE.Alternatives.Validate
 module VE.Alternatives.Wire
+module VE.Arith.Defs
+module VE.Arith.Examples
+module VE.Arith.Holds
+module VE.Arith.Syntax
 module VE.Ask.Basic
 module VE.Ask.Binding
 module VE.Ask.Examples
@@ -151,9 +157,12 @@ module VE.Calc.Lower
 module VE.Calc.LowerExamples
 module VE.Calc.Poly
 module VE.Calc.Render
+module VE.Calc.Run
+module VE.Calc.RunExamples
 module VE.Calc.Syntax
 module VE.Calc.Units
 module VE.Calc.UnitsExamples
+module VE.Calc.Wire
 module VE.Cardinality.Erase
 module VE.Cardinality.Examples
 module VE.Cardinality.Ratio
@@ -647,6 +656,9 @@ VE.Alternatives.Run.AltAdmissionAnswer@VE.Alternatives.Run
 VE.Alternatives.SettledF@VE.Alternatives.FillWire
 VE.Alternatives.TypedChooser@VE.Alternatives.Followable
 VE.Alternatives.UndecidedF@VE.Alternatives.FillWire
+VE.Arith.Defs.Means@VE.Arith.Holds
+VE.Arith.Examples.IsPrime@VE.Arith.Examples
+VE.Arith.Holds@VE.Arith.Holds
 VE.Ask.BlockLine@VE.Ask.Lines
 VE.Ask.CaseBinding@VE.Ask.Binding
 VE.Ask.Consistent@VE.Ask.Plain
@@ -671,6 +683,8 @@ VE.Ask.checkedWitness@VE.Ask.Render
 VE.Ask.checkedWitnessRow@VE.Ask.Lines
 VE.Bridge.JsonEntails@VE.Bridge
 VE.Calc.CausesAt@VE.Calc.Decls
+VE.Calc.Check.OutcomeMeans@VE.Calc.Run
+VE.Calc.Check.UnknownCause@VE.Calc.Run
 VE.Calc.Claim.Defined@VE.Calc.Syntax
 VE.Calc.Claim.Holds@VE.Calc.Syntax
 VE.Calc.Claim.Overflows@VE.Calc.Decls

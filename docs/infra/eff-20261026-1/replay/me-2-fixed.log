@@ -1,0 +1,4 @@
+exit 0
+trust_mutants: 2 definitions, 3 mutants (3 to run), 4 jobs, base 768a935fcd03
+trust_mutants: 3 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 93 s
+trust_mutants: D[I]: 3 KILLED
