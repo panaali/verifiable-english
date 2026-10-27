@@ -9454,6 +9454,7 @@
     },
     "VE/Service/Document.lean": {
       "D[V]": [
+        "VE.Scope.decodeScope",
         "VE.Service.Document.Block",
         "VE.Service.Document.BlockCoverage",
         "VE.Service.Document.BlockCoverage.line",
@@ -9488,13 +9489,16 @@
         "VE.Service.Document.frozenEnv",
         "VE.Service.Document.graphLabels",
         "VE.Service.Document.listedProfiles",
+        "VE.Service.Document.lowerScope",
         "VE.Service.Document.ownedProfiles",
         "VE.Service.Document.parsedLabels",
+        "VE.Service.Document.profilesOf",
         "VE.Service.Document.pythonMayRead",
         "VE.Service.Document.residual",
         "VE.Service.Document.rightsContentOf",
         "VE.Service.Document.rightsDoc",
         "VE.Service.Document.rightsSourceUnit",
+        "VE.Service.Document.scopeReadings",
         "VE.Service.Document.sensesContentOf",
         "VE.Service.Document.softCanonical",
         "VE.Service.Document.softContentOf",
@@ -9504,7 +9508,8 @@
         "VE.Service.Document.typedFormula",
         "VE.Service.Document.unitsOf",
         "VE.Service.Document.usesNorms",
-        "VE.Service.Document.wireJson"
+        "VE.Service.Document.wireJson",
+        "VE.Service.Document.withUnits"
       ],
       "D[R]": [
         "VE.Service.Document.Foreign",
@@ -9568,10 +9573,17 @@
         "VE.Service.Document.UnitStatus.name",
         "VE.Service.Document.UnitStatus.ofName?",
         "VE.Service.Document.addCount",
+        "VE.Service.Document.checkCore",
+        {
+          "name": "VE.Service.Document.checkDoc",
+          "tied": [
+            "VE.Scope.scope_admission",
+            "VE.Scope.scope_absent_unchanged"
+          ]
+        },
         "VE.Service.Document.countJson",
         "VE.Service.Document.counts",
         "VE.Service.Document.coverageJson",
-        "VE.Service.Document.documentCase",
         "VE.Service.Document.encode",
         "VE.Service.Document.freeNorms",
         "VE.Service.Document.kindName",
@@ -14749,6 +14761,85 @@
         "VE.Cardinality.WireExamples.terms"
       ]
     },
-    "VE/Cardinality/WireTheorems.lean": {}
+    "VE/Cardinality/WireTheorems.lean": {},
+    "VE/Scope/WireExamples.lean": {
+      "T": [
+        "VE.Scope.WireExamples.anchor",
+        "VE.Scope.WireExamples.ansUnit",
+        "VE.Scope.WireExamples.ansUnits",
+        "VE.Scope.WireExamples.answer",
+        "VE.Scope.WireExamples.blockWith",
+        "VE.Scope.WireExamples.decoded",
+        "VE.Scope.WireExamples.effectTag",
+        "VE.Scope.WireExamples.errorOf",
+        "VE.Scope.WireExamples.foldDoc",
+        "VE.Scope.WireExamples.foldEnv",
+        "VE.Scope.WireExamples.foldGov",
+        "VE.Scope.WireExamples.gov",
+        "VE.Scope.WireExamples.listName",
+        "VE.Scope.WireExamples.st"
+      ]
+    },
+    "VE/Service/ScopeExamples.lean": {
+      "T": [
+        "VE.Service.ScopeExamples.block",
+        "VE.Service.ScopeExamples.case",
+        "VE.Service.ScopeExamples.doc",
+        "VE.Service.ScopeExamples.env",
+        "VE.Service.ScopeExamples.errorOf",
+        "VE.Service.ScopeExamples.front",
+        "VE.Service.ScopeExamples.full",
+        "VE.Service.ScopeExamples.fullUnits",
+        "VE.Service.ScopeExamples.governor",
+        "VE.Service.ScopeExamples.item",
+        "VE.Service.ScopeExamples.lead",
+        "VE.Service.ScopeExamples.listed",
+        "VE.Service.ScopeExamples.member",
+        "VE.Service.ScopeExamples.part",
+        "VE.Service.ScopeExamples.row",
+        "VE.Service.ScopeExamples.source",
+        "VE.Service.ScopeExamples.sp",
+        "VE.Service.ScopeExamples.statuses",
+        "VE.Service.ScopeExamples.unf",
+        "VE.Service.ScopeExamples.unfKind",
+        "VE.Service.ScopeExamples.unit",
+        "VE.Service.ScopeExamples.units",
+        "VE.Service.ScopeExamples.unsorted"
+      ]
+    },
+    "VE/Service/ScopeAdmission.lean": {},
+    "VE/Scope/Wire.lean": {
+      "D[R]": [
+        "VE.Scope.memberOf",
+        "VE.Scope.membersIn",
+        "VE.Scope.textOf",
+        "VE.Scope.textsOf",
+        "VE.Scope.wireFault"
+      ],
+      "D[V]": [
+        "VE.Scope.decodeBlock",
+        "VE.Scope.decodeEffect",
+        "VE.Scope.decodeGovernor",
+        "VE.Scope.decodeListName",
+        "VE.Scope.decodeParts",
+        "VE.Scope.decodeReach",
+        "VE.Scope.layoutOf",
+        "VE.Scope.listMember",
+        "VE.Scope.spanIn"
+      ],
+      "G[V]": [
+        {
+          "name": "VE.Scope.governorStatus",
+          "tied": [
+            "VE.Scope.governor_status_weakest",
+            "VE.Scope.governor_status_none"
+          ]
+        },
+        "VE.Scope.byStatus",
+        "VE.Scope.changers",
+        "VE.Scope.foldGovernors",
+        "VE.Scope.statusOf"
+      ]
+    }
   }
 }
