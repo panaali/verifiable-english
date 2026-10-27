@@ -1265,6 +1265,20 @@
    "reason": "me-5d: VE/Calc/Run.lean D[V] +41 (Shown, Run.factJson, Run.stepJson, Run.reads, Run.shownJson: a derivation's certificate and counterexample, spec 3.4); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-5d, 2026-10-18",
    "commit": "ab010c3f02bca97c3d17775ba85382bf85e208eb"
+  },
+  {
+   "class": "V",
+   "lines": 6,
+   "reason": "ap-1be: norm-defaults-elaborate's wordings member: VE/Norms/Run.lean +3 (G[V] wordingsJson, shared with norms-elaborate), ResponseShape/Schemas/NormDefaults.lean +2 (the elaborate shape's wordings), VE/NormDefaults/Run.lean +1 (runOtherCase writes it)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1be, 2026-10-27",
+   "commit": "a557ff887aa6b513fdaa540c479ae304023a24a4"
+  },
+  {
+   "class": "V",
+   "lines": 1,
+   "reason": "ap-1be: the elaborate shape's render pin, ResponseShape/Schemas/NormDefaults.lean +1 as the map counts it (V +7 in all with the first allowance)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1be, 2026-10-27",
+   "commit": "a557ff887aa6b513fdaa540c479ae304023a24a4"
   }
  ]
 }

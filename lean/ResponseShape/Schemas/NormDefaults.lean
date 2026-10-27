@@ -100,10 +100,12 @@ def elaborate : Shape :=
   c
     "NormDefaults.Wire.regeneratedU: Norms.Wire.regenerated of fill U, then Fill_T, the unspecified predicates, their unsaid predicates, the default-reached targets and the fragment flag of fill U."
     [obj, .required (elaborateRequired ++ ["filled_environment_id", "fill_hash", "fill_labels",
-      "environment_id", "document_hash"]),
+      "environment_id", "document_hash", "wordings"]),
       closed (elaborateFields ++ [("filled_environment_id", str), ("fill_hash", str),
         ("fill_labels", ref "common.json#/$defs/strings"), ("environment_id", str),
-        ("document_hash", str)])]
+        ("document_hash", str),
+        ("wordings", c "Norms.Wire.plainWordings of the source: one wording per plain predicate with an act, by its name."
+          [ref "common.json#/$defs/string_map"])])]
 
 def base_environment : Shape :=
   copied "the route's base environment regenerated from the request's environment (its soft or rights block removed), compared whole with Python's by the caller" <| c
@@ -365,5 +367,18 @@ def file : File where
     ("defaults_coherence", .schema defaults_coherence),
     ("defaults_certificate", .schema defaults_certificate),
     ("defaults_model", .schema defaults_model)]
+
+
+/- The plain `elaborate` row as `tools/response_schemas.py` renders it (ap-1be): a closed object whose every member is
+required, `wordings` (`Norms.Run.wordingsJson`) a `string_map` beside the base's members. -/
+#guard (ResponseShape.render "norm-defaults.json" 64 elaborate).toOption.map (fun j => (j.getObjValD "type",
+    j.getObjValD "additionalProperties", j.getObjValD "required", (j.getObjValD "properties").getObj?.toOption.map
+    (·.toList.map (·.1)), ((j.getObjValD "properties").getObjValD "wordings").getObjValD "$ref")) ==
+  some (.str "object", .bool false, toJson ["id", "status", "order", "background", "premises", "conflict_targets",
+    "fragment", "fill", "unspecified", "unsaid", "reached", "fragment_fill", "filled_environment_id", "fill_hash",
+    "fill_labels", "environment_id", "document_hash", "wordings"], some ["background", "conflict_targets",
+    "document_hash", "environment_id", "fill", "fill_hash", "fill_labels", "filled_environment_id", "fragment",
+    "fragment_fill", "id", "order", "premises", "reached", "status", "unsaid", "unspecified", "wordings"],
+    .str "common.json#/$defs/string_map")
 
 end ResponseShape.Schemas.NormDefaults
