@@ -175,6 +175,9 @@ import VE.LimitTies
 import VE.Norms.FamilySpec
 import VE.Acts.Syntax
 import VE.Acts.Read
+import VE.Acts.Tree
+import VE.Acts.Table
+import VE.Acts.TableExamples
 import VE.Acts.GrammarExamples
 import VE.Acts.Compat
 import VE.Acts.LexicalExamples
@@ -200,6 +203,10 @@ import VE.Scope.Effects
 import VE.Scope.Govern
 import VE.Scope.Theorems
 import VE.Scope.Examples
+import VE.Scope.Wire
+import VE.Scope.WireExamples
+import VE.Service.ScopeAdmission
+import VE.Service.ScopeExamples
 import VE.Defaults.Premises
 import VE.Defaults.Examples
 import VE.Service.ActsExamples
