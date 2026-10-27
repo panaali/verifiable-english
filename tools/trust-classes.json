@@ -13326,6 +13326,21 @@
         "VE.Defaults.Fixtures.βii"
       ]
     },
+    "VE/Defaults/Meaning.lean": {
+      "C": [
+        "VE.Defaults.replacementSafe"
+      ],
+      "G[V]": [
+        "VE.Defaults.softX"
+      ],
+      "S": [
+        "VE.Defaults.DefaultBase",
+        "VE.Defaults.ReplacementHolds",
+        "VE.Defaults.SwitchesOff",
+        "VE.Defaults.leastDecisions",
+        "VE.Defaults.withOpen"
+      ]
+    },
     "VE/Defaults/Premises.lean": {
       "C": [
         "VE.Defaults.assumptionsOf",

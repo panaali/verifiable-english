@@ -102,6 +102,7 @@ import VE.Core.TableauExtendedInduction
 import VE.Core.TableauExtendedRules
 import VE.Core.Wire
 import VE.Data.Background
+import VE.Defaults.Meaning
 import VE.Defaults.Premises
 import VE.Defaults.Route
 import VE.Defaults.Wire
@@ -1588,6 +1589,7 @@ import VE.WireContract.Engine
 #print axioms VE.Defaults.Wire.replayCoherenceOn_request
 #print axioms VE.Defaults.Wire.replayModelOn_request
 #print axioms VE.Defaults.Wire.viewOf_layered
+#print axioms VE.Defaults.act_arity
 #print axioms VE.Defaults.assumptions_sound
 #print axioms VE.Defaults.atom_wf
 #print axioms VE.Defaults.basis_needs_sound
@@ -1597,14 +1599,34 @@ import VE.WireContract.Engine
 #print axioms VE.Defaults.collisionTuple_some
 #print axioms VE.Defaults.collision_sound
 #print axioms VE.Defaults.collision_unranked
+#print axioms VE.Defaults.cond_declared
+#print axioms VE.Defaults.cond_free
+#print axioms VE.Defaults.decisionNames_split
+#print axioms VE.Defaults.decision_arity
+#print axioms VE.Defaults.decision_declared
+#print axioms VE.Defaults.decision_not_unsaid
+#print axioms VE.Defaults.defaultBase_of_dflt
 #print axioms VE.Defaults.defaultCoherenceCheck_sound
+#print axioms VE.Defaults.default_entails_minimal
+#print axioms VE.Defaults.default_entails_minimal_of
+#print axioms VE.Defaults.defaults_model_default_base
 #print axioms VE.Defaults.dflt_wellFormed
 #print axioms VE.Defaults.entailsX_mono
+#print axioms VE.Defaults.excepted_inj
+#print axioms VE.Defaults.excepted_only
 #print axioms VE.Defaults.followsForm_short
+#print axioms VE.Defaults.least_le
+#print axioms VE.Defaults.mem_exc
+#print axioms VE.Defaults.node_arity
 #print axioms VE.Defaults.pairChecks_sound
 #print axioms VE.Defaults.premisesX_split
 #print axioms VE.Defaults.questionDiag_none
+#print axioms VE.Defaults.reg_arity
+#print axioms VE.Defaults.replace_admissible
+#print axioms VE.Defaults.sat_dflt
+#print axioms VE.Defaults.softX_eq
 #print axioms VE.Defaults.strict_of_withoutDefaults
+#print axioms VE.Defaults.withOpen_denote
 #print axioms VE.Definitions.Alias.alias_acceptance
 #print axioms VE.Definitions.Alias.conservative
 #print axioms VE.Definitions.Alias.faithful
