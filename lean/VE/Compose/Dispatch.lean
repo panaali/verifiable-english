@@ -796,7 +796,9 @@ def wrapperRows : List ProfileRow := [
   ⟨"right-clauses@0", [], refusing "right-clauses@0" outsideProfiles, "clauses"⟩,
   ⟨"right-clauses@0", ["rights@0"], [], "clauses"⟩,
   ⟨"readings@1", [], refusing "readings@1" outsideProfiles, "readings"⟩,
-  ⟨"readings@1", ["norms@0"], [], "readings"⟩]
+  ⟨"readings@1", ["norms@0"], [], "readings"⟩,
+  -- scope@0 (SC-1b): a wrapper at step 1b over the chain's routes, which the document mode runs (`gate_scope`)
+  ⟨"scope@0", ["norms@0"], refusing "scope@0" (outsideProfiles ++ ["ve.discourse@1"]), "govern"⟩]
 
 def profileTable : List ProfileRow := baseRows ++ wrapperRows
 
@@ -1057,6 +1059,7 @@ theorem gate_legacy (ps) (h : ∀ p ∈ ps, p ∈ legacyProfiles) :
       row ⟨"norm-defaults@0", ["norms@0"], [], "normDefaults"⟩ (by simp [baseRows]) hp _ (by simp)
     have hri : "rights@0" ∈ ps → "soft-norms@0" ∈ ps := fun hp =>
       row ⟨"rights@0", ["soft-norms@0"], [], "rights"⟩ (by simp [baseRows]) hp _ (by simp)
+    have hsc : "scope@0" ∉ ps := fun hp => by simpa [legacyProfiles, registered, wrapperProfiles] using h _ hp
     simp only [Option.none_or, faultOf_none, Except.map]
     clear hrows row hA hk h
     simp only [wrapperRows, refusing, outsideProfiles, rowChecks, List.flatMap_cons, List.flatMap_nil, List.map_cons,
@@ -1069,7 +1072,7 @@ theorem gate_legacy (ps) (h : ∀ p ∈ ps, p ∈ legacyProfiles) :
       ⟨e, h1⟩ | ⟨e, h1⟩ <;> rw [e] <;>
       by_cases hd : "ve.discourse@1" ∈ ps <;> by_cases hc : "right-clauses@0" ∈ ps <;>
       by_cases hr : "readings@1" ∈ ps <;>
-      simp [hd, hc, hr, h1, hsoft, hnd, hri, sitsOn, refusal, outside, wrapperHead, toString, String.reduceAppend]
+      simp [hd, hc, hr, h1, hsoft, hnd, hri, hsc, sitsOn, refusal, outside, wrapperHead, toString, String.reduceAppend]
 
 /-- The base rows' route: today's head. -/
 theorem routeOf_base (ps : List String) : routeOf baseRows ps = todayHead ps := by
@@ -1147,5 +1150,49 @@ theorem gate_acts (ps : List String) (h : "acts@0" ∈ ps) (r : Route)
   · rw [routeOf_table]
     by_cases hr : "readings@1" ∈ ps <;> by_cases hd : "norm-defaults@0" ∈ ps <;>
       simp [todayHead, hr, hd, hno, hso, hri, hal, hsp, hdi, hrc, hrk, hre]
+
+/-! ### `gate_scope`: `scope@0` changes no route (scope 1.1, SC-1b) -/
+
+/-- `scope@0` is a wrapper at step 1b over the chain: a list the table admits with it is admitted without it, with
+the same route, which is the chain's or a wrapper's above it, never an outside route or the discourse route. -/
+theorem gate_scope (ps : List String) (h : "scope@0" ∈ ps) (r : Route)
+    (hg : gateOf profileTable ps = .ok r) :
+    gateOf profileTable (ps.erase "scope@0") = .ok r ∧
+      (r = .clauses ∨ r = .readings ∨ r = .rights ∨ r = .soft ∨ r = .normDefaults ∨ r = .norms) := by
+  obtain ⟨⟨hs, hk, hrows⟩, rfl⟩ := (gateOf_iff _ _ _).mp hg
+  have hn : ps.Nodup := hs.imp fun h e => by subst e; exact String.lt_asymm h h
+  have hmem : ∀ x, x ≠ "scope@0" → (x ∈ ps.erase "scope@0" ↔ x ∈ ps) := fun x hx => by
+    rw [hn.mem_erase_iff]; exact ⟨And.right, fun hp => ⟨hx, hp⟩⟩
+  have hreq : ∀ r ∈ profileTable, "scope@0" ∉ r.requires := by decide
+  have hsc := hrows ⟨"scope@0", ["norms@0"], refusing "scope@0" (outsideProfiles ++ ["ve.discourse@1"]), "govern"⟩
+    (by simp [profileTable, wrapperRows]) (.inl h)
+  simp only [refusing, outsideProfiles, List.map_cons, List.map_nil, List.cons_append, List.nil_append,
+    List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq] at hsc
+  obtain ⟨hno, hrk, hal, hsp, hre, hdi⟩ := hsc
+  have hc : ∀ x, x ≠ "scope@0" → (ps.erase "scope@0").contains x = ps.contains x := fun x hx => by
+    simp only [contains_eq, hmem x hx]
+  refine ⟨(gateOf_iff _ _ _).mpr ⟨⟨hs.sublist (List.erase_sublist ..),
+    fun p hp => hk p (List.mem_of_mem_erase hp), fun r hr hon => ?_⟩, ?_⟩, ?_⟩
+  · by_cases hpa : r.profile = "scope@0"
+    · exfalso
+      rw [hpa] at hon
+      rcases hon with he | he
+      · exact List.Nodup.not_mem_erase hn he
+      · exact hreq r hr he
+    · have ⟨hq, hx⟩ := hrows r hr (hon.imp (fun hp => (hmem _ hpa).mp hp) id)
+      exact ⟨fun q hq' => (hmem q (fun e => hreq r hr (e ▸ hq'))).mpr (hq q hq'),
+        fun x hx' hp => hx x hx' (List.mem_of_mem_erase hp)⟩
+  · have e : ∀ x ∈ ["ve.discourse@1", "right-clauses@0", "readings@1", "risk@0", "alternatives@0", "speech-acts@0",
+        "reports@0", "rights@0", "soft-norms@0", "norm-defaults@0", "norms@0"],
+        (ps.erase "scope@0").contains x = ps.contains x := fun x hx => hc x (by rintro rfl; simp at hx)
+    simp only [List.mem_cons, List.not_mem_nil, or_false, forall_eq_or_imp, forall_eq] at e
+    obtain ⟨e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11⟩ := e
+    rw [routeOf_table, routeOf_table]
+    simp only [todayHead, e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11]
+  · rw [routeOf_table]
+    by_cases hc' : "right-clauses@0" ∈ ps <;> by_cases hr : "readings@1" ∈ ps <;>
+      by_cases hri : "rights@0" ∈ ps <;> by_cases hso : "soft-norms@0" ∈ ps <;>
+      by_cases hd : "norm-defaults@0" ∈ ps <;>
+      simp [todayHead, hc', hr, hri, hso, hd, hno, hrk, hal, hsp, hre, hdi]
 
 end VE.Compose
