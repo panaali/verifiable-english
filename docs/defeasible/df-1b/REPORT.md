@@ -180,6 +180,9 @@ PROBE F1 failed before the fix (all three mutants survived) and passes after it 
 RF1a–RF1g are in `mutants.json` and fail their tests (`evidence/mutants.out`). No Lean or Rust file changed; trust
 +0; no DELTA row.
 
+Selected run on the fix (`mac-pytest.sh --select`, Mac runner, HEAD 51e63836, clean): 276 units, 0 failed.
+`lake build` (1109 jobs) and `python3 lean/audit.py` pass. Not run: the full gate (the chain runs it).
+
 ## Self-review against BUILDER-CHECKLIST
 
 1. **Lean answers typed and contained.** PASS: `test_defaults_answer.py::test_mutants_never_pass_as_answers` retypes
