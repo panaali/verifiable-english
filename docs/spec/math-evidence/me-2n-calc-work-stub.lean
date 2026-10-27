@@ -37,6 +37,9 @@ theorem Val.check_eq (q : Rat) : Val.check q = Val.guard q := by
   unfold Val.check Val.guard Small
   simp only [digitCount_le_iff]
 
+#guard ([10 ^ maxDigits - 1, 10 ^ maxDigits, 1 / (10 ^ maxDigits - 1), 1 / 10 ^ maxDigits] : List Rat).all fun q =>
+  Val.check q == Val.guard q
+
 /-- A power that is beyond the digit limit, known from its base's size before it is computed. -/
 def powTooLarge (x : Rat) (k : Nat) : Bool :=
   smallBits ≤ (bits x.num - 1) * k || smallBits ≤ (bits x.den - 1) * k
@@ -302,6 +305,9 @@ def lowered (e : Expr) : Option (Option QLin × Nat) := (Expr.linearC maxWork e 
 #guard (lowered (powChain 1)).map (·.1) = some (powChain 1).linear
 #guard [1, 2, 3, 4].map (fun k => (lowered (powChain k)).map (·.2)) = [some 8642, some 8643, some 8644, some 8645]
 #guard [2, 3, 4].all fun k => match Expr.linearC maxWork (powChain k) 0 with | some (.tooLarge, _) => true | _ => false
+/-- L-5: a product of two constants of 4,080 digits is computed, charged, then beyond the limit. -/
+def big : Expr := .mul (.pow (.lit nines) 64) (.pow (.lit nines) 38)
+#guard match Expr.linearC maxWork (.mul big big) 0 with | some (.tooLarge, w) => w == 81879 | _ => false
 
 /-! P-1: me-2b's fan-out, a premise over a12 = a11 + a11 (8,191 nodes inlined), lowered once per case, not once per
 mention (20 derivations naming it 450 times take 29 s today). P-2: the same doubling over 16 free values with
