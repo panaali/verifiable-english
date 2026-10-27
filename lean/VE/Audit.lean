@@ -3018,7 +3018,9 @@ import VE.WireContract.Engine
 #print axioms VE.Norms.Wire.Source.wf
 #print axioms VE.Norms.Wire.appendPredicates_assembly
 #print axioms VE.Norms.Wire.canonicalActIn_without_acts
+#print axioms VE.Norms.Wire.decodeRegulated_plain
 #print axioms VE.Norms.Wire.decodeRegulated_without_acts
+#print axioms VE.Norms.Wire.ite_ok_cases
 #print axioms VE.Norms.agreesBelow_of_meanings
 #print axioms VE.Norms.allF_denote
 #print axioms VE.Norms.allF_wellFormed
