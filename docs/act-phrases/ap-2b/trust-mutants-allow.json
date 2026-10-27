@@ -144,6 +144,26 @@
    "definition": "VE.Acts.tail",
    "operator": "list-last",
    "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal"
+  },
+  {
+   "definition": "VE.Acts.frameRules",
+   "operator": "list-first",
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal (a symbol such as `.n .ADVO` cut as a list)"
+  },
+  {
+   "definition": "VE.Acts.frameRules",
+   "operator": "list-last",
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal (a symbol such as `.n .ADVO` cut as a list)"
+  },
+  {
+   "definition": "VE.Acts.globalRules",
+   "operator": "list-first",
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal (a symbol such as `.n .ADVO` cut as a list)"
+  },
+  {
+   "definition": "VE.Acts.globalRules",
+   "operator": "list-last",
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal (a symbol such as `.n .ADVO` cut as a list)"
   }
  ]
 }
