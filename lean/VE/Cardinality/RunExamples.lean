@@ -234,6 +234,10 @@ def counting (n : Nat) : Json :=
 
 #guard err (counting 9) == "ResourceLimit: At most 8 counted sorts"
 #guard status (counting 8) == .str "ok"
+-- Two counted sorts, the conclusion's first: each has its predicates (none) and its one region constant.
+#guard (answer (counting 2)).getObjValD "regions" == p r#"{"predicates": {"fomc_policymaker": [], "s0": []},
+  "constants": [{"constant": "cardinality__fomc_policymaker__", "sort": "fomc_policymaker", "bits": ""},
+    {"constant": "cardinality__s0__", "sort": "s0", "bits": ""}]}"#
 
 /-- `env` with predicates `a1`…`a5` on FOMC policymakers: seven unary predicates on the finite sort. -/
 def predsEnv : Json :=
