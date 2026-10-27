@@ -98,6 +98,35 @@ def test_ask_lean_cpu(record, ident):
     assert found["cpu_s"] <= 2.0, found  # the plan's registered budget, beside the stored baseline
 
 
+def test_scope_b1(record, tmp_path):
+    """B1 (docs/spec/scope-PLAN.md): F1-doc's document over the full pinned constitution pilot (184,893 B, 1,132
+    units; `tools/bench/scope_b1.py`), through the layout (`layout`: the case read and `VE.Scope.decodeScope`) and
+    then the run path (`layout and governFast`), each the CPU of one `ve_scope_bench` process. The input must be
+    C11's layout (its hash), with C11's F1 run and governFast's answer on it; anything else is reported and nothing
+    is timed. It never runs a document check (L70). Refresh the baseline after a reviewed change of its cost:
+
+        PATH="$HOME/.elan/bin:$PATH" uv run --frozen python -m pytest tools/bench/test_perf.py -k scope_b1 \\
+            --update-baselines
+    """
+    from tools.bench import scope_b1
+    lean = ROOT / "lean"
+    subprocess.run(["lake", "build", "ve_scope_bench"], cwd=lean, check=True, capture_output=True,
+                   timeout=HANG_TIMEOUT)
+    case = tmp_path / "b1.json"
+    case.write_text(json.dumps(scope_b1.case(), ensure_ascii=False))
+    seen = {}
+    for stage, measure in (("layout", "layout"), ("govern", "layout and governFast")):
+        with ChildCPU() as cpu:
+            result = subprocess.run([lean / ".lake/build/bin/ve_scope_bench", case, stage], capture_output=True,
+                                    text=True, timeout=HANG_TIMEOUT)
+        assert result.returncode in (0, 1), result.stderr
+        problems = scope_b1.problems(json.loads(result.stdout), stage == "govern")
+        assert problems == [], "B1 is not timed:\n" + "\n".join(problems)
+        seen[measure] = cpu.seconds
+    for measure, seconds in seen.items():
+        record(measure, seconds)
+
+
 def test_gate_source_identity(record, tmp_path):
     """The gate's worktree check, run at its start and at its end (tools/gate.py: source_identity), on a clean
     checkout: its second status, against a fresh index read from HEAD, hashes every tracked file. `repository
