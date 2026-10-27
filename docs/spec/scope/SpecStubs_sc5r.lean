@@ -195,7 +195,8 @@ theorem governSets_every_choice (D : SDoc) (hw : Pinned.JsonWF D.doc) (hs : gove
     ∃ o, governChoice D ch = .ok o ∧ atChoiceOn (governedSetUnits D) out ch = o := by sorry
 
 /-- `govern_strings`, per choice: no reading brings in a new symbol. -/
-theorem governSets_strings (D : SDoc) (hw : Pinned.JsonWF D.doc) (out : Json) (ho : governSets D = .ok out)
+theorem governSets_strings (D : SDoc) (hw : Pinned.JsonWF D.doc)
+    (hp : ∀ g ∈ D.governors, Pinned.JsonWF (Pinned.payload g.effect)) (out : Json) (ho : governSets D = .ok out)
     (s : String) (hs : Pinned.HasStr s out) :
     Pinned.HasStr s D.doc ∨ ∃ g ∈ D.governors, Pinned.HasStr s (Pinned.payload g.effect) := by sorry
 

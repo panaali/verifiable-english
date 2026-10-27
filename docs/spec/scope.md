@@ -2093,7 +2093,10 @@ Each statement is restated for this case, beside the original; none of sections 
 JSON take `Pinned.JsonWF`: every object at any depth is a well-formed tree. This is the DRI's fix (a) for sc-1ad's
 F-raw (featureplan-gates 2026-10-27 item 2). Its parser lemma, proved by sc-1ae or SC-1b, discharges it for every
 decoded document. `governSets_readings_refused` needs it too: `atChoiceOn` rebuilds `reading_sets` with
-`setObjVal!`, and on a tree that is not well formed a lookup can miss the member it wrote.
+`setObjVal!`, and on a tree that is not well formed a lookup can miss the member it wrote. `governSets_strings` also
+takes it of every governor's payload: `mergeParts` reads a frame part's members by traversal and `HasStr` by lookup,
+which disagree on a malformed tree (F-raw's item 4); a decoded block's payloads are parsed, so the same lemma
+discharges it.
 
 | Statement | Restates | In plain English |
 |---|---|---|
