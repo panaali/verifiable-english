@@ -122,6 +122,12 @@ the earlier one keeps its readers (admission refuses such a case as `DuplicateNa
   ev [.pred "p" 0 yes, .pred "q" 0 (.call "p" []), .pred "p" 0 no] (.call "p" []),
   ev [.pred "p" 0 yes, .pred "q" 0 (.call "p" []), .pred "p" 0 no] (.call "q" [])] =
   [some (true, 1), some (true, 1), some (false, 2), some (true, 3)]
+/-! Terms are free (spec 12.2): a function body that is a term costs no unit, however often it is called. `f10` calls
+`f9` twice, and so on down, so `f0` is evaluated 1,024 times for 1 unit. The budget does not bound this work (REPORT,
+finding N1 for me-12b). -/
+def dbl (k : Nat) : Defs :=
+  .fn "f0" 0 (lit 1) :: (List.range k).map fun i => .fn s!"f{i + 1}" 0 (.add (.call s!"f{i}" []) (.call s!"f{i}" []))
+#guard (dbl 10).WellFormed && decideBounded (dbl 10) 1 (.eq (lit 1024) (.call "f10" [])) = some (true, 1)
 /-! The fixtures are admitted, so the soundness theorem applies to their answers. -/
 #guard countDefs.WellFormed && chain.WellFormed && [m1 161, m5, m2, m4 2 11 248].all (·.Scoped countDefs 0)
 
