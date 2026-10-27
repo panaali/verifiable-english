@@ -117,7 +117,15 @@ product seeded bug in any language.
 
 ## Final checks
 
-(filled in below after the selected-test run)
+- **Selected tests.** `mac-pytest.sh --select -- --base d9cff5345 --run` ran on ve-mac-1 at aa686efc, with a clean tree,
+  in 1,575 s. The summary: exit 0, 0 failed or error ids, no known Mac-only failures. No test in `main-known-red.txt`
+  is touched.
+- **Stub.** 0 errors and 11 `sorry` warnings, with every guard passing (about 5 s). The seeded bugs S1 to S8 were
+  checked on it.
+- **Static.** `trust_map.py --check`: +0, PASS. `repo_map.py --check`: PASS, 38 modes.
+- **DRI.** The rulings for B1, C2 and C3 were asked with `msg.sh dri me-2n`
+  (`inbox/dri/20261027T232359Z-me-2n-2033442.md`).
+- **Not run.** The full gate (the chain runs it), and no product build, because no product file changed.
 
 ## Self-review against BUILDER-CHECKLIST
 
