@@ -15784,6 +15784,12 @@ theorem VE.NormDefaults.Wire.kept_sound
               ρ φ
   -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.keptV@VE.NormDefaults.Explain VE.NormDefaults.kleene@VE.NormDefaults.Evidence VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.mk@VE.Semantics VE.Structure@VE.Semantics
   -- expr 2161152331
+theorem VE.NormDefaults.Wire.layeredKindCase_other
+  ∀ (L : VE.NormDefaults.Wire.LayeredU) (id kind : String) (j : Lean.Json),
+    ¬kind ∈ VE.NormDefaults.Wire.defaultsKinds →
+      VE.NormDefaults.Wire.layeredKindCase L id kind j = VE.NormDefaults.Wire.kindCase L id kind j
+  -- uses VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.defaultsKinds@VE.Defaults.Route VE.NormDefaults.Wire.kindCase@VE.NormDefaults.Layered VE.NormDefaults.Wire.layeredKindCase@VE.Defaults.Route
+  -- expr 3835467415
 theorem VE.NormDefaults.Wire.layered_cert_sound
   ∀ (L : VE.NormDefaults.Wire.LayeredU) (ss : List String) (φ : VE.Formula) (c : VE.Tableau.Certificate),
     VE.Tableau.checkCertificate (VE.Norms.envAt (VE.NormDefaults.fill L.U) 0) L.background (VE.Norms.bindAll ss φ.not) c =
