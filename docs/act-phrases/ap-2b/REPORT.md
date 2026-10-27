@@ -71,18 +71,19 @@ All bugs are in Lean (no Python or Rust product code changed). One per claimed b
 |---|---|---|
 | `premodifier-middle-item` (globalRules) | plan's bug: A8/G8 gets 3 derivations | 44 (G8), 45, 164 |
 | `marker-without-words` (globalRules) | W2: `MK ""` has an empty right side (also breaks `grammar_wf`'s proof) | 97, 105, 174 |
-| `no-never-rules` (closed) | 5.2's last paragraph | 97, 105, 195 |
-| `adverb-as-filler` (fillExcl) | 1.4's filler words | 164, 182, 191 |
+| `no-never-rules` (closed) | 5.2's last paragraph | 97, 105, 212 |
+| `adverb-as-filler` (fillExcl) | 1.4's filler words | 164, 182, 191, 202, 205 |
+| `to-as-filler`, `nor-as-filler` (fillExcl) | 1.4: *to* and *nor* are not filler words (review F1) | 202, 205, 208 |
 | `start-not-S` (build) | the start symbol | 36-77, 109, 164-182 |
 | `rank-coord-0` (NT.rank) | W3 (also breaks the proofs) | 36, 44-77, 97, 105, 164, 174 |
-| `grammar-unclosed` (grammar), `nt-none` (RSym.nt?) | the closed schema | 97, 105 (and 195) |
+| `grammar-unclosed` (grammar), `nt-none` (RSym.nt?) | the closed schema | 97, 105 (and 212) |
 | `kw-as-fill` (kwSyms), `many1-once` (many1), `tail-no-comma-join` (tail), `items-shared-drop-last` (items), `frame-object-list-split` (frameRules), `schema-first-frame-only` (schema) | each definition's rules | spec rows, 164, 174 (each in mutants.json) |
 | `Core-drop-rnr`, `FNT-drop-REt`, `NT-drop-E1S`, `RSym-drop-t`, `RuleS-drop-rhs` | data types: a constructor or field dropped | refused by Lean in `Grammar.lean` itself |
 
-`tools/trust_mutants.py` ran on the Mac runner (`mac-pytest.sh --trustmut`, `--max-mutants 1400`, the full run on
-`dceb7400f`, then rescored after check-only and allow-only edits). It reports 986 killed, 0 survivor, 0 unknown, 52
-invalid, 96 allowed and 0 not run, over all ten selected definitions
-([trust-mutants.json](trust-mutants.json)). The first full run had 58 survivors, in two classes:
+`tools/trust_mutants.py` ran on the Mac runner (`mac-pytest.sh --trustmut --jobs 6`, `--max-mutants 1400`, on
+`496afe4bb` after fix round 1, with its new `list-drop-middle` operator: section 10). It reports 1039 killed, 0
+survivor, 0 unknown, 52 invalid, 96 allowed and 0 not run, over all ten selected definitions
+([trust-mutants.json](trust-mutants.json)). Before fix round 1 it reported 986 killed of 1134. The first full run had 58 survivors, in two classes:
 - lists of one element in the corpus vocabulary, so a cut to the first or the last element changed nothing;
 - `closed`'s never rules, which derive nothing, so only the rule list itself shows them.
 
@@ -164,9 +165,9 @@ refuses with a message the tool does not class as a refusal. 16 are equivalent, 
    - no report test and no authority switch;
    - the overlap check in section 5.
 3. PASS:
-   - [mutants.json](mutants.json): 19 seeded bugs, 14 killed by a `#guard` with the proofs cut, and 5 data-type
+   - [mutants.json](mutants.json): 21 seeded bugs, 16 killed by a `#guard` with the proofs cut, and 5 data-type
      mutants refused by Lean (`seed_bugs.py`).
-   - [trust-mutants.json](trust-mutants.json): exit 0, with 986 killed and 0 survivor. Each allowance has its reason
+   - [trust-mutants.json](trust-mutants.json): exit 0, with 1039 killed and 0 survivor. Each allowance has its reason
      (section 4).
 4. N.A.: no Python or Rust path reads the grammar, and no existing input changes behaviour. Valid inputs still pass:
    every vocabulary of 11.2 and 11.2b is `framesOk`, and its grammar is well formed (`RuleExamples.lean` 97).
@@ -205,3 +206,47 @@ classes, regenerated inventories; `8723bdd0e` lists of two and never rules; `dce
 marker-once fixtures; `51b7a0b28` declarations; `5d2b0d99d` seeded bugs, trust_mutants exit 0; `4d63cfd38` rescore;
 `8f504ebfe` trust allowance (R16); `3c7a0303f` DELTA; `560d8875d` compact allow file; `5d536b4e1` rescore;
 `3c920c237` fixture lines wrapped; `9b819b962` seeded bugs re-recorded; `6390217a6` trust_mutants re-run.
+
+## 10. Fix round 1 (review ap-2b-review.final.md)
+
+Only F1 is rated A or B; F2 to F4 are C and are left to ap-2c and the ties pass, as the review says.
+
+**F1 (B): no fixture refused *to* or *nor* as a filler word.** The class is a word list whose middle words no fixture
+reads. `trust_mutants` cut a literal list only at its ends (first, last, empty), so `fillExcl`'s `"nor"` and `"to"`
+were never dropped, and nothing caught the gap. Two fixes:
+- **Fixtures (`RuleExamples.lean` 193-209).** `reserved` writes out, for each frame of `K2`, the words before a filler
+  and the words its fillers exclude. Each word of `fillWords` starts the filler `<word> Paris`: 0 derivations when the
+  frame excludes it, 1 when not, including the later words of a marker or head (`by`, `back`) (202). A second guard
+  ties the table to `fillExcl`, frame by frame, both ways, so a word added to the exclusions needs its fixture (205).
+  The review's guard is the row after an object (208): the join words read as a list of objects, *to* and *be* as
+  nothing.
+- **The tool (`tools/trust_mutants.py`, operator `list-drop-middle`).** It drops each element of a literal list
+  between the first and the last, with its comma. On this branch it adds 53 mutants, and all 53 are killed: the
+  rule tables' rows by the count and every-rule-used guards, `"nor"` (M767) and `"to"` (M788) by 202. Without the new
+  fixtures, those two would survive. Test: `tests/test_trust_mutants.py::test_the_generator_drops_each_middle_element_of_a_literal_list`.
+
+PROBE F1 failed before the fix (`surviving filler mutants: ['"nor", "be"]', '"to", "be"]']`) and passes after it
+(`[]`). It is not a pytest test: it builds a Lean copy per mutant. Its regression tests are the seeded bugs
+`to-as-filler` and `nor-as-filler` in [mutants.json](mutants.json) (each KILLED at 202, 205 and 208) and the
+trust_mutants evidence above.
+
+Seeded bugs, one per changed language:
+- Lean: `to-as-filler` and `nor-as-filler` (`seed_bugs.py`, `lean/VE/Acts/Grammar.lean`) fail `RuleExamples.lean`
+  202, 205 and 208.
+- Python: in `tools/trust_mutants.py`, `zip(commas[1:-1], ...)` changed to `zip(commas[1:1], ...)` (no middle drops)
+  fails `test_the_generator_drops_each_middle_element_of_a_literal_list`. Restored.
+
+The new fixture definitions `fillWords` and `reserved` are classed `T` in `tools/trust-classes.json`, so trusted growth
+is unchanged at +140 (`trust_map.py --check` PASS).
+
+The trust_mutants evidence came from three runs on identical inputs: `--max-mutants` 500, then 850 and 1400, each with
+`--rescore` of the previous run. A single full run did not fit the runner's time limit at the Mac's load. The last
+run reused the earlier verdicts (`rescore.mode` "identical": 779 reused) and ran the rest.
+
+Checks: `lake build` and `python3 lean/audit.py` pass, and `regen_generated.py --check` passes (33 entries).
+`select_tests.py --base 0e7a813e8` passes: 85 units, 0 failed, on `496afe4bb`. No test in `main-known-red.txt` was
+hit. The DELTA row's Ruling cell now cites R16 as a standing ruling and no longer says SIGNED, since no DRI decision
+file signs it.
+
+Commits: `3b96283a8` fixtures, operator, seeded bugs; `78ba15359` declarations; `e72f93545` trust classes;
+`496afe4bb` seeded bugs re-recorded; `8dbad393e` trust_mutants evidence.
