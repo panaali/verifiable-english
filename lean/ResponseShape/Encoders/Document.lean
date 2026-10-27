@@ -56,11 +56,17 @@ theorem coverage_fits (j front : Json) (units : List VE.Service.Document.SourceU
   unfold VE.Service.Document.coverageJson
   split <;> fits using cells_fits
 
+theorem usage_fits (j : Json) (m : List (String × List String) × List String) :
+    Fits j (skel% "document.json#/$defs/judgments") (VE.Service.Document.usageJson m) := by
+  unfold VE.Service.Document.usageJson
+  fits
+
 theorem document_fits (j : Json) : OkFits j Skeletons.document (VE.Service.Document.checkCore j) := by
   unfold VE.Service.Document.checkCore VE.Service.Document.encode
   okfits
-  all_goals (try simp only [VE.Route.Wire.ok])
-  all_goals (try fits using coverage_fits)
+  all_goals split
+  all_goals (try simp only [VE.Route.Wire.ok, List.cons_append, List.nil_append, List.append_nil])
+  all_goals (try fits using coverage_fits, usage_fits)
   all_goals
     apply Fits.arrOf
     intro x hx
@@ -114,7 +120,8 @@ theorem fold_fits (j : Json) (D : VE.Scope.SDoc) (id : String) (c : VE.Service.D
       (encode id c).getObjValD k = v := by
     intro k v hk
     simp only [List.mem_cons, Prod.mk.injEq, List.not_mem_nil, or_false] at hk
-    rcases hk with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;> rfl
+    rcases hk with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
+      (unfold encode; split <;> rfl)
   unfold VE.Scope.foldGovernors
   simp only [e "id" (.str id) (by simp), e "status" (.str "ok") (by simp),
     e "document_id" (.str c.documentId) (by simp), e "source_id" (.str c.sourceId) (by simp),

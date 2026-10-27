@@ -623,20 +623,6 @@
    "commit": "85b20fcba4b1b0473de9e41888059e7e1be22b3a"
   },
   {
-   "class": "S",
-   "lines": 76,
-   "reason": "me-1a Numbers core, 103 trusted lines (S +76, V +27, K +0) measured by tools/trust_map.py --check: under R16 (new Lean-owned behaviour, 88): VE/Numbers/Round.lean +54 (S 50, V 4), VE/Numbers/PhrasesMain.lean +14 (V 14), VE/Numbers/Decimal.lean +9 (S 9), VE/Numbers/Phrases.lean +11 (S 8 Rel.Holds, Comparison.Holds; V 3 equalsPhrase, withinPhrase); under R6 (15): VE/Numbers/Phrases.lean Rel, Comparison and orderPhrases (S 9, V 6), which replace ve/english.py _COMPARISONS, deleted in the same change",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-1a, 2026-10-17; the Phrases.lean table lines SIGNED by standing ruling R6 (DRI-RULINGS.md)",
-   "commit": "b5248038ee26b9ad24612b87fb7838072b6f32e4"
-  },
-  {
-   "class": "V",
-   "lines": 27,
-   "reason": "me-1a Numbers core, 103 trusted lines (S +76, V +27, K +0) measured by tools/trust_map.py --check: under R16 (new Lean-owned behaviour, 88): VE/Numbers/Round.lean +54 (S 50, V 4), VE/Numbers/PhrasesMain.lean +14 (V 14), VE/Numbers/Decimal.lean +9 (S 9), VE/Numbers/Phrases.lean +11 (S 8 Rel.Holds, Comparison.Holds; V 3 equalsPhrase, withinPhrase); under R6 (15): VE/Numbers/Phrases.lean Rel, Comparison and orderPhrases (S 9, V 6), which replace ve/english.py _COMPARISONS, deleted in the same change",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-1a, 2026-10-17; the Phrases.lean table lines SIGNED by standing ruling R6 (DRI-RULINGS.md)",
-   "commit": "b5248038ee26b9ad24612b87fb7838072b6f32e4"
-  },
-  {
    "class": "V",
    "lines": 142,
    "reason": "lf-16f (lean-first batch 16f): new Lean-owned document-mode behaviour composing existing routes: plain norms@0 content on the norms route, a soft-norms@0 document on the soft route (its E'' environment, soft source, rule source and canonical content), the environment mode's fault where no route is composed, and located distinguishing-model and strict-fence diagnostics. Untied V by file against 85b20fcba: VE/Service/Document.lean +139 (Env.soft, Env.regulates, usesNorms, softSourceNorms, SoftLayer, extendedEnv, softContentOf D[V]; softSource, softLayer, softRules G[V]; and the grown check, contentOf, sourceUnit, unitsOf, decodedEnvironment, environmentOf, admitGraph, strayNull, runCaseReported), ResponseShape/Schemas/Document.lean +3 (row). K +0, S +0. Itemised in docs/lean-first/b16f/DELTA.md row 6; the ties pass is a FOLLOW-UPS.md row.",
@@ -649,6 +635,34 @@
    "reason": "lf-16f review fixes: the senses route's composition and the F3 speedups, VE/Service/Document.lean +126, VE/Discourse/Loader.lean +5 (ties pass by 2026-10-24)",
    "signature": "SIGNED by the DRI 2026-10-17 (dri-decisions-20261017b.md #1)",
    "commit": "4e2c73dec5d0c60db87122a45242f69633c4ba19"
+  },
+  {
+   "class": "V",
+   "lines": 34,
+   "reason": "lf-18 (lean-first batch 18): the metered evaluator as a service mode, new Lean-owned behaviour replacing the deleted Python evaluation authority: VE/Route/MeteredTrace.lean +30 (Trace, Row, Trace.rows, Trace.rowsOf, Row.json, Trace.json), ResponseShape/Skeletons.lean +3 (metered), VE/Service/Protocol.lean +2 (the metered mode), ResponseShape/Schemas.lean +1; S -3 (VE/Limits.lean replaces three S copies), K +0; tested by tests/test_metered_lean.py and the relay gate's service:metered mutants; ties pass in manage-agents FOLLOW-UPS.md",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md, 2026-10-17)",
+   "commit": "ffb3155a5aedd0d8ebe36e18e67956ec840ab76b"
+  },
+  {
+   "class": "V",
+   "lines": 86,
+   "reason": "lf-18 F7 (DRI note lf-18-dri-note-20261019): the decoded environment kept with each handle, and the request and case texts cut from their bytes, new Lean-owned behaviour: VE/Service/Protocol.lean +62 (Entry, Entry.of, Handles.entry?, caseResultWith, caseBounds, restrictedCases, memberCuts; objectMembersByChars, sameMembers, renderCases and sameCases are class T), VE/Route/MeteredRun.lean +24 (Prepared, prepare, runWith, reportedWith); with T1 the item is V +120, S -3, K +0 (+117); tested by tests/test_metered_handles.py, the objectMembers and restrictedCases #guards and the caseResult_cached theorem; ties pass in manage-agents FOLLOW-UPS.md",
+   "signature": "standing ruling R16 (DRI-RULINGS.md, 2026-10-17)",
+   "commit": "ffb3155a5aedd0d8ebe36e18e67956ec840ab76b"
+  },
+  {
+   "class": "S",
+   "lines": 76,
+   "reason": "me-1a Numbers core, 103 trusted lines (S +76, V +27, K +0) measured by tools/trust_map.py --check: under R16 (new Lean-owned behaviour, 88): VE/Numbers/Round.lean +54 (S 50, V 4), VE/Numbers/PhrasesMain.lean +14 (V 14), VE/Numbers/Decimal.lean +9 (S 9), VE/Numbers/Phrases.lean +11 (S 8 Rel.Holds, Comparison.Holds; V 3 equalsPhrase, withinPhrase); under R6 (15): VE/Numbers/Phrases.lean Rel, Comparison and orderPhrases (S 9, V 6), which replace ve/english.py _COMPARISONS, deleted in the same change",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-1a, 2026-10-17; the Phrases.lean table lines SIGNED by standing ruling R6 (DRI-RULINGS.md)",
+   "commit": "b5248038ee26b9ad24612b87fb7838072b6f32e4"
+  },
+  {
+   "class": "V",
+   "lines": 27,
+   "reason": "me-1a Numbers core, 103 trusted lines (S +76, V +27, K +0) measured by tools/trust_map.py --check: under R16 (new Lean-owned behaviour, 88): VE/Numbers/Round.lean +54 (S 50, V 4), VE/Numbers/PhrasesMain.lean +14 (V 14), VE/Numbers/Decimal.lean +9 (S 9), VE/Numbers/Phrases.lean +11 (S 8 Rel.Holds, Comparison.Holds; V 3 equalsPhrase, withinPhrase); under R6 (15): VE/Numbers/Phrases.lean Rel, Comparison and orderPhrases (S 9, V 6), which replace ve/english.py _COMPARISONS, deleted in the same change",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-1a, 2026-10-17; the Phrases.lean table lines SIGNED by standing ruling R6 (DRI-RULINGS.md)",
+   "commit": "b5248038ee26b9ad24612b87fb7838072b6f32e4"
   },
   {
    "class": "V",
@@ -827,34 +841,6 @@
   },
   {
    "class": "S",
-   "lines": 88,
-   "reason": "jt-1b: VE/Judgments/Status.lean +96 (S +88: Content 6, Content.formulas 4, defEdges 4, reachedBodies 7, dependsOn 4, dependsOnC 4, ActiveSet 8, UnitView 11, UnitView.reads 6, UnitView.complete 8, UnitView.legacy 6, status 13, usageMap 7; G[V] +8: viewOf); K +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-1b, 2026-10-18",
-   "commit": "e010fb6aa62ca2f13901cb270aa162eb2c8730ab"
-  },
-  {
-   "class": "V",
-   "lines": 8,
-   "reason": "jt-1b: VE/Judgments/Status.lean +96 (S +88: Content 6, Content.formulas 4, defEdges 4, reachedBodies 7, dependsOn 4, dependsOnC 4, ActiveSet 8, UnitView 11, UnitView.reads 6, UnitView.complete 8, UnitView.legacy 6, status 13, usageMap 7; G[V] +8: viewOf); K +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-1b, 2026-10-18",
-   "commit": "e010fb6aa62ca2f13901cb270aa162eb2c8730ab"
-  },
-  {
-   "class": "V",
-   "lines": 34,
-   "reason": "lf-18 (lean-first batch 18): the metered evaluator as a service mode, new Lean-owned behaviour replacing the deleted Python evaluation authority: VE/Route/MeteredTrace.lean +30 (Trace, Row, Trace.rows, Trace.rowsOf, Row.json, Trace.json), ResponseShape/Skeletons.lean +3 (metered), VE/Service/Protocol.lean +2 (the metered mode), ResponseShape/Schemas.lean +1; S -3 (VE/Limits.lean replaces three S copies), K +0; tested by tests/test_metered_lean.py and the relay gate's service:metered mutants; ties pass in manage-agents FOLLOW-UPS.md",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md, 2026-10-17)",
-   "commit": "ffb3155a5aedd0d8ebe36e18e67956ec840ab76b"
-  },
-  {
-   "class": "V",
-   "lines": 86,
-   "reason": "lf-18 F7 (DRI note lf-18-dri-note-20261019): the decoded environment kept with each handle, and the request and case texts cut from their bytes, new Lean-owned behaviour: VE/Service/Protocol.lean +62 (Entry, Entry.of, Handles.entry?, caseResultWith, caseBounds, restrictedCases, memberCuts; objectMembersByChars, sameMembers, renderCases and sameCases are class T), VE/Route/MeteredRun.lean +24 (Prepared, prepare, runWith, reportedWith); with T1 the item is V +120, S -3, K +0 (+117); tested by tests/test_metered_handles.py, the objectMembers and restrictedCases #guards and the caseResult_cached theorem; ties pass in manage-agents FOLLOW-UPS.md",
-   "signature": "standing ruling R16 (DRI-RULINGS.md, 2026-10-17)",
-   "commit": "ffb3155a5aedd0d8ebe36e18e67956ec840ab76b"
-  },
-  {
-   "class": "S",
    "lines": 27,
    "reason": "et-3b: VE/Events/Completion.lean +23, VE/Events/Premises.lean +4 (S; K +0)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-3b, 2026-10-18",
@@ -904,20 +890,6 @@
   },
   {
    "class": "S",
-   "lines": 6,
-   "reason": "me-5 derivations over rational unknowns (facts, Farkas, search): VE/Calc/Linear.lean S +4 (QLin.eval 1, QFact.Holds 3), VE/Calc/Derive.lean S +2 (Answer.point 2)",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-5, 2026-10-18",
-   "commit": "b7613541cbd398208e31b4b48c01253d732aee34"
-  },
-  {
-   "class": "S",
-   "lines": 3,
-   "reason": "me-9: lean/VE/Calc/Poly.lean S +3 (VE.Calc.Poly.eval 3); K +0, untied V +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-9, 2026-10-18",
-   "commit": "2f633d7b595a1136ae647b678fec2bce87b4b77d"
-  },
-  {
-   "class": "S",
    "lines": 18,
    "reason": "ar-10a: profile-gate table; S +18 (VE/Compose/Dispatch.lean +19, -1 elsewhere), V +49 (VE/Compose/Dispatch.lean +43, VE/Compose/ProfilesMain.lean +7, VE/Service/Standalone.lean -1); K +0; trusted +67",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ar-10a, 2026-10-18",
@@ -929,6 +901,48 @@
    "reason": "ar-10a: profile-gate table; S +18 (VE/Compose/Dispatch.lean +19, -1 elsewhere), V +49 (VE/Compose/Dispatch.lean +43, VE/Compose/ProfilesMain.lean +7, VE/Service/Standalone.lean -1); K +0; trusted +67",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ar-10a, 2026-10-18",
    "commit": "630d2e136b5b8b2497aca50730080dae1559e216"
+  },
+  {
+   "class": "S",
+   "lines": 88,
+   "reason": "jt-1b: VE/Judgments/Status.lean +96 (S +88: Content 6, Content.formulas 4, defEdges 4, reachedBodies 7, dependsOn 4, dependsOnC 4, ActiveSet 8, UnitView 11, UnitView.reads 6, UnitView.complete 8, UnitView.legacy 6, status 13, usageMap 7; G[V] +8: viewOf); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-1b, 2026-10-18",
+   "commit": "e010fb6aa62ca2f13901cb270aa162eb2c8730ab"
+  },
+  {
+   "class": "V",
+   "lines": 8,
+   "reason": "jt-1b: VE/Judgments/Status.lean +96 (S +88: Content 6, Content.formulas 4, defEdges 4, reachedBodies 7, dependsOn 4, dependsOnC 4, ActiveSet 8, UnitView 11, UnitView.reads 6, UnitView.complete 8, UnitView.legacy 6, status 13, usageMap 7; G[V] +8: viewOf); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-1b, 2026-10-18",
+   "commit": "e010fb6aa62ca2f13901cb270aa162eb2c8730ab"
+  },
+  {
+   "class": "S",
+   "lines": 6,
+   "reason": "me-5 derivations over rational unknowns (facts, Farkas, search): VE/Calc/Linear.lean S +4 (QLin.eval 1, QFact.Holds 3), VE/Calc/Derive.lean S +2 (Answer.point 2)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-5, 2026-10-18",
+   "commit": "b7613541cbd398208e31b4b48c01253d732aee34"
+  },
+  {
+   "class": "V",
+   "lines": 113,
+   "reason": "jt-2: VE/Service/Document.lean +79, ResponseShape/Schemas/Document.lean +12, VE/Service/Standalone.lean +11, VE/Compose/Dispatch.lean +11 (V; K +0, S +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-2, 2026-10-18",
+   "commit": "20aa836fd5ac77b44aae384316e46d7d5a515f07"
+  },
+  {
+   "class": "S",
+   "lines": 64,
+   "reason": "sc-1ab: VE/Scope/Effects.lean S +64 (Effect, Commutes, narrowing, depthLimit, hasOwn, depthOk, ownSafe, substOwn, mergeParts), V +8 (G[V] members, lookups); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1ab, 2026-10-18",
+   "commit": "585794c9200cfca3e0ba48bec5e6e1138015b81c"
+  },
+  {
+   "class": "V",
+   "lines": 8,
+   "reason": "sc-1ab: VE/Scope/Effects.lean S +64 (Effect, Commutes, narrowing, depthLimit, hasOwn, depthOk, ownSafe, substOwn, mergeParts), V +8 (G[V] members, lookups); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1ab, 2026-10-18",
+   "commit": "585794c9200cfca3e0ba48bec5e6e1138015b81c"
   },
   {
    "class": "V",
@@ -959,18 +973,25 @@
    "commit": "b1f7ca7adc2b39a17238457736870fb15df03928"
   },
   {
-   "class": "S",
-   "lines": 64,
-   "reason": "sc-1ab: VE/Scope/Effects.lean S +64 (Effect, Commutes, narrowing, depthLimit, hasOwn, depthOk, ownSafe, substOwn, mergeParts), V +8 (G[V] members, lookups); K +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1ab, 2026-10-18",
-   "commit": "585794c9200cfca3e0ba48bec5e6e1138015b81c"
+   "class": "V",
+   "lines": 6,
+   "reason": "ar-10b: VE/Service/Registry.lean +61 (Mode, Mode.name, Mode.ofName?, modes moved from Protocol.lean; RouteSpec new; registry tied by registry_modes), VE/Service/Protocol.lean -55; net V +6, K +0, S +0; replaces the Python mode list MODES in ve/backends/service_schema.py, deleted here",
+   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md), ar-10b, 2026-10-20",
+   "commit": "bb205adaece86354a9139677029c045c32e2b379"
   },
   {
    "class": "V",
-   "lines": 8,
-   "reason": "sc-1ab: VE/Scope/Effects.lean S +64 (Effect, Commutes, narrowing, depthLimit, hasOwn, depthOk, ownSafe, substOwn, mergeParts), V +8 (G[V] members, lookups); K +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1ab, 2026-10-18",
-   "commit": "585794c9200cfca3e0ba48bec5e6e1138015b81c"
+   "lines": 4,
+   "reason": "jt-2 review F1: VE/Service/Document.lean +4 (Env.forModes, the environment the parse, model and English cases read; locatedModel's identity under a document layer) (V; K +0, S +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-2, 2026-10-20",
+   "commit": "75a9bcef9eac12ab4b0f3dc41621b9215c0834ca"
+  },
+  {
+   "class": "S",
+   "lines": 3,
+   "reason": "me-9: lean/VE/Calc/Poly.lean S +3 (VE.Calc.Poly.eval 3); K +0, untied V +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-9, 2026-10-18",
+   "commit": "2f633d7b595a1136ae647b678fec2bce87b4b77d"
   },
   {
    "class": "S",
@@ -992,13 +1013,6 @@
    "reason": "df-1ab: VE/Defaults/Premises.lean S +6 (DefaultCoherent), V +23 (collisionTuple, decidersOf, giveWayDeciders, untied); K +0; selU tied by cohPremiseU_selU; the checks C, the diagnostics G[R]",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-1ab, 2026-10-18",
    "commit": "bfec7f9ef3aa14755f686e2567fac74984c43e2f"
-  },
-  {
-   "class": "V",
-   "lines": 6,
-   "reason": "ar-10b: VE/Service/Registry.lean +61 (Mode, Mode.name, Mode.ofName?, modes moved from Protocol.lean; RouteSpec new; registry tied by registry_modes), VE/Service/Protocol.lean -55; net V +6, K +0, S +0; replaces the Python mode list MODES in ve/backends/service_schema.py, deleted here",
-   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md), ar-10b, 2026-10-20",
-   "commit": "bb205adaece86354a9139677029c045c32e2b379"
   },
   {
    "class": "V",
@@ -1209,6 +1223,27 @@
    "reason": "ap-3b: lean/VE/Acts/Linearize.lean +46 (S: joinWord, Part.toks, listToks, Filler.toks, Atom.normal, tokStr, tokText, Atom.withTo, Atom.text, partAct); Table.lean paraphrases G[R] (not trusted); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3b, 2026-10-18",
    "commit": "0e7a813e8841bbd7cf103229cf37386b8699896d"
+  },
+  {
+   "class": "V",
+   "lines": 3,
+   "reason": "jt-2 merge with SC-1b (scope@0): VE/Service/Document.lean check +3 (G[V]): the document mode refuses judgments@0 with scope@0 (CheckerUnavailable: judgments@0 with scope@0 needs its composed Lean route), because scope's fold (Scope.foldGovernors) writes no judgments member; new Lean-owned behaviour, K +0, S +0; with jt-2's 117 the item is V +120",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md, 2026-10-17)",
+   "commit": "ab010c3f02bca97c3d17775ba85382bf85e208eb"
+  },
+  {
+   "class": "V",
+   "lines": 26,
+   "reason": "q1-4: VE/Question/Run.lean +24 (the caller's decoding and dispatch, speechPrefixes: replace speech_english's deleted F1 branch and Must/Can refusal), VE/Question/Basic.lean +2 (speechAuxiliaries: the speech caller's F2 words, new Lean behaviour)",
+   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md) for VE/Question/Run.lean +24 and by standing ruling R16 (DRI-RULINGS.md) for VE/Question/Basic.lean +2, q1-4, 2026-10-26",
+   "commit": "c45d799f3cf525a7a39e916240a922c5a60047ee"
+  },
+  {
+   "class": "V",
+   "lines": 4,
+   "reason": "q1-4: VE/Question/Run.lean +4 (caseFields: the question case's fields with the optional caller, factored out of questionCase so #guards check it)",
+   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md), q1-4, 2026-10-26",
+   "commit": "c45d799f3cf525a7a39e916240a922c5a60047ee"
   }
  ]
 }
