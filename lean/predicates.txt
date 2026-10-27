@@ -528,6 +528,8 @@ module VE.Scope.Effects
 module VE.Scope.Examples
 module VE.Scope.Govern
 module VE.Scope.Theorems
+module VE.Scope.Wire
+module VE.Scope.WireExamples
 module VE.SearchBudget.Budget
 module VE.SearchBudget.Demand
 module VE.SearchBudget.Examples
@@ -560,6 +562,8 @@ module VE.Service.Protocol
 module VE.Service.Readings
 module VE.Service.ReadingsChoices
 module VE.Service.Registry
+module VE.Service.ScopeAdmission
+module VE.Service.ScopeExamples
 module VE.Service.Standalone
 module VE.Service.TypingDiagnostic
 module VE.SoftNorms.Admission
