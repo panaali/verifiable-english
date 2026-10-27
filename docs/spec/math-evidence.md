@@ -790,7 +790,7 @@ Premise ids and claim ids share one namespace (`DuplicateClaimId`).
 8. 512 premises (ME-5); 9. `binomial-tail` trials at most 1,000 (ME-7); 10. (draft 6) the work of computing the case
 at most `maxWork` = 2^33 = 8,589,934,592 units, the unit of 12.2 (below).
 Limits 1 to 9 are checked before anything else is read; limit 10 is checked while the case is computed, after the
-decoder admits it (3.1), in this order: the value table, then the lowering of each premise in order and of each
+decoder's name, order and id checks (3.1), in this order: the value table, then the lowering of each premise in order and of each
 derivation's conclusion in claim order (the decoder's `NonlinearPremise` check, which meets them in that order), then
 each claim's expressions and each derivation's search, claims in order. The first exceeded limit refuses the case with
 `ResourceLimit: <limit> exceeds <n>` (an UNKNOWN to the relay); limit 10's is
