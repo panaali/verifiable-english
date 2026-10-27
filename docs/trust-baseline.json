@@ -1202,6 +1202,13 @@
    "reason": "qt-a3b: lean/VE/Cardinality/Run.lean +46 (D[V] CardCertificate 6, decodeCertificate 11; G[V] runCase 23, runCaseReported 6; checkCertificate tied to checkCertificate_sound), lean/VE/Time/Wire.lean -2 (decodeQuantity's identities moved to statementIds, D[I])",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3b, 2026-10-18",
    "commit": "a274d948899386de3fb36ab56b7584ab07b707b7"
+  },
+  {
+   "class": "V",
+   "lines": 15,
+   "reason": "qt-a3b fix1 (review F1): lean/VE/Cardinality/Run.lean +15 (regionsJson and erasedJson moved from D[I] to D[V], as W6a's encQ/encCore; item total V +59: Run.lean +61, Time/Wire.lean -2)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3b, 2026-10-18",
+   "commit": "a274d948899386de3fb36ab56b7584ab07b707b7"
   }
  ]
 }

@@ -15068,13 +15068,13 @@
             "VE.Cardinality.checkCertificate_sound"
           ]
         },
-        "VE.Cardinality.Run.decodeCertificate"
+        "VE.Cardinality.Run.decodeCertificate",
+        "VE.Cardinality.Run.regionsJson",
+        "VE.Cardinality.Run.erasedJson"
       ],
       "D[I]": [
         "VE.Cardinality.Run.erasedIds",
-        "VE.Cardinality.Run.statementJson",
-        "VE.Cardinality.Run.regionsJson",
-        "VE.Cardinality.Run.erasedJson"
+        "VE.Cardinality.Run.statementJson"
       ],
       "G[R]": [
         "VE.Cardinality.Run.problemChecks",
