@@ -1,0 +1,59 @@
+{
+ "records": 366,
+ "identical": 361,
+ "changed": {
+  "wordings": 4,
+  "display": 1
+ },
+ "records_changed": [
+  {
+   "key": "65:norm-defaults:norm-defaults-elaborate",
+   "why": "wordings",
+   "base": "(the head's row without `wordings`)",
+   "head": {
+    "wordings": {}
+   }
+  },
+  {
+   "key": "66:norm-defaults:norm-defaults-elaborate",
+   "why": "wordings",
+   "base": "(the head's row without `wordings`)",
+   "head": {
+    "wordings": {}
+   }
+  },
+  {
+   "key": "67:norm-defaults:norm-defaults-elaborate",
+   "why": "wordings",
+   "base": "(the head's row without `wordings`)",
+   "head": {
+    "wordings": {}
+   }
+  },
+  {
+   "key": "probe:nd-elaborate/A1-A3",
+   "why": "wordings",
+   "base": "(the head's row without `wordings`)",
+   "head": {
+    "wordings": {
+     "heard": "{0} is entitled in full equality to a fair and public hearing by an independent and impartial tribunal in {1}",
+     "paid": "{0} has the right to equal pay for equal work without any discrimination"
+    }
+   }
+  },
+  {
+   "key": "probe:nd-display/A1-A3",
+   "why": "display",
+   "base": {
+    "heard": "{0} has the recorded relation \"heard\" to {1}",
+    "paid": "{0} is paid",
+    "protected": "{0} may to the protection of the moral and material interests resulting from {1}"
+   },
+   "head": {
+    "heard": "{0} is entitled in full equality to a fair and public hearing by an independent and impartial tribunal in {1}",
+    "paid": "{0} has the right to equal pay for equal work without any discrimination",
+    "protected": "{0} may to the protection of the moral and material interests resulting from {1}"
+   }
+  }
+ ]
+}

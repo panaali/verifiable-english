@@ -785,7 +785,8 @@ def baseRows : List ProfileRow := [
   ⟨"data@0", [], [], "layer"⟩,
   ⟨"definitions@0", [], [], "layer"⟩,
   ⟨"documents@1", [], [], "layer"⟩,
-  ⟨"time@0", [], [], "layer"⟩]
+  ⟨"time@0", [], [], "layer"⟩,
+  ⟨"judgments@0", ["documents@1"], [], "layer"⟩]
 
 /-- The routes outside the chain, which no wrapper sits on, as `outside` names them. -/
 def outsideProfiles : List String := ["risk@0", "alternatives@0", "speech-acts@0", "reports@0"]
@@ -802,12 +803,23 @@ def wrapperRows : List ProfileRow := [
 
 def profileTable : List ProfileRow := baseRows ++ wrapperRows
 
+/-- The profiles whose records are the document's (`judgments@0`, JT-2): no environment decoder reads them. Each
+decoder reads the environment without them; the gate and the identities read the list as written. -/
+def documentLayers : List String := ["judgments@0"]
+
+def withoutDocumentLayers (environment : Lean.Json) : Lean.Json :=
+  match environment.getObjVal? "profiles" with
+  | .ok (.arr ps) => environment.setObjVal! "profiles" (.arr (ps.filter fun p => !documentLayers.any (.str · == p)))
+  | _ => environment
+
 /-- The one wrapper an environment lists: the environment mode gates a list with it by the whole table, and any
 other list by the base rows. -/
 def environmentWrapper : String := "readings@1"
 
-/-- The profiles an environment may list, in table order (`ve/profiles.py` `BY_NAME`). -/
-def environmentProfiles : List String := (baseRows.map (·.profile)).eraseDups ++ [environmentWrapper]
+/-- The profiles whose environments Python models, in table order (`ve/profiles.py` `BY_NAME`): every base row's but
+the document layers, which only the environment and document modes read (JT-2), then the wrapper. -/
+def environmentProfiles : List String :=
+  ((baseRows.map (·.profile)).eraseDups.filter (!documentLayers.contains ·)) ++ [environmentWrapper]
 
 /-- The route heads in precedence order: the first one with a listed row is the route. -/
 def heads : List (String × Route) :=
@@ -888,6 +900,45 @@ theorem gateOf_iff (t ps r) : gateOf t ps = .ok r ↔ TableAdmits t ps ∧ r = r
         exact ⟨fun e => ⟨⟨hs, hk.mp hp, (checks_none t ps).mp hc⟩, e.symm⟩, fun h => h.2.symm⟩
   · rw [if_pos (by simpa using hs)]
     simp [hs]
+
+/-! ### `gate_judgments`: what JT-2's row newly admits (SYNTHESIS 2.2) -/
+
+theorem rowChecks_erase (ps : List String) (hn : ps.Nodup) (hd : "documents@1" ∈ ps) :
+    ∀ r ∈ profileTable, rowChecks (ps.erase "judgments@0") r = rowChecks ps r := by
+  intro r hr
+  simp only [profileTable, baseRows, wrapperRows, List.cons_append, List.nil_append, List.mem_cons,
+    List.not_mem_nil, or_false] at hr
+  rcases hr with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
+    rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
+    simp [rowChecks, refusing, speechOthers, outsideProfiles, actsRefuses, toString, String.reduceAppend,
+      hn.mem_erase_iff, hd]
+
+theorem find_erase (ps : List String) (f : String → Bool) (h : f "judgments@0" = false) :
+    (ps.erase "judgments@0").find? f = ps.find? f := by
+  induction ps with
+  | nil => rfl
+  | cons a l ih =>
+    by_cases ha : a = "judgments@0"
+    · subst ha; simp [h]
+    · simp only [List.erase_cons, beq_iff_eq, ha, if_false, List.find?_cons, ih]
+
+/-- Every list with `documents@1` that `judgments@0`'s row admits is admitted, with its route, exactly as the same
+list without `judgments@0`, and refused with the same text otherwise. -/
+theorem gate_judgments (ps : List String) (hs : ps.Pairwise (· < ·)) (hd : "documents@1" ∈ ps) :
+    gateOf profileTable ps = gateOf profileTable (ps.erase "judgments@0") := by
+  have hn : ps.Nodup := hs.imp fun h e => by subst e; exact String.lt_asymm h h
+  have hs' : (ps.erase "judgments@0").Pairwise (· < ·) := hs.sublist (List.erase_sublist ..)
+  have hk := find_erase ps (fun p => !profileTable.any (·.profile == p)) (by decide)
+  have hc : profileTable.flatMap (rowChecks (ps.erase "judgments@0")) = profileTable.flatMap (rowChecks ps) := by
+    simp only [List.flatMap]
+    rw [List.map_congr_left (rowChecks_erase ps hn hd)]
+  have hr : routeOf profileTable (ps.erase "judgments@0") = routeOf profileTable ps := by
+    simp only [routeOf, heads, profileTable, baseRows, wrapperRows, List.find?_cons, List.find?_nil,
+      List.any_cons, List.any_nil, List.cons_append, List.nil_append, String.reduceBEq, Bool.false_and,
+      Bool.true_and, Bool.or_false, Bool.false_or, Bool.or_self]
+    simp [hn.mem_erase_iff]
+  unfold gateOf
+  rw [if_neg (by simpa using hs), if_neg (by simpa using hs'), hk, hc, hr]
 
 /-! ### `gate_legacy`: on the legacy profiles the table is `dispatch` -/
 
@@ -998,7 +1049,12 @@ theorem todayGate_base (ps : List String) (hs : ps.Pairwise (· < ·)) (h : ∀ 
       rw [base_contains]
       rcases hp with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
         simp [wrapperProfiles]
-  have hj : ps.contains "acts@0" = false := by
+  have hj : ps.contains "judgments@0" = false := by
+    cases hc : ps.contains "judgments@0"
+    · rfl
+    · have := h _ (List.contains_iff_mem.mp hc)
+      simp [legacyProfiles, registered, wrapperProfiles] at this
+  have ha : ps.contains "acts@0" = false := by
     cases hc : ps.contains "acts@0"
     · rfl
     · have := h _ (List.contains_iff_mem.mp hc)
@@ -1013,7 +1069,7 @@ theorem todayGate_base (ps : List String) (hs : ps.Pairwise (· < ·)) (h : ∀ 
     List.map_nil, List.cons_append, List.nil_append, List.append_nil, find_cons_ite, List.contains_cons,
     List.contains_nil, needText, List.find?_nil, String.reduceBEq, Bool.or_false, Bool.or_true,
     Bool.true_and, toString, String.reduceAppend, if_false, if_true, Bool.false_eq_true, faultOf_ite, faultOf_none,
-    actsRefuses, hj, Bool.false_and]
+    actsRefuses, hj, ha, Bool.false_and]
   simp only [ite_and3]
 
 theorem todayHead_base (ps : List String) : todayHead (base ps) = todayHead ps := by

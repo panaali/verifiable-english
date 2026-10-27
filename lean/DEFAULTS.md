@@ -1,13 +1,16 @@
 # Answers that hold unless an exception applies, in Lean (`lean/VE/Defaults/*`)
 
-Specification: [docs/spec/defeasible.md](../docs/spec/defeasible.md) sections 7.1 and 7.2 (draft 3) and
-[docs/spec/defeasible-PLAN.md](../docs/spec/defeasible-PLAN.md) batch DF-1a. This file lists the files and every
+Specification: [docs/spec/defeasible.md](../docs/spec/defeasible.md) sections 7.1 to 7.3 (draft 3) and
+[docs/spec/defeasible-PLAN.md](../docs/spec/defeasible-PLAN.md) batches DF-1a and DF-2. This file lists the files and every
 definition and theorem built so far, in plain words. `lean/audit.py` audits every theorem: no `sorry`, only
 `propext`, `Classical.choice` and `Quot.sound`. The service mode `norm-defaults` answers the four kinds on the soft and
 rights branches, through one row of the layered kind table (`Route.lean`); no answer of another kind changes.
 
-A default answer is conditional on the listed assumptions. Nothing here says that the situations it ranges over are
-those with the fewest exceptions; that is DF-2's theorem, not proved.
+A default answer is conditional on the listed assumptions. When the gate holds and the document passes
+`replacementSafe` (the other packs and the base background read no decision and no unsaid table of a pair member), a
+default answer also means the minimal-exception reading: the conclusion holds in every default base, the situations
+whose exceptions, switches and rankings are as few as the document and the facts allow, whatever the text leaves
+unsaid (`default_entails_minimal`, DF-2). Without the gate or that check, nothing here says so.
 
 ## Files
 
@@ -19,6 +22,8 @@ those with the fewest exceptions; that is DF-2's theorem, not proved.
 | `WireExamples.lean` | the wire answers of DF-θ, DF-α to DF-ω, DF-γb, DF-γ2 and DF-γ3, through `viewOf` and `defaultsCase` on JSON requests |
 | `Route.lean` | the layered kind table with the four kinds as one row (`defaultsRows`, needing the soft pack), and the branches' runner `runLayered` |
 | `RouteExamples.lean` | the four kinds through the service mode, the pack, the routing's boundaries and the other kinds' answers unchanged |
+| `Meaning.lean` | what a default answer means: default bases (`withOpen`, `SwitchesOff`, `DefaultBase`), the least decisions (`leastDecisions`), `softX`, the check `replacementSafe` and the fallback's hypothesis `ReplacementHolds` |
+| `MeaningExamples.lean` | `softX`, `SwitchesOff`, the least decisions and `replacementSafe` (spec 8.2's row) as `#guard`s on decoded documents and one-element situations |
 
 ## Definitions
 
@@ -74,6 +79,15 @@ those with the fewest exceptions; that is DF-2's theorem, not proved.
   the first stated condition that holds at its tuple.
 - **`defaultsRows`** (`Route.lean`): the four kinds, each needing the soft pack, answered by `defaultsCase` on `viewOf`;
   **`layeredRows`** is today's four rows and this one; **`runLayered`** decodes the source and dispatches over them.
+- **`withOpen U D B δ F`** (`Meaning.lean`): `B` with the decision tables `δ` and the unsaid tables `F`, everything
+  else as in `B`. **`SwitchesOff D B`**: no party has turned a rule off. **`DefaultBase U D X B`**: `B` is admissible
+  with `X`, no switch is on, and every admissible competitor `withOpen U D B δ F` whose decisions lie below `B`'s has
+  exactly `B`'s decisions, whatever unsaid tables `F` it takes (circumscription with the unsaid tables varied, D15).
+- **`leastDecisions D B`**: a rule's exception exactly at the typed tuples where one of its stated sufficient
+  conditions holds in `B`; no switch, no ranking. **`softX U D R`**: soft's premises on the filled tree, then `R`.
+- **`replacementSafe U D R`**: no premise of `R` or of the base background names a decision or the unsaid table of a
+  pair member. **`ReplacementHolds U D R`**: on every base admissible with `softX`, the least decisions with some
+  unsaid tables are admissible with `defaultX`.
 
 ## Theorems
 
@@ -117,6 +131,17 @@ those with the fewest exceptions; that is DF-2's theorem, not proved.
   `collision` member's tuple and deciders are those of that pair.
 - `defaultsCase_other`: a kind that does not start with `defaults-` gets no answer here.
 - `layeredKindCase_other` (`Route.lean`): a kind outside the row is dispatched by today's rows, as before.
+- `defaultBase_of_dflt` (`Meaning.lean`): a base admissible with `defaultX` is a default base; no gate needed.
+- `replace_admissible`: under the gate and `replacementSafe`, the least decisions on a base admissible with `softX`,
+  with the pair members' unsaid tables repaired (`fill_extends`) and every other table kept, are admissible with
+  `defaultX`.
+- `default_entails_minimal`: under the gate and `replacementSafe`, `defaultX` entails a conclusion exactly when it
+  holds in every expansion of every default base where the question's facts hold. `default_entails_minimal_of` is the
+  same with `ReplacementHolds` as the hypothesis (the plan's fallback).
+- `defaults_model_default_base`: a `defaults-model` countermodel's situation is a default base.
+- Helpers: `cond_declared`, `cond_free` (an exception condition names only source predicates, so no decision and no
+  unsaid table), `decision_arity` (every decision predicate has arity 1 or 2), `excepted_inj`, `excepted_only`,
+  `decision_declared`, `decision_not_unsaid`, `mem_exc`, `softX_eq`, `withOpen_denote`, `sat_dflt`, `least_le`.
 
 ## Deviations
 

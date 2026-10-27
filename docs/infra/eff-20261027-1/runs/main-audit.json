@@ -1,0 +1,115 @@
+{
+ "tree": "/home/seyran/code/ve-eff-20261027-1-s-main",
+ "what": "lean/audit.py --check (no cache)",
+ "total_seconds": 284.6,
+ "load_before": [
+  52.341796875,
+  43.7158203125,
+  28.87841796875
+ ],
+ "load_after": [
+  50.70849609375,
+  51.7802734375,
+  36.76611328125
+ ],
+ "parts": 19,
+ "parts_peak_rss_kb_sum": 24561444,
+ "parts_peak_rss_kb_max": 1628432,
+ "runs": [
+  {
+   "label": "Part16",
+   "seconds": 65.82,
+   "peak_rss_kb": 644472
+  },
+  {
+   "label": "Part2",
+   "seconds": 78.85,
+   "peak_rss_kb": 1377792
+  },
+  {
+   "label": "Part4",
+   "seconds": 95.39,
+   "peak_rss_kb": 1416856
+  },
+  {
+   "label": "Part9",
+   "seconds": 101.51,
+   "peak_rss_kb": 1371736
+  },
+  {
+   "label": "Part6",
+   "seconds": 104.23,
+   "peak_rss_kb": 694424
+  },
+  {
+   "label": "Part10",
+   "seconds": 104.55,
+   "peak_rss_kb": 1365760
+  },
+  {
+   "label": "Part13",
+   "seconds": 107.34,
+   "peak_rss_kb": 752552
+  },
+  {
+   "label": "Part18",
+   "seconds": 114.78,
+   "peak_rss_kb": 1590932
+  },
+  {
+   "label": "Part15",
+   "seconds": 117.49,
+   "peak_rss_kb": 1524224
+  },
+  {
+   "label": "Part3",
+   "seconds": 117.91,
+   "peak_rss_kb": 1387016
+  },
+  {
+   "label": "Part7",
+   "seconds": 117.91,
+   "peak_rss_kb": 1408576
+  },
+  {
+   "label": "Part0",
+   "seconds": 121.34,
+   "peak_rss_kb": 1496708
+  },
+  {
+   "label": "Part5",
+   "seconds": 123.27,
+   "peak_rss_kb": 1383980
+  },
+  {
+   "label": "Part11",
+   "seconds": 126.11,
+   "peak_rss_kb": 1356628
+  },
+  {
+   "label": "Part1",
+   "seconds": 126.83,
+   "peak_rss_kb": 1517544
+  },
+  {
+   "label": "Part12",
+   "seconds": 143.11,
+   "peak_rss_kb": 724612
+  },
+  {
+   "label": "Part8",
+   "seconds": 143.6,
+   "peak_rss_kb": 1376196
+  },
+  {
+   "label": "Part14",
+   "seconds": 211.69,
+   "peak_rss_kb": 1543004
+  },
+  {
+   "label": "Part17",
+   "seconds": 274.53,
+   "peak_rss_kb": 1628432
+  }
+ ]
+}
