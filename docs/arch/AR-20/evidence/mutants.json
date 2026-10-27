@@ -1,0 +1,147 @@
+{
+ "mutants": [
+  {
+   "id": "M1",
+   "file": "lean/VE/Kit/Except.lean",
+   "claim": "part 1: VE.Order.ProfileGate.bind_ok (and VE.Readings.Wire.bind_ok, in a module that imports it) are aliases of the one owner VE.Kit.Except.bind_ok with the identical statement; seeded: the owner drops its second conjunct, and the alias no longer type-checks",
+   "source_sha256": "191eaa7c5f51a708ed94eca4c2d0b5f4180d8dc619318a9d1de35cbdc399c101",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Order.ProfileGate VE.Readings.Companions"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.9,
+   "output_tail": "ExtendedClosure.lean:97:15: This simp argument is unused:\n  ground\n\nHint: Omit it from the simp argument list.\n  simp only [g\u0335r\u0335o\u0335u\u0335n\u0335d\u0335,\u0335 \u0335bind, Option.bind] at hg\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u26a0 [82/153] Replayed VE.Core.Conservativity\nwarning: VE/Core/Conservativity.lean:26:64: This simp argument is unused:\n  path_iff\n\nHint: Omit it from the simp argument list.\n  simp [embedKind, Reachable, VE.Closure.Reachable,\u0335 \u0335p\u0335a\u0335t\u0335h\u0335_\u0335i\u0335f\u0335f\u0335]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [83/153] Built VE.Kit.Except (524ms)\n\u2716 [84/153] Building VE.Order.ProfileGate (1.8s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-ar20-mut/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-ar20-mut/lean/VE/Order/ProfileGate.lean -o /home/seyran/code/ve-ar20-mut/lean/.lake/build/lib/lean/VE/Order/ProfileGate.olean -i /home/seyran/code/ve-ar20-mut/lean/.lake/build/lib/lean/VE/Order/ProfileGate.ilean -c /home/seyran/code/ve-ar20-mut/lean/.lake/build/ir/VE/Order/ProfileGate.c --setup /home/seyran/code/ve-ar20-mut/lean/.lake/build/ir/VE/Order/ProfileGate.setup.json --json\nerror: VE/Order/ProfileGate.lean:41:2: Type mismatch\n  Kit.Except.bind_ok h\nhas type\n  \u2203 a, x = Except.ok a\nbut is expected to have type\n  \u2203 a, x = Except.ok a \u2227 f a = Except.ok b\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Order.ProfileGate\nerror: build failed\n"
+  },
+  {
+   "id": "M2",
+   "file": "lean/VE/Route/Admission.lean",
+   "claim": "part 2: the soft-norms and norm-defaults routes decode their document with Route.Admission.decodeDoc, the one owner of its checks; seeded: decodeDoc drops the duplicate unit id check, and both routes' tests fail through the rebuilt, temporarily pinned ve_service",
+   "source_sha256": "73e6f8fbe693647c8eca886acd910f8034063d0106e4782f39c33e337860c780",
+   "command": [
+    "bash",
+    "-c",
+    "set -u; lock=$(mktemp); cp lean/checkers.lock \"$lock\"; trap 'cp \"$lock\" lean/checkers.lock; rm -f \"$lock\"' EXIT; (cd lean && PATH=$HOME/.elan/bin:$PATH lake build ve_service >/dev/null 2>&1) || { echo 'the mutant does not build: not a kill'; exit 0; }; uv run python tools/regen_generated.py --write --only checker-pins >/dev/null 2>&1 || { echo 'pinning failed: not a kill'; exit 0; }; VE_NATIVE_PREBUILT=1 uv run pytest -q -p no:cacheprovider -rfE tests/test_soft_norms_lean.py::test_admission_refuses_each_document_check_of_w2s_decoder tests/test_norm_defaults_three_way.py::test_admission_document_checks_are_w2s_decoder_in_both; s=$?; [ $s -eq 1 ] && exit 1; exit 0"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 426.1,
+   "output_tail": " \"r\", \"version\": 1, \"readings\": [leaf[\"ast\"]]}\n        broken = {\n            \"duplicate unit id\": {**good, \"units\": [units[0], {**units[1], \"id\": \"q0\"}]},\n            \"unit spans must be sorted and non-overlapping\": {**good, \"units\": units[::-1]},\n            \"duplicate lemma\": {**good, \"lemmas\": [lemma, lemma]},\n            \"duplicate reading set version\": {**good, \"reading_sets\": [reading_set, reading_set]},\n            \"invalid name\": {**good, \"open_terms\": [\"not a name\"]},\n        }\n        rows = route.run_cases([{\"id\": \"good\", \"kind\": \"admission\", \"environment\": raw, \"document\": good}] +\n                               [{\"id\": str(i), \"kind\": \"admission\", \"environment\": raw, \"document\": d}\n                                for i, d in enumerate(broken.values())])\n        assert rows[0][\"status\"] == \"ok\", rows[0]\n        for (message, document), row in zip(broken.items(), rows[1:]):\n>           with pytest.raises(VEError) as error:\n                 ^^^^^^^^^^^^^^^^^^^^^^\nE           Failed: DID NOT RAISE VEError\n\ntests/test_norm_defaults_three_way.py:249: Failed\n=========================== short test summary info ============================\nFAILED tests/test_soft_norms_lean.py::test_admission_refuses_each_document_check_of_w2s_decoder\nFAILED tests/test_norm_defaults_three_way.py::test_admission_document_checks_are_w2s_decoder_in_both\n2 failed in 0.59s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-eij0qvze)\n"
+  },
+  {
+   "id": "M3",
+   "file": "lean/VE/Route/Admission.lean",
+   "claim": "part 2: as M2, for the span check of the one decoder; seeded: decodeDoc no longer checks that unit spans are sorted",
+   "source_sha256": "73e6f8fbe693647c8eca886acd910f8034063d0106e4782f39c33e337860c780",
+   "command": [
+    "bash",
+    "-c",
+    "set -u; lock=$(mktemp); cp lean/checkers.lock \"$lock\"; trap 'cp \"$lock\" lean/checkers.lock; rm -f \"$lock\"' EXIT; (cd lean && PATH=$HOME/.elan/bin:$PATH lake build ve_service >/dev/null 2>&1) || { echo 'the mutant does not build: not a kill'; exit 0; }; uv run python tools/regen_generated.py --write --only checker-pins >/dev/null 2>&1 || { echo 'pinning failed: not a kill'; exit 0; }; VE_NATIVE_PREBUILT=1 uv run pytest -q -p no:cacheprovider -rfE tests/test_soft_norms_lean.py::test_admission_refuses_each_document_check_of_w2s_decoder tests/test_norm_defaults_three_way.py::test_admission_document_checks_are_w2s_decoder_in_both; s=$?; [ $s -eq 1 ] && exit 1; exit 0"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 658.2,
+   "output_tail": " \"r\", \"version\": 1, \"readings\": [leaf[\"ast\"]]}\n        broken = {\n            \"duplicate unit id\": {**good, \"units\": [units[0], {**units[1], \"id\": \"q0\"}]},\n            \"unit spans must be sorted and non-overlapping\": {**good, \"units\": units[::-1]},\n            \"duplicate lemma\": {**good, \"lemmas\": [lemma, lemma]},\n            \"duplicate reading set version\": {**good, \"reading_sets\": [reading_set, reading_set]},\n            \"invalid name\": {**good, \"open_terms\": [\"not a name\"]},\n        }\n        rows = route.run_cases([{\"id\": \"good\", \"kind\": \"admission\", \"environment\": raw, \"document\": good}] +\n                               [{\"id\": str(i), \"kind\": \"admission\", \"environment\": raw, \"document\": d}\n                                for i, d in enumerate(broken.values())])\n        assert rows[0][\"status\"] == \"ok\", rows[0]\n        for (message, document), row in zip(broken.items(), rows[1:]):\n>           with pytest.raises(VEError) as error:\n                 ^^^^^^^^^^^^^^^^^^^^^^\nE           Failed: DID NOT RAISE VEError\n\ntests/test_norm_defaults_three_way.py:249: Failed\n=========================== short test summary info ============================\nFAILED tests/test_soft_norms_lean.py::test_admission_refuses_each_document_check_of_w2s_decoder\nFAILED tests/test_norm_defaults_three_way.py::test_admission_document_checks_are_w2s_decoder_in_both\n2 failed in 1.03s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-n5k7wwt7)\n"
+  },
+  {
+   "id": "M4",
+   "file": "lean/VE/Paths.lean",
+   "claim": "part 3: VE.Paths is the one owner of the Core and Closure path names; seeded: its reachEval tests reflexivity for plus instead of star, and VE.Paths.reachEval_iff (of which VE.Core.reachEval_iff and VE.Closure.reachEval_iff are corollaries) no longer holds",
+   "source_sha256": "be082586f50400ffcbb8dd69eee23fee94ef0d81edf770d1b0af9bb6bbb69fc0",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Core.Paths VE.Closure.Paths"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.8,
+   "output_tail": "\u2716 [6/8] Building VE.Paths (1.4s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-ar20-mut/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-ar20-mut/lean/VE/Paths.lean -o /home/seyran/code/ve-ar20-mut/lean/.lake/build/lib/lean/VE/Paths.olean -i /home/seyran/code/ve-ar20-mut/lean/.lake/build/lib/lean/VE/Paths.ilean -c /home/seyran/code/ve-ar20-mut/lean/.lake/build/ir/VE/Paths.c --setup /home/seyran/code/ve-ar20-mut/lean/.lake/build/ir/VE/Paths.setup.json --json\nerror: VE/Paths.lean:192:76: unsolved goals\ncase plus\n\u03b1 : Type u\ninst\u271d : DecidableEq \u03b1\nes : List (\u03b1 \u00d7 \u03b1)\na b : \u03b1\n\u22a2 a = b \u2192 Path (fun x y => (x, y) \u2208 es) a b\n\ncase star\n\u03b1 : Type u\ninst\u271d : DecidableEq \u03b1\nes : List (\u03b1 \u00d7 \u03b1)\na b : \u03b1\n\u22a2 a = b \u2192 Path (fun x y => (x, y) \u2208 es) a b\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Paths\nerror: build failed\n"
+  },
+  {
+   "id": "M5",
+   "file": "lean/VE/CertificateWire.lean",
+   "claim": "part 4 (L6): canonical and documentCanonical share canonicalWith; seeded: the certificate encoder accepts JSON null, and the guard of its refusal fails",
+   "source_sha256": "d81be730d087e7908329df473c8e34f8b1f26afd87b8b81a294e131b6afb9add",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.CertificateWire"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.3,
+   "output_tail": "\u2716 [36/36] Building VE.CertificateWire (2.8s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-ar20-mut/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-ar20-mut/lean/VE/CertificateWire.lean -o /home/seyran/code/ve-ar20-mut/lean/.lake/build/lib/lean/VE/CertificateWire.olean -i /home/seyran/code/ve-ar20-mut/lean/.lake/build/lib/lean/VE/CertificateWire.ilean -c /home/seyran/code/ve-ar20-mut/lean/.lake/build/ir/VE/CertificateWire.c --setup /home/seyran/code/ve-ar20-mut/lean/.lake/build/ir/VE/CertificateWire.setup.json --json\nerror: VE/CertificateWire.lean:316:0: Expression\n  refusal (canonical 257 (Json.mkObj [(\"a\", Json.arr #[Json.null])])) == \"null is not in certificate wire format\"\ndid not evaluate to `true`\nerror: VE/CertificateWire.lean:317:0: Expression\n  refusal (canonical 257 Json.null) == \"null is not in certificate wire format\"\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.CertificateWire\nerror: build failed\n"
+  },
+  {
+   "id": "M6",
+   "file": "lean/VE/CertificateWire.lean",
+   "claim": "part 4 (L6): the shared array case is the bytes of both encoders; seeded: canonicalWith separates array items with a space, and the byte guards of both encoders fail",
+   "source_sha256": "d81be730d087e7908329df473c8e34f8b1f26afd87b8b81a294e131b6afb9add",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.CertificateWire"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.1,
+   "output_tail": "\u2716 [36/36] Building VE.CertificateWire (2.7s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-ar20-mut/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-ar20-mut/lean/VE/CertificateWire.lean -o /home/seyran/code/ve-ar20-mut/lean/.lake/build/lib/lean/VE/CertificateWire.olean -i /home/seyran/code/ve-ar20-mut/lean/.lake/build/lib/lean/VE/CertificateWire.ilean -c /home/seyran/code/ve-ar20-mut/lean/.lake/build/ir/VE/CertificateWire.c --setup /home/seyran/code/ve-ar20-mut/lean/.lake/build/ir/VE/CertificateWire.setup.json --json\nerror: VE/CertificateWire.lean:311:0: Expression\n  (documentCanonical 257\n        (Json.mkObj\n          [(\"\ud835\udd38\", Json.null), (\"b\", Json.arr #[Json.null, Json.bool true, 7]),\n            (\"a\", Json.mkObj [(\"z\", Json.str \"x\\n\"), (\"y\", Json.null)])])).toOption ==\n    some \"{\\\"a\\\":{\\\"y\\\":null,\\\"z\\\":\\\"x\\\\n\\\"},\\\"b\\\":[null,true,7],\\\"\ud835\udd38\\\":null}\"\ndid not evaluate to `true`\nerror: VE/CertificateWire.lean:314:0: Expression\n  (canonical 257\n        (Json.mkObj\n          [(\"\ud835\udd38\", Json.str \"c\"), (\"b\", Json.arr #[Json.bool false, 7]),\n            (\"a\", Json.mkObj [(\"z\", Json.str \"x\\n\")])])).toOption ==\n    some \"{\\\"a\\\":{\\\"z\\\":\\\"x\\\\n\\\"},\\\"b\\\":[false,7],\\\"\ud835\udd38\\\":\\\"c\\\"}\"\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.CertificateWire\nerror: build failed\n"
+  },
+  {
+   "id": "M7",
+   "file": "tools/layer_policy.py",
+   "claim": "VE.Paths is a layer-1 (kernel) module, so VE.Core.Paths may import it; seeded: VE.Paths drops to the default layer 2 and the Lean import layering check fails",
+   "source_sha256": "257015b8be69e7256367f732c80bdcd7fa9595bc482269774ef2e359ac99cbdc",
+   "command": [
+    "python",
+    "tools/check_lean_imports.py"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 20.5,
+   "output_tail": "new outward Lean import: VE.Core.Paths -> VE.Paths\n"
+  },
+  {
+   "id": "M8",
+   "file": "lean/VE/SoftNorms/Admission.lean",
+   "claim": "part 2: decodeSoftDoc passes decodeDoc the soft source's data@0 flag; seeded: it passes false, and the soft route no longer refuses a $string quantifier under data@0",
+   "source_sha256": "b087217d8faeb5650b63fc32101f3f31aa0f64f0ce072ace5971716d0cf338fc",
+   "command": [
+    "bash",
+    "-c",
+    "set -u; lock=$(mktemp); cp lean/checkers.lock \"$lock\"; trap 'cp \"$lock\" lean/checkers.lock; rm -f \"$lock\"' EXIT; (cd lean && PATH=$HOME/.elan/bin:$PATH lake build ve_service >/dev/null 2>&1) || { echo 'the mutant does not build: not a kill'; exit 0; }; uv run python tools/regen_generated.py --write --only checker-pins >/dev/null 2>&1 || { echo 'pinning failed: not a kill'; exit 0; }; VE_NATIVE_PREBUILT=1 uv run pytest -q -p no:cacheprovider -rfE tests/test_soft_norms_lean.py::test_admission_refuses_each_document_check_of_w2s_decoder; s=$?; [ $s -eq 1 ] && exit 1; exit 0"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 702.7,
+   "output_tail": "     assert rows[0][\"status\"] == \"ok\" and rows[0][\"admitted\"] is True, rows[0]\n        assert [(r[\"status\"], r[\"error\"]) for r in rows[1:]] == [(\"error\", message) for message in broken]\n        # The decoder's data flag is the environment's `data@0` profile: under it a `$string` quantifier is refused.\n        strings = {**good, \"reading_sets\": [{\"id\": \"r\", \"version\": 1, \"readings\": [[\"forall\", \"$string\", [\"top\"]]]}]}\n        data = env(profiles=(\"norms@0\", \"soft-norms@0\", \"data@0\"))\n        rows = run(lean, [{\"id\": \"d\", \"kind\": \"admission\", \"environment\": data, \"document\": strings}])\n>       assert (rows[0][\"status\"], rows[0][\"error\"]) == (\n            \"error\", \"UnsupportedProfile: $string quantification requires data stage 2\"), rows[0]\nE       AssertionError: {'code': 'SOFT_INVALID_INPUT', 'error': 'ill-typed or unbound conclusion', 'id': 'd', 'status': 'error'}\nE       assert ('error', 'il...d conclusion') == ('error', 'Un...data stage 2')\nE         \nE         At index 1 diff: 'ill-typed or unbound conclusion' != 'UnsupportedProfile: $string quantification requires data stage 2'\nE         Use -v to get more diff\n\ntests/test_soft_norms_lean.py:520: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_soft_norms_lean.py::test_admission_refuses_each_document_check_of_w2s_decoder\n1 failed in 0.40s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-5kmmtzul)\n"
+  },
+  {
+   "id": "M9",
+   "file": "lean/VE/NormDefaults/Admission.lean",
+   "claim": "part 2: decodeFilledDoc passes decodeDoc the source's data@0 flag; seeded: it passes false, and the norm-defaults route no longer refuses a $string quantifier under data@0",
+   "source_sha256": "ab4fe1851cdc4597e8ac052738180c28783e71bcf6abbf4d9eaccdad97d54845",
+   "command": [
+    "bash",
+    "-c",
+    "set -u; lock=$(mktemp); cp lean/checkers.lock \"$lock\"; trap 'cp \"$lock\" lean/checkers.lock; rm -f \"$lock\"' EXIT; (cd lean && PATH=$HOME/.elan/bin:$PATH lake build ve_service >/dev/null 2>&1) || { echo 'the mutant does not build: not a kill'; exit 0; }; uv run python tools/regen_generated.py --write --only checker-pins >/dev/null 2>&1 || { echo 'pinning failed: not a kill'; exit 0; }; VE_NATIVE_PREBUILT=1 uv run pytest -q -p no:cacheprovider -rfE tests/test_norm_defaults_three_way.py::test_admission_document_checks_are_w2s_decoder_in_both; s=$?; [ $s -eq 1 ] && exit 1; exit 0"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 342.7,
+   "output_tail": "[\"error\"]) == (\"error\", message), (message, row)\n            assert str(error.value) == message, message\n        # The decoder's data flag is the source's `data@0` profile: under it a `$string` quantifier is refused.\n        data = {**raw, \"profiles\": sorted({*raw[\"profiles\"], \"data@0\"})}\n        strings = {**good, \"reading_sets\": [{\"id\": \"r\", \"version\": 1, \"readings\": [[\"forall\", \"$string\", [\"top\"]]]}]}\n        message = \"UnsupportedProfile: $string quantification requires data stage 2\"\n        row = route.run_cases([{\"id\": \"d\", \"kind\": \"admission\", \"environment\": data, \"document\": strings}])[0]\n        with pytest.raises(VEError) as error:\n            admit_document(data, strings)\n>       assert (row[\"status\"], row[\"error\"]) == (\"error\", message), row\nE       AssertionError: {'error': 'ill-typed or unbound conclusion', 'id': 'd', 'status': 'error'}\nE       assert ('error', 'il...d conclusion') == ('error', 'Un...data stage 2')\nE         \nE         At index 1 diff: 'ill-typed or unbound conclusion' != 'UnsupportedProfile: $string quantification requires data stage 2'\nE         Use -v to get more diff\n\ntests/test_norm_defaults_three_way.py:260: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_norm_defaults_three_way.py::test_admission_document_checks_are_w2s_decoder_in_both\n1 failed in 0.57s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-74gg6lt7)\n"
+  }
+ ]
+}
