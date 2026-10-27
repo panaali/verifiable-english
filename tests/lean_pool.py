@@ -19,8 +19,9 @@ import subprocess
 from typing import Callable, Mapping
 
 # The `lake env lean` processes a module's pool runs at once: the 6 workers a Mac test-runner slot gives one pytest
-# run (MAC_PYTEST_WORKERS), so a unit of a selected run takes no more of the runner than a plain run with `-n 6`
-# would (measured in docs/infra/speed-vocabpar/REPORT.md). VE_TEST_LEAN_JOBS replaces it; 1 is the serial path.
+# run (MAC_PYTEST_WORKERS), so a unit takes no more of the runner than a plain run with `-n 6` would. Measured
+# enough (docs/infra/speed-vocabpar/REPORT.md): in a selected run at 6 the vocab unit ends before the run's longest
+# other unit, so a wider pool would not shorten the run. VE_TEST_LEAN_JOBS replaces it; 1 is the serial path.
 JOBS = 6
 
 
