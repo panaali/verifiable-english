@@ -3,7 +3,7 @@
  "language": "Python",
  "runner": "docs/defeasible/df-1b/evidence/run_mutants.py",
  "result": "docs/defeasible/df-1b/evidence/mutants.out",
- "note": "Plan DF-1b's five seeded bugs: P1-P3 here; the two renderer bugs wait for the English (df-1bb).",
+ "note": "Plan DF-1b's five seeded bugs: P1-P3 here; the two renderer bugs wait for the English (df-1bb). RF1a-RF1f: review F1's checks tested on one side only (each now fails its test; every check's weakenings and deletions are enumerated by tests/test_defaults_checks.py).",
  "mutants": [
   {
    "id": "P1",
@@ -116,6 +116,62 @@
    "find": "        elif args.assume_no_exception:\n",
    "replace": "        elif False:\n",
    "test": "tests/test_defaults_lean.py::test_p1_follows_unless_an_exception_applies"
+  },
+  {
+   "id": "RF1a",
+   "file": "ve/defaults.py",
+   "bug": "review F1: a collision's rules not bound to a coherence target",
+   "find": "collision[\"rules\"] not in pairs or ",
+   "replace": "",
+   "test": "tests/test_defaults_answer.py::test_pairs_and_collision"
+  },
+  {
+   "id": "RF1b",
+   "file": "ve/defaults.py",
+   "bug": "review F1: a coherence situation's entities not bound to the witness model",
+   "find": "        _situation(row, witness)\n",
+   "replace": "        pass\n",
+   "test": "tests/test_defaults_answer.py::test_pairs_and_collision"
+  },
+  {
+   "id": "RF1c",
+   "file": "ve/defaults.py",
+   "bug": "review F1: forced entries not bound to rule-then-tuple order",
+   "find": "if order != sorted(order) or",
+   "replace": "if False or",
+   "test": "tests/test_defaults_answer.py::test_forced_order_rule_then_tuple"
+  },
+  {
+   "id": "RF1d",
+   "file": "ve/document/cli.py",
+   "bug": "review F1: --sentence and --narrowing accepted with the flag",
+   "find": "if args.under or args.sentence or args.narrowing:",
+   "replace": "if args.under:",
+   "test": "tests/test_defaults_lean.py::test_flag_refusals"
+  },
+  {
+   "id": "RF1e",
+   "file": "ve/document/cli.py",
+   "bug": "review F1: a document with no soft norms accepted by the flag",
+   "find": "if doc.get(\"soft_document\") is None or _content_bearing(doc)",
+   "replace": "if _content_bearing(doc)",
+   "test": "tests/test_defaults_lean.py::test_flag_refusals"
+  },
+  {
+   "id": "RF1f",
+   "file": "ve/document/cli.py",
+   "bug": "review F1: a reading set that is not content-bearing accepted by the flag",
+   "find": " or active_reading_sets(\n            doc[\"meta\"].get(\"reading_sets\", [])):",
+   "replace": ":",
+   "test": "tests/test_defaults_lean.py::test_flag_refusals"
+  },
+  {
+   "id": "RF1g",
+   "file": "ve/defaults.py",
+   "bug": "review F1 class: a DOES-NOT-FOLLOW model row with no situation and no forced entries accepted",
+   "find": "if (\"situation\" in row) != (row[\"verdict\"] == \"DOES-NOT-FOLLOW\") or",
+   "replace": "if False or",
+   "test": "tests/test_defaults_answer.py::test_forced_condition_index_rule_and_tuple"
   }
  ]
 }

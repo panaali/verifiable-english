@@ -8,7 +8,10 @@ three probe documents (df-03's, `docs/research/evidence/defeasible/baseline/`) g
 """
 from __future__ import annotations
 
+import argparse
+import contextlib
 import copy
+import io
 import json
 from pathlib import Path
 
@@ -16,7 +19,8 @@ import pytest
 
 from ve import defaults
 from ve.backends import relay
-from ve.document import main
+from ve.document import cli, main
+from ve.document.load import load_document
 from ve.errors import CheckerUnavailable, UnsupportedProfile, VEError
 
 BASELINE = Path(__file__).resolve().parents[1] / "docs/research/evidence/defeasible/baseline"
@@ -219,15 +223,43 @@ def test_p1_follows_unless_an_exception_applies(capsys, monkeypatch, entry):
     assert _readings(capsys, entry) == entry["stdout"]
 
 
-def test_flag_refusals(capsys, monkeypatch, tmp_path):
+_ASKED = {"asked": "stub"}
+
+
+def _flag(monkeypatch, path, *flags, conclusion=True):
+    """`ve document readings PATH --conclusion C --assume-no-exception FLAGS` with `ask` stubbed: what it prints, or
+    the refusal it raises before any question is asked."""
     monkeypatch.chdir(BASELINE.parents[4])
-    entry = P1[0]
+    monkeypatch.setattr(defaults, "ask", lambda environment, norms, premises, conclusion: _ASKED)
+    out = io.StringIO()
+    with contextlib.redirect_stdout(out):
+        assert cli.main(["readings", str(path), *(["--conclusion", P1[0]["argv"][5]] if conclusion else []),
+                         "--assume-no-exception", *flags]) == 0
+    return json.loads(out.getvalue())
+
+
+def test_flag_refusals(monkeypatch):
+    """Each refusal of the flag on both sides, each fixture breaking one condition alone: the P-1 document is asked;
+    without a conclusion, with `--under`, `--sentence` or `--narrowing`, on a document with no soft norms, on one
+    with a content-bearing reading set and on one with a reading set, it is refused before any question is sent."""
+    p1 = P1[0]["argv"][3]
+    assert _flag(monkeypatch, p1) == _ASKED
     with pytest.raises(VEError, match="requires --conclusion"):
-        main(["readings", entry["argv"][3], "--assume-no-exception"])
-    with pytest.raises(VEError, match="takes no --under"):
-        _readings(capsys, entry, "--assume-no-exception", "--under", "s:0")
-    with pytest.raises(VEError, match="applies to a soft-norms@0 document"):
-        main(["readings", str(BASELINE / "p2-ce4.ve.md"), "--conclusion", entry["argv"][5], "--assume-no-exception"])
+        _flag(monkeypatch, p1, conclusion=False)
+    for flags in (["--under", "s:0"], ["--sentence", "u0036.s05"], ["--narrowing", "n"]):
+        with pytest.raises(VEError, match="takes no --under, --sentence or --narrowing"):
+            _flag(monkeypatch, p1, *flags)
+    for name in ("control-strict-no-soft-force-u0036-s05.ve.md", "p2-ce4.ve.md"):
+        with pytest.raises(VEError, match="applies to a soft-norms@0 document without open reading sets"):
+            _flag(monkeypatch, BASELINE / name)
+    # content-bearing alone, and a reading set alone (p2-ce4 has both): the predicate on the loaded P-1 document
+    doc, args = load_document(BASELINE.parents[4] / p1), argparse.Namespace(under=None, sentence=None, narrowing=None)
+    assert cli._assume_no_exception(doc, X_ALL, args) == _ASKED
+    reading_set = {"id": "s", "unit": "u", "version": 1}
+    for changed in ({**doc, "readings_s1": {"content_bearing": True}},
+                    {**doc, "meta": {**doc["meta"], "reading_sets": [reading_set]}}):
+        with pytest.raises(VEError, match="applies to a soft-norms@0 document without open reading sets"):
+            cli._assume_no_exception(changed, X_ALL, args)
 
 
 def test_an_empty_budget_is_unknown(monkeypatch):
