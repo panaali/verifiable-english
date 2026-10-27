@@ -190,6 +190,23 @@ def K2 : Vocab := ⟨[fr "seek" ["from", "about", "in", "on", ""] ["in", "on"] [
 -- list without its first member.
 #guard (["seek gladly", "seek freely", "seek be", "seek close", "seek for", "give back give",
   "seek asylum or from war"].map ("{0} " ++ ·) |> rawsOf K2 []).all (· == some 0)
+/-- Review ap-2b F1: each frame of `K2`, the words before a filler, and the words its fillers exclude (1.4), written
+out. Each word of `fillWords` starts the filler `<word> Paris`: no derivation when the frame excludes it, one when not
+(a later word of a marker or head, `by` and `back`, is a filler word). -/
+def fillWords : List String := ["and", "or", "nor", "to", "be", "freely", "gladly", "from", "about", "in", "on", "for",
+  "close", "seek", "share", "give", "with", "via", "by", "back", "Paris"]
+def reserved : List (String × List String) :=
+  let all := ["and", "or", "nor", "to", "be", "freely", "gladly", "seek", "share", "give"]
+  [("seek asylum in", all ++ ["from", "about", "in", "on", "for", "close"]), ("share bread with", all ++ ["with"]),
+    ("give back bread via", all ++ ["via"])]
+#guard reserved.map (fun (_, ex) => fillWords.map (fun w => if ex.contains w then 0 else 1) |>.map some) ==
+  reserved.map (fun (pre, _) => fillWords.map (s!"\{0} {pre} {·} Paris") |> rawsOf K2 [])
+-- The table is `fillExcl`'s, frame by frame, and covers every word it excludes.
+#guard reserved.length == K2.frames.length && (reserved.zip K2.frames).all (fun ((_, ex), f) =>
+  ex.all ((fillExcl K2 f).contains ·) && (fillExcl K2 f).all ex.contains && ex.all fillWords.contains)
+-- After an object, a join word reads as a list of objects, *to* and *be* as nothing.
+#guard (["and", "or", "nor", "to", "be"].map (s!"\{0} seek asylum {·} Paris") |> rawsOf K2 []) ==
+  [1, 1, 1, 0, 0].map some
 -- `X → never` for exactly the nonterminals that have no rule: none in `K` and `K2`, *NM* of each frame of V5.
 def nevers (V : Vocab) : List NT := ((closed (schema V)).filter (·.rhs == [.t .never])).map (·.lhs)
 #guard nevers K == [] && nevers K2 == [] && nevers V5 == [.F 0 .NM, .F 1 .NM]
