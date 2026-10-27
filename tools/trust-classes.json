@@ -15146,10 +15146,13 @@
         "VE.Arith.OpEnv",
         "VE.Arith.Term.evalB",
         "VE.Arith.Term.evalBs",
+        "VE.Arith.bits",
         "VE.Arith.charge",
+        "VE.Arith.chargeBits",
         "VE.Arith.countLoop",
         "VE.Arith.decideBounded",
-        "VE.Arith.quantLoop"
+        "VE.Arith.quantLoop",
+        "VE.Arith.stepB"
       ],
       "P": [
         "VE.Arith.Agrees",
@@ -15163,8 +15166,12 @@
     "VE/Arith/BoundedExamples.lean": {
       "T": [
         "VE.Arith.Examples.dbl",
+        "VE.Arith.Examples.dblx",
         "VE.Arith.Examples.ev",
         "VE.Arith.Examples.no",
+        "VE.Arith.Examples.reuse",
+        "VE.Arith.Examples.reuseStmt",
+        "VE.Arith.Examples.sqChain",
         "VE.Arith.Examples.yes"
       ]
     },
