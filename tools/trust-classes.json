@@ -15151,7 +15151,12 @@
         "VE.Arith.quantLoop"
       ],
       "P": [
-        "VE.Arith.Agrees"
+        "VE.Arith.Agrees",
+        "VE.Arith.Def.SitesOk",
+        "VE.Arith.Extends",
+        "VE.Arith.Site.Ok",
+        "VE.Arith.Total",
+        "VE.Arith.subSites"
       ]
     },
     "VE/Arith/BoundedExamples.lean": {
@@ -15174,6 +15179,14 @@
         "VE.Acts.partAct",
         "VE.Acts.tokStr",
         "VE.Acts.tokText"
+      ]
+    },
+    "VE/Arith/CompleteExamples.lean": {
+      "T": [
+        "VE.Arith.Examples.keeps",
+        "VE.Arith.Examples.selfCall",
+        "VE.Arith.Examples.sweep",
+        "VE.Arith.Examples.tickEnv"
       ]
     }
   }
