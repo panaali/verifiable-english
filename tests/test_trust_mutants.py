@@ -219,7 +219,7 @@ def test_a_guard_over_the_empty_list_leaves_survivors(default_run):
     assert done.returncode == 1
     printed = [line for line in done.stdout.splitlines() if line.startswith("SURVIVOR ")]
     assert len(printed) == sum(m["status"] == "SURVIVOR" for m in mutants)
-    assert "SURVIVOR lean/Demo/Defs.lean:7 Demo.evens list-empty: xs.filter (· % 2 == 0) -> []" in printed
+    assert "SURVIVOR lean/Demo/Defs.lean:7 Demo.evens (?, trusted) list-empty: xs.filter (· % 2 == 0) -> []" in printed
 
 
 def test_a_failing_proof_is_no_kill(default_run):
