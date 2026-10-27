@@ -213,6 +213,100 @@ file changed), and its rerun alone passes (1 passed), so it is a flaky interleav
 output (follow-up). `lake build` (1109 jobs) and `python3 lean/audit.py` pass. Not run: the full gate (the chain runs
 it).
 
+## 9. Re-check fix (df-1b-looprecheck2.final.md, acting-DRI note 2026-10-27)
+
+No DELTA row is needed and none is claimed or reserved: no Lean or Rust file changed, trust +0, the flag is opt-in.
+
+**F10 (B): a value that feeds a check could change and every test passed.** The class has had three forms: F1 (check
+clauses that could be deleted), F9 (an `if ...: return` exit) and F10 (the fallback chain that computes the expected
+collision decider). The fix covers the class in three steps.
+
+1. **Truth table for the decider.** `bind_coherence` used to accept any subset of the two rules' deciders plus
+   `"unstated"`. It now accepts only `_deciders(case, rules)`, which is Lean's `giveWayDeciders` of the request:
+   each rule's own `decided_by`, else the document's `exception_decider`, else `"unstated"`; one decider when the
+   rules agree, otherwise both in pair order. Two tests cover it:
+   - `tests/test_defaults_answer.py::test_collision_deciders_truth_table` runs every cell of own decider (set, unset,
+     `"unstated"`, set on one rule only, in each order) × document decider (set, unset, no soft block). Each cell
+     gets Lean's genuine `defaults-coherence` row, which names the expected deciders, and the relay accepts exactly
+     those. It refuses the other source's decider, `"unstated"`, an unrelated name and every other pair. With neither
+     source set, Lean refuses the document (`MissingExceptionDecider`); that request expects `"unstated"` alone.
+   - `::test_collision_refused_field_by_field` sets each collision member wrong in turn (rules, tuple, deciders,
+     situation) and removes each decider source in turn.
+2. **(a) The rule, inverted.** The `ve/defaults.py` docstring states the one positive condition. The relay accepts
+   and shows a row only when both hold:
+   - Lean's reply is a row of the mode's shape for this case.
+   - Every member the binding names is the value the request gives it (the closed list of R11's D1): an equality, or
+     membership in the request's own list.
+
+   Everything else is a shape fault or `CheckerUnavailable`. `tests/check_mutants.py` now also seeds the values that
+   feed checks (`values`):
+   - drops each operand of a value's `and`/`or` chain, and swaps each adjacent pair;
+   - drops each `.get` default, or adds one: the constant the `.get` is compared with, else `"mutant"` (adding
+     `None` would be a no-op, so it is skipped);
+   - flips each comparison.
+
+   `tests/test_defaults_checks.py` runs these mutants over all of `ve/defaults.py` and `_assume_no_exception`: 174
+   seeded bugs, up from 93. The first sweep left 22 survivors, and each is now killed by a test. None is recorded as
+   equivalent:
+   - a request with no soft block, a rule with no exception object, a sort or table the model lacks, and a table of
+     a rule the request lacks (`::test_collision_deciders_truth_table`, `::test_forced_tuple_sorts`);
+   - `soft_source` reading only the exception tables (`::test_soft_source_is_the_exception_tables`);
+   - the shown default answer of DF-α (`::test_strict_answer_only_when_lean_says_valid`);
+   - what the flag sends (`tests/test_defaults_lean.py::test_flag_asks_with_the_documents_norms_and_facts`).
+
+   `::test_situation_entities_of_every_sort` uses a model with two sorts, for `_in_model`.
+3. **(b) Adversarial hunts: two, the limit.** Each hunt was a subagent given only the class, PROBEs F1, F9 and F10,
+   and the code.
+   - **Hunt 1.** Tried 13 candidates: sort keys, set operators, wrong variables, the `except` clause, `_shown`, `ask`
+     routing and the flag's filters. It found 3 forms, all fixed:
+     - The forced-order key (rule index, domain index, first coordinate major). Before the fix it was tested only
+       where name order is the request's order. `::test_forced_entries_in_the_requests_order` now asks Lean for rows
+       with rules `rb` before `ra`, a domain `[e2, e1]` and a binary act.
+     - An extra forced entry where no exception holds (the same test, DF-β2 with exceptions at e1 only).
+     - The flag's unit-kind filters. `::test_flag_asks_with_the_documents_norms_and_facts` now adds an attributed
+       assertion, an example, a question, a definition and an exposition.
+
+     Judged equivalent: `_tuple` on `rules[1]` (both colliding rules regulate one act); a narrower `except` (no
+     `ValueError` or `IndexError` can be raised after the shape check); `"basis"` dropped from the verdict keys (the
+     shape's if/then/else already requires it); `key[-1]` in `soft_source`; `if gate:` in `ask`; truthiness of a
+     unit's content.
+   - **Hunt 2.** Tried 16 candidates. It found 5 forms, all fixed, each with Lean's genuine row:
+     - `needs` exactly with a strict model, where the rule is "only with":
+       `::test_needs_only_with_a_strict_model_not_exactly_with_one`.
+     - A collision on the first pair only: `::test_a_collision_on_any_colliding_pair` (DF-γ2's second pair).
+     - `ask` binding labels in name order: `::test_assumptions_in_the_elaborations_label_order` (rules `rb`, `ra`).
+     - A second forced entry for one rule and tuple: `::test_forced_entries_in_the_requests_order`.
+     - Two premises under one label: `::test_elaborate_labels_and_targets`.
+
+     Judged equivalent: `check_row`'s index (it is read only on error rows, which `relay.decide` raises before);
+     the coherence case built from `question` (Lean's replay reads only `environment`, `coherence` and `collision`).
+   - **Still open:** no confirmed form. The generator does not enumerate the kinds of edit the hunts found (sort keys,
+     subscripts, set operators, a wrong variable); each found form is a fixture now (follow-up).
+
+**PROBEs.** Each PROBE below exits 1 on the code before this round and 0 on HEAD:
+- PROBE F10 (`surviving: []`);
+- hunt 1's PROBE ORDER, FORCED-SET and FLAG-UNITS;
+- hunt 2's PROBEs C1, C2, C9, C13 and C14.
+
+PROBE F1 and PROBE F9 still exit 0.
+
+**Seeded bugs.** RF10a–RF10g are in `mutants.json`. Each fails its test (`evidence/mutants.out`: 31 of 31):
+- RF10a, RF10b: PROBE F10's two mutants;
+- RF10c: the subset check from before the fix;
+- one bug per form from the hunts.
+
+B3's site moved to the new equality check.
+
+Selected run on the fix (`mac-pytest.sh --select`, Mac runner, HEAD 2f90ac5f, clean): 276 units, 0 failed.
+`lake build` (1109 jobs) and `python3 lean/audit.py` pass. The full gate was not run; the chain runs it.
+
+**Deferred and follow-up.**
+- F2 stays deferred to the DRI (`reviews/escalations-20261027.md`), and its checks are unchanged. The new decider
+  equality follows the DRI note's step 1 ("accept exactly the expected decider").
+- F3–F8 (C) and the flaky `test_trust_mutants::test_a_guard_over_the_empty_list_leaves_survivors` stay follow-ups.
+- `_decider`'s chain is the same text as `ve/softnorms.py:464`, a second Python owner of Lean's `exceptionDecider`.
+  It is kept in `ve/defaults.py` so that PROBE F10's site still matches.
+
 ## Self-review against BUILDER-CHECKLIST
 
 1. **Lean answers typed and contained.** PASS: `test_defaults_answer.py::test_mutants_never_pass_as_answers` retypes
@@ -223,9 +317,9 @@ it).
 2. **Every deliverable built.** PASS: section 1 and the df-1bb cut (size rule). No Python copy of a Lean decision: the
    bindings read the request and Lean's other rows. No permanent report test. No file overlaps a branch in flight:
    `relay_lint.py` (feature/q1-4) is left to df-1bb.
-3. **Tests can fail.** PASS: 24 seeded bugs, `evidence/mutants.out`, and the 93 enumerated weakenings and deletions
-   of every `if ...: raise` and `if ...: return` check and helper check (`tests/test_defaults_checks.py`, sections 7
-   and 8). No Lean change, so no `trust_mutants` run.
+3. **Tests can fail.** PASS: 31 seeded bugs, `evidence/mutants.out`, and 174 enumerated seeded bugs: the weakenings
+   and deletions of every `if ...: raise` and `if ...: return` check and helper check, and the mutations of every
+   value that feeds one (`tests/test_defaults_checks.py`, sections 7–9). No Lean change, so no `trust_mutants` run.
 4. **Python, Lean and Rust agree.** PASS: `::test_p1_follows_unless_an_exception_applies` compares the answer without
    the flag with df-03's saved stdout, byte for byte; `_source_binding`'s default path is unchanged
    (`test_norm_defaults_soft_kinds.py` passes). The fixtures include two-sort tuples (`::test_forced_tuple_sorts`) and
