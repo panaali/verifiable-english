@@ -44,7 +44,10 @@ range, and a predicate call is one visit plus its body's. Connectives stop as so
 bounded quantifier stops at its first decisive value, and a visit is refused once the units spent reach the limit. The
 budget is `maxSteps` = 1,000,000 by default and at most (W6's `VE.Time.maxEvaluations`). `arithOutcome` gives a
 statement's row: holds or fails when the evaluator completes, "stated, not decided" for an unbounded statement before
-any evaluation, and unknown (`limit .evaluations`) when the budget runs out. Budget 0 is always unknown.
+any evaluation, and unknown (`limit .evaluations`) when the budget runs out. Budget 0 is always unknown. Because terms are
+free, the budget does not bound the work of a function body that is a term: a chain of definitions that each call
+the one before twice costs 1 unit (`BoundedExamples.lean`, the `dbl` guard; finding N1 in
+`docs/math-evidence/me-12aa/REPORT.md`, for me-12b).
 
 The decoder (me-12b) admits a case only when its definitions are well formed and every statement is scoped; it
 refuses the first problem in this order: a name defined twice (`DuplicateName`), a variable no quantifier or parameter
