@@ -130,12 +130,12 @@ there is no seeded bug there.
 
 ## Size
 
-Hand-written lines over the merge base (`git diff --numstat`), about 360 in all:
+Hand-written lines over the merge base (`git diff --numstat`), about 416 in all, within the ~600 guide:
 
 - **Lean product:** 90 (`Run.lean`).
 - **Fixtures:** 64 (`RunExamples.lean`).
 - **Side tables:** 32 (`trust-classes.json`, the allowance and the manifest).
-- **Evidence and docs:** about 175 (the allow file, `mutants.json`, DELTA and this report).
+- **Evidence and docs:** 230 (the allow file 9, `mutants.json` 17, DELTA 15, this report 189).
 
 Generated files: `declarations.txt`, `checkers.lock`, `trust-mutants.json` and `assurance-manifest.md`.
 
