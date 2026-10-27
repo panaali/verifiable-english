@@ -1,4 +1,5 @@
 import VE.Calc.Run
+import VE.Calc.Render
 
 /-! Route cases of the `calc` runner (math-evidence plan ME-2; spec 13.2, 13.3 and 13.6): each case's answer from
 `VE.Calc.Run.runCaseReported`, as `#guard`s that `lake build` evaluates, one per family. -/
@@ -51,8 +52,8 @@ def r2 : String := req (stated "x" r#"["sci", "1", 39]"# ++ ", " ++ defined "y" 
    claim "v2" r#"["eq", ["div", ["lit", "1"], ["sub", ["val", "x"], ["val", "x"]]], ["lit", "1"]]"# ++ ", " ++
    claim "v3" r#"["lt", ["val", "y"], ["lit", "1"]]"#)
 
-#guard (answer r1).compress == r#"{"meaning_id":"5a074a4cee5cfdce99fabb04e758d3d76f6bfdec93c035dbf66cc199c41aa2d1","rows":[{"claim":"c1","claim_id":"c29d5014aeadc1df87761d40af3cd23185d0356ad7f8289017e9b2f5f22e7770","kind":"claim","outcome":"holds","reason":null,"reproduction":null,"status":"ok"},{"claim":"c2","claim_id":"10e8ddf440fe268947bffacb61601502f0017d93d0822b8f392ead09ffb270b5","kind":"claim","outcome":"fails","reason":null,"reproduction":null,"status":"ok"}],"status":"ok"}"#
-#guard (answer r2).compress == r#"{"meaning_id":"82923ee3bfaa2f6b000be5e76ef40fbde32b0e4b1af8ef39e41d91ff54b595b5","rows":[{"claim":"v1","claim_id":"01f0a37df1028bee5e1e6e7ef5e835cf7ee6cf040d681f0a2973959fb5408c0e","kind":"claim","outcome":"unknown","reason":"unknown: an exact value would have more than 4,096 digits","reproduction":null,"status":"ok"},{"claim":"v2","claim_id":"ff9880069d728e0abc8479047f3961fd1facb733004d19f7156f50dc0a59f9aa","kind":"claim","outcome":"undefined","reason":null,"reproduction":null,"status":"ok"},{"claim":"v3","claim_id":"ddeccbbd1a0c426b1889c101c3e7453effa4650cf2b5f16d3fbf60078d079883","kind":"claim","outcome":"fails","reason":null,"reproduction":null,"status":"ok"}],"status":"ok"}"#
+#guard (answer r1).compress == r#"{"meaning_id":"5a074a4cee5cfdce99fabb04e758d3d76f6bfdec93c035dbf66cc199c41aa2d1","rows":[{"claim":"c1","claim_id":"c29d5014aeadc1df87761d40af3cd23185d0356ad7f8289017e9b2f5f22e7770","display":"0.29629…","finding":null,"kind":"claim","line":"The baseline is 0.296 when rounded to three decimal places, with exact ties going up.","outcome":"holds","reason":null,"reproduction":null,"sides":["8/27"],"status":"ok","tie":false},{"claim":"c2","claim_id":"10e8ddf440fe268947bffacb61601502f0017d93d0822b8f392ead09ffb270b5","display":"0.29629…","finding":null,"kind":"claim","line":"The baseline is 0.297 when rounded to three decimal places, with exact ties going up.","outcome":"fails","reason":null,"reproduction":null,"sides":["8/27"],"status":"ok","tie":false}],"status":"ok"}"#
+#guard (answer r2).compress == r#"{"meaning_id":"82923ee3bfaa2f6b000be5e76ef40fbde32b0e4b1af8ef39e41d91ff54b595b5","rows":[{"claim":"v1","claim_id":"01f0a37df1028bee5e1e6e7ef5e835cf7ee6cf040d681f0a2973959fb5408c0e","display":null,"finding":null,"kind":"claim","line":"The z is less than 1.","outcome":"unknown","reason":"unknown: an exact value would have more than 4,096 digits","reproduction":null,"sides":[null,"1"],"status":"ok","tie":false},{"claim":"v2","claim_id":"ff9880069d728e0abc8479047f3961fd1facb733004d19f7156f50dc0a59f9aa","display":null,"finding":null,"kind":"claim","line":null,"outcome":"undefined","reason":null,"reproduction":null,"sides":[null,"1"],"status":"ok","tie":false},{"claim":"v3","claim_id":"ddeccbbd1a0c426b1889c101c3e7453effa4650cf2b5f16d3fbf60078d079883","display":null,"finding":null,"kind":"claim","line":"The y is less than 1.","outcome":"fails","reason":null,"reproduction":null,"sides":["1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000","1"],"status":"ok","tie":false}],"status":"ok"}"#
 -- `Run.outcomeAt` reads each row back; a refusal and a row past the last read nothing.
 #guard [0, 1, 2].map (Run.outcomeAt (answer r2)) ==
   [some (.unknown (.limit .digits)), some (.decided .undefined), some (.decided .fails)]
@@ -512,16 +513,20 @@ def stringSites : List (String → String) := [
   ("claim-rule", says (req x1 (c1 r#"["rounds", ["val", "x"], "1", "half-up"]"#)),
     [r#"InvalidInput: claims.0.claim.3 must be "ties-up" or "half-even""#]),
   ("software", says (req x1 ok1 r#", "software": """#), ["InvalidInput: case.software must not be empty"]),
-  ("follows", says (req x1 (c1 r#"["follows", ["lt", ["val", "x"], ["lit", "2"]], [], []]"#)),
+  ("follows-eq", says (req x1 (c1 r#"["follows", ["eq", ["val", "x"], ["lit", "2"]], [], []]"#)),
+    ["InvalidInput: claims.0.claim.1 must be an lt, le, gt or ge claim"]),
+  ("follows-form", says (req x1 (c1 r#"["follows", ["lt", ["val", "x"], ["lit", "2"]], []]"#)),
     ["InvalidInput: claims.0.claim must be a claim"]),
   ("sqrt-rounds", says (req x1 (c1 r#"["sqrt-rounds", ["val", "x"], "1"]"#)), ["InvalidInput: claims.0.claim must be a claim"]),
   ("expression", says (req x1 (c1 r#"["eq", ["neg", ["val", "x"]], ["lit", "1"]]"#)),
     ["InvalidInput: claims.0.claim.1 must be an expression"]),
-  ("free", says (req r#"{"name": "x", "words": "the x", "free": true}"# ok1), ["InvalidInput: values.0.free is unknown"]),
+  ("free", says (req r#"{"name": "x", "words": "the x", "free": false}"# ok1), ["InvalidInput: values.0.free must be true"]),
   ("no-source", says (req r#"{"name": "x", "words": "the x"}"# ok1),
-    ["InvalidInput: values.0 must have one of stated and defined"]),
+    ["InvalidInput: values.0 must have one of stated, defined and free"]),
   ("two-sources", says (req r#"{"name": "x", "words": "the x", "stated": "1", "defined": ["lit", "1"]}"# ok1),
-    ["InvalidInput: values.0 must have one of stated and defined"]),
+    ["InvalidInput: values.0 must have one of stated, defined and free"]),
+  ("stated-free", says (req r#"{"name": "x", "words": "the x", "stated": "1", "free": true}"# ok1),
+    ["InvalidInput: values.0 must have one of stated, defined and free"]),
   ("name", says (req r#"{"name": "X", "words": "the x", "stated": "1"}"# ok1), ["InvalidInput: values.0.name must be a name"]),
   ("words", says (req r#"{"name": "x", "words": 7, "stated": "1"}"# ok1), ["InvalidInput: values.0.words must be a string"]),
   ("support", says (req r#"{"name": "x", "words": "the x", "stated": "1", "support": "rumour"}"# ok1),
@@ -586,7 +591,272 @@ def malformed : List String := ["7", "true", "null", "[]", "{}", "1.5", "\"\"", 
     req x1 (c1 s!"[\"eq\", [\"val\", \"x\"], {v}]"), req x1 (c1 s!"[\"rounds\", [\"val\", \"x\"], {v}]"),
     req x1 (c1 s!"[\"eq\", [\"lit\", {v}], [\"lit\", \"1\"]]")] ++
     -- words are any string until me-2b's words checks (W6, spec 11.2), so "" is no malformed words
-    (if v == "\"\"" then [] else [req s!"\{\"name\": \"x\", \"words\": {v}, \"stated\": \"1\"}" ok1]) |>.all fun c =>
+    (if v == "\"\"" then [] else [req s!"\{\"name\": \"x\", \"words\": {v}, \"stated\": \"1\"}" ok1]) ++
+    -- me-5c: a free value, a premise's fields, and a derivation's conclusion, premise ids and links; `true` is a free
+    -- value, and an empty list a valid premises, ids or links list
+    (if v == "true" then [] else [req s!"\{\"name\": \"x\", \"words\": \"w\", \"free\": {v}}" ok1]) ++
+    (let le := r#"["le", ["val", "x"], ["lit", "1"]]"#
+     let entry (id claim support : String) := s!", \"premises\": [\{\"id\": {id}, \"claim\": {claim}, \"support\": {support}}]"
+     [req x1 ok1 (entry v le "\"assumption\""), req x1 ok1 (entry "\"p1\"" v "\"assumption\""),
+      req x1 ok1 (entry "\"p1\"" le v), req x1 (c1 s!"[\"follows\", {v}, [], []]")] ++
+     (if v == "[]" then [] else [req x1 ok1 s!", \"premises\": {v}", req x1 (c1 s!"[\"follows\", {le}, {v}, []]"),
+       req x1 (c1 s!"[\"follows\", {le}, [], {v}]")])) |>.all fun c =>
   (answer c).getObjVal? "rows" |>.toOption |>.isNone
+
+/-! ## Derivations (ME-5; spec 3.1, 5 and 13.6): R-3 (H-6) follows, R-4 (H-6n) does not -/
+
+def free (n w : String) : String := s!"\{\"name\": \"{n}\", \"words\": \"{w}\", \"free\": true}"
+def premise (i c : String) (support : String := "assumption") : String :=
+  s!"\{\"id\": \"{i}\", \"claim\": {c}, \"support\": \"{support}\"}"
+def premises (ps : List String) : String := s!", \"premises\": [{", ".intercalate ps}]"
+/-- R-3's values: the velocity ratio r, its square s and the displacement d, all free. -/
+def rsd : String := free "r" "the velocity ratio" ++ ", " ++ free "s" "the squared velocity ratio" ++ ", " ++
+  free "d" "the displacement"
+/-- H-6's premises: p1, d = 0.4 s, and p2, d < `bound`. -/
+def h6P (bound : String) : String := premises [premise "p1" r#"["eq", ["val", "d"], ["mul", ["lit", "0.4"], ["val", "s"]]]"#,
+  premise "p2" s!"[\"lt\", [\"val\", \"d\"], [\"lit\", \"{bound}\"]]"]
+/-- "r is less than 1 divided by `n`" from p1 and p2, across `links`. -/
+def h6 (n : String) (links : String := r#"[["s", "r"]]"#) : String :=
+  claim "h6" s!"[\"follows\", [\"lt\", [\"val\", \"r\"], [\"div\", [\"lit\", \"1\"], [\"lit\", \"{n}\"]]], [\"p1\", \"p2\"], {links}]"
+def r3 : String := req rsd (h6 "4") (h6P "0.02")
+def r4 : String := req rsd (h6 "5") (h6P "0.02")
+
+#guard (answer r3).compress == r#"{"meaning_id":"3c3a2954052d22eb052c63806177a653dcae39bacaf7e6e65f14816e1c87ef32","rows":[{"claim":"h6","claim_id":"9bcd6eb6e369e68ef65aec41156ba5c6707016e9af7b9f1ed1ca1478cb94b08c","finding":null,"kind":"follows","line":"Assume the following. 1. The displacement equals the product of 0.4 and the squared velocity ratio. 2. The displacement is less than 0.02. 3. The squared velocity ratio equals the square of the velocity ratio. 4. The velocity ratio is at least 0. From these, it follows that the velocity ratio is less than 1 divided by 4.","outcome":"holds","reason":null,"reproduction":null,"status":"ok"}],"status":"ok"}"#
+#guard (answer r4).compress == r#"{"meaning_id":"3648cca05ab8e1b20013ad47ea9648f021dada6fb32638bd495af5e049fef02e","rows":[{"claim":"h6","claim_id":"4dee606f697d7fea6bac0ab5b7eee2b2f69ba5f70d99c4d2e0d90fdede93a868","finding":null,"kind":"follows","line":"Assume the following. 1. The displacement equals the product of 0.4 and the squared velocity ratio. 2. The displacement is less than 0.02. 3. The squared velocity ratio equals the square of the velocity ratio. 4. The velocity ratio is at least 0. From these, it follows that the velocity ratio is less than 1 divided by 5.","outcome":"fails","reason":null,"reproduction":null,"status":"ok"}],"status":"ok"}"#
+
+/-- A case over a free `x` with these premises and one derivation `c1` of `conclusion` from them. -/
+def onX (ps : List String) (conclusion ids : String) (links : String := "[]") (values : String := free "x" "the x") :
+    String := req values (c1 s!"[\"follows\", {conclusion}, {ids}, {links}]") (premises ps)
+def xle (n : String) : String := s!"[\"le\", [\"val\", \"x\"], [\"lit\", \"{n}\"]]"
+/-- A chain of definitions, each the sum of the one before with itself: its inlined tree doubles at each step. -/
+def chain (n : Nat) : String := ", ".intercalate ((List.range n).map fun i =>
+  defined s!"v{i + 1}" s!"[\"add\", [\"val\", \"v{i}\"], [\"val\", \"v{i}\"]]")
+def steps : String := "unknown: the derivation search ran out of its 10,000 combination steps"
+def nonlinear (path : String) : List String := [s!"NonlinearPremise: {path} (declare a square link or name the product)"]
+
+#guard expect [
+  ("h6p", says (req rsd (h6 "6") (h6P "0.01")), ["h6 holds"]),
+  ("h6a-no-link", says (req rsd (h6 "4" "[]") (h6P "0.02")), ["h6 fails"]),
+  ("h6-two-links", says (req (rsd ++ ", " ++ free "u" "the u" ++ ", " ++ free "t" "the t") (h6 "4" r#"[["u", "t"], ["s", "r"]]"# ++
+      ", " ++ (h6 "4" r#"[["s", "r"], ["u", "t"]]"#).replace "h6" "h7") (h6P "0.02")), ["h6 holds", "h7 holds"]),
+  ("h6-le", says (req rsd (claim "h6" r#"["follows", ["le", ["val", "r"], ["lit", "0.25"]], ["p1", "p2"], [["s", "r"]]]"#)
+      (h6P "0.02")), ["h6 holds"]),
+  ("h6-gt", says (req rsd (claim "h6" r#"["follows", ["gt", ["lit", "0.25"], ["val", "r"]], ["p1", "p2"], [["s", "r"]]]"#)
+      (h6P "0.02")), ["h6 holds"]),
+  ("h6-gt-fails", says (req rsd (claim "h6" r#"["follows", ["gt", ["lit", "0.2"], ["val", "r"]], ["p1", "p2"], [["s", "r"]]]"#)
+      (h6P "0.02")), ["h6 fails"]),
+  -- r ≤ 1/5 does not follow either, but the claimed bound satisfies it and no step of the square rule reaches it.
+  ("h6-ge-edge", says (req rsd (claim "h6" r#"["follows", ["ge", ["lit", "0.2"], ["val", "r"]], ["p1", "p2"], [["s", "r"]]]"#)
+      (h6P "0.02")), ["h6 unknown (unknown: no certificate and no counterexample was found)"]),
+  ("no-solution", says (onX [premise "p1" (xle "1"), premise "p2" r#"["ge", ["val", "x"], ["lit", "2"]]"#]
+      r#"["lt", ["val", "x"], ["lit", "0"]]"# r#"["p1", "p2"]"#), ["c1 holds"]),
+  ("one-premise", says (onX [premise "p1" (xle "1"), premise "p2" r#"["ge", ["val", "x"], ["lit", "2"]]"#]
+      r#"["lt", ["val", "x"], ["lit", "0"]]"# r#"["p1"]"#), ["c1 fails"]),
+  ("within", says (onX [premise "p1" r#"["within", ["val", "x"], ["lit", "1"], ["lit", "2"]]"# "observation"]
+      r#"["gt", ["val", "x"], ["lit", "0.5"]]"# r#"["p1"]"#), ["c1 holds"]),
+  ("stated", says (req x1 (c1 r#"["follows", ["lt", ["val", "x"], ["lit", "2"]], [], []]"# ++ ", " ++
+      claim "c2" r#"["follows", ["lt", ["val", "x"], ["lit", "0"]], [], []]"#)), ["c1 holds", "c2 fails"]),
+  ("mixed", says (req (x1 ++ ", " ++ free "y" "the y") (ok1.replace "c1" "c0" ++ ", " ++
+      c1 r#"["follows", ["lt", ["val", "y"], ["val", "x"]], ["p1"], []]"#) (premises [premise "p1" r#"["lt", ["mul", ["lit", "2"], ["val", "y"]], ["div", ["val", "x"], ["lit", "2"]]]"#])),
+    ["c0 holds", "c1 holds"]),
+  ("lower-bound", says (onX [premise "p1" r#"["gt", ["val", "s"], ["lit", "1"]]"#]
+      r#"["gt", ["val", "x"], ["lit", "1"]]"# r#"["p1"]"# r#"[["s", "x"]]"# (free "x" "the x" ++ ", " ++ free "s" "the s")),
+    [s!"c1 unknown (unknown: no certificate and no counterexample was found)"]),
+  -- 64 facts and the negated conclusion are past the search's 64 facts; 63 are within them.
+  ("facts-64", says (onX ((List.range 64).map fun i => premise s!"p{i}" (xle (toString i)))
+      r#"["lt", ["val", "x"], ["lit", "100"]]"# (toJson ((List.range 64).map (s!"p{·}"))).compress), [s!"c1 unknown ({steps})"]),
+  ("facts-63", says (onX ((List.range 63).map fun i => premise s!"p{i}" (xle (toString i)))
+      r#"["lt", ["val", "x"], ["lit", "100"]]"# (toJson ((List.range 63).map (s!"p{·}"))).compress), ["c1 holds"]),
+  -- An inlined expression within `maxPolyTerms` nodes is searched (v12 is 8,191 nodes), one past it is not (v13); a
+  -- part past it is not judged linear or not, one within it is (v12 times x).
+  ("chain-12", says (onX [premise "p1" r#"["le", ["val", "v12"], ["lit", "1"]]"#] r#"["lt", ["val", "x"], ["lit", "1"]]"#
+      r#"["p1"]"# "[]" (free "x" "the x" ++ ", " ++ defined "v0" r#"["val", "x"]"# ++ ", " ++ chain 13)), ["c1 holds"]),
+  ("chain-13", says (onX [premise "p1" r#"["le", ["val", "v13"], ["lit", "1"]]"#] r#"["lt", ["val", "x"], ["lit", "1"]]"#
+      r#"["p1"]"# "[]" (free "x" "the x" ++ ", " ++ defined "v0" r#"["val", "x"]"# ++ ", " ++ chain 13)),
+    [s!"c1 unknown ({steps})"]),
+  ("chain-12-nonlinear", says (onX [premise "p1" r#"["le", ["mul", ["val", "v12"], ["val", "x"]], ["lit", "1"]]"#]
+      (xle "1") r#"["p1"]"# "[]" (free "x" "the x" ++ ", " ++ defined "v0" r#"["val", "x"]"# ++ ", " ++ chain 13)),
+    nonlinear "premises.0.claim.1"),
+  ("chain-13-nonlinear", says (onX [premise "p1" r#"["le", ["mul", ["val", "v13"], ["val", "x"]], ["lit", "1"]]"#]
+      (xle "1") r#"["p1"]"# "[]" (free "x" "the x" ++ ", " ++ defined "v0" r#"["val", "x"]"# ++ ", " ++ chain 13)),
+    [s!"c1 unknown ({steps})"]),
+  ("chain", says (onX [premise "p1" r#"["lt", ["val", "v20"], ["lit", "1"]]"#] r#"["lt", ["val", "x"], ["lit", "1"]]"#
+      r#"["p1"]"# "[]" (free "x" "the x" ++ ", " ++ defined "v0" r#"["val", "x"]"# ++ ", " ++ chain 20)),
+    [s!"c1 unknown ({steps})"]),
+  ("premises-512", says (onX ((List.range 512).map fun i => premise s!"p{i}" (xle "1")) (xle "1") "[]"), ["c1 fails"]),
+  ("premises-513", says (onX ((List.range 513).map fun i => premise s!"p{i}" (xle "1")) (xle "1") "[]"),
+    ["ResourceLimit: the number of premises exceeds 512"]),
+  ("unknown-premise", says (req rsd (claim "h6" r#"["follows", ["lt", ["val", "r"], ["lit", "1"]], ["p1", "p3"], []]"#)
+      (h6P "0.02")), ["UnknownPremise: p3"]),
+  ("unknown-link-stated", says (req (rsd ++ ", " ++ stated "k" r#""1""#) (h6 "4" r#"[["s", "r"], ["k", "r"]]"#) (h6P "0.02")),
+    ["UnknownLink: k"]),
+  ("unknown-link-name", says (req rsd (h6 "4" r#"[["s", "q"]]"#) (h6P "0.02")), ["UnknownLink: q"]),
+  ("nonlinear-square", says (onX [premise "p1" r#"["eq", ["val", "s"], ["mul", ["val", "x"], ["val", "x"]]]"#]
+      (xle "1") r#"["p1"]"# "[]" (free "x" "the x" ++ ", " ++ free "s" "the s")), nonlinear "premises.0.claim.2"),
+  ("nonlinear-pow", says (onX [premise "p1" r#"["lt", ["add", ["lit", "1"], ["pow", ["val", "x"], 2]], ["lit", "1"]]"#]
+      (xle "1") r#"["p1"]"#), nonlinear "premises.0.claim.1.2"),
+  ("nonlinear-divisor", says (onX [premise "p1" r#"["lt", ["div", ["lit", "1"], ["val", "x"]], ["lit", "1"]]"#]
+      (xle "1") r#"["p1"]"#), nonlinear "premises.0.claim.1"),
+  ("nonlinear-zero", says (onX [premise "p1" r#"["lt", ["div", ["val", "x"], ["sub", ["lit", "1"], ["lit", "1"]]], ["lit", "1"]]"#]
+      (xle "1") r#"["p1"]"#), nonlinear "premises.0.claim.1"),
+  ("nonlinear-conclusion", says (onX [] r#"["lt", ["lit", "1"], ["mul", ["val", "x"], ["val", "x"]]]"# "[]"),
+    nonlinear "claims.0.claim.1.2"),
+  ("nonlinear-defined", says (onX [premise "p1" (xle "1"), premise "p2" r#"["le", ["val", "q"], ["lit", "1"]]"#]
+      (xle "1") r#"["p1"]"# "[]" (free "x" "the x" ++ ", " ++ defined "q" r#"["mul", ["val", "x"], ["val", "x"]]"#)),
+    nonlinear "premises.1.claim.1"),
+  ("linear-constants", says (onX [premise "p1" r#"["le", ["mul", ["pow", ["lit", "2"], 3], ["div", ["val", "x"], ["lit", "4"]]], ["pow", ["val", "x"], 1]]"#]
+      (xle "0") r#"["p1"]"#), ["c1 holds"]),
+  ("rounds-premise", says (onX [premise "p1" r#"["rounds", ["val", "x"], "1"]"#] (xle "1") r#"["p1"]"#),
+    ["InvalidInput: premises.0.claim must be a comparison or a range"]),
+  ("premise-support", says (onX [r#"{"id": "p1", "claim": ["le", ["val", "x"], ["lit", "1"]]}"#] (xle "1") r#"["p1"]"#),
+    ["InvalidInput: premises.0.support is missing"]),
+  ("premise-support-form", says (onX [premise "p1" (xle "1") "rumour"] (xle "1") r#"["p1"]"#),
+    ["InvalidInput: premises.0.support must be observation, testimony or assumption"]),
+  ("premise-field", says (onX [r#"{"id": "p1", "claim": ["le", ["val", "x"], ["lit", "1"]], "support": "assumption", "words": "w"}"#]
+      (xle "1") r#"["p1"]"#), ["InvalidInput: premises.0.words is unknown"]),
+  ("premise-id", says (onX [premise "p1" (xle "1")] (xle "1") "[1]"), ["InvalidInput: claims.0.claim.2.0 must be a premise id"]),
+  ("link-form", says (onX [premise "p1" (xle "1")] (xle "1") r#"["p1"]"# r#"[["x"]]"#),
+    ["InvalidInput: claims.0.claim.3.0 must be two names"]),
+  ("premises-list", says (req (free "x" "the x") (c1 (s!"[\"follows\", {xle "1"}, [], []]")) r#", "premises": {}"#),
+    ["InvalidInput: case.premises must be a list"]),
+  ("premise-claim-id", says (onX [premise "c1" (xle "1")] (xle "1") r#"["c1"]"#), ["DuplicateClaimId: c1"]),
+  ("premise-ids", says (onX [premise "p1" (xle "1"), premise "p1" (xle "2")] (xle "1") r#"["p1"]"#), ["DuplicateClaimId: p1"]),
+  ("premise-name", says (onX [premise "p1" (xle "1"), premise "p2" r#"["le", ["val", "w"], ["lit", "1"]]"#] (xle "1") r#"["p1"]"#),
+    ["UnknownName: w (declare it before the value that uses it)"])]
+
+-- J10: R-3's line, each square link two numbered premises after the case's (spec 13.6).
+#guard let words (n : String) : Option String :=
+    [("r", "the velocity ratio"), ("s", "the squared velocity ratio"), ("d", "the displacement")].lookup n
+  match ((Json.parse r3).toOption.bind (Wire.decodeCase · |>.toOption)).map (·.claims) with
+  | some [(_, Check.follows P links C)] => VE.Calc.English.renderFollows words P links C == some
+      ("Assume the following. 1. The displacement equals the product of 0.4 and the squared velocity ratio. " ++
+       "2. The displacement is less than 0.02. 3. The squared velocity ratio equals the square of the velocity ratio. " ++
+       "4. The velocity ratio is at least 0. From these, it follows that the velocity ratio is less than 1 divided by 4.")
+  | _ => false
+#guard VE.Calc.English.renderFollows (fun n => some s!"the {n}") [] [("a", "b"), ("c", "d")]
+    (.compare ⟨.lt, false⟩ (.val "b") (.lit 1)) == some ("Assume the following. 1. The a equals the square of the b. " ++
+  "2. The b is at least 0. 3. The c equals the square of the d. 4. The d is at least 0. From these, it follows that " ++
+  "the b is less than 1.")
+
+-- A chain of definitions lowers to one coefficient per unknown (`QLin.norm` in `Expr.linear`), so the search and the
+-- replay never meet a form as long as the chain: x + x + … + x (60 terms), then 2 (x + y) − y.
+#guard let ds : List Decl := ⟨"x", .free⟩ :: ⟨"y", .free⟩ :: ⟨"v0", .defined (.val "x")⟩ :: (List.range 59).map fun i =>
+    ⟨s!"v{i + 1}", .defined (.add (.val s!"v{i}") (.val "x"))⟩
+  (Claim.compare ⟨.le, false⟩ (.val "v59") (.lit 1)).facts ds == some [⟨⟨1, [("x", -60)]⟩, false⟩] &&
+  (Claim.compare ⟨.lt, false⟩ (.sub (.mul (.lit 2) (.add (.val "x") (.val "y"))) (.val "y")) (.lit 0)).facts ds ==
+    some [⟨⟨0, [("x", -2), ("y", -1)]⟩, true⟩]
+
+-- A derivation reading a value that has none is undefined, and one reading an exhausted counted value is unknown at
+-- the budget (2.7), the first fault in the conclusion and then the premises deciding. Counted values reach the wire
+-- with ME-4, so these are checked on declarations.
+#guard let ds : List Decl := [⟨"r", .free⟩, ⟨"n", .counted (Thunk.pure none) (.ok none)⟩,
+    ⟨"m", .counted (Thunk.pure none) .exhausted⟩]
+  let lt (a b : String) : Claim := .compare ⟨.lt, false⟩ (.val a) (.val b)
+  [Check.follows [] [] (lt "r" "n"), .follows [lt "r" "m"] [] (lt "r" "r"), .follows [lt "r" "n"] [] (lt "r" "m"),
+    .follows [lt "r" "m", lt "r" "n"] [] (lt "r" "r"), .follows [lt "r" "m"] [] (lt "n" "r")].map (·.run ds) ==
+  [.decided .undefined, .unknown (.limit .evaluations), .unknown (.limit .evaluations), .unknown (.limit .evaluations),
+    .decided .undefined]
+
+-- Every unknown a check gives is one of its kind's reasons (`Check.reasons`, 1.5): for a derivation the budget, the
+-- step limit and an inconclusive search; for a claim the budget and the digit limit (R-2's v1).
+#guard let ds : List Decl := [⟨"r", .free⟩, ⟨"m", .counted (Thunk.pure none) .exhausted⟩]
+  let lt (a b : String) : Claim := .compare ⟨.lt, false⟩ (.val a) (.val b)
+  let k := Check.follows [lt "r" "m"] [] (lt "r" "r")
+  let decoded := [onX [premise "p1" r#"["gt", ["val", "s"], ["lit", "1"]]"#] r#"["gt", ["val", "x"], ["lit", "1"]]"#
+      r#"["p1"]"# r#"[["s", "x"]]"# (free "x" "the x" ++ ", " ++ free "s" "the s"),
+    onX [premise "p1" r#"["le", ["val", "v13"], ["lit", "1"]]"#] r#"["lt", ["val", "x"], ["lit", "1"]]"#
+      r#"["p1"]"# "[]" (free "x" "the x" ++ ", " ++ defined "v0" r#"["val", "x"]"# ++ ", " ++ chain 13)].filterMap
+    fun s => (Json.parse s).toOption.bind (Wire.decodeCase · |>.toOption)
+  let decoded := decoded ++ [r2].filterMap fun s => (Json.parse s).toOption.bind (Wire.decodeCase · |>.toOption)
+  decoded.length == 3 && ((ds, k) :: (ds, .claim (lt "m" "m")) :: decoded.flatMap fun c =>
+      (c.claims.filter fun (_, k) => k.run c.decls matches .unknown _).map (c.decls, ·.2)).all fun (ds, k) =>
+    match k.run ds with
+    | .unknown u => decide (u ∈ k.reasons)
+    | .decided _ => false
+
+-- Spec 3.3: free values, premises (their ids, claims, supports and spans) and a derivation's parts are hashed; an
+-- empty `premises` list is no premise.
+def deriv (ps : List String) (ids links : String) : String := onX ps (xle "1") ids links (free "x" "the x" ++ ", " ++ free "s" "the s")
+#guard identityFaults.isEmpty && [
+    ("premises", [[deriv [] "[]" "[]", req (free "x" "the x" ++ ", " ++ free "s" "the s") (c1 s!"[\"follows\", {xle "1"}, [], []]")],
+      [deriv [premise "p1" (xle "1")] "[]" "[]"], [deriv [premise "p1" (xle "2")] "[]" "[]"],
+      [deriv [premise "q1" (xle "1")] "[]" "[]"], [deriv [premise "p1" (xle "1") "observation"] "[]" "[]"],
+      [deriv [r#"{"id": "p1", "claim": ["le", ["val", "x"], ["lit", "1"]], "support": "assumption", "span": [3, 5]}"#] "[]" "[]"],
+      [deriv [premise "p1" (xle "1"), premise "p2" (xle "2")] "[]" "[]"],
+      [deriv [premise "p2" (xle "2"), premise "p1" (xle "1")] "[]" "[]"]]),
+    ("derivation", [[deriv [premise "p1" (xle "1")] r#"["p1"]"# "[]"], [deriv [premise "p1" (xle "1")] "[]" r#"[["s", "x"]]"#],
+      [deriv [premise "p1" (xle "1")] "[]" r#"[["x", "s"]]"#], [deriv [premise "p1" (xle "1")] "[]" "[]",
+        req (free "x" "the x" ++ ", " ++ free "s" "the s") (c1 s!"[\"follows\", {xle "1.0"}, [], []]")
+          (premises [premise "p1" (xle "1")])]]),
+    ("free", [[req (free "x" "the x") (ok1.replace "eq" "le")], [req x1 (ok1.replace "eq" "le")]])].all fun (_, classes) =>
+  let ids := classes.map (·.map identity)
+  ids.all (fun c => c.all fun i => i.all (· != "") && i.length > 1 && some i == c.head?) &&
+    decide ((ids.filterMap fun c => c.head?.bind List.head?).Nodup)
+
+/-! ## Row fields (spec 2.2, 2.5, 3.4, 11.1; me-2c): each claim row's sides, display and tie, and every row's line
+and finding, on both sides of each boundary -/
+
+/-- Row `i`'s member `k`, written out; `"absent"` where the row has no such member. -/
+def member (s : String) (i : Nat) (k : String) : String := match (answer s).getObjVal? "rows" with
+  | .ok (.arr rows) => match rows[i]? with
+    | some r => match r.getObjVal? k with
+      | .ok v => v.compress
+      | .error _ => "absent"
+    | none => "no row"
+  | _ => "no rows"
+
+/-- Claim `c1` over `x` = 1 (or `values`): its sides, display and tie. -/
+def sdt (c : String) (values : String := x1) : List String :=
+  ["sides", "display", "tie"].map (member (req values (c1 c)) 0)
+
+def roundsOf (e p : String) (rule : String := "") : String := s!"[\"rounds{rule}\", {e}, {p}]"
+def third : String := r#"["div", ["lit", "1"], ["lit", "3"]]"#
+
+def rowFieldCases := [
+  -- display: two places beyond the printed ones, "…" only when a nonzero remainder is dropped; a sign kept
+  ("third", sdt (roundsOf third r#""0.33""#), [r#"["1/3"]"#, r#""0.3333…""#, "false"]),
+  ("exact-at-places", sdt (roundsOf r#"["lit", "0.125"]"# r#""0.1""#), [r#"["1/8"]"#, r#""0.125""#, "false"]),
+  ("negative", sdt (roundsOf r#"["sub", ["lit", "0"], ["div", ["lit", "1"], ["lit", "3"]]]"# r#""-0.33""#),
+    [r#"["-1/3"]"#, r#""-0.3333…""#, "false"]),
+  ("negative-small", sdt (roundsOf r#"["lit", "-0.0001"]"# r#""0.0""#), [r#"["-1/10000"]"#, r#""-0.000…""#, "false"]),
+  ("whole", sdt (roundsOf r#"["lit", "2.5"]"# r#""3""#), [r#"["5/2"]"#, r#""2.50""#, "true"]),
+  ("places-minus-2", sdt (roundsOf r#"["lit", "250.5"]"# r#"["sci", "3", 2]"#), [r#"["501/2"]"#, r#""250…""#, "false"]),
+  ("places-minus-7", sdt (roundsOf r#"["lit", "20012345"]"# r#"["sci", "2", 7]"#),
+    [r#"["20012345"]"#, r#""20000000…""#, "false"]),
+  ("places-minus-7-exact", sdt (roundsOf r#"["lit", "20000000"]"# r#"["sci", "2", 7]"#),
+    [r#"["20000000"]"#, r#""20000000""#, "false"]),
+  -- tie: a `rounds` claim at an exact tie under either rule; never a printed bound or another claim
+  ("tie-up", sdt (roundsOf r#"["lit", "0.125"]"# r#""0.13""#), [r#"["1/8"]"#, r#""0.1250""#, "true"]),
+  ("tie-even-rule", sdt (r#"["rounds", ["lit", "0.125"], "0.12", "half-even"]"#), [r#"["1/8"]"#, r#""0.1250""#, "true"]),
+  ("near-tie", sdt (roundsOf r#"["lit", "0.1251"]"# r#""0.13""#), [r#"["1251/10000"]"#, r#""0.1251""#, "false"]),
+  ("down-at-tie", sdt (roundsOf r#"["lit", "0.125"]"# r#""0.12""# "-down"), [r#"["1/8"]"#, r#""0.1250""#, "false"]),
+  ("up-at-tie", sdt (roundsOf r#"["lit", "0.125"]"# r#""0.13""# "-up"), [r#"["1/8"]"#, r#""0.1250""#, "false"]),
+  -- no value: undefined (the tie flag is false, as `Claim.tieSensitive` says) and beyond the digit limit (null)
+  ("undefined", sdt (roundsOf r#"["div", ["lit", "1"], ["lit", "0"]]"# r#""0.1""#), ["[null]", "null", "false"]),
+  ("digits", sdt (roundsOf r#"["val", "z"]"# r#""1""#) (stated "x" r#"["sci", "1", 39]"# ++ ", " ++
+    defined "y" r#"["pow", ["val", "x"], 64]"# ++ ", " ++ defined "z" r#"["mul", ["val", "y"], ["val", "y"]]"#),
+    ["[null]", "null", "null"]),
+  -- the other claims: one side per expression, no display, no tie
+  ("eq", sdt r#"["eq", ["val", "x"], ["lit", "1"]]"#, [r#"["1","1"]"#, "null", "false"]),
+  ("within", sdt r#"["within", ["val", "x"], ["lit", "0"], ["div", ["lit", "1"], ["lit", "0"]]]"#,
+    [r#"["1","0",null]"#, "null", "false"]),
+  -- a follows row has none of them
+  ("follows", ["sides", "display", "tie"].map (member r3 0), ["absent", "absent", "absent"])]
+#guard expect rowFieldCases
+
+-- Each value's words by its name, the first value's and the last's alike; the display of 0 has no sign.
+#guard (Json.parse r#"{"values": [{"name": "x", "words": "the x"}, {"name": "y", "words": "the y"}]}"#).toOption.all
+  fun j => [Run.wordsIn j "x", Run.wordsIn j "y", Run.wordsIn j "z"] == [some "the x", some "the y", none]
+#guard [Run.truncated 2 0, Run.truncated 0 0, Run.truncated (-1) 0, Run.truncated 1 (-1 / 20)] ==
+  ["0.00", "0", "0", "-0.0…"]
+
+-- Lean's line (11.1), `null` where 11.2's rule refuses an expression or a value's words; never a finding (13.6).
+#guard expect [
+  ("line", [member (req x1 ok1) 0 "line"], [r#""The x equals 1.""#]),
+  ("line-nested", [member (req x1 (c1 r#"["eq", ["div", ["lit", "1"], ["sub", ["val", "x"], ["val", "x"]]], ["lit", "1"]]"#)) 0 "line"],
+    ["null"]),
+  ("line-words", [member (req r#"{"name": "x", "words": "w", "stated": "1"}"# ok1) 0 "line"], ["null"]),
+  ("line-follows", [member r4 0 "line"], [r#""Assume the following. 1. The displacement equals the product of 0.4 and the squared velocity ratio. 2. The displacement is less than 0.02. 3. The squared velocity ratio equals the square of the velocity ratio. 4. The velocity ratio is at least 0. From these, it follows that the velocity ratio is less than 1 divided by 5.""#]),
+  ("finding", [member r1 1 "finding", member r3 0 "finding", member r2 0 "finding"], ["null", "null", "null"])]
 
 end VE.Calc.RunExamples

@@ -1,0 +1,197 @@
+control: 0 failures
+Q1 VE.Defaults.Wire.CertReplay.verdict: FAILS 4 guards
+    #guard answer (γCase true) == unknownBecause "with no exception, rules r1 and r2 conflict"
+    #guard answer (γCase false) == unknownBecause "no-exception coherence not checked"
+    #guard answer (γbCase (toJson [pairJ "r1" "r2"])) == unknownBecause "no-exception coherenc
+    #guard answer (γbCase (toJson ([] : List Json))) == unknownBecause "no-exception coherence
+Q2 VE.Defaults.Wire.CertReplay.reason: FAILS 1 guards
+    #guard answer ((γCase true).setObjVal! "certificate" .null) == unknownBecause "with no exc
+Q3 VE.Defaults.Wire.basisLabel: FAILS 2 guards
+    #guard answer (αCase notExc cNeeds.trace (αModels [exc1])) == follows "needs" "short" [exc
+    #guard holds dβ fun L => answer (req βEnv βR "defaults-certificate" [("premises", toJson (
+Q4 VE.Defaults.Wire.formLabel: FAILS 5 guards
+    #guard answer (αCase notExc cNeeds.trace (αModels [exc1])) == follows "needs" "short" [exc
+    #guard answer (αCase notExc cNeeds.trace (αModels [])) == follows "unsettled" "short" [exc
+    #guard answer (αCase notExc cNeeds.trace ((αModels [exc1]).take 1)) == follows "unsettled"
+    #guard answer (αCase excSelf cStrict.trace (αModels [exc1])) == follows "strict" "short" [
+    #guard answer (γbCase (toJson [pairJ "r1" "r2" γbCert])) == follows "unsettled" "short" [e
+Q5 VE.Defaults.Wire.certFields: FAILS 7 guards
+    #guard answer (αCase notExc cNeeds.trace (αModels [exc1])) == follows "needs" "short" [exc
+    #guard answer (αCase notExc cNeeds.trace (αModels [])) == follows "unsettled" "short" [exc
+    #guard answer (αCase notExc cNeeds.trace ((αModels [exc1]).take 1)) == follows "unsettled"
+    #guard answer (αCase excSelf cStrict.trace (αModels [exc1])) == follows "strict" "short" [
+    #guard holds dβ fun L => answer (req βEnv βR "defaults-certificate" [("premises", toJson (
+    #guard answer (βFact [exAt "urgent"] [exAt "urgent"]) == follows "unsettled" "long" [excN 
+    #guard answer (γbCase (toJson [pairJ "r1" "r2" γbCert])) == follows "unsettled" "short" [e
+Q6 VE.Defaults.Wire.CertReplay.form: FAILS 2 guards
+    #guard holds dβ fun L => answer (req βEnv βR "defaults-certificate" [("premises", toJson (
+    #guard answer (βFact [exAt "urgent"] [exAt "urgent"]) == follows "unsettled" "long" [excN 
+Q7 VE.Defaults.Wire.defaultsCase: FAILS 20 guards
+    #guard answer (αCase notExc cNeeds.trace (αModels [exc1])) == follows "needs" "short" [exc
+    #guard answer (αCase notExc cNeeds.trace (αModels [])) == follows "unsettled" "short" [exc
+    #guard answer (αCase notExc cNeeds.trace ((αModels [exc1]).take 1)) == follows "unsettled"
+    #guard answer (αCase excSelf cStrict.trace (αModels [exc1])) == follows "strict" "short" [
+    #guard answer (αCase notExc none (αModels [exc1])) == unknownBecause "no certificate"
+    #guard match dα with
+    #guard answer (αCase notExc cNeeds.trace []) == unknownBecause "no checked situation where
+    #guard answer ((αCase notExc none []).setObjVal! "premises" (toJson [fJ (exAt exc1)])) ==
+    #guard holds dβ fun L => answer (req βEnv βR "defaults-certificate" [("premises", toJson [
+    #guard answer (γCase true) == unknownBecause "with no exception, rules r1 and r2 conflict"
+    #guard answer (γCase false) == unknownBecause "no-exception coherence not checked"
+    #guard answer ((γCase true).setObjVal! "certificate" .null) == unknownBecause "with no exc
+    #guard holds (layered δEnv δR) fun L => answer (req δEnv δR "defaults-certificate" [("prem
+    #guard holds dβ fun L => answer (req βEnv βR "defaults-certificate" [("premises", toJson (
+    #guard answer (βFact [exAt "urgent"] [exAt "urgent"]) == follows "unsettled" "long" [excN 
+    #guard answer (βFact [exAt "urgent"] []) == unknownBecause "no certificate"
+    #guard answer (βFact [] [exAt "urgent"]) == unknownBecause "no certificate"
+    #guard answer (γbCase (toJson [pairJ "r1" "r2" γbCert])) == follows "unsettled" "short" [e
+    #guard answer (γbCase (toJson [pairJ "r1" "r2"])) == unknownBecause "no-exception coherenc
+    #guard answer (γbCase (toJson ([] : List Json))) == unknownBecause "no-exception coherence
+Q8 VE.Defaults.Wire.CertReplay.reason: FAILS 1 guards
+    #guard holds (layered δEnv δR) fun L => answer (req δEnv δR "defaults-certificate" [("prem
+M1 VE.Defaults.Wire.forcedAt: FAILS 3 guards
+    #guard holds dβ fun L => answer (modelCase βEnv βR L xAll ["urgent", exc1]) == doesNotFoll
+    #guard holds dβ fun L => [(exAt "urgent", doesNotFollow [("r1", 0)]),
+    #guard holds (layered β2Env β2R) fun L =>
+M2 VE.Defaults.Wire.forcedAt: FAILS 3 guards
+    #guard holds dβ fun L => answer (modelCase βEnv βR L xAll ["urgent", exc1]) == doesNotFoll
+    #guard holds dβ fun L => [(exAt "urgent", doesNotFollow [("r1", 0)]),
+    #guard holds (layered β2Env β2R) fun L =>
+M3 VE.Defaults.Wire.ModelReplay.verdict: FAILS 4 guards
+    #guard holds dβ fun L => [(exAt "urgent", doesNotFollow [("r1", 0)]),
+    #guard holds dβ fun L => answer ((modelCase βEnv βR L xAll ["urgent", exc1]).setObjVal! "m
+    #guard holds dβ fun L => answer (modelCase βEnv βR L xAll [exc1]) == VE.Route.Wire.ok "c" 
+    #guard holds dβ fun L => answer ((modelCase βEnv βR L xAll []).setObjVal! "model" (model (
+M4 VE.Defaults.Wire.modelFields: FAILS 4 guards
+    #guard holds dβ fun L => [(exAt "urgent", doesNotFollow [("r1", 0)]),
+    #guard holds dβ fun L => answer ((modelCase βEnv βR L xAll ["urgent", exc1]).setObjVal! "m
+    #guard holds dβ fun L => answer (modelCase βEnv βR L xAll [exc1]) == VE.Route.Wire.ok "c" 
+    #guard holds dβ fun L => answer ((modelCase βEnv βR L xAll []).setObjVal! "model" (model (
+M5 VE.Defaults.Wire.defaultsCase: FAILS 7 guards
+    #guard holds dβ fun L => answer (modelCase βEnv βR L xAll ["urgent", exc1]) == doesNotFoll
+    #guard holds dβ fun L => [(exAt "urgent", doesNotFollow [("r1", 0)]),
+    #guard holds dβ fun L => answer ((modelCase βEnv βR L xAll ["urgent", exc1]).setObjVal! "m
+    #guard holds dβ fun L => answer (modelCase βEnv βR L xAll [exc1]) == VE.Route.Wire.ok "c" 
+    #guard holds dβ fun L => answer ((modelCase βEnv βR L xAll []).setObjVal! "model" (model (
+    #guard holds dα fun L => answer (modelCase αEnv αR L (.all "assistant" (.unary exc1 (.var 
+    #guard holds (layered β2Env β2R) fun L =>
+R1 VE.Defaults.Wire.replayModelOn: FAILS 2 guards
+    THEOREM replayModelOn_request
+    #guard holds dβ fun L => [(exAt "urgent", doesNotFollow [("r1", 0)]),
+R2 VE.Defaults.Wire.replayModelOn: FAILS 3 guards
+    THEOREM replayModelOn_request
+    #guard holds dβ fun L => answer ((modelCase βEnv βR L xAll ["urgent", exc1]).setObjVal! "m
+    #guard holds dβ fun L => answer ((modelCase βEnv βR L xAll []).setObjVal! "model" (model (
+R3 VE.Defaults.Wire.filledOf: FAILS 2 guards
+    THEOREM filledOf_request
+    #guard holds dβ fun L => answer ((modelCase βEnv βR L xAll ["urgent", exc1]).setObjVal! "m
+R4 VE.Defaults.Wire.collisionOf: FAILS 2 guards
+    THEOREM collisionOf_request
+    #guard holds dγ fun L => answer (req αEnv γR "defaults-coherence" [("coherence", toJson [p
+R5 VE.Defaults.Wire.collisionOf: FAILS 5 guards
+    THEOREM collisionOf_request
+    #guard holds dγ fun L =>
+    #guard holds dγ fun L => [("r9", "r2"), ("r1", "r9")].all fun (m, n) =>
+    #guard holds (layered γ2Env γ2R) fun L =>
+    #guard holds (layered αEnv γ3R) fun L =>
+R6 VE.Defaults.Wire.replayCertOn: FAILS 3 guards
+    THEOREM replayCertOn_request
+    #guard holds dβ fun L => answer (req βEnv βR "defaults-certificate" [("premises", toJson [
+    #guard answer (βFact [exAt "urgent"] [exAt "urgent"]) == follows "unsettled" "long" [excN 
+R7 VE.Defaults.Wire.replayCertOn: FAILS 9 guards
+    THEOREM replayCertOn_request
+    #guard answer (αCase notExc cNeeds.trace (αModels [exc1])) == follows "needs" "short" [exc
+    #guard answer (αCase notExc cNeeds.trace (αModels [])) == follows "unsettled" "short" [exc
+    #guard answer (αCase notExc cNeeds.trace ((αModels [exc1]).take 1)) == follows "unsettled"
+    #guard answer (αCase excSelf cStrict.trace (αModels [exc1])) == follows "strict" "short" [
+    #guard [true, false].all fun c => match (do replayCertOn (← viewOf (γCase c)) (γCase c)) w
+    #guard holds dβ fun L => answer (req βEnv βR "defaults-certificate" [("premises", toJson (
+    #guard answer (βFact [exAt "urgent"] [exAt "urgent"]) == follows "unsettled" "long" [excN 
+    #guard answer (γbCase (toJson [pairJ "r1" "r2" γbCert])) == follows "unsettled" "short" [e
+R8 VE.Defaults.Wire.replayCertOn: FAILS 3 guards
+    THEOREM replayCertOn_request
+    #guard answer (βFact [exAt "urgent"] [exAt "urgent"]) == follows "unsettled" "long" [excN 
+    #guard answer (βFact [] [exAt "urgent"]) == unknownBecause "no certificate"
+R9 VE.Defaults.Wire.replayCertOn: FAILS 9 guards
+    THEOREM replayCertOn_request
+    #guard answer (αCase notExc cNeeds.trace (αModels [exc1])) == follows "needs" "short" [exc
+    #guard answer (αCase notExc cNeeds.trace (αModels [])) == follows "unsettled" "short" [exc
+    #guard answer (αCase notExc cNeeds.trace ((αModels [exc1]).take 1)) == follows "unsettled"
+    #guard answer (αCase excSelf cStrict.trace (αModels [exc1])) == follows "strict" "short" [
+    #guard [true, false].all fun c => match (do replayCertOn (← viewOf (γCase c)) (γCase c)) w
+    #guard holds dβ fun L => answer (req βEnv βR "defaults-certificate" [("premises", toJson (
+    #guard answer (βFact [exAt "urgent"] [exAt "urgent"]) == follows "unsettled" "long" [excN 
+    #guard answer (γbCase (toJson [pairJ "r1" "r2" γbCert])) == follows "unsettled" "short" [e
+R10 VE.Defaults.Wire.replayCertOn: FAILS 3 guards
+    THEOREM replayCertOn_request
+    #guard answer (γbCase (toJson [pairJ "r1" "r2" γbCert])) == follows "unsettled" "short" [e
+    #guard answer (γbCase (toJson [pairJ "r2" "r1" γbCert])) == .str pairText
+R11 VE.Defaults.Wire.replayCertOn: FAILS 9 guards
+    THEOREM replayCertOn_request
+    #guard answer (αCase notExc cNeeds.trace (αModels [exc1])) == follows "needs" "short" [exc
+    #guard answer (αCase notExc cNeeds.trace (αModels [])) == follows "unsettled" "short" [exc
+    #guard answer (αCase notExc cNeeds.trace ((αModels [exc1]).take 1)) == follows "unsettled"
+    #guard answer (αCase excSelf cStrict.trace (αModels [exc1])) == follows "strict" "short" [
+    #guard [true, false].all fun c => match (do replayCertOn (← viewOf (γCase c)) (γCase c)) w
+    #guard holds dβ fun L => answer (req βEnv βR "defaults-certificate" [("premises", toJson (
+    #guard answer (βFact [exAt "urgent"] [exAt "urgent"]) == follows "unsettled" "long" [excN 
+    #guard answer (γbCase (toJson [pairJ "r1" "r2" γbCert])) == follows "unsettled" "short" [e
+R12 VE.Defaults.Wire.replayCertOn: FAILS 3 guards
+    THEOREM replayCertOn_request
+    #guard answer (γCase true) == unknownBecause "with no exception, rules r1 and r2 conflict"
+    #guard answer ((γCase true).setObjVal! "certificate" .null) == unknownBecause "with no exc
+R13 VE.Defaults.Wire.replayCertOn: FAILS 13 guards
+    THEOREM replayCertOn_request
+    #guard answer (αCase notExc cNeeds.trace (αModels [exc1])) == follows "needs" "short" [exc
+    #guard answer (αCase notExc cNeeds.trace (αModels [])) == follows "unsettled" "short" [exc
+    #guard answer (αCase notExc cNeeds.trace ((αModels [exc1]).take 1)) == follows "unsettled"
+    #guard answer (αCase excSelf cStrict.trace (αModels [exc1])) == follows "strict" "short" [
+    #guard answer (αCase notExc none (αModels [exc1])) == unknownBecause "no certificate"
+    #guard match dα with
+    #guard [true, false].all fun c => match (do replayCertOn (← viewOf (γCase c)) (γCase c)) w
+    #guard holds dβ fun L => answer (req βEnv βR "defaults-certificate" [("premises", toJson (
+    #guard answer (βFact [exAt "urgent"] [exAt "urgent"]) == follows "unsettled" "long" [excN 
+    #guard answer (βFact [exAt "urgent"] []) == unknownBecause "no certificate"
+    #guard answer (βFact [] [exAt "urgent"]) == unknownBecause "no certificate"
+    #guard answer (γbCase (toJson [pairJ "r1" "r2" γbCert])) == follows "unsettled" "short" [e
+R14 VE.Defaults.Wire.replayCertOn: FAILS 3 guards
+    THEOREM replayCertOn_request
+    #guard answer (αCase notExc cNeeds.trace (αModels [exc1])) == follows "needs" "short" [exc
+    #guard holds dβ fun L => answer (req βEnv βR "defaults-certificate" [("premises", toJson (
+R15 VE.Defaults.Wire.replayCertOn: FAILS 9 guards
+    THEOREM replayCertOn_request
+    #guard answer (αCase notExc cNeeds.trace (αModels [exc1])) == follows "needs" "short" [exc
+    #guard answer (αCase notExc cNeeds.trace (αModels [])) == follows "unsettled" "short" [exc
+    #guard answer (αCase notExc cNeeds.trace ((αModels [exc1]).take 1)) == follows "unsettled"
+    #guard answer (αCase excSelf cStrict.trace (αModels [exc1])) == follows "strict" "short" [
+    #guard [true, false].all fun c => match (do replayCertOn (← viewOf (γCase c)) (γCase c)) w
+    #guard holds dβ fun L => answer (req βEnv βR "defaults-certificate" [("premises", toJson (
+    #guard answer (βFact [exAt "urgent"] [exAt "urgent"]) == follows "unsettled" "long" [excN 
+    #guard answer (γbCase (toJson [pairJ "r1" "r2" γbCert])) == follows "unsettled" "short" [e
+R16 VE.Defaults.Wire.replayCoherenceOn: FAILS 2 guards
+    THEOREM replayCoherenceOn_request
+    #guard answer (req αEnv γbR "defaults-coherence" [("coherence", toJson [pairJ "r1" "r2" γb
+R17 VE.Defaults.Wire.replayCoherenceOn: FAILS 7 guards
+    THEOREM replayCoherenceOn_request
+    #guard holds dγ fun L =>
+    #guard holds dγ fun L => [("r9", "r2"), ("r1", "r9")].all fun (m, n) =>
+    #guard holds dγ fun L => answer (req αEnv γR "defaults-coherence" [("coherence", toJson [p
+    #guard holds (layered γ'Env γ'R) fun L => (ans (req γ'Env γ'R "defaults-coherence"
+    #guard holds (layered γ2Env γ2R) fun L =>
+    #guard holds (layered αEnv γ3R) fun L =>
+R18 VE.Defaults.Wire.replayCoherenceOn: FAILS 2 guards
+    THEOREM replayCoherenceOn_request
+    #guard answer (req αEnv γbR "defaults-coherence" [("coherence", toJson [pairJ "r1" "r2" γb
+R19 VE.Defaults.Wire.pairCertsOf: FAILS 5 guards
+    #guard [toJson [pairJ "r2" "r1"], toJson [pairJ "r1" "r2", pairJ "r1" "r2"], toJson [pairJ
+    #guard answer (req δEnv δR "defaults-coherence" [("coherence", .str "x")]) == .str "array 
+    #guard answer (req αEnv γbR "defaults-coherence" [("coherence", toJson [pairJ "r1" "r2" γb
+    #guard answer (γbCase (toJson [pairJ "r1" "r2" γbCert])) == follows "unsettled" "short" [e
+    #guard answer (γbCase (toJson [pairJ "r2" "r1" γbCert])) == .str pairText
+R20 VE.Defaults.Wire.pairCertsOf: FAILS 2 guards
+    #guard [toJson [pairJ "r2" "r1"], toJson [pairJ "r1" "r2", pairJ "r1" "r2"], toJson [pairJ
+    #guard answer (γbCase (toJson [pairJ "r2" "r1" γbCert])) == .str pairText
+R21 VE.Defaults.Wire.pairCertsOf: FAILS 2 guards
+    #guard answer (req αEnv γbR "defaults-coherence" [("coherence", toJson [pairJ "r1" "r2" γb
+    #guard answer (γbCase (toJson [pairJ "r1" "r2" γbCert])) == follows "unsettled" "short" [e
+ALL MUTANTS FAIL THEIR GUARDS
