@@ -355,6 +355,7 @@ import VE.Service.Graph
 import VE.Service.Protocol
 import VE.Service.Readings
 import VE.Service.Registry
+import VE.Service.ScopeAdmission
 import VE.Service.Standalone
 import VE.SoftNorms.Admission
 import VE.SoftNorms.Coherence
@@ -1356,6 +1357,7 @@ import VE.WireContract.Engine
 #print axioms VE.Compose.gateOf_iff
 #print axioms VE.Compose.gate_acts
 #print axioms VE.Compose.gate_legacy
+#print axioms VE.Compose.gate_scope
 #print axioms VE.Compose.gate_wellFormed
 #print axioms VE.Compose.ite_and3
 #print axioms VE.Compose.ite_error_ok
@@ -6036,10 +6038,13 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.anchor_reach_iff
 #print axioms VE.Scope.baseName_some
 #print axioms VE.Scope.baseObjF_slow
+#print axioms VE.Scope.bind_ok
 #print axioms VE.Scope.commutes_symm
 #print axioms VE.Scope.composedF_slow
 #print axioms VE.Scope.coveredBy_slow
 #print axioms VE.Scope.coversU_iff
+#print axioms VE.Scope.decodeBlock_layout
+#print axioms VE.Scope.decodeScope_layout
 #print axioms VE.Scope.edgesFor_ok
 #print axioms VE.Scope.edgesInto_mem
 #print axioms VE.Scope.edgesOfF_slow
@@ -6047,6 +6052,8 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.fastReads_eq
 #print axioms VE.Scope.firstKeys_mem
 #print axioms VE.Scope.firstKeys_self
+#print axioms VE.Scope.foldStatus_mem
+#print axioms VE.Scope.foldl_meet_mem
 #print axioms VE.Scope.frameOnF_slow
 #print axioms VE.Scope.frontier_graph_refused
 #print axioms VE.Scope.governBody_slow
@@ -6055,6 +6062,8 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.govern_identity
 #print axioms VE.Scope.govern_orphan
 #print axioms VE.Scope.govern_refused
+#print axioms VE.Scope.governor_status_none
+#print axioms VE.Scope.governor_status_weakest
 #print axioms VE.Scope.governorsOfF_slow
 #print axioms VE.Scope.governorsOf_iff
 #print axioms VE.Scope.hasOwn_mono
@@ -6065,6 +6074,7 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.lookups_fields
 #print axioms VE.Scope.lookups_spec
 #print axioms VE.Scope.mapM_ok_mem
+#print axioms VE.Scope.mapM_some_mem
 #print axioms VE.Scope.mem_ordered
 #print axioms VE.Scope.members_obj
 #print axioms VE.Scope.memo_map
@@ -6076,6 +6086,8 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.reach_beq
 #print axioms VE.Scope.readings_refused
 #print axioms VE.Scope.ruleTable_decoder
+#print axioms VE.Scope.scope_absent_unchanged
+#print axioms VE.Scope.scope_admission
 #print axioms VE.Scope.substOwn_id
 #print axioms VE.Scope.substOwn_id_le
 #print axioms VE.Scope.substOwn_no_own
