@@ -183,6 +183,36 @@ RF1a–RF1g are in `mutants.json` and fail their tests (`evidence/mutants.out`).
 Selected run on the fix (`mac-pytest.sh --select`, Mac runner, HEAD 51e63836, clean): 276 units, 0 failed.
 `lake build` (1109 jobs) and `python3 lean/audit.py` pass. Not run: the full gate (the chain runs it).
 
+## 8. Re-check fix (df-1b-looprecheck1.final.md)
+
+**F9 (B): a check of the form `if ...: return` was outside the enumeration.** `ask` shows the strict answer only when
+Lean's layered check says `valid` is true, and no test had Lean saying `valid: false`, so `is not None` survived.
+Section 7's "every check" covered `if ...: raise` only. The class is "an early exit no test needs", and it is fixed in
+the enumeration: `tests/check_mutants.py` now takes each `if ...: return` as well as each `if ...: raise`. Each
+sub-condition of a `return` exit is forced both ways, because an answer can be given too often or too rarely. Each
+forced sub-condition is still evaluated (`c and False`, `c or True`), so a check that asks Lean keeps asking it and
+the seeded bug is the weakened reading, not a missing call. That gives 93 seeded bugs, up from 60. The wider
+enumeration found two more survivors of the class, `answer`'s choice of binding (coherence sent to another binding;
+every kind but elaborate sent to the certificate's), which no mutant-set test reached through `answer`. Each is now
+needed:
+- `tests/test_defaults_answer.py::test_strict_answer_only_when_lean_says_valid`: DF-ζ's strict certificate is valid;
+  the same certificate with its trace cut to one `close` gets Lean's genuine `valid: false` row, and then the default
+  question is asked; DF-α has no strict certificate, and no strict case is sent;
+- `tests/test_defaults_answer.py::test_answer_binds_each_kind_with_its_binding`: each kind's genuine row through the
+  relay is the answer, and a fault only that kind's binding refuses is refused through `answer`;
+- `tests/test_defaults_checks.py::test_review_f9_a_strict_answer_lean_rejected_is_never_shown`: PROBE F9's exact
+  seeded bug (`is not None`) fails the strict test.
+
+PROBE F9 exits 1 on the tests before the fix and 0 after it. Seeded bugs RF9a–RF9c are in `mutants.json` and fail
+their tests (`evidence/mutants.out`, all 24). No Lean or Rust file changed; trust +0; no DELTA row.
+
+Selected run on the fix (`mac-pytest.sh --select`, Mac runner, HEAD 6661dd60, clean): 327 tests, 1 failed:
+`tests/test_trust_mutants.py::test_a_guard_over_the_empty_list_leaves_survivors`. Two `SURVIVOR` lines in its stdout
+were printed run together on one line (20 lines for 21 survivors). That test is outside this change (no tools or Lean
+file changed), and its rerun alone passes (1 passed), so it is a flaky interleaving of `tools/trust_mutants.py`'s
+output (follow-up). `lake build` (1109 jobs) and `python3 lean/audit.py` pass. Not run: the full gate (the chain runs
+it).
+
 ## Self-review against BUILDER-CHECKLIST
 
 1. **Lean answers typed and contained.** PASS: `test_defaults_answer.py::test_mutants_never_pass_as_answers` retypes
@@ -193,8 +223,9 @@ Selected run on the fix (`mac-pytest.sh --select`, Mac runner, HEAD 51e63836, cl
 2. **Every deliverable built.** PASS: section 1 and the df-1bb cut (size rule). No Python copy of a Lean decision: the
    bindings read the request and Lean's other rows. No permanent report test. No file overlaps a branch in flight:
    `relay_lint.py` (feature/q1-4) is left to df-1bb.
-3. **Tests can fail.** PASS: 21 seeded bugs, `evidence/mutants.out`, and every check's 81 enumerated weakenings and
-   deletions (`tests/test_defaults_checks.py`, section 7). No Lean change, so no `trust_mutants` run.
+3. **Tests can fail.** PASS: 24 seeded bugs, `evidence/mutants.out`, and the 93 enumerated weakenings and deletions
+   of every `if ...: raise` and `if ...: return` check and helper check (`tests/test_defaults_checks.py`, sections 7
+   and 8). No Lean change, so no `trust_mutants` run.
 4. **Python, Lean and Rust agree.** PASS: `::test_p1_follows_unless_an_exception_applies` compares the answer without
    the flag with df-03's saved stdout, byte for byte; `_source_binding`'s default path is unchanged
    (`test_norm_defaults_soft_kinds.py` passes). The fixtures include two-sort tuples (`::test_forced_tuple_sorts`) and
