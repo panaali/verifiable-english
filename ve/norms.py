@@ -191,27 +191,29 @@ def _plain_acts(env) -> set[str]:
             if d.regulated is not None and d.regulated.role == "plain" and d.regulated.act is not None}
 
 
-def _bind_wordings(env, row) -> None:
-    """R8: a norms row's `wordings` (the family route gives none) name exactly the request's plain acts, and the
-    slots of each name exactly its predicate's argument positions (`relay.slots_bound`)."""
+def _bind_wordings(env, row, kind="norms-elaborate") -> None:
+    """R8: an elaborate row's `wordings` (the family route gives none) name exactly the request's plain acts, and
+    the slots of each name exactly its predicate's argument positions (`relay.slots_bound`)."""
     from .backends.relay import slots_bound
     wordings = row.get("wordings", {})
     if set(wordings) != _plain_acts(env) or not all(
             slots_bound(wording, len(env.predicates[p].arguments)) for p, wording in wordings.items()):
-        raise CheckerUnavailable("CheckerUnavailable: norms-elaborate wordings are not bound to the request")
+        raise CheckerUnavailable(f"CheckerUnavailable: {kind} wordings are not bound to the request")
 
 
 def plain_wordings(env) -> dict[str, str]:
     """Lean's wording of each plain act of `env` by its predicate (act-phrases 2.1: "{0} has the right …",
-    "{0} is entitled …"), from the norms route's `norms-elaborate` row over the environment alone, bound to the
-    request. Python computes no wording; an environment without a plain act asks nothing, and a `norm-defaults@0`
-    one, which the norms route does not read, keeps today's display (the norm-defaults route gives no wordings yet)."""
-    if not _plain_acts(env) or NORM_DEFAULTS_PROFILE in env.profiles:
+    "{0} is entitled …"), from the elaborate row over the environment alone of the route that reads it (the
+    norms route's `norms-elaborate`, or the norm-defaults route's `norm-defaults-elaborate` for a `norm-defaults@0`
+    environment), bound to the request. Python computes no wording; an environment without a plain act asks
+    nothing."""
+    if not _plain_acts(env):
         return {}
     from .backends.relay import decide_once
-    row = decide_once("norms", {"id": "norms-elaborate", "kind": "norms-elaborate",
-                                "environment": env.to_dict(), "norms": []})
-    _bind_wordings(env, row)
+    mode = "norm-defaults" if NORM_DEFAULTS_PROFILE in env.profiles else "norms"
+    kind = f"{mode}-elaborate"
+    row = decide_once(mode, {"id": kind, "kind": kind, "environment": env.to_dict(), "norms": []})
+    _bind_wordings(env, row, kind)
     return dict(row["wordings"])
 
 
