@@ -989,6 +989,14 @@
         "ResponseShape.Skeletons.identity"
       ]
     },
+    "ScopeBenchMain.lean": {
+      "T": [
+        "ScopeBench.changed",
+        "ScopeBench.report",
+        "ScopeBench.row",
+        "main"
+      ]
+    },
     "SensesMain.lean": {
       "G[V]": [
         "main"
