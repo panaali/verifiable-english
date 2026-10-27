@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 38033,
+    "total_lines": 37981,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -215,20 +215,21 @@
       },
       {
         "file": "lean/VE/CertificateWire.lean",
-        "lines": 312,
-        "sha256": "bf814b58737fdab33616a65a899a130e1b3a08b0564d7921fd295a4ac7b1c3c0",
+        "lines": 321,
+        "sha256": "d81be730d087e7908329df473c8e34f8b1f26afd87b8b81a294e131b6afb9add",
         "ranges": [
           [
             46,
-            221
+            216
           ],
           [
-            236,
-            245
+            231,
+            240
           ]
         ],
         "declarations": [
           "sha256",
+          "canonicalWith",
           "canonical",
           "digest",
           "decodeTrace",
@@ -387,12 +388,12 @@
       },
       {
         "file": "lean/VE/NormDefaults/Admission.lean",
-        "lines": 367,
-        "sha256": "ccd91ae09c6073570545482dd51e135d32e3f07c20d420b9734a3a4a3edb65de",
+        "lines": 344,
+        "sha256": "ab4fe1851cdc4597e8ac052738180c28783e71bcf6abbf4d9eaccdad97d54845",
         "ranges": [
           [
             1,
-            367
+            344
           ]
         ],
         "declarations": [
@@ -626,12 +627,12 @@
       },
       {
         "file": "lean/VE/Readings/Companions.lean",
-        "lines": 924,
-        "sha256": "00b32a8d7627ad9afdda9fb7775793793af85aa7de7f30efd40ae719cfd0d240",
+        "lines": 923,
+        "sha256": "69a9b55c501a6177666596e56b0e3e217cba80e3723f77129f12a882c60ee508",
         "ranges": [
           [
             1,
-            924
+            923
           ]
         ],
         "declarations": [
@@ -1155,39 +1156,6 @@
         "reason": "W2 document service wrapper: front matter (its JSON forms Python reads as other values deferred) and its gates (the environment mode's fault where no route is composed), unit partition and contents, a rights document's rights source (the rights route's decoder), a soft-norms document's soft source, E'' and rule source (the soft route's decoders), soft canonical content and statuses, plain norm content (the norms route's decoders), reading sets and their status fold, narrowings, graph admission, located model and fence diagnostics, statuses and coverage; full file pinned conservatively"
       },
       {
-        "file": "lean/VE/Scope/Wire.lean",
-        "lines": 154,
-        "sha256": "618b837c4a7fc2398c732805ff271357fd1def4719dc33697e6e3d3fb867ad31",
-        "ranges": [
-          [
-            1,
-            154
-          ]
-        ],
-        "declarations": [
-          "governorStatus",
-          "wireFault",
-          "membersIn",
-          "memberOf",
-          "textOf",
-          "textsOf",
-          "decodeReach",
-          "decodeEffect",
-          "decodeGovernor",
-          "decodeListName",
-          "listMember",
-          "decodeParts",
-          "spanIn",
-          "layoutOf",
-          "decodeBlock",
-          "statusOf",
-          "changers",
-          "byStatus",
-          "foldGovernors"
-        ],
-        "reason": "scope@0's front matter in the document mode (SC-1b, scope spec 3 and 1.6): the `scope` block's wire (unknown members refused, optional members absent, never null; each reach and effect; list names; anchors through discourse's decoder), the layout of the document's units from their spans clamped to the source, and the fold of a governor unit's status into the document mode's answer with its bytes by status; full file pinned conservatively"
-      },
-      {
         "file": "lean/VE/Service/Family.lean",
         "lines": 814,
         "sha256": "6c3ab030f93404cb391a9fea68397f1bfec48c2c64b9c8e4ff5c79694b0a9c0a",
@@ -1312,12 +1280,12 @@
       },
       {
         "file": "lean/VE/SoftNorms/Admission.lean",
-        "lines": 332,
-        "sha256": "5f867e8a26a78cf4b0a1aba6716354a32d9c609b0ed45d94311143e5a5e4d82b",
+        "lines": 309,
+        "sha256": "b087217d8faeb5650b63fc32101f3f31aa0f64f0ce072ace5971716d0cf338fc",
         "ranges": [
           [
             1,
-            332
+            309
           ]
         ],
         "declarations": [
@@ -1903,6 +1871,39 @@
           "outcomeAt"
         ],
         "reason": "the calc runner's answer (math-evidence spec 3.4, me-2): one row per claim with its outcome, and the reader of a row's outcome that Run.row_sound is stated over; the full file is pinned"
+      },
+      {
+        "file": "lean/VE/Scope/Wire.lean",
+        "lines": 154,
+        "sha256": "618b837c4a7fc2398c732805ff271357fd1def4719dc33697e6e3d3fb867ad31",
+        "ranges": [
+          [
+            1,
+            154
+          ]
+        ],
+        "declarations": [
+          "governorStatus",
+          "wireFault",
+          "membersIn",
+          "memberOf",
+          "textOf",
+          "textsOf",
+          "decodeReach",
+          "decodeEffect",
+          "decodeGovernor",
+          "decodeListName",
+          "listMember",
+          "decodeParts",
+          "spanIn",
+          "layoutOf",
+          "decodeBlock",
+          "statusOf",
+          "changers",
+          "byStatus",
+          "foldGovernors"
+        ],
+        "reason": "scope@0's front matter in the document mode (SC-1b, scope spec 3 and 1.6): the `scope` block's wire (unknown members refused, optional members absent, never null; each reach and effect; list names; anchors through discourse's decoder), the layout of the document's units from their spans clamped to the source, and the fold of a governor unit's status into the document mode's answer with its bytes by status; full file pinned conservatively"
       }
     ],
     "other_json": {
