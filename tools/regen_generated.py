@@ -33,6 +33,13 @@ the entry that fixes it, and reports the entries that start the service as not c
 not a generated file it changes nothing and exits 2 (an agent sync is needed). Otherwise it resolves the
 conflicted generated files, runs every writer and then every check, stages the generated files and exits 0,
 so the caller only runs `git commit --no-edit`; a failed writer or check exits 1.
+
+Each entry `--check`, `--write` or `--resolve` runs appends one JSON line to a timing log, `ve-regen-log.jsonl` in
+the git common directory (beside the run cache, shared by the checkout's worktrees): `{t, mode, phase, entry,
+seconds, rc, head, worktree}`, `phase` being `write`, `check` or `bootstrap` (the build and pins `_Service` runs
+before a service user). It measures where regeneration time goes, for the efficiency passes; no check, gate or
+train reads it. `VE_REGEN_LOG=off` turns it off and a path puts it there; a log that cannot be written is skipped
+silently, so it never changes the exit code or the output.
 """
 from __future__ import annotations
 
@@ -47,6 +54,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 
 ROOT = Path(__file__).resolve().parents[1]
 PY = sys.executable
@@ -552,6 +560,58 @@ def install_driver() -> int:
 # Running writers and checks
 
 
+class RegenLog:
+    """The timing log of one run (module docstring): `record` appends one line per entry run. Every failure to
+    find or write the log is swallowed: the log never changes the run."""
+
+    NAME = "ve-regen-log.jsonl"
+
+    def __init__(self, mode: str) -> None:
+        self.mode, self.root, self.path, self.head = mode, ROOT, None, None
+        try:
+            self.path = self._path()
+            if self.path is not None:
+                done = subprocess.run(["git", "rev-parse", "HEAD"], cwd=self.root, capture_output=True, text=True)
+                self.head = done.stdout.strip() if done.returncode == 0 else None
+        except Exception:  # noqa: BLE001 - the log never changes the run
+            self.path = None
+
+    def _path(self) -> Path | None:
+        setting = os.environ.get("VE_REGEN_LOG")
+        if setting == "off":
+            return None
+        if setting:
+            return Path(setting)
+        tools = Path(__file__).resolve().parent
+        for folder in (str(tools.parent), str(tools)):  # cache_store and its HANG_TIMEOUT (tests/subprocesses.py)
+            if folder not in sys.path:
+                sys.path.append(folder)
+        import cache_store
+        common = cache_store.git_common_directory(self.root)
+        return None if common is None else common / self.NAME
+
+    def record(self, phase: str, entry: str, seconds: float, rc: int) -> None:
+        if self.path is None:
+            return
+        line = {"t": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "mode": self.mode, "phase": phase,
+                "entry": entry, "seconds": round(seconds, 3), "rc": rc, "head": self.head,
+                "worktree": str(self.root)}
+        try:
+            with self.path.open("a") as log:
+                log.write(json.dumps(line) + "\n")
+        except Exception:  # noqa: BLE001 - the log never changes the run
+            pass
+
+
+def _timed(log: RegenLog | None, phase: str, entry: Generated, run) -> int:
+    """`run()`'s exit code; with a log, its time recorded under `entry` and `phase`."""
+    start = time.monotonic()
+    code = run()
+    if log is not None:
+        log.record(phase, entry.name, time.monotonic() - start, code)
+    return code
+
+
 def _run(entry: Generated, steps, root: Path = ROOT, environment: dict | None = None) -> int:
     """Run `steps` in order, with `environment` added to this process's for their duration."""
     saved = {name: os.environ.get(name) for name in environment or ()}
@@ -629,9 +689,10 @@ class _Service:
     entry's own steps; Lake is asked again only after the run changed a Lean file. `prune` removes, at the end,
     the pins `ready` added that are not the final build, so the lock ends as an in-order run leaves it."""
 
-    def __init__(self) -> None:
+    def __init__(self, log: RegenLog | None = None) -> None:
         self.current: bool | None = None    # Lake's answer; None: not asked since the tree changed
         self.added: set[str] = set()         # the ve_service pins `ready` added
+        self.log = log
 
     def problem(self) -> tuple[str, str] | None:
         """(the entry that fixes it, why the service cannot start), or None when it can."""
@@ -657,7 +718,8 @@ class _Service:
         for name in (BUILD, PINS):
             entry = entry_named(name)
             # The Rust pin stays the pin entry's own, in its place in the run.
-            if _run(entry, entry.write, environment={"VE_REGEN_NO_RUST": "1"} if name == PINS else None):
+            if _timed(self.log, "bootstrap", entry, lambda: _run(
+                    entry, entry.write, environment={"VE_REGEN_NO_RUST": "1"} if name == PINS else None)):
                 return name
         self.added |= set(_lock().get("ve_service", ())) - before
         self.current = None
@@ -693,8 +755,8 @@ def selected(only, skip) -> list[Generated]:
     return [entry for entry in GENERATED if (not only or entry.name in only) and entry.name not in (skip or ())]
 
 
-def write(entries) -> list[str]:
-    failed, service = [], _Service()
+def write(entries, log: RegenLog | None = None) -> list[str]:
+    failed, service = [], _Service(log)
     try:
         for entry in entries:
             if entry.write is None:
@@ -706,7 +768,7 @@ def write(entries) -> list[str]:
                     break
             print(f"== write {entry.name}", flush=True)
             lean = _lean_files(entry)
-            if _run(entry, entry.write):
+            if _timed(log, "write", entry, lambda: _run(entry, entry.write)):
                 failed.append(entry.name)
                 break  # later entries read this one's output
             service.ran(entry, _lean_files(entry) != lean)
@@ -715,7 +777,7 @@ def write(entries) -> list[str]:
     return failed
 
 
-def check(entries) -> tuple[list[str], list[str]]:
+def check(entries, log: RegenLog | None = None) -> tuple[list[str], list[str]]:
     """(the failed entries, the entries not checked because the service cannot start). Writes no tracked file."""
     failed, unchecked, problem = [], [], None
     service = _Service()
@@ -732,9 +794,9 @@ def check(entries) -> tuple[list[str], list[str]]:
             unchecked.append(entry.name)
             continue
         if entry.check is not None:
-            code = _run(entry, entry.check)
+            code = _timed(log, "check", entry, lambda: _run(entry, entry.check))
         elif entry.write is not None:
-            code = _check_by_rewriting(entry)
+            code = _timed(log, "check", entry, lambda: _check_by_rewriting(entry))
         else:
             continue
         if code:
@@ -754,7 +816,7 @@ def _stage(root: Path, path: str, number: int) -> str:
     return done.stdout if done.returncode == 0 else ""
 
 
-def resolve(entries, root: Path = ROOT) -> int:
+def resolve(entries, root: Path = ROOT, log: RegenLog | None = None) -> int:
     """Finish the merge in progress in `root` (see the module docstring); `entries` are the writers and checks
     to run after the conflicted generated files are merged."""
     if subprocess.run(["git", "rev-parse", "-q", "--verify", "MERGE_HEAD"], cwd=root,
@@ -782,9 +844,9 @@ def resolve(entries, root: Path = ROOT) -> int:
     for path in retired:
         _git(root, "rm", "-q", "-f", "--", path)
         print(f"resolved {path} (deleted: {RETIRED[path]})")
-    failed, unchecked = write(entries), []
+    failed, unchecked = write(entries, log), []
     if not failed:
-        failed, unchecked = check(entries)
+        failed, unchecked = check(entries, log)
     if failed or unchecked:
         print(f"regen_generated --resolve: failed: {', '.join(failed + unchecked)}", file=sys.stderr)
         return 1
@@ -843,9 +905,10 @@ def main(argv=None) -> int:
     if args.install_driver:
         return install_driver()
     entries = selected(args.only, args.skip)
+    log = RegenLog("resolve" if args.resolve else "write" if args.write else "check")
     if args.resolve:
-        return resolve(entries)
-    failed, unchecked = (write(entries), []) if args.write else check(entries)
+        return resolve(entries, log=log)
+    failed, unchecked = (write(entries, log), []) if args.write else check(entries, log)
     if failed or unchecked:
         print(f"regen_generated: failed: {', '.join(failed)}"
               + (f"; not checked (needs the pinned service): {', '.join(unchecked)}" if unchecked else ""),

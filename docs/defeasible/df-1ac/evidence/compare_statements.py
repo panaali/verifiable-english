@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Spec 7.2's declarations (docs/spec/defeasible.md) against a Lean file (default lean/VE/Defaults/Wire.lean), token for
-token after whitespace normalisation, comments, docstrings and proofs removed; a spec declaration with no body must be
-the built one up to its `:=`. Usage from the repository root: compare_statements.py [file]."""
+"""A spec section's declarations (docs/spec/defeasible.md; default 7.2) against a Lean file (default
+lean/VE/Defaults/Wire.lean), token for token after whitespace normalisation, comments, docstrings and proofs removed; a
+spec declaration with no body must be the built one up to its `:=`. Usage from the repository root:
+compare_statements.py [file [section]], e.g. compare_statements.py lean/VE/Defaults/Meaning.lean 7.3 (df-2)."""
 import re
 import sys
 from pathlib import Path
@@ -24,7 +25,8 @@ def decls(text: str) -> dict[str, str]:
 
 
 cut = lambda d: d.split(" := by")[0].split(" := ⟨")[0] if d.startswith("theorem") else d
-spec = (ROOT / "docs/spec/defeasible.md").read_text().split("### 7.2")[1].split("### 7.3")[0]
+section = sys.argv[2] if len(sys.argv) > 2 else "7.2"
+spec = (ROOT / "docs/spec/defeasible.md").read_text().split("### " + section + " ")[1].split("\n### ")[0]
 want = decls(spec.split("```lean")[1].split("```")[0])
 have = decls((ROOT / (sys.argv[1] if len(sys.argv) > 1 else "lean/VE/Defaults/Wire.lean")).read_text())
 bad = 0
