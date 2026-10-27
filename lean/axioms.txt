@@ -123,6 +123,20 @@
 'VE.Acts.readingsIn_exact' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.readingsIn_limit' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.readingsIn_nodup' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Acts.table_free_all_own' does not depend on any axioms
+'VE.Acts.table_free_all_shared' does not depend on any axioms
+'VE.Acts.table_free_all_split' does not depend on any axioms
+'VE.Acts.table_free_any' does not depend on any axioms
+'VE.Acts.table_free_any_split' does not depend on any axioms
+'VE.Acts.table_free_nor' does not depend on any axioms
+'VE.Acts.table_mustNot_all' does not depend on any axioms
+'VE.Acts.table_mustNot_all_split' does not depend on any axioms
+'VE.Acts.table_mustNot_any' does not depend on any axioms
+'VE.Acts.table_must_all' does not depend on any axioms
+'VE.Acts.table_must_any' does not depend on any axioms
+'VE.Acts.table_must_any_refused' depends on axioms: [propext]
+'VE.Acts.table_needNot' does not depend on any axioms
+'VE.Acts.table_one' does not depend on any axioms
 'VE.Acts.valueOf_eq_some' depends on axioms: [propext, Quot.sound]
 'VE.Alternatives.Admission.Admitted.sound' depends on axioms: [propext, Quot.sound]
 'VE.Alternatives.Admission.report_consequence' depends on axioms: [propext, Quot.sound]
