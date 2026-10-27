@@ -288,7 +288,11 @@
           },
           "type": "array"
         },
-        "unspecified": {"$ref": "common.json#/$defs/strings"}
+        "unspecified": {"$ref": "common.json#/$defs/strings"},
+        "wordings": {
+          "$comment": "Norms.Wire.plainWordings of the source: one wording per plain predicate with an act, by its name.",
+          "$ref": "common.json#/$defs/string_map"
+        }
       },
       "required": [
         "id",
@@ -307,7 +311,8 @@
         "fill_hash",
         "fill_labels",
         "environment_id",
-        "document_hash"
+        "document_hash",
+        "wordings"
       ],
       "type": "object"
     },

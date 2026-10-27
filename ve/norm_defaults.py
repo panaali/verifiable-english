@@ -12,7 +12,7 @@ from itertools import product
 from .ast import Binary, Not, Unary, Var, _Decoder, formula_from_data, formula_to_data
 from .environment import Environment
 from .errors import CheckerUnavailable, VEError
-from .norms import Norm, NormDocument, _bind
+from .norms import Norm, NormDocument, _bind, _bind_wordings
 
 PROFILE = "norm-defaults@0"
 
@@ -87,6 +87,7 @@ class UnspecifiedDocument:
         self.norms = [unit.to_dict() if hasattr(unit, "to_dict") else unit for unit in units]
         row = run_case({"id": "norm-defaults-elaborate", "kind": "norm-defaults-elaborate",
                         "environment": self.env.to_dict(), "norms": self.norms})
+        _bind_wordings(self.env, row, "norm-defaults-elaborate")
         raw = _placeholder(self.env.to_dict())
         for item in row["unsaid"]:
             predicate = item["name"].removeprefix("unsaid__")

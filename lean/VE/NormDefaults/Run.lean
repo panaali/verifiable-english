@@ -11,7 +11,8 @@ norms route is unchanged; this executable adds the `norm-defaults@0` branch and
 delegates every other case to it.
 
 * `norm-defaults-elaborate`: `norms` → the regenerated outputs of `fill U`
-  (`Wire.regeneratedU`), or the decoder's diagnostic.
+  (`Wire.regeneratedU`), with the source's plain-act `wordings` (`Norms.Run.wordingsJson`), or the decoder's
+  diagnostic.
 * `norm-defaults-conflict`: `norms` and `packages` (target of `fill U` → package)
   → `CONFLICT-FREE` when every target's certificate is bound and accepted over
   `E‴_base` and `Background_base(E‴) ++ Fill_T` (`Wire.normDefaults_wire_conflict_sound`),
@@ -235,7 +236,8 @@ def runOtherCase (id kind : String) (j : Json) : Except String Json := do
     return VE.Route.Wire.ok id (Wire.regeneratedU s.U ++
       [("filled_environment_id", .str filledId), ("fill_hash", .str fillHash),
        ("fill_labels", toJson (Admission.fillLabels s.U)),
-       ("environment_id", .str sourceId), ("document_hash", .str documentHash)])
+       ("environment_id", .str sourceId), ("document_hash", .str documentHash),
+       ("wordings", VE.Norms.Run.wordingsJson s.src.ne)])
   if kind == "norm-defaults-conflict" && (j.getObjVal? "witness").toBool then
     let ⟨s, w⟩ ← Wire.replayWitnessU j
     return VE.Route.Wire.ok id ([("verdict", .str (if w.conflict then "CONFLICT" else "UNKNOWN")),

@@ -214,7 +214,35 @@ def test_one_entry_point_gives_the_same_verdict(fixture, frame, question, answer
             call()
         assert type(caught.value).__name__ == answer["class"]
         assert F.answer_of(caught.value.lean_question) == answer
-        assert str(caught.value).startswith(answer["text"])
+        assert str(caught.value) == "\n".join(shown(answer))
+
+
+def shown(answer: dict) -> list[str]:
+    """The lines a refusal carries, from the table: Lean's text with its advice, then each rephrasing (review q1-4
+    F2: the relay's refusal ended at "Ask one of these instead:")."""
+    advice = answer.get("advice")
+    return [answer["text"] + ("" if advice is None else " " + advice["text"]), *answer.get("rephrasings", ())]
+
+
+# Every field of a refusal the contract allows, as a reader sees it: a line of `question_lines`, or structured data
+# that rides along in `lean_question` (the code and class name the error, the span locates it, the witnesses are
+# trees, as on `english.read`'s path, and `fault`/`failure` are the grammar fault's record).
+LINE_FIELDS = {"text", "advice", "rephrasings"}
+STRUCTURED_FIELDS = {"code", "class", "span", "witnesses", "fault", "failure"}
+
+
+@pytest.mark.parametrize("status", sorted(set(english_lean.QUESTION_FIELDS) - {"one"}))
+def test_every_refusal_field_is_shown_or_structured(status):
+    """A field Lean adds to a refusal fails here until it is shown or classed as structured, and a refusal that holds
+    every field it may hold shows each line field: its text, its advice and every rephrasing."""
+    required, optional = english_lean.QUESTION_FIELDS[status]
+    assert required | optional <= LINE_FIELDS | STRUCTURED_FIELDS
+    full = {"text": "T.", "advice": {"id": "a", "text": "A."}, "rephrasings": ["R1?", "R2?"]}
+    answer = {name: full[name] for name in (required | optional) & LINE_FIELDS}
+    lines = english_lean.question_lines(answer)
+    assert lines == shown(answer) and ask._lines(answer) == lines
+    assert lines[0].startswith("T.") and ("advice" not in answer or lines[0].endswith(" A."))
+    assert lines[1:] == answer.get("rephrasings", [])
 
 
 # ------------------------------------------------------------------ the CLI
@@ -383,7 +411,7 @@ def test_answer_mutations_inside_their_kinds(change, monkeypatch):
     if mutant["text"] != genuine["text"]:
         with pytest.raises(VEError) as caught:
             english_lean.read_question(env, question, words, {})
-        assert str(caught.value) == mutant["text"]
+        assert str(caught.value) == "\n".join([mutant["text"], *mutant["rephrasings"]])
         return
     with pytest.raises(CheckerUnavailable, match="malformed"):
         english_lean.read_question(env, question, words, {})

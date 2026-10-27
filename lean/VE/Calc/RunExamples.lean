@@ -859,4 +859,68 @@ def rowFieldCases := [
   ("line-follows", [member r4 0 "line"], [r#""Assume the following. 1. The displacement equals the product of 0.4 and the squared velocity ratio. 2. The displacement is less than 0.02. 3. The squared velocity ratio equals the square of the velocity ratio. 4. The velocity ratio is at least 0. From these, it follows that the velocity ratio is less than 1 divided by 5.""#]),
   ("finding", [member r1 1 "finding", member r3 0 "finding", member r2 0 "finding"], ["null", "null", "null"])]
 
+/-! ## What a decided derivation shows (spec 3.4 and 13.6; me-5d): each row's certificate and counterexample, on both
+sides of each outcome -/
+
+/-- Each row's certificate and counterexample (`Run.shownJson` of `Check.runShown`), written out; or the refusal. -/
+def shown (s : String) : List String :=
+  match (Json.parse s).toOption.map Wire.decode with
+  | some (.ok (c, _)) => c.claims.flatMap fun (_, k) =>
+    let (cert, cx) := Run.shownJson c.decls k (k.runShown c.decls).2
+    [cert.compress, cx.compress]
+  | some (.error e) => [e]
+  | none => ["parse"]
+
+-- Spec 13.6's R-3 certificate word for word (keys in Lean's order): the Farkas step for s < 1/20, with one weight per
+-- fact (d − 0.4 s ≥ 0, 0.4 s − d ≥ 0, 0.02 − d > 0, then the negated goal s − 1/20 ≥ 0), then the square step; and
+-- R-4's counterexample, the claimed bound r = 1/5 with s = r · r and d = 0.4 s, one per free value in declaration order.
+def r3Certificate : String := r#"[{"farkas":{"goal":{"coeffs":[["s","-1"]],"const":"1/20","strict":true},"weights":["1","0","1","2/5"]}},{"square":{"a":"1/20","b":"1/4","root":"r","square":"s"}}]"#
+def h6pCertificate : String := r#"[{"farkas":{"goal":{"coeffs":[["s","-1"]],"const":"1/40","strict":true},"weights":["1","0","1","2/5"]}},{"square":{"a":"1/40","b":"1/6","root":"r","square":"s"}}]"#
+/-- Free `y`, `u`, `x`, `s`, `t`, `v` and `w`, and `q` = x + y; `c1` derives x < 0 from 1 ≥ q (q read only by the last
+expression) with the links (s, t) and (v, w). -/
+def readsCase : String := onX [premise "p1" r#"["ge", ["lit", "1"], ["val", "q"]]"#] r#"["lt", ["val", "x"], ["lit", "0"]]"#
+  r#"["p1"]"# r#"[["s", "t"], ["v", "w"]]"# (free "y" "the y" ++ ", " ++ free "u" "the u" ++ ", " ++ free "x" "the x" ++
+    ", " ++ free "s" "the s" ++ ", " ++ free "t" "the t" ++ ", " ++ free "v" "the v" ++ ", " ++ free "w" "the w" ++ ", " ++
+    defined "q" r#"["add", ["val", "x"], ["val", "y"]]"#)
+#guard expect [
+  -- a certificate only where the derivation holds, a counterexample only where it fails
+  ("r3", shown r3, [r3Certificate, "null"]),
+  ("r4", shown r4, ["null", r#"[["r","1/5"],["s","1/25"],["d","2/125"]]"#]),
+  ("h6p", shown (req rsd (h6 "6") (h6P "0.01")), [h6pCertificate, "null"]),
+  ("h6a-no-link", shown (req rsd (h6 "4" "[]") (h6P "0.02")), ["null", r#"[["r","1/4"],["s","-19/20"],["d","-19/50"]]"#]),
+  -- one Farkas step over the premises' facts and the negated goal; the same case with one premise fails at x = 1
+  ("no-solution", shown (onX [premise "p1" (xle "1"), premise "p2" r#"["ge", ["val", "x"], ["lit", "2"]]"#]
+      r#"["lt", ["val", "x"], ["lit", "0"]]"# r#"["p1", "p2"]"#),
+    [r#"[{"farkas":{"goal":{"coeffs":[["x","-1"]],"const":"0","strict":true},"weights":["1","1","0"]}}]"#, "null"]),
+  ("one-premise", shown (onX [premise "p1" (xle "1"), premise "p2" r#"["ge", ["val", "x"], ["lit", "2"]]"#]
+      r#"["lt", ["val", "x"], ["lit", "0"]]"# r#"["p1"]"#), ["null", r#"[["x","1"]]"#]),
+  -- over stated values only: a goal with no coefficient, and a counterexample reading no free value
+  ("stated", shown (req x1 (c1 r#"["follows", ["lt", ["val", "x"], ["lit", "2"]], [], []]"# ++ ", " ++
+      claim "c2" r#"["follows", ["lt", ["val", "x"], ["lit", "0"]], [], []]"#)),
+    [r#"[{"farkas":{"goal":{"coeffs":[],"const":"1","strict":true},"weights":["1"]}}]"#, "null", "null", "[]"]),
+  -- the free values read, in declaration order: through a definition (y, x) and a link (s, t), never an unread one (u)
+  ("reads", shown readsCase, ["null", r#"[["y","1"],["x","0"],["s","0"],["t","0"],["v","0"],["w","0"]]"#]),
+  -- a goal over two unknowns, every coefficient written
+  ("two-unknowns", shown (req (free "x" "the x" ++ ", " ++ free "y" "the y")
+      (c1 r#"["follows", ["le", ["add", ["val", "x"], ["val", "y"]], ["lit", "2"]], ["p1", "p2"], []]"#)
+      (premises [premise "p1" (xle "1"), premise "p2" r#"["le", ["val", "y"], ["lit", "1"]]"#])),
+    [r#"[{"farkas":{"goal":{"coeffs":[["x","-1"],["y","-1"]],"const":"2","strict":false},"weights":["1","1","1"]}}]"#, "null"]),
+  -- a value read whose terms cancel is still read
+  ("reads-cancel", shown (onX [] r#"["lt", ["sub", ["val", "x"], ["val", "x"]], ["lit", "0"]]"# "[]"), ["null", r#"[["x","0"]]"#]),
+  ("cancel-holds", shown (onX [] r#"["lt", ["sub", ["val", "x"], ["val", "x"]], ["lit", "1"]]"# "[]"),
+    [r#"[{"farkas":{"goal":{"coeffs":[],"const":"1","strict":true},"weights":["1"]}}]"#, "null"]),
+  -- neither for an inconclusive derivation, one past the step limit, or a claim
+  ("inconclusive", shown (req rsd (claim "h6" r#"["follows", ["ge", ["lit", "0.2"], ["val", "r"]], ["p1", "p2"], [["s", "r"]]]"#)
+      (h6P "0.02")), ["null", "null"]),
+  ("chain-13", shown (onX [premise "p1" r#"["le", ["val", "v13"], ["lit", "1"]]"#] r#"["lt", ["val", "x"], ["lit", "1"]]"#
+      r#"["p1"]"# "[]" (free "x" "the x" ++ ", " ++ defined "v0" r#"["val", "x"]"# ++ ", " ++ chain 13)), ["null", "null"]),
+  ("claim", shown (req x1 ok1), ["null", "null"])]
+
+-- An undefined derivation and one at the budget show nothing, as their outcome says (counted values: ME-4).
+#guard let ds : List Decl := [⟨"r", .free⟩, ⟨"n", .counted (Thunk.pure none) (.ok none)⟩,
+    ⟨"m", .counted (Thunk.pure none) .exhausted⟩]
+  let lt (a b : String) : Claim := .compare ⟨.lt, false⟩ (.val a) (.val b)
+  [Check.follows [] [] (lt "r" "n"), .follows [lt "r" "m"] [] (lt "r" "r")].map (·.runShown ds) ==
+    [(.decided .undefined, .nothing), (.unknown (.limit .evaluations), .nothing)]
+
 end VE.Calc.RunExamples
