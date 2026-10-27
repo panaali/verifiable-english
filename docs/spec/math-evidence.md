@@ -2266,8 +2266,9 @@ step.
 **What the charge bounds.** Every term clause ends in `chargeBits`. So every value a term yields within budget n has
 at most n bits (`Term.evalB_bits`, a theorem proved in the stub by cases, with no induction, in any environment), and
 so does every value a step binds.
-- **Refused values.** The one value computed beyond the budget, whose charge is refused, has at most 2n bits
-  (`bits_mul_le`, `bits_add_le`, `bits_sub_le`, proved in the stub).
+- **Refused values.** The one value computed beyond the budget, whose charge is refused, is built from operands of at
+  most n bits each. A product then has at most 2n bits (`bits_mul_le`); a sum, a difference or a step's next value has
+  at most n + 1 (`bits_add_le`, `bits_sub_le`). All three bounds are proved in the stub.
 - **Memory.** The bits of all yielded values together are at most the units spent. A value read again is read
   through a variable, which charges it again, so live memory is at most the values in scope, each of at most n bits.
 - **Time.** Time is linear in the units up to:
@@ -2294,8 +2295,9 @@ changes, so none is named for restatement. The build, me-12nb, re-proves all fiv
 
 **What this draft keeps, rejects and rereads.**
 - **Rejected.** Evaluating each zero-parameter definition once is rejected as the fix (DRI, 2026-10-27): it bounds
-  neither a call tree whose definitions take parameters (B-2p) nor digit growth (B-3). It may come later only as an optimisation that
-  leaves every unit count unchanged: a call answered from a cache is still charged its body's visits and sizes.
+  neither a call tree whose definitions take parameters (B-2p) nor digit growth (B-3). It may come later only as an
+  optimisation that leaves every unit count unchanged: a call answered from a cache is still charged its body's visits
+  and sizes.
   `maxSteps` stays 1,000,000.
 - **Text outside 12.2.** 12.5's `budget` and `units` ("formula-node visits"), section 14's `arith` row and 13.6's
   R-7 (`"units": 17011` and `2`) are read in this draft's units. R-7's units are 337,735 and 33 (13.3); me-12b writes
