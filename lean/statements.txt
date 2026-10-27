@@ -632,6 +632,55 @@ theorem VE.Acts.Lexical.words_intercalate
       VE.Norms.Wire.words (" ".intercalate ws) = ws
   -- uses VE.Norms.Wire.pyWhitespace@VE.Acts.LexicalBase VE.Norms.Wire.words@VE.Acts.LexicalBase
   -- expr 265214043
+theorem VE.Acts.build_wf
+  ∀ {rs : List VE.Acts.RuleS},
+    (∀ (r : VE.Acts.RuleS), r ∈ rs → r.ok = Bool.true) →
+      (∀ (r : VE.Acts.RuleS), r ∈ rs → ∀ (x : VE.Acts.NT), VE.Acts.RSym.n x ∈ r.rhs → x ∈ List.map (fun x => x.lhs) rs) →
+        VE.Acts.NT.S ∈ List.map (fun x => x.lhs) rs → (VE.Acts.build rs).wf = Bool.true
+  -- uses VE.Acts.NT.S@VE.Acts.Grammar VE.Acts.NT@VE.Acts.Grammar VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.lhs@VE.Acts.Grammar VE.Acts.RuleS.ok@VE.Acts.Grammar VE.Acts.RuleS.rhs@VE.Acts.Grammar VE.Acts.RuleS@VE.Acts.Grammar VE.Acts.Term@VE.Acts.Syntax VE.Acts.build@VE.Acts.Grammar VE.Grammar.Grammar.wf@VE.Grammar.Basic
+  -- expr 1035516647
+theorem VE.Acts.closed_cl
+  ∀ (rs : List VE.Acts.RuleS) (r : VE.Acts.RuleS),
+    r ∈ VE.Acts.closed rs →
+      ∀ (x : VE.Acts.NT), VE.Acts.RSym.n x ∈ r.rhs → x ∈ List.map (fun x => x.lhs) (VE.Acts.closed rs)
+  -- uses VE.Acts.NT@VE.Acts.Grammar VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.lhs@VE.Acts.Grammar VE.Acts.RuleS.rhs@VE.Acts.Grammar VE.Acts.RuleS@VE.Acts.Grammar VE.Acts.closed@VE.Acts.Grammar
+  -- expr 1320471810
+theorem VE.Acts.closed_ok
+  ∀ {rs : List VE.Acts.RuleS},
+    rs.all VE.Acts.RuleS.ok = Bool.true → ∀ (r : VE.Acts.RuleS), r ∈ VE.Acts.closed rs → r.ok = Bool.true
+  -- uses VE.Acts.RuleS.ok@VE.Acts.Grammar VE.Acts.RuleS@VE.Acts.Grammar VE.Acts.closed@VE.Acts.Grammar
+  -- expr 3933089701
+theorem VE.Acts.frameRules_ok
+  ∀ (V : VE.Acts.Vocab) (h : Nat) {f : VE.Acts.Frame},
+    f.head ≠ [] → (VE.Acts.frameRules V h f).all VE.Acts.RuleS.ok = Bool.true
+  -- uses VE.Acts.Frame.head@VE.Acts.Syntax VE.Acts.Frame@VE.Acts.Syntax VE.Acts.RuleS.ok@VE.Acts.Grammar VE.Acts.RuleS@VE.Acts.Grammar VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.frameRules@VE.Acts.Grammar
+  -- expr 2414825924
+theorem VE.Acts.framesOk_words
+  ∀ {V : VE.Acts.Vocab},
+    VE.Acts.framesOk V = Bool.true →
+      ∀ (f : VE.Acts.Frame),
+        f ∈ V.frames → f.head ≠ [] ∧ ∀ (m : String), m ∈ f.markers ++ f.mods → m ≠ "" → VE.Acts.wordsOf m ≠ []
+  -- uses VE.Acts.Frame.head@VE.Acts.Syntax VE.Acts.Frame.markers@VE.Acts.Syntax VE.Acts.Frame.mods@VE.Acts.Syntax VE.Acts.Frame@VE.Acts.Syntax VE.Acts.Vocab.frames@VE.Acts.Syntax VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.framesOk@VE.Acts.Syntax VE.Acts.wordsOf@VE.Acts.Syntax
+  -- expr 1504810214
+theorem VE.Acts.getElem?_map_idxOf
+  ∀ {β : Type} (f : VE.Acts.NT → β) {x : VE.Acts.NT} {l : List VE.Acts.NT},
+    x ∈ l → (List.map f l)[List.idxOf x l]? = Option.some (f x)
+  -- uses VE.Acts.NT@VE.Acts.Grammar VE.Acts.instDecidableEqNT@VE.Acts.Grammar
+  -- expr 2618455175
+theorem VE.Acts.globalRules_ok
+  ∀ {V : VE.Acts.Vocab},
+    (∀ (f : VE.Acts.Frame), f ∈ V.frames → ∀ (m : String), m ∈ f.markers ++ f.mods → m ≠ "" → VE.Acts.wordsOf m ≠ []) →
+      (VE.Acts.globalRules V).all VE.Acts.RuleS.ok = Bool.true
+  -- uses VE.Acts.Frame.markers@VE.Acts.Syntax VE.Acts.Frame.mods@VE.Acts.Syntax VE.Acts.Frame@VE.Acts.Syntax VE.Acts.RuleS.ok@VE.Acts.Grammar VE.Acts.RuleS@VE.Acts.Grammar VE.Acts.Vocab.frames@VE.Acts.Syntax VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.globalRules@VE.Acts.Grammar VE.Acts.wordsOf@VE.Acts.Syntax
+  -- expr 148418055
+theorem VE.Acts.grammar_wf
+  ∀ (V : VE.Acts.Vocab), VE.Acts.framesOk V = Bool.true → (VE.Acts.grammar V).wf = Bool.true
+  -- uses VE.Acts.Term@VE.Acts.Syntax VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.framesOk@VE.Acts.Syntax VE.Acts.grammar@VE.Acts.Grammar VE.Grammar.Grammar.wf@VE.Grammar.Basic
+  -- expr 3559248769
+theorem VE.Acts.kwSyms_ok
+  ∀ {X : VE.Acts.NT} {ws : List String}, ws ≠ [] → { lhs := X, rhs := VE.Acts.kwSyms ws }.ok = Bool.true
+  -- uses VE.Acts.NT@VE.Acts.Grammar VE.Acts.RuleS.mk@VE.Acts.Grammar VE.Acts.RuleS.ok@VE.Acts.Grammar VE.Acts.kwSyms@VE.Acts.Grammar
+  -- expr 2344482936
 theorem VE.Acts.listing_limit
   ∀ {α : Type} [inst : DecidableEq α] (N L : Nat) (parsed : Option (List (VE.Grammar.Tree VE.Acts.Lexical.Tok)))
     (μ : VE.Grammar.Tree VE.Acts.Lexical.Tok → Option α),
@@ -718,6 +767,19 @@ theorem VE.Acts.readingsIn_nodup
     VE.Acts.readingsIn G μ N b ts = VE.Acts.Listing.ok As → As.Nodup
   -- uses VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Listing.ok@VE.Acts.Read VE.Acts.Listing@VE.Acts.Read VE.Acts.Term@VE.Acts.Syntax VE.Acts.readingsIn@VE.Acts.Read VE.Grammar.Grammar@VE.Grammar.Basic VE.Grammar.Meaning@VE.Grammar.Reading
   -- expr 217654327
+theorem VE.Acts.schema_ok
+  ∀ {V : VE.Acts.Vocab}, VE.Acts.framesOk V = Bool.true → (VE.Acts.schema V).all VE.Acts.RuleS.ok = Bool.true
+  -- uses VE.Acts.RuleS.ok@VE.Acts.Grammar VE.Acts.RuleS@VE.Acts.Grammar VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.framesOk@VE.Acts.Syntax VE.Acts.schema@VE.Acts.Grammar
+  -- expr 1043879545
+theorem VE.Acts.schema_ranked
+  ∀ (V : VE.Acts.Vocab),
+    VE.Acts.framesOk V = Bool.true →
+      ∀ (r : VE.Acts.RuleS),
+        r ∈ VE.Acts.schema V →
+          r.rhs ≠ [] ∧
+            ∀ (B : VE.Acts.NT) (rest : List VE.Acts.RSym), r.rhs = VE.Acts.RSym.n B :: rest → B.rank < r.lhs.rank
+  -- uses VE.Acts.NT.rank@VE.Acts.Grammar VE.Acts.NT@VE.Acts.Grammar VE.Acts.RSym.n@VE.Acts.Grammar VE.Acts.RSym@VE.Acts.Grammar VE.Acts.RuleS.lhs@VE.Acts.Grammar VE.Acts.RuleS.rhs@VE.Acts.Grammar VE.Acts.RuleS@VE.Acts.Grammar VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.framesOk@VE.Acts.Syntax VE.Acts.schema@VE.Acts.Grammar
+  -- expr 272239481
 theorem VE.Acts.table_free_all_own
   ∀ (op : VE.Acts.Op),
     op = VE.Acts.Op.may ∨ op = VE.Acts.Op.right →
