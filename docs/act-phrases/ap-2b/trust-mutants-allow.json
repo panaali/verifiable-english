@@ -1,0 +1,149 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Acts.build",
+   "operator": "list-drop-first",
+   "reason": "equivalent: the first two rules of every schema are both S's, so the names from the second rule on are the same list"
+  },
+  {
+   "definition": "VE.Acts.build",
+   "operator": "list-empty",
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal"
+  },
+  {
+   "definition": "VE.Acts.build",
+   "operator": "lit-plus",
+   "reason": "equivalent: `parse` never reads a rule's `act` (only VE.Grammar's action-table meaning does); the act grammar's meaning reads rules by position (ap-2c)"
+  },
+  {
+   "definition": "VE.Acts.closed",
+   "operator": "list-drop-first",
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal; or equivalent: a nonterminal that can lack a rule (NMh; SC and the cores when there is no frame) is the first and the last symbol of some right side (ERNh -> NMh, SINGLE -> SC, LS:c -> c), so any later or earlier symbols find the same ones"
+  },
+  {
+   "definition": "VE.Acts.closed",
+   "operator": "list-drop-last",
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal; or equivalent: the same reason as list-drop-first, and the schema's last rule (MGh -> MELh MGTh, or a rule of terminals) names no nonterminal that lacks a rule"
+  },
+  {
+   "definition": "VE.Acts.closed",
+   "operator": "list-first",
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal; or equivalent: a nonterminal that can lack a rule is the first symbol of some right side (ERNh -> NMh, SINGLE -> SC, LS:c -> c)"
+  },
+  {
+   "definition": "VE.Acts.closed",
+   "operator": "list-last",
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal; or equivalent: a nonterminal that can lack a rule is the last symbol of some right side (ERNh -> NMh, SINGLE -> SC, LS:c -> c)"
+  },
+  {
+   "definition": "VE.Acts.closed",
+   "operator": "list-empty",
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal"
+  },
+  {
+   "definition": "VE.Acts.fillExcl",
+   "operator": "list-empty",
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal"
+  },
+  {
+   "definition": "VE.Acts.fillExcl",
+   "operator": "list-first",
+   "reason": "equivalent: only the first word of a head or marker is read (`head?`), and `(l.take 1).head? = l.head?`"
+  },
+  {
+   "definition": "VE.Acts.frameRules",
+   "operator": "append-left",
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal"
+  },
+  {
+   "definition": "VE.Acts.frameRules",
+   "operator": "append-right",
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal"
+  },
+  {
+   "definition": "VE.Acts.frameRules",
+   "operator": "list-drop-first",
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal"
+  },
+  {
+   "definition": "VE.Acts.frameRules",
+   "operator": "list-drop-last",
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal"
+  },
+  {
+   "definition": "VE.Acts.frameRules",
+   "operator": "list-empty",
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal"
+  },
+  {
+   "definition": "VE.Acts.globalRules",
+   "operator": "append-left",
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal"
+  },
+  {
+   "definition": "VE.Acts.globalRules",
+   "operator": "append-right",
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal"
+  },
+  {
+   "definition": "VE.Acts.globalRules",
+   "operator": "list-drop-first",
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal"
+  },
+  {
+   "definition": "VE.Acts.globalRules",
+   "operator": "list-drop-last",
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal"
+  },
+  {
+   "definition": "VE.Acts.globalRules",
+   "operator": "list-empty",
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal"
+  },
+  {
+   "definition": "VE.Acts.items",
+   "operator": "list-empty",
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal"
+  },
+  {
+   "definition": "VE.Acts.schema",
+   "operator": "append-right",
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal"
+  },
+  {
+   "definition": "VE.Acts.schema",
+   "operator": "list-empty",
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal"
+  },
+  {
+   "definition": "VE.Acts.tail",
+   "operator": "append-right",
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal"
+  },
+  {
+   "definition": "VE.Acts.tail",
+   "operator": "list-drop-first",
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal"
+  },
+  {
+   "definition": "VE.Acts.tail",
+   "operator": "list-drop-last",
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal"
+  },
+  {
+   "definition": "VE.Acts.tail",
+   "operator": "list-empty",
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal"
+  },
+  {
+   "definition": "VE.Acts.tail",
+   "operator": "list-first",
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal"
+  },
+  {
+   "definition": "VE.Acts.tail",
+   "operator": "list-last",
+   "reason": "the cut leaves an ill-typed term, which Lean refuses (type mismatch, or `⟨…⟩` or dotted-identifier notation with no expected type), with a message the tool does not class as a refusal"
+  }
+ ]
+}
