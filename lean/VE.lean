@@ -179,6 +179,7 @@ import VE.Norms.FamilySpec
 import VE.Acts.Syntax
 import VE.Acts.Read
 import VE.Acts.Tree
+import VE.Acts.Linearize
 import VE.Acts.Table
 import VE.Acts.TableExamples
 import VE.Acts.GrammarExamples
@@ -216,6 +217,8 @@ import VE.Defaults.Premises
 import VE.Defaults.Examples
 import VE.Service.ActsExamples
 import VE.Defaults.Wire
+import VE.Defaults.Meaning
+import VE.Defaults.MeaningExamples
 import VE.Defaults.Route
 import VE.Defaults.WireExamples
 import VE.Defaults.RouteExamples
