@@ -516,11 +516,14 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.Lexical.words_cover
 #print axioms VE.Acts.Lexical.words_data
 #print axioms VE.Acts.Lexical.words_intercalate
+#print axioms VE.Acts.distinctTexts_ok
+#print axioms VE.Acts.firstEqualPair_none
 #print axioms VE.Acts.listing_limit
 #print axioms VE.Acts.listing_nodup
 #print axioms VE.Acts.listing_ok
 #print axioms VE.Acts.mem_firsts
 #print axioms VE.Acts.nodup_firsts
+#print axioms VE.Acts.paraphrases_nodup
 #print axioms VE.Acts.readIn_many
 #print axioms VE.Acts.readIn_none
 #print axioms VE.Acts.readIn_ok
