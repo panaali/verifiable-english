@@ -2095,6 +2095,15 @@ theorem VE.Alternatives.zip_all_target
       ∀ {t : β}, t ∈ ts → ∃ c, f t c = Bool.true
   -- uses VE.Alternatives.altConflictFreeCheckU.match_1@VE.Alternatives.FillWire VE.Alternatives.zip_all_target.match_1@VE.Alternatives.FillWire VE.Tableau.Certificate@VE.Tableau
   -- expr 120590332
+theorem VE.Arith.Examples.bertrand_means_iff
+  VE.Arith.Examples.primeDefs.Means VE.Arith.Examples.bertrand ↔
+    ∀ (n : Nat), 1 ≤ n → ∃ p, VE.Arith.Examples.IsPrime p ∧ n < p ∧ p ≤ 2 * n
+  -- uses VE.Arith.Defs.Means@VE.Arith.Holds VE.Arith.Examples.IsPrime@VE.Arith.Examples VE.Arith.Examples.bertrand@VE.Arith.Examples VE.Arith.Examples.primeDefs@VE.Arith.Examples
+  -- expr 570097480
+theorem VE.Arith.Examples.primeBody_iff
+  ∀ (E : VE.Arith.Env) (p : Nat), VE.Arith.Holds E [↑p] VE.Arith.Examples.primeBody ↔ VE.Arith.Examples.IsPrime p
+  -- uses VE.Arith.Env@VE.Arith.Holds VE.Arith.Examples.IsPrime@VE.Arith.Examples VE.Arith.Examples.primeBody@VE.Arith.Examples VE.Arith.Holds@VE.Arith.Holds
+  -- expr 1140533882
 theorem VE.Ask.Answer.groups_view
   ∀ (a : VE.Ask.Answer), a.groups = a.view.groups
   -- uses VE.Ask.Answer.groups@VE.Ask.Render VE.Ask.Answer.view@VE.Ask.Render VE.Ask.Answer@VE.Ask.Render VE.Ask.Group@VE.Ask.Groups VE.Ask.View.groups@VE.Ask.Lines
@@ -18974,10 +18983,20 @@ theorem VE.Norms.Wire.canonicalActIn_without_acts
   ∀ (ps fx : List String), ¬"acts@0" ∈ ps → VE.Norms.Wire.canonicalActIn ps fx = VE.Norms.Wire.canonicalAct
   -- uses VE.Norms.Wire.canonicalAct@VE.Norms.Wire VE.Norms.Wire.canonicalActIn@VE.Norms.Wire
   -- expr 4287139776
+theorem VE.Norms.Wire.decodeRegulated_plain
+  ∀ {name : String} {args : List String} {raw : Lean.Json} {r : VE.Norms.Regulated},
+    VE.Norms.Wire.decodeRegulated name args raw = Except.ok r → r.role = VE.Norms.Role.plain → r.act = Option.none
+  -- uses VE.Norms.Regulated.act@VE.Norms.Tree VE.Norms.Regulated.role@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Role.plain@VE.Norms.Tree VE.Norms.Role@VE.Norms.Tree VE.Norms.Wire.decodeRegulated@VE.Norms.Wire
+  -- expr 825806076
 theorem VE.Norms.Wire.decodeRegulated_without_acts
   ∀ (ps fx : List String), ¬"acts@0" ∈ ps → VE.Norms.Wire.decodeRegulatedIn ps fx = VE.Norms.Wire.decodeRegulated
   -- uses VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Wire.decodeRegulated@VE.Norms.Wire VE.Norms.Wire.decodeRegulatedIn@VE.Norms.Wire
   -- expr 384187676
+theorem VE.Norms.Wire.ite_ok_cases
+  ∀ {ε α : Type} {c : Prop} [inst : Decidable c] {a b : Except ε α} {r : α},
+    (if c then a else b) = Except.ok r → c ∧ a = Except.ok r ∨ ¬c ∧ b = Except.ok r
+  -- uses
+  -- expr 1009244347
 theorem VE.Norms.agreesBelow_of_meanings
   ∀ {D : VE.Norms.Doc} {k : Nat} {S : VE.Structure}, VE.Norms.MeaningsBelow D k S → VE.Norms.AgreesBelow D k S
   -- uses VE.Norms.AgreesBelow@VE.Norms.Subst VE.Norms.Doc@VE.Norms.Tree VE.Norms.MeaningsBelow@VE.Norms.Prefix VE.Structure@VE.Semantics
@@ -43552,6 +43571,10 @@ theorem VE.Service.runMode_bundle
     VE.Service.runMode VE.Service.Mode.bundle j = VE.Service.Standalone.reported VE.Service.FamilyBundle.bundleCase j
   -- uses VE.Service.FamilyBundle.bundleCase@VE.Service.FamilyBundle VE.Service.Mode.bundle@VE.Service.Registry VE.Service.Standalone.reported@VE.Service.Standalone VE.Service.runMode@VE.Service.Protocol
   -- expr 1295058871
+theorem VE.Service.runMode_calc
+  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.calc j = VE.Calc.Run.runCaseReported j
+  -- uses VE.Calc.Run.runCaseReported@VE.Calc.Run VE.Service.Mode.calc@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
+  -- expr 3103349118
 theorem VE.Service.runMode_check
   ∀ (j : Lean.Json),
     VE.Service.runMode VE.Service.Mode.check j = VE.Service.Standalone.reported VE.Service.Standalone.checkCase j
