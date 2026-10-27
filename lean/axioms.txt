@@ -123,6 +123,20 @@
 'VE.Acts.readingsIn_exact' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.readingsIn_limit' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.readingsIn_nodup' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Acts.table_free_all_own' does not depend on any axioms
+'VE.Acts.table_free_all_shared' does not depend on any axioms
+'VE.Acts.table_free_all_split' does not depend on any axioms
+'VE.Acts.table_free_any' does not depend on any axioms
+'VE.Acts.table_free_any_split' does not depend on any axioms
+'VE.Acts.table_free_nor' does not depend on any axioms
+'VE.Acts.table_mustNot_all' does not depend on any axioms
+'VE.Acts.table_mustNot_all_split' does not depend on any axioms
+'VE.Acts.table_mustNot_any' does not depend on any axioms
+'VE.Acts.table_must_all' does not depend on any axioms
+'VE.Acts.table_must_any' does not depend on any axioms
+'VE.Acts.table_must_any_refused' depends on axioms: [propext]
+'VE.Acts.table_needNot' does not depend on any axioms
+'VE.Acts.table_one' does not depend on any axioms
 'VE.Acts.valueOf_eq_some' depends on axioms: [propext, Quot.sound]
 'VE.Alternatives.Admission.Admitted.sound' depends on axioms: [propext, Quot.sound]
 'VE.Alternatives.Admission.report_consequence' depends on axioms: [propext, Quot.sound]
@@ -466,11 +480,14 @@
 'VE.Bridge.tupleCheck_iff' depends on axioms: [propext]
 'VE.Bridge.vocabulary_namesValid' depends on axioms: [propext, Quot.sound]
 'VE.Calc.Budgeted.bin_eq' does not depend on any axioms
+'VE.Calc.Check.fault_some' depends on axioms: [propext, Quot.sound]
+'VE.Calc.Check.outcomeMeans_claim' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.Check.run_claim' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.Check.run_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.Claim.decide_fails' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.Claim.decide_holds' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.Claim.decide_undefined' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Calc.Claim.factsIn_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.Claim.facts_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.Claim.inline_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.Claim.lower_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -507,6 +524,7 @@
 'VE.Calc.Expr.subst_agrees' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.Expr.subst_faults' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.Expr.zeroDivisor_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Calc.FM.firstAppearance_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.Farkas.check_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.Farkas.combination_eval' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.Frac.add?_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -562,6 +580,7 @@
 'VE.Calc.QLin.eval_add' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.QLin.eval_foldl' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.QLin.eval_isConst' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Calc.QLin.eval_norm' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.QLin.eval_of_cancel' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.QLin.eval_scale' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.Rescale.factor_ne' depends on axioms: [propext]
@@ -646,6 +665,8 @@
 'VE.Calc.rpow_ne' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.rsum_append' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.sidesAtB_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Calc.sum_by_names' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Calc.sum_nonzero' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.sum_split' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.valuesL_agrees' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Calc.valuesL_causes' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -963,6 +984,7 @@
 'VE.Compose.gateOf_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Compose.gate_acts' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Compose.gate_legacy' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Compose.gate_scope' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Compose.gate_wellFormed' depends on axioms: [propext, Quot.sound]
 'VE.Compose.ite_and3' does not depend on any axioms
 'VE.Compose.ite_error_ok' does not depend on any axioms
@@ -2024,6 +2046,7 @@
 'VE.Judgments.usageMap_sound' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.usageMap_unused' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Judgments.viewOf_legacy' does not depend on any axioms
+'VE.Kit.Except.bind_ok' does not depend on any axioms
 'VE.Layout.anchorReach_iff' depends on axioms: [propext, Quot.sound]
 'VE.Layout.continues_iff' depends on axioms: [propext, Quot.sound]
 'VE.Layout.discourse_anchorsOk_unchanged' depends on axioms: [propext]
@@ -2975,6 +2998,20 @@
 'VE.Order.v0_decode_profiles' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Order.v0_runCase_profiles' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Order.validModel_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Paths.Path.least' does not depend on any axioms
+'VE.Paths.Path.trans' does not depend on any axioms
+'VE.Paths.Path.unfold' does not depend on any axioms
+'VE.Paths.mem_dedup' depends on axioms: [propext]
+'VE.Paths.mem_pivot' depends on axioms: [propext, Quot.sound]
+'VE.Paths.pivot_closed' depends on axioms: [propext, Quot.sound]
+'VE.Paths.pivot_preserves_closed' depends on axioms: [propext, Quot.sound]
+'VE.Paths.reachEval_iff' depends on axioms: [propext, Quot.sound]
+'VE.Paths.star_least' does not depend on any axioms
+'VE.Paths.warshall_closed' depends on axioms: [propext, Quot.sound]
+'VE.Paths.warshall_extends' depends on axioms: [propext, Quot.sound]
+'VE.Paths.warshall_iff_path' depends on axioms: [propext, Quot.sound]
+'VE.Paths.warshall_preserves_closed' depends on axioms: [propext, Quot.sound]
+'VE.Paths.warshall_sound' depends on axioms: [propext, Quot.sound]
 'VE.Question.Run.oneFields_gated' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Question.Run.statusCodes_classed' does not depend on any axioms
 'VE.Question.Str.bsize_toSubstring' depends on axioms: [propext]
@@ -5643,10 +5680,13 @@
 'VE.Scope.anchor_reach_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.baseName_some' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.baseObjF_slow' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.bind_ok' does not depend on any axioms
 'VE.Scope.commutes_symm' depends on axioms: [propext]
 'VE.Scope.composedF_slow' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.coveredBy_slow' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.coversU_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.decodeBlock_layout' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.decodeScope_layout' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.edgesFor_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.edgesInto_mem' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.edgesOfF_slow' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -5654,6 +5694,8 @@
 'VE.Scope.fastReads_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.firstKeys_mem' depends on axioms: [propext, Quot.sound]
 'VE.Scope.firstKeys_self' depends on axioms: [propext, Quot.sound]
+'VE.Scope.foldStatus_mem' depends on axioms: [propext, Quot.sound]
+'VE.Scope.foldl_meet_mem' depends on axioms: [propext]
 'VE.Scope.frameOnF_slow' depends on axioms: [propext]
 'VE.Scope.frontier_graph_refused' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.governBody_slow' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -5662,6 +5704,8 @@
 'VE.Scope.govern_identity' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.govern_orphan' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.govern_refused' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.governor_status_none' depends on axioms: [propext, Quot.sound]
+'VE.Scope.governor_status_weakest' depends on axioms: [propext, Quot.sound]
 'VE.Scope.governorsOfF_slow' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.governorsOf_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.hasOwn_mono' depends on axioms: [propext, Quot.sound]
@@ -5672,6 +5716,7 @@
 'VE.Scope.lookups_fields' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.lookups_spec' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.mapM_ok_mem' depends on axioms: [propext, Quot.sound]
+'VE.Scope.mapM_some_mem' depends on axioms: [propext, Quot.sound]
 'VE.Scope.mem_ordered' depends on axioms: [propext, Quot.sound]
 'VE.Scope.members_obj' does not depend on any axioms
 'VE.Scope.memo_map' depends on axioms: [Quot.sound]
@@ -5683,6 +5728,8 @@
 'VE.Scope.reach_beq' does not depend on any axioms
 'VE.Scope.readings_refused' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.ruleTable_decoder' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.scope_absent_unchanged' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.scope_admission' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.substOwn_id' depends on axioms: [propext, Quot.sound]
 'VE.Scope.substOwn_id_le' depends on axioms: [propext, Quot.sound]
 'VE.Scope.substOwn_no_own' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -6655,13 +6702,20 @@
 'ResponseShape.Encoders.Discourse.w2Status_mem' depends on axioms: [propext]
 'ResponseShape.Encoders.Document.block_coverage_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Document.cells_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Document.checkCore_encode' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Document.checkDoc_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Document.coverage_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Document.document_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Document.fold_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Document.fold_status_mem' depends on axioms: [propext, Quot.sound]
 'ResponseShape.Encoders.Document.locatedRow_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Document.meaning_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Document.rowKind_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.Document.runCaseReported_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Document.statusOf_ne' does not depend on any axioms
 'ResponseShape.Encoders.Document.unit_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Document.unit_status_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Document.units_mem' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.English.diagnose_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.English.english_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.English.eval_class' depends on axioms: [propext, Quot.sound]
