@@ -2,9 +2,12 @@
 
 **No DRI signature is reserved; no DELTA (no behaviour changes).** This item is docs and a statement stub only. Its
 independent review is the scope statement review for spec section 11; the build, **sc-5rb**, starts after a PASS.
-**Size: about 655 hand-written lines, over the ~600 the common rules allow.** The stub holds 360 of them; it is the
-only home of the Lean text (the spec cites it, as pk-1s's spec cites its stub). It was not cut, because what remains
-is the six fixtures the task requires plus the three fixtures that caught real design faults (below).
+**Size: 718 hand-written lines (`git diff --numstat` against the merge base: spec +247/−2, stub 360, this report
+101, `mutants.json` 10), over the ~600 the common rules allow.** The stub is the only home of the Lean text (the spec
+cites it, as pk-1s's spec cites its stub), and was trimmed once at 633 lines. It was not cut further: what remains is
+the definitions and statements under review, the six fixtures the task requires, and the fixtures that caught the
+design faults listed below. The reviewer or DRI can take it at this size; no part splits off as a coherent `sc-5rb`
+precursor.
 
 - Branch `feature/sc-5r`, worktree `/home/seyran/code/ve-sc-5r`, merge base `4a850162c` (main). Spec and plan on main
   (spec draft 4 = `ab010c3f0`'s text). Read first: the DRI decision (`reviews/dri-decisions-20261027-scope-readings.md`
@@ -73,7 +76,12 @@ naming a limit (SR-lim); `assemble` without the agreement check (SR-dep); `setCh
 
 ## Selected tests
 
-SELECTED_TESTS_RESULT
+`zsh mac-pytest.sh --select -- --base 4a850162c --run`, on ve-mac-1 (aarch64), 6 jobs, 3,971 s: **220 units
+recorded, 0 failed, exit 0** (among them `tests/test_scope_lean.py`, `tests/test_scope_document.py`,
+`tests/test_trust_budget.py`, `tests/test_frozen_sources.py`, `tests/test_trust_mutants.py`). It ran on the tree at
+commit `ce20ad613` (stub and spec section 11 committed). The later commits edit only these four docs files: one
+stub hypothesis, one fixture, spec prose, this report and the mutants JSON. After the last stub edit the stub check
+was rerun clean, and so were the 8 seeded bugs. No test reads these files beyond what that run covered.
 
 ## Self-review against BUILDER-CHECKLIST
 
