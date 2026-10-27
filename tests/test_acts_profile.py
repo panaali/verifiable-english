@@ -480,3 +480,48 @@ def test_slots_bound_is_the_one_slot_binding_of_every_relayed_wording(template, 
     are slots `{i}` as `EnglishVocabulary.atom` replaces them and those slots are the arity's positions."""
     from ve.backends.relay import slots_bound
     assert slots_bound(template, arity) is bound
+
+
+# ap-1bc (1): the words route (`VE.Words.regulatedOf`) decodes a clause's declaration as Lean's English does, so an
+# `acts@0` plain act, a long act and an act with a fixed phrase each have Lean's clause; Python relays them.
+
+AB81 = "{0}" + " ab" * 26
+DUAL = {"must_hear": predicate(["person", "case"], {"role": "obligation", "default": "deny", "act": A1,
+                                                    "permission": "may_hear"}),
+        "may_hear": predicate(["person", "case"], {"role": "permission", "default": "deny", "act": A1}),
+        "long": predicate(["person"], {"role": "permission", "default": "allow", "act": AB81}),
+        "late": {"arguments": ["person"], "description": "d"}}
+
+
+def test_the_words_route_words_acts_clauses_by_leans_decoder():
+    """ap-1bb review F3: the words route answered `the predicate heard is not regulated` for a plain act; a plain
+    act's clause is its wording at either value, a permission's has its modal (A3: `and` inside a fixed phrase; an
+    81-character act, past today's 80), and an obligation whose act holds a fixed phrase has its pair sentence."""
+    from ve import words
+    env = Environment(environment(**DUAL))
+    found = words.lines(env, [
+        words.point_item({}, "heard", ["e0", "e1"], True), words.point_item({}, "heard", ["e0", "e1"], False),
+        words.point_item({}, "paid", ["e0"], False, kind="filling"),
+        words.point_item({}, "protected", ["e0", "e1"], True), words.point_item({}, "protected", ["e0", "e1"], False),
+        words.point_item({}, "long", ["e0"], True), words.pair_item("must_hear")])
+    heard = A1_WORDING.replace("{0}", "e0").replace("{1}", "e1")
+    tail = A1[4:].replace("{1}", "")
+    assert found == [
+        heard, heard,
+        "Here the text does not say whether e0 has the right to equal pay for equal work without any discrimination;"
+        " this situation answers 'no'.",
+        A3.replace("{0} ", "e0 may ").replace("{1}", "e1"), A3.replace("{0} ", "e0 must not ").replace("{1}", "e1"),
+        "e0 may" + " ab" * 26,
+        f'Whenever a person must {tail}an entity of sort "case", it may {tail}that entity of sort "case".']
+
+
+@pytest.mark.parametrize("item, message", [
+    ({"kind": "point", "constants": {}, "predicate": "late", "tuple": ["e0"], "value": True}, "late is not regulated"),
+    ({"kind": "filling", "constants": {}, "predicate": "late", "tuple": ["e0"], "value": True}, "late is not regulated"),
+    ({"kind": "pair", "required": "heard"}, "heard is no obligation"),
+    ({"kind": "pair", "required": "protected"}, "protected is no obligation")])
+def test_the_words_route_still_refuses_what_is_not_a_regulated_clause(item, message):
+    """The refusing side: under `acts@0` a base predicate has no clause, and a plain act or a permission no pair."""
+    from ve import words
+    with pytest.raises(VEError, match=message):
+        words.lines(Environment(environment(**DUAL)), [item])

@@ -4,6 +4,7 @@ import ResponseShape.CaseDeciders
 import ResponseShape.Encoders
 import ResponseShape.Encoders.Alternatives
 import ResponseShape.Encoders.Ask
+import ResponseShape.Encoders.Calc
 import ResponseShape.Encoders.Common
 import ResponseShape.Encoders.Conformance
 import ResponseShape.Encoders.Discourse
@@ -96,6 +97,10 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Ask.route_mem
 #print axioms ResponseShape.Encoders.Ask.row_fits
 #print axioms ResponseShape.Encoders.Ask.source_fits
+#print axioms ResponseShape.Encoders.Calc.decode_software
+#print axioms ResponseShape.Encoders.Calc.rowJson_fits
+#print axioms ResponseShape.Encoders.Calc.rowJson_fits_software
+#print axioms ResponseShape.Encoders.Calc.runCaseReported_fits
 #print axioms ResponseShape.Encoders.Common.admitDocument_kinds
 #print axioms ResponseShape.Encoders.Common.caseKind_read
 #print axioms ResponseShape.Encoders.Common.claimJson_fits
@@ -145,13 +150,20 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Discourse.w2Status_mem
 #print axioms ResponseShape.Encoders.Document.block_coverage_fits
 #print axioms ResponseShape.Encoders.Document.cells_fits
+#print axioms ResponseShape.Encoders.Document.checkCore_encode
+#print axioms ResponseShape.Encoders.Document.checkDoc_fits
 #print axioms ResponseShape.Encoders.Document.coverage_fits
 #print axioms ResponseShape.Encoders.Document.document_fits
+#print axioms ResponseShape.Encoders.Document.fold_fits
+#print axioms ResponseShape.Encoders.Document.fold_status_mem
 #print axioms ResponseShape.Encoders.Document.locatedRow_fits
 #print axioms ResponseShape.Encoders.Document.meaning_fits
 #print axioms ResponseShape.Encoders.Document.rowKind_fits
 #print axioms ResponseShape.Encoders.Document.runCaseReported_fits
+#print axioms ResponseShape.Encoders.Document.statusOf_ne
 #print axioms ResponseShape.Encoders.Document.unit_fits
+#print axioms ResponseShape.Encoders.Document.unit_status_fits
+#print axioms ResponseShape.Encoders.Document.units_mem
 #print axioms ResponseShape.Encoders.English.diagnose_fits
 #print axioms ResponseShape.Encoders.English.english_fits
 #print axioms ResponseShape.Encoders.English.eval_class
