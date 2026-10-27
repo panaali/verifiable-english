@@ -114,7 +114,7 @@ Rust or product-Lean seeded bug.
   failed, exit 0); the run fell back to the VM and took 4,138 s. It ran on the tree of 5e5939d54; the later commits
   change only prose in 12.2 and this report. The stub check gives 0 errors and all guards pass, in 50 s. The full
   gate was not run here: the chain runs it on the final HEAD.
-- **Size.** 133 + 28 lines in the spec, 266 in the stub (evidence) and this report: 544 + 28 lines in all, under
+- **Size.** 133 + 28 lines in the spec, 266 in the stub (evidence) and this report: 549 + 28 lines in all, under
   600.
 - **Overlap.**
   - Hand-written files: `docs/spec/math-evidence.md`, the stub and this report.
