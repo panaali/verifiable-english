@@ -1,0 +1,287 @@
+{
+ "base": "25ac413119c8991d1385cc95c51bcaac7415f9a2",
+ "changes": [
+  {
+   "added": 177,
+   "deleted": 0,
+   "path": "conformance/wire-contract/soft-norms@0-test-inputs.json"
+  },
+  {
+   "added": 4,
+   "deleted": 2,
+   "path": "docs/CONSOLIDATION-PLAN.md"
+  },
+  {
+   "added": 17,
+   "deleted": 0,
+   "path": "docs/arch/AR-20/DELTA.md"
+  },
+  {
+   "added": 228,
+   "deleted": 0,
+   "path": "docs/arch/AR-20/REPORT.md"
+  },
+  {
+   "added": 74,
+   "deleted": 0,
+   "path": "docs/arch/AR-20/canonical_equiv.lean"
+  },
+  {
+   "added": 22,
+   "deleted": 0,
+   "path": "docs/arch/AR-20/evidence.toml"
+  },
+  {
+   "added": 158,
+   "deleted": 0,
+   "path": "docs/arch/AR-20/evidence/ab-delta.json"
+  },
+  {
+   "added": 565,
+   "deleted": 0,
+   "path": "docs/arch/AR-20/evidence/ab.json"
+  },
+  {
+   "added": 1,
+   "deleted": 0,
+   "path": "docs/arch/AR-20/evidence/canonical-equiv.txt"
+  },
+  {
+   "added": 147,
+   "deleted": 0,
+   "path": "docs/arch/AR-20/evidence/mutants.json"
+  },
+  {
+   "added": 2128,
+   "deleted": 0,
+   "path": "docs/arch/AR-20/evidence/new-pilots.json"
+  },
+  {
+   "added": 107,
+   "deleted": 0,
+   "path": "docs/arch/AR-20/evidence/pilot-rerun.json"
+  },
+  {
+   "added": 203,
+   "deleted": 0,
+   "path": "docs/arch/AR-20/evidence/scope.json"
+  },
+  {
+   "added": 42,
+   "deleted": 0,
+   "path": "docs/arch/AR-20/evidence/statements.json"
+  },
+  {
+   "added": 25,
+   "deleted": 0,
+   "path": "docs/arch/AR-20/evidence/trust-mutants.json"
+  },
+  {
+   "added": 361,
+   "deleted": 0,
+   "path": "docs/arch/AR-20/evidence/trust.json"
+  },
+  {
+   "added": 111,
+   "deleted": 0,
+   "path": "docs/arch/AR-20/mutants.json"
+  },
+  {
+   "added": 69,
+   "deleted": 0,
+   "path": "docs/arch/AR-20/pilot_rerun.py"
+  },
+  {
+   "added": 6,
+   "deleted": 6,
+   "path": "docs/spec/assurance-manifest.md"
+  },
+  {
+   "added": 17,
+   "deleted": 0,
+   "path": "lean/VE/Audit.lean"
+  },
+  {
+   "added": 28,
+   "deleted": 19,
+   "path": "lean/VE/CertificateWire.lean"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "lean/VE/Closure/Order.lean"
+  },
+  {
+   "added": 3,
+   "deleted": 3,
+   "path": "lean/VE/Closure/PathRules.lean"
+  },
+  {
+   "added": 45,
+   "deleted": 153,
+   "path": "lean/VE/Closure/Paths.lean"
+  },
+  {
+   "added": 3,
+   "deleted": 3,
+   "path": "lean/VE/Closure/Substitution.lean"
+  },
+  {
+   "added": 3,
+   "deleted": 3,
+   "path": "lean/VE/Core/PathRules.lean"
+  },
+  {
+   "added": 45,
+   "deleted": 153,
+   "path": "lean/VE/Core/Paths.lean"
+  },
+  {
+   "added": 3,
+   "deleted": 3,
+   "path": "lean/VE/Core/Substitution.lean"
+  },
+  {
+   "added": 11,
+   "deleted": 0,
+   "path": "lean/VE/Kit/Except.lean"
+  },
+  {
+   "added": 2,
+   "deleted": 25,
+   "path": "lean/VE/NormDefaults/Admission.lean"
+  },
+  {
+   "added": 4,
+   "deleted": 4,
+   "path": "lean/VE/Order/ProfileGate.lean"
+  },
+  {
+   "added": 195,
+   "deleted": 0,
+   "path": "lean/VE/Paths.lean"
+  },
+  {
+   "added": 3,
+   "deleted": 4,
+   "path": "lean/VE/Readings/Companions.lean"
+  },
+  {
+   "added": 3,
+   "deleted": 2,
+   "path": "lean/VE/Route/Budget.lean"
+  },
+  {
+   "added": 2,
+   "deleted": 2,
+   "path": "lean/VE/Route/Closure.lean"
+  },
+  {
+   "added": 5,
+   "deleted": 4,
+   "path": "lean/VE/Route/frozen-sources.sha256"
+  },
+  {
+   "added": 2,
+   "deleted": 25,
+   "path": "lean/VE/SoftNorms/Admission.lean"
+  },
+  {
+   "added": 15,
+   "deleted": 0,
+   "path": "lean/axioms.txt"
+  },
+  {
+   "added": 2,
+   "deleted": 0,
+   "path": "lean/checkers.lock"
+  },
+  {
+   "added": 236,
+   "deleted": 201,
+   "path": "lean/declarations.txt"
+  },
+  {
+   "added": 6,
+   "deleted": 0,
+   "path": "lean/predicates.txt"
+  },
+  {
+   "added": 73,
+   "deleted": 0,
+   "path": "lean/statements.txt"
+  },
+  {
+   "added": 38,
+   "deleted": 0,
+   "path": "tests/test_norm_defaults_three_way.py"
+  },
+  {
+   "added": 33,
+   "deleted": 0,
+   "path": "tests/test_soft_norms_lean.py"
+  },
+  {
+   "added": 2,
+   "deleted": 2,
+   "path": "tools/layer_policy.py"
+  },
+  {
+   "added": 35,
+   "deleted": 1,
+   "path": "tools/trust-classes.json"
+  },
+  {
+   "added": 18,
+   "deleted": 17,
+   "path": "ve/assurance-manifest.json"
+  }
+ ],
+ "commits": [
+  {
+   "hash": "29612e0027ad8e3e1702f2424711a7d4a04e2b03",
+   "subject": "AR-20 evidence and report: DELTA (R7 rows only), A/B, statements, trust, mutants"
+  },
+  {
+   "hash": "f355c3ff8991e5eef5ce8e700fc05b2a560fa8c1",
+   "subject": "AR-20: record the new soft test's inputs; remeasured ledger rows 3 and 4"
+  },
+  {
+   "hash": "c367dd082c5a8a6afdc7411f49fb8c30d12ebafa",
+   "subject": "AR-20 part 2: the decoder tests cover each route's data flag"
+  },
+  {
+   "hash": "2d4d3f75acbc74ddcbcfe3f31b57d420ffb76e85",
+   "subject": "AR-20 part 4 (L6): guards pin both canonical encoders' bytes and refusals"
+  },
+  {
+   "hash": "9d93710147d10c33f9c31de7819355a03fc253fd",
+   "subject": "AR-20 part 2: test each decodeDoc check on the soft-norms and norm-defaults routes"
+  },
+  {
+   "hash": "d62767c580a37e012dde0ed872ec6c9aab97b71f",
+   "subject": "AR-20: regenerate the Lean inventories, pins and trust classes"
+  },
+  {
+   "hash": "8f78e9e87da2635ad32635167f4507cc42f12f04",
+   "subject": "AR-20 part 3: Kind aliases keep their own instances; no constructor alias theorems"
+  },
+  {
+   "hash": "f1f4b3b1b4f17e1463c0833b8d9b6bb0525d3fe7",
+   "subject": "AR-20 part 4 (L6): canonical and documentCanonical share canonicalWith"
+  },
+  {
+   "hash": "458a9846d8bb1c6ca72fc3ab5162b15d6f2b55cf",
+   "subject": "AR-20 part 3: one VE/Paths.lean; Core and Closure Paths re-export it"
+  },
+  {
+   "hash": "f289e2645c9d21fb1c7fcf4a4b32ade74970ad55",
+   "subject": "AR-20 part 2: decodeSoftDoc and decodeFilledDoc call Route.Admission.decodeDoc"
+  },
+  {
+   "hash": "85101d91cd4be267330993e844c798a3b72fb4aa",
+   "subject": "AR-20 part 1: bind_ok in VE.Kit.Except; the two old names are aliases"
+  }
+ ],
+ "head": "29612e0027ad8e3e1702f2424711a7d4a04e2b03"
+}

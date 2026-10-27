@@ -409,11 +409,10 @@ def splitCase (environment document : Json) : Except String (List (String × Jso
 
 /-! ## Lemmas -/
 
+/-- `VE.Kit.Except.bind_ok`, under the name the companion proofs use. -/
 theorem bind_ok {ε α β : Type} {x : Except ε α} {f : α → Except ε β} {b : β}
-    (h : (x >>= f) = .ok b) : ∃ a, x = .ok a ∧ f a = .ok b := by
-  cases x with
-  | error e => cases h
-  | ok a => exact ⟨a, rfl, h⟩
+    (h : (x >>= f) = .ok b) : ∃ a, x = .ok a ∧ f a = .ok b :=
+  VE.Kit.Except.bind_ok h
 
 theorem getObjValD_ok {j v : Json} {k : String} (h : j.getObjVal? k = .ok v) : j.getObjValD k = v := by
   simp [Json.getObjValD, h]
