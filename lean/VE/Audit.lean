@@ -19,6 +19,7 @@ import VE.Alternatives.Route
 import VE.Alternatives.Run
 import VE.Alternatives.Validate
 import VE.Alternatives.Wire
+import VE.Arith.Bounded
 import VE.Arith.Examples
 import VE.Ask.Binding
 import VE.Ask.Groups
@@ -65,6 +66,8 @@ import VE.Cardinality.Examples
 import VE.Cardinality.Ratio
 import VE.Cardinality.Syntax
 import VE.Cardinality.Theorems
+import VE.Cardinality.Wire
+import VE.Cardinality.WireTheorems
 import VE.CertificateWire
 import VE.ClaimGraph
 import VE.Closure.Congruence
@@ -698,8 +701,25 @@ import VE.WireContract.Engine
 #print axioms VE.Alternatives.wf_preds
 #print axioms VE.Alternatives.withDefinitions_relation_some
 #print axioms VE.Alternatives.zip_all_target
+#print axioms VE.Arith.Agrees.funs
+#print axioms VE.Arith.Agrees.preds
 #print axioms VE.Arith.Examples.bertrand_means_iff
 #print axioms VE.Arith.Examples.primeBody_iff
+#print axioms VE.Arith.Formula.evalB_sound
+#print axioms VE.Arith.Term.evalB_sound
+#print axioms VE.Arith.Term.evalBs_sound
+#print axioms VE.Arith.agrees_env
+#print axioms VE.Arith.arithOutcome_decided
+#print axioms VE.Arith.arithOutcome_exhausted_iff
+#print axioms VE.Arith.arithOutcome_unbounded_iff
+#print axioms VE.Arith.charge_some
+#print axioms VE.Arith.countLoop_sound
+#print axioms VE.Arith.decideBounded_sound
+#print axioms VE.Arith.decideBounded_work
+#print axioms VE.Arith.quantLoop_false
+#print axioms VE.Arith.quantLoop_true
+#print axioms VE.Arith.range_all
+#print axioms VE.Arith.range_ex
 #print axioms VE.Ask.Answer.groups_view
 #print axioms VE.Ask.Asked.hbind
 #print axioms VE.Ask.Asked.hnames
@@ -1085,8 +1105,11 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.weighted_nonneg
 #print axioms VE.Calc.zpowR_eq
 #print axioms VE.Calc.zpowR_mul_nat
+#print axioms VE.Cardinality.CAdmission.admitted
+#print axioms VE.Cardinality.CAdmission.sound
 #print axioms VE.Cardinality.CEnv.WellFormed.finiteDeclared
 #print axioms VE.Cardinality.CEnv.WellFormed.fresh
+#print axioms VE.Cardinality.CardEnv.wf
 #print axioms VE.Cardinality.Examples.admissible_cases
 #print axioms VE.Cardinality.Examples.admittedRules_cases
 #print axioms VE.Cardinality.Examples.admitted_cases
@@ -1130,6 +1153,22 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.Examples.two_some
 #print axioms VE.Cardinality.Examples.weighted_two
 #print axioms VE.Cardinality.Examples.wellFormed_cases
+#print axioms VE.Cardinality.Wire.cmpNames_spelled
+#print axioms VE.Cardinality.Wire.decodeEnvironment_sound
+#print axioms VE.Cardinality.Wire.decodeStatement_fits
+#print axioms VE.Cardinality.Wire.decodeStatement_identity
+#print axioms VE.Cardinality.Wire.elabBody_cases
+#print axioms VE.Cardinality.Wire.elabName_mem
+#print axioms VE.Cardinality.Wire.elabOperand_cases
+#print axioms VE.Cardinality.Wire.elabRatio_sound
+#print axioms VE.Cardinality.Wire.finiteSorts_length
+#print axioms VE.Cardinality.Wire.items_ok
+#print axioms VE.Cardinality.Wire.printed_eq
+#print axioms VE.Cardinality.Wire.profileLists_projected
+#print axioms VE.Cardinality.Wire.relNames_spelled
+#print axioms VE.Cardinality.Wire.ruleNames_spelled
+#print axioms VE.Cardinality.Wire.sourceFits_iff
+#print axioms VE.Cardinality.Wire.wellFormed_of
 #print axioms VE.Cardinality.admits_complete
 #print axioms VE.Cardinality.admits_iff
 #print axioms VE.Cardinality.admits_sound

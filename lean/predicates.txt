@@ -110,6 +110,8 @@ module VE.Alternatives.Route
 module VE.Alternatives.Run
 module VE.Alternatives.Validate
 module VE.Alternatives.Wire
+module VE.Arith.Bounded
+module VE.Arith.BoundedExamples
 module VE.Arith.Defs
 module VE.Arith.Examples
 module VE.Arith.Holds
@@ -174,6 +176,9 @@ module VE.Cardinality.Regions
 module VE.Cardinality.Semantics
 module VE.Cardinality.Syntax
 module VE.Cardinality.Theorems
+module VE.Cardinality.Wire
+module VE.Cardinality.WireExamples
+module VE.Cardinality.WireTheorems
 module VE.CertificateWire
 module VE.Checks
 module VE.ClaimGraph
@@ -670,6 +675,7 @@ VE.Alternatives.Run.AltAdmissionAnswer@VE.Alternatives.Run
 VE.Alternatives.SettledF@VE.Alternatives.FillWire
 VE.Alternatives.TypedChooser@VE.Alternatives.Followable
 VE.Alternatives.UndecidedF@VE.Alternatives.FillWire
+VE.Arith.Agrees@VE.Arith.Bounded
 VE.Arith.Defs.Means@VE.Arith.Holds
 VE.Arith.Examples.IsPrime@VE.Arith.Examples
 VE.Arith.Holds@VE.Arith.Holds
