@@ -1258,6 +1258,13 @@
    "reason": "jt-2 merge with SC-1b (scope@0): VE/Service/Document.lean check +3 (G[V]): the document mode refuses judgments@0 with scope@0 (CheckerUnavailable: judgments@0 with scope@0 needs its composed Lean route), because scope's fold (Scope.foldGovernors) writes no judgments member; new Lean-owned behaviour, K +0, S +0; with jt-2's 117 the item is V +120",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md, 2026-10-17)",
    "commit": "ab010c3f02bca97c3d17775ba85382bf85e208eb"
+  },
+  {
+   "class": "V",
+   "lines": 41,
+   "reason": "me-5d: VE/Calc/Run.lean D[V] +41 (Shown, Run.factJson, Run.stepJson, Run.reads, Run.shownJson: a derivation's certificate and counterexample, spec 3.4); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-5d, 2026-10-18",
+   "commit": "ab010c3f02bca97c3d17775ba85382bf85e208eb"
   }
  ]
 }
