@@ -1134,6 +1134,34 @@
    "commit": "ba2532a224a0e605a22be44917005720f4f6764c"
   },
   {
+   "class": "V",
+   "lines": 51,
+   "reason": "qt-a3: VE/Cardinality/Wire.lean +51 (D[V] decodeEnvironment 17, decodeStatement 13, finiteSorts 10, projectW6 8, profileLists 3); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3, 2026-10-18",
+   "commit": "25ac413119c8991d1385cc95c51bcaac7415f9a2"
+  },
+  {
+   "class": "V",
+   "lines": 73,
+   "reason": "qt-a3 fix1 (review F1, F2): VE/Cardinality/Wire.lean +73 (D[V], from C as W6a's elabTerm is: elabBody 12, elabOperand 12, elabRatio 12, items 5, elabRule 5, printed 5, elabName 5, ruleNames 3, cmpNames 2, relNames 1; S2's depth, new: arrayDepth 6, sourceFits 6; decodeStatement 13 -> 12); the item's V +124; K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3 fix1, 2026-10-27",
+   "commit": "110b3bf3ad801a3dc335e9b2293e5c27bb4b82eb"
+  },
+  {
+   "class": "V",
+   "lines": 147,
+   "reason": "sc-1b: VE/Scope/Wire.lean +112, VE/Service/Document.lean +33, VE/Compose/Dispatch.lean +2 (V 147; K +0, S +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1b, 2026-10-18",
+   "commit": "e9e63dda7ff2ca089c8d8f03e3657b76a55c1cfa"
+  },
+  {
+   "class": "S",
+   "lines": 64,
+   "reason": "ap-3: lean/VE/Acts/Table.lean +38 (S: Simple, Op, opOf, freeTable, table), lean/VE/Acts/Tree.lean +26 (S: Join, Part, Filler, Modifier, Atom, Act); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3, 2026-10-18",
+   "commit": "058fea806c0bb89a1f30b6255126567ce9fd97a4"
+  },
+  {
    "class": "S",
    "lines": 22,
    "reason": "me-5c: K +0, S +22 (VE/Calc/Run.lean +16: Check.OutcomeMeans's follows and undefined clauses, Check.UnknownCause's general arm, Check.keep, Check.reasons; VE/Calc/Wire.lean +6: Check.follows, Check.exprs), untied V +58 (VE/Calc/Wire.lean +43: Wire.premise, Wire.check, the premises and free-value lines of Wire.value, Wire.decl, Wire.decode and Wire.entry; VE/Calc/Render.lean +10: English.renderFollows; VE/Calc/Run.lean +5: Run.kind and the kind field of Run.rowJson)",
@@ -1148,32 +1176,18 @@
    "commit": "110b3bf3ad801a3dc335e9b2293e5c27bb4b82eb"
   },
   {
-   "class": "S",
-   "lines": 64,
-   "reason": "ap-3: lean/VE/Acts/Table.lean +38 (S: Simple, Op, opOf, freeTable, table), lean/VE/Acts/Tree.lean +26 (S: Join, Part, Filler, Modifier, Atom, Act); K +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3, 2026-10-18",
-   "commit": "058fea806c0bb89a1f30b6255126567ce9fd97a4"
-  },
-  {
-   "class": "V",
-   "lines": 147,
-   "reason": "sc-1b: VE/Scope/Wire.lean +112, VE/Service/Document.lean +33, VE/Compose/Dispatch.lean +2 (V 147; K +0, S +0)",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1b, 2026-10-18",
-   "commit": "e9e63dda7ff2ca089c8d8f03e3657b76a55c1cfa"
-  },
-  {
-   "class": "V",
-   "lines": 50,
-   "reason": "me-2c: lean/VE/Calc/Run.lean +50 (D[V] wordsIn, line, exact, truncated, sides, display, tie, claimFields; rowJson's line, finding and claim members; runCaseReported's values)",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-2c, 2026-10-27",
-   "commit": "b31b8e4c180a9ec347eebe505ecb930e92bb094e"
-  },
-  {
    "class": "V",
    "lines": 104,
    "reason": "df-1ae: V +104 (K +0, S +0): ResponseShape/Schemas/NormDefaults.lean +80 (the four defaults-* shapes, the situation, the kind and row entries), VE/Defaults/Route.lean +22 (defaultsKinds, defaultsRows, layeredRows, layeredKindCase, runLayered moved), VE/Defaults/Wire.lean +8 (situationJson, coherenceFields, modelFields), VE/NormDefaults/Run.lean +1 (the routing), VE/NormDefaults/Layered.lean -7 (runLayered moved out)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-1ae, 2026-10-18",
    "commit": "a547f2141a37398614fb0eeced43cfa7079c7265"
+  },
+  {
+   "class": "S",
+   "lines": 46,
+   "reason": "ap-3b: lean/VE/Acts/Linearize.lean +46 (S: joinWord, Part.toks, listToks, Filler.toks, Atom.normal, tokStr, tokText, Atom.withTo, Atom.text, partAct); Table.lean paraphrases G[R] (not trusted); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3b, 2026-10-18",
+   "commit": "0e7a813e8841bbd7cf103229cf37386b8699896d"
   },
   {
    "class": "S",
@@ -1191,30 +1205,44 @@
   },
   {
    "class": "V",
-   "lines": 51,
-   "reason": "qt-a3: VE/Cardinality/Wire.lean +51 (D[V] decodeEnvironment 17, decodeStatement 13, finiteSorts 10, projectW6 8, profileLists 3); K +0, S +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3, 2026-10-18",
-   "commit": "25ac413119c8991d1385cc95c51bcaac7415f9a2"
+   "lines": 6,
+   "reason": "ap-1be: norm-defaults-elaborate's wordings member: VE/Norms/Run.lean +3 (G[V] wordingsJson, shared with norms-elaborate), ResponseShape/Schemas/NormDefaults.lean +2 (the elaborate shape's wordings), VE/NormDefaults/Run.lean +1 (runOtherCase writes it)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1be, 2026-10-27",
+   "commit": "a557ff887aa6b513fdaa540c479ae304023a24a4"
   },
   {
    "class": "V",
-   "lines": 73,
-   "reason": "qt-a3 fix1 (review F1, F2): VE/Cardinality/Wire.lean +73 (D[V], from C as W6a's elabTerm is: elabBody 12, elabOperand 12, elabRatio 12, items 5, elabRule 5, printed 5, elabName 5, ruleNames 3, cmpNames 2, relNames 1; S2's depth, new: arrayDepth 6, sourceFits 6; decodeStatement 13 -> 12); the item's V +124; K +0, S +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3 fix1, 2026-10-27",
-   "commit": "110b3bf3ad801a3dc335e9b2293e5c27bb4b82eb"
-  },
-  {
-   "class": "S",
-   "lines": 46,
-   "reason": "ap-3b: lean/VE/Acts/Linearize.lean +46 (S: joinWord, Part.toks, listToks, Filler.toks, Atom.normal, tokStr, tokText, Atom.withTo, Atom.text, partAct); Table.lean paraphrases G[R] (not trusted); K +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3b, 2026-10-18",
-   "commit": "0e7a813e8841bbd7cf103229cf37386b8699896d"
+   "lines": 1,
+   "reason": "ap-1be: the elaborate shape's render pin, ResponseShape/Schemas/NormDefaults.lean +1 as the map counts it (V +7 in all with the first allowance)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1be, 2026-10-27",
+   "commit": "a557ff887aa6b513fdaa540c479ae304023a24a4"
   },
   {
    "class": "V",
-   "lines": 41,
-   "reason": "me-5d: VE/Calc/Run.lean D[V] +41 (Shown, Run.factJson, Run.stepJson, Run.reads, Run.shownJson: a derivation's certificate and counterexample, spec 3.4); K +0, S +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-5d, 2026-10-18",
+   "lines": 113,
+   "reason": "jt-2: VE/Service/Document.lean +79, ResponseShape/Schemas/Document.lean +12, VE/Service/Standalone.lean +11, VE/Compose/Dispatch.lean +11 (V; K +0, S +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-2, 2026-10-18",
+   "commit": "20aa836fd5ac77b44aae384316e46d7d5a515f07"
+  },
+  {
+   "class": "V",
+   "lines": 4,
+   "reason": "jt-2 review F1: VE/Service/Document.lean +4 (Env.forModes, the environment the parse, model and English cases read; locatedModel's identity under a document layer) (V; K +0, S +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-2, 2026-10-20",
+   "commit": "75a9bcef9eac12ab4b0f3dc41621b9215c0834ca"
+  },
+  {
+   "class": "V",
+   "lines": 50,
+   "reason": "me-2c: lean/VE/Calc/Run.lean +50 (D[V] wordsIn, line, exact, truncated, sides, display, tie, claimFields; rowJson's line, finding and claim members; runCaseReported's values)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-2c, 2026-10-27",
+   "commit": "b31b8e4c180a9ec347eebe505ecb930e92bb094e"
+  },
+  {
+   "class": "V",
+   "lines": 3,
+   "reason": "jt-2 merge with SC-1b (scope@0): VE/Service/Document.lean check +3 (G[V]): the document mode refuses judgments@0 with scope@0 (CheckerUnavailable: judgments@0 with scope@0 needs its composed Lean route), because scope's fold (Scope.foldGovernors) writes no judgments member; new Lean-owned behaviour, K +0, S +0; with jt-2's 117 the item is V +120",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md, 2026-10-17)",
    "commit": "ab010c3f02bca97c3d17775ba85382bf85e208eb"
   },
   {
@@ -1233,23 +1261,9 @@
   },
   {
    "class": "V",
-   "lines": 113,
-   "reason": "jt-2: VE/Service/Document.lean +79, ResponseShape/Schemas/Document.lean +12, VE/Service/Standalone.lean +11, VE/Compose/Dispatch.lean +11 (V; K +0, S +0)",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-2, 2026-10-18",
-   "commit": "20aa836fd5ac77b44aae384316e46d7d5a515f07"
-  },
-  {
-   "class": "V",
-   "lines": 4,
-   "reason": "jt-2 review F1: VE/Service/Document.lean +4 (Env.forModes, the environment the parse, model and English cases read; locatedModel's identity under a document layer) (V; K +0, S +0)",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-2, 2026-10-20",
-   "commit": "75a9bcef9eac12ab4b0f3dc41621b9215c0834ca"
-  },
-  {
-   "class": "V",
-   "lines": 3,
-   "reason": "jt-2 merge with SC-1b (scope@0): VE/Service/Document.lean check +3 (G[V]): the document mode refuses judgments@0 with scope@0 (CheckerUnavailable: judgments@0 with scope@0 needs its composed Lean route), because scope's fold (Scope.foldGovernors) writes no judgments member; new Lean-owned behaviour, K +0, S +0; with jt-2's 117 the item is V +120",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md, 2026-10-17)",
+   "lines": 41,
+   "reason": "me-5d: VE/Calc/Run.lean D[V] +41 (Shown, Run.factJson, Run.stepJson, Run.reads, Run.shownJson: a derivation's certificate and counterexample, spec 3.4); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-5d, 2026-10-18",
    "commit": "ab010c3f02bca97c3d17775ba85382bf85e208eb"
   }
  ]

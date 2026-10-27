@@ -4,6 +4,7 @@ import VE.EnglishGrammar.Encode
 import VE.Acts.LexicalExamples
 import VE.Norms.Run
 import VE.Words.Situation
+import VE.NormDefaults.Run
 
 /-! act-phrases AP-1, the profile part (ap-1b): `acts@0` documents through the norms decoder, the environment
 mode, the family route and Lean's English (spec 2.1, 2.8, 3.1-3.3, 4.4; fixtures A1-A3, A5, A6, A19 of 11.1).
@@ -375,5 +376,36 @@ def dual : List (String × Json) := [("must_hear", pred ["person", "case"] [("ro
   "and public hearing by an independent and impartial tribunal in a case, it may in full equality to a fair and public " ++
   "hearing by an independent and impartial tribunal in that case.")
 #guard pair envA "heard" == none
+
+
+/-! ### ap-1be: the norm-defaults route's `norm-defaults-elaborate` row gives the norms route's `wordings` of the
+decoded source, for `norm-defaults@0` environments; refused sources give no row -/
+
+def ndP : List String := ["acts@0", "norm-defaults@0", "norms@0", "relational-fol@0"]
+def ndRow (j : Json) : Json := VE.NormDefaults.Run.runCaseReported (Json.mkObj [("id", .str "w"),
+  ("kind", .str "norm-defaults-elaborate"), ("environment", j), ("norms", Json.arr #[])])
+def ndWordings (j : Json) : Json := (ndRow j).getObjValD "wordings"
+-- A1 and A2 (109 B and 72 B), exactly the norms route's and Lean's English selection; a permission has none
+#guard ndWordings (envA ndP) == routeWordings envA
+#guard ["heard", "paid"].map (fun p => (ndWordings (envA ndP)).getObjValD p) ==
+  (((wordings envA).filterMap (·.1)).take 2).map Json.str
+-- a plain act whose default is `unspecified` has its wording; so has A21 at the 400-byte limit (414 B)
+def unspecPlain : List (String × Json) := [("heard", pred ["person"] [("role", .str "plain"),
+  ("default", .str "unspecified"), ("act", .str "{0} to be heard"), ("form", .str "has the right")])]
+#guard ndWordings (env ndP unspecPlain) == Json.mkObj [("heard", .str "{0} has the right to be heard")]
+#guard ((ndWordings (env ndP [("heard", pred ["person"] (plain VE.Acts.LexicalExamples.a21 "has the right"))])).getObjValD
+  "heard").getStr?.toOption.map String.utf8ByteSize == some 414
+-- none for a permission (`unspecified` or not), and none without `acts@0`
+#guard ndWordings (env ndP unspecified) == Json.mkObj [] && ndWordings (env ndP seek) == Json.mkObj []
+#guard ndWordings (env ["norm-defaults@0", "norms@0", "relational-fol@0"] unspecified) == Json.mkObj []
+-- refused, so no row: a 401-byte act, an unsorted list, and `acts@0` with `soft-norms@0`
+#guard [env ndP [("heard", pred ["person"] (plain (VE.Acts.LexicalExamples.a21 ++ "b") "has the right"))],
+    envA ["norm-defaults@0", "acts@0", "norms@0", "relational-fol@0"],
+    envA ["acts@0", "norm-defaults@0", "norms@0", "relational-fol@0", "soft-norms@0"]].map
+  (fun j => ((ndRow j).getObjValD "status", ndWordings j)) == List.replicate 3 (Json.str "error", Json.null)
+-- the row's other members are the base's: `wordings` is the one added
+#guard members (ndRow (env ndP unspecPlain)) == some ["background", "conflict_targets", "document_hash",
+  "environment_id", "fill", "fill_hash", "fill_labels", "filled_environment_id", "fragment", "fragment_fill", "id",
+  "order", "premises", "reached", "status", "unsaid", "unspecified", "wordings"]
 
 end VE.Service.ActsExamples
