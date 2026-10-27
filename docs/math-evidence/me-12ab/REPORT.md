@@ -70,7 +70,9 @@ M5–M9 are proof helpers (P), so a proof, not a guard, kills them. A `#guard` c
 
 ## Tests
 
-- **Selected tests:** TESTS_LINE
+- **Selected tests:** `mac-pytest.sh --select -- --base a557ff887 --run` on ve-mac-1, HEAD 513b2ee6 (clean):
+  82 units, 0 failed (2,123 s). The item adds no pytest file. Its tests are the Lean guards and proofs that `lake build`
+  checks (`VE.Arith.CompleteExamples` builds in about 2 s after `VE.Arith.BoundedExamples`).
 - **Checks on the final code:** `lake build` of the whole library passes (1,118 jobs). `lean/audit.py`,
   `lean_statements.py --check`, `repo_map.py --check` and `trust_map.py --check` pass. `regen_generated.py --write
   --skip route-cases` wrote 32 entries. `gate_collection.py --check --prebuilt` reports 0 added, 0 removed, 0 refused,
@@ -113,7 +115,8 @@ In-flight branches that touch them: `feature/ap-2b`, `feature/qt-a3b` and `found
 6. PASS: base from `git merge-base`; commits from `main..HEAD --no-merges`; full gate on the final HEAD by the chain.
 7. PASS: DELTA has no row; trust +0 (`trust_map.py --check --since a557ff887`); no allowance, so no signature.
 8. PASS: DELTA "Public output: none": no mode, command, route or Python or Rust product file.
-9. PASS: TESTS_SHORT
+9. PASS: the selection ran 82 units, not every unit, and 0 failed. This item's fixtures are Lean guards
+   that `lake build` checks, and M1–M4 break them.
 10. PASS: the two statements equal spec 12.2 after whitespace normalisation; `lean/audit.py` PASS; M1, M2, M5–M9
     break the proofs as written, and `decideBounded_mono` is about `decideBounded` itself, not a copy.
 11. PASS: budget 0 is none on every refusing fixture (`CompleteExamples.lean:32-37`) and below the work on every
