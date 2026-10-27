@@ -26,7 +26,7 @@
    "definition": "VE.Acts.closed",
    "behaviour": "5.2's last paragraph: no `X → never` rule",
    "status": "KILLED",
-   "test": "lean/VE/Acts/RuleExamples.lean:97,105,195"
+   "test": "lean/VE/Acts/RuleExamples.lean:97,105,212"
   },
   {
    "id": "adverb-as-filler",
@@ -35,7 +35,25 @@
    "definition": "VE.Acts.fillExcl",
    "behaviour": "1.4: an adverb is not a filler word",
    "status": "KILLED",
-   "test": "lean/VE/Acts/RuleExamples.lean:164,182,191"
+   "test": "lean/VE/Acts/RuleExamples.lean:164,182,191,202,205"
+  },
+  {
+   "id": "to-as-filler",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.fillExcl",
+   "behaviour": "1.4: *to* is not a filler word (review ap-2b F1)",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RuleExamples.lean:202,205,208"
+  },
+  {
+   "id": "nor-as-filler",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.fillExcl",
+   "behaviour": "1.4: *nor* is not a filler word (review ap-2b F1)",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RuleExamples.lean:202,205,208"
   },
   {
    "id": "start-not-S",
@@ -44,7 +62,7 @@
    "definition": "VE.Acts.build",
    "behaviour": "the start symbol is S",
    "status": "KILLED",
-   "test": "lean/VE/Acts/RuleExamples.lean:36,38,40,44,45,47,49,51,52,62,68,77,109,164,174,182"
+   "test": "lean/VE/Acts/RuleExamples.lean:36,38,40,44,45,47,49,51,52,62,68,77,109,164,174,182,202,208"
   },
   {
    "id": "rank-coord-0",
@@ -71,7 +89,7 @@
    "definition": "VE.Acts.RSym.nt?",
    "behaviour": "a nonterminal symbol names its nonterminal",
    "status": "KILLED",
-   "test": "lean/VE/Acts/RuleExamples.lean:97,105,195"
+   "test": "lean/VE/Acts/RuleExamples.lean:97,105,212"
   },
   {
    "id": "kw-as-fill",
@@ -80,7 +98,7 @@
    "definition": "VE.Acts.kwSyms",
    "behaviour": "a head's or marker's word is a `kw` terminal",
    "status": "KILLED",
-   "test": "lean/VE/Acts/RuleExamples.lean:36,38,40,44,45,47,49,51,52,58,62,68,77,109,164,174,182,191"
+   "test": "lean/VE/Acts/RuleExamples.lean:36,38,40,44,45,47,49,51,52,58,62,68,77,109,164,174,182,191,202,208"
   },
   {
    "id": "many1-once",
@@ -89,7 +107,7 @@
    "definition": "VE.Acts.many1",
    "behaviour": "one or more",
    "status": "KILLED",
-   "test": "lean/VE/Acts/RuleExamples.lean:36,40,44,45,47,51,62,68,77,164,174"
+   "test": "lean/VE/Acts/RuleExamples.lean:36,40,44,45,47,51,62,68,77,164,174,202"
   },
   {
    "id": "tail-no-comma-join",
@@ -116,7 +134,7 @@
    "definition": "VE.Acts.frameRules",
    "behaviour": "a joined object that is not split is `O → PL`",
    "status": "KILLED",
-   "test": "lean/VE/Acts/RuleExamples.lean:77,164,174"
+   "test": "lean/VE/Acts/RuleExamples.lean:77,164,174,208"
   },
   {
    "id": "schema-first-frame-only",
@@ -125,7 +143,7 @@
    "definition": "VE.Acts.schema",
    "behaviour": "every frame's rules",
    "status": "KILLED",
-   "test": "lean/VE/Acts/RuleExamples.lean:36,44,45,51,52,62,68,77,164,174,182,195"
+   "test": "lean/VE/Acts/RuleExamples.lean:36,44,45,51,52,62,68,77,164,174,182,202,212"
   },
   {
    "id": "Core-drop-rnr",
