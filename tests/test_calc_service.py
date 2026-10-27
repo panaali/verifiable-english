@@ -38,6 +38,8 @@ EXPECTED = [
     "DuplicateName: x",
     "DuplicateClaimId: c1",
     "NoClaims: a calculation needs at least one claim",
+    ["h6 holds"],  # R-3 (H-6): a derivation that follows
+    ["h6 fails"],  # R-4 (H-6n): one that does not
 ]
 
 

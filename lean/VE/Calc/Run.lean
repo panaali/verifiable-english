@@ -33,11 +33,19 @@ def Check.OutcomeMeans (ds : List Decl) : Check → Outcome → Prop
   | k, .decided .undefined => ∃ e ∈ k.exprs, ∀ κ x, ¬ Denotes (values (assign ds (k.keep ds) κ)) e x
   | k, .unknown u => k.UnknownCause ds u
 
-/-- The first fault inlining meets in a check's expressions, in order (2.7). -/
-def Check.fault (ds : List Decl) (k : Check) : Option Val :=
-  k.exprs.findSome? fun e => match e.inline ds (k.keep ds) with
+/-- The first fault inlining by the table `t` meets in a check's expressions, in order (2.7). -/
+def Check.fault (t : Inlined) (k : Check) : Option Val :=
+  k.exprs.findSome? fun e => match e.subst t with
     | .error v => some v
     | .ok _ => none
+
+/-- `Claim.facts` with the inlining table `t` (`Claim.factsIn_eq`), built once for a whole derivation. -/
+def Claim.factsIn (t : Inlined) (c : Claim) : Option (List QFact) := (c.subst t).toOption.bind Claim.lower
+
+theorem Claim.factsIn_eq (ds : List Decl) : Claim.factsIn (inlineTable ds (freeNames ds)) = Claim.facts ds := by
+  funext c
+  unfold Claim.factsIn Claim.facts Claim.inline
+  split <;> simp_all [Except.toOption]
 
 /-- A derivation's outcome from the search over its lowered facts (spec 5): follows only with a certificate that
 replays, does not follow only with a counterexample checked by evaluation, square links included. -/
@@ -50,17 +58,20 @@ def Derive.outcome (P : List QFact) (links : List (String × String)) (g : QFact
   | .unknown _ => .unknown .derivationInconclusive
 
 /-- A claim's outcome; a derivation's from its inlining's first fault (2.7), else, within `maxPolyTerms` nodes of
-each inlined expression, from the search over the lowered premises and conclusion (spec 5). -/
+each inlined expression, from the search over the lowered premises and conclusion (spec 5). One inlining table
+serves the whole derivation. -/
 def Check.run (ds : List Decl) : Check → Outcome
   | .claim c => c.run ds
-  | k@(.follows P links C) => match k.fault ds with
+  | k@(.follows P links C) =>
+    let t := inlineTable ds (k.keep ds)
+    match k.fault t with
     | some .undefined => .decided .undefined
     | some .exhausted => .unknown (.limit .evaluations)
     | some _ => .unknown (.limit .digits)
     | none =>
-      if !k.exprs.all fun e => (e.inline ds (k.keep ds)).toOption.all (·.nodesWithin maxPolyTerms |>.isSome) then
+      if !k.exprs.all fun e => (e.subst t).toOption.all (·.nodesWithin maxPolyTerms |>.isSome) then
         .unknown (.limit .derivationSteps)
-      else match P.mapM (Claim.facts ds), C.facts ds with
+      else match P.mapM (Claim.factsIn t), C.factsIn t with
         | some fss, some [g] => Derive.outcome fss.flatten links g
         | _, _ => .unknown .derivationInconclusive
 
@@ -72,11 +83,11 @@ theorem Check.outcomeMeans_claim (ds : List Decl) (c : Claim) (v : Verdict) :
 instance (ds : List Decl) (c : Claim) (v : Verdict) : Decidable ((Check.claim c).OutcomeMeans ds (.decided v)) :=
   decidable_of_iff _ (Check.outcomeMeans_claim ds c v).symm
 
-theorem Check.fault_some {ds : List Decl} {k : Check} {v : Val} (h : k.fault ds = some v) :
-    ∃ e ∈ k.exprs, e.inline ds (k.keep ds) = .error v := by
+theorem Check.fault_some {ds : List Decl} {k : Check} {v : Val}
+    (h : k.fault (inlineTable ds (k.keep ds)) = some v) : ∃ e ∈ k.exprs, e.inline ds (k.keep ds) = .error v := by
   obtain ⟨e, he, hv⟩ := List.exists_of_findSome?_eq_some h
   refine ⟨e, he, ?_⟩
-  split at hv <;> simp_all
+  split at hv <;> simp_all [Expr.inline]
 
 theorem Check.run_claim (ds : List Decl) (c : Claim) : (Check.claim c).run ds = c.run ds := rfl
 
@@ -91,8 +102,8 @@ theorem Check.run_sound (ds : List Decl) (h : WellFormed ds) (k : Check) : k.Out
     have own : ∀ u, u ≠ .limit .digits → u ≠ .limit .evaluations → u ∈ (Check.follows P links C).reasons →
         (Check.follows P links C).OutcomeMeans ds (.unknown u) := fun u hd he hu =>
       ⟨hu, fun h => absurd h hd, fun h => absurd h he⟩
-    simp only [Check.run]
-    cases hf : (Check.follows P links C).fault ds with
+    simp only [Check.run, Check.keep]
+    cases hf : (Check.follows P links C).fault (inlineTable ds (freeNames ds)) with
     | some v =>
       obtain ⟨e, he, hv⟩ := Check.fault_some hf
       rcases Expr.inline_error ds _ e v hv with rfl | rfl
@@ -105,6 +116,7 @@ theorem Check.run_sound (ds : List Decl) (h : WellFormed ds) (k : Check) : k.Out
       · exact own _ (by decide) (by decide) (by simp [Check.reasons])
       · split
         · rename_i fss g hP hC
+          rw [Claim.factsIn_eq] at hP hC
           unfold Derive.outcome
           split
           · rename_i d _

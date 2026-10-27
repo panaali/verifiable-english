@@ -315,18 +315,21 @@ def firstUnknown (known : List String) : List Decl → Option String
       | .defined e => e.names.find? (!known.contains ·)
       | _ => none).or (firstUnknown (known ++ [d.name]) ds)
 
-/-- The path of the innermost part of `e` that is not linear in the kept names once inlined by `t` (`Expr.linear`). -/
+/-- The path of the innermost part of `e` that, inlined by `t` within `maxPolyTerms` nodes, is not linear in the kept
+names (`Expr.linear`). -/
 def nonlinearAt (t : Inlined) (path : String) (e : Expr) : Option String :=
   let inner : Option String := match e with
     | .add a b | .sub a b | .mul a b | .div a b =>
       (nonlinearAt t s!"{path}.1" a).orElse fun _ => nonlinearAt t s!"{path}.2" b
     | .pow a _ => nonlinearAt t s!"{path}.1" a
     | .lit _ | .val _ => none
-  inner.orElse fun _ => if (e.subst t).toOption.any (·.linear.isNone) then some path else none
+  inner.orElse fun _ =>
+    if (e.subst t).toOption.any fun e => (e.nodesWithin maxPolyTerms).isSome && e.linear.isNone then some path
+    else none
 
 /-- Square links name free values (`UnknownLink`); then every premise and each derivation's conclusion is linear in
-the free values once inlined (`NonlinearPremise`, naming the innermost part that is not). A claim whose inlining
-meets a fault, or whose inlined form is beyond `maxPolyTerms` nodes, is not judged here: its row says why. -/
+the free values once inlined (`NonlinearPremise`, naming the innermost part that is not). A part whose inlining meets
+a fault, or whose inlined form is beyond `maxPolyTerms` nodes, is not judged here: its row says why. -/
 def derivations (ds : List Decl) (premises : List (String × Claim)) (claims : List (String × Check)) :
     Except String Unit := do
   let free := freeNames ds
@@ -340,11 +343,7 @@ def derivations (ds : List Decl) (premises : List (String × Claim)) (claims : L
       | .follows _ _ C => some (s!"claims.{i}.claim.1", C)
       | _ => none
   if let some p := lowered.findSome? fun (path, c) =>
-      match c.inline ds free with
-      | .ok c' => if c'.exprs.all (·.nodesWithin maxPolyTerms |>.isSome) && c'.lower.isNone then
-          c.exprs.zipIdx.findSome? fun (e, i) => nonlinearAt t s!"{path}.{i + 1}" e
-        else none
-      | .error _ => none then
+      c.exprs.zipIdx.findSome? fun (e, i) => nonlinearAt t s!"{path}.{i + 1}" e then
     throw s!"NonlinearPremise: {p} (declare a square link or name the product)"
 
 /-- Names are unique, each name read is declared (before its use in a definition), claim and premise ids are unique,

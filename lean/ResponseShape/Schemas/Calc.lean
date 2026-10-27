@@ -12,10 +12,12 @@ open Lean ResponseShape
 /-- The reason texts of an unknown row: `Run.words` of every unknown outcome. -/
 def reasons : List String := VE.Calc.Run.outcomes.filterMap (VE.Calc.Run.words · |>.2)
 
+/-- A request entry whose check is a derivation, `["follows", …]`. -/
+def derivation : Shape := n [.required ["claim"], props [("claim", n [arr, .minItems 1, .prefixItems [constS "follows"]])]]
+
 /-- A row's kind is the form of the request's check: `"follows"` for a derivation, `"claim"` for any other entry. -/
 def kind : Shape :=
-  .anyOf [n [constS "claim", .onCase (props [("claim", .not (n [arr, .prefixItems [constS "follows"]]))])],
-    n [constS "follows", .equals "/claim/0"]]
+  .anyOf [n [constS "claim", .onCase (.not derivation)], n [constS "follows", .onCase derivation]]
 
 /-- A row's fields, with its outcome, reason and reproduction. -/
 def fields (outcome reason reproduction : Shape) : Shape :=
