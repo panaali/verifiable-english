@@ -151,6 +151,7 @@
             "tie": {
               "anyOf": [
                 {
+                  "enum": [true, false, null],
                   "type": "boolean",
                   "x-case": {
                     "properties": {"claim": {"minItems": 1, "prefixItems": [{"enum": ["rounds"]}], "type": "array"}},
@@ -289,6 +290,7 @@
             "tie": {
               "anyOf": [
                 {
+                  "enum": [true, false, null],
                   "type": "boolean",
                   "x-case": {
                     "properties": {"claim": {"minItems": 1, "prefixItems": [{"enum": ["rounds"]}], "type": "array"}},
@@ -409,6 +411,7 @@
             "tie": {
               "anyOf": [
                 {
+                  "enum": [true, false, null],
                   "type": "null",
                   "x-case": {
                     "properties": {"claim": {"minItems": 1, "prefixItems": [{"enum": ["rounds"]}], "type": "array"}},
@@ -621,6 +624,7 @@
             "tie": {
               "anyOf": [
                 {
+                  "enum": [true, false, null],
                   "type": "boolean",
                   "x-case": {
                     "properties": {"claim": {"minItems": 1, "prefixItems": [{"enum": ["rounds"]}], "type": "array"}},
@@ -759,6 +763,7 @@
             "tie": {
               "anyOf": [
                 {
+                  "enum": [true, false, null],
                   "type": "boolean",
                   "x-case": {
                     "properties": {"claim": {"minItems": 1, "prefixItems": [{"enum": ["rounds"]}], "type": "array"}},
@@ -879,6 +884,7 @@
             "tie": {
               "anyOf": [
                 {
+                  "enum": [true, false, null],
                   "type": "null",
                   "x-case": {
                     "properties": {"claim": {"minItems": 1, "prefixItems": [{"enum": ["rounds"]}], "type": "array"}},
