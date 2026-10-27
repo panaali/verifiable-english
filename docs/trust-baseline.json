@@ -1146,6 +1146,13 @@
    "reason": "sc-1b: VE/Scope/Wire.lean +112, VE/Service/Document.lean +33, VE/Compose/Dispatch.lean +2 (V 147; K +0, S +0)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1b, 2026-10-18",
    "commit": "e9e63dda7ff2ca089c8d8f03e3657b76a55c1cfa"
+  },
+  {
+   "class": "S",
+   "lines": 64,
+   "reason": "ap-3: lean/VE/Acts/Table.lean +38 (S: Simple, Op, opOf, freeTable, table), lean/VE/Acts/Tree.lean +26 (S: Join, Part, Filler, Modifier, Atom, Act); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3, 2026-10-18",
+   "commit": "058fea806c0bb89a1f30b6255126567ce9fd97a4"
   }
  ]
 }
