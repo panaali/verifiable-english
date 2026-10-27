@@ -10,6 +10,7 @@ module MeteredMain
 module ResponseDecode
 module ResponseShape.Audit
 module ResponseShape.CaseDeciders
+module ResponseShape.DefaultsExamples
 module ResponseShape.Encoders.Alternatives
 module ResponseShape.Encoders.Ask
 module ResponseShape.Encoders.Calc
@@ -109,6 +110,8 @@ module VE.Alternatives.Route
 module VE.Alternatives.Run
 module VE.Alternatives.Validate
 module VE.Alternatives.Wire
+module VE.Arith.Bounded
+module VE.Arith.BoundedExamples
 module VE.Arith.Defs
 module VE.Arith.Examples
 module VE.Arith.Holds
@@ -173,6 +176,9 @@ module VE.Cardinality.Regions
 module VE.Cardinality.Semantics
 module VE.Cardinality.Syntax
 module VE.Cardinality.Theorems
+module VE.Cardinality.Wire
+module VE.Cardinality.WireExamples
+module VE.Cardinality.WireTheorems
 module VE.CertificateWire
 module VE.Checks
 module VE.ClaimGraph
@@ -221,7 +227,11 @@ module VE.Core.TableauExtendedRules
 module VE.Core.Wire
 module VE.Data.Background
 module VE.Defaults.Examples
+module VE.Defaults.Meaning
+module VE.Defaults.MeaningExamples
 module VE.Defaults.Premises
+module VE.Defaults.Route
+module VE.Defaults.RouteExamples
 module VE.Defaults.Wire
 module VE.Defaults.WireExamples
 module VE.Definitions.Alias
@@ -665,6 +675,7 @@ VE.Alternatives.Run.AltAdmissionAnswer@VE.Alternatives.Run
 VE.Alternatives.SettledF@VE.Alternatives.FillWire
 VE.Alternatives.TypedChooser@VE.Alternatives.Followable
 VE.Alternatives.UndecidedF@VE.Alternatives.FillWire
+VE.Arith.Agrees@VE.Arith.Bounded
 VE.Arith.Defs.Means@VE.Arith.Holds
 VE.Arith.Examples.IsPrime@VE.Arith.Examples
 VE.Arith.Holds@VE.Arith.Holds
@@ -776,7 +787,11 @@ VE.Data.Background.EntailsData@VE.Data.Background
 VE.Data.Background.Functional@VE.Data.Background
 VE.Data.Background.Intended@VE.Data.Background
 VE.Data.Background.Total@VE.Data.Background
+VE.Defaults.DefaultBase@VE.Defaults.Meaning
 VE.Defaults.DefaultCoherent@VE.Defaults.Premises
+VE.Defaults.ReplacementHolds@VE.Defaults.Meaning
+VE.Defaults.SwitchesOff@VE.Defaults.Meaning
+VE.Defaults.leastDecisions@VE.Defaults.Meaning
 VE.Definitions.Agrees@VE.Definitions.Layer
 VE.Definitions.Bundle.LeafBound@VE.Definitions.Bundle
 VE.Definitions.Bundle.ReadingBound@VE.Definitions.Bundle

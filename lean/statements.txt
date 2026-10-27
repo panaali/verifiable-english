@@ -2095,6 +2095,28 @@ theorem VE.Alternatives.zip_all_target
       ∀ {t : β}, t ∈ ts → ∃ c, f t c = Bool.true
   -- uses VE.Alternatives.altConflictFreeCheckU.match_1@VE.Alternatives.FillWire VE.Alternatives.zip_all_target.match_1@VE.Alternatives.FillWire VE.Tableau.Certificate@VE.Tableau
   -- expr 120590332
+theorem VE.Arith.Agrees.funs
+  ∀ {E : VE.Arith.Env} {O : VE.Arith.OpEnv} {limit : Nat},
+    VE.Arith.Agrees E O limit →
+      ∀ (f : String) (n : Nat) (g : List Int → Nat → Option (Int × Nat)),
+        O.funs f = Option.some (n, g) →
+          ∃ g',
+            E.funs f = Option.some (n, g') ∧
+              ∀ (xs : List Int) (w : Nat) (x : Int) (w' : Nat),
+                g xs w = Option.some (x, w') → g' xs = Option.some x ∧ (w ≤ limit → w' ≤ limit)
+  -- uses VE.Arith.Agrees@VE.Arith.Bounded VE.Arith.Env.funs@VE.Arith.Holds VE.Arith.Env@VE.Arith.Holds VE.Arith.OpEnv.funs@VE.Arith.Bounded VE.Arith.OpEnv@VE.Arith.Bounded
+  -- expr 1883711429
+theorem VE.Arith.Agrees.preds
+  ∀ {E : VE.Arith.Env} {O : VE.Arith.OpEnv} {limit : Nat},
+    VE.Arith.Agrees E O limit →
+      ∀ (p : String) (n : Nat) (P : List Int → Nat → Option (Bool × Nat)),
+        O.preds p = Option.some (n, P) →
+          ∃ P',
+            E.preds p = Option.some (n, P') ∧
+              ∀ (xs : List Int) (w : Nat) (b : Bool) (w' : Nat),
+                P xs w = Option.some (b, w') → (P' xs ↔ b = Bool.true) ∧ (w ≤ limit → w' ≤ limit)
+  -- uses VE.Arith.Agrees@VE.Arith.Bounded VE.Arith.Env.preds@VE.Arith.Holds VE.Arith.Env@VE.Arith.Holds VE.Arith.OpEnv.preds@VE.Arith.Bounded VE.Arith.OpEnv@VE.Arith.Bounded
+  -- expr 73195690
 theorem VE.Arith.Examples.bertrand_means_iff
   VE.Arith.Examples.primeDefs.Means VE.Arith.Examples.bertrand ↔
     ∀ (n : Nat), 1 ≤ n → ∃ p, VE.Arith.Examples.IsPrime p ∧ n < p ∧ p ≤ 2 * n
@@ -2104,6 +2126,112 @@ theorem VE.Arith.Examples.primeBody_iff
   ∀ (E : VE.Arith.Env) (p : Nat), VE.Arith.Holds E [↑p] VE.Arith.Examples.primeBody ↔ VE.Arith.Examples.IsPrime p
   -- uses VE.Arith.Env@VE.Arith.Holds VE.Arith.Examples.IsPrime@VE.Arith.Examples VE.Arith.Examples.primeBody@VE.Arith.Examples VE.Arith.Holds@VE.Arith.Holds
   -- expr 1140533882
+theorem VE.Arith.Formula.evalB_sound
+  ∀ {E : VE.Arith.Env} {O : VE.Arith.OpEnv} {limit : Nat},
+    VE.Arith.Agrees E O limit →
+      ∀ (φ : VE.Arith.Formula) (ρ : List Int) (w : Nat) (b : Bool) (w' : Nat),
+        VE.Arith.Formula.evalB O limit ρ φ w = Option.some (b, w') →
+          (VE.Arith.Holds E ρ φ ↔ b = Bool.true) ∧ (w ≤ limit → w' ≤ limit)
+  -- uses VE.Arith.Agrees@VE.Arith.Bounded VE.Arith.Env@VE.Arith.Holds VE.Arith.Formula.evalB@VE.Arith.Bounded VE.Arith.Formula@VE.Arith.Syntax VE.Arith.Holds@VE.Arith.Holds VE.Arith.OpEnv@VE.Arith.Bounded
+  -- expr 131736087
+theorem VE.Arith.Term.evalB_sound
+  ∀ {E : VE.Arith.Env} {O : VE.Arith.OpEnv} {limit : Nat},
+    VE.Arith.Agrees E O limit →
+      ∀ (t : VE.Arith.Term) (ρ : List Int) (w : Nat) (x : Int) (w' : Nat),
+        VE.Arith.Term.evalB O limit ρ t w = Option.some (x, w') →
+          VE.Arith.Term.value E ρ t = Option.some x ∧ (w ≤ limit → w' ≤ limit)
+  -- uses VE.Arith.Agrees@VE.Arith.Bounded VE.Arith.Env@VE.Arith.Holds VE.Arith.OpEnv@VE.Arith.Bounded VE.Arith.Term.evalB@VE.Arith.Bounded VE.Arith.Term.value@VE.Arith.Holds VE.Arith.Term@VE.Arith.Syntax
+  -- expr 2173376614
+theorem VE.Arith.Term.evalBs_sound
+  ∀ {E : VE.Arith.Env} {O : VE.Arith.OpEnv} {limit : Nat},
+    VE.Arith.Agrees E O limit →
+      ∀ (ts : List VE.Arith.Term) (ρ : List Int) (w : Nat) (xs : List Int) (w' : Nat),
+        VE.Arith.Term.evalBs O limit ρ ts w = Option.some (xs, w') →
+          VE.Arith.Term.values E ρ ts = Option.some xs ∧ (w ≤ limit → w' ≤ limit)
+  -- uses VE.Arith.Agrees@VE.Arith.Bounded VE.Arith.Env@VE.Arith.Holds VE.Arith.OpEnv@VE.Arith.Bounded VE.Arith.Term.evalBs@VE.Arith.Bounded VE.Arith.Term.values@VE.Arith.Holds VE.Arith.Term@VE.Arith.Syntax
+  -- expr 3446190821
+theorem VE.Arith.agrees_env
+  ∀ (D : VE.Arith.Defs) (limit : Nat), VE.Arith.Agrees D.env (VE.Arith.Defs.opEnv limit D) limit
+  -- uses VE.Arith.Agrees@VE.Arith.Bounded VE.Arith.Defs.env@VE.Arith.Holds VE.Arith.Defs.opEnv@VE.Arith.Bounded VE.Arith.Defs@VE.Arith.Syntax
+  -- expr 3231188153
+theorem VE.Arith.arithOutcome_decided
+  ∀ (D : VE.Arith.Defs),
+    D.WellFormed = Bool.true →
+      ∀ (φ : VE.Arith.Formula),
+        VE.Arith.Formula.Scoped D 0 φ = Bool.true →
+          ∀ (limit : Nat) (v : VE.Numbers.Verdict),
+            VE.Arith.arithOutcome D limit φ = VE.Numbers.Outcome.decided v →
+              v ≠ VE.Numbers.Verdict.undefined ∧ (v = VE.Numbers.Verdict.holds ↔ D.Means φ)
+  -- uses VE.Arith.Defs.Means@VE.Arith.Holds VE.Arith.Defs.WellFormed@VE.Arith.Defs VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula.Scoped@VE.Arith.Defs VE.Arith.Formula@VE.Arith.Syntax VE.Arith.arithOutcome@VE.Arith.Bounded VE.Numbers.Outcome.decided@VE.Numbers.Round VE.Numbers.Outcome@VE.Numbers.Round VE.Numbers.Verdict.holds@VE.Numbers.Round VE.Numbers.Verdict.undefined@VE.Numbers.Round VE.Numbers.Verdict@VE.Numbers.Round
+  -- expr 2426494802
+theorem VE.Arith.arithOutcome_exhausted_iff
+  ∀ (D : VE.Arith.Defs) (limit : Nat) (φ : VE.Arith.Formula),
+    VE.Arith.arithOutcome D limit φ =
+        VE.Numbers.Outcome.unknown (VE.Numbers.UnknownReason.limit VE.Numbers.Limit.evaluations) ↔
+      VE.Arith.Formula.Bounded D φ = Bool.true ∧ VE.Arith.decideBounded D limit φ = Option.none
+  -- uses VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula.Bounded@VE.Arith.Defs VE.Arith.Formula@VE.Arith.Syntax VE.Arith.arithOutcome@VE.Arith.Bounded VE.Arith.decideBounded@VE.Arith.Bounded VE.Numbers.Limit.evaluations@VE.Numbers.Round VE.Numbers.Outcome.unknown@VE.Numbers.Round VE.Numbers.Outcome@VE.Numbers.Round VE.Numbers.UnknownReason.limit@VE.Numbers.Round
+  -- expr 279098140
+theorem VE.Arith.arithOutcome_unbounded_iff
+  ∀ (D : VE.Arith.Defs) (limit : Nat) (φ : VE.Arith.Formula),
+    VE.Arith.arithOutcome D limit φ = VE.Numbers.Outcome.unknown VE.Numbers.UnknownReason.unboundedStatement ↔
+      VE.Arith.Formula.Bounded D φ = Bool.false
+  -- uses VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula.Bounded@VE.Arith.Defs VE.Arith.Formula@VE.Arith.Syntax VE.Arith.arithOutcome@VE.Arith.Bounded VE.Numbers.Outcome.unknown@VE.Numbers.Round VE.Numbers.Outcome@VE.Numbers.Round VE.Numbers.UnknownReason.unboundedStatement@VE.Numbers.Round
+  -- expr 4139093868
+theorem VE.Arith.charge_some
+  ∀ {α : Type} {limit w : Nat} {k : Nat → Option (α × Nat)} {r : α × Nat},
+    VE.Arith.charge limit w k = Option.some r → w < limit ∧ k (w + 1) = Option.some r
+  -- uses VE.Arith.charge@VE.Arith.Bounded
+  -- expr 1979330727
+theorem VE.Arith.countLoop_sound
+  ∀ (Q : Int → Prop) (step : Int → Nat → Option (Bool × Nat)) (limit : Nat),
+    (∀ (i : Int) (w : Nat) (b : Bool) (w' : Nat),
+        step i w = Option.some (b, w') → (Q i ↔ b = Bool.true) ∧ (w ≤ limit → w' ≤ limit)) →
+      ∀ (n : Nat) (i : Int) (acc w : Nat) (c : Int) (w' : Nat),
+        VE.Arith.countLoop step n i acc w = Option.some (c, w') →
+          c = ↑(acc + (List.filter (fun k => Decidable.decide (Q (i + ↑k))) (List.range n)).length) ∧
+            (w ≤ limit → w' ≤ limit)
+  -- uses VE.Arith.countLoop@VE.Arith.Bounded
+  -- expr 2059428783
+theorem VE.Arith.decideBounded_sound
+  ∀ (D : VE.Arith.Defs),
+    D.WellFormed = Bool.true →
+      ∀ (φ : VE.Arith.Formula),
+        VE.Arith.Formula.Scoped D 0 φ = Bool.true →
+          ∀ (limit : Nat) (b : Bool) (w : Nat),
+            VE.Arith.decideBounded D limit φ = Option.some (b, w) → (D.Means φ ↔ b = Bool.true)
+  -- uses VE.Arith.Defs.Means@VE.Arith.Holds VE.Arith.Defs.WellFormed@VE.Arith.Defs VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula.Scoped@VE.Arith.Defs VE.Arith.Formula@VE.Arith.Syntax VE.Arith.decideBounded@VE.Arith.Bounded
+  -- expr 2462996166
+theorem VE.Arith.decideBounded_work
+  ∀ (D : VE.Arith.Defs) (φ : VE.Arith.Formula) (limit : Nat) (b : Bool) (w : Nat),
+    VE.Arith.decideBounded D limit φ = Option.some (b, w) → w ≤ limit
+  -- uses VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula@VE.Arith.Syntax VE.Arith.decideBounded@VE.Arith.Bounded
+  -- expr 102672812
+theorem VE.Arith.quantLoop_false
+  ∀ (Q : Int → Prop) (step : Int → Nat → Option (Bool × Nat)) (limit : Nat),
+    (∀ (i : Int) (w : Nat) (b : Bool) (w' : Nat),
+        step i w = Option.some (b, w') → (Q i ↔ b = Bool.true) ∧ (w ≤ limit → w' ≤ limit)) →
+      ∀ (n : Nat) (i : Int) (w : Nat) (b : Bool) (w' : Nat),
+        VE.Arith.quantLoop Bool.false step n i w = Option.some (b, w') →
+          (b = Bool.true ↔ ∃ k, k < n ∧ Q (i + ↑k)) ∧ (w ≤ limit → w' ≤ limit)
+  -- uses VE.Arith.quantLoop@VE.Arith.Bounded
+  -- expr 1509925809
+theorem VE.Arith.quantLoop_true
+  ∀ (Q : Int → Prop) (step : Int → Nat → Option (Bool × Nat)) (limit : Nat),
+    (∀ (i : Int) (w : Nat) (b : Bool) (w' : Nat),
+        step i w = Option.some (b, w') → (Q i ↔ b = Bool.true) ∧ (w ≤ limit → w' ≤ limit)) →
+      ∀ (n : Nat) (i : Int) (w : Nat) (b : Bool) (w' : Nat),
+        VE.Arith.quantLoop Bool.true step n i w = Option.some (b, w') →
+          (b = Bool.true ↔ ∀ (k : Nat), k < n → Q (i + ↑k)) ∧ (w ≤ limit → w' ≤ limit)
+  -- uses VE.Arith.quantLoop@VE.Arith.Bounded
+  -- expr 3438560831
+theorem VE.Arith.range_all
+  ∀ (l h : Int) (Q : Int → Prop), (∀ (k : Nat), k < (h - l + 1).toNat → Q (l + ↑k)) ↔ ∀ (i : Int), l ≤ i → i ≤ h → Q i
+  -- uses
+  -- expr 4221053897
+theorem VE.Arith.range_ex
+  ∀ (l h : Int) (Q : Int → Prop), (∃ k, k < (h - l + 1).toNat ∧ Q (l + ↑k)) ↔ ∃ i, l ≤ i ∧ i ≤ h ∧ Q i
+  -- uses
+  -- expr 429845774
 theorem VE.Ask.Answer.groups_view
   ∀ (a : VE.Ask.Answer), a.groups = a.view.groups
   -- uses VE.Ask.Answer.groups@VE.Ask.Render VE.Ask.Answer.view@VE.Ask.Render VE.Ask.Answer@VE.Ask.Render VE.Ask.Group@VE.Ask.Groups VE.Ask.View.groups@VE.Ask.Lines
@@ -4499,6 +4627,15 @@ theorem VE.Calc.zpowR_mul_nat
   ∀ (q : Rat), q ≠ 0 → ∀ (i : Int) (k : Nat), q ^ (i * ↑k) = (q ^ i) ^ k
   -- uses
   -- expr 606363440
+theorem VE.Cardinality.CAdmission.admitted
+  ∀ {w : VE.Cardinality.CardEnv} (self : VE.Cardinality.CAdmission w),
+    VE.Cardinality.CFormula.admits w.env self.formula = Bool.true
+  -- uses VE.Cardinality.CAdmission.formula@VE.Cardinality.Wire VE.Cardinality.CAdmission@VE.Cardinality.Wire VE.Cardinality.CFormula.admits@VE.Cardinality.Syntax VE.Cardinality.CardEnv.env@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire
+  -- expr 2098165257
+theorem VE.Cardinality.CAdmission.sound
+  ∀ {w : VE.Cardinality.CardEnv} (a : VE.Cardinality.CAdmission w), VE.Cardinality.Admitted w.env a.formula
+  -- uses VE.Cardinality.Admitted@VE.Cardinality.Syntax VE.Cardinality.CAdmission.formula@VE.Cardinality.Wire VE.Cardinality.CAdmission@VE.Cardinality.Wire VE.Cardinality.CardEnv.env@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire
+  -- expr 312861070
 theorem VE.Cardinality.CEnv.WellFormed.finiteDeclared
   ∀ {E : VE.Cardinality.CEnv}, E.WellFormed → ∀ (s : String), s ∈ E.finite → s ∈ E.q.sorts
   -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.finite@VE.Cardinality.Syntax VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Time.QEnv.sorts@VE.Time.Syntax
@@ -4510,6 +4647,10 @@ theorem VE.Cardinality.CEnv.WellFormed.fresh
         E.q.constants c = Option.some τ → c.startsWith VE.Cardinality.regionPrefix = Bool.false
   -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.q@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.regionPrefix@VE.Cardinality.Syntax VE.Time.QEnv.constants@VE.Time.Syntax VE.Time.QType@VE.Time.Syntax
   -- expr 2783318274
+theorem VE.Cardinality.CardEnv.wf
+  ∀ (self : VE.Cardinality.CardEnv), self.env.WellFormed
+  -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CardEnv.env@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire
+  -- expr 59726500
 theorem VE.Cardinality.Examples.admissible_cases
   VE.Cardinality.Admissible VE.Cardinality.Examples.users VE.Cardinality.Examples.two ∧
     ¬VE.Cardinality.Admissible VE.Cardinality.Examples.users VE.Cardinality.Examples.everyNat ∧
@@ -5026,6 +5167,135 @@ theorem VE.Cardinality.Examples.wellFormed_cases
       ¬VE.Cardinality.Examples.colliding.WellFormed ∧ ¬VE.Cardinality.Examples.ghost.WellFormed
   -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.Examples.colliding@VE.Cardinality.Examples VE.Cardinality.Examples.ghost@VE.Cardinality.Examples VE.Cardinality.Examples.named@VE.Cardinality.Examples VE.Cardinality.Examples.users@VE.Cardinality.Examples
   -- expr 2834057780
+theorem VE.Cardinality.Wire.cmpNames_spelled
+  ∀ (s : String) (c : VE.Cardinality.Cmp),
+    VE.Cardinality.Wire.elabName VE.Cardinality.Wire.cmpNames s = Except.ok c ↔
+      s =
+        match c with
+        | VE.Cardinality.Cmp.gt => "gt"
+        | VE.Cardinality.Cmp.ge => "ge"
+        | VE.Cardinality.Cmp.lt => "lt"
+        | VE.Cardinality.Cmp.le => "le"
+        | VE.Cardinality.Cmp.eq => "eq"
+  -- uses VE.Cardinality.Cmp@VE.Cardinality.Syntax VE.Cardinality.Wire.cmpNames@VE.Cardinality.Wire VE.Cardinality.Wire.cmpNames_spelled.match_1@VE.Cardinality.WireTheorems VE.Cardinality.Wire.elabName@VE.Cardinality.Wire
+  -- expr 2222065438
+theorem VE.Cardinality.Wire.decodeEnvironment_sound
+  ∀ {env : Lean.Json} {w : VE.Cardinality.CardEnv},
+    VE.Cardinality.Wire.decodeEnvironment env = Except.ok w →
+      (∃ ps, ps ∈ VE.Cardinality.Wire.profileLists ∧ VE.Route.Wire.environmentId ps env = Except.ok w.environmentId) ∧
+        (∃ j, VE.Cardinality.projectW6 env = Except.ok j ∧ VE.Time.Wire.decodeEnvironment j = Except.ok w.w6) ∧
+          ∃ finite,
+            VE.Cardinality.Wire.finiteSorts env = Except.ok finite ∧ w.env = { q := w.w6.vocab.env, finite := finite }
+  -- uses VE.Cardinality.CEnv.mk@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CardEnv.env@VE.Cardinality.Wire VE.Cardinality.CardEnv.environmentId@VE.Cardinality.Wire VE.Cardinality.CardEnv.w6@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Wire.decodeEnvironment@VE.Cardinality.Wire VE.Cardinality.Wire.finiteSorts@VE.Cardinality.Wire VE.Cardinality.Wire.profileLists@VE.Cardinality.Wire VE.Cardinality.projectW6@VE.Cardinality.Wire VE.Route.Wire.environmentId@VE.Route.Wire VE.Time.Wire.QVocab.env@VE.Time.Wire VE.Time.Wire.W6Env.vocab@VE.Time.Wire VE.Time.Wire.W6Env@VE.Time.Wire VE.Time.Wire.decodeEnvironment@VE.Time.Wire
+  -- expr 2415483866
+theorem VE.Cardinality.Wire.decodeStatement_fits
+  ∀ {w : VE.Cardinality.CardEnv} {j : Lean.Json} {a : VE.Cardinality.CAdmission w},
+    VE.Cardinality.Wire.decodeStatement w j = Except.ok a →
+      ∃ source, j.getObjVal? "formula" = Except.ok source ∧ VE.Cardinality.Wire.sourceFits source = Bool.true
+  -- uses VE.Cardinality.CAdmission@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Wire.decodeStatement@VE.Cardinality.Wire VE.Cardinality.Wire.sourceFits@VE.Cardinality.Wire
+  -- expr 3401209471
+theorem VE.Cardinality.Wire.decodeStatement_identity
+  ∀ {w : VE.Cardinality.CardEnv} {j : Lean.Json} {a : VE.Cardinality.CAdmission w},
+    VE.Cardinality.Wire.decodeStatement w j = Except.ok a →
+      VE.Route.Wire.meaningId w.profiles w.environmentId (VE.Cardinality.Wire.canonical a.formula) = Except.ok a.meaningId
+  -- uses VE.Cardinality.CAdmission.formula@VE.Cardinality.Wire VE.Cardinality.CAdmission.meaningId@VE.Cardinality.Wire VE.Cardinality.CAdmission@VE.Cardinality.Wire VE.Cardinality.CardEnv.environmentId@VE.Cardinality.Wire VE.Cardinality.CardEnv.profiles@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Wire.canonical@VE.Cardinality.Wire VE.Cardinality.Wire.decodeStatement@VE.Cardinality.Wire VE.Route.Wire.meaningId@VE.Route.Wire
+  -- expr 3777840987
+theorem VE.Cardinality.Wire.elabBody_cases
+  ∀ (n : Nat) (p : String) (a b : Lean.Json),
+    VE.Cardinality.Wire.elabBody (n + 1) (Lean.Json.arr #[Lean.Json.str "is", Lean.Json.str p]) =
+        Except.ok (VE.Cardinality.Body.atom p) ∧
+      VE.Cardinality.Wire.elabBody (n + 1) (Lean.Json.arr #[Lean.Json.str "any"]) = Except.ok VE.Cardinality.Body.any ∧
+        VE.Cardinality.Wire.elabBody (n + 1) (Lean.Json.arr #[Lean.Json.str "not", a]) =
+            VE.Cardinality.Body.not <$> VE.Cardinality.Wire.elabBody n a ∧
+          (VE.Cardinality.Wire.elabBody (n + 1) (Lean.Json.arr #[Lean.Json.str "and", a, b]) = do
+              let __do_lift ← VE.Cardinality.Wire.elabBody n a
+              let __do_lift_1 ← VE.Cardinality.Wire.elabBody n b
+              Pure.pure (__do_lift.and __do_lift_1)) ∧
+            VE.Cardinality.Wire.elabBody (n + 1) (Lean.Json.arr #[Lean.Json.str "or", a, b]) = do
+              let __do_lift ← VE.Cardinality.Wire.elabBody n a
+              let __do_lift_1 ← VE.Cardinality.Wire.elabBody n b
+              Pure.pure (__do_lift.or __do_lift_1)
+  -- uses VE.Cardinality.Body.and@VE.Cardinality.Syntax VE.Cardinality.Body.any@VE.Cardinality.Syntax VE.Cardinality.Body.atom@VE.Cardinality.Syntax VE.Cardinality.Body.not@VE.Cardinality.Syntax VE.Cardinality.Body.or@VE.Cardinality.Syntax VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.Wire.elabBody@VE.Cardinality.Wire
+  -- expr 4069765862
+theorem VE.Cardinality.Wire.elabName_mem
+  ∀ {α : Type} {names : List (String × α)} {s : String} {x : α},
+    VE.Cardinality.Wire.elabName names s = Except.ok x → (s, x) ∈ names
+  -- uses VE.Cardinality.Wire.elabName@VE.Cardinality.Wire
+  -- expr 1669916991
+theorem VE.Cardinality.Wire.elabOperand_cases
+  ∀ (w : VE.Cardinality.CardEnv) (t b : Lean.Json) (s : String),
+    (VE.Cardinality.Wire.elabOperand w (Lean.Json.arr #[Lean.Json.str "quantity", t]) = do
+        let __discr ← VE.Time.Wire.elabTerm w.w6.vocab [] VE.Limits.maxDepth t
+        match __discr with
+          | (τ, q) => Pure.pure (τ, VE.Cardinality.CTerm.quantity q)) ∧
+      VE.Cardinality.Wire.elabOperand w (Lean.Json.arr #[Lean.Json.str "count", Lean.Json.str s, b]) = do
+        let b ← VE.Cardinality.Wire.elabBody VE.Limits.maxDepth b
+        VE.Cardinality.Wire.countedSort w.env s [b]
+        Pure.pure (VE.Time.QType.qty VE.Time.dimensionless, VE.Cardinality.CTerm.count s b)
+  -- uses VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CTerm.count@VE.Cardinality.Syntax VE.Cardinality.CTerm.quantity@VE.Cardinality.Syntax VE.Cardinality.CTerm@VE.Cardinality.Syntax VE.Cardinality.CardEnv.env@VE.Cardinality.Wire VE.Cardinality.CardEnv.w6@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Wire.countedSort@VE.Cardinality.Wire VE.Cardinality.Wire.elabBody@VE.Cardinality.Wire VE.Cardinality.Wire.elabOperand@VE.Cardinality.Wire VE.Cardinality.Wire.elabOperand_cases.match_1@VE.Cardinality.WireTheorems VE.Limits.maxDepth@VE.Limits VE.Time.QTerm@VE.Time.Syntax VE.Time.QType.qty@VE.Time.Syntax VE.Time.QType@VE.Time.Syntax VE.Time.Wire.W6Env.vocab@VE.Time.Wire VE.Time.Wire.elabTerm@VE.Time.Wire VE.Time.dimensionless@VE.Time.Syntax
+  -- expr 2660094618
+theorem VE.Cardinality.Wire.elabRatio_sound
+  ∀ {w : VE.Cardinality.CardEnv} {x y : Lean.Json} {a b : VE.Cardinality.CTerm},
+    VE.Cardinality.Wire.elabRatio w x y = Except.ok (a, b) →
+      ∃ g,
+        VE.Cardinality.Wire.elabOperand w x = Except.ok (VE.Time.QType.qty g, a) ∧
+          VE.Cardinality.Wire.elabOperand w y = Except.ok (VE.Time.QType.qty g, b) ∧ g ≠ VE.Time.dayTag
+  -- uses VE.Cardinality.CTerm@VE.Cardinality.Syntax VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Wire.elabOperand@VE.Cardinality.Wire VE.Cardinality.Wire.elabRatio@VE.Cardinality.Wire VE.Time.QType.qty@VE.Time.Syntax VE.Time.QType@VE.Time.Syntax VE.Time.dayTag@VE.Time.Syntax
+  -- expr 334305473
+theorem VE.Cardinality.Wire.finiteSorts_length
+  ∀ {env : Lean.Json} {xs : List String},
+    VE.Cardinality.Wire.finiteSorts env = Except.ok xs → xs.length ≤ VE.Cardinality.Wire.maxFiniteSorts
+  -- uses VE.Cardinality.Wire.finiteSorts@VE.Cardinality.Wire VE.Cardinality.Wire.maxFiniteSorts@VE.Cardinality.Wire
+  -- expr 2775985200
+theorem VE.Cardinality.Wire.items_ok
+  ∀ (j : Lean.Json) (xs : List Lean.Json),
+    VE.Cardinality.Wire.items j = Except.ok xs ↔ ∃ a, j = Lean.Json.arr a ∧ a.toList = xs
+  -- uses VE.Cardinality.Wire.items@VE.Cardinality.Wire
+  -- expr 885375937
+theorem VE.Cardinality.Wire.printed_eq
+  ∀ (s : String), VE.Cardinality.Wire.printed s = (fun d => (d.significand, d.places)) <$> VE.Time.parseDecimal s
+  -- uses VE.Cardinality.Wire.printed@VE.Cardinality.Wire VE.Time.Dec.places@VE.Time.Decimal VE.Time.Dec.significand@VE.Time.Decimal VE.Time.Dec@VE.Time.Decimal VE.Time.parseDecimal@VE.Time.Decimal
+  -- expr 2636933300
+theorem VE.Cardinality.Wire.profileLists_projected
+  ∀ {ps : List String},
+    ps ∈ VE.Cardinality.Wire.profileLists → List.filter (fun x => x != "cardinality@0") ps ∈ VE.Time.Wire.w6Profiles
+  -- uses VE.Cardinality.Wire.profileLists@VE.Cardinality.Wire VE.Time.Wire.w6Profiles@VE.Time.Wire
+  -- expr 4115151832
+theorem VE.Cardinality.Wire.relNames_spelled
+  ∀ (s : String) (r : VE.Cardinality.Rel),
+    VE.Cardinality.Wire.elabName VE.Cardinality.Wire.relNames s = Except.ok r ↔
+      s =
+        match r with
+        | VE.Cardinality.Rel.lt => "lt"
+        | VE.Cardinality.Rel.le => "le"
+        | VE.Cardinality.Rel.eq => "eq"
+  -- uses VE.Cardinality.Rel@VE.Cardinality.Syntax VE.Cardinality.Wire.elabName@VE.Cardinality.Wire VE.Cardinality.Wire.relNames@VE.Cardinality.Wire VE.Cardinality.Wire.relNames_spelled.match_1@VE.Cardinality.WireTheorems
+  -- expr 2579625150
+theorem VE.Cardinality.Wire.ruleNames_spelled
+  ∀ (s : String) (r : VE.Numbers.Rounding),
+    (VE.Cardinality.Wire.elabRule s = Except.ok r ↔ (s, r) ∈ VE.Cardinality.Wire.ruleNames) ∧
+      ((s, r) ∈ VE.Cardinality.Wire.ruleNames ↔
+        s =
+          match r with
+          | VE.Numbers.Rounding.tiesUp => "ties_up"
+          | VE.Numbers.Rounding.halfEven => "half_even"
+          | VE.Numbers.Rounding.down => "down"
+          | VE.Numbers.Rounding.up => "up")
+  -- uses VE.Cardinality.Wire.elabRule@VE.Cardinality.Wire VE.Cardinality.Wire.ruleNames@VE.Cardinality.Wire VE.Cardinality.Wire.ruleNames_spelled.match_1@VE.Cardinality.WireTheorems VE.Numbers.Rounding@VE.Numbers.Round
+  -- expr 2232895681
+theorem VE.Cardinality.Wire.sourceFits_iff
+  ∀ (source : Lean.Json),
+    VE.Cardinality.Wire.sourceFits source = Bool.true ↔
+      VE.Time.Wire.jsonNodes (VE.Limits.maxJsonDepth + 1) source ≤ VE.Limits.maxNodes ∧
+        VE.Cardinality.Wire.arrayDepth (VE.Limits.maxDepth + 1) source ≤ VE.Limits.maxDepth
+  -- uses VE.Cardinality.Wire.arrayDepth@VE.Cardinality.Wire VE.Cardinality.Wire.sourceFits@VE.Cardinality.Wire VE.Limits.maxDepth@VE.Limits VE.Limits.maxJsonDepth@VE.Limits VE.Limits.maxNodes@VE.Limits VE.Time.Wire.jsonNodes@VE.Time.Wire
+  -- expr 10791128
+theorem VE.Cardinality.Wire.wellFormed_of
+  ∀ (v : VE.Time.Wire.QVocab) (finite : List String),
+    (finite.all v.sorts.contains && v.constants.all fun c => !c.fst.startsWith VE.Cardinality.regionPrefix) = Bool.true →
+      { q := v.env, finite := finite }.WellFormed
+  -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.mk@VE.Cardinality.Syntax VE.Cardinality.regionPrefix@VE.Cardinality.Syntax VE.Time.QType@VE.Time.Syntax VE.Time.Wire.QVocab.constants@VE.Time.Wire VE.Time.Wire.QVocab.env@VE.Time.Wire VE.Time.Wire.QVocab.sorts@VE.Time.Wire VE.Time.Wire.QVocab@VE.Time.Wire
+  -- expr 2856143815
 theorem VE.Cardinality.admits_complete
   ∀ (E : VE.Cardinality.CEnv) (a : VE.Cardinality.CFormula),
     VE.Cardinality.Admitted E a → VE.Cardinality.CFormula.admits E a = Bool.true
@@ -8435,6 +8705,12 @@ theorem VE.Defaults.Wire.viewOf_layered
     VE.Defaults.Wire.viewOf j = Except.ok v → VE.NormDefaults.Wire.decodeLayered j = Except.ok v.L
   -- uses VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView@VE.Defaults.Wire VE.Defaults.Wire.viewOf@VE.Defaults.Wire VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.decodeLayered@VE.NormDefaults.Layered
   -- expr 634990345
+theorem VE.Defaults.act_arity
+  ∀ {D : VE.SoftNorms.SoftDoc},
+    VE.SoftNorms.WellFormedSoft D = Bool.true →
+      ∀ {N : VE.SoftNorms.SoftNode}, N ∈ D.T.nodes → VE.Norms.Arity (VE.SoftNorms.actSortsOf D (VE.SoftNorms.act D N))
+  -- uses VE.Norms.Arity@VE.Norms.Basic VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.act@VE.SoftNorms.Tree VE.SoftNorms.actSortsOf@VE.SoftNorms.Tree
+  -- expr 60109947
 theorem VE.Defaults.assumptions_sound
   ∀ (U : VE.NormDefaults.UDoc),
     VE.NormDefaults.WellFormedU U = Bool.true →
@@ -8529,12 +8805,132 @@ theorem VE.Defaults.collision_unranked
                     VE.Defaults.collisionCheck U D R M F m n = Bool.true → VE.SoftNorms.Comparable D P Q = Bool.false
   -- uses VE.Bridge.Entity@VE.Bridge VE.Defaults.collisionCheck@VE.Defaults.Premises VE.FiniteModel.Valid@VE.Finite VE.FiniteModel@VE.Finite VE.Formula@VE.Syntax VE.NormDefaults.FiniteFill@VE.NormDefaults.Evidence VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.Norms.Doc@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.envAt@VE.Norms.Tree VE.SoftNorms.Comparable@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften
   -- expr 4208650158
+theorem VE.Defaults.cond_declared
+  ∀ {D : VE.SoftNorms.SoftDoc},
+    VE.SoftNorms.WellFormedSoft D = Bool.true →
+      ∀ {N : VE.SoftNorms.SoftNode},
+        N ∈ D.T.nodes →
+          ∀ {e : VE.SoftNorms.Exception},
+            N.exception = Option.some e →
+              ∀ {C : VE.Formula},
+                C ∈ e.sufficient ++ e.necessary →
+                  ∀ (p : String), p ∈ VE.Norms.preds C → ∃ ss, D.E.predicates p = Option.some ss
+  -- uses VE.Environment.predicates@VE.Syntax VE.Formula@VE.Syntax VE.Norms.preds@VE.Norms.Tree VE.SoftNorms.Exception.necessary@VE.SoftNorms.Tree VE.SoftNorms.Exception.sufficient@VE.SoftNorms.Tree VE.SoftNorms.Exception@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.E@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.exception@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften
+  -- expr 1463732663
+theorem VE.Defaults.cond_free
+  ∀ {U : VE.NormDefaults.UDoc},
+    VE.NormDefaults.WellFormedU U = Bool.true →
+      ∀ {D : VE.SoftNorms.SoftDoc},
+        U.D = VE.SoftNorms.soften D →
+          VE.SoftNorms.WellFormedSoft D = Bool.true →
+            ∀ {N : VE.SoftNorms.SoftNode},
+              N ∈ D.T.nodes →
+                ∀ {e : VE.SoftNorms.Exception},
+                  N.exception = Option.some e →
+                    ∀ {C : VE.Formula},
+                      C ∈ e.sufficient ++ e.necessary →
+                        ∀ (p : String),
+                          p ∈ VE.Norms.preds C → ¬p ∈ VE.SoftNorms.decisionNames D ∧ ¬p ∈ VE.NormDefaults.unsaidNames U
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree VE.Norms.Doc@VE.Norms.Tree VE.Norms.preds@VE.Norms.Tree VE.SoftNorms.Exception.necessary@VE.SoftNorms.Tree VE.SoftNorms.Exception.sufficient@VE.SoftNorms.Tree VE.SoftNorms.Exception@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.exception@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.decisionNames@VE.SoftNorms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- expr 4113157061
+theorem VE.Defaults.decisionNames_split
+  ∀ {D : VE.SoftNorms.SoftDoc},
+    VE.SoftNorms.decisionNames D =
+      List.map (fun x => x.fst) (VE.SoftNorms.exceptedDecisions D) ++
+          List.map (fun x => x.fst) (VE.SoftNorms.offDecisions D) ++
+        List.map (fun x => x.fst) (VE.SoftNorms.outweighsDecisions D)
+  -- uses VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.decisionNames@VE.SoftNorms.Tree VE.SoftNorms.exceptedDecisions@VE.SoftNorms.Tree VE.SoftNorms.offDecisions@VE.SoftNorms.Tree VE.SoftNorms.outweighsDecisions@VE.SoftNorms.Tree
+  -- expr 4033333207
+theorem VE.Defaults.decision_arity
+  ∀ {D : VE.SoftNorms.SoftDoc},
+    VE.SoftNorms.WellFormedSoft D = Bool.true →
+      ∀ {d : String × List String}, d ∈ VE.SoftNorms.decisions D → VE.Norms.Arity d.snd
+  -- uses VE.Norms.Arity@VE.Norms.Basic VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.decisions@VE.SoftNorms.Tree
+  -- expr 1406244858
+theorem VE.Defaults.decision_declared
+  ∀ {U : VE.NormDefaults.UDoc},
+    VE.NormDefaults.WellFormedU U = Bool.true →
+      ∀ {D : VE.SoftNorms.SoftDoc},
+        U.D = VE.SoftNorms.soften D →
+          VE.SoftNorms.WellFormedSoft D = Bool.true →
+            ∀ {d : String × List String},
+              d ∈ VE.SoftNorms.decisions D →
+                (VE.Norms.envAt (VE.NormDefaults.fill U) 0).predicates d.fst = Option.some d.snd
+  -- uses VE.Environment.predicates@VE.Syntax VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Doc@VE.Norms.Tree VE.Norms.envAt@VE.Norms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.decisions@VE.SoftNorms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- expr 1331665163
+theorem VE.Defaults.decision_not_unsaid
+  ∀ {U : VE.NormDefaults.UDoc},
+    VE.NormDefaults.WellFormedU U = Bool.true →
+      ∀ {D : VE.SoftNorms.SoftDoc},
+        U.D = VE.SoftNorms.soften D →
+          VE.SoftNorms.WellFormedSoft D = Bool.true →
+            ∀ {p : String}, p ∈ VE.SoftNorms.decisionNames D → ¬p ∈ VE.NormDefaults.unsaidNames U
+  -- uses VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree VE.Norms.Doc@VE.Norms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.decisionNames@VE.SoftNorms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- expr 3592434890
+theorem VE.Defaults.defaultBase_of_dflt
+  ∀ (U : VE.NormDefaults.UDoc),
+    VE.NormDefaults.WellFormedU U = Bool.true →
+      ∀ (D : VE.SoftNorms.SoftDoc),
+        U.D = VE.SoftNorms.soften D →
+          VE.SoftNorms.WellFormedSoft D = Bool.true →
+            ∀ (R : List VE.Formula) (B : VE.Structure),
+              VE.NormDefaults.Wire.BaseAdmissibleX U (VE.Defaults.defaultX D (VE.Defaults.softX U D R)) B →
+                VE.Defaults.DefaultBase U D (VE.Defaults.softX U D R) B
+  -- uses VE.Defaults.DefaultBase@VE.Defaults.Meaning VE.Defaults.defaultX@VE.Defaults.Premises VE.Defaults.softX@VE.Defaults.Meaning VE.Formula@VE.Syntax VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.BaseAdmissibleX@VE.NormDefaults.Report VE.Norms.Doc@VE.Norms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure@VE.Semantics
+  -- expr 3015726329
 theorem VE.Defaults.defaultCoherenceCheck_sound
   ∀ (U : VE.NormDefaults.UDoc) (D : VE.SoftNorms.SoftDoc) (R : List VE.Formula)
     (certs : List (Option VE.Tableau.Certificate)),
     VE.Defaults.defaultCoherenceCheck U D R certs = Bool.true → VE.Defaults.DefaultCoherent U D R
   -- uses VE.Defaults.DefaultCoherent@VE.Defaults.Premises VE.Defaults.defaultCoherenceCheck@VE.Defaults.Premises VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.Tableau.Certificate@VE.Tableau
   -- expr 1184126990
+theorem VE.Defaults.default_entails_minimal
+  ∀ (U : VE.NormDefaults.UDoc),
+    VE.NormDefaults.WellFormedU U = Bool.true →
+      ∀ (D : VE.SoftNorms.SoftDoc),
+        U.D = VE.SoftNorms.soften D →
+          VE.SoftNorms.WellFormedSoft D = Bool.true →
+            ∀ (R : List VE.Formula),
+              VE.Defaults.replacementSafe U D R = Bool.true →
+                VE.Defaults.DefaultCoherent U D R →
+                  ∀ (Γ : List VE.Formula) (φ : VE.Formula),
+                    VE.NormDefaults.EntailsX U (VE.Defaults.defaultX D (VE.Defaults.softX U D R)) Γ φ ↔
+                      ∀ (S : VE.Structure),
+                        VE.Defaults.DefaultBase U D (VE.Defaults.softX U D R)
+                            (VE.Norms.restrictAll (VE.NormDefaults.fill U).T S) →
+                          VE.Norms.DocumentExpansion (VE.NormDefaults.fill U)
+                              (VE.Norms.restrictAll (VE.NormDefaults.fill U).T S) S →
+                            VE.Norms.Sat S Γ → VE.Formula.denote S [] φ
+  -- uses VE.Defaults.DefaultBase@VE.Defaults.Meaning VE.Defaults.DefaultCoherent@VE.Defaults.Premises VE.Defaults.defaultX@VE.Defaults.Premises VE.Defaults.replacementSafe@VE.Defaults.Meaning VE.Defaults.softX@VE.Defaults.Meaning VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.EntailsX@VE.NormDefaults.LayeredEntail VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Doc@VE.Norms.Tree VE.Norms.DocumentExpansion@VE.Norms.Conflict VE.Norms.Sat@VE.Norms.Prefix VE.Norms.restrictAll@VE.Norms.Subst VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2701785214
+theorem VE.Defaults.default_entails_minimal_of
+  ∀ (U : VE.NormDefaults.UDoc),
+    VE.NormDefaults.WellFormedU U = Bool.true →
+      ∀ (D : VE.SoftNorms.SoftDoc),
+        U.D = VE.SoftNorms.soften D →
+          VE.SoftNorms.WellFormedSoft D = Bool.true →
+            ∀ (R : List VE.Formula),
+              VE.Defaults.ReplacementHolds U D R →
+                ∀ (Γ : List VE.Formula) (φ : VE.Formula),
+                  VE.NormDefaults.EntailsX U (VE.Defaults.defaultX D (VE.Defaults.softX U D R)) Γ φ ↔
+                    ∀ (S : VE.Structure),
+                      VE.Defaults.DefaultBase U D (VE.Defaults.softX U D R)
+                          (VE.Norms.restrictAll (VE.NormDefaults.fill U).T S) →
+                        VE.Norms.DocumentExpansion (VE.NormDefaults.fill U)
+                            (VE.Norms.restrictAll (VE.NormDefaults.fill U).T S) S →
+                          VE.Norms.Sat S Γ → VE.Formula.denote S [] φ
+  -- uses VE.Defaults.DefaultBase@VE.Defaults.Meaning VE.Defaults.ReplacementHolds@VE.Defaults.Meaning VE.Defaults.defaultX@VE.Defaults.Premises VE.Defaults.softX@VE.Defaults.Meaning VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.EntailsX@VE.NormDefaults.LayeredEntail VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Doc@VE.Norms.Tree VE.Norms.DocumentExpansion@VE.Norms.Conflict VE.Norms.Sat@VE.Norms.Prefix VE.Norms.restrictAll@VE.Norms.Subst VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 1437941940
+theorem VE.Defaults.defaults_model_default_base
+  ∀ (x : VE.Defaults.Wire.ModelReplay),
+    x.ok = Bool.true →
+      ∃ S,
+        VE.Defaults.DefaultBase x.v.L.U x.v.L.D x.v.L.X (VE.Norms.restrictAll (VE.NormDefaults.fill x.v.L.U).T S) ∧
+          VE.Norms.DocumentExpansion (VE.NormDefaults.fill x.v.L.U)
+              (VE.Norms.restrictAll (VE.NormDefaults.fill x.v.L.U).T S) S ∧
+            VE.Norms.Sat S x.Γ ∧ ¬VE.Formula.denote S [] x.φ
+  -- uses VE.Defaults.DefaultBase@VE.Defaults.Meaning VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay.ok@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay.v@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay.Γ@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay.φ@VE.Defaults.Wire VE.Defaults.Wire.ModelReplay@VE.Defaults.Wire VE.Formula.denote@VE.Semantics VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.U@VE.NormDefaults.Layered VE.NormDefaults.Wire.LayeredU.X@VE.NormDefaults.Layered VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.DocumentExpansion@VE.Norms.Conflict VE.Norms.Sat@VE.Norms.Prefix VE.Norms.restrictAll@VE.Norms.Subst VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 906851217
 theorem VE.Defaults.dflt_wellFormed
   ∀ (U : VE.NormDefaults.UDoc),
     VE.NormDefaults.WellFormedU U = Bool.true →
@@ -8551,6 +8947,27 @@ theorem VE.Defaults.entailsX_mono
       VE.NormDefaults.EntailsX U X₁ Γ φ → VE.NormDefaults.EntailsX U X₂ Γ φ
   -- uses VE.Formula.top@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.EntailsX@VE.NormDefaults.LayeredEntail VE.NormDefaults.UDoc@VE.NormDefaults.Tree
   -- expr 2665967211
+theorem VE.Defaults.excepted_inj
+  ∀ {D : VE.SoftNorms.SoftDoc},
+    VE.SoftNorms.WellFormedSoft D = Bool.true →
+      ∀ {N M : VE.SoftNorms.SoftNode},
+        N ∈ D.T.nodes →
+          N.mode = VE.SoftNorms.Mode.default →
+            M ∈ D.T.nodes →
+              M.mode = VE.SoftNorms.Mode.default → VE.SoftNorms.exceptedName N = VE.SoftNorms.exceptedName M → N = M
+  -- uses VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.exceptedName@VE.SoftNorms.Tree
+  -- expr 2801105522
+theorem VE.Defaults.excepted_only
+  ∀ {D : VE.SoftNorms.SoftDoc},
+    VE.SoftNorms.WellFormedSoft D = Bool.true →
+      ∀ {N : VE.SoftNorms.SoftNode},
+        N ∈ D.T.nodes →
+          N.mode = VE.SoftNorms.Mode.default →
+            ¬VE.SoftNorms.exceptedName N ∈
+                List.map (fun x => x.fst) (VE.SoftNorms.offDecisions D) ++
+                  List.map (fun x => x.fst) (VE.SoftNorms.outweighsDecisions D)
+  -- uses VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.exceptedName@VE.SoftNorms.Tree VE.SoftNorms.offDecisions@VE.SoftNorms.Tree VE.SoftNorms.outweighsDecisions@VE.SoftNorms.Tree
+  -- expr 2959491146
 theorem VE.Defaults.followsForm_short
   ∀ (D : VE.SoftNorms.SoftDoc) (as : List String),
     VE.Defaults.followsForm D as = VE.Defaults.Form.short →
@@ -8565,6 +8982,36 @@ theorem VE.Defaults.followsForm_short
                   VE.Defaults.dfltLabelled D
   -- uses VE.Defaults.Form.short@VE.Defaults.Premises VE.Defaults.Form@VE.Defaults.Premises VE.Defaults.dfltLabelled@VE.Defaults.Premises VE.Defaults.followsForm@VE.Defaults.Premises VE.Formula.implies@VE.Syntax VE.Formula@VE.Syntax VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.anyF@VE.Norms.Basic VE.Norms.bindAll@VE.Norms.Basic VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.exceptedF@VE.SoftNorms.Soften VE.SoftNorms.sortsOf@VE.SoftNorms.Tree
   -- expr 3258860801
+theorem VE.Defaults.least_le
+  ∀ {D : VE.SoftNorms.SoftDoc},
+    VE.SoftNorms.WellFormedSoft D = Bool.true →
+      ∀ (B : VE.Structure),
+        VE.Norms.Sat B (VE.SoftNorms.excPremises D) →
+          ∀ (p : String) (vs : List B.Carrier), VE.Defaults.leastDecisions D B p vs → B.relation p vs
+  -- uses VE.Defaults.leastDecisions@VE.Defaults.Meaning VE.Norms.Sat@VE.Norms.Prefix VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.excPremises@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 3632613416
+theorem VE.Defaults.mem_exc
+  ∀ {D : VE.SoftNorms.SoftDoc} {N : VE.SoftNorms.SoftNode},
+    N ∈ D.T.nodes →
+      N.mode = VE.SoftNorms.Mode.default →
+        ∀ {e : VE.SoftNorms.Exception},
+          N.exception = Option.some e →
+            (∀ (C : VE.Formula),
+                C ∈ e.sufficient →
+                  VE.Norms.bindAll (VE.SoftNorms.sortsOf D N.pred) (C.implies (VE.SoftNorms.exceptedF D N)) ∈
+                    VE.SoftNorms.excPremises D) ∧
+              ∀ (C : VE.Formula),
+                C ∈ e.necessary →
+                  VE.Norms.bindAll (VE.SoftNorms.sortsOf D N.pred) ((VE.SoftNorms.exceptedF D N).implies C) ∈
+                    VE.SoftNorms.excPremises D
+  -- uses VE.Formula.implies@VE.Syntax VE.Formula@VE.Syntax VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.bindAll@VE.Norms.Basic VE.SoftNorms.Exception.necessary@VE.SoftNorms.Tree VE.SoftNorms.Exception.sufficient@VE.SoftNorms.Tree VE.SoftNorms.Exception@VE.SoftNorms.Tree VE.SoftNorms.Mode.default@VE.SoftNorms.Tree VE.SoftNorms.Mode@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.exception@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.mode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.excPremises@VE.SoftNorms.Soften VE.SoftNorms.exceptedF@VE.SoftNorms.Soften VE.SoftNorms.sortsOf@VE.SoftNorms.Tree
+  -- expr 3950649200
+theorem VE.Defaults.node_arity
+  ∀ {D : VE.SoftNorms.SoftDoc},
+    VE.SoftNorms.WellFormedSoft D = Bool.true →
+      ∀ {N : VE.SoftNorms.SoftNode}, N ∈ D.T.nodes → VE.Norms.Arity (VE.SoftNorms.sortsOf D N.pred)
+  -- uses VE.Norms.Arity@VE.Norms.Basic VE.Norms.Node.pred@VE.Norms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.sortsOf@VE.SoftNorms.Tree
+  -- expr 898490877
 theorem VE.Defaults.pairChecks_sound
   ∀ (U : VE.NormDefaults.UDoc) (D : VE.SoftNorms.SoftDoc) (R : List VE.Formula) (P Q : VE.SoftNorms.SoftNode)
     (c : Option VE.Tableau.Certificate),
@@ -8590,11 +9037,75 @@ theorem VE.Defaults.questionDiag_none
             p ∈ VE.Norms.preds a → ¬p ∈ VE.SoftNorms.decisionNames D ∧ ¬p ∈ List.map (fun x => x.name) D.T.regulated
   -- uses VE.Defaults.questionDiag@VE.Defaults.Premises VE.Formula@VE.Syntax VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.preds@VE.Norms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.regulated@VE.SoftNorms.Tree VE.SoftNorms.decisionNames@VE.SoftNorms.Tree
   -- expr 605368999
+theorem VE.Defaults.reg_arity
+  ∀ {D : VE.SoftNorms.SoftDoc},
+    VE.SoftNorms.WellFormedSoft D = Bool.true →
+      ∀ {r : VE.Norms.Regulated}, r ∈ D.T.regulated → VE.Norms.Arity (VE.SoftNorms.sortsOf D r.name)
+  -- uses VE.Norms.Arity@VE.Norms.Basic VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.regulated@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.sortsOf@VE.SoftNorms.Tree
+  -- expr 924658485
+theorem VE.Defaults.replace_admissible
+  ∀ (U : VE.NormDefaults.UDoc),
+    VE.NormDefaults.WellFormedU U = Bool.true →
+      ∀ (D : VE.SoftNorms.SoftDoc),
+        U.D = VE.SoftNorms.soften D →
+          VE.SoftNorms.WellFormedSoft D = Bool.true →
+            ∀ (R : List VE.Formula),
+              VE.Defaults.replacementSafe U D R = Bool.true →
+                VE.Defaults.DefaultCoherent U D R →
+                  ∀ (B : VE.Structure),
+                    VE.NormDefaults.Wire.BaseAdmissibleX U (VE.Defaults.softX U D R) B →
+                      ∃ F,
+                        (∀ (p : String),
+                            ¬p ∈ List.map VE.NormDefaults.unsaidName (VE.NormDefaults.pairMembers U) →
+                              ∀ (vs : List B.Carrier), F p vs ↔ B.relation p vs) ∧
+                          VE.NormDefaults.Wire.BaseAdmissibleX U (VE.Defaults.defaultX D (VE.Defaults.softX U D R))
+                            (VE.Defaults.withOpen U D B (VE.Defaults.leastDecisions D B) F)
+  -- uses VE.Defaults.DefaultCoherent@VE.Defaults.Premises VE.Defaults.defaultX@VE.Defaults.Premises VE.Defaults.leastDecisions@VE.Defaults.Meaning VE.Defaults.replacementSafe@VE.Defaults.Meaning VE.Defaults.softX@VE.Defaults.Meaning VE.Defaults.withOpen@VE.Defaults.Meaning VE.Formula@VE.Syntax VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.BaseAdmissibleX@VE.NormDefaults.Report VE.NormDefaults.pairMembers@VE.NormDefaults.Tree VE.NormDefaults.unsaidName@VE.NormDefaults.Tree VE.Norms.Doc@VE.Norms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.soften@VE.SoftNorms.Soften VE.Structure.Carrier@VE.Semantics VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 1053135375
+theorem VE.Defaults.sat_dflt
+  ∀ {D : VE.SoftNorms.SoftDoc},
+    VE.SoftNorms.WellFormedSoft D = Bool.true →
+      ∀ (B : VE.Structure) (Rel : String → List B.Carrier → Prop),
+        (∀ (N : VE.SoftNorms.SoftNode),
+            N ∈ D.T.nodes →
+              ∀ (e : VE.SoftNorms.Exception),
+                N.exception = Option.some e →
+                  ∀ (C : VE.Formula),
+                    C ∈ e.sufficient →
+                      ∀
+                        (ρ :
+                          VE.Valuation
+                            { Carrier := B.Carrier, domain := B.domain, constant := B.constant, relation := Rel }),
+                        VE.Formula.denote
+                            { Carrier := B.Carrier, domain := B.domain, constant := B.constant, relation := Rel } ρ C ↔
+                          VE.Formula.denote B ρ C) →
+          (∀ (p : String),
+              p ∈ VE.SoftNorms.decisionNames D →
+                ∀ (vs : List B.Carrier), Rel p vs → VE.Defaults.leastDecisions D B p vs) →
+            VE.Norms.Sat { Carrier := B.Carrier, domain := B.domain, constant := B.constant, relation := Rel }
+              (VE.Defaults.dfltPremises D)
+  -- uses VE.Defaults.dfltPremises@VE.Defaults.Premises VE.Defaults.leastDecisions@VE.Defaults.Meaning VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.Norms.Sat@VE.Norms.Prefix VE.SoftNorms.Exception.sufficient@VE.SoftNorms.Tree VE.SoftNorms.Exception@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc.T@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode.exception@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.SoftTree.nodes@VE.SoftNorms.Tree VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften VE.SoftNorms.decisionNames@VE.SoftNorms.Tree VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.mk@VE.Semantics VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 2627952885
+theorem VE.Defaults.softX_eq
+  ∀ {U : VE.NormDefaults.UDoc} {D : VE.SoftNorms.SoftDoc} (R : List VE.Formula),
+    VE.Defaults.softX U D R =
+      VE.SoftNorms.excPremises D ++
+          List.map (fun x => VE.NormDefaults.Wire.cohPremiseU U D x.fst x.snd) (VE.SoftNorms.collidingPairs D) ++
+        R
+  -- uses VE.Defaults.softX@VE.Defaults.Meaning VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.cohPremiseU@VE.NormDefaults.Layered VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.collidingPairs@VE.SoftNorms.Tree VE.SoftNorms.excPremises@VE.SoftNorms.Soften
+  -- expr 772567070
 theorem VE.Defaults.strict_of_withoutDefaults
   ∀ (U : VE.NormDefaults.UDoc) (D : VE.SoftNorms.SoftDoc) (X Γ : List VE.Formula) (φ : VE.Formula),
     VE.NormDefaults.EntailsX U (VE.Defaults.withoutDefaults D X) Γ φ → VE.NormDefaults.EntailsX U X Γ φ
   -- uses VE.Defaults.withoutDefaults@VE.Defaults.Premises VE.Formula@VE.Syntax VE.NormDefaults.EntailsX@VE.NormDefaults.LayeredEntail VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
   -- expr 3043036219
+theorem VE.Defaults.withOpen_denote
+  ∀ {U : VE.NormDefaults.UDoc} {D : VE.SoftNorms.SoftDoc} (B : VE.Structure) (δ F : String → List B.Carrier → Prop)
+    (φ : VE.Formula) (ρ : VE.Valuation B),
+    (∀ (p : String), p ∈ VE.Norms.preds φ → ¬p ∈ VE.SoftNorms.decisionNames D ∧ ¬p ∈ VE.NormDefaults.unsaidNames U) →
+      (VE.Formula.denote (VE.Defaults.withOpen U D B δ F) ρ φ ↔ VE.Formula.denote B ρ φ)
+  -- uses VE.Defaults.withOpen@VE.Defaults.Meaning VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree VE.Norms.preds@VE.Norms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.decisionNames@VE.SoftNorms.Tree VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
+  -- expr 769665712
 theorem VE.Definitions.Alias.alias_acceptance
   ∀ (E : VE.Environment) (p q s : String),
     s ∈ E.sorts →
@@ -15642,6 +16153,12 @@ theorem VE.NormDefaults.Wire.kept_sound
               ρ φ
   -- uses VE.Bridge.Entity@VE.Bridge VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel.relations@VE.Finite VE.FiniteModel@VE.Finite VE.Formula.denote@VE.Semantics VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.keptV@VE.NormDefaults.Explain VE.NormDefaults.kleene@VE.NormDefaults.Evidence VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree VE.Structure.Carrier@VE.Semantics VE.Structure.constant@VE.Semantics VE.Structure.domain@VE.Semantics VE.Structure.mk@VE.Semantics VE.Structure@VE.Semantics
   -- expr 2161152331
+theorem VE.NormDefaults.Wire.layeredKindCase_other
+  ∀ (L : VE.NormDefaults.Wire.LayeredU) (id kind : String) (j : Lean.Json),
+    ¬kind ∈ VE.NormDefaults.Wire.defaultsKinds →
+      VE.NormDefaults.Wire.layeredKindCase L id kind j = VE.NormDefaults.Wire.kindCase L id kind j
+  -- uses VE.NormDefaults.Wire.LayeredU@VE.NormDefaults.Layered VE.NormDefaults.Wire.defaultsKinds@VE.Defaults.Route VE.NormDefaults.Wire.kindCase@VE.NormDefaults.Layered VE.NormDefaults.Wire.layeredKindCase@VE.Defaults.Route
+  -- expr 3835467415
 theorem VE.NormDefaults.Wire.layered_cert_sound
   ∀ (L : VE.NormDefaults.Wire.LayeredU) (ss : List String) (φ : VE.Formula) (c : VE.Tableau.Certificate),
     VE.Tableau.checkCertificate (VE.Norms.envAt (VE.NormDefaults.fill L.U) 0) L.background (VE.Norms.bindAll ss φ.not) c =

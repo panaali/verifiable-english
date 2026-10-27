@@ -1,4 +1,5 @@
 import VE.NormDefaults.Layered
+import VE.Defaults.Route
 import VE.NormDefaults.LayeredAdmission
 import VE.NormDefaults.Admission
 import VE.NormDefaults.Explain
@@ -43,6 +44,8 @@ delegates every other case to it.
   `fill (soften T)` or `fill (soften (correlate D))` with the route's base premises
   (`Wire.layered_conflict_sound`, `Wire.layered_report_sound`); evidence is a base
   situation `model` with a separate `filling`.
+* The `defaults-*` kinds on those branches (`Wire.defaultsKinds`, docs/spec/defeasible.md 7.2): the same runner
+  (`Wire.runLayered`, `Defaults/Route.lean`), by defeasible's row of the kind table (`Defaults.Wire.defaultsCase`).
 * `norm-defaults-certificate`: `norms`, `premises`, `conclusion`, `certificate` →
   `valid` over `Background(E‴) ++ Fill_T ++ layer premises of T‴ ++ premises`
   (`Wire.normDefaults_wire_acceptance`).
@@ -212,7 +215,8 @@ def runOtherCase (id kind : String) (j : Json) : Except String Json := do
   let env := j.getObjValD "environment"
   if !Wire.hasProfile env && !(Wire.unspecifiedNames env).isEmpty then
     throw "UnsupportedProfile: unspecified completion requires norm-defaults@0"
-  if Wire.hasProfile env && (Wire.layeredRoute env).isSome && kind.startsWith "norm-defaults-" then
+  if Wire.hasProfile env && (Wire.layeredRoute env).isSome &&
+      (kind.startsWith "norm-defaults-" || Wire.defaultsKinds.contains kind) then
     return ← Wire.runLayered id kind j
   if kind == "norm-defaults-elaborate" then
     let environment ← j.getObjVal? "environment"
