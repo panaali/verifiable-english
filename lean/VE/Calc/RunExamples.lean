@@ -52,8 +52,8 @@ def r2 : String := req (stated "x" r#"["sci", "1", 39]"# ++ ", " ++ defined "y" 
    claim "v2" r#"["eq", ["div", ["lit", "1"], ["sub", ["val", "x"], ["val", "x"]]], ["lit", "1"]]"# ++ ", " ++
    claim "v3" r#"["lt", ["val", "y"], ["lit", "1"]]"#)
 
-#guard (answer r1).compress == r#"{"meaning_id":"5a074a4cee5cfdce99fabb04e758d3d76f6bfdec93c035dbf66cc199c41aa2d1","rows":[{"claim":"c1","claim_id":"c29d5014aeadc1df87761d40af3cd23185d0356ad7f8289017e9b2f5f22e7770","kind":"claim","outcome":"holds","reason":null,"reproduction":null,"status":"ok"},{"claim":"c2","claim_id":"10e8ddf440fe268947bffacb61601502f0017d93d0822b8f392ead09ffb270b5","kind":"claim","outcome":"fails","reason":null,"reproduction":null,"status":"ok"}],"status":"ok"}"#
-#guard (answer r2).compress == r#"{"meaning_id":"82923ee3bfaa2f6b000be5e76ef40fbde32b0e4b1af8ef39e41d91ff54b595b5","rows":[{"claim":"v1","claim_id":"01f0a37df1028bee5e1e6e7ef5e835cf7ee6cf040d681f0a2973959fb5408c0e","kind":"claim","outcome":"unknown","reason":"unknown: an exact value would have more than 4,096 digits","reproduction":null,"status":"ok"},{"claim":"v2","claim_id":"ff9880069d728e0abc8479047f3961fd1facb733004d19f7156f50dc0a59f9aa","kind":"claim","outcome":"undefined","reason":null,"reproduction":null,"status":"ok"},{"claim":"v3","claim_id":"ddeccbbd1a0c426b1889c101c3e7453effa4650cf2b5f16d3fbf60078d079883","kind":"claim","outcome":"fails","reason":null,"reproduction":null,"status":"ok"}],"status":"ok"}"#
+#guard (answer r1).compress == r#"{"meaning_id":"5a074a4cee5cfdce99fabb04e758d3d76f6bfdec93c035dbf66cc199c41aa2d1","rows":[{"claim":"c1","claim_id":"c29d5014aeadc1df87761d40af3cd23185d0356ad7f8289017e9b2f5f22e7770","display":"0.29629…","finding":null,"kind":"claim","line":"The baseline is 0.296 when rounded to three decimal places, with exact ties going up.","outcome":"holds","reason":null,"reproduction":null,"sides":["8/27"],"status":"ok","tie":false},{"claim":"c2","claim_id":"10e8ddf440fe268947bffacb61601502f0017d93d0822b8f392ead09ffb270b5","display":"0.29629…","finding":null,"kind":"claim","line":"The baseline is 0.297 when rounded to three decimal places, with exact ties going up.","outcome":"fails","reason":null,"reproduction":null,"sides":["8/27"],"status":"ok","tie":false}],"status":"ok"}"#
+#guard (answer r2).compress == r#"{"meaning_id":"82923ee3bfaa2f6b000be5e76ef40fbde32b0e4b1af8ef39e41d91ff54b595b5","rows":[{"claim":"v1","claim_id":"01f0a37df1028bee5e1e6e7ef5e835cf7ee6cf040d681f0a2973959fb5408c0e","display":null,"finding":null,"kind":"claim","line":"The z is less than 1.","outcome":"unknown","reason":"unknown: an exact value would have more than 4,096 digits","reproduction":null,"sides":[null,"1"],"status":"ok","tie":false},{"claim":"v2","claim_id":"ff9880069d728e0abc8479047f3961fd1facb733004d19f7156f50dc0a59f9aa","display":null,"finding":null,"kind":"claim","line":null,"outcome":"undefined","reason":null,"reproduction":null,"sides":[null,"1"],"status":"ok","tie":false},{"claim":"v3","claim_id":"ddeccbbd1a0c426b1889c101c3e7453effa4650cf2b5f16d3fbf60078d079883","display":null,"finding":null,"kind":"claim","line":"The y is less than 1.","outcome":"fails","reason":null,"reproduction":null,"sides":["1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000","1"],"status":"ok","tie":false}],"status":"ok"}"#
 -- `Run.outcomeAt` reads each row back; a refusal and a row past the last read nothing.
 #guard [0, 1, 2].map (Run.outcomeAt (answer r2)) ==
   [some (.unknown (.limit .digits)), some (.decided .undefined), some (.decided .fails)]
@@ -621,8 +621,8 @@ def h6 (n : String) (links : String := r#"[["s", "r"]]"#) : String :=
 def r3 : String := req rsd (h6 "4") (h6P "0.02")
 def r4 : String := req rsd (h6 "5") (h6P "0.02")
 
-#guard (answer r3).compress == r#"{"meaning_id":"3c3a2954052d22eb052c63806177a653dcae39bacaf7e6e65f14816e1c87ef32","rows":[{"claim":"h6","claim_id":"9bcd6eb6e369e68ef65aec41156ba5c6707016e9af7b9f1ed1ca1478cb94b08c","kind":"follows","outcome":"holds","reason":null,"reproduction":null,"status":"ok"}],"status":"ok"}"#
-#guard (answer r4).compress == r#"{"meaning_id":"3648cca05ab8e1b20013ad47ea9648f021dada6fb32638bd495af5e049fef02e","rows":[{"claim":"h6","claim_id":"4dee606f697d7fea6bac0ab5b7eee2b2f69ba5f70d99c4d2e0d90fdede93a868","kind":"follows","outcome":"fails","reason":null,"reproduction":null,"status":"ok"}],"status":"ok"}"#
+#guard (answer r3).compress == r#"{"meaning_id":"3c3a2954052d22eb052c63806177a653dcae39bacaf7e6e65f14816e1c87ef32","rows":[{"claim":"h6","claim_id":"9bcd6eb6e369e68ef65aec41156ba5c6707016e9af7b9f1ed1ca1478cb94b08c","finding":null,"kind":"follows","line":"Assume the following. 1. The displacement equals the product of 0.4 and the squared velocity ratio. 2. The displacement is less than 0.02. 3. The squared velocity ratio equals the square of the velocity ratio. 4. The velocity ratio is at least 0. From these, it follows that the velocity ratio is less than 1 divided by 4.","outcome":"holds","reason":null,"reproduction":null,"status":"ok"}],"status":"ok"}"#
+#guard (answer r4).compress == r#"{"meaning_id":"3648cca05ab8e1b20013ad47ea9648f021dada6fb32638bd495af5e049fef02e","rows":[{"claim":"h6","claim_id":"4dee606f697d7fea6bac0ab5b7eee2b2f69ba5f70d99c4d2e0d90fdede93a868","finding":null,"kind":"follows","line":"Assume the following. 1. The displacement equals the product of 0.4 and the squared velocity ratio. 2. The displacement is less than 0.02. 3. The squared velocity ratio equals the square of the velocity ratio. 4. The velocity ratio is at least 0. From these, it follows that the velocity ratio is less than 1 divided by 5.","outcome":"fails","reason":null,"reproduction":null,"status":"ok"}],"status":"ok"}"#
 
 /-- A case over a free `x` with these premises and one derivation `c1` of `conclusion` from them. -/
 def onX (ps : List String) (conclusion ids : String) (links : String := "[]") (values : String := free "x" "the x") :
@@ -792,5 +792,71 @@ def deriv (ps : List String) (ids links : String) : String := onX ps (xle "1") i
   let ids := classes.map (·.map identity)
   ids.all (fun c => c.all fun i => i.all (· != "") && i.length > 1 && some i == c.head?) &&
     decide ((ids.filterMap fun c => c.head?.bind List.head?).Nodup)
+
+/-! ## Row fields (spec 2.2, 2.5, 3.4, 11.1; me-2c): each claim row's sides, display and tie, and every row's line
+and finding, on both sides of each boundary -/
+
+/-- Row `i`'s member `k`, written out; `"absent"` where the row has no such member. -/
+def member (s : String) (i : Nat) (k : String) : String := match (answer s).getObjVal? "rows" with
+  | .ok (.arr rows) => match rows[i]? with
+    | some r => match r.getObjVal? k with
+      | .ok v => v.compress
+      | .error _ => "absent"
+    | none => "no row"
+  | _ => "no rows"
+
+/-- Claim `c1` over `x` = 1 (or `values`): its sides, display and tie. -/
+def sdt (c : String) (values : String := x1) : List String :=
+  ["sides", "display", "tie"].map (member (req values (c1 c)) 0)
+
+def roundsOf (e p : String) (rule : String := "") : String := s!"[\"rounds{rule}\", {e}, {p}]"
+def third : String := r#"["div", ["lit", "1"], ["lit", "3"]]"#
+
+def rowFieldCases := [
+  -- display: two places beyond the printed ones, "…" only when a nonzero remainder is dropped; a sign kept
+  ("third", sdt (roundsOf third r#""0.33""#), [r#"["1/3"]"#, r#""0.3333…""#, "false"]),
+  ("exact-at-places", sdt (roundsOf r#"["lit", "0.125"]"# r#""0.1""#), [r#"["1/8"]"#, r#""0.125""#, "false"]),
+  ("negative", sdt (roundsOf r#"["sub", ["lit", "0"], ["div", ["lit", "1"], ["lit", "3"]]]"# r#""-0.33""#),
+    [r#"["-1/3"]"#, r#""-0.3333…""#, "false"]),
+  ("negative-small", sdt (roundsOf r#"["lit", "-0.0001"]"# r#""0.0""#), [r#"["-1/10000"]"#, r#""-0.000…""#, "false"]),
+  ("whole", sdt (roundsOf r#"["lit", "2.5"]"# r#""3""#), [r#"["5/2"]"#, r#""2.50""#, "true"]),
+  ("places-minus-2", sdt (roundsOf r#"["lit", "250.5"]"# r#"["sci", "3", 2]"#), [r#"["501/2"]"#, r#""250…""#, "false"]),
+  ("places-minus-7", sdt (roundsOf r#"["lit", "20012345"]"# r#"["sci", "2", 7]"#),
+    [r#"["20012345"]"#, r#""20000000…""#, "false"]),
+  ("places-minus-7-exact", sdt (roundsOf r#"["lit", "20000000"]"# r#"["sci", "2", 7]"#),
+    [r#"["20000000"]"#, r#""20000000""#, "false"]),
+  -- tie: a `rounds` claim at an exact tie under either rule; never a printed bound or another claim
+  ("tie-up", sdt (roundsOf r#"["lit", "0.125"]"# r#""0.13""#), [r#"["1/8"]"#, r#""0.1250""#, "true"]),
+  ("tie-even-rule", sdt (r#"["rounds", ["lit", "0.125"], "0.12", "half-even"]"#), [r#"["1/8"]"#, r#""0.1250""#, "true"]),
+  ("near-tie", sdt (roundsOf r#"["lit", "0.1251"]"# r#""0.13""#), [r#"["1251/10000"]"#, r#""0.1251""#, "false"]),
+  ("down-at-tie", sdt (roundsOf r#"["lit", "0.125"]"# r#""0.12""# "-down"), [r#"["1/8"]"#, r#""0.1250""#, "false"]),
+  ("up-at-tie", sdt (roundsOf r#"["lit", "0.125"]"# r#""0.13""# "-up"), [r#"["1/8"]"#, r#""0.1250""#, "false"]),
+  -- no value: undefined (the tie flag is false, as `Claim.tieSensitive` says) and beyond the digit limit (null)
+  ("undefined", sdt (roundsOf r#"["div", ["lit", "1"], ["lit", "0"]]"# r#""0.1""#), ["[null]", "null", "false"]),
+  ("digits", sdt (roundsOf r#"["val", "z"]"# r#""1""#) (stated "x" r#"["sci", "1", 39]"# ++ ", " ++
+    defined "y" r#"["pow", ["val", "x"], 64]"# ++ ", " ++ defined "z" r#"["mul", ["val", "y"], ["val", "y"]]"#),
+    ["[null]", "null", "null"]),
+  -- the other claims: one side per expression, no display, no tie
+  ("eq", sdt r#"["eq", ["val", "x"], ["lit", "1"]]"#, [r#"["1","1"]"#, "null", "false"]),
+  ("within", sdt r#"["within", ["val", "x"], ["lit", "0"], ["div", ["lit", "1"], ["lit", "0"]]]"#,
+    [r#"["1","0",null]"#, "null", "false"]),
+  -- a follows row has none of them
+  ("follows", ["sides", "display", "tie"].map (member r3 0), ["absent", "absent", "absent"])]
+#guard expect rowFieldCases
+
+-- Each value's words by its name, the first value's and the last's alike; the display of 0 has no sign.
+#guard (Json.parse r#"{"values": [{"name": "x", "words": "the x"}, {"name": "y", "words": "the y"}]}"#).toOption.all
+  fun j => [Run.wordsIn j "x", Run.wordsIn j "y", Run.wordsIn j "z"] == [some "the x", some "the y", none]
+#guard [Run.truncated 2 0, Run.truncated 0 0, Run.truncated (-1) 0, Run.truncated 1 (-1 / 20)] ==
+  ["0.00", "0", "0", "-0.0…"]
+
+-- Lean's line (11.1), `null` where 11.2's rule refuses an expression or a value's words; never a finding (13.6).
+#guard expect [
+  ("line", [member (req x1 ok1) 0 "line"], [r#""The x equals 1.""#]),
+  ("line-nested", [member (req x1 (c1 r#"["eq", ["div", ["lit", "1"], ["sub", ["val", "x"], ["val", "x"]]], ["lit", "1"]]"#)) 0 "line"],
+    ["null"]),
+  ("line-words", [member (req r#"{"name": "x", "words": "w", "stated": "1"}"# ok1) 0 "line"], ["null"]),
+  ("line-follows", [member r4 0 "line"], [r#""Assume the following. 1. The displacement equals the product of 0.4 and the squared velocity ratio. 2. The displacement is less than 0.02. 3. The squared velocity ratio equals the square of the velocity ratio. 4. The velocity ratio is at least 0. From these, it follows that the velocity ratio is less than 1 divided by 5.""#]),
+  ("finding", [member r1 1 "finding", member r3 0 "finding", member r2 0 "finding"], ["null", "null", "null"])]
 
 end VE.Calc.RunExamples
