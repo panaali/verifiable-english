@@ -1139,6 +1139,13 @@
    "reason": "qt-a3: VE/Cardinality/Wire.lean +51 (D[V] decodeEnvironment 17, decodeStatement 13, finiteSorts 10, projectW6 8, profileLists 3); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3, 2026-10-18",
    "commit": "25ac413119c8991d1385cc95c51bcaac7415f9a2"
+  },
+  {
+   "class": "V",
+   "lines": 147,
+   "reason": "sc-1b: VE/Scope/Wire.lean +112, VE/Service/Document.lean +33, VE/Compose/Dispatch.lean +2 (V 147; K +0, S +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1b, 2026-10-18",
+   "commit": "e9e63dda7ff2ca089c8d8f03e3657b76a55c1cfa"
   }
  ]
 }

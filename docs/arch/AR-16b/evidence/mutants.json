@@ -1,0 +1,208 @@
+{
+ "mutants": [
+  {
+   "id": "M1",
+   "file": "ve/readings_verdicts/superposed.py",
+   "claim": "retargeted patch tests/test_readings_sup_verdicts.py (`_ChoiceDocument`, now on ve.readings_verdicts.superposed): each small choice's document is built once; seeded: `Superposed._lifted` no longer caches it",
+   "source_sha256": "dd91ef666afbccc0ce575b2b7ed8da37f07ccc2256445cacfbb1baccf68db06e",
+   "tests": [
+    "tests/test_readings_sup_verdicts.py::test_repeated_premise_proposals_search_each_small_choice_once"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_readings_sup_verdicts.py::test_repeated_premise_proposals_search_each_small_choice_once"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 5.8,
+   "output_tail": "conclusion, **kwargs):\n            if id(env) in small_envs:\n                searched[(small_envs[id(env)], repr(premises), repr(conclusion))] += 1\n            return original_search(env, premises, conclusion, **kwargs)\n    \n        # `Superposed._lifted` looks `_ChoiceDocument` up in its own module (AR-16b), so the patch names that module.\n        monkeypatch.setattr(superposed, \"_ChoiceDocument\", choice_doc)\n        monkeypatch.setattr(search, \"find_countermodel\", find)\n        answer = route.premises_answer()\n        proposals = [tuple(tuple(x) for x in choice) for scope in answer[\"scopes\"]\n                     for choice in scope[\"model_proposals\"]]\n        assert len(proposals) > len(set(proposals))\n        assert built and searched\n>       assert max(built.values()) == 1\nE       AssertionError: assert 2 == 1\nE        +  where 2 = max(dict_values([2, 1]))\nE        +    where dict_values([2, 1]) = <built-in method values of Counter object at 0x76b4eb539550>()\nE        +      where <built-in method values of Counter object at 0x76b4eb539550> = Counter({(('rs1', 0),): 2, (('rs1', 1),): 1}).values\n\ntests/test_readings_sup_verdicts.py:260: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_sup_verdicts.py::test_repeated_premise_proposals_search_each_small_choice_once\n1 failed in 0.67s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-asysew7w)\n"
+  },
+  {
+   "id": "M2",
+   "file": "ve/readings_verdicts/route.py",
+   "claim": "patch tests/test_premise_scale.py:72 (`BUDGET._set`, the one object the package and route.py share): each budget key reads its own Lean field; seeded: every key reads max_proof_steps",
+   "source_sha256": "c858ac317487936aad7628bd721289d23a22a840df08b9a02e3d5c485878dca5",
+   "tests": [
+    "tests/test_premise_scale.py::test_the_readings_budget_is_leans"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_premise_scale.py::test_the_readings_budget_is_leans"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.4,
+   "output_tail": "   def test_the_readings_budget_is_leans(monkeypatch):\n        \"\"\"The readings routes' BUDGET holds no numbers of its own: each value is Lean's `search-budget` answer, and\n        a key a test sets stands in for Lean's only until it is deleted.\"\"\"\n        from ve import readings_verdicts, search\n        from ve.backends import relay\n        # monkeypatch.setitem in another test restores a key by setting Lean's value back: start with none set.\n        monkeypatch.setattr(readings_verdicts.BUDGET, \"_set\", {})\n        lean = search.lean_budget()\n>       assert dict(readings_verdicts.BUDGET) == {\"max_steps\": lean.max_proof_steps, \"max_domain_size\": lean.max_domain_size,\n                                                  \"max_models\": lean.max_models, \"max_evaluations\": lean.max_evaluations}\nE       AssertionError: assert {'max_steps':...tions': 10000} == {'max_steps':...ions': 100000}\nE         \nE         Omitting 2 identical items, use -vv to show\nE         Differing items:\nE         {'max_domain_size': 10000} != {'max_domain_size': 2}\nE         {'max_evaluations': 10000} != {'max_evaluations': 100000}\nE         Use -v to get more diff\n\ntests/test_premise_scale.py:74: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_premise_scale.py::test_the_readings_budget_is_leans - Asser...\n1 failed in 0.50s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-r9k69sql)\n"
+  },
+  {
+   "id": "M3",
+   "file": "ve/readings_verdicts/superposed.py",
+   "claim": "patch tests/test_premise_scale.py:382 (`BUDGET._set` max_models 1): the premise check takes the ground-fact route last; seeded: `_scaled` skips it",
+   "source_sha256": "dd91ef666afbccc0ce575b2b7ed8da37f07ccc2256445cacfbb1baccf68db06e",
+   "tests": [
+    "tests/test_premise_scale.py::test_readings_premise_check_takes_the_ground_route"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_premise_scale.py::test_readings_premise_check_takes_the_ground_route"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.7,
+   "output_tail": "ceLimit'), (False, False, 'ResourceLimit'), 'search-budget', (False, True, 'ResourceLimit'), (False, False, 'ResourceLimit'), ...]\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x71677630a8b0>\n\n    def test_readings_premise_check_takes_the_ground_route(three_agents, searches, monkeypatch):\n        \"\"\"The ground branch: with one model attempt the raised search finds nothing, and the premises' stated facts\n        are their own model, Lean-checked. With no attempt at all (R5) the answer stays UNKNOWN.\"\"\"\n        from ve import readings_verdicts\n        monkeypatch.setattr(readings_verdicts.BUDGET, \"_set\", {\"max_models\": 1})\n        result = _route(three_agents).premises()\n>       assert result[\"status\"] == \"model\" and len(result[\"model\"][\"domains\"][\"agent\"]) == 3, result\nE       AssertionError: {'budget': {'max_domain_size': 2, 'max_evaluations': 100000, 'max_models': 1, 'max_steps': 10000}, 'candidates': [{'in...1', 'status': 'UNKNOWN'}, {'index': 1, 'set': 'rs1', 'status': 'UNKNOWN'}], 'route': 'superposed', 'status': 'UNKNOWN'}\nE       assert ('UNKNOWN' == 'model'\nE         \nE         - model\nE         + UNKNOWN)\n\ntests/test_premise_scale.py:384: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_premise_scale.py::test_readings_premise_check_takes_the_ground_route\n1 failed in 0.91s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-634qvvc7)\n"
+  },
+  {
+   "id": "M4",
+   "file": "ve/readings_verdicts/route.py",
+   "claim": "patch tests/test_premise_scale.py:387 (`BUDGET._set` max_models 0): a key a test sets stands in for Lean's, a zero too; seeded: a zero is ignored",
+   "source_sha256": "c858ac317487936aad7628bd721289d23a22a840df08b9a02e3d5c485878dca5",
+   "tests": [
+    "tests/test_premise_scale.py::test_readings_premise_check_takes_the_ground_route"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_premise_scale.py::test_readings_premise_check_takes_the_ground_route"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 5.2,
+   "output_tail": "e, True, 'Found'), ...]\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7074fdbbe8b0>\n\n    def test_readings_premise_check_takes_the_ground_route(three_agents, searches, monkeypatch):\n        \"\"\"The ground branch: with one model attempt the raised search finds nothing, and the premises' stated facts\n        are their own model, Lean-checked. With no attempt at all (R5) the answer stays UNKNOWN.\"\"\"\n        from ve import readings_verdicts\n        monkeypatch.setattr(readings_verdicts.BUDGET, \"_set\", {\"max_models\": 1})\n        result = _route(three_agents).premises()\n        assert result[\"status\"] == \"model\" and len(result[\"model\"][\"domains\"][\"agent\"]) == 3, result\n        assert (False, True, \"ResourceLimit\") in searches and (True, True, \"Found\") in searches\n        assert not any(entry[2] == \"Found\" for entry in searches if entry != \"search-budget\" and not entry[0])\n        monkeypatch.setattr(readings_verdicts.BUDGET, \"_set\", {\"max_models\": 0})\n>       assert _route(three_agents).premises()[\"status\"] == \"UNKNOWN\"\nE       AssertionError: assert 'model' == 'UNKNOWN'\nE         \nE         - UNKNOWN\nE         + model\n\ntests/test_premise_scale.py:388: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_premise_scale.py::test_readings_premise_check_takes_the_ground_route\n1 failed in 1.39s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-emw2je3d)\n"
+  },
+  {
+   "id": "M5",
+   "file": "ve/readings_verdicts/enumerated.py",
+   "claim": "patch tests/test_readings_verdicts_lean.py:580 (`Enumerated.check_answer`, a class attribute): a later answer noting a reading's conflict packages otherwise is unavailable; seeded: the notes check never runs",
+   "source_sha256": "cca03ae7fda3af4c1d2b2964de7a5ea1e597132bc33a861440218b499ffa37b1",
+   "tests": [
+    "tests/test_readings_verdicts_lean.py::test_a_reading_s_conflict_notes_are_the_same_in_every_answer"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_readings_verdicts_lean.py::test_a_reading_s_conflict_notes_are_the_same_in_every_answer"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.8,
+   "output_tail": " from ve import readings_verdicts\n        _, route = loaded(tmp_path)\n>       route.conflict_answer()\n\ntests/test_readings_verdicts_lean.py:573: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nve/readings_verdicts/enumerated.py:204: in conflict_answer\n    return self._conflict_answer()\n           ^^^^^^^^^^^^^^^^^^^^^^^\nve/readings_verdicts/enumerated.py:102: in _conflict_answer\n    row = self._verdicts(\"conflict\")\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^\nve/readings_verdicts/enumerated.py:74: in _verdicts\n    if self._notes is None and any(self._notes[json.dumps(e[\"choice\"])] != _conflict_notes(e)\n                               ^^^\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\n.0 = <list_iterator object at 0x74cb388a2fe0>\n\n>   if self._notes is None and any(self._notes[json.dumps(e[\"choice\"])] != _conflict_notes(e)\n                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n                                       for e in row[\"per_choice\"]):\nE                                      TypeError: 'NoneType' object is not subscriptable\n\nve/readings_verdicts/enumerated.py:74: TypeError\n=========================== short test summary info ============================\nFAILED tests/test_readings_verdicts_lean.py::test_a_reading_s_conflict_notes_are_the_same_in_every_answer\n1 failed in 0.70s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-gtxf0x9o)\n"
+  },
+  {
+   "id": "M6",
+   "file": "ve/readings_verdicts/binding.py",
+   "claim": "the moved binding: a row's word other than UNKNOWN names a piece the row notes accepted (ROW_PIECES); seeded: any word passes",
+   "source_sha256": "3a25e7f6947b953173d3446555ab035640e61c67542ee7f553524927f3568933",
+   "tests": [
+    "tests/test_readings_verdicts_lean.py::test_every_row_word_names_a_piece_lean_accepted"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_readings_verdicts_lean.py::test_every_row_word_names_a_piece_lean_accepted"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 5.0,
+   "output_tail": "ry ALL: row 1 conflict = model\nE         query ALL: row 1 conflict = INCONSISTENT\nE         query ALL: row 1 query = CONFLICT-FREE\nE         query ALL: row 1 query = CONFLICT\nE         query ALL: row 1 query = refuted\nE         query ALL: row 1 query = model\nE         query ALL: row 1 query = INCONSISTENT\nE         query NONE under a reading: row 0 conflict = CONFLICT\nE         query NONE under a reading: row 0 conflict = proved\nE         query NONE under a reading: row 0 conflict = refuted\nE         query NONE under a reading: row 0 conflict = model\nE         query NONE under a reading: row 0 conflict = INCONSISTENT\nE         query NONE under a reading: row 0 query = CONFLICT-FREE\nE         query NONE under a reading: row 0 query = CONFLICT\nE         query NONE under a reading: row 0 query = proved\nE         query NONE under a reading: row 0 query = model\nE         query NONE under a reading: row 0 query = INCONSISTENT\nE       assert (['premises: r...ONFLICT', ...] == []\nE         \nE         Left contains 60 more items, first extra item: 'premises: row 0 conflict = CONFLICT'\nE         Use -v to get more diff)\n\ntests/test_readings_verdicts_lean.py:532: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_verdicts_lean.py::test_every_row_word_names_a_piece_lean_accepted\n1 failed in 1.53s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-cbtxmq86)\n"
+  },
+  {
+   "id": "M7",
+   "file": "ve/readings_verdicts/choice.py",
+   "claim": "the moved choice document: a filled choice's model is split into its base and its filling; seeded: the filled tables stay in the base",
+   "source_sha256": "bd0981e5a8522c9a1f8393af85f08fb7dc1522a73d6d16d443af7376a75b2dc0",
+   "tests": [
+    "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[0]"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[0]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 83.4,
+   "output_tail": "for unit in case[\"document\"][\"units\"]}\n                _need(len(row[\"decided_units\"]) == len(set(row[\"decided_units\"])))\n                _need(set(row[\"decided_units\"]) <= units)\n            _need(row[\"finding_sets\"] == frame.finding_sets)\n            rows = _check_rows(row, case, frame)\n            for label in row[\"restrictions\"] + row[\"labels\"]:\n                frame.label(label)\n            _check_result(row, case, frame, rows)\n            _check_dead(row, case, frame)\n            _check_english(row, frame, rows)\n        for entry in row[\"per_choice\"]:\n            pieces = {k for k in sent.get(json.dumps(entry[\"choice\"]), {}) if k != \"choice\"}\n            for piece, error in entry[\"errors\"].items():\n>               raise CheckerUnavailable(f\"ReadingsConformance: Lean refused the {piece} Python built on a reading's \"\n                                         f\"document: {error}\")\nE               ve.errors.CheckerUnavailable: ReadingsConformance: Lean refused the model Python built on a reading's document: InvalidModel(norm-defaults): unsaid__p1_permitted is a filling; supply it as a filling, not a table\n\nve/readings_verdicts/binding.py:310: CheckerUnavailable\n=========================== short test summary info ============================\nFAILED tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[0]\n1 failed in 1.85s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-680es2if)\n"
+  },
+  {
+   "id": "M8",
+   "file": "ve/readings_verdicts/__init__.py",
+   "claim": "the package re-exports every name callers import; seeded: `_public_sup_conflict` dropped",
+   "source_sha256": "77faaeb9ab905a673f81df188d41b330e25ffde48bd2f51b0aaef5f0f301f778",
+   "tests": [
+    "tests/test_readings_verdicts_split.py::test_every_name_callers_import_is_the_owners_object[_public_sup_conflict]"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_readings_verdicts_split.py::test_every_name_callers_import_is_the_owners_object[_public_sup_conflict]"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.2,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n__ test_every_name_callers_import_is_the_owners_object[_public_sup_conflict] ___\n\nname = '_public_sup_conflict'\n\n    @pytest.mark.parametrize(\"name\", EXPORTED)\n    def test_every_name_callers_import_is_the_owners_object(name):\n        [owner] = [module for module in MODULES if name in _defined(module)]\n        value = vars(importlib.import_module(f\"ve.readings_verdicts.{owner}\"))[name]\n>       assert getattr(V, name) is value\n               ^^^^^^^^^^^^^^^^\nE       AttributeError: module 've.readings_verdicts' has no attribute '_public_sup_conflict'\n\ntests/test_readings_verdicts_split.py:98: AttributeError\n=========================== short test summary info ============================\nFAILED tests/test_readings_verdicts_split.py::test_every_name_callers_import_is_the_owners_object[_public_sup_conflict]\n1 failed in 0.18s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-feeyh23y)\n"
+  },
+  {
+   "id": "M9",
+   "file": "ve/readings_verdicts/__init__.py",
+   "claim": "`context` picks the enumerated route for an enumerated document; seeded: it builds the superposed one",
+   "source_sha256": "77faaeb9ab905a673f81df188d41b330e25ffde48bd2f51b0aaef5f0f301f778",
+   "tests": [
+    "tests/test_readings_verdicts_lean.py::test_fnd1_query_some_each_reading_named_by_its_own_sentence"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_readings_verdicts_lean.py::test_fnd1_query_some_each_reading_named_by_its_own_sentence"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 8.5,
+   "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_________ test_fnd1_query_some_each_reading_named_by_its_own_sentence __________\n\ntmp_path = PosixPath('/tmp/pytest-of-seyran/pytest-2337/test_fnd1_query_some_each_read0')\n\n    def test_fnd1_query_some_each_reading_named_by_its_own_sentence(tmp_path):\n        doc, route = loaded(tmp_path)\n        data = route.entailment(QUERY)\n        assert data[\"verdict\"] == \"SOME\" and data[\"proof\"][\"choice\"] == C0 and data[\"countermodel\"][\"choice\"] == C1\n        answer = route.query_answer(QUERY)\n        # rd-3 round 3: the proof under the first reading rests on the pair condition (its conflict packages use it), so\n        # the plan states it after that result (verdicts_conditions_some), before the countermodel of the second.\n>       assert data[\"proof\"][\"conditional_on\"] == [PAIR] and answer[\"labels\"] == [PAIR]\n                                                             ^^^^^^^^^^^^^^^^\nE       KeyError: 'labels'\n\ntests/test_readings_verdicts_lean.py:97: KeyError\n=========================== short test summary info ============================\nFAILED tests/test_readings_verdicts_lean.py::test_fnd1_query_some_each_reading_named_by_its_own_sentence\n1 failed in 5.35s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-87iw1_1n)\n"
+  },
+  {
+   "id": "M10",
+   "file": "tools/relay_lint.py",
+   "claim": "the reserved-name rule reads every module of the readings package; seeded: it reads `ve/readings*.py` only",
+   "source_sha256": "c4029326ba0bc2cd2125956b741b169b121dc39b47c93cb3ff35198782d5e2e7",
+   "tests": [
+    "tests/test_relay_lint.py::test_every_readings_module_is_read_by_the_reserved_rule"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_relay_lint.py::test_every_readings_module_is_read_by_the_reserved_rule"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.7,
+   "output_tail": "eadings_module_is_read_by_the_reserved_rule ____________\n\n    def test_every_readings_module_is_read_by_the_reserved_rule():\n        \"\"\"The rule reads the globs, not a hand-kept list: every `ve/readings*.py` file and every module of a readings\n        package (`ve/readings_verdicts/`, AR-16b), and nothing fewer.\"\"\"\n        modules = relay_lint.readings_modules()\n>       assert {p.relative_to(ROOT).as_posix() for p in modules} >= {\n            \"ve/readings.py\", \"ve/readings_route.py\", \"ve/readings_s1.py\", \"ve/readings_s2_english.py\",\n            \"ve/readings_s2_wording.py\", \"ve/readings_sup.py\", \"ve/readings_english.py\",\n            *(p.relative_to(ROOT).as_posix() for p in (ROOT / \"ve/readings_verdicts\").glob(\"*.py\"))}\nE       AssertionError: assert {'ve/readings...lish.py', ...} >= {'ve/readings...ding.py', ...}\nE         \nE         Extra items in the right set:\nE         've/readings_verdicts/choice.py'\nE         've/readings_verdicts/binding.py'\nE         've/readings_verdicts/enumerated.py'\nE         've/readings_verdicts/superposed.py'\nE         've/readings_verdicts/__init__.py'\nE         've/readings_verdicts/route.py'\n\ntests/test_relay_lint.py:148: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_relay_lint.py::test_every_readings_module_is_read_by_the_reserved_rule\n1 failed in 0.18s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-s2dcqkoe)\n"
+  },
+  {
+   "id": "M11",
+   "file": "tools/relay_lint.py",
+   "claim": "the wording rule reads every module the reserved-name rule reads; seeded: its globs are the base's",
+   "source_sha256": "c4029326ba0bc2cd2125956b741b169b121dc39b47c93cb3ff35198782d5e2e7",
+   "tests": [
+    "tests/test_relay_lint.py::test_the_wording_rule_reads_every_readings_module"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_relay_lint.py::test_the_wording_rule_reads_every_readings_module"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 2.2,
+   "output_tail": "==================================\n______________ test_the_wording_rule_reads_every_readings_module _______________\n\n    def test_the_wording_rule_reads_every_readings_module():\n        \"\"\"The fourth rule reads every module the second does (AR-16b: the modules of `ve/readings_verdicts/` too).\"\"\"\n        wording = {p for pattern in relay_lint.WORDING_GLOBS for p in ROOT.glob(pattern)}\n>       assert set(relay_lint.readings_modules()) <= wording\nE       AssertionError: assert {PosixPath('/...ish.py'), ...} <= {PosixPath('/...nts.py'), ...}\nE         \nE         Extra items in the left set:\nE         PosixPath('/home/seyran/code/ve-arch-20261026-1/ve/readings_verdicts/superposed.py')\nE         PosixPath('/home/seyran/code/ve-arch-20261026-1/ve/readings_verdicts/route.py')\nE         PosixPath('/home/seyran/code/ve-arch-20261026-1/ve/readings_verdicts/__init__.py')\nE         PosixPath('/home/seyran/code/ve-arch-20261026-1/ve/readings_verdicts/binding.py')\nE         PosixPath('/home/seyran/code/ve-arch-20261026-1/ve/readings_verdicts/choice.py')\nE         PosixPath('/home/seyran/code/ve-arch-20261026-1/ve/readings_verdicts/enumerated.py')\n\ntests/test_relay_lint.py:160: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_relay_lint.py::test_the_wording_rule_reads_every_readings_module\n1 failed in 0.15s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-8306dl2s)\n"
+  },
+  {
+   "id": "M12",
+   "file": "tests/test_readings_sup_verdicts.py",
+   "claim": "the retarget is needed: with the patch left on the package (the base's target), `Superposed._lifted` never calls the stand-in and the test fails without any bug",
+   "source_sha256": "e95a361ef873512e5f080fd710de3d7ab3b51d523f52edc5c4c6c4f35cdb5be1",
+   "tests": [
+    "tests/test_readings_sup_verdicts.py::test_repeated_premise_proposals_search_each_small_choice_once"
+   ],
+   "baseline_exit": 0,
+   "killed_by": [
+    "tests/test_readings_sup_verdicts.py::test_repeated_premise_proposals_search_each_small_choice_once"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 3.3,
+   "output_tail": " = Counter()\n        searched = Counter()\n        small_envs = {}\n    \n        def choice_doc(owner, choice):\n            key = tuple(sorted(choice.items()))\n            built[key] += 1\n            own = original_doc(owner, choice)\n            small_envs[id(own.env)] = key\n            return own\n    \n        def find(env, premises, conclusion, **kwargs):\n            if id(env) in small_envs:\n                searched[(small_envs[id(env)], repr(premises), repr(conclusion))] += 1\n            return original_search(env, premises, conclusion, **kwargs)\n    \n        # `Superposed._lifted` looks `_ChoiceDocument` up in its own module (AR-16b), so the patch names that module.\n        monkeypatch.setattr(readings_verdicts, \"_ChoiceDocument\", choice_doc)\n        monkeypatch.setattr(search, \"find_countermodel\", find)\n        answer = route.premises_answer()\n        proposals = [tuple(tuple(x) for x in choice) for scope in answer[\"scopes\"]\n                     for choice in scope[\"model_proposals\"]]\n        assert len(proposals) > len(set(proposals))\n>       assert built and searched\nE       assert (Counter())\n\ntests/test_readings_sup_verdicts.py:259: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_readings_sup_verdicts.py::test_repeated_premise_proposals_search_each_small_choice_once\n1 failed in 0.70s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-k77rtfc1)\n"
+  }
+ ]
+}
