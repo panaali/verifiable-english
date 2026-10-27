@@ -28,13 +28,21 @@ def directory(root: Path, name: str | None = None) -> Path | None:
     if setting:
         base = Path(setting)
     else:
-        from tests.subprocesses import HANG_TIMEOUT
-        found = subprocess.run(["git", "rev-parse", "--path-format=absolute", "--git-common-dir"], cwd=root,
-                               capture_output=True, text=True, timeout=HANG_TIMEOUT)
-        if found.returncode or not found.stdout.strip():
+        common = git_common_directory(root)
+        if common is None:
             return None
-        base = Path(found.stdout.strip()) / "ve-run-cache"
+        base = common / "ve-run-cache"
     return base / name if name else base
+
+
+def git_common_directory(root: Path) -> Path | None:
+    """The git common directory of `root`'s checkout (shared by its worktrees), or None outside git."""
+    from tests.subprocesses import HANG_TIMEOUT
+    found = subprocess.run(["git", "rev-parse", "--path-format=absolute", "--git-common-dir"], cwd=root,
+                           capture_output=True, text=True, timeout=HANG_TIMEOUT)
+    if found.returncode or not found.stdout.strip():
+        return None
+    return Path(found.stdout.strip())
 
 
 def file_digest(path: Path) -> str:
