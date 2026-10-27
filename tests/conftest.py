@@ -197,6 +197,9 @@ def refuse_child_without_checker_settings(event, args):
 def pytest_configure(config):
     for variable in CHECKER_TIMEOUTS:
         os.environ[variable] = str(HANG_TIMEOUT)
+    # The suite's regeneration runs leave no line in the checkout's timing log (tools/regen_generated.py);
+    # a test of the log points it under tmp_path.
+    os.environ["VE_REGEN_LOG"] = "off"
     sys.addaudithook(refuse_child_without_checker_settings)
     english_comparator(config)
 
