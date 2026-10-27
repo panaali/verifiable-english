@@ -12644,6 +12644,7 @@
     "VE/Acts/RuleExamples.lean": {
       "T": [
         "VE.Acts.RuleExamples.K",
+        "VE.Acts.RuleExamples.K2",
         "VE.Acts.RuleExamples.V5k",
         "VE.Acts.RuleExamples.ap",
         "VE.Acts.RuleExamples.cities",
@@ -12653,12 +12654,15 @@
         "VE.Acts.RuleExamples.g5",
         "VE.Acts.RuleExamples.g8",
         "VE.Acts.RuleExamples.ln",
+        "VE.Acts.RuleExamples.nevers",
         "VE.Acts.RuleExamples.noHead",
         "VE.Acts.RuleExamples.oneWord",
         "VE.Acts.RuleExamples.parsed",
         "VE.Acts.RuleExamples.rawOf",
+        "VE.Acts.RuleExamples.rawsOf",
         "VE.Acts.RuleExamples.rets",
         "VE.Acts.RuleExamples.trees",
+        "VE.Acts.RuleExamples.treesOf",
         "VE.Acts.RuleExamples.unused"
       ]
     },

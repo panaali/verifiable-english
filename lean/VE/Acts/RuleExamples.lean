@@ -22,6 +22,13 @@ def parsed (V : Vocab) (fx : List String) (s : String) (b := stepBudget) : Optio
   | .ok ts => VE.Grammar.parse (grammar V) rawCap b ts.toArray
   | .error _ => none
 def rawOf (V : Vocab) (fx : List String) (s : String) (b := stepBudget) : Option Nat := (parsed V fx s b).map (·.length)
+/-- The derivations of each phrase of `ps`, with `V`'s grammar prepared once. -/
+def treesOf (V : Vocab) (fx ps : List String) : List (Option (List (Tree Tok))) :=
+  let P := (grammar V).prepare
+  ps.map (fun s => match Lexical.lex fx s with
+    | .ok ts => P.parse rawCap stepBudget ts.toArray
+    | .error _ => none)
+def rawsOf (V : Vocab) (fx ps : List String) : List (Option Nat) := (treesOf V fx ps).map (·.map (·.length))
 
 /-! ### 11.2: G5 to L0 (raw derivations) -/
 
@@ -150,12 +157,7 @@ def corpus : List String := ([
   "share bread with friends or with neighbours", "share bread with friends freely",
   "share bread and share bread with friends or neighbours", "share and share bread with friends for peace",
   "share bread and water with friends freely", "share bread freely, for peace, or for war"] : List String).map ("{0} " ++ ·)
-/-- The corpus's derivations, with `K`'s grammar prepared once. -/
-def trees : List (Option (List (Tree Tok))) :=
-  let P := (grammar K).prepare
-  corpus.map (fun s => match Lexical.lex ["the city"] s with
-    | .ok ts => P.parse rawCap stepBudget ts.toArray
-    | .error _ => none)
+def trees : List (Option (List (Tree Tok))) := treesOf K ["the city"] corpus
 #guard framesOk K && trees.map (·.map (·.length)) == ([1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2, 1, 4, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 4, 2, 1, 2, 4, 1, 2, 1, 2, 2, 4, 1, 4, 4, 4, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 4, 2, 1, 1, 2, 2, 1, 1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 4, 1, 1, 2, 4, 1, 1, 1, 1, 2, 2, 1]).map some
 /-- The rules of `K`'s grammar that no derivation of the corpus uses, apart from the `never` rules. -/
 def unused : List RuleS :=
@@ -164,5 +166,25 @@ def unused : List RuleS :=
 -- Only the shared-object edges of *go* are unused: 5.2 writes `REt` and `REP` for every frame, and only an object
 -- frame's `RM` reads them.
 #guard unused.map (·.lhs) == [.F 1 .REt, .F 1 .REt, .F 1 .REt, .F 1 .REt, .F 1 .REP, .F 1 .REP]
+
+/-! ### Lists of two: each element at either end of its list, on both sides -/
+
+/-- Two split markers, two not split, `""` last; two modifier markers, one of two words; split objects with `""` first
+and last; a head of two words; two adverbs. -/
+def K2 : Vocab := ⟨[fr "seek" ["from", "about", "in", "on", ""] ["in", "on"] ["for", "close by"],
+  fr "share" ["with", ""] ["with", ""] [], fr "give back" ["", "via"] ["", "via"] []], ["freely", "gladly"]⟩
+#guard framesOk K2 && (["seek asylum close by home", "seek asylum for peace", "seek asylum about war or peace",
+  "seek asylum from war or peace", "seek asylum on Monday or on Tuesday", "seek asylum in Paris or in Rome",
+  "seek asylum close by home or for peace", "seek asylum for peace or close by home", "seek by", "give back back",
+  "seek asylum in Paris or in Rome close by home", "seek asylum in Paris or in Rome for peace",
+  "share bread and water freely", "give back bread and water freely"].map ("{0} " ++ ·) |> rawsOf K2 []) ==
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2].map some
+-- Refused: an adverb, *be*, a modifier marker's first word or a head's first word as a filler; a repeated marker's
+-- list without its first member.
+#guard (["seek gladly", "seek freely", "seek be", "seek close", "seek for", "give back give",
+  "seek asylum or from war"].map ("{0} " ++ ·) |> rawsOf K2 []).all (· == some 0)
+-- `X → never` for exactly the nonterminals that have no rule: none in `K` and `K2`, *NM* of each frame of V5.
+def nevers (V : Vocab) : List NT := ((closed (schema V)).filter (·.rhs == [.t .never])).map (·.lhs)
+#guard nevers K == [] && nevers K2 == [] && nevers V5 == [.F 0 .NM, .F 1 .NM]
 
 end VE.Acts.RuleExamples
