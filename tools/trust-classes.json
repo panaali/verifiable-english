@@ -5429,7 +5429,8 @@
         "VE.Norms.Run.reportPayload",
         "VE.Norms.Run.runAdmission",
         "VE.Norms.Run.runCase",
-        "VE.Norms.Run.runCaseReported"
+        "VE.Norms.Run.runCaseReported",
+        "VE.Norms.Run.wordingsJson"
       ]
     },
     "VE/Norms/SmallModel.lean": {
@@ -14747,7 +14748,11 @@
         "VE.Service.ActsExamples.clause",
         "VE.Service.ActsExamples.pair",
         "VE.Service.ActsExamples.late",
-        "VE.Service.ActsExamples.dual"
+        "VE.Service.ActsExamples.dual",
+        "VE.Service.ActsExamples.ndP",
+        "VE.Service.ActsExamples.ndRow",
+        "VE.Service.ActsExamples.ndWordings",
+        "VE.Service.ActsExamples.unspecPlain"
       ]
     },
     "ResponseShape/Schemas/Calc.lean": {
