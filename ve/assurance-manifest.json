@@ -1997,7 +1997,8 @@
       "lean/VE/Defaults/WireExamples.lean": "test fixtures only: df-1ac's and df-1ad's `#guard`s build defaults-* case JSON and certificates from literals and run `viewOf` and `defaultsCase` (pinned in Wire.lean) on them; no service mode reads this file",
       "lean/VE/Acts/LexicalProofs.lean": "theorems of act-phrases 4.3 (check_spec against the independent Accepts, check_no_clause) about the act check of a JSON act phrase; JSON access only in Accepts and in statements and proofs (not on any runner path)",
       "lean/VE/Service/ActsExamples.lean": "fixtures only: #guard cases of act-phrases AP-1's profile part (ap-1b) that build acts@0 environments as JSON test inputs; no admission path, service mode or record reads it",
-      "lean/VE/Defaults/RouteExamples.lean": "fixtures only: #guard checks of the defaults-* kinds through the norm-defaults mode (docs/spec/defeasible.md 8.1) build request JSON; no runner path"
+      "lean/VE/Defaults/RouteExamples.lean": "fixtures only: #guard checks of the defaults-* kinds through the norm-defaults mode (docs/spec/defeasible.md 8.1) build request JSON; no runner path",
+      "lean/ResponseShape/DefaultsExamples.lean": "fixtures only: #guard checks of the defaults-* rows of norm-defaults.json on the mode's answers and their variants build JSON; no runner path"
     }
   },
   "plan_operations": {
