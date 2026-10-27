@@ -5,7 +5,7 @@ import VE.Readings.Companions
 
 /-! Statement stub of scope spec section 11 (sc-5r: per choice over a reading set a governed unit owns,
 docs/spec/scope.md). Evidence for the statement review, not product code: it lives under docs/, imports the tree on
-`main` unchanged, and every proof is `sorry` (the build item sc-5rb proves them in `lean/VE/Scope/Readings.lean`).
+`main` unchanged, and every proof is `sorry` (the build item sc-5rb proves them, spec 11.7).
 Check it from `lean/` with `PATH=~/.elan/bin:$PATH lake env lean ../docs/spec/scope/SpecStubs_sc5r.lean`.
 
 Section numbers in comments are the spec's. The fixtures of 11.6 are `#guard`s over the hard-constraint document of
@@ -18,8 +18,7 @@ open Lean
 
 namespace Pinned
 
-/-- sc-1ae's hypothesis (DRI decisions 2026-10-27, featureplan-gates item 2, fix (a)): every JSON object, at any depth,
-    is a well-formed tree, as every object `Json.parse` builds is. Pinned to sc-1ae's predicate when it merges. -/
+/-- sc-1ae's hypothesis (the DRI's fix (a), 2026-10-27): every JSON object, at any depth, is a well-formed tree. -/
 inductive JsonWF : Json → Prop
   | null : JsonWF .null
   | bool (b : Bool) : JsonWF (.bool b)
@@ -50,8 +49,7 @@ end Pinned
 
 /-! ## 11.2 The definitions -/
 
-/-- Lf-14d's limit on joint choices (`VE.Discourse.compatibleChoices … 64`), and the readings route's
-    (`VE.Readings.maxChoices`). -/
+/-- lf-14d's limit on joint choices (`compatibleChoices … 64`) and the readings route's (`VE.Readings.maxChoices`). -/
 def choiceLimit : Nat := 64
 
 def setsJson (doc : Json) : List Json := match doc.getObjValD "reading_sets" with
@@ -172,16 +170,12 @@ def governSets (D : SDoc) : Except String Json := governSetsWith govern D
 /-! ## 11.3 The statements -/
 
 /-- `governAt_no_frontier`, restated: with no governed set, the answer is `govern`'s, byte for byte as a value. -/
-theorem governSets_no_sets (D : SDoc) (h : governedSetUnits D = []) : governSets D = govern D := by
-  sorry
+theorem governSets_no_sets (D : SDoc) (h : governedSetUnits D = []) : governSets D = govern D := by sorry
 
 /-- The run path answers as the statement (`governFast_eq` per choice). -/
-theorem governSetsFast_eq (D : SDoc) : governSetsWith governFast D = governSets D := by
-  sorry
+theorem governSetsFast_eq (D : SDoc) : governSetsWith governFast D = governSets D := by sorry
 
-/-- `governAt_preserves`, restated: every member outside `units` and `reading_sets`, the unit order, every unit member
-    but `content`, every governed set unit as written, every other reading set, and every member of a governed set and
-    of its readings but the readings' `content`, are the document's own. -/
+/-- `governAt_preserves`, restated: all but `units`, `reading_sets` and the governed readings' `content` is kept. -/
 theorem governSets_preserves (D : SDoc) (hw : Pinned.JsonWF D.doc) (out : Json) (ho : governSets D = .ok out) :
     (∀ k, k ≠ "units" → k ≠ "reading_sets" → out.getObjVal? k = D.doc.getObjVal? k) ∧
     (unitsOf out).map idOf = (unitsOf D.doc).map idOf ∧
@@ -192,67 +186,52 @@ theorem governSets_preserves (D : SDoc) (hw : Pinned.JsonWF D.doc) (out : Json) 
       (setUnit y ∉ governedSetUnits D → x = y) ∧ (∀ k, k ≠ "readings" → x.getObjVal? k = y.getObjVal? k) ∧
       (readingsJson x).length = (readingsJson y).length ∧
       ∀ (n : Nat) (r r' : Json), (readingsJson x)[n]? = some r → (readingsJson y)[n]? = some r' →
-        ∀ k, k ≠ "content" → r.getObjVal? k = r'.getObjVal? k := by
-  sorry
+        ∀ k, k ≠ "content" → r.getObjVal? k = r'.getObjVal? k := by sorry
 
 /-- Per choice: every joint choice of the governed sets, read off the answer, is `govern` of that choice. -/
 theorem governSets_every_choice (D : SDoc) (hw : Pinned.JsonWF D.doc) (hs : governedSetUnits D ≠ [])
     (out : Json) (ho : governSets D = .ok out) (cs : List VE.Discourse.Choice) (hcs : setChoices D = .ok cs)
     (ch : VE.Discourse.Choice) (hc : ch ∈ cs) :
-    ∃ o, governChoice D ch = .ok o ∧ atChoiceOn (governedSetUnits D) out ch = o := by
-  sorry
+    ∃ o, governChoice D ch = .ok o ∧ atChoiceOn (governedSetUnits D) out ch = o := by sorry
 
-/-- `govern_strings`, per choice: every string value of the answer is one of the document or of a governor's payload,
-    so scope introduces no symbol through a reading either. -/
+/-- `govern_strings`, per choice: no reading brings in a new symbol. -/
 theorem governSets_strings (D : SDoc) (hw : Pinned.JsonWF D.doc) (out : Json) (ho : governSets D = .ok out)
     (s : String) (hs : Pinned.HasStr s out) :
-    Pinned.HasStr s D.doc ∨ ∃ g ∈ D.governors, Pinned.HasStr s (Pinned.payload g.effect) := by
-  sorry
+    Pinned.HasStr s D.doc ∨ ∃ g ∈ D.governors, Pinned.HasStr s (Pinned.payload g.effect) := by sorry
 
-/-- `scope_choices`, restated: the choices checked are lf-14d's joint choices over the governed sets. Every choice
-    lf-14d admits under any constraints is one of them; with no constraints they are exactly lf-14d's. -/
+/-- `scope_choices`, restated: the choices checked are lf-14d's joint choices over the governed sets. -/
 theorem scope_set_choices (D : SDoc) (cs : List VE.Discourse.Choice) (hcs : setChoices D = .ok cs)
     (K : VE.Discourse.Manifest) (n : Nat) (cs' : List VE.Discourse.Choice)
     (hk : VE.Discourse.compatibleChoices K (setShapes D) n = .ok cs') :
-    (∀ c ∈ cs', c ∈ cs) ∧ (K.constraints = [] → cs' = cs) := by
-  sorry
+    (∀ c ∈ cs', c ∈ cs) ∧ (K.constraints = [] → cs' = cs) := by sorry
 
 /-- A fault under one choice refuses the document: it is admitted only when every choice is. -/
 theorem governSets_choice_refused (D : SDoc) (hs : governedSetUnits D ≠ []) (cs : List VE.Discourse.Choice)
     (hcs : setChoices D = .ok cs) (ch : VE.Discourse.Choice) (hc : ch ∈ cs) (e : String)
-    (he : governChoice D ch = .error e) : (governSets D).isOk = false := by
-  sorry
+    (he : governChoice D ch = .error e) : (governSets D).isOk = false := by sorry
 
 /-- A fault every choice has is the document's own text, named with no choice (as `govern` would give it). -/
 theorem faultOf_every (D : SDoc) (rs : List (VE.Discourse.Choice × Except String Json)) (hn : rs ≠ []) (e : String)
-    (h : ∀ p ∈ rs, p.2 = .error e) : faultOf D rs = some e := by
-  sorry
+    (h : ∀ p ∈ rs, p.2 = .error e) : faultOf D rs = some e := by sorry
 
 /-- A resource limit under a choice is passed on unchanged: UNKNOWN, never a refusal of that choice (9.4 item 4). -/
 theorem choiceFault_limit (D : SDoc) (ch : VE.Discourse.Choice) (e : String) (h : e.startsWith "ResourceLimit" = true) :
-    choiceFault D ch e = e := by
-  sorry
+    choiceFault D ch e = e := by sorry
 
 /-- More joint choices than the limit: `ResourceLimit` (UNKNOWN), never a truncated product. -/
 theorem governSets_limit (D : SDoc) (h : VE.Discourse.productSize (setShapes D) > choiceLimit) :
-    governSets D = .error "ResourceLimit: scope choices" := by
-  sorry
+    governSets D = .error "ResourceLimit: scope choices" := by sorry
 
-/-- `readings_refused`, restated for the document mode: a reading set this section does not govern (on a governor's
-    own unit, under a frontier or fixed reach, with several versions or no reading, or on a unit with content) is
-    still refused. -/
+/-- `readings_refused`, restated for the document mode: a set this section does not govern is still refused. -/
 theorem governSets_readings_refused (D : SDoc) (hw : Pinned.JsonWF D.doc) (g : Governor) (hg : g ∈ D.governors)
     (us : List String) (hc : covered D g.reach = .ok us) (u : String) (hu : u = g.unit ∨ u ∈ us)
-    (hs : u ∈ setUnits D.doc) (hn : u ∉ governedSetUnits D) : (governSets D).isOk = false := by
-  sorry
+    (hs : u ∈ setUnits D.doc) (hn : u ∉ governedSetUnits D) : (governSets D).isOk = false := by sorry
 
-/-- `scope_admission` (5.2), restated for the document mode that calls `governSets`: the chain checks GOVERN's units
-    and reading sets, and its answer is folded as before. -/
+/-- `scope_admission` (5.2), restated: the chain checks GOVERN's units and reading sets. -/
 theorem scope_admission_sets (front ans : Json) (h : Pinned.checkDocSets front = .ok ans)
     (hs : "scope@0" ∈ VE.Service.Document.profilesOf front) :
     ∃ D out a, decodeScope front = .ok D ∧ governSets D = .ok out ∧
-      VE.Service.Document.checkCore (Pinned.withGoverned front out) = .ok a ∧ ans = foldGovernors D a := by
-  sorry
+      VE.Service.Document.checkCore (Pinned.withGoverned front out) = .ok a ∧ ans = foldGovernors D a := by sorry
 
 end VE.Scope
 
@@ -345,6 +324,8 @@ def u0166set : Json := rset "u0166-set" "u0166.s01" [reading "a" .null, reading 
 
 -- SR-g: still refused (F-rs's governor half): a set on the governor's own unit; a set on a governed unit that has content
 #guard errorOf (sets (setDoc [s03, rset "lead" "u0164.s02" [reading "a" .null]]) [g1]) == "ScopeReadings: u0164.s02"
+-- a carve-out written on u0165.s03 itself: the governor's own unit, though the frame covers it
+#guard errorOf (sets (setDoc [s03]) [g1, ⟨"gX", "u0165.s03", carveT, .list "u0164.s02", seven⟩]) == "ScopeReadings: u0165.s03"
 -- a fault every choice has is named with no choice: a frame recording six of the seven units (F-mm)
 #guard errorOf (sets (setDoc [s03]) [{g1 with units := seven.take 6}]) == "ManifestMismatch: scope.governors.g1.units"
 #guard errorOf (sets (hcDoc parts [("reading_sets", .arr #[s03])]) [g1]) == "ScopeReadings: u0165.s03"

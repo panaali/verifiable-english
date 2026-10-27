@@ -2011,17 +2011,13 @@ draft 5, 5.0, records every check with its verdict and what it gates. What bears
 
 ## 11. Per choice over a reading set a governed unit owns (addendum sc-5r, draft 5)
 
-> Status: addendum, draft 5, 2026-10-27, statement review pending; design only. It is the route the DRI chose for
-> the 06:00Z Oct 27 constitution pilot's finding 1 (`ScopeReadings: u0165.s03`;
-> `manage-agents/reviews/dri-decisions-20261027-scope-readings.md` item 1): check the governed list once per joint
-> choice of the reading set, and admit the document only when every choice is admitted. The set is never kept whole
-> as one opaque unit and never collapsed to one reading. It changes no definition, statement or fixture of sections
-> 1 to 10, and no behaviour until its build, **sc-5rb**, merges after this section's statement review passes.
-> **The Lean text is the stub's.** Every definition and statement named here is written in Lean in
-> [scope/SpecStubs_sc5r.lean](scope/SpecStubs_sc5r.lean). That file is part of this section, as pk-1s's stub is part
-> of the premise-packs spec. It elaborates against `main` unchanged with Lean v4.24.0
-> (`cd lean && lake env lean ../docs/spec/scope/SpecStubs_sc5r.lean`), with `sorry` for every proof. It checks every
-> value in 11.6 with a `#guard` over `VE.Scope.Examples`' hard-constraint document (`hcDoc`, `parts`, `g1`, `g2`).
+> Status: addendum, draft 5, 2026-10-27, statement review pending. The DRI's route for the 06:00Z Oct 27 pilot's
+> finding 1, `ScopeReadings: u0165.s03` (`manage-agents/reviews/dri-decisions-20261027-scope-readings.md` item 1):
+> check the governed list once per joint choice of the reading set; admit the document only when every choice is
+> admitted; never keep the set whole as one opaque unit, never collapse it to one reading. No behaviour changes until
+> the build, **sc-5rb**, merges after this section passes. **The Lean text is the stub's,**
+> [scope/SpecStubs_sc5r.lean](scope/SpecStubs_sc5r.lean), part of this section as pk-1s's stub is of its spec: it
+> elaborates against `main` unchanged (Lean v4.24.0, `sorry` for every proof) and checks every 11.6 value by `#guard`.
 
 ### 11.1 The reading sets it covers
 
@@ -2137,11 +2133,10 @@ and are called directly.
   `reading_sets` the chain would read each governed reading as written (a bare part), not composed.
 - **Still refused:** the sets of 11.1's first list item; a fault under any choice (11.5); a dependence on the choice
   (step 4).
-- **Resource limits per choice (9.4 item 4).** A limit `govern` meets under a choice (a decoder limit in the graph
-  step's `ruleTable`) is passed on unchanged (SR-lim). A limit the chain meets later on one choice's composed rule
-  is the chain's UNKNOWN for that choice, which keeps the document from CONFLICT-FREE. No choice is ever dropped or
-  counted as failed by exhaustion. When the first fault in lf-14d's order is a limit and a later choice has a
-  definite fault, the answer is the limit (UNKNOWN): conservative, never a verdict.
+- **Resource limits per choice (9.4 item 4).** A limit `govern` meets under a choice is passed on unchanged
+  (SR-lim); one the chain meets later on a choice's composed rule is the chain's UNKNOWN for that choice. No choice
+  is dropped or counted as failed by exhaustion. A limit first in lf-14d's order hides a later definite fault: the
+  answer is UNKNOWN, conservative, never a verdict.
 
 ### 11.5 Diagnostics (6.1 style)
 
@@ -2172,7 +2167,7 @@ cyberweapon_creation_permitted, guard}` with the pilot's two category shapes (`s
 | SR-cap | sets of 8 and 9 readings on u0165.s03 and u0165.s05 (72 choices); 8 and 8 (64) | `ResourceLimit: scope choices`; 64 are checked and admitted | `governSets_limit` both ways |
 | SR-u | an unrelated set on u0166.s01, beside SR-1's set and alone | returned unchanged (`jeq`) both times; alone, the answer is `govern`'s | `governSets_preserves`, `governSets_no_sets` |
 | SR-0 | no reading set: F1-g's document; F-id's | the answer equals `govern`'s, as a value, both times | `governSets_no_sets` |
-| SR-g | a set on the governor's unit u0164.s02 beside SR-1's; SR-1's set with u0165.s03's part also written; the frame recording six units | `ScopeReadings: u0164.s02`; `ScopeReadings: u0165.s03`; `ManifestMismatch: scope.governors.g1.units`, each named with no choice | `governSets_readings_refused`, `faultOf_every` |
+| SR-g | a set on the lead-in u0164.s02 beside SR-1's; SR-1's set with a carve-out written on u0165.s03 itself; SR-1's set with u0165.s03's part also written; the frame recording six units | `ScopeReadings: u0164.s02`; `ScopeReadings: u0165.s03` twice; `ManifestMismatch: scope.governors.g1.units`, each named with no choice | `governSets_readings_refused`, `faultOf_every` |
 | F-rs | `govern` on SR-1's document | `ScopeReadings: u0165.s03`, unchanged | `readings_refused` |
 | SR-dep | r9 on u0166.s01 `precedes` over `rules [hc-2, hc-cyberweapons]` (hc-2 on r9's predicate); the narrow reading on another predicate | `ScopeReadings: u0166.s01: differs between choices u0165.s03 scope-u0165-s03@1:wide and u0165.s03 scope-u0165-s03@1:narrow`; with one predicate in both readings, admitted, r9's `over` is `["hc-2","hc-cyberweapons"]` | `governSets_every_choice` (why step 4 checks) |
 | SR-lim | SR-dep's precedence with `gN`'s narrowing; the narrow reading's guard 63 levels deep, 64 after the narrowing; 62 | `ResourceLimit: formula depth exceeds 64`, unchanged; at 62, admitted | `choiceFault_limit` both ways |
@@ -2210,17 +2205,11 @@ readings check stays, since it refuses the sets of 11.1's first list item. **DEL
 DRI's signature, asked for with this section's PASS.
 
 **Seeded bugs**, one per behaviour, each breaking a named `#guard` or test, plus one mutant per new trusted
-definition (R16). Lean:
-- `governedSetUnits` without the governor-unit test (SR-g);
-- `atChoiceOn` keeping the governed sets (SR-1: `ScopeReadings`);
-- `faultOf` always naming a choice (SR-g, `faultOf_every`);
-- `choiceFault` naming a limit (SR-lim);
-- `assemble` without the unit agreement check (SR-dep);
-- `setChoices` with `≥` (SR-cap at 64);
-- `readingIn` returning the written reading (SR-1's contents);
-- `withGoverned` without `reading_sets` (the end-to-end test: the chain reads a bare part).
-
-Python: the relay binding a governed reading by content equality (the end-to-end test).
+definition (R16). Lean: `governedSetUnits` without the governor-unit test (SR-g); `atChoiceOn` keeping the governed
+sets (SR-1); `faultOf` always naming a choice (SR-g); `choiceFault` naming a limit (SR-lim); `assemble` without the
+agreement check (SR-dep); `setChoices` with `≥` (SR-cap); `readingIn` returning the written reading (SR-1);
+`withGoverned` without `reading_sets` (end to end). Python: the relay binding a governed reading by content equality.
+This item's own seeded bugs on the stub are listed in `docs/scope/sc-5r/mutants.json`.
 
 **Bytes:** 0 for this item and for sc-5rb (estimate). The constitution's `scope@0` M13 number (u0164.s02, +22 B)
 waits for the pilot's rewrite of the hard-constraint block (scope queue 4.4 step 2). Nothing is claimed before a pilot
