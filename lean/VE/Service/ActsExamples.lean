@@ -3,6 +3,7 @@ import VE.EnglishGrammar.Policy
 import VE.EnglishGrammar.Encode
 import VE.Acts.LexicalExamples
 import VE.Norms.Run
+import VE.Words.Situation
 
 /-! act-phrases AP-1, the profile part (ap-1b): `acts@0` documents through the norms decoder, the environment
 mode, the family route and Lean's English (spec 2.1, 2.8, 3.1-3.3, 4.4; fixtures A1-A3, A5, A6, A19 of 11.1).
@@ -315,5 +316,64 @@ def modal (j : Json) : String := match Env.decode j (Json.mkObj []) with
 #guard [["closure@0", "norms@0", "relational-fol@0"], ["closure@0", "nary@0", "norms@0", "relational-fol@0"],
     ["norms@0", "order@0", "relational-fol@0"]].map (fun ps => profilesOr (VE.Service.FamilyNorms.folView (env ps seek))) ==
   List.replicate 3 (toJson ["norms@0", "relational-fol@0"])
+
+/-! ### ap-1bc: the words route decodes a clause's declaration as Lean's English does (`VE.Words.regulatedOf`):
+`acts@0` read from the environment's list with its block's fixed phrases (act-phrases 3.2), else today's decoder -/
+
+/-- The role and act `regulatedOf` decodes for `p` in the environment `j`, reading the declarations, profiles and
+block of `source` (by default `j` itself). -/
+def regulatedIn (j : Json) (p : String) (source : Json := j) : Option (VE.Norms.Role × Option String) :=
+  match Env.decode j (Json.mkObj []) with
+  | .ok E => (VE.Words.regulatedOf { E with source } p).map fun r => (r.role, r.act)
+  | .error _ => none
+def threeOf (j : Json) (source : Json := j) := ["heard", "paid", "protected"].map (regulatedIn j · source)
+def withBlock (j : Json) (b : Option Json) : Json := match j.getObjValD "vocabulary" with
+  | .obj kvs => j.setObjVal! "vocabulary" (.obj (match b with | some b => kvs.insert "acts" b | none => kvs.erase "acts"))
+  | _ => j
+-- accepted: A1 and A2 plain with their acts and A3 a permission, each act with a fixed phrase (`and`, `for`)
+#guard threeOf envA == [some (.plain, some a1), some (.plain, some a2), some (.permission, some a3)]
+-- refused: without `acts@0` in the list, or with it in a list that is not sorted and unique (today's decoder)
+#guard threeOf envA (envA ["norms@0", "relational-fol@0"]) == [none, none, none]
+#guard unsorted.all fun ps => threeOf envA (envA ps) == [none, none, none]
+-- the block's phrases are read: without the block, or without one phrase, that act's `and` or `for` is outside a
+-- phrase; a block with a refused phrase decodes nothing
+#guard threeOf envA (withBlock envA none) == [none, none, none]
+#guard threeOf envA (withBlock envA (some (block (fxs.erase "equal pay for equal work")))) ==
+  [some (.plain, some a1), none, some (.permission, some a3)]
+#guard threeOf envA (withBlock envA (some (block (fxs ++ ["the court that is competent"])))) == [none, none, none]
+-- the act limits: today's 80 characters (at it both decoders accept, one past it only `acts@0`'s), and `acts@0`'s
+-- 400 bytes (at it accepted, one past it refused); A19's apostrophe folded
+def ab (k : Nat) (tail : String := "") : String := "{0}" ++ String.join (List.replicate k " ab") ++ tail
+def permEnv (profiles : List String) (act : String) : Json := env profiles [("p", pred ["person"] (perm act))]
+#guard [ab 25 " a", ab 26, VE.Acts.LexicalExamples.a21, ab 132 " a"].map String.utf8ByteSize == [80, 81, 400, 401]
+#guard [ab 25 " a", ab 26, VE.Acts.LexicalExamples.a21].all fun a => regulatedIn (permEnv actsP a) "p" == some (.permission, some a)
+#guard [ab 25 " a", ab 26].map (fun a => regulatedIn (permEnv actsP a) "p" (permEnv ["norms@0", "relational-fol@0"] a)) ==
+  [some (.permission, some (ab 25 " a")), none]
+#guard regulatedIn (permEnv actsP VE.Acts.LexicalExamples.a21) "p" (permEnv actsP (ab 132 " a")) == none
+#guard regulatedIn curly "p" == some (.permission, some "{0} comply with the operator's instructions in {1}")
+
+/-- The words route's clause and pair sentence in `j`, with the lexicon Lean's English selects. -/
+def lexiconOf (E : Env) : Lexicon := { VE.Words.nounsOnly [("person", "person"), ("case", "case")] with
+  wordings := E.predicates.filterMap fun d => (policyPredicate E {} d.name).map (d.name, ·.1) }
+def clause (j : Json) (p : String) (names : List String) (value : Bool) : Option String :=
+  (Env.decode j (Json.mkObj [])).toOption.bind fun E => VE.Words.clauseAt E (lexiconOf E) p names value
+def pair (j : Json) (p : String) : Option String :=
+  (Env.decode j (Json.mkObj [])).toOption.bind fun E => VE.Words.pairSentence E (lexiconOf E) p
+-- a plain act's clause is its wording whatever the value; a permission's has its modal
+#guard [true, false].map (clause envA "heard" ["Ann", "the trial"]) == List.replicate 2
+  (some "Ann is entitled in full equality to a fair and public hearing by an independent and impartial tribunal in the trial")
+#guard [true, false].map (clause envA "protected" ["Ann", "the trial"]) ==
+  [some "Ann may to the protection of the moral and material interests resulting from the trial",
+   some "Ann must not to the protection of the moral and material interests resulting from the trial"]
+-- refused: a predicate that is not regulated has no clause
+def late : List (String × Json) := [("late", Json.mkObj [("arguments", toJson ["person"]), ("description", .str "d")])]
+#guard clause (env actsP (seek ++ late)) "late" ["Ann"] true == none
+-- the pair sentence of an obligation whose act has a fixed phrase (97 B); a plain act has none
+def dual : List (String × Json) := [("must_hear", pred ["person", "case"] [("role", .str "obligation"),
+  ("default", .str "deny"), ("act", .str a1), ("permission", .str "may_hear")]), ("may_hear", pred ["person", "case"] (perm a1))]
+#guard pair (env actsP dual (some (block fxs))) "must_hear" == some ("Whenever a person must in full equality to a fair " ++
+  "and public hearing by an independent and impartial tribunal in a case, it may in full equality to a fair and public " ++
+  "hearing by an independent and impartial tribunal in that case.")
+#guard pair envA "heard" == none
 
 end VE.Service.ActsExamples
