@@ -2,6 +2,7 @@
 -- The `#print axioms` audit of every theorem of lean/declarations.txt outside the ResponseShape modules.
 import Iceberg
 import VE.Acts.Compat
+import VE.Acts.Elaborate
 import VE.Acts.GrammarExamples
 import VE.Acts.Lexical
 import VE.Acts.LexicalProofs
@@ -518,11 +519,26 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.Lexical.words_data
 #print axioms VE.Acts.Lexical.words_intercalate
 #print axioms VE.Acts.distinctTexts_ok
+#print axioms VE.Acts.elaborateMap_fst
+#print axioms VE.Acts.elaborateMap_ok
+#print axioms VE.Acts.elaborate_ok
+#print axioms VE.Acts.elaborate_one_reading
+#print axioms VE.Acts.elaborate_parts
+#print axioms VE.Acts.elaborate_unspec
+#print axioms VE.Acts.elaborate_wellFormed
 #print axioms VE.Acts.firstEqualPair_none
+#print axioms VE.Acts.inj_of_nodup_map
 #print axioms VE.Acts.listing_limit
 #print axioms VE.Acts.listing_nodup
 #print axioms VE.Acts.listing_ok
+#print axioms VE.Acts.mapM_ok
 #print axioms VE.Acts.mem_firsts
+#print axioms VE.Acts.mem_partsOf
+#print axioms VE.Acts.mem_preds
+#print axioms VE.Acts.mem_rules
+#print axioms VE.Acts.mem_splitNode
+#print axioms VE.Acts.mem_splitReg
+#print axioms VE.Acts.namesOk_ok
 #print axioms VE.Acts.nodup_firsts
 #print axioms VE.Acts.paraphrases_nodup
 #print axioms VE.Acts.readIn_many
@@ -532,6 +548,8 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.readingsIn_exact
 #print axioms VE.Acts.readingsIn_limit
 #print axioms VE.Acts.readingsIn_nodup
+#print axioms VE.Acts.ruleReading_ok
+#print axioms VE.Acts.splitMap_exact
 #print axioms VE.Acts.table_free_all_own
 #print axioms VE.Acts.table_free_all_shared
 #print axioms VE.Acts.table_free_all_split
