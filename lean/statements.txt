@@ -718,6 +718,89 @@ theorem VE.Acts.readingsIn_nodup
     VE.Acts.readingsIn G μ N b ts = VE.Acts.Listing.ok As → As.Nodup
   -- uses VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Listing.ok@VE.Acts.Read VE.Acts.Listing@VE.Acts.Read VE.Acts.Term@VE.Acts.Syntax VE.Acts.readingsIn@VE.Acts.Read VE.Grammar.Grammar@VE.Grammar.Basic VE.Grammar.Meaning@VE.Grammar.Reading
   -- expr 217654327
+theorem VE.Acts.table_free_all_own
+  ∀ (op : VE.Acts.Op),
+    op = VE.Acts.Op.may ∨ op = VE.Acts.Op.right →
+      ∀ (sp : Bool) (ps : List VE.Acts.Atom),
+        VE.Acts.table op (VE.Acts.Act.all Bool.false sp ps) = [List.map VE.Acts.Simple.atom ps]
+  -- uses VE.Acts.Act.all@VE.Acts.Tree VE.Acts.Atom@VE.Acts.Tree VE.Acts.Op.may@VE.Acts.Table VE.Acts.Op.right@VE.Acts.Table VE.Acts.Op@VE.Acts.Table VE.Acts.Simple.atom@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.table@VE.Acts.Table
+  -- expr 2380062714
+theorem VE.Acts.table_free_all_shared
+  ∀ (op : VE.Acts.Op),
+    op = VE.Acts.Op.may ∨ op = VE.Acts.Op.right →
+      ∀ (ps : List VE.Acts.Atom),
+        VE.Acts.table op (VE.Acts.Act.all Bool.true Bool.false ps) =
+          [List.map VE.Acts.Simple.atom ps, [VE.Acts.Simple.whole (VE.Acts.Act.all Bool.true Bool.false ps)]]
+  -- uses VE.Acts.Act.all@VE.Acts.Tree VE.Acts.Atom@VE.Acts.Tree VE.Acts.Op.may@VE.Acts.Table VE.Acts.Op.right@VE.Acts.Table VE.Acts.Op@VE.Acts.Table VE.Acts.Simple.atom@VE.Acts.Table VE.Acts.Simple.whole@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.table@VE.Acts.Table
+  -- expr 2677131217
+theorem VE.Acts.table_free_all_split
+  ∀ (op : VE.Acts.Op),
+    op = VE.Acts.Op.may ∨ op = VE.Acts.Op.right →
+      ∀ (ps : List VE.Acts.Atom),
+        VE.Acts.table op (VE.Acts.Act.all Bool.true Bool.true ps) = [List.map VE.Acts.Simple.atom ps]
+  -- uses VE.Acts.Act.all@VE.Acts.Tree VE.Acts.Atom@VE.Acts.Tree VE.Acts.Op.may@VE.Acts.Table VE.Acts.Op.right@VE.Acts.Table VE.Acts.Op@VE.Acts.Table VE.Acts.Simple.atom@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.table@VE.Acts.Table
+  -- expr 3758875693
+theorem VE.Acts.table_free_any
+  ∀ (op : VE.Acts.Op),
+    op = VE.Acts.Op.may ∨ op = VE.Acts.Op.right →
+      ∀ (ps : List VE.Acts.Atom),
+        VE.Acts.table op (VE.Acts.Act.any Bool.false Bool.false ps) =
+          [List.map VE.Acts.Simple.atom ps, [VE.Acts.Simple.whole (VE.Acts.Act.any Bool.false Bool.false ps)]]
+  -- uses VE.Acts.Act.any@VE.Acts.Tree VE.Acts.Atom@VE.Acts.Tree VE.Acts.Op.may@VE.Acts.Table VE.Acts.Op.right@VE.Acts.Table VE.Acts.Op@VE.Acts.Table VE.Acts.Simple.atom@VE.Acts.Table VE.Acts.Simple.whole@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.table@VE.Acts.Table
+  -- expr 2906746439
+theorem VE.Acts.table_free_any_split
+  ∀ (op : VE.Acts.Op),
+    op = VE.Acts.Op.may ∨ op = VE.Acts.Op.right →
+      ∀ (ps : List VE.Acts.Atom),
+        VE.Acts.table op (VE.Acts.Act.any Bool.false Bool.true ps) = [List.map VE.Acts.Simple.atom ps]
+  -- uses VE.Acts.Act.any@VE.Acts.Tree VE.Acts.Atom@VE.Acts.Tree VE.Acts.Op.may@VE.Acts.Table VE.Acts.Op.right@VE.Acts.Table VE.Acts.Op@VE.Acts.Table VE.Acts.Simple.atom@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.table@VE.Acts.Table
+  -- expr 1080510636
+theorem VE.Acts.table_free_nor
+  ∀ (op : VE.Acts.Op),
+    op = VE.Acts.Op.may ∨ op = VE.Acts.Op.right →
+      ∀ (sp : Bool) (ps : List VE.Acts.Atom), VE.Acts.table op (VE.Acts.Act.any Bool.true sp ps) = []
+  -- uses VE.Acts.Act.any@VE.Acts.Tree VE.Acts.Atom@VE.Acts.Tree VE.Acts.Op.may@VE.Acts.Table VE.Acts.Op.right@VE.Acts.Table VE.Acts.Op@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.table@VE.Acts.Table
+  -- expr 1856086696
+theorem VE.Acts.table_mustNot_all
+  ∀ (s : Bool) (ps : List VE.Acts.Atom),
+    VE.Acts.table VE.Acts.Op.mustNot (VE.Acts.Act.all s Bool.false ps) =
+      [List.map VE.Acts.Simple.atom ps, [VE.Acts.Simple.whole (VE.Acts.Act.all s Bool.false ps)]]
+  -- uses VE.Acts.Act.all@VE.Acts.Tree VE.Acts.Atom@VE.Acts.Tree VE.Acts.Op.mustNot@VE.Acts.Table VE.Acts.Simple.atom@VE.Acts.Table VE.Acts.Simple.whole@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.table@VE.Acts.Table
+  -- expr 3585785979
+theorem VE.Acts.table_mustNot_all_split
+  ∀ (s : Bool) (ps : List VE.Acts.Atom),
+    VE.Acts.table VE.Acts.Op.mustNot (VE.Acts.Act.all s Bool.true ps) = [List.map VE.Acts.Simple.atom ps]
+  -- uses VE.Acts.Act.all@VE.Acts.Tree VE.Acts.Atom@VE.Acts.Tree VE.Acts.Op.mustNot@VE.Acts.Table VE.Acts.Simple.atom@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.table@VE.Acts.Table
+  -- expr 2509863678
+theorem VE.Acts.table_mustNot_any
+  ∀ (n sp : Bool) (ps : List VE.Acts.Atom),
+    VE.Acts.table VE.Acts.Op.mustNot (VE.Acts.Act.any n sp ps) = [List.map VE.Acts.Simple.atom ps]
+  -- uses VE.Acts.Act.any@VE.Acts.Tree VE.Acts.Atom@VE.Acts.Tree VE.Acts.Op.mustNot@VE.Acts.Table VE.Acts.Simple.atom@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.table@VE.Acts.Table
+  -- expr 880942244
+theorem VE.Acts.table_must_all
+  ∀ (s sp : Bool) (ps : List VE.Acts.Atom),
+    VE.Acts.table VE.Acts.Op.must (VE.Acts.Act.all s sp ps) = [List.map VE.Acts.Simple.atom ps]
+  -- uses VE.Acts.Act.all@VE.Acts.Tree VE.Acts.Atom@VE.Acts.Tree VE.Acts.Op.must@VE.Acts.Table VE.Acts.Simple.atom@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.table@VE.Acts.Table
+  -- expr 785868666
+theorem VE.Acts.table_must_any
+  ∀ (ps : List VE.Acts.Atom),
+    VE.Acts.table VE.Acts.Op.must (VE.Acts.Act.any Bool.false Bool.false ps) =
+      [[VE.Acts.Simple.whole (VE.Acts.Act.any Bool.false Bool.false ps)]]
+  -- uses VE.Acts.Act.any@VE.Acts.Tree VE.Acts.Atom@VE.Acts.Tree VE.Acts.Op.must@VE.Acts.Table VE.Acts.Simple.whole@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.table@VE.Acts.Table
+  -- expr 151031043
+theorem VE.Acts.table_must_any_refused
+  ∀ (n sp : Bool) (ps : List VE.Acts.Atom),
+    n = Bool.true ∨ sp = Bool.true → VE.Acts.table VE.Acts.Op.must (VE.Acts.Act.any n sp ps) = []
+  -- uses VE.Acts.Act.any@VE.Acts.Tree VE.Acts.Atom@VE.Acts.Tree VE.Acts.Op.must@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.table@VE.Acts.Table
+  -- expr 2087436894
+theorem VE.Acts.table_needNot
+  ∀ (A : VE.Acts.Act), (∀ (a : VE.Acts.Atom), A ≠ VE.Acts.Act.one a) → VE.Acts.table VE.Acts.Op.needNot A = []
+  -- uses VE.Acts.Act.one@VE.Acts.Tree VE.Acts.Act@VE.Acts.Tree VE.Acts.Atom@VE.Acts.Tree VE.Acts.Op.needNot@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.table@VE.Acts.Table
+  -- expr 3681940925
+theorem VE.Acts.table_one
+  ∀ (op : VE.Acts.Op) (a : VE.Acts.Atom), VE.Acts.table op (VE.Acts.Act.one a) = [[VE.Acts.Simple.atom a]]
+  -- uses VE.Acts.Act.one@VE.Acts.Tree VE.Acts.Atom@VE.Acts.Tree VE.Acts.Op@VE.Acts.Table VE.Acts.Simple.atom@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.table@VE.Acts.Table
+  -- expr 1361667219
 theorem VE.Acts.valueOf_eq_some
   ∀ {α : Type} {μ : VE.Grammar.Meaning VE.Acts.Lexical.Tok Unit String α} {t : VE.Grammar.Tree VE.Acts.Lexical.Tok}
     {A : α}, VE.Acts.valueOf μ t = Option.some A ↔ ∃ c, μ () t = Except.ok (A, c, ())
@@ -3182,6 +3265,18 @@ theorem VE.Calc.Budgeted.bin_eq
           ∀ {r : Option γ} {m : Nat}, x.bin y f = Option.some (r, m) → r = X.bind fun a => Y.bind (F a)
   -- uses VE.Calc.Budgeted.bin@VE.Calc.Poly VE.Calc.Budgeted@VE.Calc.Poly
   -- expr 3247572537
+theorem VE.Calc.Check.fault_some
+  ∀ {ds : List VE.Calc.Decl} {k : VE.Calc.Check} {v : VE.Calc.Val},
+    VE.Calc.Check.fault (VE.Calc.inlineTable ds (VE.Calc.Check.keep ds k)) k = Option.some v →
+      ∃ e, e ∈ k.exprs ∧ VE.Calc.Expr.inline ds (VE.Calc.Check.keep ds k) e = Except.error v
+  -- uses VE.Calc.Check.exprs@VE.Calc.Wire VE.Calc.Check.fault@VE.Calc.Run VE.Calc.Check.keep@VE.Calc.Run VE.Calc.Check@VE.Calc.Wire VE.Calc.Decl@VE.Calc.Decls VE.Calc.Expr.inline@VE.Calc.Inline VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Val@VE.Calc.Decls VE.Calc.inlineTable@VE.Calc.Inline
+  -- expr 3760766454
+theorem VE.Calc.Check.outcomeMeans_claim
+  ∀ (ds : List VE.Calc.Decl) (c : VE.Calc.Claim) (v : VE.Numbers.Verdict),
+    VE.Calc.Check.OutcomeMeans ds (VE.Calc.Check.claim c) (VE.Numbers.Outcome.decided v) ↔
+      v = VE.Calc.Claim.decide (VE.Calc.values ds) c
+  -- uses VE.Calc.Check.OutcomeMeans@VE.Calc.Run VE.Calc.Check.claim@VE.Calc.Wire VE.Calc.Claim.decide@VE.Calc.Eval VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Decl@VE.Calc.Decls VE.Calc.values@VE.Calc.Decls VE.Numbers.Outcome.decided@VE.Numbers.Round VE.Numbers.Verdict@VE.Numbers.Round
+  -- expr 33943527
 theorem VE.Calc.Check.run_claim
   ∀ (ds : List VE.Calc.Decl) (c : VE.Calc.Claim), VE.Calc.Check.run ds (VE.Calc.Check.claim c) = VE.Calc.Claim.run ds c
   -- uses VE.Calc.Check.claim@VE.Calc.Wire VE.Calc.Check.run@VE.Calc.Run VE.Calc.Claim.run@VE.Calc.Decls VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Decl@VE.Calc.Decls VE.Numbers.Outcome@VE.Numbers.Round
@@ -3206,6 +3301,11 @@ theorem VE.Calc.Claim.decide_undefined
     VE.Calc.Claim.decide σ c = VE.Numbers.Verdict.undefined ↔ ¬VE.Calc.Claim.Defined σ c
   -- uses VE.Calc.Claim.Defined@VE.Calc.Syntax VE.Calc.Claim.decide@VE.Calc.Eval VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Values@VE.Calc.Syntax VE.Numbers.Verdict.undefined@VE.Numbers.Round VE.Numbers.Verdict@VE.Numbers.Round
   -- expr 1310136358
+theorem VE.Calc.Claim.factsIn_eq
+  ∀ (ds : List VE.Calc.Decl),
+    VE.Calc.Claim.factsIn (VE.Calc.inlineTable ds (VE.Calc.freeNames ds)) = VE.Calc.Claim.facts ds
+  -- uses VE.Calc.Claim.facts@VE.Calc.Lower VE.Calc.Claim.factsIn@VE.Calc.Run VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Decl@VE.Calc.Decls VE.Calc.QFact@VE.Calc.Linear VE.Calc.freeNames@VE.Calc.Inline VE.Calc.inlineTable@VE.Calc.Inline
+  -- expr 3895595874
 theorem VE.Calc.Claim.facts_sound
   ∀ (ds : List VE.Calc.Decl),
     VE.Calc.WellFormed ds →
@@ -3457,6 +3557,13 @@ theorem VE.Calc.Expr.zeroDivisor_sound
     e.zeroDivisor = Bool.true → ∀ (x : Rat), ¬VE.Calc.Denotes (fun v => Option.some (κ v)) e x
   -- uses VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr.zeroDivisor@VE.Calc.Identity VE.Calc.Expr@VE.Calc.Syntax
   -- expr 1342338600
+theorem VE.Calc.FM.firstAppearance_spec
+  ∀ (ns acc : List String),
+    acc.Nodup →
+      (List.foldl (fun acc n => if n ∈ acc then acc else acc ++ [n]) acc ns).Nodup ∧
+        ∀ (n : String), n ∈ List.foldl (fun acc n => if n ∈ acc then acc else acc ++ [n]) acc ns ↔ n ∈ acc ∨ n ∈ ns
+  -- uses
+  -- expr 1992975206
 theorem VE.Calc.Farkas.check_sound
   ∀ (fs : List VE.Calc.QFact) (c : VE.Calc.Farkas),
     VE.Calc.Farkas.check fs c = Bool.true → ∀ (κ : String → Rat), ¬∀ (f : VE.Calc.QFact), f ∈ fs → VE.Calc.QFact.Holds κ f
@@ -3736,6 +3843,10 @@ theorem VE.Calc.QLin.eval_isConst
   ∀ (κ : String → Rat) (L : VE.Calc.QLin), L.isConst = Bool.true → VE.Calc.QLin.eval κ L = L.const
   -- uses VE.Calc.QLin.const@VE.Calc.Linear VE.Calc.QLin.eval@VE.Calc.Linear VE.Calc.QLin.isConst@VE.Calc.Lower VE.Calc.QLin@VE.Calc.Linear
   -- expr 2050223340
+theorem VE.Calc.QLin.eval_norm
+  ∀ (κ : String → Rat) (L : VE.Calc.QLin), VE.Calc.QLin.eval κ L.norm = VE.Calc.QLin.eval κ L
+  -- uses VE.Calc.QLin.eval@VE.Calc.Linear VE.Calc.QLin.norm@VE.Calc.FourierMotzkin VE.Calc.QLin@VE.Calc.Linear
+  -- expr 3840590860
 theorem VE.Calc.QLin.eval_of_cancel
   ∀ (κ : String → Rat) (L : VE.Calc.QLin),
     (∀ (n : String), n ∈ List.map (fun x => x.fst) L.coeffs → L.coeffOf n = 0) → VE.Calc.QLin.eval κ L = L.const
@@ -4282,6 +4393,21 @@ theorem VE.Calc.sidesAtB_eq
         VE.Calc.differsAt a b κ = (Option.map (fun s => s.fst != s.snd) r).getD Bool.false
   -- uses VE.Calc.Budgeted@VE.Calc.Poly VE.Calc.Expr.eval@VE.Calc.Eval VE.Calc.Expr@VE.Calc.Syntax VE.Calc.differsAt@VE.Calc.Poly VE.Calc.sidesAtB@VE.Calc.Poly
   -- expr 2994313240
+theorem VE.Calc.sum_by_names
+  ∀ (κ : String → Rat) (U : List String),
+    U.Nodup →
+      ∀ (l : List (String × Rat)),
+        (∀ (p : String × Rat), p ∈ l → p.fst ∈ U) →
+          (List.map (fun p => p.snd * κ p.fst) l).sum =
+            (List.map (fun n => (List.map (fun x => x.snd) (List.filter (fun x => x.fst == n) l)).sum * κ n) U).sum
+  -- uses
+  -- expr 372397421
+theorem VE.Calc.sum_nonzero
+  ∀ (κ c : String → Rat) (U : List String),
+    (List.map (fun p => p.snd * κ p.fst) (List.filter (fun x => x.snd != 0) (List.map (fun n => (n, c n)) U))).sum =
+      (List.map (fun n => c n * κ n) U).sum
+  -- uses
+  -- expr 1151710027
 theorem VE.Calc.sum_split
   ∀ (κ : String → Rat) (l : List (String × Rat)) (n : String),
     (List.map (fun p => p.snd * κ p.fst) l).sum =
@@ -6741,6 +6867,18 @@ theorem VE.Compose.gate_legacy
       VE.Compose.gateOf VE.Compose.profileTable ps = VE.Compose.dispatch ps
   -- uses VE.Compose.Route@VE.Compose.Dispatch VE.Compose.dispatch@VE.Compose.Dispatch VE.Compose.gateOf@VE.Compose.Dispatch VE.Compose.legacyProfiles@VE.Compose.Dispatch VE.Compose.profileTable@VE.Compose.Dispatch
   -- expr 781844860
+theorem VE.Compose.gate_scope
+  ∀ (ps : List String),
+    "scope@0" ∈ ps →
+      ∀ (r : VE.Compose.Route),
+        VE.Compose.gateOf VE.Compose.profileTable ps = Except.ok r →
+          VE.Compose.gateOf VE.Compose.profileTable (ps.erase "scope@0") = Except.ok r ∧
+            (r = VE.Compose.Route.clauses ∨
+              r = VE.Compose.Route.readings ∨
+                r = VE.Compose.Route.rights ∨
+                  r = VE.Compose.Route.soft ∨ r = VE.Compose.Route.normDefaults ∨ r = VE.Compose.Route.norms)
+  -- uses VE.Compose.Route.clauses@VE.Compose.Dispatch VE.Compose.Route.normDefaults@VE.Compose.Dispatch VE.Compose.Route.norms@VE.Compose.Dispatch VE.Compose.Route.readings@VE.Compose.Dispatch VE.Compose.Route.rights@VE.Compose.Dispatch VE.Compose.Route.soft@VE.Compose.Dispatch VE.Compose.Route@VE.Compose.Dispatch VE.Compose.gateOf@VE.Compose.Dispatch VE.Compose.profileTable@VE.Compose.Dispatch
+  -- expr 3935014040
 theorem VE.Compose.gate_wellFormed
   ∀ (X : VE.SoftNorms.SoftDoc) (χ : VE.Formula) (P : List VE.Formula),
     VE.Formula.WellFormed (VE.Norms.envAt (VE.SoftNorms.soften X) 0) [] χ →
@@ -14540,6 +14678,11 @@ theorem VE.Judgments.viewOf_legacy
       VE.Discourse.Loader.foldStatus active unit (VE.Discourse.Loader.w2Status own.isSome meaning)
   -- uses VE.Discourse.FrontSet@VE.Discourse.Manifest VE.Discourse.Loader.foldStatus@VE.Discourse.Loader VE.Discourse.Loader.w2Status@VE.Discourse.Loader VE.Judgments.Content@VE.Judgments.Status VE.Judgments.UnitView.legacy@VE.Judgments.Status VE.Judgments.viewOf@VE.Judgments.Status
   -- expr 3651100867
+theorem VE.Kit.Except.bind_ok
+  ∀ {ε α β : Type} {x : Except ε α} {f : α → Except ε β} {b : β},
+    x >>= f = Except.ok b → ∃ a, x = Except.ok a ∧ f a = Except.ok b
+  -- uses
+  -- expr 1148682251
 theorem VE.Layout.anchorReach_iff
   ∀ (L : List VE.Layout.Unit),
     (List.map (fun x => x.id) L).Nodup →
@@ -21430,6 +21573,74 @@ theorem VE.Order.validModel_iff
     VE.Order.validModel? v d = Bool.true ↔ d.toModel.Valid v.environment
   -- uses VE.Order.FiniteModel.Valid@VE.Order.Finite VE.Order.ModelData.toModel@VE.Order.ModelCheck VE.Order.ModelData@VE.Order.ModelCheck VE.Order.Vocabulary.environment@VE.Order.ModelCheck VE.Order.Vocabulary@VE.Order.ModelCheck VE.Order.validModel?@VE.Order.ModelCheck
   -- expr 661174793
+theorem VE.Paths.Path.least
+  ∀ {α : Type u} {R : α → α → Prop} {a c : α},
+    VE.Paths.Path R a c ↔
+      ∀ (X : α → α → Prop), (∀ (x y : α), R x y → X x y) → (∀ (x y z : α), R x y → X y z → X x z) → X a c
+  -- uses VE.Paths.Path@VE.Paths
+  -- expr 3413214266
+theorem VE.Paths.Path.trans
+  ∀ {α : Type u} {R : α → α → Prop} {a b c : α}, VE.Paths.Path R a b → VE.Paths.Path R b c → VE.Paths.Path R a c
+  -- uses VE.Paths.Path@VE.Paths
+  -- expr 1287141759
+theorem VE.Paths.Path.unfold
+  ∀ {α : Type u} {R : α → α → Prop} {a c : α}, VE.Paths.Path R a c ↔ R a c ∨ ∃ b, R a b ∧ VE.Paths.Path R b c
+  -- uses VE.Paths.Path@VE.Paths
+  -- expr 986234126
+theorem VE.Paths.mem_dedup
+  ∀ {α : Type u} [inst : DecidableEq α] (a : α) (xs : List α), a ∈ VE.Paths.dedup xs ↔ a ∈ xs
+  -- uses VE.Paths.dedup@VE.Paths
+  -- expr 2372405414
+theorem VE.Paths.mem_pivot
+  ∀ {α : Type u} [inst : DecidableEq α] (v a b : α) (es : List (α × α)),
+    (a, b) ∈ VE.Paths.pivot v es ↔ (a, b) ∈ es ∨ (a, v) ∈ es ∧ (v, b) ∈ es
+  -- uses VE.Paths.pivot@VE.Paths
+  -- expr 460848875
+theorem VE.Paths.pivot_closed
+  ∀ {α : Type u} [inst : DecidableEq α] (es : List (α × α)) (v : α), VE.Paths.ClosedAt (VE.Paths.pivot v es) v
+  -- uses VE.Paths.ClosedAt@VE.Paths VE.Paths.pivot@VE.Paths
+  -- expr 2263114072
+theorem VE.Paths.pivot_preserves_closed
+  ∀ {α : Type u} [inst : DecidableEq α] (es : List (α × α)) (v w : α),
+    VE.Paths.ClosedAt es w → VE.Paths.ClosedAt (VE.Paths.pivot v es) w
+  -- uses VE.Paths.ClosedAt@VE.Paths VE.Paths.pivot@VE.Paths
+  -- expr 3200331533
+theorem VE.Paths.reachEval_iff
+  ∀ {α : Type u} [inst : DecidableEq α] (k : VE.Paths.Kind) (es : List (α × α)) (a b : α),
+    VE.Paths.reachEval k es a b = Bool.true ↔ VE.Paths.Reachable k (fun x y => (x, y) ∈ es) a b
+  -- uses VE.Paths.Kind@VE.Paths VE.Paths.Reachable@VE.Paths VE.Paths.reachEval@VE.Paths
+  -- expr 1557580196
+theorem VE.Paths.star_least
+  ∀ {α : Type u} {R : α → α → Prop} {a c : α},
+    VE.Paths.Reachable VE.Paths.Kind.star R a c ↔
+      ∀ (X : α → α → Prop), (∀ (x : α), X x x) → (∀ (x y z : α), R x y → X y z → X x z) → X a c
+  -- uses VE.Paths.Kind.star@VE.Paths VE.Paths.Reachable@VE.Paths
+  -- expr 268924530
+theorem VE.Paths.warshall_closed
+  ∀ {α : Type u} [inst : DecidableEq α] (vs : List α) (es : List (α × α)) {v : α},
+    v ∈ vs → VE.Paths.ClosedAt (VE.Paths.warshall vs es) v
+  -- uses VE.Paths.ClosedAt@VE.Paths VE.Paths.warshall@VE.Paths
+  -- expr 2574990208
+theorem VE.Paths.warshall_extends
+  ∀ {α : Type u} [inst : DecidableEq α] (vs : List α) (es : List (α × α)) {a b : α},
+    (a, b) ∈ es → (a, b) ∈ VE.Paths.warshall vs es
+  -- uses VE.Paths.warshall@VE.Paths
+  -- expr 3702606317
+theorem VE.Paths.warshall_iff_path
+  ∀ {α : Type u} [inst : DecidableEq α] (es : List (α × α)) (a b : α),
+    (a, b) ∈ VE.Paths.warshall (VE.Paths.dedup (VE.Paths.vertices es)) es ↔ VE.Paths.Path (fun x y => (x, y) ∈ es) a b
+  -- uses VE.Paths.Path@VE.Paths VE.Paths.dedup@VE.Paths VE.Paths.vertices@VE.Paths VE.Paths.warshall@VE.Paths
+  -- expr 4040364958
+theorem VE.Paths.warshall_preserves_closed
+  ∀ {α : Type u} [inst : DecidableEq α] (vs : List α) (es : List (α × α)) (v : α),
+    VE.Paths.ClosedAt es v → VE.Paths.ClosedAt (VE.Paths.warshall vs es) v
+  -- uses VE.Paths.ClosedAt@VE.Paths VE.Paths.warshall@VE.Paths
+  -- expr 4063218487
+theorem VE.Paths.warshall_sound
+  ∀ {α : Type u} [inst : DecidableEq α] (vs : List α) (es : List (α × α)) (R : α → α → Prop),
+    (∀ (a b : α), (a, b) ∈ es → VE.Paths.Path R a b) → ∀ (a b : α), (a, b) ∈ VE.Paths.warshall vs es → VE.Paths.Path R a b
+  -- uses VE.Paths.Path@VE.Paths VE.Paths.warshall@VE.Paths
+  -- expr 2609517366
 theorem VE.Question.Run.oneFields_gated
   ∀ (q : String) (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon) (c : VE.Question.Candidate)
     (φ : VE.EnglishGrammar.EFormula) (fs : List (String × Lean.Json)),
@@ -41875,6 +42086,11 @@ theorem VE.Scope.baseObjF_slow
   ∀ (D : VE.Scope.SDoc), (VE.Scope.baseObjF D fun r => (VE.Scope.coveredLayout D r).toOption.getD []) = VE.Scope.baseObj D
   -- uses VE.Scope.Reach@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.baseObj@VE.Scope.Govern VE.Scope.baseObjF@VE.Scope.Govern VE.Scope.coveredLayout@VE.Scope.Govern
   -- expr 3674618979
+theorem VE.Scope.bind_ok
+  ∀ {α β : Type} {x : Except String α} {f : α → Except String β} {b : β},
+    x >>= f = Except.ok b → ∃ a, x = Except.ok a ∧ f a = Except.ok b
+  -- uses
+  -- expr 3172643631
 theorem VE.Scope.commutes_symm
   ∀ (e₁ e₂ : VE.Scope.Effect), VE.Scope.Commutes e₁ e₂ = VE.Scope.Commutes e₂ e₁
   -- uses VE.Scope.Commutes@VE.Scope.Effects VE.Scope.Effect@VE.Scope.Effects
@@ -41895,6 +42111,16 @@ theorem VE.Scope.coversU_iff
     VE.Scope.coversU D g u = Bool.true ↔ ∃ us, VE.Scope.covered D g.reach = Except.ok us ∧ u ∈ us
   -- uses VE.Scope.Governor.reach@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.covered@VE.Scope.Govern VE.Scope.coversU@VE.Scope.Govern
   -- expr 1356600155
+theorem VE.Scope.decodeBlock_layout
+  ∀ (front : Lean.Json) (source : String) (re : VE.Readings.Wire.ReadingsEnvironment) (D : VE.Scope.SDoc),
+    VE.Scope.decodeBlock front source re = Except.ok D → D.layout = VE.Scope.layoutOf front source ∧ D.doc = front
+  -- uses VE.Layout.Unit@VE.Layout.List VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc.layout@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.decodeBlock@VE.Scope.Wire VE.Scope.layoutOf@VE.Scope.Wire
+  -- expr 2730613432
+theorem VE.Scope.decodeScope_layout
+  ∀ (front : Lean.Json) (D : VE.Scope.SDoc),
+    VE.Scope.decodeScope front = Except.ok D → List.map (fun x => x.id) D.layout = VE.Scope.unitIds D.doc
+  -- uses VE.Layout.Unit.id@VE.Layout.List VE.Layout.Unit@VE.Layout.List VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc.layout@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.decodeScope@VE.Service.Document VE.Scope.unitIds@VE.Scope.Govern
+  -- expr 433373393
 theorem VE.Scope.edgesFor_ok
   ∀ (D : VE.Scope.SDoc) (u : String) (es : List String),
     VE.Scope.edgesFor D u = Except.ok es ↔
@@ -41933,6 +42159,14 @@ theorem VE.Scope.firstKeys_self
   ∀ (l : List (String × Lean.Json)), (List.map (fun x => x.fst) l).Nodup → VE.Readings.Wire.firstKeys l = l
   -- uses VE.Readings.Wire.firstKeys@VE.Readings.Companions
   -- expr 1819661494
+theorem VE.Scope.foldStatus_mem
+  ∀ (ts : List VE.Reports.Status), ts ≠ [] → VE.Reports.foldStatus ts ∈ ts
+  -- uses VE.Reports.Status@VE.Attribution.Status VE.Reports.foldStatus@VE.Attribution.Status
+  -- expr 754835130
+theorem VE.Scope.foldl_meet_mem
+  ∀ (acc : VE.Reports.Status) (xs : List VE.Reports.Status), List.foldl VE.Reports.Status.meet acc xs ∈ acc :: xs
+  -- uses VE.Reports.Status.meet@VE.Attribution.Status VE.Reports.Status@VE.Attribution.Status
+  -- expr 704010218
 theorem VE.Scope.frameOnF_slow
   ∀ (D : VE.Scope.SDoc), (VE.Scope.frameOnF D fun r => (VE.Scope.coveredLayout D r).toOption.getD []) = VE.Scope.frameOn D
   -- uses VE.Scope.Governor@VE.Scope.Govern VE.Scope.Reach@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.coveredLayout@VE.Scope.Govern VE.Scope.frameOn@VE.Scope.Govern VE.Scope.frameOnF@VE.Scope.Govern
@@ -41977,6 +42211,18 @@ theorem VE.Scope.govern_refused
   ∀ (D : VE.Scope.SDoc), VE.Scope.admitBlock D ≠ Except.ok () → (VE.Scope.govern D).isOk = Bool.false
   -- uses VE.Scope.SDoc@VE.Scope.Govern VE.Scope.admitBlock@VE.Scope.Govern VE.Scope.govern@VE.Scope.Govern
   -- expr 677643296
+theorem VE.Scope.governor_status_none
+  ∀ (st : String → Option VE.Reports.Status) (us : List String),
+    (us = [] ∨ ∃ u, u ∈ us ∧ st u = Option.none) → VE.Scope.governorStatus st us = Option.none
+  -- uses VE.Reports.Status@VE.Attribution.Status VE.Scope.governorStatus@VE.Scope.Wire
+  -- expr 1442996409
+theorem VE.Scope.governor_status_weakest
+  ∀ (st : String → Option VE.Reports.Status) (us : List String) (s : VE.Reports.Status),
+    VE.Scope.governorStatus st us = Option.some s →
+      us ≠ [] ∧
+        (∀ (u : String), u ∈ us → ∃ t, st u = Option.some t ∧ s.rank ≤ t.rank) ∧ ∃ u, u ∈ us ∧ st u = Option.some s
+  -- uses VE.Reports.Status.rank@VE.Attribution.Status VE.Reports.Status@VE.Attribution.Status VE.Scope.governorStatus@VE.Scope.Wire
+  -- expr 2136112766
 theorem VE.Scope.governorsOfF_slow
   ∀ (D : VE.Scope.SDoc),
     (VE.Scope.governorsOfF (VE.Scope.ordered D) fun r => (VE.Scope.covered D r).toOption.getD []) = VE.Scope.governorsOf D
@@ -42035,6 +42281,13 @@ theorem VE.Scope.mapM_ok_mem
     List.mapM f l = Except.ok t → ∀ (y : β), y ∈ t → ∃ x, x ∈ l ∧ f x = Except.ok y
   -- uses
   -- expr 4262899139
+theorem VE.Scope.mapM_some_mem
+  ∀ {st : String → Option VE.Reports.Status} {us : List String} {ts : List VE.Reports.Status},
+    List.mapM st us = Option.some ts →
+      (∀ (u : String), u ∈ us → ∃ t, t ∈ ts ∧ st u = Option.some t) ∧
+        ∀ (t : VE.Reports.Status), t ∈ ts → ∃ u, u ∈ us ∧ st u = Option.some t
+  -- uses VE.Reports.Status@VE.Attribution.Status
+  -- expr 296189344
 theorem VE.Scope.mem_ordered
   ∀ (D : VE.Scope.SDoc) (g : VE.Scope.Governor), g ∈ VE.Scope.ordered D ↔ g ∈ D.governors
   -- uses VE.Scope.Governor@VE.Scope.Govern VE.Scope.SDoc.governors@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.ordered@VE.Scope.Govern
@@ -42110,6 +42363,23 @@ theorem VE.Scope.ruleTable_decoder
         (u, N) ∈ t → ∃ o, VE.Scope.composed D u = Except.ok o ∧ VE.Readings.Wire.decodeNorm D.re o = Except.ok N
   -- uses VE.Readings.Wire.decodeNorm@VE.Readings.Wire VE.Scope.SDoc.re@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.composed@VE.Scope.Govern VE.Scope.ruleTable@VE.Scope.Govern VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
   -- expr 451307237
+theorem VE.Scope.scope_absent_unchanged
+  ∀ (front : Lean.Json),
+    ¬"scope@0" ∈ VE.Service.Document.profilesOf front →
+      VE.Service.Document.checkDoc front = VE.Service.Document.checkCore front
+  -- uses VE.Service.Document.checkCore@VE.Service.Document VE.Service.Document.checkDoc@VE.Service.Document VE.Service.Document.profilesOf@VE.Service.Document
+  -- expr 1785912364
+theorem VE.Scope.scope_admission
+  ∀ (front ans : Lean.Json),
+    VE.Service.Document.checkDoc front = Except.ok ans →
+      "scope@0" ∈ VE.Service.Document.profilesOf front →
+        ∃ D out a,
+          VE.Scope.decodeScope front = Except.ok D ∧
+            VE.Scope.govern D = Except.ok out ∧
+              VE.Service.Document.checkCore (VE.Service.Document.withUnits front out) = Except.ok a ∧
+                ans = VE.Scope.foldGovernors D a
+  -- uses VE.Scope.SDoc@VE.Scope.Govern VE.Scope.decodeScope@VE.Service.Document VE.Scope.foldGovernors@VE.Scope.Wire VE.Scope.govern@VE.Scope.Govern VE.Service.Document.checkCore@VE.Service.Document VE.Service.Document.checkDoc@VE.Service.Document VE.Service.Document.profilesOf@VE.Service.Document VE.Service.Document.withUnits@VE.Service.Document
+  -- expr 1274073867
 theorem VE.Scope.substOwn_id
   ∀ (g c : Lean.Json), VE.Scope.hasOwn VE.Scope.depthLimit c = Bool.false → VE.Scope.substOwn g VE.Scope.depthLimit c = c
   -- uses VE.Scope.depthLimit@VE.Scope.Effects VE.Scope.hasOwn@VE.Scope.Effects VE.Scope.substOwn@VE.Scope.Effects
