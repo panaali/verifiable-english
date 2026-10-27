@@ -37,20 +37,15 @@ inductive NT
   deriving DecidableEq, Repr
 
 /-- A rank per nonterminal: higher than the rank of every nonterminal that starts one of its rules (W3). -/
-def FNT.rank : FNT → Nat
-  | .HD | .WR => 0
-  | .FL | .PT | .TE | .RE | .REt | .MEL | .MGT | .AR _ | .RT _ | .OL _ => 1
-  | .PL | .TR | .REP | .MG | .RL _ => 2
-  | .O | .OS | .LST _ _ => 3
-  | .EE | .NM | .RX | .SPL | .PX => 4
-  | .ER | .ERN | .RR | .PO => 5
-  | .OWNM | .LFM | .RM => 6
-  | .SM => 7
 def NT.rank : NT → Nat
-  | .ADVSO | .E1S | .SC | .C _ | .T _ _ => 1
-  | .SINGLE | .F1 _ _ | .L _ _ => 2
-  | .COORD => 3
-  | .F _ x => x.rank
+  | .ADVSO | .E1S | .SC | .C _ | .T _ _ | .F _ .FL | .F _ .PT | .F _ .TE | .F _ .RE | .F _ .REt | .F _ .MEL
+  | .F _ .MGT | .F _ (.AR _) | .F _ (.RT _) | .F _ (.OL _) => 1
+  | .SINGLE | .F1 _ _ | .L _ _ | .F _ .PL | .F _ .TR | .F _ .REP | .F _ .MG | .F _ (.RL _) => 2
+  | .COORD | .F _ .O | .F _ .OS | .F _ (.LST _ _) => 3
+  | .F _ .EE | .F _ .NM | .F _ .RX | .F _ .SPL | .F _ .PX => 4
+  | .F _ .ER | .F _ .ERN | .F _ .RR | .F _ .PO => 5
+  | .F _ .OWNM | .F _ .LFM | .F _ .RM => 6
+  | .F _ .SM => 7
   | _ => 0
 
 /-- A symbol of a right side: a terminal or a named nonterminal. -/
@@ -216,7 +211,7 @@ theorem kwSyms_ok {X : NT} {ws : List String} (h : ws ≠ []) : RuleS.ok ⟨X, k
 theorem frameRules_ok (V : Vocab) (h : Nat) {f : Frame} (hh : f.head ≠ []) : (frameRules V h f).all RuleS.ok = true := by
   obtain ⟨w, ws, hw⟩ : ∃ w ws, f.head = w :: ws := by cases hx : f.head <;> simp_all
   by_cases ho : "" ∈ f.markers <;> by_cases hs : "" ∈ f.split <;>
-    simp [frameRules, many1, tail, kwSyms, hw, ho, hs, RuleS.ok, NT.rank, FNT.rank]
+    simp [frameRules, many1, tail, kwSyms, hw, ho, hs, RuleS.ok, NT.rank]
 
 theorem globalRules_ok {V : Vocab} (hm : ∀ f ∈ V.frames, ∀ m ∈ f.markers ++ f.mods, m ≠ "" → wordsOf m ≠ []) :
     (globalRules V).all RuleS.ok = true := by
@@ -301,6 +296,14 @@ theorem closed_cl (rs : List RuleS) : ∀ r ∈ closed rs, ∀ x, .n x ∈ r.rhs
         List.mem_filterMap]
       exact .inr ⟨x, ⟨⟨r, hr, .n x, hx, rfl⟩, by simpa using hd⟩, rfl⟩
   · simp at hx
+
+/-- W2 and W3 over the rule table: every right side is non-empty, and a first nonterminal ranks below the left side. -/
+theorem schema_ranked (V : Vocab) (h : framesOk V = true) :
+    ∀ r ∈ schema V, r.rhs ≠ [] ∧ ∀ B rest, r.rhs = .n B :: rest → B.rank < r.lhs.rank := by
+  intro r hr
+  have ho := List.all_eq_true.mp (schema_ok h) r hr
+  unfold RuleS.ok at ho
+  refine ⟨fun he => by simp [he] at ho, fun B rest he => by simpa [he] using ho⟩
 
 theorem grammar_wf (V : Vocab) (h : framesOk V = true) : (grammar V).wf = true :=
   build_wf (closed_ok (schema_ok h)) (closed_cl _) (by simp [closed, schema, globalRules])
