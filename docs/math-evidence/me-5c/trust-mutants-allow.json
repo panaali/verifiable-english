@@ -13,7 +13,7 @@
   {"definition": "VE.Calc.Wire.check", "operator": "list-last", "reason": "not a program on the pattern of line 272; the links list's reverse.take 1 is killed by h6-two-links"},
   {"definition": "VE.Calc.Wire.check", "operator": "list-drop-first", "reason": "not a program: the pattern of line 272 (unsupported pattern in syntax match)"},
   {"definition": "VE.Calc.Wire.decode", "operator": "list-empty", "reason": "not a program: cprems emptied has no element type (don't know how to synthesize implicit argument)"},
-  {"definition": "VE.Calc.Wire.decode", "operator": "list-first", "reason": "equivalent on the hashed premises field, a list of at most one element (take 1 of it is itself); cprems.take 1 is killed by the premises identity family (two premises in either order)"},
-  {"definition": "VE.Calc.Wire.decode", "operator": "list-last", "reason": "equivalent on the list of at most one element, as list-first; cprems.reverse.take 1 is killed by the premises identity family"},
+  {"definition": "VE.Calc.Wire.decode", "operator": "list-first", "reason": "equivalent: on the hashed premises field, a list of at most one element, take 1 is itself; on cprems in cprems.isEmpty (the occurrence the tool edits), take 1 keeps emptiness. cprems.dropLast and cprems.drop 1 there are killed by the premises identity family (one premise against none)"},
+  {"definition": "VE.Calc.Wire.decode", "operator": "list-last", "reason": "equivalent, as list-first: reverse.take 1 keeps a list of at most one element and keeps the emptiness of cprems"},
   {"definition": "VE.Calc.English.renderFollows", "operator": "list-empty", "reason": "not a program: links.flatMap and lines.zipIdx emptied are functions or patterns Lean refuses with a type error the tool does not class as REFUSED"}
 ]}
