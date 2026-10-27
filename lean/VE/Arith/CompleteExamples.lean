@@ -23,7 +23,8 @@ def keeps (D : Defs) (φ : Formula) (n : Nat) : Bool :=
 #guard [2, 3, 4].map (decideBounded chain · (.imp (.call "pos" [lit 0]) no)) = [none, some (true, 3), some (true, 3)]
 #guard [395, 396].map (decideBounded primeDefs · m2) = [some (true, 395), some (true, 395)]
 #guard keeps chain (.call "big" [lit 3]) 40 && keeps primeDefs m5 40 && keeps countDefs (atLeast 2 (.num 11)) 200 &&
-  keeps [] (.allFromTo (lit 1) (lit 3) (.allFromTo (lit 1) (.var 0) (.le (.var 0) (.var 1)))) 40
+  keeps [] (.allFromTo (lit 1) (lit 3) (.allFromTo (lit 1) (.var 0) (.le (.var 0) (.var 1)))) 40 &&
+  keeps chain (.eq (.call "succ" [lit 3]) (lit 4)) 6
 
 /-! The refusing side: without boundedness, scoping or well-formed definitions, no budget decides. An unbounded
 statement, a variable no binder gives, a call with the wrong arity, a missing name and a recursive definition. -/
