@@ -53,6 +53,12 @@ is the next lever, and this item does not touch it.
 The scratch worktree was `/home/seyran/code/ve-eff-20261027-1-s-main`, detached. It was removed after the runs,
 and so were the temporary output directories.
 
+As an end-to-end check, the built tool (balanced parts, not the probe's ceiling-sized ones) ran one more cold
+dump, the 11th of the 12 allowed. The command was `VE_RUN_CACHE=off uv run python tools/lean_statements.py
+--check` in this worktree (tree of main ab010c3f, lean-prep restored, built). It printed
+`PASS: 6625 statements, the predicate list and the declaration list unchanged` in 106.1 s wall, with the load
+going from 26 to 43. This run is not in `runs/` and is not counted in S4, which counts the measurement runs only.
+
 ## What was built
 
 | directive | commit | test |
