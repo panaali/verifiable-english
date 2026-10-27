@@ -12,7 +12,8 @@ The statements were reviewed in QT-0 (manage-agents `quantities-p3ver1.final.md`
 `CardCertificate` equal the plan's (`docs/spec/quantities-PLAN.md`, QT-A3) and spec 4.3's text after whitespace
 normalisation (checked by a script over the three files). qt-a3's decoders and their theorems are unchanged
 (`Wire.lean` gains only a docstring line). `lean/statements.txt` only gains lines. The new helper theorems name no plan
-statement: `decodeCertificate_sound`, `runCaseReported_ok`, `runCaseReported_error` (`RunTheorems.lean`).
+statement: `decodeCertificate_sound`, `runCaseReported_ok`, `runCaseReported_error`, and fix round 1's
+`regionsJson_constants`, `erasedJson_conclusion` (`RunTheorems.lean`).
 
 ## Plan rows (the task's order)
 
@@ -120,10 +121,18 @@ slot) is [trust-mutants.json](trust-mutants.json): 60 KILLED, 0 SURVIVOR, 0 UNKN
   sort surviving, since FA1 counts one sort). The review's four mutants are in [mutants.json](mutants.json)
   (`regionsJson-bits`, `regionsJson-sort`, `erasedJson-Q`, `erasedJson-core`): 4 of 4 killed by these guards
   ([evidence/mutants-run-fix1.json](evidence/mutants-run-fix1.json); the review's PROBE is the same four edits). Both
-  definitions moved from D[I] to D[V], as W6a's `encQ`/`encCore`: V +15, a second R16 allowance (V +59 in all,
-  within 150, K +0). `trust_mutants` rerun on `ba27c7b4e` over the 5 trusted definitions: 117 mutants, 98 KILLED,
+  definitions moved from D[I] to D[V], as W6a's `encQ`/`encCore`, and stated about in `RunTheorems.lean`
+  (`regionsJson_constants`: the constants are `regionTable`'s with sort and bits; `erasedJson_conclusion`: the
+  conclusion row is `erasedProblem`'s conclusion, `Q` and erased `core`, with `erasedIds`' identities), as
+  `tests/test_cardinality_exercised.py` asks of every trusted cardinality definition: V +15, a second R16 allowance (V +59 in all,
+  within 150, K +0). `trust_mutants` rerun on `ba27c7b4e` (rescored on `47eed736a` after the two theorems: 110 carried, 7 rerun) over the 5 trusted definitions: 117 mutants, 98 KILLED,
   0 SURVIVOR, 0 UNKNOWN, 12 INVALID, 7 ALLOWED (the 5 new allowed are `list-empty` mutants of the two encoders that
   do not elaborate: "Function expected" or "Invalid projection"; each was UNKNOWN before the allow, none a survivor).
+- **Tests:** the selected plan on `389499a0b` (375 units, ve-mac-1): 373 pass; the two failures were
+  `tests/test_cardinality_exercised.py` (the reclassified encoders had no theorem), fixed by the two theorems above;
+  then `test_cardinality_exercised`, `test_assurance_manifest`, `test_lean_audit_record`, `test_trust_budget`: 165
+  pass. `regen_generated.py --check` (33), `trust_map.py --check`, `lean/audit.py` (640 files), `check_lean_imports.py`
+  pass.
 - **F2 (C), follow-up:** size. With this round about 850 hand-written lines; the round only adds guards, mutants and
   evidence the review asked for. Recorded in FOLLOW-UPS "## qt-a3b" for the size retrospective; nothing cut now.
 - **F3 (C), follow-up:** the refusal order (region table, erased problem, cardinality stale, `staleW6`, `staleCore`)
