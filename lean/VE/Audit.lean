@@ -158,6 +158,7 @@ import VE.Judgments.Decl
 import VE.Judgments.Examples
 import VE.Judgments.Scan
 import VE.Judgments.Status
+import VE.Kit.Except
 import VE.Layout.Anchors
 import VE.Layout.Discourse
 import VE.Layout.List
@@ -222,6 +223,7 @@ import VE.Order.Typing
 import VE.Order.Wire
 import VE.Order.WireGate
 import VE.ParserContracts
+import VE.Paths
 import VE.Question.Frames
 import VE.Question.Moved
 import VE.Question.Properties
@@ -2437,6 +2439,7 @@ import VE.WireContract.Engine
 #print axioms VE.Judgments.usageMap_sound
 #print axioms VE.Judgments.usageMap_unused
 #print axioms VE.Judgments.viewOf_legacy
+#print axioms VE.Kit.Except.bind_ok
 #print axioms VE.Layout.anchorReach_iff
 #print axioms VE.Layout.continues_iff
 #print axioms VE.Layout.discourse_anchorsOk_unchanged
@@ -3388,6 +3391,20 @@ import VE.WireContract.Engine
 #print axioms VE.Order.v0_decode_profiles
 #print axioms VE.Order.v0_runCase_profiles
 #print axioms VE.Order.validModel_iff
+#print axioms VE.Paths.Path.least
+#print axioms VE.Paths.Path.trans
+#print axioms VE.Paths.Path.unfold
+#print axioms VE.Paths.mem_dedup
+#print axioms VE.Paths.mem_pivot
+#print axioms VE.Paths.pivot_closed
+#print axioms VE.Paths.pivot_preserves_closed
+#print axioms VE.Paths.reachEval_iff
+#print axioms VE.Paths.star_least
+#print axioms VE.Paths.warshall_closed
+#print axioms VE.Paths.warshall_extends
+#print axioms VE.Paths.warshall_iff_path
+#print axioms VE.Paths.warshall_preserves_closed
+#print axioms VE.Paths.warshall_sound
 #print axioms VE.Question.Run.oneFields_gated
 #print axioms VE.Question.Run.statusCodes_classed
 #print axioms VE.Question.Str.bsize_toSubstring

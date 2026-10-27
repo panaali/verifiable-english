@@ -2037,6 +2037,7 @@
 'VE.Judgments.usageMap_sound' depends on axioms: [propext, Quot.sound]
 'VE.Judgments.usageMap_unused' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Judgments.viewOf_legacy' does not depend on any axioms
+'VE.Kit.Except.bind_ok' does not depend on any axioms
 'VE.Layout.anchorReach_iff' depends on axioms: [propext, Quot.sound]
 'VE.Layout.continues_iff' depends on axioms: [propext, Quot.sound]
 'VE.Layout.discourse_anchorsOk_unchanged' depends on axioms: [propext]
@@ -2988,6 +2989,20 @@
 'VE.Order.v0_decode_profiles' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Order.v0_runCase_profiles' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Order.validModel_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Paths.Path.least' does not depend on any axioms
+'VE.Paths.Path.trans' does not depend on any axioms
+'VE.Paths.Path.unfold' does not depend on any axioms
+'VE.Paths.mem_dedup' depends on axioms: [propext]
+'VE.Paths.mem_pivot' depends on axioms: [propext, Quot.sound]
+'VE.Paths.pivot_closed' depends on axioms: [propext, Quot.sound]
+'VE.Paths.pivot_preserves_closed' depends on axioms: [propext, Quot.sound]
+'VE.Paths.reachEval_iff' depends on axioms: [propext, Quot.sound]
+'VE.Paths.star_least' does not depend on any axioms
+'VE.Paths.warshall_closed' depends on axioms: [propext, Quot.sound]
+'VE.Paths.warshall_extends' depends on axioms: [propext, Quot.sound]
+'VE.Paths.warshall_iff_path' depends on axioms: [propext, Quot.sound]
+'VE.Paths.warshall_preserves_closed' depends on axioms: [propext, Quot.sound]
+'VE.Paths.warshall_sound' depends on axioms: [propext, Quot.sound]
 'VE.Question.Run.oneFields_gated' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Question.Run.statusCodes_classed' does not depend on any axioms
 'VE.Question.Str.bsize_toSubstring' depends on axioms: [propext]

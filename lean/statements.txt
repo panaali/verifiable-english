@@ -14621,6 +14621,11 @@ theorem VE.Judgments.viewOf_legacy
       VE.Discourse.Loader.foldStatus active unit (VE.Discourse.Loader.w2Status own.isSome meaning)
   -- uses VE.Discourse.FrontSet@VE.Discourse.Manifest VE.Discourse.Loader.foldStatus@VE.Discourse.Loader VE.Discourse.Loader.w2Status@VE.Discourse.Loader VE.Judgments.Content@VE.Judgments.Status VE.Judgments.UnitView.legacy@VE.Judgments.Status VE.Judgments.viewOf@VE.Judgments.Status
   -- expr 3651100867
+theorem VE.Kit.Except.bind_ok
+  ∀ {ε α β : Type} {x : Except ε α} {f : α → Except ε β} {b : β},
+    x >>= f = Except.ok b → ∃ a, x = Except.ok a ∧ f a = Except.ok b
+  -- uses
+  -- expr 1148682251
 theorem VE.Layout.anchorReach_iff
   ∀ (L : List VE.Layout.Unit),
     (List.map (fun x => x.id) L).Nodup →
@@ -21511,6 +21516,74 @@ theorem VE.Order.validModel_iff
     VE.Order.validModel? v d = Bool.true ↔ d.toModel.Valid v.environment
   -- uses VE.Order.FiniteModel.Valid@VE.Order.Finite VE.Order.ModelData.toModel@VE.Order.ModelCheck VE.Order.ModelData@VE.Order.ModelCheck VE.Order.Vocabulary.environment@VE.Order.ModelCheck VE.Order.Vocabulary@VE.Order.ModelCheck VE.Order.validModel?@VE.Order.ModelCheck
   -- expr 661174793
+theorem VE.Paths.Path.least
+  ∀ {α : Type u} {R : α → α → Prop} {a c : α},
+    VE.Paths.Path R a c ↔
+      ∀ (X : α → α → Prop), (∀ (x y : α), R x y → X x y) → (∀ (x y z : α), R x y → X y z → X x z) → X a c
+  -- uses VE.Paths.Path@VE.Paths
+  -- expr 3413214266
+theorem VE.Paths.Path.trans
+  ∀ {α : Type u} {R : α → α → Prop} {a b c : α}, VE.Paths.Path R a b → VE.Paths.Path R b c → VE.Paths.Path R a c
+  -- uses VE.Paths.Path@VE.Paths
+  -- expr 1287141759
+theorem VE.Paths.Path.unfold
+  ∀ {α : Type u} {R : α → α → Prop} {a c : α}, VE.Paths.Path R a c ↔ R a c ∨ ∃ b, R a b ∧ VE.Paths.Path R b c
+  -- uses VE.Paths.Path@VE.Paths
+  -- expr 986234126
+theorem VE.Paths.mem_dedup
+  ∀ {α : Type u} [inst : DecidableEq α] (a : α) (xs : List α), a ∈ VE.Paths.dedup xs ↔ a ∈ xs
+  -- uses VE.Paths.dedup@VE.Paths
+  -- expr 2372405414
+theorem VE.Paths.mem_pivot
+  ∀ {α : Type u} [inst : DecidableEq α] (v a b : α) (es : List (α × α)),
+    (a, b) ∈ VE.Paths.pivot v es ↔ (a, b) ∈ es ∨ (a, v) ∈ es ∧ (v, b) ∈ es
+  -- uses VE.Paths.pivot@VE.Paths
+  -- expr 460848875
+theorem VE.Paths.pivot_closed
+  ∀ {α : Type u} [inst : DecidableEq α] (es : List (α × α)) (v : α), VE.Paths.ClosedAt (VE.Paths.pivot v es) v
+  -- uses VE.Paths.ClosedAt@VE.Paths VE.Paths.pivot@VE.Paths
+  -- expr 2263114072
+theorem VE.Paths.pivot_preserves_closed
+  ∀ {α : Type u} [inst : DecidableEq α] (es : List (α × α)) (v w : α),
+    VE.Paths.ClosedAt es w → VE.Paths.ClosedAt (VE.Paths.pivot v es) w
+  -- uses VE.Paths.ClosedAt@VE.Paths VE.Paths.pivot@VE.Paths
+  -- expr 3200331533
+theorem VE.Paths.reachEval_iff
+  ∀ {α : Type u} [inst : DecidableEq α] (k : VE.Paths.Kind) (es : List (α × α)) (a b : α),
+    VE.Paths.reachEval k es a b = Bool.true ↔ VE.Paths.Reachable k (fun x y => (x, y) ∈ es) a b
+  -- uses VE.Paths.Kind@VE.Paths VE.Paths.Reachable@VE.Paths VE.Paths.reachEval@VE.Paths
+  -- expr 1557580196
+theorem VE.Paths.star_least
+  ∀ {α : Type u} {R : α → α → Prop} {a c : α},
+    VE.Paths.Reachable VE.Paths.Kind.star R a c ↔
+      ∀ (X : α → α → Prop), (∀ (x : α), X x x) → (∀ (x y z : α), R x y → X y z → X x z) → X a c
+  -- uses VE.Paths.Kind.star@VE.Paths VE.Paths.Reachable@VE.Paths
+  -- expr 268924530
+theorem VE.Paths.warshall_closed
+  ∀ {α : Type u} [inst : DecidableEq α] (vs : List α) (es : List (α × α)) {v : α},
+    v ∈ vs → VE.Paths.ClosedAt (VE.Paths.warshall vs es) v
+  -- uses VE.Paths.ClosedAt@VE.Paths VE.Paths.warshall@VE.Paths
+  -- expr 2574990208
+theorem VE.Paths.warshall_extends
+  ∀ {α : Type u} [inst : DecidableEq α] (vs : List α) (es : List (α × α)) {a b : α},
+    (a, b) ∈ es → (a, b) ∈ VE.Paths.warshall vs es
+  -- uses VE.Paths.warshall@VE.Paths
+  -- expr 3702606317
+theorem VE.Paths.warshall_iff_path
+  ∀ {α : Type u} [inst : DecidableEq α] (es : List (α × α)) (a b : α),
+    (a, b) ∈ VE.Paths.warshall (VE.Paths.dedup (VE.Paths.vertices es)) es ↔ VE.Paths.Path (fun x y => (x, y) ∈ es) a b
+  -- uses VE.Paths.Path@VE.Paths VE.Paths.dedup@VE.Paths VE.Paths.vertices@VE.Paths VE.Paths.warshall@VE.Paths
+  -- expr 4040364958
+theorem VE.Paths.warshall_preserves_closed
+  ∀ {α : Type u} [inst : DecidableEq α] (vs : List α) (es : List (α × α)) (v : α),
+    VE.Paths.ClosedAt es v → VE.Paths.ClosedAt (VE.Paths.warshall vs es) v
+  -- uses VE.Paths.ClosedAt@VE.Paths VE.Paths.warshall@VE.Paths
+  -- expr 4063218487
+theorem VE.Paths.warshall_sound
+  ∀ {α : Type u} [inst : DecidableEq α] (vs : List α) (es : List (α × α)) (R : α → α → Prop),
+    (∀ (a b : α), (a, b) ∈ es → VE.Paths.Path R a b) → ∀ (a b : α), (a, b) ∈ VE.Paths.warshall vs es → VE.Paths.Path R a b
+  -- uses VE.Paths.Path@VE.Paths VE.Paths.warshall@VE.Paths
+  -- expr 2609517366
 theorem VE.Question.Run.oneFields_gated
   ∀ (q : String) (E : VE.EnglishGrammar.Env) (L : VE.EnglishGrammar.Lexicon) (c : VE.Question.Candidate)
     (φ : VE.EnglishGrammar.EFormula) (fs : List (String × Lean.Json)),
