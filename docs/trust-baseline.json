@@ -1181,6 +1181,20 @@
    "reason": "df-1ae: V +104 (K +0, S +0): ResponseShape/Schemas/NormDefaults.lean +80 (the four defaults-* shapes, the situation, the kind and row entries), VE/Defaults/Route.lean +22 (defaultsKinds, defaultsRows, layeredRows, layeredKindCase, runLayered moved), VE/Defaults/Wire.lean +8 (situationJson, coherenceFields, modelFields), VE/NormDefaults/Run.lean +1 (the routing), VE/NormDefaults/Layered.lean -7 (runLayered moved out)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-1ae, 2026-10-18",
    "commit": "a547f2141a37398614fb0eeced43cfa7079c7265"
+  },
+  {
+   "class": "S",
+   "lines": 126,
+   "reason": "ap-2b: K +0, S +126 (lean/VE/Acts/Grammar.lean: frameRules 44, globalRules 18, NT 9, FNT 8, Core 6, RuleS 6, items 6, fillExcl 6, RSym 4, tail 4, schema 4, closed 4, grammar 3, kwSyms 2, many1 2), untied V +14 (Grammar.lean: build 9, RSym.nt? 5); NT.rank (12) is tied to schema_ranked",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-2b, 2026-10-18",
+   "commit": "0e7a813e8841bbd7cf103229cf37386b8699896d"
+  },
+  {
+   "class": "V",
+   "lines": 14,
+   "reason": "ap-2b: K +0, S +126 (lean/VE/Acts/Grammar.lean: frameRules 44, globalRules 18, NT 9, FNT 8, Core 6, RuleS 6, items 6, fillExcl 6, RSym 4, tail 4, schema 4, closed 4, grammar 3, kwSyms 2, many1 2), untied V +14 (Grammar.lean: build 9, RSym.nt? 5); NT.rank (12) is tied to schema_ranked",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-2b, 2026-10-18",
+   "commit": "0e7a813e8841bbd7cf103229cf37386b8699896d"
   }
  ]
 }
