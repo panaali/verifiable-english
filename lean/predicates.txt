@@ -83,6 +83,7 @@ module ResponseShape.Schemas
 module ResponseShape.Skeleton
 module ResponseShape.Skeletons
 module ResponseShape
+module ScopeBenchMain
 module SensesMain
 module Serve
 module SpeechActsMain
