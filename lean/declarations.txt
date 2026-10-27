@@ -2527,10 +2527,11 @@ module VE.Arith.Bounded 3741787baa0ed4d74e85999444e20ee37588ba8a24a0d86174a3d2f7
 445:0-449:16 theorem VE.Arith.arithOutcome_unbounded_iff@VE.Arith.Bounded
 451:0-456:20 theorem VE.Arith.arithOutcome_exhausted_iff@VE.Arith.Bounded
 458:0-466:13 theorem VE.Arith.arithOutcome_decided@VE.Arith.Bounded
-module VE.Arith.BoundedExamples 7d261d3d0ec8514aff03669a2a614baaa7d54abb9f113829530f0d45b70090e2
+module VE.Arith.BoundedExamples c56eaff9f34580cf1a66ce4a4d466f3f5d3b239ca7f3ce88f34c3f55c1a78162
 72:0-72:83 def VE.Arith.Examples.ev@VE.Arith.BoundedExamples
 73:0-73:40 def VE.Arith.Examples.yes@VE.Arith.BoundedExamples
 74:0-74:39 def VE.Arith.Examples.no@VE.Arith.BoundedExamples
+128:0-129:117 def VE.Arith.Examples.dbl@VE.Arith.BoundedExamples
 module VE.Arith.Defs f86495a2c76269e5287d3500112350f36ff7117cd2b435e529bc159782f3cec2
 10:0-17:77 def VE.Arith.Term.bnd@VE.Arith.Defs
 18:0-20:48 def VE.Arith.Term.bndList@VE.Arith.Defs

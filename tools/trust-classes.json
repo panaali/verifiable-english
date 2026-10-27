@@ -14846,6 +14846,7 @@
     },
     "VE/Arith/BoundedExamples.lean": {
       "T": [
+        "VE.Arith.Examples.dbl",
         "VE.Arith.Examples.ev",
         "VE.Arith.Examples.no",
         "VE.Arith.Examples.yes"
