@@ -175,6 +175,7 @@ module VE.Cardinality.Ratio
 module VE.Cardinality.Regions
 module VE.Cardinality.Run
 module VE.Cardinality.RunExamples
+module VE.Cardinality.RunTheorems
 module VE.Cardinality.Semantics
 module VE.Cardinality.Syntax
 module VE.Cardinality.Theorems

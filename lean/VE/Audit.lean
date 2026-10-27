@@ -65,6 +65,7 @@ import VE.Calc.Wire
 import VE.Cardinality.Examples
 import VE.Cardinality.Ratio
 import VE.Cardinality.Run
+import VE.Cardinality.RunTheorems
 import VE.Cardinality.Syntax
 import VE.Cardinality.Theorems
 import VE.Cardinality.Wire
