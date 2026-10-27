@@ -44,6 +44,21 @@ def fa1Admission : Json := answer (case "admission" env fa1Premises fa1Conclusio
 #guard ((fa1Admission.getObjValD "conclusion").getObjValD "formula") == (fa1Conclusion.getObjValD "formula")
 #guard ((fa1Admission.getObjValD "erased").getObjValD "conclusion").getObjValD "meaning_id" !=
   (fa1Admission.getObjValD "conclusion").getObjValD "meaning_id"
+-- Golden identities: FA1's conclusion in the cardinality environment, and the regenerated conclusion and first
+-- premise (a region premise) in W6a's two (annotated, core).
+#guard (fa1Admission.getObjValD "conclusion").getObjValD "meaning_id" ==
+  .str "cdc39856d173011b8acddc122c08690bc453f232202dd5813a65b54f5661b1c5"
+#guard let e := fa1Admission.getObjValD "erased"
+  ((e.getObjValD "conclusion").getObjValD "meaning_id", (e.getObjValD "conclusion").getObjValD "core_meaning_id",
+    ((e.getObjValD "premises").getArr?.toOption.getD #[])[0]!.getObjValD "meaning_id") ==
+  (.str "1693582034e41a1247c1992096ede677b3d42fee76465104b56d9d0836fc326f",
+    .str "e038e0dd3d095b66f455c6ee7201fe3b2ed7dd76550f7912bfcd44a33335c13a",
+    .str "a5e780ecae8ceccd555127a3cda629b7e732c8d3cce1d75254e49d21999d7317")
+-- Spec 4.2's binding texts.
+#guard (stale, VE.Time.Wire.staleW6, VE.Time.Wire.staleCore) ==
+  ("cardinality certificate is stale or bound to different statements",
+    "W6 certificate is stale or bound to different annotated statements",
+    "core certificate is stale or bound to a different regenerated problem")
 -- No `kind` is an admission case; another kind is refused, with no `valid`.
 #guard answer ((case "admission" env fa1Premises fa1Conclusion).setObjVal! "kind" (.str "admission")) ==
   answer (Json.mkObj [("id", .str "c"), ("environment", env), ("premises", Json.arr fa1Premises.toArray),
