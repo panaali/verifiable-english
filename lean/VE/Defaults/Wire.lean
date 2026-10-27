@@ -157,7 +157,10 @@ def collisionOf (L : LayeredU) (w : Json) : Except String (Collision L.U) := do
   let S ← VE.NormDefaults.Wire.situationX L (← w.getObjVal? "model")
   let F ← VE.NormDefaults.Wire.decodeFilling L.U S.M (w.getObjValD "filling")
   match ← VE.Bridge.strings (← w.getObjVal? "rules") with
-  | [m, n] => pure ⟨S, F, m, n⟩
+  | [m, n] =>
+    if let some r := [m, n].find? (fun r => !L.D.T.nodes.any (·.name == r)) then
+      throw s!"InvalidInput: a collision names an undeclared rule {r}"
+    pure ⟨S, F, m, n⟩
   | _ => throw "InvalidInput: a collision names two rules"
 
 /-- A collision is the request's: `model` (`situationX`), `filling` and `rules`. -/
@@ -172,8 +175,10 @@ theorem collisionOf_request {L : LayeredU} {w : Json} {c : Collision L.U}
   obtain ⟨rs, hrs, h⟩ := bind_ok h
   obtain ⟨ns, hns, h⟩ := bind_ok h
   split at h
-  · cases h
-    exact ⟨mj, rs, hmj, hS, hF, hrs, hns⟩
+  · split at h
+    · cases h
+    · cases h
+      exact ⟨mj, rs, hmj, hS, hF, hrs, hns⟩
   · cases h
 
 def pairText : String := "InvalidInput: coherence certificates do not match the colliding pairs"
@@ -193,13 +198,15 @@ def bindPair (environment : Json) (v : DefaultsView) (P Q : SoftNode) (c : Json)
   pure cert
 
 /-- Diagnostic 5: `coherence` lists the colliding pairs in `coherence_targets` order, each with its rule names and an
-    optional certificate; a certificate that does not bind is absent. -/
+    optional certificate; a certificate that does not bind is absent. An absent, `null` or empty list sends no
+    certificate for any pair (DF-ω's `[]`). -/
 def pairCertsOf (environment : Json) (v : DefaultsView) (j : Json) :
     Except String (List (Option VE.Tableau.Certificate)) := do
-  let entries ← match j.getObjVal? "coherence" with
-    | .error _ => pure []
-    | .ok c => (·.toList) <$> c.getArr?
+  let entries ← match VE.Readings.Wire.pieceOf j "coherence" with
+    | none => pure []
+    | some c => (·.toList) <$> c.getArr?
   let pairs := VE.SoftNorms.collidingPairs v.L.D
+  if entries.isEmpty then return pairs.map fun _ => none
   unless entries.length == pairs.length do throw pairText
   (pairs.zip entries).mapM fun ((P, Q), e) => do
     unless (← VE.Bridge.strings (← e.getObjVal? "rules")) == [P.name, Q.name] do throw pairText
@@ -647,7 +654,14 @@ def elaborateFields (v : DefaultsView) : List (String × Json) :=
 def PairStatus.label : PairStatus → String
   | .resolved => "resolved" | .collision => "collision" | .unknown => "unknown"
 
-/-- The verdict and the pairs' statuses; with COLLISION, the pair, the tuple Lean finds and DE7's deciders. -/
+/-- The situation shown (DE6, DE7): its gaps, every unsaid table of the checked filled situation, as a reachable
+    report line shows its witness (`witnessRow`). -/
+def situationJson (U : UDoc) (M : VE.FiniteModel VE.Bridge.Entity) (F : VE.NormDefaults.FiniteFill U VE.Bridge.Entity) :
+    Json :=
+  Json.mkObj [("filling", Json.mkObj (VE.NormDefaults.Wire.witnessRow U (M.withFill F) []).filling)]
+
+/-- The verdict and the pairs' statuses; with COLLISION, the pair, the tuple Lean finds and DE7's deciders, then the
+    situation. -/
 def coherenceFields (x : CoherenceReplay) : List (String × Json) :=
   [("verdict", .str x.verdict), ("pairs", Json.arr (x.pairs.map (fun (p, s) =>
       Json.mkObj [("rules", toJson [p.1.name, p.2.name]), ("status", .str s.label)])).toArray)] ++
@@ -656,7 +670,8 @@ def coherenceFields (x : CoherenceReplay) : List (String × Json) :=
     match (VE.SoftNorms.collidingPairs x.v.L.D).find? (fun p => p.1.name == w.m && p.2.name == w.n) with
     | some (P, Q) => [("collision", Json.mkObj [("rules", toJson [w.m, w.n]),
         ("tuple", entityIds ((collisionTuple x.v.L.U x.v.L.D w.S.M w.F P Q).getD [])),
-        ("deciders", toJson (giveWayDeciders x.v.L.D P Q))])]
+        ("deciders", toJson (giveWayDeciders x.v.L.D P Q))]),
+        ("situation", situationJson x.v.L.U w.S.M w.F)]
     | none => []
   | _, _ => []
 
@@ -725,7 +740,10 @@ theorem coherence_collision_named (x : CoherenceReplay) :
       · rename_i w _ hw
         split at h
         · rename_i P Q hf
-          simp only [List.mem_singleton, Prod.mk.injEq, true_and] at h
+          simp only [List.mem_cons, List.not_mem_nil, or_false, Prod.mk.injEq, true_and] at h
+          rcases h with h | ⟨h, -⟩
+          rotate_left
+          · exact absurd h (by decide)
           have hpq := List.find?_some hf
           simp only [Bool.and_eq_true, beq_iff_eq] at hpq
           exact ⟨w, P, Q, hw, List.mem_of_find?_eq_some hf, hpq.1, hpq.2, h⟩
@@ -745,7 +763,7 @@ def certFields (x : CertReplay) : List (String × Json) :=
 
 def modelFields (x : ModelReplay) : List (String × Json) :=
   [("verdict", .str x.verdict)] ++
-  if x.ok then [("forced", Json.arr (x.forced.map (fun (r, i, vs) =>
+  if x.ok then [("situation", situationJson x.v.L.U x.m.M x.m.F), ("forced", Json.arr (x.forced.map (fun (r, i, vs) =>
     Json.mkObj [("rule", .str r), ("condition", toJson i), ("tuple", entityIds vs)])).toArray)] else []
 
 /-- The `defaults-*` kinds; `none` for any other kind (one row of PK-1's layered kind table). -/
