@@ -1223,6 +1223,20 @@
    "reason": "ap-3b: lean/VE/Acts/Linearize.lean +46 (S: joinWord, Part.toks, listToks, Filler.toks, Atom.normal, tokStr, tokText, Atom.withTo, Atom.text, partAct); Table.lean paraphrases G[R] (not trusted); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3b, 2026-10-18",
    "commit": "0e7a813e8841bbd7cf103229cf37386b8699896d"
+  },
+  {
+   "class": "V",
+   "lines": 26,
+   "reason": "q1-4: VE/Question/Run.lean +24 (the caller's decoding and dispatch, speechPrefixes: replace speech_english's deleted F1 branch and Must/Can refusal), VE/Question/Basic.lean +2 (speechAuxiliaries: the speech caller's F2 words, new Lean behaviour)",
+   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md) for VE/Question/Run.lean +24 and by standing ruling R16 (DRI-RULINGS.md) for VE/Question/Basic.lean +2, q1-4, 2026-10-26",
+   "commit": "c45d799f3cf525a7a39e916240a922c5a60047ee"
+  },
+  {
+   "class": "V",
+   "lines": 4,
+   "reason": "q1-4: VE/Question/Run.lean +4 (caseFields: the question case's fields with the optional caller, factored out of questionCase so #guards check it)",
+   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md), q1-4, 2026-10-26",
+   "commit": "c45d799f3cf525a7a39e916240a922c5a60047ee"
   }
  ]
 }
