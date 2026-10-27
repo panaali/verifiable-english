@@ -1590,6 +1590,11 @@ module ResponseShape a89af379dc2e885f997404f83595dbfce86f6e898b830d94905fac35763
 789:0-789:113 def ResponseShape.tok@ResponseShape
 796:0-796:84 def ResponseShape.disagreeing@ResponseShape
 797:0-800:14 def ResponseShape.brokenOn@ResponseShape
+module ScopeBenchMain ee2f1f4bd87baa553cb8515edb1f937a11e999c2e4108e90b867a1df73f6d2cb
+18:0-20:111 def ScopeBench.row@ScopeBenchMain
+22:0-24:97 def ScopeBench.changed@ScopeBenchMain
+26:0-34:112 def ScopeBench.report@ScopeBenchMain
+38:0-53:12 def main@ScopeBenchMain
 module SensesMain 05cc0d2c0d864744efa3e0602376447057c5b4710b6188d794e5bae5eeef8d11
 3:0-3:68 def main@SensesMain
 module Serve e12fc724f336784c92f6c0c607f4bd190484e6db2f7af7ea0357abe7b3e7f4c0
