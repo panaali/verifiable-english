@@ -49,17 +49,16 @@ def ruleReading (D : ActsDoc) (A : Act) (N : Node) : Except String (List Simple)
   | some op => match table op A with
     | [] => .error s!"InvalidInput: rule {N.name} has no reading of its act; rewrite it"
     | [R] => .ok R
-    | Rs => match paraphrases D.fixed op none s!"rule {N.name}" Rs with
-      | .ok ps => .error (s!"InvalidInput: rule {N.name} has more than one reading: " ++ numbered ps)
-      | .error e => .error e
+    | Rs => paraphrases D.fixed op none s!"rule {N.name}" Rs >>= fun ps =>
+      .error (s!"InvalidInput: rule {N.name} has more than one reading: " ++ numbered ps)
 
 /-- The one reading of a predicate's act: `[[atom a]]` for `one a`; for a join, every rule on `p` and on its dual has
     exactly one reading by the table, and all are equal (D-20 to D-24). -/
 def readingOf (D : ActsDoc) (p : String) : Act → Except String (List Simple)
   | .one a => .ok [.atom a]
   | A => do
-    let T := D.U.D.T
-    let Rs ← (T.nodes.filter (fun N => N.pred == p || some N.pred == dualOf T p)).mapM (ruleReading D A)
+    let d := dualOf D.U.D.T p
+    let Rs ← (D.U.D.T.nodes.filter (fun N => N.pred == p || some N.pred == d)).mapM (ruleReading D A)
     match Rs with
     | [] => .error s!"InvalidInput: the joined act of {p} has no rule to read it by"
     | R :: rest =>
@@ -68,14 +67,10 @@ def readingOf (D : ActsDoc) (p : String) : Act → Except String (List Simple)
 
 /-- The atoms `p` splits into: its act's one reading (`readingOf`), when that reading is two or more atoms (the
     table's readings are all atoms, or one whole act). -/
-def splitAtoms (D : ActsDoc) (p : String) : Option (List Atom) :=
-  match D.acts.lookup p with
-  | some A => match readingOf D p A with
-    | .ok R =>
-      let atoms := R.filterMap (fun x => match x with | .atom a => some a | .whole _ => none)
-      if 2 ≤ atoms.length then some atoms else none
-    | .error _ => none
-  | none => none
+def splitAtoms (D : ActsDoc) (p : String) : Option (List Atom) := do
+  let R ← (D.acts.lookup p).bind fun A => (readingOf D p A).toOption
+  let atoms := R.filterMap fun x => match x with | .atom a => some a | .whole _ => none
+  if 2 ≤ atoms.length then some atoms else none
 
 /-- The parts of `p`, each atom with its index from 1; `[]` when `p` does not split. -/
 def partsOf (D : ActsDoc) (p : String) : List (Atom × Nat) := ((splitAtoms D p).getD []).zipIdx 1
@@ -304,7 +299,8 @@ theorem ruleReading_ok {D : ActsDoc} {A : Act} {N : Node} {R : List Simple} (h :
       split at h
       · cases h
       next R' heq => cases h; exact heq
-      · split at h <;> cases h
+      · simp only [bind, Except.bind] at h
+        split at h <;> cases h
 
 theorem elaborateMap_fst (D : ActsDoc) : (elaborateMap D).map (·.1) = elaborate D := rfl
 
