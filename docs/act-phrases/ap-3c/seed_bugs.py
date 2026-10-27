@@ -58,6 +58,8 @@ BUGS = [
      "C2 each part's act is its atom's (E1)"),
     ("split-reg-dual-unmapped", "splitReg", "permission := r.permission.map (partPred · x.2)",
      "permission := r.permission", "C2 a part's dual is the dual's part (E7)"),
+    ("split-reg-kept-dropped", "splitReg", "  | [] => [r]\n", "  | [] => []\n", "C2 a predicate that does not split is kept (E2)"),
+    ("split-node-kept-dropped", "splitNode", "  | [] => [N]\n", "  | [] => []\n", "C2 a rule that does not split is kept (E2)"),
     ("split-node-over-unmapped", "splitNode", "over := N.over.map (partRule · x.2)", "over := N.over",
      "C2 precedence splits pairwise (E4)"),
     ("split-env-part-undeclared", "splitEnv", "      | some x => D.U.D.E.predicates x.2.1",

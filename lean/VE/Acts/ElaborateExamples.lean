@@ -199,4 +199,52 @@ def many (n : Nat) : List Regulated := (List.range n).map fun i => rg ("b" ++ to
 #guard refusal (withActs (doc (many 63 ++ [rg "p027" .permission]) [nd "r027" "p027" false] ["zzz"]) fx6
   [("p027", g6)]) == some "ResourceLimit: regulated predicates"
 
+/-! ### Each position of each list a check reads (first, middle, last) -/
+
+-- A `one` act reads as its atom, with no rule.
+#guard (readingOf e1 "p" (.one torture)).toOption == some [.atom torture]
+-- D-25: the split predicate first or last in a guard; the bad rule first, its carve-out after; either definition.
+#guard [VE.Formula.and (.unary "b" (.var 0)) (.unary "p027" (.var 0)), .and (.unary "p027" (.var 0)) (.unary "b" (.var 0))].all
+  fun g => refusal (e6 g) == some "InvalidInput: rule rs names a predicate that is split into parts; name one of its parts"
+#guard refusal (withActs (doc [rg "p027" .permission, rg "s" .obligation] [nd "rs" "s" true [] (.unary "p027" (.var 0))
+  [.top], nd "r027" "p027" false]) fx6 [("p027", g6)]) ==
+  some "InvalidInput: rule rs names a predicate that is split into parts; name one of its parts"
+def good : Definition := ⟨"d", ["person"], .unary "b" (.var 0)⟩
+def bad : Definition := ⟨"d2", ["person"], .unary "p027" (.var 0)⟩
+#guard [[good, bad], [bad, good]].all fun ds => refusal (withActs (doc [rg "p027" .permission] [nd "r027" "p027" false]
+  (defs := ds) (extra := ["b", "d", "d2"])) fx6 [("p027", g6)]) ==
+  some "InvalidInput: definition d2 names a predicate that is split into parts; name one of its parts"
+-- Two split sources: both undeclared, every part declared.
+#guard (elaborate (withActs (doc [rg "p027" .permission, rg "p028" .plain none] [nd "r027" "p027" false,
+  nd "r028" "p028" true]) fx6 [("p027", g6), ("p028", g6)])).toOption.map (fun U => ["p027", "p028", "p027__2",
+  "p028__1"].map U.D.E.predicates) == some [none, none, some ["person"], some ["person"]]
+-- The backstop: the kept rule of a split rule's name before or after it, the split rule first or not.
+#guard [[nd "s" "p027" false, nd "r" "p027" false, nd "r" "k" true], [nd "r" "p027" false, nd "s" "p027" false,
+  nd "r" "k" true], [nd "r" "k" true, nd "r" "p027" false]].all fun ns => refusal (withActs (doc [rg "p027" .permission,
+  rg "k" .obligation] ns) fx6 [("p027", g6)]) == some "InvalidInput: the elaborated document is not well formed"
+-- D-24 with three rules: the one that differs last, or in the middle; the obligation after its dual.
+def dual (rs : List Regulated) (ns : List Node) (acts : List String) : ActsDoc :=
+  withActs (doc rs ns) ["the tool", "the data"] (acts.map (·, .any false false [useA, provideA]))
+def q : Regulated := rg "q" .obligation (some "{0} use") (some "qm")
+def qm : Regulated := rg "qm" .permission (some "{0} use")
+#guard [[nd "rq" "q" true, nd "rq2" "q" true, nd "rqm" "qm" false], [nd "rq" "q" true, nd "rqm" "qm" false,
+  nd "rq2" "q" true]].all fun ns => refusal (dual [q, qm] ns ["q"]) ==
+  some "InvalidInput: the rules on q and its dual read its act differently; write the parts as separate predicates"
+#guard refusal (dual [qm, q] [nd "rq" "q" true, nd "rqm" "qm" false] ["qm", "q"]) ==
+  some "InvalidInput: the rules on qm and its dual read its act differently; write the parts as separate predicates"
+-- Precedence over two rules splits pairwise.
+#guard (shown (elaborateMap (withActs (doc [rg "p027" .permission] [nd "r027" "p027" false, nd "r027b" "p027" true,
+  nd "r027c" "p027" false ["r027", "r027b"]]) fx6 [("p027", g6)]))).toOption.map (fun x => x.2.1.map (·.over)) ==
+  some [[], [], [], [], ["r027-a1", "r027b-a1"], ["r027-a2", "r027b-a2"]]
+-- D-26: a regulated part name first; an unspecified part name first or last; a used rule name first.
+#guard refusal (hideEnv (withActs (doc [rg "p027__2" .plain none, rg "p027" .permission] [nd "r027" "p027" false]) fx6
+  [("p027", g6)]) [("p027", ["person"])]) == some "InvalidInput: the part name p027__2 is already declared"
+#guard [["k", "p027__1"], ["p027__1", "k"]].all fun us => refusal (withActs (doc [rg "p027" .permission, rg "k"
+  .obligation] [nd "r027" "p027" false] us) fx6 [("p027", g6)]) == some "InvalidInput: the part name p027__1 is already declared"
+#guard refusal (withActs (doc [rg "p027" .permission, rg "s" .obligation] [nd "r027-a2" "s" true, nd "r027" "p027" false])
+  fx6 [("p027", g6)]) == some "InvalidInput: the part rule name r027-a2 is already used"
+-- D-27: the predicate with equal parts before another.
+#guard refusal (withActs (doc [rg "p" .plain none, rg "k" .plain none] [nd "r" "p" true]) []
+  [("p", .all false false [seek, seek])]) == some "InvalidInput: two parts of p are the same act"
+
 end VE.Acts.ElaborateExamples
