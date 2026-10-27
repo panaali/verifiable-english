@@ -22,7 +22,7 @@ instance typedDec (U : UDoc) (M : VE.FiniteModel Entity) (F : FiniteFill U Entit
 
 instance switchesDec (D : VE.SoftNorms.SoftDoc) (U : UDoc) (M : VE.FiniteModel Entity) (F : FiniteFill U Entity) :
     Decidable (SwitchesOff D (withFill U M.asStructure (finFill M F))) := by
-  unfold SwitchesOff VE.Norms.Sat; infer_instance
+  unfold SwitchesOff; (try unfold VE.Norms.Sat); infer_instance
 
 instance leastDec (D : VE.SoftNorms.SoftDoc) (U : UDoc) (M : VE.FiniteModel Entity) (F : FiniteFill U Entity)
     (p : String) (vs : List Entity) : Decidable (leastDecisions D (withFill U M.asStructure (finFill M F)) p vs) := by

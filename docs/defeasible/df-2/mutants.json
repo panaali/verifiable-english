@@ -8,7 +8,7 @@
  "fixtures": "VE/Defaults/RouteExamples.lean",
  "module": "VE.Defaults.Meaning",
  "keep": [],
- "note": "Each mutant edits one definition or statement of lean/VE/Defaults/Meaning.lean (Lean, the only product language this item changes). Meaning.lean has no #guard: every definition is a Prop or is read by the theorems, so each mutant keeps every theorem and must fail inside each theorem it names ('theorems'); the fixtures file is only the joined file's tail and its guards are the control. kind: plan (DF-2's two seeded bugs), R16 (at least one per new trusted definition of tools/trust_map.py: withOpen, SwitchesOff, DefaultBase, softX, leastDecisions, replacementSafe, ReplacementHolds).",
+ "note": "Each mutant edits one definition or statement of lean/VE/Defaults/Meaning.lean (Lean, the only product language this item changes). Meaning.lean has no #guard: every definition is a Prop or is read by the theorems, so each mutant keeps every theorem and must fail inside each theorem it names ('theorems'); the fixtures file is only the joined file's tail and its guards are the control. kind: plan (DF-2's two seeded bugs), R16 (at least one per new trusted definition of tools/trust_map.py: withOpen, SwitchesOff, DefaultBase, softX, leastDecisions, replacementSafe, ReplacementHolds). T1-T6 are tools/trust_mutants.py's operators on the two Props no check can decide (DefaultBase quantifies over every table, ReplacementHolds over every structure): each breaks the theorems it names, the reason trust-mutants-allow.json gives.",
  "mutants": [
   {
    "language": "Lean",
@@ -174,6 +174,100 @@
    "find": "      BaseAdmissibleX U (defaultX D (softX U D R)) (withOpen U D B (leastDecisions D B) F)\n\n/-! ## What",
    "replace": "      BaseAdmissibleX U (softX U D R) (withOpen U D B (leastDecisions D B) F)\n\n/-! ## What",
    "test": "lake build of lean/VE/Defaults/Meaning.lean: theorem VE.Defaults.default_entails_minimal_of",
+   "guards": [],
+   "theorems": [
+    "default_entails_minimal_of"
+   ]
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Meaning.lean",
+   "id": "T1",
+   "definition": "VE.Defaults.DefaultBase",
+   "kind": "trust_mutants",
+   "bug": "trust_mutants body-true: every base a default base",
+   "find": "  BaseAdmissibleX U X B ∧ SwitchesOff D B ∧\n  ∀ δ F : String → List B.Carrier → Prop,\n    (∀ p ∈ decisionNames D, ∀ vs, δ p vs → B.relation p vs) →\n    BaseAdmissibleX U X (withOpen U D B δ F) → SwitchesOff D (withOpen U D B δ F) →\n    ∀ p ∈ decisionNames D, ∀ vs, B.relation p vs → δ p vs\n",
+   "replace": "  True\n",
+   "test": "lake build of lean/VE/Defaults/Meaning.lean: theorem VE.Defaults.defaultBase_of_dflt, VE.Defaults.default_entails_minimal_of (the tool's operator, which no check can decide: see trust-mutants-allow.json)",
+   "guards": [],
+   "theorems": [
+    "defaultBase_of_dflt",
+    "default_entails_minimal_of"
+   ]
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Meaning.lean",
+   "id": "T2",
+   "definition": "VE.Defaults.DefaultBase",
+   "kind": "trust_mutants",
+   "bug": "trust_mutants body-false: no base a default base",
+   "find": "  BaseAdmissibleX U X B ∧ SwitchesOff D B ∧\n  ∀ δ F : String → List B.Carrier → Prop,\n    (∀ p ∈ decisionNames D, ∀ vs, δ p vs → B.relation p vs) →\n    BaseAdmissibleX U X (withOpen U D B δ F) → SwitchesOff D (withOpen U D B δ F) →\n    ∀ p ∈ decisionNames D, ∀ vs, B.relation p vs → δ p vs\n",
+   "replace": "  False\n",
+   "test": "lake build of lean/VE/Defaults/Meaning.lean: theorem VE.Defaults.defaultBase_of_dflt, VE.Defaults.default_entails_minimal_of (the tool's operator, which no check can decide: see trust-mutants-allow.json)",
+   "guards": [],
+   "theorems": [
+    "defaultBase_of_dflt",
+    "default_entails_minimal_of"
+   ]
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Meaning.lean",
+   "id": "T3",
+   "definition": "VE.Defaults.DefaultBase",
+   "kind": "trust_mutants",
+   "bug": "trust_mutants and-or at the first ∧: admissible or (no switch and minimal)",
+   "find": "  BaseAdmissibleX U X B ∧ SwitchesOff D B ∧\n  ∀ δ F",
+   "replace": "  BaseAdmissibleX U X B ∨ SwitchesOff D B ∧\n  ∀ δ F",
+   "test": "lake build of lean/VE/Defaults/Meaning.lean: theorem VE.Defaults.defaultBase_of_dflt, VE.Defaults.default_entails_minimal_of (the tool's operator, which no check can decide: see trust-mutants-allow.json)",
+   "guards": [],
+   "theorems": [
+    "defaultBase_of_dflt",
+    "default_entails_minimal_of"
+   ]
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Meaning.lean",
+   "id": "T4",
+   "definition": "VE.Defaults.DefaultBase",
+   "kind": "trust_mutants",
+   "bug": "trust_mutants and-or at the second ∧: admissible and (no switch or minimal)",
+   "find": "  BaseAdmissibleX U X B ∧ SwitchesOff D B ∧\n  ∀ δ F",
+   "replace": "  BaseAdmissibleX U X B ∧ SwitchesOff D B ∨\n  ∀ δ F",
+   "test": "lake build of lean/VE/Defaults/Meaning.lean: theorem VE.Defaults.defaultBase_of_dflt, VE.Defaults.default_entails_minimal_of (the tool's operator, which no check can decide: see trust-mutants-allow.json)",
+   "guards": [],
+   "theorems": [
+    "defaultBase_of_dflt",
+    "default_entails_minimal_of"
+   ]
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Meaning.lean",
+   "id": "T5",
+   "definition": "VE.Defaults.ReplacementHolds",
+   "kind": "trust_mutants",
+   "bug": "trust_mutants body-true: the fallback's hypothesis says nothing",
+   "find": "  ∀ B : VE.Structure.{u}, BaseAdmissibleX U (softX U D R) B →\n    ∃ F : String → List B.Carrier → Prop,\n      BaseAdmissibleX U (defaultX D (softX U D R)) (withOpen U D B (leastDecisions D B) F)\n",
+   "replace": "  True\n",
+   "test": "lake build of lean/VE/Defaults/Meaning.lean: theorem VE.Defaults.default_entails_minimal_of (the tool's operator, which no check can decide: see trust-mutants-allow.json)",
+   "guards": [],
+   "theorems": [
+    "default_entails_minimal_of"
+   ]
+  },
+  {
+   "language": "Lean",
+   "file": "lean/VE/Defaults/Meaning.lean",
+   "id": "T6",
+   "definition": "VE.Defaults.ReplacementHolds",
+   "kind": "trust_mutants",
+   "bug": "trust_mutants body-false: the fallback's hypothesis never holds",
+   "find": "  ∀ B : VE.Structure.{u}, BaseAdmissibleX U (softX U D R) B →\n    ∃ F : String → List B.Carrier → Prop,\n      BaseAdmissibleX U (defaultX D (softX U D R)) (withOpen U D B (leastDecisions D B) F)\n",
+   "replace": "  False\n",
+   "test": "lake build of lean/VE/Defaults/Meaning.lean: theorem VE.Defaults.default_entails_minimal_of (the tool's operator, which no check can decide: see trust-mutants-allow.json)",
    "guards": [],
    "theorems": [
     "default_entails_minimal_of"

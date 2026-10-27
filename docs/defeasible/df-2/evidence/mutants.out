@@ -46,4 +46,29 @@ H1 VE.Defaults.ReplacementHolds: FAILS 4 guards
     THEOREM default_entails_minimal_of
     THEOREM default_entails_minimal
     THEOREM default_entails_minimal
+T1 VE.Defaults.DefaultBase: FAILS 6 guards
+    THEOREM defaultBase_of_dflt
+    THEOREM defaultBase_of_dflt
+    THEOREM default_entails_minimal_of
+    THEOREM default_entails_minimal_of
+    THEOREM default_entails_minimal_of
+    THEOREM default_entails_minimal_of
+T2 VE.Defaults.DefaultBase: FAILS 3 guards
+    THEOREM defaultBase_of_dflt
+    THEOREM defaultBase_of_dflt
+    THEOREM default_entails_minimal_of
+T3 VE.Defaults.DefaultBase: FAILS 3 guards
+    THEOREM defaultBase_of_dflt
+    THEOREM defaultBase_of_dflt
+    THEOREM default_entails_minimal_of
+T4 VE.Defaults.DefaultBase: FAILS 3 guards
+    THEOREM defaultBase_of_dflt
+    THEOREM defaultBase_of_dflt
+    THEOREM default_entails_minimal_of
+T5 VE.Defaults.ReplacementHolds: FAILS 2 guards
+    THEOREM default_entails_minimal_of
+    THEOREM default_entails_minimal_of
+T6 VE.Defaults.ReplacementHolds: FAILS 2 guards
+    THEOREM default_entails_minimal_of
+    THEOREM default_entails_minimal_of
 ALL MUTANTS FAIL THEIR GUARDS
