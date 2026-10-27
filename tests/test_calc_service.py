@@ -40,6 +40,7 @@ EXPECTED = [
     "NoClaims: a calculation needs at least one claim",
     ["h6 holds"],  # R-3 (H-6): a derivation that follows
     ["h6 fails"],  # R-4 (H-6n): one that does not
+    ["t1 holds", "t2 holds", "t3 holds", f"t4 unknown ({DIGITS})", "t5 undefined", "t6 holds", "t7 holds"],  # me-2c
 ]
 
 
@@ -184,7 +185,7 @@ def test_rows_carry_leans_sides_display_tie_and_line(service):
     """R3: each new member is Lean's text, as spec 13.6 writes R-1, R-2 and R-3; no row has a finding (a standalone
     case), and a follows row has no sides, display or tie."""
     cases = route_cases()
-    response = ask(service, json.dumps([cases[0], cases[1], cases[-2]], ensure_ascii=False), 3)
+    response = ask(service, json.dumps([cases[0], cases[1], cases[20]], ensure_ascii=False), 3)
     results = [bound["result"] for bound in response["results"]]
     for result, want in zip(results, R1_R2):
         assert [{k: row[k] for k in want[0]} for row in result["rows"]] == want
@@ -193,9 +194,30 @@ def test_rows_carry_leans_sides_display_tie_and_line(service):
     assert h6["line"] == R3_LINE and h6["finding"] is None and not {"sides", "display", "tie"} & h6.keys()
 
 
+# The last route case's rows (me-2c): a tie under either rule and none for a printed bound, two places beyond the
+# printed ones, no display or tie flag without a value, one side per expression of a range; a negative numeral has
+# no English (11.2), so its line is null.
+ROW_FIELDS = [
+    (["1/8"], "0.1250", True, "The eighth is 0.13 when rounded to two decimal places, with exact ties going up."),
+    (["1/8"], "0.1250", True,
+     "The eighth is 0.12 when rounded to two decimal places, with exact ties going to the even digit."),
+    (["1/8"], "0.1250", False, "The eighth is 0.12 when rounded down to two decimal places."),
+    ([None], None, None, "The largest number is 1 when rounded to a whole number, with exact ties going up."),
+    ([None], None, False, None),
+    (["1/8", "0", "1/3"], None, False, "The eighth is from 0 through 1 divided by 3."),
+    (["1/8", "-1"], None, False, None)]
+
+
+def test_row_fields_at_their_boundaries(service):
+    """R3: each member is Lean's text on both sides of its boundary (the RunExamples row-field guards pin more)."""
+    case = route_cases()[22]
+    result = ask(service, json.dumps([case], ensure_ascii=False), 1)["results"][0]["result"]
+    assert [(r["sides"], r["display"], r["tie"], r["line"]) for r in result["rows"]] == ROW_FIELDS
+
+
 def test_a_follows_row_has_no_claim_members(service):
     """R8: a derivation's row given a claim row's sides, display or tie is refused."""
-    request, response = _bound_request(service, route_cases()[-2])
+    request, response = _bound_request(service, route_cases()[20])
     result = response["results"][0]["result"]
     (row,) = result["rows"]
     for member, value in (("sides", ["1"]), ("display", None), ("tie", False)):
