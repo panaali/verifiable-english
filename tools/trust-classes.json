@@ -1769,6 +1769,7 @@
       ],
       "D[I]": [
         "VE.CertificateWire.canonical",
+        "VE.CertificateWire.canonicalWith",
         "VE.CertificateWire.digest",
         "VE.CertificateWire.documentCanonical",
         "VE.CertificateWire.documentDigest",
@@ -1791,6 +1792,9 @@
         "VE.CertificateWire.limit",
         "VE.CertificateWire.maxSteps",
         "VE.CertificateWire.stepLimit"
+      ],
+      "T": [
+        "VE.CertificateWire.refusal"
       ]
     },
     "VE/Checks.lean": {
@@ -1935,10 +1939,16 @@
       "K": [
         "VE.Closure.Kind",
         "VE.Closure.Path",
+        "VE.Closure.Path.below",
         "VE.Closure.Reachable"
       ],
       "C": [
+        "VE.Closure.Kind.plus",
+        "VE.Closure.Kind.star",
         "VE.Closure.dedup",
+        "VE.Closure.instBEqKind",
+        "VE.Closure.instDecidableEqKind",
+        "VE.Closure.instReprKind",
         "VE.Closure.pivot",
         "VE.Closure.reachEval",
         "VE.Closure.vertices",
@@ -2235,10 +2245,16 @@
       "K": [
         "VE.Core.Kind",
         "VE.Core.Path",
+        "VE.Core.Path.below",
         "VE.Core.Reachable"
       ],
       "C": [
+        "VE.Core.Kind.plus",
+        "VE.Core.Kind.star",
         "VE.Core.dedup",
+        "VE.Core.instBEqKind",
+        "VE.Core.instDecidableEqKind",
+        "VE.Core.instReprKind",
         "VE.Core.pivot",
         "VE.Core.reachEval",
         "VE.Core.vertices",
@@ -8454,9 +8470,10 @@
         "VE.Route.Budget.closureRel",
         "VE.Route.Budget.closureRelN",
         "VE.Route.Budget.definitionBudget",
+        "VE.Route.Budget.instHashableClosureKind",
+        "VE.Route.Budget.instHashableCoreKind",
         "VE.Route.Budget.instHashableFormula",
         "VE.Route.Budget.instHashableKind",
-        "VE.Route.Budget.instHashableKind_1",
         "VE.Route.Budget.instHashableTerm"
       ],
       "G[R]": [
@@ -13849,7 +13866,17 @@
         "VE.Service.ActsExamples.members",
         "VE.Service.ActsExamples.frozen",
         "VE.Service.ActsExamples.closure01",
-        "VE.Service.ActsExamples.core0"
+        "VE.Service.ActsExamples.core0",
+        "VE.Service.ActsExamples.regulatedIn",
+        "VE.Service.ActsExamples.threeOf",
+        "VE.Service.ActsExamples.withBlock",
+        "VE.Service.ActsExamples.ab",
+        "VE.Service.ActsExamples.permEnv",
+        "VE.Service.ActsExamples.lexiconOf",
+        "VE.Service.ActsExamples.clause",
+        "VE.Service.ActsExamples.pair",
+        "VE.Service.ActsExamples.late",
+        "VE.Service.ActsExamples.dual"
       ]
     },
     "VE/Events/Conservative.lean": {
@@ -14850,6 +14877,23 @@
         "VE.Arith.Examples.ev",
         "VE.Arith.Examples.no",
         "VE.Arith.Examples.yes"
+      ]
+    },
+    "VE/Paths.lean": {
+      "K": [
+        "VE.Paths.Kind",
+        "VE.Paths.Path",
+        "VE.Paths.Reachable"
+      ],
+      "C": [
+        "VE.Paths.dedup",
+        "VE.Paths.pivot",
+        "VE.Paths.reachEval",
+        "VE.Paths.vertices",
+        "VE.Paths.warshall"
+      ],
+      "P": [
+        "VE.Paths.ClosedAt"
       ]
     }
   }

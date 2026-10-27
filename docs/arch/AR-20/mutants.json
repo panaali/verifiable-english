@@ -1,0 +1,111 @@
+{
+ "mutants": [
+  {
+   "id": "M1",
+   "file": "lean/VE/Kit/Except.lean",
+   "claim": "part 1: VE.Order.ProfileGate.bind_ok (and VE.Readings.Wire.bind_ok, in a module that imports it) are aliases of the one owner VE.Kit.Except.bind_ok with the identical statement; seeded: the owner drops its second conjunct, and the alias no longer type-checks",
+   "find": "    (h : (x >>= f) = .ok b) : ∃ a, x = .ok a ∧ f a = .ok b := by\n  cases x with\n  | error e => cases h\n  | ok a => exact ⟨a, rfl, h⟩",
+   "replace": "    (h : (x >>= f) = .ok b) : ∃ a, x = .ok a := by\n  cases x with\n  | error e => cases h\n  | ok a => exact ⟨a, rfl⟩",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Order.ProfileGate VE.Readings.Companions"
+   ]
+  },
+  {
+   "id": "M2",
+   "file": "lean/VE/Route/Admission.lean",
+   "claim": "part 2: the soft-norms and norm-defaults routes decode their document with Route.Admission.decodeDoc, the one owner of its checks; seeded: decodeDoc drops the duplicate unit id check, and both routes' tests fail through the rebuilt, temporarily pinned ve_service",
+   "find": "  require ((units.map DocUnit.id).eraseDups.length == units.length) \"duplicate unit id\"\n",
+   "replace": "",
+   "command": [
+    "bash",
+    "-c",
+    "set -u; lock=$(mktemp); cp lean/checkers.lock \"$lock\"; trap 'cp \"$lock\" lean/checkers.lock; rm -f \"$lock\"' EXIT; (cd lean && PATH=$HOME/.elan/bin:$PATH lake build ve_service >/dev/null 2>&1) || { echo 'the mutant does not build: not a kill'; exit 0; }; uv run python tools/regen_generated.py --write --only checker-pins >/dev/null 2>&1 || { echo 'pinning failed: not a kill'; exit 0; }; VE_NATIVE_PREBUILT=1 uv run pytest -q -p no:cacheprovider -rfE tests/test_soft_norms_lean.py::test_admission_refuses_each_document_check_of_w2s_decoder tests/test_norm_defaults_three_way.py::test_admission_document_checks_are_w2s_decoder_in_both; s=$?; [ $s -eq 1 ] && exit 1; exit 0"
+   ]
+  },
+  {
+   "id": "M3",
+   "file": "lean/VE/Route/Admission.lean",
+   "claim": "part 2: as M2, for the span check of the one decoder; seeded: decodeDoc no longer checks that unit spans are sorted",
+   "find": "  require (sortedSpans units) \"unit spans must be sorted and non-overlapping\"\n",
+   "replace": "",
+   "command": [
+    "bash",
+    "-c",
+    "set -u; lock=$(mktemp); cp lean/checkers.lock \"$lock\"; trap 'cp \"$lock\" lean/checkers.lock; rm -f \"$lock\"' EXIT; (cd lean && PATH=$HOME/.elan/bin:$PATH lake build ve_service >/dev/null 2>&1) || { echo 'the mutant does not build: not a kill'; exit 0; }; uv run python tools/regen_generated.py --write --only checker-pins >/dev/null 2>&1 || { echo 'pinning failed: not a kill'; exit 0; }; VE_NATIVE_PREBUILT=1 uv run pytest -q -p no:cacheprovider -rfE tests/test_soft_norms_lean.py::test_admission_refuses_each_document_check_of_w2s_decoder tests/test_norm_defaults_three_way.py::test_admission_document_checks_are_w2s_decoder_in_both; s=$?; [ $s -eq 1 ] && exit 1; exit 0"
+   ]
+  },
+  {
+   "id": "M4",
+   "file": "lean/VE/Paths.lean",
+   "claim": "part 3: VE.Paths is the one owner of the Core and Closure path names; seeded: its reachEval tests reflexivity for plus instead of star, and VE.Paths.reachEval_iff (of which VE.Core.reachEval_iff and VE.Closure.reachEval_iff are corollaries) no longer holds",
+   "find": "  (decide (k = .star) && decide (a = b))",
+   "replace": "  (decide (k = .plus) && decide (a = b))",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Core.Paths VE.Closure.Paths"
+   ]
+  },
+  {
+   "id": "M5",
+   "file": "lean/VE/CertificateWire.lean",
+   "claim": "part 4 (L6): canonical and documentCanonical share canonicalWith; seeded: the certificate encoder accepts JSON null, and the guard of its refusal fails",
+   "find": "def canonical : Nat → Json → Except String String :=\n  canonicalWith (throw \"null is not in certificate wire format\")",
+   "replace": "def canonical : Nat → Json → Except String String :=\n  canonicalWith (pure \"null\")",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.CertificateWire"
+   ]
+  },
+  {
+   "id": "M6",
+   "file": "lean/VE/CertificateWire.lean",
+   "claim": "part 4 (L6): the shared array case is the bytes of both encoders; seeded: canonicalWith separates array items with a space, and the byte guards of both encoders fail",
+   "find": "      pure (\"[\" ++ String.intercalate \",\" parts ++ \"]\")",
+   "replace": "      pure (\"[\" ++ String.intercalate \", \" parts ++ \"]\")",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.CertificateWire"
+   ]
+  },
+  {
+   "id": "M7",
+   "file": "tools/layer_policy.py",
+   "claim": "VE.Paths is a layer-1 (kernel) module, so VE.Core.Paths may import it; seeded: VE.Paths drops to the default layer 2 and the Lean import layering check fails",
+   "find": "        \"VE.Limits\", \"VE.Paths\", \"VE.Syntax\",",
+   "replace": "        \"VE.Limits\", \"VE.Syntax\",",
+   "command": [
+    "python",
+    "tools/check_lean_imports.py"
+   ]
+  },
+  {
+   "id": "M8",
+   "file": "lean/VE/SoftNorms/Admission.lean",
+   "claim": "part 2: decodeSoftDoc passes decodeDoc the soft source's data@0 flag; seeded: it passes false, and the soft route no longer refuses a $string quantifier under data@0",
+   "find": "  VE.Route.Admission.decodeDoc src.se.ne.rv (src.se.profiles.contains \"data@0\") j (envPrime src.D)",
+   "replace": "  VE.Route.Admission.decodeDoc src.se.ne.rv false j (envPrime src.D)",
+   "command": [
+    "bash",
+    "-c",
+    "set -u; lock=$(mktemp); cp lean/checkers.lock \"$lock\"; trap 'cp \"$lock\" lean/checkers.lock; rm -f \"$lock\"' EXIT; (cd lean && PATH=$HOME/.elan/bin:$PATH lake build ve_service >/dev/null 2>&1) || { echo 'the mutant does not build: not a kill'; exit 0; }; uv run python tools/regen_generated.py --write --only checker-pins >/dev/null 2>&1 || { echo 'pinning failed: not a kill'; exit 0; }; VE_NATIVE_PREBUILT=1 uv run pytest -q -p no:cacheprovider -rfE tests/test_soft_norms_lean.py::test_admission_refuses_each_document_check_of_w2s_decoder; s=$?; [ $s -eq 1 ] && exit 1; exit 0"
+   ]
+  },
+  {
+   "id": "M9",
+   "file": "lean/VE/NormDefaults/Admission.lean",
+   "claim": "part 2: decodeFilledDoc passes decodeDoc the source's data@0 flag; seeded: it passes false, and the norm-defaults route no longer refuses a $string quantifier under data@0",
+   "find": "  VE.Route.Admission.decodeDoc s.src.ne.rv (s.src.ne.profiles.contains \"data@0\") j (fill s.U).E",
+   "replace": "  VE.Route.Admission.decodeDoc s.src.ne.rv false j (fill s.U).E",
+   "command": [
+    "bash",
+    "-c",
+    "set -u; lock=$(mktemp); cp lean/checkers.lock \"$lock\"; trap 'cp \"$lock\" lean/checkers.lock; rm -f \"$lock\"' EXIT; (cd lean && PATH=$HOME/.elan/bin:$PATH lake build ve_service >/dev/null 2>&1) || { echo 'the mutant does not build: not a kill'; exit 0; }; uv run python tools/regen_generated.py --write --only checker-pins >/dev/null 2>&1 || { echo 'pinning failed: not a kill'; exit 0; }; VE_NATIVE_PREBUILT=1 uv run pytest -q -p no:cacheprovider -rfE tests/test_norm_defaults_three_way.py::test_admission_document_checks_are_w2s_decoder_in_both; s=$?; [ $s -eq 1 ] && exit 1; exit 0"
+   ]
+  }
+ ]
+}
