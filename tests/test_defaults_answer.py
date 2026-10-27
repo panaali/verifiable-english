@@ -306,10 +306,54 @@ def test_elaborate_labels_and_targets(monkeypatch):
              {**row, "default_premises": row["default_premises"][:1] * 2}, source)
 
 
+def test_answer_binds_each_kind_with_its_binding(monkeypatch):
+    """`answer` binds each kind's row with that kind's binding (review df-1b F9's class: an `if ...: return` is a check
+    too): each genuine row through the relay is the answer, and a fault only its own binding refuses is refused
+    through `answer`, so no kind reaches another kind's binding or none."""
+    rows = [(*_genuine(monkeypatch, name, X_ALL, kind), member, what)
+            for name, kind, member, what in (("gamma2", "defaults-elaborate", "coherence_targets", "coherence targets"),
+                                             ("gamma2", "defaults-coherence", "pairs", "pairs"),
+                                             ("delta", "defaults-certificate", "assumptions", "assumptions"))]
+    case, row, source = _beta2(monkeypatch)
+    rows.append((case, row, (), (), source, "forced", "forced order"))
+    answered = {}
+    monkeypatch.setattr(relay, "decide", lambda mode, cases, **options: [answered["row"]])
+    for case, row, labels, targets, source, member, what in rows:
+        kind = case["kind"]
+        answered["row"] = row
+        assert defaults.answer(case, labels, targets, source) == row, kind
+        answered["row"] = {**row, member: row[member][::-1]}
+        _refused(what, defaults.answer, case, labels, targets, source)
+
+
+def test_strict_answer_only_when_lean_says_valid(monkeypatch):
+    """`ask` shows the strict answer only when Lean's layered check says `valid` is true (review df-1b F9). DF-ζ's
+    strict certificate is valid; the same certificate with its trace cut to one `close` is one Lean replays and rejects
+    (a genuine `valid: false` row), and then the default question is asked, never the strict answer shown; DF-α's
+    search finds no strict certificate, so the default question is asked without the strict one."""
+    out, sent = asked(monkeypatch, "zeta")
+    assert out == {"question": "strict", "valid": True}
+    assert sent_kind(sent, "norm-defaults-certificate")[1]["valid"] is True
+    found = defaults._Search.certificate
+
+    def cut(search, X, gamma, phi):
+        certificate = found(search, X, gamma, phi)
+        return {**certificate, "trace": {"rule": "close"}} if X is search.X else certificate
+    with monkeypatch.context() as patch:
+        patch.setattr(defaults._Search, "certificate", cut)
+        out, sent = asked(monkeypatch, "zeta")
+    assert sent_kind(sent, "norm-defaults-certificate")[1]["valid"] is False
+    assert (out["question"], out["kind"]) == ("default", "defaults-certificate"), out
+    out, sent = asked(monkeypatch, "alpha")
+    assert out["question"] == "default"
+    assert not any(case.get("kind") == "norm-defaults-certificate" for case, _ in sent)
+
+
 # The tests above, which tests/test_defaults_checks.py runs against each seeded bug of the binding.
 BOTH_SIDES = (test_run_binds_the_row_to_its_case, test_forced_condition_index_rule_and_tuple,
               test_forced_order_rule_then_tuple, test_forced_tuple_sorts, test_assumptions_and_basis,
-              test_pairs_and_collision, test_elaborate_labels_and_targets)
+              test_pairs_and_collision, test_elaborate_labels_and_targets, test_answer_binds_each_kind_with_its_binding,
+              test_strict_answer_only_when_lean_says_valid)
 
 
 @pytest.mark.parametrize("name", ["alpha", "gamma"])

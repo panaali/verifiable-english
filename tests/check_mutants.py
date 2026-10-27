@@ -1,10 +1,14 @@
 """Seeded bugs of a relay's checks, enumerated from its source: each check weakened or deleted in turn.
 
-A check is the test of an `if` whose body starts with `raise` (it refuses when the test holds). `weakenings` lists
-each sub-condition whose replacement by a constant weakens the check (False where it refuses, True where it accepts;
-`and`/`or` keep the polarity, `not` flips it), and `strengthenings` the whole check made always true. A helper
-check is a call statement (`_tuple(...)`), which `deletions` drops. Because the sites are read from the AST, a check
-written later is a seeded bug too, with no list to update. Used by tests/test_rights_licence_relay.py and
+A check is the test of an `if` whose body starts with `raise` or `return`: an early exit, which refuses (`raise`) or
+gives an answer (`return`, as `ask` shows the strict answer only when Lean says `valid` is true; review df-1b F9).
+`weakenings` lists each sub-condition of a refusing check whose replacement by a constant weakens it (False where it
+refuses, True where it accepts; `and`/`or` keep the polarity, `not` flips it), and `strengthenings` the whole check
+made always true. A `return` exit can be wrong either way (an answer given too often or too rarely), so each of its
+sub-conditions is forced both ways. A forced sub-condition is still evaluated (`c and False`, `c or True`): a check
+that asks Lean and reads its answer keeps asking it, so the seeded bug is the weakened reading, not a missing call.
+A helper check is a call statement (`_tuple(...)`), which `deletions` drops. Because the sites are read from the AST,
+a check written later is a seeded bug too, with no list to update. Used by tests/test_rights_licence_relay.py and
 tests/test_defaults_checks.py.
 """
 from __future__ import annotations
@@ -13,14 +17,17 @@ import ast
 import copy
 
 
+EXITS = (ast.Raise, ast.Return)
+
+
 def checks(tree, select):
-    """`(function, check)` for each `if ...: raise` of the module's top-level functions that `select(function, node)`
-    accepts."""
+    """`(function, check, refuses)` for each `if ...: raise` (`refuses`) and `if ...: return` of the module's
+    top-level functions that `select(function, node)` accepts."""
     for function in tree.body:
         if isinstance(function, ast.FunctionDef):
             for node in ast.walk(function):
-                if isinstance(node, ast.If) and isinstance(node.body[0], ast.Raise) and select(function.name, node):
-                    yield function.name, node.test
+                if isinstance(node, ast.If) and isinstance(node.body[0], EXITS) and select(function.name, node):
+                    yield function.name, node.test, isinstance(node.body[0], ast.Raise)
 
 
 def weakenings(node, refuses):
@@ -32,6 +39,11 @@ def weakenings(node, refuses):
             yield from weakenings(value, refuses)
     elif isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.Not):
         yield from weakenings(node.operand, not refuses)
+
+
+def forced(node, value):
+    """`node` still evaluated, its value `value`: `node and False`, `node or True`."""
+    return ast.BoolOp(ast.Or() if value else ast.And(), [node, ast.Constant(value)])
 
 
 def calls(tree, functions):
@@ -56,12 +68,15 @@ def replace(tree, old, new):
 
 
 def sites(tree, select, functions=()):
-    """`(function, node, replacement, description)` for every seeded bug: each check's weakenings, each check made
-    always true, and each call statement of `functions` deleted."""
-    for function, check in checks(tree, select):
-        for node, value in weakenings(check, True):
-            yield function, node, ast.Constant(value), f"{ast.unparse(node)} -> {value}"
-        yield function, check, ast.Constant(True), f"{ast.unparse(check)} -> True"
+    """`(function, node, replacement, description)` for every seeded bug: each refusing check's weakenings and the
+    check made always true, each sub-condition of a `return` exit forced both ways, and each call statement of
+    `functions` deleted."""
+    for function, check, refuses in checks(tree, select):
+        for node, weakened in weakenings(check, True):
+            for value in (weakened,) if refuses else (weakened, not weakened):
+                yield function, node, forced(node, value), f"{ast.unparse(node)} -> {value}"
+        if refuses:
+            yield function, check, forced(check, True), f"{ast.unparse(check)} -> True"
     for function, statement in calls(tree, functions):
         yield function, statement, ast.Pass(), f"{ast.unparse(statement)} deleted"
 
