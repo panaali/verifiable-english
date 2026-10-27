@@ -876,10 +876,12 @@ def shown (s : String) : List String :=
 -- R-4's counterexample, the claimed bound r = 1/5 with s = r · r and d = 0.4 s, one per free value in declaration order.
 def r3Certificate : String := r#"[{"farkas":{"goal":{"coeffs":[["s","-1"]],"const":"1/20","strict":true},"weights":["1","0","1","2/5"]}},{"square":{"a":"1/20","b":"1/4","root":"r","square":"s"}}]"#
 def h6pCertificate : String := r#"[{"farkas":{"goal":{"coeffs":[["s","-1"]],"const":"1/40","strict":true},"weights":["1","0","1","2/5"]}},{"square":{"a":"1/40","b":"1/6","root":"r","square":"s"}}]"#
-/-- Free `y`, `u`, `x`, `s` and `t`, and `q` = x + y; `c1` derives x < 0 from q ≤ 1 with the link (s, t). -/
-def readsCase : String := onX [premise "p1" r#"["le", ["val", "q"], ["lit", "1"]]"#] r#"["lt", ["val", "x"], ["lit", "0"]]"#
-  r#"["p1"]"# r#"[["s", "t"]]"# (free "y" "the y" ++ ", " ++ free "u" "the u" ++ ", " ++ free "x" "the x" ++ ", " ++
-    free "s" "the s" ++ ", " ++ free "t" "the t" ++ ", " ++ defined "q" r#"["add", ["val", "x"], ["val", "y"]]"#)
+/-- Free `y`, `u`, `x`, `s`, `t`, `v` and `w`, and `q` = x + y; `c1` derives x < 0 from 1 ≥ q (q read only by the last
+expression) with the links (s, t) and (v, w). -/
+def readsCase : String := onX [premise "p1" r#"["ge", ["lit", "1"], ["val", "q"]]"#] r#"["lt", ["val", "x"], ["lit", "0"]]"#
+  r#"["p1"]"# r#"[["s", "t"], ["v", "w"]]"# (free "y" "the y" ++ ", " ++ free "u" "the u" ++ ", " ++ free "x" "the x" ++
+    ", " ++ free "s" "the s" ++ ", " ++ free "t" "the t" ++ ", " ++ free "v" "the v" ++ ", " ++ free "w" "the w" ++ ", " ++
+    defined "q" r#"["add", ["val", "x"], ["val", "y"]]"#)
 #guard expect [
   -- a certificate only where the derivation holds, a counterexample only where it fails
   ("r3", shown r3, [r3Certificate, "null"]),
@@ -897,7 +899,12 @@ def readsCase : String := onX [premise "p1" r#"["le", ["val", "q"], ["lit", "1"]
       claim "c2" r#"["follows", ["lt", ["val", "x"], ["lit", "0"]], [], []]"#)),
     [r#"[{"farkas":{"goal":{"coeffs":[],"const":"1","strict":true},"weights":["1"]}}]"#, "null", "null", "[]"]),
   -- the free values read, in declaration order: through a definition (y, x) and a link (s, t), never an unread one (u)
-  ("reads", shown readsCase, ["null", r#"[["y","1"],["x","0"],["s","0"],["t","0"]]"#]),
+  ("reads", shown readsCase, ["null", r#"[["y","1"],["x","0"],["s","0"],["t","0"],["v","0"],["w","0"]]"#]),
+  -- a goal over two unknowns, every coefficient written
+  ("two-unknowns", shown (req (free "x" "the x" ++ ", " ++ free "y" "the y")
+      (c1 r#"["follows", ["le", ["add", ["val", "x"], ["val", "y"]], ["lit", "2"]], ["p1", "p2"], []]"#)
+      (premises [premise "p1" (xle "1"), premise "p2" r#"["le", ["val", "y"], ["lit", "1"]]"#])),
+    [r#"[{"farkas":{"goal":{"coeffs":[["x","-1"],["y","-1"]],"const":"2","strict":false},"weights":["1","1","1"]}}]"#, "null"]),
   -- a value read whose terms cancel is still read
   ("reads-cancel", shown (onX [] r#"["lt", ["sub", ["val", "x"], ["val", "x"]], ["lit", "0"]]"# "[]"), ["null", r#"[["x","0"]]"#]),
   ("cancel-holds", shown (onX [] r#"["lt", ["sub", ["val", "x"], ["val", "x"]], ["lit", "1"]]"# "[]"),
