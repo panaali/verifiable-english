@@ -1,95 +1,15 @@
 {
  "note": "Seeded bugs of me-2c, each applied alone to the committed tree and restored; every one fails the named test or check. No Python or Rust product code changed (calc.json is generated).",
  "mutants": [
-  {
-   "id": "seed-line",
-   "language": "lean",
-   "file": "lean/VE/Calc/Run.lean",
-   "definition": "VE.Calc.Run.line",
-   "change": "a claim's line rendered with no value words (renderClaim (fun _ => none))",
-   "test": "lake build VE.Calc.RunExamples: #guards lean/VE/Calc/RunExamples.lean:55, :56 (R-1 in full) and :854 (the line guards)",
-   "result": "build failed"
-  },
-  {
-   "id": "seed-exact",
-   "language": "lean",
-   "file": "lean/VE/Calc/Run.lean",
-   "definition": "VE.Calc.Run.exact",
-   "change": "an integer written \"n/1\"",
-   "test": "lake build VE.Calc.RunExamples: #guards lean/VE/Calc/RunExamples.lean:56 (R-2 in full) and :845 (rowFieldCases)",
-   "result": "build failed"
-  },
-  {
-   "id": "seed-display",
-   "language": "lean",
-   "file": "lean/VE/Calc/Run.lean",
-   "definition": "VE.Calc.Run.display",
-   "change": "display at one place beyond the printed ones, not two",
-   "test": "lake build VE.Calc.RunExamples: #guards lean/VE/Calc/RunExamples.lean:55 and :845",
-   "result": "build failed"
-  },
-  {
-   "id": "seed-display-service",
-   "language": "lean",
-   "file": "lean/VE/Calc/Run.lean",
-   "definition": "VE.Calc.Run.display",
-   "change": "as seed-display, ve_service rebuilt and the checker pin rewritten for the run",
-   "test": "tests/test_calc_service.py::test_rows_carry_leans_sides_display_tie_and_line, tests/test_calc_service.py::test_row_fields_at_their_boundaries",
-   "result": "failed"
-  },
-  {
-   "id": "seed-tie",
-   "language": "lean",
-   "file": "lean/VE/Calc/Run.lean",
-   "definition": "VE.Calc.Run.tie",
-   "change": "an undefined rounds claim's tie flag none (null), not false",
-   "test": "lake build VE.Calc.RunExamples: #guard lean/VE/Calc/RunExamples.lean:845 (rowFieldCases \"undefined\")",
-   "result": "build failed"
-  },
-  {
-   "id": "seed-sides",
-   "language": "lean",
-   "file": "lean/VE/Calc/Run.lean",
-   "definition": "VE.Calc.Run.claimFields",
-   "change": "sides written in reverse order",
-   "test": "lake build VE.Calc.RunExamples: #guards lean/VE/Calc/RunExamples.lean:56 (R-2's [null, \"1\"]) and :845 (\"within\")",
-   "result": "build failed"
-  },
-  {
-   "id": "seed-finding",
-   "language": "lean",
-   "file": "lean/VE/Calc/Run.lean",
-   "definition": "VE.Calc.Run.rowJson",
-   "change": "finding \"\" instead of null",
-   "test": "lake build VE.Calc.RunExamples: #guards lean/VE/Calc/RunExamples.lean:55, :56, :624, :625 and :854",
-   "result": "build failed"
-  },
-  {
-   "id": "seed-schema-tie",
-   "language": "lean",
-   "file": "lean/ResponseShape/Schemas/Calc.lean",
-   "definition": "ResponseShape.Schemas.Calc.known",
-   "change": "a holds/fails rounds claim's tie typed null instead of boolean (calc.json regenerated)",
-   "test": "tests/test_calc_service.py::test_route_cases_answer_their_rows, ::test_answers_are_bound_to_their_request, ::test_rows_carry_leans_sides_display_tie_and_line, ::test_row_fields_at_their_boundaries",
-   "result": "failed"
-  },
-  {
-   "id": "seed-schema-sides",
-   "language": "lean",
-   "file": "lean/ResponseShape/Schemas/Calc.lean",
-   "definition": "ResponseShape.Schemas.Calc.sides",
-   "change": "a rounding claim given two sides instead of one (calc.json regenerated)",
-   "test": "tests/test_calc_service.py::test_route_cases_answer_their_rows, ::test_answers_are_bound_to_their_request, ::test_rows_carry_leans_sides_display_tie_and_line, ::test_row_fields_at_their_boundaries",
-   "result": "failed"
-  },
-  {
-   "id": "seed-schema-follows",
-   "language": "lean",
-   "file": "lean/ResponseShape/Schemas/Calc.lean",
-   "definition": "ResponseShape.Schemas.Calc.claimRow",
-   "change": "a follows row required to carry a claim row's sides, display and tie",
-   "test": "lake build ResponseShape.Encoders.Calc (rowJson_fits, rowJson_fits_software: unsolved goals); with calc.json regenerated, tests/test_calc_service.py::test_a_follows_row_has_no_claim_members and ::test_rows_carry_leans_sides_display_tie_and_line",
-   "result": "build failed"
-  }
+  {"id": "seed-line", "language": "lean", "file": "lean/VE/Calc/Run.lean", "definition": "VE.Calc.Run.line", "change": "a claim's line rendered with no value words (renderClaim (fun _ => none))", "test": "lake build VE.Calc.RunExamples: #guards lean/VE/Calc/RunExamples.lean:55, :56 (R-1 in full) and :854 (the line guards)", "result": "build failed"},
+  {"id": "seed-exact", "language": "lean", "file": "lean/VE/Calc/Run.lean", "definition": "VE.Calc.Run.exact", "change": "an integer written \"n/1\"", "test": "lake build VE.Calc.RunExamples: #guards lean/VE/Calc/RunExamples.lean:56 (R-2 in full) and :845 (rowFieldCases)", "result": "build failed"},
+  {"id": "seed-display", "language": "lean", "file": "lean/VE/Calc/Run.lean", "definition": "VE.Calc.Run.display", "change": "display at one place beyond the printed ones, not two", "test": "lake build VE.Calc.RunExamples: #guards lean/VE/Calc/RunExamples.lean:55 and :845", "result": "build failed"},
+  {"id": "seed-display-service", "language": "lean", "file": "lean/VE/Calc/Run.lean", "definition": "VE.Calc.Run.display", "change": "as seed-display, ve_service rebuilt and the checker pin rewritten for the run", "test": "tests/test_calc_service.py::test_rows_carry_leans_sides_display_tie_and_line, tests/test_calc_service.py::test_row_fields_at_their_boundaries", "result": "failed"},
+  {"id": "seed-tie", "language": "lean", "file": "lean/VE/Calc/Run.lean", "definition": "VE.Calc.Run.tie", "change": "an undefined rounds claim's tie flag none (null), not false", "test": "lake build VE.Calc.RunExamples: #guard lean/VE/Calc/RunExamples.lean:845 (rowFieldCases \"undefined\")", "result": "build failed"},
+  {"id": "seed-sides", "language": "lean", "file": "lean/VE/Calc/Run.lean", "definition": "VE.Calc.Run.claimFields", "change": "sides written in reverse order", "test": "lake build VE.Calc.RunExamples: #guards lean/VE/Calc/RunExamples.lean:56 (R-2's [null, \"1\"]) and :845 (\"within\")", "result": "build failed"},
+  {"id": "seed-finding", "language": "lean", "file": "lean/VE/Calc/Run.lean", "definition": "VE.Calc.Run.rowJson", "change": "finding \"\" instead of null", "test": "lake build VE.Calc.RunExamples: #guards lean/VE/Calc/RunExamples.lean:55, :56, :624, :625 and :854", "result": "build failed"},
+  {"id": "seed-schema-tie", "language": "lean", "file": "lean/ResponseShape/Schemas/Calc.lean", "definition": "ResponseShape.Schemas.Calc.known", "change": "a holds/fails rounds claim's tie typed null instead of boolean (calc.json regenerated)", "test": "tests/test_calc_service.py::test_route_cases_answer_their_rows, ::test_answers_are_bound_to_their_request, ::test_rows_carry_leans_sides_display_tie_and_line, ::test_row_fields_at_their_boundaries", "result": "failed"},
+  {"id": "seed-schema-sides", "language": "lean", "file": "lean/ResponseShape/Schemas/Calc.lean", "definition": "ResponseShape.Schemas.Calc.sides", "change": "a rounding claim given two sides instead of one (calc.json regenerated)", "test": "tests/test_calc_service.py::test_route_cases_answer_their_rows, ::test_answers_are_bound_to_their_request, ::test_rows_carry_leans_sides_display_tie_and_line, ::test_row_fields_at_their_boundaries", "result": "failed"},
+  {"id": "seed-schema-follows", "language": "lean", "file": "lean/ResponseShape/Schemas/Calc.lean", "definition": "ResponseShape.Schemas.Calc.claimRow", "change": "a follows row required to carry a claim row's sides, display and tie", "test": "lake build ResponseShape.Encoders.Calc (rowJson_fits, rowJson_fits_software: unsolved goals); with calc.json regenerated, tests/test_calc_service.py::test_a_follows_row_has_no_claim_members and ::test_rows_carry_leans_sides_display_tie_and_line", "result": "build failed"}
  ]
 }
