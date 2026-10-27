@@ -16,15 +16,16 @@ def keeps (D : Defs) (φ : Formula) (n : Nat) : Bool :=
 #guard chain.WellFormed && countDefs.WellFormed && [(chain, Formula.call "big" [lit 3]), (chain, .call "big" [lit 1]),
   (primeDefs, m5), (countDefs, atLeast 2 (.num 11)), (chain, .imp (.call "pos" [lit 0]) no)].all fun (D, φ) =>
     φ.Scoped D 0 && φ.Bounded D
-#guard sweep chain (.call "big" [lit 3]) 6 = [false, false, false, false, false, true, true]
-#guard [4, 5, 6].map (decideBounded chain · (.call "big" [lit 1])) = [none, some (false, 5), some (false, 5)]
-#guard sweep primeDefs m5 3 = [false, false, true, true]
-#guard [127, 128, 129].map (decideBounded countDefs · (atLeast 2 (.num 11))) = [none, some (true, 128), some (true, 128)]
-#guard [2, 3, 4].map (decideBounded chain · (.imp (.call "pos" [lit 0]) no)) = [none, some (true, 3), some (true, 3)]
-#guard [395, 396].map (decideBounded primeDefs · m2) = [some (true, 395), some (true, 395)]
-#guard keeps chain (.call "big" [lit 3]) 40 && keeps primeDefs m5 40 && keeps countDefs (atLeast 2 (.num 11)) 200 &&
-  keeps [] (.allFromTo (lit 1) (lit 3) (.allFromTo (lit 1) (.var 0) (.le (.var 0) (.var 1)))) 40 &&
-  keeps chain (.eq (.call "succ" [lit 3]) (lit 4)) 6
+#guard sweep chain (.call "big" [lit 3]) 24 = List.replicate 23 false ++ [true, true]
+#guard [18, 19, 20].map (decideBounded chain · (.call "big" [lit 1])) = [none, some (false, 19), some (false, 19)]
+#guard sweep primeDefs m5 34 = List.replicate 33 false ++ [true, true]
+#guard [1071, 1072, 1073].map (decideBounded countDefs · (atLeast 2 (.num 11))) =
+  [none, some (true, 1072), some (true, 1072)]
+#guard [8, 9, 10].map (decideBounded chain · (.imp (.call "pos" [lit 0]) no)) = [none, some (true, 9), some (true, 9)]
+#guard [7420, 7421].map (decideBounded primeDefs · m2) = [some (true, 7420), some (true, 7420)]
+#guard keeps chain (.call "big" [lit 3]) 40 && keeps primeDefs m5 40 && keeps countDefs (atLeast 2 (.num 11)) 1100 &&
+  keeps [] (.allFromTo (lit 1) (lit 3) (.allFromTo (lit 1) (.var 0) (.le (.var 0) (.var 1)))) 80 &&
+  keeps chain (.eq (.call "succ" [lit 3]) (lit 4)) 30
 
 /-! The refusing side: without boundedness, scoping or well-formed definitions, no budget decides. An unbounded
 statement, a variable no binder gives, a call with the wrong arity, a missing name and a recursive definition. -/
@@ -40,13 +41,13 @@ def selfCall : Defs := [.fn "f" 0 (.call "f" [])]
 larger budget changes the answer. -/
 def tickEnv (limit : Nat) : OpEnv :=
   ⟨fun f => if f = "tick" then some (0, fun _ w => some ((limit : Int), w)) else none, fun _ => none⟩
-#guard [5, 6].map (fun l => Formula.evalB (tickEnv l) l [] (.eq (.call "tick" []) (lit 5)) 0) =
-  [some (true, 1), some (false, 1)]
+#guard [20, 21].map (fun l => Formula.evalB (tickEnv l) l [] (.eq (.call "tick" []) (lit 20)) 0) =
+  [some (true, 13), some (false, 13)]
 
 /-- The theorems on a fixture: M-5 is decided at some budget, and the larger budget keeps its answer. -/
 example : ∃ limit r, decideBounded primeDefs limit m5 = some r :=
   decideBounded_complete primeDefs (by decide) m5 (by decide) (by decide)
-example : decideBounded primeDefs maxSteps m5 = some (false, 2) :=
-  decideBounded_mono primeDefs m5 2 maxSteps (false, 2) (by decide) (by decide)
+example : decideBounded primeDefs maxSteps m5 = some (false, 33) :=
+  decideBounded_mono primeDefs m5 33 maxSteps (false, 33) (by decide) (by decide)
 
 end VE.Arith.Examples
