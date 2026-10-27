@@ -241,9 +241,9 @@ theorem governSets_limit (D : SDoc) (h : VE.Discourse.productSize (setShapes D) 
 /-- `readings_refused`, restated for the document mode: a reading set this section does not govern (on a governor's
     own unit, under a frontier or fixed reach, with several versions or no reading, or on a unit with content) is
     still refused. -/
-theorem governSets_readings_refused (D : SDoc) (g : Governor) (hg : g ∈ D.governors) (us : List String)
-    (hc : covered D g.reach = .ok us) (u : String) (hu : u = g.unit ∨ u ∈ us) (hs : u ∈ setUnits D.doc)
-    (hn : u ∉ governedSetUnits D) : (governSets D).isOk = false := by
+theorem governSets_readings_refused (D : SDoc) (hw : Pinned.JsonWF D.doc) (g : Governor) (hg : g ∈ D.governors)
+    (us : List String) (hc : covered D g.reach = .ok us) (u : String) (hu : u = g.unit ∨ u ∈ us)
+    (hs : u ∈ setUnits D.doc) (hn : u ∉ governedSetUnits D) : (governSets D).isOk = false := by
   sorry
 
 /-- `scope_admission` (5.2), restated for the document mode that calls `governSets`: the chain checks GOVERN's units
