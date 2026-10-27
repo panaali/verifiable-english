@@ -99,7 +99,7 @@ def _request(*names: str):
 
 @pytest.mark.parametrize("env", [{"VE_TEST_LEAN_JOBS": "1"}, {"PYTEST_XDIST_WORKER": "gw0"},
                                  {"PYTEST_XDIST_WORKER": "gw3", "VE_TEST_LEAN_JOBS": "6"}],
-                         ids=["width 1", "xdist worker", "xdist worker with a width"])
+                         ids=["width-1", "xdist-worker", "xdist-worker-with-a-width"])
 def test_no_pool_starts_at_width_1_or_in_an_xdist_worker(monkeypatch, env):
     """Every test then elaborates its own source, as before: nothing is built, elaborated or given a directory."""
     calls = []
