@@ -11,11 +11,11 @@ from itertools import combinations
 
 import pytest
 
-from tests.test_defaults_lean import DOCS, UNLESS_URGENT, X_ALL, asked, sent_kind
+from tests.test_defaults_lean import DOCS, STRICT, UNLESS_URGENT, X_ALL, asked, env, rule, sent_kind
 from ve import defaults
 from ve.backends import relay
 from ve.backends.lean_service import _decode_json
-from ve.errors import CheckerUnavailable
+from ve.errors import CheckerUnavailable, VEError
 
 DEEP: list = []
 for _ in range(10_000):
@@ -236,6 +236,23 @@ def test_forced_tuple_sorts():
         _refused("forced tuple", defaults.bind_model, case(rows), swapped, source)
     _refused("situation", defaults.bind_model, case([["a", "u"]]), {**row, "situation": {"filling": {"t": [["z"]]}}},
              source)
+    # a sort the model has no domain for has no entity (review df-1b F10's sweep: each `.get` default is needed)
+    lacking = case([["a", "u"]])
+    del lacking["model"]["model"]["domains"]["user"]
+    _refused("forced tuple", defaults.bind_model, lacking, row, source)
+    # no stated condition: an exception object without `sufficient`, or none at all (no request Lean answers)
+    for drop in ("sufficient", None):
+        request = case([["a", "u"]])
+        exception = request["norms"][0]["norm"]["exception"]
+        exception.pop(drop) if drop else request["norms"][0]["norm"].pop("exception")
+        _refused("forced condition", defaults.bind_model, request, row, source)
+    # an exception table the model does not list holds nowhere; a table of a rule the request lacks is not read
+    empty = {**row, "forced": []}
+    assert defaults.bind_model(case([]), empty, source) is empty
+    bare = case([])
+    del bare["model"]["model"]["relations"]["e"]
+    assert defaults.bind_model(bare, empty, source) is empty
+    assert defaults.bind_model(case([["a", "u"]]), row, {"excepted": {"r1": "e", "r9": "e"}}) is row
 
 
 def test_assumptions_and_basis(monkeypatch):
@@ -274,8 +291,9 @@ def test_pairs_and_collision(monkeypatch):
                          ({"deciders": ["assistant"] * 2}, "collision deciders"),
                          ({"deciders": []}, "collision deciders"), ({"tuple": []}, "collision tuple")):
         _refused(what, defaults.bind_coherence, case, {**row, "collision": {**collision, **change}}, targets)
-    for deciders in (["unstated"], ["assistant", "unstated"]):
-        assert defaults.bind_coherence(case, {**row, "collision": {**collision, "deciders": deciders}}, targets)
+    for deciders in (["unstated"], ["assistant", "unstated"]):  # DF-γ's rules both name the assistant
+        _refused("collision deciders", defaults.bind_coherence, case,
+                 {**row, "collision": {**collision, "deciders": deciders}}, targets)
     # the collision's rules: the request's witness (none sent, another pair) and a coherence target, each alone
     _refused("collision rules", defaults.bind_coherence, {k: v for k, v in case.items() if k != "collision"}, row,
              targets)
@@ -294,6 +312,131 @@ def test_pairs_and_collision(monkeypatch):
     assert row["collision"]["deciders"] == ["assistant", "operator"]
     _refused("collision deciders", defaults.bind_coherence, case,
              {**row, "collision": {**row["collision"], "deciders": ["assistant", "operator", "unstated"]}}, targets)
+    _refused("collision deciders", defaults.bind_coherence, case,
+             {**row, "collision": {**row["collision"], "deciders": ["operator", "assistant"]}}, targets)
+
+
+# -- the collision's deciders, cell by cell (review df-1b F10): a rule's own `decided_by`, else the document's
+#    `exception_decider`, else "unstated" (docs/spec/soft-norms.md 1.2; Lean `SoftNorms.Wire.exceptionDecider`), and
+#    one decider when the two rules' are the same, otherwise both in pair order (Lean `giveWayDeciders`).
+
+def _decider_doc(own, document, soft=True):
+    """DF-γ with each rule's `decided_by` `own` (a list, one per rule; None: absent) and the document's
+    `exception_decider` `document` (None: absent; no soft block at all when not `soft`)."""
+    environment = env({**STRICT, **({"exception_decider": document} if document else {})})
+    if not soft:
+        del environment["vocabulary"]["soft"]
+    norms = [rule("r1", "x_required", True, decider=own[0]), rule("r2", "x_permitted", False, decider=own[1])]
+    for norm, decider in zip(norms, own):
+        if decider is None:
+            del norm["norm"]["exception"]["decided_by"]
+    return environment, norms
+
+
+# (cell, the rules' own deciders, the document's, whether it has a soft block, the deciders Lean names), each a
+# genuine DF-γ collision. Every cell where a rule's own decider is absent has the document's.
+DECIDER_CELLS = [
+    ("own-and-document", ["assistant", "assistant"], "operator", True, ["assistant"]),
+    ("own-only", ["assistant", "assistant"], None, True, ["assistant"]),
+    ("own-no-soft-block", ["assistant", "assistant"], None, False, ["assistant"]),
+    ("document-only", [None, None], "operator", True, ["operator"]),
+    ("own-unstated", ["unstated", "unstated"], "operator", True, ["unstated"]),
+    ("mixed", ["assistant", None], "operator", True, ["assistant", "operator"]),
+    ("mixed-reversed", [None, "assistant"], "operator", True, ["operator", "assistant"]),
+]
+# The deciders a row may name in a cell: the expected one, the other source's, "unstated", an unrelated name, and
+# pairs of them in each order.
+NAMES = ("assistant", "operator", "unstated", "nobody")
+CANDIDATES = [[a] for a in NAMES] + [[a, b] for a in NAMES for b in NAMES if a != b]
+_DECIDER_ROWS: dict = {}
+
+
+def _decider_genuine(monkeypatch, cell):
+    """Lean's genuine `defaults-coherence` case and row on the cell's document, and the coherence targets (asked once
+    per session, a copy each call)."""
+    name, own, document, soft, _ = cell
+    if name not in _DECIDER_ROWS:
+        monkeypatch.setitem(DOCS, f"deciders-{name}", _decider_doc(own, document, soft))
+        _, sent = asked(monkeypatch, f"deciders-{name}")
+        case, row = sent_kind(sent, "defaults-coherence")
+        _DECIDER_ROWS[name] = (case, row, sent_kind(sent, "defaults-elaborate")[1]["coherence_targets"])
+    return copy.deepcopy(_DECIDER_ROWS[name])
+
+
+def test_collision_deciders_truth_table(monkeypatch):
+    """In every cell, Lean's genuine row names the expected deciders and the relay accepts exactly those: the other
+    source's, "unstated", an unrelated name and every other pair are refused. The cell with neither source is Lean's
+    diagnostic (MissingExceptionDecider), so no row of it reaches the relay; its request expects "unstated" alone."""
+    for cell in DECIDER_CELLS:
+        case, row, targets = _decider_genuine(monkeypatch, cell)
+        assert row["collision"]["deciders"] == cell[-1], cell[0]
+        assert defaults.bind_coherence(case, row, targets) is row
+        for deciders in CANDIDATES:
+            tampered = {**row, "collision": {**row["collision"], "deciders": deciders}}
+            if deciders == cell[-1]:
+                assert defaults.bind_coherence(case, tampered, targets)
+            else:
+                _refused("collision deciders", defaults.bind_coherence, case, tampered, targets)
+    monkeypatch.setitem(DOCS, "deciders-none", _decider_doc([None, None], None))
+    with pytest.raises(VEError, match="MissingExceptionDecider: rule r1"):
+        asked(monkeypatch, "deciders-none")
+    case, row, targets = _decider_genuine(monkeypatch, DECIDER_CELLS[3])
+    without_key, without_block = copy.deepcopy(case), copy.deepcopy(case)
+    del without_key["environment"]["vocabulary"]["soft"]["exception_decider"]
+    del without_block["environment"]["vocabulary"]["soft"]
+    for request in (without_key, without_block):
+        for deciders in CANDIDATES:
+            tampered = {**row, "collision": {**row["collision"], "deciders": deciders}}
+            if deciders == ["unstated"]:
+                assert defaults.bind_coherence(request, tampered, targets)
+            else:
+                _refused("collision deciders", defaults.bind_coherence, request, tampered, targets)
+    # a rule's exception object absent (no request Lean answers: a default rule has one) is a decider absent too
+    for norm in case["norms"]:
+        del norm["norm"]["exception"]
+    assert defaults.bind_coherence(case, row, targets) is row
+
+
+def test_collision_refused_field_by_field(monkeypatch):
+    """The one condition the relay accepts a collision on, refused field by field: each member of the collision wrong
+    in turn (its rules, its tuple, its deciders, its situation), and each source of the deciders missing in turn from
+    the request while the row keeps Lean's answer to the full one."""
+    cell = DECIDER_CELLS[0]
+    case, row, targets = _decider_genuine(monkeypatch, cell)
+    collision, entity = row["collision"], row["collision"]["tuple"][0]
+    assert defaults.bind_coherence(case, row, targets) is row
+    for change, what in (({"rules": ["r2", "r1"]}, "collision rules"), ({"tuple": ["z"]}, "collision tuple"),
+                         ({"tuple": [entity, entity]}, "collision tuple"),
+                         ({"deciders": ["operator"]}, "collision deciders")):
+        _refused(what, defaults.bind_coherence, case, {**row, "collision": {**collision, **change}}, targets)
+    [table] = row["situation"]["filling"] or ["unsaid__x_required"]
+    _refused("situation", defaults.bind_coherence, case, {**row, "situation": {"filling": {table: [["z"]]}}}, targets)
+    # the rule's own decider missing: the document's ("operator") is expected, Lean's "assistant" is refused
+    for index in range(len(case["norms"])):
+        own = copy.deepcopy(case)
+        del own["norms"][index]["norm"]["exception"]["decided_by"]
+        _refused("collision deciders", defaults.bind_coherence, own, row, targets)
+    # the document's decider missing: the rules' own still decide; both missing: "unstated"
+    bare = copy.deepcopy(case)
+    del bare["environment"]["vocabulary"]["soft"]["exception_decider"]
+    assert defaults.bind_coherence(bare, row, targets) is row
+    for norm in bare["norms"]:
+        del norm["norm"]["exception"]["decided_by"]
+    _refused("collision deciders", defaults.bind_coherence, bare, row, targets)
+    assert defaults.bind_coherence(bare, {**row, "collision": {**collision, "deciders": ["unstated"]}}, targets)
+    # Lean's answer to the request without the rules' own deciders is the document's
+    _, document_row, _ = _decider_genuine(monkeypatch, DECIDER_CELLS[3])
+    assert document_row["collision"]["deciders"] == ["operator"]
+
+
+def test_situation_entities_of_every_sort():
+    """A situation's entities are the request model's, of any of its sorts: an entity of the second sort is one, an
+    entity of no sort is not (`_in_model` reads every sort, not the first)."""
+    witness = {"model": {"domains": {"agent": ["a"], "user": ["u"]}}}
+    for filling in ({"t": [["a"]]}, {"t": [["u"]]}, {"t": [["a", "u"]], "s": [["u", "a"]]}):
+        defaults._situation({"situation": {"filling": filling}}, witness)
+    for filling in ({"t": [["z"]]}, {"t": [["u"], ["z"]]}, {"t": [["a"]], "s": [["u", "z"]]}):
+        _refused("situation", defaults._situation, {"situation": {"filling": filling}}, witness)
 
 
 def test_elaborate_labels_and_targets(monkeypatch):
@@ -304,6 +447,20 @@ def test_elaborate_labels_and_targets(monkeypatch):
         _refused("coherence targets", defaults.bind_elaborate, case, {**row, "coherence_targets": targets}, source)
     _refused("default premises", defaults.bind_elaborate, case,
              {**row, "default_premises": row["default_premises"][:1] * 2}, source)
+
+
+def test_soft_source_is_the_exception_tables(monkeypatch):
+    """`soft_source` reads the exception tables of the source's soft elaboration, and no other decision (DF-ε's switch
+    is an `off` decision of r1): a `defaults-model` answer asked without a source binds to them, so Lean's genuine
+    DF-β2 row with its four forced entries is the answer."""
+    assert defaults.soft_source({"environment": DOCS["epsilon"][0], "norms": DOCS["epsilon"][1]}) == {
+        "pairs": [], "excepted": {"r1": "soft__excepted__r1"}}
+    case, row, source = _beta2(monkeypatch)
+    assert source == {"pairs": [], "excepted": {"r1": "soft__excepted__r1", "r2": "soft__excepted__r2"}}
+    real = relay.decide
+    monkeypatch.setattr(relay, "decide", lambda mode, cases, **options: [row] if mode == defaults.MODE else
+                        real(mode, cases, **options))
+    assert defaults.answer(case) == row
 
 
 def test_answer_binds_each_kind_with_its_binding(monkeypatch):
@@ -345,14 +502,17 @@ def test_strict_answer_only_when_lean_says_valid(monkeypatch):
     assert sent_kind(sent, "norm-defaults-certificate")[1]["valid"] is False
     assert (out["question"], out["kind"]) == ("default", "defaults-certificate"), out
     out, sent = asked(monkeypatch, "alpha")
-    assert out["question"] == "default"
+    assert out == {"question": "default", "kind": "defaults-certificate", "answer": {
+        "verdict": "FOLLOWS", "basis": "needs", "form": "short", "assumptions": ["default:exception:r1"]}}
     assert not any(case.get("kind") == "norm-defaults-certificate" for case, _ in sent)
 
 
 # The tests above, which tests/test_defaults_checks.py runs against each seeded bug of the binding.
 BOTH_SIDES = (test_run_binds_the_row_to_its_case, test_forced_condition_index_rule_and_tuple,
               test_forced_order_rule_then_tuple, test_forced_tuple_sorts, test_assumptions_and_basis,
-              test_pairs_and_collision, test_elaborate_labels_and_targets, test_answer_binds_each_kind_with_its_binding,
+              test_pairs_and_collision, test_collision_deciders_truth_table, test_collision_refused_field_by_field,
+              test_situation_entities_of_every_sort, test_elaborate_labels_and_targets,
+              test_soft_source_is_the_exception_tables, test_answer_binds_each_kind_with_its_binding,
               test_strict_answer_only_when_lean_says_valid)
 
 
