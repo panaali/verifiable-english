@@ -82,14 +82,13 @@ def _situation(row, witness):
         _in_model([r for rows in row["situation"]["filling"].values() for r in rows], witness, "situation")
 
 
-def bind_elaborate(case, row):
-    """`default_premises` under distinct labels; `coherence_targets` distinct pairs of two declared rules."""
+def bind_elaborate(case, row, source):
+    """`default_premises` under distinct labels; `coherence_targets` the colliding pairs of the source (`source`,
+    `soft_source`), in their order."""
     labels = [label for label, _ in row["default_premises"]]
-    pairs = [(m, n) for m, n, _ in row["coherence_targets"]]
-    rules = _rules(case)
     if len(set(labels)) != len(labels):
         raise _unbound("default premises")
-    if len(set(pairs)) != len(pairs) or any(m == n or m not in rules or n not in rules for m, n in pairs):
+    if [[m, n] for m, n, _ in row["coherence_targets"]] != source["pairs"]:
         raise _unbound("coherence targets")
     return row
 
@@ -106,8 +105,8 @@ def bind_coherence(case, row, targets):
             raise _unbound("collision rules")
         rules = [_rules(case)[name] for name in collision["rules"]]
         _tuple(case, rules[0], collision["tuple"], witness, "collision tuple")
-        named = {_decider(case, rule) for rule in rules} | {"unstated"}
-        if not 1 <= len(collision["deciders"]) <= 2 or not set(collision["deciders"]) <= named:
+        named, deciders = {_decider(case, rule) for rule in rules} | {"unstated"}, collision["deciders"]
+        if not 1 <= len(deciders) <= 2 or len(set(deciders)) != len(deciders) or not set(deciders) <= named:
             raise _unbound("collision deciders")
         _situation(row, witness)
     return row
@@ -115,22 +114,27 @@ def bind_coherence(case, row, targets):
 
 def bind_certificate(case, row, labels):
     """`basis`, `form` and `assumptions` exactly with FOLLOWS; the assumptions are labels of the same source's
-    `default_premises`, each once and in their order; `needs` only when the request carried a `strict_model`."""
+    `default_premises`, each once and in their order, none exactly with `strict`; `needs` only when the request
+    carried a `strict_model`; a reason is not empty."""
     follows = row["verdict"] == "FOLLOWS"
     if any((key in row) != follows for key in ("basis", "form", "assumptions")) or ("reason" in row) == follows:
         raise _unbound("verdict")
+    if not follows and not row["reason"]:
+        raise _unbound("reason")
     if follows:
-        if row["assumptions"] != [label for label in labels if label in row["assumptions"]]:
+        if (row["assumptions"] != [label for label in labels if label in row["assumptions"]] or
+                (row["basis"] == "strict") != (row["assumptions"] == [])):
             raise _unbound("assumptions")
         if row["basis"] == "needs" and "strict_model" not in case:
             raise _unbound("basis")
     return row
 
 
-def bind_model(case, row):
+def bind_model(case, row, source):
     """With DOES-NOT-FOLLOW, the situation is in the request's model, and each `forced` entry names a default rule of
     the request, a condition index below its number of stated conditions and a tuple of its act in that model; the
-    entries are distinct, in the request's rule order and then its model's entity order."""
+    entries are the rows of the default rules' exception tables (`source`, `soft_source`) in the request's model, each
+    once, in rule order and then the model's entity order."""
     if ("situation" in row) != (row["verdict"] == "DOES-NOT-FOLLOW") or ("forced" in row) != ("situation" in row):
         raise _unbound("verdict")
     rules, forced = _rules(case), row.get("forced", [])
@@ -141,7 +145,11 @@ def bind_model(case, row):
         if entry["condition"] >= len((rule.get("exception") or {}).get("sufficient", ())):
             raise _unbound("forced condition")
         _tuple(case, rule, entry["tuple"], case["model"], "forced tuple")
-    domains = case["model"]["model"]["domains"]
+    domains, relations = case["model"]["model"]["domains"], case["model"]["model"]["relations"]
+    held = {(name, tuple(values)) for name, table in source["excepted"].items()
+            if rules.get(name, {}).get("mode") == "default" for values in relations.get(table, ())}
+    if row["verdict"] == "DOES-NOT-FOLLOW" and {(e["rule"], tuple(e["tuple"])) for e in forced} != held:
+        raise _unbound("forced exceptions")
     order = [(list(rules).index(e["rule"]), [domains[s].index(v) for s, v in zip(_sorts(case, rules[e["rule"]]),
                                                                                 e["tuple"])]) for e in forced]
     if order != sorted(order) or len({repr(o) for o in order}) != len(order):
@@ -150,21 +158,33 @@ def bind_model(case, row):
     return row
 
 
-def answer(case, labels=(), targets=()):
+def answer(case, labels=(), targets=(), source=None):
     """Lean's bound answer to a `defaults-*` case: `labels` and `targets` are the same source's `defaults-elaborate`
-    rows (`default_premises` labels, `coherence_targets`), which a certificate's and a coherence answer bind to."""
+    rows (`default_premises` labels, `coherence_targets`), which a certificate's and a coherence answer bind to;
+    `source` its colliding pairs and exception tables (`soft_source`), which an elaboration and a model bind to."""
     row = run(case)
     kind = case["kind"]
     try:
+        if kind in ("defaults-elaborate", "defaults-model") and source is None:
+            source = soft_source(case)
         if kind == "defaults-elaborate":
-            return bind_elaborate(case, row)
+            return bind_elaborate(case, row, source)
         if kind == "defaults-coherence":
             return bind_coherence(case, row, targets)
         if kind == "defaults-certificate":
             return bind_certificate(case, row, labels)
-        return bind_model(case, row)
+        return bind_model(case, row, source)
     except (KeyError, TypeError, ValueError, IndexError) as error:
         raise _unbound(f"{type(error).__name__}: {error}") from None
+
+
+def soft_source(case):
+    """The request's source as Lean's soft elaboration gives it (`SoftNormDocument`, which binds it to the source):
+    its colliding pairs, in order, and each rule's exception table."""
+    from .softnorms import SoftEnvironment, SoftNormDocument
+    document = SoftNormDocument(SoftEnvironment(case["environment"]), case["norms"])
+    return {"pairs": [[a.core.name, b.core.name] for a, b in document.collisions],
+            "excepted": {key[1]: name for key, name in document.decision_by_key.items() if key[0] == "excepted"}}
 
 
 # -- the two questions (plan DF-1b), with the untrusted search
