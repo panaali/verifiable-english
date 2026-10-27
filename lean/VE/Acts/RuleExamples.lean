@@ -175,10 +175,11 @@ def K2 : Vocab := ⟨[fr "seek" ["from", "about", "in", "on", ""] ["in", "on"] [
   fr "share" ["with", ""] ["with", ""] [], fr "give back" ["", "via"] ["", "via"] []], ["freely", "gladly"]⟩
 #guard framesOk K2 && (["seek asylum close by home", "seek asylum for peace", "seek asylum about war or peace",
   "seek asylum from war or peace", "seek asylum on Monday or on Tuesday", "seek asylum in Paris or in Rome",
+  "seek asylum on Monday or Tuesday", "seek asylum in Paris or Rome",
   "seek asylum close by home or for peace", "seek asylum for peace or close by home", "seek by", "give back back",
   "seek asylum in Paris or in Rome close by home", "seek asylum in Paris or in Rome for peace",
   "share bread and water freely", "give back bread and water freely"].map ("{0} " ++ ·) |> rawsOf K2 []) ==
-  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2].map some
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2].map some
 -- Refused: an adverb, *be*, a modifier marker's first word or a head's first word as a filler; a repeated marker's
 -- list without its first member.
 #guard (["seek gladly", "seek freely", "seek be", "seek close", "seek for", "give back give",
