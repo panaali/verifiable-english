@@ -100,10 +100,12 @@ def elaborate : Shape :=
   c
     "NormDefaults.Wire.regeneratedU: Norms.Wire.regenerated of fill U, then Fill_T, the unspecified predicates, their unsaid predicates, the default-reached targets and the fragment flag of fill U."
     [obj, .required (elaborateRequired ++ ["filled_environment_id", "fill_hash", "fill_labels",
-      "environment_id", "document_hash"]),
+      "environment_id", "document_hash", "wordings"]),
       closed (elaborateFields ++ [("filled_environment_id", str), ("fill_hash", str),
         ("fill_labels", ref "common.json#/$defs/strings"), ("environment_id", str),
-        ("document_hash", str)])]
+        ("document_hash", str),
+        ("wordings", c "Norms.Wire.plainWordings of the source: one wording per plain predicate with an act, by its name."
+          [ref "common.json#/$defs/string_map"])])]
 
 def base_environment : Shape :=
   copied "the route's base environment regenerated from the request's environment (its soft or rights block removed), compared whole with Python's by the caller" <| c
