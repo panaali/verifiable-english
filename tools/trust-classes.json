@@ -12629,6 +12629,109 @@
         "VE.Acts.Examples.μlast"
       ]
     },
+    "VE/Acts/LexicalBase.lean": {
+      "D[V]": [
+        "VE.Norms.Wire.actReserved",
+        "VE.Norms.Wire.actWord",
+        "VE.Norms.Wire.asciiLetter",
+        "VE.Norms.Wire.pyWhitespace",
+        "VE.Norms.Wire.scanSlots",
+        "VE.Norms.Wire.scanSlotsAux",
+        "VE.Norms.Wire.words"
+      ]
+    },
+    "VE/Acts/Lexical.lean": {
+      "S": [
+        "VE.Acts.Lexical.Form",
+        "VE.Acts.Lexical.Form.text",
+        "VE.Acts.Lexical.Tok",
+        "VE.Acts.Lexical.clauseWords",
+        "VE.Acts.Lexical.fixedOk",
+        "VE.Acts.Lexical.joinWords",
+        "VE.Acts.Lexical.maxActBytes",
+        "VE.Acts.Lexical.maxPhraseBytes",
+        "VE.Acts.Lexical.maxPhrases",
+        "VE.Acts.Lexical.wording"
+      ],
+      "D[V]": [
+        "VE.Acts.Lexical.Form.ofText?",
+        {
+          "name": "VE.Acts.Lexical.check",
+          "tied": [
+            "VE.Acts.Lexical.check_spec"
+          ]
+        },
+        "VE.Acts.Lexical.clash",
+        {
+          "name": "VE.Acts.Lexical.decodeFixed",
+          "tied": [
+            "VE.Acts.Lexical.fixedOk_unique"
+          ]
+        },
+        "VE.Acts.Lexical.dropComma",
+        "VE.Acts.Lexical.fold",
+        {
+          "name": "VE.Acts.Lexical.group",
+          "tied": [
+            "VE.Acts.Lexical.group_spec"
+          ]
+        },
+        {
+          "name": "VE.Acts.Lexical.lex",
+          "tied": [
+            "VE.Acts.Lexical.lex_spec"
+          ]
+        },
+        "VE.Acts.Lexical.normal",
+        "VE.Acts.Lexical.phraseToks",
+        "VE.Acts.Lexical.pieceToks",
+        "VE.Acts.Lexical.rawLex",
+        "VE.Acts.Lexical.slotOf?"
+      ]
+    },
+    "VE/Acts/LexicalExamples.lean": {
+      "T": [
+        "VE.Acts.LexicalExamples.a1",
+        "VE.Acts.LexicalExamples.a13",
+        "VE.Acts.LexicalExamples.a16",
+        "VE.Acts.LexicalExamples.a19",
+        "VE.Acts.LexicalExamples.a2",
+        "VE.Acts.LexicalExamples.a21",
+        "VE.Acts.LexicalExamples.a22",
+        "VE.Acts.LexicalExamples.a24",
+        "VE.Acts.LexicalExamples.a3",
+        "VE.Acts.LexicalExamples.a33",
+        "VE.Acts.LexicalExamples.a4",
+        "VE.Acts.LexicalExamples.a6",
+        "VE.Acts.LexicalExamples.actF",
+        "VE.Acts.LexicalExamples.actOf",
+        "VE.Acts.LexicalExamples.actsP",
+        "VE.Acts.LexicalExamples.chk",
+        "VE.Acts.LexicalExamples.dualF",
+        "VE.Acts.LexicalExamples.errFixed",
+        "VE.Acts.LexicalExamples.errReg",
+        "VE.Acts.LexicalExamples.errS",
+        "VE.Acts.LexicalExamples.fieldsE",
+        "VE.Acts.LexicalExamples.formF",
+        "VE.Acts.LexicalExamples.fx1",
+        "VE.Acts.LexicalExamples.fx16",
+        "VE.Acts.LexicalExamples.fx6",
+        "VE.Acts.LexicalExamples.letters",
+        "VE.Acts.LexicalExamples.long",
+        "VE.Acts.LexicalExamples.meet",
+        "VE.Acts.LexicalExamples.needs",
+        "VE.Acts.LexicalExamples.okS",
+        "VE.Acts.LexicalExamples.perm",
+        "VE.Acts.LexicalExamples.phrase",
+        "VE.Acts.LexicalExamples.plainReg",
+        "VE.Acts.LexicalExamples.rec",
+        "VE.Acts.LexicalExamples.reg",
+        "VE.Acts.LexicalExamples.regErr",
+        "VE.Acts.LexicalExamples.regIn",
+        "VE.Acts.LexicalExamples.roleOrDefault",
+        "VE.Acts.LexicalExamples.toks"
+      ]
+    },
     "VE/Alternatives/FillExamples.lean": {
       "T": [
         "VE.Alternatives.FillExamples.env",
@@ -13630,116 +13733,6 @@
         "VE.Calc.instDecidableHolds"
       ]
     },
-    "VE/Calc/Poly.lean": {
-      "S": [
-        "VE.Calc.Poly.eval"
-      ],
-      "G[R]": [
-        "VE.Calc.Poly.coeffBound",
-        "VE.Calc.maxPolyExponent",
-        "VE.Calc.maxPolyTerms"
-      ],
-      "C": [
-        "VE.Calc.Budgeted",
-        "VE.Calc.Budgeted.bin",
-        "VE.Calc.Expr.evalB",
-        "VE.Calc.Expr.opB",
-        "VE.Calc.Expr.hasDiv",
-        "VE.Calc.Expr.nodesWithin",
-        "VE.Calc.Frac",
-        "VE.Calc.Frac.add?",
-        "VE.Calc.Frac.add?B",
-        "VE.Calc.Frac.div?",
-        "VE.Calc.Frac.div?B",
-        "VE.Calc.Frac.go",
-        "VE.Calc.Frac.mul?",
-        "VE.Calc.Frac.mul?B",
-        "VE.Calc.Frac.ofExpr?",
-        "VE.Calc.Frac.pow?",
-        "VE.Calc.Frac.pow?B",
-        "VE.Calc.Identity.compare",
-        "VE.Calc.Mono",
-        "VE.Calc.Mono.mul",
-        "VE.Calc.Poly",
-        "VE.Calc.Poly.add?",
-        "VE.Calc.Poly.combine",
-        "VE.Calc.Poly.cons0",
-        "VE.Calc.Poly.fits",
-        "VE.Calc.Poly.guard",
-        "VE.Calc.Poly.mul?",
-        "VE.Calc.Poly.mulCost",
-        "VE.Calc.Poly.neg",
-        "VE.Calc.Poly.norm",
-        "VE.Calc.Poly.ofExpr?",
-        "VE.Calc.Poly.one",
-        "VE.Calc.Poly.pow?",
-        "VE.Calc.Poly.pow?B",
-        "VE.Calc.Poly.powWithin",
-        "VE.Calc.Poly.size",
-        "VE.Calc.charge",
-        "VE.Calc.differsAt",
-        "VE.Calc.identityCheck",
-        "VE.Calc.mulVars",
-        "VE.Calc.ratWords",
-        "VE.Calc.sidesAtB",
-        "VE.Calc.varsLe"
-      ],
-      "P": [
-        "VE.Calc.Frac.Means",
-        "VE.Calc.Poly.Within",
-        "VE.Calc.vprod"
-      ]
-    },
-    "VE/Calc/Inline.lean": {
-      "S": [
-        "VE.Calc.assign",
-        "VE.Calc.freeNames"
-      ],
-      "C": [
-        "VE.Calc.Claim.inline",
-        "VE.Calc.Decl.inlineUnder",
-        "VE.Calc.Expr.bin2",
-        "VE.Calc.Expr.inline",
-        "VE.Calc.Expr.subst",
-        "VE.Calc.Inlined",
-        "VE.Calc.Inlined.at",
-        "VE.Calc.inlineTable"
-      ],
-      "P": [
-        "VE.Calc.Inlined.Agrees",
-        "VE.Calc.Inlined.Faults"
-      ]
-    },
-    "VE/Calc/Identity.lean": {
-      "S": [
-        "VE.Calc.IsIdentity",
-        "VE.Calc.NotIdentity"
-      ],
-      "G[R]": [
-        "VE.Calc.IdentityRow.reason",
-        "VE.Calc.IdentityStop",
-        "VE.Calc.IdentityStop.text"
-      ],
-      "C": [
-        "VE.Calc.Expr.zeroDivisor",
-        "VE.Calc.Frac.goB",
-        "VE.Calc.Identity.compareB",
-        "VE.Calc.IdentityRow",
-        "VE.Calc.budgetRow",
-        "VE.Calc.identityDecide",
-        "VE.Calc.identityDecideB",
-        "VE.Calc.identityPoint",
-        "VE.Calc.identityRun",
-        "VE.Calc.identityValues",
-        "VE.Calc.pointsB"
-      ]
-    },
-    "VE/Calc/IdentityExamples.lean": {
-      "T": [
-        "VE.Calc.IdentityExamples.ds",
-        "VE.Calc.IdentityExamples.κ"
-      ]
-    },
     "VE/Calc/FourierMotzkin.lean": {
       "G[R]": [
         "VE.Calc.FM.maxFacts",
@@ -13813,193 +13806,63 @@
         "VE.Calc.DeriveExamples.yAbove"
       ]
     },
-    "VE/Calc/Lower.lean": {
-      "S": [
-        "VE.Calc.Follows",
-        "VE.Calc.HasCounterexample"
-      ],
-      "C": [
-        "VE.Calc.Claim.facts",
-        "VE.Calc.Claim.lower",
-        "VE.Calc.Expr.linear",
-        "VE.Calc.QFact.sub",
-        "VE.Calc.QLin.isConst"
-      ]
-    },
-    "VE/Calc/LowerExamples.lean": {
-      "T": [
-        "VE.Calc.LowerExamples.P",
-        "VE.Calc.LowerExamples.agrees",
-        "VE.Calc.LowerExamples.count",
-        "VE.Calc.LowerExamples.ds",
-        "VE.Calc.LowerExamples.eq",
-        "VE.Calc.LowerExamples.fss",
-        "VE.Calc.LowerExamples.ge",
-        "VE.Calc.LowerExamples.gt",
-        "VE.Calc.LowerExamples.k",
-        "VE.Calc.LowerExamples.le",
-        "VE.Calc.LowerExamples.lin",
-        "VE.Calc.LowerExamples.linPts",
-        "VE.Calc.LowerExamples.links",
-        "VE.Calc.LowerExamples.lt",
-        "VE.Calc.LowerExamples.mixed",
-        "VE.Calc.LowerExamples.p1",
-        "VE.Calc.LowerExamples.pts",
-        "VE.Calc.LowerExamples.r4",
-        "VE.Calc.LowerExamples.rBelow",
-        "VE.Calc.LowerExamples.v",
-        "VE.Calc.LowerExamples.xy"
-      ]
-    },
     "VE/Compose/ProfilesMain.lean": {
       "G[V]": [
         "main",
         "rowJson"
       ]
     },
-    "VE/Acts/LexicalBase.lean": {
-      "D[V]": [
-        "VE.Norms.Wire.actReserved",
-        "VE.Norms.Wire.actWord",
-        "VE.Norms.Wire.asciiLetter",
-        "VE.Norms.Wire.pyWhitespace",
-        "VE.Norms.Wire.scanSlots",
-        "VE.Norms.Wire.scanSlotsAux",
-        "VE.Norms.Wire.words"
-      ]
-    },
-    "VE/Acts/Lexical.lean": {
-      "S": [
-        "VE.Acts.Lexical.Form",
-        "VE.Acts.Lexical.Form.text",
-        "VE.Acts.Lexical.Tok",
-        "VE.Acts.Lexical.clauseWords",
-        "VE.Acts.Lexical.fixedOk",
-        "VE.Acts.Lexical.joinWords",
-        "VE.Acts.Lexical.maxActBytes",
-        "VE.Acts.Lexical.maxPhraseBytes",
-        "VE.Acts.Lexical.maxPhrases",
-        "VE.Acts.Lexical.wording"
-      ],
-      "D[V]": [
-        "VE.Acts.Lexical.Form.ofText?",
-        {
-          "name": "VE.Acts.Lexical.check",
-          "tied": [
-            "VE.Acts.Lexical.check_spec"
-          ]
-        },
-        "VE.Acts.Lexical.clash",
-        {
-          "name": "VE.Acts.Lexical.decodeFixed",
-          "tied": [
-            "VE.Acts.Lexical.fixedOk_unique"
-          ]
-        },
-        "VE.Acts.Lexical.dropComma",
-        "VE.Acts.Lexical.fold",
-        {
-          "name": "VE.Acts.Lexical.group",
-          "tied": [
-            "VE.Acts.Lexical.group_spec"
-          ]
-        },
-        {
-          "name": "VE.Acts.Lexical.lex",
-          "tied": [
-            "VE.Acts.Lexical.lex_spec"
-          ]
-        },
-        "VE.Acts.Lexical.normal",
-        "VE.Acts.Lexical.phraseToks",
-        "VE.Acts.Lexical.pieceToks",
-        "VE.Acts.Lexical.rawLex",
-        "VE.Acts.Lexical.slotOf?"
-      ]
-    },
-    "VE/Acts/LexicalProofs.lean": {
-      "S": [
-        "VE.Acts.Lexical.Accepts",
-        "VE.Acts.Lexical.Grouped",
-        "VE.Acts.Lexical.expand"
-      ],
-      "P": [
-        "VE.Acts.Lexical.decAccepts",
-        "VE.Acts.Lexical.decFixed",
-        "VE.Acts.Lexical.decGrouped",
-        "VE.Acts.Lexical.decOkAnd",
-        "VE.Acts.Lexical.decPlain",
-        "VE.Acts.Lexical.decSuffixes",
-        "VE.Acts.Lexical.decWord",
-        "VE.Acts.Lexical.out",
-        "VE.Acts.Lexical.pieceTok",
-        "VE.Acts.Lexical.splitL",
-        "VE.Acts.Lexical.wordsL"
-      ],
+    "VE/Service/ActsExamples.lean": {
       "T": [
-        "VE.Acts.Lexical.acc",
-        "VE.Acts.Lexical.free",
-        "VE.Acts.Lexical.grouped",
-        "VE.Acts.Lexical.seek"
+        "VE.Service.ActsExamples.a1",
+        "VE.Service.ActsExamples.a2",
+        "VE.Service.ActsExamples.a3",
+        "VE.Service.ActsExamples.a5",
+        "VE.Service.ActsExamples.a6",
+        "VE.Service.ActsExamples.fxs",
+        "VE.Service.ActsExamples.desc",
+        "VE.Service.ActsExamples.pred",
+        "VE.Service.ActsExamples.plain",
+        "VE.Service.ActsExamples.perm",
+        "VE.Service.ActsExamples.env",
+        "VE.Service.ActsExamples.block",
+        "VE.Service.ActsExamples.actsP",
+        "VE.Service.ActsExamples.envA",
+        "VE.Service.ActsExamples.err",
+        "VE.Service.ActsExamples.decodeA",
+        "VE.Service.ActsExamples.rule",
+        "VE.Service.ActsExamples.seek",
+        "VE.Service.ActsExamples.plainRun",
+        "VE.Service.ActsExamples.wordings",
+        "VE.Service.ActsExamples.unsorted",
+        "VE.Service.ActsExamples.sortedRefusal",
+        "VE.Service.ActsExamples.bad",
+        "VE.Service.ActsExamples.withRevision",
+        "VE.Service.ActsExamples.profilesOr",
+        "VE.Service.ActsExamples.unspecified",
+        "VE.Service.ActsExamples.modal",
+        "VE.Service.ActsExamples.admittedWithActs",
+        "VE.Service.ActsExamples.routeWordings",
+        "VE.Service.ActsExamples.environmentRow",
+        "VE.Service.ActsExamples.curly",
+        "VE.Service.ActsExamples.straight",
+        "VE.Service.ActsExamples.members",
+        "VE.Service.ActsExamples.frozen",
+        "VE.Service.ActsExamples.closure01",
+        "VE.Service.ActsExamples.core0"
       ]
     },
-    "VE/Acts/LexicalExamples.lean": {
-      "T": [
-        "VE.Acts.LexicalExamples.a1",
-        "VE.Acts.LexicalExamples.a13",
-        "VE.Acts.LexicalExamples.a16",
-        "VE.Acts.LexicalExamples.a19",
-        "VE.Acts.LexicalExamples.a2",
-        "VE.Acts.LexicalExamples.a21",
-        "VE.Acts.LexicalExamples.a22",
-        "VE.Acts.LexicalExamples.a24",
-        "VE.Acts.LexicalExamples.a3",
-        "VE.Acts.LexicalExamples.a33",
-        "VE.Acts.LexicalExamples.a4",
-        "VE.Acts.LexicalExamples.a6",
-        "VE.Acts.LexicalExamples.actF",
-        "VE.Acts.LexicalExamples.actOf",
-        "VE.Acts.LexicalExamples.actsP",
-        "VE.Acts.LexicalExamples.chk",
-        "VE.Acts.LexicalExamples.dualF",
-        "VE.Acts.LexicalExamples.errFixed",
-        "VE.Acts.LexicalExamples.errReg",
-        "VE.Acts.LexicalExamples.errS",
-        "VE.Acts.LexicalExamples.fieldsE",
-        "VE.Acts.LexicalExamples.formF",
-        "VE.Acts.LexicalExamples.fx1",
-        "VE.Acts.LexicalExamples.fx16",
-        "VE.Acts.LexicalExamples.fx6",
-        "VE.Acts.LexicalExamples.letters",
-        "VE.Acts.LexicalExamples.long",
-        "VE.Acts.LexicalExamples.meet",
-        "VE.Acts.LexicalExamples.needs",
-        "VE.Acts.LexicalExamples.okS",
-        "VE.Acts.LexicalExamples.perm",
-        "VE.Acts.LexicalExamples.phrase",
-        "VE.Acts.LexicalExamples.plainReg",
-        "VE.Acts.LexicalExamples.rec",
-        "VE.Acts.LexicalExamples.reg",
-        "VE.Acts.LexicalExamples.regErr",
-        "VE.Acts.LexicalExamples.regIn",
-        "VE.Acts.LexicalExamples.roleOrDefault",
-        "VE.Acts.LexicalExamples.toks"
-      ]
-    },
-    "VE/Scales/Theorems.lean": {
-      "P": [
-        "VE.Scales.reread",
-        "VE.Scales.point"
-      ]
-    },
-    "VE/Scales/Degrees.lean": {
+    "VE/Events/Conservative.lean": {
       "S": [
-        "VE.Scales.StrictLinear"
+        "VE.Events.oldEnv"
       ],
       "P": [
-        "VE.Scales.asMuch",
-        "VE.Scales.below",
-        "VE.Scales.degreeSetoid"
+        "VE.Events.expDays",
+        "VE.Events.firstDay",
+        "VE.Events.expansion",
+        "VE.Events.dayNames",
+        "VE.Events.firstName",
+        "VE.Events.datesSituation"
       ]
     },
     "VE/Scope/Effects.lean": {
@@ -14020,17 +13883,20 @@
       ]
     },
     "VE/Scope/Theorems.lean": {},
-    "VE/Events/Conservative.lean": {
+    "VE/Scales/Theorems.lean": {
+      "P": [
+        "VE.Scales.reread",
+        "VE.Scales.point"
+      ]
+    },
+    "VE/Scales/Degrees.lean": {
       "S": [
-        "VE.Events.oldEnv"
+        "VE.Scales.StrictLinear"
       ],
       "P": [
-        "VE.Events.expDays",
-        "VE.Events.firstDay",
-        "VE.Events.expansion",
-        "VE.Events.dayNames",
-        "VE.Events.firstName",
-        "VE.Events.datesSituation"
+        "VE.Scales.asMuch",
+        "VE.Scales.below",
+        "VE.Scales.degreeSetoid"
       ]
     },
     "VE/Service/Registry.lean": {
@@ -14048,6 +13914,66 @@
             "VE.Service.registry_modes"
           ]
         }
+      ]
+    },
+    "VE/Calc/Poly.lean": {
+      "S": [
+        "VE.Calc.Poly.eval"
+      ],
+      "G[R]": [
+        "VE.Calc.Poly.coeffBound",
+        "VE.Calc.maxPolyExponent",
+        "VE.Calc.maxPolyTerms"
+      ],
+      "C": [
+        "VE.Calc.Budgeted",
+        "VE.Calc.Budgeted.bin",
+        "VE.Calc.Expr.evalB",
+        "VE.Calc.Expr.opB",
+        "VE.Calc.Expr.hasDiv",
+        "VE.Calc.Expr.nodesWithin",
+        "VE.Calc.Frac",
+        "VE.Calc.Frac.add?",
+        "VE.Calc.Frac.add?B",
+        "VE.Calc.Frac.div?",
+        "VE.Calc.Frac.div?B",
+        "VE.Calc.Frac.go",
+        "VE.Calc.Frac.mul?",
+        "VE.Calc.Frac.mul?B",
+        "VE.Calc.Frac.ofExpr?",
+        "VE.Calc.Frac.pow?",
+        "VE.Calc.Frac.pow?B",
+        "VE.Calc.Identity.compare",
+        "VE.Calc.Mono",
+        "VE.Calc.Mono.mul",
+        "VE.Calc.Poly",
+        "VE.Calc.Poly.add?",
+        "VE.Calc.Poly.combine",
+        "VE.Calc.Poly.cons0",
+        "VE.Calc.Poly.fits",
+        "VE.Calc.Poly.guard",
+        "VE.Calc.Poly.mul?",
+        "VE.Calc.Poly.mulCost",
+        "VE.Calc.Poly.neg",
+        "VE.Calc.Poly.norm",
+        "VE.Calc.Poly.ofExpr?",
+        "VE.Calc.Poly.one",
+        "VE.Calc.Poly.pow?",
+        "VE.Calc.Poly.pow?B",
+        "VE.Calc.Poly.powWithin",
+        "VE.Calc.Poly.size",
+        "VE.Calc.charge",
+        "VE.Calc.differsAt",
+        "VE.Calc.identityCheck",
+        "VE.Calc.mulVars",
+        "VE.Calc.ratWords",
+        "VE.Calc.sidesAtB",
+        "VE.Calc.varsLe"
+      ],
+      "P": [
+        "VE.Calc.Frac.Means",
+        "VE.Calc.Poly.Within",
+        "VE.Calc.vprod"
       ]
     },
     "VE/Scope/Govern.lean": {
@@ -14185,6 +14111,32 @@
         "VE.Scope.ordered",
         "VE.Scope.position",
         "VE.Scope.unary"
+      ]
+    },
+    "VE/Acts/LexicalProofs.lean": {
+      "S": [
+        "VE.Acts.Lexical.Accepts",
+        "VE.Acts.Lexical.Grouped",
+        "VE.Acts.Lexical.expand"
+      ],
+      "P": [
+        "VE.Acts.Lexical.decAccepts",
+        "VE.Acts.Lexical.decFixed",
+        "VE.Acts.Lexical.decGrouped",
+        "VE.Acts.Lexical.decOkAnd",
+        "VE.Acts.Lexical.decPlain",
+        "VE.Acts.Lexical.decSuffixes",
+        "VE.Acts.Lexical.decWord",
+        "VE.Acts.Lexical.out",
+        "VE.Acts.Lexical.pieceTok",
+        "VE.Acts.Lexical.splitL",
+        "VE.Acts.Lexical.wordsL"
+      ],
+      "T": [
+        "VE.Acts.Lexical.acc",
+        "VE.Acts.Lexical.free",
+        "VE.Acts.Lexical.grouped",
+        "VE.Acts.Lexical.seek"
       ]
     },
     "VE/Calc/Units.lean": {
@@ -14392,210 +14344,92 @@
         "VE.Defaults.WireFixtures.δR"
       ]
     },
-    "VE/Service/ActsExamples.lean": {
-      "T": [
-        "VE.Service.ActsExamples.a1",
-        "VE.Service.ActsExamples.a2",
-        "VE.Service.ActsExamples.a3",
-        "VE.Service.ActsExamples.a5",
-        "VE.Service.ActsExamples.a6",
-        "VE.Service.ActsExamples.fxs",
-        "VE.Service.ActsExamples.desc",
-        "VE.Service.ActsExamples.pred",
-        "VE.Service.ActsExamples.plain",
-        "VE.Service.ActsExamples.perm",
-        "VE.Service.ActsExamples.env",
-        "VE.Service.ActsExamples.block",
-        "VE.Service.ActsExamples.actsP",
-        "VE.Service.ActsExamples.envA",
-        "VE.Service.ActsExamples.err",
-        "VE.Service.ActsExamples.decodeA",
-        "VE.Service.ActsExamples.rule",
-        "VE.Service.ActsExamples.seek",
-        "VE.Service.ActsExamples.plainRun",
-        "VE.Service.ActsExamples.wordings",
-        "VE.Service.ActsExamples.unsorted",
-        "VE.Service.ActsExamples.sortedRefusal",
-        "VE.Service.ActsExamples.bad",
-        "VE.Service.ActsExamples.withRevision",
-        "VE.Service.ActsExamples.profilesOr",
-        "VE.Service.ActsExamples.unspecified",
-        "VE.Service.ActsExamples.modal",
-        "VE.Service.ActsExamples.admittedWithActs",
-        "VE.Service.ActsExamples.routeWordings",
-        "VE.Service.ActsExamples.environmentRow",
-        "VE.Service.ActsExamples.curly",
-        "VE.Service.ActsExamples.straight",
-        "VE.Service.ActsExamples.members",
-        "VE.Service.ActsExamples.frozen",
-        "VE.Service.ActsExamples.closure01",
-        "VE.Service.ActsExamples.core0"
-      ]
-    },
-    "VE/Scope/WireExamples.lean": {
-      "T": [
-        "VE.Scope.WireExamples.anchor",
-        "VE.Scope.WireExamples.ansUnit",
-        "VE.Scope.WireExamples.ansUnits",
-        "VE.Scope.WireExamples.answer",
-        "VE.Scope.WireExamples.blockWith",
-        "VE.Scope.WireExamples.decoded",
-        "VE.Scope.WireExamples.effectTag",
-        "VE.Scope.WireExamples.errorOf",
-        "VE.Scope.WireExamples.foldDoc",
-        "VE.Scope.WireExamples.foldEnv",
-        "VE.Scope.WireExamples.foldGov",
-        "VE.Scope.WireExamples.gov",
-        "VE.Scope.WireExamples.listName",
-        "VE.Scope.WireExamples.st"
-      ]
-    },
-    "VE/Service/ScopeExamples.lean": {
-      "T": [
-        "VE.Service.ScopeExamples.block",
-        "VE.Service.ScopeExamples.case",
-        "VE.Service.ScopeExamples.doc",
-        "VE.Service.ScopeExamples.env",
-        "VE.Service.ScopeExamples.errorOf",
-        "VE.Service.ScopeExamples.front",
-        "VE.Service.ScopeExamples.full",
-        "VE.Service.ScopeExamples.fullUnits",
-        "VE.Service.ScopeExamples.governor",
-        "VE.Service.ScopeExamples.item",
-        "VE.Service.ScopeExamples.lead",
-        "VE.Service.ScopeExamples.listed",
-        "VE.Service.ScopeExamples.member",
-        "VE.Service.ScopeExamples.part",
-        "VE.Service.ScopeExamples.row",
-        "VE.Service.ScopeExamples.source",
-        "VE.Service.ScopeExamples.sp",
-        "VE.Service.ScopeExamples.statuses",
-        "VE.Service.ScopeExamples.unf",
-        "VE.Service.ScopeExamples.unfKind",
-        "VE.Service.ScopeExamples.unit",
-        "VE.Service.ScopeExamples.units",
-        "VE.Service.ScopeExamples.unsorted"
-      ]
-    },
-    "VE/Service/ScopeAdmission.lean": {},
-    "VE/Scope/Wire.lean": {
-      "D[R]": [
-        "VE.Scope.memberOf",
-        "VE.Scope.membersIn",
-        "VE.Scope.textOf",
-        "VE.Scope.textsOf",
-        "VE.Scope.wireFault"
-      ],
-      "D[V]": [
-        "VE.Scope.decodeBlock",
-        "VE.Scope.decodeEffect",
-        "VE.Scope.decodeGovernor",
-        "VE.Scope.decodeListName",
-        "VE.Scope.decodeParts",
-        "VE.Scope.decodeReach",
-        "VE.Scope.layoutOf",
-        "VE.Scope.listMember",
-        "VE.Scope.spanIn"
-      ],
-      "G[V]": [
-        {
-          "name": "VE.Scope.governorStatus",
-          "tied": [
-            "VE.Scope.governor_status_weakest",
-            "VE.Scope.governor_status_none"
-          ]
-        },
-        "VE.Scope.byStatus",
-        "VE.Scope.changers",
-        "VE.Scope.foldGovernors",
-        "VE.Scope.statusOf"
-      ]
-    },
-    "VE/Arith/Syntax.lean": {
+    "VE/Calc/Inline.lean": {
       "S": [
-        "VE.Arith.Def",
-        "VE.Arith.Defs",
-        "VE.Arith.Formula",
-        "VE.Arith.Term"
+        "VE.Calc.assign",
+        "VE.Calc.freeNames"
+      ],
+      "C": [
+        "VE.Calc.Claim.inline",
+        "VE.Calc.Decl.inlineUnder",
+        "VE.Calc.Expr.bin2",
+        "VE.Calc.Expr.inline",
+        "VE.Calc.Expr.subst",
+        "VE.Calc.Inlined",
+        "VE.Calc.Inlined.at",
+        "VE.Calc.inlineTable"
+      ],
+      "P": [
+        "VE.Calc.Inlined.Agrees",
+        "VE.Calc.Inlined.Faults"
       ]
     },
-    "VE/Arith/Holds.lean": {
+    "VE/Calc/Identity.lean": {
       "S": [
-        "VE.Arith.Defs.Means",
-        "VE.Arith.Defs.env",
-        "VE.Arith.Env",
-        "VE.Arith.Holds",
-        "VE.Arith.Term.value",
-        "VE.Arith.Term.values"
-      ]
-    },
-    "VE/Arith/Defs.lean": {
+        "VE.Calc.IsIdentity",
+        "VE.Calc.NotIdentity"
+      ],
       "G[R]": [
-        "VE.Arith.Def.arity",
-        "VE.Arith.Def.isPred",
-        "VE.Arith.Def.name",
-        "VE.Arith.Defs.WellFormed",
-        "VE.Arith.Defs.boundedNames",
-        "VE.Arith.Defs.refusals",
-        "VE.Arith.Formula.Bounded",
-        "VE.Arith.Formula.Scoped",
-        "VE.Arith.Formula.bnd",
-        "VE.Arith.Formula.sites",
-        "VE.Arith.Refusal",
-        "VE.Arith.Refusal.code",
-        "VE.Arith.Refusal.rank",
-        "VE.Arith.Site",
-        "VE.Arith.Site.refusal",
-        "VE.Arith.Term.bnd",
-        "VE.Arith.Term.bndList",
-        "VE.Arith.Term.sites",
-        "VE.Arith.Term.sitesList",
-        "VE.Arith.caseRefusal",
-        "VE.Arith.firstRefusal"
+        "VE.Calc.IdentityRow.reason",
+        "VE.Calc.IdentityStop",
+        "VE.Calc.IdentityStop.text"
+      ],
+      "C": [
+        "VE.Calc.Expr.zeroDivisor",
+        "VE.Calc.Frac.goB",
+        "VE.Calc.Identity.compareB",
+        "VE.Calc.IdentityRow",
+        "VE.Calc.budgetRow",
+        "VE.Calc.identityDecide",
+        "VE.Calc.identityDecideB",
+        "VE.Calc.identityPoint",
+        "VE.Calc.identityRun",
+        "VE.Calc.identityValues",
+        "VE.Calc.pointsB"
       ]
     },
-    "VE/Arith/Examples.lean": {
-      "S": [
-        "VE.Arith.Examples.IsPrime"
-      ],
+    "VE/Calc/IdentityExamples.lean": {
       "T": [
-        "VE.Arith.Examples.Positions.Host",
-        "VE.Arith.Examples.Positions.Host.calls",
-        "VE.Arith.Examples.Positions.Place",
-        "VE.Arith.Examples.Positions.Place.down",
-        "VE.Arith.Examples.Positions.Step",
-        "VE.Arith.Examples.Positions.ff",
-        "VE.Arith.Examples.Positions.firstRepeat",
-        "VE.Arith.Examples.Positions.formulaPairs",
-        "VE.Arith.Examples.Positions.formulaPlaces",
-        "VE.Arith.Examples.Positions.formulas",
-        "VE.Arith.Examples.Positions.hosts",
-        "VE.Arith.Examples.Positions.later",
-        "VE.Arith.Examples.Positions.nameLists",
-        "VE.Arith.Examples.Positions.ok",
-        "VE.Arith.Examples.Positions.oneEach",
-        "VE.Arith.Examples.Positions.refusedAs",
-        "VE.Arith.Examples.Positions.termPairs",
-        "VE.Arith.Examples.Positions.termPlaces",
-        "VE.Arith.Examples.Positions.terms",
-        "VE.Arith.Examples.Positions.tf",
-        "VE.Arith.Examples.Positions.tt",
-        "VE.Arith.Examples.Positions.unbounded",
-        "VE.Arith.Examples.Positions.vocab",
-        "VE.Arith.Examples.Positions.z",
-        "VE.Arith.Examples.atLeast",
-        "VE.Arith.Examples.bertrand",
-        "VE.Arith.Examples.chain",
-        "VE.Arith.Examples.countDefs",
-        "VE.Arith.Examples.double",
-        "VE.Arith.Examples.lit",
-        "VE.Arith.Examples.m1",
-        "VE.Arith.Examples.m2",
-        "VE.Arith.Examples.m4",
-        "VE.Arith.Examples.m5",
-        "VE.Arith.Examples.primeBody",
-        "VE.Arith.Examples.primeDefs",
-        "VE.Arith.Examples.tacticMeans"
+        "VE.Calc.IdentityExamples.ds",
+        "VE.Calc.IdentityExamples.κ"
+      ]
+    },
+    "VE/Calc/Lower.lean": {
+      "S": [
+        "VE.Calc.Follows",
+        "VE.Calc.HasCounterexample"
+      ],
+      "C": [
+        "VE.Calc.Claim.facts",
+        "VE.Calc.Claim.lower",
+        "VE.Calc.Expr.linear",
+        "VE.Calc.QFact.sub",
+        "VE.Calc.QLin.isConst"
+      ]
+    },
+    "VE/Calc/LowerExamples.lean": {
+      "T": [
+        "VE.Calc.LowerExamples.P",
+        "VE.Calc.LowerExamples.agrees",
+        "VE.Calc.LowerExamples.count",
+        "VE.Calc.LowerExamples.ds",
+        "VE.Calc.LowerExamples.eq",
+        "VE.Calc.LowerExamples.fss",
+        "VE.Calc.LowerExamples.ge",
+        "VE.Calc.LowerExamples.gt",
+        "VE.Calc.LowerExamples.k",
+        "VE.Calc.LowerExamples.le",
+        "VE.Calc.LowerExamples.lin",
+        "VE.Calc.LowerExamples.linPts",
+        "VE.Calc.LowerExamples.links",
+        "VE.Calc.LowerExamples.lt",
+        "VE.Calc.LowerExamples.mixed",
+        "VE.Calc.LowerExamples.p1",
+        "VE.Calc.LowerExamples.pts",
+        "VE.Calc.LowerExamples.r4",
+        "VE.Calc.LowerExamples.rBelow",
+        "VE.Calc.LowerExamples.v",
+        "VE.Calc.LowerExamples.xy"
       ]
     },
     "VE/Calc/Wire.lean": {
@@ -14750,6 +14584,60 @@
         "VE.Calc.RunExamples.x1c"
       ]
     },
+    "VE/Acts/Table.lean": {
+      "S": [
+        "VE.Acts.Op",
+        "VE.Acts.Simple",
+        "VE.Acts.freeTable",
+        "VE.Acts.opOf",
+        "VE.Acts.table"
+      ]
+    },
+    "VE/Acts/TableExamples.lean": {
+      "T": [
+        "VE.Acts.TableExamples.actParts",
+        "VE.Acts.TableExamples.beyond",
+        "VE.Acts.TableExamples.causes",
+        "VE.Acts.TableExamples.cruel",
+        "VE.Acts.TableExamples.denied",
+        "VE.Acts.TableExamples.deprived",
+        "VE.Acts.TableExamples.directly",
+        "VE.Acts.TableExamples.fillerParts",
+        "VE.Acts.TableExamples.form",
+        "VE.Acts.TableExamples.g10",
+        "VE.Acts.TableExamples.g11",
+        "VE.Acts.TableExamples.g12",
+        "VE.Acts.TableExamples.g14v",
+        "VE.Acts.TableExamples.g6",
+        "VE.Acts.TableExamples.g7",
+        "VE.Acts.TableExamples.g9",
+        "VE.Acts.TableExamples.held",
+        "VE.Acts.TableExamples.heldBy",
+        "VE.Acts.TableExamples.join",
+        "VE.Acts.TableExamples.joinByName",
+        "VE.Acts.TableExamples.joinWord",
+        "VE.Acts.TableExamples.modifierWord",
+        "VE.Acts.TableExamples.opWords",
+        "VE.Acts.TableExamples.partIndex",
+        "VE.Acts.TableExamples.protection",
+        "VE.Acts.TableExamples.reg",
+        "VE.Acts.TableExamples.shape",
+        "VE.Acts.TableExamples.simpleParts",
+        "VE.Acts.TableExamples.through",
+        "VE.Acts.TableExamples.torture",
+        "VE.Acts.TableExamples.w"
+      ]
+    },
+    "VE/Acts/Tree.lean": {
+      "S": [
+        "VE.Acts.Act",
+        "VE.Acts.Atom",
+        "VE.Acts.Filler",
+        "VE.Acts.Join",
+        "VE.Acts.Modifier",
+        "VE.Acts.Part"
+      ]
+    },
     "ResponseShape/Schemas/Calc.lean": {
       "G[R]": [
         "ResponseShape.Schemas.Calc.answer",
@@ -14759,6 +14647,172 @@
         "ResponseShape.Schemas.Calc.reasons",
         "ResponseShape.Schemas.Calc.refusal",
         "ResponseShape.Schemas.Calc.row"
+      ]
+    },
+    "VE/Arith/Syntax.lean": {
+      "S": [
+        "VE.Arith.Def",
+        "VE.Arith.Defs",
+        "VE.Arith.Formula",
+        "VE.Arith.Term"
+      ]
+    },
+    "VE/Arith/Holds.lean": {
+      "S": [
+        "VE.Arith.Defs.Means",
+        "VE.Arith.Defs.env",
+        "VE.Arith.Env",
+        "VE.Arith.Holds",
+        "VE.Arith.Term.value",
+        "VE.Arith.Term.values"
+      ]
+    },
+    "VE/Arith/Defs.lean": {
+      "G[R]": [
+        "VE.Arith.Def.arity",
+        "VE.Arith.Def.isPred",
+        "VE.Arith.Def.name",
+        "VE.Arith.Defs.WellFormed",
+        "VE.Arith.Defs.boundedNames",
+        "VE.Arith.Defs.refusals",
+        "VE.Arith.Formula.Bounded",
+        "VE.Arith.Formula.Scoped",
+        "VE.Arith.Formula.bnd",
+        "VE.Arith.Formula.sites",
+        "VE.Arith.Refusal",
+        "VE.Arith.Refusal.code",
+        "VE.Arith.Refusal.rank",
+        "VE.Arith.Site",
+        "VE.Arith.Site.refusal",
+        "VE.Arith.Term.bnd",
+        "VE.Arith.Term.bndList",
+        "VE.Arith.Term.sites",
+        "VE.Arith.Term.sitesList",
+        "VE.Arith.caseRefusal",
+        "VE.Arith.firstRefusal"
+      ]
+    },
+    "VE/Arith/Examples.lean": {
+      "S": [
+        "VE.Arith.Examples.IsPrime"
+      ],
+      "T": [
+        "VE.Arith.Examples.Positions.Host",
+        "VE.Arith.Examples.Positions.Host.calls",
+        "VE.Arith.Examples.Positions.Place",
+        "VE.Arith.Examples.Positions.Place.down",
+        "VE.Arith.Examples.Positions.Step",
+        "VE.Arith.Examples.Positions.ff",
+        "VE.Arith.Examples.Positions.firstRepeat",
+        "VE.Arith.Examples.Positions.formulaPairs",
+        "VE.Arith.Examples.Positions.formulaPlaces",
+        "VE.Arith.Examples.Positions.formulas",
+        "VE.Arith.Examples.Positions.hosts",
+        "VE.Arith.Examples.Positions.later",
+        "VE.Arith.Examples.Positions.nameLists",
+        "VE.Arith.Examples.Positions.ok",
+        "VE.Arith.Examples.Positions.oneEach",
+        "VE.Arith.Examples.Positions.refusedAs",
+        "VE.Arith.Examples.Positions.termPairs",
+        "VE.Arith.Examples.Positions.termPlaces",
+        "VE.Arith.Examples.Positions.terms",
+        "VE.Arith.Examples.Positions.tf",
+        "VE.Arith.Examples.Positions.tt",
+        "VE.Arith.Examples.Positions.unbounded",
+        "VE.Arith.Examples.Positions.vocab",
+        "VE.Arith.Examples.Positions.z",
+        "VE.Arith.Examples.atLeast",
+        "VE.Arith.Examples.bertrand",
+        "VE.Arith.Examples.chain",
+        "VE.Arith.Examples.countDefs",
+        "VE.Arith.Examples.double",
+        "VE.Arith.Examples.lit",
+        "VE.Arith.Examples.m1",
+        "VE.Arith.Examples.m2",
+        "VE.Arith.Examples.m4",
+        "VE.Arith.Examples.m5",
+        "VE.Arith.Examples.primeBody",
+        "VE.Arith.Examples.primeDefs",
+        "VE.Arith.Examples.tacticMeans"
+      ]
+    },
+    "VE/Scope/WireExamples.lean": {
+      "T": [
+        "VE.Scope.WireExamples.anchor",
+        "VE.Scope.WireExamples.ansUnit",
+        "VE.Scope.WireExamples.ansUnits",
+        "VE.Scope.WireExamples.answer",
+        "VE.Scope.WireExamples.blockWith",
+        "VE.Scope.WireExamples.decoded",
+        "VE.Scope.WireExamples.effectTag",
+        "VE.Scope.WireExamples.errorOf",
+        "VE.Scope.WireExamples.foldDoc",
+        "VE.Scope.WireExamples.foldEnv",
+        "VE.Scope.WireExamples.foldGov",
+        "VE.Scope.WireExamples.gov",
+        "VE.Scope.WireExamples.listName",
+        "VE.Scope.WireExamples.st"
+      ]
+    },
+    "VE/Service/ScopeExamples.lean": {
+      "T": [
+        "VE.Service.ScopeExamples.block",
+        "VE.Service.ScopeExamples.case",
+        "VE.Service.ScopeExamples.doc",
+        "VE.Service.ScopeExamples.env",
+        "VE.Service.ScopeExamples.errorOf",
+        "VE.Service.ScopeExamples.front",
+        "VE.Service.ScopeExamples.full",
+        "VE.Service.ScopeExamples.fullUnits",
+        "VE.Service.ScopeExamples.governor",
+        "VE.Service.ScopeExamples.item",
+        "VE.Service.ScopeExamples.lead",
+        "VE.Service.ScopeExamples.listed",
+        "VE.Service.ScopeExamples.member",
+        "VE.Service.ScopeExamples.part",
+        "VE.Service.ScopeExamples.row",
+        "VE.Service.ScopeExamples.source",
+        "VE.Service.ScopeExamples.sp",
+        "VE.Service.ScopeExamples.statuses",
+        "VE.Service.ScopeExamples.unf",
+        "VE.Service.ScopeExamples.unfKind",
+        "VE.Service.ScopeExamples.unit",
+        "VE.Service.ScopeExamples.units",
+        "VE.Service.ScopeExamples.unsorted"
+      ]
+    },
+    "VE/Service/ScopeAdmission.lean": {},
+    "VE/Scope/Wire.lean": {
+      "D[R]": [
+        "VE.Scope.memberOf",
+        "VE.Scope.membersIn",
+        "VE.Scope.textOf",
+        "VE.Scope.textsOf",
+        "VE.Scope.wireFault"
+      ],
+      "D[V]": [
+        "VE.Scope.decodeBlock",
+        "VE.Scope.decodeEffect",
+        "VE.Scope.decodeGovernor",
+        "VE.Scope.decodeListName",
+        "VE.Scope.decodeParts",
+        "VE.Scope.decodeReach",
+        "VE.Scope.layoutOf",
+        "VE.Scope.listMember",
+        "VE.Scope.spanIn"
+      ],
+      "G[V]": [
+        {
+          "name": "VE.Scope.governorStatus",
+          "tied": [
+            "VE.Scope.governor_status_weakest",
+            "VE.Scope.governor_status_none"
+          ]
+        },
+        "VE.Scope.byStatus",
+        "VE.Scope.changers",
+        "VE.Scope.foldGovernors",
+        "VE.Scope.statusOf"
       ]
     }
   }
