@@ -597,7 +597,12 @@
         "ResponseShape.Schemas.NormDefaults.row",
         "ResponseShape.Schemas.NormDefaults.status",
         "ResponseShape.Schemas.NormDefaults.witness_conflict",
-        "ResponseShape.Schemas.NormDefaults.soft_admission"
+        "ResponseShape.Schemas.NormDefaults.soft_admission",
+        "ResponseShape.Schemas.NormDefaults.defaults_elaborate",
+        "ResponseShape.Schemas.NormDefaults.defaults_situation",
+        "ResponseShape.Schemas.NormDefaults.defaults_coherence",
+        "ResponseShape.Schemas.NormDefaults.defaults_certificate",
+        "ResponseShape.Schemas.NormDefaults.defaults_model"
       ],
       "G[R]": [
         "ResponseShape.Schemas.NormDefaults.norm_defaults_path"
@@ -4814,7 +4819,6 @@
         "VE.NormDefaults.Wire.layeredCase",
         "VE.NormDefaults.Wire.legacyKinds",
         "VE.NormDefaults.Wire.rightsPack",
-        "VE.NormDefaults.Wire.runLayered",
         "VE.NormDefaults.Wire.softLabelledU",
         "VE.NormDefaults.Wire.softPack",
         {
@@ -14409,7 +14413,8 @@
         "VE.Defaults.Wire.elaborateFields",
         "VE.Defaults.Wire.entityIds",
         "VE.Defaults.Wire.formLabel",
-        "VE.Defaults.Wire.modelFields"
+        "VE.Defaults.Wire.modelFields",
+        "VE.Defaults.Wire.situationJson"
       ],
       "G[R]": [
         "VE.Defaults.Wire.CertReplay.reason"
@@ -14486,6 +14491,7 @@
         "VE.Defaults.WireFixtures.req",
         "VE.Defaults.WireFixtures.rest",
         "VE.Defaults.WireFixtures.rulesJ",
+        "VE.Defaults.WireFixtures.sitJ",
         "VE.Defaults.WireFixtures.traceJ",
         "VE.Defaults.WireFixtures.unknownBecause",
         "VE.Defaults.WireFixtures.αCase",
@@ -14919,6 +14925,204 @@
     "ResponseShape/Encoders/Calc.lean": {
       "P": [
         "ResponseShape.Encoders.Calc.tacticRow_fits"
+      ]
+    },
+    "VE/Defaults/Meaning.lean": {
+      "C": [
+        "VE.Defaults.replacementSafe"
+      ],
+      "G[V]": [
+        "VE.Defaults.softX"
+      ],
+      "S": [
+        "VE.Defaults.DefaultBase",
+        "VE.Defaults.ReplacementHolds",
+        "VE.Defaults.SwitchesOff",
+        "VE.Defaults.leastDecisions",
+        "VE.Defaults.withOpen"
+      ]
+    },
+    "VE/Defaults/MeaningExamples.lean": {
+      "T": [
+        "VE.Defaults.MeaningFixtures.a1",
+        "VE.Defaults.MeaningFixtures.dSw",
+        "VE.Defaults.MeaningFixtures.dTwo",
+        "VE.Defaults.MeaningFixtures.denoteDec",
+        "VE.Defaults.MeaningFixtures.dπ",
+        "VE.Defaults.MeaningFixtures.leastDec",
+        "VE.Defaults.MeaningFixtures.offOf",
+        "VE.Defaults.MeaningFixtures.rA",
+        "VE.Defaults.MeaningFixtures.rB",
+        "VE.Defaults.MeaningFixtures.sit",
+        "VE.Defaults.MeaningFixtures.switchesDec",
+        "VE.Defaults.MeaningFixtures.typedDec"
+      ]
+    },
+    "VE/Defaults/Route.lean": {
+      "G[V]": [
+        "VE.NormDefaults.Wire.defaultsKinds",
+        "VE.NormDefaults.Wire.defaultsRows",
+        "VE.NormDefaults.Wire.layeredKindCase",
+        "VE.NormDefaults.Wire.layeredRows",
+        "VE.NormDefaults.Wire.runLayered"
+      ]
+    },
+    "VE/Defaults/RouteExamples.lean": {
+      "T": [
+        "VE.Defaults.RouteFixtures.plainEnv",
+        "VE.Defaults.RouteFixtures.refused",
+        "VE.Defaults.RouteFixtures.run",
+        "VE.Defaults.RouteFixtures.shown",
+        "VE.Defaults.RouteFixtures.βTwo"
+      ]
+    },
+    "ResponseShape/DefaultsExamples.lean": {
+      "T": [
+        "ResponseShape.DefaultsExamples.accepts",
+        "ResponseShape.DefaultsExamples.cert",
+        "ResponseShape.DefaultsExamples.certNone",
+        "ResponseShape.DefaultsExamples.coll",
+        "ResponseShape.DefaultsExamples.drop",
+        "ResponseShape.DefaultsExamples.long",
+        "ResponseShape.DefaultsExamples.refusesAll",
+        "ResponseShape.DefaultsExamples.resolved",
+        "ResponseShape.DefaultsExamples.set",
+        "ResponseShape.DefaultsExamples.strictJ",
+        "ResponseShape.DefaultsExamples.unsettled",
+        "ResponseShape.DefaultsExamples.variants"
+      ]
+    },
+    "VE/Cardinality/Wire.lean": {
+      "D[V]": [
+        "VE.Cardinality.projectW6",
+        {
+          "name": "VE.Cardinality.CardEnv",
+          "tied": [
+            "VE.Cardinality.CAdmission.sound"
+          ]
+        },
+        {
+          "name": "VE.Cardinality.CAdmission",
+          "tied": [
+            "VE.Cardinality.CAdmission.sound"
+          ]
+        },
+        "VE.Cardinality.Wire.profileLists",
+        "VE.Cardinality.Wire.finiteSorts",
+        "VE.Cardinality.Wire.decodeEnvironment",
+        "VE.Cardinality.Wire.decodeStatement",
+        "VE.Cardinality.Wire.items",
+        "VE.Cardinality.Wire.elabBody",
+        "VE.Cardinality.Wire.elabOperand",
+        "VE.Cardinality.Wire.elabRatio",
+        "VE.Cardinality.Wire.ruleNames",
+        "VE.Cardinality.Wire.elabRule",
+        "VE.Cardinality.Wire.printed",
+        "VE.Cardinality.Wire.elabName",
+        "VE.Cardinality.Wire.relNames",
+        "VE.Cardinality.Wire.cmpNames",
+        "VE.Cardinality.Wire.arrayDepth",
+        "VE.Cardinality.Wire.sourceFits"
+      ],
+      "D[R]": [
+        "VE.Cardinality.Wire.checkDeclarations",
+        "VE.Cardinality.Wire.countedSort",
+        "VE.Cardinality.Wire.admittedRule"
+      ],
+      "D[I]": [
+        "VE.Cardinality.CardEnv.profiles",
+        "VE.Cardinality.Wire.format",
+        "VE.Cardinality.Wire.encBody",
+        "VE.Cardinality.Wire.nameOf",
+        "VE.Cardinality.Wire.encOperand",
+        "VE.Cardinality.Wire.encPrinted",
+        "VE.Cardinality.Wire.encode",
+        "VE.Cardinality.Wire.canonical"
+      ],
+      "G[R]": [
+        "VE.Cardinality.Wire.maxFiniteSorts",
+        "VE.Cardinality.Wire.maxTerms",
+        "VE.Cardinality.Wire.invalidNode",
+        "VE.Cardinality.Wire.refuse"
+      ],
+      "C": [
+        "VE.Cardinality.Wire.elabFormula"
+      ]
+    },
+    "VE/Cardinality/WireExamples.lean": {
+      "T": [
+        "VE.Cardinality.WireExamples.admitted",
+        "VE.Cardinality.WireExamples.around",
+        "VE.Cardinality.WireExamples.badCount",
+        "VE.Cardinality.WireExamples.c1",
+        "VE.Cardinality.WireExamples.c2",
+        "VE.Cardinality.WireExamples.ctor",
+        "VE.Cardinality.WireExamples.declaring",
+        "VE.Cardinality.WireExamples.decode",
+        "VE.Cardinality.WireExamples.decoded",
+        "VE.Cardinality.WireExamples.deepBody",
+        "VE.Cardinality.WireExamples.deepQuantity",
+        "VE.Cardinality.WireExamples.e2",
+        "VE.Cardinality.WireExamples.efi",
+        "VE.Cardinality.WireExamples.env",
+        "VE.Cardinality.WireExamples.envDocs",
+        "VE.Cardinality.WireExamples.ers",
+        "VE.Cardinality.WireExamples.f1",
+        "VE.Cardinality.WireExamples.f2",
+        "VE.Cardinality.WireExamples.fa1Conclusion",
+        "VE.Cardinality.WireExamples.fa1Premises",
+        "VE.Cardinality.WireExamples.finite",
+        "VE.Cardinality.WireExamples.formulaOf",
+        "VE.Cardinality.WireExamples.june",
+        "VE.Cardinality.WireExamples.meaningId",
+        "VE.Cardinality.WireExamples.nested",
+        "VE.Cardinality.WireExamples.p",
+        "VE.Cardinality.WireExamples.pins",
+        "VE.Cardinality.WireExamples.ratio",
+        "VE.Cardinality.WireExamples.ratioOf",
+        "VE.Cardinality.WireExamples.refusal",
+        "VE.Cardinality.WireExamples.sept",
+        "VE.Cardinality.WireExamples.share",
+        "VE.Cardinality.WireExamples.st",
+        "VE.Cardinality.WireExamples.terms"
+      ]
+    },
+    "VE/Cardinality/WireTheorems.lean": {},
+    "VE/Arith/Bounded.lean": {
+      "G[V]": [
+        {
+          "name": "VE.Arith.arithOutcome",
+          "tied": [
+            "VE.Arith.arithOutcome_decided",
+            "VE.Arith.arithOutcome_exhausted_iff",
+            "VE.Arith.arithOutcome_unbounded_iff"
+          ]
+        }
+      ],
+      "G[R]": [
+        "VE.Arith.maxSteps"
+      ],
+      "C": [
+        "VE.Arith.Defs.opEnv",
+        "VE.Arith.Formula.evalB",
+        "VE.Arith.OpEnv",
+        "VE.Arith.Term.evalB",
+        "VE.Arith.Term.evalBs",
+        "VE.Arith.charge",
+        "VE.Arith.countLoop",
+        "VE.Arith.decideBounded",
+        "VE.Arith.quantLoop"
+      ],
+      "P": [
+        "VE.Arith.Agrees"
+      ]
+    },
+    "VE/Arith/BoundedExamples.lean": {
+      "T": [
+        "VE.Arith.Examples.dbl",
+        "VE.Arith.Examples.ev",
+        "VE.Arith.Examples.no",
+        "VE.Arith.Examples.yes"
       ]
     }
   }
