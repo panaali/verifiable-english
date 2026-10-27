@@ -1,0 +1,230 @@
+"""Answers that hold unless an exception applies, through the Lean service (defeasible plan 4.1 and 4.2, batch DF-1b).
+
+Plan 4.1's synthetic fixtures (weighing's soft frame: one sort `assistant`, `x_required` unspecified with
+`x_permitted` its allow-by-default dual, decider "the assistant") go through `ve.defaults.ask`: the strict question
+first, then the default one with Python's untrusted search, every verdict, basis, form and assumption Lean's. P-1's
+three probe documents (df-03's, `docs/research/evidence/defeasible/baseline/`) go through `ve document readings
+--assume-no-exception`; without the flag their answers are df-03's recorded ones, byte for byte.
+"""
+from __future__ import annotations
+
+import copy
+import json
+from pathlib import Path
+
+import pytest
+
+from ve import defaults
+from ve.backends import relay
+from ve.document import main
+from ve.errors import CheckerUnavailable, UnsupportedProfile, VEError
+
+BASELINE = Path(__file__).resolve().parents[1] / "docs/research/evidence/defeasible/baseline"
+STRICT = {"outranking": {"mode": "strict"}}
+HOLISTIC = {"ranks": ["safety", "helpfulness"], "outranks": [["safety", "helpfulness"]],
+            "outranking": {"mode": "holistic", "decided_by": "assistant"}}
+
+
+def _regulated(name, role, default, **extra):
+    return {"arguments": ["assistant"], "description": name,
+            "regulated": {"role": role, "default": default, "act": "{0} do x", **extra}}
+
+
+def env(soft=STRICT, base=(), profiles=()):
+    predicates = {"x_required": _regulated("x_required", "obligation", "unspecified", permission="x_permitted"),
+                  "x_permitted": _regulated("x_permitted", "permission", "allow"),
+                  **{p: {"arguments": ["assistant"], "description": p} for p in base}}
+    return {"language": "ve.core@0.2", "spec_revision": "ve-v0.2-expand2-2026-09-25",
+            "profiles": sorted(["norm-defaults@0", "norms@0", "relational-fol@0", "soft-norms@0", *profiles]),
+            "vocabulary": {"sorts": {"assistant": {"description": "assistant"}}, "predicates": predicates,
+                           "constants": {}, "soft": soft}}
+
+
+def rule(name, predicate, sign, default=True, sufficient=(), decider="assistant", **extra):
+    norm = {"name": name, "predicate": predicate, "sign": sign, "guard": ["top"], "unless": [], "over": []}
+    if default:
+        norm.update(mode="default", exception={"decided_by": decider, "sufficient": list(sufficient),
+                                               "necessary": [], "factors": []}, **extra)
+    return {"norm": norm}
+
+
+def un(p):
+    return ["unary", p, ["var", 0]]
+
+
+X_ALL = ["forall", "assistant", un("x_required")]
+UNLESS_URGENT = ["forall", "assistant", ["implies", ["not", un("urgent")], un("x_required")]]
+R1 = rule("r1", "x_required", True)
+DOCS = {
+    "alpha": (env(), [R1]),
+    "beta": (env(base=["urgent"]), [rule("r1", "x_required", True, sufficient=[un("urgent")])]),
+    "beta2": (env(base=["calm", "urgent"]), [rule("r1", "x_required", True, sufficient=[un("calm"), un("urgent")]),
+                                             rule("r2", "x_required", True, sufficient=[un("urgent")])]),
+    "gamma": (env(), [R1, rule("r2", "x_permitted", False)]),
+    "gamma'": (env({"parties": ["operator"], **STRICT}), [R1, rule("r2", "x_permitted", False, decider="operator")]),
+    "gamma2": (env(), [R1, rule("r2", "x_permitted", False), rule("r3", "x_permitted", False)]),
+    "delta": (env(HOLISTIC), [rule("r1", "x_required", True, rank="safety"),
+                              rule("r2", "x_permitted", False, rank="helpfulness")]),
+    "epsilon": (env({"parties": ["user"], **STRICT}), [rule("r1", "x_required", True, alterable=["user"])]),
+    "zeta": (env(), [rule("r0", "x_required", True, default=False), R1]),
+}
+
+
+def asked(monkeypatch, name, conclusion=X_ALL, premises=()):
+    """`ask`'s answer on fixture `name`, and every (case, row) it sent the service."""
+    sent, real = [], relay.decide
+
+    def decide(mode, cases, **options):
+        rows = real(mode, cases, **options)
+        sent.extend(zip(copy.deepcopy(cases), copy.deepcopy(rows)))
+        return rows
+    monkeypatch.setattr(relay, "decide", decide)
+    environment, norms = DOCS[name]
+    out = defaults.ask(environment, norms, list(premises), conclusion)
+    monkeypatch.setattr(relay, "decide", real)
+    return out, sent
+
+
+def sent_kind(sent, kind):
+    return next((case, row) for case, row in sent if case.get("kind") == kind)
+
+
+def follows(basis, form, assumptions):
+    return {"verdict": "FOLLOWS", "basis": basis, "form": form, "assumptions": assumptions}
+
+
+def test_alpha_needs_its_one_exception_and_the_strict_countermodel(monkeypatch):
+    out, sent = asked(monkeypatch, "alpha")
+    assert out == {"question": "default", "kind": "defaults-certificate",
+                   "answer": follows("needs", "short", ["default:exception:r1"])}
+    case, _ = sent_kind(sent, "defaults-certificate")
+    assert {"certificate", "model", "strict_model"} <= set(case)
+    # DF-α′: the same request without the strict countermodel is `unsettled`, never `needs`
+    del case["strict_model"]
+    assert defaults.answer(case, ["default:exception:r1"])["basis"] == "unsettled"
+
+
+def test_beta_forced_exception_and_its_condition(monkeypatch):
+    out, _ = asked(monkeypatch, "beta")
+    assert out["kind"] == "defaults-model" and out["answer"]["verdict"] == "DOES-NOT-FOLLOW"
+    [entry] = out["answer"]["forced"]
+    assert (entry["rule"], entry["condition"], len(entry["tuple"])) == ("r1", 0, 1)
+    out, _ = asked(monkeypatch, "beta", UNLESS_URGENT)
+    assert out["answer"] == follows("needs", "long", ["default:exception:r1"])
+
+
+def test_beta2_forced_entries_in_rule_then_tuple_order(monkeypatch):
+    """Two rules, two conditions: each entry names the first condition that holds at its tuple, and Lean's order
+    (rule order, then the model's tuple order) passes the relay's binding."""
+    out, sent = asked(monkeypatch, "beta2", ["forall", "assistant", ["implies", ["not", un("urgent")],
+                                                                     un("x_required")]])
+    assert out["answer"]["verdict"] in ("FOLLOWS", "DOES-NOT-FOLLOW")
+    case, _ = sent_kind(sent, "norm-defaults-elaborate")
+    two = {"filling": {}, "model": {"complete": True, "constants": {}, "domains": {"assistant": ["e1", "e2"]},
+                                    "relations": {"calm": [["e1"], ["e2"]], "urgent": [["e1"], ["e2"]],
+                                                  "soft__excepted__r1": [["e1"], ["e2"]],
+                                                  "soft__excepted__r2": [["e1"], ["e2"]]}}}
+    row = defaults.answer({**{k: case[k] for k in ("environment", "norms")}, "id": "m", "kind": "defaults-model",
+                           "premises": [], "conclusion": X_ALL, "model": two})
+    assert [(e["rule"], e["condition"], e["tuple"]) for e in row["forced"]] == [
+        ("r1", 0, ["e1"]), ("r1", 0, ["e2"]), ("r2", 0, ["e1"]), ("r2", 0, ["e2"])]
+
+
+@pytest.mark.parametrize("name, deciders", [("gamma", ["assistant"]), ("gamma'", ["assistant", "operator"])])
+def test_gamma_collision_gates_every_question(monkeypatch, name, deciders):
+    out, _ = asked(monkeypatch, name)
+    assert out["answer"] == {"verdict": "UNKNOWN", "reason": "with no exception, rules r1 and r2 conflict"}
+    assert out["coherence"]["verdict"] == "COLLISION"
+    assert out["coherence"]["collision"]["rules"] == ["r1", "r2"]
+    assert out["coherence"]["collision"]["deciders"] == deciders
+
+
+def test_omega_no_evidence_is_unknown_never_collision(monkeypatch):
+    _, sent = asked(monkeypatch, "gamma")
+    case, _ = sent_kind(sent, "defaults-coherence")
+    bare = {k: v for k, v in case.items() if k not in ("coherence", "collision")}
+    targets = sent_kind(sent, "defaults-elaborate")[1]["coherence_targets"]
+    row = defaults.answer(bare, targets=targets)
+    assert (row["verdict"], [p["status"] for p in row["pairs"]]) == ("UNKNOWN", ["unknown"])
+    certificate, _ = sent_kind(sent, "defaults-certificate")
+    no_gate = {k: v for k, v in certificate.items() if k not in ("coherence", "collision")}
+    assert defaults.answer(no_gate)["reason"] == "no-exception coherence not checked"
+
+
+def test_delta_rank_resolved_and_its_ranking_assumption(monkeypatch):
+    out, _ = asked(monkeypatch, "delta")
+    assert out["coherence"] == {"verdict": "COHERENT", "pairs": [{"rules": ["r1", "r2"], "status": "resolved"}]}
+    answer = out["answer"]
+    assert (answer["verdict"], answer["basis"], answer["form"]) == ("FOLLOWS", "needs", "long")
+    assert {"default:exception:r1", "default:ranking:helpfulness:safety:x_permitted"} <= set(answer["assumptions"])
+
+
+def test_epsilon_switch_is_the_long_form(monkeypatch):
+    out, _ = asked(monkeypatch, "epsilon")
+    assert out["answer"] == follows("needs", "long", ["default:exception:r1", "default:switch:r1:user"])
+
+
+def test_zeta_strict_question_first(monkeypatch):
+    """A conclusion the document's own premises give is answered by the strict question; no default case is sent."""
+    out, sent = asked(monkeypatch, "zeta")
+    assert out == {"question": "strict", "valid": True}
+    assert not any(case.get("kind") in ("defaults-certificate", "defaults-model") for case, _ in sent)
+
+
+def test_eta_and_theta_are_lean_diagnostics(monkeypatch):
+    with pytest.raises(VEError, match=r"^InvalidInput: a question that assumes no exception may state facts only; "
+                                      r"it states whether rule r1's exception applies$"):
+        asked(monkeypatch, "alpha", premises=[["exists", "assistant", un("soft__excepted__r1")]])
+    monkeypatch.setitem(DOCS, "theta", (env(profiles=["weighing@0"]), [R1]))
+    with pytest.raises(UnsupportedProfile):
+        asked(monkeypatch, "theta")
+
+
+def test_iota_and_kappa_are_unknown(monkeypatch):
+    """DF-ι: premises no situation satisfies follow strictly (Lean's strict route, F-DF1′), and the default question
+    on them is UNKNOWN, never FOLLOWS; DF-κ: a certificate bound to another premise list is no certificate."""
+    contradictory = [["exists", "assistant", un("urgent")], ["forall", "assistant", ["not", un("urgent")]]]
+    out, _ = asked(monkeypatch, "beta", UNLESS_URGENT, premises=contradictory)
+    assert out == {"question": "strict", "valid": True}
+    _, sent = asked(monkeypatch, "beta", UNLESS_URGENT)
+    case, _ = sent_kind(sent, "defaults-certificate")
+    assert defaults.answer({**case, "premises": contradictory}, ["default:exception:r1"]) == {
+        "id": "defaults", "status": "ok", "verdict": "UNKNOWN",
+        "reason": "no checked situation where the premises hold with no exception"}
+    _, sent = asked(monkeypatch, "alpha")
+    case, _ = sent_kind(sent, "defaults-certificate")
+    case["certificate"]["premise_meaning_ids"].pop()
+    assert defaults.answer(case, ["default:exception:r1"])["reason"] == "no certificate"
+
+
+# -- P-1 through `ve document readings` (plan 4.2; df-03's documents and questions)
+
+P1 = json.loads((BASELINE / "baseline.json").read_text())["p1"]
+
+
+def _readings(capsys, entry, *flags):
+    assert main(["readings", entry["argv"][3], "--conclusion", entry["argv"][5], *flags]) == 0
+    return capsys.readouterr().out
+
+
+@pytest.mark.parametrize("entry", P1, ids=[entry["set"] for entry in P1])
+def test_p1_follows_unless_an_exception_applies(capsys, monkeypatch, entry):
+    monkeypatch.chdir(BASELINE.parents[4])
+    out = json.loads(_readings(capsys, entry, "--assume-no-exception"))
+    assert out["question"] == "default" and out["kind"] == "defaults-certificate"
+    answer = out["answer"]
+    assert (answer["verdict"], answer["basis"], answer["form"], len(answer["assumptions"])) == (
+        "FOLLOWS", "needs", "short", 1)
+    # without the flag, df-03's recorded answer, unchanged
+    assert _readings(capsys, entry) == entry["stdout"]
+
+
+def test_flag_refusals(capsys, monkeypatch, tmp_path):
+    monkeypatch.chdir(BASELINE.parents[4])
+    entry = P1[0]
+    with pytest.raises(VEError, match="requires --conclusion"):
+        main(["readings", entry["argv"][3], "--assume-no-exception"])
+    with pytest.raises(VEError, match="takes no --under"):
+        _readings(capsys, entry, "--assume-no-exception", "--under", "s:0")
+    with pytest.raises(VEError, match="applies to a soft-norms@0 document"):
+        main(["readings", str(BASELINE / "p2-ce4.ve.md"), "--conclusion", entry["argv"][5], "--assume-no-exception"])

@@ -114,13 +114,13 @@ def bind_coherence(case, row, targets):
 
 
 def bind_certificate(case, row, labels):
-    """`basis`, `form` and `assumptions` exactly with FOLLOWS; each assumption, once, a label of the same source's
-    `default_premises`; `needs` only when the request carried a `strict_model`."""
+    """`basis`, `form` and `assumptions` exactly with FOLLOWS; the assumptions are labels of the same source's
+    `default_premises`, each once and in their order; `needs` only when the request carried a `strict_model`."""
     follows = row["verdict"] == "FOLLOWS"
     if any((key in row) != follows for key in ("basis", "form", "assumptions")) or ("reason" in row) == follows:
         raise _unbound("verdict")
     if follows:
-        if len(set(row["assumptions"])) != len(row["assumptions"]) or not set(row["assumptions"]) <= set(labels):
+        if row["assumptions"] != [label for label in labels if label in row["assumptions"]]:
             raise _unbound("assumptions")
         if row["basis"] == "needs" and "strict_model" not in case:
             raise _unbound("basis")
@@ -129,17 +129,23 @@ def bind_certificate(case, row, labels):
 
 def bind_model(case, row):
     """With DOES-NOT-FOLLOW, the situation is in the request's model, and each `forced` entry names a default rule of
-    the request, a condition index below its number of stated conditions and a tuple of its act in that model."""
+    the request, a condition index below its number of stated conditions and a tuple of its act in that model; the
+    entries are distinct, in the request's rule order and then its model's entity order."""
     if ("situation" in row) != (row["verdict"] == "DOES-NOT-FOLLOW") or ("forced" in row) != ("situation" in row):
         raise _unbound("verdict")
-    rules = _rules(case)
-    for entry in row.get("forced", ()):
+    rules, forced = _rules(case), row.get("forced", [])
+    for entry in forced:
         rule = rules.get(entry["rule"])
         if rule is None or rule.get("mode") != "default":
             raise _unbound("forced rule")
         if entry["condition"] >= len((rule.get("exception") or {}).get("sufficient", ())):
             raise _unbound("forced condition")
         _tuple(case, rule, entry["tuple"], case["model"], "forced tuple")
+    domains = case["model"]["model"]["domains"]
+    order = [(list(rules).index(e["rule"]), [domains[s].index(v) for s, v in zip(_sorts(case, rules[e["rule"]]),
+                                                                                e["tuple"])]) for e in forced]
+    if order != sorted(order) or len({repr(o) for o in order}) != len(order):
+        raise _unbound("forced order")
     _situation(row, case["model"])
     return row
 
@@ -190,6 +196,41 @@ class _Search:
         self.dflt = [self.formula(ast) for _, ast in dflt["default_premises"]]
         self.fill = [self.formula(item["ast"]) for item in layered["fill"]]
         self.layers = [self.formula(item["ast"]) for item in layered["premises"]]
+        # The gate's premises (Lean's `bindPair`): the base background, `Exc_T` (the soft premises before `Coh_T`,
+        # which are the coherence targets' premises, last and in their order), `R`, `Dflt_T` and `Fill_T`.
+        self.targets = dflt["coherence_targets"]
+        soft, k = [item["ast"] for item in layered["soft"]], len(self.targets)
+        exc = soft[:len(soft) - k] if soft[len(soft) - k:] == [ast for _, _, ast in self.targets] else None
+        self.gate = None if exc is None else [
+            *(item["ast"] for item in layered["background"] if item["generator"] == "literals"), *exc,
+            *(item["ast"] for item in layered["rights"]), *(ast for _, ast in dflt["default_premises"]),
+            *(item["ast"] for item in layered["fill"])]
+
+    def coherence(self):
+        """The request's gate evidence: `coherence`, each colliding pair with the certificate of its coherence premise
+        the prover finds (bound as `bindPair` binds it), and a `collision` where some pair's premise fails in a model
+        of the gate's premises; each None when there is nothing to send."""
+        from .entailment import prove_entailment
+        from .wire import digest
+        if not self.targets or self.gate is None:
+            return {}
+        premises = [self.formula(ast) for ast in self.gate]
+
+        def meaning(ast):
+            return digest(f"ve-meaning-{self.source.identity_version}\n",
+                          {"environment_id": self.source.environment_id, "ast": ast})
+        pairs, collision = [], None
+        for m, n, ast in self.targets:
+            entry = {"rules": [m, n]}
+            proof = prove_entailment(self.env, premises, self.formula(ast), max_steps=MAX_STEPS, _background=False)
+            if proof.status == "Found":
+                entry["certificate"] = {**proof.certificate, "environment_id": self.source.environment_id,
+                                        "premise_meaning_ids": [meaning(a) for a in self.gate],
+                                        "conclusion_meaning_id": meaning(ast)}
+            elif collision is None and (found := self.model(premises, [], self.formula(ast), layered=False)):
+                collision = {**found, "rules": [m, n]}
+            pairs.append(entry)
+        return {"coherence": pairs, **({"collision": collision} if collision else {})}
 
     def certificate(self, X, gamma, phi):
         """A certificate of `premisesX U X Γ ⊢ φ` bound to the source, or None within the budget."""
@@ -198,11 +239,12 @@ class _Search:
         view = _FilledView(self.source, self.env, self.fill, self.layers, X)
         return filled_certificate(view, gamma, phi, max_steps=MAX_STEPS)
 
-    def model(self, X, gamma, phi):
-        """A model of `X`, `Fill_T`, the layers and Γ where `φ` fails, as a request carries it (its base and its
-        filling apart), or None within the budget."""
+    def model(self, X, gamma, phi, layered=True):
+        """A model of `X`, `Fill_T`, the layers and Γ (of `X` and Γ alone when not `layered`) where `φ` fails, as a
+        request carries it (its base and its filling apart), or None within the budget."""
         from .search import find_countermodel
-        found = find_countermodel(self.env, [*X, *self.fill, *self.layers, *gamma], phi, max_domain_size=MAX_DOMAIN)
+        premises = [*X, *self.fill, *self.layers, *gamma] if layered else [*X, *gamma]
+        found = find_countermodel(self.env, premises, phi, max_domain_size=MAX_DOMAIN)
         if found.status != "Found":
             return None
         data = found.model.to_dict()
@@ -227,15 +269,26 @@ def ask(environment, norms, premises, conclusion):
                                    "certificate": strict})["valid"] is True:
         return {"question": "strict", "valid": True}
     X = [*search.X, *search.dflt]
+    gate = search.coherence()
     certificate = search.certificate(X, gamma, phi)
     countermodel = None if certificate is not None else search.model(X, gamma, phi)
     if countermodel is not None:
         case = {"id": "defaults", "kind": "defaults-model", **question, "model": countermodel}
     else:
         evidence = {"certificate": certificate, "model": search.model(X, gamma, Bottom()),
-                    "strict_model": search.model(search.X, gamma, phi)}
+                    "strict_model": search.model(search.X, gamma, phi), **gate}
         case = {"id": "defaults", "kind": "defaults-certificate", **question,
                 **{key: value for key, value in evidence.items() if value is not None}}
-    row = answer(case, [label for label, _ in elaborated["default_premises"]], elaborated["coherence_targets"])
-    return {"question": "default", "kind": case["kind"],
-            "answer": {key: value for key, value in row.items() if key not in ("id", "status")}}
+    targets = elaborated["coherence_targets"]
+    out = {"question": "default", "kind": case["kind"],
+           "answer": _shown(answer(case, [label for label, _ in elaborated["default_premises"]], targets))}
+    if targets:
+        out["coherence"] = _shown(answer({"id": "coherence", "kind": "defaults-coherence", **base, **gate},
+                                         targets=targets))
+    return out
+
+
+def _shown(row):
+    """What the relay shows of a bound row: all of it but `id`, `status` and the situation, which is the request's
+    own model and filling (`situationJson` shows the unsaid tables of the situation the request sent)."""
+    return {key: value for key, value in row.items() if key not in ("id", "status", "situation")}
