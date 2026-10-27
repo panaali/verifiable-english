@@ -1,0 +1,71 @@
+[
+ {
+  "answered": true,
+  "base_cpu": [
+   7.4,
+   7.72
+  ],
+  "base_wall": [
+   7.43,
+   7.71
+  ],
+  "case": "pilot/cc-20261026T0600Z:usecases/claude-constitution-pilot/run-20261026T0600Z/readings/all-strict-narrow.ve.md",
+  "cpu_ratio_of_minimums": 1.018,
+  "head_cpu": [
+   7.96,
+   7.53
+  ],
+  "head_wall": [
+   7.97,
+   7.56
+  ],
+  "same": true,
+  "source_sha256": "102d7ae5aa67d17a4a6f87c3e2cce045ab3c389b"
+ },
+ {
+  "answered": true,
+  "base_cpu": [
+   70.26,
+   72.26
+  ],
+  "base_wall": [
+   70.27,
+   72.51
+  ],
+  "case": "pilot/cc-20261026T0600Z:usecases/claude-constitution-pilot/run-20261026T0600Z/readings/nd-all.ve.md",
+  "cpu_ratio_of_minimums": 0.823,
+  "head_cpu": [
+   80.31,
+   57.81
+  ],
+  "head_wall": [
+   80.44,
+   57.81
+  ],
+  "same": true,
+  "source_sha256": "45ca4726b0cfdbea0150881e4cee997adb170d9c"
+ },
+ {
+  "answered": true,
+  "base_cpu": [
+   26.55,
+   24.81
+  ],
+  "base_wall": [
+   26.56,
+   24.79
+  ],
+  "case": "pilot/cc-20261026T0600Z:usecases/claude-constitution-pilot/run-20261026T0600Z/readings/soft-chain.ve.md",
+  "cpu_ratio_of_minimums": 0.926,
+  "head_cpu": [
+   25.46,
+   22.98
+  ],
+  "head_wall": [
+   25.46,
+   22.96
+  ],
+  "same": true,
+  "source_sha256": "4fe959ee70c7f7af6eacd2c5be9cf1e8eee67878"
+ }
+]
