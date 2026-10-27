@@ -105,12 +105,16 @@ def situation (E : Env) (L : Lexicon) (M : VE.FiniteModel VE.Bridge.Entity) : St
     ((authorPredicates E).filterMap fun p => (L.wordings.lookup p).map fun w => (p, w, (M.relations p).map (·.map name)))
     []
 
-/-- A predicate's `regulated` declaration in the environment (an `unspecified` default read as its placeholder). -/
+/-- A predicate's `regulated` declaration in the environment (an `unspecified` default read as its placeholder),
+    decoded under the environment's profiles with its fixed phrases, as `Env.decode`'s `modalForm` decodes it: under
+    `acts@0` a long act, an act with a fixed phrase and a plain act decode (act-phrases 3.2). -/
 def regulatedOf (E : Env) (p : String) : Option VE.Norms.Regulated := do
   let d ← E.predicate? p
   let entry := placeholderEntry (((E.source.getObjValD "vocabulary").getObjValD "predicates").getObjValD p)
   let raw ← (entry.getObjVal? "regulated").toOption
-  (VE.Norms.Wire.decodeRegulated p d.args raw).toOption
+  let ps := VE.Norms.Wire.actsProfiles true E.source
+  let fx ← (VE.Norms.Wire.actsFixed ps E.source).toOption
+  (VE.Norms.Wire.decodeRegulatedIn ps fx p d.args raw).toOption
 
 /-- A regulated predicate's clause at named arguments: a plain predicate's wording; else its act with `may` or `must`
     where `value` holds, `must not` (a permission) or `need not` (an obligation) where it does not. -/

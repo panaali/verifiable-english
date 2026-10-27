@@ -1132,6 +1132,27 @@
    "reason": "df-1ae: V +104 (K +0, S +0): ResponseShape/Schemas/NormDefaults.lean +80 (the four defaults-* shapes, the situation, the kind and row entries), VE/Defaults/Route.lean +22 (defaultsKinds, defaultsRows, layeredRows, layeredKindCase, runLayered moved), VE/Defaults/Wire.lean +8 (situationJson, coherenceFields, modelFields), VE/NormDefaults/Run.lean +1 (the routing), VE/NormDefaults/Layered.lean -7 (runLayered moved out)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-1ae, 2026-10-18",
    "commit": "a547f2141a37398614fb0eeced43cfa7079c7265"
+  },
+  {
+   "class": "S",
+   "lines": 64,
+   "reason": "ap-3: lean/VE/Acts/Table.lean +38 (S: Simple, Op, opOf, freeTable, table), lean/VE/Acts/Tree.lean +26 (S: Join, Part, Filler, Modifier, Atom, Act); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3, 2026-10-18",
+   "commit": "058fea806c0bb89a1f30b6255126567ce9fd97a4"
+  },
+  {
+   "class": "V",
+   "lines": 25,
+   "reason": "me-2b: the calc service mode, untied V +25 (K +0, S +0): lean/VE/Service/Protocol.lean +22 (calcCases, unsigned, the decodeCases line, the calc dispatch line), lean/VE/Service/Registry.lean +2 (Mode.calc, its name and modes entry), lean/ResponseShape/Schemas.lean +1 (Calc.file in files)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-2b, 2026-10-18",
+   "commit": "dc597b414ec891bc8ebd8414140197a7e7d3615c"
+  },
+  {
+   "class": "V",
+   "lines": 147,
+   "reason": "sc-1b: VE/Scope/Wire.lean +112, VE/Service/Document.lean +33, VE/Compose/Dispatch.lean +2 (V 147; K +0, S +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1b, 2026-10-18",
+   "commit": "e9e63dda7ff2ca089c8d8f03e3657b76a55c1cfa"
   }
  ]
 }

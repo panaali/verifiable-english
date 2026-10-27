@@ -1,0 +1,4 @@
+8321dd281 ap-1bc: DELTA (one row, the DRI decision ap-1b's row 2 cites) and REPORT ((2) and (3) cut to ap-1be)
+718ed76c6 ap-1bc (1): saved delta evidence, base against head (the words route's acts@0 clauses; a control)
+d48f5d7b1 ap-1bc (1): the new fixture definitions are test fixtures (T); seeded bugs of regulatedOf, all killed
+dd4842012 ap-1bc (1): the words route decodes a clause's declaration under acts@0 (Words.regulatedOf)

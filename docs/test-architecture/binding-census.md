@@ -6,16 +6,16 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 
 | | count |
 |---|---:|
-| leaves:bound | 249 |
-| leaves:closed domain | 260 |
-| leaves:none | 1355 |
-| modes | 37 |
+| leaves:bound | 251 |
+| leaves:closed domain | 267 |
+| leaves:none | 1358 |
+| modes | 38 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 954 |
-| today:shape | 509 |
+| today:not probed | 957 |
+| today:shape | 518 |
 | today:unbound | 137 |
-| answers | 554 |
+| answers | 560 |
 | probes | 10204 |
 | hand_binders | 51 |
 
@@ -68,7 +68,7 @@ A hand check refused a probed mutant; `only hand` counts the mutants the generic
 | `ve/readings_s2_english.py:named_result` | ve/readings_s2_english.py:415 | readings-route | 2 | 0 | no |
 | `ve/readings_s2_wording.py:name` | ve/readings_s2_wording.py:71 | readings-route | 1 | 0 | no |
 | `ve/readings_sup.py:slot_label` | ve/readings_sup.py:403 | readings-route | 1 | 0 | no |
-| `ve/readings_verdicts.py:conflict` | ve/readings_verdicts.py:341 (changed since the probe) | readings-route | 0 | 1 | yes |
+| `ve/readings_verdicts/superposed.py:conflict` | ve/readings_verdicts/superposed.py:341 (changed since the probe) | readings-route | 0 | 1 | yes |
 | `ve/reports.py:__init__` | ve/reports.py:45; ve/reports.py:39 | reports | 33 | 0 | no |
 | `ve/reports.py:_load_statuses` | ve/reports.py:52 | reports | 0 | 3 | yes |
 | `ve/rights.py:__init__` | ve/rights.py:199 (changed since the probe); ve/rights.py:190 (changed since the probe); ve/rights.py:192 (changed since the probe); ve/rights.py:166 | rights | 19 | 4 | no |
@@ -3279,6 +3279,29 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 |---|---|---|---|---|
 | `/evaluation/explanation` |  |  |  |  |
 | `/evaluation/explanation/*/bindings` |  |  |  |  |
+
+## calc
+
+6 recorded answers.
+
+| leaf | kind | class | keyword | format | observed | bound today |
+|---|---|---|---|---|---:|---|
+| `/case_index` | integer | bound | x-index |  | 1 | shape |
+| `/error` | string | none |  | minLength | 4 | not probed |
+| `/meaning_id` | string | none |  | pattern | 2 | not probed |
+| `/rows/*/claim` | string | bound | x-equals |  | 2 | shape |
+| `/rows/*/claim_id` | string | none |  | pattern | 2 | not probed |
+| `/rows/*/kind` | string | closed domain | const |  | 2 | shape |
+| `/rows/*/outcome` | string | closed domain | const |  | 2 | shape |
+| `/rows/*/outcome` | string | closed domain | enum |  | 2 | shape |
+| `/rows/*/reason` | string | closed domain | enum |  | 0 | shape |
+| `/rows/*/reproduction` | string | closed domain | const |  | 1 | shape |
+| `/rows/*/status` | string | closed domain | const |  | 2 | shape |
+| `/status` | string | closed domain | const |  | 6 | shape |
+
+| array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
+|---|---|---|---|---|
+| `/rows` | x-zip | x-zip |  |  |
 
 ## Grammars
 
