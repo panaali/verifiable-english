@@ -1,0 +1,222 @@
+{
+ "base": "110b3bf3ad801a3dc335e9b2293e5c27bb4b82eb",
+ "changes": [
+  {
+   "added": 17,
+   "deleted": 2,
+   "path": "docs/arch/AR-16b/DELTA.md"
+  },
+  {
+   "added": 315,
+   "deleted": 3,
+   "path": "docs/arch/AR-16b/REPORT.md"
+  },
+  {
+   "added": 180,
+   "deleted": 0,
+   "path": "docs/arch/AR-16b/cycles.py"
+  },
+  {
+   "added": 30,
+   "deleted": 0,
+   "path": "docs/arch/AR-16b/evidence.toml"
+  },
+  {
+   "added": 151,
+   "deleted": 0,
+   "path": "docs/arch/AR-16b/evidence/ab-delta.json"
+  },
+  {
+   "added": 551,
+   "deleted": 0,
+   "path": "docs/arch/AR-16b/evidence/ab.json"
+  },
+  {
+   "added": 121,
+   "deleted": 0,
+   "path": "docs/arch/AR-16b/evidence/cycles-after.json"
+  },
+  {
+   "added": 106,
+   "deleted": 0,
+   "path": "docs/arch/AR-16b/evidence/cycles-before.json"
+  },
+  {
+   "added": 232,
+   "deleted": 24,
+   "path": "docs/arch/AR-16b/evidence/mutants.json"
+  },
+  {
+   "added": 71,
+   "deleted": 0,
+   "path": "docs/arch/AR-16b/evidence/pilot-cpu.json"
+  },
+  {
+   "added": 10340,
+   "deleted": 0,
+   "path": "docs/arch/AR-16b/evidence/pilot-rerun.json"
+  },
+  {
+   "added": 603,
+   "deleted": 48,
+   "path": "docs/arch/AR-16b/evidence/relay-gate-base.json"
+  },
+  {
+   "added": 605,
+   "deleted": 50,
+   "path": "docs/arch/AR-16b/evidence/relay-gate-head.json"
+  },
+  {
+   "added": 199,
+   "deleted": 0,
+   "path": "docs/arch/AR-16b/evidence/scope.json"
+  },
+  {
+   "added": 23,
+   "deleted": 2,
+   "path": "docs/arch/AR-16b/evidence/verbatim.json"
+  },
+  {
+   "added": 124,
+   "deleted": 0,
+   "path": "docs/arch/AR-16b/mutants.json"
+  },
+  {
+   "added": 68,
+   "deleted": 0,
+   "path": "docs/arch/AR-16b/pilot_cpu.py"
+  },
+  {
+   "added": 81,
+   "deleted": 0,
+   "path": "docs/arch/AR-16b/rename_probe_sites.py"
+  },
+  {
+   "added": 124,
+   "deleted": 0,
+   "path": "docs/arch/AR-16b/verbatim.py"
+  },
+  {
+   "added": 27,
+   "deleted": 5,
+   "path": "docs/test-architecture/binding-census.json"
+  },
+  {
+   "added": 31,
+   "deleted": 8,
+   "path": "docs/test-architecture/binding-census.md"
+  },
+  {
+   "added": 0,
+   "deleted": 0,
+   "path": "docs/test-architecture/binding-probes.jsonl.gz"
+  },
+  {
+   "added": 5,
+   "deleted": 1,
+   "path": "tests/test_readings_defaults_rd2b_report.py"
+  },
+  {
+   "added": 6,
+   "deleted": 2,
+   "path": "tests/test_readings_defaults_rd3_report.py"
+  },
+  {
+   "added": 5,
+   "deleted": 1,
+   "path": "tests/test_readings_defaults_rd6b_report.py"
+  },
+  {
+   "added": 7,
+   "deleted": 4,
+   "path": "tests/test_readings_sup_verdicts.py"
+  },
+  {
+   "added": 151,
+   "deleted": 0,
+   "path": "tests/test_readings_verdicts_split.py"
+  },
+  {
+   "added": 16,
+   "deleted": 6,
+   "path": "tests/test_relay_lint.py"
+  },
+  {
+   "added": 3,
+   "deleted": 3,
+   "path": "tools/identity-sites.json"
+  },
+  {
+   "added": 11,
+   "deleted": 5,
+   "path": "tools/relay_lint.py"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "ve/assurance-manifest.json"
+  },
+  {
+   "added": 0,
+   "deleted": 1872,
+   "path": "ve/readings_verdicts.py"
+  },
+  {
+   "added": 51,
+   "deleted": 0,
+   "path": "ve/readings_verdicts/__init__.py"
+  },
+  {
+   "added": 497,
+   "deleted": 0,
+   "path": "ve/readings_verdicts/binding.py"
+  },
+  {
+   "added": 407,
+   "deleted": 0,
+   "path": "ve/readings_verdicts/choice.py"
+  },
+  {
+   "added": 224,
+   "deleted": 0,
+   "path": "ve/readings_verdicts/enumerated.py"
+  },
+  {
+   "added": 143,
+   "deleted": 0,
+   "path": "ve/readings_verdicts/route.py"
+  },
+  {
+   "added": 611,
+   "deleted": 0,
+   "path": "ve/readings_verdicts/superposed.py"
+  }
+ ],
+ "commits": [
+  {
+   "hash": "5f5630a0c4281a13fa79f3f17fa38fcbfc6cdf30",
+   "subject": "AR-16b: REPORT, the selected tests after the sync"
+  },
+  {
+   "hash": "5157fcfcf3bda26c792cff266243aeb855f5ff21",
+   "subject": "AR-16b: REPORT, the A/B at the synced base (0 differences), scope and relay-gate evidence"
+  },
+  {
+   "hash": "1f9edc4435c83a15b070494536c5789d06dfcbe1",
+   "subject": "Regenerate the binding census after the merge of main (R12)"
+  },
+  {
+   "hash": "7f873a0f3951857689359899b977d1c4e86abf94",
+   "subject": "AR-16b: DELTA, evidence.toml, A/B delta list, pilot re-run and CPU evidence"
+  },
+  {
+   "hash": "becce6b8e93e88a251610386c004e73db30287ec",
+   "subject": "AR-16b: evidence scripts (cycles, verbatim, probe rename), seeded mutants, the wording rule's coverage test"
+  },
+  {
+   "hash": "19b8c282552f6522ebde8fe2ec1e9a726d3d3b45",
+   "subject": "Split ve/readings_verdicts.py into the package ve/readings_verdicts/ (AR-16b)"
+  }
+ ],
+ "head": "10ebba1c266a8ff6bd5be9f323d77bcf34d36fe6"
+}

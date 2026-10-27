@@ -1,0 +1,121 @@
+{
+ "package_modules": {
+  "ve.document": [
+   "ve.document",
+   "ve.document.__main__",
+   "ve.document.cli",
+   "ve.document.containers",
+   "ve.document.lean",
+   "ve.document.load",
+   "ve.document.render",
+   "ve.document.report",
+   "ve.document.source"
+  ],
+  "ve.readings_verdicts": [
+   "ve.readings_verdicts",
+   "ve.readings_verdicts.binding",
+   "ve.readings_verdicts.choice",
+   "ve.readings_verdicts.enumerated",
+   "ve.readings_verdicts.route",
+   "ve.readings_verdicts.superposed"
+  ]
+ },
+ "raw": {
+  "modules": 147,
+  "edges": 930,
+  "cycle_sizes": [
+   42,
+   22,
+   2
+  ],
+  "readings_document_cycle": [
+   "ve.discourse",
+   "ve.document",
+   "ve.document.cli",
+   "ve.document.containers",
+   "ve.document.lean",
+   "ve.document.load",
+   "ve.document.render",
+   "ve.document.report",
+   "ve.document.source",
+   "ve.norm_defaults",
+   "ve.readings",
+   "ve.readings_components",
+   "ve.readings_route",
+   "ve.readings_s1",
+   "ve.readings_s2_wording",
+   "ve.readings_sup",
+   "ve.readings_verdicts",
+   "ve.readings_verdicts.binding",
+   "ve.readings_verdicts.choice",
+   "ve.readings_verdicts.enumerated",
+   "ve.readings_verdicts.route",
+   "ve.readings_verdicts.superposed"
+  ],
+  "readings_document_cycle_size": 22
+ },
+ "readings_verdicts_as_one_module": {
+  "modules": 142,
+  "edges": 898,
+  "cycle_sizes": [
+   42,
+   17,
+   2
+  ],
+  "readings_document_cycle": [
+   "ve.discourse",
+   "ve.document",
+   "ve.document.cli",
+   "ve.document.containers",
+   "ve.document.lean",
+   "ve.document.load",
+   "ve.document.render",
+   "ve.document.report",
+   "ve.document.source",
+   "ve.norm_defaults",
+   "ve.readings",
+   "ve.readings_components",
+   "ve.readings_route",
+   "ve.readings_s1",
+   "ve.readings_s2_wording",
+   "ve.readings_sup",
+   "ve.readings_verdicts"
+  ],
+  "readings_document_cycle_size": 17
+ },
+ "imports_by_owner": {
+  "modules": 147,
+  "edges": 940,
+  "cycle_sizes": [
+   42,
+   18,
+   2
+  ],
+  "readings_document_cycle": [
+   "ve.discourse",
+   "ve.document.containers",
+   "ve.document.lean",
+   "ve.document.load",
+   "ve.document.source",
+   "ve.norm_defaults",
+   "ve.readings",
+   "ve.readings_components",
+   "ve.readings_route",
+   "ve.readings_s1",
+   "ve.readings_s2_wording",
+   "ve.readings_sup",
+   "ve.readings_verdicts",
+   "ve.readings_verdicts.binding",
+   "ve.readings_verdicts.choice",
+   "ve.readings_verdicts.enumerated",
+   "ve.readings_verdicts.route",
+   "ve.readings_verdicts.superposed"
+  ],
+  "readings_document_cycle_size": 18
+ },
+ "on_the_cycle_only_through_a_package_init": [
+  "ve.document.cli",
+  "ve.document.render",
+  "ve.document.report"
+ ]
+}
