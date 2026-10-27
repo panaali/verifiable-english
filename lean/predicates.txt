@@ -114,6 +114,7 @@ module VE.Alternatives.Validate
 module VE.Alternatives.Wire
 module VE.Arith.Bounded
 module VE.Arith.BoundedExamples
+module VE.Arith.CompleteExamples
 module VE.Arith.Defs
 module VE.Arith.Examples
 module VE.Arith.Holds
@@ -678,9 +679,13 @@ VE.Alternatives.SettledF@VE.Alternatives.FillWire
 VE.Alternatives.TypedChooser@VE.Alternatives.Followable
 VE.Alternatives.UndecidedF@VE.Alternatives.FillWire
 VE.Arith.Agrees@VE.Arith.Bounded
+VE.Arith.Def.SitesOk@VE.Arith.Bounded
 VE.Arith.Defs.Means@VE.Arith.Holds
 VE.Arith.Examples.IsPrime@VE.Arith.Examples
+VE.Arith.Extends@VE.Arith.Bounded
 VE.Arith.Holds@VE.Arith.Holds
+VE.Arith.Site.Ok@VE.Arith.Bounded
+VE.Arith.Total@VE.Arith.Bounded
 VE.Ask.BlockLine@VE.Ask.Lines
 VE.Ask.CaseBinding@VE.Ask.Binding
 VE.Ask.Consistent@VE.Ask.Plain
