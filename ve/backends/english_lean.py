@@ -124,6 +124,17 @@ def _has_null(value) -> bool:
     return False
 
 
+def _has_surrogate(value) -> bool:
+    """A string anywhere in `value` that no UTF-8 text holds (a lone surrogate), so Lean never wrote it."""
+    if type(value) is str:
+        return any("\ud800" <= c <= "\udfff" for c in value)
+    if type(value) is dict:
+        return any(_has_surrogate(k) or _has_surrogate(item) for k, item in value.items())
+    if type(value) is list:
+        return any(_has_surrogate(item) for item in value)
+    return False
+
+
 def _span(value, source: str) -> bool:
     return (type(value) is list and len(value) == 2 and all(_nat(x) for x in value)
             and value[0] <= value[1] <= len(source))
@@ -365,10 +376,11 @@ def read(env, source: str, words, options: dict) -> LeanReading:
 
 
 def _question_contract() -> tuple[str, dict[str, str], dict[str, tuple[str, ...]], dict[str, tuple[set, set]],
-                                  dict[str, str]]:
+                                  dict[str, str], dict[str, tuple[str, ...]]]:
     """Lean's question contract (`VE.Question.Run`'s export, written to `ve/question/codes.json` by
     `tools/question_codes.py`): the version, the class of every code, the codes of every status, the fields
-    of every status and the texts its clients show as they are. The relay holds no table of its own."""
+    of every status, the texts its clients show as they are and the first words each caller other than `ve ask`
+    sends. The relay holds no table of its own."""
     import json
     data = json.loads((ROOT / "ve/question/codes.json").read_text())
     if data.get("format") != "ve.question-codes@1":
@@ -376,22 +388,28 @@ def _question_contract() -> tuple[str, dict[str, str], dict[str, tuple[str, ...]
     return (data["question_version"], {code: cls for code, cls in data["codes"]},
             {status: tuple(found) for status, found in data["statuses"]},
             {status: (set(required), set(optional)) for status, (required, optional) in data["fields"]},
-            {name: text for name, text in data["texts"]})
+            {name: text for name, text in data["texts"]}, {name: tuple(found) for name, found in data["callers"]})
 
 
-QUESTION_VERSION, QUESTION_CLASSES, QUESTION_STATUS_CODES, QUESTION_FIELDS, QUESTION_TEXTS = _question_contract()
+(QUESTION_VERSION, QUESTION_CLASSES, QUESTION_STATUS_CODES, QUESTION_FIELDS, QUESTION_TEXTS,
+ QUESTION_CALLERS) = _question_contract()
+# The one code only the speech-acts caller's request may be answered with (`VE.Question.Run.modalFields`).
+SPEECH_CALLER, MODAL_CODE = "speech-acts", "ModalQuestion"
 QUESTION_FORMS = ("caseThat", "fronted")
 
 
-def question_problem(response, expected: dict, env, question: str) -> str | None:
+def question_problem(response, expected: dict, env, question: str, caller: str | None = None) -> str | None:
     """Why `response` is not a well-formed `english.question` answer to the request over `env` whose E2
-    identities are `expected`, or None: the identities and `question_version`, the fields of its status, a code
-    of the status with Lean's class, spans inside the question in code points, the advice, the rephrasings, the
-    witnesses and, for `one`, a formula that decodes under `env`."""
+    identities are `expected` and whose caller is `caller`, or None: the identities and `question_version`, the
+    fields of its status, a code of the status with Lean's class (`ModalQuestion` only for the speech-acts
+    caller), spans inside the question in code points, the advice, the rephrasings, the witnesses and, for
+    `one`, a formula that decodes under `env`."""
     if type(response) is not dict:
         return "the response is not an object"
     if _has_null(response):
         return "the response has a null"
+    if _has_surrogate(response):
+        return "the response has a lone surrogate"
     found = response.get("identities")
     want = {**expected, "question_version": QUESTION_VERSION}
     if type(found) is not dict or found.keys() != want.keys() or \
@@ -432,6 +450,8 @@ def question_problem(response, expected: dict, env, question: str) -> str | None
         return f"a {status} answer with the code {code!r}"
     if body["class"] != QUESTION_CLASSES.get(code) or body["class"] not in ERROR_CLASSES:
         return f"the class {body['class']!r} is not Lean's class of {code}"
+    if code == MODAL_CODE and caller != SPEECH_CALLER:
+        return f"a {MODAL_CODE} answer to a request whose caller is not {SPEECH_CALLER}"
     if "span" in body and not _span(body["span"], question):
         return "invalid question span"
     if "advice" in body:
@@ -458,19 +478,32 @@ def question_problem(response, expected: dict, env, question: str) -> str | None
     return None
 
 
-def read_question(env, question: str, words, options: dict) -> dict:
+def question_lines(answer: dict) -> list[str]:
+    """The lines every client shows of a checked answer that is not `one`, as Lean wrote them: its text (with its
+    advice), then each rephrasing. `read_question`'s refusal is these lines and `ve ask` prints them; `witnesses`
+    stay structured in the answer, as on `english.read`'s path."""
+    text = answer["text"] if "advice" not in answer else f'{answer["text"]} {answer["advice"]["text"]}'
+    return [text, *answer.get("rephrasings", ())]
+
+
+def read_question(env, question: str, words, options: dict, *, caller: str | None = None) -> dict:
     """Relay one yes-or-no question to Lean's `english.question` (docs/spec/question-answering.md 4.1, 8).
 
     The request is the `english.read` request for the question as its source (the same environment, overlay,
-    lexicon producer and cap), with `question` added. The answer is checked by `question_problem`, whatever the
-    transport; `one` is returned, and any other status is raised as the class Lean names, with Lean's text (and
-    advice) and the answer as `lean_question`.
+    lexicon producer and cap), with `question` added, and `caller` when it is not `ve ask` (a caller of the
+    contract's `callers`: speech acts, plan Q1.4). The answer is checked by `question_problem`, whatever the
+    transport; `one` is returned, and any other status is raised as the class Lean names, with its
+    `question_lines` and the answer as `lean_question`.
     """
     if type(question) is not str:
         raise TypeError("question must be str")
+    if caller is not None and caller not in QUESTION_CALLERS:
+        raise ValueError(f"unknown question caller {caller!r}")
     case = request(env, question, words, options)
     case["id"] = QUESTION_MODE
     case["question"] = question
+    if caller is not None:
+        case["caller"] = caller
     if QUESTION_TRANSPORT is None:
         row = relay.decide_once(QUESTION_MODE, case)
         if row.get("status") != "ok" or row.keys() != {"id", "status", "result"}:
@@ -480,7 +513,8 @@ def read_question(env, question: str, words, options: dict) -> dict:
     else:
         response = QUESTION_TRANSPORT(case)
     try:
-        problem = question_problem(response, identities(env, question, words, case["lexicon"]), env, question)
+        problem = question_problem(response, identities(env, question, words, case["lexicon"]), env, question,
+                                   caller)
     except RecursionError:
         problem = "the response is nested too deeply"
     if problem:
@@ -493,7 +527,7 @@ def read_question(env, question: str, words, options: dict) -> dict:
             raise refusal
         return response
     cls = ERROR_CLASSES[response["class"]]
-    text = response["text"] if "advice" not in response else f'{response["text"]} {response["advice"]["text"]}'
+    text = "\n".join(question_lines(response))
     if issubclass(cls, CheckerUnavailable):
         error = cls(text, operation="question.read", backend="lean")
     else:
