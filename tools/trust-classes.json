@@ -14959,6 +14959,139 @@
       "P": [
         "VE.Paths.ClosedAt"
       ]
+    },
+    "VE/Cardinality/Wire.lean": {
+      "D[V]": [
+        "VE.Cardinality.projectW6",
+        {
+          "name": "VE.Cardinality.CardEnv",
+          "tied": [
+            "VE.Cardinality.CAdmission.sound"
+          ]
+        },
+        {
+          "name": "VE.Cardinality.CAdmission",
+          "tied": [
+            "VE.Cardinality.CAdmission.sound"
+          ]
+        },
+        "VE.Cardinality.Wire.profileLists",
+        "VE.Cardinality.Wire.finiteSorts",
+        "VE.Cardinality.Wire.decodeEnvironment",
+        "VE.Cardinality.Wire.decodeStatement",
+        "VE.Cardinality.Wire.items",
+        "VE.Cardinality.Wire.elabBody",
+        "VE.Cardinality.Wire.elabOperand",
+        "VE.Cardinality.Wire.elabRatio",
+        "VE.Cardinality.Wire.ruleNames",
+        "VE.Cardinality.Wire.elabRule",
+        "VE.Cardinality.Wire.printed",
+        "VE.Cardinality.Wire.elabName",
+        "VE.Cardinality.Wire.relNames",
+        "VE.Cardinality.Wire.cmpNames",
+        "VE.Cardinality.Wire.arrayDepth",
+        "VE.Cardinality.Wire.sourceFits"
+      ],
+      "D[R]": [
+        "VE.Cardinality.Wire.checkDeclarations",
+        "VE.Cardinality.Wire.countedSort",
+        "VE.Cardinality.Wire.admittedRule"
+      ],
+      "D[I]": [
+        "VE.Cardinality.CardEnv.profiles",
+        "VE.Cardinality.Wire.format",
+        "VE.Cardinality.Wire.encBody",
+        "VE.Cardinality.Wire.nameOf",
+        "VE.Cardinality.Wire.encOperand",
+        "VE.Cardinality.Wire.encPrinted",
+        "VE.Cardinality.Wire.encode",
+        "VE.Cardinality.Wire.canonical"
+      ],
+      "G[R]": [
+        "VE.Cardinality.Wire.maxFiniteSorts",
+        "VE.Cardinality.Wire.maxTerms",
+        "VE.Cardinality.Wire.invalidNode",
+        "VE.Cardinality.Wire.refuse"
+      ],
+      "C": [
+        "VE.Cardinality.Wire.elabFormula"
+      ]
+    },
+    "VE/Cardinality/WireExamples.lean": {
+      "T": [
+        "VE.Cardinality.WireExamples.admitted",
+        "VE.Cardinality.WireExamples.around",
+        "VE.Cardinality.WireExamples.badCount",
+        "VE.Cardinality.WireExamples.c1",
+        "VE.Cardinality.WireExamples.c2",
+        "VE.Cardinality.WireExamples.ctor",
+        "VE.Cardinality.WireExamples.declaring",
+        "VE.Cardinality.WireExamples.decode",
+        "VE.Cardinality.WireExamples.decoded",
+        "VE.Cardinality.WireExamples.deepBody",
+        "VE.Cardinality.WireExamples.deepQuantity",
+        "VE.Cardinality.WireExamples.e2",
+        "VE.Cardinality.WireExamples.efi",
+        "VE.Cardinality.WireExamples.env",
+        "VE.Cardinality.WireExamples.envDocs",
+        "VE.Cardinality.WireExamples.ers",
+        "VE.Cardinality.WireExamples.f1",
+        "VE.Cardinality.WireExamples.f2",
+        "VE.Cardinality.WireExamples.fa1Conclusion",
+        "VE.Cardinality.WireExamples.fa1Premises",
+        "VE.Cardinality.WireExamples.finite",
+        "VE.Cardinality.WireExamples.formulaOf",
+        "VE.Cardinality.WireExamples.june",
+        "VE.Cardinality.WireExamples.meaningId",
+        "VE.Cardinality.WireExamples.nested",
+        "VE.Cardinality.WireExamples.p",
+        "VE.Cardinality.WireExamples.pins",
+        "VE.Cardinality.WireExamples.ratio",
+        "VE.Cardinality.WireExamples.ratioOf",
+        "VE.Cardinality.WireExamples.refusal",
+        "VE.Cardinality.WireExamples.sept",
+        "VE.Cardinality.WireExamples.share",
+        "VE.Cardinality.WireExamples.st",
+        "VE.Cardinality.WireExamples.terms"
+      ]
+    },
+    "VE/Cardinality/WireTheorems.lean": {},
+    "VE/Arith/Bounded.lean": {
+      "G[V]": [
+        {
+          "name": "VE.Arith.arithOutcome",
+          "tied": [
+            "VE.Arith.arithOutcome_decided",
+            "VE.Arith.arithOutcome_exhausted_iff",
+            "VE.Arith.arithOutcome_unbounded_iff"
+          ]
+        }
+      ],
+      "G[R]": [
+        "VE.Arith.maxSteps"
+      ],
+      "C": [
+        "VE.Arith.Defs.opEnv",
+        "VE.Arith.Formula.evalB",
+        "VE.Arith.OpEnv",
+        "VE.Arith.Term.evalB",
+        "VE.Arith.Term.evalBs",
+        "VE.Arith.charge",
+        "VE.Arith.countLoop",
+        "VE.Arith.decideBounded",
+        "VE.Arith.quantLoop"
+      ],
+      "P": [
+        "VE.Arith.Agrees"
+      ]
+    },
+    "VE/Arith/BoundedExamples.lean": {
+      "T": [
+        "VE.Arith.Examples.dbl",
+        "VE.Arith.Examples.ev",
+        "VE.Arith.Examples.no",
+        "VE.Arith.Examples.yes"
+      ]
     }
   }
 }

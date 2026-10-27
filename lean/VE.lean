@@ -121,12 +121,15 @@ import VE.Calc.Inline
 import VE.Calc.Identity
 import VE.Calc.IdentityExamples
 import VE.Arith.Examples
+import VE.Arith.BoundedExamples
 import VE.Calc.Lower
 import VE.Calc.LowerExamples
 import VE.Numbers.Examples
 import VE.Numbers.Phrases
 import VE.Scales.Examples
 import VE.Cardinality.Examples
+import VE.Cardinality.WireExamples
+import VE.Cardinality.WireTheorems
 import VE.Risk.Cond
 import VE.Risk.Derive
 import VE.Risk.Background
