@@ -2,221 +2,41 @@
  "item": "qt-a3",
  "how": "uv run python tools/mutants.py docs/quantities/qt-a3/mutants.json --no-baseline --evidence docs/quantities/qt-a3/evidence/mutants-run.json, after a passing `lake build VE.Cardinality.WireExamples`; each mutant is applied alone to lean/VE/Cardinality/Wire.lean, the decoders and their #guard fixtures (lean/VE/Cardinality/WireExamples.lean, which does not import the theorems of WireTheorems.lean) are rebuilt, and the file is restored. A killed mutant fails a #guard (the build exits 1).",
  "mutants": [
-  {
-   "id": "plan-count-not-finite",
-   "file": "lean/VE/Cardinality/Wire.lean",
-   "claim": "countedSort (the plan's seeded bug): a count whose sort is not in finite_sorts is refused, S5 (FA8's hostile case)",
-   "find": "  unless E.finite.contains s do throw s!\"CardinalityNotFinite({s})\"\n",
-   "replace": "",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
-   ]
-  },
-  {
-   "id": "projectW6-profiles",
-   "file": "lean/VE/Cardinality/Wire.lean",
-   "claim": "projectW6: the projection removes cardinality@0 from profiles (FA11)",
-   "find": "(profiles.filter (· != \"cardinality@0\")).map",
-   "replace": "profiles.map",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
-   ]
-  },
-  {
-   "id": "profileLists-docs",
-   "file": "lean/VE/Cardinality/Wire.lean",
-   "claim": "profileLists: cardinality@0 with either of W6a's lists, documents@1 included (E2, FA11)",
-   "find": "VE.Time.Wire.w6Profiles.map (\"cardinality@0\" :: ·)",
-   "replace": "(VE.Time.Wire.w6Profiles.take 1).map (\"cardinality@0\" :: ·)",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
-   ]
-  },
-  {
-   "id": "finiteSorts-limit",
-   "file": "lean/VE/Cardinality/Wire.lean",
-   "claim": "finiteSorts: at most 64 finite sorts, 64 allowed (E6)",
-   "find": "if finite.length > maxFiniteSorts then",
-   "replace": "if finite.length ≥ maxFiniteSorts then",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
-   ]
-  },
-  {
-   "id": "finiteSorts-fields",
-   "file": "lean/VE/Cardinality/Wire.lean",
-   "claim": "finiteSorts: the cardinality object has exactly finite_sorts (E5)",
-   "find": "      exactFields c [\"finite_sorts\"]\n",
-   "replace": "",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
-   ]
-  },
-  {
-   "id": "environmentId-original",
-   "file": "lean/VE/Cardinality/Wire.lean",
-   "claim": "decodeEnvironment: the cardinality identity is over the original environment, not the projection (FA11)",
-   "find": "let id ← VE.Route.Wire.environmentId profiles env",
-   "replace": "let id ← VE.Route.Wire.environmentId profiles (← projectW6 env)",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
-   ]
-  },
-  {
-   "id": "environment-schema",
-   "file": "lean/VE/Cardinality/Wire.lean",
-   "claim": "decodeEnvironment: E3 refuses another cardinality schema, before E4",
-   "find": "  unless (← stringField env \"cardinality_schema\") == format do\n    throw \"UnsupportedProfile: Unsupported cardinality schema\"\n",
-   "replace": "",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
-   ]
-  },
-  {
-   "id": "environment-declarations",
-   "file": "lean/VE/Cardinality/Wire.lean",
-   "claim": "decodeEnvironment: E7 and E8 run, with their texts (duplicate, unknown and reserved names)",
-   "find": "  checkDeclarations w6.vocab finite\n",
-   "replace": "",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
-   ]
-  },
-  {
-   "id": "checkDeclarations-sorts",
-   "file": "lean/VE/Cardinality/Wire.lean",
-   "claim": "checkDeclarations: E8 covers declared sorts and predicates, not only constants",
-   "find": "for n in v.sorts ++ v.predicates.map (·.1) ++ v.constants.map (·.1) do",
-   "replace": "for n in v.constants.map (·.1) do",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
-   ]
-  },
-  {
-   "id": "statement-size",
-   "file": "lean/VE/Cardinality/Wire.lean",
-   "claim": "decodeStatement: S2's 10,000-node preflight comes before the pass (FA13)",
-   "find": "  if VE.Time.Wire.jsonNodes (VE.Limits.maxJsonDepth + 1) source > VE.Limits.maxNodes then\n    throw VE.Time.Wire.depthLimit\n",
-   "replace": "",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
-   ]
-  },
-  {
-   "id": "statement-format",
-   "file": "lean/VE/Cardinality/Wire.lean",
-   "claim": "decodeStatement: S1 refuses another format",
-   "find": " && j.getObjValD \"format\" == .str format do",
-   "replace": " do",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
-   ]
-  },
-  {
-   "id": "meaningId-profiles",
-   "file": "lean/VE/Cardinality/Wire.lean",
-   "claim": "decodeStatement: the meaning id is in the cardinality environment's identity, with cardinality@0 in its profiles",
-   "find": "pure ⟨f, h, ← VE.Route.Wire.meaningId w.profiles w.environmentId",
-   "replace": "pure ⟨f, h, ← VE.Route.Wire.meaningId w.w6.profiles w.environmentId",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
-   ]
-  },
-  {
-   "id": "countedSort-atoms",
-   "file": "lean/VE/Cardinality/Wire.lean",
-   "claim": "countedSort: S6 names the body atom that is not a unary predicate of the counted sort",
-   "find": "unless E.q.predicates p == some [.obj s] do throw",
-   "replace": "unless true do throw",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
-   ]
-  },
-  {
-   "id": "ratio-day",
-   "file": "lean/VE/Cardinality/Wire.lean",
-   "claim": "elabRatio: a ratio of calendar dates is refused with its own text (S9, FA9e)",
-   "find": "    if g == VE.Time.dayTag then",
-   "replace": "    if g == \"nothing\" then",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
-   ]
-  },
-  {
-   "id": "admittedRule",
-   "file": "lean/VE/Cardinality/Wire.lean",
-   "claim": "admittedRule: S10 refuses a decoded rule that is not admitted (FA9e)",
-   "find": "  unless admittedRules.contains r do throw s!\"UnsupportedRounding({name})\"",
-   "replace": "  pure ()",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
-   ]
-  },
-  {
-   "id": "proportion-order",
-   "file": "lean/VE/Cardinality/Wire.lean",
-   "claim": "elabFormula: within one node S5 comes before S8 (FA13)",
-   "find": "      countedSort w.env s [whole, part]\n      unless 0 ≤ n && n ≤ d && 0 < d do throw s!\"ProportionRange({num} in {den})\"\n",
-   "replace": "      unless 0 ≤ n && n ≤ d && 0 < d do throw s!\"ProportionRange({num} in {den})\"\n      countedSort w.env s [whole, part]\n",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
-   ]
-  },
-  {
-   "id": "relNames-eq",
-   "file": "lean/VE/Cardinality/Wire.lean",
-   "claim": "elabFormula: eq is read as =, so FA1 decodes to the core's statements",
-   "find": "(\"eq\", .eq)]\ndef cmpNames",
-   "replace": "(\"eq\", .le)]\ndef cmpNames",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
-   ]
-  },
-  {
-   "id": "encPrinted-places",
-   "file": "lean/VE/Cardinality/Wire.lean",
-   "claim": "encPrinted: the canonical object keeps a printed number's written places (identity)",
-   "find": ".str (VE.Time.renderAmount k D)",
-   "replace": ".str (VE.Time.renderAmount 0 D)",
-   "command": [
-    "bash",
-    "-c",
-    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"
-   ]
-  }
+  {"id": "plan-count-not-finite", "file": "lean/VE/Cardinality/Wire.lean", "claim": "countedSort (the plan's seeded bug): a count whose sort is not in finite_sorts is refused, S5 (FA8's hostile case)", "find": "  unless E.finite.contains s do throw s!\"CardinalityNotFinite({s})\"\n", "replace": "",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"]},
+  {"id": "projectW6-profiles", "file": "lean/VE/Cardinality/Wire.lean", "claim": "projectW6: the projection removes cardinality@0 from profiles (FA11)", "find": "(profiles.filter (· != \"cardinality@0\")).map", "replace": "profiles.map",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"]},
+  {"id": "profileLists-docs", "file": "lean/VE/Cardinality/Wire.lean", "claim": "profileLists: cardinality@0 with either of W6a's lists, documents@1 included (E2, FA11)", "find": "VE.Time.Wire.w6Profiles.map (\"cardinality@0\" :: ·)", "replace": "(VE.Time.Wire.w6Profiles.take 1).map (\"cardinality@0\" :: ·)",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"]},
+  {"id": "finiteSorts-limit", "file": "lean/VE/Cardinality/Wire.lean", "claim": "finiteSorts: at most 64 finite sorts, 64 allowed (E6)", "find": "if finite.length > maxFiniteSorts then", "replace": "if finite.length ≥ maxFiniteSorts then",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"]},
+  {"id": "finiteSorts-fields", "file": "lean/VE/Cardinality/Wire.lean", "claim": "finiteSorts: the cardinality object has exactly finite_sorts (E5)", "find": "      exactFields c [\"finite_sorts\"]\n", "replace": "",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"]},
+  {"id": "environmentId-original", "file": "lean/VE/Cardinality/Wire.lean", "claim": "decodeEnvironment: the cardinality identity is over the original environment, not the projection (FA11)", "find": "let id ← VE.Route.Wire.environmentId profiles env", "replace": "let id ← VE.Route.Wire.environmentId profiles (← projectW6 env)",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"]},
+  {"id": "environment-schema", "file": "lean/VE/Cardinality/Wire.lean", "claim": "decodeEnvironment: E3 refuses another cardinality schema, before E4", "find": "  unless (← stringField env \"cardinality_schema\") == format do\n    throw \"UnsupportedProfile: Unsupported cardinality schema\"\n", "replace": "",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"]},
+  {"id": "environment-declarations", "file": "lean/VE/Cardinality/Wire.lean", "claim": "decodeEnvironment: E7 and E8 run, with their texts (duplicate, unknown and reserved names)", "find": "  checkDeclarations w6.vocab finite\n", "replace": "",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"]},
+  {"id": "checkDeclarations-sorts", "file": "lean/VE/Cardinality/Wire.lean", "claim": "checkDeclarations: E8 covers declared sorts and predicates, not only constants", "find": "for n in v.sorts ++ v.predicates.map (·.1) ++ v.constants.map (·.1) do", "replace": "for n in v.constants.map (·.1) do",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"]},
+  {"id": "statement-size", "file": "lean/VE/Cardinality/Wire.lean", "claim": "decodeStatement: S2's 10,000-node preflight comes before the pass (FA13)", "find": "  if VE.Time.Wire.jsonNodes (VE.Limits.maxJsonDepth + 1) source > VE.Limits.maxNodes then\n    throw VE.Time.Wire.depthLimit\n", "replace": "",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"]},
+  {"id": "statement-format", "file": "lean/VE/Cardinality/Wire.lean", "claim": "decodeStatement: S1 refuses another format", "find": " && j.getObjValD \"format\" == .str format do", "replace": " do",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"]},
+  {"id": "meaningId-profiles", "file": "lean/VE/Cardinality/Wire.lean", "claim": "decodeStatement: the meaning id is in the cardinality environment's identity, with cardinality@0 in its profiles", "find": "pure ⟨f, h, ← VE.Route.Wire.meaningId w.profiles w.environmentId", "replace": "pure ⟨f, h, ← VE.Route.Wire.meaningId w.w6.profiles w.environmentId",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"]},
+  {"id": "countedSort-atoms", "file": "lean/VE/Cardinality/Wire.lean", "claim": "countedSort: S6 names the body atom that is not a unary predicate of the counted sort", "find": "unless E.q.predicates p == some [.obj s] do throw", "replace": "unless true do throw",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"]},
+  {"id": "ratio-day", "file": "lean/VE/Cardinality/Wire.lean", "claim": "elabRatio: a ratio of calendar dates is refused with its own text (S9, FA9e)", "find": "    if g == VE.Time.dayTag then", "replace": "    if g == \"nothing\" then",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"]},
+  {"id": "admittedRule", "file": "lean/VE/Cardinality/Wire.lean", "claim": "admittedRule: S10 refuses a decoded rule that is not admitted (FA9e)", "find": "  unless admittedRules.contains r do throw s!\"UnsupportedRounding({name})\"", "replace": "  pure ()",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"]},
+  {"id": "proportion-order", "file": "lean/VE/Cardinality/Wire.lean", "claim": "elabFormula: within one node S5 comes before S8 (FA13)", "find": "      countedSort w.env s [whole, part]\n      unless 0 ≤ n && n ≤ d && 0 < d do throw s!\"ProportionRange({num} in {den})\"\n", "replace": "      unless 0 ≤ n && n ≤ d && 0 < d do throw s!\"ProportionRange({num} in {den})\"\n      countedSort w.env s [whole, part]\n",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"]},
+  {"id": "relNames-eq", "file": "lean/VE/Cardinality/Wire.lean", "claim": "elabFormula: eq is read as =, so FA1 decodes to the core's statements", "find": "(\"eq\", .eq)]\ndef cmpNames", "replace": "(\"eq\", .le)]\ndef cmpNames",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"]},
+  {"id": "encPrinted-places", "file": "lean/VE/Cardinality/Wire.lean", "claim": "encPrinted: the canonical object keeps a printed number's written places (identity)", "find": ".str (VE.Time.renderAmount k D)", "replace": ".str (VE.Time.renderAmount 0 D)",
+   "command": ["bash", "-c", "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.WireExamples"]}
  ]
 }
