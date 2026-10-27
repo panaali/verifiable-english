@@ -746,6 +746,16 @@
    ]
   },
   {
+   "test": "tests/test_lean_pool.py",
+   "why": "runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tools/nested_pytest.py:command: pytest"
+   ]
+  },
+  {
    "test": "tests/test_lean_service.py",
    "why": "starts git (git rev-parse) in tools/lean_service_common.py",
    "recorded": [
