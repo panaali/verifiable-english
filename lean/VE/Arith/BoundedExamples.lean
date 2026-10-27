@@ -115,7 +115,8 @@ or one more (predicates). -/
    some (true, 1), some (false, 1)]
 /-! The budget is spent inside a definition's body too: `big 3` needs 5 visits. -/
 #guard [4, 5].map (decideBounded chain · (.call "big" [lit 3])) = [none, some (true, 5)]
-/-! A later definition of a name shadows an earlier one for the statements, and the earlier one keeps its readers. -/
+/-! The definitions are folded in order: a later definition of a name shadows an earlier one for the statements, and
+the earlier one keeps its readers (admission refuses such a case as `DuplicateName`; this pins the fold's order). -/
 #guard [ev [.fn "c" 0 (lit 1), .fn "d" 0 (.call "c" []), .fn "c" 0 (lit 2)] (.eq (.call "c" []) (lit 2)),
   ev [.fn "c" 0 (lit 1), .fn "d" 0 (.call "c" []), .fn "c" 0 (lit 2)] (.eq (.call "d" []) (lit 1)),
   ev [.pred "p" 0 yes, .pred "q" 0 (.call "p" []), .pred "p" 0 no] (.call "p" []),
