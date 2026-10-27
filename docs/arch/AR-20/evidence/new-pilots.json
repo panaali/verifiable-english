@@ -1,0 +1,2128 @@
+[
+ {
+  "answered": false,
+  "base": {
+   "timeout": 600
+  },
+  "base_seconds": 600,
+  "case": "pilot/udhr-20261026T1800Z:usecases/udhr-pilot/run-20261026T1800Z/experiment-whole/translation-whole.ve.md",
+  "head": {
+   "timeout": 600
+  },
+  "head_seconds": 600,
+  "same": true,
+  "source_sha256": "c2de2d5aaf7c47a6810102b70caa03a74ee4660a",
+  "timeout": 600
+ },
+ {
+  "answered": true,
+  "base": {
+   "exit": 0,
+   "stderr": [],
+   "stdout": {
+    "coverage": {
+     "accounted_bytes": 92,
+     "bytes_by_kind": {
+      "norm": 92
+     },
+     "bytes_by_status": {
+      "OPEN": 92
+     },
+     "coverage_percent": 100,
+     "norm_defaults": {
+      "findings": [],
+      "gaps": []
+     },
+     "residual": {
+      "assumptions": 0,
+      "bridge_leaves": 0,
+      "gaps": 0,
+      "open_terms": 1,
+      "ungrounded_defaults": 0,
+      "unresolved_reading_sets": 0
+     },
+     "residual_total": 1,
+     "source_bytes": 92,
+     "unformalised_reasons": {}
+    },
+    "document_id": "93fbd1f435c97d8646eb4ad36d96945a65913ddc790274d52db4645660410c14",
+    "format": "ve-document@1",
+    "norm_defaults": {
+     "background_labels": [],
+     "environment_id": "a9f55ec87e90b7e024554c330bd14248391386b8403f4de39f9daf998b2cc065",
+     "fill_hash": "90330707c9870cb67e809362231d81a3c56cb7c0bab1b2f2414ab0195ab858c1",
+     "filled_environment_id": "d409aaa47fdf89a3586c0e9db2c7d79915ecdb659a7f867d5b353bb986d3b401",
+     "report": {
+      "right_to_seek_asylum_and_enjoy_it_in_other_countries": [
+       "completion: unspecified",
+       "gaps: none"
+      ]
+     },
+     "unsaid_predicates": [
+      "unsaid__right_to_seek_asylum_and_enjoy_it_in_other_countries"
+     ]
+    },
+    "premises": {
+     "model_id": "5c9c202d3f7f61a2f81511ff2e8cb43cb428f5b0889ea7eb328fb86b0dc51290",
+     "status": "model"
+    },
+    "reading_plan": {
+     "choices": [
+      {}
+     ],
+     "route": "single"
+    },
+    "source_id": "c612fade201963d64d495976e69fe81efbcd8670e9fd8dd7897cee356fe2eaaa"
+   }
+  },
+  "base_seconds": 2,
+  "case": "pilot/udhr-20261026T1800Z:usecases/udhr-pilot/run-20261026T1800Z/readings/u051.other_countries_enjoyment_only.ve.md",
+  "head": {
+   "exit": 0,
+   "stderr": [],
+   "stdout": {
+    "coverage": {
+     "accounted_bytes": 92,
+     "bytes_by_kind": {
+      "norm": 92
+     },
+     "bytes_by_status": {
+      "OPEN": 92
+     },
+     "coverage_percent": 100,
+     "norm_defaults": {
+      "findings": [],
+      "gaps": []
+     },
+     "residual": {
+      "assumptions": 0,
+      "bridge_leaves": 0,
+      "gaps": 0,
+      "open_terms": 1,
+      "ungrounded_defaults": 0,
+      "unresolved_reading_sets": 0
+     },
+     "residual_total": 1,
+     "source_bytes": 92,
+     "unformalised_reasons": {}
+    },
+    "document_id": "93fbd1f435c97d8646eb4ad36d96945a65913ddc790274d52db4645660410c14",
+    "format": "ve-document@1",
+    "norm_defaults": {
+     "background_labels": [],
+     "environment_id": "a9f55ec87e90b7e024554c330bd14248391386b8403f4de39f9daf998b2cc065",
+     "fill_hash": "90330707c9870cb67e809362231d81a3c56cb7c0bab1b2f2414ab0195ab858c1",
+     "filled_environment_id": "d409aaa47fdf89a3586c0e9db2c7d79915ecdb659a7f867d5b353bb986d3b401",
+     "report": {
+      "right_to_seek_asylum_and_enjoy_it_in_other_countries": [
+       "completion: unspecified",
+       "gaps: none"
+      ]
+     },
+     "unsaid_predicates": [
+      "unsaid__right_to_seek_asylum_and_enjoy_it_in_other_countries"
+     ]
+    },
+    "premises": {
+     "model_id": "5c9c202d3f7f61a2f81511ff2e8cb43cb428f5b0889ea7eb328fb86b0dc51290",
+     "status": "model"
+    },
+    "reading_plan": {
+     "choices": [
+      {}
+     ],
+     "route": "single"
+    },
+    "source_id": "c612fade201963d64d495976e69fe81efbcd8670e9fd8dd7897cee356fe2eaaa"
+   }
+  },
+  "head_seconds": 1,
+  "same": true,
+  "source_sha256": "6095f665ef02c4788ee911a96c6218f632fedfa3",
+  "timeout": 600
+ },
+ {
+  "answered": true,
+  "base": {
+   "exit": 0,
+   "stderr": [],
+   "stdout": {
+    "coverage": {
+     "accounted_bytes": 92,
+     "bytes_by_kind": {
+      "norm": 92
+     },
+     "bytes_by_status": {
+      "OPEN": 92
+     },
+     "coverage_percent": 100,
+     "norm_defaults": {
+      "findings": [],
+      "gaps": []
+     },
+     "residual": {
+      "assumptions": 0,
+      "bridge_leaves": 0,
+      "gaps": 0,
+      "open_terms": 1,
+      "ungrounded_defaults": 0,
+      "unresolved_reading_sets": 0
+     },
+     "residual_total": 1,
+     "source_bytes": 92,
+     "unformalised_reasons": {}
+    },
+    "document_id": "a789ab267dfafc36f8c36d385b8bc4d6328857dfa510a2b8cf86d26f12e4d18f",
+    "format": "ve-document@1",
+    "norm_defaults": {
+     "background_labels": [],
+     "environment_id": "3c8b6cf152ce52a1f7a7d4bb2cb3b50172f0756fe0f00932ebda9549e7e24ac0",
+     "fill_hash": "13a818a30783ee2e7942bd6e10c1479ccee555579e6b553b4852be4a98a740ff",
+     "filled_environment_id": "1826d2f31832d19c3f6d91168114b4cf52bfc00c2c4c173f3ad8bc73528b467d",
+     "report": {
+      "right_to_seek_and_enjoy_asylum_in_other_countries": [
+       "completion: unspecified",
+       "gaps: none"
+      ]
+     },
+     "unsaid_predicates": [
+      "unsaid__right_to_seek_and_enjoy_asylum_in_other_countries"
+     ]
+    },
+    "premises": {
+     "model_id": "c4e392f0292549448e9628cb19a4c4969728445a0d36357863a8f644402d5105",
+     "status": "model"
+    },
+    "reading_plan": {
+     "choices": [
+      {}
+     ],
+     "route": "single"
+    },
+    "source_id": "c612fade201963d64d495976e69fe81efbcd8670e9fd8dd7897cee356fe2eaaa"
+   }
+  },
+  "base_seconds": 2,
+  "case": "pilot/udhr-20261026T1800Z:usecases/udhr-pilot/run-20261026T1800Z/readings/u051.other_countries_over_both.ve.md",
+  "head": {
+   "exit": 0,
+   "stderr": [],
+   "stdout": {
+    "coverage": {
+     "accounted_bytes": 92,
+     "bytes_by_kind": {
+      "norm": 92
+     },
+     "bytes_by_status": {
+      "OPEN": 92
+     },
+     "coverage_percent": 100,
+     "norm_defaults": {
+      "findings": [],
+      "gaps": []
+     },
+     "residual": {
+      "assumptions": 0,
+      "bridge_leaves": 0,
+      "gaps": 0,
+      "open_terms": 1,
+      "ungrounded_defaults": 0,
+      "unresolved_reading_sets": 0
+     },
+     "residual_total": 1,
+     "source_bytes": 92,
+     "unformalised_reasons": {}
+    },
+    "document_id": "a789ab267dfafc36f8c36d385b8bc4d6328857dfa510a2b8cf86d26f12e4d18f",
+    "format": "ve-document@1",
+    "norm_defaults": {
+     "background_labels": [],
+     "environment_id": "3c8b6cf152ce52a1f7a7d4bb2cb3b50172f0756fe0f00932ebda9549e7e24ac0",
+     "fill_hash": "13a818a30783ee2e7942bd6e10c1479ccee555579e6b553b4852be4a98a740ff",
+     "filled_environment_id": "1826d2f31832d19c3f6d91168114b4cf52bfc00c2c4c173f3ad8bc73528b467d",
+     "report": {
+      "right_to_seek_and_enjoy_asylum_in_other_countries": [
+       "completion: unspecified",
+       "gaps: none"
+      ]
+     },
+     "unsaid_predicates": [
+      "unsaid__right_to_seek_and_enjoy_asylum_in_other_countries"
+     ]
+    },
+    "premises": {
+     "model_id": "c4e392f0292549448e9628cb19a4c4969728445a0d36357863a8f644402d5105",
+     "status": "model"
+    },
+    "reading_plan": {
+     "choices": [
+      {}
+     ],
+     "route": "single"
+    },
+    "source_id": "c612fade201963d64d495976e69fe81efbcd8670e9fd8dd7897cee356fe2eaaa"
+   }
+  },
+  "head_seconds": 1,
+  "same": true,
+  "source_sha256": "378f3136e2e72bed1639300cda44aa62975cdae3",
+  "timeout": 600
+ },
+ {
+  "answered": true,
+  "base": {
+   "exit": 0,
+   "stderr": [],
+   "stdout": {
+    "coverage": {
+     "accounted_bytes": 1849,
+     "bytes_by_kind": {
+      "asserted": 487,
+      "meta": 105,
+      "norm": 864,
+      "unformalised": 393
+     },
+     "bytes_by_status": {
+      "CHECKED": 265,
+      "LABELLED": 105,
+      "OPEN": 857,
+      "UNFORMALISED": 622
+     },
+     "coverage_percent": 100,
+     "norm_defaults": {
+      "findings": [],
+      "gaps": [
+       "compel_association_membership_permitted",
+       "deprivation_of_property_permitted",
+       "entry_into_marriage_permitted",
+       "invoke_asylum_right_in_case_permitted",
+       "loss_of_nationality_permitted"
+      ]
+     },
+     "residual": {
+      "assumptions": 0,
+      "bridge_leaves": 0,
+      "couplings": 0,
+      "gaps": 5,
+      "open_terms": 57,
+      "pending_candidates": 0,
+      "readings_findings": 0,
+      "separations": 2,
+      "ungrounded_defaults": 0,
+      "unresolved_reading_sets": 4
+     },
+     "residual_total": 68,
+     "source_bytes": 1849,
+     "unformalised_reasons": {
+      "norms": 2,
+      "other_right_lines_across_open_sets": 4
+     }
+    },
+    "document_id": "de02a7906905740a2831f6acd05e2cd9782e8a5f88fbf5ec6515ce9f60991e53",
+    "format": "ve-document@1",
+    "norm_defaults": {
+     "background_labels": [],
+     "environment_id": "7142602c9b8302ffe9a7c5daaaad1b53a10c3fef0be9a3ddb5703c4f6444b788",
+     "fill_hash": "a00c2e58c8fb333f2cbb737ba987ff780cde68d5b9f3b3fd6d3cdbde553bd22f",
+     "filled_environment_id": "d646d7b8805e3d38b4a13f88a280c484e92b236c49feb8eba50076386d0aacbe",
+     "report": {
+      "compel_association_membership_permitted": [
+       "completion: unspecified",
+       "gaps: reachable"
+      ],
+      "deprivation_of_property_permitted": [
+       "completion: unspecified",
+       "gaps: reachable"
+      ],
+      "entry_into_marriage_permitted": [
+       "completion: unspecified",
+       "gaps: reachable"
+      ],
+      "invoke_asylum_right_in_case_permitted": [
+       "completion: unspecified",
+       "gaps: reachable"
+      ],
+      "loss_of_nationality_permitted": [
+       "completion: unspecified",
+       "gaps: reachable"
+      ]
+     },
+     "unsaid_predicates": [
+      "unsaid__compel_association_membership_permitted",
+      "unsaid__deprivation_of_property_permitted",
+      "unsaid__entry_into_marriage_permitted",
+      "unsaid__invoke_asylum_right_in_case_permitted",
+      "unsaid__loss_of_nationality_permitted"
+     ]
+    },
+    "premises": {
+     "candidates": [
+      {
+       "choice": [
+        [
+         "rs_u048",
+         0
+        ],
+        [
+         "rs_u051",
+         0
+        ],
+        [
+         "rs_u052",
+         0
+        ],
+        [
+         "rs_u055",
+         0
+        ]
+       ],
+       "index": 0,
+       "set": "rs_u048",
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u048",
+         1
+        ],
+        [
+         "rs_u051",
+         0
+        ],
+        [
+         "rs_u052",
+         0
+        ],
+        [
+         "rs_u055",
+         0
+        ]
+       ],
+       "index": 1,
+       "set": "rs_u048",
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u048",
+         0
+        ],
+        [
+         "rs_u051",
+         0
+        ],
+        [
+         "rs_u052",
+         0
+        ],
+        [
+         "rs_u055",
+         0
+        ]
+       ],
+       "index": 0,
+       "set": "rs_u051",
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u048",
+         0
+        ],
+        [
+         "rs_u051",
+         1
+        ],
+        [
+         "rs_u052",
+         0
+        ],
+        [
+         "rs_u055",
+         0
+        ]
+       ],
+       "index": 1,
+       "set": "rs_u051",
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u048",
+         0
+        ],
+        [
+         "rs_u051",
+         0
+        ],
+        [
+         "rs_u052",
+         0
+        ],
+        [
+         "rs_u055",
+         0
+        ]
+       ],
+       "index": 0,
+       "set": "rs_u052",
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u048",
+         0
+        ],
+        [
+         "rs_u051",
+         0
+        ],
+        [
+         "rs_u052",
+         1
+        ],
+        [
+         "rs_u055",
+         0
+        ]
+       ],
+       "index": 1,
+       "set": "rs_u052",
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u048",
+         0
+        ],
+        [
+         "rs_u051",
+         0
+        ],
+        [
+         "rs_u052",
+         0
+        ],
+        [
+         "rs_u055",
+         0
+        ]
+       ],
+       "index": 0,
+       "set": "rs_u055",
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u048",
+         0
+        ],
+        [
+         "rs_u051",
+         0
+        ],
+        [
+         "rs_u052",
+         0
+        ],
+        [
+         "rs_u055",
+         1
+        ]
+       ],
+       "index": 1,
+       "set": "rs_u055",
+       "status": "model"
+      }
+     ],
+     "choice": [
+      [
+       "rs_u048",
+       0
+      ],
+      [
+       "rs_u051",
+       0
+      ],
+      [
+       "rs_u052",
+       0
+      ],
+      [
+       "rs_u055",
+       0
+      ]
+     ],
+     "evidence": "model",
+     "gaps": [],
+     "model": {
+      "complete": true,
+      "constants": {
+       "the_family": "e0",
+       "ve__here": "e0"
+      },
+      "domains": {
+       "actor": [],
+       "bearer": [],
+       "community": [],
+       "deprivation": [],
+       "marriage_entry": [],
+       "measure": [],
+       "person": [],
+       "prosecution": [],
+       "thing": [
+        "e0"
+       ],
+       "ve__reading": [
+        "e0"
+       ]
+      },
+      "relations": {
+       "arises_from_acts_contrary_to_un": [],
+       "arises_from_acts_contrary_to_un_u052": [],
+       "arises_from_non_political_crime": [],
+       "arises_from_non_political_crime_u052": [],
+       "asylum_right_covers_case": [],
+       "declaration_implies_destructive_right": [],
+       "full_development_possible_in": [],
+       "has_free_consent_of_each_spouse": [],
+       "has_full_consent_of_each_spouse": [],
+       "has_right_to_leave_and_return_to_own_country": [],
+       "has_the_right_to_opinion_and_expression": [],
+       "has_the_right_to_own_property": [],
+       "has_the_right_to_thought_conscience_religion": [],
+       "is_arbitrary": [],
+       "is_arbitrary_u064": [],
+       "is_denial_of_change": [],
+       "is_deprivation_of_nationality": [],
+       "is_entitled_to_a_nationality": [],
+       "is_entitled_to_protection_by_society_and_the_state": [
+        [
+         "e0"
+        ]
+       ],
+       "natural_and_fundamental_group_unit_of_society": [
+        [
+         "e0"
+        ]
+       ],
+       "owes_duties_to": [],
+       "right_to_movement_and_residence_borders_on_residence": [],
+       "right_to_movement_and_residence_within_borders": [],
+       "right_to_seek_and_enjoy_asylum_in_other_countries": [],
+       "right_to_seek_asylum_and_enjoy_it_in_other_countries": [],
+       "unsaid__compel_association_membership_permitted": [],
+       "unsaid__deprivation_of_property_permitted": [],
+       "unsaid__entry_into_marriage_permitted": [],
+       "unsaid__invoke_asylum_right_in_case_permitted": [],
+       "unsaid__loss_of_nationality_permitted": [],
+       "ve__bit__1__0": [],
+       "ve__bit__2__0": [],
+       "ve__bit__3__0": [],
+       "ve__bit__4__0": []
+      }
+     },
+     "route": "superposed",
+     "status": "model"
+    },
+    "reading_plan": {
+     "choices": [
+      {
+       "rs_u048": 0,
+       "rs_u051": 0,
+       "rs_u052": 0,
+       "rs_u055": 0
+      },
+      {
+       "rs_u048": 0,
+       "rs_u051": 0,
+       "rs_u052": 0,
+       "rs_u055": 1
+      },
+      {
+       "rs_u048": 0,
+       "rs_u051": 0,
+       "rs_u052": 1,
+       "rs_u055": 0
+      },
+      {
+       "rs_u048": 0,
+       "rs_u051": 0,
+       "rs_u052": 1,
+       "rs_u055": 1
+      },
+      {
+       "rs_u048": 0,
+       "rs_u051": 1,
+       "rs_u052": 0,
+       "rs_u055": 0
+      },
+      {
+       "rs_u048": 0,
+       "rs_u051": 1,
+       "rs_u052": 0,
+       "rs_u055": 1
+      },
+      {
+       "rs_u048": 0,
+       "rs_u051": 1,
+       "rs_u052": 1,
+       "rs_u055": 0
+      },
+      {
+       "rs_u048": 0,
+       "rs_u051": 1,
+       "rs_u052": 1,
+       "rs_u055": 1
+      },
+      {
+       "rs_u048": 1,
+       "rs_u051": 0,
+       "rs_u052": 0,
+       "rs_u055": 0
+      },
+      {
+       "rs_u048": 1,
+       "rs_u051": 0,
+       "rs_u052": 0,
+       "rs_u055": 1
+      },
+      {
+       "rs_u048": 1,
+       "rs_u051": 0,
+       "rs_u052": 1,
+       "rs_u055": 0
+      },
+      {
+       "rs_u048": 1,
+       "rs_u051": 0,
+       "rs_u052": 1,
+       "rs_u055": 1
+      },
+      {
+       "rs_u048": 1,
+       "rs_u051": 1,
+       "rs_u052": 0,
+       "rs_u055": 0
+      },
+      {
+       "rs_u048": 1,
+       "rs_u051": 1,
+       "rs_u052": 0,
+       "rs_u055": 1
+      },
+      {
+       "rs_u048": 1,
+       "rs_u051": 1,
+       "rs_u052": 1,
+       "rs_u055": 0
+      },
+      {
+       "rs_u048": 1,
+       "rs_u051": 1,
+       "rs_u052": 1,
+       "rs_u055": 1
+      }
+     ],
+     "route": "enumerate"
+    },
+    "readings": {
+     "checked_by": {
+      "lean": "readings@1 admission (4.1 to 4.4), every recorded separation (4.5) and the findings (4.6): ve_readings_route readings-validate; S2 route and restrictions: readings-elaborate",
+      "not_certified": "SeparatedByDecisionOnly: decision_only_sound is not proved (DRI ruling 2)",
+      "python": "W2 structure of the reading sets, couplings and narrowings (S1 limitation, DRI ruling 3: Lean does not decode them); S2 choices, units, names, slot and sizes are Lean's, bound to the request (the sets, units, narrowings and choices they name)"
+     },
+     "choice_count": 16,
+     "choices_checked": 16,
+     "conflict": {
+      "assumed": [],
+      "choices": [
+       {
+        "choice": [
+         [
+          "rs_u048",
+          0
+         ],
+         [
+          "rs_u051",
+          0
+         ],
+         [
+          "rs_u052",
+          0
+         ],
+         [
+          "rs_u055",
+          0
+         ]
+        ],
+        "status": "CONFLICT-FREE"
+       },
+       {
+        "choice": [
+         [
+          "rs_u048",
+          0
+         ],
+         [
+          "rs_u051",
+          0
+         ],
+         [
+          "rs_u052",
+          0
+         ],
+         [
+          "rs_u055",
+          1
+         ]
+        ],
+        "status": "CONFLICT-FREE"
+       },
+       {
+        "choice": [
+         [
+          "rs_u048",
+          0
+         ],
+         [
+          "rs_u051",
+          0
+         ],
+         [
+          "rs_u052",
+          1
+         ],
+         [
+          "rs_u055",
+          0
+         ]
+        ],
+        "status": "CONFLICT-FREE"
+       },
+       {
+        "choice": [
+         [
+          "rs_u048",
+          0
+         ],
+         [
+          "rs_u051",
+          0
+         ],
+         [
+          "rs_u052",
+          1
+         ],
+         [
+          "rs_u055",
+          1
+         ]
+        ],
+        "status": "CONFLICT-FREE"
+       },
+       {
+        "choice": [
+         [
+          "rs_u048",
+          0
+         ],
+         [
+          "rs_u051",
+          1
+         ],
+         [
+          "rs_u052",
+          0
+         ],
+         [
+          "rs_u055",
+          0
+         ]
+        ],
+        "status": "CONFLICT-FREE"
+       },
+       {
+        "choice": [
+         [
+          "rs_u048",
+          0
+         ],
+         [
+          "rs_u051",
+          1
+         ],
+         [
+          "rs_u052",
+          0
+         ],
+         [
+          "rs_u055",
+          1
+         ]
+        ],
+        "status": "CONFLICT-FREE"
+       },
+       {
+        "choice": [
+         [
+          "rs_u048",
+          0
+         ],
+         [
+          "rs_u051",
+          1
+         ],
+         [
+          "rs_u052",
+          1
+         ],
+         [
+          "rs_u055",
+          0
+         ]
+        ],
+        "status": "CONFLICT-FREE"
+       },
+       {
+        "choice": [
+         [
+          "rs_u048",
+          0
+         ],
+         [
+          "rs_u051",
+          1
+         ],
+         [
+          "rs_u052",
+          1
+         ],
+         [
+          "rs_u055",
+          1
+         ]
+        ],
+        "status": "CONFLICT-FREE"
+       },
+       {
+        "choice": [
+         [
+          "rs_u048",
+          1
+         ],
+         [
+          "rs_u051",
+          0
+         ],
+         [
+          "rs_u052",
+          0
+         ],
+         [
+          "rs_u055",
+          0
+         ]
+        ],
+        "status": "CONFLICT-FREE"
+       },
+       {
+        "choice": [
+         [
+          "rs_u048",
+          1
+         ],
+         [
+          "rs_u051",
+          0
+         ],
+         [
+          "rs_u052",
+          0
+         ],
+         [
+          "rs_u055",
+          1
+         ]
+        ],
+        "status": "CONFLICT-FREE"
+       },
+       {
+        "choice": [
+         [
+          "rs_u048",
+          1
+         ],
+         [
+          "rs_u051",
+          0
+         ],
+         [
+          "rs_u052",
+          1
+         ],
+         [
+          "rs_u055",
+          0
+         ]
+        ],
+        "status": "CONFLICT-FREE"
+       },
+       {
+        "choice": [
+         [
+          "rs_u048",
+          1
+         ],
+         [
+          "rs_u051",
+          0
+         ],
+         [
+          "rs_u052",
+          1
+         ],
+         [
+          "rs_u055",
+          1
+         ]
+        ],
+        "status": "CONFLICT-FREE"
+       },
+       {
+        "choice": [
+         [
+          "rs_u048",
+          1
+         ],
+         [
+          "rs_u051",
+          1
+         ],
+         [
+          "rs_u052",
+          0
+         ],
+         [
+          "rs_u055",
+          0
+         ]
+        ],
+        "status": "CONFLICT-FREE"
+       },
+       {
+        "choice": [
+         [
+          "rs_u048",
+          1
+         ],
+         [
+          "rs_u051",
+          1
+         ],
+         [
+          "rs_u052",
+          0
+         ],
+         [
+          "rs_u055",
+          1
+         ]
+        ],
+        "status": "CONFLICT-FREE"
+       },
+       {
+        "choice": [
+         [
+          "rs_u048",
+          1
+         ],
+         [
+          "rs_u051",
+          1
+         ],
+         [
+          "rs_u052",
+          1
+         ],
+         [
+          "rs_u055",
+          0
+         ]
+        ],
+        "status": "CONFLICT-FREE"
+       },
+       {
+        "choice": [
+         [
+          "rs_u048",
+          1
+         ],
+         [
+          "rs_u051",
+          1
+         ],
+         [
+          "rs_u052",
+          1
+         ],
+         [
+          "rs_u055",
+          1
+         ]
+        ],
+        "status": "CONFLICT-FREE"
+       }
+      ],
+      "conditional_on": [],
+      "evidence": "certificates",
+      "reading_premises_used": [],
+      "status": "CONFLICT-FREE",
+      "status_text": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises"
+     },
+     "couplings": 0,
+     "dead_readings": [],
+     "english": [
+      "Under every reading of the 4 open sentences, no two rules on the same act contradict each other.",
+      "This does not depend on how sentence 2 is read.",
+      "This does not depend on how sentence 5 is read.",
+      "This does not depend on how sentence 6 is read.",
+      "This does not depend on how sentence 9 is read.",
+      "Read sentence 2 as *Every person is classified as \"right_to_movement_and_residence_within_borders\"* and sentence 5 as *Every person is classified as \"right_to_seek_and_enjoy_asylum_in_other_countries\"* and sentence 6 as *Every person must not invoke the right to seek as well as enjoy asylum in the case of each prosecution, if either that prosecution is classified as \"arises_from_non_political_crime_u052\" or that prosecution is classified as \"arises_from_acts_contrary_to_un_u052\", or both* and sentence 9 as *Every measure must not be applied, if all of the following hold:\n  (a) either that measure is classified as \"is_deprivation_of_nationality\" or that measure is classified as \"is_denial_of_change\", or both;\n  (b) that measure is classified as \"is_arbitrary\"*: the sentences of this document can all be true together, as here: e0 is a thing; e0 is classified as \"is_entitled_to_protection_by_society_and_the_state\"; e0 is classified as \"natural_and_fundamental_group_unit_of_society\"."
+     ],
+     "findings": {
+      "SeparatedByActOnly": 0,
+      "SeparatedByDecisionOnly": 0
+     },
+     "narrowings_stale": [],
+     "not_superposable": null,
+     "pending_candidates": 0,
+     "reading_premises": [],
+     "route": "superposed",
+     "separations": {
+      "holds": 0,
+      "outcome": 0,
+      "selects": 2
+     },
+     "sets": [
+      {
+       "candidates": [
+        {
+         "chain_findings": [],
+         "id": "invocation_barred",
+         "index": 0,
+         "pending": false
+        },
+        {
+         "chain_findings": [],
+         "id": "case_excluded",
+         "index": 1,
+         "pending": false
+        }
+       ],
+       "findings": [],
+       "not_certified": [],
+       "pairs": [
+        {
+         "probe": "selects",
+         "readings": [
+          "invocation_barred",
+          "case_excluded"
+         ],
+         "situation": "9425a4f10a415c0f205ac22d77df23b8bc78ae9cc4a8f5693387a6734b87848b",
+         "text": "These two readings differ in a checked situation that VE cannot yet show in words.",
+         "wording": "E24"
+        }
+       ],
+       "set": "rs_u052",
+       "unit": "u052",
+       "version": 4
+      },
+      {
+       "candidates": [
+        {
+         "chain_findings": [],
+         "id": "both_acts",
+         "index": 0,
+         "pending": false
+        },
+        {
+         "chain_findings": [],
+         "id": "deprivation_only",
+         "index": 1,
+         "pending": false
+        }
+       ],
+       "findings": [],
+       "not_certified": [],
+       "pairs": [
+        {
+         "probe": "selects",
+         "readings": [
+          "both_acts",
+          "deprivation_only"
+         ],
+         "situation": "6475e119cc5f9ab89980648c058018ae24bea2a751ff3656b13f1efcfd5c64cc",
+         "text": "These two readings differ in a checked situation that VE cannot yet show in words.",
+         "wording": "E24"
+        }
+       ],
+       "set": "rs_u055",
+       "unit": "u055",
+       "version": 3
+      }
+     ],
+     "sizes": {
+      "limits": {
+       "nodes": 10000,
+       "predicates": 256,
+       "sorts": 32
+      },
+      "nodes": 52,
+      "predicates": 39,
+      "sorts": 10
+     },
+     "status": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises"
+    },
+    "source_id": "30c55dadeebc806a044087a9d96f8f6d9c42d8413ef6370c497720eb840bfd3a"
+   }
+  },
+  "base_seconds": 10,
+  "case": "pilot/udhr-20261026T1800Z:usecases/udhr-pilot/run-20261026T1800Z/translation-part02.ve.md",
+  "head": {
+   "exit": 0,
+   "stderr": [],
+   "stdout": {
+    "coverage": {
+     "accounted_bytes": 1849,
+     "bytes_by_kind": {
+      "asserted": 487,
+      "meta": 105,
+      "norm": 864,
+      "unformalised": 393
+     },
+     "bytes_by_status": {
+      "CHECKED": 265,
+      "LABELLED": 105,
+      "OPEN": 857,
+      "UNFORMALISED": 622
+     },
+     "coverage_percent": 100,
+     "norm_defaults": {
+      "findings": [],
+      "gaps": [
+       "compel_association_membership_permitted",
+       "deprivation_of_property_permitted",
+       "entry_into_marriage_permitted",
+       "invoke_asylum_right_in_case_permitted",
+       "loss_of_nationality_permitted"
+      ]
+     },
+     "residual": {
+      "assumptions": 0,
+      "bridge_leaves": 0,
+      "couplings": 0,
+      "gaps": 5,
+      "open_terms": 57,
+      "pending_candidates": 0,
+      "readings_findings": 0,
+      "separations": 2,
+      "ungrounded_defaults": 0,
+      "unresolved_reading_sets": 4
+     },
+     "residual_total": 68,
+     "source_bytes": 1849,
+     "unformalised_reasons": {
+      "norms": 2,
+      "other_right_lines_across_open_sets": 4
+     }
+    },
+    "document_id": "de02a7906905740a2831f6acd05e2cd9782e8a5f88fbf5ec6515ce9f60991e53",
+    "format": "ve-document@1",
+    "norm_defaults": {
+     "background_labels": [],
+     "environment_id": "7142602c9b8302ffe9a7c5daaaad1b53a10c3fef0be9a3ddb5703c4f6444b788",
+     "fill_hash": "a00c2e58c8fb333f2cbb737ba987ff780cde68d5b9f3b3fd6d3cdbde553bd22f",
+     "filled_environment_id": "d646d7b8805e3d38b4a13f88a280c484e92b236c49feb8eba50076386d0aacbe",
+     "report": {
+      "compel_association_membership_permitted": [
+       "completion: unspecified",
+       "gaps: reachable"
+      ],
+      "deprivation_of_property_permitted": [
+       "completion: unspecified",
+       "gaps: reachable"
+      ],
+      "entry_into_marriage_permitted": [
+       "completion: unspecified",
+       "gaps: reachable"
+      ],
+      "invoke_asylum_right_in_case_permitted": [
+       "completion: unspecified",
+       "gaps: reachable"
+      ],
+      "loss_of_nationality_permitted": [
+       "completion: unspecified",
+       "gaps: reachable"
+      ]
+     },
+     "unsaid_predicates": [
+      "unsaid__compel_association_membership_permitted",
+      "unsaid__deprivation_of_property_permitted",
+      "unsaid__entry_into_marriage_permitted",
+      "unsaid__invoke_asylum_right_in_case_permitted",
+      "unsaid__loss_of_nationality_permitted"
+     ]
+    },
+    "premises": {
+     "candidates": [
+      {
+       "choice": [
+        [
+         "rs_u048",
+         0
+        ],
+        [
+         "rs_u051",
+         0
+        ],
+        [
+         "rs_u052",
+         0
+        ],
+        [
+         "rs_u055",
+         0
+        ]
+       ],
+       "index": 0,
+       "set": "rs_u048",
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u048",
+         1
+        ],
+        [
+         "rs_u051",
+         0
+        ],
+        [
+         "rs_u052",
+         0
+        ],
+        [
+         "rs_u055",
+         0
+        ]
+       ],
+       "index": 1,
+       "set": "rs_u048",
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u048",
+         0
+        ],
+        [
+         "rs_u051",
+         0
+        ],
+        [
+         "rs_u052",
+         0
+        ],
+        [
+         "rs_u055",
+         0
+        ]
+       ],
+       "index": 0,
+       "set": "rs_u051",
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u048",
+         0
+        ],
+        [
+         "rs_u051",
+         1
+        ],
+        [
+         "rs_u052",
+         0
+        ],
+        [
+         "rs_u055",
+         0
+        ]
+       ],
+       "index": 1,
+       "set": "rs_u051",
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u048",
+         0
+        ],
+        [
+         "rs_u051",
+         0
+        ],
+        [
+         "rs_u052",
+         0
+        ],
+        [
+         "rs_u055",
+         0
+        ]
+       ],
+       "index": 0,
+       "set": "rs_u052",
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u048",
+         0
+        ],
+        [
+         "rs_u051",
+         0
+        ],
+        [
+         "rs_u052",
+         1
+        ],
+        [
+         "rs_u055",
+         0
+        ]
+       ],
+       "index": 1,
+       "set": "rs_u052",
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u048",
+         0
+        ],
+        [
+         "rs_u051",
+         0
+        ],
+        [
+         "rs_u052",
+         0
+        ],
+        [
+         "rs_u055",
+         0
+        ]
+       ],
+       "index": 0,
+       "set": "rs_u055",
+       "status": "model"
+      },
+      {
+       "choice": [
+        [
+         "rs_u048",
+         0
+        ],
+        [
+         "rs_u051",
+         0
+        ],
+        [
+         "rs_u052",
+         0
+        ],
+        [
+         "rs_u055",
+         1
+        ]
+       ],
+       "index": 1,
+       "set": "rs_u055",
+       "status": "model"
+      }
+     ],
+     "choice": [
+      [
+       "rs_u048",
+       0
+      ],
+      [
+       "rs_u051",
+       0
+      ],
+      [
+       "rs_u052",
+       0
+      ],
+      [
+       "rs_u055",
+       0
+      ]
+     ],
+     "evidence": "model",
+     "gaps": [],
+     "model": {
+      "complete": true,
+      "constants": {
+       "the_family": "e0",
+       "ve__here": "e0"
+      },
+      "domains": {
+       "actor": [],
+       "bearer": [],
+       "community": [],
+       "deprivation": [],
+       "marriage_entry": [],
+       "measure": [],
+       "person": [],
+       "prosecution": [],
+       "thing": [
+        "e0"
+       ],
+       "ve__reading": [
+        "e0"
+       ]
+      },
+      "relations": {
+       "arises_from_acts_contrary_to_un": [],
+       "arises_from_acts_contrary_to_un_u052": [],
+       "arises_from_non_political_crime": [],
+       "arises_from_non_political_crime_u052": [],
+       "asylum_right_covers_case": [],
+       "declaration_implies_destructive_right": [],
+       "full_development_possible_in": [],
+       "has_free_consent_of_each_spouse": [],
+       "has_full_consent_of_each_spouse": [],
+       "has_right_to_leave_and_return_to_own_country": [],
+       "has_the_right_to_opinion_and_expression": [],
+       "has_the_right_to_own_property": [],
+       "has_the_right_to_thought_conscience_religion": [],
+       "is_arbitrary": [],
+       "is_arbitrary_u064": [],
+       "is_denial_of_change": [],
+       "is_deprivation_of_nationality": [],
+       "is_entitled_to_a_nationality": [],
+       "is_entitled_to_protection_by_society_and_the_state": [
+        [
+         "e0"
+        ]
+       ],
+       "natural_and_fundamental_group_unit_of_society": [
+        [
+         "e0"
+        ]
+       ],
+       "owes_duties_to": [],
+       "right_to_movement_and_residence_borders_on_residence": [],
+       "right_to_movement_and_residence_within_borders": [],
+       "right_to_seek_and_enjoy_asylum_in_other_countries": [],
+       "right_to_seek_asylum_and_enjoy_it_in_other_countries": [],
+       "unsaid__compel_association_membership_permitted": [],
+       "unsaid__deprivation_of_property_permitted": [],
+       "unsaid__entry_into_marriage_permitted": [],
+       "unsaid__invoke_asylum_right_in_case_permitted": [],
+       "unsaid__loss_of_nationality_permitted": [],
+       "ve__bit__1__0": [],
+       "ve__bit__2__0": [],
+       "ve__bit__3__0": [],
+       "ve__bit__4__0": []
+      }
+     },
+     "route": "superposed",
+     "status": "model"
+    },
+    "reading_plan": {
+     "choices": [
+      {
+       "rs_u048": 0,
+       "rs_u051": 0,
+       "rs_u052": 0,
+       "rs_u055": 0
+      },
+      {
+       "rs_u048": 0,
+       "rs_u051": 0,
+       "rs_u052": 0,
+       "rs_u055": 1
+      },
+      {
+       "rs_u048": 0,
+       "rs_u051": 0,
+       "rs_u052": 1,
+       "rs_u055": 0
+      },
+      {
+       "rs_u048": 0,
+       "rs_u051": 0,
+       "rs_u052": 1,
+       "rs_u055": 1
+      },
+      {
+       "rs_u048": 0,
+       "rs_u051": 1,
+       "rs_u052": 0,
+       "rs_u055": 0
+      },
+      {
+       "rs_u048": 0,
+       "rs_u051": 1,
+       "rs_u052": 0,
+       "rs_u055": 1
+      },
+      {
+       "rs_u048": 0,
+       "rs_u051": 1,
+       "rs_u052": 1,
+       "rs_u055": 0
+      },
+      {
+       "rs_u048": 0,
+       "rs_u051": 1,
+       "rs_u052": 1,
+       "rs_u055": 1
+      },
+      {
+       "rs_u048": 1,
+       "rs_u051": 0,
+       "rs_u052": 0,
+       "rs_u055": 0
+      },
+      {
+       "rs_u048": 1,
+       "rs_u051": 0,
+       "rs_u052": 0,
+       "rs_u055": 1
+      },
+      {
+       "rs_u048": 1,
+       "rs_u051": 0,
+       "rs_u052": 1,
+       "rs_u055": 0
+      },
+      {
+       "rs_u048": 1,
+       "rs_u051": 0,
+       "rs_u052": 1,
+       "rs_u055": 1
+      },
+      {
+       "rs_u048": 1,
+       "rs_u051": 1,
+       "rs_u052": 0,
+       "rs_u055": 0
+      },
+      {
+       "rs_u048": 1,
+       "rs_u051": 1,
+       "rs_u052": 0,
+       "rs_u055": 1
+      },
+      {
+       "rs_u048": 1,
+       "rs_u051": 1,
+       "rs_u052": 1,
+       "rs_u055": 0
+      },
+      {
+       "rs_u048": 1,
+       "rs_u051": 1,
+       "rs_u052": 1,
+       "rs_u055": 1
+      }
+     ],
+     "route": "enumerate"
+    },
+    "readings": {
+     "checked_by": {
+      "lean": "readings@1 admission (4.1 to 4.4), every recorded separation (4.5) and the findings (4.6): ve_readings_route readings-validate; S2 route and restrictions: readings-elaborate",
+      "not_certified": "SeparatedByDecisionOnly: decision_only_sound is not proved (DRI ruling 2)",
+      "python": "W2 structure of the reading sets, couplings and narrowings (S1 limitation, DRI ruling 3: Lean does not decode them); S2 choices, units, names, slot and sizes are Lean's, bound to the request (the sets, units, narrowings and choices they name)"
+     },
+     "choice_count": 16,
+     "choices_checked": 16,
+     "conflict": {
+      "assumed": [],
+      "choices": [
+       {
+        "choice": [
+         [
+          "rs_u048",
+          0
+         ],
+         [
+          "rs_u051",
+          0
+         ],
+         [
+          "rs_u052",
+          0
+         ],
+         [
+          "rs_u055",
+          0
+         ]
+        ],
+        "status": "CONFLICT-FREE"
+       },
+       {
+        "choice": [
+         [
+          "rs_u048",
+          0
+         ],
+         [
+          "rs_u051",
+          0
+         ],
+         [
+          "rs_u052",
+          0
+         ],
+         [
+          "rs_u055",
+          1
+         ]
+        ],
+        "status": "CONFLICT-FREE"
+       },
+       {
+        "choice": [
+         [
+          "rs_u048",
+          0
+         ],
+         [
+          "rs_u051",
+          0
+         ],
+         [
+          "rs_u052",
+          1
+         ],
+         [
+          "rs_u055",
+          0
+         ]
+        ],
+        "status": "CONFLICT-FREE"
+       },
+       {
+        "choice": [
+         [
+          "rs_u048",
+          0
+         ],
+         [
+          "rs_u051",
+          0
+         ],
+         [
+          "rs_u052",
+          1
+         ],
+         [
+          "rs_u055",
+          1
+         ]
+        ],
+        "status": "CONFLICT-FREE"
+       },
+       {
+        "choice": [
+         [
+          "rs_u048",
+          0
+         ],
+         [
+          "rs_u051",
+          1
+         ],
+         [
+          "rs_u052",
+          0
+         ],
+         [
+          "rs_u055",
+          0
+         ]
+        ],
+        "status": "CONFLICT-FREE"
+       },
+       {
+        "choice": [
+         [
+          "rs_u048",
+          0
+         ],
+         [
+          "rs_u051",
+          1
+         ],
+         [
+          "rs_u052",
+          0
+         ],
+         [
+          "rs_u055",
+          1
+         ]
+        ],
+        "status": "CONFLICT-FREE"
+       },
+       {
+        "choice": [
+         [
+          "rs_u048",
+          0
+         ],
+         [
+          "rs_u051",
+          1
+         ],
+         [
+          "rs_u052",
+          1
+         ],
+         [
+          "rs_u055",
+          0
+         ]
+        ],
+        "status": "CONFLICT-FREE"
+       },
+       {
+        "choice": [
+         [
+          "rs_u048",
+          0
+         ],
+         [
+          "rs_u051",
+          1
+         ],
+         [
+          "rs_u052",
+          1
+         ],
+         [
+          "rs_u055",
+          1
+         ]
+        ],
+        "status": "CONFLICT-FREE"
+       },
+       {
+        "choice": [
+         [
+          "rs_u048",
+          1
+         ],
+         [
+          "rs_u051",
+          0
+         ],
+         [
+          "rs_u052",
+          0
+         ],
+         [
+          "rs_u055",
+          0
+         ]
+        ],
+        "status": "CONFLICT-FREE"
+       },
+       {
+        "choice": [
+         [
+          "rs_u048",
+          1
+         ],
+         [
+          "rs_u051",
+          0
+         ],
+         [
+          "rs_u052",
+          0
+         ],
+         [
+          "rs_u055",
+          1
+         ]
+        ],
+        "status": "CONFLICT-FREE"
+       },
+       {
+        "choice": [
+         [
+          "rs_u048",
+          1
+         ],
+         [
+          "rs_u051",
+          0
+         ],
+         [
+          "rs_u052",
+          1
+         ],
+         [
+          "rs_u055",
+          0
+         ]
+        ],
+        "status": "CONFLICT-FREE"
+       },
+       {
+        "choice": [
+         [
+          "rs_u048",
+          1
+         ],
+         [
+          "rs_u051",
+          0
+         ],
+         [
+          "rs_u052",
+          1
+         ],
+         [
+          "rs_u055",
+          1
+         ]
+        ],
+        "status": "CONFLICT-FREE"
+       },
+       {
+        "choice": [
+         [
+          "rs_u048",
+          1
+         ],
+         [
+          "rs_u051",
+          1
+         ],
+         [
+          "rs_u052",
+          0
+         ],
+         [
+          "rs_u055",
+          0
+         ]
+        ],
+        "status": "CONFLICT-FREE"
+       },
+       {
+        "choice": [
+         [
+          "rs_u048",
+          1
+         ],
+         [
+          "rs_u051",
+          1
+         ],
+         [
+          "rs_u052",
+          0
+         ],
+         [
+          "rs_u055",
+          1
+         ]
+        ],
+        "status": "CONFLICT-FREE"
+       },
+       {
+        "choice": [
+         [
+          "rs_u048",
+          1
+         ],
+         [
+          "rs_u051",
+          1
+         ],
+         [
+          "rs_u052",
+          1
+         ],
+         [
+          "rs_u055",
+          0
+         ]
+        ],
+        "status": "CONFLICT-FREE"
+       },
+       {
+        "choice": [
+         [
+          "rs_u048",
+          1
+         ],
+         [
+          "rs_u051",
+          1
+         ],
+         [
+          "rs_u052",
+          1
+         ],
+         [
+          "rs_u055",
+          1
+         ]
+        ],
+        "status": "CONFLICT-FREE"
+       }
+      ],
+      "conditional_on": [],
+      "evidence": "certificates",
+      "reading_premises_used": [],
+      "status": "CONFLICT-FREE",
+      "status_text": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises"
+     },
+     "couplings": 0,
+     "dead_readings": [],
+     "english": [
+      "Under every reading of the 4 open sentences, no two rules on the same act contradict each other.",
+      "This does not depend on how sentence 2 is read.",
+      "This does not depend on how sentence 5 is read.",
+      "This does not depend on how sentence 6 is read.",
+      "This does not depend on how sentence 9 is read.",
+      "Read sentence 2 as *Every person is classified as \"right_to_movement_and_residence_within_borders\"* and sentence 5 as *Every person is classified as \"right_to_seek_and_enjoy_asylum_in_other_countries\"* and sentence 6 as *Every person must not invoke the right to seek as well as enjoy asylum in the case of each prosecution, if either that prosecution is classified as \"arises_from_non_political_crime_u052\" or that prosecution is classified as \"arises_from_acts_contrary_to_un_u052\", or both* and sentence 9 as *Every measure must not be applied, if all of the following hold:\n  (a) either that measure is classified as \"is_deprivation_of_nationality\" or that measure is classified as \"is_denial_of_change\", or both;\n  (b) that measure is classified as \"is_arbitrary\"*: the sentences of this document can all be true together, as here: e0 is a thing; e0 is classified as \"is_entitled_to_protection_by_society_and_the_state\"; e0 is classified as \"natural_and_fundamental_group_unit_of_society\"."
+     ],
+     "findings": {
+      "SeparatedByActOnly": 0,
+      "SeparatedByDecisionOnly": 0
+     },
+     "narrowings_stale": [],
+     "not_superposable": null,
+     "pending_candidates": 0,
+     "reading_premises": [],
+     "route": "superposed",
+     "separations": {
+      "holds": 0,
+      "outcome": 0,
+      "selects": 2
+     },
+     "sets": [
+      {
+       "candidates": [
+        {
+         "chain_findings": [],
+         "id": "invocation_barred",
+         "index": 0,
+         "pending": false
+        },
+        {
+         "chain_findings": [],
+         "id": "case_excluded",
+         "index": 1,
+         "pending": false
+        }
+       ],
+       "findings": [],
+       "not_certified": [],
+       "pairs": [
+        {
+         "probe": "selects",
+         "readings": [
+          "invocation_barred",
+          "case_excluded"
+         ],
+         "situation": "9425a4f10a415c0f205ac22d77df23b8bc78ae9cc4a8f5693387a6734b87848b",
+         "text": "These two readings differ in a checked situation that VE cannot yet show in words.",
+         "wording": "E24"
+        }
+       ],
+       "set": "rs_u052",
+       "unit": "u052",
+       "version": 4
+      },
+      {
+       "candidates": [
+        {
+         "chain_findings": [],
+         "id": "both_acts",
+         "index": 0,
+         "pending": false
+        },
+        {
+         "chain_findings": [],
+         "id": "deprivation_only",
+         "index": 1,
+         "pending": false
+        }
+       ],
+       "findings": [],
+       "not_certified": [],
+       "pairs": [
+        {
+         "probe": "selects",
+         "readings": [
+          "both_acts",
+          "deprivation_only"
+         ],
+         "situation": "6475e119cc5f9ab89980648c058018ae24bea2a751ff3656b13f1efcfd5c64cc",
+         "text": "These two readings differ in a checked situation that VE cannot yet show in words.",
+         "wording": "E24"
+        }
+       ],
+       "set": "rs_u055",
+       "unit": "u055",
+       "version": 3
+      }
+     ],
+     "sizes": {
+      "limits": {
+       "nodes": 10000,
+       "predicates": 256,
+       "sorts": 32
+      },
+      "nodes": 52,
+      "predicates": 39,
+      "sorts": 10
+     },
+     "status": "CONFLICT-FREE among rules on the same act, conditional on 0 coherence premises"
+    },
+    "source_id": "30c55dadeebc806a044087a9d96f8f6d9c42d8413ef6370c497720eb840bfd3a"
+   }
+  },
+  "head_seconds": 8,
+  "same": true,
+  "source_sha256": "40b185c9640eb9908084f80f0a219ffbc12d575d",
+  "timeout": 600
+ }
+]

@@ -1146,6 +1146,20 @@
    "reason": "qt-a3 fix1 (review F1, F2): VE/Cardinality/Wire.lean +73 (D[V], from C as W6a's elabTerm is: elabBody 12, elabOperand 12, elabRatio 12, items 5, elabRule 5, printed 5, elabName 5, ruleNames 3, cmpNames 2, relNames 1; S2's depth, new: arrayDepth 6, sourceFits 6; decodeStatement 13 -> 12); the item's V +124; K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3 fix1, 2026-10-27",
    "commit": "110b3bf3ad801a3dc335e9b2293e5c27bb4b82eb"
+  },
+  {
+   "class": "V",
+   "lines": 147,
+   "reason": "sc-1b: VE/Scope/Wire.lean +112, VE/Service/Document.lean +33, VE/Compose/Dispatch.lean +2 (V 147; K +0, S +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1b, 2026-10-18",
+   "commit": "e9e63dda7ff2ca089c8d8f03e3657b76a55c1cfa"
+  },
+  {
+   "class": "S",
+   "lines": 64,
+   "reason": "ap-3: lean/VE/Acts/Table.lean +38 (S: Simple, Op, opOf, freeTable, table), lean/VE/Acts/Tree.lean +26 (S: Join, Part, Filler, Modifier, Atom, Act); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3, 2026-10-18",
+   "commit": "058fea806c0bb89a1f30b6255126567ce9fd97a4"
   }
  ]
 }

@@ -38,7 +38,7 @@ theorem path_iff_transGen {α : Type u} {R : α → α → Prop} {a b : α} :
 
 theorem reachable_star_iff {α : Type u} {R : α → α → Prop} {a b : α} :
     Reachable .star R a b ↔ a = b ∨ Relation.TransGen R a b := by
-  simp [Reachable, path_iff_transGen]
+  simp [Reachable, VE.Paths.Reachable, path_iff_transGen]
 
 theorem atLeast_refl {α : Type} [DecidableEq α] (o : Order α) (a : α) :
     o.atLeast a a = true := by
