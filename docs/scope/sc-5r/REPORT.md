@@ -28,12 +28,12 @@ precursor.
 |---|---|---|
 | (1) which reading sets | yes: `governedSetUnits` | 11.1 |
 | (2) the definition, `governAt` or a sibling | the sibling `governChoice D ch := govern (atChoice D ch)`, with `governSets`. Reason: 5.7's `pick` maps a governor id to a reach, and `fixAt` rewrites governors only, so it cannot carry a unit's content | 11.2 |
-| (3) the three restated statements, one sentence each | `governSets_no_sets`, `governSets_preserves` + `governSets_every_choice`, `scope_set_choices`; also `governSets_strings`, `governSets_choice_refused`, `faultOf_every`, `choiceFault_limit`, `governSets_limit`, `governSets_readings_refused`, `scope_admission_sets`, `governSetsFast_eq` | 11.3, stub |
+| (3) the three restated statements, one sentence each | `governSets_no_sets`, `governSets_preserves` + `governSets_every_choice`, `scope_set_choices`; also `governSets_strings`, `governSets_choice_refused`, `faultOf_every`, `choiceFault_limit`, `governSets_limit`, `governSets_readings_refused`, `scope_admission_sets`, `governSetsFast_eq`, `checkDocSets_no_sets`, `checkDocSets_absent_unchanged` | 11.3, stub |
 | (4) replacing `readings_refused` and F-rs; what stays refused; limits per choice | yes | 11.1, 11.4 |
 | (5) diagnostics | `ScopeChoice: <unit> <set>@<v>:<reading>: <fault>`, `ResourceLimit: scope choices`, `ScopeReadings: <unit>: differs between choices …` | 11.5 |
 | (6) fixtures, computed | SR-1 (u0165.s03 admitted, both choices), SR-c (one choice conflicts, named), SR-cap (72 refused, 64 checked), SR-u (unrelated set unchanged), SR-0 (no set: `govern`'s answer as a value); also SR-1-pc, SR-1-g2, SR-c-nr, SR-g, F-rs, SR-dep, SR-lim | 11.6, `#guard`s in the stub |
 | (7) the build plan for sc-5rb | files, seeded bugs, trust about +114 under R16 (K +0), and the DRI signature its DELTA row needs | 11.7 |
-| Stub, type-checked; change-log line | `cd lean && PATH=~/.elan/bin:$PATH lake env lean ../docs/spec/scope/SpecStubs_sc5r.lean`: no error, 12 `sorry` warnings (proofs only), every `#guard` true | stub; change log |
+| Stub, type-checked; change-log line | `cd lean && PATH=~/.elan/bin:$PATH lake env lean ../docs/spec/scope/SpecStubs_sc5r.lean`: no error, 14 `sorry` warnings (proofs only), every `#guard` true | stub; change log |
 
 Design faults the fixtures found, all fixed in the spec before commit:
 - Lean's `Json` `==` and `compress` are `partial`, so they cannot be used in a proved definition. The agreement check
@@ -107,3 +107,29 @@ was rerun clean, and so were the 8 seeded bugs. No test reads these files beyond
 12. No CPU or memory regression: N.A., no product code. sc-5rb runs up to 64 × `governFast`, and 11.7 asks for
     a benchmark row, not a suite timing.
 13. `Test-removed` trailers: N.A., no test removed or renamed.
+
+## Review round (sc-5r-review.final.md)
+
+One B finding; C findings F2 to F5 are follow-ups, unchanged here. No DRI signature is reserved; no DELTA.
+
+- **F1 (B), fixed in `c28785371`.** The class: a placeholder (`opaque`) of the stub pinned on only some of the
+  cases its caller tells apart. `checkDocSets` was stated only on a document with a governed set. New statements
+  `checkDocSets_no_sets` (the document mode equals `checkDoc` whenever every decoded block governs no set, so
+  profile and block faults are included) and `checkDocSets_absent_unchanged` (`scope_absent_unchanged`'s sibling,
+  the review's sweep). Spec 11.3 lists both. 11.4 cites `checkDocSets_no_sets` for `scope_admission`'s text and
+  says what it asks of `withGoverned`. 11.6 SR-0 names it, and 11.7 gives sc-5rb the SR-0 CLI test and the review's
+  `withGoverned` example as a seeded bug. PROBE F1 exited 1 before the fix and exits 0 after it.
+- **Regression test** `tests/test_scope_sc5r_stub.py`, which checks the class rather than the example. Every
+  placeholder of type `Json → Except String Json` must be stated on each of its three cases (no `scope@0`, no
+  governed set, `scope@0`). Every placeholder must be named by some statement. The review's probe is included as
+  written, and spec 11.4's bullet must cite the statement. Seeded bugs: the stub at `a2096a604` fails
+  `::test_every_entry_placeholder_is_stated_on_every_case` and `::test_review_f1_probe`. Weakening
+  `checkDocSets_absent_unchanged`'s hypothesis to `True ∨ …` fails
+  `::test_every_entry_placeholder_is_stated_on_every_case`. Citing `governSets_no_sets` in 11.4 again fails
+  `::test_spec_keeps_scope_admission_text_by_the_document_level_statement`. Each was restored.
+- **Checks at `c28785371`:** the stub elaborates with no error, 14 `sorry` warnings, every `#guard` true. `lake build`
+  and `python3 lean/audit.py` PASS; `lean/` is unchanged. Selected tests (`mac-pytest.sh --select -- --base
+  4a850162c --run`, ve-mac-1, "HEAD c2878537 (clean)"): 63 units, 0 failed, exit 0, among them
+  `tests/test_scope_sc5r_stub.py`. Main's known-red tests were not selected.
+- Size after this round (`git diff --numstat` against the merge base, this report included): 839 lines added, 2
+  removed. The spec has +256/−2, the stub 371, this report 135, `mutants.json` 10 and the new test 67.
