@@ -239,6 +239,9 @@ open VE.Arith
 /-! B-1 to B-4 (13.3): N1's pin and doubling chain, F1's squaring chain, and a reused large value. -/
 def dbl (k : Nat) : Defs :=
   .fn "f0" 0 (lit 1) :: (List.range k).map fun i => .fn s!"f{i + 1}" 0 (.add (.call s!"f{i}" []) (.call s!"f{i}" []))
+def dblx (k : Nat) : Defs :=
+  .fn "f0" 1 (.var 0) :: (List.range k).map fun i =>
+    .fn s!"f{i + 1}" 1 (.add (.call s!"f{i}" [.var 0]) (.call s!"f{i}" [.var 0]))
 def sqChain (k : Nat) : Defs :=
   .fn "sq" 1 (.mul (.var 0) (.var 0)) :: .fn "g0" 0 (lit 2) ::
     (List.range k).map fun i => .fn s!"g{i + 1}" 0 (.call "sq" [.call s!"g{i}" []])
@@ -251,6 +254,8 @@ def reuseStmt : Formula := .le (lit 0) (.call "r" [.add (.call "g15" []) (lit 1)
 #guard [1, 1000, 12272, 12273, 12274].map (decideBounded (dbl 10) · (.eq (lit 1024) (.call "f10" []))) =
   [none, none, none, some (true, 12273), some (true, 12273)]
 #guard decideBounded (dbl 24) maxSteps (.lt (lit 0) (.call "f24" [])) = none
+#guard (dblx 24).WellFormed && decideBounded (dblx 2) maxSteps (.eq (lit 4) (.call "f2" [lit 1])) = some (true, 55) &&
+  decideBounded (dblx 24) maxSteps (.lt (lit 0) (.call "f24" [lit 1])) == none
 #guard decideBounded (sqChain 3) maxSteps (.lt (lit 0) (.call "g3" [])) = some (true, 95)
 #guard decideBounded (sqChain 16) maxSteps (.lt (lit 0) (.call "g16" [])) = some (true, 524449)
 #guard [maxSteps, 1048746, 1048747].map (decideBounded (sqChain 17) · (.lt (lit 0) (.call "g17" []))) =

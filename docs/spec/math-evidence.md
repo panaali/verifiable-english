@@ -2,6 +2,17 @@
 
 ## Changes in this draft
 
+Draft 5 (2026-10-27, me-12n) changes 12.2 and 13.3 only, adding and restating text as the DRI decided on 2026-10-27
+for me-12aa's N1 (`manage-agents/reviews/dri-decisions-20261027-me-12-n1.md`, item 1). Under the new budget, every
+term-node visit costs one unit, and a function call costs one visit plus its body's visits. Every value a term yields,
+and every value a range step binds, also costs its bit length. Draft 4's text is at `ab010c3f0`.
+- 12.2 gains `bits`, `chargeBits`, `stepB` and the restated evaluator.
+- New statements: `Term.evalB_bits` and the bit-length bounds.
+- `decideBounded_sound`, `_mono`, `_work` and `_complete` keep their text.
+- 13.3's units are recomputed *by hand* and fixtures B-1 to B-4 are added.
+- The statements were type-checked in [me-12n-budget-stub.lean](math-evidence/me-12n-budget-stub.lean), with
+  `sorry` proofs, against `main`'s `lean/`. Its independent review is the ME-S bounded re-check of 12.2 and 13.3.
+
 Draft 4 (2026-10-13) applies phase 1 (ME-0, [math-evidence-phase1.md](../research/math-evidence-phase1.md)) with the
 plan's draft 5. It changes fixtures and prose only: **no Lean statement changes**, so the untracked stub
 `lean/SpecStubs_math-evidence.lean` needs no edit for this draft (it is not tracked in this branch, and its
@@ -2058,17 +2069,32 @@ def Defs.boundedNames (D : Defs) : String → Bool :=
 def Formula.Bounded (D : Defs) (φ : Formula) : Bool := Formula.bnd D.boundedNames φ
 ```
 
-**Fuel accounting.** One unit is charged per **formula-node visit**, exactly as W6's `VE.Time.evalB`: a visit is
-refused (UNKNOWN) when the units already spent reach the budget. Term nodes are free; a count is charged through its
-condition's visits, once per value in its range; a predicate call is one visit plus its body's visits. Connectives
-short-circuit left to right (`imp` evaluates its antecedent first); a bounded quantifier tries lo, lo + 1, … in order
-and stops at the first decisive value; a count visits every value in its range. The budget is
+**Fuel accounting (draft 5, me-12n: the DRI's decision of 2026-10-27 on me-12aa's N1).** One unit is charged per
+**node visit**, term and formula nodes alike, as W6's `VE.Time.evalB` charges a formula node: a visit is refused
+(UNKNOWN) when the units already spent reach the budget. A function call, like a predicate call, is one visit plus its
+arguments' and its body's visits. Every term node is also charged the **size of the value it yields**, once its visit
+and its children are done: a literal, a variable's value, the result of `add`, `sub` or `mul`, a call's result and a
+count. Each step of a bounded quantifier or a count is charged the size of the value it binds, then its condition's
+visits. A charge that would pass the budget is refused (UNKNOWN). A count visits every value in its range;
+connectives short-circuit left to right (`imp` evaluates its antecedent first); a bounded quantifier tries lo,
+lo + 1, … in order and stops at the first decisive value. The budget is
 `maxSteps = VE.Time.maxEvaluations = 1,000,000` by default and at most; a case may set a smaller `"budget"`. The
 following evaluator is the accounting:
 
 ```lean
+/-- The size of a value: the bit length of its magnitude, and 1 for 0. -/
+def bits (x : Int) : Nat := x.natAbs.log2 + 1
+
 def charge {α : Type} (limit w : Nat) (k : Nat → Option (α × Nat)) : Option (α × Nat) :=
   if limit ≤ w then none else k (w + 1)
+
+/-- A value is charged its size once it is computed: refused (none) when the units would pass the budget. -/
+def chargeBits (limit : Nat) (x : Int) (w : Nat) : Option (Int × Nat) :=
+  if limit < w + bits x then none else some (x, w + bits x)
+
+/-- A range step charges the size of the value it binds, then visits the condition at that value. -/
+def stepB (limit : Nat) (cond : Int → Nat → Option (Bool × Nat)) (i : Int) (w : Nat) : Option (Bool × Nat) :=
+  (chargeBits limit i w).bind fun r => cond i r.2
 
 def quantLoop (universal : Bool) (step : Int → Nat → Option (Bool × Nat)) :
     Nat → Int → Nat → Option (Bool × Nat)
@@ -2089,27 +2115,28 @@ structure OpEnv where
 
 mutual
 def Term.evalB (E : OpEnv) (limit : Nat) (ρ : List Int) : Term → Nat → Option (Int × Nat)
-  | .var i, w => (ρ[i]?).map fun x => (x, w)
-  | .num n, w => some (n, w)
-  | .add a b, w => match Term.evalB E limit ρ a w with
+  | .var i, w => charge limit w fun w => (ρ[i]?).bind fun x => chargeBits limit x w
+  | .num n, w => charge limit w fun w => chargeBits limit n w
+  | .add a b, w => charge limit w fun w => match Term.evalB E limit ρ a w with
     | none => none
-    | some (x, w) => (Term.evalB E limit ρ b w).map fun r => (x + r.1, r.2)
-  | .sub a b, w => match Term.evalB E limit ρ a w with
+    | some (x, w) => (Term.evalB E limit ρ b w).bind fun r => chargeBits limit (x + r.1) r.2
+  | .sub a b, w => charge limit w fun w => match Term.evalB E limit ρ a w with
     | none => none
-    | some (x, w) => (Term.evalB E limit ρ b w).map fun r => (x - r.1, r.2)
-  | .mul a b, w => match Term.evalB E limit ρ a w with
+    | some (x, w) => (Term.evalB E limit ρ b w).bind fun r => chargeBits limit (x - r.1) r.2
+  | .mul a b, w => charge limit w fun w => match Term.evalB E limit ρ a w with
     | none => none
-    | some (x, w) => (Term.evalB E limit ρ b w).map fun r => (x * r.1, r.2)
-  | .call f args, w => match E.funs f with
+    | some (x, w) => (Term.evalB E limit ρ b w).bind fun r => chargeBits limit (x * r.1) r.2
+  | .call f args, w => charge limit w fun w => match E.funs f with
     | none => none
     | some (n, g) => match Term.evalBs E limit ρ args w with
       | none => none
-      | some (xs, w) => if xs.length = n then g xs w else none
-  | .countFromTo lo hi φ, w => match Term.evalB E limit ρ lo w with
+      | some (xs, w) => if xs.length = n then (g xs w).bind fun r => chargeBits limit r.1 r.2 else none
+  | .countFromTo lo hi φ, w => charge limit w fun w => match Term.evalB E limit ρ lo w with
     | none => none
     | some (l, w) => match Term.evalB E limit ρ hi w with
       | none => none
-      | some (h, w) => countLoop (fun i w => Formula.evalB E limit (i :: ρ) φ w) (h - l + 1).toNat l 0 w
+      | some (h, w) => (countLoop (stepB limit fun i w => Formula.evalB E limit (i :: ρ) φ w)
+          (h - l + 1).toNat l 0 w).bind fun r => chargeBits limit r.1 r.2
 def Term.evalBs (E : OpEnv) (limit : Nat) (ρ : List Int) : List Term → Nat → Option (List Int × Nat)
   | [], w => some ([], w)
   | t :: ts, w => match Term.evalB E limit ρ t w with
@@ -2154,12 +2181,12 @@ def Formula.evalB (E : OpEnv) (limit : Nat) (ρ : List Int) : Formula → Nat �
     | none => none
     | some (l, w) => match Term.evalB E limit ρ hi w with
       | none => none
-      | some (h, w) => quantLoop true (fun i w => Formula.evalB E limit (i :: ρ) φ w) (h - l + 1).toNat l w
+      | some (h, w) => quantLoop true (stepB limit fun i w => Formula.evalB E limit (i :: ρ) φ w) (h - l + 1).toNat l w
   | .exFromTo lo hi φ, w => charge limit w fun w => match Term.evalB E limit ρ lo w with
     | none => none
     | some (l, w) => match Term.evalB E limit ρ hi w with
       | none => none
-      | some (h, w) => quantLoop false (fun i w => Formula.evalB E limit (i :: ρ) φ w) (h - l + 1).toNat l w
+      | some (h, w) => quantLoop false (stepB limit fun i w => Formula.evalB E limit (i :: ρ) φ w) (h - l + 1).toNat l w
 end
 
 def Defs.opEnv (limit : Nat) (D : Defs) : OpEnv :=
@@ -2183,6 +2210,13 @@ theorem decideBounded_work (D : Defs) (φ : Formula) (limit : Nat) (b : Bool) (w
     (h : decideBounded D limit φ = some (b, w)) : w ≤ limit
 theorem decideBounded_complete (D : Defs) (hD : D.WellFormed = true) (φ : Formula)
     (hφ : φ.Scoped D 0 = true) (hb : φ.Bounded D = true) : ∃ limit r, decideBounded D limit φ = some r
+
+/-- Every value a term yields within budget `limit` has at most `limit` bits, in any environment (draft 5). -/
+theorem Term.evalB_bits (E : OpEnv) (limit : Nat) (ρ : List Int) (t : Term) (w : Nat) (x : Int) (w' : Nat)
+    (h : Term.evalB E limit ρ t w = some (x, w')) : bits x ≤ limit ∧ w' ≤ limit
+theorem bits_add_le (x y : Int) : bits (x + y) ≤ max (bits x) (bits y) + 1
+theorem bits_sub_le (x y : Int) : bits (x - y) ≤ max (bits x) (bits y) + 1
+theorem bits_mul_le (x y : Int) : bits (x * y) ≤ bits x + bits y
 
 /-- A statement's row. An unbounded statement is classified before any evaluation. -/
 def arithOutcome (D : Defs) (limit : Nat) (φ : Formula) : Outcome :=
@@ -2208,6 +2242,65 @@ end VE.Arith
 `decideBounded_sound` is the agreement of the evaluator with `Holds` that debate F4 asks for, conditional on
 completion; `decideBounded_mono` says a larger budget never changes an answer. A well-scoped statement always denotes,
 so `arith@0` has no undefined verdict; an exhausted budget is unknown and is tested apart (fixtures M-4x, M-1b).
+
+**The size is the bit length (draft 5).** `bits x` is the bit length of |x| (1 for 0). This draft uses bits rather
+than decimal digits because (1) bits are what a value occupies: Lean's `Int` stores a large value as a GMP number of
+⌈bits / 64⌉ words, so the charge measures memory; (2) the bit length costs nothing to compute (`Nat.log2` is the
+runtime's `lean_nat_log2`, GMP's `mpz_sizeinbase`), while counting decimal digits converts the number, which is
+superlinear work; and (3) bits satisfy the bounds below, `bits_mul_le` and `bits_add_le`. A decimal digit is about
+3.32 bits, so the digits a request can create are fewer than its budget, as the decision asks.
+
+**Why every yielded value, not only `add`, `sub` and `mul` (the decision's (b)).** Charging only the three results
+bounds the digits a request creates, but not the work of reading a large value again: a variable is read for one unit
+however large its value is. Fixture B-4 (13.3) builds a 32,769-bit and a 65,537-bit value, passes them as a
+function's parameters, and divides one by the other at each step of a count:
+- under draft 4's accounting it holds in 999,001 units after 107 s;
+- with only the decision's (a) and (b), it is UNKNOWN after 29 s and about 270,000 divisions, at 3 units each;
+- under this draft it is UNKNOWN within a second.
+
+These times are measured interpreted, with `lake env lean`, beyond the 1.3 s the stub takes to load. Charging a value
+at the node that yields it applies rule (b) to every value a node hands to its parent, in the conservative direction
+the decision chose. A range step's value is charged for the same reason, because the loop computes `i + 1` at every
+step.
+
+**What the charge bounds.** Every term clause ends in `chargeBits`. So every value a term yields within budget n has
+at most n bits (`Term.evalB_bits`, a theorem proved in the stub by cases, with no induction, in any environment), and
+so does every value a step binds.
+- **Refused values.** The one value computed beyond the budget, whose charge is refused, has at most 2n bits
+  (`bits_mul_le`, `bits_add_le`, `bits_sub_le`, proved in the stub).
+- **Memory.** The bits of all yielded values together are at most the units spent. A value read again is read
+  through a variable, which charges it again, so live memory is at most the values in scope, each of at most n bits.
+- **Time.** Time is linear in the units up to:
+  - GMP's multiplication and division, superlinear in the size of an operand of at most n bits;
+  - two costs whose bounds the wire's limits fix (12.5). A variable read walks ρ: fewer than 64 binders (JSON
+    depth 64) plus the parameters, which fit in 10,000 JSON nodes. A call looks its name up among at most 512
+    definitions.
+- **Not charged.** A range's remaining count is a natural number of at most n + 1 bits, decremented at each step. A
+  range up to a 65,537-bit bound measured as UNKNOWN within about a second.
+
+**The theorems under the new charge.** `decideBounded_sound`, `_mono`, `_work` and `_complete` keep draft 4's text,
+and each stays true:
+- **Sound.** `chargeBits` returns its value unchanged, and `stepB` passes the bound value to the condition, so a
+  completed evaluation computes draft 4's values.
+- **Work.** Every charge is refused before it would pass the budget, so `_work` keeps its form. Its new companion is
+  `Term.evalB_bits`.
+- **Mono.** No charge depends on the budget: a visit costs 1 and a value costs its bits. A charge refused at a larger
+  budget is therefore refused at every smaller one.
+- **Complete.** The units of a bounded, admitted statement are still fixed by the statement and its definitions. The
+  same holds for me-12ab's `decideBounded_covered` (in `Bounded.lean`, not in this text).
+
+me-12ab merged its proofs of `_mono`, `_complete` and `_covered` over draft 4's charge (4a850162c). No statement text
+changes, so none is named for restatement. The build, me-12nb, re-proves all five over this charge.
+
+**What this draft keeps, rejects and rereads.**
+- **Rejected.** Evaluating each zero-parameter definition once is rejected as the fix (DRI, 2026-10-27): it bounds
+  neither a call tree whose definitions take parameters (B-2p) nor digit growth (B-3). It may come later only as an optimisation that
+  leaves every unit count unchanged: a call answered from a cache is still charged its body's visits and sizes.
+  `maxSteps` stays 1,000,000.
+- **Text outside 12.2.** 12.5's `budget` and `units` ("formula-node visits"), section 14's `arith` row and 13.6's
+  R-7 (`"units": 17011` and `2`) are read in this draft's units. R-7's units are 337,735 and 33 (13.3); me-12b writes
+  those. The plan's ME-12 ("one unit per formula-node visit") and its M-4 reference count (248) are read the same way:
+  the count is now 87 (13.3).
 
 ### 12.3 The example vocabulary (`lean/VE/Arith/Examples.lean`)
 
@@ -2632,16 +2725,21 @@ so a finding over it stays "transcription unchecked" (2.5).
 | T-1 | empty: count 0, sum 0, mean, min, max undefined; 32B: 2, 8, 4, 3, 5; approved: count 2, sum, mean, min, max undefined (an absent score); *by hand*: not approved: count 1 (the 32B row with false), sum, mean, min and max 5; judge is not 32B: count 3, sum undefined (an absent score); score does not equal 3: count 3, sum 15, mean 5, min 4, max 6 | the three-row results are the stub's (the two added rows change none of them); draft 1's `not approved` would select the absent and the text cell too: count 3 |
 | T-2 | refused (`DigestMismatch`) | decoder check (ME-4) |
 | T-3 | *by hand*: at budget 6, c1 and c2 **unknown** (`limit .evaluations`; c2 through `share`'s definition), c3 and c4 **undefined** (the empty mean is the first fault), c5 **unknown**; without `budget`, c1 and c2 hold and c3 to c5 are undefined | `mean_7b`'s filter is one node over five rows, five visits within 6; `approved_32b`'s is three nodes, at least two visits per row, at least ten; at the default budget `approved_32b` = 1 (the first row only) and `share` = 1/2 |
-| M-1 | holds | `decideBounded primeDefs 1,000,000` = (true, 17,011 units) |
-| M-1b | unknown at 17,010; holds at 17,011 | exactly the units M-1 spends |
-| M-2 | holds | (true, 395 units) |
+| M-1 | holds | *by hand* (draft 5): `decideBounded primeDefs 1,000,000` = (true, 337,735 units); draft 4: 17,011 |
+| M-1b | *by hand* (draft 5): unknown at 337,734; holds at 337,735 and 337,736 | exactly the units M-1 spends; 13.2's budgets 17,010 and 17,011 (draft 4's boundary, also 13.4's `arithOutcome_exhausted_iff` row) are both unknown now, and 13.4 reads them as 337,734 and 337,735 |
+| M-2 | holds | *by hand* (draft 5): (true, 7,420 units); unknown at 7,419; draft 4: 395 |
 | M-3 | stated, not decided (`unboundedStatement`); proved only by import (EX-1) | `Bounded` false |
 | M-3r | reading set; the real reading stays residual | — |
-| M-4 | holds through 248 within 1,000,000 units; unknown from 249 | π(10) − π(5) = 1 (111 units) and π(11) − π(5) = 2 (127 units); at N = 200: (true, 576,518); at 248: (true, 998,395); at 249: none, and (true, 1,008,568) with a budget of 2,000,000; at 1,000: none |
-| M-4b | *phase 1*: each pair holds from its threshold to its measured bound; each instance at x = T − 1 fails | primeCount − halfPrimeCount at x = 1, 16, 28, 40 is 0, 2, 3, 4 (one less than k), at x = 2, 17, 29, 41 it is 1, 3, 4, 5; its minimum over T … 1,000 is k for each pair (exact counts in phase 1); the bounds N are ME-12's, as for M-4 |
-| M-4x | unknown (`limit .evaluations`) | none at budget 1,000 |
-| M-5 | **fails** at n = 1: deciding value 1 | (false, 2 units): the range 2…1 is empty; *by hand*: `decidingValue` is 1, the first n, since the evaluator stops there |
+| M-4 | *by hand* (draft 5): holds through 87 within 1,000,000 units; unknown from 88, so unknown at 13.2's 200, 248, 249 and 1,000 | `2 ≤ π(x) − π(x/2)` at x = 10: (false, 890 units), at 11: (true, 1,072); at N = 87: (true, 973,791); at 88: none, and (true, 1,004,183) with a budget of 1,004,183; at 200: (true, 9,694,873) with a budget of 10,000,000. Draft 4: through 248 (998,395 units), 111 and 127 units for the two differences |
+| M-4b | *phase 1*: each pair holds from its threshold to its measured bound; each instance at x = T − 1 fails | primeCount − halfPrimeCount at x = 1, 16, 28, 40 is 0, 2, 3, 4 (one less than k), at x = 2, 17, 29, 41 it is 1, 3, 4, 5; its minimum over T … 1,000 is k for each pair (exact counts in phase 1). *By hand* (draft 5), the bounds N at 1,000,000 units, with the units at N and those N + 1 needs: (1, 2) 87: 977,913 and 1,008,304; (3, 17) 88: 995,531 and 1,027,872; (4, 29) 89: 989,822 and 1,022,334; (5, 41) 91: 981,126 and 1,013,976 |
+| M-4x | unknown (`limit .evaluations`) | none at budget 1,000 (draft 5: M-1 needs 337,735) |
+| M-5 | **fails** at n = 1: deciding value 1 | *by hand* (draft 5): (false, 33 units); unknown at 32; draft 4: 2 units. The ∀ node 1, its lo `1` 1 + 1 and hi `161` 1 + 8 (12); the step at n = 1: bits 1 (13); the ∃ node 1 (14); its lo `n + 1`: add 1, `n` 1 + 1, `1` 1 + 1, bits 2 (21); its hi `2n − 1`: sub 1, the mul 1 + `2` 3 + `n` 2 + bits 2, `1` 2, bits 1 (33); the range 2…1 is empty. `decidingValue` is 1, the first n, since the evaluator stops there |
 | M-6 | agree on 0…400 | 78 primes |
+| B-1 | *by hand* (draft 5): N1's pin is unknown at budgets 1, 1,000 and 12,272, and holds at 12,273 and 12,274 (draft 4: (true, 1) at budget 1) | f0 = 1 and f(i+1) = f(i) + f(i) for i < 10, all without parameters; the statement is `1024 = f10`. Let c_i be the units of `f_i()`. Then c_0 = 4: the call 1, `1` 1 + 1, the result 1. And c_(i+1) = 2c_i + 2(i + 2) + 2: the call 1, the add 1, two calls, and the sum's i + 2 bits, charged by the add and again by the call. So c_10 = 12,260; with the eq node 1 and `1024` 1 + 11, the statement costs 12,273 |
+| B-2 | *by hand* (draft 5): unknown at 1,000,000, within seconds | N1's doubling chain at k = 24, statement `0 < f24`: c_24 > 4 · 2^24. Draft 4: 1 unit for 2^24 evaluations of f0, 55.8 s (me-12aa REPORT, N1). Draft 5: 0.7 s |
+| B-2p | *by hand* (draft 5): unknown at 1,000,000 | B-2 with a parameter: f0(x) = x and f(i+1)(x) = f(i)(x) + f(i)(x); the statement is `0 < f24(1)`. Evaluating each zero-parameter definition once would not shorten it. At k = 2, `4 = f2(1)` holds in 55 units |
+| B-3 | *by hand* (draft 5): unknown at 1,000,000, within seconds | F1's squaring chain: sq(x) = x × x, g0 = 2 and g(i+1) = sq(g(i)) for i < 31; the statement is `0 < g31`. g_k = 2^(2^k) has b_k = 2^k + 1 bits. A level costs 2 + 8b_i: g's call, sq's call and the mul (1 each), two reads of g_i (1 + b_i each), and the product's bits three times. So `0 < g_k` costs 8 · 2^k + 10k + 1 units: 95 at k = 3, 524,449 at 16 (holds) and 1,048,747 at 17 (unknown at 1,000,000). The largest value computed is g17, 131,073 bits, whose charge is refused. Draft 4: 1 unit, 40 s and 1.8 GB at 31 levels (me-12aa review, F1). Draft 5: no measurable time |
+| B-4 | *by hand* (draft 5): unknown at 1,000,000, within a second | A reused value: B-3's definitions through g16, and r(a, b) = the count of i from 1 through 999,000 such that a divides b; the statement is `0 ≤ r(g15 + 1, g16)`. Draft 4: holds in 999,001 units, after 107 s. With only the decision's (a) and (b): unknown after 29 s. Draft 5: each read of b costs 65,538 units |
 | E-1 | c1 discharged, c2 not (fails), c3 not (missing); statuses CHECKED, OPEN, UNFORMALISED, UNFORMALISED | as computed |
 | DL-1 | *phase 1*: holds × 6 | 0.85 ≤ 0.96 ≤ 1.16, 2.7 ≤ 2.8 ≤ 4.0, 1.2 ≤ 1.5 ≤ 1.6, 3.1 ≤ 3.5 ≤ 4.2; 0.96 < 2.8, 1.5 < 3.5 |
 | DL-2 | *phase 1*: holds, holds, **fails** | 4.8/0.6 = 8; 9.2/1.1 = 92/11 = 8.36…; 18/2.1 = 60/7 = 8.57…, outside [7.5, 8.5); in translation "8×" is a reading set, and this row distinguishes its readings |
@@ -2649,8 +2747,15 @@ so a finding over it stays "transcription unchecked" (2.5).
 | DL-4 | *phase 1*: holds | 0.4 + 0.7 = 1.1 < 6.1 |
 
 M-4's candidate bounds were 200 and 1,000 (debate F5). Under the accounting of 12.2, which is part of the semantics,
-the largest completing bound is 248; ME-12 re-measures it with its implementation (which must charge identically, so
-the count is the same) and pins it. No runtime estimate is part of the semantics.
+the largest completing bound is 87 (draft 4: 248). me-12nb re-measures it, and M-4b's bounds, with its implementation,
+which must charge identically, so the counts are the same, and pins them. No runtime estimate is part of the
+semantics.
+
+The units marked *by hand (draft 5)* were computed by the evaluator in
+[me-12n-budget-stub.lean](math-evidence/me-12n-budget-stub.lean), where each is a `#guard`. They are not computed by
+product code. The derivations in M-5, B-1 and B-3 above check that evaluator against 12.2's text; me-12nb pins the
+units in `BoundedExamples.lean`. The B fixtures are defined here, so 13.2 is unchanged. Their times were measured
+interpreted, with `lake env lean`, beyond the 1.3 s the stub takes to load. They are evidence, not semantics.
 
 ### 13.4 Each "exactly when" in both directions
 
