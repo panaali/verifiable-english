@@ -1877,7 +1877,7 @@ module VE.Acts.Read 416a8acd211a0289a1f1fdf8e61dc3e1e0b75d4056c09571e35b073cfd23
 166:0-171:59 theorem VE.Acts.readIn_unique@VE.Acts.Read
 173:0-178:47 theorem VE.Acts.readIn_none@VE.Acts.Read
 180:0-189:12 theorem VE.Acts.readIn_many@VE.Acts.Read
-module VE.Acts.RuleExamples e1cafc7bac59ae64cd1687a0456421b31e21f143923dcb6e88259f38f17a818e
+module VE.Acts.RuleExamples 6e43fe41a28d5e0bad1c7e332b3d55fbebba0ad99b95efd492380886b20f1a7f
 18:0-23:20 def VE.Acts.RuleExamples.parsed@VE.Acts.RuleExamples
 24:0-24:120 def VE.Acts.RuleExamples.rawOf@VE.Acts.RuleExamples
 25:0-30:23 def VE.Acts.RuleExamples.treesOf@VE.Acts.RuleExamples
@@ -1900,7 +1900,9 @@ module VE.Acts.RuleExamples e1cafc7bac59ae64cd1687a0456421b31e21f143923dcb6e8825
 163:0-163:76 def VE.Acts.RuleExamples.trees@VE.Acts.RuleExamples
 168:0-171:104 def VE.Acts.RuleExamples.unused@VE.Acts.RuleExamples
 178:0-181:108 def VE.Acts.RuleExamples.K2@VE.Acts.RuleExamples
-194:0-194:99 def VE.Acts.RuleExamples.nevers@VE.Acts.RuleExamples
+193:0-197:73 def VE.Acts.RuleExamples.fillWords@VE.Acts.RuleExamples
+198:0-201:44 def VE.Acts.RuleExamples.reserved@VE.Acts.RuleExamples
+211:0-211:99 def VE.Acts.RuleExamples.nevers@VE.Acts.RuleExamples
 module VE.Acts.Syntax ea8867c42dbcd62edcb0aa81ebc253e1f20bc973643ce8f1c9407a74d81934d9
 15:0-22:28 structure VE.Acts.Frame@VE.Acts.Syntax
 18:2-18:6 def VE.Acts.Frame.head@VE.Acts.Syntax
