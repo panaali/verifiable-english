@@ -1,0 +1,19 @@
+{"allow": [
+  {"definition": "VE.Calc.Check.OutcomeMeans", "operator": "arm-true", "reason": "the follows clauses (Follows, HasCounterexample) and the undefined clause are propositions over every assignment κ : String → Rat, or over ∀ x, ¬ Denotes, that no evaluated check can read (as me-5b allowed Follows and HasCounterexample); each clause's mutant breaks Check.run_sound (mutants.json outcome-means-holds, -fails, -undefined)"},
+  {"definition": "VE.Calc.Check.OutcomeMeans", "operator": "arm-false", "reason": "as arm-true: a proposition over every assignment that no evaluated check can read; Check.run_sound fails (mutants.json outcome-means-*)"},
+  {"definition": "VE.Calc.Check.OutcomeMeans", "operator": "not-drop", "reason": "as arm-true: the undefined clause quantifies over every assignment and value; Check.run_sound fails (mutants.json outcome-means-undefined)"},
+  {"definition": "VE.Calc.Check.UnknownCause", "operator": "arm-true", "reason": "the general arm reads Expr.Overflows and Expr.ReadsExhausted, propositions over the rationals that no evaluated check can read (me-2 allowed the claim arm for the same reason); the reasons it lists are read by the guard that every unknown of a check is one of Check.reasons, and its mutants break Check.run_sound (mutants.json unknown-cause-reasons, unknown-cause-evaluations)"},
+  {"definition": "VE.Calc.Check.UnknownCause", "operator": "arm-false", "reason": "as arm-true; Check.run_sound fails"},
+  {"definition": "VE.Calc.Check.UnknownCause", "operator": "and-or", "reason": "as arm-true; Check.run_sound fails (an unknown row's proof needs each conjunct)"},
+  {"definition": "VE.Calc.Check.UnknownCause", "operator": "eq-ne", "reason": "as arm-true; Check.run_sound fails"},
+  {"definition": "VE.Calc.Check.UnknownCause", "operator": "eq-le", "reason": "not a program: UnknownReason has no order (failed to synthesize)"},
+  {"definition": "VE.Calc.Wire.check", "operator": "list-empty", "reason": "not a program: each emptied list is a pattern, an Option or an Array the code reads with its own type (Lean refuses the text with a type or identifier error the tool does not class as REFUSED)"},
+  {"definition": "VE.Calc.Wire.check", "operator": "list-first", "reason": "not a program on the pattern [.str \"follows\", c, .arr ids, .arr links] (unsupported pattern in syntax match); the links list's take 1 is killed by h6-two-links"},
+  {"definition": "VE.Calc.Wire.check", "operator": "list-drop-last", "reason": "not a program: the pattern of line 272 (unsupported pattern in syntax match)"},
+  {"definition": "VE.Calc.Wire.check", "operator": "list-last", "reason": "not a program on the pattern of line 272; the links list's reverse.take 1 is killed by h6-two-links"},
+  {"definition": "VE.Calc.Wire.check", "operator": "list-drop-first", "reason": "not a program: the pattern of line 272 (unsupported pattern in syntax match)"},
+  {"definition": "VE.Calc.Wire.decode", "operator": "list-empty", "reason": "not a program: cprems emptied has no element type (don't know how to synthesize implicit argument)"},
+  {"definition": "VE.Calc.Wire.decode", "operator": "list-first", "reason": "equivalent: on the hashed premises field, a list of at most one element, take 1 is itself; on cprems in cprems.isEmpty (the occurrence the tool edits), take 1 keeps emptiness. cprems.dropLast and cprems.drop 1 there are killed by the premises identity family (one premise against none)"},
+  {"definition": "VE.Calc.Wire.decode", "operator": "list-last", "reason": "equivalent, as list-first: reverse.take 1 keeps a list of at most one element and keeps the emptiness of cprems"},
+  {"definition": "VE.Calc.English.renderFollows", "operator": "list-empty", "reason": "not a program: links.flatMap and lines.zipIdx emptied are functions or patterns Lean refuses with a type error the tool does not class as REFUSED"}
+]}

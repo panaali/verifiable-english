@@ -17,21 +17,21 @@ theorem decode_software (j : Json) :
   all_goals first | rfl | (cases j <;> simp_all [CaseCond.holds, Json.getObjVal?, Except.toBool])
 
 /-- A row: a decided outcome with no reason, or an unknown one with Lean's reason text. -/
-theorem rowJson_fits (id : String) (r : Row) :
-    Fits req (skel% "calc.json#/$defs/claim_row") (Run.rowJson id r) := by
+theorem rowJson_fits (id : String) (k : Check) (r : Row) :
+    Fits req (skel% "calc.json#/$defs/claim_row") (Run.rowJson id k r) := by
   rcases r with ⟨_, o, _⟩
   unfold Run.rowJson
   rcases o with v | u
   · apply Fits.altHead
-    cases v <;> fits
+    cases k <;> cases v <;> simp only [Run.kind] <;> fits
   · apply Fits.altTail; apply Fits.altHead
     rcases u with l | _ | _ | _ | _ | _
-    · cases l <;> fits
-    all_goals fits
+    · cases k <;> cases l <;> simp only [Run.kind] <;> fits
+    all_goals cases k <;> simp only [Run.kind] <;> fits
 
 /-- The same, with the reproduction `"unknown"` of a case under a software convention. -/
-theorem rowJson_fits_software (id : String) (r : Row) (h : r.reproduction.isSome) :
-    Fits req (skel% "calc.json#/$defs/claim_row_software") (Run.rowJson id r) := by
+theorem rowJson_fits_software (id : String) (k : Check) (r : Row) (h : r.reproduction.isSome) :
+    Fits req (skel% "calc.json#/$defs/claim_row_software") (Run.rowJson id k r) := by
   rcases r with ⟨_, o, p⟩
   cases p with
   | none => cases h
@@ -39,11 +39,11 @@ theorem rowJson_fits_software (id : String) (r : Row) (h : r.reproduction.isSome
     unfold Run.rowJson
     rcases o with v | u
     · apply Fits.altHead
-      cases v <;> fits
+      cases k <;> cases v <;> simp only [Run.kind] <;> fits
     · apply Fits.altTail; apply Fits.altHead
       rcases u with l | _ | _ | _ | _ | _
-      · cases l <;> fits
-      all_goals fits
+      · cases k <;> cases l <;> simp only [Run.kind] <;> fits
+      all_goals cases k <;> simp only [Run.kind] <;> fits
 
 /-- A case without `software` has rows without a reproduction; one with it, rows whose reproduction is unknown. -/
 theorem runCaseReported_fits (j : Lean.Json) :
@@ -56,14 +56,14 @@ theorem runCaseReported_fits (j : Lean.Json) :
       have hs := decode_software j _ hd hl
       fits
       obtain ⟨i, hi, rfl⟩ := List.mem_mapIdx.mp ‹_›
-      refine rowJson_fits_software _ _ ?_
-      simpa [Run.rows, Run.row] using hs
+      refine rowJson_fits_software _ _ _ ?_
+      simpa [Run.row] using hs
     · fits
   · refine Fits.onCaseT hl ?_
     split
     · fits
       obtain ⟨i, hi, rfl⟩ := List.mem_mapIdx.mp ‹_›
-      exact rowJson_fits _ _
+      exact rowJson_fits _ _ _
     · fits
 
 end ResponseShape.Encoders.Calc

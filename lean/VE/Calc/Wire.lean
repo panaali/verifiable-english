@@ -1,20 +1,27 @@
-import VE.Calc.Decls
+import VE.Calc.Lower
+import VE.Calc.Poly
 import VE.Route.Wire
 
 /-! The case `ve-calc@0` (math-evidence spec 3.1 to 3.3, ME-2): its limits in order, its decoder and its identity.
-This batch decodes claims over stated and defined values. The fields and checks of later batches (`premises`,
-`free` and `counted` values, `unit`, `environment`, `source`, `data`, `budget`; `follows`, `consistent`,
-`identity` and `sqrt-rounds`) are refused, as unknown fields or as no claim, until their batch adds them. -/
+It decodes claims over stated, defined and free values, and derivations (`follows`) over the case's `premises`
+(ME-5). The fields and checks of later batches (`counted` values, `unit`, `environment`, `source`, `data`, `budget`;
+`consistent`, `identity` and `sqrt-rounds`) are refused, as unknown fields or as no claim, until their batch adds
+them. -/
 
 namespace VE.Calc
 open Lean VE.Numbers
 
-/-- Every question a `calc@0` case asks (spec 3.4): ME-5, ME-8 and ME-9 add their constructors. -/
+/-- Every question a `calc@0` case asks (spec 3.4): a claim or a derivation; ME-8 and ME-9 add their constructors.
+The decoder resolves premise ids to their claims. -/
 inductive Check where
   | claim (c : Claim)
+  | follows (P : List Claim) (links : List (String × String)) (C : Claim)
 
-def Check.names : Check → List String
-  | .claim c => c.exprs.flatMap Expr.names
+def Check.exprs : Check → List Expr
+  | .claim c => c.exprs
+  | .follows P _ C => (C :: P).flatMap Claim.exprs
+
+def Check.names (k : Check) : List String := k.exprs.flatMap Expr.names
 
 structure Case where
   decls : List Decl
@@ -105,15 +112,16 @@ def entries (j : Json) (key : String) : Nat := match j.getObjVal? key with
   | _ => 0
 
 /-- The first limit of 3.2 the case exceeds: 10,000 JSON values, depth 64, 512 values, 512 claims, then
-exponents, literals and strings, each anywhere in the case. -/
+exponents, literals and strings, each anywhere in the case, then 512 premises. -/
 def limitFault (j : Json) : Option String :=
   if count (VE.Limits.maxNodes + 1) [j] > VE.Limits.maxNodes then
     some (limit "the number of JSON values" VE.Limits.maxNodes)
   else if depth (VE.Limits.maxDepth + 1) j > VE.Limits.maxDepth then some (limit "the JSON depth" VE.Limits.maxDepth)
   else if entries j "values" > 512 then some (limit "the number of values" 512)
   else if entries j "claims" > 512 then some (limit "the number of claims" 512)
-  else [(exponentFault, j), (literalFault, j), (stringFault, unworded j)].findSome? fun (p, j) =>
-    scan p (VE.Limits.maxDepth + 1) j
+  else ([(exponentFault, j), (literalFault, j), (stringFault, unworded j)].findSome? fun (p, j) =>
+    scan p (VE.Limits.maxDepth + 1) j).orElse fun _ =>
+      if entries j "premises" > 512 then some (limit "the number of premises" 512) else none
 
 /-! ## Literals, expressions and claims (3.1), each with its canonical form (3.3) -/
 
@@ -218,40 +226,82 @@ def recordJson (path : String) (j : Json) (fields : List (String × Json)) : Exc
       | _ => throw (invalid s!"{path}.span" "must be two natural numbers")
   pure (Json.mkObj (fields ++ support ++ span))
 
-/-- A value record: its name and its source (stated or defined), and the record as hashed, without `words`. -/
-def value (i : Nat) (j : Json) : Except String ((String × (Rat ⊕ Expr)) × Json) := do
+/-- A value record: its name and its source (stated, defined, or free as `none`), and the record as hashed, without
+`words`. -/
+def value (i : Nat) (j : Json) : Except String ((String × Option (Rat ⊕ Expr)) × Json) := do
   let path := s!"values.{i}"
-  checkFields path j ["name", "words"] ["stated", "defined", "support", "span"]
+  checkFields path j ["name", "words"] ["stated", "defined", "free", "support", "span"]
   let .ok (.str name) := j.getObjVal? "name" | throw (invalid s!"{path}.name" "must be a string")
   unless identifier name do throw (invalid s!"{path}.name" "must be a name")
   let .ok (.str _) := j.getObjVal? "words" | throw (invalid s!"{path}.words" "must be a string")
-  let (src, cs) ← match j.getObjVal? "stated", j.getObjVal? "defined" with
-    | .ok l, .error _ => do
+  let (src, cs) ← match j.getObjVal? "stated", j.getObjVal? "defined", j.getObjVal? "free" with
+    | .ok l, .error _, .error _ => do
       let p ← literal s!"{path}.stated" l
-      pure (Sum.inl p.value, ("stated", Json.str (plain p)))
-    | .error _, .ok x => do
+      pure (some (Sum.inl p.value), ("stated", Json.str (plain p)))
+    | .error _, .ok x, .error _ => do
       let (x, cx) ← expr s!"{path}.defined" VE.Limits.maxDepth x
-      pure (Sum.inr x, ("defined", cx))
-    | _, _ => throw (invalid path "must have one of stated and defined")
+      pure (some (Sum.inr x), ("defined", cx))
+    | .error _, .error _, .ok f => do
+      unless f == .bool true do throw (invalid s!"{path}.free" "must be true")
+      pure (none, ("free", Json.bool true))
+    | _, _, _ => throw (invalid path "must have one of stated, defined and free")
   pure ((name, src), ← recordJson path j [("name", .str name), cs])
 
 def claimIdChar (c : Char) : Bool := VE.Surface.identChar c || c == '-'
 
-/-- A `claims` entry: its id and check, the claim as hashed and the entry as hashed. -/
-def entry (rule : String × Rounding) (i : Nat) (j : Json) : Except String ((String × Check) × Json × Json) := do
-  let path := s!"claims.{i}"
-  checkFields path j ["id", "claim"] ["span"]
+def claimId (path : String) (j : Json) : Except String String := do
   let .ok (.str id) := j.getObjVal? "id" | throw (invalid s!"{path}.id" "must be a string")
   unless id != "" && id.all claimIdChar do throw (invalid s!"{path}.id" "must be a claim id")
+  pure id
+
+/-- A `premises` entry (ME-5): its id and claim, an `eq`, `lt`, `le`, `gt`, `ge` or `within` claim, and the entry as
+hashed, with its support. -/
+def premise (rule : String × Rounding) (i : Nat) (j : Json) : Except String ((String × Claim) × Json) := do
+  let path := s!"premises.{i}"
+  checkFields path j ["id", "claim", "support"] ["span"]
+  let id ← claimId path j
   let (c, cc) ← claim rule s!"{path}.claim" (j.getObjValD "claim")
-  pure ((id, .claim c), cc, ← recordJson path j [("id", .str id), ("claim", cc)])
+  if c matches .rounds .. then throw (invalid s!"{path}.claim" "must be a comparison or a range")
+  pure ((id, c), ← recordJson path j [("id", .str id), ("claim", cc)])
+
+/-- A check and its canonical form: a claim, or `["follows", conclusion, [premise ids], [[square, root], …]]` with
+an `lt`, `le`, `gt` or `ge` conclusion and each id resolved to its premise's claim. -/
+def check (rule : String × Rounding) (premises : List (String × Claim)) (path : String) (j : Json) :
+    Except String (Check × Json) := do
+  match (j.getArr?.toOption.map (·.toList) : Option (List Json)) with
+  | some [.str "follows", c, .arr ids, .arr links] => do
+    let (C, cc) ← claim rule s!"{path}.1" c
+    unless C matches .compare ⟨.lt, _⟩ _ _ | .compare ⟨.le, _⟩ _ _ do
+      throw (invalid s!"{path}.1" "must be an lt, le, gt or ge claim")
+    let P ← ids.toList.zipIdx.mapM fun (id, i) => match id with
+      | .str id => match premises.lookup id with
+        | some p => pure p
+        | none => throw s!"UnknownPremise: {id}"
+      | _ => throw (invalid s!"{path}.2.{i}" "must be a premise id")
+    let ls ← links.toList.zipIdx.mapM fun (l, i) => match (l.getArr?.toOption.map (·.toList) : Option (List Json)) with
+      | some [.str s, .str r] => pure (s, r)
+      | _ => throw (invalid s!"{path}.3.{i}" "must be two names")
+    pure (.follows P ls C, Json.arr #[.str "follows", cc, .arr ids, .arr links])
+  | _ => do
+    let (c, cc) ← claim rule path j
+    pure (.claim c, cc)
+
+/-- A `claims` entry: its id and check, the claim as hashed and the entry as hashed. -/
+def entry (rule : String × Rounding) (premises : List (String × Claim)) (i : Nat) (j : Json) :
+    Except String ((String × Check) × Json × Json) := do
+  let path := s!"claims.{i}"
+  checkFields path j ["id", "claim"] ["span"]
+  let id ← claimId path j
+  let (k, cc) ← check rule premises s!"{path}.claim" (j.getObjValD "claim")
+  pure ((id, k), cc, ← recordJson path j [("id", .str id), ("claim", cc)])
 
 /-! ## Names and definition order -/
 
-def decl (v : String × (Rat ⊕ Expr)) : Decl :=
+def decl (v : String × Option (Rat ⊕ Expr)) : Decl :=
   ⟨v.1, match v.2 with
-    | .inl q => .stated q
-    | .inr e => .defined e⟩
+    | some (.inl q) => .stated q
+    | some (.inr e) => .defined e
+    | none => .free⟩
 
 /-- The first name that occurs again later in the list. -/
 def firstDup : List String → Option String
@@ -265,23 +315,55 @@ def firstUnknown (known : List String) : List Decl → Option String
       | .defined e => e.names.find? (!known.contains ·)
       | _ => none).or (firstUnknown (known ++ [d.name]) ds)
 
-/-- Names are unique, each name read is declared (before its use in a definition), and claim ids are unique, in
-that order. -/
-def admit (ds : List Decl) (claims : List (String × Check)) : Except String Unit :=
+/-- The path of the innermost part of `e` that, inlined by `t` within `maxPolyTerms` nodes, is not linear in the kept
+names (`Expr.linear`). -/
+def nonlinearAt (t : Inlined) (path : String) (e : Expr) : Option String :=
+  let inner : Option String := match e with
+    | .add a b | .sub a b | .mul a b | .div a b =>
+      (nonlinearAt t s!"{path}.1" a).orElse fun _ => nonlinearAt t s!"{path}.2" b
+    | .pow a _ => nonlinearAt t s!"{path}.1" a
+    | .lit _ | .val _ => none
+  inner.orElse fun _ =>
+    if (e.subst t).toOption.any fun e => (e.nodesWithin maxPolyTerms).isSome && e.linear.isNone then some path
+    else none
+
+/-- Square links name free values (`UnknownLink`); then every premise and each derivation's conclusion is linear in
+the free values once inlined (`NonlinearPremise`, naming the innermost part that is not). A part whose inlining meets
+a fault, or whose inlined form is beyond `maxPolyTerms` nodes, is not judged here: its row says why. -/
+def derivations (ds : List Decl) (premises : List (String × Claim)) (claims : List (String × Check)) :
+    Except String Unit := do
+  let free := freeNames ds
+  let links := claims.flatMap fun (_, k) => match k with
+    | .follows _ ls _ => ls.flatMap fun l => [l.1, l.2]
+    | _ => []
+  if let some n := links.find? (!free.contains ·) then throw s!"UnknownLink: {n}"
+  let t := inlineTable ds free
+  let lowered := premises.zipIdx.map (fun ((_, c), i) => (s!"premises.{i}.claim", c)) ++
+    claims.zipIdx.filterMap fun ((_, k), i) => match k with
+      | .follows _ _ C => some (s!"claims.{i}.claim.1", C)
+      | _ => none
+  if let some p := lowered.findSome? fun (path, c) =>
+      c.exprs.zipIdx.findSome? fun (e, i) => nonlinearAt t s!"{path}.{i + 1}" e then
+    throw s!"NonlinearPremise: {p} (declare a square link or name the product)"
+
+/-- Names are unique, each name read is declared (before its use in a definition), claim and premise ids are unique,
+and derivations are linear in the free values, in that order. -/
+def admit (ds : List Decl) (premises : List (String × Claim)) (claims : List (String × Check)) : Except String Unit :=
   let names := ds.map Decl.name
-  match firstDup names, (firstUnknown [] ds).or ((claims.flatMap (·.2.names)).find? (!names.contains ·)),
-      firstDup (claims.map (·.1)) with
+  let read := premises.flatMap (·.2.exprs.flatMap Expr.names) ++ claims.flatMap (·.2.names)
+  match firstDup names, (firstUnknown [] ds).or (read.find? (!names.contains ·)),
+      firstDup (premises.map (·.1) ++ claims.map (·.1)) with
   | some n, _, _ => .error s!"DuplicateName: {n}"
   | none, some n, _ => .error s!"UnknownName: {n} (declare it before the value that uses it)"
   | none, none, some n => .error s!"DuplicateClaimId: {n}"
-  | none, none, none => .ok ()
+  | none, none, none => derivations ds premises claims
 
 /-! ## The decoder and the identity (3.3) -/
 
 /-- The case's limits, fields and format, before anything else is read. -/
 def checkCase (j : Json) : Except String Unit := do
   if let some e := limitFault j then throw e
-  checkFields "case" j ["format", "values", "claims"] ["rounding", "software"]
+  checkFields "case" j ["format", "values", "claims"] ["premises", "rounding", "software"]
   unless j.getObjValD "format" == .str "ve-calc@0" do throw (invalid "case.format" "must be \"ve-calc@0\"")
 
 /-- The case's `meaning_id` and each claim's id: the case as hashed, its environment `{}` until ME-6. -/
@@ -306,14 +388,20 @@ def decode (j : Json) : Except String (Case × String × List String) := do
     | .ok _ => throw (invalid "case.software" "must be a string")
   let .ok (.arr vs) := j.getObjVal? "values" | throw (invalid "case.values" "must be a list")
   let .ok (.arr cs) := j.getObjVal? "claims" | throw (invalid "case.claims" "must be a list")
+  let ps ← match j.getObjVal? "premises" with
+    | .error _ => pure #[]
+    | .ok (.arr ps) => pure ps
+    | .ok _ => throw (invalid "case.premises" "must be a list")
   if cs.size == 0 then throw "NoClaims: a calculation needs at least one claim"
   let (vals, cvals) := (← vs.toList.zipIdx.mapM fun (v, i) => value i v).unzip
-  let (checks, hashed) := (← cs.toList.zipIdx.mapM fun (c, i) => entry rule i c).unzip
+  let (premises, cprems) := (← ps.toList.zipIdx.mapM fun (p, i) => premise rule i p).unzip
+  let (checks, hashed) := (← cs.toList.zipIdx.mapM fun (c, i) => entry rule premises i c).unzip
   let (claimJson, entryJson) := hashed.unzip
   let ds := vals.map decl
-  admit ds checks
+  admit ds premises checks
   let (mid, ids) ← identify (Json.mkObj ([("format", .str "ve-calc@0"), ("values", .arr cvals.toArray),
-    ("claims", .arr entryJson.toArray)] ++ (software.elim [] fun s => [("software", .str s)]))) claimJson
+    ("claims", .arr entryJson.toArray)] ++ (if cprems.isEmpty then [] else [("premises", .arr cprems.toArray)]) ++
+    (software.elim [] fun s => [("software", .str s)]))) claimJson
   pure (⟨ds, checks, software⟩, mid, ids)
 
 /-- Decodes `ve-calc@0`: the limits of 3.2 first, then fields, names, definition order and literals. -/
@@ -360,13 +448,13 @@ theorem Wire.decodeCase_wellFormed (j : Lean.Json) (c : Case) (h : Wire.decodeCa
   | ok d =>
     rw [hd] at h
     cases h
-    obtain ⟨vals, hds, hadm⟩ : ∃ vals : List (String × (Rat ⊕ Expr)),
-        d.1.decls = vals.map Wire.decl ∧ Wire.admit d.1.decls d.1.claims = .ok () := by
+    obtain ⟨vals, ps, hds, hadm⟩ : ∃ (vals : List (String × Option (Rat ⊕ Expr))) (ps : List (String × Claim)),
+        d.1.decls = vals.map Wire.decl ∧ Wire.admit d.1.decls ps d.1.claims = .ok () := by
       unfold Wire.decode at hd
       simp only [bind, Except.bind, pure, Except.pure] at hd
       repeat' split at hd
       all_goals (try cases hd)
-      all_goals exact ⟨_, rfl, ‹Wire.admit _ _ = .ok _›⟩
+      all_goals exact ⟨_, _, rfl, ‹Wire.admit _ _ _ = .ok _›⟩
     unfold Wire.admit at hadm
     dsimp only at hadm
     split at hadm
