@@ -720,7 +720,7 @@ theorem countLoop_total (step : Nat → Int → Nat → Option (Bool × Nat))
       simp only [countLoop, h1 limit w (by omega), h2 limit (w + W1) (by omega), Nat.add_assoc]⟩
 
 /-- The sites of a part are sites of the whole. -/
-local macro "sub_sites" hs:term : term =>
+macro (name := subSites) "sub_sites" hs:term : term =>
   `(fun s h => $hs s (by simp only [Term.sites, Term.sitesList, Formula.sites, List.mem_append, List.mem_cons]; simp [h]))
 
 mutual

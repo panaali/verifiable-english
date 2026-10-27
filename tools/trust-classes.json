@@ -15085,7 +15085,8 @@
         "VE.Arith.Def.SitesOk",
         "VE.Arith.Extends",
         "VE.Arith.Site.Ok",
-        "VE.Arith.Total"
+        "VE.Arith.Total",
+        "VE.Arith.subSites"
       ]
     },
     "VE/Arith/BoundedExamples.lean": {
