@@ -656,6 +656,19 @@ def nonlinear (path : String) : List String := [s!"NonlinearPremise: {path} (dec
       r#"["lt", ["val", "x"], ["lit", "100"]]"# (toJson ((List.range 64).map (s!"p{·}"))).compress), [s!"c1 unknown ({steps})"]),
   ("facts-63", says (onX ((List.range 63).map fun i => premise s!"p{i}" (xle (toString i)))
       r#"["lt", ["val", "x"], ["lit", "100"]]"# (toJson ((List.range 63).map (s!"p{·}"))).compress), ["c1 holds"]),
+  -- An inlined expression within `maxPolyTerms` nodes is searched (v12 is 8,191 nodes), one past it is not (v13); a
+  -- part past it is not judged linear or not, one within it is (v12 times x).
+  ("chain-12", says (onX [premise "p1" r#"["le", ["val", "v12"], ["lit", "1"]]"#] r#"["lt", ["val", "x"], ["lit", "1"]]"#
+      r#"["p1"]"# "[]" (free "x" "the x" ++ ", " ++ defined "v0" r#"["val", "x"]"# ++ ", " ++ chain 13)), ["c1 holds"]),
+  ("chain-13", says (onX [premise "p1" r#"["le", ["val", "v13"], ["lit", "1"]]"#] r#"["lt", ["val", "x"], ["lit", "1"]]"#
+      r#"["p1"]"# "[]" (free "x" "the x" ++ ", " ++ defined "v0" r#"["val", "x"]"# ++ ", " ++ chain 13)),
+    [s!"c1 unknown ({steps})"]),
+  ("chain-12-nonlinear", says (onX [premise "p1" r#"["le", ["mul", ["val", "v12"], ["val", "x"]], ["lit", "1"]]"#]
+      (xle "1") r#"["p1"]"# "[]" (free "x" "the x" ++ ", " ++ defined "v0" r#"["val", "x"]"# ++ ", " ++ chain 13)),
+    nonlinear "premises.0.claim.1"),
+  ("chain-13-nonlinear", says (onX [premise "p1" r#"["le", ["mul", ["val", "v13"], ["val", "x"]], ["lit", "1"]]"#]
+      (xle "1") r#"["p1"]"# "[]" (free "x" "the x" ++ ", " ++ defined "v0" r#"["val", "x"]"# ++ ", " ++ chain 13)),
+    [s!"c1 unknown ({steps})"]),
   ("chain", says (onX [premise "p1" r#"["lt", ["val", "v20"], ["lit", "1"]]"#] r#"["lt", ["val", "x"], ["lit", "1"]]"#
       r#"["p1"]"# "[]" (free "x" "the x" ++ ", " ++ defined "v0" r#"["val", "x"]"# ++ ", " ++ chain 20)),
     [s!"c1 unknown ({steps})"]),
