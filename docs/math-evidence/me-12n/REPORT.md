@@ -110,9 +110,12 @@ Rust or product-Lean seeded bug.
 
 - **Trust.** `uv run python tools/trust_map.py --check`: K +0, S +0, D +0, G +0, trusted +0, PASS. There is no R16 row
   and no FOLLOW-UPS row.
-- **Tests.** `mac-pytest.sh --select` selected 146 of 471 units for the two changed documents. Its result is in the
-  last section. The full gate is the chain's, run on the final HEAD.
-- **Size.** 133 + 28 lines in the spec, 266 in the stub (evidence) and this report.
+- **Tests.** `mac-pytest.sh --select` selected 146 of 471 units for the two changed documents. All 146 passed (0
+  failed, exit 0); the run fell back to the VM and took 4,138 s. It ran on the tree of 5e5939d54; the later commits
+  change only prose in 12.2 and this report. The stub check gives 0 errors and all guards pass, in 50 s. The full
+  gate was not run here: the chain runs it on the final HEAD.
+- **Size.** 133 + 28 lines in the spec, 266 in the stub (evidence) and this report: 544 + 28 lines in all, under
+  600.
 - **Overlap.**
   - Hand-written files: `docs/spec/math-evidence.md`, the stub and this report.
   - Of the in-flight branches, only `foundation/me-1` (last commit 2026-10-15, not merged) touches the spec: it adds
