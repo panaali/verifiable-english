@@ -2547,7 +2547,7 @@ module VE.Alternatives.Wire 77bab0654eb05c84aa7648afb3b0f8116efb3bb2d127ed52d566
 363:0-364:46 def VE.Alternatives.Wire.coverageField@VE.Alternatives.Wire
 366:0-369:66 def VE.Alternatives.Wire.coverageConstNames@VE.Alternatives.Wire
 371:0-421:68 def VE.Alternatives.Wire.coverage@VE.Alternatives.Wire
-module VE.Arith.Bounded 3ece8cf91e2b5bfb32886b1f98040afc30e09341808b3fc61a9cc98715c54151
+module VE.Arith.Bounded 073067af98e131779375b4dd53223fb893a56ecfac3519883087d77d510161c6
 13:0-14:39 def VE.Arith.charge@VE.Arith.Bounded
 16:0-21:108 def VE.Arith.quantLoop@VE.Arith.Bounded
 23:0-27:78 def VE.Arith.countLoop@VE.Arith.Bounded
@@ -2599,8 +2599,8 @@ module VE.Arith.Bounded 3ece8cf91e2b5bfb32886b1f98040afc30e09341808b3fc61a9cc987
 696:0-698:39 theorem VE.Arith.charge_eq@VE.Arith.Bounded
 700:0-710:78 theorem VE.Arith.quantLoop_total@VE.Arith.Bounded
 712:0-720:96 theorem VE.Arith.countLoop_total@VE.Arith.Bounded
-723:6-724:122 def VE.Arith._aux_VE_Arith_Bounded___macroRules__private_VE_Arith_Bounded_0_VE_Arith_termSub_sites__1@VE.Arith.Bounded
-723:6-724:122 def VE.Arith.termSub_sites_@VE.Arith.Bounded
+723:0-724:122 def VE.Arith._aux_VE_Arith_Bounded___macroRules_VE_Arith_subSites_1@VE.Arith.Bounded
+723:0-724:122 def VE.Arith.subSites@VE.Arith.Bounded
 727:0-760:73 theorem VE.Arith.Term.evalB_total@VE.Arith.Bounded
 761:0-771:116 theorem VE.Arith.Term.evalBs_total@VE.Arith.Bounded
 772:0-850:99 theorem VE.Arith.Formula.evalB_total@VE.Arith.Bounded
@@ -2617,11 +2617,11 @@ module VE.Arith.BoundedExamples c56eaff9f34580cf1a66ce4a4d466f3f5d3b239ca7f3ce88
 73:0-73:40 def VE.Arith.Examples.yes@VE.Arith.BoundedExamples
 74:0-74:39 def VE.Arith.Examples.no@VE.Arith.BoundedExamples
 128:0-129:117 def VE.Arith.Examples.dbl@VE.Arith.BoundedExamples
-module VE.Arith.CompleteExamples b13a84561dd8eb6a00103932d533f3df8d56910d49e06d1df1949ec1d85654f6
+module VE.Arith.CompleteExamples c5745657826a8ab511532eeb822ef488078e430ea98d10effa45c3194539f552
 10:0-11:116 def VE.Arith.Examples.sweep@VE.Arith.CompleteExamples
 12:0-13:100 def VE.Arith.Examples.keeps@VE.Arith.CompleteExamples
-30:0-30:49 def VE.Arith.Examples.selfCall@VE.Arith.CompleteExamples
-40:0-41:101 def VE.Arith.Examples.tickEnv@VE.Arith.CompleteExamples
+31:0-31:49 def VE.Arith.Examples.selfCall@VE.Arith.CompleteExamples
+41:0-42:101 def VE.Arith.Examples.tickEnv@VE.Arith.CompleteExamples
 module VE.Arith.Defs f86495a2c76269e5287d3500112350f36ff7117cd2b435e529bc159782f3cec2
 10:0-17:77 def VE.Arith.Term.bnd@VE.Arith.Defs
 18:0-20:48 def VE.Arith.Term.bndList@VE.Arith.Defs
