@@ -741,6 +741,21 @@ def nonlinear (path : String) : List String := [s!"NonlinearPremise: {path} (dec
     .follows [lt "r" "m", lt "r" "n"] [] (lt "r" "r")].map (·.run ds) ==
   [.decided .undefined, .unknown (.limit .evaluations), .unknown (.limit .evaluations), .unknown (.limit .evaluations)]
 
+-- Every unknown a derivation gives is one of its kind's reasons (`Check.reasons`, 1.5): the budget, the step limit and
+-- an inconclusive search.
+#guard let ds : List Decl := [⟨"r", .free⟩, ⟨"m", .counted (Thunk.pure none) .exhausted⟩]
+  let lt (a b : String) : Claim := .compare ⟨.lt, false⟩ (.val a) (.val b)
+  let k := Check.follows [lt "r" "m"] [] (lt "r" "r")
+  let decoded := [onX [premise "p1" r#"["gt", ["val", "s"], ["lit", "1"]]"#] r#"["gt", ["val", "x"], ["lit", "1"]]"#
+      r#"["p1"]"# r#"[["s", "x"]]"# (free "x" "the x" ++ ", " ++ free "s" "the s"),
+    onX [premise "p1" r#"["le", ["val", "v13"], ["lit", "1"]]"#] r#"["lt", ["val", "x"], ["lit", "1"]]"#
+      r#"["p1"]"# "[]" (free "x" "the x" ++ ", " ++ defined "v0" r#"["val", "x"]"# ++ ", " ++ chain 13)].filterMap
+    fun s => (Json.parse s).toOption.bind (Wire.decodeCase · |>.toOption)
+  decoded.length == 2 && ((ds, k) :: decoded.flatMap fun c => c.claims.map (c.decls, ·.2)).all fun (ds, k) =>
+    match k.run ds with
+    | .unknown u => decide (u ∈ k.reasons)
+    | .decided _ => false
+
 -- Spec 3.3: free values, premises (their ids, claims, supports and spans) and a derivation's parts are hashed; an
 -- empty `premises` list is no premise.
 def deriv (ps : List String) (ids links : String) : String := onX ps (xle "1") ids links (free "x" "the x" ++ ", " ++ free "s" "the s")
@@ -750,7 +765,9 @@ def deriv (ps : List String) (ids links : String) : String := onX ps (xle "1") i
       [deriv [premise "q1" (xle "1")] "[]" "[]"], [deriv [premise "p1" (xle "1") "observation"] "[]" "[]"],
       [deriv [r#"{"id": "p1", "claim": ["le", ["val", "x"], ["lit", "1"]], "support": "assumption", "span": [3, 5]}"#] "[]" "[]"]]),
     ("derivation", [[deriv [premise "p1" (xle "1")] r#"["p1"]"# "[]"], [deriv [premise "p1" (xle "1")] "[]" r#"[["s", "x"]]"#],
-      [deriv [premise "p1" (xle "1")] "[]" r#"[["x", "s"]]"#], [deriv [premise "p1" (xle "1")] "[]" "[]"]]),
+      [deriv [premise "p1" (xle "1")] "[]" r#"[["x", "s"]]"#], [deriv [premise "p1" (xle "1")] "[]" "[]",
+        req (free "x" "the x" ++ ", " ++ free "s" "the s") (c1 s!"[\"follows\", {xle "1.0"}, [], []]")
+          (premises [premise "p1" (xle "1")])]]),
     ("free", [[req (free "x" "the x") (ok1.replace "eq" "le")], [req x1 (ok1.replace "eq" "le")]])].all fun (_, classes) =>
   let ids := classes.map (·.map identity)
   ids.all (fun c => c.all fun i => i.all (· != "") && i.length > 1 && some i == c.head?) &&
