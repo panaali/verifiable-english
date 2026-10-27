@@ -3,7 +3,7 @@
  "language": "Python",
  "runner": "docs/defeasible/df-1b/evidence/run_mutants.py",
  "result": "docs/defeasible/df-1b/evidence/mutants.out",
- "note": "Plan DF-1b's five seeded bugs: P1-P3 here; the two renderer bugs wait for the English (df-1bb). RF1a-RF1f: review F1's checks tested on one side only (each now fails its test; every check's weakenings and deletions are enumerated by tests/test_defaults_checks.py). RF9a-RF9c: review F9's class, an `if ...: return` check (each now fails its test; tests/check_mutants.py enumerates `return` exits too).",
+ "note": "Plan DF-1b's five seeded bugs: P1-P3 here; the two renderer bugs wait for the English (df-1bb). RF1a-RF1f: review F1's checks tested on one side only (each now fails its test; every check's weakenings and deletions are enumerated by tests/test_defaults_checks.py). RF9a-RF9c: review F9's class, an `if ...: return` check (each now fails its test; tests/check_mutants.py enumerates `return` exits too). RF10a-RF10g: re-check F10's class, a value that feeds a check (the decider's fallback chain, and the forms hunts 1 and 2 found); every generated value mutation is enumerated by tests/test_defaults_checks.py.",
  "mutants": [
   {
    "id": "P1",
@@ -48,9 +48,9 @@
   {
    "id": "B3",
    "file": "ve/defaults.py",
-   "bug": "a collision's deciders not bound to its rules' deciders",
-   "find": " or not set(deciders) <= named:",
-   "replace": ":",
+   "bug": "a collision's deciders not bound to its rules' deciders (site moved by review F10's fix: the deciders are now compared whole)",
+   "find": "if collision[\"deciders\"] != _deciders(case, rules):",
+   "replace": "if len(collision[\"deciders\"]) != len(_deciders(case, rules)):",
    "test": "tests/test_defaults_answer.py::test_pairs_and_collision"
   },
   {
@@ -196,6 +196,62 @@
    "find": "if kind == \"defaults-certificate\":",
    "replace": "if kind != \"defaults-elaborate\":",
    "test": "tests/test_defaults_answer.py::test_answer_binds_each_kind_with_its_binding"
+  },
+  {
+   "id": "RF10a",
+   "file": "ve/defaults.py",
+   "bug": "review F10: the collision decider's fallback to the document's exception_decider dropped (PROBE F10)",
+   "find": "(rule.get(\"exception\") or {}).get(\"decided_by\") or soft.get(\"exception_decider\") or \"unstated\"",
+   "replace": "(rule.get(\"exception\") or {}).get(\"decided_by\") or \"unstated\"",
+   "test": "tests/test_defaults_answer.py::test_collision_deciders_truth_table"
+  },
+  {
+   "id": "RF10b",
+   "file": "ve/defaults.py",
+   "bug": "review F10: the document's exception_decider takes precedence over the rule's own (PROBE F10)",
+   "find": "(rule.get(\"exception\") or {}).get(\"decided_by\") or soft.get(\"exception_decider\") or \"unstated\"",
+   "replace": "soft.get(\"exception_decider\") or (rule.get(\"exception\") or {}).get(\"decided_by\") or \"unstated\"",
+   "test": "tests/test_defaults_answer.py::test_collision_deciders_truth_table"
+  },
+  {
+   "id": "RF10c",
+   "file": "ve/defaults.py",
+   "bug": "review F10: the collision's deciders bound as a subset of the rules' deciders and \"unstated\" (the check before the fix)",
+   "find": "if collision[\"deciders\"] != _deciders(case, rules):",
+   "replace": "if not set(collision[\"deciders\"]) <= {*_deciders(case, rules), \"unstated\"}:",
+   "test": "tests/test_defaults_answer.py::test_collision_deciders_truth_table"
+  },
+  {
+   "id": "RF10d",
+   "file": "ve/defaults.py",
+   "bug": "F10 hunt 1: forced entries ordered by rule name, not the request's rule order",
+   "find": "order = [(list(rules).index(e[\"rule\"]), ",
+   "replace": "order = [(e[\"rule\"], ",
+   "test": "tests/test_defaults_answer.py::test_forced_entries_in_the_requests_order"
+  },
+  {
+   "id": "RF10e",
+   "file": "ve/document/cli.py",
+   "bug": "F10 hunt 1: the flag sends every unit but norms as a premise",
+   "find": "if u[\"kind\"] == \"asserted\" and u[\"content\"] is not None]",
+   "replace": "if u[\"kind\"] != \"norm\" and u[\"content\"] is not None]",
+   "test": "tests/test_defaults_lean.py::test_flag_asks_with_the_documents_norms_and_facts"
+  },
+  {
+   "id": "RF10f",
+   "file": "ve/defaults.py",
+   "bug": "F10 hunt 2: a collision accepted on the first coherence target only",
+   "find": "collision[\"rules\"] not in pairs",
+   "replace": "collision[\"rules\"] != pairs[0]",
+   "test": "tests/test_defaults_answer.py::test_a_collision_on_any_colliding_pair"
+  },
+  {
+   "id": "RF10g",
+   "file": "ve/defaults.py",
+   "bug": "F10 hunt 2: ask binds assumptions to the labels in name order",
+   "find": "answer(case, [label for label, _ in elaborated[\"default_premises\"]], targets)",
+   "replace": "answer(case, sorted(label for label, _ in elaborated[\"default_premises\"]), targets)",
+   "test": "tests/test_defaults_answer.py::test_assumptions_in_the_elaborations_label_order"
   }
  ]
 }
