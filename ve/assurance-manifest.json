@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 38166,
+    "total_lines": 38225,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1859,20 +1859,22 @@
       },
       {
         "file": "lean/VE/Calc/Run.lean",
-        "lines": 259,
-        "sha256": "209ac1a73db66e9fef52f3d008c81553cc25a804c24724c5428fadc9960702bc",
+        "lines": 318,
+        "sha256": "000fbc4043d1e51d77739d9dabf03ea6f0b13a5b457471da0589624c43e70495",
         "ranges": [
           [
             1,
-            259
+            318
           ]
         ],
         "declarations": [
+          "wordsIn",
+          "claimFields",
           "rowJson",
           "runCaseReported",
           "outcomeAt"
         ],
-        "reason": "the calc runner's answer (math-evidence spec 3.4, me-2): one row per claim with its outcome, and the reader of a row's outcome that Run.row_sound is stated over, and the kind of each row (me-5c); the full file is pinned"
+        "reason": "the calc runner's answer (math-evidence spec 3.4, me-2): one row per claim with its outcome, and the reader of a row's outcome that Run.row_sound is stated over, and the kind of each row (me-5c), and each row's line, finding, and a claim's sides, display and tie, with the values' words read from the request (me-2c); the full file is pinned"
       },
       {
         "file": "lean/VE/Scope/Wire.lean",
