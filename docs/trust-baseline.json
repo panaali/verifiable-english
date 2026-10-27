@@ -1132,6 +1132,20 @@
    "reason": "ap-1bb fix1 (review F1): VE/Norms/Wire.lean +10 (canonicalActs), VE/Service/Standalone.lean +6 (the environment row's acts), ResponseShape/Schemas/Environment.lean +1 (its shape); untied V +17 over the first allowance (V +35 in all), K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1bb, 2026-10-26",
    "commit": "ba2532a224a0e605a22be44917005720f4f6764c"
+  },
+  {
+   "class": "S",
+   "lines": 22,
+   "reason": "me-5c: K +0, S +22 (VE/Calc/Run.lean +16: Check.OutcomeMeans's follows and undefined clauses, Check.UnknownCause's general arm, Check.keep, Check.reasons; VE/Calc/Wire.lean +6: Check.follows, Check.exprs), untied V +58 (VE/Calc/Wire.lean +43: Wire.premise, Wire.check, the premises and free-value lines of Wire.value, Wire.decl, Wire.decode and Wire.entry; VE/Calc/Render.lean +10: English.renderFollows; VE/Calc/Run.lean +5: Run.kind and the kind field of Run.rowJson)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-5c, 2026-10-27",
+   "commit": "110b3bf3ad801a3dc335e9b2293e5c27bb4b82eb"
+  },
+  {
+   "class": "V",
+   "lines": 58,
+   "reason": "me-5c: K +0, S +22 (VE/Calc/Run.lean +16: Check.OutcomeMeans's follows and undefined clauses, Check.UnknownCause's general arm, Check.keep, Check.reasons; VE/Calc/Wire.lean +6: Check.follows, Check.exprs), untied V +58 (VE/Calc/Wire.lean +43: Wire.premise, Wire.check, the premises and free-value lines of Wire.value, Wire.decl, Wire.decode and Wire.entry; VE/Calc/Render.lean +10: English.renderFollows; VE/Calc/Run.lean +5: Run.kind and the kind field of Run.rowJson)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-5c, 2026-10-27",
+   "commit": "110b3bf3ad801a3dc335e9b2293e5c27bb4b82eb"
   }
  ]
 }
