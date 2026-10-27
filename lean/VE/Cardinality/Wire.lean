@@ -7,8 +7,9 @@ statements, with the diagnostics of spec 4.2 in their order.
 The W6a part of an environment is decoded by `VE.Time.Wire.decodeEnvironment` on the projection `projectW6`; the
 environment's own identity is over the original, and the projection's W6a identities stay W6a's (`CardEnv.w6`). The
 decoder establishes `CEnv.WellFormed` (E5–E8), which `cardinality_elab_sound` needs. A statement is decoded in one
-depth-first, left-to-right pass after its envelope (S1) and size (S2): at each node the checks S3–S10 that apply to
-it run in table order, a ratio's operands are checked in full before their tags are compared (S9), and a W6a part
+depth-first, left-to-right pass after its envelope (S1) and size (S2, 10,000 array nodes nested at most 64 deep,
+over the whole formula with its bodies and W6a parts): at each node the checks S3–S10 that apply to it run in table
+order, a ratio's operands are checked in full before their tags are compared (S9), and a W6a part
 is elaborated by W6a (S4). The decoded formula is then admitted by the proved `CFormula.admits`, and its identity is
 over its canonical encoding (`WireTheorems.lean` states what the decoders establish). Certificates (`CardCertificate`), the problem limits P1–P3 and the case runner are
 QT-A3's next part (qt-a3b). -/
@@ -274,14 +275,27 @@ def encode : CFormula → Json
 
 def canonical (f : CFormula) : Json := Json.mkObj [("format", .str format), ("formula", encode f)]
 
-/-- S1 (the envelope), S2 (10,000 source nodes), the pass, then admission; the meaning id is over the canonical
-object in the cardinality environment's identity. -/
+/-! ## The statement -/
+
+/-- The nesting of arrays in `j`, up to `fuel`: S2's depth, over the array nodes `jsonNodes` counts. -/
+def arrayDepth : Nat → Json → Nat
+  | 0, _ => 0
+  | fuel + 1, .arr xs => 1 + (xs.toList.map (arrayDepth fuel)).foldl max 0
+  | _, _ => 0
+
+/-- S2 on the whole formula: at most 10,000 array nodes, nested at most 64 deep. The pass's fuel restarts in bodies
+and W6a parts, so the fuel is not this limit. -/
+def sourceFits (source : Json) : Bool :=
+  VE.Time.Wire.jsonNodes (VE.Limits.maxJsonDepth + 1) source ≤ VE.Limits.maxNodes &&
+    arrayDepth (VE.Limits.maxDepth + 1) source ≤ VE.Limits.maxDepth
+
+/-- S1 (the envelope), S2 (`sourceFits`), the pass, then admission; the meaning id is over the canonical object in
+the cardinality environment's identity. -/
 def decodeStatement (w : CardEnv) (j : Json) : Except String (CAdmission w) := do
   unless (exactFields j ["format", "formula"]).isOk && j.getObjValD "format" == .str format do
     throw "Unsupported cardinality format"
   let source ← j.getObjVal? "formula"
-  if VE.Time.Wire.jsonNodes (VE.Limits.maxJsonDepth + 1) source > VE.Limits.maxNodes then
-    throw VE.Time.Wire.depthLimit
+  unless sourceFits source do throw VE.Time.Wire.depthLimit
   let f ← elabFormula w VE.Limits.maxDepth source
   if h : f.admits w.env = true then
     pure ⟨f, h, ← VE.Route.Wire.meaningId w.profiles w.environmentId (canonical f)⟩

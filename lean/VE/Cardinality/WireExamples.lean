@@ -122,6 +122,70 @@ def ratio (printed : String) : Json :=
 -- A spelling W6a canonicalises (`-0`) is the same statement.
 #guard meaningId (ratio "-0.0") == meaningId (ratio "0.0")
 
+/-! ## What each operator decodes to (review F1 of qt-a3)
+
+Every operator and name of the wire, with arguments that differ, against the `CFormula` written out, so a swapped
+name, connective or argument fails here. The read-back guards above cannot see a swapped table entry: `encode`
+reads the same tables. -/
+
+def formulaOf (formula : String) : Option CFormula :=
+  match decode [st formula] with
+  | .ok [(f, _)] => some f
+  | _ => none
+
+def efi : Body := .atom "expects_further_increase"
+def ers : Body := .atom "expects_rates_to_stay"
+def sept : CTerm := .quantity (.const "bp" "sept")
+def june : CTerm := .quantity (.const "bp" "june")
+def c1 : String := r#"["count", "fomc_policymaker", [["1", ["is", "expects_further_increase"]]], "eq", "16"]"#
+def c2 : String := r#"["count", "fomc_policymaker", [["1", ["is", "expects_rates_to_stay"]]], "eq", "2"]"#
+def f1 : CFormula := .count ⟨"fomc_policymaker", [(1, efi)], .eq, 16⟩
+def f2 : CFormula := .count ⟨"fomc_policymaker", [(1, ers)], .eq, 2⟩
+
+/-- Statements and what each must decode to. `["quantity", Q]` is FA1's (above); `elabRule`'s two other names are
+pinned below, since S10 refuses them. -/
+def pins : List (String × CFormula) :=
+  -- Each comparison of a count: two terms in order, a negative coefficient, a negative bound.
+  ([("lt", Rel.lt), ("le", .le), ("eq", .eq)].map fun (name, r) =>
+    (r#"["count", "fomc_policymaker", [["2", ["is", "expects_further_increase"]],
+      ["-1", ["not", ["is", "expects_rates_to_stay"]]]], ""# ++ name ++ "\", \"-3\"]",
+      .count ⟨"fomc_policymaker", [(2, efi), (-1, .not ers)], r, -3⟩)) ++
+  -- Each comparison of a proportion: the whole before the part, the numerator before the denominator.
+  ([("gt", Cmp.gt), ("ge", .ge), ("lt", .lt), ("le", .le), ("eq", .eq)].map fun (name, c) =>
+    (r#"["proportion", "fomc_policymaker", ["is", "expects_further_increase"], ["is", "expects_rates_to_stay"], ""# ++
+      name ++ "\", \"1\", \"3\"]",
+      .proportion ⟨"fomc_policymaker", efi, ers, c, 1, 3⟩)) ++
+  -- Each admitted rule of `rounds_to`, its operands in order.
+  ([("ties_up", VE.Numbers.Rounding.tiesUp), ("half_even", .halfEven)].map fun (name, r) =>
+    ((ratio "1").compress.replace "ties_up" name, .roundsTo r sept june 1 0)) ++
+  -- Each connective, its operands in order.
+  ([("and", CFormula.and), ("or", .or), ("implies", .implies)].map fun (name, k) =>
+    (s!"[\"{name}\", {c1}, [\"not\", {c2}]]", k f1 (.not f2))) ++
+  [(s!"[\"not\", {c1}]", .not f1),
+    -- Each body connective, with children that differ.
+    (r#"["count", "fomc_policymaker", [["1", ["and", ["is", "expects_further_increase"],
+      ["or", ["not", ["is", "expects_rates_to_stay"]], ["any"]]]]], "le", "7"]"#,
+      .count ⟨"fomc_policymaker", [(1, .and efi (.or (.not ers) .any))], .le, 7⟩),
+    -- Count operands with their sort and bodies, in order; the printed number with its places.
+    (r#"["percent_rounds_to", "half_even", ["count", "fomc_policymaker", ["is", "expects_further_increase"]],
+      ["count", "fomc_policymaker", ["not", ["is", "expects_rates_to_stay"]]], "88.90"]"#,
+      .percentRoundsTo .halfEven (.count "fomc_policymaker" efi) (.count "fomc_policymaker" (.not ers)) 8890 2),
+    (r#"["percent_rounds_to", "ties_up", ["quantity", ["const", "bp", "june"]], ["quantity", ["const", "bp", "sept"]],
+      "1"]"#, .percentRoundsTo .tiesUp june sept 1 0),
+    (r#"["percent_of", ["quantity", ["const", "bp", "june"]], ["quantity", ["const", "bp", "sept"]], "-0.296"]"#,
+      .percentOf june sept (-296) 3)]
+
+#guard pins.all fun (s, f) => formulaOf s == some f
+#guard [("ties_up", VE.Numbers.Rounding.tiesUp), ("half_even", .halfEven), ("down", .down), ("up", .up)].all
+  fun (name, r) => (elabRule name).toOption == some r
+
+/-- A formula's constructor, by an exhaustive match: a constructor added to `CFormula` fails to build here until
+`pins` (or FA1, for `quantity`) pins what it decodes from. -/
+def ctor : CFormula → Nat
+  | .quantity _ => 0 | .count _ => 1 | .proportion _ => 2 | .roundsTo .. => 3 | .percentOf .. => 4
+  | .percentRoundsTo .. => 5 | .not _ => 6 | .and .. => 7 | .or .. => 8 | .implies .. => 9
+#guard (List.range 10).all fun i => (Examples.fa1 ++ pins.map (·.2)).any (ctor · == i)
+
 /-! ## FA8 and FA9 at the wire: the hostile set -/
 
 #guard refusal r#"["count", "user", [["1", ["is", "curious"]]], "le", "2"]"# == "CardinalityNotFinite(user)"
@@ -185,9 +249,36 @@ def ratioOf (rule x y : String) : String :=
 #guard (decode [Json.mkObj [("format", .str "ve-cardinality@2"), ("formula", p r#"["any"]"#)]] matches
   .error "Unsupported cardinality format")
 #guard (decode [(st (terms 1)).setObjVal! "Q" (p "[]")] matches .error "Unsupported cardinality format")
--- Formula depth 65 (S2's depth, by the pass's fuel); 64 decode.
-def nested (n : Nat) : String := (List.replicate (n - 1) "[\"not\", ").foldr (· ++ ·) (terms 1 ++ "".pushn ']' (n - 1))
-#guard refusal (nested 65) == VE.Time.Wire.depthLimit && admitted (nested 64)
+-- An object-sorted operand (S9): both share its tag, which is not a quantity's.
+#guard refusal (ratioOf "ties_up" "\"chair\"" "\"chair\"")
+  (declaring "constants" "chair" r#"{"sort": "fomc_policymaker", "description": "the chair"}"#) ==
+  "TypeMismatch: Ratio needs quantity terms"
+
+/-! ## S2's depth: the whole formula's arrays, 64 deep (review F2 of qt-a3)
+
+The pass's fuel restarts in bodies and W6a parts; S2 bounds the statement as a whole, before the pass. -/
+
+def around (n : Nat) (inner : String) : String := (List.replicate n "[\"not\", ").foldr (· ++ ·) (inner ++ "".pushn ']' n)
+-- `n` formula levels, the innermost a count, which is 4 arrays deep: `nested n` is `n + 3` deep.
+def nested (n : Nat) : String := around (n - 1) (terms 1)
+#guard [61, 62].map (arrayDepth 65 <| p <| nested ·) == [64, 65]
+#guard refusal (nested 62) == VE.Time.Wire.depthLimit && admitted (nested 61)
+-- Before S3 at any depth: an unknown operator beside a statement too deep, and beside one that fits.
+#guard refusal s!"[\"and\", [\"bogus\"], {nested 65}]" == VE.Time.Wire.depthLimit
+#guard refusal s!"[\"and\", [\"bogus\"], {nested 60}]" == "Unknown cardinality operator bogus"
+-- A count's body: 3 arrays, then the body's own.
+def deepBody (k : Nat) : String :=
+  "[\"count\", \"fomc_policymaker\", [[\"1\", " ++ around k "[\"any\"]" ++ "]], \"le\", \"7\"]"
+#guard refusal (deepBody 61) == VE.Time.Wire.depthLimit && admitted (deepBody 60)
+-- 62 formula levels around a body 62 deep: each within its elaborator's fuel, the statement past S2's depth.
+#guard refusal (around 61 (deepBody 61)) == VE.Time.Wire.depthLimit
+#guard refusal (around 30 (deepBody 30)) == "admitted"
+-- A W6a part counts too: W6a's elaborator alone takes 63 `not`s around `top`; in a statement that is 65 deep.
+def deepQuantity (k : Nat) : String := "[\"quantity\", " ++ around k "[\"top\"]" ++ "]"
+#guard match decodeEnvironment env with
+  | .ok w => (VE.Time.Wire.elabFormula w.w6.vocab VE.Limits.maxDepth [] (p (around 63 "[\"top\"]"))).isOk
+  | .error _ => false
+#guard refusal (deepQuantity 63) == VE.Time.Wire.depthLimit && admitted (deepQuantity 62)
 
 /-! ## The environment's texts, E1–E8, each once and in order -/
 
