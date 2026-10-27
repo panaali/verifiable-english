@@ -185,4 +185,18 @@ def many (n : Nat) : List Regulated := (List.range n).map fun i => rg ("b" ++ to
 #guard refusal (withActs (doc [rg "p027" .permission, rg "k" .obligation] [nd "r" "p027" false, nd "r" "k" true]) fx6
   [("p027", g6)]) == some "InvalidInput: the elaborated document is not well formed"
 
+/-! ### The order of the steps: the first failing step's text -/
+
+#guard refusal ({ e6 (.unary "p027" (.var 0)) with acts := [("p027", g6), ("z", g6)] }) ==
+  some "InvalidInput: the joined act of z has no rule to read it by"
+#guard refusal (withActs (doc [rg "p027" .permission, rg "s" .obligation] [nd "r027" "p027" false,
+  nd "rs" "s" true [] (.unary "p027" (.var 0))] (extra := ["p027__1"])) fx6 [("p027", g6)]) ==
+  some "InvalidInput: rule rs names a predicate that is split into parts; name one of its parts"
+#guard refusal (withActs (doc [rg "p" .plain none] [nd "r" "p" true] (extra := ["p__1"])) []
+  [("p", .all false false [seek, seek])]) == some "InvalidInput: the part name p__1 is already declared"
+#guard refusal (withActs (doc (many 63 ++ [rg "p" .plain none]) [nd "r" "p" true]) []
+  [("p", .all false false [seek, seek])]) == some "InvalidInput: two parts of p are the same act"
+#guard refusal (withActs (doc (many 63 ++ [rg "p027" .permission]) [nd "r027" "p027" false] ["zzz"]) fx6
+  [("p027", g6)]) == some "ResourceLimit: regulated predicates"
+
 end VE.Acts.ElaborateExamples

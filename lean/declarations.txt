@@ -1639,7 +1639,7 @@ module VE.Acts.Elaborate 157e7f405243f1ad75f1662baa4398a6dae4c1b99a70235db5b261a
 232:0-235:38 theorem VE.Acts.elaborate_wellFormed@VE.Acts.Elaborate
 237:0-267:18 theorem VE.Acts.elaborate_one_reading@VE.Acts.Elaborate
 269:0-273:5 theorem VE.Acts.elaborate_unspec@VE.Acts.Elaborate
-module VE.Acts.ElaborateExamples f3d0083c273752cd01d97a47ad9ab68084550a28c2068dd2d71ed4b2b926c287
+module VE.Acts.ElaborateExamples 45c8805b1d7a05b2c4edc8a3a8647f69f1551c8af0f44369983c1fe11e0a1ff0
 13:0-14:89 def VE.Acts.ElaborateExamples.env@VE.Acts.ElaborateExamples
 15:0-16:89 def VE.Acts.ElaborateExamples.rg@VE.Acts.ElaborateExamples
 17:0-18:86 def VE.Acts.ElaborateExamples.nd@VE.Acts.ElaborateExamples
