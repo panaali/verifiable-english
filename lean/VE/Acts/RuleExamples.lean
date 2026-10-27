@@ -71,6 +71,9 @@ def rets : List Nat := ((closed (schema V5)).zipIdx.filter (·.1.lhs == .F 1 .RE
 /-! ### 11.2b: the 13 `ap0` rows (raw derivations) -/
 
 def ap (i : Nat) : Vocab := ap0.getD i ⟨[], []⟩
+def s05 := "an attempt to kill or disempower the vast majority of humanity or the human species as whole"
+def s06 := "an attempt to seize unprecedented and illegitimate degrees of absolute societal, military, or " ++
+  "economic control"
 #guard [rawOf (ap 0) [] "{0} be held in slavery or servitude",                                          -- X024
   rawOf (ap 1) [] "{0} be subjected to arbitrary arrest, detention or exile",                           -- X037
   rawOf (ap 1) [] "{0} be subjected to arbitrary interference with their privacy, family, home or correspondence",
@@ -84,12 +87,10 @@ def ap (i : Nat) : Vocab := ap0.getD i ⟨[], []⟩
   rawOf (ap 7) [] "{0} promote understanding, tolerance and friendship among all nations, racial or religious groups",
   rawOf (ap 8) [] "{0} give Claude a specific set of instructions, a persona, or information",          -- X0062
   rawOf (ap 9) [] "{0} actively deceive {1} about the existence of a system prompt or its content",     -- X0156
-  rawOf (ap 10) ["an attempt to kill or disempower the vast majority of humanity or the human species as whole"]
-    "{0} engage or assist in an attempt to kill or disempower the vast majority of humanity or the human species as whole",
-  rawOf (ap 11) ["an attempt to seize unprecedented and illegitimate degrees of absolute societal, military, or economic control"]
-    ("{0} engage or assist any individual or group with an attempt to seize unprecedented and illegitimate degrees " ++
-    "of absolute societal, military, or economic control")] ==
-  [1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1].map some    -- X024 X037 X045a X045ab X057 X067 X068 X071b X101 X0062 X0156 X0165s05/s06
+  rawOf (ap 10) [s05] ("{0} engage or assist in " ++ s05),                                              -- X0165s05
+  rawOf (ap 11) [s06] ("{0} engage or assist any individual or group with " ++ s06)] ==                -- X0165s06
+  -- X024 X037 X045a X045ab X057 X067 X068 X071b X101 X0062 X0156 X0165s05 X0165s06
+  [1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 1].map some
 
 /-! ### `grammar_wf` on both sides of its hypothesis -/
 
@@ -123,7 +124,8 @@ def corpus : List String := ([
   "seek political asylum, peace, and war", "seek asylum from war or peace", "seek asylum in Paris",
   "seek asylum in Paris or in Rome in London", "seek asylum in Paris or Rome from war or peace",
   "freely to seek, to seek, and to seek", "to freely seek or to seek", "freely to freely seek nor to seek",
-  "to seek asylum, to seek asylum, freely to seek asylum, to freely seek asylum, freely to freely seek asylum and to seek asylum",
+  "to seek asylum, to seek asylum, freely to seek asylum, to freely seek asylum, freely to freely seek asylum and " ++
+    "to seek asylum",
   "freely to seek asylum, to seek asylum and freely to seek asylum from war freely",
   "to freely seek asylum, to seek asylum, and to freely seek asylum for peace",
   "freely to freely seek asylum and freely to freely seek asylum from war",
@@ -156,9 +158,13 @@ def corpus : List String := ([
   "share and share freely for {1} bread with friends", "share bread with friends, with neighbours, or with {1}",
   "share bread with friends or with neighbours", "share bread with friends freely",
   "share bread and share bread with friends or neighbours", "share and share bread with friends for peace",
-  "share bread and water with friends freely", "share bread freely, for peace, or for war"] : List String).map ("{0} " ++ ·)
+  "share bread and water with friends freely", "share bread freely, for peace, or for war"] : List String).map
+  ("{0} " ++ ·)
 def trees : List (Option (List (Tree Tok))) := treesOf K ["the city"] corpus
-#guard framesOk K && trees.map (·.map (·.length)) == ([1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2, 1, 4, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 4, 2, 1, 2, 4, 1, 2, 1, 2, 2, 4, 1, 4, 4, 4, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 4, 2, 1, 1, 2, 2, 1, 1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 4, 1, 1, 2, 4, 1, 1, 1, 1, 2, 2, 1]).map some
+#guard framesOk K && trees.map (·.map (·.length)) == ([
+  1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2, 1, 4, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 4, 2, 1, 2,
+  4, 1, 2, 1, 2, 2, 4, 1, 4, 4, 4, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 1, 4, 2, 1, 1, 2, 2, 1,
+  1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 4, 1, 1, 2, 4, 1, 1, 1, 1, 2, 2, 1]).map some
 /-- The rules of `K`'s grammar that no derivation of the corpus uses, apart from the `never` rules. -/
 def unused : List RuleS :=
   let used := trees.flatMap (fun ts => (ts.getD []).flatMap rulesOf)
