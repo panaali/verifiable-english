@@ -93,6 +93,9 @@ module VE.Acts.LexicalExamples
 module VE.Acts.LexicalProofs
 module VE.Acts.Read
 module VE.Acts.Syntax
+module VE.Acts.Table
+module VE.Acts.TableExamples
+module VE.Acts.Tree
 module VE.Alternatives.Admission
 module VE.Alternatives.Background
 module VE.Alternatives.Decl
