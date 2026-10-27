@@ -778,6 +778,23 @@ def test_the_generator_cuts_every_list_a_condition_reads():
     assert not [m for m in trust_mutants.mutants(text, "def", 0, len(text)) if literal <= m[1] < literal + 5]
 
 
+def test_the_generator_drops_each_middle_element_of_a_literal_list():
+    """Review ap-2b F1: `"nor"` and `"to"` of `fillExcl`'s literal list, neither first nor last, were never dropped;
+    the list cuts keep or drop only its ends. Each element between the ends is dropped alone (its comma with it),
+    across lines and around nested groups; a comma in a string or a nested group splits nothing."""
+    import trust_mutants
+    text = ('def fillExcl (ws : List String) : List String :=\n'
+            '  ["and", "or", "nor", "to", "be"] ++ ws ++ [(1, "a, b").2,\n'
+            '    f [x, y], g] ++ ["x", "y"]\n')
+    drops = [(text[s:e], new) for op, s, e, new in trust_mutants.mutants(text, "def", 0, len(text))
+             if op == "list-drop-middle"]
+    # a dropped line's end is put back, so every line after the declaration stays where it was
+    assert drops == [(' "or",', ""), (' "nor",', ""), (' "to",', ""), ("\n    f [x, y],", "\n")]
+    for before, after in drops:
+        mutated = text.replace(before, after, 1)
+        assert mutated.count("[") == mutated.count("]") and "[(1, " in mutated
+
+
 # Review F7's truth table: every command form `classify` can see, its class, and two readings of a definition: its
 # value (`{v}`, which a check must catch) and a proof the tool cuts (`{p}`, through the witness `{w}`: up front in
 # the mutated module, when the mutant breaks it in another). An outcome a cut or broken proof can change must never

@@ -18,6 +18,11 @@ BUGS = [
      "f.markers ++ f.mods)).filter (· ≠ \"\")))", "f.markers ++ f.mods)).filter (fun _ => true)))"),
     ("no-never-rules", "closed", "5.2's last paragraph: no `X → never` rule", "(fun x => !rs.any (·.lhs == x))", "(fun _ => false)"),
     ("adverb-as-filler", "fillExcl", "1.4: an adverb is not a filler word", "\"be\"] ++ V.adverbs ++", "\"be\"] ++"),
+    # review ap-2b F1: the two middle words of the literal list, which no fixture refused
+    ("to-as-filler", "fillExcl", "1.4: *to* is not a filler word (review ap-2b F1)", "\"nor\", \"to\", \"be\"]",
+     "\"nor\", \"be\"]"),
+    ("nor-as-filler", "fillExcl", "1.4: *nor* is not a filler word (review ap-2b F1)", "\"nor\", \"to\", \"be\"]",
+     "\"to\", \"be\"]"),
     ("start-not-S", "build", "the start symbol is S", "start := names.idxOf .S", "start := names.idxOf .SINGLE"),
     ("rank-coord-0", "NT.rank", "W3: COORD ranks above its first items", "  | .COORD | .F _ .O", "  | .F _ .O"),
     ("grammar-unclosed", "grammar", "the grammar is the closed schema", "build (closed (schema V))", "build (schema V)"),
