@@ -213,9 +213,13 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Metered.trace_fits
 #print axioms ResponseShape.Encoders.NormDefaults.admitDocumentX_kinds
 #print axioms ResponseShape.Encoders.NormDefaults.admitDocument_kinds
+#print axioms ResponseShape.Encoders.NormDefaults.collides_named
+#print axioms ResponseShape.Encoders.NormDefaults.defaultsCase_fits
+#print axioms ResponseShape.Encoders.NormDefaults.dispatch_okP
 #print axioms ResponseShape.Encoders.NormDefaults.firstFailureX_of_not_free
 #print axioms ResponseShape.Encoders.NormDefaults.firstFailure_of_not_free
 #print axioms ResponseShape.Encoders.NormDefaults.layeredCase_fits
+#print axioms ResponseShape.Encoders.NormDefaults.layeredKindCase_fits
 #print axioms ResponseShape.Encoders.NormDefaults.line_fits
 #print axioms ResponseShape.Encoders.NormDefaults.of_norms
 #print axioms ResponseShape.Encoders.NormDefaults.runAdmissionX_fits
