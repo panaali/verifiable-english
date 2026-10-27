@@ -174,3 +174,16 @@ copy, not a product change.
     6 at a time. Times are in this report, never in the suite.
 13. **PASS.** No test was removed or renamed. `tools/gate_collection.py --check --prebuilt`: 7 added, 0 removed,
     0 refused, 0 stale, 0 malformed.
+
+## Pre-review fix round 1 (gate on 44bdeded9)
+
+- **Failure:** the chain's selected run failed one test,
+  `tests/test_regen_generated.py::test_every_script_with_a_writing_mode_is_registered_or_excluded_with_a_reason`,
+  because `check.py --write` made `check.py` a writer of a committed file that is not in the registry.
+- **Fix:** `check.py` no longer writes any file. `--write` became `--print`, which prints the recomputed
+  evidence to stdout (`--print > evidence.json` records it).
+  - Registering the script in `NOT_REGENERATED` would have edited `tools/regen_generated.py`, and this item
+    is test code only.
+  - `evidence.json` is unchanged: `check.py --print` gives it byte for byte, and `check.py` still exits 0 on
+    every row.
+- **Tests:** the failed test passes. The selected tests were rerun for the fix.

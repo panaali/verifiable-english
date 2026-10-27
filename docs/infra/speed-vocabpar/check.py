@@ -1,7 +1,9 @@
 """speed-vocabpar's measurement and its stop rule, regenerated from the saved run logs.
 
     python3 docs/infra/speed-vocabpar/check.py            # exit 1 on any missing, failed or skipped row
-    python3 docs/infra/speed-vocabpar/check.py --write    # (re)write evidence.json from logs/
+    python3 docs/infra/speed-vocabpar/check.py --print    # print what evidence.json should be, from logs/
+
+The evidence is recorded once (`--print > evidence.json`), so the script writes no committed file itself.
 
 Every number comes from a log in `logs/` (each a mac-pytest.sh run's whole output, as it streamed) or from
 `logs/mac-pytest.jsonl` (the lines mac-pytest.sh logged for those runs, copied as they are), and from the two
@@ -180,10 +182,11 @@ def main(argv: list[str]) -> int:
     except (OSError, ValueError, KeyError, TypeError, StopIteration, ZeroDivisionError) as error:
         print(f"FAIL: a row cannot be computed: {type(error).__name__}: {error}")
         return 1
-    if "--write" in argv:
-        EVIDENCE.write_text(json.dumps(fresh, indent=1, sort_keys=True) + "\n")
+    if "--print" in argv:
+        print(json.dumps(fresh, indent=1, sort_keys=True))
+        return 0
     saved = json.loads(EVIDENCE.read_text()) if EVIDENCE.exists() else None
-    bad = [] if saved == fresh else ["evidence.json is not what the logs give (run with --write)"]
+    bad = [] if saved == fresh else ["evidence.json is not what the logs give (record it with --print > evidence.json)"]
     for row in fresh["rows"]:
         print(f"{'PASS' if row['pass'] else 'FAIL'}  {row['row']}  "
               f"{ {k: v for k, v in row.items() if k not in ('row', 'pass', 'differ', 'failed')} }")
