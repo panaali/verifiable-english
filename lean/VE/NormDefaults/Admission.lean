@@ -123,31 +123,8 @@ structure Admitted where
 
 /-- W2's ordinary document decoder over `E‴`, with the source environment's
 literals and flags. -/
-def decodeFilledDoc (s : Wire.SourceU) (j : Json) : Except String VE.Route.Admission.Doc := do
-  let E := (fill s.U).E
-  let data := s.src.ne.profiles.contains "data@0"
-  let units ← (← (← j.getObjVal? "units").getArr?).toList.mapM
-    (VE.Route.Admission.decodeUnit E data)
-  VE.Route.Admission.require (units.length ≤ 10000) "ResourceLimit: unit count"
-  VE.Route.Admission.require ((units.map DocUnit.id).eraseDups.length == units.length)
-    "duplicate unit id"
-  VE.Route.Admission.require (VE.Route.Admission.sortedSpans units)
-    "unit spans must be sorted and non-overlapping"
-  let optional := fun (key : String) => match j.getObjVal? key with
-    | .ok v => v.getArr?.map Array.toList
-    | .error _ => pure []
-  let lemmas ← (← optional "lemmas").mapM (VE.Route.Admission.decodeLemma E data)
-  VE.Route.Admission.require ((lemmas.map Lemma.name).eraseDups.length == lemmas.length)
-    "duplicate lemma"
-  let openTerms ← VE.Route.Admission.tokens (Json.arr (← optional "open_terms").toArray)
-  let readingSets ← (← optional "reading_sets").mapM
-    (VE.Route.Admission.decodeReadingSet E data)
-  VE.Route.Admission.require
-    ((readingSets.map (fun r => (r.id, r.version))).eraseDups.length == readingSets.length)
-    "duplicate reading set version"
-  let narrowings ← VE.Route.Admission.tokens (Json.arr (← optional "narrowings").toArray)
-  pure ⟨s.src.ne.rv.literals, s.src.ne.rv.flags, units, lemmas, openTerms, readingSets,
-    narrowings⟩
+def decodeFilledDoc (s : Wire.SourceU) (j : Json) : Except String VE.Route.Admission.Doc :=
+  VE.Route.Admission.decodeDoc s.src.ne.rv (s.src.ne.profiles.contains "data@0") j (fill s.U).E
 
 /-- The profiles `E‴` carries: the source's, without `norm-defaults@0`. -/
 def filledProfiles (s : Wire.SourceU) : List String :=
