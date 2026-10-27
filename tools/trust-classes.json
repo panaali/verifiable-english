@@ -487,6 +487,7 @@
         "ResponseShape.Schemas.Document.cites",
         "ResponseShape.Schemas.Document.coverage",
         "ResponseShape.Schemas.Document.file",
+        "ResponseShape.Schemas.Document.judgments",
         "ResponseShape.Schemas.Document.meaning",
         "ResponseShape.Schemas.Document.narrowing",
         "ResponseShape.Schemas.Document.nullable",
@@ -2051,6 +2052,7 @@
           ]
         },
         "VE.Compose.dispatch",
+        "VE.Compose.documentLayers",
         "VE.Compose.environmentProfiles",
         "VE.Compose.environmentWrapper",
         {
@@ -2079,6 +2081,7 @@
         "VE.Compose.today",
         "VE.Compose.todayGate",
         "VE.Compose.todayHead",
+        "VE.Compose.withoutDocumentLayers",
         "VE.Compose.wrapperRows",
         "VE.Compose.actsRefuses"
       ],
@@ -5798,6 +5801,9 @@
       ]
     },
     "VE/Question/Basic.lean": {
+      "G[R]": [
+        "VE.Question.Shape.offset"
+      ],
       "G[V]": [
         "VE.Question.Candidate",
         "VE.Question.Form",
@@ -5825,10 +5831,8 @@
         "VE.Question.maxTokens",
         "VE.Question.questionMarks",
         "VE.Question.shape",
+        "VE.Question.speechAuxiliaries",
         "VE.Question.whWords"
-      ],
-      "G[R]": [
-        "VE.Question.Shape.offset"
       ]
     },
     "VE/Question/Examples.lean": {
@@ -5935,6 +5939,8 @@
     },
     "VE/Question/Run.lean": {
       "D[V]": [
+        "VE.Question.Run.caseFields",
+        "VE.Question.Run.decodeCaller",
         "VE.Question.Run.questionCase"
       ],
       "G[I]": [
@@ -5946,6 +5952,7 @@
         "VE.Question.Run.codeClasses",
         "VE.Question.Run.coded",
         "VE.Question.Run.lexicalFields",
+        "VE.Question.Run.modalFields",
         "VE.Question.Run.noneAdvice",
         "VE.Question.Run.noneFields",
         "VE.Question.Run.ofQuestion",
@@ -5957,11 +5964,14 @@
         "VE.Question.Run.whole"
       ],
       "G[V]": [
+        "VE.Question.Run.Caller",
+        "VE.Question.Run.Caller.auxs",
         "VE.Question.Run.askedFields",
         "VE.Question.Run.caseReported",
         "VE.Question.Run.formName",
         "VE.Question.Run.oneFields",
-        "VE.Question.Run.outcomeFields"
+        "VE.Question.Run.outcomeFields",
+        "VE.Question.Run.speechPrefixes"
       ]
     },
     "VE/Question/Spans.lean": {
@@ -5987,6 +5997,8 @@
         "VE.Question.illTypedQuestionText",
         "VE.Question.indefiniteText",
         "VE.Question.markerText",
+        "VE.Question.modalQuestionText",
+        "VE.Question.modalWords",
         "VE.Question.movedText",
         "VE.Question.newCodeClasses",
         "VE.Question.noDerivationText",
@@ -9483,6 +9495,7 @@
         "VE.Service.Document.BlockCoverage.residual",
         "VE.Service.Document.Env",
         "VE.Service.Document.Env.data",
+        "VE.Service.Document.Env.forModes",
         "VE.Service.Document.Env.lower",
         "VE.Service.Document.Env.regulates",
         "VE.Service.Document.Env.rights",
@@ -9522,6 +9535,7 @@
         "VE.Service.Document.rightsSourceUnit",
         "VE.Service.Document.scopeReadings",
         "VE.Service.Document.sensesContentOf",
+        "VE.Service.Document.setCandidates",
         "VE.Service.Document.softCanonical",
         "VE.Service.Document.softContentOf",
         "VE.Service.Document.softSourceNorms",
@@ -9529,6 +9543,7 @@
         "VE.Service.Document.split",
         "VE.Service.Document.typedFormula",
         "VE.Service.Document.unitsOf",
+        "VE.Service.Document.usageJson",
         "VE.Service.Document.usesNorms",
         "VE.Service.Document.wireJson",
         "VE.Service.Document.withUnits"
@@ -9575,6 +9590,7 @@
       ],
       "G[V]": [
         "VE.Service.Document.Checked",
+        "VE.Service.Document.Env.regulated",
         "VE.Service.Document.Meaning",
         "VE.Service.Document.Meaning.json",
         "VE.Service.Document.Meaning.ofJson?",
@@ -9590,25 +9606,20 @@
         "VE.Service.Document.Support.ofName?",
         "VE.Service.Document.UnitContent",
         "VE.Service.Document.UnitContent.json",
+        "VE.Service.Document.UnitContent.judged",
         "VE.Service.Document.UnitStatus",
         "VE.Service.Document.UnitStatus.all",
         "VE.Service.Document.UnitStatus.name",
         "VE.Service.Document.UnitStatus.ofName?",
         "VE.Service.Document.addCount",
-        "VE.Service.Document.checkCore",
-        {
-          "name": "VE.Service.Document.checkDoc",
-          "tied": [
-            "VE.Scope.scope_admission",
-            "VE.Scope.scope_absent_unchanged"
-          ]
-        },
         "VE.Service.Document.countJson",
         "VE.Service.Document.counts",
         "VE.Service.Document.coverageJson",
         "VE.Service.Document.encode",
         "VE.Service.Document.freeNorms",
+        "VE.Service.Document.judgedViews",
         "VE.Service.Document.kindName",
+        "VE.Service.Document.listedOf",
         "VE.Service.Document.lowerReadings",
         "VE.Service.Document.readingSetHasStrayNull",
         "VE.Service.Document.readingsSets",
@@ -9619,7 +9630,15 @@
         "VE.Service.Document.softLayer",
         "VE.Service.Document.softRules",
         "VE.Service.Document.softSource",
-        "VE.Service.Document.unitJson"
+        "VE.Service.Document.unitJson",
+        "VE.Service.Document.checkCore",
+        {
+          "name": "VE.Service.Document.checkDoc",
+          "tied": [
+            "VE.Scope.scope_admission",
+            "VE.Scope.scope_absent_unchanged"
+          ]
+        }
       ],
       "D[I]": [
         "VE.Service.Document.Env.meaningId",
@@ -9632,6 +9651,7 @@
         "VE.Service.Document.checkNormDefaults",
         "VE.Service.Document.checkNorms",
         "VE.Service.Document.environmentFault",
+        "VE.Service.Document.judgmentsApart",
         "VE.Service.Document.locatedFence",
         "VE.Service.Document.locatedModel",
         "VE.Service.Document.locatedOf",
@@ -10046,7 +10066,8 @@
         "VE.Service.Standalone.validateFamily",
         "VE.Service.Standalone.validated",
         "VE.Service.Standalone.validatedComposedEnvironment",
-        "VE.Service.Standalone.validatedEnvironment"
+        "VE.Service.Standalone.validatedEnvironment",
+        "VE.Service.Standalone.validatedLayerEnvironment"
       ],
       "G[R]": [
         "VE.Service.Standalone.modelError",
@@ -14246,7 +14267,11 @@
         "VE.Calc.Check.reasons"
       ],
       "D[V]": [
+        "VE.Calc.Run.claimFields",
+        "VE.Calc.Run.display",
+        "VE.Calc.Run.exact",
         "VE.Calc.Run.kind",
+        "VE.Calc.Run.line",
         {
           "name": "VE.Calc.Run.outcomeAt",
           "tied": [
@@ -14261,12 +14286,16 @@
           ]
         },
         "VE.Calc.Run.rowJson",
+        "VE.Calc.Run.sides",
+        "VE.Calc.Run.tie",
+        "VE.Calc.Run.truncated",
         {
           "name": "VE.Calc.Run.words",
           "tied": [
             "VE.Calc.Run.outcomes_words"
           ]
-        }
+        },
+        "VE.Calc.Run.wordsIn"
       ],
       "G[V]": [
         {
@@ -14326,6 +14355,7 @@
         "VE.Calc.RunExamples.literalSites",
         "VE.Calc.RunExamples.malformed",
         "VE.Calc.RunExamples.meaning",
+        "VE.Calc.RunExamples.member",
         "VE.Calc.RunExamples.multiByteNames",
         "VE.Calc.RunExamples.name64",
         "VE.Calc.RunExamples.nonlinear",
@@ -14344,12 +14374,16 @@
         "VE.Calc.RunExamples.r4",
         "VE.Calc.RunExamples.r827",
         "VE.Calc.RunExamples.req",
+        "VE.Calc.RunExamples.roundsOf",
+        "VE.Calc.RunExamples.rowFieldCases",
         "VE.Calc.RunExamples.rsd",
         "VE.Calc.RunExamples.says",
+        "VE.Calc.RunExamples.sdt",
         "VE.Calc.RunExamples.stated",
         "VE.Calc.RunExamples.steps",
         "VE.Calc.RunExamples.stringSites",
         "VE.Calc.RunExamples.strings64",
+        "VE.Calc.RunExamples.third",
         "VE.Calc.RunExamples.v2",
         "VE.Calc.RunExamples.v5",
         "VE.Calc.RunExamples.v5Rows",
@@ -14653,14 +14687,28 @@
     "ResponseShape/Schemas/Calc.lean": {
       "G[R]": [
         "ResponseShape.Schemas.Calc.answer",
+        "ResponseShape.Schemas.Calc.byForm",
+        "ResponseShape.Schemas.Calc.claimKind",
         "ResponseShape.Schemas.Calc.claimRow",
+        "ResponseShape.Schemas.Calc.comparisons",
         "ResponseShape.Schemas.Calc.derivation",
+        "ResponseShape.Schemas.Calc.digits",
+        "ResponseShape.Schemas.Calc.exact",
         "ResponseShape.Schemas.Calc.fields",
         "ResponseShape.Schemas.Calc.file",
-        "ResponseShape.Schemas.Calc.kind",
+        "ResponseShape.Schemas.Calc.flag",
+        "ResponseShape.Schemas.Calc.followsKind",
+        "ResponseShape.Schemas.Calc.form",
+        "ResponseShape.Schemas.Calc.known",
+        "ResponseShape.Schemas.Calc.null",
         "ResponseShape.Schemas.Calc.reasons",
         "ResponseShape.Schemas.Calc.refusal",
-        "ResponseShape.Schemas.Calc.row"
+        "ResponseShape.Schemas.Calc.roundings",
+        "ResponseShape.Schemas.Calc.row",
+        "ResponseShape.Schemas.Calc.sides",
+        "ResponseShape.Schemas.Calc.truncated",
+        "ResponseShape.Schemas.Calc.undefinedMembers",
+        "ResponseShape.Schemas.Calc.unknownMembers"
       ]
     },
     "VE/Arith/Syntax.lean": {
@@ -15086,7 +15134,12 @@
         "VE.Arith.quantLoop"
       ],
       "P": [
-        "VE.Arith.Agrees"
+        "VE.Arith.Agrees",
+        "VE.Arith.Def.SitesOk",
+        "VE.Arith.Extends",
+        "VE.Arith.Site.Ok",
+        "VE.Arith.Total",
+        "VE.Arith.subSites"
       ]
     },
     "VE/Arith/BoundedExamples.lean": {
@@ -15126,6 +15179,19 @@
         "VE.Defaults.MeaningFixtures.sit",
         "VE.Defaults.MeaningFixtures.switchesDec",
         "VE.Defaults.MeaningFixtures.typedDec"
+      ]
+    },
+    "ResponseShape/Encoders/Calc.lean": {
+      "P": [
+        "ResponseShape.Encoders.Calc.tacticRow_fits"
+      ]
+    },
+    "VE/Arith/CompleteExamples.lean": {
+      "T": [
+        "VE.Arith.Examples.keeps",
+        "VE.Arith.Examples.selfCall",
+        "VE.Arith.Examples.sweep",
+        "VE.Arith.Examples.tickEnv"
       ]
     }
   }

@@ -465,4 +465,506 @@ theorem arithOutcome_decided (D : Defs) (hD : D.WellFormed = true) (φ : Formula
     · next w hb => simp [decideBounded_sound D hD φ hφ limit false w hb]
   · simp at h
 
+/-! A larger budget never changes an answer (`decideBounded_mono`): a completed call of the smaller budget's
+environment completes, with the same value and units, in the larger one's. -/
+
+/-- Each call `O` completes, `O'` completes with the same value and units. -/
+structure Extends (O O' : OpEnv) : Prop where
+  funs : ∀ f n g, O.funs f = some (n, g) → ∃ g', O'.funs f = some (n, g') ∧ ∀ xs w r, g xs w = some r → g' xs w = some r
+  preds : ∀ p n P, O.preds p = some (n, P) → ∃ P', O'.preds p = some (n, P') ∧
+    ∀ xs w r, P xs w = some r → P' xs w = some r
+
+theorem charge_mono {α : Type} {limit limit' w : Nat} {k k' : Nat → Option (α × Nat)} {r : α × Nat}
+    (hl : limit ≤ limit') (hk : ∀ r, k (w + 1) = some r → k' (w + 1) = some r) (h : charge limit w k = some r) :
+    charge limit' w k' = some r := by
+  have ⟨hw, h⟩ := charge_some h
+  unfold charge; rw [if_neg (by omega)]; exact hk _ h
+
+theorem quantLoop_mono (u : Bool) {step step' : Int → Nat → Option (Bool × Nat)}
+    (hs : ∀ i w r, step i w = some r → step' i w = some r) :
+    ∀ n i w r, quantLoop u step n i w = some r → quantLoop u step' n i w = some r
+  | 0, _, _, _, h => h
+  | n + 1, i, w, r, h => by
+    simp only [quantLoop] at h ⊢
+    cases hst : step i w with
+    | none => simp [hst] at h
+    | some r0 =>
+      obtain ⟨b, w'⟩ := r0
+      rw [hs i w _ hst]; simp only [hst] at h ⊢
+      split at h
+      · rw [if_pos ‹_›]; exact quantLoop_mono u hs n _ _ _ h
+      · rw [if_neg ‹_›]; exact h
+
+theorem countLoop_mono {step step' : Int → Nat → Option (Bool × Nat)}
+    (hs : ∀ i w r, step i w = some r → step' i w = some r) :
+    ∀ n i acc w r, countLoop step n i acc w = some r → countLoop step' n i acc w = some r
+  | 0, _, _, _, _, h => h
+  | n + 1, i, acc, w, r, h => by
+    simp only [countLoop] at h ⊢
+    cases hst : step i w with
+    | none => simp [hst] at h
+    | some r0 =>
+      obtain ⟨b, w'⟩ := r0
+      rw [hs i w _ hst]; simp only [hst] at h ⊢
+      exact countLoop_mono hs n _ _ _ _ h
+
+mutual
+theorem Term.evalB_mono {O O' : OpEnv} {limit limit' : Nat} (hE : Extends O O') (hl : limit ≤ limit') :
+    ∀ (t : Term) (ρ : List Int) (w : Nat) (r : Int × Nat), Term.evalB O limit ρ t w = some r →
+      Term.evalB O' limit' ρ t w = some r
+  | .var i, ρ, w, r, h | .num n, ρ, w, r, h => by simpa [Term.evalB] using h
+  | .add a b, ρ, w, r, h | .sub a b, ρ, w, r, h | .mul a b, ρ, w, r, h => by
+    simp only [Term.evalB] at h ⊢
+    cases ha : Term.evalB O limit ρ a w with
+    | none => simp [ha] at h
+    | some ra =>
+      obtain ⟨xa, wa⟩ := ra
+      rw [Term.evalB_mono hE hl a ρ w _ ha]; simp only [ha] at h ⊢
+      cases hb : Term.evalB O limit ρ b wa with
+      | none => simp [hb] at h
+      | some rb => rw [Term.evalB_mono hE hl b ρ wa _ hb]; simpa [hb] using h
+  | .call f args, ρ, w, r, h => by
+    simp only [Term.evalB] at h ⊢
+    cases hf : O.funs f with
+    | none => simp [hf] at h
+    | some fg =>
+      obtain ⟨n, g⟩ := fg
+      obtain ⟨g', hg', hgg⟩ := hE.funs f n g hf
+      rw [hg']; simp only [hf] at h ⊢
+      cases hs : Term.evalBs O limit ρ args w with
+      | none => simp [hs] at h
+      | some rs =>
+        obtain ⟨xs, ws⟩ := rs
+        rw [Term.evalBs_mono hE hl args ρ w _ hs]; simp only [hs] at h ⊢
+        split at h
+        · rw [if_pos ‹_›]; exact hgg _ _ _ h
+        · simp at h
+  | .countFromTo lo hi φ, ρ, w, r, h => by
+    simp only [Term.evalB] at h ⊢
+    cases hlo : Term.evalB O limit ρ lo w with
+    | none => simp [hlo] at h
+    | some rl =>
+      obtain ⟨l, wl⟩ := rl
+      rw [Term.evalB_mono hE hl lo ρ w _ hlo]; simp only [hlo] at h ⊢
+      cases hhi : Term.evalB O limit ρ hi wl with
+      | none => simp [hhi] at h
+      | some rh =>
+        obtain ⟨u, wh⟩ := rh
+        rw [Term.evalB_mono hE hl hi ρ wl _ hhi]; simp only [hhi] at h ⊢
+        exact countLoop_mono (fun i w r hs => Formula.evalB_mono hE hl φ (i :: ρ) w r hs) _ _ _ _ _ h
+theorem Term.evalBs_mono {O O' : OpEnv} {limit limit' : Nat} (hE : Extends O O') (hl : limit ≤ limit') :
+    ∀ (ts : List Term) (ρ : List Int) (w : Nat) (r : List Int × Nat), Term.evalBs O limit ρ ts w = some r →
+      Term.evalBs O' limit' ρ ts w = some r
+  | [], ρ, w, r, h => by simpa [Term.evalBs] using h
+  | t :: ts, ρ, w, r, h => by
+    simp only [Term.evalBs] at h ⊢
+    cases ht : Term.evalB O limit ρ t w with
+    | none => simp [ht] at h
+    | some rt =>
+      obtain ⟨x, w1⟩ := rt
+      rw [Term.evalB_mono hE hl t ρ w _ ht]; simp only [ht] at h ⊢
+      cases hs : Term.evalBs O limit ρ ts w1 with
+      | none => simp [hs] at h
+      | some rs => rw [Term.evalBs_mono hE hl ts ρ w1 _ hs]; simpa [hs] using h
+theorem Formula.evalB_mono {O O' : OpEnv} {limit limit' : Nat} (hE : Extends O O') (hl : limit ≤ limit') :
+    ∀ (φ : Formula) (ρ : List Int) (w : Nat) (r : Bool × Nat), Formula.evalB O limit ρ φ w = some r →
+      Formula.evalB O' limit' ρ φ w = some r
+  | .eq a c, ρ, w, r, h | .lt a c, ρ, w, r, h | .le a c, ρ, w, r, h | .dvd a c, ρ, w, r, h => by
+    simp only [Formula.evalB] at h ⊢
+    refine charge_mono hl (fun r h => ?_) h
+    cases ha : Term.evalB O limit ρ a (w + 1) with
+    | none => simp [ha] at h
+    | some ra =>
+      obtain ⟨xa, wa⟩ := ra
+      rw [Term.evalB_mono hE hl a ρ _ _ ha]; simp only [ha] at h ⊢
+      cases hc : Term.evalB O limit ρ c wa with
+      | none => simp [hc] at h
+      | some rc => rw [Term.evalB_mono hE hl c ρ wa _ hc]; simpa [hc] using h
+  | .call p args, ρ, w, r, h => by
+    simp only [Formula.evalB] at h ⊢
+    refine charge_mono hl (fun r h => ?_) h
+    cases hp : O.preds p with
+    | none => simp [hp] at h
+    | some pP =>
+      obtain ⟨n, P⟩ := pP
+      obtain ⟨P', hP', hPP⟩ := hE.preds p n P hp
+      rw [hP']; simp only [hp] at h ⊢
+      cases hs : Term.evalBs O limit ρ args (w + 1) with
+      | none => simp [hs] at h
+      | some rs =>
+        obtain ⟨xs, ws⟩ := rs
+        rw [Term.evalBs_mono hE hl args ρ _ _ hs]; simp only [hs] at h ⊢
+        split at h
+        · rw [if_pos ‹_›]; exact hPP _ _ _ h
+        · simp at h
+  | .not φ, ρ, w, r, h => by
+    simp only [Formula.evalB] at h ⊢
+    refine charge_mono hl (fun r h => ?_) h
+    cases hφ : Formula.evalB O limit ρ φ (w + 1) with
+    | none => simp [hφ] at h
+    | some r1 => rw [Formula.evalB_mono hE hl φ ρ _ _ hφ]; simpa [hφ] using h
+  | .and φ ψ, ρ, w, r, h | .or φ ψ, ρ, w, r, h | .imp φ ψ, ρ, w, r, h => by
+    simp only [Formula.evalB] at h ⊢
+    refine charge_mono hl (fun r h => ?_) h
+    cases hφ : Formula.evalB O limit ρ φ (w + 1) with
+    | none => simp [hφ] at h
+    | some r1 =>
+      obtain ⟨b1, w1⟩ := r1
+      rw [Formula.evalB_mono hE hl φ ρ _ _ hφ]
+      cases b1 <;> simp only [hφ] at h ⊢ <;> first | exact h | exact Formula.evalB_mono hE hl ψ ρ w1 r h
+  | .allNat _, _, _, _, h | .exNat _, _, _, _, h | .allInt _, _, _, _, h | .exInt _, _, _, _, h => by
+    simp [Formula.evalB] at h
+  | .allFromTo lo hi φ, ρ, w, r, h | .exFromTo lo hi φ, ρ, w, r, h => by
+    simp only [Formula.evalB] at h ⊢
+    refine charge_mono hl (fun r h => ?_) h
+    cases hlo : Term.evalB O limit ρ lo (w + 1) with
+    | none => simp [hlo] at h
+    | some rl =>
+      obtain ⟨l, wl⟩ := rl
+      rw [Term.evalB_mono hE hl lo ρ _ _ hlo]; simp only [hlo] at h ⊢
+      cases hhi : Term.evalB O limit ρ hi wl with
+      | none => simp [hhi] at h
+      | some rh =>
+        obtain ⟨u, wh⟩ := rh
+        rw [Term.evalB_mono hE hl hi ρ wl _ hhi]; simp only [hhi] at h ⊢
+        exact quantLoop_mono _ (fun i w r hs => Formula.evalB_mono hE hl φ (i :: ρ) w r hs) _ _ _ _ h
+end
+
+theorem foldl_rel {α β γ : Type} (R : α → β → Prop) {f : α → γ → α} {g : β → γ → β}
+    (h : ∀ a b c, R a b → R (f a c) (g b c)) : ∀ (l : List γ) a b, R a b → R (l.foldl f a) (l.foldl g b)
+  | [], _, _, hr => hr
+  | c :: l, a, b, hr => foldl_rel R h l _ _ (h a b c hr)
+
+theorem opEnv_extends (D : Defs) {limit limit' : Nat} (hl : limit ≤ limit') :
+    Extends (D.opEnv limit) (D.opEnv limit') := by
+  refine foldl_rel Extends (fun O O' d hE => ?_) D _ _ ⟨by simp, by simp⟩
+  cases d with
+  | fn f n body =>
+    refine ⟨fun g m k hk => ?_, hE.preds⟩
+    by_cases hg : g = f
+    · subst hg
+      simp only [ite_true, Option.some.injEq, Prod.mk.injEq] at hk ⊢
+      obtain ⟨rfl, rfl⟩ := hk
+      exact ⟨_, ⟨rfl, rfl⟩, fun xs w r h => Term.evalB_mono hE hl body xs w r h⟩
+    · simp only [hg, ite_false] at hk ⊢; exact hE.funs g m k hk
+  | pred p n body =>
+    refine ⟨hE.funs, fun q m k hk => ?_⟩
+    by_cases hq : q = p
+    · subst hq
+      simp only [ite_true, Option.some.injEq, Prod.mk.injEq] at hk ⊢
+      obtain ⟨rfl, rfl⟩ := hk
+      exact ⟨_, ⟨rfl, rfl⟩, fun xs w r h => Formula.evalB_mono hE hl body xs w r h⟩
+    · simp only [hq, ite_false] at hk ⊢; exact hE.preds q m k hk
+
+theorem decideBounded_mono (D : Defs) (φ : Formula) (limit limit' : Nat) (r : Bool × Nat)
+    (h : decideBounded D limit φ = some r) (hl : limit ≤ limit') : decideBounded D limit' φ = some r :=
+  Formula.evalB_mono (opEnv_extends D hl) hl φ [] 0 r h
+
+/-! A bounded, admitted statement is decided once the budget covers its work (`decideBounded_complete`). The work is
+the statement's own: the same units and the same answer at every budget that covers them (`decideBounded_covered`). -/
+
+/-- What admission guarantees of a site (spec 12.1), for the definitions `E` a body may call and `depth` outer values. -/
+def Site.Ok (E : Defs) (depth : Nat) : Site → Prop
+  | .free j => j < depth
+  | .call pred f argc => ∃ d, E.find? (fun d => d.name == f && d.isPred == pred) = some d ∧ d.arity = argc
+  | .count _ => True
+
+theorem Site.ok_of_refusal {D E : Defs} {depth : Nat} {B : Option (String → Bool)} :
+    ∀ {s : Site}, s.refusal D E depth B = none → s.Ok E depth
+  | .free j, h => by simp only [Site.refusal] at h; split at h <;> simp_all [Site.Ok]
+  | .call pred f argc, h => by
+    simp only [Site.refusal] at h
+    split at h
+    · split at h
+      · simp at h
+      · next d hd => split at h
+                     · exact ⟨d, hd, ‹_›⟩
+                     · simp at h
+    · simp at h
+  | .count _, _ => trivial
+
+/-- Each name `B` marks, as `E` finds it, completes in the environment of every budget, with a value and a work that
+depend only on its arguments, once the budget covers that work. -/
+structure Total (O : Nat → OpEnv) (E : Defs) (B : String → Bool) : Prop where
+  funs : ∀ f d, E.find? (fun d => d.name == f && d.isPred == false) = some d → B f = true →
+    ∀ xs : List Int, xs.length = d.arity → ∃ x W, ∀ limit, ∃ g, (O limit).funs f = some (d.arity, g) ∧
+      ∀ w, w + W ≤ limit → g xs w = some (x, w + W)
+  preds : ∀ p d, E.find? (fun d => d.name == p && d.isPred == true) = some d → B p = true →
+    ∀ xs : List Int, xs.length = d.arity → ∃ b W, ∀ limit, ∃ P, (O limit).preds p = some (d.arity, P) ∧
+      ∀ w, w + W ≤ limit → P xs w = some (b, w + W)
+
+theorem charge_eq {α : Type} {limit w : Nat} {k : Nat → Option (α × Nat)} (h : w < limit) :
+    charge limit w k = k (w + 1) := by
+  unfold charge; rw [if_neg (by omega)]
+
+theorem quantLoop_total (u : Bool) (step : Nat → Int → Nat → Option (Bool × Nat))
+    (hs : ∀ i, ∃ b W, ∀ limit w, w + W ≤ limit → step limit i w = some (b, w + W)) :
+    ∀ n i, ∃ b W, ∀ limit w, w + W ≤ limit → quantLoop u (step limit) n i w = some (b, w + W)
+  | 0, _ => ⟨u, 0, fun _ _ _ => by simp [quantLoop]⟩
+  | n + 1, i => by
+    obtain ⟨b, W1, h1⟩ := hs i
+    obtain ⟨c, W2, h2⟩ := quantLoop_total u step hs n (i + 1)
+    by_cases hb : b = u
+    · exact ⟨c, W1 + W2, fun limit w hw => by
+        simp only [quantLoop, h1 limit w (by omega), hb, if_true, h2 limit (w + W1) (by omega), Nat.add_assoc]⟩
+    · exact ⟨!u, W1, fun limit w hw => by simp [quantLoop, h1 limit w hw, hb]⟩
+
+theorem countLoop_total (step : Nat → Int → Nat → Option (Bool × Nat))
+    (hs : ∀ i, ∃ b W, ∀ limit w, w + W ≤ limit → step limit i w = some (b, w + W)) :
+    ∀ n i acc, ∃ c W, ∀ limit w, w + W ≤ limit → countLoop (step limit) n i acc w = some (c, w + W)
+  | 0, _, acc => ⟨acc, 0, fun _ _ _ => by simp [countLoop]⟩
+  | n + 1, i, acc => by
+    obtain ⟨b, W1, h1⟩ := hs i
+    obtain ⟨c, W2, h2⟩ := countLoop_total step hs n (i + 1) (if b then acc + 1 else acc)
+    exact ⟨c, W1 + W2, fun limit w hw => by
+      simp only [countLoop, h1 limit w (by omega), h2 limit (w + W1) (by omega), Nat.add_assoc]⟩
+
+/-- The sites of a part are sites of the whole. -/
+macro (name := subSites) "sub_sites" hs:term : term =>
+  `(fun s h => $hs s (by simp only [Term.sites, Term.sitesList, Formula.sites, List.mem_append, List.mem_cons]; simp [h]))
+
+mutual
+theorem Term.evalB_total {O : Nat → OpEnv} {E : Defs} {B : String → Bool} {depth : Nat} (hT : Total O E B) :
+    ∀ (t : Term) (k : Nat) (ρ : List Int), Term.bnd B t = true → (∀ s ∈ Term.sites k t, s.Ok E depth) →
+      ρ.length = k + depth → ∃ x W, ∀ limit w, w + W ≤ limit → Term.evalB (O limit) limit ρ t w = some (x, w + W)
+  | .var i, k, ρ, _, hs, hl => by
+    have hi : i < ρ.length := by
+      by_cases hk : k ≤ i
+      · have := hs (.free (i - k)) (by simp [Term.sites, hk]); simp only [Site.Ok] at this; omega
+      · omega
+    exact ⟨ρ[i], 0, fun _ _ _ => by simp [Term.evalB, hi]⟩
+  | .num n, _, _, _, _, _ => ⟨n, 0, fun _ _ _ => by simp [Term.evalB]⟩
+  | .add a b, k, ρ, hb, hs, hl | .sub a b, k, ρ, hb, hs, hl | .mul a b, k, ρ, hb, hs, hl => by
+    simp only [Term.bnd, Bool.and_eq_true] at hb
+    obtain ⟨x, Wa, ha⟩ := Term.evalB_total hT a k ρ hb.1 (sub_sites hs) hl
+    obtain ⟨y, Wb, hb'⟩ := Term.evalB_total hT b k ρ hb.2 (sub_sites hs) hl
+    exact ⟨_, Wa + Wb, fun limit w hw => by
+      simp only [Term.evalB, ha limit w (by omega), hb' limit (w + Wa) (by omega), Option.map_some, ← Nat.add_assoc] <;> exact rfl⟩
+  | .call f args, k, ρ, hb, hs, hl => by
+    simp only [Term.bnd, Bool.and_eq_true] at hb
+    obtain ⟨d, hd, har⟩ := hs (.call false f args.length) (by simp [Term.sites])
+    obtain ⟨xs, Ws, hlen, hxs⟩ := Term.evalBs_total hT args k ρ hb.2 (sub_sites hs) hl
+    obtain ⟨x, Wg, hg⟩ := hT.funs f d hd hb.1 xs (by omega)
+    exact ⟨x, Ws + Wg, fun limit w hw => by
+      obtain ⟨g, hf, hgw⟩ := hg limit
+      simp only [Term.evalB, hf, hxs limit w (by omega), hlen, har, if_true, hgw (w + Ws) (by omega), Nat.add_assoc]⟩
+  | .countFromTo lo hi φ, k, ρ, hb, hs, hl => by
+    simp only [Term.bnd, Bool.and_eq_true] at hb
+    obtain ⟨l, Wl, hlo⟩ := Term.evalB_total hT lo k ρ hb.1.1 (sub_sites hs) hl
+    obtain ⟨u, Wh, hhi⟩ := Term.evalB_total hT hi k ρ hb.1.2 (sub_sites hs) hl
+    obtain ⟨c, Wc, hc⟩ := countLoop_total (fun limit i w => Formula.evalB (O limit) limit (i :: ρ) φ w)
+      (fun i => Formula.evalB_total hT φ (k + 1) (i :: ρ) hb.2 (sub_sites hs) (by simp [hl]; omega))
+      (u - l + 1).toNat l 0
+    exact ⟨c, Wl + Wh + Wc, fun limit w hw => by
+      simp only [Term.evalB, hlo limit w (by omega), hhi limit (w + Wl) (by omega),
+        hc limit (w + Wl + Wh) (by omega)] <;> simp only [Nat.add_assoc]⟩
+theorem Term.evalBs_total {O : Nat → OpEnv} {E : Defs} {B : String → Bool} {depth : Nat} (hT : Total O E B) :
+    ∀ (ts : List Term) (k : Nat) (ρ : List Int), Term.bndList B ts = true →
+      (∀ s ∈ Term.sitesList k ts, s.Ok E depth) → ρ.length = k + depth →
+      ∃ xs W, xs.length = ts.length ∧ ∀ limit w, w + W ≤ limit → Term.evalBs (O limit) limit ρ ts w = some (xs, w + W)
+  | [], _, _, _, _, _ => ⟨[], 0, rfl, fun _ _ _ => by simp [Term.evalBs]⟩
+  | t :: ts, k, ρ, hb, hs, hl => by
+    simp only [Term.bndList, Bool.and_eq_true] at hb
+    obtain ⟨x, Wt, ht⟩ := Term.evalB_total hT t k ρ hb.1 (sub_sites hs) hl
+    obtain ⟨xs, Ws, hlen, hxs⟩ := Term.evalBs_total hT ts k ρ hb.2 (sub_sites hs) hl
+    exact ⟨x :: xs, Wt + Ws, by simp [hlen], fun limit w hw => by
+      simp only [Term.evalBs, ht limit w (by omega), hxs limit (w + Wt) (by omega), Option.map_some, Nat.add_assoc]⟩
+theorem Formula.evalB_total {O : Nat → OpEnv} {E : Defs} {B : String → Bool} {depth : Nat} (hT : Total O E B) :
+    ∀ (φ : Formula) (k : Nat) (ρ : List Int), Formula.bnd B φ = true → (∀ s ∈ Formula.sites k φ, s.Ok E depth) →
+      ρ.length = k + depth → ∃ b W, ∀ limit w, w + W ≤ limit → Formula.evalB (O limit) limit ρ φ w = some (b, w + W)
+  | .eq a c, k, ρ, hb, hs, hl => by
+    simp only [Formula.bnd, Bool.and_eq_true] at hb
+    obtain ⟨x, Wa, ha⟩ := Term.evalB_total hT a k ρ hb.1 (sub_sites hs) hl
+    obtain ⟨y, Wc, hc⟩ := Term.evalB_total hT c k ρ hb.2 (sub_sites hs) hl
+    exact ⟨decide (x = y), 1 + Wa + Wc, fun limit w hw => by
+      simp only [Formula.evalB, charge_eq (show w < limit by omega), ha limit (w + 1) (by omega),
+        hc limit (w + 1 + Wa) (by omega), Option.map_some, ← Nat.add_assoc]⟩
+  | .lt a c, k, ρ, hb, hs, hl => by
+    simp only [Formula.bnd, Bool.and_eq_true] at hb
+    obtain ⟨x, Wa, ha⟩ := Term.evalB_total hT a k ρ hb.1 (sub_sites hs) hl
+    obtain ⟨y, Wc, hc⟩ := Term.evalB_total hT c k ρ hb.2 (sub_sites hs) hl
+    exact ⟨decide (x < y), 1 + Wa + Wc, fun limit w hw => by
+      simp only [Formula.evalB, charge_eq (show w < limit by omega), ha limit (w + 1) (by omega),
+        hc limit (w + 1 + Wa) (by omega), Option.map_some, ← Nat.add_assoc]⟩
+  | .le a c, k, ρ, hb, hs, hl => by
+    simp only [Formula.bnd, Bool.and_eq_true] at hb
+    obtain ⟨x, Wa, ha⟩ := Term.evalB_total hT a k ρ hb.1 (sub_sites hs) hl
+    obtain ⟨y, Wc, hc⟩ := Term.evalB_total hT c k ρ hb.2 (sub_sites hs) hl
+    exact ⟨decide (x ≤ y), 1 + Wa + Wc, fun limit w hw => by
+      simp only [Formula.evalB, charge_eq (show w < limit by omega), ha limit (w + 1) (by omega),
+        hc limit (w + 1 + Wa) (by omega), Option.map_some, ← Nat.add_assoc]⟩
+  | .dvd a c, k, ρ, hb, hs, hl => by
+    simp only [Formula.bnd, Bool.and_eq_true] at hb
+    obtain ⟨x, Wa, ha⟩ := Term.evalB_total hT a k ρ hb.1 (sub_sites hs) hl
+    obtain ⟨y, Wc, hc⟩ := Term.evalB_total hT c k ρ hb.2 (sub_sites hs) hl
+    exact ⟨decide (x ∣ y), 1 + Wa + Wc, fun limit w hw => by
+      simp only [Formula.evalB, charge_eq (show w < limit by omega), ha limit (w + 1) (by omega),
+        hc limit (w + 1 + Wa) (by omega), Option.map_some, ← Nat.add_assoc]⟩
+  | .call p args, k, ρ, hb, hs, hl => by
+    simp only [Formula.bnd, Bool.and_eq_true] at hb
+    obtain ⟨d, hd, har⟩ := hs (.call true p args.length) (by simp [Formula.sites])
+    obtain ⟨xs, Ws, hlen, hxs⟩ := Term.evalBs_total hT args k ρ hb.2 (sub_sites hs) hl
+    obtain ⟨b, Wp, hp⟩ := hT.preds p d hd hb.1 xs (by omega)
+    exact ⟨b, 1 + Ws + Wp, fun limit w hw => by
+      obtain ⟨P, hP, hPw⟩ := hp limit
+      simp only [Formula.evalB, charge_eq (show w < limit by omega), hP, hxs limit (w + 1) (by omega), hlen, har,
+        if_true, hPw (w + 1 + Ws) (by omega), ← Nat.add_assoc]⟩
+  | .not φ, k, ρ, hb, hs, hl => by
+    simp only [Formula.bnd] at hb
+    obtain ⟨b, W, h⟩ := Formula.evalB_total hT φ k ρ hb (sub_sites hs) hl
+    exact ⟨!b, 1 + W, fun limit w hw => by
+      simp only [Formula.evalB, charge_eq (show w < limit by omega), h limit (w + 1) (by omega), Option.map_some,
+        ← Nat.add_assoc]⟩
+  | .and φ ψ, k, ρ, hb, hs, hl | .or φ ψ, k, ρ, hb, hs, hl | .imp φ ψ, k, ρ, hb, hs, hl => by
+    simp only [Formula.bnd, Bool.and_eq_true] at hb
+    obtain ⟨b1, W1, h1⟩ := Formula.evalB_total hT φ k ρ hb.1 (sub_sites hs) hl
+    obtain ⟨b2, W2, h2⟩ := Formula.evalB_total hT ψ k ρ hb.2 (sub_sites hs) hl
+    cases b1
+    all_goals first
+      | exact ⟨_, 1 + W1, fun limit w hw => by
+          simp only [Formula.evalB, charge_eq (show w < limit by omega), h1 limit (w + 1) (by omega), ← Nat.add_assoc] <;> exact rfl⟩
+      | exact ⟨_, 1 + W1 + W2, fun limit w hw => by
+          simp only [Formula.evalB, charge_eq (show w < limit by omega), h1 limit (w + 1) (by omega),
+            h2 limit (w + 1 + W1) (by omega), ← Nat.add_assoc] <;> exact rfl⟩
+  | .allNat _, _, _, hb, _, _ | .exNat _, _, _, hb, _, _ | .allInt _, _, _, hb, _, _ | .exInt _, _, _, hb, _, _ => by
+    simp [Formula.bnd] at hb
+  | .allFromTo lo hi φ, k, ρ, hb, hs, hl => by
+    simp only [Formula.bnd, Bool.and_eq_true] at hb
+    obtain ⟨l, Wl, hlo⟩ := Term.evalB_total hT lo k ρ hb.1.1 (sub_sites hs) hl
+    obtain ⟨u, Wh, hhi⟩ := Term.evalB_total hT hi k ρ hb.1.2 (sub_sites hs) hl
+    have hst := fun i => Formula.evalB_total hT φ (k + 1) (i :: ρ) hb.2 (sub_sites hs) (by simp [hl]; omega)
+    obtain ⟨c, Wq, hq⟩ := quantLoop_total true (fun limit i w => Formula.evalB (O limit) limit (i :: ρ) φ w) hst
+      (u - l + 1).toNat l
+    exact ⟨c, 1 + Wl + Wh + Wq, fun limit w hw => by
+      simp only [Formula.evalB, charge_eq (show w < limit by omega), hlo limit (w + 1) (by omega),
+        hhi limit (w + 1 + Wl) (by omega), hq limit (w + 1 + Wl + Wh) (by omega), ← Nat.add_assoc]⟩
+  | .exFromTo lo hi φ, k, ρ, hb, hs, hl => by
+    simp only [Formula.bnd, Bool.and_eq_true] at hb
+    obtain ⟨l, Wl, hlo⟩ := Term.evalB_total hT lo k ρ hb.1.1 (sub_sites hs) hl
+    obtain ⟨u, Wh, hhi⟩ := Term.evalB_total hT hi k ρ hb.1.2 (sub_sites hs) hl
+    have hst := fun i => Formula.evalB_total hT φ (k + 1) (i :: ρ) hb.2 (sub_sites hs) (by simp [hl]; omega)
+    obtain ⟨c, Wq, hq⟩ := quantLoop_total false (fun limit i w => Formula.evalB (O limit) limit (i :: ρ) φ w) hst
+      (u - l + 1).toNat l
+    exact ⟨c, 1 + Wl + Wh + Wq, fun limit w hw => by
+      simp only [Formula.evalB, charge_eq (show w < limit by omega), hlo limit (w + 1) (by omega),
+        hhi limit (w + 1 + Wl) (by omega), hq limit (w + 1 + Wl + Wh) (by omega), ← Nat.add_assoc]⟩
+end
+
+/-! The definitions' environment is total on its bounded names: by induction on the definitions, each admitted by
+`Defs.WellFormed` over the ones above it. -/
+
+theorem opEnv_snoc (limit : Nat) (E : Defs) (d : Def) : (E ++ [d]).opEnv limit = match d with
+    | .fn f n body => { (E.opEnv limit) with
+        funs := fun g => if g = f then some (n, fun xs w => Term.evalB (E.opEnv limit) limit xs body w)
+          else (E.opEnv limit).funs g }
+    | .pred p n body => { (E.opEnv limit) with
+        preds := fun q => if q = p then some (n, fun xs w => Formula.evalB (E.opEnv limit) limit xs body w)
+          else (E.opEnv limit).preds q } := by
+  unfold Defs.opEnv; rw [List.foldl_append]; rfl
+
+theorem boundedNames_snoc (E : Defs) (d : Def) : (E ++ [d]).boundedNames = match d with
+    | .fn f _ body => fun g => if g = f then Term.bnd E.boundedNames body else E.boundedNames g
+    | .pred p _ body => fun q => if q = p then Formula.bnd E.boundedNames body else E.boundedNames q := by
+  unfold Defs.boundedNames; rw [List.foldl_append]; rfl
+
+/-- What admission guarantees of every site of a definition's body, over the definitions `E` above it. -/
+def Def.SitesOk (E : Defs) : Def → Prop
+  | .fn _ n body => ∀ s ∈ Term.sites 0 body, s.Ok E n
+  | .pred _ n body => ∀ s ∈ Formula.sites 0 body, s.Ok E n
+
+theorem wellFormed_at {D : Defs} (hD : D.WellFormed = true) {k : Nat} {d : Def} (hk : D[k]? = some d) :
+    (D.take k).any (·.name == d.name) = false ∧ d.SitesOk (D.take k) := by
+  have hlt : k < D.length := (List.getElem?_eq_some_iff.1 hk).1
+  simp only [Defs.WellFormed, Defs.refusals, List.isEmpty_iff, List.append_eq_nil_iff, List.filterMap_eq_nil_iff,
+    List.flatMap_eq_nil_iff, List.mem_range] at hD
+  obtain ⟨h1, h2⟩ := hD
+  refine ⟨?_, ?_⟩
+  · have := h1 k hlt; simp only [hk, Option.bind_some] at this; split at this <;> simp_all
+  · have := h2 k hlt; simp only [hk] at this
+    cases d <;> simp only [Def.SitesOk, List.filterMap_eq_nil_iff, List.mem_map] at this ⊢ <;>
+      exact fun s hs => Site.ok_of_refusal (this _ ⟨s, hs, rfl⟩)
+
+theorem Total.snoc {E : Defs} {d : Def} (hT : Total (fun limit => E.opEnv limit) E E.boundedNames)
+    (hnew : E.any (·.name == d.name) = false) (hs : d.SitesOk E) :
+    Total (fun limit => (E ++ [d]).opEnv limit) (E ++ [d]) (E ++ [d]).boundedNames := by
+  have hnone : ∀ pred, E.find? (fun d' => d'.name == d.name && d'.isPred == pred) = none := fun pred => by
+    rw [List.find?_eq_none]; intro x hx; have := List.any_eq_false.1 hnew x hx; simp_all
+  have hfind : ∀ f pred d', E.find? (fun d => d.name == f && d.isPred == pred) = some d' → f ≠ d.name :=
+    fun f pred d' h hf => by subst hf; simp [hnone] at h
+  cases d with
+  | fn f n body =>
+    replace hnone : ∀ pred, E.find? (fun d' => d'.name == f && d'.isPred == pred) = none := hnone
+    replace hfind : ∀ g pred d', E.find? (fun d => d.name == g && d.isPred == pred) = some d' → g ≠ f := hfind
+    simp only [Def.SitesOk] at hs
+    refine ⟨fun g d' hd' hB xs hlen => ?_, fun q d' hd' hB xs hlen => ?_⟩
+    · by_cases hg : g = f
+      · subst hg
+        rw [List.find?_append, hnone, List.find?_singleton] at hd'
+        simp [Def.name, Def.isPred] at hd'
+        subst hd'
+        simp only [boundedNames_snoc, ↓reduceIte] at hB
+        obtain ⟨x, W, h⟩ := Term.evalB_total hT body 0 xs hB hs (by simpa [Def.arity] using hlen)
+        exact ⟨x, W, fun limit => ⟨fun xs w => Term.evalB (Defs.opEnv limit E) limit xs body w,
+          by simp only [opEnv_snoc, ↓reduceIte, Def.arity], fun w hw => h limit w hw⟩⟩
+      · rw [List.find?_append, List.find?_singleton] at hd'
+        have hd'' : E.find? (fun d => d.name == g && d.isPred == false) = some d' := by
+          simpa [Def.name, Ne.symm hg] using hd'
+        simp only [boundedNames_snoc, if_neg hg] at hB
+        obtain ⟨x, W, h⟩ := hT.funs g d' hd'' hB xs hlen
+        exact ⟨x, W, fun limit => by simpa [opEnv_snoc, hg] using h limit⟩
+    · rw [List.find?_append, List.find?_singleton] at hd'
+      have hd'' : E.find? (fun d => d.name == q && d.isPred == true) = some d' := by simpa [Def.isPred] using hd'
+      simp only [boundedNames_snoc, if_neg (hfind q true d' hd'')] at hB
+      obtain ⟨b, W, h⟩ := hT.preds q d' hd'' hB xs hlen
+      exact ⟨b, W, fun limit => by simpa [opEnv_snoc] using h limit⟩
+  | pred p n body =>
+    replace hnone : ∀ pred, E.find? (fun d' => d'.name == p && d'.isPred == pred) = none := hnone
+    replace hfind : ∀ g pred d', E.find? (fun d => d.name == g && d.isPred == pred) = some d' → g ≠ p := hfind
+    simp only [Def.SitesOk] at hs
+    refine ⟨fun g d' hd' hB xs hlen => ?_, fun q d' hd' hB xs hlen => ?_⟩
+    · rw [List.find?_append, List.find?_singleton] at hd'
+      have hd'' : E.find? (fun d => d.name == g && d.isPred == false) = some d' := by simpa [Def.isPred] using hd'
+      simp only [boundedNames_snoc, if_neg (hfind g false d' hd'')] at hB
+      obtain ⟨x, W, h⟩ := hT.funs g d' hd'' hB xs hlen
+      exact ⟨x, W, fun limit => by simpa [opEnv_snoc] using h limit⟩
+    · by_cases hq : q = p
+      · subst hq
+        rw [List.find?_append, hnone, List.find?_singleton] at hd'
+        simp [Def.name, Def.isPred] at hd'
+        subst hd'
+        simp only [boundedNames_snoc, ↓reduceIte] at hB
+        obtain ⟨b, W, h⟩ := Formula.evalB_total hT body 0 xs hB hs (by simpa [Def.arity] using hlen)
+        exact ⟨b, W, fun limit => ⟨fun xs w => Formula.evalB (Defs.opEnv limit E) limit xs body w,
+          by simp only [opEnv_snoc, ↓reduceIte, Def.arity], fun w hw => h limit w hw⟩⟩
+      · rw [List.find?_append, List.find?_singleton] at hd'
+        have hd'' : E.find? (fun d => d.name == q && d.isPred == true) = some d' := by
+          simpa [Def.name, Ne.symm hq] using hd'
+        simp only [boundedNames_snoc, if_neg hq] at hB
+        obtain ⟨b, W, h⟩ := hT.preds q d' hd'' hB xs hlen
+        exact ⟨b, W, fun limit => by simpa [opEnv_snoc, hq] using h limit⟩
+
+theorem total_take (D : Defs) (hD : D.WellFormed = true) :
+    ∀ k, Total (fun limit => Defs.opEnv limit (D.take k)) (D.take k) (Defs.boundedNames (D.take k))
+  | 0 => ⟨fun _ _ h => by simp at h, fun _ _ h => by simp at h⟩
+  | k + 1 => by
+    rw [List.take_succ]
+    cases hk : D[k]? with
+    | none => simpa using total_take D hD k
+    | some d => obtain ⟨h1, h2⟩ := wellFormed_at hD hk; exact (total_take D hD k).snoc h1 h2
+
+/-- The work bound: a bounded, admitted statement has an answer and a number of units, fixed by the statement and its
+definitions, that every budget covering those units returns. -/
+theorem decideBounded_covered (D : Defs) (hD : D.WellFormed = true) (φ : Formula) (hφ : φ.Scoped D 0 = true)
+    (hb : φ.Bounded D = true) : ∃ b W, ∀ limit, W ≤ limit → decideBounded D limit φ = some (b, W) := by
+  have hT := total_take D hD D.length
+  rw [List.take_length] at hT
+  simp only [Formula.Scoped, List.isEmpty_iff, List.filterMap_eq_nil_iff] at hφ
+  obtain ⟨b, W, h⟩ := Formula.evalB_total (depth := 0) hT φ 0 [] hb (fun s hs => Site.ok_of_refusal (hφ s hs)) rfl
+  exact ⟨b, W, fun limit hl => by simpa using h limit 0 (by omega)⟩
+
+theorem decideBounded_complete (D : Defs) (hD : D.WellFormed = true) (φ : Formula)
+    (hφ : φ.Scoped D 0 = true) (hb : φ.Bounded D = true) : ∃ limit r, decideBounded D limit φ = some r := by
+  obtain ⟨b, W, h⟩ := decideBounded_covered D hD φ hφ hb
+  exact ⟨W, _, h W (Nat.le_refl W)⟩
+
 end VE.Arith

@@ -76,8 +76,8 @@ def decodeEnvironment (environment : Json) : Except String ReadingsEnvironment :
   | .ok .readings => pure ()
   | .ok _ => throw "UnsupportedProfile: readings@1 is not the head of this profile list"
   | .error e => throw e
-  let lowerJson ← stripReadings environment
-  let lower := profiles.filter (· != readingsProfile)
+  let lowerJson ← stripReadings (VE.Compose.withoutDocumentLayers environment)
+  let lower := profiles.filter fun p => p != readingsProfile && !VE.Compose.documentLayers.contains p
   -- The frame is decoded without `norm-defaults@0`, its `unspecified` completions read as the placeholder `deny`
   -- (DRI ruling 4): content beside it is S1's named abstention off the norms chain (1.1), and on the norms chain
   -- the completion's admission reads `unspecified` from `lowerJson` (`UnspecifiedWire.unspecOf`).

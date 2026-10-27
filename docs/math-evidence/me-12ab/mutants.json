@@ -1,0 +1,191 @@
+{
+ "note": "Hand mutants of lean/VE/Arith/Bounded.lean (me-12ab). Each edit is planted alone, in the first occurrence of `before`, in a copy of Bounded.lean joined with BoundedExamples.lean and CompleteExamples.lean into one file, which `lake env lean` checks whole: Lean goes on past a broken proof, so one run lists both the proofs (`proofs`) and the #guard lines of the committed fixture files (`test`) that fail. The control (no mutant) has no error. The runner was a scratch script and is not committed. tools/trust_mutants.py selects no definition: the item adds no trusted declaration (trust +0).",
+ "control": {
+  "errors": []
+ },
+ "seeded": [
+  {
+   "id": "M1",
+   "file": "lean/VE/Arith/Bounded.lean",
+   "definition": "VE.Arith.Defs.opEnv",
+   "bug": "mono: a budget-dependent environment (a function's value adds the budget's parity)",
+   "before": "fun xs w => Term.evalB E limit xs body w",
+   "after": "fun xs w => (Term.evalB E limit xs body w).map fun r => (r.1 + ((limit % 2 : Nat) : Int), r.2)",
+   "occurrence": 0,
+   "verdict": "KILLED",
+   "proofs": [
+    "VE.Arith.agrees_env",
+    "VE.Arith.opEnv_extends",
+    "VE.Arith.opEnv_snoc"
+   ],
+   "test": [
+    "lean/VE/Arith/BoundedExamples.lean:130",
+    "lean/VE/Arith/CompleteExamples.lean:25"
+   ]
+  },
+  {
+   "id": "M2",
+   "file": "lean/VE/Arith/Bounded.lean",
+   "definition": "VE.Arith.charge",
+   "bug": "mono: budget 4 refuses every visit, so a larger budget loses an answer",
+   "before": "if limit ≤ w then none else k (w + 1)",
+   "after": "if limit ≤ w || limit = 4 then none else k (w + 1)",
+   "occurrence": 0,
+   "verdict": "KILLED",
+   "proofs": [
+    "VE.Arith.charge_eq",
+    "VE.Arith.charge_mono"
+   ],
+   "test": [
+    "lean/VE/Arith/CompleteExamples.lean:23",
+    "lean/VE/Arith/CompleteExamples.lean:25"
+   ]
+  },
+  {
+   "id": "M3",
+   "file": "lean/VE/Arith/Bounded.lean",
+   "definition": "VE.Arith.Formula.evalB",
+   "bug": "complete: a call of a one-place predicate never completes",
+   "before": "if xs.length = n then P xs w else none",
+   "after": "if xs.length = n && n != 1 then P xs w else none",
+   "occurrence": 0,
+   "verdict": "KILLED",
+   "proofs": [
+    "VE.Arith.Formula.evalB_sound",
+    "VE.Arith.Formula.evalB_total"
+   ],
+   "test": [
+    "lean/VE/Arith/BoundedExamples.lean:19",
+    "lean/VE/Arith/BoundedExamples.lean:20",
+    "lean/VE/Arith/BoundedExamples.lean:21",
+    "lean/VE/Arith/BoundedExamples.lean:26",
+    "lean/VE/Arith/BoundedExamples.lean:27",
+    "lean/VE/Arith/BoundedExamples.lean:28",
+    "lean/VE/Arith/BoundedExamples.lean:41",
+    "lean/VE/Arith/BoundedExamples.lean:47",
+    "lean/VE/Arith/BoundedExamples.lean:48",
+    "lean/VE/Arith/BoundedExamples.lean:49",
+    "lean/VE/Arith/BoundedExamples.lean:50",
+    "lean/VE/Arith/BoundedExamples.lean:51",
+    "lean/VE/Arith/BoundedExamples.lean:53",
+    "lean/VE/Arith/BoundedExamples.lean:59",
+    "lean/VE/Arith/BoundedExamples.lean:62",
+    "lean/VE/Arith/BoundedExamples.lean:64",
+    "lean/VE/Arith/BoundedExamples.lean:66",
+    "lean/VE/Arith/BoundedExamples.lean:68",
+    "lean/VE/Arith/BoundedExamples.lean:111",
+    "lean/VE/Arith/BoundedExamples.lean:117",
+    "lean/VE/Arith/CompleteExamples.lean:19",
+    "lean/VE/Arith/CompleteExamples.lean:20",
+    "lean/VE/Arith/CompleteExamples.lean:22",
+    "lean/VE/Arith/CompleteExamples.lean:23",
+    "lean/VE/Arith/CompleteExamples.lean:24"
+   ]
+  },
+  {
+   "id": "M4",
+   "file": "lean/VE/Arith/Bounded.lean",
+   "definition": "VE.Arith.Term.evalB",
+   "bug": "complete's refusing side: a variable no binder gives reads 0, so an unscoped statement is decided",
+   "before": "(ρ[i]?).map fun x => (x, w)",
+   "after": "some ((ρ[i]?).getD 0, w)",
+   "occurrence": 0,
+   "verdict": "KILLED",
+   "proofs": [
+    "VE.Arith.Term.evalB_sound"
+   ],
+   "test": [
+    "lean/VE/Arith/BoundedExamples.lean:106",
+    "lean/VE/Arith/CompleteExamples.lean:32"
+   ]
+  },
+  {
+   "id": "M5",
+   "file": "lean/VE/Arith/Bounded.lean",
+   "definition": "VE.Arith.Extends",
+   "bug": "new definition: a completed call need only complete, not with the same value and units",
+   "before": "∀ xs w r, g xs w = some r → g' xs w = some r",
+   "after": "∀ xs w r, g xs w = some r → (g' xs w).isSome",
+   "occurrence": 0,
+   "verdict": "KILLED",
+   "proofs": [
+    "VE.Arith.Term.evalB_mono",
+    "VE.Arith.opEnv_extends"
+   ],
+   "test": [
+    "VE.Arith.Term.evalB_mono",
+    "VE.Arith.opEnv_extends"
+   ]
+  },
+  {
+   "id": "M6",
+   "file": "lean/VE/Arith/Bounded.lean",
+   "definition": "VE.Arith.Total",
+   "bug": "new definition: a function's work bound is strict",
+   "before": "∀ w, w + W ≤ limit → g xs w = some (x, w + W)",
+   "after": "∀ w, w + W < limit → g xs w = some (x, w + W)",
+   "occurrence": 0,
+   "verdict": "KILLED",
+   "proofs": [
+    "VE.Arith.Term.evalB_total",
+    "VE.Arith.Total.snoc"
+   ],
+   "test": [
+    "VE.Arith.Term.evalB_total",
+    "VE.Arith.Total.snoc"
+   ]
+  },
+  {
+   "id": "M7",
+   "file": "lean/VE/Arith/Bounded.lean",
+   "definition": "VE.Arith.Site.Ok",
+   "bug": "new definition: a free variable may be one past the outer values",
+   "before": "  | .free j => j < depth",
+   "after": "  | .free j => j ≤ depth",
+   "occurrence": 0,
+   "verdict": "KILLED",
+   "proofs": [
+    "VE.Arith.Site.ok_of_refusal",
+    "VE.Arith.Term.evalB_total"
+   ],
+   "test": [
+    "VE.Arith.Site.ok_of_refusal",
+    "VE.Arith.Term.evalB_total"
+   ]
+  },
+  {
+   "id": "M8",
+   "file": "lean/VE/Arith/Bounded.lean",
+   "definition": "VE.Arith.Def.SitesOk",
+   "bug": "new definition: a predicate body's sites are read under one binder too many",
+   "before": "  | .pred _ n body => ∀ s ∈ Formula.sites 0 body, s.Ok E n",
+   "after": "  | .pred _ n body => ∀ s ∈ Formula.sites 1 body, s.Ok E n",
+   "occurrence": 0,
+   "verdict": "KILLED",
+   "proofs": [
+    "VE.Arith.Total.snoc",
+    "VE.Arith.wellFormed_at"
+   ],
+   "test": [
+    "VE.Arith.Total.snoc",
+    "VE.Arith.wellFormed_at"
+   ]
+  },
+  {
+   "id": "M9",
+   "file": "lean/VE/Arith/Bounded.lean",
+   "definition": "VE.Arith.subSites",
+   "bug": "new definition: a formula's parts are not read as its sites",
+   "before": "Term.sites, Term.sitesList, Formula.sites, List.mem_append",
+   "after": "Term.sites, Term.sitesList, List.mem_append",
+   "occurrence": 0,
+   "verdict": "KILLED",
+   "proofs": [
+    "VE.Arith.Formula.evalB_total"
+   ],
+   "test": [
+    "VE.Arith.Formula.evalB_total"
+   ]
+  }
+ ]
+}
