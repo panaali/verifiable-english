@@ -242,6 +242,18 @@ def ratioOf (rule x y : String) : String :=
 #guard refusal r#"["count", "fomc_policymaker", [["1", ["every"]]], "le", "2"]"# == "Unknown cardinality operator every"
 #guard refusal r#"["count", "fomc_policymaker", [["1", ["is"]]], "le", "2"]"# == "Invalid cardinality formula"
 #guard refusal r#"["most", "fomc_policymaker"]"# == "Unknown cardinality operator most"
+-- Every known operator in another shape is S3's `invalidNode`: each body, operand and formula operator.
+#guard ["[\"is\"]", "[\"any\", [\"any\"]]", "[\"not\"]", "[\"and\", [\"any\"]]", "[\"or\", [\"any\"]]"].all fun b =>
+  refusal s!"[\"count\", \"fomc_policymaker\", [[\"1\", {b}]], \"le\", \"2\"]" == invalidNode
+#guard ["[\"quantity\"]", "[\"count\", \"fomc_policymaker\"]"].all fun x =>
+  refusal s!"[\"percent_of\", {x}, [\"quantity\", [\"const\", \"bp\", \"june\"]], \"1\"]" == invalidNode
+#guard ["quantity", "count", "proportion", "rounds_to", "percent_of", "percent_rounds_to", "not", "and", "or",
+  "implies"].all fun op => refusal s!"[\"{op}\"]" == invalidNode
+#guard refusal r#"["percent_of", ["share", "fomc_policymaker"], ["quantity", ["const", "bp", "june"]], "1"]"# ==
+  "Unknown cardinality operator share"
+-- A count operand's body is typed at its own S6.
+#guard refusal r#"["percent_of", ["count", "fomc_policymaker", ["is", "curious"]], ["count", "fomc_policymaker", ["any"]],
+  "1"]"# == "TypeMismatch: curious is not a unary predicate of sort fomc_policymaker"
 #guard refusal r#"["quantity", ["lt", ["const", "bp", "sept"], ["const", "day", "d1"]]]"# ==
   "TypeMismatch: UnitMismatch(bp,day)"
 #guard refusal r#"["percent_of", ["quantity", ["const", "fomc_policymaker", "x"]], ["quantity", ["const", "bp", "june"]], "1"]"# ==
@@ -334,6 +346,11 @@ def badCount : String := r#"["count", "user", [["1", ["is", "curious"]]], "le", 
 -- Over the size limit with an unknown operator inside: S2 first (10,002 array nodes).
 #guard refusal s!"[\"and\", {terms 5000}, [\"bogus\"]]" == VE.Time.Wire.depthLimit
 #guard refusal s!"[\"and\", {terms 64}, [\"bogus\"]]" == "Unknown cardinality operator bogus"
+-- S2's node count at its limit: 10,000 array nodes pass (S3 refuses `bogus`), 10,001 do not.
+#guard [s!"[\"and\", [\"bogus\"], {terms 4998}]", s!"[\"and\", [[\"bogus\"]], {terms 4998}]"].map
+  (VE.Time.Wire.jsonNodes 257 <| p ·) == [10000, 10001]
+#guard refusal s!"[\"and\", [\"bogus\"], {terms 4998}]" == "Unknown cardinality operator bogus"
+#guard refusal s!"[\"and\", [[\"bogus\"]], {terms 4998}]" == VE.Time.Wire.depthLimit
 -- Statements in request order: the first refusal is the first faulty statement's.
 #guard decode [st badCount, st (share "3" "2")] matches .error "CardinalityNotFinite(user)"
 
