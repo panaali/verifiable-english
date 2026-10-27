@@ -228,3 +228,19 @@ def test_flag_refusals(capsys, monkeypatch, tmp_path):
         _readings(capsys, entry, "--assume-no-exception", "--under", "s:0")
     with pytest.raises(VEError, match="applies to a soft-norms@0 document"):
         main(["readings", str(BASELINE / "p2-ce4.ve.md"), "--conclusion", entry["argv"][5], "--assume-no-exception"])
+
+
+def test_an_empty_budget_is_unknown(monkeypatch):
+    """With no prover step and no domain element to search (budget 0) neither question has evidence: the strict
+    question is not answered and the default one is UNKNOWN, never FOLLOWS."""
+    monkeypatch.setattr(defaults, "MAX_STEPS", 0)
+    monkeypatch.setattr(defaults, "MAX_DOMAIN", 0)
+    for name in ("alpha", "zeta"):
+        out, _ = asked(monkeypatch, name)
+        assert (out["question"], out["answer"]["verdict"]) == ("default", "UNKNOWN"), out
+
+
+@pytest.mark.parametrize("conclusion", [7, None, [], {}, "x", ["unary", "absent", ["var", 0]]])
+def test_a_malformed_conclusion_is_a_diagnostic(monkeypatch, conclusion):
+    with pytest.raises(VEError):
+        asked(monkeypatch, "alpha", conclusion)

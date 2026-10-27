@@ -5,6 +5,7 @@ retyped, duplicated or reordered, a label swapped for another case's, a pair mov
 from __future__ import annotations
 
 import copy
+import json
 from itertools import combinations
 
 import pytest
@@ -12,9 +13,13 @@ import pytest
 from tests.test_defaults_lean import DOCS, UNLESS_URGENT, X_ALL, asked, sent_kind
 from ve import defaults
 from ve.backends import relay
+from ve.backends.lean_service import _decode_json
 from ve.errors import CheckerUnavailable
 
-RETYPED = (7, True, None, [], {}, "x")
+DEEP: list = []
+for _ in range(10_000):
+    DEEP = [DEEP]
+RETYPED = (7, 1.5, True, None, [], {}, "x", "\ud800", DEEP)
 # Another case's labels and names (DF-ε's switch, a rule and a decider no fixture here has): the swaps.
 SWAPS = ("default:switch:r1:user", "r9", "operator")
 # Genuine answers: (fixture, conclusion, kind) for each kind and verdict the relay reads.
@@ -65,7 +70,7 @@ def _faults(row):
         if type(path[-1]) is str:
             yield path, _set
         for other in RETYPED:
-            if type(other) is not type(value):
+            if type(other) is not type(value) or other == "\ud800":
                 yield path, other
         if type(value) in (str, list, dict) and value:
             yield path, type(value)()
@@ -79,6 +84,15 @@ def _faults(row):
                     yield path, other
 
 
+def _transported(row):
+    """The row as the service's transport hands it on (`LeanService` decodes each line with `_decode_json`): a value no
+    JSON line holds (a lone surrogate, nesting past the runtime's limit) is a malformed response there."""
+    try:
+        return _decode_json(json.dumps(row))
+    except (ValueError, RecursionError):
+        raise CheckerUnavailable("CheckerUnavailable: malformed response") from None
+
+
 def _shown(case, labels, targets, source):
     try:
         return defaults._shown(defaults.answer(case, labels, targets, source))
@@ -90,12 +104,13 @@ def _shown(case, labels, targets, source):
 def test_mutants_never_pass_as_answers(monkeypatch, name, conclusion, kind):
     case, genuine, *inputs = _genuine(monkeypatch, name, conclusion, kind)
     answered = {"row": genuine}
-    monkeypatch.setattr(relay, "decide", lambda mode, cases, **options: [copy.deepcopy(answered["row"])])
+    monkeypatch.setattr(relay, "decide", lambda mode, cases, **options: [_transported(answered["row"])])
     shown = _shown(case, *inputs)
     assert shown is not None
     faults = list(_faults(genuine))
+    shallow = [fault for fault in faults if fault[1] is not DEEP]  # a 10k-deep list is one fault only
     accepted = []
-    for depth, edits in [(1, [(f,) for f in faults]), (2, combinations(faults, 2))]:
+    for depth, edits in [(1, [(f,) for f in faults]), (2, combinations(shallow, 2))]:
         for edit in edits:
             try:
                 mutant = genuine
