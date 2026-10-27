@@ -1202,6 +1202,13 @@
    "reason": "df-2: VE/Defaults/Meaning.lean S +35, V +5 (withOpen, SwitchesOff, DefaultBase, leastDecisions, ReplacementHolds; softX)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-2, 2026-10-18",
    "commit": "f39c78ddeea84706c68a90da3e3bbee1ad20562f"
+  },
+  {
+   "class": "V",
+   "lines": 6,
+   "reason": "ap-1be: norm-defaults-elaborate's wordings member: VE/Norms/Run.lean +3 (G[V] wordingsJson, shared with norms-elaborate), ResponseShape/Schemas/NormDefaults.lean +2 (the elaborate shape's wordings), VE/NormDefaults/Run.lean +1 (runOtherCase writes it)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1be, 2026-10-27",
+   "commit": "a557ff887aa6b513fdaa540c479ae304023a24a4"
   }
  ]
 }
