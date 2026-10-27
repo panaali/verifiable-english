@@ -287,6 +287,9 @@ def test_forced_entries_in_the_requests_order(monkeypatch):
             reordered = [forced[::-1]]
             _refused("forced exceptions", defaults.bind_model, case,
                      {**row, "forced": [forced[0], {**forced[0], "tuple": ["e2"]}, forced[1]]}, source)
+            # a second entry for the same rule and tuple under another condition (hunt 2): each exception once
+            _refused("forced order", defaults.bind_model, case,
+                     {**row, "forced": [{**forced[0], "condition": 0}, *forced]}, source)
         else:
             reordered = [forced[::-1]]
         for other in reordered:
@@ -514,6 +517,52 @@ def test_situation_entities_of_every_sort():
         _refused("situation", defaults._situation, {"situation": {"filling": filling}}, witness)
 
 
+_HUNT2: dict = {}
+
+
+def _hunt2(monkeypatch):
+    """Lean's genuine rows on requests the fixtures above do not send (review df-1b hunt 2): DF-α's certificate request
+    with a `strict_model` that is no strict countermodel (its own `model`), and DF-γ2's coherence request whose
+    collision witness names the second colliding pair."""
+    if not _HUNT2:
+        case, _, labels, _, _ = _genuine(monkeypatch, "alpha", X_ALL, "defaults-certificate")
+        case = {**case, "strict_model": copy.deepcopy(case["model"])}
+        _HUNT2["unsettled"] = (case, defaults.run(case), labels)
+        case, _, _, targets, _ = _genuine(monkeypatch, "gamma2", X_ALL, "defaults-coherence")
+        case = {**case, "collision": {**case["collision"], "rules": ["r1", "r3"]}}
+        _HUNT2["second-pair"] = (case, defaults.run(case), targets)
+    return copy.deepcopy(_HUNT2)
+
+
+def test_needs_only_with_a_strict_model_not_exactly_with_one(monkeypatch):
+    """A `strict_model` that is no strict countermodel leaves the basis `unsettled` (Lean's `basisOf`): `needs` asks for
+    a strict model, but a strict model does not ask for `needs`."""
+    case, row, labels = _hunt2(monkeypatch)["unsettled"]
+    assert (row["verdict"], row["basis"]) == ("FOLLOWS", "unsettled")
+    assert defaults.bind_certificate(case, row, labels) is row
+
+
+def test_a_collision_on_any_colliding_pair(monkeypatch):
+    """A collision names any of the coherence targets, not only the first: Lean's genuine COLLISION on DF-γ2's second
+    pair is the answer."""
+    case, row, targets = _hunt2(monkeypatch)["second-pair"]
+    assert (row["verdict"], row["collision"]["rules"]) == ("COLLISION", ["r1", "r3"])
+    assert [m for m, *_ in targets] == ["r1", "r1"] and defaults.bind_coherence(case, row, targets) is row
+
+
+def test_assumptions_in_the_elaborations_label_order(monkeypatch):
+    """`ask` binds a certificate's assumptions to the elaboration's labels in Lean's order, the request's rule order,
+    not name order: rules `rb` then `ra`, each guarded by one side of `calm`, need both exceptions, in that order."""
+    calm = rule("rb", "x_required", True)
+    calm["norm"]["guard"] = un("calm")
+    other = rule("ra", "x_required", True)
+    other["norm"]["guard"] = ["not", un("calm")]
+    monkeypatch.setitem(DOCS, "rb-ra", (env(base=["calm"]), [calm, other]))
+    out, _ = asked(monkeypatch, "rb-ra")
+    assert out["answer"] == {"verdict": "FOLLOWS", "basis": "needs", "form": "short",
+                             "assumptions": ["default:exception:rb", "default:exception:ra"]}
+
+
 def test_elaborate_labels_and_targets(monkeypatch):
     case, row, _, _, source = _genuine(monkeypatch, "gamma2", X_ALL, "defaults-elaborate")
     assert defaults.bind_elaborate(case, row, source) is row
@@ -522,6 +571,10 @@ def test_elaborate_labels_and_targets(monkeypatch):
         _refused("coherence targets", defaults.bind_elaborate, case, {**row, "coherence_targets": targets}, source)
     _refused("default premises", defaults.bind_elaborate, case,
              {**row, "default_premises": row["default_premises"][:1] * 2}, source)
+    # two premises under one label, their formulas kept (review df-1b hunt 2: labels are distinct, not entries)
+    relabelled = copy.deepcopy(row)
+    relabelled["default_premises"][1][0] = relabelled["default_premises"][0][0]
+    _refused("default premises", defaults.bind_elaborate, case, relabelled, source)
 
 
 def test_soft_source_is_the_exception_tables(monkeypatch):
@@ -587,8 +640,9 @@ BOTH_SIDES = (test_run_binds_the_row_to_its_case, test_forced_condition_index_ru
               test_forced_order_rule_then_tuple, test_forced_entries_in_the_requests_order, test_forced_tuple_sorts, test_assumptions_and_basis,
               test_pairs_and_collision, test_collision_deciders_truth_table, test_collision_refused_field_by_field,
               test_situation_entities_of_every_sort, test_elaborate_labels_and_targets,
-              test_soft_source_is_the_exception_tables, test_answer_binds_each_kind_with_its_binding,
-              test_strict_answer_only_when_lean_says_valid)
+              test_soft_source_is_the_exception_tables, test_needs_only_with_a_strict_model_not_exactly_with_one,
+              test_a_collision_on_any_colliding_pair, test_answer_binds_each_kind_with_its_binding,
+              test_assumptions_in_the_elaborations_label_order, test_strict_answer_only_when_lean_says_valid)
 
 
 @pytest.mark.parametrize("name", ["alpha", "gamma"])
