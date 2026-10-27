@@ -161,6 +161,8 @@ PATH="$HOME/.elan/bin:$PATH" UV_CACHE_DIR=/tmp/ve-xdist-uv-cache \
 
 `--update-baselines` rewrites the baselines of the benchmarks that ran. Commit the change only after reviewing it: a baseline is a claim about the code's cost. `tests/test_bench_baselines.py` checks, in the suite, that a baseline can fail a measurement.
 
+Regeneration (`tools/regen_generated.py --check`, `--write`, `--resolve`) times each entry it runs into `ve-regen-log.jsonl` in the git common directory, one JSON line per entry, for the efficiency passes; nothing checks or gates on it. Its fields, the `VE_REGEN_LOG` switch and its rules are in that tool's docstring. The suite runs with it off (`tests/conftest.py`).
+
 ## The default selection: function-level, from the coverage map
 
 For a fix loop, run the tests the working-tree change can affect, with the
