@@ -14245,7 +14245,11 @@
         "VE.Calc.Check.reasons"
       ],
       "D[V]": [
+        "VE.Calc.Run.claimFields",
+        "VE.Calc.Run.display",
+        "VE.Calc.Run.exact",
         "VE.Calc.Run.kind",
+        "VE.Calc.Run.line",
         {
           "name": "VE.Calc.Run.outcomeAt",
           "tied": [
@@ -14260,12 +14264,16 @@
           ]
         },
         "VE.Calc.Run.rowJson",
+        "VE.Calc.Run.sides",
+        "VE.Calc.Run.tie",
+        "VE.Calc.Run.truncated",
         {
           "name": "VE.Calc.Run.words",
           "tied": [
             "VE.Calc.Run.outcomes_words"
           ]
-        }
+        },
+        "VE.Calc.Run.wordsIn"
       ],
       "G[V]": [
         {
@@ -14325,6 +14333,7 @@
         "VE.Calc.RunExamples.literalSites",
         "VE.Calc.RunExamples.malformed",
         "VE.Calc.RunExamples.meaning",
+        "VE.Calc.RunExamples.member",
         "VE.Calc.RunExamples.multiByteNames",
         "VE.Calc.RunExamples.name64",
         "VE.Calc.RunExamples.nonlinear",
@@ -14343,12 +14352,16 @@
         "VE.Calc.RunExamples.r4",
         "VE.Calc.RunExamples.r827",
         "VE.Calc.RunExamples.req",
+        "VE.Calc.RunExamples.roundsOf",
+        "VE.Calc.RunExamples.rowFieldCases",
         "VE.Calc.RunExamples.rsd",
         "VE.Calc.RunExamples.says",
+        "VE.Calc.RunExamples.sdt",
         "VE.Calc.RunExamples.stated",
         "VE.Calc.RunExamples.steps",
         "VE.Calc.RunExamples.stringSites",
         "VE.Calc.RunExamples.strings64",
+        "VE.Calc.RunExamples.third",
         "VE.Calc.RunExamples.v2",
         "VE.Calc.RunExamples.v5",
         "VE.Calc.RunExamples.v5Rows",
@@ -14648,14 +14661,28 @@
     "ResponseShape/Schemas/Calc.lean": {
       "G[R]": [
         "ResponseShape.Schemas.Calc.answer",
+        "ResponseShape.Schemas.Calc.byForm",
+        "ResponseShape.Schemas.Calc.claimKind",
         "ResponseShape.Schemas.Calc.claimRow",
+        "ResponseShape.Schemas.Calc.comparisons",
         "ResponseShape.Schemas.Calc.derivation",
+        "ResponseShape.Schemas.Calc.digits",
+        "ResponseShape.Schemas.Calc.exact",
         "ResponseShape.Schemas.Calc.fields",
         "ResponseShape.Schemas.Calc.file",
-        "ResponseShape.Schemas.Calc.kind",
+        "ResponseShape.Schemas.Calc.flag",
+        "ResponseShape.Schemas.Calc.followsKind",
+        "ResponseShape.Schemas.Calc.form",
+        "ResponseShape.Schemas.Calc.known",
+        "ResponseShape.Schemas.Calc.null",
         "ResponseShape.Schemas.Calc.reasons",
         "ResponseShape.Schemas.Calc.refusal",
-        "ResponseShape.Schemas.Calc.row"
+        "ResponseShape.Schemas.Calc.roundings",
+        "ResponseShape.Schemas.Calc.row",
+        "ResponseShape.Schemas.Calc.sides",
+        "ResponseShape.Schemas.Calc.truncated",
+        "ResponseShape.Schemas.Calc.undefinedMembers",
+        "ResponseShape.Schemas.Calc.unknownMembers"
       ]
     },
     "VE/Arith/Syntax.lean": {
@@ -15134,6 +15161,11 @@
         "VE.Defaults.MeaningFixtures.sit",
         "VE.Defaults.MeaningFixtures.switchesDec",
         "VE.Defaults.MeaningFixtures.typedDec"
+      ]
+    },
+    "ResponseShape/Encoders/Calc.lean": {
+      "P": [
+        "ResponseShape.Encoders.Calc.tacticRow_fits"
       ]
     }
   }
