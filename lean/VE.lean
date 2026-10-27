@@ -183,6 +183,8 @@ import VE.Acts.Tree
 import VE.Acts.Linearize
 import VE.Acts.Table
 import VE.Acts.TableExamples
+import VE.Acts.Elaborate
+import VE.Acts.ElaborateExamples
 import VE.Acts.GrammarExamples
 import VE.Acts.Compat
 import VE.Acts.LexicalExamples
