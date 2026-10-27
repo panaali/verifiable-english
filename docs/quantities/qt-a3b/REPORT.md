@@ -1,6 +1,6 @@
 # qt-a3b report: the cardinality certificate check and case runner (quantities QT-A3, second part)
 
-No DRI signature is reserved: DELTA row 1 (trust, V +44) cites R16. Delivered: `CardCertificate`, `checkCertificate`
+No DRI signature is reserved: DELTA row 1 (trust, V +59 after fix round 1) cites R16. Delivered: `CardCertificate`, `checkCertificate`
 and `checkCertificate_sound` (the plan's text), P1–P3, the `admission` and `certificate` cases with the region table
 and the regenerated problem with its W6a identities, claimed tables and problems refused, W6a's shared helpers owned by
 W6a, and the fixtures, with the plan's seeded bug. Next: **qt-a3c** (the `cardinality` mode, its shape and the
@@ -36,8 +36,8 @@ Not in this item, by the task: `Protocol.lean`, `service_schema.py`, `Dispatch.l
 --no-baseline`, [evidence/mutants-run.json](evidence/mutants-run.json)). Every kill is a `#guard` that "did not
 evaluate to `true`", never a type or proof error: `RunExamples.lean` does not import `RunTheorems.lean`, and for a
 mutant of `Run.lean` the command first replaces `checkCertificate_sound`'s proof by `sorry` (the binding mutants break
-that proof too). All are Lean; no Python or Rust product code changed (`tools/layer_policy.py`, a tool, gains two
-module names).
+that proof too). The Lean ones are above; fix round 1 adds four Lean encoder mutants and two Python mutants of the
+one changed Python file, `tools/layer_policy.py` (no Rust changed); see "Fix round 1".
 
 | Mutant | File, definition | Failing guards (section of `RunExamples.lean`) |
 |---|---|---|
@@ -67,7 +67,8 @@ slot) is [trust-mutants.json](trust-mutants.json): 60 KILLED, 0 SURVIVOR, 0 UNKN
 
 ## Trust, size and evidence
 
-- Trust (`tools/trust_map.py --check`, final tree, against `a274d9488`): K +0, S +0, untied V +44 (DELTA row 1, R16;
+- Trust (`tools/trust_map.py --check`, final tree, against `a274d9488`): K +0, S +0, untied V +59 (+44, and +15 in
+  fix round 1; DELTA row 1, R16;
   FOLLOW-UPS "## qt-a3b"). Consolidation ledger rows 7 (+29, the runner) and 8b (−2) of `docs/CONSOLIDATION-PLAN.md`
   re-measured from `trust_map.py --ledger`, as `test_committed_ledger_names_real_declarations` asks.
 - Size: about 690 hand-written lines before this report and DELTA, about 790 with them. Lean 528 (`Run.lean` 172,
@@ -104,6 +105,31 @@ slot) is [trust-mutants.json](trust-mutants.json): 60 KILLED, 0 SURVIVOR, 0 UNKN
 - **qt-a3d**: `Document.lean` (`admitDocument`, `admit_cardinality_report_sound`) and `Render.lean`.
 - Then QT-A4. No qt-a3bb: nothing of this item's scope was cut.
 
+## Fix round 1 (pre-review gate and review `qt-a3b-review-ov`)
+
+- **Pre-review gate [mutants] FAIL (Python):** `tools/layer_policy.py` changed with no seeded bug. Two mutants added to
+  [mutants.json](mutants.json), each killed by `tools/check_lean_imports.py` (exit 1, "new outward Lean import"; it is
+  the `select_tests.py` Lean-layer check and `regen_generated.py`'s `layer-ledgers` check):
+  `layer-policy-run-examples` (drop `VE.Cardinality.RunExamples` from the layer-4 fixture set:
+  `VE.Cardinality.RunExamples -> VE.Cardinality.Run`) and `layer-policy-run-theorems` (drop
+  `VE.Cardinality.RunTheorems`: `VE.Cardinality.RunTheorems -> VE.Cardinality.Run`). Restored; the check prints
+  "Lean layer graph kept (640 modules)".
+- **F1 (B), fixed:** golden `#guard`s in `RunExamples.lean` for FA1's whole region table (each constant with its
+  `sort` and `bits`, and the predicates), for the erased conclusion's and the first (region) premise's `Q` and `core`,
+  and for a two-counted-sort region table (the mechanical rerun found `regionsJson` keeping only the first counted
+  sort surviving, since FA1 counts one sort). The review's four mutants are in [mutants.json](mutants.json)
+  (`regionsJson-bits`, `regionsJson-sort`, `erasedJson-Q`, `erasedJson-core`): 4 of 4 killed by these guards
+  ([evidence/mutants-run-fix1.json](evidence/mutants-run-fix1.json); the review's PROBE is the same four edits). Both
+  definitions moved from D[I] to D[V], as W6a's `encQ`/`encCore`: V +15, a second R16 allowance (V +59 in all,
+  within 150, K +0). `trust_mutants` rerun on `ba27c7b4e` over the 5 trusted definitions: 117 mutants, 98 KILLED,
+  0 SURVIVOR, 0 UNKNOWN, 12 INVALID, 7 ALLOWED (the 5 new allowed are `list-empty` mutants of the two encoders that
+  do not elaborate: "Function expected" or "Invalid projection"; each was UNKNOWN before the allow, none a survivor).
+- **F2 (C), follow-up:** size. With this round about 850 hand-written lines; the round only adds guards, mutants and
+  evidence the review asked for. Recorded in FOLLOW-UPS "## qt-a3b" for the size retrospective; nothing cut now.
+- **F3 (C), follow-up:** the refusal order (region table, erased problem, cardinality stale, `staleW6`, `staleCore`)
+  differs from spec 4.2's listing (W6a's certificate texts first). No user sees it until the mode exists; FOLLOW-UPS
+  "## qt-a3b" asks qt-a3c's DELTA to state the order with R2.
+
 ## Self-review against BUILDER-CHECKLIST
 
 1. N.A.: no Lean answer is relayed to Python yet (qt-a3c/QT-A4); the runner's own inputs are refused when malformed
@@ -111,7 +137,8 @@ slot) is [trust-mutants.json](trust-mutants.json): 60 KILLED, 0 SURVIVOR, 0 UNKN
    forged-claims guards).
 2. PASS: plan-row table above; no Python copy of a Lean decision; W6a stays the one owner of the shared helpers; no
    permanent report test; overlap listed.
-3. PASS: `mutants.json` 25/25 killed by `#guard`s (`evidence/mutants-run.json`); `trust-mutants.json` 0 survivors.
+3. PASS: `mutants.json` 31/31 killed (25 in `evidence/mutants-run.json`, 6 in `evidence/mutants-run-fix1.json`);
+   `trust-mutants.json` 0 survivors, 0 unknown.
 4. PASS: base against head on W6a's 37 recorded cases, byte-identical (DELTA); FA1 replays, FA1b does not
    (`RunExamples.lean` FA1/FA1b guards).
 5. PASS: every identity the certificate names is bound, each refused when shifted, reordered or taken from the other
