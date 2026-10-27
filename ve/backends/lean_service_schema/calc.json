@@ -52,32 +52,97 @@
           "properties": {
             "claim": {"type": "string", "x-equals": "/id"},
             "claim_id": {"$ref": "common.json#/$defs/hex64"},
-            "kind": {
+            "display": {
+              "$comment": "VE.Calc.Run.display: a rounding claim's value truncated at two places beyond the printed ones, or null.",
               "anyOf": [
                 {
-                  "const": "claim",
+                  "anyOf": [{"pattern": "-?(0|[1-9][0-9]*)(\\.[0-9][0-9]*)?…?", "type": "string"}, {"type": "null"}],
                   "x-case": {
-                    "not": {
-                      "properties": {"claim": {"minItems": 1, "prefixItems": [{"const": "follows"}], "type": "array"}},
-                      "required": ["claim"]
-                    }
+                    "properties": {
+                      "claim": {
+                        "minItems": 1,
+                        "prefixItems": [{"enum": ["rounds", "rounds-down", "rounds-up"]}],
+                        "type": "array"
+                      }
+                    },
+                    "required": ["claim"]
                   }
                 },
                 {
-                  "const": "follows",
+                  "type": "null",
                   "x-case": {
-                    "properties": {"claim": {"minItems": 1, "prefixItems": [{"const": "follows"}], "type": "array"}},
-                    "required": ["claim"]
+                    "not": {
+                      "properties": {
+                        "claim": {
+                          "minItems": 1,
+                          "prefixItems": [{"enum": ["rounds", "rounds-down", "rounds-up"]}],
+                          "type": "array"
+                        }
+                      },
+                      "required": ["claim"]
+                    }
                   }
                 }
               ]
             },
+            "finding": {
+              "$comment": "VE.Calc.Run.rowJson: a standalone case is no translated document (2.5, 13.6).",
+              "type": "null"
+            },
+            "kind": {
+              "const": "claim",
+              "x-case": {
+                "not": {
+                  "properties": {"claim": {"minItems": 1, "prefixItems": [{"const": "follows"}], "type": "array"}},
+                  "required": ["claim"]
+                }
+              }
+            },
+            "line": {
+              "$comment": "VE.Calc.Run.line: Lean's English (11.1), or null beyond 11.2's nesting rule.",
+              "anyOf": [{"$ref": "common.json#/$defs/text"}, {"type": "null"}]
+            },
             "outcome": {"enum": ["holds", "fails", "undefined"]},
             "reason": {"type": "null"},
             "reproduction": {"type": "null"},
-            "status": {"const": "ok"}
+            "sides": {"$ref": "#/$defs/sides"},
+            "status": {"const": "ok"},
+            "tie": {
+              "$comment": "VE.Calc.Run.tie: 2.2's tie flag, null for a rounds claim without a known value; false for any other claim.",
+              "anyOf": [
+                {
+                  "type": ["boolean", "null"],
+                  "x-case": {
+                    "properties": {"claim": {"minItems": 1, "prefixItems": [{"enum": ["rounds"]}], "type": "array"}},
+                    "required": ["claim"]
+                  }
+                },
+                {
+                  "const": false,
+                  "x-case": {
+                    "not": {
+                      "properties": {"claim": {"minItems": 1, "prefixItems": [{"enum": ["rounds"]}], "type": "array"}},
+                      "required": ["claim"]
+                    }
+                  }
+                }
+              ]
+            }
           },
-          "required": ["status", "claim", "claim_id", "kind", "outcome", "reason", "reproduction"],
+          "required": [
+            "status",
+            "claim",
+            "claim_id",
+            "kind",
+            "outcome",
+            "reason",
+            "line",
+            "finding",
+            "reproduction",
+            "sides",
+            "display",
+            "tie"
+          ],
           "type": "object"
         },
         {
@@ -85,25 +150,159 @@
           "properties": {
             "claim": {"type": "string", "x-equals": "/id"},
             "claim_id": {"$ref": "common.json#/$defs/hex64"},
-            "kind": {
+            "display": {
+              "$comment": "VE.Calc.Run.display: a rounding claim's value truncated at two places beyond the printed ones, or null.",
               "anyOf": [
                 {
-                  "const": "claim",
+                  "anyOf": [{"pattern": "-?(0|[1-9][0-9]*)(\\.[0-9][0-9]*)?…?", "type": "string"}, {"type": "null"}],
                   "x-case": {
-                    "not": {
-                      "properties": {"claim": {"minItems": 1, "prefixItems": [{"const": "follows"}], "type": "array"}},
-                      "required": ["claim"]
-                    }
+                    "properties": {
+                      "claim": {
+                        "minItems": 1,
+                        "prefixItems": [{"enum": ["rounds", "rounds-down", "rounds-up"]}],
+                        "type": "array"
+                      }
+                    },
+                    "required": ["claim"]
                   }
                 },
                 {
-                  "const": "follows",
+                  "type": "null",
                   "x-case": {
-                    "properties": {"claim": {"minItems": 1, "prefixItems": [{"const": "follows"}], "type": "array"}},
-                    "required": ["claim"]
+                    "not": {
+                      "properties": {
+                        "claim": {
+                          "minItems": 1,
+                          "prefixItems": [{"enum": ["rounds", "rounds-down", "rounds-up"]}],
+                          "type": "array"
+                        }
+                      },
+                      "required": ["claim"]
+                    }
                   }
                 }
               ]
+            },
+            "finding": {
+              "$comment": "VE.Calc.Run.rowJson: a standalone case is no translated document (2.5, 13.6).",
+              "type": "null"
+            },
+            "kind": {
+              "const": "claim",
+              "x-case": {
+                "not": {
+                  "properties": {"claim": {"minItems": 1, "prefixItems": [{"const": "follows"}], "type": "array"}},
+                  "required": ["claim"]
+                }
+              }
+            },
+            "line": {
+              "$comment": "VE.Calc.Run.line: Lean's English (11.1), or null beyond 11.2's nesting rule.",
+              "anyOf": [{"$ref": "common.json#/$defs/text"}, {"type": "null"}]
+            },
+            "outcome": {"const": "unknown"},
+            "reason": {
+              "enum": [
+                "unknown: an exact value would have more than 4,096 digits",
+                "unknown: the budget of 1000000 evaluation steps ran out",
+                "unknown: the derivation search ran out of its 10,000 combination steps",
+                "unknown: the consistency search tried its 4,096 candidate points",
+                "unknown: a normal form would have more than 10,000 terms",
+                "unknown: floating-point computation not modelled",
+                "unknown: no certificate and no counterexample was found",
+                "unknown: neither a witness nor an enclosure decides it",
+                "unknown: the normal forms differ and no point where the sides differ was found",
+                "stated, not decided: a quantifier has no bound"
+              ]
+            },
+            "reproduction": {"type": "null"},
+            "sides": {"$ref": "#/$defs/sides"},
+            "status": {"const": "ok"},
+            "tie": {
+              "$comment": "VE.Calc.Run.tie: 2.2's tie flag, null for a rounds claim without a known value; false for any other claim.",
+              "anyOf": [
+                {
+                  "type": ["boolean", "null"],
+                  "x-case": {
+                    "properties": {"claim": {"minItems": 1, "prefixItems": [{"enum": ["rounds"]}], "type": "array"}},
+                    "required": ["claim"]
+                  }
+                },
+                {
+                  "const": false,
+                  "x-case": {
+                    "not": {
+                      "properties": {"claim": {"minItems": 1, "prefixItems": [{"enum": ["rounds"]}], "type": "array"}},
+                      "required": ["claim"]
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "required": [
+            "status",
+            "claim",
+            "claim_id",
+            "kind",
+            "outcome",
+            "reason",
+            "line",
+            "finding",
+            "reproduction",
+            "sides",
+            "display",
+            "tie"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "claim": {"type": "string", "x-equals": "/id"},
+            "claim_id": {"$ref": "common.json#/$defs/hex64"},
+            "finding": {
+              "$comment": "VE.Calc.Run.rowJson: a standalone case is no translated document (2.5, 13.6).",
+              "type": "null"
+            },
+            "kind": {
+              "const": "follows",
+              "x-case": {
+                "properties": {"claim": {"minItems": 1, "prefixItems": [{"const": "follows"}], "type": "array"}},
+                "required": ["claim"]
+              }
+            },
+            "line": {
+              "$comment": "VE.Calc.Run.line: Lean's English (11.1), or null beyond 11.2's nesting rule.",
+              "anyOf": [{"$ref": "common.json#/$defs/text"}, {"type": "null"}]
+            },
+            "outcome": {"enum": ["holds", "fails", "undefined"]},
+            "reason": {"type": "null"},
+            "reproduction": {"type": "null"},
+            "status": {"const": "ok"}
+          },
+          "required": ["status", "claim", "claim_id", "kind", "outcome", "reason", "line", "finding", "reproduction"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "claim": {"type": "string", "x-equals": "/id"},
+            "claim_id": {"$ref": "common.json#/$defs/hex64"},
+            "finding": {
+              "$comment": "VE.Calc.Run.rowJson: a standalone case is no translated document (2.5, 13.6).",
+              "type": "null"
+            },
+            "kind": {
+              "const": "follows",
+              "x-case": {
+                "properties": {"claim": {"minItems": 1, "prefixItems": [{"const": "follows"}], "type": "array"}},
+                "required": ["claim"]
+              }
+            },
+            "line": {
+              "$comment": "VE.Calc.Run.line: Lean's English (11.1), or null beyond 11.2's nesting rule.",
+              "anyOf": [{"$ref": "common.json#/$defs/text"}, {"type": "null"}]
             },
             "outcome": {"const": "unknown"},
             "reason": {
@@ -123,7 +322,7 @@
             "reproduction": {"type": "null"},
             "status": {"const": "ok"}
           },
-          "required": ["status", "claim", "claim_id", "kind", "outcome", "reason", "reproduction"],
+          "required": ["status", "claim", "claim_id", "kind", "outcome", "reason", "line", "finding", "reproduction"],
           "type": "object"
         }
       ]
@@ -136,32 +335,97 @@
           "properties": {
             "claim": {"type": "string", "x-equals": "/id"},
             "claim_id": {"$ref": "common.json#/$defs/hex64"},
-            "kind": {
+            "display": {
+              "$comment": "VE.Calc.Run.display: a rounding claim's value truncated at two places beyond the printed ones, or null.",
               "anyOf": [
                 {
-                  "const": "claim",
+                  "anyOf": [{"pattern": "-?(0|[1-9][0-9]*)(\\.[0-9][0-9]*)?…?", "type": "string"}, {"type": "null"}],
                   "x-case": {
-                    "not": {
-                      "properties": {"claim": {"minItems": 1, "prefixItems": [{"const": "follows"}], "type": "array"}},
-                      "required": ["claim"]
-                    }
+                    "properties": {
+                      "claim": {
+                        "minItems": 1,
+                        "prefixItems": [{"enum": ["rounds", "rounds-down", "rounds-up"]}],
+                        "type": "array"
+                      }
+                    },
+                    "required": ["claim"]
                   }
                 },
                 {
-                  "const": "follows",
+                  "type": "null",
                   "x-case": {
-                    "properties": {"claim": {"minItems": 1, "prefixItems": [{"const": "follows"}], "type": "array"}},
-                    "required": ["claim"]
+                    "not": {
+                      "properties": {
+                        "claim": {
+                          "minItems": 1,
+                          "prefixItems": [{"enum": ["rounds", "rounds-down", "rounds-up"]}],
+                          "type": "array"
+                        }
+                      },
+                      "required": ["claim"]
+                    }
                   }
                 }
               ]
             },
+            "finding": {
+              "$comment": "VE.Calc.Run.rowJson: a standalone case is no translated document (2.5, 13.6).",
+              "type": "null"
+            },
+            "kind": {
+              "const": "claim",
+              "x-case": {
+                "not": {
+                  "properties": {"claim": {"minItems": 1, "prefixItems": [{"const": "follows"}], "type": "array"}},
+                  "required": ["claim"]
+                }
+              }
+            },
+            "line": {
+              "$comment": "VE.Calc.Run.line: Lean's English (11.1), or null beyond 11.2's nesting rule.",
+              "anyOf": [{"$ref": "common.json#/$defs/text"}, {"type": "null"}]
+            },
             "outcome": {"enum": ["holds", "fails", "undefined"]},
             "reason": {"type": "null"},
             "reproduction": {"const": "unknown"},
-            "status": {"const": "ok"}
+            "sides": {"$ref": "#/$defs/sides"},
+            "status": {"const": "ok"},
+            "tie": {
+              "$comment": "VE.Calc.Run.tie: 2.2's tie flag, null for a rounds claim without a known value; false for any other claim.",
+              "anyOf": [
+                {
+                  "type": ["boolean", "null"],
+                  "x-case": {
+                    "properties": {"claim": {"minItems": 1, "prefixItems": [{"enum": ["rounds"]}], "type": "array"}},
+                    "required": ["claim"]
+                  }
+                },
+                {
+                  "const": false,
+                  "x-case": {
+                    "not": {
+                      "properties": {"claim": {"minItems": 1, "prefixItems": [{"enum": ["rounds"]}], "type": "array"}},
+                      "required": ["claim"]
+                    }
+                  }
+                }
+              ]
+            }
           },
-          "required": ["status", "claim", "claim_id", "kind", "outcome", "reason", "reproduction"],
+          "required": [
+            "status",
+            "claim",
+            "claim_id",
+            "kind",
+            "outcome",
+            "reason",
+            "line",
+            "finding",
+            "reproduction",
+            "sides",
+            "display",
+            "tie"
+          ],
           "type": "object"
         },
         {
@@ -169,25 +433,159 @@
           "properties": {
             "claim": {"type": "string", "x-equals": "/id"},
             "claim_id": {"$ref": "common.json#/$defs/hex64"},
-            "kind": {
+            "display": {
+              "$comment": "VE.Calc.Run.display: a rounding claim's value truncated at two places beyond the printed ones, or null.",
               "anyOf": [
                 {
-                  "const": "claim",
+                  "anyOf": [{"pattern": "-?(0|[1-9][0-9]*)(\\.[0-9][0-9]*)?…?", "type": "string"}, {"type": "null"}],
                   "x-case": {
-                    "not": {
-                      "properties": {"claim": {"minItems": 1, "prefixItems": [{"const": "follows"}], "type": "array"}},
-                      "required": ["claim"]
-                    }
+                    "properties": {
+                      "claim": {
+                        "minItems": 1,
+                        "prefixItems": [{"enum": ["rounds", "rounds-down", "rounds-up"]}],
+                        "type": "array"
+                      }
+                    },
+                    "required": ["claim"]
                   }
                 },
                 {
-                  "const": "follows",
+                  "type": "null",
                   "x-case": {
-                    "properties": {"claim": {"minItems": 1, "prefixItems": [{"const": "follows"}], "type": "array"}},
-                    "required": ["claim"]
+                    "not": {
+                      "properties": {
+                        "claim": {
+                          "minItems": 1,
+                          "prefixItems": [{"enum": ["rounds", "rounds-down", "rounds-up"]}],
+                          "type": "array"
+                        }
+                      },
+                      "required": ["claim"]
+                    }
                   }
                 }
               ]
+            },
+            "finding": {
+              "$comment": "VE.Calc.Run.rowJson: a standalone case is no translated document (2.5, 13.6).",
+              "type": "null"
+            },
+            "kind": {
+              "const": "claim",
+              "x-case": {
+                "not": {
+                  "properties": {"claim": {"minItems": 1, "prefixItems": [{"const": "follows"}], "type": "array"}},
+                  "required": ["claim"]
+                }
+              }
+            },
+            "line": {
+              "$comment": "VE.Calc.Run.line: Lean's English (11.1), or null beyond 11.2's nesting rule.",
+              "anyOf": [{"$ref": "common.json#/$defs/text"}, {"type": "null"}]
+            },
+            "outcome": {"const": "unknown"},
+            "reason": {
+              "enum": [
+                "unknown: an exact value would have more than 4,096 digits",
+                "unknown: the budget of 1000000 evaluation steps ran out",
+                "unknown: the derivation search ran out of its 10,000 combination steps",
+                "unknown: the consistency search tried its 4,096 candidate points",
+                "unknown: a normal form would have more than 10,000 terms",
+                "unknown: floating-point computation not modelled",
+                "unknown: no certificate and no counterexample was found",
+                "unknown: neither a witness nor an enclosure decides it",
+                "unknown: the normal forms differ and no point where the sides differ was found",
+                "stated, not decided: a quantifier has no bound"
+              ]
+            },
+            "reproduction": {"const": "unknown"},
+            "sides": {"$ref": "#/$defs/sides"},
+            "status": {"const": "ok"},
+            "tie": {
+              "$comment": "VE.Calc.Run.tie: 2.2's tie flag, null for a rounds claim without a known value; false for any other claim.",
+              "anyOf": [
+                {
+                  "type": ["boolean", "null"],
+                  "x-case": {
+                    "properties": {"claim": {"minItems": 1, "prefixItems": [{"enum": ["rounds"]}], "type": "array"}},
+                    "required": ["claim"]
+                  }
+                },
+                {
+                  "const": false,
+                  "x-case": {
+                    "not": {
+                      "properties": {"claim": {"minItems": 1, "prefixItems": [{"enum": ["rounds"]}], "type": "array"}},
+                      "required": ["claim"]
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "required": [
+            "status",
+            "claim",
+            "claim_id",
+            "kind",
+            "outcome",
+            "reason",
+            "line",
+            "finding",
+            "reproduction",
+            "sides",
+            "display",
+            "tie"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "claim": {"type": "string", "x-equals": "/id"},
+            "claim_id": {"$ref": "common.json#/$defs/hex64"},
+            "finding": {
+              "$comment": "VE.Calc.Run.rowJson: a standalone case is no translated document (2.5, 13.6).",
+              "type": "null"
+            },
+            "kind": {
+              "const": "follows",
+              "x-case": {
+                "properties": {"claim": {"minItems": 1, "prefixItems": [{"const": "follows"}], "type": "array"}},
+                "required": ["claim"]
+              }
+            },
+            "line": {
+              "$comment": "VE.Calc.Run.line: Lean's English (11.1), or null beyond 11.2's nesting rule.",
+              "anyOf": [{"$ref": "common.json#/$defs/text"}, {"type": "null"}]
+            },
+            "outcome": {"enum": ["holds", "fails", "undefined"]},
+            "reason": {"type": "null"},
+            "reproduction": {"const": "unknown"},
+            "status": {"const": "ok"}
+          },
+          "required": ["status", "claim", "claim_id", "kind", "outcome", "reason", "line", "finding", "reproduction"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "claim": {"type": "string", "x-equals": "/id"},
+            "claim_id": {"$ref": "common.json#/$defs/hex64"},
+            "finding": {
+              "$comment": "VE.Calc.Run.rowJson: a standalone case is no translated document (2.5, 13.6).",
+              "type": "null"
+            },
+            "kind": {
+              "const": "follows",
+              "x-case": {
+                "properties": {"claim": {"minItems": 1, "prefixItems": [{"const": "follows"}], "type": "array"}},
+                "required": ["claim"]
+              }
+            },
+            "line": {
+              "$comment": "VE.Calc.Run.line: Lean's English (11.1), or null beyond 11.2's nesting rule.",
+              "anyOf": [{"$ref": "common.json#/$defs/text"}, {"type": "null"}]
             },
             "outcome": {"const": "unknown"},
             "reason": {
@@ -207,10 +605,15 @@
             "reproduction": {"const": "unknown"},
             "status": {"const": "ok"}
           },
-          "required": ["status", "claim", "claim_id", "kind", "outcome", "reason", "reproduction"],
+          "required": ["status", "claim", "claim_id", "kind", "outcome", "reason", "line", "finding", "reproduction"],
           "type": "object"
         }
       ]
+    },
+    "exact": {
+      "$comment": "VE.Calc.Run.exact: an exact value, a reduced fraction \"n/d\" or an integer \"n\".",
+      "pattern": "0|-?[1-9][0-9]*(/[1-9][0-9]*)?",
+      "type": "string"
     },
     "refusal": {
       "$comment": "VE.Calc.Run.runCaseReported: the decoder's refusal of the case (spec 3.2, 13.1).",
@@ -218,6 +621,45 @@
       "properties": {"error": {"$ref": "common.json#/$defs/text"}, "status": {"const": "error"}},
       "required": ["status", "error"],
       "type": "object"
+    },
+    "sides": {
+      "$comment": "VE.Calc.Run.sides: each expression's exact value, or null where it has none (undefined, or beyond a limit).",
+      "anyOf": [
+        {
+          "maxItems": 1,
+          "minItems": 1,
+          "x-case": {
+            "properties": {
+              "claim": {
+                "minItems": 1,
+                "prefixItems": [{"enum": ["rounds", "rounds-down", "rounds-up"]}],
+                "type": "array"
+              }
+            },
+            "required": ["claim"]
+          }
+        },
+        {
+          "maxItems": 3,
+          "minItems": 3,
+          "x-case": {
+            "properties": {"claim": {"minItems": 1, "prefixItems": [{"enum": ["within"]}], "type": "array"}},
+            "required": ["claim"]
+          }
+        },
+        {
+          "maxItems": 2,
+          "minItems": 2,
+          "x-case": {
+            "properties": {
+              "claim": {"minItems": 1, "prefixItems": [{"enum": ["eq", "lt", "le", "gt", "ge"]}], "type": "array"}
+            },
+            "required": ["claim"]
+          }
+        }
+      ],
+      "items": {"anyOf": [{"$ref": "#/$defs/exact"}, {"type": "null"}]},
+      "type": "array"
     }
   }
 }

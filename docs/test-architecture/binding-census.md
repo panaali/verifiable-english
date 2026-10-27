@@ -8,11 +8,11 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 |---|---:|
 | leaves:bound | 248 |
 | leaves:closed domain | 264 |
-| leaves:none | 1344 |
+| leaves:none | 1347 |
 | modes | 38 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 943 |
+| today:not probed | 946 |
 | today:shape | 512 |
 | today:unbound | 137 |
 | answers | 561 |
@@ -3255,17 +3255,21 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/meaning_id` | string | none |  | pattern | 3 | not probed |
 | `/rows/*/claim` | string | bound | x-equals |  | 3 | shape |
 | `/rows/*/claim_id` | string | none |  | pattern | 3 | not probed |
+| `/rows/*/display` | string | none |  | pattern | 2 | not probed |
 | `/rows/*/kind` | string | closed domain | const |  | 3 | shape |
+| `/rows/*/line` | string | none |  | minLength | 2 | not probed |
 | `/rows/*/outcome` | string | closed domain | const |  | 3 | shape |
 | `/rows/*/outcome` | string | closed domain | enum |  | 3 | shape |
 | `/rows/*/reason` | string | closed domain | enum |  | 0 | shape |
 | `/rows/*/reproduction` | string | closed domain | const |  | 1 | shape |
+| `/rows/*/sides/*` | string | none |  | pattern | 2 | not probed |
 | `/rows/*/status` | string | closed domain | const |  | 3 | shape |
 | `/status` | string | closed domain | const |  | 7 | shape |
 
 | array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
 |---|---|---|---|---|
 | `/rows` | x-zip | x-zip |  |  |
+| `/rows/*/sides` |  |  |  |  |
 
 ## Grammars
 
