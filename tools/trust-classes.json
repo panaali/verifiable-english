@@ -15264,6 +15264,14 @@
         "VE.Arith.Examples.sweep",
         "VE.Arith.Examples.tickEnv"
       ]
+    },
+    "ScopeBenchMain.lean": {
+      "T": [
+        "ScopeBench.changed",
+        "ScopeBench.report",
+        "ScopeBench.row",
+        "main"
+      ]
     }
   }
 }
