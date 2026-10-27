@@ -16,6 +16,14 @@ theorem decode_software (j : Json) :
   all_goals intro hl
   all_goals first | rfl | (cases j <;> simp_all [CaseCond.holds, Json.getObjVal?, Except.toBool])
 
+/-- A tie flag: true, false or null (`ResponseShape.Schemas.Calc.flag`). -/
+theorem tie_fits (t : Option Bool) :
+    Fits req (.alt [.lit (.bool true), .lit (.bool false), .lit .null]) (t.elim .null Json.bool) := by
+  rcases t with _ | _ | _
+  · exact Fits.alt (by simp) (Fits.lit .null)
+  · exact Fits.alt (by simp) (Fits.lit (.bool false))
+  · exact Fits.alt (by simp) (Fits.lit (.bool true))
+
 set_option hygiene false in
 /-- A claim row (sides, display and tie) that holds or fails, is undefined, or is unknown with Lean's reason text, or
 a follows row, decided or unknown: the five alternatives of `claim_row`, in order. -/
@@ -24,13 +32,16 @@ macro "row_fits" : tactic => `(tactic|(
   cases k <;> rcases o with v | u
   · cases v
     · apply Fits.altHead; simp only [Run.kind, Run.claimFields, List.cons_append, List.nil_append]; fits
+      all_goals exact tie_fits _
     · apply Fits.altHead; simp only [Run.kind, Run.claimFields, List.cons_append, List.nil_append]; fits
+      all_goals exact tie_fits _
     · apply Fits.altTail; apply Fits.altHead
       simp only [Run.kind, Run.claimFields, List.cons_append, List.nil_append]; fits
+      all_goals exact tie_fits _
   · apply Fits.altTail; apply Fits.altTail; apply Fits.altHead
     rcases u with l | _ | _ | _ | _ | _
-    · cases l <;> simp only [Run.kind, Run.claimFields, List.cons_append, List.nil_append] <;> fits
-    all_goals simp only [Run.kind, Run.claimFields, List.cons_append, List.nil_append] <;> fits
+    · cases l <;> simp only [Run.kind, Run.claimFields, List.cons_append, List.nil_append] <;> fits <;> exact tie_fits _
+    all_goals simp only [Run.kind, Run.claimFields, List.cons_append, List.nil_append] <;> fits <;> exact tie_fits _
   · apply Fits.altTail; apply Fits.altTail; apply Fits.altTail; apply Fits.altHead
     cases v <;> simp only [Run.kind, Run.claimFields, List.append_nil] <;> fits
   · apply Fits.altTail; apply Fits.altTail; apply Fits.altTail; apply Fits.altTail; apply Fits.altHead

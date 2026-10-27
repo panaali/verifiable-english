@@ -47,22 +47,25 @@ def byForm (ops : List String) (yes no : Shape) : Shape :=
 
 def null : Shape := .type ["null"]
 
+/-- A tie flag `t`: the skeleton keeps the enumeration (a tie is a boolean or null), the client also its type. -/
+def flag (t : String) : Shape := n [.type [t], .enum [.bool true, .bool false, .null]]
+
 /-- A claim row's members beyond a follows row's (`known`, `undefinedMembers`, `unknownMembers`): its sides (`VE.Calc.Run.sides`), its display
 (`VE.Calc.Run.display`) and its tie flag (`VE.Calc.Run.tie`, 2.2), by its outcome. A claim that holds or fails has
 every side, a rounding claim its display and a `rounds` claim its tie flag; an undefined or unknown claim has a side
 without a value, and an unknown one no display, nor a `rounds` claim's tie flag. Any other claim's tie is `false`. -/
 def known : List (String × Shape) :=
   [("sides", sides (ref "#/$defs/exact")), ("display", byForm roundings truncated null),
-    ("tie", byForm ["rounds"] (.type ["boolean"]) (.const (.bool false)))]
+    ("tie", byForm ["rounds"] (flag "boolean") (.const (.bool false)))]
 
 def undefinedMembers : List (String × Shape) :=
   [("sides", n [sides (.anyOf [ref "#/$defs/exact", null]), .contains null]),
     ("display", byForm roundings (.anyOf [truncated, null]) null),
-    ("tie", byForm ["rounds"] (.type ["boolean"]) (.const (.bool false)))]
+    ("tie", byForm ["rounds"] (flag "boolean") (.const (.bool false)))]
 
 def unknownMembers : List (String × Shape) :=
   [("sides", n [sides (.anyOf [ref "#/$defs/exact", null]), .contains null]), ("display", null),
-    ("tie", byForm ["rounds"] null (.const (.bool false)))]
+    ("tie", byForm ["rounds"] (flag "null") (.const (.bool false)))]
 
 /-- A row's fields: its kind, its outcome, reason and reproduction, and the members `more` of its kind. -/
 def fields (kind : Shape) (more : List (String × Shape)) (outcome reason reproduction : Shape) : Shape :=
