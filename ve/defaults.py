@@ -6,6 +6,12 @@ gate, the verdict, the basis, the form, the kept assumptions and the exceptions 
 cases and binds each answer to the request it asked about (R8): every check here is the answer's shape or its binding,
 and an answer that fails one is `CheckerUnavailable`, never a verdict of Python's.
 
+The relay accepts and shows a row on one condition only: Lean's reply is a row of the mode's shape for this case
+(`run`), and every member the binding names is the value the request gives it (the closed list of R11's D1, `bind_*`:
+an equality, such as the collision's deciders and `_decider`'s fallback chain, or membership in the request's own
+list). Everything else is refused: a shape fault or `CheckerUnavailable`. `ask` shows the strict answer only when
+Lean's layered check says `valid` is true.
+
 `ask` is the two questions of `ve document readings --assume-no-exception`: the strict question first (Lean's layered
 `norm-defaults-certificate`), and the default question only when the strict one has no certificate, with the strict
 countermodel the search found sent as `strict_model`. The search is an untrusted generator, as readings' is: Python's
@@ -57,6 +63,13 @@ def _decider(case, rule):
     return (rule.get("exception") or {}).get("decided_by") or soft.get("exception_decider") or "unstated"
 
 
+def _deciders(case, rules):
+    """The deciders a collision of two rules names (Lean's `giveWayDeciders`): one when the two rules' deciders are the
+    same, otherwise both, in pair order."""
+    first, second = (_decider(case, rule) for rule in rules)
+    return [first] if first == second else [first, second]
+
+
 def _entities(witness):
     """Every entity of a request's model (`{"model": {"domains": ...}}`), by sort."""
     return {sort: set(ids) for sort, ids in witness["model"]["domains"].items()}
@@ -94,7 +107,7 @@ def bind_elaborate(case, row, source):
 
 def bind_coherence(case, row, targets):
     """`pairs` are `coherence_targets`, one to one and in order; a collision names one of them, at a tuple of its
-    first rule's act in the collision's model, with deciders of its two rules."""
+    first rule's act in the collision's model, with exactly the deciders of its two rules (`_deciders`)."""
     pairs = [[m, n] for m, n, _ in targets]
     if [entry["rules"] for entry in row["pairs"]] != pairs:
         raise _unbound("pairs")
@@ -104,8 +117,7 @@ def bind_coherence(case, row, targets):
             raise _unbound("collision rules")
         rules = [_rules(case)[name] for name in collision["rules"]]
         _tuple(case, rules[0], collision["tuple"], witness, "collision tuple")
-        named, deciders = {_decider(case, rule) for rule in rules} | {"unstated"}, collision["deciders"]
-        if not 1 <= len(deciders) <= 2 or len(set(deciders)) != len(deciders) or not set(deciders) <= named:
+        if collision["deciders"] != _deciders(case, rules):
             raise _unbound("collision deciders")
         _situation(row, witness)
     return row
