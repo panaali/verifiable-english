@@ -1181,6 +1181,13 @@
    "reason": "df-1ae: V +104 (K +0, S +0): ResponseShape/Schemas/NormDefaults.lean +80 (the four defaults-* shapes, the situation, the kind and row entries), VE/Defaults/Route.lean +22 (defaultsKinds, defaultsRows, layeredRows, layeredKindCase, runLayered moved), VE/Defaults/Wire.lean +8 (situationJson, coherenceFields, modelFields), VE/NormDefaults/Run.lean +1 (the routing), VE/NormDefaults/Layered.lean -7 (runLayered moved out)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-1ae, 2026-10-18",
    "commit": "a547f2141a37398614fb0eeced43cfa7079c7265"
+  },
+  {
+   "class": "S",
+   "lines": 46,
+   "reason": "ap-3b: lean/VE/Acts/Linearize.lean +46 (S: joinWord, Part.toks, listToks, Filler.toks, Atom.normal, tokStr, tokText, Atom.withTo, Atom.text, partAct); Table.lean paraphrases G[R] (not trusted); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3b, 2026-10-18",
+   "commit": "0e7a813e8841bbd7cf103229cf37386b8699896d"
   }
  ]
 }
