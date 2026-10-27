@@ -14814,6 +14814,42 @@
         "VE.Scope.foldGovernors",
         "VE.Scope.statusOf"
       ]
+    },
+    "VE/Arith/Bounded.lean": {
+      "G[V]": [
+        {
+          "name": "VE.Arith.arithOutcome",
+          "tied": [
+            "VE.Arith.arithOutcome_decided",
+            "VE.Arith.arithOutcome_exhausted_iff",
+            "VE.Arith.arithOutcome_unbounded_iff"
+          ]
+        }
+      ],
+      "G[R]": [
+        "VE.Arith.maxSteps"
+      ],
+      "C": [
+        "VE.Arith.Defs.opEnv",
+        "VE.Arith.Formula.evalB",
+        "VE.Arith.OpEnv",
+        "VE.Arith.Term.evalB",
+        "VE.Arith.Term.evalBs",
+        "VE.Arith.charge",
+        "VE.Arith.countLoop",
+        "VE.Arith.decideBounded",
+        "VE.Arith.quantLoop"
+      ],
+      "P": [
+        "VE.Arith.Agrees"
+      ]
+    },
+    "VE/Arith/BoundedExamples.lean": {
+      "T": [
+        "VE.Arith.Examples.ev",
+        "VE.Arith.Examples.no",
+        "VE.Arith.Examples.yes"
+      ]
     }
   }
 }
