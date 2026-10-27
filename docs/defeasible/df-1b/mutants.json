@@ -1,0 +1,257 @@
+{
+ "item": "df-1b",
+ "language": "Python",
+ "runner": "docs/defeasible/df-1b/evidence/run_mutants.py",
+ "result": "docs/defeasible/df-1b/evidence/mutants.out",
+ "note": "Plan DF-1b's five seeded bugs: P1-P3 here; the two renderer bugs wait for the English (df-1bb). RF1a-RF1f: review F1's checks tested on one side only (each now fails its test; every check's weakenings and deletions are enumerated by tests/test_defaults_checks.py). RF9a-RF9c: review F9's class, an `if ...: return` check (each now fails its test; tests/check_mutants.py enumerates `return` exits too). RF10a-RF10g: re-check F10's class, a value that feeds a check (the decider's fallback chain, and the forms hunts 1 and 2 found); every generated value mutation is enumerated by tests/test_defaults_checks.py.",
+ "mutants": [
+  {
+   "id": "P1",
+   "file": "ve/defaults.py",
+   "bug": "plan: the relay accepts an assumption label not in default_premises",
+   "find": "if (row[\"assumptions\"] != [label for label in labels if label in row[\"assumptions\"]] or",
+   "replace": "if (False or",
+   "test": "tests/test_defaults_answer.py::test_assumptions_and_basis"
+  },
+  {
+   "id": "P2",
+   "file": "ve/defaults.py",
+   "bug": "plan: the relay accepts needs on a request without strict_model",
+   "find": "if row[\"basis\"] == \"needs\" and \"strict_model\" not in case:",
+   "replace": "if False:",
+   "test": "tests/test_defaults_answer.py::test_assumptions_and_basis"
+  },
+  {
+   "id": "P3",
+   "file": "ve/defaults.py",
+   "bug": "plan: the relay accepts a forced condition index at or beyond the rule's number of conditions",
+   "find": "if entry[\"condition\"] >= len(",
+   "replace": "if entry[\"condition\"] > len(",
+   "test": "tests/test_defaults_answer.py::test_forced_condition_index_rule_and_tuple"
+  },
+  {
+   "id": "B1",
+   "file": "ve/defaults.py",
+   "bug": "basis strict accepted with kept assumptions",
+   "find": "(row[\"basis\"] == \"strict\") != (row[\"assumptions\"] == [])):",
+   "replace": "False):",
+   "test": "tests/test_defaults_answer.py::test_assumptions_and_basis"
+  },
+  {
+   "id": "B2",
+   "file": "ve/defaults.py",
+   "bug": "pairs bound as a set, not one to one in order",
+   "find": "if [entry[\"rules\"] for entry in row[\"pairs\"]] != pairs:",
+   "replace": "if sorted(entry[\"rules\"] for entry in row[\"pairs\"]) != sorted(pairs):",
+   "test": "tests/test_defaults_answer.py::test_pairs_and_collision"
+  },
+  {
+   "id": "B3",
+   "file": "ve/defaults.py",
+   "bug": "a collision's deciders not bound to its rules' deciders (site moved by review F10's fix: the deciders are now compared whole)",
+   "find": "if collision[\"deciders\"] != _deciders(case, rules):",
+   "replace": "if len(collision[\"deciders\"]) != len(_deciders(case, rules)):",
+   "test": "tests/test_defaults_answer.py::test_pairs_and_collision"
+  },
+  {
+   "id": "B4",
+   "file": "ve/defaults.py",
+   "bug": "forced entries not bound to the model's exception tables",
+   "find": "} != held:",
+   "replace": "} != held and False:",
+   "test": "tests/test_defaults_answer.py::test_forced_condition_index_rule_and_tuple"
+  },
+  {
+   "id": "B5",
+   "file": "ve/defaults.py",
+   "bug": "a tuple's entities checked against every sort, not their own",
+   "find": "any(v not in entities.get(s, ()) for s, v in zip(sorts, values))",
+   "replace": "any(v not in set().union(*entities.values()) for v in values)",
+   "test": "tests/test_defaults_answer.py::test_forced_tuple_sorts"
+  },
+  {
+   "id": "B6",
+   "file": "ve/defaults.py",
+   "bug": "coherence targets not bound to the source's colliding pairs",
+   "find": "!= source[\"pairs\"]:",
+   "replace": "!= source[\"pairs\"] and False:",
+   "test": "tests/test_defaults_answer.py::test_elaborate_labels_and_targets"
+  },
+  {
+   "id": "B7",
+   "file": "ve/defaults.py",
+   "bug": "the relay skips the shape check of the row it received",
+   "find": "        check_row(MODE, row, case, 0)",
+   "replace": "        pass",
+   "test": "tests/test_defaults_answer.py::test_mutants_never_pass_as_answers"
+  },
+  {
+   "id": "Q1",
+   "file": "ve/defaults.py",
+   "bug": "order: the strict question skipped, the default one always asked",
+   "find": "if strict is not None and run(",
+   "replace": "if False and run(",
+   "test": "tests/test_defaults_lean.py::test_zeta_strict_question_first"
+  },
+  {
+   "id": "Q2",
+   "file": "ve/defaults.py",
+   "bug": "order: the strict countermodel not sent as strict_model (basis unsettled)",
+   "find": "\"strict_model\": search.model(search.X, gamma, phi), **gate}",
+   "replace": "\"strict_model\": None, **gate}",
+   "test": "tests/test_defaults_lean.py::test_alpha_needs_its_one_exception_and_the_strict_countermodel"
+  },
+  {
+   "id": "Q3",
+   "file": "ve/defaults.py",
+   "bug": "search: the gate's evidence (pair certificates, collision) not sent",
+   "find": "\"strict_model\": search.model(search.X, gamma, phi), **gate}",
+   "replace": "\"strict_model\": search.model(search.X, gamma, phi)}",
+   "test": "tests/test_defaults_lean.py::test_delta_rank_resolved_and_its_ranking_assumption"
+  },
+  {
+   "id": "F1",
+   "file": "ve/document/cli.py",
+   "bug": "the flag ignored: the readings command answers as without it",
+   "find": "        elif args.assume_no_exception:\n",
+   "replace": "        elif False:\n",
+   "test": "tests/test_defaults_lean.py::test_p1_follows_unless_an_exception_applies"
+  },
+  {
+   "id": "RF1a",
+   "file": "ve/defaults.py",
+   "bug": "review F1: a collision's rules not bound to a coherence target",
+   "find": "collision[\"rules\"] not in pairs or ",
+   "replace": "",
+   "test": "tests/test_defaults_answer.py::test_pairs_and_collision"
+  },
+  {
+   "id": "RF1b",
+   "file": "ve/defaults.py",
+   "bug": "review F1: a coherence situation's entities not bound to the witness model",
+   "find": "        _situation(row, witness)\n",
+   "replace": "        pass\n",
+   "test": "tests/test_defaults_answer.py::test_pairs_and_collision"
+  },
+  {
+   "id": "RF1c",
+   "file": "ve/defaults.py",
+   "bug": "review F1: forced entries not bound to rule-then-tuple order",
+   "find": "if order != sorted(order) or",
+   "replace": "if False or",
+   "test": "tests/test_defaults_answer.py::test_forced_order_rule_then_tuple"
+  },
+  {
+   "id": "RF1d",
+   "file": "ve/document/cli.py",
+   "bug": "review F1: --sentence and --narrowing accepted with the flag",
+   "find": "if args.under or args.sentence or args.narrowing:",
+   "replace": "if args.under:",
+   "test": "tests/test_defaults_lean.py::test_flag_refusals"
+  },
+  {
+   "id": "RF1e",
+   "file": "ve/document/cli.py",
+   "bug": "review F1: a document with no soft norms accepted by the flag",
+   "find": "if doc.get(\"soft_document\") is None or _content_bearing(doc)",
+   "replace": "if _content_bearing(doc)",
+   "test": "tests/test_defaults_lean.py::test_flag_refusals"
+  },
+  {
+   "id": "RF1f",
+   "file": "ve/document/cli.py",
+   "bug": "review F1: a reading set that is not content-bearing accepted by the flag",
+   "find": " or active_reading_sets(\n            doc[\"meta\"].get(\"reading_sets\", [])):",
+   "replace": ":",
+   "test": "tests/test_defaults_lean.py::test_flag_refusals"
+  },
+  {
+   "id": "RF1g",
+   "file": "ve/defaults.py",
+   "bug": "review F1 class: a DOES-NOT-FOLLOW model row with no situation and no forced entries accepted",
+   "find": "if (\"situation\" in row) != (row[\"verdict\"] == \"DOES-NOT-FOLLOW\") or",
+   "replace": "if False or",
+   "test": "tests/test_defaults_answer.py::test_forced_condition_index_rule_and_tuple"
+  },
+  {
+   "id": "RF9a",
+   "file": "ve/defaults.py",
+   "bug": "review F9: the strict answer shown when Lean rejected the strict certificate (valid read as `is not None`)",
+   "find": "[\"valid\"] is True",
+   "replace": "[\"valid\"] is not None",
+   "test": "tests/test_defaults_answer.py::test_strict_answer_only_when_lean_says_valid"
+  },
+  {
+   "id": "RF9b",
+   "file": "ve/defaults.py",
+   "bug": "review F9 class: a coherence row bound by another kind's binding",
+   "find": "if kind == \"defaults-coherence\":",
+   "replace": "if False:",
+   "test": "tests/test_defaults_answer.py::test_answer_binds_each_kind_with_its_binding"
+  },
+  {
+   "id": "RF9c",
+   "file": "ve/defaults.py",
+   "bug": "review F9 class: a model row bound by the certificate binding",
+   "find": "if kind == \"defaults-certificate\":",
+   "replace": "if kind != \"defaults-elaborate\":",
+   "test": "tests/test_defaults_answer.py::test_answer_binds_each_kind_with_its_binding"
+  },
+  {
+   "id": "RF10a",
+   "file": "ve/defaults.py",
+   "bug": "review F10: the collision decider's fallback to the document's exception_decider dropped (PROBE F10)",
+   "find": "(rule.get(\"exception\") or {}).get(\"decided_by\") or soft.get(\"exception_decider\") or \"unstated\"",
+   "replace": "(rule.get(\"exception\") or {}).get(\"decided_by\") or \"unstated\"",
+   "test": "tests/test_defaults_answer.py::test_collision_deciders_truth_table"
+  },
+  {
+   "id": "RF10b",
+   "file": "ve/defaults.py",
+   "bug": "review F10: the document's exception_decider takes precedence over the rule's own (PROBE F10)",
+   "find": "(rule.get(\"exception\") or {}).get(\"decided_by\") or soft.get(\"exception_decider\") or \"unstated\"",
+   "replace": "soft.get(\"exception_decider\") or (rule.get(\"exception\") or {}).get(\"decided_by\") or \"unstated\"",
+   "test": "tests/test_defaults_answer.py::test_collision_deciders_truth_table"
+  },
+  {
+   "id": "RF10c",
+   "file": "ve/defaults.py",
+   "bug": "review F10: the collision's deciders bound as a subset of the rules' deciders and \"unstated\" (the check before the fix)",
+   "find": "if collision[\"deciders\"] != _deciders(case, rules):",
+   "replace": "if not set(collision[\"deciders\"]) <= {*_deciders(case, rules), \"unstated\"}:",
+   "test": "tests/test_defaults_answer.py::test_collision_deciders_truth_table"
+  },
+  {
+   "id": "RF10d",
+   "file": "ve/defaults.py",
+   "bug": "F10 hunt 1: forced entries ordered by rule name, not the request's rule order",
+   "find": "order = [(list(rules).index(e[\"rule\"]), ",
+   "replace": "order = [(e[\"rule\"], ",
+   "test": "tests/test_defaults_answer.py::test_forced_entries_in_the_requests_order"
+  },
+  {
+   "id": "RF10e",
+   "file": "ve/document/cli.py",
+   "bug": "F10 hunt 1: the flag sends every unit but norms as a premise",
+   "find": "if u[\"kind\"] == \"asserted\" and u[\"content\"] is not None]",
+   "replace": "if u[\"kind\"] != \"norm\" and u[\"content\"] is not None]",
+   "test": "tests/test_defaults_lean.py::test_flag_asks_with_the_documents_norms_and_facts"
+  },
+  {
+   "id": "RF10f",
+   "file": "ve/defaults.py",
+   "bug": "F10 hunt 2: a collision accepted on the first coherence target only",
+   "find": "collision[\"rules\"] not in pairs",
+   "replace": "collision[\"rules\"] != pairs[0]",
+   "test": "tests/test_defaults_answer.py::test_a_collision_on_any_colliding_pair"
+  },
+  {
+   "id": "RF10g",
+   "file": "ve/defaults.py",
+   "bug": "F10 hunt 2: ask binds assumptions to the labels in name order",
+   "find": "answer(case, [label for label, _ in elaborated[\"default_premises\"]], targets)",
+   "replace": "answer(case, sorted(label for label, _ in elaborated[\"default_premises\"]), targets)",
+   "test": "tests/test_defaults_answer.py::test_assumptions_in_the_elaborations_label_order"
+  }
+ ]
+}
