@@ -14270,6 +14270,7 @@
         "VE.Calc.Run.claimFields",
         "VE.Calc.Run.display",
         "VE.Calc.Run.exact",
+        "VE.Calc.Run.factJson",
         "VE.Calc.Run.kind",
         "VE.Calc.Run.line",
         {
@@ -14285,8 +14286,11 @@
             "VE.Calc.Run.outcomes_words"
           ]
         },
+        "VE.Calc.Run.reads",
         "VE.Calc.Run.rowJson",
+        "VE.Calc.Run.shownJson",
         "VE.Calc.Run.sides",
+        "VE.Calc.Run.stepJson",
         "VE.Calc.Run.tie",
         "VE.Calc.Run.truncated",
         {
@@ -14295,7 +14299,8 @@
             "VE.Calc.Run.outcomes_words"
           ]
         },
-        "VE.Calc.Run.wordsIn"
+        "VE.Calc.Run.wordsIn",
+        "VE.Calc.Shown"
       ],
       "G[V]": [
         {
@@ -14327,8 +14332,9 @@
       "C": [
         "VE.Calc.Check.fault",
         "VE.Calc.Check.run",
+        "VE.Calc.Check.runShown",
         "VE.Calc.Claim.factsIn",
-        "VE.Calc.Derive.outcome",
+        "VE.Calc.Derive.shown",
         "VE.Calc.instDecidableOutcomeMeansClaimDecided"
       ]
     },
@@ -14348,6 +14354,7 @@
         "VE.Calc.RunExamples.free",
         "VE.Calc.RunExamples.h6",
         "VE.Calc.RunExamples.h6P",
+        "VE.Calc.RunExamples.h6pCertificate",
         "VE.Calc.RunExamples.h8",
         "VE.Calc.RunExamples.identity",
         "VE.Calc.RunExamples.identityFamilies",
@@ -14371,14 +14378,17 @@
         "VE.Calc.RunExamples.r1",
         "VE.Calc.RunExamples.r2",
         "VE.Calc.RunExamples.r3",
+        "VE.Calc.RunExamples.r3Certificate",
         "VE.Calc.RunExamples.r4",
         "VE.Calc.RunExamples.r827",
+        "VE.Calc.RunExamples.readsCase",
         "VE.Calc.RunExamples.req",
         "VE.Calc.RunExamples.roundsOf",
         "VE.Calc.RunExamples.rowFieldCases",
         "VE.Calc.RunExamples.rsd",
         "VE.Calc.RunExamples.says",
         "VE.Calc.RunExamples.sdt",
+        "VE.Calc.RunExamples.shown",
         "VE.Calc.RunExamples.stated",
         "VE.Calc.RunExamples.steps",
         "VE.Calc.RunExamples.stringSites",

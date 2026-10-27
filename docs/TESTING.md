@@ -140,6 +140,10 @@ A `nightly` corpus-scale rerun in a listed file is left out and named under `lef
 
 `python3 tools/platform_contract.py estimate` sums the measured Mac seconds of the listed tests from `tests/heavy-durations.json`. It is scheduling metadata: no test fails on a duration.
 
+## Mutants of Lean definitions: `tools/trust_mutants.py`
+
+`tools/trust_mutants.py` writes mechanical mutants of the Lean definitions a branch adds or changes, builds each in a scratch copy and reports which checks kill it. Its docstring is the one statement of the rules; this is a summary. With no flag it mutates the definitions `tools/trust_map.py` counts as trusted, the survivors standing ruling R16 asks about. `--classes all`, or a list of trust_map class names, also mutates the decoders, admission checks and limits that trust_map does not count as trusted. Reviewers plant their hand mutants in those definitions, and eff-20261026-1 found a survivor on the reviewer's line, at the reviewed tree, in 17 of 46 such mutants. Theorems, proof helpers and checks are never mutated. Each verdict line and the summary name the class, so a survivor in a trusted definition (R16) reads apart from review-risk evidence. The selection is one of the run's inputs, so `--rescore` never reuses or carries a verdict across another selection. The tool is builder and reviewer evidence only: no gate, merge train or nightly reads it.
+
 ## Speed is not a correctness criterion
 
 Under load, any elapsed-time bound can fail a correct program. A merge-train suite at load 50 failed on a 5-second default and on a fake service's 0.5-second retry. The rules:
