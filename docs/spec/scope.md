@@ -1,6 +1,9 @@
 # Cross-sentence scope (`scope@0`): item-1 specification
 
-> Status: item-1 specification, draft 4, 2026-10-13, design only: no product code, test or generated file changes.
+> Status: item-1 specification, draft 5, 2026-10-27, design only: no product code, test or generated file changes.
+> Draft 5 adds section 11 (sc-5r): per choice over a reading set a governed unit owns, with its stub
+> [scope/SpecStubs_sc5r.lean](scope/SpecStubs_sc5r.lean). It changes no text of sections 1 to 10 other than added
+> lines (the change log, two pins in 8.1, one line in 9.4, one in 10); its statement review is pending.
 > Draft 4 records the phase-1 results ([docs/research/scope-phase1.md](../research/scope-phase1.md), SC-M0) beside
 > [scope-PLAN.md](scope-PLAN.md) draft 5; it changes no definition, statement or fixture value (9.6).
 > Draft 3 applies the confirmation round's one finding (`manage-agents/scope-p3ver1.final.md`): the document mode
@@ -23,7 +26,17 @@
 > not by hand.** Fixtures over the pilot layout use the pilot's own bytes for the units involved, shortened only
 > inside sentences (7.0).
 
-## Changes in this draft (draft 4)
+## Changes in this draft (draft 5)
+
+- **Draft 5 (2026-10-27, sc-5r): new section 11**, the per-choice `govern` over a `readings@1` set on a unit inside a
+  governed list (the DRI's route for the 06:00Z Oct 27 pilot's `ScopeReadings: u0165.s03`): `governChoice`, the
+  sibling of `governAt` (5.7's `pick` cannot carry a unit's reading), and `governSets`; restated
+  `governAt_no_frontier`, `governAt_preserves`, `scope_choices`, `readings_refused` and `scope_admission` for this
+  case; diagnostics `ScopeChoice` and `ResourceLimit: scope choices`; fixtures SR-1 to SR-lim computed in the stub;
+  the build plan for sc-5rb. No approved definition, statement or fixture value changes; 8.1, 9.4 and 10 gain one
+  added line or row each.
+
+Draft 4:
 
 - **No definition, theorem statement, diagnostic or fixture value changes,** so the scratch stub needs no
   re-elaboration: phase 1 measured the pilots and checked the spec's layout results (C11), and found nothing a statement
@@ -1774,6 +1787,8 @@ separate the two readings.
 | `Pinned.rightNames`, `Pinned.withReach` | rights@0 (`VE.Rights.Limitation.scope`) | SC-6, after S2b |
 | attitude guard nodes | AT-3a, inside W1's `decodeNorm` and soft's `decodeSoftNorm` | SC-2's claim |
 | AR-10's profile-gate row and mode registry | AR-10 | SC-1b, SC-1c |
+| `Pinned.JsonWF`, `Pinned.HasStr`, `Pinned.payload` (section 11's stub) | sc-1ae (the DRI's fix (a) of 2026-10-27; 4.2's `HasStr`, `payload`) | sc-5rb, when sc-1ae merges |
+| `Pinned.checkDocSets`, `Pinned.withGoverned` (section 11's stub) | sc-5rb's own: `checkDoc` and `withUnits` as 11.4 changes them | written by sc-5rb |
 
 ### 8.2 Limits
 
@@ -1915,6 +1930,9 @@ approved before its batch is built. SC-1a, SC-3a and the other batches do not wa
 6. *The pins.* `Pinned.ruleTyped` and `Pinned.jointPicks` are pinned. `govern_provenance` and
    `govern_no_new_symbols` are stated per choice, through `governAt`, and `scope_choices` over lf-14d's joint set.
 
+Section 11 (draft 5, sc-5r) is the addendum for reading sets that a governed unit owns, split out of SC-5 by the DRI
+(2026-10-27); SC-5's frontier obligations above are unchanged by it.
+
 ### 9.5 Correction from the confirmation round (draft 3)
 
 The confirmation round on draft 2's diff (`manage-agents/scope-p3ver1.final.md`) found every 9.3 correction applied
@@ -1987,3 +2005,238 @@ draft 5, 5.0, records every check with its verdict and what it gates. What bears
       executed fixture (9.3); nothing is proved yet.
 - [ ] The layout results C11 checks hold on the full pilot layout, not only on excerpts (7.0); draft 4 changes no
       statement, so the stub was not re-elaborated for it.
+- [ ] Section 11: every statement is true as written, on inputs no parser builds too (`Pinned.JsonWF` where a
+      statement reads a rebuilt object); the route is the DRI's (per choice, never the set whole, never one reading);
+      every 11.6 value follows from the definitions (each a `#guard` in the stub).
+
+## 11. Per choice over a reading set a governed unit owns (addendum sc-5r, draft 5)
+
+> Status: addendum, draft 5, 2026-10-27, statement review pending; design only. It is the route the DRI chose for
+> the 06:00Z Oct 27 constitution pilot's finding 1 (`ScopeReadings: u0165.s03`;
+> `manage-agents/reviews/dri-decisions-20261027-scope-readings.md` item 1): check the governed list once per joint
+> choice of the reading set, and admit the document only when every choice is admitted. The set is never kept whole
+> as one opaque unit and never collapsed to one reading. It changes no definition, statement or fixture of sections
+> 1 to 10, and no behaviour until its build, **sc-5rb**, merges after this section's statement review passes.
+> **The Lean text is the stub's.** Every definition and statement named here is written in Lean in
+> [scope/SpecStubs_sc5r.lean](scope/SpecStubs_sc5r.lean). That file is part of this section, as pk-1s's stub is part
+> of the premise-packs spec. It elaborates against `main` unchanged with Lean v4.24.0
+> (`cd lean && lake env lean ../docs/spec/scope/SpecStubs_sc5r.lean`), with `sorry` for every proof. It checks every
+> value in 11.6 with a `#guard` over `VE.Scope.Examples`' hard-constraint document (`hcDoc`, `parts`, `g1`, `g2`).
+
+### 11.1 The reading sets it covers
+
+A reading set is **governed per choice** when its unit `u` (`governedSetUnits D`):
+- is a unit of the document and is written without content (`null`, as the pilot writes u0165.s03);
+- has exactly one entry in `reading_sets`, and that entry holds at least one reading;
+- is covered by some governor (its reach regenerated on `D`, as `coversU` reads it);
+- is no governor's own unit;
+- is covered by no `frontier` reach and no `fixed` reach.
+
+In the pilot this is u0165.s03's set `scope-u0165-s03` (readings `wide` and `narrow`) inside u0164.s02's list. Its
+readings are written in the item's own form: a `part` under a frame, a `norm` under a re-guard or carve-out alone.
+These sets are built by lf-14d and the readings route. They are called and never edited.
+
+Every other reading set is handled as today:
+- **Refused, `ScopeReadings: <unit>` (unchanged text).** A set on a governor's own unit: the governing words
+  themselves have readings, which is SC-5's case. A set that a frontier or fixed reach covers: no frontier reach
+  passes admission before SC-5 (`UnsupportedProfile`), and SC-E1 and the deictic frontier stay gated. A unit with
+  several versions of its set (choosing the active one is left to a later addendum). A set with no reading. A set
+  on a unit that also has written content: a choice replaces the unit's content, so a unit with both is refused, and
+  scope never picks one of the two.
+- **Carried unchanged.** A set on a unit no governor covers, exactly as `govern` carries it today.
+
+### 11.2 The definitions
+
+**Why a sibling, not 5.7's `governAt`.** `governAt D pick` takes `pick : String → Option (List String)`, which maps
+a governor id to a reach, and `fixAt` rewrites governors only. A reading-set choice picks a unit's *content*
+(`readings[i].content`), and no field of `Governor` carries that, so `pick` cannot express it. The sibling is
+`governChoice D ch := govern (atChoice D ch)`. Here `ch` is lf-14d's own `VE.Discourse.Choice`, one
+`(set id, version, reading index)` per governed set, so `governAt` and `fixAt` stay as written for SC-5.
+
+| Name | What it is |
+|---|---|
+| `governedSetUnits D`, `governedSets D` | 11.1's units, and their entries of `reading_sets` in document order |
+| `setShapes D` (`shapeOf`) | each governed set as lf-14d's enumeration reads it: id, version and the number of its readings (`VE.Route.Admission.ReadingSet` with a placeholder formula per reading; `mem_allChoices` shows that the enumeration reads nothing else) |
+| `setChoices D` | lf-14d's `VE.Discourse.allChoices (setShapes D)` in lf-14d's order, or `ResourceLimit: scope choices` when `VE.Discourse.productSize` exceeds `choiceLimit = 64` (lf-14d's limit and the readings route's `maxChoices`) |
+| `atChoiceOn su doc ch`, `atChoice D ch` | the document under one choice: each unit of `su` carries the content of its set's chosen reading, and the sets on `su` leave `reading_sets`; nothing else changes |
+| `governChoice D ch` | `govern (atChoice D ch)`: every theorem of `govern` holds of it as written |
+| `choiceText`, `choiceFault`, `faultOf` | 11.5's texts |
+| `assemble` | the one answer built from the per-choice answers (below) |
+| `governSetsWith gv D`, `governSets D := governSetsWith govern D` | the entry. The run path is `governSetsWith governFast` (1.5.8) |
+
+`governSets D`, in fault order:
+1. With no governed set, `govern D`: today's path, byte for byte as a value (`governSets_no_sets`).
+2. More than 64 joint choices: `ResourceLimit: scope choices`, which is UNKNOWN and never a truncated product.
+3. `govern` under every choice, in lf-14d's order. If any choice faults, the answer is the first fault
+   (`faultOf`, 11.5). Every choice is computed, so a fault every choice has is told apart from one that only some
+   choices have.
+4. `assemble`. Every unit outside the governed set units is written as the first choice writes it; if another
+   choice writes it differently, the answer is `ScopeReadings: <unit>: differs between choices …`. Each governed
+   set unit stays as written. Each reading `i` of a governed set gets the content its unit has under the choices
+   that pick `i`, refused in the same way when two of those choices differ (another governed set's choice, or a
+   `rules` reach or a graph effect that reads the reading). The comparison is `VE.Readings.Wire.jeq`, the readings
+   route's tree equality, proved sound (`jeq_iff`). Lean's `Json` `==` and `compress` are `partial` and cannot be
+   reasoned about.
+
+**What the chain then does (unchanged).** The answer is one document whose governed sets hold composed rules. The
+document mode hands the chain GOVERN's units **and reading sets** (`Pinned.withGoverned`, 11.4). The chain's readings
+route enumerates the compatible joint choices of all the document's reading sets and reports CONFLICT-FREE only when
+every choice is (`VE.Readings.Components`, `foldK_conflict_free`). By `governSets_every_choice`, each such choice of
+the answer, restricted to the governed sets, is exactly `govern` of that choice. So the governed list is checked
+once per joint choice. Scope admits the document only when every choice governs without a fault, and the chain
+calls it conflict-free only when every choice is.
+
+**Reading members.** GOVERN writes only a governed reading's `content`. Its `id`, `kind`, `meaning_id` and
+`admission` are carried (`governSets_preserves`). A governed reading's `meaning_id` names its composed rule, as a
+governed unit's does (5.2, SC-1b). Whatever check reads a norm reading's `meaning_id` today reads it on the answer
+(sc-5rb's obligation 3, 11.7).
+
+### 11.3 The statements
+
+Each statement is restated for this case, beside the original; none of sections 5.1 to 5.7 changes. Hypotheses on
+JSON take `Pinned.JsonWF`: every object at any depth is a well-formed tree. This is the DRI's fix (a) for sc-1ad's
+F-raw (featureplan-gates 2026-10-27 item 2). Its parser lemma, proved by sc-1ae or SC-1b, discharges it for every
+decoded document. `governSets_readings_refused` needs it too: `atChoiceOn` rebuilds `reading_sets` with
+`setObjVal!`, and on a tree that is not well formed a lookup can miss the member it wrote.
+
+| Statement | Restates | In plain English |
+|---|---|---|
+| `governSets_no_sets` | `governAt_no_frontier` | With no reading set governed per choice, the answer is exactly `govern`'s. |
+| `governSetsFast_eq` | `governFast_eq` | The run path answers exactly as the statement does. |
+| `governSets_preserves` | `governAt_preserves`, `govern_preserves` | The answer keeps every document member other than `units` and `reading_sets`, the unit order, every unit member other than `content`, every governed set unit as written, and every other reading set. It also keeps every member of a governed set and of its readings, except the readings' `content`. |
+| `governSets_every_choice` | `governAt_preserves` ("every theorem of SC-1a holds per choice") | Every joint choice of the governed sets, read off the answer, is exactly `govern` of that choice. |
+| `governSets_strings` | `govern_strings`, per choice (9.4 item 6) | Every string in the answer is a string of the document or of a governor's payload, so no reading brings in a new symbol. |
+| `scope_set_choices` | `scope_choices` | The choices checked are lf-14d's joint choices over the governed sets: every choice lf-14d admits under any constraints is checked, and with no constraints the two lists are equal. |
+| `governSets_choice_refused` | — | If `govern` faults under one choice, the document is refused: it is admitted only when every choice is. |
+| `faultOf_every` | — | A fault that every choice has is reported in the document's own words, naming no choice. |
+| `choiceFault_limit` | 9.4 item 4 | A resource limit under a choice is passed on unchanged (UNKNOWN), never as a refusal of that choice. |
+| `governSets_limit` | `frontier_limit_iff`'s rule | More joint choices than the limit is `ResourceLimit: scope choices` (UNKNOWN), never a truncated product. |
+| `governSets_readings_refused` | `readings_refused` | A reading set this section does not govern per choice, but that a governor owns or reaches, is still refused. |
+| `scope_admission_sets` | `scope_admission` (5.2) | The document mode's answer on a `scope@0` document is the chain's answer on `governSets`' units and reading sets, with governor statuses folded as before. |
+
+`govern_provenance` and `govern_no_new_symbols` hold per choice as written, because `governChoice D ch` is `govern`
+of a document. With `governSets_every_choice` they hold for each choice the chain reads. Of the SC-5 obligations
+(9.4), this case raises only items 4 and 6 (above). Items 1 to 3 do not arise: no reach is fixed, `governedSetUnits`
+reads reaches regenerated on `D`, so nothing recurses into `governSets`, and every governor records its units as
+today. Item 5 does not arise either: graph governors over a governed set are allowed, and a dependence on the choice
+is refused, step 4. `ruleTyped` and `jointPicks` stay SC-5's pins: lf-14d's `allChoices` and `productSize` are merged
+and are called directly.
+
+### 11.4 What the build replaces, and what stays refused
+
+- **`readings_refused` and F-rs stay** as they are, proved, about `govern`, the per-choice core: a choice's document
+  has no governed set left, so `govern` never sees one. What changes is the call. The document mode's
+  `checkDoc` calls `governSetsWith governFast` in place of `governFast`. The refusal the document mode gives is
+  then `governSets_readings_refused`, and F-rs's case (a set on u0165.s03 inside the list) is admitted at the
+  document level (SR-1). F-rs's `govern` `#guard`s in `lean/VE/Scope/Examples.lean` stay unchanged and stay in the
+  selected set, as the DRI's condition requires.
+- **`scope_admission` is replaced by `scope_admission_sets`.** As approved it names `govern` and `withUnits`. Once
+  `checkDoc` calls `governSets` it is false on a document with a governed set. Its text holds for a document with
+  none, by `governSets_no_sets`.
+- **`withUnits` becomes `Pinned.withGoverned`.** Today the case hands `check` GOVERN's `units` only. Without
+  `reading_sets` the chain would read each governed reading as written (a bare part), not composed.
+- **Still refused:** the sets of 11.1's first list item; a fault under any choice (11.5); a dependence on the choice
+  (step 4).
+- **Resource limits per choice (9.4 item 4).** A limit `govern` meets under a choice (a decoder limit in the graph
+  step's `ruleTable`) is passed on unchanged (SR-lim). A limit the chain meets later on one choice's composed rule
+  is the chain's UNKNOWN for that choice, which keeps the document from CONFLICT-FREE. No choice is ever dropped or
+  counted as failed by exhaustion. When the first fault in lf-14d's order is a limit and a later choice has a
+  definite fault, the answer is the limit (UNKNOWN): conservative, never a verdict.
+
+### 11.5 Diagnostics (6.1 style)
+
+| Text | When | Stage |
+|---|---|---|
+| `ResourceLimit: scope choices` | more than 64 joint choices of the governed sets (UNKNOWN) | `governSets` 2 |
+| `ScopeChoice: <choice>: <fault>` | `govern` faults under some choices but not all; the first such choice in lf-14d's order. `<choice>` lists each governed set as `<unit> <set>@<version>:<reading id>`, joined by `, ` | `governSets` 3 |
+| `<fault>`, `govern`'s own text | a fault every choice has (a block fault, a set this section does not govern) | `governSets` 3 |
+| a `ResourceLimit…` text, unchanged | a resource limit under a choice (UNKNOWN) | `governSets` 3 |
+| `ScopeReadings: <unit>: differs between choices <choice> and <choice>` | a unit outside the governed set units, or a governed set's reading, written differently under two choices | `governSets` 4 |
+
+For example, a narrow reading that also writes `sign`, under the frame that writes `sign`, gives
+`ScopeChoice: u0165.s03 scope-u0165-s03@1:narrow: ScopeConflict: u0165.s03: sign`.
+
+### 11.6 Acceptance fixtures (computed in the stub)
+
+The hard-constraint document of 7.1 (`hcDoc`, the norms chain's environment). u0165.s03 has no content. Its set
+`scope-u0165-s03` holds `wide` and `narrow`, each the part `{name: hc-cyberweapons, predicate:
+cyberweapon_creation_permitted, guard}` with the pilot's two category shapes (`s03_scope.py`) as stand-in guards.
+
+| Id | Fixture | Expected (computed) | Statement |
+|---|---|---|---|
+| SR-1 | u0165.s03's set inside the list, frame `g1` | `governedSetUnits = [u0165.s03]`; two choices `[(scope-u0165-s03, 1, 0)]`, `[(…, 1, 1)]`; admitted. The readings' contents are the composed rules `{"norm":{"guard":<wide>,"name":"hc-cyberweapons","over":[],"predicate":"cyberweapon_creation_permitted","sign":false,"unless":[]}}` and the same with `<narrow>`. u0165.s03 stays `null`. u0165.s01 is F1-g's | `governSets_preserves`, `scope_set_choices` |
+| SR-1-pc | SR-1, each choice | `atChoiceOn` of the answer equals `governChoice`'s answer (`jeq`), for both choices | `governSets_every_choice` |
+| SR-1-g2 | SR-1 with `g2` (u0173.s01's re-guard over the list name) | each reading re-guarded as the items are: `wide` in F3's shape, `narrow` equal to `govern`'s rule for u0165.s03 with the narrow part written in place; u0165.s01 as `govern` gives it | `governSets_every_choice` |
+| SR-c | the narrow reading also writes `sign` | `ScopeChoice: u0165.s03 scope-u0165-s03@1:narrow: ScopeConflict: u0165.s03: sign` | `governSets_choice_refused` |
+| SR-c-nr | the wide reading an assertion `["top"]` | `ScopeChoice: u0165.s03 scope-u0165-s03@1:wide: ScopeNotARule: u0165.s03`, refused, never skipped | `governSets_choice_refused` |
+| SR-cap | sets of 8 and 9 readings on u0165.s03 and u0165.s05 (72 choices); 8 and 8 (64) | `ResourceLimit: scope choices`; 64 are checked and admitted | `governSets_limit` both ways |
+| SR-u | an unrelated set on u0166.s01, beside SR-1's set and alone | returned unchanged (`jeq`) both times; alone, the answer is `govern`'s | `governSets_preserves`, `governSets_no_sets` |
+| SR-0 | no reading set: F1-g's document; F-id's | the answer equals `govern`'s, as a value, both times | `governSets_no_sets` |
+| SR-g | a set on the governor's unit u0164.s02 beside SR-1's; SR-1's set with u0165.s03's part also written; the frame recording six units | `ScopeReadings: u0164.s02`; `ScopeReadings: u0165.s03`; `ManifestMismatch: scope.governors.g1.units`, each named with no choice | `governSets_readings_refused`, `faultOf_every` |
+| F-rs | `govern` on SR-1's document | `ScopeReadings: u0165.s03`, unchanged | `readings_refused` |
+| SR-dep | r9 on u0166.s01 `precedes` over `rules [hc-2, hc-cyberweapons]` (hc-2 on r9's predicate); the narrow reading on another predicate | `ScopeReadings: u0166.s01: differs between choices u0165.s03 scope-u0165-s03@1:wide and u0165.s03 scope-u0165-s03@1:narrow`; with one predicate in both readings, admitted, r9's `over` is `["hc-2","hc-cyberweapons"]` | `governSets_every_choice` (why step 4 checks) |
+| SR-lim | SR-dep's precedence with `gN`'s narrowing; the narrow reading's guard 63 levels deep, 64 after the narrowing; 62 | `ResourceLimit: formula depth exceeds 64`, unchanged; at 62, admitted | `choiceFault_limit` both ways |
+
+### 11.7 The build: sc-5rb
+
+**Depends on** this section's PASS, and on sc-1ae for the four statements with `Pinned.JsonWF`
+(`governSets_preserves`, `governSets_every_choice`, `governSets_strings`, `governSets_readings_refused`). sc-1ae's
+`govern_preserves`, `govern_strings` and parser lemma are what their proofs use. If sc-1ae has not merged, sc-5rb
+builds the rest and these four are **sc-5rc**, as `decodeScope_bound` waited for sc-1ae at SC-1b.
+
+**Files** (one owner each; no `mutual`, no `partial`):
+1. `lean/VE/Scope/Readings.lean`, new: 11.2's definitions, verbatim from the stub. Trust: about **+110** lines,
+   G[V] glue, untied (the stub's definition lines with their docstrings).
+2. `lean/VE/Scope/ReadingsTheorems.lean`, new: 11.3's proofs (P, not trusted). Their `#print axioms` lines go in
+   `lean/VE/Audit.lean`.
+3. `lean/VE/Service/Document.lean`: `checkDoc` calls `VE.Scope.governSetsWith VE.Scope.governFast`; `withGoverned`
+   hands `check` GOVERN's `reading_sets` with its `units`. The readings route's `meaning_id` check of a governed
+   reading is confirmed on the answer, with a test. Trust: about **+4** lines G.
+4. `lean/VE/Service/ScopeAdmission.lean`: `scope_admission_sets` in place of `scope_admission` (P).
+5. `lean/VE/Scope/ReadingsExamples.lean`, new (T): 11.6's `#guard`s.
+6. `tests/data/scope/hard-constraints-readings.scope.md` and `tests/test_scope_document.py`: SR-1 end to end through
+   `ve document check`, a part document with `readings@1` listed and the set as `s03_scope.py` gives it, written as
+   parts. Expected: two choices, CONFLICT-FREE, u0164.s02 OPEN by `governorStatus`. Also SR-c through the CLI, and
+   the R8 fuzz over the new answer.
+7. `ve/document/lean.py`, only if the answer names readings: bound by set id, version and reading id, never by
+   equality with the authored part. This is sc-1b's review finding F1: content that Lean composes must not be bound
+   to the authored text.
+8. Generated files through `tools/regen_generated.py --write` (inventories, `lean/checkers.lock`, route cases).
+
+**Trust:** about **+114** lines (Readings.lean about 110, Document.lean about 4), K +0. That fits **R16** (at most
+150), with a FOLLOW-UPS row for the ties pass. R6 does not apply: no decision path is deleted, and `admitBlock`'s
+readings check stays, since it refuses the sets of 11.1's first list item. **DELTA:** documents refused today with
+`ScopeReadings` on a governed unit are admitted. No standing ruling covers that widening, so sc-5rb's row needs the
+DRI's signature, asked for with this section's PASS.
+
+**Seeded bugs**, one per behaviour, each breaking a named `#guard` or test, plus one mutant per new trusted
+definition (R16). Lean:
+- `governedSetUnits` without the governor-unit test (SR-g);
+- `atChoiceOn` keeping the governed sets (SR-1: `ScopeReadings`);
+- `faultOf` always naming a choice (SR-g, `faultOf_every`);
+- `choiceFault` naming a limit (SR-lim);
+- `assemble` without the unit agreement check (SR-dep);
+- `setChoices` with `≥` (SR-cap at 64);
+- `readingIn` returning the written reading (SR-1's contents);
+- `withGoverned` without `reading_sets` (the end-to-end test: the chain reads a bare part).
+
+Python: the relay binding a governed reading by content equality (the end-to-end test).
+
+**Bytes:** 0 for this item and for sc-5rb (estimate). The constitution's `scope@0` M13 number (u0164.s02, +22 B)
+waits for the pilot's rewrite of the hard-constraint block (scope queue 4.4 step 2). Nothing is claimed before a pilot
+audit.
+
+### 11.8 For the statement review
+
+1. **The full product, not the compatible choices.** Scope checks every combination of the governed sets' readings,
+   which contains every compatible joint choice under any coupling, narrowing or constraint (`scope_set_choices`).
+   A fault under a combination the document's constraints exclude therefore refuses the document. That is
+   conservative: a refusal, never a wrong verdict. Restricting the check to the compatible choices needs the
+   chain's constraints pinned for scope; left for later.
+2. **A decoder limit in `baseName` is read as no name.** On `main`, `covered`'s `rules` reach reads `baseName`, which
+   turns every decoder error into "no name", `ResourceLimit` included. A `rules` reach naming a rule whose base guard
+   meets the limit is therefore `ScopeUnknownRule`, a definite refusal, where 6.2 says exhaustion is UNKNOWN. Found
+   while computing SR-lim (it reaches `govern` today without any reading set). It is not changed here (approved 5.1
+   text); recorded in FOLLOW-UPS for the scope queue.
+3. **Several versions of one unit's set** stay refused (11.1). The readings route reads the latest version (`active`).
+   A later addendum can govern that one.
