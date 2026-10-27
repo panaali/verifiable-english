@@ -78,9 +78,9 @@ naming a limit (SR-lim); `assemble` without the agreement check (SR-dep); `setCh
 
 `zsh mac-pytest.sh --select -- --base 4a850162c --run`, on ve-mac-1 (aarch64), 6 jobs, 3,971 s: **220 units
 recorded, 0 failed, exit 0** (among them `tests/test_scope_lean.py`, `tests/test_scope_document.py`,
-`tests/test_trust_budget.py`, `tests/test_frozen_sources.py`, `tests/test_trust_mutants.py`). It ran on the tree at
-commit `ce20ad613` (stub and spec section 11 committed). The later commits edit only these four docs files: one
-stub hypothesis, one fixture, spec prose, this report and the mutants JSON. After the last stub edit the stub check
+`tests/test_trust_budget.py`, `tests/test_frozen_sources.py`, `tests/test_trust_mutants.py`). It ran on commit `b38c19e10`
+(the runner's summary line: "HEAD b38c19e1 (clean)"). The later commits edit only docs files: one hypothesis added
+to `governSets_strings` in the stub, one paragraph in spec 11.3, this report and the mutants JSON. After the last stub edit the stub check
 was rerun clean, and so were the 8 seeded bugs. No test reads these files beyond what that run covered.
 
 ## Self-review against BUILDER-CHECKLIST
