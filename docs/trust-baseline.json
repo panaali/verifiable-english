@@ -1209,6 +1209,13 @@
    "reason": "ap-3b: lean/VE/Acts/Linearize.lean +46 (S: joinWord, Part.toks, listToks, Filler.toks, Atom.normal, tokStr, tokText, Atom.withTo, Atom.text, partAct); Table.lean paraphrases G[R] (not trusted); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3b, 2026-10-18",
    "commit": "0e7a813e8841bbd7cf103229cf37386b8699896d"
+  },
+  {
+   "class": "V",
+   "lines": 40,
+   "reason": "me-5d: VE/Calc/Run.lean D[V] +40 (Shown, Run.factJson, Run.stepJson, Run.reads, Run.shownJson: a derivation's certificate and counterexample, spec 3.4); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-5d, 2026-10-18",
+   "commit": "ab010c3f02bca97c3d17775ba85382bf85e208eb"
   }
  ]
 }
