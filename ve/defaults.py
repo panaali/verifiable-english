@@ -231,23 +231,19 @@ class _Search:
         the prover finds (bound as `bindPair` binds it), and a `collision` where some pair's premise fails in a model
         of the gate's premises; each None when there is nothing to send."""
         from .entailment import prove_entailment
-        from .wire import digest
+        from .norm_defaults_route import _source_binding
+        from .readings_verdicts.choice import _FilledView
         if not self.targets or self.gate is None:
             return {}
         premises = [self.formula(ast) for ast in self.gate]
-
-        def meaning(ast):
-            return digest(f"ve-meaning-{self.source.identity_version}\n",
-                          {"environment_id": self.source.environment_id, "ast": ast})
+        view = _FilledView(self.source, self.env, (), ())
         pairs, collision = [], None
         for m, n, ast in self.targets:
-            entry = {"rules": [m, n]}
-            proof = prove_entailment(self.env, premises, self.formula(ast), max_steps=MAX_STEPS, _background=False)
+            entry, target = {"rules": [m, n]}, self.formula(ast)
+            proof = prove_entailment(self.env, premises, target, max_steps=MAX_STEPS, _background=False)
             if proof.status == "Found":
-                entry["certificate"] = {**proof.certificate, "environment_id": self.source.environment_id,
-                                        "premise_meaning_ids": [meaning(a) for a in self.gate],
-                                        "conclusion_meaning_id": meaning(ast)}
-            elif collision is None and (found := self.model(premises, [], self.formula(ast), layered=False)):
+                entry["certificate"] = {**proof.certificate, **_source_binding(view, (), target, listed=premises)}
+            elif collision is None and (found := self.model(premises, [], target, layered=False)):
                 collision = {**found, "rules": [m, n]}
             pairs.append(entry)
         return {"coherence": pairs, **({"collision": collision} if collision else {})}
