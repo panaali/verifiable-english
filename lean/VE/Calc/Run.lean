@@ -1,4 +1,5 @@
 import VE.Calc.Wire
+import VE.Calc.Render
 
 /-! The `calc` mode's runner (math-evidence spec 3.4, ME-2): what each outcome of a check states, one row per
 `claims` entry in order, and the row theorem on the wire (`Run.row_sound`). It has the `claim` and `follows` (ME-5)
@@ -177,16 +178,71 @@ def kind : Check → String
   | .claim _ => "claim"
   | .follows .. => "follows"
 
-def rowJson (claimId : String) (k : Check) (r : Row) : Json :=
-  Json.mkObj [("status", .str "ok"), ("claim", .str r.id), ("claim_id", .str claimId), ("kind", .str (kind k)),
-    ("outcome", .str (words r.outcome).1), ("reason", (words r.outcome).2.elim .null Json.str),
-    ("reproduction", if r.reproduction.isSome then .str "unknown" else .null)]
+/-! ## Row fields (spec 3.4): Lean's line, and a claim's sides, display and tie -/
 
-/-- The service answer: the case's `meaning_id` and its rows, or the refusal of the case. -/
+/-- Each value's words in the request (3.1), by name: the decoder has read each as a string. -/
+def wordsIn (j : Json) : String → Option String :=
+  let ws : List (String × String) := match j.getObjVal? "values" with
+    | .ok (.arr vs) => vs.toList.filterMap fun v => match v.getObjVal? "name", v.getObjVal? "words" with
+      | .ok (.str n), .ok (.str w) => some (n, w)
+      | _, _ => none
+    | _ => []
+  fun n => ws.lookup n
+
+/-- A check's English line (11.1, 9), `none` where an expression is beyond 11.2's nesting rule or a value's words
+are not 11.2's form. -/
+def line (words : String → Option String) : Check → Option String
+  | .claim c => English.renderClaim words c
+  | .follows P links C => English.renderFollows words P links C
+
+/-- An exact value as a reduced fraction "n/d", or "n" for an integer (3.4). -/
+def exact (q : Rat) : String := if q.den = 1 then toString q.num else s!"{q.num}/{q.den}"
+
+/-- 2.5's display of `x` at `k` places: truncated toward zero, then "…" when the truncation dropped a nonzero
+remainder. -/
+def truncated (k : Int) (x : Rat) : String :=
+  let y := x * tenPow k
+  (if x < 0 then "-" else "") ++ VE.Time.renderAmount k.toNat (y.num.natAbs / y.den * 10 ^ (-k).toNat) ++
+    (if y.num.natAbs % y.den = 0 then "" else "…")
+
+/-- A claim's sides: each expression's value under the case's bounded values (`Claim.run` reads the same). -/
+def sides (σ : String → Val) (c : Claim) : List Val := c.exprs.map (Expr.evalL σ)
+
+/-- A rounding claim's display, at two places beyond the printed ones (2.5), where its value is known. -/
+def display (σ : String → Val) : Claim → Option String
+  | .rounds _ e p => match e.evalL σ with
+    | .ok x => some (truncated (p.places + 2) x)
+    | _ => none
+  | _ => none
+
+/-- 2.2's tie flag (`Claim.tieSensitive`), `none` where a rule's claim has no known value. -/
+def tie (σ : String → Val) : Claim → Option Bool
+  | .rounds .tiesUp e p | .rounds .halfEven e p => match e.evalL σ with
+    | .ok x => some (tieAt p.places x)
+    | .undefined => some false
+    | _ => none
+  | _ => some false
+
+/-- The members of a claim row beyond a follows row's: its sides, display and tie. -/
+def claimFields (σ : String → Val) : Check → List (String × Json)
+  | .claim c => [("sides", .arr (sides σ c |>.map fun | .ok q => .str (exact q) | _ => .null).toArray),
+    ("display", (display σ c).elim .null Json.str), ("tie", (tie σ c).elim .null Json.bool)]
+  | .follows .. => []
+
+def rowJson (claimId : String) (named : String → Option String) (σ : String → Val) (k : Check) (r : Row) : Json :=
+  Json.mkObj ([("status", .str "ok"), ("claim", .str r.id), ("claim_id", .str claimId), ("kind", .str (kind k)),
+    ("outcome", .str (words r.outcome).1), ("reason", (words r.outcome).2.elim .null Json.str),
+    ("line", (line named k).elim .null Json.str), ("finding", .null),
+    ("reproduction", if r.reproduction.isSome then .str "unknown" else .null)] ++ claimFields σ k)
+
+/-- The service answer: the case's `meaning_id` and its rows, or the refusal of the case. A standalone case is no
+translated document, so no row has a finding (2.5, 13.6). -/
 def runCaseReported (j : Json) : Json :=
   match Wire.decode j with
-  | .ok (c, mid, ids) => Json.mkObj [("status", .str "ok"), ("meaning_id", .str mid),
-    ("rows", .arr (c.claims.mapIdx fun i cl => rowJson (ids.getD i "") cl.2 (Run.row c cl)).toArray)]
+  | .ok (c, mid, ids) =>
+    let σ := valuesL c.decls
+    Json.mkObj [("status", .str "ok"), ("meaning_id", .str mid),
+      ("rows", .arr (c.claims.mapIdx fun i cl => rowJson (ids.getD i "") (wordsIn j) σ cl.2 (Run.row c cl)).toArray)]
   | .error e => Json.mkObj [("status", .str "error"), ("error", .str e)]
 
 /-- The outcome row `i` of an answer states. -/
@@ -216,14 +272,17 @@ theorem outcome_sound (j : Lean.Json) (c : Case) (h : Wire.decodeCase j = .ok c)
         Std.TreeMap.Raw.getElem?_ofList_of_mem (cmp := compare) (k_eq := Std.ReflCmp.compare_self) hp hm]
       rfl
     have hrows : (runCaseReported j).getObjVal? "rows" =
-        .ok (.arr (d.1.claims.mapIdx fun i cl => rowJson (d.2.2.getD i "") cl.2 (Run.row d.1 cl)).toArray) := by
+        .ok (.arr (d.1.claims.mapIdx fun i cl =>
+          rowJson (d.2.2.getD i "") (wordsIn j) (valuesL d.1.decls) cl.2 (Run.row d.1 cl)).toArray) := by
       simp only [runCaseReported, hd]
       exact get _ _ _ (by simp) (by simp)
     have ho := outcomes_words ((d.1.claims[i]'hi).2.run d.1.decls)
-    have hout (k : Check) (r : Row) : (rowJson (d.2.2.getD i "") k r).getObjVal? "outcome" =
-        .ok (.str (words r.outcome).1) := get _ _ _ (by simp) (by simp)
-    have hreason (k : Check) (r : Row) : (rowJson (d.2.2.getD i "") k r).getObjVal? "reason" =
-        .ok ((words r.outcome).2.elim .null Json.str) := get _ _ _ (by simp) (by simp)
+    have hout (k : Check) (r : Row) :
+        (rowJson (d.2.2.getD i "") (wordsIn j) (valuesL d.1.decls) k r).getObjVal? "outcome" =
+          .ok (.str (words r.outcome).1) := get _ _ _ (by cases k <;> simp [claimFields]) (by simp)
+    have hreason (k : Check) (r : Row) :
+        (rowJson (d.2.2.getD i "") (wordsIn j) (valuesL d.1.decls) k r).getObjVal? "reason" =
+          .ok ((words r.outcome).2.elim .null Json.str) := get _ _ _ (by cases k <;> simp [claimFields]) (by simp)
     simp only [outcomeAt, hrows, List.getElem?_toArray, List.getElem?_mapIdx, List.getElem?_eq_getElem hi,
       Option.map_some, Option.bind_eq_bind, Option.bind_some, hout, hreason, Run.row_outcome]
     generalize words ((d.1.claims[i]'hi).2.run d.1.decls) = wo at ho ⊢
