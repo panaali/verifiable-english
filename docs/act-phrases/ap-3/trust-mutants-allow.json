@@ -1,0 +1,16 @@
+{
+ "allow": [
+  {"definition": "VE.Acts.freeTable", "operator": "bool-flip",
+   "reason": "does not elaborate: a flipped pattern Bool leaves a case missing (Missing cases); seed_bugs.py cuts every result and each is killed"},
+  {"definition": "VE.Acts.freeTable", "operator": "all-any",
+   "reason": "does not elaborate: a pattern `all` read as `any` leaves the all cases missing (Missing cases)"},
+  {"definition": "VE.Acts.freeTable", "operator": "any-all",
+   "reason": "does not elaborate: a pattern `any` read as `all` leaves the any cases missing (Missing cases)"},
+  {"definition": "VE.Acts.opOf", "operator": "bool-flip",
+   "reason": "does not elaborate: a flipped sign pattern leaves a case missing (Missing cases); seed_bugs.py's sweep swaps every result op and each is killed"},
+  {"definition": "VE.Acts.table", "operator": "all-any",
+   "reason": "does not elaborate: a pattern `all` read as `any` leaves a case missing (Missing cases)"},
+  {"definition": "VE.Acts.table", "operator": "any-all",
+   "reason": "does not elaborate: a pattern `any` read as `all` leaves a case missing (Missing cases)"}
+ ]
+}
