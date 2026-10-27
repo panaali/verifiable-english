@@ -1,0 +1,121 @@
+{
+ "item": "df-1b",
+ "language": "Python",
+ "runner": "docs/defeasible/df-1b/evidence/run_mutants.py",
+ "result": "docs/defeasible/df-1b/evidence/mutants.out",
+ "note": "Plan DF-1b's five seeded bugs: P1-P3 here; the two renderer bugs wait for the English (df-1bb).",
+ "mutants": [
+  {
+   "id": "P1",
+   "file": "ve/defaults.py",
+   "bug": "plan: the relay accepts an assumption label not in default_premises",
+   "find": "if (row[\"assumptions\"] != [label for label in labels if label in row[\"assumptions\"]] or",
+   "replace": "if (False or",
+   "test": "tests/test_defaults_answer.py::test_assumptions_and_basis"
+  },
+  {
+   "id": "P2",
+   "file": "ve/defaults.py",
+   "bug": "plan: the relay accepts needs on a request without strict_model",
+   "find": "if row[\"basis\"] == \"needs\" and \"strict_model\" not in case:",
+   "replace": "if False:",
+   "test": "tests/test_defaults_answer.py::test_assumptions_and_basis"
+  },
+  {
+   "id": "P3",
+   "file": "ve/defaults.py",
+   "bug": "plan: the relay accepts a forced condition index at or beyond the rule's number of conditions",
+   "find": "if entry[\"condition\"] >= len(",
+   "replace": "if entry[\"condition\"] > len(",
+   "test": "tests/test_defaults_answer.py::test_forced_condition_index_rule_and_tuple"
+  },
+  {
+   "id": "B1",
+   "file": "ve/defaults.py",
+   "bug": "basis strict accepted with kept assumptions",
+   "find": "(row[\"basis\"] == \"strict\") != (row[\"assumptions\"] == [])):",
+   "replace": "False):",
+   "test": "tests/test_defaults_answer.py::test_assumptions_and_basis"
+  },
+  {
+   "id": "B2",
+   "file": "ve/defaults.py",
+   "bug": "pairs bound as a set, not one to one in order",
+   "find": "if [entry[\"rules\"] for entry in row[\"pairs\"]] != pairs:",
+   "replace": "if sorted(entry[\"rules\"] for entry in row[\"pairs\"]) != sorted(pairs):",
+   "test": "tests/test_defaults_answer.py::test_pairs_and_collision"
+  },
+  {
+   "id": "B3",
+   "file": "ve/defaults.py",
+   "bug": "a collision's deciders not bound to its rules' deciders",
+   "find": " or not set(deciders) <= named:",
+   "replace": ":",
+   "test": "tests/test_defaults_answer.py::test_pairs_and_collision"
+  },
+  {
+   "id": "B4",
+   "file": "ve/defaults.py",
+   "bug": "forced entries not bound to the model's exception tables",
+   "find": "} != held:",
+   "replace": "} != held and False:",
+   "test": "tests/test_defaults_answer.py::test_forced_condition_index_rule_and_tuple"
+  },
+  {
+   "id": "B5",
+   "file": "ve/defaults.py",
+   "bug": "a tuple's entities checked against every sort, not their own",
+   "find": "any(v not in entities.get(s, ()) for s, v in zip(sorts, values))",
+   "replace": "any(v not in set().union(*entities.values()) for v in values)",
+   "test": "tests/test_defaults_answer.py::test_forced_tuple_sorts"
+  },
+  {
+   "id": "B6",
+   "file": "ve/defaults.py",
+   "bug": "coherence targets not bound to the source's colliding pairs",
+   "find": "!= source[\"pairs\"]:",
+   "replace": "!= source[\"pairs\"] and False:",
+   "test": "tests/test_defaults_answer.py::test_elaborate_labels_and_targets"
+  },
+  {
+   "id": "B7",
+   "file": "ve/defaults.py",
+   "bug": "the relay skips the shape check of the row it received",
+   "find": "        check_row(MODE, row, case, 0)",
+   "replace": "        pass",
+   "test": "tests/test_defaults_answer.py::test_mutants_never_pass_as_answers"
+  },
+  {
+   "id": "Q1",
+   "file": "ve/defaults.py",
+   "bug": "order: the strict question skipped, the default one always asked",
+   "find": "if strict is not None and run(",
+   "replace": "if False and run(",
+   "test": "tests/test_defaults_lean.py::test_zeta_strict_question_first"
+  },
+  {
+   "id": "Q2",
+   "file": "ve/defaults.py",
+   "bug": "order: the strict countermodel not sent as strict_model (basis unsettled)",
+   "find": "\"strict_model\": search.model(search.X, gamma, phi), **gate}",
+   "replace": "\"strict_model\": None, **gate}",
+   "test": "tests/test_defaults_lean.py::test_alpha_needs_its_one_exception_and_the_strict_countermodel"
+  },
+  {
+   "id": "Q3",
+   "file": "ve/defaults.py",
+   "bug": "search: the gate's evidence (pair certificates, collision) not sent",
+   "find": "\"strict_model\": search.model(search.X, gamma, phi), **gate}",
+   "replace": "\"strict_model\": search.model(search.X, gamma, phi)}",
+   "test": "tests/test_defaults_lean.py::test_delta_rank_resolved_and_its_ranking_assumption"
+  },
+  {
+   "id": "F1",
+   "file": "ve/document/cli.py",
+   "bug": "the flag ignored: the readings command answers as without it",
+   "find": "        elif args.assume_no_exception:\n",
+   "replace": "        elif False:\n",
+   "test": "tests/test_defaults_lean.py::test_p1_follows_unless_an_exception_applies"
+  }
+ ]
+}
