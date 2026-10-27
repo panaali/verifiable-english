@@ -216,14 +216,14 @@ def exact (q : Rat) : String := if q.den = 1 then toString q.num else s!"{q.num}
 /-- A fact `0 ≤ L`, or `0 < L` when strict, as spec 3.4 writes it: the constant, one `[name, "n/d"]` per coefficient. -/
 def factJson (f : QFact) : Json :=
   Json.mkObj [("const", .str (exact f.form.const)),
-    ("coeffs", .arr (f.form.coeffs.map fun p => Json.arr #[.str p.1, .str (exact p.2)]).toArray),
+    ("coeffs", .arr (f.form.coeffs.map fun (p : String × Rat) => Json.arr #[.str p.1, .str (exact p.2)]).toArray),
     ("strict", .bool f.strict)]
 
 /-- A replayed step: a Farkas refutation's goal and its weights, one per fact in the order it combines them, or a
 square step's link and bounds. -/
 def stepJson : Step → Json
   | .farkas goal cert => Json.mkObj [("farkas", Json.mkObj [("goal", factJson goal),
-      ("weights", .arr (cert.weights.map fun w => .str (exact w)).toArray)])]
+      ("weights", .arr (cert.weights.map fun (w : Rat) => Json.str (exact w)).toArray)])]
   | .square s r a b => Json.mkObj [("square", Json.mkObj [("square", .str s), ("root", .str r),
       ("a", .str (exact a)), ("b", .str (exact b))])]
 
@@ -231,10 +231,11 @@ def stepJson : Step → Json
 (as ME-9's point reads its sides'). -/
 def reads (ds : List Decl) (k : Check) : List String :=
   let t := inlineTable ds (k.keep ds)
-  let linked := match k with
-    | .follows _ links _ => links.flatMap fun l => [l.1, l.2]
+  let inlined : List Expr := k.exprs.filterMap fun e => (e.subst t).toOption
+  let linked : List String := match k with
+    | .follows _ links _ => links.flatMap fun (l : String × String) => [l.1, l.2]
     | _ => []
-  let read := (k.exprs.filterMap fun e => (e.subst t).toOption).flatMap Expr.names ++ linked
+  let read : List String := inlined.flatMap Expr.names ++ linked
   (k.keep ds).filter (· ∈ read)
 
 /-- A row's `certificate` and `counterexample` (spec 3.4): the replayed steps in order, or one `[name, "n/d"]` per
@@ -242,7 +243,7 @@ free value read at the checked point; `null` where the outcome shows neither. -/
 def shownJson (ds : List Decl) (k : Check) : Shown → Json × Json
   | .certificate steps => (.arr (steps.map stepJson).toArray, .null)
   | .counterexample κ =>
-    (.null, .arr ((reads ds k).map fun n => Json.arr #[.str n, .str (exact (Answer.point κ n))]).toArray)
+    (.null, .arr ((reads ds k).map fun (n : String) => Json.arr #[.str n, .str (exact (Answer.point κ n))]).toArray)
   | .nothing => (.null, .null)
 
 /-- 2.5's display of `x` at `k` places: truncated toward zero, then "…" when the truncation dropped a nonzero
