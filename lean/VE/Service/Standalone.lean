@@ -228,7 +228,11 @@ def validatedLayerEnvironment (environment : Json) : Except String VE.Route.Gate
   if rawProfiles.contains "norm-defaults@0" && !rawProfiles.contains "norms@0" then
     let _ ← VE.Compose.gateOf VE.Compose.baseRows rawProfiles
     pure ()
-  let named := (VE.Route.Gate.profilesOf environment).toOption.getD []
+  -- `acts@0` is read by the norms decoder only: its row's refusals come before every decoder (act-phrases 4.4)
+  if rawProfiles.contains "acts@0" then
+    let _ ← VE.Compose.gateOf (if rawProfiles.contains VE.Compose.environmentWrapper then VE.Compose.profileTable
+      else VE.Compose.baseRows) rawProfiles
+  let named :=(VE.Route.Gate.profilesOf environment).toOption.getD []
   let empty := Json.arr #[]
   if named.contains "risk@0" || (environment.getObjVal? "risk").isOk then
     let _ ← VE.Risk.Wire.decodeRiskSource environment
@@ -271,7 +275,8 @@ def validatedLayerEnvironment (environment : Json) : Except String VE.Route.Gate
     pure ()
   else if named.contains "norms@0" then
     let predicates ← VE.Bridge.fields (← (← environment.getObjVal? "vocabulary").getObjVal? "predicates")
-    if !named.contains "norm-defaults@0" &&
+    -- under `acts@0` the norms decoder below checks the declarations with the act check of act-phrases 3.2
+    if !named.contains "norm-defaults@0" && !named.contains "acts@0" &&
         predicates.any (fun (_, entry) => (entry.getObjVal? "regulated").isOk) &&
         (VE.NormDefaults.Wire.unspecifiedNames environment).isEmpty then
       checkRegulated predicates
@@ -424,11 +429,17 @@ def environmentCase (j : Json) : Except String Json := do
     return VE.Route.Wire.ok id ([("environment_id", .str envId)] ++
       (match l with
        | .v0 _ => [("profile", environment.getObjValD "profile")]
-       | _ => [("profiles", environment.getObjValD "profiles")]) ++ [("family", .str l.family)])
+       -- a frozen envelope regulates nothing: no act
+       | _ => [("profiles", environment.getObjValD "profiles")]) ++ [("family", .str l.family)] ++
+      (match l with | .v0 _ => [] | _ => [("acts", Json.mkObj [])]))
   let e ← validatedComposedEnvironment environment
-  let environmentId ← environmentIdOf e.profiles (← identityEnvironment environment e.profiles)
+  -- `environmentIdOf` of the identity environment, with the canonical acts it hashes, which Python stores
+  let canonical ← VE.Norms.Wire.canonicalEnvironmentJson (← identityEnvironment environment e.profiles)
+  let environmentId ← VE.Route.Wire.environmentId e.profiles canonical
+  let acts ← VE.Norms.Wire.canonicalActs canonical
   pure (VE.Route.Wire.ok id [("environment_id", .str environmentId),
-    ("profiles", toJson e.profiles), ("family", .str e.family.name)])
+    ("profiles", toJson e.profiles), ("family", .str e.family.name),
+    ("acts", Json.mkObj (acts.map fun (p, a) => (p, .str a)))])
 
 /-- Python sorts relation rows by typed tuple order. In the order family,
 `$int` cells compare numerically even though they travel as strings. -/

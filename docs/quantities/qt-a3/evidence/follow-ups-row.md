@@ -1,0 +1,9 @@
+# FOLLOW-UPS.md rows for qt-a3 fix1 (R16 ties pass, W6a sweep)
+
+Appended to `manage-agents/FOLLOW-UPS.md` with `>>`, after the "## qt-a3 (2026-10-26)" section. If they go missing, re-append these lines verbatim. Probe: `grep -A1 '^## qt-a3 fix1 (2026-10-27)' ~/code/manage-agents/FOLLOW-UPS.md | grep -q 'R16 ties pass (qt-a3 fix1'`.
+
+```
+## qt-a3 fix1 (2026-10-27)
+- R16 ties pass (qt-a3 fix1, ve-qt-a3 docs/quantities/qt-a3/DELTA.md row 1; the item's untied V +124 = +51 above plus +73, K +0, S +0): lean/VE/Cardinality/Wire.lean +73 (D[V], moved from C as W6a's elabTerm is: elabBody 12, elabOperand 12, elabRatio 12, items 5, elabRule 5, printed 5, elabName 5, ruleNames 3, cmpNames 2, relNames 1; S2's depth, new: arrayDepth 6, sourceFits 6; decodeStatement 13 -> 12) -> infra item ties-qt-a3 (with the row above): tie relNames/cmpNames/ruleNames/elabName/elabRule to relNames_spelled, cmpNames_spelled and ruleNames_spelled (each name decodes to exactly its constructor), elabBody and elabOperand to elabBody_cases and elabOperand_cases, elabRatio to elabRatio_sound, items to items_ok, printed to printed_eq, sourceFits and arrayDepth to decodeStatement_fits and sourceFits_iff (lean/VE/Cardinality/WireTheorems.lean); whether W6a's and the cardinality wire's elabFormula should stay C (admits checks typing only) is the same question for both.
+- W6a S2 depth (review F2 of qt-a3, sweep; outside qt-a3): VE.Time.Wire.decodeQuantity (lean/VE/Time/Wire.lean:559) checks 10,000 array nodes before the pass but no whole-statement depth; depth 64 is each elaborator's fuel, which restarts for every term (elabFormula's `term := elabTerm ... maxDepth`). A fix there changes W6a's route answers (Python and Rust mirror the node count), so it needs its own item and DELTA; the cardinality wire's sourceFits (S2 over the whole formula, arrays nested at most 64 deep) is the model.
+```

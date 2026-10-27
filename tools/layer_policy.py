@@ -116,8 +116,10 @@ def lean_layer(module: str) -> int | None:
     if module in {"VE", "VE.Audit", "Iceberg", "VE.Checks", "VE.Route.Checks", "VE.LimitTies"}:
         return 5  # aggregation and audit targets (VE.LimitTies checks frozen and hashed copies of VE.Limits)
     if module in {"VE.EnglishGrammar.ProfileExamples", "VE.EnglishGrammar.E2Examples",
-                  "VE.Question.Examples", "VE.Question.Fixtures", "VE.Alternatives.FillExamples"}:
-        return 4  # runner-boundary acceptance fixtures import EnglishGrammar.Run, Question.Run or Alternatives.Run
+                  "VE.Question.Examples", "VE.Question.Fixtures", "VE.Alternatives.FillExamples",
+                  "VE.Calc.RunExamples", "VE.Defaults.RouteExamples"}:
+        return 4  # runner-boundary acceptance fixtures import EnglishGrammar.Run, Question.Run, Alternatives.Run, Calc.Run
+        # or NormDefaults.Run
     if lean_entry(module) or module.endswith(".Run") or module == "VE.Route.MeteredRun" or module.startswith("VE.Service."):
         return 4
     if module == "ResponseShape" or module.startswith("ResponseShape."):
@@ -130,7 +132,8 @@ def lean_layer(module: str) -> int | None:
         return 4  # states theorems on EnglishGrammar.Run.codepointsBefore (question answering Q1.1)
     if module.startswith("VE.Ask."):
         return 4  # question answering Q2: binds a request to Service.Document's split and reads EnglishGrammar.Run
-    if module in {"VE.Acts.LexicalBase", "VE.Acts.Lexical", "VE.Acts.Compat", "VE.Acts.LexicalExamples"}:
+    if module in {"VE.Acts.LexicalBase", "VE.Acts.Lexical", "VE.Acts.LexicalProofs", "VE.Acts.Compat",
+                  "VE.Acts.LexicalExamples"}:
         return 2  # act-phrases AP-1: the lexical act check, below the norms decoder that calls it
     if module.startswith("VE.Words."):
         return 3  # the answer's situation wording, from the English lexicon (question answering Q2.3)
@@ -139,8 +142,8 @@ def lean_layer(module: str) -> int | None:
         "VE.Order.Surface", "VE.Core.Surface", "VE.Closure.Surface",
     }:
         return 3
-    if module.startswith(("VE.Core.", "VE.Json")) or module in {
-        "VE.Limits", "VE.Syntax", "VE.Semantics", "VE.Typing", "VE.Finite", "VE.Consequence",
+    if module.startswith(("VE.Core.", "VE.Json", "VE.Kit.")) or module in {
+        "VE.Limits", "VE.Paths", "VE.Syntax", "VE.Semantics", "VE.Typing", "VE.Finite", "VE.Consequence",
         "VE.Bridge", "VE.RoundTrip", "VE.CertificateWire", "VE.ClaimGraph",
         "VE.GraphChecks", "VE.ModelProofs", "VE.EnvironmentProofs",
         "VE.Tableau", "VE.TableauClosure", "VE.TableauChecker",

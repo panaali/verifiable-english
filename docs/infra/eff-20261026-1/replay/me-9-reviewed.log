@@ -1,0 +1,5 @@
+exit 1
+trust_mutants: 1 definitions, 1 mutants (1 to run), 4 jobs, base 2f633d7b595a
+SURVIVOR lean/VE/Calc/Poly.lean:65 VE.Calc.Poly.fits (C) and-or: && -> ||
+trust_mutants: 0 KILLED, 1 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 25 s
+trust_mutants: C: 1 SURVIVOR

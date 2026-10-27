@@ -1,5 +1,5 @@
-"""scope@0's Lean core (sc-1a, sc-3a, sc-1ab): the layout's list runs, label reaches and anchors, and the effects on
-a rule's JSON object.
+"""scope@0's Lean core (sc-1a, sc-3a, sc-1ab, sc-1ac, sc-1ad): the layout's list runs, label reaches and anchors, the
+effects on a rule's JSON object, and `govern` with the block's admission, the graph step and the run path.
 
 The fixtures themselves are Lean: `lean/VE/Scope/Examples.lean` holds the spec's 7.1 fixtures as kernel theorems
 (`decide`) and `#guard`s, checked by every `lake build`. This file checks what standing ruling R16 asks of the
@@ -26,20 +26,32 @@ def test_the_scope_files_are_classified():
     table = trust_map.load_table()
     modules = scope_modules()
     assert {"VE/Layout/Anchors.lean", "VE/Layout/Discourse.lean", "VE/Layout/List.lean", "VE/Scope/Effects.lean",
-            "VE/Scope/Examples.lean", "VE/Scope/Theorems.lean"} <= set(modules)
+            "VE/Scope/Examples.lean", "VE/Scope/Govern.lean", "VE/Scope/Theorems.lean"} <= set(modules)
     assert all(module in table for module in modules)
+
+
+# The document mode's block decoder and fold helpers (sc-1b), named one by one: no theorem states them yet (the
+# spec's statement over the decoder, `decodeScope_bound`, waits for sc-1ae); R16's condition for them is met by
+# `lean/VE/Scope/WireExamples.lean`'s #guards and docs/scope/sc-1b/trust-mutants.json.
+WIRE = [f"VE/Scope/Wire.lean: VE.Scope.{name}" for name in (
+    "byStatus", "changers", "decodeEffect", "decodeGovernor", "decodeListName", "decodeParts", "decodeReach",
+    "listMember", "spanIn", "statusOf")]
 
 
 def test_every_trusted_scope_definition_is_used_by_a_theorem():
     proved = trust_map.statements(STATEMENTS)
     assert proved, "lean/statements.txt is missing or empty; run tools/lean_statements.py"
-    assert trust_map.unexercised(trust_map.load_table(), proved, scope_modules()) == []
+    assert trust_map.unexercised(trust_map.load_table(), proved, scope_modules()) == WIRE
 
 
 TIES = {
     "VE/Layout/List.lean": {"VE.Layout.continues", "VE.Layout.indexOf", "VE.Layout.listRun", "VE.Layout.runFrom",
                             "VE.Layout.itemFrom", "VE.Layout.itemRun"},
     "VE/Layout/Anchors.lean": {"VE.Layout.anchorReach", "VE.Layout.anchorUnits"},
+    "VE/Scope/Govern.lean": {"VE.Scope.coversU", "VE.Scope.governorsOf", "VE.Scope.itemRule", "VE.Scope.ruleTable",
+                             "VE.Scope.edgesFor", "VE.Scope.governFast", "VE.Scope.fastReads", "VE.Scope.frameOnF",
+                             "VE.Scope.baseObjF", "VE.Scope.coveredBy", "VE.Scope.governorsOfF", "VE.Scope.composedF",
+                             "VE.Scope.edgesOfF", "VE.Scope.governBody"},
     # discourse's containment and anchor checks are one-line calls of the moved bodies (sc-3a)
     "VE/Discourse/Access.lean": {"VE.Discourse.within", "VE.Discourse.innermostAnchor"},
     "VE/Discourse/WellFormed.lean": {"VE.Discourse.anchorsOk"},
@@ -64,13 +76,19 @@ def test_each_tie_names_a_theorem_about_its_definition():
     assert ("VE.Layout.Anchors", "VE.Layout.within") in proved["VE.Layout.anchorReach_iff"]
     assert ("VE.Layout.Anchors", "VE.Layout.within") in proved["VE.Layout.discourse_within_unchanged"]
     assert ("VE.Layout.Anchors", "VE.Layout.anchorsOk") in proved["VE.Layout.discourse_anchorsOk_unchanged"]
+    # governorsOf's meaning is `covered` and `unary`; itemRule's is `mergeParts` and the chain's decoder (spec 5.1)
+    assert ("VE.Scope.Govern", "VE.Scope.covered") in proved["VE.Scope.governorsOf_iff"]
+    assert ("VE.Scope.Effects", "VE.Scope.mergeParts") in proved["VE.Scope.itemRule_decoder"]
+    # the run path's meaning is `govern` (spec 5.1), each of its steps `govern`'s step (sc-1ad)
+    assert ("VE.Scope.Govern", "VE.Scope.govern") in proved["VE.Scope.governFast_eq"]
+    assert ("VE.Scope.Govern", "VE.Scope.govern") in proved["VE.Scope.governBody_slow"]
 
 
 def unexercised_without(module: str, name: str) -> list[str]:
     """The unexercised definitions once every theorem that uses `name` of `module` is dropped."""
     proved = trust_map.statements(STATEMENTS)
     without = {theorem: found for theorem, found in proved.items() if not found or (module, name) not in found}
-    return trust_map.unexercised(trust_map.load_table(), without, scope_modules())
+    return [d for d in trust_map.unexercised(trust_map.load_table(), without, scope_modules()) if d not in WIRE]
 
 
 def test_a_definition_no_theorem_uses_is_reported():
@@ -82,3 +100,10 @@ def test_a_definition_no_theorem_uses_is_reported():
 def test_an_effects_definition_no_theorem_uses_is_reported(name):
     """The same for the effects (sc-1ab): each named definition is reported once its theorems are dropped."""
     assert unexercised_without("VE.Scope.Effects", name) == [f"VE/Scope/Effects.lean: {name}"]
+
+
+@pytest.mark.parametrize("name", ["VE.Scope.baseObj", "VE.Scope.ordered", "VE.Scope.govern", "VE.Scope.applyEffect",
+                                  "VE.Scope.addOver", "VE.Scope.edgesInto", "VE.Scope.memo"])
+def test_a_govern_definition_no_theorem_uses_is_reported(name):
+    """The same for `govern` (sc-1ac, sc-1ad): each named definition is reported once its theorems are dropped."""
+    assert f"VE/Scope/Govern.lean: {name}" in unexercised_without("VE.Scope.Govern", name)

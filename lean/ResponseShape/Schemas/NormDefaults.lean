@@ -51,7 +51,11 @@ def kind : Def :=
     ("norm-defaults-status", kindIs "norm-defaults-status"),
     ("norm-defaults-gaps", kindIs "norm-defaults-gaps"),
     ("norm-defaults-certificate", kindIs "norm-defaults-certificate"),
-    ("norm-defaults-report", kindIs "norm-defaults-report")]
+    ("norm-defaults-report", kindIs "norm-defaults-report"),
+    ("defaults-elaborate", kindIs "defaults-elaborate"),
+    ("defaults-coherence", kindIs "defaults-coherence"),
+    ("defaults-certificate", kindIs "defaults-certificate"),
+    ("defaults-model", kindIs "defaults-model")]
 
 /-- The fields of `elaborate`, shared with `layered_elaborate`. -/
 def elaborateFields : List (String × Shape) := [
@@ -249,6 +253,73 @@ def soft_admission : Shape :=
       ("kinds", n [arr, .items (ref "common.json#/$defs/kind"), .equals "/document/units/*/kind"]),
       ("conditional_on", ref "soft-norms.json#/$defs/coherence_labels")]]
 
+def defaults_elaborate : Shape :=
+  c "Defaults.Wire.elaborateFields (defaults-elaborate): Dflt_T's labelled premises, then each colliding pair's two rule names and coherence premise (Defaults.Wire.elaborateRows)." [
+    obj,
+    .required ["id", "status", "default_premises", "coherence_targets"],
+    closed [
+      ("id", ref "common.json#/$defs/id_ok"),
+      ("status", constS "ok"),
+      ("default_premises", n [arr, .items (n [arr, .prefixItems [ref "common.json#/$defs/text",
+        ref "common.json#/$defs/generated_formula"], .minItems 2, .maxItems 2])]),
+      ("coherence_targets", n [arr, .items (n [arr, .prefixItems [str, str, ref "common.json#/$defs/generated_formula"],
+        .minItems 3, .maxItems 3])])]]
+
+/-- The situation a default answer shows (`Defaults.Wire.situationJson`). -/
+def defaults_situation : Shape :=
+  c "Defaults.Wire.situationJson: every unsaid table of the checked filled situation (NormDefaults.Wire.witnessRow), rows as entity ids." [
+    obj,
+    .required ["filling"],
+    closed [("filling", n [obj, .object [] (some (n [arr, .items (ref "common.json#/$defs/strings")]))])]]
+
+def defaults_coherence : Shape :=
+  c "Defaults.Wire.coherenceFields (defaults-coherence): the verdict and each colliding pair's status; with COLLISION, the pair the request's collision names, the tuple Lean finds (collisionTuple), DE7's deciders (giveWayDeciders) and the situation." [
+    obj,
+    .required ["id", "status", "verdict", "pairs"],
+    closed [
+      ("id", ref "common.json#/$defs/id_ok"),
+      ("status", constS "ok"),
+      ("verdict", enumS ["COHERENT", "COLLISION", "UNKNOWN"]),
+      ("pairs", n [arr, .items (n [obj, .required ["rules", "status"],
+        closed [("rules", ref "common.json#/$defs/string_pair"), ("status", enumS ["resolved", "collision", "unknown"])]])]),
+      ("collision", n [obj, .required ["rules", "tuple", "deciders"],
+        closed [("rules", n [ref "common.json#/$defs/string_pair", .equals "/collision/rules"]),
+          ("tuple", ref "common.json#/$defs/strings"), ("deciders", ref "common.json#/$defs/strings")]]),
+      ("situation", ref "#/$defs/defaults_situation")],
+    .ite (props [("verdict", constS "COLLISION")]) (.required ["collision", "situation"])
+      (.allOf [.not (.required ["collision"]), .not (.required ["situation"])])]
+
+def defaults_certificate : Shape :=
+  c "Defaults.Wire.certFields (defaults-certificate): FOLLOWS with its basis, form and kept assumptions (defaults_certificate_sound), or UNKNOWN with its reason (CertReplay.reason)." [
+    obj,
+    .required ["id", "status", "verdict"],
+    closed [
+      ("id", ref "common.json#/$defs/id_ok"),
+      ("status", constS "ok"),
+      ("verdict", enumS ["FOLLOWS", "UNKNOWN"]),
+      ("basis", enumS ["strict", "needs", "unsettled"]),
+      ("form", enumS ["short", "long"]),
+      ("assumptions", ref "common.json#/$defs/strings"),
+      ("reason", str)],
+    .ite (props [("verdict", constS "FOLLOWS")])
+      (.allOf [.required ["basis", "form", "assumptions"], .not (.required ["reason"])])
+      (.allOf [.required ["reason"], .not (.required ["basis"]), .not (.required ["form"]),
+        .not (.required ["assumptions"])])]
+
+def defaults_model : Shape :=
+  c "Defaults.Wire.modelFields (defaults-model): DOES-NOT-FOLLOW with the situation and each exception the text's own conditions force there (defaults_model_sound, forcedAt_sound), or UNKNOWN." [
+    obj,
+    .required ["id", "status", "verdict"],
+    closed [
+      ("id", ref "common.json#/$defs/id_ok"),
+      ("status", constS "ok"),
+      ("verdict", enumS ["DOES-NOT-FOLLOW", "UNKNOWN"]),
+      ("situation", ref "#/$defs/defaults_situation"),
+      ("forced", n [arr, .items (n [obj, .required ["rule", "condition", "tuple"],
+        closed [("rule", str), ("condition", ref "common.json#/$defs/nat"), ("tuple", ref "common.json#/$defs/strings")]])])],
+    .ite (props [("verdict", constS "DOES-NOT-FOLLOW")]) (.required ["situation", "forced"])
+      (.allOf [.not (.required ["situation"]), .not (.required ["forced"])])]
+
 def «row» : Shape :=
   .select [
     (ref "#/$defs/norm_defaults_path", .anyOf [
@@ -263,7 +334,11 @@ def «row» : Shape :=
         (.allOf [ref "#/$defs/kind/norm-defaults-gaps", .required ["model"]], ref "#/$defs/gaps_model"),
         (ref "#/$defs/kind/norm-defaults-gaps", ref "#/$defs/gaps"),
         (ref "#/$defs/kind/norm-defaults-certificate", ref "#/$defs/certificate"),
-        (ref "#/$defs/kind/norm-defaults-report", ref "#/$defs/report_row")]]),
+        (ref "#/$defs/kind/norm-defaults-report", ref "#/$defs/report_row"),
+        (ref "#/$defs/kind/defaults-elaborate", ref "#/$defs/defaults_elaborate"),
+        (ref "#/$defs/kind/defaults-coherence", ref "#/$defs/defaults_coherence"),
+        (ref "#/$defs/kind/defaults-certificate", ref "#/$defs/defaults_certificate"),
+        (ref "#/$defs/kind/defaults-model", ref "#/$defs/defaults_model")]]),
     ((.bool true), ref "norms.json#/row")]
 
 def file : File where
@@ -284,6 +359,11 @@ def file : File where
     ("certificate", .schema certificate),
     ("soft_admission", .schema soft_admission),
     ("report_line", .schema report_line),
-    ("report_row", .schema report_row)]
+    ("report_row", .schema report_row),
+    ("defaults_elaborate", .schema defaults_elaborate),
+    ("defaults_situation", .schema defaults_situation),
+    ("defaults_coherence", .schema defaults_coherence),
+    ("defaults_certificate", .schema defaults_certificate),
+    ("defaults_model", .schema defaults_model)]
 
 end ResponseShape.Schemas.NormDefaults
