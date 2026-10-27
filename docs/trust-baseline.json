@@ -1174,6 +1174,13 @@
    "reason": "me-5c: K +0, S +22 (VE/Calc/Run.lean +16: Check.OutcomeMeans's follows and undefined clauses, Check.UnknownCause's general arm, Check.keep, Check.reasons; VE/Calc/Wire.lean +6: Check.follows, Check.exprs), untied V +58 (VE/Calc/Wire.lean +43: Wire.premise, Wire.check, the premises and free-value lines of Wire.value, Wire.decl, Wire.decode and Wire.entry; VE/Calc/Render.lean +10: English.renderFollows; VE/Calc/Run.lean +5: Run.kind and the kind field of Run.rowJson)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-5c, 2026-10-27",
    "commit": "110b3bf3ad801a3dc335e9b2293e5c27bb4b82eb"
+  },
+  {
+   "class": "V",
+   "lines": 104,
+   "reason": "df-1ae: V +104 (K +0, S +0): ResponseShape/Schemas/NormDefaults.lean +80 (the four defaults-* shapes, the situation, the kind and row entries), VE/Defaults/Route.lean +22 (defaultsKinds, defaultsRows, layeredRows, layeredKindCase, runLayered moved), VE/Defaults/Wire.lean +8 (situationJson, coherenceFields, modelFields), VE/NormDefaults/Run.lean +1 (the routing), VE/NormDefaults/Layered.lean -7 (runLayered moved out)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-1ae, 2026-10-18",
+   "commit": "a547f2141a37398614fb0eeced43cfa7079c7265"
   }
  ]
 }
