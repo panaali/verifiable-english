@@ -39,6 +39,13 @@ import trust_map  # noqa: E402
 TRACKED = subprocess.run(["git", "ls-files"], cwd=ROOT, capture_output=True, text=True, check=True).stdout.split()
 
 
+@pytest.fixture(autouse=True)
+def _no_timing_log(monkeypatch):
+    """The runs these tests make leave no line in the checkout's timing log (`RegenLog`); a test of the log
+    points it under tmp_path."""
+    monkeypatch.setenv("VE_REGEN_LOG", "off")
+
+
 # The registry
 
 
@@ -993,7 +1000,7 @@ def test_assurance_doc_check_fails_on_a_stale_table(tmp_path, monkeypatch):
 
 
 # The timing log (eff-20261027-1): one line per entry run, in the git common directory; VE_REGEN_LOG=off turns it
-# off; a log that cannot be written changes nothing. The suite runs with it off (tests/conftest.py); these tests
+# off; a log that cannot be written changes nothing. This file runs with it off (`_no_timing_log`); these tests
 # point it into tmp_path.
 
 
