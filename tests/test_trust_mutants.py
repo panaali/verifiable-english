@@ -4,6 +4,7 @@ are built in a scratch copy (the checkout's bytes and times are unchanged), and 
 NOT RUN. The package's declaration and predicate lists come from tools/lean_statements.py's own per-module script."""
 from __future__ import annotations
 
+from dataclasses import asdict
 import json
 import os
 from pathlib import Path
@@ -218,7 +219,7 @@ def test_a_guard_over_the_empty_list_leaves_survivors(default_run):
     assert done.returncode == 1
     printed = [line for line in done.stdout.splitlines() if line.startswith("SURVIVOR ")]
     assert len(printed) == sum(m["status"] == "SURVIVOR" for m in mutants)
-    assert "SURVIVOR lean/Demo/Defs.lean:7 Demo.evens list-empty: xs.filter (· % 2 == 0) -> []" in printed
+    assert "SURVIVOR lean/Demo/Defs.lean:7 Demo.evens (?, trusted) list-empty: xs.filter (· % 2 == 0) -> []" in printed
 
 
 def test_a_failing_proof_is_no_kill(default_run):
@@ -562,18 +563,19 @@ EXPECTED = {"check-file": ["lean/Demo/Examples.lean"], "statements": ["lean/stat
             "lakefile": "its inputs differ (lean): lean/lakefile.toml is no module of lean/",
             "trust-table": "its inputs differ (lean): tools/trust-classes.json is no module of lean/",
             "deep": "its inputs differ (options)", "test-option": "its inputs differ (options)",
+            "classes": "its inputs differ (options)",
             "base": "its inputs differ (base)", "tool": "its inputs differ (tool)",
             "no-files": "its inputs differ (lean) and it records no per-file digests"}
 
 
-@pytest.mark.parametrize("change", [*CHANGES, "deep", "test-option", "base", "tool", "no-files"])
+@pytest.mark.parametrize("change", [*CHANGES, "deep", "test-option", "classes", "base", "tool", "no-files"])
 def test_any_changed_input_but_checks_gives_a_full_run(package, tmp_path, change):
     """`inputs` digests the bytes, never a commit id (speed-tmrescore), and each file's own (speed-tmchecks). A
     check-only change (a check module outside every selected declaration's file and import closure, an outside
     --test file, a generated inventory) is mode "checks", with the files that changed; a `__pycache__` none at all
     (review F1). One byte of a selected declaration's file, the lakefile or trust_map's table, or another tool,
-    --deep, --test or base, is a full run, even beside a check-only change, and so is PREV with no per-file
-    digests."""
+    --deep, --test, --classes or base, is a full run, even beside a check-only change, and so is PREV with no
+    per-file digests (eff-20261026-1b: no verdict carries across another selection)."""
     import shutil
     import trust_mutants
     root = tmp_path / "copy"
@@ -582,8 +584,8 @@ def test_any_changed_input_but_checks_gives_a_full_run(package, tmp_path, change
     (root / "outside/T.lean").write_text("import Demo.Defs\n#guard Demo.small 2\n")
     base = "0123456789abcdef" * 2 + "01234567"  # a commit id: `main` resolves it, `inputs` records it as it is
 
-    def digests(deep: bool = False, tests: tuple = (), base: str = base) -> dict:
-        return trust_mutants.inputs(root, base, list(tests), [root / "outside/T.lean"], deep)
+    def digests(deep: bool = False, tests: tuple = (), base: str = base, classes: tuple = ("trusted",)) -> dict:
+        return trust_mutants.inputs(root, base, list(tests), [root / "outside/T.lean"], deep, classes)
 
     def why_not(names: list[str]) -> str | None:
         return trust_mutants.check_only(names, {"Demo/Defs.lean"}, {"outside/T.lean"})
@@ -595,7 +597,8 @@ def test_any_changed_input_but_checks_gives_a_full_run(package, tmp_path, change
     else:  # a key no check-only change may move, beside one that may
         CHANGES["check-file"](root)
     now = digests(change == "deep", ("Demo/Examples.lean",) if change == "test-option" else (),
-                  base if change != "base" else base[:-1] + ("0" if base[-1] != "0" else "1"))
+                  base if change != "base" else base[:-1] + ("0" if base[-1] != "0" else "1"),
+                  ("all",) if change == "classes" else ("trusted",))
     if change == "tool":
         now["tool"] = "0" * 64
     if change == "no-files":
@@ -620,9 +623,9 @@ def test_the_inputs_digest_the_tools_own_source(tmp_path, monkeypatch):
     helper.__file__ = str(source)
     monkeypatch.setattr(trust_mutants, "ROOT", tmp_path)
     monkeypatch.setitem(sys.modules, "tm_helper", helper)
-    before = trust_mutants.inputs(tmp_path, "b", [], [], False)
+    before = trust_mutants.inputs(tmp_path, "b", [], [], False, ("trusted",))
     source.write_text("X = 2\n")
-    after = trust_mutants.inputs(tmp_path, "b", [], [], False)
+    after = trust_mutants.inputs(tmp_path, "b", [], [], False, ("trusted",))
     assert [k for k in after if after[k] != before[k]] == ["tool"]
 
 
@@ -760,6 +763,163 @@ def test_rescore_after_a_check_only_change_carries_the_kills_it_reads_the_same(p
     assert [(m["id"], m["status"], m["detail"].split(": ")[0]) for m in data["mutants"]] == [
         (m["id"], m["status"], m["detail"].split(": ")[0]) for m in full], (done.stdout, full_done.stdout)
     assert done.returncode == full_done.returncode == 1
+
+
+CLASSED = {  # eff-20261026-1b: one declaration of each kind --classes tells apart
+    "Demo/Defs.lean": """namespace Demo
+
+/-- A limit, reject-only (D[R]): guarded on both sides of its bound. -/
+def small (n : Nat) : Bool := n < 3
+
+/-- Checked code (C), guarded over `[]` only. -/
+def evens (xs : List Nat) : List Nat := xs.filter (· % 2 == 0)
+
+/-- A proof helper (P). -/
+def double (n : Nat) : Nat := n + n + 0
+
+theorem double_eq (n : Nat) : double n = 2 * n := by unfold double; omega
+
+/-- Unclassified: trusted. -/
+def twice (n : Nat) : Nat := 2 * n
+
+end Demo
+""",
+    "Demo/Examples.lean": "import Demo.Defs\nopen Demo\n\n#guard small 2\n#guard !small 3\n#guard evens [] == []\n"
+                          "#guard twice 3 == 6\n\nexample : double 1 = 2 := by decide\n",
+}
+TABLE = {"modules": {"Demo/Defs.lean": {"D[R]": ["Demo.small"], "C": ["Demo.evens"], "P": ["Demo.double"]}}}
+
+
+@pytest.fixture(scope="module")
+def classed(tmp_path_factory) -> Path:
+    root = tmp_path_factory.mktemp("classed")
+    scaffold(root, "")
+    for f, text in CLASSED.items():
+        (root / "lean" / f).write_text(text)
+    (root / "tools/trust-classes.json").write_text(json.dumps(TABLE))
+    dump(root, tmp_path_factory.mktemp("classed-dump"), ["Demo.double_eq"])
+    git(root, "add", ".")
+    git(root, "commit", "-qm", "head")
+    return root
+
+
+@pytest.fixture(scope="module")
+def classed_all(classed, tmp_path_factory):
+    scratch = tmp_path_factory.mktemp("classed-all")
+    done, _ = tool(classed, scratch, "--classes", "all")
+    return done, json.loads((scratch / "evidence.json").read_text()), scratch / "evidence.json"
+
+
+def planned(root: Path, *classes: str) -> list:
+    import trust_mutants
+    found, _, fatal = trust_mutants.plan(root, "HEAD~1", *([classes] if classes else []))
+    assert not fatal, fatal
+    return found
+
+
+def test_with_no_flag_the_plan_selects_exactly_the_trusted_definitions(classed):
+    """With no --classes the plan is `trusted`'s, and its declarations are exactly those trust_map counts as trusted
+    (read here from trust_map itself): the reject-only, checked and proof-helper ones are skipped."""
+    import trust_map
+    import trust_mutants
+    default = planned(classed)
+    assert [asdict(m) for m in default] == [asdict(m) for m in planned(classed, "trusted")]
+    classified, _, problems = trust_map.walk(classed, classed / "tools/trust-classes.json",
+                                             classed / "lean/statements.txt")
+    assert not problems, problems
+    trusted = {c.decl.name for c in classified if c.trusted and c.decl.kind not in ("theorem", "command")}
+    assert {m.definition for m in default} == trusted == {"Demo.twice"}, default
+    assert all(m.trusted and m.trust_class == "?" for m in default)
+    assert trust_mutants.classes_of("trusted") == trust_mutants.TRUSTED
+
+
+def test_classes_all_adds_the_untrusted_definitions_and_keeps_the_default(classed):
+    """`--classes all` selects the reject-only and checked definitions the default skips; its trusted mutants are
+    the default's, field for field but the ids and run order; a class name picks that class alone."""
+    key = ("file", "line", "definition", "operator", "start", "end", "before", "after", "trust_class", "trusted")
+    default, wide = planned(classed), planned(classed, "all")
+    assert {m.definition for m in wide} == {"Demo.small", "Demo.evens", "Demo.twice"}, wide
+    assert sorted(tuple(getattr(m, k) for k in key) for m in wide if m.trusted) == sorted(
+        tuple(getattr(m, k) for k in key) for m in default)
+    assert {(m.definition, m.trust_class, m.trusted) for m in wide} == {
+        ("Demo.small", "D[R]", False), ("Demo.evens", "C", False), ("Demo.twice", "?", True)}
+    assert {m.definition for m in planned(classed, "C", "D[R]")} == {"Demo.small", "Demo.evens"}
+    assert {m.definition for m in planned(classed, "D[R]")} == {"Demo.small"}
+
+
+def test_a_theorem_proof_helper_or_check_is_never_selected(classed):
+    """P and T are no --classes name, and no list selects a theorem, a proof helper (P) or a check (T)."""
+    import trust_mutants
+    assert not {"P", "T"} & set(trust_mutants.SELECTABLE)
+    for classes in [("all",), trust_mutants.SELECTABLE, ("trusted", *trust_mutants.SELECTABLE)]:
+        names = {m.definition for m in planned(classed, *classes)}
+        assert not names & {"Demo.double", "Demo.double_eq", None}, (classes, names)
+
+
+@pytest.mark.parametrize("text", ["P", "T", "C,P", "trusted,T", "X", "c", "", "C,", "all,?"])
+def test_an_unknown_class_name_is_refused(classed, tmp_path, text):
+    """A name that is not `trusted`, `all` or a selectable trust_map class stops the run (exit 2) before any plan."""
+    import trust_mutants
+    assert trust_mutants.classes_of(text) is None
+    done, mutants = tool(classed, tmp_path / "run", "--classes", text)
+    assert done.returncode == 2 and "--classes" in done.stderr and not mutants, done.stdout + done.stderr
+
+
+def test_classes_names_are_read_from_trust_map():
+    """The selectable names are trust_map's CLASSES but its KIND_CLASSES' (one owner); `all` absorbs the rest."""
+    import trust_map
+    import trust_mutants
+    assert set(trust_mutants.SELECTABLE) == set(trust_map.CLASSES) - set(trust_map.KIND_CLASSES.values())
+    assert trust_mutants.classes_of(" D[R] ,C,C") == ("C", "D[R]")
+    assert trust_mutants.classes_of("trusted,all,G[R]") == ("all",)
+
+
+def test_classes_all_mutates_a_reject_only_definition_and_names_each_class(classed_all):
+    """Under `--classes all` the reject-only limit is mutated and killed by its guards, the checked definition's
+    survivors print with its class, the trusted one's with ", trusted", the JSON records the list, each mutant's
+    class and the verdicts counted by class, and the summary prints them."""
+    done, data, _ = classed_all
+    mutants = data["mutants"]
+    small, evens, twice = (of(mutants, n) for n in ("small", "evens", "twice"))
+    assert small and all(m["status"] == "KILLED" and (m["trust_class"], m["trusted"]) == ("D[R]", False)
+                         for m in small), small
+    assert {(m["trust_class"], m["trusted"]) for m in evens} == {("C", False)}
+    assert {(m["trust_class"], m["trusted"]) for m in twice} == {("?", True)}
+    survivors = [line for line in done.stdout.splitlines() if line.startswith("SURVIVOR ")]
+    assert survivors and any(" Demo.evens (C) " in line for line in survivors), done.stdout
+    assert all(re.search(r" Demo\.\w+ \((C|D\[R\]|\?, trusted)\) [\w-]+: ", line) for line in survivors), survivors
+    assert data["classes"] == ["all"]
+    for cls, trusted in (("D[R]", False), ("C", False), ("?", True)):
+        label = cls + (", trusted" if trusted else "")
+        mine = [m["status"] for m in mutants if m["trust_class"] == cls]
+        assert data["class_counts"][label] == {s: mine.count(s) for s in set(mine)}, data["class_counts"]
+        assert f"trust_mutants: {label}: " in done.stdout
+    assert done.returncode == 1
+
+
+def test_a_default_run_records_its_selection(default_run, tmp_path_factory):
+    """With no flag every mutant is trusted, and the JSON says the list was `trusted`."""
+    data = json.loads((tmp_path_factory.getbasetemp() / "default-evidence.json").read_text())
+    assert data["classes"] == ["trusted"] and json.loads(data["inputs"]["options"])["classes"] == ["trusted"]
+    assert data["mutants"] and all(m["trusted"] and m["trust_class"] == "?" for m in data["mutants"])
+
+
+def test_rescore_carries_only_across_the_same_classes(classed, classed_all, tmp_path):
+    """--rescore reuses a verdict only under the same --classes: the same list is mode "identical" (every verdict
+    reused, nothing built), another list is a full run even when it selects the very same mutants."""
+    _, prev, path = classed_all
+    done, same = rescored(classed, tmp_path / "same", path, "--classes", "all")
+    ran = [m for m in prev["mutants"] if m["raw_status"] in ("KILLED", "INVALID", "SURVIVOR")]
+    assert ran and (same["rescore"]["mode"], same["rescore"]["reused"]) == ("identical", len(ran)), done.stdout
+    assert [(m["id"], m["status"]) for m in same["mutants"]] == [(m["id"], m["status"]) for m in prev["mutants"]]
+    # every class the package has, named: the plan is `all`'s, the selection's list is not
+    names = ("trusted", "C", "D[R]")
+    assert [(m.id, m.definition, m.operator) for m in planned(classed, *names)] == [
+        (m["id"], m["definition"], m["operator"]) for m in prev["mutants"]]
+    done, other = rescored(classed, tmp_path / "other", path, "--classes", ",".join(names), "--max-mutants", "0")
+    assert (other["rescore"]["mode"], other["rescore"]["head"]) == ("full", None), done.stdout
+    assert other["rescore"]["full_run"] == "its inputs differ (options)"
+    assert not [m for m in other["mutants"] if "reused_from" in m]
 
 
 def test_the_generator_cuts_every_list_a_condition_reads():
