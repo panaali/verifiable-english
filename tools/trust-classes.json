@@ -12964,6 +12964,7 @@
         "VE.Calc.English.renderAtom",
         "VE.Calc.English.renderClaim",
         "VE.Calc.English.renderExpr",
+        "VE.Calc.English.renderFollows",
         "VE.Calc.English.renderTerm",
         "VE.Calc.English.reservedWords",
         "VE.Calc.English.valueWordsOk"
@@ -14378,6 +14379,7 @@
       ],
       "C": [
         "VE.Calc.Claim.inline",
+        "VE.Calc.Claim.subst",
         "VE.Calc.Decl.inlineUnder",
         "VE.Calc.Expr.bin2",
         "VE.Calc.Expr.inline",
@@ -14461,10 +14463,12 @@
     },
     "VE/Calc/Wire.lean": {
       "S": [
-        "VE.Calc.Check"
+        "VE.Calc.Check",
+        "VE.Calc.Check.exprs"
       ],
       "D[V]": [
         "VE.Calc.Case",
+        "VE.Calc.Wire.check",
         "VE.Calc.Wire.claim",
         "VE.Calc.Wire.comparisons",
         "VE.Calc.Wire.decl",
@@ -14479,6 +14483,7 @@
         "VE.Calc.Wire.expr",
         "VE.Calc.Wire.literal",
         "VE.Calc.Wire.operations",
+        "VE.Calc.Wire.premise",
         "VE.Calc.Wire.rules",
         "VE.Calc.Wire.value"
       ],
@@ -14488,9 +14493,11 @@
         "VE.Calc.Wire.checkCase",
         "VE.Calc.Wire.checkFields",
         "VE.Calc.Wire.children",
+        "VE.Calc.Wire.claimId",
         "VE.Calc.Wire.claimIdChar",
         "VE.Calc.Wire.count",
         "VE.Calc.Wire.depth",
+        "VE.Calc.Wire.derivations",
         "VE.Calc.Wire.entries",
         "VE.Calc.Wire.exponentFault",
         "VE.Calc.Wire.firstDup",
@@ -14499,6 +14506,7 @@
         "VE.Calc.Wire.limit",
         "VE.Calc.Wire.limitFault",
         "VE.Calc.Wire.literalFault",
+        "VE.Calc.Wire.nonlinearAt",
         "VE.Calc.Wire.scan",
         "VE.Calc.Wire.stringFault",
         "VE.Calc.Wire.unworded"
@@ -14514,10 +14522,12 @@
     "VE/Calc/Run.lean": {
       "S": [
         "VE.Calc.Check.OutcomeMeans",
-        "VE.Calc.Check.UnknownCause"
+        "VE.Calc.Check.UnknownCause",
+        "VE.Calc.Check.keep",
+        "VE.Calc.Check.reasons"
       ],
       "D[V]": [
-        "VE.Calc.Run.rowJson",
+        "VE.Calc.Run.kind",
         {
           "name": "VE.Calc.Run.outcomeAt",
           "tied": [
@@ -14531,6 +14541,7 @@
             "VE.Calc.Run.outcomes_words"
           ]
         },
+        "VE.Calc.Run.rowJson",
         {
           "name": "VE.Calc.Run.words",
           "tied": [
@@ -14566,8 +14577,11 @@
         }
       ],
       "C": [
+        "VE.Calc.Check.fault",
         "VE.Calc.Check.run",
-        "VE.Calc.instDecidableOutcomeMeansDecided"
+        "VE.Calc.Claim.factsIn",
+        "VE.Calc.Derive.outcome",
+        "VE.Calc.instDecidableOutcomeMeansClaimDecided"
       ]
     },
     "VE/Calc/RunExamples.lean": {
@@ -14575,12 +14589,17 @@
         "VE.Calc.RunExamples.answer",
         "VE.Calc.RunExamples.bad",
         "VE.Calc.RunExamples.c1",
+        "VE.Calc.RunExamples.chain",
         "VE.Calc.RunExamples.claim",
         "VE.Calc.RunExamples.deep",
         "VE.Calc.RunExamples.deepScanFault",
         "VE.Calc.RunExamples.defined",
+        "VE.Calc.RunExamples.deriv",
         "VE.Calc.RunExamples.expect",
         "VE.Calc.RunExamples.field",
+        "VE.Calc.RunExamples.free",
+        "VE.Calc.RunExamples.h6",
+        "VE.Calc.RunExamples.h6P",
         "VE.Calc.RunExamples.h8",
         "VE.Calc.RunExamples.identity",
         "VE.Calc.RunExamples.identityFamilies",
@@ -14590,25 +14609,34 @@
         "VE.Calc.RunExamples.meaning",
         "VE.Calc.RunExamples.multiByteNames",
         "VE.Calc.RunExamples.name64",
+        "VE.Calc.RunExamples.nonlinear",
         "VE.Calc.RunExamples.nulls",
         "VE.Calc.RunExamples.ok1",
+        "VE.Calc.RunExamples.onX",
         "VE.Calc.RunExamples.ones",
         "VE.Calc.RunExamples.p512",
         "VE.Calc.RunExamples.pad",
+        "VE.Calc.RunExamples.premise",
+        "VE.Calc.RunExamples.premises",
         "VE.Calc.RunExamples.printedSites",
         "VE.Calc.RunExamples.r1",
         "VE.Calc.RunExamples.r2",
+        "VE.Calc.RunExamples.r3",
+        "VE.Calc.RunExamples.r4",
         "VE.Calc.RunExamples.r827",
         "VE.Calc.RunExamples.req",
+        "VE.Calc.RunExamples.rsd",
         "VE.Calc.RunExamples.says",
         "VE.Calc.RunExamples.stated",
+        "VE.Calc.RunExamples.steps",
         "VE.Calc.RunExamples.stringSites",
         "VE.Calc.RunExamples.strings64",
         "VE.Calc.RunExamples.v2",
         "VE.Calc.RunExamples.v5",
         "VE.Calc.RunExamples.v5Rows",
         "VE.Calc.RunExamples.x1",
-        "VE.Calc.RunExamples.x1c"
+        "VE.Calc.RunExamples.x1c",
+        "VE.Calc.RunExamples.xle"
       ]
     },
     "VE/Acts/Table.lean": {
@@ -14669,8 +14697,10 @@
       "G[R]": [
         "ResponseShape.Schemas.Calc.answer",
         "ResponseShape.Schemas.Calc.claimRow",
+        "ResponseShape.Schemas.Calc.derivation",
         "ResponseShape.Schemas.Calc.fields",
         "ResponseShape.Schemas.Calc.file",
+        "ResponseShape.Schemas.Calc.kind",
         "ResponseShape.Schemas.Calc.reasons",
         "ResponseShape.Schemas.Calc.refusal",
         "ResponseShape.Schemas.Calc.row"
