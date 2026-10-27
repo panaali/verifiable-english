@@ -130,6 +130,7 @@ import VE.Scales.Examples
 import VE.Cardinality.Examples
 import VE.Cardinality.Run
 import VE.Cardinality.RunExamples
+import VE.Cardinality.RunTheorems
 import VE.Cardinality.WireExamples
 import VE.Cardinality.WireTheorems
 import VE.Risk.Cond
