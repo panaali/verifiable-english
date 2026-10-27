@@ -10,6 +10,7 @@ module MeteredMain
 module ResponseDecode
 module ResponseShape.Audit
 module ResponseShape.CaseDeciders
+module ResponseShape.DefaultsExamples
 module ResponseShape.Encoders.Alternatives
 module ResponseShape.Encoders.Ask
 module ResponseShape.Encoders.Calc
@@ -91,8 +92,12 @@ module VE.Acts.Lexical
 module VE.Acts.LexicalBase
 module VE.Acts.LexicalExamples
 module VE.Acts.LexicalProofs
+module VE.Acts.Linearize
 module VE.Acts.Read
 module VE.Acts.Syntax
+module VE.Acts.Table
+module VE.Acts.TableExamples
+module VE.Acts.Tree
 module VE.Alternatives.Admission
 module VE.Alternatives.Background
 module VE.Alternatives.Decl
@@ -106,6 +111,8 @@ module VE.Alternatives.Route
 module VE.Alternatives.Run
 module VE.Alternatives.Validate
 module VE.Alternatives.Wire
+module VE.Arith.Bounded
+module VE.Arith.BoundedExamples
 module VE.Arith.Defs
 module VE.Arith.Examples
 module VE.Arith.Holds
@@ -170,6 +177,9 @@ module VE.Cardinality.Regions
 module VE.Cardinality.Semantics
 module VE.Cardinality.Syntax
 module VE.Cardinality.Theorems
+module VE.Cardinality.Wire
+module VE.Cardinality.WireExamples
+module VE.Cardinality.WireTheorems
 module VE.CertificateWire
 module VE.Checks
 module VE.ClaimGraph
@@ -218,7 +228,11 @@ module VE.Core.TableauExtendedRules
 module VE.Core.Wire
 module VE.Data.Background
 module VE.Defaults.Examples
+module VE.Defaults.Meaning
+module VE.Defaults.MeaningExamples
 module VE.Defaults.Premises
+module VE.Defaults.Route
+module VE.Defaults.RouteExamples
 module VE.Defaults.Wire
 module VE.Defaults.WireExamples
 module VE.Definitions.Alias
@@ -307,6 +321,7 @@ module VE.Judgments.Decl
 module VE.Judgments.Examples
 module VE.Judgments.Scan
 module VE.Judgments.Status
+module VE.Kit.Except
 module VE.Layout.Anchors
 module VE.Layout.Discourse
 module VE.Layout.List
@@ -386,6 +401,7 @@ module VE.Order.Typing
 module VE.Order.Wire
 module VE.Order.WireGate
 module VE.ParserContracts
+module VE.Paths
 module VE.Question.Basic
 module VE.Question.Examples
 module VE.Question.Fixtures
@@ -528,6 +544,8 @@ module VE.Scope.Effects
 module VE.Scope.Examples
 module VE.Scope.Govern
 module VE.Scope.Theorems
+module VE.Scope.Wire
+module VE.Scope.WireExamples
 module VE.SearchBudget.Budget
 module VE.SearchBudget.Demand
 module VE.SearchBudget.Examples
@@ -560,6 +578,8 @@ module VE.Service.Protocol
 module VE.Service.Readings
 module VE.Service.ReadingsChoices
 module VE.Service.Registry
+module VE.Service.ScopeAdmission
+module VE.Service.ScopeExamples
 module VE.Service.Standalone
 module VE.Service.TypingDiagnostic
 module VE.SoftNorms.Admission
@@ -656,6 +676,7 @@ VE.Alternatives.Run.AltAdmissionAnswer@VE.Alternatives.Run
 VE.Alternatives.SettledF@VE.Alternatives.FillWire
 VE.Alternatives.TypedChooser@VE.Alternatives.Followable
 VE.Alternatives.UndecidedF@VE.Alternatives.FillWire
+VE.Arith.Agrees@VE.Arith.Bounded
 VE.Arith.Defs.Means@VE.Arith.Holds
 VE.Arith.Examples.IsPrime@VE.Arith.Examples
 VE.Arith.Holds@VE.Arith.Holds
@@ -767,7 +788,11 @@ VE.Data.Background.EntailsData@VE.Data.Background
 VE.Data.Background.Functional@VE.Data.Background
 VE.Data.Background.Intended@VE.Data.Background
 VE.Data.Background.Total@VE.Data.Background
+VE.Defaults.DefaultBase@VE.Defaults.Meaning
 VE.Defaults.DefaultCoherent@VE.Defaults.Premises
+VE.Defaults.ReplacementHolds@VE.Defaults.Meaning
+VE.Defaults.SwitchesOff@VE.Defaults.Meaning
+VE.Defaults.leastDecisions@VE.Defaults.Meaning
 VE.Definitions.Agrees@VE.Definitions.Layer
 VE.Definitions.Bundle.LeafBound@VE.Definitions.Bundle
 VE.Definitions.Bundle.ReadingBound@VE.Definitions.Bundle
@@ -978,6 +1003,10 @@ VE.Order.Tableau.Defined@VE.Order.Tableau
 VE.Order.Tableau.Signed.Holds@VE.Order.Tableau
 VE.Order.TupleTyped@VE.Order.Semantics
 VE.Order.Valuation.Typed@VE.Order.Semantics
+VE.Paths.ClosedAt@VE.Paths
+VE.Paths.Path.below@VE.Paths
+VE.Paths.Path@VE.Paths
+VE.Paths.Reachable@VE.Paths
 VE.Question.AtMostOneDerivation@VE.Question.Properties
 VE.Question.GrammarChecks@VE.Question.Properties
 VE.Question.HasReading@VE.Question.Properties

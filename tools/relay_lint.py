@@ -20,7 +20,7 @@ An explicitly owned surface parser remains outside the relay even when only a
 relayed file adapter imports it.
 
 A second rule keeps the unspecified completion's `fill` in Lean (readings-defaults plan, RD-2b and D12) and the soft
-decisions' names too (rd-9 soft-chain plan SC-8): no readings module (`ve/readings*.py`) holds a string literal or a
+decisions' names too (rd-9 soft-chain plan SC-8): no readings module (`READINGS_GLOBS`) holds a string literal or a
 comment containing a reserved completion name prefix (`RESERVED`) or the soft layer's decision prefix
 (`READINGS_RESERVED`), so none builds a filled name or a decision's name. A literal that only keeps such names out
 of the English (a non-wording guard) carries the marker `# relay-lint: non-wording` on its line; marked literals are
@@ -75,8 +75,9 @@ RELAYED_FUNCTIONS = {"ve/english.py": ("_lean_reading", "_parse_english_document
 # owner. SpeechDocument only supplies its structured fence to Lean for checking.
 OWNED_SURFACES = frozenset({"ve.speech_english"})
 FILE_IO = "# relay-lint: file I/O"
-# The modules that may not build the completion's names, and the reserved prefixes (norm-defaults 2.1).
-READINGS_GLOB = "ve/readings*.py"
+# The modules that may not build the completion's names, and the reserved prefixes (norm-defaults 2.1): every
+# readings module, and every module of a readings package (AR-16b split `ve/readings_verdicts.py` into its package).
+READINGS_GLOBS = ("ve/readings*.py", "ve/readings*/*.py")
 from ve.environment import RESERVED_PREFIXES as RESERVED  # noqa: E402  (one table with the checker's)
 from ve.environment import WORDING_LAYER_PREFIXES  # noqa: E402
 # The readings modules also never spell a soft decision's name (rd-9 soft-chain plan SC-8): they find it by its key in
@@ -89,7 +90,7 @@ PARSE_FREE = ("ve/senses_document.py", "ve/backends/senses.py", "ve/senses/__ini
 SENSES_LOADER = "ve/document"
 ENGLISH_READER = "parse_english"
 # The situation-wording rule (Q2.4): the modules, the phrases only Lean words, and the listed frames.
-WORDING_GLOBS = ("ve/readings*.py", "ve/norm_defaults*.py")
+WORDING_GLOBS = (*READINGS_GLOBS, "ve/norm_defaults*.py")
 WORDING = ("is a ", "is an ", "does not say whether")
 _FRAME = "a frame around Lean's clause; stays Python's until its own move (plan 5)"
 _LEGEND = "the legend's sentences (norm-defaults 4.1), outside Q2.4's list; the clause is Python's legend wording"
@@ -339,12 +340,17 @@ def english_reads(path: Path, *, branches_only: bool = False) -> list[str]:
     return out
 
 
+def readings_modules() -> list[Path]:
+    """The modules the second rule reads (`READINGS_GLOBS`)."""
+    return sorted(p for pattern in READINGS_GLOBS for p in ROOT.glob(pattern))
+
+
 def main(argv: list[str] | None = None) -> int:
     paths = [Path(p).resolve() for p in (argv if argv else [str(ROOT / r) for r in RELAYED])]
     if not argv:
         paths += helpers(paths)
     scoped = {} if argv else {(ROOT / name).resolve(): functions for name, functions in RELAYED_FUNCTIONS.items()}
-    readings = paths if argv else sorted(ROOT.glob(READINGS_GLOB))
+    readings = paths if argv else readings_modules()
     missing = [p for p in [*paths, *scoped] if not p.is_file()]
     if missing:
         print("\n".join(f"relayed module not found: {p}" for p in missing))

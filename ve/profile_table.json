@@ -116,7 +116,16 @@
   {"slot": "readings",
    "requires": ["norms@0"],
    "refuses": [],
-   "profile": "readings@1"}],
+   "profile": "readings@1"},
+  {"slot": "govern",
+   "requires": ["norms@0"],
+   "refuses":
+   [["risk@0", "scope@0 with risk@0"],
+    ["alternatives@0", "scope@0 with alternatives@0"],
+    ["speech-acts@0", "scope@0 with speech-acts@0"],
+    ["reports@0", "scope@0 with reports@0"],
+    ["ve.discourse@1", "scope@0 with ve.discourse@1"]],
+   "profile": "scope@0"}],
  "environment":
  ["alternatives@0",
   "risk@0",

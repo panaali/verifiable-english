@@ -674,6 +674,8 @@ steps 5 and 7 remeasured at the merge of ve-integration into readings-defaults/r
 and 8b remeasured at the merge of ve-integration into lean-first/b12 (2026-10-09), with batch 12's located
 decoders; steps 4, 5 and 7 remeasured at the merge of ve-integration into rd-9/integrate (2026-10-16);
 steps 5 and 8b remeasured on act-phrases ap-1b (2026-10-20: the `acts@0` decoder lines; both again after review F1 and C1);
+steps 3 and 4 remeasured on AR-20 (2026-10-26: `VE/Closure/Paths.lean` re-exports the shared `VE/Paths.lean`, and
+`decodeSoftDoc` and `decodeFilledDoc` call `Route.Admission.decodeDoc`, step 4a);
 the current measurements follow:
 
 The merged step 2a ledger now identifies no remaining runner lines in that row; the table below records
@@ -684,8 +686,8 @@ the current source classification alongside the previously measured steps.
 | 1 | 0 | 23 | 0 | 0 | 23 | 5 | 1.5 | 3.1 |
 | 2a | 0 | 0 | 0 | 0 | 0 | 4 | 1 | 0.0 |
 | 2b | 117 | 0 | 0 | 0 | 117 | 2 | 2 | 29.2 |
-| 3 | 39 | 0 | 0 | 10 | 29 | 14 | 2 | 1.0 |
-| 4 | 737 | 0 | 0 | 420 | 317 | 14 | 2 | 11.3 |
+| 3 | 30 | 0 | 0 | 10 | 20 | 14 | 2 | 0.7 |
+| 4 | 691 | 0 | 0 | 420 | 271 | 14 | 2 | 9.7 |
 | 5 | 0 | 464 | 0 | 0 | 464 | 14 | 1 | 33.1 |
 | 6 | 35 | 0 | 1748 | 0 | 35 | 3 | 1 | 11.7 |
 | 7 | 683 | 0 | 0 | 60 | 623 | 6 | 2 | 51.9 |

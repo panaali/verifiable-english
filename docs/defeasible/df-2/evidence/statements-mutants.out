@@ -1,0 +1,8 @@
+P1 (VE.Defaults.default_entails_minimal):
+  DIFF    default_entails_minimal
+  11 OK, 1 not OK
+
+P2 (VE.Defaults.DefaultBase):
+  DIFF    DefaultBase
+  11 OK, 1 not OK
+

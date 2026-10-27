@@ -228,6 +228,7 @@ def test_premise_scopes_reuse_lean_proposals_without_extra_verdicts(tmp_path, mo
 def test_repeated_premise_proposals_search_each_small_choice_once(tmp_path, monkeypatch):
     from collections import Counter
     from ve import readings_verdicts, search
+    from ve.readings_verdicts import superposed
 
     _, route, _ = example(tmp_path)
     original_doc = readings_verdicts._ChoiceDocument
@@ -248,7 +249,8 @@ def test_repeated_premise_proposals_search_each_small_choice_once(tmp_path, monk
             searched[(small_envs[id(env)], repr(premises), repr(conclusion))] += 1
         return original_search(env, premises, conclusion, **kwargs)
 
-    monkeypatch.setattr(readings_verdicts, "_ChoiceDocument", choice_doc)
+    # `Superposed._lifted` looks `_ChoiceDocument` up in its own module (AR-16b), so the patch names that module.
+    monkeypatch.setattr(superposed, "_ChoiceDocument", choice_doc)
     monkeypatch.setattr(search, "find_countermodel", find)
     answer = route.premises_answer()
     proposals = [tuple(tuple(x) for x in choice) for scope in answer["scopes"]
@@ -373,11 +375,12 @@ def test_sup_relay_leaves_status_consistency_to_lean(tmp_path):
 def test_python_sup_has_no_fold_or_dependency_replay():
     import ast
     from pathlib import Path
-    tree = ast.parse(Path("ve/readings_verdicts.py").read_text())
-    cls = next(n for n in tree.body if isinstance(n, ast.ClassDef) and n.name == "Superposed")
+    # Every module of the package (AR-16b split `ve/readings_verdicts.py` into `ve/readings_verdicts/`).
+    trees = [ast.parse(path.read_text()) for path in sorted(Path("ve/readings_verdicts").glob("*.py"))]
+    [cls] = [n for tree in trees for n in tree.body if isinstance(n, ast.ClassDef) and n.name == "Superposed"]
     names = {n.name for n in cls.body if isinstance(n, ast.FunctionDef)}
     assert not names & {"_fold", "_dependencies", "_mentions", "_choice_conflicts", "_gated_choice"}
-    assert not any(isinstance(n, ast.FunctionDef) and n.name == "_replays" for n in tree.body)
+    assert not any(isinstance(n, ast.FunctionDef) and n.name == "_replays" for tree in trees for n in tree.body)
 
 
 def test_budget_free_nd_verdict_request_keeps_the_enumerated_contract():
