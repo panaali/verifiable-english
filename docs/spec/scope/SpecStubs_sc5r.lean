@@ -33,9 +33,11 @@ inductive HasStr (s : String) : Json → Prop
   | arr {xs : Array Json} {x : Json} : x ∈ xs → HasStr s x → HasStr s (.arr xs)
   | obj {j x : Json} {k : String} : j.getObjVal? k = .ok x → HasStr s x → HasStr s j
 
-/-- sc-5rb's document mode: `checkDoc` (5.2) with `governSetsWith governFast` in place of `governFast`. -/
+/-- sc-5rb's document mode: `checkDoc` (5.2) with `governSetsWith governFast` in place of `governFast`. Pinned on
+    every case by `scope_admission_sets`, `checkDocSets_no_sets` and `checkDocSets_absent_unchanged`. -/
 opaque checkDocSets : Json → Except String Json
-/-- sc-5rb's `withUnits` (8.1), which also hands the chain GOVERN's `reading_sets`. -/
+/-- sc-5rb's `withUnits` (8.1), which also hands the chain GOVERN's `reading_sets`. With no governed set the chain
+    answers it as it answers `withUnits` (`checkDocSets_no_sets`). -/
 opaque withGoverned : Json → Json → Json
 
 /-- Spec 4.2's `payload` (sc-1ae). -/
@@ -233,6 +235,15 @@ theorem scope_admission_sets (front ans : Json) (h : Pinned.checkDocSets front =
     (hs : "scope@0" ∈ VE.Service.Document.profilesOf front) :
     ∃ D out a, decodeScope front = .ok D ∧ governSets D = .ok out ∧
       VE.Service.Document.checkCore (Pinned.withGoverned front out) = .ok a ∧ ans = foldGovernors D a := by sorry
+
+/-- `scope_admission`'s text, kept where no set is governed: the document mode answers exactly as today's `checkDoc`,
+    a block or profile fault included (`governSets_no_sets`, and the chain reads `withGoverned` as `withUnits`). -/
+theorem checkDocSets_no_sets (front : Json) (h : ∀ D, decodeScope front = .ok D → governedSetUnits D = []) :
+    Pinned.checkDocSets front = VE.Service.Document.checkDoc front := by sorry
+
+/-- `scope_absent_unchanged`, restated: a document without `scope@0` is `checkCore`'s, as before. -/
+theorem checkDocSets_absent_unchanged (front : Json) (h : "scope@0" ∉ VE.Service.Document.profilesOf front) :
+    Pinned.checkDocSets front = VE.Service.Document.checkCore front := by sorry
 
 end VE.Scope
 
