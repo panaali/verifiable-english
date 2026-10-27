@@ -1,0 +1,379 @@
+{
+ "mutants": [
+  {
+   "id": "plan-count-not-finite",
+   "file": "lean/VE/Cardinality/Wire.lean",
+   "claim": "countedSort (the plan's seeded bug): a count whose sort is not in finite_sorts is refused (the hostile case, through the runner)",
+   "source_sha256": "b892dbef05b3118dfd55d4d9951ab66672beb5232ec2d711a3f96264a237c8ab",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 21.4,
+   "output_tail": "lean/.lake/build/ir/VE/Cardinality/WireExamples.setup.json --json\nerror: VE/Cardinality/WireExamples.lean:191:0: Expression\n  refusal \"[\\\"count\\\", \\\"user\\\", [[\\\"1\\\", [\\\"is\\\", \\\"curious\\\"]]], \\\"le\\\", \\\"2\\\"]\" == \"CardinalityNotFinite(user)\"\ndid not evaluate to `true`\nerror: VE/Cardinality/WireExamples.lean:326:0: Expression\n  refusal (terms 1) (finite \"{\\\"finite_sorts\\\": []}\") == \"CardinalityNotFinite(fomc_policymaker)\"\ndid not evaluate to `true`\nerror: VE/Cardinality/WireExamples.lean:333:0: Expression\n  refusal \"[\\\"proportion\\\", \\\"user\\\", [\\\"any\\\"], [\\\"is\\\", \\\"curious\\\"], \\\"gt\\\", \\\"3\\\", \\\"2\\\"]\" ==\n    \"CardinalityNotFinite(user)\"\ndid not evaluate to `true`\nerror: VE/Cardinality/WireExamples.lean:342:0: Expression\n  refusal (toString \"[\\\"and\\\", \" ++ toString badCount ++ toString \", \" ++ toString (share \"3\" \"2\") ++ toString \"]\") ==\n    \"CardinalityNotFinite(user)\"\ndid not evaluate to `true`\nerror: VE/Cardinality/WireExamples.lean:344:0: Expression\n  refusal\n      \"[\\\"rounds_to\\\", \\\"ties_up\\\", [\\\"count\\\", \\\"user\\\", [\\\"is\\\", \\\"curious\\\"]], [\\\"quantity\\\", [\\\"const\\\", \\\"bp\\\", \\\"sept\\\"]], \\\"296\\\"]\" ==\n    \"CardinalityNotFinite(user)\"\ndid not evaluate to `true`\nerror: VE/Cardinality/WireExamples.lean:355:0: Expression\n  match decode [st badCount, st (share \"3\" \"2\")] with\n  | Except.error \"CardinalityNotFinite(user)\" => true\n  | x => false\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.WireExamples\nerror: build failed\n"
+  },
+  {
+   "id": "problemChecks-limits",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "problemChecks: P1 and P2 run on the problem (8 counted sorts, 6 predicates per counted sort)",
+   "source_sha256": "8bc9a5f0222d2e3c5c8ad5ebbbb31136f1a871b2cd2ec258c27f3af5ef096df5",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && python3 -c \"import pathlib; p = pathlib.Path('VE/Cardinality/Run.lean'); s = p.read_text(); i = s.index('c.formula := by\\n') + len('c.formula := by\\n'); j = s.index('\\nend VE.Cardinality\\n', i); p.write_text(s[:i] + '  sorry\\n' + s[j:])\" && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 193.5,
+   "output_tail": "Examples.ilean -c /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:217:0: Expression\n  err (counting 9) == \"ResourceLimit: At most 8 counted sorts\"\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:231:0: Expression\n  err (case \"admission\" predsEnv [] (mentioning 7)) ==\n    \"ResourceLimit: At most 6 predicates on counted sort fomc_policymaker (64 regions)\"\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:234:0: Expression\n  err\n      (case \"admission\" predsEnv [mentioning 6]\n        (st \"[\\\"count\\\", \\\"fomc_policymaker\\\", [[\\\"1\\\", [\\\"is\\\", \\\"expects_rates_to_stay\\\"]]], \\\"le\\\", \\\"7\\\"]\")) ==\n    \"ResourceLimit: At most 6 predicates on counted sort fomc_policymaker (64 regions)\"\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:238:0: Expression\n  err\n      (case \"admission\"\n        (obj (sortsEnv 9)\n          [(\"vocabulary\",\n              (predsEnv.getObjValD \"vocabulary\").setObjVal! \"sorts\"\n                (((sortsEnv 9).getObjValD \"vocabulary\").getObjValD \"sorts\"))])\n        (List.map countAny (List.map (fun x => toString \"s\" ++ toString x) (List.range 8))) (mentioning 7)) ==\n    \"ResourceLimit: At most 8 counted sorts\"\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "problemChecks-aggregate",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "problemChecks: P3, W6a's 10,000-node aggregate on the erased problem",
+   "source_sha256": "8bc9a5f0222d2e3c5c8ad5ebbbb31136f1a871b2cd2ec258c27f3af5ef096df5",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && python3 -c \"import pathlib; p = pathlib.Path('VE/Cardinality/Run.lean'); s = p.read_text(); i = s.index('c.formula := by\\n') + len('c.formula := by\\n'); j = s.index('\\nend VE.Cardinality\\n', i); p.write_text(s[:i] + '  sorry\\n' + s[j:])\" && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 254.4,
+   "output_tail": "trace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3b/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:265:0: Expression\n  err (case \"admission\" predsEnv (List.replicate (10001 - base) top) (wide 58)) == Time.Wire.aggregateLimit\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:267:0: Expression\n  err (case \"certificate\" predsEnv (List.replicate (10001 - base) top) (wide 58) [(\"certificate\", p \"{}\")]) ==\n    Time.Wire.aggregateLimit\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:269:0: Expression\n  (said do\n      let w \u2190 decodeEnvironment predsEnv\n      let ps \u2190 List.mapM (decodeStatement w) (List.replicate (10001 - base) top)\n      let __do_lift \u2190 decodeStatement w (wide 58)\n      let __do_lift_1 \u2190 decodeCertificate fa1Cert\n      checkCertificate ps __do_lift __do_lift_1) ==\n    Time.Wire.aggregateLimit\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "erasedIds-conclusion",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "erasedIds: the regenerated conclusion's W6a identities are its own (golden)",
+   "source_sha256": "8bc9a5f0222d2e3c5c8ad5ebbbb31136f1a871b2cd2ec258c27f3af5ef096df5",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && python3 -c \"import pathlib; p = pathlib.Path('VE/Cardinality/Run.lean'); s = p.read_text(); i = s.index('c.formula := by\\n') + len('c.formula := by\\n'); j = s.index('\\nend VE.Cardinality\\n', i); p.write_text(s[:i] + '  sorry\\n' + s[j:])\" && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 104.2,
+   "output_tail": "linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u26a0 [137/138] Built VE.Cardinality.Run (2.9s)\nwarning: VE/Cardinality/Run.lean:80:8: declaration uses 'sorry'\n\u2716 [138/138] Building VE.Cardinality.RunExamples (101s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3b/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:51:0: Expression\n  let e := fa1Admission.getObjValD \"erased\";\n  ((e.getObjValD \"conclusion\").getObjValD \"meaning_id\", (e.getObjValD \"conclusion\").getObjValD \"core_meaning_id\",\n      ((e.getObjValD \"premises\").getArr?.toOption.getD #[])[0]!.getObjValD \"meaning_id\") ==\n    (Json.str \"1693582034e41a1247c1992096ede677b3d42fee76465104b56d9d0836fc326f\",\n      Json.str \"e038e0dd3d095b66f455c6ee7201fe3b2ed7dd76550f7912bfcd44a33335c13a\",\n      Json.str \"a5e780ecae8ceccd555127a3cda629b7e732c8d3cce1d75254e49d21999d7317\")\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "decodeCertificate-format",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "decodeCertificate: another certificate format is refused",
+   "source_sha256": "8bc9a5f0222d2e3c5c8ad5ebbbb31136f1a871b2cd2ec258c27f3af5ef096df5",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && python3 -c \"import pathlib; p = pathlib.Path('VE/Cardinality/Run.lean'); s = p.read_text(); i = s.index('c.formula := by\\n') + len('c.formula := by\\n'); j = s.index('\\nend VE.Cardinality\\n', i); p.write_text(s[:i] + '  sorry\\n' + s[j:])\" && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 113.4,
+   "output_tail": "\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u26a0 [137/138] Built VE.Cardinality.Run (1.0s)\nwarning: VE/Cardinality/Run.lean:80:8: declaration uses 'sorry'\n\u2716 [138/138] Building VE.Cardinality.RunExamples (111s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3b/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:145:0: Expression\n  refused (fa1Cert.setObjVal! \"format\" (Json.str \"ve-quantity-certificate@1\")) ==\n    \"Invalid cardinality certificate: Unsupported cardinality certificate format\"\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "decodeCertificate-fields",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "decodeCertificate: a certificate with an extra member is refused",
+   "source_sha256": "8bc9a5f0222d2e3c5c8ad5ebbbb31136f1a871b2cd2ec258c27f3af5ef096df5",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && python3 -c \"import pathlib; p = pathlib.Path('VE/Cardinality/Run.lean'); s = p.read_text(); i = s.index('c.formula := by\\n') + len('c.formula := by\\n'); j = s.index('\\nend VE.Cardinality\\n', i); p.write_text(s[:i] + '  sorry\\n' + s[j:])\" && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 129.5,
+   "output_tail": ", List.length_append, List.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u26a0 [137/138] Built VE.Cardinality.Run (2.6s)\nwarning: VE/Cardinality/Run.lean:79:8: declaration uses 'sorry'\n\u2716 [138/138] Building VE.Cardinality.RunExamples (126s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3b/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:147:0: Expression\n  (refused (fa1Cert.setObjVal! \"extra\" (Json.str \"x\"))).startsWith \"Invalid cardinality certificate: \"\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "checkCertificate-environment",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "checkCertificate: the cardinality environment identity is bound (FA11)",
+   "source_sha256": "8bc9a5f0222d2e3c5c8ad5ebbbb31136f1a871b2cd2ec258c27f3af5ef096df5",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && python3 -c \"import pathlib; p = pathlib.Path('VE/Cardinality/Run.lean'); s = p.read_text(); i = s.index('c.formula := by\\n') + len('c.formula := by\\n'); j = s.index('\\nend VE.Cardinality\\n', i); p.write_text(s[:i] + '  sorry\\n' + s[j:])\" && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 123.4,
+   "output_tail": "and_eq_true, decide_eq_true_eq, List.length_append, List.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u26a0 [137/138] Built VE.Cardinality.Run (2.3s)\nwarning: VE/Cardinality/Run.lean:80:8: declaration uses 'sorry'\n\u2716 [138/138] Building VE.Cardinality.RunExamples (120s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3b/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:130:0: Expression\n  refused (fa1Cert.setObjVal! \"environment_id\" (Json.str w6Id)) == stale\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "checkCertificate-premises",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "checkCertificate: the cardinality premise ids are bound, in order",
+   "source_sha256": "8bc9a5f0222d2e3c5c8ad5ebbbb31136f1a871b2cd2ec258c27f3af5ef096df5",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && python3 -c \"import pathlib; p = pathlib.Path('VE/Cardinality/Run.lean'); s = p.read_text(); i = s.index('c.formula := by\\n') + len('c.formula := by\\n'); j = s.index('\\nend VE.Cardinality\\n', i); p.write_text(s[:i] + '  sorry\\n' + s[j:])\" && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 110.3,
+   "output_tail": "n:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u26a0 [137/138] Built VE.Cardinality.Run (2.5s)\nwarning: VE/Cardinality/Run.lean:80:8: declaration uses 'sorry'\n\u2716 [138/138] Building VE.Cardinality.RunExamples (107s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3b/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:131:0: Expression\n  refused (fa1Cert.setObjVal! \"premise_meaning_ids\" (reversed (fa1Cert.getObjValD \"premise_meaning_ids\"))) == stale\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:143:0: Expression\n  err (case \"certificate\" env fa1Premises.dropLast fa1Conclusion [(\"certificate\", fa1Cert)]) == stale\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "checkCertificate-w6-premises",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "checkCertificate: W6a's annotated premise ids of the regenerated problem are bound",
+   "source_sha256": "8bc9a5f0222d2e3c5c8ad5ebbbb31136f1a871b2cd2ec258c27f3af5ef096df5",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && python3 -c \"import pathlib; p = pathlib.Path('VE/Cardinality/Run.lean'); s = p.read_text(); i = s.index('c.formula := by\\n') + len('c.formula := by\\n'); j = s.index('\\nend VE.Cardinality\\n', i); p.write_text(s[:i] + '  sorry\\n' + s[j:])\" && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 100.4,
+   "output_tail": "length_append, List.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u26a0 [137/138] Built VE.Cardinality.Run (1.8s)\nwarning: VE/Cardinality/Run.lean:80:8: declaration uses 'sorry'\n\u2716 [138/138] Building VE.Cardinality.RunExamples (98s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3b/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:136:0: Expression\n  refused (withW6 \"premise_meaning_ids\" (reversed (w6.getObjValD \"premise_meaning_ids\"))) == Time.Wire.staleW6\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "checkCertificate-core-conclusion",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "checkCertificate: the regenerated core conclusion's id is bound",
+   "source_sha256": "8bc9a5f0222d2e3c5c8ad5ebbbb31136f1a871b2cd2ec258c27f3af5ef096df5",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && python3 -c \"import pathlib; p = pathlib.Path('VE/Cardinality/Run.lean'); s = p.read_text(); i = s.index('c.formula := by\\n') + len('c.formula := by\\n'); j = s.index('\\nend VE.Cardinality\\n', i); p.write_text(s[:i] + '  sorry\\n' + s[j:])\" && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 126.9,
+   "output_tail": "t.length_append, List.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u26a0 [137/138] Built VE.Cardinality.Run (2.6s)\nwarning: VE/Cardinality/Run.lean:80:8: declaration uses 'sorry'\n\u2716 [138/138] Building VE.Cardinality.RunExamples (124s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3b/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:141:0: Expression\n  refused (withCore \"conclusion_meaning_id\" (w6.getObjValD \"conclusion_meaning_id\")) == Time.Wire.staleCore\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "checkCertificate-steps",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "checkCertificate: the replay's step limit is 10,000 steps, 10,000 allowed",
+   "source_sha256": "8bc9a5f0222d2e3c5c8ad5ebbbb31136f1a871b2cd2ec258c27f3af5ef096df5",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && python3 -c \"import pathlib; p = pathlib.Path('VE/Cardinality/Run.lean'); s = p.read_text(); i = s.index('c.formula := by\\n') + len('c.formula := by\\n'); j = s.index('\\nend VE.Cardinality\\n', i); p.write_text(s[:i] + '  sorry\\n' + s[j:])\" && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 129.7,
+   "output_tail": "t from the simp argument list.\n  simp only [Bool.and_eq_true, decide_eq_true_eq, List.length_append, List.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u26a0 [137/138] Built VE.Cardinality.Run (2.4s)\nwarning: VE/Cardinality/Run.lean:80:8: declaration uses 'sorry'\n\u2716 [138/138] Building VE.Cardinality.RunExamples (126s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3b/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:172:0: Expression\n  steps 9999 == \"false\"\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "stale-text",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "stale: spec 4.2's binding text",
+   "source_sha256": "8bc9a5f0222d2e3c5c8ad5ebbbb31136f1a871b2cd2ec258c27f3af5ef096df5",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && python3 -c \"import pathlib; p = pathlib.Path('VE/Cardinality/Run.lean'); s = p.read_text(); i = s.index('c.formula := by\\n') + len('c.formula := by\\n'); j = s.index('\\nend VE.Cardinality\\n', i); p.write_text(s[:i] + '  sorry\\n' + s[j:])\" && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 123.8,
+   "output_tail": "/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u26a0 [137/138] Built VE.Cardinality.Run (2.3s)\nwarning: VE/Cardinality/Run.lean:80:8: declaration uses 'sorry'\n\u2716 [138/138] Building VE.Cardinality.RunExamples (121s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3b/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:58:0: Expression\n  (stale, Time.Wire.staleW6, Time.Wire.staleCore) ==\n    (\"cardinality certificate is stale or bound to different statements\",\n      \"W6 certificate is stale or bound to different annotated statements\",\n      \"core certificate is stale or bound to a different regenerated problem\")\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "statementJson-formula",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "statementJson: the canonical formula is echoed",
+   "source_sha256": "8bc9a5f0222d2e3c5c8ad5ebbbb31136f1a871b2cd2ec258c27f3af5ef096df5",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && python3 -c \"import pathlib; p = pathlib.Path('VE/Cardinality/Run.lean'); s = p.read_text(); i = s.index('c.formula := by\\n') + len('c.formula := by\\n'); j = s.index('\\nend VE.Cardinality\\n', i); p.write_text(s[:i] + '  sorry\\n' + s[j:])\" && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 135.4,
+   "output_tail": "e_eq, List.length_append, List.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u26a0 [137/138] Built VE.Cardinality.Run (2.2s)\nwarning: VE/Cardinality/Run.lean:80:8: declaration uses 'sorry'\n\u2716 [138/138] Building VE.Cardinality.RunExamples (132s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3b/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:44:0: Expression\n  (fa1Admission.getObjValD \"conclusion\").getObjValD \"formula\" == fa1Conclusion.getObjValD \"formula\"\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "regionsJson-order",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "regionsJson: each counted sort's predicates in first-use order",
+   "source_sha256": "8bc9a5f0222d2e3c5c8ad5ebbbb31136f1a871b2cd2ec258c27f3af5ef096df5",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && python3 -c \"import pathlib; p = pathlib.Path('VE/Cardinality/Run.lean'); s = p.read_text(); i = s.index('c.formula := by\\n') + len('c.formula := by\\n'); j = s.index('\\nend VE.Cardinality\\n', i); p.write_text(s[:i] + '  sorry\\n' + s[j:])\" && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 112.9,
+   "output_tail": "th `set_option linter.unusedSimpArgs false`\n\u26a0 [137/138] Built VE.Cardinality.Run (2.1s)\nwarning: VE/Cardinality/Run.lean:80:8: declaration uses 'sorry'\n\u2716 [138/138] Building VE.Cardinality.RunExamples (110s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3b/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:35:0: Expression\n  (fa1Admission.getObjValD \"regions\").getObjValD \"predicates\" ==\n    p \"{\\\"fomc_policymaker\\\": [\\\"expects_further_increase\\\", \\\"expects_rates_to_stay\\\"]}\"\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:184:0: Expression\n  err\n      (case \"admission\" env fa1Premises fa1Conclusion\n        [(\"regions\",\n            regions.setObjVal! \"predicates\"\n              (p \"{\\\"fomc_policymaker\\\": [\\\"expects_rates_to_stay\\\", \\\"expects_further_increase\\\"]}\"))]) ==\n    \"region table differs from the regenerated one\"\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "erasedJson-ids",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "erasedJson: each erased formula carries its annotated and its core id under their names",
+   "source_sha256": "8bc9a5f0222d2e3c5c8ad5ebbbb31136f1a871b2cd2ec258c27f3af5ef096df5",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && python3 -c \"import pathlib; p = pathlib.Path('VE/Cardinality/Run.lean'); s = p.read_text(); i = s.index('c.formula := by\\n') + len('c.formula := by\\n'); j = s.index('\\nend VE.Cardinality\\n', i); p.write_text(s[:i] + '  sorry\\n' + s[j:])\" && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 126.1,
+   "output_tail": "es\"), (\"conclusion\", fa1Admission.getObjValD \"conclusion\")]\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:114:0: Expression\n  certify fa1Premises.dropLast fa1Conclusion (certificate fa1bAdmission Examples.fa1Trace) ==\n    Json.mkObj\n      [(\"id\", Json.str \"c\"), (\"status\", Json.str \"ok\"), (\"valid\", Json.bool false), (\"environment_id\", Json.str envId),\n        (\"w6_environment_id\", Json.str w6Id), (\"w6_target_environment_id\", Json.str targetId),\n        (\"premises\", fa1bAdmission.getObjValD \"premises\"), (\"conclusion\", fa1bAdmission.getObjValD \"conclusion\")]\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:139:0: Expression\n  refused (withCore \"environment_id\" (Json.str w6Id)) == Time.Wire.staleCore\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:140:0: Expression\n  refused (withCore \"premise_meaning_ids\" (w6.getObjValD \"premise_meaning_ids\")) == Time.Wire.staleCore\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:141:0: Expression\n  refused (withCore \"conclusion_meaning_id\" (w6.getObjValD \"conclusion_meaning_id\")) == Time.Wire.staleCore\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:171:0: Expression\n  steps 10000 == Route.Steps.stepLimit\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:172:0: Expression\n  steps 9999 == \"false\"\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "claimed-same",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "claimed: a claimed table that differs is refused",
+   "source_sha256": "8bc9a5f0222d2e3c5c8ad5ebbbb31136f1a871b2cd2ec258c27f3af5ef096df5",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && python3 -c \"import pathlib; p = pathlib.Path('VE/Cardinality/Run.lean'); s = p.read_text(); i = s.index('c.formula := by\\n') + len('c.formula := by\\n'); j = s.index('\\nend VE.Cardinality\\n', i); p.write_text(s[:i] + '  sorry\\n' + s[j:])\" && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 94.8,
+   "output_tail": "   regions.setObjVal! \"predicates\"\n              (p \"{\\\"fomc_policymaker\\\": [\\\"expects_rates_to_stay\\\", \\\"expects_further_increase\\\"]}\"))]) ==\n    \"region table differs from the regenerated one\"\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:187:0: Expression\n  err\n      (case \"admission\" env fa1Premises fa1Conclusion\n        [(\"erased\",\n            erased.setObjVal! \"premises\"\n              (Json.arr (List.drop 1 ((erased.getObjValD \"premises\").getArr?.toOption.getD #[]).toList).toArray))]) ==\n    \"erased problem differs from the regenerated one\"\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:191:0: Expression\n  err\n      (case \"admission\" env fa1Premises fa1Conclusion\n        [(\"regions\", List.foldl (fun j x => Json.arr #[j]) (Json.str \"x\") (List.range 300))]) ==\n    \"region table differs from the regenerated one\"\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:194:0: Expression\n  err (case \"certificate\" env fa1Premises fa1Conclusion [(\"certificate\", fa1Cert), (\"erased\", p \"[]\")]) ==\n    \"erased problem differs from the regenerated one\"\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:196:0: Expression\n  err (case \"certificate\" env fa1Premises fa1Conclusion [(\"certificate\", p \"{}\"), (\"regions\", erased)]) ==\n    \"region table differs from the regenerated one\"\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "claimed-uncanonical",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "claimed: a claim the canonical writer refuses is refused",
+   "source_sha256": "8bc9a5f0222d2e3c5c8ad5ebbbb31136f1a871b2cd2ec258c27f3af5ef096df5",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && python3 -c \"import pathlib; p = pathlib.Path('VE/Cardinality/Run.lean'); s = p.read_text(); i = s.index('c.formula := by\\n') + len('c.formula := by\\n'); j = s.index('\\nend VE.Cardinality\\n', i); p.write_text(s[:i] + '  sorry\\n' + s[j:])\" && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 93.7,
+   "output_tail": "can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u26a0 [137/138] Built VE.Cardinality.Run (1.7s)\nwarning: VE/Cardinality/Run.lean:80:8: declaration uses 'sorry'\n\u2716 [138/138] Building VE.Cardinality.RunExamples (91s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3b/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:191:0: Expression\n  err\n      (case \"admission\" env fa1Premises fa1Conclusion\n        [(\"regions\", List.foldl (fun j x => Json.arr #[j]) (Json.str \"x\") (List.range 300))]) ==\n    \"region table differs from the regenerated one\"\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "runCase-kind",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "runCase: only admission and certificate cases",
+   "source_sha256": "8bc9a5f0222d2e3c5c8ad5ebbbb31136f1a871b2cd2ec258c27f3af5ef096df5",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && python3 -c \"import pathlib; p = pathlib.Path('VE/Cardinality/Run.lean'); s = p.read_text(); i = s.index('c.formula := by\\n') + len('c.formula := by\\n'); j = s.index('\\nend VE.Cardinality\\n', i); p.write_text(s[:i] + '  sorry\\n' + s[j:])\" && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 81.7,
+   "output_tail": "\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u26a0 [137/138] Built VE.Cardinality.Run (1.5s)\nwarning: VE/Cardinality/Run.lean:80:8: declaration uses 'sorry'\n\u2716 [138/138] Building VE.Cardinality.RunExamples (79s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3b/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:66:0: Expression\n  answer (case \"countermodel\" env fa1Premises fa1Conclusion) ==\n    p \"{\\\"id\\\": \\\"c\\\", \\\"status\\\": \\\"error\\\", \\\"error\\\": \\\"unknown case kind countermodel\\\"}\"\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "runCase-default",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "runCase: a case without kind is an admission case",
+   "source_sha256": "8bc9a5f0222d2e3c5c8ad5ebbbb31136f1a871b2cd2ec258c27f3af5ef096df5",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && python3 -c \"import pathlib; p = pathlib.Path('VE/Cardinality/Run.lean'); s = p.read_text(); i = s.index('c.formula := by\\n') + len('c.formula := by\\n'); j = s.index('\\nend VE.Cardinality\\n', i); p.write_text(s[:i] + '  sorry\\n' + s[j:])\" && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 89.0,
+   "output_tail": "warning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u26a0 [137/138] Built VE.Cardinality.Run (1.6s)\nwarning: VE/Cardinality/Run.lean:80:8: declaration uses 'sorry'\n\u2716 [138/138] Building VE.Cardinality.RunExamples (87s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3b/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:63:0: Expression\n  answer ((case \"admission\" env fa1Premises fa1Conclusion).setObjVal! \"kind\" (Json.str \"admission\")) ==\n    answer\n      (Json.mkObj\n        [(\"id\", Json.str \"c\"), (\"environment\", env), (\"premises\", Json.arr fa1Premises.toArray),\n          (\"conclusion\", fa1Conclusion)])\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "runCase-claims",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "runCase: claimed region tables are checked",
+   "source_sha256": "8bc9a5f0222d2e3c5c8ad5ebbbb31136f1a871b2cd2ec258c27f3af5ef096df5",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && python3 -c \"import pathlib; p = pathlib.Path('VE/Cardinality/Run.lean'); s = p.read_text(); i = s.index('c.formula := by\\n') + len('c.formula := by\\n'); j = s.index('\\nend VE.Cardinality\\n', i); p.write_text(s[:i] + '  sorry\\n' + s[j:])\" && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 95.0,
+   "output_tail": "n/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3b/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:184:0: Expression\n  err\n      (case \"admission\" env fa1Premises fa1Conclusion\n        [(\"regions\",\n            regions.setObjVal! \"predicates\"\n              (p \"{\\\"fomc_policymaker\\\": [\\\"expects_rates_to_stay\\\", \\\"expects_further_increase\\\"]}\"))]) ==\n    \"region table differs from the regenerated one\"\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:191:0: Expression\n  err\n      (case \"admission\" env fa1Premises fa1Conclusion\n        [(\"regions\", List.foldl (fun j x => Json.arr #[j]) (Json.str \"x\") (List.range 300))]) ==\n    \"region table differs from the regenerated one\"\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:196:0: Expression\n  err (case \"certificate\" env fa1Premises fa1Conclusion [(\"certificate\", p \"{}\"), (\"regions\", erased)]) ==\n    \"region table differs from the regenerated one\"\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "runCaseReported-valid",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "runCaseReported: a refused certificate case says valid false",
+   "source_sha256": "8bc9a5f0222d2e3c5c8ad5ebbbb31136f1a871b2cd2ec258c27f3af5ef096df5",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && python3 -c \"import pathlib; p = pathlib.Path('VE/Cardinality/Run.lean'); s = p.read_text(); i = s.index('c.formula := by\\n') + len('c.formula := by\\n'); j = s.index('\\nend VE.Cardinality\\n', i); p.write_text(s[:i] + '  sorry\\n' + s[j:])\" && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 84.7,
+   "output_tail": "on linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u26a0 [137/138] Built VE.Cardinality.Run (1.5s)\nwarning: VE/Cardinality/Run.lean:80:8: declaration uses 'sorry'\n\u2716 [138/138] Building VE.Cardinality.RunExamples (82s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3b/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:151:0: Expression\n  answer (case \"certificate\" env fa1Premises fa1Conclusion [(\"certificate\", p \"{}\")]) ==\n    Json.mkObj\n      [(\"id\", Json.str \"c\"), (\"status\", Json.str \"error\"), (\"error\", Json.str (refused (p \"{}\"))),\n        (\"valid\", Json.bool false)]\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "statementIds-target",
+   "file": "lean/VE/Time/Wire.lean",
+   "claim": "statementIds (W6a): the core id is in the W6a target environment's identity (golden)",
+   "source_sha256": "147a419f9ee340e04b3e2c600f0474ad6019401172b41058911f60665a467c81",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 101.8,
+   "output_tail": " [134/138] Built VE.Time.Wire (12s)\n\u2714 [135/138] Built VE.Cardinality.Wire (1.8s)\n\u2714 [136/138] Built VE.Cardinality.Run (2.0s)\n\u2714 [137/138] Built VE.Cardinality.WireExamples (9.9s)\n\u2716 [138/138] Building VE.Cardinality.RunExamples (77s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3b/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:51:0: Expression\n  let e := fa1Admission.getObjValD \"erased\";\n  ((e.getObjValD \"conclusion\").getObjValD \"meaning_id\", (e.getObjValD \"conclusion\").getObjValD \"core_meaning_id\",\n      ((e.getObjValD \"premises\").getArr?.toOption.getD #[])[0]!.getObjValD \"meaning_id\") ==\n    (Json.str \"1693582034e41a1247c1992096ede677b3d42fee76465104b56d9d0836fc326f\",\n      Json.str \"e038e0dd3d095b66f455c6ee7201fe3b2ed7dd76550f7912bfcd44a33335c13a\",\n      Json.str \"a5e780ecae8ceccd555127a3cda629b7e732c8d3cce1d75254e49d21999d7317\")\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "aggregate-bound",
+   "file": "lean/VE/Time/Wire.lean",
+   "claim": "quantityLimits.aggregate (W6a): at most 10,000 nodes, 10,000 allowed (P3)",
+   "source_sha256": "147a419f9ee340e04b3e2c600f0474ad6019401172b41058911f60665a467c81",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 123.0,
+   "output_tail": "l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [134/138] Built VE.Time.Wire (13s)\n\u2714 [135/138] Built VE.Cardinality.Wire (2.2s)\n\u2714 [136/138] Built VE.Cardinality.Run (2.8s)\n\u2714 [137/138] Built VE.Cardinality.WireExamples (12s)\n\u2716 [138/138] Building VE.Cardinality.RunExamples (94s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3b/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:264:0: Expression\n  status (case \"admission\" predsEnv (List.replicate (10000 - base) top) (wide 58)) == Json.str \"ok\"\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "staleW6-text",
+   "file": "lean/VE/Time/Wire.lean",
+   "claim": "staleW6 (W6a): its binding text",
+   "source_sha256": "147a419f9ee340e04b3e2c600f0474ad6019401172b41058911f60665a467c81",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 162.0,
+   "output_tail": "_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [134/138] Built VE.Time.Wire (18s)\n\u2714 [135/138] Built VE.Cardinality.Wire (2.2s)\n\u2714 [136/138] Built VE.Cardinality.Run (2.7s)\n\u2714 [137/138] Built VE.Cardinality.WireExamples (12s)\n\u2716 [138/138] Building VE.Cardinality.RunExamples (128s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3b/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:58:0: Expression\n  (stale, Time.Wire.staleW6, Time.Wire.staleCore) ==\n    (\"cardinality certificate is stale or bound to different statements\",\n      \"W6 certificate is stale or bound to different annotated statements\",\n      \"core certificate is stale or bound to a different regenerated problem\")\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "staleCore-text",
+   "file": "lean/VE/Time/Wire.lean",
+   "claim": "staleCore (W6a): its binding text",
+   "source_sha256": "147a419f9ee340e04b3e2c600f0474ad6019401172b41058911f60665a467c81",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 168.0,
+   "output_tail": "_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [134/138] Built VE.Time.Wire (16s)\n\u2714 [135/138] Built VE.Cardinality.Wire (2.2s)\n\u2714 [136/138] Built VE.Cardinality.Run (2.3s)\n\u2714 [137/138] Built VE.Cardinality.WireExamples (12s)\n\u2716 [138/138] Building VE.Cardinality.RunExamples (137s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3b/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3b/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3b/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:58:0: Expression\n  (stale, Time.Wire.staleW6, Time.Wire.staleCore) ==\n    (\"cardinality certificate is stale or bound to different statements\",\n      \"W6 certificate is stale or bound to different annotated statements\",\n      \"core certificate is stale or bound to a different regenerated problem\")\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  }
+ ]
+}
