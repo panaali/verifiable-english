@@ -160,16 +160,19 @@ def said (r : Except String Bool) : String :=
 
 /-! ## The replay's step limit (10,000 steps), at and past it, on the decoded certificate -/
 
-/-- FA1's decoded statements and certificate, with its trace replaced by an expansion with `n` closed children. -/
-def steps (n : Nat) : String := said do
+/-- FA1's decoded statements and certificate, with its trace replaced by one of `10000 + extra` steps, at most 101
+children per node and two levels deep (a 10,000-child node overflows the stack of Lean on aarch64). -/
+def steps (extra : Nat) : String := said do
   let w ← decodeEnvironment env
   let ps ← fa1Premises.mapM (decodeStatement w)
   let c ← decodeStatement w fa1Conclusion
   let cert ← decodeCertificate fa1Cert
-  checkCertificate ps c { cert with w6.core.trace := .expand 0 none (List.replicate n .close) }
+  let trace := .expand 0 none (List.replicate extra .close ++
+    List.replicate 99 (.expand 0 none (List.replicate 100 .close)))
+  checkCertificate ps c { cert with w6.core.trace := trace }
 
-#guard steps 10000 == VE.Route.Steps.stepLimit
-#guard steps 9999 == "false"
+#guard steps 1 == VE.Route.Steps.stepLimit
+#guard steps 0 == "false"
 
 /-! ## A forged region table and a forged erased problem -/
 
