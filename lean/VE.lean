@@ -122,6 +122,7 @@ import VE.Calc.Identity
 import VE.Calc.IdentityExamples
 import VE.Arith.Examples
 import VE.Arith.BoundedExamples
+import VE.Arith.CompleteExamples
 import VE.Calc.Lower
 import VE.Calc.LowerExamples
 import VE.Numbers.Examples
