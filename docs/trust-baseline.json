@@ -1195,6 +1195,34 @@
    "reason": "ap-2b: K +0, S +126 (lean/VE/Acts/Grammar.lean: frameRules 44, globalRules 18, NT 9, FNT 8, Core 6, RuleS 6, items 6, fillExcl 6, RSym 4, tail 4, schema 4, closed 4, grammar 3, kwSyms 2, many1 2), untied V +14 (Grammar.lean: build 9, RSym.nt? 5); NT.rank (12) is tied to schema_ranked",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-2b, 2026-10-18",
    "commit": "0e7a813e8841bbd7cf103229cf37386b8699896d"
+  },
+  {
+   "class": "V",
+   "lines": 50,
+   "reason": "me-2c: lean/VE/Calc/Run.lean +50 (D[V] wordsIn, line, exact, truncated, sides, display, tie, claimFields; rowJson's line, finding and claim members; runCaseReported's values)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-2c, 2026-10-27",
+   "commit": "b31b8e4c180a9ec347eebe505ecb930e92bb094e"
+  },
+  {
+   "class": "S",
+   "lines": 35,
+   "reason": "df-2: VE/Defaults/Meaning.lean S +35, V +5 (withOpen, SwitchesOff, DefaultBase, leastDecisions, ReplacementHolds; softX)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-2, 2026-10-18",
+   "commit": "f39c78ddeea84706c68a90da3e3bbee1ad20562f"
+  },
+  {
+   "class": "V",
+   "lines": 5,
+   "reason": "df-2: VE/Defaults/Meaning.lean S +35, V +5 (withOpen, SwitchesOff, DefaultBase, leastDecisions, ReplacementHolds; softX)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-2, 2026-10-18",
+   "commit": "f39c78ddeea84706c68a90da3e3bbee1ad20562f"
+  },
+  {
+   "class": "S",
+   "lines": 46,
+   "reason": "ap-3b: lean/VE/Acts/Linearize.lean +46 (S: joinWord, Part.toks, listToks, Filler.toks, Atom.normal, tokStr, tokText, Atom.withTo, Atom.text, partAct); Table.lean paraphrases G[R] (not trusted); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3b, 2026-10-18",
+   "commit": "0e7a813e8841bbd7cf103229cf37386b8699896d"
   }
  ]
 }
