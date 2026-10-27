@@ -1,0 +1,21 @@
+{
+ "base": "110b3bf3ad801a3dc335e9b2293e5c27bb4b82eb",
+ "head": "10ebba1c266a8ff6bd5be9f323d77bcf34d36fe6",
+ "definitions": 38,
+ "moved_verbatim": 38,
+ "top_level_comments": 10,
+ "indented_imports": {
+  "base": 90,
+  "head": 90
+ },
+ "added": [],
+ "module_lines": {
+  "ve/readings_verdicts/__init__.py": 51,
+  "ve/readings_verdicts/binding.py": 497,
+  "ve/readings_verdicts/choice.py": 407,
+  "ve/readings_verdicts/enumerated.py": 224,
+  "ve/readings_verdicts/route.py": 143,
+  "ve/readings_verdicts/superposed.py": 611
+ },
+ "errors": []
+}
