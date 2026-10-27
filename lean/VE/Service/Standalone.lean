@@ -223,7 +223,7 @@ def validatedEnvironment (environment : Json) : Except String VE.Route.Gate.Enve
 statement layer validates its own declarations; the core decoder handles the
 remaining families. `Compose.profileTable` is the single gate for the full registry: its base rows, and the whole
 table for a list with `Compose.environmentWrapper`. -/
-def validatedComposedEnvironment (environment : Json) : Except String VE.Route.Gate.Envelope := do
+def validatedLayerEnvironment (environment : Json) : Except String VE.Route.Gate.Envelope := do
   let rawProfiles := (VE.Bridge.strings (environment.getObjValD "profiles")).toOption.getD []
   if rawProfiles.contains "norm-defaults@0" && !rawProfiles.contains "norms@0" then
     let _ ← VE.Compose.gateOf VE.Compose.baseRows rawProfiles
@@ -292,6 +292,17 @@ def validatedComposedEnvironment (environment : Json) : Except String VE.Route.G
     else if ps.contains "nary@0" then .closureNary
     else if ps.contains "closure@0" then .closure else .fol
   pure ⟨ps, family, ← environment.getObjVal? "vocabulary"⟩
+
+/-- `validatedLayerEnvironment` over the environment without `Compose.documentLayers`, then the table's gate over
+the list as written, which `Compose.gate_judgments` shows adds only the layer's own requirement. -/
+def validatedComposedEnvironment (environment : Json) : Except String VE.Route.Gate.Envelope := do
+  let listed := (VE.Bridge.strings (environment.getObjValD "profiles")).toOption.getD []
+  unless listed.any VE.Compose.documentLayers.contains do return ← validatedLayerEnvironment environment
+  let e ← validatedLayerEnvironment (VE.Compose.withoutDocumentLayers environment)
+  let ps ← VE.Route.Gate.profilesOf environment
+  let _ ← VE.Compose.gateOf
+    (if ps.contains VE.Compose.environmentWrapper then VE.Compose.profileTable else VE.Compose.baseRows) ps
+  pure { e with profiles := ps }
 
 /-- A model's tables use the checker vocabulary, including profile words, but
 its identity stays bound to the complete submitted environment. The owning
