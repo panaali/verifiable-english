@@ -24,6 +24,16 @@
       "definition": "VE.Calc.Run.wordsIn",
       "operator": "list-empty",
       "reason": "No mutant is built: `vs.toList` -> `[]` leaves `.filterMap` on a list of unknown type (Invalid field notation), and `vs.toList.filterMap` -> `[]` leaves its function argument applied to a list (Function expected): Lean refuses both texts, outside the replaced span, so the tool reads UNKNOWN. The empty word list is killed through list-first/list-last and the wordsIn guard in RunExamples."
+    },
+    {
+      "definition": "VE.Calc.Run.truncated",
+      "operator": "list-first",
+      "reason": "Equivalent where it survives: the sign is the one-character string \"-\" or the empty string, and String.take 1 of either is itself; the same operator on the digits is killed by the RunExamples display guards."
+    },
+    {
+      "definition": "VE.Calc.Run.truncated",
+      "operator": "list-empty",
+      "reason": "No mutant is built: a String operand of ++ replaced by the list literal [] does not elaborate (failed to synthesize HAppend String (List _)), so the tool reads UNKNOWN."
     }
   ]
 }
