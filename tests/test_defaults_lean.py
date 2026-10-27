@@ -262,6 +262,27 @@ def test_flag_refusals(monkeypatch):
             cli._assume_no_exception(changed, X_ALL, args)
 
 
+def test_flag_asks_with_the_documents_norms_and_facts(monkeypatch):
+    """The flag asks about the document's norms, its facts as premises (an assertion with no content is none) and its
+    environment without `readings@1` (Lean's layered route refuses that profile); a document with no soft document is
+    refused (review df-1b F10's sweep: each value the flag sends is needed)."""
+    asked_with = []
+    monkeypatch.setattr(defaults, "ask", lambda *arguments: asked_with.append(arguments) or _ASKED)
+    doc, args = load_document(BASELINE.parents[4] / P1[0]["argv"][3]), argparse.Namespace(
+        under=None, sentence=None, narrowing=None)
+    [norm] = [unit["content"] for unit in doc["units"]]
+    fact = ["exists", "assistant", un("urgent")]
+    doc = {**doc, "units": [*doc["units"], {"kind": "asserted", "content": fact},
+                            {"kind": "asserted", "content": None}]}
+    assert cli._assume_no_exception(doc, X_ALL, args) == _ASKED
+    [(environment, norms, premises, conclusion)] = asked_with
+    assert environment["profiles"] == ["documents@1", "norm-defaults@0", "norms@0", "relational-fol@0",
+                                       "soft-norms@0"]
+    assert (norms, premises, conclusion) == ([norm], [fact], X_ALL)
+    with pytest.raises(VEError, match="applies to a soft-norms@0 document without open reading sets"):
+        cli._assume_no_exception({k: v for k, v in doc.items() if k != "soft_document"}, X_ALL, args)
+
+
 def test_an_empty_budget_is_unknown(monkeypatch):
     """With no prover step and no domain element to search (budget 0) neither question has evidence: the strict
     question is not answered and the default one is UNKNOWN, never FOLLOWS."""

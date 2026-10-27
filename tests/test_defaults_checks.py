@@ -22,7 +22,7 @@ from ve import defaults
 from ve.document import cli
 
 ROOT = Path(__file__).resolve().parents[1]
-TESTS = (*BOTH_SIDES, test_defaults_lean.test_flag_refusals)
+TESTS = (*BOTH_SIDES, test_defaults_lean.test_flag_refusals, test_defaults_lean.test_flag_asks_with_the_documents_norms_and_facts)
 
 
 def _flag_check(function, node):
@@ -34,8 +34,9 @@ def _defaults_functions():
             if isinstance(node, ast.FunctionDef)}
 
 
-# (module, its checks, the functions whose call statements are helper checks)
-TARGETS = ((defaults, lambda function, node: True, _defaults_functions()), (cli, _flag_check, ()))
+# (module, its checks, the functions whose call statements are helper checks, the functions whose values feed checks)
+TARGETS = ((defaults, lambda function, node: True, _defaults_functions(), lambda function: True),
+           (cli, _flag_check, (), lambda function: function == "_assume_no_exception"))
 
 
 def _fails(test):
@@ -52,10 +53,10 @@ def _fails(test):
 def test_review_f1_every_check_is_needed_by_a_both_sides_test():
     assert [test.__name__ for test in TESTS if _fails(test)] == []  # control; asks Lean's genuine rows once
     survivors, count = [], 0
-    for module, select, functions in TARGETS:
+    for module, select, functions, feeding in TARGETS:
         path = Path(module.__file__)
         for function, description, tree in check_mutants.mutants(path.read_text(), str(path.relative_to(ROOT)),
-                                                                  select, functions):
+                                                                  select, functions, feeding):
             count += 1
             namespace = {"__name__": module.__name__, "__package__": module.__package__, "__file__": str(path)}
             exec(compile(tree, str(path), "exec"), namespace)
@@ -63,7 +64,9 @@ def test_review_f1_every_check_is_needed_by_a_both_sides_test():
                 patch.setattr(module, function, namespace[function])
                 if not any(_fails(test) for test in TESTS):
                     survivors.append(description)
-    assert count >= 93  # the enumeration reaches every check (60 sites at review F1's fix, 93 with F9's exits)
+    # the enumeration reaches every check and every value that feeds one (60 sites at review F1's fix, 93 with F9's
+    # exits, 174 with F10's values)
+    assert count >= 174
     assert survivors == [], "\n".join(survivors)
 
 
