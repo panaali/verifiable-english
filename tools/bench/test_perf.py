@@ -123,7 +123,7 @@ def test_scope_b1(record, tmp_path):
         problems = scope_b1.problems(json.loads(result.stdout), stage == "govern")
         assert problems == [], "B1 is not timed:\n" + "\n".join(problems)
         seen[measure] = cpu.seconds
-    for measure, seconds in seen.items():
+    for measure, seconds in seen.items():  # only when both runs are B1's, so a changed input records nothing
         record(measure, seconds)
 
 

@@ -116,6 +116,9 @@ Each bug was planted, its failing test was observed, and the source was restored
   Both are fixed in `cb6075768` and `ce9c4b12e`.
 - **The remaining files**, with the two fixed files in full and `test_scope_b1_input.py`, ran on the Mac at
   `ce9c4b12e`: 1,172 passed, exit 0.
+- **The docs commit `b1fb48ab`** (a new directory selects the tests that list directories) selected 193 units.
+  They ran on the VM: `test_layer_policy` and 191 files passed with exit 0. The last file,
+  `test_trust_mutants.py`, ran separately: 327 passed.
 - **Other checks:** `regen_generated.py --check`, `trust_map.py --check`, `repo_map.py --check`, `lean/audit.py`
   and `gate_collection.py --check --prebuilt` (9 added, 0 refused, 0 stale, 0 malformed) all pass.
 - **Known red.** None of `main-known-red.txt` was hit.
