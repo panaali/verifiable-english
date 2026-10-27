@@ -164,6 +164,24 @@
       "detail": "error: VE/Acts/ElaborateExamples.lean:112:0: Expression"
     },
     {
+      "id": "split-reg-kept-dropped",
+      "file": "lean/VE/Acts/Elaborate.lean",
+      "definition": "splitReg",
+      "claim": "C2 a predicate that does not split is kept (E2)",
+      "test": "lean/VE/Acts/ElaborateExamples.lean",
+      "result": "KILLED",
+      "detail": "error: VE/Acts/ElaborateExamples.lean:47:0: Expression"
+    },
+    {
+      "id": "split-node-kept-dropped",
+      "file": "lean/VE/Acts/Elaborate.lean",
+      "definition": "splitNode",
+      "claim": "C2 a rule that does not split is kept (E2)",
+      "test": "lean/VE/Acts/ElaborateExamples.lean",
+      "result": "KILLED",
+      "detail": "error: VE/Acts/ElaborateExamples.lean:47:0: Expression"
+    },
+    {
       "id": "split-node-over-unmapped",
       "file": "lean/VE/Acts/Elaborate.lean",
       "definition": "splitNode",
