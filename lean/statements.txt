@@ -5176,6 +5176,32 @@ theorem VE.Cardinality.Run.decodeCertificate_sound
             ∃ x, j.getObjVal? "w6" = Except.ok x ∧ VE.Time.Wire.decodeW6Certificate x = Except.ok cert.w6
   -- uses VE.Bridge.stringField@VE.Bridge VE.Cardinality.CardCertificate.conclusionId@VE.Cardinality.Run VE.Cardinality.CardCertificate.environmentId@VE.Cardinality.Run VE.Cardinality.CardCertificate.w6@VE.Cardinality.Run VE.Cardinality.CardCertificate@VE.Cardinality.Run VE.Cardinality.Run.decodeCertificate@VE.Cardinality.Run VE.Time.Wire.W6Certificate@VE.Time.Wire VE.Time.Wire.decodeW6Certificate@VE.Time.Wire
   -- expr 2169870929
+theorem VE.Cardinality.Run.erasedJson_conclusion
+  ∀ {w : VE.Cardinality.CardEnv} {ps : List VE.Cardinality.CFormula} {c : VE.Cardinality.CFormula}
+    {pids : List (String × String)} {cid : String × String},
+    VE.Cardinality.Run.erasedIds w ps c = Except.ok (pids, cid) →
+      Except.map (fun x => x.getObjVal? "conclusion") (VE.Cardinality.Run.erasedJson w ps c) =
+        Except.ok
+          (Except.ok
+            (Lean.Json.mkObj
+              [("Q", VE.Time.Wire.encQ (VE.Cardinality.erasedProblem w.env ps c).snd),
+                ("core", VE.Time.Wire.encCore (VE.Cardinality.erasedProblem w.env ps c).snd.erase),
+                ("meaning_id", Lean.Json.str cid.fst), ("core_meaning_id", Lean.Json.str cid.snd)]))
+  -- uses VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.CardEnv.env@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Run.erasedIds@VE.Cardinality.Run VE.Cardinality.Run.erasedJson@VE.Cardinality.Run VE.Cardinality.erasedProblem@VE.Cardinality.Erase VE.Time.QFormula.erase@VE.Time.Syntax VE.Time.QFormula@VE.Time.Syntax VE.Time.Wire.encCore@VE.Time.Wire VE.Time.Wire.encQ@VE.Time.Wire
+  -- expr 3998950269
+theorem VE.Cardinality.Run.regionsJson_constants
+  ∀ (E : VE.Cardinality.CEnv) (fs : List VE.Cardinality.CFormula),
+    (VE.Cardinality.Run.regionsJson E fs).getObjVal? "constants" =
+      Except.ok
+        (Lean.ToJson.toJson
+          (List.map
+            (fun e =>
+              Lean.Json.mkObj
+                [("constant", Lean.Json.str e.fst), ("sort", Lean.Json.str e.snd.fst),
+                  ("bits", Lean.Json.str (VE.Cardinality.bitString e.snd.snd))])
+            (VE.Cardinality.regionTable E fs)))
+  -- uses VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.Region@VE.Cardinality.Regions VE.Cardinality.Run.regionsJson@VE.Cardinality.Run VE.Cardinality.bitString@VE.Cardinality.Regions VE.Cardinality.regionTable@VE.Cardinality.Regions
+  -- expr 1333388031
 theorem VE.Cardinality.Run.runCaseReported_error
   ∀ {j : Lean.Json} {m : String},
     VE.Cardinality.Run.runCase j = Except.error m →
