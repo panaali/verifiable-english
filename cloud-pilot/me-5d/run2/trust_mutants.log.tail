@@ -1,0 +1,11 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+trust_mutants: 4 definitions, 123 mutants (123 to run), 4 jobs, base ab010c3f02bc
+UNKNOWN lean/VE/Calc/Run.lean:238 VE.Calc.Run.reads append-right: Expr.names ++ ->  (lean/VE/Calc/Run.lean:238: Application type mismatch: The argument)
+UNKNOWN lean/VE/Calc/Run.lean:234 VE.Calc.Run.reads list-empty: k.exprs -> [] (lean/VE/Calc/Run.lean:234: Invalid field notation: Type of)
+UNKNOWN lean/VE/Calc/Run.lean:219 VE.Calc.Run.factJson list-empty: f.form.coeffs.map -> [] (lean/VE/Calc/Run.lean:219: Function expected at)
+UNKNOWN lean/VE/Calc/Run.lean:234 VE.Calc.Run.reads list-empty: k.exprs.filterMap -> [] (lean/VE/Calc/Run.lean:234: Function expected at)
+UNKNOWN lean/VE/Calc/Run.lean:226 VE.Calc.Run.stepJson list-empty: cert.weights.map -> [] (lean/VE/Calc/Run.lean:226: Function expected at)
+UNKNOWN lean/VE/Calc/Run.lean:246 VE.Calc.Run.shownJson list-empty: (reads ds k).map -> [] (lean/VE/Calc/Run.lean:246: Function expected at)
+UNKNOWN lean/VE/Calc/Run.lean:236 VE.Calc.Run.reads list-empty: links.flatMap -> [] (lean/VE/Calc/Run.lean:236: Function expected at)
+UNKNOWN lean/VE/Calc/Run.lean:238 VE.Calc.Run.reads list-empty: Expr.names -> [] (lean/VE/Calc/Run.lean:238: Application type mismatch: The argument)
+trust_mutants: 91 KILLED, 0 SURVIVOR, 8 UNKNOWN, 24 INVALID, 0 ALLOWED, 0 NOT RUN in 1181 s

@@ -1,0 +1,6 @@
+mode=cold jobs=4 nproc=4 host=vm date=2026-10-27T15:02:54Z
+Mem:              15           0          14           0           0          15
+/dev/vda        252G   11G   28G  28% /
+ 15:02:54 up 1 min,  0 user,  load average: 0.54, 0.15, 0.05
+-rw-r--r-- 1 root root 459625674 Oct 27 15:03 /tmp/lean.tar.zst
+Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)

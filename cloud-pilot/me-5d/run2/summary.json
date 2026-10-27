@@ -1,0 +1,626 @@
+{
+ "counts": {
+  "INVALID": 24,
+  "KILLED": 91,
+  "UNKNOWN": 8
+ },
+ "jobs": 4,
+ "seconds": 1181,
+ "verdicts": {
+  "M001": [
+   "VE.Calc.Run.factJson",
+   "list-empty",
+   "KILLED"
+  ],
+  "M002": [
+   "VE.Calc.Run.stepJson",
+   "list-empty",
+   "KILLED"
+  ],
+  "M003": [
+   "VE.Calc.Run.reads",
+   "list-empty",
+   "KILLED"
+  ],
+  "M004": [
+   "VE.Calc.Run.shownJson",
+   "list-empty",
+   "KILLED"
+  ],
+  "M005": [
+   "VE.Calc.Run.reads",
+   "append-left",
+   "KILLED"
+  ],
+  "M006": [
+   "VE.Calc.Run.reads",
+   "append-right",
+   "UNKNOWN"
+  ],
+  "M007": [
+   "VE.Calc.Run.factJson",
+   "list-empty",
+   "KILLED"
+  ],
+  "M008": [
+   "VE.Calc.Run.stepJson",
+   "list-empty",
+   "KILLED"
+  ],
+  "M009": [
+   "VE.Calc.Run.reads",
+   "list-empty",
+   "UNKNOWN"
+  ],
+  "M010": [
+   "VE.Calc.Run.shownJson",
+   "list-empty",
+   "KILLED"
+  ],
+  "M011": [
+   "VE.Calc.Run.factJson",
+   "list-empty",
+   "UNKNOWN"
+  ],
+  "M012": [
+   "VE.Calc.Run.stepJson",
+   "list-empty",
+   "KILLED"
+  ],
+  "M013": [
+   "VE.Calc.Run.reads",
+   "list-empty",
+   "UNKNOWN"
+  ],
+  "M014": [
+   "VE.Calc.Run.shownJson",
+   "list-empty",
+   "KILLED"
+  ],
+  "M015": [
+   "VE.Calc.Run.stepJson",
+   "list-empty",
+   "UNKNOWN"
+  ],
+  "M016": [
+   "VE.Calc.Run.reads",
+   "list-empty",
+   "KILLED"
+  ],
+  "M017": [
+   "VE.Calc.Run.shownJson",
+   "list-empty",
+   "UNKNOWN"
+  ],
+  "M018": [
+   "VE.Calc.Run.stepJson",
+   "list-empty",
+   "KILLED"
+  ],
+  "M019": [
+   "VE.Calc.Run.reads",
+   "list-empty",
+   "UNKNOWN"
+  ],
+  "M020": [
+   "VE.Calc.Run.stepJson",
+   "list-empty",
+   "KILLED"
+  ],
+  "M021": [
+   "VE.Calc.Run.reads",
+   "list-empty",
+   "KILLED"
+  ],
+  "M022": [
+   "VE.Calc.Run.reads",
+   "list-empty",
+   "KILLED"
+  ],
+  "M023": [
+   "VE.Calc.Run.reads",
+   "list-empty",
+   "KILLED"
+  ],
+  "M024": [
+   "VE.Calc.Run.reads",
+   "list-empty",
+   "UNKNOWN"
+  ],
+  "M025": [
+   "VE.Calc.Run.reads",
+   "list-empty",
+   "KILLED"
+  ],
+  "M026": [
+   "VE.Calc.Run.reads",
+   "list-empty",
+   "KILLED"
+  ],
+  "M027": [
+   "VE.Calc.Run.reads",
+   "list-empty",
+   "KILLED"
+  ],
+  "M028": [
+   "VE.Calc.Run.factJson",
+   "list-first",
+   "KILLED"
+  ],
+  "M029": [
+   "VE.Calc.Run.stepJson",
+   "list-first",
+   "KILLED"
+  ],
+  "M030": [
+   "VE.Calc.Run.reads",
+   "list-first",
+   "KILLED"
+  ],
+  "M031": [
+   "VE.Calc.Run.shownJson",
+   "list-first",
+   "KILLED"
+  ],
+  "M032": [
+   "VE.Calc.Run.factJson",
+   "list-drop-last",
+   "KILLED"
+  ],
+  "M033": [
+   "VE.Calc.Run.stepJson",
+   "list-drop-last",
+   "KILLED"
+  ],
+  "M034": [
+   "VE.Calc.Run.reads",
+   "list-drop-last",
+   "KILLED"
+  ],
+  "M035": [
+   "VE.Calc.Run.shownJson",
+   "list-drop-last",
+   "KILLED"
+  ],
+  "M036": [
+   "VE.Calc.Run.factJson",
+   "list-first",
+   "KILLED"
+  ],
+  "M037": [
+   "VE.Calc.Run.stepJson",
+   "list-first",
+   "KILLED"
+  ],
+  "M038": [
+   "VE.Calc.Run.reads",
+   "list-first",
+   "KILLED"
+  ],
+  "M039": [
+   "VE.Calc.Run.shownJson",
+   "list-first",
+   "KILLED"
+  ],
+  "M040": [
+   "VE.Calc.Run.factJson",
+   "list-drop-last",
+   "KILLED"
+  ],
+  "M041": [
+   "VE.Calc.Run.stepJson",
+   "list-drop-last",
+   "KILLED"
+  ],
+  "M042": [
+   "VE.Calc.Run.reads",
+   "list-drop-last",
+   "KILLED"
+  ],
+  "M043": [
+   "VE.Calc.Run.shownJson",
+   "list-drop-last",
+   "KILLED"
+  ],
+  "M044": [
+   "VE.Calc.Run.factJson",
+   "list-first",
+   "INVALID"
+  ],
+  "M045": [
+   "VE.Calc.Run.stepJson",
+   "list-first",
+   "INVALID"
+  ],
+  "M046": [
+   "VE.Calc.Run.reads",
+   "list-first",
+   "INVALID"
+  ],
+  "M047": [
+   "VE.Calc.Run.shownJson",
+   "list-first",
+   "KILLED"
+  ],
+  "M048": [
+   "VE.Calc.Run.factJson",
+   "list-drop-last",
+   "INVALID"
+  ],
+  "M049": [
+   "VE.Calc.Run.stepJson",
+   "list-drop-last",
+   "KILLED"
+  ],
+  "M050": [
+   "VE.Calc.Run.reads",
+   "list-drop-last",
+   "INVALID"
+  ],
+  "M051": [
+   "VE.Calc.Run.shownJson",
+   "list-drop-last",
+   "KILLED"
+  ],
+  "M052": [
+   "VE.Calc.Run.stepJson",
+   "list-first",
+   "KILLED"
+  ],
+  "M053": [
+   "VE.Calc.Run.reads",
+   "list-first",
+   "KILLED"
+  ],
+  "M054": [
+   "VE.Calc.Run.shownJson",
+   "list-first",
+   "INVALID"
+  ],
+  "M055": [
+   "VE.Calc.Run.stepJson",
+   "list-drop-last",
+   "INVALID"
+  ],
+  "M056": [
+   "VE.Calc.Run.reads",
+   "list-drop-last",
+   "KILLED"
+  ],
+  "M057": [
+   "VE.Calc.Run.shownJson",
+   "list-drop-last",
+   "INVALID"
+  ],
+  "M058": [
+   "VE.Calc.Run.reads",
+   "list-first",
+   "INVALID"
+  ],
+  "M059": [
+   "VE.Calc.Run.stepJson",
+   "list-drop-last",
+   "KILLED"
+  ],
+  "M060": [
+   "VE.Calc.Run.reads",
+   "list-drop-last",
+   "INVALID"
+  ],
+  "M061": [
+   "VE.Calc.Run.reads",
+   "list-first",
+   "KILLED"
+  ],
+  "M062": [
+   "VE.Calc.Run.stepJson",
+   "list-drop-last",
+   "KILLED"
+  ],
+  "M063": [
+   "VE.Calc.Run.reads",
+   "list-drop-last",
+   "KILLED"
+  ],
+  "M064": [
+   "VE.Calc.Run.reads",
+   "list-first",
+   "KILLED"
+  ],
+  "M065": [
+   "VE.Calc.Run.reads",
+   "list-drop-last",
+   "KILLED"
+  ],
+  "M066": [
+   "VE.Calc.Run.reads",
+   "list-first",
+   "KILLED"
+  ],
+  "M067": [
+   "VE.Calc.Run.reads",
+   "list-drop-last",
+   "KILLED"
+  ],
+  "M068": [
+   "VE.Calc.Run.reads",
+   "list-first",
+   "INVALID"
+  ],
+  "M069": [
+   "VE.Calc.Run.reads",
+   "list-drop-last",
+   "INVALID"
+  ],
+  "M070": [
+   "VE.Calc.Run.reads",
+   "list-first",
+   "KILLED"
+  ],
+  "M071": [
+   "VE.Calc.Run.reads",
+   "list-drop-last",
+   "KILLED"
+  ],
+  "M072": [
+   "VE.Calc.Run.reads",
+   "list-first",
+   "KILLED"
+  ],
+  "M073": [
+   "VE.Calc.Run.reads",
+   "list-drop-last",
+   "KILLED"
+  ],
+  "M074": [
+   "VE.Calc.Run.reads",
+   "list-first",
+   "KILLED"
+  ],
+  "M075": [
+   "VE.Calc.Run.reads",
+   "list-drop-last",
+   "KILLED"
+  ],
+  "M076": [
+   "VE.Calc.Run.factJson",
+   "list-last",
+   "KILLED"
+  ],
+  "M077": [
+   "VE.Calc.Run.stepJson",
+   "list-last",
+   "KILLED"
+  ],
+  "M078": [
+   "VE.Calc.Run.reads",
+   "list-last",
+   "KILLED"
+  ],
+  "M079": [
+   "VE.Calc.Run.shownJson",
+   "list-last",
+   "KILLED"
+  ],
+  "M080": [
+   "VE.Calc.Run.factJson",
+   "list-drop-first",
+   "KILLED"
+  ],
+  "M081": [
+   "VE.Calc.Run.stepJson",
+   "list-drop-first",
+   "KILLED"
+  ],
+  "M082": [
+   "VE.Calc.Run.reads",
+   "list-drop-first",
+   "KILLED"
+  ],
+  "M083": [
+   "VE.Calc.Run.shownJson",
+   "list-drop-first",
+   "KILLED"
+  ],
+  "M084": [
+   "VE.Calc.Run.factJson",
+   "list-last",
+   "KILLED"
+  ],
+  "M085": [
+   "VE.Calc.Run.stepJson",
+   "list-last",
+   "KILLED"
+  ],
+  "M086": [
+   "VE.Calc.Run.reads",
+   "list-last",
+   "KILLED"
+  ],
+  "M087": [
+   "VE.Calc.Run.shownJson",
+   "list-last",
+   "KILLED"
+  ],
+  "M088": [
+   "VE.Calc.Run.factJson",
+   "list-drop-first",
+   "KILLED"
+  ],
+  "M089": [
+   "VE.Calc.Run.stepJson",
+   "list-drop-first",
+   "KILLED"
+  ],
+  "M090": [
+   "VE.Calc.Run.reads",
+   "list-drop-first",
+   "KILLED"
+  ],
+  "M091": [
+   "VE.Calc.Run.shownJson",
+   "list-drop-first",
+   "KILLED"
+  ],
+  "M092": [
+   "VE.Calc.Run.factJson",
+   "list-last",
+   "INVALID"
+  ],
+  "M093": [
+   "VE.Calc.Run.stepJson",
+   "list-last",
+   "INVALID"
+  ],
+  "M094": [
+   "VE.Calc.Run.reads",
+   "list-last",
+   "INVALID"
+  ],
+  "M095": [
+   "VE.Calc.Run.shownJson",
+   "list-last",
+   "KILLED"
+  ],
+  "M096": [
+   "VE.Calc.Run.factJson",
+   "list-drop-first",
+   "INVALID"
+  ],
+  "M097": [
+   "VE.Calc.Run.stepJson",
+   "list-drop-first",
+   "KILLED"
+  ],
+  "M098": [
+   "VE.Calc.Run.reads",
+   "list-drop-first",
+   "INVALID"
+  ],
+  "M099": [
+   "VE.Calc.Run.shownJson",
+   "list-drop-first",
+   "KILLED"
+  ],
+  "M100": [
+   "VE.Calc.Run.stepJson",
+   "list-last",
+   "KILLED"
+  ],
+  "M101": [
+   "VE.Calc.Run.reads",
+   "list-last",
+   "KILLED"
+  ],
+  "M102": [
+   "VE.Calc.Run.shownJson",
+   "list-last",
+   "INVALID"
+  ],
+  "M103": [
+   "VE.Calc.Run.stepJson",
+   "list-drop-first",
+   "INVALID"
+  ],
+  "M104": [
+   "VE.Calc.Run.reads",
+   "list-drop-first",
+   "KILLED"
+  ],
+  "M105": [
+   "VE.Calc.Run.shownJson",
+   "list-drop-first",
+   "INVALID"
+  ],
+  "M106": [
+   "VE.Calc.Run.reads",
+   "list-last",
+   "INVALID"
+  ],
+  "M107": [
+   "VE.Calc.Run.stepJson",
+   "list-drop-first",
+   "KILLED"
+  ],
+  "M108": [
+   "VE.Calc.Run.reads",
+   "list-drop-first",
+   "INVALID"
+  ],
+  "M109": [
+   "VE.Calc.Run.reads",
+   "list-last",
+   "KILLED"
+  ],
+  "M110": [
+   "VE.Calc.Run.stepJson",
+   "list-drop-first",
+   "KILLED"
+  ],
+  "M111": [
+   "VE.Calc.Run.reads",
+   "list-drop-first",
+   "KILLED"
+  ],
+  "M112": [
+   "VE.Calc.Run.reads",
+   "list-last",
+   "KILLED"
+  ],
+  "M113": [
+   "VE.Calc.Run.reads",
+   "list-drop-first",
+   "KILLED"
+  ],
+  "M114": [
+   "VE.Calc.Run.reads",
+   "list-last",
+   "KILLED"
+  ],
+  "M115": [
+   "VE.Calc.Run.reads",
+   "list-drop-first",
+   "KILLED"
+  ],
+  "M116": [
+   "VE.Calc.Run.reads",
+   "list-last",
+   "INVALID"
+  ],
+  "M117": [
+   "VE.Calc.Run.reads",
+   "list-drop-first",
+   "INVALID"
+  ],
+  "M118": [
+   "VE.Calc.Run.reads",
+   "list-last",
+   "KILLED"
+  ],
+  "M119": [
+   "VE.Calc.Run.reads",
+   "list-drop-first",
+   "KILLED"
+  ],
+  "M120": [
+   "VE.Calc.Run.reads",
+   "list-last",
+   "KILLED"
+  ],
+  "M121": [
+   "VE.Calc.Run.reads",
+   "list-drop-first",
+   "KILLED"
+  ],
+  "M122": [
+   "VE.Calc.Run.reads",
+   "list-last",
+   "KILLED"
+  ],
+  "M123": [
+   "VE.Calc.Run.reads",
+   "list-drop-first",
+   "KILLED"
+  ]
+ }
+}
