@@ -28,6 +28,8 @@ The invocations are:
   holds; it is measurement only), and for `ve_english_route` the spec fixtures of
   `tests/test_english_lean_route.py` as `english.read` cases and each of its environments as an
   `english.grammar` case; for `ve_senses_route`, a successful s7 request and a malformed pack;
+  for `ve_scope_bench`, scope benchmark B1's case (`tools/bench/scope_b1.py`) through the layout
+  and `governFast` (it prints no times);
 * with `--contract-inputs`, the `soft-norms@0` inputs that `tests/contract_input_recorder.py`
   wrote (`VE_CONTRACT_INPUTS`), as `soft-elaborate` cases for the service modes `soft-norms` and
   `diagnose` (unit `soft-norms@0`);
@@ -81,7 +83,7 @@ ROUTE_MODES = ("quantity", "norms", "discourse", "speech-acts", "soft-norms", "r
                "risk", "norm-defaults", "readings-route")
 # Executables that read no case list; `harness_invocations` gives their inputs.
 HARNESS_EXECUTABLES = frozenset({"ve_service", "ve_english_run", "ve_response_decode", "ve_english_lean_bench",
-                                 "ve_english_route", "ve_senses_route", "ve_metered"})
+                                 "ve_english_route", "ve_senses_route", "ve_metered", "ve_scope_bench"})
 
 
 class Invocation(NamedTuple):
@@ -173,7 +175,7 @@ def service_session() -> tuple[bytes, list[tuple[str, dict]]]:
 def harness_invocations(baseline: Path) -> list[Invocation]:
     """Inputs of the executables that read no case list (`ve_service`, its `risk-eval` mode included,
     `ve_english_run`, `ve_response_decode`, `ve_english_lean_bench`, `ve_english_route`,
-    `ve_senses_route`), from the generators and
+    `ve_senses_route`, `ve_scope_bench`), from the generators and
     fixtures their tests use. The responses that `ve_response_decode` checks are the baseline
     service's answers to the session."""
     for folder in (ROOT, ROOT / "tests"):  # the test modules import their helpers as pytest does
@@ -211,6 +213,9 @@ def harness_invocations(baseline: Path) -> list[Invocation]:
     malformed = {**senses_case, "id": "senses-invalid-pack", "packs": ["null"]}
     found.append(Invocation("ve_senses_route", "senses s7 and malformed pack", ("-",),
                             json.dumps([senses_case, malformed], ensure_ascii=False).encode()))
+    from tools.bench import scope_b1
+    found.append(Invocation("ve_scope_bench", "B1's case through the layout and governFast", ("/dev/stdin", "govern"),
+                            json.dumps(scope_b1.case(), ensure_ascii=False).encode()))
     from tests.test_metered_lean import FAMILIES, fixture, formulas
     from ve.ast import formula_to_data
     metered = []
