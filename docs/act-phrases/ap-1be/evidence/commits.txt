@@ -1,0 +1,125 @@
+commit d681b96372d01456255097bb5b6f1405d0ea9304
+Author: Ali Panahi <panaali@gmail.com>
+Date:   Tue Oct 27 15:43:54 2026 +0000
+
+    ap-1be: DELTA (R16, R3, the display under the DRI's AP-1 decision files) and build report; part (2) cut to ap-1bf
+    
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+commit 7b04fcd28ecde3d7d65e759c8bc83540c57dccad
+Author: Ali Panahi <panaali@gmail.com>
+Date:   Tue Oct 27 15:40:37 2026 +0000
+
+    ap-1be: record the replaced ap-1bb test's removal (trailer in the last paragraph)
+    
+    c33a9092f replaced the test; its trailer stood before the attribution paragraph, where
+    tools/gate_collection.py does not read it.
+    
+    Test-removed: tests/test_acts_profile.py::test_norm_defaults_keeps_todays_display_without_asking — norm-defaults@0 environments now display Lean's wording from norm-defaults-elaborate (ap-1be part 1); replaced by test_a_norm_defaults_environment_reads_with_the_wording_lean_selected
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+commit f783465d1bc33558c4ad7f3f87a6750d3d1e16c5
+Author: Ali Panahi <panaali@gmail.com>
+Date:   Tue Oct 27 15:39:28 2026 +0000
+
+    ap-1be: trust_mutants full run through mac-pytest --trustmut (VM fallback): 34 killed, 0 survivors, 3 allowed
+    
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+commit cb010be57cc073007ca0cbab682643d1609f1129
+Author: Ali Panahi <panaali@gmail.com>
+Date:   Tue Oct 27 14:53:09 2026 +0000
+
+    ap-1be: classify the norm-defaults schema file's JSON read, re-measure consolidation row 7, R16 allowance V +1 for the shape pin
+    
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+commit 59e9314b765aa768d128c4e40ce42ed5fb42c8c1
+Author: Ali Panahi <panaali@gmail.com>
+Date:   Tue Oct 27 13:40:49 2026 +0000
+
+    ap-1be: delta evidence, base a557ff887 against head: 366 records, 361 identical, 4 wordings, 1 display
+    
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+commit d13f69c47b6e786eedc58146604d12b4c29cd4ae
+Author: Ali Panahi <panaali@gmail.com>
+Date:   Tue Oct 27 13:39:42 2026 +0000
+
+    ap-1be: seeded bugs (4 Lean, 4 Python), all killed
+    
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+commit 4f0aad32715b956a3a21430ca2d61e3d3cb6c81a
+Author: Ali Panahi <panaali@gmail.com>
+Date:   Tue Oct 27 13:32:26 2026 +0000
+
+    ap-1be: trust_mutants over the changed trusted definitions: 34 killed, 0 survivors, 3 allowed (do not elaborate)
+    
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+commit 2854fec664dcbfee36e2a7da851eb4dc3ce06b0a
+Author: Ali Panahi <panaali@gmail.com>
+Date:   Tue Oct 27 12:59:16 2026 +0000
+
+    ap-1be: regenerate declarations after the shape pin
+    
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+commit c34045ec379ca34a1eac10959b79f878e6cbf7c0
+Author: Ali Panahi <panaali@gmail.com>
+Date:   Tue Oct 27 12:50:14 2026 +0000
+
+    ap-1be: pin the rendered elaborate shape (closed, every member required, wordings a string_map)
+    
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+commit 3f3e6aec485c6aefd6c0cae6a7ee5cc268415352
+Author: Ali Panahi <panaali@gmail.com>
+Date:   Tue Oct 27 12:47:48 2026 +0000
+
+    ap-1be: trust classes (wordingsJson G[V], four fixtures T) and the R16 allowance V +6
+    
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+commit c33a9092fd5db92421d90c94c64ecaa759afb59e
+Author: Ali Panahi <panaali@gmail.com>
+Date:   Tue Oct 27 12:45:40 2026 +0000
+
+    ap-1be: tests for the norm-defaults route's wordings (R3 text, R8 binding on both readers, schema retypes)
+    
+    A norm-defaults@0 environment now asks the norm-defaults route for its plain acts' wordings,
+    so the ap-1bb test that pinned the old fallback (no call) is replaced by
+    test_a_norm_defaults_environment_reads_with_the_wording_lean_selected; the no-call test keeps
+    its id and also covers norm-defaults@0 environments without a plain act.
+    
+    Test-removed: tests/test_acts_profile.py::test_norm_defaults_keeps_todays_display_without_asking — norm-defaults@0 environments now display Lean's wording from norm-defaults-elaborate (ap-1be part 1); replaced by ::test_a_norm_defaults_environment_reads_with_the_wording_lean_selected
+    
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+commit e967aabc0818f140ef6cd130df50a5c1898869e9
+Author: Ali Panahi <panaali@gmail.com>
+Date:   Tue Oct 27 12:45:40 2026 +0000
+
+    ap-1be (1): plain_wordings asks norm-defaults-elaborate for norm-defaults@0 environments; both readers bind it (R8)
+    
+    `_bind_wordings` (names exactly the request's plain acts, slots by relay.slots_bound) now binds
+    the norm-defaults row in `plain_wordings` and in UnspecifiedDocument, the document's own row.
+    Generated: norm-defaults.json, the binding census (answers re-asked), checkers.lock, declarations.
+    
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+commit 2085f90133ea0d9c93f19dceeec8aaa28d868841
+Author: Ali Panahi <panaali@gmail.com>
+Date:   Tue Oct 27 12:45:40 2026 +0000
+
+    ap-1be (1): norm-defaults-elaborate gives the source's plain-act wordings (Norms.Run.wordingsJson)
+    
+    The plain norm-defaults branch's elaborate row gains `wordings`, Norms.Wire.plainWordings of the
+    decoded source, written by the one helper the norms route's row now uses too. Its shape
+    (`elaborate`, closed, the member required, `string_map`) and the encoder theorem
+    (runCaseReported_fits) cover it; the layered rows are unchanged (acts@0 is refused there).
+    ActsExamples guards: equal to the norms route's and Lean's English selection, an `unspecified`
+    plain act, A21 at 400 bytes, none for a permission or without acts@0, and three refused sources.
+    
+    Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
