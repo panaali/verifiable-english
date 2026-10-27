@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 38721,
+    "total_lines": 38769,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1862,22 +1862,23 @@
       },
       {
         "file": "lean/VE/Calc/Run.lean",
-        "lines": 318,
-        "sha256": "000fbc4043d1e51d77739d9dabf03ea6f0b13a5b457471da0589624c43e70495",
+        "lines": 366,
+        "sha256": "b09fc345ee8eb03a9c54c6ca4ea7280135d0ec51adb921e0728fc87a2a0ee367",
         "ranges": [
           [
             1,
-            318
+            366
           ]
         ],
         "declarations": [
           "wordsIn",
           "claimFields",
+          "shownJson",
           "rowJson",
           "runCaseReported",
           "outcomeAt"
         ],
-        "reason": "the calc runner's answer (math-evidence spec 3.4, me-2): one row per claim with its outcome, and the reader of a row's outcome that Run.row_sound is stated over, and the kind of each row (me-5c), and each row's line, finding, and a claim's sides, display and tie, with the values' words read from the request (me-2c); the full file is pinned"
+        "reason": "the calc runner's answer (math-evidence spec 3.4, me-2): one row per claim with its outcome, and the reader of a row's outcome that Run.row_sound is stated over, and the kind of each row (me-5c), and each row's line, finding, and a claim's sides, display and tie, with the values' words read from the request (me-2c), and a derivation's certificate and counterexample (me-5d); the full file is pinned"
       },
       {
         "file": "lean/VE/Scope/Wire.lean",
