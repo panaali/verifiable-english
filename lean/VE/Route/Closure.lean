@@ -417,7 +417,7 @@ theorem reachValue_closure (k : VE.Closure.Kind) (c : Edges) (es : List (Entity 
     reachValue (decide (k = .star)) c (some v) (some w) = VE.Closure.reachEval k es v w := by
   apply Bool.eq_iff_iff.mpr
   rw [VE.Closure.reachEval_iff, VE.Closure.reachable_congr k _ R hes]
-  cases k <;> simp [reachValue, VE.Closure.Reachable, hc]
+  cases k <;> simp [reachValue, VE.Closure.Reachable, VE.Paths.Reachable, hc]
 
 theorem path_core_iff (R : Entity → Entity → Prop) (a b : Entity) :
     VE.Core.Path R a b ↔ VE.Closure.Path R a b := by
@@ -437,7 +437,7 @@ theorem reachValue_core (k : VE.Core.Kind) (c : Edges) (es : List (Entity × Ent
     reachValue (decide (k = .star)) c (some v) (some w) = VE.Core.reachEval k es v w := by
   apply Bool.eq_iff_iff.mpr
   rw [VE.Core.reachEval_iff, VE.Core.reachable_congr k _ R hes]
-  cases k <;> simp [reachValue, VE.Core.Reachable, hc, path_core_iff]
+  cases k <;> simp [reachValue, VE.Core.Reachable, VE.Paths.Reachable, hc, path_core_iff]
 
 /-! ## The closure cache -/
 
