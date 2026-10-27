@@ -536,6 +536,12 @@ class EnglishVocabulary:
                     modal = 'may' if reg.role == 'permission' else 'must'
                     self.predicates[name] = reg.act.replace('{0} ', '{0} ' + modal + ' ', 1)
                     self.negatives.pop(name, None)
+            # acts@0: a plain act reads with the wording Lean selected (act-phrases 2.1), relayed by the norms
+            # route; no lint here decides it.
+            from .norms import plain_wordings
+            for name, template in plain_wordings(env).items():
+                self.predicates[name] = template
+                self.negatives.pop(name, None)
 
     def atom(self, name, terms, negative=False):
         text = (self.negatives if negative else self.predicates)[name]

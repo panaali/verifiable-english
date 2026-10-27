@@ -356,6 +356,37 @@ def test_layers_judgments_does_not_compose_with_are_unavailable(service):
         "CheckerUnavailable: judgments@0 with senses needs its composed Lean route", None)
 
 
+def scope_text(profiles):
+    """`VE.Service.ScopeExamples.doc`: a lead-in governing two items, over `profiles`."""
+    lead = {"sign": False, "unless": [], "over": []}
+    regulated = {"role": "permission", "default": "deny", "act": "{0} acts"}
+    env = {"language": LANGUAGE, "profiles": profiles, "spec_revision": SPEC_REVISION,
+           "vocabulary": {"sorts": {"agent": {"description": "agent"}}, "constants": {},
+                          "predicates": {"p": {"arguments": ["agent"], "description": "d", "regulated": regulated}}}}
+
+    def item(uid, start, end, name):
+        return {"id": uid, "span": [start, end], "kind": "norm", "meaning": "specified", "support": "assumption",
+                "content": {"part": {"name": name, "predicate": "p", "guard": ["top"]}}}
+    units = [{"id": "u1", "span": [0, 18], "kind": "norm", "meaning": "specified", "support": "none"},
+             item("i1", 18, 25, "r1"), item("i2", 25, 34, "r2"),
+             {"id": "u3", "span": [34, 46], "kind": ["unformalised", "x"], "meaning": {"unformalised": "x"},
+              "support": "none"}]
+    governor = {"id": "g1", "unit": "u1", "reach": {"list": "u1"}, "units": ["i1", "i2"], "effect": {"frame": lead}}
+    front = {"format": "ve-document@1", "environment": env, "units": units,
+             "scope": {"version": "scope@0", "governors": [governor]}}
+    return "---\n" + json.dumps(front) + "\n---\nAgents must not:\n\n* Act.\n* Rest.\n\nThat is all."
+
+
+def test_scope_does_not_compose_with_judgments_yet(service):
+    """Merge with SC-1b: scope's fold writes no `judgments` member, so the document mode refuses the pair; the same
+    scope document without `judgments@0` is answered."""
+    plain = ["documents@1", "norms@0", "relational-fol@0", "scope@0"]
+    row = answer(service, scope_text(plain))
+    assert row["status"] == "ok" and [u["status"] for u in row["units"]][:3] == ["CHECKED"] * 3, row
+    assert outcome(answer(service, scope_text(with_profile(plain)))) == (
+        "CheckerUnavailable: judgments@0 with scope@0 needs its composed Lean route", None)
+
+
 def test_the_answer_fits_its_schema_and_models_refuse_the_profile(service):
     """The genuine answer passes the generated `document.json`. No model mode composes with the layer yet (jt-2b),
     and Python's model projection refuses it as they do."""

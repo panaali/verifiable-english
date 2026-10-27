@@ -97,6 +97,36 @@ theorem decodeRegulated_without_acts (ps fx : List String) (h : "acts@0" ∉ ps)
   simp only [decodeRegulatedIn, decodeRegulated, canonicalActIn_without_acts ps fx h,
     show ps.contains "acts@0" = false by simpa using h]
 
+/-- The branch an `if` that answered `.ok` took, with its condition. -/
+theorem ite_ok_cases {ε α : Type} {c : Prop} [Decidable c] {a b : Except ε α} {r : α}
+    (h : (if c then a else b) = .ok r) : (c ∧ a = .ok r) ∨ (¬c ∧ b = .ok r) := by
+  by_cases hc : c
+  · exact .inl ⟨hc, by simpa [hc] using h⟩
+  · exact .inr ⟨hc, by simpa [hc] using h⟩
+
+/-- Today's decoder never produces an act on a plain predicate, so `Tree.check`'s dropped refusal admits only
+    `acts@0` documents. -/
+theorem decodeRegulated_plain {name : String} {args : List String} {raw : Lean.Json} {r : VE.Norms.Regulated}
+    (h : decodeRegulated name args raw = .ok r) (hp : r.role = .plain) : r.act = none := by
+  -- walk the decoder one step at a time: a bind, an `if` with its condition, or a `match`; a leaf is a refusal,
+  -- or a declaration whose role and act the steps fixed
+  simp only [decodeRegulated, decodeRegulatedWith] at h
+  repeat' (first
+    | (cases h; done)
+    | (cases h; first | rfl | cases hp)
+    | (have h' := VE.Order.ProfileGate.bind_ok h; clear h; obtain ⟨_, _, h⟩ := h'; try dsimp only at h)
+    | (have h' := ite_ok_cases h; clear h
+       rcases h' with ⟨hc, h⟩ | ⟨hc, h⟩ <;> try (simp at hc; done))
+    | split at h)
+  all_goals simp_all [pure, Except.pure]
+
+/-- The wording of a plain act (act-phrases 2.1): `Lexical.wording` of the form its declaration `raw` carries; none
+for any other declaration. Lean's English (`modalForm`) and the norms route's `wordings` read it. -/
+def plainWording (r : Regulated) (raw : Json) : Option String :=
+  match r.role, r.act, (raw.getObjValD "form").getStr?.toOption.bind VE.Acts.Lexical.Form.ofText? with
+  | .plain, some act, some f => some (VE.Acts.Lexical.wording f act)
+  | _, _, _ => none
+
 /-- A decoded norms environment: the complete environment, its literals, the
 regulated declarations (in vocabulary order) and the original JSON. -/
 structure NormsEnvironment where
@@ -105,14 +135,57 @@ structure NormsEnvironment where
   profiles : List String
   json : Json
 
+/-- The wording of each plain act of `ne` by its predicate, in vocabulary order (the norms route's `wordings`). -/
+def plainWordings (ne : NormsEnvironment) : List (String × String) :=
+  ne.regulated.filterMap fun r => (plainWording r ((((ne.json.getObjValD "vocabulary").getObjValD
+    "predicates").getObjValD r.name).getObjValD "regulated")).map (r.name, ·)
+
+/-- The fixed phrases of an environment's `acts` block (act-phrases 3.1), each checked by `Lexical.decodeFixed`,
+when its profiles `ps` are read with `acts@0`; else none. An absent block is the empty block. -/
+def actsFixed (ps : List String) (environment : Json) : Except String (List String) :=
+  match ps.isEmpty, (environment.getObjValD "vocabulary").getObjVal? "acts" with
+  | false, .ok block => do
+    exactFields block ["fixed"]
+    let fx ← strings (← block.getObjVal? "fixed")
+    let _ ← VE.Acts.Lexical.decodeFixed fx
+    pure fx
+  | _, _ => pure []
+
+/-- `acts@0`'s refusal on the checker family `f` (act-phrases 4.4), which the profile row and the plain route read. -/
+def actsFamilyRefusal (f : String) : String := s!"acts@0 on the {f} family is not implemented"
+
+/-- Whether `acts@0` is read from the profiles `ps`: they list it and are sorted and unique. Any other list keeps
+`acts@0`, and the envelope decoder refuses the list as the base refuses it. -/
+def readsActs (ps : List String) : Bool := ps.contains "acts@0" && decide (ps.Pairwise (· < ·))
+
+/-- The profiles of an environment from which `acts@0` is read (`readsActs`), when `acts` lets the decoder read
+it; else none. -/
+def actsProfiles (acts : Bool) (environment : Json) : List String :=
+  match acts, VE.Route.Gate.profilesOf environment with
+  | true, .ok ps => if readsActs ps then ps else []
+  | _, _ => []
+
+/-- What the frozen envelope and vocabulary decoders read of an `acts@0` environment: the environment without
+`acts@0` in `ps` and without the `acts` block, when `acts@0` is read from `ps`; else the environment as it is. -/
+def actsView (environment : Json) (ps : List String) : Json :=
+  let vocab := match environment.getObjValD "vocabulary" with
+    | .obj kvs => Json.obj (kvs.erase "acts")
+    | v => v
+  if readsActs ps then (environment.setObjVal! "profiles" (toJson (ps.erase "acts@0"))).setObjVal! "vocabulary" vocab
+  else environment
+
 /-- Separate `regulated` from each predicate entry, decode the rest with the
-frozen P0 decoder, then decode and retain every `regulated` extension. -/
+frozen P0 decoder, then decode and retain every `regulated` extension. With
+`acts`, an environment listing `acts@0` is read with its `acts` block and the
+act check of act-phrases 3.2; without it, `acts@0` is refused as today. -/
 def decodeNormsEnvironment (environment : Json)
-    (displayConstants : Bool := true) : Except String NormsEnvironment := do
-  let e ← VE.Route.Gate.decodeEnvelope environment
+    (displayConstants : Bool := true) (acts : Bool := false) : Except String NormsEnvironment := do
+  let ps := actsProfiles acts environment
+  let e ← VE.Route.Gate.decodeEnvelope (if ps.isEmpty then environment else actsView environment ps)
   unless e.profiles.contains "norms@0" do throw "UnsupportedProfile: norms@0 is required"
   unless e.family == .fol do
     throw (VE.Route.Gate.unsupported "the norms route admits FOL documents only")
+  let fx ← actsFixed ps environment
   let vocab := e.vocabulary
   let predicates ← fields (← vocab.getObjVal? "predicates")
   let stripped ← predicates.mapM fun (p, entry) => do
@@ -128,16 +201,19 @@ def decodeNormsEnvironment (environment : Json)
       if (entry.getObjVal? "functional").isOk || (entry.getObjVal? "total").isOk then
         throw s!"RegulatedFlag: {p}"
       let args ← strings (← entry.getObjVal? "arguments")
-      some <$> decodeRegulated p args raw
+      some <$> decodeRegulatedIn ps fx p args raw
   if regs.length > 64 then throw "ResourceLimit: regulated predicates"
   actChecks regs
-  pure ⟨rv, regs, e.profiles, environment⟩
+  pure ⟨rv, regs, if ps.isEmpty then e.profiles else ps, environment⟩
 
 /-- Python hashes `Environment.to_dict()`, which stores normalised act phrases.
-Apply that same canonicalisation before any source environment binding. -/
+Apply that same canonicalisation before any source environment binding: each act by
+`canonicalActIn` with the environment's profiles and fixed phrases (act-phrases 3.3). -/
 def canonicalEnvironmentJson (environment : Json) : Except String Json := do
   let vocab ← environment.getObjVal? "vocabulary"
   let predicates ← fields (← vocab.getObjVal? "predicates")
+  let ps := actsProfiles true environment
+  let fx ← actsFixed ps environment
   let canonical ← predicates.mapM fun (name, entry) => do
     let entry ← match entry.getObjVal? "regulated" with
       | .error _ => pure entry
@@ -146,11 +222,21 @@ def canonicalEnvironmentJson (environment : Json) : Except String Json := do
           | .error _ => pure reg
           | .ok act =>
             let args ← strings (← entry.getObjVal? "arguments")
-            pure (reg.setObjVal! "act" (.str (← canonicalAct name args.length act)))
+            pure (reg.setObjVal! "act" (.str (← canonicalActIn ps fx name args.length act)))
         pure (entry.setObjVal! "regulated" reg)
     pure (name, entry)
   pure (environment.setObjVal! "vocabulary"
     (vocab.setObjVal! "predicates" (Json.mkObj canonical)))
+
+/-- The act of each regulated predicate of `canonical` (`canonicalEnvironmentJson`'s result) by its predicate, in
+vocabulary order: the canonical acts the environment identity hashes. The environment row gives them (`acts`) and
+Python stores each as its predicate's act, so the identity determines the environment Python builds (ap-1bb). -/
+def canonicalActs (canonical : Json) : Except String (List (String × String)) := do
+  let predicates ← fields (← (← canonical.getObjVal? "vocabulary").getObjVal? "predicates")
+  predicates.filterMapM fun (p, entry) =>
+    match (entry.getObjValD "regulated").getObjVal? "act" with
+    | .ok act => do pure (some (p, ← act.getStr?))
+    | .error _ => pure none
 
 /-- Append generated predicate declarations to the actual environment vocabulary. Both
 soft-norms and rights use this operation, and the response-shape proof fixes its entries. -/
@@ -279,10 +365,12 @@ does: its Background leaves `background:flags` are W2's (`Route.Admission`,
 regenerated from the decoded flags), and its report theorem takes the flag
 premises as a separate hypothesis. Every other norms case keeps the gate, since
 its regenerated Background and conflict checks are stated over literals and
-profile premises only (`backgroundBase`). -/
+profile premises only (`backgroundBase`). The norms route reads `acts@0`
+(act-phrases 2.8); a route that does not hook it calls `decodeNormsEnvironment`
+without `acts`, or refuses the profile before it calls this. -/
 def decodeSource (environment norms : Json) (flags : Bool := false)
     (displayConstants : Bool := true) : Except String Source := do
-  let ne ← decodeNormsEnvironment environment displayConstants
+  let ne ← decodeNormsEnvironment environment displayConstants (acts := true)
   unless ne.rv.definitions.isEmpty || ne.profiles.contains "definitions@0" do
     throw "defined declarations require the definitions@0 profile"
   unless flags || ne.rv.flags.isEmpty do
