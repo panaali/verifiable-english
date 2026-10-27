@@ -64,7 +64,9 @@ compare_statements.py` on this HEAD: **42 OK, 0 not OK**. No statement of spec 7
 
 ## 4. Seeded bugs, trust, size
 
-Seeded bugs (Lean only; no Python or Rust product file changed), `mutants.json`, saved run `evidence/mutants.out`:
+Seeded bugs in Lean (`mutants.json` `mutants`, saved run `evidence/mutants.out`) and in Python (the one changed Python
+file, `tools/layer_policy.py`: `mutants.json` `python_mutants`, saved run `evidence/python-mutants.out`); no Rust file
+changed:
 
 | # | Definition: bug | Fails |
 | --- | --- | --- |
@@ -77,6 +79,7 @@ Seeded bugs (Lean only; no Python or Rust product file changed), `mutants.json`,
 | WR4, WR5 | `pairCertsOf`: `[]` refused; `null` read as a list (claim 4) | DF-ω's `[]`, `null`, no member |
 | WR6, WR7 | `collisionOf`: undeclared rule not refused; only the first rule checked (claim 4) | undeclared rule |
 | SH1–SH9 | the shapes: rules unbound, situation without COLLISION, basis untyped, DOES-NOT-FOLLOW without situation, label untyped, filling rows untyped, kind misnamed, row mis-selected, situation's shape dropped (claim 3) | `ResponseShape/DefaultsExamples.lean` |
+| PY1 | `tools/layer_policy.py` `lean_layer`: `VE.Defaults.RouteExamples` left out of the layer-4 runner-boundary fixtures (claim 1: the route's fixtures import `NormDefaults.Run`) | `python3 tools/check_lean_imports.py` (the gate's Lean layer check): "new outward Lean import: VE.Defaults.RouteExamples -> VE.NormDefaults.Run", exit 1; restored, exit 0 |
 
 **Trust** (R16, DELTA T1): V +104, K +0, S +0, per file in DELTA T1; FOLLOW-UPS "## df-1ae" asks for the ties pass.
 
@@ -100,7 +103,7 @@ Evidence commit list (`git log --oneline main..HEAD --no-merges`, before this re
    length); `test_route_row_schemas.py` fuzzes the eleven recorded answers through the client schema and Lean.
 2. **Every deliverable built.** PASS: section 1, deliverables (1)–(4) and the review C findings; no Python copy of a
    Lean decision; in-flight overlap only `lean/VE.lean`'s import list (union-merged).
-3. **Tests can fail.** PASS: 25 seeded bugs (`evidence/mutants.out`), `trust_mutants.py` (`trust-mutants.json`).
+3. **Tests can fail.** PASS: 25 Lean seeded bugs (`evidence/mutants.out`), one Python (PY1, `evidence/python-mutants.out`), `trust_mutants.py` (`trust-mutants.json`).
 4. **Python, Lean and Rust agree.** PASS: base and head side by side on all 330 recorded route cases
    (`evidence/byte-identity.json`); the head's answers pass the client schema in `LeanService` (`evidence/delta.json`).
 5. **R8 binding.** N.A. for the relay (df-1b). The shapes bind what they can (`id`, the collision's `rules`
