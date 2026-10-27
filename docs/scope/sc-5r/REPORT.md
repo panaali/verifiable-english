@@ -2,8 +2,8 @@
 
 **No DRI signature is reserved; no DELTA (no behaviour changes).** This item is docs and a statement stub only. Its
 independent review is the scope statement review for spec section 11; the build, **sc-5rb**, starts after a PASS.
-**Size: 718 hand-written lines (`git diff --numstat` against the merge base: spec +247/−2, stub 360, this report
-101, `mutants.json` 10), over the ~600 the common rules allow.** The stub is the only home of the Lean text (the spec
+**Size: 726 hand-written lines (`git diff --numstat` against the merge base: spec +247/−2, stub 360, this report
+109, `mutants.json` 10), over the ~600 the common rules allow.** The stub is the only home of the Lean text (the spec
 cites it, as pk-1s's spec cites its stub), and was trimmed once at 633 lines. It was not cut further: what remains is
 the definitions and statements under review, the six fixtures the task requires, and the fixtures that caught the
 design faults listed below. The reviewer or DRI can take it at this size; no part splits off as a coherent `sc-5rb`
