@@ -591,7 +591,16 @@ def malformed : List String := ["7", "true", "null", "[]", "{}", "1.5", "\"\"", 
     req x1 (c1 s!"[\"eq\", [\"val\", \"x\"], {v}]"), req x1 (c1 s!"[\"rounds\", [\"val\", \"x\"], {v}]"),
     req x1 (c1 s!"[\"eq\", [\"lit\", {v}], [\"lit\", \"1\"]]")] ++
     -- words are any string until me-2b's words checks (W6, spec 11.2), so "" is no malformed words
-    (if v == "\"\"" then [] else [req s!"\{\"name\": \"x\", \"words\": {v}, \"stated\": \"1\"}" ok1]) |>.all fun c =>
+    (if v == "\"\"" then [] else [req s!"\{\"name\": \"x\", \"words\": {v}, \"stated\": \"1\"}" ok1]) ++
+    -- me-5c: a free value, a premise's fields, and a derivation's conclusion, premise ids and links; `true` is a free
+    -- value, and an empty list a valid premises, ids or links list
+    (if v == "true" then [] else [req s!"\{\"name\": \"x\", \"words\": \"w\", \"free\": {v}}" ok1]) ++
+    (let le := r#"["le", ["val", "x"], ["lit", "1"]]"#
+     let entry (id claim support : String) := s!", \"premises\": [\{\"id\": {id}, \"claim\": {claim}, \"support\": {support}}]"
+     [req x1 ok1 (entry v le "\"assumption\""), req x1 ok1 (entry "\"p1\"" v "\"assumption\""),
+      req x1 ok1 (entry "\"p1\"" le v), req x1 (c1 s!"[\"follows\", {v}, [], []]")] ++
+     (if v == "[]" then [] else [req x1 ok1 s!", \"premises\": {v}", req x1 (c1 s!"[\"follows\", {le}, {v}, []]"),
+       req x1 (c1 s!"[\"follows\", {le}, [], {v}]")])) |>.all fun c =>
   (answer c).getObjVal? "rows" |>.toOption |>.isNone
 
 /-! ## Derivations (ME-5; spec 3.1, 5 and 13.6): R-3 (H-6) follows, R-4 (H-6n) does not -/
