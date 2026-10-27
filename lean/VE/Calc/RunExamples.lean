@@ -844,6 +844,12 @@ def rowFieldCases := [
   ("follows", ["sides", "display", "tie"].map (member r3 0), ["absent", "absent", "absent"])]
 #guard expect rowFieldCases
 
+-- Each value's words by its name, the first value's and the last's alike; the display of 0 has no sign.
+#guard (Json.parse r#"{"values": [{"name": "x", "words": "the x"}, {"name": "y", "words": "the y"}]}"#).toOption.all
+  fun j => [Run.wordsIn j "x", Run.wordsIn j "y", Run.wordsIn j "z"] == [some "the x", some "the y", none]
+#guard [Run.truncated 2 0, Run.truncated 0 0, Run.truncated (-1) 0, Run.truncated 1 (-1 / 20)] ==
+  ["0.00", "0", "0", "-0.0…"]
+
 -- Lean's line (11.1), `null` where 11.2's rule refuses an expression or a value's words; never a finding (13.6).
 #guard expect [
   ("line", [member (req x1 ok1) 0 "line"], [r#""The x equals 1.""#]),

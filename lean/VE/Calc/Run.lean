@@ -202,9 +202,7 @@ def exact (q : Rat) : String := if q.den = 1 then toString q.num else s!"{q.num}
 remainder. -/
 def truncated (k : Int) (x : Rat) : String :=
   let y := x * tenPow k
-  let t := y.num.natAbs / y.den
-  (if x < 0 then "-" else "") ++
-    (if 0 ≤ k then VE.Time.renderAmount k.toNat t else toString (t * 10 ^ (-k).toNat)) ++
+  (if x < 0 then "-" else "") ++ VE.Time.renderAmount k.toNat (y.num.natAbs / y.den * 10 ^ (-k).toNat) ++
     (if y.num.natAbs % y.den = 0 then "" else "…")
 
 /-- A claim's sides: each expression's value under the case's bounded values (`Claim.run` reads the same). -/
