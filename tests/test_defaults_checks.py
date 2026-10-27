@@ -1,8 +1,10 @@
-"""Every check of the defaults relay and of `--assume-no-exception` is needed by a test (review df-1b F1, PROBE F1).
+"""Every check of the defaults relay and of `--assume-no-exception` is needed by a test (review df-1b F1 and F9,
+PROBE F1 and PROBE F9).
 
 The checks are read from the source (tests/check_mutants.py): each `if ...: raise` of `ve/defaults.py`, and of
-`ve/document/cli.py` where it is the flag's, weakened one sub-condition at a time or made always true, and each
-helper check (`_tuple(...)`, `_situation(...)`, `check_row(...)`) deleted. Each seeded bug must fail one of the
+`ve/document/cli.py` where it is the flag's, weakened one sub-condition at a time or made always true; each
+`if ...: return` (`answer`'s choice of binding, `ask`'s strict answer) with each sub-condition forced both ways; and
+each helper check (`_tuple(...)`, `_situation(...)`, `check_row(...)`) deleted. Each seeded bug must fail one of the
 both-sides tests, which read Lean's genuine rows asked once (tests/test_defaults_answer.py `_genuine`), so a check
 written later is a seeded bug too and a check no fixture needs fails here.
 """
@@ -61,5 +63,20 @@ def test_review_f1_every_check_is_needed_by_a_both_sides_test():
                 patch.setattr(module, function, namespace[function])
                 if not any(_fails(test) for test in TESTS):
                     survivors.append(description)
-    assert count >= 60  # the enumeration reaches every check (60 sites at review F1's fix)
+    assert count >= 93  # the enumeration reaches every check (60 sites at review F1's fix, 93 with F9's exits)
     assert survivors == [], "\n".join(survivors)
+
+
+def test_review_f9_a_strict_answer_lean_rejected_is_never_shown():
+    """PROBE F9's seeded bug: `ask` reading Lean's `valid` as `is not None` shows the strict answer for a certificate
+    Lean rejected, which the both-sides test of the strict answer finds."""
+    path = Path(defaults.__file__)
+    source, site = path.read_text(), '["valid"] is True'
+    assert source.count(site) == 1
+    namespace = {"__name__": defaults.__name__, "__package__": defaults.__package__, "__file__": str(path)}
+    exec(compile(source.replace(site, '["valid"] is not None'), str(path), "exec"), namespace)
+    test = BOTH_SIDES[-1]
+    assert test.__name__ == "test_strict_answer_only_when_lean_says_valid" and not _fails(test)
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setattr(defaults, "ask", namespace["ask"])
+        assert _fails(test)
