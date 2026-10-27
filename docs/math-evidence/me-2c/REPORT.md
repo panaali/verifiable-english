@@ -156,6 +156,8 @@ ME-3 (the Python relay) can read these rows. **me-2d** takes the words checks fo
 - `lake build` (whole library), `regen_generated.py --write` then `--check` (33 entries), `trust_map.py --check`
   (K +0, S +0, V +50: PASS), `relay_mutation_gate.py --route service:calc` (0 failures), `trust_mutants`
   (exit 0, above).
+- Selected tests on 0393af80 (`mac-pytest.sh --select`, ve-mac-1): all 382 units passed, exit 0.
+  `gate_collection.py --check --prebuilt`: 8 added, 0 refused, 0 stale, 0 malformed.
 - Not run: the full gate (the chain runs it on the final HEAD).
 
 ## Self-review against BUILDER-CHECKLIST
@@ -182,4 +184,4 @@ ME-3 (the Python relay) can read these rows. **me-2d** takes the words checks fo
     (`rowFieldCases` "digits"). The tests have no timing, only `HANG_TIMEOUT`.
 12. PASS: no other mode's path changes. Each claim's expressions are evaluated once more for the sides (the same
     bounded `evalL`, `valuesL` built once per case), so the work grows by a constant factor, not exponentially.
-13. PASS: no test is removed or renamed (`gate_collection.py --check --prebuilt` below).
+13. PASS: no test is removed or renamed (`gate_collection.py --check --prebuilt`: 0 refused, 0 stale, 0 malformed).
