@@ -748,6 +748,8 @@
 'VE.Cardinality.Examples.weighted_two' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.Examples.wellFormed_cases' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.Run.decodeCertificate_sound' depends on axioms: [propext, Quot.sound]
+'VE.Cardinality.Run.erasedJson_conclusion' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Cardinality.Run.regionsJson_constants' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.Run.runCaseReported_error' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.Run.runCaseReported_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.Wire.cmpNames_spelled' depends on axioms: [propext, Classical.choice, Quot.sound]

@@ -1156,6 +1156,8 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.Examples.weighted_two
 #print axioms VE.Cardinality.Examples.wellFormed_cases
 #print axioms VE.Cardinality.Run.decodeCertificate_sound
+#print axioms VE.Cardinality.Run.erasedJson_conclusion
+#print axioms VE.Cardinality.Run.regionsJson_constants
 #print axioms VE.Cardinality.Run.runCaseReported_error
 #print axioms VE.Cardinality.Run.runCaseReported_ok
 #print axioms VE.Cardinality.Wire.cmpNames_spelled

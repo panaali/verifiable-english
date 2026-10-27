@@ -23,6 +23,23 @@ theorem decodeCertificate_sound {j : Json} {cert : CardCertificate} (h : decodeC
     simp_all
   · cases h
 
+/-- The region table's constants are `regionTable`'s, in its order, each with its name, sort and bits. -/
+theorem regionsJson_constants (E : CEnv) (fs : List CFormula) :
+    (regionsJson E fs).getObjVal? "constants" = .ok (toJson ((regionTable E fs).map fun e =>
+      Json.mkObj [("constant", .str e.1), ("sort", .str e.2.1), ("bits", .str (bitString e.2.2))])) := by
+  rfl
+
+/-- The regenerated conclusion's row is `erasedProblem`'s conclusion, annotated and erased, with its W6a identities. -/
+theorem erasedJson_conclusion {w : CardEnv} {ps : List CFormula} {c : CFormula} {pids : List (String × String)}
+    {cid : String × String} (h : erasedIds w ps c = .ok (pids, cid)) :
+    (erasedJson w ps c).map (·.getObjVal? "conclusion") = .ok (.ok (Json.mkObj
+      [("Q", VE.Time.Wire.encQ (erasedProblem w.env ps c).2),
+        ("core", VE.Time.Wire.encCore (erasedProblem w.env ps c).2.erase), ("meaning_id", .str cid.1),
+        ("core_meaning_id", .str cid.2)])) := by
+  unfold erasedJson
+  rw [h]
+  rfl
+
 /-- A runner's answer is its row; a refusal is an error row, and in a certificate case it says `valid: false`, so a
 refused certificate is never reported valid. -/
 theorem runCaseReported_ok {j r : Json} (h : runCase j = .ok r) : runCaseReported j = r := by
