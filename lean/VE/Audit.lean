@@ -104,6 +104,7 @@ import VE.Core.TableauExtendedRules
 import VE.Core.Wire
 import VE.Data.Background
 import VE.Defaults.Premises
+import VE.Defaults.Route
 import VE.Defaults.Wire
 import VE.Definitions.Alias
 import VE.Definitions.Bundle
@@ -2612,6 +2613,7 @@ import VE.WireContract.Engine
 #print axioms VE.NormDefaults.Wire.fillPremises_wellFormed
 #print axioms VE.NormDefaults.Wire.grounding_ungrounded_iff
 #print axioms VE.NormDefaults.Wire.kept_sound
+#print axioms VE.NormDefaults.Wire.layeredKindCase_other
 #print axioms VE.NormDefaults.Wire.layered_cert_sound
 #print axioms VE.NormDefaults.Wire.layered_conflict_sound
 #print axioms VE.NormDefaults.Wire.layered_report_sound
