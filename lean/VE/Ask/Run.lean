@@ -141,7 +141,7 @@ def askCase (j : Json) : Except String Json := do
     let fields ← answered (routeOfDocument text) j q c φ
     pure (VE.Route.Wire.ok id [("result", Json.mkObj (fields ++ [("identities", identities)]))])
   | other =>
-    let fields ← askedFields E.profiles q E L other
+    let fields ← askedFields VE.Question.auxiliaries E.profiles q E L other
     pure (VE.Route.Wire.ok id [("result", Json.mkObj (refusedFields fields ++ [("identities", identities)]))])
 
 def caseReported (j : Json) : Json :=
