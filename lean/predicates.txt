@@ -795,6 +795,7 @@ VE.Data.Background.Intended@VE.Data.Background
 VE.Data.Background.Total@VE.Data.Background
 VE.Defaults.DefaultBase@VE.Defaults.Meaning
 VE.Defaults.DefaultCoherent@VE.Defaults.Premises
+VE.Defaults.MeaningFixtures.DefaultBaseFixed@VE.Defaults.MeaningExamples
 VE.Defaults.ReplacementHolds@VE.Defaults.Meaning
 VE.Defaults.SwitchesOff@VE.Defaults.Meaning
 VE.Defaults.leastDecisions@VE.Defaults.Meaning

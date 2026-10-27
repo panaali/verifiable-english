@@ -8723,6 +8723,101 @@ theorem VE.Data.Background.totalPremise_iff
     VE.Formula.denote S [] (VE.Data.Background.totalPremise f) ↔ VE.Data.Background.Total S f
   -- uses VE.Data.Background.Flag@VE.Data.Background VE.Data.Background.Total@VE.Data.Background VE.Data.Background.totalPremise@VE.Data.Background VE.Formula.denote@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 4262845113
+theorem VE.Defaults.MeaningFixtures.Uπ_eq
+  VE.Defaults.MeaningFixtures.Uπ = { D := VE.Defaults.MeaningFixtures.Sπ, unspec := ["x_permitted", "x_required"] }
+  -- uses VE.Defaults.MeaningFixtures.Sπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.Uπ@VE.Defaults.MeaningExamples VE.NormDefaults.UDoc.mk@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree
+  -- expr 1310567377
+theorem VE.Defaults.MeaningFixtures.admissible_π
+  ∀ {on fon : List String},
+    (∀ (p : String), p ∈ on → p = VE.Defaults.MeaningFixtures.excπ) →
+      VE.NormDefaults.fillValid VE.Defaults.MeaningFixtures.Uπ (VE.Defaults.MeaningFixtures.Mπ on)
+            (VE.Defaults.MeaningFixtures.Fπ fon) =
+          Bool.true →
+        VE.NormDefaults.Wire.BaseAdmissibleX VE.Defaults.MeaningFixtures.Uπ
+          (VE.Defaults.softX VE.Defaults.MeaningFixtures.Uπ VE.Defaults.MeaningFixtures.Dπ [])
+          (VE.Defaults.MeaningFixtures.sitπ on fon)
+  -- uses VE.Defaults.Fixtures.Entity@VE.Defaults.Examples VE.Defaults.MeaningFixtures.Dπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.Fπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.Mπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.Uπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.excπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.sitπ@VE.Defaults.MeaningExamples VE.Defaults.softX@VE.Defaults.Meaning VE.Formula@VE.Syntax VE.NormDefaults.Wire.BaseAdmissibleX@VE.NormDefaults.Report VE.NormDefaults.fillValid@VE.NormDefaults.Evidence
+  -- expr 3844871864
+theorem VE.Defaults.MeaningFixtures.decisionNames_π
+  VE.SoftNorms.decisionNames VE.Defaults.MeaningFixtures.Dπ = [VE.Defaults.MeaningFixtures.excπ]
+  -- uses VE.Defaults.MeaningFixtures.Dπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.excπ@VE.Defaults.MeaningExamples VE.SoftNorms.decisionNames@VE.SoftNorms.Tree
+  -- expr 1961693428
+theorem VE.Defaults.MeaningFixtures.decisions_π
+  VE.SoftNorms.decisions VE.Defaults.MeaningFixtures.Dπ = [(VE.Defaults.MeaningFixtures.excπ, ["assistant"])]
+  -- uses VE.Defaults.MeaningFixtures.Dπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.excπ@VE.Defaults.MeaningExamples VE.SoftNorms.decisions@VE.SoftNorms.Tree
+  -- expr 947880806
+theorem VE.Defaults.MeaningFixtures.exc_unsaid
+  ¬VE.Defaults.MeaningFixtures.excπ ∈ VE.NormDefaults.unsaidNames VE.Defaults.MeaningFixtures.Uπ
+  -- uses VE.Defaults.MeaningFixtures.Uπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.excπ@VE.Defaults.MeaningExamples VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree
+  -- expr 1536106616
+theorem VE.Defaults.MeaningFixtures.exceptedName_π
+  VE.SoftNorms.exceptedName VE.Defaults.MeaningFixtures.nπ = VE.Defaults.MeaningFixtures.excπ
+  -- uses VE.Defaults.MeaningFixtures.excπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.nπ@VE.Defaults.MeaningExamples VE.SoftNorms.exceptedName@VE.SoftNorms.Tree
+  -- expr 4058389415
+theorem VE.Defaults.MeaningFixtures.open_π
+  ∀ {on fon on' fon' : List String} (δ F : String → List VE.Defaults.Fixtures.Entity → Prop),
+    (∀ (vs : List VE.Defaults.Fixtures.Entity),
+        δ VE.Defaults.MeaningFixtures.excπ vs ↔
+          (VE.Defaults.MeaningFixtures.sitπ on' fon').relation VE.Defaults.MeaningFixtures.excπ vs) →
+      (∀ (n : String),
+          n ∈ VE.NormDefaults.unsaidNames VE.Defaults.MeaningFixtures.Uπ →
+            ∀ (vs : List VE.Defaults.Fixtures.Entity),
+              F n vs ↔ (VE.Defaults.MeaningFixtures.sitπ on' fon').relation n vs) →
+        (∀ (n : String),
+            n ≠ VE.Defaults.MeaningFixtures.excπ →
+              ¬n ∈ VE.NormDefaults.unsaidNames VE.Defaults.MeaningFixtures.Uπ → (n ∈ on ↔ n ∈ on')) →
+          VE.Defaults.withOpen VE.Defaults.MeaningFixtures.Uπ VE.Defaults.MeaningFixtures.Dπ
+              (VE.Defaults.MeaningFixtures.sitπ on fon) δ F =
+            VE.Defaults.MeaningFixtures.sitπ on' fon'
+  -- uses VE.Defaults.Fixtures.Entity@VE.Defaults.Examples VE.Defaults.MeaningFixtures.Dπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.Uπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.excπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.sitπ@VE.Defaults.MeaningExamples VE.Defaults.withOpen@VE.Defaults.Meaning VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2907945344
+theorem VE.Defaults.MeaningFixtures.rel_base
+  ∀ {on fon : List String} {n : String},
+    ¬n ∈ VE.NormDefaults.unsaidNames VE.Defaults.MeaningFixtures.Uπ →
+      ∀ (vs : List VE.Defaults.Fixtures.Entity),
+        (VE.Defaults.MeaningFixtures.sitπ on fon).relation n vs ↔ n ∈ on ∧ vs = VE.Defaults.MeaningFixtures.a1
+  -- uses VE.Defaults.Fixtures.Entity@VE.Defaults.Examples VE.Defaults.MeaningFixtures.Uπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.a1@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.sitπ@VE.Defaults.MeaningExamples VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree VE.Structure.relation@VE.Semantics
+  -- expr 2935153287
+theorem VE.Defaults.MeaningFixtures.rel_unsaid
+  ∀ {on fon : List String} {n : String},
+    n ∈ VE.NormDefaults.unsaidNames VE.Defaults.MeaningFixtures.Uπ →
+      ∀ (vs : List VE.Defaults.Fixtures.Entity),
+        (VE.Defaults.MeaningFixtures.sitπ on fon).relation n vs ↔ n ∈ fon ∧ vs = VE.Defaults.MeaningFixtures.a1
+  -- uses VE.Defaults.Fixtures.Entity@VE.Defaults.Examples VE.Defaults.MeaningFixtures.Uπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.a1@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.sitπ@VE.Defaults.MeaningExamples VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree VE.Structure.relation@VE.Semantics
+  -- expr 3730994866
+theorem VE.Defaults.MeaningFixtures.rel_π
+  ∀ {on fon : List String} (n : String) (vs : List VE.Defaults.Fixtures.Entity),
+    (VE.Defaults.MeaningFixtures.sitπ on fon).relation n vs ↔
+      (if n ∈ VE.NormDefaults.unsaidNames VE.Defaults.MeaningFixtures.Uπ then n ∈ fon else n ∈ on) ∧
+        vs = VE.Defaults.MeaningFixtures.a1
+  -- uses VE.Defaults.Fixtures.Entity@VE.Defaults.Examples VE.Defaults.MeaningFixtures.Uπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.a1@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.sitπ@VE.Defaults.MeaningExamples VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree VE.Structure.relation@VE.Semantics
+  -- expr 1508802412
+theorem VE.Defaults.MeaningFixtures.soften_π
+  VE.SoftNorms.soften VE.Defaults.MeaningFixtures.Dπ = VE.Defaults.MeaningFixtures.Sπ
+  -- uses VE.Defaults.MeaningFixtures.Dπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.Sπ@VE.Defaults.MeaningExamples VE.Norms.Doc@VE.Norms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- expr 3228024758
+theorem VE.Defaults.MeaningFixtures.startsWith_prefix
+  ∀ (s p : String), s.startsWith p = Bool.true → p.data <+: s.data
+  -- uses
+  -- expr 3493648044
+theorem VE.Defaults.MeaningFixtures.switch_π
+  "default:exception:r1".startsWith "default:switch:" = Bool.false
+  -- uses
+  -- expr 3344955064
+theorem VE.Defaults.MeaningFixtures.switchesOff_π
+  ∀ (B : VE.Structure), VE.Defaults.SwitchesOff VE.Defaults.MeaningFixtures.Dπ B
+  -- uses VE.Defaults.MeaningFixtures.Dπ@VE.Defaults.MeaningExamples VE.Defaults.SwitchesOff@VE.Defaults.Meaning VE.Structure@VE.Semantics
+  -- expr 886539872
+theorem VE.Defaults.MeaningFixtures.typed_π
+  ∀ (on fon : List String),
+    VE.TupleTyped (VE.Defaults.MeaningFixtures.sitπ on fon) ["assistant"] VE.Defaults.MeaningFixtures.a1
+  -- uses VE.Defaults.MeaningFixtures.a1@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.sitπ@VE.Defaults.MeaningExamples VE.TupleTyped@VE.Semantics
+  -- expr 2023982765
+theorem VE.Defaults.MeaningFixtures.unsaid_π
+  VE.NormDefaults.unsaidNames VE.Defaults.MeaningFixtures.Uπ =
+    [VE.NormDefaults.unsaidName "x_permitted", VE.NormDefaults.unsaidName "x_required"]
+  -- uses VE.Defaults.MeaningFixtures.Uπ@VE.Defaults.MeaningExamples VE.NormDefaults.unsaidName@VE.NormDefaults.Tree VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree
+  -- expr 1460465549
 theorem VE.Defaults.Wire.DefaultsView.hD
   ∀ (self : VE.Defaults.Wire.DefaultsView), VE.SoftNorms.WellFormedSoft self.L.D = Bool.true
   -- uses VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView@VE.Defaults.Wire VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften
