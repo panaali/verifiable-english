@@ -66,10 +66,11 @@ RELAYED = ("ve/backends/relay.py", "ve/readings_route.py", "ve/discourse.py",
            "ve/norm_admission.py", "ve/ask.py", "ve/words.py")
 # Relayed functions of a module that also holds Python's own code (English E2, spec 2.9: the admission path of
 # `ve/english.py`; the producer, the renderer, the statement reader and the comparator in the same module write
-# their own diagnostics and are outside it).
+# their own diagnostics and are outside it; question answering Q1.4: the speech parser's polar path, `_polar`).
 RELAYED_FUNCTIONS = {"ve/english.py": ("_lean_reading", "_parse_english_document_uncached",
                                        "_parse_english_document", "parse_english_with_metadata", "parse_english",
-                                       "parse_english_argument")}
+                                       "parse_english_argument"),
+                     "ve/speech_english.py": ("_polar",)}
 # W2's English text-to-structure parser remains the experimental English E3
 # owner. SpeechDocument only supplies its structured fence to Lean for checking.
 OWNED_SURFACES = frozenset({"ve.speech_english"})
