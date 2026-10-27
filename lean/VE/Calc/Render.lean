@@ -116,4 +116,14 @@ def renderClaim (words : String → Option String) (c : Claim) : Option String :
           | .up => v ++ " is " ++ printed ++ " when rounded up to " ++ places
   pure (line.capitalize ++ ".")
 
+/-- A derivation (J10): its premises numbered, each square link `(s, r)` as two more, "S equals the square of R."
+and "R is at least 0.", then its conclusion. -/
+def renderFollows (words : String → Option String) (P : List Claim) (links : List (String × String)) (C : Claim) :
+    Option String := do
+  let linked : List Claim := links.flatMap fun (s, r) =>
+    [.compare ⟨.eq, false⟩ (.val s) (.pow (.val r) 2), .compare ⟨.le, true⟩ (.val r) (.lit 0)]
+  let lines ← (P ++ linked).mapM (renderClaim words)
+  pure ("Assume the following. " ++ " ".intercalate (lines.zipIdx.map fun (l, i) => s!"{i + 1}. {l}") ++
+    " From these, it follows that " ++ (← renderClaim words C).decapitalize)
+
 end VE.Calc.English

@@ -182,12 +182,15 @@ theorem Expr.inline_tooLarge (ds : List Decl) (h : WellFormed ds) (keep : List S
     (he : e.inline ds keep = .error .tooLarge) : e.Overflows ds := by
   rcases Expr.inline_error ds keep e _ he with h' | h' <;> cases h'
 
+/-- `Expr.subst` on each expression of a claim, in `Claim.exprs`' order: the first faulty one names the fault. -/
+def Claim.subst (t : Inlined) : Claim → Except Val Claim
+  | .compare r a b => do return .compare r (← a.subst t) (← b.subst t)
+  | .within e lo hi => do return .within (← e.subst t) (← lo.subst t) (← hi.subst t)
+  | .rounds r e p => do return .rounds r (← e.subst t) p
+
 /-- `Expr.inline` on each expression of a claim, in `Claim.exprs`' order: the first faulty one names the fault. -/
 def Claim.inline (ds : List Decl) (keep : List String) (c : Claim) : Except Val Claim :=
-  match c with
-  | .compare r a b => do return .compare r (← a.inline ds keep) (← b.inline ds keep)
-  | .within e lo hi => do return .within (← e.inline ds keep) (← lo.inline ds keep) (← hi.inline ds keep)
-  | .rounds r e p => do return .rounds r (← e.inline ds keep) p
+  c.subst (inlineTable ds keep)
 
 theorem Claim.inline_sound (ds : List Decl) (h : WellFormed ds) (keep : List String)
     (hk : ∀ n ∈ keep, n ∈ ds.map Decl.name) (c c' : Claim) (hc : c.inline ds keep = .ok c') (κ : String → Rat) :
@@ -195,15 +198,17 @@ theorem Claim.inline_sound (ds : List Decl) (h : WellFormed ds) (keep : List Str
   have hs := fun e e' he x => Expr.inline_sound ds h keep hk e e' he κ x
   cases c with
   | compare r a b =>
-      cases ha : a.inline ds keep <;> cases hb : b.inline ds keep <;>
-        simp [Claim.inline, ha, hb, bind, Except.bind, pure, Except.pure] at hc
+      cases ha : a.subst (inlineTable ds keep) <;> cases hb : b.subst (inlineTable ds keep) <;>
+        simp [Claim.inline, Claim.subst, ha, hb, bind, Except.bind, pure, Except.pure] at hc
       subst hc; simp only [Claim.Holds, hs a _ ha, hs b _ hb]
   | within e lo hi =>
-      cases he : e.inline ds keep <;> cases hl : lo.inline ds keep <;> cases hh : hi.inline ds keep <;>
-        simp [Claim.inline, he, hl, hh, bind, Except.bind, pure, Except.pure] at hc
+      cases he : e.subst (inlineTable ds keep) <;> cases hl : lo.subst (inlineTable ds keep) <;>
+        cases hh : hi.subst (inlineTable ds keep) <;>
+        simp [Claim.inline, Claim.subst, he, hl, hh, bind, Except.bind, pure, Except.pure] at hc
       subst hc; simp only [Claim.Holds, hs e _ he, hs lo _ hl, hs hi _ hh]
   | rounds r e p =>
-      cases he : e.inline ds keep <;> simp [Claim.inline, he, bind, Except.bind, pure, Except.pure] at hc
+      cases he : e.subst (inlineTable ds keep) <;>
+        simp [Claim.inline, Claim.subst, he, bind, Except.bind, pure, Except.pure] at hc
       subst hc; simp only [Claim.Holds, hs e _ he]
 
 end VE.Calc

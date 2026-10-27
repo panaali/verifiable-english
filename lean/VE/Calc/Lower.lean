@@ -12,12 +12,13 @@ def QLin.isConst (L : QLin) : Bool := (L.coeffs.map (·.1)).all fun n => L.coeff
 
 /-- The linear form of an expression over the free values, or none when it is not linear: a product of two forms
 neither of them constant, a power of a form that is not constant other than its 0th and 1st, or a division by a
-form that is not a nonzero constant. -/
+form that is not a nonzero constant. A sum is normalised (`QLin.norm`), one coefficient per unknown, so a chain of
+definitions gives a form no longer than its unknowns. -/
 def Expr.linear : Expr → Option QLin
   | .lit q => some ⟨q, []⟩
   | .val n => some ⟨0, [(n, 1)]⟩
-  | .add a b => do return (← a.linear).add (← b.linear)
-  | .sub a b => do return (← a.linear).add ((← b.linear).scale (-1))
+  | .add a b => do return ((← a.linear).add (← b.linear)).norm
+  | .sub a b => do return ((← a.linear).add ((← b.linear).scale (-1))).norm
   | .mul a b => do
       let (L, M) := (← a.linear, ← b.linear)
       if L.isConst then return M.scale L.const
@@ -63,6 +64,52 @@ def Claim.facts (ds : List Decl) (c : Claim) : Option (List QFact) :=
 theorem QLin.eval_isConst (κ : String → Rat) (L : QLin) (h : L.isConst = true) : L.eval κ = L.const :=
   QLin.eval_of_cancel κ L (by simpa [QLin.isConst] using h)
 
+theorem FM.firstAppearance_spec (ns acc : List String) (h : acc.Nodup) :
+    (ns.foldl (fun acc n => if n ∈ acc then acc else acc ++ [n]) acc).Nodup ∧
+      ∀ n, n ∈ ns.foldl (fun acc n => if n ∈ acc then acc else acc ++ [n]) acc ↔ n ∈ acc ∨ n ∈ ns := by
+  induction ns generalizing acc with
+  | nil => simpa using h
+  | cons m ns ih =>
+    by_cases hm : m ∈ acc
+    · simp only [List.foldl_cons, hm, if_true]; refine ⟨(ih acc h).1, fun n => ?_⟩; rw [(ih acc h).2]; grind
+    · simp only [List.foldl_cons, hm, if_false]
+      have hn : (acc ++ [m]).Nodup := by
+        rw [List.nodup_append]; refine ⟨h, by simp, ?_⟩; intro a ha b hb; simp at hb; subst hb; rintro rfl; exact hm ha
+      exact ⟨(ih _ hn).1, fun n => by rw [(ih _ hn).2]; simp; grind⟩
+
+/-- Over a list `U` of distinct names that holds every name of `l`, `l`'s value is one term per name of `U`. -/
+theorem sum_by_names (κ : String → Rat) (U : List String) (hU : U.Nodup) (l : List (String × Rat))
+    (hl : ∀ p ∈ l, p.1 ∈ U) :
+    (l.map fun p => p.2 * κ p.1).sum = (U.map fun n => ((l.filter (·.1 == n)).map (·.2)).sum * κ n).sum := by
+  induction U generalizing l with
+  | nil => cases l with
+    | nil => rfl
+    | cons p _ => exact absurd (hl p (by simp)) (by simp)
+  | cons n U ih =>
+    obtain ⟨hn, hU⟩ := List.nodup_cons.mp hU
+    rw [sum_split κ l n, ih hU _ (fun p hp => by
+      have := List.mem_filter.mp hp; rcases List.mem_cons.mp (hl p this.1) with h | h
+      · simp [h] at this
+      · exact h)]
+    simp only [List.map_cons, List.sum_cons]
+    congr 1; congr 1; apply List.map_congr_left; intro m hm
+    rw [List.filter_filter]; congr 3; apply List.filter_congr; intro q _
+    by_cases hq : q.1 = m <;> simp [hq] <;> rintro rfl <;> exact hn hm
+
+theorem sum_nonzero (κ c : String → Rat) (U : List String) :
+    (((U.map fun n => (n, c n)).filter (·.2 != 0)).map fun p => p.2 * κ p.1).sum = (U.map fun n => c n * κ n).sum := by
+  induction U with
+  | nil => rfl
+  | cons n U ih => by_cases h : c n = 0 <;> simp [h, ih, Rat.zero_add]
+
+theorem QLin.eval_norm (κ : String → Rat) (L : QLin) : L.norm.eval κ = L.eval κ := by
+  have hspec := FM.firstAppearance_spec (L.coeffs.map (·.1)) [] (by simp)
+  unfold QLin.eval QLin.norm FM.unknowns FM.firstAppearance
+  simp only [List.flatMap_cons, List.flatMap_nil, List.append_nil]
+  rw [sum_nonzero κ L.coeffOf,
+    sum_by_names κ _ hspec.1 L.coeffs (fun p hp => (hspec.2 p.1).mpr (.inr (List.mem_map_of_mem hp)))]
+  rfl
+
 theorem Expr.linear_sound (κ : String → Rat) (e : Expr) (L : QLin) (h : e.linear = some L) :
     Denotes (fun n => some (κ n)) e (L.eval κ) := by
   induction e generalizing L with
@@ -70,10 +117,10 @@ theorem Expr.linear_sound (κ : String → Rat) (e : Expr) (L : QLin) (h : e.lin
   | val n => cases h; rw [show QLin.eval κ ⟨0, [(n, 1)]⟩ = κ n by simp [QLin.eval, Rat.add_zero, Rat.zero_add]]; exact .val rfl
   | add a b iha ihb =>
       cases ha : a.linear <;> cases hb : b.linear <;> simp [Expr.linear, ha, hb] at h
-      subst h; rw [QLin.eval_add]; exact .add (iha _ ha) (ihb _ hb)
+      subst h; rw [QLin.eval_norm, QLin.eval_add]; exact .add (iha _ ha) (ihb _ hb)
   | sub a b iha ihb =>
       cases ha : a.linear <;> cases hb : b.linear <;> simp [Expr.linear, ha, hb] at h
-      subst h; rw [QLin.eval_add, QLin.eval_scale]
+      subst h; rw [QLin.eval_norm, QLin.eval_add, QLin.eval_scale]
       have := Denotes.sub (iha _ ha) (ihb _ hb); grind
   | mul a b iha ihb =>
       cases ha : a.linear <;> cases hb : b.linear <;> simp [Expr.linear, ha, hb] at h
