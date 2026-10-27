@@ -628,6 +628,8 @@ def nonlinear (path : String) : List String := [s!"NonlinearPremise: {path} (dec
 #guard expect [
   ("h6p", says (req rsd (h6 "6") (h6P "0.01")), ["h6 holds"]),
   ("h6a-no-link", says (req rsd (h6 "4" "[]") (h6P "0.02")), ["h6 fails"]),
+  ("h6-two-links", says (req (rsd ++ ", " ++ free "u" "the u" ++ ", " ++ free "t" "the t") (h6 "4" r#"[["u", "t"], ["s", "r"]]"# ++
+      ", " ++ (h6 "4" r#"[["s", "r"], ["u", "t"]]"#).replace "h6" "h7") (h6P "0.02")), ["h6 holds", "h7 holds"]),
   ("h6-le", says (req rsd (claim "h6" r#"["follows", ["le", ["val", "r"], ["lit", "0.25"]], ["p1", "p2"], [["s", "r"]]]"#)
       (h6P "0.02")), ["h6 holds"]),
   ("h6-gt", says (req rsd (claim "h6" r#"["follows", ["gt", ["lit", "0.25"], ["val", "r"]], ["p1", "p2"], [["s", "r"]]]"#)
@@ -722,6 +724,10 @@ def nonlinear (path : String) : List String := [s!"NonlinearPremise: {path} (dec
        "2. The displacement is less than 0.02. 3. The squared velocity ratio equals the square of the velocity ratio. " ++
        "4. The velocity ratio is at least 0. From these, it follows that the velocity ratio is less than 1 divided by 4.")
   | _ => false
+#guard VE.Calc.English.renderFollows (fun n => some s!"the {n}") [] [("a", "b"), ("c", "d")]
+    (.compare ⟨.lt, false⟩ (.val "b") (.lit 1)) == some ("Assume the following. 1. The a equals the square of the b. " ++
+  "2. The b is at least 0. 3. The c equals the square of the d. 4. The d is at least 0. From these, it follows that " ++
+  "the b is less than 1.")
 
 -- A chain of definitions lowers to one coefficient per unknown (`QLin.norm` in `Expr.linear`), so the search and the
 -- replay never meet a form as long as the chain: x + x + … + x (60 terms), then 2 (x + y) − y.
@@ -738,11 +744,12 @@ def nonlinear (path : String) : List String := [s!"NonlinearPremise: {path} (dec
     ⟨"m", .counted (Thunk.pure none) .exhausted⟩]
   let lt (a b : String) : Claim := .compare ⟨.lt, false⟩ (.val a) (.val b)
   [Check.follows [] [] (lt "r" "n"), .follows [lt "r" "m"] [] (lt "r" "r"), .follows [lt "r" "n"] [] (lt "r" "m"),
-    .follows [lt "r" "m", lt "r" "n"] [] (lt "r" "r")].map (·.run ds) ==
-  [.decided .undefined, .unknown (.limit .evaluations), .unknown (.limit .evaluations), .unknown (.limit .evaluations)]
+    .follows [lt "r" "m", lt "r" "n"] [] (lt "r" "r"), .follows [lt "r" "m"] [] (lt "n" "r")].map (·.run ds) ==
+  [.decided .undefined, .unknown (.limit .evaluations), .unknown (.limit .evaluations), .unknown (.limit .evaluations),
+    .decided .undefined]
 
--- Every unknown a derivation gives is one of its kind's reasons (`Check.reasons`, 1.5): the budget, the step limit and
--- an inconclusive search.
+-- Every unknown a check gives is one of its kind's reasons (`Check.reasons`, 1.5): for a derivation the budget, the
+-- step limit and an inconclusive search; for a claim the budget and the digit limit (R-2's v1).
 #guard let ds : List Decl := [⟨"r", .free⟩, ⟨"m", .counted (Thunk.pure none) .exhausted⟩]
   let lt (a b : String) : Claim := .compare ⟨.lt, false⟩ (.val a) (.val b)
   let k := Check.follows [lt "r" "m"] [] (lt "r" "r")
@@ -751,7 +758,9 @@ def nonlinear (path : String) : List String := [s!"NonlinearPremise: {path} (dec
     onX [premise "p1" r#"["le", ["val", "v13"], ["lit", "1"]]"#] r#"["lt", ["val", "x"], ["lit", "1"]]"#
       r#"["p1"]"# "[]" (free "x" "the x" ++ ", " ++ defined "v0" r#"["val", "x"]"# ++ ", " ++ chain 13)].filterMap
     fun s => (Json.parse s).toOption.bind (Wire.decodeCase · |>.toOption)
-  decoded.length == 2 && ((ds, k) :: decoded.flatMap fun c => c.claims.map (c.decls, ·.2)).all fun (ds, k) =>
+  let decoded := decoded ++ [r2].filterMap fun s => (Json.parse s).toOption.bind (Wire.decodeCase · |>.toOption)
+  decoded.length == 3 && ((ds, k) :: (ds, .claim (lt "m" "m")) :: decoded.flatMap fun c =>
+      (c.claims.filter fun (_, k) => k.run c.decls matches .unknown _).map (c.decls, ·.2)).all fun (ds, k) =>
     match k.run ds with
     | .unknown u => decide (u ∈ k.reasons)
     | .decided _ => false
@@ -763,7 +772,9 @@ def deriv (ps : List String) (ids links : String) : String := onX ps (xle "1") i
     ("premises", [[deriv [] "[]" "[]", req (free "x" "the x" ++ ", " ++ free "s" "the s") (c1 s!"[\"follows\", {xle "1"}, [], []]")],
       [deriv [premise "p1" (xle "1")] "[]" "[]"], [deriv [premise "p1" (xle "2")] "[]" "[]"],
       [deriv [premise "q1" (xle "1")] "[]" "[]"], [deriv [premise "p1" (xle "1") "observation"] "[]" "[]"],
-      [deriv [r#"{"id": "p1", "claim": ["le", ["val", "x"], ["lit", "1"]], "support": "assumption", "span": [3, 5]}"#] "[]" "[]"]]),
+      [deriv [r#"{"id": "p1", "claim": ["le", ["val", "x"], ["lit", "1"]], "support": "assumption", "span": [3, 5]}"#] "[]" "[]"],
+      [deriv [premise "p1" (xle "1"), premise "p2" (xle "2")] "[]" "[]"],
+      [deriv [premise "p2" (xle "2"), premise "p1" (xle "1")] "[]" "[]"]]),
     ("derivation", [[deriv [premise "p1" (xle "1")] r#"["p1"]"# "[]"], [deriv [premise "p1" (xle "1")] "[]" r#"[["s", "x"]]"#],
       [deriv [premise "p1" (xle "1")] "[]" r#"[["x", "s"]]"#], [deriv [premise "p1" (xle "1")] "[]" "[]",
         req (free "x" "the x" ++ ", " ++ free "s" "the s") (c1 s!"[\"follows\", {xle "1.0"}, [], []]")
