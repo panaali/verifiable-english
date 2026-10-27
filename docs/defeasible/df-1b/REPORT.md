@@ -137,7 +137,17 @@ ce3060bfc, 6798a6a2b, 403056c07, ccd6898ba, 0b7813002, eaac6e59b.
 
 ## 6. Final selected run
 
-(Filled in below after the run on the committed HEAD.)
+Run 3 (`mac-pytest.sh --select`, Mac runner, HEAD 3cfbd44d, clean) ran all 275 selected units. Two failed:
+
+- `test_defaults_answer.py::test_elaborate_mutants_lose_evidence_at_most[gamma]`: a RecursionError. The test's stub
+  handed the 10k-deep retype to the relay without the transport's decoder.
+- `test_nested_pytest.py::test_every_pytest_command_is_built_by_the_builder`: the mutant runner built its own pytest
+  command.
+
+Both were fixed in the next commit: the stub decodes through `_decode_json`, and the runner uses
+`tools/nested_pytest.py`. After the fix, `tests/test_defaults_answer.py` and `tests/test_nested_pytest.py` pass
+(45 passed). The runner was rerun with the builder's command: all 14 bugs fail (`evidence/mutants.out`). No product
+file changed after run 3.
 
 ## Self-review against BUILDER-CHECKLIST
 

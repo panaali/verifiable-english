@@ -230,7 +230,7 @@ def test_elaborate_mutants_lose_evidence_at_most(monkeypatch, name):
 
     def decide(mode, cases, **options):
         if cases[0].get("kind") == "defaults-elaborate":
-            return [copy.deepcopy(answered["row"])]
+            return [_transported(answered["row"])]
         return real(mode, cases, **options)
     monkeypatch.setattr(relay, "decide", decide)
     found = []

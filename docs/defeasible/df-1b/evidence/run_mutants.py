@@ -3,16 +3,19 @@
 A bug fails when its test fails. Usage, from the repository root:
 uv run python docs/defeasible/df-1b/evidence/run_mutants.py > docs/defeasible/df-1b/evidence/mutants.out"""
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[4]
+sys.path.insert(0, str(ROOT / "tools"))
+import nested_pytest  # noqa: E402
 
 
 def failed(test):
-    done = subprocess.run([sys.executable, "-m", "pytest", "-q", "-x", "-p", "no:cacheprovider", test], cwd=ROOT,
-                          capture_output=True, text=True)
+    done = subprocess.run(nested_pytest.command(["-q", "-x", "-p", "no:cacheprovider", test]), cwd=ROOT,
+                          env=nested_pytest.environment(os.environ), capture_output=True, text=True)
     return done.returncode != 0, (done.stdout.strip().splitlines() or [""])[-1]
 
 
