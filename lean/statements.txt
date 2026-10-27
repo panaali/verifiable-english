@@ -4913,6 +4913,18 @@ theorem VE.Cardinality.Examples.wellFormed_cases
       ¬VE.Cardinality.Examples.colliding.WellFormed ∧ ¬VE.Cardinality.Examples.ghost.WellFormed
   -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.Examples.colliding@VE.Cardinality.Examples VE.Cardinality.Examples.ghost@VE.Cardinality.Examples VE.Cardinality.Examples.named@VE.Cardinality.Examples VE.Cardinality.Examples.users@VE.Cardinality.Examples
   -- expr 2834057780
+theorem VE.Cardinality.Wire.cmpNames_spelled
+  ∀ (s : String) (c : VE.Cardinality.Cmp),
+    VE.Cardinality.Wire.elabName VE.Cardinality.Wire.cmpNames s = Except.ok c ↔
+      s =
+        match c with
+        | VE.Cardinality.Cmp.gt => "gt"
+        | VE.Cardinality.Cmp.ge => "ge"
+        | VE.Cardinality.Cmp.lt => "lt"
+        | VE.Cardinality.Cmp.le => "le"
+        | VE.Cardinality.Cmp.eq => "eq"
+  -- uses VE.Cardinality.Cmp@VE.Cardinality.Syntax VE.Cardinality.Wire.cmpNames@VE.Cardinality.Wire VE.Cardinality.Wire.cmpNames_spelled.match_1@VE.Cardinality.WireTheorems VE.Cardinality.Wire.elabName@VE.Cardinality.Wire
+  -- expr 2222065438
 theorem VE.Cardinality.Wire.decodeEnvironment_sound
   ∀ {env : Lean.Json} {w : VE.Cardinality.CardEnv},
     VE.Cardinality.Wire.decodeEnvironment env = Except.ok w →
@@ -4922,22 +4934,108 @@ theorem VE.Cardinality.Wire.decodeEnvironment_sound
             VE.Cardinality.Wire.finiteSorts env = Except.ok finite ∧ w.env = { q := w.w6.vocab.env, finite := finite }
   -- uses VE.Cardinality.CEnv.mk@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CardEnv.env@VE.Cardinality.Wire VE.Cardinality.CardEnv.environmentId@VE.Cardinality.Wire VE.Cardinality.CardEnv.w6@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Wire.decodeEnvironment@VE.Cardinality.Wire VE.Cardinality.Wire.finiteSorts@VE.Cardinality.Wire VE.Cardinality.Wire.profileLists@VE.Cardinality.Wire VE.Cardinality.projectW6@VE.Cardinality.Wire VE.Route.Wire.environmentId@VE.Route.Wire VE.Time.Wire.QVocab.env@VE.Time.Wire VE.Time.Wire.W6Env.vocab@VE.Time.Wire VE.Time.Wire.W6Env@VE.Time.Wire VE.Time.Wire.decodeEnvironment@VE.Time.Wire
   -- expr 2415483866
+theorem VE.Cardinality.Wire.decodeStatement_fits
+  ∀ {w : VE.Cardinality.CardEnv} {j : Lean.Json} {a : VE.Cardinality.CAdmission w},
+    VE.Cardinality.Wire.decodeStatement w j = Except.ok a →
+      ∃ source, j.getObjVal? "formula" = Except.ok source ∧ VE.Cardinality.Wire.sourceFits source = Bool.true
+  -- uses VE.Cardinality.CAdmission@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Wire.decodeStatement@VE.Cardinality.Wire VE.Cardinality.Wire.sourceFits@VE.Cardinality.Wire
+  -- expr 3401209471
 theorem VE.Cardinality.Wire.decodeStatement_identity
   ∀ {w : VE.Cardinality.CardEnv} {j : Lean.Json} {a : VE.Cardinality.CAdmission w},
     VE.Cardinality.Wire.decodeStatement w j = Except.ok a →
       VE.Route.Wire.meaningId w.profiles w.environmentId (VE.Cardinality.Wire.canonical a.formula) = Except.ok a.meaningId
   -- uses VE.Cardinality.CAdmission.formula@VE.Cardinality.Wire VE.Cardinality.CAdmission.meaningId@VE.Cardinality.Wire VE.Cardinality.CAdmission@VE.Cardinality.Wire VE.Cardinality.CardEnv.environmentId@VE.Cardinality.Wire VE.Cardinality.CardEnv.profiles@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Wire.canonical@VE.Cardinality.Wire VE.Cardinality.Wire.decodeStatement@VE.Cardinality.Wire VE.Route.Wire.meaningId@VE.Route.Wire
   -- expr 3777840987
+theorem VE.Cardinality.Wire.elabBody_cases
+  ∀ (n : Nat) (p : String) (a b : Lean.Json),
+    VE.Cardinality.Wire.elabBody (n + 1) (Lean.Json.arr #[Lean.Json.str "is", Lean.Json.str p]) =
+        Except.ok (VE.Cardinality.Body.atom p) ∧
+      VE.Cardinality.Wire.elabBody (n + 1) (Lean.Json.arr #[Lean.Json.str "any"]) = Except.ok VE.Cardinality.Body.any ∧
+        VE.Cardinality.Wire.elabBody (n + 1) (Lean.Json.arr #[Lean.Json.str "not", a]) =
+            VE.Cardinality.Body.not <$> VE.Cardinality.Wire.elabBody n a ∧
+          (VE.Cardinality.Wire.elabBody (n + 1) (Lean.Json.arr #[Lean.Json.str "and", a, b]) = do
+              let __do_lift ← VE.Cardinality.Wire.elabBody n a
+              let __do_lift_1 ← VE.Cardinality.Wire.elabBody n b
+              Pure.pure (__do_lift.and __do_lift_1)) ∧
+            VE.Cardinality.Wire.elabBody (n + 1) (Lean.Json.arr #[Lean.Json.str "or", a, b]) = do
+              let __do_lift ← VE.Cardinality.Wire.elabBody n a
+              let __do_lift_1 ← VE.Cardinality.Wire.elabBody n b
+              Pure.pure (__do_lift.or __do_lift_1)
+  -- uses VE.Cardinality.Body.and@VE.Cardinality.Syntax VE.Cardinality.Body.any@VE.Cardinality.Syntax VE.Cardinality.Body.atom@VE.Cardinality.Syntax VE.Cardinality.Body.not@VE.Cardinality.Syntax VE.Cardinality.Body.or@VE.Cardinality.Syntax VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.Wire.elabBody@VE.Cardinality.Wire
+  -- expr 4069765862
+theorem VE.Cardinality.Wire.elabName_mem
+  ∀ {α : Type} {names : List (String × α)} {s : String} {x : α},
+    VE.Cardinality.Wire.elabName names s = Except.ok x → (s, x) ∈ names
+  -- uses VE.Cardinality.Wire.elabName@VE.Cardinality.Wire
+  -- expr 1669916991
+theorem VE.Cardinality.Wire.elabOperand_cases
+  ∀ (w : VE.Cardinality.CardEnv) (t b : Lean.Json) (s : String),
+    (VE.Cardinality.Wire.elabOperand w (Lean.Json.arr #[Lean.Json.str "quantity", t]) = do
+        let __discr ← VE.Time.Wire.elabTerm w.w6.vocab [] VE.Limits.maxDepth t
+        match __discr with
+          | (τ, q) => Pure.pure (τ, VE.Cardinality.CTerm.quantity q)) ∧
+      VE.Cardinality.Wire.elabOperand w (Lean.Json.arr #[Lean.Json.str "count", Lean.Json.str s, b]) = do
+        let b ← VE.Cardinality.Wire.elabBody VE.Limits.maxDepth b
+        VE.Cardinality.Wire.countedSort w.env s [b]
+        Pure.pure (VE.Time.QType.qty VE.Time.dimensionless, VE.Cardinality.CTerm.count s b)
+  -- uses VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CTerm.count@VE.Cardinality.Syntax VE.Cardinality.CTerm.quantity@VE.Cardinality.Syntax VE.Cardinality.CTerm@VE.Cardinality.Syntax VE.Cardinality.CardEnv.env@VE.Cardinality.Wire VE.Cardinality.CardEnv.w6@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Wire.countedSort@VE.Cardinality.Wire VE.Cardinality.Wire.elabBody@VE.Cardinality.Wire VE.Cardinality.Wire.elabOperand@VE.Cardinality.Wire VE.Cardinality.Wire.elabOperand_cases.match_1@VE.Cardinality.WireTheorems VE.Limits.maxDepth@VE.Limits VE.Time.QTerm@VE.Time.Syntax VE.Time.QType.qty@VE.Time.Syntax VE.Time.QType@VE.Time.Syntax VE.Time.Wire.W6Env.vocab@VE.Time.Wire VE.Time.Wire.elabTerm@VE.Time.Wire VE.Time.dimensionless@VE.Time.Syntax
+  -- expr 2660094618
+theorem VE.Cardinality.Wire.elabRatio_sound
+  ∀ {w : VE.Cardinality.CardEnv} {x y : Lean.Json} {a b : VE.Cardinality.CTerm},
+    VE.Cardinality.Wire.elabRatio w x y = Except.ok (a, b) →
+      ∃ g,
+        VE.Cardinality.Wire.elabOperand w x = Except.ok (VE.Time.QType.qty g, a) ∧
+          VE.Cardinality.Wire.elabOperand w y = Except.ok (VE.Time.QType.qty g, b) ∧ g ≠ VE.Time.dayTag
+  -- uses VE.Cardinality.CTerm@VE.Cardinality.Syntax VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Wire.elabOperand@VE.Cardinality.Wire VE.Cardinality.Wire.elabRatio@VE.Cardinality.Wire VE.Time.QType.qty@VE.Time.Syntax VE.Time.QType@VE.Time.Syntax VE.Time.dayTag@VE.Time.Syntax
+  -- expr 334305473
 theorem VE.Cardinality.Wire.finiteSorts_length
   ∀ {env : Lean.Json} {xs : List String},
     VE.Cardinality.Wire.finiteSorts env = Except.ok xs → xs.length ≤ VE.Cardinality.Wire.maxFiniteSorts
   -- uses VE.Cardinality.Wire.finiteSorts@VE.Cardinality.Wire VE.Cardinality.Wire.maxFiniteSorts@VE.Cardinality.Wire
   -- expr 2775985200
+theorem VE.Cardinality.Wire.items_ok
+  ∀ (j : Lean.Json) (xs : List Lean.Json),
+    VE.Cardinality.Wire.items j = Except.ok xs ↔ ∃ a, j = Lean.Json.arr a ∧ a.toList = xs
+  -- uses VE.Cardinality.Wire.items@VE.Cardinality.Wire
+  -- expr 885375937
+theorem VE.Cardinality.Wire.printed_eq
+  ∀ (s : String), VE.Cardinality.Wire.printed s = (fun d => (d.significand, d.places)) <$> VE.Time.parseDecimal s
+  -- uses VE.Cardinality.Wire.printed@VE.Cardinality.Wire VE.Time.Dec.places@VE.Time.Decimal VE.Time.Dec.significand@VE.Time.Decimal VE.Time.Dec@VE.Time.Decimal VE.Time.parseDecimal@VE.Time.Decimal
+  -- expr 2636933300
 theorem VE.Cardinality.Wire.profileLists_projected
   ∀ {ps : List String},
     ps ∈ VE.Cardinality.Wire.profileLists → List.filter (fun x => x != "cardinality@0") ps ∈ VE.Time.Wire.w6Profiles
   -- uses VE.Cardinality.Wire.profileLists@VE.Cardinality.Wire VE.Time.Wire.w6Profiles@VE.Time.Wire
   -- expr 4115151832
+theorem VE.Cardinality.Wire.relNames_spelled
+  ∀ (s : String) (r : VE.Cardinality.Rel),
+    VE.Cardinality.Wire.elabName VE.Cardinality.Wire.relNames s = Except.ok r ↔
+      s =
+        match r with
+        | VE.Cardinality.Rel.lt => "lt"
+        | VE.Cardinality.Rel.le => "le"
+        | VE.Cardinality.Rel.eq => "eq"
+  -- uses VE.Cardinality.Rel@VE.Cardinality.Syntax VE.Cardinality.Wire.elabName@VE.Cardinality.Wire VE.Cardinality.Wire.relNames@VE.Cardinality.Wire VE.Cardinality.Wire.relNames_spelled.match_1@VE.Cardinality.WireTheorems
+  -- expr 2579625150
+theorem VE.Cardinality.Wire.ruleNames_spelled
+  ∀ (s : String) (r : VE.Numbers.Rounding),
+    (VE.Cardinality.Wire.elabRule s = Except.ok r ↔ (s, r) ∈ VE.Cardinality.Wire.ruleNames) ∧
+      ((s, r) ∈ VE.Cardinality.Wire.ruleNames ↔
+        s =
+          match r with
+          | VE.Numbers.Rounding.tiesUp => "ties_up"
+          | VE.Numbers.Rounding.halfEven => "half_even"
+          | VE.Numbers.Rounding.down => "down"
+          | VE.Numbers.Rounding.up => "up")
+  -- uses VE.Cardinality.Wire.elabRule@VE.Cardinality.Wire VE.Cardinality.Wire.ruleNames@VE.Cardinality.Wire VE.Cardinality.Wire.ruleNames_spelled.match_1@VE.Cardinality.WireTheorems VE.Numbers.Rounding@VE.Numbers.Round
+  -- expr 2232895681
+theorem VE.Cardinality.Wire.sourceFits_iff
+  ∀ (source : Lean.Json),
+    VE.Cardinality.Wire.sourceFits source = Bool.true ↔
+      VE.Time.Wire.jsonNodes (VE.Limits.maxJsonDepth + 1) source ≤ VE.Limits.maxNodes ∧
+        VE.Cardinality.Wire.arrayDepth (VE.Limits.maxDepth + 1) source ≤ VE.Limits.maxDepth
+  -- uses VE.Cardinality.Wire.arrayDepth@VE.Cardinality.Wire VE.Cardinality.Wire.sourceFits@VE.Cardinality.Wire VE.Limits.maxDepth@VE.Limits VE.Limits.maxJsonDepth@VE.Limits VE.Limits.maxNodes@VE.Limits VE.Time.Wire.jsonNodes@VE.Time.Wire
+  -- expr 10791128
 theorem VE.Cardinality.Wire.wellFormed_of
   ∀ (v : VE.Time.Wire.QVocab) (finite : List String),
     (finite.all v.sorts.contains && v.constants.all fun c => !c.fst.startsWith VE.Cardinality.regionPrefix) = Bool.true →
