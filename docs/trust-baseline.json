@@ -1139,6 +1139,13 @@
    "reason": "me-12a: arith@0 meaning, S +93 (VE/Arith/Holds.lean 60, VE/Arith/Syntax.lean 31, VE/Arith/Examples.lean 2), K +0, V +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-12a, 2026-10-18",
    "commit": "7855620f3e06be59bd94730ef404689d3a18e558"
+  },
+  {
+   "class": "V",
+   "lines": 147,
+   "reason": "sc-1b: VE/Scope/Wire.lean +112, VE/Service/Document.lean +33, VE/Compose/Dispatch.lean +2 (V 147; K +0, S +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1b, 2026-10-18",
+   "commit": "e9e63dda7ff2ca089c8d8f03e3657b76a55c1cfa"
   }
  ]
 }

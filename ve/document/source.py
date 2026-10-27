@@ -79,6 +79,8 @@ def _split(raw: bytes):
                "contexts", "assessments", "bridges", "scoped", "completions", "senses"}
     if meta["format"] == "ve-document@2":
         allowed.add("discourse")
+    if "scope@0" in listed_profiles(meta.get("environment")):
+        allowed.add("scope")  # scope@0's block (docs/spec/scope.md 3), which Lean's document mode governs
     if set(meta) - allowed:
         raise VEError("unknown document metadata")
     if "couplings" in meta and not {"rights@0", "readings@1"}.intersection(
@@ -165,6 +167,15 @@ def stored_identities(raw: bytes):
         raise VEError("document needs an embedded environment")
     env = _environment(base_environment(meta))
     return meta, source_id(source, env), _document_id(meta, source, fences)
+
+
+def chain_environment(data):
+    """The environment data Lean's `document` chain reads: `scope@0` is a wrapper the mode runs before the chain, which
+    reads the environment without it (`Service.Document.lowerScope`). The one place Python lowers it: the proposal
+    the case carries and the document built from the answer read this environment, never the one as written."""
+    if "scope@0" not in listed_profiles(data):
+        return data
+    return {**data, "profiles": [p for p in data["profiles"] if p != "scope@0"]}
 
 
 def base_environment(meta):
