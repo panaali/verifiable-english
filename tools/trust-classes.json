@@ -15081,7 +15081,11 @@
         "VE.Arith.quantLoop"
       ],
       "P": [
-        "VE.Arith.Agrees"
+        "VE.Arith.Agrees",
+        "VE.Arith.Def.SitesOk",
+        "VE.Arith.Extends",
+        "VE.Arith.Site.Ok",
+        "VE.Arith.Total"
       ]
     },
     "VE/Arith/BoundedExamples.lean": {
@@ -15090,6 +15094,14 @@
         "VE.Arith.Examples.ev",
         "VE.Arith.Examples.no",
         "VE.Arith.Examples.yes"
+      ]
+    },
+    "VE/Arith/CompleteExamples.lean": {
+      "T": [
+        "VE.Arith.Examples.keeps",
+        "VE.Arith.Examples.selfCall",
+        "VE.Arith.Examples.sweep",
+        "VE.Arith.Examples.tickEnv"
       ]
     },
     "VE/Defaults/Meaning.lean": {
