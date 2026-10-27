@@ -465,4 +465,199 @@ theorem arithOutcome_decided (D : Defs) (hD : D.WellFormed = true) (φ : Formula
     · next w hb => simp [decideBounded_sound D hD φ hφ limit false w hb]
   · simp at h
 
+/-! A larger budget never changes an answer (`decideBounded_mono`): a completed call of the smaller budget's
+environment completes, with the same value and units, in the larger one's. -/
+
+/-- Each call `O` completes, `O'` completes with the same value and units. -/
+structure Extends (O O' : OpEnv) : Prop where
+  funs : ∀ f n g, O.funs f = some (n, g) → ∃ g', O'.funs f = some (n, g') ∧ ∀ xs w r, g xs w = some r → g' xs w = some r
+  preds : ∀ p n P, O.preds p = some (n, P) → ∃ P', O'.preds p = some (n, P') ∧
+    ∀ xs w r, P xs w = some r → P' xs w = some r
+
+theorem charge_mono {α : Type} {limit limit' w : Nat} {k k' : Nat → Option (α × Nat)} {r : α × Nat}
+    (hl : limit ≤ limit') (hk : ∀ r, k (w + 1) = some r → k' (w + 1) = some r) (h : charge limit w k = some r) :
+    charge limit' w k' = some r := by
+  have ⟨hw, h⟩ := charge_some h
+  unfold charge; rw [if_neg (by omega)]; exact hk _ h
+
+theorem quantLoop_mono (u : Bool) {step step' : Int → Nat → Option (Bool × Nat)}
+    (hs : ∀ i w r, step i w = some r → step' i w = some r) :
+    ∀ n i w r, quantLoop u step n i w = some r → quantLoop u step' n i w = some r
+  | 0, _, _, _, h => h
+  | n + 1, i, w, r, h => by
+    simp only [quantLoop] at h ⊢
+    cases hst : step i w with
+    | none => simp [hst] at h
+    | some r0 =>
+      obtain ⟨b, w'⟩ := r0
+      rw [hs i w _ hst]; simp only [hst] at h ⊢
+      split at h
+      · rw [if_pos ‹_›]; exact quantLoop_mono u hs n _ _ _ h
+      · rw [if_neg ‹_›]; exact h
+
+theorem countLoop_mono {step step' : Int → Nat → Option (Bool × Nat)}
+    (hs : ∀ i w r, step i w = some r → step' i w = some r) :
+    ∀ n i acc w r, countLoop step n i acc w = some r → countLoop step' n i acc w = some r
+  | 0, _, _, _, _, h => h
+  | n + 1, i, acc, w, r, h => by
+    simp only [countLoop] at h ⊢
+    cases hst : step i w with
+    | none => simp [hst] at h
+    | some r0 =>
+      obtain ⟨b, w'⟩ := r0
+      rw [hs i w _ hst]; simp only [hst] at h ⊢
+      exact countLoop_mono hs n _ _ _ _ h
+
+mutual
+theorem Term.evalB_mono {O O' : OpEnv} {limit limit' : Nat} (hE : Extends O O') (hl : limit ≤ limit') :
+    ∀ (t : Term) (ρ : List Int) (w : Nat) (r : Int × Nat), Term.evalB O limit ρ t w = some r →
+      Term.evalB O' limit' ρ t w = some r
+  | .var i, ρ, w, r, h | .num n, ρ, w, r, h => by simpa [Term.evalB] using h
+  | .add a b, ρ, w, r, h | .sub a b, ρ, w, r, h | .mul a b, ρ, w, r, h => by
+    simp only [Term.evalB] at h ⊢
+    cases ha : Term.evalB O limit ρ a w with
+    | none => simp [ha] at h
+    | some ra =>
+      obtain ⟨xa, wa⟩ := ra
+      rw [Term.evalB_mono hE hl a ρ w _ ha]; simp only [ha] at h ⊢
+      cases hb : Term.evalB O limit ρ b wa with
+      | none => simp [hb] at h
+      | some rb => rw [Term.evalB_mono hE hl b ρ wa _ hb]; simpa [hb] using h
+  | .call f args, ρ, w, r, h => by
+    simp only [Term.evalB] at h ⊢
+    cases hf : O.funs f with
+    | none => simp [hf] at h
+    | some fg =>
+      obtain ⟨n, g⟩ := fg
+      obtain ⟨g', hg', hgg⟩ := hE.funs f n g hf
+      rw [hg']; simp only [hf] at h ⊢
+      cases hs : Term.evalBs O limit ρ args w with
+      | none => simp [hs] at h
+      | some rs =>
+        obtain ⟨xs, ws⟩ := rs
+        rw [Term.evalBs_mono hE hl args ρ w _ hs]; simp only [hs] at h ⊢
+        split at h
+        · rw [if_pos ‹_›]; exact hgg _ _ _ h
+        · simp at h
+  | .countFromTo lo hi φ, ρ, w, r, h => by
+    simp only [Term.evalB] at h ⊢
+    cases hlo : Term.evalB O limit ρ lo w with
+    | none => simp [hlo] at h
+    | some rl =>
+      obtain ⟨l, wl⟩ := rl
+      rw [Term.evalB_mono hE hl lo ρ w _ hlo]; simp only [hlo] at h ⊢
+      cases hhi : Term.evalB O limit ρ hi wl with
+      | none => simp [hhi] at h
+      | some rh =>
+        obtain ⟨u, wh⟩ := rh
+        rw [Term.evalB_mono hE hl hi ρ wl _ hhi]; simp only [hhi] at h ⊢
+        exact countLoop_mono (fun i w r hs => Formula.evalB_mono hE hl φ (i :: ρ) w r hs) _ _ _ _ _ h
+theorem Term.evalBs_mono {O O' : OpEnv} {limit limit' : Nat} (hE : Extends O O') (hl : limit ≤ limit') :
+    ∀ (ts : List Term) (ρ : List Int) (w : Nat) (r : List Int × Nat), Term.evalBs O limit ρ ts w = some r →
+      Term.evalBs O' limit' ρ ts w = some r
+  | [], ρ, w, r, h => by simpa [Term.evalBs] using h
+  | t :: ts, ρ, w, r, h => by
+    simp only [Term.evalBs] at h ⊢
+    cases ht : Term.evalB O limit ρ t w with
+    | none => simp [ht] at h
+    | some rt =>
+      obtain ⟨x, w1⟩ := rt
+      rw [Term.evalB_mono hE hl t ρ w _ ht]; simp only [ht] at h ⊢
+      cases hs : Term.evalBs O limit ρ ts w1 with
+      | none => simp [hs] at h
+      | some rs => rw [Term.evalBs_mono hE hl ts ρ w1 _ hs]; simpa [hs] using h
+theorem Formula.evalB_mono {O O' : OpEnv} {limit limit' : Nat} (hE : Extends O O') (hl : limit ≤ limit') :
+    ∀ (φ : Formula) (ρ : List Int) (w : Nat) (r : Bool × Nat), Formula.evalB O limit ρ φ w = some r →
+      Formula.evalB O' limit' ρ φ w = some r
+  | .eq a c, ρ, w, r, h | .lt a c, ρ, w, r, h | .le a c, ρ, w, r, h | .dvd a c, ρ, w, r, h => by
+    simp only [Formula.evalB] at h ⊢
+    refine charge_mono hl (fun r h => ?_) h
+    cases ha : Term.evalB O limit ρ a (w + 1) with
+    | none => simp [ha] at h
+    | some ra =>
+      obtain ⟨xa, wa⟩ := ra
+      rw [Term.evalB_mono hE hl a ρ _ _ ha]; simp only [ha] at h ⊢
+      cases hc : Term.evalB O limit ρ c wa with
+      | none => simp [hc] at h
+      | some rc => rw [Term.evalB_mono hE hl c ρ wa _ hc]; simpa [hc] using h
+  | .call p args, ρ, w, r, h => by
+    simp only [Formula.evalB] at h ⊢
+    refine charge_mono hl (fun r h => ?_) h
+    cases hp : O.preds p with
+    | none => simp [hp] at h
+    | some pP =>
+      obtain ⟨n, P⟩ := pP
+      obtain ⟨P', hP', hPP⟩ := hE.preds p n P hp
+      rw [hP']; simp only [hp] at h ⊢
+      cases hs : Term.evalBs O limit ρ args (w + 1) with
+      | none => simp [hs] at h
+      | some rs =>
+        obtain ⟨xs, ws⟩ := rs
+        rw [Term.evalBs_mono hE hl args ρ _ _ hs]; simp only [hs] at h ⊢
+        split at h
+        · rw [if_pos ‹_›]; exact hPP _ _ _ h
+        · simp at h
+  | .not φ, ρ, w, r, h => by
+    simp only [Formula.evalB] at h ⊢
+    refine charge_mono hl (fun r h => ?_) h
+    cases hφ : Formula.evalB O limit ρ φ (w + 1) with
+    | none => simp [hφ] at h
+    | some r1 => rw [Formula.evalB_mono hE hl φ ρ _ _ hφ]; simpa [hφ] using h
+  | .and φ ψ, ρ, w, r, h | .or φ ψ, ρ, w, r, h | .imp φ ψ, ρ, w, r, h => by
+    simp only [Formula.evalB] at h ⊢
+    refine charge_mono hl (fun r h => ?_) h
+    cases hφ : Formula.evalB O limit ρ φ (w + 1) with
+    | none => simp [hφ] at h
+    | some r1 =>
+      obtain ⟨b1, w1⟩ := r1
+      rw [Formula.evalB_mono hE hl φ ρ _ _ hφ]
+      cases b1 <;> simp only [hφ] at h ⊢ <;> first | exact h | exact Formula.evalB_mono hE hl ψ ρ w1 r h
+  | .allNat _, _, _, _, h | .exNat _, _, _, _, h | .allInt _, _, _, _, h | .exInt _, _, _, _, h => by
+    simp [Formula.evalB] at h
+  | .allFromTo lo hi φ, ρ, w, r, h | .exFromTo lo hi φ, ρ, w, r, h => by
+    simp only [Formula.evalB] at h ⊢
+    refine charge_mono hl (fun r h => ?_) h
+    cases hlo : Term.evalB O limit ρ lo (w + 1) with
+    | none => simp [hlo] at h
+    | some rl =>
+      obtain ⟨l, wl⟩ := rl
+      rw [Term.evalB_mono hE hl lo ρ _ _ hlo]; simp only [hlo] at h ⊢
+      cases hhi : Term.evalB O limit ρ hi wl with
+      | none => simp [hhi] at h
+      | some rh =>
+        obtain ⟨u, wh⟩ := rh
+        rw [Term.evalB_mono hE hl hi ρ wl _ hhi]; simp only [hhi] at h ⊢
+        exact quantLoop_mono _ (fun i w r hs => Formula.evalB_mono hE hl φ (i :: ρ) w r hs) _ _ _ _ h
+end
+
+theorem foldl_rel {α β γ : Type} (R : α → β → Prop) {f : α → γ → α} {g : β → γ → β}
+    (h : ∀ a b c, R a b → R (f a c) (g b c)) : ∀ (l : List γ) a b, R a b → R (l.foldl f a) (l.foldl g b)
+  | [], _, _, hr => hr
+  | c :: l, a, b, hr => foldl_rel R h l _ _ (h a b c hr)
+
+theorem opEnv_extends (D : Defs) {limit limit' : Nat} (hl : limit ≤ limit') :
+    Extends (D.opEnv limit) (D.opEnv limit') := by
+  refine foldl_rel Extends (fun O O' d hE => ?_) D _ _ ⟨by simp, by simp⟩
+  cases d with
+  | fn f n body =>
+    refine ⟨fun g m k hk => ?_, hE.preds⟩
+    by_cases hg : g = f
+    · subst hg
+      simp only [ite_true, Option.some.injEq, Prod.mk.injEq] at hk ⊢
+      obtain ⟨rfl, rfl⟩ := hk
+      exact ⟨_, ⟨rfl, rfl⟩, fun xs w r h => Term.evalB_mono hE hl body xs w r h⟩
+    · simp only [hg, ite_false] at hk ⊢; exact hE.funs g m k hk
+  | pred p n body =>
+    refine ⟨hE.funs, fun q m k hk => ?_⟩
+    by_cases hq : q = p
+    · subst hq
+      simp only [ite_true, Option.some.injEq, Prod.mk.injEq] at hk ⊢
+      obtain ⟨rfl, rfl⟩ := hk
+      exact ⟨_, ⟨rfl, rfl⟩, fun xs w r h => Formula.evalB_mono hE hl body xs w r h⟩
+    · simp only [hq, ite_false] at hk ⊢; exact hE.preds q m k hk
+
+theorem decideBounded_mono (D : Defs) (φ : Formula) (limit limit' : Nat) (r : Bool × Nat)
+    (h : decideBounded D limit φ = some r) (hl : limit ≤ limit') : decideBounded D limit' φ = some r :=
+  Formula.evalB_mono (opEnv_extends D hl) hl φ [] 0 r h
+
 end VE.Arith
