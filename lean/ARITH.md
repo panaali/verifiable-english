@@ -4,8 +4,8 @@ Specification: [docs/spec/math-evidence.md](../docs/spec/math-evidence.md) §§1
 [docs/spec/math-evidence-PLAN.md](../docs/spec/math-evidence-PLAN.md). `arith@0` states facts about whole numbers
 and integers: "for every whole number n from 1 through 161, there is a prime p with n < p and p at most twice n".
 ME-12 is split by the size rule: me-12a is the statement and its meaning; me-12aa adds the budgeted evaluator
-(spec 12.2); me-12ab its monotonicity and completeness and 12.5's deciding value; me-12b the wire, the runner, the
-rows and the mode (spec 12.5). Nothing public reads the core yet.
+(spec 12.2); me-12ab its monotonicity and completeness; me-12ac 12.5's deciding value and fixture M-6; me-12b the
+wire, the runner, the rows and the mode (spec 12.5). Nothing public reads the core yet.
 `lean/audit.py` audits every theorem: no `sorry`, only `propext`, `Classical.choice` and `Quot.sound`.
 
 ## Files
@@ -17,6 +17,7 @@ rows and the mode (spec 12.5). Nothing public reads the core yet.
 | `Defs.lean` | boundedness (`Formula.Bounded`); admission (`Defs.WellFormed`, `Formula.Scoped`) and the refusals the core decides, in the decoder's order (`caseRefusal`) |
 | `Bounded.lean` | the budgeted evaluator: `Formula.evalB` (one unit per formula-node visit), `maxSteps`, `decideBounded` and a statement's row `arithOutcome` |
 | `BoundedExamples.lean` | the evaluation fixtures M-1, M-1b, M-2, M-3, M-4, M-4b, M-4x and M-5 at each budget boundary, and one fixture per clause of the evaluator |
+| `CompleteExamples.lean` | each statement's work (the first budget that decides it) at, just under and just over it, every larger budget keeping the answer, and each hypothesis of completeness on its refusing side |
 | `Examples.lean` | the prime vocabulary, Bertrand's postulate (`bertrand`, `IsPrime`, `bertrand_means_iff`), one example per clause of the meaning in both directions, the fixture statements M-1 to M-5 and the admission guards |
 
 ## The meaning, in plain words
@@ -63,3 +64,7 @@ the wire's (me-12b).
   whole number exactly when it is prime in the usual sense (`IsPrime`).
 * `bertrand_means_iff`: Bertrand's postulate in VE (`bertrand`, fixture M-3) means "for every whole number n at least
   1 there is a prime p with n < p ≤ 2n". The proof unfolds definitions only; EX-1's import project rewrites with it.
+* `decideBounded_mono`: a larger budget never changes an answer; it only turns unknown into the answer.
+* `decideBounded_covered` and `decideBounded_complete`: a bounded statement over well-formed definitions, with every
+  variable bound, has an answer and a number of units fixed by the statement; every budget at least that number
+  returns both. So it is decided once the budget covers its work.
