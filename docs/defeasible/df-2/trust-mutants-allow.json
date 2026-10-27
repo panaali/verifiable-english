@@ -1,0 +1,124 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Defaults.DefaultBase",
+   "operator": "and-or",
+   "reason": "not equivalent: DefaultBase quantifies over every pair of tables δ, F : String → List B.Carrier → Prop, which no #guard or decide can evaluate, so no check reads it; each mutant of this operator breaks theorems defaultBase_of_dflt and default_entails_minimal_of (hand mutants T1-T4, docs/defeasible/df-2/mutants.json and evidence/mutants.out); DF-π's examples (spec 8.5) are df-2b"
+  },
+  {
+   "definition": "VE.Defaults.DefaultBase",
+   "operator": "body-false",
+   "reason": "not equivalent: DefaultBase quantifies over every pair of tables δ, F : String → List B.Carrier → Prop, which no #guard or decide can evaluate, so no check reads it; each mutant of this operator breaks theorems defaultBase_of_dflt and default_entails_minimal_of (hand mutants T1-T4, docs/defeasible/df-2/mutants.json and evidence/mutants.out); DF-π's examples (spec 8.5) are df-2b"
+  },
+  {
+   "definition": "VE.Defaults.DefaultBase",
+   "operator": "body-true",
+   "reason": "not equivalent: DefaultBase quantifies over every pair of tables δ, F : String → List B.Carrier → Prop, which no #guard or decide can evaluate, so no check reads it; each mutant of this operator breaks theorems defaultBase_of_dflt and default_entails_minimal_of (hand mutants T1-T4, docs/defeasible/df-2/mutants.json and evidence/mutants.out); DF-π's examples (spec 8.5) are df-2b"
+  },
+  {
+   "definition": "VE.Defaults.ReplacementHolds",
+   "operator": "body-false",
+   "reason": "not equivalent: ReplacementHolds quantifies over every structure B, which no check can evaluate, and the tool cannot cut the failing proof (ReplacementHolds.{u} names a universe); each mutant breaks theorem default_entails_minimal_of (hand mutants T5, T6, docs/defeasible/df-2/mutants.json and evidence/mutants.out)"
+  },
+  {
+   "definition": "VE.Defaults.ReplacementHolds",
+   "operator": "body-true",
+   "reason": "not equivalent: ReplacementHolds quantifies over every structure B, which no check can evaluate, and the tool cannot cut the failing proof (ReplacementHolds.{u} names a universe); each mutant breaks theorem default_entails_minimal_of (hand mutants T5, T6, docs/defeasible/df-2/mutants.json and evidence/mutants.out)"
+  },
+  {
+   "definition": "VE.Defaults.SwitchesOff",
+   "operator": "body-false",
+   "reason": "not equivalent: the #guards at lean/VE/Defaults/MeaningExamples.lean:56-58 refute each mutant of this operator that elaborates (the line its UNKNOWN reports); the tool says UNKNOWN because the Prop is checked only through its Decidable instance (switchesDec), which Lean rebuilds from the mutated body (drift), as for VE.Acts.Lexical.Accepts"
+  },
+  {
+   "definition": "VE.Defaults.SwitchesOff",
+   "operator": "body-true",
+   "reason": "not equivalent: the #guards at lean/VE/Defaults/MeaningExamples.lean:56-58 refute each mutant of this operator that elaborates (the line its UNKNOWN reports); the tool says UNKNOWN because the Prop is checked only through its Decidable instance (switchesDec), which Lean rebuilds from the mutated body (drift), as for VE.Acts.Lexical.Accepts"
+  },
+  {
+   "definition": "VE.Defaults.SwitchesOff",
+   "operator": "list-drop-first",
+   "reason": "not equivalent: the #guards at lean/VE/Defaults/MeaningExamples.lean:56-58 refute each mutant of this operator that elaborates (the line its UNKNOWN reports); the tool says UNKNOWN because the Prop is checked only through its Decidable instance (switchesDec), which Lean rebuilds from the mutated body (drift), as for VE.Acts.Lexical.Accepts"
+  },
+  {
+   "definition": "VE.Defaults.SwitchesOff",
+   "operator": "list-drop-last",
+   "reason": "not equivalent: the #guards at lean/VE/Defaults/MeaningExamples.lean:56-58 refute each mutant of this operator that elaborates (the line its UNKNOWN reports); the tool says UNKNOWN because the Prop is checked only through its Decidable instance (switchesDec), which Lean rebuilds from the mutated body (drift), as for VE.Acts.Lexical.Accepts"
+  },
+  {
+   "definition": "VE.Defaults.SwitchesOff",
+   "operator": "list-first",
+   "reason": "not equivalent: the #guards at lean/VE/Defaults/MeaningExamples.lean:56-58 refute each mutant of this operator that elaborates (the line its UNKNOWN reports); the tool says UNKNOWN because the Prop is checked only through its Decidable instance (switchesDec), which Lean rebuilds from the mutated body (drift), as for VE.Acts.Lexical.Accepts"
+  },
+  {
+   "definition": "VE.Defaults.SwitchesOff",
+   "operator": "list-last",
+   "reason": "not equivalent: the #guards at lean/VE/Defaults/MeaningExamples.lean:56-58 refute each mutant of this operator that elaborates (the line its UNKNOWN reports); the tool says UNKNOWN because the Prop is checked only through its Decidable instance (switchesDec), which Lean rebuilds from the mutated body (drift), as for VE.Acts.Lexical.Accepts"
+  },
+  {
+   "definition": "VE.Defaults.SwitchesOff",
+   "operator": "list-empty",
+   "reason": "not equivalent: the #guards at lean/VE/Defaults/MeaningExamples.lean:56-58 refute each mutant of this operator that elaborates (the line its UNKNOWN reports); the tool says UNKNOWN because the Prop is checked only through its Decidable instance (switchesDec), which Lean rebuilds from the mutated body (drift), as for VE.Acts.Lexical.Accepts; the two whose UNKNOWN says 'Invalid projection' do not elaborate ([] in place of dfltLabelled D or its filter leaves `a.1` without a type)"
+  },
+  {
+   "definition": "VE.Defaults.leastDecisions",
+   "operator": "and-or",
+   "reason": "not equivalent: the #guards at lean/VE/Defaults/MeaningExamples.lean:62-68 refute each mutant of this operator that elaborates (the line its UNKNOWN reports); the tool says UNKNOWN because the Prop is checked only through its Decidable instance (leastDec), which Lean rebuilds from the mutated body (drift), as for VE.Acts.Lexical.Accepts"
+  },
+  {
+   "definition": "VE.Defaults.leastDecisions",
+   "operator": "eq-ne",
+   "reason": "not equivalent: the #guards at lean/VE/Defaults/MeaningExamples.lean:62-68 refute each mutant of this operator that elaborates (the line its UNKNOWN reports); the tool says UNKNOWN because the Prop is checked only through its Decidable instance (leastDec), which Lean rebuilds from the mutated body (drift), as for VE.Acts.Lexical.Accepts"
+  },
+  {
+   "definition": "VE.Defaults.leastDecisions",
+   "operator": "eq-le",
+   "reason": "not equivalent: the #guards at lean/VE/Defaults/MeaningExamples.lean:62-68 refute each mutant of this operator that elaborates (the line its UNKNOWN reports); the tool says UNKNOWN because the Prop is checked only through its Decidable instance (leastDec), which Lean rebuilds from the mutated body (drift), as for VE.Acts.Lexical.Accepts; the one whose UNKNOWN says 'failed to synthesize' does not elaborate (no ≤ on Mode)"
+  },
+  {
+   "definition": "VE.Defaults.leastDecisions",
+   "operator": "body-false",
+   "reason": "does not elaborate: the body is a function of p and vs, and True or False is no function (Type mismatch at its line)"
+  },
+  {
+   "definition": "VE.Defaults.leastDecisions",
+   "operator": "body-true",
+   "reason": "does not elaborate: the body is a function of p and vs, and True or False is no function (Type mismatch at its line)"
+  },
+  {
+   "definition": "VE.Defaults.leastDecisions",
+   "operator": "list-drop-first",
+   "reason": "does not elaborate: a list operation on N.exception, an Option, or [] in place of an Option (Invalid field notation or Application type mismatch at its line)"
+  },
+  {
+   "definition": "VE.Defaults.leastDecisions",
+   "operator": "list-drop-last",
+   "reason": "does not elaborate: a list operation on N.exception, an Option, or [] in place of an Option (Invalid field notation or Application type mismatch at its line)"
+  },
+  {
+   "definition": "VE.Defaults.leastDecisions",
+   "operator": "list-empty",
+   "reason": "does not elaborate: a list operation on N.exception, an Option, or [] in place of an Option (Invalid field notation or Application type mismatch at its line)"
+  },
+  {
+   "definition": "VE.Defaults.leastDecisions",
+   "operator": "list-first",
+   "reason": "does not elaborate: a list operation on N.exception, an Option, or [] in place of an Option (Invalid field notation or Application type mismatch at its line)"
+  },
+  {
+   "definition": "VE.Defaults.leastDecisions",
+   "operator": "list-last",
+   "reason": "does not elaborate: a list operation on N.exception, an Option, or [] in place of an Option (Invalid field notation or Application type mismatch at its line)"
+  },
+  {
+   "definition": "VE.Defaults.softX",
+   "operator": "append-right",
+   "reason": "does not elaborate: dropping `(·.2) ++` leaves softLabelledU's pairs where formulas are expected (Application type mismatch at its line); the other softX mutants are KILLED by MeaningExamples.lean:45-46"
+  },
+  {
+   "definition": "VE.Defaults.softX",
+   "operator": "list-empty",
+   "reason": "does not elaborate: [] in place of softLabelledU U D or of (·.2) leaves the map without a type (Invalid projection or Application type mismatch at its line); the list-empty mutants that elaborate are KILLED by MeaningExamples.lean:45-46"
+  }
+ ]
+}
