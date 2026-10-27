@@ -15091,6 +15091,37 @@
         "VE.Arith.Examples.no",
         "VE.Arith.Examples.yes"
       ]
+    },
+    "VE/Defaults/Meaning.lean": {
+      "C": [
+        "VE.Defaults.replacementSafe"
+      ],
+      "G[V]": [
+        "VE.Defaults.softX"
+      ],
+      "S": [
+        "VE.Defaults.DefaultBase",
+        "VE.Defaults.ReplacementHolds",
+        "VE.Defaults.SwitchesOff",
+        "VE.Defaults.leastDecisions",
+        "VE.Defaults.withOpen"
+      ]
+    },
+    "VE/Defaults/MeaningExamples.lean": {
+      "T": [
+        "VE.Defaults.MeaningFixtures.a1",
+        "VE.Defaults.MeaningFixtures.dSw",
+        "VE.Defaults.MeaningFixtures.dTwo",
+        "VE.Defaults.MeaningFixtures.denoteDec",
+        "VE.Defaults.MeaningFixtures.dπ",
+        "VE.Defaults.MeaningFixtures.leastDec",
+        "VE.Defaults.MeaningFixtures.offOf",
+        "VE.Defaults.MeaningFixtures.rA",
+        "VE.Defaults.MeaningFixtures.rB",
+        "VE.Defaults.MeaningFixtures.sit",
+        "VE.Defaults.MeaningFixtures.switchesDec",
+        "VE.Defaults.MeaningFixtures.typedDec"
+      ]
     }
   }
 }

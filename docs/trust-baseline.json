@@ -1188,6 +1188,20 @@
    "reason": "ap-3b: lean/VE/Acts/Linearize.lean +46 (S: joinWord, Part.toks, listToks, Filler.toks, Atom.normal, tokStr, tokText, Atom.withTo, Atom.text, partAct); Table.lean paraphrases G[R] (not trusted); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3b, 2026-10-18",
    "commit": "0e7a813e8841bbd7cf103229cf37386b8699896d"
+  },
+  {
+   "class": "S",
+   "lines": 35,
+   "reason": "df-2: VE/Defaults/Meaning.lean S +35, V +5 (withOpen, SwitchesOff, DefaultBase, leastDecisions, ReplacementHolds; softX)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-2, 2026-10-18",
+   "commit": "f39c78ddeea84706c68a90da3e3bbee1ad20562f"
+  },
+  {
+   "class": "V",
+   "lines": 5,
+   "reason": "df-2: VE/Defaults/Meaning.lean S +35, V +5 (withOpen, SwitchesOff, DefaultBase, leastDecisions, ReplacementHolds; softX)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-2, 2026-10-18",
+   "commit": "f39c78ddeea84706c68a90da3e3bbee1ad20562f"
   }
  ]
 }
