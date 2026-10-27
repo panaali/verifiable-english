@@ -4364,7 +4364,7 @@ module VE.Calc.Run 209ac1a73db66e9fef52f3d008c81553cc25a804c24724c5428fadc996070
 232:0-238:68 theorem VE.Calc.Run.row_sound@VE.Calc.Run
 240:0-247:48 theorem VE.Calc.Run.verdict_sound@VE.Calc.Run
 249:0-255:66 theorem VE.Calc.Run.unknown_named@VE.Calc.Run
-module VE.Calc.RunExamples 39a6285f945114d4f7113899bdf589bef570b440a97f99ef1bae212232afda6a
+module VE.Calc.RunExamples b09d7691a5eeddbf050476aaea779b8f47d658d9d8ee2c570278df5f10340f89
 10:0-12:22 def VE.Calc.RunExamples.answer@VE.Calc.RunExamples
 14:0-14:87 def VE.Calc.RunExamples.field@VE.Calc.RunExamples
 16:0-23:26 def VE.Calc.RunExamples.says@VE.Calc.RunExamples
@@ -4415,7 +4415,7 @@ module VE.Calc.RunExamples 39a6285f945114d4f7113899bdf589bef570b440a97f99ef1bae2
 622:0-624:79 def VE.Calc.RunExamples.chain@VE.Calc.RunExamples
 625:0-625:94 def VE.Calc.RunExamples.steps@VE.Calc.RunExamples
 626:0-626:121 def VE.Calc.RunExamples.nonlinear@VE.Calc.RunExamples
-733:0-733:135 def VE.Calc.RunExamples.deriv@VE.Calc.RunExamples
+761:0-761:135 def VE.Calc.RunExamples.deriv@VE.Calc.RunExamples
 module VE.Calc.Syntax 5fb0fd5b3ab4a969a25f642f8a98ba44cb4fa5b1e114b83623d4c19b0b4153d7
 6:0-14:28 inductive VE.Calc.Expr@VE.Calc.Syntax
 14:11-14:15 def VE.Calc.instReprExpr.repr@VE.Calc.Syntax
