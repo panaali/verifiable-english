@@ -15126,6 +15126,7 @@
         "VE.Cardinality.RunExamples.withW6"
       ]
     },
+    "VE/Cardinality/RunTheorems.lean": {},
     "VE/Arith/Bounded.lean": {
       "G[V]": [
         {
