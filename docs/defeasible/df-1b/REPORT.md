@@ -29,7 +29,7 @@ type only as `str`).
 | the strict question first; the default question only when the strict one has no certificate, with the strict countermodel as `strict_model` (none found: none sent, basis `unsettled`) | `ask` | `::test_zeta_strict_question_first`, `::test_alpha_needs_its_one_exception_and_the_strict_countermodel`; Q1, Q2 |
 | the search reads `defaults-elaborate` | `_Search` (`Dflt_T`, the coherence targets) | every `ask` test; Q3 |
 | `tests/test_defaults_lean.py`: 4.1's fixtures through the service | DF-α, α′, β (i) and (ii), β2, γ, γ′, ω, δ, ε, ζ, η, θ, ι, κ | 22 tests |
-| `tests/test_defaults_answer.py`: one and two faults; each `CheckerUnavailable` or nothing shown changes; the three `forced` mutation fixtures | 7 genuine answers (each kind and verdict), every binding on both sides | 14 tests |
+| `tests/test_defaults_answer.py`: one and two faults; each `CheckerUnavailable` or nothing shown changes; the three `forced` mutation fixtures | 7 genuine answers (each kind and verdict), every binding on both sides, each refusal named by its check | 16 tests |
 | P-1 (4.2) | df-03's three probe documents through the flag | `::test_p1_follows_unless_an_exception_applies` |
 | English DE1–DE7, DE11, DE12; `default:` in `tools/relay_lint.py`; route cases; `probe_defaults.py`, P-3 | **df-1bb** | — |
 
@@ -93,7 +93,7 @@ question: `{"question": "strict", "valid": true}`. Its review follow-up was that
 ## 4. Seeded bugs, trust, size, pilot bytes
 
 Seeded bugs (Python; `mutants.json`, run by `evidence/run_mutants.py`, saved `evidence/mutants.out`). The controls
-pass, and **all 14 fail their tests**. No Lean or Rust file changed.
+pass, and **all 21 fail their tests** (14 of the build, 7 of review F1). No Lean or Rust file changed.
 
 | # | File: bug | Fails |
 | --- | --- | --- |
@@ -103,6 +103,7 @@ pass, and **all 14 fail their tests**. No Lean or Rust file changed.
 | B1–B7 | `strict` with assumptions; pairs as a set; deciders unbound; `forced` not the model's exceptions; a tuple's sorts unchecked; targets not the source's pairs; the shape check skipped | `::test_assumptions_and_basis`, `::test_pairs_and_collision` (B2, B3), `::test_forced_condition_index_rule_and_tuple`, `::test_forced_tuple_sorts`, `::test_elaborate_labels_and_targets`, `::test_mutants_never_pass_as_answers` |
 | Q1–Q3 | the strict question skipped; no `strict_model` sent; no gate evidence sent | `test_defaults_lean.py::test_zeta_strict_question_first`, `::test_alpha_…`, `::test_delta_…` |
 | F1 | `ve/document/cli.py`: the flag ignored | `::test_p1_follows_unless_an_exception_applies` |
+| RF1a–RF1g | review F1: a collision's rules not a coherence target; a coherence situation's entities unbound; `forced` order unchecked; `--sentence`/`--narrowing` accepted; a document with no soft norms accepted; a reading set accepted; a model row's situation and `forced` both dropped | `test_defaults_answer.py::test_pairs_and_collision` (a, b), `::test_forced_order_rule_then_tuple`, `test_defaults_lean.py::test_flag_refusals` (d–f), `::test_forced_condition_index_rule_and_tuple` |
 
 The plan's two renderer bugs (DE1 without "Unless an exception applies"; DE6 for DF-β (i)) go with the English to
 df-1bb.
@@ -149,6 +150,36 @@ Both were fixed in the next commit: the stub decodes through `_decode_json`, and
 (45 passed). The runner was rerun with the builder's command: all 14 bugs fail (`evidence/mutants.out`). No product
 file changed after run 3.
 
+## 7. Review fix (df-1b-review.final.md)
+
+**F1 (B): checks tested on one side only.** The class is "a binding check no fixture needs". Fixed structurally:
+`tests/test_defaults_checks.py::test_review_f1_every_check_is_needed_by_a_both_sides_test` reads every check from
+the source (`tests/check_mutants.py`, the AST enumeration `tests/test_rights_licence_relay.py` used, now shared): each
+`if ...: raise` of `ve/defaults.py` and the flag's checks in `ve/document/cli.py`, weakened one sub-condition at a
+time or made always true, and each helper check call deleted, 81 seeded bugs in all. Each must fail one of the
+both-sides tests (`BOTH_SIDES` and `test_flag_refusals`); a check added later is enumerated too. The tests read Lean's
+genuine rows asked once per session, so the 81 runs take seconds. Planting an unneeded check makes it fail
+(`row.get('zzz') -> False` survives).
+
+To make every check needed, each refusal now names the check that must refuse it (`_refused(what, ...)`), and each
+fixture breaks one check alone:
+- the collision's rules: no witness, the witness's rules not the row's, and both moved to a pair that is no
+  coherence target, each alone; the coherence situation's entities in and outside the witness model; three distinct
+  named deciders (DF-γ′);
+- `forced` order: Lean's four-entry DF-β2 row reordered within a rule, across rules and reversed
+  (`::test_forced_order_rule_then_tuple`);
+- the model row's verdict: situation and `forced` both absent with DOES-NOT-FOLLOW, both present with UNKNOWN; the
+  certificate row's verdict: `form` missing with FOLLOWS, `form` or no reason with UNKNOWN;
+- `run`: a row with another `id` is refused by the shape, which binds `id` to the request. `run`'s own id check could
+  never fire after it, so it is removed (one owner);
+- the flag (`test_flag_refusals`, `ask` stubbed so a refusal is shown to come before any question): no conclusion,
+  `--under`, `--sentence`, `--narrowing`, a document with no soft norms, p2-ce4, and on the loaded P-1 document a
+  content-bearing reading set alone and a reading set alone; the P-1 document itself is asked.
+
+PROBE F1 failed before the fix (all three mutants survived) and passes after it (each fails a test). Seeded bugs
+RF1a–RF1g are in `mutants.json` and fail their tests (`evidence/mutants.out`). No Lean or Rust file changed; trust
++0; no DELTA row.
+
 ## Self-review against BUILDER-CHECKLIST
 
 1. **Lean answers typed and contained.** PASS: `test_defaults_answer.py::test_mutants_never_pass_as_answers` retypes
@@ -159,7 +190,8 @@ file changed after run 3.
 2. **Every deliverable built.** PASS: section 1 and the df-1bb cut (size rule). No Python copy of a Lean decision: the
    bindings read the request and Lean's other rows. No permanent report test. No file overlaps a branch in flight:
    `relay_lint.py` (feature/q1-4) is left to df-1bb.
-3. **Tests can fail.** PASS: 14 seeded bugs, `evidence/mutants.out`. No Lean change, so no `trust_mutants` run.
+3. **Tests can fail.** PASS: 21 seeded bugs, `evidence/mutants.out`, and every check's 81 enumerated weakenings and
+   deletions (`tests/test_defaults_checks.py`, section 7). No Lean change, so no `trust_mutants` run.
 4. **Python, Lean and Rust agree.** PASS: `::test_p1_follows_unless_an_exception_applies` compares the answer without
    the flag with df-03's saved stdout, byte for byte; `_source_binding`'s default path is unchanged
    (`test_norm_defaults_soft_kinds.py` passes). The fixtures include two-sort tuples (`::test_forced_tuple_sorts`) and

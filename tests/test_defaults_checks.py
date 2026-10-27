@@ -1,0 +1,65 @@
+"""Every check of the defaults relay and of `--assume-no-exception` is needed by a test (review df-1b F1, PROBE F1).
+
+The checks are read from the source (tests/check_mutants.py): each `if ...: raise` of `ve/defaults.py`, and of
+`ve/document/cli.py` where it is the flag's, weakened one sub-condition at a time or made always true, and each
+helper check (`_tuple(...)`, `_situation(...)`, `check_row(...)`) deleted. Each seeded bug must fail one of the
+both-sides tests, which read Lean's genuine rows asked once (tests/test_defaults_answer.py `_genuine`), so a check
+written later is a seeded bug too and a check no fixture needs fails here.
+"""
+from __future__ import annotations
+
+import ast
+import inspect
+from pathlib import Path
+
+import pytest
+
+from tests import check_mutants, test_defaults_lean
+from tests.test_defaults_answer import BOTH_SIDES
+from ve import defaults
+from ve.document import cli
+
+ROOT = Path(__file__).resolve().parents[1]
+TESTS = (*BOTH_SIDES, test_defaults_lean.test_flag_refusals)
+
+
+def _flag_check(function, node):
+    return function == "_assume_no_exception" or "assume_no_exception" in ast.unparse(node.test)
+
+
+def _defaults_functions():
+    return {node.name for node in ast.parse((ROOT / "ve/defaults.py").read_text()).body
+            if isinstance(node, ast.FunctionDef)}
+
+
+# (module, its checks, the functions whose call statements are helper checks)
+TARGETS = ((defaults, lambda function, node: True, _defaults_functions()), (cli, _flag_check, ()))
+
+
+def _fails(test):
+    with pytest.MonkeyPatch.context() as patch:
+        try:
+            test(*[patch for _ in inspect.signature(test).parameters])  # each takes `monkeypatch` or nothing
+        except KeyboardInterrupt:
+            raise
+        except BaseException:  # an assertion, `pytest.raises` unmet, or a crash: the seeded bug is found
+            return True
+    return False
+
+
+def test_review_f1_every_check_is_needed_by_a_both_sides_test():
+    assert [test.__name__ for test in TESTS if _fails(test)] == []  # control; asks Lean's genuine rows once
+    survivors, count = [], 0
+    for module, select, functions in TARGETS:
+        path = Path(module.__file__)
+        for function, description, tree in check_mutants.mutants(path.read_text(), str(path.relative_to(ROOT)),
+                                                                  select, functions):
+            count += 1
+            namespace = {"__name__": module.__name__, "__package__": module.__package__, "__file__": str(path)}
+            exec(compile(tree, str(path), "exec"), namespace)
+            with pytest.MonkeyPatch.context() as patch:
+                patch.setattr(module, function, namespace[function])
+                if not any(_fails(test) for test in TESTS):
+                    survivors.append(description)
+    assert count >= 60  # the enumeration reaches every check (60 sites at review F1's fix)
+    assert survivors == [], "\n".join(survivors)

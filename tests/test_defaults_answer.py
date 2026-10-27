@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import copy
 import json
+import re
 from itertools import combinations
 
 import pytest
@@ -29,14 +30,21 @@ GENUINE = [("alpha", X_ALL, "defaults-certificate"), ("beta", X_ALL, "defaults-m
            ("delta", X_ALL, "defaults-certificate")]
 
 
+_GENUINE: dict = {}
+
+
 def _genuine(monkeypatch, name, conclusion, kind):
     """The case, Lean's row and the binding's inputs: the same source's elaborate labels and targets, and its
-    exception tables."""
-    _, sent = asked(monkeypatch, name, conclusion)
-    elaborated = sent_kind(sent, "defaults-elaborate")[1]
-    case, row = sent_kind(sent, kind)
-    return (case, row, [label for label, _ in elaborated["default_premises"]], elaborated["coherence_targets"],
-            defaults.soft_source(case))
+    exception tables. Asked once per session (a copy each call), so a seeded bug of the binding
+    (tests/test_defaults_checks.py) runs the binding alone."""
+    key = (name, json.dumps(conclusion), kind)
+    if key not in _GENUINE:
+        _, sent = asked(monkeypatch, name, conclusion)
+        elaborated = sent_kind(sent, "defaults-elaborate")[1]
+        case, row = sent_kind(sent, kind)
+        _GENUINE[key] = (case, row, [label for label, _ in elaborated["default_premises"]],
+                         elaborated["coherence_targets"], defaults.soft_source(case))
+    return copy.deepcopy(_GENUINE[key])
 
 
 def _nodes(value, path=()):
@@ -127,11 +135,25 @@ def test_mutants_never_pass_as_answers(monkeypatch, name, conclusion, kind):
     assert not accepted, accepted[:5]
 
 
-# -- each binding on both sides of its boundary (bind_* read the request and the row only)
+# -- each binding on both sides of its boundary (bind_* read the request and the row only). Each refusal names the
+#    check that refuses it, and each fixture breaks that check alone, so every check is needed by some fixture
+#    (tests/test_defaults_checks.py deletes each one in turn).
 
-def _refused(bind, *args):
-    with pytest.raises(CheckerUnavailable, match="not an answer to the defaults request"):
+def _refused(what, bind, *args):
+    with pytest.raises(CheckerUnavailable, match=rf"not an answer to the defaults request \({re.escape(what)}[):]"):
         bind(*args)
+
+
+def test_run_binds_the_row_to_its_case(monkeypatch):
+    case, genuine, *_ = _genuine(monkeypatch, "beta", X_ALL, "defaults-model")
+    answered = {}
+    monkeypatch.setattr(relay, "decide", lambda mode, cases, **options: [answered["row"]])
+    answered["row"] = genuine
+    assert defaults.run(case) == genuine
+    # the shape binds the row's id to the case's
+    for row in ({**genuine, "id": "other"}, {k: v for k, v in genuine.items() if k != "verdict"}):
+        answered["row"] = row
+        _refused("shape", defaults.run, case)
 
 
 def test_forced_condition_index_rule_and_tuple(monkeypatch):
@@ -139,19 +161,61 @@ def test_forced_condition_index_rule_and_tuple(monkeypatch):
     [entry] = row["forced"]
     entity = entry["tuple"][0]
     assert defaults.bind_model(case, row, source) is row  # condition 0 of one stated condition
-    for change in ({"condition": 1}, {"rule": "r9"}, {"tuple": []}, {"tuple": [entity, entity]}, {"tuple": ["z"]}):
-        _refused(defaults.bind_model, case, {**row, "forced": [{**entry, **change}]}, source)
-    # every exception that holds in the model, and only those: none dropped, none added
-    _refused(defaults.bind_model, case, {**row, "forced": []}, source)
-    _refused(defaults.bind_model, case, {**row, "forced": [entry, entry]}, source)
+    for change, what in (({"condition": 1}, "forced condition"), ({"rule": "r9"}, "forced rule"),
+                         ({"tuple": []}, "forced tuple"), ({"tuple": [entity, entity]}, "forced tuple"),
+                         ({"tuple": ["z"]}, "forced tuple")):
+        _refused(what, defaults.bind_model, case, {**row, "forced": [{**entry, **change}]}, source)
+    # every exception that holds in the model, and only those: none dropped, none added, none twice
+    _refused("forced exceptions", defaults.bind_model, case, {**row, "forced": []}, source)
+    _refused("forced order", defaults.bind_model, case, {**row, "forced": [entry, entry]}, source)
     # a strict rule is no default rule; a second condition of a two-condition rule is in range, a third is not
     strict = copy.deepcopy(case)
     strict["norms"][0]["norm"].pop("mode")
-    _refused(defaults.bind_model, strict, row, source)
+    _refused("forced rule", defaults.bind_model, strict, row, source)
     two = copy.deepcopy(case)
     two["norms"][0]["norm"]["exception"]["sufficient"].append(["top"])
     assert defaults.bind_model(two, {**row, "forced": [{**entry, "condition": 1}]}, source)
-    _refused(defaults.bind_model, two, {**row, "forced": [{**entry, "condition": 2}]}, source)
+    _refused("forced condition", defaults.bind_model, two, {**row, "forced": [{**entry, "condition": 2}]}, source)
+    # a situation and `forced` exactly with DOES-NOT-FOLLOW; the situation's entities are the model's
+    _refused("verdict", defaults.bind_model, case, {k: v for k, v in row.items() if k != "situation"}, source)
+    _refused("verdict", defaults.bind_model, case, {k: v for k, v in row.items() if k != "forced"}, source)
+    unknown = {"id": row["id"], "status": "ok", "verdict": "UNKNOWN", "reason": "no countermodel"}
+    assert defaults.bind_model(case, unknown, source) is unknown
+    _refused("verdict", defaults.bind_model, case, {**unknown, "situation": row["situation"]}, source)
+    _refused("verdict", defaults.bind_model, case, {**unknown, "situation": row["situation"], "forced": []}, source)
+    _refused("verdict", defaults.bind_model, case,
+             {k: v for k, v in row.items() if k not in ("situation", "forced")}, source)
+    [table] = row["situation"]["filling"] or ["unsaid__x_required"]
+    _refused("situation", defaults.bind_model, case, {**row, "situation": {"filling": {table: [["z"]]}}}, source)
+    assert defaults.bind_model(case, {**row, "situation": {"filling": {table: [[entity]]}}}, source)
+
+
+_BETA2: dict = {}
+
+
+def _beta2(monkeypatch):
+    """Lean's DOES-NOT-FOLLOW row on DF-β2 (two rules, two conditions) in a model of two entities where every
+    exception holds: four `forced` entries, in rule order and then the model's entity order."""
+    if not _BETA2:
+        environment, norms = DOCS["beta2"]
+        model = {"filling": {}, "model": {"complete": True, "constants": {}, "domains": {"assistant": ["e1", "e2"]},
+                                          "relations": {"calm": [["e1"], ["e2"]], "urgent": [["e1"], ["e2"]],
+                                                        "soft__excepted__r1": [["e1"], ["e2"]],
+                                                        "soft__excepted__r2": [["e1"], ["e2"]]}}}
+        case = {"id": "m", "kind": "defaults-model", "environment": environment, "norms": norms, "premises": [],
+                "conclusion": X_ALL, "model": model}
+        _BETA2["genuine"] = (case, defaults.run(case), defaults.soft_source(case))
+    return copy.deepcopy(_BETA2["genuine"])
+
+
+def test_forced_order_rule_then_tuple(monkeypatch):
+    case, row, source = _beta2(monkeypatch)
+    r1e1, r1e2, r2e1, r2e2 = row["forced"]
+    assert [(e["rule"], e["tuple"]) for e in row["forced"]] == [
+        ("r1", ["e1"]), ("r1", ["e2"]), ("r2", ["e1"]), ("r2", ["e2"])]
+    assert defaults.bind_model(case, row, source) is row
+    for forced in ([r1e2, r1e1, r2e1, r2e2], [r2e1, r2e2, r1e1, r1e2], row["forced"][::-1]):
+        _refused("forced order", defaults.bind_model, case, {**row, "forced": forced}, source)
 
 
 def test_forced_tuple_sorts():
@@ -169,8 +233,9 @@ def test_forced_tuple_sorts():
     assert defaults.bind_model(case([["a", "u"]]), row, source) is row
     swapped = {**row, "forced": [{"rule": "r1", "condition": 0, "tuple": ["u", "a"]}]}
     for rows in ([["a", "u"]], [["u", "a"]]):
-        _refused(defaults.bind_model, case(rows), swapped, source)
-    _refused(defaults.bind_model, case([["a", "u"]]), {**row, "situation": {"filling": {"t": [["z"]]}}}, source)
+        _refused("forced tuple", defaults.bind_model, case(rows), swapped, source)
+    _refused("situation", defaults.bind_model, case([["a", "u"]]), {**row, "situation": {"filling": {"t": [["z"]]}}},
+             source)
 
 
 def test_assumptions_and_basis(monkeypatch):
@@ -178,35 +243,57 @@ def test_assumptions_and_basis(monkeypatch):
     assert len(row["assumptions"]) > 1 and defaults.bind_certificate(case, row, labels) is row
     for assumptions in (row["assumptions"][::-1], [*row["assumptions"], "default:switch:r1:user"],
                         [row["assumptions"][0]] * 2):
-        _refused(defaults.bind_certificate, case, {**row, "assumptions": assumptions}, labels)
+        _refused("assumptions", defaults.bind_certificate, case, {**row, "assumptions": assumptions}, labels)
     assert defaults.bind_certificate(case, {**row, "assumptions": row["assumptions"][1:]}, labels)
     # `needs` only with a strict countermodel; `unsettled` and `strict` without one
     bare = {k: v for k, v in case.items() if k != "strict_model"}
-    _refused(defaults.bind_certificate, bare, row, labels)
+    _refused("basis", defaults.bind_certificate, bare, row, labels)
     assert defaults.bind_certificate(bare, {**row, "basis": "unsettled"}, labels)
     # `strict` exactly when no assumption is kept
-    _refused(defaults.bind_certificate, bare, {**row, "basis": "strict"}, labels)
+    _refused("assumptions", defaults.bind_certificate, bare, {**row, "basis": "strict"}, labels)
     assert defaults.bind_certificate(bare, {**row, "basis": "strict", "assumptions": []}, labels)
-    _refused(defaults.bind_certificate, bare, {**row, "basis": "unsettled", "assumptions": []}, labels)
-    _refused(defaults.bind_certificate, case, {**row, "reason": "no certificate"}, labels)
+    _refused("assumptions", defaults.bind_certificate, bare, {**row, "basis": "unsettled", "assumptions": []}, labels)
+    # `basis`, `form` and `assumptions` exactly with FOLLOWS, a reason exactly without it, and never empty
+    _refused("verdict", defaults.bind_certificate, case, {**row, "reason": "no certificate"}, labels)
+    _refused("verdict", defaults.bind_certificate, case, {k: v for k, v in row.items() if k != "form"}, labels)
     unknown = {"verdict": "UNKNOWN", "reason": "no certificate"}
     assert defaults.bind_certificate(case, unknown, labels)
-    _refused(defaults.bind_certificate, case, {**unknown, "reason": ""}, labels)
+    _refused("verdict", defaults.bind_certificate, case, {**unknown, "form": "short"}, labels)
+    _refused("verdict", defaults.bind_certificate, case, {"verdict": "UNKNOWN"}, labels)
+    _refused("reason", defaults.bind_certificate, case, {**unknown, "reason": ""}, labels)
 
 
 def test_pairs_and_collision(monkeypatch):
     case, row, _, targets, _ = _genuine(monkeypatch, "gamma2", X_ALL, "defaults-coherence")
     assert len(row["pairs"]) == 2 and defaults.bind_coherence(case, row, targets) is row
-    _refused(defaults.bind_coherence, case, {**row, "pairs": row["pairs"][::-1]}, targets)
+    _refused("pairs", defaults.bind_coherence, case, {**row, "pairs": row["pairs"][::-1]}, targets)
     case, row, _, targets, _ = _genuine(monkeypatch, "gamma", X_ALL, "defaults-coherence")
     collision = row["collision"]
     assert defaults.bind_coherence(case, row, targets) is row
-    for change in ({"rules": ["r2", "r1"]}, {"deciders": ["operator"]}, {"deciders": ["assistant"] * 2},
-                   {"deciders": ["assistant", "unstated", "operator"]}, {"deciders": []}, {"tuple": []}):
-        _refused(defaults.bind_coherence, case, {**row, "collision": {**collision, **change}}, targets)
+    for change, what in (({"deciders": ["operator"]}, "collision deciders"),
+                         ({"deciders": ["assistant"] * 2}, "collision deciders"),
+                         ({"deciders": []}, "collision deciders"), ({"tuple": []}, "collision tuple")):
+        _refused(what, defaults.bind_coherence, case, {**row, "collision": {**collision, **change}}, targets)
     for deciders in (["unstated"], ["assistant", "unstated"]):
         assert defaults.bind_coherence(case, {**row, "collision": {**collision, "deciders": deciders}}, targets)
-    _refused(defaults.bind_coherence, {k: v for k, v in case.items() if k != "collision"}, row, targets)
+    # the collision's rules: the request's witness (none sent, another pair) and a coherence target, each alone
+    _refused("collision rules", defaults.bind_coherence, {k: v for k, v in case.items() if k != "collision"}, row,
+             targets)
+    swapped = {**case, "collision": {**case["collision"], "rules": ["r2", "r1"]}}
+    _refused("collision rules", defaults.bind_coherence, swapped, row, targets)
+    _refused("collision rules", defaults.bind_coherence, swapped,
+             {**row, "collision": {**collision, "rules": ["r2", "r1"]}}, targets)
+    # the situation's entities are the witness model's
+    [table] = row["situation"]["filling"]
+    entity = collision["tuple"][0]
+    assert defaults.bind_coherence(case, {**row, "situation": {"filling": {table: [[entity]]}}}, targets)
+    _refused("situation", defaults.bind_coherence, case, {**row, "situation": {"filling": {table: [["z"]]}}},
+             targets)
+    # three deciders, each distinct and named by the two rules (DF-γ′): at most two
+    case, row, _, targets, _ = _genuine(monkeypatch, "gamma'", X_ALL, "defaults-coherence")
+    assert row["collision"]["deciders"] == ["assistant", "operator"]
+    _refused("collision deciders", defaults.bind_coherence, case,
+             {**row, "collision": {**row["collision"], "deciders": ["assistant", "operator", "unstated"]}}, targets)
 
 
 def test_elaborate_labels_and_targets(monkeypatch):
@@ -214,8 +301,15 @@ def test_elaborate_labels_and_targets(monkeypatch):
     assert defaults.bind_elaborate(case, row, source) is row
     [first, second] = row["coherence_targets"]
     for targets in ([first, first], [["r1", "r9", first[2]], second], [second, first], [first], []):
-        _refused(defaults.bind_elaborate, case, {**row, "coherence_targets": targets}, source)
-    _refused(defaults.bind_elaborate, case, {**row, "default_premises": row["default_premises"][:1] * 2}, source)
+        _refused("coherence targets", defaults.bind_elaborate, case, {**row, "coherence_targets": targets}, source)
+    _refused("default premises", defaults.bind_elaborate, case,
+             {**row, "default_premises": row["default_premises"][:1] * 2}, source)
+
+
+# The tests above, which tests/test_defaults_checks.py runs against each seeded bug of the binding.
+BOTH_SIDES = (test_run_binds_the_row_to_its_case, test_forced_condition_index_rule_and_tuple,
+              test_forced_order_rule_then_tuple, test_forced_tuple_sorts, test_assumptions_and_basis,
+              test_pairs_and_collision, test_elaborate_labels_and_targets)
 
 
 @pytest.mark.parametrize("name", ["alpha", "gamma"])

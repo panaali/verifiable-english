@@ -27,7 +27,8 @@ def _unbound(what):
 
 
 def run(case):
-    """Lean's row for one case, held to its shape: a rejection raises Lean's diagnostic (`relay.decide`)."""
+    """Lean's row for one case, held to its shape, which binds its `id` to the case's: a rejection raises Lean's
+    diagnostic (`relay.decide`)."""
     from .backends import relay
     from .backends.service_schema import Invalid, check_row
     [row] = relay.decide(MODE, [case])
@@ -35,8 +36,6 @@ def run(case):
         check_row(MODE, row, case, 0)
     except Invalid as error:
         raise _unbound(f"shape: {error}") from None
-    if row.get("id") != case["id"]:
-        raise _unbound("id")
     return row
 
 
