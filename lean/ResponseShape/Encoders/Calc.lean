@@ -17,20 +17,23 @@ theorem decode_software (j : Json) :
   all_goals first | rfl | (cases j <;> simp_all [CaseCond.holds, Json.getObjVal?, Except.toBool])
 
 set_option hygiene false in
-/-- A claim row (sides, display and tie) or a follows row, each decided with no reason or unknown with Lean's
-reason text: the four alternatives of `claim_row`, in order. -/
+/-- A claim row (sides, display and tie) that holds or fails, is undefined, or is unknown with Lean's reason text, or
+a follows row, decided or unknown: the five alternatives of `claim_row`, in order. -/
 macro "row_fits" : tactic => `(tactic|(
   unfold Run.rowJson
   cases k <;> rcases o with v | u
-  · apply Fits.altHead
-    cases v <;> simp only [Run.kind, Run.claimFields, List.cons_append, List.nil_append] <;> fits
-  · apply Fits.altTail; apply Fits.altHead
+  · cases v
+    · apply Fits.altHead; simp only [Run.kind, Run.claimFields, List.cons_append, List.nil_append]; fits
+    · apply Fits.altHead; simp only [Run.kind, Run.claimFields, List.cons_append, List.nil_append]; fits
+    · apply Fits.altTail; apply Fits.altHead
+      simp only [Run.kind, Run.claimFields, List.cons_append, List.nil_append]; fits
+  · apply Fits.altTail; apply Fits.altTail; apply Fits.altHead
     rcases u with l | _ | _ | _ | _ | _
     · cases l <;> simp only [Run.kind, Run.claimFields, List.cons_append, List.nil_append] <;> fits
     all_goals simp only [Run.kind, Run.claimFields, List.cons_append, List.nil_append] <;> fits
-  · apply Fits.altTail; apply Fits.altTail; apply Fits.altHead
-    cases v <;> simp only [Run.kind, Run.claimFields, List.append_nil] <;> fits
   · apply Fits.altTail; apply Fits.altTail; apply Fits.altTail; apply Fits.altHead
+    cases v <;> simp only [Run.kind, Run.claimFields, List.append_nil] <;> fits
+  · apply Fits.altTail; apply Fits.altTail; apply Fits.altTail; apply Fits.altTail; apply Fits.altHead
     rcases u with l | _ | _ | _ | _ | _
     · cases l <;> simp only [Run.kind, Run.claimFields, List.append_nil] <;> fits
     all_goals simp only [Run.kind, Run.claimFields, List.append_nil] <;> fits))
