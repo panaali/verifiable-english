@@ -672,34 +672,6 @@ theorem VE.Acts.elaborate_one_reading
                           VE.Acts.opOf r N.sign = Option.some op ∧ VE.Acts.table op A = [R]
   -- uses VE.Acts.Act.one@VE.Acts.Tree VE.Acts.Act@VE.Acts.Tree VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc.acts@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Atom@VE.Acts.Tree VE.Acts.Op@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.dualOf@VE.Acts.Elaborate VE.Acts.elaborate@VE.Acts.Elaborate VE.Acts.opOf@VE.Acts.Table VE.Acts.readingOf@VE.Acts.Elaborate VE.Acts.table@VE.Acts.Table VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree
   -- expr 3219671281
-theorem VE.Acts.elaborate_parts
-  ∀ (D : VE.Acts.ActsDoc) {U' : VE.NormDefaults.UDoc} {M : VE.Acts.SplitMap},
-    VE.Acts.elaborateMap D = Except.ok (U', M) →
-      (∀ (q p : String) (i : Nat),
-          (q, p, i) ∈ M.preds →
-            ∃ r,
-              r ∈ D.U.D.T.regulated ∧
-                r.name = p ∧
-                  ∃ atoms a,
-                    VE.Acts.splitAtoms D p = Option.some atoms ∧
-                      atoms[i - 1]? = Option.some a ∧
-                        List.find? (fun x => x.name == q) U'.D.T.regulated =
-                            Option.some
-                              { name := q, sorts := r.sorts, allowByDefault := r.allowByDefault, role := r.role,
-                                act := Option.some (VE.Acts.partAct D.fixed r.role a),
-                                permission := Option.map (fun x => VE.Acts.partPred x i) r.permission } ∧
-                          U'.D.E.predicates q = D.U.D.E.predicates p ∧ (q ∈ U'.unspec ↔ p ∈ D.U.unspec)) ∧
-        ∀ (n m : String) (i : Nat),
-          (n, m, i) ∈ M.rules →
-            ∃ N,
-              N ∈ D.U.D.T.nodes ∧
-                N.name = m ∧
-                  List.find? (fun x => x.name == n) U'.D.T.nodes =
-                    Option.some
-                      { name := n, pred := VE.Acts.partPred N.pred i, sign := N.sign, guard := N.guard,
-                        carveOuts := N.carveOuts, over := List.map (fun x => VE.Acts.partRule x i) N.over }
-  -- uses VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc.fixed@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Atom@VE.Acts.Tree VE.Acts.SplitMap.preds@VE.Acts.Elaborate VE.Acts.SplitMap.rules@VE.Acts.Elaborate VE.Acts.SplitMap@VE.Acts.Elaborate VE.Acts.elaborateMap@VE.Acts.Elaborate VE.Acts.partAct@VE.Acts.Linearize VE.Acts.partPred@VE.Acts.Elaborate VE.Acts.partRule@VE.Acts.Elaborate VE.Acts.splitAtoms@VE.Acts.Elaborate VE.Environment.predicates@VE.Syntax VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc.unspec@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.Norms.Doc.E@VE.Norms.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.carveOuts@VE.Norms.Tree VE.Norms.Node.guard@VE.Norms.Tree VE.Norms.Node.mk@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.over@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Regulated.allowByDefault@VE.Norms.Tree VE.Norms.Regulated.mk@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.permission@VE.Norms.Tree VE.Norms.Regulated.role@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree
-  -- expr 1857175075
 theorem VE.Acts.elaborate_unspec
   ∀ (D : VE.Acts.ActsDoc) {U' : VE.NormDefaults.UDoc},
     VE.Acts.elaborate D = Except.ok U' → U'.unspec = List.flatMap (VE.Acts.partNames D) D.U.unspec
@@ -714,10 +686,6 @@ theorem VE.Acts.firstEqualPair_none
   ∀ (k : Nat) (ts : List String), VE.Acts.firstEqualPair k ts = Option.none ↔ ts.Nodup
   -- uses VE.Acts.firstEqualPair@VE.Acts.Table
   -- expr 2471763056
-theorem VE.Acts.inj_of_nodup_map
-  ∀ {α β : Type} {f : α → β} {l : List α}, (List.map f l).Nodup → ∀ {x y : α}, x ∈ l → y ∈ l → f x = f y → x = y
-  -- uses
-  -- expr 2912099309
 theorem VE.Acts.listing_limit
   ∀ {α : Type} [inst : DecidableEq α] (N L : Nat) (parsed : Option (List (VE.Grammar.Tree VE.Acts.Lexical.Tok)))
     (μ : VE.Grammar.Tree VE.Acts.Lexical.Tok → Option α),
@@ -748,61 +716,6 @@ theorem VE.Acts.mem_firsts
   ∀ {α : Type} [inst : DecidableEq α] {x : α} {l : List α}, x ∈ VE.Acts.firsts l ↔ x ∈ l
   -- uses VE.Acts.firsts@VE.Acts.Read
   -- expr 3013831312
-theorem VE.Acts.mem_partsOf
-  ∀ {D : VE.Acts.ActsDoc} {p : String} {x : VE.Acts.Atom × Nat},
-    x ∈ VE.Acts.partsOf D p →
-      ∃ atoms, VE.Acts.splitAtoms D p = Option.some atoms ∧ 1 ≤ x.snd ∧ atoms[x.snd - 1]? = Option.some x.fst
-  -- uses VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Atom@VE.Acts.Tree VE.Acts.partsOf@VE.Acts.Elaborate VE.Acts.splitAtoms@VE.Acts.Elaborate
-  -- expr 509705323
-theorem VE.Acts.mem_preds
-  ∀ {D : VE.Acts.ActsDoc} {x : String × String × Nat},
-    x ∈ (VE.Acts.splitMap D).preds ↔
-      ∃ r, r ∈ D.U.D.T.regulated ∧ ∃ y, y ∈ VE.Acts.partsOf D r.name ∧ x = (VE.Acts.partPred r.name y.snd, r.name, y.snd)
-  -- uses VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Atom@VE.Acts.Tree VE.Acts.SplitMap.preds@VE.Acts.Elaborate VE.Acts.partPred@VE.Acts.Elaborate VE.Acts.partsOf@VE.Acts.Elaborate VE.Acts.splitMap@VE.Acts.Elaborate VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree
-  -- expr 1871743931
-theorem VE.Acts.mem_rules
-  ∀ {D : VE.Acts.ActsDoc} {x : String × String × Nat},
-    x ∈ (VE.Acts.splitMap D).rules ↔
-      ∃ N, N ∈ D.U.D.T.nodes ∧ ∃ y, y ∈ VE.Acts.partsOf D N.pred ∧ x = (VE.Acts.partRule N.name y.snd, N.name, y.snd)
-  -- uses VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Atom@VE.Acts.Tree VE.Acts.SplitMap.rules@VE.Acts.Elaborate VE.Acts.partRule@VE.Acts.Elaborate VE.Acts.partsOf@VE.Acts.Elaborate VE.Acts.splitMap@VE.Acts.Elaborate VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree
-  -- expr 337162278
-theorem VE.Acts.mem_splitNode
-  ∀ {D : VE.Acts.ActsDoc} {N K : VE.Norms.Node},
-    K ∈ VE.Acts.splitNode D N ↔
-      VE.Acts.partsOf D N.pred = [] ∧ K = N ∨
-        ∃ x,
-          x ∈ VE.Acts.partsOf D N.pred ∧
-            K =
-              { name := VE.Acts.partRule N.name x.snd, pred := VE.Acts.partPred N.pred x.snd, sign := N.sign,
-                guard := N.guard, carveOuts := N.carveOuts,
-                over := List.map (fun x_1 => VE.Acts.partRule x_1 x.snd) N.over }
-  -- uses VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Atom@VE.Acts.Tree VE.Acts.partPred@VE.Acts.Elaborate VE.Acts.partRule@VE.Acts.Elaborate VE.Acts.partsOf@VE.Acts.Elaborate VE.Acts.splitNode@VE.Acts.Elaborate VE.Norms.Node.carveOuts@VE.Norms.Tree VE.Norms.Node.guard@VE.Norms.Tree VE.Norms.Node.mk@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node.over@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree
-  -- expr 2855171516
-theorem VE.Acts.mem_splitReg
-  ∀ {D : VE.Acts.ActsDoc} {r s : VE.Norms.Regulated},
-    s ∈ VE.Acts.splitReg D r ↔
-      VE.Acts.partsOf D r.name = [] ∧ s = r ∨
-        ∃ x,
-          x ∈ VE.Acts.partsOf D r.name ∧
-            s =
-              { name := VE.Acts.partPred r.name x.snd, sorts := r.sorts, allowByDefault := r.allowByDefault,
-                role := r.role, act := Option.some (VE.Acts.partAct D.fixed r.role x.fst),
-                permission := Option.map (fun x_1 => VE.Acts.partPred x_1 x.snd) r.permission }
-  -- uses VE.Acts.ActsDoc.fixed@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Atom@VE.Acts.Tree VE.Acts.partAct@VE.Acts.Linearize VE.Acts.partPred@VE.Acts.Elaborate VE.Acts.partsOf@VE.Acts.Elaborate VE.Acts.splitReg@VE.Acts.Elaborate VE.Norms.Regulated.allowByDefault@VE.Norms.Tree VE.Norms.Regulated.mk@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated.permission@VE.Norms.Tree VE.Norms.Regulated.role@VE.Norms.Tree VE.Norms.Regulated.sorts@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree
-  -- expr 174613871
-theorem VE.Acts.namesOk_ok
-  ∀ {D : VE.Acts.ActsDoc},
-    VE.Acts.namesOk D = Except.ok () →
-      (∀ (q : String),
-          q ∈ List.map (fun x => x.fst) (VE.Acts.splitMap D).preds →
-            (∀ (r : VE.Norms.Regulated), r ∈ D.U.D.T.regulated → r.name ≠ q) ∧ ¬q ∈ D.U.unspec) ∧
-        (List.map (fun x => x.fst) (VE.Acts.splitMap D).preds).Nodup ∧
-          (∀ (n : String),
-              n ∈ List.map (fun x => x.fst) (VE.Acts.splitMap D).rules →
-                ∀ (N : VE.Norms.Node), N ∈ D.U.D.T.nodes → N.name ≠ n) ∧
-            (List.map (fun x => x.fst) (VE.Acts.splitMap D).rules).Nodup
-  -- uses VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.SplitMap.preds@VE.Acts.Elaborate VE.Acts.SplitMap.rules@VE.Acts.Elaborate VE.Acts.namesOk@VE.Acts.Elaborate VE.Acts.splitMap@VE.Acts.Elaborate VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc.unspec@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree
-  -- expr 2273796772
 theorem VE.Acts.nodup_firsts
   ∀ {α : Type} [inst : DecidableEq α] (l : List α), (VE.Acts.firsts l).Nodup
   -- uses VE.Acts.firsts@VE.Acts.Read
@@ -878,28 +791,6 @@ theorem VE.Acts.ruleReading_ok
           VE.Acts.opOf r N.sign = Option.some op ∧ VE.Acts.table op A = [R]
   -- uses VE.Acts.Act@VE.Acts.Tree VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Op@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.opOf@VE.Acts.Table VE.Acts.ruleReading@VE.Acts.Elaborate VE.Acts.table@VE.Acts.Table VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree
   -- expr 4077629860
-theorem VE.Acts.splitMap_exact
-  ∀ (D : VE.Acts.ActsDoc) {U' : VE.NormDefaults.UDoc} {M : VE.Acts.SplitMap},
-    VE.Acts.elaborateMap D = Except.ok (U', M) →
-      (∀ (q : String),
-          q ∈ List.map (fun x => x.name) U'.D.T.regulated ∧ ¬q ∈ List.map (fun x => x.name) D.U.D.T.regulated ↔
-            ∃ p i, (q, p, i) ∈ M.preds) ∧
-        (∀ (n : String),
-            n ∈ List.map (fun x => x.name) U'.D.T.nodes ∧ ¬n ∈ List.map (fun x => x.name) D.U.D.T.nodes ↔
-              ∃ m i, (n, m, i) ∈ M.rules) ∧
-          (∀ (q p : String) (i : Nat),
-              (q, p, i) ∈ M.preds →
-                q = VE.Acts.partPred p i ∧
-                  p ∈ List.map (fun x => x.name) D.U.D.T.regulated ∧
-                    ¬p ∈ List.map (fun x => x.name) U'.D.T.regulated ∧ 1 ≤ i) ∧
-            (∀ (n m : String) (i : Nat),
-                (n, m, i) ∈ M.rules →
-                  n = VE.Acts.partRule m i ∧
-                    m ∈ List.map (fun x => x.name) D.U.D.T.nodes ∧ ¬m ∈ List.map (fun x => x.name) U'.D.T.nodes ∧ 1 ≤ i) ∧
-              (∀ (q p : String) (i j : Nat), (q, p, i) ∈ M.preds → 1 ≤ j → j ≤ i → ∃ q', (q', p, j) ∈ M.preds) ∧
-                (List.map (fun x => x.fst) M.preds).Nodup ∧ (List.map (fun x => x.fst) M.rules).Nodup
-  -- uses VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.SplitMap.preds@VE.Acts.Elaborate VE.Acts.SplitMap.rules@VE.Acts.Elaborate VE.Acts.SplitMap@VE.Acts.Elaborate VE.Acts.elaborateMap@VE.Acts.Elaborate VE.Acts.partPred@VE.Acts.Elaborate VE.Acts.partRule@VE.Acts.Elaborate VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree
-  -- expr 862688641
 theorem VE.Acts.table_free_all_own
   ∀ (op : VE.Acts.Op),
     op = VE.Acts.Op.may ∨ op = VE.Acts.Op.right →
