@@ -1,0 +1,3 @@
+{"allow": [
+  {"definition": "VE.Cardinality.Run.runCase", "operator": "list-empty", "reason": "not a program: the two UNKNOWN mutants replace the decoded premises `ps` (a List (CAdmission w)) by `[]` where its element type is only known from `ps` itself (`ps.map (·.formula)` at :152, `ps.map statementJson` at :159), so the declaration does not elaborate (Invalid field notation; cannot synthesize `α`); every list-empty mutant of runCase that elaborates is KILLED"}
+]}
