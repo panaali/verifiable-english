@@ -1160,6 +1160,13 @@
    "reason": "sc-1b: VE/Scope/Wire.lean +112, VE/Service/Document.lean +33, VE/Compose/Dispatch.lean +2 (V 147; K +0, S +0)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1b, 2026-10-18",
    "commit": "e9e63dda7ff2ca089c8d8f03e3657b76a55c1cfa"
+  },
+  {
+   "class": "V",
+   "lines": 50,
+   "reason": "me-2c: lean/VE/Calc/Run.lean +50 (D[V] wordsIn, line, exact, truncated, sides, display, tie, claimFields; rowJson's line, finding and claim members; runCaseReported's values)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-2c, 2026-10-27",
+   "commit": "b31b8e4c180a9ec347eebe505ecb930e92bb094e"
   }
  ]
 }
