@@ -7208,6 +7208,11 @@ theorem VE.Compose.find_cons_ite
       if c = Bool.true then Option.some (c, e) else List.find? (fun x => x.fst) l
   -- uses
   -- expr 3672781057
+theorem VE.Compose.find_erase
+  ∀ (ps : List String) (f : String → Bool),
+    f "judgments@0" = Bool.false → List.find? f (ps.erase "judgments@0") = List.find? f ps
+  -- uses
+  -- expr 1743147879
 theorem VE.Compose.find_first
   ∀ {l : List String} {P : String → Bool} {x : String},
     List.Pairwise (fun x1 x2 => x1 < x2) l →
@@ -7240,6 +7245,13 @@ theorem VE.Compose.gate_acts
             (r = VE.Compose.Route.norms ∨ r = VE.Compose.Route.normDefaults ∨ r = VE.Compose.Route.readings)
   -- uses VE.Compose.Route.normDefaults@VE.Compose.Dispatch VE.Compose.Route.norms@VE.Compose.Dispatch VE.Compose.Route.readings@VE.Compose.Dispatch VE.Compose.Route@VE.Compose.Dispatch VE.Compose.gateOf@VE.Compose.Dispatch VE.Compose.profileTable@VE.Compose.Dispatch
   -- expr 3915517882
+theorem VE.Compose.gate_judgments
+  ∀ (ps : List String),
+    List.Pairwise (fun x1 x2 => x1 < x2) ps →
+      "documents@1" ∈ ps →
+        VE.Compose.gateOf VE.Compose.profileTable ps = VE.Compose.gateOf VE.Compose.profileTable (ps.erase "judgments@0")
+  -- uses VE.Compose.Route@VE.Compose.Dispatch VE.Compose.gateOf@VE.Compose.Dispatch VE.Compose.profileTable@VE.Compose.Dispatch
+  -- expr 3096057114
 theorem VE.Compose.gate_legacy
   ∀ (ps : List String),
     (∀ (p : String), p ∈ ps → p ∈ VE.Compose.legacyProfiles) →
@@ -7401,6 +7413,14 @@ theorem VE.Compose.routeOf_table
         else if ps.contains "readings@1" = Bool.true then VE.Compose.Route.readings else VE.Compose.todayHead ps
   -- uses VE.Compose.Route.clauses@VE.Compose.Dispatch VE.Compose.Route.discourse@VE.Compose.Dispatch VE.Compose.Route.readings@VE.Compose.Dispatch VE.Compose.Route@VE.Compose.Dispatch VE.Compose.profileTable@VE.Compose.Dispatch VE.Compose.routeOf@VE.Compose.Dispatch VE.Compose.todayHead@VE.Compose.Dispatch
   -- expr 1482409583
+theorem VE.Compose.rowChecks_erase
+  ∀ (ps : List String),
+    ps.Nodup →
+      "documents@1" ∈ ps →
+        ∀ (r : VE.Compose.ProfileRow),
+          r ∈ VE.Compose.profileTable → VE.Compose.rowChecks (ps.erase "judgments@0") r = VE.Compose.rowChecks ps r
+  -- uses VE.Compose.ProfileRow@VE.Compose.Dispatch VE.Compose.profileTable@VE.Compose.Dispatch VE.Compose.rowChecks@VE.Compose.Dispatch
+  -- expr 3978477204
 theorem VE.Compose.sat_append
   ∀ (B : VE.Structure) (P Q : List VE.Formula), VE.Norms.Sat B (P ++ Q) ↔ VE.Norms.Sat B P ∧ VE.Norms.Sat B Q
   -- uses VE.Formula@VE.Syntax VE.Norms.Sat@VE.Norms.Prefix VE.Structure@VE.Semantics
