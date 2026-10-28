@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import json
-import subprocess
 import sys
 from pathlib import Path
 
@@ -17,13 +16,6 @@ sys.path.insert(0, str(RUN))
 import migrate  # noqa: E402
 
 
-FROZEN_TREE_PRESENT = subprocess.run(
-    ["git", "cat-file", "-e", f"{migrate.TREE}^{{tree}}"], cwd=ROOT, capture_output=True).returncode == 0
-NEEDS_FROZEN_RUN = pytest.mark.skipif(
-    not FROZEN_TREE_PRESENT,
-    reason="the bd6c7ab2 pilot commit's tree is absent from this checkout's history")
-
-
 METRICS = json.loads((RUN / "metrics.json").read_text())
 UNMIGRATED = json.loads((RUN / "unmigrated.json").read_text())
 META, _SOURCE = migrate.split_document((RUN / "translation.ve.md").read_bytes())
@@ -35,6 +27,30 @@ def lean():
 
 
 
+
+
+def test_the_frozen_run_is_read_without_git(monkeypatch):
+    """Review F2 (gha-lineage): `bd6c7ab2` never reached `main`, so the run is read from its pinned snapshot, in
+    any clone, and no Git call names the commit."""
+    def no_git(*args, **kwargs):
+        raise AssertionError(f"a Git call for the frozen run: {args}")
+    monkeypatch.setattr(migrate.subprocess, "run", no_git)
+    meta, source, companions = migrate.read_run()
+    assert meta["format"] == "ve-document@1" and source and companions
+    readings = migrate.git_ls(migrate.COMMIT, f"{migrate.RUN}/readings")
+    assert readings == sorted(readings) and {name for name, _ in companions.values()} <= set(readings)
+
+
+def test_a_changed_frozen_snapshot_is_refused(tmp_path, monkeypatch):
+    changed = tmp_path / "frozen-run.json"
+    changed.write_bytes(migrate.FROZEN.read_bytes().replace(b"ve-document@1", b"ve-document@2", 1))
+    monkeypatch.setattr(migrate, "FROZEN", changed)
+    migrate.frozen.cache_clear()
+    try:
+        with pytest.raises(SystemExit, match="SHA-256 pin"):
+            migrate.read_run()
+    finally:
+        migrate.frozen.cache_clear()
 
 
 def test_copied_environment_holds_only_what_the_assertion_mentions():
@@ -58,7 +74,6 @@ def test_copied_environment_holds_only_what_the_assertion_mentions():
                      "predicate arises_from_non_political_crime", "predicate asylum_right_covers_case"]
 
 
-@NEEDS_FROZEN_RUN
 def test_the_migration_reproduces_the_committed_document(tmp_path):
     """Rerun through Lean from run 20261006T1800Z at bd6c7ab2: the same document and record, byte for byte."""
     lean()
@@ -67,7 +82,6 @@ def test_the_migration_reproduces_the_committed_document(tmp_path):
     assert json.loads((tmp_path / "unmigrated.json").read_text()) == UNMIGRATED
 
 
-@NEEDS_FROZEN_RUN
 def test_one_sets_witnesses_replay_equal_in_its_component_and_alone(tmp_path):
     """`rs_u025`'s companions (witnesses SETTLED yes, SETTLED no and UNDECIDED): each witness Lean replays, in the
     component and alone, is the recorded one."""
