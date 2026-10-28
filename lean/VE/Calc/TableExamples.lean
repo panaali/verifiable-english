@@ -67,7 +67,7 @@ def csv (s : String) (cols := t1Cols) : Option Table := (decodeCsv cols s.toUTF8
 def rows? (t : Option Table) : Option (List (List Cell)) := t.map (·.rows)
 #guard rows? (csv "judge,approved,score\r\n32B,true,3\r\n32B,false,5\r\n14B,true,\r\n14B,,4\r\n14B,yes,6") = some T1.rows
 #guard rows? (csv "score,judge,approved\n\"3\",\"a,\"\"b\"\"\",\"\"") = some [[.num 3, .text "a,\"b\"", .absent]]
-#guard ["j,a,x\n", "j,a\n", "j,a,s,s\n", "j,a,s\n1,2", "j,a,s\n\"x,y,z", "j,a,s\n\"x\"y,,",
+#guard ["j,a,x\n", "j,a\n", "a,s\n", "j,s\n", "j,a,s,s\n", "j,a,s\n1,2", "j,a,s\n\"x,y,z", "j,a,s\n\"x\"y,,",
   "j,a,s\nx\"y,,", "j,a,s\nx\ry,,"].all (csv · [("j", .text), ("a", .bool), ("s", .number)] |>.isNone)
 #guard rows? (csv "j,a,s\n\"x\",,\n" [("j", .text), ("a", .bool), ("s", .number)]) = some [[.text "x", .absent, .absent]]
 #guard ["j,a,s\nx,,", "j,a,s\nx,,\n"].map (rows? <| csv · [("j", .text), ("a", .bool), ("s", .number)]) =
@@ -87,9 +87,11 @@ def jsonl (s : String) : Option Table := (decodeJsonl t1Cols s.toUTF8).toOption
   "{\"score\":6,\"judge\":\"14B\",\"approved\":\"yes\"}\n")) = some T1.rows
 #guard rows? (jsonl "{\"judge\":3,\"approved\":1,\"score\":0.30}") = some [[.text "3", .text "1", .num (3/10)]]
 #guard rows? (jsonl "{\"judge\":true,\"approved\":\"x\",\"score\":false}") = some [[.text "true", .text "x", .text "false"]]
-#guard ["{\"judge\":\"a\",\"judge\":\"b\"}", "{\"judges\":\"a\"}", "{\"judge\":[\"a\"]}", "{\"judge\":\"a\"}x", "\n"].all
+#guard ["{\"judge\":\"a\",\"judge\":\"b\"}", "{\"judges\":\"a\"}", "{\"x\":1,\"judge\":\"a\"}", "{\"judge\":\"a\",\"x\":1}",
+  "{\"judge\":\"a\",\"x\":1,\"score\":2}", "{\"judge\":[\"a\"]}", "{\"judge\":\"a\"}x", "\n"].all
   (jsonl · |>.isNone)
 #guard rows? (jsonl "{}") = some [[.absent, .absent, .absent]] ∧ rows? (jsonl "") = some []
+#guard (jsonl "{}\n{}").map (·.rows.length) = some 2 ∧ (jsonl "{}").map (·.columns) = some ["judge", "approved", "score"]
 
 /-! A synthetic 30-row trial: row i is in arm "drug" when i is even, at site A, B or C by i mod 3, responded unless
 4 divides i, aged 40 + i. -/
