@@ -50,4 +50,46 @@ theorem runCaseReported_error {j : Json} {m : String} (h : runCase j = .error m)
       (if (j.getObjValD "kind").getStr?.toOption == some "certificate" then [("valid", .bool false)] else [])) := by
   simp [runCaseReported, h]
 
+/-! ### P3 charged as the problem is built (`chargedNodes`) -/
+
+theorem foldl_add_ge : ∀ (xs : List Nat) (u : Nat), u ≤ xs.foldl (· + ·) u
+  | [], _ => Nat.le_refl _
+  | x :: xs, u => Nat.le_trans (Nat.le_add_right u x) (foldl_add_ge xs (u + x))
+
+theorem foldl_capped_ge (M : Nat) : ∀ (xs : List Nat) (u : Nat),
+    u ≤ xs.foldl (fun a n => if a > M then a else a + n) u
+  | [], _ => Nat.le_refl _
+  | x :: xs, u => by
+    simp only [List.foldl_cons]
+    split
+    · exact foldl_capped_ge M xs u
+    · exact Nat.le_trans (Nat.le_add_right u x) (foldl_capped_ge M xs (u + x))
+
+/-- A sum that stops adding once it passes `M` passes `M` exactly when the whole sum does. -/
+theorem foldl_capped_gt (M : Nat) : ∀ (xs : List Nat) (u : Nat),
+    xs.foldl (fun a n => if a > M then a else a + n) u > M ↔ xs.foldl (· + ·) u > M
+  | [], _ => Iff.rfl
+  | x :: xs, u => by
+    simp only [List.foldl_cons]
+    by_cases h : u > M
+    · simp only [h, if_true]
+      exact ⟨fun _ => Nat.lt_of_lt_of_le h (Nat.le_trans (Nat.le_add_right u x) (foldl_add_ge xs (u + x))),
+        fun _ => Nat.lt_of_lt_of_le h (foldl_capped_ge M xs u)⟩
+    · simp only [h, if_false]
+      exact foldl_capped_gt M xs (u + x)
+
+/-- The charged P3 answers as W6a's aggregate limit on the whole erased problem: the same verdict and text. -/
+theorem problemChecks_eq (E : CEnv) (ps : List CFormula) (c : CFormula) :
+    problemChecks E ps c = (problemLimits E (c :: ps) >>= fun _ =>
+      VE.Time.Wire.quantityLimits.aggregate ((erasedProblem E ps c).2 :: (erasedProblem E ps c).1)) := by
+  have e : chargedNodes E ps c > VE.Limits.maxNodes ↔ (((erasedProblem E ps c).2 :: (erasedProblem E ps c).1).map
+      (VE.Order.Wire.formulaNodes ·.erase)).foldl (· + ·) 0 > VE.Limits.maxNodes := by
+    unfold chargedNodes
+    rw [← List.foldl_map (f := fun q : Unit → VE.Time.QFormula => VE.Order.Wire.formulaNodes (q ()).erase)
+      (g := fun a n => if a > VE.Limits.maxNodes then a else a + n), foldl_capped_gt]
+    simp [erasedThunks, erasedProblem, bridgePremises, List.map_append, List.map_map, Function.comp_def]
+  unfold problemChecks VE.Time.Wire.quantityLimits.aggregate
+  simp only [e]
+  rfl
+
 end VE.Cardinality.Run

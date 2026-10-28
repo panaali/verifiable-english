@@ -24,11 +24,24 @@ open Lean
 open VE.Bridge (exactFields stringField strings)
 open VE.Time (QFormula)
 
+/-- The erased problem in the order of W6a's aggregate count (the conclusion, the region premises, the bridges, the
+erased premises), each formula built only when it is read. -/
+def erasedThunks (E : CEnv) (ps : List CFormula) (c : CFormula) : List (Unit → QFormula) :=
+  (fun _ => c.erase E (c :: ps)) :: (nonnegPremises E (c :: ps)).map (fun q _ => q) ++
+    (countedUniversals E (c :: ps)).map (fun x _ => bridge E (c :: ps) x) ++ ps.map (fun p _ => p.erase E (c :: ps))
+
+/-- P3's node count, charged as the erased problem is built (the DRI's rule of 2026-10-27): a formula is built and
+counted only while the total is within the limit, so an erasure that grows past it stops one formula later. Past the
+limit exactly when W6a's count of the whole erased problem is (`problemChecks_eq`). -/
+def chargedNodes (E : CEnv) (ps : List CFormula) (c : CFormula) : Nat :=
+  (erasedThunks E ps c).foldl (fun used q =>
+    if used > VE.Limits.maxNodes then used else used + VE.Order.Wire.formulaNodes (q ()).erase) 0
+
 /-- P1–P3 (spec 4.2): counted sorts, predicates per counted sort, then W6a's aggregate node limit on the erased
-problem. -/
+problem, charged as it is built. -/
 def problemChecks (E : CEnv) (ps : List CFormula) (c : CFormula) : Except String Unit := do
   problemLimits E (c :: ps)
-  VE.Time.Wire.quantityLimits.aggregate ((erasedProblem E ps c).2 :: (erasedProblem E ps c).1)
+  if chargedNodes E ps c > VE.Limits.maxNodes then throw VE.Time.Wire.aggregateLimit
 
 /-- The regenerated problem's W6a identities (annotated, core) in the projection's environment, premises first. -/
 def erasedIds (w : CardEnv) (ps : List CFormula) (c : CFormula) :
