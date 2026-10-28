@@ -1,0 +1,19 @@
+{
+ "job": "ap-3c-5a28f9c5-gha",
+ "head": "b53c40c474876fbc686a7da34100c7f7aa229eb7",
+ "argv": [
+  "ap-3c-5a28f9c5-gha",
+  "b53c40c474876fbc686a7da34100c7f7aa229eb7",
+  "5f732bf12575fa353e983d3544a0032d9b3fc5b4",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-6f94fd07ef07.tar.zst",
+  "d0e9b0be0f6cd45da213f2e4b3cd71f7362e6e8415a4941decb27266f9be4dfb",
+  "--max-mutants",
+  "1000",
+  "--classes",
+  "trusted",
+  "--allow",
+  "docs/act-phrases/ap-3c/trust-mutants-allow.json",
+  "--jobs",
+  "4"
+ ]
+}
