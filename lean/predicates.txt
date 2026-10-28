@@ -545,6 +545,9 @@ module VE.Scales.Theorems
 module VE.Scope.Effects
 module VE.Scope.Examples
 module VE.Scope.Govern
+module VE.Scope.Readings
+module VE.Scope.ReadingsExamples
+module VE.Scope.ReadingsTheorems
 module VE.Scope.Theorems
 module VE.Scope.Wire
 module VE.Scope.WireExamples
