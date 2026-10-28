@@ -134,12 +134,12 @@
    "first_failure": "E           ve.errors.UnsupportedProfile: UnsupportedProfile: Unsupported profile acts@0"
   },
   {
-   "id": "py-filled-acts-unbound",
-   "file": "ve/readings_route.py",
-   "definition": "_bind_completion",
-   "test": "uv run pytest -q -x tests/test_acts_profile.py -k 'filled_act_not_bound'",
+   "id": "lean-readings-sets-admitted",
+   "file": "lean/VE/Readings/Wire.lean",
+   "definition": "decodeDocument",
+   "test": "PATH=/home/seyran/.elan/bin:$PATH lake build VE.Readings.ActsExamples",
    "killed": true,
-   "first_failure": "E       Failed: DID NOT RAISE CheckerUnavailable"
+   "first_failure": "error: VE/Readings/ActsExamples.lean:53:0: Expression"
   }
  ]
 }
