@@ -1,7 +1,9 @@
 import VE.Calc.Table
 
 /-! The CSV subset of spec 4.1: comma separator, double-quote quoting (a doubled quote inside), a header row, LF or
-CRLF line ends. -/
+CRLF line ends. `csvRecords` reads in a mode with the current field and the record's earlier fields (both reversed)
+after the records read (reversed). `columnTypes` gives the declared type of each header column: every header column
+declared once, and every declared column present. -/
 
 namespace VE.Calc
 
@@ -9,8 +11,6 @@ inductive CsvMode where
   | plain | quoted | closed
   deriving DecidableEq
 
-/-- The records of `cs`, reading in `mode` with the current field `cur` and the record's earlier fields `fs` (both
-reversed) after the records `rs` (reversed). -/
 def csvRecords : List Char → CsvMode → List Char → List String → List (List String) →
     Except String (List (List String))
   | [], .quoted, _, _, _ => .error "TableFormat: a quoted field is not closed"
@@ -28,13 +28,10 @@ def csvRecords : List Char → CsvMode → List Char → List String → List (L
       else csvRecords cs .plain (c :: cur) fs rs
   | _ :: _, .closed, _, _, _ => .error "TableFormat: a character after a closing quote"
 
-/-- The declared type of each header column: every header column declared once, and every declared column present. -/
 def columnTypes (decl : List (String × ColType)) (header : List String) : Except String (List ColType) := do
   unless header.eraseDups.length = header.length do throw "TableFormat: a repeated column"
   if let some (c, _) := decl.find? (fun d => !header.contains d.1) then throw s!"TableFormat: no column {c}"
-  header.mapM fun h => match decl.lookup h with
-    | some t => pure t
-    | none => throw s!"TableFormat: an undeclared column {h}"
+  header.mapM fun h => (decl.lookup h).elim (throw s!"TableFormat: an undeclared column {h}") pure
 
 def decodeCsv (decl : List (String × ColType)) (bytes : ByteArray) : Except String Table := do
   let some text := String.fromUTF8? bytes | throw "TableFormat: the bytes are not UTF-8"
