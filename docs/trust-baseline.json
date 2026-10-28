@@ -1328,6 +1328,20 @@
    "reason": "sc-5rb: VE/Scope/Readings.lean +118 (G[V] untied, scope spec 11.2), VE/Service/Document.lean +12 (withSets D[V], check's reading-set case; checkDocSets tied), VE/Service/ScopeAdmission.lean +6 (S, Pinned.withGoverned); K +0, total +136",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-5rb, 2026-10-28",
    "commit": "d9cff5345ed2874d718bd1fa988b2777d5e2be0f"
+  },
+  {
+   "class": "S",
+   "lines": 110,
+   "reason": "ap-2c: K +0, trusted +135: lean/VE/Acts/Meaning.lean +128 (S +110: Att, Elt, Piece, addPiece, joinAct, singleAct, coordAct, applyRule, piecesOf, atomOk, actOk, meaning; untied V +18: Atom.add, baseAtom, listOf, itemOf), lean/VE/Acts/Readings.lean +7 (untied V: readings, read, analyse); Derived (3) is tied to derived_iff",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-2c, 2026-10-18",
+   "commit": "c0a80d23a7113a6ba38245ae3e78b7ef4edd965a"
+  },
+  {
+   "class": "V",
+   "lines": 25,
+   "reason": "ap-2c: K +0, trusted +135: lean/VE/Acts/Meaning.lean +128 (S +110: Att, Elt, Piece, addPiece, joinAct, singleAct, coordAct, applyRule, piecesOf, atomOk, actOk, meaning; untied V +18: Atom.add, baseAtom, listOf, itemOf), lean/VE/Acts/Readings.lean +7 (untied V: readings, read, analyse); Derived (3) is tied to derived_iff",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-2c, 2026-10-18",
+   "commit": "c0a80d23a7113a6ba38245ae3e78b7ef4edd965a"
   }
  ]
 }
