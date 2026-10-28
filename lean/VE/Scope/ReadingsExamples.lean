@@ -137,4 +137,36 @@ def notN : Nat → Json | 0 => j "[\"top\"]" | n + 1 => .arr #[.str "not", notN 
 #guard pickOf [("scope-u0165-s03", 2, 1), ("scope-u0165-s03", 1, 0)] s03 == some 0 &&
   pickOf [("scope-u0165-s03", 2, 1)] s03 == none
 
+-- sc-5rb (R16's mutants): two governed sets under the frame, each reading composed as its unit would be, the
+-- units in order, and a choice named by both sets
+def a5 : Json := part "hc-5" "restricted_act_permitted" "a5"
+def s05set (b : Json := part "hc-5" "restricted_act_permitted" "a6") : Json :=
+  rset "scope-u0165-s05" "u0165.s05" [reading "a" a5, reading "b" b]
+def twoSets : List (String × Json) := without "u0165.s05" (without "u0165.s03" parts)
+def asWritten (u : String) (c : Json) : Option String := contentStr (gov (hcDoc ((without u parts) ++ [(u, c)])) [g1]) u
+#guard readingContents (sets (setDoc [s03, s05set] twoSets) [g1]) "u0165.s05" ==
+    (do pure [← asWritten "u0165.s05" a5, ← asWritten "u0165.s05" (part "hc-5" "restricted_act_permitted" "a6")]) &&
+  asWritten "u0165.s05" a5 != asWritten "u0165.s05" (part "hc-5" "restricted_act_permitted" "a6") &&
+  readingContents (sets (setDoc [s03, s05set] twoSets) [g1]) "u0165.s03" == some [wideNorm, narrowNorm] &&
+  (sets (setDoc [s03, s05set] twoSets) [g1]).toOption.map unitIds == some (unitIds (setDoc [s03, s05set] twoSets))
+#guard errorOf (sets (setDoc [s03, s05set (cyberPart "restricted_act_permitted" (j "[\"unary\", \"a5\", [\"var\", 1]]")
+    [("sign", .bool false)])] twoSets) [g1]) ==
+  "ScopeChoice: u0165.s03 scope-u0165-s03@1:wide, u0165.s05 scope-u0165-s05@1:b: ScopeConflict: u0165.s05: sign"
+-- a governor that covers no governed unit, listed first, governs nothing; one on u0165.s03 itself, listed first,
+-- still refuses
+#guard errorOf (sets (setDoc [s03]) [gR, g1]) == "ok"
+#guard errorOf (sets (setDoc [s03]) [⟨"gX", "u0165.s03", carveT, .list "u0164.s02", seven⟩, g1]) == "ScopeReadings: u0165.s03"
+-- SR-dep's dependent rule on the document's first unit and on its last: still compared
+def depAt (u : String) : List (String × Json) := (depParts.filter (·.1 != "u0166.s01")) ++ [(u, r9)]
+#guard [("u0164.s01"), ("u0173.s01")].all fun u => errorOf (sets (setDoc [s03set (cyberPart "cyberweapon_creation_permitted"
+    guardWide) (cyberPart "other_permitted" guardNarrow)] (depAt u)) [g1, {gPr with unit := u}]) ==
+  s!"ScopeReadings: {u}: differs between choices u0165.s03 scope-u0165-s03@1:wide and u0165.s03 scope-u0165-s03@1:narrow"
+-- 65 joint choices (5 by 13): over the limit; a set with no version is version 0
+#guard errorOf (sets (setDoc [wideSet "s3" "u0165.s03" 5, wideSet "s5" "u0165.s05" 13] twoSets) [g1]) ==
+  "ResourceLimit: scope choices"
+#guard errorOf (sets (setDoc [Json.mkObj [("id", "scope-u0165-s03"), ("unit", "u0165.s03"), ("status", "open"),
+    ("readings", .arr #[reading "wide" (cyberPart "cyberweapon_creation_permitted" guardWide), reading "narrow"
+      (cyberPart "cyberweapon_creation_permitted" guardNarrow [("sign", .bool false)])])]]) [g1]) ==
+  "ScopeChoice: u0165.s03 scope-u0165-s03@0:narrow: ScopeConflict: u0165.s03: sign"
+
 end VE.Scope.Examples
