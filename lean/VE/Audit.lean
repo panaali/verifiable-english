@@ -6220,13 +6220,17 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.Examples.depth_bound
 #print axioms VE.Scope.Examples.effects_six
 #print axioms VE.Scope.Examples.governor_fields
+#print axioms VE.Scope.Examples.hcDoc_wf
 #print axioms VE.Scope.Examples.invented_payload
+#print axioms VE.Scope.Examples.leadPart_wf
 #print axioms VE.Scope.Examples.markers
 #print axioms VE.Scope.Examples.mergeParts_text
 #print axioms VE.Scope.Examples.narrowings
 #print axioms VE.Scope.Examples.of_source
 #print axioms VE.Scope.Examples.own_binder
 #print axioms VE.Scope.Examples.para_counts
+#print axioms VE.Scope.Examples.part_wf
+#print axioms VE.Scope.Examples.parts_wf
 #print axioms VE.Scope.Examples.reaches_root
 #print axioms VE.Scope.Examples.reaches_seven
 #print axioms VE.Scope.Examples.sdoc_fields
@@ -6313,6 +6317,7 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.ite_bind_ok
 #print axioms VE.Scope.itemRule_decoder
 #print axioms VE.Scope.jsonWF_getD
+#print axioms VE.Scope.jsonWF_mkObj
 #print axioms VE.Scope.jsonWF_top
 #print axioms VE.Scope.label_reach_iff
 #print axioms VE.Scope.lookup_mem

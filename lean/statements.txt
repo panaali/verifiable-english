@@ -42932,10 +42932,21 @@ theorem VE.Scope.Examples.governor_fields
   ∀ (g : VE.Scope.Governor), g = g
   -- uses VE.Scope.Governor@VE.Scope.Govern
   -- expr 1251228642
+theorem VE.Scope.Examples.hcDoc_wf
+  ∀ (cs extra : List (String × Lean.Json)),
+    (∀ (p : String × Lean.Json), p ∈ cs → VE.Scope.JsonWF p.snd) →
+      (∀ (p : String × Lean.Json), p ∈ extra → VE.Scope.JsonWF p.snd) → VE.Scope.JsonWF (VE.Scope.Examples.hcDoc cs extra)
+  -- uses VE.Scope.Examples.hcDoc@VE.Scope.Examples VE.Scope.JsonWF@VE.Scope.Govern
+  -- expr 2226883735
 theorem VE.Scope.Examples.invented_payload
   VE.Scope.HasStr "invented" (VE.Scope.payload VE.Scope.Examples.gI.effect)
   -- uses VE.Scope.Examples.gI@VE.Scope.Examples VE.Scope.Governor.effect@VE.Scope.Govern VE.Scope.HasStr@VE.Scope.Govern VE.Scope.payload@VE.Scope.Govern
   -- expr 1059726456
+theorem VE.Scope.Examples.leadPart_wf
+  VE.Scope.JsonWF
+    (Lean.Json.mkObj [("sign", Lean.Json.bool Bool.false), ("unless", Lean.Json.arr #[]), ("over", Lean.Json.arr #[])])
+  -- uses VE.Scope.JsonWF@VE.Scope.Govern
+  -- expr 2833872464
 theorem VE.Scope.Examples.markers
   VE.Layout.markerLen "* x".toUTF8 0 3 = Option.some 2 ∧
     VE.Layout.markerLen "- x".toUTF8 0 3 = Option.some 2 ∧
@@ -42994,6 +43005,14 @@ theorem VE.Scope.Examples.para_counts
     VE.Scope.Examples.paraAgrees [("a", "x\n\n  \n\t\x0d\nb "), ("b", "c\n \n"), ("c", "\n\nd")] = Bool.true
   -- uses VE.Layout.paraCounts@VE.Layout.List VE.Scope.Examples.paraAgrees@VE.Scope.Examples
   -- expr 3512158593
+theorem VE.Scope.Examples.part_wf
+  ∀ (name pred atom : String), VE.Scope.JsonWF (VE.Scope.Examples.part name pred atom)
+  -- uses VE.Scope.Examples.part@VE.Scope.Examples VE.Scope.JsonWF@VE.Scope.Govern
+  -- expr 1157242663
+theorem VE.Scope.Examples.parts_wf
+  VE.Scope.JsonWF (VE.Scope.Examples.hcDoc VE.Scope.Examples.parts)
+  -- uses VE.Scope.Examples.hcDoc@VE.Scope.Examples VE.Scope.Examples.parts@VE.Scope.Examples VE.Scope.JsonWF@VE.Scope.Govern
+  -- expr 586365037
 theorem VE.Scope.Examples.reaches_root
   VE.Layout.reachesRoot VE.Scope.Examples.boxAnchors 2 (VE.Scope.Examples.anc "s" (Option.some "r") "S" (5, 15)) =
       Bool.true ∧
@@ -43709,6 +43728,11 @@ theorem VE.Scope.jsonWF_getD
   ∀ (j : Lean.Json), VE.Scope.JsonWF j → ∀ (k : String), VE.Scope.JsonWF (j.getObjValD k)
   -- uses VE.Scope.JsonWF@VE.Scope.Govern
   -- expr 2316922810
+theorem VE.Scope.jsonWF_mkObj
+  ∀ (l : List (String × Lean.Json)),
+    (∀ (p : String × Lean.Json), p ∈ l → VE.Scope.JsonWF p.snd) → VE.Scope.JsonWF (Lean.Json.mkObj l)
+  -- uses VE.Scope.JsonWF@VE.Scope.Govern
+  -- expr 2843329041
 theorem VE.Scope.jsonWF_top
   ∀ (o : Lean.Json),
     VE.Scope.JsonWF o → ∀ (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare), o = Lean.Json.obj kvs → kvs.WF

@@ -5807,13 +5807,17 @@
 'VE.Scope.Examples.depth_bound' does not depend on any axioms
 'VE.Scope.Examples.effects_six' depends on axioms: [propext, Quot.sound]
 'VE.Scope.Examples.governor_fields' does not depend on any axioms
+'VE.Scope.Examples.hcDoc_wf' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.Examples.invented_payload' depends on axioms: [propext]
+'VE.Scope.Examples.leadPart_wf' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.Examples.markers' does not depend on any axioms
 'VE.Scope.Examples.mergeParts_text' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.Examples.narrowings' depends on axioms: [propext]
 'VE.Scope.Examples.of_source' depends on axioms: [propext, Quot.sound]
 'VE.Scope.Examples.own_binder' does not depend on any axioms
 'VE.Scope.Examples.para_counts' depends on axioms: [propext, Quot.sound]
+'VE.Scope.Examples.part_wf' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.Examples.parts_wf' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.Examples.reaches_root' does not depend on any axioms
 'VE.Scope.Examples.reaches_seven' depends on axioms: [propext, Quot.sound]
 'VE.Scope.Examples.sdoc_fields' depends on axioms: [propext]
@@ -5900,6 +5904,7 @@
 'VE.Scope.ite_bind_ok' depends on axioms: [propext, Quot.sound]
 'VE.Scope.itemRule_decoder' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.jsonWF_getD' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.jsonWF_mkObj' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.jsonWF_top' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.label_reach_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.lookup_mem' does not depend on any axioms
