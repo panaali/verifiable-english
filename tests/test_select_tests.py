@@ -2363,3 +2363,21 @@ def test_without_a_readable_history_list_the_other_triggers_still_run_the_lint(t
     paths = ["docs/a.md", "tests/test_x.py", "tests/history-map.json", "tools/cache_store.py", "tools/git_words.py"]
     assert select_tests.history_inventory(paths) == ["tests/test_x.py", "tests/history-map.json",
                                                      "tools/git_words.py"]
+
+
+def test_what_the_history_list_names_only_adds_its_lint(lint_unreached, monkeypatch):
+    """No plan gets narrower: with every changed module named by the list, a plan is the one with the rule
+    answering nothing, plus the lint."""
+    paths = ["tools/bench/baseline.py", "usecases/asimov-laws/rules.ve"]
+    rule = lint_unreached.history_inventory
+    monkeypatch.setattr(lint_unreached, "history_inventory", lambda changed: [])
+    without = lint_unreached.impacted(paths)
+    monkeypatch.setattr(lint_unreached, "history_inventory", rule)
+    monkeypatch.setattr(lint_unreached.history_tests, "named_sources", lambda: frozenset(paths))
+    named = lint_unreached.impacted(paths)
+    assert named["history_inventory"] == ["tools/bench/baseline.py"]
+    assert named["selected"] == sorted({*without["selected"], lint_unreached.HISTORY_TEST})
+    assert {key: value for key, value in named.items() if key not in ("selected", "selected_count", "history_inventory",
+                                                                       "commands")} \
+        == {key: value for key, value in without.items() if key not in ("selected", "selected_count",
+                                                                         "history_inventory", "commands")}

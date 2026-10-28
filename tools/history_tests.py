@@ -4,7 +4,8 @@ A test reads history when it starts git or reads a `.git` directory or file: its
 commits, refs or the object store change, with every tracked file the same. Such a result binds the commit it
 ran on and is never carried to another commit (docs/test-architecture/histdep/REPORT.md says where each
 record binds it). The list is an inventory and a lint only: no gate, merge or nightly run skips or reuses a
-test because of it.
+test because of it. The selector reads it only to run the lint when a change can make it stale (`INPUTS`,
+`named_sources`, tools/select_tests.py `history_inventory`).
 
 Where the list comes from, two inputs, no hand edits:
 
