@@ -776,8 +776,8 @@ example : ¬ HasStr "a" (.str "b") := by
 example : ¬ HasStr "k" (Json.mkObj [("k", .null)]) := by
   intro h; cases h with
   | obj hk hx => obtain ⟨p, hp, rfl⟩ := mkObj_get_mem _ _ _ hk; simp at hp; subst hp; exact hasStr_null _ hx
-example : [payload (.frame "p"), payload (.reguard "r"), payload (.carveOut "c"), payload .precedes, payload .yields,
-    payload .title] = ([.str "p", .str "r", .str "c", .null, .null, .null] : List Json) := rfl
+#guard [payload (.frame "p"), payload (.reguard "r"), payload (.carveOut "c"), payload .precedes, payload .yields,
+  payload .title] == ([.str "p", .str "r", .str "c", .null, .null, .null] : List Json)
 example : JsonWF (Json.mkObj [("k", .arr #["a"])]) := .obj _ Std.TreeMap.Raw.WF.ofList fun kv hkv => by
   obtain ⟨p, hp, he⟩ := mkObj_get_mem [("k", .arr #["a"])] kv.1 kv.2 ((getObjVal_obj _ _ _).mpr
     ((Std.TreeMap.Raw.mem_toList_iff_getElem?_eq_some Std.TreeMap.Raw.WF.ofList).mp hkv))

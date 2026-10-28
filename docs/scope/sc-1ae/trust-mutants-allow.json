@@ -1,0 +1,8 @@
+{
+  "allow": [
+    {"definition": "VE.Scope.BlockBound", "operator": "body-true", "reason": "a Prop no evaluated check can read; the build with proofs fails at govern_no_new_symbols (Theorems.lean, hb applied), and Examples' F-sym ¬BlockBound fixture: mutants.json proof_kills tm-BlockBound-body-true"},
+    {"definition": "VE.Scope.BlockBound", "operator": "body-false", "reason": "a Prop no evaluated check can read; the build with proofs fails at govern_no_new_symbols (Theorems.lean, hb applied), and Examples' F-sym BlockBound fixture: mutants.json proof_kills tm-BlockBound-body-false"},
+    {"definition": "VE.Scope.HasStr", "operator": "eq-ne", "reason": "an inductive Prop no evaluated check can read; the build with proofs fails at hasStr_setObj and 22 other proofs: mutants.json proof_kills tm-HasStr-eq-ne"},
+    {"definition": "VE.Scope.HasStr", "operator": "eq-le", "reason": "Lean refuses the text: Except String Json has no LE instance (failed to synthesize), so no such definition exists"}
+  ]
+}
