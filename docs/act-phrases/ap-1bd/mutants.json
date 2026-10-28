@@ -65,33 +65,33 @@
    "id": "lean-singleActsOnly-identity",
    "file": "lean/VE/Readings/Wire.lean",
    "definition": "singleActsOnly",
-   "test": "PATH=/home/seyran/.elan/bin:$PATH lake build VE.Service.ActsExamples",
+   "test": "PATH=/home/seyran/.elan/bin:$PATH lake build VE.Readings.ActsExamples",
    "killed": true,
-   "first_failure": "error: VE/Service/ActsExamples.lean:464:0: Expression"
+   "first_failure": "error: VE/Readings/ActsExamples.lean:44:0: Expression"
   },
   {
    "id": "lean-singleActsOnly-any-refusal",
    "file": "lean/VE/Readings/Wire.lean",
    "definition": "singleActsOnly",
-   "test": "PATH=/home/seyran/.elan/bin:$PATH lake build VE.Service.ActsExamples",
+   "test": "PATH=/home/seyran/.elan/bin:$PATH lake build VE.Readings.ActsExamples",
    "killed": true,
-   "first_failure": "error: VE/Service/ActsExamples.lean:467:0: Expression"
+   "first_failure": "error: VE/Readings/ActsExamples.lean:49:0: Expression"
   },
   {
    "id": "lean-readings-no-acts",
    "file": "lean/VE/Readings/Wire.lean",
    "definition": "decodeEnvironment",
-   "test": "PATH=/home/seyran/.elan/bin:$PATH lake build VE.Service.ActsExamples",
+   "test": "PATH=/home/seyran/.elan/bin:$PATH lake build VE.Readings.ActsExamples",
    "killed": true,
-   "first_failure": "error: VE/Service/ActsExamples.lean:172:0: Expression"
+   "first_failure": "error: VE/Readings/ActsExamples.lean:35:0: Expression"
   },
   {
    "id": "lean-checkW1-plain-refused",
    "file": "lean/VE/SoftNorms/Soften.lean",
    "definition": "checkW1",
-   "test": "PATH=/home/seyran/.elan/bin:$PATH lake build VE.Service.ActsExamples",
+   "test": "PATH=/home/seyran/.elan/bin:$PATH lake build VE.Readings.ActsExamples",
    "killed": true,
-   "first_failure": "error: VE/Service/ActsExamples.lean:459:0: Expression"
+   "first_failure": "error: VE/Readings/ActsExamples.lean:41:0: Expression"
   },
   {
    "id": "py-rust-view-unchanged",
