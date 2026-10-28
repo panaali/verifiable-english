@@ -738,6 +738,7 @@ import VE.WireContract.Engine
 #print axioms VE.Arith.Formula.evalB_sound
 #print axioms VE.Arith.Formula.evalB_total
 #print axioms VE.Arith.Site.ok_of_refusal
+#print axioms VE.Arith.Term.evalB_bits
 #print axioms VE.Arith.Term.evalB_mono
 #print axioms VE.Arith.Term.evalB_sound
 #print axioms VE.Arith.Term.evalB_total
@@ -751,7 +752,15 @@ import VE.WireContract.Engine
 #print axioms VE.Arith.arithOutcome_decided
 #print axioms VE.Arith.arithOutcome_exhausted_iff
 #print axioms VE.Arith.arithOutcome_unbounded_iff
+#print axioms VE.Arith.bits_add_le
+#print axioms VE.Arith.bits_mul_le
+#print axioms VE.Arith.bits_natAbs_le
+#print axioms VE.Arith.bits_sub_le
 #print axioms VE.Arith.boundedNames_snoc
+#print axioms VE.Arith.chargeBits_bits
+#print axioms VE.Arith.chargeBits_eq
+#print axioms VE.Arith.chargeBits_mono
+#print axioms VE.Arith.chargeBits_some
 #print axioms VE.Arith.charge_eq
 #print axioms VE.Arith.charge_mono
 #print axioms VE.Arith.charge_some
@@ -764,6 +773,7 @@ import VE.WireContract.Engine
 #print axioms VE.Arith.decideBounded_sound
 #print axioms VE.Arith.decideBounded_work
 #print axioms VE.Arith.foldl_rel
+#print axioms VE.Arith.log2_le_of_lt
 #print axioms VE.Arith.opEnv_extends
 #print axioms VE.Arith.opEnv_snoc
 #print axioms VE.Arith.quantLoop_false
@@ -772,6 +782,10 @@ import VE.WireContract.Engine
 #print axioms VE.Arith.quantLoop_true
 #print axioms VE.Arith.range_all
 #print axioms VE.Arith.range_ex
+#print axioms VE.Arith.stepB_mono
+#print axioms VE.Arith.stepB_some
+#print axioms VE.Arith.stepB_sound
+#print axioms VE.Arith.stepB_total
 #print axioms VE.Arith.total_take
 #print axioms VE.Arith.wellFormed_at
 #print axioms VE.Ask.Answer.groups_view
