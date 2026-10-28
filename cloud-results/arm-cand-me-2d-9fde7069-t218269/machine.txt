@@ -1,0 +1,6 @@
+job=arm-cand-me-2d-9fde7069-t218269 nproc=4 arch=aarch64 host=runnervm9u1px date=2026-10-28T20:13:30Z ulimit_s=16384
+Mem:              15           1           9           0           4          13
+/dev/root       145G   41G  104G  29% /
+ 20:13:30 up 2 min,  0 user,  load average: 0.89, 0.45, 0.18
+pilot/codex branches: 98
+[gate] passed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 20132 passed, 93 skipped, 0 failures
