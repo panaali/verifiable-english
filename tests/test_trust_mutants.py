@@ -1269,7 +1269,9 @@ def test_the_truth_table_statuses(table_run):
     for row in rows:
         status, where = statuses[f"{space[row['setting']]}.{row['d']}"]
         lines = range(row["line"] - (row["wrap"] != "bare"), row["line"] + 1)  # the wrapper's or the command's
-        places = [f"{module[row['setting']]}:{n}" for n in lines] if row["expected"] != "SURVIVOR" else [""]
+        # a SURVIVOR names the proofs it breaks, if any (review sc-1ae F1)
+        places = [f"{module[row['setting']]}:{n}" for n in lines] if row["expected"] != "SURVIVOR" else [
+            "", "the proofs it breaks"]
         assert status == row["expected"] and where in places, (row, done.stdout)
 
 
