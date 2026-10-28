@@ -103,3 +103,42 @@ def test_answers_are_typed_and_bound_to_their_request(service):
     refused(1, {k: v for k, v in certificate.items() if k != "valid"})
     refused(1, {**certificate, "valid": "true"})
     refused(1, {**certificate, "regions": admission["regions"]})
+
+
+def universal(i: int, depth: int = 6, bits: int = 4) -> dict:
+    """F5 of the qt-a3c loop recheck: a universal statement over the counted sort whose first `depth` conjuncts every
+    statement shares; only the last `bits` connectives (the bits of `i`) tell two statements apart."""
+    def unary(p):
+        return ["unary", p, ["var", 0]]
+
+    def common(d):
+        return unary("expects_further_increase") if d == 0 else ["and", common(d - 1), unary("expects_rates_to_stay")]
+
+    def tail(b):
+        if b == 0:
+            return unary("expects_further_increase")
+        return ["and" if (i >> (b - 1)) & 1 else "or", tail(b - 1), unary("expects_rates_to_stay")]
+    return {"format": "ve-cardinality@1",
+            "formula": ["quantity", ["forall", "fomc_policymaker", ["and", common(depth), tail(bits)]]]}
+
+
+def test_universals_are_bridged_once_in_first_use_order(service):
+    """F5 of the qt-a3c loop recheck: the counted universal statements are deduplicated in near-linear time (a hash
+    set, `firstUseH_eq` and the `@[csimp]` lemmas of `VE/Cardinality/Regions.lean`). Sixteen statements that differ
+    only at the end, then each again in reverse order: the erased problem bridges each once, in first-use order, so
+    its region premises and bridges are the sixteen-statement request's, and the erased premises follow them."""
+    base = next(case for case in route_cases() if case["id"] == "p3-charged")
+    count = {"format": "ve-cardinality@1", "formula": ["count", "fomc_policymaker", [["1", ["any"]]], "eq", "18"]}
+    top = {"format": "ve-cardinality@1", "formula": ["quantity", ["top"]]}
+    distinct = [universal(i) for i in range(16)]
+    once, twice = ({**base, "id": name, "premises": [count, *premises], "conclusion": top}
+                   for name, premises in (("once", distinct), ("twice", distinct + distinct[::-1])))
+    first, second = (bound["result"] for bound in exchange(service, [once, twice])[1]["results"])
+    assert first["status"] == second["status"] == "ok", (first, second)
+    assert first["regions"] == second["regions"]
+    assert first["regions"]["predicates"] == {"fomc_policymaker": ["expects_further_increase", "expects_rates_to_stay"]}
+    regions, shared = len(first["regions"]["constants"]), len(first["regions"]["constants"]) + len(distinct)
+    assert len({json.dumps(bridge) for bridge in first["erased"]["premises"][regions:shared]}) == len(distinct)
+    assert len(first["erased"]["premises"]) == shared + 1 + len(distinct)
+    assert len(second["erased"]["premises"]) == shared + 1 + 2 * len(distinct)
+    assert second["erased"]["premises"][:shared] == first["erased"]["premises"][:shared]
