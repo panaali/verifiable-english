@@ -83,12 +83,14 @@ module ResponseShape.Schemas
 module ResponseShape.Skeleton
 module ResponseShape.Skeletons
 module ResponseShape
+module ScopeBenchMain
 module SensesMain
 module Serve
 module SpeechActsMain
 module VE.Acts.Compat
 module VE.Acts.Elaborate
 module VE.Acts.ElaborateExamples
+module VE.Acts.Grammar
 module VE.Acts.GrammarExamples
 module VE.Acts.Lexical
 module VE.Acts.LexicalBase
@@ -96,6 +98,7 @@ module VE.Acts.LexicalExamples
 module VE.Acts.LexicalProofs
 module VE.Acts.Linearize
 module VE.Acts.Read
+module VE.Acts.RuleExamples
 module VE.Acts.Syntax
 module VE.Acts.Table
 module VE.Acts.TableExamples
@@ -797,6 +800,7 @@ VE.Data.Background.Intended@VE.Data.Background
 VE.Data.Background.Total@VE.Data.Background
 VE.Defaults.DefaultBase@VE.Defaults.Meaning
 VE.Defaults.DefaultCoherent@VE.Defaults.Premises
+VE.Defaults.MeaningFixtures.DefaultBaseFixed@VE.Defaults.MeaningExamples
 VE.Defaults.ReplacementHolds@VE.Defaults.Meaning
 VE.Defaults.SwitchesOff@VE.Defaults.Meaning
 VE.Defaults.leastDecisions@VE.Defaults.Meaning
