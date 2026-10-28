@@ -197,4 +197,215 @@ theorem embeddable_complete {α : Type} [DecidableEq α] (E : VE.Environment) (V
     rw [if_neg (by rw [named _ m1]; omega), if_neg (by rw [named _ mk]; omega)]
     rfl
 
+/-! ## Proofs: the numbering embeds every situation that passes the check -/
+
+theorem pairwise_of_chain {β : Type} (R : β → β → Prop) (trans : ∀ a b c, R a b → R b c → R a c) :
+    ∀ (l : List β), (∀ p ∈ l.zip l.tail, R p.1 p.2) → l.Pairwise R
+  | [], _ => .nil
+  | a :: rest, h => .cons (chain_head R trans rest a h) (pairwise_of_chain R trans rest fun p hp => h p (by
+      cases rest with
+      | nil => simp at hp
+      | cons c rest => exact List.mem_cons_of_mem _ hp))
+
+/-- In a list related pairwise in order, every element is its last element or related to it. -/
+theorem rel_getLast {β : Type} {R : β → β → Prop} {l : List β} (hp : l.Pairwise R) {E : β}
+    (he : l.getLast? = some E) : ∀ D ∈ l, D = E ∨ R D E := by
+  obtain ⟨ys, rfl⟩ := List.getLast?_eq_some_iff.1 he
+  intro D hD
+  rcases List.mem_append.1 hD with hD | hD
+  · exact .inr ((List.pairwise_append.1 hp).2.2 D hD E (by simp))
+  · exact .inl (by simpa using hD)
+
+/-- A count grows strictly when the counted property grows and gains an element. -/
+theorem countP_lt_of {β : Type} {p q : β → Bool} : ∀ {l : List β}, (∀ z ∈ l, p z = true → q z = true) →
+    ∀ {x : β}, x ∈ l → q x = true → p x = false → l.countP p < l.countP q
+  | [], _, _, hx, _, _ => absurd hx List.not_mem_nil
+  | y :: l, hpq, x, hx, hq, hp => by
+    have mono : l.countP p ≤ l.countP q := List.countP_mono_left fun z hz => hpq z (.tail _ hz)
+    rw [List.countP_cons, List.countP_cons]
+    rcases List.mem_cons.1 hx with rfl | hx
+    · simp [hq, hp]; omega
+    · have := countP_lt_of (fun z hz => hpq z (.tail _ hz)) hx hq hp
+      by_cases hy : p y = true
+      · simp [hy, hpq y (.head _) hy]; omega
+      · by_cases hy' : q y = true <;> simp [hy, hy'] <;> omega
+
+/-- The check passes only when the numbering embeds the situation (the check itself gives the calendar premises on
+    the situation's days, so none is assumed: SR-B2). A day's number is its rank plus the offset (date number minus
+    rank) of the last named day at or below it; the gap bounds make the offsets grow, and the year bound of
+    `EventsTyped` keeps the last date, so every day, within `dateMax`. -/
+theorem embeddable_sound {α : Type} [DecidableEq α] (E : VE.Environment) (V : EventsEnv)
+    (hT : EventsTyped E V = true) (M : VE.FiniteModel α) (valid : M.Valid E) (he : embeddable V M = true) :
+    Embeds V M.asStructure (numbering V M) := by
+  have _ := valid
+  simp only [EventsTyped, Bool.and_eq_true, List.all_eq_true, decide_eq_true_eq] at hT
+  have hlt := hT.2
+  have hmax : ∀ D ∈ V.dates, D.num ≤ dateMax := fun D hD => by
+    have hp := (VE.Time.Civil.properB_iff D).1 (hT.1.2 D hD).1.1
+    exact (VE.Time.valid_iff hp).1 ⟨hp, (hT.1.2 D hD).1.2⟩
+  let r := namedRank V M
+  unfold embeddable calendarCheck at he
+  by_cases hsl : strictLinearB V M = true
+  case neg => simp [hsl] at he
+  simp only [hsl, Bool.not_true, Bool.false_eq_true, if_false] at he
+  split at he
+  · simp at he
+  rename_i h2
+  split at he
+  · simp at he
+  rename_i h3
+  simp only [strictLinearB, Bool.and_eq_true, List.all_eq_true, decide_eq_true_eq, Bool.not_eq_true',
+    Bool.or_eq_true, beq_iff_eq] at hsl
+  obtain ⟨⟨⟨-, irr⟩, tr⟩, tot⟩ := hsl
+  have trans : ∀ x ∈ M.domains V.day, ∀ y ∈ M.domains V.day, ∀ z ∈ M.domains V.day,
+      beforeB V M x y = true → beforeB V M y z = true → beforeB V M x z = true := fun x hx y hy z hz h₁ h₂ => by
+    rcases tr x hx y hy z hz with h | h
+    · simp [h₁, h₂] at h
+    · exact h
+  have rankLt : ∀ x ∈ M.domains V.day, rank V M x < (M.domains V.day).length := fun x hx =>
+    List.length_filter_lt_length_iff_exists.2 ⟨x, hx, by simp [irr x hx]⟩
+  have rankMono : ∀ x ∈ M.domains V.day, ∀ y ∈ M.domains V.day, beforeB V M x y = true →
+      rank V M x < rank V M y := fun x hx y hy h => by
+    simp only [rank, ← List.countP_eq_length_filter]
+    exact countP_lt_of (fun z hz hzx => trans z hz x hx y hy hzx h) hx h (irr x hx)
+  have day : ∀ D ∈ V.dates, ∃ x ∈ M.domains V.day, M.constants (dateName D) = some x ∧
+      namedRank V M D = rank V M x := fun D hD => by
+    have := List.find?_eq_none.1 h2 D hD
+    cases hd : dateDay V M D with
+    | none => simp [hd] at this
+    | some x =>
+      obtain ⟨hc, hx⟩ := Option.filter_eq_some_iff.1 hd
+      exact ⟨x, by simpa using hx, hc, by simp [namedRank, hd]⟩
+  -- a day's number is its rank plus a growing offset
+  obtain ⟨h, hnum, hmono, hdate, hbound⟩ : ∃ h : Nat → Nat,
+      (∀ x, numbering V M x = rank V M x + h (rank V M x)) ∧ (∀ k k', k ≤ k' → h k ≤ h k') ∧
+      (∀ D ∈ V.dates, namedRank V M D + h (namedRank V M D) = D.num) ∧
+      (∀ x ∈ M.domains V.day, rank V M x + h (rank V M x) ≤ dateMax) := by
+    split at he
+    · next hd =>
+      refine ⟨fun _ => 0, fun x => ?_, fun _ _ _ => Nat.le_refl _, fun D hD => by simp [hd] at hD, fun x hx => ?_⟩
+      · simp [numbering, hd]
+      · have := rankLt x hx
+        dsimp only
+        split at he
+        · omega
+        · simp at he
+    · next D₁ rest hd =>
+      split at he
+      · simp at he
+      rename_i h1
+      split at he
+      · simp at he
+      rename_i h4
+      split at he
+      · simp at he
+      rename_i h5
+      let P : Civil → Civil → Prop := fun D E => namedRank V M D < namedRank V M E ∧
+        (namedRank V M D ≤ D.num → namedRank V M E ≤ E.num ∧ D.num - namedRank V M D ≤ E.num - namedRank V M E)
+      have pw : V.dates.Pairwise P := pairwise_of_chain P (fun a b c ab bc => by
+          refine ⟨Nat.lt_trans ab.1 bc.1, fun ha => ?_⟩
+          obtain ⟨hb, hb'⟩ := ab.2 ha
+          obtain ⟨hc, hc'⟩ := bc.2 hb
+          exact ⟨hc, by omega⟩) V.dates (fun p hp => by
+        have a := List.find?_eq_none.1 h3 p hp
+        have b := List.find?_eq_none.1 h4 p hp
+        have c := hlt p hp
+        simp only [Bool.not_eq_true', decide_eq_false_iff_not, Classical.not_not, decide_eq_true_eq] at a b
+        exact ⟨a, fun _ => ⟨by omega, by omega⟩⟩)
+      have m1 : D₁ ∈ V.dates := by rw [hd]; exact List.mem_cons_self ..
+      have headRel : ∀ D ∈ V.dates, D = D₁ ∨ P D₁ D := fun D hD => by
+        rw [hd] at hD pw
+        rcases List.mem_cons.1 hD with rfl | hD
+        · exact .inl rfl
+        · exact .inr ((List.pairwise_cons.1 pw).1 D hD)
+      have offOk : ∀ D ∈ V.dates, namedRank V M D ≤ D.num := fun D hD => by
+        rcases headRel D hD with rfl | hP
+        · omega
+        · exact (hP.2 (by omega)).1
+      have off : ∀ D ∈ V.dates, ∀ D', D = D' ∨ P D D' →
+          D.num - namedRank V M D ≤ D'.num - namedRank V M D' := fun D hD D' h => by
+        rcases h with rfl | h
+        · exact Nat.le_refl _
+        · exact (h.2 (offOk D hD)).2
+      have lastF : ∀ k D', (V.dates.filter (fun D => decide (namedRank V M D ≤ k))).getLast? = some D' →
+          D' ∈ V.dates ∧ namedRank V M D' ≤ k ∧ ∀ D ∈ V.dates, namedRank V M D ≤ k → D = D' ∨ P D D' :=
+        fun k D' hL => by
+          have hm := List.mem_filter.1 (List.mem_of_getLast? hL)
+          exact ⟨hm.1, by simpa using hm.2, fun D hD hk =>
+            rel_getLast (pw.filter _) hL D (List.mem_filter.2 ⟨hD, by simpa using hk⟩)⟩
+      have noneF : ∀ k, (V.dates.filter (fun D => decide (namedRank V M D ≤ k))).getLast? = none →
+          ∀ D ∈ V.dates, k < namedRank V M D := fun k hN D hD => by
+        have := List.filter_eq_nil_iff.1 (List.getLast?_eq_none_iff.1 hN) D hD
+        simp at this; omega
+      refine ⟨fun k => match (V.dates.filter (fun D => decide (namedRank V M D ≤ k))).getLast? with
+        | some D => D.num - namedRank V M D
+        | none => D₁.num - namedRank V M D₁, fun x => ?_, fun k k' hk => ?_, fun D hD => ?_, fun x hx => ?_⟩
+      · simp only [numbering]
+        split
+        · next D hL =>
+          have := (lastF _ D hL).2.1; have := offOk D (lastF _ D hL).1
+          omega
+        · next hL =>
+          rw [hd]; dsimp only
+          have := noneF _ hL D₁ m1; have := offOk D₁ m1
+          omega
+      · dsimp only
+        split
+        · next D hL =>
+          obtain ⟨hD, hkD, -⟩ := lastF k D hL
+          split
+          · next D' hL' => exact off D hD D' ((lastF k' D' hL').2.2 D hD (by omega))
+          · next hL' => exact absurd (noneF k' hL' D hD) (by omega)
+        · next hL =>
+          split
+          · next D' hL' => exact off D₁ m1 D' ((headRel D' (lastF k' D' hL').1).imp_left Eq.symm)
+          · exact Nat.le_refl _
+      · dsimp only
+        split
+        · next D' hL =>
+          obtain ⟨-, hk, hall⟩ := lastF _ D' hL
+          rcases hall D hD (Nat.le_refl _) with rfl | hP
+          · have := offOk D hD; omega
+          · exact absurd hP.1 (by omega)
+        · next hL => exact absurd (noneF _ hL D hD) (Nat.lt_irrefl _)
+      · obtain ⟨Dk, hDk⟩ : ∃ Dk, Dk = (D₁ :: rest).getLastD D₁ := ⟨_, rfl⟩
+        rw [← hDk] at h5
+        have mk : Dk ∈ V.dates := by rw [hd, hDk, List.getLastD_cons]; exact List.getLastD_mem_cons ..
+        have hlast : V.dates.getLast? = some Dk := by
+          rw [hd, hDk, List.getLast?_cons, List.getLastD_cons, List.getLastD_eq_getLast?]
+        have toLast : ∀ D ∈ V.dates, D = Dk ∨ P D Dk := rel_getLast pw hlast
+        have hk : (match (V.dates.filter (fun D => decide (namedRank V M D ≤ rank V M x))).getLast? with
+            | some D => D.num - namedRank V M D
+            | none => D₁.num - namedRank V M D₁) ≤ Dk.num - namedRank V M Dk := by
+          split
+          · next D hL => exact off D (lastF _ D hL).1 Dk (toLast D (lastF _ D hL).1)
+          · exact off D₁ m1 Dk (toLast D₁ m1)
+        obtain ⟨y, hy, -, hr⟩ := day Dk mk
+        have := rankLt y hy; have := rankLt x hx; have := offOk Dk mk; have := hmax Dk mk
+        dsimp only
+        omega
+  refine ⟨fun x y hx hy heq => ?_, fun x hx => by rw [hnum]; exact hbound x hx, fun x y hx hy => ?_,
+    fun D hD => ?_⟩
+  · have hx : x ∈ M.domains V.day := hx
+    have hy : y ∈ M.domains V.day := hy
+    rw [hnum, hnum] at heq
+    rcases tot x hx y hy with (h' | h') | h'
+    · exact h'
+    · have := rankMono x hx y hy h'; have := hmono _ _ (Nat.le_of_lt this); omega
+    · have := rankMono y hy x hx h'; have := hmono _ _ (Nat.le_of_lt this); omega
+  · have hx : x ∈ M.domains V.day := hx
+    have hy : y ∈ M.domains V.day := hy
+    show [x, y] ∈ M.relations V.before ↔ numbering V M x < numbering V M y
+    have hb : [x, y] ∈ M.relations V.before ↔ beforeB V M x y = true := by simp [beforeB]
+    rw [hb, hnum, hnum]
+    constructor
+    · intro h'; have := rankMono x hx y hy h'; have := hmono _ _ (Nat.le_of_lt this); omega
+    · intro h'
+      rcases tot x hx y hy with (rfl | h'') | h''
+      · omega
+      · exact h''
+      · have := rankMono y hy x hx h''; have := hmono _ _ (Nat.le_of_lt this); omega
+  · obtain ⟨x, hx, hc, hr⟩ := day D hD
+    exact ⟨x, hc, hx, by rw [hnum, ← hr]; exact hdate D hD⟩
+
 end VE.Events
