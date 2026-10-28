@@ -21,6 +21,21 @@ SURVIVOR (exit 1) whatever the allow file says. The PROBE F1 failed before the f
 `Examples.lean:789` `.num` and `:824` `.bool`). F2, F3 and F5 (C) are left to their FOLLOW-UPs; F4's two allow
 reasons are reworded (`eq-le` INVALID by hand; `BlockBound` `body-false`'s meaningful kill is `Examples.lean:764`).
 
+## fix2 (recheck `sc-1ae-looprecheck1.final.md`)
+
+One new B finding, fixed as a class. **F6 (B)**: `--rescore` reused an ALLOWED row with an empty detail (it kept
+the detail only where `--allow` changed nothing), so a `ctor-drop` came back as breaking no proof, `--allow` refused
+it, and a rescore of allowed evidence on an identical tree reported each allowed drop as a SURVIVOR (exit 1). The
+class: any part of a verdict that `--allow` writes over is lost to `--rescore`. Now `allowed` records the whole
+verdict before `--allow` (`raw_status` and `raw_detail`), the evidence writes `raw_detail` on every row `--allow`
+changed, `previous` reads it for every operator and status, `Reads.verdict` reads it too, and evidence with an
+allowed row that has no `raw_detail` is not reused: the tool does a full run and prints why, so it never reads an
+empty detail. PROBE F6 failed before the fix (`('SURVIVOR', '') != ('ALLOWED', …)`) and passes after it. On this
+item: the evidence was rerun with the new tool (a full run, since the tool's digest changed; 3 KILLED, 13 ALLOWED,
+exit 0), then the recorded command rescored it into [trust-mutants-rescore.json](trust-mutants-rescore.json):
+mode "identical", 15 reused, 1 rerun (`HasStr` `eq-le`, UNKNOWN before `--allow`, which is never reused), 3 KILLED,
+13 ALLOWED, exit 0; each of the 9 `ctor-drop`s stays ALLOWED and names the proofs it breaks.
+
 - Branch `feature/sc-1ae`, worktree `/home/seyran/code/ve-sc-1ae`, merge base `72a241fba` (main, after a merge of
   main at `a93aa5df3`; the work started on `c2a0ee977`).
 - Decision: `reviews/dri-decisions-20261027-featureplan-gates.md` item 2 (manage-agents), fix (a). Plan and spec on
@@ -124,6 +139,11 @@ Lean is the only language whose product code changed (the Python changes are a t
 empty: the last fails; (3) `--allow` applied to an unread constructor: the last fails. Lean: PROBE F1, below as
 `JsonWF-no-bool-num`.
 
+**fix2 (F6).** Seeded bug in the tool (Python), restored: `previous` reads the detail only where `--allow` changed
+nothing (the old line): `tests/test_trust_mutants.py::test_rescore_reads_the_whole_verdict_before_allow` (3 of 4
+cases: ctor-drop, lt-le SURVIVOR, lt-le UNKNOWN) and
+`::test_a_constructor_no_proof_reads_survives_with_no_proof_named_and_is_never_allowed` fail. No Lean or Rust changed.
+
 **Mechanical (R16, checklist 13a).** `zsh mac-pytest.sh --trustmut -- --max-mutants 1000 --allow
 docs/scope/sc-1ae/trust-mutants-allow.json --rescore docs/scope/sc-1ae/trust-mutants.json --json
 docs/scope/sc-1ae/trust-mutants.json` on `3aa5f8151` (after the merge of main): 7 mutants of the 3 definitions with
@@ -187,6 +207,7 @@ otherwise: each computes a `govern` answer, or a decoded name, that breaks the s
   removed. Selected tests on ve-mac-1 at `c8991ddcf`: 1 failed, `tests/test_trust_mutants.py::test_the_truth_table_statuses`
   (it read a SURVIVOR's detail as empty; fixed in `418fdd5d1`), and every other selected file exit 0; then
   `tests/test_trust_mutants.py` in full at `418fdd5d1`'s tree: 348 passed. No test of `main-known-red.txt` failed.
+- **fix2**: see "Tests (fix2)" below.
 - **Full gate**: not run by me, as the task says; the chain runs it on the final HEAD.
 
 ## Pilot bytes (estimate)
@@ -261,6 +282,7 @@ Definitions and theorems (spec section -> place):
 - 5.1 `govern_preserves` -> Theorems.lean:1157 (`unitsOf_patch` :1064, `setObjVal_ne` :1049, `idOf_set` :1061)
 - JSON lemmas: `getObjVal_map` :617 (any `Impl`, via `impl_get_map`), `mkObj_get_mem` :768, `hasStr_set` :790, `hasStr_substOwn` :833, `jsonWF_top` :758
 - 7.1 F-sym -> Examples.lean:751; its document well formed (`parts_wf`, `hcDoc_wf`, `part_wf`, `leadPart_wf`) and `govern_no_new_symbols` on it -> Examples.lean:768 (fix1 F1); `jsonWF_mkObj` -> Theorems.lean:778
+- fix2 F6 class: `tools/trust_mutants.py` `Mutant.raw_detail`, `allowed` (records it), `previous` (reads it; refuses an allowed row without it), `Reads.verdict`, the `--json` rows; tests `tests/test_trust_mutants.py::test_rescore_reads_the_whole_verdict_before_allow`, `::test_rescore_of_evidence_whose_mutants_differ_is_a_full_run`, `::test_a_constructor_no_proof_reads_*` (its rescore of allowed evidence)
 - fix1 F1 class: `tools/trust_mutants.py` `ctor-drop` (in `mutants`), the SURVIVOR detail (in `run`), `allowed`; tests `tests/test_trust_mutants.py::test_the_generator_drops_each_constructor_*`, `::test_a_constructor_no_proof_reads_*`
 Regression commands:
 - `cd lean && PATH=~/.elan/bin:$PATH lake build VE.Scope.Examples` (every proof and fixture of this item)
