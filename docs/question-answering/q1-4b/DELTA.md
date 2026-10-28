@@ -1,16 +1,16 @@
 # Q1.4b: DELTA
 
-**No signature is reserved: the 19 verdict rows are signed by the DRI (reviews/dri-decisions-20261027-featureplan-gates.md item 4); every other row cites R1 or R2.**
+**DRI signature required for P1–P10: ten additional verdict changes found by F1. The 19 V rows remain signed by the DRI (reviews/dri-decisions-20261027-featureplan-gates.md item 4); R1 or R2 covers the refusal rows.**
 
 Base: `parse_speech` at the merge base `de7cb4022` ([evidence/base.json](evidence/base.json)); head: the same corpus
 with every `Is ` wording read by Lean's question reader for the speech-acts caller ([evidence/head.json](evidence/head.json)).
-The corpus, its recording and its comparison are Q1.4's (`../q1-4/evidence/speech_ab.py write` and `compare`):
-2,436 records, 4 environments × 609 wordings. The differences are in [evidence/delta.json](evidence/delta.json): 19
-`verdict`, 79 `class`, 140 `wording`, 0 `lint`; it is the same file as Q1.4's `write-f2` preview against this base.
-`uv run python evidence/speech_ab_f2.py check evidence/delta.json` exits 0 with
-`{"rows": 238, "gloss": 10, "folded": 3, "quantified": 6, "O1": 8, "R1": 211, "failing": 0}`: every verdict row is in
-exactly one of the decision's three classes and the counts are the decision's, every other row keeps every name the
-base quoted and a span wherever the base had one (R1 (a), (b)) or is R2's rule O1. No `lint` row: the
+The corpus starts with Q1.4's 2,436 records (`../q1-4/evidence/speech_ab.py write`), then
+`evidence/speech_ab_f2.py augment` adds ten environment/wording pairs. The differences in
+[evidence/delta.json](evidence/delta.json) are 29 `verdict`, 79 `class`, 140 `wording`, 0 `lint` across 2,446 records.
+`uv run python evidence/speech_ab_f2.py audit evidence/delta.json` checks all 248 changed rows and exits 0:
+19 signed verdicts, ten identified pending verdicts, 79 class and 140 wording rows. `check` exits 1 while P1–P10
+lack a DRI signature. Every refusal row keeps each name the base quoted and a span wherever the base had one
+(R1 (a), (b)) or is R2's rule O1. No `lint` row: the
 `OpaqueWording` warning is gone only where its question is now refused (rows V1-V10).
 
 | Row | Class | Env | Wording | Base (Python) | Head (Lean) | Ruling |
@@ -34,6 +34,16 @@ base quoted and a span wherever the base had one (R1 (a), (b)) or is R2's rule O
 | V17 | (c) every/some | glossed | `Is some service reviewed?` | `InvalidInput` UnknownAlternative: wording, some | polar `["exists", "service", ["unary", "reviewed", ["var", 0]]]` | SIGNED by the DRI 2026-10-27 (reviews/dri-decisions-20261027-featureplan-gates.md item 4); condition test `tests/test_speech_polar_lean.py::test_a_quantified_f2_question_is_read_as_ve_ask_reads_it` |
 | V18 | (c) every/some | f0-reviewed | `Is every service reviewed?` | `InvalidInput` UnknownAlternative: wording, every | polar `["forall", "service", ["unary", "reviewed", ["var", 0]]]` | SIGNED by the DRI 2026-10-27 (reviews/dri-decisions-20261027-featureplan-gates.md item 4); condition test `tests/test_speech_polar_lean.py::test_a_quantified_f2_question_is_read_as_ve_ask_reads_it` |
 | V19 | (c) every/some | f0-reviewed | `Is some service reviewed?` | `InvalidInput` UnknownAlternative: wording, some | polar `["exists", "service", ["unary", "reviewed", ["var", 0]]]` | SIGNED by the DRI 2026-10-27 (reviews/dri-decisions-20261027-featureplan-gates.md item 4); condition test `tests/test_speech_polar_lean.py::test_a_quantified_f2_question_is_read_as_ve_ask_reads_it` |
+| P1 | negative verbalisation | negative | `Is atlas not reviewed?` | `SyntaxError` | polar `["not", ["unary", "reviewed", ["const", "atlas"]]]` | DRI SIGNATURE REQUIRED (F1; verdict change); `test_a_declared_negative_verbalisation_has_a_recorded_verdict_change` |
+| P2 | negative verbalisation | negative | `Is beacon not reviewed?` | `SyntaxError` | polar `["not", ["unary", "reviewed", ["const", "beacon"]]]` | DRI SIGNATURE REQUIRED (F1; verdict change); `test_a_declared_negative_verbalisation_has_a_recorded_verdict_change` |
+| P3 | bare name | names | `Is atlas2 reviewed?` | polar `reviewed(atlas2)` | `SyntaxError` | DRI SIGNATURE REQUIRED (F1; verdict change); `test_a_declared_name_with_digit_or_underscore_has_both_verdict_changes` |
+| P4 | quoted name | names | `Is "atlas2" reviewed?` | `InvalidInput` | polar `reviewed(atlas2)` | DRI SIGNATURE REQUIRED (F1; verdict change); `test_a_declared_name_with_digit_or_underscore_has_both_verdict_changes` |
+| P5 | bare name | names | `Is atlas_two reviewed?` | polar `reviewed(atlas_two)` | `SyntaxError` | DRI SIGNATURE REQUIRED (F1; verdict change); `test_a_declared_name_with_digit_or_underscore_has_both_verdict_changes` |
+| P6 | quoted name | names | `Is "atlas_two" reviewed?` | `InvalidInput` | polar `reviewed(atlas_two)` | DRI SIGNATURE REQUIRED (F1; verdict change); `test_a_declared_name_with_digit_or_underscore_has_both_verdict_changes` |
+| P7 | bare name | names | `Is beacon2 reviewed?` | polar `reviewed(beacon2)` | `SyntaxError` | DRI SIGNATURE REQUIRED (F1; verdict change); `test_a_declared_name_with_digit_or_underscore_has_both_verdict_changes` |
+| P8 | quoted name | names | `Is "beacon2" reviewed?` | `InvalidInput` | polar `reviewed(beacon2)` | DRI SIGNATURE REQUIRED (F1; verdict change); `test_a_declared_name_with_digit_or_underscore_has_both_verdict_changes` |
+| P9 | bare name | names | `Is beacon_two reviewed?` | polar `reviewed(beacon_two)` | `SyntaxError` | DRI SIGNATURE REQUIRED (F1; verdict change); `test_a_declared_name_with_digit_or_underscore_has_both_verdict_changes` |
+| P10 | quoted name | names | `Is "beacon_two" reviewed?` | `InvalidInput` | polar `reviewed(beacon_two)` | DRI SIGNATURE REQUIRED (F1; verdict change); `test_a_declared_name_with_digit_or_underscore_has_both_verdict_changes` |
 | W1 | wording, 132 | all 4 | an `Is <…>?` wording whose rest matches no declared gloss: 54 wordings (`Is atlas checked?` with case, spacing and Unicode variants, `Is atlas not reviewed?`, `Is atlas reviewed, therefore?`, …) | `SyntaxError` `The character at position 0 cannot appear outside a quoted name.`, span 0-1: Python's fallback lexed `@<name> <rest>.`, so the position is that of an `@` the writer did not write | Lean's text over the question with its span: `The question has no reading with the current vocabulary. Closest sentence tried: "…". <diagnosis>` (124), or the lexer's own position in the question, e.g. `The character at position 13 cannot appear outside a quoted name.` (8) | R1 (DRI-RULINGS.md): (a) the base quoted no name, (b) the head has a span, (c) the head names the closest sentence and the true position; checked by `evidence/speech_ab_f2.py check` |
 | O1 | wording, 8 | all 4 | `Is atlas reviewed? Is beacon reviewed?`, `Is atlas reviewed??` | the same `@` position-0 text | `SyntaxError` `Write one question that ends with a question mark.` (`NotOneQuestion`) | R2 (DRI-RULINGS.md), Q1.4's rule O1: a wording of more than one sentence, or with more than one `?`, is refused as not one question before any of its sentences is lexed (`speech_ab.py`'s `order_o1`) |
 | C1 | class, 60 | all 4 | an `Is ` wording the base's regex did not match: no `?` or a character after it (36), a doubled or odd space (12), `Is ?` (4), `Is atlas?` (4), a line break inside a word (4) | `InvalidInput: no single speech-act reading`, no span | Lean's `SyntaxError` with the question's span: `Write one question that ends with a question mark.`, `The spacing at position <n> is not allowed: …`, `The question is empty.`, or `The question has no reading with the current vocabulary. …` | R1 (DRI-RULINGS.md): the class is Lean's `codeClasses`, as Q1.4's W2; the base quoted no name; the added span is R3 (DRI-RULINGS.md), checked inside the question by `question_problem` |
