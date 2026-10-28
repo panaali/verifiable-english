@@ -99,7 +99,7 @@ def regions : Shape :=
     obj,
     .required ["predicates", "constants"],
     closed [
-      ("predicates", .object [] (some (n [arr, .items str, .maxItems 6]))),
+      ("predicates", n [obj, .object [] (some (n [arr, .items str, .maxItems 6]))]),
       ("constants", n [arr, .maxItems 512, .items (n [
         obj,
         .required ["constant", "sort", "bits"],

@@ -15,7 +15,7 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 | today:not probed | 979 |
 | today:shape | 523 |
 | today:unbound | 137 |
-| answers | 561 |
+| answers | 574 |
 | probes | 10204 |
 | hand_binders | 51 |
 
@@ -3317,38 +3317,38 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 
 ## cardinality
 
-0 recorded answers.
+13 recorded answers.
 
 | leaf | kind | class | keyword | format | observed | bound today |
 |---|---|---|---|---|---:|---|
-| `/case_index` | integer | bound | x-index |  | 0 | shape |
-| `/conclusion/meaning_id` | string | none |  | pattern | 0 | not probed |
-| `/environment_id` | string | none |  | pattern | 0 | not probed |
-| `/erased/conclusion/core_meaning_id` | string | none |  | pattern | 0 | not probed |
-| `/erased/conclusion/meaning_id` | string | none |  | pattern | 0 | not probed |
-| `/erased/premises/*/core_meaning_id` | string | none |  | pattern | 0 | not probed |
-| `/erased/premises/*/meaning_id` | string | none |  | pattern | 0 | not probed |
-| `/error` | string | none |  | minLength | 0 | not probed |
-| `/id` | any | bound | x-echo |  | 0 | shape |
-| `/id` | string | bound | x-equals |  | 0 | shape |
-| `/premises/*/meaning_id` | string | none |  | pattern | 0 | not probed |
-| `/regions/constants/*/bits` | string | none |  | pattern | 0 | not probed |
-| `/regions/constants/*/constant` | string | none |  | pattern | 0 | not probed |
-| `/regions/constants/*/sort` | string | bound | x-references |  | 0 | shape |
-| `/regions/predicates/@key` | key | none |  |  | 0 | not probed |
-| `/regions/predicates/{}/*` | string | none |  |  | 0 | not probed |
-| `/status` | string | closed domain | const |  | 0 | shape |
-| `/w6_environment_id` | string | none |  | pattern | 0 | not probed |
-| `/w6_target_environment_id` | string | none |  | pattern | 0 | not probed |
+| `/case_index` | integer | bound | x-index |  | 1 | shape |
+| `/conclusion/meaning_id` | string | none |  | pattern | 5 | not probed |
+| `/environment_id` | string | none |  | pattern | 5 | not probed |
+| `/erased/conclusion/core_meaning_id` | string | none |  | pattern | 3 | not probed |
+| `/erased/conclusion/meaning_id` | string | none |  | pattern | 3 | not probed |
+| `/erased/premises/*/core_meaning_id` | string | none |  | pattern | 28 | not probed |
+| `/erased/premises/*/meaning_id` | string | none |  | pattern | 28 | not probed |
+| `/error` | string | none |  | minLength | 8 | not probed |
+| `/id` | any | bound | x-echo |  | 9 | shape |
+| `/id` | string | bound | x-equals |  | 9 | shape |
+| `/premises/*/meaning_id` | string | none |  | pattern | 18 | not probed |
+| `/regions/constants/*/bits` | string | none |  | pattern | 12 | not probed |
+| `/regions/constants/*/constant` | string | none |  | pattern | 12 | not probed |
+| `/regions/constants/*/sort` | string | bound | x-references |  | 12 | shape |
+| `/regions/predicates/@key` | key | none |  |  | 3 | not probed |
+| `/regions/predicates/{}/*` | string | none |  |  | 6 | not probed |
+| `/status` | string | closed domain | const |  | 13 | shape |
+| `/w6_environment_id` | string | none |  | pattern | 5 | not probed |
+| `/w6_target_environment_id` | string | none |  | pattern | 5 | not probed |
 
 | grammar at | grammar | bound whole by | observed |
 |---|---|---|---:|
-| `/conclusion/formula` | formula |  | 0 |
-| `/erased/conclusion/Q` | q_formula |  | 0 |
-| `/erased/conclusion/core` | core_formula |  | 0 |
-| `/erased/premises/*/Q` | q_formula |  | 0 |
-| `/erased/premises/*/core` | core_formula |  | 0 |
-| `/premises/*/formula` | formula |  | 0 |
+| `/conclusion/formula` | formula |  | 60 |
+| `/erased/conclusion/Q` | q_formula |  | 33 |
+| `/erased/conclusion/core` | core_formula |  | 33 |
+| `/erased/premises/*/Q` | q_formula |  | 472 |
+| `/erased/premises/*/core` | core_formula |  | 371 |
+| `/premises/*/formula` | formula |  | 139 |
 
 | array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
 |---|---|---|---|---|
