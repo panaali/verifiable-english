@@ -71,7 +71,8 @@ none left; 1: a survivor or UNKNOWN left; 3: none left but some NOT RUN; 2: cann
 evidence only: no gate, merge train or nightly reads it.
 
 --rescore PREV.json (speed-tmrescore): every --json records `inputs`, digests of the bytes every verdict is computed
-from (`inputs`, with each file's own in `files`), each mutant's status before --allow (`raw_status`), and for each
+from (`inputs`, with each file's own in `files`), each mutant's verdict before --allow (`raw_status`, and
+`raw_detail` on a row --allow changed: review sc-1ae recheck F6), and for each
 KILLED and INVALID one what it reads (`reads`, `killed_at`: `Reads`). When PREV's mutants are this plan's and
 - its `inputs` are this run's (mode "identical"): its KILLED, INVALID and SURVIVOR verdicts are the same by
   construction and are reused (`reused_from: <PREV head>`); only its UNKNOWN mutants (a build past its time limit
@@ -192,6 +193,7 @@ class Mutant:
     detail: str = ""
     edit: tuple[int, str] = (0, "")  # what `run` writes: text[start:edit[0]] -> edit[1] (`relined`)
     raw_status: str = "NOT RUN"  # the status before --allow, which --rescore reads
+    raw_detail: str = ""  # the detail before --allow, which --rescore reads (a ctor-drop's names the proofs it breaks)
     reused_from: str = ""  # the head of the --rescore run whose verdict this is
     carried: str = ""  # "checks" when --rescore carried it across a check-only change (`Reads.carry`)
     reads: str = ""  # a KILLED or INVALID verdict's digest of what it reads (`Reads.verdict`)
@@ -1217,7 +1219,7 @@ class Reads:
         m.reads, m.killed_at = "", None
         if m.raw_status == "INVALID":
             m.reads = self.scope(m)
-        elif m.raw_status == "KILLED" and (at := self.killer(m.detail)):
+        elif m.raw_status == "KILLED" and (at := self.killer(m.raw_detail)):
             if span := next(((s, e) for s, e, r, _ in self.roles.get(at[0], ()) if r == "check" and s <= at[1] <= e),
                             None):
                 m.reads, m.killed_at = self.check(m, at[0], *span), span
@@ -1318,7 +1320,9 @@ def previous(path: Path, now: dict, found: list[Mutant], why_not) -> tuple[str, 
         if [tuple(r[k] for k in ("id", "file", "line", "definition", "operator", "before", "after")) for r in rows] != [
                 (m.id, m.file, m.line, m.definition, m.operator, m.before, m.after) for m in found]:
             return "its mutants are not this tree's"
-        verdicts = {r["id"]: {"status": r["raw_status"], "detail": r["detail"] if r["raw_status"] == r["status"] else "",
+        if any(r["raw_status"] != r["status"] and "raw_detail" not in r for r in rows):
+            return "it records no detail before --allow (`raw_detail`) on a row --allow changed"
+        verdicts = {r["id"]: {"status": r["raw_status"], "detail": r.get("raw_detail", r["detail"]),
                               "reads": r.get("reads", ""), "killed_at": r.get("killed_at")} for r in rows}
         if not isinstance(head, str) or not head or not all(
                 isinstance(v["detail"], str) and v["status"] in (*REUSED, "UNKNOWN", "NOT RUN")
@@ -1422,7 +1426,7 @@ def main(argv: list[str] | None = None) -> int:
 
     def allowed(m: Mutant) -> None:
         """The current --allow on a verdict, run or reused, which is printed when it is left."""
-        m.raw_status = m.status
+        m.raw_status, m.raw_detail = m.status, m.detail  # the verdict before --allow, all of it: --rescore reads it
         unread = m.operator == "ctor-drop" and m.status == "SURVIVOR" and not m.detail  # review sc-1ae F1
         if m.status in ("SURVIVOR", "UNKNOWN") and (m.definition, m.operator) in allow and not unread:
             reason = allow[(m.definition, m.operator)]
@@ -1499,7 +1503,9 @@ def main(argv: list[str] | None = None) -> int:
             **({"rescore": rescore} if rescore else {}),
             "definitions": [f"lean/{f}: {d}" for f, d in definitions],
             "mutants": [{k: v for k, v in asdict(m).items() if k not in ("start", "end", "edit")
-                         and (k not in ("reused_from", "carried", "reads", "killed_at") or v)} for m in found]}))
+                         and (k not in ("reused_from", "carried", "reads", "killed_at") or v)
+                         and (k != "raw_detail" or (m.raw_status, m.raw_detail) != (m.status, m.detail))}
+                        for m in found]}))
     return 1 if counts["SURVIVOR"] or counts["UNKNOWN"] else 3 if not_run else 0
 
 
