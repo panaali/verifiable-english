@@ -1,0 +1,19 @@
+{
+ "job": "me-4.s1of4-0f35bb7c",
+ "head": "f901564a00c2be0a9904e9e32e41eb1115c2bd0d",
+ "argv": [
+  "me-4.s1of4-0f35bb7c",
+  "f901564a00c2be0a9904e9e32e41eb1115c2bd0d",
+  "c2991bb8119c5fec23bc31bb9309e8fa684c6f5b",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-b589be8420a1.tar.zst",
+  "e7ad853371ba12c434c9d9f000aa8e580d15f3f4a900a1c31eb0209df53a8a90",
+  "--max-mutants",
+  "1000",
+  "--allow",
+  "docs/math-evidence/me-4/trust-mutants-allow.json",
+  "--shard",
+  "1/4",
+  "--jobs",
+  "4"
+ ]
+}
