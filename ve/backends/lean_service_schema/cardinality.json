@@ -1,0 +1,211 @@
+{
+  "$id": "cardinality.json",
+  "$comment": "Mode cardinality: Cardinality.Run.runCaseReported. The case kind (default admission) selects the answer.",
+  "row": {
+    "anyOf": [
+      {"$ref": "common.json#/$defs/case_error"},
+      {"$ref": "#/$defs/error"},
+      {
+        "x-select": [
+          {"then": {"$ref": "#/$defs/admission"}, "when": {"$ref": "common.json#/$defs/no_kind"}},
+          {"then": {"$ref": "#/$defs/admission"}, "when": {"$ref": "#/$defs/kind/admission"}},
+          {"then": {"$ref": "#/$defs/certificate"}, "when": {"$ref": "#/$defs/kind/certificate"}}
+        ]
+      }
+    ]
+  },
+  "$defs": {
+    "admission": {
+      "$comment": "Cardinality.Run.runCase admission: the statements, the region table and the regenerated erased problem.",
+      "additionalProperties": false,
+      "properties": {
+        "conclusion": {"$ref": "#/$defs/statement"},
+        "environment_id": {"$ref": "common.json#/$defs/hex64"},
+        "erased": {"$ref": "#/$defs/problem"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "premises": {"items": {"$ref": "#/$defs/statement"}, "type": "array", "x-length": "/premises"},
+        "regions": {"$ref": "#/$defs/regions"},
+        "status": {"const": "ok"},
+        "w6_environment_id": {"$ref": "common.json#/$defs/hex64"},
+        "w6_target_environment_id": {"$ref": "common.json#/$defs/hex64"}
+      },
+      "required": [
+        "id",
+        "status",
+        "environment_id",
+        "w6_environment_id",
+        "w6_target_environment_id",
+        "premises",
+        "conclusion",
+        "regions",
+        "erased"
+      ],
+      "type": "object",
+      "x-references": {"array": "/regions/constants", "field": "sort", "in": "/environment/cardinality/finite_sorts"}
+    },
+    "body": {
+      "$comment": "Cardinality.Wire.encBody: a Boolean combination of unary atoms on the counted object.",
+      "x-tagged": {
+        "and": [{"$ref": "#/$defs/body"}, {"$ref": "#/$defs/body"}],
+        "any": [],
+        "is": [{"type": "string"}],
+        "not": [{"$ref": "#/$defs/body"}],
+        "or": [{"$ref": "#/$defs/body"}, {"$ref": "#/$defs/body"}]
+      }
+    },
+    "certificate": {
+      "$comment": "Cardinality.Run.runCase certificate: the replayed certificate's verdict beside the statements.",
+      "additionalProperties": false,
+      "properties": {
+        "conclusion": {"$ref": "#/$defs/statement"},
+        "environment_id": {"$ref": "common.json#/$defs/hex64"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "premises": {"items": {"$ref": "#/$defs/statement"}, "type": "array", "x-length": "/premises"},
+        "status": {"const": "ok"},
+        "valid": {"type": "boolean"},
+        "w6_environment_id": {"$ref": "common.json#/$defs/hex64"},
+        "w6_target_environment_id": {"$ref": "common.json#/$defs/hex64"}
+      },
+      "required": [
+        "valid",
+        "id",
+        "status",
+        "environment_id",
+        "w6_environment_id",
+        "w6_target_environment_id",
+        "premises",
+        "conclusion"
+      ],
+      "type": "object"
+    },
+    "erased": {
+      "$comment": "Cardinality.Run.erasedJson: a regenerated W6a formula with its annotated and core identities.",
+      "additionalProperties": false,
+      "properties": {
+        "Q": {"$ref": "quantity.json#/$defs/q_formula"},
+        "core": {"$ref": "quantity.json#/$defs/core_formula"},
+        "core_meaning_id": {"$ref": "common.json#/$defs/hex64"},
+        "meaning_id": {"$ref": "common.json#/$defs/hex64"}
+      },
+      "required": ["Q", "core", "meaning_id", "core_meaning_id"],
+      "type": "object"
+    },
+    "error": {
+      "$comment": "Cardinality.Run.runCaseReported: the request's id (null if absent) and the message, with valid: false exactly for a certificate case.",
+      "additionalProperties": false,
+      "else": {"not": {"required": ["valid"]}},
+      "if": {"x-case": {"$ref": "#/$defs/kind/certificate"}},
+      "properties": {
+        "error": {"$ref": "common.json#/$defs/text"},
+        "id": {"x-echo": "/id"},
+        "status": {"const": "error"},
+        "valid": {"const": false}
+      },
+      "required": ["id", "status", "error"],
+      "then": {"required": ["valid"]},
+      "type": "object"
+    },
+    "formula": {
+      "$comment": "Cardinality.Wire.encode: the canonical ve-cardinality@1 formula (spec 4.1).",
+      "x-tagged": {
+        "and": [{"$ref": "#/$defs/formula"}, {"$ref": "#/$defs/formula"}],
+        "count": [
+          {"type": "string"},
+          {
+            "items": {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [{"$ref": "common.json#/$defs/integer_text"}, {"$ref": "#/$defs/body"}],
+              "type": "array"
+            },
+            "type": "array"
+          },
+          {"enum": ["lt", "le", "eq"]},
+          {"$ref": "common.json#/$defs/integer_text"}
+        ],
+        "implies": [{"$ref": "#/$defs/formula"}, {"$ref": "#/$defs/formula"}],
+        "not": [{"$ref": "#/$defs/formula"}],
+        "or": [{"$ref": "#/$defs/formula"}, {"$ref": "#/$defs/formula"}],
+        "percent_of": [{"$ref": "#/$defs/operand"}, {"$ref": "#/$defs/operand"}, {"$ref": "#/$defs/printed"}],
+        "percent_rounds_to": [
+          {"$ref": "#/$defs/rule"},
+          {"$ref": "#/$defs/operand"},
+          {"$ref": "#/$defs/operand"},
+          {"$ref": "#/$defs/printed"}
+        ],
+        "proportion": [
+          {"type": "string"},
+          {"$ref": "#/$defs/body"},
+          {"$ref": "#/$defs/body"},
+          {"enum": ["gt", "ge", "lt", "le", "eq"]},
+          {"$ref": "common.json#/$defs/integer_text"},
+          {"$ref": "common.json#/$defs/integer_text"}
+        ],
+        "quantity": [{"$ref": "quantity.json#/$defs/q_formula"}],
+        "rounds_to": [
+          {"$ref": "#/$defs/rule"},
+          {"$ref": "#/$defs/operand"},
+          {"$ref": "#/$defs/operand"},
+          {"$ref": "#/$defs/printed"}
+        ]
+      }
+    },
+    "kind": {
+      "admission": {"properties": {"kind": {"const": "admission"}}, "required": ["kind"], "type": "object"},
+      "certificate": {"properties": {"kind": {"const": "certificate"}}, "required": ["kind"], "type": "object"}
+    },
+    "operand": {
+      "$comment": "Cardinality.Wire.encOperand: a closed W6a term or a count.",
+      "x-tagged": {
+        "count": [{"type": "string"}, {"$ref": "#/$defs/body"}],
+        "quantity": [{"$ref": "quantity.json#/$defs/q_term"}]
+      }
+    },
+    "printed": {
+      "$comment": "Cardinality.Wire.encPrinted: a decimal (Time.renderAmount).",
+      "pattern": "-?[0-9][0-9]*(\\.[0-9][0-9]*)?",
+      "type": "string"
+    },
+    "problem": {
+      "$comment": "Cardinality.Run.erasedJson: the regenerated W6a problem, premises then conclusion.",
+      "additionalProperties": false,
+      "properties": {
+        "conclusion": {"$ref": "#/$defs/erased"},
+        "premises": {"items": {"$ref": "#/$defs/erased"}, "type": "array"}
+      },
+      "required": ["premises", "conclusion"],
+      "type": "object"
+    },
+    "regions": {
+      "$comment": "Cardinality.Run.regionsJson: each counted sort's predicates, then every region constant with its sort and bits.",
+      "additionalProperties": false,
+      "properties": {
+        "constants": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "bits": {"pattern": "[0-1]{0,6}", "type": "string"},
+              "constant": {"pattern": "cardinality__[ -~]*", "type": "string"},
+              "sort": {"type": "string"}
+            },
+            "required": ["constant", "sort", "bits"],
+            "type": "object"
+          },
+          "maxItems": 512,
+          "type": "array"
+        },
+        "predicates": {"additionalProperties": {"items": {"type": "string"}, "maxItems": 6, "type": "array"}}
+      },
+      "required": ["predicates", "constants"],
+      "type": "object"
+    },
+    "rule": {"enum": ["ties_up", "half_even", "down", "up"]},
+    "statement": {
+      "$comment": "Cardinality.Run.statementJson: a statement's cardinality meaning id and canonical formula.",
+      "additionalProperties": false,
+      "properties": {"formula": {"$ref": "#/$defs/formula"}, "meaning_id": {"$ref": "common.json#/$defs/hex64"}},
+      "required": ["meaning_id", "formula"],
+      "type": "object"
+    }
+  }
+}

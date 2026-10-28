@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 38953,
+    "total_lines": 38966,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1448,12 +1448,12 @@
       },
       {
         "file": "lean/VE/Cardinality/Run.lean",
-        "lines": 172,
-        "sha256": "8bc9a5f0222d2e3c5c8ad5ebbbb31136f1a871b2cd2ec258c27f3af5ef096df5",
+        "lines": 185,
+        "sha256": "9985c7b0b35eea5bc3a72974d4f95ba29eb0c5cf56f19f37c29c048879428c36",
         "ranges": [
           [
             1,
-            172
+            185
           ]
         ],
         "declarations": [
@@ -2029,6 +2029,7 @@
       "lean/ResponseShape/Encoders/Quantity.lean": "theorems that the quantity mode's rows fit its shape, with value and evaluations tied to the case's model (getObjVal? in statements and proofs only; not on any runner path)",
       "lean/ResponseShape/Encoders/RiskEval.lean": "theorems that the risk-eval mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Encoders/Calc.lean": "theorems that the calc mode's rows fit its shape, with a row's reproduction tied to the case's software member (getObjVal? in proofs only; not on any runner path)",
+      "lean/ResponseShape/Encoders/Cardinality.lean": "theorems that the cardinality mode's rows fit its shape, with valid exactly beside a certificate case (getObjVal? in proofs only; not on any runner path)",
       "lean/ResponseShape/Encoders/SpeechActs.lean": "theorems that the speech-acts mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Encoders/Family.lean": "theorems that the graph, readings, bundle and family-norms modes' rows fit their shapes; its one Json-taking def is a proof (familyNormsFolFits), not on any runner path",
       "lean/ResponseShape/EnumSites.lean": "lists every enum and const of the response shapes and the fields that resolve to one, for tests/test_enum_domains.py (test tooling; JSON only to print the list and in proof helpers; not on any runner path)",

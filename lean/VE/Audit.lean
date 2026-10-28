@@ -65,6 +65,7 @@ import VE.Calc.Run
 import VE.Calc.Units
 import VE.Calc.Wire
 import VE.Cardinality.Examples
+import VE.Cardinality.Gate
 import VE.Cardinality.Ratio
 import VE.Cardinality.Run
 import VE.Cardinality.RunTheorems
@@ -1223,6 +1224,10 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.Examples.wellFormed_cases
 #print axioms VE.Cardinality.Run.decodeCertificate_sound
 #print axioms VE.Cardinality.Run.erasedJson_conclusion
+#print axioms VE.Cardinality.Run.foldl_add_ge
+#print axioms VE.Cardinality.Run.foldl_capped_ge
+#print axioms VE.Cardinality.Run.foldl_capped_gt
+#print axioms VE.Cardinality.Run.problemChecks_eq
 #print axioms VE.Cardinality.Run.regionsJson_constants
 #print axioms VE.Cardinality.Run.runCaseReported_error
 #print axioms VE.Cardinality.Run.runCaseReported_ok
@@ -1273,6 +1278,7 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.evalFin_iff
 #print axioms VE.Cardinality.exists_nodup_filter
 #print axioms VE.Cardinality.firstUse_nodup
+#print axioms VE.Cardinality.gate_cardinality
 #print axioms VE.Cardinality.get_of_data
 #print axioms VE.Cardinality.hasCount_exists_unique
 #print axioms VE.Cardinality.hasCount_regionSize
@@ -1313,6 +1319,7 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.roundsTo_ratio_agree
 #print axioms VE.Cardinality.split_underscore
 #print axioms VE.Cardinality.startsWith_of_data
+#print axioms VE.Cardinality.sublist_of_sorted
 #print axioms VE.Cardinality.substrEq_prefix
 #print axioms VE.Cardinality.sumTerms_denote
 #print axioms VE.Cardinality.sumTerms_typed
@@ -6437,6 +6444,7 @@ import VE.WireContract.Engine
 #print axioms VE.Service.runMode_ask
 #print axioms VE.Service.runMode_bundle
 #print axioms VE.Service.runMode_calc
+#print axioms VE.Service.runMode_cardinality
 #print axioms VE.Service.runMode_check
 #print axioms VE.Service.runMode_checkCertificate
 #print axioms VE.Service.runMode_diagnose
