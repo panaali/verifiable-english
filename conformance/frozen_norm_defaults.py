@@ -13,7 +13,7 @@ import sys
 from types import ModuleType
 
 _ROOT = Path(__file__).resolve().parents[1]
-_REVISION = "9160d326"
+_REVISION = "2b9dda5603d4263be4c5eba7feac07714a5ab321"  # root tree of the frozen source
 _SHA256 = "971ced0206d040903906b896c3a6902752db1d19788745bc4357fe53bfbad870"
 _source = subprocess.check_output(["git", "show", f"{_REVISION}:ve/norm_defaults.py"], cwd=_ROOT)
 if hashlib.sha256(_source).hexdigest() != _SHA256:
