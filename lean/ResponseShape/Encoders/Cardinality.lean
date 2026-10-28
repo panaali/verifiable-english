@@ -8,17 +8,23 @@ open Lean ResponseShape ResponseShape.Skeletons VE.Cardinality
 
 variable {req : Json}
 
-theorem regionsJson_fits (E : CEnv) (fs : List CFormula) :
-    Fits req (skel% "cardinality.json#/$defs/regions") (Run.regionsJson E fs) := by
+theorem regionsJson_fits (R : RegionData) (table : List (String × String × Region)) :
+    Fits req (skel% "cardinality.json#/$defs/regions") (Run.regionsJson R table) := by
   unfold Run.regionsJson
   simp only [toJson, List.toJson, Array.toJson, List.map_toArray, List.map_map]
+  fits
+
+theorem problemJson_fits (ep : List VE.Time.QFormula × VE.Time.QFormula)
+    (ids : List (String × String) × (String × String)) :
+    Fits req (skel% "cardinality.json#/$defs/problem") (Run.problemJson ep ids) := by
+  unfold Run.problemJson
   fits
 
 theorem erasedJson_fits (w : CardEnv) (ps : List CFormula) (c : CFormula) :
     OkFits req (skel% "cardinality.json#/$defs/problem") (Run.erasedJson w ps c) := by
   unfold Run.erasedJson
   okfits
-  all_goals fits
+  exact problemJson_fits _ _
 
 /-- The runner answers a certificate row only for the kind `certificate`. -/
 theorem certificate_kind {j : Json} {kind : String} (hK : j.getObjValD "kind" = .str kind)
@@ -35,7 +41,7 @@ macro "cardinality_rows" : tactic =>
   `(tactic|(okfits <;> kind_subst <;> (try simp only [VE.Time.Wire.ok, Run.statementJson]) <;>
     (try fits using regionsJson_fits) <;>
     first
-      | exact erasedJson_fits _ _ _ _ ‹_›
+      | exact problemJson_fits _ _
       | exact certificate_kind hK ‹_› ‹_›
       | exact absurd (by decide) ‹¬("admission" == "admission") = true›))
 

@@ -98,6 +98,44 @@ def test_ask_lean_cpu(record, ident):
     assert found["cpu_s"] <= 2.0, found  # the plan's registered budget, beside the stored baseline
 
 
+def cardinality_case(premises: int) -> dict:
+    """The recorded `p3-charged` case with `premises` copies of one count premise whose body has 2,048 atoms (six
+    predicates, so 64 regions), well-formed and under the line limit; the conclusion is "top"."""
+    from tests.lean_service_corpus import cardinality_cases
+    base = next(case for case in cardinality_cases() if case["id"] == "p3-charged")
+    atoms = ["a1", "a2", "a3", "a4", "a5", "expects_further_increase"]
+
+    def body(depth, i=0):
+        if depth == 0:
+            return ["is", atoms[i % 6]]
+        return ["and" if depth % 2 else "or", body(depth - 1, 2 * i), body(depth - 1, 2 * i + 1)]
+    count = {"format": "ve-cardinality@1", "formula": ["count", "fomc_policymaker", [["1", body(11)]], "le", "7"]}
+    return {**base, "id": "growth", "premises": [count] * premises,
+            "conclusion": {"format": "ve-cardinality@1", "formula": ["quantity", ["top"]]}}
+
+
+def test_cardinality_region_structure_once(record):
+    """F1 of the qt-a3c review: 50 and then 150 large count premises on a warm service. Each count's erasure read
+    the region structure (`predsOn`) by rescanning the whole problem, so three times the request cost 6.7 times the
+    CPU; computed once per problem (`regionData`, `checkedProblem`) it costs about three times. The build measured is
+    the one in `lean/.lake` (`lake build ve_service`), pinned or not: this measures cost, not trust."""
+    from ve.backends.lean_service import DEFAULT_EXECUTABLE, LeanService
+    seen = {}
+    with LeanService(DEFAULT_EXECUTABLE, timeout=HANG_TIMEOUT, allow_unlisted_build=True) as service:
+        for premises in (50, 150):
+            wire = json.dumps([cardinality_case(premises)], separators=(",", ":"))
+            before = service.cpu_seconds()
+            _, response = service.exchange("cardinality", wire, 1, timeout=HANG_TIMEOUT)
+            after = service.cpu_seconds()
+            assert response["results"][0]["result"]["status"] == "ok", response["results"][0]["result"]
+            if before is None or after is None:
+                pytest.skip("the platform does not report the service's CPU time")
+            seen[premises] = after - before
+    record("50 premises", seen[50])
+    record("150 premises", seen[150])
+    assert seen[150] < 5 * seen[50], seen  # linear: about 3; rescanning the problem at each count gave 6.7
+
+
 def test_scope_b1(record, tmp_path):
     """B1 (docs/spec/scope-PLAN.md): F1-doc's document over the full pinned constitution pilot (184,893 B, 1,132
     units; `tools/bench/scope_b1.py`), through the layout (`layout`: the case read and `VE.Scope.decodeScope`) and

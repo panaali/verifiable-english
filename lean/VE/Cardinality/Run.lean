@@ -25,16 +25,17 @@ open VE.Bridge (exactFields stringField strings)
 open VE.Time (QFormula)
 
 /-- The erased problem in the order of W6a's aggregate count (the conclusion, the region premises, the bridges, the
-erased premises), each formula built only when it is read. -/
-def erasedThunks (E : CEnv) (ps : List CFormula) (c : CFormula) : List (Unit → QFormula) :=
-  (fun _ => c.erase E (c :: ps)) :: (nonnegPremises E (c :: ps)).map (fun q _ => q) ++
-    (countedUniversals E (c :: ps)).map (fun x _ => bridge E (c :: ps) x) ++ ps.map (fun p _ => p.erase E (c :: ps))
+erased premises), from the region structure `R` and its region table, each formula built only when it is read. -/
+def erasedThunks (E : CEnv) (R : RegionData) (table : List (String × String × Region)) (ps : List CFormula)
+    (c : CFormula) : List (Unit → QFormula) :=
+  (fun _ => c.eraseBy E R.predsOn) :: (nonnegOf table).map (fun q _ => q) ++
+    R.universals.map (fun x _ => bridgeBy R.predsOn x) ++ ps.map (fun p _ => p.eraseBy E R.predsOn)
 
 /-- P3's node count, charged as the erased problem is built (the DRI's rule of 2026-10-27): a formula is built and
 counted only while the total is within the limit, so an erasure that grows past it stops one formula later. Past the
 limit exactly when W6a's count of the whole erased problem is (`problemChecks_eq`). -/
 def chargedNodes (E : CEnv) (ps : List CFormula) (c : CFormula) : Nat :=
-  (erasedThunks E ps c).foldl (fun used q =>
+  (erasedThunks E (regionData E (c :: ps)) (regionTable E (c :: ps)) ps c).foldl (fun used q =>
     if used > VE.Limits.maxNodes then used else used + VE.Order.Wire.formulaNodes (q ()).erase) 0
 
 /-- P1–P3 (spec 4.2): counted sorts, predicates per counted sort, then W6a's aggregate node limit on the erased
@@ -43,11 +44,38 @@ def problemChecks (E : CEnv) (ps : List CFormula) (c : CFormula) : Except String
   problemLimits E (c :: ps)
   if chargedNodes E ps c > VE.Limits.maxNodes then throw VE.Time.Wire.aggregateLimit
 
+/-- One formula of the charge: past the limit nothing more is built; otherwise the next formula is built, counted and
+kept (`charge_fst`, `charge_snd`). -/
+def charge (acc : Nat × List QFormula) (q : Unit → QFormula) : Nat × List QFormula :=
+  if acc.1 > VE.Limits.maxNodes then acc else
+    let f := q ()
+    (acc.1 + VE.Order.Wire.formulaNodes f.erase, f :: acc.2)
+
+/-- The erased problem `(premises, conclusion)` from the built list, which is in the charge's order. -/
+def ofCharged : List QFormula → List QFormula × QFormula
+  | c :: ps => (ps, c)
+  | [] => ([], .top)
+
+/-- `problemChecks` with the region structure computed once: P1, the region structure, P2, then P3 charged as the
+erased problem is built; the answer is the region structure, its table and the erased problem the charge built, read
+by the answer and the replay (`checkedProblem_eq`). -/
+def checkedProblem (E : CEnv) (ps : List CFormula) (c : CFormula) :
+    Except String (RegionData × List (String × String × Region) × (List QFormula × QFormula)) := do
+  let R ← checkedRegions E (c :: ps)
+  let table := R.table
+  let built := (erasedThunks E R table ps c).foldl charge (0, [])
+  if built.1 > VE.Limits.maxNodes then throw VE.Time.Wire.aggregateLimit
+  pure (R, table, ofCharged built.2.reverse)
+
+/-- An erased problem's W6a identities (annotated, core) in the projection's environment, premises first. -/
+def idsOf (w : CardEnv) (ep : List QFormula × QFormula) :
+    Except String (List (String × String) × (String × String)) := do
+  pure (← ep.1.mapM (VE.Time.Wire.statementIds w.w6), ← VE.Time.Wire.statementIds w.w6 ep.2)
+
 /-- The regenerated problem's W6a identities (annotated, core) in the projection's environment, premises first. -/
 def erasedIds (w : CardEnv) (ps : List CFormula) (c : CFormula) :
-    Except String (List (String × String) × (String × String)) := do
-  pure (← (erasedProblem w.env ps c).1.mapM (VE.Time.Wire.statementIds w.w6),
-    ← VE.Time.Wire.statementIds w.w6 (erasedProblem w.env ps c).2)
+    Except String (List (String × String) × (String × String)) :=
+  idsOf w (erasedProblem w.env ps c)
 
 def stale : String := "cardinality certificate is stale or bound to different statements"
 
@@ -69,32 +97,37 @@ universe v
 open VE.Time (QFormula)
 open Run (problemChecks erasedIds stale)
 
-/-- The problem's limits, the binding to the cardinality statements, W6a's two bindings to the regenerated problem,
-the replay's step limit, then the frozen order replay of the erased problem. -/
+/-- The binding to the cardinality statements, W6a's two bindings to the erased problem `ep` (its identities `ids`),
+the replay's step limit, then the frozen order replay of `ep` in the environment with the region table `table`. -/
+def checkErased {w : CardEnv} (ps : List (CAdmission w)) (c : CAdmission w)
+    (table : List (String × String × Region)) (ep : List QFormula × QFormula)
+    (ids : List (String × String) × (String × String)) (cert : CardCertificate) : Except String Bool :=
+  if !(cert.environmentId == w.environmentId && cert.premiseIds == ps.map (·.meaningId) &&
+      cert.conclusionId == c.meaningId) then .error stale
+  else if !(cert.w6.environmentId == w.w6.environmentId && cert.w6.premiseIds == ids.1.map (·.1) &&
+      cert.w6.conclusionId == ids.2.1) then .error VE.Time.Wire.staleW6
+  else if !(cert.w6.core.environment_id == w.w6.targetId &&
+      cert.w6.core.premise_meaning_ids == ids.1.map (·.2) && cert.w6.core.conclusion_meaning_id == ids.2.2) then
+    .error VE.Time.Wire.staleCore
+  else if VE.Route.Steps.order cert.w6.core.trace > VE.Route.Steps.maxSteps then .error VE.Route.Steps.stepLimit
+  else .ok (VE.Order.Tableau.checkCertificate (w.env.elabBy table).erase (ep.1.map QFormula.erase) ep.2.erase
+    cert.w6.core)
+
+/-- The problem's limits, then `checkErased` on the regenerated problem. -/
 def checkCertificate {w : CardEnv} (ps : List (CAdmission w)) (c : CAdmission w) (cert : CardCertificate) :
     Except String Bool :=
   match problemChecks w.env (ps.map (·.formula)) c.formula, erasedIds w (ps.map (·.formula)) c.formula with
   | .error e, _ => .error e
   | .ok _, .error e => .error e
-  | .ok _, .ok (pids, cid) =>
-    if !(cert.environmentId == w.environmentId && cert.premiseIds == ps.map (·.meaningId) &&
-        cert.conclusionId == c.meaningId) then .error stale
-    else if !(cert.w6.environmentId == w.w6.environmentId && cert.w6.premiseIds == pids.map (·.1) &&
-        cert.w6.conclusionId == cid.1) then .error VE.Time.Wire.staleW6
-    else if !(cert.w6.core.environment_id == w.w6.targetId &&
-        cert.w6.core.premise_meaning_ids == pids.map (·.2) && cert.w6.core.conclusion_meaning_id == cid.2) then
-      .error VE.Time.Wire.staleCore
-    else if VE.Route.Steps.order cert.w6.core.trace > VE.Route.Steps.maxSteps then .error VE.Route.Steps.stepLimit
-    else .ok (VE.Order.Tableau.checkCertificate (w.env.elab (c.formula :: ps.map (·.formula))).erase
-      ((erasedProblem w.env (ps.map (·.formula)) c.formula).1.map QFormula.erase)
-      (erasedProblem w.env (ps.map (·.formula)) c.formula).2.erase cert.w6.core)
+  | .ok _, .ok ids => checkErased ps c (regionTable w.env (c.formula :: ps.map (·.formula)))
+      (erasedProblem w.env (ps.map (·.formula)) c.formula) ids cert
 
 /-- An accepted certificate is a W6a certificate of the regenerated problem, bound to the cardinality identities. -/
 theorem checkCertificate_sound {w : CardEnv} (ps : List (CAdmission w)) (c : CAdmission w)
     (cert : CardCertificate) (h : checkCertificate ps c cert = .ok true) :
     cert.environmentId = w.environmentId ∧ cert.premiseIds = ps.map (·.meaningId) ∧
       cert.conclusionId = c.meaningId ∧ CEntails.{v} w.env (ps.map (·.formula)) c.formula := by
-  unfold checkCertificate at h
+  unfold checkCertificate checkErased at h
   split at h
   · cases h
   · cases h
@@ -131,19 +164,22 @@ def statementJson {w : CardEnv} (a : CAdmission w) : Json :=
   Json.mkObj [("meaning_id", .str a.meaningId), ("formula", encode a.formula)]
 
 /-- The region table: each counted sort's predicates in first-use order, and every region constant with its sort
-and bits (the bit of each of those predicates, in that order). -/
-def regionsJson (E : CEnv) (fs : List CFormula) : Json :=
-  Json.mkObj [("predicates", Json.mkObj ((countedSorts fs).map fun s => (s, toJson (predsOn E fs s)))),
-    ("constants", toJson ((regionTable E fs).map fun e =>
+and bits (the bit of each of those predicates, in that order), from the region structure and its table. -/
+def regionsJson (R : RegionData) (table : List (String × String × Region)) : Json :=
+  Json.mkObj [("predicates", Json.mkObj (R.sorts.map fun s => (s, toJson (R.predsOn s)))),
+    ("constants", toJson (table.map fun e =>
       Json.mkObj [("constant", .str e.1), ("sort", .str e.2.1), ("bits", .str (bitString e.2.2))]))]
+
+/-- An erased problem, each formula with its W6a identities. -/
+def problemJson (ep : List QFormula × QFormula) (ids : List (String × String) × (String × String)) : Json :=
+  let one := fun (q : QFormula) (ids : String × String) => Json.mkObj [("Q", VE.Time.Wire.encQ q),
+    ("core", VE.Time.Wire.encCore q.erase), ("meaning_id", .str ids.1), ("core_meaning_id", .str ids.2)]
+  Json.mkObj [("premises", Json.arr ((ep.1.zip ids.1).map fun x => one x.1 x.2).toArray),
+    ("conclusion", one ep.2 ids.2)]
 
 /-- The regenerated problem, each formula with its W6a identities. -/
 def erasedJson (w : CardEnv) (ps : List CFormula) (c : CFormula) : Except String Json := do
-  let (pids, cid) ← erasedIds w ps c
-  let one := fun (q : QFormula) (ids : String × String) => Json.mkObj [("Q", VE.Time.Wire.encQ q),
-    ("core", VE.Time.Wire.encCore q.erase), ("meaning_id", .str ids.1), ("core_meaning_id", .str ids.2)]
-  pure (Json.mkObj [("premises", Json.arr (((erasedProblem w.env ps c).1.zip pids).map fun x => one x.1 x.2).toArray),
-    ("conclusion", one (erasedProblem w.env ps c).2 cid)])
+  pure (problemJson (erasedProblem w.env ps c) (← erasedIds w ps c))
 
 /-- A claimed region table or erased problem must be the regenerated one (spec 4.1). -/
 def claimed (j : Json) (field : String) (regenerated : Json) (text : String) : Except String Unit := do
@@ -162,10 +198,10 @@ def runCase (j : Json) : Except String Json := do
   let w ← decodeEnvironment (← j.getObjVal? "environment")
   let ps ← (← (← j.getObjVal? "premises").getArr?).toList.mapM (decodeStatement w)
   let c ← decodeStatement w (← j.getObjVal? "conclusion")
-  let fs := ps.map (·.formula)
-  problemChecks w.env fs c.formula
-  let regions := regionsJson w.env (c.formula :: fs)
-  let erased ← erasedJson w fs c.formula
+  let (R, table, ep) ← checkedProblem w.env (ps.map (·.formula)) c.formula
+  let ids ← idsOf w ep
+  let regions := regionsJson R table
+  let erased := problemJson ep ids
   claimed j "regions" regions "region table differs from the regenerated one"
   claimed j "erased" erased "erased problem differs from the regenerated one"
   let answer := [("environment_id", .str w.environmentId), ("w6_environment_id", .str w.w6.environmentId),
@@ -173,7 +209,7 @@ def runCase (j : Json) : Except String Json := do
     ("conclusion", statementJson c)]
   if kind == "admission" then
     return VE.Time.Wire.ok id (answer ++ [("regions", regions), ("erased", erased)])
-  let valid ← checkCertificate ps c (← decodeCertificate (← j.getObjVal? "certificate"))
+  let valid ← checkErased ps c table ep ids (← decodeCertificate (← j.getObjVal? "certificate"))
   pure (VE.Time.Wire.ok id (("valid", .bool valid) :: answer))
 
 def runCaseReported (j : Json) : Json :=

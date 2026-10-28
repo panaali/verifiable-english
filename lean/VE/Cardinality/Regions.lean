@@ -76,14 +76,22 @@ def CFormula.countBodies : CFormula → List (String × Body)
 def countedSorts (fs : List CFormula) : List String :=
   firstUse ((fs.flatMap (·.countBodies)).map (·.1))
 
+/-- The universal statements of `us` over a sort of `sorts`, each once. -/
+def countedAmong (sorts : List String) (us : List (String × Body × QFormula)) : List (String × Body × QFormula) :=
+  firstUse (us.filter (fun x => sorts.contains x.1))
+
 /-- Recognised universal statements over a counted sort, each once. -/
 def countedUniversals (E : CEnv) (fs : List CFormula) : List (String × Body × QFormula) :=
-  firstUse ((fs.flatMap (·.universalsC E)).filter (fun x => (countedSorts fs).contains x.1))
+  countedAmong (countedSorts fs) (fs.flatMap (·.universalsC E))
+
+/-- The predicates on sort `s` of the count bodies `bodies` and the counted universal statements `us`, in first-use
+order: count bodies first, then counted universal statements. -/
+def predsAmong (bodies : List (String × Body)) (us : List (String × Body × QFormula)) (s : String) : List String :=
+  firstUse (((bodies.filter (·.1 == s)).flatMap (·.2.atoms)) ++ ((us.filter (·.1 == s)).flatMap (·.2.1.atoms)))
 
 /-- The predicates on sort `s`, in first-use order: count bodies first, then counted universal statements. -/
 def predsOn (E : CEnv) (fs : List CFormula) (s : String) : List String :=
-  firstUse ((((fs.flatMap (·.countBodies)).filter (·.1 == s)).flatMap (·.2.atoms)) ++
-    (((countedUniversals E fs).filter (·.1 == s)).flatMap (·.2.1.atoms)))
+  predsAmong (fs.flatMap (·.countBodies)) (countedUniversals E fs) s
 
 /-- A region: one truth value per predicate of `predsOn`; `regions n` lists all `2 ^ n`, first predicate most
 significant. -/
@@ -108,16 +116,22 @@ def bitString (r : Region) : String := String.mk (r.map (fun b => if b then '1' 
 name. -/
 def regionConst (s : String) (r : Region) : String := regionPrefix ++ s ++ "__" ++ bitString r
 
+/-- Every region constant of the sorts `sorts`, with its sort and region, the predicates on each sort read from `P`. -/
+def tableOf (sorts : List String) (P : String → List String) : List (String × String × Region) :=
+  sorts.flatMap fun s => (regions (P s).length).map fun r => (regionConst s r, s, r)
+
 def regionTable (E : CEnv) (fs : List CFormula) : List (String × String × Region) :=
-  (countedSorts fs).flatMap fun s =>
-    (regions (predsOn E fs s).length).map fun r => (regionConst s r, s, r)
+  tableOf (countedSorts fs) (predsOn E fs)
 
 def dl : String := VE.Time.dimensionless
 
-/-- `E.q` plus one dimensionless integer constant per region of every counted sort. -/
-def CEnv.elab (E : CEnv) (fs : List CFormula) : QEnv :=
-  { E.q with constants := fun c =>
-      if (regionTable E fs).any (·.1 == c) then some (.qty dl) else E.q.constants c }
+/-- `E.q` plus one dimensionless integer constant per region constant of `table`. -/
+def CEnv.elabBy (E : CEnv) (table : List (String × String × Region)) : QEnv :=
+  { E.q with constants := fun c => if table.any (·.1 == c) then some (.qty dl) else E.q.constants c }
+
+/-- `E.q` plus one dimensionless integer constant per region of every counted sort; the region table is computed once,
+not at every read of a constant. -/
+def CEnv.elab (E : CEnv) (fs : List CFormula) : QEnv := E.elabBy (regionTable E fs)
 
 /-- The region's own body: each predicate of `ps` or its negation, as the region's bits say. -/
 def regionBody (ps : List String) (r : Region) : Body :=
@@ -128,14 +142,57 @@ def regionBody (ps : List String) (r : Region) : Body :=
 def maxCountedSorts : Nat := 8
 def maxPredicates : Nat := 6
 
+/-- P1: at most 8 counted sorts. -/
+def sortLimit (sorts : List String) : Except String Unit :=
+  if sorts.length > maxCountedSorts then throw s!"ResourceLimit: At most {maxCountedSorts} counted sorts" else pure ()
+
+/-- P2: at most 6 predicates (64 regions) on each counted sort, in first-use order, read from `P`. -/
+def predicateLimit (sorts : List String) (P : String → List String) : Except String Unit := do
+  for s in sorts do
+    if (P s).length > maxPredicates then
+      throw s!"ResourceLimit: At most {maxPredicates} predicates on counted sort {s} ({2 ^ maxPredicates} regions)"
+
 /-- At most 8 counted sorts, then at most 6 predicates (64 regions) on each, in first-use order; so a problem has at
 most 512 region constants. -/
 def problemLimits (E : CEnv) (fs : List CFormula) : Except String Unit := do
   let sorts := countedSorts fs
-  if sorts.length > maxCountedSorts then
-    throw s!"ResourceLimit: At most {maxCountedSorts} counted sorts"
-  for s in sorts do
-    if (predsOn E fs s).length > maxPredicates then
-      throw s!"ResourceLimit: At most {maxPredicates} predicates on counted sort {s} ({2 ^ maxPredicates} regions)"
+  sortLimit sorts
+  predicateLimit sorts (predsOn E fs)
+
+/-! ## The region structure, computed once per problem (`regionData_predsOn`) -/
+
+/-- A problem's counted sorts, the predicates on each and its counted universal statements, each computed once;
+`regionData` builds it after P1 (`sortLimit`), so the predicates are listed for at most 8 sorts. -/
+structure RegionData where
+  sorts : List String
+  preds : List (String × List String)
+  universals : List (String × Body × QFormula)
+
+/-- The predicates on `s`: its row of `preds`, none on a sort that is not counted (as `predsOn`). -/
+def RegionData.predsOn (R : RegionData) (s : String) : List String :=
+  match R.preds.find? (·.1 == s) with
+  | some e => e.2
+  | none => []
+
+/-- The region table, each sort's predicates read from its row. -/
+def RegionData.table (R : RegionData) : List (String × String × Region) := tableOf R.sorts R.predsOn
+
+/-- The region structure of the counted sorts `sorts` with the count bodies `bodies` and the universal statements
+`us`: one scan of the problem for each sort's predicates. -/
+def regionDataOf (sorts : List String) (bodies : List (String × Body)) (us : List (String × Body × QFormula)) :
+    RegionData :=
+  let counted := countedAmong sorts us
+  ⟨sorts, sorts.map fun s => (s, predsAmong bodies counted s), counted⟩
+
+def regionData (E : CEnv) (fs : List CFormula) : RegionData :=
+  regionDataOf (countedSorts fs) (fs.flatMap (·.countBodies)) (fs.flatMap (·.universalsC E))
+
+/-- P1, the region structure, then P2 on it: `problemLimits` and then `regionData`, each part computed once. -/
+def checkedRegions (E : CEnv) (fs : List CFormula) : Except String RegionData := do
+  let sorts := countedSorts fs
+  sortLimit sorts
+  let R := regionDataOf sorts (fs.flatMap (·.countBodies)) (fs.flatMap (·.universalsC E))
+  predicateLimit sorts R.predsOn
+  pure R
 
 end VE.Cardinality

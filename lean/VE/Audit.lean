@@ -1222,8 +1222,14 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.Examples.two_some
 #print axioms VE.Cardinality.Examples.weighted_two
 #print axioms VE.Cardinality.Examples.wellFormed_cases
+#print axioms VE.Cardinality.Run.charge_fst
+#print axioms VE.Cardinality.Run.charge_over
+#print axioms VE.Cardinality.Run.charge_snd
+#print axioms VE.Cardinality.Run.checkErased_eq
+#print axioms VE.Cardinality.Run.checkedProblem_eq
 #print axioms VE.Cardinality.Run.decodeCertificate_sound
 #print axioms VE.Cardinality.Run.erasedJson_conclusion
+#print axioms VE.Cardinality.Run.erasedThunks_built
 #print axioms VE.Cardinality.Run.foldl_add_ge
 #print axioms VE.Cardinality.Run.foldl_capped_ge
 #print axioms VE.Cardinality.Run.foldl_capped_gt
@@ -1258,6 +1264,7 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.bridge_hold
 #print axioms VE.Cardinality.cardinality_elab_sound
 #print axioms VE.Cardinality.checkCertificate_sound
+#print axioms VE.Cardinality.checkedRegions_eq
 #print axioms VE.Cardinality.countAtom_holds_iff
 #print axioms VE.Cardinality.countFin_eq
 #print axioms VE.Cardinality.count_atLeast_agree
@@ -1300,6 +1307,7 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.not_regionName
 #print axioms VE.Cardinality.percentOf_holds_iff
 #print axioms VE.Cardinality.percentRoundsTo_holds_iff
+#print axioms VE.Cardinality.predsOn_not_counted
 #print axioms VE.Cardinality.proportion_holds_iff
 #print axioms VE.Cardinality.ratioTyped_iff
 #print axioms VE.Cardinality.ratio_cmp
@@ -1307,6 +1315,10 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.regionBody_holds
 #print axioms VE.Cardinality.regionConst_inj
 #print axioms VE.Cardinality.regionConst_startsWith
+#print axioms VE.Cardinality.regionData_predsOn
+#print axioms VE.Cardinality.regionData_sorts
+#print axioms VE.Cardinality.regionData_table
+#print axioms VE.Cardinality.regionData_universals
 #print axioms VE.Cardinality.regionSize_eq
 #print axioms VE.Cardinality.regionSize_filter
 #print axioms VE.Cardinality.regionSize_sum
