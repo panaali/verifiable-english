@@ -15267,8 +15267,12 @@
       ],
       "C": [
         "VE.Arith.Defs.opEnv",
+        "VE.Arith.Defs.opEnvList",
         "VE.Arith.Formula.evalB",
         "VE.Arith.OpEnv",
+        "VE.Arith.OpTable",
+        "VE.Arith.OpTable.add",
+        "VE.Arith.OpTable.env",
         "VE.Arith.Term.evalB",
         "VE.Arith.Term.evalBs",
         "VE.Arith.bits",
@@ -15286,6 +15290,20 @@
         "VE.Arith.Site.Ok",
         "VE.Arith.Total",
         "VE.Arith.subSites"
+      ]
+    },
+    "VE/Arith/TableExamples.lean": {
+      "T": [
+        "VE.Arith.TableExamples.byList",
+        "VE.Arith.TableExamples.call0",
+        "VE.Arith.TableExamples.k",
+        "VE.Arith.TableExamples.name64",
+        "VE.Arith.TableExamples.near",
+        "VE.Arith.TableExamples.nearCases",
+        "VE.Arith.TableExamples.order",
+        "VE.Arith.TableExamples.orderCases",
+        "VE.Arith.TableExamples.twice",
+        "VE.Arith.TableExamples.twiceCases"
       ]
     },
     "VE/Arith/BoundedExamples.lean": {
