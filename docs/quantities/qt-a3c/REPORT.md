@@ -3,7 +3,8 @@
 No DRI signature is reserved. Delivered: the mode `cardinality` (registry, dispatch, `runMode_cardinality`, `DEADLINES`), `cardinality.json` with `runCaseReported_fits`, the `cardinality@0` row of AR-10's table with its
 composition theorem `gate_cardinality`, P3 charged as the erased problem is built (`chargedNodes`, `problemChecks_eq`), and the route cases FA1, FA1b and the hostile set.
 Trust: V +12, K +0, S +0 (R16; +16 before fix round 1). DELTA rows 1–2 cite SYNTHESIS 2.2 in me-2b's wording, row 3 cites R2, row 4 cites R16. Size: about 780 hand-written lines, over the ~600 guide (see "Size").
-Next: **qt-a3cb**, the `countermodel` case; then qt-a3d (`Document.lean`, `Render.lean`) and QT-A4. Fix round 1 (review F1): the region structure is computed once per problem and the erased problem built once ("Fix round 1").
+Next: **qt-a3cb**, the `countermodel` case; then qt-a3d (`Document.lean`, `Render.lean`) and QT-A4. Fix round 1 (review F1): the region structure is computed once per problem and the erased problem built once ("Fix round 1"). Fix round 2 (loop recheck F5): the counted universals, sorts and
+predicates are deduplicated in near-linear time ("Fix round 2").
 
 ## Statement gate
 
@@ -119,6 +120,8 @@ one-element lists) and one that does not elaborate.
   - Rest of the class, probed: the first-use deduplication (`firstUse`) is quadratic in the number of distinct items,
     but sorts and predicates are bounded by the environment's 256-name vocabulary limit; distinct counted universal
     statements, which that limit does not bound, cost 3.3 s at 8,000 and 6.8 s at 16,000 (linear to the line limit).
+    That holds only for statements that differ early; the loop recheck's F5 sent statements that differ at the end
+    (quadratic), fixed in round 2.
     `withRegionsFinite` (the countermodel check) is not on a service path; qt-a3cb's case brings it there.
   - Seeded bugs: `mutants-fix1.json`, 6/6 killed (`evidence/mutants-fix1-run.json`): `regions-rescan` (the base's
     rescanning erasure, killed by the benchmark), `charge-keeps` (route cases `fa1-claimed`, `fa1-certificate`) and
@@ -128,6 +131,41 @@ one-element lists) and one that does not elaborate.
     `trust-mutants-fix1.json`, 23 KILLED, 0 SURVIVOR, 4 ALLOWED (list-empty mutants that do not elaborate, reasons in
     `trust-mutants-allow.json`), 8 INVALID, exit 0. Trust: untied V +12 (+16 before; `Run.lean` −4), DELTA row 4.
 - **F2, F3, F4 (C)**: not changed in this round (F2 is QT-A4's relay, F3 is size, F4 the wording of a signed DELTA row).
+
+## Fix round 2 (loop recheck `qt-a3c-looprecheck1.final.md`)
+
+- **F5 (B), the dedup of the counted universals is quadratic and runs before P3.** `firstUse` compared each item with
+  every item kept before it (`List.contains`) and appended it (`acc ++ [x]`). Universal statements that differ only
+  at the end cost a full comparison each, so the dedup cost (statements)² × size before P3 refused the request.
+  The class is every first-use dedup of request data on the service path: `countedSorts` (count bodies' sorts),
+  `countedAmong` (the universals) and `predsAmong` (each sort's predicates) all ran `firstUse` before P1, P2 or P3.
+  - Now: `firstUseH` (`Regions.lean`) keeps a hash set of the items seen and an array in first-use order. Each
+    item is hashed once (derived `Hashable` of `QTerm`, `QFormula` and `Body`, over the whole item) and compared only
+    with the items in its bucket. `firstUseH_eq` proves `firstUseH xs = firstUse xs` (same items, same order) for any
+    lawful `BEq`. The three definitions keep `firstUse`, so the kernel still evaluates them (`decide +kernel` in
+    `Examples.lean`) and no theorem changed. `@[csimp]` lemmas (`countedSorts_eq_H`, `countedAmong_eq_H`,
+    `predsAmong_eq_H`) make compiled code run the hash-set versions. They come right after each definition, before
+    its callers are compiled. There is no Python or Rust copy of this code.
+  - Same answers, proved: `firstUseH_eq` and the three `@[csimp]` equalities; the recorded route cases answer as
+    before. No DELTA row, as for P3's charge: the verdicts and texts are equal by theorem.
+  - PROBE F5 (`ve_service` wall clock): 1,800 statements 3.4 s and 5,400 statements 26.9 s before (ratio 7.9); 1.7 s
+    and 5.1 s after (ratio 3.1). Regression tests:
+    - `tools/bench/test_perf.py::test_cardinality_universal_dedup_near_linear`, the probe as a CPU benchmark. Its
+      baselines are 1.37 s and 4.10 s, and it requires the larger CPU under 4.5 times the smaller.
+    - `tests/test_cardinality_service.py::test_universals_are_bridged_once_in_first_use_order`, with no timing: sixteen
+      statements that differ only at the end, then the same sixteen in reverse order. Each is bridged once, in
+      first-use order, with the sixteen-statement request's region table.
+  - Seeded bugs: `mutants-fix2.json`, 4/4 killed (`evidence/mutants-fix2-run.json`):
+    - `dedup-csimp-dropped` (countedAmong's `@[csimp]` removed) and `dedup-hash-constant` (a constant hash of formulas
+      and bodies): both killed by the benchmark.
+    - `dedup-step-no-insert` (an item kept but not added to the set): killed by `firstUseStep_inv`.
+    - `dedup-step-no-insert-service` (the same bug with its proof bypassed): killed by
+      `test_universals_are_bridged_once_in_first_use_order` and the route cases.
+
+    Lean only.
+  - Trust: the new definitions and instances are class C (checked code). `tools/trust_map.py --check --since
+    3694f9791` gives trusted +0, so the round has no trusted line for trust mutants. The item total is unchanged:
+    untied V +12 (DELTA row 4).
 
 ## Self-review against BUILDER-CHECKLIST
 
@@ -168,5 +206,6 @@ one-element lists) and one that does not elaborate.
 - Generated (never by hand): `uv run python tools/regen_generated.py --write` (cardinality.json and envelope.json, profile_table.json, inventories, Audit files, binding census, checkers.lock); the schema writer needs `lake build ve_response_decode` first; a new mode needs `tools/response_schemas.py --write` before the regen pass (the service's handshake is checked against envelope.json).
 - Mutants: `uv run python tools/mutants.py docs/quantities/qt-a3c/mutants.json --no-baseline --evidence docs/quantities/qt-a3c/evidence/mutants-run.json`.
 - Fix round 1: `uv run python tools/mutants.py docs/quantities/qt-a3c/mutants-fix1.json --no-baseline --evidence docs/quantities/qt-a3c/evidence/mutants-fix1-run.json` (pinned build first); benchmark `uv run --frozen python -m pytest tools/bench/test_perf.py -k cardinality_region` (needs a pinned build: the file's collection starts the service).
+- Fix round 2: `uv run python tools/mutants.py docs/quantities/qt-a3c/mutants-fix2.json --no-baseline --evidence docs/quantities/qt-a3c/evidence/mutants-fix2-run.json` (pinned build first); benchmark `uv run --frozen python -m pytest tools/bench/test_perf.py -k universal_dedup`; `lean/VE/Cardinality/Regions.lean`: `firstUseH` :25, `firstUseH_eq` :51, the derived `Hashable` instances :54, `countedSortsH`/`countedSorts_eq_H`, `countedAmongH`/`countedAmong_eq_H`, `predsAmongH`/`predsAmong_eq_H` (after each definition).
 - Trust mutants: `zsh /home/seyran/code/manage-agents/mac-pytest.sh --trustmut -- --max-mutants 1000 --allow docs/quantities/qt-a3c/trust-mutants-allow.json --rescore docs/quantities/qt-a3c/trust-mutants.json --json docs/quantities/qt-a3c/trust-mutants.json`.
 ## END FIXMAP
