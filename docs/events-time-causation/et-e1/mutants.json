@@ -1,0 +1,22 @@
+{
+  "item": "et-e1",
+  "note": "Seeded bugs in the ET-E1 scorer (Python, an evidence script; no product code changed). Each planted by sed, run with the one test, restored by git checkout.",
+  "mutants": [
+    {"id": "S1", "file": "docs/events-time-causation/et-e1/run.py", "function": "parse_answer",
+     "change": "return found[0] (first ANSWER line) instead of found[-1]",
+     "test": "tests/test_et_e1_probe.py::test_parse_answer_takes_the_last_answer_line", "result": "killed"},
+    {"id": "S2", "file": "docs/events-time-causation/et-e1/run.py", "function": "score",
+     "change": "per-wording bar correct > 0.9 * total instead of >=",
+     "test": "tests/test_et_e1_probe.py::test_one_miss_in_five_is_below_the_bar_and_one_in_ten_is_not", "result": "killed"},
+    {"id": "S3", "file": "docs/events-time-causation/et-e1/run.py", "function": "score",
+     "change": "a pair told apart when either U1 or U2 is correct instead of both",
+     "test": "tests/test_et_e1_probe.py::test_told_apart_needs_both_readings_of_the_same_sample", "result": "killed"},
+    {"id": "S4", "file": "docs/events-time-causation/et-e1/run.py", "function": "load_raw",
+     "change": "absent answers accepted (absent check disabled)",
+     "test": "tests/test_et_e1_probe.py::test_load_raw_refuses_unbound_answers[missing]", "result": "killed"},
+    {"id": "S5", "file": "docs/events-time-causation/et-e1/run.py", "function": "load_raw",
+     "change": "the int type check on sample dropped",
+     "test": "tests/test_et_e1_probe.py::test_load_raw_refuses_unbound_answers[sample_bool]",
+     "result": "survived (equivalent): the file-name binding still refuses sample False, since the file is __s0.json, not __sFalse.json"}
+  ]
+}
