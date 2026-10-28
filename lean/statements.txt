@@ -14168,6 +14168,12 @@ theorem VE.Events.countP_lt_lt
           List.countP (fun y => Decidable.decide (f y < f x)) l < List.countP (fun y => Decidable.decide (f y < b)) l
   -- uses
   -- expr 949534644
+theorem VE.Events.countP_lt_of
+  ∀ {β : Type} {p q : β → Bool} {l : List β},
+    (∀ (z : β), z ∈ l → p z = Bool.true → q z = Bool.true) →
+      ∀ {x : β}, x ∈ l → q x = Bool.true → p x = Bool.false → List.countP p l < List.countP q l
+  -- uses
+  -- expr 3690781615
 theorem VE.Events.countP_lt_succ
   ∀ {β : Type} (f : β → Nat) (l : List β) (b : Nat),
     List.countP (fun y => Decidable.decide (f y < b + 1)) l =
@@ -14219,6 +14225,13 @@ theorem VE.Events.embeddable_complete
             ∀ (num : α → Nat), VE.Events.Embeds V M.asStructure num → VE.Events.embeddable V M = Bool.true
   -- uses VE.Environment@VE.Syntax VE.Events.Embeds@VE.Events.Premises VE.Events.EventsEnv.day@VE.Events.Decl VE.Events.EventsEnv@VE.Events.Decl VE.Events.EventsTyped@VE.Events.Decl VE.Events.embeddable@VE.Events.Calendar VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel.domains@VE.Finite VE.FiniteModel@VE.Finite
   -- expr 3156555518
+theorem VE.Events.embeddable_sound
+  ∀ {α : Type} [inst : DecidableEq α] (E : VE.Environment) (V : VE.Events.EventsEnv),
+    VE.Events.EventsTyped E V = Bool.true →
+      ∀ (M : VE.FiniteModel α),
+        M.Valid E → VE.Events.embeddable V M = Bool.true → VE.Events.Embeds V M.asStructure (VE.Events.numbering V M)
+  -- uses VE.Environment@VE.Syntax VE.Events.Embeds@VE.Events.Premises VE.Events.EventsEnv@VE.Events.Decl VE.Events.EventsTyped@VE.Events.Decl VE.Events.embeddable@VE.Events.Calendar VE.Events.numbering@VE.Events.Calendar VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Structure.Carrier@VE.Semantics
+  -- expr 3364039827
 theorem VE.Events.eventsPremises_satisfiable
   ∀ (E : VE.Environment) (V : VE.Events.EventsEnv),
     VE.Events.WellFormedEvents E V = Bool.true →
@@ -14300,11 +14313,22 @@ theorem VE.Events.pad_value
   ∀ (w n : Nat), List.foldl (fun v c => 10 * v + (c.toNat - 48)) 0 (VE.Time.pad w n).data = n
   -- uses VE.Time.pad@VE.Time.Calendar
   -- expr 1295606217
+theorem VE.Events.pairwise_of_chain
+  ∀ {β : Type} (R : β → β → Prop),
+    (∀ (a b c : β), R a b → R b c → R a c) →
+      ∀ (l : List β), (∀ (p : β × β), p ∈ l.zip l.tail → R p.fst p.snd) → List.Pairwise R l
+  -- uses
+  -- expr 1870197974
 theorem VE.Events.regen_typed
   ∀ (E : VE.Environment) (V : VE.Events.EventsEnv),
     VE.Events.WellFormedEvents E V = Bool.true → VE.Events.EventsTyped (VE.Events.regenEnv E V) V = Bool.true
   -- uses VE.Environment@VE.Syntax VE.Events.EventsEnv@VE.Events.Decl VE.Events.EventsTyped@VE.Events.Decl VE.Events.WellFormedEvents@VE.Events.Decl VE.Events.regenEnv@VE.Events.Decl
   -- expr 1843268313
+theorem VE.Events.rel_getLast
+  ∀ {β : Type} {R : β → β → Prop} {l : List β},
+    List.Pairwise R l → ∀ {E : β}, l.getLast? = Option.some E → ∀ (D : β), D ∈ l → D = E ∨ R D E
+  -- uses
+  -- expr 1063318347
 theorem VE.Events.startRole_mem
   ∀ {V : VE.Events.EventsEnv} {s st : String},
     VE.Events.startRole V s = Option.some st →
