@@ -2,7 +2,9 @@
 
     uv run --frozen python usecases/udhr-pilot/run-20261010T1400Z/migrate.py [--commit bd6c7ab2] [--out DIR]
 
-Reads the run at `bd6c7ab2` with `git show` (docs/spec/readings-defaults-PLAN.md, RD-5 step 1) and writes, into
+Reads the run at `bd6c7ab2` (docs/spec/readings-defaults-PLAN.md, RD-5 step 1) from `frozen-run.json`, the files of
+that commit's tree the migration and the witness replay read, pinned by SHA-256 (the commit never reached `main`, so
+no other clone has it); `--commit` names another commit, read with `git show`. It writes, into
 `--out` (default: this directory), the migrated main document `translation.ve.md` and `unmigrated.json`:
 
 - `readings@1` joins the main profiles, and `norm-defaults@0` with it: Lean checks a document whose readings carry
@@ -31,6 +33,8 @@ from __future__ import annotations
 
 import argparse
 import copy
+import functools
+import hashlib
 import json
 import subprocess
 import sys
@@ -43,19 +47,34 @@ sys.path.insert(0, str(HERE))
 
 RUN = "usecases/udhr-pilot/run-20261006T1800Z"
 COMMIT = "bd6c7ab2"
-TREE = "67488355afafbdde2f7f72b341b93cd2cc680b48"
+FROZEN = HERE / "frozen-run.json"  # COMMIT's files the scripts read (tree 67488355), one snapshot
+FROZEN_SHA256 = "fe165c3c12496387992ab6af62228505eddcfecf6af1bb70b1e4831513b2beaf"
 ADDED_PROFILES = ("norm-defaults@0", "readings@1")
 OPEN_TERM_DIFFERENCE = "declare open term"
 
 
+@functools.cache
+def frozen():
+    """COMMIT's files by path, after the snapshot's SHA-256 matches its pin."""
+    raw = FROZEN.read_bytes()
+    if hashlib.sha256(raw).hexdigest() != FROZEN_SHA256:
+        raise SystemExit(f"migrate: {FROZEN.name} does not match its SHA-256 pin")
+    return json.loads(raw)["files"]
+
+
 def git_show(commit, path):
-    revision = TREE if commit == COMMIT else commit
-    return subprocess.run(["git", "show", f"{revision}:{path}"], cwd=ROOT, check=True, capture_output=True).stdout
+    if commit == COMMIT:
+        if path not in frozen():
+            raise SystemExit(f"migrate: {path} is not in {FROZEN.name}")
+        return frozen()[path].encode()
+    return subprocess.run(["git", "show", f"{commit}:{path}"], cwd=ROOT, check=True, capture_output=True).stdout
 
 
 def git_ls(commit, path):
-    revision = TREE if commit == COMMIT else commit
-    out = subprocess.run(["git", "ls-tree", "--name-only", f"{revision}:{path}"], cwd=ROOT, check=True,
+    if commit == COMMIT:
+        prefix = path.rstrip("/") + "/"
+        return sorted({name[len(prefix):].split("/")[0] for name in frozen() if name.startswith(prefix)})
+    out = subprocess.run(["git", "ls-tree", "--name-only", f"{commit}:{path}"], cwd=ROOT, check=True,
                          capture_output=True).stdout.decode()
     return out.split()
 
