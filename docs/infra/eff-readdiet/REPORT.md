@@ -10,7 +10,7 @@ Open items: none; no DELTA, DRI signature, or trust change.
 
 | Acceptance item | Owner | Evidence |
 | --- | --- | --- |
-| Keep the route-recipe heading and link; move steps 1–7 verbatim | AGENT | `AGENTS.md:51`, `docs/ROUTE-RECIPE.md:1`; byte comparison against `git show d9cff5345:AGENTS.md` passed |
+| Keep the route-recipe heading and link; move steps 1–7 verbatim | AGENT | `AGENTS.md:51`, `docs/ROUTE-RECIPE.md:1`; line comparison against `git show d9cff5345:AGENTS.md` passed |
 | Condense Generated files without dropping its rules or commands; leave other AGENTS sections unchanged | AGENT | Section 700 bytes; script compared all other sections byte for byte with base; `test_repo_map.py` passed |
 | Apply existing path, Lean-name and command checks to both entry docs; guard link and 6,000-byte limit | AGENT | `tests/test_repo_map.py`: 33 passed; three seeded bugs below failed their named tests |
 | Add recipe beside AGENTS.md in docs index | AGENT | `docs/README.md:15` |
