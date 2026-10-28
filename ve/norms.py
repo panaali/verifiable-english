@@ -205,13 +205,15 @@ def plain_wordings(env) -> dict[str, str]:
     """Lean's wording of each plain act of `env` by its predicate (act-phrases 2.1: "{0} has the right …",
     "{0} is entitled …"), from the elaborate row over the environment alone of the route that reads it (the
     norms route's `norms-elaborate`, or the norm-defaults route's `norm-defaults-elaborate` for a `norm-defaults@0`
-    environment), bound to the request. Python computes no wording; an environment without a plain act asks
-    nothing."""
+    environment), bound to the request. A `readings@1` environment is asked of the readings route, whose runner
+    strips the head profile and runs the same case on the lower route (`Readings.Run.runLower`); Python drops no
+    profile. Python computes no wording; an environment without a plain act asks nothing."""
     if not _plain_acts(env):
         return {}
     from .backends.relay import decide_once
-    mode = "norm-defaults" if NORM_DEFAULTS_PROFILE in env.profiles else "norms"
-    kind = f"{mode}-elaborate"
+    lower = "norm-defaults" if NORM_DEFAULTS_PROFILE in env.profiles else "norms"
+    kind = f"{lower}-elaborate"
+    mode = "readings-route" if "readings@1" in env.profiles else lower
     row = decide_once(mode, {"id": kind, "kind": kind, "environment": env.to_dict(), "norms": []})
     _bind_wordings(env, row, kind)
     return dict(row["wordings"])

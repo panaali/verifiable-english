@@ -70,5 +70,21 @@ def d4 (p : String) : String := s!"InvalidInput: act phrase for {p} joins acts w
 #guard [d4 "pp", d4 "p"].map (VE.Readings.Wire.singleActsOnly ["p", "pp"]) == [d33 "pp", d33 "p"]
 #guard [d4 "p", "InvalidInput: act phrase for q has a comma outside a fixed phrase"].map
   (VE.Readings.Wire.singleActsOnly ["q"]) == [d4 "p", "InvalidInput: act phrase for q has a comma outside a fixed phrase"]
+-- the wordings of a `readings@1` environment's plain acts (review F1): the readings route runs an elaborate case on
+-- the lower route without `readings@1`, so its row's `wordings` are that route's, with and without `norm-defaults@0`
+def elabCase (kind : String) (e : Json) : Json :=
+  Json.mkObj [("id", .str kind), ("kind", .str kind), ("environment", e), ("norms", Json.arr #[])]
+def wordings (row : Json) : List String :=
+  (((row.getObjValD "wordings").getObj?).toOption.map (·.toList.map (·.1))).getD []
+#guard wordings (VE.Readings.Run.runLower (elabCase "norms-elaborate" envA)) == ["heard", "paid"]
+#guard (VE.Readings.Run.runLower (elabCase "norms-elaborate" envA)).getObjValD "wordings" ==
+  (VE.Norms.Run.runCaseReported (elabCase "norms-elaborate" (envA ["acts@0", "norms@0", "relational-fol@0"]))).getObjValD
+    "wordings"
+#guard (VE.Readings.Run.runLower (elabCase "norm-defaults-elaborate"
+    (envA ["acts@0", "norm-defaults@0", "norms@0", "readings@1", "relational-fol@0"]))).getObjValD "wordings" ==
+  (VE.NormDefaults.Run.runCaseReported (elabCase "norm-defaults-elaborate"
+    (envA ["acts@0", "norm-defaults@0", "norms@0", "relational-fol@0"]))).getObjValD "wordings"
+#guard wordings (VE.NormDefaults.Run.runCaseReported (elabCase "norm-defaults-elaborate"
+    (envA ["acts@0", "norm-defaults@0", "norms@0", "relational-fol@0"]))) == ["heard", "paid"]
 
 end VE.Readings.ActsExamples

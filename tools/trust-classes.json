@@ -15365,7 +15365,9 @@
         "VE.Readings.ActsExamples.d4",
         "VE.Readings.ActsExamples.rule",
         "VE.Readings.ActsExamples.setDoc",
-        "VE.Readings.ActsExamples.noActs"
+        "VE.Readings.ActsExamples.noActs",
+        "VE.Readings.ActsExamples.elabCase",
+        "VE.Readings.ActsExamples.wordings"
       ]
     }
   }

@@ -12795,7 +12795,7 @@ module VE.Question.Texts ec3c063b64cbe3d8106b137560ce1552e4d03119f0d5312c462b242
 51:0-52:72 def VE.Question.illTypedQuestionText@VE.Question.Texts
 53:0-58:106 def VE.Question.movedText@VE.Question.Texts
 59:0-61:90 def VE.Question.unansweredText@VE.Question.Texts
-module VE.Readings.ActsExamples 3418722347b5e82f19f519efca561e93e477cb565131bea26ec059f605b0c733
+module VE.Readings.ActsExamples bdec39830f7db5242fa01ae0828c7ca02e8fa82f9f4be7ff46f55bb88a64295e
 10:0-10:109 def VE.Readings.ActsExamples.a1@VE.Readings.ActsExamples
 11:0-11:70 def VE.Readings.ActsExamples.a2@VE.Readings.ActsExamples
 12:0-12:79 def VE.Readings.ActsExamples.a5@VE.Readings.ActsExamples
@@ -12813,6 +12813,8 @@ module VE.Readings.ActsExamples 3418722347b5e82f19f519efca561e93e477cb565131bea2
 45:0-48:89 def VE.Readings.ActsExamples.setDoc@VE.Readings.ActsExamples
 49:0-52:91 def VE.Readings.ActsExamples.noActs@VE.Readings.ActsExamples
 69:0-69:112 def VE.Readings.ActsExamples.d4@VE.Readings.ActsExamples
+75:0-76:98 def VE.Readings.ActsExamples.elabCase@VE.Readings.ActsExamples
+77:0-78:83 def VE.Readings.ActsExamples.wordings@VE.Readings.ActsExamples
 module VE.Readings.Asserted 2d8ef381b8bdced4585651fb2fda5ecf0c02bd23ab75fe99c70726f8092b9a12
 20:0-26:16 def VE.Readings.buildAsserted@VE.Readings.Asserted
 28:0-40:43 theorem VE.Readings.build_snd_fold@VE.Readings.Asserted
