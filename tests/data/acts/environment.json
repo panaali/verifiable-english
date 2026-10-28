@@ -1,0 +1,67 @@
+{
+ "language": "ve.core@0.2",
+ "profiles": [
+  "acts@0",
+  "norms@0",
+  "relational-fol@0"
+ ],
+ "spec_revision": "ve-v0.2-expand2-2026-09-25",
+ "vocabulary": {
+  "sorts": {
+   "person": {
+    "description": "person"
+   },
+   "case": {
+    "description": "case"
+   }
+  },
+  "predicates": {
+   "heard": {
+    "arguments": [
+     "person",
+     "case"
+    ],
+    "description": "d",
+    "regulated": {
+     "role": "plain",
+     "default": "deny",
+     "act": "{0} in full equality to a fair and public hearing by an independent and impartial tribunal in {1}",
+     "form": "is entitled"
+    }
+   },
+   "paid": {
+    "arguments": [
+     "person"
+    ],
+    "description": "d",
+    "regulated": {
+     "role": "plain",
+     "default": "deny",
+     "act": "{0} to equal pay for equal work without any discrimination",
+     "form": "has the right"
+    }
+   },
+   "protected": {
+    "arguments": [
+     "person",
+     "case"
+    ],
+    "description": "d",
+    "regulated": {
+     "role": "permission",
+     "default": "allow",
+     "act": "{0} to the protection of the moral and material interests resulting from {1}"
+    }
+   }
+  },
+  "constants": {},
+  "acts": {
+   "fixed": [
+    "a fair and public hearing by an independent and impartial tribunal",
+    "equal pay for equal work",
+    "the moral and material interests",
+    "cruel, inhuman or degrading treatment or punishment"
+   ]
+  }
+ }
+}
