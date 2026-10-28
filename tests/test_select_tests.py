@@ -2251,3 +2251,115 @@ def test_a_script_no_test_reaches_is_reported(selector, monkeypatch):
     plan = selector.impacted(["tools/bench/baseline.py"])
     assert not plan["fallback"] and plan["scripts_without_tests"] == ["tools/bench/baseline.py"]
     assert plan["selected"] == sorted(plan["always"])
+
+
+# --- the history inventory: a change that can make tests/history-dependent.json stale runs its lint in both
+# paths (waste audit 2026-10-28 row 11: main renamed a function of tools/cache_store.py, which the list names,
+# and a branch's merge kept its stale copy; the selected run skipped the lint and the merge train caught it).
+
+import history_tests  # noqa: E402
+
+HISTORY_TRIGGERS = ["tests/test_vacuity.py", "tests/subprocesses.py", "tests/conftest.py",
+                    "tests/history-dependent.json", "tests/history-map.json", "tools/history_tests.py",
+                    "tools/git_words.py", "tools/cache_store.py"]
+# A product module the list does not name, and documentation.
+HISTORY_NEUTRAL = ["tools/bench/baseline.py", "docs/english-surface.md"]
+
+
+def history_changes(path: str) -> list:
+    """An edit of `path`; for a Python file under tests/ also an added one in a new directory and a deleted one."""
+    old = real(path)
+    changes = [select_tests.Change(path, old, old + ("\n# c\n" if path.endswith(".py") else " "))]
+    if path == "tests/subprocesses.py":
+        changes += [select_tests.Change("tests/fixtures/deep/helper.py", None, "X = 1\n"),
+                    select_tests.Change("tests/test_gone.py", "X = 1\n", None)]
+    return changes
+
+
+@pytest.mark.parametrize("path", HISTORY_TRIGGERS)
+def test_a_change_that_can_stale_the_history_list_runs_its_lint_with_a_map(path, head):
+    assert "tools/cache_store.py" in history_tests.named_sources()
+    data = make_map({test: {} for test in select_tests.units()}, commit=head)
+    for change in history_changes(path):
+        plan = plan_for([change], data)
+        assert plan["history_inventory"] == [change.path]
+        assert select_tests.HISTORY_TEST in plan["selected"]
+        assert plan["full"] or "history inventory" in plan["reasons"][select_tests.HISTORY_TEST], change.path
+
+
+@pytest.mark.parametrize("path", HISTORY_NEUTRAL)
+def test_documentation_and_an_unlisted_module_do_not_run_the_history_lint_with_a_map(path, head):
+    assert path not in history_tests.named_sources()
+    data = make_map({test: {} for test in select_tests.units()}, commit=head)
+    plan = plan_for(history_changes(path), data)
+    assert not plan["full"] and plan["history_inventory"] == []
+    assert "history inventory" not in plan["reasons"].get(select_tests.HISTORY_TEST, [])
+
+
+@pytest.fixture
+def lint_unreached(selector, monkeypatch):
+    """`--impacted` with the lint reached by no change of its own, so only the history rule can select it."""
+    reaches = selector.reaches
+    monkeypatch.setattr(selector, "reaches", lambda test, changed: test != selector.HISTORY_TEST
+                        and reaches(test, changed))
+    return selector
+
+
+@pytest.mark.parametrize("path", HISTORY_TRIGGERS)
+def test_a_change_that_can_stale_the_history_list_runs_its_lint_impacted(lint_unreached, path):
+    plan = lint_unreached.impacted([path])
+    assert not plan["fallback"] and plan["history_inventory"] == [path]
+    assert lint_unreached.HISTORY_TEST in plan["selected"]
+
+
+@pytest.mark.parametrize("path", HISTORY_NEUTRAL)
+def test_documentation_and_an_unlisted_module_do_not_run_the_history_lint_impacted(lint_unreached, path):
+    plan = lint_unreached.impacted([path])
+    assert not plan["fallback"] and plan["history_inventory"] == []
+    assert lint_unreached.HISTORY_TEST not in plan["selected"]
+
+
+def write_history_files(root: Path, listed, extract) -> None:
+    (root / "tests").mkdir(exist_ok=True)
+    for name, data in ((history_tests.LIST, listed), (history_tests.MAP_EXTRACT, extract)):
+        if data is not None:
+            (root / name).write_text(data if isinstance(data, str) else json.dumps(data))
+
+
+HEADER = {"commit": "0" * 40, "version": 7, "created": "2026-10-28T00:00:00+00:00", "tests": 1}
+LISTED = {"format": history_tests.FORMAT, "map": HEADER, "tests": [
+    {"test": "tests/test_a.py", "why": "starts git", "recorded": ["source"], "via": ["pkg/listed.py:f: git log"]}]}
+EXTRACT = {"format": history_tests.MAP_FORMAT, "map": HEADER,
+           "units": {"tests/test_a.py": {"git": True, "sites": ["pkg/mapped.py:g"]}}}
+
+
+@pytest.mark.parametrize("listed, extract, named", [
+    (LISTED, EXTRACT, {"pkg/listed.py", "pkg/mapped.py"}),
+    ({**LISTED, "format": "other"}, EXTRACT, {"pkg/mapped.py"}),
+    ("{not json", EXTRACT, {"pkg/mapped.py"}),
+    (LISTED, {**EXTRACT, "units": []}, {"pkg/listed.py"}),
+    (LISTED, None, {"pkg/listed.py"}),
+    (None, None, set()),
+], ids=["both", "list malformed", "list unreadable", "extract malformed", "extract missing", "neither"])
+def test_the_history_list_and_its_map_extract_each_name_their_sources(tmp_path, listed, extract, named):
+    write_history_files(tmp_path, listed, extract)
+    assert history_tests.named_sources(tmp_path) == named
+
+
+def test_a_module_only_the_map_extract_names_runs_the_lint(lint_unreached, tmp_path, monkeypatch):
+    write_history_files(tmp_path, {**LISTED, "format": "other"},
+                        {**EXTRACT, "units": {"tests/test_a.py": {"git": True, "sites": ["tools/bench/baseline.py:f"]}}})
+    named = history_tests.named_sources
+    monkeypatch.setattr(lint_unreached.history_tests, "named_sources", lambda: named(tmp_path))
+    plan = lint_unreached.impacted(["tools/bench/baseline.py"])
+    assert plan["history_inventory"] == ["tools/bench/baseline.py"]
+    assert lint_unreached.HISTORY_TEST in plan["selected"]
+
+
+def test_without_a_readable_history_list_the_other_triggers_still_run_the_lint(tmp_path, monkeypatch):
+    write_history_files(tmp_path, "{not json", "[]")
+    named = history_tests.named_sources
+    monkeypatch.setattr(select_tests.history_tests, "named_sources", lambda: named(tmp_path))
+    paths = ["docs/a.md", "tests/test_x.py", "tests/history-map.json", "tools/cache_store.py", "tools/git_words.py"]
+    assert select_tests.history_inventory(paths) == ["tests/test_x.py", "tests/history-map.json",
+                                                     "tools/git_words.py"]
