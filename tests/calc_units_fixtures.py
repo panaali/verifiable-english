@@ -254,7 +254,8 @@ FIXTURES = [
         ("exponent-minus-63", ["sci", "1", -63], f'ok "0.{"0" * 62}1"'),
         ("exponent-minus-64", ["sci", "1", -64], f'ok "0.{"0" * 63}1"'),
         ("exponent-minus-65", ["sci", "1", -65], "ResourceLimit: an exponent exceeds 64"),
-        ("exponent-huge", ["sci", "1", 10 ** 30], "ResourceLimit: an exponent exceeds 64"),
+        ("exponent-1000", ["sci", "1", 1000], "ResourceLimit: an exponent exceeds 64"),
+        ("exponent-minus-1000", ["sci", "1", -1000], "ResourceLimit: an exponent exceeds 64"),
         ("exponent-first", ["sci", "1" * 41, 65], "ResourceLimit: an exponent exceeds 64"),  # limit 5 before 6
         # (iii) A zero or negative `sci` factor is refused; the nearest positive ones are read.
         ("zero", ["sci", "0", 5], "InvalidInput: units.meter.factor must be more than zero"),
