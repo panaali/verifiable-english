@@ -634,17 +634,20 @@ def test_rescore_of_evidence_whose_mutants_differ_is_a_full_run(tmp_path):
     import trust_mutants
     m = trust_mutants.Mutant("M001", "Demo/Defs.lean", 3, "Demo.small", "lt-le", 0, 1, (3, 3), "<", "≤")
     row = {"id": "M001", "file": "Demo/Defs.lean", "line": 3, "definition": "Demo.small", "operator": "lt-le",
-           "before": "<", "after": "≤", "status": "ALLOWED", "raw_status": "SURVIVOR", "detail": "a reason"}
+           "before": "<", "after": "≤", "status": "ALLOWED", "raw_status": "SURVIVOR", "detail": "a reason",
+           "lines": [3, 3], "trust_class": "C", "trusted": True}
     prev = tmp_path / "prev.json"
     now = dict.fromkeys(trust_mutants.OVERALL, "1")
-    for rows, ok in (([row], True), ([{**row, "after": "="}], False), ([], False),
-                     ([{**row, "raw_status": "PASSED"}], False), ([{k: v for k, v in row.items() if k != "raw_status"}],
-                                                                  False), ([{**row, "reads": 7}], False),
-                     ([{**row, "killed_at": [1]}], False), ([{**row, "killed_at": [1, True]}], False)):
+    unread = [{**row, "raw_status": "PASSED"}, {k: v for k, v in row.items() if k != "raw_status"}, {**row, "reads": 7},
+              {**row, "killed_at": [1]}, {**row, "killed_at": [1, True]}, {**row, "line": True},  # tm-shard fix1 F1
+              {**row, "status": None, "raw_status": None}, {**row, "detail": 7}, {**row, "raw_status": "ALLOWED"},
+              {**row, "status": "OTHER SHARD", "raw_status": "OTHER SHARD", "detail": ""}, {**row, "trusted": 1}]
+    for rows, ok in (([row], True), ([{**row, "after": "="}], False), ([], False), *(([r], False) for r in unread)):
         prev.write_text(json.dumps({"inputs": now, "head": "h", "mutants": rows}))
         got = trust_mutants.previous(prev, now, [m], lambda names: None)
         assert (got == ("identical", "h", {"M001": {"status": "SURVIVOR", "detail": "", "reads": "", "killed_at": None}},
-                        [])) if ok else isinstance(got, str), (rows, got)
+                        [])) if ok else isinstance(got, str) and (
+            "cannot be read" in got) == any(r in unread for r in rows), (rows, got)
     prev.write_text(json.dumps({"inputs": now, "head": "", "mutants": [row]}))
     assert "cannot be read" in trust_mutants.previous(prev, now, [m], lambda names: None)
 
@@ -2247,8 +2250,23 @@ def test_the_parts_merged_are_the_one_runs_record(sharded, capsys, n, limit):
 
 
 def shifted(value):
+    """Another value of the same type (a list's last item shifted)."""
     return (not value if isinstance(value, bool) else value + 1 if isinstance(value, int) else value + "x"
-            if isinstance(value, str) else [*value, "x"] if isinstance(value, list) else {**value, "x": 1})
+            if isinstance(value, str) else ([*value[:-1], shifted(value[-1])] if value else ["x"])
+            if isinstance(value, list) else {**value, "x": 1})
+
+
+def resealed(data):
+    """A changed part's counts, counts by class and definitions made again from its rows, as `record` makes them,
+    so only the change can refuse it; a part whose rows are no Mutant's is left as it is."""
+    import trust_mutants as tm
+    try:
+        found = [tm.Mutant(**{"start": 0, "end": 0, **r}) for r in data["mutants"]]
+        data.update({k: tm.record(found, *[None] * 10, shard={})[k] for k in ("counts", "class_counts",
+                                                                                  "definitions")})
+    except (TypeError, KeyError, AttributeError):
+        pass
+    return data
 
 
 REFUSED_MERGES = [
@@ -2258,8 +2276,11 @@ REFUSED_MERGES = [
     ("k-repeated", lambda ps: ps[2]["shard"].update(k=2), "[2] repeated"),
     ("k-missing", lambda ps: ps.pop(), "[3] missing"),
     *((f, lambda ps, f=f: ps[1].update({f: shifted(ps[1][f])}), f"disagree on {f}:")
-      for f in ("base", "head", "max_mutants", "deep", "tests", "classes", "inputs", "definitions")),
-    ("rescore", lambda ps: ps[2].update(rescore={"mode": "full"}), "disagree on rescore:"),
+      for f in ("base", "head", "max_mutants", "deep", "tests", "classes", "inputs")),
+    ("inputs-bool-for-int", lambda ps: [d["inputs"].update(x=True if d is ps[1] else 1) for d in ps],
+     "disagree on inputs:"),
+    ("rescore", lambda ps: ps[2].update(rescore={"file": "p", "head": None, "mode": "full", "changed": [], "reused": 0,
+                                                 "rerun": 2, "full_run": "no"}), "disagree on rescore:"),
     *((f"plan-{f}", lambda ps, f=f: ps[1]["mutants"][1].update({f: shifted(ps[1]["mutants"][1][f])}),
        f"plan (M002.{f})") for f in ("id", "file", "line", "definition", "operator", "before", "after", "lines",
                                      "trust_class", "trusted")),
@@ -2269,8 +2290,9 @@ REFUSED_MERGES = [
      "M001, owned by"),
     ("owned-not-run", lambda ps: ps[0]["shard"]["owned"].append("M007"), "M007, owned by"),
     ("owned-unknown-id", lambda ps: ps[0]["shard"]["owned"].append("M099"), "M099, owned by"),
-    ("owned-by-none", lambda ps: (ps[0]["shard"]["owned"].remove("M001"), ps[0]["mutants"][0].update(
-        status="OTHER SHARD", raw_status="OTHER SHARD")), "M001 is owned by no part"),
+    ("owned-by-none", lambda ps: (ps[0]["shard"]["owned"].remove("M001"), ps[0]["mutants"].__setitem__(0, {
+        **{k: v for k, v in ps[0]["mutants"][0].items() if k not in ("reads", "killed_at")}, "detail": "",
+        "status": "OTHER SHARD", "raw_status": "OTHER SHARD"})), "M001 is owned by no part"),
     ("verdict-not-owned", lambda ps: ps[0]["shard"]["owned"].remove("M001"), "M001 has a verdict in"),
     ("not-a-record", lambda ps: ps.__setitem__(1, [1]), 'no "shard" key'),
 ]
@@ -2284,13 +2306,89 @@ def test_merge_refuses_parts_that_are_not_one_runs(sharded, capsys, name, change
     data = [json.loads(p.read_text()) for p in paths]
     change(data)
     for p, d in zip(paths, data):
-        p.write_text(json.dumps(d))
+        p.write_text(json.dumps(resealed(d) if isinstance(d, dict) and not name.startswith("derived-") else d))
     capsys.readouterr()
     merged = sharded.tmp / "merged.json"
     assert sharded.tm.main(["--merge", str(merged), *map(str, paths[:len(data)])]) == 2
     err = capsys.readouterr().err.strip()
     assert len(err.splitlines()) == 1 and says in err and not merged.exists(), err
     assert name.startswith(("no-shard", "shard-", "n", "k-", "not-a")) or str(paths[0].parent) in err
+
+
+def corrupt(field, value, row=0):
+    """Part 1's row `row` (M001, which it owns) with `field` set to `value` (deleted: ...)."""
+    return lambda ps: (ps[0]["mutants"][row].pop(field) if value is ... else
+                       ps[0]["mutants"][row].update({field: value}))
+
+
+NOT_WRITTEN = "is not a part this tool writes"
+# tm-shard fix1 F1: a part whose fields are not of their types, or whose rows are not rows `record` writes, is refused
+# before a verdict of it is counted or printed (the counts made again from its rows, so only the change refuses it)
+UNREAD_PARTS = [
+    *((f"row-{f}-{v!r}", corrupt(f, v), NOT_WRITTEN) for f, v in (
+        ("status", None), ("raw_status", None), ("status", "PASSED"), ("raw_status", "PASSED"),
+        ("raw_status", "SURVIVOR"), ("detail", 7), ("detail", None), ("detail", ...), ("reused_from", 5),
+        ("reused_from", ""), ("carried", 1), ("carried", ""), ("reads", 7), ("reads", ""), ("killed_at", [1]),
+        ("killed_at", [1, True]), ("killed_at", None), ("killed_at", "1-2"), ("line", True), ("line", "3"),
+        ("lines", [1, True]), ("lines", [1]), ("trusted", 1), ("trust_class", None), ("id", 1), ("extra", "x"),
+        ("before", ...))),
+    ("row-status-raw-PASSED", lambda ps: ps[0]["mutants"][0].update(status="PASSED", raw_status="PASSED"),
+     NOT_WRITTEN),
+    ("row-allowed-raw-allowed", lambda ps: ps[0]["mutants"][0].update(status="ALLOWED", raw_status="ALLOWED"),
+     NOT_WRITTEN),
+    ("row-killed-raw-survivor", lambda ps: ps[0]["mutants"][0].update(status="KILLED", raw_status="SURVIVOR"),
+     NOT_WRITTEN),
+    ("rows-repeat-an-id", lambda ps: ps[0]["mutants"].__setitem__(1, {**ps[0]["mutants"][1], "id": "M001"}),
+     NOT_WRITTEN),
+    ("rows-not-a-list", lambda ps: ps[0].update(mutants={"M001": ps[0]["mutants"][0]}), NOT_WRITTEN),
+    *((f"field-{f}-{v!r}", lambda ps, f=f, v=v: ps[0].update({f: v}), NOT_WRITTEN) for f, v in (
+        ("jobs", True), ("jobs", "4"), ("jobs", None), ("seconds", 1.5), ("seconds", False), ("max_mutants", True),
+        ("deep", 0), ("tests", [1]), ("tests", "x"), ("classes", "trusted"), ("inputs", []), ("base", None),
+        ("head", 1), ("extra", 1))),
+    *((f"field-missing-{f}", lambda ps, f=f: ps[0].pop(f), NOT_WRITTEN) for f in ("jobs", "seconds", "mutants",
+                                                                                   "inputs")),
+    ("derived-missing-counts", lambda ps: ps[0].pop("counts"), "its counts are not what its rows give"),
+    ("shard-owned-not-ids", lambda ps: ps[0]["shard"].update(owned=[1]), NOT_WRITTEN),
+    ("shard-extra-key", lambda ps: ps[0]["shard"].update(x=1), NOT_WRITTEN),
+    *((f"rescore-{f}-{v!r}", lambda ps, f=f, v=v: [d.update(rescore={
+        "file": "p", "head": "h", "mode": "identical", "changed": [], "reused": 1, "rerun": 1, f: v}) for d in ps],
+       NOT_WRITTEN) for f, v in (("reused", True), ("rerun", "1"), ("mode", "other"), ("head", 1), ("changed", [1]),
+                                 ("full_run", None), ("x", 1))),
+    ("rescore-missing-rerun", lambda ps: [d.update(rescore={"file": "p", "head": "h", "mode": "identical",
+                                                             "changed": [], "reused": 1}) for d in ps], NOT_WRITTEN),
+    *((f"derived-{f}", lambda ps, f=f: ps[0].update({f: shifted(ps[0][f])}), f"its {f} are not what its rows give")
+      for f in ("counts", "class_counts", "definitions")),
+    ("derived-status-uncounted", lambda ps: ps[0]["mutants"][1].update(status="KILLED", raw_status="KILLED"),
+     "its class_counts, counts are not"),
+]
+
+
+@pytest.mark.parametrize(("name", "change", "says"), UNREAD_PARTS, ids=[r[0] for r in UNREAD_PARTS])
+def test_merge_refuses_a_part_this_tool_does_not_write(sharded, capsys, name, change, says):
+    test_merge_refuses_parts_that_are_not_one_runs(sharded, capsys, name, change, says)
+
+
+# tm-shard fix1 F2: a row a part does not run (OTHER SHARD, or NOT RUN past --max-mutants) is exactly the plan's row
+# with that status and nothing else, so no part's unowned row can give the merge a verdict (M002 is part 2's, M007
+# past --max-mutants 6 and no part's); each changed part is resealed, so its counts agree with its rows
+IDLE_ROWS = [
+    *((f"{i}-{'-'.join(v)}", lambda ps, i=i, v=v: ps[0]["mutants"][int(i[1:]) - 1].update(v),
+       f"{i} has a verdict in") for i in ("M002", "M007") for v in (
+        {"status": "KILLED", "raw_status": "KILLED"}, {"status": "SURVIVOR", "raw_status": "SURVIVOR"},
+        {"status": "ALLOWED", "raw_status": "UNKNOWN"}, {"detail": "x"}, {"reused_from": "h"}, {"carried": "checks"},
+        {"reads": "r"}, {"killed_at": [1, 1]})),
+    ("M007-not-run-other", lambda ps: ps[0]["mutants"][6].update(status="OTHER SHARD", raw_status="OTHER SHARD"),
+     "M007 has a verdict"),
+    ("M002-not-run", lambda ps: ps[0]["mutants"][1].update(status="NOT RUN", raw_status="NOT RUN"),
+     "M002 has a verdict"),
+    ("tail-killed-in-every-part", lambda ps: [r.update(status="KILLED", raw_status="KILLED")
+                                              for d in ps for r in d["mutants"][6:]], "M007 has a verdict"),
+]
+
+
+@pytest.mark.parametrize(("name", "change", "says"), IDLE_ROWS, ids=[r[0] for r in IDLE_ROWS])
+def test_merge_refuses_a_verdict_on_a_row_a_part_does_not_run(sharded, capsys, name, change, says):
+    test_merge_refuses_parts_that_are_not_one_runs(sharded, capsys, name, change, says)
 
 
 def test_merge_refuses_an_unreadable_part_or_no_part(sharded, capsys):
@@ -2318,9 +2416,9 @@ def test_rescored_parts_merge_to_the_rescored_run(sharded, capsys):
     assert printed(capsys.readouterr().out) == printed(out) and bare(merged) == bare(one)
     assert json.loads(merged.read_text())["rescore"] == {"file": str(prev), "head": json.loads(prev.read_text())[
         "head"], "mode": "identical", "changed": [], "reused": 5, "rerun": 1}
-    for field in ("mode", "head", "file", "changed", "full_run"):
+    for field, value in (("mode", "checks"), ("head", "x"), ("file", "x"), ("changed", ["x"]), ("full_run", "x")):
         data = json.loads(paths[1].read_text())
-        data["rescore"][field] = "x"
+        data["rescore"][field] = value
         (sharded.tmp / "changed.json").write_text(json.dumps(data))
         assert sharded.tm.main(["--merge", str(merged), str(paths[0]), str(sharded.tmp / "changed.json"),
                                 str(paths[2])]) == 2

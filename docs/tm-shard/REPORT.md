@@ -104,6 +104,33 @@ exit 0, 0 failed (ve-mac-1, 892 s). `uv run python tools/regen_generated.py --ch
 S6 first went uncaught: every stubbed part ran in 0 s, so the sum equalled the max. The test now gives each part
 distinct seconds, and S6 fails it.
 
+### Fix round 1 (review F1, F2)
+
+F1: `--merge` read a part's rows without checking them, so a null status vanished from the counts and a non-text
+detail crashed the printing. Now each part must be a record this tool writes (`unread`): the fields `record`
+copies of their types (`PART`, `SHARD`, `RESCORE`), each row of `ROW`'s fields and types (from `Mutant`), with a
+status it writes and the raw_status that status allows (`unwritten`), and its counts, counts by class and
+definitions what `record` makes of its rows. Comparisons between parts are of JSON texts (`canon`), so `true` is
+not `1`. `--rescore` PREV reads its rows with the same `unwritten`.
+
+F2: a part's rows past --max-mutants were copied into the merge unchecked, so NOT RUN rows turned KILLED gave
+exit 0. Now every row a part does not run, OTHER SHARD or NOT RUN, must be exactly the plan's row with that status
+(`idle`). Tests: `test_merge_refuses_a_part_this_tool_does_not_write`,
+`test_merge_refuses_a_verdict_on_a_row_a_part_does_not_run`, `test_rescore_of_evidence_whose_mutants_differ_is_a_full_run`.
+
+| id | file | bug | failing test |
+|---|---|---|---|
+| S7 | tools/trust_mutants.py | `typed`: a bool taken for an int | test_merge_refuses_a_part_this_tool_does_not_write[row-line-True] |
+| S8 | tools/trust_mutants.py | status not checked against STATUSES | test_merge_refuses_a_part_this_tool_does_not_write[row-status-raw-PASSED] |
+| S9 | tools/trust_mutants.py | counts not compared with the rows' | test_merge_refuses_a_part_this_tool_does_not_write[derived-counts] |
+| S10 | tools/trust_mutants.py | a row not run checked by status only | test_merge_refuses_a_verdict_on_a_row_a_part_does_not_run[M007-detail] |
+| S11 | tools/trust_mutants.py | options compared with `==` | test_merge_refuses_parts_that_are_not_one_runs[inputs-bool-for-int] |
+| S12 | tools/trust_mutants.py | raw_status ALLOWED accepted | test_merge_refuses_a_part_this_tool_does_not_write[row-allowed-raw-allowed] |
+| S13 | tools/trust_mutants.py | --rescore rows not checked by `unwritten` | test_rescore_of_evidence_whose_mutants_differ_is_a_full_run |
+
+S8 and S11 first went uncaught (a null status already failed its type; the third part lacked the changed input);
+the cases now set a typed unknown status and the input in every part.
+
 ## DELTA
 
 None. This is builder tooling: no VE language, verdict, wire or product change, so no row and no signature.

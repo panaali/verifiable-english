@@ -94,8 +94,10 @@ for a change, any other change, a file it cannot read) it is a full run, and one
 - --merge OUT.json PART.json... reads only the parts (no checkout, no Lean; every other option is ignored) and
   writes the record one run with their options writes, but for "seconds" (the parts' longest), "jobs" (their sum)
   and `shards: [{k, n, jobs, seconds}]`, by k; it prints that run's lines and exits with its code. It refuses (exit
-  2) parts that are no part, disagree on N, base, head, options, inputs, definitions, the plan or --rescore's
-  file, head, mode, changed or full_run, miss or repeat a k, or own a mutant twice, never, or with no verdict;
+  2) parts that are no part as this tool writes one (`unread`: a field or row not of its type, a status not one
+  it writes, counts that are not its rows'), disagree on N, base, head, options, inputs, the plan or --rescore's
+  file, head, mode, changed or full_run, miss or repeat a k, own a mutant twice, never, or with no verdict, or
+  hold anything but the plan's row and its status (`idle`) for a mutant they do not run, OTHER SHARD or NOT RUN;
 - --plan prints `{"base", "definitions", "mutants", "to_run", "not_run"}` ("owned" too with --shard) as one JSON
   line and builds nothing: what sizes N.
 """
@@ -119,6 +121,8 @@ import subprocess
 import sys
 import tempfile
 import time
+from types import UnionType
+from typing import get_args, get_origin, get_type_hints
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT), str(ROOT / "tools"), str(ROOT / "lean")]
@@ -1319,16 +1323,13 @@ def previous(path: Path, now: dict, found: list[Mutant], why_not) -> tuple[str, 
             if why := why_not(changed) if changed else "its per-file digests show no change":
                 return f"its inputs differ ({', '.join(differ)}): {why}"
         rows, head = data["mutants"], data["head"]
+        if unwritten(rows) or not isinstance(head, str) or not head or any(r["raw_status"] == OTHER for r in rows):
+            return "it cannot be read: a status, detail or digest is not one this tool writes"
         if [tuple(r[k] for k in ("id", "file", "line", "definition", "operator", "before", "after")) for r in rows] != [
                 (m.id, m.file, m.line, m.definition, m.operator, m.before, m.after) for m in found]:
             return "its mutants are not this tree's"
         verdicts = {r["id"]: {"status": r["raw_status"], "detail": r["detail"] if r["raw_status"] == r["status"] else "",
                               "reads": r.get("reads", ""), "killed_at": r.get("killed_at")} for r in rows}
-        if not isinstance(head, str) or not head or not all(
-                isinstance(v["detail"], str) and v["status"] in (*REUSED, "UNKNOWN", "NOT RUN")
-                and isinstance(v["reads"], str) and (v["killed_at"] is None or isinstance(v["killed_at"], list) and len(
-                    v["killed_at"]) == 2 and all(type(x) is int for x in v["killed_at"])) for v in verdicts.values()):
-            return "it cannot be read: a status, detail or digest is not one this tool writes"
         return "checks" if differ else "identical", head, verdicts, changed
     except (OSError, ValueError, KeyError, TypeError, AttributeError) as error:
         return f"it cannot be read ({type(error).__name__}: {error})"
@@ -1398,12 +1399,79 @@ def record(found: list[Mutant], base: str, head: str, jobs: int, max_mutants: in
             **({"rescore": rescore} if rescore else {}),
             "definitions": [f"lean/{f}: {d}" for f, d in sorted({(m.file, m.definition) for m in found})],
             **({"shard": shard} if shard is not None else {}), **({"shards": shards} if shards else {}),
-            "mutants": [{k: v for k, v in asdict(m).items() if k not in ("start", "end", "edit")
-                         and (k not in ("reused_from", "carried", "reads", "killed_at") or v)} for m in found]}
+            "mutants": [{k: v for k, v in asdict(m).items() if k in ROW and (k not in OPTIONAL or v)} for m in found]}
 
 
+OPTIONAL = ("reused_from", "carried", "reads", "killed_at")  # a row holds these only when they are set
+ROW = {k: t for k, t in get_type_hints(Mutant).items() if k not in ("start", "end", "edit")}  # a row's fields
+PART = {"base": str, "head": str, "jobs": int, "max_mutants": int, "deep": bool, "tests": list[str], "seconds": int,
+        "classes": list[str], "inputs": dict, "shard": dict}  # what `record` copies from its arguments
+SHARD = {"k": int, "n": int, "owned": list[str]}
+RESCORE = {"file": str, "head": str | None, "mode": str, "changed": list[str], "reused": int, "rerun": int,
+           "full_run": str}  # full_run only when it was one
 PLANNED = ("id", "file", "line", "definition", "operator", "before", "after", "lines", "trust_class", "trusted")
-AGREED = ("base", "head", "max_mutants", "deep", "tests", "classes", "inputs", "definitions")
+AGREED = ("base", "head", "max_mutants", "deep", "tests", "classes", "inputs")  # definitions: the plan's (`unread`)
+
+
+def typed(v, t) -> bool:
+    """Whether the JSON value v is of type t: str, int, bool, dict, None, list[X], tuple[X, Y] (a list of two) or
+    X | Y; a bool is no int."""
+    o, a = get_origin(t), get_args(t)
+    return (type(v) is list and len(v) == len(a) and all(map(typed, v, a)) if o is tuple else
+            type(v) is list and all(typed(x, a[0]) for x in v) if o is list else
+            any(typed(v, x) for x in a) if o is UnionType else type(v) is t)
+
+
+def fits(d, schema: dict, optional: tuple = ()) -> bool:
+    """Whether d is a dict with exactly the keys of `schema` (those of `optional` may be absent), each of its type."""
+    return type(d) is dict and set(d) <= set(schema) and all(
+        typed(d[k], t) if k in d else k in optional for k, t in schema.items())
+
+
+def unwritten(rows) -> str | None:
+    """Why `rows` are not a --json record's mutants as `record` writes them, or None: each a row of `ROW`'s fields of
+    their types, those of `OPTIONAL` only when set, distinct ids, a status of STATUSES or OTHER, and its raw_status
+    that status (an ALLOWED one's: SURVIVOR or UNKNOWN)."""
+    if type(rows) is not list:
+        return "its mutants are not a list"
+    for r in rows:
+        if not fits(r, ROW, OPTIONAL) or not all(r[k] for k in OPTIONAL if k in r):
+            return f"the row of {r.get('id') if type(r) is dict else r!r} is not one of its fields and types"
+        if r["status"] not in (*STATUSES, OTHER) or not (r["raw_status"] in ("SURVIVOR", "UNKNOWN") if r[
+                "status"] == "ALLOWED" else r["raw_status"] == r["status"]):
+            return f"{r['id']} has status {r['status']!r} (before --allow {r['raw_status']!r})"
+    if len({r["id"] for r in rows}) != len(rows):
+        return "its mutant ids repeat"
+    return None
+
+
+def canon(v) -> str:
+    """v as one JSON text, keys sorted: two values are the same when theirs are (so true is not 1)."""
+    return json.dumps(v, sort_keys=True, ensure_ascii=False)
+
+
+def idle(r: dict, status: str) -> dict:
+    """The row a part writes for a mutant it does not run: r's plan, with `status` (OTHER, or NOT RUN past
+    max_mutants) before and after --allow, and no detail."""
+    return {**{f: r[f] for f in PLANNED}, "status": status, "raw_status": status, "detail": ""}
+
+
+def unread(d) -> str | None:
+    """Why the record d is not a --shard part's as `record` writes it, or None: the fields `record` copies of their
+    types (`PART`, `SHARD`, `RESCORE`), its rows `unwritten`, and the rest (counts, by class, definitions) what
+    `record` makes of them."""
+    if not (fits({k: v for k, v in d.items() if k in PART}, PART) and fits(d["shard"], SHARD) and (
+            "rescore" not in d or fits(d["rescore"], RESCORE, ("full_run",)) and d["rescore"]["mode"] in (
+                "full", "identical", "checks"))):
+        return "a field is missing or not of its type"
+    if why := unwritten(d.get("mutants")):
+        return why
+    found = [Mutant(**{"start": 0, "end": 0, **r}) for r in d["mutants"]]
+    again = record(found, d["base"], d["head"], d["jobs"], d["max_mutants"], d["deep"], d["tests"], d["seconds"],
+                   d["classes"], d["inputs"], d.get("rescore"), shard=d["shard"])
+    if bad := sorted(k for k in again.keys() | d.keys() if canon(again.get(k)) != canon(d.get(k))):
+        return f"its {', '.join(bad)} are not what its rows give"
+    return None
 
 
 def merge(out: Path, paths: list[Path]) -> int:
@@ -1417,6 +1485,8 @@ def merge(out: Path, paths: list[Path]) -> int:
     if bad := [str(p) for d, p in parts if not (isinstance(d, dict) and isinstance(s := d.get("shard"), dict) and all(
             type(s.get(x)) is int for x in ("k", "n")) and isinstance(s.get("owned"), list))]:
         return refuse(f'no "shard" key {{k, n, owned}} (no --shard part): {", ".join(bad)}')
+    if bad := next(((p, why) for d, p in parts if (why := unread(d))), None):
+        return refuse(f"{bad[0]} is not a part this tool writes: {bad[1]}")
     parts.sort(key=lambda x: x[0]["shard"]["k"])
     every = ", ".join(str(p) for _, p in parts)
     if len({d["shard"]["n"] for d, _ in parts}) > 1:
@@ -1431,12 +1501,12 @@ def merge(out: Path, paths: list[Path]) -> int:
             agreed = [*((f, d.get(f), first.get(f)) for f in AGREED), ("rescore", "rescore" in d, "rescore" in first),
                       *((f"rescore.{x}", (d.get("rescore") or {}).get(x), (first.get("rescore") or {}).get(x))
                         for x in ("mode", "head", "file", "changed", "full_run"))]
-            if bad := next((f for f, a, b in agreed if a != b), None):
+            if bad := next((f for f, a, b in agreed if canon(a) != canon(b)), None):
                 return refuse(f"the parts disagree on {bad}: {path} and {p}")
             if len(d["mutants"]) != len(first["mutants"]):
                 return refuse(f"the parts disagree on the plan (mutants): {path} and {p}")
             for a, b in zip(first["mutants"], d["mutants"]):
-                if bad := next((f for f in PLANNED if a.get(f) != b.get(f)), None):
+                if bad := next((f for f in PLANNED if canon(a[f]) != canon(b[f])), None):
                     return refuse(f"the parts disagree on the plan ({a.get('id')}.{bad}): {path} and {p}")
         run_now = {r["id"] for r in first["mutants"][:max(0, first["max_mutants"])]}
         for d, p in parts:
@@ -1447,9 +1517,9 @@ def merge(out: Path, paths: list[Path]) -> int:
                 if i not in run_now or mine[i]["status"] in (OTHER, "NOT RUN") or mine[i]["raw_status"] == OTHER:
                     return refuse(f"{i}, owned by {p}, has no verdict there")
                 rows[i] = mine[i], p
-            if bad := next((i for i in run_now - set(d["shard"]["owned"]) if (mine[i]["status"], mine[i][
-                    "raw_status"]) != (OTHER, OTHER)), None):
-                return refuse(f"{bad} has a verdict in {p}, which does not own it")
+            if bad := next((r["id"] for r in d["mutants"] if r["id"] not in d["shard"]["owned"] and canon(r) != canon(
+                    idle(r, OTHER if r["id"] in run_now else "NOT RUN"))), None):
+                return refuse(f"{bad} has a verdict in {p}, which does not run it")
         if missing := sorted(run_now - set(rows)):
             return refuse(f"{missing[0]} is owned by no part ({every})")
         found = [Mutant(**{"start": 0, "end": 0, **rows.get(r["id"], (r,))[0]}) for r in first["mutants"]]
