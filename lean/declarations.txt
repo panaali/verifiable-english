@@ -18655,7 +18655,7 @@ module VE.Scope.Readings 61ae685769e48517abf45f291f1df0e5964a514ce165baf35da4351
 92:0-117:102 def VE.Scope.assemble@VE.Scope.Readings
 119:0-127:51 def VE.Scope.governSetsWith@VE.Scope.Readings
 129:0-129:73 def VE.Scope.governSets@VE.Scope.Readings
-module VE.Scope.ReadingsExamples 328ab3c1974d0e814f5c6fa3f7601e2d6a981334efbb89b8362776fb974f2937
+module VE.Scope.ReadingsExamples 6a56bb37b077cda40ddf3d20faed50774fc1345547bc6aa1c861187332f4d454
 11:0-11:233 def VE.Scope.Examples.guardWide@VE.Scope.ReadingsExamples
 12:0-12:235 def VE.Scope.Examples.guardNarrow@VE.Scope.ReadingsExamples
 13:0-14:129 def VE.Scope.Examples.cyberPart@VE.Scope.ReadingsExamples
@@ -18681,7 +18681,7 @@ module VE.Scope.ReadingsExamples 328ab3c1974d0e814f5c6fa3f7601e2d6a981334efbb89b
 143:0-144:68 def VE.Scope.Examples.s05set@VE.Scope.ReadingsExamples
 145:0-145:85 def VE.Scope.Examples.twoSets@VE.Scope.ReadingsExamples
 146:0-146:120 def VE.Scope.Examples.asWritten@VE.Scope.ReadingsExamples
-160:0-160:100 def VE.Scope.Examples.depAt@VE.Scope.ReadingsExamples
+163:0-163:100 def VE.Scope.Examples.depAt@VE.Scope.ReadingsExamples
 module VE.Scope.ReadingsTheorems 6898820f5439f808fe0255eb3f1c4d67d234e933da2adeab0bbd9930de9d7885
 11:0-13:70 theorem VE.Scope.governSets_no_sets@VE.Scope.ReadingsTheorems
 15:0-17:62 theorem VE.Scope.governSetsFast_eq@VE.Scope.ReadingsTheorems
