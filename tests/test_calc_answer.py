@@ -17,11 +17,14 @@ from tests.lean_build import lean_build
 from tests.lean_service_corpus import calc_cases
 from tests.subprocesses import HANG_TIMEOUT
 from ve import calc
-from ve.backends.lean_service import LeanService, case_digest, case_texts
+from ve.backends.lean_service import LeanService, _decode_json, case_digest, case_texts
 from ve.backends.service_schema import Invalid, check_response
 from ve.errors import CheckerUnavailable
 
-RETYPED = (7, 1.5, True, None, [], {}, "x")
+DEEP: list = []
+for _ in range(10_000):
+    DEEP = [DEEP]
+RETYPED = (7, 1.5, True, None, [], {}, "x", "\ud800", DEEP)
 # Members whose value Lean may leave null (a line beyond 11.2's nesting rule; a side, display or tie without a known
 # value), with the type a null of theirs may become: making one null, or a null a line's text or a tie's flag, is a
 # change of Lean's value, which a relay cannot bind (it never re-evaluates), not a type fault. Every other retype of
@@ -56,11 +59,13 @@ def _genuine(service, name):
 
 
 def _shown(case, response, request, result):
-    """What `ve calc check` shows of `result`, or None when the schema or the relay refuses it."""
+    """What `ve calc check` shows of `result`, or None when the transport (`LeanService` decodes each line with
+    `_decode_json`: no lone surrogate, no nesting past the runtime's limit), the schema or the relay refuses it."""
     try:
+        result = _decode_json(json.dumps(result))
         check_response("calc", {**response, "results": [{**response["results"][0], "result": result}]}, request)
-        return calc.lines(calc.read_answer(json.loads(json.dumps(result)), case))
-    except (Invalid, CheckerUnavailable):
+        return calc.lines(calc.read_answer(result, case))
+    except (ValueError, RecursionError, Invalid, CheckerUnavailable):
         return None
 
 
@@ -93,8 +98,10 @@ def _faults(result):
         if type(path[-1]) is str:
             yield path, _set
         for other in RETYPED:
-            if type(other) is not type(value) and not (member in NULLABLE and (
-                    other is None or (value is None and type(other) is NULLABLE[member]))):
+            if type(other) is not type(value) or other == "\ud800":
+                if member in NULLABLE and (other is None or (
+                        value is None and type(other) is NULLABLE[member] and other != "\ud800")):
+                    continue
                 yield path, other
         if type(value) in (str, list, dict) and value:
             yield path, type(value)()
@@ -113,8 +120,9 @@ def test_mutants_never_pass_as_answers(service, name):
     shown = _shown(case, response, request, genuine)
     assert shown is not None
     faults = list(_faults(genuine))
+    shallow = [fault for fault in faults if fault[1] is not DEEP]  # a 10k-deep list is one fault only
     accepted = []
-    for depth, edits in [(1, [(f,) for f in faults]), (2, combinations(faults, 2))]:
+    for depth, edits in [(1, [(f,) for f in faults]), (2, combinations(shallow, 2))]:
         for edit in edits:
             try:
                 mutant = genuine
