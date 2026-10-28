@@ -26,8 +26,9 @@ How a change selects tests:
 * Every file, whatever its kind: the tests that read it, and, for an added or
   removed file, the tests that listed any directory above it, the root "."
   included (it may make its directory appear or vanish). Documentation and
-  GitHub workflows (`.github/workflows/*.yml`) only select these. `kind_of` and `file_impact` are the one rule for both the
-  plan and the drift check below.
+  GitHub workflows (`.github/workflows/*.yml`) only select these. `kind_of`
+  and `file_impact` are the one rule for both the plan and the drift check
+  below.
 * The map is recorded for an earlier commit. Code that changed since then
   ("drift") may call the changed code anew: drift units that name what changed
   add their own tests. Tests the map does not cover (new, failed or opaque when
