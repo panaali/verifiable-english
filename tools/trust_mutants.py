@@ -1522,6 +1522,35 @@ def merge(out: Path, paths: list[Path]) -> int:
                 return refuse(f"{bad} has a verdict in {p}, which does not run it")
         if missing := sorted(run_now - set(rows)):
             return refuse(f"{missing[0]} is owned by no part ({every})")
+        for d, p in parts:
+            shard = d["shard"]
+            expected = [r["id"] for r in d["mutants"] if r["id"] in run_now and owns(r["id"], (shard["k"], n))]
+            if shard["owned"] != expected:
+                return refuse(f"{p} shard.owned does not follow the by-id split")
+            owned = [rows[i][0] for i in expected]
+            rescore_part = d.get("rescore")
+            if rescore_part is None:
+                if any("reused_from" in r or "carried" in r for r in owned):
+                    return refuse(f"{p} has reused rows without rescore")
+                continue
+            mode, head = rescore_part["mode"], rescore_part["head"]
+            reused_rows = [r for r in owned if "reused_from" in r]
+            if (rescore_part["reused"] != len(reused_rows) or
+                    rescore_part["rerun"] != len(owned) - len(reused_rows)):
+                return refuse(f"{p} rescore.reused and rescore.rerun do not match its owned rows")
+            if (mode == "full" and (head is not None or reused_rows) or
+                    mode != "full" and (not head or any(r["reused_from"] != head for r in reused_rows))):
+                return refuse(f"{p} rescore.head does not match its reused rows")
+            if (mode == "full" and (rescore_part["changed"] or not rescore_part.get("full_run")) or
+                    mode == "identical" and (rescore_part["changed"] or "full_run" in rescore_part) or
+                    mode == "checks" and (not rescore_part["changed"] or "full_run" in rescore_part)):
+                return refuse(f"{p} rescore.mode does not match its run facts")
+            if any(r.get("carried") != ("checks" if mode == "checks" and "reused_from" in r else None)
+                   for r in owned):
+                return refuse(f"{p} rescore.mode does not match its carried rows")
+            reusable = REUSED if mode == "identical" else ("KILLED", "INVALID")
+            if any(r["raw_status"] not in reusable for r in reused_rows):
+                return refuse(f"{p} rescore.mode cannot reuse the row's raw_status")
         found = [Mutant(**{"start": 0, "end": 0, **rows.get(r["id"], (r,))[0]}) for r in first["mutants"]]
         rescore = first.get("rescore") and {**first["rescore"], **{x: sum(d["rescore"][x] for d, _ in parts)
                                                                    for x in ("reused", "rerun")}}
