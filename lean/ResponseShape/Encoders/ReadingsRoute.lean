@@ -614,7 +614,9 @@ theorem verdictsD_fits (id : String) (b : Wire.Admitted2) (j : Json) :
   · okfits
     all_goals first
       | (split
-         · apply ndDefault_fits
+         · split
+           · apply ndDefault_fits
+           · apply ndVerdictsAnswer_fits; decide
          · apply ndVerdictsAnswer_fits; decide)
       | skip
   · okfits
