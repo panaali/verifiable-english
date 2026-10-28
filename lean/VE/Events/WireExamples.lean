@@ -14,7 +14,7 @@ def pred (args : String) (wording : String) : Json :=
   parse s!"\{\"arguments\": {args}, \"description\": \"d\", \"verbalisation\": \"{wording}\"}"
 
 def vocab : Json := Json.mkObj [
-  ("sorts", parse "{\"day\": {\"description\": \"d\"}, \"act\": {\"description\": \"d\"}, \"stay\": {\"description\": \"d\"}}"),
+  ("sorts", parse "{\"day\": {\"description\": \"d\"}, \"act\": {\"description\": \"d\"}, \"stay\": {\"description\": \"d\"}, \"term\": {\"description\": \"d\"}}"),
   ("predicates", Json.mkObj [
     ("before", pred "[\"day\", \"day\"]" "{0} is before {1}"),
     ("committed_on", pred "[\"act\", \"day\"]" "{0} happens on {1}"),
@@ -22,7 +22,10 @@ def vocab : Json := Json.mkObj [
     ("stay_ends", pred "[\"stay\", \"day\"]" "{0} ends on {1}"),
     ("contributed_to", pred "[\"act\", \"stay\"]" "{0} contributed to {1}"),
     ("needed_for", pred "[\"act\", \"stay\"]" "{0} was necessary for {1}"),
-    ("happens_at", pred "[\"act\", \"day\"]" "{0} happens at {1}")]),
+    ("happens_at", pred "[\"act\", \"day\"]" "{0} happens at {1}"),
+    ("term_begins", pred "[\"term\", \"day\"]" "{0} begins on {1}"),
+    ("term_ends", pred "[\"term\", \"day\"]" "{0} ends on {1}"),
+    ("led_to", pred "[\"stay\", \"act\"]" "{0} contributed to {1}")]),
   ("constants", parse "{\"today\": {\"sort\": \"day\", \"description\": \"d\"}}")]
 
 def block : Json := parse ("{\"day\": \"day\", \"before\": \"before\", " ++
@@ -154,6 +157,35 @@ def oneDay : List (String × VE.Formula) := [("events:irreflexive", .all "day" (
 #guard (checkPremiseSize 5 oneDay).toOption.isSome
 #guard (match checkPremiseSize 4 oneDay with | .error e => e | .ok _ => "ok") ==
   "ResourceLimit: events premise events:irreflexive"
+
+-- Trust-mutant survivors (trust-mutants.json): each check over every element, not only the first or the last.
+-- A link from the state sort to the event sort; two state sorts; the fault on the first link, then on the second.
+#guard diag (env (set "links" (.arr #[link "led_to" "contributed" "x"]))) ==
+  "ok [2026-10-12, 2026-10-13, 2026-10-14] 12 [x]"
+#guard diag (env (set "states" (parse ("[{\"sort\": \"stay\", \"begins\": \"stay_begins\", \"ends\": \"stay_ends\"}, " ++
+  "{\"sort\": \"term\", \"begins\": \"term_begins\", \"ends\": \"term_ends\"}]")))) ==
+  "ok [2026-10-12, 2026-10-13, 2026-10-14] 15 [the drafters]"
+#guard diag (env (set "links" (.arr #[link "needed_for" "necessary" "x", link "contributed_to" "necessary" "y"]))) ==
+  "EventsVerbalisation: contributed_to"
+#guard diag (env (set "links" (.arr #[link "contributed_to" "necessary" "y", link "needed_for" "necessary" "x"]))) ==
+  "EventsVerbalisation: contributed_to"
+def vocabReg : Json := setPred "contributed_to" (regulated (pred "[\"act\", \"stay\"]" "{0} contributed to {1}"))
+#guard diag (env (set "links" (.arr #[link "needed_for" "necessary" "x", link "contributed_to" "contributed" "y"])) vocabReg) ==
+  "EventsRegulated: contributed_to"
+#guard diag (env (set "links" (.arr #[link "contributed_to" "contributed" "y", link "needed_for" "necessary" "x"])) vocabReg) ==
+  "EventsRegulated: contributed_to"
+-- The anchor equal to a date listed after the first is the same date.
+#guard diag (env (dates ["2026-10-14", "2026-10-12"] (some "2026-10-12"))) == "ok [2026-10-12, 2026-10-14] 9 [the drafters]"
+-- The vocabulary view, its environment and the reserved names, first and last of each list.
+def W2 : VocabView := ⟨["date__s", "day"], [("p", parse "{\"arguments\": [\"day\"]}"), ("q", .null)],
+  [("c", parse "{\"sort\": \"day\"}"), ("date__c", parse "{\"sort\": \"s\"}")]⟩
+#guard W2.names == ["date__s", "day", "p", "q", "c", "date__c"]
+#guard W2.env.sorts == ["date__s", "day"] && W2.env.predicates "p" == some ["day"] && W2.env.predicates "q" == none &&
+  W2.env.constants "c" == some "day" && W2.env.constants "date__c" == some "s"
+#guard (match checkDates W2 [] none with | .error e => e | .ok _ => "ok") == "EventsReserved: date__s"
+#guard (match checkDates { W2 with sorts := ["day"] } [] none with | .error e => e | .ok _ => "ok") ==
+  "EventsReserved: date__c"
+#guard reservedPrefixes.filter (·.1 == "events") == [("events", "date__")]
 
 -- The regenerated environment declares each named date of the day sort, and nothing else.
 def decoded : Option EventsDecoded := (decodeEvents (env block)).toOption.join
