@@ -139,12 +139,12 @@ theorem scope_absent_unchanged (front : Json) (h : "scope@0" ∉ profilesOf fron
 
 The document mode's entry is `checkDocSets`, which calls `governSetsWith governFast`; `scope_admission` and
 `scope_absent_unchanged` above stay true of `checkDoc`, which `checkDocSets` answers as wherever no set is governed.
-The stub's placeholders are pinned here: `Pinned.checkDocSets` is the entry, and `Pinned.withGoverned` the case it
+The stub's placeholders are pinned here: `Pinned.checkDocSets` is the entry (an alias), and `Pinned.withGoverned` the case it
 hands the chain, read off the case's own scope block. -/
 
 namespace Pinned
 
-abbrev checkDocSets := VE.Service.Document.checkDocSets
+export VE.Service.Document (checkDocSets)
 
 /-- The case `checkDocSets` hands the chain: GOVERN's units, and its reading sets when the case's scope block governs
     a reading set per choice (11.4). -/
@@ -159,7 +159,7 @@ theorem scope_admission_sets (front ans : Json) (h : Pinned.checkDocSets front =
     (hs : "scope@0" ∈ VE.Service.Document.profilesOf front) :
     ∃ D out a, decodeScope front = .ok D ∧ governSets D = .ok out ∧
       VE.Service.Document.checkCore (Pinned.withGoverned front out) = .ok a ∧ ans = foldGovernors D a := by
-  unfold Pinned.checkDocSets VE.Service.Document.checkDocSets at h
+  unfold VE.Service.Document.checkDocSets at h
   rw [if_pos hs] at h
   simp only [bind, Except.bind] at h
   split at h
@@ -183,7 +183,7 @@ theorem scope_admission_sets (front ans : Json) (h : Pinned.checkDocSets front =
     a block or profile fault included (`governSets_no_sets`, and the chain reads `withGoverned` as `withUnits`). -/
 theorem checkDocSets_no_sets (front : Json) (h : ∀ D, decodeScope front = .ok D → governedSetUnits D = []) :
     Pinned.checkDocSets front = VE.Service.Document.checkDoc front := by
-  unfold Pinned.checkDocSets VE.Service.Document.checkDocSets VE.Service.Document.checkDoc
+  unfold VE.Service.Document.checkDocSets VE.Service.Document.checkDoc
   split
   · simp only [bind, Except.bind]
     split
@@ -198,7 +198,7 @@ theorem checkDocSets_no_sets (front : Json) (h : ∀ D, decodeScope front = .ok 
 /-- `scope_absent_unchanged`, restated: a document without `scope@0` is `checkCore`'s, as before. -/
 theorem checkDocSets_absent_unchanged (front : Json) (h : "scope@0" ∉ VE.Service.Document.profilesOf front) :
     Pinned.checkDocSets front = VE.Service.Document.checkCore front := by
-  unfold Pinned.checkDocSets VE.Service.Document.checkDocSets
+  unfold VE.Service.Document.checkDocSets
   rw [if_neg h]
 
 end VE.Scope

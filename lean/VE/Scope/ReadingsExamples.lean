@@ -124,4 +124,14 @@ def notN : Nat → Json | 0 => j "[\"top\"]" | n + 1 => .arr #[.str "not", notN 
 #guard errorOf (sets (setDoc [s03set (cyberPart "cyberweapon_creation_permitted" guardWide)
     (cyberPart "cyberweapon_creation_permitted" (notN 62))] depParts) [g1, gN, gPr] hcNames) == "ok"
 
+-- sc-5rb, both sides of 11.1's clauses that sc-5r's review (F2) found without a fixture: one entry (two versions of
+-- the set are refused), at least one reading (none is refused, never `ResourceLimit`; one is governed), and neither a
+-- frontier nor a fixed reach
+#guard errorOf (sets (setDoc [s03, s03.setObjVal! "version" (2 : Nat)]) [g1]) == "ScopeReadings: u0165.s03"
+#guard errorOf (sets (setDoc [rset "scope-u0165-s03" "u0165.s03" []]) [g1]) == "ScopeReadings: u0165.s03"
+#guard readingContents (sets (setDoc [rset "scope-u0165-s03" "u0165.s03"
+  [reading "wide" (cyberPart "cyberweapon_creation_permitted" guardWide)]]) [g1]) "u0165.s03" == some [wideNorm]
+#guard !layoutReach .frontier && !layoutReach (.fixed ["u0165.s03"]) && layoutReach (.list "u0164.s02") &&
+  layoutReach (.rules ["hc-2"])
+
 end VE.Scope.Examples

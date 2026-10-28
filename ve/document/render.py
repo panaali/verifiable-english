@@ -4,7 +4,7 @@ from __future__ import annotations
 import json
 
 from ..ast import Document, formula_from_data
-from ..errors import VEError
+from ..errors import CheckerUnavailable, VEError
 from ..readings import active_reading_sets
 from .containers import _content_bearing, _rights_block
 from .load import load_document
@@ -176,6 +176,11 @@ def render_document(path):
             lines.append("The author's chosen reading is:" if reading_set["status"] == "authored"
                          else "This sentence could mean:")
             for index, candidate in enumerate(reading_set["readings"]):
+                if type(candidate["content"]) is dict and "part" in candidate["content"]:
+                    # A part is read only under scope@0, which composes it per choice; Lean's answer does not carry
+                    # the composed readings yet (scope spec 11.7 item 7, sc-5rc), and the part alone is no rule.
+                    raise CheckerUnavailable(f"CheckerUnavailable: {u['id']}'s reading set is composed per choice by "
+                                             "scope@0, and its composed readings are not relayed yet")
                 lead = "One reading is" if index == 0 else "Another reading is"
                 # A coupled axis's label says which reading a coupling chooses together (6.2).
                 labels = candidate.get("labels") or {}
