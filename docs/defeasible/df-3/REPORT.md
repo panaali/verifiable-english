@@ -20,9 +20,9 @@ runner overload after the Mac was unreachable; it is not counted as a pass.
   executable probe failed before the fix and passes after it. Regressions:
   `tests/test_defaults_readings.py::test_df_rho_every_forged_collision_field_is_refused` and
   `tests/test_defaults_answer.py::test_situation_filling_tables_and_tuples_are_bound`,
-  `::test_situation_entities_of_every_sort`. The two focused files passed: **81 passed**. A seeded Python bug
-  replacing the complete-table check with `if False` in a detached worktree made the missing-table assertion fail;
-  that worktree was removed.
+  `::test_situation_entities_of_every_sort`. The two focused files passed: **81 passed**. A seeded Python bug in
+  `ve/defaults.py` replacing the complete-table check with `if False` made
+  `tests/test_defaults_answer.py::test_situation_entities_of_every_sort` fail; the original file was restored.
 - Validation: `lake build` completed successfully (689 jobs) and `python3 lean/audit.py` passed (655 sources, 7,309
   theorem declarations) in the selected runner. The cached map selected **433 of 482** test units; the changed
   readings unit passed, and 9 recorded units had passed when the VM run was interrupted. The Mac runner was
