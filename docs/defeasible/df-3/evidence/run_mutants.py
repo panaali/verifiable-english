@@ -1,6 +1,8 @@
 """Seeded bugs for df-3: each applied alone, built (Lean), its named check run, then restored."""
-import json, subprocess, sys, time
+import json, os, subprocess, sys
 ROOT = "/home/seyran/code/ve-df-3"
+sys.path.insert(0, ROOT)
+from tools import nested_pytest
 T = "tests/test_defaults_readings.py::"
 DV, WI, SC = "lean/VE/Readings/DefaultVerdicts.lean", "lean/VE/Defaults/Wire.lean", "lean/ResponseShape/Schemas/ReadingsRoute.lean"
 STOP_ROW = ("    HoldsG (dSem.{u} N) [] .bottom c (dConflictRow e d) := by\n", "    HoldsG (dSem.{u} N) [] .bottom c (dConflictRow e d) := by\n  stop\n")
@@ -37,9 +39,18 @@ def sh(cmd, timeout=3500):
 
 only = set(sys.argv[1:])
 results = []
+baseline = {}
 for mid, definition, path, edits, (kind, arg) in M:
     if only and mid not in only:
         continue
+    if kind == "test":
+        key = tuple(arg)
+        if key not in baseline:
+            baseline[key] = subprocess.run(
+                nested_pytest.command(["-q", "-p", "no:cacheprovider", *arg]), cwd=ROOT,
+                env=nested_pytest.environment(os.environ), capture_output=True, text=True, timeout=3000)
+        if baseline[key].returncode != 0:
+            raise RuntimeError(f"baseline tests for {mid} did not pass: {baseline[key].returncode}")
     full = f"{ROOT}/{path}"
     original = open(full).read()
     text = original
@@ -56,8 +67,10 @@ for mid, definition, path, edits, (kind, arg) in M:
             if b is not None and "Build completed" not in b.stdout:
                 killed, by = True, "lake build ve_service: " + b.stdout.splitlines()[0][:160]
             else:
-                r = sh("uv run pytest -q -p no:cacheprovider " + " ".join(f"'{t}'" for t in arg), timeout=3000)
-                killed, by = r.returncode != 0, arg[0]
+                r = subprocess.run(nested_pytest.command(["-q", "-p", "no:cacheprovider", *arg]), cwd=ROOT,
+                                   env=nested_pytest.environment(os.environ), capture_output=True, text=True,
+                                   timeout=3000)
+                killed, by = nested_pytest.failed_test_run(r), arg[0]
     finally:
         open(full, "w").write(original)
     results.append({"id": mid, "definition": definition, "file": path, "test": by,
