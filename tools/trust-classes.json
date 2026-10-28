@@ -15557,6 +15557,60 @@
         "VE.Scope.Examples.wideSet"
       ]
     },
-    "VE/Scope/ReadingsTheorems.lean": {}
+    "VE/Scope/ReadingsTheorems.lean": {},
+    "VE/Events/Wire.lean": {
+      "D[V]": [
+        "VE.Events.EventsDecoded",
+        "VE.Events.VocabView",
+        "VE.Events.vocabView",
+        "VE.Events.VocabView.args",
+        "VE.Events.VocabView.wording",
+        "VE.Events.VocabView.decided",
+        "VE.Events.VocabView.names",
+        "VE.Events.VocabView.env",
+        "VE.Events.strAt",
+        "VE.Events.arrAt",
+        "VE.Events.decodeEventSort",
+        "VE.Events.decodeStateSort",
+        "VE.Events.decodeLinkRaw",
+        "VE.Events.checkLinks",
+        "VE.Events.ownedByEvents",
+        "VE.Events.checkDates",
+        "VE.Events.decodeEvents",
+        "VE.Events.eventsPack"
+      ],
+      "D[R]": [
+        "VE.Events.invalid",
+        "VE.Events.objectAt",
+        "VE.Events.firstFault",
+        "VE.Events.repeatOf",
+        "VE.Events.roleSig",
+        "VE.Events.checkDay",
+        "VE.Events.checkRoles",
+        "VE.Events.checkPremiseSize"
+      ]
+    },
+    "VE/Events/WireExamples.lean": {
+      "T": [
+        "VE.Events.WireExamples.parse",
+        "VE.Events.WireExamples.pred",
+        "VE.Events.WireExamples.vocab",
+        "VE.Events.WireExamples.block",
+        "VE.Events.WireExamples.drop",
+        "VE.Events.WireExamples.env",
+        "VE.Events.WireExamples.set",
+        "VE.Events.WireExamples.setPred",
+        "VE.Events.WireExamples.diag",
+        "VE.Events.WireExamples.link",
+        "VE.Events.WireExamples.by64",
+        "VE.Events.WireExamples.regulated",
+        "VE.Events.WireExamples.dates",
+        "VE.Events.WireExamples.days",
+        "VE.Events.WireExamples.withConst",
+        "VE.Events.WireExamples.oneDay",
+        "VE.Events.WireExamples.decoded",
+        "VE.Events.WireExamples.softP"
+      ]
+    }
   }
 }

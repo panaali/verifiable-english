@@ -150,7 +150,7 @@ def checkPremiseSize (limit : Nat) (ls : List (String × VE.Formula)) : Except S
   firstFault (ls.map fun (l, a) => (decide (VE.Bridge.formulaNodes a > limit), s!"ResourceLimit: events premise {l}"))
 
 /-- Spec 1.2 and 4: `none` without the block; otherwise the block, checked in order, its regenerated environment. -/
-def decodeEvents (environment : Json) : Except String (Option EventsDecoded) :=
+def decodeEvents (environment : Lean.Json) : Except String (Option EventsDecoded) :=
   match environment.getObjVal? "events" with
   | .error _ => pure none
   | .ok b => do
