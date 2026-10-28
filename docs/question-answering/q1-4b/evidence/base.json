@@ -27726,5 +27726,209 @@
    "message": "InvalidInput: no single speech-act reading"
   },
   "wording": "Is \"beacon_two\" reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "InvalidInput",
+   "error": "VEError",
+   "message": "UnknownAlternative: wording, every"
+  },
+  "wording": "Is every service not reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "InvalidInput",
+   "error": "VEError",
+   "message": "UnknownAlternative: wording, no"
+  },
+  "wording": "Is no service reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "InvalidInput",
+   "error": "VEError",
+   "message": "UnknownAlternative: wording, no"
+  },
+  "wording": "Is no service not reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "InvalidInput",
+   "error": "VEError",
+   "message": "UnknownAlternative: wording, some"
+  },
+  "wording": "Is some service not reviewed?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The character at position 0 cannot appear outside a quoted name.",
+   "span": {
+    "column": 1,
+    "end": 1,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is atlas checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The character at position 0 cannot appear outside a quoted name.",
+   "span": {
+    "column": 1,
+    "end": 1,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is atlas not checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "InvalidInput",
+   "error": "VEError",
+   "message": "UnknownAlternative: wording, every"
+  },
+  "wording": "Is every service checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "InvalidInput",
+   "error": "VEError",
+   "message": "UnknownAlternative: wording, every"
+  },
+  "wording": "Is every service not checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "InvalidInput",
+   "error": "VEError",
+   "message": "UnknownAlternative: wording, no"
+  },
+  "wording": "Is no service checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "InvalidInput",
+   "error": "VEError",
+   "message": "UnknownAlternative: wording, no"
+  },
+  "wording": "Is no service not checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "InvalidInput",
+   "error": "VEError",
+   "message": "UnknownAlternative: wording, some"
+  },
+  "wording": "Is some service checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "InvalidInput",
+   "error": "VEError",
+   "message": "UnknownAlternative: wording, some"
+  },
+  "wording": "Is some service not checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The character at position 0 cannot appear outside a quoted name.",
+   "span": {
+    "column": 1,
+    "end": 1,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is atlas Checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The character at position 0 cannot appear outside a quoted name.",
+   "span": {
+    "column": 1,
+    "end": 1,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is atlas not Checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "InvalidInput",
+   "error": "VEError",
+   "message": "UnknownAlternative: wording, every"
+  },
+  "wording": "Is every service Checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "InvalidInput",
+   "error": "VEError",
+   "message": "UnknownAlternative: wording, every"
+  },
+  "wording": "Is every service not Checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "InvalidInput",
+   "error": "VEError",
+   "message": "UnknownAlternative: wording, no"
+  },
+  "wording": "Is no service Checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "InvalidInput",
+   "error": "VEError",
+   "message": "UnknownAlternative: wording, no"
+  },
+  "wording": "Is no service not Checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "InvalidInput",
+   "error": "VEError",
+   "message": "UnknownAlternative: wording, some"
+  },
+  "wording": "Is some service Checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "InvalidInput",
+   "error": "VEError",
+   "message": "UnknownAlternative: wording, some"
+  },
+  "wording": "Is some service not Checked?"
  }
 ]

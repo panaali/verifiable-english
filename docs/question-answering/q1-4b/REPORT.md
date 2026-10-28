@@ -1,8 +1,9 @@
 # Q1.4b report: `Is <Name> …?` read by Lean's question reader through the speech caller
 
-**Status: BLOCKED on DRI signature for DELTA P1–P10 (ten additional verdict changes).** F1's expanded corpus records
-them, and the approval check deliberately exits 1 until the DRI decides. The original 19 verdict rows remain signed
-by the DRI (reviews/dri-decisions-20261027-featureplan-gates.md item 4); every refusal row cites R1 or R2.
+**Status: every DELTA verdict row is signed.** V1–V19 by the DRI 2026-10-27
+(reviews/dri-decisions-20261027-featureplan-gates.md item 4); P1–P19 by the DRI 2026-10-28
+(reviews/dri-decisions-20261028-q1-4b.md items 1–5: the F1 rows, recheck 1's F3 and F4, and class (d)), each with a
+test that the speech caller's verdict and text equal `ve ask`'s. Every refusal row cites R1 or R2.
 Branch head: the commit that adds this fix report, on merge base `de7cb4022`. `parse_speech` sends wordings beginning with
 `Is ` to Lean's `english.question` with caller `speech-acts`, and the `Is <Name>` branch (Python's `_copular` used for
 polar questions) is deleted. Python only; no Lean change, no theorem statement added or changed. Open: FOLLOW-UP q1-4bb (below).
@@ -15,7 +16,8 @@ polar questions) is deleted. Python only; no Lean change, no theorem statement a
 | DRI item 4 (a): a gloss question gets Lean's refusal text | the routing above | `test_a_gloss_question_gets_leans_refusal_text` (accepting side: `test_a_gloss_leans_lexicon_reads_is_read`, `test_a_gloss_outside_the_environment_is_refused`) |
 | DRI item 4 (b): a case-folded name is refused | the routing above | `test_a_case_folded_name_is_refused` (`ATLAS`, `aTLAS`, `ATlas`, `BEACON`; accepting side: `test_a_name_as_declared_or_capitalised_is_read`, `atlas`, `Atlas`, `Beacon`) |
 | DRI item 4 (c): `Is every service reviewed?` gets the same verdict and text through the speech caller as through `ve ask` | the routing above | `test_a_quantified_f2_question_is_read_as_ve_ask_reads_it` (runs `ve ask DOC Q --reading` and `--json` on a document in the speech environment; `every`, `some`, and the refusing side `Is a service reviewed?` with its two rephrasings) |
-| DELTA: every changed answer or refusal has a recorded row | [DELTA.md](DELTA.md) V1–V19 signed; P1–P10 await a DRI decision | `evidence/speech_ab_f2.py audit evidence/delta.json`; `check` exits 1 while pending |
+| DRI 2026-10-28 items 1–5: P1–P19 equal `ve ask` | the routing above; the corpus's `reader_cases` (determiners read from the grammar source x predicate with and without a verbalisation x polarity) | `test_a_declared_negative_verbalisation_has_a_recorded_verdict_change`, `test_a_declared_name_with_digit_or_underscore_has_both_verdict_changes`, `test_a_no_question_is_read_as_ve_ask_reads_it`, `test_an_unverbalised_predicate_is_read_as_ve_ask_reads_it`, `test_every_quantified_unverbalised_verdict_row_is_read_as_ve_ask_reads_it`, `test_the_corpus_records_every_grammar_determiner_and_predicate_form` |
+| DELTA: every changed answer or refusal has a recorded row | [DELTA.md](DELTA.md) V1–V19 and P1–P19 signed | `evidence/speech_ab_f2.py audit evidence/delta.json` (= `check`) exits 0: `test_the_extended_delta_audits_every_verdict_as_signed`, `test_the_delta_audit_catches_missing_or_unclassified_verdicts` |
 | "Bytes 0" | no pilot document asks an `Is <Name> …?` speech question (`conformance/`, `usecases/`: none) | expected pilot bytes moved: 0 (an estimate) |
 
 The original 19 verdict rows change exactly as the decision lists them: 10 gloss (`glossed` 8, `f0-*` `Is tom a cat?` 2), 3
@@ -23,16 +25,21 @@ case-folded (`Is ATLAS reviewed?` under `speech`, `glossed`, `f0-reviewed`), and
 reviewed?` under `speech`, `glossed`, `f0-reviewed`). The saved delta is byte-identical to Q1.4's `write-f2` preview
 recorded against this base. F1 adds ten more verdict rows: two accepted negations when a negative verbalisation is
 declared, four bare service names with digits or underscores newly refused, and those four names quoted newly accepted.
-The two acceptance classes require a DRI decision under `DRI-RULINGS.md`; no standing ruling signs verdict changes.
+Recheck 1 (F3, F4) found the corpus still missed two of the reader's dimensions, so fix round 2 generates them:
+`reader_cases` crosses every determiner the grammar source puts before a noun (`every`, `some`, `no`) and a name with a
+predicate declared with and without a verbalisation (as declared and capitalised) and both polarities. That adds nine
+verdict rows: `Is no service reviewed?` (P11), `Is atlas checked/Checked?` without a verbalisation (P12–P13), and
+`Is every/some/no service checked/Checked?` (P14–P19). The DRI signed all of them on 2026-10-28; `ve ask` reads each
+the same, which the tests assert.
 
 ## What changed for users (summary of [DELTA.md](DELTA.md))
 
-- 29 verdicts: the original 19 signed by item 4, plus ten pending a DRI signature (P1–P10).
-- 140 wording rows (R1, R2's O1): the base's text for an `Is <…>?` with no matching gloss was
+- 38 verdicts: the original 19 signed by item 4, plus P1–P19 signed by the DRI 2026-10-28 (items 1–5).
+- 142 wording rows (R1, R2's O1): the base's text for an `Is <…>?` with no matching gloss was
   `The character at position 0 cannot appear outside a quoted name.` Python's fallback lexed `@<name> <rest>.`, so
   that position belonged to an `@` the writer never typed. The head gives Lean's text over the question itself (the
   closest sentence tried, the unknown phrase, the true position).
-- 79 class rows (R1, R3 for the added spans): `InvalidInput: no single speech-act reading` and
+- 88 class rows (R1, R3 for the added spans): `InvalidInput: no single speech-act reading` and
   `UnknownAlternative: wording, <word>` become Lean's `SyntaxError`/`TypeMismatch` with a span, keeping the base's
   word.
 - The `OpaqueWording` lint now appears on `Which one of …` and query targets only. A polar question that matched a
@@ -46,6 +53,8 @@ The two acceptance classes require a DRI decision under `DRI-RULINGS.md`; no sta
 | M2: case folding kept (the name replaced by `_name`'s folded constant before routing) | class (b) | `test_a_case_folded_name_is_refused` (4 failed) |
 | M3: `"Is "` dropped from `_LEAN_PREFIXES` | class (c), routing | `test_a_quantified_f2_question_is_read_as_ve_ask_reads_it` (3 failed) |
 | C1: the delta checker given q1-4's delta, a row with head text `x`, and head against head | evidence | `speech_ab_f2.py check` exits 1 on each, 0 on the saved delta |
+| C2 (fix round 2): `determiners()` returns `("every", "some")` instead of reading the grammar source | corpus coverage (F3's class) | `test_the_corpus_records_every_grammar_determiner_and_predicate_form`, `test_the_extended_delta_audits_every_verdict_as_signed` (2 failed) |
+| C3 (fix round 2): a determiner row's head may be any atom, not its determiner's formula | evidence | `test_the_delta_audit_catches_missing_or_unclassified_verdicts[speech-Is no service reviewed?-change_head]` (1 failed) |
 
 Each was planted alone, shown failing, and restored; the tree was clean afterwards. No Lean or Rust product code
 changed, so there are no seeded bugs in those languages.
@@ -93,8 +102,8 @@ Next item: q1-3 (Q1 evidence, a measurement report).
 4. PASS: speech caller and `ve ask` agree on verdict and text: `test_a_quantified_f2_question_is_read_as_ve_ask_reads_it`; valid wordings still read: `test_a_name_as_declared_or_capitalised_is_read`, `test_a_gloss_leans_lexicon_reads_is_read`.
 5. PASS: a name not declared as written is refused, not folded: `test_a_case_folded_name_is_refused`.
 6. PASS: base and head recorded at `de7cb4022` and this head (evidence/base.json, head.json); the chain runs the gate on the final HEAD.
-7. BLOCKED: the original 19 DELTA verdict cells are signed by the DRI; P1–P10 reserve a new signature because no standing ruling covers these verdicts.
-8. PASS for evidence coverage: [DELTA.md](DELTA.md) covers all 248 changed records of evidence/delta.json (`speech_ab_f2.py audit`: failing 0, pending_signature 10). The approval `check` exits 1 by design.
+7. PASS: every DELTA verdict cell is signed by the DRI (V1–V19: 2026-10-27 item 4; P1–P19: 2026-10-28 items 1–5) and names its condition test; no signature is reserved.
+8. PASS for evidence coverage: [DELTA.md](DELTA.md) covers all 268 changed records of evidence/delta.json (`speech_ab_f2.py audit` and `check`: failing 0, each class at its recorded count).
 9. PASS: `select_tests` selects `tests/test_speech_polar_lean.py` and `tests/test_speech_acts.py` (156 of 479 units), the files whose tests M1-M3 fail.
 10. N.A.: no theorem added or changed (no Lean change).
 11. PASS: the question limits are Lean's, as in Q1.4: `test_the_question_limits_are_leans`; no new budget.
@@ -112,15 +121,17 @@ Next item: q1-3 (Q1 evidence, a measurement report).
 - `tests/test_speech_acts.py::test_a_declared_gloss_is_one_opaque_atom_and_the_word_lint_only_warns`: the gloss
   directive, now through `Which one of …`.
 - `docs/question-answering/q1-4b/evidence/`: base.json, head.json, delta.json (original corpus by
-  `../q1-4/evidence/speech_ab.py write`, ten extra cases by `speech_ab_f2.py augment`, comparison by
-  `../q1-4/evidence/speech_ab.py compare`); `speech_ab_f2.py audit|check` (signed and pending classes, R1, O1).
+  `../q1-4/evidence/speech_ab.py write`, 30 extra cases by `speech_ab_f2.py augment` (`extra_cases`, `reader_cases`,
+  `determiners` read from `ve/english_grammar/relational-fol@0.json`), comparison by
+  `../q1-4/evidence/speech_ab.py compare`); `speech_ab_f2.py audit|check` (eight signed classes, R1, O1).
 - Lean (unchanged, the owner): `VE.Question.Run.speechPrefixes` `lean/VE/Question/Run.lean:194`, `Caller.auxs` `:181`,
   `speechAuxiliaries` `lean/VE/Question/Basic.lean:11`.
 - Regression tests: `VE_NATIVE_PREBUILT=1 uv run pytest -q tests/test_speech_polar_lean.py tests/test_speech_acts.py`
 - Evidence: start with Q1.4's saved base/head corpus, run `speech_ab_f2.py augment <saved> <out>` once against the
-  merge-base parser (`VE_AB_ROOT=<base checkout>`) and once against the head parser, compare with
-  `speech_ab.py compare <base> <head> <delta>`, then run `speech_ab_f2.py audit <delta>` for completeness and
-  `speech_ab_f2.py check <delta>` for DRI approval (currently exit 1).
+  merge-base parser (`VE_AB_ROOT=<base checkout>`, e.g. `git archive de7cb4022 ve tests lean/checkers.lock` into a
+  tmp dir, with `VE_LEAN_SERVICE=<this checkout>/lean/.lake/build/bin/ve_service`: Lean is identical at both commits)
+  and once against the head parser; `augment` adds only cases not yet recorded. Compare with
+  `speech_ab.py compare <base> <head> <delta>`, then `speech_ab_f2.py audit <delta>` (exit 0).
 - Generated files: none changed (no regen input touched); if one is, `uv run python tools/regen_generated.py --write`.
 - trust_mutants: not run (no trusted Lean changed).
 ## END FIXMAP
