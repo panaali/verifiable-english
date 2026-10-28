@@ -91,14 +91,15 @@ S10 (`stepB`) are the mutants per new definition. S12 shows that the UNKNOWN gua
   PASS. `bits`, `chargeBits` and `stepB` are C (`tools/trust-classes.json`), as the evaluator is; the four new fixture
   definitions are T. There is no allowance, no R16 row and no FOLLOW-UPS row.
 - **Tests.** `mac-pytest.sh --select -- --base d9cff5345 --run`, tree of 5f75f9893 (later commits: spec prose and this
-  report): 87 of 474 units, 0 failed, exit 0, on the VM (no Mac slot; 7,164 s). No pytest file is added.
+  report): 87 of 474 units, 0 failed, exit 0, on the VM (no Mac slot; 7,164 s); the last commit's 7 units
+  (`--base 5f75f9893`) also pass. No pytest file is added.
 - **Checks.** `lake build` (1,121 jobs), `lean/audit.py` (7,210 theorems), `lean_statements.py --check`,
   `repo_map.py --check`, `frozen.py` and `trust_map.py --check` pass. `regen_generated.py --write --skip route-cases`
   wrote 32 entries (`route-cases` needs the Rust release binary; no route changed). `gate_collection.py --check
   --prebuilt`: 0 added, removed, refused, stale or malformed. The full gate is the chain's, on the final HEAD.
-- **Size.** 597 hand-written lines added or changed (`git diff --numstat` from the base; generated files excluded):
+- **Size.** 598 hand-written lines added or changed (`git diff --numstat` from the base; generated files excluded):
   `Bounded.lean` 235, `BoundedExamples.lean` 92, `CompleteExamples.lean` 14, `ARITH.md` 14, spec 24, plan 7, trust table
-  8, evidence 62 (`uncharged-costs.lean`, `mutants.json`, DELTA) and this report 141. Nothing is cut.
+  8, evidence 62 (`uncharged-costs.lean`, `mutants.json`, DELTA) and this report 142. Nothing is cut.
 - **Overlap.** No in-flight branch touches `lean/VE/Arith/` or `lean/ARITH.md`. `lean/VE/Audit.lean` (generated) and
   `tools/trust-classes.json` (union) are shared with ap-2b, ap-3c, df-2b, qt-a3b, me-1 and arch-AR-1; the stale
   `foundation/me-1` also touches the spec and plan.
