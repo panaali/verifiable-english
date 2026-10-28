@@ -1282,15 +1282,15 @@
   },
   {
    "class": "S",
-   "lines": 113,
-   "reason": "ap-2c: K +0, trusted +141: lean/VE/Acts/Meaning.lean +131 (S +110: Att, Elt, Piece, addPiece, joinAct, singleAct, coordAct, applyRule, piecesOf, atomOk, actOk, meaning; untied V +21: Atom.add, baseAtom, listOf, itemOf, piecesKids), lean/VE/Acts/Readings.lean +10 (S +3: Derived; untied V +7: readings, read, analyse)",
+   "lines": 110,
+   "reason": "ap-2c: K +0, trusted +135: lean/VE/Acts/Meaning.lean +128 (S +110: Att, Elt, Piece, addPiece, joinAct, singleAct, coordAct, applyRule, piecesOf, atomOk, actOk, meaning; untied V +18: Atom.add, baseAtom, listOf, itemOf), lean/VE/Acts/Readings.lean +7 (untied V: readings, read, analyse); Derived (3) is tied to derived_iff",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-2c, 2026-10-18",
    "commit": "c0a80d23a7113a6ba38245ae3e78b7ef4edd965a"
   },
   {
    "class": "V",
-   "lines": 28,
-   "reason": "ap-2c: K +0, trusted +141: lean/VE/Acts/Meaning.lean +131 (S +110: Att, Elt, Piece, addPiece, joinAct, singleAct, coordAct, applyRule, piecesOf, atomOk, actOk, meaning; untied V +21: Atom.add, baseAtom, listOf, itemOf, piecesKids), lean/VE/Acts/Readings.lean +10 (S +3: Derived; untied V +7: readings, read, analyse)",
+   "lines": 25,
+   "reason": "ap-2c: K +0, trusted +135: lean/VE/Acts/Meaning.lean +128 (S +110: Att, Elt, Piece, addPiece, joinAct, singleAct, coordAct, applyRule, piecesOf, atomOk, actOk, meaning; untied V +18: Atom.add, baseAtom, listOf, itemOf), lean/VE/Acts/Readings.lean +7 (untied V: readings, read, analyse); Derived (3) is tied to derived_iff",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-2c, 2026-10-18",
    "commit": "c0a80d23a7113a6ba38245ae3e78b7ef4edd965a"
   }
