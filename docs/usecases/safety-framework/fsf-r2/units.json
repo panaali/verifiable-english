@@ -1,0 +1,3744 @@
+{
+ "units": [
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 64,
+   "id": "p1-title",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 27,
+   "id": "p1-published",
+   "items": 3,
+   "items_agree": 3,
+   "items_disagree": [],
+   "status": "CHECKED",
+   "status_oct1": "CHECKED",
+   "status_oct18": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 35,
+   "id": "p2-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 158,
+   "id": "ov-purpose",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 163,
+   "id": "ov-complements",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 103,
+   "id": "ov-informed",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 513,
+   "id": "ov-components",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 316,
+   "id": "ov-tcl-ccl",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 125,
+   "id": "ov-addresses",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 109,
+   "id": "ov-each-type",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "process and deadline wording"
+   ],
+   "bytes": 146,
+   "id": "ov-cross-cutting",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "UNFORMALISED",
+   "status_oct1": "UNFORMALISED",
+   "status_oct18": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 96,
+   "id": "ov-glossary-pointer",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "attitudes (beliefs, expectations)"
+   ],
+   "bytes": 71,
+   "id": "ov-public-good",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 134,
+   "id": "ov-current",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "causation"
+   ],
+   "bytes": 386,
+   "id": "ov-social-value",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 55,
+   "id": "ov-early",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "modality (may, could)"
+   ],
+   "bytes": 129,
+   "id": "ov-may-change",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "process and deadline wording"
+   ],
+   "bytes": 159,
+   "id": "ov-review-periodically",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "UNFORMALISED",
+   "status_oct1": "UNFORMALISED",
+   "status_oct18": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 238,
+   "id": "fn3",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 142,
+   "id": "fn2",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 350,
+   "id": "fn1-urls",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 30,
+   "id": "p2-footer",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 1086,
+   "id": "p3-contents",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 47,
+   "id": "s1-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 215,
+   "id": "s1-intro",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 10,
+   "id": "s11-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 125,
+   "id": "s11-focus",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 209,
+   "id": "s11-complements",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 209,
+   "id": "s11-not-exclusive",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 61,
+   "id": "s12-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 110,
+   "id": "s12-built",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 137,
+   "id": "s12-ccl-definition",
+   "items": 12,
+   "items_agree": 12,
+   "items_disagree": [],
+   "status": "CHECKED",
+   "status_oct1": "CHECKED",
+   "status_oct18": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 217,
+   "id": "s12-determined",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 72,
+   "id": "s12-component",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 113,
+   "id": "s12-two-kinds",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "CHECKED",
+   "status_oct1": "CHECKED",
+   "status_oct18": "CHECKED"
+  },
+  {
+   "blockers": [],
+   "bytes": 129,
+   "id": "s12-misuse-domains",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "CHECKED",
+   "status_oct1": "CHECKED",
+   "status_oct18": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 427,
+   "id": "s12-domain-definitions",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 203,
+   "id": "s12-ml-rd-ccls",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "modality (may, could)"
+   ],
+   "bytes": 164,
+   "id": "s12-cross-cutting",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 80,
+   "id": "s12-introduces",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 195,
+   "id": "s12-tcl-purpose",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 74,
+   "id": "s12-tcl-domains",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "CHECKED",
+   "status_oct1": "CHECKED",
+   "status_oct18": "CHECKED"
+  },
+  {
+   "blockers": [
+    "modality (may, could)"
+   ],
+   "bytes": 89,
+   "id": "s12-may-include",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "process and deadline wording"
+   ],
+   "bytes": 181,
+   "id": "s12-tcl-proximity",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "UNFORMALISED",
+   "status_oct1": "UNFORMALISED",
+   "status_oct18": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 30,
+   "id": "p4-footer",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 54,
+   "id": "s13-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "judgment terms"
+   ],
+   "bytes": 178,
+   "id": "s13-process",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "UNFORMALISED",
+   "status_oct1": "UNFORMALISED",
+   "status_oct18": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 26,
+   "id": "s131-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 71,
+   "id": "s131-first",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 175,
+   "id": "s131-identify",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 289,
+   "id": "s131-consider",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 264,
+   "id": "s131-domains",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "judgment terms"
+   ],
+   "bytes": 224,
+   "id": "s131-continue",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "UNFORMALISED",
+   "status_oct1": "UNFORMALISED",
+   "status_oct18": "UNFORMALISED"
+  },
+  {
+   "blockers": [],
+   "bytes": 129,
+   "id": "s131-four-domains",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "CHECKED",
+   "status_oct1": "CHECKED",
+   "status_oct18": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 31,
+   "id": "s132-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 175,
+   "id": "s132-purpose",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "judgment terms"
+   ],
+   "bytes": 113,
+   "id": "s132-cca",
+   "items": 17,
+   "items_agree": 17,
+   "items_disagree": [],
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [
+    "judgment terms",
+    "readings: a reading with no rule or several rules"
+   ],
+   "bytes": 431,
+   "id": "s132-subsequent",
+   "items": 1,
+   "items_agree": 1,
+   "items_disagree": [],
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [],
+   "bytes": 314,
+   "id": "s132-mcca",
+   "items": 1,
+   "items_agree": 1,
+   "items_disagree": [],
+   "status": "CHECKED",
+   "status_oct1": "CHECKED",
+   "status_oct18": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 139,
+   "id": "s132-mcca-factors",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "modality (may, could)"
+   ],
+   "bytes": 361,
+   "id": "s132-light-weight",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "modality (may, could)"
+   ],
+   "bytes": 156,
+   "id": "s132-non-frontier",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 269,
+   "id": "s132-early-warning",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 248,
+   "id": "s132-alert-thresholds",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "attitudes (aims)"
+   ],
+   "bytes": 275,
+   "id": "s132-scaffolding",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "UNFORMALISED",
+   "status_oct1": "UNFORMALISED",
+   "status_oct18": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "modality (may, could)"
+   ],
+   "bytes": 42,
+   "id": "s132-may-run",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "judgment terms",
+    "readings: a reading with no rule or several rules"
+   ],
+   "bytes": 338,
+   "id": "fn4",
+   "items": 1,
+   "items_agree": 1,
+   "items_disagree": [],
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 30,
+   "id": "p5-footer",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 26,
+   "id": "p6-header",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "modality (may, could)"
+   ],
+   "bytes": 112,
+   "id": "s132-may-run-continued",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "judgment terms"
+   ],
+   "bytes": 145,
+   "id": "s132-further-analysis",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "UNFORMALISED",
+   "status_oct1": "UNFORMALISED",
+   "status_oct18": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "attitudes (aims)"
+   ],
+   "bytes": 211,
+   "id": "s132-strive",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "UNFORMALISED",
+   "status_oct1": "UNFORMALISED",
+   "status_oct18": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 125,
+   "id": "s132-insights",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "attitudes (beliefs, expectations)"
+   ],
+   "bytes": 268,
+   "id": "s132-means",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "modality (may, could)"
+   ],
+   "bytes": 146,
+   "id": "s132-engage",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "two readings kept: VE decides each (fsf-r1)"
+   ],
+   "bytes": 252,
+   "id": "note-ml-rd-must",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "reading_content": true,
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [
+    "attitudes (beliefs, expectations)"
+   ],
+   "bytes": 132,
+   "id": "note-ml-rd-expect",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "modality (may, could)"
+   ],
+   "bytes": 224,
+   "id": "note-ml-rd-may-use",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 22,
+   "id": "s133-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "judgment terms"
+   ],
+   "bytes": 228,
+   "id": "s133-apply",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "UNFORMALISED",
+   "status_oct1": "UNFORMALISED",
+   "status_oct18": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "judgment terms"
+   ],
+   "bytes": 183,
+   "id": "s133-alert",
+   "items": 5,
+   "items_agree": 5,
+   "items_disagree": [],
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [
+    "process and deadline wording"
+   ],
+   "bytes": 69,
+   "id": "s133-inform",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "UNFORMALISED",
+   "status_oct1": "UNFORMALISED",
+   "status_oct18": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 108,
+   "id": "s133-central",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "modality (may, could)"
+   ],
+   "bytes": 233,
+   "id": "s133-update-threshold",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 297,
+   "id": "s133-categories",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 236,
+   "id": "s133-limited",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "modality (may, could)"
+   ],
+   "bytes": 265,
+   "id": "s133-determined-later",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 314,
+   "id": "s133-reflect",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 31,
+   "id": "s134-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "process and deadline wording"
+   ],
+   "bytes": 92,
+   "id": "s134-various",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "UNFORMALISED",
+   "status_oct1": "UNFORMALISED",
+   "status_oct18": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 179,
+   "id": "s134-security",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 30,
+   "id": "p6-footer",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 26,
+   "id": "p7-header",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "process and deadline wording"
+   ],
+   "bytes": 202,
+   "id": "s134-deployment",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "UNFORMALISED",
+   "status_oct1": "UNFORMALISED",
+   "status_oct18": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "judgment terms"
+   ],
+   "bytes": 126,
+   "id": "s134-rra",
+   "items": 7,
+   "items_agree": 7,
+   "items_disagree": [],
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [
+    "judgment terms"
+   ],
+   "bytes": 103,
+   "id": "s134-safety-case",
+   "items": 5,
+   "items_agree": 5,
+   "items_disagree": [],
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 115,
+   "id": "s134-see",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 36,
+   "id": "s135-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 167,
+   "id": "s135-intro",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "judgment terms"
+   ],
+   "bytes": 293,
+   "id": "s135-bullet1",
+   "items": 4,
+   "items_agree": 4,
+   "items_disagree": [],
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [
+    "judgment terms",
+    "readings: a reading with no rule or several rules"
+   ],
+   "bytes": 196,
+   "id": "s135-bullet2",
+   "items": 34,
+   "items_agree": 34,
+   "items_disagree": [],
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [
+    "judgment terms"
+   ],
+   "bytes": 490,
+   "id": "s135-bullet2-dm",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [
+    "readings: a reading with no rule or several rules"
+   ],
+   "bytes": 95,
+   "id": "s135-bullet2-only",
+   "items": 1,
+   "items_agree": 1,
+   "items_disagree": [],
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [
+    "judgment terms"
+   ],
+   "bytes": 435,
+   "id": "s135-bullet2-sec",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [
+    "judgment terms",
+    "readings: a reading with no rule or several rules"
+   ],
+   "bytes": 194,
+   "id": "s135-bullet3",
+   "items": 19,
+   "items_agree": 19,
+   "items_disagree": [],
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [
+    "judgment terms",
+    "two readings kept: VE decides each (fsf-r1)"
+   ],
+   "bytes": 269,
+   "id": "s135-bullet3-dm",
+   "items": 7,
+   "items_agree": 7,
+   "items_disagree": [],
+   "reading_content": true,
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [
+    "judgment terms",
+    "readings: a reading with no rule or several rules"
+   ],
+   "bytes": 106,
+   "id": "s135-bullet3-only",
+   "items": 1,
+   "items_agree": 1,
+   "items_disagree": [],
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [
+    "judgment terms"
+   ],
+   "bytes": 435,
+   "id": "s135-bullet3-sec",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 355,
+   "id": "fn5",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 30,
+   "id": "p7-footer",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 26,
+   "id": "p8-header",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "judgment terms",
+    "readings: a reading with no rule or several rules"
+   ],
+   "bytes": 222,
+   "id": "s135-bullet4",
+   "items": 9,
+   "items_agree": 9,
+   "items_disagree": [],
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [
+    "judgment terms"
+   ],
+   "bytes": 436,
+   "id": "s135-bullet4-dm",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [
+    "judgment terms",
+    "readings: a reading with no rule or several rules"
+   ],
+   "bytes": 106,
+   "id": "s135-bullet4-only",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [
+    "judgment terms"
+   ],
+   "bytes": 308,
+   "id": "s135-bullet4-sec",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 396,
+   "id": "s135-note",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "two readings kept: VE decides each (fsf-r1)"
+   ],
+   "bytes": 189,
+   "id": "s135-holistic",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "reading_content": true,
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 30,
+   "id": "p8-footer",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 44,
+   "id": "s2-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 277,
+   "id": "s2-intro",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 24,
+   "id": "s21-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 306,
+   "id": "s21-categories",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 153,
+   "id": "s21-levels",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 316,
+   "id": "s21-process",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 186,
+   "id": "s21-centered",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 27,
+   "id": "s211-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 236,
+   "id": "s211-important",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "causation"
+   ],
+   "bytes": 232,
+   "id": "s211-because",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "external references"
+   ],
+   "bytes": 525,
+   "id": "s211-saif",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "UNFORMALISED",
+   "status_oct1": "UNFORMALISED",
+   "status_oct18": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "external references"
+   ],
+   "bytes": 145,
+   "id": "s211-levels",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "UNFORMALISED",
+   "status_oct1": "UNFORMALISED",
+   "status_oct18": "UNFORMALISED"
+  },
+  {
+   "blockers": [],
+   "bytes": 231,
+   "id": "s211-sl2plus",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "CHECKED",
+   "status_oct1": "CHECKED",
+   "status_oct18": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 486,
+   "id": "s211-may-include",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "attitudes (beliefs, expectations)"
+   ],
+   "bytes": 152,
+   "id": "s211-expect",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "external references"
+   ],
+   "bytes": 666,
+   "id": "fn6",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "UNFORMALISED",
+   "status_oct1": "UNFORMALISED",
+   "status_oct18": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 30,
+   "id": "p9-footer",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 55,
+   "id": "s212-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 197,
+   "id": "s212-applied",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "process and deadline wording"
+   ],
+   "bytes": 398,
+   "id": "s212-step1",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "UNFORMALISED",
+   "status_oct1": "UNFORMALISED",
+   "status_oct18": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 1470,
+   "id": "s212-step1b",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "judgment terms"
+   ],
+   "bytes": 108,
+   "id": "s212-step1c",
+   "items": 5,
+   "items_agree": 5,
+   "items_disagree": [],
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [
+    "judgment terms",
+    "two readings kept: VE decides each (fsf-r1)"
+   ],
+   "bytes": 246,
+   "id": "s212-step2",
+   "items": 20,
+   "items_agree": 20,
+   "items_disagree": [],
+   "reading_content": true,
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [
+    "judgment terms"
+   ],
+   "bytes": 242,
+   "id": "s212-deem",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "UNFORMALISED",
+   "status_oct1": "UNFORMALISED",
+   "status_oct18": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "modality (may, could)"
+   ],
+   "bytes": 228,
+   "id": "s212-step3",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 186,
+   "id": "s212-submitted",
+   "items": 1,
+   "items_agree": 1,
+   "items_disagree": [],
+   "status": "CHECKED",
+   "status_oct1": "CHECKED",
+   "status_oct18": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 313,
+   "id": "s212-designed",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "attitudes (beliefs, expectations)"
+   ],
+   "bytes": 255,
+   "id": "s212-believe",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 54,
+   "id": "fn7",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 31,
+   "id": "p10-footer",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 26,
+   "id": "p11-header",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "attitudes (beliefs, expectations)"
+   ],
+   "bytes": 307,
+   "id": "s22-insider-assessment",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "two readings kept: VE decides each (fsf-r1)"
+   ],
+   "bytes": 92,
+   "id": "s22-insider-not-required",
+   "items": 1,
+   "items_agree": 0,
+   "items_disagree": [
+    "C1"
+   ],
+   "reading_content": true,
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 29,
+   "id": "s22-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 165,
+   "id": "s22-set-out",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "attitudes (beliefs, expectations)"
+   ],
+   "bytes": 37,
+   "id": "s22-expect",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "judgment terms",
+    "readings: a reading with no rule or several rules"
+   ],
+   "bytes": 186,
+   "id": "s22-recommend",
+   "items": 7,
+   "items_agree": 6,
+   "items_disagree": [
+    "C1"
+   ],
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [
+    "modality (may, could)"
+   ],
+   "bytes": 100,
+   "id": "s22-posture",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "defeasible (stated adjustments)"
+   ],
+   "bytes": 482,
+   "id": "s22-adjusted",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "UNFORMALISED",
+   "status_oct1": "UNFORMALISED",
+   "status_oct18": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "attitudes (beliefs, expectations)"
+   ],
+   "bytes": 151,
+   "id": "s22-believe",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 52,
+   "id": "s221-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 121,
+   "id": "s221-focus",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 116,
+   "id": "s221-table-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 166,
+   "id": "s221-ccl",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "CHECKED",
+   "status_oct1": "CHECKED",
+   "status_oct18": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 390,
+   "id": "s221-rationale",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 252,
+   "id": "s221-tcl",
+   "items": 12,
+   "items_agree": 12,
+   "items_disagree": [],
+   "status": "CHECKED",
+   "status_oct1": "CHECKED",
+   "status_oct18": "CHECKED"
+  },
+  {
+   "blockers": [
+    "judgment terms"
+   ],
+   "bytes": 105,
+   "id": "fn8",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "UNFORMALISED",
+   "status_oct1": "UNFORMALISED",
+   "status_oct18": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 31,
+   "id": "p11-footer",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 38,
+   "id": "s222-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 123,
+   "id": "s222-focus",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 117,
+   "id": "s222-table-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 144,
+   "id": "s222-ccl",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "CHECKED",
+   "status_oct1": "CHECKED",
+   "status_oct18": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 302,
+   "id": "s222-rationale",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 27,
+   "id": "s223-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 164,
+   "id": "s223-focus",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 234,
+   "id": "s223-note",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 132,
+   "id": "s223-table-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 335,
+   "id": "s223-ccl",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "CHECKED",
+   "status_oct1": "CHECKED",
+   "status_oct18": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 214,
+   "id": "s223-rationale",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 31,
+   "id": "p12-footer",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 75,
+   "id": "s3-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 274,
+   "id": "s3-intro",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 24,
+   "id": "s31-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 262,
+   "id": "s31-similar",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 27,
+   "id": "s311-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 124,
+   "id": "s311-important",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "causation"
+   ],
+   "bytes": 189,
+   "id": "s311-likelihood",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "external references"
+   ],
+   "bytes": 98,
+   "id": "s311-rely",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "UNFORMALISED",
+   "status_oct1": "UNFORMALISED",
+   "status_oct18": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 87,
+   "id": "fn9-a",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 29,
+   "id": "s312-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 118,
+   "id": "s312-applied",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 113,
+   "id": "s312-similar",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "process and deadline wording"
+   ],
+   "bytes": 403,
+   "id": "s312-step1",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "UNFORMALISED",
+   "status_oct1": "UNFORMALISED",
+   "status_oct18": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 1147,
+   "id": "s312-step1b",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "judgment terms"
+   ],
+   "bytes": 108,
+   "id": "s312-step1c",
+   "items": 5,
+   "items_agree": 5,
+   "items_disagree": [],
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 55,
+   "id": "fn10",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "external references"
+   ],
+   "bytes": 155,
+   "id": "fn9-b",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "UNFORMALISED",
+   "status_oct1": "UNFORMALISED",
+   "status_oct18": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 31,
+   "id": "p13-footer",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 26,
+   "id": "p14-header",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "judgment terms",
+    "two readings kept: VE decides each (fsf-r1)"
+   ],
+   "bytes": 281,
+   "id": "s312-step2",
+   "items": 28,
+   "items_agree": 28,
+   "items_disagree": [],
+   "reading_content": true,
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [
+    "judgment terms"
+   ],
+   "bytes": 233,
+   "id": "s312-deem",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "UNFORMALISED",
+   "status_oct1": "UNFORMALISED",
+   "status_oct18": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "modality (may, could)"
+   ],
+   "bytes": 228,
+   "id": "s312-step3",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 186,
+   "id": "s312-submitted",
+   "items": 1,
+   "items_agree": 1,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 313,
+   "id": "s312-designed",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "attitudes (beliefs, expectations)"
+   ],
+   "bytes": 255,
+   "id": "s312-believe",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 46,
+   "id": "s32-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 644,
+   "id": "s32-tiered",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 65,
+   "id": "s321-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 439,
+   "id": "s321-tcl",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "CHECKED",
+   "status_oct1": "CHECKED",
+   "status_oct18": "CHECKED"
+  },
+  {
+   "blockers": [
+    "judgment terms"
+   ],
+   "bytes": 120,
+   "id": "s321-periodic",
+   "items": 1,
+   "items_agree": 1,
+   "items_disagree": [],
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 130,
+   "id": "s321-may",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 175,
+   "id": "s321-internal",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "judgment terms"
+   ],
+   "bytes": 208,
+   "id": "s321-safeguards",
+   "items": 1,
+   "items_agree": 1,
+   "items_disagree": [],
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 40,
+   "id": "s322-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 120,
+   "id": "s322-define",
+   "items": 12,
+   "items_agree": 12,
+   "items_disagree": [],
+   "status": "CHECKED",
+   "status_oct1": "CHECKED",
+   "status_oct18": "CHECKED"
+  },
+  {
+   "blockers": [
+    "attitudes (beliefs, expectations)"
+   ],
+   "bytes": 37,
+   "id": "s322-expect",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "judgment terms",
+    "readings: a reading with no rule or several rules"
+   ],
+   "bytes": 48,
+   "id": "s322-recommend",
+   "items": 7,
+   "items_agree": 6,
+   "items_disagree": [
+    "C1"
+   ],
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 31,
+   "id": "p14-footer",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 26,
+   "id": "p15-header",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 150,
+   "id": "s322-recommend-continued",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 119,
+   "id": "s322-table-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 168,
+   "id": "s322-acceleration",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "CHECKED",
+   "status_oct1": "CHECKED",
+   "status_oct18": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 673,
+   "id": "s322-acceleration-rationale",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 181,
+   "id": "s322-automation",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "CHECKED",
+   "status_oct1": "CHECKED",
+   "status_oct18": "CHECKED"
+  },
+  {
+   "blockers": [
+    "addressee (a recommendation to the field)"
+   ],
+   "bytes": 142,
+   "id": "s322-automation-recommend",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "UNFORMALISED",
+   "status_oct1": "UNFORMALISED",
+   "status_oct18": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 248,
+   "id": "s322-automation-rationale",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 159,
+   "id": "s322-catastrophic",
+   "items": 12,
+   "items_agree": 12,
+   "items_disagree": [],
+   "status": "CHECKED",
+   "status_oct1": "CHECKED",
+   "status_oct18": "CHECKED"
+  },
+  {
+   "blockers": [
+    "addressee (a recommendation to the field)"
+   ],
+   "bytes": 141,
+   "id": "s322-exceptional",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "UNFORMALISED",
+   "status_oct1": "UNFORMALISED",
+   "status_oct18": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "modality (may, could)"
+   ],
+   "bytes": 232,
+   "id": "fn13",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "modality (may, could)"
+   ],
+   "bytes": 179,
+   "id": "fn12",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "defeasible (stated adjustments)"
+   ],
+   "bytes": 69,
+   "id": "fn11",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "UNFORMALISED",
+   "status_oct1": "UNFORMALISED",
+   "status_oct18": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 31,
+   "id": "p15-footer",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 92,
+   "id": "s4-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "attitudes (beliefs, expectations)"
+   ],
+   "bytes": 190,
+   "id": "s41-structure",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 125,
+   "id": "s41-responsibilities",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 112,
+   "id": "s41-reviews",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 31,
+   "id": "p16-footer",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 73,
+   "id": "s5-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 67,
+   "id": "s51-yearly",
+   "items": 1,
+   "items_agree": 1,
+   "items_disagree": [],
+   "status": "CHECKED",
+   "status_oct1": "CHECKED",
+   "status_oct18": "CHECKED"
+  },
+  {
+   "blockers": [
+    "judgment terms"
+   ],
+   "bytes": 145,
+   "id": "s51-frequent",
+   "items": 1,
+   "items_agree": 1,
+   "items_disagree": [],
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [
+    "process and deadline wording"
+   ],
+   "bytes": 380,
+   "id": "s51-process",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "UNFORMALISED",
+   "status_oct1": "UNFORMALISED",
+   "status_oct18": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "modality (may, could)"
+   ],
+   "bytes": 252,
+   "id": "s51-may-update",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "process and deadline wording"
+   ],
+   "bytes": 110,
+   "id": "s51-governance-bodies",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "UNFORMALISED",
+   "status_oct1": "UNFORMALISED",
+   "status_oct18": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 16,
+   "id": "s52-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "judgment terms",
+    "readings: a reading with no rule or several rules"
+   ],
+   "bytes": 239,
+   "id": "s52-aim",
+   "items": 5,
+   "items_agree": 5,
+   "items_disagree": [],
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 512,
+   "id": "s52-may-include",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "modality (may, could)"
+   ],
+   "bytes": 136,
+   "id": "s52-may-also",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "process and deadline wording"
+   ],
+   "bytes": 72,
+   "id": "s52-continue",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "UNFORMALISED",
+   "status_oct1": "UNFORMALISED",
+   "status_oct18": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 39,
+   "id": "s53-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 33,
+   "id": "s53-v31",
+   "items": 3,
+   "items_agree": 3,
+   "items_disagree": [],
+   "status": "CHECKED",
+   "status_oct1": "CHECKED",
+   "status_oct18": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 573,
+   "id": "s53-changes",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 37,
+   "id": "s53-v30",
+   "items": 3,
+   "items_agree": 3,
+   "items_disagree": [],
+   "status": "CHECKED",
+   "status_oct1": "CHECKED",
+   "status_oct18": "CHECKED"
+  },
+  {
+   "blockers": [],
+   "bytes": 35,
+   "id": "s53-v20",
+   "items": 3,
+   "items_agree": 3,
+   "items_disagree": [],
+   "status": "CHECKED",
+   "status_oct1": "CHECKED",
+   "status_oct18": "CHECKED"
+  },
+  {
+   "blockers": [],
+   "bytes": 31,
+   "id": "s53-v10",
+   "items": 3,
+   "items_agree": 3,
+   "items_disagree": [],
+   "status": "CHECKED",
+   "status_oct1": "CHECKED",
+   "status_oct18": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 31,
+   "id": "p17-footer",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 41,
+   "id": "g-heading",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 307,
+   "id": "g-frontier",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 322,
+   "id": "g-checkpoints",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 109,
+   "id": "g-model",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 740,
+   "id": "g-domains",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 277,
+   "id": "g-ccl",
+   "items": 12,
+   "items_agree": 12,
+   "items_disagree": [],
+   "status": "CHECKED",
+   "status_oct1": "CHECKED",
+   "status_oct18": "CHECKED"
+  },
+  {
+   "blockers": [],
+   "bytes": 288,
+   "id": "g-tcl",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "CHECKED",
+   "status_oct1": "CHECKED",
+   "status_oct18": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 345,
+   "id": "g-alert",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 250,
+   "id": "g-inherent",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 151,
+   "id": "g-cca",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 186,
+   "id": "g-early-warning",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 31,
+   "id": "p18-footer",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 26,
+   "id": "p19-header",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 151,
+   "id": "g-early-warning-continued",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 524,
+   "id": "g-mcca",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 307,
+   "id": "g-increases",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 487,
+   "id": "g-response-plans",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 349,
+   "id": "g-deployment-mitigations",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 193,
+   "id": "g-external",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "CHECKED",
+   "status_oct1": "CHECKED",
+   "status_oct18": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 137,
+   "id": "g-low-risk",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 100,
+   "id": "g-internal",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "CHECKED",
+   "status_oct1": "CHECKED",
+   "status_oct18": "CHECKED"
+  },
+  {
+   "blockers": [],
+   "bytes": 230,
+   "id": "g-high-risk",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "CHECKED",
+   "status_oct1": "CHECKED",
+   "status_oct18": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 316,
+   "id": "g-security-mitigations",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "external references"
+   ],
+   "bytes": 146,
+   "id": "g-communicate",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "UNFORMALISED",
+   "status_oct1": "UNFORMALISED",
+   "status_oct18": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "external references"
+   ],
+   "bytes": 243,
+   "id": "g-rand",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "UNFORMALISED",
+   "status_oct1": "UNFORMALISED",
+   "status_oct18": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 70,
+   "id": "fn14",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 31,
+   "id": "p19-footer",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 51,
+   "id": "p20-header",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 147,
+   "id": "g-rra",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 119,
+   "id": "g-rra-part",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "two readings kept: VE decides each (fsf-r1)"
+   ],
+   "bytes": 107,
+   "id": "g-within",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "reading_content": true,
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 139,
+   "id": "g-safety-cases",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "judgment terms"
+   ],
+   "bytes": 148,
+   "id": "g-safety-case-when",
+   "items": 5,
+   "items_agree": 5,
+   "items_disagree": [],
+   "status": "OPEN",
+   "status_oct1": "OPEN",
+   "status_oct18": "OPEN"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 298,
+   "id": "g-safety-case-misuse",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 254,
+   "id": "g-safety-case-ml-rd",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 63,
+   "id": "fn15",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check (layout, exposition, definitions, examples)"
+   ],
+   "bytes": 31,
+   "id": "p20-footer",
+   "items": 0,
+   "items_agree": 0,
+   "items_disagree": [],
+   "status": "LABELLED",
+   "status_oct1": "LABELLED",
+   "status_oct18": "LABELLED"
+  }
+ ]
+}
