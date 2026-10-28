@@ -1349,6 +1349,13 @@
    "reason": "et-3d: lean/VE/Events/Decl.lean S +1 (EventsTyped: decide (D.year ≤ 9999) per named date and its docstring line; K +0, V +0)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-3d, 2026-10-18",
    "commit": "b8eac74553124f72a8650211b9df8228c621fdfe"
+  },
+  {
+   "class": "V",
+   "lines": 120,
+   "reason": "et-4: VE/Events/Wire.lean +120 untied D[V] (EventsDecoded, VocabView and its readers, strAt, arrAt, decodeEventSort, decodeStateSort, decodeLinkRaw, checkLinks, ownedByEvents, checkDates, decodeEvents, eventsPack); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-4, 2026-10-18",
+   "commit": "6d0a105269961144688f8511f4cc4cd0c10542e4"
   }
  ]
 }

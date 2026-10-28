@@ -1,0 +1,47 @@
+{
+ "exact": [
+  "theorem eventsX_absent",
+  "theorem events_certificate_calendar"
+ ],
+ "differs": [
+  {
+   "decl": "def decodeEvents",
+   "approved": "def decodeEvents (environment : Lean.Json) : Except String (Option EventsDecoded) -- 1.2 and 4",
+   "lean": "def decodeEvents (environment : Json) : Except String (Option EventsDecoded)"
+  },
+  {
+   "decl": "def eventsPack",
+   "approved": "def eventsPack (d : EventsDecoded) : VE.Packs.Pack := { id := \"events\", kind := .constraint, decls := d.V.dates.map (fun D => (dateName D, [d.V.day])), labelled := eventsLabelled d.V, origins := d.origins }",
+   "lean": "def eventsPack (d : EventsDecoded) : VE.NormDefaults.Packs.Pack := { id := \"events\", kind := .constraint, decls := [], consts := [], labelled := eventsLabelled d.V, origins := d.origins }"
+  },
+  {
+   "decl": "structure EventsDecoded",
+   "approved": "structure EventsDecoded where V : EventsEnv E : VE.Environment -- the regenerated environment origins : List (String × VE.Packs.RequestPath)",
+   "lean": "structure EventsDecoded where V : EventsEnv E : VE.Environment origins : List (String × VE.NormDefaults.Packs.RequestPath) typed : EventsTyped E V = true"
+  }
+ ],
+ "not_built": [
+  "def checkedPremises",
+  "def completed",
+  "def completionFill",
+  "def fillBodies",
+  "def modelSafe",
+  "def replayEventsEntailment",
+  "def settledSafe",
+  "def undecidedSafe",
+  "def unguarded",
+  "def witnessSafe",
+  "structure EventsEntailmentReplay",
+  "theorem events_model_calendar",
+  "theorem events_settled_calendar",
+  "theorem events_undecided_calendar",
+  "theorem events_wire_acceptance",
+  "theorem events_witness_calendar",
+  "theorem fillPremises_canonical_completion"
+ ],
+ "counts": {
+  "exact": 2,
+  "differs": 3,
+  "not_built": 17
+ }
+}

@@ -1939,6 +1939,7 @@
 'VE.EvaluationCounts.mapM_length' depends on axioms: [propext, Quot.sound]
 'VE.EvaluationCounts.order_decodeFormulas_length' depends on axioms: [propext, Quot.sound]
 'VE.EvaluationCounts.route_decodeFormulas_length' depends on axioms: [propext, Quot.sound]
+'VE.Events.EventsDecoded.typed' depends on axioms: [propext]
 'VE.Events.boundRole_mem' depends on axioms: [propext, Quot.sound]
 'VE.Events.calendar_sat' depends on axioms: [propext, Quot.sound]
 'VE.Events.chain_head' depends on axioms: [propext]
@@ -1965,6 +1966,8 @@
 'VE.Events.embeddable_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Events.eventsPremises_satisfiable' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Events.eventsPremises_wellFormed' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Events.eventsX_absent' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Events.events_certificate_calendar' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Events.events_conservative' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Events.expansion_typed' depends on axioms: [propext]
 'VE.Events.guarded_empty' does not depend on any axioms
