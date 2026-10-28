@@ -71,9 +71,8 @@ structure ReadingsEnvironment where
     act of a predicate `p` among `predicates` (`Acts.Lexical.check`'s D-4) is given as the route's own refusal, since
     nothing elaborates a reading set's candidates; every other refusal is the decoder's. -/
 def singleActsOnly (predicates : List String) (message : String) : String :=
-  match predicates.find? (fun p => message.startsWith s!"InvalidInput: act phrase for {p} joins acts with '") with
-  | some p => s!"UnsupportedProfile: acts@0 on the readings route admits single acts only; the act of {p} joins acts"
-  | none => message
+  (predicates.find? (fun p => message.startsWith s!"InvalidInput: act phrase for {p} joins acts with '")).elim message
+    fun p => s!"UnsupportedProfile: acts@0 on the readings route admits single acts only; the act of {p} joins acts"
 
 def decodeEnvironment (environment : Json) : Except String ReadingsEnvironment := do
   let profiles ← match environment.getObjVal? "profiles" >>= strings with
