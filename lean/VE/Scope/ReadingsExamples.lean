@@ -148,10 +148,13 @@ def asWritten (u : String) (c : Json) : Option String := contentStr (gov (hcDoc 
     (do pure [← asWritten "u0165.s05" a5, ← asWritten "u0165.s05" (part "hc-5" "restricted_act_permitted" "a6")]) &&
   asWritten "u0165.s05" a5 != asWritten "u0165.s05" (part "hc-5" "restricted_act_permitted" "a6") &&
   readingContents (sets (setDoc [s03, s05set] twoSets) [g1]) "u0165.s03" == some [wideNorm, narrowNorm] &&
-  (sets (setDoc [s03, s05set] twoSets) [g1]).toOption.map unitIds == some (unitIds (setDoc [s03, s05set] twoSets))
+  (sets (setDoc [s03, s05set] twoSets) [g1]).toOption.map unitIds == some (unitIds (setDoc [s03, s05set] twoSets)) &&
+  ["u0165.s03", "u0165.s05"].all (contentStr (sets (setDoc [s03, s05set] twoSets) [g1]) · == some "null")
 #guard errorOf (sets (setDoc [s03, s05set (cyberPart "restricted_act_permitted" (j "[\"unary\", \"a5\", [\"var\", 1]]")
     [("sign", .bool false)])] twoSets) [g1]) ==
   "ScopeChoice: u0165.s03 scope-u0165-s03@1:wide, u0165.s05 scope-u0165-s05@1:b: ScopeConflict: u0165.s05: sign"
+-- a set on the lead-in listed before the governed one: still refused under every choice
+#guard errorOf (sets (setDoc [rset "lead" "u0164.s02" [reading "a" .null], s03]) [g1]) == "ScopeReadings: u0164.s02"
 -- a governor that covers no governed unit, listed first, governs nothing; one on u0165.s03 itself, listed first,
 -- still refuses
 #guard errorOf (sets (setDoc [s03]) [gR, g1]) == "ok"
