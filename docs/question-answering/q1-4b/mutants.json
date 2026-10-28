@@ -1,0 +1,42 @@
+{
+ "item": "q1-4b",
+ "note": "Each mutant planted alone in the file named, the test run, then the file restored (apply, uv run pytest -q <test>, restore; the working tree was clean afterwards). Python is the only language whose product code this item changes.",
+ "mutants": [
+  {
+   "id": "M1",
+   "language": "Python",
+   "file": "ve/speech_english.py",
+   "behaviour": "class (a): Python no longer answers a gloss question; Lean's refusal text reaches the writer",
+   "mutation": "the deleted `Is <Name>` branch (regex, `_name`, `_copular`) put back before the Lean routing",
+   "test": "tests/test_speech_polar_lean.py::test_a_gloss_question_gets_leans_refusal_text",
+   "result": "3 failed"
+  },
+  {
+   "id": "M2",
+   "language": "Python",
+   "file": "ve/speech_english.py",
+   "behaviour": "class (b): a case-folded name is refused",
+   "mutation": "before routing, the second word of an `Is ` wording replaced by the constant `_name` folds it to",
+   "test": "tests/test_speech_polar_lean.py::test_a_case_folded_name_is_refused",
+   "result": "4 failed"
+  },
+  {
+   "id": "M3",
+   "language": "Python",
+   "file": "ve/speech_english.py",
+   "behaviour": "class (c) and the routing: every `Is ` wording is Lean's, read as `ve ask` reads it",
+   "mutation": "`\"Is \"` dropped from `_LEAN_PREFIXES`",
+   "test": "tests/test_speech_polar_lean.py::test_a_quantified_f2_question_is_read_as_ve_ask_reads_it",
+   "result": "3 failed"
+  },
+  {
+   "id": "C1",
+   "language": "Python (evidence script)",
+   "file": "docs/question-answering/q1-4b/evidence/speech_ab_f2.py",
+   "behaviour": "the delta checker fails on an uncovered row, an empty delta and a head-against-head delta",
+   "mutation": "inputs: q1-4's delta.json (V1 rows, in none of the classes), one wording row whose head text is \"x\" (counts not the decision's), and compare head.json head.json",
+   "test": "uv run python docs/question-answering/q1-4b/evidence/speech_ab_f2.py check <each>",
+   "result": "exit 1 on each; exit 0 on delta.json"
+  }
+ ]
+}

@@ -1,0 +1,6061 @@
+{
+ "counts": {
+  "class": 79,
+  "lint": 0,
+  "verdict": 19,
+  "wording": 140
+ },
+ "records": 2436,
+ "rows": [
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'alice'; 'desk'; '\"desk1\"'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "\tIs atlas checked?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'alice'; 'desk'; '\"desk1\"'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "\nIs atlas checked?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'alice'; 'desk'; '\"desk1\"'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "\u000bIs atlas checked?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'alice'; 'desk'; '\"desk1\"'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "\fIs atlas checked?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'alice'; 'desk'; '\"desk1\"'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "\rIs atlas checked?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'alice'; 'desk'; '\"desk1\"'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": " Is atlas checked?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The spacing at position 4 is not allowed: write no space before a period or at the start, one after a period, and one between words and quoted names.",
+    "span": {
+     "column": 5,
+     "end": 5,
+     "line": 1,
+     "start": 4
+    }
+   },
+   "wording": "Is  atlas  checked?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The spacing at position 4 is not allowed: write no space before a period or at the start, one after a period, and one between words and quoted names.",
+    "span": {
+     "column": 5,
+     "end": 5,
+     "line": 1,
+     "start": 4
+    }
+   },
+   "wording": "Is  atlas  reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The spacing at position 4 is not allowed: write no space before a period or at the start, one after a period, and one between words and quoted names.",
+    "span": {
+     "column": 5,
+     "end": 5,
+     "line": 1,
+     "start": 4
+    }
+   },
+   "wording": "Is  it  the  case  that  atlas  is  reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question is empty.",
+    "span": {
+     "column": 1,
+     "end": 4,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is ?"
+  },
+  {
+   "base": {
+    "content": {
+     "body": [
+      "unary",
+      "reviewed",
+      [
+       "const",
+       "atlas"
+      ]
+     ],
+     "mode": "polar"
+    },
+    "kind": "question",
+    "warnings": []
+   },
+   "class": "verdict",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"ATLAS is reviewed.\". Unknown English phrase 'ATLAS'. Nearest declared wordings: 'atlas'; 'alice'; 'bob'.",
+    "span": {
+     "column": 4,
+     "end": 8,
+     "line": 1,
+     "start": 3
+    }
+   },
+   "wording": "Is ATLAS reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, a"
+   },
+   "class": "class",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "VE cannot tell whether \"a\" here means every or some. Ask one of these instead:\nIs every service reviewed?\nIs some service reviewed?",
+    "span": {
+     "column": 1,
+     "end": 22,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is a service reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "class",
+   "env": "speech",
+   "head": {
+    "code": "TypeMismatch",
+    "error": "TypeMismatch",
+    "message": "TypeMismatch: The question was read, and its formula does not pass the type check.",
+    "span": {
+     "column": 1,
+     "end": 18,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is alice reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 13 cannot appear outside a quoted name.",
+    "span": {
+     "column": 14,
+     "end": 14,
+     "line": 1,
+     "start": 13
+    }
+   },
+   "wording": "Is atlas chec\u0000ed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is chec\ted.\". Unknown English phrase 'is chec\ted'. Nearest declared wordings: 'alice'; 'beacon'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas chec\ted?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is chec\ned.\". Unknown English phrase 'is chec\ned'. Nearest declared wordings: 'alice'; 'beacon'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas chec\ned?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is chec\u000bed.\". Unknown English phrase 'is chec\u000bed'. Nearest declared wordings: 'alice'; 'beacon'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas chec\u000bed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is chec\fed.\". Unknown English phrase 'is chec\fed'. Nearest declared wordings: 'alice'; 'beacon'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas chec\fed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is chec\red.\". Unknown English phrase 'is chec\red'. Nearest declared wordings: 'alice'; 'beacon'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas chec\red?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is chec\u001ced.\". Unknown English phrase 'is chec\u001ced'. Nearest declared wordings: 'alice'; 'beacon'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas chec\u001ced?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is chec\u001fed.\". Unknown English phrase 'is chec\u001fed'. Nearest declared wordings: 'alice'; 'beacon'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas chec\u001fed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is chec ed.\". Unknown English phrase 'is chec ed'. Nearest declared wordings: 'alice'; 'beacon'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas chec ed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'alice'; 'desk'; '\"desk1\"'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 18,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?\u0000"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'alice'; 'desk'; '\"desk1\"'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?\t"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'alice'; 'desk'; '\"desk1\"'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?\n"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'alice'; 'desk'; '\"desk1\"'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?\u000b"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'alice'; 'desk'; '\"desk1\"'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?\f"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'alice'; 'desk'; '\"desk1\"'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?\r"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 18,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?\u001c"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 18,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?\u001f"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'alice'; 'desk'; '\"desk1\"'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked? "
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 18,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?\u007f"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 13 cannot appear outside a quoted name.",
+    "span": {
+     "column": 14,
+     "end": 14,
+     "line": 1,
+     "start": 13
+    }
+   },
+   "wording": "Is atlas chec\u007fed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is linked to atlas.\". Unknown English phrase 'is linked to atlas'. Nearest declared wordings: 'atlas'; 'alice'; 'beacon'.",
+    "span": {
+     "column": 1,
+     "end": 24,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas linked to atlas?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is not reviewed.\". Unknown English phrase 'is not reviewed'. Nearest declared wordings: 'is reviewed'; 'service'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 21,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas not reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 17,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed and not reviewed.\". Expected '.' or ', ' here. Use the English paraphrase as a writing example.",
+    "span": {
+     "column": 18,
+     "end": 21,
+     "line": 1,
+     "start": 17
+    }
+   },
+   "wording": "Is atlas reviewed and not reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed by staff.\". Phrase 'is reviewed by staff' extends existing wording 'reviewed': '{0} is reviewed'; declare distinct wording by hand.",
+    "span": {
+     "column": 1,
+     "end": 26,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed by staff?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed despite remaining unreviewed.\". Phrase 'is reviewed despite remaining unreviewed' extends existing wording 'reviewed': '{0} is reviewed'; declare distinct wording by hand.",
+    "span": {
+     "column": 1,
+     "end": 46,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed despite remaining unreviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed yet never reviewed.\". Phrase 'is reviewed yet never reviewed' extends existing wording 'reviewed': '{0} is reviewed'; declare distinct wording by hand.",
+    "span": {
+     "column": 1,
+     "end": 36,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed yet never reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed, therefore.\". Unknown English phrase 'therefore'. Nearest declared wordings: 'service'; 'beacon'; 'query'.",
+    "span": {
+     "column": 19,
+     "end": 28,
+     "line": 1,
+     "start": 18
+    }
+   },
+   "wording": "Is atlas reviewed, therefore?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 19,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed?\u0000"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 19,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed?\u001c"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 19,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed?\u001f"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 38,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed? Is beacon reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 19,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed??"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 19,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed?\u007f"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is vetted really vetted.\". Unknown English phrase 'is vetted really vetted'. Nearest declared wordings: 'may open {1}'; 'may share {1}'; 'must open {1}'.",
+    "span": {
+     "column": 1,
+     "end": 29,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas vetted really vetted?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is vetted, sadly.\". Unknown English phrase 'is vetted'. Nearest declared wordings: 'alice'; 'atlas'; 'beacon'.",
+    "span": {
+     "column": 1,
+     "end": 15,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas vetted, sadly?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is vetted.\". Unknown English phrase 'is vetted'. Nearest declared wordings: 'alice'; 'atlas'; 'beacon'.",
+    "span": {
+     "column": 1,
+     "end": 15,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas vetted?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary.",
+    "span": {
+     "column": 1,
+     "end": 9,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"beacon is near the desk.\". Unknown English phrase 'is near the desk'. Nearest declared wordings: 'desk'; 'may share {1}'; 'atlas'.",
+    "span": {
+     "column": 1,
+     "end": 23,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is beacon near the desk?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, every"
+   },
+   "class": "verdict",
+   "env": "speech",
+   "head": {
+    "content": {
+     "body": [
+      "forall",
+      "service",
+      [
+       "unary",
+       "reviewed",
+       [
+        "var",
+        0
+       ]
+      ]
+     ],
+     "mode": "polar"
+    },
+    "kind": "question",
+    "warnings": []
+   },
+   "wording": "Is every service reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, it"
+   },
+   "class": "class",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"it is the case that.\". Expected 'same as ' here. Use the English paraphrase as a writing example.",
+    "span": {
+     "column": 10,
+     "end": 14,
+     "line": 1,
+     "start": 9
+    }
+   },
+   "wording": "Is it the case that?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, some"
+   },
+   "class": "verdict",
+   "env": "speech",
+   "head": {
+    "content": {
+     "body": [
+      "exists",
+      "service",
+      [
+       "unary",
+       "reviewed",
+       [
+        "var",
+        0
+       ]
+      ]
+     ],
+     "mode": "polar"
+    },
+    "kind": "question",
+    "warnings": []
+   },
+   "wording": "Is some service reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, the"
+   },
+   "class": "class",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"the is token reviewed.\". Unknown English phrase 'the is'. Nearest declared wordings: 'bob'; '\"q1\"'; 'token'.",
+    "span": {
+     "column": 1,
+     "end": 7,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is the token reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"token1 is reviewed.\". Unknown English phrase 'token1'. Nearest declared wordings: '\"token1\"'; 'token'; 'bob'.",
+    "span": {
+     "column": 4,
+     "end": 9,
+     "line": 1,
+     "start": 3
+    }
+   },
+   "wording": "Is token1 reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, tom"
+   },
+   "class": "class",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"tom is a cat.\". Unknown English phrase 'tom'. Nearest declared wordings: 'bob'; '\"q1\"'; 'token'.",
+    "span": {
+     "column": 4,
+     "end": 6,
+     "line": 1,
+     "start": 3
+    }
+   },
+   "wording": "Is tom a cat?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'is vetted'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "\tIs atlas checked?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'is vetted'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "\nIs atlas checked?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'is vetted'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "\u000bIs atlas checked?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'is vetted'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "\fIs atlas checked?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'is vetted'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "\rIs atlas checked?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'is vetted'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": " Is atlas checked?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The spacing at position 4 is not allowed: write no space before a period or at the start, one after a period, and one between words and quoted names.",
+    "span": {
+     "column": 5,
+     "end": 5,
+     "line": 1,
+     "start": 4
+    }
+   },
+   "wording": "Is  atlas  checked?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The spacing at position 4 is not allowed: write no space before a period or at the start, one after a period, and one between words and quoted names.",
+    "span": {
+     "column": 5,
+     "end": 5,
+     "line": 1,
+     "start": 4
+    }
+   },
+   "wording": "Is  atlas  reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The spacing at position 4 is not allowed: write no space before a period or at the start, one after a period, and one between words and quoted names.",
+    "span": {
+     "column": 5,
+     "end": 5,
+     "line": 1,
+     "start": 4
+    }
+   },
+   "wording": "Is  it  the  case  that  atlas  is  reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question is empty.",
+    "span": {
+     "column": 1,
+     "end": 4,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is ?"
+  },
+  {
+   "base": {
+    "content": {
+     "body": [
+      "unary",
+      "reviewed",
+      [
+       "const",
+       "atlas"
+      ]
+     ],
+     "mode": "polar"
+    },
+    "kind": "question",
+    "warnings": []
+   },
+   "class": "verdict",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"ATLAS is reviewed.\". Unknown English phrase 'ATLAS'. Nearest declared wordings: 'atlas'; 'alice'; 'bob'.",
+    "span": {
+     "column": 4,
+     "end": 8,
+     "line": 1,
+     "start": 3
+    }
+   },
+   "wording": "Is ATLAS reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, a"
+   },
+   "class": "class",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "VE cannot tell whether \"a\" here means every or some. Ask one of these instead:\nIs every service reviewed?\nIs some service reviewed?",
+    "span": {
+     "column": 1,
+     "end": 22,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is a service reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "class",
+   "env": "glossed",
+   "head": {
+    "code": "TypeMismatch",
+    "error": "TypeMismatch",
+    "message": "TypeMismatch: The question was read, and its formula does not pass the type check.",
+    "span": {
+     "column": 1,
+     "end": 18,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is alice reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 13 cannot appear outside a quoted name.",
+    "span": {
+     "column": 14,
+     "end": 14,
+     "line": 1,
+     "start": 13
+    }
+   },
+   "wording": "Is atlas chec\u0000ed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is chec\ted.\". Unknown English phrase 'is chec\ted'. Nearest declared wordings: 'is vetted'; 'alice'; 'is classified as \"staffed\"'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas chec\ted?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is chec\ned.\". Unknown English phrase 'is chec\ned'. Nearest declared wordings: 'is vetted'; 'alice'; 'is classified as \"staffed\"'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas chec\ned?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is chec\u000bed.\". Unknown English phrase 'is chec\u000bed'. Nearest declared wordings: 'is vetted'; 'alice'; 'is classified as \"staffed\"'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas chec\u000bed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is chec\fed.\". Unknown English phrase 'is chec\fed'. Nearest declared wordings: 'is vetted'; 'alice'; 'is classified as \"staffed\"'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas chec\fed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is chec\red.\". Unknown English phrase 'is chec\red'. Nearest declared wordings: 'is vetted'; 'alice'; 'is classified as \"staffed\"'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas chec\red?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is chec\u001ced.\". Unknown English phrase 'is chec\u001ced'. Nearest declared wordings: 'is vetted'; 'alice'; 'is classified as \"staffed\"'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas chec\u001ced?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is chec\u001fed.\". Unknown English phrase 'is chec\u001fed'. Nearest declared wordings: 'is vetted'; 'alice'; 'is classified as \"staffed\"'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas chec\u001fed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is chec ed.\". Unknown English phrase 'is chec ed'. Nearest declared wordings: 'is vetted'; 'alice'; 'is classified as \"staffed\"'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas chec ed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'is vetted'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 18,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?\u0000"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'is vetted'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?\t"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'is vetted'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?\n"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'is vetted'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?\u000b"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'is vetted'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?\f"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'is vetted'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?\r"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 18,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?\u001c"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 18,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?\u001f"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'is vetted'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked? "
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 18,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?\u007f"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 13 cannot appear outside a quoted name.",
+    "span": {
+     "column": 14,
+     "end": 14,
+     "line": 1,
+     "start": 13
+    }
+   },
+   "wording": "Is atlas chec\u007fed?"
+  },
+  {
+   "base": {
+    "content": {
+     "body": [
+      "unary",
+      "atlas_linked",
+      [
+       "const",
+       "atlas"
+      ]
+     ],
+     "mode": "polar"
+    },
+    "kind": "question",
+    "warnings": [
+     "OpaqueWording: 'is linked to atlas' contains 'atlas' and is read as one declared predicate"
+    ]
+   },
+   "class": "verdict",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is linked to atlas.\". Unknown English phrase 'is linked to atlas'. Nearest declared wordings: 'atlas'; 'is classified as \"desk_near\"'; 'is vetted'.",
+    "span": {
+     "column": 1,
+     "end": 24,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas linked to atlas?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is not reviewed.\". Unknown English phrase 'is not reviewed'. Nearest declared wordings: 'is reviewed'; 'service'; 'is vetted'.",
+    "span": {
+     "column": 1,
+     "end": 21,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas not reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 17,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed"
+  },
+  {
+   "base": {
+    "content": {
+     "body": [
+      "unary",
+      "contradictory",
+      [
+       "const",
+       "atlas"
+      ]
+     ],
+     "mode": "polar"
+    },
+    "kind": "question",
+    "warnings": [
+     "OpaqueWording: 'is reviewed and not reviewed' contains 'and' and is read as one declared predicate"
+    ]
+   },
+   "class": "verdict",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed and not reviewed.\". Expected '.' or ', ' here. Use the English paraphrase as a writing example.",
+    "span": {
+     "column": 18,
+     "end": 21,
+     "line": 1,
+     "start": 17
+    }
+   },
+   "wording": "Is atlas reviewed and not reviewed?"
+  },
+  {
+   "base": {
+    "content": {
+     "body": [
+      "unary",
+      "staffed",
+      [
+       "const",
+       "atlas"
+      ]
+     ],
+     "mode": "polar"
+    },
+    "kind": "question",
+    "warnings": [
+     "OpaqueWording: 'is reviewed by staff' contains 'reviewed' and is read as one declared predicate"
+    ]
+   },
+   "class": "verdict",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed by staff.\". Phrase 'is reviewed by staff' extends existing wording 'reviewed': '{0} is reviewed'; declare distinct wording by hand.",
+    "span": {
+     "column": 1,
+     "end": 26,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed by staff?"
+  },
+  {
+   "base": {
+    "content": {
+     "body": [
+      "unary",
+      "despite",
+      [
+       "const",
+       "atlas"
+      ]
+     ],
+     "mode": "polar"
+    },
+    "kind": "question",
+    "warnings": [
+     "OpaqueWording: 'is reviewed despite remaining unreviewed' contains 'reviewed' and is read as one declared predicate"
+    ]
+   },
+   "class": "verdict",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed despite remaining unreviewed.\". Phrase 'is reviewed despite remaining unreviewed' extends existing wording 'reviewed': '{0} is reviewed'; declare distinct wording by hand.",
+    "span": {
+     "column": 1,
+     "end": 46,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed despite remaining unreviewed?"
+  },
+  {
+   "base": {
+    "content": {
+     "body": [
+      "unary",
+      "yet_never",
+      [
+       "const",
+       "atlas"
+      ]
+     ],
+     "mode": "polar"
+    },
+    "kind": "question",
+    "warnings": [
+     "OpaqueWording: 'is reviewed yet never reviewed' contains 'yet' and is read as one declared predicate"
+    ]
+   },
+   "class": "verdict",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed yet never reviewed.\". Phrase 'is reviewed yet never reviewed' extends existing wording 'reviewed': '{0} is reviewed'; declare distinct wording by hand.",
+    "span": {
+     "column": 1,
+     "end": 36,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed yet never reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed, therefore.\". Unknown English phrase 'therefore'. Nearest declared wordings: 'service'; 'beacon'; 'is classified as \"despite\"'.",
+    "span": {
+     "column": 19,
+     "end": 28,
+     "line": 1,
+     "start": 18
+    }
+   },
+   "wording": "Is atlas reviewed, therefore?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 19,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed?\u0000"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 19,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed?\u001c"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 19,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed?\u001f"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 38,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed? Is beacon reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 19,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed??"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 19,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed?\u007f"
+  },
+  {
+   "base": {
+    "content": {
+     "body": [
+      "unary",
+      "twice",
+      [
+       "const",
+       "atlas"
+      ]
+     ],
+     "mode": "polar"
+    },
+    "kind": "question",
+    "warnings": [
+     "OpaqueWording: 'is vetted really vetted' contains 'vetted' and is read as one declared predicate"
+    ]
+   },
+   "class": "verdict",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is vetted really vetted.\". Phrase 'is vetted really vetted' extends existing wording 'vetted': '{0} is vetted'; declare distinct wording by hand.",
+    "span": {
+     "column": 1,
+     "end": 29,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas vetted really vetted?"
+  },
+  {
+   "base": {
+    "content": {
+     "body": [
+      "unary",
+      "comma",
+      [
+       "const",
+       "atlas"
+      ]
+     ],
+     "mode": "polar"
+    },
+    "kind": "question",
+    "warnings": [
+     "OpaqueWording: 'is vetted, sadly' contains ',' and is read as one declared predicate"
+    ]
+   },
+   "class": "verdict",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is vetted, sadly.\". Unknown English phrase 'sadly'. Nearest declared wordings: 'atlas'; 'query'; 'alice'.",
+    "span": {
+     "column": 17,
+     "end": 22,
+     "line": 1,
+     "start": 16
+    }
+   },
+   "wording": "Is atlas vetted, sadly?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary.",
+    "span": {
+     "column": 1,
+     "end": 9,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas?"
+  },
+  {
+   "base": {
+    "content": {
+     "body": [
+      "unary",
+      "desk_near",
+      [
+       "const",
+       "beacon"
+      ]
+     ],
+     "mode": "polar"
+    },
+    "kind": "question",
+    "warnings": [
+     "OpaqueWording: 'is near the desk' contains 'the desk' and is read as one declared predicate"
+    ]
+   },
+   "class": "verdict",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"beacon is near the desk.\". Unknown English phrase 'is near the desk'. Nearest declared wordings: 'desk'; 'may share {1}'; 'is vetted'.",
+    "span": {
+     "column": 1,
+     "end": 23,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is beacon near the desk?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, every"
+   },
+   "class": "verdict",
+   "env": "glossed",
+   "head": {
+    "content": {
+     "body": [
+      "forall",
+      "service",
+      [
+       "unary",
+       "reviewed",
+       [
+        "var",
+        0
+       ]
+      ]
+     ],
+     "mode": "polar"
+    },
+    "kind": "question",
+    "warnings": []
+   },
+   "wording": "Is every service reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, it"
+   },
+   "class": "class",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"it is the case that.\". Expected 'same as ' here. Use the English paraphrase as a writing example.",
+    "span": {
+     "column": 10,
+     "end": 14,
+     "line": 1,
+     "start": 9
+    }
+   },
+   "wording": "Is it the case that?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, some"
+   },
+   "class": "verdict",
+   "env": "glossed",
+   "head": {
+    "content": {
+     "body": [
+      "exists",
+      "service",
+      [
+       "unary",
+       "reviewed",
+       [
+        "var",
+        0
+       ]
+      ]
+     ],
+     "mode": "polar"
+    },
+    "kind": "question",
+    "warnings": []
+   },
+   "wording": "Is some service reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, the"
+   },
+   "class": "class",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"the is token reviewed.\". Unknown English phrase 'the is'. Nearest declared wordings: 'bob'; '\"q1\"'; 'token'.",
+    "span": {
+     "column": 1,
+     "end": 7,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is the token reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"token1 is reviewed.\". Unknown English phrase 'token1'. Nearest declared wordings: '\"token1\"'; 'token'; 'bob'.",
+    "span": {
+     "column": 4,
+     "end": 9,
+     "line": 1,
+     "start": 3
+    }
+   },
+   "wording": "Is token1 reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, tom"
+   },
+   "class": "class",
+   "env": "glossed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"tom is a cat.\". Unknown English phrase 'tom'. Nearest declared wordings: 'bob'; 'is classified as \"comma\"'; '\"q1\"'.",
+    "span": {
+     "column": 4,
+     "end": 6,
+     "line": 1,
+     "start": 3
+    }
+   },
+   "wording": "Is tom a cat?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'check'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "\tIs atlas checked?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'check'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "\nIs atlas checked?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'check'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "\u000bIs atlas checked?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'check'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "\fIs atlas checked?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'check'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "\rIs atlas checked?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'check'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": " Is atlas checked?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The spacing at position 4 is not allowed: write no space before a period or at the start, one after a period, and one between words and quoted names.",
+    "span": {
+     "column": 5,
+     "end": 5,
+     "line": 1,
+     "start": 4
+    }
+   },
+   "wording": "Is  atlas  checked?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The spacing at position 4 is not allowed: write no space before a period or at the start, one after a period, and one between words and quoted names.",
+    "span": {
+     "column": 5,
+     "end": 5,
+     "line": 1,
+     "start": 4
+    }
+   },
+   "wording": "Is  atlas  reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The spacing at position 4 is not allowed: write no space before a period or at the start, one after a period, and one between words and quoted names.",
+    "span": {
+     "column": 5,
+     "end": 5,
+     "line": 1,
+     "start": 4
+    }
+   },
+   "wording": "Is  it  the  case  that  atlas  is  reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question is empty.",
+    "span": {
+     "column": 1,
+     "end": 4,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is ?"
+  },
+  {
+   "base": {
+    "content": {
+     "body": [
+      "unary",
+      "reviewed",
+      [
+       "const",
+       "atlas"
+      ]
+     ],
+     "mode": "polar"
+    },
+    "kind": "question",
+    "warnings": []
+   },
+   "class": "verdict",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"ATLAS is reviewed.\". Unknown English phrase 'ATLAS'. Nearest declared wordings: 'atlas'; 'alice'; 'is animal'.",
+    "span": {
+     "column": 4,
+     "end": 8,
+     "line": 1,
+     "start": 3
+    }
+   },
+   "wording": "Is ATLAS reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, a"
+   },
+   "class": "class",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "VE cannot tell whether \"a\" here means every or some. Ask one of these instead:\nIs every service reviewed?\nIs some service reviewed?",
+    "span": {
+     "column": 1,
+     "end": 22,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is a service reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "class",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "TypeMismatch",
+    "error": "TypeMismatch",
+    "message": "TypeMismatch: The question was read, and its formula does not pass the type check.",
+    "span": {
+     "column": 1,
+     "end": 18,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is alice reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 13 cannot appear outside a quoted name.",
+    "span": {
+     "column": 14,
+     "end": 14,
+     "line": 1,
+     "start": 13
+    }
+   },
+   "wording": "Is atlas chec\u0000ed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is chec\ted.\". Unknown English phrase 'is chec\ted'. Nearest declared wordings: 'check'; 'alice'; 'beacon'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas chec\ted?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is chec\ned.\". Unknown English phrase 'is chec\ned'. Nearest declared wordings: 'check'; 'alice'; 'beacon'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas chec\ned?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is chec\u000bed.\". Unknown English phrase 'is chec\u000bed'. Nearest declared wordings: 'check'; 'alice'; 'beacon'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas chec\u000bed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is chec\fed.\". Unknown English phrase 'is chec\fed'. Nearest declared wordings: 'check'; 'alice'; 'beacon'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas chec\fed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is chec\red.\". Unknown English phrase 'is chec\red'. Nearest declared wordings: 'check'; 'alice'; 'beacon'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas chec\red?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is chec\u001ced.\". Unknown English phrase 'is chec\u001ced'. Nearest declared wordings: 'check'; 'alice'; 'beacon'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas chec\u001ced?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is chec\u001fed.\". Unknown English phrase 'is chec\u001fed'. Nearest declared wordings: 'check'; 'alice'; 'beacon'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas chec\u001fed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is chec ed.\". Unknown English phrase 'is chec ed'. Nearest declared wordings: 'check'; 'alice'; 'beacon'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas chec ed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'check'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 18,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?\u0000"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'check'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?\t"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'check'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?\n"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'check'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?\u000b"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'check'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?\f"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'check'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?\r"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 18,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?\u001c"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 18,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?\u001f"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked.\". Unknown English phrase 'is checked'. Nearest declared wordings: 'check'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked? "
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 18,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?\u007f"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 13 cannot appear outside a quoted name.",
+    "span": {
+     "column": 14,
+     "end": 14,
+     "line": 1,
+     "start": 13
+    }
+   },
+   "wording": "Is atlas chec\u007fed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is linked to atlas.\". Unknown English phrase 'is linked to atlas'. Nearest declared wordings: 'atlas'; 'has the recorded relation \"done_open\" to {1}'; 'is animal'.",
+    "span": {
+     "column": 1,
+     "end": 24,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas linked to atlas?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is not reviewed.\". Unknown English phrase 'is not reviewed'. Nearest declared wordings: 'is reviewed'; 'service'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 21,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas not reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 17,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed and not reviewed.\". Expected '.' or ', ' here. Use the English paraphrase as a writing example.",
+    "span": {
+     "column": 18,
+     "end": 21,
+     "line": 1,
+     "start": 17
+    }
+   },
+   "wording": "Is atlas reviewed and not reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed by staff.\". Phrase 'is reviewed by staff' extends existing wording 'reviewed': '{0} is reviewed'; declare distinct wording by hand.",
+    "span": {
+     "column": 1,
+     "end": 26,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed by staff?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed despite remaining unreviewed.\". Phrase 'is reviewed despite remaining unreviewed' extends existing wording 'reviewed': '{0} is reviewed'; declare distinct wording by hand.",
+    "span": {
+     "column": 1,
+     "end": 46,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed despite remaining unreviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed yet never reviewed.\". Phrase 'is reviewed yet never reviewed' extends existing wording 'reviewed': '{0} is reviewed'; declare distinct wording by hand.",
+    "span": {
+     "column": 1,
+     "end": 36,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed yet never reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed, therefore.\". Unknown English phrase 'therefore'. Nearest declared wordings: 'service'; 'beacon'; 'check'.",
+    "span": {
+     "column": 19,
+     "end": 28,
+     "line": 1,
+     "start": 18
+    }
+   },
+   "wording": "Is atlas reviewed, therefore?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 19,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed?\u0000"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 19,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed?\u001c"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 19,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed?\u001f"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 38,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed? Is beacon reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 19,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed??"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 19,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed?\u007f"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is vetted really vetted.\". Unknown English phrase 'is vetted really vetted'. Nearest declared wordings: 'may open {1}'; 'may share {1}'; 'may click {1}'.",
+    "span": {
+     "column": 1,
+     "end": 29,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas vetted really vetted?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is vetted, sadly.\". Unknown English phrase 'is vetted'. Nearest declared wordings: 'alice'; 'atlas'; 'beacon'.",
+    "span": {
+     "column": 1,
+     "end": 15,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas vetted, sadly?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is vetted.\". Unknown English phrase 'is vetted'. Nearest declared wordings: 'alice'; 'atlas'; 'beacon'.",
+    "span": {
+     "column": 1,
+     "end": 15,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas vetted?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary.",
+    "span": {
+     "column": 1,
+     "end": 9,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"beacon is near the desk.\". Unknown English phrase 'is near the desk'. Nearest declared wordings: 'desk'; 'may share {1}'; 'atlas'.",
+    "span": {
+     "column": 1,
+     "end": 23,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is beacon near the desk?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, every"
+   },
+   "class": "verdict",
+   "env": "f0-reviewed",
+   "head": {
+    "content": {
+     "body": [
+      "forall",
+      "service",
+      [
+       "unary",
+       "reviewed",
+       [
+        "var",
+        0
+       ]
+      ]
+     ],
+     "mode": "polar"
+    },
+    "kind": "question",
+    "warnings": []
+   },
+   "wording": "Is every service reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, it"
+   },
+   "class": "class",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"it is the case that.\". Expected 'same as ' here. Use the English paraphrase as a writing example.",
+    "span": {
+     "column": 10,
+     "end": 14,
+     "line": 1,
+     "start": 9
+    }
+   },
+   "wording": "Is it the case that?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, some"
+   },
+   "class": "verdict",
+   "env": "f0-reviewed",
+   "head": {
+    "content": {
+     "body": [
+      "exists",
+      "service",
+      [
+       "unary",
+       "reviewed",
+       [
+        "var",
+        0
+       ]
+      ]
+     ],
+     "mode": "polar"
+    },
+    "kind": "question",
+    "warnings": []
+   },
+   "wording": "Is some service reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, the"
+   },
+   "class": "class",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"the is token reviewed.\". Unknown English phrase 'the is'. Nearest declared wordings: 'tom'; 'is classified as \"cat\"'; 'check'.",
+    "span": {
+     "column": 1,
+     "end": 7,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is the token reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"token1 is reviewed.\". Unknown English phrase 'token1'. Nearest declared wordings: '\"token1\"'; 'token'; 'thing'.",
+    "span": {
+     "column": 4,
+     "end": 9,
+     "line": 1,
+     "start": 3
+    }
+   },
+   "wording": "Is token1 reviewed?"
+  },
+  {
+   "base": {
+    "content": {
+     "body": [
+      "unary",
+      "cat",
+      [
+       "const",
+       "tom"
+      ]
+     ],
+     "mode": "polar"
+    },
+    "kind": "question",
+    "warnings": []
+   },
+   "class": "verdict",
+   "env": "f0-reviewed",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"tom is a cat.\". Unknown English phrase 'is a cat'. Nearest declared wordings: 'is classified as \"cat\"'; '\"q1\"'; 'tom'.",
+    "span": {
+     "column": 1,
+     "end": 12,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is tom a cat?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 17,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "\tIs atlas reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 17,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "\nIs atlas reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 17,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "\u000bIs atlas reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 17,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "\fIs atlas reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 17,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "\rIs atlas reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 17,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": " Is atlas reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The spacing at position 4 is not allowed: write no space before a period or at the start, one after a period, and one between words and quoted names.",
+    "span": {
+     "column": 5,
+     "end": 5,
+     "line": 1,
+     "start": 4
+    }
+   },
+   "wording": "Is  atlas  checked?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The spacing at position 4 is not allowed: write no space before a period or at the start, one after a period, and one between words and quoted names.",
+    "span": {
+     "column": 5,
+     "end": 5,
+     "line": 1,
+     "start": 4
+    }
+   },
+   "wording": "Is  atlas  reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The spacing at position 4 is not allowed: write no space before a period or at the start, one after a period, and one between words and quoted names.",
+    "span": {
+     "column": 5,
+     "end": 5,
+     "line": 1,
+     "start": 4
+    }
+   },
+   "wording": "Is  it  the  case  that  atlas  is  reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question is empty.",
+    "span": {
+     "column": 1,
+     "end": 4,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is ?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"ATLAS is reviewed.\". Unknown English phrase 'ATLAS'. Nearest declared wordings: 'atlas'; 'alice'; 'is animal'.",
+    "span": {
+     "column": 4,
+     "end": 8,
+     "line": 1,
+     "start": 3
+    }
+   },
+   "wording": "Is ATLAS reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"Atlas is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 17,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is Atlas reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, a"
+   },
+   "class": "class",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"a is service reviewed.\". Unknown English phrase 'a'. Nearest declared wordings: '\"q1\"'; 'is classified as \"cat\"'; 'tom'. Write \"every\" or \"some\" in place of \"a\".",
+    "span": {
+     "column": 4,
+     "end": 4,
+     "line": 1,
+     "start": 3
+    }
+   },
+   "wording": "Is a service reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"alice is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 17,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is alice reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is Reviewed.\". Unknown English phrase 'is Reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 17,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas Reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 13 cannot appear outside a quoted name.",
+    "span": {
+     "column": 14,
+     "end": 14,
+     "line": 1,
+     "start": 13
+    }
+   },
+   "wording": "Is atlas chec\u0000ed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is chec\ted.\". Unknown English phrase 'is chec\ted'. Nearest declared wordings: 'is checked'; 'check'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas chec\ted?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is chec\ned.\". Unknown English phrase 'is chec\ned'. Nearest declared wordings: 'is checked'; 'check'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas chec\ned?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is chec\u000bed.\". Unknown English phrase 'is chec\u000bed'. Nearest declared wordings: 'is checked'; 'check'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas chec\u000bed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is chec\fed.\". Unknown English phrase 'is chec\fed'. Nearest declared wordings: 'is checked'; 'check'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas chec\fed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is chec\red.\". Unknown English phrase 'is chec\red'. Nearest declared wordings: 'is checked'; 'check'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas chec\red?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is chec\u001ced.\". Unknown English phrase 'is chec\u001ced'. Nearest declared wordings: 'is checked'; 'check'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas chec\u001ced?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is chec\u001fed.\". Unknown English phrase 'is chec\u001fed'. Nearest declared wordings: 'is checked'; 'check'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas chec\u001fed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is chec ed.\". Unknown English phrase 'is chec ed'. Nearest declared wordings: 'is checked'; 'check'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 16,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas chec ed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 18,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?\u0000"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 18,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?\u001c"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 18,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?\u001f"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 18,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas checked?\u007f"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 13 cannot appear outside a quoted name.",
+    "span": {
+     "column": 14,
+     "end": 14,
+     "line": 1,
+     "start": 13
+    }
+   },
+   "wording": "Is atlas chec\u007fed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is linked to atlas.\". Unknown English phrase 'is linked to atlas'. Nearest declared wordings: 'atlas'; 'has the recorded relation \"done_open\" to {1}'; 'is animal'.",
+    "span": {
+     "column": 1,
+     "end": 24,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas linked to atlas?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is not reviewed.\". Unknown English phrase 'is not reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 21,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas not reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 17,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed and not reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 17,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed and not reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed by staff.\". Unknown English phrase 'is reviewed by staff'. Nearest declared wordings: 'is checked'; 'is classified as \"cat\"'; 'may share {1}'.",
+    "span": {
+     "column": 1,
+     "end": 26,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed by staff?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed despite remaining unreviewed.\". Unknown English phrase 'is reviewed despite remaining unreviewed'. Nearest declared wordings: 'may click {1}'; 'has the recorded relation \"done_open\" to {1}'; 'may open {1}'.",
+    "span": {
+     "column": 1,
+     "end": 46,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed despite remaining unreviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed yet never reviewed.\". Unknown English phrase 'is reviewed yet never reviewed'. Nearest declared wordings: 'is checked'; 'may click {1}'; 'may open {1}'.",
+    "span": {
+     "column": 1,
+     "end": 36,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed yet never reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed, therefore.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 17,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed, therefore?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 17,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 19,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed?\u0000"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 17,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed?\t"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 17,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed?\n"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 17,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed?\u000b"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 17,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed?\f"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 17,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed?\r"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 19,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed?\u001c"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 19,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed?\u001f"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 17,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed? "
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 38,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed? Is beacon reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 19,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed??"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "Write one question that ends with a question mark.",
+    "span": {
+     "column": 1,
+     "end": 19,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas reviewed?\u007f"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is vetted really vetted.\". Unknown English phrase 'is vetted really vetted'. Nearest declared wordings: 'may open {1}'; 'may share {1}'; 'may click {1}'.",
+    "span": {
+     "column": 1,
+     "end": 29,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas vetted really vetted?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is vetted, sadly.\". Unknown English phrase 'is vetted'. Nearest declared wordings: 'is checked'; 'alice'; 'atlas'.",
+    "span": {
+     "column": 1,
+     "end": 15,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas vetted, sadly?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is vetted.\". Unknown English phrase 'is vetted'. Nearest declared wordings: 'is checked'; 'alice'; 'atlas'.",
+    "span": {
+     "column": 1,
+     "end": 15,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas vetted?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "InvalidInput: no single speech-act reading"
+   },
+   "class": "class",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary.",
+    "span": {
+     "column": 1,
+     "end": 9,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"beacon is near the desk.\". Unknown English phrase 'is near the desk'. Nearest declared wordings: 'desk'; 'may share {1}'; 'atlas'.",
+    "span": {
+     "column": 1,
+     "end": 23,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is beacon near the desk?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"beacon is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 18,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is beacon reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, every"
+   },
+   "class": "class",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"every service is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 25,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is every service reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, it"
+   },
+   "class": "class",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"it is the case that.\". Expected 'same as ' here. Use the English paraphrase as a writing example.",
+    "span": {
+     "column": 10,
+     "end": 14,
+     "line": 1,
+     "start": 9
+    }
+   },
+   "wording": "Is it the case that?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, some"
+   },
+   "class": "class",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"some service is reviewed.\". Unknown English phrase 'is reviewed'. Nearest declared wordings: 'is checked'; 'service'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 24,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is some service reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, the"
+   },
+   "class": "class",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"the is token reviewed.\". Unknown English phrase 'the is'. Nearest declared wordings: 'tom'; 'is classified as \"cat\"'; 'check'.",
+    "span": {
+     "column": 1,
+     "end": 7,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is the token reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"token1 is reviewed.\". Unknown English phrase 'token1'. Nearest declared wordings: '\"token1\"'; 'token'; 'thing'.",
+    "span": {
+     "column": 4,
+     "end": 9,
+     "line": 1,
+     "start": 3
+    }
+   },
+   "wording": "Is token1 reviewed?"
+  },
+  {
+   "base": {
+    "content": {
+     "body": [
+      "unary",
+      "cat",
+      [
+       "const",
+       "tom"
+      ]
+     ],
+     "mode": "polar"
+    },
+    "kind": "question",
+    "warnings": []
+   },
+   "class": "verdict",
+   "env": "f0-checked",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"tom is a cat.\". Unknown English phrase 'is a cat'. Nearest declared wordings: 'is classified as \"cat\"'; '\"q1\"'; 'tom'.",
+    "span": {
+     "column": 1,
+     "end": 12,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is tom a cat?"
+  }
+ ]
+}
