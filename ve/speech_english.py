@@ -148,14 +148,16 @@ def _command_candidates(env, scope):
             yield phrase, predicate, tuple(value for _, value in bindings), reg.role
 
 
-# The beginnings of the wordings Lean reads for the speech-acts caller (its contract's `callers`): `Is it the case
-# that ` (F1), and `Must ` and `Can `, which Lean refuses (`ModalQuestion`).
-_LEAN_PREFIXES = tuple(QUESTION_CALLERS[SPEECH_CALLER])
+# The beginnings of the wordings Lean reads for the speech-acts caller: its contract's `callers` (`Is it the case
+# that ` (F1), and `Must ` and `Can `, which Lean refuses with `ModalQuestion`), and F2's fronted `Is ` (Q1.4b, DRI
+# 2026-10-27 item 4), which Lean's reader reads with the caller's auxiliary `is`.
+_LEAN_PREFIXES = (*QUESTION_CALLERS[SPEECH_CALLER], "Is ")
 
 
 def _polar(env, text):
-    """An F1 polar question, or a `Must` or `Can` wording, as Lean's `english.question` reads it for the speech-acts
-    caller (docs/spec/question-answering-PLAN.md Q1.4): its formula, or Lean's refusal raised as Lean gives it."""
+    """A polar question (F1 or F2), or a `Must` or `Can` wording, as Lean's `english.question` reads it for the
+    speech-acts caller (docs/spec/question-answering-PLAN.md Q1.4): its formula, or Lean's refusal raised as Lean
+    gives it."""
     from .english import EnglishVocabulary
     answer = read_question(env, text, EnglishVocabulary(env, _defer_overlay_refusals=True), {}, caller=SPEECH_CALLER)
     return {"mode": "polar", "body": answer["ast"]}, "question"
@@ -182,10 +184,6 @@ def parse_speech(env, source, scope, *, query=None, reading_set=None, warnings=N
         return {"mode": "follows", "query": query}, "question"
     if text.startswith(_LEAN_PREFIXES):
         return _polar(env, text)
-    match = re.fullmatch(r"Is ([A-Za-z][A-Za-z0-9_]*) (.+)\?", text)
-    if match:
-        name = _name(env, match[1])
-        return {"mode": "polar", "body": _to_data(_copular(env, name, "is " + match[2], warnings))}, "question"
     for mode, pattern in (("which_one", r"Which one of (.+) is (.+)\?"),
                           ("which_all", r"Which of (.+) are (.+)\?")):
         match = re.fullmatch(pattern, text)
