@@ -4,7 +4,8 @@ A test reads history when it starts git or reads a `.git` directory or file: its
 commits, refs or the object store change, with every tracked file the same. Such a result binds the commit it
 ran on and is never carried to another commit (docs/test-architecture/histdep/REPORT.md says where each
 record binds it). The list is an inventory and a lint only: no gate, merge or nightly run skips or reuses a
-test because of it.
+test because of it. The selector reads it only to run the lint when a change can make it stale (`INPUTS`,
+`named_sources`, tools/select_tests.py `history_inventory`).
 
 Where the list comes from, two inputs, no hand edits:
 
@@ -63,6 +64,9 @@ LIST = "tests/history-dependent.json"
 MAP_EXTRACT = "tests/history-map.json"
 FORMAT = "ve-history-tests@1"
 MAP_FORMAT = "ve-history-map@1"
+# The files besides the sources the list names (`named_sources`) whose change can make the lint fail: its two
+# inputs and its own code.
+INPUTS = (LIST, MAP_EXTRACT, "tools/history_tests.py", "tools/git_words.py")
 START, READ = "starts git", "reads .git"
 # A pytest run started by the code: the source does not say which test files it runs (a list in data, a directory,
 # the whole suite), so the unit is listed, which is the safe side.
@@ -1119,6 +1123,24 @@ def lint(root: Path = ROOT) -> Findings:
     if errors:
         return Findings(errors, [])
     return compare(listed, generate(saved, root), root)
+
+
+def named_sources(root: Path = ROOT) -> frozenset[str]:
+    """The source files the committed list (each `via` entry) and the map extract (each site) name: a change to one,
+    a renamed function say, can make the list stale, so the selector runs the lint for it (tools/select_tests.py
+    `history_inventory`). A file that is unreadable or malformed names none."""
+    named = set()
+    for name, valid, entries in (
+            (LIST, validate_list, lambda data: (item for row in data["tests"] for item in row["via"])),
+            (MAP_EXTRACT, validate_extract, lambda data: (site for record in data["units"].values()
+                                                          for site in record["sites"]))):
+        try:
+            data = json.loads((root / name).read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        if not valid(data):
+            named.update(entry.split(":", 1)[0] for entry in entries(data))
+    return frozenset(named)
 
 
 def compare(listed: dict, expected: dict, root: Path = ROOT) -> Findings:

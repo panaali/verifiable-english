@@ -2,16 +2,29 @@ import VE.Arith.Holds
 import VE.Arith.Defs
 import VE.Time.Budget
 
-/-! The budget (spec 12.2, debate F5): one unit per formula-node visit, as W6's `VE.Time.evalB`; term nodes are
-free, a count is charged through its condition, a predicate call is one visit plus its body's. `decideBounded` is
-this evaluator from no work spent; when it completes, its answer is the meaning's (`decideBounded_sound`), so the
-budget only turns an answer into unknown. -/
+/-! The budget (spec 12.2, draft 5; me-12n): one unit per node visit, term and formula nodes alike, as W6's
+`VE.Time.evalB` charges a formula node; a call, of a function or a predicate, is one visit plus its arguments' and its
+body's. Every value a term yields, and every value a range step binds, is also charged its size (`bits`), so the
+units bound the size of every value and the work done on it (`Term.evalB_bits`). `decideBounded` is this evaluator
+from no work spent; when it completes, its answer is the meaning's (`decideBounded_sound`), so the budget only turns
+an answer into unknown. -/
 
 namespace VE.Arith
 open VE.Numbers
 
+/-- The size of a value: the bit length of its magnitude, and 1 for 0. -/
+def bits (x : Int) : Nat := x.natAbs.log2 + 1
+
 def charge {α : Type} (limit w : Nat) (k : Nat → Option (α × Nat)) : Option (α × Nat) :=
   if limit ≤ w then none else k (w + 1)
+
+/-- A value is charged its size once it is computed: refused (none) when the units would pass the budget. -/
+def chargeBits (limit : Nat) (x : Int) (w : Nat) : Option (Int × Nat) :=
+  if limit < w + bits x then none else some (x, w + bits x)
+
+/-- A range step charges the size of the value it binds, then visits the condition at that value. -/
+def stepB (limit : Nat) (cond : Int → Nat → Option (Bool × Nat)) (i : Int) (w : Nat) : Option (Bool × Nat) :=
+  (chargeBits limit i w).bind fun r => cond i r.2
 
 def quantLoop (universal : Bool) (step : Int → Nat → Option (Bool × Nat)) :
     Nat → Int → Nat → Option (Bool × Nat)
@@ -32,27 +45,28 @@ structure OpEnv where
 
 mutual
 def Term.evalB (E : OpEnv) (limit : Nat) (ρ : List Int) : Term → Nat → Option (Int × Nat)
-  | .var i, w => (ρ[i]?).map fun x => (x, w)
-  | .num n, w => some (n, w)
-  | .add a b, w => match Term.evalB E limit ρ a w with
+  | .var i, w => charge limit w fun w => (ρ[i]?).bind fun x => chargeBits limit x w
+  | .num n, w => charge limit w fun w => chargeBits limit n w
+  | .add a b, w => charge limit w fun w => match Term.evalB E limit ρ a w with
     | none => none
-    | some (x, w) => (Term.evalB E limit ρ b w).map fun r => (x + r.1, r.2)
-  | .sub a b, w => match Term.evalB E limit ρ a w with
+    | some (x, w) => (Term.evalB E limit ρ b w).bind fun r => chargeBits limit (x + r.1) r.2
+  | .sub a b, w => charge limit w fun w => match Term.evalB E limit ρ a w with
     | none => none
-    | some (x, w) => (Term.evalB E limit ρ b w).map fun r => (x - r.1, r.2)
-  | .mul a b, w => match Term.evalB E limit ρ a w with
+    | some (x, w) => (Term.evalB E limit ρ b w).bind fun r => chargeBits limit (x - r.1) r.2
+  | .mul a b, w => charge limit w fun w => match Term.evalB E limit ρ a w with
     | none => none
-    | some (x, w) => (Term.evalB E limit ρ b w).map fun r => (x * r.1, r.2)
-  | .call f args, w => match E.funs f with
+    | some (x, w) => (Term.evalB E limit ρ b w).bind fun r => chargeBits limit (x * r.1) r.2
+  | .call f args, w => charge limit w fun w => match E.funs f with
     | none => none
     | some (n, g) => match Term.evalBs E limit ρ args w with
       | none => none
-      | some (xs, w) => if xs.length = n then g xs w else none
-  | .countFromTo lo hi φ, w => match Term.evalB E limit ρ lo w with
+      | some (xs, w) => if xs.length = n then (g xs w).bind fun r => chargeBits limit r.1 r.2 else none
+  | .countFromTo lo hi φ, w => charge limit w fun w => match Term.evalB E limit ρ lo w with
     | none => none
     | some (l, w) => match Term.evalB E limit ρ hi w with
       | none => none
-      | some (h, w) => countLoop (fun i w => Formula.evalB E limit (i :: ρ) φ w) (h - l + 1).toNat l 0 w
+      | some (h, w) => (countLoop (stepB limit fun i w => Formula.evalB E limit (i :: ρ) φ w)
+          (h - l + 1).toNat l 0 w).bind fun r => chargeBits limit r.1 r.2
 def Term.evalBs (E : OpEnv) (limit : Nat) (ρ : List Int) : List Term → Nat → Option (List Int × Nat)
   | [], w => some ([], w)
   | t :: ts, w => match Term.evalB E limit ρ t w with
@@ -97,12 +111,12 @@ def Formula.evalB (E : OpEnv) (limit : Nat) (ρ : List Int) : Formula → Nat �
     | none => none
     | some (l, w) => match Term.evalB E limit ρ hi w with
       | none => none
-      | some (h, w) => quantLoop true (fun i w => Formula.evalB E limit (i :: ρ) φ w) (h - l + 1).toNat l w
+      | some (h, w) => quantLoop true (stepB limit fun i w => Formula.evalB E limit (i :: ρ) φ w) (h - l + 1).toNat l w
   | .exFromTo lo hi φ, w => charge limit w fun w => match Term.evalB E limit ρ lo w with
     | none => none
     | some (l, w) => match Term.evalB E limit ρ hi w with
       | none => none
-      | some (h, w) => quantLoop false (fun i w => Formula.evalB E limit (i :: ρ) φ w) (h - l + 1).toNat l w
+      | some (h, w) => quantLoop false (stepB limit fun i w => Formula.evalB E limit (i :: ρ) φ w) (h - l + 1).toNat l w
 end
 
 def Defs.opEnv (limit : Nat) (D : Defs) : OpEnv :=
@@ -237,17 +251,92 @@ theorem charge_some {α : Type} {limit w : Nat} {k : Nat → Option (α × Nat)}
     (h : charge limit w k = some r) : w < limit ∧ k (w + 1) = some r := by
   unfold charge at h; split at h <;> simp_all
 
+theorem chargeBits_some {limit w : Nat} {x y : Int} {w' : Nat} (h : chargeBits limit x w = some (y, w')) :
+    y = x ∧ w' = w + bits x ∧ w + bits x ≤ limit := by
+  unfold chargeBits at h; split at h
+  · simp at h
+  · simp only [Option.some.injEq, Prod.mk.injEq] at h; omega
+
+theorem chargeBits_bits {limit w : Nat} {x y : Int} {w' : Nat} (h : chargeBits limit x w = some (y, w')) :
+    bits y ≤ limit ∧ w' ≤ limit := by
+  obtain ⟨rfl, rfl, h⟩ := chargeBits_some h; omega
+
+/-- Every value a term yields within budget `limit` has at most `limit` bits, in any environment (draft 5). -/
+theorem Term.evalB_bits (E : OpEnv) (limit : Nat) (ρ : List Int) (t : Term) (w : Nat) (x : Int) (w' : Nat)
+    (h : Term.evalB E limit ρ t w = some (x, w')) : bits x ≤ limit ∧ w' ≤ limit := by
+  cases t <;> simp only [Term.evalB, charge] at h <;>
+    repeat' (first | (split at h) | (rw [Option.bind_eq_some_iff] at h; obtain ⟨_, _, h⟩ := h))
+  all_goals first | (simp at h; done) | exact chargeBits_bits h
+
+theorem log2_le_of_lt {n k : Nat} (h : n < 2 ^ (k + 1)) : n.log2 ≤ k := by
+  by_cases hn : n = 0
+  · subst hn; simp [Nat.log2_zero]
+  · exact Nat.lt_succ_iff.1 ((Nat.log2_lt hn).2 h)
+
+theorem bits_natAbs_le {x : Int} {n k : Nat} (hx : x.natAbs ≤ n) (h : n < 2 ^ (k + 1)) : bits x ≤ k + 1 := by
+  have := log2_le_of_lt (n := x.natAbs) (k := k) (by omega)
+  unfold bits; omega
+
+/-! The one value computed beyond the budget, whose charge is refused, is built from operands within it. -/
+
+theorem bits_add_le (x y : Int) : bits (x + y) ≤ max (bits x) (bits y) + 1 := by
+  have hx := Nat.lt_log2_self (n := x.natAbs)
+  have hy := Nat.lt_log2_self (n := y.natAbs)
+  have hm1 : 2 ^ (x.natAbs.log2 + 1) ≤ 2 ^ (max (bits x) (bits y)) :=
+    Nat.pow_le_pow_right (by omega) (by simp only [bits]; omega)
+  have hm2 : 2 ^ (y.natAbs.log2 + 1) ≤ 2 ^ (max (bits x) (bits y)) :=
+    Nat.pow_le_pow_right (by omega) (by simp only [bits]; omega)
+  exact bits_natAbs_le (Int.natAbs_add_le x y) (by rw [Nat.pow_succ]; omega)
+
+theorem bits_sub_le (x y : Int) : bits (x - y) ≤ max (bits x) (bits y) + 1 := by
+  have := bits_add_le x (-y)
+  simpa [Int.sub_eq_add_neg, bits, Int.natAbs_neg] using this
+
+theorem bits_mul_le (x y : Int) : bits (x * y) ≤ bits x + bits y := by
+  have hx := Nat.lt_log2_self (n := x.natAbs)
+  have hy := Nat.lt_log2_self (n := y.natAbs)
+  have := bits_natAbs_le (k := x.natAbs.log2 + y.natAbs.log2 + 1) (Nat.le_of_eq (Int.natAbs_mul x y))
+    (calc x.natAbs * y.natAbs < 2 ^ (x.natAbs.log2 + 1) * 2 ^ (y.natAbs.log2 + 1) := Nat.mul_lt_mul'' hx hy
+      _ = 2 ^ (x.natAbs.log2 + y.natAbs.log2 + 1 + 1) := by rw [← Nat.pow_add]; congr 1; omega)
+  unfold bits at this ⊢; omega
+
+theorem stepB_some {limit : Nat} {cond : Int → Nat → Option (Bool × Nat)} {i : Int} {w : Nat} {r : Bool × Nat}
+    (h : stepB limit cond i w = some r) : w + bits i ≤ limit ∧ cond i (w + bits i) = some r := by
+  unfold stepB chargeBits at h; split at h
+  · simp at h
+  · exact ⟨by omega, by simpa using h⟩
+
+/-- A step agrees with `Q` and keeps the work within the limit when its condition does. -/
+theorem stepB_sound {Q : Int → Prop} {limit : Nat} {cond : Int → Nat → Option (Bool × Nat)}
+    (hs : ∀ i w b w', cond i w = some (b, w') → (Q i ↔ b = true) ∧ (w ≤ limit → w' ≤ limit)) :
+    ∀ i w b w', stepB limit cond i w = some (b, w') → (Q i ↔ b = true) ∧ (w ≤ limit → w' ≤ limit) :=
+  fun _ _ _ _ h => have ⟨hw, h⟩ := stepB_some h; ⟨(hs _ _ _ _ h).1, fun _ => (hs _ _ _ _ h).2 hw⟩
+
 mutual
 theorem Term.evalB_sound {E : Env} {O : OpEnv} {limit : Nat} (hA : Agrees E O limit) :
     ∀ (t : Term) (ρ : List Int) (w : Nat) (x : Int) (w' : Nat), Term.evalB O limit ρ t w = some (x, w') →
       Term.value E ρ t = some x ∧ (w ≤ limit → w' ≤ limit)
   | .var i, ρ, w, x, w', h => by
+    have hk := fun _ : w ≤ limit => (Term.evalB_bits O limit ρ _ w x w' h).2
     simp only [Term.evalB] at h
-    cases hi : ρ[i]? <;> simp_all [Term.value]
-  | .num n, ρ, w, x, w', h => by simp_all [Term.evalB, Term.value]
+    have ⟨_, h⟩ := charge_some h
+    cases hi : ρ[i]? with
+    | none => simp [hi] at h
+    | some v =>
+      simp only [hi, Option.bind_some] at h
+      obtain ⟨rfl, -, -⟩ := chargeBits_some h
+      exact ⟨by simp [Term.value, hi], hk⟩
+  | .num n, ρ, w, x, w', h => by
+    have hk := fun _ : w ≤ limit => (Term.evalB_bits O limit ρ _ w x w' h).2
+    simp only [Term.evalB] at h
+    have ⟨_, h⟩ := charge_some h
+    obtain ⟨rfl, -, -⟩ := chargeBits_some h
+    exact ⟨by simp [Term.value], hk⟩
   | .add a b, ρ, w, x, w', h | .sub a b, ρ, w, x, w', h | .mul a b, ρ, w, x, w', h => by
+    have hk := fun _ : w ≤ limit => (Term.evalB_bits O limit ρ _ w x w' h).2
     simp only [Term.evalB] at h
-    cases ha : Term.evalB O limit ρ a w with
+    have ⟨_, h⟩ := charge_some h
+    cases ha : Term.evalB O limit ρ a (w + 1) with
     | none => simp [ha] at h
     | some ra =>
       obtain ⟨xa, wa⟩ := ra
@@ -255,31 +344,38 @@ theorem Term.evalB_sound {E : Env} {O : OpEnv} {limit : Nat} (hA : Agrees E O li
       | none => simp [ha, hb] at h
       | some rb =>
         obtain ⟨xb, wb⟩ := rb
-        have ⟨va, wka⟩ := Term.evalB_sound hA a ρ w xa wa ha
-        have ⟨vb, wkb⟩ := Term.evalB_sound hA b ρ wa xb wb hb
-        simp only [ha, hb, Option.map_some, Option.some.injEq, Prod.mk.injEq] at h
-        obtain ⟨rfl, rfl⟩ := h
-        exact ⟨by simp [Term.value, va, vb], fun h0 => wkb (wka h0)⟩
+        have ⟨va, _⟩ := Term.evalB_sound hA a ρ (w + 1) xa wa ha
+        have ⟨vb, _⟩ := Term.evalB_sound hA b ρ wa xb wb hb
+        simp only [ha, hb, Option.bind_some] at h
+        obtain ⟨rfl, -, -⟩ := chargeBits_some h
+        exact ⟨by simp [Term.value, va, vb], hk⟩
   | .call f args, ρ, w, x, w', h => by
+    have hk := fun _ : w ≤ limit => (Term.evalB_bits O limit ρ _ w x w' h).2
     simp only [Term.evalB] at h
+    have ⟨_, h⟩ := charge_some h
     cases hf : O.funs f with
     | none => simp [hf] at h
     | some r =>
       obtain ⟨n, g⟩ := r
-      cases hs : Term.evalBs O limit ρ args w with
+      cases hs : Term.evalBs O limit ρ args (w + 1) with
       | none => simp [hf, hs] at h
       | some rs =>
         obtain ⟨xs, ws⟩ := rs
         simp only [hf, hs] at h
         split at h
         · obtain ⟨g', hg', hgg⟩ := hA.funs f n g hf
-          have ⟨vs, wks⟩ := Term.evalBs_sound hA args ρ w xs ws hs
-          have ⟨vx, wkx⟩ := hgg xs ws x w' h
-          exact ⟨by simp [Term.value, *], fun h0 => wkx (wks h0)⟩
+          have ⟨vs, _⟩ := Term.evalBs_sound hA args ρ (w + 1) xs ws hs
+          rw [Option.bind_eq_some_iff] at h
+          obtain ⟨⟨y, wy⟩, hy, h⟩ := h
+          obtain ⟨rfl, -, -⟩ := chargeBits_some h
+          have ⟨vx, _⟩ := hgg xs ws x wy hy
+          exact ⟨by simp [Term.value, *], hk⟩
         · simp at h
   | .countFromTo lo hi φ, ρ, w, x, w', h => by
+    have hk := fun _ : w ≤ limit => (Term.evalB_bits O limit ρ _ w x w' h).2
     simp only [Term.evalB] at h
-    cases hl : Term.evalB O limit ρ lo w with
+    have ⟨_, h⟩ := charge_some h
+    cases hl : Term.evalB O limit ρ lo (w + 1) with
     | none => simp [hl] at h
     | some rl =>
       obtain ⟨l, wl⟩ := rl
@@ -288,11 +384,14 @@ theorem Term.evalB_sound {E : Env} {O : OpEnv} {limit : Nat} (hA : Agrees E O li
       | some rh =>
         obtain ⟨u, wh⟩ := rh
         simp only [hl, hh] at h
-        have ⟨vl, wkl⟩ := Term.evalB_sound hA lo ρ w l wl hl
-        have ⟨vh, wkh⟩ := Term.evalB_sound hA hi ρ wl u wh hh
-        have ⟨vc, wkc⟩ := countLoop_sound (fun i => Holds E (i :: ρ) φ) _ limit
-          (fun i w b w' hs => Formula.evalB_sound hA φ (i :: ρ) w b w' hs) _ _ _ _ _ _ h
-        exact ⟨by simp [Term.value, vl, vh, vc], fun h0 => wkc (wkh (wkl h0))⟩
+        have ⟨vl, _⟩ := Term.evalB_sound hA lo ρ (w + 1) l wl hl
+        have ⟨vh, _⟩ := Term.evalB_sound hA hi ρ wl u wh hh
+        rw [Option.bind_eq_some_iff] at h
+        obtain ⟨⟨c, wc⟩, hc, h⟩ := h
+        obtain ⟨rfl, -, -⟩ := chargeBits_some h
+        have ⟨vc, _⟩ := countLoop_sound (fun i => Holds E (i :: ρ) φ) _ limit
+          (stepB_sound fun i w b w' hs => Formula.evalB_sound hA φ (i :: ρ) w b w' hs) _ _ _ _ _ _ hc
+        exact ⟨by simp [Term.value, vl, vh, vc], hk⟩
 theorem Term.evalBs_sound {E : Env} {O : OpEnv} {limit : Nat} (hA : Agrees E O limit) :
     ∀ (ts : List Term) (ρ : List Int) (w : Nat) (xs : List Int) (w' : Nat), Term.evalBs O limit ρ ts w = some (xs, w') →
       Term.values E ρ ts = some xs ∧ (w ≤ limit → w' ≤ limit)
@@ -393,7 +492,7 @@ theorem Formula.evalB_sound {E : Env} {O : OpEnv} {limit : Nat} (hA : Agrees E O
         simp only [hl, hh] at h
         have ⟨vl, wkl⟩ := Term.evalB_sound hA lo ρ (w + 1) l wl hl
         have ⟨vh, wkh⟩ := Term.evalB_sound hA hi ρ wl u wh hh
-        have hs := fun i w b w' hs => Formula.evalB_sound hA φ (i :: ρ) w b w' hs
+        have hs := stepB_sound fun i w b w' hs => Formula.evalB_sound hA φ (i :: ρ) w b w' hs
         first
         | (have ⟨v, wk⟩ := quantLoop_true (fun i => Holds E (i :: ρ) φ) _ limit hs _ _ _ _ _ h
            have H : Holds E ρ (.allFromTo lo hi φ) ↔ ∀ i, l ≤ i → i ≤ u → Holds E (i :: ρ) φ := by simp [Holds, vl, vh]
@@ -480,6 +579,18 @@ theorem charge_mono {α : Type} {limit limit' w : Nat} {k k' : Nat → Option (�
   have ⟨hw, h⟩ := charge_some h
   unfold charge; rw [if_neg (by omega)]; exact hk _ h
 
+theorem chargeBits_mono {limit limit' w : Nat} {x : Int} {r : Int × Nat} (hl : limit ≤ limit')
+    (h : chargeBits limit x w = some r) : chargeBits limit' x w = some r := by
+  unfold chargeBits at h ⊢; split at h
+  · simp at h
+  · rw [if_neg (by omega)]; exact h
+
+theorem stepB_mono {limit limit' : Nat} {cond cond' : Int → Nat → Option (Bool × Nat)} (hl : limit ≤ limit')
+    (hs : ∀ i w r, cond i w = some r → cond' i w = some r) :
+    ∀ i w r, stepB limit cond i w = some r → stepB limit' cond' i w = some r := fun i w r h => by
+  have ⟨hw, h⟩ := stepB_some h
+  unfold stepB chargeBits; rw [if_neg (by omega)]; exact hs _ _ _ h
+
 theorem quantLoop_mono (u : Bool) {step step' : Int → Nat → Option (Bool × Nat)}
     (hs : ∀ i w r, step i w = some r → step' i w = some r) :
     ∀ n i w r, quantLoop u step n i w = some r → quantLoop u step' n i w = some r
@@ -512,46 +623,65 @@ mutual
 theorem Term.evalB_mono {O O' : OpEnv} {limit limit' : Nat} (hE : Extends O O') (hl : limit ≤ limit') :
     ∀ (t : Term) (ρ : List Int) (w : Nat) (r : Int × Nat), Term.evalB O limit ρ t w = some r →
       Term.evalB O' limit' ρ t w = some r
-  | .var i, ρ, w, r, h | .num n, ρ, w, r, h => by simpa [Term.evalB] using h
+  | .var i, ρ, w, r, h => by
+    simp only [Term.evalB] at h ⊢
+    refine charge_mono hl (fun r h => ?_) h
+    cases hi : ρ[i]? with
+    | none => simp [hi] at h
+    | some v => simp only [hi, Option.bind_some] at h ⊢; exact chargeBits_mono hl h
+  | .num n, ρ, w, r, h => by
+    simp only [Term.evalB] at h ⊢
+    exact charge_mono hl (fun r h => chargeBits_mono hl h) h
   | .add a b, ρ, w, r, h | .sub a b, ρ, w, r, h | .mul a b, ρ, w, r, h => by
     simp only [Term.evalB] at h ⊢
-    cases ha : Term.evalB O limit ρ a w with
+    refine charge_mono hl (fun r h => ?_) h
+    cases ha : Term.evalB O limit ρ a (w + 1) with
     | none => simp [ha] at h
     | some ra =>
       obtain ⟨xa, wa⟩ := ra
-      rw [Term.evalB_mono hE hl a ρ w _ ha]; simp only [ha] at h ⊢
+      rw [Term.evalB_mono hE hl a ρ _ _ ha]; simp only [ha] at h ⊢
       cases hb : Term.evalB O limit ρ b wa with
       | none => simp [hb] at h
-      | some rb => rw [Term.evalB_mono hE hl b ρ wa _ hb]; simpa [hb] using h
+      | some rb =>
+        rw [Term.evalB_mono hE hl b ρ wa _ hb]; simp only [hb, Option.bind_some] at h ⊢
+        exact chargeBits_mono hl h
   | .call f args, ρ, w, r, h => by
     simp only [Term.evalB] at h ⊢
+    refine charge_mono hl (fun r h => ?_) h
     cases hf : O.funs f with
     | none => simp [hf] at h
     | some fg =>
       obtain ⟨n, g⟩ := fg
       obtain ⟨g', hg', hgg⟩ := hE.funs f n g hf
       rw [hg']; simp only [hf] at h ⊢
-      cases hs : Term.evalBs O limit ρ args w with
+      cases hs : Term.evalBs O limit ρ args (w + 1) with
       | none => simp [hs] at h
       | some rs =>
         obtain ⟨xs, ws⟩ := rs
-        rw [Term.evalBs_mono hE hl args ρ w _ hs]; simp only [hs] at h ⊢
+        rw [Term.evalBs_mono hE hl args ρ _ _ hs]; simp only [hs] at h ⊢
         split at h
-        · rw [if_pos ‹_›]; exact hgg _ _ _ h
+        · rw [if_pos ‹_›]
+          rw [Option.bind_eq_some_iff] at h ⊢
+          obtain ⟨y, hy, h⟩ := h
+          exact ⟨y, hgg _ _ _ hy, chargeBits_mono hl h⟩
         · simp at h
   | .countFromTo lo hi φ, ρ, w, r, h => by
     simp only [Term.evalB] at h ⊢
-    cases hlo : Term.evalB O limit ρ lo w with
+    refine charge_mono hl (fun r h => ?_) h
+    cases hlo : Term.evalB O limit ρ lo (w + 1) with
     | none => simp [hlo] at h
     | some rl =>
       obtain ⟨l, wl⟩ := rl
-      rw [Term.evalB_mono hE hl lo ρ w _ hlo]; simp only [hlo] at h ⊢
+      rw [Term.evalB_mono hE hl lo ρ _ _ hlo]; simp only [hlo] at h ⊢
       cases hhi : Term.evalB O limit ρ hi wl with
       | none => simp [hhi] at h
       | some rh =>
         obtain ⟨u, wh⟩ := rh
         rw [Term.evalB_mono hE hl hi ρ wl _ hhi]; simp only [hhi] at h ⊢
-        exact countLoop_mono (fun i w r hs => Formula.evalB_mono hE hl φ (i :: ρ) w r hs) _ _ _ _ _ h
+        rw [Option.bind_eq_some_iff] at h ⊢
+        obtain ⟨c, hc, h⟩ := h
+        exact ⟨c, countLoop_mono (stepB_mono hl fun i w r hs => Formula.evalB_mono hE hl φ (i :: ρ) w r hs) _ _ _ _ _ hc,
+          chargeBits_mono hl h⟩
 theorem Term.evalBs_mono {O O' : OpEnv} {limit limit' : Nat} (hE : Extends O O') (hl : limit ≤ limit') :
     ∀ (ts : List Term) (ρ : List Int) (w : Nat) (r : List Int × Nat), Term.evalBs O limit ρ ts w = some r →
       Term.evalBs O' limit' ρ ts w = some r
@@ -627,7 +757,7 @@ theorem Formula.evalB_mono {O O' : OpEnv} {limit limit' : Nat} (hE : Extends O O
       | some rh =>
         obtain ⟨u, wh⟩ := rh
         rw [Term.evalB_mono hE hl hi ρ wl _ hhi]; simp only [hhi] at h ⊢
-        exact quantLoop_mono _ (fun i w r hs => Formula.evalB_mono hE hl φ (i :: ρ) w r hs) _ _ _ _ h
+        exact quantLoop_mono _ (stepB_mono hl fun i w r hs => Formula.evalB_mono hE hl φ (i :: ρ) w r hs) _ _ _ _ h
 end
 
 theorem foldl_rel {α β γ : Type} (R : α → β → Prop) {f : α → γ → α} {g : β → γ → β}
@@ -697,6 +827,19 @@ theorem charge_eq {α : Type} {limit w : Nat} {k : Nat → Option (α × Nat)} (
     charge limit w k = k (w + 1) := by
   unfold charge; rw [if_neg (by omega)]
 
+theorem chargeBits_eq {limit w : Nat} {x : Int} (h : w + bits x ≤ limit) :
+    chargeBits limit x w = some (x, w + bits x) := by
+  unfold chargeBits; rw [if_neg (by omega)]
+
+/-- A step's work is its value's size plus its condition's. -/
+theorem stepB_total (cond : Nat → Int → Nat → Option (Bool × Nat))
+    (hs : ∀ i, ∃ b W, ∀ limit w, w + W ≤ limit → cond limit i w = some (b, w + W)) :
+    ∀ i, ∃ b W, ∀ limit w, w + W ≤ limit → stepB limit (cond limit) i w = some (b, w + W) := fun i => by
+  obtain ⟨b, W, h⟩ := hs i
+  exact ⟨b, bits i + W, fun limit w hw => by
+    simp only [stepB, chargeBits_eq (show w + bits i ≤ limit by omega), Option.bind_some,
+      h limit (w + bits i) (by omega), Nat.add_assoc]⟩
+
 theorem quantLoop_total (u : Bool) (step : Nat → Int → Nat → Option (Bool × Nat))
     (hs : ∀ i, ∃ b W, ∀ limit w, w + W ≤ limit → step limit i w = some (b, w + W)) :
     ∀ n i, ∃ b W, ∀ limit w, w + W ≤ limit → quantLoop u (step limit) n i w = some (b, w + W)
@@ -732,32 +875,58 @@ theorem Term.evalB_total {O : Nat → OpEnv} {E : Defs} {B : String → Bool} {d
       by_cases hk : k ≤ i
       · have := hs (.free (i - k)) (by simp [Term.sites, hk]); simp only [Site.Ok] at this; omega
       · omega
-    exact ⟨ρ[i], 0, fun _ _ _ => by simp [Term.evalB, hi]⟩
-  | .num n, _, _, _, _, _ => ⟨n, 0, fun _ _ _ => by simp [Term.evalB]⟩
-  | .add a b, k, ρ, hb, hs, hl | .sub a b, k, ρ, hb, hs, hl | .mul a b, k, ρ, hb, hs, hl => by
+    exact ⟨ρ[i], 1 + bits ρ[i], fun limit w hw => by
+      simp only [Term.evalB, charge_eq (show w < limit by omega), hi, getElem?_pos, Option.bind_some,
+        chargeBits_eq (show w + 1 + bits ρ[i] ≤ limit by omega), ← Nat.add_assoc]⟩
+  | .num n, _, _, _, _, _ => ⟨n, 1 + bits n, fun limit w hw => by
+      simp only [Term.evalB, charge_eq (show w < limit by omega), chargeBits_eq (show w + 1 + bits n ≤ limit by omega),
+        ← Nat.add_assoc]⟩
+  | .add a b, k, ρ, hb, hs, hl => by
     simp only [Term.bnd, Bool.and_eq_true] at hb
     obtain ⟨x, Wa, ha⟩ := Term.evalB_total hT a k ρ hb.1 (sub_sites hs) hl
     obtain ⟨y, Wb, hb'⟩ := Term.evalB_total hT b k ρ hb.2 (sub_sites hs) hl
-    exact ⟨_, Wa + Wb, fun limit w hw => by
-      simp only [Term.evalB, ha limit w (by omega), hb' limit (w + Wa) (by omega), Option.map_some, ← Nat.add_assoc] <;> exact rfl⟩
+    exact ⟨x + y, 1 + Wa + Wb + bits (x + y), fun limit w hw => by
+      simp only [Term.evalB, charge_eq (show w < limit by omega), ha limit (w + 1) (by omega),
+        hb' limit (w + 1 + Wa) (by omega), Option.bind_some,
+        chargeBits_eq (show w + 1 + Wa + Wb + bits (x + y) ≤ limit by omega), ← Nat.add_assoc]⟩
+  | .sub a b, k, ρ, hb, hs, hl => by
+    simp only [Term.bnd, Bool.and_eq_true] at hb
+    obtain ⟨x, Wa, ha⟩ := Term.evalB_total hT a k ρ hb.1 (sub_sites hs) hl
+    obtain ⟨y, Wb, hb'⟩ := Term.evalB_total hT b k ρ hb.2 (sub_sites hs) hl
+    exact ⟨x - y, 1 + Wa + Wb + bits (x - y), fun limit w hw => by
+      simp only [Term.evalB, charge_eq (show w < limit by omega), ha limit (w + 1) (by omega),
+        hb' limit (w + 1 + Wa) (by omega), Option.bind_some,
+        chargeBits_eq (show w + 1 + Wa + Wb + bits (x - y) ≤ limit by omega), ← Nat.add_assoc]⟩
+  | .mul a b, k, ρ, hb, hs, hl => by
+    simp only [Term.bnd, Bool.and_eq_true] at hb
+    obtain ⟨x, Wa, ha⟩ := Term.evalB_total hT a k ρ hb.1 (sub_sites hs) hl
+    obtain ⟨y, Wb, hb'⟩ := Term.evalB_total hT b k ρ hb.2 (sub_sites hs) hl
+    exact ⟨x * y, 1 + Wa + Wb + bits (x * y), fun limit w hw => by
+      simp only [Term.evalB, charge_eq (show w < limit by omega), ha limit (w + 1) (by omega),
+        hb' limit (w + 1 + Wa) (by omega), Option.bind_some,
+        chargeBits_eq (show w + 1 + Wa + Wb + bits (x * y) ≤ limit by omega), ← Nat.add_assoc]⟩
   | .call f args, k, ρ, hb, hs, hl => by
     simp only [Term.bnd, Bool.and_eq_true] at hb
     obtain ⟨d, hd, har⟩ := hs (.call false f args.length) (by simp [Term.sites])
     obtain ⟨xs, Ws, hlen, hxs⟩ := Term.evalBs_total hT args k ρ hb.2 (sub_sites hs) hl
     obtain ⟨x, Wg, hg⟩ := hT.funs f d hd hb.1 xs (by omega)
-    exact ⟨x, Ws + Wg, fun limit w hw => by
+    exact ⟨x, 1 + Ws + Wg + bits x, fun limit w hw => by
       obtain ⟨g, hf, hgw⟩ := hg limit
-      simp only [Term.evalB, hf, hxs limit w (by omega), hlen, har, if_true, hgw (w + Ws) (by omega), Nat.add_assoc]⟩
+      simp only [Term.evalB, charge_eq (show w < limit by omega), hf, hxs limit (w + 1) (by omega), hlen, har,
+        if_true, hgw (w + 1 + Ws) (by omega), Option.bind_some,
+        chargeBits_eq (show w + 1 + Ws + Wg + bits x ≤ limit by omega), ← Nat.add_assoc]⟩
   | .countFromTo lo hi φ, k, ρ, hb, hs, hl => by
     simp only [Term.bnd, Bool.and_eq_true] at hb
     obtain ⟨l, Wl, hlo⟩ := Term.evalB_total hT lo k ρ hb.1.1 (sub_sites hs) hl
     obtain ⟨u, Wh, hhi⟩ := Term.evalB_total hT hi k ρ hb.1.2 (sub_sites hs) hl
-    obtain ⟨c, Wc, hc⟩ := countLoop_total (fun limit i w => Formula.evalB (O limit) limit (i :: ρ) φ w)
-      (fun i => Formula.evalB_total hT φ (k + 1) (i :: ρ) hb.2 (sub_sites hs) (by simp [hl]; omega))
+    obtain ⟨c, Wc, hc⟩ := countLoop_total (fun limit => stepB limit fun i w => Formula.evalB (O limit) limit (i :: ρ) φ w)
+      (stepB_total (fun limit i w => Formula.evalB (O limit) limit (i :: ρ) φ w)
+        fun i => Formula.evalB_total hT φ (k + 1) (i :: ρ) hb.2 (sub_sites hs) (by simp [hl]; omega))
       (u - l + 1).toNat l 0
-    exact ⟨c, Wl + Wh + Wc, fun limit w hw => by
-      simp only [Term.evalB, hlo limit w (by omega), hhi limit (w + Wl) (by omega),
-        hc limit (w + Wl + Wh) (by omega)] <;> simp only [Nat.add_assoc]⟩
+    exact ⟨c, 1 + Wl + Wh + Wc + bits c, fun limit w hw => by
+      simp only [Term.evalB, charge_eq (show w < limit by omega), hlo limit (w + 1) (by omega),
+        hhi limit (w + 1 + Wl) (by omega), hc limit (w + 1 + Wl + Wh) (by omega), Option.bind_some,
+        chargeBits_eq (show w + 1 + Wl + Wh + Wc + bits c ≤ limit by omega), ← Nat.add_assoc]⟩
 theorem Term.evalBs_total {O : Nat → OpEnv} {E : Defs} {B : String → Bool} {depth : Nat} (hT : Total O E B) :
     ∀ (ts : List Term) (k : Nat) (ρ : List Int), Term.bndList B ts = true →
       (∀ s ∈ Term.sitesList k ts, s.Ok E depth) → ρ.length = k + depth →
@@ -832,8 +1001,9 @@ theorem Formula.evalB_total {O : Nat → OpEnv} {E : Defs} {B : String → Bool}
     simp only [Formula.bnd, Bool.and_eq_true] at hb
     obtain ⟨l, Wl, hlo⟩ := Term.evalB_total hT lo k ρ hb.1.1 (sub_sites hs) hl
     obtain ⟨u, Wh, hhi⟩ := Term.evalB_total hT hi k ρ hb.1.2 (sub_sites hs) hl
-    have hst := fun i => Formula.evalB_total hT φ (k + 1) (i :: ρ) hb.2 (sub_sites hs) (by simp [hl]; omega)
-    obtain ⟨c, Wq, hq⟩ := quantLoop_total true (fun limit i w => Formula.evalB (O limit) limit (i :: ρ) φ w) hst
+    have hst := stepB_total (fun limit i w => Formula.evalB (O limit) limit (i :: ρ) φ w)
+      fun i => Formula.evalB_total hT φ (k + 1) (i :: ρ) hb.2 (sub_sites hs) (by simp [hl]; omega)
+    obtain ⟨c, Wq, hq⟩ := quantLoop_total true (fun limit => stepB limit fun i w => Formula.evalB (O limit) limit (i :: ρ) φ w) hst
       (u - l + 1).toNat l
     exact ⟨c, 1 + Wl + Wh + Wq, fun limit w hw => by
       simp only [Formula.evalB, charge_eq (show w < limit by omega), hlo limit (w + 1) (by omega),
@@ -842,8 +1012,9 @@ theorem Formula.evalB_total {O : Nat → OpEnv} {E : Defs} {B : String → Bool}
     simp only [Formula.bnd, Bool.and_eq_true] at hb
     obtain ⟨l, Wl, hlo⟩ := Term.evalB_total hT lo k ρ hb.1.1 (sub_sites hs) hl
     obtain ⟨u, Wh, hhi⟩ := Term.evalB_total hT hi k ρ hb.1.2 (sub_sites hs) hl
-    have hst := fun i => Formula.evalB_total hT φ (k + 1) (i :: ρ) hb.2 (sub_sites hs) (by simp [hl]; omega)
-    obtain ⟨c, Wq, hq⟩ := quantLoop_total false (fun limit i w => Formula.evalB (O limit) limit (i :: ρ) φ w) hst
+    have hst := stepB_total (fun limit i w => Formula.evalB (O limit) limit (i :: ρ) φ w)
+      fun i => Formula.evalB_total hT φ (k + 1) (i :: ρ) hb.2 (sub_sites hs) (by simp [hl]; omega)
+    obtain ⟨c, Wq, hq⟩ := quantLoop_total false (fun limit => stepB limit fun i w => Formula.evalB (O limit) limit (i :: ρ) φ w) hst
       (u - l + 1).toNat l
     exact ⟨c, 1 + Wl + Wh + Wq, fun limit w hw => by
       simp only [Formula.evalB, charge_eq (show w < limit by omega), hlo limit (w + 1) (by omega),
