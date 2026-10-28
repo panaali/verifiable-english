@@ -207,7 +207,11 @@ otherwise: each computes a `govern` answer, or a decoded name, that breaks the s
   removed. Selected tests on ve-mac-1 at `c8991ddcf`: 1 failed, `tests/test_trust_mutants.py::test_the_truth_table_statuses`
   (it read a SURVIVOR's detail as empty; fixed in `418fdd5d1`), and every other selected file exit 0; then
   `tests/test_trust_mutants.py` in full at `418fdd5d1`'s tree: 348 passed. No test of `main-known-red.txt` failed.
-- **fix2**: see "Tests (fix2)" below.
+- **fix2** (F6): `lake build` (1,135 jobs) and `python3 lean/audit.py` PASS (no Lean changed);
+  `gate_collection.py --check --prebuilt`: 20,032 collected, 11 added, 0 removed. Selected tests
+  (`mac-pytest.sh --select`) at `a9261ac62`: 387 of 481 units, 6 shards, all passed, exit 0. A first selected run
+  at `c0babbeed` failed 5 cases of `test_a_verdict_carries_only_while_what_it_reads_reads_the_same` (my edit of
+  that test set `detail` to a tuple; fixed in `a9261ac62`). No test of `main-known-red.txt` failed.
 - **Full gate**: not run by me, as the task says; the chain runs it on the final HEAD.
 
 ## Pilot bytes (estimate)
