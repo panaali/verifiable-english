@@ -667,6 +667,52 @@ theorem VE.Acts.distinctTexts_ok
   ∀ (what : String) (ts us : List String), VE.Acts.distinctTexts what ts = Except.ok us ↔ us = ts ∧ ts.Nodup
   -- uses VE.Acts.distinctTexts@VE.Acts.Table
   -- expr 3643680838
+theorem VE.Acts.elaborateMap_fst
+  ∀ (D : VE.Acts.ActsDoc), Except.map (fun x => x.fst) (VE.Acts.elaborateMap D) = VE.Acts.elaborate D
+  -- uses VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.SplitMap@VE.Acts.Elaborate VE.Acts.elaborate@VE.Acts.Elaborate VE.Acts.elaborateMap@VE.Acts.Elaborate VE.NormDefaults.UDoc@VE.NormDefaults.Tree
+  -- expr 418837391
+theorem VE.Acts.elaborateMap_ok
+  ∀ {D : VE.Acts.ActsDoc} {U' : VE.NormDefaults.UDoc} {M : VE.Acts.SplitMap},
+    VE.Acts.elaborateMap D = Except.ok (U', M) →
+      (∃ Rs, List.mapM (fun x => VE.Acts.readingOf D x.fst x.snd) D.acts = Except.ok Rs) ∧
+        VE.Acts.namesOk D = Except.ok () ∧
+          U' = VE.Acts.splitDoc D ∧
+            M = VE.Acts.splitMap D ∧
+              VE.NormDefaults.WellFormedU U' = Bool.true ∧
+                (M.rules.all fun x => !U'.D.T.nodes.any fun x_1 => x_1.name == x.snd.fst) = Bool.true
+  -- uses VE.Acts.Act@VE.Acts.Tree VE.Acts.ActsDoc.acts@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Simple@VE.Acts.Table VE.Acts.SplitMap.rules@VE.Acts.Elaborate VE.Acts.SplitMap@VE.Acts.Elaborate VE.Acts.elaborateMap@VE.Acts.Elaborate VE.Acts.namesOk@VE.Acts.Elaborate VE.Acts.readingOf@VE.Acts.Elaborate VE.Acts.splitDoc@VE.Acts.Elaborate VE.Acts.splitMap@VE.Acts.Elaborate VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree
+  -- expr 1152826092
+theorem VE.Acts.elaborate_ok
+  ∀ {D : VE.Acts.ActsDoc} {U' : VE.NormDefaults.UDoc},
+    VE.Acts.elaborate D = Except.ok U' → ∃ M, VE.Acts.elaborateMap D = Except.ok (U', M)
+  -- uses VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.SplitMap@VE.Acts.Elaborate VE.Acts.elaborate@VE.Acts.Elaborate VE.Acts.elaborateMap@VE.Acts.Elaborate VE.NormDefaults.UDoc@VE.NormDefaults.Tree
+  -- expr 68642539
+theorem VE.Acts.elaborate_one_reading
+  ∀ (D : VE.Acts.ActsDoc) {U' : VE.NormDefaults.UDoc},
+    VE.Acts.elaborate D = Except.ok U' →
+      ∀ (p : String) (A : VE.Acts.Act),
+        (p, A) ∈ D.acts →
+          (∃ a, A = VE.Acts.Act.one a) ∨
+            ∃ R,
+              VE.Acts.readingOf D p A = Except.ok R ∧
+                ∀ (N : VE.Norms.Node),
+                  N ∈ D.U.D.T.nodes →
+                    N.pred = p ∨ Option.some N.pred = VE.Acts.dualOf D.U.D.T p →
+                      ∃ r op,
+                        List.find? (fun x => x.name == N.pred) D.U.D.T.regulated = Option.some r ∧
+                          VE.Acts.opOf r N.sign = Option.some op ∧ VE.Acts.table op A = [R]
+  -- uses VE.Acts.Act.one@VE.Acts.Tree VE.Acts.Act@VE.Acts.Tree VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc.acts@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Atom@VE.Acts.Tree VE.Acts.Op@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.dualOf@VE.Acts.Elaborate VE.Acts.elaborate@VE.Acts.Elaborate VE.Acts.opOf@VE.Acts.Table VE.Acts.readingOf@VE.Acts.Elaborate VE.Acts.table@VE.Acts.Table VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree
+  -- expr 3219671281
+theorem VE.Acts.elaborate_unspec
+  ∀ (D : VE.Acts.ActsDoc) {U' : VE.NormDefaults.UDoc},
+    VE.Acts.elaborate D = Except.ok U' → U'.unspec = List.flatMap (VE.Acts.partNames D) D.U.unspec
+  -- uses VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.elaborate@VE.Acts.Elaborate VE.Acts.partNames@VE.Acts.Elaborate VE.NormDefaults.UDoc.unspec@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree
+  -- expr 3916595845
+theorem VE.Acts.elaborate_wellFormed
+  ∀ (D : VE.Acts.ActsDoc) {U' : VE.NormDefaults.UDoc},
+    VE.Acts.elaborate D = Except.ok U' → VE.NormDefaults.WellFormedU U' = Bool.true
+  -- uses VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.elaborate@VE.Acts.Elaborate VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree
+  -- expr 3613047864
 theorem VE.Acts.firstEqualPair_none
   ∀ (k : Nat) (ts : List String), VE.Acts.firstEqualPair k ts = Option.none ↔ ts.Nodup
   -- uses VE.Acts.firstEqualPair@VE.Acts.Table
@@ -723,6 +769,11 @@ theorem VE.Acts.listing_ok
       ∃ ts, parsed = Option.some ts ∧ ts.length < N ∧ xs = VE.Acts.firsts (List.filterMap μ ts) ∧ xs.length ≤ L
   -- uses VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Listing.ok@VE.Acts.Read VE.Acts.Listing@VE.Acts.Read VE.Acts.firsts@VE.Acts.Read VE.Acts.listing@VE.Acts.Read VE.Grammar.Tree@VE.Grammar.Derives
   -- expr 4241073090
+theorem VE.Acts.mapM_ok
+  ∀ {α β ε : Type} {f : α → Except ε β} {l : List α} {ys : List β},
+    List.mapM f l = Except.ok ys → ∀ (x : α), x ∈ l → ∃ y, y ∈ ys ∧ f x = Except.ok y
+  -- uses
+  -- expr 2741401135
 theorem VE.Acts.mem_firsts
   ∀ {α : Type} [inst : DecidableEq α] {x : α} {l : List α}, x ∈ VE.Acts.firsts l ↔ x ∈ l
   -- uses VE.Acts.firsts@VE.Acts.Read
@@ -849,6 +900,14 @@ theorem VE.Acts.readings_nodup
     VE.Acts.readings V N b ts = VE.Acts.Listing.ok As → As.Nodup
   -- uses VE.Acts.Act@VE.Acts.Tree VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Listing.ok@VE.Acts.Read VE.Acts.Listing@VE.Acts.Read VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.readings@VE.Acts.Readings
   -- expr 3252955071
+theorem VE.Acts.ruleReading_ok
+  ∀ {D : VE.Acts.ActsDoc} {A : VE.Acts.Act} {N : VE.Norms.Node} {R : List VE.Acts.Simple},
+    VE.Acts.ruleReading D A N = Except.ok R →
+      ∃ r op,
+        List.find? (fun x => x.name == N.pred) D.U.D.T.regulated = Option.some r ∧
+          VE.Acts.opOf r N.sign = Option.some op ∧ VE.Acts.table op A = [R]
+  -- uses VE.Acts.Act@VE.Acts.Tree VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Op@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.opOf@VE.Acts.Table VE.Acts.ruleReading@VE.Acts.Elaborate VE.Acts.table@VE.Acts.Table VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree
+  -- expr 4077629860
 theorem VE.Acts.schema_ok
   ∀ {V : VE.Acts.Vocab}, VE.Acts.framesOk V = Bool.true → (VE.Acts.schema V).all VE.Acts.RuleS.ok = Bool.true
   -- uses VE.Acts.RuleS.ok@VE.Acts.Grammar VE.Acts.RuleS@VE.Acts.Grammar VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.framesOk@VE.Acts.Syntax VE.Acts.schema@VE.Acts.Grammar
@@ -2322,6 +2381,11 @@ theorem VE.Arith.Site.ok_of_refusal
     VE.Arith.Site.refusal D E depth B s = Option.none → VE.Arith.Site.Ok E depth s
   -- uses VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Refusal@VE.Arith.Defs VE.Arith.Site.Ok@VE.Arith.Bounded VE.Arith.Site.refusal@VE.Arith.Defs VE.Arith.Site@VE.Arith.Defs
   -- expr 148804266
+theorem VE.Arith.Term.evalB_bits
+  ∀ (E : VE.Arith.OpEnv) (limit : Nat) (ρ : List Int) (t : VE.Arith.Term) (w : Nat) (x : Int) (w' : Nat),
+    VE.Arith.Term.evalB E limit ρ t w = Option.some (x, w') → VE.Arith.bits x ≤ limit ∧ w' ≤ limit
+  -- uses VE.Arith.OpEnv@VE.Arith.Bounded VE.Arith.Term.evalB@VE.Arith.Bounded VE.Arith.Term@VE.Arith.Syntax VE.Arith.bits@VE.Arith.Bounded
+  -- expr 3694090624
 theorem VE.Arith.Term.evalB_mono
   ∀ {O O' : VE.Arith.OpEnv} {limit limit' : Nat},
     VE.Arith.Extends O O' →
@@ -2441,6 +2505,22 @@ theorem VE.Arith.arithOutcome_unbounded_iff
       VE.Arith.Formula.Bounded D φ = Bool.false
   -- uses VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula.Bounded@VE.Arith.Defs VE.Arith.Formula@VE.Arith.Syntax VE.Arith.arithOutcome@VE.Arith.Bounded VE.Numbers.Outcome.unknown@VE.Numbers.Round VE.Numbers.Outcome@VE.Numbers.Round VE.Numbers.UnknownReason.unboundedStatement@VE.Numbers.Round
   -- expr 4139093868
+theorem VE.Arith.bits_add_le
+  ∀ (x y : Int), VE.Arith.bits (x + y) ≤ Max.max (VE.Arith.bits x) (VE.Arith.bits y) + 1
+  -- uses VE.Arith.bits@VE.Arith.Bounded
+  -- expr 4269050433
+theorem VE.Arith.bits_mul_le
+  ∀ (x y : Int), VE.Arith.bits (x * y) ≤ VE.Arith.bits x + VE.Arith.bits y
+  -- uses VE.Arith.bits@VE.Arith.Bounded
+  -- expr 3660033003
+theorem VE.Arith.bits_natAbs_le
+  ∀ {x : Int} {n k : Nat}, x.natAbs ≤ n → n < 2 ^ (k + 1) → VE.Arith.bits x ≤ k + 1
+  -- uses VE.Arith.bits@VE.Arith.Bounded
+  -- expr 2358350136
+theorem VE.Arith.bits_sub_le
+  ∀ (x y : Int), VE.Arith.bits (x - y) ≤ Max.max (VE.Arith.bits x) (VE.Arith.bits y) + 1
+  -- uses VE.Arith.bits@VE.Arith.Bounded
+  -- expr 1605022655
 theorem VE.Arith.boundedNames_snoc
   ∀ (E : VE.Arith.Defs) (d : VE.Arith.Def),
     (E ++ [d]).boundedNames =
@@ -2450,6 +2530,26 @@ theorem VE.Arith.boundedNames_snoc
         if q = p then VE.Arith.Formula.bnd E.boundedNames body else E.boundedNames q
   -- uses VE.Arith.Def@VE.Arith.Syntax VE.Arith.Defs.boundedNames@VE.Arith.Defs VE.Arith.Defs.opEnv.match_1@VE.Arith.Bounded VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula.bnd@VE.Arith.Defs VE.Arith.Formula@VE.Arith.Syntax VE.Arith.Term.bnd@VE.Arith.Defs VE.Arith.Term@VE.Arith.Syntax
   -- expr 3280137390
+theorem VE.Arith.chargeBits_bits
+  ∀ {limit w : Nat} {x y : Int} {w' : Nat},
+    VE.Arith.chargeBits limit x w = Option.some (y, w') → VE.Arith.bits y ≤ limit ∧ w' ≤ limit
+  -- uses VE.Arith.bits@VE.Arith.Bounded VE.Arith.chargeBits@VE.Arith.Bounded
+  -- expr 4182643902
+theorem VE.Arith.chargeBits_eq
+  ∀ {limit w : Nat} {x : Int},
+    w + VE.Arith.bits x ≤ limit → VE.Arith.chargeBits limit x w = Option.some (x, w + VE.Arith.bits x)
+  -- uses VE.Arith.bits@VE.Arith.Bounded VE.Arith.chargeBits@VE.Arith.Bounded
+  -- expr 4142228633
+theorem VE.Arith.chargeBits_mono
+  ∀ {limit limit' w : Nat} {x : Int} {r : Int × Nat},
+    limit ≤ limit' → VE.Arith.chargeBits limit x w = Option.some r → VE.Arith.chargeBits limit' x w = Option.some r
+  -- uses VE.Arith.chargeBits@VE.Arith.Bounded
+  -- expr 3278823892
+theorem VE.Arith.chargeBits_some
+  ∀ {limit w : Nat} {x y : Int} {w' : Nat},
+    VE.Arith.chargeBits limit x w = Option.some (y, w') → y = x ∧ w' = w + VE.Arith.bits x ∧ w + VE.Arith.bits x ≤ limit
+  -- uses VE.Arith.bits@VE.Arith.Bounded VE.Arith.chargeBits@VE.Arith.Bounded
+  -- expr 3461834319
 theorem VE.Arith.charge_eq
   ∀ {α : Type} {limit w : Nat} {k : Nat → Option (α × Nat)}, w < limit → VE.Arith.charge limit w k = k (w + 1)
   -- uses VE.Arith.charge@VE.Arith.Bounded
@@ -2532,6 +2632,10 @@ theorem VE.Arith.foldl_rel
       ∀ (l : List γ) (a : α) (b : β), R a b → R (List.foldl f a l) (List.foldl g b l)
   -- uses
   -- expr 590644498
+theorem VE.Arith.log2_le_of_lt
+  ∀ {n k : Nat}, n < 2 ^ (k + 1) → n.log2 ≤ k
+  -- uses
+  -- expr 1783431650
 theorem VE.Arith.opEnv_extends
   ∀ (D : VE.Arith.Defs) {limit limit' : Nat},
     limit ≤ limit' → VE.Arith.Extends (VE.Arith.Defs.opEnv limit D) (VE.Arith.Defs.opEnv limit' D)
@@ -2597,6 +2701,35 @@ theorem VE.Arith.range_ex
   ∀ (l h : Int) (Q : Int → Prop), (∃ k, k < (h - l + 1).toNat ∧ Q (l + ↑k)) ↔ ∃ i, l ≤ i ∧ i ≤ h ∧ Q i
   -- uses
   -- expr 429845774
+theorem VE.Arith.stepB_mono
+  ∀ {limit limit' : Nat} {cond cond' : Int → Nat → Option (Bool × Nat)},
+    limit ≤ limit' →
+      (∀ (i : Int) (w : Nat) (r : Bool × Nat), cond i w = Option.some r → cond' i w = Option.some r) →
+        ∀ (i : Int) (w : Nat) (r : Bool × Nat),
+          VE.Arith.stepB limit cond i w = Option.some r → VE.Arith.stepB limit' cond' i w = Option.some r
+  -- uses VE.Arith.stepB@VE.Arith.Bounded
+  -- expr 250217693
+theorem VE.Arith.stepB_some
+  ∀ {limit : Nat} {cond : Int → Nat → Option (Bool × Nat)} {i : Int} {w : Nat} {r : Bool × Nat},
+    VE.Arith.stepB limit cond i w = Option.some r →
+      w + VE.Arith.bits i ≤ limit ∧ cond i (w + VE.Arith.bits i) = Option.some r
+  -- uses VE.Arith.bits@VE.Arith.Bounded VE.Arith.stepB@VE.Arith.Bounded
+  -- expr 3927809102
+theorem VE.Arith.stepB_sound
+  ∀ {Q : Int → Prop} {limit : Nat} {cond : Int → Nat → Option (Bool × Nat)},
+    (∀ (i : Int) (w : Nat) (b : Bool) (w' : Nat),
+        cond i w = Option.some (b, w') → (Q i ↔ b = Bool.true) ∧ (w ≤ limit → w' ≤ limit)) →
+      ∀ (i : Int) (w : Nat) (b : Bool) (w' : Nat),
+        VE.Arith.stepB limit cond i w = Option.some (b, w') → (Q i ↔ b = Bool.true) ∧ (w ≤ limit → w' ≤ limit)
+  -- uses VE.Arith.stepB@VE.Arith.Bounded
+  -- expr 2855911647
+theorem VE.Arith.stepB_total
+  ∀ (cond : Nat → Int → Nat → Option (Bool × Nat)),
+    (∀ (i : Int), ∃ b W, ∀ (limit w : Nat), w + W ≤ limit → cond limit i w = Option.some (b, w + W)) →
+      ∀ (i : Int),
+        ∃ b W, ∀ (limit w : Nat), w + W ≤ limit → VE.Arith.stepB limit (cond limit) i w = Option.some (b, w + W)
+  -- uses VE.Arith.stepB@VE.Arith.Bounded
+  -- expr 655937730
 theorem VE.Arith.total_take
   ∀ (D : VE.Arith.Defs),
     D.WellFormed = Bool.true →
@@ -5548,6 +5681,56 @@ theorem VE.Cardinality.Examples.wellFormed_cases
       ¬VE.Cardinality.Examples.colliding.WellFormed ∧ ¬VE.Cardinality.Examples.ghost.WellFormed
   -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.Examples.colliding@VE.Cardinality.Examples VE.Cardinality.Examples.ghost@VE.Cardinality.Examples VE.Cardinality.Examples.named@VE.Cardinality.Examples VE.Cardinality.Examples.users@VE.Cardinality.Examples
   -- expr 2834057780
+theorem VE.Cardinality.Run.decodeCertificate_sound
+  ∀ {j : Lean.Json} {cert : VE.Cardinality.CardCertificate},
+    VE.Cardinality.Run.decodeCertificate j = Except.ok cert →
+      VE.Bridge.stringField j "format" = Except.ok "ve-cardinality-certificate@1" ∧
+        VE.Bridge.stringField j "environment_id" = Except.ok cert.environmentId ∧
+          VE.Bridge.stringField j "conclusion_meaning_id" = Except.ok cert.conclusionId ∧
+            ∃ x, j.getObjVal? "w6" = Except.ok x ∧ VE.Time.Wire.decodeW6Certificate x = Except.ok cert.w6
+  -- uses VE.Bridge.stringField@VE.Bridge VE.Cardinality.CardCertificate.conclusionId@VE.Cardinality.Run VE.Cardinality.CardCertificate.environmentId@VE.Cardinality.Run VE.Cardinality.CardCertificate.w6@VE.Cardinality.Run VE.Cardinality.CardCertificate@VE.Cardinality.Run VE.Cardinality.Run.decodeCertificate@VE.Cardinality.Run VE.Time.Wire.W6Certificate@VE.Time.Wire VE.Time.Wire.decodeW6Certificate@VE.Time.Wire
+  -- expr 2169870929
+theorem VE.Cardinality.Run.erasedJson_conclusion
+  ∀ {w : VE.Cardinality.CardEnv} {ps : List VE.Cardinality.CFormula} {c : VE.Cardinality.CFormula}
+    {pids : List (String × String)} {cid : String × String},
+    VE.Cardinality.Run.erasedIds w ps c = Except.ok (pids, cid) →
+      Except.map (fun x => x.getObjVal? "conclusion") (VE.Cardinality.Run.erasedJson w ps c) =
+        Except.ok
+          (Except.ok
+            (Lean.Json.mkObj
+              [("Q", VE.Time.Wire.encQ (VE.Cardinality.erasedProblem w.env ps c).snd),
+                ("core", VE.Time.Wire.encCore (VE.Cardinality.erasedProblem w.env ps c).snd.erase),
+                ("meaning_id", Lean.Json.str cid.fst), ("core_meaning_id", Lean.Json.str cid.snd)]))
+  -- uses VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.CardEnv.env@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Run.erasedIds@VE.Cardinality.Run VE.Cardinality.Run.erasedJson@VE.Cardinality.Run VE.Cardinality.erasedProblem@VE.Cardinality.Erase VE.Time.QFormula.erase@VE.Time.Syntax VE.Time.QFormula@VE.Time.Syntax VE.Time.Wire.encCore@VE.Time.Wire VE.Time.Wire.encQ@VE.Time.Wire
+  -- expr 3998950269
+theorem VE.Cardinality.Run.regionsJson_constants
+  ∀ (E : VE.Cardinality.CEnv) (fs : List VE.Cardinality.CFormula),
+    (VE.Cardinality.Run.regionsJson E fs).getObjVal? "constants" =
+      Except.ok
+        (Lean.ToJson.toJson
+          (List.map
+            (fun e =>
+              Lean.Json.mkObj
+                [("constant", Lean.Json.str e.fst), ("sort", Lean.Json.str e.snd.fst),
+                  ("bits", Lean.Json.str (VE.Cardinality.bitString e.snd.snd))])
+            (VE.Cardinality.regionTable E fs)))
+  -- uses VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.Region@VE.Cardinality.Regions VE.Cardinality.Run.regionsJson@VE.Cardinality.Run VE.Cardinality.bitString@VE.Cardinality.Regions VE.Cardinality.regionTable@VE.Cardinality.Regions
+  -- expr 1333388031
+theorem VE.Cardinality.Run.runCaseReported_error
+  ∀ {j : Lean.Json} {m : String},
+    VE.Cardinality.Run.runCase j = Except.error m →
+      VE.Cardinality.Run.runCaseReported j =
+        Lean.Json.mkObj
+          ([("id", j.getObjValD "id"), ("status", Lean.Json.str "error"), ("error", Lean.Json.str m)] ++
+            if ((j.getObjValD "kind").getStr?.toOption == Option.some "certificate") = Bool.true then
+              [("valid", Lean.Json.bool Bool.false)]
+            else [])
+  -- uses VE.Cardinality.Run.runCase@VE.Cardinality.Run VE.Cardinality.Run.runCaseReported@VE.Cardinality.Run
+  -- expr 1605942797
+theorem VE.Cardinality.Run.runCaseReported_ok
+  ∀ {j r : Lean.Json}, VE.Cardinality.Run.runCase j = Except.ok r → VE.Cardinality.Run.runCaseReported j = r
+  -- uses VE.Cardinality.Run.runCase@VE.Cardinality.Run VE.Cardinality.Run.runCaseReported@VE.Cardinality.Run
+  -- expr 1073128038
 theorem VE.Cardinality.Wire.cmpNames_spelled
   ∀ (s : String) (c : VE.Cardinality.Cmp),
     VE.Cardinality.Wire.elabName VE.Cardinality.Wire.cmpNames s = Except.ok c ↔
@@ -5747,6 +5930,15 @@ theorem VE.Cardinality.cardinality_elab_sound
               VE.Cardinality.CEntails E ps c
   -- uses VE.Cardinality.Admitted@VE.Cardinality.Syntax VE.Cardinality.CEntails@VE.Cardinality.Semantics VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.elab@VE.Cardinality.Regions VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.erasedProblem@VE.Cardinality.Erase VE.Time.QFormula@VE.Time.Syntax VE.Time.TEntails@VE.Time.Semantics
   -- expr 2153097470
+theorem VE.Cardinality.checkCertificate_sound
+  ∀ {w : VE.Cardinality.CardEnv} (ps : List (VE.Cardinality.CAdmission w)) (c : VE.Cardinality.CAdmission w)
+    (cert : VE.Cardinality.CardCertificate),
+    VE.Cardinality.checkCertificate ps c cert = Except.ok Bool.true →
+      cert.environmentId = w.environmentId ∧
+        cert.premiseIds = List.map (fun x => x.meaningId) ps ∧
+          cert.conclusionId = c.meaningId ∧ VE.Cardinality.CEntails w.env (List.map (fun x => x.formula) ps) c.formula
+  -- uses VE.Cardinality.CAdmission.formula@VE.Cardinality.Wire VE.Cardinality.CAdmission.meaningId@VE.Cardinality.Wire VE.Cardinality.CAdmission@VE.Cardinality.Wire VE.Cardinality.CEntails@VE.Cardinality.Semantics VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.CardCertificate.conclusionId@VE.Cardinality.Run VE.Cardinality.CardCertificate.environmentId@VE.Cardinality.Run VE.Cardinality.CardCertificate.premiseIds@VE.Cardinality.Run VE.Cardinality.CardCertificate@VE.Cardinality.Run VE.Cardinality.CardEnv.env@VE.Cardinality.Wire VE.Cardinality.CardEnv.environmentId@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.checkCertificate@VE.Cardinality.Run
+  -- expr 3850057825
 theorem VE.Cardinality.countAtom_holds_iff
   ∀ {α : Type u} {E : VE.Cardinality.CEnv} {T : VE.Time.TStructure α},
     VE.Cardinality.Admissible E T →
@@ -8853,6 +9045,97 @@ theorem VE.Data.Background.totalPremise_iff
     VE.Formula.denote S [] (VE.Data.Background.totalPremise f) ↔ VE.Data.Background.Total S f
   -- uses VE.Data.Background.Flag@VE.Data.Background VE.Data.Background.Total@VE.Data.Background VE.Data.Background.totalPremise@VE.Data.Background VE.Formula.denote@VE.Semantics VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics
   -- expr 4262845113
+theorem VE.Defaults.MeaningFixtures.Uπ_eq
+  VE.Defaults.MeaningFixtures.Uπ = { D := VE.Defaults.MeaningFixtures.Sπ, unspec := ["x_permitted", "x_required"] }
+  -- uses VE.Defaults.MeaningFixtures.Sπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.Uπ@VE.Defaults.MeaningExamples VE.NormDefaults.UDoc.mk@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree
+  -- expr 1310567377
+theorem VE.Defaults.MeaningFixtures.admissible_π
+  ∀ {on fon : List String},
+    (∀ (p : String), p ∈ on → p = VE.Defaults.MeaningFixtures.excπ) →
+      VE.NormDefaults.fillValid VE.Defaults.MeaningFixtures.Uπ (VE.Defaults.MeaningFixtures.Mπ on)
+            (VE.Defaults.MeaningFixtures.Fπ fon) =
+          Bool.true →
+        VE.NormDefaults.Wire.BaseAdmissibleX VE.Defaults.MeaningFixtures.Uπ
+          (VE.Defaults.softX VE.Defaults.MeaningFixtures.Uπ VE.Defaults.MeaningFixtures.Dπ [])
+          (VE.Defaults.MeaningFixtures.sitπ on fon)
+  -- uses VE.Defaults.Fixtures.Entity@VE.Defaults.Examples VE.Defaults.MeaningFixtures.Dπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.Fπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.Mπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.Uπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.excπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.sitπ@VE.Defaults.MeaningExamples VE.Defaults.softX@VE.Defaults.Meaning VE.Formula@VE.Syntax VE.NormDefaults.Wire.BaseAdmissibleX@VE.NormDefaults.Report VE.NormDefaults.fillValid@VE.NormDefaults.Evidence
+  -- expr 3844871864
+theorem VE.Defaults.MeaningFixtures.decisionNames_π
+  VE.SoftNorms.decisionNames VE.Defaults.MeaningFixtures.Dπ = [VE.Defaults.MeaningFixtures.excπ]
+  -- uses VE.Defaults.MeaningFixtures.Dπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.excπ@VE.Defaults.MeaningExamples VE.SoftNorms.decisionNames@VE.SoftNorms.Tree
+  -- expr 1961693428
+theorem VE.Defaults.MeaningFixtures.decisions_π
+  VE.SoftNorms.decisions VE.Defaults.MeaningFixtures.Dπ = [(VE.Defaults.MeaningFixtures.excπ, ["assistant"])]
+  -- uses VE.Defaults.MeaningFixtures.Dπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.excπ@VE.Defaults.MeaningExamples VE.SoftNorms.decisions@VE.SoftNorms.Tree
+  -- expr 947880806
+theorem VE.Defaults.MeaningFixtures.exc_unsaid
+  ¬VE.Defaults.MeaningFixtures.excπ ∈ VE.NormDefaults.unsaidNames VE.Defaults.MeaningFixtures.Uπ
+  -- uses VE.Defaults.MeaningFixtures.Uπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.excπ@VE.Defaults.MeaningExamples VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree
+  -- expr 1536106616
+theorem VE.Defaults.MeaningFixtures.exceptedName_π
+  VE.SoftNorms.exceptedName VE.Defaults.MeaningFixtures.nπ = VE.Defaults.MeaningFixtures.excπ
+  -- uses VE.Defaults.MeaningFixtures.excπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.nπ@VE.Defaults.MeaningExamples VE.SoftNorms.exceptedName@VE.SoftNorms.Tree
+  -- expr 4058389415
+theorem VE.Defaults.MeaningFixtures.open_π
+  ∀ {on fon on' fon' : List String} (δ F : String → List VE.Defaults.Fixtures.Entity → Prop),
+    (∀ (vs : List VE.Defaults.Fixtures.Entity),
+        δ VE.Defaults.MeaningFixtures.excπ vs ↔
+          (VE.Defaults.MeaningFixtures.sitπ on' fon').relation VE.Defaults.MeaningFixtures.excπ vs) →
+      (∀ (n : String),
+          n ∈ VE.NormDefaults.unsaidNames VE.Defaults.MeaningFixtures.Uπ →
+            ∀ (vs : List VE.Defaults.Fixtures.Entity),
+              F n vs ↔ (VE.Defaults.MeaningFixtures.sitπ on' fon').relation n vs) →
+        (∀ (n : String),
+            n ≠ VE.Defaults.MeaningFixtures.excπ →
+              ¬n ∈ VE.NormDefaults.unsaidNames VE.Defaults.MeaningFixtures.Uπ → (n ∈ on ↔ n ∈ on')) →
+          VE.Defaults.withOpen VE.Defaults.MeaningFixtures.Uπ VE.Defaults.MeaningFixtures.Dπ
+              (VE.Defaults.MeaningFixtures.sitπ on fon) δ F =
+            VE.Defaults.MeaningFixtures.sitπ on' fon'
+  -- uses VE.Defaults.Fixtures.Entity@VE.Defaults.Examples VE.Defaults.MeaningFixtures.Dπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.Uπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.excπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.sitπ@VE.Defaults.MeaningExamples VE.Defaults.withOpen@VE.Defaults.Meaning VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree VE.Structure.relation@VE.Semantics VE.Structure@VE.Semantics
+  -- expr 2907945344
+theorem VE.Defaults.MeaningFixtures.rel_base
+  ∀ {on fon : List String} {n : String},
+    ¬n ∈ VE.NormDefaults.unsaidNames VE.Defaults.MeaningFixtures.Uπ →
+      ∀ (vs : List VE.Defaults.Fixtures.Entity),
+        (VE.Defaults.MeaningFixtures.sitπ on fon).relation n vs ↔ n ∈ on ∧ vs = VE.Defaults.MeaningFixtures.a1
+  -- uses VE.Defaults.Fixtures.Entity@VE.Defaults.Examples VE.Defaults.MeaningFixtures.Uπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.a1@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.sitπ@VE.Defaults.MeaningExamples VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree VE.Structure.relation@VE.Semantics
+  -- expr 2935153287
+theorem VE.Defaults.MeaningFixtures.rel_unsaid
+  ∀ {on fon : List String} {n : String},
+    n ∈ VE.NormDefaults.unsaidNames VE.Defaults.MeaningFixtures.Uπ →
+      ∀ (vs : List VE.Defaults.Fixtures.Entity),
+        (VE.Defaults.MeaningFixtures.sitπ on fon).relation n vs ↔ n ∈ fon ∧ vs = VE.Defaults.MeaningFixtures.a1
+  -- uses VE.Defaults.Fixtures.Entity@VE.Defaults.Examples VE.Defaults.MeaningFixtures.Uπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.a1@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.sitπ@VE.Defaults.MeaningExamples VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree VE.Structure.relation@VE.Semantics
+  -- expr 3730994866
+theorem VE.Defaults.MeaningFixtures.rel_π
+  ∀ {on fon : List String} (n : String) (vs : List VE.Defaults.Fixtures.Entity),
+    (VE.Defaults.MeaningFixtures.sitπ on fon).relation n vs ↔
+      (if n ∈ VE.NormDefaults.unsaidNames VE.Defaults.MeaningFixtures.Uπ then n ∈ fon else n ∈ on) ∧
+        vs = VE.Defaults.MeaningFixtures.a1
+  -- uses VE.Defaults.Fixtures.Entity@VE.Defaults.Examples VE.Defaults.MeaningFixtures.Uπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.a1@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.sitπ@VE.Defaults.MeaningExamples VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree VE.Structure.relation@VE.Semantics
+  -- expr 1508802412
+theorem VE.Defaults.MeaningFixtures.soften_π
+  VE.SoftNorms.soften VE.Defaults.MeaningFixtures.Dπ = VE.Defaults.MeaningFixtures.Sπ
+  -- uses VE.Defaults.MeaningFixtures.Dπ@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.Sπ@VE.Defaults.MeaningExamples VE.Norms.Doc@VE.Norms.Tree VE.SoftNorms.soften@VE.SoftNorms.Soften
+  -- expr 3228024758
+theorem VE.Defaults.MeaningFixtures.switch_π
+  "default:exception:r1".startsWith "default:switch:" = Bool.false
+  -- uses
+  -- expr 3344955064
+theorem VE.Defaults.MeaningFixtures.switchesOff_π
+  ∀ (B : VE.Structure), VE.Defaults.SwitchesOff VE.Defaults.MeaningFixtures.Dπ B
+  -- uses VE.Defaults.MeaningFixtures.Dπ@VE.Defaults.MeaningExamples VE.Defaults.SwitchesOff@VE.Defaults.Meaning VE.Structure@VE.Semantics
+  -- expr 886539872
+theorem VE.Defaults.MeaningFixtures.typed_π
+  ∀ (on fon : List String),
+    VE.TupleTyped (VE.Defaults.MeaningFixtures.sitπ on fon) ["assistant"] VE.Defaults.MeaningFixtures.a1
+  -- uses VE.Defaults.MeaningFixtures.a1@VE.Defaults.MeaningExamples VE.Defaults.MeaningFixtures.sitπ@VE.Defaults.MeaningExamples VE.TupleTyped@VE.Semantics
+  -- expr 2023982765
+theorem VE.Defaults.MeaningFixtures.unsaid_π
+  VE.NormDefaults.unsaidNames VE.Defaults.MeaningFixtures.Uπ =
+    [VE.NormDefaults.unsaidName "x_permitted", VE.NormDefaults.unsaidName "x_required"]
+  -- uses VE.Defaults.MeaningFixtures.Uπ@VE.Defaults.MeaningExamples VE.NormDefaults.unsaidName@VE.NormDefaults.Tree VE.NormDefaults.unsaidNames@VE.NormDefaults.Tree
+  -- expr 1460465549
 theorem VE.Defaults.Wire.DefaultsView.hD
   ∀ (self : VE.Defaults.Wire.DefaultsView), VE.SoftNorms.WellFormedSoft self.L.D = Bool.true
   -- uses VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire VE.Defaults.Wire.DefaultsView@VE.Defaults.Wire VE.NormDefaults.Wire.LayeredU.D@VE.NormDefaults.Layered VE.SoftNorms.WellFormedSoft@VE.SoftNorms.Soften
