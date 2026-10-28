@@ -2,6 +2,7 @@
 -- The `#print axioms` audit of every theorem of lean/declarations.txt outside the ResponseShape modules.
 import Iceberg
 import VE.Acts.Compat
+import VE.Acts.Elaborate
 import VE.Acts.Grammar
 import VE.Acts.GrammarExamples
 import VE.Acts.Lexical
@@ -525,6 +526,12 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.closed_cl
 #print axioms VE.Acts.closed_ok
 #print axioms VE.Acts.distinctTexts_ok
+#print axioms VE.Acts.elaborateMap_fst
+#print axioms VE.Acts.elaborateMap_ok
+#print axioms VE.Acts.elaborate_ok
+#print axioms VE.Acts.elaborate_one_reading
+#print axioms VE.Acts.elaborate_unspec
+#print axioms VE.Acts.elaborate_wellFormed
 #print axioms VE.Acts.firstEqualPair_none
 #print axioms VE.Acts.frameRules_ok
 #print axioms VE.Acts.framesOk_words
@@ -535,6 +542,7 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.listing_limit
 #print axioms VE.Acts.listing_nodup
 #print axioms VE.Acts.listing_ok
+#print axioms VE.Acts.mapM_ok
 #print axioms VE.Acts.mem_firsts
 #print axioms VE.Acts.nodup_firsts
 #print axioms VE.Acts.paraphrases_nodup
@@ -545,6 +553,7 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.readingsIn_exact
 #print axioms VE.Acts.readingsIn_limit
 #print axioms VE.Acts.readingsIn_nodup
+#print axioms VE.Acts.ruleReading_ok
 #print axioms VE.Acts.schema_ok
 #print axioms VE.Acts.schema_ranked
 #print axioms VE.Acts.table_free_all_own

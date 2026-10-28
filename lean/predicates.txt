@@ -88,6 +88,8 @@ module SensesMain
 module Serve
 module SpeechActsMain
 module VE.Acts.Compat
+module VE.Acts.Elaborate
+module VE.Acts.ElaborateExamples
 module VE.Acts.Grammar
 module VE.Acts.GrammarExamples
 module VE.Acts.Lexical
