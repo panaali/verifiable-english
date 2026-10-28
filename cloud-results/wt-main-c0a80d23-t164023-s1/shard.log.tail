@@ -1,0 +1,172 @@
+shard 2/7: 91 units; commands: ['lake build', 'lake build ve_english_lean_bench ve_scope_bench']
++ lake build
+⚠ [95/185] Replayed VE.SoftNorms.Soften
+warning: VE/SoftNorms/Soften.lean:264:19: This simp argument is unused:
+  Option.bind_eq_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵e̵q̵_̵b̵i̵n̵d̵,̵ ̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵n̵o̵n̵e̵]̵[̲O̲p̲t̲i̲o̲n̲.̲b̲i̲n̲d̲_̲n̲o̲n̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [110/185] Replayed VE.Readings.Separate
+warning: VE/Readings/Separate.lean:1490:50: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: VE/Readings/Separate.lean:1492:5: unused variable `hr`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [118/185] Replayed VE.Readings.Superpose
+warning: VE/Readings/Superpose.lean:311:34: unused variable `h`
+
+... (9094 lines cut; full output in shard-full.txt)
+  Downloaded proc-macro2 v1.0.107
+  Downloaded num-traits v0.2.19
+  Downloaded serde v1.0.229
+  Downloaded typenum v1.20.1
+  Downloaded num-bigint v0.4.8
+  Downloaded memchr v2.8.3
+  Downloaded serde_json v1.0.151
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.26
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling cfg-if v1.0.5
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.229
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `release` profile [optimized] target(s) in 15.86s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling serde_core v1.0.229
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling itoa v1.0.18
+   Compiling cpufeatures v0.2.17
+   Compiling memchr v2.8.3
+   Compiling cfg-if v1.0.5
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 8.39s
+order: failed last time []; changed []; then the rest; --maxfail off
+recording 91 units with 4 jobs in /tmp/ve-select-run-fgtv_bva
+  tests/test_stage2_standalone.py: exit 1 in 8.7 s, 573 functions
+  tests/test_repo_map.py: exit 1 in 82.0 s, 431 functions
+  tests/test_stage0_probe_matrix.py: exit 1 in 6.3 s, 908 functions
+FAILED tests/test_repo_map.py (exit 1): tests/test_repo_map.py::test_a_map_from_before_the_relay_changed_gives_the_static_answer; log /tmp/ve-select-run-fgtv_bva/tests__test_repo_map.py.log
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['git', 'rev-parse', 'db138256cf71e7c3416aa4acd420cf3e3125314f^']' returned non-zero exit status 128.
+
+../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: CalledProcessError
+=========================== short test summary info ============================
+FAILED tests/test_repo_map.py::test_a_map_from_before_the_relay_changed_gives_the_static_answer - subprocess.CalledProcessError: Command '['git', 'rev-parse', 'db138256cf71e7c3416aa4acd420cf3e3125314f^']' returned non-zero exit status 128.
+1 failed, 28 passed in 80.70s (0:01:20)
+FAILED tests/test_stage2_standalone.py (exit 1): tests/test_stage2_standalone.py::test_environment_node_mutations_match_frozen_python_code_and_path, tests/test_stage2_standalone.py::test_model_node_mutations_match_frozen_python_code_and_path, tests/test_stage2_standalone.py::test_model_oracle_detects_seeded_decoder_faults[change_code], tests/test_stage2_standalone.py::test_model_oracle_detects_seeded_decoder_faults[drop_path]; log /tmp/ve-select-run-fgtv_bva/tests__test_stage2_standalone.py.log
+                    else:
+                        row["error"] = row["error"].replace("InvalidModel:", "InvalidInput:", 1)
+                    seeded = True
+                    break
+            return rows
+    
+        monkeypatch.setattr(LeanService, "run", altered)
+        with pytest.raises(AssertionError):
+            test_model_node_mutations_match_frozen_python_code_and_path(tmp_path, capfd)
+>       assert seeded
+E       assert False
+
+tests/test_stage2_standalone.py:716: AssertionError
+----------------------------- Captured stderr call -----------------------------
+tag lean-first/oracle-python does not exist
+=========================== short test summary info ============================
+FAILED tests/test_stage2_standalone.py::test_model_node_mutations_match_frozen_python_code_and_path - AssertionError: assert 2 == 0
+ +  where 2 = <function run at 0x7f57b6660eb0>(PosixPath('/tmp/pytest-of-runner/pytest-2/test_model_node_mutations_matc0/oracle.py'), scratch=PosixPath('/tmp/pytest-of-runner/pytest-2/test_model_node_mutations_matc0'))
+ +    where <function run at 0x7f57b6660eb0> = <module 'tools.lean_first_oracle' from '/home/runner/work/verifiable-english/verifiable-english/tools/lean_first_oracle.py'>.run
+FAILED tests/test_stage2_standalone.py::test_environment_node_mutations_match_frozen_python_code_and_path - AssertionError: assert 2 == 0
+ +  where 2 = <function run at 0x7f57b6660eb0>(PosixPath('/tmp/pytest-of-runner/pytest-2/test_environment_node_mutation0/oracle.py'), scratch=PosixPath('/tmp/pytest-of-runner/pytest-2/test_environment_node_mutation0'))
+ +    where <function run at 0x7f57b6660eb0> = <module 'tools.lean_first_oracle' from '/home/runner/work/verifiable-english/verifiable-english/tools/lean_first_oracle.py'>.run
+FAILED tests/test_stage2_standalone.py::test_model_oracle_detects_seeded_decoder_faults[drop_path] - assert False
+FAILED tests/test_stage2_standalone.py::test_model_oracle_detects_seeded_decoder_faults[change_code] - assert False
+4 failed, 114 passed, 1 deselected in 6.54s
+FAILED tests/test_stage0_probe_matrix.py (exit 1): tests/test_stage0_probe_matrix.py::test_frozen_baseline_keeps_rejection_codes_and_complete_graph_evidence; log /tmp/ve-select-run-fgtv_bva/tests__test_stage0_probe_matrix.py.log
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['git', 'ls-tree', '-r', '--name-only', 'f4286ef0d911c9db527abcc387e8280df8858e59', '--', 've']' returned non-zero exit status 128.
+
+../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: CalledProcessError
+----------------------------- Captured stderr call -----------------------------
+fatal: not a tree object
+=========================== short test summary info ============================
+FAILED tests/test_stage0_probe_matrix.py::test_frozen_baseline_keeps_rejection_codes_and_complete_graph_evidence - subprocess.CalledProcessError: Command '['git', 'ls-tree', '-r', '--name-only', 'f4286ef0d911c9db527abcc387e8280df8858e59', '--', 've']' returned non-zero exit status 128.
+1 failed, 13 passed in 5.61s
+recorded 91 units for tree 9b18bc6780; 0 others left to the static graph until they run; 3 failed
+SHARD 2/7: exit 1 in 797.4 s; 91 units, 88 passed
