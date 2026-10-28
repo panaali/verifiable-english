@@ -12,7 +12,7 @@ from itertools import product
 from .ast import Binary, Not, Unary, Var, _Decoder, formula_from_data, formula_to_data
 from .environment import Environment
 from .errors import CheckerUnavailable, VEError
-from .norms import Norm, NormDocument, _bind, _bind_wordings
+from .norms import Norm, NormDocument, _bind, _bind_wordings, base_data
 
 PROFILE = "norm-defaults@0"
 
@@ -71,11 +71,7 @@ class _Filled:
         return self._premises
 
     def base_environment(self):
-        raw = self.env.to_dict()
-        raw["profiles"] = [p for p in raw["profiles"] if p not in ("norms@0", "readings@1")]
-        raw["vocabulary"]["predicates"] = {
-            p: decl for p, decl in raw["vocabulary"]["predicates"].items() if "regulated" not in decl}
-        return Environment(raw)
+        return Environment(base_data(self.env.to_dict()))
 
 
 class UnspecifiedDocument:
