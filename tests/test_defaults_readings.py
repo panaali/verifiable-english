@@ -309,6 +309,12 @@ RHO_FORGERIES = {
         deciders=["assistant"]),
     "situation outside the model": lambda row, case, i: row["default"]["per_choice"][i]["situation"].update(
         filling={"unsaid__avoid_required": [["e7", "e0"]]}),
+    "situation undeclared filling table": lambda row, case, i: row["default"]["per_choice"][i]["situation"].update(
+        filling={"absent": [["e0"]]}),
+    "situation wrong filling arity": lambda row, case, i: row["default"]["per_choice"][i]["situation"].update(
+        filling={"unsaid__avoid_required": [["e0"]]}),
+    "situation missing empty filling table": lambda row, case, i: row["default"]["per_choice"][i]["situation"].update(
+        filling={}),
     "collision on a FREE row": lambda row, case, i: row["default"]["per_choice"][i].update(conflict="CONFLICT-FREE"),
     "collision without its situation": lambda row, case, i: row["default"]["per_choice"][i].pop("situation"),
     "collision the request did not send": lambda row, case, i: next(

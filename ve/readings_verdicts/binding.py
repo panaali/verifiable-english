@@ -364,7 +364,7 @@ def _check_default(row, case, frame):
             rules = [_rules(base)[name] for name in found["rules"]]
             _tuple(base, rules[0], found["tuple"], witness, "collision tuple")
             _need(found["deciders"] == _deciders(base, rules))
-            _situation(entry, witness)
+            _situation(base, entry, witness)
     for line in member["english"]:
         if line["row"] == "DE8":
             continue
