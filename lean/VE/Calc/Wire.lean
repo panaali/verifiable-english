@@ -1,5 +1,7 @@
 import VE.Calc.Lower
 import VE.Calc.Poly
+import VE.Calc.Render
+import VE.Time.Wire
 import VE.Route.Wire
 
 /-! The case `ve-calc@0` (math-evidence spec 3.1 to 3.3, ME-2): its limits in order, its decoder and its identity.
@@ -226,6 +228,22 @@ def recordJson (path : String) (j : Json) (fields : List (String × Json)) : Exc
       | _ => throw (invalid s!"{path}.span" "must be two natural numbers")
   pure (Json.mkObj (fields ++ support ++ span))
 
+/-- 11.2's rules for a value's words, after W6's (`VE.Time.Wire.displayString`): they begin with "the" and not with
+a phrase word (`ValueWordsForm`, naming the phrase word, else the first word), and contain no reserved word
+(`ReservedWord`). -/
+def checkWords (name w : String) : Except String Unit := do
+  VE.Time.Wire.displayString w false "Verbalisation"
+  let first := ((English.leadingPhrase w).getD ((w.splitOn " ").headD ""))
+  unless w.startsWith "the " && (English.leadingPhrase w).isNone do
+    throw s!"ValueWordsForm: the words of {name} must begin with \"the\" and not with \"{first}\""
+  if let some r := English.reservedIn w then throw s!"ReservedWord: \"{r}\" in the words of {name}"
+
+/-- W6a's check over the values' words (`VerbalisationCollision`), each value's words as a constant's
+verbalisation. -/
+def checkVerbalisations (vs : List Json) : Except String Unit :=
+  VE.Time.Wire.checkVerbalisations <| vs.map fun v =>
+    ((v.getObjValD "name").getStr?.toOption.getD "", Json.mkObj [("verbalisation", v.getObjValD "words")])
+
 /-- A value record: its name and its source (stated, defined, or free as `none`), and the record as hashed, without
 `words`. -/
 def value (i : Nat) (j : Json) : Except String ((String × Option (Rat ⊕ Expr)) × Json) := do
@@ -233,7 +251,8 @@ def value (i : Nat) (j : Json) : Except String ((String × Option (Rat ⊕ Expr)
   checkFields path j ["name", "words"] ["stated", "defined", "free", "support", "span"]
   let .ok (.str name) := j.getObjVal? "name" | throw (invalid s!"{path}.name" "must be a string")
   unless identifier name do throw (invalid s!"{path}.name" "must be a name")
-  let .ok (.str _) := j.getObjVal? "words" | throw (invalid s!"{path}.words" "must be a string")
+  let .ok (.str words) := j.getObjVal? "words" | throw (invalid s!"{path}.words" "must be a string")
+  checkWords name words
   let (src, cs) ← match j.getObjVal? "stated", j.getObjVal? "defined", j.getObjVal? "free" with
     | .ok l, .error _, .error _ => do
       let p ← literal s!"{path}.stated" l
@@ -394,6 +413,7 @@ def decode (j : Json) : Except String (Case × String × List String) := do
     | .ok _ => throw (invalid "case.premises" "must be a list")
   if cs.size == 0 then throw "NoClaims: a calculation needs at least one claim"
   let (vals, cvals) := (← vs.toList.zipIdx.mapM fun (v, i) => value i v).unzip
+  checkVerbalisations vs.toList
   let (premises, cprems) := (← ps.toList.zipIdx.mapM fun (p, i) => premise rule i p).unzip
   let (checks, hashed) := (← cs.toList.zipIdx.mapM fun (c, i) => entry rule premises i c).unzip
   let (claimJson, entryJson) := hashed.unzip
@@ -404,7 +424,7 @@ def decode (j : Json) : Except String (Case × String × List String) := do
     (software.elim [] fun s => [("software", .str s)]))) claimJson
   pure (⟨ds, checks, software⟩, mid, ids)
 
-/-- Decodes `ve-calc@0`: the limits of 3.2 first, then fields, names, definition order and literals. -/
+/-- Decodes `ve-calc@0`: the limits of 3.2 first, then fields, words, names, definition order and literals. -/
 def decodeCase (j : Json) : Except String Case := (decode j).map (·.1)
 
 end Wire
