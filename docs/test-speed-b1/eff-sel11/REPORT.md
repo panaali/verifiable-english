@@ -73,6 +73,8 @@ No selection rule can catch a staleness that appears after the last run. The inv
 ## Seeded bugs (all Python; no Lean or Rust changed)
 
 Each bug was planted, its test run, and the code restored. The scripts were `/tmp/eff-sel11-seeds*.py`.
+The same list, with file and test keys, is committed as `docs/test-speed-b1/eff-sel11/seeded-bugs.json`;
+S2 and S4 were rerun on 3136cff4 (S2: 3 failed, S4: 8 failed).
 
 | # | File | Bug | Failing test |
 |---|---|---|---|
@@ -137,7 +139,7 @@ No user-visible behaviour of VE changes, and this is test tooling only, so there
   - history block from `:2259`: `HISTORY_TRIGGERS`, `HISTORY_NEUTRAL`, `history_changes`, the map-path tests `:2284/:2295`, fixture `lint_unreached` `:2304`, the impacted tests `:2313/:2320`, `named_sources` shapes `:2348`, map-extract only `:2353`, fallback `:2363`, only-adds `:2372`
 - `tests/test_history_tests.py`: reader guard `test_only_the_lint_reads_the_list` `:317`; `test_the_selector_reads_the_list_only_to_run_its_lint` `:328`.
 - `docs/TESTING.md`: the "History inventory" selection rule.
-- `docs/test-speed-b1/eff-sel11/`: `measure.py` (the measurement), `measure.json` (saved evidence), this report.
+- `docs/test-speed-b1/eff-sel11/`: `measure.py` (the measurement), `measure.json` (saved evidence), `seeded-bugs.json` (the seeds), this report.
 - Regression tests:
   - `uv run pytest -q tests/test_select_tests.py -k 'history or presence_alike or mapped'`
   - `uv run pytest -q tests/test_history_tests.py -k 'reads_the_list or tree_passes or command_line_lint'`
