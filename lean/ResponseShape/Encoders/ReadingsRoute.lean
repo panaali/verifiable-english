@@ -609,17 +609,16 @@ theorem verdictsD_fits (id : String) (b : Wire.Admitted2) (j : Json) :
     OkFits req (skel% "readings-route.json#/$defs/verdicts") (runVerdictsD id b j) := by
   unfold runVerdictsD
   split
-  · exact verdictsSD_fits _ _ _
-  · exact verdictsSD_fits _ _ _
   · okfits
     all_goals first
+      | exact verdictsSD_fits _ _ _
       | (split
          · split
            · apply ndDefault_fits
            · apply ndVerdictsAnswer_fits; decide
          · apply ndVerdictsAnswer_fits; decide)
       | skip
-  · okfits
+  · exact verdictsSD_fits _ _ _
 
 /-! RD-7's superposed encoder has a closed shape all the way to each model and evidence note. -/
 theorem supScopeJson_fits (q : String) (s : SupScope) (proposals : List Choice) :

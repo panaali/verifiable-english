@@ -483,30 +483,24 @@ def defaultJson (z : DVerdicts) : Json :=
     ("per_choice", Json.arr (z.ds.map (dChoiceJson z)).toArray),
     ("english", Json.arr ((dEnglish z).map DLine.json).toArray)]
 
-def askedText : String := "InvalidInput: assume_no_exception is true or false, and applies to the query question"
-
 /-- RD-9's `readings-verdicts` under the soft completion (`runVerdictsSD`); when the request asks
-    (`assume_no_exception: true`, the query question, at most 64 compatible choices), RD-9's answer on the same replay
+    (`assume_no_exception: true` on the query question) within 64 compatible choices, RD-9's answer on the same replay
     (`replaySD`, `ndVerdictsAnswer`) with the `default` member beside it, present only when the strict conflict fold is
-    FREE (`DVerdicts.defaultMember`) and some choice has a no-exception premise (`hasDefaults`, plan F-DF2). -/
+    FREE (`DVerdicts.defaultMember`) and some choice has a no-exception premise (`hasDefaults`, plan F-DF2). Any other
+    request is answered as RD-9 answers it. -/
 def runVerdictsD (id : String) (b : Admitted2) (j : Json) : Except String Json := do
   match j.getObjValD "assume_no_exception" with
-  | .null | .bool false => runVerdictsSD id b j
   | .bool true =>
     let q ← verdictsRequest b j
-    if q.question = "query" then
-      let r ← admitSDOf b
-      if (choices r.N.D).isEmpty then throw (unsatText r.N.D)
-      if (choices r.N.D).length ≤ maxChoices then
-        let y ← replaySD r "query" q.A j
-        let z ← replayD y j
-        let a := ndVerdictsAnswer id "query" (j.getObjValD "document") r.N.D q.A q.named (some (xInfos y.x)) []
-          q.dead
-        pure (match z.defaultMember with
-          | some _ => if z.hasDefaults then a.setObjVal! "default" (defaultJson z) else a
-          | none => a)
-      else throw "UnsupportedProfile: answers that assume no exception take at most 64 compatible readings"
-    else throw askedText
-  | _ => throw askedText
+    let r ← admitSDOf b
+    if q.question = "query" ∧ ¬ (choices r.N.D).isEmpty ∧ (choices r.N.D).length ≤ maxChoices then
+      let y ← replaySD r "query" q.A j
+      let z ← replayD y j
+      let a := ndVerdictsAnswer id "query" (j.getObjValD "document") r.N.D q.A q.named (some (xInfos y.x)) [] q.dead
+      pure (match z.defaultMember with
+        | some _ => if z.hasDefaults then a.setObjVal! "default" (defaultJson z) else a
+        | none => a)
+    else runVerdictsSD id b j
+  | _ => runVerdictsSD id b j
 
 end VE.Readings.Run
