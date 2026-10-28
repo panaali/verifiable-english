@@ -1,0 +1,200 @@
+     Running tests/norms.rs (rust/target/debug/deps/norms-21ec777e225b76c8)
+
+running 3 tests
+test act_phrase_whitespace_matches_python_split ... ok
+test regulated_environment_and_profile_model ... ok
+test regulated_predicate_cannot_be_defined_or_flagged ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/premise_scale.rs (rust/target/debug/deps/premise_scale-92f544d2968876db)
+
+running 6 tests
+test a_ground_candidate_the_premises_reject_is_no_witness ... ok
+test a_raised_sort_is_searched_at_its_size ... ok
+test ground_route_on_stated_quantities ... ok
+test shared_bound_cannot_hold_three_distinct_constants ... ok
+test sort_bounds_name_declared_sorts_in_order ... ok
+test the_ground_route_tries_the_stated_facts_alone ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+
+     Running tests/search.rs (rust/target/debug/deps/search-35abf7e625d64595)
+
+running 7 tests
+test constants_may_alias_and_empty_domains_are_not_inferred_inhabited ... ok
+test environment_binding_cannot_be_substituted ... ok
+test flagged_relation_absent_from_query_is_enumerated ... ok
+test limits_are_operational_and_checked_at_exhaustion_boundary ... ok
+test measurement_iterator_uses_the_search_order ... ok
+test mixed_sort_constant_and_relation_products_are_exhaustive ... ok
+test unused_predicates_do_not_expand_search ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/soft_norms.rs (rust/target/debug/deps/soft_norms-12169e7f2a9b8730)
+
+running 1 test
+test replay_untrusted_soft_elaborations ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (rust/target/debug/deps/ve_kernel-31a99c7244783363)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (rust/target/debug/deps/ve_profile-39d349572b160587)
+
+running 3 tests
+test search::domain_size_tests::lazy_sizes_are_the_eager_order ... ok
+test search::domain_size_tests::many_sorts_hold_one_vector ... ok
+test search::domain_size_tests::per_sort_maxima_are_the_eager_order ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+   Doc-tests ve_core
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ve_kernel
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ve_profile
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
++ python3 tools/rust_build.py build --locked --release --manifest-path rust/Cargo.toml -p ve
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.26
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling serde_json v1.0.151
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling memchr v2.8.3
+   Compiling itoa v1.0.18
+   Compiling cpufeatures v0.2.17
+   Compiling cfg-if v1.0.5
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling serde_derive v1.0.229
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `release` profile [optimized] target(s) in 10.60s
+6422647f908dfbf4bc7728df20719c0f613842d577b4c697f3a6c2aeb8408579  /home/runner/work/verifiable-english/verifiable-english/rust/target/release/ve: pinned in /home/runner/work/verifiable-english/verifiable-english/lean/checkers.lock
++ python3 tools/rust_build.py build --locked --manifest-path rust/Cargo.toml -p ve
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.62s
+    Finished `release` profile [optimized] target(s) in 0.01s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.01s
+order: failed last time []; changed ['tests/test_scope_document.py', 'tests/test_scope_lean.py', 'tests/test_scope_readings_document.py', 'tests/test_scope_sc5r_stub.py']; then the rest; --maxfail 5
+recording 475 units with 4 jobs in /tmp/ve-select-run-55wxbev1
+  tests/test_scope_sc5r_stub.py: exit 0 in 1.5 s, 247 functions
+  tests/test_scope_lean.py: exit 0 in 2.9 s, 262 functions
+  tests/test_scope_readings_document.py: exit 0 in 4.3 s, 793 functions
+  tests/test_scope_document.py: exit 0 in 8.0 s, 999 functions
+  tests/test_assist.py: exit 0 in 196.5 s, 1266 functions
+  tests/test_assist_invariants.py: exit 0 in 233.9 s, 989 functions
+  tests/test_wire_gate_corpus.py: exit 0 in 519.5 s, 3596 functions
+  tests/test_lean_document_wrapper.py: exit 0 in 501.5 s, 1538 functions
+  tests/test_p1_preflight.py: exit 0 in 35.0 s, 739 functions
+  tests/test_asimov_extended.py: exit 0 in 151.3 s, 666 functions
+  tests/test_p1_amendment12.py: exit 0 in 107.1 s, 805 functions
+  tests/test_readings_rd6b_differential.py: exit 0 in 883.8 s, 1030 functions
+  tests/test_p1.py: exit 0 in 24.3 s, 809 functions
+  tests/test_stage2_standalone.py: exit 1 in 4.4 s, 579 functions
+  tests/test_english_evidence.py: exit 0 in 1133.7 s, 764 functions
+  tests/test_difffuzz.py: exit 0 in 257.1 s, 2114 functions
+  tests/test_enum_domains.py: exit 0 in 292.6 s, 265 functions
+  tests/test_p1_amendment9.py: exit 0 in 24.5 s, 761 functions
+  tests/test_soft_review_regressions.py: exit 0 in 331.5 s, 1023 functions
+  tests/test_discourse_answer.py: exit 0 in 30.2 s, 926 functions
+  tests/test_p1_amendment14.py: exit 0 in 22.2 s, 778 functions
+  tests/test_model_environment.py: exit 0 in 33.3 s, 740 functions
+  tests/test_select_tests.py: exit 0 in 182.3 s, 686 functions, OPAQUE
+  tests/test_b16e_rights_document.py: exit 0 in 162.2 s, 947 functions
+  tests/test_risk_margins.py: exit 0 in 273.9 s, 411 functions
+  tests/test_lean_service_schema.py: exit 0 in 150.0 s, 1097 functions
+  tests/test_rights_three_way.py: exit 0 in 40.6 s, 640 functions
+  tests/test_readings_s2_document.py: exit 0 in 184.1 s, 1679 functions
+  tests/test_consolidation_tools.py: exit 0 in 578.1 s, 1192 functions
+  tests/test_cli.py: exit 0 in 63.3 s, 838 functions
+  tests/test_discourse_lean.py: exit 1 in 45.4 s, 1021 functions
+stopping after 5 failed tests (--maxfail 5)
+FAILED tests/test_discourse_lean.py (exit 1): tests/test_discourse_lean.py::test_malformed_metadata_reaches_lean; log /tmp/ve-select-run-55wxbev1/tests__test_discourse_lean.py.log
+                                                 "ResourceLimit: JSON front matter nesting exceeds the parser's depth")
+E       assert ('ResourceLim...ument format') == ('ResourceLim...rser's depth")
+E         
+E         At index 1 diff: 'unsupported document format' != "ResourceLimit: JSON front matter nesting exceeds the parser's depth"
+E         
+E         Full diff:
+E           (
+E               'ResourceLimit: JSON depth exceeds 256',
+E         -     "ResourceLimit: JSON front matter nesting exceeds the parser's depth",
+E         +     'unsupported document format',
+E           )
+
+tests/test_discourse_lean.py:1965: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_discourse_lean.py::test_malformed_metadata_reaches_lean - assert ('ResourceLim...ument format') == ('ResourceLim...rser's depth")
+  
+  At index 1 diff: 'unsupported document format' != "ResourceLimit: JSON front matter nesting exceeds the parser's depth"
+  
+  Full diff:
+    (
+        'ResourceLimit: JSON depth exceeds 256',
+  -     "ResourceLimit: JSON front matter nesting exceeds the parser's depth",
+  +     'unsupported document format',
+    )
+1 failed, 69 passed in 43.84s
+FAILED tests/test_stage2_standalone.py (exit 1): tests/test_stage2_standalone.py::test_environment_node_mutations_match_frozen_python_code_and_path, tests/test_stage2_standalone.py::test_model_node_mutations_match_frozen_python_code_and_path, tests/test_stage2_standalone.py::test_model_oracle_detects_seeded_decoder_faults[change_code], tests/test_stage2_standalone.py::test_model_oracle_detects_seeded_decoder_faults[drop_path]; log /tmp/ve-select-run-55wxbev1/tests__test_stage2_standalone.py.log
+                    else:
+                        row["error"] = row["error"].replace("InvalidModel:", "InvalidInput:", 1)
+                    seeded = True
+                    break
+            return rows
+    
+        monkeypatch.setattr(LeanService, "run", altered)
+        with pytest.raises(AssertionError):
+            test_model_node_mutations_match_frozen_python_code_and_path(tmp_path, capfd)
+>       assert seeded
+E       assert False
+
+tests/test_stage2_standalone.py:716: AssertionError
+----------------------------- Captured stderr call -----------------------------
+tag lean-first/oracle-python does not exist
+=========================== short test summary info ============================
+FAILED tests/test_stage2_standalone.py::test_model_node_mutations_match_frozen_python_code_and_path - AssertionError: assert 2 == 0
+ +  where 2 = <function run at 0x7fa2267fdc70>(PosixPath('/tmp/pytest-of-runner/pytest-12/test_model_node_mutations_matc0/oracle.py'), scratch=PosixPath('/tmp/pytest-of-runner/pytest-12/test_model_node_mutations_matc0'))
+ +    where <function run at 0x7fa2267fdc70> = <module 'tools.lean_first_oracle' from '/home/runner/work/verifiable-english/verifiable-english/tools/lean_first_oracle.py'>.run
+FAILED tests/test_stage2_standalone.py::test_environment_node_mutations_match_frozen_python_code_and_path - AssertionError: assert 2 == 0
+ +  where 2 = <function run at 0x7fa2267fdc70>(PosixPath('/tmp/pytest-of-runner/pytest-12/test_environment_node_mutation0/oracle.py'), scratch=PosixPath('/tmp/pytest-of-runner/pytest-12/test_environment_node_mutation0'))
+ +    where <function run at 0x7fa2267fdc70> = <module 'tools.lean_first_oracle' from '/home/runner/work/verifiable-english/verifiable-english/tools/lean_first_oracle.py'>.run
+FAILED tests/test_stage2_standalone.py::test_model_oracle_detects_seeded_decoder_faults[drop_path] - assert False
+FAILED tests/test_stage2_standalone.py::test_model_oracle_detects_seeded_decoder_faults[change_code] - assert False
+4 failed, 114 passed, 1 deselected in 3.92s
+recorded 31 units for tree 4c271850cc; 444 others left to the static graph until they run; 2 failed
+STOPPED EARLY (--maxfail 5): 444 selected units did not run: tests/test_acts_lexical.py, tests/test_acts_lexical_mutants.py, tests/test_acts_profile.py, tests/test_acts_tree_mutants.py, tests/test_acts_vocab_mutants.py, tests/test_agent_policy.py, tests/test_agent_policy_rerun.py, tests/test_agent_policy_unspecified.py, tests/test_alternatives_fill.py, tests/test_alternatives_profile.py, tests/test_alternatives_three_way.py, tests/test_answer_cutoff.py, tests/test_answer_store.py, tests/test_ap2_limits_provisional.py, tests/test_ar3_report.py, tests/test_ar6_report.py, tests/test_ar8_evidence.py, tests/test_architecture_docs.py, tests/test_argument.py, tests/test_argument_adversarial.py, tests/test_argument_fixtures.py, tests/test_asimov_laws.py, tests/test_ask_cli.py, tests/test_ask_fixtures.py, tests/test_ask_null_free.py, tests/test_ask_relay.py, tests/test_assist_deadline.py, tests/test_assist_recovery.py, tests/test_assist_recovery_replay.py, tests/test_assist_split.py, tests/test_assurance_manifest.py, tests/test_attacks.py, tests/test_authoring.py, tests/test_b11b_report.py, tests/test_b14c.py, tests/test_b15a_evidence.py, tests/test_b15b_evidence.py, tests/test_b16a_evidence.py, tests/test_b16b_evidence.py, tests/test_b16c_evidence.py, tests/test_b16d_document.py, tests/test_b16d_evidence.py, tests/test_b16d_norm_roles.py, tests/test_b16f_document.py, tests/test_b16f_senses_document.py, tests/test_b17_evidence.py, tests/test_b17_owner.py, tests/test_background.py, tests/test_batch_evidence.py, tests/test_batch_scope.py, tests/test_bench_baselines.py, tests/test_bench_timing.py, tests/test_binding_census.py, tests/test_bluedot_grant.py, tests/test_bundle.py, tests/test_calc_algebra.py, tests/test_calc_derive.py, tests/test_calc_dimensions.py, tests/test_calc_service.py, tests/test_calc_units.py, tests/test_calendar_regression_w6b.py, tests/test_cardinality_exercised.py, tests/test_cedar_attributes.py, tests/test_cedar_norms.py, tests/test_closure.py, tests/test_closure_certificates.py, tests/test_closure_induction.py, tests/test_closure_witnesses.py, tests/test_colab.py, tests/test_compose_dispatch.py, tests/test_compose_integration.py, tests/test_conformance.py, tests/test_constitution_w6a_controls.py, tests/test_count_w6a.py, tests/test_coverage_dashboard.py, tests/test_cpu_bounds.py, tests/test_data_adapters.py, tests/test_data_flags.py, tests/test_data_surface.py, tests/test_data_three_way.py, tests/test_defaults_answer.py, tests/test_defaults_checks.py, tests/test_defaults_lean.py, tests/test_defeasible_baseline_evidence.py, tests/test_definitions.py, tests/test_definitions_differential.py, tests/test_definitions_english.py, tests/test_discourse.py, tests/test_discourse_constitution.py, tests/test_discourse_three_way.py, tests/test_document.py, tests/test_document_lean_switch.py, tests/test_document_split.py, tests/test_e1_core.py, tests/test_e1_prompts.py, tests/test_eff_tests_report.py, tests/test_eligibility_wfp.py, tests/test_encoder_shapes.py, tests/test_english.py, tests/test_english_e26_ab.py, tests/test_english_e26_boundary.py, tests/test_english_e26_diagnosis.py, tests/test_english_e26_evidence.py, tests/test_english_e26_report.py, tests/test_english_e2_boundary.py, tests/test_english_e2_integer_marks.py, tests/test_english_e2_ledger_sites.py, tests/test_english_e2_overlay.py, tests/test_english_e2_profile_matrix.py, tests/test_english_e2_python.py, tests/test_english_e2_relay.py, tests/test_english_e2_report.py, tests/test_english_e2_responses.py, tests/test_english_e2_saved_evidence.py, tests/test_english_e2_selection.py, tests/test_english_e2_statements.py, tests/test_english_grammar_gen.py, tests/test_english_lean_adapter.py, tests/test_english_lean_engine.py, tests/test_english_lean_lexer.py, tests/test_english_lean_lexicon.py, tests/test_english_lean_rejections.py, tests/test_english_lean_route.py, tests/test_english_lean_s0.py, tests/test_english_lean_s2.py, tests/test_english_lean_s3.py, tests/test_english_lean_s3_compare.py, tests/test_english_lean_seal.py, tests/test_english_lean_tables.py, tests/test_english_lean_tokens.py, tests/test_english_runner_root.py, tests/test_english_unambiguity.py, tests/test_entailment.py, tests/test_entailment_adversarial.py, tests/test_entailment_properties.py, tests/test_environment_field_types.py, tests/test_equivalence.py, tests/test_equivalence_properties.py, tests/test_et8_completion.py, tests/test_evaluate_search.py, tests/test_evidence_bounds.py, tests/test_evidence_toolkit.py, tests/test_evidence_tools.py, tests/test_filling_search.py, tests/test_fluent.py, tests/test_fol_names.py, tests/test_fret_w6a_rerating.py, tests/test_frozen_sources.py, tests/test_gate.py, tests/test_gate_collection.py, tests/test_gate_durations.py, tests/test_gate_integrity.py, tests/test_gate_quarantine.py, tests/test_gate_rerun.py, tests/test_gate_trust.py, tests/test_gatekeeper_adapter.py, tests/test_grammar.py, tests/test_grammar_backends.py, tests/test_grammar_cli.py, tests/test_hang_guards.py, tests/test_heavy_tests.py, tests/test_history_tests.py, tests/test_identity_lint.py, tests/test_inventory_lint.py, tests/test_jt_crossplan_ties.py, tests/test_judgments_document.py, tests/test_judgments_exercised.py, tests/test_lake_outputs.py, tests/test_lean_audit_record.py, tests/test_lean_authority_values.py, tests/test_lean_budget_types.py, tests/test_lean_build.py, tests/test_lean_certificates.py, tests/test_lean_conformance.py, tests/test_lean_decided_share.py, tests/test_lean_default_build.py, tests/test_lean_dump_cache.py, tests/test_lean_first_b10a_report.py, tests/test_lean_first_b10b_report.py, tests/test_lean_first_b12_report.py, tests/test_lean_first_b13a.py, tests/test_lean_first_b13b.py, tests/test_lean_first_b14a.py, tests/test_lean_first_b3b_report.py, tests/test_lean_first_b3d_report.py, tests/test_lean_first_b5_delta.py, tests/test_lean_first_b6_report.py, tests/test_lean_first_b9_report.py, tests/test_lean_first_diff.py, tests/test_lean_first_diff_cache.py, tests/test_lean_first_oracle.py, tests/test_lean_first_rule3_measurement.py, tests/test_lean_first_triage.py, tests/test_lean_handles.py, tests/test_lean_import_reader.py, tests/test_lean_layers_once.py, tests/test_lean_limits.py, tests/test_lean_service.py, tests/test_lean_share.py, tests/test_lean_statements_parts.py, tests/test_legend.py, tests/test_lexicon.py, tests/test_lf14a_long_parse.py, tests/test_lf14a_response_shape.py, tests/test_llm.py, tests/test_merge_tooling_evidence.py, tests/test_metered_answer.py, tests/test_metered_differential.py, tests/test_metered_handles.py, tests/test_metered_lean.py, tests/test_mutants.py, tests/test_nary.py, tests/test_nary_differential.py, tests/test_nary_folio.py, tests/test_native_build_lock.py, tests/test_natural.py, tests/test_nested_pytest.py, tests/test_news_w6a_fixtures.py, tests/test_norm_admission.py, tests/test_norm_defaults.py, tests/test_norm_defaults_contract.py, tests/test_norm_defaults_differential.py, tests/test_norm_defaults_layered.py, tests/test_norm_defaults_relay_english.py, tests/test_norm_defaults_report.py, tests/test_norm_defaults_soft_kinds.py, tests/test_norm_defaults_switch.py, tests/test_norm_defaults_three_way.py, tests/test_norm_english.py, tests/test_norms.py, tests/test_norms_contract.py, tests/test_norms_three_way.py, tests/test_numbers_phrases.py, tests/test_numeral_conversion.py, tests/test_oom_mutation_evidence.py, tests/test_order.py, tests/test_order_gate.py, tests/test_order_grammar.py, tests/test_order_round2.py, tests/test_p0_three_way.py, tests/test_p1_amendment11.py, tests/test_p1_amendment13.py, tests/test_p1_amendment15.py, tests/test_p1_amendment7.py, tests/test_p1_amendment8.py, tests/test_p1_history.py, tests/test_p1_infrastructure.py, tests/test_p1_native_counter.py, tests/test_p1_reconcile.py, tests/test_packs_guard_mutants.py, tests/test_parser_renderer.py, tests/test_platform_contract.py, tests/test_precommit_hook.py, tests/test_premise_scale.py, tests/test_presupposition_wordings.py, tests/test_profile_artifacts.py, tests/test_profile_table.py, tests/test_profiles.py, tests/test_progress_watch.py, tests/test_properties.py, tests/test_propose.py, tests/test_question_answering_measure_report.py, tests/test_question_answering_q2_report.py, tests/test_question_differential.py, tests/test_question_fixture_sources.py, tests/test_question_lean_relay.py, tests/test_question_reading.py, tests/test_question_statements.py, tests/test_rd9_chain_relay.py, tests/test_rd9_dri_signatures.py, tests/test_rd9_followup_bindings.py, tests/test_rd9_gap_relay.py, tests/test_rd9_r14_candidates.py, tests/test_rd9_soft_split.py, tests/test_rd9_statements.py, tests/test_readings_budget_zero.py, tests/test_readings_companions_lean.py, tests/test_readings_component_names.py, tests/test_readings_components_document.py, tests/test_readings_components_lean.py, tests/test_readings_components_load.py, tests/test_readings_constant_display.py, tests/test_readings_defaults_english.py, tests/test_readings_defaults_names.py, tests/test_readings_defaults_rd2a_report.py, tests/test_readings_defaults_rd2b_report.py, tests/test_readings_defaults_rd3_report.py, tests/test_readings_defaults_rd4a_report.py, tests/test_readings_defaults_rd4b_report.py, tests/test_readings_defaults_rd6a.py, tests/test_readings_defaults_rd6a_report.py, tests/test_readings_defaults_rd6b_report.py, tests/test_readings_defaults_rd8_report.py, tests/test_readings_defaults_statements.py, tests/test_readings_lazy_pairs.py, tests/test_readings_lean_sharing.py, tests/test_readings_nd_document.py, tests/test_readings_nd_lean.py, tests/test_readings_rd5_plain_probe.py, tests/test_readings_rd5_udhr.py, tests/test_readings_route_fuzz.py, tests/test_readings_route_relay.py, tests/test_readings_s1_differential.py, tests/test_readings_s1_document.py, tests/test_readings_s1_integration.py, tests/test_readings_s1_lean.py, tests/test_readings_s1_pilot_rebuild.py, tests/test_readings_s1_python.py, tests/test_readings_s2_answer.py, tests/test_readings_s2_lean.py, tests/test_readings_s2_python.py, tests/test_readings_sd_ce4.py, tests/test_readings_sd_differential.py, tests/test_readings_sd_document.py, tests/test_readings_sd_lean.py, tests/test_readings_sd_relay.py, tests/test_readings_sup_verdicts.py, tests/test_readings_verdicts_lean.py, tests/test_readings_verdicts_split.py, tests/test_regen_generated.py, tests/test_relay.py, tests/test_relay_binding_inventory.py, tests/test_relay_english_scale.py, tests/test_relay_lint.py, tests/test_relay_mutation_gate.py, tests/test_relay_wire_check.py, tests/test_replay_conservativity.py, tests/test_repo_map.py, tests/test_report_english.py, tests/test_reports.py, tests/test_reports_agreement.py, tests/test_reports_fault_order.py, tests/test_reports_lean.py, tests/test_reports_status.py, tests/test_response_schemas.py, tests/test_rights.py, tests/test_rights_lean.py, tests/test_rights_licence_relay.py, tests/test_rights_render_status.py, tests/test_risk_diagnostics.py, tests/test_risk_differential.py, tests/test_risk_english.py, tests/test_risk_every_diagnostic.py, tests/test_risk_fixtures.py, tests/test_risk_generated_policies.py, tests/test_risk_integration.py, tests/test_risk_lean_route.py, tests/test_risk_profile.py, tests/test_risk_w6_extension.py, tests/test_route_parity.py, tests/test_route_row_schemas.py, tests/test_route_transport.py, tests/test_run_cache.py, tests/test_run_order.py, tests/test_runner.py, tests/test_rust_conformance.py, tests/test_rust_jsonl_schema.py, tests/test_rust_memory_budget.py, tests/test_rust_reproducible.py, tests/test_safety_framework.py, tests/test_scales_exercised.py, tests/test_scope_b1_input.py, tests/test_search_budget_answer.py, tests/test_search_options.py, tests/test_senses_document.py, tests/test_senses_lean.py, tests/test_senses_pack.py, tests/test_senses_route.py, tests/test_service_schema_compiler.py, tests/test_shape_binding_mutants.py, tests/test_since_pass.py, tests/test_single_owner.py, tests/test_soft_candidate_economy.py, tests/test_soft_decision_keys.py, tests/test_soft_norms_conformance.py, tests/test_soft_norms_lean.py, tests/test_soft_request_economy.py, tests/test_softnorms_contract.py, tests/test_softnorms_public_contract.py, tests/test_speech_acts.py, tests/test_speech_acts_conformance.py, tests/test_speech_acts_lean.py, tests/test_speech_polar_lean.py, tests/test_speech_source_lean.py, tests/test_speech_source_relay.py, tests/test_speech_source_switch.py, tests/test_stage0_inventory.py, tests/test_stage0_probe_matrix.py, tests/test_stage2_bundle.py, tests/test_stage2_dispatch.py, tests/test_stage2_evaluation.py, tests/test_stage2_faults.py, tests/test_stage2_graph.py, tests/test_stage2_norms.py, tests/test_stage2_parse.py, tests/test_stage2_readings.py, tests/test_stage2_validation.py, tests/test_statement_block_environment.py, tests/test_stats.py, tests/test_suite_tail.py, tests/test_surface_registry.py, tests/test_t1c.py, tests/test_test_schedule.py, tests/test_test_speed_b2.py, tests/test_testing_profile_doc.py, tests/test_time_surface_w6a.py, tests/test_time_w6a.py, tests/test_trust_budget.py, tests/test_trust_mutants.py, tests/test_trust_ratchet.py, tests/test_units_lean_gate_w6a.py, tests/test_units_lean_w6a.py, tests/test_units_relay_w6a.py, tests/test_units_w6a.py, tests/test_vacuity.py, tests/test_ve_iface.py, tests/test_views.py, tests/test_views_polish.py, tests/test_w6a2_looprecheck1.py, tests/test_w6a2_numeral_characters.py, tests/test_w6a_certificate_steps.py, tests/test_w6a_citations.py, tests/test_w6a_documents.py, tests/test_w6a_limit_generator.py, tests/test_w6a_limits.py, tests/test_w6a_looprecheck1.py, tests/test_w6a_looprecheck2.py, tests/test_w6a_review_regressions.py, tests/test_w6a_route_limits.py, tests/test_w6b_gates.py, tests/test_wire_contract_corpus.py, tests/test_wire_contract_engine.py, tests/test_wire_contract_faults.py, tests/test_wire_contract_generator.py, tests/test_wire_contract_lean.py, tests/test_wire_contract_lint.py, tests/test_wire_contract_precondition.py, tests/test_wire_contract_s4_lean.py, tests/test_wire_contract_s5_admission.py, tests/test_wire_contract_s5_lean.py, tests/test_wire_contract_soft_lean.py, tests/test_wire_contract_three_way.py, tests/test_words.py, tools/test_layer_policy.py
