@@ -346,6 +346,7 @@ import VE.Scales.Examples
 import VE.Scales.Intended
 import VE.Scales.Theorems
 import VE.Scope.Examples
+import VE.Scope.ReadingsTheorems
 import VE.Scope.Theorems
 import VE.SearchBudget.Budget
 import VE.SearchBudget.Demand
@@ -6218,6 +6219,9 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.baseName_some
 #print axioms VE.Scope.baseObjF_slow
 #print axioms VE.Scope.bind_ok
+#print axioms VE.Scope.checkDocSets_absent_unchanged
+#print axioms VE.Scope.checkDocSets_no_sets
+#print axioms VE.Scope.choiceFault_limit
 #print axioms VE.Scope.commutes_symm
 #print axioms VE.Scope.composedF_slow
 #print axioms VE.Scope.coveredBy_slow
@@ -6229,6 +6233,8 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.edgesOfF_slow
 #print axioms VE.Scope.edgesOf_graph
 #print axioms VE.Scope.fastReads_eq
+#print axioms VE.Scope.faultOf_every
+#print axioms VE.Scope.faultOf_some
 #print axioms VE.Scope.firstKeys_mem
 #print axioms VE.Scope.firstKeys_self
 #print axioms VE.Scope.foldStatus_mem
@@ -6237,6 +6243,10 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.frontier_graph_refused
 #print axioms VE.Scope.governBody_slow
 #print axioms VE.Scope.governFast_eq
+#print axioms VE.Scope.governSetsFast_eq
+#print axioms VE.Scope.governSets_choice_refused
+#print axioms VE.Scope.governSets_limit
+#print axioms VE.Scope.governSets_no_sets
 #print axioms VE.Scope.govern_admits
 #print axioms VE.Scope.govern_identity
 #print axioms VE.Scope.govern_orphan
@@ -6267,6 +6277,8 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.ruleTable_decoder
 #print axioms VE.Scope.scope_absent_unchanged
 #print axioms VE.Scope.scope_admission
+#print axioms VE.Scope.scope_admission_sets
+#print axioms VE.Scope.scope_set_choices
 #print axioms VE.Scope.substOwn_id
 #print axioms VE.Scope.substOwn_id_le
 #print axioms VE.Scope.substOwn_no_own
