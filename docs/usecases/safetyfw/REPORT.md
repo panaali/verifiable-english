@@ -2,7 +2,8 @@
 
 - **Status:** parts 1, 2, 3 and 5 done; part 4 (the openai-preparedness baseline) is cut for size and named
   `usecase-safetyfw-b`. No DRI signature is reserved, no DELTA row, trust +0 (no Lean file changed).
-- **HEAD:** the branch tip; code final at 18e9c937d, later commits change only this report (base main 6d0a10526).
+- **HEAD:** the branch tip; original baseline code at 18e9c937d, source-coverage correction at 92a2fd643
+  (base main 6d0a10526).
 - **What changed:** both frozen keys transcribed and pinned; fsf-r2 re-measured the DeepMind case (no byte moved
   since Oct 18) with one probe per merged item; anthropic-rsp has its corrected baseline: 59,410 bytes in 303 units,
   9.0% CHECKED, with stage 0 and the gaps by feature family.
@@ -159,6 +160,8 @@ None of these gives a wrong verdict. Each is a limit the translation had to work
 | 10 | `usecases/anthropic-rsp/rsp_vocabulary.py` | a predicate renamed `review_if_board` | `::test_rsp_identifiers_and_inventions` |
 | 11 | `usecases/anthropic-rsp/rules.d1.ve` | an invented stop rule on no unit (PLAN 11 m2) | `::test_rsp_identifiers_and_inventions` (M6 untraced) |
 | 12 | `usecases/anthropic-rsp/stage0.py` | PLAN mutant m6: D4's "Within 30 days" → 60 | `::test_rsp_stage0_rerun_equals_saved`. On the first try it was **not** caught: D4 and D5 compared the day asked about with the deadline the wrong way round. Fixed in c1fd40403; the saved answers are unchanged |
+| 13 | `tools/difffuzz_corpus.py` | removed the anthropic-rsp cases.json exclusion, then restored it | `tests/test_difffuzz.py::test_every_fixture_is_read_or_excluded_with_a_reason` failed with that fixture unread |
+| 14 | `usecases/anthropic-rsp/build_document.py` | removed the personal-relationships unit, then restored it | `tests/test_safetyfw_usecases.py::test_rsp_reviewer_prohibitions_are_separate_coverage_units` failed with that builder unit absent |
 
 Product code in the reviewed sense: Python under `tools/` (`difffuzz_corpus.py`, one registry entry; bug 4). No
 Lean or Rust file changed.
@@ -188,7 +191,7 @@ Lean or Rust file changed.
    under the task's own size rule. No new Python copy of a Lean decision: every status and verdict is VE's
    (`test_rsp_every_byte_is_in_exactly_one_unit` reads `ve.document.coverage`). No report test checks batch
    evidence.
-3. Tests can fail: PASS. 12 seeded bugs in section 9, one of which found a real error (m6).
+3. Tests can fail: PASS. 14 seeded bugs in section 9, one of which found a real error (m6).
 4. Py/Lean/Rust agree, valid inputs pass: N.A., because no checker code changed. safety-framework's `run.py --check`
    reproduces every saved answer.
 5. R8 binding: N.A., because no relayed field was added.
@@ -206,3 +209,16 @@ Lean or Rust file changed.
     whole-document readings run (L70).
 13. `Test-removed` trailers: PASS. No test removed or renamed (`gate_collection.py --check --prebuilt`: 0 removed,
     0 stale, 0 malformed).
+
+## 12. Review correction
+
+- F1: split the 3.6.1 paragraph into three source clauses; only the organizational rule remains CHECKED.
+  `test_rsp_reviewer_prohibitions_are_separate_coverage_units` and the saved-report consistency test passed;
+  the review's F1 probe failed before and passed after. Commit 92a2fd643.
+- F-ready1: planted and restored the changed Python corpus-registry mutant; its fixture-coverage test failed.
+  The committed [seed-mutants.json](seed-mutants.json) names that file and the builder mutant for the new coverage
+  rule. The review-ready mutant check is rerun on the final commit.
+- Verification: 20 use-case tests passed; the corpus-registry regression passed after restoration. The selected
+  runner's preflight completed `lake build` and `python3 lean/audit.py`, then reported `FULL: missing coverage map`
+  and expanded pytest to 484 units; that pytest expansion was stopped under this item's selected-only instruction.
+  No release gate or model call ran. The three entries in `main-known-red.txt` were left untouched.
