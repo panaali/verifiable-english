@@ -1,9 +1,11 @@
 import VE.Events.Completion
 import VE.Events.Conservative
+import VE.Time.Wire
 
 /-! The ET-3 fixtures of docs/spec/events-time-causation.md 8 as `#guard` lines: T1 to T6, T10, T13,
-T2b, the fragment rows F1 and the day numbers; et-3b's completion pieces and the counterexample to
-`embeddable_sound` as approved; et-3c's T7 (conservativity); et-3cb's finite situation of the pack alone.
+T2b, the fragment rows F1 and the day numbers; et-3b's completion pieces and its counterexample to
+`embeddable_sound`, refused since et-3d's year bound; et-3c's T7 (conservativity); et-3cb's finite situation of the
+pack alone; et-3d's year boundary.
 T8 (identity) is ET-4's. -/
 namespace VE.Events.Examples
 open VE.Events
@@ -284,19 +286,56 @@ example : ∃ M : VE.FiniteModel VE.Bridge.Entity, M.Valid (regenEnv envT7 vT7) 
     VE.Norms.Sat M.asStructure (eventsX vT7) ∧ embeddable vT7 M = true :=
   eventsPremises_satisfiable envT7 vT7 (by decide)
 
--- `embeddable_sound` as approved does not hold: `EventsTyped` bounds no year, so a named date after
--- 9999-12-31 passes the check while its number exceeds `dateMax` (et-3b's report; the DRI's to amend)
+-- et-3d: `EventsTyped` bounds every named date's year by 9999, as the decoder does (`Civil.Valid`; the DRI's
+-- amendment, reviews/dri-decisions-20261027-featureplan-gates.md item 1). et-3b's counterexample, a named date
+-- 10000-01-01 that passes the check with number `dateMax + 1`, is no longer typed, so `embeddable_sound` holds as
+-- approved.
 def vX : EventsEnv := base [d 10000 1 1]
 def envX : VE.Environment :=
   ⟨["day"], fun p => if p = "before" then some ["day", "day"] else none,
    fun c => if c = dateName (d 10000 1 1) then some "day" else none⟩
 def mX : VE.FiniteModel String := chain ["x"] [(dateName (d 10000 1 1), "x")]
-#guard EventsTyped envX vX && embeddable vX mX && numbering vX mX "x" == dateMax + 1
+#guard !EventsTyped envX vX && embeddable vX mX && numbering vX mX "x" == dateMax + 1
 -- and no numbering at all embeds it, though the check passes
 example (num : String → Nat) : ¬ Embeds vX mX.asStructure num := fun h => by
   obtain ⟨x, -, hx, hn⟩ := h.2.2.2 (d 10000 1 1) (by decide)
   have := h.2.1 x hx
   rw [hn] at this
   exact absurd this (by decide)
+-- the boundary: the last date, 9999-12-31, is typed and numbered `dateMax`; the next one is not, alone or after it
+def vL : EventsEnv := base [d 9999 12 31]
+def vL2 : EventsEnv := base [d 9999 12 31, d 10000 1 1]
+#guard EventsTyped (regenEnv envDay vL) vL && WellFormedEvents envDay vL
+#guard !EventsTyped (regenEnv envDay vX) vX && !WellFormedEvents envDay vX
+#guard !EventsTyped (regenEnv envDay vL2) vL2 && !WellFormedEvents envDay vL2
+#guard EventsTyped (regenEnv envDay (base [d 9998 12 31, d 9999 1 1])) (base [d 9998 12 31, d 9999 1 1])
+#guard embeddable vL (chain ["x"] [(dateName (d 9999 12 31), "x")]) &&
+  numbering vL (chain ["x"] [(dateName (d 9999 12 31), "x")]) "x" == dateMax
+#guard embeddable vL (chain ["w", "x"] [(dateName (d 9999 12 31), "x")]) &&
+  numbering vL (chain ["w", "x"] [(dateName (d 9999 12 31), "x")]) "w" == dateMax - 1
+#guard calendarCheck vL (chain ["x", "y"] [(dateName (d 9999 12 31), "x")]) ==
+  some "NotCalendar: 1 day after 9999-12-31, at most 0"
+-- `embeddable_sound` with no hypothesis beyond the approved ones, its typing from the author's block
+example (M : VE.FiniteModel String) (valid : M.Valid (regenEnv envDay vL)) (he : embeddable vL M = true) :
+    Embeds vL M.asStructure (numbering (α := String) vL M) :=
+  embeddable_sound (regenEnv envDay vL) vL (regen_typed envDay vL (by decide)) M valid he
+
+-- the decoders never build such a date (the DRI's condition, reviews/dri-decisions-20261028-et-3d.md): the ISO
+-- reader takes four-digit years, and the day-number reader refuses `dateMax + 1`
+#guard (match VE.Time.parseIso "10000-01-01" with
+  | .error e => e == "InvalidDate(10000-01-01)"
+  | .ok _ => false)
+#guard (match VE.Time.parseIso "9999-12-31" with
+  | .error _ => false
+  | .ok D => D == d 9999 12 31)
+#guard (match VE.Time.Wire.runConversion "c" "civil" (Lean.Json.mkObj [("day", 2932897)]) with
+  | .error e => e == "DateRange(2932897)"
+  | .ok _ => false)
+#guard (match VE.Time.Wire.runConversion "c" "civil" (Lean.Json.mkObj [("day", 2932896)]) with
+  | .error _ => false
+  | .ok j => (j.getObjValAs? String "date").toOption == some "9999-12-31")
+-- every date the ISO reader returns passes the new bound, so the decoder discharges it
+example {s : String} {D : Civil} (h : VE.Time.parseIso s = .ok D) : decide (D.year ≤ 9999) = true :=
+  decide_eq_true (VE.Time.parseIso_valid h).2
 
 end VE.Events.Examples
