@@ -1,0 +1,76 @@
+collected	tests/test_gate_quarantine.py::test_a_quarantined_failure_that_passes_alone_does_not_fail_the_gate
+collected	tests/test_gate_quarantine.py::test_a_quarantined_failure_that_fails_alone_fails_the_gate
+collected	tests/test_gate_quarantine.py::test_a_retry_without_a_result_fails_the_gate
+collected	tests/test_gate_quarantine.py::test_another_failure_still_fails_the_gate_and_is_never_retried
+collected	tests/test_gate_quarantine.py::test_the_nightly_retries_nothing
+collected	tests/test_gate_quarantine.py::test_an_entry_applies_from_its_added_day_to_its_expiry[before added]
+collected	tests/test_gate_quarantine.py::test_an_entry_applies_from_its_added_day_to_its_expiry[added]
+collected	tests/test_gate_quarantine.py::test_an_entry_applies_from_its_added_day_to_its_expiry[expires]
+collected	tests/test_gate_quarantine.py::test_an_entry_applies_from_its_added_day_to_its_expiry[after expiry]
+collected	tests/test_gate_quarantine.py::test_a_malformed_quarantine_fails_the_gate
+collected	tests/test_gate_quarantine.py::test_a_passing_suite_retries_nothing
+collected	tests/test_gate_quarantine.py::test_the_tracked_quarantine_is_valid_and_names_collected_tests
+collected	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[missing field]
+collected	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[extra field]
+collected	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[empty owner]
+collected	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[owner not a string]
+collected	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[not a node id]
+collected	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[outside tests]
+collected	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[bad day]
+collected	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[eight days]
+collected	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[expires first]
+collected	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[twice]
+collected	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[absolute evidence]
+collected	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[evidence outside]
+collected	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[missing evidence]
+collected	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[evidence of another test]
+collected	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[version 2]
+collected	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[version true]
+collected	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[entries not a list]
+collected	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[extra key]
+collected	tests/test_gate_quarantine.py::test_an_unreadable_quarantine_is_refused
+collected	tests/test_gate_quarantine.py::test_the_gates_pytest_runs_every_test_whatever_the_project_or_shell_asks
+collected	tests/test_gate_quarantine.py::test_the_gates_plugin_refuses_to_stop_early[--maxfail=1]
+collected	tests/test_gate_quarantine.py::test_the_gates_plugin_refuses_to_stop_early[-x]
+collected	tests/test_gate_quarantine.py::test_the_gates_plugin_refuses_to_stop_early[--exitfirst]
+collected	tests/test_gate_quarantine.py::test_the_gates_plugin_refuses_to_stop_early[--sw]
+collected	tests/test_gate_quarantine.py::test_the_gates_plugin_refuses_to_stop_early[--stepwise-skip]
+collected	tests/test_gate_quarantine.py::test_the_retry_command_is_the_gates_pytest_over_the_node_ids
+passed	tests/test_gate_quarantine.py::test_a_quarantined_failure_that_passes_alone_does_not_fail_the_gate
+passed	tests/test_gate_quarantine.py::test_a_quarantined_failure_that_fails_alone_fails_the_gate
+passed	tests/test_gate_quarantine.py::test_a_retry_without_a_result_fails_the_gate
+passed	tests/test_gate_quarantine.py::test_another_failure_still_fails_the_gate_and_is_never_retried
+passed	tests/test_gate_quarantine.py::test_the_nightly_retries_nothing
+passed	tests/test_gate_quarantine.py::test_an_entry_applies_from_its_added_day_to_its_expiry[before added]
+passed	tests/test_gate_quarantine.py::test_an_entry_applies_from_its_added_day_to_its_expiry[added]
+passed	tests/test_gate_quarantine.py::test_an_entry_applies_from_its_added_day_to_its_expiry[expires]
+passed	tests/test_gate_quarantine.py::test_an_entry_applies_from_its_added_day_to_its_expiry[after expiry]
+passed	tests/test_gate_quarantine.py::test_a_malformed_quarantine_fails_the_gate
+passed	tests/test_gate_quarantine.py::test_a_passing_suite_retries_nothing
+passed	tests/test_gate_quarantine.py::test_the_tracked_quarantine_is_valid_and_names_collected_tests
+passed	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[missing field]
+passed	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[extra field]
+passed	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[empty owner]
+passed	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[owner not a string]
+passed	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[not a node id]
+passed	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[outside tests]
+passed	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[bad day]
+passed	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[eight days]
+passed	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[expires first]
+passed	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[twice]
+passed	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[absolute evidence]
+passed	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[evidence outside]
+passed	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[missing evidence]
+passed	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[evidence of another test]
+passed	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[version 2]
+passed	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[version true]
+passed	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[entries not a list]
+passed	tests/test_gate_quarantine.py::test_a_malformed_entry_is_refused[extra key]
+passed	tests/test_gate_quarantine.py::test_an_unreadable_quarantine_is_refused
+passed	tests/test_gate_quarantine.py::test_the_gates_pytest_runs_every_test_whatever_the_project_or_shell_asks
+passed	tests/test_gate_quarantine.py::test_the_gates_plugin_refuses_to_stop_early[--maxfail=1]
+passed	tests/test_gate_quarantine.py::test_the_gates_plugin_refuses_to_stop_early[-x]
+passed	tests/test_gate_quarantine.py::test_the_gates_plugin_refuses_to_stop_early[--exitfirst]
+passed	tests/test_gate_quarantine.py::test_the_gates_plugin_refuses_to_stop_early[--sw]
+passed	tests/test_gate_quarantine.py::test_the_gates_plugin_refuses_to_stop_early[--stepwise-skip]
+passed	tests/test_gate_quarantine.py::test_the_retry_command_is_the_gates_pytest_over_the_node_ids

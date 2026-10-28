@@ -1,0 +1,30 @@
+collected	tests/test_lean_certificates.py::test_python_certificates_and_forged_mutations
+collected	tests/test_lean_certificates.py::test_certificate_json_rejects_duplicate_keys_null_and_invalid_index
+collected	tests/test_lean_certificates.py::test_wrong_order_and_duplicate_premises_are_bound
+collected	tests/test_lean_certificates.py::test_compound_closure_versions_and_parameter_bindings
+collected	tests/test_lean_certificates.py::test_depth_limit_is_per_case_and_matches_python[124]
+collected	tests/test_lean_certificates.py::test_depth_limit_is_per_case_and_matches_python[125]
+collected	tests/test_lean_certificates.py::test_depth_limit_is_per_case_and_matches_python[126]
+collected	tests/test_lean_certificates.py::test_depth_limit_is_per_case_and_matches_python[300]
+collected	tests/test_lean_certificates.py::test_batch_splitting_preserves_strict_json_rejection[[,]]
+collected	tests/test_lean_certificates.py::test_batch_splitting_preserves_strict_json_rejection[[{} ,]]
+collected	tests/test_lean_certificates.py::test_batch_splitting_preserves_strict_json_rejection[[, {}]]
+collected	tests/test_lean_certificates.py::test_batch_splitting_preserves_strict_json_rejection[[{}] []]
+collected	tests/test_lean_certificates.py::test_batch_splitting_preserves_strict_json_rejection[[[}]]]
+collected	tests/test_lean_certificates.py::test_batch_splitting_preserves_strict_json_rejection[["unterminated]]
+collected	tests/test_lean_certificates.py::test_batch_splitting_preserves_strict_json_rejection[[{"a":1,"a":2},{}]]
+passed	tests/test_lean_certificates.py::test_python_certificates_and_forged_mutations
+passed	tests/test_lean_certificates.py::test_certificate_json_rejects_duplicate_keys_null_and_invalid_index
+passed	tests/test_lean_certificates.py::test_wrong_order_and_duplicate_premises_are_bound
+passed	tests/test_lean_certificates.py::test_compound_closure_versions_and_parameter_bindings
+passed	tests/test_lean_certificates.py::test_depth_limit_is_per_case_and_matches_python[124]
+passed	tests/test_lean_certificates.py::test_depth_limit_is_per_case_and_matches_python[125]
+passed	tests/test_lean_certificates.py::test_depth_limit_is_per_case_and_matches_python[126]
+passed	tests/test_lean_certificates.py::test_depth_limit_is_per_case_and_matches_python[300]
+passed	tests/test_lean_certificates.py::test_batch_splitting_preserves_strict_json_rejection[[,]]
+passed	tests/test_lean_certificates.py::test_batch_splitting_preserves_strict_json_rejection[[{} ,]]
+passed	tests/test_lean_certificates.py::test_batch_splitting_preserves_strict_json_rejection[[, {}]]
+passed	tests/test_lean_certificates.py::test_batch_splitting_preserves_strict_json_rejection[[{}] []]
+passed	tests/test_lean_certificates.py::test_batch_splitting_preserves_strict_json_rejection[[[}]]]
+passed	tests/test_lean_certificates.py::test_batch_splitting_preserves_strict_json_rejection[["unterminated]]
+passed	tests/test_lean_certificates.py::test_batch_splitting_preserves_strict_json_rejection[[{"a":1,"a":2},{}]]

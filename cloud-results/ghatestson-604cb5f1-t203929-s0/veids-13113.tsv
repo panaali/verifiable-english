@@ -1,0 +1,204 @@
+collected	tests/test_english_lean_route.py::test_the_fixtures_are_read_from_the_lean_examples
+collected	tests/test_english_lean_route.py::test_python_selects_the_fixture_lexicon[F]
+collected	tests/test_english_lean_route.py::test_python_selects_the_fixture_lexicon[F3]
+collected	tests/test_english_lean_route.py::test_python_selects_the_fixture_lexicon[FC]
+collected	tests/test_english_lean_route.py::test_python_selects_the_fixture_lexicon[FD]
+collected	tests/test_english_lean_route.py::test_python_selects_the_fixture_lexicon[Fapi]
+collected	tests/test_english_lean_route.py::test_three_way_conformance_on_the_spec_fixtures
+collected	tests/test_english_lean_route.py::test_the_comparison_sees_a_planted_difference
+collected	tests/test_english_lean_route.py::test_admission_comparator_records_agreement_with_the_real_reader
+collected	tests/test_english_lean_route.py::test_admission_refuses_non_lean_authority[python]
+collected	tests/test_english_lean_route.py::test_admission_refuses_non_lean_authority[shadow]
+collected	tests/test_english_lean_route.py::test_admission_refuses_non_lean_authority[rust-experimental]
+collected	tests/test_english_lean_route.py::test_admission_does_not_call_the_python_parser
+collected	tests/test_english_lean_route.py::test_alternatives_and_data_flags_share_the_english_boundary
+collected	tests/test_english_lean_route.py::test_alternatives_boundary_validates_unrelated_declarations_separately[definition]
+collected	tests/test_english_lean_route.py::test_alternatives_boundary_validates_unrelated_declarations_separately[string literal]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-functional-False-available-FA]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-functional-False-available-FR]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-functional-False-leads_to-FA]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-functional-False-leads_to-FR]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-functional-True-available-FA]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-functional-True-available-FR]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-functional-True-leads_to-FA]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-functional-True-leads_to-FR]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-total-False-available-FA]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-total-False-available-FR]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-total-False-leads_to-FA]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-total-False-leads_to-FR]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-total-True-available-FA]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-total-True-available-FR]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-total-True-leads_to-FA]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-total-True-leads_to-FR]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-defined-value4-available-FA]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-defined-value4-available-FR]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-defined-value4-leads_to-FA]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-defined-value4-leads_to-FR]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-functional-False-available-FA]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-functional-False-available-FR]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-functional-False-leads_to-FA]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-functional-False-leads_to-FR]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-functional-True-available-FA]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-functional-True-available-FR]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-functional-True-leads_to-FA]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-functional-True-leads_to-FR]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-total-False-available-FA]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-total-False-available-FR]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-total-False-leads_to-FA]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-total-False-leads_to-FR]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-total-True-available-FA]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-total-True-available-FR]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-total-True-leads_to-FA]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-total-True-leads_to-FR]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-defined-value4-available-FA]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-defined-value4-available-FR]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-defined-value4-leads_to-FA]
+collected	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-defined-value4-leads_to-FR]
+collected	tests/test_english_lean_route.py::test_i1_i2_the_identities_of_one_text_twice_and_respaced
+collected	tests/test_english_lean_route.py::test_i3_another_lexicon_changes_only_the_lexicon_id
+collected	tests/test_english_lean_route.py::test_i4_a_stated_lexicon_id_is_not_read
+collected	tests/test_english_lean_route.py::test_i6_the_overlay_digest_is_present_exactly_with_an_overlay[F]
+collected	tests/test_english_lean_route.py::test_i6_the_overlay_digest_is_present_exactly_with_an_overlay[F53]
+collected	tests/test_english_lean_route.py::test_every_identity_is_the_adapters
+collected	tests/test_english_lean_route.py::test_a_derivation_names_the_rules_with_their_spans
+collected	tests/test_english_lean_route.py::test_many_carries_two_witness_trees
+collected	tests/test_english_lean_route.py::test_rejections_carry_their_code_text_and_sentence[Legacy is deployed. Alice owns it.-PronounUnresolved-1]
+collected	tests/test_english_lean_route.py::test_rejections_carry_their_code_text_and_sentence[For every person, some service is deployed.-NaturalScoped-0]
+collected	tests/test_english_lean_route.py::test_rejections_carry_their_code_text_and_sentence[Every service is reviewed-Unterminated-None]
+collected	tests/test_english_lean_route.py::test_an_invalid_lexicon_is_invalid_grammar_with_its_first_failure
+collected	tests/test_english_lean_route.py::test_translation_mode[FD-2-Every deployed service is reviewed.-many-2-False]
+collected	tests/test_english_lean_route.py::test_translation_mode[FD-3-Every deployed service is reviewed.-many-2-True]
+collected	tests/test_english_lean_route.py::test_translation_mode[F-2-Every service is reviewed.-one-1-True]
+collected	tests/test_english_lean_route.py::test_translation_mode[F-2-Every sevice is reviewed.-none-0-True]
+collected	tests/test_english_lean_route.py::test_translation_mode[F-0-Every service is reviewed.-budget-0-False]
+collected	tests/test_english_lean_route.py::test_translation_mode[F-1-Every service is reviewed.-budget-1-False]
+collected	tests/test_english_lean_route.py::test_translation_mode_reads_one_sentence
+collected	tests/test_english_lean_route.py::test_authoring_reads_at_cap_two_only
+collected	tests/test_english_lean_route.py::test_the_export_is_the_grammar_with_the_sources_rows
+collected	tests/test_english_lean_route.py::test_the_export_carries_kwmid
+collected	tests/test_english_lean_route.py::test_every_malformed_request_is_an_error_row_or_an_answer
+collected	tests/test_english_lean_route.py::test_a_lexicon_for_another_environment_is_refused
+collected	tests/test_english_lean_route.py::test_a_route_that_answers_for_another_lexicon_fails_closed
+collected	tests/test_english_lean_route.py::test_pythons_renderings_read_back_in_lean_as_their_formulas
+collected	tests/test_english_lean_route.py::test_text_variants_get_the_same_outcome_from_python_and_lean[Kelvin sign]
+collected	tests/test_english_lean_route.py::test_text_variants_get_the_same_outcome_from_python_and_lean[carriage return]
+collected	tests/test_english_lean_route.py::test_text_variants_get_the_same_outcome_from_python_and_lean[control character]
+collected	tests/test_english_lean_route.py::test_text_variants_get_the_same_outcome_from_python_and_lean[curly quotes]
+collected	tests/test_english_lean_route.py::test_text_variants_get_the_same_outcome_from_python_and_lean[dotted capital I]
+collected	tests/test_english_lean_route.py::test_text_variants_get_the_same_outcome_from_python_and_lean[double space]
+collected	tests/test_english_lean_route.py::test_text_variants_get_the_same_outcome_from_python_and_lean[no-break space]
+collected	tests/test_english_lean_route.py::test_text_variants_get_the_same_outcome_from_python_and_lean[space before the period]
+collected	tests/test_english_lean_route.py::test_text_variants_get_the_same_outcome_from_python_and_lean[tab]
+collected	tests/test_english_lean_route.py::test_spacing_rejections_agree[F-Legacy is deployed .-Legacy is deployed.]
+collected	tests/test_english_lean_route.py::test_spacing_rejections_agree[F-Legacy is deployed\t.-Legacy is deployed.]
+collected	tests/test_english_lean_route.py::test_spacing_rejections_agree[F- Legacy is deployed.-Legacy is deployed.]
+collected	tests/test_english_lean_route.py::test_spacing_rejections_agree[F-\nLegacy is deployed.-Legacy is deployed.]
+collected	tests/test_english_lean_route.py::test_spacing_rejections_agree[F-\xa0Legacy is deployed.-Legacy is deployed.]
+collected	tests/test_english_lean_route.py::test_spacing_rejections_agree[F-Legacy is deployed.It is reviewed.-Legacy is deployed. It is reviewed.]
+collected	tests/test_english_lean_route.py::test_spacing_rejections_agree[F-Legacy is deployed.Therefore legacy is deployed.-Legacy is deployed. Therefore legacy is deployed.]
+collected	tests/test_english_lean_route.py::test_spacing_rejections_agree[F51-Legacy has the recorded relation"owner_of"to alice.-Legacy has the recorded relation "owner_of" to alice.]
+collected	tests/test_english_lean_route.py::test_spacing_rejections_agree[F51-Legacy has the recorded relation "owner_of"to alice.-Legacy has the recorded relation "owner_of" to alice.]
+collected	tests/test_english_lean_route.py::test_spacing_rejections_agree[F51-Legacy has the recorded relation"owner_of" to alice.-Legacy has the recorded relation "owner_of" to alice.]
+collected	tests/test_english_lean_route.py::test_spacing_mutants_of_every_fixture_get_one_outcome
+passed	tests/test_english_lean_route.py::test_the_fixtures_are_read_from_the_lean_examples
+passed	tests/test_english_lean_route.py::test_python_selects_the_fixture_lexicon[F]
+passed	tests/test_english_lean_route.py::test_python_selects_the_fixture_lexicon[F3]
+passed	tests/test_english_lean_route.py::test_python_selects_the_fixture_lexicon[FC]
+passed	tests/test_english_lean_route.py::test_python_selects_the_fixture_lexicon[FD]
+passed	tests/test_english_lean_route.py::test_python_selects_the_fixture_lexicon[Fapi]
+passed	tests/test_english_lean_route.py::test_three_way_conformance_on_the_spec_fixtures
+passed	tests/test_english_lean_route.py::test_the_comparison_sees_a_planted_difference
+passed	tests/test_english_lean_route.py::test_admission_comparator_records_agreement_with_the_real_reader
+passed	tests/test_english_lean_route.py::test_admission_refuses_non_lean_authority[python]
+passed	tests/test_english_lean_route.py::test_admission_refuses_non_lean_authority[shadow]
+passed	tests/test_english_lean_route.py::test_admission_refuses_non_lean_authority[rust-experimental]
+passed	tests/test_english_lean_route.py::test_admission_does_not_call_the_python_parser
+passed	tests/test_english_lean_route.py::test_alternatives_and_data_flags_share_the_english_boundary
+passed	tests/test_english_lean_route.py::test_alternatives_boundary_validates_unrelated_declarations_separately[definition]
+passed	tests/test_english_lean_route.py::test_alternatives_boundary_validates_unrelated_declarations_separately[string literal]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-functional-False-available-FA]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-functional-False-available-FR]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-functional-False-leads_to-FA]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-functional-False-leads_to-FR]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-functional-True-available-FA]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-functional-True-available-FR]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-functional-True-leads_to-FA]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-functional-True-leads_to-FR]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-total-False-available-FA]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-total-False-available-FR]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-total-False-leads_to-FA]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-total-False-leads_to-FR]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-total-True-available-FA]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-total-True-available-FR]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-total-True-leads_to-FA]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-total-True-leads_to-FR]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-defined-value4-available-FA]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-defined-value4-available-FR]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-defined-value4-leads_to-FA]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.read-defined-value4-leads_to-FR]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-functional-False-available-FA]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-functional-False-available-FR]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-functional-False-leads_to-FA]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-functional-False-leads_to-FR]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-functional-True-available-FA]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-functional-True-available-FR]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-functional-True-leads_to-FA]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-functional-True-leads_to-FR]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-total-False-available-FA]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-total-False-available-FR]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-total-False-leads_to-FA]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-total-False-leads_to-FR]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-total-True-available-FA]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-total-True-available-FR]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-total-True-leads_to-FA]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-total-True-leads_to-FR]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-defined-value4-available-FA]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-defined-value4-available-FR]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-defined-value4-leads_to-FA]
+passed	tests/test_english_lean_route.py::test_block_role_declarations_are_rejected_at_both_english_entries[english.grammar-defined-value4-leads_to-FR]
+passed	tests/test_english_lean_route.py::test_i1_i2_the_identities_of_one_text_twice_and_respaced
+passed	tests/test_english_lean_route.py::test_i3_another_lexicon_changes_only_the_lexicon_id
+passed	tests/test_english_lean_route.py::test_i4_a_stated_lexicon_id_is_not_read
+passed	tests/test_english_lean_route.py::test_i6_the_overlay_digest_is_present_exactly_with_an_overlay[F]
+passed	tests/test_english_lean_route.py::test_i6_the_overlay_digest_is_present_exactly_with_an_overlay[F53]
+passed	tests/test_english_lean_route.py::test_every_identity_is_the_adapters
+passed	tests/test_english_lean_route.py::test_a_derivation_names_the_rules_with_their_spans
+passed	tests/test_english_lean_route.py::test_many_carries_two_witness_trees
+passed	tests/test_english_lean_route.py::test_rejections_carry_their_code_text_and_sentence[Legacy is deployed. Alice owns it.-PronounUnresolved-1]
+passed	tests/test_english_lean_route.py::test_rejections_carry_their_code_text_and_sentence[For every person, some service is deployed.-NaturalScoped-0]
+passed	tests/test_english_lean_route.py::test_rejections_carry_their_code_text_and_sentence[Every service is reviewed-Unterminated-None]
+passed	tests/test_english_lean_route.py::test_an_invalid_lexicon_is_invalid_grammar_with_its_first_failure
+passed	tests/test_english_lean_route.py::test_translation_mode[FD-2-Every deployed service is reviewed.-many-2-False]
+passed	tests/test_english_lean_route.py::test_translation_mode[FD-3-Every deployed service is reviewed.-many-2-True]
+passed	tests/test_english_lean_route.py::test_translation_mode[F-2-Every service is reviewed.-one-1-True]
+passed	tests/test_english_lean_route.py::test_translation_mode[F-2-Every sevice is reviewed.-none-0-True]
+passed	tests/test_english_lean_route.py::test_translation_mode[F-0-Every service is reviewed.-budget-0-False]
+passed	tests/test_english_lean_route.py::test_translation_mode[F-1-Every service is reviewed.-budget-1-False]
+passed	tests/test_english_lean_route.py::test_translation_mode_reads_one_sentence
+passed	tests/test_english_lean_route.py::test_authoring_reads_at_cap_two_only
+passed	tests/test_english_lean_route.py::test_the_export_is_the_grammar_with_the_sources_rows
+passed	tests/test_english_lean_route.py::test_the_export_carries_kwmid
+passed	tests/test_english_lean_route.py::test_every_malformed_request_is_an_error_row_or_an_answer
+passed	tests/test_english_lean_route.py::test_a_lexicon_for_another_environment_is_refused
+passed	tests/test_english_lean_route.py::test_a_route_that_answers_for_another_lexicon_fails_closed
+passed	tests/test_english_lean_route.py::test_pythons_renderings_read_back_in_lean_as_their_formulas
+passed	tests/test_english_lean_route.py::test_text_variants_get_the_same_outcome_from_python_and_lean[Kelvin sign]
+passed	tests/test_english_lean_route.py::test_text_variants_get_the_same_outcome_from_python_and_lean[carriage return]
+passed	tests/test_english_lean_route.py::test_text_variants_get_the_same_outcome_from_python_and_lean[control character]
+passed	tests/test_english_lean_route.py::test_text_variants_get_the_same_outcome_from_python_and_lean[curly quotes]
+passed	tests/test_english_lean_route.py::test_text_variants_get_the_same_outcome_from_python_and_lean[dotted capital I]
+passed	tests/test_english_lean_route.py::test_text_variants_get_the_same_outcome_from_python_and_lean[double space]
+passed	tests/test_english_lean_route.py::test_text_variants_get_the_same_outcome_from_python_and_lean[no-break space]
+passed	tests/test_english_lean_route.py::test_text_variants_get_the_same_outcome_from_python_and_lean[space before the period]
+passed	tests/test_english_lean_route.py::test_text_variants_get_the_same_outcome_from_python_and_lean[tab]
+passed	tests/test_english_lean_route.py::test_spacing_rejections_agree[F-Legacy is deployed .-Legacy is deployed.]
+passed	tests/test_english_lean_route.py::test_spacing_rejections_agree[F-Legacy is deployed\t.-Legacy is deployed.]
+passed	tests/test_english_lean_route.py::test_spacing_rejections_agree[F- Legacy is deployed.-Legacy is deployed.]
+passed	tests/test_english_lean_route.py::test_spacing_rejections_agree[F-\nLegacy is deployed.-Legacy is deployed.]
+passed	tests/test_english_lean_route.py::test_spacing_rejections_agree[F-\xa0Legacy is deployed.-Legacy is deployed.]
+passed	tests/test_english_lean_route.py::test_spacing_rejections_agree[F-Legacy is deployed.It is reviewed.-Legacy is deployed. It is reviewed.]
+passed	tests/test_english_lean_route.py::test_spacing_rejections_agree[F-Legacy is deployed.Therefore legacy is deployed.-Legacy is deployed. Therefore legacy is deployed.]
+passed	tests/test_english_lean_route.py::test_spacing_rejections_agree[F51-Legacy has the recorded relation"owner_of"to alice.-Legacy has the recorded relation "owner_of" to alice.]
+passed	tests/test_english_lean_route.py::test_spacing_rejections_agree[F51-Legacy has the recorded relation "owner_of"to alice.-Legacy has the recorded relation "owner_of" to alice.]
+passed	tests/test_english_lean_route.py::test_spacing_rejections_agree[F51-Legacy has the recorded relation"owner_of" to alice.-Legacy has the recorded relation "owner_of" to alice.]
+passed	tests/test_english_lean_route.py::test_spacing_mutants_of_every_fixture_get_one_outcome
