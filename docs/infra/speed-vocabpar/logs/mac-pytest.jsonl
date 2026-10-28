@@ -1,0 +1,10 @@
+{"t":"2026-10-27T16:01:15Z","worktree":"/home/seyran/code/ve-vocabpar-base","kind":"pytest","where":"ve-mac-1","mac_load":"36.55 36.24 39.87","rc":0,"seconds":1257,"note":"0 failed, 0 known"}
+{"t":"2026-10-27T16:18:03Z","worktree":"/home/seyran/code/ve-vocabpar-pool","kind":"pytest","where":"ve-mac-1","mac_load":"47.09 41.18 36.53","rc":0,"seconds":896,"note":"0 failed, 0 known"}
+{"t":"2026-10-27T17:49:30Z","worktree":"/home/seyran/code/ve-vocabpar-pool","kind":"pytest","where":"ve-mac-1","mac_load":"44.56 48.19 44.26","rc":0,"seconds":5474,"note":"0 failed, 0 known"}
+{"t":"2026-10-27T18:03:55Z","worktree":"/home/seyran/code/ve-vocabpar-base","kind":"pytest","where":"ve-mac-1","mac_load":"47.09 41.18 36.53","rc":0,"seconds":7248,"note":"0 failed, 0 known"}
+{"t":"2026-10-27T18:07:44Z","worktree":"/home/seyran/code/ve-vocabpar-base","kind":"pytest","where":"ve-mac-1","mac_load":"36.06 33.19 31.58","rc":0,"seconds":1084,"note":"0 failed, 0 known"}
+{"t":"2026-10-27T18:59:36Z","worktree":"/home/seyran/code/ve-vocabpar-pool","kind":"pytest","where":"ve-mac-1","mac_load":"35.95 36.87 35.44","rc":0,"seconds":3331,"note":"0 failed, 0 known"}
+{"t":"2026-10-27T19:24:55Z","worktree":"/home/seyran/code/ve-vocabpar-scratch","kind":"pytest","where":"ve-mac-1","mac_load":"42.31 34.74 32.11","rc":1,"seconds":5701,"note":"5 failed, 0 known"}
+{"t":"2026-10-27T19:38:03Z","worktree":"/home/seyran/code/ve-vocabpar-pool","kind":"select_tests","where":"ve-mac-1","mac_load":"36.87 47.96 47.25","rc":0,"seconds":1848,"note":"0 failed, 0 known"}
+{"t":"2026-10-27T20:06:50Z","worktree":"/home/seyran/code/ve-vocabpar-scratch","kind":"pytest","where":"ve-mac-1","mac_load":"45.53 43.16 43.89","rc":1,"seconds":2508,"note":"5 failed, 0 known"}
+{"t":"2026-10-27T20:16:04Z","worktree":"/home/seyran/code/ve-vocabpar-pool","kind":"select_tests","where":"ve-mac-1","mac_load":"42.24 50.27 49.57","rc":1,"seconds":2264,"note":"2 failed, 0 known"}

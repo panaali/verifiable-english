@@ -78,18 +78,40 @@ def isIndefinite (o : Outcome) : Bool := match o with | .indefinite .. => true |
   "Is it the case that every member is happy?")
 
 -- G24: speech acts' auxiliaries (`["is"]`, Q1.4) on G.
-#guard match readQuestion ["is"] groupEnv {} groupLex 2100000 "Is Ann eligible?" with
+#guard match readQuestion speechAuxiliaries groupEnv {} groupLex 2100000 "Is Ann eligible?" with
   | .one c φ => c == ⟨.fronted "is" 4, "Ann is eligible."⟩ && φ == .pred "eligible" [.const "ann"]
   | _ => false
-#guard match readQuestion ["is"] groupEnv {} groupLex 2100000 "Must Ann be eligible?" with
+#guard match readQuestion speechAuxiliaries groupEnv {} groupLex 2100000 "Must Ann be eligible?" with
   | .form wh => !wh
   | _ => false
 #guard formText ["is"] ==
   "VE answers questions that begin with \"Is\", or with \"Is it the case that\" followed by a sentence."
-#guard isOne (readQuestion ["is"] groupEnv {} groupLex 2100000 "Is it the case that Ann is eligible?")
+#guard isOne (readQuestion speechAuxiliaries groupEnv {} groupLex 2100000 "Is it the case that Ann is eligible?")
+#guard speechAuxiliaries == ["is"] && Run.Caller.speechActs.auxs == speechAuxiliaries &&
+  Run.Caller.ask.auxs == auxiliaries
+#guard Run.speechPrefixes == ["Is it the case that ", "Must ", "Can "]
+-- The caller field: absent is `ve ask`; only the string "speech-acts" names the speech-acts caller.
+#guard (Run.decodeCaller (Lean.Json.mkObj [])).toOption == some .ask
+#guard (Run.decodeCaller (Lean.Json.mkObj [("caller", "speech-acts")])).toOption == some .speechActs
+#guard ["ask", "speech", "Speech-acts", ""].all fun w =>
+  (Run.decodeCaller (Lean.Json.mkObj [("caller", .str w)])).toOption.isNone
+#guard (Run.decodeCaller (Lean.Json.mkObj [("caller", Lean.Json.null)])).toOption.isNone
+-- A case may hold `caller` only when it is present: `english.read`'s fields and `question` come first either way.
+#guard (Run.caseFields (Lean.Json.mkObj [("caller", "speech-acts")])).getLast? == some "caller"
+#guard (Run.caseFields (Lean.Json.mkObj [])).getLast? == some "question" &&
+  (Run.caseFields (Lean.Json.mkObj [])).take 7 == ["id", "environment", "lexicon", "source", "mode", "cap", "question"]
+#guard Run.caseFields (Lean.Json.mkObj [("generated", true), ("caller", 1), ("overlay", 2)]) ==
+  ["id", "environment", "lexicon", "source", "mode", "cap", "question", "overlay", "generated", "caller"]
+-- The `ModalQuestion` refusal: a first word of `modalWords` followed by a space, whatever follows, and nothing else.
+#guard ["Must Ann be eligible?", "Can Ann be eligible?", "Can check.", "Must ", "Must alice?"].all fun q =>
+  Run.modalFields q == some [("status", .str "modal"), ("code", .str "ModalQuestion"),
+    ("text", .str "ModalQuestion: choose an explicit question"), ("class", .str "VEError")]
+#guard ["Must", "Can", "Mustard is eligible?", "Canned check.", "must Ann be eligible?", "MUST Ann be eligible?",
+  "Must\tAnn be eligible?", "May Ann be eligible?", "Is Ann eligible?", " Must Ann be eligible?"].all fun q =>
+  Run.modalFields q == none
 
 -- G21: the work budget 0 stops at the first candidate (`Budget`), which the mode reports as row 9.
-#guard match Run.outcomeFields [] "Is every member eligible?" groupEnv groupLex
+#guard match Run.outcomeFields auxiliaries [] "Is every member eligible?" groupEnv groupLex
     (readQuestion auxiliaries groupEnv {} groupLex 0 "Is every member eligible?") with
   | .ok fs => fs.lookup "code" == some (.str "Budget") && fs.lookup "status" == some (.str "budget") &&
       fs.lookup "text" == some (.str "VE stopped reading this question at its work limit.") &&

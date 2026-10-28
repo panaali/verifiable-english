@@ -122,6 +122,7 @@ import VE.Calc.Identity
 import VE.Calc.IdentityExamples
 import VE.Arith.Examples
 import VE.Arith.BoundedExamples
+import VE.Arith.CompleteExamples
 import VE.Calc.Lower
 import VE.Calc.LowerExamples
 import VE.Numbers.Examples
@@ -182,9 +183,12 @@ import VE.Norms.FamilySpec
 import VE.Acts.Syntax
 import VE.Acts.Read
 import VE.Acts.Tree
+import VE.Acts.Linearize
 import VE.Acts.Table
 import VE.Acts.TableExamples
 import VE.Acts.GrammarExamples
+import VE.Acts.Grammar
+import VE.Acts.RuleExamples
 import VE.Acts.Compat
 import VE.Acts.LexicalExamples
 import VE.Alternatives.FillExamples

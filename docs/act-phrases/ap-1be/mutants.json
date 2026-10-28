@@ -1,0 +1,58 @@
+{
+ "nd-wordings-dropped": {
+  "definition": "VE.NormDefaults.Run.runOtherCase",
+  "file": "lean/VE/NormDefaults/Run.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:389:0: Expression"
+ },
+ "nd-wordings-renamed": {
+  "definition": "VE.NormDefaults.Run.runOtherCase",
+  "file": "lean/VE/NormDefaults/Run.lean",
+  "test": "ResponseShape.Encoders.NormDefaults",
+  "killed": true,
+  "first_failure": "error: ResponseShape/Encoders/NormDefaults.lean:213:51: unsolved goals"
+ },
+ "wordingsJson-names": {
+  "definition": "VE.Norms.Run.wordingsJson",
+  "file": "lean/VE/Norms/Run.lean",
+  "test": "VE.Service.ActsExamples",
+  "killed": true,
+  "first_failure": "error: VE/Service/ActsExamples.lean:231:0: Expression"
+ },
+ "shape-wordings-strings": {
+  "definition": "ResponseShape.Schemas.NormDefaults.elaborate",
+  "file": "lean/ResponseShape/Schemas/NormDefaults.lean",
+  "test": "ResponseShape.Encoders.NormDefaults",
+  "killed": true,
+  "first_failure": "error: ResponseShape/Schemas/NormDefaults.lean:374:0: Expression"
+ },
+ "py-nd-not-asked": {
+  "definition": "ve.norms.plain_wordings",
+  "file": "ve/norms.py",
+  "test": "tests/test_acts_profile.py::test_a_norm_defaults_environment_reads_with_the_wording_lean_selected",
+  "killed": true,
+  "first_failure": "FAILED tests/test_acts_profile.py::test_a_norm_defaults_environment_reads_with_the_wording_lean_selected"
+ },
+ "py-nd-norms-mode": {
+  "definition": "ve.norms.plain_wordings",
+  "file": "ve/norms.py",
+  "test": "tests/test_acts_profile.py::test_a_norm_defaults_environment_reads_with_the_wording_lean_selected",
+  "killed": true,
+  "first_failure": "FAILED tests/test_acts_profile.py::test_a_norm_defaults_environment_reads_with_the_wording_lean_selected"
+ },
+ "py-nd-document-unbound": {
+  "definition": "ve.norm_defaults.UnspecifiedDocument",
+  "file": "ve/norm_defaults.py",
+  "test": "tests/test_acts_profile.py::test_norm_defaults_wordings_not_bound_to_the_request_are_unavailable",
+  "killed": true,
+  "first_failure": "FAILED tests/test_acts_profile.py::test_norm_defaults_wordings_not_bound_to_the_request_are_unavailable[dropped]"
+ },
+ "py-bind-subset": {
+  "definition": "ve.norms._bind_wordings",
+  "file": "ve/norms.py",
+  "test": "tests/test_acts_profile.py::test_norm_defaults_wordings_not_bound_to_the_request_are_unavailable",
+  "killed": true,
+  "first_failure": "FAILED tests/test_acts_profile.py::test_norm_defaults_wordings_not_bound_to_the_request_are_unavailable[dropped]"
+ }
+}
