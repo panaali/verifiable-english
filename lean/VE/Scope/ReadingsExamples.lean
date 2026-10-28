@@ -133,5 +133,8 @@ def notN : Nat → Json | 0 => j "[\"top\"]" | n + 1 => .arr #[.str "not", notN 
   [reading "wide" (cyberPart "cyberweapon_creation_permitted" guardWide)]]) [g1]) "u0165.s03" == some [wideNorm]
 #guard !layoutReach .frontier && !layoutReach (.fixed ["u0165.s03"]) && layoutReach (.list "u0164.s02") &&
   layoutReach (.rules ["hc-2"])
+-- a choice names each set by its id and its version (`pickOf`): another version of the same id is another set
+#guard pickOf [("scope-u0165-s03", 2, 1), ("scope-u0165-s03", 1, 0)] s03 == some 0 &&
+  pickOf [("scope-u0165-s03", 2, 1)] s03 == none
 
 end VE.Scope.Examples
