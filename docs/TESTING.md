@@ -30,7 +30,7 @@ A test file is selected when one of these changed:
 - the Rust sources, when the test's code starts the Rust checker or selects an authority. So a Rust change selects the Rust conformance and three-way tests.
 - a data file whose path, name or use-case directory appears in a string in the test's code, such as `usecases/asimov-laws/...` for `tests/test_asimov_laws.py`.
 
-The cross-cutting tests in `ALWAYS` (`tools/select_tests.py`) always run. A change no test reaches selects the full suite: an unknown file, a deleted file or `ve/__init__.py`. A script that no test reaches selects only `ALWAYS`, and the tool reports it.
+The cross-cutting tests in `ALWAYS` (`tools/select_tests.py`) always run. So does the history-inventory lint whenever a change can make the list stale (see below). A change no test reaches selects the full suite: an unknown file, a deleted file or `ve/__init__.py`. A script that no test reaches selects only `ALWAYS`, and the tool reports it.
 
 The fast path is precise for changes to tests, helpers, tools, data and use cases. It is coarse for core product modules: they import one another widely, so a change to, for example, `ve/ast.py` still selects most of the suite. The gate (`tools/gate.py`) always runs everything.
 
@@ -140,6 +140,10 @@ A `nightly` corpus-scale rerun in a listed file is left out and named under `lef
 
 `python3 tools/platform_contract.py estimate` sums the measured Mac seconds of the listed tests from `tests/heavy-durations.json`. It is scheduling metadata: no test fails on a duration.
 
+## Mutants of Lean definitions: `tools/trust_mutants.py`
+
+`tools/trust_mutants.py` writes mechanical mutants of the Lean definitions a branch adds or changes, builds each in a scratch copy and reports which checks kill it. Its docstring is the one statement of the rules; this is a summary. With no flag it mutates the definitions `tools/trust_map.py` counts as trusted, the survivors standing ruling R16 asks about. `--classes all`, or a list of trust_map class names, also mutates the decoders, admission checks and limits that trust_map does not count as trusted. Reviewers plant their hand mutants in those definitions, and eff-20261026-1 found a survivor on the reviewer's line, at the reviewed tree, in 17 of 46 such mutants. Theorems, proof helpers and checks are never mutated. Each verdict line and the summary name the class, so a survivor in a trusted definition (R16) reads apart from review-risk evidence. The selection is one of the run's inputs, so `--rescore` never reuses or carries a verdict across another selection. The tool is builder and reviewer evidence only: no gate, merge train or nightly reads it.
+
 ## Speed is not a correctness criterion
 
 Under load, any elapsed-time bound can fail a correct program. A merge-train suite at load 50 failed on a 5-second default and on a fake service's 0.5-second retry. The rules:
@@ -160,6 +164,8 @@ PATH="$HOME/.elan/bin:$PATH" UV_CACHE_DIR=/tmp/ve-xdist-uv-cache \
 ```
 
 `--update-baselines` rewrites the baselines of the benchmarks that ran. Commit the change only after reviewing it: a baseline is a claim about the code's cost. `tests/test_bench_baselines.py` checks, in the suite, that a baseline can fail a measurement.
+
+Regeneration (`tools/regen_generated.py --check`, `--write`, `--resolve`) times each entry it runs into `ve-regen-log.jsonl` in the git common directory, one JSON line per entry, for the efficiency passes; nothing checks or gates on it. Its fields, the `VE_REGEN_LOG` switch and its rules are in that tool's docstring; `tests/test_regen_generated.py`, the suite's one caller of its runs, turns it off.
 
 ## The default selection: function-level, from the coverage map
 
@@ -260,6 +266,10 @@ The selector works at the level of functions, not layers:
   complete suite.
 * **Smoke.** Any change beyond documentation also runs three fast files
   (`SMOKE` in `tools/select_tests.py`).
+* **History inventory.** A change that can make `tests/history-dependent.json`
+  stale also runs its lint, `tests/test_history_tests.py`, in this plan and in
+  `--impacted`: a Python file under `tests/`, the list, its map extract, the
+  lint's code, or a module the list names (`history_inventory`).
 
 The layer checks run only when their inputs change: the Python import check
 when a `ve/` module's imports change, the Lean import check for `.lean`

@@ -1209,6 +1209,90 @@
    "reason": "qt-a3b fix1 (review F1): lean/VE/Cardinality/Run.lean +15 (regionsJson and erasedJson moved from D[I] to D[V], as W6a's encQ/encCore; item total V +59: Run.lean +61, Time/Wire.lean -2)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3b, 2026-10-18",
    "commit": "a274d948899386de3fb36ab56b7584ab07b707b7"
+  },
+  {
+   "class": "S",
+   "lines": 126,
+   "reason": "ap-2b: K +0, S +126 (lean/VE/Acts/Grammar.lean: frameRules 44, globalRules 18, NT 9, FNT 8, Core 6, RuleS 6, items 6, fillExcl 6, RSym 4, tail 4, schema 4, closed 4, grammar 3, kwSyms 2, many1 2), untied V +14 (Grammar.lean: build 9, RSym.nt? 5); NT.rank (12) is tied to schema_ranked",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-2b, 2026-10-18",
+   "commit": "0e7a813e8841bbd7cf103229cf37386b8699896d"
+  },
+  {
+   "class": "V",
+   "lines": 14,
+   "reason": "ap-2b: K +0, S +126 (lean/VE/Acts/Grammar.lean: frameRules 44, globalRules 18, NT 9, FNT 8, Core 6, RuleS 6, items 6, fillExcl 6, RSym 4, tail 4, schema 4, closed 4, grammar 3, kwSyms 2, many1 2), untied V +14 (Grammar.lean: build 9, RSym.nt? 5); NT.rank (12) is tied to schema_ranked",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-2b, 2026-10-18",
+   "commit": "0e7a813e8841bbd7cf103229cf37386b8699896d"
+  },
+  {
+   "class": "V",
+   "lines": 50,
+   "reason": "me-2c: lean/VE/Calc/Run.lean +50 (D[V] wordsIn, line, exact, truncated, sides, display, tie, claimFields; rowJson's line, finding and claim members; runCaseReported's values)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-2c, 2026-10-27",
+   "commit": "b31b8e4c180a9ec347eebe505ecb930e92bb094e"
+  },
+  {
+   "class": "S",
+   "lines": 46,
+   "reason": "ap-3b: lean/VE/Acts/Linearize.lean +46 (S: joinWord, Part.toks, listToks, Filler.toks, Atom.normal, tokStr, tokText, Atom.withTo, Atom.text, partAct); Table.lean paraphrases G[R] (not trusted); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3b, 2026-10-18",
+   "commit": "0e7a813e8841bbd7cf103229cf37386b8699896d"
+  },
+  {
+   "class": "V",
+   "lines": 26,
+   "reason": "q1-4: VE/Question/Run.lean +24 (the caller's decoding and dispatch, speechPrefixes: replace speech_english's deleted F1 branch and Must/Can refusal), VE/Question/Basic.lean +2 (speechAuxiliaries: the speech caller's F2 words, new Lean behaviour)",
+   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md) for VE/Question/Run.lean +24 and by standing ruling R16 (DRI-RULINGS.md) for VE/Question/Basic.lean +2, q1-4, 2026-10-26",
+   "commit": "c45d799f3cf525a7a39e916240a922c5a60047ee"
+  },
+  {
+   "class": "V",
+   "lines": 4,
+   "reason": "q1-4: VE/Question/Run.lean +4 (caseFields: the question case's fields with the optional caller, factored out of questionCase so #guards check it)",
+   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md), q1-4, 2026-10-26",
+   "commit": "c45d799f3cf525a7a39e916240a922c5a60047ee"
+  },
+  {
+   "class": "V",
+   "lines": 113,
+   "reason": "jt-2: VE/Service/Document.lean +79, ResponseShape/Schemas/Document.lean +12, VE/Service/Standalone.lean +11, VE/Compose/Dispatch.lean +11 (V; K +0, S +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-2, 2026-10-18",
+   "commit": "20aa836fd5ac77b44aae384316e46d7d5a515f07"
+  },
+  {
+   "class": "V",
+   "lines": 4,
+   "reason": "jt-2 review F1: VE/Service/Document.lean +4 (Env.forModes, the environment the parse, model and English cases read; locatedModel's identity under a document layer) (V; K +0, S +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-2, 2026-10-20",
+   "commit": "75a9bcef9eac12ab4b0f3dc41621b9215c0834ca"
+  },
+  {
+   "class": "V",
+   "lines": 3,
+   "reason": "jt-2 merge with SC-1b (scope@0): VE/Service/Document.lean check +3 (G[V]): the document mode refuses judgments@0 with scope@0 (CheckerUnavailable: judgments@0 with scope@0 needs its composed Lean route), because scope's fold (Scope.foldGovernors) writes no judgments member; new Lean-owned behaviour, K +0, S +0; with jt-2's 117 the item is V +120",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md, 2026-10-17)",
+   "commit": "ab010c3f02bca97c3d17775ba85382bf85e208eb"
+  },
+  {
+   "class": "V",
+   "lines": 41,
+   "reason": "me-5d: VE/Calc/Run.lean D[V] +41 (Shown, Run.factJson, Run.stepJson, Run.reads, Run.shownJson: a derivation's certificate and counterexample, spec 3.4); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-5d, 2026-10-18",
+   "commit": "ab010c3f02bca97c3d17775ba85382bf85e208eb"
+  },
+  {
+   "class": "V",
+   "lines": 6,
+   "reason": "ap-1be: norm-defaults-elaborate's wordings member: VE/Norms/Run.lean +3 (G[V] wordingsJson, shared with norms-elaborate), ResponseShape/Schemas/NormDefaults.lean +2 (the elaborate shape's wordings), VE/NormDefaults/Run.lean +1 (runOtherCase writes it)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1be, 2026-10-27",
+   "commit": "a557ff887aa6b513fdaa540c479ae304023a24a4"
+  },
+  {
+   "class": "V",
+   "lines": 1,
+   "reason": "ap-1be: the elaborate shape's render pin, ResponseShape/Schemas/NormDefaults.lean +1 as the map counts it (V +7 in all with the first allowance)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1be, 2026-10-27",
+   "commit": "a557ff887aa6b513fdaa540c479ae304023a24a4"
   }
  ]
 }

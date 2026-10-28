@@ -80,9 +80,10 @@ def _answer(exc: Exception) -> dict | None:
 
 
 def _lines(answer: dict) -> list[str]:
-    """Lean's text, its advice, then its rephrasings, one per line (a question VE does not read)."""
-    text = answer["text"] if "advice" not in answer else f'{answer["text"]} {answer["advice"]["text"]}'
-    return [text, *answer.get("rephrasings", ())]
+    """Lean's text, its advice, then its rephrasings, one per line (a question VE does not read): the relay's
+    `question_lines`, the lines its refusals carry too."""
+    from .backends.english_lean import question_lines
+    return question_lines(answer)
 
 
 # ---------------------------------------------------------------------------------------------------------------

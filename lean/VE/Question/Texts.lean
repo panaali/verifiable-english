@@ -14,7 +14,12 @@ def newCodeClasses : List (String × String) :=
   [("NotOneQuestion", "SyntaxError"), ("QuestionForm", "SyntaxError"),
    ("QuestionTooLong", "ResourceLimit"), ("AmbiguousQuestion", "AmbiguousDerivation"),
    ("QuestionWithMarker", "SyntaxError"), ("IndefiniteQuestion", "SyntaxError"),
-   ("QuestionWordMoved", "SyntaxError")]
+   ("QuestionWordMoved", "SyntaxError"), ("ModalQuestion", "VEError")]
+
+/-- Speech acts refuse a wording whose first word is one of these, before it is read (plan Q1.4). -/
+def modalWords : List String := ["Must", "Can"]
+/-- The speech-acts caller's refusal of a wording that begins with a word of `modalWords`. -/
+def modalQuestionText : String := "ModalQuestion: choose an explicit question"
 
 def notOneQuestionText : String := "Write one question that ends with a question mark."
 def whQuestionText : String :=
