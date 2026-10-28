@@ -10,5 +10,7 @@
   {"definition": "VE.Compose.environmentProfiles", "operator": "list-empty", "reason": "not a program: baseRows replaced by [] has no element type, so the field notation does not elaborate (Invalid field notation)"},
   {"definition": "VE.Compose.environmentProfiles", "operator": "list-drop-last", "reason": "equivalent: the last base row and the last distinct base profile are cardinality@0's, which the modeProfiles filter removes anyway, so the list is the same"},
   {"definition": "VE.Compose.environmentProfiles", "operator": "list-first", "reason": "equivalent: documentLayers and modeProfiles have one element each, so take 1 is the list itself"},
-  {"definition": "VE.Compose.environmentProfiles", "operator": "list-last", "reason": "equivalent: documentLayers and modeProfiles have one element each, so reverse.take 1 is the list itself"}
+  {"definition": "VE.Compose.environmentProfiles", "operator": "list-last", "reason": "equivalent: documentLayers and modeProfiles have one element each, so reverse.take 1 is the list itself"},
+  {"definition": "VE.Cardinality.Run.regionsJson", "operator": "list-empty", "reason": "not a program: [] in place of R.sorts.map, table or table.map has no element type (Function expected, Invalid projection at the line), so the module does not elaborate (fix round 1; as ResponseShape.Schemas.files')"},
+  {"definition": "VE.Cardinality.Run.runCase", "operator": "list-empty", "reason": "not a program: [] in place of the decoded premises ps leaves ps.map (·.formula) with no element type (Invalid field notation at the line), so the module does not elaborate (fix round 1)"}
 ]}
