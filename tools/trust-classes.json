@@ -13032,7 +13032,9 @@
         "VE.Events.Examples.mT7",
         "VE.Events.Examples.vX",
         "VE.Events.Examples.envX",
-        "VE.Events.Examples.mX"
+        "VE.Events.Examples.mX",
+        "VE.Events.Examples.vL",
+        "VE.Events.Examples.vL2"
       ]
     },
     "VE/Events/Premises.lean": {
