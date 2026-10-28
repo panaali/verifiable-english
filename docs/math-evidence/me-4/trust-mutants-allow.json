@@ -94,6 +94,11 @@
    "definition": "VE.Calc.Agg.run",
    "operator": "list-empty",
    "reason": "No mutant is built: `T.select f` or `T.numbers f c` -> `[]` leaves a list of unknown element type or an Option expected, which Lean refuses; the tool reports the refusal as UNKNOWN"
+  },
+  {
+   "definition": "VE.Calc.decodeJsonl",
+   "operator": "list-last",
+   "reason": "Equivalent at `lines.getLast?`: (lines.reverse.take 1).getLast? is lines.getLast?; at `else lines` the mutant keeps one line of a file without a last line end, which the guard `(jsonl \"{}\\n{}\").map (·.rows.length) = some 2` kills"
   }
  ]
 }
