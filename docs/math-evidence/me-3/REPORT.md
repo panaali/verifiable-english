@@ -90,7 +90,7 @@ the layer-4 row, and one appended line. The plan lists both as shared files of M
 
 ## Size
 
-About 1,000 hand-written lines changed outside generated files. `.importlinter` is generated. Most of the lines are the
+About 920 hand-written lines changed outside generated files (921 added, 3 removed). `.importlinter` is generated. Most of the lines are the
 relay (228), the two test files (about 460) and this item's docs.
 
 ## Pilot bytes
