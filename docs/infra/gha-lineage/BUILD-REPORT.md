@@ -20,7 +20,7 @@ Open: the DRI's GitHub Actions run of all history-dependent units and the chain'
 
 The default `github-export.sh sync` could not write its export lock or log under `/home/seyran/code` in this sandbox. The same script succeeded with `VE_EXPORT_SRC=/home/seyran/code/ve-gha-lineage`, `VE_EXPORT_DIR=/tmp/ve-gha-export`, and `VE_EXPORT_LOG=/tmp/ve-gha-export.log`. The clone used `git clone -q --no-local --no-tags --single-branch --branch infra/gha-lineage /tmp/ve-gha-export /tmp/ve-ghl-gha-lineage`, then `uv sync --frozen` and copies of `lean/.lake` and `rust/target`. It has the same tree as the VM branch and no VM commit object. The exported `main` ref was fetched for a test that asks Git for the merge base.
 
-Before this change, the pilot recorded 41 collection errors across 131 history-dependent units: 20 from `git show 9160d326:ve/norm_defaults.py`, and 21 `CheckerUnavailable` errors without a Lean build. After this change, collection in the built clone reported **5,950 collected, one deselected, zero errors** across 132 units (the new lint is the extra unit). The affected-unit run covered 82 files with `-n 6`: **3,379 passed, three failed, one setup error**. The setup error was the sandbox's read-only default cache; the identity test lacked a `main` ref in the single-branch clone. Two pilot tests needed the root tree of `bd6c7ab2`, an unmerged historical run absent from the clone. With a writable cache, exported `main` ref, and the narrow pilot skip, rerunning only those four IDs gave **two passed, two skipped**. The VM still runs both pilot tests when the tree exists. No test needing real ancestry was skipped; the two skips are for unavailable frozen content from the named off-branch commit.
+Before this change, the pilot recorded 41 collection errors across 131 history-dependent units: 20 from `git show 9160d326:ve/norm_defaults.py`, and 21 `CheckerUnavailable` errors without a Lean build. After this change, collection in the built clone reported **5,950 collected, one deselected, zero errors** across 132 units (the new lint is the extra unit). The affected-unit run covered 82 files with `-n 6`: **3,379 passed, three failed, one setup error**. The setup error was the sandbox's read-only default cache; the identity test lacked a `main` ref in the single-branch clone. Two pilot tests needed the root tree of `bd6c7ab2`, an unmerged historical run absent from the clone. With a writable cache, exported `main` ref, and the narrow pilot skip, rerunning only those four IDs gave **two passed, two skipped**. That skip broke R18 and that run missed three units that still handed VM commits to Git; fix round 1 (below) removes the skip and fixes the three.
 
 No Lean, Rust, `ve/`, wire, trust, or VE language behavior changed. There is no DELTA row or user-visible VE output delta. The report uses saved run counts, not a permanent test of a moving Git diff (R11/D4, `DRI-RULINGS.md`). No model call, push, or tag mutation occurred. `main-known-red.txt` names no failure encountered here.
 
@@ -33,13 +33,26 @@ No Lean, Rust, `ve/`, wire, trust, or VE language behavior changed. There is no 
 ## Verification
 
 - Focused VM probes: frozen norm and word sources, Stage 0 runtime digest, oracle check, and pilot `read_run` all passed. Targeted historical report, identity, repo-map, and oracle tests passed.
-- Clone collection and affected-unit run: results above; all previously failing IDs passed or took the documented absent-tree skip on targeted rerun.
+- Clone collection and affected-unit run: results above; all previously failing IDs passed or took the absent-tree skip on targeted rerun (removed in fix round 1).
 - `tools/regen_generated.py --write`: completed 33 entries with no tracked file changes.
 - `tools/regen_generated.py --check`: passed all 33 entries.
 - `tools/gate_collection.py --check --prebuilt`: 19,873 collected, three added, zero removed, refused, stale, or malformed trailers.
 - Selected VM tests: 40 units through `mac-pytest.sh --select`; 39 units passed, and `test_history_tests.py::test_only_the_lint_reads_the_list` failed because its exact reader inventory omitted the new lint. After adding that reader, `mac-pytest.sh -- tests/test_history_tests.py::test_only_the_lint_reads_the_list` passed (one passed). Only the failed ID was rerun.
 - Final pilot helper check: `mac-pytest.sh -- tests/test_readings_rd5_udhr.py` passed all three tests after both historical Git helpers mapped the recorded commit to its tree.
 - Final release gate: delegated to the chain on this report's committed final HEAD.
+
+## Fix round 1 (review of `a8993df30`)
+
+| Finding | Fix | Regression test |
+|---|---|---|
+| F1 (B) AR-8, RD-8 and the closure witnesses handed VM commits to Git | The evidence saves each commit's tree and subject; `tests/lineage.py` finds them in HEAD's history (a tree alone names two merges). The witness samples are read as pinned blobs. | `test_ar8_evidence.py::test_the_saved_commits_are_every_commit_before_the_report_commit`, `test_readings_defaults_rd8_report.py::test_review_fix_commit_chain_and_final_gate_target`, `test_closure_witnesses.py::test_all_e0_closure_witnesses`; the class: `test_lineage_lint.py::test_a_revision_read_from_saved_data_is_found` |
+| F2 (B) a skip that fired only without the pilot tree (R18) | `frozen-run.json` holds the 165 files of `bd6c7ab2`'s tree that the scripts read, pinned by SHA-256 in `migrate.py`; the skip is removed | `test_readings_rd5_udhr.py::test_the_frozen_run_is_read_without_git`, `::test_a_changed_frozen_snapshot_is_refused` |
+| F3 (C) lint gaps | The scanner follows saved JSON, function scopes, `log`/`merge-base`/`rev-list`, command variables, `args=`, if-expressions, other modules' constants and 7-character ids | `test_lineage_lint.py::test_the_scanner_finds_each_way_a_revision_is_written` |
+| F4 (C) `git log --all` tie | `git log HEAD` | `test_repo_map.py::test_a_map_from_before_the_relay_changed_gives_the_static_answer` |
+| F5 (C) stale wording | Docstrings name the tree | none (wording) |
+| F-ready1 (B) no seeded bug named a changed Python file | `docs/infra/gha-lineage/seeded-bugs.json`: 10 seeded bugs, each planted alone, its test failed (exit 1), file restored | the tests it names |
+
+GitHub-lineage bed (export re-synced from this branch; no VM commit, no `bd6c7ab2` tree): the F1 probe, the RD-5 tests, the lint and the oracle tests gave 36 passed, no skip; `test_repo_map.py -k static_answer` gave 3 passed. Before the fix the probe gave 3 failed.
 
 ## Self-review against BUILDER-CHECKLIST
 
@@ -75,7 +88,7 @@ No Lean, Rust, `ve/`, wire, trust, or VE language behavior changed. There is no 
 - `tests/test_lineage_lint.py`: revision literal lint and its scanner tests.
 - `tests/test_rd9_dri_signatures.py`: signed entry tree, recorded commit binding.
 - `tests/test_readings_defaults_rd6b_report.py`: historical trust trees, saved commit string checks.
-- `tests/test_readings_rd5_udhr.py`: narrow skip when the off-branch pilot tree is missing.
+- `tests/test_readings_rd5_udhr.py`: the frozen pilot run read from its pinned snapshot, no skip (fix round 1).
 - `tests/test_repo_map.py`: locate a commit by its shared tree before asking for its parent.
 - `tools/identity_lint.py`: accept a tree revision for historical allowlist content.
 - `tools/lean_first_oracle.py`: `frozen_files`, `check`, `run` use the tree; present tags still bind to commit and tree.
