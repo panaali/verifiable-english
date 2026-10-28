@@ -9,7 +9,8 @@ service reviewed?` in Q1.4's environments, which the base refused as `UnknownAlt
 quantifier. 2026-10-28: item 1 `negative`, a declared negative verbalisation; item 2 `bare_name` and `quoted_name`,
 a name with a digit or underscore; item 3 `determiner`, a grammar determiner outside (c); items 4 and 5
 `unverbalised`, a predicate declared without a verbalisation; item 5 `opening`, a question of `opening_cases` (one
-sentence per grammar rule, so every way a sentence opens) that the base refused and Lean reads. A `class` or
+sentence per grammar rule, so every way a sentence opens, in every added environment and both polarities) that the
+base refused and Lean reads. A `class` or
 `wording` row must keep R1's (a) and (b) or be R2's rule O1, as in Q1.4. A `lint` row fails, and so does a class
 whose count is not the recorded one, so an empty delta or a head-against-head comparison fails too. `audit` and
 `check` are the same check.
@@ -17,6 +18,7 @@ whose count is not the recorded one, so an empty delta or a head-against-head co
 from __future__ import annotations
 
 import functools
+import itertools
 import json
 import sys
 from pathlib import Path
@@ -53,19 +55,37 @@ def reader_cases() -> list[tuple[str, str, str]]:
             for polarity in ("", "not ")]
 
 
-def _lexicon(raw: dict, word: str) -> dict[str, list[str]]:
+def _spellings(raw: dict, word: str) -> list[list[str]]:
+    """The predicate's spellings after its subject, both polarities: its verbalisation (Lean's default words `is
+    <word>` when it has none) and its declared negative verbalisation (`is not <word>` when it has none), so the
+    corpus asks every opening with each form the environment gives it (recheck 1 F6)."""
+    declared = raw["vocabulary"]["predicates"][word]
+    forms = (declared.get("verbalisation") or f"{{0}} is {word}",
+             declared.get("negative_verbalisation") or f"{{0}} is not {word}")
+    return [form.removeprefix("{0} ").split() for form in forms]
+
+
+def _lexicon(raw: dict, word: str) -> dict[str, list[list[str]]]:
     """The words of the grammar's vocabulary categories (the nonterminals no grammar rule defines) for the
-    environment `raw` and its one-place predicate `word` over `service`, as `ve/english.py` builds them; a category
-    the environment cannot fill (`relation`, `object_relative`) is absent, so no sentence is built through it."""
+    environment `raw` and its one-place predicate `word` over `service`, as `ve/english.py` builds them, each as its
+    alternatives: `atom` and `relative` have one per polarity (`_spellings`); a category the environment cannot fill
+    (`relation`, `object_relative`) is absent, so no sentence is built through it."""
     from ve.environment import Environment
     from ve.printer import _fluent_variable_letters
 
     noun = raw["vocabulary"]["sorts"]["service"]["verbalisation"]["singular"]
     constant = next(n for n, c in raw["vocabulary"]["constants"].items() if c["sort"] == "service")
     letter = _fluent_variable_letters({"service": noun}, Environment(raw))["service"]
-    return {"noun": [noun], "constant": [constant], "label": [letter + "1"], "adjective": [word],
-            "atom": [constant, "is", word], "relative": ["is", word], "copula_relative": ["is", word],
-            "copula_adjective": [word], "natural_subject": [word, noun], "owner_clause": ["has", "an", "owner"]}
+    spellings = _spellings(raw, word)
+    return {"noun": [[noun]], "constant": [[constant]], "label": [[letter + "1"]], "adjective": [[word]],
+            "atom": [[constant, *form] for form in spellings], "relative": spellings,
+            "copula_relative": [["is", word]], "copula_adjective": [[word]], "natural_subject": [[word, noun]],
+            "owner_clause": [["has", "an", "owner"]]}
+
+
+class _Slot(str):
+    """A vocabulary category's place in a sentence, filled with each of its alternatives when the sentence is
+    spelled; while sentences are built it weighs as its first alternative."""
 
 
 def _symbol(s) -> str | None:
@@ -81,22 +101,26 @@ def _join(tokens: list) -> str:
     return text
 
 
-def opening_sentences(raw: dict, word: str) -> dict[str, list]:
+def opening_sentences(raw: dict, word: str) -> dict[str, list[list]]:
     """One sentence per grammar rule, so every way a sentence can open (a marker, `it is not the case that`, `there
     is a`, `this is impossible`, a determiner, a term, a listing, ...) is a corpus case. Each rule is put in the
     shortest sentence that reaches its left-hand side, with every other nonterminal at its shortest expansion; read
     from the grammar source and the environment's words, so a rule the grammar gains is a case before anyone lists
-    it. Returns tag -> tokens (a `before` punctuation mark is a 1-tuple). A rule no sentence reaches is absent."""
+    it. Returns tag -> the sentence spelled with every combination of its categories' alternatives (each polarity in
+    each place, the first one the all-positive sentence), as tokens (a `before` punctuation mark is a 1-tuple). A
+    rule no sentence reaches is absent."""
     rules = json.loads(GRAMMAR.read_text())
+    lexicon = _lexicon(raw, word)
     tok = lambda s: (s["p"],) if type(s) is dict and s.get("before") else _symbol(s)
-    shortest = dict(_lexicon(raw, word))
+    size = lambda tokens: sum(len(lexicon[t][0]) if type(t) is _Slot else 1 for t in tokens)
+    shortest = {category: [_Slot(category)] for category in lexicon}
     changed = True
     while changed:  # the shortest expansion of each nonterminal, to a fixed point
         changed = False
         for r in rules:
             if all(_symbol(s) is not None or s["n"] in shortest for s in r["rhs"]):
                 out = [t for s in r["rhs"] for t in ([tok(s)] if _symbol(s) is not None else shortest[s["n"]])]
-                if r["lhs"] not in shortest or len(out) < len(shortest[r["lhs"]]):
+                if r["lhs"] not in shortest or size(out) < size(shortest[r["lhs"]]):
                     shortest[r["lhs"]], changed = out, True
     hole = object()
     context = {"sentence": [hole]}  # the shortest sentence with a hole where the nonterminal goes
@@ -114,28 +138,40 @@ def opening_sentences(raw: dict, word: str) -> dict[str, list]:
                     [hole] if j == i else [tok(o)] if _symbol(o) is not None else shortest[o["n"]])]
                 at = context[r["lhs"]].index(hole)
                 out = context[r["lhs"]][:at] + inner + context[r["lhs"]][at + 1:]
-                if s["n"] not in context or len(out) < len(context[s["n"]]):
+                if s["n"] not in context or size(out) < size(context[s["n"]]):
                     context[s["n"]], changed = out, True
     sentences = {}
     for r in rules:
         if r["lhs"] in context and all(_symbol(s) is not None or s["n"] in shortest for s in r["rhs"]):
             body = [t for s in r["rhs"] for t in ([tok(s)] if _symbol(s) is not None else shortest[s["n"]])]
             at = context[r["lhs"]].index(hole)
-            sentences[r["tag"]] = context[r["lhs"]][:at] + body + context[r["lhs"]][at + 1:]
+            slotted = context[r["lhs"]][:at] + body + context[r["lhs"]][at + 1:]
+            sentences[r["tag"]] = [[w for t, fill in zip(slotted, fills) for w in (fill if type(t) is _Slot else [t])]
+                                   for fills in itertools.product(*(lexicon[t] if type(t) is _Slot else [None]
+                                                                    for t in slotted))]
     return sentences
+
+
+def opening_inputs() -> list[tuple[str, str]]:
+    """(env, predicate): every environment of `extra_environments` with each of its one-place predicates over
+    `service`, so an environment's own words (a declared negative form, a predicate without a verbalisation, more
+    names) are asked in every opening (recheck 1 F6)."""
+    return [(env, name) for env, raw in extra_environments().items()
+            for name, declared in raw["vocabulary"]["predicates"].items() if declared["arguments"] == ["service"]]
 
 
 def opening_cases() -> list[tuple[str, str, str]]:
     """(env, wording, rule tag): each sentence of `opening_sentences` asked with the auxiliary taken out, once for
-    each `is` it has (the inverse of the question reader putting the auxiliary back in one gap, spec 2.2), in
-    `speech` (a predicate with a verbalisation) and `unverbalised` (one without)."""
+    each `is` it has (the inverse of the question reader putting the auxiliary back in one gap, spec 2.2), for every
+    pair of `opening_inputs`."""
     raws = extra_environments()
     cases = {}
-    for env, word in (("speech", "reviewed"), ("unverbalised", UNVERBALISED)):
-        for tag, tokens in opening_sentences(raws[env], word).items():
-            for i, t in enumerate(tokens):
-                if t == "is":
-                    cases.setdefault((env, f"Is {_join(tokens[:i] + tokens[i + 1:])}?"), tag)
+    for env, word in opening_inputs():
+        for tag, spelled in opening_sentences(raws[env], word).items():
+            for tokens in spelled:
+                for i, t in enumerate(tokens):
+                    if t == "is":
+                        cases.setdefault((env, f"Is {_join(tokens[:i] + tokens[i + 1:])}?"), tag)
     return [(env, wording, tag) for (env, wording), tag in cases.items()]
 
 
@@ -161,12 +197,16 @@ def extra_cases() -> list[tuple[str, str, dict]]:
     negative verbalisation, `reader_cases` and `opening_cases` exercise whole classes, not one reproducer.
     """
     raws = extra_environments()
-    return ([("negative", f"Is {name} not reviewed?", raws["negative"]) for name in NEGATIVE_SUBJECTS]
-            + [("names", f"Is {spelling} reviewed?", raws["names"])
-               for name in SPECIAL_NAMES
-               for spelling in (name, f'"{name}"')]
+    return ([(env, wording, raws[env]) for env, wording in named_cases()]
             + [(env, wording, raws[env]) for env, wording, _ in reader_cases()]
             + [(env, wording, raws[env]) for env, wording, _ in opening_cases()])
+
+
+def named_cases() -> list[tuple[str, str]]:
+    """(env, wording) of DRI 2026-10-28 items 1 and 2: both subjects of a declared negative verbalisation, both
+    spellings of each special name."""
+    return ([("negative", f"Is {name} not reviewed?") for name in NEGATIVE_SUBJECTS]
+            + [("names", f"Is {spelling} reviewed?") for name in SPECIAL_NAMES for spelling in (name, f'"{name}"')])
 
 
 def augment(source: str, out: str) -> None:
@@ -270,16 +310,17 @@ def unverbalised(r: dict) -> bool:
 
 @functools.cache
 def _keys(cases) -> frozenset[tuple[str, str]]:
-    """The (env, wording) pairs of `reader_cases` or `opening_cases`, computed once per run."""
+    """The (env, wording) pairs of `named_cases`, `reader_cases` or `opening_cases`, computed once per run."""
     return frozenset((env, wording) for env, wording, *_ in cases())
 
 
 def opening(r: dict) -> bool:
-    """Item 5 (class (d)): an `opening_cases` question outside `reader_cases` that the base refused and the head
-    reads as a polar question; that the reading is `ve ask`'s is the test's to show
-    (`test_every_opening_verdict_row_is_read_as_ve_ask_reads_it`)."""
+    """Item 5 (class (d)): an `opening_cases` question outside the cases recorded before it (`named_cases`,
+    `reader_cases`) that the base refused and the head reads as a polar question; that the reading is `ve ask`'s is
+    the test's to show (`test_every_opening_verdict_row_is_read_as_ve_ask_reads_it`)."""
     body = r["head"].get("content", {}).get("body")
-    return (r["class"] == "verdict" and (r["env"], r["wording"]) in _keys(opening_cases) - _keys(reader_cases)
+    return (r["class"] == "verdict"
+            and (r["env"], r["wording"]) in _keys(opening_cases) - _keys(reader_cases) - _keys(named_cases)
             and "error" in r["base"] and r["head"].get("kind") == "question" and type(body) is list)
 
 
@@ -290,7 +331,7 @@ CLASSES = {"gloss": gloss, "folded": folded, "quantified": quantified, "negative
 DECIDED = {"gloss": 10, "folded": 3, "quantified": 6,  # dri-decisions-20261027-featureplan-gates.md item 4
            "negative": len(NEGATIVE_SUBJECTS), "bare_name": len(SPECIAL_NAMES),  # dri-decisions-20261028-q1-4b.md
            "quoted_name": len(SPECIAL_NAMES), "determiner": 1, "unverbalised": 8,  # items 1, 2, 2, 3, 4 and 5
-           "opening": 50}  # item 5
+           "opening": 206}  # item 5
 
 
 def check(delta_path: str) -> int:
