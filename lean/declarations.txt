@@ -5940,7 +5940,7 @@ module VE.Compose.Dispatch 6c9502c0439e1ff2978ea6385c192310239fe5fb9337d31eb5f95
 1159:0-1178:61 theorem VE.Compose.baseGate_today@VE.Compose.Dispatch
 1183:0-1226:75 theorem VE.Compose.gate_acts@VE.Compose.Dispatch
 1230:0-1270:75 theorem VE.Compose.gate_scope@VE.Compose.Dispatch
-module VE.Compose.Examples 40508fb2fe6539ff937edced5f1275a173ef911e42dfbc7fce7d8c9dea74ce1d
+module VE.Compose.Examples 572e2c968334c9632d6da8df0617463a40b5b4de4f6d050004f4adb50e89ee35
 26:0-31:19 def VE.Compose.Examples.instBEqExceptStringRoute@VE.Compose.Examples
 162:0-164:224 def VE.Compose.Examples.registrySorted@VE.Compose.Examples
 170:0-172:106 def VE.Compose.Examples.maskList@VE.Compose.Examples
