@@ -182,6 +182,11 @@ otherwise: each computes a `govern` answer, or a decoded name, that breaks the s
 - **Selected tests** (`zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`) on ve-mac-1 at
   `0b8da307c` (clean; this report follows): 430 of 481 units, exit 0, 0 failed. No test of `main-known-red.txt`
   failed.
+- **fix1**: `lake build` (1,135 jobs) and `python3 lean/audit.py` PASS; `regen_generated --check` 33 entries;
+  `trust_map.py --check` S +27 (unchanged); `gate_collection.py --check --prebuilt`: 20,028 collected, 7 added, 0
+  removed. Selected tests on ve-mac-1 at `c8991ddcf`: 1 failed, `tests/test_trust_mutants.py::test_the_truth_table_statuses`
+  (it read a SURVIVOR's detail as empty; fixed in `418fdd5d1`), and every other selected file exit 0; then
+  `tests/test_trust_mutants.py` in full at `418fdd5d1`'s tree: 348 passed. No test of `main-known-red.txt` failed.
 - **Full gate**: not run by me, as the task says; the chain runs it on the final HEAD.
 
 ## Pilot bytes (estimate)
