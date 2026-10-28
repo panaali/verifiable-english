@@ -294,6 +294,57 @@ def base_shaped(template: list) -> bool:
     return template == [_Slot("constant"), _Slot("relative")]
 
 
+# The deleted branch's own pattern at the merge base (`parse_speech`, ve/speech_english.py at de7cb4022).
+BASE_PATTERN = re.compile(r"Is ([A-Za-z][A-Za-z0-9_]*) (.+)\?")
+
+
+def base_members(raw: dict) -> list[tuple[str, ...]]:
+    """The member shapes of the base's acceptance set in `raw` (`in_base_set`): `<name> <declared form>` as tokens,
+    for every constant the base's pattern can name and every one-place predicate of its sort whose verbalisation is
+    `{0} is <words>` (the base compared the rest with the verbalisation only, never a negative one)."""
+    v = raw["vocabulary"]
+    return [(c, *p["verbalisation"].removeprefix("{0} ").split()) for c, d in v["constants"].items()
+            if BASE_PATTERN.fullmatch(f"Is {c} x?") for p in v["predicates"].values()
+            if p["arguments"] == [d["sort"]] and p.get("verbalisation", "").startswith("{0} is ")]
+
+
+def in_base_set(raw: dict, wording: str) -> bool:
+    """DRI 2026-10-28 b item 1 (a): whether `wording` is in the base's acceptance set of the `Is ` branch this item
+    deleted, the wordings base `_copular` read: `Is <name> <declared form>?` for exactly one member of `base_members`,
+    the name and the form up to ASCII case (`ascii_fold`) and the whole up to the space `wording_text` trims for every
+    reader. A wording the base read outside the F1 prefixes is in it (`outside_base_set`); every verdict change of a
+    member is a recorded delta.json row (`coverage` asks every member shape in every `variants` form), and every head
+    reading outside it is the relay's and `ve ask`'s (tests/test_speech_polar_lean.py, the relay and differential
+    tests)."""
+    from ve.errors import VEError
+    from ve.speech_acts import ascii_fold, wording_text
+    try:
+        text = wording_text(wording)
+    except VEError:
+        return False
+    if not BASE_PATTERN.fullmatch(text):
+        return False
+    return sum(ascii_fold(text) == ascii_fold(questions(list(m))[0]) for m in base_members(raw)) == 1
+
+
+def outside_base_set(records: list[dict]) -> list[dict]:
+    """The records of a base recording the base read through the deleted `Is ` branch (a reading whose trimmed wording
+    starts with `Is ` but with no F1 prefix, which Lean read at both ends) that `in_base_set` does not hold for."""
+    from ve.backends.english_lean import QUESTION_CALLERS, SPEECH_CALLER
+    from ve.errors import VEError
+    from ve.speech_acts import wording_text
+    out = []
+    for r in records:
+        try:
+            text = wording_text(r["wording"])
+        except VEError:
+            continue
+        if ("content" in r["outcome"] and text.startswith("Is ") and not text.startswith(
+                tuple(QUESTION_CALLERS[SPEECH_CALLER])) and not in_base_set(extra_environments()[r["env"]], r["wording"])):
+            out.append(r)
+    return out
+
+
 @functools.cache
 def all_sentences() -> dict[str, dict]:
     """env -> `opening_sentences` for every environment of `extra_environments`, computed once per run."""
@@ -340,6 +391,10 @@ def coverage(sentences: dict[str, dict], recorded: set) -> list[str]:
         if env not in sentences:
             missing.append(f"{env}: environment never asked")
             continue
+        for member in base_members(raw):  # DRI 2026-10-28 b item 1 (a): every member shape of the base's set
+            for axis, q in [("words", questions(list(member))[0]), *variants(list(member))]:
+                if (env, q) not in recorded:
+                    missing.append(f"{env} base set {' '.join(member)!r}: {KINDS[axis]} {q!r} never asked")
         words = slot_words(raw)
         filled = {c for c, alternatives in words.items() if alternatives}
         filled |= {c for c, parts in COMPOSITE.items() if all(p not in WORD_CATEGORIES or p in filled for p in parts)}
@@ -427,6 +482,149 @@ def named_cases() -> list[tuple[str, str]]:
             + [("names", f"Is {spelling} reviewed?") for name in SPECIAL_NAMES for spelling in (name, f'"{name}"')])
 
 
+# Loop recheck 1 of fix round 5 (q1-4b-c281354-looprecheck1.final.md): F8-F11 (REPORT.md's open O1-O4) and F13, `Is `
+# wordings outside the base's acceptance set that Lean reads at head and the corpus never asked. DRI 2026-10-28 b
+# item 1: covered by the relay and differential tests, not by delta.json rows.
+RECHECKED = [("speech", "Is Beacon the same as beacon?"), ("speech", "Is Every service REVIEWED?"),
+             ("speech", "Is it not the case that if atlas is reviewed, then either atlas is reviewed or atlas is "
+                        "reviewed, or both?"),
+             ("glossed", "Is it not the case that no Service is reviewed?"),
+             ("negative", "Is Every service not reviewed?"), ("negative", "Is there a Service that is not reviewed?")]
+HUNT_SEED = 20261028
+HUNT_SAMPLE = 1500  # per generator: the differential test runs `ve ask` three times a wording, under 2 min with -n 16
+NESTS = (("it", "is", "not", "the", "case", "that"), ("therefore",), ("it", "follows", "that"),
+         ("if", "this", "holds", "in", "all", "cases", (",",), "then"))
+
+
+@functools.cache
+def _corpus_keys() -> frozenset[tuple[str, str]]:
+    """The (env, wording) pairs of every recording's corpus: Q1.4's and `extra_cases`."""
+    return _keys(q14_cases) | frozenset((env, wording) for env, wording, _ in extra_cases())
+
+
+def _words(tokens: list) -> list[int]:
+    return [i for i, t in enumerate(tokens) if type(t) is str and t.isalpha()]
+
+
+def hunt_one() -> list[tuple[str, str, str]]:
+    """Hunt 1 of fix round 5 (DRI note 2026-10-28c (b)), as (env, wording, axis) outside the corpus: on each rule's
+    first sentence, each word capitalised and in capitals; the sentence under each of `NESTS` and as the antecedent
+    of an `if`; each constant slot filled with a definite or `you`/`it`; `is`/`IS` for `Is`, a doubled space, a space
+    before `?` and a trailing space; and each regulated act framed as `permitted to`, `required to`, ...."""
+    raws, out = extra_environments(), {}
+
+    def add(env, wording, axis):
+        if (env, wording) not in _corpus_keys():
+            out.setdefault((env, wording), axis)
+
+    for env, sentences in all_sentences().items():
+        definites = [*raws[env]["speech_acts"].get("definites", {}), "you", "it"]
+        for tag, (template, rows) in sentences.items():
+            tokens = spell(template, rows[0])
+            for i in _words(tokens):
+                for v in (tokens[i].capitalize(), tokens[i].upper()):
+                    for q in questions(tokens[:i] + [v] + tokens[i + 1:]) if v != tokens[i] else ():
+                        add(env, q, "case " + tag)
+            for wrap in NESTS:
+                for q in questions([*wrap, *tokens]):
+                    add(env, q, "nest " + tag)
+            for q in questions(["if", *tokens, (",",), "then", "this", "holds", "in", "all", "cases"]):
+                add(env, q, "nest-if " + tag)
+            slots = [k for k, t in enumerate(template) if type(t) is _Slot]
+            for n, k in enumerate(slots):
+                for d in definites if template[k] == "constant" else ():
+                    for q in questions(spell(template, rows[0][:n] + (tuple(d.split()),) + rows[0][n + 1:])):
+                        add(env, q, "definite " + tag)
+            for q in questions(tokens):
+                add(env, "is" + q[2:], "lower-is " + tag)
+                add(env, "IS" + q[2:], "upper-is " + tag)
+                add(env, q.replace(" ", "  ", 2).replace("  ", " ", 1), "space " + tag)
+                add(env, q[:-1] + " ?", "space-q " + tag)
+                add(env, q + " ", "trail " + tag)
+    for env, raw in raws.items():
+        consts = raw["vocabulary"]["constants"]
+        for p in raw["vocabulary"]["predicates"].values():
+            if not (act := p.get("regulated", {}).get("act")):
+                continue
+            for x, y in itertools.product(*([c for c, d in consts.items() if d["sort"] == s] for s in p["arguments"])):
+                body = act.format(x, y).split()
+                for frame in ("permitted to", "required to", "allowed to", "obliged to"):
+                    add(env, f"Is {x} {frame} {' '.join(body[1:])}?", "regulated")
+                add(env, f"Is it the case that {act.format(x, y)}?", "regulated")
+    return [(env, wording, axis) for (env, wording), axis in out.items()]
+
+
+def hunt_two(seed: int = HUNT_SEED) -> list[tuple[str, str, str]]:
+    """Hunt 2 of fix round 5, as (env, wording, axis) outside the corpus: on up to three rows of each rule, a word
+    capitalised and then a second in capitals (two variants at once, O2); a tab for a space, two doubled spaces, a
+    leading space, `Isn't` for `Is`, `ſ` for `s`; and on up to 60 nested sentences, the sentence nested again (two
+    deep, O3), in an `if` with itself, with a word capitalised (a variant inside a nesting, O4) and a doubled space."""
+    import random
+    rnd, out = random.Random(seed), {}
+
+    def add(env, wording, axis):
+        if (env, wording) not in _corpus_keys():
+            out.setdefault((env, wording), axis)
+
+    for env, sentences in all_sentences().items():
+        for tag in [t for t in sentences if not t.startswith(NEST)]:
+            template, rows = sentences[tag]
+            for fills in rnd.sample(rows, min(3, len(rows))):
+                tokens = spell(template, fills)
+                for _ in range(2):
+                    i, j = rnd.choice(_words(tokens)), rnd.choice(_words(tokens))
+                    once = tokens[:i] + [tokens[i].capitalize()] + tokens[i + 1:]
+                    for q in questions(once):
+                        add(env, q, "case-row " + tag)
+                    for q in questions(once[:j] + [once[j].upper()] + once[j + 1:]):
+                        add(env, q, "case-two " + tag)
+                for q in questions(tokens):
+                    gaps = [k for k, c in enumerate(q) if c == " "]
+                    k = rnd.choice(gaps)
+                    add(env, q[:k] + "\t" + q[k + 1:], "space-row " + tag)
+                    a, b = rnd.sample(gaps, 2) if len(gaps) > 1 else (gaps[0], gaps[0])
+                    add(env, q[:a] + "  " + q[a + 1:b] + "  " + q[b + 1:] if a < b else q, "space-two " + tag)
+                    add(env, " " + q, "lead " + tag)
+                    add(env, "Isn't" + q[2:], "isnt " + tag)
+                    add(env, q[:3] + q[3:].replace("s", "ſ", 1), "unicode " + tag)
+        nests = [t for t in sentences if t.startswith(NEST)]
+        for tag in rnd.sample(nests, min(60, len(nests))):
+            template, rows = sentences[tag]
+            tokens = spell(template, rows[0])
+            for q in questions([*NESTS[0], *tokens]):
+                add(env, q, "nest2 " + tag)
+            for q in questions(["if", *tokens, (",",), "then", *tokens]):
+                add(env, q, "nest2-if " + tag)
+            i = rnd.choice(_words(tokens))
+            for q in questions(tokens[:i] + [tokens[i].capitalize()] + tokens[i + 1:]):
+                add(env, q, "nest-case " + tag)
+            for q in questions(tokens):
+                add(env, q.replace(" ", "  ", 1), "nest-space " + tag)
+    return [(env, wording, axis) for (env, wording), axis in out.items()]
+
+
+@functools.cache
+def hunt_sample(size: int = HUNT_SAMPLE, seed: int = HUNT_SEED) -> tuple[tuple[str, str, str], ...]:
+    """A fixed-seed sample of `size` candidates of each hunt generator (DRI 2026-10-28 b item 1 (c)), then
+    `RECHECKED`, as (env, wording, generator); recorded at the base in evidence/hunt-base.json.gz (`hunt`)."""
+    import random
+    out = {}
+    for name, generator in (("hunt_one", hunt_one), ("hunt_two", hunt_two)):
+        candidates = sorted({(env, wording) for env, wording, _ in generator()})
+        for env, wording in random.Random(seed).sample(candidates, min(size, len(candidates))):
+            out.setdefault((env, wording), name)
+    for env, wording in RECHECKED:
+        out.setdefault((env, wording), "rechecked")
+    return tuple((env, wording, name) for (env, wording), name in out.items())
+
+
+def hunt(out: str, jobs: int = 1) -> None:
+    """Record `hunt_sample` with this checkout's parser (VE_AB_ROOT selects the base's) as a saved corpus."""
+    cases = [(env, wording) for env, wording, _ in hunt_sample()]
+    save([{"env": env, "wording": wording, "outcome": outcome}
+          for (env, wording), outcome in zip(cases, outcomes(cases, jobs))], out)
+
+
 def load(path) -> list[dict]:
     """A saved corpus: a list of {env, wording, outcome}, gzipped when its name ends in `.gz`."""
     path = Path(path)
@@ -480,6 +678,25 @@ def augment(source: str, out: str, jobs: int = 1) -> None:
     rows += [{"env": env, "wording": wording, "outcome": outcome}
              for (env, wording), outcome in zip(new, outcomes(new, jobs))]
     save(rows, out)
+
+
+def code_worded() -> frozenset[str]:
+    """The codes whose class writes `Code: text` (`ve.errors._CodeWorded`)."""
+    from ve import errors
+    return frozenset(c.code for c in vars(errors).values()
+                     if isinstance(c, type) and issubclass(c, errors._CodeWorded) and c is not errors._CodeWorded)
+
+
+def rerecord(source: str, out: str, jobs: int = 1) -> int:
+    """Re-record, with this checkout's parser, every record of a saved corpus whose outcome has a `code_worded` code
+    (the loop recheck's relay fix: `read_question` now raises Lean's lines verbatim, so only those messages change);
+    the rest are kept. Returns how many were re-recorded."""
+    rows = load(source)
+    stale = [i for i, r in enumerate(rows) if r["outcome"].get("code") in code_worded()]
+    for i, outcome in zip(stale, outcomes([(rows[i]["env"], rows[i]["wording"]) for i in stale], jobs)):
+        rows[i] = {**rows[i], "outcome": outcome}
+    save(rows, out)
+    return len(stale)
 
 
 def compared(base: list[dict], head: list[dict]) -> list[dict]:
@@ -625,6 +842,12 @@ def recordings(folder: str) -> tuple[list[dict], list[dict], list[dict]]:
     return base, head, compared(base, head)
 
 
+@functools.cache
+def hunt_recording(folder: str) -> list[dict]:
+    """The saved base recording of `hunt_sample` in `folder` (hunt-base.json.gz), read once per run."""
+    return load(Path(folder) / "hunt-base.json.gz")
+
+
 def audit(rows: list[dict]) -> tuple[dict, list[dict]]:
     """Each class's count over `rows`, and the failing rows: a `lint` row, a `verdict` row not in exactly one signed
     class, a `class` or `wording` row that neither keeps R1 nor is O1."""
@@ -648,11 +871,14 @@ def check(delta_path: str) -> int:
     missing = coverage(all_sentences(), {(r["env"], r["wording"]) for r in head})
     for line in missing[:20]:
         print("unasked:", line)
+    outside = outside_base_set(base + hunt_recording(str(Path(delta_path).parent)))
+    for r in outside:
+        print("fails: the base read", r["env"], repr(r["wording"]), "outside its acceptance set (`in_base_set`)")
     refusals = [r for r in rows if r["class"] in ("class", "wording")]
     o1 = [r for r in refusals if speech_ab.order_o1(r)]
     print(json.dumps({"rows": len(rows), **counts, "O1": len(o1), "R1": len(refusals) - len(o1),
-                      "failing": len(bad), "unasked": len(missing)}))
-    return 1 if bad or counts != DECIDED or not same or missing else 0
+                      "failing": len(bad), "unasked": len(missing), "outside_base_set": len(outside)}))
+    return 1 if bad or counts != DECIDED or not same or missing or outside else 0
 
 
 KINDS = {"words": "opening", "case": "case variant", "space": "spacing variant", "nest": "nested in",
@@ -676,8 +902,19 @@ def _cell(outcome: dict) -> str:
     return f"polar `{json.dumps(outcome['content'].get('body'))}`"
 
 
+TRIMMED = " (compared on wording_text, reviews/dri-decisions-20261028-q1-4b-b.md item 2)"
+
+
+def trimmed(r: dict) -> bool:
+    """Whether the row's wording has space around it that `wording_text` trims for every reader (DRI 2026-10-28 b
+    item 2: its condition test compares the speech caller with `ve ask` on the trimmed wording)."""
+    from ve.speech_acts import wording_text
+    return wording_text(r["wording"]) != r["wording"]
+
+
 def delta_md(delta_path: str, first: int) -> str:
-    """DELTA.md's class (d) rows, one per `_group`, numbered from P`first`: its count, environments and first row."""
+    """DELTA.md's class (d) rows, one per `_group`, numbered from P`first`: its count, environments and first row;
+    the Ruling cell of a group holding a `trimmed` row says it is compared on `wording_text` (`TRIMMED`)."""
     tags = {(env, wording): tag for env, wording, tag in opening_cases()}
     groups = {}
     for r in json.loads(Path(delta_path).read_text())["rows"]:
@@ -688,13 +925,18 @@ def delta_md(delta_path: str, first: int) -> str:
         f"| P{n} | (d) {KINDS[kind]}" + (f", rule `{rule}`" if rule else "") + f", {len(rows):,} rows | "
         f"{', '.join(sorted({r['env'] for r in rows}))} | `{json.dumps(rows[0]['wording'])[1:-1]}` | "
         f"{_cell(rows[0]['base'])} | {_cell(rows[0]['head'])} | SIGNED by the DRI 2026-10-28 "
-        f"(reviews/dri-decisions-20261028-q1-4b.md item 5); condition test `{test}` |\n"
+        f"(reviews/dri-decisions-20261028-q1-4b.md item 5)" + (TRIMMED if any(map(trimmed, rows)) else "")
+        + f"; condition test `{test}` |\n"
         for n, ((kind, rule), rows) in enumerate(sorted(groups.items()), first))
 
 
 if __name__ == "__main__":
     if sys.argv[1:2] == ["augment"] and len(sys.argv) in (4, 5):
         augment(sys.argv[2], sys.argv[3], int(sys.argv[4]) if len(sys.argv) == 5 else 1)
+    elif sys.argv[1:2] == ["rerecord"] and len(sys.argv) in (4, 5):
+        print(rerecord(sys.argv[2], sys.argv[3], int(sys.argv[4]) if len(sys.argv) == 5 else 1), "re-recorded")
+    elif sys.argv[1:2] == ["hunt"] and len(sys.argv) in (3, 4):
+        hunt(sys.argv[2], int(sys.argv[3]) if len(sys.argv) == 4 else 1)
     elif sys.argv[1:2] == ["delta-md"] and len(sys.argv) == 4:
         sys.stdout.write(delta_md(sys.argv[2], int(sys.argv[3])))
     elif sys.argv[1:2] == ["delta"] and len(sys.argv) == 5:
