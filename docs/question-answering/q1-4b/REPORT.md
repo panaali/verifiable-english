@@ -128,7 +128,9 @@ changed, so there are no seeded bugs in those languages.
   mutants (no trusted Lean changed).
 - Fix round 5 (loop recheck 2 F7, DRI note 2026-10-28c): PROBE F5, F6 and F7 exit 0; the four open PROBEs exit 1;
   `audit` exits 0 (22 s); the class (d) condition test passes for 6,608 rows; `review-ready --delta-dri-needed` exits
-  0, also with `L52_WIDE=1`. Selected tests: SELECTED_RUN.
+  0, also with `L52_WIDE=1`. Selected tests (`mac-pytest.sh --select -- --base de7cb4022 --run`, HEAD `b600c7eb1`,
+  ve-mac-1): 158 units, 0 failed (984 s); `gate_collection.py --check --prebuilt`: 6,707 added, 4 removed by a
+  trailer, 0 refused.
 - Fix round 4 (loop recheck 1 F6): selected tests (`mac-pytest.sh --select -- --base de7cb4022 --run`, HEAD
   `4e1f58ffb`): 158 units, 0 failed; PROBE F6 exits 0; the 206-row condition test passes.
 - Fix round 3: selected tests (`mac-pytest.sh --select -- --base de7cb4022 --run`, HEAD `c4a134909`): 158 units,
