@@ -7,8 +7,9 @@ from __future__ import annotations
 
 import json
 import re
-import subprocess
 from pathlib import Path
+
+from tests import lineage
 
 ROOT = Path(__file__).resolve().parents[1]
 FOLDER = ROOT / "docs/readings-defaults/rd8"
@@ -46,15 +47,16 @@ def test_review_fix_commit_chain_and_final_gate_target():
     saved = EVIDENCE["commits"] + EVIDENCE["review_fix_commits"]
     assert len({entry["hash"] for entry in saved}) == len(saved)
     assert EVIDENCE["gate"]["head"] == EVIDENCE["commits"][-2]["hash"]
-    report_commit = EVIDENCE["report_commit"]
-    assert re.fullmatch(r"[0-9a-f]{40}", report_commit)
-    # Full hashes cut to the evidence's fixed length: git's own %h length grows with the repository.
-    lines = subprocess.check_output(
-        ["git", "log", "--reverse", "--format=%H%x09%s", f"{EVIDENCE['base']}..{report_commit}"],
-        cwd=ROOT, text=True).splitlines()
-    assert lines[-1] == report_commit + "\tdocs: RD-8 review fixes and final gate evidence"
-    rows = [f"{sha[:ABBREV]}\t{subject}" for sha, subject in (line.split("\t", 1) for line in lines)]
-    assert rows[:-1] == [f"{entry['hash']}\t{entry['subject']}" for entry in saved]
+    assert re.fullmatch(r"[0-9a-f]{40}", EVIDENCE["report_commit"])
+    assert all(re.fullmatch(r"[0-9a-f]{40}", tree) for tree in
+               [EVIDENCE["base_tree"], EVIDENCE["report_tree"], *(entry["tree"] for entry in saved)])
+    # gha-lineage F1: the saved ids are the VM's records; base and report are found by their saved tree and
+    # subject, and the range is compared as saved trees and subjects.
+    subject = "docs: RD-8 review fixes and final gate evidence"
+    base = lineage.commit_of(EVIDENCE["base_tree"], EVIDENCE["base_subject"])
+    report = lineage.commit_of(EVIDENCE["report_tree"], subject)
+    assert lineage.log(base, report, "--reverse") == [(entry["tree"], entry["subject"]) for entry in saved] + [
+        (EVIDENCE["report_tree"], subject)]
 
 
 def test_the_theorem_table_is_the_saved_list():

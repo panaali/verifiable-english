@@ -18,6 +18,10 @@ EVIDENCE = HERE / "evidence"
 RD6B_HEAD = "e1319b36477d9de8cb83b6df4b4d372186cb4b3d"
 MERGED_BASE = "f05474685f3df4313d0b264c32cf1cf673a17d97"
 RD6B_APPROVED = "6b66f08721003c390f9180ed84dfe911fe9869b6"  # the approved head merged into ve-integration by 8b9927f2
+RD6B_HEAD_TREE = "fa9d91739f275e25e145a51e3d5c7a2c6959ee21"
+MERGED_BASE_TREE = "2d650c94fbbca18f999e217291f4df2a74ac0457"
+RD6B_APPROVED_TREE = "0e1c8f389190731b1787fc32f491835c2f1f1517"
+BASE_MERGE_TREE = "e28dd3050ebfe97f7cee0e0d9fbeb82ca167eea7"
 
 
 # A seeded bug's file that later became a package (AR-16b split `ve/readings_verdicts.py` into `ve/readings_verdicts/`).
@@ -247,16 +251,17 @@ def test_trust_growth_is_rd6b_entry_and_listed_for_signature():
     from tools import trust_map
     summary, *_ = saved()
     reviewed = json.loads(subprocess.check_output(
-        ["git", "show", f"{RD6B_HEAD}:docs/trust-baseline.json"], cwd=ROOT))
+        ["git", "show", f"{RD6B_HEAD_TREE}:docs/trust-baseline.json"], cwd=ROOT))
     # AR-4: the history became the allowances of the budget file (one per class that grew, the entry's text as
     # its reason); the tree's counts are checked against the base by `trust_map.py --check`.
     allowed = {(a["class"], a["lines"], a["reason"]) for a in json.loads(
         (ROOT / "docs/trust-baseline.json").read_text())["allowances"]}
     approved = json.loads(subprocess.check_output(
-        ["git", "show", f"{RD6B_APPROVED}:docs/trust-baseline.json"], cwd=ROOT))
-    reviewed_files, problems, _ = trust_map.measure_rev(RD6B_HEAD)
-    parent, parent_problems, _ = trust_map.measure_rev(summary["base_merge_commit"])
-    merged, merged_problems, _ = trust_map.measure_rev(MERGED_BASE)
+        ["git", "show", f"{RD6B_APPROVED_TREE}:docs/trust-baseline.json"], cwd=ROOT))
+    assert summary["base_merge_commit"] == "0d93e591d3963b65d1ad909a508b9d928322a014"
+    reviewed_files, problems, _ = trust_map.measure_rev(RD6B_HEAD_TREE)
+    parent, parent_problems, _ = trust_map.measure_rev(BASE_MERGE_TREE)
+    merged, merged_problems, _ = trust_map.measure_rev(MERGED_BASE_TREE)
     assert not problems and not parent_problems and not merged_problems
     assert reviewed["files"] == reviewed_files and reviewed["signed"] == [] and approved["signed"] == []
     entry = reviewed["history"][-1]

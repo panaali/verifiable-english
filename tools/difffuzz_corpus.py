@@ -80,6 +80,7 @@ EXCLUDED = {
     "usecases/udhr-pilot/*/reports/*.check.json": ("artifact", "a UDHR pilot run's recorded check report"),
     "usecases/udhr-pilot/*/metrics.json": ("artifact", "a UDHR pilot run's measurements"),
     "usecases/udhr-pilot/*/unmigrated.json": ("artifact", "a UDHR pilot run's record of sets not migrated"),
+    "usecases/udhr-pilot/*/frozen-run.json": ("artifact", "an earlier UDHR pilot run's files, frozen for migration"),
 }
 
 def _generated(module, name, convert=lambda value: value):
