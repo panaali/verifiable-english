@@ -21,7 +21,7 @@ HERE = REPO / "usecases" / "safety-framework"
 # both use cases import their siblings lazily by those names. This use case's modules are loaded
 # apart and stand in sys.modules only while its own tests run.
 OWN_NAMES = ("vocabulary", "translation", "run", "reference", "severity_and_dates", "build_document",
-             "readings_r1", "measure_r1")
+             "readings_r1", "measure_r1", "measure_r2")
 
 
 def _load_own_modules():
@@ -37,7 +37,7 @@ def _load_own_modules():
 
 OWN = _load_own_modules()
 build_document, reference, run = OWN["build_document"], OWN["reference"], OWN["run"]
-readings_r1, measure_r1 = OWN["readings_r1"], OWN["measure_r1"]
+readings_r1, measure_r1, measure_r2 = OWN["readings_r1"], OWN["measure_r1"], OWN["measure_r2"]
 translation, vocabulary = OWN["translation"], OWN["vocabulary"]
 
 
@@ -263,3 +263,47 @@ def test_every_unit_and_item_is_measured_once():
         assert u["items_agree"] + len(u["items_disagree"]) == u["items"], u["id"]
     open_terms = {u["id"] for u in json.loads((HERE / "spans.json").read_text())["units"] if u.get("open_terms")}
     assert {u["id"] for u in units if "judgment terms" in u["blockers"] and u["status"] == "OPEN"} == open_terms
+
+
+# --- fsf-r2 (2026-10-28): re-measured after jt-2/jt-2b, df-1b/df-1bb and sc-5r/sc-5rb ----------------------------
+
+FSF_R2 = REPO / "docs" / "usecases" / "safety-framework" / "fsf-r2"
+
+
+def test_fsf_r2_measures_every_unit_as_saved_and_none_moved_since_oct18():
+    """fsf-r2's units.json and gaps.json are measure_r2's measurement of the saved spans and results; every unit has
+    its Oct 18 status, every feature a family, and fsf-r1's evidence is what measure_r1 writes."""
+    units, gaps = measure_r2.measure()
+    for name, data in (("units.json", units), ("gaps.json", gaps)):
+        assert json.loads((FSF_R2 / name).read_text()) == json.loads(json.dumps(data)), name
+    r1 = {u["id"]: u for u in json.loads((measure_r1.EVIDENCE / "units.json").read_text())["units"]}
+    assert [u["id"] for u in units["units"]] == list(r1)
+    assert all(u["status"] == u["status_oct18"] == r1[u["id"]]["status"] for u in units["units"])
+    assert gaps["units_changed_status_since_oct18"] == []
+    assert gaps["master_bytes_by_status"]["today"] == gaps["master_bytes_by_status"]["oct18"]
+    families = {"JT", "DF", "SC", "QT", "ET", "AP", "WG", "AT", "external reference", "readings", "no claim to check"}
+    assert set(gaps["features"]) == set(measure_r2.FAMILIES)
+    assert all(f["family"] in families for f in gaps["features"].values())
+
+
+def test_fsf_r2_probes_record_lean_s_answer_on_each_merged_item():
+    """The saved probes: judgments@0 refused beside soft-norms@0 and a judged unit OPEN where admitted; the defaults
+    flag refused on an open reading set; RS8's set refused on its governor's own unit."""
+    probes = json.loads((FSF_R2 / "probes.json").read_text())
+    assert probes["JT-a"]["diagnostic"] == "CheckerUnavailable: judgments@0 with soft-norms@0 needs its composed Lean route"
+    assert probes["JT-b"]["diagnostic"] == "JudgmentUnbound: ot1_level_reached"
+    for probe in ("JT-c", "JT-d", "SC-b", "SC-d"):
+        assert probes[probe]["admitted"] and set(probes[probe]["units"].values()) == {"OPEN"}, probe
+    assert len(probes["JT-d"]["units"]) == 8
+    assert {u for row in probes["JT-d"]["judgments"]["used"] for u in row["units"]} == set(probes["JT-d"]["units"])
+    assert not probes["DF-a"]["admitted"] and probes["DF-a"]["status"]["units"] == {"s135-holistic": "OPEN"}
+    assert probes["DF-c"]["answer"]["verdict"] == "UNKNOWN"
+    assert probes["SC-c"]["diagnostic"] == "ScopeReadings: s135-bullet2-only"
+
+
+@pytest.mark.skipif(not OWN["severity_and_dates"].RISK_ROUTE.exists(), reason="the Lean service is not built")
+def test_fsf_r2_probes_rerun_equals_saved_probes():
+    """The probes are cut from the pinned source, which the gate runner does not store (tools/gate-optional.json)."""
+    if not build_document.DEFAULT_SOURCE.exists():
+        pytest.skip("the pinned source is not stored on this machine")
+    assert measure_r2.main(["--check"]) == 0
