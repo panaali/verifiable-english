@@ -534,6 +534,91 @@ theorem verdictsSD_fits (id : String) (b : Wire.Admitted2) (j : Json) :
     | (apply ndVerdictsAnswer_fits; exact VerdictsRequest.hq _)
     | skip
 
+/-! DF-3's `default` member (`Readings/DefaultVerdicts.lean`). -/
+
+theorem dConflictWord_fits {U : VE.NormDefaults.UDoc} {D : VE.SoftNorms.SoftDoc} {X : List VE.Formula}
+    (e : Wire.XEvidence U X) (d : DEvidence U D X) :
+    Fits req (.strIn ["CONFLICT-FREE", "CONFLICT", "UNKNOWN"]) (.str (word (dConflictRow e d))) := by
+  apply Fits.strIn_lit
+  unfold dConflictRow
+  (repeat' split) <;> decide
+
+theorem dQueryWord_fits {U : VE.NormDefaults.UDoc} {D : VE.SoftNorms.SoftDoc} {X : List VE.Formula}
+    (e : Wire.XEvidence U X) (d : DEvidence U D X) (A Γ : List VE.Formula) (φ : VE.Formula) :
+    Fits req (.strIn ["proved", "refuted", "UNKNOWN"]) (.str (word (dQueryRow e d A Γ φ))) := by
+  apply Fits.strIn_lit
+  unfold dQueryRow
+  (repeat' split) <;> decide
+
+theorem word_conflict : word .conflict = "CONFLICT" := rfl
+theorem word_proved : word .proved = "proved" := rfl
+
+theorem dChoiceJson_fits (z : DVerdicts) (d : (c : Choice) × DChoice z.y.r.N c) :
+    Fits req (skel% "readings-route.json#/$defs/verdicts_default_choice") (dChoiceJson z d) := by
+  unfold dChoiceJson
+  dsimp only
+  cases hb : dBasis d.2.1 d.2.2 (choiceDoc z.y.r.N.D d.1).2 z.y.x.Γ z.y.x.φ with
+  | none =>
+    cases hc : d.2.2.collision <;> cases hk : d.2.2.collides
+    all_goals (try simp only [List.cons_append, List.nil_append, List.append_nil])
+    case some.true w =>
+      rw [collides_conflict _ _ hk, word_conflict]
+      unfold VE.Defaults.Wire.collisionFields
+      split <;> (try simp only [List.cons_append, List.nil_append, List.append_nil]) <;> fits using dQueryWord_fits
+    all_goals fits using dConflictWord_fits, dQueryWord_fits
+  | some p =>
+    rw [dBasis_proved hb, word_proved]
+    cases hc : d.2.2.collision <;> cases hk : d.2.2.collides
+    all_goals (try simp only [List.cons_append, List.nil_append, List.append_nil])
+    case some.true w =>
+      rw [collides_conflict _ _ hk, word_conflict]
+      unfold VE.Defaults.Wire.collisionFields
+      split <;> (try simp only [List.cons_append, List.nil_append, List.append_nil]) <;> fits
+    all_goals fits using dConflictWord_fits
+
+theorem dLine_fits (l : DLine) : Fits req (skel% "readings-route.json#/$defs/verdicts_default_line") l.json := by
+  cases l <;> unfold DLine.json <;> fits
+
+theorem defaultJson_fits (z : DVerdicts) :
+    Fits req (skel% "readings-route.json#/$defs/verdicts_default") (defaultJson z) := by
+  unfold defaultJson
+  fits
+  all_goals first
+    | apply dChoiceJson_fits
+    | apply dLine_fits
+    | (apply Fits.strIn_lit; cases foldEntailment z.dConflictRows z.dQueryRows <;> decide)
+    | (apply Fits.strIn_lit; rcases foldConflict_range z.dConflictRows with h | h | h <;> simp [h, word])
+
+set_option maxHeartbeats 1000000 in
+theorem ndDefault_fits (id : String) (document : Json) (D : Doc) (A : Choice) (assumed : Option Choice)
+    (infos : Option (List RowInfo)) (over : List RowInfo) (dead : List Json) (z : DVerdicts) :
+    Fits req (skel% "readings-route.json#/$defs/verdicts")
+      ((ndVerdictsAnswer id "query" document D A assumed infos over dead).setObjVal! "default" (defaultJson z)) := by
+  unfold ndVerdictsAnswer verdictsAnswer answerFields deadReadingsJson untakenJson
+  simp only [okWith, VE.Route.Wire.ok]
+  rw [setObjVal_mkObj, setObjVal_mkObj]
+  fits using defaultJson_fits
+  all_goals first
+    | apply result_query_fits
+    | apply perChoiceJson_fits
+    | apply line_fits
+    | (apply deadNote_fits; assumption)
+
+set_option maxHeartbeats 1000000 in
+theorem verdictsD_fits (id : String) (b : Wire.Admitted2) (j : Json) :
+    OkFits req (skel% "readings-route.json#/$defs/verdicts") (runVerdictsD id b j) := by
+  unfold runVerdictsD
+  split
+  · exact verdictsSD_fits _ _ _
+  · exact verdictsSD_fits _ _ _
+  · okfits
+    all_goals first
+      | (split
+         · apply ndDefault_fits
+         · apply ndVerdictsAnswer_fits; decide)
+      | skip
+  · okfits
+
 /-! RD-7's superposed encoder has a closed shape all the way to each model and evidence note. -/
 theorem supScopeJson_fits (q : String) (s : SupScope) (proposals : List Choice) :
     Fits req (skel% "readings-route.json#/$defs/sup_scope") (supScopeJson q s proposals) := by
@@ -721,7 +806,7 @@ theorem runS2ND_fits (lower : List String → Json → Json) (id kind : String) 
   all_goals (try (intro v hv; fits_from verdicts_fits _ _ _ _ v hv))
   all_goals (try (intro v hv; fits_from supVerdicts_fits _ _ _ v hv))
   all_goals (try (intro v hv; fits_from verdicts_fits _ _ _ _ v hv))
-  all_goals (try (intro v hv; fits_from verdictsSD_fits _ _ _ v hv))
+  all_goals (try (intro v hv; fits_from verdictsD_fits _ _ _ v hv))
   all_goals (try kind_norm)
   all_goals (try with_reducible exact runNDKind_fits _ _ _ _ hK0)
   all_goals (try with_reducible exact runSDKind_fits _ _ _ _ hK0)

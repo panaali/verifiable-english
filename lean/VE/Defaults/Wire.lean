@@ -670,19 +670,22 @@ def situationJson (U : UDoc) (M : VE.FiniteModel VE.Bridge.Entity) (F : VE.NormD
     Json :=
   Json.mkObj [("filling", Json.mkObj (VE.NormDefaults.Wire.witnessRow U (M.withFill F) []).filling)]
 
-/-- The verdict and the pairs' statuses; with COLLISION, the pair, the tuple Lean finds and DE7's deciders, then the
-    situation. -/
+/-- A collision's pair, the tuple Lean finds and DE7's deciders, then the situation (`defaults-coherence` and DF-3's
+    readings member). -/
+def collisionFields (U : UDoc) (D : SoftDoc) (w : Collision U) : List (String × Json) :=
+  match (VE.SoftNorms.collidingPairs D).find? (fun p => p.1.name == w.m && p.2.name == w.n) with
+  | some (P, Q) => [("collision", Json.mkObj [("rules", toJson [w.m, w.n]),
+      ("tuple", entityIds ((collisionTuple U D w.S.M w.F P Q).getD [])),
+      ("deciders", toJson (giveWayDeciders D P Q))]),
+      ("situation", situationJson U w.S.M w.F)]
+  | none => []
+
+/-- The verdict and the pairs' statuses; with COLLISION, `collisionFields`. -/
 def coherenceFields (x : CoherenceReplay) : List (String × Json) :=
   [("verdict", .str x.verdict), ("pairs", Json.arr (x.pairs.map (fun (p, s) =>
       Json.mkObj [("rules", toJson [p.1.name, p.2.name]), ("status", .str s.label)])).toArray)] ++
   match x.verdict == "COLLISION", x.collision with
-  | true, some w =>
-    match (VE.SoftNorms.collidingPairs x.v.L.D).find? (fun p => p.1.name == w.m && p.2.name == w.n) with
-    | some (P, Q) => [("collision", Json.mkObj [("rules", toJson [w.m, w.n]),
-        ("tuple", entityIds ((collisionTuple x.v.L.U x.v.L.D w.S.M w.F P Q).getD [])),
-        ("deciders", toJson (giveWayDeciders x.v.L.D P Q))]),
-        ("situation", situationJson x.v.L.U w.S.M w.F)]
-    | none => []
+  | true, some w => collisionFields x.v.L.U x.v.L.D w
   | _, _ => []
 
 /-- What the answer shows of a collision: a pair shown `collision`, or a `collision` member, only with a collision
@@ -703,7 +706,7 @@ theorem coherence_collision_shown (x : CoherenceReplay) :
         simp only [Bool.and_eq_true] at hc
         exact hc.1
       · cases hs
-  · unfold coherenceFields at h
+  · unfold coherenceFields collisionFields at h
     split at h
     · rename_i hv _
       exact beq_iff_eq.mp hv
@@ -742,7 +745,7 @@ theorem coherence_collision_named (x : CoherenceReplay) :
           rw [hp] at ha
           exact ⟨w, rfl, ha.1, ha.2⟩
       · cases hs
-  · unfold coherenceFields at h
+  · unfold coherenceFields collisionFields at h
     rw [List.mem_append] at h
     rcases h with h | h
     · simp at h
