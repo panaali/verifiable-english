@@ -754,6 +754,9 @@
         "ResponseShape.Schemas.ReadingsRoute.verdicts_word",
         "ResponseShape.Schemas.ReadingsRoute.soft_premises",
         "ResponseShape.Schemas.ReadingsRoute.filledFieldsS"
+      ],
+      "T": [
+        "ResponseShape.Schemas.ReadingsRoute.renderedProperty"
       ]
     },
     "ResponseShape/Schemas/Reports.lean": {

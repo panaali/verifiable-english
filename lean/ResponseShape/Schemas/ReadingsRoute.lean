@@ -914,4 +914,16 @@ def file : File where
     ("product_line", .schema product_line),
     ("verdicts_components", .schema verdicts_components)]
 
+/- The filled environment's shapes as `tools/response_schemas.py` renders them into `readings-route.json`, which
+`tests/test_response_schemas.py` compares with this rendering (ap-1bd): a plain act's `form` a string, the `acts`
+block closed with its required `fixed` strings; each digest pins the rest of the rendering. -/
+def renderedProperty (s : Shape) (path : List String) : Option Json :=
+  (render "readings-route.json" 64 s).toOption.map fun j => path.foldl (fun j k => (j.getObjValD "properties").getObjValD k) j
+#guard renderedProperty filledPredicate ["regulated", "form"] == some (Json.mkObj [("type", .str "string")])
+#guard renderedProperty filledEnvironment ["vocabulary", "acts"] == some (Json.mkObj [("additionalProperties", .bool false),
+  ("properties", Json.mkObj [("fixed", Json.mkObj [("$ref", .str "common.json#/$defs/strings")])]),
+  ("required", toJson ["fixed"]), ("type", .str "object")])
+#guard (renderedProperty filledPredicate []).map (hash ·.compress) == some 1830252082568157544
+#guard (renderedProperty filledEnvironment []).map (hash ·.compress) == some 7984071425157217422
+
 end ResponseShape.Schemas.ReadingsRoute
