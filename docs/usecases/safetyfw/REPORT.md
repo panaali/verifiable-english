@@ -2,7 +2,7 @@
 
 - **Status:** parts 1, 2, 3 and 5 done; part 4 (the openai-preparedness baseline) is cut for size and named
   `usecase-safetyfw-b`. No DRI signature is reserved, no DELTA row, trust +0 (no Lean file changed).
-- **HEAD:** the commit that adds this report, on c1fd40403 (base main 6d0a10526). The full gate is left to the chain.
+- **HEAD:** the branch tip; code final at 18e9c937d, later commits change only this report (base main 6d0a10526).
 - **What changed:** both frozen keys transcribed and pinned; fsf-r2 re-measured the DeepMind case (no byte moved
   since Oct 18) with one probe per merged item; anthropic-rsp has its baseline: 59,410 bytes in 301 units, 9.5%
   CHECKED, with stage 0 and the gaps by feature family.
