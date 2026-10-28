@@ -35,12 +35,17 @@ EXPECTED = [
     "ResourceLimit: an exponent exceeds 64",
     "ResourceLimit: Decimal literal exceeds 40 digits",
     "InvalidInput: case.meaning_id is unknown",
-    "DuplicateName: x",
+    "VerbalisationCollision(x, x)",  # me-2d: the same words, so W6a's check before DuplicateName
     "DuplicateClaimId: c1",
     "NoClaims: a calculation needs at least one claim",
     ["h6 holds"],  # R-3 (H-6): a derivation that follows
     ["h6 fails"],  # R-4 (H-6n): one that does not
     ["t1 holds", "t2 holds", "t3 holds", f"t4 unknown ({DIGITS})", "t5 undefined", "t6 holds", "t7 holds"],  # me-2c
+    "DuplicateName: x",  # me-2d: the words checks, each refused, and the nearest accepted words
+    'ValueWordsForm: the words of x must begin with "the" and not with "baseline"',
+    'ReservedWord: "and" in the words of x',
+    "VerbalisationCollision(x, y)",
+    ["c1 holds", "c2 fails"],
 ]
 
 
