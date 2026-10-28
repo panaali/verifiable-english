@@ -1,0 +1,329 @@
+{
+ "restored_build_returncode": 0,
+ "mutants": [
+  {
+   "id": "premodifier-middle-item",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.globalRules",
+   "behaviour": "the plan's seeded bug: a third premodifier rule; A8 has 3 meanings",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:45,185"
+  },
+  {
+   "id": "Att-drop-all",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.Att",
+   "behaviour": "data type: a constructor dropped",
+   "status": "REFUSED",
+   "test": "lean/VE/Acts/Meaning.lean:39"
+  },
+  {
+   "id": "Elt-drop-mod",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.Elt",
+   "behaviour": "data type: a constructor dropped",
+   "status": "REFUSED",
+   "test": "lean/VE/Acts/Meaning.lean:35"
+  },
+  {
+   "id": "Piece-drop-list",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.Piece",
+   "behaviour": "data type: a constructor dropped",
+   "status": "REFUSED",
+   "test": "lean/VE/Acts/Meaning.lean:97"
+  },
+  {
+   "id": "add-arg-first",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.Atom.add",
+   "behaviour": "an element goes after the atom's others",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:82,155"
+  },
+  {
+   "id": "add-mod-dropped",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.Atom.add",
+   "behaviour": "a modifier is added",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:33,35,44,45,48,51,54,55,63,64,85,133,150"
+  },
+  {
+   "id": "all-as-own",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.addPiece",
+   "behaviour": "an element read over all goes to every atom",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:33,35,44,45,48,51,55,63,64,82,90,131,133,136"
+  },
+  {
+   "id": "split-first-member",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.addPiece",
+   "behaviour": "a split construct makes one atom per member",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:37,51,54,78,80,82,85,118,120,152"
+  },
+  {
+   "id": "nor-as-or",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.joinAct",
+   "behaviour": "*nor* is `any true`",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:48,80"
+  },
+  {
+   "id": "and-unshared",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.joinAct",
+   "behaviour": "*and* keeps `shared`",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:78,85"
+  },
+  {
+   "id": "be-as-to",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.baseAtom",
+   "behaviour": "*be* is read",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:33,37,38,44,45,48,51,54,55,66,78,82,85,152"
+  },
+  {
+   "id": "single-unshared",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.singleAct",
+   "behaviour": "a split construct's *and* is `all true`",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:78,85"
+  },
+  {
+   "id": "single-to-first",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.singleAct",
+   "behaviour": "after a split, an edge's near end is the last part",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:51"
+  },
+  {
+   "id": "coord-own-fw",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.coordAct",
+   "behaviour": "later items take the first's shared function words",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:48"
+  },
+  {
+   "id": "coord-first-item",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.coordAct",
+   "behaviour": "each element goes to its own item",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:33,44,45,48,55,57,133"
+  },
+  {
+   "id": "list-keeps-join",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.listOf",
+   "behaviour": "a list's members are the pieces but its join word",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:33,35,37,38,44,45,48,51,54,55,57,63,64,66,78,80,82,85,90,112,114,118,120,124,131,133,136,148,152"
+  },
+  {
+   "id": "item-no-fw",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.itemOf",
+   "behaviour": "an item's function words",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:33,37,38,44,45,48,51,54,55,66,78,80,82,85,152"
+  },
+  {
+   "id": "d9-no-last",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.applyRule",
+   "behaviour": "D9 (i): a long last part is refused",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:115,118,120"
+  },
+  {
+   "id": "d9-no-first",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.applyRule",
+   "behaviour": "D9 (i): a long first part is refused",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:90,115,118,120"
+  },
+  {
+   "id": "d9-also-repeated",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.applyRule",
+   "behaviour": "D9 (i) is for a marker written once (`PL`), not `RL`",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:38,66,124,148"
+  },
+  {
+   "id": "edge-second-near",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.applyRule",
+   "behaviour": "an edge's second rule reads over all",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:33,35,44,45,48,51,55,63,64,133"
+  },
+  {
+   "id": "rnr-args-own",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.applyRule",
+   "behaviour": "a shared-object list's last arguments go to every item",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:33,35,55,63,64,90,131,133,136"
+  },
+  {
+   "id": "split-not-split",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.applyRule",
+   "behaviour": "a split marker's list is a split construct",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:37,51,78,80,82"
+  },
+  {
+   "id": "fixed-as-slot",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.piecesOf",
+   "behaviour": "a fixed phrase is a fixed part",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:33,37,38,44,45,48,51,54,57,66,85"
+  },
+  {
+   "id": "second-never",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.piecesOf",
+   "behaviour": "the second of two alike rules is told apart",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:33,35,44,45,48,51,55,63,64,133"
+  },
+  {
+   "id": "kids-reversed",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.piecesOf",
+   "behaviour": "children in order",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:33,37,38,44,45,48,51,54,55,57,66,78,80,82,85,150,152,155"
+  },
+  {
+   "id": "no-object-check",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.atomOk",
+   "behaviour": "an object exactly when the frame lists \"\"",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:131,142,163"
+  },
+  {
+   "id": "no-marker-check",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.atomOk",
+   "behaviour": "every argument marker is the frame's",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:136,163"
+  },
+  {
+   "id": "no-mod-check",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.atomOk",
+   "behaviour": "every modifier marker is the frame's",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:133,166"
+  },
+  {
+   "id": "no-adverb-check",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.atomOk",
+   "behaviour": "every adverb is declared",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:138,166"
+  },
+  {
+   "id": "join-of-one",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.actOk",
+   "behaviour": "a join has at least two atoms",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:142"
+  },
+  {
+   "id": "meaning-no-actOk",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.meaning",
+   "behaviour": "the meaning is refused unless every atom fits",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:90,131,133,136"
+  },
+  {
+   "id": "readings-budget-0",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Readings.lean",
+   "definition": "VE.Acts.readings",
+   "behaviour": "the step budget is passed on",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:33,36,44,48,51,55,63,90,112,114,115,118,120,124,131,133,136"
+  },
+  {
+   "id": "read-budget-0",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Readings.lean",
+   "definition": "VE.Acts.read",
+   "behaviour": "the step budget is passed on",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:35,36,37,38,54,57,61,62,66,78,80,82,85,150,152,155"
+  },
+  {
+   "id": "analyse-never",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Readings.lean",
+   "definition": "VE.Acts.analyse",
+   "behaviour": "one `one` meaning is its atom",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:66"
+  },
+  {
+   "id": "Derived-true",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Readings.lean",
+   "definition": "VE.Acts.Derived",
+   "behaviour": "a meaning is derived (tied to derived_iff, spec 5.6's text: its theorems refuse the plant)",
+   "status": "REFUSED",
+   "test": "lean/VE/Acts/Readings.lean:27"
+  }
+ ]
+}
