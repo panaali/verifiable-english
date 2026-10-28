@@ -21,7 +21,7 @@ import tomllib
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from tools import lake_outputs, nested_pytest, quarantine, rust_build, test_schedule  # noqa: E402
+from tools import gate_shards, lake_outputs, nested_pytest, quarantine, rust_build, test_schedule  # noqa: E402
 POLICY = ROOT / "tools/gate-optional.json"
 LEAN_BINARIES = ("ve_conformance", "ve_service", "ve_senses_route")
 REQUIRED_STAGES = ("toolchains", "lean_build", "lean_audit", "rust_build",
@@ -659,8 +659,13 @@ def gate_scratch_root() -> Path:
 
 
 def main() -> int:
+    from tools import gate_collection
+    gate_started = time.monotonic()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, help="the record (default gate-result.json in the checkout)")
+    parser.add_argument("--shard", metavar="K/N", help="run one deterministic share of the full gate")
+    parser.add_argument("--merge-shards", nargs="+", type=Path, metavar="RECORD",
+                        help="assemble all N shard records into one full gate record")
     parser.add_argument("--workers", default="auto",
                         help="xdist workers for the suite (default auto: the CPUs the load leaves, "
                              "tests/conftest.py)")
@@ -679,6 +684,18 @@ def main() -> int:
                              "contract-passed or failed; default --output platform-contract-result.json). It is "
                              "never a full gate's evidence")
     args = parser.parse_args()
+    if args.merge_shards is not None:
+        if args.shard or args.contract is not None or args.rerun_failed is not None or args.base:
+            parser.error("--merge-shards accepts only records and --output")
+        return gate_shards.merge_files(args.merge_shards, (args.output or ROOT / "gate-result.json").resolve())
+    shard = None
+    if args.shard is not None:
+        match = re.fullmatch(r"([1-9][0-9]*)/([1-9][0-9]*)", args.shard)
+        if match is None or int(match[1]) > int(match[2]):
+            parser.error("--shard must be K/N with 1 <= K <= N")
+        shard = (int(match[1]), int(match[2]))
+        if args.contract is not None or args.rerun_failed is not None:
+            parser.error("--shard cannot combine with --contract or --rerun-failed")
     if not (args.workers == "auto" or args.workers.isdecimal() and int(args.workers) > 0):
         parser.error("--workers is a positive count or auto")
     if args.contract is not None and (args.rerun_failed is not None or args.base):
@@ -751,17 +768,19 @@ def main() -> int:
             result["stages"].append("lean_build")
             # The examples are admitted by this commit's ve_service, so the check follows the build: before it, a
             # binary left by an earlier build would answer with another commit's modes.
-            command(["uv", "run", "--frozen", "--no-sync", "python",
-                     "tools/wire_contract.py", "--check"], env=env,
-                    stage="Wire contract check")
+            if shard is None or shard[0] == 1:
+                command(["uv", "run", "--frozen", "--no-sync", "python",
+                         "tools/wire_contract.py", "--check"], env=env,
+                        stage="Wire contract check")
 
             # The per-file trust counts live in the gate record, not the tree (AR-4, D3).
-            trust_file = scratch / "trust-files.json"
-            command(["uv", "run", "--frozen", "--no-sync", "python", "tools/trust_map.py", "--files",
-                     str(trust_file)], env=env, stage=TRUST_STAGE)
-            result["trust"] = read_trust(trust_file)
+            if shard is None or shard[0] == 1:
+                trust_file = scratch / "trust-files.json"
+                command(["uv", "run", "--frozen", "--no-sync", "python", "tools/trust_map.py", "--files",
+                         str(trust_file)], env=env, stage=TRUST_STAGE)
+                result["trust"] = read_trust(trust_file)
 
-            if selection is None:
+            if selection is None and (shard is None or shard[0] == 1):
                 command(["uv", "run", "--frozen", "--no-sync", "python", "lean/audit.py"],
                         env=env, stage="Lean audit")
                 result["stages"].append("lean_audit")
@@ -772,32 +791,36 @@ def main() -> int:
             target_dir = ROOT / "rust/target"
             cargo_options = ["--target-dir", str(target_dir)]
 
-            with isolated_cargo(env, target_dir) as (cargo_env, cargo_cwd):
-                record_environment(result, "cargo", cargo_env)
-                command(["cargo", "build", *cargo_options, "--locked", "--release", "--manifest-path",
-                         str(ROOT / "rust/Cargo.toml")], cwd=cargo_cwd, env=cargo_env,
-                        stage="Rust build")
-                rust_binary = target_dir / "release/ve"
-                if not rust_binary.is_file() or not os.access(rust_binary, os.X_OK):
-                    raise RuntimeError(f"Rust build did not produce {rust_binary}")
-                if rust_build.digest(rust_binary) not in rust_build.pinned_digests(
-                        ROOT / "lean/checkers.lock"):
-                    raise RuntimeError(f"Rust build {rust_binary} is not pinned in lean/checkers.lock")
-                result["stages"].append("rust_build")
+            rust_binary = target_dir / "release/ve"
+            if shard is None or shard[0] == 1:
+                with isolated_cargo(env, target_dir) as (cargo_env, cargo_cwd):
+                    record_environment(result, "cargo", cargo_env)
+                    command(["cargo", "build", *cargo_options, "--locked", "--release", "--manifest-path",
+                             str(ROOT / "rust/Cargo.toml")], cwd=cargo_cwd, env=cargo_env,
+                            stage="Rust build")
+                    if not rust_binary.is_file() or not os.access(rust_binary, os.X_OK):
+                        raise RuntimeError(f"Rust build did not produce {rust_binary}")
+                    if rust_build.digest(rust_binary) not in rust_build.pinned_digests(
+                            ROOT / "lean/checkers.lock"):
+                        raise RuntimeError(f"Rust build {rust_binary} is not pinned in lean/checkers.lock")
+                    result["stages"].append("rust_build")
 
-                if rerun is None:
-                    rust_tests = command(["cargo", "test", *cargo_options, "--locked", "--release", "--workspace",
-                                          "--manifest-path", str(ROOT / "rust/Cargo.toml")],
-                                         cwd=cargo_cwd, env=cargo_env, stage="native Rust tests")
-                    summaries = re.findall(r"test result: ok\. (\d+) passed; (\d+) failed; "
-                                           r"(\d+) ignored;", rust_tests)
-                    if not summaries:
-                        raise RuntimeError("cargo test produced no parseable test result")
-                    result["counts"]["rust_passed"] = sum(int(row[0]) for row in summaries)
-                    result["counts"]["rust_ignored"] = sum(int(row[2]) for row in summaries)
-                    if result["counts"]["rust_passed"] == 0 or result["counts"]["rust_ignored"]:
-                        raise RuntimeError("native Rust tests absent or ignored")
-                    result["stages"].append("cargo_test")
+                    if rerun is None:
+                        rust_tests = command(["cargo", "test", *cargo_options, "--locked", "--release", "--workspace",
+                                              "--manifest-path", str(ROOT / "rust/Cargo.toml")],
+                                             cwd=cargo_cwd, env=cargo_env, stage="native Rust tests")
+                        summaries = re.findall(r"test result: ok\. (\d+) passed; (\d+) failed; "
+                                               r"(\d+) ignored;", rust_tests)
+                        if not summaries:
+                            raise RuntimeError("cargo test produced no parseable test result")
+                        result["counts"]["rust_passed"] = sum(int(row[0]) for row in summaries)
+                        result["counts"]["rust_ignored"] = sum(int(row[2]) for row in summaries)
+                        if result["counts"]["rust_passed"] == 0 or result["counts"]["rust_ignored"]:
+                            raise RuntimeError("native Rust tests absent or ignored")
+                        result["stages"].append("cargo_test")
+            elif not rust_binary.is_file() or rust_build.digest(rust_binary) not in rust_build.pinned_digests(
+                    ROOT / "lean/checkers.lock"):
+                raise RuntimeError(f"shard {shard[0]} needs the pinned Rust binary at {rust_binary}")
 
             python = ["uv", "run", "--frozen", "--no-sync", "python"]
             collection_file, events_file = scratch / "pytest-collection.json", scratch / "pytest.json"
@@ -813,9 +836,25 @@ def main() -> int:
             if selection is None and not collection["collection_reports"] and \
                     len(collection["collected"]) == len(set(collection["collected"])):
                 head_ids = collection["collected"]
-            if contract is None:
+            if contract is None and (shard is None or shard[0] == 1):
                 expected, diff = base_collection(result, args.base, env, pytest_env, scratch)
+            elif shard is not None:
+                result["collection"] = {"base": gate_collection.rev(f"{args.base}^{{commit}}", env=env)
+                                        if args.base else gate_collection.merge_base(env=env)}
             suite_durations(result, env, durations_file)
+            if shard is not None:
+                shard_plan = gate_shards.plan(collection["collected"],
+                                              test_schedule.read_source(durations_file), shard[1],
+                                              selected=collection["selected"])
+                selection = gate_shards.share(shard_plan, shard[0])
+                if not selection:
+                    raise RuntimeError(f"shard {shard[0]}/{shard[1]} has no tests")
+                result["mode"] = "shard"
+                result["shard"] = {"k": shard[0], "n": shard[1], "digest": shard_plan["digest"],
+                                   "plan": shard_plan, "collected": shard_plan["collected"], "ran": selection}
+                result["collection"]["collected_zlib"] = gate_collection.encode_ids(collection["collected"])
+                result["collection"]["head_ids"] = len(collection["collected"])
+                result["collection"]["base_ids"] = result["collection"].get("base_ids", 0)
             try:
                 command(suite_command(python, args.workers, selection),
                         env={**pytest_env, "VE_GATE_PYTEST_RESULT": str(events_file)}, stage="Python suite")
@@ -823,7 +862,13 @@ def main() -> int:
                 result["failures"].append({"stage": "pytest command", "reason": str(exc)})
             if not events_file.exists():
                 raise RuntimeError("pytest did not write its result events")
-            events = merge_pytest_events(collection, json.loads(events_file.read_text()))
+            if shard is not None:
+                subset = {"collected": selection, "selected": selection, "deselected": [],
+                          "collection_reports": []}
+                events = merge_pytest_events(subset, json.loads(events_file.read_text()))
+                result["pytest_seconds"] = events.get("seconds", {})
+            else:
+                events = merge_pytest_events(collection, json.loads(events_file.read_text()))
             record_durations(result, events)
             if contract is not None:
                 # No collection check (the complete gates check the whole collection); each listed selector must
@@ -833,6 +878,21 @@ def main() -> int:
                     if not any(platform_contract.covers(selector, nodeid) for nodeid in events["selected"]):
                         result["failures"].append({"stage": "coverage",
                                                    "reason": f"contract test collected nothing: {selector}"})
+            elif shard is not None:
+                if shard[0] == 1:
+                    # Check full collection and base coverage once; the actual outcomes are accounted per share.
+                    full = {**collection, "tests": {node: {"outcome": "passed"}
+                                                     for node in collection["selected"]}}
+                    interpret_pytest(result, full, policy, expected, diff=diff,
+                                     base=result["collection"]["base"])
+                    full_collection = dict(result["collection"])
+                    full_counts = dict(result["counts"])
+                    live_skips = list(result["skips"])
+                interpret_pytest(result, events, policy, selection, families=())
+                if shard[0] == 1:
+                    result["collection"] = full_collection
+                    result["counts"]["deselected"] = full_counts["deselected"]
+                    result["skips"] = live_skips + [skip for skip in result["skips"] if skip not in live_skips]
             elif rerun is None:
                 interpret_pytest(result, events, policy, expected, diff=diff, base=result["collection"]["base"])
             else:
@@ -865,7 +925,11 @@ def main() -> int:
             if record_head:
                 from tools import gate_collection
                 result.setdefault("collection", {})["collected_zlib"] = gate_collection.encode_ids(head_ids)
-            if completed and selection is None and result["stages"] == list(REQUIRED_STAGES) \
+            if shard is not None and completed and not result["failures"] and \
+                    result["stages"] == (list(REQUIRED_STAGES) if shard[0] == 1 else
+                                         ["toolchains", "lean_build", "pytest"]):
+                result["status"] = "shard-passed"
+            elif shard is None and completed and selection is None and result["stages"] == list(REQUIRED_STAGES) \
                     and not result["failures"]:
                 result["status"] = "passed"
             # A rerun of failed tests is never a full gate: its own status, which no evidence check accepts.
@@ -876,10 +940,12 @@ def main() -> int:
             elif completed and contract is not None and not result["failures"] and \
                     result["stages"] == list(CONTRACT_STAGES):
                 result["status"] = "contract-passed"
-            if record_head:
+            if record_head and shard is None:
                 result["collection"]["head_record"] = "written"
                 result["collection"]["head_record"] = record_collection(
                     result["commit_sha"], head_ids, env, result=result)
+            if shard is not None and "shard" in result:
+                result["shard"]["seconds"] = round(time.monotonic() - gate_started, 1)
             write_result(output, result)
             print(f"[gate] {result['status']}: {output}; "
                   f"{result['counts'].get('passed', 0)} passed, "
@@ -897,7 +963,7 @@ def main() -> int:
             if result["status"] == "rerun-passed":
                 print("[gate] the failed tests passed on rerun; this is not a full gate: run the full gate "
                       "for the final evidence", flush=True)
-    return 0 if result["status"] in ("passed", "rerun-passed", "contract-passed") else 1
+    return 0 if result["status"] in ("passed", "rerun-passed", "contract-passed", "shard-passed") else 1
 
 
 if __name__ == "__main__":
