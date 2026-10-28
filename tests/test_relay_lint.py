@@ -211,3 +211,37 @@ def test_the_senses_path_is_read_by_the_third_rule():
     loader = "".join(path.read_text() for path in modules)
     assert "if senses is not None" in loader and "parse_english" in loader
     assert all(relay_lint.english_reads(path, branches_only=True) == [] for path in modules)
+
+# The fifth rule (defeasible plan DF-1b): no `ve/` module spells a no-exception premise label.
+
+@pytest.mark.parametrize("line, found", [
+    ('label = "default:exception:" + rule', True),
+    ('label = f"default:switch:{rule}:{body}"', True),
+    ('label = "default:"', True),
+    ('"""Docstrings count: default:ranking:l:h:a."""', True),
+    ('kind = rule  # a default:exception label', True),
+    ('kind = "x default:y"', True),
+    ('"""(default: every candidate different)."""', False),
+    ('kind = "default: "', False),
+    ('kind = "default:\\n"', False),
+    ('kind = {"default": rule}', False),
+    ('kind = "default" + ":"', False),
+    ('kind = rule  # the default: the first rule', False),
+])
+def test_seeded_default_labels(tmp_path, line, found):
+    module = tmp_path / "defaults_x.py"
+    module.write_text(f"def f(rule, body, default: int = 0):\n    {line}\n")
+    assert bool(relay_lint.default_labels(module)) is found
+    assert relay_lint.main([str(module)]) == (1 if found else 0)
+
+
+def test_the_defaults_relay_is_relayed_and_every_ve_module_is_read():
+    """`ve/defaults.py` is in `RELAYED`, its English is linted with it (a helper only it imports), both pass every
+    rule, and the fifth rule reads every module of `ve/`, packages included."""
+    assert "ve/defaults.py" in relay_lint.RELAYED
+    assert ROOT / "ve/defaults_english.py" in relay_lint.helpers([ROOT / path for path in relay_lint.RELAYED])
+    modules = set(relay_lint.defaults_modules())
+    assert {ROOT / "ve/defaults.py", ROOT / "ve/defaults_english.py", ROOT / "ve/document/cli.py"} <= modules
+    assert modules == {p for p in (ROOT / "ve").rglob("*.py")}
+    for name in ("ve/defaults.py", "ve/defaults_english.py"):
+        assert relay_lint.main([str(ROOT / name)]) == 0, name
