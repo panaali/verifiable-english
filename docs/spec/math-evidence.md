@@ -2279,6 +2279,13 @@ so does every value a step binds.
   - two costs whose bounds the wire's limits fix (12.5). A variable read walks ρ: fewer than 64 binders (JSON
     depth 64) plus the parameters, which fit in 10,000 JSON nodes. A call looks its name up among at most 512
     definitions.
+  - Measured worst cases, each before UNKNOWN at 1,000,000 units (me-12nb,
+    [uncharged-costs.lean](../math-evidence/me-12nb/uncharged-costs.lean); interpreted with `lake env lean`, then
+    compiled): reading the last of 4,000 parameters 1.3 s and 0.8 s; a range up to a 65,537-bit bound under 0.3 s
+    and 0.05 s; a call of the first of 512 definitions whose 64-byte names differ only at the end, 1,024 times per
+    step, 37 s and 2.5 to 2.9 s. The name lookup's cost is the implementation's (a walk with a full-name compare), not
+    the charge's: me-12nc replaces it with a table built once per case, which changes no unit count, before me-12b
+    exposes the evaluator (DRI, 2026-10-27, `dri-decisions-20261027-me-12nb.md`).
 - **Not charged.** A range's remaining count is a natural number of at most n + 1 bits, decremented at each step. A
   range up to a 65,537-bit bound measured as UNKNOWN within about a second.
 
