@@ -1,0 +1,4 @@
+collected	tests/test_order_gate.py::test_order_certificates_rejected_at_profile_gate[profiles0]
+collected	tests/test_order_gate.py::test_order_certificates_rejected_at_profile_gate[profiles1]
+passed	tests/test_order_gate.py::test_order_certificates_rejected_at_profile_gate[profiles0]
+passed	tests/test_order_gate.py::test_order_certificates_rejected_at_profile_gate[profiles1]

@@ -1,0 +1,14 @@
+collected	tests/test_discourse_three_way.py::test_alpha_three_way
+collected	tests/test_discourse_three_way.py::test_alpha_prime_three_way[two-sorts]
+collected	tests/test_discourse_three_way.py::test_alpha_prime_three_way[unmentioned-other-sort]
+collected	tests/test_discourse_three_way.py::test_alpha_prime_three_way[second-service-mentioned]
+collected	tests/test_discourse_three_way.py::test_alpha_prime_three_way[second-service-unmentioned]
+collected	tests/test_discourse_three_way.py::test_alpha_prime_three_way[binder-in-earlier-anchor]
+collected	tests/test_discourse_three_way.py::test_alpha_prime_three_way[three-versus-two]
+passed	tests/test_discourse_three_way.py::test_alpha_three_way
+passed	tests/test_discourse_three_way.py::test_alpha_prime_three_way[two-sorts]
+passed	tests/test_discourse_three_way.py::test_alpha_prime_three_way[unmentioned-other-sort]
+passed	tests/test_discourse_three_way.py::test_alpha_prime_three_way[second-service-mentioned]
+passed	tests/test_discourse_three_way.py::test_alpha_prime_three_way[second-service-unmentioned]
+passed	tests/test_discourse_three_way.py::test_alpha_prime_three_way[binder-in-earlier-anchor]
+passed	tests/test_discourse_three_way.py::test_alpha_prime_three_way[three-versus-two]

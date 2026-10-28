@@ -1,0 +1,16 @@
+collected	tests/test_wire_contract_s5_admission.py::test_shadow_contract_module_has_no_public_boundary[norm-defaults@0]
+collected	tests/test_wire_contract_s5_admission.py::test_shadow_contract_module_has_no_public_boundary[norms@0]
+collected	tests/test_wire_contract_s5_admission.py::test_shadow_admission_retains_legacy_error[norms@0-None]
+collected	tests/test_wire_contract_s5_admission.py::test_shadow_admission_retains_legacy_error[norms@0-N3]
+collected	tests/test_wire_contract_s5_admission.py::test_shadow_admission_retains_legacy_error[norms@0-N7]
+collected	tests/test_wire_contract_s5_admission.py::test_shadow_admission_retains_legacy_error[norm-defaults@0-None]
+collected	tests/test_wire_contract_s5_admission.py::test_shadow_admission_retains_legacy_error[norm-defaults@0-D10]
+collected	tests/test_wire_contract_s5_admission.py::test_shadow_calls_import_no_diagnostic_module
+passed	tests/test_wire_contract_s5_admission.py::test_shadow_contract_module_has_no_public_boundary[norm-defaults@0]
+passed	tests/test_wire_contract_s5_admission.py::test_shadow_contract_module_has_no_public_boundary[norms@0]
+passed	tests/test_wire_contract_s5_admission.py::test_shadow_admission_retains_legacy_error[norms@0-None]
+passed	tests/test_wire_contract_s5_admission.py::test_shadow_admission_retains_legacy_error[norms@0-N3]
+passed	tests/test_wire_contract_s5_admission.py::test_shadow_admission_retains_legacy_error[norms@0-N7]
+passed	tests/test_wire_contract_s5_admission.py::test_shadow_admission_retains_legacy_error[norm-defaults@0-None]
+passed	tests/test_wire_contract_s5_admission.py::test_shadow_admission_retains_legacy_error[norm-defaults@0-D10]
+passed	tests/test_wire_contract_s5_admission.py::test_shadow_calls_import_no_diagnostic_module

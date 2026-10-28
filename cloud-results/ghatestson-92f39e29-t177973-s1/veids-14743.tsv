@@ -1,0 +1,10 @@
+collected	tests/test_trust_budget.py::test_trust_map_check_passes_on_the_live_tree
+collected	tests/test_trust_budget.py::test_every_allowance_is_signed_or_inherited_from_before_ar4
+collected	tests/test_trust_budget.py::test_one_unsigned_trusted_line_fails_the_live_check[K]
+collected	tests/test_trust_budget.py::test_one_unsigned_trusted_line_fails_the_live_check[S]
+collected	tests/test_trust_budget.py::test_one_unsigned_trusted_line_fails_the_live_check[V]
+passed	tests/test_trust_budget.py::test_trust_map_check_passes_on_the_live_tree
+passed	tests/test_trust_budget.py::test_every_allowance_is_signed_or_inherited_from_before_ar4
+passed	tests/test_trust_budget.py::test_one_unsigned_trusted_line_fails_the_live_check[K]
+passed	tests/test_trust_budget.py::test_one_unsigned_trusted_line_fails_the_live_check[S]
+passed	tests/test_trust_budget.py::test_one_unsigned_trusted_line_fails_the_live_check[V]

@@ -1,0 +1,510 @@
+collected	tests/test_select_tests.py::test_unit_names_are_cpython_qualnames
+collected	tests/test_select_tests.py::test_qualnames_of_the_repository_match_the_compiler
+collected	tests/test_select_tests.py::test_comments_and_docstrings_change_nothing
+collected	tests/test_select_tests.py::test_delta_classifies_each_kind_of_edit[def f():\n    return 1\n-def f():\n    return 2\n-expected0]
+collected	tests/test_select_tests.py::test_delta_classifies_each_kind_of_edit[class C:\n    def m(self):\n        return 1\n-class C:\n    def m(self):\n        return 2\n-expected1]
+collected	tests/test_select_tests.py::test_delta_classifies_each_kind_of_edit[def f():\n    def g():\n        return 1\n    return g\n-def f():\n    def g():\n        return 2\n    return g\n-expected2]
+collected	tests/test_select_tests.py::test_delta_classifies_each_kind_of_edit[def f(x=1):\n    return x\n-def f(x=2):\n    return x\n-expected3]
+collected	tests/test_select_tests.py::test_delta_classifies_each_kind_of_edit[X = 1\ndef f():\n    return X\n-X = 2\ndef f():\n    return X\n-expected4]
+collected	tests/test_select_tests.py::test_delta_classifies_each_kind_of_edit[TABLE = {}\n-TABLE = {}\nTABLE['k'] = 1\n-expected5]
+collected	tests/test_select_tests.py::test_delta_classifies_each_kind_of_edit[class C:\n    a = 1\n-class C:\n    a = 2\n-expected6]
+collected	tests/test_select_tests.py::test_delta_classifies_each_kind_of_edit[X = 1\n-X = 1\nregister(X)\n-expected7]
+collected	tests/test_select_tests.py::test_delta_classifies_each_kind_of_edit[def f():\n    pass\n-@register\ndef f():\n    pass\n-expected8]
+collected	tests/test_select_tests.py::test_delta_classifies_each_kind_of_edit[def f():\n    pass\n-@functools.cache\ndef f():\n    pass\n-expected9]
+collected	tests/test_select_tests.py::test_delta_classifies_each_kind_of_edit[A = 1\nB = 2\n-B = 2\nA = 1\n-expected10]
+collected	tests/test_select_tests.py::test_delta_classifies_each_kind_of_edit[def f():\n    pass\n-def f():\n    pass\ndef g():\n    pass\n-expected11]
+collected	tests/test_select_tests.py::test_delta_classifies_each_kind_of_edit[def f():\n    pass\ndef g():\n    pass\n-def f():\n    pass\n-expected12]
+collected	tests/test_select_tests.py::test_def_and_async_def_are_different_units[def f():\n    return 1\n]
+collected	tests/test_select_tests.py::test_def_and_async_def_are_different_units[class C:\n    def f(self):\n        return 1\n]
+collected	tests/test_select_tests.py::test_def_and_async_def_are_different_units[def g():\n    def f():\n        return 1\n    return f\n]
+collected	tests/test_select_tests.py::test_def_and_async_def_are_different_units[class C:\n    @staticmethod\n    def f():\n        return 1\n]
+collected	tests/test_select_tests.py::test_making_a_repository_method_async_changes_it
+collected	tests/test_select_tests.py::test_every_field_of_a_def_or_class_is_part_of_its_digest
+collected	tests/test_select_tests.py::test_defs_in_every_compound_statement_are_units
+collected	tests/test_select_tests.py::test_every_identifier_field_of_the_ast_is_classified
+collected	tests/test_select_tests.py::test_a_changed_function_selects_the_tests_that_ran_it
+collected	tests/test_select_tests.py::test_light_tier_keeps_the_heavy_test_of_a_changed_function
+collected	tests/test_select_tests.py::test_a_changed_constant_selects_its_readers_here_and_in_importers
+collected	tests/test_select_tests.py::test_a_top_level_call_selects_every_importer
+collected	tests/test_select_tests.py::test_a_new_function_nothing_calls_by_name_selects_the_whole_file
+collected	tests/test_select_tests.py::test_a_new_function_called_by_changed_code_adds_nothing_else
+collected	tests/test_select_tests.py::test_lookups_match_nested_code_but_not_name_prefixes
+collected	tests/test_select_tests.py::test_map_round_trips_through_its_edges
+collected	tests/test_select_tests.py::test_resumed_unit_merges_every_edge_kind
+collected	tests/test_select_tests.py::test_operation_map_rejects_missing_and_bool_indices
+collected	tests/test_select_tests.py::test_service_modes_narrow_only_known_recorded_users
+collected	tests/test_select_tests.py::test_compiled_mode_roots_cover_every_service_mode
+collected	tests/test_select_tests.py::test_unverified_mode_activation_keeps_service_wide_selection
+collected	tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean
+collected	tests/test_select_tests.py::test_shared_service_response_dependency_selects_every_mode
+collected	tests/test_select_tests.py::test_checker_pin_reader_still_selects_on_lock_change
+collected	tests/test_select_tests.py::test_recorder_tracks_each_service_request_mode
+collected	tests/test_select_tests.py::test_lean_service_emits_mode_before_dispatch
+collected	tests/test_select_tests.py::test_seeded_manifest_edits_change_a_field_ve_reads[graph.compose]
+collected	tests/test_select_tests.py::test_seeded_manifest_edits_change_a_field_ve_reads[norms.elaborate]
+collected	tests/test_select_tests.py::test_seeded_manifest_edits_change_a_field_ve_reads[certificate.check]
+collected	tests/test_select_tests.py::test_seeded_manifest_edits_change_a_field_ve_reads[evaluate]
+collected	tests/test_select_tests.py::test_seeded_manifest_edits_change_a_field_ve_reads[bundle.check]
+collected	tests/test_select_tests.py::test_the_lean_seed_adds_a_module_to_one_executable
+collected	tests/test_select_tests.py::test_seeded_manifest_edits_select_their_readers[graph.compose]
+collected	tests/test_select_tests.py::test_seeded_manifest_edits_select_their_readers[norms.elaborate]
+collected	tests/test_select_tests.py::test_seeded_manifest_edits_select_their_readers[certificate.check]
+collected	tests/test_select_tests.py::test_seeded_manifest_edits_select_their_readers[evaluate]
+collected	tests/test_select_tests.py::test_seeded_manifest_edits_select_their_readers[bundle.check]
+collected	tests/test_select_tests.py::test_removed_manifest_operation_selects_registration
+collected	tests/test_select_tests.py::test_semantic_registration_reads_only_presence
+collected	tests/test_select_tests.py::test_every_read_of_the_operation_table_is_an_audit_event[__contains__]
+collected	tests/test_select_tests.py::test_every_read_of_the_operation_table_is_an_audit_event[__eq__]
+collected	tests/test_select_tests.py::test_every_read_of_the_operation_table_is_an_audit_event[__getitem__]
+collected	tests/test_select_tests.py::test_every_read_of_the_operation_table_is_an_audit_event[__iter__]
+collected	tests/test_select_tests.py::test_every_read_of_the_operation_table_is_an_audit_event[__len__]
+collected	tests/test_select_tests.py::test_every_read_of_the_operation_table_is_an_audit_event[__ne__]
+collected	tests/test_select_tests.py::test_every_read_of_the_operation_table_is_an_audit_event[get]
+collected	tests/test_select_tests.py::test_every_read_of_the_operation_table_is_an_audit_event[items]
+collected	tests/test_select_tests.py::test_every_read_of_the_operation_table_is_an_audit_event[keys]
+collected	tests/test_select_tests.py::test_every_read_of_the_operation_table_is_an_audit_event[values]
+collected	tests/test_select_tests.py::test_difffuzz_binding_lookup_is_a_recorded_manifest_read
+collected	tests/test_select_tests.py::test_no_module_reads_assurance_state_around_the_audited_api
+collected	tests/test_select_tests.py::test_manifest_shared_field_or_missing_map_selects_full
+collected	tests/test_select_tests.py::test_automatic_selection_without_a_map_runs_full_suite
+collected	tests/test_select_tests.py::test_find_map_names_each_nearer_map_it_skips
+collected	tests/test_select_tests.py::test_select_tests_says_why_old_maps_left_it_without_one
+collected	tests/test_select_tests.py::test_tree_maps_do_not_crowd_commit_maps_out_of_the_window
+collected	tests/test_select_tests.py::test_freshness_is_the_map_selection_would_use
+collected	tests/test_select_tests.py::test_each_map_format_version_ships_with_a_converter_or_a_recorded_map
+collected	tests/test_select_tests.py::test_a_version_6_map_converts_and_keeps_every_service_user
+collected	tests/test_select_tests.py::test_recording_starts_the_longest_units_first
+collected	tests/test_select_tests.py::test_a_child_that_records_here_and_left_no_file_ran_nothing[records here]
+collected	tests/test_select_tests.py::test_a_child_that_records_here_and_left_no_file_ran_nothing[another interpreter]
+collected	tests/test_select_tests.py::test_a_child_that_records_here_and_left_no_file_ran_nothing[site skipped]
+collected	tests/test_select_tests.py::test_a_child_that_records_here_and_left_no_file_ran_nothing[another recording]
+collected	tests/test_select_tests.py::test_a_child_records_here_only_if_the_hook_started_this_process
+collected	tests/test_select_tests.py::test_the_hook_test_map_installs_is_the_one_the_recorder_checks
+collected	tests/test_select_tests.py::test_a_recording_inside_a_recorded_test_hands_over_its_records
+collected	tests/test_select_tests.py::test_added_and_removed_lean_modules_select_only_importing_executables
+collected	tests/test_select_tests.py::test_tests_that_ran_no_drifted_code_keep_their_map_entry
+collected	tests/test_select_tests.py::test_drifted_data_and_programs_make_their_users_uncertain
+collected	tests/test_select_tests.py::test_static_closure_follows_imports_facade_and_named_programs
+collected	tests/test_select_tests.py::test_static_closure_holds_what_each_conftest_above_the_test_reaches
+collected	tests/test_select_tests.py::test_a_deleted_file_keeps_the_tests_that_used_it
+collected	tests/test_select_tests.py::test_without_a_map_deleting_a_module_selects_its_importers
+collected	tests/test_select_tests.py::test_with_a_map_deleting_a_module_selects_every_test_that_imported_it
+collected	tests/test_select_tests.py::test_recorder_sees_functions_reads_and_children
+collected	tests/test_select_tests.py::test_recorder_tracks_manifest_operations_without_import_read
+collected	tests/test_select_tests.py::test_direct_manifest_read_remains_a_whole_file_edge
+collected	tests/test_select_tests.py::test_a_python_child_that_leaves_no_record_makes_the_unit_opaque
+collected	tests/test_select_tests.py::test_a_test_run_by_pytest_keeps_its_own_reads_and_listings
+collected	tests/test_select_tests.py::test_reads_and_listings_belong_to_the_innermost_owner
+collected	tests/test_select_tests.py::test_whole_plans_on_this_checkout
+collected	tests/test_select_tests.py::test_a_workflow_change_selects_only_the_workflow_test
+collected	tests/test_select_tests.py::test_native_changes_schedule_builds_and_their_runners
+collected	tests/test_select_tests.py::test_an_evidence_file_selects_its_readers_not_every_unmapped_unit
+collected	tests/test_select_tests.py::test_a_product_word_names_only_product_directories
+collected	tests/test_select_tests.py::test_a_merge_driver_edit_of_gitattributes_selects_its_readers_and_git_users
+collected	tests/test_select_tests.py::test_only_checkout_attribute_edits_of_gitattributes_change_everything[merge line moved]
+collected	tests/test_select_tests.py::test_only_checkout_attribute_edits_of_gitattributes_change_everything[comment]
+collected	tests/test_select_tests.py::test_only_checkout_attribute_edits_of_gitattributes_change_everything[export rule]
+collected	tests/test_select_tests.py::test_only_checkout_attribute_edits_of_gitattributes_change_everything[diff driver]
+collected	tests/test_select_tests.py::test_only_checkout_attribute_edits_of_gitattributes_change_everything[text set]
+collected	tests/test_select_tests.py::test_only_checkout_attribute_edits_of_gitattributes_change_everything[text unset]
+collected	tests/test_select_tests.py::test_only_checkout_attribute_edits_of_gitattributes_change_everything[eol]
+collected	tests/test_select_tests.py::test_only_checkout_attribute_edits_of_gitattributes_change_everything[filter]
+collected	tests/test_select_tests.py::test_only_checkout_attribute_edits_of_gitattributes_change_everything[binary macro]
+collected	tests/test_select_tests.py::test_only_checkout_attribute_edits_of_gitattributes_change_everything[line order of eol]
+collected	tests/test_select_tests.py::test_only_checkout_attribute_edits_of_gitattributes_change_everything[macro defined]
+collected	tests/test_select_tests.py::test_only_checkout_attribute_edits_of_gitattributes_change_everything[macro used]
+collected	tests/test_select_tests.py::test_only_checkout_attribute_edits_of_gitattributes_change_everything[quoted pattern]
+collected	tests/test_select_tests.py::test_only_checkout_attribute_edits_of_gitattributes_change_everything[unknown token]
+collected	tests/test_select_tests.py::test_a_shared_manifest_field_selects_its_whole_manifest_readers
+collected	tests/test_select_tests.py::test_an_authority_change_selects_the_registrations_of_its_entries
+collected	tests/test_select_tests.py::test_an_identical_rebuild_selects_no_runner
+collected	tests/test_select_tests.py::test_a_changed_binary_selects_all_its_runners
+collected	tests/test_select_tests.py::test_without_both_build_records_every_runner_is_selected[base]
+collected	tests/test_select_tests.py::test_without_both_build_records_every_runner_is_selected[head]
+collected	tests/test_select_tests.py::test_without_both_build_records_every_runner_is_selected[both]
+collected	tests/test_select_tests.py::test_no_cutoff_when_the_trees_cannot_show_the_change
+collected	tests/test_select_tests.py::test_a_build_record_needs_a_current_build_of_one_tree
+collected	tests/test_select_tests.py::test_a_current_build_is_up_to_date_and_traced
+collected	tests/test_select_tests.py::test_a_run_builds_the_head_for_the_cutoff_when_the_base_build_is_recorded
+collected	tests/test_select_tests.py::test_deleting_a_module_that_binds_nothing_selects_its_importers[empty]
+collected	tests/test_select_tests.py::test_deleting_a_module_that_binds_nothing_selects_its_importers[docstring]
+collected	tests/test_select_tests.py::test_deleting_a_module_that_binds_nothing_selects_its_importers[pass]
+collected	tests/test_select_tests.py::test_deleting_a_module_that_binds_nothing_selects_its_importers[comment]
+collected	tests/test_select_tests.py::test_adding_a_python_fixture_selects_the_tests_that_listed_its_directory
+collected	tests/test_select_tests.py::test_an_added_or_deleted_file_selects_the_listers_of_every_directory_above_it
+collected	tests/test_select_tests.py::test_a_file_in_a_new_directory_selects_the_listers_of_the_root
+collected	tests/test_select_tests.py::test_a_listing_of_a_directory_that_does_not_exist_yet_is_kept
+collected	tests/test_select_tests.py::test_without_a_map_an_added_file_selects_the_tests_that_name_the_root
+collected	tests/test_select_tests.py::test_a_new_module_selects_the_tests_that_now_import_it
+collected	tests/test_select_tests.py::test_a_named_but_unedited_path_may_have_appeared_or_vanished
+collected	tests/test_select_tests.py::test_every_kind_of_file_has_a_presence_example
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[ve/_presence_probe.py-A-empty]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[ve/_presence_probe.py-A-docstring]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[ve/_presence_probe.py-A-pass]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[ve/_presence_probe.py-A-comment]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[ve/_presence_probe.py-A-code]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[ve/_presence_probe.py-D-empty]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[ve/_presence_probe.py-D-docstring]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[ve/_presence_probe.py-D-pass]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[ve/_presence_probe.py-D-comment]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[ve/_presence_probe.py-D-code]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[tests/fixtures/_presence_probe.py-A-empty]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[tests/fixtures/_presence_probe.py-A-docstring]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[tests/fixtures/_presence_probe.py-A-pass]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[tests/fixtures/_presence_probe.py-A-comment]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[tests/fixtures/_presence_probe.py-A-code]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[tests/fixtures/_presence_probe.py-D-empty]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[tests/fixtures/_presence_probe.py-D-docstring]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[tests/fixtures/_presence_probe.py-D-pass]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[tests/fixtures/_presence_probe.py-D-comment]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[tests/fixtures/_presence_probe.py-D-code]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[lean/VE/_PresenceProbe.lean-A-text]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[lean/VE/_PresenceProbe.lean-D-text]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[rust/ve-core/src/_presence_probe.rs-A-text]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[rust/ve-core/src/_presence_probe.rs-D-text]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[tests/fixtures/_presence_probe.json-A-text]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[tests/fixtures/_presence_probe.json-D-text]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[docs/_presence_probe.md-A-text]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[docs/_presence_probe.md-D-text]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[_presence_probe.md-A-text]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[_presence_probe.md-D-text]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[.github/workflows/_presence_probe.yml-A-text]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[.github/workflows/_presence_probe.yml-D-text]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[pyproject.toml-A-text]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[pyproject.toml-D-text]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[_presence_probe.cfg-A-text]
+collected	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[_presence_probe.cfg-D-text]
+collected	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[tests_of matches only the exact name]
+collected	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[module-level statements are ignored]
+collected	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[drift is ignored]
+collected	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[new functions are trusted]
+collected	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[any pytest frame on the stack makes a read infrastructure]
+collected	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[def and async def are digested alike]
+collected	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[the graph forgets deleted files]
+collected	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[the plan's graph forgets deleted files]
+collected	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[a vanished module is not an import-time change]
+collected	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[an empty delta hides an added or deleted module]
+collected	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[directory listings count for data files only]
+collected	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[listers of the root are ignored]
+collected	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[only the nearest recorded directory's listers count]
+collected	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[listers of the root are ignored for a new directory]
+collected	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[listings of directories without a tracked file are dropped]
+collected	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[the static graph never names the root]
+collected	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[every '.' literal names the root]
+collected	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[product modules name the root too]
+collected	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[tree maps fill find_map's window]
+collected	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[a new map format needs no converter or map]
+collected	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[the version 6 converter drops service users]
+collected	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[units record in name order]
+collected	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[a child without the hook counts as recorded]
+collected	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[a nested recording keeps its records]
+collected	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[product words name every directory of the name]
+collected	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[.gitattributes changes everything]
+collected	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[checkout attributes are ignored]
+collected	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[shared manifest fields have no readers]
+collected	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[an authority change selects only entry readers]
+collected	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[the cutoff ignores the digests]
+collected	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[a missing build record counts as identical]
+collected	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[equal trees are an identical build]
+collected	tests/test_select_tests.py::test_testing_doc_tables_are_generated_from_the_evidence
+collected	tests/test_select_tests.py::test_smoke_files_and_top_level_areas_match_the_tree
+collected	tests/test_select_tests.py::test_a_malformed_map_is_rejected
+collected	tests/test_select_tests.py::test_every_test_file_is_reachable_from_a_source_path
+collected	tests/test_select_tests.py::test_changes_select_the_tests_that_depend_on_them[lean]
+collected	tests/test_select_tests.py::test_changes_select_the_tests_that_depend_on_them[rust]
+collected	tests/test_select_tests.py::test_changes_select_the_tests_that_depend_on_them[use case]
+collected	tests/test_select_tests.py::test_changes_select_the_tests_that_depend_on_them[hook]
+collected	tests/test_select_tests.py::test_changes_select_the_tests_that_depend_on_them[test helper]
+collected	tests/test_select_tests.py::test_changes_select_the_tests_that_depend_on_them[bench]
+collected	tests/test_select_tests.py::test_what_the_conftest_loads_selects_every_test_below_it[tests/conftest.py]
+collected	tests/test_select_tests.py::test_what_the_conftest_loads_selects_every_test_below_it[tests/subprocesses.py]
+collected	tests/test_select_tests.py::test_what_the_conftest_loads_selects_every_test_below_it[tools/rust_build.py]
+collected	tests/test_select_tests.py::test_what_the_conftest_loads_selects_every_test_below_it[ve/surface/unambiguity.py]
+collected	tests/test_select_tests.py::test_a_conftest_in_a_test_directory_joins_its_tests_closure
+collected	tests/test_select_tests.py::test_narrow_changes_select_few_tests
+collected	tests/test_select_tests.py::test_unknown_or_unreached_inputs_select_the_full_suite
+collected	tests/test_select_tests.py::test_a_script_no_test_reaches_is_reported
+collected	tests/test_select_tests.py::test_a_change_that_can_stale_the_history_list_runs_its_lint_with_a_map[tests/test_vacuity.py]
+collected	tests/test_select_tests.py::test_a_change_that_can_stale_the_history_list_runs_its_lint_with_a_map[tests/subprocesses.py]
+collected	tests/test_select_tests.py::test_a_change_that_can_stale_the_history_list_runs_its_lint_with_a_map[tests/conftest.py]
+collected	tests/test_select_tests.py::test_a_change_that_can_stale_the_history_list_runs_its_lint_with_a_map[tests/history-dependent.json]
+collected	tests/test_select_tests.py::test_a_change_that_can_stale_the_history_list_runs_its_lint_with_a_map[tests/history-map.json]
+collected	tests/test_select_tests.py::test_a_change_that_can_stale_the_history_list_runs_its_lint_with_a_map[tools/history_tests.py]
+collected	tests/test_select_tests.py::test_a_change_that_can_stale_the_history_list_runs_its_lint_with_a_map[tools/git_words.py]
+collected	tests/test_select_tests.py::test_a_change_that_can_stale_the_history_list_runs_its_lint_with_a_map[tools/cache_store.py]
+collected	tests/test_select_tests.py::test_documentation_and_an_unlisted_module_do_not_run_the_history_lint_with_a_map[tools/bench/baseline.py]
+collected	tests/test_select_tests.py::test_documentation_and_an_unlisted_module_do_not_run_the_history_lint_with_a_map[docs/english-surface.md]
+collected	tests/test_select_tests.py::test_a_change_that_can_stale_the_history_list_runs_its_lint_impacted[tests/test_vacuity.py]
+collected	tests/test_select_tests.py::test_a_change_that_can_stale_the_history_list_runs_its_lint_impacted[tests/subprocesses.py]
+collected	tests/test_select_tests.py::test_a_change_that_can_stale_the_history_list_runs_its_lint_impacted[tests/conftest.py]
+collected	tests/test_select_tests.py::test_a_change_that_can_stale_the_history_list_runs_its_lint_impacted[tests/history-dependent.json]
+collected	tests/test_select_tests.py::test_a_change_that_can_stale_the_history_list_runs_its_lint_impacted[tests/history-map.json]
+collected	tests/test_select_tests.py::test_a_change_that_can_stale_the_history_list_runs_its_lint_impacted[tools/history_tests.py]
+collected	tests/test_select_tests.py::test_a_change_that_can_stale_the_history_list_runs_its_lint_impacted[tools/git_words.py]
+collected	tests/test_select_tests.py::test_a_change_that_can_stale_the_history_list_runs_its_lint_impacted[tools/cache_store.py]
+collected	tests/test_select_tests.py::test_documentation_and_an_unlisted_module_do_not_run_the_history_lint_impacted[tools/bench/baseline.py]
+collected	tests/test_select_tests.py::test_documentation_and_an_unlisted_module_do_not_run_the_history_lint_impacted[docs/english-surface.md]
+collected	tests/test_select_tests.py::test_the_history_list_and_its_map_extract_each_name_their_sources[both]
+collected	tests/test_select_tests.py::test_the_history_list_and_its_map_extract_each_name_their_sources[list malformed]
+collected	tests/test_select_tests.py::test_the_history_list_and_its_map_extract_each_name_their_sources[list unreadable]
+collected	tests/test_select_tests.py::test_the_history_list_and_its_map_extract_each_name_their_sources[extract malformed]
+collected	tests/test_select_tests.py::test_the_history_list_and_its_map_extract_each_name_their_sources[extract missing]
+collected	tests/test_select_tests.py::test_the_history_list_and_its_map_extract_each_name_their_sources[neither]
+collected	tests/test_select_tests.py::test_a_module_only_the_map_extract_names_runs_the_lint
+collected	tests/test_select_tests.py::test_without_a_readable_history_list_the_other_triggers_still_run_the_lint
+collected	tests/test_select_tests.py::test_what_the_history_list_names_only_adds_its_lint
+passed	tests/test_select_tests.py::test_unit_names_are_cpython_qualnames
+passed	tests/test_select_tests.py::test_qualnames_of_the_repository_match_the_compiler
+passed	tests/test_select_tests.py::test_comments_and_docstrings_change_nothing
+passed	tests/test_select_tests.py::test_delta_classifies_each_kind_of_edit[def f():\n    return 1\n-def f():\n    return 2\n-expected0]
+passed	tests/test_select_tests.py::test_delta_classifies_each_kind_of_edit[class C:\n    def m(self):\n        return 1\n-class C:\n    def m(self):\n        return 2\n-expected1]
+passed	tests/test_select_tests.py::test_delta_classifies_each_kind_of_edit[def f():\n    def g():\n        return 1\n    return g\n-def f():\n    def g():\n        return 2\n    return g\n-expected2]
+passed	tests/test_select_tests.py::test_delta_classifies_each_kind_of_edit[def f(x=1):\n    return x\n-def f(x=2):\n    return x\n-expected3]
+passed	tests/test_select_tests.py::test_delta_classifies_each_kind_of_edit[X = 1\ndef f():\n    return X\n-X = 2\ndef f():\n    return X\n-expected4]
+passed	tests/test_select_tests.py::test_delta_classifies_each_kind_of_edit[TABLE = {}\n-TABLE = {}\nTABLE['k'] = 1\n-expected5]
+passed	tests/test_select_tests.py::test_delta_classifies_each_kind_of_edit[class C:\n    a = 1\n-class C:\n    a = 2\n-expected6]
+passed	tests/test_select_tests.py::test_delta_classifies_each_kind_of_edit[X = 1\n-X = 1\nregister(X)\n-expected7]
+passed	tests/test_select_tests.py::test_delta_classifies_each_kind_of_edit[def f():\n    pass\n-@register\ndef f():\n    pass\n-expected8]
+passed	tests/test_select_tests.py::test_delta_classifies_each_kind_of_edit[def f():\n    pass\n-@functools.cache\ndef f():\n    pass\n-expected9]
+passed	tests/test_select_tests.py::test_delta_classifies_each_kind_of_edit[A = 1\nB = 2\n-B = 2\nA = 1\n-expected10]
+passed	tests/test_select_tests.py::test_delta_classifies_each_kind_of_edit[def f():\n    pass\n-def f():\n    pass\ndef g():\n    pass\n-expected11]
+passed	tests/test_select_tests.py::test_delta_classifies_each_kind_of_edit[def f():\n    pass\ndef g():\n    pass\n-def f():\n    pass\n-expected12]
+passed	tests/test_select_tests.py::test_def_and_async_def_are_different_units[def f():\n    return 1\n]
+passed	tests/test_select_tests.py::test_def_and_async_def_are_different_units[class C:\n    def f(self):\n        return 1\n]
+passed	tests/test_select_tests.py::test_def_and_async_def_are_different_units[def g():\n    def f():\n        return 1\n    return f\n]
+passed	tests/test_select_tests.py::test_def_and_async_def_are_different_units[class C:\n    @staticmethod\n    def f():\n        return 1\n]
+passed	tests/test_select_tests.py::test_making_a_repository_method_async_changes_it
+passed	tests/test_select_tests.py::test_every_field_of_a_def_or_class_is_part_of_its_digest
+passed	tests/test_select_tests.py::test_defs_in_every_compound_statement_are_units
+passed	tests/test_select_tests.py::test_every_identifier_field_of_the_ast_is_classified
+passed	tests/test_select_tests.py::test_a_changed_function_selects_the_tests_that_ran_it
+passed	tests/test_select_tests.py::test_light_tier_keeps_the_heavy_test_of_a_changed_function
+passed	tests/test_select_tests.py::test_a_changed_constant_selects_its_readers_here_and_in_importers
+passed	tests/test_select_tests.py::test_a_top_level_call_selects_every_importer
+passed	tests/test_select_tests.py::test_a_new_function_nothing_calls_by_name_selects_the_whole_file
+passed	tests/test_select_tests.py::test_a_new_function_called_by_changed_code_adds_nothing_else
+passed	tests/test_select_tests.py::test_lookups_match_nested_code_but_not_name_prefixes
+passed	tests/test_select_tests.py::test_map_round_trips_through_its_edges
+passed	tests/test_select_tests.py::test_resumed_unit_merges_every_edge_kind
+passed	tests/test_select_tests.py::test_operation_map_rejects_missing_and_bool_indices
+passed	tests/test_select_tests.py::test_service_modes_narrow_only_known_recorded_users
+passed	tests/test_select_tests.py::test_compiled_mode_roots_cover_every_service_mode
+passed	tests/test_select_tests.py::test_unverified_mode_activation_keeps_service_wide_selection
+passed	tests/test_select_tests.py::test_compiled_mode_roots_regenerate_from_lean
+passed	tests/test_select_tests.py::test_shared_service_response_dependency_selects_every_mode
+passed	tests/test_select_tests.py::test_checker_pin_reader_still_selects_on_lock_change
+passed	tests/test_select_tests.py::test_recorder_tracks_each_service_request_mode
+passed	tests/test_select_tests.py::test_lean_service_emits_mode_before_dispatch
+passed	tests/test_select_tests.py::test_seeded_manifest_edits_change_a_field_ve_reads[graph.compose]
+passed	tests/test_select_tests.py::test_seeded_manifest_edits_change_a_field_ve_reads[norms.elaborate]
+passed	tests/test_select_tests.py::test_seeded_manifest_edits_change_a_field_ve_reads[certificate.check]
+passed	tests/test_select_tests.py::test_seeded_manifest_edits_change_a_field_ve_reads[evaluate]
+passed	tests/test_select_tests.py::test_seeded_manifest_edits_change_a_field_ve_reads[bundle.check]
+passed	tests/test_select_tests.py::test_the_lean_seed_adds_a_module_to_one_executable
+passed	tests/test_select_tests.py::test_seeded_manifest_edits_select_their_readers[graph.compose]
+passed	tests/test_select_tests.py::test_seeded_manifest_edits_select_their_readers[norms.elaborate]
+passed	tests/test_select_tests.py::test_seeded_manifest_edits_select_their_readers[certificate.check]
+passed	tests/test_select_tests.py::test_seeded_manifest_edits_select_their_readers[evaluate]
+passed	tests/test_select_tests.py::test_seeded_manifest_edits_select_their_readers[bundle.check]
+passed	tests/test_select_tests.py::test_removed_manifest_operation_selects_registration
+passed	tests/test_select_tests.py::test_semantic_registration_reads_only_presence
+passed	tests/test_select_tests.py::test_every_read_of_the_operation_table_is_an_audit_event[__contains__]
+passed	tests/test_select_tests.py::test_every_read_of_the_operation_table_is_an_audit_event[__eq__]
+passed	tests/test_select_tests.py::test_every_read_of_the_operation_table_is_an_audit_event[__getitem__]
+passed	tests/test_select_tests.py::test_every_read_of_the_operation_table_is_an_audit_event[__iter__]
+passed	tests/test_select_tests.py::test_every_read_of_the_operation_table_is_an_audit_event[__len__]
+passed	tests/test_select_tests.py::test_every_read_of_the_operation_table_is_an_audit_event[__ne__]
+passed	tests/test_select_tests.py::test_every_read_of_the_operation_table_is_an_audit_event[get]
+passed	tests/test_select_tests.py::test_every_read_of_the_operation_table_is_an_audit_event[items]
+passed	tests/test_select_tests.py::test_every_read_of_the_operation_table_is_an_audit_event[keys]
+passed	tests/test_select_tests.py::test_every_read_of_the_operation_table_is_an_audit_event[values]
+passed	tests/test_select_tests.py::test_difffuzz_binding_lookup_is_a_recorded_manifest_read
+passed	tests/test_select_tests.py::test_no_module_reads_assurance_state_around_the_audited_api
+passed	tests/test_select_tests.py::test_manifest_shared_field_or_missing_map_selects_full
+passed	tests/test_select_tests.py::test_automatic_selection_without_a_map_runs_full_suite
+passed	tests/test_select_tests.py::test_find_map_names_each_nearer_map_it_skips
+passed	tests/test_select_tests.py::test_select_tests_says_why_old_maps_left_it_without_one
+passed	tests/test_select_tests.py::test_tree_maps_do_not_crowd_commit_maps_out_of_the_window
+passed	tests/test_select_tests.py::test_freshness_is_the_map_selection_would_use
+passed	tests/test_select_tests.py::test_each_map_format_version_ships_with_a_converter_or_a_recorded_map
+passed	tests/test_select_tests.py::test_a_version_6_map_converts_and_keeps_every_service_user
+passed	tests/test_select_tests.py::test_recording_starts_the_longest_units_first
+passed	tests/test_select_tests.py::test_a_child_that_records_here_and_left_no_file_ran_nothing[records here]
+passed	tests/test_select_tests.py::test_a_child_that_records_here_and_left_no_file_ran_nothing[another interpreter]
+passed	tests/test_select_tests.py::test_a_child_that_records_here_and_left_no_file_ran_nothing[site skipped]
+passed	tests/test_select_tests.py::test_a_child_that_records_here_and_left_no_file_ran_nothing[another recording]
+passed	tests/test_select_tests.py::test_a_child_records_here_only_if_the_hook_started_this_process
+passed	tests/test_select_tests.py::test_the_hook_test_map_installs_is_the_one_the_recorder_checks
+passed	tests/test_select_tests.py::test_a_recording_inside_a_recorded_test_hands_over_its_records
+passed	tests/test_select_tests.py::test_added_and_removed_lean_modules_select_only_importing_executables
+passed	tests/test_select_tests.py::test_tests_that_ran_no_drifted_code_keep_their_map_entry
+passed	tests/test_select_tests.py::test_drifted_data_and_programs_make_their_users_uncertain
+passed	tests/test_select_tests.py::test_static_closure_follows_imports_facade_and_named_programs
+passed	tests/test_select_tests.py::test_static_closure_holds_what_each_conftest_above_the_test_reaches
+passed	tests/test_select_tests.py::test_a_deleted_file_keeps_the_tests_that_used_it
+passed	tests/test_select_tests.py::test_without_a_map_deleting_a_module_selects_its_importers
+passed	tests/test_select_tests.py::test_with_a_map_deleting_a_module_selects_every_test_that_imported_it
+passed	tests/test_select_tests.py::test_recorder_sees_functions_reads_and_children
+passed	tests/test_select_tests.py::test_recorder_tracks_manifest_operations_without_import_read
+passed	tests/test_select_tests.py::test_direct_manifest_read_remains_a_whole_file_edge
+passed	tests/test_select_tests.py::test_a_python_child_that_leaves_no_record_makes_the_unit_opaque
+passed	tests/test_select_tests.py::test_a_test_run_by_pytest_keeps_its_own_reads_and_listings
+passed	tests/test_select_tests.py::test_reads_and_listings_belong_to_the_innermost_owner
+passed	tests/test_select_tests.py::test_whole_plans_on_this_checkout
+passed	tests/test_select_tests.py::test_a_workflow_change_selects_only_the_workflow_test
+passed	tests/test_select_tests.py::test_native_changes_schedule_builds_and_their_runners
+passed	tests/test_select_tests.py::test_an_evidence_file_selects_its_readers_not_every_unmapped_unit
+passed	tests/test_select_tests.py::test_a_product_word_names_only_product_directories
+passed	tests/test_select_tests.py::test_a_merge_driver_edit_of_gitattributes_selects_its_readers_and_git_users
+passed	tests/test_select_tests.py::test_only_checkout_attribute_edits_of_gitattributes_change_everything[merge line moved]
+passed	tests/test_select_tests.py::test_only_checkout_attribute_edits_of_gitattributes_change_everything[comment]
+passed	tests/test_select_tests.py::test_only_checkout_attribute_edits_of_gitattributes_change_everything[export rule]
+passed	tests/test_select_tests.py::test_only_checkout_attribute_edits_of_gitattributes_change_everything[diff driver]
+passed	tests/test_select_tests.py::test_only_checkout_attribute_edits_of_gitattributes_change_everything[text set]
+passed	tests/test_select_tests.py::test_only_checkout_attribute_edits_of_gitattributes_change_everything[text unset]
+passed	tests/test_select_tests.py::test_only_checkout_attribute_edits_of_gitattributes_change_everything[eol]
+passed	tests/test_select_tests.py::test_only_checkout_attribute_edits_of_gitattributes_change_everything[filter]
+passed	tests/test_select_tests.py::test_only_checkout_attribute_edits_of_gitattributes_change_everything[binary macro]
+passed	tests/test_select_tests.py::test_only_checkout_attribute_edits_of_gitattributes_change_everything[line order of eol]
+passed	tests/test_select_tests.py::test_only_checkout_attribute_edits_of_gitattributes_change_everything[macro defined]
+passed	tests/test_select_tests.py::test_only_checkout_attribute_edits_of_gitattributes_change_everything[macro used]
+passed	tests/test_select_tests.py::test_only_checkout_attribute_edits_of_gitattributes_change_everything[quoted pattern]
+passed	tests/test_select_tests.py::test_only_checkout_attribute_edits_of_gitattributes_change_everything[unknown token]
+passed	tests/test_select_tests.py::test_a_shared_manifest_field_selects_its_whole_manifest_readers
+passed	tests/test_select_tests.py::test_an_authority_change_selects_the_registrations_of_its_entries
+passed	tests/test_select_tests.py::test_an_identical_rebuild_selects_no_runner
+passed	tests/test_select_tests.py::test_a_changed_binary_selects_all_its_runners
+passed	tests/test_select_tests.py::test_without_both_build_records_every_runner_is_selected[base]
+passed	tests/test_select_tests.py::test_without_both_build_records_every_runner_is_selected[head]
+passed	tests/test_select_tests.py::test_without_both_build_records_every_runner_is_selected[both]
+passed	tests/test_select_tests.py::test_no_cutoff_when_the_trees_cannot_show_the_change
+passed	tests/test_select_tests.py::test_a_build_record_needs_a_current_build_of_one_tree
+passed	tests/test_select_tests.py::test_a_current_build_is_up_to_date_and_traced
+passed	tests/test_select_tests.py::test_a_run_builds_the_head_for_the_cutoff_when_the_base_build_is_recorded
+passed	tests/test_select_tests.py::test_deleting_a_module_that_binds_nothing_selects_its_importers[empty]
+passed	tests/test_select_tests.py::test_deleting_a_module_that_binds_nothing_selects_its_importers[docstring]
+passed	tests/test_select_tests.py::test_deleting_a_module_that_binds_nothing_selects_its_importers[pass]
+passed	tests/test_select_tests.py::test_deleting_a_module_that_binds_nothing_selects_its_importers[comment]
+passed	tests/test_select_tests.py::test_adding_a_python_fixture_selects_the_tests_that_listed_its_directory
+passed	tests/test_select_tests.py::test_an_added_or_deleted_file_selects_the_listers_of_every_directory_above_it
+passed	tests/test_select_tests.py::test_a_file_in_a_new_directory_selects_the_listers_of_the_root
+passed	tests/test_select_tests.py::test_a_listing_of_a_directory_that_does_not_exist_yet_is_kept
+passed	tests/test_select_tests.py::test_without_a_map_an_added_file_selects_the_tests_that_name_the_root
+passed	tests/test_select_tests.py::test_a_new_module_selects_the_tests_that_now_import_it
+passed	tests/test_select_tests.py::test_a_named_but_unedited_path_may_have_appeared_or_vanished
+passed	tests/test_select_tests.py::test_every_kind_of_file_has_a_presence_example
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[ve/_presence_probe.py-A-empty]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[ve/_presence_probe.py-A-docstring]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[ve/_presence_probe.py-A-pass]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[ve/_presence_probe.py-A-comment]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[ve/_presence_probe.py-A-code]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[ve/_presence_probe.py-D-empty]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[ve/_presence_probe.py-D-docstring]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[ve/_presence_probe.py-D-pass]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[ve/_presence_probe.py-D-comment]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[ve/_presence_probe.py-D-code]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[tests/fixtures/_presence_probe.py-A-empty]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[tests/fixtures/_presence_probe.py-A-docstring]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[tests/fixtures/_presence_probe.py-A-pass]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[tests/fixtures/_presence_probe.py-A-comment]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[tests/fixtures/_presence_probe.py-A-code]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[tests/fixtures/_presence_probe.py-D-empty]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[tests/fixtures/_presence_probe.py-D-docstring]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[tests/fixtures/_presence_probe.py-D-pass]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[tests/fixtures/_presence_probe.py-D-comment]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[tests/fixtures/_presence_probe.py-D-code]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[lean/VE/_PresenceProbe.lean-A-text]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[lean/VE/_PresenceProbe.lean-D-text]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[rust/ve-core/src/_presence_probe.rs-A-text]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[rust/ve-core/src/_presence_probe.rs-D-text]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[tests/fixtures/_presence_probe.json-A-text]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[tests/fixtures/_presence_probe.json-D-text]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[docs/_presence_probe.md-A-text]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[docs/_presence_probe.md-D-text]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[_presence_probe.md-A-text]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[_presence_probe.md-D-text]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[.github/workflows/_presence_probe.yml-A-text]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[.github/workflows/_presence_probe.yml-D-text]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[pyproject.toml-A-text]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[pyproject.toml-D-text]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[_presence_probe.cfg-A-text]
+passed	tests/test_select_tests.py::test_the_plan_and_the_drift_check_treat_presence_alike[_presence_probe.cfg-D-text]
+passed	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[tests_of matches only the exact name]
+passed	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[module-level statements are ignored]
+passed	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[drift is ignored]
+passed	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[new functions are trusted]
+passed	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[any pytest frame on the stack makes a read infrastructure]
+passed	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[def and async def are digested alike]
+passed	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[the graph forgets deleted files]
+passed	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[the plan's graph forgets deleted files]
+passed	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[a vanished module is not an import-time change]
+passed	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[an empty delta hides an added or deleted module]
+passed	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[directory listings count for data files only]
+passed	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[listers of the root are ignored]
+passed	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[only the nearest recorded directory's listers count]
+passed	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[listers of the root are ignored for a new directory]
+passed	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[listings of directories without a tracked file are dropped]
+passed	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[the static graph never names the root]
+passed	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[every '.' literal names the root]
+passed	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[product modules name the root too]
+passed	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[tree maps fill find_map's window]
+passed	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[a new map format needs no converter or map]
+passed	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[the version 6 converter drops service users]
+passed	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[units record in name order]
+passed	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[a child without the hook counts as recorded]
+passed	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[a nested recording keeps its records]
+passed	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[product words name every directory of the name]
+passed	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[.gitattributes changes everything]
+passed	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[checkout attributes are ignored]
+passed	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[shared manifest fields have no readers]
+passed	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[an authority change selects only entry readers]
+passed	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[the cutoff ignores the digests]
+passed	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[a missing build record counts as identical]
+passed	tests/test_select_tests.py::test_selector_mutants_fail_the_checks[equal trees are an identical build]
+passed	tests/test_select_tests.py::test_testing_doc_tables_are_generated_from_the_evidence
+passed	tests/test_select_tests.py::test_smoke_files_and_top_level_areas_match_the_tree
+passed	tests/test_select_tests.py::test_a_malformed_map_is_rejected
+passed	tests/test_select_tests.py::test_every_test_file_is_reachable_from_a_source_path
+passed	tests/test_select_tests.py::test_changes_select_the_tests_that_depend_on_them[lean]
+passed	tests/test_select_tests.py::test_changes_select_the_tests_that_depend_on_them[rust]
+passed	tests/test_select_tests.py::test_changes_select_the_tests_that_depend_on_them[use case]
+passed	tests/test_select_tests.py::test_changes_select_the_tests_that_depend_on_them[hook]
+passed	tests/test_select_tests.py::test_changes_select_the_tests_that_depend_on_them[test helper]
+passed	tests/test_select_tests.py::test_changes_select_the_tests_that_depend_on_them[bench]
+passed	tests/test_select_tests.py::test_what_the_conftest_loads_selects_every_test_below_it[tests/conftest.py]
+passed	tests/test_select_tests.py::test_what_the_conftest_loads_selects_every_test_below_it[tests/subprocesses.py]
+passed	tests/test_select_tests.py::test_what_the_conftest_loads_selects_every_test_below_it[tools/rust_build.py]
+passed	tests/test_select_tests.py::test_what_the_conftest_loads_selects_every_test_below_it[ve/surface/unambiguity.py]
+passed	tests/test_select_tests.py::test_a_conftest_in_a_test_directory_joins_its_tests_closure
+passed	tests/test_select_tests.py::test_narrow_changes_select_few_tests
+passed	tests/test_select_tests.py::test_unknown_or_unreached_inputs_select_the_full_suite
+passed	tests/test_select_tests.py::test_a_script_no_test_reaches_is_reported
+passed	tests/test_select_tests.py::test_a_change_that_can_stale_the_history_list_runs_its_lint_with_a_map[tests/test_vacuity.py]
+passed	tests/test_select_tests.py::test_a_change_that_can_stale_the_history_list_runs_its_lint_with_a_map[tests/subprocesses.py]
+passed	tests/test_select_tests.py::test_a_change_that_can_stale_the_history_list_runs_its_lint_with_a_map[tests/conftest.py]
+passed	tests/test_select_tests.py::test_a_change_that_can_stale_the_history_list_runs_its_lint_with_a_map[tests/history-dependent.json]
+passed	tests/test_select_tests.py::test_a_change_that_can_stale_the_history_list_runs_its_lint_with_a_map[tests/history-map.json]
+passed	tests/test_select_tests.py::test_a_change_that_can_stale_the_history_list_runs_its_lint_with_a_map[tools/history_tests.py]
+passed	tests/test_select_tests.py::test_a_change_that_can_stale_the_history_list_runs_its_lint_with_a_map[tools/git_words.py]
+passed	tests/test_select_tests.py::test_a_change_that_can_stale_the_history_list_runs_its_lint_with_a_map[tools/cache_store.py]
+passed	tests/test_select_tests.py::test_documentation_and_an_unlisted_module_do_not_run_the_history_lint_with_a_map[tools/bench/baseline.py]
+passed	tests/test_select_tests.py::test_documentation_and_an_unlisted_module_do_not_run_the_history_lint_with_a_map[docs/english-surface.md]
+passed	tests/test_select_tests.py::test_a_change_that_can_stale_the_history_list_runs_its_lint_impacted[tests/test_vacuity.py]
+passed	tests/test_select_tests.py::test_a_change_that_can_stale_the_history_list_runs_its_lint_impacted[tests/subprocesses.py]
+passed	tests/test_select_tests.py::test_a_change_that_can_stale_the_history_list_runs_its_lint_impacted[tests/conftest.py]
+passed	tests/test_select_tests.py::test_a_change_that_can_stale_the_history_list_runs_its_lint_impacted[tests/history-dependent.json]
+passed	tests/test_select_tests.py::test_a_change_that_can_stale_the_history_list_runs_its_lint_impacted[tests/history-map.json]
+passed	tests/test_select_tests.py::test_a_change_that_can_stale_the_history_list_runs_its_lint_impacted[tools/history_tests.py]
+passed	tests/test_select_tests.py::test_a_change_that_can_stale_the_history_list_runs_its_lint_impacted[tools/git_words.py]
+passed	tests/test_select_tests.py::test_a_change_that_can_stale_the_history_list_runs_its_lint_impacted[tools/cache_store.py]
+passed	tests/test_select_tests.py::test_documentation_and_an_unlisted_module_do_not_run_the_history_lint_impacted[tools/bench/baseline.py]
+passed	tests/test_select_tests.py::test_documentation_and_an_unlisted_module_do_not_run_the_history_lint_impacted[docs/english-surface.md]
+passed	tests/test_select_tests.py::test_the_history_list_and_its_map_extract_each_name_their_sources[both]
+passed	tests/test_select_tests.py::test_the_history_list_and_its_map_extract_each_name_their_sources[list malformed]
+passed	tests/test_select_tests.py::test_the_history_list_and_its_map_extract_each_name_their_sources[list unreadable]
+passed	tests/test_select_tests.py::test_the_history_list_and_its_map_extract_each_name_their_sources[extract malformed]
+passed	tests/test_select_tests.py::test_the_history_list_and_its_map_extract_each_name_their_sources[extract missing]
+passed	tests/test_select_tests.py::test_the_history_list_and_its_map_extract_each_name_their_sources[neither]
+passed	tests/test_select_tests.py::test_a_module_only_the_map_extract_names_runs_the_lint
+passed	tests/test_select_tests.py::test_without_a_readable_history_list_the_other_triggers_still_run_the_lint
+passed	tests/test_select_tests.py::test_what_the_history_list_names_only_adds_its_lint
