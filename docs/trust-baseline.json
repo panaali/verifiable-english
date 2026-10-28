@@ -1342,6 +1342,20 @@
    "reason": "ap-2c: K +0, trusted +135: lean/VE/Acts/Meaning.lean +128 (S +110: Att, Elt, Piece, addPiece, joinAct, singleAct, coordAct, applyRule, piecesOf, atomOk, actOk, meaning; untied V +18: Atom.add, baseAtom, listOf, itemOf), lean/VE/Acts/Readings.lean +7 (untied V: readings, read, analyse); Derived (3) is tied to derived_iff",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-2c, 2026-10-18",
    "commit": "c0a80d23a7113a6ba38245ae3e78b7ef4edd965a"
+  },
+  {
+   "class": "S",
+   "lines": 12,
+   "reason": "df-3: S +12 (VE/Readings/DefaultVerdicts.lean: choiceSoft, dSem), V +126 (VE/Readings/DefaultVerdicts.lean +80: dBasis, DVerdicts.hasDefaults, dEnglish, runVerdictsD, verdictWord, dChoiceJson, DLine, DLine.json, defaultJson; ResponseShape/Schemas/ReadingsRoute.lean +43: verdicts_default_choice, verdicts_default_line, verdicts_default; VE/Defaults/Wire.lean +3: collisionFields), K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-3, 2026-10-18",
+   "commit": "0df9256dfe7d86d3d4ebf009a9a9026006256447"
+  },
+  {
+   "class": "V",
+   "lines": 126,
+   "reason": "df-3: S +12 (VE/Readings/DefaultVerdicts.lean: choiceSoft, dSem), V +126 (VE/Readings/DefaultVerdicts.lean +80: dBasis, DVerdicts.hasDefaults, dEnglish, runVerdictsD, verdictWord, dChoiceJson, DLine, DLine.json, defaultJson; ResponseShape/Schemas/ReadingsRoute.lean +43: verdicts_default_choice, verdicts_default_line, verdicts_default; VE/Defaults/Wire.lean +3: collisionFields), K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-3, 2026-10-18",
+   "commit": "0df9256dfe7d86d3d4ebf009a9a9026006256447"
   }
  ]
 }
