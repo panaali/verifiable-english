@@ -9,6 +9,8 @@ case-folded name is refused, and `Is every service reviewed?` is read as `ve ask
 from __future__ import annotations
 
 import copy
+import functools
+import itertools
 import json
 import os
 import subprocess
@@ -21,6 +23,7 @@ from ve import speech_english
 from ve.backends import english_lean, relay
 from ve.english import EnglishVocabulary
 from ve.errors import CheckerUnavailable, ResourceLimit, VEError
+from ve.speech_acts import wording_text
 from ve.speech_english import parse_speech
 
 from subprocesses import HANG_TIMEOUT
@@ -208,19 +211,38 @@ def extended(kind: str) -> Environment:
     return Environment(EXTRA[kind])
 
 
-def ve_ask(tmp_path, question: str, *options: str, env=ENV):
-    """`ve ask DOCUMENT QUESTION --reading` over a document in `env`."""
+def _document(tmp_path, env) -> Path:
     document = tmp_path / "speech.ve.md"
     meta = {"format": "ve-document@1", "environment": env.to_dict(), "units": [{"id": "s1", "fence": "s1"}]}
     document.write_text("---\n" + json.dumps(meta) + "\n---\nAtlas is reviewed.\n```ve s1\nAtlas is reviewed.\n```\n")
+    return document
+
+
+def ve_ask(tmp_path, question: str, *options: str, env=ENV):
+    """`ve ask DOCUMENT QUESTION --reading` over a document in `env`."""
     environ = {k: v for k, v in os.environ.items() if k in ENV_ALLOW or k.startswith("VE_")}
-    return subprocess.run([sys.executable, "-m", "ve", "ask", str(document), question, "--reading", *options],
-                          cwd=ROOT, env=environ, text=True, capture_output=True, timeout=HANG_TIMEOUT)
+    return subprocess.run([sys.executable, "-m", "ve", "ask", str(_document(tmp_path, env)), question, "--reading",
+                           *options], cwd=ROOT, env=environ, text=True, capture_output=True, timeout=HANG_TIMEOUT)
 
 
-def assert_read_as_ve_ask(monkeypatch, tmp_path, env, wording: str, body) -> dict:
-    """The speech caller's verdict and text for `wording` equal `ve ask`'s in the same environment (DRI 2026-10-28
-    item 5 (ii)): `body` is the formula both read, or None when both refuse it. Returns `ve ask`'s JSON result."""
+@pytest.fixture
+def ve_ask_here(capsys):
+    """`ve ask` as `ve_ask` runs it, through the same entry (`ve.__main__.main`) in this process, for the thousands of
+    class (d) rows (a process each would take hours)."""
+    from ve.__main__ import main
+
+    def run(tmp_path, question: str, *options: str, env=ENV):
+        capsys.readouterr()
+        code = main(["ask", str(_document(tmp_path, env)), question, "--reading", *options])
+        out = capsys.readouterr()
+        return subprocess.CompletedProcess([], code, out.out, out.err)
+    return run
+
+
+def assert_read_as_ve_ask(monkeypatch, tmp_path, env, wording: str, body, ask=ve_ask) -> dict:
+    """The speech caller's verdict and text for `wording` equal `ve ask`'s (run by `ask`) in the same environment (DRI
+    2026-10-28 item 5 (ii)): `body` is the formula both read, or None when both refuse it. Returns `ve ask`'s JSON
+    result."""
     seen = []
 
     def spy(*args, **kwargs):
@@ -233,8 +255,8 @@ def assert_read_as_ve_ask(monkeypatch, tmp_path, env, wording: str, body) -> dic
         return answer
 
     monkeypatch.setattr(speech_english, "read_question", spy)
-    done = ve_ask(tmp_path, wording, env=env)
-    structured = json.loads(ve_ask(tmp_path, wording, "--json", env=env).stdout)["result"]
+    done = ask(tmp_path, wording, env=env)
+    structured = json.loads(ask(tmp_path, wording, "--json", env=env).stdout)["result"]
     if body is None:
         with pytest.raises(VEError) as caught:
             parse_speech(env, wording, env.speech_acts)
@@ -253,6 +275,12 @@ def saved_verdict(env: str, wording: str) -> dict:
     match = [row for row in rows if row["env"] == env and row["wording"] == wording]
     assert len(match) == 1 and match[0]["class"] == "verdict"
     return match[0]
+
+
+@functools.cache
+def recorded() -> frozenset[tuple[str, str]]:
+    """The (env, wording) pairs of the saved head corpus (`evidence/head.json.gz`)."""
+    return frozenset((r["env"], r["wording"]) for r in speech_ab_f2.recordings(str(EVIDENCE))[1])
 
 
 @pytest.mark.parametrize("name", ["atlas", "beacon"])
@@ -313,40 +341,134 @@ def test_every_quantified_unverbalised_verdict_row_is_read_as_ve_ask_reads_it(mo
     assert_read_as_ve_ask(monkeypatch, tmp_path, extended(env), wording, body)
 
 
-OPENING = [(row["env"], row["wording"], row["head"]["content"]["body"])
+OPENING = [(row["env"], row["wording"], row["head"].get("content", {}).get("body"))
            for row in json.loads((EVIDENCE / "delta.json").read_text())["rows"] if speech_ab_f2.opening(row)]
 
 
-@pytest.mark.parametrize("env, wording, body", OPENING, ids=[f"{e}:{w}" for e, w, _ in OPENING])
-def test_every_opening_verdict_row_is_read_as_ve_ask_reads_it(monkeypatch, tmp_path, env, wording, body):
-    """Recheck 2 F5, DRI 2026-10-28 item 5 (class (d)): every saved verdict row of a sentence opening outside the
-    reader's dimensions (`Is there a service that is reviewed?`, `Is this impossible?`, `Is every service that is
-    reviewed reviewed?`, ...), which the base refused, gets the same verdict and text through the speech caller as
-    through `ve ask`."""
+@pytest.mark.parametrize("env, wording, body", OPENING, ids=[f"{e}:{w!r}" for e, w, _ in OPENING])
+def test_every_opening_verdict_row_is_read_as_ve_ask_reads_it(monkeypatch, tmp_path, ve_ask_here, env, wording, body):
+    """Recheck 2 F5, DRI 2026-10-28 item 5 (class (d)): every saved verdict row of an `Is ` question this item added
+    (a sentence opening, a declared word in any slot, a case, spacing or nesting variant), in either direction, gets
+    the same verdict and text through the speech caller as through `ve ask` (run in this process: 6,608 rows), for
+    the wording the speech caller reads: `wording_text` trims the space around every unit's wording for every reader
+    (unchanged here) and `ve ask` reads its question untrimmed, so a row with space around it is compared trimmed
+    (REPORT.md FOLLOW-UP)."""
     assert len(OPENING) == speech_ab_f2.DECIDED["opening"]
-    assert_read_as_ve_ask(monkeypatch, tmp_path, extended(env), wording, body)
-    assert "error" in saved_verdict(env, wording)["base"]
+    read = wording_text(wording)
+    assert read.startswith("Is ") and read in wording and wording.strip(" \t\n\r\x0b\x0c") == read
+    assert_read_as_ve_ask(monkeypatch, tmp_path, extended(env), read, body, ask=ve_ask_here)
 
 
-def test_the_corpus_records_a_question_for_every_grammar_opening():
-    """F5: the corpus has one sentence per grammar rule, so every sentence opening (`there is a`, `this is
-    impossible`, a marker, a term, ...) is asked and recorded; a rule is left out only when the environment has no
-    word for one of its categories (a binary relation), and a rule the grammar gains is a case before it is listed."""
-    rules = json.loads(speech_ab_f2.GRAMMAR.read_text())
-    recorded = {(r["env"], r["wording"]) for r in json.loads((EVIDENCE / "head.json").read_text())}
-    inputs = speech_ab_f2.opening_inputs()
-    assert {env for env, _ in inputs} == set(EXTRA)  # loop recheck 1 F6: every environment of the added corpus
-    assert {("unverbalised", "checked"), ("negative", "reviewed")} <= set(inputs)
-    for env, word in inputs:
-        sentences = speech_ab_f2.opening_sentences(EXTRA[env], word)
-        for rule in rules:
-            if rule["tag"] not in sentences:
-                assert {"n": "relation"} in rule["rhs"] or {"n": "object_relative"} in rule["rhs"], rule["tag"]
-    cases = speech_ab_f2.opening_cases()
-    assert {(env, wording) for env, wording, _ in cases} <= recorded
+def test_the_corpus_asks_every_declared_word_in_every_slot_and_records_it():
+    """F5, F6, F7, DRI note 2026-10-28c (a): `coverage` finds the saved corpus complete: every environment the evidence
+    asks in (Q1.4's and the three added), every grammar rule (but those needing a two-place verbalisation, which none
+    declares), every declared word in every slot and every pair of words in every two slots, the case and spacing
+    variants and each rule's sentence in each formula place, all recorded."""
+    assert set(EXTRA) == {"speech", "glossed", "f0-reviewed", "f0-checked", "negative", "names", "unverbalised"}
+    assert speech_ab_f2.coverage(speech_ab_f2.all_sentences(), recorded()) == []
+    cases = {(env, w) for env, w, _ in speech_ab_f2.opening_cases()}
     for wording in ("Is there a service that is reviewed?", "Is this impossible?",
                     "Is every service that is reviewed reviewed?"):
-        assert ("speech", wording) in {(env, w) for env, w, _ in cases}
+        assert ("speech", wording) in cases
+
+
+@pytest.mark.parametrize("env", sorted(EXTRA))
+def test_the_corpus_words_are_every_word_the_environment_declares(env):
+    """DRI note 2026-10-28c (a): each category's words are the environment's whole declaration, never a chosen one:
+    every constant bare and quoted, every sort's nouns (its name when it declares none), every one-place predicate's
+    positive and not-form."""
+    declared = EXTRA[env]["vocabulary"]
+    words = speech_ab_f2.vocabulary(EXTRA[env])
+    assert sorted(w for (w,) in words["constant"]) == sorted([*declared["constants"],
+                                                              *(f'"{c}"' for c in declared["constants"])])
+    for sort, d in declared["sorts"].items():
+        nouns = {d["verbalisation"]["singular"], d["verbalisation"]["plural"]} if "verbalisation" in d else {sort}
+        assert nouns <= {w for (w,) in words["noun"]}
+    for name, p in declared["predicates"].items():
+        if len(p["arguments"]) == 1:
+            forms = (p.get("verbalisation") or f"{{0}} is {name}", p.get("negative_verbalisation")
+                     or f"{{0}} is not {name}")
+            assert {tuple(form.split()[1:]) for form in forms} <= set(words["relative"])
+
+
+def _rows(env: str, tag: str, change) -> dict:
+    """`all_sentences` with the rows of one rule's sentence changed by `change`."""
+    sentences = {e: dict(s) for e, s in speech_ab_f2.all_sentences().items()}
+    template, rows = sentences[env][tag]
+    sentences[env][tag] = (template, change(rows))
+    return sentences
+
+
+def _without(env: str, tag: str) -> dict:
+    return {e: {t: v for t, v in s.items() if (e, t) != (env, tag)} for e, s in speech_ab_f2.all_sentences().items()}
+
+
+SAFE = {  # DRI note 2026-10-28c (a): each case the audit must refuse, and what its refusal names
+    "a declared constant missing from a slot": (
+        lambda: _rows("names", "atom.eq", lambda rows: [f for f in rows if f[0] != ("atlas2",)]), None,
+        "names atom.eq: slot 1 (constant) 'atlas2'"),
+    "a quoted spelling missing": (
+        lambda: _rows("names", "sentence.plain", lambda rows: [f for f in rows if not f[0][0].startswith('"')]), None,
+        "names sentence.plain: slot 1 (constant) '\"atlas2\"'"),
+    "an environment missing": (
+        lambda: {e: s for e, s in speech_ab_f2.all_sentences().items() if e != "names"}, None,
+        "names: environment never asked"),
+    "a grammar rule with no sentence": (
+        lambda: _without("speech", "formula.negation"), None, "speech formula.negation: grammar rule with no sentence"),
+    "a predicate form missing": (
+        lambda: _rows("negative", "sentence.plain", lambda rows: [f for f in rows if f[1] != ("is", "not", "reviewed")]),
+        None, "negative sentence.plain: slot 2 (relative) 'is not reviewed'"),
+    "a second slot never varied": (
+        lambda: _rows("names", "atom.eq", lambda rows: [(f[0], rows[0][1]) for f in rows]), None,
+        "names atom.eq: slot 2 (constant) '\"atlas2\"'"),
+    "a pair never asked together (F7)": (
+        speech_ab_f2.all_sentences, ("names", 'Is "atlas2" the same as beacon?'),
+        "names atom.eq: slot 1 (constant) '\"atlas2\"' with slot 2 (constant) 'beacon'"),
+    "a case variant never asked (hunt 1)": (
+        speech_ab_f2.all_sentences, ("speech", "Is Every service reviewed?"),
+        "speech formula.universal: case variant 'Is Every service reviewed?'"),
+    "a nesting never asked (hunt 1)": (
+        lambda: _without("speech", speech_ab_f2.nest_tag("negation", 6, "formula.universal")), None,
+        "speech negation: formula.universal in formula place 6 never asked"),
+}
+
+
+@pytest.mark.parametrize("case", SAFE)
+def test_the_audit_fails_on_an_incomplete_corpus_and_names_the_gap(monkeypatch, capsys, case):
+    """DRI note 2026-10-28c (a): the audit says the corpus is complete under one condition only; a word, spelling,
+    form, slot, pair, variant, nesting, rule or environment the corpus never asked fails it, and the failure names
+    it."""
+    sentences, unrecorded, named = SAFE[case]
+    sentences = sentences()
+    base, head, rows = speech_ab_f2.recordings(str(EVIDENCE))
+    if unrecorded:
+        head = [r for r in head if (r["env"], r["wording"]) != unrecorded]
+    assert any(line.startswith(named) for line in speech_ab_f2.coverage(sentences, {
+        (r["env"], r["wording"]) for r in head}))
+    monkeypatch.setattr(speech_ab_f2, "all_sentences", lambda: sentences)
+    monkeypatch.setattr(speech_ab_f2, "recordings", lambda folder: (base, head, rows))
+    capsys.readouterr()
+    assert speech_ab_f2.check(str(EVIDENCE / "delta.json")) == 1
+    assert "unasked: " in capsys.readouterr().out
+
+
+HUNTED = [("names", 'Is it not the case that "atlas2" is reviewed?'), ("names", 'Is "atlas2" the same as beacon?'),
+          ("f0-reviewed", "Is it not the case that atlas is reviewed?"), ("speech", "Is Every service reviewed?"),
+          ("speech", "Is atlas  reviewed?"), ("speech", "Is every service reviewed? "),
+          ("speech", "Is it not the case that every service is reviewed?"),
+          ("speech", "Is it not the case that either atlas is reviewed or atlas is reviewed, or both?"),
+          ("speech", " Is every service reviewed?"), ("names", "Is BEACON reviewed?"),
+          ("glossed", "Is atlas reviewed YET never reviewed?")]
+
+
+@pytest.mark.parametrize("env, wording", HUNTED, ids=[f"{e}:{w!r}" for e, w in HUNTED])
+def test_every_hunted_form_is_asked_and_recorded_as_a_signed_verdict(env, wording):
+    """Loop recheck 2 F7 (another declared name, in another slot) and the forms DRI note 2026-10-28c's hunts found
+    (Q1.4's own environments, a case, spacing or nesting variant, a leading space, a case-folded name, a gloss in
+    capitals): each is a corpus case saved as a class (d) verdict row, in either direction; that each equals `ve
+    ask`'s reading is `test_every_opening_verdict_row_is_read_as_ve_ask_reads_it`."""
+    assert (env, wording) in {(e, w) for e, w, _ in speech_ab_f2.opening_cases()}
+    assert speech_ab_f2.opening(saved_verdict(env, wording))
 
 
 F6 = ["Is every service not reviewed?", "Is some service not reviewed?", "Is no service not reviewed?",
@@ -366,24 +488,26 @@ def test_a_declared_not_form_is_asked_in_every_opening_and_recorded(wording):
 def test_every_opening_sentence_is_spelled_in_both_polarities():
     """Loop recheck 1 F6's class: each place a predicate fills in an opening sentence is spelled with its positive and
     its not-form (the declared one where there is one), so an environment's negative words are never left unasked."""
-    for env, word in speech_ab_f2.opening_inputs():
-        forms = speech_ab_f2._spellings(EXTRA[env], word)
-        assert len(forms) == 2 and "not" in forms[1] and "not" not in forms[0]
-        sentences = speech_ab_f2.opening_sentences(EXTRA[env], word)
-        two = sentences["guard.two"]  # `every <noun> who <relative> and <relative> <relative>`: three places
-        assert len(two) == 8 and len({" ".join(map(str, t)) for t in two}) == 8
+    for env, raw in EXTRA.items():
+        relative = speech_ab_f2.vocabulary(raw)["relative"]
+        assert {"not" in form for form in relative} == {True, False}
+        template, rows = speech_ab_f2.all_sentences()[env]["guard.two"]
+        slots = [t for t in template if type(t) is speech_ab_f2._Slot]
+        places = [i for i, t in enumerate(slots) if t == "relative"]
+        assert len(places) == 3  # `every <noun> who <relative> and <relative> <relative>`
+        for i, j in itertools.combinations(places, 2):  # every form, and every pair of forms, in each two places
+            assert {(f[i], f[j]) for f in rows} == set(itertools.product(relative, relative))
 
 
 def test_the_corpus_records_every_grammar_determiner_and_predicate_form():
     """The added corpus is generated from the grammar's determiners, so a determiner the grammar gains is a recorded
     case (in both environments, both polarities) before its delta can be audited."""
     assert set(speech_ab_f2.determiners()) >= {"every", "some", "no"}
-    recorded = {(r["env"], r["wording"]) for r in json.loads((EVIDENCE / "head.json").read_text())}
     cases = speech_ab_f2.reader_cases()
-    assert {(env, wording) for env, wording, _ in cases} <= recorded
+    assert {(env, wording) for env, wording, _ in cases} <= recorded()
     for det in speech_ab_f2.determiners():
         for env, word in (("speech", "reviewed"), ("unverbalised", "checked"), ("unverbalised", "Checked")):
-            assert (env, f"Is {det} service {word}?") in recorded and (env, f"Is {det} service not {word}?") in recorded
+            assert {(env, f"Is {det} service {word}?"), (env, f"Is {det} service not {word}?")} <= recorded()
 
 
 def test_the_extended_delta_audits_every_verdict_as_signed():
@@ -406,20 +530,31 @@ def test_the_extended_delta_audits_every_verdict_as_signed():
     ("speech", "Is every service that is reviewed reviewed?", "remove"),
     ("negative", "Is every service not reviewed?", "remove"),
     ("negative", "Is there a service that is not reviewed?", "remove"),
-    ("negative", "Is every service that is not reviewed reviewed?", "remove")])
-def test_the_delta_audit_catches_missing_or_unclassified_verdicts(tmp_path, env, wording, mutation):
-    """A missing case or a verdict outside its class cannot pass the audit."""
-    delta = json.loads((EVIDENCE / "delta.json").read_text())
-    row = next(row for row in delta["rows"] if row["env"] == env and row["wording"] == wording)
+    ("negative", "Is every service that is not reviewed reviewed?", "remove"),
+    ("names", 'Is "atlas2" the same as beacon?', "remove")])
+def test_the_delta_audit_catches_missing_or_unclassified_verdicts(env, wording, mutation):
+    """A missing case or a verdict outside its class cannot pass the audit (`audit` over the recordings' rows)."""
+    rows = list(speech_ab_f2.recordings(str(EVIDENCE))[2])
+    at = next(i for i, row in enumerate(rows) if row["env"] == env and row["wording"] == wording)
     if mutation == "remove":
-        delta["rows"].remove(row)
+        del rows[at]
     else:
-        row["head"]["content"]["body"] = ["unary", "reviewed", ["const", "atlas"]]
-    changed = tmp_path / "delta.json"
-    changed.write_text(json.dumps(delta))
-    result = subprocess.run([sys.executable, str(EVIDENCE / "speech_ab_f2.py"), "audit", str(changed)],
-                            capture_output=True, text=True, timeout=HANG_TIMEOUT)
-    assert result.returncode == 1
+        rows[at] = copy.deepcopy(rows[at])
+        rows[at]["head"]["content"]["body"] = ["unary", "reviewed", ["const", "atlas"]]
+    counts, bad = speech_ab_f2.audit(rows)
+    assert bad or counts != speech_ab_f2.DECIDED
+
+
+def test_the_audit_fails_on_a_delta_that_is_not_the_recordings_summary(tmp_path):
+    """delta.json is checked against base.json.gz and head.json.gz beside it: a verdict row removed from it fails."""
+    delta = json.loads((EVIDENCE / "delta.json").read_text())
+    del delta["rows"][0]
+    (tmp_path / "delta.json").write_text(json.dumps(delta))
+    for name in ("base.json.gz", "head.json.gz"):
+        (tmp_path / name).symlink_to(EVIDENCE / name)
+    done = subprocess.run([sys.executable, str(EVIDENCE / "speech_ab_f2.py"), "audit", str(tmp_path / "delta.json")],
+                          capture_output=True, text=True, timeout=HANG_TIMEOUT)
+    assert done.returncode == 1 and "delta.json is not the summary" in done.stdout
 
 
 @pytest.mark.parametrize("wording, body", [
