@@ -1009,7 +1009,7 @@ INDUCTIVE_CHECKS = """import Demo.Proofs
 """
 
 
-def test_a_constructor_no_proof_reads_survives_with_no_proof_named(tmp_path_factory):
+def test_a_constructor_no_proof_reads_survives_with_no_proof_named_and_is_never_allowed(tmp_path_factory):
     """Review sc-1ae F1 end to end: a Prop's constructors are exercised only by proofs, so both drops survive; the
     one a proof reads names it (what an --allow reason cites), the one nothing reads names none. The proof is built
     because a module of checks imports it."""
@@ -1020,11 +1020,23 @@ def test_a_constructor_no_proof_reads_survives_with_no_proof_named(tmp_path_fact
     dump(root, tmp_path_factory.mktemp("dump"), ["Demo.ev_zero"])
     git(root, "add", ".")
     git(root, "commit", "-qm", "head")
-    done, mutants = tool(root, tmp_path_factory.mktemp("run"))
+    run = tmp_path_factory.mktemp("run")
+    done, mutants = tool(root, run)
     drops = {m["before"].split()[1]: (m["status"], m["detail"]) for m in of(mutants, "Ev")
              if m["operator"] == "ctor-drop"}
     assert drops == {"zero": ("SURVIVOR", "the proofs it breaks: lean/Demo/Proofs.lean:3"), "step": ("SURVIVOR", "")}, \
         done.stdout + done.stderr
+    # --allow never allows the constructor nothing reads; the one it allows keeps the proof it breaks
+    allow = tmp_path_factory.mktemp("allow") / "allow.json"
+    allow.write_text(json.dumps({"allow": [{"definition": "Demo.Ev", "operator": "ctor-drop", "reason": "a Prop"}]}))
+    done, mutants = tool(root, tmp_path_factory.mktemp("again"), "--allow", str(allow), "--rescore",
+                         str(run / "evidence.json"))
+    drops = {m["before"].split()[1]: (m["status"], m["detail"]) for m in of(mutants, "Ev")
+             if m["operator"] == "ctor-drop"}
+    assert drops == {"zero": ("ALLOWED", "a Prop (the proofs it breaks: lean/Demo/Proofs.lean:3)"),
+                     "step": ("SURVIVOR", "")}, done.stdout + done.stderr
+    assert done.returncode == 1 and [line for line in done.stdout.splitlines()
+                                     if line.startswith("SURVIVOR") and "ctor-drop: | step" in line], done.stdout
 
 
 # Review F7's truth table: every command form `classify` can see, its class, and two readings of a definition: its
