@@ -1125,7 +1125,7 @@ module ResponseShape.Schemas.ReadingsChoices 8ed9f89b2336d9490aafda46f5f16d7f319
 36:0-36:47 def ResponseShape.Schemas.ReadingsChoices.plan@ResponseShape.Schemas.ReadingsChoices
 38:0-42:10 def ResponseShape.Schemas.ReadingsChoices.row@ResponseShape.Schemas.ReadingsChoices
 44:0-50:27 def ResponseShape.Schemas.ReadingsChoices.file@ResponseShape.Schemas.ReadingsChoices
-module ResponseShape.Schemas.ReadingsRoute 53d8cfc97756e8bc8efe1355a3f80f960c81b99d223703bde0866ae849200456
+module ResponseShape.Schemas.ReadingsRoute 77d613a72b8f9824daa1f810e5a1c000128ba71dfc0835fe35a47a6eb91795b9
 7:0-17:54 def ResponseShape.Schemas.ReadingsRoute.kind@ResponseShape.Schemas.ReadingsRoute
 19:0-33:38 def ResponseShape.Schemas.ReadingsRoute.pair@ResponseShape.Schemas.ReadingsRoute
 35:0-46:61 def ResponseShape.Schemas.ReadingsRoute.key@ResponseShape.Schemas.ReadingsRoute
@@ -1196,6 +1196,7 @@ module ResponseShape.Schemas.ReadingsRoute 53d8cfc97756e8bc8efe1355a3f80f960c81b
 805:0-811:50 def ResponseShape.Schemas.ReadingsRoute.verdicts_components@ResponseShape.Schemas.ReadingsRoute
 813:0-859:30 def ResponseShape.Schemas.ReadingsRoute.row@ResponseShape.Schemas.ReadingsRoute
 861:0-915:57 def ResponseShape.Schemas.ReadingsRoute.file@ResponseShape.Schemas.ReadingsRoute
+920:0-921:126 def ResponseShape.Schemas.ReadingsRoute.renderedProperty@ResponseShape.Schemas.ReadingsRoute
 module ResponseShape.Schemas.Reports baeb474eafc93ae7f9e3f19c673ccedcaa126f114e7b8f1855e0f59218adcdf7
 9:0-21:94 def ResponseShape.Schemas.Reports.reports_path@ResponseShape.Schemas.Reports
 23:0-31:48 def ResponseShape.Schemas.Reports.kind@ResponseShape.Schemas.Reports
