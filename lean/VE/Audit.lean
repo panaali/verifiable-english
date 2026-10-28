@@ -1229,6 +1229,7 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.Run.checkedProblem_eq
 #print axioms VE.Cardinality.Run.decodeCertificate_sound
 #print axioms VE.Cardinality.Run.erasedJson_conclusion
+#print axioms VE.Cardinality.Run.erasedJson_problemJson
 #print axioms VE.Cardinality.Run.erasedThunks_built
 #print axioms VE.Cardinality.Run.foldl_add_ge
 #print axioms VE.Cardinality.Run.foldl_capped_ge

@@ -5675,6 +5675,13 @@ theorem VE.Cardinality.Run.erasedJson_conclusion
                 ("meaning_id", Lean.Json.str cid.fst), ("core_meaning_id", Lean.Json.str cid.snd)]))
   -- uses VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.CardEnv.env@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Run.erasedIds@VE.Cardinality.Run VE.Cardinality.Run.erasedJson@VE.Cardinality.Run VE.Cardinality.erasedProblem@VE.Cardinality.Erase VE.Time.QFormula.erase@VE.Time.Syntax VE.Time.QFormula@VE.Time.Syntax VE.Time.Wire.encCore@VE.Time.Wire VE.Time.Wire.encQ@VE.Time.Wire
   -- expr 3998950269
+theorem VE.Cardinality.Run.erasedJson_problemJson
+  ∀ (w : VE.Cardinality.CardEnv) (ps : List VE.Cardinality.CFormula) (c : VE.Cardinality.CFormula),
+    VE.Cardinality.Run.erasedJson w ps c =
+      Except.map (VE.Cardinality.Run.problemJson (VE.Cardinality.erasedProblem w.env ps c))
+        (VE.Cardinality.Run.erasedIds w ps c)
+  -- uses VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.CardEnv.env@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Run.erasedIds@VE.Cardinality.Run VE.Cardinality.Run.erasedJson@VE.Cardinality.Run VE.Cardinality.Run.problemJson@VE.Cardinality.Run VE.Cardinality.erasedProblem@VE.Cardinality.Erase
+  -- expr 4149155385
 theorem VE.Cardinality.Run.erasedThunks_built
   ∀ (E : VE.Cardinality.CEnv) (ps : List VE.Cardinality.CFormula) (c : VE.Cardinality.CFormula),
     List.map (fun x => x ())

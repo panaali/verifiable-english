@@ -13394,12 +13394,24 @@
         "VE.Cardinality.dl",
         "VE.Cardinality.CEnv.elab",
         "VE.Cardinality.regionBody",
-        "VE.Cardinality.CTerm.countBodies"
+        "VE.Cardinality.CTerm.countBodies",
+        "VE.Cardinality.countedAmong",
+        "VE.Cardinality.predsAmong",
+        "VE.Cardinality.tableOf",
+        "VE.Cardinality.CEnv.elabBy",
+        "VE.Cardinality.RegionData",
+        "VE.Cardinality.RegionData.predsOn",
+        "VE.Cardinality.RegionData.table",
+        "VE.Cardinality.regionDataOf",
+        "VE.Cardinality.regionData"
       ],
       "G[R]": [
         "VE.Cardinality.maxCountedSorts",
         "VE.Cardinality.maxPredicates",
-        "VE.Cardinality.problemLimits"
+        "VE.Cardinality.problemLimits",
+        "VE.Cardinality.sortLimit",
+        "VE.Cardinality.predicateLimit",
+        "VE.Cardinality.checkedRegions"
       ]
     },
     "VE/Cardinality/Ratio.lean": {
@@ -13417,9 +13429,7 @@
       "C": [
         "VE.Cardinality.sumTerms",
         "VE.Cardinality.regionSum",
-        "VE.Cardinality.CountAtom.erase",
         "VE.Cardinality.Cmp.erase",
-        "VE.Cardinality.Proportion.erase",
         "VE.Cardinality.CFormula.erase",
         "VE.Cardinality.nonnegPremises",
         "VE.Cardinality.bridgePremises",
@@ -13429,7 +13439,14 @@
         "VE.Cardinality.withRegionsFinite",
         "VE.Cardinality.refutesC",
         "VE.Cardinality.CTerm.erase",
-        "VE.Cardinality.bridge"
+        "VE.Cardinality.bridge",
+        "VE.Cardinality.regionSumBy",
+        "VE.Cardinality.CountAtom.eraseBy",
+        "VE.Cardinality.Proportion.eraseBy",
+        "VE.Cardinality.CTerm.eraseBy",
+        "VE.Cardinality.CFormula.eraseBy",
+        "VE.Cardinality.nonnegOf",
+        "VE.Cardinality.bridgeBy"
       ],
       "P": [
         "VE.Cardinality.regionSize",
@@ -15366,11 +15383,24 @@
         },
         "VE.Cardinality.Run.decodeCertificate",
         "VE.Cardinality.Run.regionsJson",
-        "VE.Cardinality.Run.erasedJson"
+        "VE.Cardinality.Run.erasedJson",
+        {
+          "name": "VE.Cardinality.Run.problemJson",
+          "tied": [
+            "VE.Cardinality.Run.erasedJson_problemJson"
+          ]
+        },
+        {
+          "name": "VE.Cardinality.checkErased",
+          "tied": [
+            "VE.Cardinality.Run.checkErased_eq"
+          ]
+        }
       ],
       "D[I]": [
         "VE.Cardinality.Run.erasedIds",
-        "VE.Cardinality.Run.statementJson"
+        "VE.Cardinality.Run.statementJson",
+        "VE.Cardinality.Run.idsOf"
       ],
       "G[R]": [
         {
@@ -15382,7 +15412,10 @@
         "VE.Cardinality.Run.stale",
         "VE.Cardinality.Run.claimed",
         "VE.Cardinality.Run.erasedThunks",
-        "VE.Cardinality.Run.chargedNodes"
+        "VE.Cardinality.Run.chargedNodes",
+        "VE.Cardinality.Run.charge",
+        "VE.Cardinality.Run.ofCharged",
+        "VE.Cardinality.Run.checkedProblem"
       ],
       "G[V]": [
         "VE.Cardinality.Run.runCase",

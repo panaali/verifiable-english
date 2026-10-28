@@ -2,7 +2,7 @@
 
 No DRI signature is reserved. Delivered: the mode `cardinality` (registry, dispatch, `runMode_cardinality`, `DEADLINES`), `cardinality.json` with `runCaseReported_fits`, the `cardinality@0` row of AR-10's table with its
 composition theorem `gate_cardinality`, P3 charged as the erased problem is built (`chargedNodes`, `problemChecks_eq`), and the route cases FA1, FA1b and the hostile set.
-Trust: V +16, K +0, S +0 (R16). DELTA rows 1–2 cite SYNTHESIS 2.2 in me-2b's wording, row 3 cites R2, row 4 cites R16. Size: about 780 hand-written lines, over the ~600 guide (see "Size").
+Trust: V +12, K +0, S +0 (R16; +16 before fix round 1). DELTA rows 1–2 cite SYNTHESIS 2.2 in me-2b's wording, row 3 cites R2, row 4 cites R16. Size: about 780 hand-written lines, over the ~600 guide (see "Size").
 Next: **qt-a3cb**, the `countermodel` case; then qt-a3d (`Document.lean`, `Render.lean`) and QT-A4. Fix round 1 (review F1): the region structure is computed once per problem and the erased problem built once ("Fix round 1").
 
 ## Statement gate
@@ -70,7 +70,7 @@ one-element lists) and one that does not elaborate.
 
 ## Trust, size and evidence
 
-- Trust (`tools/trust_map.py --check`, final tree, against `b8eac7455`): K +0, S +0, untied V +16 (DELTA row 4,
+- Trust (`tools/trust_map.py --check`, final tree, against `b8eac7455`): K +0, S +0, untied V +12 (+16 before fix round 1, `Run.lean` −4; DELTA row 4,
   R16; `docs/trust-baseline.json`; FOLLOW-UPS "## qt-a3c" ties pass). The shapes, skeleton and P3 helpers are G[R].
   `problemChecks` is tied to `problemChecks_eq`.
 - Size (`git diff --numstat` against the merge base, generated files and evidence JSON excluded): about 780 lines.
@@ -159,7 +159,7 @@ one-element lists) and one that does not elaborate.
 - `tests/test_cardinality_service.py`: route-case answers, typing and binding mutants. `tests/data/route-cases.jsonl`: the 19 cases (written from the Lean fixtures of `RunExamples.lean`).
 - `tests/lean_service_corpus.py` (`recorded`, `cardinality_cases`), `tests/test_route_row_schemas.py` (ROUTE_MODES, two weakenings), `tests/test_profile_table.py`, `tests/test_lean_service.py` (`_SCHEMA_SEEDS`).
 - `tests/data/relay-gate-cases.jsonl` (13 cardinality fixtures, kept as `--record` keeps them), `tools/relay-gate-allow.json` (cardinality B0, F4, QTA3C-1), `tests/data/binding-answers.jsonl.gz` (`tools/binding_census.py --answers`).
-- `tools/trust-classes.json`, `docs/trust-baseline.json` (R16 allowance V +16), `ve/assurance-manifest.json` (Run.lean pin, decoder total, encoder `other_json`).
+- `tools/trust-classes.json`, `docs/trust-baseline.json` (R16 allowance V +16; the item measures +12), `ve/assurance-manifest.json` (Run.lean pin, decoder total, encoder `other_json`).
 - Regression tests: `uv run pytest -q tests/test_cardinality_service.py tests/test_profile_table.py tests/test_cardinality_exercised.py tests/test_assurance_manifest.py tests/test_trust_budget.py`; `uv run pytest -q -n 8 tests/test_route_row_schemas.py tests/test_relay_mutation_gate.py`; `cd lean && lake build VE.Compose.Examples VE.Cardinality.RunExamples VE.Cardinality.Gate ResponseShape.Encoders`.
 - Generated (never by hand): `uv run python tools/regen_generated.py --write` (cardinality.json and envelope.json, profile_table.json, inventories, Audit files, binding census, checkers.lock); the schema writer needs `lake build ve_response_decode` first; a new mode needs `tools/response_schemas.py --write` before the regen pass (the service's handshake is checked against envelope.json).
 - Mutants: `uv run python tools/mutants.py docs/quantities/qt-a3c/mutants.json --no-baseline --evidence docs/quantities/qt-a3c/evidence/mutants-run.json`.
