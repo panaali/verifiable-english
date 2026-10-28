@@ -131,7 +131,8 @@ def namesOk (D : ActsDoc) : Except String Unit :=
   let declared := fun q => (D.U.D.E.predicates q).isSome || D.U.D.T.regulated.any (·.name == q) ||
     D.U.unspec.contains q || qs.count q > 1
   let used := fun n => D.U.D.T.nodes.any (·.name == n) || ns.count n > 1
-  match qs.find? (fun q => declared q || q.utf8ByteSize > 64), ns.find? (fun n => used n || !ruleName n) with
+  match qs.find? (fun q => declared q || q.utf8ByteSize > VE.Limits.maxIdentifierBytes),
+      ns.find? (fun n => used n || !ruleName n) with
   | some q, _ => .error (if declared q then s!"InvalidInput: the part name {q} is already declared"
       else s!"ResourceLimit: the part name {q} is over 64 bytes")
   | none, some n => .error (if used n then s!"InvalidInput: the part rule name {n} is already used"
