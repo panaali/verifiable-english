@@ -1,0 +1,5 @@
+trust_mutants: 12 definitions, 345 mutants (345 to run), 4 jobs, base 99490db8402c
+SURVIVOR lean/VE/Calc/Jsonl.lean:38 VE.Calc.decodeJsonl (D[V], trusted) list-last: lines -> (lines.reverse.take 1)
+trust_mutants: 253 KILLED, 1 SURVIVOR, 0 UNKNOWN, 24 INVALID, 67 ALLOWED, 0 NOT RUN in 651 s
+trust_mutants: D[V], trusted: 234 KILLED, 1 SURVIVOR, 12 INVALID, 23 ALLOWED
+trust_mutants: S, trusted: 19 KILLED, 12 INVALID, 44 ALLOWED
