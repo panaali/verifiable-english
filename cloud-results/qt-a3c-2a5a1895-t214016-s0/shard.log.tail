@@ -1,0 +1,172 @@
+shard 1/6: 103 units; commands: ['python3 tools/check_lean_imports.py', 'lake build', 'lake build ve_english_lean_bench ve_scope_bench', 'python3 lean/audit.py', 'uv run --frozen --group dev python tools/test_layer_policy.py']
++ python3 tools/check_lean_imports.py
+Lean layer graph kept (650 modules, 22 reviewed legacy edges)
++ lake build
+⚠ [95/918] Replayed VE.SoftNorms.Soften
+warning: VE/SoftNorms/Soften.lean:264:19: This simp argument is unused:
+  Option.bind_eq_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵e̵q̵_̵b̵i̵n̵d̵,̵ ̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵n̵o̵n̵e̵]̵[̲O̲p̲t̲i̲o̲n̲.̲b̲i̲n̲d̲_̲n̲o̲n̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [110/918] Replayed VE.Readings.Separate
+warning: VE/Readings/Separate.lean:1490:50: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: VE/Readings/Separate.lean:1492:5: unused variable `hr`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [118/918] Replayed VE.Readings.Superpose
+... (16455 lines cut; full output in shard-full.txt)
+'ResponseShape.toOption_ok' does not depend on any axioms
+PASS: 650 source files; 7282 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
+info: syncing channel updates for 1.98.1-x86_64-unknown-linux-gnu
+info: latest update on 2026-09-03 for version 1.98.1 (48a229cea 2026-09-01)
+info: downloading 3 components
+warn: the missing active toolchain `1.98.1-x86_64-unknown-linux-gnu` has been auto-installed
+warn: this might cause rustup commands to take longer time to finish than expected
+info: you may opt out with `RUSTUP_AUTO_INSTALL=0` or `rustup set auto-install disable`
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded block-buffer v0.10.4
+  Downloaded autocfg v1.5.1
+  Downloaded crypto-common v0.1.7
+  Downloaded cfg-if v1.0.5
+  Downloaded cpufeatures v0.2.17
+  Downloaded version_check v0.9.5
+  Downloaded quote v1.0.47
+  Downloaded itoa v1.0.18
+  Downloaded generic-array v0.14.7
+  Downloaded num-integer v0.1.47
+  Downloaded zmij v1.0.23
+  Downloaded digest v0.10.7
+  Downloaded sha2 v0.10.9
+  Downloaded serde_derive v1.0.229
+  Downloaded unicode-ident v1.0.26
+  Downloaded proc-macro2 v1.0.107
+  Downloaded num-traits v0.2.19
+  Downloaded serde_core v1.0.229
+  Downloaded typenum v1.20.1
+  Downloaded serde v1.0.229
+  Downloaded memchr v2.8.3
+  Downloaded num-bigint v0.4.8
+  Downloaded serde_json v1.0.151
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling memchr v2.8.3
+   Compiling cpufeatures v0.2.17
+   Compiling cfg-if v1.0.5
+   Compiling itoa v1.0.18
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.229
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `release` profile [optimized] target(s) in 10.63s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling serde_core v1.0.229
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling serde v1.0.229
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling itoa v1.0.18
+   Compiling cpufeatures v0.2.17
+   Compiling memchr v2.8.3
+   Compiling cfg-if v1.0.5
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 5.58s
+order: failed last time []; changed []; then the rest; --maxfail 5
+recording 103 units with 4 jobs in /tmp/ve-select-run-cxalya7t
+  tests/test_stage2_standalone.py: exit 1 in 5.8 s, 579 functions
+  tests/test_norm_defaults_three_way.py: exit 2 in 0.7 s, 238 functions
+stopping after 5 failed tests (--maxfail 5)
+FAILED tests/test_norm_defaults_three_way.py (exit 2): tests/test_norm_defaults_three_way.py; log /tmp/ve-select-run-cxalya7t/tests__test_norm_defaults_three_way.py.log
+
+ve: English comparator: {"records": 0, "excluded": 0, "planted": 0, "classes": {}} (/tmp/ve-english-comparator-mgpfbcwm)
+
+==================================== ERRORS ====================================
+____________ ERROR collecting tests/test_norm_defaults_three_way.py ____________
+tests/test_norm_defaults_three_way.py:16: in <module>
+    from conformance import norm_defaults_differential as differential
+conformance/norm_defaults_differential.py:34: in <module>
+    from conformance import frozen_norm_defaults as nd  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+conformance/frozen_norm_defaults.py:18: in <module>
+    _source = subprocess.check_output(["git", "show", f"{_REVISION}:ve/norm_defaults.py"], cwd=_ROOT)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:473: in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: in run
+    raise CalledProcessError(retcode, process.args,
+E   subprocess.CalledProcessError: Command '['git', 'show', '9160d326:ve/norm_defaults.py']' returned non-zero exit status 128.
+------------------------------- Captured stderr --------------------------------
+fatal: invalid object name '9160d326'.
+=========================== short test summary info ============================
+ERROR tests/test_norm_defaults_three_way.py - subprocess.CalledProcessError: Command '['git', 'show', '9160d326:ve/norm_defaults.py']' returned non-zero exit status 128.
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.20s
+FAILED tests/test_stage2_standalone.py (exit 1): tests/test_stage2_standalone.py::test_environment_node_mutations_match_frozen_python_code_and_path, tests/test_stage2_standalone.py::test_model_node_mutations_match_frozen_python_code_and_path, tests/test_stage2_standalone.py::test_model_oracle_detects_seeded_decoder_faults[change_code], tests/test_stage2_standalone.py::test_model_oracle_detects_seeded_decoder_faults[drop_path]; log /tmp/ve-select-run-cxalya7t/tests__test_stage2_standalone.py.log
+                    else:
+                        row["error"] = row["error"].replace("InvalidModel:", "InvalidInput:", 1)
+                    seeded = True
+                    break
+            return rows
+    
+        monkeypatch.setattr(LeanService, "run", altered)
+        with pytest.raises(AssertionError):
+            test_model_node_mutations_match_frozen_python_code_and_path(tmp_path, capfd)
+>       assert seeded
+E       assert False
+
+tests/test_stage2_standalone.py:716: AssertionError
+----------------------------- Captured stderr call -----------------------------
+tag lean-first/oracle-python does not exist
+=========================== short test summary info ============================
+FAILED tests/test_stage2_standalone.py::test_model_node_mutations_match_frozen_python_code_and_path - AssertionError: assert 2 == 0
+ +  where 2 = <function run at 0x7fd83f530eb0>(PosixPath('/tmp/pytest-of-runner/pytest-2/test_model_node_mutations_matc0/oracle.py'), scratch=PosixPath('/tmp/pytest-of-runner/pytest-2/test_model_node_mutations_matc0'))
+ +    where <function run at 0x7fd83f530eb0> = <module 'tools.lean_first_oracle' from '/home/runner/work/verifiable-english/verifiable-english/tools/lean_first_oracle.py'>.run
+FAILED tests/test_stage2_standalone.py::test_environment_node_mutations_match_frozen_python_code_and_path - AssertionError: assert 2 == 0
+ +  where 2 = <function run at 0x7fd83f530eb0>(PosixPath('/tmp/pytest-of-runner/pytest-2/test_environment_node_mutation0/oracle.py'), scratch=PosixPath('/tmp/pytest-of-runner/pytest-2/test_environment_node_mutation0'))
+ +    where <function run at 0x7fd83f530eb0> = <module 'tools.lean_first_oracle' from '/home/runner/work/verifiable-english/verifiable-english/tools/lean_first_oracle.py'>.run
+FAILED tests/test_stage2_standalone.py::test_model_oracle_detects_seeded_decoder_faults[drop_path] - assert False
+FAILED tests/test_stage2_standalone.py::test_model_oracle_detects_seeded_decoder_faults[change_code] - assert False
+4 failed, 114 passed, 1 deselected in 5.15s
+recorded 11 units for tree df44f04373; 92 others left to the static graph until they run; 2 failed
+STOPPED EARLY (--maxfail 5): 92 selected units did not run: tests/test_select_tests.py, tests/test_acts_tree_mutants.py, tests/test_acts_lexical_mutants.py, tests/test_lean_dump_cache.py, tests/test_eligibility_wfp.py, tests/test_w6a_route_limits.py, tests/test_b16d_document.py, tests/test_answer_cutoff.py, tests/test_readings_verdicts_lean.py, tests/test_gate.py, tests/test_history_tests.py, tests/test_rights.py, tests/test_b16d_norm_roles.py, tests/test_readings_components_document.py, tests/test_ask_relay.py, tests/test_reports_fault_order.py, tests/test_p1_reconcile.py, tests/test_platform_contract.py, tests/test_w6a_certificate_steps.py, tests/test_lf14a_long_parse.py, tests/test_readings_sd_differential.py, tests/test_norm_defaults_differential.py, tests/test_trust_budget.py, tests/test_p1_amendment7.py, tests/test_p1_amendment8.py, tests/test_english_grammar_gen.py, tests/test_lean_handles.py, tests/test_readings_rd5_udhr.py, tests/test_binding_census.py, tests/test_gate_integrity.py, tests/test_readings_sd_document.py, tests/test_native_build_lock.py, tests/test_stage2_validation.py, tests/test_e1_core.py, tests/test_numeral_conversion.py, tests/test_english_e26_ab.py, tests/test_readings_defaults_statements.py, tests/test_argument_fixtures.py, tests/test_norm_defaults_soft_kinds.py, tests/test_soft_norms_lean.py, tests/test_w6a2_numeral_characters.py, tests/test_bundle.py, tests/test_stage2_readings.py, tests/test_ar3_report.py, tests/test_readings_defaults_english.py, tests/test_units_relay_w6a.py, tests/test_risk_diagnostics.py, tests/test_wire_contract_lint.py, tests/test_risk_english.py, tests/test_calc_dimensions.py, tests/test_lean_first_oracle.py, tests/test_grammar_cli.py, tests/test_english_e2_responses.py, tests/test_compose_dispatch.py, tests/test_b11b_report.py, tests/test_english_lean_rejections.py, tests/test_question_answering_measure_report.py, tests/test_alternatives_fill.py, tests/test_search_options.py, tests/test_speech_polar_lean.py, tests/test_b16a_evidence.py, tests/test_count_w6a.py, tests/test_english_e2_ledger_sites.py, tests/test_readings_defaults_rd6a.py, tests/test_softnorms_public_contract.py, tests/test_speech_acts.py, tests/test_stats.py, tests/test_legend.py, tests/test_rd9_chain_relay.py, tests/test_readings_rd5_plain_probe.py, tests/test_response_schemas.py, tests/test_lf14a_response_shape.py, tests/test_metered_answer.py, tests/test_metered_handles.py, tests/test_nary.py, tests/test_lean_default_build.py, tests/test_lean_first_triage.py, tests/test_norms.py, tests/test_rights_render_status.py, tests/test_statement_block_environment.py, tests/test_time_surface_w6a.py, tests/test_units_w6a.py, tests/test_ve_iface.py, tests/test_time_w6a.py, tests/test_w6b_gates.py, tests/test_wire_contract_precondition.py, tests/test_ar6_report.py, tests/test_b16d_evidence.py, tests/test_profile_artifacts.py, tests/test_question_answering_q2_report.py, tests/test_rd9_dri_signatures.py, tests/test_readings_defaults_rd2b_report.py
+SHARD 1/6: exit 1 in 503.2 s; 103 units, 9 passed
