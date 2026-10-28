@@ -23,4 +23,3 @@ Worked example: the `discourse` mode.
 7. **Fuzz tests.** `tests/test_discourse_answer.py` mutates genuine answers one and two faults at a time
    (each member dropped, emptied, retyped, duplicated or reordered, an index pushed out of range):
    every mutant is `CheckerUnavailable` or changes nothing the relay shows.
-
