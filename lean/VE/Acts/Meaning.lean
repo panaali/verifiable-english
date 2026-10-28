@@ -15,9 +15,9 @@ namespace VE.Acts
 open Lexical (Tok)
 open VE.Grammar (Tree Meaning)
 
-/-- Which atoms an element reads over (5.3): its own item's, an edge's near end (the first item, or the last item or
+/-- Which atoms an element reads over (5.3): its own item's (an edge's near end: the first item, or the last item or
 part), or all. -/
-inductive Att | own | near | all
+inductive Att | own | all
   deriving DecidableEq, Repr
 /-- An argument (marker and filler) or a modifier of an atom. -/
 inductive Elt | arg (m : String) (fl : Filler) | mod (md : Modifier)
@@ -69,19 +69,19 @@ def listOf (cs : List Piece) : Option (Join × List Piece) :=
   match cs.filterMap (fun | .j j => some j | _ => none) with
   | [j] => some (j, cs.filter (!· matches .j _))
   | _ => none
-/-- An item from its pieces: its one head, its function words, and its elements in order. -/
+/-- An item from its pieces: its one head, its function words, and its pieces in order (`addPiece` reads the
+elements). -/
 def itemOf (cs : List Piece) : Option Piece :=
   match cs.filterMap (fun | .head h => some h | _ => none) with
-  | [h] => some (.item (cs.findSome? (fun | .fw t b => some (t, b) | _ => none)) h
-      (cs.filter (fun | .fw .. | .head _ => false | _ => true)))
+  | [h] => some (.item (cs.findSome? (fun | .fw t b => some (t, b) | _ => none)) h cs)
   | _ => none
-/-- A node's pieces from its children's and its rule `r` (`second`: the second of an edge's two rules). -/
+/-- A node's pieces from its children's and its rule `r`. `second` says the rule equals the one before it: only an
+edge's two rules are written alike (5.2), and the second reads over all. -/
 def applyRule (r : RuleS) (second : Bool) (cs : List Piece) : Option (List Piece) :=
-  let edge := match r.lhs with | .E1X | .F _ .TE | .F _ .RE | .F _ .REt | .F _ .PX => true | _ => false
-  let att := if !edge then Att.own else if second then .all else .near
+  let att := if second then Att.all else .own
   let words := cs.filterMap (fun | .w s => some s | _ => none)
   let part : Piece → Option Part := fun | .part p | .elt (.arg _ (.one p)) _ => some p | _ => none
-  let toAll : Piece → Piece := fun | .elt e .own => .elt e .all | p => p
+  let toAll : Piece → Piece := fun | .elt (.arg m f) .own => .elt (.arg m f) .all | p => p
   match r.lhs, r.rhs, cs with
   | _, [.t (.adv _)], [.w v] => some [.elt (.mod (.adv v.toLower)) att]
   | .F _ (.AR m), _, [.part p] => some [.elt (.arg m (.one p)) .own]

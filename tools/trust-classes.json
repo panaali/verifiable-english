@@ -12716,10 +12716,13 @@
       ]
     },
     "VE/Acts/Readings.lean": {
-      "S": [
-        "VE.Acts.Derived"
-      ],
       "G[V]": [
+        {
+          "name": "VE.Acts.Derived",
+          "tied": [
+            "VE.Acts.derived_iff"
+          ]
+        },
         "VE.Acts.analyse",
         "VE.Acts.read",
         "VE.Acts.readings"
@@ -12731,6 +12734,7 @@
         "VE.Acts.MeaningExamples.Va",
         "VE.Acts.MeaningExamples.Vm",
         "VE.Acts.MeaningExamples.Vs",
+        "VE.Acts.MeaningExamples.edgeOnly",
         "VE.Acts.MeaningExamples.fx5",
         "VE.Acts.MeaningExamples.fx8",
         "VE.Acts.MeaningExamples.g8t",

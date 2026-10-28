@@ -18,7 +18,7 @@ QUIET = {G: "lean/VE/Acts/RuleExamples.lean"}
 BUGS = [
     (G, "premodifier-middle-item", "globalRules", "the plan's seeded bug: a third premodifier rule; A8 has 3 meanings",
      "⟨.E1X, [adv]⟩, ⟨.E1X, [adv]⟩]", "⟨.E1X, [adv]⟩, ⟨.E1X, [adv]⟩, ⟨.E1X, [adv]⟩]"),
-    (M, "Att-drop-near", "Att", "data type: a constructor dropped", "| own | near | all", "| own | all"),
+    (M, "Att-drop-all", "Att", "data type: a constructor dropped", "inductive Att | own | all", "inductive Att | own"),
     (M, "Elt-drop-mod", "Elt", "data type: a constructor dropped", " | mod (md : Modifier)\n", "\n"),
     (M, "Piece-drop-list", "Piece", "data type: a constructor dropped", "  | list (j : Join) (ps : List Part) |", "  |"),
     (M, "add-arg-first", "Atom.add", "an element goes after the atom's others", "a.args ++ [(m, fl)]", "[(m, fl)] ++ a.args"),
@@ -40,7 +40,7 @@ BUGS = [
     (M, "d9-no-first", "applyRule", "D9 (i): a long first part is refused", "(long ps.head? || long ps.getLast?)", "long ps.getLast?"),
     (M, "d9-also-repeated", "applyRule", "D9 (i) is for a marker written once (`PL`), not `RL`",
      "if r.lhs matches .F _ .PL && ", "if "),
-    (M, "edge-second-near", "applyRule", "an edge's second rule reads over all", "if second then .all else .near", ".near"),
+    (M, "edge-second-near", "applyRule", "an edge's second rule reads over all", "if second then Att.all else .own", ".own"),
     (M, "rnr-args-own", "applyRule", "a shared-object list's last arguments go to every item",
      "| .F _ .PX, _, _ | .C .rnr, _, _ =>", "| .F _ .PX, _, _ =>"),
     (M, "split-not-split", "applyRule", "a split marker's list is a split construct",
@@ -61,7 +61,7 @@ BUGS = [
     (R, "read-budget-0", "read", "the step budget is passed on", "readIn (grammar V) (meaning V) N b ts",
      "readIn (grammar V) (meaning V) N 0 ts"),
     (R, "analyse-never", "analyse", "one `one` meaning is its atom", "| .ok (.one a) => some a | _ => none", "| _ => none"),
-    (R, "Derived-true", "Derived", "a meaning is derived (statement only: its theorems refuse the plant)",
+    (R, "Derived-true", "Derived", "a meaning is derived (tied to derived_iff, spec 5.6's text: its theorems refuse the plant)",
      ":= DerivedIn (grammar V) (meaning V) ts A", ":= True"),
 ]
 

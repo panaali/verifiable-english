@@ -142,4 +142,16 @@ def Va : Vocab := frames [fr "seek" ["", "from"] [] [], fr "enjoy" [""] [] []]
 #guard actOk V5 (.all true false [obj5 "seek" true, obj5 "enjoy" true]) && !actOk V5 (.all true false [obj5 "seek" true]) &&
   !actOk V5 (.any false true [obj5 "seek" true]) && !actOk V5 (.one { obj5 "seek" true with args := [] })
 
+/-! ### The edges' second rules -/
+
+/-- The rule table writes two rules alike only for the five edges (5.2), so the meaning reads a rule equal to the one
+before it as an edge's second, read over all. -/
+def edgeOnly (V : Vocab) : Bool :=
+  let rs := closed (schema V)
+  (rs.zip rs.tail).all (fun (a, b) => a != b || match b.lhs with
+    | .E1X | .F _ .TE | .F _ .RE | .F _ .REt | .F _ .PX => true | _ => false)
+#guard ([V5, V6, V7, V8, V9, V10, V11, V12, V14, V5k, Vs, Vm, Va, V6b] ++ ap0).all edgeOnly
+-- V5: `E1X`'s pair, and per frame `TE`, `RE`, `REt` and `PX` each a pair for the adverb and one for *in*: 1 + 2 · 8
+#guard ((closed (schema V5)).zip (closed (schema V5)).tail).countP (fun (a, b) => a == b) == 17
+
 end VE.Acts.MeaningExamples
