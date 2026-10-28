@@ -1,0 +1,86 @@
+collected	tests/test_gate_integrity.py::test_gate_scratch_root_can_avoid_system_tmp
+collected	tests/test_gate_integrity.py::test_gate_rejects_missing_tests_and_module_skips[<lambda>-collected at the merge base are not collected here]
+collected	tests/test_gate_integrity.py::test_gate_rejects_missing_tests_and_module_skips[<lambda>-without a deselection report]
+collected	tests/test_gate_integrity.py::test_gate_rejects_missing_tests_and_module_skips[<lambda>-collection]
+collected	tests/test_gate_integrity.py::test_pytest_plugin_observes_collection_bypasses[import pytest\npytest.skip('module unavailable', allow_module_level=True)\n-]
+collected	tests/test_gate_integrity.py::test_pytest_plugin_observes_collection_bypasses[import pytest\npytest.importorskip('ve_gate_absent_test_backend')\n-]
+collected	tests/test_gate_integrity.py::test_pytest_plugin_observes_collection_bypasses[def test_first(): pass\ndef test_second(): pass\n-def pytest_collection_modifyitems(items):\n    items[:] = items[:1]\n]
+collected	tests/test_gate_integrity.py::test_gate_environment_is_an_allowlist
+collected	tests/test_gate_integrity.py::test_gate_environment_uses_real_repository_and_recorder
+collected	tests/test_gate_integrity.py::test_poisoned_toolchain_variables_do_not_reach_real_tools
+collected	tests/test_gate_integrity.py::test_poisoned_ambient_environment_leaves_gate_result_unchanged
+collected	tests/test_gate_integrity.py::test_cargo_ignores_home_cache_and_manifest_configs
+collected	tests/test_gate_integrity.py::test_gate_refuses_cargo_config_in_any_ancestor[.cargo/config.toml]
+collected	tests/test_gate_integrity.py::test_gate_refuses_cargo_config_in_any_ancestor[.cargo/config]
+collected	tests/test_gate_integrity.py::test_gate_refuses_cargo_config_in_any_ancestor[scratch/.cargo/config.toml]
+collected	tests/test_gate_integrity.py::test_gate_refuses_cargo_config_in_any_ancestor[scratch/cargo-home/config.toml]
+collected	tests/test_gate_integrity.py::test_gate_refuses_ancestor_uv_workspace
+collected	tests/test_gate_integrity.py::test_ancestor_pyproject_kinds[workspace]
+collected	tests/test_gate_integrity.py::test_ancestor_pyproject_kinds[project-workspace]
+collected	tests/test_gate_integrity.py::test_ancestor_pyproject_kinds[malformed]
+collected	tests/test_gate_integrity.py::test_ancestor_pyproject_kinds[tool-string]
+collected	tests/test_gate_integrity.py::test_ancestor_pyproject_kinds[uv-integer]
+collected	tests/test_gate_integrity.py::test_ancestor_pyproject_kinds[project]
+collected	tests/test_gate_integrity.py::test_ancestor_pyproject_kinds[uv-settings]
+collected	tests/test_gate_integrity.py::test_ancestor_pyproject_kinds[other-tool]
+collected	tests/test_gate_integrity.py::test_gate_rejects_python_environment_outside_checkout
+collected	tests/test_gate_integrity.py::test_cargo_workspace_root_ignores_ancestor_workspaces
+collected	tests/test_gate_integrity.py::test_cargo_registry_seed_takes_only_locked_archives
+collected	tests/test_gate_integrity.py::test_fsmonitor_hook_cannot_hide_edited_source
+collected	tests/test_gate_integrity.py::test_index_bits_cannot_hide_edited_source[--assume-unchanged]
+collected	tests/test_gate_integrity.py::test_index_bits_cannot_hide_edited_source[--skip-worktree]
+collected	tests/test_gate_integrity.py::test_source_identity_reports_clean_tree_and_leaves_index_alone
+collected	tests/test_gate_integrity.py::test_staged_change_stays_dirty_when_the_file_matches_the_commit
+collected	tests/test_gate_integrity.py::test_clean_status_is_checked_again_on_a_fresh_index_of_the_commit
+collected	tests/test_gate_integrity.py::test_gate_rejects_untracked_source_before_build
+collected	tests/test_gate_integrity.py::test_terminated_gate_cannot_leave_old_pass_record
+collected	tests/test_gate_integrity.py::test_interrupted_gate_cannot_record_pass[KeyboardInterrupt]
+collected	tests/test_gate_integrity.py::test_interrupted_gate_cannot_record_pass[TypeError]
+collected	tests/test_gate_integrity.py::test_interrupted_gate_cannot_record_pass[AttributeError]
+collected	tests/test_gate_integrity.py::test_gate_resets_record_uses_own_binary_and_checks_source_at_end[False-False]
+collected	tests/test_gate_integrity.py::test_gate_resets_record_uses_own_binary_and_checks_source_at_end[True-False]
+collected	tests/test_gate_integrity.py::test_gate_resets_record_uses_own_binary_and_checks_source_at_end[False-True]
+collected	tests/test_gate_integrity.py::test_gate_refuses_a_rust_build_checkers_lock_does_not_pin
+passed	tests/test_gate_integrity.py::test_gate_scratch_root_can_avoid_system_tmp
+passed	tests/test_gate_integrity.py::test_gate_rejects_missing_tests_and_module_skips[<lambda>-collected at the merge base are not collected here]
+passed	tests/test_gate_integrity.py::test_gate_rejects_missing_tests_and_module_skips[<lambda>-without a deselection report]
+passed	tests/test_gate_integrity.py::test_gate_rejects_missing_tests_and_module_skips[<lambda>-collection]
+passed	tests/test_gate_integrity.py::test_pytest_plugin_observes_collection_bypasses[import pytest\npytest.skip('module unavailable', allow_module_level=True)\n-]
+passed	tests/test_gate_integrity.py::test_pytest_plugin_observes_collection_bypasses[import pytest\npytest.importorskip('ve_gate_absent_test_backend')\n-]
+passed	tests/test_gate_integrity.py::test_pytest_plugin_observes_collection_bypasses[def test_first(): pass\ndef test_second(): pass\n-def pytest_collection_modifyitems(items):\n    items[:] = items[:1]\n]
+passed	tests/test_gate_integrity.py::test_gate_environment_is_an_allowlist
+passed	tests/test_gate_integrity.py::test_gate_environment_uses_real_repository_and_recorder
+passed	tests/test_gate_integrity.py::test_poisoned_toolchain_variables_do_not_reach_real_tools
+passed	tests/test_gate_integrity.py::test_poisoned_ambient_environment_leaves_gate_result_unchanged
+passed	tests/test_gate_integrity.py::test_cargo_ignores_home_cache_and_manifest_configs
+passed	tests/test_gate_integrity.py::test_gate_refuses_cargo_config_in_any_ancestor[.cargo/config.toml]
+passed	tests/test_gate_integrity.py::test_gate_refuses_cargo_config_in_any_ancestor[.cargo/config]
+passed	tests/test_gate_integrity.py::test_gate_refuses_cargo_config_in_any_ancestor[scratch/.cargo/config.toml]
+passed	tests/test_gate_integrity.py::test_gate_refuses_cargo_config_in_any_ancestor[scratch/cargo-home/config.toml]
+passed	tests/test_gate_integrity.py::test_gate_refuses_ancestor_uv_workspace
+passed	tests/test_gate_integrity.py::test_ancestor_pyproject_kinds[workspace]
+passed	tests/test_gate_integrity.py::test_ancestor_pyproject_kinds[project-workspace]
+passed	tests/test_gate_integrity.py::test_ancestor_pyproject_kinds[malformed]
+passed	tests/test_gate_integrity.py::test_ancestor_pyproject_kinds[tool-string]
+passed	tests/test_gate_integrity.py::test_ancestor_pyproject_kinds[uv-integer]
+passed	tests/test_gate_integrity.py::test_ancestor_pyproject_kinds[project]
+passed	tests/test_gate_integrity.py::test_ancestor_pyproject_kinds[uv-settings]
+passed	tests/test_gate_integrity.py::test_ancestor_pyproject_kinds[other-tool]
+passed	tests/test_gate_integrity.py::test_gate_rejects_python_environment_outside_checkout
+passed	tests/test_gate_integrity.py::test_cargo_workspace_root_ignores_ancestor_workspaces
+passed	tests/test_gate_integrity.py::test_cargo_registry_seed_takes_only_locked_archives
+passed	tests/test_gate_integrity.py::test_fsmonitor_hook_cannot_hide_edited_source
+passed	tests/test_gate_integrity.py::test_index_bits_cannot_hide_edited_source[--assume-unchanged]
+passed	tests/test_gate_integrity.py::test_index_bits_cannot_hide_edited_source[--skip-worktree]
+passed	tests/test_gate_integrity.py::test_source_identity_reports_clean_tree_and_leaves_index_alone
+passed	tests/test_gate_integrity.py::test_staged_change_stays_dirty_when_the_file_matches_the_commit
+passed	tests/test_gate_integrity.py::test_clean_status_is_checked_again_on_a_fresh_index_of_the_commit
+passed	tests/test_gate_integrity.py::test_gate_rejects_untracked_source_before_build
+passed	tests/test_gate_integrity.py::test_terminated_gate_cannot_leave_old_pass_record
+passed	tests/test_gate_integrity.py::test_interrupted_gate_cannot_record_pass[KeyboardInterrupt]
+passed	tests/test_gate_integrity.py::test_interrupted_gate_cannot_record_pass[TypeError]
+passed	tests/test_gate_integrity.py::test_interrupted_gate_cannot_record_pass[AttributeError]
+passed	tests/test_gate_integrity.py::test_gate_resets_record_uses_own_binary_and_checks_source_at_end[False-False]
+passed	tests/test_gate_integrity.py::test_gate_resets_record_uses_own_binary_and_checks_source_at_end[True-False]
+passed	tests/test_gate_integrity.py::test_gate_resets_record_uses_own_binary_and_checks_source_at_end[False-True]
+passed	tests/test_gate_integrity.py::test_gate_refuses_a_rust_build_checkers_lock_does_not_pin

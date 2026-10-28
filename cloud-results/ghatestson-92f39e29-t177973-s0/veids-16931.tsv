@@ -1,0 +1,38 @@
+collected	tests/test_lake_outputs.py::test_traced_binaries_are_fresh_and_a_replaced_binary_is_stale
+collected	tests/test_lake_outputs.py::test_an_unreadable_or_wrong_trace_is_stale[]
+collected	tests/test_lake_outputs.py::test_an_unreadable_or_wrong_trace_is_stale[{]
+collected	tests/test_lake_outputs.py::test_an_unreadable_or_wrong_trace_is_stale[[]]
+collected	tests/test_lake_outputs.py::test_an_unreadable_or_wrong_trace_is_stale[{"log": []}]
+collected	tests/test_lake_outputs.py::test_an_unreadable_or_wrong_trace_is_stale[{"outputs": null}]
+collected	tests/test_lake_outputs.py::test_an_unreadable_or_wrong_trace_is_stale[{"outputs": true}]
+collected	tests/test_lake_outputs.py::test_an_unreadable_or_wrong_trace_is_stale[{"outputs": "0"}]
+collected	tests/test_lake_outputs.py::test_the_oracle_is_lakes_hash
+collected	tests/test_lake_outputs.py::test_lean_is_found_in_the_accounts_elan_when_home_is_replaced
+collected	tests/test_lake_outputs.py::test_every_build_entry_point_drops_stale_traces_first
+collected	tests/test_lake_outputs.py::test_a_removed_targets_binary_is_obsolete_and_a_live_ones_files_are_kept
+collected	tests/test_lake_outputs.py::test_the_repositorys_executables_are_its_lakefiles_targets
+collected	tests/test_lake_outputs.py::test_targets_it_cannot_name_remove_nothing[name = "p"\n[[lean_exe]]\nroot = "Main"\n]
+collected	tests/test_lake_outputs.py::test_targets_it_cannot_name_remove_nothing[name = "p"\n[[lean_exe]]\nname = "Ve.Service"\n]
+collected	tests/test_lake_outputs.py::test_targets_it_cannot_name_remove_nothing[name = "p"\n[[lean_exe]]\nname = "../ve"\n]
+collected	tests/test_lake_outputs.py::test_targets_it_cannot_name_remove_nothing[name = "p"\nlean_exe = "ve"\n]
+collected	tests/test_lake_outputs.py::test_targets_it_cannot_name_remove_nothing[name = "p"\n[[lean_exe\n]
+collected	tests/test_lake_outputs.py::test_a_lakefile_only_lake_can_evaluate_removes_nothing
+passed	tests/test_lake_outputs.py::test_traced_binaries_are_fresh_and_a_replaced_binary_is_stale
+passed	tests/test_lake_outputs.py::test_an_unreadable_or_wrong_trace_is_stale[]
+passed	tests/test_lake_outputs.py::test_an_unreadable_or_wrong_trace_is_stale[{]
+passed	tests/test_lake_outputs.py::test_an_unreadable_or_wrong_trace_is_stale[[]]
+passed	tests/test_lake_outputs.py::test_an_unreadable_or_wrong_trace_is_stale[{"log": []}]
+passed	tests/test_lake_outputs.py::test_an_unreadable_or_wrong_trace_is_stale[{"outputs": null}]
+passed	tests/test_lake_outputs.py::test_an_unreadable_or_wrong_trace_is_stale[{"outputs": true}]
+passed	tests/test_lake_outputs.py::test_an_unreadable_or_wrong_trace_is_stale[{"outputs": "0"}]
+passed	tests/test_lake_outputs.py::test_the_oracle_is_lakes_hash
+skipped	tests/test_lake_outputs.py::test_lean_is_found_in_the_accounts_elan_when_home_is_replaced
+passed	tests/test_lake_outputs.py::test_every_build_entry_point_drops_stale_traces_first
+passed	tests/test_lake_outputs.py::test_a_removed_targets_binary_is_obsolete_and_a_live_ones_files_are_kept
+passed	tests/test_lake_outputs.py::test_the_repositorys_executables_are_its_lakefiles_targets
+passed	tests/test_lake_outputs.py::test_targets_it_cannot_name_remove_nothing[name = "p"\n[[lean_exe]]\nroot = "Main"\n]
+passed	tests/test_lake_outputs.py::test_targets_it_cannot_name_remove_nothing[name = "p"\n[[lean_exe]]\nname = "Ve.Service"\n]
+passed	tests/test_lake_outputs.py::test_targets_it_cannot_name_remove_nothing[name = "p"\n[[lean_exe]]\nname = "../ve"\n]
+passed	tests/test_lake_outputs.py::test_targets_it_cannot_name_remove_nothing[name = "p"\nlean_exe = "ve"\n]
+passed	tests/test_lake_outputs.py::test_targets_it_cannot_name_remove_nothing[name = "p"\n[[lean_exe\n]
+passed	tests/test_lake_outputs.py::test_a_lakefile_only_lake_can_evaluate_removes_nothing

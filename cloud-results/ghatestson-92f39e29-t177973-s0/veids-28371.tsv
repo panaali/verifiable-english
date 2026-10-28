@@ -1,0 +1,6 @@
+collected	tests/test_b16d_evidence.py::test_every_residue_and_count_comes_from_saved_ledger
+collected	tests/test_b16d_evidence.py::test_scope_mutants_and_gate_are_saved
+collected	tests/test_b16d_evidence.py::test_nine_corpus_comparison_and_report_are_saved
+passed	tests/test_b16d_evidence.py::test_every_residue_and_count_comes_from_saved_ledger
+passed	tests/test_b16d_evidence.py::test_scope_mutants_and_gate_are_saved
+passed	tests/test_b16d_evidence.py::test_nine_corpus_comparison_and_report_are_saved

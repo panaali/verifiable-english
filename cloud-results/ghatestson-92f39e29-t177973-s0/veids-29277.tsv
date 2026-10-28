@@ -1,0 +1,120 @@
+collected	tests/test_lean_dump_cache.py::test_a_stored_dump_is_replayed_without_running
+collected	tests/test_lean_dump_cache.py::test_two_checkouts_of_one_tree_share_an_entry
+collected	tests/test_lean_dump_cache.py::test_a_tree_whose_inputs_cannot_be_read_runs_the_dump
+collected	tests/test_lean_dump_cache.py::test_the_code_digest_follows_imports_to_the_helpers
+collected	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[a Lean source edited]
+collected	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[a Lean source added]
+collected	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[a Lean source removed]
+collected	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[a Lean source renamed]
+collected	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[the toolchain]
+collected	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[the installed toolchain's library]
+collected	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[the installed toolchain's lean]
+collected	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[the lakefile]
+collected	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[a lakefile.lean added]
+collected	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[the Lake manifest]
+collected	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[tools/lean_statements.py]
+collected	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[lean/audit.py]
+collected	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[the cache's store]
+collected	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[a module imported through another]
+collected	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[the format]
+collected	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[a Lean setting of the environment]
+collected	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[the lake program]
+collected	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[the platform]
+collected	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[the step]
+collected	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[a caller's file]
+collected	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[a caller's value]
+collected	tests/test_lean_dump_cache.py::test_a_corrupt_entry_is_a_miss_and_the_dump_runs[not gzip]
+collected	tests/test_lean_dump_cache.py::test_a_corrupt_entry_is_a_miss_and_the_dump_runs[truncated]
+collected	tests/test_lean_dump_cache.py::test_a_corrupt_entry_is_a_miss_and_the_dump_runs[empty]
+collected	tests/test_lean_dump_cache.py::test_a_corrupt_entry_is_a_miss_and_the_dump_runs[a JSON list]
+collected	tests/test_lean_dump_cache.py::test_a_corrupt_entry_is_a_miss_and_the_dump_runs[not JSON]
+collected	tests/test_lean_dump_cache.py::test_a_corrupt_entry_is_a_miss_and_the_dump_runs[a directory]
+collected	tests/test_lean_dump_cache.py::test_a_corrupt_entry_is_a_miss_and_the_dump_runs[outputs missing]
+collected	tests/test_lean_dump_cache.py::test_a_corrupt_entry_is_a_miss_and_the_dump_runs[outputs not a list]
+collected	tests/test_lean_dump_cache.py::test_a_corrupt_entry_is_a_miss_and_the_dump_runs[an output not text]
+collected	tests/test_lean_dump_cache.py::test_a_corrupt_entry_is_a_miss_and_the_dump_runs[an output short]
+collected	tests/test_lean_dump_cache.py::test_a_corrupt_entry_is_a_miss_and_the_dump_runs[an output extra]
+collected	tests/test_lean_dump_cache.py::test_a_corrupt_entry_is_a_miss_and_the_dump_runs[another format]
+collected	tests/test_lean_dump_cache.py::test_a_corrupt_entry_is_a_miss_and_the_dump_runs[another step]
+collected	tests/test_lean_dump_cache.py::test_a_corrupt_entry_is_a_miss_and_the_dump_runs[another key]
+collected	tests/test_lean_dump_cache.py::test_a_corrupt_entry_is_a_miss_and_the_dump_runs[inputs missing]
+collected	tests/test_lean_dump_cache.py::test_an_entry_whose_recorded_inputs_are_not_the_current_ones_is_a_miss[a Lean source's digest]
+collected	tests/test_lean_dump_cache.py::test_an_entry_whose_recorded_inputs_are_not_the_current_ones_is_a_miss[the toolchain's digest]
+collected	tests/test_lean_dump_cache.py::test_an_entry_whose_recorded_inputs_are_not_the_current_ones_is_a_miss[a code file's digest]
+collected	tests/test_lean_dump_cache.py::test_an_entry_whose_recorded_inputs_are_not_the_current_ones_is_a_miss[the platform]
+collected	tests/test_lean_dump_cache.py::test_off_never_reads_or_writes
+collected	tests/test_lean_dump_cache.py::test_the_cache_directory
+collected	tests/test_lean_dump_cache.py::test_a_dump_that_fails_or_whose_inputs_change_while_it_runs_is_not_stored
+collected	tests/test_lean_dump_cache.py::test_a_tree_that_runs_code_while_it_elaborates_is_never_cached[#eval (1 : Nat)\n]
+collected	tests/test_lean_dump_cache.py::test_a_tree_that_runs_code_while_it_elaborates_is_never_cached[def x : String := include_str "data.txt"\n]
+collected	tests/test_lean_dump_cache.py::test_a_tree_that_runs_code_while_it_elaborates_is_never_cached[run_cmd pure ()\n]
+collected	tests/test_lean_dump_cache.py::test_a_tree_that_runs_code_while_it_elaborates_is_never_cached[initialize counter : IO.Ref Nat \u2190 IO.mkRef 0\n]
+collected	tests/test_lean_dump_cache.py::test_a_tree_that_runs_code_while_it_elaborates_is_never_cached[elab "probe" : term => do\n  let _ \u2190 IO.FS.readFile "x"\n  return .const ``Nat []\n]
+collected	tests/test_lean_dump_cache.py::test_the_real_tree_runs_no_code_while_it_elaborates
+collected	tests/test_lean_dump_cache.py::test_two_concurrent_stores_of_one_key_leave_one_valid_entry
+collected	tests/test_lean_dump_cache.py::test_the_store_keeps_the_newest_entries
+collected	tests/test_lean_dump_cache.py::test_the_steps_are_the_regeneration_entries
+collected	tests/test_lean_dump_cache.py::test_the_command_lines_use_the_cache
+collected	tests/test_lean_dump_cache.py::test_only_the_explicit_audit_modes_are_cached
+collected	tests/test_lean_dump_cache.py::test_the_audit_replays_lean_output_and_checks_it_as_fresh
+collected	tests/test_lean_dump_cache.py::test_a_replayed_dump_is_the_cold_dump_of_the_real_tree
+passed	tests/test_lean_dump_cache.py::test_a_stored_dump_is_replayed_without_running
+passed	tests/test_lean_dump_cache.py::test_two_checkouts_of_one_tree_share_an_entry
+passed	tests/test_lean_dump_cache.py::test_a_tree_whose_inputs_cannot_be_read_runs_the_dump
+passed	tests/test_lean_dump_cache.py::test_the_code_digest_follows_imports_to_the_helpers
+passed	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[a Lean source edited]
+passed	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[a Lean source added]
+passed	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[a Lean source removed]
+passed	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[a Lean source renamed]
+passed	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[the toolchain]
+passed	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[the installed toolchain's library]
+passed	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[the installed toolchain's lean]
+passed	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[the lakefile]
+passed	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[a lakefile.lean added]
+passed	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[the Lake manifest]
+passed	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[tools/lean_statements.py]
+passed	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[lean/audit.py]
+passed	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[the cache's store]
+passed	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[a module imported through another]
+passed	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[the format]
+passed	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[a Lean setting of the environment]
+passed	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[the lake program]
+passed	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[the platform]
+passed	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[the step]
+passed	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[a caller's file]
+passed	tests/test_lean_dump_cache.py::test_each_keyed_input_changed_is_a_miss[a caller's value]
+passed	tests/test_lean_dump_cache.py::test_a_corrupt_entry_is_a_miss_and_the_dump_runs[not gzip]
+passed	tests/test_lean_dump_cache.py::test_a_corrupt_entry_is_a_miss_and_the_dump_runs[truncated]
+passed	tests/test_lean_dump_cache.py::test_a_corrupt_entry_is_a_miss_and_the_dump_runs[empty]
+passed	tests/test_lean_dump_cache.py::test_a_corrupt_entry_is_a_miss_and_the_dump_runs[a JSON list]
+passed	tests/test_lean_dump_cache.py::test_a_corrupt_entry_is_a_miss_and_the_dump_runs[not JSON]
+passed	tests/test_lean_dump_cache.py::test_a_corrupt_entry_is_a_miss_and_the_dump_runs[a directory]
+passed	tests/test_lean_dump_cache.py::test_a_corrupt_entry_is_a_miss_and_the_dump_runs[outputs missing]
+passed	tests/test_lean_dump_cache.py::test_a_corrupt_entry_is_a_miss_and_the_dump_runs[outputs not a list]
+passed	tests/test_lean_dump_cache.py::test_a_corrupt_entry_is_a_miss_and_the_dump_runs[an output not text]
+passed	tests/test_lean_dump_cache.py::test_a_corrupt_entry_is_a_miss_and_the_dump_runs[an output short]
+passed	tests/test_lean_dump_cache.py::test_a_corrupt_entry_is_a_miss_and_the_dump_runs[an output extra]
+passed	tests/test_lean_dump_cache.py::test_a_corrupt_entry_is_a_miss_and_the_dump_runs[another format]
+passed	tests/test_lean_dump_cache.py::test_a_corrupt_entry_is_a_miss_and_the_dump_runs[another step]
+passed	tests/test_lean_dump_cache.py::test_a_corrupt_entry_is_a_miss_and_the_dump_runs[another key]
+passed	tests/test_lean_dump_cache.py::test_a_corrupt_entry_is_a_miss_and_the_dump_runs[inputs missing]
+passed	tests/test_lean_dump_cache.py::test_an_entry_whose_recorded_inputs_are_not_the_current_ones_is_a_miss[a Lean source's digest]
+passed	tests/test_lean_dump_cache.py::test_an_entry_whose_recorded_inputs_are_not_the_current_ones_is_a_miss[the toolchain's digest]
+passed	tests/test_lean_dump_cache.py::test_an_entry_whose_recorded_inputs_are_not_the_current_ones_is_a_miss[a code file's digest]
+passed	tests/test_lean_dump_cache.py::test_an_entry_whose_recorded_inputs_are_not_the_current_ones_is_a_miss[the platform]
+passed	tests/test_lean_dump_cache.py::test_off_never_reads_or_writes
+passed	tests/test_lean_dump_cache.py::test_the_cache_directory
+passed	tests/test_lean_dump_cache.py::test_a_dump_that_fails_or_whose_inputs_change_while_it_runs_is_not_stored
+passed	tests/test_lean_dump_cache.py::test_a_tree_that_runs_code_while_it_elaborates_is_never_cached[#eval (1 : Nat)\n]
+passed	tests/test_lean_dump_cache.py::test_a_tree_that_runs_code_while_it_elaborates_is_never_cached[def x : String := include_str "data.txt"\n]
+passed	tests/test_lean_dump_cache.py::test_a_tree_that_runs_code_while_it_elaborates_is_never_cached[run_cmd pure ()\n]
+passed	tests/test_lean_dump_cache.py::test_a_tree_that_runs_code_while_it_elaborates_is_never_cached[initialize counter : IO.Ref Nat \u2190 IO.mkRef 0\n]
+passed	tests/test_lean_dump_cache.py::test_a_tree_that_runs_code_while_it_elaborates_is_never_cached[elab "probe" : term => do\n  let _ \u2190 IO.FS.readFile "x"\n  return .const ``Nat []\n]
+passed	tests/test_lean_dump_cache.py::test_the_real_tree_runs_no_code_while_it_elaborates
+passed	tests/test_lean_dump_cache.py::test_two_concurrent_stores_of_one_key_leave_one_valid_entry
+passed	tests/test_lean_dump_cache.py::test_the_store_keeps_the_newest_entries
+passed	tests/test_lean_dump_cache.py::test_the_steps_are_the_regeneration_entries
+passed	tests/test_lean_dump_cache.py::test_the_command_lines_use_the_cache
+passed	tests/test_lean_dump_cache.py::test_only_the_explicit_audit_modes_are_cached
+passed	tests/test_lean_dump_cache.py::test_the_audit_replays_lean_output_and_checks_it_as_fresh
+passed	tests/test_lean_dump_cache.py::test_a_replayed_dump_is_the_cold_dump_of_the_real_tree

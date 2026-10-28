@@ -1,0 +1,136 @@
+collected	tests/test_answer_cutoff.py::test_recorder_records_each_case_the_client_sent
+collected	tests/test_answer_cutoff.py::test_request_records_leave_the_map_as_it_was
+collected	tests/test_answer_cutoff.py::test_service_uses_the_record_cannot_replay_make_the_unit_unknown[import sys\nsys.audit('ve.service.mode', 'evaluate')\n-was not raised by the client's exchange]
+collected	tests/test_answer_cutoff.py::test_service_uses_the_record_cannot_replay_make_the_unit_unknown[from ve.backends.lean_service import LeanService, CheckerUnavailable\ntry:\n    LeanService('/nonexistent/ve_service').run('evaluate', [{'id': 'a', 'ast': [['top']]}])\nexcept CheckerUnavailable:\n    pass\n-a request to another executable]
+collected	tests/test_answer_cutoff.py::test_service_uses_the_record_cannot_replay_make_the_unit_unknown[import subprocess\nsubprocess.Popen(['lean/.lake/build/bin/ve_service'], stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL).wait()\n-started outside ve/backends/lean_service.py]
+collected	tests/test_answer_cutoff.py::test_service_uses_the_record_cannot_replay_make_the_unit_unknown[from ve.backends.lean_service import LeanService\nwith LeanService() as service:\n    try:\n        service.exchange('evaluate', '{}', 1)\n    except Exception:\n        pass\n-(ValueError: the request's cases do not split)]
+collected	tests/test_answer_cutoff.py::test_service_uses_the_record_cannot_replay_make_the_unit_unknown[from ve.backends.lean_service import LeanService\nwith LeanService() as service:\n    try:\n        service.exchange('evaluate', '[1]', 1, texts=[1])\n    except Exception:\n        pass\n-(ValueError: the request's cases do not split)]
+collected	tests/test_answer_cutoff.py::test_timeouts_and_data_reads_of_the_pins_are_recorded[client]
+collected	tests/test_answer_cutoff.py::test_timeouts_and_data_reads_of_the_pins_are_recorded[call]
+collected	tests/test_answer_cutoff.py::test_a_child_and_a_nested_recording_send_for_the_outer_unit
+collected	tests/test_answer_cutoff.py::test_a_process_that_ends_without_cleanup_keeps_its_records
+collected	tests/test_answer_cutoff.py::test_the_cutoff_reads_and_writes_its_files_as_utf8_in_any_locale
+collected	tests/test_answer_cutoff.py::test_a_recording_without_requests_starts_a_child_with_its_own_environment
+collected	tests/test_answer_cutoff.py::test_the_caller_is_code_under_the_root_and_not_beside_it
+collected	tests/test_answer_cutoff.py::test_folding_marks_truncated_and_unrecorded_cases_unknown
+collected	tests/test_answer_cutoff.py::test_folding_keeps_a_timed_request_and_reads_every_line_it_can
+collected	tests/test_answer_cutoff.py::test_diff_finds_changed_missing_and_unreplayable_answers
+collected	tests/test_answer_cutoff.py::test_a_case_names_an_environment_only_by_a_string_handle_in_an_object
+collected	tests/test_answer_cutoff.py::test_batches_split_by_mode_count_and_inline_size
+collected	tests/test_answer_cutoff.py::test_a_refused_batch_is_asked_again_case_by_case
+collected	tests/test_answer_cutoff.py::test_a_unit_that_read_an_answer_the_base_build_changed_is_unknown
+collected	tests/test_answer_cutoff.py::test_answers_rule_selects_changed_and_unknown_users_only
+collected	tests/test_answer_cutoff.py::test_a_unit_recorded_failing_or_opaque_is_unknown_with_its_status
+collected	tests/test_answer_cutoff.py::test_request_handling_and_project_changes_select_every_service_user[lean/VE/Service/Protocol.lean]
+collected	tests/test_answer_cutoff.py::test_request_handling_and_project_changes_select_every_service_user[lean/VE/Service/Registry.lean]
+collected	tests/test_answer_cutoff.py::test_request_handling_and_project_changes_select_every_service_user[lean/Serve.lean]
+collected	tests/test_answer_cutoff.py::test_request_handling_and_project_changes_select_every_service_user[lean/VE/Json.lean]
+collected	tests/test_answer_cutoff.py::test_request_handling_and_project_changes_select_every_service_user[lean/lakefile.toml]
+collected	tests/test_answer_cutoff.py::test_a_pin_change_selects_only_data_readers_when_the_new_build_is_pinned
+collected	tests/test_answer_cutoff.py::test_the_pin_exemption_is_for_the_pins_only
+collected	tests/test_answer_cutoff.py::test_pinned_reads_the_pins_of_the_tree_or_of_a_commit
+collected	tests/test_answer_cutoff.py::test_randomised_inputs_make_a_unit_unknown[from hypothesis import given\n-uses hypothesis]
+collected	tests/test_answer_cutoff.py::test_randomised_inputs_make_a_unit_unknown[import random\n\ndef test():\n    random.choice([1, 2])\n-calls random.choice]
+collected	tests/test_answer_cutoff.py::test_randomised_inputs_make_a_unit_unknown[import random\n\ndef test():\n    random.Random()\n-calls random.Random]
+collected	tests/test_answer_cutoff.py::test_randomised_inputs_make_a_unit_unknown[from random import shuffle\n-imports random's shuffle]
+collected	tests/test_answer_cutoff.py::test_randomised_inputs_make_a_unit_unknown[import uuid\n\ndef test():\n    uuid.uuid4()\n-calls uuid.uuid4]
+collected	tests/test_answer_cutoff.py::test_randomised_inputs_make_a_unit_unknown[import hypothesis\n-uses hypothesis]
+collected	tests/test_answer_cutoff.py::test_randomised_inputs_make_a_unit_unknown[import hypothesis.strategies as st\n-uses hypothesis]
+collected	tests/test_answer_cutoff.py::test_randomised_inputs_make_a_unit_unknown[from hypothesis.strategies import integers\n-uses hypothesis]
+collected	tests/test_answer_cutoff.py::test_randomised_inputs_make_a_unit_unknown[from uuid import uuid4\n-imports uuid's uuid4]
+collected	tests/test_answer_cutoff.py::test_randomised_inputs_make_a_unit_unknown[from os import urandom\n-imports os's urandom]
+collected	tests/test_answer_cutoff.py::test_randomised_inputs_make_a_unit_unknown[import secrets\n\ndef test():\n    secrets.token_hex()\n-calls secrets.token_hex]
+collected	tests/test_answer_cutoff.py::test_a_unit_that_does_not_parse_is_unknown
+collected	tests/test_answer_cutoff.py::test_seeded_randomness_is_not_unknown
+collected	tests/test_answer_cutoff.py::test_property_tests_count_in_the_unit_and_its_helpers_but_not_in_another_test_file
+collected	tests/test_answer_cutoff.py::test_service_rule_is_restored_after_a_failure
+collected	tests/test_answer_cutoff.py::test_modes_rule_is_ts_b2s_per_mode_rule
+collected	tests/test_answer_cutoff.py::test_select_runs_today_off_and_the_answers_rule_on_its_diff
+collected	tests/test_answer_cutoff.py::test_select_answers_takes_the_build_made_here_by_default
+collected	tests/test_answer_cutoff.py::test_select_answers_refuses_a_diff_it_cannot_trust
+collected	tests/test_answer_cutoff.py::test_replay_answers_each_case_as_recorded_and_again_alike
+collected	tests/test_answer_cutoff.py::test_a_replay_refuses_to_finish_without_every_answer
+collected	tests/test_answer_cutoff.py::test_a_replay_answers_only_from_the_build_it_hashed
+collected	tests/test_answer_cutoff.py::test_the_replay_command_line
+collected	tests/test_answer_cutoff.py::test_the_cutoff_command_line
+collected	tests/test_answer_cutoff.py::test_the_tools_run_as_scripts[answer_replay]
+collected	tests/test_answer_cutoff.py::test_the_tools_run_as_scripts[answer_cutoff]
+collected	tests/test_answer_cutoff.py::test_record_writes_a_recording_select_answers_reads
+collected	tests/test_answer_cutoff.py::test_the_hook_passes_its_rule_and_is_off_by_default
+collected	tests/test_answer_cutoff.py::test_a_feedback_run_takes_the_r1_rule_and_nothing_else_does[None]
+collected	tests/test_answer_cutoff.py::test_a_feedback_run_takes_the_r1_rule_and_nothing_else_does[modes]
+collected	tests/test_answer_cutoff.py::test_the_gate_and_the_maps_never_reach_the_cutoff
+collected	tests/test_answer_cutoff.py::test_a_case_answers_alike_alone_and_in_a_batch
+collected	tests/test_answer_cutoff.py::test_a_case_named_by_handle_is_replayed_inline_as_the_client_resends_it
+collected	tests/test_answer_cutoff.py::test_answers_read_todays_map_and_count_the_recordings_staleness
+collected	tests/test_answer_cutoff.py::test_the_pin_exemption_and_the_stale_answers_reach_the_plan
+collected	tests/test_answer_cutoff.py::test_a_feedback_run_takes_the_modes_rule
+collected	tests/test_answer_cutoff.py::test_r1_never_takes_the_answers_rule
+passed	tests/test_answer_cutoff.py::test_recorder_records_each_case_the_client_sent
+passed	tests/test_answer_cutoff.py::test_request_records_leave_the_map_as_it_was
+passed	tests/test_answer_cutoff.py::test_service_uses_the_record_cannot_replay_make_the_unit_unknown[import sys\nsys.audit('ve.service.mode', 'evaluate')\n-was not raised by the client's exchange]
+passed	tests/test_answer_cutoff.py::test_service_uses_the_record_cannot_replay_make_the_unit_unknown[from ve.backends.lean_service import LeanService, CheckerUnavailable\ntry:\n    LeanService('/nonexistent/ve_service').run('evaluate', [{'id': 'a', 'ast': [['top']]}])\nexcept CheckerUnavailable:\n    pass\n-a request to another executable]
+passed	tests/test_answer_cutoff.py::test_service_uses_the_record_cannot_replay_make_the_unit_unknown[import subprocess\nsubprocess.Popen(['lean/.lake/build/bin/ve_service'], stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL).wait()\n-started outside ve/backends/lean_service.py]
+passed	tests/test_answer_cutoff.py::test_service_uses_the_record_cannot_replay_make_the_unit_unknown[from ve.backends.lean_service import LeanService\nwith LeanService() as service:\n    try:\n        service.exchange('evaluate', '{}', 1)\n    except Exception:\n        pass\n-(ValueError: the request's cases do not split)]
+passed	tests/test_answer_cutoff.py::test_service_uses_the_record_cannot_replay_make_the_unit_unknown[from ve.backends.lean_service import LeanService\nwith LeanService() as service:\n    try:\n        service.exchange('evaluate', '[1]', 1, texts=[1])\n    except Exception:\n        pass\n-(ValueError: the request's cases do not split)]
+passed	tests/test_answer_cutoff.py::test_timeouts_and_data_reads_of_the_pins_are_recorded[client]
+passed	tests/test_answer_cutoff.py::test_timeouts_and_data_reads_of_the_pins_are_recorded[call]
+passed	tests/test_answer_cutoff.py::test_a_child_and_a_nested_recording_send_for_the_outer_unit
+passed	tests/test_answer_cutoff.py::test_a_process_that_ends_without_cleanup_keeps_its_records
+passed	tests/test_answer_cutoff.py::test_the_cutoff_reads_and_writes_its_files_as_utf8_in_any_locale
+passed	tests/test_answer_cutoff.py::test_a_recording_without_requests_starts_a_child_with_its_own_environment
+passed	tests/test_answer_cutoff.py::test_the_caller_is_code_under_the_root_and_not_beside_it
+passed	tests/test_answer_cutoff.py::test_folding_marks_truncated_and_unrecorded_cases_unknown
+passed	tests/test_answer_cutoff.py::test_folding_keeps_a_timed_request_and_reads_every_line_it_can
+passed	tests/test_answer_cutoff.py::test_diff_finds_changed_missing_and_unreplayable_answers
+passed	tests/test_answer_cutoff.py::test_a_case_names_an_environment_only_by_a_string_handle_in_an_object
+passed	tests/test_answer_cutoff.py::test_batches_split_by_mode_count_and_inline_size
+passed	tests/test_answer_cutoff.py::test_a_refused_batch_is_asked_again_case_by_case
+passed	tests/test_answer_cutoff.py::test_a_unit_that_read_an_answer_the_base_build_changed_is_unknown
+passed	tests/test_answer_cutoff.py::test_answers_rule_selects_changed_and_unknown_users_only
+passed	tests/test_answer_cutoff.py::test_a_unit_recorded_failing_or_opaque_is_unknown_with_its_status
+passed	tests/test_answer_cutoff.py::test_request_handling_and_project_changes_select_every_service_user[lean/VE/Service/Protocol.lean]
+passed	tests/test_answer_cutoff.py::test_request_handling_and_project_changes_select_every_service_user[lean/VE/Service/Registry.lean]
+passed	tests/test_answer_cutoff.py::test_request_handling_and_project_changes_select_every_service_user[lean/Serve.lean]
+passed	tests/test_answer_cutoff.py::test_request_handling_and_project_changes_select_every_service_user[lean/VE/Json.lean]
+passed	tests/test_answer_cutoff.py::test_request_handling_and_project_changes_select_every_service_user[lean/lakefile.toml]
+passed	tests/test_answer_cutoff.py::test_a_pin_change_selects_only_data_readers_when_the_new_build_is_pinned
+passed	tests/test_answer_cutoff.py::test_the_pin_exemption_is_for_the_pins_only
+passed	tests/test_answer_cutoff.py::test_pinned_reads_the_pins_of_the_tree_or_of_a_commit
+passed	tests/test_answer_cutoff.py::test_randomised_inputs_make_a_unit_unknown[from hypothesis import given\n-uses hypothesis]
+passed	tests/test_answer_cutoff.py::test_randomised_inputs_make_a_unit_unknown[import random\n\ndef test():\n    random.choice([1, 2])\n-calls random.choice]
+passed	tests/test_answer_cutoff.py::test_randomised_inputs_make_a_unit_unknown[import random\n\ndef test():\n    random.Random()\n-calls random.Random]
+passed	tests/test_answer_cutoff.py::test_randomised_inputs_make_a_unit_unknown[from random import shuffle\n-imports random's shuffle]
+passed	tests/test_answer_cutoff.py::test_randomised_inputs_make_a_unit_unknown[import uuid\n\ndef test():\n    uuid.uuid4()\n-calls uuid.uuid4]
+passed	tests/test_answer_cutoff.py::test_randomised_inputs_make_a_unit_unknown[import hypothesis\n-uses hypothesis]
+passed	tests/test_answer_cutoff.py::test_randomised_inputs_make_a_unit_unknown[import hypothesis.strategies as st\n-uses hypothesis]
+passed	tests/test_answer_cutoff.py::test_randomised_inputs_make_a_unit_unknown[from hypothesis.strategies import integers\n-uses hypothesis]
+passed	tests/test_answer_cutoff.py::test_randomised_inputs_make_a_unit_unknown[from uuid import uuid4\n-imports uuid's uuid4]
+passed	tests/test_answer_cutoff.py::test_randomised_inputs_make_a_unit_unknown[from os import urandom\n-imports os's urandom]
+passed	tests/test_answer_cutoff.py::test_randomised_inputs_make_a_unit_unknown[import secrets\n\ndef test():\n    secrets.token_hex()\n-calls secrets.token_hex]
+passed	tests/test_answer_cutoff.py::test_a_unit_that_does_not_parse_is_unknown
+passed	tests/test_answer_cutoff.py::test_seeded_randomness_is_not_unknown
+passed	tests/test_answer_cutoff.py::test_property_tests_count_in_the_unit_and_its_helpers_but_not_in_another_test_file
+passed	tests/test_answer_cutoff.py::test_service_rule_is_restored_after_a_failure
+passed	tests/test_answer_cutoff.py::test_modes_rule_is_ts_b2s_per_mode_rule
+passed	tests/test_answer_cutoff.py::test_select_runs_today_off_and_the_answers_rule_on_its_diff
+passed	tests/test_answer_cutoff.py::test_select_answers_takes_the_build_made_here_by_default
+passed	tests/test_answer_cutoff.py::test_select_answers_refuses_a_diff_it_cannot_trust
+passed	tests/test_answer_cutoff.py::test_replay_answers_each_case_as_recorded_and_again_alike
+passed	tests/test_answer_cutoff.py::test_a_replay_refuses_to_finish_without_every_answer
+passed	tests/test_answer_cutoff.py::test_a_replay_answers_only_from_the_build_it_hashed
+passed	tests/test_answer_cutoff.py::test_the_replay_command_line
+passed	tests/test_answer_cutoff.py::test_the_cutoff_command_line
+passed	tests/test_answer_cutoff.py::test_the_tools_run_as_scripts[answer_replay]
+passed	tests/test_answer_cutoff.py::test_the_tools_run_as_scripts[answer_cutoff]
+passed	tests/test_answer_cutoff.py::test_record_writes_a_recording_select_answers_reads
+passed	tests/test_answer_cutoff.py::test_the_hook_passes_its_rule_and_is_off_by_default
+passed	tests/test_answer_cutoff.py::test_a_feedback_run_takes_the_r1_rule_and_nothing_else_does[None]
+passed	tests/test_answer_cutoff.py::test_a_feedback_run_takes_the_r1_rule_and_nothing_else_does[modes]
+passed	tests/test_answer_cutoff.py::test_the_gate_and_the_maps_never_reach_the_cutoff
+passed	tests/test_answer_cutoff.py::test_a_case_answers_alike_alone_and_in_a_batch
+passed	tests/test_answer_cutoff.py::test_a_case_named_by_handle_is_replayed_inline_as_the_client_resends_it
+passed	tests/test_answer_cutoff.py::test_answers_read_todays_map_and_count_the_recordings_staleness
+passed	tests/test_answer_cutoff.py::test_the_pin_exemption_and_the_stale_answers_reach_the_plan
+passed	tests/test_answer_cutoff.py::test_a_feedback_run_takes_the_modes_rule
+passed	tests/test_answer_cutoff.py::test_r1_never_takes_the_answers_rule

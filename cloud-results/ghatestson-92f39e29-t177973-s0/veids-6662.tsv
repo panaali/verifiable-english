@@ -1,0 +1,26 @@
+collected	tests/test_lineage_lint.py::test_literal_revision_scanner_follows_a_frozen_loader
+collected	tests/test_lineage_lint.py::test_the_scanner_finds_each_way_a_revision_is_written[subprocess.run(["git", "show", f"{report.B12_HEAD}:lean/trust.txt"])\n]
+collected	tests/test_lineage_lint.py::test_the_scanner_finds_each_way_a_revision_is_written[subprocess.run(["git", "log", "c24aeab..HEAD"])\n]
+collected	tests/test_lineage_lint.py::test_the_scanner_finds_each_way_a_revision_is_written[subprocess.run(["git", "merge-base", "HEAD", "c24aeab2"])\n]
+collected	tests/test_lineage_lint.py::test_the_scanner_finds_each_way_a_revision_is_written[subprocess.run(["git", "rev-list", "c24aeab2"])\n]
+collected	tests/test_lineage_lint.py::test_the_scanner_finds_each_way_a_revision_is_written[command = ["git", "show", "c24aeab2:f"]\nsubprocess.run(command)\n]
+collected	tests/test_lineage_lint.py::test_the_scanner_finds_each_way_a_revision_is_written[subprocess.run(args=["git", "show", "c24aeab2:f"])\n]
+collected	tests/test_lineage_lint.py::test_the_scanner_finds_each_way_a_revision_is_written[REV = "c24aeab2" if old else "HEAD"\nsubprocess.run(["git", "show", f"{REV}:f"])\n]
+collected	tests/test_lineage_lint.py::test_a_revision_read_from_saved_data_is_found[EVIDENCE = json.loads(text)\ngit("log", "--reverse", f"{EVIDENCE['base']}..HEAD")\n-base]
+collected	tests/test_lineage_lint.py::test_a_revision_read_from_saved_data_is_found[E = json.loads(t)\nreport = E["report_commit"]\nsubprocess.check_output(["git", "log", f"{E['base']}..{report}"])\n-report_commit]
+collected	tests/test_lineage_lint.py::test_a_revision_read_from_saved_data_is_found[for entry in m["items"]:\n    row = json.loads(t)\n    prov = row["provenance"]\n    key = (prov["git_revision"], prov["path"])\n    subprocess.check_output(["git", "show", ":".join(key)])\n-git_revision]
+collected	tests/test_lineage_lint.py::test_saved_content_names_and_pinned_blobs_pass
+collected	tests/test_lineage_lint.py::test_history_revisions_are_content_addressed
+passed	tests/test_lineage_lint.py::test_literal_revision_scanner_follows_a_frozen_loader
+passed	tests/test_lineage_lint.py::test_the_scanner_finds_each_way_a_revision_is_written[subprocess.run(["git", "show", f"{report.B12_HEAD}:lean/trust.txt"])\n]
+passed	tests/test_lineage_lint.py::test_the_scanner_finds_each_way_a_revision_is_written[subprocess.run(["git", "log", "c24aeab..HEAD"])\n]
+passed	tests/test_lineage_lint.py::test_the_scanner_finds_each_way_a_revision_is_written[subprocess.run(["git", "merge-base", "HEAD", "c24aeab2"])\n]
+passed	tests/test_lineage_lint.py::test_the_scanner_finds_each_way_a_revision_is_written[subprocess.run(["git", "rev-list", "c24aeab2"])\n]
+passed	tests/test_lineage_lint.py::test_the_scanner_finds_each_way_a_revision_is_written[command = ["git", "show", "c24aeab2:f"]\nsubprocess.run(command)\n]
+passed	tests/test_lineage_lint.py::test_the_scanner_finds_each_way_a_revision_is_written[subprocess.run(args=["git", "show", "c24aeab2:f"])\n]
+passed	tests/test_lineage_lint.py::test_the_scanner_finds_each_way_a_revision_is_written[REV = "c24aeab2" if old else "HEAD"\nsubprocess.run(["git", "show", f"{REV}:f"])\n]
+passed	tests/test_lineage_lint.py::test_a_revision_read_from_saved_data_is_found[EVIDENCE = json.loads(text)\ngit("log", "--reverse", f"{EVIDENCE['base']}..HEAD")\n-base]
+passed	tests/test_lineage_lint.py::test_a_revision_read_from_saved_data_is_found[E = json.loads(t)\nreport = E["report_commit"]\nsubprocess.check_output(["git", "log", f"{E['base']}..{report}"])\n-report_commit]
+passed	tests/test_lineage_lint.py::test_a_revision_read_from_saved_data_is_found[for entry in m["items"]:\n    row = json.loads(t)\n    prov = row["provenance"]\n    key = (prov["git_revision"], prov["path"])\n    subprocess.check_output(["git", "show", ":".join(key)])\n-git_revision]
+passed	tests/test_lineage_lint.py::test_saved_content_names_and_pinned_blobs_pass
+passed	tests/test_lineage_lint.py::test_history_revisions_are_content_addressed

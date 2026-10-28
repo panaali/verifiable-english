@@ -1,0 +1,10 @@
+collected	tests/test_english_e2_selection.py::test_the_wordings_reach_both_sides_of_the_rule
+collected	tests/test_english_e2_selection.py::test_lean_accepts_every_selection_python_makes[1]
+collected	tests/test_english_e2_selection.py::test_lean_accepts_every_selection_python_makes[2]
+collected	tests/test_english_e2_selection.py::test_lean_accepts_every_selection_python_makes[3]
+collected	tests/test_english_e2_selection.py::test_lean_accepts_every_selection_python_makes[4]
+passed	tests/test_english_e2_selection.py::test_the_wordings_reach_both_sides_of_the_rule
+passed	tests/test_english_e2_selection.py::test_lean_accepts_every_selection_python_makes[1]
+passed	tests/test_english_e2_selection.py::test_lean_accepts_every_selection_python_makes[2]
+passed	tests/test_english_e2_selection.py::test_lean_accepts_every_selection_python_makes[3]
+passed	tests/test_english_e2_selection.py::test_lean_accepts_every_selection_python_makes[4]

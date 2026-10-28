@@ -1,0 +1,138 @@
+collected	tests/test_hang_guards.py::test_no_short_wait_outside_the_reviewed_allowlist
+collected	tests/test_hang_guards.py::test_every_allowlist_entry_still_covers_a_short_wait
+collected	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[helper default]
+collected	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[subprocess call]
+collected	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[service]
+collected	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[annotated keyword-only default]
+collected	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[lambda default]
+collected	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[hang guard]
+collected	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[hang guard literal]
+collected	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[fault deadline]
+collected	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[reaping keyword]
+collected	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[positional wait]
+collected	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[future result]
+collected	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[sleep]
+collected	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[service setting]
+collected	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[instrumented setting]
+collected	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[parse budget]
+collected	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[environment entry]
+collected	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[environment assignment]
+collected	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[hang guard setting]
+collected	tests/test_hang_guards.py::test_the_guard_names_the_function_holding_the_wait
+collected	tests/test_hang_guards.py::test_the_guard_sees_a_product_constant_wait
+collected	tests/test_hang_guards.py::test_each_lean_route_caller_leaves_the_wait_to_its_mode[soft route]
+collected	tests/test_hang_guards.py::test_each_lean_route_caller_leaves_the_wait_to_its_mode[norm-defaults route]
+collected	tests/test_hang_guards.py::test_each_lean_route_caller_leaves_the_wait_to_its_mode[readings route]
+collected	tests/test_hang_guards.py::test_each_lean_route_caller_leaves_the_wait_to_its_mode[reports route]
+collected	tests/test_hang_guards.py::test_each_lean_route_caller_leaves_the_wait_to_its_mode[risk route]
+collected	tests/test_hang_guards.py::test_each_lean_route_caller_leaves_the_wait_to_its_mode[alternatives route]
+collected	tests/test_hang_guards.py::test_each_lean_route_caller_leaves_the_wait_to_its_mode[discourse route]
+collected	tests/test_hang_guards.py::test_each_lean_route_caller_leaves_the_wait_to_its_mode[W6 quantity admission]
+collected	tests/test_hang_guards.py::test_an_explicit_route_timeout_is_kept
+collected	tests/test_hang_guards.py::test_the_suite_raises_every_checker_setting_to_the_hang_guard
+collected	tests/test_hang_guards.py::test_every_precommit_wait_follows_the_setting_else_its_default
+collected	tests/test_hang_guards.py::test_a_wire_check_that_outlasts_its_wait_blocks_the_commit
+collected	tests/test_hang_guards.py::test_the_busy_cpu_clock_advances_a_tick_per_reading_in_its_phases_only
+collected	tests/test_hang_guards.py::test_the_busy_cpu_clock_can_move_while_the_request_is_written
+collected	tests/test_hang_guards.py::test_every_sub_tick_cpu_deadline_is_read_on_the_busy_clock
+collected	tests/test_hang_guards.py::test_the_sub_tick_lint_sees_each_form[setitem below a tick]
+collected	tests/test_hang_guards.py::test_the_sub_tick_lint_sees_each_form[assigned below a tick]
+collected	tests/test_hang_guards.py::test_the_sub_tick_lint_sees_each_form[on the busy clock]
+collected	tests/test_hang_guards.py::test_the_sub_tick_lint_sees_each_form[above a tick]
+collected	tests/test_hang_guards.py::test_the_sub_tick_lint_sees_each_form[not a constant]
+collected	tests/test_hang_guards.py::test_a_child_started_without_a_checker_setting_is_refused[popped from a child's environment]
+collected	tests/test_hang_guards.py::test_a_child_started_without_a_checker_setting_is_refused[deleted from this process]
+collected	tests/test_hang_guards.py::test_a_child_started_without_a_checker_setting_is_refused[os.system]
+collected	tests/test_hang_guards.py::test_a_child_started_without_a_checker_setting_is_refused[os.posix_spawn]
+collected	tests/test_hang_guards.py::test_a_real_checker_started_with_a_lowered_setting_is_refused[service setting, this process]
+collected	tests/test_hang_guards.py::test_a_real_checker_started_with_a_lowered_setting_is_refused[Rust setting, child environment]
+collected	tests/test_hang_guards.py::test_a_real_checker_started_with_a_lowered_setting_is_refused[unreadable setting, posix_spawn]
+collected	tests/test_hang_guards.py::test_a_lowered_setting_for_a_fake_checker_is_allowed
+collected	tests/test_hang_guards.py::test_a_removed_setting_without_a_real_child_or_a_fresh_environment_is_allowed
+collected	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[monotonic]
+collected	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[elapsed]
+collected	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[perf_counter]
+collected	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[process_time]
+collected	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[nanoseconds]
+collected	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[CPU seconds]
+collected	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[CPU name]
+collected	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[duration]
+collected	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[other name]
+collected	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[recorded wait]
+collected	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[rusage]
+collected	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[CPU count]
+collected	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[CPU seconds by key]
+collected	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[elapsed by get]
+collected	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[work count by key]
+collected	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[other key]
+collected	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[saved figure in a report]
+collected	tests/test_hang_guards.py::test_test_modules_other_code_imports_load_outside_pytest
+passed	tests/test_hang_guards.py::test_no_short_wait_outside_the_reviewed_allowlist
+passed	tests/test_hang_guards.py::test_every_allowlist_entry_still_covers_a_short_wait
+passed	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[helper default]
+passed	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[subprocess call]
+passed	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[service]
+passed	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[annotated keyword-only default]
+passed	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[lambda default]
+passed	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[hang guard]
+passed	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[hang guard literal]
+passed	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[fault deadline]
+passed	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[reaping keyword]
+passed	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[positional wait]
+passed	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[future result]
+passed	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[sleep]
+passed	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[service setting]
+passed	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[instrumented setting]
+passed	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[parse budget]
+passed	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[environment entry]
+passed	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[environment assignment]
+passed	tests/test_hang_guards.py::test_the_guard_sees_each_form_of_wait[hang guard setting]
+passed	tests/test_hang_guards.py::test_the_guard_names_the_function_holding_the_wait
+passed	tests/test_hang_guards.py::test_the_guard_sees_a_product_constant_wait
+passed	tests/test_hang_guards.py::test_each_lean_route_caller_leaves_the_wait_to_its_mode[soft route]
+passed	tests/test_hang_guards.py::test_each_lean_route_caller_leaves_the_wait_to_its_mode[norm-defaults route]
+passed	tests/test_hang_guards.py::test_each_lean_route_caller_leaves_the_wait_to_its_mode[readings route]
+passed	tests/test_hang_guards.py::test_each_lean_route_caller_leaves_the_wait_to_its_mode[reports route]
+passed	tests/test_hang_guards.py::test_each_lean_route_caller_leaves_the_wait_to_its_mode[risk route]
+passed	tests/test_hang_guards.py::test_each_lean_route_caller_leaves_the_wait_to_its_mode[alternatives route]
+passed	tests/test_hang_guards.py::test_each_lean_route_caller_leaves_the_wait_to_its_mode[discourse route]
+passed	tests/test_hang_guards.py::test_each_lean_route_caller_leaves_the_wait_to_its_mode[W6 quantity admission]
+passed	tests/test_hang_guards.py::test_an_explicit_route_timeout_is_kept
+passed	tests/test_hang_guards.py::test_the_suite_raises_every_checker_setting_to_the_hang_guard
+passed	tests/test_hang_guards.py::test_every_precommit_wait_follows_the_setting_else_its_default
+passed	tests/test_hang_guards.py::test_a_wire_check_that_outlasts_its_wait_blocks_the_commit
+passed	tests/test_hang_guards.py::test_the_busy_cpu_clock_advances_a_tick_per_reading_in_its_phases_only
+passed	tests/test_hang_guards.py::test_the_busy_cpu_clock_can_move_while_the_request_is_written
+passed	tests/test_hang_guards.py::test_every_sub_tick_cpu_deadline_is_read_on_the_busy_clock
+passed	tests/test_hang_guards.py::test_the_sub_tick_lint_sees_each_form[setitem below a tick]
+passed	tests/test_hang_guards.py::test_the_sub_tick_lint_sees_each_form[assigned below a tick]
+passed	tests/test_hang_guards.py::test_the_sub_tick_lint_sees_each_form[on the busy clock]
+passed	tests/test_hang_guards.py::test_the_sub_tick_lint_sees_each_form[above a tick]
+passed	tests/test_hang_guards.py::test_the_sub_tick_lint_sees_each_form[not a constant]
+passed	tests/test_hang_guards.py::test_a_child_started_without_a_checker_setting_is_refused[popped from a child's environment]
+passed	tests/test_hang_guards.py::test_a_child_started_without_a_checker_setting_is_refused[deleted from this process]
+passed	tests/test_hang_guards.py::test_a_child_started_without_a_checker_setting_is_refused[os.system]
+passed	tests/test_hang_guards.py::test_a_child_started_without_a_checker_setting_is_refused[os.posix_spawn]
+passed	tests/test_hang_guards.py::test_a_real_checker_started_with_a_lowered_setting_is_refused[service setting, this process]
+passed	tests/test_hang_guards.py::test_a_real_checker_started_with_a_lowered_setting_is_refused[Rust setting, child environment]
+passed	tests/test_hang_guards.py::test_a_real_checker_started_with_a_lowered_setting_is_refused[unreadable setting, posix_spawn]
+passed	tests/test_hang_guards.py::test_a_lowered_setting_for_a_fake_checker_is_allowed
+passed	tests/test_hang_guards.py::test_a_removed_setting_without_a_real_child_or_a_fresh_environment_is_allowed
+passed	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[monotonic]
+passed	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[elapsed]
+passed	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[perf_counter]
+passed	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[process_time]
+passed	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[nanoseconds]
+passed	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[CPU seconds]
+passed	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[CPU name]
+passed	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[duration]
+passed	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[other name]
+passed	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[recorded wait]
+passed	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[rusage]
+passed	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[CPU count]
+passed	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[CPU seconds by key]
+passed	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[elapsed by get]
+passed	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[work count by key]
+passed	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[other key]
+passed	tests/test_hang_guards.py::test_the_elapsed_guard_sees_each_form[saved figure in a report]
+passed	tests/test_hang_guards.py::test_test_modules_other_code_imports_load_outside_pytest
