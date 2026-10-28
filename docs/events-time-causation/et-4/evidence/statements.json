@@ -7,7 +7,7 @@
   {
    "decl": "def decodeEvents",
    "approved": "def decodeEvents (environment : Lean.Json) : Except String (Option EventsDecoded) -- 1.2 and 4",
-   "lean": "def decodeEvents (environment : Json) : Except String (Option EventsDecoded)"
+   "lean": "def decodeEvents (environment : Lean.Json) : Except String (Option EventsDecoded)"
   },
   {
    "decl": "def eventsPack",
