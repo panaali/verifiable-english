@@ -161,6 +161,11 @@ product seeded bug in any language.
 
 ## Final checks
 
+- **Fix round 1.** `mac-pytest.sh --select -- --base d9cff5345 --run` ran on ve-mac-1 at efb85cd5 (clean): 13 units,
+  exit 0, 0 failed or error ids, no known Mac-only failures, 576 s. `regen_generated.py --check`: no entry owns or
+  reads the three changed files. In the full `--check`, route-cases and checker-pins failed, but each passes alone
+  (`--only`), and neither reads `docs/`. No Lean, Python or Rust product file changed, so there was no lake build,
+  `audit.py` or trust_mutants run.
 - **Selected tests.** `mac-pytest.sh --select -- --base d9cff5345 --run` ran on ve-mac-1 at aa686efc, with a clean tree,
   in 1,575 s. The summary: exit 0, 0 failed or error ids, no known Mac-only failures. No test in `main-known-red.txt`
   is touched.
