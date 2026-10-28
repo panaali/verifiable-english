@@ -2,6 +2,7 @@
 -- The `#print axioms` audit of every theorem of lean/declarations.txt outside the ResponseShape modules.
 import Iceberg
 import VE.Acts.Compat
+import VE.Acts.Grammar
 import VE.Acts.GrammarExamples
 import VE.Acts.Lexical
 import VE.Acts.LexicalProofs
@@ -517,8 +518,17 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.Lexical.words_cover
 #print axioms VE.Acts.Lexical.words_data
 #print axioms VE.Acts.Lexical.words_intercalate
+#print axioms VE.Acts.build_wf
+#print axioms VE.Acts.closed_cl
+#print axioms VE.Acts.closed_ok
 #print axioms VE.Acts.distinctTexts_ok
 #print axioms VE.Acts.firstEqualPair_none
+#print axioms VE.Acts.frameRules_ok
+#print axioms VE.Acts.framesOk_words
+#print axioms VE.Acts.getElem?_map_idxOf
+#print axioms VE.Acts.globalRules_ok
+#print axioms VE.Acts.grammar_wf
+#print axioms VE.Acts.kwSyms_ok
 #print axioms VE.Acts.listing_limit
 #print axioms VE.Acts.listing_nodup
 #print axioms VE.Acts.listing_ok
@@ -532,6 +542,8 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.readingsIn_exact
 #print axioms VE.Acts.readingsIn_limit
 #print axioms VE.Acts.readingsIn_nodup
+#print axioms VE.Acts.schema_ok
+#print axioms VE.Acts.schema_ranked
 #print axioms VE.Acts.table_free_all_own
 #print axioms VE.Acts.table_free_all_shared
 #print axioms VE.Acts.table_free_all_split

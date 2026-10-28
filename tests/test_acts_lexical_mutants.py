@@ -19,12 +19,14 @@ mutation must change the source exactly once.
 """
 from __future__ import annotations
 
+from functools import partial
 import re
 import shutil
 import subprocess
 
 import pytest
 
+import lean_pool
 from subprocesses import HANG_TIMEOUT
 from tests.lean_build import LEAN, lean_build
 
@@ -233,13 +235,41 @@ def _elaborate(lake: str, tmp_path, source: str) -> subprocess.CompletedProcess:
                           timeout=HANG_TIMEOUT)
 
 
+def _unmutated() -> str:
+    return _assemble(_sources(), EXAMPLES.read_text())
+
+
+def _mutant(name: str) -> str:
+    """The one file a mutant's test elaborates: its mutated sources and the fixtures."""
+    return _assemble(MUTANTS[name](_sources()), EXAMPLES.read_text())
+
+
+# The source each test that elaborates calls for, by its function: the pool (`elaborated`) builds them the same way.
+SOURCES = {"test_the_unmutated_sources_elaborate_cleanly": _unmutated,
+           "test_every_seeded_mutant_fails_a_fixture": _mutant,
+           "test_an_equivalent_mutant_elaborates_and_passes_every_fixture": _mutant}
+
+
+@pytest.fixture(scope="module")
+def elaborated(lake, request, tmp_path_factory):
+    """The selected tests' sources, elaborated at once (`tests/lean_pool.py`); empty under xdist or at width 1."""
+    return lean_pool.elaborate_selected(request, SOURCES, partial(_elaborate, lake),
+                                        lambda: tmp_path_factory.mktemp("lexical-pool"))
+
+
+@pytest.fixture
+def elaborate(lake, elaborated):
+    """A test's elaboration of `source`: the pool's, else its own `_elaborate` call."""
+    return lambda tmp_path, source: lean_pool.result(elaborated, source, lambda: _elaborate(lake, tmp_path, source))
+
+
 def _killed(out: str) -> bool:
     """Every error is a `#guard` that failed, and there is one."""
     return 0 < out.count(GUARD_FAILED) == len(re.findall(r": error(?:\([\w.]+\))?:", out))
 
 
-def test_the_unmutated_sources_elaborate_cleanly(lake, tmp_path):
-    done = _elaborate(lake, tmp_path, _assemble(_sources(), EXAMPLES.read_text()))
+def test_the_unmutated_sources_elaborate_cleanly(elaborate, tmp_path):
+    done = elaborate(tmp_path, _unmutated())
     out = done.stdout + done.stderr
     assert done.returncode == 0 and "error" not in out, out
 
@@ -282,23 +312,21 @@ def test_the_sweep_covers_every_decision_of_the_decoder():
 
 
 @pytest.mark.parametrize("name", sorted(set(MUTANTS) - set(EQUIVALENT)))
-def test_every_seeded_mutant_fails_a_fixture(lake, tmp_path, name):
+def test_every_seeded_mutant_fails_a_fixture(elaborate, tmp_path, name):
     sources = _sources()
-    mutated = MUTANTS[name](sources)
-    assert mutated != sources, f"{name} changes nothing"
-    done = _elaborate(lake, tmp_path, _assemble(mutated, EXAMPLES.read_text()))
+    assert MUTANTS[name](sources) != sources, f"{name} changes nothing"
+    done = elaborate(tmp_path, _mutant(name))
     out = done.stdout + done.stderr
     assert done.returncode != 0, f"{name} survives every #guard"
     assert _killed(out), f"{name} fails before a #guard, or not only at #guards:\n{out}"
 
 
 @pytest.mark.parametrize("name", sorted(EQUIVALENT))
-def test_an_equivalent_mutant_elaborates_and_passes_every_fixture(lake, tmp_path, name):
+def test_an_equivalent_mutant_elaborates_and_passes_every_fixture(elaborate, tmp_path, name):
     """A mutant listed as equivalent changes the source and still passes: if a fixture kills it, the list is wrong."""
     sources = _sources()
-    mutated = MUTANTS[name](sources)
-    assert mutated != sources
-    done = _elaborate(lake, tmp_path, _assemble(mutated, EXAMPLES.read_text()))
+    assert MUTANTS[name](sources) != sources
+    done = elaborate(tmp_path, _mutant(name))
     assert done.returncode == 0, f"{name} ({EQUIVALENT[name]}) fails:\n{done.stdout + done.stderr}"
 
 
