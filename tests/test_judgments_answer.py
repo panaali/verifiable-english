@@ -70,7 +70,14 @@ def test_the_genuine_answer_is_relayed(genuine, name):
     assert relayed(case, row)
 
 
-RETYPES = (None, True, 7, 7.5, "7", [], {})
+def deep(n=10_000):
+    value = []
+    for _ in range(n):
+        value = [value]
+    return value
+
+
+RETYPES = (None, True, 7, 7.5, "7", "\ud800", [], {}, deep())
 
 
 def mutants(value, path=()):
