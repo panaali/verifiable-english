@@ -283,7 +283,8 @@ class _Search:
 def ask(environment, norms, premises, conclusion):
     """The strict question, then, when it has no certificate, the default question (plan DF-1b): `{"question":
     "strict", "valid": true}` from Lean's layered certificate check, or `{"question": "default", "kind", "answer"}`
-    with Lean's bound `defaults-certificate` or `defaults-model` row (without `id` and `status`)."""
+    with Lean's bound `defaults-certificate` or `defaults-model` row (without `id` and `status`), the gate's
+    `coherence` row when the source has colliding pairs, and the `english` of both (`ve.defaults_english`)."""
     from .ast import Bottom
     base = {"environment": environment, "norms": norms}
     elaborated = answer({"id": "defaults-elaborate", "kind": "defaults-elaborate", **base})
@@ -306,12 +307,17 @@ def ask(environment, norms, premises, conclusion):
                     "strict_model": search.model(search.X, gamma, phi), **gate}
         case = {"id": "defaults", "kind": "defaults-certificate", **question,
                 **{key: value for key, value in evidence.items() if value is not None}}
+    from .defaults_english import sentences
     targets = elaborated["coherence_targets"]
-    out = {"question": "default", "kind": case["kind"],
-           "answer": _shown(answer(case, [label for label, _ in elaborated["default_premises"]], targets))}
+    row = answer(case, [label for label, _ in elaborated["default_premises"]], targets)
+    out = {"question": "default", "kind": case["kind"], "answer": _shown(row)}
+    english = sentences(case, row)
     if targets:
-        out["coherence"] = _shown(answer({"id": "coherence", "kind": "defaults-coherence", **base, **gate},
-                                         targets=targets))
+        coherence = {"id": "coherence", "kind": "defaults-coherence", **base, **gate}
+        row = answer(coherence, targets=targets)
+        out["coherence"] = _shown(row)
+        english += sentences(coherence, row)
+    out["english"] = english
     return out
 
 
