@@ -791,6 +791,16 @@
    ]
   },
   {
+   "test": "tests/test_lineage_lint.py",
+   "why": "starts git (git cat-file) in tests/test_lineage_lint.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tests/test_lineage_lint.py:test_history_revisions_are_content_addressed: git cat-file"
+   ]
+  },
+  {
    "test": "tests/test_mutants.py",
    "why": "runs pytest on test files the source does not name, in tools/nested_pytest.py",
    "recorded": [
@@ -1357,7 +1367,7 @@
   },
   {
    "test": "tests/test_repo_map.py",
-   "why": "starts git (git add, git cat-file, git config, git init, git ls-files, git merge-base, git merge-file, git rev-list, git rev-parse, git show, git status, git write-tree) in tests/test_repo_map.py, tools/cache_store.py, tools/regen_generated.py, tools/repo_map.py, tools/select_tests.py, tools/source_graph.py, tools/test_layer_policy.py, tools/test_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "why": "starts git (git add, git cat-file, git config, git init, git log, git ls-files, git merge-base, git merge-file, git rev-list, git rev-parse, git show, git status, git write-tree) in tests/test_repo_map.py, tools/cache_store.py, tools/regen_generated.py, tools/repo_map.py, tools/select_tests.py, tools/source_graph.py, tools/test_layer_policy.py, tools/test_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
    "recorded": [
     "coverage map",
     "source"
@@ -1366,7 +1376,8 @@
     "tests/test_repo_map.py:commands: git",
     "tests/test_repo_map.py:head: git rev-parse",
     "tests/test_repo_map.py:rights_map: git status",
-    "tests/test_repo_map.py:test_a_map_from_before_the_relay_changed_gives_the_static_answer: git rev-parse",
+    "tests/test_repo_map.py:test_a_map_from_before_the_relay_changed_gives_the_static_answer: git log, git rev-parse",
+    "tests/test_repo_map.py:test_a_map_from_before_the_relay_changed_gives_the_static_answer.<locals>.<genexpr>: git rev-parse",
     "tests/test_repo_map.py:test_every_command_named_in_agents_md_exists_and_the_fast_ones_answer_help: git",
     "tests/test_repo_map.py:test_map_expectations_with_an_untracked_file: git init, git ls-files",
     "tools/cache_store.py:git_common_directory: git rev-parse",
