@@ -28056,5 +28056,185 @@
    "message": "InvalidInput: non-ASCII speech wording"
   },
   "wording": "\u3000Must alice open the desk?"
+ },
+ {
+  "env": "negative",
+  "outcome": {
+   "content": {
+    "body": [
+     "not",
+     [
+      "unary",
+      "reviewed",
+      [
+       "const",
+       "atlas"
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is atlas not reviewed?"
+ },
+ {
+  "env": "negative",
+  "outcome": {
+   "content": {
+    "body": [
+     "not",
+     [
+      "unary",
+      "reviewed",
+      [
+       "const",
+       "beacon"
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is beacon not reviewed?"
+ },
+ {
+  "env": "names",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas2 is reviewed.\". Unknown English phrase 'atlas2'. Nearest declared wordings: '\"atlas2\"'; 'atlas'; 'alice'.",
+   "span": {
+    "column": 4,
+    "end": 9,
+    "line": 1,
+    "start": 3
+   }
+  },
+  "wording": "Is atlas2 reviewed?"
+ },
+ {
+  "env": "names",
+  "outcome": {
+   "content": {
+    "body": [
+     "unary",
+     "reviewed",
+     [
+      "const",
+      "atlas2"
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is \"atlas2\" reviewed?"
+ },
+ {
+  "env": "names",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas_two is reviewed.\". Unknown English phrase 'atlas_two'. Nearest declared wordings: '\"atlas_two\"'; 'atlas'; '\"atlas2\"'.",
+   "span": {
+    "column": 4,
+    "end": 12,
+    "line": 1,
+    "start": 3
+   }
+  },
+  "wording": "Is atlas_two reviewed?"
+ },
+ {
+  "env": "names",
+  "outcome": {
+   "content": {
+    "body": [
+     "unary",
+     "reviewed",
+     [
+      "const",
+      "atlas_two"
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is \"atlas_two\" reviewed?"
+ },
+ {
+  "env": "names",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"beacon2 is reviewed.\". Unknown English phrase 'beacon2'. Nearest declared wordings: '\"beacon2\"'; 'beacon'; '\"beacon_two\"'.",
+   "span": {
+    "column": 4,
+    "end": 10,
+    "line": 1,
+    "start": 3
+   }
+  },
+  "wording": "Is beacon2 reviewed?"
+ },
+ {
+  "env": "names",
+  "outcome": {
+   "content": {
+    "body": [
+     "unary",
+     "reviewed",
+     [
+      "const",
+      "beacon2"
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is \"beacon2\" reviewed?"
+ },
+ {
+  "env": "names",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"beacon_two is reviewed.\". Unknown English phrase 'beacon_two'. Nearest declared wordings: '\"beacon_two\"'; 'beacon'; '\"beacon2\"'.",
+   "span": {
+    "column": 4,
+    "end": 13,
+    "line": 1,
+    "start": 3
+   }
+  },
+  "wording": "Is beacon_two reviewed?"
+ },
+ {
+  "env": "names",
+  "outcome": {
+   "content": {
+    "body": [
+     "unary",
+     "reviewed",
+     [
+      "const",
+      "beacon_two"
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is \"beacon_two\" reviewed?"
  }
 ]
