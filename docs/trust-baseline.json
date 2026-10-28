@@ -1293,6 +1293,13 @@
    "reason": "ap-1be: the elaborate shape's render pin, ResponseShape/Schemas/NormDefaults.lean +1 as the map counts it (V +7 in all with the first allowance)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1be, 2026-10-27",
    "commit": "a557ff887aa6b513fdaa540c479ae304023a24a4"
+  },
+  {
+   "class": "V",
+   "lines": 30,
+   "reason": "ap-1bd: V +30 untied (VE/Service/Standalone.lean +19: regulatedOf, actsRead and their call sites; VE/Readings/Wire.lean +9: singleActsOnly and the acts@0 frame decode; ResponseShape/Schemas/ReadingsRoute.lean +2: the filled environment's form and acts block); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1bd, 2026-10-18",
+   "commit": "d8926dc1d1ef52a6783d13c781a9c064c963822f"
   }
  ]
 }
