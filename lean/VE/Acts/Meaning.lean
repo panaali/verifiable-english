@@ -15,44 +15,38 @@ namespace VE.Acts
 open Lexical (Tok)
 open VE.Grammar (Tree Meaning)
 
-/-- Which atoms an element reads over (5.3): its own item's, the near end of an edge (the first item, or the last
-item or part), or all of them. -/
+/-- Which atoms an element reads over (5.3): its own item's, an edge's near end (the first item, or the last item or
+part), or all. -/
 inductive Att | own | near | all
   deriving DecidableEq, Repr
-
 /-- An argument (marker and filler) or a modifier of an atom. -/
 inductive Elt | arg (m : String) (fl : Filler) | mod (md : Modifier)
   deriving DecidableEq, Repr
-
-/-- What a node means before its act is built: words, commas, parts, join words, function words (*to*, *be*), a head,
-a list of parts, an element, a split construct (its join, whether a split marker's, and one element per member), an
-item (its function words, head and elements in order) or an act. -/
+/-- A node's meaning before its act: words, parts, join words, function words, a head, a list of parts, an
+element, a split construct (its join, whether a split marker's, one element per member), an item or an act. -/
 inductive Piece
-  | w (s : String) | comma | part (p : Part) | j (j : Join) | fw (to be : Bool) | head (ws : List String)
+  | w (s : String) | part (p : Part) | j (j : Join) | fw (to be : Bool) | head (ws : List String)
   | list (j : Join) (ps : List Part) | elt (e : Elt) (a : Att) | split (j : Join) (sp : Bool) (es : List Elt)
   | item (fw : Option (Bool × Bool)) (h : List String) (es : List Piece) | act (A : Act)
   deriving Repr
-
+/-- The atom with one more argument or modifier, after the others. -/
 def Atom.add (a : Atom) : Elt → Atom
   | .arg m fl => { a with args := a.args ++ [(m, fl)] }
   | .mod md => { a with mods := a.mods ++ [md] }
-
 /-- Atoms `as` with the piece `p` of atom `k` added: to `k` alone or, read over all, to every atom; a split construct
 makes one atom per member. -/
 def addPiece (k : Nat) (as : List Atom) : Piece → List Atom
   | .elt e a => as.mapIdx (fun i x => if a == .all || i == k then x.add e else x)
   | .split _ _ es => as.flatMap (fun x => es.map x.add)
   | _ => as
-
 /-- A join of atoms (1.5): *and* is `all`, *or* and *nor* are `any`. -/
 def joinAct (shared sp : Bool) : Join → List Atom → Act
   | .and => .all shared sp
   | .or => .any false sp
   | .nor => .any true sp
-
+/-- An item's atom before its elements: its function words and head. -/
 def baseAtom (fw : Option (Bool × Bool)) (h : List String) : Atom :=
   ⟨(fw.map (·.1)).getD false, (fw.map (·.2)).getD false, h, [], []⟩
-
 /-- A single item (5.3, `singleAct`): its elements in order, each added to the last atom or to all; a split construct
 makes the parts. -/
 def singleAct : Piece → Option Act
@@ -63,7 +57,6 @@ def singleAct : Piece → Option Act
     | none, [a] => some (.one a)
     | none, _ => none
   | _ => none
-
 /-- A coordination (5.3, `coordAct`): one atom per item, later items taking the first's function words when they are
 shared; each element is added to its own item's atom, or to all. -/
 def coordAct (shared : Bool) (j : Join) (its : List Piece) : Option Act := do
@@ -71,20 +64,17 @@ def coordAct (shared : Bool) (j : Join) (its : List Piece) : Option Act := do
   let fw0 := its.head?.bind (·.1)
   let as := its.map (fun (fw, h, _) => baseAtom (if shared then fw0 else fw) h)
   pure (joinAct shared false j (its.zipIdx.foldl (fun as ((_, _, es), i) => es.foldl (addPiece i) as) as))
-
-/-- A list's join word (exactly one) and its members: the other pieces but commas. -/
+/-- A list's join word (exactly one) and its members, the other pieces. -/
 def listOf (cs : List Piece) : Option (Join × List Piece) :=
   match cs.filterMap (fun | .j j => some j | _ => none) with
-  | [j] => some (j, cs.filter (fun | .j _ | .comma => false | _ => true))
+  | [j] => some (j, cs.filter (!· matches .j _))
   | _ => none
-
 /-- An item from its pieces: its one head, its function words, and its elements in order. -/
 def itemOf (cs : List Piece) : Option Piece :=
   match cs.filterMap (fun | .head h => some h | _ => none) with
   | [h] => some (.item (cs.findSome? (fun | .fw t b => some (t, b) | _ => none)) h
       (cs.filter (fun | .fw .. | .head _ => false | _ => true)))
   | _ => none
-
 /-- A node's pieces from its children's and its rule `r` (`second`: the second of an edge's two rules). -/
 def applyRule (r : RuleS) (second : Bool) (cs : List Piece) : Option (List Piece) :=
   let edge := match r.lhs with | .E1X | .F _ .TE | .F _ .RE | .F _ .REt | .F _ .PX => true | _ => false
@@ -98,8 +88,7 @@ def applyRule (r : RuleS) (second : Bool) (cs : List Piece) : Option (List Piece
   | .F _ (.OL _), _, _ => some cs
   | _, [.n (.MK m), _], [.part p] => some [.elt (.mod (.prep m p)) att]
   | .MK _, _, _ => some []
-  | .J, _, [.w v] => if v.toLower == "and" then some [.j .and] else if v.toLower == "or" then some [.j .or]
-      else if v.toLower == "nor" then some [.j .nor] else none
+  | .J, _, [.w v] => ([("and", Join.and), ("or", .or), ("nor", .nor)].lookup v.toLower).map ([.j ·])
   | .FW, _, _ => some [.fw ((words.map (·.toLower)).contains "to") ((words.map (·.toLower)).contains "be")]
   | .F _ .HD, _, _ => some [.head (words.map (·.toLower))]
   | .F _ .FL, _, _ => some (if words.length == cs.length && !cs.isEmpty then [.part (.words words)] else cs)
@@ -123,17 +112,15 @@ def applyRule (r : RuleS) (second : Bool) (cs : List Piece) : Option (List Piece
   | .COORD, .n (.F1 own _) :: _, _ => do
     let (j, its) ← listOf cs
     some [.act (← coordAct (!own) j its)]
-  | .S, _, _ => some (cs.filter (· matches .act _))
+  | .S, _, _ => some (cs.filter (· matches .act _))                     -- the subject `{0}` is dropped here
   | _, _, _ => some cs
-
 mutual
-/-- The pieces of a derivation: a word token is a word, a slot or fixed phrase a part, the subject `{0}` nothing. -/
+/-- The pieces of a derivation: a word token is a word, a slot or fixed phrase a part, a comma nothing. -/
 def piecesOf (rs : Array RuleS) : Tree Tok → Option (List Piece)
   | .leaf (.word v) => some [.w v]
-  | .leaf (.slot 0) => some []
   | .leaf (.slot i) => some [.part (.slot i)]
   | .leaf (.fixed i) => some [.part (.fixed i)]
-  | .leaf .comma => some [.comma]
+  | .leaf .comma => some []
   | .node i kids => do
     let r ← rs[i]?
     applyRule r (0 < i && rs[i - 1]? == some r) (← piecesKids rs kids)
@@ -141,7 +128,6 @@ def piecesKids (rs : Array RuleS) : List (Tree Tok) → Option (List Piece)
   | [] => some []
   | k :: ks => do pure ((← piecesOf rs k) ++ (← piecesKids rs ks))
 end
-
 /-- An atom fits its frame (5.3): its head is declared; it has an object exactly when the frame lists `""`; every
 argument marker is the frame's, every modifier marker one of its modifier markers, every adverb declared. -/
 def atomOk (V : Vocab) (a : Atom) : Bool :=
@@ -151,12 +137,10 @@ def atomOk (V : Vocab) (a : Atom) : Bool :=
     (a.args.filter (·.1 == "")).length == (if f.markers.contains "" then 1 else 0) &&
     a.args.all (f.markers.contains ·.1) &&
     a.mods.all (fun | .adv w => V.adverbs.contains w | .prep m _ => f.mods.contains m)
-
 /-- Every atom fits its frame, and a join has at least two. -/
 def actOk (V : Vocab) : Act → Bool
   | .one a => atomOk V a
   | .all _ _ ps | .any _ _ ps => 2 ≤ ps.length && ps.all (atomOk V)
-
 /-- The meaning of a derivation (5.3): its act tree, or no meaning. -/
 def meaning (V : Vocab) : Meaning Tok Unit String Act :=
   let rs := (closed (schema V)).toArray

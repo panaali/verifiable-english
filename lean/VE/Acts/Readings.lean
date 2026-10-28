@@ -13,19 +13,13 @@ open Lexical (Tok)
 
 /-- Every reading of a phrase: its distinct meanings in derivation order, or the limit outcome (5.4). -/
 def readings (V : Vocab) (N b : Nat) (ts : Array Tok) : Listing Act := readingsIn (grammar V) (meaning V) N b ts
-
 /-- One reading required: `ok` of the one meaning, `none`, `many` with the first two, or `limit` (5.4). -/
 def read (V : Vocab) (N b : Nat) (ts : Array Tok) : ReadOutcome Act := readIn (grammar V) (meaning V) N b ts
-
 /-- For AP-5 only: a simple act exactly when the phrase has one meaning and it is `one`; it renames nothing. -/
 def analyse (V : Vocab) (N b : Nat) (ts : Array Tok) : Option Atom :=
-  match read V N b ts with
-  | .ok (.one a) => some a
-  | _ => none
-
-/-- A meaning of the token list: some derivation means `A`. -/
-def Derived (V : Vocab) (ts : List Tok) (A : Act) : Prop :=
-  ∃ d, VE.Grammar.Derives (grammar V) (.n (grammar V).start) ts d ∧ ∃ c, meaning V () d = .ok (A, c, ())
+  match read V N b ts with | .ok (.one a) => some a | _ => none
+/-- A meaning of the token list: some derivation means `A` (spec 5.6's `Derived`, which is `DerivedIn`'s text). -/
+def Derived (V : Vocab) (ts : List Tok) (A : Act) : Prop := DerivedIn (grammar V) (meaning V) ts A
 
 /-- One meaning (design debate): some derivation means `A`, and every derivation that has a meaning means `A`. -/
 theorem read_unique (V : Vocab) (h : framesOk V = true) {N b : Nat} {ts : Array Tok} {A : Act}

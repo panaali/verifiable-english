@@ -138,5 +138,8 @@ def Va : Vocab := frames [fr "seek" ["", "from"] [] [], fr "enjoy" [""] [] []]
 #guard atomOk V5 (obj5 "seek" true) && !atomOk V5 { obj5 "seek" true with head := ["keep"] } &&
   !atomOk V8 ⟨true, false, ["enjoy"], [("", .one (w "the arts"))], [.adv "slowly"]⟩ &&
   atomOk V8 ⟨true, false, ["enjoy"], [("", .one (w "the arts"))], [.adv "freely"]⟩
+-- a join has at least two atoms (the grammar writes no shorter one, so `actOk` is tested on trees)
+#guard actOk V5 (.all true false [obj5 "seek" true, obj5 "enjoy" true]) && !actOk V5 (.all true false [obj5 "seek" true]) &&
+  !actOk V5 (.any false true [obj5 "seek" true]) && !actOk V5 (.one { obj5 "seek" true with args := [] })
 
 end VE.Acts.MeaningExamples
