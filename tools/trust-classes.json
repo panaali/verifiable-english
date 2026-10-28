@@ -14996,16 +14996,26 @@
     },
     "VE/Defaults/MeaningExamples.lean": {
       "T": [
+        "VE.Defaults.MeaningFixtures.Bπ",
+        "VE.Defaults.MeaningFixtures.DefaultBaseFixed",
+        "VE.Defaults.MeaningFixtures.Dπ",
+        "VE.Defaults.MeaningFixtures.Fπ",
+        "VE.Defaults.MeaningFixtures.Mπ",
+        "VE.Defaults.MeaningFixtures.Sπ",
+        "VE.Defaults.MeaningFixtures.Uπ",
         "VE.Defaults.MeaningFixtures.a1",
         "VE.Defaults.MeaningFixtures.dSw",
         "VE.Defaults.MeaningFixtures.dTwo",
         "VE.Defaults.MeaningFixtures.denoteDec",
         "VE.Defaults.MeaningFixtures.dπ",
+        "VE.Defaults.MeaningFixtures.excπ",
         "VE.Defaults.MeaningFixtures.leastDec",
+        "VE.Defaults.MeaningFixtures.nπ",
         "VE.Defaults.MeaningFixtures.offOf",
         "VE.Defaults.MeaningFixtures.rA",
         "VE.Defaults.MeaningFixtures.rB",
         "VE.Defaults.MeaningFixtures.sit",
+        "VE.Defaults.MeaningFixtures.sitπ",
         "VE.Defaults.MeaningFixtures.switchesDec",
         "VE.Defaults.MeaningFixtures.typedDec"
       ]
