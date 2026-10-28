@@ -132,7 +132,7 @@ def test_a_cases_own_reading_sets_member_is_no_input():
     from ve.backends.relay import answer
     for text in (F1.read_text(), _doc()):
         plain = answer("document", {"id": "d", "document": text, "admit": True})
-        forged = answer("document", {"id": "d", "document": text, "admit": True, "reading_sets": []})
+        forged = answer("document", {"id": "d", "document": text, "admit": True, "reading_sets": 7})
         assert forged == plain and plain[1] is None
 
 
