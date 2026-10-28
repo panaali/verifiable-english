@@ -14967,7 +14967,10 @@
     },
     "VE/Scope/ReadingsExamples.lean": {
       "T": [
+        "VE.Scope.Examples.a5",
+        "VE.Scope.Examples.asWritten",
         "VE.Scope.Examples.cyberPart",
+        "VE.Scope.Examples.depAt",
         "VE.Scope.Examples.depParts",
         "VE.Scope.Examples.gPr",
         "VE.Scope.Examples.guardNarrow",
@@ -14982,8 +14985,10 @@
         "VE.Scope.Examples.rset",
         "VE.Scope.Examples.s03",
         "VE.Scope.Examples.s03set",
+        "VE.Scope.Examples.s05set",
         "VE.Scope.Examples.setDoc",
         "VE.Scope.Examples.sets",
+        "VE.Scope.Examples.twoSets",
         "VE.Scope.Examples.u0166set",
         "VE.Scope.Examples.wideG2",
         "VE.Scope.Examples.wideNorm",
