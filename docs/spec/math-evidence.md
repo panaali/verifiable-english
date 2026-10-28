@@ -40,6 +40,9 @@ and every value a range step binds, also costs its bit length. Draft 4's text is
 - 13.3's units are recomputed *by hand* and fixtures B-1 to B-4 are added.
 - The statements were type-checked in [me-12n-budget-stub.lean](math-evidence/me-12n-budget-stub.lean), with
   `sorry` proofs, against `main`'s `lean/`. Its independent review is the ME-S bounded re-check of 12.2 and 13.3.
+- me-12nb (the build) restates in draft 5's units, as the DRI decided (`dri-decisions-20261027-me-12n.md`), the
+  counts and units outside 12.2 and 13.3: 12.5's `budget` and `units`, 13.4's M-1b rows, 13.6's R-7, section 14's
+  `arith` row and section 16's C6. No statement changes.
 
 Draft 4 (2026-10-13) applies phase 1 (ME-0, [math-evidence-phase1.md](../research/math-evidence-phase1.md)) with the
 plan's draft 5. It changes fixtures and prose only: **no Lean statement changes**, so the untracked stub
@@ -2482,6 +2485,13 @@ so does every value a step binds.
   - two costs whose bounds the wire's limits fix (12.5). A variable read walks ρ: fewer than 64 binders (JSON
     depth 64) plus the parameters, which fit in 10,000 JSON nodes. A call looks its name up among at most 512
     definitions.
+  - Measured worst cases, each before UNKNOWN at 1,000,000 units (me-12nb,
+    [uncharged-costs.lean](../math-evidence/me-12nb/uncharged-costs.lean); interpreted with `lake env lean`, then
+    compiled): reading the last of 4,000 parameters 1.3 s and 0.8 s; a range up to a 65,537-bit bound under 0.3 s
+    and 0.05 s; a call of the first of 512 definitions whose 64-byte names differ only at the end, 1,024 times per
+    step, 37 s and 2.5 to 2.9 s. The name lookup's cost is the implementation's (a walk with a full-name compare), not
+    the charge's: me-12nc replaces it with a table built once per case, which changes no unit count, before me-12b
+    exposes the evaluator (DRI, 2026-10-27, `dri-decisions-20261027-me-12nb.md`).
 - **Not charged.** A range's remaining count is a natural number of at most n + 1 bits, decremented at each step. A
   range up to a 65,537-bit bound measured as UNKNOWN within about a second.
 
@@ -2505,10 +2515,9 @@ changes, so none is named for restatement. The build, me-12nb, re-proves all fiv
   optimisation that leaves every unit count unchanged: a call answered from a cache is still charged its body's visits
   and sizes.
   `maxSteps` stays 1,000,000.
-- **Text outside 12.2.** 12.5's `budget` and `units` ("formula-node visits"), section 14's `arith` row and 13.6's
-  R-7 (`"units": 17011` and `2`) are read in this draft's units. R-7's units are 337,735 and 33 (13.3); me-12b writes
-  those. The plan's ME-12 ("one unit per formula-node visit") and its M-4 reference count (248) are read the same way:
-  the count is now 87 (13.3).
+- **Text outside 12.2.** 12.5's `budget` and `units`, section 14's `arith` row, 13.4's M-1b rows, 13.6's R-7 (its
+  units are 337,735 and 33, 13.3) and section 16's C6 are restated in this draft's units (me-12nb). So are the plan's
+  D19, 2.13, 3.9 and ME-12 ("one unit per formula-node visit") and its M-4 reference count (248, now 87; 13.3).
 
 ### 12.3 The example vocabulary (`lean/VE/Arith/Examples.lean`)
 
@@ -2610,7 +2619,7 @@ This section does for `arith@0` what 3.1 to 3.4 do for `calc@0` (Fable's E6).
 | `format` | yes | `"ve-arith@0"` |
 | `definitions` | yes (may be empty) | a list of definitions, in order |
 | `statements` | yes | a nonempty list of `{"id": <statement id>, "formula": <formula>}`; every statement gets one row |
-| `budget` | no | a positive integer at most 1,000,000 (`maxSteps`, the default): the formula-node visits of each statement (12.2) |
+| `budget` | no | a positive integer at most 1,000,000 (`maxSteps`, the default): the units of each statement: node visits and value sizes (12.2) |
 | `imports` | no (ME-13) | a list of `{"statement": <statement id>, "record": <import record>}`, the record with the fields of `Import` (12.4) in snake case (`statement_id`, `means_digest`, `project`, `project_rev`, `toolchain`, `mathlib_rev`, `declaration`, `check_digest`, `axioms`) |
 
 A definition is `{"name": f, "kind": "function" | "predicate", "params": [x, …], "words": w, "body": b}`: `b` is a
@@ -2740,8 +2749,8 @@ end ResponseShape.Encoders.Arith
 
 **Rows.** A refused case answers the common case error. Otherwise each statement has one row, in order, with
 `statement` (the request's id), `statement_id`, `outcome` (`holds`, `fails` or `unknown`; never `undefined`),
-`reason` (1.5's text for unknown, else `null`), `bounded` (`Formula.Bounded`), `units` (the formula-node visits spent
-when evaluation decided it, else `null`), `deciding` (`{"variable": x, "value": "<integer>"}` with the request's name
+`reason` (1.5's text for unknown, else `null`), `bounded` (`Formula.Bounded`), `units` (the units spent, node visits
+and value sizes (12.2), when evaluation decided it, else `null`), `deciding` (`{"variable": x, "value": "<integer>"}` with the request's name
 of the outermost binder, else `null`), `line` (11.3's rendering), `import` (`importLabel`, else `null`) and `rests_on`
 (for an imported row its residual line "Proved in Lean with Mathlib at revision <rev>, declaration <name>; VE did not
 replay this proof.", else empty). With the deciding value, M-5's row says "fails at n = 1" (13.3). The relay
@@ -3009,7 +3018,7 @@ interpreted, with `lake env lean`, beyond the 1.3 s the stub takes to load. They
 | `calcLeaf_discharged_iff` | E-1 c1 | E-1 c2 (fails), c3 (missing) |
 | `decideBounded_sound` | M-1 (true; it holds) | M-5 (false; it fails) |
 | `arithOutcome_unbounded_iff` | M-3 | M-1 |
-| `arithOutcome_exhausted_iff` | M-4x; M-1b at 17,010 | M-1b at 17,011; M-3 (unbounded, not exhausted) |
+| `arithOutcome_exhausted_iff` | M-4x; M-1b at 337,734 | M-1b at 337,735; M-3 (unbounded, not exhausted) |
 | `arithOutcome_decided` | M-1 (holds) | M-5 (fails) |
 | `Case.outcome_bounded` (draft 2) | R-7's m1 (holds; it means) | R-7's m5 (fails; it does not) |
 | `Stat.run_isSome` (draft 2) | S-5's population variance of one value (some 0; 1 ≤ 1) | S-5's variance of one value (none; 2 > 1) |
@@ -3219,11 +3228,11 @@ weight on the strict fact, as the stub's `Farkas.check` found for H-6.
 
 ```json
 [{"status": "ok", "statement": "m1", "statement_id": "<hex64>", "outcome": "holds", "reason": null, "bounded": true,
-  "units": 17011, "deciding": null,
+  "units": 337735, "deciding": null,
   "line": "For every whole number n from 1 through 161, there is an integer p from the sum of n and 1 through twice n such that p is prime.",
   "import": null, "rests_on": []},
  {"status": "ok", "statement": "m5", "statement_id": "<hex64>", "outcome": "fails", "reason": null, "bounded": true,
-  "units": 2, "deciding": {"variable": "n", "value": "1"}, "line": "<display>", "import": null, "rests_on": []},
+  "units": 33, "deciding": {"variable": "n", "value": "1"}, "line": "<display>", "import": null, "rests_on": []},
  {"status": "ok", "statement": "m3", "statement_id": "<hex64>", "outcome": "unknown",
   "reason": "stated, not decided: a quantifier has no bound", "bounded": false, "units": null, "deciding": null,
   "line": "For every whole number n, if n is at least 1, then there is a whole number p such that p is prime, n is less than p, and p is at most twice n.",
@@ -3231,7 +3240,7 @@ weight on the strict fact, as the stub's `Farkas.check` found for H-6.
 ```
 
 The decoder gives exactly the stub's formulas (`FxArith.m1 161`, `FxArith.m5`, `bertrand` and `primeBody` in de Bruijn
-form), so the units are the stub's 17,011 and 2.
+form), so the units are 13.3's 337,735 and 33 (draft 5; draft 4: 17,011 and 2).
 
 **R-8, an exhausted budget** (M-4x): R-7's definitions, the statement m1 alone and `"budget": 1000`. Its row is
 `{"status": "ok", "statement": "m1", "statement_id": "<hex64>", "outcome": "unknown", "reason": "unknown: the budget
@@ -3366,7 +3375,7 @@ is a witness; t + 1 = 1 + t), and the `*_undefined` rows are unchanged.
 | consistency search | 4,096 candidate points | unknown (`limit .witnessPoints`) |
 | identity normal form | 10,000 monomials | unknown (`limit .polyTerms`) |
 | sign flips | 16 values | refused (`SignFlipTooLong`) |
-| `arith` evaluation | 1,000,000 formula-node visits per statement, or the case's smaller `budget` | unknown (`limit .evaluations`) |
+| `arith` evaluation | 1,000,000 units (node visits and value sizes, 12.2) per statement, or the case's smaller `budget` | unknown (`limit .evaluations`) |
 | `arith` JSON nodes, depth, definitions, statements, numerals, names | 10,000; 64; 512; 512; 40 digits; 64 bytes | refused (`ResourceLimit`) |
 
 Trusted and not certified: SHA-256 (as for the risk log); the decoders (pinned in `ve/assurance-manifest.json` by hand);
@@ -3408,8 +3417,9 @@ The edits of the plan review (`manage-agents/debates/design-math-evidence/`), as
 - **C5.** `arith@0`'s meaning interprets definitions in order (`Defs.env`) instead of inlining them (plan 3.9's
   `Defs.expand`): the same meaning without substitution under binders and without an expansion that can grow
   exponentially. `Defs.Means D φ` keeps its name and role.
-- **C6.** `arith`'s accounting charges formula-node visits only, as W6 does; term nodes are free, and a count is
-  charged through its condition. Every loop therefore costs at least one unit per iteration.
+- **C6.** `arith`'s accounting charges every node visit, term and formula nodes alike, and every value's bit length
+  (draft 5, 12.2; draft 4 charged formula-node visits only, as W6 does). Every loop therefore costs at least one unit
+  per iteration, and no value grows past the budget.
 - **C7.** The expression grammar of 11.2 puts infix phrases only at the top with an atom on the left. The plan's
   nesting rule (one phrase inside another) is kept; its own rewrite of the first refused sentence nests three phrases,
   so this draft's rewrite names the squared ratio as well.
