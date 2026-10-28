@@ -1,6 +1,6 @@
 # Use case: openai-preparedness (OpenAI Preparedness Framework, version 2)
 
-> Status: **PLAN, draft 2** (2026-10-28, branch `infra/usecase-safetyfw`; draft 1 reviewed by gpt-6-astra and Opus,
+> Status: **PLAN, draft 3** (2026-10-28, branch `infra/usecase-safetyfw`; draft 1 reviewed by gpt-6-astra and Opus,
 > `manage-agents/safetyfw-planreview-{astra,opus}.final.md`; dispositions in `manage-agents/reviews/safetyfw-plan-convergence-20261028.md`). The plan and its answer key (section 6)
 > are written before any VE run. They get two plan reviews (gpt-6-astra xhigh and Opus xhigh) before the key is
 > frozen; the freeze is recorded in [KEY-FREEZE.md](KEY-FREEZE.md) with a timestamp and the SHA-256 of section 6.
@@ -71,9 +71,9 @@ releases a comparable system.
 |---|---|---|---|
 | RS0 | every process statement about OpenAI's own conduct, in the future or present tense ("we will …", "Prior to deployment, every covered model undergoes", "We do not deploy models", "SAG will receive", "SAG members serve") | **commitment** / **prediction** | "Will" and the present tense are not deontic words. |
 | N1 | narrowing of RS0 to **commitment**, clause by clause | cites 5 "so that the public, governments, and our industry peers can trust in our adherence to this policy" and 1 "to build confidence that we are meeting our commitments" | A clause that carries "expect", "aim", "strive", "may", "could", "where feasible" or "as needed" is not narrowed. Under N1 a commitment is strict. |
-| RS1 | Table 1, column "Risk-specific safeguard guidelines": "Require security controls …", "Require safeguards against misuse …", "Until we have specified … halt further development", "Contribute towards …" | **strict** / **default** | Imperatives under a header that calls them guidelines. The default reading is the guideline reading; a third, no-norm reading is not admitted, because each cell is an imperative ("Require", "halt") and 2.2 states the same requirements in force words ("are required to have robust and effective safeguards … and appropriate security controls"). |
+| RS1 | Table 1, column "Risk-specific safeguard guidelines": "Require security controls …", "Require safeguards against misuse …", "Until we have specified … halt further development", "Contribute towards …" | **strict** / **default** | Imperatives under a header that calls them guidelines. The default reading is the guideline reading; a third, no-norm reading is not admitted, because each cell is an imperative ("Require", "halt"); 2.2 restates two of them (the security controls and the sufficiency rule) in force words ("are required to have robust and effective safeguards … and appropriate security controls"). |
 | RS2 | whether reaching a Critical threshold in a category is reaching its High threshold | **nest** / **sep** | 4.2 "Systems that reach Critical capability also require safeguards …" ("also" presupposes the High rule applies); no sentence states the implication. |
-| RS3 | the High deployment rule: 2.2 "required to have robust and effective safeguards that sufficiently minimize the associated risk of severe harm before they are deployed"; 4.2 "must have safeguards that sufficiently minimize … before they are deployed"; 1 "We do not deploy models that reach a High capability threshold until …" | **ext**: "deployed" is external deployment / **any**: every deployment, internal included | 4.4's heading "Increasing safeguards before internal use and further development" adds internal use for Critical only, which supports ext. The word is unqualified, and Table 1 sets a High-level safeguard "for large-scale internal deployment", which supports any. |
+| RS3 | the High deployment rule: 2.2 "required to have robust and effective safeguards that sufficiently minimize the associated risk of severe harm before they are deployed"; 4.2 "must have safeguards that sufficiently minimize … before they are deployed"; 1 "We do not deploy models that reach a High capability threshold until …" | **ext**: "deployed" is external deployment / **any**: every deployment, internal included | 4.4's heading "Increasing safeguards before internal use and further development" names internal use for Critical (RS18), which suggests the High rule did not cover it, and so supports ext. The word is unqualified, and Table 1 sets a High-level safeguard "for large-scale internal deployment", which supports any. |
 | RS4 | Table 2, column "Potential response" | **N**: each response is a norm / **P**: a potential response, no norm | The header says "Potential"; 2.3 commits only to threat modelling, measurement and sharing in these areas. |
 | RS4s | the guard of each Table 2 response | **scoped**: the response applies to a model with the row's research capability (plus any stated condition) / **unscoped**: only the stated condition, if any | Table 2 pairs each capability with its response; some responses state their own condition ("If a model has High or Critical capabilities in any of the Tracked Categories"). |
 | RS5 | 4.3: "we could adjust accordingly the level of safeguards that we require in that capability area, but only if: …" | **within**: an adjusted level must still sufficiently minimize the risk (4.2 lists "The baseline risk from other deployments" among the SAG's factors) / **exception**: an exception to the High deployment rule, under the three stated conditions | "Could adjust" may change what counts as sufficient or override the requirement. |
@@ -89,6 +89,8 @@ releases a comparable system.
 | RS14 | Appendix B: "SAG members serve for one year terms" | **appointment**: counted from the appointment / **unstated** | No start point is given (as RS10). |
 | RS15 | the change log's own undertakings (item 4 "Going forward we will handle risks related to persuasion outside the Preparedness Framework, including via our Model Spec and policy prohibitions"; item 5 "we commit to further developing the associated threat models") | **explanation**: they describe the version / **rule**: commitments of version 2 | They are written as commitments inside a change log. |
 | RS16 | 3.3: "Determine that the capability threshold has been crossed, and therefore recommend implementing and assessing corresponding safeguards, if they have not already been implemented and assessed" | **coupled**: a determination that a threshold is crossed brings the recommendation with it / **option**: one of the next steps the SAG's decision "can include" | "These can include" introduces the list; "and therefore" couples the two acts inside the item. |
+| RS17 | Appendix B: "Where necessary, the Board may reverse a decision and/or mandate a revised course of action." | **bperm**: a permission / **bmight**: "may" in the sense of "might" | [norms.md](../../docs/spec/norms.md) 2 |
+| RS18 | the scope of 4.4 (Critical): heading "4.4 Increasing safeguards before internal use and further development"; body "Such models require additional safeguards (safety and security controls) during development, regardless of whether or when they are externally deployed" | **inuse**: the Critical rule also covers internal use (the heading) / **devonly**: development only (the body) | The heading and the body differ. |
 
 ### 3.2 Open terms (each with its decider; none gets invented criteria)
 
@@ -133,7 +135,6 @@ illustrative Appendix C, and give no premise.
   Factors of an open term (what is considered in deciding it) give no premise. C.1 and C.2 are "illustrative
   examples" of safeguards that "could" be used: factors, not instances of a required standard. Only C.3's "We will
   require the following practices" states requirements. The same rule is used in the anthropic-rsp plan.
-  following practices" states requirements.
 - **No causal link stated as certain.** "could lead to", "could cause", "may upset", "could compromise" become
   `causal` units or `might` cells.
 
@@ -214,7 +215,7 @@ Critical standard has been specified (OT6 false); every other open term is unset
 ## 6. Answer key (written before any VE run)
 
 Notation: strict, default: RS1; nest, sep: RS2; ext, any: RS3; N, P: RS4; within, exception: RS5; req, desc: RS6;
-noinput, nodelib: RS7; rel, pred: RS8; publication, unstated: RS10; final, process: RS11; suff, iff: RS12;
+noinput, nodelib: RS7; rel, pred: RS8; publication, unstated: RS10; final, process: RS11; suff, iff: RS12; bperm, bmight: RS17; inuse, devonly: RS18;
 permission, might: RS13; appointment: RS14; explanation, rule: RS15; coupled, option: RS16; scoped, unscoped: RS4s. "soft" marks
 an item that holds only as a default rule under RS1 = default (or RS9 = default).
 
@@ -229,7 +230,7 @@ specified).
 |---|---|---|---|---|---|---|
 | L0 | NONE ×4 | NONE ×4 | NONE ×4 | NONE ×4 | NONE ×4 | no family A atom names a model at no threshold (C.3's "For all models … access must be strictly limited" is not the High-standard bundle; see G9) |
 | BIO-H | ALL ×4 | EXT: ALL, soft; else NONE | NONE ×4 | EXT: ALL; INT, LINT: SOME(any); DEV: NONE | NONE ×4 | F1 SEC is also F4's strict C.3 commitment, for the model whatever the activity (2.2 "appropriate security controls as they are developed"). MIS "before external deployment". F2 under RS3. |
-| BIO-C | SOME(nest) ×4 | EXT: SOME(nest), soft; else NONE | NONE ×4 | DEV: ALL; EXT: SOME(nest); INT, LINT: SOME(nest ∧ any) | DEV: ALL, soft; else NONE | F3 is limited to development ("during development"; "irrespective of deployment plans" qualifies it). A deployment proposal reaches SUF only through F2, which needs High (nest) and, for internal deployment, RS3 = any. HALT names further development only. |
+| BIO-C | SOME(nest) ×4 | EXT: SOME(nest), soft; else NONE | NONE ×4 | DEV: ALL; EXT: SOME(nest); INT, LINT: SOME(inuse ∨ (nest ∧ any)) | DEV: ALL, soft; else NONE | F3's body is limited to development ("during development"; "irrespective of deployment plans" qualifies it); under RS18 = inuse its heading adds internal use. External deployment reaches SUF only through F2, which needs High (nest); internal deployment through F2 also needs RS3 = any. HALT names further development only. |
 | CYB-H | ALL ×4 | EXT: ALL, soft; else NONE | LINT: ALL, soft; else NONE | as BIO-H | NONE ×4 | MIS "for external deployment"; ALN "for large-scale internal deployment". |
 | CYB-C | SOME(nest) ×4 | EXT: SOME(nest), soft; else NONE | LINT: SOME(nest), soft; else NONE | as BIO-C | DEV: ALL, soft; else NONE | as BIO-C |
 | AIS-H | ALL ×4 | NONE ×4 | NONE ×4 | as BIO-H | NONE ×4 | the row lists security controls only |
@@ -304,8 +305,8 @@ months"); T1 and T2 score only the quantity.
 | C3 | F1 HALT against F3 (safeguards during development) | NONE | both restrict development |
 | C4 | F6 against F5 bullet 4 | NONE | F6's own exception ("barring reason to believe …") is F5's case |
 | C5 | AIS-H's guideline (security controls only) against F2 | NONE | the rules add up; none releases what another requires |
-| C6 | Appendix B, Leadership's "all final decisions" against "the Board may reverse a decision" | SOME(final) | A deployment decision by Leadership that the Board reverses: under final, no body may change it; the Board sentence permits the change. Under process, Leadership's decisions are final only within the operational process. |
-| C-doc | the whole document, per choice | SOME(final) | exactly C6 |
+| C6 | Appendix B, Leadership's "all final decisions" against "the Board may reverse a decision" | SOME(final ∧ bperm) | A deployment decision by Leadership that the Board reverses: under final, no body may change it; under bperm the Board sentence permits the change. Under process, Leadership's decisions are final only within the operational process; under bmight the Board sentence is no norm. |
+| C-doc | the whole document, per choice | SOME(final ∧ bperm) | exactly C6 |
 
 ### 6.6 Family G: gaps (10 items)
 
@@ -388,7 +389,7 @@ defaults, SC scope, QT quantities, ET time, AP acts, WG weighing, AT attitudes).
 
 ## 8. What is expected to stay OPEN
 
-- **O1: every open term OT1 to OT20.** In particular whether a level is reached, and whether safeguards
+- **O1: every open term OT1 to OT21.** In particular whether a level is reached, and whether safeguards
   sufficiently minimize the risk.
 - **O2: norm reading sets**, answered per choice by the harness; VE decides only sets whose readings are each one
   rule.
@@ -417,7 +418,7 @@ safety-framework 9. Report, unscored, what changes without N1 and without N2.
 | # | Metric | Expected |
 |---|---|---|
 | M1 | key agreement per family (A 140, B 42, K 22, T 2, C 7, G 10, N 4, S 8, D 4) | 239/239; every miss explained in section 12 |
-| M2 | reading sets: count, choices per case, SOME verdicts, VE's own readings verdicts | RS1 to RS16 and RS4s plus N1, N2; at most 2³ = 8 choices per family A case (RS1, RS2, RS3) |
+| M2 | reading sets: count, choices per case, SOME verdicts, VE's own readings verdicts | RS1 to RS18 and RS4s plus N1, N2; at most 2⁴ = 16 choices per family A case (RS1, RS2, RS3, RS18) |
 | M3 | span accounting: `bytes_by_status` (CHECKED, OPEN, LABELLED, UNFORMALISED) and `bytes_by_kind`, totalling 67,418; reasons; residual; for each unit that is not CHECKED, the feature family it waits for (section 7) | CHECKED under 10% |
 | M4 | structure-conditional answers per family | reported |
 | M5 | CHECKED-bar lint (P7) | 0 |
@@ -432,7 +433,7 @@ safety-framework 9. Report, unscored, what changes without N1 and without N2.
 | Id | Mutation | Expected change |
 |---|---|---|
 | m1 | remove F11's precedence over F2 (keep RS5 = exception) | C1 becomes SOME(exception); C-doc adds it |
-| m2 | add "a model at a High level may be deployed externally once its misuse safeguards meet the High standard" (an invented permission, 3.3) | a new conflict with F2 at BIO-H and CYB-H external deployment when OT4 holds and OT2 fails: C-doc becomes SOME(final ∨ the new candidate); M6 flags it |
+| m2 | add "a model at a High level may be deployed externally once its misuse safeguards meet the High standard" (an invented permission, 3.3) | C-doc becomes ALL: a witness (external deployment at BIO-H, CYB-H or AIS-H, and at a Critical level under nest, with OT4 true, OT2 false and OT12 false) conflicts with the strict F2 under every choice; M6 flags it |
 | m3 | delete "for large-scale internal deployment" from CYB-H's ALN bullet | A-CYB-H ALN becomes ALL, soft, ×4; A-CYB-C ALN at DEV, INT and EXT becomes SOME(nest), soft; G3 changes |
 | m4 | change "1/5th" to "1/4th" | T2 becomes ALL |
 | m5 | change "thousands of people" to "millions of people" | S1 becomes NONE; S5 stays ALL |
