@@ -29,7 +29,7 @@ neither `approved` nor `not approved`, and an absent score leaves sum, mean, min
 #guard all5 .all = ok [some 5, none, none, none, none]
 #guard all5 (.or (.isTrue "approved") (.isFalse "approved")) = ok [some 3, none, none, none, none]
 #guard T1.select (.or (.isTrue "approved") (.isFalse "approved")) = T1.rows.take 3
-#guard (T1.rows.drop 3).map (T1.cell · "approved") = [.absent, .text "yes"]
+#guard (T1.rows.drop 3).map (T1.cell · "approved") = [.absent, .text "yes"] ∧ T1.cell T1.rows[0]! "nope" = .absent
 
 /-! Refusals: a wrong digest, an unregistered handle, an unknown column, bytes that do not decode. -/
 #guard refusal (runCounted 9 [(t1.handle, "judge,approved,score\n32B,true,4\n".toUTF8)] t1 .all .count) = "DigestMismatch"
@@ -70,6 +70,9 @@ def rows? (t : Option Table) : Option (List (List Cell)) := t.map (·.rows)
 #guard ["j,a,x\n", "j,a\n", "j,a,s,s\n", "j,a,s\n1,2", "j,a,s\n\"x,y,z", "j,a,s\n\"x\"y,,",
   "j,a,s\nx\"y,,", "j,a,s\nx\ry,,"].all (csv · [("j", .text), ("a", .bool), ("s", .number)] |>.isNone)
 #guard rows? (csv "j,a,s\n\"x\",,\n" [("j", .text), ("a", .bool), ("s", .number)]) = some [[.text "x", .absent, .absent]]
+#guard ["j,a,s\nx,,", "j,a,s\nx,,\n"].map (rows? <| csv · [("j", .text), ("a", .bool), ("s", .number)]) =
+  List.replicate 2 (some [[.text "x", .absent, .absent]])
+#guard ["j\nx", "j\n\"\"", "j\n"].map (rows? <| csv · [("j", .text)]) = [some [[.text "x"]], some [[.absent]], some []]
 #guard rows? (csv "s,j,a\n1,x,true" [("j", .text), ("a", .bool), ("s", .number)]) = some [[.num 1, .text "x", .bool true]]
 #guard (decodeCsv t1Cols (ByteArray.mk #[0xff])).toOption.isNone
 #guard ["0.30", "-1.5", "0", "007", "1e3", ".5", " 1"].map (readCell .number) =
@@ -83,6 +86,7 @@ def jsonl (s : String) : Option Table := (decodeJsonl t1Cols s.toUTF8).toOption
   "{\"judge\":\"14B\",\"approved\":true}\r\n{\"judge\":\"14B\",\"approved\":null,\"score\":4}\n" ++
   "{\"score\":6,\"judge\":\"14B\",\"approved\":\"yes\"}\n")) = some T1.rows
 #guard rows? (jsonl "{\"judge\":3,\"approved\":1,\"score\":0.30}") = some [[.text "3", .text "1", .num (3/10)]]
+#guard rows? (jsonl "{\"judge\":true,\"approved\":\"x\",\"score\":false}") = some [[.text "true", .text "x", .text "false"]]
 #guard ["{\"judge\":\"a\",\"judge\":\"b\"}", "{\"judges\":\"a\"}", "{\"judge\":[\"a\"]}", "{\"judge\":\"a\"}x", "\n"].all
   (jsonl · |>.isNone)
 #guard rows? (jsonl "{}") = some [[.absent, .absent, .absent]] ∧ rows? (jsonl "") = some []

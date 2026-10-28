@@ -4616,7 +4616,7 @@ module VE.Calc.Inline 136cf31ece359f2ee70cab3752978b60d6de97eb3fc5c0e61556b85139
 185:0-189:56 def VE.Calc.Claim.subst@VE.Calc.Inline
 191:0-193:31 def VE.Calc.Claim.inline@VE.Calc.Inline
 195:0-212:50 theorem VE.Calc.Claim.inline_sound@VE.Calc.Inline
-module VE.Calc.Jsonl 181bc9a14c824a3d1c5d8462be1f6ae137bdb612de1ed72c84a96022640971e5
+module VE.Calc.Jsonl 6fa7253c3f35182fd7353bdee03a891e010b1d7199d812756d6892284ca0c09d
 13:0-19:38 def VE.Calc.jsonScalar@VE.Calc.Jsonl
 21:0-27:32 def VE.Calc.jsonFlatObject@VE.Calc.Jsonl
 29:0-33:16 def VE.Calc.jsonCell@VE.Calc.Jsonl
@@ -5004,7 +5004,7 @@ module VE.Calc.Table 20386a29a9dc7eb70b7790843fbc5f0062e80950ac8f248002e3ed0fbdb
 221:11-221:15 instance VE.Calc.instReprColType@VE.Calc.Table
 221:17-221:28 instance VE.Calc.instDecidableEqColType@VE.Calc.Table
 223:0-230:19 def VE.Calc.readCell@VE.Calc.Table
-module VE.Calc.TableExamples ec6c597a248d84afdcd012c609003a09aec3ff5943a452e4047710433fce2a64
+module VE.Calc.TableExamples df81633faedd85fcf3ad7f0bd129376bce8c8b6d4699a609e4175dc028640d8e
 8:0-8:113 def VE.Calc.TableExamples.t1Bytes@VE.Calc.TableExamples
 9:0-9:99 def VE.Calc.TableExamples.t1Cols@VE.Calc.TableExamples
 10:0-10:103 def VE.Calc.TableExamples.t1@VE.Calc.TableExamples
@@ -5020,11 +5020,11 @@ module VE.Calc.TableExamples ec6c597a248d84afdcd012c609003a09aec3ff5943a452e4047
 54:0-58:73 def VE.Calc.TableExamples.t3Claims@VE.Calc.TableExamples
 66:0-66:90 def VE.Calc.TableExamples.csv@VE.Calc.TableExamples
 67:0-67:74 def VE.Calc.TableExamples.rows?@VE.Calc.TableExamples
-81:0-81:79 def VE.Calc.TableExamples.jsonl@VE.Calc.TableExamples
-92:0-92:116 def VE.Calc.TableExamples.trialCols@VE.Calc.TableExamples
-93:0-95:26 def VE.Calc.TableExamples.trial@VE.Calc.TableExamples
-104:0-109:111 def VE.Calc.TableExamples.v5Csv@VE.Calc.TableExamples
-110:0-124:30 def VE.Calc.TableExamples.v5@VE.Calc.TableExamples
+84:0-84:79 def VE.Calc.TableExamples.jsonl@VE.Calc.TableExamples
+96:0-96:116 def VE.Calc.TableExamples.trialCols@VE.Calc.TableExamples
+97:0-99:26 def VE.Calc.TableExamples.trial@VE.Calc.TableExamples
+108:0-113:111 def VE.Calc.TableExamples.v5Csv@VE.Calc.TableExamples
+114:0-128:30 def VE.Calc.TableExamples.v5@VE.Calc.TableExamples
 module VE.Calc.Units 3ccdfd38167eea5ff0ce721f55946805383288decd63550029361630ace369af
 14:0-14:97 def VE.Calc.Units.affineNames@VE.Calc.Units
 15:0-15:65 def VE.Calc.Units.logarithmicNames@VE.Calc.Units

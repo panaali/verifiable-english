@@ -1,11 +1,11 @@
 import VE.Calc.Table
 import Lean.Data.Json
 
-/-! The JSON-lines subset of spec 4.1: one flat object per line, columns read by top-level key. A key appears once
-(Lean's own JSON parser keeps the last of two equal keys, a second reading, so this reader refuses them). A line is a
-flat object of scalars (a string, a number, `true`, `false` or `null`; an array or object fails). A missing key or
-`null` is absent; a string is read as a CSV field; a JSON number or Boolean is that value in a column of its type and
-is kept as text in any other. -/
+/-! The JSON-lines subset of spec 4.1: one flat object per line (a CR before the LF is JSON whitespace), columns read
+by top-level key. A key appears once (Lean's own JSON parser keeps the last of two equal keys, a second reading, so
+this reader refuses them). A line is a flat object of scalars (a string, a number, `true`, `false` or `null`; an
+array or object fails). A missing key or `null` is absent; a string is read as a CSV field; a JSON number or Boolean
+is that value in a column of its type and is kept as text in any other. -/
 
 namespace VE.Calc
 open Lean Std.Internal.Parsec Std.Internal.Parsec.String
@@ -34,7 +34,7 @@ def jsonCell (t : ColType) : Option Json → Cell
 
 def decodeJsonl (decl : List (String × ColType)) (bytes : ByteArray) : Except String Table := do
   let some text := String.fromUTF8? bytes | throw "TableFormat: the bytes are not UTF-8"
-  let lines := (text.splitOn "\n").map fun l => if l.endsWith "\r" then l.dropRight 1 else l
+  let lines := text.splitOn "\n"
   let lines := if lines.getLast? = some "" then lines.dropLast else lines
   let rows ← lines.mapM fun l => do
     let some pairs := (Parser.run jsonFlatObject l).toOption | throw "TableFormat: a line is not a flat JSON object"
