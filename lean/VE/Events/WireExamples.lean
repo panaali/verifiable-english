@@ -14,7 +14,7 @@ def pred (args : String) (wording : String) : Json :=
   parse s!"\{\"arguments\": {args}, \"description\": \"d\", \"verbalisation\": \"{wording}\"}"
 
 def vocab : Json := Json.mkObj [
-  ("sorts", parse "{\"day\": {\"description\": \"d\"}, \"act\": {\"description\": \"d\"}, \"stay\": {\"description\": \"d\"}, \"term\": {\"description\": \"d\"}}"),
+  ("sorts", parse "{\"day\": {\"description\": \"d\"}, \"act\": {\"description\": \"d\"}, \"stay\": {\"description\": \"d\"}, \"lease\": {\"description\": \"d\"}}"),
   ("predicates", Json.mkObj [
     ("before", pred "[\"day\", \"day\"]" "{0} is before {1}"),
     ("committed_on", pred "[\"act\", \"day\"]" "{0} happens on {1}"),
@@ -23,8 +23,8 @@ def vocab : Json := Json.mkObj [
     ("contributed_to", pred "[\"act\", \"stay\"]" "{0} contributed to {1}"),
     ("needed_for", pred "[\"act\", \"stay\"]" "{0} was necessary for {1}"),
     ("happens_at", pred "[\"act\", \"day\"]" "{0} happens at {1}"),
-    ("term_begins", pred "[\"term\", \"day\"]" "{0} begins on {1}"),
-    ("term_ends", pred "[\"term\", \"day\"]" "{0} ends on {1}"),
+    ("lease_begins", pred "[\"lease\", \"day\"]" "{0} begins on {1}"),
+    ("lease_ends", pred "[\"lease\", \"day\"]" "{0} ends on {1}"),
     ("led_to", pred "[\"stay\", \"act\"]" "{0} contributed to {1}")]),
   ("constants", parse "{\"today\": {\"sort\": \"day\", \"description\": \"d\"}}")]
 
@@ -163,7 +163,7 @@ def oneDay : List (String × VE.Formula) := [("events:irreflexive", .all "day" (
 #guard diag (env (set "links" (.arr #[link "led_to" "contributed" "x"]))) ==
   "ok [2026-10-12, 2026-10-13, 2026-10-14] 12 [x]"
 #guard diag (env (set "states" (parse ("[{\"sort\": \"stay\", \"begins\": \"stay_begins\", \"ends\": \"stay_ends\"}, " ++
-  "{\"sort\": \"term\", \"begins\": \"term_begins\", \"ends\": \"term_ends\"}]")))) ==
+  "{\"sort\": \"lease\", \"begins\": \"lease_begins\", \"ends\": \"lease_ends\"}]")))) ==
   "ok [2026-10-12, 2026-10-13, 2026-10-14] 15 [the drafters]"
 #guard diag (env (set "links" (.arr #[link "needed_for" "necessary" "x", link "contributed_to" "necessary" "y"]))) ==
   "EventsVerbalisation: contributed_to"

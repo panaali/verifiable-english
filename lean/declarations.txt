@@ -9674,7 +9674,7 @@ module VE.Events.Wire b0474b4779abd114c9f25e01ab2321dc0ac1668423e6a01c141b71bdbd
 152:0-177:37 def VE.Events.decodeEvents@VE.Events.Wire
 179:0-182:26 def VE.Events.eventsPack@VE.Events.Wire
 184:0-190:33 theorem VE.Events.eventsX_absent@VE.Events.Wire
-module VE.Events.WireExamples ee8426457cfc5cdc7259c38ed86a82b89ef1952974d194ef887dcb0b23b0c13e
+module VE.Events.WireExamples 1ed1499110878db51d17399a42bcf5c9fa7a4d84a567f6209ff6b8e0293b316f
 11:0-11:67 def VE.Events.WireExamples.parse@VE.Events.WireExamples
 13:0-14:94 def VE.Events.WireExamples.pred@VE.Events.WireExamples
 16:0-29:82 def VE.Events.WireExamples.vocab@VE.Events.WireExamples
