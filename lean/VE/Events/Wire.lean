@@ -82,7 +82,7 @@ def decodeLinkRaw (j : Json) : Except String (String × LinkForm × Option Strin
     | "necessary" => pure LinkForm.necessary
     | _ => throw (invalid ".links.form")
   let by_ ← strAt j ".links" "decided_by"
-  if by_.utf8ByteSize > 64 then throw (invalid ".links.decided_by")
+  if by_.utf8ByteSize > VE.Limits.maxIdentifierBytes then throw (invalid ".links.decided_by")
   pure (p, form, if by_ == "unstated" then none else some by_)
 
 /-! ## Items 3 to 7, in order -/
