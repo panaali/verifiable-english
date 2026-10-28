@@ -161,7 +161,7 @@ OPERATORS = {**dict.fromkeys(("arm-true", "arm-false", "arm-default", "body-true
                               "or-and", "lt-le", "le-lt", "lt-eq", "le-eq", "eq-le", "eq-ne", "ne-eq", "all-any",
                               "any-all", "bool-flip", "lit-plus", "lit-minus", "list-empty", "append-left",
                               "append-right"), 1), "list-first": 2, "list-drop-last": 2, "list-last": 3,
-             "list-drop-first": 3}
+             "list-drop-first": 3, "list-drop-middle": 3}
 LT, LE, EQ = r"(?<![<-])<(?![-|$*;=<>])", r"≤|(?<!<)<=(?!>)", r"(?<![:=!<>])=(?![=>])"
 TOKENS = [("not-drop", r"¬\s*|(?<![\w'!?)\]⟩])!(?=[\w(·])", ""), ("and-or", "∧", "∨"),
           ("and-or", r"(?<![&|])&&(?![&|])", "||"), ("or-and", "∨", "∧"), ("or-and", r"(?<!\|)\|\|(?!\|)", "&&"),
@@ -297,7 +297,13 @@ def mutants(text: str, kind: str, lo: int, hi: int) -> list[tuple[str, int, int,
         if left is not None and right > op + 4:
             lists += [(left, op), (op + 4, right)]
             out += [("append-left", op, right, ""), ("append-right", left, op + 4, "")]
-    lists += [(lo + m.start(), group(t, lo + m.start())) for m in re.finditer(r"(?<![\w'?!)\]@#])\[(?!\])", code)]
+    literals = [(lo + m.start(), group(t, lo + m.start())) for m in re.finditer(r"(?<![\w'?!)\]@#])\[(?!\])", code)]
+    lists += literals
+    for s, e in literals:  # review ap-2b F1: each element of a literal list between its first and its last
+        commas = [s]
+        while (c := depth0(t, commas[-1] + 1, e - 1, ",")) is not None:
+            commas.append(c)
+        out += [("list-drop-middle", a + 1, b + 1, "") for a, b in zip(commas[1:-1], commas[2:])]
     for s, e in dict.fromkeys(lists):
         atom = text[s:e]
         if t[s] == "(" and (s + 1, e - 1) in lists or not atom.strip():  # `(xs)` is the list `xs`
