@@ -55,6 +55,24 @@
    "mutation": "opening_cases keeps only the first `is` of each sentence (drops `Is every service that is reviewed reviewed?`)",
    "test": "tests/test_speech_polar_lean.py::test_the_corpus_records_a_question_for_every_grammar_opening, tests/test_speech_polar_lean.py::test_the_extended_delta_audits_every_verdict_as_signed",
    "result": "2 failed"
+  },
+  {
+   "id": "C6",
+   "language": "Python (evidence script)",
+   "file": "docs/question-answering/q1-4b/evidence/speech_ab_f2.py",
+   "behaviour": "each place a predicate fills in an opening sentence is asked in both polarities (loop recheck 1 F6's class)",
+   "mutation": "_spellings returns only the positive form, so no opening is asked with a not-form",
+   "test": "tests/test_speech_polar_lean.py::test_a_declared_not_form_is_asked_in_every_opening_and_recorded, tests/test_speech_polar_lean.py::test_every_opening_sentence_is_spelled_in_both_polarities, tests/test_speech_polar_lean.py::test_the_extended_delta_audits_every_verdict_as_signed",
+   "result": "7 failed"
+  },
+  {
+   "id": "C7",
+   "language": "Python (evidence script)",
+   "file": "docs/question-answering/q1-4b/evidence/speech_ab_f2.py",
+   "behaviour": "the openings are asked in every environment of the added corpus (loop recheck 1 F6)",
+   "mutation": "opening_inputs keeps only `speech` and `unverbalised`",
+   "test": "tests/test_speech_polar_lean.py::test_the_corpus_records_a_question_for_every_grammar_opening, tests/test_speech_polar_lean.py::test_a_declared_not_form_is_asked_in_every_opening_and_recorded, tests/test_speech_polar_lean.py::test_the_extended_delta_audits_every_verdict_as_signed",
+   "result": "7 failed"
   }
  ]
 }
