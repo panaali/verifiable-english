@@ -202,14 +202,17 @@ def test_without_a_default_premise_there_is_no_member(tmp_path):
     assert "default" not in row
 
 
-def test_lean_refuses_the_flag_on_another_question_or_type(nu):
+def test_the_flag_elsewhere_is_rd9s_answer(nu):
+    """Only `assume_no_exception: true` on the query question asks: another question or value is RD-9's answer."""
     from ve.readings_route import run_lean
     _, route, row = nu
-    case = route.requests[id(row)]
-    for change in ({"question": "conflict"}, {"question": "premises"}, {"assume_no_exception": "yes"},
-                   {"assume_no_exception": 1}):
-        [answer] = run_lean([{**case, **change}])
-        assert answer["status"] == "error" and answer["error"].startswith("InvalidInput: assume_no_exception"), answer
+    case = {k: v for k, v in route.requests[id(row)].items() if k != "assume_no_exception"}
+    for question in ("conflict", "premises", "query"):
+        [plain] = run_lean([{**case, "question": question}])
+        values = ("yes", 1, None) + ((True,) if question != "query" else ())
+        for value in values:
+            [asked] = run_lean([{**case, "question": question, "assume_no_exception": value}])
+            assert asked == plain and "default" not in asked, (question, value)
 
 
 def test_under_names_readings_and_other_flags_are_refused(nu, tmp_path):

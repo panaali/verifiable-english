@@ -128,13 +128,14 @@ def main(argv=None):
 def _assume_no_exception(doc, conclusion, args):
     """`--assume-no-exception` (defeasible plan DF-1b): Lean's strict answer, else its answer with no exception
     assumed (`ve.defaults.ask`), on a soft-norms@0 document without open reading sets; the document's assertions are
-    the question's premises."""
+    the question's premises. On a document with a content-bearing set (DF-3), the readings' answer with Lean's
+    `default` member (`_readings_without_exception`)."""
     from ..defaults import ask
     from ..readings_s1 import READINGS
-    if args.sentence or args.narrowing or (args.under and not _content_bearing(doc)):
-        raise VEError("--assume-no-exception takes no --sentence or --narrowing, and --under only on readings")
-    if _content_bearing(doc) and doc.get("readings_components") is None:
+    if _content_bearing(doc) and doc.get("readings_components") is None and not (args.sentence or args.narrowing):
         return _readings_without_exception(doc, conclusion, args)
+    if args.under or args.sentence or args.narrowing:
+        raise VEError("--assume-no-exception takes no --under, --sentence or --narrowing")
     if doc.get("soft_document") is None or _content_bearing(doc) or active_reading_sets(
             doc["meta"].get("reading_sets", [])):
         raise VEError("--assume-no-exception applies to a soft-norms@0 document without open reading sets")

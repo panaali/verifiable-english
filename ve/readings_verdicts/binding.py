@@ -327,7 +327,7 @@ def _check_answer(row, case, frame):
 
 def _check_default(row, case, frame):
     """The `default` member (defeasible plan DF-3), bound to the request: present exactly when the request asks
-    (`assume_no_exception`), every strict conflict row is CONFLICT-FREE (`readings_wire_default_present`) and some
+    (`assume_no_exception` on the query question, at most 64 choices), every strict conflict row is CONFLICT-FREE (`readings_wire_default_present`) and some
     choice has a `default_premises` row (plan F-DF2); one
     entry per choice of the answer, in its order; a basis exactly with `proved`, its assumptions the labels of the
     choice's own `default_premises` (Lean's `defaults-elaborate` on the choice's norms, `frame.defaults`), each once
@@ -336,7 +336,7 @@ def _check_default(row, case, frame):
     deciders; every English row names a choice of the member whose entry carries what the row renders. Which rows
     the member has and what they say is Lean's."""
     member = row.get("default")
-    if case.get("assume_no_exception") is not True:
+    if case.get("assume_no_exception") is not True or case["question"] != "query" or "budget" in row["result"]:
         _need(member is None)
         return
     free = all(e["conflict"] == "CONFLICT-FREE" for e in row["per_choice"])
