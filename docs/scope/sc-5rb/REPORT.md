@@ -169,3 +169,26 @@ build F-rs's and `readings_refused`'s checks (the DRI's condition). After `26e55
     never built over the limit. The B1 benchmark variant is in FOLLOW-UPS.
 13. `Test-removed` trailers: PASS. No test was removed or renamed. `tools/gate_collection.py --check --prebuilt`:
     19,855 collected, 15 added, 0 refused, 0 stale, 0 malformed.
+
+## Fix round 1 (review `manage-agents/sc-5rb-review.final.md`, from 016341ad1)
+
+Python only; no Lean, schema or generated file changed (`tools/regen_generated.py --check`: 33 entries up to date).
+
+- **F1 (B), class: a consumer reading a reading Lean composes per choice.** `ve/document/lean.py`
+  `composed_set_units(meta)` names, from the request, the units whose set scope@0 composes (the sets on units a
+  governor names; Lean refuses any other set there, `ScopeReadings`), and `composed_unavailable(unit)` is the one
+  refusal. `_lean_document` raises it when a readings route would be built over the sets (content-bearing or with
+  companions): those routes feed load, check, coverage and every readings query. Render's guard keys on the composed
+  set, not on a part (`ve/document/render.py`), and the rights-rule warm-up skips such sets. Sweep over the six
+  effects: only `reguard` and `carve_out` govern a set of rules in full; `precedes`/`yields` answer `ScopeNoEffect`
+  over the list, `title` `ScopeReach`, and `frame` reads parts, which no route reads (row 1's document still loads and
+  checks; its readings query is `UNKNOWN`, "non-assertion elaborator is not yet available"). Without `readings@1`
+  Lean refuses such a set. DELTA row 3 (reserved for the DRI).
+- **F2 (B), class: a Lean `ResourceLimit` replaced by the retained path.** `_lean_answer` raises a `ResourceLimit`
+  for a document under a wrapper profile (`_lean_only`, by `chain_environment`); every view (load, check, render,
+  coverage, readings) goes through it. Covers `scope choices` and GOVERN's own limits. DELTA row 4 (R2).
+  `CheckerUnavailable` keeps its fallback (`tests/test_scope_document.py::test_a_rights_documents_fence_is_left_to_the_retained_path_which_refuses_scope`).
+
+Seeded bugs (Python; each planted alone, the test run, restored; `mutants.json`): the load guard removed, render's
+guard removed, the limit falling back, `composed_set_units` naming nothing: each killed by the tests named there.
+trust_mutants not rerun: this round changed no trusted Lean line.
