@@ -1,10 +1,34 @@
-# DRI signature needed: df-3's corrected `DVerdicts` statement (spec 7.4 is false as written)
+# STOPPED — DRI signature needed for df-3's corrected `DVerdicts` statement
 
 **Status: STOPPED at spec 7.4's `DVerdicts` / `d_rowsHold`; DRI approval of a corrected statement is needed.**
-HEAD at report preparation: `868e9118b` on `feature/df-3`; merge base `0df9256dfe7d`.
+F2's shared Python request binding is fixed in this review round; F1 remains the statement approval stop.
+F2's code and regressions are committed as `5a5992a86` on `feature/df-3`; merge base `0df9256dfe7d`.
 The Lean fold, route, Python relay, English and fixtures are implemented and committed, but the approved structure is false for its claimed theorem.
 The two user-visible rows D1 and D2 are signed by the DRI in `reviews/dri-decisions-20261028-df-3.md`; the statement change is not signed there.
-No full gate ran (the user assigns it to the chain); the selected-test run never reached pytest in this read-only local fallback.
+No full gate ran (the user assigns it to the chain). The selected-test VM fallback was interrupted under sustained
+runner overload after the Mac was unreachable; it is not counted as a pass.
+
+## Review fix round (2026-10-28)
+
+- F1: the executable statement probe still reports `DIFF DVerdicts` (16 OK, 1 DIFF). The approved structure permits
+  arbitrary, empty, or false rows; no sound proof can establish `d_rowsHold` for all of them. DELTA row D3 explicitly
+  reserves the item-specific DRI signature. A passing statement regression cannot be added until the DRI approves a
+  sound replacement for spec 7.4; the comparator is the executable regression probe.
+- F2: `ve/defaults.py::_situation` now binds the complete set of displayed filling tables to the request's
+  unspecified regulated predicates, and checks every tuple's arity and declared sorts against the request model.
+  `defaults-coherence`, `defaults-model`, and the DF-3 enumerated verdict route share this helper. The review's
+  executable probe failed before the fix and passes after it. Regressions:
+  `tests/test_defaults_readings.py::test_df_rho_every_forged_collision_field_is_refused` and
+  `tests/test_defaults_answer.py::test_situation_filling_tables_and_tuples_are_bound`,
+  `::test_situation_entities_of_every_sort`. The two focused files passed: **81 passed**. A seeded Python bug
+  replacing the complete-table check with `if False` in a detached worktree made the missing-table assertion fail;
+  that worktree was removed.
+- Validation: `lake build` completed successfully (689 jobs) and `python3 lean/audit.py` passed (655 sources, 7,309
+  theorem declarations) in the selected runner. The cached map selected **433 of 482** test units; the changed
+  readings unit passed, and 9 recorded units had passed when the VM run was interrupted. The Mac runner was
+  unreachable, and VM load averaged about 134 with 32 CPUs available. The initial VM fallback without a writable
+  cached map was also interrupted after it began a fresh 482-unit map recording; neither run is a selected-test pass.
+  The three tests listed in `main-known-red.txt` are pre-existing main failures and were not edited here.
 
 ## Statement counterexample and required decision
 
