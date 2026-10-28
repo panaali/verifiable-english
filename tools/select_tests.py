@@ -79,6 +79,7 @@ SMOKE = ("tests/test_conformance.py", "tests/test_surface_registry.py", "tests/t
 # The lint of the history-dependent test list (tools/history_tests.py), run by any change that can make it stale
 # (`history_inventory`).
 HISTORY_TEST = "tests/test_history_tests.py"
+HISTORY_REASON = "history inventory"
 # `--run` stops after this many failed tests outside the quarantine (`--maxfail`; 0 runs everything).
 MAXFAIL = 5
 UV_PYTHON = ("uv", "run", "--frozen", "--group", "dev", "python")
@@ -927,7 +928,7 @@ def finish(sel: Selection, changes: list[Change], paths: list[str], started: flo
         if sel.code:
             sel.add(SMOKE, "smoke")
         if history:
-            sel.add([HISTORY_TEST], "history inventory")
+            sel.add([HISTORY_TEST], HISTORY_REASON)
         selected = sorted(sel.reasons)
     pytest_files = [t for t in selected if t.startswith("tests/")]
     extra = [t for t in selected if t in EXTRA_UNITS]
