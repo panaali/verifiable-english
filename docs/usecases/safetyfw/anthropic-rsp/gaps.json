@@ -1,9 +1,9 @@
 {
  "d1_bytes_by_status": {
-  "CHECKED": 5000,
+  "CHECKED": 4676,
   "LABELLED": 37899,
   "OPEN": 13214,
-  "UNFORMALISED": 3297
+  "UNFORMALISED": 3621
  },
  "features": {
   "AT": {
@@ -57,14 +57,14 @@
    "units": 2
   },
   "SC": {
-   "bytes": 1611,
-   "sole_bytes": 369,
-   "sole_units": 2,
+   "bytes": 1935,
+   "sole_bytes": 693,
+   "sole_units": 4,
    "statuses": {
     "OPEN": 1242,
-    "UNFORMALISED": 369
+    "UNFORMALISED": 693
    },
-   "units": 7
+   "units": 9
   },
   "WG": {
    "bytes": 551,
@@ -105,17 +105,17 @@
   }
  },
  "master_bytes_by_status": {
-  "CHECKED": 5651,
+  "CHECKED": 5327,
   "LABELLED": 37248,
   "OPEN": 13214,
-  "UNFORMALISED": 3297
+  "UNFORMALISED": 3621
  },
  "source_bytes": 59410,
  "status_bytes_recomputed": {
-  "CHECKED": 5651,
+  "CHECKED": 5327,
   "LABELLED": 37248,
   "OPEN": 13214,
-  "UNFORMALISED": 3297
+  "UNFORMALISED": 3621
  },
- "units": 301
+ "units": 303
 }

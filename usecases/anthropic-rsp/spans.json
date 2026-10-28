@@ -2172,11 +2172,31 @@
    "id": "s361-financial-interest",
    "span": [
     37680,
-    38099
+    37775
    ],
    "kind": "norm",
    "rule": "f15-financial-interest",
    "status": "CHECKED"
+  },
+  {
+   "id": "s361-individual-financial-interest",
+   "span": [
+    37775,
+    37957
+   ],
+   "kind": "unformalised",
+   "reason": "addressed_to_others",
+   "status": "UNFORMALISED"
+  },
+  {
+   "id": "s361-personal-relationships",
+   "span": [
+    37957,
+    38099
+   ],
+   "kind": "unformalised",
+   "reason": "addressed_to_others",
+   "status": "UNFORMALISED"
   },
   {
    "id": "s361-consult",
