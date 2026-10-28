@@ -441,14 +441,25 @@ def corpus():
             "readings-choices": [{**choice_plan, "limit": 64},
                                  {**choice_plan, "limit": 1}, choice_verdict],
             "search-budget": [*search_budget_cases(), *ADVERSARIAL],
-            "metered": metered_cases(), "calc": [*calc_cases(), *ADVERSARIAL]}
+            "metered": metered_cases(), "calc": [*calc_cases(), *ADVERSARIAL],
+            "cardinality": [*cardinality_cases(), *ADVERSARIAL]}
+
+
+def recorded(mode):
+    """A mode's route cases in `tests/data/route-cases.jsonl`."""
+    rows = (json.loads(line) for line in (ROOT / "tests/data/route-cases.jsonl").read_text().splitlines())
+    return [case for name, case in rows if name == mode]
 
 
 def calc_cases():
-    """The `calc` mode's route cases (`tests/data/route-cases.jsonl`): every outcome, a reproduction row and each
-    refusal of the hostile set."""
-    rows = (json.loads(line) for line in (ROOT / "tests/data/route-cases.jsonl").read_text().splitlines())
-    return [case for mode, case in rows if mode == "calc"]
+    """The `calc` mode's route cases: every outcome, a reproduction row and each refusal of the hostile set."""
+    return recorded("calc")
+
+
+def cardinality_cases():
+    """The `cardinality` mode's route cases (quantities QT-A3): FA1 and FA1b, admitted and certified, and the hostile
+    set at the wire, one case per diagnostic class in spec 4.2's order."""
+    return recorded("cardinality")
 
 
 def metered_cases():
