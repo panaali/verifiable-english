@@ -1,11 +1,18 @@
-"""Speech acts' F1 polar questions and their `Must`/`Can` refusal, read by Lean (question answering Q1.4).
+"""Speech acts' polar questions and their `Must`/`Can` refusal, read by Lean (question answering Q1.4, Q1.4b).
 
-`parse_speech` sends a wording that begins with one of the contract's speech-acts prefixes (`speechPrefixes`) to
-`english.question` with `caller` "speech-acts" and relays the answer; `Is <Name> …?` stays Python's until Q1.4b.
+`parse_speech` sends a wording that begins with one of the contract's speech-acts prefixes (`speechPrefixes`), or with
+F2's fronted `Is ` (Q1.4b), to `english.question` with `caller` "speech-acts" and relays the answer. Q1.4b's three
+classes of changed verdicts (DRI 2026-10-27 item 4) have one test each: a gloss question gets Lean's refusal text, a
+case-folded name is refused, and `Is every service reviewed?` is read as `ve ask` reads it.
 """
 from __future__ import annotations
 
 import copy
+import json
+import os
+import subprocess
+import sys
+from pathlib import Path
 
 import pytest
 
@@ -15,8 +22,10 @@ from ve.english import EnglishVocabulary
 from ve.errors import CheckerUnavailable, ResourceLimit, VEError
 from ve.speech_english import parse_speech
 
+from subprocesses import HANG_TIMEOUT
 from test_question_reading import _mutants
 from test_speech_acts import environment
+from ve.environment import Environment
 
 ENV = environment()
 MODAL_TEXT = "ModalQuestion: choose an explicit question"
@@ -27,15 +36,15 @@ def words(env=ENV):
     return EnglishVocabulary(env, _defer_overlay_refusals=True)
 
 
-def case(question: str, caller: str | None = SPEECH) -> dict:
+def case(question: str, caller: str | None = SPEECH, env=ENV) -> dict:
     """The request `read_question` sends for `question`."""
-    out = {**english_lean.request(ENV, question, words(), {}), "id": english_lean.QUESTION_MODE,
+    out = {**english_lean.request(env, question, words(env), {}), "id": english_lean.QUESTION_MODE,
            "question": question}
     return out if caller is None else {**out, "caller": caller}
 
 
-def live(question: str, caller: str | None = SPEECH) -> dict:
-    row = relay.decide_once(english_lean.QUESTION_MODE, case(question, caller))
+def live(question: str, caller: str | None = SPEECH, env=ENV) -> dict:
+    row = relay.decide_once(english_lean.QUESTION_MODE, case(question, caller, env))
     assert row.get("status") == "ok", row
     return row["result"]
 
@@ -57,7 +66,7 @@ def calls(monkeypatch):
 
 def test_the_routed_prefixes_are_the_contracts():
     assert english_lean.QUESTION_CALLERS == {SPEECH: ("Is it the case that ", "Must ", "Can ")}
-    assert speech_english._LEAN_PREFIXES == english_lean.QUESTION_CALLERS[SPEECH]
+    assert speech_english._LEAN_PREFIXES == (*english_lean.QUESTION_CALLERS[SPEECH], "Is ")
 
 
 @pytest.mark.parametrize("wording, body", [
@@ -70,15 +79,28 @@ def test_an_f1_question_is_leans_reading(calls, wording, body):
     assert calls == [SPEECH]
 
 
-@pytest.mark.parametrize("wording", ["Is it the case that?", "Is it the case thatatlas is reviewed?",
-                                     "is it the case that atlas is reviewed?", "Is atlas reviewed?"])
-def test_a_wording_without_the_f1_prefix_is_not_sent(calls, wording):
-    """The prefix's boundary: no space after `that`, a lower-case `is`, and F2 (Python's until Q1.4b)."""
+@pytest.mark.parametrize("wording", ["is it the case that atlas is reviewed?", "is atlas reviewed?",
+                                     "IS ATLAS REVIEWED?", "Isatlas reviewed?", "Is", "Which one of atlas and beacon "
+                                     "is reviewed?", "Atlas is reviewed?", "Does atlas click?"])
+def test_a_wording_without_a_routed_prefix_is_not_sent(calls, wording):
+    """The boundary of `Is `: a lower-case or capital `is`, no space after `Is`, and other speech acts."""
     try:
         parse_speech(ENV, wording, ENV.speech_acts)
     except VEError:
         pass
     assert calls == []
+
+
+@pytest.mark.parametrize("wording", ["Is atlas reviewed?", "Is ?", "Is atlas reviewed", "Is it the case that?",
+                                     "Is it the case thatatlas is reviewed?", "Is ATLAS reviewed?",
+                                     "Is every service reviewed?", "Is a service reviewed?", "Is atlas?"])
+def test_an_f2_wording_is_sent(calls, wording):
+    """Q1.4b: every wording that begins with `Is ` is Lean's, read or refused, with no Python reading beside it."""
+    try:
+        parse_speech(ENV, wording, ENV.speech_acts)
+    except VEError as exc:
+        assert exc.lean_question is not None
+    assert calls == [SPEECH]
 
 
 def test_an_f1_refusal_is_leans_text_and_span(calls):
@@ -100,6 +122,124 @@ def test_an_f1_refusal_carries_leans_rephrasings(calls):
         'VE cannot tell whether "a" here means every or some. Ask one of these instead:',
         "Is it the case that every service is reviewed?", "Is it the case that some service is reviewed?"]
     assert str(caught.value).splitlines() == english_lean.question_lines(answer)
+
+
+# ------------------------------------------------------------------ Q1.4b: F2's three classes (DRI 2026-10-27 item 4)
+
+GLOSSES = {"staffed": "{0} is reviewed by staff", "despite": "{0} is reviewed despite remaining unreviewed",
+           "atlas_linked": "{0} is linked to atlas", "vetted": "{0} is vetted"}
+
+
+def glossed() -> Environment:
+    raw = ENV.to_dict()
+    for name, gloss in GLOSSES.items():
+        raw["vocabulary"]["predicates"][name] = {"arguments": ["service"], "description": name,
+                                                 "verbalisation": gloss}
+    return Environment(raw)
+
+
+GLOSSED = glossed()
+
+
+def refused(env, wording: str) -> tuple[VEError, dict]:
+    """The speech caller's refusal of `wording`, and Lean's answer to the same request sent by itself."""
+    with pytest.raises(VEError) as caught:
+        parse_speech(env, wording, env.speech_acts)
+    return caught.value, live(wording, env=env)
+
+
+@pytest.mark.parametrize("wording", ["Is atlas reviewed by staff?", "Is atlas reviewed despite remaining unreviewed?",
+                                     "Is atlas linked to atlas?"])
+def test_a_gloss_question_gets_leans_refusal_text(calls, wording):
+    """Class (a): a declared gloss is no longer matched opaquely by Python; Lean's lexicon has no such wording, so
+    the speech caller gets Lean's refusal, its text and its span, where the base answered with the gloss's
+    predicate."""
+    error, answer = refused(GLOSSED, wording)
+    assert answer["code"] == "NoDerivation" and error.lean_question["code"] == "NoDerivation"
+    assert str(error).splitlines() == english_lean.question_lines(answer)
+    assert error.span is not None and calls == [SPEECH]
+
+
+@pytest.mark.parametrize("env, wording, predicate", [(GLOSSED, "Is atlas vetted?", "vetted"),
+                                                     (GLOSSED, "Is atlas reviewed?", "reviewed"),
+                                                     (ENV, "Is beacon reviewed?", "reviewed")])
+def test_a_gloss_leans_lexicon_reads_is_read(calls, env, wording, predicate):
+    """The accepting side of class (a): a one-property gloss, which Lean's lexicon reads, is Lean's reading."""
+    subject = wording.split()[1]
+    assert parse_speech(env, wording, env.speech_acts) == (
+        {"mode": "polar", "body": ["unary", predicate, ["const", subject]]}, "question")
+    assert calls == [SPEECH]
+
+
+def test_a_gloss_outside_the_environment_is_refused():
+    """`Is atlas vetted?` is read only where `vetted` is declared."""
+    error, answer = refused(ENV, "Is atlas vetted?")
+    assert str(error).splitlines() == english_lean.question_lines(answer)
+
+
+@pytest.mark.parametrize("wording", ["Is ATLAS reviewed?", "Is aTLAS reviewed?", "Is ATlas reviewed?",
+                                     "Is BEACON reviewed?"])
+def test_a_case_folded_name_is_refused(calls, wording):
+    """Class (b): Python folded a name's case; Lean refuses a name not written as declared (or capitalised)."""
+    error, answer = refused(ENV, wording)
+    assert answer["code"] == "NoDerivation"
+    assert str(error).splitlines() == english_lean.question_lines(answer)
+    assert wording.split()[1] in str(error) and calls == [SPEECH]
+
+
+@pytest.mark.parametrize("wording, name", [("Is atlas reviewed?", "atlas"), ("Is Atlas reviewed?", "atlas"),
+                                           ("Is Beacon reviewed?", "beacon")])
+def test_a_name_as_declared_or_capitalised_is_read(wording, name):
+    """The accepting side of class (b): the declared name, and the name with its first letter capitalised."""
+    assert parse_speech(ENV, wording, ENV.speech_acts)[0]["body"] == ["unary", "reviewed", ["const", name]]
+
+
+ROOT = Path(__file__).resolve().parents[1]
+ENV_ALLOW = ("PATH", "HOME", "LANG", "LC_ALL", "TMPDIR", "PYTHONPATH", "PYTHONNOUSERSITE", "PYTHONPYCACHEPREFIX")
+
+
+def ve_ask(tmp_path, question: str, *options: str):
+    """`ve ask DOCUMENT QUESTION --reading` over a document in the speech environment."""
+    document = tmp_path / "speech.ve.md"
+    meta = {"format": "ve-document@1", "environment": ENV.to_dict(), "units": [{"id": "s1", "fence": "s1"}]}
+    document.write_text("---\n" + json.dumps(meta) + "\n---\nAtlas is reviewed.\n```ve s1\nAtlas is reviewed.\n```\n")
+    env = {k: v for k, v in os.environ.items() if k in ENV_ALLOW or k.startswith("VE_")}
+    return subprocess.run([sys.executable, "-m", "ve", "ask", str(document), question, "--reading", *options],
+                          cwd=ROOT, env=env, text=True, capture_output=True, timeout=HANG_TIMEOUT)
+
+
+@pytest.mark.parametrize("wording, body", [
+    ("Is every service reviewed?", ["forall", "service", ["unary", "reviewed", ["var", 0]]]),
+    ("Is some service reviewed?", ["exists", "service", ["unary", "reviewed", ["var", 0]]]),
+    ("Is a service reviewed?", None)])
+def test_a_quantified_f2_question_is_read_as_ve_ask_reads_it(monkeypatch, tmp_path, wording, body):
+    """Class (c): `Is every service reviewed?` (and `some`), which Python refused as `UnknownAlternative`, gets the
+    same verdict and text through the speech caller as through `ve ask`; `Is a service reviewed?` gets the same
+    refusal, whose rephrasings are those two questions (spec 4.1 row 14)."""
+    seen = []
+
+    def spy(*args, **kwargs):
+        try:
+            answer = english_lean.read_question(*args, **kwargs)
+        except VEError as exc:
+            seen.append(exc.lean_question)
+            raise
+        seen.append(answer)
+        return answer
+
+    monkeypatch.setattr(speech_english, "read_question", spy)
+    done = ve_ask(tmp_path, wording)
+    structured = json.loads(ve_ask(tmp_path, wording, "--json").stdout)["result"]
+    if body is None:
+        with pytest.raises(VEError) as caught:
+            parse_speech(ENV, wording, ENV.speech_acts)
+        assert done.returncode == 2 and str(caught.value).splitlines() == done.stdout.splitlines()
+        assert structured["rephrasings"] == [wording.replace(" a ", " every "), wording.replace(" a ", " some ")]
+    else:
+        assert parse_speech(ENV, wording, ENV.speech_acts) == ({"mode": "polar", "body": body}, "question")
+        assert done.returncode == 0 and english_lean.question_lines(seen[0]) == done.stdout.splitlines()
+        assert structured["ast"] == body
+    assert seen[0]["status"] == structured["status"] and seen[0]["text"] == structured["text"]
 
 
 NESTED = "Is it the case that " + "it is not the case that " * 49 + "atlas is reviewed?"
