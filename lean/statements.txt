@@ -2528,8 +2528,8 @@ theorem VE.Arith.boundedNames_snoc
       | VE.Arith.Def.fn f arity body => fun g => if g = f then VE.Arith.Term.bnd E.boundedNames body else E.boundedNames g
       | VE.Arith.Def.pred p arity body => fun q =>
         if q = p then VE.Arith.Formula.bnd E.boundedNames body else E.boundedNames q
-  -- uses VE.Arith.Def@VE.Arith.Syntax VE.Arith.Defs.boundedNames@VE.Arith.Defs VE.Arith.Defs.opEnv.match_1@VE.Arith.Bounded VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula.bnd@VE.Arith.Defs VE.Arith.Formula@VE.Arith.Syntax VE.Arith.Term.bnd@VE.Arith.Defs VE.Arith.Term@VE.Arith.Syntax
-  -- expr 3280137390
+  -- uses VE.Arith.Def@VE.Arith.Syntax VE.Arith.Defs.boundedNames@VE.Arith.Defs VE.Arith.Defs.opEnvList.match_1@VE.Arith.Bounded VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula.bnd@VE.Arith.Defs VE.Arith.Formula@VE.Arith.Syntax VE.Arith.Term.bnd@VE.Arith.Defs VE.Arith.Term@VE.Arith.Syntax
+  -- expr 2600895271
 theorem VE.Arith.chargeBits_bits
   ∀ {limit w : Nat} {x y : Int} {w' : Nat},
     VE.Arith.chargeBits limit x w = Option.some (y, w') → VE.Arith.bits y ≤ limit ∧ w' ≤ limit
@@ -2636,6 +2636,10 @@ theorem VE.Arith.log2_le_of_lt
   ∀ {n k : Nat}, n < 2 ^ (k + 1) → n.log2 ≤ k
   -- uses
   -- expr 1783431650
+theorem VE.Arith.opEnv_eq_list
+  ∀ (limit : Nat) (D : VE.Arith.Defs), VE.Arith.Defs.opEnv limit D = VE.Arith.Defs.opEnvList limit D
+  -- uses VE.Arith.Defs.opEnv@VE.Arith.Bounded VE.Arith.Defs.opEnvList@VE.Arith.Bounded VE.Arith.Defs@VE.Arith.Syntax VE.Arith.OpEnv@VE.Arith.Bounded
+  -- expr 3930107235
 theorem VE.Arith.opEnv_extends
   ∀ (D : VE.Arith.Defs) {limit limit' : Nat},
     limit ≤ limit' → VE.Arith.Extends (VE.Arith.Defs.opEnv limit D) (VE.Arith.Defs.opEnv limit' D)
@@ -2659,8 +2663,8 @@ theorem VE.Arith.opEnv_snoc
             if q = p then
               Option.some (n, fun xs w => VE.Arith.Formula.evalB (VE.Arith.Defs.opEnv limit E) limit xs body w)
             else (VE.Arith.Defs.opEnv limit E).preds q }
-  -- uses VE.Arith.Def@VE.Arith.Syntax VE.Arith.Defs.opEnv.match_1@VE.Arith.Bounded VE.Arith.Defs.opEnv@VE.Arith.Bounded VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula.evalB@VE.Arith.Bounded VE.Arith.Formula@VE.Arith.Syntax VE.Arith.OpEnv.funs@VE.Arith.Bounded VE.Arith.OpEnv.mk@VE.Arith.Bounded VE.Arith.OpEnv.preds@VE.Arith.Bounded VE.Arith.OpEnv@VE.Arith.Bounded VE.Arith.Term.evalB@VE.Arith.Bounded VE.Arith.Term@VE.Arith.Syntax
-  -- expr 563588754
+  -- uses VE.Arith.Def@VE.Arith.Syntax VE.Arith.Defs.opEnv@VE.Arith.Bounded VE.Arith.Defs.opEnvList.match_1@VE.Arith.Bounded VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula.evalB@VE.Arith.Bounded VE.Arith.Formula@VE.Arith.Syntax VE.Arith.OpEnv.funs@VE.Arith.Bounded VE.Arith.OpEnv.mk@VE.Arith.Bounded VE.Arith.OpEnv.preds@VE.Arith.Bounded VE.Arith.OpEnv@VE.Arith.Bounded VE.Arith.Term.evalB@VE.Arith.Bounded VE.Arith.Term@VE.Arith.Syntax
+  -- expr 3189004836
 theorem VE.Arith.quantLoop_false
   ∀ (Q : Int → Prop) (step : Int → Nat → Option (Bool × Nat)) (limit : Nat),
     (∀ (i : Int) (w : Nat) (b : Bool) (w' : Nat),

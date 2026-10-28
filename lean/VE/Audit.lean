@@ -784,6 +784,7 @@ import VE.WireContract.Engine
 #print axioms VE.Arith.decideBounded_work
 #print axioms VE.Arith.foldl_rel
 #print axioms VE.Arith.log2_le_of_lt
+#print axioms VE.Arith.opEnv_eq_list
 #print axioms VE.Arith.opEnv_extends
 #print axioms VE.Arith.opEnv_snoc
 #print axioms VE.Arith.quantLoop_false
