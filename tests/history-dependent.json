@@ -66,7 +66,7 @@
   },
   {
    "test": "tests/test_ar8_evidence.py",
-   "why": "starts git (git show) in docs/architecture/ar-8/measure.py, tests/test_ar8_evidence.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "why": "starts git (git show) in docs/architecture/ar-8/measure.py, tests/lineage.py, tests/test_ar8_evidence.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
    "recorded": [
     "coverage map",
     "source"
@@ -74,6 +74,7 @@
    "via": [
     "docs/architecture/ar-8/measure.py:git: git",
     "docs/architecture/ar-8/measure.py:lines_at: git show",
+    "tests/lineage.py:git: git",
     "tests/test_ar8_evidence.py:git: git",
     "tools/nested_pytest.py:command: pytest"
    ]
@@ -237,13 +238,13 @@
   },
   {
    "test": "tests/test_closure_witnesses.py",
-   "why": "starts git (git show) in experiments/E0/closure_witnesses/validate.py",
+   "why": "starts git (git cat-file) in experiments/E0/closure_witnesses/validate.py",
    "recorded": [
     "coverage map",
     "source"
    ],
    "via": [
-    "experiments/E0/closure_witnesses/validate.py:validate: git show"
+    "experiments/E0/closure_witnesses/validate.py:validate: git cat-file"
    ]
   },
   {
@@ -1156,13 +1157,12 @@
   },
   {
    "test": "tests/test_readings_defaults_rd8_report.py",
-   "why": "starts git (git log) in tests/test_readings_defaults_rd8_report.py",
+   "why": "starts git in tests/lineage.py",
    "recorded": [
-    "coverage map",
     "source"
    ],
    "via": [
-    "tests/test_readings_defaults_rd8_report.py:test_review_fix_commit_chain_and_final_gate_target: git log"
+    "tests/lineage.py:git: git"
    ]
   },
   {
@@ -1200,13 +1200,12 @@
   },
   {
    "test": "tests/test_readings_rd5_udhr.py",
-   "why": "starts git (git cat-file, git ls-tree, git show) in tests/test_readings_rd5_udhr.py, usecases/udhr-pilot/run-20261010T1400Z/migrate.py",
+   "why": "starts git (git ls-tree, git show) in usecases/udhr-pilot/run-20261010T1400Z/migrate.py",
    "recorded": [
     "coverage map",
     "source"
    ],
    "via": [
-    "tests/test_readings_rd5_udhr.py:<module>: git cat-file",
     "usecases/udhr-pilot/run-20261010T1400Z/migrate.py:git_ls: git ls-tree",
     "usecases/udhr-pilot/run-20261010T1400Z/migrate.py:git_show: git show"
    ]
