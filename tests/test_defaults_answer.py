@@ -11,7 +11,7 @@ from itertools import combinations
 
 import pytest
 
-from tests.test_defaults_lean import DOCS, STRICT, UNLESS_URGENT, X_ALL, asked, env, rule, sent_kind, un
+from tests.test_defaults_lean import ALPHA_ENGLISH, DOCS, STRICT, UNLESS_URGENT, X_ALL, asked, env, rule, sent_kind, un
 from ve import defaults
 from ve.backends import relay
 from ve.backends.lean_service import _decode_json
@@ -631,7 +631,8 @@ def test_strict_answer_only_when_lean_says_valid(monkeypatch):
     assert (out["question"], out["kind"]) == ("default", "defaults-certificate"), out
     out, sent = asked(monkeypatch, "alpha")
     assert out == {"question": "default", "kind": "defaults-certificate", "answer": {
-        "verdict": "FOLLOWS", "basis": "needs", "form": "short", "assumptions": ["default:exception:r1"]}}
+        "verdict": "FOLLOWS", "basis": "needs", "form": "short", "assumptions": ["default:exception:r1"]},
+        "english": ALPHA_ENGLISH}
     assert not any(case.get("kind") == "norm-defaults-certificate" for case, _ in sent)
 
 

@@ -1,0 +1,121 @@
+{
+ "item": "df-1bb",
+ "language": "Python",
+ "runner": "docs/defeasible/df-1bb/evidence/run_mutants.py",
+ "result": "docs/defeasible/df-1bb/evidence/mutants.out",
+ "note": "R1 and R2 are plan DF-1b's two renderer seeded bugs; E1-E7 one per rendering or binding behaviour claimed; L1-L4 the lint rule and the RELAYED row; W1 the wiring in ask. Python only: no Lean or Rust file changed.",
+ "mutants": [
+  {
+   "id": "R1",
+   "file": "ve/defaults_english.py",
+   "bug": "plan: the renderer drops DE1's \"Unless an exception applies\"",
+   "find": "{\"short\": \"Unless an exception applies\", \"long\"",
+   "replace": "{\"short\": \"\", \"long\"",
+   "test": "tests/test_defaults_english.py::test_de1_and_de2_short_form"
+  },
+  {
+   "id": "R2",
+   "file": "ve/defaults_english.py",
+   "bug": "plan: the renderer prints DE6 for DF-β (i) (Lean's forced entries ignored)",
+   "find": "(\" beyond those the text states\" if row[\"forced\"] else \"\")",
+   "replace": "\"\"",
+   "test": "tests/test_defaults_english.py::test_de6_long_and_de11_at_beta_one"
+  },
+  {
+   "id": "E1",
+   "file": "ve/defaults_english.py",
+   "bug": "DE12 not shown for basis unsettled",
+   "find": "if row[\"basis\"] == \"unsettled\":",
+   "replace": "if False:",
+   "test": "tests/test_defaults_english.py::test_de12_after_the_assumptions_only_when_unsettled"
+  },
+  {
+   "id": "E2",
+   "file": "ve/defaults_english.py",
+   "bug": "DE11 shown for Lean's first forced entry only",
+   "find": "for entry in row[\"forced\"]:",
+   "replace": "for entry in row[\"forced\"][:1]:",
+   "test": "tests/test_defaults_english.py::test_de11_once_per_forced_entry_in_lean_order"
+  },
+  {
+   "id": "E3",
+   "file": "ve/defaults_english.py",
+   "bug": "DE7a·u never chosen: an unstated decider rendered as a party",
+   "find": "if deciders == [UNSET]:",
+   "replace": "if False:",
+   "test": "tests/test_defaults_english.py::test_de7_decider_sentence_is_lean_s_deciders"
+  },
+  {
+   "id": "E4",
+   "file": "ve/defaults_english.py",
+   "bug": "Python chooses the form: DE1 whenever the first assumption is an exception",
+   "find": "}[row[\"form\"]]",
+   "replace": "}[\"short\" if row[\"assumptions\"][0].split(\":\")[1] == \"exception\" else \"long\"]",
+   "test": "tests/test_defaults_english.py::test_form_is_lean_s"
+  },
+  {
+   "id": "E5",
+   "file": "ve/defaults_english.py",
+   "bug": "a switch label's party not bound to the rule's `alterable`",
+   "find": "if party not in text.rule(name).get(\"alterable\", ()):",
+   "replace": "if not text.rule(name):",
+   "test": "tests/test_defaults_english.py::test_a_label_the_request_cannot_give_is_refused"
+  },
+  {
+   "id": "E6",
+   "file": "ve/defaults_english.py",
+   "bug": "a ranking label's ranks not bound to the source's ranks",
+   "find": "if not {low, high} <= set(text.soft.get(\"ranks\", ())):",
+   "replace": "if False:",
+   "test": "tests/test_defaults_english.py::test_a_label_the_request_cannot_give_is_refused"
+  },
+  {
+   "id": "E7",
+   "file": "ve/defaults_english.py",
+   "bug": "DE2·u: an unstated decider rendered as a party",
+   "find": "\"The text names no case where it applies, and no one who decides.\" if who == UNSET else",
+   "replace": "\"The text names no case where it applies, and no one who decides.\" if False else",
+   "test": "tests/test_defaults_english.py::test_de2_unstated"
+  },
+  {
+   "id": "L1",
+   "file": "tools/relay_lint.py",
+   "bug": "the lint's label pattern misses a label built from a bare prefix",
+   "find": "DEFAULT_LABEL = re.compile(r\"default:(?!\\s)\")",
+   "replace": "DEFAULT_LABEL = re.compile(r\"default:(?=\\w)\")",
+   "test": "tests/test_relay_lint.py::test_seeded_default_labels"
+  },
+  {
+   "id": "L2",
+   "file": "tools/relay_lint.py",
+   "bug": "the lint's fifth rule reads no comment",
+   "find": "if token.type == tokenize.COMMENT and DEFAULT_LABEL.search(token.string)]",
+   "replace": "if False]",
+   "test": "tests/test_relay_lint.py::test_seeded_default_labels"
+  },
+  {
+   "id": "L3",
+   "file": "tools/relay_lint.py",
+   "bug": "ve/defaults.py not in RELAYED",
+   "find": ", \"ve/defaults.py\")",
+   "replace": ")",
+   "test": "tests/test_relay_lint.py::test_the_defaults_relay_is_relayed_and_every_ve_module_is_read"
+  },
+  {
+   "id": "L4",
+   "file": "tools/relay_lint.py",
+   "bug": "the fifth rule reads only the top level of ve/",
+   "find": "DEFAULTS_GLOB = \"ve/**/*.py\"",
+   "replace": "DEFAULTS_GLOB = \"ve/*.py\"",
+   "test": "tests/test_relay_lint.py::test_the_defaults_relay_is_relayed_and_every_ve_module_is_read"
+  },
+  {
+   "id": "W1",
+   "file": "ve/defaults.py",
+   "bug": "ask shows no English for the gate's collision",
+   "find": "        english += sentences(coherence, row)\n",
+   "replace": "",
+   "test": "tests/test_defaults_english.py::test_de7_and_de7a"
+  }
+ ]
+}
