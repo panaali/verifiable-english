@@ -1,0 +1,200 @@
+'ResponseShape.Encoders.SoftNorms.checkSource_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.SoftNorms.classify_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.SoftNorms.decisionKeyJson_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.SoftNorms.decision_entries_fit' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.SoftNorms.declarations_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.SoftNorms.documentReferences_ok' depends on axioms: [propext, Quot.sound]
+'ResponseShape.Encoders.SoftNorms.elaborate_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.SoftNorms.envelope_ok' depends on axioms: [propext]
+'ResponseShape.Encoders.SoftNorms.environmentReferences_ok' depends on axioms: [propext, Quot.sound]
+'ResponseShape.Encoders.SoftNorms.exceptionFields_ok' depends on axioms: [propext, Quot.sound]
+'ResponseShape.Encoders.SoftNorms.fail_ok' does not depend on any axioms
+'ResponseShape.Encoders.SoftNorms.firstFailure_of_not_free' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.SoftNorms.inherited_ok' does not depend on any axioms
+'ResponseShape.Encoders.SoftNorms.of_norms' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.SoftNorms.pairs_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.SoftNorms.profileChecks_ok' depends on axioms: [propext, Quot.sound]
+'ResponseShape.Encoders.SoftNorms.rankSemantics_ok' depends on axioms: [propext, Quot.sound]
+'ResponseShape.Encoders.SoftNorms.regenerated_environment' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.SoftNorms.reportedCode_mem' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.SoftNorms.ruleFields_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.SoftNorms.ruleReferences_ok' depends on axioms: [propext, Quot.sound]
+'ResponseShape.Encoders.SoftNorms.runCaseReported_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.SoftNorms.runCase_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.SoftNorms.runSoftKind_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.SoftNorms.softDiagnosticCode_mem' depends on axioms: [propext, Quot.sound]
+'ResponseShape.Encoders.SoftNorms.softLabelledIn_nonempty' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.SoftNorms.softLabelled_nonempty' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.SoftNorms.softNames_ok' depends on axioms: [propext, Quot.sound]
+'ResponseShape.Encoders.SoftNorms.softPairs_ok' depends on axioms: [propext, Quot.sound]
+'ResponseShape.Encoders.SoftNorms.typed_ok' depends on axioms: [propext]
+'ResponseShape.Encoders.SpeechActs.elaborate_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.SpeechActs.firstFailure_of_not_free' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.SpeechActs.of_norms' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.SpeechActs.question_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.SpeechActs.runCaseReported_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.SpeechActs.runCase_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Standalone.check_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Standalone.check_reported' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Standalone.environment_case_reported' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Standalone.environment_fault_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Standalone.environment_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Standalone.environment_reported' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Standalone.environment_with_path_fits' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'ResponseShape.Encoders.Standalone.family_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Standalone.identity_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Standalone.identity_reported' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Standalone.legacy_environment_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Standalone.legacy_family_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Standalone.model_case_reported' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Standalone.model_fault_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Standalone.model_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Standalone.model_reported' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Standalone.other_environment_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Standalone.parse_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Standalone.parse_reported' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Words.caseReported_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.Words.wordsCase_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.runMode_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.ErrP.bind' does not depend on any axioms
+'ResponseShape.ErrP.error' does not depend on any axioms
+'ResponseShape.ErrP.forIn' depends on axioms: [propext, Quot.sound]
+'ResponseShape.ErrP.ite' does not depend on any axioms
+'ResponseShape.ErrP.jp1' does not depend on any axioms
+'ResponseShape.ErrP.jp2' does not depend on any axioms
+'ResponseShape.ErrP.jp3' does not depend on any axioms
+'ResponseShape.ErrP.map' does not depend on any axioms
+'ResponseShape.ErrP.mapM' depends on axioms: [propext, Quot.sound]
+'ResponseShape.ErrP.ok' does not depend on any axioms
+'ResponseShape.ErrP.pure' does not depend on any axioms
+'ResponseShape.Fits.admits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Fits.altHead' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Fits.altSub' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Fits.altTail' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Fits.alt_inv' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Fits.arrList' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Fits.arrMap' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Fits.arrOf' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Fits.congr' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Fits.getArr' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Fits.getObjVal' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Fits.isSome_of_mem' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Fits.mkObj' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Fits.mkObjAlt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Fits.mkObjExtra' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Fits.none_of_not_mem' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Fits.notString_arr' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Fits.notString_mkObj' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Fits.notString_setObj' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Fits.not_of_admits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Fits.nothing_not' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Fits.ofAlt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Fits.ofList_get' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Fits.ofList_value' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Fits.onCase_inv' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Fits.setObj' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Fits.setObjAlt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Fits.strIn_lit' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Fits.strNotIn_lit' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Fits.toJsonStrs' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.KindRead.of_str' depends on axioms: [propext]
+'ResponseShape.Lit.of_json' does not depend on any axioms
+'ResponseShape.OkP.arrayMapM' depends on axioms: [propext, Quot.sound]
+'ResponseShape.OkP.bind' does not depend on any axioms
+'ResponseShape.OkP.error' does not depend on any axioms
+'ResponseShape.OkP.filterMapM' depends on axioms: [propext]
+'ResponseShape.OkP.filterMapM_loop' depends on axioms: [propext]
+'ResponseShape.OkP.foldlM' depends on axioms: [propext]
+'ResponseShape.OkP.forIn' depends on axioms: [propext, Quot.sound]
+'ResponseShape.OkP.ite' does not depend on any axioms
+'ResponseShape.OkP.map' does not depend on any axioms
+'ResponseShape.OkP.mapM' depends on axioms: [propext, Quot.sound]
+'ResponseShape.OkP.mapOf' does not depend on any axioms
+'ResponseShape.OkP.of' does not depend on any axioms
+'ResponseShape.OkP.ok' does not depend on any axioms
+'ResponseShape.OkP.pure' does not depend on any axioms
+'ResponseShape.OkP.pure_ok' does not depend on any axioms
+'ResponseShape.OkP.throw' does not depend on any axioms
+'ResponseShape.OkP.throw_bind' does not depend on any axioms
+'ResponseShape.Skel.condsOk_field' depends on axioms: [propext, Quot.sound]
+'ResponseShape.Skel.lookup_mem' does not depend on any axioms
+'ResponseShape.getArr_arr' does not depend on any axioms
+'ResponseShape.getObjVal_setObjVal' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.isEmpty_append' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.isEmpty_empty' does not depend on any axioms
+'ResponseShape.isEmpty_iff_data' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.kind_setObjVal' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.not_not_true' depends on axioms: [propext]
+'ResponseShape.setObjVal_mkObj' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.toOption_ok' does not depend on any axioms
+PASS: 643 source files; 7208 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
+== check frozen-inventory
+PASS: frozen Lean sources and Main.lean subcommands unchanged
+== check trust-tables
+FAIL: no merge base of HEAD and `main`; name the base with --since REV
+class lines: K 994, S 11670, D 16448, G 32955, C 11544, P 89449, T 24433, o 16038
+D/G groups: D[V] 14388, D[R] 1439, D[I] 621, G[V] 29419, G[R] 3259, G[I] 277
+tied 961, unclassified 0, trusted 55648 (K + S + untied [V] + unclassified), 203531 lines in 643 files
+== check checker-pins
+== check response-schemas
+== check binding-census
+binding_census: note: a hand check changed since the probe (re-probe with --record): ve/readings_route.py:elaborate: 'raise CheckerUnavailable("ReadingsConformance: Python and Lean differ on S2 choices")'
+binding_census: note: a hand check changed since the probe (re-probe with --record): ve/readings_route.py:elaborate: 'raise CheckerUnavailable("ReadingsConformance: Python and Lean differ on S2 names")'
+binding_census: note: a hand check changed since the probe (re-probe with --record): ve/readings_route.py:elaborate: 'raise CheckerUnavailable("ReadingsConformance: Python and Lean differ on S2 sizes")'
+binding_census: note: a hand check changed since the probe (re-probe with --record): ve/readings_route.py:elaborate: 'raise CheckerUnavailable("ReadingsConformance: Python and Lean differ on S2 units")'
+binding_census: note: a hand check changed since the probe (re-probe with --record): ve/readings_route.py:elaborate: 'raise CheckerUnavailable("ReadingsConformance: Python and Lean differ on the S2 finding")'
+binding_census: note: a hand check changed since the probe (re-probe with --record): ve/readings_route.py:elaborate: 'raise CheckerUnavailable("ReadingsConformance: Python and Lean differ on the S2 route")'
+binding_census: note: a hand check changed since the probe (re-probe with --record): ve/readings_route.py:elaborate: 'raise CheckerUnavailable("ReadingsConformance: Python and Lean differ on the S2 slot")'
+binding_census: note: a hand check changed since the probe (re-probe with --record): ve/readings_route.py:elaborate: 'raise CheckerUnavailable("ReadingsConformance: Python and Lean differ on the S2 vocabulary")'
+binding_census: note: a hand check changed since the probe (re-probe with --record): ve/readings_verdicts/superposed.py:conflict: 'raise CheckerUnavailable("ReadingsConformance: Lean does not confirm the conflict certificates "'
+binding_census: note: a hand check changed since the probe (re-probe with --record): ve/rights.py:__init__: 'raise ValueError("rights line binding")'
+binding_census: note: a hand check changed since the probe (re-probe with --record): ve/rights.py:__init__: 'raise ValueError("rights line count")'
+binding_census: note: a hand check changed since the probe (re-probe with --record): ve/rights.py:__init__: 'raise ValueError("rights wording keys")'
+== check english-codes
+PASS: the code table is the english.grammar export
+== check question-codes
+PASS: the question contract is the english.question export
+== check question-lock
+PASS: ve/question/LOCK.json records the service's question version
+== check assurance-manifest
+..                                                                       [100%]
+ve: English comparator: {"records": 0, "excluded": 0, "planted": 0, "classes": {}} (/tmp/ve-english-comparator-rkvxssfc)
+
+2 passed in 0.41s
+== check assurance-doc
+== check layer-ledgers
+Lean layer graph kept (643 modules, 22 reviewed legacy edges)
+== check import-contract
+
+╔══╗─────────▶╔╗ ╔╗      ╔╗◀───┐
+╚╣╠╝◀─────┐  ╔╝╚╗║║────▶╔╝╚╗   │
+ ║║   ╔══╦══╦╩╗╔╝║║  ╔╦═╩╗╔╝╔═╦══╗
+ ║║╔══╣╔╗║╔╗║╔╣║ ║║ ╔╬╣╔╗║║ ║│║╔═╝
+╔╣╠╣║║║╚╝║╚╝║║║╚╗║╚═╝║║║║║╚╗║═╣║
+╚══╩╩╩╣╔═╩══╩╝╚═╝╚═══╩╩╝╚╩═╩╩═╩╝
+  └──▶║║                    ▲ 
+      ╚╝────────────────────┘
+
+
+---------
+Contracts
+---------
+
+Analyzed 182 files, 1022 dependencies.
+--------------------------------------
+
+VE inward-only imports (reviewed legacy edges) KEPT (42 ignored imports)
+
+Contracts: 1 kept, 0 broken.
+== check uv-lock
+Resolved 59 packages in 0.87ms
+== check heavy-tests
+== check platform-divergences
+== check platform-contract
+platform-contract.json: up to date
+== check history-map
+== check history-tests
+tests/history-dependent.json: every test that reads history is listed
+regen_generated: failed: wire-contract, trust-tables
