@@ -93,6 +93,12 @@ def sent_kind(sent, kind):
     return next((case, row) for case, row in sent if case.get("kind") == kind)
 
 
+# DE1 and DE2 (tests/test_defaults_english.py has every form)
+ALPHA_ENGLISH = ["Unless an exception applies, the conclusion follows: Every assistant must do x.",
+                 "This assumes that the exception to rule r1 does not apply. The assistant decides where it applies; "
+                 "the text names no case."]
+
+
 def follows(basis, form, assumptions):
     return {"verdict": "FOLLOWS", "basis": basis, "form": form, "assumptions": assumptions}
 
@@ -100,7 +106,7 @@ def follows(basis, form, assumptions):
 def test_alpha_needs_its_one_exception_and_the_strict_countermodel(monkeypatch):
     out, sent = asked(monkeypatch, "alpha")
     assert out == {"question": "default", "kind": "defaults-certificate",
-                   "answer": follows("needs", "short", ["default:exception:r1"])}
+                   "answer": follows("needs", "short", ["default:exception:r1"]), "english": ALPHA_ENGLISH}
     case, _ = sent_kind(sent, "defaults-certificate")
     assert {"certificate", "model", "strict_model"} <= set(case)
     # DF-α′: the same request without the strict countermodel is `unsettled`, never `needs`
@@ -219,6 +225,10 @@ def test_p1_follows_unless_an_exception_applies(capsys, monkeypatch, entry):
     answer = out["answer"]
     assert (answer["verdict"], answer["basis"], answer["form"], len(answer["assumptions"])) == (
         "FOLLOWS", "needs", "short", 1)
+    # DE1, then DE2·u: the rule's exception is decided by `unstated` (plan 4.2)
+    head, assumed = out["english"]
+    assert head.startswith("Unless an exception applies, the conclusion follows: For every instance of Claude, ")
+    assert assumed.endswith("does not apply. The text names no case where it applies, and no one who decides.")
     # without the flag, df-03's recorded answer, unchanged
     assert _readings(capsys, entry) == entry["stdout"]
 

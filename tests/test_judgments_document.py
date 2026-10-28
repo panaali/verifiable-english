@@ -399,7 +399,8 @@ def test_the_answer_fits_its_schema_and_models_refuse_the_profile(service):
 
 
 def test_python_never_decides_a_judgments_document(service, tmp_path):
-    """Python's own loader refuses the profile, and the Lean answer is not relayed before jt-2b."""
+    """Python's own loader refuses the profile, and a document is not built from the Lean answer before jt-2c (the
+    composing modes' identities, reviews/dri-decisions-20261028-jt-2c.md); jt-2b binds its `judgments` field."""
     from ve.document import load_document
     from ve.document.load import _load_document
     from ve.errors import CheckerUnavailable

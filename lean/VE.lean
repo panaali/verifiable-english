@@ -191,6 +191,9 @@ import VE.Acts.ElaborateExamples
 import VE.Acts.GrammarExamples
 import VE.Acts.Grammar
 import VE.Acts.RuleExamples
+import VE.Acts.Meaning
+import VE.Acts.Readings
+import VE.Acts.MeaningExamples
 import VE.Acts.Compat
 import VE.Acts.LexicalExamples
 import VE.Alternatives.FillExamples
@@ -217,6 +220,9 @@ import VE.Scope.Theorems
 import VE.Scope.Examples
 import VE.Scope.Wire
 import VE.Scope.WireExamples
+import VE.Scope.Readings
+import VE.Scope.ReadingsTheorems
+import VE.Scope.ReadingsExamples
 import VE.Service.ScopeAdmission
 import VE.Service.ScopeExamples
 import VE.Defaults.Premises

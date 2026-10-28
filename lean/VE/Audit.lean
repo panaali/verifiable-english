@@ -8,6 +8,7 @@ import VE.Acts.GrammarExamples
 import VE.Acts.Lexical
 import VE.Acts.LexicalProofs
 import VE.Acts.Read
+import VE.Acts.Readings
 import VE.Acts.Table
 import VE.Alternatives.Admission
 import VE.Alternatives.Background
@@ -346,6 +347,7 @@ import VE.Scales.Examples
 import VE.Scales.Intended
 import VE.Scales.Theorems
 import VE.Scope.Examples
+import VE.Scope.ReadingsTheorems
 import VE.Scope.Theorems
 import VE.SearchBudget.Budget
 import VE.SearchBudget.Demand
@@ -522,9 +524,11 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.Lexical.words_cover
 #print axioms VE.Acts.Lexical.words_data
 #print axioms VE.Acts.Lexical.words_intercalate
+#print axioms VE.Acts.analyse_one
 #print axioms VE.Acts.build_wf
 #print axioms VE.Acts.closed_cl
 #print axioms VE.Acts.closed_ok
+#print axioms VE.Acts.derived_iff
 #print axioms VE.Acts.distinctTexts_ok
 #print axioms VE.Acts.elaborateMap_fst
 #print axioms VE.Acts.elaborateMap_ok
@@ -550,9 +554,15 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.readIn_none
 #print axioms VE.Acts.readIn_ok
 #print axioms VE.Acts.readIn_unique
+#print axioms VE.Acts.read_many
+#print axioms VE.Acts.read_none
+#print axioms VE.Acts.read_unique
 #print axioms VE.Acts.readingsIn_exact
 #print axioms VE.Acts.readingsIn_limit
 #print axioms VE.Acts.readingsIn_nodup
+#print axioms VE.Acts.readings_exact
+#print axioms VE.Acts.readings_limit
+#print axioms VE.Acts.readings_nodup
 #print axioms VE.Acts.ruleReading_ok
 #print axioms VE.Acts.schema_ok
 #print axioms VE.Acts.schema_ranked
@@ -2357,6 +2367,7 @@ import VE.WireContract.Engine
 #print axioms VE.Events.countP_eq_le_one
 #print axioms VE.Events.countP_lt_le
 #print axioms VE.Events.countP_lt_lt
+#print axioms VE.Events.countP_lt_of
 #print axioms VE.Events.countP_lt_succ
 #print axioms VE.Events.dateName_data
 #print axioms VE.Events.dateName_inj
@@ -2364,6 +2375,7 @@ import VE.WireContract.Engine
 #print axioms VE.Events.datesOrder_iff
 #print axioms VE.Events.dayExtension_transfer
 #print axioms VE.Events.embeddable_complete
+#print axioms VE.Events.embeddable_sound
 #print axioms VE.Events.eventsPremises_satisfiable
 #print axioms VE.Events.eventsPremises_wellFormed
 #print axioms VE.Events.events_conservative
@@ -2378,7 +2390,9 @@ import VE.WireContract.Engine
 #print axioms VE.Events.oldTuple_map
 #print axioms VE.Events.pad_chars
 #print axioms VE.Events.pad_value
+#print axioms VE.Events.pairwise_of_chain
 #print axioms VE.Events.regen_typed
+#print axioms VE.Events.rel_getLast
 #print axioms VE.Events.startRole_mem
 #print axioms VE.Events.term_map
 #print axioms VE.Events.tupleTyped_relation
@@ -6218,6 +6232,9 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.baseName_some
 #print axioms VE.Scope.baseObjF_slow
 #print axioms VE.Scope.bind_ok
+#print axioms VE.Scope.checkDocSets_absent_unchanged
+#print axioms VE.Scope.checkDocSets_no_sets
+#print axioms VE.Scope.choiceFault_limit
 #print axioms VE.Scope.commutes_symm
 #print axioms VE.Scope.composedF_slow
 #print axioms VE.Scope.coveredBy_slow
@@ -6229,6 +6246,8 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.edgesOfF_slow
 #print axioms VE.Scope.edgesOf_graph
 #print axioms VE.Scope.fastReads_eq
+#print axioms VE.Scope.faultOf_every
+#print axioms VE.Scope.faultOf_some
 #print axioms VE.Scope.firstKeys_mem
 #print axioms VE.Scope.firstKeys_self
 #print axioms VE.Scope.foldStatus_mem
@@ -6237,6 +6256,10 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.frontier_graph_refused
 #print axioms VE.Scope.governBody_slow
 #print axioms VE.Scope.governFast_eq
+#print axioms VE.Scope.governSetsFast_eq
+#print axioms VE.Scope.governSets_choice_refused
+#print axioms VE.Scope.governSets_limit
+#print axioms VE.Scope.governSets_no_sets
 #print axioms VE.Scope.govern_admits
 #print axioms VE.Scope.govern_identity
 #print axioms VE.Scope.govern_orphan
@@ -6267,6 +6290,8 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.ruleTable_decoder
 #print axioms VE.Scope.scope_absent_unchanged
 #print axioms VE.Scope.scope_admission
+#print axioms VE.Scope.scope_admission_sets
+#print axioms VE.Scope.scope_set_choices
 #print axioms VE.Scope.substOwn_id
 #print axioms VE.Scope.substOwn_id_le
 #print axioms VE.Scope.substOwn_no_own
