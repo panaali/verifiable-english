@@ -1975,6 +1975,7 @@
       "lean/VE/Cardinality/WireTheorems.lean": "statements about the ve-cardinality@1 decoders and their parts (items_ok over Json.getArr?, the elaborators' cases on JSON arrays, decodeStatement_fits); no runtime JSON handling",
       "lean/VE/Cardinality/WireExamples.lean": "fixtures only: #guard checks of docs/spec/quantities.md 4.2 and 9.1 decode cardinality environments and statements built with Json.parse and Json.mkObj; no runner path",
       "lean/VE/Scope/Examples.lean": "scope@0 acceptance fixtures: JSON parts and conditions built with Json.parse and Json.mkObj and checked by #guard and decide; no runtime JSON handling",
+      "lean/VE/Events/Examples.lean": "fixtures only: #guard checks of docs/spec/events-time-causation.md 8 and et-3d's year boundary; two build a day-number request with Json.mkObj for W6a's runConversion and read its answer; no runner path",
       "lean/VE/Discourse/Run.lean": "lean:runner-glue: ve_discourse_route case dispatch and response rows",
       "lean/VE/Discourse/Wire.lean": "lean:discourse-wire: the ve.discourse@1 manifest decoder and discourse report rows; decoded values are validated, never trusted (discourse_wire_binding, discourse_report_sound)",
       "lean/VE/Discourse/Admission.lean": "lean:discourse-wire: the profile adapter strips ve.discourse@1 from the environment JSON before every frozen call (setObjVal!, profile_adapter_base)",
