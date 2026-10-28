@@ -478,18 +478,22 @@ class NormDocument:
             from .errors import CheckerUnavailable
             raise CheckerUnavailable("alternatives@0 requires the Lean checker")
         from .environment import Environment
-        data = self.env.to_dict()
-        data["vocabulary"]["predicates"] = {
-            name: decl for name, decl in data["vocabulary"]["predicates"].items()
-            if "regulated" not in decl}
-        # `readings@1` is the head's layer, never the base vocabulary's (DRI ruling 4's class); `acts@0` and its
-        # block are the norms layer's (act-phrases 2.8).
-        data["profiles"] = [p for p in data["profiles"] if p not in ("norms@0", "readings@1", "acts@0")]
-        data["vocabulary"].pop("acts", None)
+        data = base_data(self.env.to_dict())
         if "speech-acts@0" in data["profiles"]:
             data["profiles"].remove("speech-acts@0")
             data.pop("speech_acts", None)
         return Environment(data)
+
+
+def base_data(data: dict) -> dict:
+    """The stored environment `data` without its norms layer: the regulated predicates, `norms@0`, and `acts@0` with
+    its block (act-phrases 2.8); `readings@1` is the head's layer, never the base vocabulary's (DRI ruling 4's
+    class). Lean's projection is `Norms.Replay.baseEnvironmentJson`."""
+    data["vocabulary"]["predicates"] = {
+        name: decl for name, decl in data["vocabulary"]["predicates"].items() if "regulated" not in decl}
+    data["profiles"] = [p for p in data["profiles"] if p not in ("norms@0", "readings@1", "acts@0")]
+    data["vocabulary"].pop("acts", None)
+    return data
 
 
 @dataclass(frozen=True, slots=True)
