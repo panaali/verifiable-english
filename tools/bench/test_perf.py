@@ -136,6 +136,37 @@ def test_cardinality_region_structure_once(record):
     assert seen[150] < 5 * seen[50], seen  # linear: about 3; rescanning the problem at each count gave 6.7
 
 
+def test_cardinality_universal_dedup_near_linear(record):
+    """F5 of the qt-a3c loop recheck (its PROBE F5): one count premise and 1,800 and then 5,400 universal statements
+    over the counted sort that differ only in their last 16 connectives. `firstUse` compared each statement with every
+    one kept before it, so three times the request cost 8.2 times the time; the hash-set dedup (`firstUseH`, run by
+    the `@[csimp]` lemmas of `VE/Cardinality/Regions.lean`) costs about three times. P3 refuses both requests, after
+    the dedup. The build measured is the one in `lean/.lake`, pinned or not: this measures cost, not trust."""
+    from tests.test_cardinality_service import universal
+    from tests.lean_service_corpus import cardinality_cases
+    from ve.backends.lean_service import DEFAULT_EXECUTABLE, LeanService
+    base = next(case for case in cardinality_cases() if case["id"] == "p3-charged")
+    count = {"format": "ve-cardinality@1", "formula": ["count", "fomc_policymaker", [["1", ["any"]]], "eq", "18"]}
+    top = {"format": "ve-cardinality@1", "formula": ["quantity", ["top"]]}
+    seen = {}
+    with LeanService(DEFAULT_EXECUTABLE, timeout=HANG_TIMEOUT, allow_unlisted_build=True) as service:
+        for statements in (1800, 5400):
+            case = {**base, "id": "w", "conclusion": top,
+                    "premises": [count, *(universal(i, depth=30, bits=16) for i in range(statements))]}
+            wire = json.dumps([case], separators=(",", ":"))
+            before = service.cpu_seconds()
+            _, response = service.exchange("cardinality", wire, 1, timeout=HANG_TIMEOUT)
+            after = service.cpu_seconds()
+            result = response["results"][0]["result"]
+            assert result["status"] == "error" and "aggregate" in result["error"], result
+            if before is None or after is None:
+                pytest.skip("the platform does not report the service's CPU time")
+            seen[statements] = after - before
+    record("1800 universals", seen[1800])
+    record("5400 universals", seen[5400])
+    assert seen[5400] < 4.5 * seen[1800], seen  # near-linear: about 3; the quadratic dedup gave 8.2
+
+
 def test_scope_b1(record, tmp_path):
     """B1 (docs/spec/scope-PLAN.md): F1-doc's document over the full pinned constitution pilot (184,893 B, 1,132
     units; `tools/bench/scope_b1.py`), through the layout (`layout`: the case read and `VE.Scope.decodeScope`) and
