@@ -1,6 +1,7 @@
 # Use case: anthropic-rsp (Anthropic Responsible Scaling Policy, version 3.4)
 
-> Status: **PLAN, draft 1** (2026-10-28, branch `infra/usecase-safetyfw`). The plan and its answer key (section 6)
+> Status: **PLAN, draft 2** (2026-10-28, branch `infra/usecase-safetyfw`; draft 1 reviewed by gpt-6-astra and Opus,
+> `manage-agents/safetyfw-planreview-{astra,opus}.final.md`; dispositions in `manage-agents/reviews/safetyfw-plan-convergence-20261028.md`). The plan and its answer key (section 6)
 > are written before any VE run. They get two plan reviews (gpt-6-astra xhigh and Opus xhigh) before the key is
 > frozen; the freeze is recorded in [KEY-FREEZE.md](KEY-FREEZE.md) with a timestamp and the SHA-256 of section 6.
 > After the freeze no answer-key cell changes; section 12 records every deviation.
@@ -80,24 +81,29 @@ Its shape differs from the FSF in ways the four questions probe:
 ### 3.1 Reading sets (written before the translation; none is collapsed)
 
 Each set is cited to its source unit. The harness evaluates every complete choice of the sets in a case's cone
-(section 9). N1 and N2 are the only narrowings; each cites source units, is listed in the residual, and section 9
-reports what changes without it.
+(section 9). N1, N2 and N3 are the only narrowings; each cites source units, is listed in the residual, and section
+9 reports what changes without it.
 
 | Id | Source unit | Readings | Why the text admits each |
 |---|---|---|---|
-| RS0 | every "we will …" about the company's own process | **commitment** / **prediction** | "Will" is not a deontic word. |
-| N1 | narrowing of RS0 to **commitment** | cites the Introduction "Frontier Safety Roadmaps are a new requirement under our RSP" and "Risk Reports are another new requirement", and section 4 "We commit to the following governance measures" | The text calls its process sentences requirements and commitments. A "will" sentence that also carries "aim", "strive", "intend", "try to", "work toward", "usually", "expect", "may", "as needed" or "as appropriate" is not narrowed; it stays RS0 or becomes an aim unit (O4). Under N1 a commitment is strict (`must`). |
+| RS0 | every process statement about the company's own conduct, in the future or present tense ("we will …", "It will cover", "will be required", "The external review process will involve", "at least one recipient will be", "We would consider") | **commitment** / **prediction** | "Will" and the present tense are not deontic words. |
+| N1 | narrowing of RS0 to **commitment**, clause by clause | cites the Introduction "Frontier Safety Roadmaps are a new requirement under our RSP" and "Risk Reports are another new requirement"; section 4 "We commit to the following governance measures"; for Appendix A, its heading "Appendix A: Commitments Related to Competitors", its column header "Commitment" and p. 4 "We have also adopted a set of competitor-contingent commitments" | The text calls its process statements requirements and commitments. The exception applies per clause: a clause that carries "aim", "strive", "intend", "try to", "work toward", "usually", "expect" or "may" is not narrowed (it gets RS12, RS13 or RS6). "As needed" in Appendix A states the extent of the delay (OT7), not a hedge, so the delay clauses are narrowed. Under N1 a commitment is strict (`must`). Without N1 (prediction), every cell that rests on a commitment becomes NONE, while F5's "should" (ARGk) remains; section 9 reports this. |
 | N2 | narrowing: the Changelog's entries for v1.0 to v3.3 are **history**, with no force in v3.4 | cites "This update is a comprehensive rewrite of our RSP" (v3.0 entry) and the Introduction "Our previous RSP committed to implementing mitigations that would reduce our models' absolute risk levels to acceptable levels, without regard to whether other frontier AI developers would do the same" | The v2.0 entry says the update maintained "our commitment not to train or deploy models unless we have implemented adequate safeguards". Read as standing, it would be a stop rule that v3.4 states nowhere else. Section 9 reports what changes without N2. The v3.4 entry is read as an explanation of this version (LABELLED explanation), not as rules. |
 | RS1 | the middle column of the section 1 table ("Mitigations—our plan as a company"), each row | **cond**: the row's plans are commitments conditioned on the row's threshold / **uncond**: the plans hold whatever threshold is reached; the row only says which risk they address / **overview**: the column states no rule of its own (footnote 3) | The table "maps capability thresholds to the mitigations we believe they call for" (Introduction) supports cond. The plans are worded as present undertakings ("We will maintain or improve on our ASL-3 protections"), which supports uncond. Footnote 3: "It should be read as an overview, not as indicating any separate or additional plans." |
-| RS2 | the right column ("Mitigations—ambitious industry-wide recommendations"): "A frontier developer should make a strong argument that …" | **F**: a recommendation to the field, no norm on the company / **Dd**: "should" read distributively, so it also binds the company as a frontier developer, as a **default** rule | The addressee is "a frontier developer". The strict force of the soft-norms rule is excluded by p. 4: "we cannot unilaterally and unconditionally commit to staying in line with the industry-wide recommendations in the right column". |
-| RS3 | the Automated R&D row: "We will consider this threshold to be met if we determine that either (1) … or (2) …"; "We would consider scenario (2) to have occurred where (a) … and (b) …" | **suff**: sufficient conditions only / **iff**: the stated conditions are also necessary | "If" and "where" state sufficient conditions; a definition is often read as complete. |
+| RS2 | the right column ("Mitigations—ambitious industry-wide recommendations"): "A frontier developer should make a strong argument that …" | **F**: a recommendation to the field, no norm on the company / **Ds**: "should" read distributively, so it also binds the company as a frontier developer; its force follows the soft-norms rule {strict, default} | The addressee is "a frontier developer". p. 4 "we cannot unilaterally and unconditionally commit to staying in line with the industry-wide recommendations in the right column" concerns the company's commitment, not the recommendation's force, so it does not narrow the force (the safety-framework precedent: its N2 was withdrawn for this reason, README disagreement 2). |
+| RS3o | the Automated R&D row: "We will consider this threshold to be met if we determine that either (1) … or (2) …" | **suff** / **iff** | "If" states a sufficient condition; a definition is often read as complete. |
+| RS3i | the same row: "We would consider scenario (2) to have occurred where (a) … and (b) …" | **suff** / **iff**, chosen independently of RS3o | "Where" states a sufficient condition; nothing ties its completeness to the outer definition's. |
+| RS3c | the end of (b): "such that continuation of the trend in AI progress seems likely to lead to even greater acceleration" | **cond**: a third condition of scenario (2) (OT28) / **result**: a stated consequence of (a) and (b) | The v3.4 changelog explains the constant-rate case by this clause ("there could be a strong argument for expecting the trend to continue rather than accelerate"). |
 | RS4 | Appendix A, "General upleveling": "However, we will not necessarily delay AI development and deployment in this scenario." | **scope**: no rule; A3 itself creates no duty to delay / **rel**: a "need not" rule (no duty to delay in this scenario) | "Not necessarily" can deny a duty (scope) or grant a release. |
 | RS5 | Appendix A, "Competitors have strong safety measures": "all competitors who have developed, or will soon develop, a highly capable frontier model are able to make strong arguments …" | **import**: the scenario needs at least one such competitor / **noimport**: the universal holds vacuously when there is none | English "all" does not fix existential import. |
-| RS6 | 3.6.1: "a reviewing organization itself may not have a financial interest in Anthropic; and the individuals … may not have a financial interest in Anthropic or close personal relationships …" | **P**: a prohibition / **M**: "may not" in the sense of "might not", no norm | In translation "may" is ambiguous ([norms.md](../../docs/spec/norms.md) 2), as in safety-framework RS7. |
+| RS6 | every "may" sentence about the company: 3.6.1 "a reviewing organization itself may not have a financial interest in Anthropic …"; 4.4 "we may provide public notice"; 3.6.2 "we may choose to split the review process"; 3.5 "Reasons we may redact material include" | **P**: a permission (for "may not": a prohibition) / **M**: "may" in the sense of "might", no norm | In translation "may" is ambiguous ([norms.md](../../docs/spec/norms.md) 2), as in safety-framework RS7. |
+| N3 | narrowing of RS6 to **P** for 3.6.1 | cites "Do not have conflicts of interest with respect to Anthropic. At a minimum, a reviewing organization itself may not have a financial interest in Anthropic" | "At a minimum" introduces the minimum content of the preceding selection criterion, so the "may not" clauses state requirements on the selection. |
 | RS7 | 3.4 step 3: "The CEO and RSO will make the ultimate determination regarding the adequacy of the risk assessment and any downstream deployment or development plans." | **exec**: the executives' determination, a step of the process / **final**: no approval beyond the CEO and RSO is needed (a "need not" rule) | "Ultimate" can mean final or highest within the process. Step 5 is titled "Modified process when marginal risk analysis is important" and says "rather than just the CEO and RSO", so under both readings step 5 is an exception to step 3. |
-| RS8 | 3.2: "We should make a strong attempt to ensure that ongoing (as opposed to temporary) changes do not significantly increase the level of risk." | **strict** / **default** | The [soft-norms.md](../../docs/spec/soft-norms.md) 2.2 rule for "should". |
+| RS8 | every "should" about the company or the field: 3.2 "We should make a strong attempt to ensure that ongoing (as opposed to temporary) changes do not significantly increase the level of risk"; the T4 recommendation's "analyses of threats from AIs should follow very high evidentiary standards"; 3.6.1 "external review parties should not be teams whose revenue …" (an example) | **strict** / **default** | The [soft-norms.md](../../docs/spec/soft-norms.md) 2.2 rule. The text has no "must". |
 | RS9 | 3.1 Timing: "We will publish a Risk Report every 3-6 months." | **window**: each interval between consecutive reports is at least 3 and at most 6 months / **bound**: each interval is at most 6 months | "every 3-6 months" may state a range or only its upper end. |
-| RS10 | Appendix A, "Anthropic in the lead" and "Competitors have strong safety measures": "We will delay AI development and deployment as needed to achieve this" | **as-needed**: the duty to delay holds only when the open term "needed" (OT7) holds / — | One reading only; listed so that OT7's role is explicit. Not a set; no choice is enumerated. |
+| RS11 | 3.1 Off-cycle, bullet 1: "When we publicly deploy a model that we determine is …" | **at**: the analysis is published when the model is deployed (a time) / **trigger**: the deployment triggers an analysis with no stated deadline | Bullet 2 states "Within 30 days"; bullet 1 states only "When". |
+| RS12 | every aim: "we aim to", "we will strive to", "We intend", "We will try to work toward", "We will work toward a practice of" | **default**: a default norm, decider unstated / **intent**: no norm | as safety-framework RS4 ("aim to": default norm or intent) |
+| RS13 | 3.4 step 2: "We will usually also seek feedback from trusted external parties with relevant expertise." | **default**: a default obligation / **frequency**: a hedged claim about how often | soft-norms.md 2.2 |
 
 ### 3.2 Open terms (each with its decider; none gets invented criteria)
 
@@ -109,8 +115,9 @@ premise. `we` means Anthropic as the text uses the word.
 |---|---|---|---|
 | OT1 | the model has crossed threshold Tk | `we` (3.3 "whether we believe we've crossed relevant thresholds"; for T4 "if we determine") | the row's description; T4: section 3.1 conditions (family T) |
 | OT2 | "significantly more capable than … all models for which we have publicly analyzed risks" (off-cycle, bullet 1) | `we` ("that we determine") | "e.g., in a prior Risk Report, System Card, or other public artifact" |
-| OT3 | "could pose risks related to high-stakes misalignment or automated R&D that … significantly exceed those posed by models covered by a prior Risk Report" (in-scope internal models; off-cycle bullet 2 compares with all publicly analyzed models) | `we` ("we have determined") | at a minimum, "internal models that we are deploying for large-scale, fully autonomous research" (a sufficient condition, not a factor) |
-| OT4 | "significantly redacted" | any of `RSO`, `CEO`, `Board`, `LTBT` ("in the judgment of the RSO, CEO, Board, or LTBT") | "the redactions omit information a reasonable external safety researcher would consider important …" |
+| OT3a | in-scope internal models: "could pose risks related to high-stakes misalignment or automated R&D that (2) significantly exceed those posed by models covered by a prior Risk Report" | `we` ("by the time of the report's publication, we have determined") | at a minimum, models deployed "for large-scale, fully autonomous research" (OT22): a sufficient condition, not a factor |
+| OT3b | off-cycle bullet 2: risks that "significantly exceed those of all models for which we have publicly analyzed such risks" | `we` ("Within 30 days of determining") | "e.g., in a prior Risk Report, System Card, or other public artifact" |
+| OT4 | "significantly redacted" | the definition's standard ("information a reasonable external safety researcher would consider important") has no stated decider; the judgment of any of `RSO`, `CEO`, `Board`, `LTBT` is a sufficient condition ("shall be deemed significantly redacted if, in the judgment of the RSO, CEO, Board, or LTBT, it meets this description") | none |
 | OT5 | "highly capable" | `we` ("if we conclude that it crosses the threshold for automated AI R&D") | defined by OT1 for T4 |
 | OT6 | a "strong argument" / "strong case" that risk is contained | `unstated` (p. 5 suggests third parties "determine which such arguments are adequate") | the right column's "This will likely require" lists |
 | OT7 | delay "as needed" | `we` | none |
@@ -119,7 +126,7 @@ premise. `we` means Anthropic as the text uses the word.
 | OT10 | a substantiated report "involves a material safety risk" | `we` ("If we determine") | none |
 | OT11 | "noteworthy" changes and deviations | `unstated` | none |
 | OT12 | "promptly"; "regularly"; "On approximately an annual basis" | `unstated` | none |
-| OT13 | "ASL-3 protections" | external reference | "which include classifier guards at least as robust as our initial Constitutional Classifiers; access controls …" (factors) |
+| OT13 | "ASL-3 protections" | external reference | the stated components ("which include classifier guards at least as robust as our initial Constitutional Classifiers; access controls …") are premises (the protections include them, 3.3); the rest of the content is external |
 | OT14 | T3's "highly relied on", "extensive access to sensitive assets", "moderate capacity for autonomous, goal-directed operation and subterfuge" | `unstated` | none |
 | OT15 | T4 (1): "fully substitute for our entire set of Research Scientists and Research Engineers" | `we` | "at competitive costs (i.e., within a factor of 5)": the factor is quantified (family T) |
 | OT16 | T4 (2)(a): "double the rate of progress … compared to both the rate we'd expect and the fastest rate of extended progress … we've observed" (the footnote numbers 8 and 9 sit inside the sentence) | `we` ("we observe or expect") | footnote 8 (definition and example), footnote 9 ("Over at least three model generations") |
@@ -128,6 +135,13 @@ premise. `we` means Anthropic as the text uses the word.
 | OT19 | marginal risk analysis "plays a major role in a decision to move forward" | `unstated` | none |
 | OT20 | "appropriate and proportional corrective action" | `unstated` | none |
 | OT21 | the industry-wide threshold rows' harm descriptions (T1 "significantly help", T2 "functionally substitute for the scarce human expertise") | `unstated` | footnotes 4 to 7 (examples) |
+| OT22 | "large-scale, fully autonomous research" | `unstated` | none |
+| OT23 | "imminently develop", "will soon develop" | `we` | none |
+| OT24 | "conflicts of interest with respect to Anthropic" | `we` (the selecting party) | the "At a minimum" clauses are its stated minimum (N3) |
+| OT25 | reviewer criteria: "significant experience and expertise", "reputational and other incentives making them likely to be candid" | `we` | the examples of 3.6.1 |
+| OT26 | Appendix A "General upleveling": "a significant improvement", "comparable (or lower) effort or cost"; "a significant effort" | `we` | none |
+| OT27 | "relevant" model development or deployment decisions (RSO duty 2) | `RSO`, `unstated` | none |
+| OT28 | (b)'s "such that continuation of the trend in AI progress seems likely to lead to even greater acceleration" (under RS3c = cond) | `we` | none |
 
 ### 3.3 What the translation must not add
 
@@ -141,7 +155,10 @@ premise. `we` means Anthropic as the text uses the word.
   the only harm word for T1 to T3, and T4 states none (family S).
 - **No causal link stated as certain.** "could result in", "could cause", "may serve", "will likely require",
   "significantly more likely" become `causal` units (LABELLED) or `might` cells, never `leads to`.
-- **No closure of examples.** "such as", "e.g.", "for example", "include but are not limited to" lists are factors;
+- **No closure of examples; stated instances are premises.** "such as", "e.g.", "for example", "include but are not
+  limited to" lists never close a class. A listed instance of a stated class is a premise ("X, such as Y" gives "Y is an
+  X"; "protections, which include Y" gives "the protections include Y"). Factors of an open term (what is considered
+  in deciding it) give no premise. The same rule is used in the openai-preparedness plan.
   none is a premise.
 
 ## 4. The text as rules (the inventory the key and the translation both use)
@@ -172,13 +189,13 @@ threshold for automated AI R&D described in Section 1."
 | F5 | 1, right column, rows T1 to T4 | "A frontier developer should make a strong argument that …" (OT6). (RS2) |
 | F6 | 2 | maintain a Frontier Safety Roadmap; share it with all full-time employees, the Board and the LTBT; publish it in redacted form; provide updates on whether goals are achieved; set new goals when they are. (RS0/N1) The goals are "not hard commitments" (Introduction). |
 | F7 | 3, 3.1 Timing | publish Risk Reports, every 3-6 months. (RS0/N1, RS9) |
-| F8 | 3.1 Scope | a Risk Report covers in-scope models: all publicly deployed models as of the coverage date, and internal models determined under OT3, including at a minimum those deployed "for large-scale, fully autonomous research"; the coverage date is "no more than 30 days prior to the publication of the report". Voluntary inclusion "does not expand the commitments below". |
-| F9 | 3.1 Off-cycle | an off-cycle analysis (bullet 1) when publicly deploying a model determined under OT2 (no deadline stated); (bullet 2) "Within 30 days of determining" an internal model under OT3 relative to all publicly analyzed models. |
+| F8 | 3.1 Scope | a Risk Report covers in-scope models: all publicly deployed models as of the coverage date, and internal models determined under OT3a, including at a minimum those deployed "for large-scale, fully autonomous research"; the coverage date is "no more than 30 days prior to the publication of the report". Voluntary inclusion "does not expand the commitments below". |
+| F9 | 3.1 Off-cycle | an off-cycle analysis (bullet 1) when publicly deploying a model determined under OT2 (RS11: at deployment, or no deadline stated); (bullet 2) "Within 30 days of determining" an internal model under OT3b relative to all publicly analyzed models. |
 | F10 | 3.2 | keep future practices in line with described mitigations "or track and report noteworthy changes and deviations" (OT11); acknowledge significant absolute risk; "We should make a strong attempt …" (RS8). "We intend" is an aim. |
 | F11 | 3.3 | the factual, risk-analysis and review contents, for each in-scope model; the marginal-risk analyses when OT18 holds. |
-| F12 | 3.4 | steps 1 to 4: drafting by internal experts; comprehensive internal feedback; approval by the CEO and RSO, who make the "ultimate determination" (RS7); prompt sharing with the Board and LTBT. Step 5: explicit Board and LTBT approval when marginal risk analysis plays a major role (OT19); an exception to step 3. |
+| F12 | 3.4 | steps 1 to 4: drafting by internal experts; comprehensive internal feedback; external feedback "usually" (RS13); approval by the CEO and RSO, who make the "ultimate determination" (RS7); prompt sharing with the Board and LTBT. Step 5: explicit Board and LTBT approval when marginal risk analysis plays a major role (OT19); an exception to step 3. |
 | F13 | 3.5 | publish a public version; disclose the existence of each redaction; "aim" to minimise redactions and to justify them (aims). |
-| F14 | 3.6 | a full external review with at least one external reviewer whenever a Risk Report covers highly capable models (OT5) and is significantly redacted (OT4); an external review upon the LTBT's request. "We will work toward a practice of seeking comprehensive, public external review" is an aim. |
+| F14 | 3.6 | (RS12 for "work toward") a full external review with at least one external reviewer whenever a Risk Report covers highly capable models (OT5) and is significantly redacted (OT4); an external review upon the LTBT's request. "We will work toward a practice of seeking comprehensive, public external review" is an aim. |
 | F15 | 3.6.1 | select reviewers meeting three criteria (the third with RS6); consult the Board and obtain the LTBT's approval. |
 | F16 | 3.6.2 | share the report with reviewers within one week of submitting it to the Board and LTBT; ask for public commentary within 30 days of receipt; every section shared with at least one reviewer; only legally necessary redactions. "We will try to work toward" earlier review is an aim. |
 | F17 | 3.6.3 | the contents of the external review, and the public written report (the reviewer's acts; the company commits only to "ask"). |
@@ -192,7 +209,7 @@ threshold for automated AI R&D described in Section 1."
 | F25 | App. A, "Competitors have strong safety measures" | if strong evidence (OT8) that all competitors who have or will soon develop a highly capable model can make strong arguments (RS5): meet or exceed their overall risk reduction posture; delay as needed until able. |
 | F26 | App. A, "General upleveling" | if strong evidence that a competitor's mitigation (1) is a significant improvement and (2) is implementable at comparable or lower effort or cost: make a significant effort to meet or exceed it; "we will not necessarily delay" (RS4). |
 | F27 | 3.6 definitions | "highly capable" (OT5) and "significantly redacted" (OT4). |
-| F28 | 1, T4 row | the threshold is met if (1) or (2); (2) occurs where (a) and (b) (RS3, OT15 to OT17). |
+| F28 | 1, T4 row | the threshold is met if (1) or (2); (2) occurs where (a) and (b) (RS3o, RS3i, RS3c; OT15 to OT17, OT28). |
 
 Everything else (the Introduction's rationale, beliefs, expectations, hopes, examples, footnotes that explain,
 the changelog under N2, page furniture) is accounted for as LABELLED or UNFORMALISED units, with reasons
@@ -217,27 +234,28 @@ results say which requirements are only soft ("soft"). **REL** is a "need not" r
 the W1 conflict check on the document of that choice; a strict rule that blocks a default rule on the same act is
 not a conflict.
 
-**Case facts.** The model has crossed exactly the thresholds named (T0: none) and no others; every open term not
-named by the case is unset; the company is the frontier developer the right column addresses (relevant only
-under RS2 = Dd).
+**Case facts.** The model has crossed the thresholds named (T0: none) and no others (no reading implies one
+threshold from another); every open term not named by the case is unset; the company is the frontier developer the
+right column addresses (relevant only under RS2 = Ds).
 
 | Family | Cases | Scored items |
 |---|---|---|
 | A: what each threshold requires | A-T0 … A-T4: 5 cases | 8 atoms each (PROT1 … PROT4, ARG1 … ARG4): 40 |
 | B: Risk Report scope | B-PUB, B-INT, B-INTD, B-AUT, B-VOL, B-TRN | 2 atoms each (INSCOPE, ASSESS): 12 |
 | K: process triggers | K1 … K22 | 27 |
-| T: the Automated R&D threshold | T1 … T6 | 8 |
-| C: conflicts | C1 … C6, C-doc | 7 |
+| T: the Automated R&D threshold | T1 … T7 | 9 |
+| C: conflicts | C1 … C7, C-doc | 8 |
 | G: gaps | G1 … G8 | 8 |
 | N: never applies | N1 … N5 | 5 |
 | S: severity and causation | S1-T1 … S1-T4, S2 … S5 | 8 |
 | D: dates | D1 … D7 | 9 |
-| **Total** | | **124** |
+| **Total** | | **126** |
 
 ## 6. Answer key (written before any VE run)
 
-Notation: cond, uncond, ov: RS1; F, Dd: RS2; suff, iff: RS3; scope, rel: RS4; import, noimport: RS5; P, M: RS6;
-exec, final: RS7; window, bound: RS9. PROTk is "the row k plans of the middle column are required"; ARGk is "the
+Notation: cond, uncond, ov: RS1; F, Ds: RS2; iffo: RS3o = iff; iffi: RS3i = iff; cond, result: RS3c; scope, rel:
+RS4; import, noimport: RS5; P, M: RS6; exec, final: RS7; window, bound: RS9; at, trigger: RS11; default, intent:
+RS12. "soft" marks an item that holds only under a default force. PROTk is "the row k plans of the middle column are required"; ARGk is "the
 company is required to make the row k strong argument".
 
 ### 6.1 Family A (40 items)
@@ -245,20 +263,20 @@ company is required to make the row k strong argument".
 | Case | PROTk (own row) | PROTj (other rows) | ARGk (own row) | ARGj (other rows) | Justification |
 |---|---|---|---|---|---|
 | A-T0 | — | SOME(uncond), each j | — | NONE, each j | Only under uncond do the middle-column plans hold with no threshold crossed. The right column is stated "at each threshold". |
-| A-Tk, k = 1 … 4 | SOME(cond ∨ uncond) | SOME(uncond), each j ≠ k | SOME(Dd), soft | NONE, each j ≠ k | Under ov the column states no rule (footnote 3), and no other section of v3.4 restates the row plans as rules (F3's and F4's Risk Report sentences are covered by family B and K, not by PROTk). Under Dd the strong-argument "should" is a default rule; a strict reading is excluded (RS2). No threshold implies another (3.3). |
+| A-Tk, k = 1 … 4 | SOME(cond ∨ uncond) | SOME(uncond), each j ≠ k | SOME(Ds), soft only under the default force | NONE, each j ≠ k | Under ov the column states no rule (footnote 3), and no other section of v3.4 restates the row plans as rules; F4's last bullet (external review of Risk Reports) is asked in K9 and K10. Under Ds the strong-argument "should" binds the company with strict or default force (RS2). No threshold implies another (3.3). |
 
-Totals: SOME 24, NONE 16. Under RS0 "prediction" (without N1) nothing is required anywhere; that is reported, not
-scored.
+Totals: SOME 24, NONE 16. Under RS0 "prediction" (without N1) every PROT cell becomes NONE and the ARG cells stay
+SOME(Ds); reported, not scored.
 
 ### 6.2 Family B (12 items)
 
 | Case | Situation | INSCOPE (F8) | ASSESS (F11 "with respect to each in-scope model") | Justification |
 |---|---|---|---|---|
 | B-PUB | publicly deployed as of the coverage date | ALL | ALL | "all publicly deployed models as of the coverage date" |
-| B-INT | internally deployed; no OT3 determination; not used for large-scale autonomous research | NONE | NONE | the internal criterion needs the determination |
-| B-INTD | internally deployed; OT3 determined by publication | ALL | ALL | F8 |
-| B-AUT | internally deployed for large-scale, fully autonomous research; OT3 unset | ALL | ALL | "this will—at a minimum—include any internal models that we are deploying for large-scale, fully autonomous research" |
-| B-VOL | not deployed publicly, OT3 unset; voluntarily included | NONE | NONE | "such inclusion does not expand the commitments below" |
+| B-INT | internally deployed; no OT3a determination; not used for large-scale autonomous research | NONE | NONE | the internal criterion needs the determination |
+| B-INTD | internally deployed; OT3a determined by publication | ALL | ALL | F8 |
+| B-AUT | internally deployed for large-scale, fully autonomous research (OT22 found); OT3a unset | ALL | ALL | "this will—at a minimum—include any internal models that we are deploying for large-scale, fully autonomous research" |
+| B-VOL | not deployed publicly, OT3a unset; voluntarily included | NONE | NONE | "such inclusion does not expand the commitments below" |
 | B-TRN | in training, not deployed | NONE | NONE | no criterion names it (gap G2) |
 
 ### 6.3 Family K (27 items)
@@ -268,45 +286,46 @@ scored.
 | K1 | any time | publishing Risk Reports required | ALL | F7 |
 | K2 | public deployment of a model determined (OT2) significantly more capable than all publicly analyzed models | off-cycle analysis required | ALL | F9 bullet 1 |
 | K3 | the same deployment, OT2 unset | off-cycle analysis required | NONE | the determination is the trigger |
-| K4 | internal model determined under OT3 against all publicly analyzed models | off-cycle analysis required | ALL | F9 bullet 2 (deadline: D4) |
+| K4 | internal model determined under OT3b | off-cycle analysis required | ALL | F9 bullet 2 (deadline: D4) |
 | K5 | OT18 holds (risk high, decision partly on marginal risk) | the four marginal-risk analyses required | ALL | F11 |
 | K6 | marginal risk analysis plays a major role in a decision to move forward (OT19) | explicit Board and LTBT approval required | ALL | F12 step 5 |
 | K7 | a Risk Report is approved | sharing decisions, report and internal feedback with the Board and LTBT required | ALL | F12 step 4 |
 | K8 | a report covers a highly capable model and is significantly redacted | full external review required | ALL | F14 |
-| K9 | covers a highly capable model; not significantly redacted | full external review required | NONE | F14 needs both; "work toward a practice" is an aim |
-| K10 | significantly redacted; no highly capable model | full external review required | NONE | as K9 |
+| K9 | covers a highly capable model; not significantly redacted | full external review required | SOME(cond ∨ uncond) | F14 needs both conditions; but F4's last bullet requires Risk Reports "subject to external review by at least one expert, experienced, credible, candid and disinterested external party", and a highly capable model is one that crosses T4 (3.6) |
+| K10 | significantly redacted; no highly capable model | full external review required | SOME(uncond) | F14 fails; F4's last bullet holds without T4 only under uncond |
 | K11 | the LTBT requests a review | conducting a public or private external review required | ALL | F14 |
 | K12a | selecting external reviewers | the LTBT's approval required | ALL | F15 |
 | K12b | the same | consulting the Board required | ALL | F15 |
-| K13 | a candidate reviewing organisation has a financial interest in Anthropic | selecting it forbidden | SOME(P) | F15 with RS6. Under M only the third criterion "Do not have conflicts of interest" remains, and whether a financial interest is one is not stated. |
+| K13 | a candidate reviewing organisation has a financial interest in Anthropic | selecting it forbidden | ALL | F15 under N3 |
 | K14 | a Risk Report is submitted to the Board and LTBT under the external review process | sharing it with the reviewers within one week required | ALL | F16 (dates: D5) |
 | K15a | a noncompliance report is substantiated and involves a material safety risk (OT10) | prompt Board notification required | ALL | F20 |
 | K15b | the same | public notice required | NONE | "we may provide public notice" |
 | K16 | a report concerns the RSO's conduct | a Board member among the recipients required | ALL | F20 |
 | K17 | the RSP is updated | publishing it on or before its effective date and recording the differences in the Change Log required | ALL | F23 |
-| K18 | a Risk Report described a mitigation; later practice deviates from it | tracking and reporting the deviation required | ALL | F10: the disjunction's first branch fails, so the second is required |
+| K18 | a Risk Report described a mitigation; later practice deviates from it; the deviation is noteworthy (OT11 found) | tracking and reporting the deviation required | ALL | F10: the disjunction's first branch fails, so the second is required |
 | K19a | Appendix A "in the lead" scenario (OT5, OT8 found) | a strong argument required | ALL | F24 |
 | K19b | the same, and delay found needed (OT7) | delaying development and deployment required | ALL | F24 |
-| K20 | "Competitors have strong safety measures" (OT8 found), with at least one such competitor | meeting or exceeding their posture required | ALL | F25 (under both RS5 readings, since a competitor exists) |
+| K20 | "Competitors have strong safety measures" (OT8 found), with at least one such competitor; the company has a highly capable frontier model (OT5) | meeting or exceeding their posture required | ALL | F25 "For our highly capable frontier models" (under both RS5 readings, since a competitor exists) |
 | K21a | "General upleveling" scenario | a significant effort to meet or exceed required | ALL | F26 |
 | K21b | the same | delay required | NONE | "we will not necessarily delay" |
-| K22a | a Roadmap goal is missed | the next Risk Report addressing it required | ALL | F11, review item 3 ("any cases where we failed to meet our goals") |
+| K22a | a Roadmap goal is missed | a Risk Report addressing it required | ALL | F11, review item 3 ("any cases where we failed to meet our goals") |
 | K22b | the same | any other consequence (delay, pause) required | NONE | the goals are "not hard commitments" |
 
-### 6.4 Family T: the Automated R&D threshold (8 items)
+### 6.4 Family T: the Automated R&D threshold (9 items)
 
 | Case | Situation | Item | Key | Justification |
 |---|---|---|---|---|
 | T1 | determined: the models can fully substitute for all Research Scientists and Research Engineers at 4× their cost | T4 met | ALL | (1), with 4 ≤ 5 |
-| T2a | the same at 6× the cost; (2) found not to hold | T4 met | NONE | (1) fails on the factor; (2) fails |
-| T2b | the same | T4 not met | SOME(iff) | only a complete definition concludes "not met" |
-| T3 | (2)(a) observed and (2)(b) found plausible | T4 met | ALL | (2) |
+| T2a | the same at 6× the cost; scenario (2) found not to have occurred | T4 met | NONE | (1) fails on the factor; (2) fails |
+| T2b | the same | T4 not met | SOME(iffo) | only a complete outer definition concludes "not met" |
+| T3 | (2)(a) observed, (2)(b) found plausible, and the continuation clause found (OT28) | T4 met | ALL | (2) under every RS3c reading |
 | T4a | (2)(a) observed; (2)(b) found not plausible; (1) found not to hold | T4 met | NONE | neither (1) nor (2) |
-| T4b | the same | T4 not met | SOME(iff) | as T2b |
+| T4b | the same | T4 not met | SOME(iffo ∧ iffi) | "not met" needs a complete outer definition, and "(2) has not occurred" a complete inner one |
 | T5 | substitution at 4.5× cost | "at competitive costs" | ALL | "(i.e., within a factor of 5)" |
 | T6 | the rate of progress equals the fastest rate observed without significant AI contribution; (1) unset | T4 met | NONE | (2)(a) needs double that rate (the v3.4 changelog explains the same outcome; under N2 it is not used as a rule) |
+| T7 | (2)(a) observed and (2)(b) found plausible; the continuation clause found not to hold | T4 met | SOME(result) | under cond the clause is a third condition of (2) |
 
-### 6.5 Family C: conflicts (7 items)
+### 6.5 Family C: conflicts (8 items)
 
 | Case | Rules | Key | Witness or reason |
 |---|---|---|---|
@@ -314,9 +333,10 @@ scored.
 | C2 | F12 step 3 against step 5 | NONE | Under final, step 3 is a "need not" on further approval, but step 5 is its exception ("Modified process", "rather than just the CEO and RSO"). Under exec there is no "need not". Mutant m1 removes the precedence. |
 | C3 | F1 ("equally or more robust measures over time") against F10 ("keep … in line … or track and report") | NONE | F10 is a disjunction that F1's compliance satisfies; neither permits weakening. |
 | C4 | F13 (public redactions "include but are not limited to" four reasons) against F16 ("the only redactions" for external review are legal) | NONE | different versions of the report |
-| C5 | F24 against F25 in the lead scenario | NONE | Under import, F25's scenario fails (no competitor). Under noimport, F25's condition holds vacuously and its posture comparison is over no competitors (N3). |
-| C6 | F19 (unredacted to at least 200 employees) against F13 ("aim to minimize redactions" for the regular-clearance version) | NONE | different versions; F13's sentence is an aim |
-| C-doc | the whole document, per choice | SOME(rel) | exactly C1; otherwise CONFLICT-FREE |
+| C5 | F24 against F25 in the lead scenario, where no competitor has developed or will soon develop a highly capable model | NONE | Under import, F25's scenario fails. Under noimport, F25's condition holds vacuously and its comparison is over no competitors. |
+| C6 | F19 (unredacted to at least 200 employees) against F13 ("aim to minimize redactions" for the regular-clearance version) | NONE | different versions; F13's sentence is an aim (RS12) |
+| C7 | F25 (delay until able to meet the competitors' posture) against F26 (not necessarily delay) | SOME(rel) | strong competitor safety measures (with the company's highly capable model, delay needed) and a competitor's better mitigation at once |
+| C-doc | the whole document, per choice | SOME(rel) | C1 and C7; otherwise CONFLICT-FREE |
 
 ### 6.6 Family G: gaps (8 items)
 
@@ -325,13 +345,13 @@ scored.
 | Case | Situation | Key | Justification |
 |---|---|---|---|
 | G1 | T2 crossed; the row's plans not in place; no Appendix A scenario holds | silent on development and deployment: ALL (no rule forbids either) | Under cond and uncond the plans are required, but nothing makes proceeding depend on them (3.3). |
-| G2 | a model in training, not deployed | silent on Risk Reports and analyses: ALL | F8 and F9 name deployed models only |
+| G2 | a model in training, not deployed | the per-model F11 assessments and the off-cycle analyses: silent: ALL | F8 and F9 name deployed models only (Risk Reports do reason generally about "the risks of training or deploying our models"; that is not a per-model item) |
 | G3 | a catastrophic risk outside T1 to T4 (e.g., a cyber capability) | silent on thresholds: ALL; covered by F11's threat-model identification only | no closure (4.1) |
-| G4 | the off-cycle analysis for a public deployment (K2) | silent on its deadline: ALL | bullet 1 has no "within"; bullet 2 has "Within 30 days" |
+| G4 | the off-cycle analysis for a public deployment (K2) | silent on its deadline: SOME(trigger) | RS11: under at, the analysis is due at deployment |
 | G5 | an external reviewer gives no commentary within 30 days | silent on consequences: ALL | the company commits only to "ask" |
-| G6 | a full review is required (K8) and the LTBT approves no candidate reviewer | silent on what follows: ALL | F14 and F15 cannot both be met; no rule says which yields |
+| G6 | a full review is required (K8) and the LTBT approves no candidate reviewer | a rule saying which of F14 and F15 yields: silent: ALL | F14 and F15 cannot both be met |
 | G7 | a substantiated noncompliance report without a material safety risk | prompt Board notice required: NONE; covered by the quarterly update: ALL (one item, keyed "covered by quarterly update only") | F20 |
-| G8 | a Roadmap goal revised in a less ambitious direction because it was not achieved | silent: ALL (no rule forbids it) | "we will strive to avoid" is an aim |
+| G8 | a Roadmap goal revised in a less ambitious direction because it was not achieved | silent: SOME(intent) | "we will strive to avoid" (RS12): a default norm under default |
 
 ### 6.7 Family N: never applies (5 items)
 
@@ -339,7 +359,7 @@ scored.
 |---|---|---|---|
 | N1 | Can F11's assessments be required for a model that is only voluntarily included? | never: ALL | "with respect to each in-scope model"; voluntary inclusion "does not expand the commitments below" |
 | N2 | Can F26 ever require a delay? | never: ALL | "we will not necessarily delay" under both RS4 readings |
-| N3 | In the lead scenario, does F25 add any requirement? | never: ALL | import: the scenario fails; noimport: the comparison set is empty |
+| N3 | In the lead scenario, where no competitor has developed or will soon develop a highly capable model, does F25 add any requirement? | never: ALL | import: the scenario fails; noimport: the comparison set is empty |
 | N4 | Is any commitment F1 to F28 dead (an unsatisfiable guard)? | no: NONE dead; a witness model for each | every guard is satisfiable over the declared vocabulary |
 | N5 | Can any changelog sentence for v1.0 to v3.3 select as a rule? | never: ALL (under N2) | N2; section 9 reports what selects without it |
 
@@ -352,7 +372,7 @@ scored.
 | S2 | Is T2's harm ranked above T1's? | NONE (no order; countermodels both ways) | the text states no order (3.3) |
 | S3 | Might a T1-capable system without the row's protections make catastrophic harm more likely? | ALL (a stated `might` cell) | "with serious potential for catastrophic damages" |
 | S4 | Does it *lead to* catastrophic harm? | NONE | only potential is stated |
-| S5 | Is an existential threat a catastrophic risk in the RSP's sense? | NONE (an example in footnote 1's "such as" list gives no premise) | 3.3, no closure of examples; the footnote's term is "in its plain meaning" |
+| S5 | Is an existential threat from advanced AI a catastrophic risk in the RSP's sense? | ALL (a stated instance, 3.3) | footnote 1 "such as existential threats or fundamental destabilization of global systems"; the list does not close the class |
 
 ### 6.9 Family D: dates (9 items)
 
@@ -362,8 +382,8 @@ scored.
 | D2 | Was v3.4 effective before the retrieval date 2026-10-28? | ALL | that v3.4 is current is an observation leaf (LABELLED) |
 | D3a | coverage date 2026-05-20, publication 2026-07-01: does the coverage date comply? | NONE (42 days > 30) | F8 |
 | D3b | coverage date 2026-06-10, publication 2026-07-01 | ALL (21 days) | F8 |
-| D4 | an OT3 determination on 2026-08-03: is the off-cycle analysis due no later than 2026-09-02? | ALL | "Within 30 days" |
-| D5 | submitted to the Board and LTBT on 2026-09-01: must the reviewers have it by 2026-09-08? | ALL | "within one week" (7 days, a bridge) |
+| D4 | an OT3b determination on 2026-08-03: is the off-cycle analysis due no later than 2026-09-02? | ALL | "Within 30 days" |
+| D5 | under the external review process (K8 or K11), a report submitted to the Board and LTBT on 2026-09-01: must the reviewers have it by 2026-09-08? | ALL | "within one week" (7 days, a bridge) |
 | D6a | Risk Reports published 2026-03-01 and next on 2026-10-01: is the cadence met? | NONE (7 months) | RS9, both readings |
 | D6b | published 2026-03-01 and next on 2026-04-15 | SOME(bound) | under window the interval is under 3 months |
 | D7 | Is the procedural compliance review due by a fixed date? | NONE (no date certifiable: "approximately") | OT12 |
@@ -402,16 +422,16 @@ defaults, SC scope, QT quantities, ET time, AP acts, WG weighing, AT attitudes).
 | Part | VE feature | Family |
 |---|---|---|
 | F6 to F28 rule blocks, exceptions (F12 step 5), "need not" (RS4, RS7) | `norms@0` | merged |
-| RS2 Dd, RS8, the aims | `soft-norms@0` | merged; aims are AT |
+| RS2 Ds, RS8, RS12, RS13 | `soft-norms@0` | merged; aims are AT |
 | OT1 to OT21 | W2 open terms; `judgments@0` (jt-2, jt-2b) if P8 admits it | JT |
-| RS0 to RS9, N1, N2 | W2 reading sets, per-choice harness expansion | merged |
+| RS0 to RS13, N1 to N3 | W2 reading sets, per-choice harness expansion | merged |
 | RS5 (existential import), "all", "each in-scope model" | quantifier scope | SC |
 | day counts, cadence, "within a factor of 5", footnote 8's "81×" | W6a; `ve-units@1` | QT, ET |
 | "promptly", "regularly", "On approximately an annual basis", "prior to or on … its effective date" | event order and deadlines | ET |
 | "delay AI development and deployment", "make a significant effort", "share … with policymakers" | act phrases | AP |
 | "meet or exceed the overall risk reduction posture of these competitors", "risks … justified by corresponding benefits" | comparison and weighing | WG |
 | "We believe", "We expect", "We hope", "We intend", "we aim", "we will strive" | attitudes | AT |
-| "ordinarily", "generally", "usually" | defaults | DF |
+| "usually", "generally", the default force of RS2, RS8, RS12 | defaults | DF |
 
 ## 8. What is expected to stay OPEN
 
@@ -429,7 +449,7 @@ defaults, SC scope, QT quantities, ET time, AP acts, WG weighing, AT attitudes).
 - **O10: who "we" is.** Anthropic is labelled, never identified with the RSO, CEO, Board or LTBT.
 
 Expected CHECKED share: **under 10%**, probably under 5%: the dates, the factor arithmetic, and the few
-commitments whose guards have no open term (K1, K7, K12, K16, K17).
+commitments whose guards have no open term (K1, K7, K12, K13, K16, K17).
 
 ## 9. Run protocol (implementation round)
 
@@ -449,14 +469,14 @@ commitments whose guards have no open term (K1, K7, K12, K16, K17).
 **Per case.** As safety-framework 9: build the facts from section 5 without reading the key; for every complete
 choice in the case's cone, check the premises are consistent; compute selections, conflicts or entailments under
 both completion defaults; combine into ALL, SOME(c) or NONE; a search that runs out of budget is UNKNOWN and a miss.
-Report, unscored, what changes without N1 and without N2.
+Report, unscored, what changes without N1, without N2 and without N3.
 
 ## 10. Metrics to report
 
 | # | Metric | Expected |
 |---|---|---|
-| M1 | key agreement per family (A 40, B 12, K 27, T 8, C 7, G 8, N 5, S 8, D 9) | 124/124; every miss explained in section 12 |
-| M2 | reading sets: count, choices per case, SOME verdicts, VE's own readings verdicts | RS1 to RS9 (RS1 has three readings) plus N1 and N2; at most 3 · 2 = 6 choices per family A case; C-doc enumerates the sets that bear on a conflict candidate (RS1, RS4, RS5, RS7: 24 choices) |
+| M1 | key agreement per family (A 40, B 12, K 27, T 9, C 8, G 8, N 5, S 8, D 9) | 126/126; every miss explained in section 12 |
+| M2 | reading sets: count, choices per case, SOME verdicts, VE's own readings verdicts | RS1 to RS13 plus N1 to N3; at most 3 × 3 = 9 choices per family A case (RS1; RS2 with Ds's two forces); C-doc enumerates the sets that bear on a conflict candidate (RS1, RS4, RS5, RS7) |
 | M3 | span accounting: `bytes_by_status` (CHECKED, OPEN, LABELLED, UNFORMALISED) and `bytes_by_kind`, totalling 59,410; the reason for each unformalised unit; the residual; for each unit that is not CHECKED, the feature family it waits for (section 7) | CHECKED under 10% |
 | M4 | structure-conditional answers per family | reported |
 | M5 | CHECKED-bar lint (P7) | 0 |
@@ -471,10 +491,10 @@ Report, unscored, what changes without N1 and without N2.
 | Id | Mutation | Expected change |
 |---|---|---|
 | m1 | remove step 5's precedence over step 3 (keep RS7 = final) | C2 becomes SOME(final); C-doc adds it |
-| m2 | add "a model that crosses T1 crosses T4" (an invented implication) | A-T1 PROT4 becomes SOME(cond ∨ uncond), A-T1 ARG4 SOME(Dd); M6 flags it |
-| m3 | replace F26's "we will not necessarily delay" with "we will delay as needed" | N2 fails; C1 and C-doc become NONE; K21b becomes ALL given OT7 |
-| m4 | add a cyber threshold row T5 with a middle-column plan | G3 changes (a threshold covers cyber); M6 flags it |
-| m5 | drop "(i.e., within a factor of 5)" | T5 becomes NONE (an open term without its factor); T1 becomes OPEN on the cost |
+| m2 | add "a model that crosses a threshold must not be developed further or deployed unless the row's middle-column plans are in place" (an invented stop rule, 3.3) | G1 becomes not silent: development and deployment forbidden, SOME(cond ∨ uncond); M6 flags it |
+| m3 | replace F26's "we will not necessarily delay" with "we will delay as needed" | N2 becomes NONE (F26 can require a delay); C1, C7 and C-doc become NONE; K21b stays NONE (OT7 unset in its case) |
+| m4 | add a cyber threshold row Tc with a middle-column plan | G3 changes (a threshold covers cyber); M6 flags it |
+| m5 | drop "(i.e., within a factor of 5)" | T5 becomes NONE ("competitive costs" is an open term without its factor); T1 becomes NONE; T2b becomes NONE ((1) no longer fails on cost) |
 | m6 | change "Within 30 days" (F9 bullet 2) to "Within 60 days" | D4 becomes NONE |
 
 ## 12. Deviations (after running VE; empty at plan time)
