@@ -31,7 +31,7 @@ Each mutant was temporary, its named pytest test failed, and the file was restor
 
 ## Build checklist applicability
 
-Items 1–12, 15, and 17–19 concern product parsers, wire answers, verdicts, Lean proofs, or use cases; none changed. Item 13 is covered by the three failures above. Item 14: the modified tests retain the `tmp_path` cache fixture, and the added checks only read repository files. Item 16: both entry docs are checked by the same parametrized checks. Item 20: this report gives status, evidence and unrun checks. Item 21: all acceptance items above carry AGENT or EXTERNAL owners. Item 22: direct `test_repo_map.py` passed (33 tests); the selected runner passed (474 units); the chain owns the final gate under this task's override. Item 23: no user-visible delta or signature applies. No tests were removed or renamed. Free disk at handoff: 178 GB.
+Items 1–12, 15, and 17–19 concern product parsers, wire answers, verdicts, Lean proofs, or use cases; none changed. Item 13 is covered by the three failures above. Item 14: the modified tests retain the `tmp_path` cache fixture, and the added checks only read repository files. Item 16: both entry docs are checked by the same parametrized checks. Item 20: this report gives status, evidence and unrun checks. Item 21: all acceptance items above carry AGENT or EXTERNAL owners. Item 22: direct `test_repo_map.py` passed (33 tests); the selected runner passed (474 units); the chain owns the final gate under this task's override. Item 23: no user-visible delta or signature applies. No test function was removed or renamed, but three test IDs changed: parametrizing the path, Lean-name and command checks over both entry docs replaced each unparametrized ID with an `[AGENTS.md]` and a `[ROUTE-RECIPE.md]` ID, so the branch records the three old IDs in `Test-removed:` trailers. Free disk at handoff: 178 GB.
 
 ## Self-review against BUILDER-CHECKLIST
 
@@ -47,7 +47,7 @@ Items 1–12, 15, and 17–19 concern product parsers, wire answers, verdicts, L
 10. N.A. — no Lean statement or proof changed.
 11. N.A. — no budget or deadline changed.
 12. N.A. — no runtime path changed.
-13. PASS — `git diff main...38571b519 -- tests/test_repo_map.py` keeps every old test name; no Test-removed trailer needed.
+13. PASS — `git diff main...38571b519 -- tests/test_repo_map.py` keeps every old test function name. The three functions it parametrizes, `test_every_path_named_in_agents_md_exists`, `test_every_lean_name_in_agents_md_is_declared` and `test_every_command_named_in_agents_md_exists_and_the_fast_ones_answer_help`, now collect one ID per entry doc in place of the old unparametrized ID; a `Test-removed:` trailer records each old ID.
 
 ## FIXMAP
 
