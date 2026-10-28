@@ -217,13 +217,13 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Alternatives/FillWire.lean` | 564 | 564 | 1–564 | `5b736870014d…` |
 | `lean/VE/Calc/Units.lean` | 222 | 222 | 1–222 | `fda31837236b…` |
 | `lean/VE/Defaults/Wire.lean` | 786 | 786 | 1–786 | `6bd1efcf1347…` |
-| `lean/VE/Calc/Wire.lean` | 474 | 474 | 1–474 | `7d0009d69066…` |
+| `lean/VE/Calc/Wire.lean` | 494 | 494 | 1–494 | `ebeb66b7142d…` |
 | `lean/VE/Calc/Run.lean` | 366 | 366 | 1–366 | `b09fc345ee8e…` |
 | `lean/VE/Scope/Wire.lean` | 154 | 154 | 1–154 | `618b837c4a7f…` |
 | `lean/VE/Cardinality/Wire.lean` | 304 | 304 | 1–304 | `b892dbef05b3…` |
 | `lean/VE/Defaults/Route.lean` | 46 | 46 | 1–46 | `97feda58f0f4…` |
 | `lean/VE/Cardinality/Run.lean` | 172 | 172 | 1–172 | `8bc9a5f0222d…` |
-| **total** | | **38,979** | | |
+| **total** | | **38,999** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner
