@@ -238,9 +238,11 @@ On every list of D-all, the table answers as `dispatch` and its base rows as `to
   .error "UnsupportedProfile: Unsupported profile ve.discourse@1"
 #guard gateOf profileTable ["norms@0", "relational-fol@0", "ve.discourse@1"] == .ok .discourse
 #guard environmentProfiles.length == 18 && !environmentProfiles.contains "judgments@0" &&
+  !environmentProfiles.contains "cardinality@0" &&
   environmentProfiles.getLast? == some "readings@1"
 #guard legacyProfiles.all (fun p => profileTable.any (·.profile == p)) &&
-  (profileTable.map (·.profile)).eraseDups.filter (!legacyProfiles.contains ·) == ["acts@0", "judgments@0", "scope@0"]
+  (profileTable.map (·.profile)).eraseDups.filter (!legacyProfiles.contains ·) ==
+    ["acts@0", "judgments@0", "cardinality@0", "scope@0"]
 
 /-! JT-2's row (judgment-terms-PLAN.md JT-2): `judgments@0` requires `documents@1`, refuses nothing and keeps the
 route of the list without it (`gate_judgments`). -/
@@ -667,5 +669,19 @@ the gate's own. -/
   [(["norms@0"], ["risk@0", "alternatives@0", "speech-acts@0", "reports@0", "ve.discourse@1"], "govern")]
 #guard gateOf profileTable ["alternatives@0", "norms@0", "relational-fol@0", "risk@0", "scope@0"] ==
   .error "UnsupportedProfile: scope@0 with risk@0"
+
+/-! QT-A3's row (quantities 4.2, E2; `VE.Cardinality.gate_cardinality`): W6a's two lists, with the document layer
+too; one requirement missing, one other profile, or the layer without `documents@1` is refused. -/
+#guard [["cardinality@0", "order@0", "relational-fol@0", "time@0"],
+  ["cardinality@0", "documents@1", "order@0", "relational-fol@0", "time@0"],
+  ["cardinality@0", "documents@1", "judgments@0", "order@0", "relational-fol@0", "time@0"]].all
+  (gateOf profileTable · == .ok .frozen)
+#guard [(["cardinality@0", "order@0", "relational-fol@0"], "cardinality@0 requires time@0"),
+  (["cardinality@0", "relational-fol@0", "time@0"], "cardinality@0 requires order@0"),
+  (["cardinality@0"], "Missing profile relational-fol@0"),
+  (["cardinality@0", "norms@0", "order@0", "relational-fol@0", "time@0"], "cardinality@0 with norms@0"),
+  (["cardinality@0", "order@0", "readings@1", "relational-fol@0", "time@0"], "cardinality@0 with readings@1"),
+  (["cardinality@0", "judgments@0", "order@0", "relational-fol@0", "time@0"], "judgments@0 requires documents@1")].all
+  fun (ps, e) => gateOf profileTable ps == .error s!"UnsupportedProfile: {e}"
 
 end VE.Compose.Examples
