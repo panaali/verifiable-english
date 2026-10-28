@@ -4,8 +4,8 @@
   `usecase-safetyfw-b`. No DRI signature is reserved, no DELTA row, trust +0 (no Lean file changed).
 - **HEAD:** the branch tip; code final at 18e9c937d, later commits change only this report (base main 6d0a10526).
 - **What changed:** both frozen keys transcribed and pinned; fsf-r2 re-measured the DeepMind case (no byte moved
-  since Oct 18) with one probe per merged item; anthropic-rsp has its baseline: 59,410 bytes in 301 units, 9.5%
-  CHECKED, with stage 0 and the gaps by feature family.
+  since Oct 18) with one probe per merged item; anthropic-rsp has its corrected baseline: 59,410 bytes in 303 units,
+  9.0% CHECKED, with stage 0 and the gaps by feature family.
 - **Open items:** `usecase-safetyfw-b`, `usecase-rsp-run`, `usecase-pf-run`, `fsf-r3`. No key finding.
 
 ## 1. Task rows
@@ -22,7 +22,7 @@
 | 2(c) docs/usecases/safety-framework/fsf-r2/ (units.json, gaps.json, probes.md); fsf-r1 unchanged | yes (and probes.json) | deefa264d | `measure_r1.py --check` passes |
 | 3. anthropic-rsp: vocabulary, environments D1, D2, D3 | D1: `rsp_vocabulary.py`, `environment.d1.json`; D2 and D3 are built in `stage0.py` (no source prose, no separate file) | a0c22aafd | `::test_rsp_environment_file_is_generated`, `::test_rsp_stage0_rerun_equals_saved` |
 | 3. rules.d1.ve, facts.d1.ve with the source sentence beside each rule | 76 rules, 11 premise blocks | a0c22aafd | `::test_rsp_every_rule_and_premise_parses_with_one_reading`, M6 in `::test_rsp_identifiers_and_inventions` |
-| 3. span accounting: every byte in one unit; status by VE's check; kind; reason; residual | yes, 301 units; coverage.json has `bytes_by_status`, `master_bytes_by_status`, `bytes_by_kind`, `unformalised_reasons`, `residual` (safety-framework's shape) | a0c22aafd | `::test_rsp_every_byte_is_in_exactly_one_unit` |
+| 3. span accounting: every byte in one unit; status by VE's check; kind; reason; residual | yes, 303 units; coverage.json has `bytes_by_status`, `master_bytes_by_status`, `bytes_by_kind`, `unformalised_reasons`, `residual` (safety-framework's shape) | a0c22aafd | `::test_rsp_every_byte_is_in_exactly_one_unit`, `::test_rsp_reviewer_prohibitions_are_separate_coverage_units` |
 | 3. stage 0 probes P1 to P8 | yes ([stage0.json](anthropic-rsp/stage0.json)) | a0c22aafd, c1fd40403 | `::test_rsp_stage0_saved_answers`, `::test_rsp_stage0_rerun_equals_saved` |
 | 3. a measure script writing gaps.json by family, all blockers and alone | `measure.py` ([gaps.json](anthropic-rsp/gaps.json), [units.json](anthropic-rsp/units.json)) | a0c22aafd | `::test_rsp_every_byte_not_checked_waits_for_a_named_family` |
 | 3. shared code with safety-framework by import; safety-framework's outputs unchanged | the unit-spec helpers and `measure` of its build_document.py are imported (loaded apart, as its test loads them) | a0c22aafd | safety-framework's `build_document.py --check` and `run.py --check` pass |
@@ -54,7 +54,7 @@ the same way as safety-framework's `test_span_accounting_is_complete`.
 | DeepMind FSF 3.1 | Oct 1 (first run) | 4,595 (8.5%) | 7,356 (13.5%) | 35,557 (65.4%) | 6,865 (12.6%) | 54,373 |
 | DeepMind FSF 3.1 | Oct 18 (fsf-r1) | 4,595 (8.5%) | 7,356 (13.5%) | 35,557 (65.4%) | 6,865 (12.6%) | 54,373 |
 | DeepMind FSF 3.1 | Oct 28 (fsf-r2) | 4,595 (8.5%) | 7,356 (13.5%) | 35,557 (65.4%) | 6,865 (12.6%) | 54,373 |
-| Anthropic RSP 3.4 | Oct 28 (baseline) | 5,651 (9.5%) | 13,214 (22.2%) | 37,248 (62.7%) | 3,297 (5.5%) | 59,410 |
+| Anthropic RSP 3.4 | Oct 28 (corrected baseline) | 5,327 (9.0%) | 13,214 (22.2%) | 37,248 (62.7%) | 3,621 (6.1%) | 59,410 |
 | OpenAI PF v2 | not measured (`usecase-safetyfw-b`) | | | | | 67,418 |
 
 Sources: [fsf-r2/gaps.json](../safety-framework/fsf-r2/gaps.json) (`master_bytes_by_status`, oct1, oct18 and
@@ -63,6 +63,12 @@ today) and [anthropic-rsp/gaps.json](anthropic-rsp/gaps.json). Both plans expect
 The RSP has more OPEN and less UNFORMALISED text than the FSF. Its open terms are named on the rules
 themselves (28 records), and most of its process sentences are commitments without an open term in their guards (34
 CHECKED rules). The DeepMind framework has more process wording ("periodically", "this will inform") that has no rule.
+
+The 3.6.1 paragraph was overcounted as CHECKED: its organization financial-interest rule covered the first 95
+bytes, while the next 324 bytes also prohibit financial interests of individual reviewers and their reporting chain,
+and close personal relationships. Those two clauses now have separate UNFORMALISED units (182 and 142 bytes) waiting
+for SC. The frozen key, including K13, is unchanged. This corrects use-case source coverage; no Lean checker verdict
+or diagnostic changed (`test_rsp_reviewer_prohibitions_are_separate_coverage_units`).
 
 ## 4. What the bytes that are not CHECKED wait for, all three frameworks, ranked by bytes
 
@@ -78,7 +84,7 @@ A unit counts under every family it waits for; "alone" counts the units with tha
 | readings (readings differ in which rules hold) | 18, 3,597 | 735 | 17, 3,989 | 2,106 | 7,586 | 2,841 |
 | ET time and process wording | 11, 2,212 | 2,212 | 7, 1,390 | 489 | 3,602 | 2,701 |
 | external reference | 7, 1,978 | 1,978 | 6, 797 | 797 | 2,775 | 2,775 |
-| SC scope (addressee, existential import) | 2, 283 | 283 | 7, 1,611 | 369 | 1,894 | 652 |
+| SC scope (addressee, existential import) | 2, 283 | 283 | 9, 1,935 | 693 | 2,218 | 976 |
 | DF defaults | 2, 551 | 551 | 4, 866 | 405 | 1,417 | 956 |
 | WG weighing and causation | 3, 807 | 807 | 2, 551 | 551 | 1,358 | 1,358 |
 | QT quantities | 0, 0 | 0 | 2, 105 | 0 | 105 | 0 |
@@ -87,7 +93,7 @@ A unit counts under every family it waits for; "alone" counts the units with tha
 Among the families with a claim to check, JT is first in both texts, then AT. JT's landing (`judgments@0`) moves no
 byte to CHECKED, because a judged unit stays OPEN by theorem (fsf-r2). The "alone" column is the most a family's
 landing can move, since those units wait for nothing else: AT 12,127 B, external references 2,775 B (if the
-referenced documents are translated), ET 2,701 B, WG 1,358 B, DF 956 B, SC 652 B. Whether a unit then becomes
+referenced documents are translated), ET 2,701 B, WG 1,358 B, DF 956 B, SC 976 B. Whether a unit then becomes
 CHECKED depends on how the feature represents it, and this item does not measure that. In the RSP, QT appears only
 with JT (`t4-cost-factor`) or ET (the 3-6 month cadence).
 

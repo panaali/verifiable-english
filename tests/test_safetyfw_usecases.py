@@ -176,6 +176,44 @@ def test_rsp_every_byte_is_in_exactly_one_unit(rsp_modules):
         assert rsp_build.main(["--check"]) == 0
 
 
+def test_rsp_reviewer_prohibitions_are_separate_coverage_units():
+    """Each prohibition in 3.6.1 has its own span; only the organization clause has a D1 rule."""
+    units = json.loads((RSP / "spans.json").read_text())["units"]
+    ids = ("s361-financial-interest", "s361-individual-financial-interest", "s361-personal-relationships")
+    assert [uid for _, uid, _ in rsp_build.UNITS if uid in ids] == list(ids)
+    clauses = [next(u for u in units if u["id"] == uid) for uid in ids]
+    assert [u["status"] for u in clauses] == ["CHECKED", "UNFORMALISED", "UNFORMALISED"]
+    assert clauses[0]["rule"] == "f15-financial-interest"
+    assert all(u["reason"] == "addressed_to_others" for u in clauses[1:])
+    assert [u["span"][0] for u in clauses] == sorted(u["span"][0] for u in clauses)
+    assert all(a["span"][1] == b["span"][0] for a, b in zip(clauses, clauses[1:]))
+    assert (clauses[0]["span"][0], clauses[-1]["span"][1]) == (37680, 38099)
+    if rsp_build.DEFAULT_SOURCE.exists():
+        source = rsp_build.DEFAULT_SOURCE.read_bytes()
+        for unit, phrase in zip(clauses, (b"a reviewing organization itself may not",
+                                              b"individuals involved in conducting the review",
+                                              b"close personal relationships with anyone at Anthropic")):
+            assert phrase in source[slice(*unit["span"])]
+
+
+def test_rsp_reported_coverage_matches_saved_measurement():
+    """The use-case README and build report cannot keep a stale CHECKED claim after a span changes."""
+    spans = json.loads((RSP / "spans.json").read_text())["units"]
+    gaps = json.loads((RSP_EVIDENCE / "gaps.json").read_text())
+    totals = gaps["master_bytes_by_status"]
+    counts = Counter(u["status"] for u in spans)
+    readme = (RSP / "README.md").read_text()
+    report = (RSP_EVIDENCE.parent / "REPORT.md").read_text()
+    for status in ("CHECKED", "OPEN", "LABELLED", "UNFORMALISED"):
+        share = f"{totals[status] / gaps['source_bytes']:.1%}"
+        cells = f"{counts[status]} | {totals[status]:,} | {share}"
+        assert f"| {status} | {cells} |" in readme
+        assert f"{totals[status]:,} ({share})" in next(
+            line for line in report.splitlines() if line.startswith("| Anthropic RSP 3.4 |"))
+    sc = gaps["features"]["SC"]
+    assert f"| SC scope | {sc['units']} | {sc['bytes']:,} | {sc['sole_units']}, {sc['sole_bytes']:,} |" in readme
+
+
 def test_rsp_every_reading_set_rule_and_open_term_is_placed(rsp_modules):
     """Each set of READINGS sits on exactly one unit and names only blocks of rules.d1.ve or facts.d1.ve (or a case
     premise); each open term a unit lists is declared; every declared open term is used."""

@@ -10,24 +10,24 @@
   "exposition": 5913,
   "hedged": 1903,
   "meta": 3078,
-  "norm": 19277,
-  "unformalised": 3297
+  "norm": 18953,
+  "unformalised": 3621
  },
  "bytes_by_status": {
-  "CHECKED": 5000,
+  "CHECKED": 4676,
   "LABELLED": 37899,
   "OPEN": 13214,
-  "UNFORMALISED": 3297
+  "UNFORMALISED": 3621
  },
  "coverage_percent": 100,
  "default_exceptions_by_decider": {},
  "document": "rsp.d1.ve.md (built locally, not committed)",
- "document_sha256": "2acb5fd2b3c99c0716d83521a42366f8c2513bb73e21fe4d2ec5a5032b95c3d3",
+ "document_sha256": "7a94a1ce12b162784a5164dc5859e190af166a377b8c45d7572b5a7ae1f392f0",
  "master_bytes_by_status": {
-  "CHECKED": 5651,
+  "CHECKED": 5327,
   "LABELLED": 37248,
   "OPEN": 13214,
-  "UNFORMALISED": 3297
+  "UNFORMALISED": 3621
  },
  "residual": {
   "assumptions": 0,
@@ -45,7 +45,7 @@
  "soft_status": "CHECKED",
  "source_bytes": 59410,
  "unformalised_reasons": {
-  "addressed_to_others": 2,
+  "addressed_to_others": 4,
   "aim_without_force": 2,
   "as_appropriate": 1,
   "degree_term": 2,

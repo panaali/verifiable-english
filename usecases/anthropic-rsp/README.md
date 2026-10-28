@@ -45,7 +45,7 @@ unit ids and short quotations only.
 | [rsp_vocabulary.py](rsp_vocabulary.py), [environment.d1.json](environment.d1.json) | the vocabulary, with 64 regulated predicates (Lean's limit); each predicate's description is its legend, and each open term names its decider |
 | [rsp_translation.py](rsp_translation.py) | loads and parses the rules and premises with VE's one-reading check |
 | [cases.json](cases.json), [answer-key.json](answer-key.json) | the cases and the 126 answers of PLAN sections 5 and 6, transcribed after the freeze |
-| [build_document.py](build_document.py), [spans.json](spans.json), [coverage.json](coverage.json) | the byte-by-byte accounting of the source text: 301 units |
+| [build_document.py](build_document.py), [spans.json](spans.json), [coverage.json](coverage.json) | the byte-by-byte accounting of the source text: 303 units |
 | [stage0.py](stage0.py) | stage 0: probes P1 to P8, the identifier lint and the invention audit ([stage0.json](../../docs/usecases/safetyfw/anthropic-rsp/stage0.json)) |
 | [measure.py](measure.py) | what each byte that is not CHECKED waits for ([units.json, gaps.json](../../docs/usecases/safetyfw/anthropic-rsp/)) |
 | [../../tests/test_safetyfw_usecases.py](../../tests/test_safetyfw_usecases.py) | the test: the frozen key and its transcription, the span accounting, stage 0 and the gaps |
@@ -63,18 +63,18 @@ Each takes `--check` to compare with the committed output instead of writing it.
 
 ## Span accounting (2026-10-28)
 
-All 59,410 bytes of the source are in exactly one of the document's 301 units. VE gives each unit its status when
+All 59,410 bytes of the source are in exactly one of the document's 303 units. VE gives each unit its status when
 it loads the D1 document. A unit routed to D2 (severity) or D3 (dates) is CHECKED when stage 0 admits that document
 with its evidence.
 
 | Status | Units | Bytes | Share |
 |---|---|---|---|
-| CHECKED | 51 | 5,651 | 9.5% |
+| CHECKED | 51 | 5,327 | 9.0% |
 | OPEN | 63 | 13,214 | 22.2% |
 | LABELLED | 169 | 37,248 | 62.7% |
-| UNFORMALISED | 18 | 3,297 | 5.5% |
+| UNFORMALISED | 20 | 3,621 | 6.1% |
 
-Within D1 alone, 5,000 bytes are CHECKED. D3 checks 449 bytes (the changelog dates, the effective date and 3.1's
+Within D1 alone, 4,676 bytes are CHECKED. D3 checks 449 bytes (the changelog dates, the effective date and 3.1's
 coverage date) and D2 checks 202 bytes (footnote 1's instance of catastrophic risk). The plan expected under 10%.
 
 The 51 CHECKED units are 5 premise units, the 12 routed units and the 34 commitments whose guards use no open
@@ -82,6 +82,10 @@ term. Among the commitments are publishing Risk Reports (K1), the LTBT's approva
 reviewer with a financial interest (K13), a Board member among the recipients of a report on the RSO (K16) and
 publishing an update with its Change Log (K17). Sharing an approved report with the Board and LTBT (K7) is OPEN,
 because it is to be done "promptly" (OT12).
+
+The 3.6.1 financial-interest paragraph has three source clauses. Only its 95-byte organization clause is CHECKED;
+the 182-byte individual/review-chain financial-interest clause and 142-byte close-personal-relationship clause are
+UNFORMALISED (SC) until their actors and reporting-chain scope are represented.
 
 ## What each byte that is not CHECKED waits for
 
@@ -94,7 +98,7 @@ From [gaps.json](../../docs/usecases/safetyfw/anthropic-rsp/gaps.json). A unit c
 | JT judgment terms | 50 | 11,372 | 33, 6,892 | the 28 open terms (whether a threshold is crossed, "highly capable", "significantly redacted", "promptly", ...) and 3.2's degree terms |
 | AT attitudes | 43 | 6,510 | 43, 6,510 | beliefs, expectations, hopes, intents, the hedged "may" and "could", and the aims of RS12 |
 | readings | 17 | 3,989 | 10, 2,106 | RS1 (ov: no rule), RS3o/RS3i/RS3c, RS4, RS6, RS7: readings that differ in which rules hold, and the row parts written in their own units |
-| SC scope | 7 | 1,611 | 2, 369 | RS2 (a recommendation to the field, or the company too), RS5 (existential import), recommendations to others |
+| SC scope | 9 | 1,935 | 4, 693 | RS2 (a recommendation to the field, or the company too), RS5 (existential import), recommendations to others and the reviewer/reporting-chain prohibitions |
 | ET time | 7 | 1,390 | 3, 489 | RS9 (every 3-6 months), RS11 (at deployment or no deadline), "promptly", "prior to or on its effective date", no stated trigger |
 | DF defaults | 4 | 866 | 3, 405 | RS8 and RS13: a "should" or "usually" read as strict or default |
 | external reference | 6 | 797 | 6, 797 | the Roadmap's page, RAND SL4, California SB 53, separate compliance documents, "see here" |
@@ -110,7 +114,7 @@ From [gaps.json](../../docs/usecases/safetyfw/anthropic-rsp/gaps.json). A unit c
 | P2 RS1 on its unit, `ve document check` | the set stays pending: premises UNKNOWN, one unresolved set |
 | P3 D2 (`risk@0` with `alternatives@0`) | admitted with the T1 to T3 harms and footnote 1's instance, each catastrophic; three stated `might` cells, no `leads` cell. With T4's harm, which states no class, refused: `HarmUnclassified` |
 | P4 D3 (`ve-units@1`) | the changelog dates increase (D1), v3.4 is effective before retrieval (D2), and the day counts of D3b, D4 and D5 hold, each with a certificate VE replays |
-| P5 D1 over the text | 301 units; `bytes_by_status` totals 59,410 |
+| P5 D1 over the text | 303 units; `bytes_by_status` totals 59,410 |
 | P6 the routed units | 202 B to D2, 449 B to D3; the master map is total and contiguous |
 | P7 identifier lint | 0 violations |
 | P8 D1 with `judgments@0` | refused: `judgments@0 with soft-norms@0 needs its composed Lean route` (jt-2c is not merged) |

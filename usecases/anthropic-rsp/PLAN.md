@@ -548,6 +548,11 @@ That item builds the translation, the span accounting and stage 0. It does not a
     for. They are UNFORMALISED `degree_term` (JT).
 13. **N2 is applied by kind.** The changelog entries for v1.0 to v3.3 are LABELLED explanations marked `history`, and
     their dates are routed to D3. N5's answer is that no rule is written from them.
+14. **The 3.6.1 minimum is split by prohibition.** The organization's financial-interest clause is CHECKED over
+    its own 95-byte span. The individual reviewer/reporting-chain financial-interest clause (182 bytes) and the
+    close-personal-relationship clause (142 bytes) are separate UNFORMALISED units waiting for SC; their actors and
+    reporting-chain scope are not represented by the existing organizational rule. This corrects the baseline's
+    overcount of CHECKED bytes without changing section 6 or the frozen key.
 
 ## 13. Files for the implementation round (not this commit)
 

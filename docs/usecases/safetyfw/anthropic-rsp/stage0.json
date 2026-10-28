@@ -82,15 +82,15 @@
  },
  "P5": {
   "bytes_by_status": {
-   "CHECKED": 5000,
+   "CHECKED": 4676,
    "LABELLED": 37899,
    "OPEN": 13214,
-   "UNFORMALISED": 3297
+   "UNFORMALISED": 3621
   },
   "expected": "bytes_by_status totals 59,410",
   "input": "D1 over the 59,410-byte text",
   "total": 59410,
-  "units": 301
+  "units": 303
  },
  "P6": {
   "contiguous": true,

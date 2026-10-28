@@ -1949,10 +1949,30 @@
   },
   {
    "blockers": [],
-   "bytes": 419,
+   "bytes": 95,
    "id": "s361-financial-interest",
    "kind": "norm",
    "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "SC"
+   ],
+   "bytes": 182,
+   "id": "s361-individual-financial-interest",
+   "kind": "unformalised",
+   "reason": "addressed_to_others",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "SC"
+   ],
+   "bytes": 142,
+   "id": "s361-personal-relationships",
+   "kind": "unformalised",
+   "reason": "addressed_to_others",
+   "status": "UNFORMALISED"
   },
   {
    "blockers": [],
