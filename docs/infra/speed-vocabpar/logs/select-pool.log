@@ -1,0 +1,45 @@
+[mac-pytest 19:09:12Z] maps to ve-mac-1: 531 sent, 0 pruned (531 in /home/seyran/.cache/ve-testmap)
+[mac-pytest 19:09:12Z] running on ve-mac-1: HEAD 5a30735a (clean) of /home/seyran/code/ve-vocabpar-pool; select_tests --base ab010c3f0 --run --jobs 6
+[mac-pytest@ve-mac-1 19:09:13Z] both mac-pytest slots busy; waiting (until 21:05:53Z)
+[mac-pytest@ve-mac-1 19:25:00Z] setup: lake build + checker pins for tree d72171e4 in 3s
+[mac-pytest@ve-mac-1 19:25:00Z] select on ve-mac-1 (aarch64), slot 2, commit 5a30735a, setup 3s: --base ab010c3f0 --run --jobs 6
+29/467 test units (map ab010c3f02, 1.86 s)
+changed: docs/infra/speed-vocabpar/mutants-evidence.json, docs/infra/speed-vocabpar/mutants.json, docs/infra/speed-vocabpar/rss.py, tests/history-dependent.json, tests/lean_pool.py, tests/test_acts_lexical_mutants.py, tests/test_acts_vocab_mutants.py, tests/test_lean_pool.py
++ uv run --frozen --group dev python tools/test_layer_policy.py
++ uv run --frozen --group dev python -m pytest -p hypothesis.extra.pytestplugin -q tests/test_acts_lexical_mutants.py tests/test_acts_vocab_mutants.py tests/test_answer_cutoff.py tests/test_conformance.py tests/test_definitions.py tests/test_document_split.py tests/test_gate.py tests/test_gate_quarantine.py tests/test_hang_guards.py tests/test_heavy_tests.py tests/test_history_tests.py tests/test_lean_dump_cache.py tests/test_lean_pool.py tests/test_nested_pytest.py tests/test_platform_contract.py tests/test_precommit_hook.py tests/test_readings_verdicts_split.py tests/test_regen_generated.py tests/test_relay_binding_inventory.py tests/test_repo_map.py tests/test_run_order.py tests/test_rust_reproducible.py tests/test_select_tests.py tests/test_since_pass.py tests/test_stage0_inventory.py tests/test_surface_registry.py tests/test_test_speed_b2.py tests/test_wire_gate_corpus.py
+    Finished `release` profile [optimized] target(s) in 0.06s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.06s
+order: failed last time []; changed ['tests/test_acts_lexical_mutants.py', 'tests/test_acts_vocab_mutants.py', 'tests/test_lean_pool.py']; then the rest; --maxfail 5
+recording 29 units with 6 jobs in /tmp/ve-select-run-5czszchx
+  tests/test_lean_pool.py: exit 0 in 3.9 s, 259 functions
+  tests/test_acts_lexical_mutants.py: exit 0 in 144.4 s, 277 functions
+  tests/test_precommit_hook.py: exit 0 in 169.1 s, 323 functions
+  tests/test_nested_pytest.py: exit 0 in 74.6 s, 736 functions
+  tests/test_rust_reproducible.py: exit 0 in 65.1 s, 253 functions
+  tests/test_hang_guards.py: exit 0 in 60.4 s, 915 functions
+  tests/test_relay_binding_inventory.py: exit 0 in 154.8 s, 695 functions
+  tests/test_gate_quarantine.py: exit 0 in 100.2 s, 2734 functions
+  tests/test_run_order.py: exit 0 in 26.8 s, 508 functions, OPAQUE
+  tests/test_repo_map.py: exit 0 in 417.5 s, 467 functions
+  tests/test_stage0_inventory.py: exit 0 in 27.3 s, 247 functions
+  tests/test_platform_contract.py: exit 0 in 34.5 s, 426 functions
+  tests/test_select_tests.py: exit 0 in 441.3 s, 686 functions, OPAQUE
+  tests/test_definitions.py: exit 0 in 12.2 s, 720 functions
+  tests/test_since_pass.py: exit 0 in 39.6 s, 349 functions
+  tests/test_heavy_tests.py: exit 0 in 3.1 s, 330 functions
+  tests/test_conformance.py: exit 0 in 2.0 s, 605 functions
+  tests/test_answer_cutoff.py: exit 0 in 24.3 s, 586 functions, OPAQUE
+  tests/test_gate.py: exit 0 in 55.5 s, 2661 functions
+  tests/test_document_split.py: exit 0 in 12.8 s, 296 functions
+  tests/test_regen_generated.py: exit 0 in 40.0 s, 784 functions
+  tests/test_surface_registry.py: exit 0 in 1.2 s, 422 functions
+  tests/test_test_speed_b2.py: exit 0 in 1.7 s, 275 functions
+  tests/test_readings_verdicts_split.py: exit 0 in 12.6 s, 263 functions
+  tests/test_history_tests.py: exit 0 in 77.2 s, 390 functions
+  tools/test_layer_policy.py: exit 0 in 87.5 s, 209 functions
+  tests/test_acts_vocab_mutants.py: exit 0 in 694.7 s, 320 functions
+  tests/test_lean_dump_cache.py: exit 0 in 257.3 s, 346 functions
+  tests/test_wire_gate_corpus.py: exit 0 in 763.5 s, 3595 functions
+recorded 29 units for tree d72171e490; 0 others left to the static graph until they run; 0 failed
+[mac-pytest 19:38:03Z] map recorded for tree d72171e490 -> /home/seyran/.cache/ve-testmap
+[mac-pytest 19:38:03Z] summary: ran on ve-mac-1 (aarch64), select_tests with 5 args, jobs 6; HEAD 5a30735a (clean); 1848s; exit=0; failed/error ids=0; known Mac-only failures (mac-known-failures.txt): none
