@@ -131,6 +131,26 @@ def test_df_nu_default_fold_all_with_the_default_readings_assumption(nu):
     assert member["english"] == [{"row": "DE8"}, {"row": "assumptions", "choice": [["rs1", 1]]}]
 
 
+def test_default_query_respects_readings_budget_after_cached_free_gate(tmp_path, monkeypatch):
+    """An exhausted query cannot reuse the standalone defaults search's larger limits."""
+    from ve.readings_verdicts import BUDGET
+
+    route = route_of(soft_document(tmp_path, [K1]))
+    assert route.conflict_answer()["result"]["status"] == "CONFLICT-FREE"
+    for key in BUDGET:
+        monkeypatch.setitem(BUDGET, key, 0)
+    answer = route.default_answer(QUERY)
+    assert answer["result"]["verdict"] == "UNKNOWN"
+    assert answer["default"]["verdict"] == "UNKNOWN"
+    assert {entry["query"] for entry in answer["default"]["per_choice"]} == {"UNKNOWN"}
+
+
+def test_default_query_with_adequate_budget_is_all(nu):
+    """The same query retains its checked positive answer with the ordinary budget."""
+    _, route, _ = nu
+    assert route.default_answer(QUERY)["default"]["verdict"] == "ALL"
+
+
 def test_df_nu_english_is_de8_then_the_default_readings_de2(nu, tmp_path):
     path, _, _ = nu
     data = cli(path, tmp_path, "--assume-no-exception")

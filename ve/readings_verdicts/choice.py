@@ -405,7 +405,7 @@ class _FilledChoiceDocument:
             base = {"environment": wire(self.route.source.senv.lower_data), "norms": norms}
             elaborated = answer({"id": "defaults-elaborate", "kind": "defaults-elaborate", **base})
             layered = run({"id": "norm-defaults-elaborate", "kind": "norm-defaults-elaborate", **base})
-            self._defaults = (base, elaborated, _Search(base, layered, elaborated))
+            self._defaults = (base, elaborated, _Search(base, layered, elaborated, budget=BUDGET))
         return self._defaults
 
     def default_case(self, conclusion_ast, gamma=()):

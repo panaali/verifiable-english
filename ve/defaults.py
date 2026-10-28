@@ -215,11 +215,14 @@ class _Search:
     each `unspecified` completion read as `deny`, the unsaid tables and the soft decisions declared, as the readings
     route's filled choice documents read them)."""
 
-    def __init__(self, base, layered, dflt):
+    def __init__(self, base, layered, dflt, budget=None):
         from .ast import formula_from_data
         from .environment import Environment
         from .norm_defaults import _placeholder
         from .softnorms import SoftEnvironment
+        # A readings request supplies its own search limits. Keep the mapping live so a
+        # cached free gate cannot hide a later exhausted query budget.
+        self.budget = budget
         raw = _placeholder(base["environment"])
         self.tables = [item["name"] for item in layered["unsaid"]]
         for item in layered["unsaid"]:
@@ -260,7 +263,9 @@ class _Search:
         pairs, collision = [], None
         for m, n, ast in self.targets:
             entry, target = {"rules": [m, n]}, self.formula(ast)
-            proof = prove_entailment(self.env, premises, target, max_steps=MAX_STEPS, _background=False)
+            proof = prove_entailment(self.env, premises, target,
+                                    max_steps=self.budget["max_steps"] if self.budget is not None else MAX_STEPS,
+                                    _background=False)
             if proof.status == "Found":
                 entry["certificate"] = {**proof.certificate, **_source_binding(view, (), target, listed=premises)}
             elif collision is None and (found := self.model(premises, [], target, layered=False)):
@@ -273,14 +278,18 @@ class _Search:
         from .norm_defaults_route import filled_certificate
         from .readings_verdicts.choice import _FilledView
         view = _FilledView(self.source, self.env, self.fill, self.layers, X)
-        return filled_certificate(view, gamma, phi, max_steps=MAX_STEPS)
+        return filled_certificate(view, gamma, phi,
+                                  max_steps=self.budget["max_steps"] if self.budget is not None else MAX_STEPS)
 
     def model(self, X, gamma, phi, layered=True):
         """A model of `X`, `Fill_T`, the layers and Γ (of `X` and Γ alone when not `layered`) where `φ` fails, as a
         request carries it (its base and its filling apart), or None within the budget."""
         from .search import find_countermodel
         premises = [*X, *self.fill, *self.layers, *gamma] if layered else [*X, *gamma]
-        found = find_countermodel(self.env, premises, phi, max_domain_size=MAX_DOMAIN)
+        limits = ({"max_domain_size": self.budget["max_domain_size"], "max_models": self.budget["max_models"],
+                   "max_evaluations": self.budget["max_evaluations"]} if self.budget is not None else
+                  {"max_domain_size": MAX_DOMAIN})
+        found = find_countermodel(self.env, premises, phi, **limits)
         if found.status != "Found":
             return None
         data = found.model.to_dict()
