@@ -2,7 +2,8 @@
 
 Feature item qt-a3c (plan `docs/spec/quantities-PLAN.md` QT-A3, spec `docs/spec/quantities.md` 3.9, 4.1–4.3; SYNTHESIS
 2.2 and 4.2). Base: main at b8eac7455. Every user-visible change is a row. P3 charged as the erased problem is built
-(`chargedNodes`) is no row: `problemChecks_eq` proves the same verdict and text as before.
+(`chargedNodes`) is no row: `problemChecks_eq` proves the same verdict and text as before. Nor is the near-linear
+dedup (`firstUseH`, run by `@[csimp]`; fix round 2): `firstUseH_eq` proves the same sorts, predicates and universals.
 
 | # | Change | Evidence | Ruling |
 |---|---|---|---|
