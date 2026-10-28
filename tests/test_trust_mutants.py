@@ -2233,6 +2233,8 @@ def test_the_parts_merged_are_the_one_runs_record(sharded, capsys, n, limit):
     one = sharded.tmp / "one.json"
     code, out, _, _, _ = sharded("--json", one, "--max-mutants", limit, capsys=capsys)
     paths = parts(sharded, n, "--max-mutants", limit)
+    for k, p in enumerate(paths, 1):  # run facts of their own, each part's different
+        p.write_text(p.read_text().replace('"seconds": 0,', f'"seconds": {k * 37 % 101},', 1))
     capsys.readouterr()
     merged = sharded.tmp / "merged.json"
     assert sharded.tm.main(["--merge", str(merged), *map(str, reversed(paths))]) == code
@@ -2241,6 +2243,7 @@ def test_the_parts_merged_are_the_one_runs_record(sharded, capsys, n, limit):
     data, each = json.loads(merged.read_text()), [json.loads(p.read_text()) for p in paths]
     assert data["shards"] == [{"k": d["shard"]["k"], "n": n, "jobs": d["jobs"], "seconds": d["seconds"]} for d in each]
     assert (data["jobs"], data["seconds"]) == (sum(d["jobs"] for d in each), max(d["seconds"] for d in each))
+    assert len({d["seconds"] for d in each}) == n and data["seconds"] > 0
 
 
 def shifted(value):
