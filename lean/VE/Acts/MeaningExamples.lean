@@ -142,6 +142,36 @@ def Va : Vocab := frames [fr "seek" ["", "from"] [] [], fr "enjoy" [""] [] []]
 #guard actOk V5 (.all true false [obj5 "seek" true, obj5 "enjoy" true]) && !actOk V5 (.all true false [obj5 "seek" true]) &&
   !actOk V5 (.any false true [obj5 "seek" true]) && !actOk V5 (.one { obj5 "seek" true with args := [] })
 
+/-! ### Each list a check reads, at its first and last element -/
+
+-- the meaning's conclusion mark is `false`; a single item that begins with an adverb keeps it
+#guard ((parsed V7 fx7 "{0} be held by secret vote or by equivalent free voting procedures").getD []).map (fun t =>
+  match meaning V7 () t with | .ok (_, c, ()) => some c | .error _ => none) == [some false]
+#guard rd1 V11 [] "{0} directly take part in {1}" == .ok (.one { directly with toWord := false })
+-- a split object's join is a split construct's; three arguments keep their order
+#guard rd1 Vs [] "{0} to change religion or belief" == .ok (.any false true ([w "religion", w "belief"].map fun p =>
+  ⟨true, false, ["change"], [("", .one p)], []⟩))
+def V3 : Vocab := frames [fr "send" ["", "to", "by"] [] []]
+#guard rd1 V3 [] "{0} send aid to {1} by {2}" ==
+  .ok (.one ⟨false, false, ["send"], [("", .one (w "aid")), ("to", .one (.slot 1)), ("by", .one (.slot 2))], []⟩)
+/-- An atom of `h` with arguments `as` and modifiers `ms`. -/
+def at_ (h : String) (as : List (String × Filler)) (ms : List Modifier := []) : Atom := ⟨false, false, [h], as, ms⟩
+def o (s : String) : String × Filler := ("", .one (w s))
+def Vk : Vocab := ⟨[fr "give" ["to", ""] [] ["at", "in", "on"], fr "deceive" ["", "about"] [] []], ["now", "then", "soon"]⟩
+-- `atomOk`: the object where `""` is not the frame's first or last marker, or not the atom's first argument; two
+-- objects; a marker that is not the frame's at either end; adverbs and modifier markers from the middle of their lists
+#guard atomOk Vk (at_ "give" [o "aid"]) && atomOk Vk (at_ "deceive" [o "him"]) &&
+  atomOk Vk (at_ "give" [("to", .one (w "him")), o "aid"]) && !atomOk Vk (at_ "give" [o "aid", o "food"]) &&
+  !atomOk Vk (at_ "give" [("by", .one (w "him")), o "aid"]) && !atomOk Vk (at_ "give" [o "aid", ("by", .one (w "him"))])
+#guard atomOk Vk (at_ "give" [o "aid"] [.adv "then", .prep "in" (w "time")]) &&
+  !atomOk Vk (at_ "give" [o "aid"] [.adv "never", .adv "then"]) && !atomOk Vk (at_ "give" [o "aid"] [.adv "then", .adv "never"]) &&
+  !atomOk Vk (at_ "give" [o "aid"] [.prep "by" (w "x"), .prep "in" (w "x")]) &&
+  !atomOk Vk (at_ "give" [o "aid"] [.prep "in" (w "x"), .prep "by" (w "x")])
+-- `actOk`: every atom of a join fits, the first and the last
+#guard !actOk Vk (.all true false [at_ "give" [o "aid"], at_ "keep" [o "aid"]]) &&
+  !actOk Vk (.any false false [at_ "keep" [o "aid"], at_ "give" [o "aid"]]) &&
+  actOk Vk (.any false false [at_ "give" [o "aid"], at_ "deceive" [o "him"]])
+
 /-! ### The edges' second rules -/
 
 /-- The rule table writes two rules alike only for the five edges (5.2), so the meaning reads a rule equal to the one
@@ -150,7 +180,7 @@ def edgeOnly (V : Vocab) : Bool :=
   let rs := closed (schema V)
   (rs.zip rs.tail).all (fun (a, b) => a != b || match b.lhs with
     | .E1X | .F _ .TE | .F _ .RE | .F _ .REt | .F _ .PX => true | _ => false)
-#guard ([V5, V6, V7, V8, V9, V10, V11, V12, V14, V5k, Vs, Vm, Va, V6b] ++ ap0).all edgeOnly
+#guard ([V5, V6, V7, V8, V9, V10, V11, V12, V14, V5k, Vs, Vm, Va, V6b, V3, Vk] ++ ap0).all edgeOnly
 -- V5: `E1X`'s pair, and per frame `TE`, `RE`, `REt` and `PX` each a pair for the adverb and one for *in*: 1 + 2 · 8
 #guard ((closed (schema V5)).zip (closed (schema V5)).tail).countP (fun (a, b) => a == b) == 17
 

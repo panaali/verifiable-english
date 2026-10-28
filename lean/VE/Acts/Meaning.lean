@@ -77,6 +77,7 @@ edge's two rules are written alike (5.2), and the second reads over all. -/
 def applyRule (r : RuleS) (second : Bool) (cs : List Piece) : Option (List Piece) :=
   let att := if second then Att.all else .own
   let words := cs.filterMap (fun | .w s => some s | _ => none)
+  let lw := words.map (·.toLower)
   let part : Piece → Option Part := fun | .part p | .elt (.arg _ (.one p)) _ => some p | _ => none
   let toAll : Piece → Piece := fun | .elt (.arg m f) .own => .elt (.arg m f) .all | p => p
   match r.lhs, r.rhs, cs with
@@ -85,8 +86,8 @@ def applyRule (r : RuleS) (second : Bool) (cs : List Piece) : Option (List Piece
   | _, [.n (.MK m), _], [.part p] => some [.elt (.mod (.prep m p)) att]
   | .MK _, _, _ => some []
   | .J, _, [.w v] => ([("and", Join.and), ("or", .or), ("nor", .nor)].lookup v.toLower).map ([.j ·])
-  | .FW, _, _ => some [.fw ((words.map (·.toLower)).contains "to") ((words.map (·.toLower)).contains "be")]
-  | .F _ .HD, _, _ => some [.head (words.map (·.toLower))]
+  | .FW, _, _ => some [.fw (lw.contains "to") (lw.contains "be")]
+  | .F _ .HD, _, _ => some [.head lw]
   | .F _ .FL, _, _ => some (if words.length == cs.length then [.part (.words words)] else cs)
   | .F _ .PL, _, _ | .F _ (.RL _), _, _ => do
     let (j, ms) ← listOf cs
@@ -108,12 +109,12 @@ def applyRule (r : RuleS) (second : Bool) (cs : List Piece) : Option (List Piece
   | .COORD, .n (.F1 own _) :: _, _ => do
     let (j, its) ← listOf cs
     some [.act (← coordAct (!own) j its)]
-  | .S, _, _ => some (cs.filter (· matches .act _))                     -- the subject `{0}` is dropped here
   | _, _, _ => some cs
-/-- The pieces of a derivation: a word token is a word, a slot or fixed phrase a part, a comma nothing; a node's from
-its rule `rs[i]` and its children's, in order. -/
+/-- The pieces of a derivation: a word token is a word, a slot or fixed phrase a part, the subject `{0}` and a comma
+nothing; a node's from its rule `rs[i]` and its children's, in order. -/
 def piecesOf (rs : Array RuleS) : Tree Tok → Option (List Piece)
   | .leaf (.word v) => some [.w v]
+  | .leaf (.slot 0) => some []
   | .leaf (.slot i) => some [.part (.slot i)]
   | .leaf (.fixed i) => some [.part (.fixed i)]
   | .leaf .comma => some []
