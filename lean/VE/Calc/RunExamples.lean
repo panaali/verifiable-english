@@ -196,7 +196,7 @@ def identityFamilies : List (String × List (List String)) :=
   ("words and key order", [
     [req x1 ok1, req r#"{"words": "the other words", "stated": "1", "name": "x"}"# ok1,
      req x1 r#"{"claim": ["eq", ["val", "x"], ["lit", "1"]], "id": "c1"}"#,
-     r#"{"claims": [{"claim": ["eq", ["val", "x"], ["lit", "1"]], "id": "c1"}], "values": [{"stated": "1", "words": "w", "name": "x"}], "format": "ve-calc@0"}"#]]),
+     r#"{"claims": [{"claim": ["eq", ["val", "x"], ["lit", "1"]], "id": "c1"}], "values": [{"stated": "1", "words": "the w", "name": "x"}], "format": "ve-calc@0"}"#]]),
   -- 3.3: `gt` and `ge` are kept as written, and every operand keeps its place.
   ("comparisons as written", [
     [x1c r#"["gt", ["val", "x"], ["lit", "2"]]"#], [x1c r#"["lt", ["lit", "2"], ["val", "x"]]"#],
@@ -224,11 +224,11 @@ def identityFamilies : List (String × List (List String)) :=
     [req (x1 ++ ", " ++ stated "y" r#""2""#) ok1], [req (stated "y" r#""2""# ++ ", " ++ x1) ok1],
     [req (stated "y" r#""1""#) (c1 r#"["eq", ["val", "y"], ["lit", "1"]]"#)]]),
   ("support", [req x1 ok1] :: ["observation", "testimony", "assumption"].map fun support =>
-    [req s!"\{\"name\": \"x\", \"words\": \"w\", \"stated\": \"1\", \"support\": \"{support}\"}" ok1]),
+    [req s!"\{\"name\": \"x\", \"words\": \"the w\", \"stated\": \"1\", \"support\": \"{support}\"}" ok1]),
   ("claim span", [req x1 ok1] :: [[3, 3], [3, 5], [3, 6], [4, 5]].map fun span =>
     [req x1 s!"\{\"id\": \"c1\", \"claim\": [\"eq\", [\"val\", \"x\"], [\"lit\", \"1\"]], \"span\": {toJson span |>.compress}}"]),
   ("value span", [req x1 ok1] :: [[3, 3], [3, 5], [3, 6], [4, 5]].map fun span =>
-    [req s!"\{\"name\": \"x\", \"words\": \"w\", \"stated\": \"1\", \"span\": {toJson span |>.compress}}" ok1]),
+    [req s!"\{\"name\": \"x\", \"words\": \"the w\", \"stated\": \"1\", \"span\": {toJson span |>.compress}}" ok1]),
   ("software", [req x1 ok1] :: ["P", "Q", "Python 3.12"].map fun software =>
     [req x1 ok1 s!", \"software\": \"{software}\""]),
   ("claim ids", ["c1", "c2", "c-1"].map fun id => [req x1 (claim id r#"["eq", ["val", "x"], ["lit", "1"]]"#)])]
@@ -277,18 +277,18 @@ def identityFaults : List String := identityFamilies.filterMap fun (name, classe
 /-! Accepted edges of the decoder. A refusal-only corpus cannot pin these branches. -/
 #guard meaning (req x1 (claim "c-1" r#"["eq", ["val", "x"], ["lit", "1"]]"#)) != ""
 #guard ["observation", "testimony", "assumption"].all fun support =>
-  meaning (req s!"\{\"name\": \"x\", \"words\": \"w\", \"stated\": \"1\", \"support\": \"{support}\"}" ok1) != ""
+  meaning (req s!"\{\"name\": \"x\", \"words\": \"the w\", \"stated\": \"1\", \"support\": \"{support}\"}" ok1) != ""
 #guard meaning (req x1 r#"{"id": "c1", "claim": ["eq", ["val", "x"], ["lit", "1"]], "span": [3, 3]}"#) != ""
-#guard meaning (req r#"{"name": "x", "words": "w", "stated": "1", "span": [3, 3]}"# ok1) != ""
+#guard meaning (req r#"{"name": "x", "words": "the w", "stated": "1", "span": [3, 3]}"# ok1) != ""
 
 -- Exact digests pin the encoding of each optional identity field, including JSON number type and span order.
 #guard meaning (req x1 ok1 r#", "software": "P""#) ==
   "7c2d5ac13c8312f41b811897bb1d41afd4e06c5d634fc6652befb813ab97203e"
-#guard meaning (req r#"{"name": "x", "words": "w", "stated": "1", "support": "observation"}"# ok1) ==
+#guard meaning (req r#"{"name": "x", "words": "the w", "stated": "1", "support": "observation"}"# ok1) ==
   "23602c987e56328857e0654cb9c82410ab7d64076d27d6e0a409ce1b023d72c8"
 #guard meaning (req x1 r#"{"id": "c1", "claim": ["eq", ["val", "x"], ["lit", "1"]], "span": [3, 5]}"#) ==
   "5eed16c6aae468b703a685bb5ffd070f3c30476b09f097de7c0f898d4d6dffb5"
-#guard meaning (req r#"{"name": "x", "words": "w", "stated": "1", "span": [3, 5]}"# ok1) ==
+#guard meaning (req r#"{"name": "x", "words": "the w", "stated": "1", "span": [3, 5]}"# ok1) ==
   "2e10e6d03ab1c276745095d8150d9c2fc21ecad2287b54c54e118ff5c68564dc"
 
 -- The whole finite support vocabulary keeps its exact JSON spelling, not just distinct digests.
@@ -388,7 +388,7 @@ def strings64 : List String := name64 :: multiByteNames
 
 /-- Places me-2 checks no length of, or does not read: each refuses its string of 64 bytes otherwise, if at all. -/
 def stringSites : List (String → String) := [
-  fun s => req s!"\{\"name\": \"x\", \"words\": \"w\", \"stated\": \"1\", \"support\": \"{s}\"}" ok1,
+  fun s => req s!"\{\"name\": \"x\", \"words\": \"the w\", \"stated\": \"1\", \"support\": \"{s}\"}" ok1,
   fun s => req x1 ok1 s!", \"rounding\": \"{s}\"",
   fun s => s!"\{\"format\": \"{s}\", \"values\": [{x1}], \"claims\": [{ok1}]}",
   fun s => req x1 (c1 s!"[\"{s}\", [\"val\", \"x\"], [\"lit\", \"1\"]]"),
@@ -401,17 +401,17 @@ def stringSites : List (String → String) := [
   fun s => req x1 s!"\{\"id\": \"c1\", \"claim\": [\"eq\", [\"val\", \"x\"], [\"lit\", \"1\"]], \"words\": \"{s}\"}",
   fun s => req x1 ok1 s!", \"words\": \"{s}\"",
   fun s => req s!"\{\"name\": \"x\", \"words\": [\"{s}\"], \"stated\": \"1\"}" ok1,
-  fun s => req s!"\{\"name\": \"x\", \"words\": \"w\", \"defined\": \{\"words\": \"{s}\"}}" ok1,
+  fun s => req s!"\{\"name\": \"x\", \"words\": \"the w\", \"defined\": \{\"words\": \"{s}\"}}" ok1,
   -- object keys
   fun s => req x1 ok1 s!", \"{s}\": 1",
-  fun s => req s!"\{\"name\": \"x\", \"words\": \"w\", \"stated\": \"1\", \"{s}\": 1}" ok1,
+  fun s => req s!"\{\"name\": \"x\", \"words\": \"the w\", \"stated\": \"1\", \"{s}\": 1}" ok1,
   fun s => req x1 s!"\{\"id\": \"c1\", \"claim\": [\"eq\", [\"val\", \"x\"], [\"lit\", \"1\"]], \"{s}\": 1}"]
 
 #guard stringSites.all fun site => strings64.all fun s =>
   (says (site s)).all (!·.startsWith "ResourceLimit") && says (site (s ++ "x")) == ["ResourceLimit: a string exceeds 64"]
 
 -- A value's `words` of any length is no resource limit.
-#guard strings64.all fun s => meaning (req s!"\{\"name\": \"x\", \"words\": \"{s}{s}{s}\", \"stated\": \"1\"}" ok1) != ""
+#guard strings64.all fun s => meaning (req s!"\{\"name\": \"x\", \"words\": \"the {s}{s}{s}\", \"stated\": \"1\"}" ok1) != ""
 
 -- A literal of more than 40 digits and 64 bytes is limit 6, at each place a literal is read; earlier limits come
 -- before the string cap too.
@@ -502,7 +502,9 @@ def stringSites : List (String → String) := [
   ("sign-spelling", says (req x1 (c1 r#"["rounds", ["val", "x"], "+1"]"#)), ["InvalidInput: claims.0.claim.2 must be a decimal"]),
   ("forged-meaning-id", says (req x1 ok1 r#", "meaning_id": "5a074a4cee5cfdce99fabb04e758d3d76f6bfdec93c035dbf66cc199c41aa2d1""#),
     ["InvalidInput: case.meaning_id is unknown"]),
-  ("duplicate-name", says (req (x1 ++ ", " ++ x1) ok1), ["DuplicateName: x"]),
+  ("duplicate-name", says (req (x1 ++ ", " ++ r#"{"name": "x", "words": "the other x", "stated": "1"}"#) ok1),
+    ["DuplicateName: x"]),
+  ("duplicate-name-words", says (req (x1 ++ ", " ++ x1) ok1), ["VerbalisationCollision(x, x)"]),
   ("duplicate-claim", says (req x1 (ok1 ++ ", " ++ ok1)), ["DuplicateClaimId: c1"]),
   ("no-claims", says (req x1 ""), ["NoClaims: a calculation needs at least one claim"]),
   ("not-object", says "[]", ["InvalidInput: case must be an object"]),
@@ -581,20 +583,20 @@ def malformed : List String := ["7", "true", "null", "[]", "{}", "1.5", "\"\"", 
     s!"\{\"format\": \"ve-calc@0\", \"values\": {v}, \"claims\": [{ok1}]}",
     s!"\{\"format\": \"ve-calc@0\", \"values\": [{x1}], \"claims\": {v}}",
     req x1 ok1 s!", \"rounding\": {v}", req x1 ok1 s!", \"software\": {v}",
-    req s!"\{\"name\": {v}, \"words\": \"w\", \"stated\": \"1\"}" ok1,
-    req s!"\{\"name\": \"x\", \"words\": \"w\", \"stated\": {v}}" ok1,
-    req s!"\{\"name\": \"x\", \"words\": \"w\", \"defined\": {v}}" ok1,
-    req s!"\{\"name\": \"x\", \"words\": \"w\", \"stated\": \"1\", \"support\": {v}}" ok1,
-    req s!"\{\"name\": \"x\", \"words\": \"w\", \"stated\": \"1\", \"span\": {v}}" ok1,
+    req s!"\{\"name\": {v}, \"words\": \"the w\", \"stated\": \"1\"}" ok1,
+    req s!"\{\"name\": \"x\", \"words\": \"the w\", \"stated\": {v}}" ok1,
+    req s!"\{\"name\": \"x\", \"words\": \"the w\", \"defined\": {v}}" ok1,
+    req s!"\{\"name\": \"x\", \"words\": \"the w\", \"stated\": \"1\", \"support\": {v}}" ok1,
+    req s!"\{\"name\": \"x\", \"words\": \"the w\", \"stated\": \"1\", \"span\": {v}}" ok1,
     req x1 s!"\{\"id\": {v}, \"claim\": [\"eq\", [\"val\", \"x\"], [\"lit\", \"1\"]]}",
     req x1 s!"\{\"id\": \"c1\", \"claim\": {v}}",
     req x1 (c1 s!"[\"eq\", [\"val\", \"x\"], {v}]"), req x1 (c1 s!"[\"rounds\", [\"val\", \"x\"], {v}]"),
     req x1 (c1 s!"[\"eq\", [\"lit\", {v}], [\"lit\", \"1\"]]")] ++
-    -- words are any string until me-2b's words checks (W6, spec 11.2), so "" is no malformed words
-    (if v == "\"\"" then [] else [req s!"\{\"name\": \"x\", \"words\": {v}, \"stated\": \"1\"}" ok1]) ++
+    -- me-2d: "" is malformed words too (W6's verbalisation rule)
+    [req s!"\{\"name\": \"x\", \"words\": {v}, \"stated\": \"1\"}" ok1] ++
     -- me-5c: a free value, a premise's fields, and a derivation's conclusion, premise ids and links; `true` is a free
     -- value, and an empty list a valid premises, ids or links list
-    (if v == "true" then [] else [req s!"\{\"name\": \"x\", \"words\": \"w\", \"free\": {v}}" ok1]) ++
+    (if v == "true" then [] else [req s!"\{\"name\": \"x\", \"words\": \"the w\", \"free\": {v}}" ok1]) ++
     (let le := r#"["le", ["val", "x"], ["lit", "1"]]"#
      let entry (id claim support : String) := s!", \"premises\": [\{\"id\": {id}, \"claim\": {claim}, \"support\": {support}}]"
      [req x1 ok1 (entry v le "\"assumption\""), req x1 ok1 (entry "\"p1\"" v "\"assumption\""),
@@ -725,14 +727,18 @@ def nonlinear (path : String) : List String := [s!"NonlinearPremise: {path} (dec
     ["UnknownName: w (declare it before the value that uses it)"])]
 
 -- J10: R-3's line, each square link two numbered premises after the case's (spec 13.6).
-#guard let words (n : String) : Option String :=
+/-- R-3's one derivation rendered with its values' words, or `none` when it decodes otherwise. -/
+def r3Line : Option String :=
+  let words (n : String) : Option String :=
     [("r", "the velocity ratio"), ("s", "the squared velocity ratio"), ("d", "the displacement")].lookup n
   match ((Json.parse r3).toOption.bind (Wire.decodeCase · |>.toOption)).map (·.claims) with
-  | some [(_, Check.follows P links C)] => VE.Calc.English.renderFollows words P links C == some
-      ("Assume the following. 1. The displacement equals the product of 0.4 and the squared velocity ratio. " ++
-       "2. The displacement is less than 0.02. 3. The squared velocity ratio equals the square of the velocity ratio. " ++
-       "4. The velocity ratio is at least 0. From these, it follows that the velocity ratio is less than 1 divided by 4.")
-  | _ => false
+  | some [(_, Check.follows P links C)] => VE.Calc.English.renderFollows words P links C
+  | _ => none
+
+#guard r3Line == some
+  ("Assume the following. 1. The displacement equals the product of 0.4 and the squared velocity ratio. " ++
+   "2. The displacement is less than 0.02. 3. The squared velocity ratio equals the square of the velocity ratio. " ++
+   "4. The velocity ratio is at least 0. From these, it follows that the velocity ratio is less than 1 divided by 4.")
 #guard VE.Calc.English.renderFollows (fun n => some s!"the {n}") [] [("a", "b"), ("c", "d")]
     (.compare ⟨.lt, false⟩ (.val "b") (.lit 1)) == some ("Assume the following. 1. The a equals the square of the b. " ++
   "2. The b is at least 0. 3. The c equals the square of the d. 4. The d is at least 0. From these, it follows that " ++
@@ -769,10 +775,8 @@ def nonlinear (path : String) : List String := [s!"NonlinearPremise: {path} (dec
     fun s => (Json.parse s).toOption.bind (Wire.decodeCase · |>.toOption)
   let decoded := decoded ++ [r2].filterMap fun s => (Json.parse s).toOption.bind (Wire.decodeCase · |>.toOption)
   decoded.length == 3 && ((ds, k) :: (ds, .claim (lt "m" "m")) :: decoded.flatMap fun c =>
-      (c.claims.filter fun (_, k) => k.run c.decls matches .unknown _).map (c.decls, ·.2)).all fun (ds, k) =>
-    match k.run ds with
-    | .unknown u => decide (u ∈ k.reasons)
-    | .decided _ => false
+      (c.claims.filter fun e => (Run.words (e.2.run c.decls)).1 == "unknown").map (c.decls, ·.2)).all fun p =>
+    decide (p.2.run p.1 ∈ p.2.reasons.map Outcome.unknown)
 
 -- Spec 3.3: free values, premises (their ids, claims, supports and spans) and a derivation's parts are hashed; an
 -- empty `premises` list is no premise.
@@ -850,12 +854,12 @@ def rowFieldCases := [
 #guard [Run.truncated 2 0, Run.truncated 0 0, Run.truncated (-1) 0, Run.truncated 1 (-1 / 20)] ==
   ["0.00", "0", "0", "-0.0…"]
 
--- Lean's line (11.1), `null` where 11.2's rule refuses an expression or a value's words; never a finding (13.6).
+-- Lean's line (11.1), `null` where 11.2's rule refuses an expression (words outside 11.2 are refused, me-2d); never a finding (13.6).
 #guard expect [
   ("line", [member (req x1 ok1) 0 "line"], [r#""The x equals 1.""#]),
   ("line-nested", [member (req x1 (c1 r#"["eq", ["div", ["lit", "1"], ["sub", ["val", "x"], ["val", "x"]]], ["lit", "1"]]"#)) 0 "line"],
     ["null"]),
-  ("line-words", [member (req r#"{"name": "x", "words": "w", "stated": "1"}"# ok1) 0 "line"], ["null"]),
+  ("line-words", [member (req r#"{"name": "x", "words": "the w", "stated": "1"}"# ok1) 0 "line"], [r#""The w equals 1.""#]),
   ("line-follows", [member r4 0 "line"], [r#""Assume the following. 1. The displacement equals the product of 0.4 and the squared velocity ratio. 2. The displacement is less than 0.02. 3. The squared velocity ratio equals the square of the velocity ratio. 4. The velocity ratio is at least 0. From these, it follows that the velocity ratio is less than 1 divided by 5.""#]),
   ("finding", [member r1 1 "finding", member r3 0 "finding", member r2 0 "finding"], ["null", "null", "null"])]
 
@@ -922,5 +926,73 @@ def readsCase : String := onX [premise "p1" r#"["ge", ["lit", "1"], ["val", "q"]
   let lt (a b : String) : Claim := .compare ⟨.lt, false⟩ (.val a) (.val b)
   [Check.follows [] [] (lt "r" "n"), .follows [lt "r" "m"] [] (lt "r" "r")].map (·.runShown ds) ==
     [(.decided .undefined, .nothing), (.unknown (.limit .evaluations), .nothing)]
+
+/-! ## The words checks (spec 3.1 and 11.2, me-2d): W6's verbalisation rule and `VerbalisationCollision`, then
+`ValueWordsForm` and `ReservedWord`, each refused and with its nearest accepted words, which answer as "the x" does
+(words are not hashed, 3.3) -/
+
+/-- A value `n` stated as 1 with the words `w`, and a case of one such value `x`. -/
+def wx' (n w : String) : String := s!"\{\"name\": \"{n}\", \"words\": \"{w}\", \"stated\": \"1\"}"
+def wx (w : String) : String := req (wx' "x" w) ok1
+
+def form (p : String) : List String := [s!"ValueWordsForm: the words of x must begin with \"the\" and not with \"{p}\""]
+def reserved (r : String) : List String := [s!"ReservedWord: \"{r}\" in the words of x"]
+
+-- Accepted words answer as on main: the same rows and the same `meaning_id` as "the x".
+#guard ["the x", "the island", "the minuses", "the bees", "the throughput", "the sumo of things", "the summary",
+    "the sum", "the product", "the square", "the cube", "the half", "the twice-told tale", "the x divided",
+    "the x to the", "the x times ten", "the x when", "the band", "the isle", "the bequest", "the equalsign",
+    "the theory", "the the", "the x-and-y", "the X", "the café", s!"the {ones 252}"].all fun w =>
+  says (wx w) == ["c1 holds"] && meaning (wx w) == meaning (req x1 ok1)
+#guard expect [
+  -- ValueWordsForm: "the" first, and no phrase word first (naming the phrase word, else the first word)
+  ("no-the", says (wx "baseline"), form "baseline"),
+  ("the-glued", says (wx "theory"), form "theory"),
+  ("capital-the", says (wx "The x"), form "The"),
+  ("the-alone", says (wx "the"), form "the"),
+  ("sum", says (wx "the sum of the a"), form "the sum of"),
+  ("product", says (wx "the product of the a"), form "the product of"),
+  ("square", says (wx "the square of the a"), form "the square of"),
+  ("cube", says (wx "the cube of the a"), form "the cube of"),
+  ("twice", says (wx "twice the a"), form "twice"),
+  ("half", says (wx "half of the a"), form "half of"),
+  ("the-phrase-alone", says (wx "the sum of"), form "the sum of"),
+  ("form-first", says (wx "baseline and rate"), form "baseline"),
+  -- ReservedWord: each reserved word as whole words, at the end and in the middle; the first in 11.2's order
+  ("and", says (wx "the x and y"), reserved "and"),
+  ("minus", says (wx "the x minus y"), reserved "minus"),
+  ("divided by", says (wx "the x divided by y"), reserved "divided by"),
+  ("to the power", says (wx "the x to the power y"), reserved "to the power"),
+  ("times ten to the power", says (wx "the x times ten to the power y"), reserved "to the power"),
+  ("is", says (wx "the x is"), reserved "is"),
+  ("be", says (wx "the x be y"), reserved "be"),
+  ("equals", says (wx "the x equals y"), reserved "equals"),
+  ("when rounded", says (wx "the x when rounded"), reserved "when rounded"),
+  ("through", says (wx "the x through y"), reserved "through"),
+  ("first-in-order", says (wx "the x is y and z"), reserved "and"),
+  -- W6's verbalisation rule, first: nonempty, at most 256 characters, whitespace-normalised
+  ("empty", says (wx ""), ["Verbalisation must be nonempty"]),
+  ("long", says (wx s!"the {ones 253}"), ["ResourceLimit: Verbalisation exceeds 256 characters"]),
+  ("double-space", says (wx "the  x"), ["Verbalisation \"the  x\" must be whitespace-normalized"]),
+  ("trailing", says (wx "the x "), ["Verbalisation \"the x \" must be whitespace-normalized"]),
+  ("tab", says (wx "the x\\ty"), ["Verbalisation \"the x\\ty\" must be whitespace-normalized"]),
+  ("whitespace-first", says (req (wx' "x" "the x " ++ ", " ++ wx' "y" "baseline") ok1),
+    ["Verbalisation \"the x \" must be whitespace-normalized"]),
+  -- every source is checked: a defined and a free value
+  ("defined", says (req (x1 ++ ", " ++ r#"{"name": "y", "words": "twice the x", "defined": ["val", "x"]}"#) ok1),
+    [r#"ValueWordsForm: the words of y must begin with "the" and not with "twice""#]),
+  ("free", says (req r#"{"name": "x", "words": "the x and y", "free": true}"# (c1 r#"["eq", ["lit", "1"], ["lit", "1"]]"#)),
+    reserved "and"),
+  -- VerbalisationCollision (W6a's check): two values with the same words, the first and the last of three; words
+  -- that differ in one character are two values
+  ("collision", says (req (x1 ++ ", " ++ r#"{"name": "y", "words": "the x", "stated": "1"}"#) ok1),
+    ["VerbalisationCollision(x, y)"]),
+  ("collision-last", says (req (x1 ++ ", " ++ stated "y" r#""2""# ++ ", " ++
+      r#"{"name": "z", "words": "the x", "stated": "1"}"#) ok1), ["VerbalisationCollision(x, z)"]),
+  ("collision-before-name", says (req (x1 ++ ", " ++ r#"{"name": "y", "words": "the x", "defined": ["val", "q"]}"#) ok1),
+    ["VerbalisationCollision(x, y)"]),
+  ("no-collision", says (req (x1 ++ ", " ++ r#"{"name": "y", "words": "the x2", "stated": "1"}"#) ok1), ["c1 holds"]),
+  ("words-before-collision", says (req (x1 ++ ", " ++ r#"{"name": "y", "words": "the x and y", "stated": "1"}"# ++ ", " ++
+      r#"{"name": "z", "words": "the x", "stated": "1"}"#) ok1), [r#"ReservedWord: "and" in the words of y"#])]
 
 end VE.Calc.RunExamples
