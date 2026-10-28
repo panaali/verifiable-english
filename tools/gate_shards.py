@@ -107,6 +107,8 @@ def merge_records(records: list[dict]) -> dict:
             number = row.get("k")
             if type(number) is not int or not 1 <= number <= n or number in by_number:
                 return refuse(f"missing or duplicate shard number: {number!r}")
+            if record.get("schema_version") != first.get("schema_version") or record.get("mode") != "shard":
+                return refuse(f"shard {number}: schema or mode differs")
             if type(row.get("n")) is not int or row["n"] != n or \
                     row.get("digest") != shard_plan["digest"] or row.get("plan") != shard_plan:
                 return refuse(f"shard {number}: N or plan digest differs")
@@ -131,22 +133,41 @@ def merge_records(records: list[dict]) -> dict:
                 return refuse(f"shard {number}: incomplete stages")
             if row.get("collected") != shard_plan["collected"]:
                 return refuse(f"shard {number}: collection differs")
-            if gate_collection.decode_ids(record.get("collection", {}).get("collected_zlib")) != ids:
+            if not isinstance(record.get("collection"), dict) or \
+                    gate_collection.decode_ids(record["collection"].get("collected_zlib")) != ids:
                 return refuse(f"shard {number}: full collection differs")
             ran = row.get("ran")
             if not isinstance(ran, list) or not ran or ran != share(shard_plan, number):
                 return refuse(f"shard {number}: ran IDs differ from plan or no suite ran")
             counts = record.get("counts", {})
             if not isinstance(counts, dict) or any(type(counts.get(key)) is not int or counts[key] < 0
-                                                    for key in ("selected", "passed", "skipped", "failed")) or \
+                                                    for key in ("collected", "selected", "passed", "skipped",
+                                                                "failed", "deselected")) or \
+                    counts["collected"] != len(ran) or \
                     counts["selected"] != len(ran) or \
-                    sum(counts[key] for key in ("passed", "skipped", "failed")) != len(ran):
+                    sum(counts[key] for key in ("passed", "skipped", "failed")) != len(ran) or \
+                    counts["deselected"] != (len(ids) - len(gate_collection.decode_ids(shard_plan["selected"]))
+                                             if number == 1 else 0):
                 return refuse(f"shard {number}: incomplete test events")
+            skips = record.get("skips")
+            if not isinstance(skips, list) or len(skips) != counts["skipped"] + counts["deselected"] or \
+                    any(not isinstance(skip, dict) or type(skip.get("nodeid")) is not str or
+                        skip["nodeid"] not in ids or type(skip.get("allowed")) is not bool
+                        for skip in skips) or len({skip["nodeid"] for skip in skips}) != len(skips) or \
+                    {skip["nodeid"] for skip in skips if not skip.get("deselected")} - set(ran):
+                return refuse(f"shard {number}: incomplete skip events")
+            failures = record.get("failures")
+            if not isinstance(failures, list) or any(not isinstance(failure, dict) or
+                                                    type(failure.get("stage")) is not str or
+                                                    type(failure.get("reason")) is not str for failure in failures) or \
+                    len([failure for failure in failures if failure["stage"] == "pytest"]) != counts["failed"]:
+                return refuse(f"shard {number}: incomplete failure events")
             if record.get("status") == "shard-passed" and record.get("failures"):
                 return refuse(f"shard {number}: passing status with failures")
             if record.get("status") == "failed" and not record.get("failures"):
                 return refuse(f"shard {number}: failed status without a reason")
-            if any(record.get("quarantine", {}).get(key) != first.get("quarantine", {}).get(key)
+            if not isinstance(record.get("quarantine"), dict) or not isinstance(first.get("quarantine"), dict) or \
+                    any(record["quarantine"].get(key) != first["quarantine"].get(key)
                    for key in ("enabled", "day", "active", "expired")):
                 return refuse(f"shard {number}: quarantine policy differs")
             by_number[number] = record

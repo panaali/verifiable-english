@@ -123,6 +123,9 @@ def test_merge_cli_writes_one_full_record(tmp_path):
     (lambda row: row["collection"].update(collected_zlib="bad"), "full collection"),
     (lambda row: row["shard"].update(n=True), "N"),
     (lambda row: row["counts"].update(selected=True), "incomplete test events"),
+    (lambda row: row.update(collection=[]), "full collection"),
+    (lambda row: row.update(quarantine=[]), "quarantine"),
+    (lambda row: row.update(mode="full"), "schema or mode"),
     (lambda row: row.update(status="failed"), "without a reason"),
 ])
 def test_merge_refuses_mismatched_or_empty_shard(change, word):
@@ -131,6 +134,32 @@ def test_merge_refuses_mismatched_or_empty_shard(change, word):
     merged = gate_shards.merge_records(rows)
     assert merged["status"] == "failed"
     assert word in merged["failures"][0]["reason"]
+
+
+def test_merge_refuses_missing_or_malformed_test_events():
+    rows = records(2)
+    owner = next(row for row in rows if row["counts"]["skipped"])
+    owner["skips"] = []
+    merged = gate_shards.merge_records(rows)
+    assert merged["status"] == "failed"
+    assert "incomplete skip events" in merged["failures"][0]["reason"]
+
+    rows = records(2)
+    owner = next(row for row in rows if row["counts"]["skipped"])
+    owner["skips"][0]["allowed"] = 1
+    merged = gate_shards.merge_records(rows)
+    assert merged["status"] == "failed"
+    assert "incomplete skip events" in merged["failures"][0]["reason"]
+
+    rows = records(2)
+    owner = next(row for row in rows if IDS[-1] in row["shard"]["ran"])
+    owner["counts"]["passed"] -= 1
+    owner["counts"]["failed"] += 1
+    owner["status"] = "failed"
+    owner["failures"] = [{"stage": "gate", "reason": "suite failed"}]
+    merged = gate_shards.merge_records(rows)
+    assert merged["status"] == "failed"
+    assert "incomplete failure events" in merged["failures"][0]["reason"]
 
 
 def test_plan_is_repeatable_and_partitions_each_collected_id_once():
