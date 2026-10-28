@@ -586,7 +586,7 @@ theorem setObjVal_get (kvs : Std.TreeMap.Raw String Json) (hw : kvs.WF) (k k' : 
 theorem hasStr_null (s : String) : ¬ HasStr s .null := by
   intro h; cases h with | obj hk _ => simp [Json.getObjVal?, throw, throwThe, MonadExceptOf.throw] at hk
 
-theorem hasStr_set (s : String) (kvs : Std.TreeMap.Raw String Json) (hw : kvs.WF) (k : String) (v : Json)
+theorem hasStr_setObj (s : String) (kvs : Std.TreeMap.Raw String Json) (hw : kvs.WF) (k : String) (v : Json)
     (h : HasStr s ((Json.obj kvs).setObjVal! k v)) : HasStr s (.obj kvs) ∨ HasStr s v := by
   cases h with
   | obj hk hx =>
@@ -787,10 +787,10 @@ theorem top_set (o : Json) (hw : ∀ kvs, o = .obj kvs → kvs.WF) (k : String) 
   | obj t => intro kvs he; cases he; exact (hw t rfl).insert
   | _ => intro kvs he; rw [setObjVal_null _ (by simp)] at he; cases he
 
-theorem hasStr_set' (s : String) (o : Json) (hw : ∀ kvs, o = .obj kvs → kvs.WF) (k : String) (v : Json)
+theorem hasStr_set (s : String) (o : Json) (hw : ∀ kvs, o = .obj kvs → kvs.WF) (k : String) (v : Json)
     (h : HasStr s (o.setObjVal! k v)) : HasStr s o ∨ HasStr s v := by
   cases o with
-  | obj t => exact hasStr_set s t (hw t rfl) k v h
+  | obj t => exact hasStr_setObj s t (hw t rfl) k v h
   | _ => rw [setObjVal_null _ (by simp)] at h; exact absurd h (hasStr_null s)
 
 theorem hasStr_getD (s : String) (j : Json) (k : String) (h : HasStr s (j.getObjValD k)) : HasStr s j := by
@@ -925,7 +925,7 @@ theorem applyEffect_src (u : String) (e : Effect) (o o' : Json) (h : applyEffect
     · next g hg =>
       cases h
       refine ⟨top_set o hw _ _, fun s hs => ?_⟩
-      rcases hasStr_set' s o hw _ _ hs with h | h
+      rcases hasStr_set s o hw _ _ hs with h | h
       · exact .inl h
       · rcases hasStr_substOwn g s _ _ h with h | h
         · exact .inl (.obj hg h)
@@ -935,7 +935,7 @@ theorem applyEffect_src (u : String) (e : Effect) (o o' : Json) (h : applyEffect
     · next xs _ hu =>
       cases h
       refine ⟨top_set o hw _ _, fun s hs => ?_⟩
-      rcases hasStr_set' s o hw _ _ hs with h | h
+      rcases hasStr_set s o hw _ _ hs with h | h
       · exact .inl h
       · cases h with
         | arr hm hx =>
@@ -1019,7 +1019,7 @@ theorem addOver_src (es : List String) (o : Json) (hw : ∀ kvs, o = .obj kvs �
     split
     · exact ⟨hw, fun s h => .inl h⟩
     · refine ⟨top_set o hw _ _, fun s hs => ?_⟩
-      rcases hasStr_set' s o hw _ _ hs with h | h
+      rcases hasStr_set s o hw _ _ hs with h | h
       · exact .inl h
       · cases h with
         | arr hm hx' =>
@@ -1044,7 +1044,7 @@ theorem newContent_src (c o : Json) (hw : JsonWF c) (s : String) (h : HasStr s (
       | obj kvs => exact .inl (.obj (members_get kvs (jsonWF_top _ hw kvs rfl) _ _ hp) hs)
       | _ => exact absurd hp (by rw [show members _ = [] from rfl]; exact List.not_mem_nil)
     · rw [List.mem_singleton.mp hp] at hs; exact .inr hs
-  · exact hasStr_set' s c (jsonWF_top c hw) _ _ h
+  · exact hasStr_set s c (jsonWF_top c hw) _ _ h
 
 theorem setObjVal_ne (o : Json) (hw : ∀ kvs, o = .obj kvs → kvs.WF) (k k' : String) (v : Json) (hk : k ≠ k') :
     (o.setObjVal! k v).getObjVal? k' = o.getObjVal? k' := by
@@ -1085,7 +1085,7 @@ theorem lookup_mem {β : Type} (k : String) (b : β) : ∀ (l : List (String × 
 theorem patch_src (D : SDoc) (hw : JsonWF D.doc) (comp : List (String × Json)) (s : String)
     (h : HasStr s (patch D comp)) : HasStr s D.doc ∨ ∃ p ∈ comp, HasStr s p.2 := by
   unfold patch at h
-  rcases hasStr_set' s _ (jsonWF_top _ hw) _ _ h with h | h
+  rcases hasStr_set s _ (jsonWF_top _ hw) _ _ h with h | h
   · exact .inl h
   · cases h with
     | arr hm hx =>
@@ -1094,7 +1094,7 @@ theorem patch_src (D : SDoc) (hw : JsonWF D.doc) (comp : List (String × Json)) 
       have hu := unitsOf_mem D.doc y hy
       split at hx
       · next o ho =>
-        rcases hasStr_set' s y (jsonWF_top _ (hu.2 hw)) _ _ hx with h | h
+        rcases hasStr_set s y (jsonWF_top _ (hu.2 hw)) _ _ hx with h | h
         · exact .inl (hu.1 s h)
         · rcases newContent_src _ o (jsonWF_getD _ (hu.2 hw) _) s h with h | h
           · exact .inl (hu.1 s (hasStr_getD _ _ _ h))
