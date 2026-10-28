@@ -1,0 +1,194 @@
+{
+ "item": "me-4",
+ "seeded": [
+  {
+   "id": "S1",
+   "file": "lean/VE/Calc/Table.lean",
+   "definition": "Filter.sel/Filter.Selects",
+   "bug": "isFalse selects every row whose cell is not the Boolean true (the plan's seeded bug)",
+   "test": "Filter.sel_iff and Filter.bool_atoms fail (lake build VE.Calc.Table); the selection counts 3 against the guard's 1 at lean/VE/Calc/TableExamples.lean:25"
+  },
+  {
+   "id": "S2",
+   "file": "lean/VE/Calc/Table.lean",
+   "definition": "Filter.sel",
+   "bug": "notEquals selects a non-number cell",
+   "test": "Filter.sel_iff fails (lake build VE.Calc.Table)"
+  },
+  {
+   "id": "S3",
+   "file": "lean/VE/Calc/Table.lean",
+   "definition": "Filter.selB",
+   "bug": "an `and` node costs nothing",
+   "test": "Filter.selB_sound fails (lake build VE.Calc.Table)"
+  },
+  {
+   "id": "S4",
+   "file": "lean/VE/Calc/Table.lean",
+   "definition": "mean?",
+   "bug": "the mean of an empty list is 0",
+   "test": "Agg.run_mean and Agg.run_empty fail (lake build VE.Calc.Table)"
+  },
+  {
+   "id": "S5",
+   "file": "lean/VE/Calc/Data.lean",
+   "definition": "runCounted",
+   "bug": "the digest is not checked",
+   "test": "counted_bound (runCounted_reads) fails (lake build VE.Calc.Data)"
+  },
+  {
+   "id": "S6",
+   "file": "lean/VE/Calc/Csv.lean",
+   "definition": "csvRecords",
+   "bug": "CRLF ends a record only after a quoted field",
+   "test": "lean/VE/Calc/TableExamples.lean:68 (T-1 with CRLF and no last line end)"
+  },
+  {
+   "id": "S7",
+   "file": "lean/VE/Calc/Jsonl.lean",
+   "definition": "decodeJsonl",
+   "bug": "a repeated JSON key is accepted",
+   "test": "lean/VE/Calc/TableExamples.lean:90"
+  },
+  {
+   "id": "S8",
+   "file": "lean/VE/Calc/Table.lean",
+   "definition": "Agg.runB",
+   "bug": "budget 0 allows a run",
+   "test": "lean/VE/Calc/TableExamples.lean:47"
+  },
+  {
+   "id": "S9",
+   "file": "lean/VE/Calc/Csv.lean",
+   "definition": "csvRecords",
+   "bug": "end of file: `m = .plain ∨ cur = [] ∧ fs = []`",
+   "test": "lean/VE/Calc/TableExamples.lean:68, :70, :73"
+  },
+  {
+   "id": "S10",
+   "file": "lean/VE/Calc/Csv.lean",
+   "definition": "csvRecords",
+   "bug": "end of file: `m = .plain ∧ (cur = [] ∨ fs = [])`",
+   "test": "lean/VE/Calc/TableExamples.lean:73, :75"
+  },
+  {
+   "id": "H1",
+   "file": "lean/VE/Calc/Table.lean",
+   "definition": "Table.cell",
+   "bug": "an unknown column reads the first cell",
+   "test": "lean/VE/Calc/TableExamples.lean:32"
+  },
+  {
+   "id": "H2",
+   "file": "lean/VE/Calc/Data.lean",
+   "definition": "decodeTable",
+   "bug": "JSON lines read as CSV",
+   "test": "lean/VE/Calc/TableExamples.lean:39"
+  },
+  {
+   "id": "H3",
+   "file": "lean/VE/Calc/Table.lean",
+   "definition": "Filter.Selects",
+   "bug": "isFalse means `≠ .bool true` (meaning only)",
+   "test": "Filter.sel_iff and Filter.bool_atoms fail (lake build VE.Calc.Table)"
+  },
+  {
+   "id": "H4",
+   "file": "lean/VE/Calc/Table.lean",
+   "definition": "Agg.run",
+   "bug": "min reads List.max?",
+   "test": "lean/VE/Calc/TableExamples.lean:23, :27, :105"
+  }
+ ],
+ "per_definition_from_trust_mutants": {
+  "VE.Calc.jsonCell": {
+   "file": "lean/VE/Calc/Jsonl.lean",
+   "line": 30,
+   "operator": "arm-default",
+   "before": "readCell t s",
+   "after": ".absent",
+   "test": "lean/VE/Calc/TableExamples.lean:85,87"
+  },
+  "VE.Calc.columnTypes": {
+   "file": "lean/VE/Calc/Csv.lean",
+   "line": 33,
+   "operator": "not-drop",
+   "before": "!",
+   "after": "",
+   "test": "lean/VE/Calc/TableExamples.lean:22,22"
+  },
+  "VE.Calc.csvRecords": {
+   "file": "lean/VE/Calc/Csv.lean",
+   "line": 18,
+   "operator": "and-or",
+   "before": "∧",
+   "after": "∨",
+   "test": "lean/VE/Calc/TableExamples.lean:68,68"
+  },
+  "VE.Calc.decodeCsv": {
+   "file": "lean/VE/Calc/Csv.lean",
+   "line": 41,
+   "operator": "eq-le",
+   "before": "=",
+   "after": "≤",
+   "test": "lean/VE/Calc/TableExamples.lean:70,71"
+  },
+  "VE.Calc.jsonScalar": {
+   "file": "lean/VE/Calc/Jsonl.lean",
+   "line": 15,
+   "operator": "eq-ne",
+   "before": "==",
+   "after": "!=",
+   "test": "lean/VE/Calc/TableExamples.lean:85,87"
+  },
+  "VE.Calc.jsonFlatObject": {
+   "file": "lean/VE/Calc/Jsonl.lean",
+   "line": 23,
+   "operator": "eq-ne",
+   "before": "==",
+   "after": "!=",
+   "test": "lean/VE/Calc/TableExamples.lean:85,87"
+  },
+  "VE.Calc.decodeJsonl": {
+   "file": "lean/VE/Calc/Jsonl.lean",
+   "line": 38,
+   "operator": "eq-ne",
+   "before": "=",
+   "after": "≠",
+   "test": "lean/VE/Calc/TableExamples.lean:85,87"
+  },
+  "VE.Calc.mean?": {
+   "file": "lean/VE/Calc/Table.lean",
+   "line": 100,
+   "operator": "eq-ne",
+   "before": "=",
+   "after": "≠",
+   "test": "lean/VE/Calc/TableExamples.lean:22,22"
+  },
+  "VE.Calc.readCell": {
+   "file": "lean/VE/Calc/Table.lean",
+   "line": 228,
+   "operator": "bool-flip",
+   "before": "true",
+   "after": "false",
+   "test": "lean/VE/Calc/TableExamples.lean:24,24"
+  },
+  "VE.Calc.Table.numbers": {
+   "file": "lean/VE/Calc/Table.lean",
+   "line": 96,
+   "operator": "list-empty",
+   "before": "(T.select f)",
+   "after": "[]",
+   "test": "lean/VE/Calc/TableExamples.lean:23,23"
+  },
+  "VE.Calc.Agg.run": {
+   "file": "lean/VE/Calc/Table.lean",
+   "line": 106,
+   "operator": "list-first",
+   "before": "(T.select f)",
+   "after": "((T.select f).take 1)",
+   "test": "lean/VE/Calc/TableExamples.lean:23,23"
+  }
+ },
+ "trust_mutants": "docs/math-evidence/me-4/trust-mutants.json (253 KILLED, 0 SURVIVOR, 0 UNKNOWN, 24 INVALID, 68 ALLOWED)"
+}
