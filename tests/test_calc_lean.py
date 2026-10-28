@@ -12,7 +12,7 @@ from tests.lean_service_corpus import calc_cases
 from ve import calc
 from ve.__main__ import main
 from ve.backends import relay
-from ve.errors import CheckerUnavailable
+from ve.errors import CheckerUnavailable, VEError
 
 R3_LINE = ("Assume the following. 1. The displacement equals the product of 0.4 and the squared velocity ratio. "
            "2. The displacement is less than 0.02. 3. The squared velocity ratio equals the square of the velocity "
@@ -94,3 +94,38 @@ def test_an_unbound_answer_is_checker_unavailable(monkeypatch, tmp_path, capsys)
     assert code == 5 and json.loads(out)["status"] == "CheckerUnavailable"
     monkeypatch.setattr(relay, "decide", lambda mode, cases, **options: [genuine])
     assert calc.check(case) == genuine
+
+
+def _nodes(value, path=()):
+    yield path, value
+    children = value.items() if type(value) is dict else enumerate(value) if type(value) is list else ()
+    for key, child in children:
+        yield from _nodes(child, (*path, key))
+
+
+def test_a_malformed_case_reaches_only_leans_answer():
+    """Each member of R-3's case (premises, a follows check and its links) replaced by 7, true, null, [], {}, 1.5, a
+    lone surrogate or a 10,000-deep list: `calc.check` returns a bound answer or raises a `VEError` (Lean's refusal,
+    or the wire's for a value JSON cannot send), never `CheckerUnavailable` or another exception."""
+    deep: list = []
+    for _ in range(10_000):
+        deep = [deep]
+    case = calc_cases()[20]
+    outcomes = {"answered": 0, "refused": 0}
+    for path, value in list(_nodes(case))[1:]:
+        for other in (7, True, None, [], {}, 1.5, "\ud800", deep):
+            if type(other) is type(value) and other != "\ud800":
+                continue
+            mutant = json.loads(json.dumps(case))
+            parent = mutant
+            for step in path[:-1]:
+                parent = parent[step]
+            parent[path[-1]] = other
+            try:
+                calc.check(mutant)
+                outcomes["answered"] += 1
+            except CheckerUnavailable:
+                raise
+            except VEError:
+                outcomes["refused"] += 1
+    assert outcomes["refused"] > 100
