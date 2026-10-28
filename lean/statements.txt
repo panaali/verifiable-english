@@ -43150,6 +43150,23 @@ theorem VE.Scope.bind_ok
     x >>= f = Except.ok b → ∃ a, x = Except.ok a ∧ f a = Except.ok b
   -- uses
   -- expr 3172643631
+theorem VE.Scope.checkDocSets_absent_unchanged
+  ∀ (front : Lean.Json),
+    ¬"scope@0" ∈ VE.Service.Document.profilesOf front →
+      VE.Service.Document.checkDocSets front = VE.Service.Document.checkCore front
+  -- uses VE.Service.Document.checkCore@VE.Service.Document VE.Service.Document.checkDocSets@VE.Service.Document VE.Service.Document.profilesOf@VE.Service.Document
+  -- expr 660855298
+theorem VE.Scope.checkDocSets_no_sets
+  ∀ (front : Lean.Json),
+    (∀ (D : VE.Scope.SDoc), VE.Scope.decodeScope front = Except.ok D → VE.Scope.governedSetUnits D = []) →
+      VE.Service.Document.checkDocSets front = VE.Service.Document.checkDoc front
+  -- uses VE.Scope.SDoc@VE.Scope.Govern VE.Scope.decodeScope@VE.Service.Document VE.Scope.governedSetUnits@VE.Scope.Readings VE.Service.Document.checkDoc@VE.Service.Document VE.Service.Document.checkDocSets@VE.Service.Document
+  -- expr 3260158576
+theorem VE.Scope.choiceFault_limit
+  ∀ (D : VE.Scope.SDoc) (ch : VE.Discourse.Choice) (e : String),
+    e.startsWith "ResourceLimit" = Bool.true → VE.Scope.choiceFault D ch e = e
+  -- uses VE.Discourse.Choice@VE.Discourse.Joint VE.Scope.SDoc@VE.Scope.Govern VE.Scope.choiceFault@VE.Scope.Readings
+  -- expr 2489575035
 theorem VE.Scope.commutes_symm
   ∀ (e₁ e₂ : VE.Scope.Effect), VE.Scope.Commutes e₁ e₂ = VE.Scope.Commutes e₂ e₁
   -- uses VE.Scope.Commutes@VE.Scope.Effects VE.Scope.Effect@VE.Scope.Effects
@@ -43208,6 +43225,19 @@ theorem VE.Scope.fastReads_eq
       (fun r => (VE.Scope.coveredLayout D r).toOption.getD [], fun r => (VE.Scope.covered D r).toOption.getD [])
   -- uses VE.Scope.Reach@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.covered@VE.Scope.Govern VE.Scope.coveredLayout@VE.Scope.Govern VE.Scope.fastReads@VE.Scope.Govern
   -- expr 141792606
+theorem VE.Scope.faultOf_every
+  ∀ (D : VE.Scope.SDoc) (rs : List (VE.Discourse.Choice × Except String Lean.Json)),
+    rs ≠ [] →
+      ∀ (e : String),
+        (∀ (p : VE.Discourse.Choice × Except String Lean.Json), p ∈ rs → p.snd = Except.error e) →
+          VE.Scope.faultOf D rs = Option.some e
+  -- uses VE.Discourse.Choice@VE.Discourse.Joint VE.Scope.SDoc@VE.Scope.Govern VE.Scope.faultOf@VE.Scope.Readings
+  -- expr 1592286201
+theorem VE.Scope.faultOf_some
+  ∀ (D : VE.Scope.SDoc) (rs : List (VE.Discourse.Choice × Except String Lean.Json)) (ch : VE.Discourse.Choice)
+    (e : String), (ch, Except.error e) ∈ rs → ∃ x, VE.Scope.faultOf D rs = Option.some x
+  -- uses VE.Discourse.Choice@VE.Discourse.Joint VE.Scope.SDoc@VE.Scope.Govern VE.Scope.faultOf@VE.Scope.Readings
+  -- expr 2039638491
 theorem VE.Scope.firstKeys_mem
   ∀ (l : List (String × Lean.Json)),
     (∀ (p : String × Lean.Json), p ∈ l → ∀ (q : String × Lean.Json), q ∈ l → p.fst = q.fst → p = q) →
@@ -43248,6 +43278,30 @@ theorem VE.Scope.governFast_eq
   ∀ (D : VE.Scope.SDoc), VE.Scope.governFast D = VE.Scope.govern D
   -- uses VE.Scope.SDoc@VE.Scope.Govern VE.Scope.govern@VE.Scope.Govern VE.Scope.governFast@VE.Scope.Govern
   -- expr 2224973779
+theorem VE.Scope.governSetsFast_eq
+  ∀ (D : VE.Scope.SDoc), VE.Scope.governSetsWith VE.Scope.governFast D = VE.Scope.governSets D
+  -- uses VE.Scope.SDoc@VE.Scope.Govern VE.Scope.governFast@VE.Scope.Govern VE.Scope.governSets@VE.Scope.Readings VE.Scope.governSetsWith@VE.Scope.Readings
+  -- expr 1335170983
+theorem VE.Scope.governSets_choice_refused
+  ∀ (D : VE.Scope.SDoc),
+    VE.Scope.governedSetUnits D ≠ [] →
+      ∀ (cs : List VE.Discourse.Choice),
+        VE.Scope.setChoices D = Except.ok cs →
+          ∀ (ch : VE.Discourse.Choice),
+            ch ∈ cs →
+              ∀ (e : String), VE.Scope.governChoice D ch = Except.error e → (VE.Scope.governSets D).isOk = Bool.false
+  -- uses VE.Discourse.Choice@VE.Discourse.Joint VE.Scope.SDoc@VE.Scope.Govern VE.Scope.governChoice@VE.Scope.Readings VE.Scope.governSets@VE.Scope.Readings VE.Scope.governedSetUnits@VE.Scope.Readings VE.Scope.setChoices@VE.Scope.Readings
+  -- expr 461767713
+theorem VE.Scope.governSets_limit
+  ∀ (D : VE.Scope.SDoc),
+    VE.Discourse.productSize (VE.Scope.setShapes D) > VE.Scope.choiceLimit →
+      VE.Scope.governSets D = Except.error "ResourceLimit: scope choices"
+  -- uses VE.Discourse.productSize@VE.Discourse.Joint VE.Scope.SDoc@VE.Scope.Govern VE.Scope.choiceLimit@VE.Scope.Readings VE.Scope.governSets@VE.Scope.Readings VE.Scope.setShapes@VE.Scope.Readings
+  -- expr 3941990649
+theorem VE.Scope.governSets_no_sets
+  ∀ (D : VE.Scope.SDoc), VE.Scope.governedSetUnits D = [] → VE.Scope.governSets D = VE.Scope.govern D
+  -- uses VE.Scope.SDoc@VE.Scope.Govern VE.Scope.govern@VE.Scope.Govern VE.Scope.governSets@VE.Scope.Readings VE.Scope.governedSetUnits@VE.Scope.Readings
+  -- expr 1309938816
 theorem VE.Scope.govern_admits
   ∀ (D : VE.Scope.SDoc) (out : Lean.Json), VE.Scope.govern D = Except.ok out → VE.Scope.admitBlock D = Except.ok ()
   -- uses VE.Scope.SDoc@VE.Scope.Govern VE.Scope.admitBlock@VE.Scope.Govern VE.Scope.govern@VE.Scope.Govern
@@ -43439,6 +43493,25 @@ theorem VE.Scope.scope_admission
                 ans = VE.Scope.foldGovernors D a
   -- uses VE.Scope.SDoc@VE.Scope.Govern VE.Scope.decodeScope@VE.Service.Document VE.Scope.foldGovernors@VE.Scope.Wire VE.Scope.govern@VE.Scope.Govern VE.Service.Document.checkCore@VE.Service.Document VE.Service.Document.checkDoc@VE.Service.Document VE.Service.Document.profilesOf@VE.Service.Document VE.Service.Document.withUnits@VE.Service.Document
   -- expr 1274073867
+theorem VE.Scope.scope_admission_sets
+  ∀ (front ans : Lean.Json),
+    VE.Service.Document.checkDocSets front = Except.ok ans →
+      "scope@0" ∈ VE.Service.Document.profilesOf front →
+        ∃ D out a,
+          VE.Scope.decodeScope front = Except.ok D ∧
+            VE.Scope.governSets D = Except.ok out ∧
+              VE.Service.Document.checkCore (VE.Scope.Pinned.withGoverned front out) = Except.ok a ∧
+                ans = VE.Scope.foldGovernors D a
+  -- uses VE.Scope.Pinned.withGoverned@VE.Service.ScopeAdmission VE.Scope.SDoc@VE.Scope.Govern VE.Scope.decodeScope@VE.Service.Document VE.Scope.foldGovernors@VE.Scope.Wire VE.Scope.governSets@VE.Scope.Readings VE.Service.Document.checkCore@VE.Service.Document VE.Service.Document.checkDocSets@VE.Service.Document VE.Service.Document.profilesOf@VE.Service.Document
+  -- expr 1272908474
+theorem VE.Scope.scope_set_choices
+  ∀ (D : VE.Scope.SDoc) (cs : List VE.Discourse.Choice),
+    VE.Scope.setChoices D = Except.ok cs →
+      ∀ (K : VE.Discourse.Manifest) (n : Nat) (cs' : List VE.Discourse.Choice),
+        VE.Discourse.compatibleChoices K (VE.Scope.setShapes D) n = Except.ok cs' →
+          (∀ (c : VE.Discourse.Choice), c ∈ cs' → c ∈ cs) ∧ (K.constraints = [] → cs' = cs)
+  -- uses VE.Discourse.Choice@VE.Discourse.Joint VE.Discourse.Constraint@VE.Discourse.Manifest VE.Discourse.Manifest.constraints@VE.Discourse.Manifest VE.Discourse.Manifest@VE.Discourse.Manifest VE.Discourse.compatibleChoices@VE.Discourse.Joint VE.Scope.SDoc@VE.Scope.Govern VE.Scope.setChoices@VE.Scope.Readings VE.Scope.setShapes@VE.Scope.Readings
+  -- expr 442093291
 theorem VE.Scope.substOwn_id
   ∀ (g c : Lean.Json), VE.Scope.hasOwn VE.Scope.depthLimit c = Bool.false → VE.Scope.substOwn g VE.Scope.depthLimit c = c
   -- uses VE.Scope.depthLimit@VE.Scope.Effects VE.Scope.hasOwn@VE.Scope.Effects VE.Scope.substOwn@VE.Scope.Effects
