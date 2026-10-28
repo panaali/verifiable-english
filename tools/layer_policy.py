@@ -23,11 +23,15 @@ PYTHON = {
         "readings_s2_english senses").split(),
     4: ("__main__ adapters admission argument ask attacks authoring backends bundle check "
         "document equivalence norm_admission norm_defaults norm_defaults_contract norm_defaults_english norm_defaults_route norm_strict "
-        "filling_search openterms propose readings search stream_audit vacuity assist discourse words "
+        "defaults_english filling_search openterms propose readings search stream_audit vacuity assist discourse words calc "
         "reports reports_route risk rights_route soft_route speech_document readings_route readings_s1 "
         "readings_sup readings_verdicts readings_components readings_s2_wording senses_document defaults").split(),
     5: ["argument_fixtures"],
 }
+# Python modules off the live Lean path, kept only for the files that still import them (no other file may).
+# `ve.openterms`: a document Lean's `document` mode answers takes its open terms from Lean's W2 check (jt-2b); Python's
+# own path for a document Lean cannot decide yet, and the frozen speech snapshot, still read it.
+RETAINED = {"ve.openterms": ("ve/document/load.py", "tests/frozen_speech/speech_document.py")}
 # Top-level trees of apps, experiments, research and the paper: every path in them is layer 5.
 APP_AREAS = frozenset({"ve_experiments", "experiments", "usecases", "paper", "research"})
 PYTHON_MODULES = {f"ve.{name}": layer for layer, names in PYTHON.items() for name in names}
@@ -117,17 +121,18 @@ def lean_layer(module: str) -> int | None:
         return 5  # aggregation and audit targets (VE.LimitTies checks frozen and hashed copies of VE.Limits)
     if module in {"VE.EnglishGrammar.ProfileExamples", "VE.EnglishGrammar.E2Examples",
                   "VE.Question.Examples", "VE.Question.Fixtures", "VE.Alternatives.FillExamples",
-                  "VE.Calc.RunExamples", "VE.Defaults.RouteExamples", "VE.Readings.ActsExamples"}:
+                  "VE.Calc.RunExamples", "VE.Defaults.RouteExamples", "VE.Readings.ActsExamples",
+                  "VE.Cardinality.RunExamples"}:
         return 4  # runner-boundary acceptance fixtures import EnglishGrammar.Run, Question.Run, Alternatives.Run, Calc.Run,
-        # NormDefaults.Run or Readings.Run
+        # NormDefaults.Run, Readings.Run or Cardinality.Run
     if lean_entry(module) or module.endswith(".Run") or module == "VE.Route.MeteredRun" or module.startswith("VE.Service."):
         return 4
     if module == "ResponseShape" or module.startswith("ResponseShape."):
         return 4  # the service's response shapes: ve_response_decode and the client's schema source
     if module in {"VE.Norms.FlaggedSpec"}:
         return 4  # states theorems on Norms.Run.runCase (docs/CONSOLIDATION-PLAN.md step 1a)
-    if module in {"VE.Route.RunSound", "VE.Norms.RunSound"}:
-        return 4  # states theorems on Route.Run.runCase and Norms.Run.runCase (step 2a)
+    if module in {"VE.Route.RunSound", "VE.Norms.RunSound", "VE.Cardinality.RunTheorems"}:
+        return 4  # states theorems on Route.Run.runCase and Norms.Run.runCase (step 2a), and on Cardinality.Run's runner
     if module in {"VE.Question.Spans"}:
         return 4  # states theorems on EnglishGrammar.Run.codepointsBefore (question answering Q1.1)
     if module.startswith("VE.Ask."):

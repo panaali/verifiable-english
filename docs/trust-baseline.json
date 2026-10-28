@@ -1300,6 +1300,62 @@
    "reason": "ap-1bd: V +31 untied (VE/Service/Standalone.lean +19: regulatedOf, actsRead and their call sites; VE/Readings/Wire.lean +12: singleActsOnly, the acts@0 frame decode and the reading-set refusal); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1bd, 2026-10-18",
    "commit": "d8926dc1d1ef52a6783d13c781a9c064c963822f"
+  },
+  {
+   "class": "S",
+   "lines": 110,
+   "reason": "ap-2c: K +0, trusted +135: lean/VE/Acts/Meaning.lean +128 (S +110: Att, Elt, Piece, addPiece, joinAct, singleAct, coordAct, applyRule, piecesOf, atomOk, actOk, meaning; untied V +18: Atom.add, baseAtom, listOf, itemOf), lean/VE/Acts/Readings.lean +7 (untied V: readings, read, analyse); Derived (3) is tied to derived_iff",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-2c, 2026-10-18",
+   "commit": "c0a80d23a7113a6ba38245ae3e78b7ef4edd965a"
+  },
+  {
+   "class": "V",
+   "lines": 25,
+   "reason": "ap-2c: K +0, trusted +135: lean/VE/Acts/Meaning.lean +128 (S +110: Att, Elt, Piece, addPiece, joinAct, singleAct, coordAct, applyRule, piecesOf, atomOk, actOk, meaning; untied V +18: Atom.add, baseAtom, listOf, itemOf), lean/VE/Acts/Readings.lean +7 (untied V: readings, read, analyse); Derived (3) is tied to derived_iff",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-2c, 2026-10-18",
+   "commit": "c0a80d23a7113a6ba38245ae3e78b7ef4edd965a"
+  },
+  {
+   "class": "V",
+   "lines": 44,
+   "reason": "qt-a3b: lean/VE/Cardinality/Run.lean +46 (D[V] CardCertificate 6, decodeCertificate 11; G[V] runCase 23, runCaseReported 6; checkCertificate tied to checkCertificate_sound), lean/VE/Time/Wire.lean -2 (decodeQuantity's identities moved to statementIds, D[I])",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3b, 2026-10-18",
+   "commit": "a274d948899386de3fb36ab56b7584ab07b707b7"
+  },
+  {
+   "class": "V",
+   "lines": 15,
+   "reason": "qt-a3b fix1 (review F1): lean/VE/Cardinality/Run.lean +15 (regionsJson and erasedJson moved from D[I] to D[V], as W6a's encQ/encCore; item total V +59: Run.lean +61, Time/Wire.lean -2)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3b, 2026-10-18",
+   "commit": "a274d948899386de3fb36ab56b7584ab07b707b7"
+  },
+  {
+   "class": "S",
+   "lines": 6,
+   "reason": "sc-5rb: VE/Scope/Readings.lean +118 (G[V] untied, scope spec 11.2), VE/Service/Document.lean +12 (withSets D[V], check's reading-set case; checkDocSets tied), VE/Service/ScopeAdmission.lean +6 (S, Pinned.withGoverned); K +0, total +136",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-5rb, 2026-10-28",
+   "commit": "d9cff5345ed2874d718bd1fa988b2777d5e2be0f"
+  },
+  {
+   "class": "V",
+   "lines": 130,
+   "reason": "sc-5rb: VE/Scope/Readings.lean +118 (G[V] untied, scope spec 11.2), VE/Service/Document.lean +12 (withSets D[V], check's reading-set case; checkDocSets tied), VE/Service/ScopeAdmission.lean +6 (S, Pinned.withGoverned); K +0, total +136",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-5rb, 2026-10-28",
+   "commit": "d9cff5345ed2874d718bd1fa988b2777d5e2be0f"
+  },
+  {
+   "class": "V",
+   "lines": 8,
+   "reason": "me-2d: VE/Calc/Render.lean +6 (G[V] English.leadingPhrase, reservedIn), VE/Calc/Wire.lean +2 (D[V] the calls in value and decode); checkWords and checkVerbalisations are D[R] (+16), RunExamples helpers T (V +8, K +0, S +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-2d, 2026-10-18",
+   "commit": "de7cb402237e826966f45fe7f495e69de61ce494"
+  },
+  {
+   "class": "S",
+   "lines": 1,
+   "reason": "et-3d: lean/VE/Events/Decl.lean S +1 (EventsTyped: decide (D.year ≤ 9999) per named date and its docstring line; K +0, V +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-3d, 2026-10-18",
+   "commit": "b8eac74553124f72a8650211b9df8228c621fdfe"
   }
  ]
 }

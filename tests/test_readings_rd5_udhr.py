@@ -29,6 +29,30 @@ def lean():
 
 
 
+def test_the_frozen_run_is_read_without_git(monkeypatch):
+    """Review F2 (gha-lineage): `bd6c7ab2` never reached `main`, so the run is read from its pinned snapshot, in
+    any clone, and no Git call names the commit."""
+    def no_git(*args, **kwargs):
+        raise AssertionError(f"a Git call for the frozen run: {args}")
+    monkeypatch.setattr(migrate.subprocess, "run", no_git)
+    meta, source, companions = migrate.read_run()
+    assert meta["format"] == "ve-document@1" and source and companions
+    readings = migrate.git_ls(migrate.COMMIT, f"{migrate.RUN}/readings")
+    assert readings == sorted(readings) and {name for name, _ in companions.values()} <= set(readings)
+
+
+def test_a_changed_frozen_snapshot_is_refused(tmp_path, monkeypatch):
+    changed = tmp_path / "frozen-run.json"
+    changed.write_bytes(migrate.FROZEN.read_bytes().replace(b"ve-document@1", b"ve-document@2", 1))
+    monkeypatch.setattr(migrate, "FROZEN", changed)
+    migrate.frozen.cache_clear()
+    try:
+        with pytest.raises(SystemExit, match="SHA-256 pin"):
+            migrate.read_run()
+    finally:
+        migrate.frozen.cache_clear()
+
+
 def test_copied_environment_holds_only_what_the_assertion_mentions():
     """The copied companion of `rs_u052`'s asserted reading: the main frame's declarations of the predicates it
     mentions and their sorts, without the verbalisation the norm companion gives them (so Lean's split refuses the

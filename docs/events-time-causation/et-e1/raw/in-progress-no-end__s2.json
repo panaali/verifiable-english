@@ -1,0 +1,53 @@
+{
+ "item": "in-progress-no-end",
+ "sample": 2,
+ "model": "claude-sonnet-5-5",
+ "account": "claude-panaali2",
+ "prompt_sha256": "3a8a3a2e159ded121bc4c5e9713db4658f5f7d6cb594e726c3e816809a37fe72",
+ "started": "2026-10-28T13:14:40+00:00",
+ "errors": [],
+ "finished": "2026-10-28T13:14:45+00:00",
+ "cli": {
+  "exit_code": 0,
+  "cli_session_id": "df4c743a-648b-4cdb-877d-8d32ba402dda",
+  "model_usage": [
+   "claude-sonnet-5-5"
+  ],
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 756,
+   "cache_read_input_tokens": 0,
+   "output_tokens": 92,
+   "output_tokens_details": {
+    "thinking_tokens": 0
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 756,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 92,
+     "cache_read_input_tokens": 0,
+     "cache_creation_input_tokens": 756,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 756
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "num_turns": 1
+ },
+ "reply": "The text says a stay begins on 2 June 2027 but gives no end date or length. Ana has no other stay, so whether the stay is still in progress on 20 June depends on when it ends, which we aren't told. It could have ended before 20 June or continued past it.\n\nANSWER: C"
+}

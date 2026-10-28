@@ -65,3 +65,29 @@ def test_spec_keeps_scope_admission_text_by_the_document_level_statement():
     section = SPEC.read_text().split("### 11.4 ", 1)[1].split("\n### ", 1)[0]
     bullet = next(b for b in section.split("\n- ") if b.startswith("**`scope_admission` is replaced"))
     assert "`checkDocSets_no_sets`" in bullet
+
+
+# sc-5rb's statement gate: each statement the build proves is the stub's after whitespace normalisation, and the
+# statements it leaves are exactly the four that take `Pinned.JsonWF` (sc-1ae's parser lemma; sc-5rc).
+PROVED = [ROOT / "lean/VE/Scope/ReadingsTheorems.lean", ROOT / "lean/VE/Service/ScopeAdmission.lean"]
+LEFT = {"governSets_preserves", "governSets_every_choice", "governSets_strings", "governSets_readings_refused"}
+
+
+def by_name(text: str) -> dict[str, str]:
+    return {st.split()[0]: " ".join(st.split()) for st in statements(text)}
+
+
+def test_each_statement_sc5rb_proves_is_the_stubs_text():
+    stub = by_name(STUB.read_text())
+    built = {}
+    for path in PROVED:
+        built |= by_name(path.read_text())
+    assert {name: built.get(name) for name in stub if name not in LEFT} == {n: t for n, t in stub.items()
+                                                                           if n not in LEFT}
+    assert not LEFT & set(built) and LEFT <= set(stub)
+
+
+def test_the_definitions_are_the_stubs_verbatim():
+    stub = STUB.read_text().split("/-! ## 11.2 The definitions -/\n", 1)[1].split("\n/-! ## 11.3", 1)[0]
+    built = (ROOT / "lean/VE/Scope/Readings.lean").read_text()
+    assert stub.strip() in built

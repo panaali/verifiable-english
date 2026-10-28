@@ -162,6 +162,15 @@ theorem checkDoc_fits (j : Json) : OkFits j Skeletons.document (VE.Service.Docum
     exact fold_fits j _ id c
   · exact document_fits j
 
+theorem checkDocSets_fits (j : Json) : OkFits j Skeletons.document (VE.Service.Document.checkDocSets j) := by
+  unfold VE.Service.Document.checkDocSets
+  split
+  · okfits
+    rename_i a h
+    obtain ⟨id, c, rfl⟩ := checkCore_encode h
+    exact fold_fits j _ id c
+  · exact document_fits j
+
 theorem locatedRow_fits (j : Json) (message : String) (at_ : VE.Service.Document.Located) :
     Fits j Skeletons.document (VE.Service.Document.locatedRow j message at_) := by
   unfold VE.Service.Document.locatedRow
@@ -175,7 +184,7 @@ theorem runCaseReported_fits (j : Json) :
     Fits j Skeletons.document (VE.Service.Document.runCaseReported j) := by
   unfold VE.Service.Document.runCaseReported
   split
-  · exact checkDoc_fits j _ ‹_›
+  · exact checkDocSets_fits j _ ‹_›
   · split
     · exact locatedRow_fits j _ _
     · unfold VE.Service.Standalone.reported

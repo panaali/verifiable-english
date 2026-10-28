@@ -47,7 +47,7 @@ for name in ["coveredLayout", "kindOf", "defSpans", "admitBlock", "anchor_reach_
         i = next(i for i in range(min(len(a), len(b))) if a[i] != b[i])
         print(f"DIFFERS   {name}: spec `{' '.join(a[i:i + 4])}`, built `{' '.join(b[i:i + 4])}`")
 
-base = statements(subprocess.run(["git", "show", "68f18dcdc:lean/statements.txt"], capture_output=True, text=True,
+base = statements(subprocess.run(["git", "show", "17ea952d883cc269dbc37f0879e2e52b3a6d1ac2:lean/statements.txt"], capture_output=True, text=True,
                                  check=True).stdout)
 head = statements(open("lean/statements.txt").read())
 print("\nsc-3a's statements, compiled, at 68f18dcdc and on this tree:\n")
