@@ -1,3 +1,5 @@
+edf4cb96af5698c1df85652ce17ad572f475fb25 ap-1bd: report's size breakdown recomputed from the numstat
+605d0c90526063a27d09132640b1f58ffd715fa7 ap-1bd: evidence commit list (git log main..HEAD --no-merges)
 fcd41aa9c3537a036eb79914e4321d4b3ae2f4e6 ap-1bd: report the measured size
 f093cf4524161d78958a8a9c735c807c4904f1bb ap-1bd: trust_mutants rescored on the final Lean (26 killed, 10 allowed, exit 0); DELTA and build report
 501f211bc1ac933914f54800b4e442ea7f230fb1 ap-1bd: seeded bug for the reading-set refusal; delta re-recorded at the head
