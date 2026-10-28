@@ -1326,10 +1326,14 @@ def test_native_changes_schedule_builds_and_their_runners(head):
     assert list(select_tests.AUDIT) not in rust["commands"]
 
 
+# Reasons the plan adds for the whole change, not through the map: smoke and the history-inventory lint.
+PLAN_WIDE = {"smoke", select_tests.HISTORY_REASON}
+
+
 def mapped_reasons(plan: dict) -> set[str]:
-    """The units a plan selected through the map (not smoke, not the static graph)."""
+    """The units a plan selected through the map (not smoke or the history lint, not the static graph)."""
     return {test for test, reasons in plan["reasons"].items()
-            if any(r != "smoke" and not r.endswith("(static)") for r in reasons)}
+            if any(r not in PLAN_WIDE and not r.endswith("(static)") for r in reasons)}
 
 
 EVIDENCE_FILE = "docs/arch/AR-1/evidence/checks.json"
@@ -1879,7 +1883,7 @@ def test_the_plan_and_the_drift_check_treat_presence_alike(kind, path, letter, c
         expected |= {"python": {PRESENCE_UNITS["importer"]}, "lean": set(),
                      "rust": {PRESENCE_UNITS["runner"]}, "data": set()}[kind]
         mapped = {test for test, reasons in plan["reasons"].items()
-                  if any(r != "smoke" and not r.endswith("(static)") for r in reasons)}
+                  if any(r not in PLAN_WIDE and not r.endswith("(static)") for r in reasons)}
         assert mapped == expected, plan["reasons"]
     versions = {path: (old, new)} if path.endswith(".py") else {}
     drift = select_tests.uncertain_units(select_tests.Coverage(data), source_graph.load(select_tests.ROOT),
@@ -2284,7 +2288,7 @@ def test_a_change_that_can_stale_the_history_list_runs_its_lint_with_a_map(path,
         plan = plan_for([change], data)
         assert plan["history_inventory"] == [change.path]
         assert select_tests.HISTORY_TEST in plan["selected"]
-        assert plan["full"] or "history inventory" in plan["reasons"][select_tests.HISTORY_TEST], change.path
+        assert plan["full"] or select_tests.HISTORY_REASON in plan["reasons"][select_tests.HISTORY_TEST], change.path
 
 
 @pytest.mark.parametrize("path", HISTORY_NEUTRAL)
@@ -2293,7 +2297,7 @@ def test_documentation_and_an_unlisted_module_do_not_run_the_history_lint_with_a
     data = make_map({test: {} for test in select_tests.units()}, commit=head)
     plan = plan_for(history_changes(path), data)
     assert not plan["full"] and plan["history_inventory"] == []
-    assert "history inventory" not in plan["reasons"].get(select_tests.HISTORY_TEST, [])
+    assert select_tests.HISTORY_REASON not in plan["reasons"].get(select_tests.HISTORY_TEST, [])
 
 
 @pytest.fixture

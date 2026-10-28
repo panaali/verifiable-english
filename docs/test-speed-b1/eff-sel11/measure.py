@@ -31,7 +31,7 @@ def measure(merge: str) -> dict:
     base = git("merge-base", main_side, branch)
     paths = git("diff", "--no-renames", "--name-only", base, branch).splitlines()
     plan = select_tests.select(paths, base=base, after=branch)
-    only_rule = plan["reasons"].get(select_tests.HISTORY_TEST) == ["history inventory"]
+    only_rule = plan["reasons"].get(select_tests.HISTORY_TEST) == [select_tests.HISTORY_REASON]
     after = select_tests.impacted(paths)
     rule = select_tests.history_inventory
     select_tests.history_inventory = lambda paths: []
