@@ -1,0 +1,17 @@
+fcd41aa9c3537a036eb79914e4321d4b3ae2f4e6 ap-1bd: report the measured size
+f093cf4524161d78958a8a9c735c807c4904f1bb ap-1bd: trust_mutants rescored on the final Lean (26 killed, 10 allowed, exit 0); DELTA and build report
+501f211bc1ac933914f54800b4e442ea7f230fb1 ap-1bd: seeded bug for the reading-set refusal; delta re-recorded at the head
+925a8b323a2f15db4c7f2b74db21b618249ee564 ap-1bd: a reading set over acts@0 keeps the base's refusal (Python's superposed route does not read acts@0 yet: ap-1bg); the filled environment's shape, binding and tests reverted (unreachable without reading sets); R16 allowance V +31
+ae9714ae00d1bba06f79dcd439ad49fe6340f675 ap-1bd: the oracle's acts@0 fixture environments on one line each (same content)
+6a2fce02df6b06eca2cacf71ff185aba83e42bd0 ap-1bd: seeded bugs re-run where the code or its guard moved (actsRead's gate, the readings guards)
+d0784ce83146eb465cfb9073397d0f20ec2da865 ap-1bd: trust_mutants evidence (84 killed, 5 allowed: three do not elaborate, two equivalent), exit 0
+4fc1517f6346a984f215f7c0d50b5ec58b09ebda ap-1bd: the Readings/Wire decoder pin reviewed and re-pinned (singleActsOnly listed), the new guard files under other_json, VE.Readings.ActsExamples's layer
+51fb76c5a17577e30c08e45b9e4954bdf344c801 ap-1bd: the readings route's guards in their own directory (VE.Readings.ActsExamples: joined act first or last, constants, the text map); actsRead gates the base rows (readings@1 is set aside before validated); acts@0 alone
+1339b57bf7c5948180fc6a5fa6d4788b3bd578ed ap-1bd: pin the filled environment's shapes (form, acts, the rendering's digests) by guards in the schema module
+3ea68e9c10a10c80b4ea2839a20f9fc5b1569169 ap-1bd: seeded bugs (Lean 10, Python 6), all killed; one equivalent first plant recorded
+dd20ed6794d2cfc550729cc4ae67a53d23160fc6 ap-1bd: trust classes for the new declarations and the R16 allowance (V +30, K +0, S +0); delta base against head (369 records, 364 identical: acts 4, d33 1)
+1bafda8862d8148391a0893be1a7a1cdae293074 ap-1bd: singleActsOnly without a match (approved statements keep their bytes); regenerated files and the service pin
+ef386517d2cf743d65c56d7c9d8336be2f8a65b7 ap-1bd: the model oracle's acts@0 rows re-recorded by its tool (record --profile acts@0): an all-plain acts@0 environment answered, A1-A3's still refused by Rust
+b2b2a008e83096f6767313e250559181fff73b44 ap-1bd: the readings route admits a rule on a plain act (Soften.checkW1) and types and binds a filled environment's acts block and form; tests for typing, models, Rust's view, the readings route and the u076 part document
+294faf2f1b87983d7e1ca6e015ed6c543e5339cd ap-1bd: the readings route's frame decoder reads acts@0 single acts, D-33 for a joined act; guards on both sides of typing, the model path and the readings route
+c0f2e3cd21aea18691edb9c595d23630505f7d06 ap-1bd: typing and the model path read acts@0 (Standalone.regulatedOf, actsRead); Rust's search view without a wording-only acts layer
