@@ -2391,6 +2391,76 @@ def test_merge_refuses_a_verdict_on_a_row_a_part_does_not_run(sharded, capsys, n
     test_merge_refuses_parts_that_are_not_one_runs(sharded, capsys, name, change, says)
 
 
+def forged_rescore_parts(ps, *, mode="identical", head="h", reused=0, rerun=2, source=None, carried=None):
+    """Resealable parts with one independently changed rescore fact or row provenance."""
+    for d in ps:
+        d["rescore"] = {"file": "p", "head": head, "mode": mode, "changed": ["x"] if mode == "checks" else [],
+                        "reused": reused, "rerun": rerun, **({"full_run": "old evidence"} if mode == "full" else {})}
+    if source is not None:
+        ps[0]["mutants"][0]["reused_from"] = source
+    if carried is not None:
+        ps[0]["mutants"][0]["carried"] = carried
+
+
+RESCORE_FORGERIES = [
+    ("invented-reuse-count", lambda ps: forged_rescore_parts(ps, reused=999, rerun=0), "rescore.reused"),
+    ("invented-rerun-count", lambda ps: forged_rescore_parts(ps, rerun=999), "rescore.rerun"),
+    ("missing-row-source", lambda ps: forged_rescore_parts(ps, reused=1, rerun=1), "rescore.reused"),
+    ("wrong-row-source", lambda ps: forged_rescore_parts(ps, reused=1, rerun=1, source="other"), "rescore.head"),
+    ("row-source-without-rescore", lambda ps: ps[0]["mutants"][0].update(reused_from="h"),
+     "without rescore"),
+    ("carried-without-rescore", lambda ps: ps[0]["mutants"][0].update(carried="checks"),
+     "without rescore"),
+    ("full-run-claims-reuse", lambda ps: forged_rescore_parts(ps, mode="full", head=None, reused=1, rerun=1,
+                                                               source="h"), "rescore.head"),
+    ("identical-claims-carry", lambda ps: forged_rescore_parts(ps, reused=1, rerun=1, source="h",
+                                                                carried="checks"), "rescore.mode"),
+    ("unknown-carry-label", lambda ps: forged_rescore_parts(ps, reused=1, rerun=1, source="h",
+                                                              carried="something else"), "rescore.mode"),
+    ("checks-omits-carry", lambda ps: forged_rescore_parts(ps, mode="checks", reused=1, rerun=1, source="h"),
+     "rescore.mode"),
+    ("checks-without-changed-files", lambda ps: (forged_rescore_parts(ps, mode="checks"),
+                                                   [d["rescore"].update(changed=[]) for d in ps]), "rescore.mode"),
+    ("identical-with-changed-files", lambda ps: (forged_rescore_parts(ps),
+                                                  [d["rescore"].update(changed=["x"]) for d in ps]), "rescore.mode"),
+    ("full-without-reason", lambda ps: (forged_rescore_parts(ps, mode="full", head=None),
+                                        [d["rescore"].pop("full_run") for d in ps]), "rescore.mode"),
+    ("unknown-claimed-reused", lambda ps: (forged_rescore_parts(ps),
+                                             ps[2]["mutants"][2].update(reused_from="h"),
+                                             ps[2]["rescore"].update(reused=1, rerun=1)), "raw_status"),
+]
+
+
+@pytest.mark.parametrize(("name", "change", "says"), RESCORE_FORGERIES, ids=[r[0] for r in RESCORE_FORGERIES])
+def test_merge_binds_rescore_to_owned_rows(sharded, capsys, name, change, says):
+    paths = parts(sharded, 3, "--max-mutants", 6)
+    data = [json.loads(p.read_text()) for p in paths]
+    change(data)
+    for p, d in zip(paths, data):
+        p.write_text(json.dumps(resealed(d)))
+    merged = sharded.tmp / "merged.json"
+    capsys.readouterr()
+    assert sharded.tm.main(["--merge", str(merged), *map(str, paths)]) == 2
+    assert says in capsys.readouterr().err and not merged.exists()
+
+
+def test_merge_enforces_the_by_id_owner_even_when_all_verdicts_are_accounted_for(sharded, capsys):
+    paths = parts(sharded, 3, "--max-mutants", 6)
+    data = [json.loads(p.read_text()) for p in paths]
+    owner, other = data[0], data[1]
+    verdict = owner["mutants"][0]
+    owner["mutants"][0] = sharded.tm.idle(verdict, sharded.tm.OTHER)
+    owner["shard"]["owned"].remove("M001")
+    other["mutants"][0] = verdict
+    other["shard"]["owned"].append("M001")
+    for p, d in zip(paths, data):
+        p.write_text(json.dumps(resealed(d)))
+    merged = sharded.tmp / "merged.json"
+    capsys.readouterr()
+    assert sharded.tm.main(["--merge", str(merged), *map(str, paths)]) == 2
+    assert "shard.owned does not follow the by-id split" in capsys.readouterr().err and not merged.exists()
+
+
 def test_merge_refuses_an_unreadable_part_or_no_part(sharded, capsys):
     (sharded.tmp / "bad.json").write_text("{")
     assert sharded.tm.main(["--merge", str(sharded.tmp / "m.json"), str(sharded.tmp / "bad.json")]) == 2

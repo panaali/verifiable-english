@@ -1,7 +1,7 @@
 # tm-shard: trust_mutants --shard K/N, --merge and --plan
 
 Status: built and verified; ready for the chain's gate. No DRI signature is needed (tooling, no DELTA row).
-Changed: tools/trust_mutants.py and tests/test_trust_mutants.py only (Python). No Lean, Rust, trust, wire or ve/ change.
+Changed: tools/trust_mutants.py, tests/test_trust_mutants.py and this report (Python tooling only).
 Proof on real Lean (q1-4, 30 mutants run): three parts merged equal the unsharded record (empty diff), and the
 unsharded record equals main's tool byte for byte apart from `seconds` and `inputs.tool`.
 Open: none. Not run here: the full gate (the chain runs it), trust_mutants on the Mac (no trusted Lean changed).
@@ -130,6 +130,19 @@ exit 0. Now every row a part does not run, OTHER SHARD or NOT RUN, must be exact
 
 S8 and S11 first went uncaught (a null status already failed its type; the third part lacked the changed input);
 the cases now set a typed unknown status and the input in every part.
+
+### Fix round 2 (recheck F3)
+
+F3: `--merge` now derives each part's owned IDs from the shared `owns` rule and binds `rescore.reused`,
+`rescore.rerun`, `rescore.head`, mode, and each row's `reused_from`/`carried` to those owned rows. A part without
+`rescore` cannot claim reused or carried verdicts. The by-ID ownership check also refuses a fully accounted-for
+verdict moved to a different part. Tests: `test_merge_binds_rescore_to_owned_rows` (14 cases),
+`test_merge_enforces_the_by_id_owner_even_when_all_verdicts_are_accounted_for`, and the existing valid rescored
+merge test. The executable PROBE F3 failed before the fix and passed afterward.
+
+Seeded Python bug S14: disabled the two rescore counter comparisons in `tools/trust_mutants.py`;
+`test_merge_binds_rescore_to_owned_rows[invented-reuse-count]` failed with merge exit 1 and a fabricated
+"2997 reused" summary. Restored the comparisons afterward.
 
 ## DELTA
 
