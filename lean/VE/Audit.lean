@@ -2,6 +2,7 @@
 -- The `#print axioms` audit of every theorem of lean/declarations.txt outside the ResponseShape modules.
 import Iceberg
 import VE.Acts.Compat
+import VE.Acts.Grammar
 import VE.Acts.GrammarExamples
 import VE.Acts.Lexical
 import VE.Acts.LexicalProofs
@@ -106,6 +107,7 @@ import VE.Core.TableauExtendedRules
 import VE.Core.Wire
 import VE.Data.Background
 import VE.Defaults.Meaning
+import VE.Defaults.MeaningExamples
 import VE.Defaults.Premises
 import VE.Defaults.Route
 import VE.Defaults.Wire
@@ -517,8 +519,17 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.Lexical.words_cover
 #print axioms VE.Acts.Lexical.words_data
 #print axioms VE.Acts.Lexical.words_intercalate
+#print axioms VE.Acts.build_wf
+#print axioms VE.Acts.closed_cl
+#print axioms VE.Acts.closed_ok
 #print axioms VE.Acts.distinctTexts_ok
 #print axioms VE.Acts.firstEqualPair_none
+#print axioms VE.Acts.frameRules_ok
+#print axioms VE.Acts.framesOk_words
+#print axioms VE.Acts.getElem?_map_idxOf
+#print axioms VE.Acts.globalRules_ok
+#print axioms VE.Acts.grammar_wf
+#print axioms VE.Acts.kwSyms_ok
 #print axioms VE.Acts.listing_limit
 #print axioms VE.Acts.listing_nodup
 #print axioms VE.Acts.listing_ok
@@ -532,6 +543,8 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.readingsIn_exact
 #print axioms VE.Acts.readingsIn_limit
 #print axioms VE.Acts.readingsIn_nodup
+#print axioms VE.Acts.schema_ok
+#print axioms VE.Acts.schema_ranked
 #print axioms VE.Acts.table_free_all_own
 #print axioms VE.Acts.table_free_all_shared
 #print axioms VE.Acts.table_free_all_split
@@ -1647,6 +1660,21 @@ import VE.WireContract.Engine
 #print axioms VE.Data.Background.premises_sat_iff
 #print axioms VE.Data.Background.string_encoding_sound
 #print axioms VE.Data.Background.totalPremise_iff
+#print axioms VE.Defaults.MeaningFixtures.Uπ_eq
+#print axioms VE.Defaults.MeaningFixtures.admissible_π
+#print axioms VE.Defaults.MeaningFixtures.decisionNames_π
+#print axioms VE.Defaults.MeaningFixtures.decisions_π
+#print axioms VE.Defaults.MeaningFixtures.exc_unsaid
+#print axioms VE.Defaults.MeaningFixtures.exceptedName_π
+#print axioms VE.Defaults.MeaningFixtures.open_π
+#print axioms VE.Defaults.MeaningFixtures.rel_base
+#print axioms VE.Defaults.MeaningFixtures.rel_unsaid
+#print axioms VE.Defaults.MeaningFixtures.rel_π
+#print axioms VE.Defaults.MeaningFixtures.soften_π
+#print axioms VE.Defaults.MeaningFixtures.switch_π
+#print axioms VE.Defaults.MeaningFixtures.switchesOff_π
+#print axioms VE.Defaults.MeaningFixtures.typed_π
+#print axioms VE.Defaults.MeaningFixtures.unsaid_π
 #print axioms VE.Defaults.Wire.DefaultsView.hD
 #print axioms VE.Defaults.Wire.DefaultsView.hR
 #print axioms VE.Defaults.Wire.DefaultsView.hU
