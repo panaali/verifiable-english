@@ -1,4 +1,12 @@
-# STOPPED — DRI signature needed for df-3's corrected `DVerdicts` statement
+# STOPPED — DRI signature needed for df-3's corrected `DVerdicts` statement; F4–F6 fixed
+
+## Recheck fixes (2026-10-28)
+
+- F4 → `DefaultVerdicts.lean` is classified as a full-file pinned decoder in `ve/assurance-manifest.json`, with the generated assurance document updated. Regression: `tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified`, plus decoder range and hash pins. Commit `b91fc1fdf`.
+- F5 → the hand mutation runner uses `nested_pytest.command` and its sanitized environment, requires the unmutated target tests to pass, and counts a kill only for a pytest test failure. Regressions: `tests/test_nested_pytest.py::test_every_pytest_command_is_built_by_the_builder`, `::test_mutation_kill_requires_a_failed_test`; a P1 smoke run with `PYTEST_ADDOPTS='-k impossible'` still killed its mutant. Commit `250464df7`.
+- F6 → the default evidence search receives the readings route's live budget for proof, coherence and model generation. Lean still decides all rows and folds. Regressions: `tests/test_defaults_readings.py::test_default_query_respects_readings_budget_after_cached_free_gate`, `::test_default_query_with_adequate_budget_is_all`. The original probe changed from strict `UNKNOWN`, default `ALL` to both `UNKNOWN`; removing the budget argument made the new test fail. Commit `0cbea510e`. The zero-budget verdict delta is signed by standing ruling R5 in `DELTA.md`.
+
+The F4 and F5 executable probes failed before these fixes and passed afterward. F1 remains the approved-statement stop recorded below; the D3 cell deliberately reserves the DRI decision and prevents review-ready status. The three tests listed in `main-known-red.txt` are pre-existing main failures, outside this branch's fix scope.
 
 **Status: STOPPED at spec 7.4's `DVerdicts` / `d_rowsHold`; DRI approval of a corrected statement is needed.**
 F2's shared Python request binding is fixed in this review round; F1 remains the statement approval stop.
