@@ -82,8 +82,8 @@ recorded expression; it is written with `Option.elim` instead). jt-2 merged (`6b
   (`isEmpty` of a list's first or last element; a sorted profile list starts with `acts@0`) and four that do not
   elaborate (`[]` without an element type). An earlier run sent to the cloud was refused by its verifier and abandoned.
 - **Size** (`git diff --numstat` against the merge base; generated files, evidence JSON, mutants JSON and the oracle
-  excluded): 634 added and 40 changed hand-written lines: Lean 134 (guards 120), Python 31, tests and fixtures 122, the
-  oracle tool 15, the delta script 114, side tables 40, DELTA and this report about 175. That is about 35 over the ~600
+  excluded): 634 added and 40 changed hand-written lines: Lean 161 (guards 120), Python 31, tests and fixtures 107, the
+  oracle tool 15, the delta script 114, side tables 40, DELTA and this report 166. That is about 35 over the ~600
   rule; deviation 5's revert (the filled environment's shape, binding and fuzz tests, about 90 lines) and the
   compacted fixtures kept it there, and the rest is named ap-1bg.
 - **Evidence:** [evidence/delta.json](evidence/delta.json) (369 records, 364 identical, DELTA rows 2-3);
