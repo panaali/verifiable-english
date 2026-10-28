@@ -694,11 +694,6 @@ def _bind_completion(row, case, *, checked_part=False):
             _need(label.startswith(FILL_LABEL) and tuple(label[len(FILL_LABEL):].split(",")) in pairs)
     filled = Environment(row["filled"]["environment"])
     _need(set(filled.sorts) == set(request.sorts) and set(filled.constants) == set(request.constants))
-    # `acts@0`'s block and every regulated act and form are the request's (ap-1bd)
-    _need(row["filled"]["environment"]["vocabulary"].get("acts") == case["environment"]["vocabulary"].get("acts")
-          and all((filled.predicates[p].regulated.act, filled.predicates[p].regulated.form)
-                  == (decl.regulated.act, decl.regulated.form)
-                  for p, decl in request.predicates.items() if decl.regulated is not None))
     # The profiles are the request's, in its order, without the completion's own (review B4 of rd-6b).
     profiles = row["filled"]["environment"]["profiles"]
     _need(NORM_DEFAULTS not in profiles and profiles == [p for p in case["environment"]["profiles"] if p in profiles])

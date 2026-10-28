@@ -754,9 +754,6 @@
         "ResponseShape.Schemas.ReadingsRoute.verdicts_word",
         "ResponseShape.Schemas.ReadingsRoute.soft_premises",
         "ResponseShape.Schemas.ReadingsRoute.filledFieldsS"
-      ],
-      "T": [
-        "ResponseShape.Schemas.ReadingsRoute.renderedProperty"
       ]
     },
     "ResponseShape/Schemas/Reports.lean": {
@@ -15365,7 +15362,10 @@
         "VE.Readings.ActsExamples.decode",
         "VE.Readings.ActsExamples.d33",
         "VE.Readings.ActsExamples.ruleDoc",
-        "VE.Readings.ActsExamples.d4"
+        "VE.Readings.ActsExamples.d4",
+        "VE.Readings.ActsExamples.rule",
+        "VE.Readings.ActsExamples.setDoc",
+        "VE.Readings.ActsExamples.noActs"
       ]
     }
   }

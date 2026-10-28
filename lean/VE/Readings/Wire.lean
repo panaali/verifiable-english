@@ -274,6 +274,9 @@ def decodeDocument (re : ReadingsEnvironment) (document : Json) : Except String 
     | .arr ss => ss.toList.mapM decodeSet
     | .null => pure []
     | _ => throw "reading_sets must be a list"
+  -- a reading set over `acts@0` reaches Python's superposed route, whose soft frame does not read the profile yet
+  -- (ap-1bg): such a document keeps the base's refusal
+  if re.profiles.contains "acts@0" && !sets.isEmpty then throw "UnsupportedProfile: Unsupported profile acts@0"
   let act := active sets
   let unitIds := units.map (·.1)
   let mut items : List Item := []

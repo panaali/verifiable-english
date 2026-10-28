@@ -1098,12 +1098,6 @@
         "vocabulary": {
           "additionalProperties": false,
           "properties": {
-            "acts": {
-              "additionalProperties": false,
-              "properties": {"fixed": {"$ref": "common.json#/$defs/strings"}},
-              "required": ["fixed"],
-              "type": "object"
-            },
             "constants": {
               "additionalProperties": {
                 "additionalProperties": false,
@@ -1163,7 +1157,6 @@
           "properties": {
             "act": {"type": "string"},
             "default": {"enum": ["allow", "deny"]},
-            "form": {"type": "string"},
             "permission": {"type": ["string", "null"]},
             "role": {"enum": ["permission", "obligation", "plain"]}
           },
