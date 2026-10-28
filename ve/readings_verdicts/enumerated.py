@@ -216,6 +216,21 @@ class Enumerated(_Route):
             fields["assumed"] = [list(x) for x in assumed]
         return self._verdicts("query", query=query, **fields)
 
+    def default_english(self, row, wording):
+        """The rendered English of `row`'s `default` member (`ve.defaults_english.readings`): each reading named as
+        `wording` names it, each choice's request its own `defaults-*` request with the collision sent for it."""
+        from ..defaults_english import readings
+        sent = {json.dumps(e["choice"]): e for e in self.requests[id(row)]["evidence"]}
+
+        def under(choice_json):
+            return " and ".join(f"sentence {number} read as {name}" for number, name in wording.readings(choice_json))
+
+        def choice_case(choice_json):
+            base, _ = self.frame(self.requests[id(row)]).defaults(choice_json)
+            witness = sent.get(json.dumps(choice_json), {}).get("default", {}).get("collision")
+            return {**base, **({"collision": witness} if witness else {})}
+        return readings(row["default"], under, choice_case)
+
     def query_answer(self, conclusion_ast, assumed=None, premises=()):
         """Lean's whole answer to the `entailment` request for this conclusion (its English plan included), asked
         when this route has not asked it yet."""
