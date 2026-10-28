@@ -1,11 +1,11 @@
 {
  "counts": {
-  "class": 79,
+  "class": 88,
   "lint": 0,
-  "verdict": 29,
-  "wording": 140
+  "verdict": 38,
+  "wording": 142
  },
- "records": 2446,
+ "records": 2466,
  "rows": [
   {
    "base": {
@@ -6348,6 +6348,523 @@
     "warnings": []
    },
    "wording": "Is \"beacon_two\" reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, every"
+   },
+   "class": "class",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"every service is not reviewed.\". Unknown English phrase 'is not reviewed'. Nearest declared wordings: 'is reviewed'; 'service'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 29,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is every service not reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, no"
+   },
+   "class": "verdict",
+   "env": "speech",
+   "head": {
+    "content": {
+     "body": [
+      "not",
+      [
+       "exists",
+       "service",
+       [
+        "unary",
+        "reviewed",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     ],
+     "mode": "polar"
+    },
+    "kind": "question",
+    "warnings": []
+   },
+   "wording": "Is no service reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, no"
+   },
+   "class": "class",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"no service is not reviewed.\". Unknown English phrase 'is not reviewed'. Nearest declared wordings: 'is reviewed'; 'service'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 26,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is no service not reviewed?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, some"
+   },
+   "class": "class",
+   "env": "speech",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"some service is not reviewed.\". Unknown English phrase 'is not reviewed'. Nearest declared wordings: 'is reviewed'; 'service'; 'alice'.",
+    "span": {
+     "column": 1,
+     "end": 28,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is some service not reviewed?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "verdict",
+   "env": "unverbalised",
+   "head": {
+    "content": {
+     "body": [
+      "unary",
+      "checked",
+      [
+       "const",
+       "atlas"
+      ]
+     ],
+     "mode": "polar"
+    },
+    "kind": "question",
+    "warnings": []
+   },
+   "wording": "Is atlas checked?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "unverbalised",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is not checked.\". Unknown English phrase 'is not checked'. Nearest declared wordings: 'is checked'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 20,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas not checked?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, every"
+   },
+   "class": "verdict",
+   "env": "unverbalised",
+   "head": {
+    "content": {
+     "body": [
+      "forall",
+      "service",
+      [
+       "unary",
+       "checked",
+       [
+        "var",
+        0
+       ]
+      ]
+     ],
+     "mode": "polar"
+    },
+    "kind": "question",
+    "warnings": []
+   },
+   "wording": "Is every service checked?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, every"
+   },
+   "class": "class",
+   "env": "unverbalised",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"every service is not checked.\". Unknown English phrase 'is not checked'. Nearest declared wordings: 'is checked'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 28,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is every service not checked?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, no"
+   },
+   "class": "verdict",
+   "env": "unverbalised",
+   "head": {
+    "content": {
+     "body": [
+      "not",
+      [
+       "exists",
+       "service",
+       [
+        "unary",
+        "checked",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     ],
+     "mode": "polar"
+    },
+    "kind": "question",
+    "warnings": []
+   },
+   "wording": "Is no service checked?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, no"
+   },
+   "class": "class",
+   "env": "unverbalised",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"no service is not checked.\". Unknown English phrase 'is not checked'. Nearest declared wordings: 'is checked'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 25,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is no service not checked?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, some"
+   },
+   "class": "verdict",
+   "env": "unverbalised",
+   "head": {
+    "content": {
+     "body": [
+      "exists",
+      "service",
+      [
+       "unary",
+       "checked",
+       [
+        "var",
+        0
+       ]
+      ]
+     ],
+     "mode": "polar"
+    },
+    "kind": "question",
+    "warnings": []
+   },
+   "wording": "Is some service checked?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, some"
+   },
+   "class": "class",
+   "env": "unverbalised",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"some service is not checked.\". Unknown English phrase 'is not checked'. Nearest declared wordings: 'is checked'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 27,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is some service not checked?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "verdict",
+   "env": "unverbalised",
+   "head": {
+    "content": {
+     "body": [
+      "unary",
+      "checked",
+      [
+       "const",
+       "atlas"
+      ]
+     ],
+     "mode": "polar"
+    },
+    "kind": "question",
+    "warnings": []
+   },
+   "wording": "Is atlas Checked?"
+  },
+  {
+   "base": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The character at position 0 cannot appear outside a quoted name.",
+    "span": {
+     "column": 1,
+     "end": 1,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "class": "wording",
+   "env": "unverbalised",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is not Checked.\". Unknown English phrase 'is not Checked'. Nearest declared wordings: 'is checked'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 20,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is atlas not Checked?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, every"
+   },
+   "class": "verdict",
+   "env": "unverbalised",
+   "head": {
+    "content": {
+     "body": [
+      "forall",
+      "service",
+      [
+       "unary",
+       "checked",
+       [
+        "var",
+        0
+       ]
+      ]
+     ],
+     "mode": "polar"
+    },
+    "kind": "question",
+    "warnings": []
+   },
+   "wording": "Is every service Checked?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, every"
+   },
+   "class": "class",
+   "env": "unverbalised",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"every service is not Checked.\". Unknown English phrase 'is not Checked'. Nearest declared wordings: 'is checked'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 28,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is every service not Checked?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, no"
+   },
+   "class": "verdict",
+   "env": "unverbalised",
+   "head": {
+    "content": {
+     "body": [
+      "not",
+      [
+       "exists",
+       "service",
+       [
+        "unary",
+        "checked",
+        [
+         "var",
+         0
+        ]
+       ]
+      ]
+     ],
+     "mode": "polar"
+    },
+    "kind": "question",
+    "warnings": []
+   },
+   "wording": "Is no service Checked?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, no"
+   },
+   "class": "class",
+   "env": "unverbalised",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"no service is not Checked.\". Unknown English phrase 'is not Checked'. Nearest declared wordings: 'is checked'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 25,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is no service not Checked?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, some"
+   },
+   "class": "verdict",
+   "env": "unverbalised",
+   "head": {
+    "content": {
+     "body": [
+      "exists",
+      "service",
+      [
+       "unary",
+       "checked",
+       [
+        "var",
+        0
+       ]
+      ]
+     ],
+     "mode": "polar"
+    },
+    "kind": "question",
+    "warnings": []
+   },
+   "wording": "Is some service Checked?"
+  },
+  {
+   "base": {
+    "code": "InvalidInput",
+    "error": "VEError",
+    "message": "UnknownAlternative: wording, some"
+   },
+   "class": "class",
+   "env": "unverbalised",
+   "head": {
+    "code": "SyntaxError",
+    "error": "SyntaxError",
+    "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"some service is not Checked.\". Unknown English phrase 'is not Checked'. Nearest declared wordings: 'is checked'; 'alice'; 'desk'.",
+    "span": {
+     "column": 1,
+     "end": 27,
+     "line": 1,
+     "start": 0
+    }
+   },
+   "wording": "Is some service not Checked?"
   }
  ]
 }
