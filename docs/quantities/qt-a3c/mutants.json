@@ -1,0 +1,149 @@
+{
+ "item": "qt-a3c",
+ "how": "uv run python tools/mutants.py docs/quantities/qt-a3c/mutants.json --no-baseline --evidence docs/quantities/qt-a3c/evidence/mutants-run.json, after a passing build. Each mutant is applied alone, its command rebuilds the module whose #guard, proof or test must fail (the dispatch mutant first replaces runMode_cardinality's rfl by sorry, so its kill is the service test's), and the harness restores the file's exact bytes.",
+ "mutants": [
+  {
+   "id": "row-requires",
+   "file": "lean/VE/Compose/Dispatch.lean",
+   "claim": "the cardinality@0 row requires W6a's three profiles",
+   "find": "⟨\"cardinality@0\", [\"order@0\", \"relational-fol@0\", \"time@0\"]",
+   "replace": "⟨\"cardinality@0\", [\"order@0\", \"relational-fol@0\"]",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Compose.Examples"
+   ],
+   "test": "VE/Compose/Examples.lean QT-A3 refusals (requires time@0)"
+  },
+  {
+   "id": "others-norms",
+   "file": "lean/VE/Compose/Dispatch.lean",
+   "claim": "cardinalityOthers: the row refuses every other profile",
+   "find": "\"nary@0\", \"norm-defaults@0\", \"norms@0\",\n   \"readings@1\"",
+   "replace": "\"nary@0\", \"norm-defaults@0\",\n   \"readings@1\"",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Compose.Examples"
+   ],
+   "test": "VE/Compose/Examples.lean QT-A3 refusals (with norms@0)"
+  },
+  {
+   "id": "modeProfiles-empty",
+   "file": "lean/VE/Compose/Dispatch.lean",
+   "claim": "modeProfiles: Python's environment list leaves cardinality@0 out",
+   "find": "def modeProfiles : List String := [\"cardinality@0\"]",
+   "replace": "def modeProfiles : List String := []",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Compose.Examples"
+   ],
+   "test": "VE/Compose/Examples.lean environmentProfiles guard"
+  },
+  {
+   "id": "registry-name",
+   "file": "lean/VE/Service/Registry.lean",
+   "claim": "Mode.name: the mode is named cardinality",
+   "find": "| .cardinality => \"cardinality\"",
+   "replace": "| .cardinality => \"cardinalty\"",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build ResponseShape.Skeletons"
+   ],
+   "test": "ResponseShape/Skeletons.lean every mode's row is its file's"
+  },
+  {
+   "id": "dispatch-w6a",
+   "file": "lean/VE/Service/Protocol.lean",
+   "claim": "runMode: the mode runs the cardinality runner",
+   "find": "| .cardinality, j => VE.Cardinality.Run.runCaseReported j",
+   "replace": "| .cardinality, j => VE.Time.Wire.runCaseReported j",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && python3 -c \"import pathlib; p = pathlib.Path('VE/Service/Protocol.lean'); s = p.read_text(); p.write_text(s.replace('runMode .cardinality j = VE.Cardinality.Run.runCaseReported j := rfl', 'runMode .cardinality j = VE.Cardinality.Run.runCaseReported j := sorry'))\" && cd .. && uv run pytest -q -x tests/test_cardinality_service.py"
+   ],
+   "test": "ResponseShape.Encoders.runMode_fits (the mode's row fits cardinality.json only through the cardinality runner): the service test's ve_service build fails there"
+  },
+  {
+   "id": "encoder-statement",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "runCaseReported_fits: a statement row has its meaning id and formula",
+   "find": "Json.mkObj [(\"meaning_id\", .str a.meaningId), (\"formula\", encode a.formula)]",
+   "replace": "Json.mkObj [(\"formula\", encode a.formula)]",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build ResponseShape.Encoders.Cardinality"
+   ],
+   "test": "ResponseShape.Encoders.Cardinality.runCaseReported_fits"
+  },
+  {
+   "id": "tactic-certificate",
+   "file": "lean/ResponseShape/Encoders/Cardinality.lean",
+   "claim": "cardinality_rows: a certificate row only for the kind certificate",
+   "find": "      | exact certificate_kind hK ‹_› ‹_›\n",
+   "replace": "",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build ResponseShape.Encoders.Cardinality"
+   ],
+   "test": "ResponseShape.Encoders.Cardinality.runCase_fits"
+  },
+  {
+   "id": "charged-nostop",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "chargedNodes: the build stops once the total passes the limit",
+   "find": "if used > VE.Limits.maxNodes then used else used +",
+   "replace": "used +",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean charged guard (10000 < n < 20000)"
+  },
+  {
+   "id": "charged-bridges",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "erasedThunks: the bridges are counted",
+   "find": "    (countedUniversals E (c :: ps)).map (fun x _ => bridge E (c :: ps) x) ++ ",
+   "replace": "    ",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunTheorems"
+   ],
+   "test": "VE.Cardinality.Run.problemChecks_eq"
+  },
+  {
+   "id": "charged-text",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "problemChecks: P3's refusal is W6a's aggregate text",
+   "find": "then throw VE.Time.Wire.aggregateLimit",
+   "replace": "then throw \"ResourceLimit: too large\"",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean P3 guards"
+  },
+  {
+   "id": "py-deadline",
+   "file": "ve/backends/lean_service.py",
+   "claim": "DEADLINES: the mode has its CPU deadline",
+   "find": "    \"cardinality\": (60.0, 60.0),\n",
+   "replace": "",
+   "command": [
+    "bash",
+    "-c",
+    "uv run pytest -q -x tests/test_lean_service.py -k deadline_keys"
+   ],
+   "test": "tests/test_lean_service.py::test_the_deadline_keys_are_the_handshakes_modes"
+  }
+ ]
+}
