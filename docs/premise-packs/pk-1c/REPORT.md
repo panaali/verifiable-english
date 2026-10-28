@@ -80,7 +80,7 @@ and Rust product code are unchanged.
   - `pk_keyPremise` :311
   - `legacy_labels_nodup_of_actKeys` :342 (the DRI's statement)
   - `legacy_labels_nodup_of_identifiers` :392 (the route discharge)
-- `lean/VE/NormDefaults/PacksLegacyExamples.lean`: F1′ (`cx`) :111–129, the `hk` fixtures :131–136 and the `VE.Bridge.identifier` fixtures :137–141.
+- `lean/VE/NormDefaults/PacksLegacyExamples.lean`: F1′ (`cx`) :102–129, the `hk` fixtures :131–136 and the `VE.Bridge.identifier` fixtures :137–141.
 - `docs/premise-packs/pk-1c/{DELTA.md,mutants.json,REPORT.md}`: the evidence.
 - Regression: `cd lean && PATH=~/.elan/bin:$PATH lake build VE.NormDefaults.PacksLegacyExamples`; `uv run pytest -q tests/test_packs_guard_mutants.py`; `python3 lean/audit.py`.
 - Generated files: `lean/declarations.txt`, `lean/statements.txt`, `lean/axioms.txt` and `lean/VE/Audit.lean`, through `uv run python tools/regen_generated.py --write`.
