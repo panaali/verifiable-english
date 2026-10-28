@@ -75,13 +75,6 @@ def _entities(witness):
     return {sort: set(ids) for sort, ids in witness["model"]["domains"].items()}
 
 
-def _in_model(rows, witness, what):
-    """Every entity of a situation's rows is one of the request's model."""
-    known = set().union(*_entities(witness).values())
-    if any(value not in known for row in rows for value in row):
-        raise _unbound(what)
-
-
 def _tuple(case, rule, values, witness, what):
     """A tuple of a rule's act: its arity and sorts, each entity in the request's model with that sort."""
     sorts, entities = _sorts(case, rule), _entities(witness)
@@ -89,9 +82,25 @@ def _tuple(case, rule, values, witness, what):
         raise _unbound(what)
 
 
-def _situation(row, witness):
+def _situation(case, row, witness):
+    """The displayed filling has exactly the tables of the request's unspecified regulated predicates.
+
+    Each table uses its predicate's declared argument sorts and the request model's domains. Lean emits all tables,
+    including empty ones (`witnessRow`); its filling decoder accepts an omitted input table as empty.
+    """
     if "situation" in row:
-        _in_model([r for rows in row["situation"]["filling"].values() for r in rows], witness, "situation")
+        predicates = case["environment"]["vocabulary"]["predicates"]
+        tables = {"unsaid__" + name: predicate["arguments"] for name, predicate in predicates.items()
+                  if (predicate.get("regulated") or {}).get("default") == "unspecified"}
+        filling = row["situation"]["filling"]
+        if set(filling) != set(tables):
+            raise _unbound("situation")
+        entities = _entities(witness)
+        for name, rows in filling.items():
+            sorts = tables[name]
+            if any(len(values) != len(sorts) or
+                   any(value not in entities.get(sort, ()) for sort, value in zip(sorts, values)) for values in rows):
+                raise _unbound("situation")
 
 
 def bind_elaborate(case, row, source):
@@ -119,7 +128,7 @@ def bind_coherence(case, row, targets):
         _tuple(case, rules[0], collision["tuple"], witness, "collision tuple")
         if collision["deciders"] != _deciders(case, rules):
             raise _unbound("collision deciders")
-        _situation(row, witness)
+        _situation(case, row, witness)
     return row
 
 
@@ -165,7 +174,7 @@ def bind_model(case, row, source):
                                                                                 e["tuple"])]) for e in forced]
     if order != sorted(order) or len({repr(o) for o in order}) != len(order):
         raise _unbound("forced order")
-    _situation(row, case["model"])
+    _situation(case, row, case["model"])
     return row
 
 

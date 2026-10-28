@@ -394,6 +394,17 @@ def test_pairs_and_collision(monkeypatch):
              {**row, "collision": {**row["collision"], "deciders": ["operator", "assistant"]}}, targets)
 
 
+@pytest.mark.parametrize("kind,fixture", [("defaults-coherence", "gamma"), ("defaults-model", "beta")])
+@pytest.mark.parametrize("filling", [{"absent": [["e0"]]}, {"unsaid__x_required": [["e0", "e0"]]}, {}])
+def test_situation_filling_tables_and_tuples_are_bound(monkeypatch, kind, fixture, filling):
+    case, row, _, targets, source = _genuine(monkeypatch, fixture, X_ALL, kind)
+    forged = {**row, "situation": {"filling": filling}}
+    if kind == "defaults-coherence":
+        _refused("situation", defaults.bind_coherence, case, forged, targets)
+    else:
+        _refused("situation", defaults.bind_model, case, forged, source)
+
+
 # -- the collision's deciders, cell by cell (review df-1b F10): a rule's own `decided_by`, else the document's
 #    `exception_decider`, else "unstated" (docs/spec/soft-norms.md 1.2; Lean `SoftNorms.Wire.exceptionDecider`), and
 #    one decider when the two rules' are the same, otherwise both in pair order (Lean `giveWayDeciders`).
@@ -508,13 +519,14 @@ def test_collision_refused_field_by_field(monkeypatch):
 
 
 def test_situation_entities_of_every_sort():
-    """A situation's entities are the request model's, of any of its sorts: an entity of the second sort is one, an
-    entity of no sort is not (`_in_model` reads every sort, not the first)."""
+    """Each filling tuple follows the declared sorts, including two distinct sorts."""
+    case = {"environment": {"vocabulary": {"predicates": {
+        "p": {"arguments": ["agent", "user"], "regulated": {"default": "unspecified"}}}}}}
     witness = {"model": {"domains": {"agent": ["a"], "user": ["u"]}}}
-    for filling in ({"t": [["a"]]}, {"t": [["u"]]}, {"t": [["a", "u"]], "s": [["u", "a"]]}):
-        defaults._situation({"situation": {"filling": filling}}, witness)
-    for filling in ({"t": [["z"]]}, {"t": [["u"], ["z"]]}, {"t": [["a"]], "s": [["u", "z"]]}):
-        _refused("situation", defaults._situation, {"situation": {"filling": filling}}, witness)
+    defaults._situation(case, {"situation": {"filling": {"unsaid__p": [["a", "u"]]}}}, witness)
+    for filling in ({"unsaid__p": [["u", "a"]]}, {"unsaid__p": [["a"]]},
+                    {"unsaid__p": [["z", "u"]]}, {"unsaid__p": [], "absent": []}, {}):
+        _refused("situation", defaults._situation, case, {"situation": {"filling": filling}}, witness)
 
 
 _HUNT2: dict = {}
