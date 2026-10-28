@@ -5,7 +5,7 @@ import VE.Acts.LexicalExamples
 import VE.Norms.Run
 import VE.Words.Situation
 import VE.NormDefaults.Run
-import VE.Readings.Run
+import VE.Readings.ActsExamples
 
 /-! act-phrases AP-1, the profile part (ap-1b): `acts@0` documents through the norms decoder, the environment
 mode, the family route and Lean's English (spec 2.1, 2.8, 3.1-3.3, 4.4; fixtures A1-A3, A5, A6, A19 of 11.1).
@@ -410,7 +410,7 @@ def unspecPlain : List (String × Json) := [("heard", pred ["person"] [("role", 
   "order", "premises", "reached", "status", "unsaid", "unspecified", "wordings"]
 
 /-! ### ap-1bd: typing, the model path and the readings route read `acts@0` (`Standalone.regulatedOf`, `actsRead`;
-`Readings.Wire.singleActsOnly`, D-33) -/
+`Readings.Wire.singleActsOnly`, D-33: the readings route's own in `VE.Readings.ActsExamples`) -/
 
 def typed (j : Json) (ast : Json := Json.arr #[.str "top"]) : String :=
   err (VE.Service.Standalone.checkCase (Json.mkObj [("id", .str "c"), ("environment", j), ("ast", ast)]))
@@ -425,6 +425,7 @@ def every (sort p : String) : Json :=
 #guard typed (envA ["acts@0", "closure@0", "norms@0", "relational-fol@0"]) ==
   "UnsupportedProfile: acts@0 on the closure family is not implemented"
 #guard typed (envA ["acts@0", "relational-fol@0"]) == "UnsupportedProfile: acts@0 requires norms@0"
+#guard typed (envA ["acts@0"]) == "UnsupportedProfile: Missing profile relational-fol@0"
 -- the act check is `acts@0`'s, with the block's fixed phrases: A1 without them joins acts; 400 bytes and one past
 #guard typed (env actsP [("heard", pred ["person", "case"] (plain a1 "is entitled"))]) ==
   "InvalidInput: act phrase for heard joins acts with 'and' outside a fixed phrase"
@@ -447,33 +448,8 @@ def dualEnv := env actsP dual (some (block fxs))
 #guard ((decodeA dualEnv).toOption.bind fun ne => (VE.Service.Standalone.folBackground dualEnv ne.rv).toOption.map
   fun bg => (bg.filter (·.2 == "profile")).length) == some 1
 
--- the readings route reads single acts (A1-A3, with and without `norm-defaults@0`)
-def rdP : List String := ["acts@0", "norms@0", "readings@1", "relational-fol@0"]
-#guard (VE.Readings.Wire.decodeEnvironment (envA rdP)).toOption.map (·.se.ne.regulated.map (·.act)) ==
-  some [some a1, some a2, some a3]
-#guard err (VE.Readings.Wire.decodeEnvironment (envA ["acts@0", "norm-defaults@0", "norms@0", "readings@1",
-  "relational-fol@0"])) == "ok"
--- and admits a document with a rule on a plain act (the norms chain's `Soften.checkW1` admits the act)
-def ruleDoc (p : String) : Json := Json.mkObj [("units", Json.arr #[Json.mkObj [("id", .str "u1"), ("kind", .str "norm"),
-  ("content", rule p)]]), ("reading_sets", Json.arr #[])]
-#guard err (VE.Readings.Run.validateOne "v" (envA rdP) (ruleDoc "paid")) == "ok"
--- D-33 for a joined act (A5's "and", A6's "or" with its phrase undeclared; plain or a permission); the norms route
--- keeps D-4; every other act refusal (D-5's comma) and the block's refusal without `acts@0` are the decoder's own
-def d33 (p : String) : String :=
-  s!"UnsupportedProfile: acts@0 on the readings route admits single acts only; the act of {p} joins acts"
-#guard [env rdP [("p", pred ["person"] (plain a5 "has the right"))], env rdP [("p", pred ["person"] (perm a5))],
-  env rdP [("p", pred ["person"] (plain a6 "has the right"))] (some (block fxs))].map
-    (err ∘ VE.Readings.Wire.decodeEnvironment) == List.replicate 3 (d33 "p")
-#guard err (VE.Readings.Wire.decodeEnvironment (env rdP [("p", pred ["person"] (plain "{0} seek, asylum" "has the right"))]))
-  == "InvalidInput: act phrase for p has a comma outside a fixed phrase"
-#guard err (VE.Readings.Wire.decodeEnvironment (envA ["norms@0", "readings@1", "relational-fol@0"])) ==
-  "fields do not match: expected [sorts, predicates, constants], got [acts, constants, predicates, sorts]"
--- the environment mode gives the route's refusal; the predicate named is the one D-4 names, never a prefix of it
-#guard err (VE.Service.Standalone.validatedComposedEnvironment (env rdP [("p", pred ["person"] (plain a5 "has the right"))]))
-  == d33 "p"
-#guard VE.Readings.Wire.singleActsOnly ["p", "pp"]
-  "InvalidInput: act phrase for pp joins acts with 'or' outside a fixed phrase" == d33 "pp"
-#guard VE.Readings.Wire.singleActsOnly ["q"] "InvalidInput: act phrase for p joins acts with 'or' outside a fixed phrase"
-  == "InvalidInput: act phrase for p joins acts with 'or' outside a fixed phrase"
+-- the environment mode gives the readings route's D-33 (its fixtures in `VE.Readings.ActsExamples`)
+#guard err (VE.Service.Standalone.validatedComposedEnvironment (VE.Readings.ActsExamples.env [("p", "plain", a5)])) ==
+  VE.Readings.ActsExamples.d33 "p"
 
 end VE.Service.ActsExamples

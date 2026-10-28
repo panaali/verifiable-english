@@ -14701,10 +14701,7 @@
         "VE.Service.ActsExamples.typed",
         "VE.Service.ActsExamples.every",
         "VE.Service.ActsExamples.modelled",
-        "VE.Service.ActsExamples.dualEnv",
-        "VE.Service.ActsExamples.rdP",
-        "VE.Service.ActsExamples.d33",
-        "VE.Service.ActsExamples.ruleDoc"
+        "VE.Service.ActsExamples.dualEnv"
       ]
     },
     "ResponseShape/Schemas/Calc.lean": {
@@ -15351,6 +15348,24 @@
         "ScopeBench.report",
         "ScopeBench.row",
         "main"
+      ]
+    },
+    "VE/Readings/ActsExamples.lean": {
+      "T": [
+        "VE.Readings.ActsExamples.a1",
+        "VE.Readings.ActsExamples.a2",
+        "VE.Readings.ActsExamples.a5",
+        "VE.Readings.ActsExamples.a6",
+        "VE.Readings.ActsExamples.fxs",
+        "VE.Readings.ActsExamples.rdP",
+        "VE.Readings.ActsExamples.reg",
+        "VE.Readings.ActsExamples.env",
+        "VE.Readings.ActsExamples.envA",
+        "VE.Readings.ActsExamples.err",
+        "VE.Readings.ActsExamples.decode",
+        "VE.Readings.ActsExamples.d33",
+        "VE.Readings.ActsExamples.ruleDoc",
+        "VE.Readings.ActsExamples.d4"
       ]
     }
   }
