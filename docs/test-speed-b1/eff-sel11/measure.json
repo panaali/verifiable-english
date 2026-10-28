@@ -1,0 +1,258 @@
+{
+  "measured_on": "b4ce890ed2003d5146a8484e8bfcaf1375867e6d",
+  "main": "d9cff5345ed2874d718bd1fa988b2777d5e2be0f",
+  "rows": [
+    {
+      "merge": "d9cff5345ed2874d718bd1fa988b2777d5e2be0f",
+      "subject": "Merge feature/sc-5r (sc-5r): approved by review; synced and verified",
+      "base": "2b13707e76216f82370d81bfcafeb5c064f40b94",
+      "branch": "2fb29d55d717609d6107b8a36effc5bc087a0458",
+      "changed": 5,
+      "history_inventory": [
+        "tests/test_scope_sc5r_stub.py"
+      ],
+      "map": {
+        "full": false,
+        "after": 30,
+        "before": 30,
+        "has_lint": true,
+        "added_by_rule": false
+      },
+      "impacted": {
+        "fallback": false,
+        "after": 473,
+        "before": 473,
+        "has_lint": true,
+        "added_by_rule": false
+      }
+    },
+    {
+      "merge": "79e3dd816975ac88fb6986df7cbfc656991d0b5b",
+      "subject": "Merge feature/me-12n (me-12n): approved by review; synced and verified",
+      "base": "2b13707e76216f82370d81bfcafeb5c064f40b94",
+      "branch": "e898792cee577eaee4a7cf0a320c3e1dc2e8e809",
+      "changed": 3,
+      "history_inventory": [],
+      "map": {
+        "full": false,
+        "after": 14,
+        "before": 14,
+        "has_lint": true,
+        "added_by_rule": false
+      },
+      "impacted": {
+        "fallback": false,
+        "after": 473,
+        "before": 473,
+        "has_lint": true,
+        "added_by_rule": false
+      }
+    },
+    {
+      "merge": "d01bb29fbfa27084984380f2bd139a4bfa4577e1",
+      "subject": "Merge feature/sc-1bb (sc-1bb): approved by review; synced and verified",
+      "base": "2b13707e76216f82370d81bfcafeb5c064f40b94",
+      "branch": "81976176baeaf1647c4f1a0b747856ea647390ca",
+      "changed": 17,
+      "history_inventory": [
+        "tests/test_scope_b1_input.py"
+      ],
+      "map": {
+        "full": false,
+        "after": 409,
+        "before": 409,
+        "has_lint": true,
+        "added_by_rule": false
+      },
+      "impacted": {
+        "fallback": false,
+        "after": 447,
+        "before": 447,
+        "has_lint": true,
+        "added_by_rule": false
+      }
+    },
+    {
+      "merge": "8a64ef81b46f2f9611b59982d2105a3f2bb05956",
+      "subject": "Merge feature/ap-1be (ap-1be): approved by review; synced and verified",
+      "base": "2b13707e76216f82370d81bfcafeb5c064f40b94",
+      "branch": "b4e7a834d3d0fb7b5529d4584b2abab482dece0e",
+      "changed": 28,
+      "history_inventory": [
+        "tests/test_acts_profile.py"
+      ],
+      "map": {
+        "full": false,
+        "after": 388,
+        "before": 388,
+        "has_lint": true,
+        "added_by_rule": false
+      },
+      "impacted": {
+        "fallback": false,
+        "after": 473,
+        "before": 473,
+        "has_lint": true,
+        "added_by_rule": false
+      }
+    },
+    {
+      "merge": "63b7e4149587a571dffbc7acb092dadd30477bae",
+      "subject": "Merge infra/eff-20261027-1 (eff-20261027-1): approved by review; synced and verified",
+      "base": "6b5d6cbb691619586606c358645d5626d8bc8a7c",
+      "branch": "90a974190852c319af586bb59f4c05770e93d613",
+      "changed": 23,
+      "history_inventory": [
+        "tests/history-dependent.json",
+        "tests/test_lean_statements_parts.py",
+        "tests/test_regen_generated.py",
+        "tools/cache_store.py",
+        "tools/regen_generated.py"
+      ],
+      "map": {
+        "full": false,
+        "after": 35,
+        "before": 35,
+        "has_lint": true,
+        "added_by_rule": false
+      },
+      "impacted": {
+        "fallback": false,
+        "after": 473,
+        "before": 473,
+        "has_lint": true,
+        "added_by_rule": false
+      }
+    },
+    {
+      "merge": "2b13707e76216f82370d81bfcafeb5c064f40b94",
+      "subject": "Merge infra/eff-20261026-1b (eff-20261026-1b): approved by review; synced and verified",
+      "base": "6b5d6cbb691619586606c358645d5626d8bc8a7c",
+      "branch": "17d649746fe4c965764542b1cbb643a5eba83296",
+      "changed": 11,
+      "history_inventory": [
+        "tests/test_trust_mutants.py",
+        "tools/trust_mutants.py"
+      ],
+      "map": {
+        "full": false,
+        "after": 26,
+        "before": 26,
+        "has_lint": true,
+        "added_by_rule": false
+      },
+      "impacted": {
+        "fallback": false,
+        "after": 473,
+        "before": 473,
+        "has_lint": true,
+        "added_by_rule": false
+      }
+    },
+    {
+      "merge": "02351b38d8030bbd60ca6c4c9bf717765b4b0ed8",
+      "subject": "Merge feature/me-5d (me-5d): approved by review; synced and verified",
+      "base": "6b5d6cbb691619586606c358645d5626d8bc8a7c",
+      "branch": "5a1c2d18585a7130ef1c90dd4abd1d125c23fa45",
+      "changed": 13,
+      "history_inventory": [],
+      "map": {
+        "full": false,
+        "after": 377,
+        "before": 377,
+        "has_lint": true,
+        "added_by_rule": false
+      },
+      "impacted": {
+        "fallback": false,
+        "after": 473,
+        "before": 473,
+        "has_lint": true,
+        "added_by_rule": false
+      }
+    },
+    {
+      "merge": "6b5d6cbb691619586606c358645d5626d8bc8a7c",
+      "subject": "Merge feature/jt-2 (jt-2): approved by review; synced and verified",
+      "base": "4a850162ca1ca7ca9bc786781398e95123e95b02",
+      "branch": "c7decd9822ddb938cf97bc85cd39b19dba71251a",
+      "changed": 27,
+      "history_inventory": [
+        "tests/test_judgments_document.py",
+        "tests/test_profile_table.py"
+      ],
+      "map": {
+        "full": false,
+        "after": 474,
+        "before": 474,
+        "has_lint": true,
+        "added_by_rule": false
+      },
+      "impacted": {
+        "fallback": false,
+        "after": 473,
+        "before": 473,
+        "has_lint": true,
+        "added_by_rule": false
+      }
+    },
+    {
+      "merge": "4a850162ca1ca7ca9bc786781398e95123e95b02",
+      "subject": "Merge feature/me-12ab (me-12ab): approved by review; synced and verified",
+      "base": "fbcbc2bb6560b68117fe5ee135498187e23d82d9",
+      "branch": "7998ab466c5b084c7c15858347ac480d3bd8075c",
+      "changed": 14,
+      "history_inventory": [],
+      "map": {
+        "full": false,
+        "after": 386,
+        "before": 386,
+        "has_lint": true,
+        "added_by_rule": false
+      },
+      "impacted": {
+        "fallback": false,
+        "after": 444,
+        "before": 444,
+        "has_lint": true,
+        "added_by_rule": false
+      }
+    },
+    {
+      "merge": "895f2610afd269915d077b4c18e985eb8307d602",
+      "subject": "Merge feature/df-1b (df-1b): approved by review; synced and verified",
+      "base": "ab010c3f02bca97c3d17775ba85382bf85e208eb",
+      "branch": "dad0a4fd29aece407df0335daaba0c4eb1e8cfd1",
+      "changed": 15,
+      "history_inventory": [
+        "tests/check_mutants.py",
+        "tests/test_defaults_answer.py",
+        "tests/test_defaults_checks.py",
+        "tests/test_defaults_lean.py",
+        "tests/test_rights_licence_relay.py"
+      ],
+      "map": {
+        "full": false,
+        "after": 282,
+        "before": 282,
+        "has_lint": true,
+        "added_by_rule": false
+      },
+      "impacted": {
+        "fallback": true,
+        "after": 473,
+        "before": 473,
+        "has_lint": true,
+        "added_by_rule": false
+      }
+    }
+  ],
+  "with_lint": {
+    "map": 10,
+    "impacted": 10
+  },
+  "added_by_rule": {
+    "map": 0,
+    "impacted": 0
+  }
+}
