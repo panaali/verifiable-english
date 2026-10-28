@@ -1265,6 +1265,20 @@
    "reason": "me-5d: VE/Calc/Run.lean D[V] +41 (Shown, Run.factJson, Run.stepJson, Run.reads, Run.shownJson: a derivation's certificate and counterexample, spec 3.4); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-5d, 2026-10-18",
    "commit": "ab010c3f02bca97c3d17775ba85382bf85e208eb"
+  },
+  {
+   "class": "S",
+   "lines": 6,
+   "reason": "sc-5rb: VE/Scope/Readings.lean +118 (G[V] untied, scope spec 11.2), VE/Service/Document.lean +12 (withSets D[V], check's reading-set case; checkDocSets tied), VE/Service/ScopeAdmission.lean +6 (S, Pinned.withGoverned); K +0, total +136",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-5rb, 2026-10-28",
+   "commit": "d9cff5345ed2874d718bd1fa988b2777d5e2be0f"
+  },
+  {
+   "class": "V",
+   "lines": 130,
+   "reason": "sc-5rb: VE/Scope/Readings.lean +118 (G[V] untied, scope spec 11.2), VE/Service/Document.lean +12 (withSets D[V], check's reading-set case; checkDocSets tied), VE/Service/ScopeAdmission.lean +6 (S, Pinned.withGoverned); K +0, total +136",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-5rb, 2026-10-28",
+   "commit": "d9cff5345ed2874d718bd1fa988b2777d5e2be0f"
   }
  ]
 }

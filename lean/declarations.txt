@@ -18655,7 +18655,7 @@ module VE.Scope.Readings 61ae685769e48517abf45f291f1df0e5964a514ce165baf35da4351
 92:0-117:102 def VE.Scope.assemble@VE.Scope.Readings
 119:0-127:51 def VE.Scope.governSetsWith@VE.Scope.Readings
 129:0-129:73 def VE.Scope.governSets@VE.Scope.Readings
-module VE.Scope.ReadingsExamples 9037872dfc945ed1dc96ffa80cd84a9bfa11df6fe78aea68a4a4b63a383fbb92
+module VE.Scope.ReadingsExamples e533c18698f53a3557f1ba0782be7cf2d4d38da4ba57e72b018774e1e60ec9c5
 11:0-11:233 def VE.Scope.Examples.guardWide@VE.Scope.ReadingsExamples
 12:0-12:235 def VE.Scope.Examples.guardNarrow@VE.Scope.ReadingsExamples
 13:0-14:129 def VE.Scope.Examples.cyberPart@VE.Scope.ReadingsExamples
