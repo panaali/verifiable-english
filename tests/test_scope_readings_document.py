@@ -164,3 +164,80 @@ def test_render_refuses_a_set_composed_per_choice_naming_its_unit(tmp_path):
 def test_every_structural_mutant_of_the_sr1_answer_is_refused(tmp_path, monkeypatch):
     accepted, count = structural_mutants_accepted(tmp_path, monkeypatch, _doc())
     assert count > 200 and not accepted, accepted
+
+
+def _rules_in_full(effect):
+    """The review's F1 probe: three rules under a lead-in, rule b's unit u2 written without content and holding one
+    set whose reading is the rule b written in full, which the governor (`effect`) changes."""
+    from tests.test_scope_document import _governed_text
+    meta, body = _split(_governed_text("norms", effect))
+    meta["environment"]["profiles"] = sorted(meta["environment"]["profiles"] + ["readings@1"])
+    meta["scope"]["governors"][0].update(unit="u0", reach={"list": "u0"}, units=["u1", "u2", "u3"])
+    reading = {"id": "r", "kind": "norm", "meaning_id": "m", "content": meta["units"][2].pop("content"),
+               "admission": {"who": "t", "why": "w"}}
+    meta["reading_sets"] = [{"id": "s", "unit": "u2", "version": 1, "status": "open", "readings": [reading]}]
+    return _text(meta, body)
+
+
+@pytest.mark.parametrize("effect", ["reguard", "carve_out"])
+def test_f1_a_composed_set_of_rules_in_full_is_unavailable_to_every_view(tmp_path, effect):
+    """Fix round 1 F1: Lean composes the reading per choice and its answer does not carry it (sc-5rc), so no view reads
+    the reading as written: the carve-out probe certified ALL from it where the composed rule gives NONE. Load (and
+    so the readings queries and coverage), check and render are unavailable, naming the unit. Of the six effects, the
+    other four never govern such a set: precedes and yields have no effect over the list (`ScopeNoEffect`), title's
+    reach is refused (`ScopeReach`), and frame reads parts (SR-1)."""
+    from ve.readings_verdicts import context
+    text = _rules_in_full(effect)
+    assert _rows(text)[0] is not None
+    path = tmp_path / "f1.ve.md"
+    path.write_text(text)
+    query = ["forall", "state", ["forall", "person", ["binary", "protect_required", ["var", 1], ["var", 0]]]]
+    for view in (D.load_document, D.check_document, D.render_document,
+                 lambda p: context(D.load_document(p)).entailment(query)):
+        with pytest.raises(CheckerUnavailable, match="^CheckerUnavailable: u2's reading set is composed per choice"):
+            view(path)
+
+
+def test_f1_the_composed_sets_are_read_from_the_request():
+    """`composed_set_units`: the sets on the units a governor names, in unit order; none without `scope@0`."""
+    from ve.document.lean import composed_set_units
+    meta, _ = _meta()
+    assert composed_set_units(meta) == ["u0165.s03"]
+    meta["environment"]["profiles"] = [p for p in meta["environment"]["profiles"] if p != "scope@0"]
+    assert composed_set_units(meta) == []
+
+
+def _many_choices(meta, rs):
+    """Two governed sets of 8 and 9 readings: 72 joint choices, above the limit of 64 (`VE.Scope.choiceLimit`)."""
+    other = json.loads(json.dumps(rs))
+    other.update(id="s5", unit="u0165.s05")
+    meta["reading_sets"].append(other)
+    next(u for u in meta["units"] if u["id"] == "u0165.s05").pop("content")
+    for s, n in ((rs, 8), (other, 9)):
+        s["readings"] = [{**s["readings"][0], "id": str(i)} for i in range(n)]
+
+
+def test_f2_more_joint_choices_than_the_limit_is_leans_unknown_on_every_view(tmp_path):
+    """Fix round 1 F2: Lean's `ResourceLimit: scope choices` (UNKNOWN, DELTA row 1) reaches every view, never the
+    retained path's `UnsupportedProfile: scope@0`."""
+    from ve.errors import ResourceLimit
+    text = _doc(_many_choices)
+    assert _rows(text) == (None, "ResourceLimit: scope choices")
+    path = tmp_path / "f2.ve.md"
+    path.write_text(text)
+    for view in (D.load_document, D.check_document, D.render_document):
+        with pytest.raises(ResourceLimit, match="^ResourceLimit: scope choices$"):
+            view(path)
+
+
+def test_f2_every_scope_resource_limit_is_leans(tmp_path):
+    """The class of F2: a limit GOVERN reaches without any reading set (more than 256 governors) is Lean's too."""
+    from tests.test_scope_document import _governed_text
+    from ve.errors import ResourceLimit
+    meta, body = _split(_governed_text("norms", "frame"))
+    governor = meta["scope"]["governors"][0]
+    meta["scope"]["governors"] = [{**governor, "id": f"g{i}"} for i in range(257)]
+    path = tmp_path / "f2.ve.md"
+    path.write_text(_text(meta, body))
+    with pytest.raises(ResourceLimit, match="^ResourceLimit: scope governors$"):
+        D.load_document(path)
