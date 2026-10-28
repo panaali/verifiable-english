@@ -9491,7 +9491,7 @@ module VE.Events.Decl dbdce7482707463582d5260331ab863aff14f876a044b3d7c9251d984d
 79:0-92:44 def VE.Events.WellFormedEvents@VE.Events.Decl
 94:0-96:111 def VE.Events.regenEnv@VE.Events.Decl
 98:0-107:59 def VE.Events.EventsTyped@VE.Events.Decl
-module VE.Events.Examples 1cea6892b86b35438bc2433755d1c1d9c38c8d1069483701aee03e3c2803099d
+module VE.Events.Examples f550c8bbdfbf251528f38f1b89a4a1536d6ecc0dea32e1674668e796879eb0a5
 14:0-14:42 def VE.Events.Examples.d@VE.Events.Examples
 16:0-17:111 def VE.Events.Examples.base@VE.Events.Examples
 19:0-20:87 def VE.Events.Examples.envDay@VE.Events.Examples
