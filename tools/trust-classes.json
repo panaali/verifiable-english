@@ -13404,6 +13404,15 @@
         "VE.Cardinality.RegionData.table",
         "VE.Cardinality.regionDataOf",
         "VE.Cardinality.regionData"
+,
+        "VE.Cardinality.firstUseStep",
+        "VE.Cardinality.firstUseH",
+        "VE.Cardinality.instHashableQTerm",
+        "VE.Cardinality.instHashableQFormula",
+        "VE.Cardinality.instHashableBody",
+        "VE.Cardinality.countedSortsH",
+        "VE.Cardinality.countedAmongH",
+        "VE.Cardinality.predsAmongH"
       ],
       "G[R]": [
         "VE.Cardinality.maxCountedSorts",

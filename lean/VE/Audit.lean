@@ -67,6 +67,7 @@ import VE.Calc.Wire
 import VE.Cardinality.Examples
 import VE.Cardinality.Gate
 import VE.Cardinality.Ratio
+import VE.Cardinality.Regions
 import VE.Cardinality.Run
 import VE.Cardinality.RunTheorems
 import VE.Cardinality.Syntax
@@ -1272,6 +1273,8 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.count_atMost_agree
 #print axioms VE.Cardinality.count_exactly_agree
 #print axioms VE.Cardinality.count_nOfM_agree
+#print axioms VE.Cardinality.countedAmong_eq_H
+#print axioms VE.Cardinality.countedSorts_eq_H
 #print axioms VE.Cardinality.countedUniversals_spec
 #print axioms VE.Cardinality.counted_of_mem
 #print axioms VE.Cardinality.counts_iff
@@ -1285,6 +1288,9 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.erasedProblem_admitted
 #print axioms VE.Cardinality.evalFin_iff
 #print axioms VE.Cardinality.exists_nodup_filter
+#print axioms VE.Cardinality.firstUseH_eq
+#print axioms VE.Cardinality.firstUseH_foldl
+#print axioms VE.Cardinality.firstUseStep_inv
 #print axioms VE.Cardinality.firstUse_nodup
 #print axioms VE.Cardinality.gate_cardinality
 #print axioms VE.Cardinality.get_of_data
@@ -1308,6 +1314,7 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.not_regionName
 #print axioms VE.Cardinality.percentOf_holds_iff
 #print axioms VE.Cardinality.percentRoundsTo_holds_iff
+#print axioms VE.Cardinality.predsAmong_eq_H
 #print axioms VE.Cardinality.predsOn_not_counted
 #print axioms VE.Cardinality.proportion_holds_iff
 #print axioms VE.Cardinality.ratioTyped_iff

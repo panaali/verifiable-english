@@ -6018,6 +6018,14 @@ theorem VE.Cardinality.count_nOfM_agree
                     VE.Order.Formula.denote T.lower [] (VE.Time.nOfM s n m sel.toFormula prop.toFormula)
   -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Body.toFormula@VE.Cardinality.Theorems VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.BodyTyped@VE.Cardinality.Syntax VE.Cardinality.CEnv.finite@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.nOfMFormula@VE.Cardinality.Theorems VE.Order.Formula.denote@VE.Order.Semantics VE.Order.Structure.Carrier@VE.Order.Semantics VE.Order.Value@VE.Order.Semantics VE.Time.TStructure.lower@VE.Time.Semantics VE.Time.TStructure@VE.Time.Semantics VE.Time.nOfM@VE.Time.Count
   -- expr 1226029124
+theorem VE.Cardinality.countedAmong_eq_H
+  VE.Cardinality.countedAmong = VE.Cardinality.countedAmongH
+  -- uses VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.countedAmong@VE.Cardinality.Regions VE.Cardinality.countedAmongH@VE.Cardinality.Regions VE.Time.QFormula@VE.Time.Syntax
+  -- expr 1119746687
+theorem VE.Cardinality.countedSorts_eq_H
+  VE.Cardinality.countedSorts = VE.Cardinality.countedSortsH
+  -- uses VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.countedSorts@VE.Cardinality.Regions VE.Cardinality.countedSortsH@VE.Cardinality.Regions
+  -- expr 3546235577
 theorem VE.Cardinality.countedUniversals_spec
   ∀ {E : VE.Cardinality.CEnv} {fs : List VE.Cardinality.CFormula},
     (∀ (a : VE.Cardinality.CFormula), a ∈ fs → VE.Cardinality.Admitted E a) →
@@ -6146,6 +6154,30 @@ theorem VE.Cardinality.exists_nodup_filter
   ∀ {α : Type u} (P : α → Prop) (xs : List α), ∃ ys, ys.Nodup ∧ ∀ (x : α), x ∈ ys ↔ x ∈ xs ∧ P x
   -- uses
   -- expr 3200230773
+theorem VE.Cardinality.firstUseH_eq
+  ∀ {β : Type} [inst : BEq β] [LawfulBEq β] [inst_2 : Hashable β] (xs : List β),
+    VE.Cardinality.firstUseH xs = VE.Cardinality.firstUse xs
+  -- uses VE.Cardinality.firstUse@VE.Cardinality.Regions VE.Cardinality.firstUseH@VE.Cardinality.Regions
+  -- expr 720334210
+theorem VE.Cardinality.firstUseH_foldl
+  ∀ {β : Type} [inst : BEq β] [LawfulBEq β] [inst_2 : Hashable β] (xs : List β) (acc : Std.HashSet β × Array β)
+    (l : List β),
+    (∀ (y : β), acc.fst.contains y = l.contains y) →
+      acc.snd.toList = l →
+        (List.foldl VE.Cardinality.firstUseStep acc xs).snd.toList =
+          List.foldl (fun acc x => if acc.contains x = Bool.true then acc else acc ++ [x]) l xs
+  -- uses VE.Cardinality.firstUseStep@VE.Cardinality.Regions
+  -- expr 817300403
+theorem VE.Cardinality.firstUseStep_inv
+  ∀ {β : Type} [inst : BEq β] [LawfulBEq β] [inst_2 : Hashable β] (acc : Std.HashSet β × Array β) (l : List β) (x : β),
+    (∀ (y : β), acc.fst.contains y = l.contains y) →
+      acc.snd.toList = l →
+        (∀ (y : β),
+            (VE.Cardinality.firstUseStep acc x).fst.contains y =
+              (if l.contains x = Bool.true then l else l ++ [x]).contains y) ∧
+          (VE.Cardinality.firstUseStep acc x).snd.toList = if l.contains x = Bool.true then l else l ++ [x]
+  -- uses VE.Cardinality.firstUseStep@VE.Cardinality.Regions
+  -- expr 2921543236
 theorem VE.Cardinality.firstUse_nodup
   ∀ {β : Type} [inst : BEq β] [LawfulBEq β] (xs : List β), (VE.Cardinality.firstUse xs).Nodup
   -- uses VE.Cardinality.firstUse@VE.Cardinality.Regions
@@ -6293,6 +6325,10 @@ theorem VE.Cardinality.percentRoundsTo_holds_iff
             0 < zd ∧ VE.Cardinality.erasedRounding r (100 * zn) zd D k
   -- uses VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.CFormula.percentRoundsTo@VE.Cardinality.Syntax VE.Cardinality.CTerm.Denotes@VE.Cardinality.Semantics VE.Cardinality.CTerm@VE.Cardinality.Syntax VE.Cardinality.erasedRounding@VE.Cardinality.Ratio VE.Numbers.Rounding@VE.Numbers.Round VE.Time.TStructure@VE.Time.Semantics
   -- expr 1348203355
+theorem VE.Cardinality.predsAmong_eq_H
+  VE.Cardinality.predsAmong = VE.Cardinality.predsAmongH
+  -- uses VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.predsAmong@VE.Cardinality.Regions VE.Cardinality.predsAmongH@VE.Cardinality.Regions VE.Time.QFormula@VE.Time.Syntax
+  -- expr 6982935
 theorem VE.Cardinality.predsOn_not_counted
   ∀ {E : VE.Cardinality.CEnv} {fs : List VE.Cardinality.CFormula} {s : String},
     ¬s ∈ VE.Cardinality.countedSorts fs → VE.Cardinality.predsOn E fs s = []

@@ -1,4 +1,5 @@
 import VE.Cardinality.Syntax
+import Std.Data.HashSet
 
 /-! Regions of the counted sorts (docs/spec/quantities.md 3.5).
 
@@ -11,6 +12,48 @@ open VE.Time (QEnv QTerm QFormula)
 
 def firstUse {β : Type} [BEq β] (xs : List β) : List β :=
   xs.foldl (fun acc x => if acc.contains x then acc else acc ++ [x]) []
+
+/-- One step of `firstUseH`: the items kept so far, as a hash set and in first-use order. -/
+def firstUseStep {β : Type} [BEq β] [Hashable β] (acc : Std.HashSet β × Array β) (x : β) :
+    Std.HashSet β × Array β :=
+  if acc.1.contains x then acc else (acc.1.insert x, acc.2.push x)
+
+/-- `firstUse` in near-linear time (`firstUseH_eq`): each item is hashed once and looked up in the set of the items
+kept so far, so a request's statements, deduplicated before P3 is charged, are never compared pairwise. The
+definitions below keep `firstUse`, which the kernel evaluates (`decide`); the `@[csimp]` lemmas after
+`countedSorts`, `countedAmong` and `predsAmong` make compiled code run this one. -/
+def firstUseH {β : Type} [BEq β] [Hashable β] (xs : List β) : List β :=
+  (xs.foldl firstUseStep (∅, #[])).2.toList
+
+/-- One step of `firstUseH` keeps its set and its array equal to `firstUse`'s list. -/
+theorem firstUseStep_inv {β : Type} [BEq β] [LawfulBEq β] [Hashable β] (acc : Std.HashSet β × Array β)
+    (l : List β) (x : β) (h1 : ∀ y, acc.1.contains y = l.contains y) (h2 : acc.2.toList = l) :
+    (∀ y, (firstUseStep acc x).1.contains y = (if l.contains x then l else l ++ [x]).contains y) ∧
+      (firstUseStep acc x).2.toList = (if l.contains x then l else l ++ [x]) := by
+  unfold firstUseStep
+  rw [h1 x]
+  cases hx : l.contains x
+  · refine ⟨fun y => ?_, by simp [h2]⟩
+    simp only [Bool.false_eq_true, if_false, Std.HashSet.contains_insert, h1 y, List.contains_append,
+      List.contains_cons, List.contains_nil, Bool.or_false]
+    rw [Bool.or_comm, BEq.comm]
+  · exact ⟨fun y => by simp [h1 y], by simp [h2]⟩
+
+theorem firstUseH_foldl {β : Type} [BEq β] [LawfulBEq β] [Hashable β] : ∀ (xs : List β)
+    (acc : Std.HashSet β × Array β) (l : List β), (∀ y, acc.1.contains y = l.contains y) → acc.2.toList = l →
+    (xs.foldl firstUseStep acc).2.toList = xs.foldl (fun acc x => if acc.contains x then acc else acc ++ [x]) l
+  | [], _, _, _, h2 => h2
+  | x :: ys, acc, l, h1, h2 => by
+    rw [List.foldl_cons, List.foldl_cons]
+    exact firstUseH_foldl ys _ _ (firstUseStep_inv acc l x h1 h2).1 (firstUseStep_inv acc l x h1 h2).2
+
+/-- The near-linear dedup is `firstUse`: the same items in the same first-use order. -/
+theorem firstUseH_eq {β : Type} [BEq β] [LawfulBEq β] [Hashable β] (xs : List β) : firstUseH xs = firstUse xs :=
+  firstUseH_foldl xs (∅, #[]) [] (fun _ => by simp) rfl
+
+deriving instance Hashable for VE.Time.QTerm
+deriving instance Hashable for VE.Time.QFormula
+deriving instance Hashable for Body
 
 def Body.atoms : Body → List String
   | .atom p => [p]
@@ -76,9 +119,23 @@ def CFormula.countBodies : CFormula → List (String × Body)
 def countedSorts (fs : List CFormula) : List String :=
   firstUse ((fs.flatMap (·.countBodies)).map (·.1))
 
+/-- `countedSorts` as compiled code runs it (`countedSorts_eq_H`). -/
+def countedSortsH (fs : List CFormula) : List String :=
+  firstUseH ((fs.flatMap (·.countBodies)).map (·.1))
+
+@[csimp] theorem countedSorts_eq_H : @countedSorts = @countedSortsH := by
+  funext fs; exact (firstUseH_eq _).symm
+
 /-- The universal statements of `us` over a sort of `sorts`, each once. -/
 def countedAmong (sorts : List String) (us : List (String × Body × QFormula)) : List (String × Body × QFormula) :=
   firstUse (us.filter (fun x => sorts.contains x.1))
+
+/-- `countedAmong` as compiled code runs it (`countedAmong_eq_H`). -/
+def countedAmongH (sorts : List String) (us : List (String × Body × QFormula)) : List (String × Body × QFormula) :=
+  firstUseH (us.filter (fun x => sorts.contains x.1))
+
+@[csimp] theorem countedAmong_eq_H : @countedAmong = @countedAmongH := by
+  funext sorts us; exact (firstUseH_eq _).symm
 
 /-- Recognised universal statements over a counted sort, each once. -/
 def countedUniversals (E : CEnv) (fs : List CFormula) : List (String × Body × QFormula) :=
@@ -88,6 +145,13 @@ def countedUniversals (E : CEnv) (fs : List CFormula) : List (String × Body × 
 order: count bodies first, then counted universal statements. -/
 def predsAmong (bodies : List (String × Body)) (us : List (String × Body × QFormula)) (s : String) : List String :=
   firstUse (((bodies.filter (·.1 == s)).flatMap (·.2.atoms)) ++ ((us.filter (·.1 == s)).flatMap (·.2.1.atoms)))
+
+/-- `predsAmong` as compiled code runs it (`predsAmong_eq_H`). -/
+def predsAmongH (bodies : List (String × Body)) (us : List (String × Body × QFormula)) (s : String) : List String :=
+  firstUseH (((bodies.filter (·.1 == s)).flatMap (·.2.atoms)) ++ ((us.filter (·.1 == s)).flatMap (·.2.1.atoms)))
+
+@[csimp] theorem predsAmong_eq_H : @predsAmong = @predsAmongH := by
+  funext bodies us s; exact (firstUseH_eq _).symm
 
 /-- The predicates on sort `s`, in first-use order: count bodies first, then counted universal statements. -/
 def predsOn (E : CEnv) (fs : List CFormula) (s : String) : List String :=
