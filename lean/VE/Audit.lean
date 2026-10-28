@@ -2357,6 +2357,7 @@ import VE.WireContract.Engine
 #print axioms VE.Events.countP_eq_le_one
 #print axioms VE.Events.countP_lt_le
 #print axioms VE.Events.countP_lt_lt
+#print axioms VE.Events.countP_lt_of
 #print axioms VE.Events.countP_lt_succ
 #print axioms VE.Events.dateName_data
 #print axioms VE.Events.dateName_inj
@@ -2364,6 +2365,7 @@ import VE.WireContract.Engine
 #print axioms VE.Events.datesOrder_iff
 #print axioms VE.Events.dayExtension_transfer
 #print axioms VE.Events.embeddable_complete
+#print axioms VE.Events.embeddable_sound
 #print axioms VE.Events.eventsPremises_satisfiable
 #print axioms VE.Events.eventsPremises_wellFormed
 #print axioms VE.Events.events_conservative
@@ -2378,7 +2380,9 @@ import VE.WireContract.Engine
 #print axioms VE.Events.oldTuple_map
 #print axioms VE.Events.pad_chars
 #print axioms VE.Events.pad_value
+#print axioms VE.Events.pairwise_of_chain
 #print axioms VE.Events.regen_typed
+#print axioms VE.Events.rel_getLast
 #print axioms VE.Events.startRole_mem
 #print axioms VE.Events.term_map
 #print axioms VE.Events.tupleTyped_relation
