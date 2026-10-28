@@ -129,6 +129,9 @@ import VE.Numbers.Examples
 import VE.Numbers.Phrases
 import VE.Scales.Examples
 import VE.Cardinality.Examples
+import VE.Cardinality.Run
+import VE.Cardinality.RunExamples
+import VE.Cardinality.RunTheorems
 import VE.Cardinality.WireExamples
 import VE.Cardinality.WireTheorems
 import VE.Risk.Cond
@@ -183,6 +186,8 @@ import VE.Acts.Tree
 import VE.Acts.Linearize
 import VE.Acts.Table
 import VE.Acts.TableExamples
+import VE.Acts.Elaborate
+import VE.Acts.ElaborateExamples
 import VE.Acts.GrammarExamples
 import VE.Acts.Grammar
 import VE.Acts.RuleExamples

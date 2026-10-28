@@ -25,9 +25,10 @@ How a change selects tests:
   ran them; Rust: the tests that ran a Rust binary, and `cargo test`.
 * Every file, whatever its kind: the tests that read it, and, for an added or
   removed file, the tests that listed any directory above it, the root "."
-  included (it may make its directory appear or vanish). Documentation only
-  selects these. `kind_of` and `file_impact` are the one rule for both the
-  plan and the drift check below.
+  included (it may make its directory appear or vanish). Documentation and
+  GitHub workflows (`.github/workflows/*.yml`) only select these. `kind_of`
+  and `file_impact` are the one rule for both the plan and the drift check
+  below.
 * The map is recorded for an earlier commit. Code that changed since then
   ("drift") may call the changed code anew: drift units that name what changed
   add their own tests. Tests the map does not cover (new, failed or opaque when
@@ -107,10 +108,19 @@ LEAN_LAYER_INPUTS = {"tools/lean-layer-exceptions.json", "tools/check_lean_impor
                      "tools/lean_header_imports.lean", "tools/layer_policy.py"}
 RUST_LAYER_INPUTS = {"tools/check_rust_deps.py", "tools/layer_policy.py"}
 KNOWN_AREAS = {"ve", "tests", "tools", "conformance", "lean", "rust", "docs", "examples", "data", "bench",
-               "design", *APP_AREAS}
+               "design", ".github", *APP_AREAS}
+# GitHub Actions workflows: only GitHub runs them, and tests/test_ci_workflow.py reads them as text,
+# so like documentation they select their readers and the listers of their directory, never SMOKE.
+WORKFLOWS = ".github/workflows/"
+WORKFLOW_SUFFIXES = (".yml", ".yaml")
 # Cached drift results depend on this file's rules as well as the graph's.
 SELECTOR_VERSION = hashlib.sha256(source_graph.CODE_VERSION.encode()
                                   + Path(__file__).read_bytes()).hexdigest()[:16]
+
+
+def documentation(path: str) -> bool:
+    """Text no test runs (documentation or a workflow): it selects only the tests that name or read it."""
+    return path.endswith(DOCUMENT_SUFFIXES) or (path.startswith(WORKFLOWS) and path.endswith(WORKFLOW_SUFFIXES))
 
 
 def units() -> list[str]:
@@ -569,7 +579,7 @@ def rust_change(sel: Selection, change: Change) -> None:
 
 def data_change(sel: Selection, change: Change, rust_sources: dict[str, str]) -> None:
     path = change.path
-    if not path.endswith(DOCUMENT_SUFFIXES):
+    if not documentation(path):
         sel.code = True
     mapped(sel, change)
     sel.static(mentions_path(path), f"names {path}")
