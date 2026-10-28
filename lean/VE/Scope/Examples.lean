@@ -748,6 +748,41 @@ def rawRule : Json := rawJ (nd "over" (.arr #[]) (nd "guard" (j "[\"top\"]") .le
 #guard (member (.ok rawRule) "name", (do pure (← VE.Readings.Wire.decodeNorm (← VE.Readings.Wire.decodeEnvironment softEnv) rawRule).name : Except String String).toOption) ==
   (none, some "hidden")
 
+/-! F-sym (spec 7.1, sc-1ae): `block = null`, the frame `g1` and a carve-out whose condition names `invented`. The
+    answer has the string, the document and the block do not: `govern_strings` holds (it is `gI`'s payload) and
+    `BlockBound` fails, so `govern_no_new_symbols` does not apply. With the condition in the block it holds. -/
+def inventedC : Json := .arr #["unary", "invented", .arr #["var", (1 : Nat)]]
+def gI : Governor := ⟨"gI", "u0173.s01", .carveOut inventedC, .listName "the hard constraints", seven⟩
+def count (s : String) (o : Json) : Nat := (o.compress.splitOn s!"\"{s}\"").length - 1
+#guard ((gov (hcDoc parts) [g1, gI] hcNames).toOption.map (count "invented"), count "invented" (hcDoc parts)) ==
+  (some 7, 0)
+#guard (gov (hcDoc parts) [g1, gI] hcNames).toOption.map (fun o => (normOf (contentOf o "u0165.s01")).map
+  (·.getObjValD "unless" |>.compress)) == some (some "[[\"unary\",\"invented\",[\"var\",1]]]")
+theorem invented_payload : HasStr "invented" (payload gI.effect) := .arr (by simp) .str
+example (re : VE.Readings.Wire.ReadingsEnvironment) : ¬ BlockBound (sdoc (hcDoc parts) [g1, gI] hcNames re) :=
+  fun hb => hasStr_null _ (hb gI (by simp [sdoc]) _ invented_payload)
+example (re : VE.Readings.Wire.ReadingsEnvironment) :
+    BlockBound { sdoc (hcDoc parts) [gI] hcNames re with block := .arr #[inventedC] } :=
+  fun g hg s hs => by simp only [sdoc, List.mem_singleton] at hg; subst hg; exact .arr (by simp; rfl) hs
+
+/-! `HasStr`, `payload` and `JsonWF` (sc-1ae): a string value at any depth, and never a key -/
+example : HasStr "a" (.arr #["b", .arr #["a"]]) := .arr (x := .arr #["a"]) (by simp) (.arr (by simp) .str)
+example : HasStr "a" (Json.mkObj [("k", "a")]) := .obj ((mkObj_getObjVal [("k", "a")] (by simp) "k" _).mpr (by simp)) .str
+example : ¬ HasStr "a" (.str "b") := by
+  intro h; generalize hj : Json.str "b" = x at h; cases h with
+  | str => simp at hj
+  | arr => cases hj
+  | obj hk _ => subst hj; simp [Json.getObjVal?, throw, throwThe, MonadExceptOf.throw] at hk
+example : ¬ HasStr "k" (Json.mkObj [("k", .null)]) := by
+  intro h; cases h with
+  | obj hk hx => obtain ⟨p, hp, rfl⟩ := mkObj_get_mem _ _ _ hk; simp at hp; subst hp; exact hasStr_null _ hx
+example : [payload (.frame "p"), payload (.reguard "r"), payload (.carveOut "c"), payload .precedes, payload .yields,
+    payload .title] = ([.str "p", .str "r", .str "c", .null, .null, .null] : List Json) := rfl
+example : JsonWF (Json.mkObj [("k", .arr #["a"])]) := .obj _ Std.TreeMap.Raw.WF.ofList fun kv hkv => by
+  obtain ⟨p, hp, he⟩ := mkObj_get_mem [("k", .arr #["a"])] kv.1 kv.2 ((getObjVal_obj _ _ _).mpr
+    ((Std.TreeMap.Raw.mem_toList_iff_getElem?_eq_some Std.TreeMap.Raw.WF.ofList).mp hkv))
+  simp at hp; subst hp; rw [← he]; exact .arr _ fun x hx => by simp at hx; subst hx; exact .str _
+
 /-! ## sc-3ab (spec 7.5): the `govern` halves of F8, F8-tree, F9′ and F10, and F-meta's two-root case. The anchor
     and label reaches are the layout's, and the block's anchors pass discourse's checks (`admitBlock` step 7) -/
 
