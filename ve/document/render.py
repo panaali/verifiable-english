@@ -4,9 +4,10 @@ from __future__ import annotations
 import json
 
 from ..ast import Document, formula_from_data
-from ..errors import VEError
+from ..errors import CheckerUnavailable, VEError
 from ..readings import active_reading_sets
 from .containers import _content_bearing, _rights_block
+from .lean import composed_set_units, composed_unavailable
 from .load import load_document
 
 
@@ -139,8 +140,9 @@ def render_document(path):
         return RightsDocument(doc["environment"], units, deferred=True)
 
     active_by_unit = {r["unit"]: r for r in active_reading_sets(doc["meta"].get("reading_sets", []))}
+    composed = set(composed_set_units(doc["meta"]))
     # Every right candidate's line rules in one Lean request per source, not one per candidate.
-    shown = [candidate_units(candidate["content"]) for u in doc["units"]
+    shown = [candidate_units(candidate["content"]) for u in doc["units"] if u["id"] not in composed
              for candidate in active_by_unit.get(u["id"], {}).get("readings", ())]
     if any(units is not None for units in shown):
         from ..rights import RightsDocument
@@ -175,6 +177,10 @@ def render_document(path):
         if reading_set is not None:
             lines.append("The author's chosen reading is:" if reading_set["status"] == "authored"
                          else "This sentence could mean:")
+            if u["id"] in composed:
+                # scope@0 composes this set per choice; Lean's answer does not carry the composed readings yet (scope
+                # spec 11.7 item 7, sc-5rc), and a reading as written (a part, or a rule before GOVERN) is not one.
+                raise composed_unavailable(u["id"])
             for index, candidate in enumerate(reading_set["readings"]):
                 lead = "One reading is" if index == 0 else "Another reading is"
                 # A coupled axis's label says which reading a coupling chooses together (6.2).

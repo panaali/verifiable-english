@@ -94,12 +94,14 @@ def measure(base: str, head: str, mutants: list[dict]) -> dict:
     for row in git("diff", "--numstat", "--no-renames", base, head).splitlines():
         added, deleted, path = row.split("\t")
         numstat[path] = [int(added), int(deleted)]
-    commits = [line.split(" ", 1) for line in git("log", "--no-merges", "--reverse", "--format=%H %s",
+    commits = [line.split(" ", 2) for line in git("log", "--no-merges", "--reverse", "--format=%H %T %s",
                                                      f"{base}..{head}").splitlines()]
+    # The trees and subjects name these commits in every lineage (tests/lineage.py); the ids are records.
     return {
         "batch": "AR-8", "range": "main..HEAD --no-merges", "report_subject": REPORT_SUBJECT,
-        "base": git("rev-parse", base).strip(), "head": git("rev-parse", head).strip(),
-        "commits": [{"sha": sha, "subject": subject} for sha, subject in commits],
+        "base": git("rev-parse", base).strip(), "base_tree": git("rev-parse", f"{base}^{{tree}}").strip(),
+        "base_subject": git("log", "-1", "--format=%s", base).strip(), "head": git("rev-parse", head).strip(),
+        "commits": [{"sha": sha, "tree": tree, "subject": subject} for sha, tree, subject in commits],
         "numstat": numstat,
         "totals": {"added": sum(a for a, _ in numstat.values()), "deleted": sum(d for _, d in numstat.values())},
         "lines": {path: {"base": lines_at(base, path), "head": lines_at(head, path)} for path in FILES},
