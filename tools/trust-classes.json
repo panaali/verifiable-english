@@ -12692,6 +12692,57 @@
         "VE.Acts.RuleExamples.unused"
       ]
     },
+    "VE/Acts/Meaning.lean": {
+      "S": [
+        "VE.Acts.Att",
+        "VE.Acts.Elt",
+        "VE.Acts.Piece",
+        "VE.Acts.actOk",
+        "VE.Acts.addPiece",
+        "VE.Acts.applyRule",
+        "VE.Acts.atomOk",
+        "VE.Acts.coordAct",
+        "VE.Acts.joinAct",
+        "VE.Acts.meaning",
+        "VE.Acts.piecesOf",
+        "VE.Acts.singleAct"
+      ],
+      "G[V]": [
+        "VE.Acts.Atom.add",
+        "VE.Acts.baseAtom",
+        "VE.Acts.itemOf",
+        "VE.Acts.listOf",
+        "VE.Acts.piecesKids"
+      ]
+    },
+    "VE/Acts/Readings.lean": {
+      "S": [
+        "VE.Acts.Derived"
+      ],
+      "G[V]": [
+        "VE.Acts.analyse",
+        "VE.Acts.read",
+        "VE.Acts.readings"
+      ]
+    },
+    "VE/Acts/MeaningExamples.lean": {
+      "T": [
+        "VE.Acts.MeaningExamples.V6b",
+        "VE.Acts.MeaningExamples.Va",
+        "VE.Acts.MeaningExamples.Vm",
+        "VE.Acts.MeaningExamples.Vs",
+        "VE.Acts.MeaningExamples.fx5",
+        "VE.Acts.MeaningExamples.fx8",
+        "VE.Acts.MeaningExamples.g8t",
+        "VE.Acts.MeaningExamples.meanings",
+        "VE.Acts.MeaningExamples.n",
+        "VE.Acts.MeaningExamples.obj5",
+        "VE.Acts.MeaningExamples.rd",
+        "VE.Acts.MeaningExamples.rd1",
+        "VE.Acts.MeaningExamples.sub",
+        "VE.Acts.MeaningExamples.toks"
+      ]
+    },
     "VE/Acts/GrammarExamples.lean": {
       "T": [
         "VE.Acts.Examples.V10",
