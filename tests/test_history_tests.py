@@ -317,11 +317,12 @@ def _names_the_list(path: Path) -> bool:
 def test_only_the_lint_reads_the_list():
     """The list is an inventory and a lint only: no gate, merge or cache code reads it, so no run skips or reuses
     a test because of it. Only its lint, the lint's test, the generated-file registry, which runs the lint as the
-    list's writer and checker, and the selector, which runs the lint when a change can make the list stale (the
-    next test), and the selector's test name it."""
+    list's writer and checker, the lineage revision lint, and the selector, which runs the lint when a change can
+    make the list stale (the next test), and the selector's test name it."""
     readers = sorted(path.relative_to(ROOT).as_posix() for directory in ("tools", "tests", "ve", "conformance")
                      for path in (ROOT / directory).rglob("*.py") if _names_the_list(path))
-    assert readers == ["tests/test_history_tests.py", "tests/test_select_tests.py", "tools/history_tests.py",
+    assert readers == ["tests/test_history_tests.py", "tests/test_lineage_lint.py", "tests/test_select_tests.py",
+                       "tools/history_tests.py",
                        "tools/regen_generated.py", "tools/select_tests.py"]
 
 

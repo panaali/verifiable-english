@@ -82,13 +82,17 @@ def _document_case(raw: bytes, admit: bool, directory: Path | None = None, prepa
 def _lean_answer(raw: bytes, admit: bool, directory: Path | None = None, prepared: dict | None = None):
     """Lean's `document` row for a `ve-document@1` text, or None when Python's own path decides it: the mode
     answered `CheckerUnavailable` or `ResourceLimit` (it cannot decide, and says so), or the case cannot be sent
-    (`_document_case`). Any other rejection is Lean's diagnostic, raised verbatim; a failure of the service itself is
+    (`_document_case`). A `ResourceLimit` for a document under a wrapper profile (`_lean_only`) is raised: no other
+    path can decide it, and the limit is UNKNOWN, never Python's refusal of the profile. Any other rejection is Lean's diagnostic, raised verbatim; a failure of the service itself is
     raised, never answered by Python."""
     case = _document_case(raw, admit, directory, prepared)
     if case is None:
         return None
     from ..backends.relay import answer
     row, error = answer("document", case)
+    if isinstance(error, ResourceLimit) and _lean_only(raw):
+        # Python's own path cannot read a wrapper profile (`chain_environment`), so Lean's UNKNOWN is the answer.
+        raise error
     if isinstance(error, (CheckerUnavailable, ResourceLimit)):
         return None
     if error is not None and getattr(error, "path", None) and not _names_a_model_member(raw, error.path):
@@ -111,6 +115,16 @@ def _lean_answer(raw: bytes, admit: bool, directory: Path | None = None, prepare
     if error is not None:
         raise error
     return row
+
+
+def _lean_only(raw: bytes) -> bool:
+    """Whether the document lists a wrapper profile only Lean's `document` mode reads (`chain_environment` lowers it):
+    Python's own path refuses it at the environment, so it never answers in Lean's place."""
+    try:
+        environment = _split(raw)[0].get("environment")
+        return chain_environment(environment) is not environment
+    except (AttributeError, KeyError, TypeError, ValueError, VEError):
+        return False
 
 
 def _spans_a_strict_fence(raw: bytes, span) -> bool:
@@ -259,6 +273,10 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool, prepare
                      if selected or any(d.regulated is not None for d in env.predicates.values()) else None)
         reading_sets = meta.get("reading_sets", [])
         companions, s1_content = _readings_routes(env, reading_sets)
+        composed = composed_set_units(meta)
+        if composed and (companions or s1_content):
+            # The readings routes read every reading's content, and a composed set's is Lean's, not the authored one.
+            raise composed_unavailable(composed[0])
         readings_s1 = readings_s2 = readings_components = None
         if companions:
             from ..readings_components import load as load_components
@@ -402,17 +420,47 @@ def _governed_units(meta) -> set:
     `part` unit. Read from the request, never recomputed: which of them a governor changes, and how, is Lean's."""
     if "scope@0" not in listed_profiles(meta.get("environment")):
         return set()
+    named = _named_units(meta)
+    units = meta.get("units")
+    return {u.get("id") for u, _ in _parts(units if type(units) is list else [])
+            if type(u) is dict and (u.get("id") in named or
+                                    type(u.get("content")) is dict and "part" in u["content"])}
+
+
+def _named_units(meta) -> set:
+    """Every unit the request's `scope` block names, as a governor's `unit` or in its recorded `units`."""
     block = meta.get("scope")
     governors = block.get("governors") if type(block) is dict else None
     named = set()
     for governor in governors if type(governors) is list else ():
         if type(governor) is dict:
             named.add(governor.get("unit"))
-            named.update(governor.get("units") if type(governor.get("units")) is list else ())
+            named.update(u for u in (governor.get("units") if type(governor.get("units")) is list else ())
+                         if type(u) is str)
+    return named
+
+
+def composed_set_units(meta) -> list:
+    """The units, in front-matter order, whose reading set Lean's `document` mode composes per choice under `scope@0`
+    (scope 11.1, `VE.Scope.governedSetUnits`): read from the request, never recomputed. A set on a unit a governor
+    names is admitted only when GOVERN composes it per choice (any other is `ScopeReadings: <unit>`), so in a document
+    Lean admitted these are exactly the sets on named units. Their readings as written are not their meaning: Lean's
+    answer does not carry the composed readings yet (scope 11.7 item 7, sc-5rc), so whatever reads a reading of one
+    is `composed_unavailable`, never the authored content."""
+    if "scope@0" not in listed_profiles(meta.get("environment")):
+        return []
+    named = _named_units(meta)
+    sets = meta.get("reading_sets")
+    on = {s.get("unit") for s in (sets if type(sets) is list else ()) if type(s) is dict}
     units = meta.get("units")
-    return {u.get("id") for u, _ in _parts(units if type(units) is list else [])
-            if type(u) is dict and (u.get("id") in named or
-                                    type(u.get("content")) is dict and "part" in u["content"])}
+    return [u["id"] for u, _ in _parts(units if type(units) is list else [])
+            if type(u) is dict and u.get("id") in named and u.get("id") in on]
+
+
+def composed_unavailable(unit: str) -> CheckerUnavailable:
+    """The one refusal of whatever would read the readings of a set `composed_set_units` names."""
+    return CheckerUnavailable(f"CheckerUnavailable: {unit}'s reading set is composed per choice by scope@0, and its "
+                              "composed readings are not relayed yet")
 
 
 def _with_governed_units(meta: dict, governed: set, rows: list) -> dict:

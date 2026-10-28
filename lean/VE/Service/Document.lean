@@ -11,6 +11,7 @@ import VE.Rights.Run
 import VE.Limits
 import VE.Judgments.Status
 import VE.Scope.Wire
+import VE.Scope.Readings
 
 /-! # The `document` service mode: the `ve-document@1` wrapper (docs/LEAN-FIRST-PLAN.md, row 16a)
 
@@ -1737,15 +1738,20 @@ structure Checked where
 /-- `withGraph := false` is `load_document` alone: everything but `_report`'s claim-graph part (its reading checks, W2
 admission and the narrowing choices), which `check_document` adds (batch 16b). -/
 def check (text : String) (withGraph : Bool := true) (lexicon : Option Json := none) (packs : Option Json := none)
-    (governed : Option Json := none) : Except String Checked := do
+    (governed : Option Json := none) (governedSets : Option Json := none) : Except String Checked := do
   let doc ← split text (senses := true)
   -- `scope@0`'s fold (`VE.Scope.foldGovernors`) writes no `judgments` member: the two do not compose yet.
   if ["scope@0", "judgments@0"].all (listedProfiles (doc.front.getObjValD "environment")).contains then
     throw (unavailable "judgments@0 with scope@0 needs its composed Lean route")
-  -- A `scope@0` document's governed units (`withUnits`), read on the environment without the wrapper (scope 1.1).
+  -- A `scope@0` document's governed units (`withUnits`) and, when a set is governed per choice, its reading sets
+  -- (`withSets`, scope 11.4), read on the environment without the wrapper (scope 1.1).
   let front := match governed with
     | some us => if (listedProfiles (doc.front.getObjValD "environment")).contains "scope@0" then
-        (doc.front.setObjVal! "units" us).setObjVal! "environment" (lowerScope (doc.front.getObjValD "environment"))
+        let f := doc.front.setObjVal! "units" us
+        let f := match governedSets with
+          | some rs => f.setObjVal! "reading_sets" rs
+          | none => f
+        f.setObjVal! "environment" (lowerScope (doc.front.getObjValD "environment"))
       else doc.front
     | none => doc.front
   if doc.source.isEmpty then throw "document source is empty"
@@ -1847,7 +1853,8 @@ def checkCore (j : Json) : Except String Json := do
     | .ok _ => throw "InvalidInput: admit must be a boolean"
     | .error _ => pure true
   let lexicon := (j.getObjVal? "lexicon").toOption
-  pure (encode id (← check text withGraph lexicon (j.getObjVal? "packs").toOption (j.getObjVal? "units").toOption))
+  pure (encode id (← check text withGraph lexicon (j.getObjVal? "packs").toOption (j.getObjVal? "units").toOption
+    (j.getObjVal? "reading_sets").toOption))
 
 /-! ## `scope@0` (docs/spec/scope.md 1.1, 1.6, 5.2 and 8.1; SC-1b)
 
@@ -1862,8 +1869,14 @@ def profilesOf (j : Json) : List String :=
   (do let (front, _) ← Loader.frontText (← (j.getObjValD "document").getStr?)
       pure (listedProfiles ((← frontJson front).getObjValD "environment"))).toOption.getD []
 
-/-- The case with GOVERN's units, which `check` reads in place of the front matter's under `scope@0`. -/
-def withUnits (j out : Json) : Json := j.setObjVal! "units" (out.getObjValD "units")
+/-- The case with GOVERN's units, which `check` reads in place of the front matter's under `scope@0`. A case's own
+    `reading_sets` is dropped: only `withSets` hands the chain reading sets. -/
+def withUnits (j out : Json) : Json := match j.setObjVal! "units" (out.getObjValD "units") with
+  | .obj kvs => .obj (kvs.erase "reading_sets")
+  | j => j
+
+/-- The case with GOVERN's units and reading sets (scope 11.4), for a document with a reading set governed per choice. -/
+def withSets (j out : Json) : Json := (withUnits j out).setObjVal! "reading_sets" (out.getObjValD "reading_sets")
 
 /-- The chain's decoding environment the scope block reads (scope 8.1): the readings decoder's, `readings@1` listed. -/
 def scopeReadings (environment : Json) : Except String VE.Readings.Wire.ReadingsEnvironment :=
@@ -1878,13 +1891,26 @@ def _root_.VE.Scope.decodeScope (j : Json) : Except String VE.Scope.SDoc := do
   let _ ← environmentOf (lowerScope environment) (senses := (doc.front.getObjVal? "senses").isOk)
   VE.Scope.decodeBlock doc.front doc.source (← scopeReadings environment)
 
-/-- The document mode's entry. -/
+/-- The document mode with GOVERN alone (sc-1b): `checkDocSets`'s answer wherever no reading set is governed per
+    choice (`checkDocSets_no_sets`). -/
 def checkDoc (j : Json) : Except String Json :=
   if "scope@0" ∈ profilesOf j then do
     let _ ← VE.Compose.gateOf VE.Compose.profileTable (profilesOf j)
     let D ← VE.Scope.decodeScope j
     let out ← VE.Scope.governFast D
     let a ← checkCore (withUnits j out)
+    pure (VE.Scope.foldGovernors D a)
+  else checkCore j
+
+/-- The document mode's entry (scope 11, sc-5rb): `checkDoc` with `VE.Scope.governSetsWith VE.Scope.governFast`, the
+    chain handed GOVERN's reading sets when a set is governed per choice; with none, `checkDoc`'s answer
+    (`checkDocSets_no_sets`). -/
+def checkDocSets (j : Json) : Except String Json :=
+  if "scope@0" ∈ profilesOf j then do
+    let _ ← VE.Compose.gateOf VE.Compose.profileTable (profilesOf j)
+    let D ← VE.Scope.decodeScope j
+    let out ← VE.Scope.governSetsWith VE.Scope.governFast D
+    let a ← checkCore (if (VE.Scope.governedSetUnits D).isEmpty then withUnits j out else withSets j out)
     pure (VE.Scope.foldGovernors D a)
   else checkCore j
 
@@ -1980,7 +2006,7 @@ def locatedRow (j : Json) (message : String) (at_ : Located) : Json :=
   | .none => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message)]
 
 def runCaseReported (j : Json) : Json :=
-  match checkDoc j with
+  match checkDocSets j with
   | .ok result => result
   | .error message =>
     match locatedOf j message with

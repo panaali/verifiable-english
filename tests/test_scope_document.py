@@ -92,12 +92,18 @@ def test_every_structural_mutant_of_the_f1_answer_is_refused(tmp_path, monkeypat
     """The scope@0 answer is typed and bound as every document answer (R8): each one-fault structural mutant of the
     genuine F1 row (a member dropped or added, a list element dropped or duplicated, a value retyped) is refused by
     the response schema or by the binding, never relayed into a document."""
+    accepted, count = structural_mutants_accepted(tmp_path, monkeypatch, F1.read_text())
+    assert count > 200 and not accepted, accepted
+
+
+def structural_mutants_accepted(tmp_path, monkeypatch, text):
+    """The one-fault mutants of a scope@0 document's genuine row that the schema and the binding let through."""
     from tests.test_document_lean_switch import _structural_mutants
     from ve.backends import relay
     from ve.backends.lean_service import CheckerUnavailable
     from ve.backends.service_schema import ROWS, Context, Invalid
     path = tmp_path / "f1.ve.md"
-    path.write_text(F1.read_text())
+    path.write_text(text)
     case = {"id": "document", "document": path.read_text(), "admit": True}
     row = D._lean_answer(path.read_bytes(), True)
     lead = next(i for i, u in enumerate(row["units"]) if u["id"] == "u0164.s02")
@@ -120,7 +126,7 @@ def test_every_structural_mutant_of_the_f1_answer_is_refused(tmp_path, monkeypat
         except CheckerUnavailable:
             continue
         accepted.append(where)
-    assert count > 200 and not accepted, accepted
+    return accepted, count
 
 
 # ------------------------------------------------------------------- sc-1b review F1: governed rules are relayed

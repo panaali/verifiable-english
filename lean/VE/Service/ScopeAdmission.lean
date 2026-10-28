@@ -1,5 +1,6 @@
 import VE.Service.Document
 import VE.Scope.Theorems
+import VE.Scope.ReadingsTheorems
 
 /-! SC-1b's theorems (docs/spec/scope.md 5.2): the governor status, the front-matter decoder's layout, and the document
     mode's answer on a `scope@0` document. The spec's placeholders (8.1) are pinned here: `Pinned.checkDoc` is
@@ -132,6 +133,72 @@ theorem scope_admission (front ans : Json) (h : checkDoc front = .ok ans)
 theorem scope_absent_unchanged (front : Json) (h : "scope@0" ∉ profilesOf front) :
     checkDoc front = checkCore front := by
   unfold checkDoc
+  rw [if_neg h]
+
+/-! ## Per choice over a reading set (scope spec 11.3 and 11.4, sc-5rb)
+
+The document mode's entry is `checkDocSets`, which calls `governSetsWith governFast`; `scope_admission` and
+`scope_absent_unchanged` above stay true of `checkDoc`, which `checkDocSets` answers as wherever no set is governed.
+The stub's placeholders are pinned here: `Pinned.checkDocSets` is the entry (an alias), and `Pinned.withGoverned` the case it
+hands the chain, read off the case's own scope block. -/
+
+namespace Pinned
+
+export VE.Service.Document (checkDocSets)
+
+/-- The case `checkDocSets` hands the chain: GOVERN's units, and its reading sets when the case's scope block governs
+    a reading set per choice (11.4). -/
+def withGoverned (j out : Json) : Json := match decodeScope j with
+  | .ok D => if (governedSetUnits D).isEmpty then withUnits j out else VE.Service.Document.withSets j out
+  | .error _ => withUnits j out
+
+end Pinned
+
+/-- `scope_admission` (5.2), restated: the chain checks GOVERN's units and reading sets. -/
+theorem scope_admission_sets (front ans : Json) (h : Pinned.checkDocSets front = .ok ans)
+    (hs : "scope@0" ∈ VE.Service.Document.profilesOf front) :
+    ∃ D out a, decodeScope front = .ok D ∧ governSets D = .ok out ∧
+      VE.Service.Document.checkCore (Pinned.withGoverned front out) = .ok a ∧ ans = foldGovernors D a := by
+  unfold VE.Service.Document.checkDocSets at h
+  rw [if_pos hs] at h
+  simp only [bind, Except.bind] at h
+  split at h
+  · cases h
+  split at h
+  · cases h
+  rename_i D hD
+  split at h
+  · cases h
+  rename_i out ho
+  split at h
+  · cases h
+  rename_i a ha
+  cases h
+  refine ⟨D, out, a, hD, (governSetsFast_eq D) ▸ ho, ?_, rfl⟩
+  unfold Pinned.withGoverned
+  rw [hD]
+  exact ha
+
+/-- `scope_admission`'s text, kept where no set is governed: the document mode answers exactly as today's `checkDoc`,
+    a block or profile fault included (`governSets_no_sets`, and the chain reads `withGoverned` as `withUnits`). -/
+theorem checkDocSets_no_sets (front : Json) (h : ∀ D, decodeScope front = .ok D → governedSetUnits D = []) :
+    Pinned.checkDocSets front = VE.Service.Document.checkDoc front := by
+  unfold VE.Service.Document.checkDocSets VE.Service.Document.checkDoc
+  split
+  · simp only [bind, Except.bind]
+    split
+    · rfl
+    · cases hD : decodeScope front with
+      | error e => rfl
+      | ok D =>
+        have h0 := h D hD
+        simp only [VE.Scope.governSetsWith, h0, List.isEmpty_nil, if_true]
+  · rfl
+
+/-- `scope_absent_unchanged`, restated: a document without `scope@0` is `checkCore`'s, as before. -/
+theorem checkDocSets_absent_unchanged (front : Json) (h : "scope@0" ∉ VE.Service.Document.profilesOf front) :
+    Pinned.checkDocSets front = VE.Service.Document.checkCore front := by
+  unfold VE.Service.Document.checkDocSets
   rw [if_neg h]
 
 end VE.Scope
