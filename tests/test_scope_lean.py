@@ -38,10 +38,19 @@ WIRE = [f"VE/Scope/Wire.lean: VE.Scope.{name}" for name in (
     "listMember", "spanIn", "statusOf")]
 
 
+# The per-choice GOVERN's helpers (sc-5rb, scope spec 11.2), named one by one: the statements naming the trees they
+# build (`governSets_preserves`, `governSets_every_choice`, `governSets_strings`, `governSets_readings_refused`) take
+# `Pinned.JsonWF` and wait for sc-1ae (sc-5rc); R16's condition for them is met by
+# `lean/VE/Scope/ReadingsExamples.lean`'s #guards and docs/scope/sc-5rb/trust-mutants.json.
+READINGS = [f"VE/Scope/Readings.lean: VE.Scope.{name}" for name in (
+    "assemble", "atChoice", "atChoiceOn", "choiceText", "governedSets", "layoutReach", "pickOf", "readingAt",
+    "readingsJson", "setUnit", "setVersion", "setsJson", "shapeOf")]
+
+
 def test_every_trusted_scope_definition_is_used_by_a_theorem():
     proved = trust_map.statements(STATEMENTS)
     assert proved, "lean/statements.txt is missing or empty; run tools/lean_statements.py"
-    assert trust_map.unexercised(trust_map.load_table(), proved, scope_modules()) == WIRE
+    assert trust_map.unexercised(trust_map.load_table(), proved, scope_modules()) == sorted(WIRE + READINGS)
 
 
 TIES = {
@@ -88,7 +97,8 @@ def unexercised_without(module: str, name: str) -> list[str]:
     """The unexercised definitions once every theorem that uses `name` of `module` is dropped."""
     proved = trust_map.statements(STATEMENTS)
     without = {theorem: found for theorem, found in proved.items() if not found or (module, name) not in found}
-    return [d for d in trust_map.unexercised(trust_map.load_table(), without, scope_modules()) if d not in WIRE]
+    return [d for d in trust_map.unexercised(trust_map.load_table(), without, scope_modules())
+            if d not in WIRE + READINGS]
 
 
 def test_a_definition_no_theorem_uses_is_reported():
