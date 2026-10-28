@@ -5,6 +5,7 @@ import VE.Acts.LexicalExamples
 import VE.Norms.Run
 import VE.Words.Situation
 import VE.NormDefaults.Run
+import VE.Readings.Run
 
 /-! act-phrases AP-1, the profile part (ap-1b): `acts@0` documents through the norms decoder, the environment
 mode, the family route and Lean's English (spec 2.1, 2.8, 3.1-3.3, 4.4; fixtures A1-A3, A5, A6, A19 of 11.1).
@@ -452,6 +453,10 @@ def rdP : List String := ["acts@0", "norms@0", "readings@1", "relational-fol@0"]
   some [some a1, some a2, some a3]
 #guard err (VE.Readings.Wire.decodeEnvironment (envA ["acts@0", "norm-defaults@0", "norms@0", "readings@1",
   "relational-fol@0"])) == "ok"
+-- and admits a document with a rule on a plain act (the norms chain's `Soften.checkW1` admits the act)
+def ruleDoc (p : String) : Json := Json.mkObj [("units", Json.arr #[Json.mkObj [("id", .str "u1"), ("kind", .str "norm"),
+  ("content", rule p)]]), ("reading_sets", Json.arr #[])]
+#guard err (VE.Readings.Run.validateOne "v" (envA rdP) (ruleDoc "paid")) == "ok"
 -- D-33 for a joined act (A5's "and", A6's "or" with its phrase undeclared; plain or a permission); the norms route
 -- keeps D-4; every other act refusal (D-5's comma) and the block's refusal without `acts@0` are the decoder's own
 def d33 (p : String) : String :=
