@@ -9554,7 +9554,8 @@
         "VE.Service.Document.usageJson",
         "VE.Service.Document.usesNorms",
         "VE.Service.Document.wireJson",
-        "VE.Service.Document.withUnits"
+        "VE.Service.Document.withUnits",
+        "VE.Service.Document.withSets"
       ],
       "D[R]": [
         "VE.Service.Document.Foreign",
@@ -9645,6 +9646,14 @@
           "tied": [
             "VE.Scope.scope_admission",
             "VE.Scope.scope_absent_unchanged"
+          ]
+        },
+        {
+          "name": "VE.Service.Document.checkDocSets",
+          "tied": [
+            "VE.Scope.checkDocSets_absent_unchanged",
+            "VE.Scope.checkDocSets_no_sets",
+            "VE.Scope.scope_admission_sets"
           ]
         }
       ],
@@ -14962,7 +14971,11 @@
         "VE.Service.ScopeExamples.unsorted"
       ]
     },
-    "VE/Service/ScopeAdmission.lean": {},
+    "VE/Service/ScopeAdmission.lean": {
+      "S": [
+        "VE.Scope.Pinned.withGoverned"
+      ]
+    },
     "VE/Scope/Wire.lean": {
       "D[R]": [
         "VE.Scope.memberOf",
@@ -15419,6 +15432,63 @@
         "VE.Cardinality.RunExamples.withW6"
       ]
     },
-    "VE/Cardinality/RunTheorems.lean": {}
+    "VE/Cardinality/RunTheorems.lean": {},
+    "VE/Scope/Readings.lean": {
+      "G[V]": [
+        "VE.Scope.assemble",
+        "VE.Scope.atChoice",
+        "VE.Scope.atChoiceOn",
+        "VE.Scope.choiceFault",
+        "VE.Scope.choiceLimit",
+        "VE.Scope.choiceText",
+        "VE.Scope.faultOf",
+        "VE.Scope.governChoice",
+        "VE.Scope.governSets",
+        "VE.Scope.governSetsWith",
+        "VE.Scope.governedSetUnits",
+        "VE.Scope.governedSets",
+        "VE.Scope.layoutReach",
+        "VE.Scope.pickOf",
+        "VE.Scope.readingAt",
+        "VE.Scope.readingsJson",
+        "VE.Scope.setChoices",
+        "VE.Scope.setShapes",
+        "VE.Scope.setUnit",
+        "VE.Scope.setVersion",
+        "VE.Scope.setsJson",
+        "VE.Scope.shapeOf"
+      ]
+    },
+    "VE/Scope/ReadingsExamples.lean": {
+      "T": [
+        "VE.Scope.Examples.a5",
+        "VE.Scope.Examples.asWritten",
+        "VE.Scope.Examples.cyberPart",
+        "VE.Scope.Examples.depAt",
+        "VE.Scope.Examples.depParts",
+        "VE.Scope.Examples.gPr",
+        "VE.Scope.Examples.guardNarrow",
+        "VE.Scope.Examples.guardWide",
+        "VE.Scope.Examples.narrowG2",
+        "VE.Scope.Examples.narrowNorm",
+        "VE.Scope.Examples.notN",
+        "VE.Scope.Examples.perChoice",
+        "VE.Scope.Examples.r9",
+        "VE.Scope.Examples.reading",
+        "VE.Scope.Examples.readingContents",
+        "VE.Scope.Examples.rset",
+        "VE.Scope.Examples.s03",
+        "VE.Scope.Examples.s03set",
+        "VE.Scope.Examples.s05set",
+        "VE.Scope.Examples.setDoc",
+        "VE.Scope.Examples.sets",
+        "VE.Scope.Examples.twoSets",
+        "VE.Scope.Examples.u0166set",
+        "VE.Scope.Examples.wideG2",
+        "VE.Scope.Examples.wideNorm",
+        "VE.Scope.Examples.wideSet"
+      ]
+    },
+    "VE/Scope/ReadingsTheorems.lean": {}
   }
 }
