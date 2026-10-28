@@ -1,0 +1,172 @@
+shard 5/7: 88 units; commands: ['lake build', 'lake build ve_english_lean_bench ve_scope_bench']
++ lake build
+⚠ [95/143] Replayed VE.SoftNorms.Soften
+warning: VE/SoftNorms/Soften.lean:264:19: This simp argument is unused:
+  Option.bind_eq_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵e̵q̵_̵b̵i̵n̵d̵,̵ ̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵n̵o̵n̵e̵]̵[̲O̲p̲t̲i̲o̲n̲.̲b̲i̲n̲d̲_̲n̲o̲n̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [110/143] Replayed VE.Readings.Separate
+warning: VE/Readings/Separate.lean:1490:50: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: VE/Readings/Separate.lean:1492:5: unused variable `hr`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [118/143] Replayed VE.Readings.Superpose
+warning: VE/Readings/Superpose.lean:311:34: unused variable `h`
+
+... (9094 lines cut; full output in shard-full.txt)
+  Downloaded unicode-ident v1.0.26
+  Downloaded serde_core v1.0.229
+  Downloaded memchr v2.8.3
+  Downloaded typenum v1.20.1
+  Downloaded serde v1.0.229
+  Downloaded num-bigint v0.4.8
+  Downloaded serde_json v1.0.151
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling itoa v1.0.18
+   Compiling cpufeatures v0.2.17
+   Compiling cfg-if v1.0.5
+   Compiling memchr v2.8.3
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.229
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `release` profile [optimized] target(s) in 16.00s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.26
+   Compiling autocfg v1.5.1
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling cfg-if v1.0.5
+   Compiling memchr v2.8.3
+   Compiling cpufeatures v0.2.17
+   Compiling itoa v1.0.18
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 8.38s
+order: failed last time []; changed []; then the rest; --maxfail off
+recording 88 units with 4 jobs in /tmp/ve-select-run-5nd2b729
+  tests/test_stage2_validation.py: exit 1 in 4.4 s, 793 functions
+  tests/test_closure_witnesses.py: exit 1 in 0.8 s, 229 functions
+  tests/test_readings_defaults_rd8_report.py: exit 1 in 0.9 s, 237 functions
+FAILED tests/test_stage2_validation.py (exit 1): tests/test_stage2_validation.py::test_environments_and_models_match_frozen_python_on_every_profile_combination; log /tmp/ve-select-run-5nd2b729/tests__test_stage2_validation.py.log
+            "        except VEError:\n"
+            "            models.append(['rejected'])\n"
+            "    rows.append(['accepted', env.environment_id, models])\n"
+            "print(json.dumps(rows))\n"
+        )
+        # oracle.run executes the script with the frozen package on PYTHONPATH.
+        # Supply the payload path through argv in a tiny wrapper so the oracle's
+        # runner need not acquire another interface for this test.
+        wrapper = tmp_path / "run_oracle.py"
+        wrapper.write_text("import runpy, sys\n"
+                           f"sys.argv = [{str(script)!r}, {str(payload)!r}]\n"
+                           f"runpy.run_path({str(script)!r}, run_name='__main__')\n")
+>       assert lean_first_oracle.run(wrapper, scratch=tmp_path) == 0
+E       AssertionError: assert 2 == 0
+E        +  where 2 = <function run at 0x7f11b2343480>(PosixPath('/tmp/pytest-of-runner/pytest-20/test_environments_and_models_m0/run_oracle.py'), scratch=PosixPath('/tmp/pytest-of-runner/pytest-20/test_environments_and_models_m0'))
+E        +    where <function run at 0x7f11b2343480> = <module 'tools.lean_first_oracle' from '/home/runner/work/verifiable-english/verifiable-english/tools/lean_first_oracle.py'>.run
+
+tests/test_stage2_validation.py:96: AssertionError
+----------------------------- Captured stderr call -----------------------------
+tag lean-first/oracle-python does not exist
+=========================== short test summary info ============================
+FAILED tests/test_stage2_validation.py::test_environments_and_models_match_frozen_python_on_every_profile_combination - AssertionError: assert 2 == 0
+ +  where 2 = <function run at 0x7f11b2343480>(PosixPath('/tmp/pytest-of-runner/pytest-20/test_environments_and_models_m0/run_oracle.py'), scratch=PosixPath('/tmp/pytest-of-runner/pytest-20/test_environments_and_models_m0'))
+ +    where <function run at 0x7f11b2343480> = <module 'tools.lean_first_oracle' from '/home/runner/work/verifiable-english/verifiable-english/tools/lean_first_oracle.py'>.run
+1 failed, 21 passed in 2.63s
+FAILED tests/test_closure_witnesses.py (exit 1): tests/test_closure_witnesses.py::test_all_e0_closure_witnesses; log /tmp/ve-select-run-5nd2b729/tests__test_closure_witnesses.py.log
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['git', 'show', '46be9e1bafc85e37456cbf56e9dc92b6c8178666:experiments/E0/survey_samples/cedar.jsonl']' returned non-zero exit status 128.
+
+../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: CalledProcessError
+----------------------------- Captured stderr call -----------------------------
+fatal: path 'experiments/E0/survey_samples/cedar.jsonl' exists on disk, but not in '46be9e1bafc85e37456cbf56e9dc92b6c8178666'
+=========================== short test summary info ============================
+FAILED tests/test_closure_witnesses.py::test_all_e0_closure_witnesses - subprocess.CalledProcessError: Command '['git', 'show', '46be9e1bafc85e37456cbf56e9dc92b6c8178666:experiments/E0/survey_samples/cedar.jsonl']' returned non-zero exit status 128.
+1 failed in 0.18s
+FAILED tests/test_readings_defaults_rd8_report.py (exit 1): tests/test_readings_defaults_rd8_report.py::test_review_fix_commit_chain_and_final_gate_target; log /tmp/ve-select-run-5nd2b729/tests__test_readings_defaults_rd8_report.py.log
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['git', 'log', '--reverse', '--format=%H%x09%s', '167eb8ff..69a8dbdaf1eb330ff09214955715351816d7d4d9']' returned non-zero exit status 128.
+
+../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: CalledProcessError
+----------------------------- Captured stderr call -----------------------------
+fatal: ambiguous argument '167eb8ff..69a8dbdaf1eb330ff09214955715351816d7d4d9': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+=========================== short test summary info ============================
+FAILED tests/test_readings_defaults_rd8_report.py::test_review_fix_commit_chain_and_final_gate_target - subprocess.CalledProcessError: Command '['git', 'log', '--reverse', '--format=%H%x09%s', '167eb8ff..69a8dbdaf1eb330ff09214955715351816d7d4d9']' returned non-zero exit status 128.
+1 failed, 8 passed in 0.20s
+recorded 88 units for tree 9b18bc6780; 0 others left to the static graph until they run; 3 failed
+SHARD 5/7: exit 1 in 834.3 s; 88 units, 85 passed
