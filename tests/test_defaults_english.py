@@ -8,9 +8,13 @@ every name a label gives to the request). Lean selects every form: the tests cha
 """
 from __future__ import annotations
 
+import json
+from pathlib import Path
+
 import pytest
 
 from ve import defaults_english
+from ve.document import main
 from ve.errors import CheckerUnavailable
 from tests.test_defaults_lean import DOCS, HOLISTIC, STRICT, UNLESS_URGENT, X_ALL, asked, env, rule, un
 
@@ -238,3 +242,35 @@ def test_no_label_prefix_marker_or_by_default(monkeypatch):
     long_or_forced = english(monkeypatch, "epsilon") + english(monkeypatch, "beta")
     assert not any(s.startswith(("Unless an exception applies", "Even if no exception applies,"))
                    for s in long_or_forced)
+
+
+# -- P-3 (plan 4.2): u0073.s05, one default rule with three stated exception conditions, through the flag
+
+P3 = Path(__file__).resolve().parents[1] / "docs/defeasible/df-1bb/probe"
+CLASSIFIED = 'that instruction is classified as "{}"'
+
+
+def _p3(capsys, question):
+    assert main(["readings", str(P3 / "p3-force-u0073-s05.ve.md"), "--conclusion",
+                 str(P3 / f"question-p3-{question}.json"), "--assume-no-exception"]) == 0
+    return json.loads(capsys.readouterr().out)
+
+
+def test_p3_follows_long_listing_the_three_conditions(capsys):
+    out = _p3(capsys, "none-holds")
+    assert (out["answer"]["verdict"], out["answer"]["basis"], out["answer"]["form"]) == ("FOLLOWS", "needs", "long")
+    head, assumed = out["english"]
+    assert head.startswith("Under the assumptions listed below, the conclusion follows: ")
+    conditions = ", or ".join(CLASSIFIED.format(p) for p in ("unsafe", "unethical", "against_guidelines"))
+    assert assumed == ("This assumes that the exception to rule comply applies only where the text says it does: "
+                       f"{conditions}. The text names no one who decides any other case.")
+
+
+def test_p3_fails_where_a_condition_holds_naming_it(capsys):
+    out = _p3(capsys, "always")
+    [entry] = out["answer"]["forced"]
+    condition = ("unsafe", "unethical", "against_guidelines")[entry["condition"]]
+    assert out["english"][0].startswith("Even if no exception applies beyond those the text states, the conclusion "
+                                        "does not follow. It fails here: ")
+    assert out["english"][1:] == [
+        f'The text\'s own exception to rule comply applies here: e0 is classified as "{condition}".']
