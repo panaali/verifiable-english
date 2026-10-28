@@ -115,6 +115,19 @@ def test_an_f1_refusal_is_leans_text_and_span(calls):
     assert caught.value.span is not None and calls == [SPEECH]
 
 
+@pytest.mark.parametrize("wording", ["Is alice reviewed?", "Is it the case that alice is reviewed?"])
+def test_a_code_worded_refusal_is_leans_text_verbatim(monkeypatch, tmp_path, ve_ask_here, wording):
+    """Loop recheck of fix round 5 (DRI 2026-10-28 b item 1 (c)): a refusal of a class that writes `Code: text` for
+    Python's own checkers (`TypeMismatch`) carries Lean's lines verbatim (`question_lines`), the text `ve ask` prints,
+    on the F1 and the F2 route alike; the code stays in its own field."""
+    with pytest.raises(VEError) as caught:
+        parse_speech(ENV, wording, ENV.speech_acts)
+    assert caught.value.code == "TypeMismatch" and caught.value.span is not None
+    assert str(caught.value) == caught.value.message == "\n".join(english_lean.question_lines(caught.value.lean_question))
+    assert caught.value.to_dict()["message"] == "The question was read, and its formula does not pass the type check."
+    assert_read_as_ve_ask(monkeypatch, tmp_path, ENV, wording, None, ask=ve_ask_here)
+
+
 def test_an_f1_refusal_carries_leans_rephrasings(calls):
     """Review q1-4 F2: the refusal is Lean's text and then each rephrasing, the lines `ve ask` prints, never a text
     that ends at "Ask one of these instead:"."""
@@ -239,10 +252,14 @@ def ve_ask_here(capsys):
     return run
 
 
+VE_ASKS = object()  # `assert_read_as_ve_ask`'s body: whatever `ve ask` reads
+
+
 def assert_read_as_ve_ask(monkeypatch, tmp_path, env, wording: str, body, ask=ve_ask) -> dict:
     """The speech caller's verdict and text for `wording` equal `ve ask`'s (run by `ask`) in the same environment (DRI
-    2026-10-28 item 5 (ii)): `body` is the formula both read, or None when both refuse it. Returns `ve ask`'s JSON
-    result."""
+    2026-10-28 item 5 (ii)): `body` is the formula both read, None when both refuse it, or `VE_ASKS` for `ve ask`'s own
+    reading (its `ast` when it reads one, else None: the differential over generated wordings). Returns `ve ask`'s
+    JSON result."""
     seen = []
 
     def spy(*args, **kwargs):
@@ -257,10 +274,14 @@ def assert_read_as_ve_ask(monkeypatch, tmp_path, env, wording: str, body, ask=ve
     monkeypatch.setattr(speech_english, "read_question", spy)
     done = ask(tmp_path, wording, env=env)
     structured = json.loads(ask(tmp_path, wording, "--json", env=env).stdout)["result"]
+    if body is VE_ASKS:
+        body = structured["ast"] if structured["status"] == "one" else None
     if body is None:
         with pytest.raises(VEError) as caught:
             parse_speech(env, wording, env.speech_acts)
-        assert done.returncode == 2 and str(caught.value).splitlines() == done.stdout.splitlines()
+        assert done.returncode == (4 if isinstance(caught.value, ResourceLimit) else 2)  # `ve ask`'s EXIT_LIMIT
+        assert str(caught.value).splitlines() == done.stdout.splitlines()
+        assert type(caught.value).__name__ == seen[0]["class"] == structured["class"]
     else:
         assert parse_speech(env, wording, env.speech_acts) == ({"mode": "polar", "body": body}, "question")
         assert done.returncode == 0 and english_lean.question_lines(seen[0]) == done.stdout.splitlines()
@@ -359,6 +380,151 @@ def test_every_opening_verdict_row_is_read_as_ve_ask_reads_it(monkeypatch, tmp_p
     assert_read_as_ve_ask(monkeypatch, tmp_path, extended(env), read, body, ask=ve_ask_here)
 
 
+def test_the_class_d_delta_rows_are_the_generators_and_name_the_trimmed_comparison():
+    """Loop recheck F12, DRI 2026-10-28 b item 2: DELTA.md's class (d) rows P20-P109 are `delta_md`'s, and the Ruling
+    cell of every row whose group holds a wording with space around it says it is compared on `wording_text`."""
+    rows = speech_ab_f2.delta_md(str(EVIDENCE / "delta.json"), 20)
+    assert rows in (EVIDENCE.parent / "DELTA.md").read_text()
+    assert sum(map(speech_ab_f2.trimmed, OPENING_ROWS)) == 2760
+    lines = rows.splitlines()
+    noted = [line for line in lines if speech_ab_f2.TRIMMED in line]
+    assert 0 < len(noted) < len(lines) == 90
+    count = lambda line: int(line.split(" | ")[1].rsplit(", ", 1)[1].removesuffix(" rows").replace(",", ""))
+    assert sum(map(count, lines)) == len(OPENING_ROWS) and sum(map(count, noted)) >= 2760
+    for line in lines:  # a row whose first wording has space around it is always noted
+        first = json.loads('"' + line.split(" | ")[3].strip("`") + '"')
+        assert wording_text(first) == first or speech_ab_f2.TRIMMED in line
+
+
+# ------------------------------------------------------------------ class (d) by structure (DRI 2026-10-28 b item 1)
+
+OPENING_ROWS = [row for row in json.loads((EVIDENCE / "delta.json").read_text())["rows"] if speech_ab_f2.opening(row)]
+HUNT = speech_ab_f2.hunt_recording(str(EVIDENCE))
+RECHECKED = set(speech_ab_f2.RECHECKED)
+
+
+def _routed(wording: str) -> bool:
+    """Whether the trimmed wording starts with a prefix the speech parser routes to Lean (`_LEAN_PREFIXES`)."""
+    try:
+        return wording_text(wording).startswith(speech_english._LEAN_PREFIXES)
+    except VEError:
+        return False
+
+
+def test_the_hunt_recording_is_the_generators_fixed_seed_sample():
+    """DRI 2026-10-28 b item 1 (c): evidence/hunt-base.json.gz records, at the base, exactly `hunt_sample` (a fixed-
+    seed sample of both hunt generators, then F8-F11 and F13), so the relay and differential tests below run over the
+    committed generators' sample and not a chosen list."""
+    sample = speech_ab_f2.hunt_sample()
+    assert [(r["env"], r["wording"]) for r in HUNT] == [(env, wording) for env, wording, _ in sample]
+    assert {name for *_, name in sample} == {"hunt_one", "hunt_two", "rechecked"}
+    assert RECHECKED <= {(r["env"], r["wording"]) for r in HUNT}
+
+
+@pytest.mark.parametrize("source", ["corpus", "hunt"])
+def test_every_wording_the_base_read_through_is_is_in_its_acceptance_set(source):
+    """DRI 2026-10-28 b item 1 (a): a wording the base read through the deleted `Is ` branch (an `Is ` wording outside
+    the F1 prefixes) is in `in_base_set`, over the saved corpus and the hunt sample; and in the corpus every member the
+    set holds was read at the base, so the set is the base's, not a superset."""
+    base = speech_ab_f2.recordings(str(EVIDENCE))[0] if source == "corpus" else HUNT
+    assert speech_ab_f2.outside_base_set(base) == []
+    members = [r for r in base if speech_ab_f2.in_base_set(EXTRA[r["env"]], r["wording"])]
+    assert all("content" in r["outcome"] for r in members)
+    assert len(members) == (708 if source == "corpus" else 0)
+
+
+@pytest.mark.parametrize("env, wording, read", [
+    ("speech", "Is atlas reviewed?", True), ("speech", " Is ATLAS REVIEWED?\t", True),
+    ("glossed", "Is Beacon reviewed BY staff?", True), ("f0-checked", "Is tom a cat?", True),
+    ("speech", "Is atlas  reviewed?", False), ("speech", "Is atlas not reviewed?", False),
+    ("speech", "Is every service reviewed?", False), ("speech", 'Is "atlas" reviewed?', False),
+    ("speech", "is atlas reviewed?", False), ("speech", "Is atlas reviewed", False),
+    ("unverbalised", "Is atlas checked?", False), ("speech", "Is alice reviewed?", False),
+    ("speech", "Is atlas reviewed?\xa0", False)])
+def test_the_base_acceptance_set_is_a_declared_name_and_form_up_to_case_and_trimmed_space(env, wording, read):
+    """DRI 2026-10-28 b item 1 (a): `in_base_set` holds for `Is <name> <declared form>?` up to ASCII case and the
+    space `wording_text` trims, and for nothing else: not inner spacing, a negative form, a determiner, a quoted name,
+    `is`, a missing `?`, an undeclared form, a name of another sort, or a non-ASCII space."""
+    assert speech_ab_f2.in_base_set(EXTRA[env], wording) is read
+
+
+RELAY_CHUNKS = 32
+
+
+@functools.cache
+def relay_cases() -> list[tuple[str, str, str]]:
+    """(source, env, wording): every saved corpus wording whose trimmed text starts with a routed prefix or is not
+    ASCII (refused before any route), and every hunt-sample wording."""
+    out = [("corpus", r["env"], r["wording"]) for r in speech_ab_f2.recordings(str(EVIDENCE))[1]
+           if _routed(r["wording"]) or not r["wording"].isascii()]
+    return out + [("rechecked" if (r["env"], r["wording"]) in RECHECKED else "hunt", r["env"], r["wording"])
+                  for r in HUNT]
+
+
+def assert_relayed(env_name: str, wording: str, monkeypatch) -> None:
+    """`parse_speech` gives a wording whose trimmed text starts with `_LEAN_PREFIXES` to `read_question` exactly once,
+    with `wording_text(wording)`, this environment, the speech vocabulary, no options and `caller=SPEECH_CALLER`, and
+    returns its `ast` unchanged or raises its refusal unchanged; any other wording never reaches it."""
+    env = speech_ab_f2._environment(env_name)
+    seen, ast, refusal = [], ["recorded ast"], VEError("SyntaxError: recorded refusal")
+
+    def recorder(*args, caller=None, **kwargs):
+        seen.append((args, caller, kwargs))
+        if len(seen) == 2:
+            raise refusal
+        return {"ast": ast}
+
+    monkeypatch.setattr(speech_english, "read_question", recorder)
+    try:
+        text = wording_text(wording)
+    except VEError:
+        text = None
+    if text is None or not text.startswith(speech_english._LEAN_PREFIXES):
+        with pytest.raises(VEError):  # a wording outside the routed prefixes: refused or read by another route
+            parse_speech(env, wording, env.speech_acts)
+        assert seen == []
+        return
+    content, kind = parse_speech(env, wording, env.speech_acts)
+    assert (content, kind) == ({"mode": "polar", "body": ast}, "question") and content["body"] is ast
+    (args, caller, kwargs), = seen
+    assert caller == SPEECH and kwargs == {} and len(args) == 4
+    assert args[0] is env and args[1] == text and type(args[2]) is EnglishVocabulary and args[3] == {}
+    with pytest.raises(VEError) as caught:
+        parse_speech(env, wording, env.speech_acts)
+    assert caught.value is refusal and len(seen) == 2 and seen[1][0][1] == text
+
+
+@pytest.mark.parametrize("chunk", range(RELAY_CHUNKS))
+def test_parse_speech_relays_every_routed_corpus_and_hunted_wording_unchanged(monkeypatch, chunk):
+    """DRI 2026-10-28 b item 1 (b): over every routed (or non-ASCII) wording of the saved corpus and every wording of
+    the hunt sample (F8-F11 and F13 among them), the speech parser makes no decision of its own between the wording
+    and Lean's reader (`assert_relayed`), so any `Is ` wording outside the base's set reads as Lean reads it."""
+    cases = relay_cases()
+    assert len(cases) > 290_000 and {s for s, *_ in cases} == {"corpus", "hunt", "rechecked"}
+    for _, env, wording in cases[chunk::RELAY_CHUNKS]:
+        assert_relayed(env, wording, monkeypatch)
+
+
+@pytest.mark.parametrize("env, wording", sorted(RECHECKED), ids=[f"rechecked:{e}:{w!r}" for e, w in sorted(RECHECKED)])
+def test_a_rechecked_wording_is_relayed_unchanged(monkeypatch, env, wording):
+    """Loop recheck F8-F11, F13 (DRI 2026-10-28 b item 1 (b)): each wording the recheck found outside the base's set
+    is relayed to Lean's reader unchanged."""
+    assert_relayed(env, wording, monkeypatch)
+
+
+DIFFERENTIAL = [(r["env"], r["wording"]) for r in HUNT if _routed(r["wording"])
+                and not wording_text(r["wording"]).startswith(("Must ", "Can "))]
+
+
+@pytest.mark.parametrize("env, wording", DIFFERENTIAL, ids=[
+    f"{'rechecked' if (e, w) in RECHECKED else 'hunt'}:{e}:{w!r}" for e, w in DIFFERENTIAL])
+def test_a_hunted_wording_gets_ve_asks_verdict_and_text(monkeypatch, tmp_path, ve_ask_here, env, wording):
+    """DRI 2026-10-28 b item 1 (c), loop recheck F8-F11 and F13: for every routed wording of the hunt sample (modal
+    ones excepted, as item 5), the speech caller's verdict and text equal `ve ask`'s on `wording_text(wording)`."""
+    assert len(DIFFERENTIAL) > 2_000 and RECHECKED <= set(DIFFERENTIAL)
+    assert_read_as_ve_ask(monkeypatch, tmp_path, extended(env), wording_text(wording), VE_ASKS, ask=ve_ask_here)
+
+
 def test_the_corpus_asks_every_declared_word_in_every_slot_and_records_it():
     """F5, F6, F7, DRI note 2026-10-28c (a): `coverage` finds the saved corpus complete: every environment the evidence
     asks in (Q1.4's and the three added), every grammar rule (but those needing a two-place verbalisation, which none
@@ -427,6 +593,9 @@ SAFE = {  # DRI note 2026-10-28c (a): each case the audit must refuse, and what 
     "a case variant never asked (hunt 1)": (
         speech_ab_f2.all_sentences, ("speech", "Is Every service reviewed?"),
         "speech formula.universal: case variant 'Is Every service reviewed?'"),
+    "a member shape of the base's acceptance set never asked (DRI 2026-10-28 b item 1 (a))": (
+        speech_ab_f2.all_sentences, ("glossed", "Is atlas reviewed by STAFF?"),
+        "glossed base set 'atlas is reviewed by staff': case variant 'Is atlas reviewed by STAFF?' never asked"),
     "a nesting never asked (hunt 1)": (
         lambda: _without("speech", speech_ab_f2.nest_tag("negation", 6, "formula.universal")), None,
         "speech negation: formula.universal in formula place 6 never asked"),
@@ -450,6 +619,22 @@ def test_the_audit_fails_on_an_incomplete_corpus_and_names_the_gap(monkeypatch, 
     capsys.readouterr()
     assert speech_ab_f2.check(str(EVIDENCE / "delta.json")) == 1
     assert "unasked: " in capsys.readouterr().out
+
+
+@pytest.mark.parametrize("recording", ["corpus", "hunt"])
+@pytest.mark.parametrize("wording", ["Is every service reviewed?", "Is atlas not reviewed?", "Is atlas  reviewed?"])
+def test_the_audit_fails_when_the_base_read_outside_its_acceptance_set(monkeypatch, capsys, recording, wording):
+    """DRI 2026-10-28 b item 1 (a): `check` exits 1 and names the wording when a base recording (the corpus or the
+    hunt sample) has a reading of the deleted `Is ` branch outside `in_base_set`."""
+    base, head, rows = speech_ab_f2.recordings(str(EVIDENCE))
+    read = {"env": "speech", "wording": wording, "outcome": {"kind": "question", "content": {}, "warnings": []}}
+    if recording == "corpus":
+        monkeypatch.setattr(speech_ab_f2, "recordings", lambda folder: ([*base, read], head, rows))
+    else:
+        monkeypatch.setattr(speech_ab_f2, "hunt_recording", lambda folder: [*HUNT, read])
+    capsys.readouterr()
+    assert speech_ab_f2.check(str(EVIDENCE / "delta.json")) == 1
+    assert f"the base read speech {wording!r} outside" in capsys.readouterr().out
 
 
 HUNTED = [("names", 'Is it not the case that "atlas2" is reviewed?'), ("names", 'Is "atlas2" the same as beacon?'),
