@@ -95,7 +95,7 @@ from the code: the `OL` arm, the `S` arm, `itemOf`'s filter and the edge list.
   theorems; `uv run python tools/regen_generated.py --write --skip route-cases` (route-cases needs a Rust release
   binary the worktree lacks, and no route is touched); `tools/gate_collection.py --check --prebuilt`: 19,905
   collected, 0 added, 0 removed, 0 refused/stale/malformed.
-- **Selected tests** (`mac-pytest.sh --select`, once on the final code): see section 9.
+- **Selected tests** (`mac-pytest.sh --select`, once on the final code): 88 units, all exit 0 (section 9).
 - **Pilot bytes:** 0 itself (estimate). Nothing reads a joined act on a route yet; AP-4 (u092, +163 B est.) and ap-3d
   need `read`. Nothing is claimed before a pilot audit.
 
@@ -139,7 +139,10 @@ ap-3d (the relay, with ap-3c), then AP-4 (protocol queue after qt-a3c and SC-1c)
 
 ## 9. Selected tests
 
-Pending (filled in after the run).
+`zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on `a1456e5d` (clean), ve-mac-1, once:
+88 of 477 test units selected (among them `test_acts_vocab_mutants`, `test_acts_tree_mutants`,
+`test_acts_lexical_mutants`, `test_trust_budget`, `test_trust_mutants`, `test_lean_dump_cache`), each exit 0; 0 failed.
+No test of main-known-red.txt was selected or failed; nothing pre-existing to report.
 
 ## 10. Commits (`main..HEAD --no-merges`, before this report)
 
