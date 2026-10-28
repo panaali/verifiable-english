@@ -430,7 +430,7 @@ def hcDoc (cs : List (String × Json)) (extra : List (String × Json) := []) : J
     ("content", (cs.lookup x.id).getD .null)]).toArray)] ++ extra)
 
 def part (name pred atom : String) : Json :=
-  Json.mkObj [("part", Json.mkObj [("name", name), ("predicate", pred), ("guard", j s!"[\"unary\", \"{atom}\", [\"var\", 1]]")])]
+  Json.mkObj [("part", Json.mkObj [("name", name), ("predicate", pred), ("guard", .arr #["unary", atom, .arr #["var", (1 : Nat)]])])]
 /-- The seven item parts; u0165.s01 and u0165.s07 have the names and guards of spec 7.1's F1-g. -/
 def parts : List (String × Json) := seven.zipIdx.map fun (u, i) =>
   (u, if i == 0 then part "hc-cbrn-uplift" "restricted_act_permitted" "mass_casualty_weapon_uplift"
@@ -764,6 +764,66 @@ example (re : VE.Readings.Wire.ReadingsEnvironment) : ¬ BlockBound (sdoc (hcDoc
 example (re : VE.Readings.Wire.ReadingsEnvironment) :
     BlockBound { sdoc (hcDoc parts) [gI] hcNames re with block := .arr #[inventedC] } :=
   fun g hg s hs => by simp only [sdoc, List.mem_singleton] at hg; subst hg; exact .arr (by simp; rfl) hs
+
+/-! F-sym's document is well formed (review sc-1ae F1), so the `govern` statements' hypotheses all hold on it. No proof
+    unfolds the parser, so `part` writes its guard as a term, the value `j` parses (the `#guard`) -/
+#guard parts.all fun (_, c) => (c.getObjValD "part" |>.getObjValD "guard") ==
+  j s!"[\"unary\", {(c.getObjValD "part" |>.getObjValD "guard" |>.getArrVal? 1).toOption.getD .null}, [\"var\", 1]]"
+theorem part_wf (name pred atom : String) : JsonWF (part name pred atom) :=
+  jsonWF_mkObj _ fun p hp => by
+    simp only [List.mem_singleton] at hp; subst hp
+    refine jsonWF_mkObj _ fun q hq => ?_
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hq
+    rcases hq with rfl | rfl | rfl
+    · exact .str _
+    · exact .str _
+    · refine .arr _ fun x hx => ?_
+      simp only [List.mem_toArray, List.mem_cons, List.not_mem_nil, or_false] at hx
+      rcases hx with rfl | rfl | rfl
+      · exact .str _
+      · exact .str _
+      · refine .arr _ fun y hy => ?_
+        simp only [List.mem_toArray, List.mem_cons, List.not_mem_nil, or_false] at hy
+        rcases hy with rfl | rfl
+        · exact .str _
+        · exact .num _
+theorem hcDoc_wf (cs extra : List (String × Json)) (hc : ∀ p ∈ cs, JsonWF p.2) (he : ∀ p ∈ extra, JsonWF p.2) :
+    JsonWF (hcDoc cs extra) :=
+  jsonWF_mkObj _ fun p hp => by
+    rcases List.mem_append.mp hp with hp | hp
+    · simp only [List.mem_singleton] at hp; subst hp
+      refine .arr _ fun x hx => ?_
+      obtain ⟨y, -, rfl⟩ := List.mem_map.mp (List.mem_toArray.mp hx)
+      refine jsonWF_mkObj _ fun q hq => ?_
+      simp only [List.mem_cons, List.not_mem_nil, or_false] at hq
+      rcases hq with rfl | rfl | rfl
+      · exact .str _
+      · exact .str _
+      · show JsonWF ((cs.lookup y.id).getD .null)
+        cases hl : cs.lookup y.id with
+        | none => exact .null
+        | some v => exact hc _ (lookup_mem _ _ cs hl)
+    · exact he p hp
+theorem parts_wf : JsonWF (hcDoc parts) := hcDoc_wf parts [] (fun p hp => by
+  obtain ⟨⟨u, i⟩, -, rfl⟩ := List.mem_map.mp hp
+  dsimp only; split
+  · exact part_wf ..
+  · split <;> exact part_wf ..) (by simp)
+-- F-sym with the condition in the block: `govern_no_new_symbols` applies to the document as written
+example (re : VE.Readings.Wire.ReadingsEnvironment) (out : Json)
+    (ho : govern { sdoc (hcDoc parts) [gI] hcNames re with block := .arr #[inventedC] } = .ok out) (s : String)
+    (hs : HasStr s out) : HasStr s (hcDoc parts) ∨ HasStr s (.arr #[inventedC]) :=
+  govern_no_new_symbols _ parts_wf
+    (fun g hg s hs => by simp only [sdoc, List.mem_singleton] at hg; subst hg; exact .arr (by simp; rfl) hs) out ho s hs
+-- `leadPart` as a term (the `#guard`): a rule's `sign` is a boolean
+#guard (Json.mkObj [("sign", false), ("unless", .arr #[]), ("over", .arr #[])]) == leadPart
+theorem leadPart_wf : JsonWF (Json.mkObj [("sign", false), ("unless", .arr #[]), ("over", .arr #[])]) :=
+  jsonWF_mkObj _ fun p hp => by
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hp
+    rcases hp with rfl | rfl | rfl
+    · exact .bool _
+    · exact .arr _ (by simp)
+    · exact .arr _ (by simp)
 
 /-! `HasStr`, `payload` and `JsonWF` (sc-1ae): a string value at any depth, and never a key -/
 example : HasStr "a" (.arr #["b", .arr #["a"]]) := .arr (x := .arr #["a"]) (by simp) (.arr (by simp) .str)

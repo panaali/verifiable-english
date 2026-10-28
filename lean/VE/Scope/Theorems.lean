@@ -774,6 +774,13 @@ theorem mkObj_get_mem (l : List (String × Json)) (k : String) (x : Json) (h : (
   by_cases hc : compare a k = .eq <;> simp only [hc, if_true, if_false, reduceCtorEq] at hy
   exact ⟨(a, b), List.mem_reverse.mp hm, Option.some.inj hy⟩
 
+/-- `Json.mkObj` builds a well-formed object from well-formed members. -/
+theorem jsonWF_mkObj (l : List (String × Json)) (h : ∀ p ∈ l, JsonWF p.2) : JsonWF (Json.mkObj l) :=
+  .obj _ Std.TreeMap.Raw.WF.ofList fun kv hkv => by
+    obtain ⟨p, hp, he⟩ := mkObj_get_mem l kv.1 kv.2 ((getObjVal_obj _ _ _).mpr
+      ((Std.TreeMap.Raw.mem_toList_iff_getElem?_eq_some Std.TreeMap.Raw.WF.ofList).mp hkv))
+    exact he ▸ h p hp
+
 theorem hasStr_mkObj (s : String) (l : List (String × Json)) (h : HasStr s (Json.mkObj l)) : ∃ p ∈ l, HasStr s p.2 := by
   cases h with
   | obj hk hx => obtain ⟨p, hp, rfl⟩ := mkObj_get_mem l _ _ hk; exact ⟨p, hp, hx⟩
