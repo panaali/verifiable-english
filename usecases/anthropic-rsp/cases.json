@@ -1,0 +1,429 @@
+{
+ "source": "PLAN.md section 5 case facts: the model has crossed the thresholds named (T0: none) and no others; a model the case calls highly capable (OT5 found) has crossed T4, and T4 counts as named; every open term not named by the case is unset (findings: true found, false found not to hold); the company is the frontier developer the right column addresses; transcribed, not changed",
+ "cases": [
+  {
+   "id": "A-T0",
+   "family": "A",
+   "thresholds": [],
+   "situation": "no threshold crossed",
+   "findings": {}
+  },
+  {
+   "id": "A-T1",
+   "family": "A",
+   "thresholds": [
+    "T1"
+   ],
+   "situation": "T1 crossed, no other threshold",
+   "findings": {}
+  },
+  {
+   "id": "A-T2",
+   "family": "A",
+   "thresholds": [
+    "T2"
+   ],
+   "situation": "T2 crossed, no other threshold",
+   "findings": {}
+  },
+  {
+   "id": "A-T3",
+   "family": "A",
+   "thresholds": [
+    "T3"
+   ],
+   "situation": "T3 crossed, no other threshold",
+   "findings": {}
+  },
+  {
+   "id": "A-T4",
+   "family": "A",
+   "thresholds": [
+    "T4"
+   ],
+   "situation": "T4 crossed, no other threshold",
+   "findings": {}
+  },
+  {
+   "id": "B-PUB",
+   "family": "B",
+   "thresholds": [],
+   "situation": "publicly deployed as of the coverage date",
+   "findings": {}
+  },
+  {
+   "id": "B-INT",
+   "family": "B",
+   "thresholds": [],
+   "situation": "internally deployed; no OT3a determination; not used for large-scale autonomous research",
+   "findings": {}
+  },
+  {
+   "id": "B-INTD",
+   "family": "B",
+   "thresholds": [],
+   "situation": "internally deployed; OT3a determined by publication",
+   "findings": {
+    "OT3a": true
+   }
+  },
+  {
+   "id": "B-AUT",
+   "family": "B",
+   "thresholds": [],
+   "situation": "internally deployed for large-scale, fully autonomous research (OT22 found); OT3a unset",
+   "findings": {
+    "OT22": true
+   }
+  },
+  {
+   "id": "B-VOL",
+   "family": "B",
+   "thresholds": [],
+   "situation": "not deployed publicly, OT3a unset; voluntarily included",
+   "findings": {}
+  },
+  {
+   "id": "B-TRN",
+   "family": "B",
+   "thresholds": [],
+   "situation": "in training, not deployed",
+   "findings": {}
+  },
+  {
+   "id": "K1",
+   "family": "K",
+   "thresholds": [],
+   "situation": "any time",
+   "findings": {}
+  },
+  {
+   "id": "K2",
+   "family": "K",
+   "thresholds": [],
+   "situation": "public deployment of a model determined (OT2) significantly more capable than all publicly analyzed models",
+   "findings": {
+    "OT2": true
+   }
+  },
+  {
+   "id": "K3",
+   "family": "K",
+   "thresholds": [],
+   "situation": "the same deployment, OT2 unset",
+   "findings": {}
+  },
+  {
+   "id": "K4",
+   "family": "K",
+   "thresholds": [],
+   "situation": "internal model determined under OT3b",
+   "findings": {
+    "OT3b": true
+   }
+  },
+  {
+   "id": "K5",
+   "family": "K",
+   "thresholds": [],
+   "situation": "OT18 holds (risk high, decision partly on marginal risk)",
+   "findings": {
+    "OT18": true
+   }
+  },
+  {
+   "id": "K6",
+   "family": "K",
+   "thresholds": [],
+   "situation": "marginal risk analysis plays a major role in a decision to move forward (OT19)",
+   "findings": {
+    "OT19": true
+   }
+  },
+  {
+   "id": "K7",
+   "family": "K",
+   "thresholds": [],
+   "situation": "a Risk Report is approved",
+   "findings": {}
+  },
+  {
+   "id": "K8",
+   "family": "K",
+   "thresholds": [],
+   "situation": "a report covers a highly capable model and is significantly redacted",
+   "findings": {
+    "OT5": true,
+    "OT4": true
+   }
+  },
+  {
+   "id": "K9",
+   "family": "K",
+   "thresholds": [],
+   "situation": "covers a highly capable model; not significantly redacted",
+   "findings": {
+    "OT5": true,
+    "OT4": false
+   }
+  },
+  {
+   "id": "K10",
+   "family": "K",
+   "thresholds": [],
+   "situation": "significantly redacted; no highly capable model",
+   "findings": {
+    "OT4": true,
+    "OT5": false
+   }
+  },
+  {
+   "id": "K11",
+   "family": "K",
+   "thresholds": [],
+   "situation": "the LTBT requests a review",
+   "findings": {}
+  },
+  {
+   "id": "K12",
+   "family": "K",
+   "thresholds": [],
+   "situation": "selecting external reviewers",
+   "findings": {}
+  },
+  {
+   "id": "K13",
+   "family": "K",
+   "thresholds": [],
+   "situation": "a candidate reviewing organisation has a financial interest in Anthropic",
+   "findings": {}
+  },
+  {
+   "id": "K14",
+   "family": "K",
+   "thresholds": [],
+   "situation": "a Risk Report is submitted to the Board and LTBT under the external review process",
+   "findings": {}
+  },
+  {
+   "id": "K15",
+   "family": "K",
+   "thresholds": [],
+   "situation": "a noncompliance report is substantiated and involves a material safety risk (OT10)",
+   "findings": {
+    "OT10": true
+   }
+  },
+  {
+   "id": "K16",
+   "family": "K",
+   "thresholds": [],
+   "situation": "a report concerns the RSO's conduct",
+   "findings": {}
+  },
+  {
+   "id": "K17",
+   "family": "K",
+   "thresholds": [],
+   "situation": "the RSP is updated",
+   "findings": {}
+  },
+  {
+   "id": "K18",
+   "family": "K",
+   "thresholds": [],
+   "situation": "a Risk Report described a mitigation; later practice deviates from it; the deviation is noteworthy (OT11 found)",
+   "findings": {
+    "OT11": true
+   }
+  },
+  {
+   "id": "K19a",
+   "family": "K",
+   "thresholds": [],
+   "situation": "Appendix A \"in the lead\" scenario (OT5, OT8 found)",
+   "findings": {
+    "OT5": true,
+    "OT8": true
+   }
+  },
+  {
+   "id": "K19b",
+   "family": "K",
+   "thresholds": [],
+   "situation": "the same, and delay found needed (OT7)",
+   "findings": {
+    "OT5": true,
+    "OT8": true,
+    "OT7": true
+   }
+  },
+  {
+   "id": "K20",
+   "family": "K",
+   "thresholds": [],
+   "situation": "\"Competitors have strong safety measures\" (OT8 found), with at least one such competitor; the company has a highly capable frontier model (OT5)",
+   "findings": {
+    "OT8": true,
+    "OT5": true
+   }
+  },
+  {
+   "id": "K21",
+   "family": "K",
+   "thresholds": [],
+   "situation": "\"General upleveling\" scenario",
+   "findings": {}
+  },
+  {
+   "id": "K22",
+   "family": "K",
+   "thresholds": [],
+   "situation": "a Roadmap goal is missed",
+   "findings": {}
+  },
+  {
+   "id": "T1",
+   "family": "T",
+   "thresholds": [],
+   "situation": "determined: the models can fully substitute for all Research Scientists and Research Engineers at 4x their cost",
+   "findings": {
+    "OT15": true
+   },
+   "quantities": {
+    "cost_factor": 4
+   }
+  },
+  {
+   "id": "T2",
+   "family": "T",
+   "thresholds": [],
+   "situation": "the same at 6x the cost; scenario (2) found not to have occurred",
+   "findings": {
+    "OT15": true,
+    "scenario_2": false
+   },
+   "quantities": {
+    "cost_factor": 6
+   }
+  },
+  {
+   "id": "T3",
+   "family": "T",
+   "thresholds": [],
+   "situation": "(2)(a) observed, (2)(b) found plausible, and the continuation clause found (OT28)",
+   "findings": {
+    "OT16": true,
+    "OT17": true,
+    "OT28": true
+   }
+  },
+  {
+   "id": "T4",
+   "family": "T",
+   "thresholds": [],
+   "situation": "(2)(a) observed; (2)(b) found not plausible; (1) found not to hold",
+   "findings": {
+    "OT16": true,
+    "OT17": false,
+    "OT15": false
+   }
+  },
+  {
+   "id": "T5",
+   "family": "T",
+   "thresholds": [],
+   "situation": "substitution at 4.5x cost",
+   "findings": {},
+   "quantities": {
+    "cost_factor": 4.5
+   }
+  },
+  {
+   "id": "T6",
+   "family": "T",
+   "thresholds": [],
+   "situation": "the rate of progress equals the fastest rate observed without significant AI contribution; (1) unset",
+   "findings": {},
+   "quantities": {
+    "rate_over_fastest_observed": 1
+   }
+  },
+  {
+   "id": "T7",
+   "family": "T",
+   "thresholds": [],
+   "situation": "(2)(a) observed and (2)(b) found plausible; the continuation clause found not to hold",
+   "findings": {
+    "OT16": true,
+    "OT17": true,
+    "OT28": false
+   }
+  },
+  {
+   "id": "G1",
+   "family": "G",
+   "thresholds": [
+    "T2"
+   ],
+   "situation": "T2 crossed; the row's plans not in place; no Appendix A scenario holds",
+   "findings": {}
+  },
+  {
+   "id": "G2",
+   "family": "G",
+   "thresholds": [],
+   "situation": "a model in training, not deployed",
+   "findings": {}
+  },
+  {
+   "id": "G3",
+   "family": "G",
+   "thresholds": [],
+   "situation": "a catastrophic risk outside T1 to T4 (e.g., a cyber capability)",
+   "findings": {}
+  },
+  {
+   "id": "G4",
+   "family": "G",
+   "thresholds": [],
+   "situation": "the off-cycle analysis for a public deployment (K2)",
+   "findings": {
+    "OT2": true
+   }
+  },
+  {
+   "id": "G5",
+   "family": "G",
+   "thresholds": [],
+   "situation": "an external reviewer gives no commentary within 30 days",
+   "findings": {}
+  },
+  {
+   "id": "G6",
+   "family": "G",
+   "thresholds": [],
+   "situation": "a full review is required (K8) and the LTBT approves no candidate reviewer",
+   "findings": {
+    "OT5": true,
+    "OT4": true
+   }
+  },
+  {
+   "id": "G7",
+   "family": "G",
+   "thresholds": [],
+   "situation": "a substantiated noncompliance report without a material safety risk",
+   "findings": {
+    "OT10": false
+   }
+  },
+  {
+   "id": "G8",
+   "family": "G",
+   "thresholds": [],
+   "situation": "a Roadmap goal revised in a less ambitious direction because it was not achieved",
+   "findings": {}
+  }
+ ]
+}

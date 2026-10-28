@@ -145,6 +145,12 @@
    "symbols": 37
   },
   {
+   "environment": "usecases/anthropic-rsp/environment.d1.json",
+   "failures": [],
+   "lexicon_id": "06b41fd6d4236f65a1693e412035d2e6f2ca492b963210cec55843aadc6ea5cb",
+   "symbols": 114
+  },
+  {
    "environment": "usecases/asimov-extended/environment.json",
    "failures": [],
    "lexicon_id": "accf001f410fbfd796620ff2f734b140bcd411658b3d876eb61ed49610df5b94",
@@ -238,6 +244,6 @@
  "failures_by_condition": {},
  "format": "ve.english-lean-lexicon-report@1",
  "invalid": 0,
- "valid": 39,
+ "valid": 40,
  "wording_key_differences": []
 }
