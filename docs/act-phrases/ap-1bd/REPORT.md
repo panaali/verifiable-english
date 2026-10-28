@@ -1,10 +1,10 @@
 # ap-1bd build report: typing, the model path and the readings route read `acts@0`
 
-**No DRI signature is reserved; nothing stops the item.** Status: built; selected tests (418 units), `lake build`,
-`lean/audit.py`, regen and `trust_map --check` pass; trust mutants exit 0 (26 killed, 10 allowed). What changed: Lean types an `acts@0`
-document, checks its models, builds its Background and reads its single acts on the readings route (D-33 for a joined
-act); the UDHR probe document u076 is CHECKED end to end through `ve document check`. Open: ap-1bg (section 5). Size:
-634 added and 40 changed hand-written lines, about 35 over the ~600 rule (section 4).
+**No DRI signature is reserved; nothing stops the item.** Status: review FIX applied (F1, the one B; section 7):
+selected tests (417 units) pass at `875f93c60`, `lake build`, `lean/audit.py`, regen and `trust_map --check` pass; trust
+mutants (26 killed, 10 allowed) are from `501f211b`, not rerun after the fix (section 7). What changed: Lean types, models
+and reads `acts@0` single acts on the readings route (D-33); u076 is CHECKED, also with `readings@1`, whose wordings now
+come from the readings route. Open: ap-1bg (section 5), review C findings F2-F7 (section 7). Size: section 4 and 7.
 
 Plan and spec on `main`: [act-phrases-PLAN.md](../../spec/act-phrases-PLAN.md) 4 "AP-1";
 [act-phrases.md](../../spec/act-phrases.md) 4.1-4.4, 6.4 (`Readings/Wire.lean`), 10 (D-33); `DRI-DECISIONS-PHASE2.md`
@@ -143,6 +143,16 @@ Lean mirror: `lean/VE/Readings/ActsExamples.lean` guards that `runLower`'s `word
 routes' on the same environment without `readings@1`. Seeded bug: `plain_wordings` asking the lower route again
 (`ve/norms.py`) fails all three of the first tests ([mutants.json](mutants.json) `py-plain-wordings-lower-route`). No Rust
 or trusted Lean changed (trust `--check`: still V +31; the two new example helpers are classified T). DELTA row 2 lists the tests.
+
+Tests of the fix: the five F1 tests (43 cases) pass locally; `mac-pytest.sh --select` (417 units, among them
+`tests/test_acts_profile.py` and `tests/test_trust_mutants.py`) exits 0 with 0 failed at `875f93c60`; `lake build`
+(1,126 jobs), `lean/audit.py`, `regen_generated.py --check` (33) and `trust_map.py --check` (V +31) pass. **Not run:** the
+trust mutants after the fix. The Mac runner dropped mid-run, the VM fallback (1 job) passed the 2-hour limit and was
+stopped without an answer. The fix changes no mutated definition and no trusted Lean (only `T` guards), a guard can
+only add kills, and the 10 ALLOWED mutants are equivalent or do not elaborate, so the committed verdicts at `501f211b`
+stand; the reviewer's full run on the HEAD checks this. Size of the fix (`git diff --numstat 777c5fd42`, generated
+`declarations.txt` excluded): Python 6 added and 4 removed, tests 92, Lean guards 16, side table 2, DELTA, report and
+mutants JSON 48.
 
 **C findings, recorded:** F2: DELTA's sentence on reading sets now says the base's refusal is the readings route
 decoder's, and that a document the enumerated route answers is read with `acts@0` (no evidence probe records it;
