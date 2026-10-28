@@ -385,3 +385,33 @@ def interrupted_gate_reaches_its_injected_build(request, monkeypatch):
     """
     if request.node.originalname == "test_interrupted_gate_cannot_record_pass":
         monkeypatch.setattr(request.module.gate.lake_outputs, "drop_stale", lambda *args, **kwargs: None)
+
+
+# VALIDATION ONLY (dri-ghatestson 2026-10-28, not for main): every test id and its outcome, one file per pytest process,
+# so the Actions and Mac runs of the same tree can be compared by id (DRI-RULINGS R18).
+_IDS_DIR = os.path.join(os.environ["RUNNER_TEMP"], "out") if os.environ.get("RUNNER_TEMP") else "/tmp/ve-ids-ghatestson"
+
+
+def _ids_write(kind, nodeid):
+    os.makedirs(_IDS_DIR, exist_ok=True)
+    with open(os.path.join(_IDS_DIR, f"veids-{os.getpid()}.tsv"), "a") as out:
+        out.write(f"{kind}\t{nodeid}\n")
+
+
+def pytest_collection_finish(session):
+    for item in session.items:
+        _ids_write("collected", item.nodeid)
+
+
+def pytest_runtest_logreport(report):
+    if hasattr(report, "wasxfail"):
+        kind = "xfailed" if report.skipped else "xpassed"
+    elif report.skipped:
+        kind = "skipped"
+    elif report.failed:
+        kind = "failed" if report.when == "call" else "error"
+    elif report.when == "call":
+        kind = "passed"
+    else:
+        return
+    _ids_write(kind, report.nodeid)
