@@ -8,16 +8,6 @@
  },
  "tests": [
   {
-   "test": "tests/test_acts_profile.py",
-   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
-   "recorded": [
-    "source"
-   ],
-   "via": [
-    "conformance/frozen_norm_defaults.py:<module>: git show"
-   ]
-  },
-  {
    "test": "tests/test_agent_policy_unspecified.py",
    "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
    "recorded": [

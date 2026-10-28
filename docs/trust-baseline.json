@@ -1296,8 +1296,8 @@
   },
   {
    "class": "V",
-   "lines": 30,
-   "reason": "ap-1bd: V +30 untied (VE/Service/Standalone.lean +19: regulatedOf, actsRead and their call sites; VE/Readings/Wire.lean +9: singleActsOnly and the acts@0 frame decode; ResponseShape/Schemas/ReadingsRoute.lean +2: the filled environment's form and acts block); K +0, S +0",
+   "lines": 31,
+   "reason": "ap-1bd: V +31 untied (VE/Service/Standalone.lean +19: regulatedOf, actsRead and their call sites; VE/Readings/Wire.lean +12: singleActsOnly, the acts@0 frame decode and the reading-set refusal); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1bd, 2026-10-18",
    "commit": "d8926dc1d1ef52a6783d13c781a9c064c963822f"
   }

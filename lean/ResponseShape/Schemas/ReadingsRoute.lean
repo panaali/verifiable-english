@@ -182,8 +182,8 @@ def names : Shape := n [arr, .items (n [obj, .required ["set", "version", "candi
 
 
 /-- A predicate entry of the filled environment: the request's entry as the norms environment decoder admits it
-    (`Route.Wire.decodeVocabulary`, `Norms.Wire.decodeRegulatedIn`: a plain act's `form` under `acts@0`), its
-    default `deny` where the request said `unspecified`, or an `unsaid__p` entry `NormDefaults.Wire.withUnsaid` adds (arguments and description). -/
+    (`Route.Wire.decodeVocabulary`, `Norms.Wire.decodeRegulated`), its default `deny` where the request said
+    `unspecified`, or an `unsaid__p` entry `NormDefaults.Wire.withUnsaid` adds (arguments and description). -/
 def filledPredicate : Shape :=
   n [obj, .required ["arguments", "description"],
     closed [
@@ -195,7 +195,7 @@ def filledPredicate : Shape :=
         closed [("arguments", ref "common.json#/$defs/strings"), ("body", ref "common.json#/$defs/fol_formula")]]),
       ("regulated", n [obj, .required ["role", "default"],
         closed [("role", enumS ["permission", "obligation", "plain"]), ("default", enumS ["allow", "deny"]),
-          ("act", str), ("form", str), ("permission", .type ["string", "null"])]])]]
+          ("act", str), ("permission", .type ["string", "null"])]])]]
 
 /-- The filled environment (review B4 of rd-6b): the case's lower environment with each `unspecified` read as
     `deny`, `norm-defaults@0` removed and every `unsaid__p` added. Its envelope is `Route.Gate.decodeEnvelope`'s four
@@ -221,9 +221,7 @@ def filledEnvironment : Shape :=
                 closed [("singular", str), ("plural", str)]])]]))]),
             ("constants", n [obj, .object [] (some (n [obj, .required ["sort"],
               closed [("sort", str), ("description", str), ("verbalisation", str)]]))]),
-            ("predicates", n [obj, .object [] (some (ref "#/$defs/filled_predicate"))]),
-            -- `acts@0`'s block (act-phrases 3.1), copied from the request
-            ("acts", n [obj, .required ["fixed"], closed [("fixed", ref "common.json#/$defs/strings")]])]])]]
+            ("predicates", n [obj, .object [] (some (ref "#/$defs/filled_predicate"))])]])]]
 
 def filled : Shape :=
   c "Readings.Run.runValidateND (UnspecifiedWire.filledJson): under the unspecified completion, the chain the completion took (Readings.Chain.text; the client reads it and derives no chain), the filled frame's environment (unspecified read as deny, norm-defaults@0 removed, every unsaid__p added) and the filled units, the F_p units last." [
@@ -913,17 +911,5 @@ def file : File where
     ("product_component", .schema product_component),
     ("product_line", .schema product_line),
     ("verdicts_components", .schema verdicts_components)]
-
-/- The filled environment's shapes as `tools/response_schemas.py` renders them into `readings-route.json`, which
-`tests/test_response_schemas.py` compares with this rendering (ap-1bd): a plain act's `form` a string, the `acts`
-block closed with its required `fixed` strings; each digest pins the rest of the rendering. -/
-def renderedProperty (s : Shape) (path : List String) : Option Json :=
-  (render "readings-route.json" 64 s).toOption.map fun j => path.foldl (fun j k => (j.getObjValD "properties").getObjValD k) j
-#guard renderedProperty filledPredicate ["regulated", "form"] == some (Json.mkObj [("type", .str "string")])
-#guard renderedProperty filledEnvironment ["vocabulary", "acts"] == some (Json.mkObj [("additionalProperties", .bool false),
-  ("properties", Json.mkObj [("fixed", Json.mkObj [("$ref", .str "common.json#/$defs/strings")])]),
-  ("required", toJson ["fixed"]), ("type", .str "object")])
-#guard (renderedProperty filledPredicate []).map (hash ·.compress) == some 1830252082568157544
-#guard (renderedProperty filledEnvironment []).map (hash ·.compress) == some 7984071425157217422
 
 end ResponseShape.Schemas.ReadingsRoute

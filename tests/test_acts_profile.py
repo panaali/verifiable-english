@@ -656,17 +656,24 @@ def test_rust_searches_a_wording_only_acts_layer_and_refuses_any_other():
         find_countermodel(Environment(environment()), (), Exists("person", Unary("paid", Var(0))))
 
 
-def readings_row(env, units):
+def readings_row(env, units, sets=()):
     from ve.readings_route import document_wire
     [row] = lean_routes.rows("readings-route", [{"id": "v", "kind": "readings-validate", "environment": env,
-                                                 "document": document_wire(units, [])}])
+                                                 "document": document_wire(units, list(sets))}])
     return row
+
+
+BASE_REFUSAL = "UnsupportedProfile: Unsupported profile acts@0"
 
 
 def test_the_readings_route_reads_single_acts_and_refuses_a_joined_act():
     rule = {"norm": {"name": "m", "predicate": "paid", "sign": True, "guard": ["top"], "unless": [], "over": []}}
     readings = ["acts@0", "norms@0", "readings@1", "relational-fol@0"]
     assert readings_row(plain_environment(readings), [{"id": "u1", "kind": "norm", "content": rule}]).get("error") is None
+    # a reading set over `acts@0` keeps the base's refusal (ap-1bg)
+    sets = [{"id": "rs1", "unit": "u1", "version": 1, "status": "open", "situations": {}, "readings": [
+        {"id": r, "kind": "norm", "content": {"norm": {**rule["norm"], "sign": r == "a"}}} for r in "ab"]}]
+    assert readings_row(plain_environment(readings), [{"id": "u1"}], sets)["error"] == BASE_REFUSAL
     joined = plain_environment(readings)
     joined["vocabulary"]["predicates"]["paid"]["regulated"]["act"] = A5
     assert readings_row(joined, [])["error"] == ("UnsupportedProfile: acts@0 on the readings route admits single acts "
@@ -705,84 +712,3 @@ def test_a_udhr_act_phrase_unit_is_checked_end_to_end(tmp_path):
                                           "of his country directly or through freely chosen representatives.")
     with pytest.raises(VEError, match=r"fields do not match: expected \[sorts, predicates, constants\], got \[acts"):
         check_document(u076(tmp_path, ["documents@1", "norm-defaults@0", "norms@0", "relational-fol@0"]))
-
-
-
-def completion_case():
-    """F-ND1 (readings under the unspecified completion) with a plain act under `acts@0`: its environment and
-    document as the readings route reads them."""
-    from tests.test_readings_nd_lean import ND, doc1, env1
-    raw = env1(sorted([*ND, "acts@0"]))
-    raw["vocabulary"]["predicates"]["paid"] = predicate(["user"], {"role": "plain", "default": "deny", "act": A2,
-                                                                   "form": "has the right"})
-    raw["vocabulary"]["acts"] = {"fixed": FIXED}
-    document, _ = doc1(raw)
-    return raw, document
-
-
-def test_the_readings_route_fills_a_plain_act_under_the_completion():
-    from ve.readings_route import validate
-    raw, document = completion_case()
-    row = validate(raw, document["units"], document["reading_sets"])
-    vocabulary = row["filled"]["environment"]["vocabulary"]
-    assert vocabulary["acts"] == {"fixed": FIXED} and vocabulary["predicates"]["paid"]["regulated"] == {
-        "role": "plain", "default": "deny", "act": A2, "form": "has the right"}
-
-
-FILLED_RETYPED = [("form", 7), ("form", None), ("form", ["has the right"]), ("acts", 7), ("acts", {"fixed": 7}),
-                  ("acts", {"fixed": [7]}), ("acts", {"fixed": FIXED, "frames": []}), ("acts", {})]
-
-
-@pytest.mark.parametrize("field, value", FILLED_RETYPED)
-def test_a_retyped_filled_act_field_fails_the_schema(field, value):
-    """The filled environment's `form` and `acts` are typed by the generated schema (`readings-route.json`): the
-    genuine exchange passes and every retype is refused before a reader sees it."""
-    from tests.lean_build import lean_build
-    from tests.subprocesses import HANG_TIMEOUT
-    from ve.backends.lean_service import LeanService, _decode_json, case_digest, case_texts
-    from ve.backends.service_schema import Invalid, check_response
-    from ve.readings_route import document_wire, wire
-    raw, document = completion_case()
-    cases = [{"id": "v", "kind": "readings-validate", "environment": wire(raw),
-              "document": wire(document_wire(document["units"], document["reading_sets"]))}]
-    text = json.dumps(cases, ensure_ascii=False, separators=(",", ":"))
-    with LeanService(lean_build("ve_service") / "ve_service", timeout=HANG_TIMEOUT) as service:
-        _, response = service.exchange("readings-route", text, 1, timeout=HANG_TIMEOUT)
-    request = {"id": response["id"], "mode": "readings-route", "cases": cases,
-               "digests": [case_digest(t) for t in case_texts(text)], "bytes": len(text.encode())}
-    check_response("readings-route", _decode_json(json.dumps(response).encode()), request)
-    mutant = copy.deepcopy(response)
-    vocabulary = mutant["results"][0]["result"]["filled"]["environment"]["vocabulary"]
-    target = vocabulary["predicates"]["paid"]["regulated"] if field == "form" else vocabulary
-    target[field] = value
-    with pytest.raises(Invalid):
-        check_response("readings-route", _decode_json(json.dumps(mutant).encode()), request)
-
-
-@pytest.mark.parametrize("mutant", ["form-changed", "form-dropped", "act-changed", "acts-dropped", "phrase-dropped"])
-def test_a_filled_act_not_bound_to_the_request_is_unavailable(monkeypatch, mutant):
-    """The filled environment's `acts` block and every act and form are the request's: each rebinding is
-    `CheckerUnavailable`, never an answer."""
-    from ve import readings_route
-    from ve.errors import CheckerUnavailable
-    raw, document = completion_case()
-    genuine = readings_route.run_lean
-
-    def rebound(cases, **kwargs):
-        rows = copy.deepcopy(genuine(cases, **kwargs))
-        vocabulary = rows[0]["filled"]["environment"]["vocabulary"]
-        regulated = vocabulary["predicates"]["paid"]["regulated"]
-        if mutant == "form-changed":
-            regulated["form"] = "is entitled"
-        elif mutant == "form-dropped":
-            del regulated["form"], regulated["act"]
-        elif mutant == "act-changed":
-            regulated["act"] = "{0} to equal pay for equal work"
-        elif mutant == "acts-dropped":
-            del vocabulary["acts"]
-        else:
-            vocabulary["acts"]["fixed"] = FIXED[1:]
-        return rows
-    monkeypatch.setattr(readings_route, "run_lean", rebound)
-    with pytest.raises(CheckerUnavailable):
-        readings_route.validate(raw, document["units"], document["reading_sets"])

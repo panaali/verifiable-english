@@ -35,10 +35,23 @@ def d33 (p : String) : String :=
 #guard (VE.Readings.Wire.decodeEnvironment envA).toOption.map (·.se.ne.regulated.map (·.act)) == some [some a1, some a2]
 #guard decode (envA ["acts@0", "norm-defaults@0", "norms@0", "readings@1", "relational-fol@0"]) == "ok"
 -- and admits a document with a rule on a plain act (the norms chain's `Soften.checkW1` admits the act)
+def rule (sign : Bool) : Json := Json.mkObj [("norm", Json.mkObj [("name", .str "m"), ("predicate", .str "paid"),
+  ("sign", .bool sign), ("guard", Json.arr #[.str "top"]), ("unless", Json.arr #[]), ("over", Json.arr #[])])]
 def ruleDoc : Json := Json.mkObj [("reading_sets", Json.arr #[]), ("units", Json.arr #[Json.mkObj [("id", .str "u1"),
-  ("kind", .str "norm"), ("content", Json.mkObj [("norm", Json.mkObj [("name", .str "m"), ("predicate", .str "paid"),
-    ("sign", .bool true), ("guard", Json.arr #[.str "top"]), ("unless", Json.arr #[]), ("over", Json.arr #[])])])]])]
+  ("kind", .str "norm"), ("content", rule true)]])]
 #guard err (VE.Readings.Run.validateOne "v" envA ruleDoc) == "ok"
+-- a document with a reading set over `acts@0` keeps the base's refusal (ap-1bg); without `acts@0` the set is admitted
+-- as before (here to its own refusal), and with no set the document is read (above)
+def setDoc : Json := Json.mkObj [("units", Json.arr #[Json.mkObj [("id", .str "u1")]]), ("reading_sets", Json.arr #[
+  Json.mkObj [("id", .str "rs1"), ("unit", .str "u1"), ("version", toJson 1), ("status", .str "open"), ("situations",
+    Json.mkObj []), ("readings", Json.arr #[Json.mkObj [("id", .str "a"), ("kind", .str "norm"), ("content", rule true)],
+      Json.mkObj [("id", .str "b"), ("kind", .str "norm"), ("content", rule false)]])]])]
+def noActs : Json := (Json.parse ("{\"language\":\"ve.core@0.2\",\"profiles\":[\"norms@0\",\"readings@1\"," ++
+  "\"relational-fol@0\"],\"spec_revision\":\"ve-v0.2-expand2-2026-09-25\",\"vocabulary\":{\"sorts\":{\"person\":" ++
+  "{\"description\":\"p\"}},\"constants\":{},\"predicates\":{\"paid\":{\"arguments\":[\"person\"],\"description\":" ++
+  "\"d\",\"regulated\":{\"role\":\"plain\",\"default\":\"deny\"}}}}}")).toOption.getD .null
+#guard [envA, noActs].map (fun e => err (VE.Readings.Run.validateOne "v" e setDoc)) ==
+  ["UnsupportedProfile: Unsupported profile acts@0", "each other reading needs a distinguishing model id"]
 -- D-33 for a joined act (A5's "and", A6's "or" outside the phrases; plain or a permission), the predicate named the
 -- one whose act joins, first or last of several
 #guard [env [("p", "plain", a5)], env [("p", "permission", a5)], env [("p", "plain", a6)]].map decode ==
