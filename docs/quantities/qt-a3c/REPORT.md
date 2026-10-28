@@ -124,6 +124,9 @@ one-element lists) and one that does not elaborate.
     rescanning erasure, killed by the benchmark), `charge-keeps` (route cases `fa1-claimed`, `fa1-certificate`) and
     `charge-keeps-proof` (`charge_snd`), `preds-row` (`regionData_predsOn`) and `preds-row-service` (route cases),
     `elab-once` (`regionSum_typed`). Lean only: no Python or Rust product code changed.
+  - Trust mutants of the round (`--base aa2803bcb`, the trusted lines it changed: `regionsJson`, `runCase`):
+    `trust-mutants-fix1.json`, 23 KILLED, 0 SURVIVOR, 4 ALLOWED (list-empty mutants that do not elaborate, reasons in
+    `trust-mutants-allow.json`), 8 INVALID, exit 0. Trust: untied V +12 (+16 before; `Run.lean` −4), DELTA row 4.
 - **F2, F3, F4 (C)**: not changed in this round (F2 is QT-A4's relay, F3 is size, F4 the wording of a signed DELTA row).
 
 ## Self-review against BUILDER-CHECKLIST
@@ -146,14 +149,15 @@ one-element lists) and one that does not elaborate.
 - `lean/VE/Service/Registry.lean`: `Mode.cardinality`, its name, `modes` entry.
 - `lean/VE/Service/Protocol.lean`: dispatch line in `runMode`; `runMode_cardinality` (rfl).
 - `lean/ResponseShape/Schemas/Cardinality.lean`: the row shape (`admission`, `certificate`, `error`, `regions`, `problem`, `formula`, `body`, `operand`); `x-length` on premises, `x-references` on region sorts.
-- `lean/ResponseShape/Encoders/Cardinality.lean`: `regionsJson_fits` :11, `erasedJson_fits` :17, `certificate_kind` :24, macro `cardinality_rows` :34, `runCase_fits` :42, `runCaseReported_fits` :58.
+- `lean/ResponseShape/Encoders/Cardinality.lean`: `regionsJson_fits` :11, `problemJson_fits` :17, `erasedJson_fits` :23, macro `cardinality_rows`, `runCase_fits` :48, `runCaseReported_fits` :64.
 - `lean/ResponseShape/{Schemas,Skeletons,Encoders}.lean`: registration (file list, skeleton, `runMode_fits` case).
 - `lean/VE/Compose/Dispatch.lean`: `cardinalityOthers` :766, the row :798, `modeProfiles` :826 (in `environmentProfiles`); proofs `todayGate_base` (`hcard`), `rowChecks_erase` (simp set).
 - `lean/VE/Compose/Examples.lean`: QT-A3 guards at the end (both sides; the exact-refusals guard).
 - `lean/VE/Cardinality/Gate.lean`: `sublist_of_sorted` :12, `gate_cardinality` :37 (spec 4.2 E2 and SYNTHESIS 2.2).
-- `lean/VE/Cardinality/Erase.lean`: `bridge` (factored out of `bridgePremises`, unchanged meaning).
-- `lean/VE/Cardinality/Run.lean`: `erasedThunks` :29, `chargedNodes` :36, `problemChecks` :42 (P3 charged; spec 4.2).
-- `lean/VE/Cardinality/RunTheorems.lean`: `foldl_capped_gt` :69, `problemChecks_eq` :82.
+- `lean/VE/Cardinality/Erase.lean`: the erasure reads predicates from `P` (`regionSumBy` :25, `CFormula.eraseBy` :61, `bridgeBy` :90, `nonnegOf` :83); the statements' forms are instances (`regionSum`, `CFormula.erase`, `bridge`: abbrevs).
+- `lean/VE/Cardinality/Regions.lean`: `countedAmong` :80, `predsAmong` :89, `tableOf` :120, `CEnv.elabBy` :129, `sortLimit` :146, `predicateLimit` :150, `RegionData` :166, `regionData` :187, `checkedRegions` :191; their equalities in `Theorems.lean` (`regionData_predsOn`, `regionData_table`, `checkedRegions_eq`).
+- `lean/VE/Cardinality/Run.lean`: `erasedThunks` :29, `chargedNodes` :37, `problemChecks` :43 (P3 charged; spec 4.2), `charge` :49, `checkedProblem` :62, `idsOf` :71, `checkErased` :102, `checkCertificate` :117, `regionsJson` :168, `problemJson` :174, `runCase` :192.
+- `lean/VE/Cardinality/RunTheorems.lean`: `erasedJson_problemJson` :44, `erasedThunks_built` :88, `problemChecks_eq` :95, `charge_fst` :117, `charge_snd` :128, `checkedProblem_eq` :144, `checkErased_eq` :163.
 - `lean/VE/Cardinality/RunExamples.lean`: `anyCount`, `charged` and the charged guards in the P section.
 - `ve/backends/lean_service.py`: `DEADLINES["cardinality"]`.
 - `tests/test_cardinality_service.py`: route-case answers, typing and binding mutants. `tests/data/route-cases.jsonl`: the 19 cases (written from the Lean fixtures of `RunExamples.lean`).
@@ -163,5 +167,6 @@ one-element lists) and one that does not elaborate.
 - Regression tests: `uv run pytest -q tests/test_cardinality_service.py tests/test_profile_table.py tests/test_cardinality_exercised.py tests/test_assurance_manifest.py tests/test_trust_budget.py`; `uv run pytest -q -n 8 tests/test_route_row_schemas.py tests/test_relay_mutation_gate.py`; `cd lean && lake build VE.Compose.Examples VE.Cardinality.RunExamples VE.Cardinality.Gate ResponseShape.Encoders`.
 - Generated (never by hand): `uv run python tools/regen_generated.py --write` (cardinality.json and envelope.json, profile_table.json, inventories, Audit files, binding census, checkers.lock); the schema writer needs `lake build ve_response_decode` first; a new mode needs `tools/response_schemas.py --write` before the regen pass (the service's handshake is checked against envelope.json).
 - Mutants: `uv run python tools/mutants.py docs/quantities/qt-a3c/mutants.json --no-baseline --evidence docs/quantities/qt-a3c/evidence/mutants-run.json`.
+- Fix round 1: `uv run python tools/mutants.py docs/quantities/qt-a3c/mutants-fix1.json --no-baseline --evidence docs/quantities/qt-a3c/evidence/mutants-fix1-run.json` (pinned build first); benchmark `uv run --frozen python -m pytest tools/bench/test_perf.py -k cardinality_region` (needs a pinned build: the file's collection starts the service).
 - Trust mutants: `zsh /home/seyran/code/manage-agents/mac-pytest.sh --trustmut -- --max-mutants 1000 --allow docs/quantities/qt-a3c/trust-mutants-allow.json --rescore docs/quantities/qt-a3c/trust-mutants.json --json docs/quantities/qt-a3c/trust-mutants.json`.
 ## END FIXMAP
