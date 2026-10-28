@@ -28609,5 +28609,3945 @@
    }
   },
   "wording": "Is some service not Checked?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "A question cannot contain \"therefore\", \"so\", \"hence\" or \"it follows that\".",
+   "span": {
+    "column": 1,
+    "end": 28,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is therefore atlas reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "A question cannot contain \"therefore\", \"so\", \"hence\" or \"it follows that\".",
+   "span": {
+    "column": 1,
+    "end": 21,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is so atlas reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "A question cannot contain \"therefore\", \"so\", \"hence\" or \"it follows that\".",
+   "span": {
+    "column": 1,
+    "end": 24,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is hence atlas reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "A question cannot contain \"therefore\", \"so\", \"hence\" or \"it follows that\".",
+   "span": {
+    "column": 1,
+    "end": 34,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is it follows that atlas reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "content": {
+    "body": [
+     "not",
+     [
+      "unary",
+      "reviewed",
+      [
+       "const",
+       "atlas"
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is it not the case that atlas is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it not the case that atlas is reviewed?",
+   "span": {
+    "column": 1,
+    "end": 42,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is it is not the case that atlas reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that both atlas is reviewed and atlas is reviewed?",
+   "span": {
+    "column": 1,
+    "end": 45,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is both atlas reviewed and atlas is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that both atlas is reviewed and atlas is reviewed?",
+   "span": {
+    "column": 1,
+    "end": 45,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is both atlas is reviewed and atlas reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a list marker that does not fit its depth.",
+   "span": {
+    "column": 1,
+    "end": 72,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is all of the following hold: (a) atlas reviewed; (a) atlas is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a list marker that does not fit its depth.",
+   "span": {
+    "column": 1,
+    "end": 72,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is all of the following hold: (a) atlas is reviewed; (a) atlas reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "content": {
+    "body": [
+     "exists",
+     "service",
+     [
+      "unary",
+      "reviewed",
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is there a service who is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs there a service who is reviewed?",
+   "span": {
+    "column": 1,
+    "end": 35,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is there is a service who reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question introduces a name that is already in use.",
+   "span": {
+    "column": 1,
+    "end": 147,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is starting from atlas, atlas reachable by one or more steps, where a step from a service to a service satisfies this condition: atlas is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question introduces a name that is already in use.",
+   "span": {
+    "column": 1,
+    "end": 147,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is starting from atlas, atlas is reachable by one or more steps, where a step from a service to a service satisfies this condition: atlas reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that either atlas is reviewed or atlas is reviewed, or both?",
+   "span": {
+    "column": 1,
+    "end": 55,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is either atlas reviewed or atlas is reviewed, or both?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that either atlas is reviewed or atlas is reviewed, or both?",
+   "span": {
+    "column": 1,
+    "end": 55,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is either atlas is reviewed or atlas reviewed, or both?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that if atlas is reviewed, then atlas is reviewed?",
+   "span": {
+    "column": 1,
+    "end": 45,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is if atlas reviewed, then atlas is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that if atlas is reviewed, then atlas is reviewed?",
+   "span": {
+    "column": 1,
+    "end": 45,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is if atlas is reviewed, then atlas reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that all of the following hold: first clause: atlas is reviewed; end first clause; second clause: atlas is reviewed; end second clause?",
+   "span": {
+    "column": 1,
+    "end": 130,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is all of the following hold: first clause: atlas reviewed; end first clause; second clause: atlas is reviewed; end second clause?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that all of the following hold: first clause: atlas is reviewed; end first clause; second clause: atlas is reviewed; end second clause?",
+   "span": {
+    "column": 1,
+    "end": 130,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is all of the following hold: first clause: atlas is reviewed; end first clause; second clause: atlas reviewed; end second clause?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that both of the following hold: first clause: atlas is reviewed; end first clause; second clause: atlas is reviewed; end second clause?",
+   "span": {
+    "column": 1,
+    "end": 131,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is both of the following hold: first clause: atlas reviewed; end first clause; second clause: atlas is reviewed; end second clause?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that both of the following hold: first clause: atlas is reviewed; end first clause; second clause: atlas is reviewed; end second clause?",
+   "span": {
+    "column": 1,
+    "end": 131,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is both of the following hold: first clause: atlas is reviewed; end first clause; second clause: atlas reviewed; end second clause?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that at least one of the following holds: first clause: atlas is reviewed; end first clause; second clause: atlas is reviewed; end second clause?",
+   "span": {
+    "column": 1,
+    "end": 140,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is at least one of the following holds: first clause: atlas reviewed; end first clause; second clause: atlas is reviewed; end second clause?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that at least one of the following holds: first clause: atlas is reviewed; end first clause; second clause: atlas is reviewed; end second clause?",
+   "span": {
+    "column": 1,
+    "end": 140,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is at least one of the following holds: first clause: atlas is reviewed; end first clause; second clause: atlas reviewed; end second clause?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that if the following holds: first clause: atlas is reviewed; end first clause; second clause: atlas is reviewed; end second clause?",
+   "span": {
+    "column": 1,
+    "end": 127,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is if the following holds: first clause: atlas reviewed; end first clause; second clause: atlas is reviewed; end second clause?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that if the following holds: first clause: atlas is reviewed; end first clause; second clause: atlas is reviewed; end second clause?",
+   "span": {
+    "column": 1,
+    "end": 127,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is if the following holds: first clause: atlas is reviewed; end first clause; second clause: atlas reviewed; end second clause?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a list marker that does not fit its depth.",
+   "span": {
+    "column": 1,
+    "end": 73,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is both of the following hold: (a) atlas reviewed; (a) atlas is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a list marker that does not fit its depth.",
+   "span": {
+    "column": 1,
+    "end": 73,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is both of the following hold: (a) atlas is reviewed; (a) atlas reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a list marker that does not fit its depth.",
+   "span": {
+    "column": 1,
+    "end": 82,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is at least one of the following holds: (a) atlas reviewed; (a) atlas is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a list marker that does not fit its depth.",
+   "span": {
+    "column": 1,
+    "end": 82,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is at least one of the following holds: (a) atlas is reviewed; (a) atlas reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a list marker that does not fit its depth.",
+   "span": {
+    "column": 1,
+    "end": 95,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is if the following holds: (a) atlas reviewed; then the following holds: (a) atlas is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a list marker that does not fit its depth.",
+   "span": {
+    "column": 1,
+    "end": 95,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is if the following holds: (a) atlas is reviewed; then the following holds: (a) atlas reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a list marker that does not fit its depth.",
+   "span": {
+    "column": 1,
+    "end": 72,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is all of the following hold: (b) atlas reviewed; (a) atlas is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a list marker that does not fit its depth.",
+   "span": {
+    "column": 1,
+    "end": 72,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is all of the following hold: (b) atlas is reviewed; (a) atlas reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a list marker that does not fit its depth.",
+   "span": {
+    "column": 1,
+    "end": 72,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is all of the following hold: (i) atlas reviewed; (a) atlas is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a list marker that does not fit its depth.",
+   "span": {
+    "column": 1,
+    "end": 72,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is all of the following hold: (i) atlas is reviewed; (a) atlas reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a list marker that does not fit its depth.",
+   "span": {
+    "column": 1,
+    "end": 73,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is all of the following hold: (ii) atlas reviewed; (a) atlas is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a list marker that does not fit its depth.",
+   "span": {
+    "column": 1,
+    "end": 73,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is all of the following hold: (ii) atlas is reviewed; (a) atlas reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs every service who is reviewed reviewed?",
+   "span": {
+    "column": 1,
+    "end": 42,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is every service who reviewed is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "implies",
+      [
+       "unary",
+       "reviewed",
+       [
+        "var",
+        0
+       ]
+      ],
+      [
+       "unary",
+       "reviewed",
+       [
+        "var",
+        0
+       ]
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every service who is reviewed reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs every service who is reviewed and is reviewed reviewed?",
+   "span": {
+    "column": 1,
+    "end": 58,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is every service who reviewed and is reviewed is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs every service who is reviewed and is reviewed reviewed?",
+   "span": {
+    "column": 1,
+    "end": 58,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is every service who is reviewed and reviewed is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "implies",
+      [
+       "and",
+       [
+        "unary",
+        "reviewed",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "unary",
+        "reviewed",
+        [
+         "var",
+         0
+        ]
+       ]
+      ],
+      [
+       "unary",
+       "reviewed",
+       [
+        "var",
+        0
+       ]
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every service who is reviewed and is reviewed reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs every service who is reviewed and is reviewed, and is reviewed reviewed?",
+   "span": {
+    "column": 1,
+    "end": 75,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is every service who reviewed and is reviewed, and is reviewed is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs every service who is reviewed and is reviewed, and is reviewed reviewed?",
+   "span": {
+    "column": 1,
+    "end": 75,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is every service who is reviewed and reviewed, and is reviewed is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs every service who is reviewed and is reviewed, and is reviewed reviewed?",
+   "span": {
+    "column": 1,
+    "end": 75,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is every service who is reviewed and is reviewed, and reviewed is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "implies",
+      [
+       "and",
+       [
+        "and",
+        [
+         "unary",
+         "reviewed",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "unary",
+         "reviewed",
+         [
+          "var",
+          0
+         ]
+        ]
+       ],
+       [
+        "unary",
+        "reviewed",
+        [
+         "var",
+         0
+        ]
+       ]
+      ],
+      [
+       "unary",
+       "reviewed",
+       [
+        "var",
+        0
+       ]
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every service who is reviewed and is reviewed, and is reviewed reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs every service who is reviewed, and is reviewed and is reviewed reviewed?",
+   "span": {
+    "column": 1,
+    "end": 75,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is every service who reviewed, and is reviewed and is reviewed is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs every service who is reviewed, and is reviewed and is reviewed reviewed?",
+   "span": {
+    "column": 1,
+    "end": 75,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is every service who is reviewed, and reviewed and is reviewed is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs every service who is reviewed, and is reviewed and is reviewed reviewed?",
+   "span": {
+    "column": 1,
+    "end": 75,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is every service who is reviewed, and is reviewed and reviewed is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "implies",
+      [
+       "and",
+       [
+        "unary",
+        "reviewed",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "and",
+        [
+         "unary",
+         "reviewed",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "unary",
+         "reviewed",
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ],
+      [
+       "unary",
+       "reviewed",
+       [
+        "var",
+        0
+       ]
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every service who is reviewed, and is reviewed and is reviewed reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs every service who is reviewed and who is reviewed reviewed?",
+   "span": {
+    "column": 1,
+    "end": 62,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is every service who reviewed and who is reviewed is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs every service who is reviewed and who is reviewed reviewed?",
+   "span": {
+    "column": 1,
+    "end": 62,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is every service who is reviewed and who reviewed is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "implies",
+      [
+       "and",
+       [
+        "unary",
+        "reviewed",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "unary",
+        "reviewed",
+        [
+         "var",
+         0
+        ]
+       ]
+      ],
+      [
+       "unary",
+       "reviewed",
+       [
+        "var",
+        0
+       ]
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every service who is reviewed and who is reviewed reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs every service who is reviewed and that is reviewed reviewed?",
+   "span": {
+    "column": 1,
+    "end": 63,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is every service who reviewed and that is reviewed is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs every service who is reviewed and that is reviewed reviewed?",
+   "span": {
+    "column": 1,
+    "end": 63,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is every service who is reviewed and that reviewed is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "implies",
+      [
+       "and",
+       [
+        "unary",
+        "reviewed",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "unary",
+        "reviewed",
+        [
+         "var",
+         0
+        ]
+       ]
+      ],
+      [
+       "unary",
+       "reviewed",
+       [
+        "var",
+        0
+       ]
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every service who is reviewed and that is reviewed reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs every service that is reviewed reviewed?",
+   "span": {
+    "column": 1,
+    "end": 43,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is every service that reviewed is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "implies",
+      [
+       "unary",
+       "reviewed",
+       [
+        "var",
+        0
+       ]
+      ],
+      [
+       "unary",
+       "reviewed",
+       [
+        "var",
+        0
+       ]
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every service that is reviewed reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that for every service, atlas is reviewed?",
+   "span": {
+    "column": 1,
+    "end": 37,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is for every service, atlas reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that for every service who is reviewed, atlas is reviewed?",
+   "span": {
+    "column": 1,
+    "end": 53,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is for every service who reviewed, atlas is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that for every service who is reviewed, atlas is reviewed?",
+   "span": {
+    "column": 1,
+    "end": 53,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is for every service who is reviewed, atlas reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "content": {
+    "body": [
+     "exists",
+     "service",
+     [
+      "unary",
+      "reviewed",
+      [
+       "const",
+       "atlas"
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is there a service such that atlas is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs there a service such that atlas is reviewed?",
+   "span": {
+    "column": 1,
+    "end": 47,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is there is a service such that atlas reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "content": {
+    "body": [
+     "exists",
+     "service",
+     [
+      "unary",
+      "reviewed",
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is there a service that is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs there a service that is reviewed?",
+   "span": {
+    "column": 1,
+    "end": 36,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is there is a service that reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "content": {
+    "body": [
+     "exists",
+     "service",
+     [
+      "unary",
+      "reviewed",
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is there an service who is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs there an service who is reviewed?",
+   "span": {
+    "column": 1,
+    "end": 36,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is there is an service who reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "unary",
+      "reviewed",
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every first service reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "unary",
+      "reviewed",
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every second service reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "unary",
+      "reviewed",
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every third service reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "unary",
+      "reviewed",
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every fourth service reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "unary",
+      "reviewed",
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every fifth service reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "unary",
+      "reviewed",
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every sixth service reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "unary",
+      "reviewed",
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every seventh service reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "unary",
+      "reviewed",
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every eighth service reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "unary",
+      "reviewed",
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every service named S1 reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "content": {
+    "body": [
+     "eq",
+     [
+      "const",
+      "atlas"
+     ],
+     [
+      "const",
+      "atlas"
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is atlas the same as atlas?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses \"it\", and it is not settled what \"it\" refers to. Repeat the name.",
+   "span": {
+    "column": 1,
+    "end": 24,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is it the same as atlas?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a name before introducing it.",
+   "span": {
+    "column": 1,
+    "end": 34,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is that service the same as atlas?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a name before introducing it.",
+   "span": {
+    "column": 1,
+    "end": 39,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is the first service the same as atlas?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a name before introducing it.",
+   "span": {
+    "column": 1,
+    "end": 40,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is the second service the same as atlas?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a name before introducing it.",
+   "span": {
+    "column": 1,
+    "end": 39,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is the third service the same as atlas?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a name before introducing it.",
+   "span": {
+    "column": 1,
+    "end": 40,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is the fourth service the same as atlas?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a name before introducing it.",
+   "span": {
+    "column": 1,
+    "end": 39,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is the fifth service the same as atlas?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a name before introducing it.",
+   "span": {
+    "column": 1,
+    "end": 39,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is the sixth service the same as atlas?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a name before introducing it.",
+   "span": {
+    "column": 1,
+    "end": 41,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is the seventh service the same as atlas?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a name before introducing it.",
+   "span": {
+    "column": 1,
+    "end": 40,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is the eighth service the same as atlas?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a name before introducing it.",
+   "span": {
+    "column": 1,
+    "end": 24,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is S1 the same as atlas?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "content": {
+    "body": [
+     "bottom"
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is this impossible?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question lists the same name or the same property twice in one list.",
+   "span": {
+    "column": 1,
+    "end": 34,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is atlas, atlas or atlas reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question lists the same name or the same property twice in one list.",
+   "span": {
+    "column": 1,
+    "end": 41,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is atlas reviewed, reviewed and reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question lists the same name or the same property twice in one list.",
+   "span": {
+    "column": 1,
+    "end": 40,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is atlas reviewed, reviewed or reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs some service reviewed and reviewed?",
+   "span": {
+    "column": 1,
+    "end": 41,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is some service reviewed and is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs some service reviewed and reviewed?",
+   "span": {
+    "column": 1,
+    "end": 41,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is some service is reviewed and reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "content": {
+    "body": [
+     "exists",
+     "service",
+     [
+      "and",
+      [
+       "unary",
+       "reviewed",
+       [
+        "var",
+        0
+       ]
+      ],
+      [
+       "unary",
+       "reviewed",
+       [
+        "var",
+        0
+       ]
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is some service reviewed and reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "implies",
+      [
+       "unary",
+       "reviewed",
+       [
+        "var",
+        0
+       ]
+      ],
+      [
+       "unary",
+       "reviewed",
+       [
+        "var",
+        0
+       ]
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every reviewed service reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"every is reviewed service reviewed and has an owner.\". Unknown English phrase 'is reviewed service reviewed'. Nearest declared wordings: 'is reviewed'; 'may open {1}'; 'must open {1}'.",
+   "span": {
+    "column": 1,
+    "end": 34,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is every reviewed service reviewed and has an owner?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question introduces a name that is already in use.",
+   "span": {
+    "column": 1,
+    "end": 150,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is starting from atlas, atlas reachable by one or more steps, where a step from a service to a service satisfies the following: (a) atlas is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question introduces a name that is already in use.",
+   "span": {
+    "column": 1,
+    "end": 150,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is starting from atlas, atlas is reachable by one or more steps, where a step from a service to a service satisfies the following: (a) atlas reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question introduces a name that is already in use.",
+   "span": {
+    "column": 1,
+    "end": 148,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is starting from atlas, atlas reachable by zero or more steps, where a step from a service to a service satisfies this condition: atlas is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question introduces a name that is already in use.",
+   "span": {
+    "column": 1,
+    "end": 148,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is starting from atlas, atlas is reachable by zero or more steps, where a step from a service to a service satisfies this condition: atlas reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is reviewed or reviewed, or both.\". Expected '.' or ', ' here. Use the English paraphrase as a writing example.",
+   "span": {
+    "column": 18,
+    "end": 20,
+    "line": 1,
+    "start": 17
+   }
+  },
+  "wording": "Is atlas reviewed or reviewed, or both?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"every service is reviewed or reviewed, or both.\". Expected '.' here. Use the English paraphrase as a writing example.",
+   "span": {
+    "column": 26,
+    "end": 28,
+    "line": 1,
+    "start": 25
+   }
+  },
+  "wording": "Is every service reviewed or reviewed, or both?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"if atlas is reviewed and atlas is reviewed, then atlas is reviewed.\". Expected ', then ' or ', ' here. Use the English paraphrase as a writing example.",
+   "span": {
+    "column": 21,
+    "end": 24,
+    "line": 1,
+    "start": 20
+   }
+  },
+  "wording": "Is if atlas reviewed and atlas is reviewed, then atlas is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"if atlas is reviewed is and atlas reviewed, then atlas is reviewed.\". Expected ', then ' or ', ' here. Use the English paraphrase as a writing example.",
+   "span": {
+    "column": 1,
+    "end": 24,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is if atlas is reviewed and atlas reviewed, then atlas is reviewed?"
+ },
+ {
+  "env": "speech",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"if atlas is reviewed is and atlas is reviewed, then atlas reviewed.\". Expected ', then ' or ', ' here. Use the English paraphrase as a writing example.",
+   "span": {
+    "column": 1,
+    "end": 24,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is if atlas is reviewed and atlas is reviewed, then atlas reviewed?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "A question cannot contain \"therefore\", \"so\", \"hence\" or \"it follows that\".",
+   "span": {
+    "column": 1,
+    "end": 27,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is therefore atlas checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "A question cannot contain \"therefore\", \"so\", \"hence\" or \"it follows that\".",
+   "span": {
+    "column": 1,
+    "end": 20,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is so atlas checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "A question cannot contain \"therefore\", \"so\", \"hence\" or \"it follows that\".",
+   "span": {
+    "column": 1,
+    "end": 23,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is hence atlas checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "A question cannot contain \"therefore\", \"so\", \"hence\" or \"it follows that\".",
+   "span": {
+    "column": 1,
+    "end": 33,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is it follows that atlas checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "content": {
+    "body": [
+     "not",
+     [
+      "unary",
+      "checked",
+      [
+       "const",
+       "atlas"
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is it not the case that atlas is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it not the case that atlas is checked?",
+   "span": {
+    "column": 1,
+    "end": 41,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is it is not the case that atlas checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that both atlas is checked and atlas is checked?",
+   "span": {
+    "column": 1,
+    "end": 43,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is both atlas checked and atlas is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that both atlas is checked and atlas is checked?",
+   "span": {
+    "column": 1,
+    "end": 43,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is both atlas is checked and atlas checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a list marker that does not fit its depth.",
+   "span": {
+    "column": 1,
+    "end": 70,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is all of the following hold: (a) atlas checked; (a) atlas is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a list marker that does not fit its depth.",
+   "span": {
+    "column": 1,
+    "end": 70,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is all of the following hold: (a) atlas is checked; (a) atlas checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "content": {
+    "body": [
+     "exists",
+     "service",
+     [
+      "unary",
+      "checked",
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is there a service who is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs there a service who is checked?",
+   "span": {
+    "column": 1,
+    "end": 34,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is there is a service who checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question introduces a name that is already in use.",
+   "span": {
+    "column": 1,
+    "end": 146,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is starting from atlas, atlas reachable by one or more steps, where a step from a service to a service satisfies this condition: atlas is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question introduces a name that is already in use.",
+   "span": {
+    "column": 1,
+    "end": 146,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is starting from atlas, atlas is reachable by one or more steps, where a step from a service to a service satisfies this condition: atlas checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that either atlas is checked or atlas is checked, or both?",
+   "span": {
+    "column": 1,
+    "end": 53,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is either atlas checked or atlas is checked, or both?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that either atlas is checked or atlas is checked, or both?",
+   "span": {
+    "column": 1,
+    "end": 53,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is either atlas is checked or atlas checked, or both?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that if atlas is checked, then atlas is checked?",
+   "span": {
+    "column": 1,
+    "end": 43,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is if atlas checked, then atlas is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that if atlas is checked, then atlas is checked?",
+   "span": {
+    "column": 1,
+    "end": 43,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is if atlas is checked, then atlas checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that all of the following hold: first clause: atlas is checked; end first clause; second clause: atlas is checked; end second clause?",
+   "span": {
+    "column": 1,
+    "end": 128,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is all of the following hold: first clause: atlas checked; end first clause; second clause: atlas is checked; end second clause?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that all of the following hold: first clause: atlas is checked; end first clause; second clause: atlas is checked; end second clause?",
+   "span": {
+    "column": 1,
+    "end": 128,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is all of the following hold: first clause: atlas is checked; end first clause; second clause: atlas checked; end second clause?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that both of the following hold: first clause: atlas is checked; end first clause; second clause: atlas is checked; end second clause?",
+   "span": {
+    "column": 1,
+    "end": 129,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is both of the following hold: first clause: atlas checked; end first clause; second clause: atlas is checked; end second clause?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that both of the following hold: first clause: atlas is checked; end first clause; second clause: atlas is checked; end second clause?",
+   "span": {
+    "column": 1,
+    "end": 129,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is both of the following hold: first clause: atlas is checked; end first clause; second clause: atlas checked; end second clause?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that at least one of the following holds: first clause: atlas is checked; end first clause; second clause: atlas is checked; end second clause?",
+   "span": {
+    "column": 1,
+    "end": 138,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is at least one of the following holds: first clause: atlas checked; end first clause; second clause: atlas is checked; end second clause?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that at least one of the following holds: first clause: atlas is checked; end first clause; second clause: atlas is checked; end second clause?",
+   "span": {
+    "column": 1,
+    "end": 138,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is at least one of the following holds: first clause: atlas is checked; end first clause; second clause: atlas checked; end second clause?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that if the following holds: first clause: atlas is checked; end first clause; second clause: atlas is checked; end second clause?",
+   "span": {
+    "column": 1,
+    "end": 125,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is if the following holds: first clause: atlas checked; end first clause; second clause: atlas is checked; end second clause?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that if the following holds: first clause: atlas is checked; end first clause; second clause: atlas is checked; end second clause?",
+   "span": {
+    "column": 1,
+    "end": 125,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is if the following holds: first clause: atlas is checked; end first clause; second clause: atlas checked; end second clause?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a list marker that does not fit its depth.",
+   "span": {
+    "column": 1,
+    "end": 71,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is both of the following hold: (a) atlas checked; (a) atlas is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a list marker that does not fit its depth.",
+   "span": {
+    "column": 1,
+    "end": 71,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is both of the following hold: (a) atlas is checked; (a) atlas checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a list marker that does not fit its depth.",
+   "span": {
+    "column": 1,
+    "end": 80,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is at least one of the following holds: (a) atlas checked; (a) atlas is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a list marker that does not fit its depth.",
+   "span": {
+    "column": 1,
+    "end": 80,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is at least one of the following holds: (a) atlas is checked; (a) atlas checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a list marker that does not fit its depth.",
+   "span": {
+    "column": 1,
+    "end": 93,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is if the following holds: (a) atlas checked; then the following holds: (a) atlas is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a list marker that does not fit its depth.",
+   "span": {
+    "column": 1,
+    "end": 93,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is if the following holds: (a) atlas is checked; then the following holds: (a) atlas checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a list marker that does not fit its depth.",
+   "span": {
+    "column": 1,
+    "end": 70,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is all of the following hold: (b) atlas checked; (a) atlas is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a list marker that does not fit its depth.",
+   "span": {
+    "column": 1,
+    "end": 70,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is all of the following hold: (b) atlas is checked; (a) atlas checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a list marker that does not fit its depth.",
+   "span": {
+    "column": 1,
+    "end": 70,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is all of the following hold: (i) atlas checked; (a) atlas is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a list marker that does not fit its depth.",
+   "span": {
+    "column": 1,
+    "end": 70,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is all of the following hold: (i) atlas is checked; (a) atlas checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a list marker that does not fit its depth.",
+   "span": {
+    "column": 1,
+    "end": 71,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is all of the following hold: (ii) atlas checked; (a) atlas is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a list marker that does not fit its depth.",
+   "span": {
+    "column": 1,
+    "end": 71,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is all of the following hold: (ii) atlas is checked; (a) atlas checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs every service who is checked checked?",
+   "span": {
+    "column": 1,
+    "end": 40,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is every service who checked is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "implies",
+      [
+       "unary",
+       "checked",
+       [
+        "var",
+        0
+       ]
+      ],
+      [
+       "unary",
+       "checked",
+       [
+        "var",
+        0
+       ]
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every service who is checked checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs every service who is checked and is checked checked?",
+   "span": {
+    "column": 1,
+    "end": 55,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is every service who checked and is checked is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs every service who is checked and is checked checked?",
+   "span": {
+    "column": 1,
+    "end": 55,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is every service who is checked and checked is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "implies",
+      [
+       "and",
+       [
+        "unary",
+        "checked",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "unary",
+        "checked",
+        [
+         "var",
+         0
+        ]
+       ]
+      ],
+      [
+       "unary",
+       "checked",
+       [
+        "var",
+        0
+       ]
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every service who is checked and is checked checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs every service who is checked and is checked, and is checked checked?",
+   "span": {
+    "column": 1,
+    "end": 71,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is every service who checked and is checked, and is checked is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs every service who is checked and is checked, and is checked checked?",
+   "span": {
+    "column": 1,
+    "end": 71,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is every service who is checked and checked, and is checked is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs every service who is checked and is checked, and is checked checked?",
+   "span": {
+    "column": 1,
+    "end": 71,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is every service who is checked and is checked, and checked is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "implies",
+      [
+       "and",
+       [
+        "and",
+        [
+         "unary",
+         "checked",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "unary",
+         "checked",
+         [
+          "var",
+          0
+         ]
+        ]
+       ],
+       [
+        "unary",
+        "checked",
+        [
+         "var",
+         0
+        ]
+       ]
+      ],
+      [
+       "unary",
+       "checked",
+       [
+        "var",
+        0
+       ]
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every service who is checked and is checked, and is checked checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs every service who is checked, and is checked and is checked checked?",
+   "span": {
+    "column": 1,
+    "end": 71,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is every service who checked, and is checked and is checked is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs every service who is checked, and is checked and is checked checked?",
+   "span": {
+    "column": 1,
+    "end": 71,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is every service who is checked, and checked and is checked is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs every service who is checked, and is checked and is checked checked?",
+   "span": {
+    "column": 1,
+    "end": 71,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is every service who is checked, and is checked and checked is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "implies",
+      [
+       "and",
+       [
+        "unary",
+        "checked",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "and",
+        [
+         "unary",
+         "checked",
+         [
+          "var",
+          0
+         ]
+        ],
+        [
+         "unary",
+         "checked",
+         [
+          "var",
+          0
+         ]
+        ]
+       ]
+      ],
+      [
+       "unary",
+       "checked",
+       [
+        "var",
+        0
+       ]
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every service who is checked, and is checked and is checked checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs every service who is checked and who is checked checked?",
+   "span": {
+    "column": 1,
+    "end": 59,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is every service who checked and who is checked is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs every service who is checked and who is checked checked?",
+   "span": {
+    "column": 1,
+    "end": 59,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is every service who is checked and who checked is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "implies",
+      [
+       "and",
+       [
+        "unary",
+        "checked",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "unary",
+        "checked",
+        [
+         "var",
+         0
+        ]
+       ]
+      ],
+      [
+       "unary",
+       "checked",
+       [
+        "var",
+        0
+       ]
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every service who is checked and who is checked checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs every service who is checked and that is checked checked?",
+   "span": {
+    "column": 1,
+    "end": 60,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is every service who checked and that is checked is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs every service who is checked and that is checked checked?",
+   "span": {
+    "column": 1,
+    "end": 60,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is every service who is checked and that checked is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "implies",
+      [
+       "and",
+       [
+        "unary",
+        "checked",
+        [
+         "var",
+         0
+        ]
+       ],
+       [
+        "unary",
+        "checked",
+        [
+         "var",
+         0
+        ]
+       ]
+      ],
+      [
+       "unary",
+       "checked",
+       [
+        "var",
+        0
+       ]
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every service who is checked and that is checked checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs every service that is checked checked?",
+   "span": {
+    "column": 1,
+    "end": 41,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is every service that checked is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "implies",
+      [
+       "unary",
+       "checked",
+       [
+        "var",
+        0
+       ]
+      ],
+      [
+       "unary",
+       "checked",
+       [
+        "var",
+        0
+       ]
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every service that is checked checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that for every service, atlas is checked?",
+   "span": {
+    "column": 1,
+    "end": 36,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is for every service, atlas checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that for every service who is checked, atlas is checked?",
+   "span": {
+    "column": 1,
+    "end": 51,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is for every service who checked, atlas is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs it the case that for every service who is checked, atlas is checked?",
+   "span": {
+    "column": 1,
+    "end": 51,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is for every service who is checked, atlas checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "content": {
+    "body": [
+     "exists",
+     "service",
+     [
+      "unary",
+      "checked",
+      [
+       "const",
+       "atlas"
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is there a service such that atlas is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs there a service such that atlas is checked?",
+   "span": {
+    "column": 1,
+    "end": 46,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is there is a service such that atlas checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "content": {
+    "body": [
+     "exists",
+     "service",
+     [
+      "unary",
+      "checked",
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is there a service that is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs there a service that is checked?",
+   "span": {
+    "column": 1,
+    "end": 35,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is there is a service that checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "content": {
+    "body": [
+     "exists",
+     "service",
+     [
+      "unary",
+      "checked",
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is there an service who is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs there an service who is checked?",
+   "span": {
+    "column": 1,
+    "end": 35,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is there is an service who checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "unary",
+      "checked",
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every first service checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "unary",
+      "checked",
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every second service checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "unary",
+      "checked",
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every third service checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "unary",
+      "checked",
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every fourth service checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "unary",
+      "checked",
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every fifth service checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "unary",
+      "checked",
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every sixth service checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "unary",
+      "checked",
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every seventh service checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "unary",
+      "checked",
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every eighth service checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "unary",
+      "checked",
+      [
+       "var",
+       0
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every service named S1 checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "content": {
+    "body": [
+     "eq",
+     [
+      "const",
+      "atlas"
+     ],
+     [
+      "const",
+      "atlas"
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is atlas the same as atlas?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses \"it\", and it is not settled what \"it\" refers to. Repeat the name.",
+   "span": {
+    "column": 1,
+    "end": 24,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is it the same as atlas?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a name before introducing it.",
+   "span": {
+    "column": 1,
+    "end": 34,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is that service the same as atlas?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a name before introducing it.",
+   "span": {
+    "column": 1,
+    "end": 39,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is the first service the same as atlas?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a name before introducing it.",
+   "span": {
+    "column": 1,
+    "end": 40,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is the second service the same as atlas?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a name before introducing it.",
+   "span": {
+    "column": 1,
+    "end": 39,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is the third service the same as atlas?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a name before introducing it.",
+   "span": {
+    "column": 1,
+    "end": 40,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is the fourth service the same as atlas?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a name before introducing it.",
+   "span": {
+    "column": 1,
+    "end": 39,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is the fifth service the same as atlas?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a name before introducing it.",
+   "span": {
+    "column": 1,
+    "end": 39,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is the sixth service the same as atlas?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a name before introducing it.",
+   "span": {
+    "column": 1,
+    "end": 41,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is the seventh service the same as atlas?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a name before introducing it.",
+   "span": {
+    "column": 1,
+    "end": 40,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is the eighth service the same as atlas?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question uses a name before introducing it.",
+   "span": {
+    "column": 1,
+    "end": 24,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is S1 the same as atlas?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "content": {
+    "body": [
+     "bottom"
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is this impossible?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question lists the same name or the same property twice in one list.",
+   "span": {
+    "column": 1,
+    "end": 33,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is atlas, atlas or atlas checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question lists the same name or the same property twice in one list.",
+   "span": {
+    "column": 1,
+    "end": 38,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is atlas checked, checked and checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question lists the same name or the same property twice in one list.",
+   "span": {
+    "column": 1,
+    "end": 37,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is atlas checked, checked or checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs some service checked and checked?",
+   "span": {
+    "column": 1,
+    "end": 39,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is some service checked and is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "VE could read this question only by putting \"is\" back inside a smaller part of the sentence, such as a part that begins with \"who\", \"that\", \"which\", \"if\", \"both\" or \"either\", or one of the phrases joined by \"and\" or \"or\". English moves a word to the front only from the main sentence. Ask this instead:\nIs some service checked and checked?",
+   "span": {
+    "column": 1,
+    "end": 39,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is some service is checked and checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "content": {
+    "body": [
+     "exists",
+     "service",
+     [
+      "and",
+      [
+       "unary",
+       "checked",
+       [
+        "var",
+        0
+       ]
+      ],
+      [
+       "unary",
+       "checked",
+       [
+        "var",
+        0
+       ]
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is some service checked and checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "content": {
+    "body": [
+     "forall",
+     "service",
+     [
+      "implies",
+      [
+       "unary",
+       "checked",
+       [
+        "var",
+        0
+       ]
+      ],
+      [
+       "unary",
+       "checked",
+       [
+        "var",
+        0
+       ]
+      ]
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is every checked service checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"every is checked service checked and has an owner.\". Unknown English phrase 'is checked service checked'. Nearest declared wordings: 'may share {1}'; 'is checked'; 'may open {1}'.",
+   "span": {
+    "column": 1,
+    "end": 32,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is every checked service checked and has an owner?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question introduces a name that is already in use.",
+   "span": {
+    "column": 1,
+    "end": 149,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is starting from atlas, atlas reachable by one or more steps, where a step from a service to a service satisfies the following: (a) atlas is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question introduces a name that is already in use.",
+   "span": {
+    "column": 1,
+    "end": 149,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is starting from atlas, atlas is reachable by one or more steps, where a step from a service to a service satisfies the following: (a) atlas checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question introduces a name that is already in use.",
+   "span": {
+    "column": 1,
+    "end": 147,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is starting from atlas, atlas reachable by zero or more steps, where a step from a service to a service satisfies this condition: atlas is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question introduces a name that is already in use.",
+   "span": {
+    "column": 1,
+    "end": 147,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is starting from atlas, atlas is reachable by zero or more steps, where a step from a service to a service satisfies this condition: atlas checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"atlas is checked or checked, or both.\". Expected '.' or ', ' here. Use the English paraphrase as a writing example.",
+   "span": {
+    "column": 17,
+    "end": 19,
+    "line": 1,
+    "start": 16
+   }
+  },
+  "wording": "Is atlas checked or checked, or both?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"every service is checked or checked, or both.\". Expected '.' here. Use the English paraphrase as a writing example.",
+   "span": {
+    "column": 25,
+    "end": 27,
+    "line": 1,
+    "start": 24
+   }
+  },
+  "wording": "Is every service checked or checked, or both?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"if atlas is checked and atlas is checked, then atlas is checked.\". Expected ', then ' or ', ' here. Use the English paraphrase as a writing example.",
+   "span": {
+    "column": 20,
+    "end": 23,
+    "line": 1,
+    "start": 19
+   }
+  },
+  "wording": "Is if atlas checked and atlas is checked, then atlas is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"if atlas is checked is and atlas checked, then atlas is checked.\". Expected ', then ' or ', ' here. Use the English paraphrase as a writing example.",
+   "span": {
+    "column": 1,
+    "end": 23,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is if atlas is checked and atlas checked, then atlas is checked?"
+ },
+ {
+  "env": "unverbalised",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The question has no reading with the current vocabulary. Closest sentence tried: \"if atlas is checked is and atlas is checked, then atlas checked.\". Expected ', then ' or ', ' here. Use the English paraphrase as a writing example.",
+   "span": {
+    "column": 1,
+    "end": 23,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is if atlas is checked and atlas is checked, then atlas checked?"
  }
 ]

@@ -313,6 +313,39 @@ def test_every_quantified_unverbalised_verdict_row_is_read_as_ve_ask_reads_it(mo
     assert_read_as_ve_ask(monkeypatch, tmp_path, extended(env), wording, body)
 
 
+OPENING = [(row["env"], row["wording"], row["head"]["content"]["body"])
+           for row in json.loads((EVIDENCE / "delta.json").read_text())["rows"] if speech_ab_f2.opening(row)]
+
+
+@pytest.mark.parametrize("env, wording, body", OPENING, ids=[f"{e}:{w}" for e, w, _ in OPENING])
+def test_every_opening_verdict_row_is_read_as_ve_ask_reads_it(monkeypatch, tmp_path, env, wording, body):
+    """Recheck 2 F5, DRI 2026-10-28 item 5 (class (d)): every saved verdict row of a sentence opening outside the
+    reader's dimensions (`Is there a service that is reviewed?`, `Is this impossible?`, `Is every service that is
+    reviewed reviewed?`, ...), which the base refused, gets the same verdict and text through the speech caller as
+    through `ve ask`."""
+    assert len(OPENING) == speech_ab_f2.DECIDED["opening"]
+    assert_read_as_ve_ask(monkeypatch, tmp_path, extended(env), wording, body)
+    assert "error" in saved_verdict(env, wording)["base"]
+
+
+def test_the_corpus_records_a_question_for_every_grammar_opening():
+    """F5: the corpus has one sentence per grammar rule, so every sentence opening (`there is a`, `this is
+    impossible`, a marker, a term, ...) is asked and recorded; a rule is left out only when the environment has no
+    word for one of its categories (a binary relation), and a rule the grammar gains is a case before it is listed."""
+    rules = json.loads(speech_ab_f2.GRAMMAR.read_text())
+    recorded = {(r["env"], r["wording"]) for r in json.loads((EVIDENCE / "head.json").read_text())}
+    for env, word in (("speech", "reviewed"), ("unverbalised", "checked")):
+        sentences = speech_ab_f2.opening_sentences(EXTRA[env], word)
+        for rule in rules:
+            if rule["tag"] not in sentences:
+                assert {"n": "relation"} in rule["rhs"] or {"n": "object_relative"} in rule["rhs"], rule["tag"]
+    cases = speech_ab_f2.opening_cases()
+    assert {(env, wording) for env, wording, _ in cases} <= recorded
+    for wording in ("Is there a service that is reviewed?", "Is this impossible?",
+                    "Is every service that is reviewed reviewed?"):
+        assert ("speech", wording) in {(env, w) for env, w, _ in cases}
+
+
 def test_the_corpus_records_every_grammar_determiner_and_predicate_form():
     """The added corpus is generated from the grammar's determiners, so a determiner the grammar gains is a recorded
     case (in both environments, both polarities) before its delta can be audited."""
@@ -340,7 +373,9 @@ def test_the_extended_delta_audits_every_verdict_as_signed():
 @pytest.mark.parametrize("env, wording, mutation", [
     ("negative", "Is atlas not reviewed?", "remove"), ("negative", "Is atlas not reviewed?", "change_head"),
     ("speech", "Is no service reviewed?", "remove"), ("speech", "Is no service reviewed?", "change_head"),
-    ("unverbalised", "Is atlas checked?", "remove"), ("unverbalised", "Is no service Checked?", "change_head")])
+    ("unverbalised", "Is atlas checked?", "remove"), ("unverbalised", "Is no service Checked?", "change_head"),
+    ("speech", "Is there a service that is reviewed?", "remove"), ("speech", "Is this impossible?", "remove"),
+    ("speech", "Is every service that is reviewed reviewed?", "remove")])
 def test_the_delta_audit_catches_missing_or_unclassified_verdicts(tmp_path, env, wording, mutation):
     """A missing case or a verdict outside its class cannot pass the audit."""
     delta = json.loads((EVIDENCE / "delta.json").read_text())
