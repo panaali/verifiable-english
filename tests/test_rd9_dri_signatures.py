@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DELTA = ROOT / "docs/readings-defaults/rd9-lean/DELTA.md"
 REPORT = ROOT / "docs/rd-9/integration/FIX-REPORT.md"
 SIGNED = "SIGNED WITH CONDITION by DRI 2026-10-15 (rd-9 B8/B9"
+SIGNED_ENTRY_TREE = "31953648c3ee4ac6e3f90a27c6e8f000a2d0c23d"
 
 
 def _entry():
@@ -23,7 +24,8 @@ def _entry():
                   if a["signature"].startswith(SIGNED)]
     [reason] = {a["reason"] for a in allowances}
     [commit] = {a["commit"] for a in allowances}
-    recorded = json.loads(subprocess.check_output(["git", "show", f"{commit}:docs/trust-baseline.json"], cwd=ROOT))
+    assert commit == "98f97159e1a773532c4035559ae29f04548a9da6"
+    recorded = json.loads(subprocess.check_output(["git", "show", f"{SIGNED_ENTRY_TREE}:docs/trust-baseline.json"], cwd=ROOT))
     [entry] = [e for e in recorded["history"] if e.get("signed", "").startswith(SIGNED)]
     assert entry["change"] == reason
     assert {a["class"]: a["lines"] for a in allowances} == {c: n for c, n in entry["allow"].items() if n}

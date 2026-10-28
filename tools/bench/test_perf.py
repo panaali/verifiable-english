@@ -14,6 +14,7 @@ import time
 
 import pytest
 
+from test_precommit_hook import fixture_repo  # pytest registers the private-repository fixture
 from conformance.soft_norms import soft4_reproducers
 from subprocesses import HANG_TIMEOUT, ChildCPU
 from tools import nested_pytest
@@ -24,12 +25,12 @@ from ve.softnorms import load_soft_document
 ROOT = Path(__file__).resolve().parents[2]
 
 
-def test_precommit_large_staged_change(record, tmp_path):
+def test_precommit_large_staged_change(record, tmp_path, fixture_repo):
     """The hook's own work on an edit of every Python and hand-written Lean source plus
     1500 new files. `lean --deps` is left out: its share is bounded by its wall-clock
     budget (`lean_header_imports`), not by its work."""
     from test_precommit_hook import Staging, stage_large_change, without_lean
-    staging = Staging(tmp_path)
+    staging = Staging(tmp_path, fixture_repo)
     stage_large_change(staging)
     with ChildCPU() as cpu:
         result = staging.run("--timings", PATH=without_lean(tmp_path))

@@ -99,7 +99,10 @@ module VE.Acts.LexicalBase
 module VE.Acts.LexicalExamples
 module VE.Acts.LexicalProofs
 module VE.Acts.Linearize
+module VE.Acts.Meaning
+module VE.Acts.MeaningExamples
 module VE.Acts.Read
+module VE.Acts.Readings
 module VE.Acts.RuleExamples
 module VE.Acts.Syntax
 module VE.Acts.Table
@@ -555,6 +558,9 @@ module VE.Scales.Theorems
 module VE.Scope.Effects
 module VE.Scope.Examples
 module VE.Scope.Govern
+module VE.Scope.Readings
+module VE.Scope.ReadingsExamples
+module VE.Scope.ReadingsTheorems
 module VE.Scope.Theorems
 module VE.Scope.Wire
 module VE.Scope.WireExamples
@@ -668,6 +674,7 @@ ResponseShape.Fits@ResponseShape.Skeleton
 ResponseShape.KindRead@ResponseShape.Skeleton
 ResponseShape.OkFits@ResponseShape.Skeleton
 ResponseShape.OkP@ResponseShape.Skeleton
+VE.Acts.Derived@VE.Acts.Readings
 VE.Acts.DerivedIn@VE.Acts.Read
 VE.Acts.Lexical.Accepts@VE.Acts.LexicalProofs
 VE.Acts.Lexical.Grouped@VE.Acts.LexicalProofs
