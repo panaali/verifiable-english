@@ -243,6 +243,7 @@ NOT_REGENERATED = {
                                                       "checked at the batch gate",
     "docs/merge-tooling/*.py": "this tooling's evidence, recorded once (git merge-tree --write-tree is no writer)",
     "docs/premise-scale/*.py": "batch measurements and seeded faults, recorded once in docs/premise-scale/evidence",
+    "docs/defeasible/df-1bb/evidence/select_route_cases.py": "df-1bb: appends recorded route cases once (append-only)",
     "conformance/soft_norms.py": "--write-rust-fixtures: the Rust tests' fixture, rewritten with the soft-norms unit",
     "usecases/*/*.py": "use-case results, rerun by their harness",
 }
