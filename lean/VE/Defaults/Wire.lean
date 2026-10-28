@@ -91,20 +91,36 @@ def viewRest (j : Json) (L : LayeredU) : Except String (ViewRest L) :=
         ((rest.find? (fun x => !decisionFree L.D x.2)).map (·.1)).getD "")
     else .error notWellFormedText
 
-/-- `decodeLayered` itself (no second decoder), then diagnostic 7 (`hD`, and `hXw` through `check_iff_wellFormed`),
-    then `viewRest`. `hU` is `decodeLayered_soften`. -/
+/-- Diagnostic 7 (`hD`, and `hXw` through `check_iff_wellFormed`), then `viewRest`, on a decoded source `L`
+    (`viewOf`'s, or a readings choice's `choiceLayeredG` source in DF-3). -/
+def viewOn (j : Json) (L : LayeredU) (hU : L.U.D = soften L.D) : Except String DefaultsView :=
+  if hD : WellFormedSoft L.D = true then
+    if hXw : L.X.all (·.check (envAt (fill L.U) 0) []) = true then
+      match viewRest j L with
+      | .error e => .error e
+      | .ok r => .ok ⟨L, r.R, r.hX, hU, hD,
+          fun a ha => (VE.check_iff_wellFormed _ _ a).mp (List.all_eq_true.mp hXw a ha), r.hR, r.hl⟩
+    else .error notWellFormedText
+  else .error notWellFormedText
+
+/-- The view's document is the source it was checked on. -/
+theorem viewOn_L {j : Json} {L : LayeredU} {hU : L.U.D = soften L.D} {v : DefaultsView}
+    (h : viewOn j L hU = .ok v) : v.L = L := by
+  unfold viewOn at h
+  split at h
+  · split at h
+    · split at h
+      · cases h
+      · cases h
+        rfl
+    · cases h
+  · cases h
+
+/-- `decodeLayered` itself (no second decoder), then `viewOn`. `hU` is `decodeLayered_soften`. -/
 def viewOf (j : Json) : Except String DefaultsView :=
   match h : VE.NormDefaults.Wire.decodeLayered j with
   | .error e => .error e
-  | .ok L =>
-    if hD : WellFormedSoft L.D = true then
-      if hXw : L.X.all (·.check (envAt (fill L.U) 0) []) = true then
-        match viewRest j L with
-        | .error e => .error e
-        | .ok r => .ok ⟨L, r.R, r.hX, decodeLayered_soften j L h, hD,
-            fun a ha => (VE.check_iff_wellFormed _ _ a).mp (List.all_eq_true.mp hXw a ha), r.hR, r.hl⟩
-      else .error notWellFormedText
-    else .error notWellFormedText
+  | .ok L => viewOn j L (decodeLayered_soften j L h)
 
 /-- The view's document is the layered route's own decoding. -/
 theorem viewOf_layered (j : Json) (v : DefaultsView) (h : viewOf j = .ok v) :
@@ -113,14 +129,8 @@ theorem viewOf_layered (j : Json) (v : DefaultsView) (h : viewOf j = .ok v) :
   split at h
   · cases h
   · rename_i L hL
-    split at h
-    · split at h
-      · split at h
-        · cases h
-        · cases h
-          exact hL
-      · cases h
-    · cases h
+    rw [viewOn_L h]
+    exact hL
 
 /-! ## The pieces a request carries -/
 
