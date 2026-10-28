@@ -2,6 +2,7 @@
 -- The `#print axioms` audit of every theorem of lean/declarations.txt outside the ResponseShape modules.
 import Iceberg
 import VE.Acts.Compat
+import VE.Acts.Elaborate
 import VE.Acts.Grammar
 import VE.Acts.GrammarExamples
 import VE.Acts.Lexical
@@ -66,6 +67,8 @@ import VE.Calc.Units
 import VE.Calc.Wire
 import VE.Cardinality.Examples
 import VE.Cardinality.Ratio
+import VE.Cardinality.Run
+import VE.Cardinality.RunTheorems
 import VE.Cardinality.Syntax
 import VE.Cardinality.Theorems
 import VE.Cardinality.Wire
@@ -108,6 +111,7 @@ import VE.Core.TableauExtendedRules
 import VE.Core.Wire
 import VE.Data.Background
 import VE.Defaults.Meaning
+import VE.Defaults.MeaningExamples
 import VE.Defaults.Premises
 import VE.Defaults.Route
 import VE.Defaults.Wire
@@ -525,6 +529,12 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.closed_ok
 #print axioms VE.Acts.derived_iff
 #print axioms VE.Acts.distinctTexts_ok
+#print axioms VE.Acts.elaborateMap_fst
+#print axioms VE.Acts.elaborateMap_ok
+#print axioms VE.Acts.elaborate_ok
+#print axioms VE.Acts.elaborate_one_reading
+#print axioms VE.Acts.elaborate_unspec
+#print axioms VE.Acts.elaborate_wellFormed
 #print axioms VE.Acts.firstEqualPair_none
 #print axioms VE.Acts.frameRules_ok
 #print axioms VE.Acts.framesOk_words
@@ -535,6 +545,7 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.listing_limit
 #print axioms VE.Acts.listing_nodup
 #print axioms VE.Acts.listing_ok
+#print axioms VE.Acts.mapM_ok
 #print axioms VE.Acts.mem_firsts
 #print axioms VE.Acts.nodup_firsts
 #print axioms VE.Acts.paraphrases_nodup
@@ -551,6 +562,7 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.readings_exact
 #print axioms VE.Acts.readings_limit
 #print axioms VE.Acts.readings_nodup
+#print axioms VE.Acts.ruleReading_ok
 #print axioms VE.Acts.schema_ok
 #print axioms VE.Acts.schema_ranked
 #print axioms VE.Acts.table_free_all_own
@@ -735,6 +747,7 @@ import VE.WireContract.Engine
 #print axioms VE.Arith.Formula.evalB_sound
 #print axioms VE.Arith.Formula.evalB_total
 #print axioms VE.Arith.Site.ok_of_refusal
+#print axioms VE.Arith.Term.evalB_bits
 #print axioms VE.Arith.Term.evalB_mono
 #print axioms VE.Arith.Term.evalB_sound
 #print axioms VE.Arith.Term.evalB_total
@@ -748,7 +761,15 @@ import VE.WireContract.Engine
 #print axioms VE.Arith.arithOutcome_decided
 #print axioms VE.Arith.arithOutcome_exhausted_iff
 #print axioms VE.Arith.arithOutcome_unbounded_iff
+#print axioms VE.Arith.bits_add_le
+#print axioms VE.Arith.bits_mul_le
+#print axioms VE.Arith.bits_natAbs_le
+#print axioms VE.Arith.bits_sub_le
 #print axioms VE.Arith.boundedNames_snoc
+#print axioms VE.Arith.chargeBits_bits
+#print axioms VE.Arith.chargeBits_eq
+#print axioms VE.Arith.chargeBits_mono
+#print axioms VE.Arith.chargeBits_some
 #print axioms VE.Arith.charge_eq
 #print axioms VE.Arith.charge_mono
 #print axioms VE.Arith.charge_some
@@ -761,6 +782,7 @@ import VE.WireContract.Engine
 #print axioms VE.Arith.decideBounded_sound
 #print axioms VE.Arith.decideBounded_work
 #print axioms VE.Arith.foldl_rel
+#print axioms VE.Arith.log2_le_of_lt
 #print axioms VE.Arith.opEnv_extends
 #print axioms VE.Arith.opEnv_snoc
 #print axioms VE.Arith.quantLoop_false
@@ -769,6 +791,10 @@ import VE.WireContract.Engine
 #print axioms VE.Arith.quantLoop_true
 #print axioms VE.Arith.range_all
 #print axioms VE.Arith.range_ex
+#print axioms VE.Arith.stepB_mono
+#print axioms VE.Arith.stepB_some
+#print axioms VE.Arith.stepB_sound
+#print axioms VE.Arith.stepB_total
 #print axioms VE.Arith.total_take
 #print axioms VE.Arith.wellFormed_at
 #print axioms VE.Ask.Answer.groups_view
@@ -1204,6 +1230,11 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.Examples.two_some
 #print axioms VE.Cardinality.Examples.weighted_two
 #print axioms VE.Cardinality.Examples.wellFormed_cases
+#print axioms VE.Cardinality.Run.decodeCertificate_sound
+#print axioms VE.Cardinality.Run.erasedJson_conclusion
+#print axioms VE.Cardinality.Run.regionsJson_constants
+#print axioms VE.Cardinality.Run.runCaseReported_error
+#print axioms VE.Cardinality.Run.runCaseReported_ok
 #print axioms VE.Cardinality.Wire.cmpNames_spelled
 #print axioms VE.Cardinality.Wire.decodeEnvironment_sound
 #print axioms VE.Cardinality.Wire.decodeStatement_fits
@@ -1230,6 +1261,7 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.bodyOfQ_spec
 #print axioms VE.Cardinality.bridge_hold
 #print axioms VE.Cardinality.cardinality_elab_sound
+#print axioms VE.Cardinality.checkCertificate_sound
 #print axioms VE.Cardinality.countAtom_holds_iff
 #print axioms VE.Cardinality.countFin_eq
 #print axioms VE.Cardinality.count_atLeast_agree
@@ -1654,6 +1686,21 @@ import VE.WireContract.Engine
 #print axioms VE.Data.Background.premises_sat_iff
 #print axioms VE.Data.Background.string_encoding_sound
 #print axioms VE.Data.Background.totalPremise_iff
+#print axioms VE.Defaults.MeaningFixtures.Uπ_eq
+#print axioms VE.Defaults.MeaningFixtures.admissible_π
+#print axioms VE.Defaults.MeaningFixtures.decisionNames_π
+#print axioms VE.Defaults.MeaningFixtures.decisions_π
+#print axioms VE.Defaults.MeaningFixtures.exc_unsaid
+#print axioms VE.Defaults.MeaningFixtures.exceptedName_π
+#print axioms VE.Defaults.MeaningFixtures.open_π
+#print axioms VE.Defaults.MeaningFixtures.rel_base
+#print axioms VE.Defaults.MeaningFixtures.rel_unsaid
+#print axioms VE.Defaults.MeaningFixtures.rel_π
+#print axioms VE.Defaults.MeaningFixtures.soften_π
+#print axioms VE.Defaults.MeaningFixtures.switch_π
+#print axioms VE.Defaults.MeaningFixtures.switchesOff_π
+#print axioms VE.Defaults.MeaningFixtures.typed_π
+#print axioms VE.Defaults.MeaningFixtures.unsaid_π
 #print axioms VE.Defaults.Wire.DefaultsView.hD
 #print axioms VE.Defaults.Wire.DefaultsView.hR
 #print axioms VE.Defaults.Wire.DefaultsView.hU
