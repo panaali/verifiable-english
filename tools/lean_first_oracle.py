@@ -1,18 +1,19 @@
 """The frozen pre-deletion Python, kept as a test oracle (docs/LEAN-FIRST-PLAN.md, section 6.2;
 DRI answer 7).
 
-The oracle is the commit tagged `lean-first/oracle-python` (batch 0's base): the Python checkers
-before any Lean-first batch deleted a line. `docs/lean-first/oracle.json` freezes, by
-SHA-256 at that commit, what the oracle depends on: its dependency lock, the baseline artifacts,
-the frozen conformance fixtures and the contracts. It is run in isolation as
-`conformance/replay_baseline.py` runs its pinned code: a `git archive` of the commit in a
-temporary directory, imported from there with this checkout's Python environment, which must
-still be the frozen lock's. It labels new fixtures `oracle: lean+pinned-python` and is deleted
-after batch 18 plus 14 clean days.
+The oracle is the tree of batch 0's base (recorded with its commit and the VM's tag
+`lean-first/oracle-python`): the Python checkers before any Lean-first batch deleted a line.
+`docs/lean-first/oracle.json` freezes, by SHA-256 in that tree, what the oracle depends on: its
+dependency lock, the baseline artifacts, the frozen conformance fixtures and the contracts. It is
+run in isolation as `conformance/replay_baseline.py` runs its pinned code: a `git archive` of the
+tree in a temporary directory, imported from there with this checkout's Python environment, which
+must still be the frozen lock's. A clone without the tag (the GitHub export) checks the tree and
+its files alone. It labels new fixtures `oracle: lean+pinned-python` and is deleted after batch 18
+plus 14 clean days.
 
 Usage::
 
-    tools/lean_first_oracle.py --check          # the tag and every frozen file are intact
+    tools/lean_first_oracle.py --check          # every frozen file is intact in the tree (and the tag, if present)
     tools/lean_first_oracle.py --write          # (batch 0 only) record the manifest
     tools/lean_first_oracle.py run SCRIPT.py    # run SCRIPT in the oracle; its stdout is the answer
 """
@@ -48,10 +49,10 @@ def git(*args: str) -> bytes:
     return subprocess.run(["git", *args], cwd=ROOT, check=True, capture_output=True).stdout
 
 
-def frozen_files(commit: str) -> dict[str, str]:
-    """SHA-256 of every frozen file at `commit`."""
-    paths = git("ls-tree", "-r", "--name-only", commit, "--", *FROZEN).decode().split()
-    return {path: hashlib.sha256(git("show", f"{commit}:{path}")).hexdigest() for path in sorted(paths)}
+def frozen_files(tree: str) -> dict[str, str]:
+    """SHA-256 of every frozen file in `tree`."""
+    paths = git("ls-tree", "-r", "--name-only", tree, "--", *FROZEN).decode().split()
+    return {path: hashlib.sha256(git("show", f"{tree}:{path}")).hexdigest() for path in sorted(paths)}
 
 
 def check() -> list[str]:
@@ -60,13 +61,19 @@ def check() -> list[str]:
     try:
         commit = git("rev-parse", f"refs/tags/{manifest['tag']}^{{commit}}").decode().strip()
     except subprocess.CalledProcessError:
-        return [f"tag {manifest['tag']} does not exist"]
-    if commit != manifest["commit"]:
-        problems.append(f"tag {manifest['tag']} names {commit}, not {manifest['commit']}")
-    files = frozen_files(manifest["commit"])
+        commit = None  # the exported GitHub lineage does not carry the VM-only tag
+    if commit is not None:
+        if commit != manifest["commit"]:
+            problems.append(f"tag {manifest['tag']} names {commit}, not {manifest['commit']}")
+        if git("rev-parse", f"{commit}^{{tree}}").decode().strip() != manifest["tree"]:
+            problems.append(f"tag {manifest['tag']} does not name the frozen tree")
+    try:
+        files = frozen_files(manifest["tree"])
+    except subprocess.CalledProcessError:
+        return problems + [f"oracle tree {manifest['tree']} does not exist"]
     if files != manifest["files"]:
         changed = sorted(set(files.items()) ^ set(manifest["files"].items()))
-        problems.append(f"frozen files differ at the oracle commit: {changed[:5]}")
+        problems.append(f"frozen files differ at the oracle tree: {changed[:5]}")
     lock = hashlib.sha256((ROOT / "uv.lock").read_bytes()).hexdigest()
     if lock != manifest["files"].get("uv.lock"):
         problems.append("this checkout's uv.lock is not the oracle's: its environment cannot run the oracle")
@@ -75,8 +82,9 @@ def check() -> list[str]:
 
 def write() -> None:
     commit = git("rev-parse", f"refs/tags/{TAG}^{{commit}}").decode().strip()
+    tree = git("rev-parse", f"{commit}^{{tree}}").decode().strip()
     MANIFEST.write_text(json.dumps({"format": "lean-first-oracle@1", "tag": TAG, "commit": commit,
-                                    "trees": list(TREES), "files": frozen_files(commit)},
+                                    "tree": tree, "trees": list(TREES), "files": frozen_files(tree)},
                                    indent=1, sort_keys=True) + "\n")
 
 
@@ -86,7 +94,7 @@ def run(script: Path, scratch: Path | None = None) -> int:
         print("\n".join(problems), file=sys.stderr)
         return 2
     manifest = json.loads(MANIFEST.read_text())
-    archive = git("archive", manifest["commit"], *manifest["trees"])
+    archive = git("archive", manifest["tree"], *manifest["trees"])
     with tempfile.TemporaryDirectory(prefix="ve-lean-first-oracle-", dir=scratch) as directory:
         with tarfile.open(fileobj=io.BytesIO(archive)) as tree:
             tree.extractall(directory, filter="data")
@@ -107,7 +115,7 @@ def main(argv=None) -> int:
     if args.command == "run":
         return run(args.script)
     problems = check()
-    print("\n".join(problems) if problems else "PASS: the oracle's tag and frozen files are intact")
+    print("\n".join(problems) if problems else "PASS: the oracle's tree and frozen files are intact")
     return 1 if problems else 0
 
 
