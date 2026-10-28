@@ -30,7 +30,7 @@ A test file is selected when one of these changed:
 - the Rust sources, when the test's code starts the Rust checker or selects an authority. So a Rust change selects the Rust conformance and three-way tests.
 - a data file whose path, name or use-case directory appears in a string in the test's code, such as `usecases/asimov-laws/...` for `tests/test_asimov_laws.py`.
 
-The cross-cutting tests in `ALWAYS` (`tools/select_tests.py`) always run. A change no test reaches selects the full suite: an unknown file, a deleted file or `ve/__init__.py`. A script that no test reaches selects only `ALWAYS`, and the tool reports it.
+The cross-cutting tests in `ALWAYS` (`tools/select_tests.py`) always run. So does the history-inventory lint whenever a change can make the list stale (see below). A change no test reaches selects the full suite: an unknown file, a deleted file or `ve/__init__.py`. A script that no test reaches selects only `ALWAYS`, and the tool reports it.
 
 The fast path is precise for changes to tests, helpers, tools, data and use cases. It is coarse for core product modules: they import one another widely, so a change to, for example, `ve/ast.py` still selects most of the suite. The gate (`tools/gate.py`) always runs everything.
 
@@ -266,6 +266,10 @@ The selector works at the level of functions, not layers:
   complete suite.
 * **Smoke.** Any change beyond documentation also runs three fast files
   (`SMOKE` in `tools/select_tests.py`).
+* **History inventory.** A change that can make `tests/history-dependent.json`
+  stale also runs its lint, `tests/test_history_tests.py`, in this plan and in
+  `--impacted`: a Python file under `tests/`, the list, its map extract, the
+  lint's code, or a module the list names (`history_inventory`).
 
 The layer checks run only when their inputs change: the Python import check
 when a `ve/` module's imports change, the Lean import check for `.lean`
