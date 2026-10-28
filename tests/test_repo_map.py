@@ -299,9 +299,10 @@ def test_a_map_from_before_the_relay_changed_gives_the_static_answer(built, cach
     # The commit the review case names (it added `read_question`), fixed: the file's latest commit moves with
     # every branch that edits it, and an edit with no import-time effect (lean-first batch 18's) leaves a map
     # that only imported the file valid.
-    # Resolve the commit with this tree in the current lineage before asking for its parent.
+    # Resolve the commit with this tree in HEAD's history before asking for its parent: `--all` also lists other
+    # lineages' copies of the commit (the GitHub export's), and which one came first was a tie in log order.
     last_tree = "f7a4922cef63100f62b77313705fda7d6d1b575e"
-    history = subprocess.run(["git", "log", "--all", "--format=%H", "--", relay], cwd=ROOT,
+    history = subprocess.run(["git", "log", "HEAD", "--format=%H", "--", relay], cwd=ROOT,
                              capture_output=True, text=True, check=True).stdout.splitlines()
     last = next(commit for commit in history if subprocess.run(
         ["git", "rev-parse", f"{commit}^{{tree}}"], cwd=ROOT, capture_output=True, text=True,
