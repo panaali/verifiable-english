@@ -4,7 +4,8 @@ growth only when "every new trusted definition is exercised by a test that can f
 
     uv run python tools/trust_mutants.py [--base REV] [--jobs N] [--max-mutants N] [--test FILE ...] [--deep]
                                          [--allow FILE] [--json OUT] [--root DIR] [--rescore PREV.json]
-                                         [--classes LIST]
+                                         [--classes LIST] [--shard K/N] [--plan]
+    uv run python tools/trust_mutants.py --merge OUT.json PART.json...
 
 Selected: each declaration tools/trust_map.py counts as trusted (not a theorem or check) whose lines hold a line
 the tree adds or changes over REV (default: the merge base of HEAD and main).
@@ -82,6 +83,21 @@ KILLED and INVALID one what it reads (`reads`, `killed_at`: `Reads`). When PREV'
 The current --allow applies to all. With no mutant to run there is no build. Else (no `inputs`, no per-file digests
 for a change, any other change, a file it cannot read) it is a full run, and one line says why. The JSON gains
 `rescore: {file, head, mode, changed, reused, rerun}`.
+
+--shard K/N, --merge and --plan (tm-shard) split one run into N parts that run on N machines, and combine them:
+- --shard K/N (1 <= K <= N, else exit 2): after the plan and --max-mutants as without it, part K owns the mutants
+  that run whose id M<i> has (i - 1) % N == K - 1 (`owns`: by id, so stable, balanced by count, and since the ids
+  follow the run order a mix of every tier). It builds and judges only those (--rescore and the control build
+  too), prints only their SURVIVOR and UNKNOWN lines, and its exit code reads only their verdicts. Its --json is
+  the record (`record`) with `shard: {k, n, owned}` added; each mutant another part owns is listed in plan order
+  with status and raw_status `OTHER SHARD`, a status only a part's record holds (counted under its own key);
+- --merge OUT.json PART.json... reads only the parts (no checkout, no Lean; every other option is ignored) and
+  writes the record one run with their options writes, but for "seconds" (the parts' longest), "jobs" (their sum)
+  and `shards: [{k, n, jobs, seconds}]`, by k; it prints that run's lines and exits with its code. It refuses (exit
+  2) parts that are no part, disagree on N, base, head, options, inputs, definitions, the plan or --rescore's
+  file, head, mode, changed or full_run, miss or repeat a k, or own a mutant twice, never, or with no verdict;
+- --plan prints `{"base", "definitions", "mutants", "to_run", "not_run"}` ("owned" too with --shard) as one JSON
+  line and builds nothing: what sizes N.
 """
 from __future__ import annotations
 
@@ -148,6 +164,8 @@ NO_ANSWER = re.compile(r"maximum recursion depth|maximum number of heartbeats|\(
                        r"Tactic `(?:decide|native_decide)` failed")
 KILL, RFL, NONE = "KILL", "RFL", "UNKNOWN"  # `judge`'s verdicts on one error
 TIMED_OUT = -1000  # `Scratch.lake`'s code for a run killed past its time limit
+STATUSES = ("KILLED", "SURVIVOR", "UNKNOWN", "INVALID", "ALLOWED", "NOT RUN")
+OTHER = "OTHER SHARD"  # a --shard part's status of a mutant another part owns
 STOP = {"then", "else", "do", "with", "in", "fun", "if", "let", "match", "return", "throw", "by", "at", "from", "where",
         "for", "unless", "mut", "have", "show"}
 LIST_METHODS = ("find\\?|any|all|contains|map|filter|flatMap|filterMap|length|head\\?|isEmpty|foldl|foldr|zip|lookup|"
@@ -1333,6 +1351,124 @@ def kind(m: Mutant) -> str:
     return m.trust_class + (", trusted" if m.trusted else "")
 
 
+def owns(mutant: str, shard: tuple[int, int] | None) -> bool:
+    """Whether part K of N (`shard`, None: the whole run) owns the mutant of id M<i>: (i - 1) % N == K - 1."""
+    return shard is None or (int(mutant[1:]) - 1) % shard[1] == shard[0] - 1
+
+
+def tally(found: list[Mutant], part: bool) -> tuple[dict[str, int], dict[str, dict[str, int]]]:
+    """The counts by status (every status, OTHER SHARD too in a part's) and the counts by class (those not 0)."""
+    statuses = STATUSES + ((OTHER,) if part else ())
+    return {s: sum(m.status == s for m in found) for s in statuses}, {
+        k: {s: n for s in statuses if (n := sum(m.status == s for m in found if kind(m) == k))}
+        for k in sorted({kind(m) for m in found})}
+
+
+def line(m: Mutant) -> str:
+    """A SURVIVOR, UNKNOWN or NOT RUN line."""
+    return (f"{m.status} lean/{m.file}:{m.line} {m.definition} ({kind(m)}) {m.operator}: {show(m.before)} -> "
+            f"{show(m.after)}{' (' + show(m.detail) + ')' if m.detail else ''}")
+
+
+def summary(found: list[Mutant], part: bool, seconds: int, rescore: dict | None) -> dict[str, int]:
+    """Print the counts line and the by-class lines; the counts."""
+    counts, by_class = tally(found, part)
+    mode, head, changed = (rescore["mode"], rescore["head"] or "", rescore["changed"]) if rescore else ("full", "", [])
+    print("trust_mutants: " + ", ".join(f"{n} {s}" for s, n in counts.items()) + f" in {seconds} s"
+          + (f"; {rescore['reused']} reused from {head[:12]} (identical inputs)" if mode == "identical" else
+             f"; {rescore['reused']} carried from {head[:12]} (check-only change: {', '.join(changed)})"
+             if mode == "checks" else ""))
+    for k, n in by_class.items():
+        print(f"trust_mutants: {k}: " + ", ".join(f"{x} {s}" for s, x in n.items()))
+    return counts
+
+
+def exit_code(counts: dict[str, int]) -> int:
+    """The exit code over these verdicts: 1 a survivor or UNKNOWN left, 3 none left but some NOT RUN, 0 none."""
+    return 1 if counts["SURVIVOR"] or counts["UNKNOWN"] else 3 if counts["NOT RUN"] else 0
+
+
+def record(found: list[Mutant], base: str, head: str, jobs: int, max_mutants: int, deep: bool, tests: list[str],
+           seconds: int, classes: list[str], digests: dict, rescore: dict | None, shard: dict | None = None,
+           shards: list[dict] | None = None) -> dict:
+    """The --json record, of a run, a part (`shard`) or a merge of the parts (`shards`)."""
+    counts, by_class = tally(found, shard is not None)
+    return {"base": base, "head": head, "jobs": jobs, "max_mutants": max_mutants, "deep": deep, "tests": tests,
+            "seconds": seconds, "counts": counts, "classes": classes, "class_counts": by_class, "inputs": digests,
+            **({"rescore": rescore} if rescore else {}),
+            "definitions": [f"lean/{f}: {d}" for f, d in sorted({(m.file, m.definition) for m in found})],
+            **({"shard": shard} if shard is not None else {}), **({"shards": shards} if shards else {}),
+            "mutants": [{k: v for k, v in asdict(m).items() if k not in ("start", "end", "edit")
+                         and (k not in ("reused_from", "carried", "reads", "killed_at") or v)} for m in found]}
+
+
+PLANNED = ("id", "file", "line", "definition", "operator", "before", "after", "lines", "trust_class", "trusted")
+AGREED = ("base", "head", "max_mutants", "deep", "tests", "classes", "inputs", "definitions")
+
+
+def merge(out: Path, paths: list[Path]) -> int:
+    """--merge OUT PART...: the parts' records as one, the record one run with their options writes (`record`)."""
+    def refuse(why: str) -> int:
+        return print(f"trust_mutants --merge: {why}", file=sys.stderr) or 2
+    try:
+        parts = [(json.loads(p.read_text()), p) for p in paths]
+    except (OSError, ValueError) as error:
+        return refuse(f"a part cannot be read ({type(error).__name__}: {error})")
+    if bad := [str(p) for d, p in parts if not (isinstance(d, dict) and isinstance(s := d.get("shard"), dict) and all(
+            type(s.get(x)) is int for x in ("k", "n")) and isinstance(s.get("owned"), list))]:
+        return refuse(f'no "shard" key {{k, n, owned}} (no --shard part): {", ".join(bad)}')
+    parts.sort(key=lambda x: x[0]["shard"]["k"])
+    every = ", ".join(str(p) for _, p in parts)
+    if len({d["shard"]["n"] for d, _ in parts}) > 1:
+        return refuse(f"the parts disagree on shard.n: {', '.join(f'{p} ({d['shard']['n']})' for d, p in parts)}")
+    ks, n = [d["shard"]["k"] for d, _ in parts], parts[0][0]["shard"]["n"]
+    if ks != list(range(1, n + 1)):
+        return refuse(f"shard.k of {n} parts: {sorted(set(range(1, n + 1)) - set(ks))} missing, "
+                      f"{sorted({k for k in ks if ks.count(k) > 1})} repeated ({every})")
+    (first, path), rows = parts[0], {}
+    try:
+        for d, p in parts[1:]:
+            agreed = [*((f, d.get(f), first.get(f)) for f in AGREED), ("rescore", "rescore" in d, "rescore" in first),
+                      *((f"rescore.{x}", (d.get("rescore") or {}).get(x), (first.get("rescore") or {}).get(x))
+                        for x in ("mode", "head", "file", "changed", "full_run"))]
+            if bad := next((f for f, a, b in agreed if a != b), None):
+                return refuse(f"the parts disagree on {bad}: {path} and {p}")
+            if len(d["mutants"]) != len(first["mutants"]):
+                return refuse(f"the parts disagree on the plan (mutants): {path} and {p}")
+            for a, b in zip(first["mutants"], d["mutants"]):
+                if bad := next((f for f in PLANNED if a.get(f) != b.get(f)), None):
+                    return refuse(f"the parts disagree on the plan ({a.get('id')}.{bad}): {path} and {p}")
+        run_now = {r["id"] for r in first["mutants"][:max(0, first["max_mutants"])]}
+        for d, p in parts:
+            mine = {r["id"]: r for r in d["mutants"]}
+            for i in d["shard"]["owned"]:
+                if i in rows:
+                    return refuse(f"{i} is owned twice: {rows[i][1]} and {p}")
+                if i not in run_now or mine[i]["status"] in (OTHER, "NOT RUN") or mine[i]["raw_status"] == OTHER:
+                    return refuse(f"{i}, owned by {p}, has no verdict there")
+                rows[i] = mine[i], p
+            if bad := next((i for i in run_now - set(d["shard"]["owned"]) if (mine[i]["status"], mine[i][
+                    "raw_status"]) != (OTHER, OTHER)), None):
+                return refuse(f"{bad} has a verdict in {p}, which does not own it")
+        if missing := sorted(run_now - set(rows)):
+            return refuse(f"{missing[0]} is owned by no part ({every})")
+        found = [Mutant(**{"start": 0, "end": 0, **rows.get(r["id"], (r,))[0]}) for r in first["mutants"]]
+        rescore = first.get("rescore") and {**first["rescore"], **{x: sum(d["rescore"][x] for d, _ in parts)
+                                                                   for x in ("reused", "rerun")}}
+        shards = [{"k": d["shard"]["k"], "n": n, "jobs": d["jobs"], "seconds": d["seconds"]} for d, _ in parts]
+        data = record(found, first["base"], first["head"], sum(s["jobs"] for s in shards), first["max_mutants"],
+                      first["deep"], first["tests"], max(s["seconds"] for s in shards), first["classes"],
+                      first["inputs"], rescore, shards=shards)
+    except (KeyError, TypeError, AttributeError, ValueError) as error:
+        return refuse(f"a part cannot be read ({type(error).__name__}: {error})")
+    for m in found:
+        if m.status in ("SURVIVOR", "UNKNOWN", "NOT RUN"):
+            print(line(m))
+    counts = summary(found, False, data["seconds"], rescore)
+    out.write_text(evidence(data))
+    return exit_code(counts)
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--base", help="the commit compared with (default: the merge base of HEAD and main)")
@@ -1351,7 +1487,23 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--classes", default=",".join(TRUSTED), metavar="LIST",
                         help="the declarations selected: trusted (default), all, or trust_map class names "
                         f"({', '.join(SELECTABLE)}), comma-separated")
+    parser.add_argument("--shard", metavar="K/N", help="build and judge only part K of N of the mutants that run")
+    parser.add_argument("--merge", nargs="+", type=Path, metavar=("OUT.json", "PART.json"),
+                        help="write OUT.json, the record of one run, from the --json of its N --shard parts; reads "
+                        "only those files (every other option is ignored, --shard and --plan refused)")
+    parser.add_argument("--plan", action="store_true",
+                        help="print the plan's counts as one JSON line, and build nothing")
     args = parser.parse_args(argv)
+    if args.merge:
+        if args.shard or args.plan or len(args.merge) < 2:
+            return print("--merge OUT.json PART.json...: at least one part, and no --shard or --plan",
+                         file=sys.stderr) or 2
+        return merge(args.merge[0], args.merge[1:])
+    shard = None
+    if args.shard is not None:
+        if not (got := re.fullmatch(r"([0-9]+)/([0-9]+)", args.shard)) or not 1 <= int(got[1]) <= int(got[2]):
+            return print(f"--shard {args.shard!r}: not K/N with 1 <= K <= N", file=sys.stderr) or 2
+        shard = int(got[1]), int(got[2])
     root = args.root.resolve()
     if (classes := classes_of(args.classes)) is None:
         return print(f"--classes {args.classes!r}: not a comma-separated list of trusted, all, {', '.join(SELECTABLE)}"
@@ -1378,8 +1530,17 @@ def main(argv: list[str] | None = None) -> int:
             fatal.append(f"{t}: {error}")
     if fatal:
         return print("\n".join(fatal), file=sys.stderr) or 2
-    jobs = args.jobs or max(1, min(8, (os.cpu_count() or 1) - int(os.getloadavg()[1])))
     run_now, not_run = found[:max(0, args.max_mutants)], found[max(0, args.max_mutants):]
+    mine = [m for m in run_now if owns(m.id, shard)]  # this part's (all of run_now with no --shard)
+    if args.plan:
+        print(json.dumps({"base": git(root, "rev-parse", base).stdout.strip(), "definitions": len(
+            {(m.file, m.definition) for m in found}), "mutants": len(found), "to_run": len(run_now),
+            "not_run": len(not_run), **({"owned": len(mine)} if shard else {})}))
+        return 0
+    for m in run_now:
+        if not owns(m.id, shard):
+            m.status = m.raw_status = OTHER
+    jobs = args.jobs or max(1, min(8, (os.cpu_count() or 1) - int(os.getloadavg()[1])))
     digests = inputs(root, git(root, "rev-parse", base).stdout.strip(), tests, outside, args.deep, classes)
     reused, rescore, why, mode, changed = "", None, "", "full", []
     reads = Reads(root, tree, outside) if args.rescore or args.json else None
@@ -1391,7 +1552,7 @@ def main(argv: list[str] | None = None) -> int:
             print(f"trust_mutants: --rescore {args.rescore}: a full run, since {why}", flush=True)
         else:
             mode, reused, verdicts, changed = got
-            for m in run_now:
+            for m in mine:
                 p = verdicts[m.id]
                 if mode == "identical" and p["status"] in REUSED:
                     m.status, m.detail = p["status"], p["detail"]
@@ -1400,7 +1561,7 @@ def main(argv: list[str] | None = None) -> int:
                 else:
                     continue
                 m.reused_from = reused
-    todo = [m for m in run_now if not m.reused_from]
+    todo = [m for m in mine if not m.reused_from]
     env = {**os.environ, "PATH": f"{Path.home() / '.elan/bin'}{os.pathsep}{os.environ.get('PATH', '')}"}
     definitions = sorted({(m.file, m.definition) for m in found})
     print(f"trust_mutants: {len(definitions)} definitions, {len(found)} mutants ({len(todo)} to run), {jobs} jobs, "
@@ -1412,9 +1573,8 @@ def main(argv: list[str] | None = None) -> int:
         if m.status in ("SURVIVOR", "UNKNOWN") and (m.definition, m.operator) in allow:
             m.status, m.detail = "ALLOWED", allow[(m.definition, m.operator)]
         if m.status in ("SURVIVOR", "UNKNOWN"):
-            print(f"{m.status} lean/{m.file}:{m.line} {m.definition} ({kind(m)}) {m.operator}: {show(m.before)} -> "
-                  f"{show(m.after)}{' (' + show(m.detail) + ')' if m.detail else ''}", flush=True)
-    for m in run_now:
+            print(line(m), flush=True)
+    for m in mine:
         if m.reused_from:
             allowed(m)
     with tempfile.TemporaryDirectory(prefix="trust-mutants-") as scratch_dir:
@@ -1457,34 +1617,20 @@ def main(argv: list[str] | None = None) -> int:
         with ThreadPoolExecutor(max_workers=jobs) as executor:
             list(executor.map(one, todo))
     for m in not_run:
-        print(f"NOT RUN lean/{m.file}:{m.line} {m.definition} ({kind(m)}) {m.operator}: {show(m.before)} -> "
-              f"{show(m.after)}")
-    statuses = ("KILLED", "SURVIVOR", "UNKNOWN", "INVALID", "ALLOWED", "NOT RUN")
-    counts = {s: sum(m.status == s for m in found) for s in statuses}
-    by_class = {k: {s: n for s in statuses if (n := sum(m.status == s for m in found if kind(m) == k))}
-                for k in sorted({kind(m) for m in found})}
+        print(line(m))
     seconds = round(time.monotonic() - started)
-    kept = len(run_now) - len(todo)
-    print("trust_mutants: " + ", ".join(f"{n} {s}" for s, n in counts.items()) + f" in {seconds} s"
-          + (f"; {kept} reused from {reused[:12]} (identical inputs)" if mode == "identical" else
-             f"; {kept} carried from {reused[:12]} (check-only change: {', '.join(changed)})" if mode == "checks" else ""))
-    for k, n in by_class.items():
-        print(f"trust_mutants: {k}: " + ", ".join(f"{x} {s}" for s, x in n.items()))
     if args.rescore:
-        rescore = {"file": str(args.rescore), "head": reused or None, "mode": mode, "changed": changed, "reused": kept,
-                   "rerun": len(todo), **({} if reused else {"full_run": why})}
+        rescore = {"file": str(args.rescore), "head": reused or None, "mode": mode, "changed": changed,
+                   "reused": len(mine) - len(todo), "rerun": len(todo), **({} if reused else {"full_run": why})}
+    counts = summary(found, shard is not None, seconds, rescore)
     if args.json:
         for m in found:  # what each KILLED and INVALID verdict reads, for a later --rescore
             reads.verdict(m)
-        args.json.write_text(evidence({
-            "base": digests["base"], "head": git(root, "rev-parse", "HEAD").stdout.strip(),
-            "jobs": jobs, "max_mutants": args.max_mutants, "deep": args.deep, "tests": args.test, "seconds": seconds,
-            "counts": counts, "classes": list(classes), "class_counts": by_class, "inputs": digests,
-            **({"rescore": rescore} if rescore else {}),
-            "definitions": [f"lean/{f}: {d}" for f, d in definitions],
-            "mutants": [{k: v for k, v in asdict(m).items() if k not in ("start", "end", "edit")
-                         and (k not in ("reused_from", "carried", "reads", "killed_at") or v)} for m in found]}))
-    return 1 if counts["SURVIVOR"] or counts["UNKNOWN"] else 3 if not_run else 0
+        args.json.write_text(evidence(record(
+            found, digests["base"], git(root, "rev-parse", "HEAD").stdout.strip(), jobs, args.max_mutants, args.deep,
+            args.test, seconds, list(classes), digests, rescore,
+            shard={"k": shard[0], "n": shard[1], "owned": [m.id for m in mine]} if shard else None)))
+    return exit_code(counts)
 
 
 if __name__ == "__main__":
