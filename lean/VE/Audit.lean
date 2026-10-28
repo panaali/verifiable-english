@@ -106,6 +106,7 @@ import VE.Core.TableauExtendedInduction
 import VE.Core.TableauExtendedRules
 import VE.Core.Wire
 import VE.Data.Background
+import VE.Defaults.Meaning
 import VE.Defaults.Premises
 import VE.Defaults.Route
 import VE.Defaults.Wire
@@ -520,6 +521,8 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.build_wf
 #print axioms VE.Acts.closed_cl
 #print axioms VE.Acts.closed_ok
+#print axioms VE.Acts.distinctTexts_ok
+#print axioms VE.Acts.firstEqualPair_none
 #print axioms VE.Acts.frameRules_ok
 #print axioms VE.Acts.framesOk_words
 #print axioms VE.Acts.getElem?_map_idxOf
@@ -531,6 +534,7 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.listing_ok
 #print axioms VE.Acts.mem_firsts
 #print axioms VE.Acts.nodup_firsts
+#print axioms VE.Acts.paraphrases_nodup
 #print axioms VE.Acts.readIn_many
 #print axioms VE.Acts.readIn_none
 #print axioms VE.Acts.readIn_ok
@@ -716,21 +720,48 @@ import VE.WireContract.Engine
 #print axioms VE.Arith.Agrees.preds
 #print axioms VE.Arith.Examples.bertrand_means_iff
 #print axioms VE.Arith.Examples.primeBody_iff
+#print axioms VE.Arith.Extends.funs
+#print axioms VE.Arith.Extends.preds
+#print axioms VE.Arith.Formula.evalB_mono
 #print axioms VE.Arith.Formula.evalB_sound
+#print axioms VE.Arith.Formula.evalB_total
+#print axioms VE.Arith.Site.ok_of_refusal
+#print axioms VE.Arith.Term.evalB_mono
 #print axioms VE.Arith.Term.evalB_sound
+#print axioms VE.Arith.Term.evalB_total
+#print axioms VE.Arith.Term.evalBs_mono
 #print axioms VE.Arith.Term.evalBs_sound
+#print axioms VE.Arith.Term.evalBs_total
+#print axioms VE.Arith.Total.funs
+#print axioms VE.Arith.Total.preds
+#print axioms VE.Arith.Total.snoc
 #print axioms VE.Arith.agrees_env
 #print axioms VE.Arith.arithOutcome_decided
 #print axioms VE.Arith.arithOutcome_exhausted_iff
 #print axioms VE.Arith.arithOutcome_unbounded_iff
+#print axioms VE.Arith.boundedNames_snoc
+#print axioms VE.Arith.charge_eq
+#print axioms VE.Arith.charge_mono
 #print axioms VE.Arith.charge_some
+#print axioms VE.Arith.countLoop_mono
 #print axioms VE.Arith.countLoop_sound
+#print axioms VE.Arith.countLoop_total
+#print axioms VE.Arith.decideBounded_complete
+#print axioms VE.Arith.decideBounded_covered
+#print axioms VE.Arith.decideBounded_mono
 #print axioms VE.Arith.decideBounded_sound
 #print axioms VE.Arith.decideBounded_work
+#print axioms VE.Arith.foldl_rel
+#print axioms VE.Arith.opEnv_extends
+#print axioms VE.Arith.opEnv_snoc
 #print axioms VE.Arith.quantLoop_false
+#print axioms VE.Arith.quantLoop_mono
+#print axioms VE.Arith.quantLoop_total
 #print axioms VE.Arith.quantLoop_true
 #print axioms VE.Arith.range_all
 #print axioms VE.Arith.range_ex
+#print axioms VE.Arith.total_take
+#print axioms VE.Arith.wellFormed_at
 #print axioms VE.Ask.Answer.groups_view
 #print axioms VE.Ask.Asked.hbind
 #print axioms VE.Ask.Asked.hnames
@@ -1412,11 +1443,13 @@ import VE.WireContract.Engine
 #print axioms VE.Compose.faultOf_none
 #print axioms VE.Compose.find_congr
 #print axioms VE.Compose.find_cons_ite
+#print axioms VE.Compose.find_erase
 #print axioms VE.Compose.find_first
 #print axioms VE.Compose.forIn_yield_ok
 #print axioms VE.Compose.gateMatch_find
 #print axioms VE.Compose.gateOf_iff
 #print axioms VE.Compose.gate_acts
+#print axioms VE.Compose.gate_judgments
 #print axioms VE.Compose.gate_legacy
 #print axioms VE.Compose.gate_scope
 #print axioms VE.Compose.gate_wellFormed
@@ -1439,6 +1472,7 @@ import VE.WireContract.Engine
 #print axioms VE.Compose.rights_valid_is_slot
 #print axioms VE.Compose.routeOf_base
 #print axioms VE.Compose.routeOf_table
+#print axioms VE.Compose.rowChecks_erase
 #print axioms VE.Compose.sat_append
 #print axioms VE.Compose.sat_backgroundBaseP
 #print axioms VE.Compose.sat_gate_off
@@ -1639,6 +1673,7 @@ import VE.WireContract.Engine
 #print axioms VE.Defaults.Wire.replayCoherenceOn_request
 #print axioms VE.Defaults.Wire.replayModelOn_request
 #print axioms VE.Defaults.Wire.viewOf_layered
+#print axioms VE.Defaults.act_arity
 #print axioms VE.Defaults.assumptions_sound
 #print axioms VE.Defaults.atom_wf
 #print axioms VE.Defaults.basis_needs_sound
@@ -1648,14 +1683,34 @@ import VE.WireContract.Engine
 #print axioms VE.Defaults.collisionTuple_some
 #print axioms VE.Defaults.collision_sound
 #print axioms VE.Defaults.collision_unranked
+#print axioms VE.Defaults.cond_declared
+#print axioms VE.Defaults.cond_free
+#print axioms VE.Defaults.decisionNames_split
+#print axioms VE.Defaults.decision_arity
+#print axioms VE.Defaults.decision_declared
+#print axioms VE.Defaults.decision_not_unsaid
+#print axioms VE.Defaults.defaultBase_of_dflt
 #print axioms VE.Defaults.defaultCoherenceCheck_sound
+#print axioms VE.Defaults.default_entails_minimal
+#print axioms VE.Defaults.default_entails_minimal_of
+#print axioms VE.Defaults.defaults_model_default_base
 #print axioms VE.Defaults.dflt_wellFormed
 #print axioms VE.Defaults.entailsX_mono
+#print axioms VE.Defaults.excepted_inj
+#print axioms VE.Defaults.excepted_only
 #print axioms VE.Defaults.followsForm_short
+#print axioms VE.Defaults.least_le
+#print axioms VE.Defaults.mem_exc
+#print axioms VE.Defaults.node_arity
 #print axioms VE.Defaults.pairChecks_sound
 #print axioms VE.Defaults.premisesX_split
 #print axioms VE.Defaults.questionDiag_none
+#print axioms VE.Defaults.reg_arity
+#print axioms VE.Defaults.replace_admissible
+#print axioms VE.Defaults.sat_dflt
+#print axioms VE.Defaults.softX_eq
 #print axioms VE.Defaults.strict_of_withoutDefaults
+#print axioms VE.Defaults.withOpen_denote
 #print axioms VE.Definitions.Alias.alias_acceptance
 #print axioms VE.Definitions.Alias.conservative
 #print axioms VE.Definitions.Alias.faithful
