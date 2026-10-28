@@ -72,7 +72,8 @@ makes its named test or `#guard` fail.
   `tests/test_scope_sc5r_stub.py::test_each_statement_sc5rb_proves_is_the_stubs_text`; that is what it compares.
 
 **R16 mutants per trusted definition:** `mac-pytest.sh --trustmut -- --max-mutants 400 --jobs 6 --allow
-docs/scope/sc-5rb/trust-mutants-allow.json` at `118e33b5`, run on ve-mac-1. Result: **220 KILLED, 0 SURVIVOR,
+docs/scope/sc-5rb/trust-mutants-allow.json` at `445b67a0` (this tree, against main `c0a80d23a`; a full run), on
+ve-mac-1. Result: **220 KILLED, 0 SURVIVOR,
 0 UNKNOWN, 68 INVALID, 50 ALLOWED, 0 NOT RUN**, exit 0 ([trust-mutants.json](trust-mutants.json)). The first run
 left 38 survivors and 36 unknowns. New fixtures killed 24 of the survivors: two governed sets, governor order, a
 dependent rule on the first and the last unit, 65 choices, a set with no version, a lead-in set listed first, and
