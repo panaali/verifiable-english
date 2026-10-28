@@ -187,3 +187,57 @@ def test_the_order_is_lean_s(genuine, label, name, usage, accepted):
     usage); only a map out of the request's order or naming is refused."""
     case, row = genuine[name]
     assert relayed(case, {**row, "judgments": usage}) == accepted
+
+
+# `ve/openterms.py` off the live document path (JT-2, Python): a rights document Lean's `document` mode answers takes
+# its open terms from the names Lean's W2 check accepted, and a malformed record is Lean's diagnostic.
+OPEN_TERM = {"name": "z_open", "arguments": [], "decided_by": "court", "necessary": [], "sufficient": [],
+             "factors": [], "precedents": [], "jurisdiction": "x", "version": 1}
+RIGHTS_OPEN_TERMS = {
+    "declared": ([OPEN_TERM], False, None),
+    "an open unit": ([OPEN_TERM], True, None),
+    "schema": ([{"name": "z_open"}], False, "invalid open-term schema"),
+    "version": ([{**OPEN_TERM, "version": 0}], False, "invalid open-term version"),
+    "repeated": ([OPEN_TERM, OPEN_TERM], False, "duplicate or invalid open term"),
+    "undeclared": ([], True, "invalid meaning status"),
+}
+
+
+@pytest.mark.parametrize("name", RIGHTS_OPEN_TERMS)
+def test_a_rights_document_reads_lean_s_open_terms(tmp_path, name):
+    from tests.test_b16e_rights_document import _both, _join, _split, _text
+    terms, opened, refusal = RIGHTS_OPEN_TERMS[name]
+    meta, body = _split(_text(0))
+    meta["open_terms"] = terms
+    if opened:
+        meta["units"][0]["meaning"] = {"open": ["z_open"]}
+    path = tmp_path / "rights.ve.md"
+    path.write_text(_join(meta, body))
+    decided, new, old = _both(path)
+    assert decided and new == old
+    assert [o.get("raised", {}).get("message") for o in new] == [refusal, refusal]
+
+
+def test_openterms_is_imported_only_where_the_layer_policy_retains_it():
+    import ast
+    from pathlib import Path
+    from tools.layer_policy import RETAINED
+    root = Path(__file__).resolve().parents[1]
+    importers = set()
+    for path in root.glob("**/*.py"):
+        relative = path.relative_to(root).as_posix()
+        if relative.startswith((".venv/", "lean/.lake/", ".git/")):
+            continue
+        package = ".".join(path.relative_to(root).with_suffix("").parts[:-1])
+        for node in ast.walk(ast.parse(path.read_bytes())):
+            names = []
+            if isinstance(node, ast.ImportFrom):
+                base = node.module or ""
+                if node.level:
+                    base = ".".join([*package.split(".")[:len(package.split(".")) - node.level + 1], base]).strip(".")
+                names = [base, *(f"{base}.{a.name}" for a in node.names)]
+            elif isinstance(node, ast.Import):
+                names = [a.name for a in node.names]
+            if "ve.openterms" in names:
+                importers.add(relative)
+    assert importers == set(RETAINED["ve.openterms"])
