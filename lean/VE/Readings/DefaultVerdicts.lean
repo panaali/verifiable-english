@@ -151,6 +151,10 @@ def DVerdicts.defaultMember (z : DVerdicts) : Option (ChoiceResult × ReadingVer
     some (foldConflict z.dConflictRows, foldEntailment z.dConflictRows z.dQueryRows)
   else none
 
+/-- Some chosen choice has a no-exception premise (plan F-DF2: the member is shown only then). -/
+def DVerdicts.hasDefaults (z : DVerdicts) : Bool :=
+  z.ds.any (fun d => !(dfltLabelled (choiceSoft z.y.r.N d.1)).isEmpty)
+
 /-! ### The rows hold at `dSem` -/
 
 theorem dConflictRow_holds {N : NDoc} {c : Choice} (e : XEvidence (choiceU N c) (choiceX N c))
@@ -484,7 +488,7 @@ def askedText : String := "InvalidInput: assume_no_exception is true or false, a
 /-- RD-9's `readings-verdicts` under the soft completion (`runVerdictsSD`); when the request asks
     (`assume_no_exception: true`, the query question, at most 64 compatible choices), RD-9's answer on the same replay
     (`replaySD`, `ndVerdictsAnswer`) with the `default` member beside it, present only when the strict conflict fold is
-    FREE (`DVerdicts.defaultMember`). -/
+    FREE (`DVerdicts.defaultMember`) and some choice has a no-exception premise (`hasDefaults`, plan F-DF2). -/
 def runVerdictsD (id : String) (b : Admitted2) (j : Json) : Except String Json := do
   match j.getObjValD "assume_no_exception" with
   | .null | .bool false => runVerdictsSD id b j
@@ -499,7 +503,7 @@ def runVerdictsD (id : String) (b : Admitted2) (j : Json) : Except String Json :
         let a := ndVerdictsAnswer id "query" (j.getObjValD "document") r.N.D q.A q.named (some (xInfos y.x)) []
           q.dead
         pure (match z.defaultMember with
-          | some _ => a.setObjVal! "default" (defaultJson z)
+          | some _ => if z.hasDefaults then a.setObjVal! "default" (defaultJson z) else a
           | none => a)
       else throw "UnsupportedProfile: answers that assume no exception take at most 64 compatible readings"
     else throw askedText

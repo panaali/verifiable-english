@@ -327,7 +327,8 @@ def _check_answer(row, case, frame):
 
 def _check_default(row, case, frame):
     """The `default` member (defeasible plan DF-3), bound to the request: present exactly when the request asks
-    (`assume_no_exception`) and every strict conflict row is CONFLICT-FREE (`readings_wire_default_present`); one
+    (`assume_no_exception`), every strict conflict row is CONFLICT-FREE (`readings_wire_default_present`) and some
+    choice has a `default_premises` row (plan F-DF2); one
     entry per choice of the answer, in its order; a basis exactly with `proved`, its assumptions the labels of the
     choice's own `default_premises` (Lean's `defaults-elaborate` on the choice's norms, `frame.defaults`), each once
     and in their order, none exactly with `strict`, `needs` only beside the strict countermodel the request sent; a
@@ -335,8 +336,12 @@ def _check_default(row, case, frame):
     deciders; every English row names a choice of the member whose entry carries what the row renders. Which rows
     the member has and what they say is Lean's."""
     member = row.get("default")
-    asked = case.get("assume_no_exception") is True
-    _need((member is not None) == (asked and all(e["conflict"] == "CONFLICT-FREE" for e in row["per_choice"])))
+    if case.get("assume_no_exception") is not True:
+        _need(member is None)
+        return
+    free = all(e["conflict"] == "CONFLICT-FREE" for e in row["per_choice"])
+    defaults = free and any(frame.defaults(e["choice"])[1]["default_premises"] for e in row["per_choice"])
+    _need((member is not None) == defaults)
     if member is None:
         return
     from ..defaults import _deciders, _rules, _situation, _tuple
