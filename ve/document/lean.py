@@ -10,7 +10,6 @@ from ..backends.lean_service import CheckerUnavailable
 from ..environment import Environment, listed_profiles
 from ..errors import ResourceLimit, VEError
 from ..identity import source_id
-from ..openterms import validate_open_terms
 from ..readings import active_reading_sets, rights_meaning_id
 from ..wire import digest
 from .source import (STATUSES, _RIGHTS_KINDS, _document_id, _english_fences, _environment, _parts, _split,
@@ -234,10 +233,11 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool, prepare
             formula_env = soft_document.extended_env
         if "rights@0" in env.profiles:
             # Batch 16e: the containers of the rights source Lean's `document` mode decoded with the rights route
-            # (`Service.Document.rightsDoc`); Lean's unit statuses and contents are the answer's, not theirs.
+            # (`Service.Document.rightsDoc`); Lean's unit statuses and contents are the answer's, not theirs. Its
+            # open terms are the names Lean's W2 check accepted (`Loader.openTermNames`, jt-2b).
             from ..rights import RightsDocument
             rights_document = RightsDocument(env, _rights_units(meta["units"]),
-                                             open_predicates=validate_open_terms(env, meta.get("open_terms", [])))
+                                             open_predicates={t["name"] for t in meta.get("open_terms", [])})
             soft_document = rights_document.soft_document
             formula_env = soft_document.extended_env
         for unit in units:
@@ -324,8 +324,12 @@ def _bind_document_answer(body, meta, declared, row, senses=None):
         if not condition:
             raise ValueError("Lean document row disagrees with its request")
 
+    judged = "judgments@0" in listed_profiles(meta.get("environment"))
     require(type(row) is dict and type(row.get("source")) is str and
-            set(row) == {"id", "status", "document_id", "source_id", "source", "units", "coverage"})
+            set(row) == {"id", "status", "document_id", "source_id", "source", "units", "coverage"} |
+            ({"judgments"} if judged else set()))
+    if judged:
+        require(_judgments_bound(row["judgments"], meta.get("open_terms", []), [u.get("id") for u, _ in declared]))
     source = row["source"].encode("utf-8")
     require(source == body)
     units = row.get("units")
@@ -411,6 +415,31 @@ def _bind_document_answer(body, meta, declared, row, senses=None):
                      "bytes_by_kind": kinds, "bytes_by_status": statuses, "unformalised_reasons": reasons,
                      "residual": residual, "residual_total": sum(residual.values())})
     require(same(coverage, expected))
+
+
+def _judgments_bound(usage, open_terms, unit_ids) -> bool:
+    """Whether a `judgments` usage map (Lean's `usageMap`, docs/spec/judgment-terms.md 8.3) is bound to the request:
+    every declared open term once, across `used` and `unused`, each list in declaration order; each `units` list
+    non-empty, of units of the request, in the request's unit order. Which units use which term is Lean's."""
+    names = [t.get("name") if type(t) is dict else None for t in open_terms] if type(open_terms) is list else []
+
+    def ordered(values, order):
+        # Every value is in `order`, and the values stand in `order`'s order with no repeat.
+        if not all(type(v) is str and v in order for v in values):
+            return False
+        places = [order.index(v) for v in values]
+        return all(a < b for a, b in zip(places, places[1:]))
+    if type(usage) is not dict or set(usage) != {"used", "unused"}:
+        return False
+    used, unused = usage["used"], usage["unused"]
+    if type(used) is not list or type(unused) is not list:
+        return False
+    if not all(type(r) is dict and set(r) == {"term", "units"} and type(r["units"]) is list and r["units"]
+               and ordered(r["units"], unit_ids) for r in used):
+        return False
+    terms = [r["term"] for r in used]
+    return (ordered(terms, names) and ordered(unused, names) and
+            sorted(map(str, terms + unused)) == sorted(map(str, names)))
 
 
 def _governed_units(meta) -> set:
