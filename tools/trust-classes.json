@@ -15353,6 +15353,63 @@
         "ScopeBench.row",
         "main"
       ]
+    },
+    "VE/Acts/Elaborate.lean": {
+      "S": [
+        "VE.Acts.ActsDoc",
+        "VE.Acts.SplitMap",
+        "VE.Acts.dualOf",
+        "VE.Acts.elaborate",
+        "VE.Acts.elaborateMap",
+        "VE.Acts.partNames",
+        "VE.Acts.partPred",
+        "VE.Acts.partRule",
+        "VE.Acts.readingOf",
+        "VE.Acts.splitAtoms"
+      ],
+      "G[V]": [
+        "VE.Acts.namesOk",
+        "VE.Acts.partsDistinct",
+        "VE.Acts.partsOf",
+        "VE.Acts.refsOk",
+        "VE.Acts.ruleReading",
+        "VE.Acts.splitDoc",
+        "VE.Acts.splitEnv",
+        "VE.Acts.splitMap",
+        "VE.Acts.splitNode",
+        "VE.Acts.splitReg"
+      ]
+    },
+    "VE/Acts/ElaborateExamples.lean": {
+      "T": [
+        "VE.Acts.ElaborateExamples.bad",
+        "VE.Acts.ElaborateExamples.doc",
+        "VE.Acts.ElaborateExamples.dual",
+        "VE.Acts.ElaborateExamples.e1",
+        "VE.Acts.ElaborateExamples.e2",
+        "VE.Acts.ElaborateExamples.e3",
+        "VE.Acts.ElaborateExamples.e4",
+        "VE.Acts.ElaborateExamples.e5",
+        "VE.Acts.ElaborateExamples.e6",
+        "VE.Acts.ElaborateExamples.e7",
+        "VE.Acts.ElaborateExamples.env",
+        "VE.Acts.ElaborateExamples.fx14",
+        "VE.Acts.ElaborateExamples.good",
+        "VE.Acts.ElaborateExamples.hideEnv",
+        "VE.Acts.ElaborateExamples.many",
+        "VE.Acts.ElaborateExamples.named",
+        "VE.Acts.ElaborateExamples.nd",
+        "VE.Acts.ElaborateExamples.provideA",
+        "VE.Acts.ElaborateExamples.q",
+        "VE.Acts.ElaborateExamples.qm",
+        "VE.Acts.ElaborateExamples.r027",
+        "VE.Acts.ElaborateExamples.refusal",
+        "VE.Acts.ElaborateExamples.rg",
+        "VE.Acts.ElaborateExamples.seek",
+        "VE.Acts.ElaborateExamples.shown",
+        "VE.Acts.ElaborateExamples.useA",
+        "VE.Acts.ElaborateExamples.withActs"
+      ]
     }
   }
 }

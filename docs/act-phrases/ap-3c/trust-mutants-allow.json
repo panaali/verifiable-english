@@ -1,0 +1,154 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Acts.dualOf",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, or of a non-list (Invalid field notation, Invalid projection, Type mismatch, Unknown identifier, Function expected)"
+  },
+  {
+   "definition": "VE.Acts.splitMap",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, or of a non-list (Invalid field notation, Invalid projection, Type mismatch, Unknown identifier, Function expected)"
+  },
+  {
+   "definition": "VE.Acts.splitEnv",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, or of a non-list (Invalid field notation, Invalid projection, Type mismatch, Unknown identifier, Function expected)"
+  },
+  {
+   "definition": "VE.Acts.namesOk",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, or of a non-list (Invalid field notation, Invalid projection, Type mismatch, Unknown identifier, Function expected)"
+  },
+  {
+   "definition": "VE.Acts.partsDistinct",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, or of a non-list (Invalid field notation, Invalid projection, Type mismatch, Unknown identifier, Function expected)"
+  },
+  {
+   "definition": "VE.Acts.elaborateMap",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, or of a non-list (Invalid field notation, Invalid projection, Type mismatch, Unknown identifier, Function expected)"
+  },
+  {
+   "definition": "VE.Acts.elaborate",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, or of a non-list (Invalid field notation, Invalid projection, Type mismatch, Unknown identifier, Function expected)"
+  },
+  {
+   "definition": "VE.Acts.ruleReading",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, or of a non-list (Invalid field notation, Invalid projection, Type mismatch, Unknown identifier, Function expected)"
+  },
+  {
+   "definition": "VE.Acts.splitAtoms",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, or of a non-list (Invalid field notation, Invalid projection, Type mismatch, Unknown identifier, Function expected)"
+  },
+  {
+   "definition": "VE.Acts.partNames",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, or of a non-list (Invalid field notation, Invalid projection, Type mismatch, Unknown identifier, Function expected)"
+  },
+  {
+   "definition": "VE.Acts.refsOk",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, or of a non-list (Invalid field notation, Invalid projection, Type mismatch, Unknown identifier, Function expected)"
+  },
+  {
+   "definition": "VE.Acts.splitReg",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, or of a non-list (Invalid field notation, Invalid projection, Type mismatch, Unknown identifier, Function expected); the cut of the whole body to `[]` (every predicate or rule dropped) is refuted by E1's guards, but the tool reads E1's check as reading the next definition moved by the cut and does not certify it (seed_bugs.py `split-reg-kept-dropped` plants the kept half and is KILLED)"
+  },
+  {
+   "definition": "VE.Acts.splitReg",
+   "operator": "list-first",
+   "reason": "does not elaborate: the cut of `xs` or `xs.map` ends inside `xs.map fun x => { … }` (unexpected identifier; expected '}'); every other cut of this operator is KILLED"
+  },
+  {
+   "definition": "VE.Acts.splitReg",
+   "operator": "list-last",
+   "reason": "does not elaborate: the cut of `xs` or `xs.map` ends inside `xs.map fun x => { … }` (unexpected identifier; expected '}'); every other cut of this operator is KILLED"
+  },
+  {
+   "definition": "VE.Acts.splitReg",
+   "operator": "list-drop-first",
+   "reason": "does not elaborate: the cut of `xs` or `xs.map` ends inside `xs.map fun x => { … }` (unexpected identifier; expected '}'); every other cut of this operator is KILLED"
+  },
+  {
+   "definition": "VE.Acts.splitReg",
+   "operator": "list-drop-last",
+   "reason": "does not elaborate: the cut of `xs` or `xs.map` ends inside `xs.map fun x => { … }` (unexpected identifier; expected '}'); every other cut of this operator is KILLED"
+  },
+  {
+   "definition": "VE.Acts.splitNode",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, or of a non-list (Invalid field notation, Invalid projection, Type mismatch, Unknown identifier, Function expected); the cut of the whole body to `[]` (every predicate or rule dropped) is refuted by E1's guards, but the tool reads E1's check as reading the next definition moved by the cut and does not certify it (seed_bugs.py `split-node-kept-dropped` plants the kept half and is KILLED)"
+  },
+  {
+   "definition": "VE.Acts.splitNode",
+   "operator": "list-first",
+   "reason": "does not elaborate: the cut of `xs` or `xs.map` ends inside `xs.map fun x => { … }` (unexpected identifier; expected '}'); every other cut of this operator is KILLED"
+  },
+  {
+   "definition": "VE.Acts.splitNode",
+   "operator": "list-last",
+   "reason": "does not elaborate: the cut of `xs` or `xs.map` ends inside `xs.map fun x => { … }` (unexpected identifier; expected '}'); every other cut of this operator is KILLED"
+  },
+  {
+   "definition": "VE.Acts.splitNode",
+   "operator": "list-drop-first",
+   "reason": "does not elaborate: the cut of `xs` or `xs.map` ends inside `xs.map fun x => { … }` (unexpected identifier; expected '}'); every other cut of this operator is KILLED"
+  },
+  {
+   "definition": "VE.Acts.splitNode",
+   "operator": "list-drop-last",
+   "reason": "does not elaborate: the cut of `xs` or `xs.map` ends inside `xs.map fun x => { … }` (unexpected identifier; expected '}'); every other cut of this operator is KILLED"
+  },
+  {
+   "definition": "VE.Acts.dualOf",
+   "operator": "list-first",
+   "reason": "does not elaborate: the cut wraps the Option `find?` of the permission branch (Invalid dotted identifier); the cuts of `T.regulated` are KILLED by the dual fixtures (obligation after its dual)"
+  },
+  {
+   "definition": "VE.Acts.dualOf",
+   "operator": "list-last",
+   "reason": "does not elaborate: the cut wraps the Option `find?` of the permission branch (Invalid dotted identifier); the cuts of `T.regulated` are KILLED by the dual fixtures (obligation after its dual)"
+  },
+  {
+   "definition": "VE.Acts.dualOf",
+   "operator": "list-drop-first",
+   "reason": "does not elaborate: the cut wraps the Option `find?` of the permission branch (Invalid dotted identifier); the cuts of `T.regulated` are KILLED by the dual fixtures (obligation after its dual)"
+  },
+  {
+   "definition": "VE.Acts.dualOf",
+   "operator": "list-drop-last",
+   "reason": "does not elaborate: the cut wraps the Option `find?` of the permission branch (Invalid dotted identifier); the cuts of `T.regulated` are KILLED by the dual fixtures (obligation after its dual)"
+  },
+  {
+   "definition": "VE.Acts.splitEnv",
+   "operator": "list-drop-first",
+   "reason": "equivalent: in `M.preds.any (·.2.1 == q)` every split source has two parts or more, so dropping the first entry leaves every source named; the cut of `find?`'s list is KILLED"
+  },
+  {
+   "definition": "VE.Acts.splitEnv",
+   "operator": "list-drop-last",
+   "reason": "equivalent: as list-drop-first, dropping the last entry of `M.preds` leaves every source named"
+  },
+  {
+   "definition": "VE.Acts.elaborateMap",
+   "operator": "list-drop-first",
+   "reason": "equivalent: in the backstop's `M.rules.all` every split rule has two part rules or more, so dropping the first entry leaves every source rule checked; the cut of `U'.D.T.nodes` is KILLED (kept rule first)"
+  },
+  {
+   "definition": "VE.Acts.elaborateMap",
+   "operator": "list-drop-last",
+   "reason": "equivalent: as list-drop-first, dropping the last entry of `M.rules` leaves every source rule checked"
+  },
+  {
+   "definition": "VE.Acts.namesOk",
+   "operator": "list-drop-last",
+   "reason": "equivalent: in `qs.count q > 1` and `ns.count n > 1` a name occurs twice only when its source is declared twice, and then each of its two or more parts does, so the first part's count stays 2 without the last entry; the other drops are KILLED"
+  }
+ ]
+}
