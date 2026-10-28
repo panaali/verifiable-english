@@ -546,6 +546,14 @@ structure Admission (w : W6Env) where
   meaningId : String
   coreId : String
 
+/-- A statement's two identities in `w`: the annotated meaning id of its canonical object and its core's (the
+cardinality route's regenerated problems use them too). -/
+def statementIds (w : W6Env) (formula : QFormula) : Except String (String × String) := do
+  let canonical := Json.mkObj [("format", .str "ve-quantity@1"), ("formula", encQ formula),
+    ("traces", Json.arr #[])]
+  pure (← VE.Route.Wire.meaningId w.profiles w.environmentId canonical,
+    ← VE.Route.Wire.meaningId w.profiles w.targetId (encCore formula.erase))
+
 def decodeQuantity (w : W6Env) (p : Json) : Except String (Admission w) := do
   shape p ["format", "formula"] ["traces", "Q"]
   unless p.getObjValD "format" == .str "ve-quantity@1" do throw "Unsupported quantity format"
@@ -568,10 +576,8 @@ def decodeQuantity (w : W6Env) (p : Json) : Except String (Admission w) := do
     let core := encCore formula.erase
     -- The frozen decoder re-checks the regenerated core in the target vocabulary.
     let _ ← VE.Order.Wire.decodeFormulas w.vocab.core.environment (Json.arr #[core])
-    let canonical := Json.mkObj [("format", .str "ve-quantity@1"), ("formula", q),
-      ("traces", Json.arr #[])]
-    pure ⟨formula, h, q, core, ← VE.Route.Wire.meaningId w.profiles w.environmentId canonical,
-      ← VE.Route.Wire.meaningId w.profiles w.targetId core⟩
+    let (meaningId, coreId) ← statementIds w formula
+    pure ⟨formula, h, q, core, meaningId, coreId⟩
   else throw "TypeMismatch: statement is not admitted"
 
 /-- Every admitted statement satisfies the independent admission relation, and
@@ -594,9 +600,15 @@ together have at most 10,000 formula and term nodes (Python
 `check_quantity_limits`, Rust `quantity_limits`, in this order). -/
 def quantityLimits {w : W6Env} (ps : List (Admission w)) (c : Admission w) :
     Except String Unit :=
-  if ((c :: ps).map (VE.Order.Wire.formulaNodes ·.formula.erase)).foldl (· + ·) 0 > VE.Limits.maxNodes then
-    .error aggregateLimit
-  else .ok ()
+  aggregate ((c :: ps).map (·.formula))
+where
+  /-- The aggregate node limit on regenerated cores (the cardinality route's erased problems use it too). -/
+  aggregate (qs : List QFormula) : Except String Unit :=
+    if (qs.map (VE.Order.Wire.formulaNodes ·.erase)).foldl (· + ·) 0 > VE.Limits.maxNodes then .error aggregateLimit
+    else .ok ()
+
+def staleW6 : String := "W6 certificate is stale or bound to different annotated statements"
+def staleCore : String := "core certificate is stale or bound to a different regenerated problem"
 
 /-! ## Certificates -/
 
@@ -629,11 +641,11 @@ def checkW6Certificate {w : W6Env} (ps : List (Admission w)) (c : Admission w)
   if (quantityLimits ps c).isOk = false then .error aggregateLimit
   else if !(cert.environmentId == w.environmentId && cert.premiseIds == ps.map (·.meaningId) &&
       cert.conclusionId == c.meaningId) then
-    .error "W6 certificate is stale or bound to different annotated statements"
+    .error staleW6
   else if !(cert.core.environment_id == w.targetId &&
       cert.core.premise_meaning_ids == ps.map (·.coreId) &&
       cert.core.conclusion_meaning_id == c.coreId) then
-    .error "core certificate is stale or bound to a different regenerated problem"
+    .error staleCore
   else if VE.Route.Steps.order cert.core.trace > VE.Route.Steps.maxSteps then
     .error VE.Route.Steps.stepLimit
   else .ok (VE.Order.Tableau.checkCertificate w.vocab.core.environment (ps.map (·.formula.erase))
