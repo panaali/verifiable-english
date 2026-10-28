@@ -1335,6 +1335,13 @@
    "reason": "sc-5rb: VE/Scope/Readings.lean +118 (G[V] untied, scope spec 11.2), VE/Service/Document.lean +12 (withSets D[V], check's reading-set case; checkDocSets tied), VE/Service/ScopeAdmission.lean +6 (S, Pinned.withGoverned); K +0, total +136",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-5rb, 2026-10-28",
    "commit": "d9cff5345ed2874d718bd1fa988b2777d5e2be0f"
+  },
+  {
+   "class": "V",
+   "lines": 31,
+   "reason": "me-2d: VE/Calc/Wire.lean +18, VE/Calc/RunExamples.lean +7, VE/Calc/Render.lean +6 (V +31, K +0, S +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-2d, 2026-10-18",
+   "commit": "de7cb402237e826966f45fe7f495e69de61ce494"
   }
  ]
 }
