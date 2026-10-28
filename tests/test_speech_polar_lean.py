@@ -334,7 +334,10 @@ def test_the_corpus_records_a_question_for_every_grammar_opening():
     word for one of its categories (a binary relation), and a rule the grammar gains is a case before it is listed."""
     rules = json.loads(speech_ab_f2.GRAMMAR.read_text())
     recorded = {(r["env"], r["wording"]) for r in json.loads((EVIDENCE / "head.json").read_text())}
-    for env, word in (("speech", "reviewed"), ("unverbalised", "checked")):
+    inputs = speech_ab_f2.opening_inputs()
+    assert {env for env, _ in inputs} == set(EXTRA)  # loop recheck 1 F6: every environment of the added corpus
+    assert {("unverbalised", "checked"), ("negative", "reviewed")} <= set(inputs)
+    for env, word in inputs:
         sentences = speech_ab_f2.opening_sentences(EXTRA[env], word)
         for rule in rules:
             if rule["tag"] not in sentences:
@@ -344,6 +347,31 @@ def test_the_corpus_records_a_question_for_every_grammar_opening():
     for wording in ("Is there a service that is reviewed?", "Is this impossible?",
                     "Is every service that is reviewed reviewed?"):
         assert ("speech", wording) in {(env, w) for env, w, _ in cases}
+
+
+F6 = ["Is every service not reviewed?", "Is some service not reviewed?", "Is no service not reviewed?",
+      "Is there a service that is not reviewed?", "Is every service that is not reviewed reviewed?"]
+
+
+@pytest.mark.parametrize("wording", F6)
+def test_a_declared_not_form_is_asked_in_every_opening_and_recorded(wording):
+    """Loop recheck 1 F6: with the not-form declared (`negative`), openings the base refused and Lean reads are
+    corpus cases, in each place and each polarity, saved as verdict rows of class (d); that each equals `ve ask`'s
+    reading is `test_every_opening_verdict_row_is_read_as_ve_ask_reads_it`."""
+    assert ("negative", wording) in {(env, w) for env, w, _ in speech_ab_f2.opening_cases()}
+    row = saved_verdict("negative", wording)
+    assert speech_ab_f2.opening(row) and "error" in row["base"] and row["head"]["kind"] == "question"
+
+
+def test_every_opening_sentence_is_spelled_in_both_polarities():
+    """Loop recheck 1 F6's class: each place a predicate fills in an opening sentence is spelled with its positive and
+    its not-form (the declared one where there is one), so an environment's negative words are never left unasked."""
+    for env, word in speech_ab_f2.opening_inputs():
+        forms = speech_ab_f2._spellings(EXTRA[env], word)
+        assert len(forms) == 2 and "not" in forms[1] and "not" not in forms[0]
+        sentences = speech_ab_f2.opening_sentences(EXTRA[env], word)
+        two = sentences["guard.two"]  # `every <noun> who <relative> and <relative> <relative>`: three places
+        assert len(two) == 8 and len({" ".join(map(str, t)) for t in two}) == 8
 
 
 def test_the_corpus_records_every_grammar_determiner_and_predicate_form():
@@ -375,7 +403,10 @@ def test_the_extended_delta_audits_every_verdict_as_signed():
     ("speech", "Is no service reviewed?", "remove"), ("speech", "Is no service reviewed?", "change_head"),
     ("unverbalised", "Is atlas checked?", "remove"), ("unverbalised", "Is no service Checked?", "change_head"),
     ("speech", "Is there a service that is reviewed?", "remove"), ("speech", "Is this impossible?", "remove"),
-    ("speech", "Is every service that is reviewed reviewed?", "remove")])
+    ("speech", "Is every service that is reviewed reviewed?", "remove"),
+    ("negative", "Is every service not reviewed?", "remove"),
+    ("negative", "Is there a service that is not reviewed?", "remove"),
+    ("negative", "Is every service that is not reviewed reviewed?", "remove")])
 def test_the_delta_audit_catches_missing_or_unclassified_verdicts(tmp_path, env, wording, mutation):
     """A missing case or a verdict outside its class cannot pass the audit."""
     delta = json.loads((EVIDENCE / "delta.json").read_text())
