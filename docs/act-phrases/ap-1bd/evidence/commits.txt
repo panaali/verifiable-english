@@ -1,3 +1,7 @@
+39d4bad809899f7bb282718a913f7bd110dd772c ap-1bd review fix: report summary, tests run and not run, size of the fix
+2ddebad7c00234463406f74701be1260a60168da ap-1bd review fix: DELTA row 2's F1 tests, the F2 sentence, row 4 (F3, R2); report section 7
+875f93c607ecc53848472a83be46cac2d523713d ap-1bd review F1: a readings@1 environment's wordings come from the readings route
+777c5fd424e28e2c5f912630a8fcbba95b64301e ap-1bd: evidence commit list (git log main..HEAD --no-merges)
 edf4cb96af5698c1df85652ce17ad572f475fb25 ap-1bd: report's size breakdown recomputed from the numstat
 605d0c90526063a27d09132640b1f58ffd715fa7 ap-1bd: evidence commit list (git log main..HEAD --no-merges)
 fcd41aa9c3537a036eb79914e4321d4b3ae2f4e6 ap-1bd: report the measured size
