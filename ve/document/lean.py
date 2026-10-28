@@ -10,7 +10,6 @@ from ..backends.lean_service import CheckerUnavailable
 from ..environment import Environment, listed_profiles
 from ..errors import ResourceLimit, VEError
 from ..identity import source_id
-from ..openterms import validate_open_terms
 from ..readings import active_reading_sets, rights_meaning_id
 from ..wire import digest
 from .source import (STATUSES, _RIGHTS_KINDS, _document_id, _english_fences, _environment, _parts, _split,
@@ -82,13 +81,17 @@ def _document_case(raw: bytes, admit: bool, directory: Path | None = None, prepa
 def _lean_answer(raw: bytes, admit: bool, directory: Path | None = None, prepared: dict | None = None):
     """Lean's `document` row for a `ve-document@1` text, or None when Python's own path decides it: the mode
     answered `CheckerUnavailable` or `ResourceLimit` (it cannot decide, and says so), or the case cannot be sent
-    (`_document_case`). Any other rejection is Lean's diagnostic, raised verbatim; a failure of the service itself is
+    (`_document_case`). A `ResourceLimit` for a document under a wrapper profile (`_lean_only`) is raised: no other
+    path can decide it, and the limit is UNKNOWN, never Python's refusal of the profile. Any other rejection is Lean's diagnostic, raised verbatim; a failure of the service itself is
     raised, never answered by Python."""
     case = _document_case(raw, admit, directory, prepared)
     if case is None:
         return None
     from ..backends.relay import answer
     row, error = answer("document", case)
+    if isinstance(error, ResourceLimit) and _lean_only(raw):
+        # Python's own path cannot read a wrapper profile (`chain_environment`), so Lean's UNKNOWN is the answer.
+        raise error
     if isinstance(error, (CheckerUnavailable, ResourceLimit)):
         return None
     if error is not None and getattr(error, "path", None) and not _names_a_model_member(raw, error.path):
@@ -111,6 +114,16 @@ def _lean_answer(raw: bytes, admit: bool, directory: Path | None = None, prepare
     if error is not None:
         raise error
     return row
+
+
+def _lean_only(raw: bytes) -> bool:
+    """Whether the document lists a wrapper profile only Lean's `document` mode reads (`chain_environment` lowers it):
+    Python's own path refuses it at the environment, so it never answers in Lean's place."""
+    try:
+        environment = _split(raw)[0].get("environment")
+        return chain_environment(environment) is not environment
+    except (AttributeError, KeyError, TypeError, ValueError, VEError):
+        return False
 
 
 def _spans_a_strict_fence(raw: bytes, span) -> bool:
@@ -220,10 +233,11 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool, prepare
             formula_env = soft_document.extended_env
         if "rights@0" in env.profiles:
             # Batch 16e: the containers of the rights source Lean's `document` mode decoded with the rights route
-            # (`Service.Document.rightsDoc`); Lean's unit statuses and contents are the answer's, not theirs.
+            # (`Service.Document.rightsDoc`); Lean's unit statuses and contents are the answer's, not theirs. Its
+            # open terms are the names Lean's W2 check accepted (`Loader.openTermNames`, jt-2b).
             from ..rights import RightsDocument
             rights_document = RightsDocument(env, _rights_units(meta["units"]),
-                                             open_predicates=validate_open_terms(env, meta.get("open_terms", [])))
+                                             open_predicates={t["name"] for t in meta.get("open_terms", [])})
             soft_document = rights_document.soft_document
             formula_env = soft_document.extended_env
         for unit in units:
@@ -259,6 +273,10 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool, prepare
                      if selected or any(d.regulated is not None for d in env.predicates.values()) else None)
         reading_sets = meta.get("reading_sets", [])
         companions, s1_content = _readings_routes(env, reading_sets)
+        composed = composed_set_units(meta)
+        if composed and (companions or s1_content):
+            # The readings routes read every reading's content, and a composed set's is Lean's, not the authored one.
+            raise composed_unavailable(composed[0])
         readings_s1 = readings_s2 = readings_components = None
         if companions:
             from ..readings_components import load as load_components
@@ -306,8 +324,12 @@ def _bind_document_answer(body, meta, declared, row, senses=None):
         if not condition:
             raise ValueError("Lean document row disagrees with its request")
 
+    judged = "judgments@0" in listed_profiles(meta.get("environment"))
     require(type(row) is dict and type(row.get("source")) is str and
-            set(row) == {"id", "status", "document_id", "source_id", "source", "units", "coverage"})
+            set(row) == {"id", "status", "document_id", "source_id", "source", "units", "coverage"} |
+            ({"judgments"} if judged else set()))
+    if judged:
+        require(_judgments_bound(row["judgments"], meta.get("open_terms", []), [u.get("id") for u, _ in declared]))
     source = row["source"].encode("utf-8")
     require(source == body)
     units = row.get("units")
@@ -395,6 +417,31 @@ def _bind_document_answer(body, meta, declared, row, senses=None):
     require(same(coverage, expected))
 
 
+def _judgments_bound(usage, open_terms, unit_ids) -> bool:
+    """Whether a `judgments` usage map (Lean's `usageMap`, docs/spec/judgment-terms.md 8.3) is bound to the request:
+    every declared open term once, across `used` and `unused`, each list in declaration order; each `units` list
+    non-empty, of units of the request, in the request's unit order. Which units use which term is Lean's."""
+    names = [t.get("name") if type(t) is dict else None for t in open_terms] if type(open_terms) is list else []
+
+    def ordered(values, order):
+        # Every value is in `order`, and the values stand in `order`'s order with no repeat.
+        if not all(type(v) is str and v in order for v in values):
+            return False
+        places = [order.index(v) for v in values]
+        return all(a < b for a, b in zip(places, places[1:]))
+    if type(usage) is not dict or set(usage) != {"used", "unused"}:
+        return False
+    used, unused = usage["used"], usage["unused"]
+    if type(used) is not list or type(unused) is not list:
+        return False
+    if not all(type(r) is dict and set(r) == {"term", "units"} and type(r["units"]) is list and r["units"]
+               and ordered(r["units"], unit_ids) for r in used):
+        return False
+    terms = [r["term"] for r in used]
+    return (ordered(terms, names) and ordered(unused, names) and
+            sorted(map(str, terms + unused)) == sorted(map(str, names)))
+
+
 def _governed_units(meta) -> set:
     """The units whose rule Lean's `document` mode may answer composed under `scope@0` (`VE.Scope.govern` patches the
     content of `affected` units only, all of them rule units): every unit the request's `scope` block names, as a
@@ -402,17 +449,47 @@ def _governed_units(meta) -> set:
     `part` unit. Read from the request, never recomputed: which of them a governor changes, and how, is Lean's."""
     if "scope@0" not in listed_profiles(meta.get("environment")):
         return set()
+    named = _named_units(meta)
+    units = meta.get("units")
+    return {u.get("id") for u, _ in _parts(units if type(units) is list else [])
+            if type(u) is dict and (u.get("id") in named or
+                                    type(u.get("content")) is dict and "part" in u["content"])}
+
+
+def _named_units(meta) -> set:
+    """Every unit the request's `scope` block names, as a governor's `unit` or in its recorded `units`."""
     block = meta.get("scope")
     governors = block.get("governors") if type(block) is dict else None
     named = set()
     for governor in governors if type(governors) is list else ():
         if type(governor) is dict:
             named.add(governor.get("unit"))
-            named.update(governor.get("units") if type(governor.get("units")) is list else ())
+            named.update(u for u in (governor.get("units") if type(governor.get("units")) is list else ())
+                         if type(u) is str)
+    return named
+
+
+def composed_set_units(meta) -> list:
+    """The units, in front-matter order, whose reading set Lean's `document` mode composes per choice under `scope@0`
+    (scope 11.1, `VE.Scope.governedSetUnits`): read from the request, never recomputed. A set on a unit a governor
+    names is admitted only when GOVERN composes it per choice (any other is `ScopeReadings: <unit>`), so in a document
+    Lean admitted these are exactly the sets on named units. Their readings as written are not their meaning: Lean's
+    answer does not carry the composed readings yet (scope 11.7 item 7, sc-5rc), so whatever reads a reading of one
+    is `composed_unavailable`, never the authored content."""
+    if "scope@0" not in listed_profiles(meta.get("environment")):
+        return []
+    named = _named_units(meta)
+    sets = meta.get("reading_sets")
+    on = {s.get("unit") for s in (sets if type(sets) is list else ()) if type(s) is dict}
     units = meta.get("units")
-    return {u.get("id") for u, _ in _parts(units if type(units) is list else [])
-            if type(u) is dict and (u.get("id") in named or
-                                    type(u.get("content")) is dict and "part" in u["content"])}
+    return [u["id"] for u, _ in _parts(units if type(units) is list else [])
+            if type(u) is dict and u.get("id") in named and u.get("id") in on]
+
+
+def composed_unavailable(unit: str) -> CheckerUnavailable:
+    """The one refusal of whatever would read the readings of a set `composed_set_units` names."""
+    return CheckerUnavailable(f"CheckerUnavailable: {unit}'s reading set is composed per choice by scope@0, and its "
+                              "composed readings are not relayed yet")
 
 
 def _with_governed_units(meta: dict, governed: set, rows: list) -> dict:

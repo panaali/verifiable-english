@@ -14,6 +14,8 @@ HERE = Path(__file__).resolve().parent
 EVIDENCE = HERE / "evidence"
 BASE = "49d18263"
 B12_HEAD = "d772de28"  # approved batch-12 evidence, before the integration merge
+BASE_TREE = "e4e0369af01dd8e8f4656d75d7ccad597916c85a"
+B12_HEAD_TREE = "ecb9a4a4acae33a176760e85054a1e087af831b3"
 BEGIN = "<!-- BEGIN GENERATED: python docs/lean-first/b12/report.py --write -->\n"
 END = "<!-- END GENERATED -->"
 COMPARES = ("conformance", "probe", "profiles", "pilots")
@@ -25,7 +27,7 @@ def load(name: str):
 
 
 def line_changes() -> dict[str, tuple[int, int]]:
-    output = subprocess.check_output(["git", "diff", "--numstat", BASE, B12_HEAD], cwd=ROOT, text=True)
+    output = subprocess.check_output(["git", "diff", "--numstat", BASE_TREE, B12_HEAD_TREE], cwd=ROOT, text=True)
     rows = [line.split("\t") for line in output.splitlines()]
     return {
         "production Python": (sum(int(a) for a, _, p in rows if p.startswith("ve/") and p.endswith(".py")),
@@ -55,9 +57,9 @@ def render() -> str:
         f"{name} +{added:,}/−{deleted:,} (net {added - deleted:+,})"
         for name, (added, deleted) in changes.items()) + "."]
     before = json.loads(subprocess.check_output(
-        ["git", "show", f"{BASE}:conformance/difffuzz-baseline.json"], cwd=ROOT, text=True))
+        ["git", "show", f"{BASE_TREE}:conformance/difffuzz-baseline.json"], cwd=ROOT, text=True))
     after = json.loads(subprocess.check_output(
-        ["git", "show", f"{B12_HEAD}:conformance/difffuzz-baseline.json"], cwd=ROOT, text=True))
+        ["git", "show", f"{B12_HEAD_TREE}:conformance/difffuzz-baseline.json"], cwd=ROOT, text=True))
     fuzz = load("difffuzz-ab.json")
     runs = fuzz["runs"]
     head_only = sum(len(row["head_only_new"]) for row in runs)

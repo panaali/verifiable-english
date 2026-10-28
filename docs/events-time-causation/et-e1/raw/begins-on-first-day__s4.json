@@ -1,0 +1,53 @@
+{
+ "item": "begins-on-first-day",
+ "sample": 4,
+ "model": "claude-sonnet-5-5",
+ "account": "claude-panaali2",
+ "prompt_sha256": "d763857148b07e9afedd9a35831093742b087faedd36c1ab625fdcde2dbfeb7f",
+ "started": "2026-10-28T13:13:20+00:00",
+ "errors": [],
+ "finished": "2026-10-28T13:13:23+00:00",
+ "cli": {
+  "exit_code": 0,
+  "cli_session_id": "efdc9aa8-09c0-48b2-82ff-c05a2002402d",
+  "model_usage": [
+   "claude-sonnet-5-5"
+  ],
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 701,
+   "cache_read_input_tokens": 0,
+   "output_tokens": 39,
+   "output_tokens_details": {
+    "thinking_tokens": 0
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 701,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 39,
+     "cache_read_input_tokens": 0,
+     "cache_creation_input_tokens": 701,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 701
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "num_turns": 1
+ },
+ "reply": "The text says the stay begins on 2 June 2027, so that day is the first day of the stay.\n\nANSWER: B"
+}
