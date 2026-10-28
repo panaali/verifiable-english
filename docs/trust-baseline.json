@@ -1342,6 +1342,13 @@
    "reason": "me-2d: VE/Calc/Render.lean +6 (G[V] English.leadingPhrase, reservedIn), VE/Calc/Wire.lean +2 (D[V] the calls in value and decode); checkWords and checkVerbalisations are D[R] (+16), RunExamples helpers T (V +8, K +0, S +0)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-2d, 2026-10-18",
    "commit": "de7cb402237e826966f45fe7f495e69de61ce494"
+  },
+  {
+   "class": "S",
+   "lines": 1,
+   "reason": "et-3d: lean/VE/Events/Decl.lean S +1 (EventsTyped: decide (D.year ≤ 9999) per named date and its docstring line; K +0, V +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-3d, 2026-10-18",
+   "commit": "b8eac74553124f72a8650211b9df8228c621fdfe"
   }
  ]
 }

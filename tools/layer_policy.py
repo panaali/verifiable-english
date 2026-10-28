@@ -23,11 +23,15 @@ PYTHON = {
         "readings_s2_english senses").split(),
     4: ("__main__ adapters admission argument ask attacks authoring backends bundle check "
         "document equivalence norm_admission norm_defaults norm_defaults_contract norm_defaults_english norm_defaults_route norm_strict "
-        "filling_search openterms propose readings search stream_audit vacuity assist discourse words "
+        "defaults_english filling_search openterms propose readings search stream_audit vacuity assist discourse words "
         "reports reports_route risk rights_route soft_route speech_document readings_route readings_s1 "
         "readings_sup readings_verdicts readings_components readings_s2_wording senses_document defaults").split(),
     5: ["argument_fixtures"],
 }
+# Python modules off the live Lean path, kept only for the files that still import them (no other file may).
+# `ve.openterms`: a document Lean's `document` mode answers takes its open terms from Lean's W2 check (jt-2b); Python's
+# own path for a document Lean cannot decide yet, and the frozen speech snapshot, still read it.
+RETAINED = {"ve.openterms": ("ve/document/load.py", "tests/frozen_speech/speech_document.py")}
 # Top-level trees of apps, experiments, research and the paper: every path in them is layer 5.
 APP_AREAS = frozenset({"ve_experiments", "experiments", "usecases", "paper", "research"})
 PYTHON_MODULES = {f"ve.{name}": layer for layer, names in PYTHON.items() for name in names}
