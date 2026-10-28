@@ -107,6 +107,7 @@ import VE.Core.TableauExtendedRules
 import VE.Core.Wire
 import VE.Data.Background
 import VE.Defaults.Meaning
+import VE.Defaults.MeaningExamples
 import VE.Defaults.Premises
 import VE.Defaults.Route
 import VE.Defaults.Wire
@@ -1645,6 +1646,21 @@ import VE.WireContract.Engine
 #print axioms VE.Data.Background.premises_sat_iff
 #print axioms VE.Data.Background.string_encoding_sound
 #print axioms VE.Data.Background.totalPremise_iff
+#print axioms VE.Defaults.MeaningFixtures.Uπ_eq
+#print axioms VE.Defaults.MeaningFixtures.admissible_π
+#print axioms VE.Defaults.MeaningFixtures.decisionNames_π
+#print axioms VE.Defaults.MeaningFixtures.decisions_π
+#print axioms VE.Defaults.MeaningFixtures.exc_unsaid
+#print axioms VE.Defaults.MeaningFixtures.exceptedName_π
+#print axioms VE.Defaults.MeaningFixtures.open_π
+#print axioms VE.Defaults.MeaningFixtures.rel_base
+#print axioms VE.Defaults.MeaningFixtures.rel_unsaid
+#print axioms VE.Defaults.MeaningFixtures.rel_π
+#print axioms VE.Defaults.MeaningFixtures.soften_π
+#print axioms VE.Defaults.MeaningFixtures.switch_π
+#print axioms VE.Defaults.MeaningFixtures.switchesOff_π
+#print axioms VE.Defaults.MeaningFixtures.typed_π
+#print axioms VE.Defaults.MeaningFixtures.unsaid_π
 #print axioms VE.Defaults.Wire.DefaultsView.hD
 #print axioms VE.Defaults.Wire.DefaultsView.hR
 #print axioms VE.Defaults.Wire.DefaultsView.hU
