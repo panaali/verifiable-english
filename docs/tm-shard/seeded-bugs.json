@@ -1,0 +1,9 @@
+{"item": "tm-shard", "language": "Python", "how": "each planted in tools/trust_mutants.py, its test run (uv run pytest -q tests/test_trust_mutants.py -k <test>), the file restored",
+ "mutants": [
+  {"id": "S1", "file": "tools/trust_mutants.py", "behaviour": "--shard ownership: (i) % N instead of (i - 1) % N in owns", "test": "tests/test_trust_mutants.py::test_a_shard_owns_a_disjoint_stable_part_of_the_mutants_that_run", "caught": true},
+  {"id": "S2", "file": "tools/trust_mutants.py", "behaviour": "--merge: every row taken from part 1, not from its owner", "test": "tests/test_trust_mutants.py::test_the_parts_merged_are_the_one_runs_record[2-6]", "caught": true},
+  {"id": "S3", "file": "tools/trust_mutants.py", "behaviour": "--merge: the owned-twice refusal dropped", "test": "tests/test_trust_mutants.py::test_merge_refuses_parts_that_are_not_one_runs[owned-twice]", "caught": true},
+  {"id": "S4", "file": "tools/trust_mutants.py", "behaviour": "--plan: to_run counts the part's mutants, not the run's", "test": "tests/test_trust_mutants.py::test_plan_prints_the_counts_and_builds_nothing", "caught": true},
+  {"id": "S5", "file": "tools/trust_mutants.py", "behaviour": "--shard with --rescore: verdicts reused for mutants other parts own", "test": "tests/test_trust_mutants.py::test_rescored_parts_merge_to_the_rescored_run", "caught": true},
+  {"id": "S6", "file": "tools/trust_mutants.py", "behaviour": "--merge: seconds summed instead of the longest part's", "test": "tests/test_trust_mutants.py::test_the_parts_merged_are_the_one_runs_record[2-6]", "caught": true}
+ ]}
