@@ -18763,7 +18763,7 @@ module VE.Scope.Effects 76d034cbd2f835309381cbbd7b032eaf69a03bb29fe463e3bad6e950
 64:0-66:13 def VE.Scope.narrowing@VE.Scope.Effects
 68:0-73:17 def VE.Scope.Commutes@VE.Scope.Effects
 77:0-83:40 def VE.Scope.mergeParts@VE.Scope.Effects
-module VE.Scope.Examples 5488987b049adcee18a106db7efe4913d74b20ad2cb9e42db82b367bd4124de7
+module VE.Scope.Examples 77322c0c3c51fae6104c777d10ec5e0af70e39968995c1a145e53aefca6df9b8
 15:0-18:14 def VE.Scope.Examples.mk@VE.Scope.Examples
 20:0-20:111 def VE.Scope.Examples.layoutOf@VE.Scope.Examples
 22:0-32:71 def VE.Scope.Examples.hcPieces@VE.Scope.Examples
