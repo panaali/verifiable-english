@@ -13530,6 +13530,7 @@
         "VE.Cardinality.Examples.fa4"
       ]
     },
+    "VE/Cardinality/Gate.lean": {},
     "VE/Judgments/Status.lean": {
       "G[V]": [
         "VE.Judgments.viewOf"
