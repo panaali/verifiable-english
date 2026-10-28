@@ -654,6 +654,52 @@ theorem VE.Acts.distinctTexts_ok
   ∀ (what : String) (ts us : List String), VE.Acts.distinctTexts what ts = Except.ok us ↔ us = ts ∧ ts.Nodup
   -- uses VE.Acts.distinctTexts@VE.Acts.Table
   -- expr 3643680838
+theorem VE.Acts.elaborateMap_fst
+  ∀ (D : VE.Acts.ActsDoc), Except.map (fun x => x.fst) (VE.Acts.elaborateMap D) = VE.Acts.elaborate D
+  -- uses VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.SplitMap@VE.Acts.Elaborate VE.Acts.elaborate@VE.Acts.Elaborate VE.Acts.elaborateMap@VE.Acts.Elaborate VE.NormDefaults.UDoc@VE.NormDefaults.Tree
+  -- expr 418837391
+theorem VE.Acts.elaborateMap_ok
+  ∀ {D : VE.Acts.ActsDoc} {U' : VE.NormDefaults.UDoc} {M : VE.Acts.SplitMap},
+    VE.Acts.elaborateMap D = Except.ok (U', M) →
+      (∃ Rs, List.mapM (fun x => VE.Acts.readingOf D x.fst x.snd) D.acts = Except.ok Rs) ∧
+        VE.Acts.namesOk D = Except.ok () ∧
+          U' = VE.Acts.splitDoc D ∧
+            M = VE.Acts.splitMap D ∧
+              VE.NormDefaults.WellFormedU U' = Bool.true ∧
+                (M.rules.all fun x => !U'.D.T.nodes.any fun x_1 => x_1.name == x.snd.fst) = Bool.true
+  -- uses VE.Acts.Act@VE.Acts.Tree VE.Acts.ActsDoc.acts@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Simple@VE.Acts.Table VE.Acts.SplitMap.rules@VE.Acts.Elaborate VE.Acts.SplitMap@VE.Acts.Elaborate VE.Acts.elaborateMap@VE.Acts.Elaborate VE.Acts.namesOk@VE.Acts.Elaborate VE.Acts.readingOf@VE.Acts.Elaborate VE.Acts.splitDoc@VE.Acts.Elaborate VE.Acts.splitMap@VE.Acts.Elaborate VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.name@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree
+  -- expr 1152826092
+theorem VE.Acts.elaborate_ok
+  ∀ {D : VE.Acts.ActsDoc} {U' : VE.NormDefaults.UDoc},
+    VE.Acts.elaborate D = Except.ok U' → ∃ M, VE.Acts.elaborateMap D = Except.ok (U', M)
+  -- uses VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.SplitMap@VE.Acts.Elaborate VE.Acts.elaborate@VE.Acts.Elaborate VE.Acts.elaborateMap@VE.Acts.Elaborate VE.NormDefaults.UDoc@VE.NormDefaults.Tree
+  -- expr 68642539
+theorem VE.Acts.elaborate_one_reading
+  ∀ (D : VE.Acts.ActsDoc) {U' : VE.NormDefaults.UDoc},
+    VE.Acts.elaborate D = Except.ok U' →
+      ∀ (p : String) (A : VE.Acts.Act),
+        (p, A) ∈ D.acts →
+          (∃ a, A = VE.Acts.Act.one a) ∨
+            ∃ R,
+              VE.Acts.readingOf D p A = Except.ok R ∧
+                ∀ (N : VE.Norms.Node),
+                  N ∈ D.U.D.T.nodes →
+                    N.pred = p ∨ Option.some N.pred = VE.Acts.dualOf D.U.D.T p →
+                      ∃ r op,
+                        List.find? (fun x => x.name == N.pred) D.U.D.T.regulated = Option.some r ∧
+                          VE.Acts.opOf r N.sign = Option.some op ∧ VE.Acts.table op A = [R]
+  -- uses VE.Acts.Act.one@VE.Acts.Tree VE.Acts.Act@VE.Acts.Tree VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc.acts@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Atom@VE.Acts.Tree VE.Acts.Op@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.dualOf@VE.Acts.Elaborate VE.Acts.elaborate@VE.Acts.Elaborate VE.Acts.opOf@VE.Acts.Table VE.Acts.readingOf@VE.Acts.Elaborate VE.Acts.table@VE.Acts.Table VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.nodes@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree
+  -- expr 3219671281
+theorem VE.Acts.elaborate_unspec
+  ∀ (D : VE.Acts.ActsDoc) {U' : VE.NormDefaults.UDoc},
+    VE.Acts.elaborate D = Except.ok U' → U'.unspec = List.flatMap (VE.Acts.partNames D) D.U.unspec
+  -- uses VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.elaborate@VE.Acts.Elaborate VE.Acts.partNames@VE.Acts.Elaborate VE.NormDefaults.UDoc.unspec@VE.NormDefaults.Tree VE.NormDefaults.UDoc@VE.NormDefaults.Tree
+  -- expr 3916595845
+theorem VE.Acts.elaborate_wellFormed
+  ∀ (D : VE.Acts.ActsDoc) {U' : VE.NormDefaults.UDoc},
+    VE.Acts.elaborate D = Except.ok U' → VE.NormDefaults.WellFormedU U' = Bool.true
+  -- uses VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.elaborate@VE.Acts.Elaborate VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree
+  -- expr 3613047864
 theorem VE.Acts.firstEqualPair_none
   ∀ (k : Nat) (ts : List String), VE.Acts.firstEqualPair k ts = Option.none ↔ ts.Nodup
   -- uses VE.Acts.firstEqualPair@VE.Acts.Table
@@ -710,6 +756,11 @@ theorem VE.Acts.listing_ok
       ∃ ts, parsed = Option.some ts ∧ ts.length < N ∧ xs = VE.Acts.firsts (List.filterMap μ ts) ∧ xs.length ≤ L
   -- uses VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Listing.ok@VE.Acts.Read VE.Acts.Listing@VE.Acts.Read VE.Acts.firsts@VE.Acts.Read VE.Acts.listing@VE.Acts.Read VE.Grammar.Tree@VE.Grammar.Derives
   -- expr 4241073090
+theorem VE.Acts.mapM_ok
+  ∀ {α β ε : Type} {f : α → Except ε β} {l : List α} {ys : List β},
+    List.mapM f l = Except.ok ys → ∀ (x : α), x ∈ l → ∃ y, y ∈ ys ∧ f x = Except.ok y
+  -- uses
+  -- expr 2741401135
 theorem VE.Acts.mem_firsts
   ∀ {α : Type} [inst : DecidableEq α] {x : α} {l : List α}, x ∈ VE.Acts.firsts l ↔ x ∈ l
   -- uses VE.Acts.firsts@VE.Acts.Read
@@ -781,6 +832,14 @@ theorem VE.Acts.readingsIn_nodup
     VE.Acts.readingsIn G μ N b ts = VE.Acts.Listing.ok As → As.Nodup
   -- uses VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Listing.ok@VE.Acts.Read VE.Acts.Listing@VE.Acts.Read VE.Acts.Term@VE.Acts.Syntax VE.Acts.readingsIn@VE.Acts.Read VE.Grammar.Grammar@VE.Grammar.Basic VE.Grammar.Meaning@VE.Grammar.Reading
   -- expr 217654327
+theorem VE.Acts.ruleReading_ok
+  ∀ {D : VE.Acts.ActsDoc} {A : VE.Acts.Act} {N : VE.Norms.Node} {R : List VE.Acts.Simple},
+    VE.Acts.ruleReading D A N = Except.ok R →
+      ∃ r op,
+        List.find? (fun x => x.name == N.pred) D.U.D.T.regulated = Option.some r ∧
+          VE.Acts.opOf r N.sign = Option.some op ∧ VE.Acts.table op A = [R]
+  -- uses VE.Acts.Act@VE.Acts.Tree VE.Acts.ActsDoc.U@VE.Acts.Elaborate VE.Acts.ActsDoc@VE.Acts.Elaborate VE.Acts.Op@VE.Acts.Table VE.Acts.Simple@VE.Acts.Table VE.Acts.opOf@VE.Acts.Table VE.Acts.ruleReading@VE.Acts.Elaborate VE.Acts.table@VE.Acts.Table VE.NormDefaults.UDoc.D@VE.NormDefaults.Tree VE.Norms.Doc.T@VE.Norms.Tree VE.Norms.Node.pred@VE.Norms.Tree VE.Norms.Node.sign@VE.Norms.Tree VE.Norms.Node@VE.Norms.Tree VE.Norms.Regulated.name@VE.Norms.Tree VE.Norms.Regulated@VE.Norms.Tree VE.Norms.Tree.regulated@VE.Norms.Tree
+  -- expr 4077629860
 theorem VE.Acts.schema_ok
   ∀ {V : VE.Acts.Vocab}, VE.Acts.framesOk V = Bool.true → (VE.Acts.schema V).all VE.Acts.RuleS.ok = Bool.true
   -- uses VE.Acts.RuleS.ok@VE.Acts.Grammar VE.Acts.RuleS@VE.Acts.Grammar VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.framesOk@VE.Acts.Syntax VE.Acts.schema@VE.Acts.Grammar
