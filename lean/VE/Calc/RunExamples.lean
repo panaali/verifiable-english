@@ -763,6 +763,16 @@ def r3Line : Option String :=
   [.decided .undefined, .unknown (.limit .evaluations), .unknown (.limit .evaluations), .unknown (.limit .evaluations),
     .decided .undefined]
 
+/-- A case's checks that are unknown, each with the case's values. -/
+def unknownChecks (c : Case) : List (List Decl × Check) :=
+  (c.claims.filter fun e => match e.2.run c.decls with | .unknown _ => true | .decided _ => false).map (c.decls, ·.2)
+
+/-- The check is unknown for one of its kind's reasons (a decided check is not). -/
+def unknownIsReason (ds : List Decl) (k : Check) : Bool :=
+  match k.run ds with
+  | .unknown u => decide (u ∈ k.reasons)
+  | .decided _ => false
+
 -- Every unknown a check gives is one of its kind's reasons (`Check.reasons`, 1.5): for a derivation the budget, the
 -- step limit and an inconclusive search; for a claim the budget and the digit limit (R-2's v1).
 #guard let ds : List Decl := [⟨"r", .free⟩, ⟨"m", .counted (Thunk.pure none) .exhausted⟩]
@@ -774,11 +784,8 @@ def r3Line : Option String :=
       r#"["p1"]"# "[]" (free "x" "the x" ++ ", " ++ defined "v0" r#"["val", "x"]"# ++ ", " ++ chain 13)].filterMap
     fun s => (Json.parse s).toOption.bind (Wire.decodeCase · |>.toOption)
   let decoded := decoded ++ [r2].filterMap fun s => (Json.parse s).toOption.bind (Wire.decodeCase · |>.toOption)
-  decoded.length == 3 && ((ds, k) :: (ds, .claim (lt "m" "m")) :: decoded.flatMap fun c =>
-      (c.claims.filter fun (_, k) => k.run c.decls matches .unknown _).map (c.decls, ·.2)).all fun (ds, k) =>
-    match k.run ds with
-    | .unknown u => decide (u ∈ k.reasons)
-    | .decided _ => false
+  decoded.length == 3 && ((ds, k) :: (ds, .claim (lt "m" "m")) :: decoded.flatMap unknownChecks).all fun p =>
+    unknownIsReason p.1 p.2
 
 -- Spec 3.3: free values, premises (their ids, claims, supports and spans) and a derivation's parts are hashed; an
 -- empty `premises` list is no premise.
