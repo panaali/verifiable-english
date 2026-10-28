@@ -655,6 +655,14 @@ theorem VE.Acts.closed_ok
     rs.all VE.Acts.RuleS.ok = Bool.true → ∀ (r : VE.Acts.RuleS), r ∈ VE.Acts.closed rs → r.ok = Bool.true
   -- uses VE.Acts.RuleS.ok@VE.Acts.Grammar VE.Acts.RuleS@VE.Acts.Grammar VE.Acts.closed@VE.Acts.Grammar
   -- expr 3933089701
+theorem VE.Acts.derived_iff
+  ∀ (V : VE.Acts.Vocab) (ts : List VE.Acts.Lexical.Tok) (A : VE.Acts.Act),
+    VE.Acts.Derived V ts A ↔
+      ∃ d,
+        VE.Grammar.Derives (VE.Acts.grammar V) (VE.Grammar.Sym.n (VE.Acts.grammar V).start) ts d ∧
+          ∃ c, VE.Acts.meaning V () d = Except.ok (A, c, ())
+  -- uses VE.Acts.Act@VE.Acts.Tree VE.Acts.Derived@VE.Acts.Readings VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Term@VE.Acts.Syntax VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.grammar@VE.Acts.Grammar VE.Acts.instAcceptsTermTok@VE.Acts.Syntax VE.Acts.meaning@VE.Acts.Meaning VE.Grammar.Derives@VE.Grammar.Derives VE.Grammar.Grammar.start@VE.Grammar.Basic VE.Grammar.Sym.n@VE.Grammar.Basic VE.Grammar.Tree@VE.Grammar.Derives
+  -- expr 2136057478
 theorem VE.Acts.distinctTexts_ok
   ∀ (what : String) (ts us : List String), VE.Acts.distinctTexts what ts = Except.ok us ↔ us = ts ∧ ts.Nodup
   -- uses VE.Acts.distinctTexts@VE.Acts.Table
