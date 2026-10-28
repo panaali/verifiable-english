@@ -1,0 +1,40 @@
+"""et-4 seeded bugs: apply one bug to the tree, run `lake build VE.Events.WireExamples`, record the first errors
+(file:line and the #guard or proof there), restore. Usage: python3 harness.py <worktree> (prints ../mutants.json)."""
+import subprocess, sys, os, re, json
+LEAN = sys.argv[1] + '/lean'
+env = dict(os.environ, PATH=os.path.expanduser('~/.elan/bin') + ':' + os.environ['PATH'])
+W, P = 'VE/Events/Wire.lean', 'VE/NormDefaults/Packs.lean'
+BUGS = [
+ ('packOrder-events-first', "PK-1's order: eventsX before soft's premises (plan's seeded bug 1)", P,
+  '["soft", "rights", "weighing", "attitudes", "scales", "events"]',
+  '["events", "soft", "rights", "weighing", "attitudes", "scales"]'),
+ ('prefix-row-dropped', 'date__ registered for the events pack (EventsReserved reads the row)', P,
+  ', ("events", "date__")]', ']'),
+ ('absent-block-refused', 'eventsX_absent: no block, no pack', W,
+  '  | .error _ => pure none\n  | .ok b => do', '  | .error _ => throw "InvalidInput: events"\n  | .ok b => do'),
+ ('anchor-not-added', 'the anchor is a named date', W,
+  '(ds ++ (a.filter (!ds.contains ·)).toList)', '(ds ++ [])'),
+ ('decided-by-65', 'decided_by at most 64 bytes', W, 'by_.utf8ByteSize > 64', 'by_.utf8ByteSize > 65'),
+ ('roles-before-day', 'fault order: item 3 before item 4', W,
+  '    checkDay W V0 (raw.map (·.1))\n    checkRoles W V0\n', '    checkRoles W V0\n    checkDay W V0 (raw.map (·.1))\n'),
+]
+
+def run(name, claim, path, old, new):
+    f = os.path.join(LEAN, path)
+    src = open(f).read()
+    assert src.count(old) == 1, name
+    open(f, 'w').write(src.replace(old, new))
+    try:
+        b = subprocess.run(['lake', 'build', 'VE.Events.WireExamples'], cwd=LEAN, env=env, capture_output=True, text=True)
+    finally:
+        open(f, 'w').write(src)
+    fails = []
+    for l in (b.stdout + b.stderr).splitlines():
+        m = re.match(r'error: (VE/[\w/]+\.lean):(\d+):\d+', l)
+        if m:
+            text = open(os.path.join(LEAN, m.group(1))).read().splitlines()[int(m.group(2)) - 1].strip()[:100]
+            fails.append(f'lean/{m.group(1)}:{m.group(2)}: {text}')
+    return {'id': name, 'claim': claim, 'file': 'lean/' + path, 'build_failed': b.returncode != 0,
+            'test': fails[:4], 'failures': len(fails)}
+
+print(json.dumps([run(*m) for m in BUGS], indent=1, ensure_ascii=False))
