@@ -7327,7 +7327,8 @@
         "VE.Readings.Wire.keyJson",
         "VE.Readings.Wire.keyText",
         "VE.Readings.Wire.pendingAt",
-        "VE.Readings.Wire.reservedText"
+        "VE.Readings.Wire.reservedText",
+        "VE.Readings.Wire.singleActsOnly"
       ],
       "G[V]": [
         "VE.Readings.Wire.Admitted",
@@ -10059,7 +10060,9 @@
         "VE.Service.Standalone.stripPredicates",
         "VE.Service.Standalone.sugarOf",
         "VE.Service.Standalone.surfaceReader",
-        "VE.Service.Standalone.tableFields"
+        "VE.Service.Standalone.tableFields",
+        "VE.Service.Standalone.regulatedOf",
+        "VE.Service.Standalone.actsRead"
       ],
       "D[I]": [
         "VE.Service.Standalone.legacyEnvironmentId"
@@ -12903,6 +12906,7 @@
         "VE.Calc.English.exactWords",
         "VE.Calc.English.exprDepth",
         "VE.Calc.English.fill",
+        "VE.Calc.English.leadingPhrase",
         "VE.Calc.English.natWords",
         "VE.Calc.English.phraseWords",
         "VE.Calc.English.placesPhrase",
@@ -12912,6 +12916,7 @@
         "VE.Calc.English.renderExpr",
         "VE.Calc.English.renderFollows",
         "VE.Calc.English.renderTerm",
+        "VE.Calc.English.reservedIn",
         "VE.Calc.English.reservedWords",
         "VE.Calc.English.valueWordsOk"
       ]
@@ -14220,6 +14225,7 @@
         "VE.Calc.UnitsExamples.miles",
         "VE.Calc.UnitsExamples.newsEnv",
         "VE.Calc.UnitsExamples.physics",
+        "VE.Calc.UnitsExamples.physicsSci",
         "VE.Calc.UnitsExamples.rescaled",
         "VE.Calc.UnitsExamples.says",
         "VE.Calc.UnitsExamples.sigma",
@@ -14257,6 +14263,8 @@
         "VE.Calc.Wire.admit",
         "VE.Calc.Wire.checkCase",
         "VE.Calc.Wire.checkFields",
+        "VE.Calc.Wire.checkVerbalisations",
+        "VE.Calc.Wire.checkWords",
         "VE.Calc.Wire.children",
         "VE.Calc.Wire.claimId",
         "VE.Calc.Wire.claimIdChar",
@@ -14376,6 +14384,7 @@
         "VE.Calc.RunExamples.deriv",
         "VE.Calc.RunExamples.expect",
         "VE.Calc.RunExamples.field",
+        "VE.Calc.RunExamples.form",
         "VE.Calc.RunExamples.free",
         "VE.Calc.RunExamples.h6",
         "VE.Calc.RunExamples.h6P",
@@ -14404,10 +14413,12 @@
         "VE.Calc.RunExamples.r2",
         "VE.Calc.RunExamples.r3",
         "VE.Calc.RunExamples.r3Certificate",
+        "VE.Calc.RunExamples.r3Line",
         "VE.Calc.RunExamples.r4",
         "VE.Calc.RunExamples.r827",
         "VE.Calc.RunExamples.readsCase",
         "VE.Calc.RunExamples.req",
+        "VE.Calc.RunExamples.reserved",
         "VE.Calc.RunExamples.roundsOf",
         "VE.Calc.RunExamples.rowFieldCases",
         "VE.Calc.RunExamples.rsd",
@@ -14422,6 +14433,8 @@
         "VE.Calc.RunExamples.v2",
         "VE.Calc.RunExamples.v5",
         "VE.Calc.RunExamples.v5Rows",
+        "VE.Calc.RunExamples.wx",
+        "VE.Calc.RunExamples.wx'",
         "VE.Calc.RunExamples.x1",
         "VE.Calc.RunExamples.x1c",
         "VE.Calc.RunExamples.xle"
@@ -14718,7 +14731,11 @@
         "VE.Service.ActsExamples.ndP",
         "VE.Service.ActsExamples.ndRow",
         "VE.Service.ActsExamples.ndWordings",
-        "VE.Service.ActsExamples.unspecPlain"
+        "VE.Service.ActsExamples.unspecPlain",
+        "VE.Service.ActsExamples.typed",
+        "VE.Service.ActsExamples.every",
+        "VE.Service.ActsExamples.modelled",
+        "VE.Service.ActsExamples.dualEnv"
       ]
     },
     "ResponseShape/Schemas/Calc.lean": {
@@ -15611,6 +15628,29 @@
         "VE.Readings.DefaultExamples.labels",
         "VE.Readings.DefaultExamples.pairs",
         "VE.Readings.DefaultExamples.corpus"
+      ]
+    },
+    "VE/Readings/ActsExamples.lean": {
+      "T": [
+        "VE.Readings.ActsExamples.a1",
+        "VE.Readings.ActsExamples.a2",
+        "VE.Readings.ActsExamples.a5",
+        "VE.Readings.ActsExamples.a6",
+        "VE.Readings.ActsExamples.fxs",
+        "VE.Readings.ActsExamples.rdP",
+        "VE.Readings.ActsExamples.reg",
+        "VE.Readings.ActsExamples.env",
+        "VE.Readings.ActsExamples.envA",
+        "VE.Readings.ActsExamples.err",
+        "VE.Readings.ActsExamples.decode",
+        "VE.Readings.ActsExamples.d33",
+        "VE.Readings.ActsExamples.ruleDoc",
+        "VE.Readings.ActsExamples.d4",
+        "VE.Readings.ActsExamples.rule",
+        "VE.Readings.ActsExamples.setDoc",
+        "VE.Readings.ActsExamples.noActs",
+        "VE.Readings.ActsExamples.elabCase",
+        "VE.Readings.ActsExamples.wordings"
       ]
     }
   }
