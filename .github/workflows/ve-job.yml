@@ -1,0 +1,106 @@
+# VE compute job on GitHub Actions: a zero-token compute pool (manage-agents dri-gha, 2026-10-28).
+# A job is one push of branch ci-job/<job> by the VM dispatcher (gha-dispatch.sh, via github-push.sh only). Its tip is ONE
+# commit on top of the job's exported head that adds only ci-job/job.json, ci-job/job.sh and this file.
+#   run:     read-only token, no credentials kept; checks that shape, checks out the exported head itself, installs the
+#            pinned toolchain (Lean v4.24.0, uv 0.12.19, zstd), then
+#            bash job.sh run <checkout> <out dir> <job.json "argv"...>   (same contract as the cloud runner's cloud-tm-job.sh)
+#   publish: write token; commits ONLY cloud-results/<job>/ on top of the exported head and pushes ci-result/<job>
+#            (never --force, never another branch). The VM's cloud-pull.sh verifies it like any cloud result.
+# Never triggered by pull requests, forks, schedules or other branches. Uses no secrets. Actions are pinned by commit.
+name: ve-job
+on:
+  push:
+    branches: ['ci-job/**']
+permissions: {}
+concurrency:
+  group: ve-job-${{ github.ref_name }}
+  cancel-in-progress: false
+jobs:
+  run:
+    if: github.repository == 'panaali/verifiable-english'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    permissions:
+      contents: read
+    outputs:
+      job: ${{ steps.job.outputs.job }}
+      head: ${{ steps.job.outputs.head }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4.3.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - id: job
+        name: job commit
+        run: |
+          set -euo pipefail
+          job=${GITHUB_REF_NAME#ci-job/}
+          [[ $job =~ ^[A-Za-z0-9._-]+$ ]] || { echo "bad job name $job"; exit 1; }
+          head=$(python3 -I -c 'import json; print(json.load(open("ci-job/job.json"))["head"])')
+          [ "$(python3 -I -c 'import json; print(json.load(open("ci-job/job.json"))["job"])')" = "$job" ] || { echo "job.json is not $job"; exit 1; }
+          [ "$(git rev-parse HEAD~1)" = "$head" ] && [ -z "$(git rev-parse -q --verify HEAD^2 || true)" ] || { echo "the job commit's parent is not $head"; exit 1; }
+          extra=$(git diff --name-only HEAD~1 HEAD | grep -v -x -E 'ci-job/job\.json|ci-job/job\.sh|\.github/workflows/ve-job\.yml' || true)
+          [ -z "$extra" ] || { echo "the job commit changes other files: $extra"; exit 1; }
+          mkdir -p "$RUNNER_TEMP/ci-job" "$RUNNER_TEMP/out"
+          cp ci-job/job.json ci-job/job.sh "$RUNNER_TEMP/ci-job/"
+          git checkout -q --detach "$head"
+          echo "job=$job" >> "$GITHUB_OUTPUT"; echo "head=$head" >> "$GITHUB_OUTPUT"
+      - name: tools
+        run: |
+          set -euo pipefail
+          t0=$(date +%s)
+          cd "$RUNNER_TEMP"
+          curl -sSfL --retry 3 -o lean.tar.zst https://github.com/leanprover/lean4/releases/download/v4.24.0/lean-4.24.0-linux.tar.zst
+          echo "b14f5e5159219dd1a1956c3b806813319f5e94ccd5bdfd56f54520609a5bb5ec  lean.tar.zst" | sha256sum -c -
+          curl -sSfL --retry 3 -o uv.tgz https://github.com/astral-sh/uv/releases/download/0.12.19/uv-x86_64-unknown-linux-gnu.tar.gz
+          echo "23bf5552d220e0842b65c862097b2ebaeba0064b74eda5e565e77fd25969d8c8  uv.tgz" | sha256sum -c -
+          command -v zstd > /dev/null || { sudo apt-get update -qq && sudo apt-get install -y -qq zstd; }
+          sudo mkdir -p /opt/lean && sudo chown "$(id -u)" /opt/lean
+          zstd -dc lean.tar.zst | tar -x -C /opt/lean --strip-components=1
+          sudo tar -xzf uv.tgz -C /usr/local/bin --strip-components=1
+          rm -f lean.tar.zst uv.tgz
+          sudo ln -sf /opt/lean/bin/lean /usr/local/bin/lean; sudo ln -sf /opt/lean/bin/lake /usr/local/bin/lake
+          printf 'step\trc\tseconds\ntools\t0\t%s\n' "$(( $(date +%s) - t0 ))" > "$RUNNER_TEMP/out/gha-setup.tsv"
+          { echo "run_id=$GITHUB_RUN_ID attempt=$GITHUB_RUN_ATTEMPT runner=$RUNNER_NAME image=${ImageOS:-?}-${ImageVersion:-?}"; lean --version; uv --version; df -h / | tail -1; } > "$RUNNER_TEMP/out/gha.txt"
+      - name: job
+        run: |
+          set -uo pipefail
+          mapfile -t argv < <(python3 -I -c 'import json, sys; print("\n".join(json.load(open(sys.argv[1]))["argv"]))' "$RUNNER_TEMP/ci-job/job.json")
+          bash "$RUNNER_TEMP/ci-job/job.sh" run "$GITHUB_WORKSPACE" "$RUNNER_TEMP/out" "${argv[@]}"
+      - if: always() && steps.job.outputs.job != ''
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        with:
+          name: out
+          path: ${{ runner.temp }}/out
+          retention-days: 3
+          if-no-files-found: error
+  publish:
+    needs: run
+    if: always() && needs.run.outputs.job != ''
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4.3.1
+        with:
+          ref: ${{ needs.run.outputs.head }}
+          fetch-depth: 1
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093  # v4.3.0
+        with:
+          name: out
+          path: ${{ runner.temp }}/out
+      - name: push ci-result
+        env:
+          JOB: ${{ needs.run.outputs.job }}
+        run: |
+          set -euo pipefail
+          D=cloud-results/$JOB; O=$RUNNER_TEMP/out
+          rm -rf "$D"; mkdir -p "$D"
+          for f in "$O"/*; do [ -f "$f" ] || continue
+            case $f in *.log) tail -n 200 "$f" > "$D/$(basename "$f").tail";; *) cp "$f" "$D/";; esac; done
+          echo "run_url=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID run_result=${{ needs.run.result }}" >> "$D/gha.txt"
+          git add -- "$D"
+          git -c user.name="VE actions runner" -c user.email=noreply@anthropic.com commit -q -m "ci-job $JOB: result" -- "$D"
+          git push -q origin "HEAD:refs/heads/ci-result/$JOB" || { sleep 20; git push -q origin "HEAD:refs/heads/ci-result/$JOB"; }
+          git rev-parse HEAD

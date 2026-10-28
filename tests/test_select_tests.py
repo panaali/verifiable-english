@@ -1308,6 +1308,30 @@ def test_whole_plans_on_this_checkout(head):
     assert "tests/test_vacuity.py" in test_change["selected"]
 
 
+def test_a_workflow_change_selects_only_the_workflow_test(head):
+    """A GitHub workflow is text only GitHub runs: like documentation it selects the tests that read
+    or name it (tests/test_ci_workflow.py) and its directory's listers, never SMOKE nor everything.
+    Another file under .github/ is data, which also runs SMOKE."""
+    workflow, test = ".github/workflows/ve-job.yml", "tests/test_ci_workflow.py"
+    assert select_tests.kind_of(workflow) == select_tests.DATA and select_tests.documentation(workflow)
+    assert select_tests.kind_of(".github/dependabot.yml") == select_tests.DATA
+    assert not select_tests.documentation(".github/dependabot.yml")
+    smoke = set(select_tests.SMOKE)
+    edges = {unit: {} for unit in select_tests.units()}
+    edges[test] = {"r": [workflow], "d": [".github/workflows"]}
+    recorded = make_map(edges, commit=head)
+    edit = plan_for([select_tests.Change(workflow, real(workflow), real(workflow) + "# c\n")], recorded)
+    assert not edit["full"] and edit["selected"] == [test]
+    added = plan_for([select_tests.Change(".github/workflows/other.yml", None, "x\n")], recorded)
+    assert not added["full"] and added["selected"] == [test]
+    # Before the map has recorded the test, the static graph finds it: it names the directory.
+    unrecorded = make_map({unit: {} for unit in select_tests.units()}, commit=head, failed=(test,))
+    added = plan_for([select_tests.Change(".github/workflows/other.yml", None, "x\n")], unrecorded)
+    assert test in added["selected"] and not smoke & set(added["selected"]) and not added["full"]
+    other = plan_for([select_tests.Change(".github/dependabot.yml", None, "x\n")], recorded)
+    assert smoke <= set(other["selected"]) and not other["full"]
+
+
 def test_native_changes_schedule_builds_and_their_runners(head):
     every = select_tests.units()
     edges = {test: {} for test in every}
@@ -1326,10 +1350,14 @@ def test_native_changes_schedule_builds_and_their_runners(head):
     assert list(select_tests.AUDIT) not in rust["commands"]
 
 
+# Reasons the plan adds for the whole change, not through the map: smoke and the history-inventory lint.
+PLAN_WIDE = {"smoke", select_tests.HISTORY_REASON}
+
+
 def mapped_reasons(plan: dict) -> set[str]:
-    """The units a plan selected through the map (not smoke, not the static graph)."""
+    """The units a plan selected through the map (not smoke or the history lint, not the static graph)."""
     return {test for test, reasons in plan["reasons"].items()
-            if any(r != "smoke" and not r.endswith("(static)") for r in reasons)}
+            if any(r not in PLAN_WIDE and not r.endswith("(static)") for r in reasons)}
 
 
 EVIDENCE_FILE = "docs/arch/AR-1/evidence/checks.json"
@@ -1825,7 +1853,8 @@ KIND_EXAMPLES = {
     "python": ("ve/_presence_probe.py", "tests/fixtures/_presence_probe.py"),
     "lean": ("lean/VE/_PresenceProbe.lean",),
     "rust": ("rust/ve-core/src/_presence_probe.rs",),
-    "data": ("tests/fixtures/_presence_probe.json", "docs/_presence_probe.md", "_presence_probe.md"),
+    "data": ("tests/fixtures/_presence_probe.json", "docs/_presence_probe.md", "_presence_probe.md",
+             ".github/workflows/_presence_probe.yml"),
     "everything": ("pyproject.toml", "_presence_probe.cfg"),
 }
 PRESENCE_UNITS = {"reader": "tests/test_background.py", "importer": "tests/test_authoring.py",
@@ -1879,7 +1908,7 @@ def test_the_plan_and_the_drift_check_treat_presence_alike(kind, path, letter, c
         expected |= {"python": {PRESENCE_UNITS["importer"]}, "lean": set(),
                      "rust": {PRESENCE_UNITS["runner"]}, "data": set()}[kind]
         mapped = {test for test, reasons in plan["reasons"].items()
-                  if any(r != "smoke" and not r.endswith("(static)") for r in reasons)}
+                  if any(r not in PLAN_WIDE and not r.endswith("(static)") for r in reasons)}
         assert mapped == expected, plan["reasons"]
     versions = {path: (old, new)} if path.endswith(".py") else {}
     drift = select_tests.uncertain_units(select_tests.Coverage(data), source_graph.load(select_tests.ROOT),
@@ -2251,3 +2280,133 @@ def test_a_script_no_test_reaches_is_reported(selector, monkeypatch):
     plan = selector.impacted(["tools/bench/baseline.py"])
     assert not plan["fallback"] and plan["scripts_without_tests"] == ["tools/bench/baseline.py"]
     assert plan["selected"] == sorted(plan["always"])
+
+
+# --- the history inventory: a change that can make tests/history-dependent.json stale runs its lint in both
+# paths (waste audit 2026-10-28 row 11: main renamed a function of tools/cache_store.py, which the list names,
+# and a branch's merge kept its stale copy; the selected run skipped the lint and the merge train caught it).
+
+import history_tests  # noqa: E402
+
+HISTORY_TRIGGERS = ["tests/test_vacuity.py", "tests/subprocesses.py", "tests/conftest.py",
+                    "tests/history-dependent.json", "tests/history-map.json", "tools/history_tests.py",
+                    "tools/git_words.py", "tools/cache_store.py"]
+# A product module the list does not name, and documentation.
+HISTORY_NEUTRAL = ["tools/bench/baseline.py", "docs/english-surface.md"]
+
+
+def history_changes(path: str) -> list:
+    """An edit of `path`; for a Python file under tests/ also an added one in a new directory and a deleted one."""
+    old = real(path)
+    changes = [select_tests.Change(path, old, old + ("\n# c\n" if path.endswith(".py") else " "))]
+    if path == "tests/subprocesses.py":
+        changes += [select_tests.Change("tests/fixtures/deep/helper.py", None, "X = 1\n"),
+                    select_tests.Change("tests/test_gone.py", "X = 1\n", None)]
+    return changes
+
+
+@pytest.mark.parametrize("path", HISTORY_TRIGGERS)
+def test_a_change_that_can_stale_the_history_list_runs_its_lint_with_a_map(path, head):
+    assert "tools/cache_store.py" in history_tests.named_sources()
+    data = make_map({test: {} for test in select_tests.units()}, commit=head)
+    for change in history_changes(path):
+        plan = plan_for([change], data)
+        assert plan["history_inventory"] == [change.path]
+        assert select_tests.HISTORY_TEST in plan["selected"]
+        assert plan["full"] or select_tests.HISTORY_REASON in plan["reasons"][select_tests.HISTORY_TEST], change.path
+
+
+@pytest.mark.parametrize("path", HISTORY_NEUTRAL)
+def test_documentation_and_an_unlisted_module_do_not_run_the_history_lint_with_a_map(path, head):
+    assert path not in history_tests.named_sources()
+    data = make_map({test: {} for test in select_tests.units()}, commit=head)
+    plan = plan_for(history_changes(path), data)
+    assert not plan["full"] and plan["history_inventory"] == []
+    assert select_tests.HISTORY_REASON not in plan["reasons"].get(select_tests.HISTORY_TEST, [])
+
+
+@pytest.fixture
+def lint_unreached(selector, monkeypatch):
+    """`--impacted` with the lint reached by no change of its own, so only the history rule can select it."""
+    reaches = selector.reaches
+    monkeypatch.setattr(selector, "reaches", lambda test, changed: test != selector.HISTORY_TEST
+                        and reaches(test, changed))
+    return selector
+
+
+@pytest.mark.parametrize("path", HISTORY_TRIGGERS)
+def test_a_change_that_can_stale_the_history_list_runs_its_lint_impacted(lint_unreached, path):
+    plan = lint_unreached.impacted([path])
+    assert not plan["fallback"] and plan["history_inventory"] == [path]
+    assert lint_unreached.HISTORY_TEST in plan["selected"]
+
+
+@pytest.mark.parametrize("path", HISTORY_NEUTRAL)
+def test_documentation_and_an_unlisted_module_do_not_run_the_history_lint_impacted(lint_unreached, path):
+    plan = lint_unreached.impacted([path])
+    assert not plan["fallback"] and plan["history_inventory"] == []
+    assert lint_unreached.HISTORY_TEST not in plan["selected"]
+
+
+def write_history_files(root: Path, listed, extract) -> None:
+    (root / "tests").mkdir(exist_ok=True)
+    for name, data in ((history_tests.LIST, listed), (history_tests.MAP_EXTRACT, extract)):
+        if data is not None:
+            (root / name).write_text(data if isinstance(data, str) else json.dumps(data))
+
+
+HEADER = {"commit": "0" * 40, "version": 7, "created": "2026-10-28T00:00:00+00:00", "tests": 1}
+LISTED = {"format": history_tests.FORMAT, "map": HEADER, "tests": [
+    {"test": "tests/test_a.py", "why": "starts git", "recorded": ["source"], "via": ["pkg/listed.py:f: git log"]}]}
+EXTRACT = {"format": history_tests.MAP_FORMAT, "map": HEADER,
+           "units": {"tests/test_a.py": {"git": True, "sites": ["pkg/mapped.py:g"]}}}
+
+
+@pytest.mark.parametrize("listed, extract, named", [
+    (LISTED, EXTRACT, {"pkg/listed.py", "pkg/mapped.py"}),
+    ({**LISTED, "format": "other"}, EXTRACT, {"pkg/mapped.py"}),
+    ("{not json", EXTRACT, {"pkg/mapped.py"}),
+    (LISTED, {**EXTRACT, "units": []}, {"pkg/listed.py"}),
+    (LISTED, None, {"pkg/listed.py"}),
+    (None, None, set()),
+], ids=["both", "list malformed", "list unreadable", "extract malformed", "extract missing", "neither"])
+def test_the_history_list_and_its_map_extract_each_name_their_sources(tmp_path, listed, extract, named):
+    write_history_files(tmp_path, listed, extract)
+    assert history_tests.named_sources(tmp_path) == named
+
+
+def test_a_module_only_the_map_extract_names_runs_the_lint(lint_unreached, tmp_path, monkeypatch):
+    write_history_files(tmp_path, {**LISTED, "format": "other"},
+                        {**EXTRACT, "units": {"tests/test_a.py": {"git": True, "sites": ["tools/bench/baseline.py:f"]}}})
+    named = history_tests.named_sources
+    monkeypatch.setattr(lint_unreached.history_tests, "named_sources", lambda: named(tmp_path))
+    plan = lint_unreached.impacted(["tools/bench/baseline.py"])
+    assert plan["history_inventory"] == ["tools/bench/baseline.py"]
+    assert lint_unreached.HISTORY_TEST in plan["selected"]
+
+
+def test_without_a_readable_history_list_the_other_triggers_still_run_the_lint(tmp_path, monkeypatch):
+    write_history_files(tmp_path, "{not json", "[]")
+    named = history_tests.named_sources
+    monkeypatch.setattr(select_tests.history_tests, "named_sources", lambda: named(tmp_path))
+    paths = ["docs/a.md", "tests/test_x.py", "tests/history-map.json", "tools/cache_store.py", "tools/git_words.py"]
+    assert select_tests.history_inventory(paths) == ["tests/test_x.py", "tests/history-map.json",
+                                                     "tools/git_words.py"]
+
+
+def test_what_the_history_list_names_only_adds_its_lint(lint_unreached, monkeypatch):
+    """No plan gets narrower: with every changed module named by the list, a plan is the one with the rule
+    answering nothing, plus the lint."""
+    paths = ["tools/bench/baseline.py", "usecases/asimov-laws/rules.ve"]
+    rule = lint_unreached.history_inventory
+    monkeypatch.setattr(lint_unreached, "history_inventory", lambda changed: [])
+    without = lint_unreached.impacted(paths)
+    monkeypatch.setattr(lint_unreached, "history_inventory", rule)
+    monkeypatch.setattr(lint_unreached.history_tests, "named_sources", lambda: frozenset(paths))
+    named = lint_unreached.impacted(paths)
+    assert named["history_inventory"] == ["tools/bench/baseline.py"]
+    assert named["selected"] == sorted({*without["selected"], lint_unreached.HISTORY_TEST})
+    assert {key: value for key, value in named.items() if key not in ("selected", "selected_count", "history_inventory",
+                                                                       "commands")} \
+        == {key: value for key, value in without.items() if key not in ("selected", "selected_count",
+                                                                         "history_inventory", "commands")}
