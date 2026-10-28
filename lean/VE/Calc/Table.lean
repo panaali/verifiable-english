@@ -212,14 +212,14 @@ theorem Agg.runB_sound (limit : Nat) (T : Table) (f : Filter) (a : Agg) (v : Opt
     have hall : Table.select ⟨T.columns, rows⟩ .all = T.select f := by simp [Table.select, Filter.sel, hs]
     cases a <;> simp [Agg.run, Table.numbers, hall, hc]
 
-/-! Declared column types, shared by the CSV and JSON-lines decoders (spec 4.1). -/
+/-! Declared column types, shared by the CSV and JSON-lines decoders (spec 4.1). `readCell` reads a field as written:
+empty is absent; a number column reads an exact decimal, a `bool` column `true` or `false`; any other text is kept as
+text. -/
 
 inductive ColType where
   | text | number | bool
   deriving Repr, DecidableEq
 
-/-- A field as written: empty is absent; a number column reads an exact decimal, a `bool` column `true` or `false`; any
-other text is kept as text. -/
 def readCell : ColType → String → Cell
   | _, "" => .absent
   | .number, s => match VE.Time.parseDecimal s with

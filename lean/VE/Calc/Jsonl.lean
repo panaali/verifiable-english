@@ -2,12 +2,14 @@ import VE.Calc.Table
 import Lean.Data.Json
 
 /-! The JSON-lines subset of spec 4.1: one flat object per line, columns read by top-level key. A key appears once
-(Lean's own JSON parser keeps the last of two equal keys, a second reading, so this reader refuses them). -/
+(Lean's own JSON parser keeps the last of two equal keys, a second reading, so this reader refuses them). A line is a
+flat object of scalars (a string, a number, `true`, `false` or `null`; an array or object fails). A missing key or
+`null` is absent; a string is read as a CSV field; a JSON number or Boolean is that value in a column of its type and
+is kept as text in any other. -/
 
 namespace VE.Calc
 open Lean Std.Internal.Parsec Std.Internal.Parsec.String
 
-/-- A string, a number, `true`, `false` or `null`; an array or object fails. -/
 def jsonScalar : Parser Json := do
   let c ← peek!
   if c == '"' then skip; return .str (← Json.Parser.str)
@@ -16,19 +18,14 @@ def jsonScalar : Parser Json := do
   else if c == 'n' then skipString "null"; return .null
   else return .num (← Json.Parser.num)
 
-/-- One line: a flat object of scalars, in written order. -/
 def jsonFlatObject : Parser (List (String × Json)) := do
   ws; skipChar '{'; ws
   if (← peek!) == '}' then skip; ws; eof; return []
   let pair : Parser (String × Json) := do
     skipChar '"'; let k ← Json.Parser.str; ws; skipChar ':'; ws; let v ← jsonScalar; ws; pure (k, v)
-  let first ← pair
-  let rest ← many (skipChar ',' *> ws *> pair)
-  skipChar '}'; ws; eof
-  pure (first :: rest.toList)
+  let ps := (← pair) :: (← many (skipChar ',' *> ws *> pair)).toList
+  skipChar '}'; ws; eof; pure ps
 
-/-- A missing key or `null` is absent; a string is read as a CSV field; a JSON number or Boolean is that value in a
-column of its type and is kept as text in any other. -/
 def jsonCell (t : ColType) : Option Json → Cell
   | some (.str s) => readCell t s
   | some (.num n) => if t = .number then .num (n.mantissa / (10 ^ n.exponent : Nat)) else .text n.toString

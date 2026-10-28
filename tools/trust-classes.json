@@ -15548,6 +15548,90 @@
         "VE.Acts.MeaningExamples.sub",
         "VE.Acts.MeaningExamples.toks"
       ]
+    },
+    "VE/Calc/Table.lean": {
+      "S": [
+        "VE.Calc.Agg",
+        "VE.Calc.Agg.run",
+        "VE.Calc.Cell",
+        "VE.Calc.Filter",
+        "VE.Calc.Filter.Selects",
+        "VE.Calc.Table",
+        "VE.Calc.Table.cell",
+        "VE.Calc.Table.numbers",
+        "VE.Calc.mean?"
+      ],
+      "D[V]": [
+        "VE.Calc.ColType",
+        "VE.Calc.readCell"
+      ],
+      "C": [
+        "VE.Calc.Agg.runB",
+        "VE.Calc.Filter.sel",
+        "VE.Calc.Filter.selB",
+        "VE.Calc.Table.select",
+        "VE.Calc.Table.selectB"
+      ]
+    },
+    "VE/Calc/Csv.lean": {
+      "D[V]": [
+        "VE.Calc.CsvMode",
+        "VE.Calc.columnTypes",
+        "VE.Calc.csvRecords",
+        "VE.Calc.decodeCsv"
+      ]
+    },
+    "VE/Calc/Jsonl.lean": {
+      "D[V]": [
+        "VE.Calc.decodeJsonl",
+        "VE.Calc.jsonCell",
+        "VE.Calc.jsonFlatObject",
+        "VE.Calc.jsonScalar"
+      ]
+    },
+    "VE/Calc/Data.lean": {
+      "D[V]": [
+        "VE.Calc.DataDecl",
+        "VE.Calc.Format",
+        "VE.Calc.decodeTable"
+      ],
+      "G[V]": [
+        {
+          "name": "VE.Calc.runCounted",
+          "tied": [
+            "VE.Calc.counted_bound",
+            "VE.Calc.counted_exhausted"
+          ]
+        }
+      ],
+      "G[R]": [
+        "VE.Calc.Agg.columns",
+        "VE.Calc.Filter.columns"
+      ]
+    },
+    "VE/Calc/TableExamples.lean": {
+      "T": [
+        "VE.Calc.TableExamples.T1",
+        "VE.Calc.TableExamples.aggs",
+        "VE.Calc.TableExamples.all5",
+        "VE.Calc.TableExamples.approved32",
+        "VE.Calc.TableExamples.counted",
+        "VE.Calc.TableExamples.csv",
+        "VE.Calc.TableExamples.jsonl",
+        "VE.Calc.TableExamples.ok",
+        "VE.Calc.TableExamples.refusal",
+        "VE.Calc.TableExamples.rows?",
+        "VE.Calc.TableExamples.run",
+        "VE.Calc.TableExamples.t1",
+        "VE.Calc.TableExamples.t1Bytes",
+        "VE.Calc.TableExamples.t1Cols",
+        "VE.Calc.TableExamples.t3",
+        "VE.Calc.TableExamples.t3Claims",
+        "VE.Calc.TableExamples.trial",
+        "VE.Calc.TableExamples.trialCols",
+        "VE.Calc.TableExamples.v5",
+        "VE.Calc.TableExamples.v5Csv"
+      ]
     }
   }
 }
