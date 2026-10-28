@@ -128,12 +128,11 @@ def cx : VE.Rights.RightsDoc :=
 #guard diag (assemble (legacyU cx) 0 (legacyPacks cx)) ==
   "InvalidInput: premise label rights:limitation:x:p:q:necessary:c of pack rights is used twice"
 
-/-- The act-key hypothesis of `legacy_labels_nodup_of_actKeys`, decided. -/
-def actKeysPlain (R : VE.Rights.RightsDoc) : Bool := (VE.Rights.condKeys R).all fun k => !k.2.1.toList.contains ':'
--- `cx` fails it; the well-formed sources hold it, and their labels are distinct, as the theorem says.
-#guard !actKeysPlain cx
-#guard (rightsDocs.take 6).all fun R => actKeysPlain R && (VE.Rights.condKeys R).all (VE.Bridge.identifier ·.2.1) &&
-  decide (legacyLabels R).Nodup
+-- The act-key hypothesis of `legacy_labels_nodup_of_actKeys`: `cx` fails it; the well-formed sources hold it (their
+-- act keys are route identifiers), and their labels are distinct, as the theorem says.
+#guard (VE.Rights.condKeys cx).any (·.2.1.toList.contains ':')
+#guard (rightsDocs.take 6).all fun R => (VE.Rights.condKeys R).all (fun k => !k.2.1.toList.contains ':' &&
+  VE.Bridge.identifier k.2.1) && decide (legacyLabels R).Nodup
 #guard (rightsDocs.take 6).any fun R => !(VE.Rights.condKeys R).isEmpty
 -- `VE.Bridge.identifier`, the route's check on predicate names, refuses `:` anywhere and accepts its neighbours
 -- `9` and `_`; `;` (just past `:`) and the 64-byte budget are refused too.
