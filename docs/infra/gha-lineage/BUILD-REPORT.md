@@ -38,6 +38,7 @@ No Lean, Rust, `ve/`, wire, trust, or VE language behavior changed. There is no 
 - `tools/regen_generated.py --check`: passed all 33 entries.
 - `tools/gate_collection.py --check --prebuilt`: 19,873 collected, three added, zero removed, refused, stale, or malformed trailers.
 - Selected VM tests: 40 units through `mac-pytest.sh --select`; 39 units passed, and `test_history_tests.py::test_only_the_lint_reads_the_list` failed because its exact reader inventory omitted the new lint. After adding that reader, `mac-pytest.sh -- tests/test_history_tests.py::test_only_the_lint_reads_the_list` passed (one passed). Only the failed ID was rerun.
+- Final pilot helper check: `mac-pytest.sh -- tests/test_readings_rd5_udhr.py` passed all three tests after both historical Git helpers mapped the recorded commit to its tree.
 - Final release gate: delegated to the chain on this report's committed final HEAD.
 
 ## Self-review against BUILDER-CHECKLIST
@@ -78,9 +79,9 @@ No Lean, Rust, `ve/`, wire, trust, or VE language behavior changed. There is no 
 - `tests/test_repo_map.py`: locate a commit by its shared tree before asking for its parent.
 - `tools/identity_lint.py`: accept a tree revision for historical allowlist content.
 - `tools/lean_first_oracle.py`: `frozen_files`, `check`, `run` use the tree; present tags still bind to commit and tree.
-- `usecases/udhr-pilot/run-20261010T1400Z/migrate.py`: read from the pilot tree while preserving the recorded commit label.
+- `usecases/udhr-pilot/run-20261010T1400Z/migrate.py`: `git_show` and `git_ls` map the recorded pilot commit to its tree for migration and witness callers.
 - `docs/infra/gha-lineage/BUILD-REPORT.md`: run evidence, seeded bugs, review, and handoff.
-- Key definitions: frozen loaders `conformance/frozen_norm_defaults.py:16`, `conformance/frozen_words.py:21`; oracle `tools/lean_first_oracle.py:51`, `:57`, `:90`; lint `tests/test_lineage_lint.py:24`, `:67`, `:81`; identity `tools/identity_lint.py:275`; Stage 0 `tests/probe_matrix.py:165`; pilot `usecases/udhr-pilot/run-20261010T1400Z/migrate.py:71`.
+- Key definitions: frozen loaders `conformance/frozen_norm_defaults.py:16`, `conformance/frozen_words.py:21`; oracle `tools/lean_first_oracle.py:51`, `:57`, `:90`; lint `tests/test_lineage_lint.py:24`, `:67`, `:81`; identity `tools/identity_lint.py:275`; Stage 0 `tests/probe_matrix.py:165`; pilot `usecases/udhr-pilot/run-20261010T1400Z/migrate.py:51`, `:56`, `:73`.
 - Regression commands: `uv run pytest -q tests/test_lineage_lint.py tests/test_lean_first_oracle.py`; `uv run pytest -q tests/test_identity_lint.py -k ratchet_starts`; `uv run pytest -q tests/test_lean_first_b12_report.py tests/test_readings_defaults_rd6b_report.py tests/test_readings_rd5_udhr.py`.
 - Selection command: `zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`.
 - Generated file: `tests/history-dependent.json`, owned by `tools/history_tests.py --write`; one-pass regeneration command: `uv run python tools/regen_generated.py --write`.

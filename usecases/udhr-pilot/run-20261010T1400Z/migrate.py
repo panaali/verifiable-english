@@ -49,11 +49,13 @@ OPEN_TERM_DIFFERENCE = "declare open term"
 
 
 def git_show(commit, path):
-    return subprocess.run(["git", "show", f"{commit}:{path}"], cwd=ROOT, check=True, capture_output=True).stdout
+    revision = TREE if commit == COMMIT else commit
+    return subprocess.run(["git", "show", f"{revision}:{path}"], cwd=ROOT, check=True, capture_output=True).stdout
 
 
 def git_ls(commit, path):
-    out = subprocess.run(["git", "ls-tree", "--name-only", f"{commit}:{path}"], cwd=ROOT, check=True,
+    revision = TREE if commit == COMMIT else commit
+    out = subprocess.run(["git", "ls-tree", "--name-only", f"{revision}:{path}"], cwd=ROOT, check=True,
                          capture_output=True).stdout.decode()
     return out.split()
 
@@ -70,13 +72,12 @@ def join_document(meta, source):
 
 def read_run(commit=COMMIT):
     """The run's main front matter and source, and each companion by (unit, candidate): its front matter."""
-    revision = TREE if commit == COMMIT else commit
-    meta, source = split_document(git_show(revision, f"{RUN}/translation.ve.md"))
+    meta, source = split_document(git_show(commit, f"{RUN}/translation.ve.md"))
     companions = {}
-    for name in git_ls(revision, f"{RUN}/readings"):
+    for name in git_ls(commit, f"{RUN}/readings"):
         if name.endswith(".ve.md"):
             unit, candidate = name.split(".")[:2]
-            companions[(unit, candidate)] = (name, split_document(git_show(revision, f"{RUN}/readings/{name}"))[0])
+            companions[(unit, candidate)] = (name, split_document(git_show(commit, f"{RUN}/readings/{name}"))[0])
     return meta, source, companions
 
 
