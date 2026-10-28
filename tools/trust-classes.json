@@ -753,7 +753,10 @@
         "ResponseShape.Schemas.ReadingsRoute.verdicts_statuses",
         "ResponseShape.Schemas.ReadingsRoute.verdicts_word",
         "ResponseShape.Schemas.ReadingsRoute.soft_premises",
-        "ResponseShape.Schemas.ReadingsRoute.filledFieldsS"
+        "ResponseShape.Schemas.ReadingsRoute.filledFieldsS",
+        "ResponseShape.Schemas.ReadingsRoute.verdicts_default_choice",
+        "ResponseShape.Schemas.ReadingsRoute.verdicts_default_line",
+        "ResponseShape.Schemas.ReadingsRoute.verdicts_default"
       ]
     },
     "ResponseShape/Schemas/Reports.lean": {
@@ -14451,7 +14454,8 @@
         "VE.Defaults.Wire.replayCoherenceOn",
         "VE.Defaults.Wire.replayModel",
         "VE.Defaults.Wire.replayModelOn",
-        "VE.Defaults.Wire.viewOf"
+        "VE.Defaults.Wire.viewOf",
+        "VE.Defaults.Wire.viewOn"
       ],
       "D[R]": [
         "VE.Defaults.Wire.notWellFormedText",
@@ -14468,7 +14472,8 @@
         "VE.Defaults.Wire.entityIds",
         "VE.Defaults.Wire.formLabel",
         "VE.Defaults.Wire.modelFields",
-        "VE.Defaults.Wire.situationJson"
+        "VE.Defaults.Wire.situationJson",
+        "VE.Defaults.Wire.collisionFields"
       ],
       "G[R]": [
         "VE.Defaults.Wire.CertReplay.reason"
@@ -15546,6 +15551,69 @@
         "VE.Acts.MeaningExamples.rd1",
         "VE.Acts.MeaningExamples.sub",
         "VE.Acts.MeaningExamples.toks"
+      ]
+    },
+    "VE/Readings/DefaultVerdicts.lean": {
+      "S": [
+        "VE.Readings.choiceSoft",
+        "VE.Readings.dSem"
+      ],
+      "C": [
+        "VE.Readings.DEvidence",
+        "VE.Readings.DEvidence.coherent",
+        "VE.Readings.DEvidence.collides",
+        "VE.Readings.DEvidence.asX",
+        "VE.Readings.dConflictRow",
+        "VE.Readings.dFollows",
+        "VE.Readings.dQueryRow",
+        "VE.Readings.DChoice",
+        "VE.Readings.DVerdicts",
+        "VE.Readings.DVerdicts.dConflictRows",
+        "VE.Readings.DVerdicts.dQueryRows",
+        "VE.Readings.dEvidenceOf",
+        "VE.Readings.replayD",
+        "VE.Readings.replayVerdictsD"
+      ],
+      "G[V]": [
+        "VE.Readings.dBasis",
+        {
+          "name": "VE.Readings.DVerdicts.bases",
+          "tied": [
+            "VE.Readings.d_bases_sound"
+          ]
+        },
+        {
+          "name": "VE.Readings.DVerdicts.defaultMember",
+          "tied": [
+            "VE.Readings.readings_wire_default_present",
+            "VE.Readings.readings_wire_default_conflict"
+          ]
+        },
+        "VE.Readings.DVerdicts.hasDefaults",
+        "VE.Readings.Run.dEnglish",
+        "VE.Readings.Run.runVerdictsD"
+      ],
+      "D[V]": [
+        "VE.Readings.Run.verdictWord",
+        "VE.Readings.Run.dChoiceJson",
+        "VE.Readings.Run.DLine",
+        "VE.Readings.Run.DLine.json",
+        "VE.Readings.Run.defaultJson"
+      ],
+      "D[R]": [
+        "VE.Readings.Run.askedText"
+      ]
+    },
+    "VE/Readings/DefaultVerdictsExamples.lean": {
+      "T": [
+        "VE.Readings.DefaultExamples.S2",
+        "VE.Readings.DefaultExamples.D2",
+        "VE.Readings.DefaultExamples.rs2",
+        "VE.Readings.DefaultExamples.Nν",
+        "VE.Readings.DefaultExamples.Nρ",
+        "VE.Readings.DefaultExamples.labels",
+        "VE.Readings.DefaultExamples.pairs",
+        "VE.Readings.DefaultExamples.corpus"
       ]
     }
   }
