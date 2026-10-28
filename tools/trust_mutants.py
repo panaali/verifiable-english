@@ -23,9 +23,10 @@ it, and the summary counts the verdicts by class (`class_counts`). LIST is one o
 never reuses or carries a verdict across another selection.
 
 The `OPERATORS` mutate each selected declaration inside its compiled range (lean/declarations.txt), comments and
-strings excluded, on its changed lines only (all of a new one). Every edit keeps each line after the declaration
-where it was (`relined`), so the cuts and the roles, which read the checkout's line numbers, read the mutated text
-right (review F9).
+strings excluded, on its changed lines only (all of a new one); an inductive's `ctor-drop` drops each constructor
+alone (review sc-1ae F1: `JsonWF`'s `bool` and `num` read by no proof or check). Every edit keeps each line after
+the declaration where it was (`relined`), so the cuts and the roles, which read the checkout's line numbers, read the
+mutated text right (review F9).
 
 Each mutant is built in a private scratch copy of lean/ (its build restored from tools/lean_share.py's checked build
 of this tree, else copied from lean/.lake; the checkout is only read): the mutated module, then each module that imports it and holds checks for it: a check whose compiled
@@ -51,7 +52,9 @@ every other case is UNKNOWN (review F11/F12, the DRI's note 2026-10-19c). The mu
   text and outside every tactic block;
 - SURVIVOR when every check passes. A failing proof elsewhere is no kill (BUILDER-CHECKLIST 3): it is cut to
   `sorry` (a `#print` blanked) and the build repeated, before any other error is read; and a check that fails in
-  the control too reads a cut proof (`#eval` refuses a value that depends on `sorry`), so it is cut the same way;
+  the control too reads a cut proof (`#eval` refuses a value that depends on `sorry`), so it is cut the same way.
+  Its detail names each proof it cut ("the proofs it breaks: <file>:<line>, ..."), empty when it broke none: a
+  Prop no check can evaluate is exercised only by those proofs (R16), so an --allow reason for it cites one;
 - UNKNOWN in every other case: an error in a definition, or in a command that is no check, even beside a failing
   check (review F8: a definition's broken proof term leaves `sorry` there, which a check may refuse); a check
   whose message states no refutation (out of budget, stuck, a tactic that fails, an unclassified message: F10,
@@ -160,7 +163,7 @@ CUTS = {"list-empty": None, "list-first": ".take 1", "list-drop-last": ".dropLas
 OPERATORS = {**dict.fromkeys(("arm-true", "arm-false", "arm-default", "body-true", "body-false", "not-drop", "and-or",
                               "or-and", "lt-le", "le-lt", "lt-eq", "le-eq", "eq-le", "eq-ne", "ne-eq", "all-any",
                               "any-all", "bool-flip", "lit-plus", "lit-minus", "list-empty", "append-left",
-                              "append-right"), 1), "list-first": 2, "list-drop-last": 2, "list-last": 3,
+                              "append-right", "ctor-drop"), 1), "list-first": 2, "list-drop-last": 2, "list-last": 3,
              "list-drop-first": 3, "list-drop-middle": 3}
 LT, LE, EQ = r"(?<![<-])<(?![-|$*;=<>])", r"≤|(?<!<)<=(?!>)", r"(?<![:=!<>])=(?![=>])"
 TOKENS = [("not-drop", r"¬\s*|(?<![\w'!?)\]⟩])!(?=[\w(·])", ""), ("and-or", "∧", "∨"),
@@ -286,6 +289,14 @@ def mutants(text: str, kind: str, lo: int, hi: int) -> list[tuple[str, int, int,
                 out += [("arm-true", s, e, consts[0]), ("arm-false", s, e, consts[1])]
             elif default and (s, e) != default[1:]:
                 out.append(("arm-default", s, e, text[default[1]:default[2]]))
+    if kind == "inductive":  # review sc-1ae F1: each constructor dropped alone, its doc comment with it
+        starts = [lo + a.start() for a in re.finditer(r"(?m)^[ \t]*\|", code)
+                  if sum((c in OPEN) - (c in CLOSE) for c in code[:a.start()]) == 0]
+        for a, b in zip(starts, [*starts[1:], hi]):
+            e = a + len(t[a:(depth0(t, a, b, r"\bderiving\b") or b)].rstrip())
+            while (p := text.rfind("\n", lo, a - 1)) >= 0 and not t[p + 1:a - 1].strip() and text[p + 1:a - 1].strip():
+                a = p + 1
+            out.append(("ctor-drop", a, e, ""))
     for m in re.finditer(rf"\.({LIST_METHODS})(?![\w?!'])", code):  # a list method's receiver and list result
         if (start := atom_before(t, lo + m.start(), lo)) is not None:
             lists += [(start, lo + m.start())] + ([(start, atom_after(t, start, hi))] if m[1] in LIST_RESULTS else [])
@@ -1088,8 +1099,9 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
         failing = {t: out for t in outside if (out := lake(env, "env", "lean", str(t)))[0]}
         if late := next((t for t in failing if failing[t][0] == TIMED_OUT), None):
             return "UNKNOWN", f"{late}: {failing[late][1]}"
-        if not failing:
-            return "SURVIVOR", ""
+        if not failing:  # review sc-1ae F1: the proofs it broke, each cut, which an --allow reason cites
+            broke = [f"lean/{f}:{a}" for f, spans in cuts.items() for a, _ in spans]
+            return "SURVIVOR", f"the proofs it breaks: {', '.join(broke)}" if broke else ""
         key = ("outside", tuple(built), state())
         if key not in controls:
             write(m.file, False)

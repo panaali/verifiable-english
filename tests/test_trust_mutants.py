@@ -955,6 +955,78 @@ def test_the_generator_drops_each_middle_element_of_a_literal_list():
         assert mutated.count("[") == mutated.count("]") and "[(1, " in mutated
 
 
+def test_the_generator_drops_each_constructor_of_an_inductive():
+    """Review sc-1ae F1: deleting `JsonWF`'s `bool` and `num` broke no proof and no check, and no operator wrote that
+    mutant. Each constructor is dropped alone: across lines, its doc comment with it, never a `deriving` clause or a
+    `|` inside a bracket; every line after it stays where it was."""
+    import trust_mutants
+    text = ('inductive Ev : Nat → Prop\n'
+            '  | zero : Ev 0\n'
+            '  /-- two more,\n      across lines -/\n'
+            '  | step (n : Nat) (h : Ev n) :\n      Ev (n + 2)\n'
+            '  | odd (h : match 1 with\n  | 0 => True\n  | _ => False) : Ev 1\n'
+            'inductive Color where\n  | red\n  | green\n  deriving Repr\n')
+    split = text.index("inductive Color")
+    drops = [(text[s:e], new) for lo, hi in ((0, split - 1), (split, len(text) - 1))
+             for op, s, e, new in trust_mutants.mutants(text, "inductive", lo, hi) if op == "ctor-drop"]
+    assert drops == [("  | zero : Ev 0", ""),
+                     ("  /-- two more,\n      across lines -/\n  | step (n : Nat) (h : Ev n) :\n      Ev (n + 2)",
+                      "\n\n\n"),
+                     ("  | odd (h : match 1 with\n  | 0 => True\n  | _ => False) : Ev 1", "\n\n"),
+                     ("  | red", ""), ("  | green", "")]
+    assert not [m for m in trust_mutants.mutants(text, "def", 0, split - 1) if m[0] == "ctor-drop"]
+
+
+def test_the_generator_drops_each_constructor_of_json_wf():
+    """Review sc-1ae F1's own declaration: each of `JsonWF`'s six constructors, `bool` and `num` among them."""
+    import trust_mutants
+    text = (ROOT / "lean/VE/Scope/Govern.lean").read_text()
+    declared, _ = trust_mutants.declaration_list(ROOT / "lean/declarations.txt")
+    (r,) = [d for d in declared["VE.Scope.Govern"] if d.name == "VE.Scope.JsonWF"]
+    starts = [0, *(i + 1 for i, ch in enumerate(text) if ch == "\n")]
+    lo, hi = starts[r.start[0] - 1] + r.start[1], starts[r.end[0] - 1] + r.end[1]
+    drops = [text[s:e].split()[1] for op, s, e, _ in trust_mutants.mutants(text, "inductive", lo, hi)
+             if op == "ctor-drop"]
+    assert drops == ["null", "bool", "num", "str", "arr", "obj"]
+
+
+INDUCTIVE = """namespace Demo
+
+/-- `zero` is read by a proof, `step` by nothing. -/
+inductive Ev : Nat → Prop
+  | zero : Ev 0
+  | step (n : Nat) : Ev n → Ev (n + 2)
+
+end Demo
+"""
+INDUCTIVE_PROOFS = """import Demo.Defs
+
+theorem Demo.ev_zero : Demo.Ev 0 := .zero
+"""
+INDUCTIVE_CHECKS = """import Demo.Proofs
+
+#guard (2 : Nat) + 2 == 4
+"""
+
+
+def test_a_constructor_no_proof_reads_survives_with_no_proof_named(tmp_path_factory):
+    """Review sc-1ae F1 end to end: a Prop's constructors are exercised only by proofs, so both drops survive; the
+    one a proof reads names it (what an --allow reason cites), the one nothing reads names none. The proof is built
+    because a module of checks imports it."""
+    root = tmp_path_factory.mktemp("inductive")
+    scaffold(root, "Far")
+    for name, text in (("Defs", INDUCTIVE), ("Proofs", INDUCTIVE_PROOFS), ("Examples", INDUCTIVE_CHECKS)):
+        (root / f"lean/Demo/{name}.lean").write_text(text)
+    dump(root, tmp_path_factory.mktemp("dump"), ["Demo.ev_zero"])
+    git(root, "add", ".")
+    git(root, "commit", "-qm", "head")
+    done, mutants = tool(root, tmp_path_factory.mktemp("run"))
+    drops = {m["before"].split()[1]: (m["status"], m["detail"]) for m in of(mutants, "Ev")
+             if m["operator"] == "ctor-drop"}
+    assert drops == {"zero": ("SURVIVOR", "the proofs it breaks: lean/Demo/Proofs.lean:3"), "step": ("SURVIVOR", "")}, \
+        done.stdout + done.stderr
+
+
 # Review F7's truth table: every command form `classify` can see, its class, and two readings of a definition: its
 # value (`{v}`, which a check must catch) and a proof the tool cuts (`{p}`, through the witness `{w}`: up front in
 # the mutated module, when the mutant breaks it in another). An outcome a cut or broken proof can change must never
