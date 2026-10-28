@@ -67,6 +67,14 @@ structure ReadingsEnvironment where
   json : Json
   lowerJson : Json
 
+/-- D-33 (act-phrases 6.4, 10): the readings route reads single acts only. The norms decoder's refusal of a joined
+    act of a predicate `p` among `predicates` (`Acts.Lexical.check`'s D-4) is given as the route's own refusal, since
+    nothing elaborates a reading set's candidates; every other refusal is the decoder's. -/
+def singleActsOnly (predicates : List String) (message : String) : String :=
+  match predicates.find? (fun p => message.startsWith s!"InvalidInput: act phrase for {p} joins acts with '") with
+  | some p => s!"UnsupportedProfile: acts@0 on the readings route admits single acts only; the act of {p} joins acts"
+  | none => message
+
 def decodeEnvironment (environment : Json) : Except String ReadingsEnvironment := do
   let profiles ← match environment.getObjVal? "profiles" >>= strings with
     | .ok ps => pure ps
@@ -94,7 +102,9 @@ def decodeEnvironment (environment : Json) : Except String ReadingsEnvironment :
     pure ⟨.soft, profiles, lower, ⟨checked.ne, checked.soft, checked.profiles, frameJson⟩, emptyRights,
       environment, lowerJson⟩
   | .norms =>
-    let ne ← VE.Norms.Wire.decodeNormsEnvironment frameJson (displayConstants := false)
+    let names := ((frameJson.getObjValD "vocabulary").getObjValD "predicates" |> fields).toOption.getD []
+    let ne ← (VE.Norms.Wire.decodeNormsEnvironment frameJson (displayConstants := false) (acts := true)).mapError
+      (singleActsOnly (names.map Prod.fst))
     pure ⟨.norms, profiles, lower, ⟨ne, emptySoft, lower, lowerJson⟩, emptyRights, environment, lowerJson⟩
 
 /-- The frame (1.2): the environment and no unit. -/
