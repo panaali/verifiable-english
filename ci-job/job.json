@@ -1,0 +1,15 @@
+{
+ "job": "sccold-0294040f",
+ "head": "951f2c50b400271d4e17e44dfcc3657cb055cf1c",
+ "argv": [
+  "sccold-0294040f",
+  "951f2c50b400271d4e17e44dfcc3657cb055cf1c",
+  "6121d5c1bc541869c55cc91234dfef5509f4070d",
+  "-",
+  "-",
+  "--max-mutants",
+  "3",
+  "--jobs",
+  "4"
+ ]
+}
