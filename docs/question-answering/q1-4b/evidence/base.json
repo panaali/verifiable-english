@@ -27584,5 +27584,147 @@
    "message": "InvalidInput: non-ASCII speech wording"
   },
   "wording": "\u3000Must alice open the desk?"
+ },
+ {
+  "env": "negative",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The character at position 0 cannot appear outside a quoted name.",
+   "span": {
+    "column": 1,
+    "end": 1,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is atlas not reviewed?"
+ },
+ {
+  "env": "negative",
+  "outcome": {
+   "code": "SyntaxError",
+   "error": "SyntaxError",
+   "message": "The character at position 0 cannot appear outside a quoted name.",
+   "span": {
+    "column": 1,
+    "end": 1,
+    "line": 1,
+    "start": 0
+   }
+  },
+  "wording": "Is beacon not reviewed?"
+ },
+ {
+  "env": "names",
+  "outcome": {
+   "content": {
+    "body": [
+     "unary",
+     "reviewed",
+     [
+      "const",
+      "atlas2"
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is atlas2 reviewed?"
+ },
+ {
+  "env": "names",
+  "outcome": {
+   "code": "InvalidInput",
+   "error": "VEError",
+   "message": "InvalidInput: no single speech-act reading"
+  },
+  "wording": "Is \"atlas2\" reviewed?"
+ },
+ {
+  "env": "names",
+  "outcome": {
+   "content": {
+    "body": [
+     "unary",
+     "reviewed",
+     [
+      "const",
+      "atlas_two"
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is atlas_two reviewed?"
+ },
+ {
+  "env": "names",
+  "outcome": {
+   "code": "InvalidInput",
+   "error": "VEError",
+   "message": "InvalidInput: no single speech-act reading"
+  },
+  "wording": "Is \"atlas_two\" reviewed?"
+ },
+ {
+  "env": "names",
+  "outcome": {
+   "content": {
+    "body": [
+     "unary",
+     "reviewed",
+     [
+      "const",
+      "beacon2"
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is beacon2 reviewed?"
+ },
+ {
+  "env": "names",
+  "outcome": {
+   "code": "InvalidInput",
+   "error": "VEError",
+   "message": "InvalidInput: no single speech-act reading"
+  },
+  "wording": "Is \"beacon2\" reviewed?"
+ },
+ {
+  "env": "names",
+  "outcome": {
+   "content": {
+    "body": [
+     "unary",
+     "reviewed",
+     [
+      "const",
+      "beacon_two"
+     ]
+    ],
+    "mode": "polar"
+   },
+   "kind": "question",
+   "warnings": []
+  },
+  "wording": "Is beacon_two reviewed?"
+ },
+ {
+  "env": "names",
+  "outcome": {
+   "code": "InvalidInput",
+   "error": "VEError",
+   "message": "InvalidInput: no single speech-act reading"
+  },
+  "wording": "Is \"beacon_two\" reviewed?"
  }
 ]

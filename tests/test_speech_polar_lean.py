@@ -194,6 +194,91 @@ def test_a_name_as_declared_or_capitalised_is_read(wording, name):
     assert parse_speech(ENV, wording, ENV.speech_acts)[0]["body"] == ["unary", "reviewed", ["const", name]]
 
 
+def _extended_environment(kind):
+    raw = ENV.to_dict()
+    if kind == "negative":
+        raw["vocabulary"]["predicates"]["reviewed"]["negative_verbalisation"] = "{0} is not reviewed"
+    else:
+        for name in ("atlas2", "atlas_two", "beacon2", "beacon_two"):
+            raw["vocabulary"]["constants"][name] = {"sort": "service", "description": name}
+    return Environment(raw)
+
+
+@pytest.mark.parametrize("name", ["atlas", "beacon"])
+def test_a_declared_negative_verbalisation_has_a_recorded_verdict_change(name):
+    """F1: with this declared negative form, Lean reads negation where the base refused the question."""
+    wording = f"Is {name} not reviewed?"
+    env = _extended_environment("negative")
+    expected = {"mode": "polar", "body": ["not", ["unary", "reviewed", ["const", name]]]}
+    assert parse_speech(env, wording, env.speech_acts) == (expected, "question")
+    _assert_saved_new_verdict("negative", wording, expected, "SyntaxError")
+
+
+@pytest.mark.parametrize("name", ["atlas2", "atlas_two", "beacon2", "beacon_two"])
+def test_a_declared_name_with_digit_or_underscore_has_both_verdict_changes(name):
+    """F1: bare and quoted spellings exchange acceptance; both outcomes are saved."""
+    env = _extended_environment("names")
+    bare, quoted = f"Is {name} reviewed?", f'Is "{name}" reviewed?'
+    with pytest.raises(VEError) as caught:
+        parse_speech(env, bare, env.speech_acts)
+    assert caught.value.lean_question["code"] == "NoDerivation"
+    expected = {"mode": "polar", "body": ["unary", "reviewed", ["const", name]]}
+    assert parse_speech(env, quoted, env.speech_acts) == (expected, "question")
+    _assert_saved_new_verdict("names", bare, None, "accepted")
+    _assert_saved_new_verdict("names", quoted, expected, "InvalidInput")
+
+
+def _assert_saved_new_verdict(env, wording, head_content, base_code):
+    evidence = Path(__file__).resolve().parents[1] / "docs/question-answering/q1-4b/evidence/delta.json"
+    rows = json.loads(evidence.read_text())["rows"]
+    match = [row for row in rows if row["env"] == env and row["wording"] == wording]
+    assert len(match) == 1 and match[0]["class"] == "verdict"
+    base, head = match[0]["base"], match[0]["head"]
+    if base_code == "accepted":
+        assert base["content"]["body"] == ["unary", "reviewed", ["const", wording.split()[1]]]
+    else:
+        assert base["code"] == base_code
+    if head_content is None:
+        assert head["code"] == "SyntaxError"
+    else:
+        assert head["content"] == head_content
+
+
+def test_the_extended_delta_audits_all_ten_pending_verdicts():
+    """The evidence is complete, while its unsigned verdicts keep the approval gate closed."""
+    script = ROOT / "docs/question-answering/q1-4b/evidence/speech_ab_f2.py"
+    delta = ROOT / "docs/question-answering/q1-4b/evidence/delta.json"
+    audited = subprocess.run([sys.executable, str(script), "audit", str(delta)],
+                             capture_output=True, text=True, timeout=HANG_TIMEOUT)
+    assert audited.returncode == 0, audited.stdout + audited.stderr
+    summary = json.loads(audited.stdout)
+    assert {key: summary[key] for key in ("negative", "bare_name", "quoted_name")} == {
+        "negative": 2, "bare_name": 4, "quoted_name": 4}
+    assert summary["pending_signature"] == 10 and summary["failing"] == 0
+    gated = subprocess.run([sys.executable, str(script), "check", str(delta)],
+                           capture_output=True, text=True, timeout=HANG_TIMEOUT)
+    assert gated.returncode == 1 and json.loads(gated.stdout)["pending_signature"] == 10
+
+
+@pytest.mark.parametrize("mutation", ["remove", "change_head"])
+def test_the_delta_audit_catches_missing_or_unclassified_verdicts(tmp_path, mutation):
+    """A missing case or an unknown verdict cannot be hidden by the pending-class allowance."""
+    script = ROOT / "docs/question-answering/q1-4b/evidence/speech_ab_f2.py"
+    saved = ROOT / "docs/question-answering/q1-4b/evidence/delta.json"
+    delta = json.loads(saved.read_text())
+    row = next(row for row in delta["rows"] if row["env"] == "negative"
+               and row["wording"] == "Is atlas not reviewed?")
+    if mutation == "remove":
+        delta["rows"].remove(row)
+    else:
+        row["head"]["content"]["body"] = ["unary", "reviewed", ["const", "atlas"]]
+    changed = tmp_path / "delta.json"
+    changed.write_text(json.dumps(delta))
+    result = subprocess.run([sys.executable, str(script), "audit", str(changed)],
+                            capture_output=True, text=True, timeout=HANG_TIMEOUT)
+    assert result.returncode == 1
+
+
 ROOT = Path(__file__).resolve().parents[1]
 ENV_ALLOW = ("PATH", "HOME", "LANG", "LC_ALL", "TMPDIR", "PYTHONPATH", "PYTHONNOUSERSITE", "PYTHONPYCACHEPREFIX")
 
