@@ -46,6 +46,9 @@ EXPECTED = [
     'ReservedWord: "and" in the words of x',
     "VerbalisationCollision(x, y)",
     ["c1 holds", "c2 fails"],
+    # me-3: claim and follows rows (both outcomes) under a software convention, beside a stated value
+    ["w1 holds reproduction unknown", "h6 holds reproduction unknown", "u1 holds reproduction unknown",
+     "h7 fails reproduction unknown"],
 ]
 
 
