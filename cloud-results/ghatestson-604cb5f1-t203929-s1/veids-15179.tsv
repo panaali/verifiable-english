@@ -1,0 +1,22 @@
+collected	tests/test_definitions.py::test_order_and_closed_biconditionals
+collected	tests/test_definitions.py::test_nary_definition_elaborates_and_computes_model_table
+collected	tests/test_definitions.py::test_nary_definition_rejects_self_reference
+collected	tests/test_definitions.py::test_reject_recursive_and_free[body0-DependencyCycle]
+collected	tests/test_definitions.py::test_reject_recursive_and_free[body1-the body is not a typed formula over the symbols below it]
+collected	tests/test_definitions.py::test_reject_mutual_cycle
+collected	tests/test_definitions.py::test_bound_definition_changes_identity_and_validates_model
+collected	tests/test_definitions.py::test_bound_definition_rejects_cycle_and_free_variable
+collected	tests/test_definitions.py::test_definition_statement_sugar_is_input_only
+collected	tests/test_definitions.py::test_thousand_guarded_sugar_round_trips
+collected	tests/test_definitions.py::test_definition_above_regulated_symbol_is_admitted
+passed	tests/test_definitions.py::test_order_and_closed_biconditionals
+passed	tests/test_definitions.py::test_nary_definition_elaborates_and_computes_model_table
+passed	tests/test_definitions.py::test_nary_definition_rejects_self_reference
+passed	tests/test_definitions.py::test_reject_recursive_and_free[body0-DependencyCycle]
+passed	tests/test_definitions.py::test_reject_recursive_and_free[body1-the body is not a typed formula over the symbols below it]
+passed	tests/test_definitions.py::test_reject_mutual_cycle
+passed	tests/test_definitions.py::test_bound_definition_changes_identity_and_validates_model
+passed	tests/test_definitions.py::test_bound_definition_rejects_cycle_and_free_variable
+passed	tests/test_definitions.py::test_definition_statement_sugar_is_input_only
+passed	tests/test_definitions.py::test_thousand_guarded_sugar_round_trips
+passed	tests/test_definitions.py::test_definition_above_regulated_symbol_is_admitted

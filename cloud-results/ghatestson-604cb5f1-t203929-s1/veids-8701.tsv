@@ -1,0 +1,66 @@
+collected	tests/test_run_order.py::test_the_tools_modules_are_not_shadowed_by_test_modules
+collected	tests/test_run_order.py::test_the_last_failed_then_the_changed_then_the_rest
+collected	tests/test_run_order.py::test_within_each_group_the_slowest_recorded_unit_starts_first
+collected	tests/test_run_order.py::test_the_order_is_a_permutation_of_the_selection
+collected	tests/test_run_order.py::test_a_unit_leaves_the_last_failures_when_it_runs_to_the_end
+collected	tests/test_run_order.py::test_the_last_failures_are_the_runs_and_a_newer_gates
+collected	tests/test_run_order.py::test_a_malformed_state_is_no_last_failures[]
+collected	tests/test_run_order.py::test_a_malformed_state_is_no_last_failures[{]
+collected	tests/test_run_order.py::test_a_malformed_state_is_no_last_failures[[]]
+collected	tests/test_run_order.py::test_a_malformed_state_is_no_last_failures[{"format": "other", "failed": {}}]
+collected	tests/test_run_order.py::test_a_malformed_state_is_no_last_failures[{"format": "ve-last-failed@1", "failed": {"tests/test_a.py": [7]}}]
+collected	tests/test_run_order.py::test_the_state_is_in_this_worktrees_own_git_directory
+collected	tests/test_run_order.py::test_junit_failures_are_pytests_own_node_ids
+collected	tests/test_run_order.py::test_a_unit_without_a_junit_report_is_one_failure_named_by_the_unit
+collected	tests/test_run_order.py::test_a_plain_run_takes_the_last_failed_then_the_changed_first
+collected	tests/test_run_order.py::test_a_plain_run_stops_after_maxfail_and_keeps_what_it_did_not_run
+collected	tests/test_run_order.py::test_a_plain_run_whose_only_failures_are_quarantined_passes
+collected	tests/test_run_order.py::test_a_quarantined_failure_never_stops_a_plain_run
+collected	tests/test_run_order.py::test_a_full_run_counts_quarantined_failures_and_never_stops
+collected	tests/test_run_order.py::test_the_maxfail_options[arguments0---full runs every test]
+collected	tests/test_run_order.py::test_the_maxfail_options[arguments1-0 or a positive count]
+collected	tests/test_run_order.py::test_no_run_path_passes_pytests_own_stop_options
+collected	tests/test_run_order.py::test_the_stop_plugin_refuses_pytests_own_maxfail
+collected	tests/test_run_order.py::test_a_recorded_unit_runs_past_its_quarantined_failure[1]
+collected	tests/test_run_order.py::test_a_recorded_unit_runs_past_its_quarantined_failure[2]
+collected	tests/test_run_order.py::test_recorded_units_start_in_the_given_order
+collected	tests/test_run_order.py::test_a_recorded_run_stops_after_maxfail_failures
+collected	tests/test_run_order.py::test_stopping_kills_the_running_units
+collected	tests/test_run_order.py::test_without_maxfail_every_unit_runs
+collected	tests/test_run_order.py::test_killing_a_recorded_run_kills_its_units[SIGTERM]
+collected	tests/test_run_order.py::test_killing_a_recorded_run_kills_its_units[SIGINT]
+collected	tests/test_run_order.py::test_killing_a_recorded_run_kills_its_units[SIGHUP]
+collected	tests/test_run_order.py::test_a_failing_recorded_run_kills_its_other_units
+passed	tests/test_run_order.py::test_the_tools_modules_are_not_shadowed_by_test_modules
+passed	tests/test_run_order.py::test_the_last_failed_then_the_changed_then_the_rest
+passed	tests/test_run_order.py::test_within_each_group_the_slowest_recorded_unit_starts_first
+passed	tests/test_run_order.py::test_the_order_is_a_permutation_of_the_selection
+passed	tests/test_run_order.py::test_a_unit_leaves_the_last_failures_when_it_runs_to_the_end
+passed	tests/test_run_order.py::test_the_last_failures_are_the_runs_and_a_newer_gates
+passed	tests/test_run_order.py::test_a_malformed_state_is_no_last_failures[]
+passed	tests/test_run_order.py::test_a_malformed_state_is_no_last_failures[{]
+passed	tests/test_run_order.py::test_a_malformed_state_is_no_last_failures[[]]
+passed	tests/test_run_order.py::test_a_malformed_state_is_no_last_failures[{"format": "other", "failed": {}}]
+passed	tests/test_run_order.py::test_a_malformed_state_is_no_last_failures[{"format": "ve-last-failed@1", "failed": {"tests/test_a.py": [7]}}]
+passed	tests/test_run_order.py::test_the_state_is_in_this_worktrees_own_git_directory
+passed	tests/test_run_order.py::test_junit_failures_are_pytests_own_node_ids
+passed	tests/test_run_order.py::test_a_unit_without_a_junit_report_is_one_failure_named_by_the_unit
+passed	tests/test_run_order.py::test_a_plain_run_takes_the_last_failed_then_the_changed_first
+passed	tests/test_run_order.py::test_a_plain_run_stops_after_maxfail_and_keeps_what_it_did_not_run
+passed	tests/test_run_order.py::test_a_plain_run_whose_only_failures_are_quarantined_passes
+passed	tests/test_run_order.py::test_a_quarantined_failure_never_stops_a_plain_run
+passed	tests/test_run_order.py::test_a_full_run_counts_quarantined_failures_and_never_stops
+passed	tests/test_run_order.py::test_the_maxfail_options[arguments0---full runs every test]
+passed	tests/test_run_order.py::test_the_maxfail_options[arguments1-0 or a positive count]
+passed	tests/test_run_order.py::test_no_run_path_passes_pytests_own_stop_options
+passed	tests/test_run_order.py::test_the_stop_plugin_refuses_pytests_own_maxfail
+passed	tests/test_run_order.py::test_a_recorded_unit_runs_past_its_quarantined_failure[1]
+passed	tests/test_run_order.py::test_a_recorded_unit_runs_past_its_quarantined_failure[2]
+passed	tests/test_run_order.py::test_recorded_units_start_in_the_given_order
+passed	tests/test_run_order.py::test_a_recorded_run_stops_after_maxfail_failures
+passed	tests/test_run_order.py::test_stopping_kills_the_running_units
+passed	tests/test_run_order.py::test_without_maxfail_every_unit_runs
+passed	tests/test_run_order.py::test_killing_a_recorded_run_kills_its_units[SIGTERM]
+passed	tests/test_run_order.py::test_killing_a_recorded_run_kills_its_units[SIGINT]
+passed	tests/test_run_order.py::test_killing_a_recorded_run_kills_its_units[SIGHUP]
+passed	tests/test_run_order.py::test_a_failing_recorded_run_kills_its_other_units
