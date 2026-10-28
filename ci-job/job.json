@@ -1,0 +1,17 @@
+{
+ "job": "tmsv5-me-4.s6of6-ddcedb47",
+ "head": "d76daccac25ea65e75f8a765fa3e71f607aef079",
+ "argv": [
+  "tmsv5-me-4.s6of6-ddcedb47",
+  "d76daccac25ea65e75f8a765fa3e71f607aef079",
+  "99490db8402cee0e705579e3826cb67d359b72b0",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-b589be8420a1.tar.zst",
+  "e7ad853371ba12c434c9d9f000aa8e580d15f3f4a900a1c31eb0209df53a8a90",
+  "--max-mutants",
+  "1000",
+  "--shard",
+  "6/6",
+  "--jobs",
+  "3"
+ ]
+}
