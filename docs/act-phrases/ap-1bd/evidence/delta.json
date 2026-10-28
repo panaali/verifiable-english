@@ -1,0 +1,79 @@
+{
+ "records": 369,
+ "identical": 364,
+ "changed": {
+  "acts": 4,
+  "d33": 1
+ },
+ "records_changed": [
+  {
+   "key": "probe:check/A1-A3",
+   "why": "acts",
+   "base": {
+    "error": "UnsupportedProfile: Unsupported profile acts@0",
+    "id": "c",
+    "status": "error"
+   },
+   "head": {
+    "id": "c",
+    "meaning_id": "318593ca461bd74813a13bf3af0b7343774bbd259b8136762f044eb237aba917",
+    "status": "ok",
+    "well_typed": true
+   }
+  },
+  {
+   "key": "probe:model/A1-A3",
+   "why": "acts",
+   "base": {
+    "error": "UnsupportedProfile: Unsupported profile acts@0",
+    "id": "m",
+    "status": "error"
+   },
+   "head": {
+    "id": "m",
+    "model_id": "7f26c6176c5993fe7eaeb9d26502d2a958014a1321501246eec0f91febb903be",
+    "status": "ok",
+    "valid": true
+   }
+  },
+  {
+   "key": "probe:readings/A1-A3",
+   "why": "acts",
+   "base": {
+    "error": "UnsupportedProfile: Unsupported profile acts@0",
+    "id": "v",
+    "status": "error"
+   },
+   "head": {
+    "content_bearing": false,
+    "id": "v",
+    "status": "ok"
+   }
+  },
+  {
+   "key": "probe:readings/A5",
+   "why": "d33",
+   "base": {
+    "error": "UnsupportedProfile: Unsupported profile acts@0",
+    "id": "v",
+    "status": "error"
+   },
+   "head": {
+    "error": "UnsupportedProfile: acts@0 on the readings route admits single acts only; the act of p joins acts",
+    "id": "v",
+    "status": "error"
+   }
+  },
+  {
+   "key": "probe:document/u076",
+   "why": "acts",
+   "base": {
+    "bytes": 123,
+    "refused": "UnsupportedProfile: Unsupported profile acts@0"
+   },
+   "head": {
+    "CHECKED": 123
+   }
+  }
+ ]
+}
