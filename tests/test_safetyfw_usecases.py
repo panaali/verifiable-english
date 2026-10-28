@@ -113,3 +113,126 @@ def test_transcription_is_pinned(case):
     """No key cell or case fact of the transcription changes without this pin changing in the same commit."""
     for name, digest in TRANSCRIPTION_SHA256[case].items():
         assert hashlib.sha256((USECASES / case / name).read_bytes()).hexdigest() == digest, name
+
+
+# --- anthropic-rsp baseline (PLAN 7 to 10): the translation, the span accounting, stage 0 and the gaps -------------
+
+RSP = USECASES / "anthropic-rsp"
+RSP_EVIDENCE = REPO / "docs" / "usecases" / "safetyfw" / "anthropic-rsp"
+# The case's modules import their siblings by bare names, two of which safety-framework's modules also use; they are
+# loaded apart and stand in sys.modules only while these tests run (as tests/test_safety_framework.py does).
+RSP_NAMES = ("rsp_vocabulary", "rsp_translation", "build_document", "stage0", "measure")
+
+
+def _load_rsp():
+    import importlib
+    import sys
+    saved = {name: sys.modules.pop(name) for name in RSP_NAMES if name in sys.modules}
+    sys.path.insert(0, str(RSP))
+    try:
+        return {name: importlib.import_module(name) for name in RSP_NAMES}
+    finally:
+        sys.path.remove(str(RSP))
+        for name in RSP_NAMES:
+            sys.modules.pop(name, None)
+        sys.modules.update(saved)
+
+
+RSP_MODULES = _load_rsp()
+rsp_build, rsp_stage0, rsp_measure = RSP_MODULES["build_document"], RSP_MODULES["stage0"], RSP_MODULES["measure"]
+rsp_translation, rsp_vocabulary = RSP_MODULES["rsp_translation"], RSP_MODULES["rsp_vocabulary"]
+LEAN_SERVICE = REPO / "lean/.lake/build/bin/ve_service"
+
+
+@pytest.fixture
+def rsp_modules(monkeypatch):
+    import sys
+    for name, module in RSP_MODULES.items():
+        monkeypatch.setitem(sys.modules, name, module)
+
+
+def test_rsp_environment_file_is_generated():
+    assert (RSP / "environment.d1.json").read_text() == rsp_vocabulary.text()
+
+
+@pytest.mark.skipif(not LEAN_SERVICE.exists(), reason="the Lean service is not built")
+def test_rsp_every_rule_and_premise_parses_with_one_reading(rsp_modules):
+    for block in rsp_translation.rule_blocks():
+        assert json.loads(rsp_translation.parsed_rule(block.id))["name"] == block.id
+    assert sum(len(f) for _, f in rsp_translation.facts()) == 15
+
+
+def test_rsp_every_byte_is_in_exactly_one_unit(rsp_modules):
+    """M3: the saved spans partition the 59,410 bytes; the D1 and master maps each total them; with the pinned source,
+    the build reproduces spans.json and coverage.json byte for byte."""
+    coverage = json.loads((RSP / "coverage.json").read_text())
+    spans = json.loads((RSP / "spans.json").read_text())["units"]
+    assert coverage["source_bytes"] == coverage["accounted_bytes"] == rsp_build.TEXT_BYTES == 59410
+    assert sum(coverage["bytes_by_status"].values()) == sum(coverage["master_bytes_by_status"].values()) == 59410
+    assert spans[0]["span"][0] == 0 and spans[-1]["span"][1] == 59410
+    assert all(a["span"][1] == b["span"][0] for a, b in zip(spans, spans[1:]))
+    assert [u["id"] for u in spans] == [uid for _, uid, _ in rsp_build.UNITS]
+    if rsp_build.DEFAULT_SOURCE.exists():
+        assert rsp_build.main(["--check"]) == 0
+
+
+def test_rsp_every_reading_set_rule_and_open_term_is_placed(rsp_modules):
+    """Each set of READINGS sits on exactly one unit and names only blocks of rules.d1.ve or facts.d1.ve (or a case
+    premise); each open term a unit lists is declared; every declared open term is used."""
+    spans = json.loads((RSP / "spans.json").read_text())["units"]
+    placed = [u["reading_set"] for u in spans if "reading_set" in u]
+    assert sorted(placed) == sorted(rsp_build.READINGS)
+    blocks = {b.id for b in rsp_translation.read_blocks("rules.d1.ve")} | {
+        b.id for b in rsp_translation.read_blocks("facts.d1.ve")}
+    for set_id, (harness, choices) in rsp_build.READINGS.items():
+        assert harness in rsp_build.SET_FAMILIES and set(harness.split(" and ")) <= set(rsp_translation.READING_SETS)
+        for item in (i for items in choices.values() for i in items):
+            assert item.startswith("case: ") or set(item.split(" or ")) <= blocks, (set_id, item)
+    used = {t for u in spans for t in u.get("open_terms", [])}
+    assert used == set(rsp_build.OPEN_TERMS)
+
+
+def test_rsp_every_byte_not_checked_waits_for_a_named_family(rsp_modules):
+    """gaps.json and units.json are measure.py's reading of the saved spans: a unit is CHECKED exactly when it has no
+    blocker, every blocker is a family of the feature map, and an OPEN unit with an open term waits for JT."""
+    units, gaps = rsp_measure.measure()
+    for name, data in (("units.json", units), ("gaps.json", gaps)):
+        assert json.loads((RSP_EVIDENCE / name).read_text()) == json.loads(json.dumps(data)), name
+    for u in units["units"]:
+        assert (u["status"] == "CHECKED") is (u["blockers"] == []), u["id"]
+        assert set(u["blockers"]) <= set(rsp_measure.FAMILIES), u["id"]
+    spans = {u["id"]: u for u in json.loads((RSP / "spans.json").read_text())["units"]}
+    assert all("JT" in u["blockers"] for u in units["units"]
+               if u["status"] == "OPEN" and spans[u["id"]].get("open_terms"))
+    assert gaps["status_bytes_recomputed"] == gaps["master_bytes_by_status"]
+
+
+def test_rsp_identifiers_and_inventions(rsp_modules):
+    """P7 (M5) and M6, recomputed: no identifier packs a threshold, number or condition into its name, and every rule,
+    premise, default and permission is traced to a span; stage0.json saved the same."""
+    lint, audit = rsp_stage0.identifier_lint(), rsp_stage0.invention_audit()
+    assert lint["violations"] == []
+    assert audit["untraced"] == audit["defaults_untraced"] == audit["permissions_untraced"] == []
+    assert audit["thresholds_without_premise"] == audit["order_or_causal_predicates"] == []
+    saved = json.loads((RSP_EVIDENCE / "stage0.json").read_text())
+    assert saved["P7"] == json.loads(json.dumps(lint)) and saved["M6"] == json.loads(json.dumps(audit))
+
+
+def test_rsp_stage0_saved_answers(rsp_modules):
+    """The saved stage 0: P1 OPEN, P2 pending, D2 admitted only without T4's unclassified harm, D3's certificates,
+    P5 and P6 total, and judgments@0 refused beside soft-norms@0 (P8)."""
+    saved = json.loads((RSP_EVIDENCE / "stage0.json").read_text())
+    assert saved["P1"]["units"] == {"s36-full-review": "OPEN"}
+    assert (saved["P2"]["units"], saved["P2"]["premises"]) == ({"t1-plan": "OPEN"}, "UNKNOWN")
+    assert saved["P3"]["admitted"] and saved["P3"]["with_unclassified_t4_harm"] == "HarmUnclassified: harm_of_automated_rd"
+    assert all(c["might"] and not c["leads"] for c in saved["P3"]["stated_cells"])
+    assert saved["P4"]["admitted"] and all(saved["P4"]["certificates"].values())
+    assert saved["P5"]["total"] == saved["P6"]["master_total"] == 59410 and saved["P6"]["contiguous"]
+    assert saved["P8"]["diagnostic"] == "CheckerUnavailable: judgments@0 with soft-norms@0 needs its composed Lean route"
+
+
+@pytest.mark.skipif(not LEAN_SERVICE.exists(), reason="the Lean service is not built")
+def test_rsp_stage0_rerun_equals_saved(rsp_modules):
+    """Stage 0 recomputed by VE; the source probes need the pinned source, which the gate runner does not store
+    (tools/gate-optional.json), and are left out without it."""
+    assert rsp_stage0.main(["--check"]) == 0
