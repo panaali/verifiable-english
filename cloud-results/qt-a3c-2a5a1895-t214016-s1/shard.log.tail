@@ -1,0 +1,172 @@
+shard 2/6: 108 units; commands: ['lake build', 'lake build ve_english_lean_bench ve_scope_bench']
++ lake build
+⚠ [95/879] Replayed VE.SoftNorms.Soften
+warning: VE/SoftNorms/Soften.lean:264:19: This simp argument is unused:
+  Option.bind_eq_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵e̵q̵_̵b̵i̵n̵d̵,̵ ̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵n̵o̵n̵e̵]̵[̲O̲p̲t̲i̲o̲n̲.̲b̲i̲n̲d̲_̲n̲o̲n̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [110/879] Replayed VE.Readings.Separate
+warning: VE/Readings/Separate.lean:1490:50: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: VE/Readings/Separate.lean:1492:5: unused variable `hr`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [118/879] Replayed VE.Readings.Superpose
+warning: VE/Readings/Superpose.lean:311:34: unused variable `h`
+
+... (9221 lines cut; full output in shard-full.txt)
+   Compiling digest v0.10.7
+   Compiling cfg-if v1.0.5
+   Compiling memchr v2.8.3
+   Compiling cpufeatures v0.2.17
+   Compiling itoa v1.0.18
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 5.81s
+order: failed last time []; changed ['tests/test_cardinality_service.py']; then the rest; --maxfail 5
+recording 108 units with 4 jobs in /tmp/ve-select-run-59eolmcd
+  tests/test_wire_contract_s5_lean.py: exit 2 in 0.7 s, 231 functions
+  tests/test_repo_map.py: exit 1 in 61.3 s, 447 functions
+  tests/test_readings_components_lean.py: exit 2 in 0.8 s, 233 functions
+  tests/test_hang_guards.py: exit 1 in 20.3 s, 502 functions
+  tests/test_gate_quarantine.py: exit 1 in 43.1 s, 2750 functions
+stopping after 5 failed tests (--maxfail 5)
+FAILED tests/test_repo_map.py (exit 1): tests/test_repo_map.py::test_a_map_from_before_the_relay_changed_gives_the_static_answer; log /tmp/ve-select-run-59eolmcd/tests__test_repo_map.py.log
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['git', 'rev-parse', 'db138256cf71e7c3416aa4acd420cf3e3125314f^']' returned non-zero exit status 128.
+
+../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: CalledProcessError
+=========================== short test summary info ============================
+FAILED tests/test_repo_map.py::test_a_map_from_before_the_relay_changed_gives_the_static_answer - subprocess.CalledProcessError: Command '['git', 'rev-parse', 'db138256cf71e7c3416aa4acd420cf3e3125314f^']' returned non-zero exit status 128.
+1 failed, 32 passed in 60.15s (0:01:00)
+FAILED tests/test_wire_contract_s5_lean.py (exit 2): tests/test_wire_contract_s5_lean.py; log /tmp/ve-select-run-59eolmcd/tests__test_wire_contract_s5_lean.py.log
+
+ve: English comparator: {"records": 0, "excluded": 0, "planted": 0, "classes": {}} (/tmp/ve-english-comparator-n_47fkuu)
+
+==================================== ERRORS ====================================
+_____________ ERROR collecting tests/test_wire_contract_s5_lean.py _____________
+tests/test_wire_contract_s5_lean.py:31: in <module>
+    from conformance.frozen_norm_defaults import UnspecifiedDocument
+conformance/frozen_norm_defaults.py:18: in <module>
+    _source = subprocess.check_output(["git", "show", f"{_REVISION}:ve/norm_defaults.py"], cwd=_ROOT)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:473: in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: in run
+    raise CalledProcessError(retcode, process.args,
+E   subprocess.CalledProcessError: Command '['git', 'show', '9160d326:ve/norm_defaults.py']' returned non-zero exit status 128.
+------------------------------- Captured stderr --------------------------------
+fatal: invalid object name '9160d326'.
+=========================== short test summary info ============================
+ERROR tests/test_wire_contract_s5_lean.py - subprocess.CalledProcessError: Command '['git', 'show', '9160d326:ve/norm_defaults.py']' returned non-zero exit status 128.
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.21s
+FAILED tests/test_gate_quarantine.py (exit 1): tests/test_gate_quarantine.py::test_the_tracked_quarantine_is_valid_and_names_collected_tests; log /tmp/ve-select-run-59eolmcd/tests__test_gate_quarantine.py.log
+        """The IDs the gate's plugin records as collected in `root`, in collection order. `env` (default: INHERITED
+        from this process) gets `root` as PYTHONPATH, so `root`'s own sources are imported."""
+        with tempfile.TemporaryDirectory(prefix="ve-gate-collection-") as directory:
+            output = Path(directory) / "events.json"
+            base = {name: os.environ[name] for name in INHERITED if name in os.environ} if env is None else dict(env)
+            # Bytecode is checked only against its source's size and whole-second
+            # mtime, so a same-size edit within the second would load the earlier
+            # source. An empty cache, never the tree's __pycache__, compiles it fresh.
+            base.update(PYTHONPATH=str(root), PYTHONPYCACHEPREFIX=str(Path(directory) / "pycache"))
+            if prebuilt:
+                # Inside a running suite, whose session holds the shared build lock.
+                base["VE_NATIVE_PREBUILT"] = "1"
+            run = subprocess.run(collection_command(python or [sys.executable]), cwd=root,
+                                 env=nested_pytest.environment(base, VE_GATE_PYTEST_RESULT=str(output)),
+                                 text=True, capture_output=True)
+            events = json.loads(output.read_text()) if output.exists() else None
+        if events and events["collection_reports"]:
+            # A module skipped or broken at collection drops its IDs without a trace.
+>           raise CollectionError("collection reports: " + json.dumps(events["collection_reports"])[:4000])
+E           tools.gate_collection.CollectionError: collection reports: [{"nodeid": "tests/test_agent_policy_unspecified.py", "outcome": "failed", "reason": "tests/test_agent_policy_unspecified.py:21: in <module>\n    from conformance import frozen_norm_defaults as nd  # noqa: E402\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nconformance/frozen_norm_defaults.py:18: in <module>\n    _source = subprocess.check_output([\"git\", \"show\", f\"{_REVISION}:ve/norm_defaults.py\"], cwd=_ROOT)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:473: in check_output\n    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,\n../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: in run\n    raise CalledProcessError(retcode, process.args,\nE   subprocess.CalledProcessError: Command '['git', 'show', '9160d326:ve/norm_defaults.py']' returned non-zero exit status 128."}, {"nodeid": "tests/test_norm_defaults.py", "outcome": "failed", "reason": "tests/test_norm_defaults.py:12: in <module>\n    from conformance import frozen_norm_defaults as nd\nconformance/frozen_norm_defaults.py:18: in <module>\n    _source = subprocess.check_output([\"git\", \"show\", f\"{_REVISION}:ve/norm_defaults.py\"], cwd=_ROOT)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:473: in check_output\n    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,\n../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: in run\n    raise CalledProcessError(retcode, process.args,\nE   subprocess.CalledProcessError: Command '['git', 'show', '9160d326:ve/norm_defaults.py']' returned non-zero exit status 128."}, {"nodeid": "tests/test_norm_defaults_differential.py", "outcome": "failed", "reason": "tests/test_norm_defaults_differential.py:18: in <module>\n    from conformance.norm_defaults_differential import CONSTANTS, atom as _atom\nconformance/norm_defaults_differential.py:34: in <module>\n    from conformance import frozen_norm_defaults as nd  # noqa: E402\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nconformance/frozen_norm_defaults.py:18: in <module>\n    _source = subprocess.check_output([\"git\", \"show\", f\"{_REVISION}:ve/norm_defaults.py\"], cwd=_ROOT)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:473: in check_output\n    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,\n../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: in run\n    raise CalledProcessError(retcode, process.args,\nE   subprocess.CalledProcessError: Command '['git', 'show', '9160d326:ve/norm_defaults.py']' returned non-zero exit status 128."}, {"nodeid": "tests/test_norm_defaults_layered.py", "outcome": "failed", "reason": "tests/test_norm_defaults_layered.py:16: in <module>\n    from conformance import norm_defaults_layered as layered\nconformance/norm_defaults_layered.py:25: in <module>\n    from conformance import frozen_norm_defaults as nd  # noqa: E402\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nconformance/frozen_norm_defaults.py:18: in <module>\n    _source = subprocess.check_output([\"git\", \"show\", f\"{_REVISION}:ve/norm_defaults.py\"], cwd=_ROOT)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:473: in check_output\n    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,\n../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: i
+
+tools/gate_collection.py:103: CollectionError
+=========================== short test summary info ============================
+FAILED tests/test_gate_quarantine.py::test_the_tracked_quarantine_is_valid_and_names_collected_tests - tools.gate_collection.CollectionError: collection reports: [{"nodeid": "tests/test_agent_policy_unspecified.py", "outcome": "failed", "reason": "tests/test_agent_policy_unspecified.py:21: in <module>\n    from conformance import frozen_norm_defaults as nd  # noqa: E402\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nconformance/frozen_norm_defaults.py:18: in <module>\n    _source = subprocess.check_output([\"git\", \"show\", f\"{_REVISION}:ve/norm_defaults.py\"], cwd=_ROOT)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:473: in check_output\n    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,\n../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: in run\n    raise CalledProcessError(retcode, process.args,\nE   subprocess.CalledProcessError: Command '['git', 'show', '9160d326:ve/norm_defaults.py']' returned non-zero exit status 128."}, {"nodeid": "tests/test_norm_defaults.py", "outcome": "failed", "reason": "tests/test_norm_defaults.py:12: in <module>\n    from conformance import frozen_norm_defaults as nd\nconformance/frozen_norm_defaults.py:18: in <module>\n    _source = subprocess.check_output([\"git\", \"show\", f\"{_REVISION}:ve/norm_defaults.py\"], cwd=_ROOT)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:473: in check_output\n    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,\n../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: in run\n    raise CalledProcessError(retcode, process.args,\nE   subprocess.CalledProcessError: Command '['git', 'show', '9160d326:ve/norm_defaults.py']' returned non-zero exit status 128."}, {"nodeid": "tests/test_norm_defaults_differential.py", "outcome": "failed", "reason": "tests/test_norm_defaults_differential.py:18: in <module>\n    from conformance.norm_defaults_differential import CONSTANTS, atom as _atom\nconformance/norm_defaults_differential.py:34: in <module>\n    from conformance import frozen_norm_defaults as nd  # noqa: E402\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nconformance/frozen_norm_defaults.py:18: in <module>\n    _source = subprocess.check_output([\"git\", \"show\", f\"{_REVISION}:ve/norm_defaults.py\"], cwd=_ROOT)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:473: in check_output\n    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,\n../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: in run\n    raise CalledProcessError(retcode, process.args,\nE   subprocess.CalledProcessError: Command '['git', 'show', '9160d326:ve/norm_defaults.py']' returned non-zero exit status 128."}, {"nodeid": "tests/test_norm_defaults_layered.py", "outcome": "failed", "reason": "tests/test_norm_defaults_layered.py:16: in <module>\n    from conformance import norm_defaults_layered as layered\nconformance/norm_defaults_layered.py:25: in <module>\n    from conformance import frozen_norm_defaults as nd  # noqa: E402\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nconformance/frozen_norm_defaults.py:18: in <module>\n    _source = subprocess.check_output([\"git\", \"show\", f\"{_REVISION}:ve/norm_defaults.py\"], cwd=_ROOT)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:473: in check_output\n    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,\n../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: i
+1 failed, 37 passed in 42.24s
+FAILED tests/test_hang_guards.py (exit 1): tests/test_hang_guards.py::test_test_modules_other_code_imports_load_outside_pytest; log /tmp/ve-select-run-59eolmcd/tests__test_hang_guards.py.log
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['/home/runner/work/verifiable-english/verifiable-english/.venv/bin/python', '-c', "import impor...e 18, in <module>\n    from subprocesses import HANG_TIMEOUT\nModuleNotFoundError: No module named \'subprocesses\'\n').returncode
+
+tests/test_hang_guards.py:693: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_hang_guards.py::test_test_modules_other_code_imports_load_outside_pytest - AssertionError: Traceback (most recent call last):
+    File "<string>", line 3, in <module>
+      importlib.import_module('tests.' + name)
+      ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+    File "/home/runner/.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/importlib/__init__.py", line 88, in import_module
+      return _bootstrap._gcd_import(name[level:], package, level)
+             ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "<frozen importlib._bootstrap>", line 1406, in _gcd_import
+    File "<frozen importlib._bootstrap>", line 1371, in _find_and_load
+    File "<frozen importlib._bootstrap>", line 1342, in _find_and_load_unlocked
+    File "<frozen importlib._bootstrap>", line 938, in _load_unlocked
+    File "<frozen importlib._bootstrap_external>", line 759, in exec_module
+    File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+    File "/home/runner/work/verifiable-english/verifiable-english/tests/lean_build.py", line 18, in <module>
+      from subprocesses import HANG_TIMEOUT
+  ModuleNotFoundError: No module named 'subprocesses'
+  
+assert 1 == 0
+ +  where 1 = CompletedProcess(args=['/home/runner/work/verifiable-english/verifiable-english/.venv/bin/python', '-c', "import impor...e 18, in <module>\n    from subprocesses import HANG_TIMEOUT\nModuleNotFoundError: No module named \'subprocesses\'\n').returncode
+1 failed, 68 passed in 19.64s
+FAILED tests/test_readings_components_lean.py (exit 2): tests/test_readings_components_lean.py; log /tmp/ve-select-run-59eolmcd/tests__test_readings_components_lean.py.log
+    from tests.test_readings_nd_lean import ASKS, PROBE1, base1, choice_case, doc1, env1, environment, lower, one, \
+<frozen importlib._bootstrap>:1371: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1342: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:938: in _load_unlocked
+    ???
+.venv/lib/python3.14/site-packages/_pytest/assertion/rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests/test_readings_nd_lean.py:17: in <module>
+    from conformance import frozen_norm_defaults as oracle
+conformance/frozen_norm_defaults.py:18: in <module>
+    _source = subprocess.check_output(["git", "show", f"{_REVISION}:ve/norm_defaults.py"], cwd=_ROOT)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:473: in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: in run
+    raise CalledProcessError(retcode, process.args,
+E   subprocess.CalledProcessError: Command '['git', 'show', '9160d326:ve/norm_defaults.py']' returned non-zero exit status 128.
+------------------------------- Captured stderr --------------------------------
+fatal: invalid object name '9160d326'.
+=========================== short test summary info ============================
+ERROR tests/test_readings_components_lean.py - subprocess.CalledProcessError: Command '['git', 'show', '9160d326:ve/norm_defaults.py']' returned non-zero exit status 128.
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.28s
+recorded 27 units for tree df44f04373; 81 others left to the static graph until they run; 5 failed
+STOPPED EARLY (--maxfail 5): 81 selected units did not run: tests/test_packs_guard_mutants.py, tests/test_defaults_checks.py, tests/test_relay_binding_inventory.py, tools/test_layer_policy.py, tests/test_readings_sup_verdicts.py, tests/test_question_reading.py, tests/test_lean_share.py, tests/test_since_pass.py, tests/test_defaults_lean.py, tests/test_english_lean_s3.py, tests/test_single_owner.py, tests/test_senses_route.py, tests/test_assist_deadline.py, tests/test_document_split.py, tests/test_english_e2_profile_matrix.py, tests/test_speech_acts_lean.py, tests/test_readings_defaults_names.py, tests/test_readings_verdicts_split.py, tests/test_readings_sd_lean.py, tests/test_speech_source_relay.py, tests/test_bluedot_grant.py, tests/test_b15b_evidence.py, tests/test_views_polish.py, tests/test_risk_lean_route.py, tests/test_lean_first_b13b.py, tests/test_norm_admission.py, tests/test_definitions_english.py, tests/test_order_round2.py, tests/test_speech_source_switch.py, tests/test_p0_three_way.py, tests/test_evidence_toolkit.py, tests/test_gate_trust.py, tests/test_w6a_looprecheck2.py, tests/test_lexicon.py, tests/test_lean_first_b14a.py, tests/test_lean_first_b6_report.py, tests/test_progress_watch.py, tests/test_english_e2_boundary.py, tests/test_english_lean_lexicon.py, tests/test_route_transport.py, tests/test_readings_defaults_rd3_report.py, tests/test_readings_nd_lean.py, tests/test_order_grammar.py, tests/test_risk_profile.py, tests/test_english_e2_selection.py, tests/test_english_e2_statements.py, tests/test_senses_lean.py, tests/test_words.py, tests/test_rd9_gap_relay.py, tests/test_discourse_three_way.py, tests/test_entailment.py, tests/test_equivalence.py, tests/test_compose_integration.py, tests/test_norm_defaults_switch.py, tests/test_norm_english.py, tests/test_cardinality_exercised.py, tests/test_closure_witnesses.py, tests/test_suite_tail.py, tests/test_batch_scope.py, tests/test_readings_sd_relay.py, tests/test_conformance.py, tests/test_colab.py, tests/test_english_lean_adapter.py, tests/test_scales_exercised.py, tests/test_b17_owner.py, tests/test_eff_tests_report.py, tests/test_lean_statements_parts.py, tests/test_readings_defaults_rd6a_report.py, tests/test_b16b_evidence.py, tests/test_english_e2_relay.py, tests/test_lean_first_rule3_measurement.py, tests/test_profiles.py, tests/test_question_lean_relay.py, tests/test_calendar_regression_w6b.py, tests/test_gatekeeper_adapter.py, tests/test_lean_first_b10a_report.py, tests/test_lean_first_b3d_report.py, tests/test_readings_s2_python.py, tests/test_acts_lexical.py, tests/test_wire_contract_engine.py, tests/test_wire_contract_generator.py
+SHARD 2/6: exit 1 in 537.1 s; 108 units, 22 passed
