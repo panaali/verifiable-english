@@ -66,6 +66,7 @@ def diag (j : Json) : String :=
 #guard diag (env (drop "anchor" block)) ==
   "ok [2026-10-12, 2026-10-14] 9 [the drafters]"
 #guard diag (env (set "day" (.num 3))) == "InvalidInput: events.day"
+#guard diag (env (set "states" (.num 1))) == "InvalidInput: events.states"
 #guard diag (env (set "anchor" (.num 3))) == "InvalidInput: events.anchor"
 #guard diag (env (set "dates" (parse "[\"2026-10-12\", 4]"))) == "InvalidInput: events.dates"
 #guard diag (env (set "events" (parse "[{\"sort\": \"act\", \"on\": \"committed_on\", \"x\": 1}]"))) ==

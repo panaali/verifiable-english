@@ -17,10 +17,10 @@
   "file": "lean/VE/NormDefaults/Packs.lean",
   "build_failed": true,
   "test": [
-   "lean/VE/Events/WireExamples.lean:149: #guard diag (env block (withConst \"date__2026_10_12\")) == \"EventsReserved: date__2026_10_12\"",
-   "lean/VE/Events/WireExamples.lean:150: #guard diag (env block (withConst \"date__x\")) == \"EventsReserved: date__x\"",
-   "lean/VE/Events/WireExamples.lean:152: #guard ownedByEvents (dateName ⟨2026, 10, 12⟩) && !ownedByEvents \"date_x\" && !ownedByEvents \"dates__",
-   "lean/VE/Events/WireExamples.lean:185: #guard (match checkDates W2 [] none with | .error e => e | .ok _ => \"ok\") == \"EventsReserved: date__"
+   "lean/VE/Events/WireExamples.lean:150: #guard diag (env block (withConst \"date__2026_10_12\")) == \"EventsReserved: date__2026_10_12\"",
+   "lean/VE/Events/WireExamples.lean:151: #guard diag (env block (withConst \"date__x\")) == \"EventsReserved: date__x\"",
+   "lean/VE/Events/WireExamples.lean:153: #guard ownedByEvents (dateName ⟨2026, 10, 12⟩) && !ownedByEvents \"date_x\" && !ownedByEvents \"dates__",
+   "lean/VE/Events/WireExamples.lean:186: #guard (match checkDates W2 [] none with | .error e => e | .ok _ => \"ok\") == \"EventsReserved: date__"
   ],
   "failures": 6
  },
@@ -41,9 +41,9 @@
   "build_failed": true,
   "test": [
    "lean/VE/Events/WireExamples.lean:55: #guard diag (env block) == \"ok [2026-10-12, 2026-10-13, 2026-10-14] 12 [the drafters]\"",
-   "lean/VE/Events/WireExamples.lean:79: #guard diag (env (set \"links\" (.arr #[link \"contributed_to\" \"contributed\" by64]))) ==",
-   "lean/VE/Events/WireExamples.lean:83: #guard diag (env (set \"links\" (.arr #[link \"contributed_to\" \"contributed\" \"unstated\"]))) ==",
-   "lean/VE/Events/WireExamples.lean:111: #guard diag (env block (setPred \"committed_on\" (pred \"[\\\"act\\\", \\\"day\\\"]\" \"{0} x on {1}\"))) =="
+   "lean/VE/Events/WireExamples.lean:80: #guard diag (env (set \"links\" (.arr #[link \"contributed_to\" \"contributed\" by64]))) ==",
+   "lean/VE/Events/WireExamples.lean:84: #guard diag (env (set \"links\" (.arr #[link \"contributed_to\" \"contributed\" \"unstated\"]))) ==",
+   "lean/VE/Events/WireExamples.lean:112: #guard diag (env block (setPred \"committed_on\" (pred \"[\\\"act\\\", \\\"day\\\"]\" \"{0} x on {1}\"))) =="
   ],
   "failures": 14
  },
@@ -53,9 +53,43 @@
   "file": "lean/VE/Events/Wire.lean",
   "build_failed": true,
   "test": [
-   "lean/VE/Events/WireExamples.lean:81: #guard diag (env (set \"links\" (.arr #[link \"contributed_to\" \"contributed\" (by64 ++ \"b\")]))) =="
+   "lean/VE/Events/WireExamples.lean:82: #guard diag (env (set \"links\" (.arr #[link \"contributed_to\" \"contributed\" (by64 ++ \"b\")]))) =="
   ],
   "failures": 1
+ },
+ {
+  "id": "strAt-path",
+  "claim": "strAt names the field it refuses",
+  "file": "lean/VE/Events/Wire.lean",
+  "build_failed": true,
+  "test": [
+   "lean/VE/Events/WireExamples.lean:68: #guard diag (env (set \"day\" (.num 3))) == \"InvalidInput: events.day\""
+  ],
+  "failures": 1
+ },
+ {
+  "id": "arrAt-drops-first",
+  "claim": "arrAt reads every entry",
+  "file": "lean/VE/Events/Wire.lean",
+  "build_failed": true,
+  "test": [
+   "lean/VE/Events/WireExamples.lean:55: #guard diag (env block) == \"ok [2026-10-12, 2026-10-13, 2026-10-14] 12 [the drafters]\"",
+   "lean/VE/Events/WireExamples.lean:66: #guard diag (env (drop \"anchor\" block)) ==",
+   "lean/VE/Events/WireExamples.lean:72: #guard diag (env (set \"events\" (parse \"[{\\\"sort\\\": \\\"act\\\", \\\"on\\\": \\\"committed_on\\\", \\\"x\\\": 1}]\")))",
+   "lean/VE/Events/WireExamples.lean:74: #guard diag (env (set \"states\" (parse \"[{\\\"sort\\\": \\\"stay\\\", \\\"begins\\\": \\\"stay_begins\\\"}]\"))) =="
+  ],
+  "failures": 34
+ },
+ {
+  "id": "eventsPack-calendar-only",
+  "claim": "the pack carries every generated premise",
+  "file": "lean/VE/Events/Wire.lean",
+  "build_failed": true,
+  "test": [
+   "lean/VE/Events/WireExamples.lean:198: #guard decoded.any fun d => (eventsPack d).id == \"events\" && (eventsPack d).labelled == eventsLabell",
+   "lean/VE/Events/WireExamples.lean:199: #guard decoded.any fun d => match assembleIn reservedPrefixes d.E 0 [eventsPack d, softP] with"
+  ],
+  "failures": 2
  },
  {
   "id": "roles-before-day",
@@ -63,8 +97,8 @@
   "file": "lean/VE/Events/Wire.lean",
   "build_failed": true,
   "test": [
-   "lean/VE/Events/WireExamples.lean:87: #guard diag (env (set \"day\" (.str \"date\"))) == \"EventsSort: date\"",
-   "lean/VE/Events/WireExamples.lean:88: #guard diag (env (set \"before\" (.str \"stay_begins\"))) == \"EventsSort: stay_begins\""
+   "lean/VE/Events/WireExamples.lean:88: #guard diag (env (set \"day\" (.str \"date\"))) == \"EventsSort: date\"",
+   "lean/VE/Events/WireExamples.lean:89: #guard diag (env (set \"before\" (.str \"stay_begins\"))) == \"EventsSort: stay_begins\""
   ],
   "failures": 2
  }

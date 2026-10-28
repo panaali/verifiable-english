@@ -15,6 +15,11 @@ BUGS = [
  ('anchor-not-added', 'the anchor is a named date', W,
   '(ds ++ (a.filter (!ds.contains ·)).toList)', '(ds ++ [])'),
  ('decided-by-65', 'decided_by at most 64 bytes', W, 'by_.utf8ByteSize > 64', 'by_.utf8ByteSize > 65'),
+ ('strAt-path', 'strAt names the field it refuses', W,
+  "(j.getObjValD k).getStr?.mapError fun _ => invalid s!\"{path}.{k}\"", "(j.getObjValD k).getStr?.mapError fun _ => invalid path"),
+ ('arrAt-drops-first', 'arrAt reads every entry', W, ".getArr?.map (·.toList))", ".getArr?.map (·.toList.drop 1))"),
+ ('eventsPack-calendar-only', 'the pack carries every generated premise', W,
+  'labelled := eventsLabelled d.V,', 'labelled := calendarLabelled d.V,'),
  ('roles-before-day', 'fault order: item 3 before item 4', W,
   '    checkDay W V0 (raw.map (·.1))\n    checkRoles W V0\n', '    checkRoles W V0\n    checkDay W V0 (raw.map (·.1))\n'),
 ]
