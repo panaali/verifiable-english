@@ -1,0 +1,172 @@
+shard 4/6: 108 units; commands: ['lake build', 'lake build ve_english_lean_bench ve_scope_bench']
++ lake build
+⚠ [95/180] Replayed VE.SoftNorms.Soften
+warning: VE/SoftNorms/Soften.lean:264:19: This simp argument is unused:
+  Option.bind_eq_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵e̵q̵_̵b̵i̵n̵d̵,̵ ̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵n̵o̵n̵e̵]̵[̲O̲p̲t̲i̲o̲n̲.̲b̲i̲n̲d̲_̲n̲o̲n̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [110/180] Replayed VE.Readings.Separate
+warning: VE/Readings/Separate.lean:1490:50: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: VE/Readings/Separate.lean:1492:5: unused variable `hr`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [118/180] Replayed VE.Readings.Superpose
+warning: VE/Readings/Superpose.lean:311:34: unused variable `h`
+
+... (9117 lines cut; full output in shard-full.txt)
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Readings/VerdictsWire.lean:946:90: This simp argument is unused:
+  Option.some.injEq
+
+Hint: Omit it from the simp argument list.
+  simp only [PlanItem.label_text, PlanItem.label_shown, reduceCtorEq,̵ ̵O̵p̵t̵i̵o̵n̵.̵s̵o̵m̵e̵.̵i̵n̵j̵E̵q̵] at hl
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [517/683] Replayed VE.Defaults.Premises
+warning: VE/Defaults/Premises.lean:301:36: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: VE/Defaults/Premises.lean:301:77: unused variable `hU`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: VE/Defaults/Premises.lean:311:5: unused variable `valid`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [526/683] Replayed VE.Readings.SupExtra
+warning: VE/Readings/SupExtra.lean:70:47: unused variable `hA`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+✔ [678/683] Built ScopeBenchMain (822ms)
+✔ [679/683] Built EnglishLeanBenchMain (978ms)
+✔ [681/683] Built ScopeBenchMain:c.o (184ms)
+✔ [682/683] Built ve_english_lean_bench:exe (488ms)
+✔ [683/683] Built ve_scope_bench:exe (507ms)
+Build completed successfully (683 jobs).
+info: syncing channel updates for 1.98.1-x86_64-unknown-linux-gnu
+info: latest update on 2026-09-03 for version 1.98.1 (48a229cea 2026-09-01)
+info: downloading 3 components
+warn: the missing active toolchain `1.98.1-x86_64-unknown-linux-gnu` has been auto-installed
+warn: this might cause rustup commands to take longer time to finish than expected
+info: you may opt out with `RUSTUP_AUTO_INSTALL=0` or `rustup set auto-install disable`
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded cpufeatures v0.2.17
+  Downloaded block-buffer v0.10.4
+  Downloaded autocfg v1.5.1
+  Downloaded cfg-if v1.0.5
+  Downloaded crypto-common v0.1.7
+  Downloaded sha2 v0.10.9
+  Downloaded num-traits v0.2.19
+  Downloaded proc-macro2 v1.0.107
+  Downloaded generic-array v0.14.7
+  Downloaded version_check v0.9.5
+  Downloaded itoa v1.0.18
+  Downloaded zmij v1.0.23
+  Downloaded quote v1.0.47
+  Downloaded digest v0.10.7
+  Downloaded num-integer v0.1.47
+  Downloaded unicode-ident v1.0.26
+  Downloaded serde_core v1.0.229
+  Downloaded serde_derive v1.0.229
+  Downloaded serde v1.0.229
+  Downloaded num-bigint v0.4.8
+  Downloaded memchr v2.8.3
+  Downloaded typenum v1.20.1
+  Downloaded serde_json v1.0.151
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.47
+   Compiling autocfg v1.5.1
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling serde_json v1.0.151
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling cpufeatures v0.2.17
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling cfg-if v1.0.5
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.229
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `release` profile [optimized] target(s) in 15.68s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling serde_core v1.0.229
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling serde_json v1.0.151
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling cpufeatures v0.2.17
+   Compiling cfg-if v1.0.5
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 8.18s
+order: failed last time []; changed ['tests/test_route_row_schemas.py', 'tests/test_profile_table.py']; then the rest; --maxfail 5
+recording 108 units with 4 jobs in /tmp/ve-select-run-h2n5lw1v
+  tests/test_lean_service_schema.py: exit 1 in 6.3 s, 953 functions
+stopping after 5 failed tests (--maxfail 5)
+FAILED tests/test_lean_service_schema.py (exit 1): tests/test_lean_service_schema.py::test_every_field_dropped_emptied_nulled_and_retyped_agrees_with_lean, tests/test_lean_service_schema.py::test_fuzz_detects_a_weakened_schema[digest], tests/test_lean_service_schema.py::test_genuine_responses_are_accepted_by_schema_and_lean, tests/test_lean_service_schema.py::test_genuine_responses_satisfy_the_lean_invariants, tests/test_lean_service_schema.py::test_mutated_genuine_responses_agree_with_lean_decoders; log /tmp/ve-select-run-h2n5lw1v/tests__test_lean_service_schema.py.log
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['git', 'show', '9160d326:ve/norm_defaults.py']' returned non-zero exit status 128.
+
+../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: CalledProcessError
+=========================== short test summary info ============================
+ERROR tests/test_lean_service_schema.py::test_genuine_responses_are_accepted_by_schema_and_lean - subprocess.CalledProcessError: Command '['git', 'show', '9160d326:ve/norm_defaults.py']' returned non-zero exit status 128.
+ERROR tests/test_lean_service_schema.py::test_genuine_responses_satisfy_the_lean_invariants - subprocess.CalledProcessError: Command '['git', 'show', '9160d326:ve/norm_defaults.py']' returned non-zero exit status 128.
+ERROR tests/test_lean_service_schema.py::test_every_field_dropped_emptied_nulled_and_retyped_agrees_with_lean - subprocess.CalledProcessError: Command '['git', 'show', '9160d326:ve/norm_defaults.py']' returned non-zero exit status 128.
+ERROR tests/test_lean_service_schema.py::test_mutated_genuine_responses_agree_with_lean_decoders - subprocess.CalledProcessError: Command '['git', 'show', '9160d326:ve/norm_defaults.py']' returned non-zero exit status 128.
+ERROR tests/test_lean_service_schema.py::test_fuzz_detects_a_weakened_schema[digest] - subprocess.CalledProcessError: Command '['git', 'show', '9160d326:ve/norm_defaults.py']' returned non-zero exit status 128.
+!!!!!! stopping after 5 failed tests outside the quarantine (--maxfail 5) !!!!!!
+7 passed, 5 errors in 5.41s
+recorded 4 units for tree df44f04373; 104 others left to the static graph until they run; 1 failed
+STOPPED EARLY (--maxfail 5): 104 selected units did not run: tests/test_readings_s2_document.py, tests/test_fluent.py, tests/test_route_row_schemas.py, tests/test_safety_framework.py, tests/test_readings_components_load.py, tests/test_ask_cli.py, tests/test_english.py, tests/test_question_differential.py, tests/test_calc_algebra.py, tests/test_precommit_hook.py, tests/test_et8_completion.py, tests/test_natural.py, tests/test_regen_generated.py, tests/test_metered_differential.py, tests/test_readings_s1_differential.py, tests/test_nary_differential.py, tests/test_encoder_shapes.py, tests/test_asimov_laws.py, tests/test_rust_reproducible.py, tests/test_premise_scale.py, tests/test_order.py, tests/test_discourse_answer.py, tests/test_norm_defaults_report.py, tests/test_calc_units.py, tests/test_run_cache.py, tests/test_closure.py, tests/test_agent_policy.py, tests/test_assist_recovery.py, tests/test_document_lean_switch.py, tests/test_rights_licence_relay.py, tests/test_equivalence_properties.py, tests/test_b17_evidence.py, tests/test_test_schedule.py, tests/test_run_order.py, tests/test_ask_null_free.py, tests/test_reports_status.py, tests/test_t1c.py, tests/test_scope_document.py, tests/test_definitions.py, tests/test_lake_outputs.py, tests/test_readings_lean_sharing.py, tests/test_discourse.py, tests/test_english_lean_engine.py, tests/test_rd9_statements.py, tests/test_alternatives_three_way.py, tests/test_lean_first_b13a.py, tests/test_readings_lazy_pairs.py, tests/test_cpu_bounds.py, tests/test_lean_pool.py, tests/test_soft_norms_conformance.py, tests/test_arith_uncharged_costs.py, tests/test_lean_first_diff_cache.py, tests/test_question_statements.py, tests/test_data_three_way.py, tests/test_rd9_soft_split.py, tests/test_alternatives_profile.py, tests/test_oom_mutation_evidence.py, tests/test_w6a_citations.py, tests/test_fret_w6a_rerating.py, tests/test_english_e2_integer_marks.py, tests/test_soft_request_economy.py, tests/test_readings_s1_lean.py, tests/test_readings_route_relay.py, tests/test_testing_profile_doc.py, tests/test_reports.py, tests/test_norm_defaults_layered.py, tests/test_scope_lean.py, tests/test_argument.py, tests/test_ci_workflow.py, tests/test_w6a_limits.py, tests/test_argument_adversarial.py, tests/test_numbers_phrases.py, tests/test_p1_native_counter.py, tests/test_wire_contract_s5_admission.py, tests/test_english_e2_saved_evidence.py, tests/test_attacks.py, tests/test_news_w6a_fixtures.py, tests/test_presupposition_wordings.py, tests/test_readings_s1_integration.py, tests/test_rust_jsonl_schema.py, tests/test_parser_renderer.py, tests/test_calc_service.py, tests/test_wire_contract_lean.py, tests/test_background.py, tests/test_readings_component_names.py, tests/test_calc_derive.py, tests/test_english_e2_python.py, tests/test_risk_w6_extension.py, tests/test_defeasible_baseline_evidence.py, tests/test_evidence_tools.py, tests/test_wire_contract_corpus.py, tests/test_authoring.py, tests/test_english_e26_report.py, tests/test_grammar_backends.py, tests/test_nary_folio.py, tests/test_architecture_docs.py, tests/test_bench_baselines.py, tests/test_bench_timing.py, tests/test_fol_names.py, tests/test_lean_build.py, tests/test_readings_defaults_rd4a_report.py, tests/test_readings_defaults_rd4b_report.py, tests/test_test_speed_b2.py, tests/test_lean_first_b3b_report.py
+SHARD 4/6: exit 1 in 87.2 s; 108 units, 3 passed
