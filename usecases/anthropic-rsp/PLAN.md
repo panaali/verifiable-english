@@ -1,6 +1,6 @@
 # Use case: anthropic-rsp (Anthropic Responsible Scaling Policy, version 3.4)
 
-> Status: **PLAN, draft 3** (2026-10-28, branch `infra/usecase-safetyfw`; draft 1 reviewed by gpt-6-astra and Opus,
+> Status: **PLAN, draft 3, key FROZEN** (see KEY-FREEZE.md) (2026-10-28, branch `infra/usecase-safetyfw`; draft 1 reviewed by gpt-6-astra and Opus,
 > `manage-agents/safetyfw-planreview-{astra,opus}.final.md`; dispositions in `manage-agents/reviews/safetyfw-plan-convergence-20261028.md`). The plan and its answer key (section 6)
 > are written before any VE run. They get two plan reviews (gpt-6-astra xhigh and Opus xhigh) before the key is
 > frozen; the freeze is recorded in [KEY-FREEZE.md](KEY-FREEZE.md) with a timestamp and the SHA-256 of section 6.
@@ -93,7 +93,7 @@ Each set is cited to its source unit. The harness evaluates every complete choic
 | RS2 | the right column ("Mitigations—ambitious industry-wide recommendations"): "A frontier developer should make a strong argument that …" | **F**: a recommendation to the field, no norm on the company / **Ds**: "should" read distributively, so it also binds the company as a frontier developer; its force follows the soft-norms rule {strict, default} | The addressee is "a frontier developer". p. 4 "we cannot unilaterally and unconditionally commit to staying in line with the industry-wide recommendations in the right column" concerns the company's commitment, not the recommendation's force, so it does not narrow the force (the safety-framework precedent: its N2 was withdrawn for this reason, README disagreement 2). |
 | RS3o | the Automated R&D row: "We will consider this threshold to be met if we determine that either (1) … or (2) …" | **suff** / **iff** | "If" states a sufficient condition; a definition is often read as complete. |
 | RS3i | the same row: "We would consider scenario (2) to have occurred where (a) … and (b) …" | **suff** / **iff**, chosen independently of RS3o | "Where" states a sufficient condition; nothing ties its completeness to the outer definition's. |
-| RS3c | the end of (b): "such that continuation of the trend in AI progress seems likely to lead to even greater acceleration" | **cond**: a third condition of scenario (2) (OT28) / **result**: a stated consequence of (a) and (b); under result the clause is a LABELLED causal unit and gives no premise (3.3) | The v3.4 changelog explains the constant-rate case by this clause ("there could be a strong argument for expecting the trend to continue rather than accelerate"). |
+| RS3c | the end of (b): "such that continuation of the trend in AI progress seems likely to lead to even greater acceleration" | **third**: a third condition of scenario (2) (OT28) / **result**: a stated consequence of (a) and (b); under result the clause is a LABELLED causal unit and gives no premise (3.3) | The v3.4 changelog explains the constant-rate case by this clause ("there could be a strong argument for expecting the trend to continue rather than accelerate"). |
 | RS4 | Appendix A, "General upleveling": "However, we will not necessarily delay AI development and deployment in this scenario." | **scope**: no rule; A3 itself creates no duty to delay / **rel**: a "need not" rule (no duty to delay in this scenario) | "Not necessarily" can deny a duty (scope) or grant a release. |
 | RS5 | Appendix A, "Competitors have strong safety measures": "all competitors who have developed, or will soon develop, a highly capable frontier model are able to make strong arguments …" | **import**: the scenario needs at least one such competitor / **noimport**: the universal holds vacuously when there is none | English "all" does not fix existential import. |
 | RS6 | every "may" sentence about the company: 3.6.1 "a reviewing organization itself may not have a financial interest in Anthropic …"; 4.4 "we may provide public notice"; 3.6.2 "we may choose to split the review process"; 3.5 "Reasons we may redact material include" | **P**: a permission (for "may not": a prohibition) / **M**: "may" in the sense of "might", no norm | In translation "may" is ambiguous ([norms.md](../../docs/spec/norms.md) 2), as in safety-framework RS7. |
@@ -141,7 +141,7 @@ premise. `we` means Anthropic as the text uses the word.
 | OT25 | reviewer criteria: "significant experience and expertise", "reputational and other incentives making them likely to be candid" | `we` | the examples of 3.6.1 |
 | OT26 | Appendix A "General upleveling": "a significant improvement", "comparable (or lower) effort or cost"; "a significant effort" | `we` | none |
 | OT27 | "relevant" model development or deployment decisions (RSO duty 2) | `RSO`, `unstated` | none |
-| OT28 | (b)'s "such that continuation of the trend in AI progress seems likely to lead to even greater acceleration" (under RS3c = cond) | `we` | none |
+| OT28 | (b)'s "such that continuation of the trend in AI progress seems likely to lead to even greater acceleration" (under RS3c = third) | `we` | none |
 
 ### 3.3 What the translation must not add
 
@@ -252,7 +252,7 @@ right column addresses (relevant only under RS2 = Ds).
 
 ## 6. Answer key (written before any VE run)
 
-Notation: cond, uncond, ov: RS1; F, Ds: RS2; iffo: RS3o = iff; iffi: RS3i = iff; cond, result: RS3c; scope, rel:
+Notation: cond, uncond, ov: RS1; F, Ds: RS2; iffo: RS3o = iff; iffi: RS3i = iff; third, result: RS3c; scope, rel:
 RS4; import, noimport: RS5; P, M: RS6; exec, final: RS7; window, bound: RS9; at, trigger: RS11; default, intent:
 RS12. "soft" marks an item that holds only under a default force. PROTk is "the row k plans of the middle column are required"; ARGk is "the
 company is required to make the row k strong argument".
@@ -322,7 +322,7 @@ SOME(Ds); reported, not scored.
 | T4b | the same | T4 not met | SOME(iffo ∧ iffi) | "not met" needs a complete outer definition, and "(2) has not occurred" a complete inner one |
 | T5 | substitution at 4.5× cost | "at competitive costs" | ALL | "(i.e., within a factor of 5)" |
 | T6 | the rate of progress equals the fastest rate observed without significant AI contribution; (1) unset | T4 met | NONE | (2)(a) needs double that rate (the v3.4 changelog explains the same outcome; under N2 it is not used as a rule) |
-| T7 | (2)(a) observed and (2)(b) found plausible; the continuation clause found not to hold | T4 met | SOME(result) | under cond the clause is a third condition of (2) |
+| T7 | (2)(a) observed and (2)(b) found plausible; the continuation clause found not to hold | T4 met | SOME(result) | under third the clause is a third condition of (2) |
 
 ### 6.5 Family C: conflicts (8 items)
 
@@ -423,7 +423,7 @@ defaults, SC scope, QT quantities, ET time, AP acts, WG weighing, AT attitudes).
 | F6 to F28 rule blocks, exceptions (F12 step 5), "need not" (RS4, RS7) | `norms@0` | merged |
 | RS2 Ds, RS8, RS12, RS13 | `soft-norms@0` | merged; aims are AT |
 | OT1 to OT28 | W2 open terms; `judgments@0` (jt-2, jt-2b) if P8 admits it | JT |
-| RS0 to RS13, N1 to N3 | W2 reading sets, per-choice harness expansion | merged |
+| RS0 to RS9, RS3o, RS3i, RS3c, RS11 to RS13, N1 to N3 | W2 reading sets, per-choice harness expansion | merged |
 | RS5 (existential import), "all", "each in-scope model" | quantifier scope | SC |
 | day counts, cadence, "within a factor of 5", footnote 8's "81×" | W6a; `ve-units@1` | QT, ET |
 | "promptly", "regularly", "On approximately an annual basis", "prior to or on … its effective date" | event order and deadlines | ET |
