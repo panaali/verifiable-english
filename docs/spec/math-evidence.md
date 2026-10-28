@@ -2,6 +2,18 @@
 
 ## Changes in this draft
 
+Draft 7 (2026-10-28, me-2n fix 1) answers the review of draft 6 (`manage-agents/me-2n-review.final.md`). Draft 6's
+text is at `43268f467`.
+- F1, work that was not charged: a derivation is now charged for every entry it visits, `entryUnits` = 2^11 units for
+  each coefficient or weight (3.2 (b)). The steps that visit each entry once per other entry are rewritten to make one
+  pass, each equal to 5's definition: `QLin.norm`, `QLin.isConst`, `FM.pick`, `Farkas.check`, and the decoder's
+  `nonlinearAt`, which now lowers each side once. "Why 2^33" is redone from measured times per unit. 13.3 adds N-1 and
+  K-1 (the review's two cases), and P-2 is retuned to keep 72/73.
+- F2, a widening: a side beyond the digit limit now keeps 5's linearity. `Lowered.tooLarge` carries the side's shape,
+  and an operation whose linearity the shapes leave open is lowered exactly, charged its bound first (`exactC`). The
+  decoder therefore refuses exactly what it refuses today (`Expr.linearC_tooLarge`). 13.3 adds S-1 to S-10.
+- The new statements are type-checked in the stub, and every guard passes. 3.2 (c) lists the changes they make.
+
 Draft 6 (2026-10-27, me-2n) is the `calc@0` sibling of draft 5, for me-2b's review F1, under the DRI's rule of
 2026-10-27: each value is evaluated once, and its size is charged. Draft 5's text is at `d9cff5345`.
 - 3.2 gains limit 10 (2^33 units of 12.2's unit per case, `ResourceLimit`), (a) a value table, (b) the size charge,
@@ -813,8 +825,10 @@ stub) makes the table 2.4's `valuesL`, so every statement of 2.3, 2.4 and 3.4 ho
 expressions are evaluated once, and its outcome (`Claim.ofSides`, equal to `Claim.run` by `Claim.ofSides_eq`), its
 `sides`, `display` and `tie` read those values. A read is a lookup: `Expr.evalC`'s `val` clause charges one visit and
 the value's size whatever its definition, so a read never re-evaluates. The guard is F1-511 (512 values, 396,545
-units, where re-evaluation would cost 2^511). For derivations, each premise is lowered once per case (the decoder's
-linearity check and every derivation that names it read the same facts), and each conclusion once.
+units, where re-evaluation would cost 2^511). For derivations, each premise is lowered once per case, and each
+conclusion once: the decoder's linearity check and every derivation that names the premise read the same facts. The
+decoder lowers each side once, bottom-up (`nonlinearAtC`, draft 7), not once per part (`Wire.nonlinearAt` lowers
+every part again from its leaves).
 
 **(b) The size charge.** The unit is 12.2's: one per node visited, plus the size of each value computed, in bits
 (`bits`, which me-12n chose: a value's bit length is what its arithmetic costs and what memory holds, and one unit
@@ -825,14 +839,41 @@ in limit 10's order, and a charge that would pass `maxWork` refuses the case bef
   (`Val.check`, equal to `Val.guard` by `digitCount_le_iff`), never by a digit list. A power whose base gives
   `(bits − 1) · k ≥ 13,607` for its numerator or denominator is beyond the limit, since 2^13,607 > 10^4,096; it is
   `tooLarge` without being computed (`powTooLarge_sound`). Every other power is computed.
-- *Derivations* (`Expr.linearC`, me-2nc): each node of an inlined side costs one visit, and each linear form built
-  costs its size. A form with a constant or coefficient beyond the digit limit, and a power of a constant that
-  `powTooLarge` rules out (never computed), end the derivation as `unknown derivationInconclusive` (1.5's text: no
-  certificate and no counterexample was found). That is never `NonlinearPremise`, so the decoder refuses only forms
-  that are not linear. 5's search charges each row it builds 1 + `rowSize` and holds the row to the digit limit; a
-  row beyond it ends the search the same way. `inlineTable` and `nodesWithin` are unchanged. This is the identity's
-  rule (8.2: a coefficient of more than 4,096 digits ends it as `limit .polyTerms`), and no statement of 3.4 changes:
-  `Check.UnknownCause` asks only that a derivation's other reasons be among its `reasons`.
+- *Derivations* (`Expr.linearC`, me-2nc): **every step is charged for each entry it visits** (draft 7). A node of an
+  inlined side costs one visit. Each form built costs `entryUnits` = 2^11 per coefficient, plus its size. Each row of
+  5's search costs `rowCost`: 1, plus `entryUnits` per coefficient and per weight, plus `rowSize`. Each pass over a
+  stage's rows costs `passCost`: 1 per row, plus `entryUnits` per coefficient. These passes are `eliminate`'s three
+  filters and `pick`'s two. An entry's units cover its small arithmetic and its lookups among at most
+  `FM.maxUnknowns` names ("Why 2^33").
+  - *One pass each.* No step may visit an entry once per other entry, since its work would then grow faster than its
+    charge (the review's N-1 and K-1). me-2nc replaces the following, each proved equal to 5's definition, so no
+    answer changes:
+    - `QLin.norm` (and `FM.firstAppearance` under it) by `QLin.normOnce`, one map from names to sums;
+    - `QLin.isConst` by `QLin.isConstOnce`;
+    - `FM.pick` by `pickOnce`: a row holds at `x = v` exactly when `v` is within its bound, so one pass finds the
+      tightest bounds, and the candidates are 5's, in 5's order;
+    - `Farkas.check` by `Farkas.checkOnce`, whose combination is normalised once instead of `coeffOf` per name;
+    - the decoder's `Wire.nonlinearAt` by `nonlinearAtC`: each side lowered once, bottom-up, so it names the same
+      innermost part at the cost of one `linearC`.
+  - *Held to the digit limit.* The following end the derivation as `unknown derivationInconclusive` (1.5's text: no
+    certificate and no counterexample was found): a form with a constant or coefficient beyond the digit limit; a
+    power of a constant that `powTooLarge` rules out (never computed); a search row beyond the limit; and a value of
+    back-substitution's point (`pick`'s bound, midpoint or step, each from rows and earlier values within the limit)
+    beyond it. A Farkas combination is a sum of at most 64 products of values within the limit, so it needs no hold.
+    `inlineTable` and `nodesWithin` are unchanged. This is the identity's rule (8.2: a coefficient of more than 4,096
+    digits ends it as `limit .polyTerms`), and no statement of 3.4 changes: `Check.UnknownCause` asks only that a
+    derivation's other reasons be among its `reasons`.
+  - *Linearity is 5's, exactly* (draft 7). A side beyond the digit limit is `tooLarge` with its **shape**: constant
+    (known nonzero, known zero, or neither), not constant, or unknown. Its values are not kept. A product, quotient or
+    power decides its linearity from its operands' shapes, as 5 does from their forms. For example, `x + c^4096` is
+    not constant, so its square is not linear and the decoder refuses it (`NonlinearPremise`), as it does today. The
+    shapes can leave the answer open only when two sides that are not constant were added (their coefficients
+    beyond the limit may cancel) or a constant's nonzeroness is unknown. Then that node is lowered exactly
+    (`exactC`), charged first `Expr.exactBound`, a bound from its shape alone that charges each value
+    `b · (log₂ b + 1)` units for `b` bits, so a case that cannot afford it is refused by limit 10 before it is
+    computed. The result stays `tooLarge`. So `.nonlinear` is exactly 5's `none` (`Expr.linearC_nonlinear` and
+    `Expr.linearC_tooLarge`). The decoder refuses exactly the cases it refuses today, and a value beyond the limit
+    only ends a derivation.
 
 ```lean
 def qbits (q : Rat) : Nat := bits q.num + bits q.den        -- 12.2's `bits`
@@ -856,12 +897,31 @@ theorem runC_mono (limit limit' : Nat) (c : Case) (r : List (Outcome × List Val
 theorem runC_work (limit : Nat) (c : Case) (r : List (Outcome × List Val) × Nat)
     (h : runC limit c = some r) : r.2 ≤ limit
 theorem runC_complete (c : Case) : ∃ limit r, runC limit c = some r
-def Expr.linearC (limit : Nat) : Expr → Nat → Option (Lowered × Nat)    -- form, nonlinear or tooLarge
+def entryUnits : Nat := 2 ^ 11                               -- draft 7: one coefficient or weight visited
+def QLin.normOnce (L : QLin) : QLin                           -- one pass; isConstOnce, pickOnce, checkOnce alike
+theorem QLin.normOnce_eq (L : QLin) : L.normOnce = L.norm
+theorem QLin.isConstOnce_eq (L : QLin) : L.isConstOnce = L.isConst
+theorem pickOnce_eq (x : String) (rows : List FM.Row) (κ : List (String × Rat)) : pickOnce x rows κ = FM.pick x rows κ
+theorem Farkas.checkOnce_eq (fs : List QFact) (c : Farkas) : Farkas.checkOnce fs c = c.check fs
+inductive Shape | const (nonzero : Option Bool) | nonconst | unknown
+inductive Lowered | form (L : QLin) | nonlinear | tooLarge (s : Shape)
+def Expr.exactBound (e : Expr) : Nat                          -- from e's shape: visits, entries, b · (log₂ b + 1)
+def exactC (limit : Nat) (e : Expr) (w : Nat) : Option (Lowered × Nat)  -- 5's linearity, charged its bound first
+def Expr.linearC (limit : Nat) : Expr → Nat → Option (Lowered × Nat)
 theorem Expr.linearC_form (limit : Nat) (e : Expr) (w : Nat) (L : QLin) (w' : Nat)
     (h : Expr.linearC limit e w = some (.form L, w')) : e.linear = some L
 theorem Expr.linearC_nonlinear (limit : Nat) (e : Expr) (w w' : Nat)
     (h : Expr.linearC limit e w = some (.nonlinear, w')) : e.linear = none
+theorem Expr.linearC_tooLarge (limit : Nat) (e : Expr) (w : Nat) (s : Shape) (w' : Nat)
+    (h : Expr.linearC limit e w = some (.tooLarge s, w')) : ∃ L, e.linear = some L ∧ Shape.Sound L s
+def nonlinearAtC (limit : Nat) (t : Inlined) (path : String) (e : Expr) (w : Nat) :
+    Option ((Option String × Option Lowered) × Nat)           -- the decoder's check, each side lowered once
+theorem nonlinearAtC_eq (limit : Nat) (t : Inlined) (path : String) (e : Expr) (w : Nat) (r : Option String)
+    (l : Option Lowered) (w' : Nat) (h : nonlinearAtC limit t path e w = some ((r, l), w')) :
+    r = Wire.nonlinearAt t path e
 def rowSize (r : FM.Row) : Nat                                -- its form's and its weights' sizes
+def rowCost (r : FM.Row) : Nat                                -- 1 + entryUnits · entries + rowSize
+def passCost (rows : List FM.Row) : Nat                       -- 1 + entryUnits · coefficients, per row
 ```
 
 The bodies are those of [me-2n-calc-work-stub.lean](math-evidence/me-2n-calc-work-stub.lean). `runC_mono` and
@@ -876,24 +936,50 @@ leaves. So an expression costs at most (27,215 + 54,430)/5 = 16,329 units per JS
 10. The limit binds only derivations, whose sizes the digit limit holds per value but whose forms and rows it does
 not count.
 
-**Why 2^33.** Every value the runner computes is within twice the digit limit, so a unit's time is bounded. On today's
-`ve_service`, dense lowering costs 0.6 ns a unit (P-2: 60 premises, 7.1 × 10⁹ units, 4.1 s). Most of the bits are
-in additions, which are cheap per bit; a gcd of 27,000-bit values is the costliest step, which I estimate at about 2 ns
-a bit (not measured). So a case at the limit should run for about 5 to 20 s, short of the 60 s deadline. A lower
-limit would refuse cases that run in under a second today: P-2 with 10 premises passes 2^30 and takes 0.7 s. me-2nb and me-2nc measure the time at the limit in
-`tools/bench/` (not in the suite) and pin the units in Lean guards.
+**Why 2^33** (draft 7). The limit bounds time only if every kind of work is charged in proportion to its time. Draft
+6 said a unit's time was bounded because every value is within twice the digit limit. That was false: an entry
+visited once per other entry was never charged (the review's K-1 and N-1). Draft 7 charges each kind, and none of
+them outgrows its charge (one pass each, (b)). The times below were measured on today's `ve_service` on the VM, where
+each of these steps is slower than it will be after me-2nc's one-pass rewrite.
+- *Size.* A unit of size covers arithmetic on values within twice the digit limit. P-2 measures 0.51 ns a unit (72
+  premises, 8.5 × 10⁹ units, 4.4 s); draft 6's P-2 measured 0.58 (7.1 × 10⁹ units, 4.1 s). A gcd of 27,000-bit values
+  is the costliest step per bit, which I estimate at about 2 ns a bit (not measured).
+- *Entries.* An entry visited costs `entryUnits` = 2,048 units. The costliest entry measured is a coefficient in
+  `FM.pick`'s fit check: its rational product and sum, and its lookup among 14 names. K-1 measures 0.86 µs per entry
+  (one derivation, 6.4 s for about 493,000 row checks of 15 coefficients), which is 0.42 ns a unit.
+- *Visits.* A node visited costs 1 unit and the size of its form, so a node of small constants is undercharged
+  (0.2 to 0.4 µs a node in C-1 below). The count of visits bounds them instead. Each side is lowered once and has
+  at most `maxPolyTerms` = 10,000 inlined nodes, and a case has at most 1,024 claims with at most 3 sides each. That
+  is at most 3.1 × 10⁷ visits, 6 to 11 s. C-1 measures this: 256 premises over a constant of 8,191 inlined nodes take
+  0.98 to 1.50 s today across runs, lowering each one twice.
+- *The exact fallback* (`exactC`) charges `b · (log₂ b + 1)` a value of `b` bits, because arithmetic beyond twice the
+  digit limit costs more than its size. It runs only where the shapes leave linearity open.
+
+So a case at the limit runs for at most about 2^33 × 0.58 ns = 5 s of size and entry work, up to 17 s if the gcd
+estimate holds, plus at most 11 s of visits: at most about 28 s, short of the 60 s deadline. A lower limit would
+refuse cases that finish quickly today: P-2 with 10 premises passes 2^30 and takes 0.73 s. me-2nb and me-2nc measure
+the time at the limit in `tools/bench/` (not in the suite), re-measure `entryUnits` against the one-pass steps, and
+pin the units in Lean guards.
 
 **(c) What changes on `main`** (fixtures in 13.3; times on `ve_service` today).
 - *Claims (me-2nb)*: no answer that today's runner gives within its deadline changes (`runC_sound`, and the bound
   above). Requests it does not finish now get 2.4's outcomes: F1-28 `holds` (today `CheckerUnavailable`), and
   G-1x512 512 `unknown (limit .digits)` rows (today `CheckerUnavailable`). Answered today and faster after: F1-24
   (4.8 s), G-1 (18.7 s). No claim case ends `ResourceLimit`.
-- *Derivations (me-2nc)*: (i) unavailable today → answered: L-4 (`derivationInconclusive`), and P-1 (same rows,
-  29 s today). (ii) Decided today → `unknown derivationInconclusive`: a derivation whose lowering or search meets a
-  value beyond the digit limit, such as L-2 (holds in 0.07 s) and L-3 (holds in 12.7 s). (iii) Answered today →
-  `ResourceLimit`: a case over 2^33 units, such as P-2 with 73 premises (about 5 s today). Its other rows are lost.
+- *Derivations (me-2nc)*: (i) Unavailable today → answered: L-4 (`derivationInconclusive`), P-1 (same rows, 29 s
+  today), and K-1 with 12 derivations (`fails`, 61 s today; its y stages cost about 2.7 × 10⁹ units). (ii) Decided
+  today → `unknown derivationInconclusive`: a derivation whose lowering or search meets a value beyond the digit
+  limit, such as L-2 (holds in 0.07 s) and L-3 (holds in 12.7 s), and one whose point has a value beyond it.
+  (iii) Answered today → `ResourceLimit`: a case over 2^33 units, such as P-2 with 73 premises (4.7 s today). Since
+  draft 7 charges entries, these also include K-1's decreasing order with 39 or more derivations (0.16 s each today,
+  over 2.2 × 10⁸ units each, so me-2nc pins the exact count), and N-1 with 122 to about 130 premises (about 55 to
+  63 s today, near the deadline). Their other rows are lost. (iv) **Nothing else changes.** No case refused today is
+  accepted, and no case accepted today is refused except by limit 10. The one-pass steps are equal to 5's (`_eq`
+  theorems). `.nonlinear` is exactly 5's `none` (`Expr.linearC_nonlinear`, `Expr.linearC_tooLarge`), so S-1 to S-3,
+  S-9 and S-10 stay `NonlinearPremise` as today. Draft 6 accepted S-1 and S-2 (review F2); draft 7 removes that
+  widening.
 - *At and under the limit*: F1-24 at 1,124, 1,125 and 1,126 units (the charged runner, with the limit as a
-  parameter), and P-2 at 72 premises (under 2^33) and 73 (over it).
+  parameter), P-2 at 72 premises (under 2^33) and 73 (over it), and N-1 at 121 and 122.
 
 ### 3.3 Identity
 
@@ -1307,7 +1393,7 @@ Fourier-Motzkin elimination within 64 facts, 16 unknowns and 10,000 combination 
 Outcomes: **follows** (a replayed certificate; outcome `holds`), **does not follow** (a counterexample checked by
 evaluation, square links included; outcome `fails`), **undefined** (a premise or the conclusion reads a value that has
 none, 3.4), or **unknown** (`limit .derivationSteps`, or `derivationInconclusive` when a needed step is outside the
-square rule or, from draft 6, when the lowering or the search meets a value beyond the digit limit, 3.2 (b)). The search tries the claimed bound itself as a counterexample candidate first. Physical laws enter as
+square rule or, from draft 6, when the lowering, the search or (draft 7) its point meets a value beyond the digit limit, 3.2 (b)). The search tries the claimed bound itself as a counterexample candidate first. Physical laws enter as
 premises with `support: assumption`.
 
 A square link `(s, r)` is two assumptions, the square equation s = r · r and the root's nonnegativity 0 ≤ r, and the
@@ -2824,8 +2910,12 @@ so a finding over it stays "transcription unchecked" (2.5).
 | V-11s | *by hand* (draft 6): fails, fails, unknown (`limit .digits`), unknown (`limit .digits`) in 25,297 units; the same as product code | V-11's shape: 10^39, its 64th power (2,497 digits) and that power squared (4,993 digits, not computed), then a division by 0 after the limit |
 | H-1 | *by hand* (draft 6): 497 unknown rows in 107,837,424 units, under 3.2's bound 163,290,000 | b = r^64 · r^38 with r = (10^40 − 1)/(10^40 − 3): 4,080 digits over 4,080 (27,108 bits); 497 claims `b · b = b · b` (20 JSON values each) fill 10,000 JSON values; each product (54,214 bits) is charged, then refused at the digit limit |
 | L-1 to L-4 | *by hand* (draft 6): L-1 lowers to the constant c^64 in 8,642 units; L-2 to L-4 are `derivationInconclusive` in 8,643 to 8,645 | a premise over c^(64^k), c = 10^40 − 1. L-1's power is computed (2,560 digits); the others are ruled out by `powTooLarge` from the base. Today: L-1 and L-2 hold (0.00 s and 0.07 s), L-3 holds in 12.7 s, L-4 is not run (its constant would have 671 million digits) |
-| P-1 | *by hand* (draft 6): the premise lowers once, in 49,133 units, to 5's form | a0 = u (free) and a(i+1) = a(i) + a(i) to a12: 8,191 inlined nodes. Today, 20 derivations that name it 450 times take 29 s, and 300 derivations naming it 15 times take 16.9 s |
-| P-2 | *by hand* (draft 6): one premise lowers in 117,946,925 units; a case with 72 such premises is under `maxWork`, and one with 73 is over it (`ResourceLimit`) | 16 free values, big = c^64 · c^38 (4,080 digits), a0 = big · (u0 + … + u15), and a(i+1) = a(i) + a(i) to a8 (inside `maxPolyTerms`); premise i is `a8 < i`. Today: 0.71 s with 10 premises, 4.14 s with 60. me-2nc pins the case's exact units |
+| P-1 | *by hand* (draft 7): the premise lowers once, in 16,824,301 units (draft 6: 49,133; each of its 8,191 forms now pays its coefficient's entry), to 5's form | a0 = u (free) and a(i+1) = a(i) + a(i) to a12: 8,191 inlined nodes. Today, 20 derivations that name it 450 times take 29 s, and 300 derivations naming it 15 times take 16.9 s |
+| P-2 | *by hand* (draft 7): one premise lowers in 118,478,125 units, most of them its forms' entries; a case with 72 such premises is under `maxWork`, and one with 73 is over it (`ResourceLimit`) | 16 free values, big = c^20 (800 digits; draft 6 had c^64 · c^38, 4,080 digits, which the entry charge would move to 62/63), a0 = big · (u0 + … + u15), and a(i+1) = a(i) + a(i) to a8 (inside `maxPolyTerms`); premise i is `a8 < i`. Today: 0.73 s with 10 premises, 4.37 s with 72, 4.67 s with 73. me-2nc pins the case's exact units |
+| S-1 to S-10 | *by hand* (draft 7): 5's linearity in every row (`Expr.linear` agrees): S-1 to S-3, S-9 and S-10 not linear (`NonlinearPremise`); S-4 to S-8 linear and `tooLarge`, S-8 with shape constant zero. S-1 in 10,698 units; S-8 in 144,138,778 (its exact fallback's bound) | C = c^4096 (beyond the digit limit, never computed). S-1 `(x + C)^2`, S-2 `(x + C) · x`, S-3 `x / (x + C)`; S-4 `(x + C) · C`, S-5 `(x + C) / C`, S-6 and S-7 `(x + C)^1` and `(x + C)^0`; S-8 `(C·x − C·x) · x` (the coefficients cancel: lowered exactly), S-9 `(C·x − C·y) · x`, S-10 `x / (C − C)`. Review F2: today S-1 and S-2 get `NonlinearPremise` in 0.06 s; draft 6 accepted them |
+| N-1 | *by hand* (draft 7): one premise side lowers in 70,576,397 units; 121 premises are under `maxWork`, 122 over it (`ResourceLimit`) | review F1 (`QLin.norm`): s = a balanced sum of 400 free values, and premise i is `s + … + s < i`, 8 mentions balanced. Today: 0.14 s with 1 mention and 10 premises, 4.46 s with 8 and 10, and 58 to 63 s with 8 and 130 (the deadline): `norm` is quadratic and `nonlinearAt` lowers every part again |
+| K-1 | *by hand* (draft 7): the y stage has 993 rows; its rows (`rowCost`) and `pick`'s two passes (`passCost`) cost 221,757,785 units a derivation; `pickOnce` equals `FM.pick` on the stage (8 by 7 premises, both orders) | review F1 (`FM.pick`): 32 premises 0 < x − 1000·i and 31 premises x < s + j (s = y + z1 + … + z14), conclusion y < 0 (`fails`). With bounds increasing in row order, each candidate is checked against every earlier row. Today: 6.5 s for one derivation and 13.1 s for two (61 s for 12 in the review); decreasing, 0.16 s |
+| C-1 | measured (draft 7): visits of small constants are bounded by their count | a(i+1) = a(i) + a(i) to a12 from a0 = 1 (8,191 inlined nodes); premise i is `x < a12 + i`, no derivation. Today: 0.27 s with 64 premises, 0.98 to 1.50 s with 256 |
 | I-1 | *by hand*: `canonical` succeeds; the two wavelength spellings give one `meaning_id`; the `"20000000"` spelling gives another | canonical value literals `"11"` and `"0.000000589"`; canonical claim `["rounds",["div",["val","length"],["val","wavelength"]],["2","-7"],"ties-up"]`; `"20000000"` is `["20000000","0"]`; draft 1's encoding `["2",-7]` gives `Except.error "Natural number expected"` (Astra evaluated the frozen functions read-only); the digests are pinned by ME-2 |
 | I-2 | *by hand*: `environmentId` succeeds; the reordered environment has the same id; the `ve-units@1` id is W6a's today | canonical text `{"base_dimensions":["length","time"],"unit_schema":"ve-units@2","units":{"meter_per_second":{"base_exponents":{"length":"1","time":"-1"},"factor":"1"}}}`; without J1's strings the exponent −1 gives "Natural number expected"; the digests are pinned by ME-6 |
 | D-1 | holds | 15 + 2 = 17 |
@@ -2876,10 +2966,11 @@ so a finding over it stays "transcription unchecked" (2.5).
 | DL-3 | *phase 1*: **fails**, **fails** | 355,993 is not 350,000 (places 0), and 355,993 × 10⁻⁴ = 35.5993 is outside [34.5, 35.5) (it rounds to 36, that is 360,000); the open tolerance reading is not decided (no tolerance is stated and no decider exists), so it stays unresolved |
 | DL-4 | *phase 1*: holds | 0.4 + 0.7 = 1.1 < 6.1 |
 
-The rows marked *by hand (draft 6)* were computed by the evaluator in
+The rows marked *by hand (draft 6)* or *(draft 7)* were computed by the evaluator in
 [me-2n-calc-work-stub.lean](math-evidence/me-2n-calc-work-stub.lean), where each is a `#guard`, not by product code.
 me-2nb pins the claim rows in `lean/VE/Calc/Examples.lean`, and me-2nc pins the derivation rows. Times are wall times
-of one request to `ve_service` on `main` (d9cff5345, compiled), and they are evidence, not semantics.
+of one request to `ve_service` on `main` (d9cff5345, compiled), and they are evidence, not semantics. Draft 7's times
+were taken on 2026-10-28 on the VM, with the same `lean/` tree; they vary with its load (C-1: 0.98 to 1.50 s).
 
 M-4's candidate bounds were 200 and 1,000 (debate F5). Under the accounting of 12.2, which is part of the semantics,
 the largest completing bound is 87 (draft 4: 248). me-12nb re-measures it, and M-4b's bounds, with its implementation,
