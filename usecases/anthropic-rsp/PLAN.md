@@ -1,6 +1,6 @@
 # Use case: anthropic-rsp (Anthropic Responsible Scaling Policy, version 3.4)
 
-> Status: **PLAN, draft 2** (2026-10-28, branch `infra/usecase-safetyfw`; draft 1 reviewed by gpt-6-astra and Opus,
+> Status: **PLAN, draft 3** (2026-10-28, branch `infra/usecase-safetyfw`; draft 1 reviewed by gpt-6-astra and Opus,
 > `manage-agents/safetyfw-planreview-{astra,opus}.final.md`; dispositions in `manage-agents/reviews/safetyfw-plan-convergence-20261028.md`). The plan and its answer key (section 6)
 > are written before any VE run. They get two plan reviews (gpt-6-astra xhigh and Opus xhigh) before the key is
 > frozen; the freeze is recorded in [KEY-FREEZE.md](KEY-FREEZE.md) with a timestamp and the SHA-256 of section 6.
@@ -93,7 +93,7 @@ Each set is cited to its source unit. The harness evaluates every complete choic
 | RS2 | the right column ("Mitigations—ambitious industry-wide recommendations"): "A frontier developer should make a strong argument that …" | **F**: a recommendation to the field, no norm on the company / **Ds**: "should" read distributively, so it also binds the company as a frontier developer; its force follows the soft-norms rule {strict, default} | The addressee is "a frontier developer". p. 4 "we cannot unilaterally and unconditionally commit to staying in line with the industry-wide recommendations in the right column" concerns the company's commitment, not the recommendation's force, so it does not narrow the force (the safety-framework precedent: its N2 was withdrawn for this reason, README disagreement 2). |
 | RS3o | the Automated R&D row: "We will consider this threshold to be met if we determine that either (1) … or (2) …" | **suff** / **iff** | "If" states a sufficient condition; a definition is often read as complete. |
 | RS3i | the same row: "We would consider scenario (2) to have occurred where (a) … and (b) …" | **suff** / **iff**, chosen independently of RS3o | "Where" states a sufficient condition; nothing ties its completeness to the outer definition's. |
-| RS3c | the end of (b): "such that continuation of the trend in AI progress seems likely to lead to even greater acceleration" | **cond**: a third condition of scenario (2) (OT28) / **result**: a stated consequence of (a) and (b) | The v3.4 changelog explains the constant-rate case by this clause ("there could be a strong argument for expecting the trend to continue rather than accelerate"). |
+| RS3c | the end of (b): "such that continuation of the trend in AI progress seems likely to lead to even greater acceleration" | **cond**: a third condition of scenario (2) (OT28) / **result**: a stated consequence of (a) and (b); under result the clause is a LABELLED causal unit and gives no premise (3.3) | The v3.4 changelog explains the constant-rate case by this clause ("there could be a strong argument for expecting the trend to continue rather than accelerate"). |
 | RS4 | Appendix A, "General upleveling": "However, we will not necessarily delay AI development and deployment in this scenario." | **scope**: no rule; A3 itself creates no duty to delay / **rel**: a "need not" rule (no duty to delay in this scenario) | "Not necessarily" can deny a duty (scope) or grant a release. |
 | RS5 | Appendix A, "Competitors have strong safety measures": "all competitors who have developed, or will soon develop, a highly capable frontier model are able to make strong arguments …" | **import**: the scenario needs at least one such competitor / **noimport**: the universal holds vacuously when there is none | English "all" does not fix existential import. |
 | RS6 | every "may" sentence about the company: 3.6.1 "a reviewing organization itself may not have a financial interest in Anthropic …"; 4.4 "we may provide public notice"; 3.6.2 "we may choose to split the review process"; 3.5 "Reasons we may redact material include" | **P**: a permission (for "may not": a prohibition) / **M**: "may" in the sense of "might", no norm | In translation "may" is ambiguous ([norms.md](../../docs/spec/norms.md) 2), as in safety-framework RS7. |
@@ -159,7 +159,6 @@ premise. `we` means Anthropic as the text uses the word.
   limited to" lists never close a class. A listed instance of a stated class is a premise ("X, such as Y" gives "Y is an
   X"; "protections, which include Y" gives "the protections include Y"). Factors of an open term (what is considered
   in deciding it) give no premise. The same rule is used in the openai-preparedness plan.
-  none is a premise.
 
 ## 4. The text as rules (the inventory the key and the translation both use)
 
@@ -235,7 +234,7 @@ the W1 conflict check on the document of that choice; a strict rule that blocks 
 not a conflict.
 
 **Case facts.** The model has crossed the thresholds named (T0: none) and no others (no reading implies one
-threshold from another); every open term not named by the case is unset; the company is the frontier developer the
+threshold from another); a model the case calls highly capable (OT5 found) has crossed T4 (3.6), and T4 counts as named; every open term not named by the case is unset; the company is the frontier developer the
 right column addresses (relevant only under RS2 = Ds).
 
 | Family | Cases | Scored items |
@@ -423,7 +422,7 @@ defaults, SC scope, QT quantities, ET time, AP acts, WG weighing, AT attitudes).
 |---|---|---|
 | F6 to F28 rule blocks, exceptions (F12 step 5), "need not" (RS4, RS7) | `norms@0` | merged |
 | RS2 Ds, RS8, RS12, RS13 | `soft-norms@0` | merged; aims are AT |
-| OT1 to OT21 | W2 open terms; `judgments@0` (jt-2, jt-2b) if P8 admits it | JT |
+| OT1 to OT28 | W2 open terms; `judgments@0` (jt-2, jt-2b) if P8 admits it | JT |
 | RS0 to RS13, N1 to N3 | W2 reading sets, per-choice harness expansion | merged |
 | RS5 (existential import), "all", "each in-scope model" | quantifier scope | SC |
 | day counts, cadence, "within a factor of 5", footnote 8's "81×" | W6a; `ve-units@1` | QT, ET |
@@ -435,7 +434,7 @@ defaults, SC scope, QT quantities, ET time, AP acts, WG weighing, AT attitudes).
 
 ## 8. What is expected to stay OPEN
 
-- **O1: every open term OT1 to OT21.** Whether a threshold is crossed is never a VE result.
+- **O1: every open term OT1 to OT28.** Whether a threshold is crossed is never a VE result.
 - **O2: norm reading sets.** Per-choice answers come from the harness's expansion and are labelled so; VE's own
   readings query decides only sets whose readings are each one rule (as fsf-r1 found).
 - **O3: causal and degree language** ("significantly more likely", "could result in", "dramatically accelerate").
@@ -476,7 +475,7 @@ Report, unscored, what changes without N1, without N2 and without N3.
 | # | Metric | Expected |
 |---|---|---|
 | M1 | key agreement per family (A 40, B 12, K 27, T 9, C 8, G 8, N 5, S 8, D 9) | 126/126; every miss explained in section 12 |
-| M2 | reading sets: count, choices per case, SOME verdicts, VE's own readings verdicts | RS1 to RS13 plus N1 to N3; at most 3 × 3 = 9 choices per family A case (RS1; RS2 with Ds's two forces); C-doc enumerates the sets that bear on a conflict candidate (RS1, RS4, RS5, RS7) |
+| M2 | reading sets: count, choices per case, SOME verdicts, VE's own readings verdicts | RS1, RS2, RS3o, RS3i, RS3c, RS4 to RS9, RS11 to RS13, plus N1 to N3; at most 3 × 3 = 9 choices per family A case (RS1; RS2 with Ds's two forces); C-doc enumerates the sets that bear on a conflict candidate (RS1, RS4, RS5, RS7) |
 | M3 | span accounting: `bytes_by_status` (CHECKED, OPEN, LABELLED, UNFORMALISED) and `bytes_by_kind`, totalling 59,410; the reason for each unformalised unit; the residual; for each unit that is not CHECKED, the feature family it waits for (section 7) | CHECKED under 10% |
 | M4 | structure-conditional answers per family | reported |
 | M5 | CHECKED-bar lint (P7) | 0 |
@@ -491,7 +490,7 @@ Report, unscored, what changes without N1, without N2 and without N3.
 | Id | Mutation | Expected change |
 |---|---|---|
 | m1 | remove step 5's precedence over step 3 (keep RS7 = final) | C2 becomes SOME(final); C-doc adds it |
-| m2 | add "a model that crosses a threshold must not be developed further or deployed unless the row's middle-column plans are in place" (an invented stop rule, 3.3) | G1 becomes not silent: development and deployment forbidden, SOME(cond ∨ uncond); M6 flags it |
+| m2 | add "a model that crosses a threshold must not be developed further or deployed unless the row's middle-column plans are in place" (an invented stop rule, 3.3) | G1's item ("no rule forbids either") becomes NONE: development and deployment are forbidden under every choice; M6 flags it |
 | m3 | replace F26's "we will not necessarily delay" with "we will delay as needed" | N2 becomes NONE (F26 can require a delay); C1, C7 and C-doc become NONE; K21b stays NONE (OT7 unset in its case) |
 | m4 | add a cyber threshold row Tc with a middle-column plan | G3 changes (a threshold covers cyber); M6 flags it |
 | m5 | drop "(i.e., within a factor of 5)" | T5 becomes NONE ("competitive costs" is an open term without its factor); T1 becomes NONE; T2b becomes NONE ((1) no longer fails on cost) |
