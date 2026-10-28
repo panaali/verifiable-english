@@ -21,6 +21,11 @@ def analyse (V : Vocab) (N b : Nat) (ts : Array Tok) : Option Atom :=
 /-- A meaning of the token list: some derivation means `A` (spec 5.6's `Derived`, which is `DerivedIn`'s text). -/
 def Derived (V : Vocab) (ts : List Tok) (A : Act) : Prop := DerivedIn (grammar V) (meaning V) ts A
 
+/-- `Derived` is spec 5.6's text. -/
+theorem derived_iff (V : Vocab) (ts : List Tok) (A : Act) : Derived V ts A ↔
+    ∃ d, VE.Grammar.Derives (grammar V) (.n (grammar V).start) ts d ∧ ∃ c, meaning V () d = .ok (A, c, ()) :=
+  Iff.rfl
+
 /-- One meaning (design debate): some derivation means `A`, and every derivation that has a meaning means `A`. -/
 theorem read_unique (V : Vocab) (h : framesOk V = true) {N b : Nat} {ts : Array Tok} {A : Act}
     (hr : read V N b ts = .ok A) :
