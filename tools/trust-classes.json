@@ -15599,9 +15599,6 @@
         "VE.Readings.Run.DLine",
         "VE.Readings.Run.DLine.json",
         "VE.Readings.Run.defaultJson"
-      ],
-      "D[R]": [
-        "VE.Readings.Run.askedText"
       ]
     },
     "VE/Readings/DefaultVerdictsExamples.lean": {
