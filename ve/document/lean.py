@@ -10,7 +10,6 @@ from ..backends.lean_service import CheckerUnavailable
 from ..environment import Environment, listed_profiles
 from ..errors import ResourceLimit, VEError
 from ..identity import source_id
-from ..openterms import validate_open_terms
 from ..readings import active_reading_sets, rights_meaning_id
 from ..wire import digest
 from .source import (STATUSES, _RIGHTS_KINDS, _document_id, _english_fences, _environment, _parts, _split,
@@ -234,10 +233,11 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool, prepare
             formula_env = soft_document.extended_env
         if "rights@0" in env.profiles:
             # Batch 16e: the containers of the rights source Lean's `document` mode decoded with the rights route
-            # (`Service.Document.rightsDoc`); Lean's unit statuses and contents are the answer's, not theirs.
+            # (`Service.Document.rightsDoc`); Lean's unit statuses and contents are the answer's, not theirs. Its
+            # open terms are the names Lean's W2 check accepted (`Loader.openTermNames`, jt-2b).
             from ..rights import RightsDocument
             rights_document = RightsDocument(env, _rights_units(meta["units"]),
-                                             open_predicates=validate_open_terms(env, meta.get("open_terms", [])))
+                                             open_predicates={t["name"] for t in meta.get("open_terms", [])})
             soft_document = rights_document.soft_document
             formula_env = soft_document.extended_env
         for unit in units:
