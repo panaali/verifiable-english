@@ -1,0 +1,172 @@
+shard 5/6: 55 units; commands: ['lake build', 'lake build ve_english_lean_bench ve_scope_bench']
++ lake build
+⚠ [95/1099] Replayed VE.SoftNorms.Soften
+warning: VE/SoftNorms/Soften.lean:264:19: This simp argument is unused:
+  Option.bind_eq_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵e̵q̵_̵b̵i̵n̵d̵,̵ ̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵n̵o̵n̵e̵]̵[̲O̲p̲t̲i̲o̲n̲.̲b̲i̲n̲d̲_̲n̲o̲n̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [110/1099] Replayed VE.Readings.Separate
+warning: VE/Readings/Separate.lean:1490:50: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: VE/Readings/Separate.lean:1492:5: unused variable `hr`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [118/1099] Replayed VE.Readings.Superpose
+warning: VE/Readings/Superpose.lean:311:34: unused variable `h`
+
+... (9225 lines cut; full output in shard-full.txt)
+   Compiling memchr v2.8.3
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 8.74s
+order: failed last time []; changed []; then the rest; --maxfail 5
+recording 55 units with 4 jobs in /tmp/ve-select-run-093oxbul
+  tests/test_identity_lint.py: exit 1 in 49.9 s, 307 functions
+  tests/test_stage0_probe_matrix.py: exit 1 in 7.0 s, 916 functions
+  tests/test_lean_first_diff.py: exit 1 in 25.0 s, 843 functions
+  tests/test_readings_nd_document.py: exit 2 in 1.3 s, 413 functions
+  tests/test_lean_first_b12_report.py: exit 1 in 1.0 s, 261 functions
+stopping after 6 failed tests (--maxfail 5)
+FAILED tests/test_identity_lint.py (exit 1): tests/test_identity_lint.py::test_the_ratchet_starts_at_the_commit_that_adds_the_allowlist; log /tmp/ve-select-run-093oxbul/tests__test_identity_lint.py.log
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['git', 'rev-parse', '--verify', 'c24aeab2^{commit}']' returned non-zero exit status 128.
+
+../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: CalledProcessError
+=========================== short test summary info ============================
+FAILED tests/test_identity_lint.py::test_the_ratchet_starts_at_the_commit_that_adds_the_allowlist - subprocess.CalledProcessError: Command '['git', 'rev-parse', '--verify', 'c24aeab2^{commit}']' returned non-zero exit status 128.
+1 failed, 107 passed in 49.06s
+FAILED tests/test_readings_nd_document.py (exit 2): tests/test_readings_nd_document.py; log /tmp/ve-select-run-093oxbul/tests__test_readings_nd_document.py.log
+    from tests.test_readings_nd_lean import PROBE1, base1, doc1, doc2, env1, env2, norm, reading, reading_set
+<frozen importlib._bootstrap>:1371: in _find_and_load
+    ???
+<frozen importlib._bootstrap>:1342: in _find_and_load_unlocked
+    ???
+<frozen importlib._bootstrap>:938: in _load_unlocked
+    ???
+.venv/lib/python3.14/site-packages/_pytest/assertion/rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests/test_readings_nd_lean.py:17: in <module>
+    from conformance import frozen_norm_defaults as oracle
+conformance/frozen_norm_defaults.py:18: in <module>
+    _source = subprocess.check_output(["git", "show", f"{_REVISION}:ve/norm_defaults.py"], cwd=_ROOT)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:473: in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: in run
+    raise CalledProcessError(retcode, process.args,
+E   subprocess.CalledProcessError: Command '['git', 'show', '9160d326:ve/norm_defaults.py']' returned non-zero exit status 128.
+------------------------------- Captured stderr --------------------------------
+fatal: invalid object name '9160d326'.
+=========================== short test summary info ============================
+ERROR tests/test_readings_nd_document.py - subprocess.CalledProcessError: Command '['git', 'show', '9160d326:ve/norm_defaults.py']' returned non-zero exit status 128.
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.62s
+FAILED tests/test_lean_first_diff.py (exit 1): tests/test_lean_first_diff.py::test_norm_defaults_profile_corpus_is_complete_and_schema_bound; log /tmp/ve-select-run-093oxbul/tests__test_lean_first_diff.py.log
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['git', 'show', '9160d326:ve/norm_defaults.py']' returned non-zero exit status 128.
+
+../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: CalledProcessError
+----------------------------- Captured stderr call -----------------------------
+fatal: invalid object name '9160d326'.
+=========================== short test summary info ============================
+FAILED tests/test_lean_first_diff.py::test_norm_defaults_profile_corpus_is_complete_and_schema_bound - subprocess.CalledProcessError: Command '['git', 'show', '9160d326:ve/norm_defaults.py']' returned non-zero exit status 128.
+1 failed, 74 passed in 24.29s
+FAILED tests/test_stage0_probe_matrix.py (exit 1): tests/test_stage0_probe_matrix.py::test_frozen_baseline_keeps_rejection_codes_and_complete_graph_evidence; log /tmp/ve-select-run-093oxbul/tests__test_stage0_probe_matrix.py.log
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['git', 'ls-tree', '-r', '--name-only', 'f4286ef0d911c9db527abcc387e8280df8858e59', '--', 've']' returned non-zero exit status 128.
+
+../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: CalledProcessError
+----------------------------- Captured stderr call -----------------------------
+fatal: not a tree object
+=========================== short test summary info ============================
+FAILED tests/test_stage0_probe_matrix.py::test_frozen_baseline_keeps_rejection_codes_and_complete_graph_evidence - subprocess.CalledProcessError: Command '['git', 'ls-tree', '-r', '--name-only', 'f4286ef0d911c9db527abcc387e8280df8858e59', '--', 've']' returned non-zero exit status 128.
+1 failed, 13 passed in 6.29s
+FAILED tests/test_lean_first_b12_report.py (exit 1): tests/test_lean_first_b12_report.py::test_branch_trust_allowance_counts_only_batch_12_changes, tests/test_lean_first_b12_report.py::test_delta_numbers_are_regenerated_from_evidence; log /tmp/ve-select-run-093oxbul/tests__test_lean_first_b12_report.py.log
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['git', 'show', 'd772de28:docs/trust-baseline.json']' returned non-zero exit status 128.
+
+../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: CalledProcessError
+----------------------------- Captured stderr call -----------------------------
+fatal: invalid object name 'd772de28'.
+=========================== short test summary info ============================
+FAILED tests/test_lean_first_b12_report.py::test_delta_numbers_are_regenerated_from_evidence - subprocess.CalledProcessError: Command '['git', 'diff', '--numstat', '49d18263', 'd772de28']' returned non-zero exit status 128.
+FAILED tests/test_lean_first_b12_report.py::test_branch_trust_allowance_counts_only_batch_12_changes - subprocess.CalledProcessError: Command '['git', 'show', 'd772de28:docs/trust-baseline.json']' returned non-zero exit status 128.
+2 failed, 3 passed in 0.40s
+recorded 12 units for tree df44f04373; 43 others left to the static graph until they run; 5 failed
+STOPPED EARLY (--maxfail 5): 43 selected units did not run: tests/test_enum_domains.py, tests/test_wire_gate_corpus.py, tests/test_acts_vocab_mutants.py, tests/test_relay_mutation_gate.py, tests/test_readings_sd_ce4.py, tests/test_answer_store.py, tests/test_readings_budget_zero.py, tests/test_closure_certificates.py, tests/test_closure_induction.py, tests/test_replay_conservativity.py, tests/test_norms_contract.py, tests/test_acts_profile.py, tests/test_readings_s1_document.py, tests/test_metered_lean.py, tests/test_rd9_followup_bindings.py, tests/test_heavy_tests.py, tests/test_norm_defaults_relay_english.py, tests/test_batch_evidence.py, tests/test_soft_decision_keys.py, tests/test_lean_limits.py, tests/test_relay_english_scale.py, tests/test_risk_every_diagnostic.py, tests/test_entailment_adversarial.py, tests/test_readings_companions_lean.py, tests/test_discourse_constitution.py, tests/test_lean_first_b10b_report.py, tests/test_gate_rerun.py, tests/test_judgments_document.py, tests/test_english_lean_s0.py, tests/test_english_lean_tokens.py, tests/test_judgments_exercised.py, tests/test_english_lean_s2.py, tests/test_english_lean_s3_compare.py, tests/test_data_flags.py, tests/test_readings_defaults_rd8_report.py, tests/test_readings_s1_python.py, tests/test_english_e26_evidence.py, tests/test_readings_constant_display.py, tests/test_senses_pack.py, tests/test_b16c_evidence.py, tests/test_lean_first_b5_delta.py, tests/test_lean_first_b9_report.py, tests/test_rd9_r14_candidates.py
+SHARD 5/6: exit 1 in 261.1 s; 55 units, 7 passed
