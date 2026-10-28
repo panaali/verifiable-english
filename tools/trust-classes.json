@@ -983,7 +983,8 @@
         "ResponseShape.Skeletons.calc",
         "ResponseShape.Skeletons.diagnose",
         "ResponseShape.Skeletons.normDefaults",
-        "ResponseShape.Skeletons.words"
+        "ResponseShape.Skeletons.words",
+        "ResponseShape.Skeletons.cardinality"
       ],
       "G[I]": [
         "ResponseShape.Skeletons.identity"
@@ -2091,7 +2092,9 @@
         "VE.Compose.todayHead",
         "VE.Compose.withoutDocumentLayers",
         "VE.Compose.wrapperRows",
-        "VE.Compose.actsRefuses"
+        "VE.Compose.actsRefuses",
+        "VE.Compose.cardinalityOthers",
+        "VE.Compose.modeProfiles"
       ],
       "G[R]": [
         "VE.Compose.pendingWithDefaults"
@@ -13425,7 +13428,8 @@
         "VE.Cardinality.countFin",
         "VE.Cardinality.withRegionsFinite",
         "VE.Cardinality.refutesC",
-        "VE.Cardinality.CTerm.erase"
+        "VE.Cardinality.CTerm.erase",
+        "VE.Cardinality.bridge"
       ],
       "P": [
         "VE.Cardinality.regionSize",
@@ -15368,9 +15372,16 @@
         "VE.Cardinality.Run.statementJson"
       ],
       "G[R]": [
-        "VE.Cardinality.Run.problemChecks",
+        {
+          "name": "VE.Cardinality.Run.problemChecks",
+          "tied": [
+            "VE.Cardinality.Run.problemChecks_eq"
+          ]
+        },
         "VE.Cardinality.Run.stale",
-        "VE.Cardinality.Run.claimed"
+        "VE.Cardinality.Run.claimed",
+        "VE.Cardinality.Run.erasedThunks",
+        "VE.Cardinality.Run.chargedNodes"
       ],
       "G[V]": [
         "VE.Cardinality.Run.runCase",
@@ -15414,9 +15425,37 @@
         "VE.Cardinality.RunExamples.w6Id",
         "VE.Cardinality.RunExamples.wide",
         "VE.Cardinality.RunExamples.withCore",
-        "VE.Cardinality.RunExamples.withW6"
+        "VE.Cardinality.RunExamples.withW6",
+        "VE.Cardinality.RunExamples.anyCount",
+        "VE.Cardinality.RunExamples.charged"
       ]
     },
-    "VE/Cardinality/RunTheorems.lean": {}
+    "VE/Cardinality/RunTheorems.lean": {},
+    "ResponseShape/Schemas/Cardinality.lean": {
+      "G[R]": [
+        "ResponseShape.Schemas.Cardinality.admission",
+        "ResponseShape.Schemas.Cardinality.answer",
+        "ResponseShape.Schemas.Cardinality.answerFields",
+        "ResponseShape.Schemas.Cardinality.body",
+        "ResponseShape.Schemas.Cardinality.certificate",
+        "ResponseShape.Schemas.Cardinality.erased",
+        "ResponseShape.Schemas.Cardinality.error",
+        "ResponseShape.Schemas.Cardinality.file",
+        "ResponseShape.Schemas.Cardinality.formula",
+        "ResponseShape.Schemas.Cardinality.kind",
+        "ResponseShape.Schemas.Cardinality.operand",
+        "ResponseShape.Schemas.Cardinality.printed",
+        "ResponseShape.Schemas.Cardinality.problem",
+        "ResponseShape.Schemas.Cardinality.regions",
+        "ResponseShape.Schemas.Cardinality.row",
+        "ResponseShape.Schemas.Cardinality.rule",
+        "ResponseShape.Schemas.Cardinality.statement"
+      ]
+    },
+    "ResponseShape/Encoders/Cardinality.lean": {
+      "G[V]": [
+        "ResponseShape.Encoders.Cardinality.tacticCardinality_rows"
+      ]
+    }
   }
 }

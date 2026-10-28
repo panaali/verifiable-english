@@ -5635,6 +5635,27 @@ theorem VE.Cardinality.Run.erasedJson_conclusion
                 ("meaning_id", Lean.Json.str cid.fst), ("core_meaning_id", Lean.Json.str cid.snd)]))
   -- uses VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.CardEnv.env@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Run.erasedIds@VE.Cardinality.Run VE.Cardinality.Run.erasedJson@VE.Cardinality.Run VE.Cardinality.erasedProblem@VE.Cardinality.Erase VE.Time.QFormula.erase@VE.Time.Syntax VE.Time.QFormula@VE.Time.Syntax VE.Time.Wire.encCore@VE.Time.Wire VE.Time.Wire.encQ@VE.Time.Wire
   -- expr 3998950269
+theorem VE.Cardinality.Run.foldl_add_ge
+  ∀ (xs : List Nat) (u : Nat), u ≤ List.foldl (fun x1 x2 => x1 + x2) u xs
+  -- uses
+  -- expr 2237739851
+theorem VE.Cardinality.Run.foldl_capped_ge
+  ∀ (M : Nat) (xs : List Nat) (u : Nat), u ≤ List.foldl (fun a n => if a > M then a else a + n) u xs
+  -- uses
+  -- expr 569617177
+theorem VE.Cardinality.Run.foldl_capped_gt
+  ∀ (M : Nat) (xs : List Nat) (u : Nat),
+    List.foldl (fun a n => if a > M then a else a + n) u xs > M ↔ List.foldl (fun x1 x2 => x1 + x2) u xs > M
+  -- uses
+  -- expr 611315846
+theorem VE.Cardinality.Run.problemChecks_eq
+  ∀ (E : VE.Cardinality.CEnv) (ps : List VE.Cardinality.CFormula) (c : VE.Cardinality.CFormula),
+    VE.Cardinality.Run.problemChecks E ps c = do
+      VE.Cardinality.problemLimits E (c :: ps)
+      VE.Time.Wire.quantityLimits.aggregate
+          ((VE.Cardinality.erasedProblem E ps c).snd :: (VE.Cardinality.erasedProblem E ps c).fst)
+  -- uses VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.Run.problemChecks@VE.Cardinality.Run VE.Cardinality.erasedProblem@VE.Cardinality.Erase VE.Cardinality.problemLimits@VE.Cardinality.Regions VE.Time.QFormula@VE.Time.Syntax VE.Time.Wire.quantityLimits.aggregate@VE.Time.Wire
+  -- expr 2772685334
 theorem VE.Cardinality.Run.regionsJson_constants
   ∀ (E : VE.Cardinality.CEnv) (fs : List VE.Cardinality.CFormula),
     (VE.Cardinality.Run.regionsJson E fs).getObjVal? "constants" =
@@ -6068,6 +6089,15 @@ theorem VE.Cardinality.firstUse_nodup
   ∀ {β : Type} [inst : BEq β] [LawfulBEq β] (xs : List β), (VE.Cardinality.firstUse xs).Nodup
   -- uses VE.Cardinality.firstUse@VE.Cardinality.Regions
   -- expr 745461169
+theorem VE.Cardinality.gate_cardinality
+  ∀ (ps : List String),
+    "cardinality@0" ∈ ps →
+      ¬"judgments@0" ∈ ps →
+        ∀ (r : VE.Compose.Route),
+          VE.Compose.gateOf VE.Compose.profileTable ps = Except.ok r ↔
+            ps ∈ VE.Cardinality.Wire.profileLists ∧ r = VE.Compose.Route.frozen
+  -- uses VE.Cardinality.Wire.profileLists@VE.Cardinality.Wire VE.Compose.Route.frozen@VE.Compose.Dispatch VE.Compose.Route@VE.Compose.Dispatch VE.Compose.gateOf@VE.Compose.Dispatch VE.Compose.profileTable@VE.Compose.Dispatch
+  -- expr 3140971446
 theorem VE.Cardinality.get_of_data
   ∀ {s : String} {A rest : List Char} {c : Char},
     s.data = A ++ c :: rest → s.get { byteIdx := String.utf8ByteSize.go A } = c
@@ -6344,6 +6374,12 @@ theorem VE.Cardinality.startsWith_of_data
   ∀ (s p : String) (r : List Char), s.data = p.data ++ r → s.startsWith p = Bool.true
   -- uses
   -- expr 3588905589
+theorem VE.Cardinality.sublist_of_sorted
+  ∀ {l m : List String},
+    List.Pairwise (fun x1 x2 => x1 < x2) l →
+      List.Pairwise (fun x1 x2 => x1 < x2) m → (∀ (x : String), x ∈ l → x ∈ m) → l.Sublist m
+  -- uses
+  -- expr 782490565
 theorem VE.Cardinality.substrEq_prefix
   ∀ (s p : String) (r : List Char),
     s.data = p.data ++ r →
@@ -44895,6 +44931,10 @@ theorem VE.Service.runMode_calc
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.calc j = VE.Calc.Run.runCaseReported j
   -- uses VE.Calc.Run.runCaseReported@VE.Calc.Run VE.Service.Mode.calc@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 3103349118
+theorem VE.Service.runMode_cardinality
+  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.cardinality j = VE.Cardinality.Run.runCaseReported j
+  -- uses VE.Cardinality.Run.runCaseReported@VE.Cardinality.Run VE.Service.Mode.cardinality@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
+  -- expr 26778175
 theorem VE.Service.runMode_check
   ∀ (j : Lean.Json),
     VE.Service.runMode VE.Service.Mode.check j = VE.Service.Standalone.reported VE.Service.Standalone.checkCase j
