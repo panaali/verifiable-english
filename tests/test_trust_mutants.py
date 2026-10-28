@@ -2340,9 +2340,9 @@ def test_a_merged_record_is_a_rescore_prev_as_the_one_runs_is(sharded):
 
 
 def test_plan_prints_the_counts_and_builds_nothing(sharded, capsys):
-    head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=sharded.root, capture_output=True, text=True,
-                          timeout=HANG_TIMEOUT).stdout.strip()
-    counts = {"base": head, "definitions": 2, "mutants": 8, "to_run": 6, "not_run": 2}
+    sharded("--json", sharded.tmp / "run.json", "--max-mutants", 6)
+    capsys.readouterr()
+    counts = {"base": json.loads((sharded.tmp / "run.json").read_text())["base"], "definitions": 2, "mutants": 8, "to_run": 6, "not_run": 2}
     for args, owned in (((), None), (("--shard", "2/3"), 2), (("--shard", "1/9"), 1), (("--shard", "8/9"), 0)):
         code, out, _, ran, builds = sharded("--plan", "--max-mutants", 6, *args, "--json", sharded.tmp / "p.json",
                                             capsys=capsys)
