@@ -1,0 +1,27 @@
+trust_mutants: 12 definitions, 357 mutants (89 to run), 4 jobs, base 99490db8402c
+UNKNOWN lean/VE/Calc/Jsonl.lean:31 VE.Calc.jsonCell (D[V], trusted) eq-le: = -> ≤ (lean/VE/Calc/Jsonl.lean:31: failed to synthesize)
+SURVIVOR lean/VE/Calc/Table.lean:44 VE.Calc.Filter.Selects (S, trusted) or-and: ∨ -> ∧
+SURVIVOR lean/VE/Calc/Table.lean:36 VE.Calc.Filter.Selects (S, trusted) bool-flip: True -> False
+UNKNOWN lean/VE/Calc/Table.lean:106 VE.Calc.Agg.run (S, trusted) list-empty: (T.select f) -> [] (lean/VE/Calc/Table.lean:106: don't know how to synthesize implicit argument `α`)
+SURVIVOR lean/VE/Calc/Csv.lean:18 VE.Calc.csvRecords (D[V], trusted) and-or: ∧ -> ∨
+UNKNOWN lean/VE/Calc/Csv.lean:32 VE.Calc.columnTypes (D[V], trusted) list-empty: header.eraseDups.length -> [] (lean/VE/Calc/Csv.lean:32: Type mismatch)
+UNKNOWN lean/VE/Calc/Table.lean:107 VE.Calc.Agg.run (S, trusted) list-empty: (T.numbers f c) -> [] (lean/VE/Calc/Table.lean:107: Type mismatch)
+UNKNOWN lean/VE/Calc/Csv.lean:32 VE.Calc.columnTypes (D[V], trusted) list-empty: header.eraseDups -> [] (lean/VE/Calc/Csv.lean:32: don't know how to synthesize implicit argument `α`)
+SURVIVOR lean/VE/Calc/Table.lean:43 VE.Calc.Filter.Selects (S, trusted) and-or: ∧ -> ∨
+SURVIVOR lean/VE/Calc/Table.lean:40 VE.Calc.Filter.Selects (S, trusted) arm-true: ∃ x, T.cell r c = .num x ∧ x ≠ q -> True
+UNKNOWN lean/VE/Calc/Csv.lean:32 VE.Calc.columnTypes (D[V], trusted) list-empty: header -> [] (lean/VE/Calc/Csv.lean:32: don't know how to synthesize implicit argument `α`)
+SURVIVOR lean/VE/Calc/Table.lean:41 VE.Calc.Filter.Selects (S, trusted) arm-false: T.cell r c = .bool true -> False
+SURVIVOR lean/VE/Calc/Table.lean:41 VE.Calc.Filter.Selects (S, trusted) eq-ne: = -> ≠
+SURVIVOR lean/VE/Calc/Table.lean:42 VE.Calc.Filter.Selects (S, trusted) arm-true: T.cell r c = .bool false -> True
+UNKNOWN lean/VE/Calc/Jsonl.lean:42 VE.Calc.decodeJsonl (D[V], trusted) list-empty: keys.eraseDups.length -> [] (lean/VE/Calc/Jsonl.lean:42: Type mismatch)
+UNKNOWN lean/VE/Calc/Jsonl.lean:42 VE.Calc.decodeJsonl (D[V], trusted) list-empty: keys -> [] (lean/VE/Calc/Jsonl.lean:42: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Calc/Jsonl.lean:43 VE.Calc.decodeJsonl (D[V], trusted) list-empty: decl -> [] (lean/VE/Calc/Jsonl.lean:43: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Calc/Jsonl.lean:44 VE.Calc.decodeJsonl (D[V], trusted) list-empty: decl.map -> [] (lean/VE/Calc/Jsonl.lean:44: Function expected at)
+SURVIVOR lean/VE/Calc/Table.lean:43 VE.Calc.Filter.Selects (S, trusted) arm-false: f.Selects T r ∧ g.Selects T r -> False
+SURVIVOR lean/VE/Calc/Table.lean:44 VE.Calc.Filter.Selects (S, trusted) arm-true: f.Selects T r ∨ g.Selects T r -> True
+UNKNOWN lean/VE/Calc/Jsonl.lean:45 VE.Calc.decodeJsonl (D[V], trusted) list-empty: decl -> [] (lean/VE/Calc/Jsonl.lean:45: don't know how to synthesize implicit argument `α`)
+SURVIVOR lean/VE/Calc/Csv.lean:33 VE.Calc.columnTypes (D[V], trusted) list-drop-first: decl -> (decl.drop 1)
+SURVIVOR lean/VE/Calc/Jsonl.lean:45 VE.Calc.decodeJsonl (D[V], trusted) list-last: decl.map Prod.fst -> ((decl.map Prod.fst).reverse.take 1)
+trust_mutants: 65 KILLED, 12 SURVIVOR, 11 UNKNOWN, 1 INVALID, 0 ALLOWED, 0 NOT RUN, 268 OTHER SHARD in 281 s
+trust_mutants: D[V], trusted: 59 KILLED, 3 SURVIVOR, 9 UNKNOWN, 211 OTHER SHARD
+trust_mutants: S, trusted: 6 KILLED, 9 SURVIVOR, 2 UNKNOWN, 1 INVALID, 57 OTHER SHARD
