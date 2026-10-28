@@ -1,0 +1,3732 @@
+{
+ "units": [
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 34,
+   "id": "p1-u1",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 31,
+   "id": "p1-u2",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 101,
+   "id": "p2-u3",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 163,
+   "id": "p2-u4",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 143,
+   "id": "p2-u5",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 244,
+   "id": "p2-u6",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 174,
+   "id": "p2-u7",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 169,
+   "id": "p2-u8",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 163,
+   "id": "p2-u9",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 209,
+   "id": "p2-u10",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 137,
+   "id": "p2-u11",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 158,
+   "id": "p2-u12",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 90,
+   "id": "p2-u13",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 235,
+   "id": "p2-u14",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 143,
+   "id": "p2-u15",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "QT"
+   ],
+   "bytes": 305,
+   "id": "p2-u16",
+   "kind": "unformalised",
+   "reason": "quantity",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 101,
+   "id": "p2-u17",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 135,
+   "id": "p2-u18",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 1952,
+   "id": "p3-u19",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 114,
+   "id": "p4-u20",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 198,
+   "id": "p4-u21",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 16,
+   "id": "p4-u22",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 264,
+   "id": "p4-u23",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "ET"
+   ],
+   "bytes": 233,
+   "id": "p4-u24",
+   "kind": "unformalised",
+   "reason": "event_order",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 175,
+   "id": "p4-u25",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 194,
+   "id": "p4-u26",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 133,
+   "id": "p4-u27",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "ET"
+   ],
+   "bytes": 197,
+   "id": "p4-u28",
+   "kind": "unformalised",
+   "reason": "event_order",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 200,
+   "id": "p4-u29",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 264,
+   "id": "p4-u30",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 248,
+   "id": "p4-u31",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 78,
+   "id": "p4-u32",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 153,
+   "id": "p4-u33",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 190,
+   "id": "p4-u34",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 176,
+   "id": "p4-u35",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 223,
+   "id": "p4-u36",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 60,
+   "id": "p4-u37",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 190,
+   "id": "p4-u38",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 235,
+   "id": "p4-u39",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 115,
+   "id": "p4-u40",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 399,
+   "id": "p4-u41",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 102,
+   "id": "p4-u42",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 185,
+   "id": "p4-u43",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 7,
+   "id": "p4-u44",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 400,
+   "id": "p5-u45",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 299,
+   "id": "p5-u46",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 148,
+   "id": "p5-u47",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "ET"
+   ],
+   "bytes": 181,
+   "id": "p5-u48",
+   "kind": "unformalised",
+   "reason": "event_order",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "SC",
+    "JT"
+   ],
+   "bytes": 116,
+   "id": "p5-u49",
+   "kind": "norm",
+   "reading_set": "rs12-category",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 129,
+   "id": "p5-u50",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 144,
+   "id": "p5-u51",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "ET"
+   ],
+   "bytes": 104,
+   "id": "p5-u52",
+   "kind": "unformalised",
+   "reason": "event_order",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 230,
+   "id": "p5-u53",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 178,
+   "id": "p5-u54",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 99,
+   "id": "p5-u55",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 652,
+   "id": "p5-u56",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 183,
+   "id": "p5-u57",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 112,
+   "id": "p5-u58",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "JT",
+    "ET"
+   ],
+   "bytes": 250,
+   "id": "p5-u59",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 158,
+   "id": "p5-u60",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "ET"
+   ],
+   "bytes": 478,
+   "id": "p5-u61",
+   "kind": "unformalised",
+   "reason": "event_order",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 261,
+   "id": "p5-u62",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 178,
+   "id": "p6-u63",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 124,
+   "id": "p6-u64",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 361,
+   "id": "p6-u65",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [],
+   "bytes": 6,
+   "id": "p6-u66",
+   "kind": "asserted",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 279,
+   "id": "p6-u67",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 151,
+   "id": "p6-u68",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "JT",
+    "DF"
+   ],
+   "bytes": 71,
+   "id": "p6-u69",
+   "kind": "norm",
+   "reading_set": "rs1-security",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "JT",
+    "ET",
+    "DF"
+   ],
+   "bytes": 104,
+   "id": "p6-u70",
+   "kind": "norm",
+   "reading_set": "rs1-misuse-bio",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [],
+   "bytes": 10,
+   "id": "p6-u71",
+   "kind": "asserted",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 328,
+   "id": "p6-u72",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 269,
+   "id": "p6-u73",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "ET",
+    "JT",
+    "DF"
+   ],
+   "bytes": 123,
+   "id": "p6-u74",
+   "kind": "norm",
+   "reading_set": "rs1-halt",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 214,
+   "id": "p6-u75",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [],
+   "bytes": 6,
+   "id": "p6-u76",
+   "kind": "asserted",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 251,
+   "id": "p6-u77",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 190,
+   "id": "p6-u78",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 277,
+   "id": "p6-u79",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 71,
+   "id": "p6-u80",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "JT",
+    "ET",
+    "DF"
+   ],
+   "bytes": 101,
+   "id": "p6-u81",
+   "kind": "norm",
+   "reading_set": "rs1-misuse-cyb",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "JT",
+    "ET",
+    "DF"
+   ],
+   "bytes": 117,
+   "id": "p6-u82",
+   "kind": "norm",
+   "reading_set": "rs1-alignment-cyb",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 154,
+   "id": "p6-u83",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 230,
+   "id": "p6-u84",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [],
+   "bytes": 10,
+   "id": "p7-u85",
+   "kind": "asserted",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 324,
+   "id": "p7-u86",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 184,
+   "id": "p7-u87",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 184,
+   "id": "p7-u88",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 265,
+   "id": "p7-u89",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [],
+   "bytes": 6,
+   "id": "p7-u90",
+   "kind": "asserted",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 180,
+   "id": "p7-u91",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 76,
+   "id": "p7-u92",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 270,
+   "id": "p7-u93",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 71,
+   "id": "p7-u94",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [],
+   "bytes": 10,
+   "id": "p7-u95",
+   "kind": "asserted",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "QT",
+    "ET"
+   ],
+   "bytes": 397,
+   "id": "p7-u96",
+   "kind": "unformalised",
+   "reason": "quantity",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 293,
+   "id": "p7-u97",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 402,
+   "id": "p7-u98",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 308,
+   "id": "p7-u99",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 148,
+   "id": "p7-u100",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 57,
+   "id": "p7-u101",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 190,
+   "id": "p8-u102",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 70,
+   "id": "p8-u103",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "ET"
+   ],
+   "bytes": 89,
+   "id": "p8-u104",
+   "kind": "unformalised",
+   "reason": "event_order",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 176,
+   "id": "p8-u105",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 439,
+   "id": "p8-u106",
+   "kind": "norm",
+   "reading_set": "rs4-research",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 175,
+   "id": "p8-u107",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 210,
+   "id": "p8-u108",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 511,
+   "id": "p8-u109",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 330,
+   "id": "p8-u110",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 396,
+   "id": "p8-u111",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 176,
+   "id": "p8-u112",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 270,
+   "id": "p8-u113",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 254,
+   "id": "p8-u114",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 164,
+   "id": "p8-u115",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 278,
+   "id": "p8-u116",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 67,
+   "id": "p9-u117",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 205,
+   "id": "p9-u118",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 133,
+   "id": "p9-u119",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 185,
+   "id": "p9-u120",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 116,
+   "id": "p9-u121",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 191,
+   "id": "p9-u122",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 160,
+   "id": "p9-u123",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 94,
+   "id": "p9-u124",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 158,
+   "id": "p9-u125",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 240,
+   "id": "p9-u126",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 347,
+   "id": "p9-u127",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 496,
+   "id": "p9-u128",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 458,
+   "id": "p9-u129",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 249,
+   "id": "p9-u130",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 261,
+   "id": "p9-u131",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 54,
+   "id": "p9-u132",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 137,
+   "id": "p9-u133",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 52,
+   "id": "p9-u134",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 142,
+   "id": "p9-u135",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 197,
+   "id": "p9-u136",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 156,
+   "id": "p9-u137",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 287,
+   "id": "p9-u138",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 404,
+   "id": "p10-u139",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 196,
+   "id": "p10-u140",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 121,
+   "id": "p10-u141",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 362,
+   "id": "p10-u142",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 42,
+   "id": "p10-u143",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 90,
+   "id": "p10-u144",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 147,
+   "id": "p10-u145",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 250,
+   "id": "p10-u146",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "ET"
+   ],
+   "bytes": 343,
+   "id": "p10-u147",
+   "kind": "unformalised",
+   "reason": "event_order",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 185,
+   "id": "p10-u148",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [],
+   "bytes": 86,
+   "id": "p10-u149",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 186,
+   "id": "p10-u150",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 289,
+   "id": "p10-u151",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [],
+   "bytes": 40,
+   "id": "p10-u152",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 27,
+   "id": "p10-u153",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 19,
+   "id": "p10-u154",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 198,
+   "id": "p10-u155",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "DF",
+    "JT"
+   ],
+   "bytes": 515,
+   "id": "p10-u156",
+   "kind": "norm",
+   "reading_set": "rs8-distilled",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 309,
+   "id": "p11-u157",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 177,
+   "id": "p11-u158",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "JT",
+    "ET"
+   ],
+   "bytes": 396,
+   "id": "p11-u159",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 68,
+   "id": "p11-u160",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 134,
+   "id": "p11-u161",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [],
+   "bytes": 60,
+   "id": "p11-u162",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 72,
+   "id": "p11-u163",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [],
+   "bytes": 81,
+   "id": "p11-u164",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [],
+   "bytes": 27,
+   "id": "p11-u165",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 219,
+   "id": "p11-u166",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 59,
+   "id": "p11-u167",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 107,
+   "id": "p11-u168",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 194,
+   "id": "p11-u169",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 305,
+   "id": "p11-u170",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 64,
+   "id": "p11-u171",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 147,
+   "id": "p11-u172",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 51,
+   "id": "p11-u173",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 78,
+   "id": "p11-u174",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 289,
+   "id": "p11-u175",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 178,
+   "id": "p11-u176",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 47,
+   "id": "p11-u177",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 86,
+   "id": "p11-u178",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 135,
+   "id": "p11-u179",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 91,
+   "id": "p12-u180",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 284,
+   "id": "p12-u181",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "ET"
+   ],
+   "bytes": 295,
+   "id": "p12-u182",
+   "kind": "unformalised",
+   "reason": "event_order",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 169,
+   "id": "p12-u183",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 18,
+   "id": "p12-u184",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 131,
+   "id": "p12-u185",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 250,
+   "id": "p12-u186",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 185,
+   "id": "p12-u187",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 160,
+   "id": "p12-u188",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 223,
+   "id": "p12-u189",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 30,
+   "id": "p12-u190",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 49,
+   "id": "p12-u191",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 84,
+   "id": "p12-u192",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 217,
+   "id": "p12-u193",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "ET"
+   ],
+   "bytes": 154,
+   "id": "p12-u194",
+   "kind": "unformalised",
+   "reason": "event_order",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "ET"
+   ],
+   "bytes": 127,
+   "id": "p12-u195",
+   "kind": "unformalised",
+   "reason": "event_order",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 71,
+   "id": "p12-u196",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 169,
+   "id": "p12-u197",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 153,
+   "id": "p12-u198",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 224,
+   "id": "p12-u199",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 146,
+   "id": "p12-u200",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 159,
+   "id": "p12-u201",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 60,
+   "id": "p12-u202",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 128,
+   "id": "p12-u203",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 18,
+   "id": "p12-u204",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 308,
+   "id": "p13-u205",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 177,
+   "id": "p13-u206",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "JT",
+    "WG",
+    "readings"
+   ],
+   "bytes": 183,
+   "id": "p13-u207",
+   "kind": "norm",
+   "reading_set": "rs5-adjustment",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 92,
+   "id": "p13-u208",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 63,
+   "id": "p13-u209",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "ET"
+   ],
+   "bytes": 415,
+   "id": "p13-u210",
+   "kind": "unformalised",
+   "reason": "event_order",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "JT",
+    "ET"
+   ],
+   "bytes": 153,
+   "id": "p13-u211",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "ET"
+   ],
+   "bytes": 185,
+   "id": "p13-u212",
+   "kind": "unformalised",
+   "reason": "event_order",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 146,
+   "id": "p13-u213",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 430,
+   "id": "p13-u214",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 46,
+   "id": "p13-u215",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 100,
+   "id": "p13-u216",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 27,
+   "id": "p13-u217",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [],
+   "bytes": 89,
+   "id": "p13-u218",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 193,
+   "id": "p13-u219",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 19,
+   "id": "p13-u220",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 137,
+   "id": "p13-u221",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 136,
+   "id": "p13-u222",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 139,
+   "id": "p13-u223",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 197,
+   "id": "p13-u224",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 278,
+   "id": "p13-u225",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 126,
+   "id": "p13-u226",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 44,
+   "id": "p14-u227",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 145,
+   "id": "p14-u228",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 353,
+   "id": "p14-u229",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 235,
+   "id": "p14-u230",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 89,
+   "id": "p14-u231",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 151,
+   "id": "p14-u232",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 165,
+   "id": "p14-u233",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 130,
+   "id": "p14-u234",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 136,
+   "id": "p14-u235",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 226,
+   "id": "p15-u236",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 32,
+   "id": "p15-u237",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 67,
+   "id": "p15-u238",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 252,
+   "id": "p15-u239",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 206,
+   "id": "p15-u240",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 133,
+   "id": "p15-u241",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 79,
+   "id": "p15-u242",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 144,
+   "id": "p15-u243",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 190,
+   "id": "p15-u244",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 174,
+   "id": "p15-u245",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 56,
+   "id": "p15-u246",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 153,
+   "id": "p15-u247",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 154,
+   "id": "p15-u248",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 325,
+   "id": "p15-u249",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 81,
+   "id": "p15-u250",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 160,
+   "id": "p15-u251",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 262,
+   "id": "p15-u252",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 144,
+   "id": "p15-u253",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 256,
+   "id": "p15-u254",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 234,
+   "id": "p15-u255",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 44,
+   "id": "p15-u256",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 154,
+   "id": "p15-u257",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 155,
+   "id": "p15-u258",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 225,
+   "id": "p15-u259",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 243,
+   "id": "p15-u260",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 173,
+   "id": "p15-u261",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 315,
+   "id": "p15-u262",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 4,
+   "id": "p16-u263",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 32,
+   "id": "p16-u264",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 171,
+   "id": "p16-u265",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 194,
+   "id": "p16-u266",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "ET"
+   ],
+   "bytes": 139,
+   "id": "p16-u267",
+   "kind": "unformalised",
+   "reason": "event_order",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 52,
+   "id": "p16-u268",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 148,
+   "id": "p16-u269",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 226,
+   "id": "p16-u270",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [],
+   "bytes": 155,
+   "id": "p16-u271",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 21,
+   "id": "p16-u272",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 204,
+   "id": "p16-u273",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 331,
+   "id": "p16-u274",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 85,
+   "id": "p16-u275",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 42,
+   "id": "p16-u276",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 212,
+   "id": "p16-u277",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 64,
+   "id": "p16-u278",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 68,
+   "id": "p16-u279",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 85,
+   "id": "p16-u280",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 150,
+   "id": "p16-u281",
+   "kind": "norm",
+   "reading_set": "rs0-informed",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 119,
+   "id": "p16-u282",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [],
+   "bytes": 122,
+   "id": "p16-u283",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 148,
+   "id": "p16-u284",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 93,
+   "id": "p16-u285",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 39,
+   "id": "p16-u286",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 69,
+   "id": "p16-u287",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 159,
+   "id": "p16-u288",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "ET",
+    "readings"
+   ],
+   "bytes": 113,
+   "id": "p16-u289",
+   "kind": "norm",
+   "reading_set": "rs0-year",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 12,
+   "id": "p16-u290",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 227,
+   "id": "p16-u291",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 117,
+   "id": "p16-u292",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 260,
+   "id": "p17-u293",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 106,
+   "id": "p17-u294",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 137,
+   "id": "p17-u295",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 167,
+   "id": "p17-u296",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 94,
+   "id": "p17-u297",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 309,
+   "id": "p17-u298",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 118,
+   "id": "p17-u299",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 157,
+   "id": "p17-u300",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 257,
+   "id": "p17-u301",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 304,
+   "id": "p17-u302",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 161,
+   "id": "p17-u303",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 261,
+   "id": "p17-u304",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 101,
+   "id": "p18-u305",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 106,
+   "id": "p18-u306",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 118,
+   "id": "p18-u307",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 123,
+   "id": "p18-u308",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 108,
+   "id": "p18-u309",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 74,
+   "id": "p18-u310",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 100,
+   "id": "p18-u311",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 117,
+   "id": "p18-u312",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 166,
+   "id": "p18-u313",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 136,
+   "id": "p18-u314",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 200,
+   "id": "p18-u315",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 117,
+   "id": "p18-u316",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 66,
+   "id": "p18-u317",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 116,
+   "id": "p18-u318",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 106,
+   "id": "p18-u319",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 82,
+   "id": "p18-u320",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 121,
+   "id": "p18-u321",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 45,
+   "id": "p18-u322",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 241,
+   "id": "p18-u323",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 120,
+   "id": "p18-u324",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 114,
+   "id": "p18-u325",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 187,
+   "id": "p18-u326",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 257,
+   "id": "p19-u327",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 154,
+   "id": "p19-u328",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 157,
+   "id": "p19-u329",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 131,
+   "id": "p19-u330",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 250,
+   "id": "p19-u331",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 187,
+   "id": "p19-u332",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 160,
+   "id": "p19-u333",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 226,
+   "id": "p19-u334",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 266,
+   "id": "p19-u335",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 259,
+   "id": "p19-u336",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 98,
+   "id": "p20-u337",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 62,
+   "id": "p20-u338",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 153,
+   "id": "p20-u339",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 52,
+   "id": "p20-u340",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 92,
+   "id": "p20-u341",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 122,
+   "id": "p20-u342",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 108,
+   "id": "p20-u343",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 198,
+   "id": "p20-u344",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 88,
+   "id": "p20-u345",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 67,
+   "id": "p20-u346",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 67,
+   "id": "p20-u347",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 61,
+   "id": "p20-u348",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 61,
+   "id": "p20-u349",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 208,
+   "id": "p20-u350",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 101,
+   "id": "p20-u351",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 37,
+   "id": "p20-u352",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 124,
+   "id": "p20-u353",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 103,
+   "id": "p20-u354",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 87,
+   "id": "p20-u355",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 141,
+   "id": "p20-u356",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 199,
+   "id": "p20-u357",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 213,
+   "id": "p20-u358",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 158,
+   "id": "p20-u359",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 51,
+   "id": "p20-u360",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 25,
+   "id": "p20-u361",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 73,
+   "id": "p20-u362",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 34,
+   "id": "p20-u363",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 56,
+   "id": "p20-u364",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 284,
+   "id": "p20-u365",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 173,
+   "id": "p21-u366",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 163,
+   "id": "p21-u367",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "external reference"
+   ],
+   "bytes": 182,
+   "id": "p21-u368",
+   "kind": "unformalised",
+   "reason": "external_reference",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 183,
+   "id": "p21-u369",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "external reference"
+   ],
+   "bytes": 127,
+   "id": "p21-u370",
+   "kind": "unformalised",
+   "reason": "external_reference",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 68,
+   "id": "p21-u371",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 211,
+   "id": "p21-u372",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 262,
+   "id": "p21-u373",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 309,
+   "id": "p21-u374",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 132,
+   "id": "p21-u375",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 461,
+   "id": "p21-u376",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 143,
+   "id": "p21-u377",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 246,
+   "id": "p21-u378",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 53,
+   "id": "p21-u379",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 350,
+   "id": "p21-u380",
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 77,
+   "id": "p21-u381",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 184,
+   "id": "p21-u382",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "ET"
+   ],
+   "bytes": 337,
+   "id": "p21-u383",
+   "kind": "unformalised",
+   "reason": "event_order",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 84,
+   "id": "p21-u384",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 143,
+   "id": "p21-u385",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 229,
+   "id": "p22-u386",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "ET"
+   ],
+   "bytes": 637,
+   "id": "p22-u387",
+   "kind": "unformalised",
+   "reason": "event_order",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 81,
+   "id": "p22-u388",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 644,
+   "id": "p22-u389",
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
+  }
+ ]
+}

@@ -1,0 +1,496 @@
+{
+  "language": "ve.core@0.2",
+  "profiles": [
+    "norms@0",
+    "relational-fol@0",
+    "soft-norms@0"
+  ],
+  "spec_revision": "ve-v0.2-expand2-2026-09-25",
+  "vocabulary": {
+    "sorts": {
+      "situation": {
+        "description": "a development, use, deployment, review or decision of a covered model"
+      },
+      "level": {
+        "description": "one of Table 1's six named capability levels"
+      },
+      "category": {
+        "description": "one of the three Tracked Categories"
+      },
+      "proposal": {
+        "description": "a safeguard or governance proposal"
+      },
+      "requirement": {
+        "description": "a stated safeguard requirement"
+      }
+    },
+    "predicates": {
+      "covered": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "the model at {0} is covered by the Framework"
+      },
+      "high_capability": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "the model at {0} reaches a High capability threshold; SAG decides this"
+      },
+      "critical_capability": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "the model at {0} reaches a Critical capability threshold; SAG decides this"
+      },
+      "likely_to_cross": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "the model at {0} appears likely to cross a threshold; SAG decides this"
+      },
+      "reasonable_evidence": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "there is reasonable evidence that safeguards are not working at {0}"
+      },
+      "adjustment_conditions": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "the three conditions of 4.3 hold at {0}; their assessment is open"
+      },
+      "sufficient_safeguards": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "safeguards sufficiently minimize severe-harm risk at {0}; SAG decides this"
+      },
+      "major_deployment": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "{0} is a major deployment; OpenAI decides this"
+      },
+      "safeguard_selection": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "{0} is the selection of safeguards for a deployment"
+      },
+      "substantiated_noncompliance": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "a noncompliance report at {0} is substantiated"
+      },
+      "external_deployment": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "{0} is an external deployment"
+      },
+      "large_scale_internal": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "{0} is a large-scale internal deployment"
+      },
+      "critical_standard_unspecified": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "the Critical standard has not yet been specified at {0}"
+      },
+      "in_category": {
+        "arguments": [
+          "level",
+          "category"
+        ],
+        "description": "{0} is in Tracked Category {1}",
+        "verbalisation": "{0} concerns {1}"
+      },
+      "high": {
+        "arguments": [
+          "level"
+        ],
+        "description": "{0} is a High level",
+        "verbalisation": "{0} is high"
+      },
+      "critical": {
+        "arguments": [
+          "level"
+        ],
+        "description": "{0} is a Critical level",
+        "verbalisation": "{0} is critical"
+      },
+      "reached": {
+        "arguments": [
+          "situation",
+          "level"
+        ],
+        "description": "the model at {0} has reached {1}; SAG decides this",
+        "verbalisation": "{0} has reached {1}"
+      },
+      "proposed": {
+        "arguments": [
+          "proposal"
+        ],
+        "description": "{0} is proposed"
+      },
+      "required": {
+        "arguments": [
+          "requirement"
+        ],
+        "description": "{0} is a requirement"
+      },
+      "misuse_safeguards": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "Table 1: misuse safeguards for deployment",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have misuse safeguards"
+        }
+      },
+      "security_controls": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "Table 1 and C.3: security controls",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have security controls"
+        }
+      },
+      "alignment_safeguards": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "Table 1: CYB-H large-scale internal safeguards",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have misalignment safeguards"
+        }
+      },
+      "halt_development": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "Table 1: halt further development at Critical",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} halt further development"
+        }
+      },
+      "safeguards_before_deployment": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "1, 2.2, 4.2: safeguards before deployment",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have safeguards before deployment"
+        }
+      },
+      "safeguards_during_development": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "4.4: Critical safeguards during development",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have safeguards during development"
+        }
+      },
+      "security_practices": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "C.3: required High-level security practices",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have security practices"
+        }
+      },
+      "evaluations": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "3.3: Scalable Evaluations",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} undergo evaluations"
+        }
+      },
+      "capabilities_report": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "3.3: SAG reviews the report",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have SAG review the Capabilities Report"
+        }
+      },
+      "safeguard_work": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "4: work before formal determination",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} start safeguard work"
+        }
+      },
+      "safeguards_report": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "4.1 and 4.2",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have a Safeguards Report"
+        }
+      },
+      "risk_paths": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "4.1: first safeguard-selection step",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} identify ways severe harm can arise"
+        }
+      },
+      "specific_safeguards": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "4.1: second safeguard-selection step",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} identify specific safeguards"
+        }
+      },
+      "efficacy_methods": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "4.1: third safeguard-selection step",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} identify efficacy methods"
+        }
+      },
+      "efficacy_threshold": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "4.1: third safeguard-selection step",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} identify an efficacy threshold"
+        }
+      },
+      "validate_evidence": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "4.2: evidence safeguards fail",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} validate the evidence"
+        }
+      },
+      "review_sufficiency": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "4.2: review sufficiency",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} review safeguard sufficiency"
+        }
+      },
+      "research_review": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "2.3: periodic review",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have research categories reviewed"
+        }
+      },
+      "decision_documented": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "5.1: SAG documentation",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have the decision documented"
+        }
+      },
+      "noncompliance_investigated": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "5.1: noncompliance",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have noncompliance investigated"
+        }
+      },
+      "corrective_action": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "5.1: substantiated noncompliance",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have corrective action taken"
+        }
+      },
+      "public_disclosure": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "5.2: major deployment disclosure",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have public disclosure"
+        }
+      },
+      "safeguards_disclosed": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "5.2: beyond High disclosure",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have safeguards disclosed"
+        }
+      },
+      "sag_recommendation": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "Appendix B: SAG role",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have SAG recommendations sent to Leadership"
+        }
+      },
+      "ssc_visibility": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "Appendix B: SSC oversight",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} give SSC visibility into the process"
+        }
+      },
+      "recommendation_informed": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "Appendix B: SAG recommendation",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have Leadership informed by SAG"
+        }
+      },
+      "annual_review": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "Appendix B: at least once a year",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have an annual review"
+        }
+      },
+      "tracking": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "2.1: Tracked Category criteria",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have the category tracked"
+        }
+      }
+    },
+    "constants": {
+      "biological_and_chemical_high": {
+        "sort": "level",
+        "description": "Table 1: biological_and_chemical, High"
+      },
+      "biological_and_chemical_critical": {
+        "sort": "level",
+        "description": "Table 1: biological_and_chemical, Critical"
+      },
+      "cybersecurity_high": {
+        "sort": "level",
+        "description": "Table 1: cybersecurity, High"
+      },
+      "cybersecurity_critical": {
+        "sort": "level",
+        "description": "Table 1: cybersecurity, Critical"
+      },
+      "ai_self_improvement_high": {
+        "sort": "level",
+        "description": "Table 1: ai_self_improvement, High"
+      },
+      "ai_self_improvement_critical": {
+        "sort": "level",
+        "description": "Table 1: ai_self_improvement, Critical"
+      },
+      "ai_self_improvement": {
+        "sort": "category",
+        "description": "Tracked Category ai_self_improvement"
+      },
+      "biological_and_chemical": {
+        "sort": "category",
+        "description": "Tracked Category biological_and_chemical"
+      },
+      "cybersecurity": {
+        "sort": "category",
+        "description": "Tracked Category cybersecurity"
+      }
+    }
+  }
+}

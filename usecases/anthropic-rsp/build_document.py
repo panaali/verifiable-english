@@ -30,6 +30,8 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
+sys.path.insert(0, str(HERE.parent))
+from safetyfw_common import safety_framework  # noqa: E402
 sys.path.insert(0, str(HERE))
 import rsp_translation as T  # noqa: E402
 import rsp_vocabulary as V  # noqa: E402
@@ -37,24 +39,7 @@ import rsp_vocabulary as V  # noqa: E402
 DEFAULT_SOURCE = Path.home() / "code/manage-agents/pilots/anthropic-rsp/source/rsp-3.4.txt"
 TEXT_SHA256 = "c7de7fe2f1f44cdd650efb327ecd798f1140034cf6328eb2e494de587c2c3063"
 TEXT_BYTES = 59410
-FSF_NAMES = ("vocabulary", "translation", "build_document", "measure_r1")
-
-
-def _safety_framework():
-    """safety-framework's `build_document` and `measure_r1`, loaded as that case's test loads them: its siblings stand
-    under their bare names only while they import, so that no other use case's module of the same name is shadowed."""
-    saved = {name: sys.modules.pop(name) for name in FSF_NAMES if name in sys.modules}
-    sys.path.insert(0, str(REPO / "usecases" / "safety-framework"))
-    try:
-        return {name: importlib.import_module(name) for name in ("build_document", "measure_r1")}
-    finally:
-        sys.path.pop(0)
-        for name in FSF_NAMES:
-            sys.modules.pop(name, None)
-        sys.modules.update(saved)
-
-
-FSF = _safety_framework()
+FSF = safety_framework("build_document", "measure_r1")
 meta, label, believes, hedged, causal, unformalised, facts, rule, condition, readings, routed = (
     getattr(FSF["build_document"], name) for name in ("meta", "label", "believes", "hedged", "causal",
                                                        "unformalised", "facts", "rule", "condition", "readings",

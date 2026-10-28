@@ -1,0 +1,64 @@
+## f1-misuse-bio-strict | RS1=strict | Table 1 BIO-H: “Require safeguards against misuse … before external deployment”
+Rule 1. Every situation must have misuse safeguards, if both that situation has reached "biological_and_chemical_high" and that situation is classified as "external_deployment".
+## f1-misuse-bio-default | RS1=default | Table 1 BIO-H: the same imperative under “Risk-specific safeguard guidelines”
+Rule 1. Every situation should have misuse safeguards, if both that situation has reached "biological_and_chemical_high" and that situation is classified as "external_deployment".
+## f1-misuse-cyb-strict | RS1=strict | Table 1 CYB-H: “Require safeguards against misuse … for external deployment”
+Rule 1. Every situation must have misuse safeguards, if both that situation has reached "cybersecurity_high" and that situation is classified as "external_deployment".
+## f1-misuse-cyb-default | RS1=default | Table 1 CYB-H: the same imperative under “Risk-specific safeguard guidelines”
+Rule 1. Every situation should have misuse safeguards, if both that situation has reached "cybersecurity_high" and that situation is classified as "external_deployment".
+## f1-alignment-cyb-strict | RS1=strict | Table 1 CYB-H: “Require safeguards … against misalignment … for large-scale internal deployment”
+Rule 1. Every situation must have misalignment safeguards, if both that situation has reached "cybersecurity_high" and that situation is classified as "large_scale_internal".
+## f1-alignment-cyb-default | RS1=default | Table 1 CYB-H: the same imperative under “Risk-specific safeguard guidelines”
+Rule 1. Every situation should have misalignment safeguards, if both that situation has reached "cybersecurity_high" and that situation is classified as "large_scale_internal".
+## f1-security-strict | RS1=strict | Table 1: “Require security controls … meeting High standard”
+Rule 1. Every situation must have security controls, if both that situation is covered and that situation is classified as "high_capability".
+## f1-security-default | RS1=default | Table 1: the same imperative under “Risk-specific safeguard guidelines”
+Rule 1. Every situation should have security controls, if both that situation is covered and that situation is classified as "high_capability".
+## f1-halt-strict | RS1=strict | Table 1: “Until we have specified safeguards and security controls … halt further development”
+Rule 1. Every situation must halt further development, if both that situation is classified as "critical_capability" and that situation is classified as "critical_standard_unspecified".
+## f1-halt-default | RS1=default | Table 1: the same imperative under “Risk-specific safeguard guidelines”
+Rule 1. Every situation should halt further development, if both that situation is classified as "critical_capability" and that situation is classified as "critical_standard_unspecified".
+## f2-deploy | always | 2.2: “required to have robust and effective safeguards that sufficiently minimize … before they are deployed”
+Rule 1. Every situation must have safeguards before deployment, if both that situation is covered and that situation is classified as "high_capability".
+## f3-develop | always | 4.4: “Such models require additional safeguards … during development”
+Rule 1. Every situation must have safeguards during development, if both that situation is covered and that situation is classified as "critical_capability".
+## f4-security | always | C.3: “We will require the following practices for High capability models”
+Rule 1. Every situation must have security practices, if both that situation is covered and that situation is classified as "high_capability".
+## f7-evaluations | always | 3.3: “Prior to deployment, every covered model undergoes Scalable Evaluations”
+Rule 1. Every situation must undergo evaluations, if that situation is covered.
+## f7-report | always | 3.3: “The SAG reviews the Capabilities Report”
+Rule 1. Every situation must have SAG review the Capabilities Report, if that situation is covered.
+## f8-start | always | 4: “If a covered system appears likely to cross a capability threshold, we will start to work on safeguards”
+Rule 1. Every situation must start safeguard work, if both that situation is covered and that situation is classified as "likely_to_cross".
+## f9-report | always | 4.1: “Safeguards Report” records the case for reducing severe-harm risk
+Rule 1. Every situation must have a Safeguards Report, if that situation is classified as "safeguard_selection".
+## f9-risk-paths | always | 4.1: “We first identify the plausible ways in which … severe harm can come to fruition”
+Rule 1. Every situation must identify ways severe harm can arise, if that situation is classified as "safeguard_selection".
+## f9-specific | always | 4.1: “For each of those, we then identify specific safeguards”
+Rule 1. Every situation must identify specific safeguards, if that situation is classified as "safeguard_selection".
+## f9-efficacy | always | 4.1: “For each identified safeguard, we identify methods to measure their efficacy”
+Rule 1. Every situation must identify efficacy methods, if that situation is classified as "safeguard_selection".
+## f9-threshold | always | 4.1: “and an efficacy threshold” for each safeguard
+Rule 1. Every situation must identify an efficacy threshold, if that situation is classified as "safeguard_selection".
+## f10-validate | always | 4.2: “If we find reasonable evidence … we will validate the information being received”
+Rule 1. Every situation must validate the evidence, if that situation is classified as "reasonable_evidence".
+## f10-review | always | 4.2: “review the sufficiency of our safeguards” on that evidence
+Rule 1. Every situation must review safeguard sufficiency, if that situation is classified as "reasonable_evidence".
+## f14-document | always | 5.1: “We document SAG reports and decisions”
+Rule 1. Every situation must have the decision documented.
+## f14-investigate | always | 5.1: noncompliance is “tracked and investigated”
+Rule 1. Every situation must have noncompliance investigated.
+## f14-corrective | always | 5.1: “where reports are substantiated, will take appropriate and proportional corrective action”
+Rule 1. Every situation must have corrective action taken, if that situation is classified as "substantiated_noncompliance".
+## f15-disclose | always | 5.2: “We will publish information … for major deployments”
+Rule 1. Every situation must have public disclosure, if that situation is classified as "major_deployment".
+## f15-safeguards | always | 5.2: “if the model is beyond a High threshold, we will include information about safeguards”
+Rule 1. Every situation must have safeguards disclosed, if both that situation is classified as "major_deployment" and that situation is classified as "high_capability".
+## f16-sag-recommend | always | Appendix B: SAG is responsible for “providing recommendations on potential next steps … to OpenAI Leadership”
+Rule 1. Every situation must have SAG recommendations sent to Leadership, if that situation is covered.
+## f16-ssc-visibility | always | Appendix B: “The Safety and Security Committee … will be given visibility into processes”
+Rule 1. Every situation must give SSC visibility into the process.
+## f16-informed | RS0=commitment | Appendix B: Leadership makes “deployment go/no-go decisions, informed by SAG’s recommendations”
+Rule 1. Every situation must have Leadership informed by SAG.
+## f16-year | RS0=commitment | Appendix B: “review the Preparedness Framework … at least once a year”
+Rule 1. Every situation must have an annual review.

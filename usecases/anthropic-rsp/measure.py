@@ -21,9 +21,10 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import build_document as B  # noqa: E402
+sys.path.insert(0, str(HERE.parent))
+from safetyfw_common import FAMILIES, measure_units  # noqa: E402
 
 EVIDENCE = HERE.parents[1] / "docs" / "usecases" / "safetyfw" / "anthropic-rsp"
-FAMILIES = ("JT", "DF", "SC", "QT", "ET", "AP", "WG", "AT", "external reference", "readings", "no claim to check")
 NO_CLAIM = "no claim to check"
 UNFORMALISED = {"external_reference": "external reference", "no_deadline_or_trigger": "ET",
                 "process_description": "ET", "aim_without_force": "AT", "hope": "AT", "preference": "AT",
@@ -50,27 +51,7 @@ def blockers(record):
 
 
 def measure():
-    spans = json.loads((HERE / "spans.json").read_text())["units"]
-    units = [{"id": r["id"], "bytes": r["span"][1] - r["span"][0], "status": r["status"], "kind": r["kind"],
-              "blockers": blockers(r), **({"reason": r["reason"]} if "reason" in r else {}),
-              **({"reading_set": r["reading_set"]} if "reading_set" in r else {})} for r in spans]
-    statuses, features = {}, {}
-    for u in units:
-        statuses[u["status"]] = statuses.get(u["status"], 0) + u["bytes"]
-        for family in u["blockers"]:
-            entry = features.setdefault(family, {"units": 0, "bytes": 0, "sole_units": 0, "sole_bytes": 0,
-                                                 "statuses": {}})
-            entry["units"] += 1
-            entry["bytes"] += u["bytes"]
-            entry["statuses"][u["status"]] = entry["statuses"].get(u["status"], 0) + u["bytes"]
-            if len(u["blockers"]) == 1:
-                entry["sole_units"] += 1
-                entry["sole_bytes"] += u["bytes"]
-    coverage = json.loads((HERE / "coverage.json").read_text())
-    gaps = {"source_bytes": coverage["source_bytes"], "master_bytes_by_status": coverage["master_bytes_by_status"],
-            "d1_bytes_by_status": coverage["bytes_by_status"], "status_bytes_recomputed": statuses,
-            "units": len(units), "features": dict(sorted(features.items(), key=lambda kv: (-kv[1]["bytes"], kv[0])))}
-    return {"units": units}, gaps
+    return measure_units(HERE / "spans.json", HERE / "coverage.json", blockers)
 
 
 def main(argv=None):
