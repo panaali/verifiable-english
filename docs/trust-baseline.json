@@ -1338,8 +1338,8 @@
   },
   {
    "class": "V",
-   "lines": 31,
-   "reason": "me-2d: VE/Calc/Wire.lean +18, VE/Calc/RunExamples.lean +7, VE/Calc/Render.lean +6 (V +31, K +0, S +0)",
+   "lines": 40,
+   "reason": "me-2d: VE/Calc/Wire.lean +18, VE/Calc/RunExamples.lean +16, VE/Calc/Render.lean +6 (V +40, K +0, S +0)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-2d, 2026-10-18",
    "commit": "de7cb402237e826966f45fe7f495e69de61ce494"
   }
