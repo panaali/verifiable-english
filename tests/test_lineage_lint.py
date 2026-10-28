@@ -50,7 +50,7 @@ def revision_literals(source: str) -> set[str]:
         name = node.func.id if isinstance(node.func, ast.Name) else \
             node.func.attr if isinstance(node.func, ast.Attribute) else ""
         args = node.args[0].elts if isinstance(node.args[0], (ast.List, ast.Tuple)) else node.args
-        direct = [arg.value for arg in args[:3] if isinstance(arg, ast.Constant) and isinstance(arg.value, str)]
+        direct = [arg.value for arg in args if isinstance(arg, ast.Constant) and isinstance(arg.value, str)]
         git_call = ("git" in direct and bool(OPS.intersection(direct)) or
                     name in {"git", "_git"} and bool(OPS.intersection(direct)))
         if name == "measure_rev":
@@ -76,6 +76,8 @@ def test_literal_revision_scanner_follows_a_frozen_loader():
         'import subprocess\nREV = "9160d326"\n'
         'subprocess.check_output(["git", "show", f"{REV}:ve/norm_defaults.py"])\n')
     assert "9160d326" not in revision_literals('REV = "9160d326"\nrecord = {"commit": REV}\n')
+    assert "9160d326" in revision_literals(
+        'subprocess.run(["git", "-C", "checkout", "show", "9160d326:file"])\n')
 
 
 def test_history_revisions_are_content_addressed():
