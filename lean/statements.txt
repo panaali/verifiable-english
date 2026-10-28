@@ -14168,6 +14168,12 @@ theorem VE.Events.countP_lt_lt
           List.countP (fun y => Decidable.decide (f y < f x)) l < List.countP (fun y => Decidable.decide (f y < b)) l
   -- uses
   -- expr 949534644
+theorem VE.Events.countP_lt_of
+  ∀ {β : Type} {p q : β → Bool} {l : List β},
+    (∀ (z : β), z ∈ l → p z = Bool.true → q z = Bool.true) →
+      ∀ {x : β}, x ∈ l → q x = Bool.true → p x = Bool.false → List.countP p l < List.countP q l
+  -- uses
+  -- expr 3690781615
 theorem VE.Events.countP_lt_succ
   ∀ {β : Type} (f : β → Nat) (l : List β) (b : Nat),
     List.countP (fun y => Decidable.decide (f y < b + 1)) l =
@@ -14219,6 +14225,13 @@ theorem VE.Events.embeddable_complete
             ∀ (num : α → Nat), VE.Events.Embeds V M.asStructure num → VE.Events.embeddable V M = Bool.true
   -- uses VE.Environment@VE.Syntax VE.Events.Embeds@VE.Events.Premises VE.Events.EventsEnv.day@VE.Events.Decl VE.Events.EventsEnv@VE.Events.Decl VE.Events.EventsTyped@VE.Events.Decl VE.Events.embeddable@VE.Events.Calendar VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel.domains@VE.Finite VE.FiniteModel@VE.Finite
   -- expr 3156555518
+theorem VE.Events.embeddable_sound
+  ∀ {α : Type} [inst : DecidableEq α] (E : VE.Environment) (V : VE.Events.EventsEnv),
+    VE.Events.EventsTyped E V = Bool.true →
+      ∀ (M : VE.FiniteModel α),
+        M.Valid E → VE.Events.embeddable V M = Bool.true → VE.Events.Embeds V M.asStructure (VE.Events.numbering V M)
+  -- uses VE.Environment@VE.Syntax VE.Events.Embeds@VE.Events.Premises VE.Events.EventsEnv@VE.Events.Decl VE.Events.EventsTyped@VE.Events.Decl VE.Events.embeddable@VE.Events.Calendar VE.Events.numbering@VE.Events.Calendar VE.FiniteModel.Valid@VE.Finite VE.FiniteModel.asStructure@VE.Finite VE.FiniteModel@VE.Finite VE.Structure.Carrier@VE.Semantics
+  -- expr 3364039827
 theorem VE.Events.eventsPremises_satisfiable
   ∀ (E : VE.Environment) (V : VE.Events.EventsEnv),
     VE.Events.WellFormedEvents E V = Bool.true →
@@ -14300,11 +14313,22 @@ theorem VE.Events.pad_value
   ∀ (w n : Nat), List.foldl (fun v c => 10 * v + (c.toNat - 48)) 0 (VE.Time.pad w n).data = n
   -- uses VE.Time.pad@VE.Time.Calendar
   -- expr 1295606217
+theorem VE.Events.pairwise_of_chain
+  ∀ {β : Type} (R : β → β → Prop),
+    (∀ (a b c : β), R a b → R b c → R a c) →
+      ∀ (l : List β), (∀ (p : β × β), p ∈ l.zip l.tail → R p.fst p.snd) → List.Pairwise R l
+  -- uses
+  -- expr 1870197974
 theorem VE.Events.regen_typed
   ∀ (E : VE.Environment) (V : VE.Events.EventsEnv),
     VE.Events.WellFormedEvents E V = Bool.true → VE.Events.EventsTyped (VE.Events.regenEnv E V) V = Bool.true
   -- uses VE.Environment@VE.Syntax VE.Events.EventsEnv@VE.Events.Decl VE.Events.EventsTyped@VE.Events.Decl VE.Events.WellFormedEvents@VE.Events.Decl VE.Events.regenEnv@VE.Events.Decl
   -- expr 1843268313
+theorem VE.Events.rel_getLast
+  ∀ {β : Type} {R : β → β → Prop} {l : List β},
+    List.Pairwise R l → ∀ {E : β}, l.getLast? = Option.some E → ∀ (D : β), D ∈ l → D = E ∨ R D E
+  -- uses
+  -- expr 1063318347
 theorem VE.Events.startRole_mem
   ∀ {V : VE.Events.EventsEnv} {s st : String},
     VE.Events.startRole V s = Option.some st →
@@ -16079,6 +16103,10 @@ theorem VE.NormDefaults.Packs.assemble_wellFormed
         ∀ (a : VE.Formula), a ∈ VE.NormDefaults.Packs.X qs → VE.Formula.WellFormed (VE.NormDefaults.Packs.envX U qs) [] a
   -- uses VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack.consts@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack.decls@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack.labelled@VE.NormDefaults.Packs VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.X@VE.NormDefaults.Packs VE.NormDefaults.Packs.assemble@VE.NormDefaults.Packs VE.NormDefaults.Packs.envX@VE.NormDefaults.Packs VE.NormDefaults.Packs.extendEnv@VE.NormDefaults.Packs VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree
   -- expr 2359425922
+theorem VE.NormDefaults.Packs.bridge_identifier_sep
+  ∀ {n : String}, VE.Bridge.identifier n = Bool.true → ¬':' ∈ n.toList
+  -- uses VE.Bridge.identifier@VE.Bridge
+  -- expr 4081766230
 theorem VE.NormDefaults.Packs.dispatch_legacy
   ∀ (ids : List String) (L : VE.NormDefaults.Wire.LayeredU) (id kind : String) (j : Lean.Json),
     kind ∈ VE.NormDefaults.Wire.legacyKinds →
@@ -16190,6 +16218,24 @@ theorem VE.NormDefaults.Packs.legacy_drop
   ∀ (s r : List (String × VE.Formula)), List.drop ((s ++ r).length - r.length) (s ++ r) = r
   -- uses VE.Formula@VE.Syntax
   -- expr 2159951683
+theorem VE.NormDefaults.Packs.legacy_labels_nodup_of_actKeys
+  ∀ (U : VE.NormDefaults.UDoc) (R : VE.Rights.RightsDoc),
+    VE.Rights.WellFormedRights R = Bool.true →
+      VE.NormDefaults.WellFormedU U = Bool.true →
+        (∀ (k : String × String × String), k ∈ VE.Rights.condKeys R → ¬':' ∈ k.snd.fst.toList) →
+          (List.map (fun x => x.fst)
+              (VE.NormDefaults.Wire.softLabelledU U (VE.Rights.correlate R) ++ VE.Rights.limPremisesLabelled R)).Nodup
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.softLabelledU@VE.NormDefaults.Layered VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.WellFormedRights@VE.Rights.Correlate VE.Rights.condKeys@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.Rights.limPremisesLabelled@VE.Rights.Correlate
+  -- expr 453719617
+theorem VE.NormDefaults.Packs.legacy_labels_nodup_of_identifiers
+  ∀ (U : VE.NormDefaults.UDoc) (R : VE.Rights.RightsDoc),
+    VE.Rights.WellFormedRights R = Bool.true →
+      VE.NormDefaults.WellFormedU U = Bool.true →
+        (∀ (k : String × String × String), k ∈ VE.Rights.condKeys R → VE.Bridge.identifier k.snd.fst = Bool.true) →
+          (List.map (fun x => x.fst)
+              (VE.NormDefaults.Wire.softLabelledU U (VE.Rights.correlate R) ++ VE.Rights.limPremisesLabelled R)).Nodup
+  -- uses VE.Bridge.identifier@VE.Bridge VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.softLabelledU@VE.NormDefaults.Layered VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.WellFormedRights@VE.Rights.Correlate VE.Rights.condKeys@VE.Rights.Tree VE.Rights.correlate@VE.Rights.Correlate VE.Rights.limPremisesLabelled@VE.Rights.Correlate
+  -- expr 208475406
 theorem VE.NormDefaults.Packs.legacy_take
   ∀ (s r : List (String × VE.Formula)), List.take ((s ++ r).length - r.length) (s ++ r) = s
   -- uses VE.Formula@VE.Syntax
@@ -16272,11 +16318,22 @@ theorem VE.NormDefaults.Packs.packPremises_sub
     a ∈ VE.NormDefaults.Packs.packPremises qs i → a ∈ VE.NormDefaults.Packs.labelledX qs
   -- uses VE.Formula@VE.Syntax VE.NormDefaults.Packs.Pack@VE.NormDefaults.Packs VE.NormDefaults.Packs.labelledX@VE.NormDefaults.Packs VE.NormDefaults.Packs.packPremises@VE.NormDefaults.Packs
   -- expr 754880861
+theorem VE.NormDefaults.Packs.pk_check_ok
+  ∀ {R : VE.Rights.RightsDoc}, VE.Rights.WellFormedRights R = Bool.true → VE.Rights.checkRights R = Except.ok ()
+  -- uses VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.WellFormedRights@VE.Rights.Correlate VE.Rights.checkRights@VE.Rights.Correlate
+  -- expr 2166469903
 theorem VE.NormDefaults.Packs.pk_coh
   ∀ (M N : VE.SoftNorms.SoftNode),
     (VE.SoftNorms.Wire.cohLabel M N).data = "soft:coherence:".data ++ (M.name.data ++ ',' :: N.name.data)
   -- uses VE.Norms.Node.name@VE.Norms.Tree VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.SoftNorms.Wire.cohLabel@VE.SoftNorms.Wire
   -- expr 4191174507
+theorem VE.NormDefaults.Packs.pk_cond_ident
+  ∀ {R : VE.Rights.RightsDoc},
+    VE.Rights.WellFormedRights R = Bool.true →
+      ∀ (L : VE.Rights.Limitation),
+        L ∈ R.limits → ∀ (c : VE.Rights.Condition), c ∈ L.conditions → VE.Rights.identifier c.name = Bool.true
+  -- uses VE.Rights.Condition.name@VE.Rights.Tree VE.Rights.Condition@VE.Rights.Tree VE.Rights.Limitation.conditions@VE.Rights.Tree VE.Rights.Limitation@VE.Rights.Tree VE.Rights.RightsDoc.limits@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.WellFormedRights@VE.Rights.Correlate VE.Rights.identifier@VE.Rights.Correlate
+  -- expr 43564936
 theorem VE.NormDefaults.Packs.pk_exc_inj
   ∀ {n n' : String} {k k' : List Char} {i i' : Nat},
     ¬':' ∈ n.data →
@@ -16324,10 +16381,42 @@ theorem VE.NormDefaults.Packs.pk_exc_suff
       "soft:exception:".data ++ (n.data ++ ':' :: ("sufficient".data ++ ':' :: Nat.toDigits 10 i))
   -- uses
   -- expr 476788524
+theorem VE.NormDefaults.Packs.pk_identifier_sep
+  ∀ {n : String}, VE.Rights.identifier n = Bool.true → ¬':' ∈ n.data
+  -- uses VE.Rights.identifier@VE.Rights.Correlate
+  -- expr 2566361937
+theorem VE.NormDefaults.Packs.pk_keyPremise
+  ∀ {R : VE.Rights.RightsDoc} {k : String × String × String} {b : String × VE.Formula},
+    VE.Rights.keyPremise R k = Option.some b →
+      ∃ L,
+        L ∈ R.limits ∧
+          ∃ c,
+            c ∈ L.conditions ∧
+              L.name = k.fst ∧
+                c.name = k.snd.snd ∧
+                  b.fst =
+                    ToString.toString "rights:limitation:" ++ ToString.toString L.name ++ ToString.toString ":" ++
+                              ToString.toString k.snd.fst ++
+                            ToString.toString ":" ++
+                          ToString.toString (if c.necessary = Bool.true then "necessary" else "sufficient") ++
+                        ToString.toString ":" ++
+                      ToString.toString c.name
+  -- uses VE.Formula@VE.Syntax VE.Rights.Condition.name@VE.Rights.Tree VE.Rights.Condition.necessary@VE.Rights.Tree VE.Rights.Condition@VE.Rights.Tree VE.Rights.Limitation.conditions@VE.Rights.Tree VE.Rights.Limitation.name@VE.Rights.Tree VE.Rights.Limitation@VE.Rights.Tree VE.Rights.RightsDoc.limits@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.keyPremise@VE.Rights.Correlate
+  -- expr 2574528178
+theorem VE.NormDefaults.Packs.pk_kindWord_sep
+  ∀ (b : Bool), ¬':' ∈ (if b = Bool.true then "necessary" else "sufficient").data
+  -- uses
+  -- expr 3190886171
 theorem VE.NormDefaults.Packs.pk_kind_sep
   ∀ {k : List Char}, k = "sufficient".data ∨ k = "necessary".data → ¬':' ∈ k
   -- uses
   -- expr 2251136770
+theorem VE.NormDefaults.Packs.pk_limBody_ident
+  ∀ {D : VE.Rights.RightsDoc} {L : VE.Rights.Limitation} {r : ForInStep PUnit},
+    VE.Readings.limBody D L = Except.ok r →
+      ∀ (c : VE.Rights.Condition), c ∈ L.conditions → VE.Rights.identifier c.name = Bool.true
+  -- uses VE.Readings.limBody@VE.Readings.Lines VE.Rights.Condition.name@VE.Rights.Tree VE.Rights.Condition@VE.Rights.Tree VE.Rights.Limitation.conditions@VE.Rights.Tree VE.Rights.Limitation@VE.Rights.Tree VE.Rights.RightsDoc@VE.Rights.Tree VE.Rights.identifier@VE.Rights.Correlate
+  -- expr 1397019180
 theorem VE.NormDefaults.Packs.pk_mem_exc
   ∀ {D : VE.SoftNorms.SoftDoc} {x : String},
     x ∈ VE.SoftNorms.Wire.excLabels D →
@@ -16336,6 +16425,40 @@ theorem VE.NormDefaults.Packs.pk_mem_exc
           x.data = "soft:exception:".data ++ (n.data ++ ':' :: (k ++ ':' :: Nat.toDigits 10 i))
   -- uses VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.Wire.excLabels@VE.SoftNorms.Wire
   -- expr 1592963572
+theorem VE.NormDefaults.Packs.pk_rights_data
+  ∀ (n a w c : String),
+    (ToString.toString "rights:limitation:" ++ ToString.toString n ++ ToString.toString ":" ++ ToString.toString a ++
+                  ToString.toString ":" ++
+                ToString.toString w ++
+              ToString.toString ":" ++
+            ToString.toString c).data.reverse =
+      c.data.reverse ++
+        ':' :: (w.data.reverse ++ ':' :: (a.data.reverse ++ ':' :: (n.data.reverse ++ "rights:limitation:".data.reverse)))
+  -- uses
+  -- expr 2259699578
+theorem VE.NormDefaults.Packs.pk_rights_inj
+  ∀ {n a w c n' a' w' c' : String},
+    ¬':' ∈ a.data →
+      ¬':' ∈ a'.data →
+        ¬':' ∈ w.data →
+          ¬':' ∈ w'.data →
+            ¬':' ∈ c.data →
+              ¬':' ∈ c'.data →
+                ToString.toString "rights:limitation:" ++ ToString.toString n ++ ToString.toString ":" ++
+                              ToString.toString a ++
+                            ToString.toString ":" ++
+                          ToString.toString w ++
+                        ToString.toString ":" ++
+                      ToString.toString c =
+                    ToString.toString "rights:limitation:" ++ ToString.toString n' ++ ToString.toString ":" ++
+                              ToString.toString a' ++
+                            ToString.toString ":" ++
+                          ToString.toString w' ++
+                        ToString.toString ":" ++
+                      ToString.toString c' →
+                  n = n' ∧ a = a' ∧ c = c'
+  -- uses
+  -- expr 505930399
 theorem VE.NormDefaults.Packs.pk_ruleName
   ∀ {D : VE.SoftNorms.SoftDoc},
     VE.SoftNorms.WellFormedSoft D = Bool.true →
@@ -16346,6 +16469,11 @@ theorem VE.NormDefaults.Packs.pk_ruleName_sep
   ∀ {n : String}, VE.Norms.ruleName n = Bool.true → ¬':' ∈ n.data ∧ ¬',' ∈ n.data
   -- uses VE.Norms.ruleName@VE.Norms.Tree
   -- expr 3911359335
+theorem VE.NormDefaults.Packs.pk_soft_head
+  ∀ {U : VE.NormDefaults.UDoc} {D : VE.SoftNorms.SoftDoc} {x : String},
+    x ∈ List.map (fun x => x.fst) (VE.NormDefaults.Wire.softLabelledU U D) → x.data.head? = Option.some 's'
+  -- uses VE.Formula@VE.Syntax VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.Wire.softLabelledU@VE.NormDefaults.Layered VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree
+  -- expr 2288780359
 theorem VE.NormDefaults.Packs.pk_split
   ∀ {s : Char} (a a' b b' : List Char), ¬s ∈ a → ¬s ∈ a' → a ++ s :: b = a' ++ s :: b' → a = a' ∧ b = b'
   -- uses
