@@ -56,7 +56,7 @@ recorded expression; it is written with `Option.elim` instead). jt-2 merged (`6b
 ## 3. Seeded bugs
 
 [mutants.json](mutants.json) records each bug's `file`, `definition`, the one check run and its first failure:
-**16 killed** (Lean 11, Python 5; no Rust changed), and one recorded equivalent first plant (`folBackground`'s
+**17 killed** (Lean 11, Python 6; no Rust changed), and one recorded equivalent first plant (`folBackground`'s
 `.drop 1` dropped the permission, whose dual the obligation still names; re-planted as the loss of every pair).
 
 | Bug (file) | Killed by |
@@ -70,6 +70,7 @@ recorded expression; it is written with `Option.elim` instead). jt-2 merged (`6b
 | `without_wording_acts` returning its input; keeping the act; for any role (`ve/profiles.py`) | `test_rust_searches_a_wording_only_acts_layer_and_refuses_any_other` |
 | `rust_environment` unreduced (`ve/backends/rust_jsonl.py`) | the same test |
 | `base_data` keeping `acts@0` (`ve/norms.py`) | `test_a_udhr_act_phrase_unit_is_checked_end_to_end` |
+| `plain_wordings` asking the lower route of a `readings@1` environment (`ve/norms.py`; review F1) | `test_a_readings_environment_has_leans_wordings` and the two other F1 tests (section 7) |
 
 ## 4. Trust, size, evidence and tests
 
@@ -110,7 +111,7 @@ ap-2c) for u092.
 
 1. PASS: no relayed field added (the reverted filled-environment members are not relayed); D-33 is Lean's text, relayed (`test_the_readings_route_reads_single_acts_and_refuses_a_joined_act`).
 2. PASS: section 1 copies each task part with its test; ap-1bg is named; no Python copy of a Lean decision (one projection replaces two), no report test, no in-flight file.
-3. PASS: [mutants.json](mutants.json) (16 killed), [trust-mutants.json](trust-mutants.json); `delta.py --compare` exits 1 head against head and on empty input.
+3. PASS: [mutants.json](mutants.json) (17 killed), [trust-mutants.json](trust-mutants.json); `delta.py --compare` exits 1 head against head and on empty input.
 4. PASS: [evidence/delta.json](evidence/delta.json), base and head each with its own client and service (364 of 369 identical); `test_rust_refuses_an_acts_environment` unchanged.
 5. PASS: no new field read from a Lean answer; the oracle's search witnesses are checked by Lean (`test_search_status_and_comparison_answer_as_the_base_did`).
 6. PASS: base is `git merge-base`; evidence commits from `main..HEAD --no-merges`; the gate is the chain's, on the final HEAD.
@@ -122,6 +123,33 @@ ap-2c) for u092.
 12. PASS: no new Lean call per item: typing and models read the environment once (`regulatedOf`); the u076 check runs in about a second.
 13. PASS: no test removed; `gate_collection.py --check --prebuilt`: 0 refused, 0 stale, 0 malformed.
 
+## 7. Review fix (ap-1bd-review.final.md)
+
+**F1 (B), fixed** (`875f93c60`). An `acts@0` environment that lists `readings@1` loads, but `ve.norms.plain_wordings`
+asked `norms-elaborate` or `norm-defaults-elaborate` of it, and both routes refuse `readings@1`; every English entry point
+builds `EnglishVocabulary`, so rendering and English parsing of any such environment with a plain act failed with
+`UnsupportedProfile: Unsupported profile readings@1`. The class is every reader of `plain_wordings`, and the fix is in
+that one function: a `readings@1` environment is asked of the `readings-route` mode, whose runner strips the head
+profile and runs the same elaborate case on the lower route (`Readings.Run.runLower`, unchanged). Python drops no
+profile, and the row is typed by `readings-route.json` (any lower route's row) and bound by the same `_bind_wordings`.
+The probe printed the refusal before the fix and `{'paid': '{0} has the right to equal pay …'}` after it. Regression
+tests (`tests/test_acts_profile.py`): `::test_a_readings_environment_has_leans_wordings` (the probe),
+`::test_every_acts_list_the_environment_mode_accepts_has_leans_wordings` (the class: before the fix 6 of the 21 accepted
+lists failed, every one listing `readings@1`; after it, none), `::test_a_udhr_act_phrase_unit_with_readings_is_checked_and_rendered`
+(u076 with `readings@1` and `norm-defaults@0`, as the UDHR pilot lists them: CHECKED 123 B and rendered),
+`::test_readings_wordings_not_bound_to_the_request_are_unavailable` (12 rebind mutants of the genuine readings-route
+row) and `::test_a_retyped_readings_wordings_field_fails_the_schema` (14 retypes, with and without `norm-defaults@0`).
+Lean mirror: `lean/VE/Readings/ActsExamples.lean` guards that `runLower`'s `wordings` equal the norms and norm-defaults
+routes' on the same environment without `readings@1`. Seeded bug: `plain_wordings` asking the lower route again
+(`ve/norms.py`) fails all three of the first tests ([mutants.json](mutants.json) `py-plain-wordings-lower-route`). No Rust
+or trusted Lean changed (trust `--check`: still V +31; the two new example helpers are classified T). DELTA row 2 lists the tests.
+
+**C findings, recorded:** F2: DELTA's sentence on reading sets now says the base's refusal is the readings route
+decoder's, and that a document the enumerated route answers is read with `acts@0` (no evidence probe records it;
+follow-up). F3: DELTA row 4 states the fault order (R2). F4 (`typingReduced` docstring), F5 (`ve/profiles.py:50`
+comment, move with ap-1bg (b)), F6 (record the `Soften.lean` hunk in the plan's AP-1 change list) and F7 (size) are
+follow-ups, as the review sets them.
+
 ## FIXMAP
 - `lean/VE/Service/Standalone.lean`: Lean's standalone modes. `regulatedOf` :30 (acts-aware `regulated` read),
   `checkRegulated` :38, `actsRead` :46 (base rows' gate + `actsView`), `validated` :206 (uses both), `modelCase` :549
@@ -132,7 +160,8 @@ ap-2c) for u092.
 - `lean/VE/Service/ActsExamples.lean` section "ap-1bd": typing, model, Background guards; `lean/VE/Readings/ActsExamples.lean`:
   readings route guards (single acts, reading sets, D-33, constants, the text map).
 - `ve/profiles.py` `without_wording_acts` :116 and `ve/backends/rust_jsonl.py` :328: Rust's search view.
-- `ve/norms.py` `base_data` :488 (one base projection; `ve/norm_defaults.py` :74 calls it).
+- `ve/norms.py` `base_data` :488 (one base projection; `ve/norm_defaults.py` :74 calls it); `plain_wordings` :204
+  (review F1: a `readings@1` environment asked of `readings-route`).
 - `tests/b15b_model_cases.py` `record --profile` :184; fixtures `tests/data/acts/*.json`; oracle `tests/data/b15b-model-oracle.json.gz`.
 - `tests/test_acts_profile.py` :617-715 (ap-1bd tests); `docs/act-phrases/ap-1bd/delta.py` (base/head delta).
 - Side tables: `tools/trust-classes.json`, `tools/layer_policy.py` (`VE.Readings.ActsExamples` layer 4),
