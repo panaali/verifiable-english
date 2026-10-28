@@ -117,6 +117,9 @@ S10 (`stepB`) are the mutants per new definition. S12 shows that the UNKNOWN gua
   `me-12n-budget-stub.lean` and `SpecStubs_pk1.lean` (type-checked against main when written) and
   `SpecStubs_sc5r.lean` (`tests/test_scope_sc5r_stub.py` reads it). Inside `lean/`, `BoundedExamples.lean` and
   `CompleteExamples.lean` are imported by `lean/VE.lean`.
+- **Checks.** No Lean, generated input or trusted line changed: `regen_generated.py --check` exit 0, no trust_mutants
+  run. `mac-pytest.sh --select -- --base d9cff5345 --run` on 085a0dc8f: 85 units, 0 failed, exit 0, on ve-mac-1
+  (`test_arith_uncharged_costs.py` 25.9 s there).
 
 ## Next items
 
