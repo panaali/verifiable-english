@@ -15608,6 +15608,8 @@
         "VE.Events.WireExamples.days",
         "VE.Events.WireExamples.withConst",
         "VE.Events.WireExamples.oneDay",
+        "VE.Events.WireExamples.vocabReg",
+        "VE.Events.WireExamples.W2",
         "VE.Events.WireExamples.decoded",
         "VE.Events.WireExamples.softP"
       ]
