@@ -49,14 +49,11 @@ def baseAtom (fw : Option (Bool × Bool)) (h : List String) : Atom :=
   ⟨(fw.map (·.1)).getD false, (fw.map (·.2)).getD false, h, [], []⟩
 /-- A single item (5.3, `singleAct`): its elements in order, each added to the last atom or to all; a split construct
 makes the parts. -/
-def singleAct : Piece → Option Act
-  | .item fw h es =>
-    let as := es.foldl (fun as p => addPiece (as.length - 1) as p) [baseAtom fw h]
-    match es.findSome? (fun | .split j sp _ => some (j, sp) | _ => none), as with
-    | some (j, sp), _ => some (joinAct true sp j as)
-    | none, [a] => some (.one a)
-    | none, _ => none
-  | _ => none
+def singleAct (fw : Option (Bool × Bool)) (h : List String) (es : List Piece) : Act :=
+  let as := es.foldl (fun as p => addPiece (as.length - 1) as p) [baseAtom fw h]
+  match es.findSome? (fun | .split j sp _ => some (j, sp) | _ => none) with
+  | some (j, sp) => joinAct true sp j as
+  | none => .one (as.headD (baseAtom fw h))
 /-- A coordination (5.3, `coordAct`): one atom per item, later items taking the first's function words when they are
 shared; each element is added to its own item's atom, or to all. -/
 def coordAct (shared : Bool) (j : Join) (its : List Piece) : Option Act := do
@@ -71,9 +68,9 @@ def listOf (cs : List Piece) : Option (Join × List Piece) :=
   | _ => none
 /-- An item from its pieces: its one head, its function words, and its pieces in order (`addPiece` reads the
 elements). -/
-def itemOf (cs : List Piece) : Option Piece :=
+def itemOf (cs : List Piece) : Option (Option (Bool × Bool) × List String × List Piece) :=
   match cs.filterMap (fun | .head h => some h | _ => none) with
-  | [h] => some (.item (cs.findSome? (fun | .fw t b => some (t, b) | _ => none)) h cs)
+  | [h] => some (cs.findSome? (fun | .fw t b => some (t, b) | _ => none), h, cs)
   | _ => none
 /-- A node's pieces from its children's and its rule `r`. `second` says the rule equals the one before it: only an
 edge's two rules are written alike (5.2), and the second reads over all. -/
@@ -85,13 +82,12 @@ def applyRule (r : RuleS) (second : Bool) (cs : List Piece) : Option (List Piece
   match r.lhs, r.rhs, cs with
   | _, [.t (.adv _)], [.w v] => some [.elt (.mod (.adv v.toLower)) att]
   | .F _ (.AR m), _, [.part p] => some [.elt (.arg m (.one p)) .own]
-  | .F _ (.OL _), _, _ => some cs
   | _, [.n (.MK m), _], [.part p] => some [.elt (.mod (.prep m p)) att]
   | .MK _, _, _ => some []
   | .J, _, [.w v] => ([("and", Join.and), ("or", .or), ("nor", .nor)].lookup v.toLower).map ([.j ·])
   | .FW, _, _ => some [.fw ((words.map (·.toLower)).contains "to") ((words.map (·.toLower)).contains "be")]
   | .F _ .HD, _, _ => some [.head (words.map (·.toLower))]
-  | .F _ .FL, _, _ => some (if words.length == cs.length && !cs.isEmpty then [.part (.words words)] else cs)
+  | .F _ .FL, _, _ => some (if words.length == cs.length then [.part (.words words)] else cs)
   | .F _ .PL, _, _ | .F _ (.RL _), _, _ => do
     let (j, ms) ← listOf cs
     let ps ← ms.mapM part
@@ -107,15 +103,15 @@ def applyRule (r : RuleS) (second : Bool) (cs : List Piece) : Option (List Piece
     let (j, ms) ← listOf cs
     some [.split j false (← ms.mapM (fun | .elt e _ => some e | _ => none))]
   | .F _ .PX, _, _ | .C .rnr, _, _ => some (cs.map toAll)
-  | .SINGLE, _, _ => do some [.act (← singleAct (← itemOf cs))]
-  | .F1 _ _, _, _ | .L _ _, _, _ => do some [← itemOf cs]
+  | .SINGLE, _, _ => (itemOf cs).map (fun (fw, h, es) => [.act (singleAct fw h es)])
+  | .F1 _ _, _, _ | .L _ _, _, _ => (itemOf cs).map (fun (fw, h, es) => [.item fw h es])
   | .COORD, .n (.F1 own _) :: _, _ => do
     let (j, its) ← listOf cs
     some [.act (← coordAct (!own) j its)]
   | .S, _, _ => some (cs.filter (· matches .act _))                     -- the subject `{0}` is dropped here
   | _, _, _ => some cs
-mutual
-/-- The pieces of a derivation: a word token is a word, a slot or fixed phrase a part, a comma nothing. -/
+/-- The pieces of a derivation: a word token is a word, a slot or fixed phrase a part, a comma nothing; a node's from
+its rule `rs[i]` and its children's, in order. -/
 def piecesOf (rs : Array RuleS) : Tree Tok → Option (List Piece)
   | .leaf (.word v) => some [.w v]
   | .leaf (.slot i) => some [.part (.slot i)]
@@ -123,11 +119,9 @@ def piecesOf (rs : Array RuleS) : Tree Tok → Option (List Piece)
   | .leaf .comma => some []
   | .node i kids => do
     let r ← rs[i]?
-    applyRule r (0 < i && rs[i - 1]? == some r) (← piecesKids rs kids)
-def piecesKids (rs : Array RuleS) : List (Tree Tok) → Option (List Piece)
-  | [] => some []
-  | k :: ks => do pure ((← piecesOf rs k) ++ (← piecesKids rs ks))
-end
+    applyRule r (rs.extract (i - 1) i == #[r]) (← kids.attach.mapM (fun ⟨k, _⟩ => piecesOf rs k)).flatten
+termination_by t => sizeOf t
+decreasing_by have := List.sizeOf_lt_of_mem ‹_›; simp_wf; omega
 /-- An atom fits its frame (5.3): its head is declared; it has an object exactly when the frame lists `""`; every
 argument marker is the frame's, every modifier marker one of its modifier markers, every adverb declared. -/
 def atomOk (V : Vocab) (a : Atom) : Bool :=

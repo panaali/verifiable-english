@@ -12711,8 +12711,7 @@
         "VE.Acts.Atom.add",
         "VE.Acts.baseAtom",
         "VE.Acts.itemOf",
-        "VE.Acts.listOf",
-        "VE.Acts.piecesKids"
+        "VE.Acts.listOf"
       ]
     },
     "VE/Acts/Readings.lean": {
