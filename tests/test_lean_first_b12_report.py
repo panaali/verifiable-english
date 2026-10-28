@@ -91,10 +91,10 @@ def test_delta_numbers_are_regenerated_from_evidence():
     first = report.load("difffuzz-first-pass.json")
     reviewed = {entry["signature"] for row in first["runs"] for entry in row["head_only_new"]}
     baseline = json.loads(subprocess.check_output(
-        ["git", "show", f"{report.B12_HEAD}:conformance/difffuzz-baseline.json"], cwd=ROOT))
+        ["git", "show", f"{report.B12_HEAD_TREE}:conformance/difffuzz-baseline.json"], cwd=ROOT))
     assert reviewed
     base = json.loads(subprocess.check_output(
-        ["git", "show", f"{report.BASE}:conformance/difffuzz-baseline.json"], cwd=ROOT))
+        ["git", "show", f"{report.BASE_TREE}:conformance/difffuzz-baseline.json"], cwd=ROOT))
     assert len(baseline["entries"]) < len(base["entries"])
     assert all(entry["follow_up"] != "TODO" for entry in baseline["entries"])
     assert all(not row["head_only_new"] and not row["head_not_reproduced"] for row in fuzz["runs"])
@@ -123,11 +123,11 @@ def test_branch_trust_allowance_counts_only_batch_12_changes():
     # Batch 12 is a historical signed measurement. The merge has a new tree
     # and a separate current baseline; it must not rewrite the reviewed delta.
     baseline = json.loads(subprocess.check_output(
-        ["git", "show", f"{report.B12_HEAD}:docs/trust-baseline.json"], cwd=ROOT))
+        ["git", "show", f"{report.B12_HEAD_TREE}:docs/trust-baseline.json"], cwd=ROOT))
     main_baseline = json.loads(subprocess.check_output(
-        ["git", "show", "adefca30:docs/trust-baseline.json"], cwd=ROOT))
+        ["git", "show", "685cdd3bdaa8dfd5b8cf1a1588032854995d2b79:docs/trust-baseline.json"], cwd=ROOT))
     assert baseline["history"][-1]["rebaselined_from"] == trust_map.budget(main_baseline["totals"])
-    parent, parent_problems, _ = trust_map.measure_rev(report.BASE)
+    parent, parent_problems, _ = trust_map.measure_rev(report.BASE_TREE)
     assert not parent_problems
     now = trust_map.budget(baseline["totals"])
     before = trust_map.budget(trust_map.totals(parent))

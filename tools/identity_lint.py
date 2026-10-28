@@ -275,7 +275,7 @@ def growth(base: list[dict], head: list[dict]) -> list[str]:
 def base_entries(rev: str) -> list[dict] | None:
     """The allowlist at `rev`, or None when `rev` has none (the ratchet starts at the commit that adds it). A bad
     revision fails."""
-    subprocess.run(["git", "rev-parse", "--verify", f"{rev}^{{commit}}"], cwd=ROOT, check=True,
+    subprocess.run(["git", "rev-parse", "--verify", f"{rev}^{{tree}}"], cwd=ROOT, check=True,
                    capture_output=True)
     if subprocess.run(["git", "cat-file", "-e", f"{rev}:{ALLOWLIST_NAME}"], cwd=ROOT,
                       capture_output=True).returncode != 0:

@@ -152,6 +152,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Document.block_coverage_fits
 #print axioms ResponseShape.Encoders.Document.cells_fits
 #print axioms ResponseShape.Encoders.Document.checkCore_encode
+#print axioms ResponseShape.Encoders.Document.checkDocSets_fits
 #print axioms ResponseShape.Encoders.Document.checkDoc_fits
 #print axioms ResponseShape.Encoders.Document.coverage_fits
 #print axioms ResponseShape.Encoders.Document.document_fits
