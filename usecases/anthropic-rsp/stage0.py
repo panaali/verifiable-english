@@ -155,14 +155,19 @@ def d3():
     chain = [_q(["date_before", _day(f"{a}_date"), _day(f"{b}_date")]) for a, b in zip(versions, versions[1:])]
     out = {"D1": all(_proved(env, stated, goal) for goal in chain),
            "D2": _proved(env, stated, _q(["date_before", _day("v3_4_date"), _day("retrieval_date")]))}
-    # "no more than 30 days prior to the publication" (F8), "Within 30 days" (F9), "within one week" (F16, 7 days)
-    counts = {"D3b": ("2026-06-10", "2026-07-01", "30"), "D4": ("2026-08-03", "2026-09-02", "30"),
-              "D5": ("2026-09-01", "2026-09-08", "7")}
-    for item, (start, end, days) in counts.items():
+    # D3b: the coverage date is "no more than 30 days prior to the publication" (F8): the publication is no later
+    # than 30 days after it. D4, D5: the deadline ("Within 30 days" of F9; "within one week" of F16, 7 days) is no
+    # later than the day asked about.
+    counts = {"D3b": ("2026-06-10", "2026-07-01", "30", "publication within"),
+              "D4": ("2026-08-03", "2026-09-02", "30", "deadline by"), "D5": ("2026-09-01", "2026-09-08", "7",
+                                                                             "deadline by")}
+    for item, (start, day, days, question) in counts.items():
         env = date_environment(("start_day", "limit_day"))
         facts = [_q(["date_on", _day("start_day"), ["date", start]]),
                  _q(["shift_days", _day("limit_day"), _day("start_day"), days])]
-        out[item] = _proved(env, facts, _q(["date_no_later", ["date", end], _day("limit_day")]))
+        goal = (["date_no_later", ["date", day], _day("limit_day")] if question == "publication within" else
+                ["date_no_later", _day("limit_day"), ["date", day]])
+        out[item] = _proved(env, facts, _q(goal))
     return {"certificates": out, "admitted": all(out.values())}
 
 
