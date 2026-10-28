@@ -61,6 +61,17 @@ changed, so there are no seeded bugs in those languages.
 - Size: about 220 hand-written lines of code and tests, plus these documents and the 75-line checker. The item is
   under the 800-1,500 target because it is a deletion plus its condition tests; nothing was cut.
 
+## Sibling lessons (review q1-4)
+
+- F1, the question limits: the base read an F2 question only through a gloss match, because its fallback always
+  failed on the `@` it added. A gloss is at most 256 characters (`lean/VE/Bridge.lean:123`, `ResourceLimit:
+  verbalisation size`), so no question the base read comes near 300 tokens or 4,096 bytes. No F2 verdict changes at
+  the limits (probe: a 60-word gloss is refused by the environment, a 40-word one is far under both limits).
+- F2, rephrasings: `Is a service reviewed?` carries both rephrasings through the speech caller, the same lines
+  `ve ask` prints (`test_a_quantified_f2_question_is_read_as_ve_ask_reads_it`, refusing case).
+- F3, one-sided checks: this item adds no check; every test of a refusing side has its accepting side beside it
+  (the routed and unrouted prefixes, the glosses Lean reads and refuses, the names as declared and folded).
+
 ## Not delivered (FOLLOW-UP q1-4bb)
 
 The DRI kept Q1.4b Python only, so `"Is "` is a Python literal beside the prefixes Lean exports (`speechPrefixes`,
