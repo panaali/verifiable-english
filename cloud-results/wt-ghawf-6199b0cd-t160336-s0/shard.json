@@ -1,0 +1,1 @@
+{"shard": 0, "shards": 6, "units": ["tests/test_document_split.py", "tests/test_lean_default_build.py", "tests/test_norm_defaults_switch.py", "tests/test_scope_lean.py", "tests/test_trust_ratchet.py", "tests/test_wire_gate_corpus.py"], "rc": 0, "seconds": 464.8, "passed": 6}
