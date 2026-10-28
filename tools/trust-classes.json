@@ -13240,6 +13240,7 @@
         "VE.Scope.Examples.boxUnits",
         "VE.Scope.Examples.carveT",
         "VE.Scope.Examples.contentStr",
+        "VE.Scope.Examples.count",
         "VE.Scope.Examples.coveredL",
         "VE.Scope.Examples.envJ",
         "VE.Scope.Examples.errorOf",
@@ -13250,6 +13251,7 @@
         "VE.Scope.Examples.g2",
         "VE.Scope.Examples.g6",
         "VE.Scope.Examples.g8",
+        "VE.Scope.Examples.gI",
         "VE.Scope.Examples.gN",
         "VE.Scope.Examples.gN8",
         "VE.Scope.Examples.gP",
@@ -13271,6 +13273,7 @@
         "VE.Scope.Examples.hcUnits",
         "VE.Scope.Examples.ibAnchors",
         "VE.Scope.Examples.instructablePieces",
+        "VE.Scope.Examples.inventedC",
         "VE.Scope.Examples.item1",
         "VE.Scope.Examples.item3sign",
         "VE.Scope.Examples.j",
@@ -14145,7 +14148,10 @@
         "VE.Scope.unitsOf"
       ],
       "S": [
+        "VE.Scope.BlockBound",
         "VE.Scope.Governor",
+        "VE.Scope.HasStr",
+        "VE.Scope.JsonWF",
         "VE.Scope.Reach",
         "VE.Scope.SDoc",
         "VE.Scope.addOver",
@@ -14161,6 +14167,7 @@
         "VE.Scope.graph",
         "VE.Scope.isFrame",
         "VE.Scope.ordered",
+        "VE.Scope.payload",
         "VE.Scope.position",
         "VE.Scope.unary"
       ]
