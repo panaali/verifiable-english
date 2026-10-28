@@ -1356,6 +1356,13 @@
    "reason": "df-3: S +12 (VE/Readings/DefaultVerdicts.lean: choiceSoft, dSem), V +126 (VE/Readings/DefaultVerdicts.lean +80: dBasis, DVerdicts.hasDefaults, dEnglish, runVerdictsD, verdictWord, dChoiceJson, DLine, DLine.json, defaultJson; ResponseShape/Schemas/ReadingsRoute.lean +43: verdicts_default_choice, verdicts_default_line, verdicts_default; VE/Defaults/Wire.lean +3: collisionFields), K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-3, 2026-10-18",
    "commit": "0df9256dfe7d86d3d4ebf009a9a9026006256447"
+  },
+  {
+   "class": "V",
+   "lines": 8,
+   "reason": "me-2d: VE/Calc/Render.lean +6 (G[V] English.leadingPhrase, reservedIn), VE/Calc/Wire.lean +2 (D[V] the calls in value and decode); checkWords and checkVerbalisations are D[R] (+16), RunExamples helpers T (V +8, K +0, S +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-2d, 2026-10-18",
+   "commit": "de7cb402237e826966f45fe7f495e69de61ce494"
   }
  ]
 }
