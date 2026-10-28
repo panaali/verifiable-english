@@ -5613,6 +5613,56 @@ theorem VE.Cardinality.Examples.wellFormed_cases
       ¬VE.Cardinality.Examples.colliding.WellFormed ∧ ¬VE.Cardinality.Examples.ghost.WellFormed
   -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.Examples.colliding@VE.Cardinality.Examples VE.Cardinality.Examples.ghost@VE.Cardinality.Examples VE.Cardinality.Examples.named@VE.Cardinality.Examples VE.Cardinality.Examples.users@VE.Cardinality.Examples
   -- expr 2834057780
+theorem VE.Cardinality.Run.decodeCertificate_sound
+  ∀ {j : Lean.Json} {cert : VE.Cardinality.CardCertificate},
+    VE.Cardinality.Run.decodeCertificate j = Except.ok cert →
+      VE.Bridge.stringField j "format" = Except.ok "ve-cardinality-certificate@1" ∧
+        VE.Bridge.stringField j "environment_id" = Except.ok cert.environmentId ∧
+          VE.Bridge.stringField j "conclusion_meaning_id" = Except.ok cert.conclusionId ∧
+            ∃ x, j.getObjVal? "w6" = Except.ok x ∧ VE.Time.Wire.decodeW6Certificate x = Except.ok cert.w6
+  -- uses VE.Bridge.stringField@VE.Bridge VE.Cardinality.CardCertificate.conclusionId@VE.Cardinality.Run VE.Cardinality.CardCertificate.environmentId@VE.Cardinality.Run VE.Cardinality.CardCertificate.w6@VE.Cardinality.Run VE.Cardinality.CardCertificate@VE.Cardinality.Run VE.Cardinality.Run.decodeCertificate@VE.Cardinality.Run VE.Time.Wire.W6Certificate@VE.Time.Wire VE.Time.Wire.decodeW6Certificate@VE.Time.Wire
+  -- expr 2169870929
+theorem VE.Cardinality.Run.erasedJson_conclusion
+  ∀ {w : VE.Cardinality.CardEnv} {ps : List VE.Cardinality.CFormula} {c : VE.Cardinality.CFormula}
+    {pids : List (String × String)} {cid : String × String},
+    VE.Cardinality.Run.erasedIds w ps c = Except.ok (pids, cid) →
+      Except.map (fun x => x.getObjVal? "conclusion") (VE.Cardinality.Run.erasedJson w ps c) =
+        Except.ok
+          (Except.ok
+            (Lean.Json.mkObj
+              [("Q", VE.Time.Wire.encQ (VE.Cardinality.erasedProblem w.env ps c).snd),
+                ("core", VE.Time.Wire.encCore (VE.Cardinality.erasedProblem w.env ps c).snd.erase),
+                ("meaning_id", Lean.Json.str cid.fst), ("core_meaning_id", Lean.Json.str cid.snd)]))
+  -- uses VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.CardEnv.env@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Run.erasedIds@VE.Cardinality.Run VE.Cardinality.Run.erasedJson@VE.Cardinality.Run VE.Cardinality.erasedProblem@VE.Cardinality.Erase VE.Time.QFormula.erase@VE.Time.Syntax VE.Time.QFormula@VE.Time.Syntax VE.Time.Wire.encCore@VE.Time.Wire VE.Time.Wire.encQ@VE.Time.Wire
+  -- expr 3998950269
+theorem VE.Cardinality.Run.regionsJson_constants
+  ∀ (E : VE.Cardinality.CEnv) (fs : List VE.Cardinality.CFormula),
+    (VE.Cardinality.Run.regionsJson E fs).getObjVal? "constants" =
+      Except.ok
+        (Lean.ToJson.toJson
+          (List.map
+            (fun e =>
+              Lean.Json.mkObj
+                [("constant", Lean.Json.str e.fst), ("sort", Lean.Json.str e.snd.fst),
+                  ("bits", Lean.Json.str (VE.Cardinality.bitString e.snd.snd))])
+            (VE.Cardinality.regionTable E fs)))
+  -- uses VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.Region@VE.Cardinality.Regions VE.Cardinality.Run.regionsJson@VE.Cardinality.Run VE.Cardinality.bitString@VE.Cardinality.Regions VE.Cardinality.regionTable@VE.Cardinality.Regions
+  -- expr 1333388031
+theorem VE.Cardinality.Run.runCaseReported_error
+  ∀ {j : Lean.Json} {m : String},
+    VE.Cardinality.Run.runCase j = Except.error m →
+      VE.Cardinality.Run.runCaseReported j =
+        Lean.Json.mkObj
+          ([("id", j.getObjValD "id"), ("status", Lean.Json.str "error"), ("error", Lean.Json.str m)] ++
+            if ((j.getObjValD "kind").getStr?.toOption == Option.some "certificate") = Bool.true then
+              [("valid", Lean.Json.bool Bool.false)]
+            else [])
+  -- uses VE.Cardinality.Run.runCase@VE.Cardinality.Run VE.Cardinality.Run.runCaseReported@VE.Cardinality.Run
+  -- expr 1605942797
+theorem VE.Cardinality.Run.runCaseReported_ok
+  ∀ {j r : Lean.Json}, VE.Cardinality.Run.runCase j = Except.ok r → VE.Cardinality.Run.runCaseReported j = r
+  -- uses VE.Cardinality.Run.runCase@VE.Cardinality.Run VE.Cardinality.Run.runCaseReported@VE.Cardinality.Run
+  -- expr 1073128038
 theorem VE.Cardinality.Wire.cmpNames_spelled
   ∀ (s : String) (c : VE.Cardinality.Cmp),
     VE.Cardinality.Wire.elabName VE.Cardinality.Wire.cmpNames s = Except.ok c ↔
@@ -5812,6 +5862,15 @@ theorem VE.Cardinality.cardinality_elab_sound
               VE.Cardinality.CEntails E ps c
   -- uses VE.Cardinality.Admitted@VE.Cardinality.Syntax VE.Cardinality.CEntails@VE.Cardinality.Semantics VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.elab@VE.Cardinality.Regions VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.erasedProblem@VE.Cardinality.Erase VE.Time.QFormula@VE.Time.Syntax VE.Time.TEntails@VE.Time.Semantics
   -- expr 2153097470
+theorem VE.Cardinality.checkCertificate_sound
+  ∀ {w : VE.Cardinality.CardEnv} (ps : List (VE.Cardinality.CAdmission w)) (c : VE.Cardinality.CAdmission w)
+    (cert : VE.Cardinality.CardCertificate),
+    VE.Cardinality.checkCertificate ps c cert = Except.ok Bool.true →
+      cert.environmentId = w.environmentId ∧
+        cert.premiseIds = List.map (fun x => x.meaningId) ps ∧
+          cert.conclusionId = c.meaningId ∧ VE.Cardinality.CEntails w.env (List.map (fun x => x.formula) ps) c.formula
+  -- uses VE.Cardinality.CAdmission.formula@VE.Cardinality.Wire VE.Cardinality.CAdmission.meaningId@VE.Cardinality.Wire VE.Cardinality.CAdmission@VE.Cardinality.Wire VE.Cardinality.CEntails@VE.Cardinality.Semantics VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.CardCertificate.conclusionId@VE.Cardinality.Run VE.Cardinality.CardCertificate.environmentId@VE.Cardinality.Run VE.Cardinality.CardCertificate.premiseIds@VE.Cardinality.Run VE.Cardinality.CardCertificate@VE.Cardinality.Run VE.Cardinality.CardEnv.env@VE.Cardinality.Wire VE.Cardinality.CardEnv.environmentId@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.checkCertificate@VE.Cardinality.Run
+  -- expr 3850057825
 theorem VE.Cardinality.countAtom_holds_iff
   ∀ {α : Type u} {E : VE.Cardinality.CEnv} {T : VE.Time.TStructure α},
     VE.Cardinality.Admissible E T →
