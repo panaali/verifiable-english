@@ -1,0 +1,14 @@
+{
+ "job": "main-d9cff534-chk",
+ "head": "6121d5c1bc541869c55cc91234dfef5509f4070d",
+ "argv": [
+  "main-d9cff534-chk",
+  "6121d5c1bc541869c55cc91234dfef5509f4070d",
+  "6121d5c1bc541869c55cc91234dfef5509f4070d",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-6f94fd07ef07.tar.zst",
+  "d0e9b0be0f6cd45da213f2e4b3cd71f7362e6e8415a4941decb27266f9be4dfb",
+  "lineage_tags=git tag -f 41887e90 669642c0d7468a0b078dc71df9b89646bef49cdf && git tag -f 68f18dcdc f60df3441940327f6cf0bb8c410fd6b23e699e40 && git tag -f 9160d326 10dd123ca6e1cf723d1562dd740abee831621e7a && git tag -f adefca30 0c2f72221595cb99c99c9f197af087f8bd97fc25 && git tag -f lean-first/oracle-python dba9f9de9db5e39b571a618bb355a04b412afd0e",
+  "focus=uv run --frozen python -m pytest -q -p no:cacheprovider tests/test_discourse_lean.py::test_malformed_metadata_reaches_lean tests/test_stage2_standalone.py",
+  "trust_tables=uv run --frozen python tools/regen_generated.py --check --only trust-tables"
+ ]
+}
