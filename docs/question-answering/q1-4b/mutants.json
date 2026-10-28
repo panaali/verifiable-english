@@ -37,6 +37,24 @@
    "mutation": "inputs: q1-4's delta.json (V1 rows, in none of the classes), one wording row whose head text is \"x\" (counts not the decision's), and compare head.json head.json",
    "test": "uv run python docs/question-answering/q1-4b/evidence/speech_ab_f2.py check <each>",
    "result": "exit 1 on each; exit 0 on delta.json"
+  },
+  {
+   "id": "C4",
+   "language": "Python (evidence script)",
+   "file": "docs/question-answering/q1-4b/evidence/speech_ab_f2.py",
+   "behaviour": "the corpus asks a question for every grammar opening (recheck 2 F5's class)",
+   "mutation": "opening_sentences skips every rule that opens with a word other than a determiner (`there is a`, `this is impossible`, markers, listings)",
+   "test": "tests/test_speech_polar_lean.py::test_the_corpus_records_a_question_for_every_grammar_opening, tests/test_speech_polar_lean.py::test_the_extended_delta_audits_every_verdict_as_signed",
+   "result": "2 failed"
+  },
+  {
+   "id": "C5",
+   "language": "Python (evidence script)",
+   "file": "docs/question-answering/q1-4b/evidence/speech_ab_f2.py",
+   "behaviour": "each sentence is asked once for every gap that has the auxiliary",
+   "mutation": "opening_cases keeps only the first `is` of each sentence (drops `Is every service that is reviewed reviewed?`)",
+   "test": "tests/test_speech_polar_lean.py::test_the_corpus_records_a_question_for_every_grammar_opening, tests/test_speech_polar_lean.py::test_the_extended_delta_audits_every_verdict_as_signed",
+   "result": "2 failed"
   }
  ]
 }
