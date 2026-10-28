@@ -2,7 +2,8 @@ import VE.Arith.BoundedExamples
 
 /-! me-12nb evidence, not product code (nothing imports it): the three costs spec 12.2 leaves uncharged, each at its
 worst within 12.5's wire limits, and each unknown at `maxSteps`. Run from `lean/`:
-`lake env lean ../docs/math-evidence/me-12nb/uncharged-costs.lean` (times in the REPORT). -/
+`lake env lean ../docs/math-evidence/me-12nb/uncharged-costs.lean` (times in the REPORT). Lake builds no target from
+it: `tests/test_arith_uncharged_costs.py` runs it, so it stays selected (the DRI's condition on me-12nb). -/
 
 namespace VE.Arith.Examples
 open VE.Arith

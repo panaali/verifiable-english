@@ -92,7 +92,7 @@ S10 (`stepB`) are the mutants per new definition. S12 shows that the UNKNOWN gua
   definitions are T. There is no allowance, no R16 row and no FOLLOW-UPS row.
 - **Tests.** `mac-pytest.sh --select -- --base d9cff5345 --run`, tree of 5f75f9893 (later commits: spec prose and this
   report): 87 of 474 units, 0 failed, exit 0, on the VM (no Mac slot; 7,164 s); the last commit's 7 units
-  (`--base 5f75f9893`) also pass. No pytest file is added.
+  (`--base 5f75f9893`) also pass. Fix round 1 adds `tests/test_arith_uncharged_costs.py` (below).
 - **Checks.** `lake build` (1,121 jobs), `lean/audit.py` (7,210 theorems), `lean_statements.py --check`,
   `repo_map.py --check`, `frozen.py` and `trust_map.py --check` pass. `regen_generated.py --write --skip route-cases`
   wrote 32 entries (`route-cases` needs the Rust release binary; no route changed). `gate_collection.py --check
@@ -104,6 +104,19 @@ S10 (`stepB`) are the mutants per new definition. S12 shows that the UNKNOWN gua
   `tools/trust-classes.json` (union) are shared with ap-2b, ap-3c, df-2b, qt-a3b, me-1 and arch-AR-1; the stale
   `foundation/me-1` also touches the spec and plan.
 - **Bytes.** 0 expected (use-case ceiling, ME-P4); nothing is claimed before a pilot audit.
+
+## Fix round 1 (`me-12nb-review.final.md`)
+
+- **F1 (B): the condition's fixtures were run by nothing.** `uncharged-costs.lean` is outside Lake's targets, so the
+  DRI's "must stay selected" guards ran only by hand. `tests/test_arith_uncharged_costs.py` now runs the file with
+  `lake env lean` (so every Lean change selects it, as `lake`/`lean` runners are, and an edit of the file selects it,
+  as it names the file), checks that each of the four guards is still there (the three UNKNOWN at `maxSteps`, the count
+  6,147), and shows the run can fail: a copy with the count off by one is refused. Seeded bug: `tree 10` → `tree 9`
+  in `dense` fails `test_lean_accepts_every_guard` (`:22`); restored. About 50 s on the VM, interpreted.
+- **Sweep.** The other `#guard` files under `docs/` are spec scratch stubs, not fixtures a decision keeps:
+  `me-12n-budget-stub.lean` and `SpecStubs_pk1.lean` (type-checked against main when written) and
+  `SpecStubs_sc5r.lean` (`tests/test_scope_sc5r_stub.py` reads it). Inside `lean/`, `BoundedExamples.lean` and
+  `CompleteExamples.lean` are imported by `lean/VE.lean`.
 
 ## Next items
 
