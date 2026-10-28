@@ -1310,8 +1310,8 @@
   },
   {
    "class": "V",
-   "lines": 26,
-   "reason": "qt-a3c: VE/Compose/Dispatch.lean +11 (the cardinality@0 row, cardinalityOthers, modeProfiles), ResponseShape/Encoders/Cardinality.lean +10 (the cardinality_rows tactic), VE/Service/Registry.lean +2, ResponseShape/Schemas.lean +1, ResponseShape/Skeletons.lean +1, VE/Service/Protocol.lean +1; K +0, S +0",
+   "lines": 16,
+   "reason": "qt-a3c: VE/Compose/Dispatch.lean +11 (the cardinality@0 row, cardinalityOthers, modeProfiles), VE/Service/Registry.lean +2, ResponseShape/Schemas.lean +1, ResponseShape/Skeletons.lean +1, VE/Service/Protocol.lean +1; K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3c, 2026-10-28",
    "commit": "b8eac74553124f72a8650211b9df8228c621fdfe"
   }
