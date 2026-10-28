@@ -1,7 +1,7 @@
 {
  "item": "ap-1bd",
  "planted_by": "a throwaway driver: plant, run the one check, restore (git status clean after)",
- "killed": 16,
+ "killed": 17,
  "survived_equivalent": 1,
  "mutants": [
   {
@@ -140,6 +140,14 @@
    "test": "PATH=/home/seyran/.elan/bin:$PATH lake build VE.Readings.ActsExamples",
    "killed": true,
    "first_failure": "error: VE/Readings/ActsExamples.lean:53:0: Expression"
+  },
+  {
+   "id": "py-plain-wordings-lower-route",
+   "file": "ve/norms.py",
+   "definition": "plain_wordings",
+   "test": "uv run python -m pytest -q tests/test_acts_profile.py -k 'readings_environment_has or accepts_has_leans or with_readings_is'",
+   "killed": true,
+   "first_failure": "FAILED tests/test_acts_profile.py::test_a_readings_environment_has_leans_wordings (3 failed: UnsupportedProfile: Unsupported profile readings@1)"
   }
  ]
 }
