@@ -224,11 +224,13 @@ def test_rsp_stage0_saved_answers(rsp_modules):
     saved = json.loads((RSP_EVIDENCE / "stage0.json").read_text())
     assert saved["P1"]["units"] == {"s36-full-review": "OPEN"}
     assert (saved["P2"]["units"], saved["P2"]["premises"]) == ({"t1-plan": "OPEN"}, "UNKNOWN")
-    assert saved["P3"]["admitted"] and saved["P3"]["with_unclassified_t4_harm"] == "HarmUnclassified: harm_of_automated_rd"
+    assert saved["P3"]["admitted"]
+    assert saved["P3"]["with_unclassified_t4_harm"] == "HarmUnclassified: harm_of_automated_rd"
     assert all(c["might"] and not c["leads"] for c in saved["P3"]["stated_cells"])
     assert saved["P4"]["admitted"] and all(saved["P4"]["certificates"].values())
     assert saved["P5"]["total"] == saved["P6"]["master_total"] == 59410 and saved["P6"]["contiguous"]
-    assert saved["P8"]["diagnostic"] == "CheckerUnavailable: judgments@0 with soft-norms@0 needs its composed Lean route"
+    assert saved["P8"]["diagnostic"] == ("CheckerUnavailable: judgments@0 with soft-norms@0 needs its composed Lean "
+                                         "route")
 
 
 @pytest.mark.skipif(not LEAN_SERVICE.exists(), reason="the Lean service is not built")
