@@ -989,6 +989,14 @@
         "ResponseShape.Skeletons.identity"
       ]
     },
+    "ScopeBenchMain.lean": {
+      "T": [
+        "ScopeBench.changed",
+        "ScopeBench.report",
+        "ScopeBench.row",
+        "main"
+      ]
+    },
     "SensesMain.lean": {
       "G[V]": [
         "main"
@@ -11325,7 +11333,8 @@
         "VE.Time.Wire.w6Profiles"
       ],
       "D[I]": [
-        "VE.Time.Wire.canonicalText"
+        "VE.Time.Wire.canonicalText",
+        "VE.Time.Wire.statementIds"
       ],
       "G[V]": [
         "VE.Time.Wire.admissions",
@@ -11345,7 +11354,9 @@
       "G[R]": [
         "VE.Time.Wire.aggregateLimit",
         "VE.Time.Wire.depthLimit",
-        "VE.Time.Wire.quantityLimits"
+        "VE.Time.Wire.quantityLimits",
+        "VE.Time.Wire.staleW6",
+        "VE.Time.Wire.staleCore"
       ]
     },
     "VE/WireContract/Diagnose.lean": {
@@ -15138,10 +15149,13 @@
         "VE.Arith.OpEnv",
         "VE.Arith.Term.evalB",
         "VE.Arith.Term.evalBs",
+        "VE.Arith.bits",
         "VE.Arith.charge",
+        "VE.Arith.chargeBits",
         "VE.Arith.countLoop",
         "VE.Arith.decideBounded",
-        "VE.Arith.quantLoop"
+        "VE.Arith.quantLoop",
+        "VE.Arith.stepB"
       ],
       "P": [
         "VE.Arith.Agrees",
@@ -15155,8 +15169,12 @@
     "VE/Arith/BoundedExamples.lean": {
       "T": [
         "VE.Arith.Examples.dbl",
+        "VE.Arith.Examples.dblx",
         "VE.Arith.Examples.ev",
         "VE.Arith.Examples.no",
+        "VE.Arith.Examples.reuse",
+        "VE.Arith.Examples.reuseStmt",
+        "VE.Arith.Examples.sqChain",
         "VE.Arith.Examples.yes"
       ]
     },
@@ -15275,13 +15293,130 @@
         "VE.Acts.RuleExamples.unused"
       ]
     },
-    "ScopeBenchMain.lean": {
-      "T": [
-        "ScopeBench.changed",
-        "ScopeBench.report",
-        "ScopeBench.row",
-        "main"
+    "VE/Acts/Elaborate.lean": {
+      "S": [
+        "VE.Acts.ActsDoc",
+        "VE.Acts.SplitMap",
+        "VE.Acts.dualOf",
+        "VE.Acts.elaborate",
+        "VE.Acts.elaborateMap",
+        "VE.Acts.partNames",
+        "VE.Acts.partPred",
+        "VE.Acts.partRule",
+        "VE.Acts.readingOf",
+        "VE.Acts.splitAtoms"
+      ],
+      "G[V]": [
+        "VE.Acts.namesOk",
+        "VE.Acts.partsDistinct",
+        "VE.Acts.partsOf",
+        "VE.Acts.refsOk",
+        "VE.Acts.ruleReading",
+        "VE.Acts.splitDoc",
+        "VE.Acts.splitEnv",
+        "VE.Acts.splitMap",
+        "VE.Acts.splitNode",
+        "VE.Acts.splitReg"
       ]
-    }
+    },
+    "VE/Acts/ElaborateExamples.lean": {
+      "T": [
+        "VE.Acts.ElaborateExamples.bad",
+        "VE.Acts.ElaborateExamples.doc",
+        "VE.Acts.ElaborateExamples.dual",
+        "VE.Acts.ElaborateExamples.e1",
+        "VE.Acts.ElaborateExamples.e2",
+        "VE.Acts.ElaborateExamples.e3",
+        "VE.Acts.ElaborateExamples.e4",
+        "VE.Acts.ElaborateExamples.e5",
+        "VE.Acts.ElaborateExamples.e6",
+        "VE.Acts.ElaborateExamples.e7",
+        "VE.Acts.ElaborateExamples.env",
+        "VE.Acts.ElaborateExamples.fx14",
+        "VE.Acts.ElaborateExamples.good",
+        "VE.Acts.ElaborateExamples.hideEnv",
+        "VE.Acts.ElaborateExamples.many",
+        "VE.Acts.ElaborateExamples.named",
+        "VE.Acts.ElaborateExamples.nd",
+        "VE.Acts.ElaborateExamples.provideA",
+        "VE.Acts.ElaborateExamples.q",
+        "VE.Acts.ElaborateExamples.qm",
+        "VE.Acts.ElaborateExamples.r027",
+        "VE.Acts.ElaborateExamples.refusal",
+        "VE.Acts.ElaborateExamples.rg",
+        "VE.Acts.ElaborateExamples.seek",
+        "VE.Acts.ElaborateExamples.shown",
+        "VE.Acts.ElaborateExamples.useA",
+        "VE.Acts.ElaborateExamples.withActs"
+      ]
+    },
+    "VE/Cardinality/Run.lean": {
+      "D[V]": [
+        "VE.Cardinality.CardCertificate",
+        {
+          "name": "VE.Cardinality.checkCertificate",
+          "tied": [
+            "VE.Cardinality.checkCertificate_sound"
+          ]
+        },
+        "VE.Cardinality.Run.decodeCertificate",
+        "VE.Cardinality.Run.regionsJson",
+        "VE.Cardinality.Run.erasedJson"
+      ],
+      "D[I]": [
+        "VE.Cardinality.Run.erasedIds",
+        "VE.Cardinality.Run.statementJson"
+      ],
+      "G[R]": [
+        "VE.Cardinality.Run.problemChecks",
+        "VE.Cardinality.Run.stale",
+        "VE.Cardinality.Run.claimed"
+      ],
+      "G[V]": [
+        "VE.Cardinality.Run.runCase",
+        "VE.Cardinality.Run.runCaseReported"
+      ]
+    },
+    "VE/Cardinality/RunExamples.lean": {
+      "T": [
+        "VE.Cardinality.RunExamples.answer",
+        "VE.Cardinality.RunExamples.base",
+        "VE.Cardinality.RunExamples.case",
+        "VE.Cardinality.RunExamples.certificate",
+        "VE.Cardinality.RunExamples.certify",
+        "VE.Cardinality.RunExamples.core",
+        "VE.Cardinality.RunExamples.countAny",
+        "VE.Cardinality.RunExamples.counting",
+        "VE.Cardinality.RunExamples.envId",
+        "VE.Cardinality.RunExamples.erased",
+        "VE.Cardinality.RunExamples.erasedNodes",
+        "VE.Cardinality.RunExamples.err",
+        "VE.Cardinality.RunExamples.fa1Admission",
+        "VE.Cardinality.RunExamples.fa1Cert",
+        "VE.Cardinality.RunExamples.fa1bAdmission",
+        "VE.Cardinality.RunExamples.ids",
+        "VE.Cardinality.RunExamples.mentioning",
+        "VE.Cardinality.RunExamples.obj",
+        "VE.Cardinality.RunExamples.other",
+        "VE.Cardinality.RunExamples.predsEnv",
+        "VE.Cardinality.RunExamples.refused",
+        "VE.Cardinality.RunExamples.regions",
+        "VE.Cardinality.RunExamples.reversed",
+        "VE.Cardinality.RunExamples.said",
+        "VE.Cardinality.RunExamples.sortsEnv",
+        "VE.Cardinality.RunExamples.status",
+        "VE.Cardinality.RunExamples.steps",
+        "VE.Cardinality.RunExamples.targetId",
+        "VE.Cardinality.RunExamples.top",
+        "VE.Cardinality.RunExamples.traceJson",
+        "VE.Cardinality.RunExamples.vocab",
+        "VE.Cardinality.RunExamples.w6",
+        "VE.Cardinality.RunExamples.w6Id",
+        "VE.Cardinality.RunExamples.wide",
+        "VE.Cardinality.RunExamples.withCore",
+        "VE.Cardinality.RunExamples.withW6"
+      ]
+    },
+    "VE/Cardinality/RunTheorems.lean": {}
   }
 }

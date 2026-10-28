@@ -1,6 +1,6 @@
-"""The builders' entry file (AGENTS.md) names only what exists, and tools/repo_map.py derives its map.
+"""The builders' entry files name only what exists, and tools/repo_map.py derives its map.
 
-AGENTS.md: every backticked path exists (a glob matches), every backticked Lean name is a declaration of
+AGENTS.md and docs/ROUTE-RECIPE.md: every backticked path exists (a glob matches), every Lean name is in
 `lean/declarations.txt`, and every backticked command runs something that exists: its script, its `-m`
 module, its `lake build` targets (from `lean/lakefile.toml`) or its program; a script that parses its
 arguments with argparse answers `--help` with exit 0, and a `repo_map.py` command parses with the tool's
@@ -40,6 +40,8 @@ from ve.backends.service_schema import MODES
 
 ROOT = Path(__file__).resolve().parents[1]
 AGENTS = ROOT / "AGENTS.md"
+RECIPE = ROOT / "docs/ROUTE-RECIPE.md"
+ENTRY_DOCS = (AGENTS, RECIPE)
 TOOL = ROOT / "tools/repo_map.py"
 SUFFIXES = (".md", ".py", ".lean", ".json", ".jsonl", ".txt", ".toml", ".lock", ".sha256")
 LEAN_NAME = re.compile(r"(?:VE|ResponseShape)(?:\.[A-Za-z_][\w']*)+")
@@ -90,9 +92,9 @@ def tool(*args, env=None, cwd=ROOT):
     return subprocess.run([sys.executable, str(TOOL), *args], cwd=cwd, env=env, capture_output=True, text=True)
 
 
-# -- AGENTS.md --------------------------------------------------------------------------------------------
-def spans() -> list[str]:
-    return re.findall(r"`([^`\n]+)`", AGENTS.read_text(encoding="utf-8"))
+# -- AGENTS.md and ROUTE-RECIPE.md ----------------------------------------------------------------------
+def spans(document: Path) -> list[str]:
+    return re.findall(r"`([^`\n]+)`", document.read_text(encoding="utf-8"))
 
 
 def is_path(span: str) -> bool:
@@ -100,10 +102,10 @@ def is_path(span: str) -> bool:
         and not LEAN_NAME.fullmatch(span)
 
 
-def commands() -> list[tuple[Path, list[str]]]:
+def commands(document: Path) -> list[tuple[Path, list[str]]]:
     """(working directory, argv) of each backticked command, `cd DIR &&` and `NAME=value` prefixes applied."""
     found = []
-    for span in spans():
+    for span in spans(document):
         if " " not in span:
             continue
         cwd, words = ROOT, shlex.split(span.replace("$(git merge-base HEAD main)", "BASE"))
@@ -129,29 +131,38 @@ def script_of(cwd: Path, words: list[str]) -> tuple[Path | None, list[str]]:
 
 def test_agents_md_is_short_and_claude_md_is_its_symlink():
     assert len(AGENTS.read_text(encoding="utf-8").splitlines()) <= 150
+    assert AGENTS.stat().st_size <= 6000
     claude = ROOT / "CLAUDE.md"
     assert claude.is_symlink() and os.readlink(claude) == "AGENTS.md"
 
 
-def test_every_path_named_in_agents_md_exists():
-    paths = [span for span in spans() if is_path(span)]
-    assert len(paths) >= 20, paths  # the parse found the file's paths
+def test_agents_md_links_route_recipe():
+    assert "`docs/ROUTE-RECIPE.md`" in AGENTS.read_text(encoding="utf-8")
+
+
+@pytest.mark.parametrize("document", ENTRY_DOCS, ids=lambda p: p.name)
+def test_every_path_named_in_agents_md_exists(document):
+    paths = [span for span in spans(document) if is_path(span)]
+    assert len(paths) >= (20 if document == AGENTS else 10), paths
     missing = [p for p in paths if not (any(ROOT.glob(p)) if "*" in p else (ROOT / p).exists())]
-    assert not missing, f"AGENTS.md names paths that do not exist: {missing}"
+    assert not missing, f"{document.relative_to(ROOT)} names paths that do not exist: {missing}"
 
 
-def test_every_lean_name_in_agents_md_is_declared():
-    names = [span for span in spans() if LEAN_NAME.fullmatch(span)]
-    assert names
+@pytest.mark.parametrize("document", ENTRY_DOCS, ids=lambda p: p.name)
+def test_every_lean_name_in_agents_md_is_declared(document):
+    names = [span for span in spans(document) if LEAN_NAME.fullmatch(span)]
+    if document == RECIPE:
+        assert names
     declared = {line.split()[2].rpartition("@")[0] for line in
                 (ROOT / "lean/declarations.txt").read_text(encoding="utf-8").splitlines()
                 if not line.startswith("--") and len(line.split()) >= 3}
     assert not [n for n in names if n not in declared]
 
 
-def test_every_command_named_in_agents_md_exists_and_the_fast_ones_answer_help(cache_env):
-    found = commands()
-    assert len(found) >= 10, found
+@pytest.mark.parametrize("document", ENTRY_DOCS, ids=lambda p: p.name)
+def test_every_command_named_in_agents_md_exists_and_the_fast_ones_answer_help(cache_env, document):
+    found = commands(document)
+    assert len(found) >= (10 if document == AGENTS else 1), found
     lakefile = tomllib.loads((ROOT / "lean/lakefile.toml").read_text())
     targets = {entry["name"] for kind in ("lean_exe", "lean_lib") for entry in lakefile.get(kind, [])}
     helped = set()
@@ -175,7 +186,8 @@ def test_every_command_named_in_agents_md_exists_and_the_fast_ones_answer_help(c
             done = subprocess.run([sys.executable, str(script), "--help"], cwd=cwd, env=cache_env,
                                   capture_output=True, text=True)
             assert done.returncode == 0, (script, done.stderr[-2000:])
-    assert TOOL in helped
+    if document == AGENTS:
+        assert TOOL in helped
 
 
 # -- repo_map.py ----------------------------------------------------------------------------------------------
