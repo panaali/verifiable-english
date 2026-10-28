@@ -95,14 +95,15 @@ def WellFormedEvents (E : VE.Environment) (V : EventsEnv) : Bool :=
 def regenEnv (E : VE.Environment) (V : EventsEnv) : VE.Environment :=
   { E with constants := fun c => if V.dates.any (fun D => dateName D == c) then some V.day else E.constants c }
 
-/-- The regenerated environment types the block. -/
+/-- The regenerated environment types the block. A named date is a valid date, year 9999 at most, as the decoder
+    builds it (`Civil.Valid`; the DRI's amendment of 2026-10-27). -/
 def EventsTyped (E : VE.Environment) (V : EventsEnv) : Bool :=
   E.sorts.contains V.day && sig2 E V.before V.day V.day &&
   V.events.all (fun e => E.sorts.contains e.sort && e.sort != V.day && sig2 E e.on e.sort V.day) &&
   V.states.all (fun s => E.sorts.contains s.sort && s.sort != V.day && sig2 E s.begins s.sort V.day &&
     sig2 E s.ends s.sort V.day) &&
   V.links.all (fun l => sig2 E l.predicate l.cause l.effect) &&
-  V.dates.all (fun D => D.properB && E.constants (dateName D) == some V.day) &&
+  V.dates.all (fun D => D.properB && decide (D.year ≤ 9999) && E.constants (dateName D) == some V.day) &&
   (consecutive V).all (fun p => decide (p.1.num < p.2.num))
 
 end VE.Events
