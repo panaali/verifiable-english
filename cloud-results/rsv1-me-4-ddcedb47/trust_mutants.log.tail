@@ -1,0 +1,93 @@
+trust_mutants: 12 definitions, 357 mutants (37 to run), 4 jobs, base 99490db8402c
+SURVIVOR lean/VE/Calc/Table.lean:37 VE.Calc.Filter.Selects (S, trusted) arm-true: T.cell r c = .text v -> True
+SURVIVOR lean/VE/Calc/Table.lean:37 VE.Calc.Filter.Selects (S, trusted) arm-false: T.cell r c = .text v -> False
+SURVIVOR lean/VE/Calc/Table.lean:38 VE.Calc.Filter.Selects (S, trusted) and-or: ∧ -> ∨
+SURVIVOR lean/VE/Calc/Table.lean:44 VE.Calc.Filter.Selects (S, trusted) or-and: ∨ -> ∧
+SURVIVOR lean/VE/Calc/Table.lean:100 VE.Calc.mean? (S, trusted) eq-le: = -> ≤
+SURVIVOR lean/VE/Calc/Table.lean:37 VE.Calc.Filter.Selects (S, trusted) eq-ne: = -> ≠
+SURVIVOR lean/VE/Calc/Table.lean:38 VE.Calc.Filter.Selects (S, trusted) ne-eq: ≠ -> =
+SURVIVOR lean/VE/Calc/Table.lean:36 VE.Calc.Filter.Selects (S, trusted) bool-flip: True -> False
+SURVIVOR lean/VE/Calc/Jsonl.lean:37 VE.Calc.decodeJsonl (D[V], trusted) lit-minus: 1 -> 0
+SURVIVOR lean/VE/Calc/Table.lean:38 VE.Calc.Filter.Selects (S, trusted) arm-true: ∃ s, T.cell r c = .text s ∧ s ≠ v -> True
+SURVIVOR lean/VE/Calc/Table.lean:38 VE.Calc.Filter.Selects (S, trusted) arm-false: ∃ s, T.cell r c = .text s ∧ s ≠ v -> False
+SURVIVOR lean/VE/Calc/Csv.lean:18 VE.Calc.csvRecords (D[V], trusted) and-or: ∧ -> ∨
+SURVIVOR lean/VE/Calc/Table.lean:40 VE.Calc.Filter.Selects (S, trusted) and-or: ∧ -> ∨
+SURVIVOR lean/VE/Calc/Csv.lean:18 VE.Calc.csvRecords (D[V], trusted) eq-le: = -> ≤
+SURVIVOR lean/VE/Calc/Table.lean:38 VE.Calc.Filter.Selects (S, trusted) eq-ne: = -> ≠
+SURVIVOR lean/VE/Calc/Table.lean:40 VE.Calc.Filter.Selects (S, trusted) ne-eq: ≠ -> =
+SURVIVOR lean/VE/Calc/Table.lean:41 VE.Calc.Filter.Selects (S, trusted) bool-flip: true -> false
+SURVIVOR lean/VE/Calc/Table.lean:39 VE.Calc.Filter.Selects (S, trusted) arm-true: T.cell r c = .num q -> True
+SURVIVOR lean/VE/Calc/Table.lean:39 VE.Calc.Filter.Selects (S, trusted) arm-false: T.cell r c = .num q -> False
+SURVIVOR lean/VE/Calc/Table.lean:43 VE.Calc.Filter.Selects (S, trusted) and-or: ∧ -> ∨
+SURVIVOR lean/VE/Calc/Csv.lean:18 VE.Calc.csvRecords (D[V], trusted) eq-le: = -> ≤
+SURVIVOR lean/VE/Calc/Table.lean:39 VE.Calc.Filter.Selects (S, trusted) eq-ne: = -> ≠
+SURVIVOR lean/VE/Calc/Table.lean:42 VE.Calc.Filter.Selects (S, trusted) bool-flip: false -> true
+SURVIVOR lean/VE/Calc/Table.lean:40 VE.Calc.Filter.Selects (S, trusted) arm-true: ∃ x, T.cell r c = .num x ∧ x ≠ q -> True
+SURVIVOR lean/VE/Calc/Table.lean:40 VE.Calc.Filter.Selects (S, trusted) arm-false: ∃ x, T.cell r c = .num x ∧ x ≠ q -> False
+SURVIVOR lean/VE/Calc/Csv.lean:27 VE.Calc.csvRecords (D[V], trusted) eq-le: = -> ≤
+SURVIVOR lean/VE/Calc/Table.lean:40 VE.Calc.Filter.Selects (S, trusted) eq-ne: = -> ≠
+SURVIVOR lean/VE/Calc/Table.lean:41 VE.Calc.Filter.Selects (S, trusted) arm-true: T.cell r c = .bool true -> True
+SURVIVOR lean/VE/Calc/Table.lean:41 VE.Calc.Filter.Selects (S, trusted) arm-false: T.cell r c = .bool true -> False
+SURVIVOR lean/VE/Calc/Csv.lean:27 VE.Calc.csvRecords (D[V], trusted) eq-le: = -> ≤
+SURVIVOR lean/VE/Calc/Table.lean:41 VE.Calc.Filter.Selects (S, trusted) eq-ne: = -> ≠
+SURVIVOR lean/VE/Calc/Table.lean:42 VE.Calc.Filter.Selects (S, trusted) arm-true: T.cell r c = .bool false -> True
+SURVIVOR lean/VE/Calc/Table.lean:42 VE.Calc.Filter.Selects (S, trusted) arm-false: T.cell r c = .bool false -> False
+SURVIVOR lean/VE/Calc/Table.lean:42 VE.Calc.Filter.Selects (S, trusted) eq-ne: = -> ≠
+SURVIVOR lean/VE/Calc/Table.lean:43 VE.Calc.Filter.Selects (S, trusted) arm-true: f.Selects T r ∧ g.Selects T r -> True
+SURVIVOR lean/VE/Calc/Table.lean:43 VE.Calc.Filter.Selects (S, trusted) arm-false: f.Selects T r ∧ g.Selects T r -> False
+SURVIVOR lean/VE/Calc/Table.lean:44 VE.Calc.Filter.Selects (S, trusted) arm-true: f.Selects T r ∨ g.Selects T r -> True
+SURVIVOR lean/VE/Calc/Table.lean:44 VE.Calc.Filter.Selects (S, trusted) arm-false: f.Selects T r ∨ g.Selects T r -> False
+SURVIVOR lean/VE/Calc/Jsonl.lean:45 VE.Calc.decodeJsonl (D[V], trusted) list-empty: decl.map Prod.fst -> []
+SURVIVOR lean/VE/Calc/Jsonl.lean:43 VE.Calc.decodeJsonl (D[V], trusted) list-first: keys -> (keys.take 1)
+SURVIVOR lean/VE/Calc/Jsonl.lean:45 VE.Calc.decodeJsonl (D[V], trusted) list-first: decl -> (decl.take 1)
+SURVIVOR lean/VE/Calc/Jsonl.lean:45 VE.Calc.decodeJsonl (D[V], trusted) list-drop-last: decl -> (decl.dropLast)
+SURVIVOR lean/VE/Calc/Jsonl.lean:45 VE.Calc.decodeJsonl (D[V], trusted) list-first: decl.map Prod.fst -> ((decl.map Prod.fst).take 1)
+SURVIVOR lean/VE/Calc/Jsonl.lean:45 VE.Calc.decodeJsonl (D[V], trusted) list-drop-last: decl.map Prod.fst -> ((decl.map Prod.fst).dropLast)
+SURVIVOR lean/VE/Calc/Jsonl.lean:38 VE.Calc.decodeJsonl (D[V], trusted) list-last: lines -> (lines.reverse.take 1)
+SURVIVOR lean/VE/Calc/Csv.lean:33 VE.Calc.columnTypes (D[V], trusted) list-last: decl -> (decl.reverse.take 1)
+SURVIVOR lean/VE/Calc/Csv.lean:33 VE.Calc.columnTypes (D[V], trusted) list-drop-first: decl -> (decl.drop 1)
+SURVIVOR lean/VE/Calc/Jsonl.lean:43 VE.Calc.decodeJsonl (D[V], trusted) list-last: keys -> (keys.reverse.take 1)
+SURVIVOR lean/VE/Calc/Jsonl.lean:45 VE.Calc.decodeJsonl (D[V], trusted) list-last: decl -> (decl.reverse.take 1)
+SURVIVOR lean/VE/Calc/Jsonl.lean:45 VE.Calc.decodeJsonl (D[V], trusted) list-drop-first: decl -> (decl.drop 1)
+SURVIVOR lean/VE/Calc/Jsonl.lean:45 VE.Calc.decodeJsonl (D[V], trusted) list-last: decl.map Prod.fst -> ((decl.map Prod.fst).reverse.take 1)
+SURVIVOR lean/VE/Calc/Jsonl.lean:45 VE.Calc.decodeJsonl (D[V], trusted) list-drop-first: decl.map Prod.fst -> ((decl.map Prod.fst).drop 1)
+UNKNOWN lean/VE/Calc/Jsonl.lean:38 VE.Calc.decodeJsonl (D[V], trusted) eq-le: = -> ≤ (lean/VE/Calc/Jsonl.lean:38: failed to synthesize)
+UNKNOWN lean/VE/Calc/Jsonl.lean:31 VE.Calc.jsonCell (D[V], trusted) eq-le: = -> ≤ (lean/VE/Calc/Jsonl.lean:31: failed to synthesize)
+UNKNOWN lean/VE/Calc/Csv.lean:18 VE.Calc.csvRecords (D[V], trusted) eq-le: = -> ≤ (lean/VE/Calc/Csv.lean:18: failed to synthesize)
+UNKNOWN lean/VE/Calc/Csv.lean:32 VE.Calc.columnTypes (D[V], trusted) list-empty: header -> [] (lean/VE/Calc/Csv.lean:32: typeclass instance problem is stuck, it is often due to metavariables)
+UNKNOWN lean/VE/Calc/Jsonl.lean:37 VE.Calc.decodeJsonl (D[V], trusted) list-empty: (text.splitOn "\n") -> [] (lean/VE/Calc/Jsonl.lean:37: Invalid field notation: Type of)
+UNKNOWN lean/VE/Calc/Table.lean:37 VE.Calc.Filter.Selects (S, trusted) eq-le: = -> ≤ (lean/VE/Calc/Table.lean:37: failed to synthesize)
+UNKNOWN lean/VE/Calc/Jsonl.lean:32 VE.Calc.jsonCell (D[V], trusted) eq-le: = -> ≤ (lean/VE/Calc/Jsonl.lean:32: failed to synthesize)
+UNKNOWN lean/VE/Calc/Table.lean:36 VE.Calc.Filter.Selects (S, trusted) all-any: all -> any (lean/VE/Calc/Table.lean:36: Unknown constant `VE.Calc.Filter.any`)
+UNKNOWN lean/VE/Calc/Csv.lean:32 VE.Calc.columnTypes (D[V], trusted) list-empty: header.eraseDups.length -> [] (lean/VE/Calc/Csv.lean:32: Type mismatch)
+UNKNOWN lean/VE/Calc/Table.lean:106 VE.Calc.Agg.run (S, trusted) list-empty: (T.select f) -> [] (lean/VE/Calc/Table.lean:106: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Calc/Csv.lean:41 VE.Calc.decodeCsv (D[V], trusted) list-empty: r -> [] (lean/VE/Calc/Csv.lean:41: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Calc/Jsonl.lean:37 VE.Calc.decodeJsonl (D[V], trusted) list-empty: (text.splitOn "\n").map -> [] (lean/VE/Calc/Jsonl.lean:37: Function expected at)
+UNKNOWN lean/VE/Calc/Table.lean:38 VE.Calc.Filter.Selects (S, trusted) eq-le: = -> ≤ (lean/VE/Calc/Table.lean:38: failed to synthesize)
+UNKNOWN lean/VE/Calc/Csv.lean:32 VE.Calc.columnTypes (D[V], trusted) list-empty: header.eraseDups -> [] (lean/VE/Calc/Csv.lean:32: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Calc/Table.lean:100 VE.Calc.mean? (S, trusted) list-empty: xs -> [] (lean/VE/Calc/Table.lean:100: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Calc/Csv.lean:41 VE.Calc.decodeCsv (D[V], trusted) list-empty: types -> [] (lean/VE/Calc/Csv.lean:41: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Calc/Table.lean:107 VE.Calc.Agg.run (S, trusted) list-empty: (T.numbers f c) -> [] (lean/VE/Calc/Table.lean:107: Type mismatch)
+UNKNOWN lean/VE/Calc/Table.lean:39 VE.Calc.Filter.Selects (S, trusted) eq-le: = -> ≤ (lean/VE/Calc/Table.lean:39: failed to synthesize)
+UNKNOWN lean/VE/Calc/Csv.lean:32 VE.Calc.columnTypes (D[V], trusted) list-empty: header -> [] (lean/VE/Calc/Csv.lean:32: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Calc/Table.lean:107 VE.Calc.Agg.run (S, trusted) list-empty: (T.numbers f c).map List.sum -> [] (lean/VE/Calc/Table.lean:107: Type mismatch)
+UNKNOWN lean/VE/Calc/Table.lean:40 VE.Calc.Filter.Selects (S, trusted) eq-le: = -> ≤ (lean/VE/Calc/Table.lean:40: failed to synthesize)
+UNKNOWN lean/VE/Calc/Table.lean:107 VE.Calc.Agg.run (S, trusted) list-empty: List -> [] (lean/VE/Calc/Table.lean:107: failed to synthesize)
+UNKNOWN lean/VE/Calc/Csv.lean:33 VE.Calc.columnTypes (D[V], trusted) list-empty: decl -> [] (lean/VE/Calc/Csv.lean:33: Invalid projection: Type of)
+UNKNOWN lean/VE/Calc/Jsonl.lean:41 VE.Calc.decodeJsonl (D[V], trusted) list-empty: pairs -> [] (lean/VE/Calc/Jsonl.lean:41: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Calc/Table.lean:41 VE.Calc.Filter.Selects (S, trusted) eq-le: = -> ≤ (lean/VE/Calc/Table.lean:41: failed to synthesize)
+UNKNOWN lean/VE/Calc/Jsonl.lean:42 VE.Calc.decodeJsonl (D[V], trusted) list-empty: keys.eraseDups -> [] (lean/VE/Calc/Jsonl.lean:42: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Calc/Jsonl.lean:42 VE.Calc.decodeJsonl (D[V], trusted) list-empty: keys.eraseDups.length -> [] (lean/VE/Calc/Jsonl.lean:42: Type mismatch)
+UNKNOWN lean/VE/Calc/Jsonl.lean:42 VE.Calc.decodeJsonl (D[V], trusted) list-empty: keys -> [] (lean/VE/Calc/Jsonl.lean:42: typeclass instance problem is stuck, it is often due to metavariables)
+UNKNOWN lean/VE/Calc/Table.lean:42 VE.Calc.Filter.Selects (S, trusted) eq-le: = -> ≤ (lean/VE/Calc/Table.lean:42: failed to synthesize)
+UNKNOWN lean/VE/Calc/Jsonl.lean:42 VE.Calc.decodeJsonl (D[V], trusted) list-empty: keys -> [] (lean/VE/Calc/Jsonl.lean:42: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Calc/Jsonl.lean:43 VE.Calc.decodeJsonl (D[V], trusted) list-empty: decl -> [] (lean/VE/Calc/Jsonl.lean:43: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Calc/Jsonl.lean:44 VE.Calc.decodeJsonl (D[V], trusted) list-empty: decl.map -> [] (lean/VE/Calc/Jsonl.lean:44: Function expected at)
+UNKNOWN lean/VE/Calc/Jsonl.lean:45 VE.Calc.decodeJsonl (D[V], trusted) list-empty: decl -> [] (lean/VE/Calc/Jsonl.lean:45: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Calc/Jsonl.lean:37 VE.Calc.decodeJsonl (D[V], trusted) list-first: (text.splitOn "\n").map -> (((text.splitOn "\n").map).take 1) (lean/VE/Calc/Jsonl.lean:38: Invalid field notation: Type of)
+UNKNOWN lean/VE/Calc/Jsonl.lean:37 VE.Calc.decodeJsonl (D[V], trusted) list-drop-last: (text.splitOn "\n").map -> (((text.splitOn "\n").map).dropLast) (lean/VE/Calc/Jsonl.lean:38: Invalid field notation: Type of)
+UNKNOWN lean/VE/Calc/Jsonl.lean:37 VE.Calc.decodeJsonl (D[V], trusted) list-last: (text.splitOn "\n").map -> (((text.splitOn "\n").map).reverse.take 1) (lean/VE/Calc/Jsonl.lean:38: Invalid field notation: Type of)
+UNKNOWN lean/VE/Calc/Jsonl.lean:37 VE.Calc.decodeJsonl (D[V], trusted) list-drop-first: (text.splitOn "\n").map -> (((text.splitOn "\n").map).drop 1) (lean/VE/Calc/Jsonl.lean:38: Invalid field notation: Type of)
+trust_mutants: 244 KILLED, 52 SURVIVOR, 37 UNKNOWN, 24 INVALID, 0 ALLOWED, 0 NOT RUN in 27 s; 320 reused from d76daccac25e (identical inputs)
+trust_mutants: D[V], trusted: 225 KILLED, 20 SURVIVOR, 25 UNKNOWN, 12 INVALID
+trust_mutants: S, trusted: 19 KILLED, 32 SURVIVOR, 12 UNKNOWN, 12 INVALID
