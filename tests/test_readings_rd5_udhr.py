@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -14,6 +15,13 @@ RUN = ROOT / "usecases/udhr-pilot/run-20261010T1400Z"
 sys.path.insert(0, str(RUN))
 
 import migrate  # noqa: E402
+
+
+FROZEN_TREE_PRESENT = subprocess.run(
+    ["git", "cat-file", "-e", f"{migrate.TREE}^{{tree}}"], cwd=ROOT, capture_output=True).returncode == 0
+NEEDS_FROZEN_RUN = pytest.mark.skipif(
+    not FROZEN_TREE_PRESENT,
+    reason="the bd6c7ab2 pilot commit's tree is absent from this checkout's history")
 
 
 METRICS = json.loads((RUN / "metrics.json").read_text())
@@ -50,6 +58,7 @@ def test_copied_environment_holds_only_what_the_assertion_mentions():
                      "predicate arises_from_non_political_crime", "predicate asylum_right_covers_case"]
 
 
+@NEEDS_FROZEN_RUN
 def test_the_migration_reproduces_the_committed_document(tmp_path):
     """Rerun through Lean from run 20261006T1800Z at bd6c7ab2: the same document and record, byte for byte."""
     lean()
@@ -58,6 +67,7 @@ def test_the_migration_reproduces_the_committed_document(tmp_path):
     assert json.loads((tmp_path / "unmigrated.json").read_text()) == UNMIGRATED
 
 
+@NEEDS_FROZEN_RUN
 def test_one_sets_witnesses_replay_equal_in_its_component_and_alone(tmp_path):
     """`rs_u025`'s companions (witnesses SETTLED yes, SETTLED no and UNDECIDED): each witness Lean replays, in the
     component and alone, is the recorded one."""
