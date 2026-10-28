@@ -12,6 +12,14 @@ from ve import Environment, FiniteModel, document_from_data, evaluate, parse, pr
 from ve.identity import source_id
 
 OUT = Path(__file__).resolve().parent
+# Each sample file a witness's provenance names, by (git_revision, path), as the blob Git reads: the revision is the
+# VM's commit id, a record; the blob is the same in every clone (gha-lineage F1).
+SAMPLE_BLOBS = {
+    ("46be9e1bafc85e37456cbf56e9dc92b6c8178666", "experiments/E0/survey_samples/alloy.jsonl"):
+        "cd12f275d64c4ae80606a75191c78601aff2a5e0",
+    ("46be9e1bafc85e37456cbf56e9dc92b6c8178666", "experiments/E0/survey_samples/cedar.jsonl"):
+        "d1e4ff6c3615c85fe81ed421c689acf22b7fe416",
+}
 
 
 def reachable(edges,a,b,star=False):
@@ -132,7 +140,7 @@ def validate():
         assert row['id']==entry['id'] and row['id'] in allowed
         prov=row['provenance'];key=(prov['git_revision'],prov['path'])
         if key not in samples:
-            raw=subprocess.check_output(['git','show',':'.join(key)],cwd=ROOT,text=True)
+            raw=subprocess.check_output(['git','cat-file','blob',SAMPLE_BLOBS[key]],cwd=ROOT,text=True)
             samples[key]={r['id']:r for r in map(json.loads,raw.splitlines())}
         assert row['source']==samples[key][row['id']]['text']
         assert hashlib.sha256(row['source'].encode()).hexdigest()==prov['text_sha256']
