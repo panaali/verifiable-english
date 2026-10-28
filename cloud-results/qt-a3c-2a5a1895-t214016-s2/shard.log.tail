@@ -1,0 +1,172 @@
+shard 3/6: 100 units; commands: ['lake build', 'lake build ve_english_lean_bench ve_scope_bench']
++ lake build
+⚠ [95/1099] Replayed VE.SoftNorms.Soften
+warning: VE/SoftNorms/Soften.lean:264:19: This simp argument is unused:
+  Option.bind_eq_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵e̵q̵_̵b̵i̵n̵d̵,̵ ̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵n̵o̵n̵e̵]̵[̲O̲p̲t̲i̲o̲n̲.̲b̲i̲n̲d̲_̲n̲o̲n̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [110/1099] Replayed VE.Readings.Separate
+warning: VE/Readings/Separate.lean:1490:50: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: VE/Readings/Separate.lean:1492:5: unused variable `hr`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [118/1099] Replayed VE.Readings.Superpose
+warning: VE/Readings/Superpose.lean:311:34: unused variable `h`
+
+... (9168 lines cut; full output in shard-full.txt)
+  Downloaded zmij v1.0.23
+  Downloaded sha2 v0.10.9
+  Downloaded serde_derive v1.0.229
+  Downloaded proc-macro2 v1.0.107
+  Downloaded serde_core v1.0.229
+  Downloaded quote v1.0.47
+  Downloaded serde_json v1.0.151
+  Downloaded num-bigint v0.4.8
+  Downloaded serde v1.0.229
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling memchr v2.8.3
+   Compiling cfg-if v1.0.5
+   Compiling cpufeatures v0.2.17
+   Compiling itoa v1.0.18
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling serde_derive v1.0.229
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `release` profile [optimized] target(s) in 16.16s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling serde_core v1.0.229
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling serde_json v1.0.151
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling cpufeatures v0.2.17
+   Compiling cfg-if v1.0.5
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 9.08s
+order: failed last time []; changed ['tests/test_lean_service.py']; then the rest; --maxfail 5
+recording 100 units with 4 jobs in /tmp/ve-select-run-476k88su
+  tests/test_agent_policy_unspecified.py: exit 2 in 1.2 s, 250 functions
+  tests/test_assurance_manifest.py: exit 1 in 29.7 s, 1364 functions
+  tests/test_readings_defaults_rd6b_report.py: exit 1 in 4.2 s, 260 functions
+stopping after 5 failed tests (--maxfail 5)
+FAILED tests/test_agent_policy_unspecified.py (exit 2): tests/test_agent_policy_unspecified.py; log /tmp/ve-select-run-476k88su/tests__test_agent_policy_unspecified.py.log
+
+ve: English comparator: {"records": 0, "excluded": 0, "planted": 0, "classes": {}} (/tmp/ve-english-comparator-7l0gj6ea)
+
+==================================== ERRORS ====================================
+___________ ERROR collecting tests/test_agent_policy_unspecified.py ____________
+tests/test_agent_policy_unspecified.py:21: in <module>
+    from conformance import frozen_norm_defaults as nd  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+conformance/frozen_norm_defaults.py:18: in <module>
+    _source = subprocess.check_output(["git", "show", f"{_REVISION}:ve/norm_defaults.py"], cwd=_ROOT)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:473: in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: in run
+    raise CalledProcessError(retcode, process.args,
+E   subprocess.CalledProcessError: Command '['git', 'show', '9160d326:ve/norm_defaults.py']' returned non-zero exit status 128.
+------------------------------- Captured stderr --------------------------------
+fatal: invalid object name '9160d326'.
+=========================== short test summary info ============================
+ERROR tests/test_agent_policy_unspecified.py - subprocess.CalledProcessError: Command '['git', 'show', '9160d326:ve/norm_defaults.py']' returned non-zero exit status 128.
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.45s
+FAILED tests/test_assurance_manifest.py (exit 1): tests/test_assurance_manifest.py::test_every_lean_binding_routes_its_operation, tests/test_assurance_manifest.py::test_every_real_answer_is_counted_and_indexed, tests/test_assurance_manifest.py::test_no_other_mode_accepts_an_operations_probe; log /tmp/ve-select-run-476k88su/tests__test_assurance_manifest.py.log
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['git', 'show', '9160d326:ve/norm_defaults.py']' returned non-zero exit status 128.
+
+../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: CalledProcessError
+----------------------------- Captured stderr call -----------------------------
+fatal: invalid object name '9160d326'.
+=========================== short test summary info ============================
+FAILED tests/test_assurance_manifest.py::test_every_lean_binding_routes_its_operation - subprocess.CalledProcessError: Command '['git', 'show', '9160d326:ve/norm_defaults.py']' returned non-zero exit status 128.
+FAILED tests/test_assurance_manifest.py::test_every_real_answer_is_counted_and_indexed - subprocess.CalledProcessError: Command '['git', 'show', '9160d326:ve/norm_defaults.py']' returned non-zero exit status 128.
+FAILED tests/test_assurance_manifest.py::test_no_other_mode_accepts_an_operations_probe - subprocess.CalledProcessError: Command '['git', 'show', '9160d326:ve/norm_defaults.py']' returned non-zero exit status 128.
+3 failed, 134 passed in 28.83s
+FAILED tests/test_readings_defaults_rd6b_report.py (exit 1): tests/test_readings_defaults_rd6b_report.py::test_trust_growth_is_rd6b_entry_and_listed_for_signature; log /tmp/ve-select-run-476k88su/tests__test_readings_defaults_rd6b_report.py.log
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['git', 'show', 'e1319b36477d9de8cb83b6df4b4d372186cb4b3d:docs/trust-baseline.json']' returned non-zero exit status 128.
+
+../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: CalledProcessError
+----------------------------- Captured stderr call -----------------------------
+fatal: path 'docs/trust-baseline.json' exists on disk, but not in 'e1319b36477d9de8cb83b6df4b4d372186cb4b3d'
+=========================== short test summary info ============================
+FAILED tests/test_readings_defaults_rd6b_report.py::test_trust_growth_is_rd6b_entry_and_listed_for_signature - subprocess.CalledProcessError: Command '['git', 'show', 'e1319b36477d9de8cb83b6df4b4d372186cb4b3d:docs/trust-baseline.json']' returned non-zero exit status 128.
+1 failed, 6 passed in 3.05s
+recorded 21 units for tree df44f04373; 79 others left to the static graph until they run; 3 failed
+STOPPED EARLY (--maxfail 5): 79 selected units did not run: tests/test_difffuzz.py, tests/test_shape_binding_mutants.py, tests/test_defaults_answer.py, tests/test_propose.py, tests/test_lean_import_reader.py, tests/test_b16f_senses_document.py, tests/test_frozen_sources.py, tests/test_stage0_inventory.py, tests/test_question_fixture_sources.py, tests/test_trust_ratchet.py, tests/test_ask_fixtures.py, tests/test_readings_s2_answer.py, tests/test_norm_defaults_contract.py, tests/test_mutants.py, tests/test_b16f_document.py, tests/test_report_english.py, tests/test_stage2_faults.py, tests/test_soft_candidate_economy.py, tests/test_stage2_norms.py, tests/test_w6a_documents.py, tests/test_runner.py, tests/test_stage2_bundle.py, tests/test_norm_defaults.py, tests/test_softnorms_contract.py, tests/test_rust_memory_budget.py, tests/test_b14c.py, tests/test_english_runner_root.py, tests/test_ar8_evidence.py, tests/test_reports_agreement.py, tests/test_relay.py, tests/test_units_lean_w6a.py, tests/test_p1_amendment11.py, tests/test_lean_decided_share.py, tests/test_b15a_evidence.py, tests/test_p1_infrastructure.py, tests/test_readings_s2_lean.py, tests/test_inventory_lint.py, tests/test_relay_lint.py, tests/test_english_unambiguity.py, tests/test_readings_s1_pilot_rebuild.py, tests/test_readings_defaults_rd2a_report.py, tests/test_filling_search.py, tests/test_service_schema_compiler.py, tests/test_cedar_norms.py, tests/test_relay_wire_check.py, tests/test_english_lean_seal.py, tests/test_wire_contract_s4_lean.py, tests/test_assist_split.py, tests/test_scope_sc5r_stub.py, tests/test_w6a_review_regressions.py, tests/test_english_e2_overlay.py, tests/test_risk_integration.py, tests/test_order_gate.py, tests/test_lean_budget_types.py, tests/test_rights_lean.py, tests/test_risk_differential.py, tests/test_evaluate_search.py, tests/test_units_lean_gate_w6a.py, tests/test_wire_contract_three_way.py, tests/test_english_e26_boundary.py, tests/test_english_e26_diagnosis.py, tests/test_gate_durations.py, tests/test_stage2_dispatch.py, tests/test_vacuity.py, tests/test_english_lean_lexer.py, tests/test_search_budget_answer.py, tests/test_constitution_w6a_controls.py, tests/test_coverage_dashboard.py, tests/test_english_e2_report.py, tests/test_english_lean_tables.py, tests/test_llm.py, tests/test_surface_registry.py, tests/test_cedar_attributes.py, tests/test_data_adapters.py, tests/test_jt_crossplan_ties.py, tests/test_merge_tooling_evidence.py, tests/test_route_parity.py, tests/test_scope_b1_input.py, tests/test_ap2_limits_provisional.py
+SHARD 3/6: exit 1 in 894.5 s; 100 units, 18 passed
