@@ -186,6 +186,9 @@ import VE.Acts.TableExamples
 import VE.Acts.GrammarExamples
 import VE.Acts.Grammar
 import VE.Acts.RuleExamples
+import VE.Acts.Meaning
+import VE.Acts.Readings
+import VE.Acts.MeaningExamples
 import VE.Acts.Compat
 import VE.Acts.LexicalExamples
 import VE.Alternatives.FillExamples
