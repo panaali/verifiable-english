@@ -1,6 +1,6 @@
 # Use case: openai-preparedness (OpenAI Preparedness Framework, version 2)
 
-> Status: **PLAN, draft 3** (2026-10-28, branch `infra/usecase-safetyfw`; draft 1 reviewed by gpt-6-astra and Opus,
+> Status: **PLAN, draft 3, key FROZEN** (see KEY-FREEZE.md) (2026-10-28, branch `infra/usecase-safetyfw`; draft 1 reviewed by gpt-6-astra and Opus,
 > `manage-agents/safetyfw-planreview-{astra,opus}.final.md`; dispositions in `manage-agents/reviews/safetyfw-plan-convergence-20261028.md`). The plan and its answer key (section 6)
 > are written before any VE run. They get two plan reviews (gpt-6-astra xhigh and Opus xhigh) before the key is
 > frozen; the freeze is recorded in [KEY-FREEZE.md](KEY-FREEZE.md) with a timestamp and the SHA-256 of section 6.
@@ -71,7 +71,7 @@ releases a comparable system.
 |---|---|---|---|
 | RS0 | every process statement about OpenAI's own conduct, in the future or present tense ("we will …", "Prior to deployment, every covered model undergoes", "We do not deploy models", "SAG will receive", "SAG members serve") | **commitment** / **prediction** | "Will" and the present tense are not deontic words. |
 | N1 | narrowing of RS0 to **commitment**, clause by clause | cites 5 "so that the public, governments, and our industry peers can trust in our adherence to this policy" and 1 "to build confidence that we are meeting our commitments" | A clause that carries "expect", "aim", "strive", "may", "could", "where feasible" or "as needed" is not narrowed. Under N1 a commitment is strict. |
-| RS1 | Table 1, column "Risk-specific safeguard guidelines": "Require security controls …", "Require safeguards against misuse …", "Until we have specified … halt further development", "Contribute towards …" | **strict** / **default** | Imperatives under a header that calls them guidelines. The default reading is the guideline reading; a third, no-norm reading is not admitted, because each cell is an imperative ("Require", "halt"); 2.2 restates two of them (the security controls and the sufficiency rule) in force words ("are required to have robust and effective safeguards … and appropriate security controls"). |
+| RS1 | Table 1, column "Risk-specific safeguard guidelines": "Require security controls …", "Require safeguards against misuse …", "Until we have specified … halt further development", "Contribute towards …" | **strict** / **default** | Imperatives under a header that calls them guidelines. The default reading is the guideline reading; a third, no-norm reading is not admitted, because each cell is an imperative ("Require", "halt"); 2.2 restates one of them, the security controls, in force words ("appropriate security controls as they are developed"). |
 | RS2 | whether reaching a Critical threshold in a category is reaching its High threshold | **nest** / **sep** | 4.2 "Systems that reach Critical capability also require safeguards …" ("also" presupposes the High rule applies); no sentence states the implication. |
 | RS3 | the High deployment rule: 2.2 "required to have robust and effective safeguards that sufficiently minimize the associated risk of severe harm before they are deployed"; 4.2 "must have safeguards that sufficiently minimize … before they are deployed"; 1 "We do not deploy models that reach a High capability threshold until …" | **ext**: "deployed" is external deployment / **any**: every deployment, internal included | 4.4's heading "Increasing safeguards before internal use and further development" names internal use for Critical (RS18), which suggests the High rule did not cover it, and so supports ext. The word is unqualified, and Table 1 sets a High-level safeguard "for large-scale internal deployment", which supports any. |
 | RS4 | Table 2, column "Potential response" | **N**: each response is a norm / **P**: a potential response, no norm | The header says "Potential"; 2.3 commits only to threat modelling, measurement and sharing in these areas. |
@@ -162,7 +162,7 @@ Framework ("Persuasion category risks do not fit the criteria for inclusion"). F
 |---|---|---|
 | F1 | Table 1 | the guideline bullets of 4.1, per level and activity (RS1, RS2) |
 | F2 | 1, 2.2, 4.2, App. C | **High deployment rule**: a covered system that reaches High must have safeguards that sufficiently minimize the associated risk (OT2) before it is deployed (RS3; OT2 is the SAG's) |
-| F3 | 1, 2.2, 4.2, 4.4 | **Critical development rule**: a system that reaches Critical requires such safeguards during development, irrespective of deployment plans; also for models "forecasted to reach" Critical (4.4) |
+| F3 | 1, 2.2, 4.2, 4.4 | **Critical development rule**: a system that reaches Critical requires such safeguards during development, irrespective of deployment plans; also for models "forecasted to reach" Critical (4.4); its scope beyond development is RS18 |
 | F4 | C.3 | "We will require the following practices for High capability models" (the security practices; OT3) |
 | F5 | 3.2 | the covered deployments (OT7); the SAG decides ambiguity; a development checkpoint "If justified by our forecasts" |
 | F6 | footnote 6 | distilled, fine-tuned or quantized from a model determined not High: "ordinarily not require additional safety measures barring reason to believe a significant increase" (RS8, OT20) |
@@ -175,7 +175,7 @@ Framework ("Persuasion category risks do not fit the criteria for inclusion"). F
 | F13 | 2.3 | periodic review of each Research Category; "SAG will receive the results" |
 | F14 | 5.1 | documentation of SAG reports and decisions; employees "may also request and receive a summary"; noncompliance tracked and investigated, corrective action if substantiated (OT19) |
 | F15 | 5.2 | public disclosure for major deployments (OT13): scope of testing, evaluations, reasoning; safeguards information "if the model is beyond a High threshold"; third-party evaluation and stress testing when deemed warranted and available (OT14); independent expert opinion at the SAG's option |
-| F16 | App. B | SAG duties; Leadership's final decisions "informed by SAG's recommendations" (RS6); Leadership "can also make decisions without the SAG's participation" (RS7); SSC visibility; the Board "may reverse a decision"; one-year SAG terms; review "at least once a year" (RS10); fast-track, and the Chair "should also coordinate" (RS9) |
+| F16 | App. B | SAG duties; Leadership's final decisions "informed by SAG's recommendations" (RS6); Leadership "can also make decisions without the SAG's participation" (RS7); SSC visibility; the Board "may reverse a decision" (RS17); one-year SAG terms; review "at least once a year" (RS10); fast-track, and the Chair "should also coordinate" (RS9) |
 | F17 | 2.1 | Tracked Category criteria (RS12) |
 
 Everything else (the motivation of 1.1, beliefs, expectations, the change log's explanations, the persuasion and
@@ -313,7 +313,7 @@ months"); T1 and T2 score only the quantity.
 | Case | Situation | Key | Justification |
 |---|---|---|---|
 | G1 | BIO-C; a Critical standard specified but not implemented; further development proposed | silent on proceeding: ALL (F3 requires safeguards; no rule forbids development) | HALT ends when a standard is "specified" |
-| G2 | external deployment of a Critical model with no Critical standard | a Critical-specific deployment rule: silent: ALL (F2 reaches it only under nest) | HALT names further development only; F3 is limited to development |
+| G2 | external deployment of a Critical model with no Critical standard | a Critical-specific deployment rule: silent: ALL (F2 reaches it only under nest) | HALT names further development only; F3 reaches development and, under RS18 = inuse, internal use, never external deployment |
 | G3 | CYB-H, external deployment | misalignment safeguards: silent: ALL (F2 still applies) | ALN is "for large-scale internal deployment" |
 | G4 | AIS-H, external deployment | misuse and misalignment safeguards: silent: ALL (F2 still applies) | the row lists security controls only |
 | G5 | a nuclear or radiological capability comparable to High | no threshold rule: ALL; only K18 under N | Research Category |
