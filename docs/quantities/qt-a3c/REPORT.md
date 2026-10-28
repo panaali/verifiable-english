@@ -3,7 +3,7 @@
 No DRI signature is reserved. Delivered: the mode `cardinality` (registry, dispatch, `runMode_cardinality`, `DEADLINES`), `cardinality.json` with `runCaseReported_fits`, the `cardinality@0` row of AR-10's table with its
 composition theorem `gate_cardinality`, P3 charged as the erased problem is built (`chargedNodes`, `problemChecks_eq`), and the route cases FA1, FA1b and the hostile set.
 Trust: V +16, K +0, S +0 (R16). DELTA rows 1–2 cite SYNTHESIS 2.2 in me-2b's wording, row 3 cites R2, row 4 cites R16. Size: about 780 hand-written lines, over the ~600 guide (see "Size").
-Next: **qt-a3cb**, the `countermodel` case and the region structure computed once per problem; then qt-a3d (`Document.lean`, `Render.lean`) and QT-A4.
+Next: **qt-a3cb**, the `countermodel` case; then qt-a3d (`Document.lean`, `Render.lean`) and QT-A4. Fix round 1 (review F1): the region structure is computed once per problem and the erased problem built once ("Fix round 1").
 
 ## Statement gate
 
@@ -31,7 +31,7 @@ and `runCase_fits`. All use only the standard axioms (`python3 lean/audit.py`: P
 | (3) `cardinality@0` table row and composition theorem | yes. The row requires `order@0`, `relational-fol@0` and `time@0`, and refuses every other table profile except `documents@1` and `judgments@0` (the document layer, whose own row composes it: refusing it would break jt-2's `gate_judgments`). `gate_cardinality`: with `cardinality@0` and without `judgments@0`, the gate admits exactly E2's lists (`Wire.profileLists`), on the frozen route. Python's environment list leaves it out (`modeProfiles`) until QT-A4 | `Gate.lean`; `Compose/Examples.lean` QT-A3 guards (both sides of every boundary); `test_profile_table.py` |
 | (4) Route cases FA1, FA1b, hostile set | 19 cases in `tests/data/route-cases.jsonl`: FA1 admitted and certified (`valid: true`), FA1b admitted (no `kind`) and certified (`valid: false`), FA1 with its regenerated tables claimed; forged region table, forged erased problem, FA11's stale certificate, a malformed certificate, the kind `countermodel` (refused here; qt-a3cb), E2, S1, S5 (the plan's seeded bug), S7, S8, S10, P1, P2, P3 | `test_cardinality_service.py::test_route_cases_answer_as_recorded` |
 | (5) `countermodel` case | **qt-a3cb** (size rule) | FOLLOW-UPS "## qt-a3c" |
-| Evaluated once, size charged (the DRI's rule of 2026-10-27) | P3 is charged as the erased problem is built (`erasedThunks`, `chargedNodes`): each formula is built only while the total is within 10,000 nodes. `problemChecks_eq` proves the same verdict and text as W6a's aggregate on the whole problem. The growing chain: a 64-term count erases to over 8,000 nodes, 64 times its terms' source. 200 of them would build 1.6 million erased nodes; now the build stops after two (`10000 < n < 20000`), with W6a's text. Not done here (qt-a3cb): inside the core's `CFormula.erase`, `predsOn`, `regionTable` and `countedUniversals` are recomputed at every read, each a scan of the whole problem | `RunExamples.lean` charged guards; route case `p3-charged`; mutant `charged-nostop` |
+| Evaluated once, size charged (the DRI's rule of 2026-10-27) | P3 is charged as the erased problem is built (`erasedThunks`, `chargedNodes`): each formula is built only while the total is within 10,000 nodes. `problemChecks_eq` proves the same verdict and text as W6a's aggregate on the whole problem. The growing chain: a 64-term count erases to over 8,000 nodes, 64 times its terms' source. 200 of them would build 1.6 million erased nodes; now the build stops after two (`10000 < n < 20000`), with W6a's text. Fix round 1: the region structure (`regionData`: counted sorts, predicates per sort, counted universals) is computed once per problem after P1 and its table once after P2 (`checkedRegions`); the erasure, the bridges and `CEnv.elab` read them (`eraseBy`, `bridgeBy`, `elabBy`); the charge keeps each formula it builds, and the answer and the replay read that list (`charge`, `checkedProblem`) | `RunExamples.lean` charged guards; route case `p3-charged`; mutant `charged-nostop` |
 | No `ve/profiles.py` row, no `Document.lean`, `Render.lean`, `lean/VE/Calc/`, `lean/VE/Arith/`, `ve/document/` edit | none edited. Two proofs in `Dispatch.lean`, `todayGate_base` and `rowChecks_erase`, gain the new row's facts, as ap-1b's and jt-2's rows did; their statements are unchanged | |
 | `ve/assurance-manifest.json`, `ROADMAP.md` | manifest: `Run.lean`'s pin and the decoder total re-measured, and `Encoders/Cardinality.lean` classified (`other_json`). `ROADMAP.md`: the trust-cost line | `test_assurance_manifest.py` |
 
@@ -89,10 +89,42 @@ one-element lists) and one that does not elaborate.
 ## Not delivered (next items)
 
 - **qt-a3cb**: the `countermodel` case (spec 3.9, budgeted as W6a's `refutesB`, through `refutesC_sound`), with the
-  region sizes computed once per model and charged. Also the core's region structure (`predsOn`, `regionTable`,
-  `countedUniversals`) computed once per problem rather than at every read inside `CFormula.erase`.
+  region sizes computed once per model and charged (`withRegionsFinite` still reads `regionTable` at each constant;
+  no service mode reaches it until then).
 - **qt-a3d**: `Document.lean`, `Render.lean`. Then SC-1c and AP-4 in the protocol queue, and QT-A4 (the relay, which
   will bind the region table's predicate names: relay-gate F4 entries for `service:cardinality`).
+
+## Fix round 1 (review `qt-a3c-review.final.md`)
+
+- **F1 (B), the region structure recomputed at every read.** Each count's erasure called `predsOn E fs`, a scan of
+  the whole problem, so a problem's cost grew with its size squared. Now:
+  - `regionData` (`Regions.lean`) holds the counted sorts, each sort's predicates and the counted universals, each
+    computed once; `checkedRegions` builds it after P1 (so predicates are listed for at most 8 sorts) and runs P2 on
+    it; `RegionData.table` is built once, after P2.
+  - The erasure family reads the predicates from a function (`regionSumBy`, `CountAtom.eraseBy`, `Proportion.eraseBy`,
+    `CTerm.eraseBy`, `CFormula.eraseBy`, `bridgeBy`); the statements' forms (`regionSum`, `CTerm.erase`,
+    `CFormula.erase`, `bridge`) are its instances at `predsOn E fs`, so no statement changed. `CEnv.elab` reads its
+    table once (`elabBy`) rather than at each constant. Sweep (b): `countedUniversals` reads the counted sorts once
+    (`countedAmong`). Sweep (c): `regionsJson` and `nonnegOf` read the one table.
+  - Sweep (d): the charge keeps every formula it builds (`charge`); the runner reads that list for the answer
+    (`problemJson`), the identities (`idsOf`) and the replay (`checkErased`), so the erased problem is built once.
+  - Same behaviour, proved: `regionData_predsOn`, `regionData_table`, `checkedRegions_eq` (`Theorems.lean`);
+    `charge_fst`, `charge_snd`, `checkedProblem_eq`, `checkErased_eq` (`RunTheorems.lean`). The recorded route cases
+    answer as before.
+  - Measured (the review's probe, `ve_service` wall clock): 50 count premises 10.9 s before, 3.2 s after; 150 premises
+    52.6 s before, 8.6 s after (ratio 4.8 before here, 6.7 in the review; 2.7 after); 200 premises 10.6 s (67.5 s in
+    the review); 280 premises refused by P3 after 10.2 s (55.8 s). Regression benchmark:
+    `tools/bench/test_perf.py::test_cardinality_region_structure_once` (CPU 1.49 s and 4.32 s, baselines recorded; it
+    requires the 150-premise CPU under five times the 50-premise CPU).
+  - Rest of the class, probed: the first-use deduplication (`firstUse`) is quadratic in the number of distinct items,
+    but sorts and predicates are bounded by the environment's 256-name vocabulary limit; distinct counted universal
+    statements, which that limit does not bound, cost 3.3 s at 8,000 and 6.8 s at 16,000 (linear to the line limit).
+    `withRegionsFinite` (the countermodel check) is not on a service path; qt-a3cb's case brings it there.
+  - Seeded bugs: `mutants-fix1.json`, 6/6 killed (`evidence/mutants-fix1-run.json`): `regions-rescan` (the base's
+    rescanning erasure, killed by the benchmark), `charge-keeps` (route cases `fa1-claimed`, `fa1-certificate`) and
+    `charge-keeps-proof` (`charge_snd`), `preds-row` (`regionData_predsOn`) and `preds-row-service` (route cases),
+    `elab-once` (`regionSum_typed`). Lean only: no Python or Rust product code changed.
+- **F2, F3, F4 (C)**: not changed in this round (F2 is QT-A4's relay, F3 is size, F4 the wording of a signed DELTA row).
 
 ## Self-review against BUILDER-CHECKLIST
 
