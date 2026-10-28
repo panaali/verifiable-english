@@ -1,0 +1,24 @@
+trust_mutants: 12 definitions, 357 mutants (89 to run), 4 jobs, base 99490db8402c
+UNKNOWN lean/VE/Calc/Table.lean:37 VE.Calc.Filter.Selects (S, trusted) eq-le: = -> ≤ (lean/VE/Calc/Table.lean:37: failed to synthesize)
+SURVIVOR lean/VE/Calc/Table.lean:38 VE.Calc.Filter.Selects (S, trusted) and-or: ∧ -> ∨
+SURVIVOR lean/VE/Calc/Table.lean:37 VE.Calc.Filter.Selects (S, trusted) arm-false: T.cell r c = .text v -> False
+UNKNOWN lean/VE/Calc/Table.lean:36 VE.Calc.Filter.Selects (S, trusted) all-any: all -> any (lean/VE/Calc/Table.lean:36: Unknown constant `VE.Calc.Filter.any`)
+SURVIVOR lean/VE/Calc/Csv.lean:18 VE.Calc.csvRecords (D[V], trusted) eq-le: = -> ≤
+SURVIVOR lean/VE/Calc/Table.lean:38 VE.Calc.Filter.Selects (S, trusted) arm-false: ∃ s, T.cell r c = .text s ∧ s ≠ v -> False
+SURVIVOR lean/VE/Calc/Table.lean:38 VE.Calc.Filter.Selects (S, trusted) eq-ne: = -> ≠
+UNKNOWN lean/VE/Calc/Jsonl.lean:37 VE.Calc.decodeJsonl (D[V], trusted) list-empty: (text.splitOn "\n").map -> [] (lean/VE/Calc/Jsonl.lean:37: Function expected at)
+UNKNOWN lean/VE/Calc/Table.lean:39 VE.Calc.Filter.Selects (S, trusted) eq-le: = -> ≤ (lean/VE/Calc/Table.lean:39: failed to synthesize)
+SURVIVOR lean/VE/Calc/Table.lean:39 VE.Calc.Filter.Selects (S, trusted) arm-false: T.cell r c = .num q -> False
+SURVIVOR lean/VE/Calc/Table.lean:42 VE.Calc.Filter.Selects (S, trusted) bool-flip: false -> true
+UNKNOWN lean/VE/Calc/Table.lean:107 VE.Calc.Agg.run (S, trusted) list-empty: List -> [] (lean/VE/Calc/Table.lean:107: failed to synthesize)
+SURVIVOR lean/VE/Calc/Csv.lean:27 VE.Calc.csvRecords (D[V], trusted) eq-le: = -> ≤
+UNKNOWN lean/VE/Calc/Csv.lean:33 VE.Calc.columnTypes (D[V], trusted) list-empty: decl -> [] (lean/VE/Calc/Csv.lean:33: Invalid projection: Type of)
+UNKNOWN lean/VE/Calc/Table.lean:41 VE.Calc.Filter.Selects (S, trusted) eq-le: = -> ≤ (lean/VE/Calc/Table.lean:41: failed to synthesize)
+SURVIVOR lean/VE/Calc/Table.lean:40 VE.Calc.Filter.Selects (S, trusted) eq-ne: = -> ≠
+UNKNOWN lean/VE/Calc/Table.lean:42 VE.Calc.Filter.Selects (S, trusted) eq-le: = -> ≤ (lean/VE/Calc/Table.lean:42: failed to synthesize)
+UNKNOWN lean/VE/Calc/Jsonl.lean:42 VE.Calc.decodeJsonl (D[V], trusted) list-empty: keys -> [] (lean/VE/Calc/Jsonl.lean:42: typeclass instance problem is stuck, it is often due to metavariables)
+UNKNOWN lean/VE/Calc/Jsonl.lean:42 VE.Calc.decodeJsonl (D[V], trusted) list-empty: keys.eraseDups -> [] (lean/VE/Calc/Jsonl.lean:42: don't know how to synthesize implicit argument `α`)
+SURVIVOR lean/VE/Calc/Jsonl.lean:45 VE.Calc.decodeJsonl (D[V], trusted) list-first: decl.map Prod.fst -> ((decl.map Prod.fst).take 1)
+trust_mutants: 68 KILLED, 10 SURVIVOR, 10 UNKNOWN, 1 INVALID, 0 ALLOWED, 0 NOT RUN, 268 OTHER SHARD in 277 s
+trust_mutants: D[V], trusted: 62 KILLED, 3 SURVIVOR, 4 UNKNOWN, 213 OTHER SHARD
+trust_mutants: S, trusted: 6 KILLED, 7 SURVIVOR, 6 UNKNOWN, 1 INVALID, 55 OTHER SHARD
