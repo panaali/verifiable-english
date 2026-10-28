@@ -1,0 +1,558 @@
+{
+ "tree": "/home/seyran/code/ve-eff-20261027-1-s-main",
+ "head": "a274d948899386de3fb36ab56b7584ab07b707b7",
+ "mode": "serial",
+ "parts": 1,
+ "total_seconds": 317.1,
+ "load_before": [
+  24.4619140625,
+  33.20849609375,
+  36.18798828125
+ ],
+ "load_after": [
+  28.56201171875,
+  32.76318359375,
+  35.25341796875
+ ],
+ "statements_seconds": 241.15,
+ "statements_peak_rss_kb_sum": 1680372,
+ "statements_peak_rss_kb_max": 1680372,
+ "tree_seconds": 26.87,
+ "alone_runs": 86,
+ "theorems": 6622,
+ "matches_committed": [
+  true,
+  true,
+  true
+ ],
+ "runs": [
+  {
+   "label": "Tree",
+   "seconds": 26.87,
+   "peak_rss_kb": 1648188,
+   "lines": 21673
+  },
+  {
+   "label": "Alone0",
+   "seconds": 2.89,
+   "peak_rss_kb": 1414256,
+   "lines": 22
+  },
+  {
+   "label": "Alone3",
+   "seconds": 2.89,
+   "peak_rss_kb": 1288440,
+   "lines": 2
+  },
+  {
+   "label": "Alone2",
+   "seconds": 3.01,
+   "peak_rss_kb": 1238484,
+   "lines": 2
+  },
+  {
+   "label": "Alone1",
+   "seconds": 3.26,
+   "peak_rss_kb": 1408056,
+   "lines": 2
+  },
+  {
+   "label": "Alone5",
+   "seconds": 3.28,
+   "peak_rss_kb": 1572708,
+   "lines": 40
+  },
+  {
+   "label": "Alone4",
+   "seconds": 3.36,
+   "peak_rss_kb": 1387472,
+   "lines": 2
+  },
+  {
+   "label": "Alone6",
+   "seconds": 3.64,
+   "peak_rss_kb": 1624188,
+   "lines": 1
+  },
+  {
+   "label": "Alone7",
+   "seconds": 3.78,
+   "peak_rss_kb": 1560652,
+   "lines": 17
+  },
+  {
+   "label": "Alone8",
+   "seconds": 4.21,
+   "peak_rss_kb": 1568264,
+   "lines": 13
+  },
+  {
+   "label": "Alone9",
+   "seconds": 4.23,
+   "peak_rss_kb": 1593628,
+   "lines": 31
+  },
+  {
+   "label": "Alone13",
+   "seconds": 4.08,
+   "peak_rss_kb": 1586992,
+   "lines": 7
+  },
+  {
+   "label": "Alone12",
+   "seconds": 4.25,
+   "peak_rss_kb": 1587152,
+   "lines": 23
+  },
+  {
+   "label": "Alone10",
+   "seconds": 4.56,
+   "peak_rss_kb": 1587380,
+   "lines": 15
+  },
+  {
+   "label": "Alone11",
+   "seconds": 4.4,
+   "peak_rss_kb": 1587604,
+   "lines": 5
+  },
+  {
+   "label": "Alone14",
+   "seconds": 4.07,
+   "peak_rss_kb": 1591672,
+   "lines": 29
+  },
+  {
+   "label": "Alone15",
+   "seconds": 4.5,
+   "peak_rss_kb": 1584440,
+   "lines": 17
+  },
+  {
+   "label": "Alone20",
+   "seconds": 5.52,
+   "peak_rss_kb": 1585976,
+   "lines": 13
+  },
+  {
+   "label": "Alone18",
+   "seconds": 6.08,
+   "peak_rss_kb": 1591004,
+   "lines": 7
+  },
+  {
+   "label": "Alone23",
+   "seconds": 5.3,
+   "peak_rss_kb": 1591792,
+   "lines": 8
+  },
+  {
+   "label": "Alone21",
+   "seconds": 5.93,
+   "peak_rss_kb": 1592744,
+   "lines": 19
+  },
+  {
+   "label": "Alone22",
+   "seconds": 5.94,
+   "peak_rss_kb": 1587556,
+   "lines": 9
+  },
+  {
+   "label": "Alone16",
+   "seconds": 6.57,
+   "peak_rss_kb": 1590092,
+   "lines": 19
+  },
+  {
+   "label": "Alone17",
+   "seconds": 7.2,
+   "peak_rss_kb": 1584288,
+   "lines": 6
+  },
+  {
+   "label": "Alone19",
+   "seconds": 7.03,
+   "peak_rss_kb": 1589264,
+   "lines": 15
+  },
+  {
+   "label": "Alone24",
+   "seconds": 4.39,
+   "peak_rss_kb": 1588704,
+   "lines": 3
+  },
+  {
+   "label": "Alone25",
+   "seconds": 4.01,
+   "peak_rss_kb": 1608028,
+   "lines": 136
+  },
+  {
+   "label": "Alone26",
+   "seconds": 4.0,
+   "peak_rss_kb": 1589620,
+   "lines": 17
+  },
+  {
+   "label": "Alone27",
+   "seconds": 4.04,
+   "peak_rss_kb": 1593252,
+   "lines": 17
+  },
+  {
+   "label": "Alone28",
+   "seconds": 4.28,
+   "peak_rss_kb": 1593248,
+   "lines": 16
+  },
+  {
+   "label": "Alone29",
+   "seconds": 4.32,
+   "peak_rss_kb": 1592256,
+   "lines": 5
+  },
+  {
+   "label": "Alone31",
+   "seconds": 3.84,
+   "peak_rss_kb": 1587944,
+   "lines": 3
+  },
+  {
+   "label": "Alone30",
+   "seconds": 4.33,
+   "peak_rss_kb": 1588760,
+   "lines": 24
+  },
+  {
+   "label": "Alone33",
+   "seconds": 4.02,
+   "peak_rss_kb": 1591884,
+   "lines": 7
+  },
+  {
+   "label": "Alone32",
+   "seconds": 4.15,
+   "peak_rss_kb": 1591148,
+   "lines": 40
+  },
+  {
+   "label": "Alone34",
+   "seconds": 4.11,
+   "peak_rss_kb": 1586312,
+   "lines": 20
+  },
+  {
+   "label": "Alone35",
+   "seconds": 4.1,
+   "peak_rss_kb": 1585156,
+   "lines": 3
+  },
+  {
+   "label": "Alone36",
+   "seconds": 3.96,
+   "peak_rss_kb": 1624740,
+   "lines": 2
+  },
+  {
+   "label": "Alone37",
+   "seconds": 3.93,
+   "peak_rss_kb": 1580460,
+   "lines": 38
+  },
+  {
+   "label": "Alone39",
+   "seconds": 3.73,
+   "peak_rss_kb": 1563388,
+   "lines": 26
+  },
+  {
+   "label": "Alone38",
+   "seconds": 4.03,
+   "peak_rss_kb": 1579920,
+   "lines": 91
+  },
+  {
+   "label": "Alone43",
+   "seconds": 3.02,
+   "peak_rss_kb": 1252980,
+   "lines": 3
+  },
+  {
+   "label": "Alone41",
+   "seconds": 3.31,
+   "peak_rss_kb": 1253772,
+   "lines": 3
+  },
+  {
+   "label": "Alone42",
+   "seconds": 3.4,
+   "peak_rss_kb": 1294496,
+   "lines": 10
+  },
+  {
+   "label": "Alone44",
+   "seconds": 3.3,
+   "peak_rss_kb": 1251204,
+   "lines": 4
+  },
+  {
+   "label": "Alone40",
+   "seconds": 3.77,
+   "peak_rss_kb": 1518412,
+   "lines": 19
+  },
+  {
+   "label": "Alone45",
+   "seconds": 3.58,
+   "peak_rss_kb": 1561980,
+   "lines": 57
+  },
+  {
+   "label": "Alone46",
+   "seconds": 3.25,
+   "peak_rss_kb": 1253680,
+   "lines": 4
+  },
+  {
+   "label": "Alone47",
+   "seconds": 3.63,
+   "peak_rss_kb": 1563224,
+   "lines": 17
+  },
+  {
+   "label": "Alone49",
+   "seconds": 3.74,
+   "peak_rss_kb": 1258376,
+   "lines": 7
+  },
+  {
+   "label": "Alone48",
+   "seconds": 4.03,
+   "peak_rss_kb": 1563436,
+   "lines": 20
+  },
+  {
+   "label": "Alone50",
+   "seconds": 3.75,
+   "peak_rss_kb": 1251644,
+   "lines": 5
+  },
+  {
+   "label": "Alone53",
+   "seconds": 3.37,
+   "peak_rss_kb": 1251424,
+   "lines": 5
+  },
+  {
+   "label": "Alone52",
+   "seconds": 3.72,
+   "peak_rss_kb": 1251276,
+   "lines": 3
+  },
+  {
+   "label": "Alone51",
+   "seconds": 4.08,
+   "peak_rss_kb": 1561328,
+   "lines": 7
+  },
+  {
+   "label": "Alone54",
+   "seconds": 4.01,
+   "peak_rss_kb": 1561100,
+   "lines": 7
+  },
+  {
+   "label": "Alone55",
+   "seconds": 4.04,
+   "peak_rss_kb": 1560908,
+   "lines": 3
+  },
+  {
+   "label": "Alone56",
+   "seconds": 3.48,
+   "peak_rss_kb": 1253152,
+   "lines": 3
+  },
+  {
+   "label": "Alone58",
+   "seconds": 3.6,
+   "peak_rss_kb": 1251884,
+   "lines": 3
+  },
+  {
+   "label": "Alone57",
+   "seconds": 3.69,
+   "peak_rss_kb": 1251164,
+   "lines": 9
+  },
+  {
+   "label": "Alone59",
+   "seconds": 3.94,
+   "peak_rss_kb": 1562280,
+   "lines": 24
+  },
+  {
+   "label": "Alone61",
+   "seconds": 3.58,
+   "peak_rss_kb": 1250720,
+   "lines": 8
+  },
+  {
+   "label": "Alone62",
+   "seconds": 3.39,
+   "peak_rss_kb": 1249408,
+   "lines": 7
+  },
+  {
+   "label": "Alone60",
+   "seconds": 4.05,
+   "peak_rss_kb": 1561228,
+   "lines": 10
+  },
+  {
+   "label": "Alone63",
+   "seconds": 3.46,
+   "peak_rss_kb": 1261584,
+   "lines": 20
+  },
+  {
+   "label": "Alone64",
+   "seconds": 3.5,
+   "peak_rss_kb": 1254220,
+   "lines": 3
+  },
+  {
+   "label": "Alone65",
+   "seconds": 3.79,
+   "peak_rss_kb": 1251736,
+   "lines": 3
+  },
+  {
+   "label": "Alone66",
+   "seconds": 3.81,
+   "peak_rss_kb": 1254040,
+   "lines": 7
+  },
+  {
+   "label": "Alone67",
+   "seconds": 3.73,
+   "peak_rss_kb": 1255376,
+   "lines": 71
+  },
+  {
+   "label": "Alone68",
+   "seconds": 4.12,
+   "peak_rss_kb": 1564432,
+   "lines": 22
+  },
+  {
+   "label": "Alone71",
+   "seconds": 3.61,
+   "peak_rss_kb": 1252216,
+   "lines": 4
+  },
+  {
+   "label": "Alone69",
+   "seconds": 4.2,
+   "peak_rss_kb": 1564188,
+   "lines": 22
+  },
+  {
+   "label": "Alone70",
+   "seconds": 4.38,
+   "peak_rss_kb": 1559924,
+   "lines": 16
+  },
+  {
+   "label": "Alone72",
+   "seconds": 3.65,
+   "peak_rss_kb": 1253064,
+   "lines": 13
+  },
+  {
+   "label": "Alone73",
+   "seconds": 3.68,
+   "peak_rss_kb": 1254068,
+   "lines": 4
+  },
+  {
+   "label": "Alone75",
+   "seconds": 4.12,
+   "peak_rss_kb": 1563356,
+   "lines": 9
+  },
+  {
+   "label": "Alone76",
+   "seconds": 3.85,
+   "peak_rss_kb": 1414900,
+   "lines": 4
+  },
+  {
+   "label": "Alone74",
+   "seconds": 4.54,
+   "peak_rss_kb": 1564616,
+   "lines": 20
+  },
+  {
+   "label": "Alone78",
+   "seconds": 4.49,
+   "peak_rss_kb": 1567052,
+   "lines": 156
+  },
+  {
+   "label": "Alone77",
+   "seconds": 4.52,
+   "peak_rss_kb": 1565284,
+   "lines": 4
+  },
+  {
+   "label": "Alone79",
+   "seconds": 4.25,
+   "peak_rss_kb": 1577964,
+   "lines": 42
+  },
+  {
+   "label": "Alone80",
+   "seconds": 3.73,
+   "peak_rss_kb": 1253892,
+   "lines": 85
+  },
+  {
+   "label": "Alone81",
+   "seconds": 3.85,
+   "peak_rss_kb": 1419128,
+   "lines": 2
+  },
+  {
+   "label": "Alone84",
+   "seconds": 3.6,
+   "peak_rss_kb": 1302368,
+   "lines": 3
+  },
+  {
+   "label": "Alone82",
+   "seconds": 3.87,
+   "peak_rss_kb": 1560652,
+   "lines": 2
+  },
+  {
+   "label": "Alone83",
+   "seconds": 3.94,
+   "peak_rss_kb": 1562868,
+   "lines": 2
+  },
+  {
+   "label": "Alone85",
+   "seconds": 3.25,
+   "peak_rss_kb": 1232304,
+   "lines": 4
+  },
+  {
+   "label": "Statements",
+   "seconds": 241.15,
+   "peak_rss_kb": 1680372,
+   "lines": 48972
+  }
+ ]
+}

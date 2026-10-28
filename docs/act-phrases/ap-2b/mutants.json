@@ -1,0 +1,194 @@
+{
+ "restored_build_returncode": 0,
+ "mutants": [
+  {
+   "id": "premodifier-middle-item",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.globalRules",
+   "behaviour": "the plan's seeded bug: a third premodifier edge rule; A8 (G8) has 3",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RuleExamples.lean:44,45,164"
+  },
+  {
+   "id": "marker-without-words",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.globalRules",
+   "behaviour": "W2: `MK \"\"` with an empty right side, so the grammar is not well formed",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RuleExamples.lean:97,105,174"
+  },
+  {
+   "id": "no-never-rules",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.closed",
+   "behaviour": "5.2's last paragraph: no `X → never` rule",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RuleExamples.lean:97,105,212"
+  },
+  {
+   "id": "adverb-as-filler",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.fillExcl",
+   "behaviour": "1.4: an adverb is not a filler word",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RuleExamples.lean:164,182,191,202,205"
+  },
+  {
+   "id": "to-as-filler",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.fillExcl",
+   "behaviour": "1.4: *to* is not a filler word (review ap-2b F1)",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RuleExamples.lean:202,205,208"
+  },
+  {
+   "id": "nor-as-filler",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.fillExcl",
+   "behaviour": "1.4: *nor* is not a filler word (review ap-2b F1)",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RuleExamples.lean:202,205,208"
+  },
+  {
+   "id": "start-not-S",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.build",
+   "behaviour": "the start symbol is S",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RuleExamples.lean:36,38,40,44,45,47,49,51,52,62,68,77,109,164,174,182,202,208"
+  },
+  {
+   "id": "rank-coord-0",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.NT.rank",
+   "behaviour": "W3: COORD ranks above its first items",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RuleExamples.lean:36,44,45,51,52,62,68,77,97,105,164,174"
+  },
+  {
+   "id": "grammar-unclosed",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.grammar",
+   "behaviour": "the grammar is the closed schema",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RuleExamples.lean:97,105"
+  },
+  {
+   "id": "nt-none",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.RSym.nt?",
+   "behaviour": "a nonterminal symbol names its nonterminal",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RuleExamples.lean:97,105,212"
+  },
+  {
+   "id": "kw-as-fill",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.kwSyms",
+   "behaviour": "a head's or marker's word is a `kw` terminal",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RuleExamples.lean:36,38,40,44,45,47,49,51,52,58,62,68,77,109,164,174,182,191,202,208"
+  },
+  {
+   "id": "many1-once",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.many1",
+   "behaviour": "one or more",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RuleExamples.lean:36,40,44,45,47,51,62,68,77,164,174,202"
+  },
+  {
+   "id": "tail-no-comma-join",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.tail",
+   "behaviour": "a comma before the join word",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RuleExamples.lean:52,77,164,174"
+  },
+  {
+   "id": "items-shared-drop-last",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.items",
+   "behaviour": "an adverb on both sides of a shared function word",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RuleExamples.lean:164,174"
+  },
+  {
+   "id": "frame-object-list-split",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.frameRules",
+   "behaviour": "a joined object that is not split is `O → PL`",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RuleExamples.lean:77,164,174,208"
+  },
+  {
+   "id": "schema-first-frame-only",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.schema",
+   "behaviour": "every frame's rules",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RuleExamples.lean:36,44,45,51,52,62,68,77,164,174,182,202,212"
+  },
+  {
+   "id": "Core-drop-rnr",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.Core",
+   "behaviour": "data type: a constructor dropped",
+   "status": "REFUSED",
+   "test": "lean/VE/Acts/Grammar.lean:84"
+  },
+  {
+   "id": "FNT-drop-REt",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.FNT",
+   "behaviour": "data type: a constructor dropped",
+   "status": "REFUSED",
+   "test": "lean/VE/Acts/Grammar.lean:41"
+  },
+  {
+   "id": "NT-drop-E1S",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.NT",
+   "behaviour": "data type: a constructor dropped",
+   "status": "REFUSED",
+   "test": "lean/VE/Acts/Grammar.lean:41"
+  },
+  {
+   "id": "RSym-drop-t",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.RSym",
+   "behaviour": "data type: a constructor dropped",
+   "status": "REFUSED",
+   "test": "lean/VE/Acts/Grammar.lean:62"
+  },
+  {
+   "id": "RuleS-drop-rhs",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Grammar.lean",
+   "definition": "VE.Acts.RuleS",
+   "behaviour": "data type: a field dropped",
+   "status": "REFUSED",
+   "test": "lean/VE/Acts/Grammar.lean:63"
+  }
+ ]
+}
