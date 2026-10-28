@@ -1,114 +1,24 @@
-{
- "allow": [
-  {
-   "definition": "VE.Events.EventsDecoded",
-   "operator": "bool-flip",
-   "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"
-  },
-  {
-   "definition": "VE.Events.EventsDecoded",
-   "operator": "eq-le",
-   "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"
-  },
-  {
-   "definition": "VE.Events.EventsDecoded",
-   "operator": "eq-ne",
-   "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"
-  },
-  {
-   "definition": "VE.Events.VocabView.args",
-   "operator": "list-empty",
-   "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"
-  },
-  {
-   "definition": "VE.Events.VocabView.decided",
-   "operator": "list-empty",
-   "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"
-  },
-  {
-   "definition": "VE.Events.VocabView.env",
-   "operator": "list-empty",
-   "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"
-  },
-  {
-   "definition": "VE.Events.VocabView.names",
-   "operator": "append-right",
-   "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"
-  },
-  {
-   "definition": "VE.Events.VocabView.names",
-   "operator": "list-empty",
-   "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"
-  },
-  {
-   "definition": "VE.Events.VocabView.wording",
-   "operator": "list-empty",
-   "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"
-  },
-  {
-   "definition": "VE.Events.arrAt",
-   "operator": "list-empty",
-   "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"
-  },
-  {
-   "definition": "VE.Events.checkDates",
-   "operator": "le-lt",
-   "reason": "equivalent: the sorted list has no two dates with one Civil.num (duplicates are refused before the sort, the anchor is added only when not listed), so <= and < sort it the same"
-  },
-  {
-   "definition": "VE.Events.checkDates",
-   "operator": "list-empty",
-   "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"
-  },
-  {
-   "definition": "VE.Events.checkDates",
-   "operator": "list-first",
-   "reason": "equivalent where it survives: an Option.toList has at most one element, so take 1 keeps it (the take 1 of ds is killed)"
-  },
-  {
-   "definition": "VE.Events.checkDates",
-   "operator": "list-last",
-   "reason": "equivalent where it survives: an Option.toList has at most one element, so reverse.take 1 keeps it"
-  },
-  {
-   "definition": "VE.Events.checkLinks",
-   "operator": "list-empty",
-   "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"
-  },
-  {
-   "definition": "VE.Events.decodeEvents",
-   "operator": "bool-flip",
-   "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"
-  },
-  {
-   "definition": "VE.Events.decodeEvents",
-   "operator": "eq-le",
-   "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"
-  },
-  {
-   "definition": "VE.Events.decodeEvents",
-   "operator": "eq-ne",
-   "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"
-  },
-  {
-   "definition": "VE.Events.decodeEvents",
-   "operator": "list-empty",
-   "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"
-  },
-  {
-   "definition": "VE.Events.ownedByEvents",
-   "operator": "list-drop-first",
-   "reason": "equivalent: the first row is soft's, which the owner filter never reads"
-  },
-  {
-   "definition": "VE.Events.ownedByEvents",
-   "operator": "list-last",
-   "reason": "equivalent: the events row is the last of reservedPrefixes and the filter keeps only the events row, so the last row alone gives the same answer"
-  },
-  {
-   "definition": "VE.Events.vocabView",
-   "operator": "list-empty",
-   "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"
-  }
- ]
-}
+{"allow": [
+  {"definition": "VE.Events.EventsDecoded", "operator": "bool-flip", "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"},
+  {"definition": "VE.Events.EventsDecoded", "operator": "eq-le", "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"},
+  {"definition": "VE.Events.EventsDecoded", "operator": "eq-ne", "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"},
+  {"definition": "VE.Events.VocabView.args", "operator": "list-empty", "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"},
+  {"definition": "VE.Events.VocabView.decided", "operator": "list-empty", "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"},
+  {"definition": "VE.Events.VocabView.env", "operator": "list-empty", "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"},
+  {"definition": "VE.Events.VocabView.names", "operator": "append-right", "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"},
+  {"definition": "VE.Events.VocabView.names", "operator": "list-empty", "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"},
+  {"definition": "VE.Events.VocabView.wording", "operator": "list-empty", "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"},
+  {"definition": "VE.Events.arrAt", "operator": "list-empty", "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"},
+  {"definition": "VE.Events.checkDates", "operator": "le-lt", "reason": "equivalent: the sorted list has no two dates with one Civil.num (duplicates are refused before the sort, the anchor is added only when not listed), so <= and < sort it the same"},
+  {"definition": "VE.Events.checkDates", "operator": "list-empty", "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"},
+  {"definition": "VE.Events.checkDates", "operator": "list-first", "reason": "equivalent where it survives: an Option.toList has at most one element, so take 1 keeps it (the take 1 of ds is killed)"},
+  {"definition": "VE.Events.checkDates", "operator": "list-last", "reason": "equivalent where it survives: an Option.toList has at most one element, so reverse.take 1 keeps it"},
+  {"definition": "VE.Events.checkLinks", "operator": "list-empty", "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"},
+  {"definition": "VE.Events.decodeEvents", "operator": "bool-flip", "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"},
+  {"definition": "VE.Events.decodeEvents", "operator": "eq-le", "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"},
+  {"definition": "VE.Events.decodeEvents", "operator": "eq-ne", "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"},
+  {"definition": "VE.Events.decodeEvents", "operator": "list-empty", "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"},
+  {"definition": "VE.Events.ownedByEvents", "operator": "list-drop-first", "reason": "equivalent: the first row is soft's, which the owner filter never reads"},
+  {"definition": "VE.Events.ownedByEvents", "operator": "list-last", "reason": "equivalent: the events row is the last of reservedPrefixes and the filter keeps only the events row, so the last row alone gives the same answer"},
+  {"definition": "VE.Events.vocabView", "operator": "list-empty", "reason": "Lean refuses the mutant text: the type error it reports (in the mutated definition or its one caller) is the build failing, so no program runs it"}
+]}
