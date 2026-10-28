@@ -1,0 +1,172 @@
+shard 4/7: 94 units; commands: ['lake build', 'lake build ve_english_lean_bench ve_scope_bench']
++ lake build
+⚠ [95/121] Replayed VE.SoftNorms.Soften
+warning: VE/SoftNorms/Soften.lean:264:19: This simp argument is unused:
+  Option.bind_eq_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵e̵q̵_̵b̵i̵n̵d̵,̵ ̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵n̵o̵n̵e̵]̵[̲O̲p̲t̲i̲o̲n̲.̲b̲i̲n̲d̲_̲n̲o̲n̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [110/121] Replayed VE.Readings.Separate
+warning: VE/Readings/Separate.lean:1490:50: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: VE/Readings/Separate.lean:1492:5: unused variable `hr`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [120/1123] Replayed VE.Readings.Superpose
+warning: VE/Readings/Superpose.lean:311:34: unused variable `h`
+
+... (9121 lines cut; full output in shard-full.txt)
+   Compiling cfg-if v1.0.5
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.229
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `release` profile [optimized] target(s) in 16.79s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling typenum v1.20.1
+   Compiling serde_core v1.0.229
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling cfg-if v1.0.5
+   Compiling cpufeatures v0.2.17
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 9.16s
+order: failed last time []; changed []; then the rest; --maxfail off
+recording 94 units with 4 jobs in /tmp/ve-select-run-t6c_3sne
+  tests/test_identity_lint.py: exit 1 in 53.9 s, 300 functions
+  tests/test_lean_first_oracle.py: exit 1 in 1.0 s, 233 functions
+  tests/test_ar8_evidence.py: exit 1 in 3.6 s, 235 functions
+  tests/test_rd9_dri_signatures.py: exit 1 in 3.1 s, 230 functions
+FAILED tests/test_identity_lint.py (exit 1): tests/test_identity_lint.py::test_the_ratchet_starts_at_the_commit_that_adds_the_allowlist; log /tmp/ve-select-run-t6c_3sne/tests__test_identity_lint.py.log
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['git', 'rev-parse', '--verify', 'c24aeab2^{commit}']' returned non-zero exit status 128.
+
+../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: CalledProcessError
+=========================== short test summary info ============================
+FAILED tests/test_identity_lint.py::test_the_ratchet_starts_at_the_commit_that_adds_the_allowlist - subprocess.CalledProcessError: Command '['git', 'rev-parse', '--verify', 'c24aeab2^{commit}']' returned non-zero exit status 128.
+1 failed, 107 passed in 53.16s
+FAILED tests/test_lean_first_oracle.py (exit 1): tests/test_lean_first_oracle.py::test_a_changed_frozen_file_or_tag_is_found, tests/test_lean_first_oracle.py::test_the_freeze_is_intact, tests/test_lean_first_oracle.py::test_the_oracle_runs_the_pre_deletion_python; log /tmp/ve-select-run-t6c_3sne/tests__test_lean_first_oracle.py.log
+                          "print(ve.__file__)\nprint(UnknownSymbol('x').message)\n")
+>       assert oracle.run(script, scratch=tmp_path) == 0
+E       AssertionError: assert 2 == 0
+E        +  where 2 = <function run at 0x7f8cd861d9b0>(PosixPath('/tmp/pytest-of-runner/pytest-29/test_the_oracle_runs_the_pre_d0/probe.py'), scratch=PosixPath('/tmp/pytest-of-runner/pytest-29/test_the_oracle_runs_the_pre_d0'))
+E        +    where <function run at 0x7f8cd861d9b0> = oracle.run
+
+tests/test_lean_first_oracle.py:31: AssertionError
+----------------------------- Captured stderr call -----------------------------
+tag lean-first/oracle-python does not exist
+=========================== short test summary info ============================
+FAILED tests/test_lean_first_oracle.py::test_the_freeze_is_intact - AssertionError: assert ['tag lean-fi...es not exist'] == []
+  
+  Left contains one more item: 'tag lean-first/oracle-python does not exist'
+  
+  Full diff:
+  - []
+  + [
+  +     'tag lean-first/oracle-python does not exist',
+  + ]
+FAILED tests/test_lean_first_oracle.py::test_a_changed_frozen_file_or_tag_is_found - assert False
+ +  where False = any(<generator object test_a_changed_frozen_file_or_tag_is_found.<locals>.<genexpr> at 0x7f8cd8804e10>)
+FAILED tests/test_lean_first_oracle.py::test_the_oracle_runs_the_pre_deletion_python - AssertionError: assert 2 == 0
+ +  where 2 = <function run at 0x7f8cd861d9b0>(PosixPath('/tmp/pytest-of-runner/pytest-29/test_the_oracle_runs_the_pre_d0/probe.py'), scratch=PosixPath('/tmp/pytest-of-runner/pytest-29/test_the_oracle_runs_the_pre_d0'))
+ +    where <function run at 0x7f8cd861d9b0> = oracle.run
+3 failed in 0.20s
+FAILED tests/test_rd9_dri_signatures.py (exit 1): tests/test_rd9_dri_signatures.py::test_the_reports_record_the_same_itemised_numbers, tests/test_rd9_dri_signatures.py::test_the_trust_entry_is_signed_and_itemised; log /tmp/ve-select-run-t6c_3sne/tests__test_rd9_dri_signatures.py.log
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['git', 'show', '98f97159e1a773532c4035559ae29f04548a9da6:docs/trust-baseline.json']' returned non-zero exit status 128.
+
+../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: CalledProcessError
+----------------------------- Captured stderr call -----------------------------
+fatal: path 'docs/trust-baseline.json' exists on disk, but not in '98f97159e1a773532c4035559ae29f04548a9da6'
+=========================== short test summary info ============================
+FAILED tests/test_rd9_dri_signatures.py::test_the_trust_entry_is_signed_and_itemised - subprocess.CalledProcessError: Command '['git', 'show', '98f97159e1a773532c4035559ae29f04548a9da6:docs/trust-baseline.json']' returned non-zero exit status 128.
+FAILED tests/test_rd9_dri_signatures.py::test_the_reports_record_the_same_itemised_numbers - subprocess.CalledProcessError: Command '['git', 'show', '98f97159e1a773532c4035559ae29f04548a9da6:docs/trust-baseline.json']' returned non-zero exit status 128.
+2 failed, 2 passed in 0.89s
+FAILED tests/test_ar8_evidence.py (exit 1): tests/test_ar8_evidence.py::test_the_saved_commits_are_every_commit_before_the_report_commit; log /tmp/ve-select-run-t6c_3sne/tests__test_ar8_evidence.py.log
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['git', 'log', '--no-merges', '--reverse', '--format=%H', 'c24aeab20ee513e3e1bef310c5e3263fab3998cc..bdc0a94e08418faaa47f815576f08986b0bad904']' returned non-zero exit status 128.
+
+../../../.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: CalledProcessError
+=========================== short test summary info ============================
+FAILED tests/test_ar8_evidence.py::test_the_saved_commits_are_every_commit_before_the_report_commit - subprocess.CalledProcessError: Command '['git', 'log', '--no-merges', '--reverse', '--format=%H', 'c24aeab20ee513e3e1bef310c5e3263fab3998cc..bdc0a94e08418faaa47f815576f08986b0bad904']' returned non-zero exit status 128.
+1 failed, 3 passed in 0.90s
+recorded 94 units for tree 9b18bc6780; 0 others left to the static graph until they run; 4 failed
+SHARD 4/7: exit 1 in 1036.7 s; 94 units, 90 passed
