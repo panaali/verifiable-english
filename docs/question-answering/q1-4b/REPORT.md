@@ -89,6 +89,8 @@ changed, so there are no seeded bugs in those languages.
 
 - Trust: `tools/trust_map.py --check` PASS, K +0, S +0, D +0, G +0, trusted +0. No allowance, no R16 row, no trust
   mutants (no trusted Lean changed).
+- Fix round 4 (loop recheck 1 F6): selected tests (`mac-pytest.sh --select -- --base de7cb4022 --run`, HEAD
+  `4e1f58ffb`): 158 units, 0 failed; PROBE F6 exits 0; the 206-row condition test passes.
 - Fix round 3: selected tests (`mac-pytest.sh --select -- --base de7cb4022 --run`, HEAD `c4a134909`): 158 units,
   0 failed; the F5 probe exits 0.
 - Selected tests on the final code, before this report (`mac-pytest.sh --select -- --base de7cb4022 --run`, HEAD
@@ -152,9 +154,11 @@ Next item: q1-3 (Q1 evidence, a measurement report).
 - `tests/test_speech_acts.py::test_a_declared_gloss_is_one_opaque_atom_and_the_word_lint_only_warns`: the gloss
   directive, now through `Which one of …`.
 - `docs/question-answering/q1-4b/evidence/`: base.json, head.json, delta.json (original corpus by
-  `../q1-4/evidence/speech_ab.py write`, 244 extra cases by `speech_ab_f2.py augment` (`extra_cases`, `reader_cases`,
-  `determiners` and `opening_cases`/`opening_sentences` read from `ve/english_grammar/relational-fol@0.json`), comparison by
-  `../q1-4/evidence/speech_ab.py compare`); `speech_ab_f2.py audit|check` (nine signed classes, R1, O1).
+  `../q1-4/evidence/speech_ab.py write`, 2,295 extra cases by `speech_ab_f2.py augment` (`extra_cases`: `named_cases`
+  :205, `reader_cases` :46, `opening_cases` :163 over `opening_inputs` :155 (every added environment x one-place
+  `service` predicate) and `opening_sentences` :104 (`_lexicon` :68, `_spellings` :58 both polarities, `_Slot` :86),
+  all read from `ve/english_grammar/relational-fol@0.json`), comparison by `../q1-4/evidence/speech_ab.py compare`);
+  `speech_ab_f2.py audit|check` (nine signed classes, `opening` :317, `DECIDED` :331, R1, O1).
 - Lean (unchanged, the owner): `VE.Question.Run.speechPrefixes` `lean/VE/Question/Run.lean:194`, `Caller.auxs` `:181`,
   `speechAuxiliaries` `lean/VE/Question/Basic.lean:11`.
 - Regression tests: `VE_NATIVE_PREBUILT=1 uv run pytest -q tests/test_speech_polar_lean.py tests/test_speech_acts.py`
