@@ -43,6 +43,7 @@ sys.path.insert(0, str(HERE))
 
 RUN = "usecases/udhr-pilot/run-20261006T1800Z"
 COMMIT = "bd6c7ab2"
+TREE = "67488355afafbdde2f7f72b341b93cd2cc680b48"
 ADDED_PROFILES = ("norm-defaults@0", "readings@1")
 OPEN_TERM_DIFFERENCE = "declare open term"
 
@@ -69,12 +70,13 @@ def join_document(meta, source):
 
 def read_run(commit=COMMIT):
     """The run's main front matter and source, and each companion by (unit, candidate): its front matter."""
-    meta, source = split_document(git_show(commit, f"{RUN}/translation.ve.md"))
+    revision = TREE if commit == COMMIT else commit
+    meta, source = split_document(git_show(revision, f"{RUN}/translation.ve.md"))
     companions = {}
-    for name in git_ls(commit, f"{RUN}/readings"):
+    for name in git_ls(revision, f"{RUN}/readings"):
         if name.endswith(".ve.md"):
             unit, candidate = name.split(".")[:2]
-            companions[(unit, candidate)] = (name, split_document(git_show(commit, f"{RUN}/readings/{name}"))[0])
+            companions[(unit, candidate)] = (name, split_document(git_show(revision, f"{RUN}/readings/{name}"))[0])
     return meta, source, companions
 
 

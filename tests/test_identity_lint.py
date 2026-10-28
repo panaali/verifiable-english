@@ -11,7 +11,7 @@ from tools import identity_lint, relay_lint
 
 ROOT = Path(__file__).resolve().parents[1]
 # The commit the architecture plan measured, before the allowlist existed.
-PLAN_BASE = "c24aeab2"
+PLAN_BASE = "5bdad54139b14ec64d6932a0b867eb612858f050"  # root tree at the plan base
 
 
 def _module(tmp_path: Path, body: str) -> Path:

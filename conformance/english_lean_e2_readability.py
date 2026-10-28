@@ -42,7 +42,7 @@ import tarfile
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
-FROZEN = "ac91e1e4"
+FROZEN = "91dba35528bf16064a82fec6b2b4fe1f9272bca5"  # root tree of the frozen evaluation
 EVAL = "experiments/readability-sonnet"
 LEAN_ITEMS = ("R23", "R24", "R25", "R29", "R30")
 
