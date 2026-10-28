@@ -1,0 +1,8 @@
+== check trust-tables
+class lines: K 994, S 11664, D 16437, G 32823, C 11544, P 89321, T 24295, o 15984
+D/G groups: D[V] 14377, D[R] 1439, D[I] 621, G[V] 29287, G[R] 3259, G[I] 277
+tied 948, unclassified 0, trusted 55512 (K + S + untied [V] + unclassified), 203062 lines in 640 files
+against 67d78d90d754: K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted +0
+note: 67d78d90d754 records the budget {'K': 997, 'S': 9958, 'V': 39079}; measured there {'K': 994, 'S': 11664, 'V': 42854} (the merge train's --write has not run since)
+PASS: K, S and untied [V] within 67d78d90d754 and the allowances introduced since
+regen_generated: checked 1 entries
