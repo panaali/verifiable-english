@@ -64,7 +64,9 @@ every other case is UNKNOWN (review F11/F12, the DRI's note 2026-10-19c). The mu
 
 SURVIVOR and UNKNOWN print as `<STATUS> <file>:<line> <definition> (<class>) <operator>: <before> -> <after>`
 (`kind`: the class, ", trusted" added when R16 counts it), unless --allow FILE lists the definition and operator
-with a reason ({"allow": [{"definition": "VE.X.f", "operator": "lt-le", "reason": "one line"}]}). Exit 0: all ran,
+with a reason ({"allow": [{"definition": "VE.X.f", "operator": "lt-le", "reason": "one line"}]}); a `ctor-drop`
+survivor that breaks no proof is never allowed (no proof or check reads its constructor), and an allowed one keeps
+the proofs it breaks after its reason. Exit 0: all ran,
 none left; 1: a survivor or UNKNOWN left; 3: none left but some NOT RUN; 2: cannot run. Builder and reviewer
 evidence only: no gate, merge train or nightly reads it.
 
@@ -1421,8 +1423,10 @@ def main(argv: list[str] | None = None) -> int:
     def allowed(m: Mutant) -> None:
         """The current --allow on a verdict, run or reused, which is printed when it is left."""
         m.raw_status = m.status
-        if m.status in ("SURVIVOR", "UNKNOWN") and (m.definition, m.operator) in allow:
-            m.status, m.detail = "ALLOWED", allow[(m.definition, m.operator)]
+        unread = m.operator == "ctor-drop" and m.status == "SURVIVOR" and not m.detail  # review sc-1ae F1
+        if m.status in ("SURVIVOR", "UNKNOWN") and (m.definition, m.operator) in allow and not unread:
+            reason = allow[(m.definition, m.operator)]
+            m.status, m.detail = "ALLOWED", f"{reason} ({m.detail})" if m.operator == "ctor-drop" else reason
         if m.status in ("SURVIVOR", "UNKNOWN"):
             print(f"{m.status} lean/{m.file}:{m.line} {m.definition} ({kind(m)}) {m.operator}: {show(m.before)} -> "
                   f"{show(m.after)}{' (' + show(m.detail) + ')' if m.detail else ''}", flush=True)
