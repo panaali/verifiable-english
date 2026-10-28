@@ -96,8 +96,8 @@ theorem runCase_fits (j : Json) (hj : CaseWF j)
     | skip
   all_goals kind_norm
   all_goals (try contra)
-  all_goals (try simp only [VE.Route.Wire.ok, Flagged.regenerated, Wire.regenerated, List.map_cons, List.map_nil,
-    String.reduceBEq])
+  all_goals (try simp only [VE.Route.Wire.ok, Flagged.regenerated, Wire.regenerated, wordingsJson, List.map_cons,
+    List.map_nil, String.reduceBEq])
   all_goals first
     | (unfold runAdmission; okfits; fits_from admission_fits _ _ _ (admitDocument_kinds _ _ _ ‹Admission.admitDocument _ _ = .ok _›))
     | fits

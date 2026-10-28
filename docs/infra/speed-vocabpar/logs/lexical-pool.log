@@ -1,0 +1,106 @@
+[mac-pytest 16:18:20Z] running on ve-mac-1: HEAD 2df3fd2a (clean) of /home/seyran/code/ve-vocabpar-pool; pytest -p no:xdist -v --durations=15 tests/test_acts_lexical_mutants.py
+[mac-pytest@ve-mac-1 16:18:21Z] both mac-pytest slots busy; waiting (until 18:15:01Z)
+[mac-pytest@ve-mac-1 17:48:48Z] pytest on ve-mac-1 (aarch64), slot 2, commit 2df3fd2a, setup 2s: -p no:xdist -v --durations=15 tests/test_acts_lexical_mutants.py
+============================= test session starts ==============================
+platform linux -- Python 3.14.8, pytest-9.1.1, pluggy-1.6.0 -- /home/verunner/pyt/ve-vocabpar-pool-98b492a5/w/.venv/bin/python
+cachedir: .pytest_cache
+hypothesis profile 'default'
+rootdir: /home/verunner/pyt/ve-vocabpar-pool-98b492a5/w
+configfile: pyproject.toml
+plugins: anyio-4.15.1, hypothesis-6.168.0, xdist-3.8.0
+collecting ... collected 84 items
+
+tests/test_acts_lexical_mutants.py::test_the_unmutated_sources_elaborate_cleanly PASSED [  1%]
+tests/test_acts_lexical_mutants.py::test_the_sweep_covers_every_decision_of_the_decoder PASSED [  2%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[acts-false-decodeRegulatedWith-1] PASSED [  3%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[acts-false-decodeRegulatedWith-2] PASSED [  4%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[acts-false-decodeRegulatedWith-3] PASSED [  5%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[acts-profile-negated-canonicalActIn-1] PASSED [  7%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[acts-profile-negated-decodeRegulatedIn-1] PASSED [  8%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[conjunct-dropped-check-1] PASSED [  9%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[conjunct-dropped-check-2] PASSED [ 10%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[conjunct-dropped-check-4] PASSED [ 11%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[conjunct-dropped-decodeRegulatedWith-1] PASSED [ 13%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[conjunct-dropped-decodeRegulatedWith-10] PASSED [ 14%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[conjunct-dropped-decodeRegulatedWith-11] PASSED [ 15%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[conjunct-dropped-decodeRegulatedWith-12] PASSED [ 16%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[conjunct-dropped-decodeRegulatedWith-2] PASSED [ 17%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[conjunct-dropped-decodeRegulatedWith-3] PASSED [ 19%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[conjunct-dropped-decodeRegulatedWith-4] PASSED [ 20%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[conjunct-dropped-decodeRegulatedWith-5] PASSED [ 21%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[conjunct-dropped-decodeRegulatedWith-6] PASSED [ 22%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[conjunct-dropped-decodeRegulatedWith-8] PASSED [ 23%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[conjunct-dropped-decodeRegulatedWith-9] PASSED [ 25%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[default-negated-decodeRegulatedWith-1] PASSED [ 26%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[default-negated-decodeRegulatedWith-2] PASSED [ 27%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[fx-dropped-canonicalActIn-1] PASSED [ 28%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[fx-dropped-check-1] PASSED [ 29%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[fx-dropped-decodeRegulatedIn-1] PASSED [ 30%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[guard-off-canonicalActIn-1] PASSED [ 32%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[guard-off-check-1] PASSED [ 33%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[guard-off-check-2] PASSED [ 34%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[guard-off-check-3] PASSED [ 35%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[guard-off-check-4] PASSED [ 36%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[guard-off-decodeRegulatedWith-1] PASSED [ 38%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[guard-off-decodeRegulatedWith-2] PASSED [ 39%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[guard-off-decodeRegulatedWith-3] PASSED [ 40%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[guard-off-decodeRegulatedWith-4] PASSED [ 41%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[guard-off-decodeRegulatedWith-5] PASSED [ 42%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[guard-off-decodeRegulatedWith-6] PASSED [ 44%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[guard-off-decodeRegulatedWith-7] PASSED [ 45%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[guard-off-decodeRegulatedWith-8] PASSED [ 46%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[guard-off-decodeRegulatedWith-9] PASSED [ 47%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[negated-check-1] PASSED [ 48%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[negated-check-2] PASSED [ 50%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[negated-check-3] PASSED [ 51%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[negated-check-4] PASSED [ 52%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[negated-check-5] PASSED [ 53%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[negated-decodeRegulatedWith-1] PASSED [ 54%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[negated-decodeRegulatedWith-2] PASSED [ 55%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[negated-decodeRegulatedWith-3] PASSED [ 57%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[negated-decodeRegulatedWith-4] PASSED [ 58%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[negated-decodeRegulatedWith-5] PASSED [ 59%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[negated-decodeRegulatedWith-6] PASSED [ 60%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[off-boundary-check-1] PASSED [ 61%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[off-boundary-check-2] PASSED [ 63%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[review-fixed-phrases-not-passed-on] PASSED [ 64%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[review-form-on-every-role] PASSED [ 65%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[review-modal-act-by-todays-check] PASSED [ 66%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[review-obligation-act-by-todays-check] PASSED [ 67%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[review-slots-each-once] PASSED [ 69%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[role-obligation-decodeRegulatedWith-1] PASSED [ 70%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[role-obligation-decodeRegulatedWith-2] PASSED [ 71%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[role-obligation-decodeRegulatedWith-3] PASSED [ 72%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[role-obligation-decodeRegulatedWith-4] PASSED [ 73%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[role-obligation-decodeRegulatedWith-5] PASSED [ 75%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[role-obligation-decodeRegulatedWith-6] PASSED [ 76%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[role-permission-decodeRegulatedWith-1] PASSED [ 77%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[role-permission-decodeRegulatedWith-2] PASSED [ 78%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[role-permission-decodeRegulatedWith-3] PASSED [ 79%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[role-permission-decodeRegulatedWith-4] PASSED [ 80%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[role-permission-decodeRegulatedWith-5] PASSED [ 82%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[role-permission-decodeRegulatedWith-6] PASSED [ 83%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[role-permission-decodeRegulatedWith-7] PASSED [ 84%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[role-plain-decodeRegulatedWith-1] PASSED [ 85%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[role-plain-decodeRegulatedWith-2] PASSED [ 86%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[role-plain-decodeRegulatedWith-3] PASSED [ 88%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[slots-as-a-set] PASSED [ 89%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[slots-in-range-as-many] PASSED [ 90%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[slots-in-range-each-once] PASSED [ 91%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[todays-check-obligation-decodeRegulatedWith-1] PASSED [ 92%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[todays-check-permission-decodeRegulatedWith-1] PASSED [ 94%]
+tests/test_acts_lexical_mutants.py::test_every_seeded_mutant_fails_a_fixture[todays-check-plain-decodeRegulatedWith-1] PASSED [ 95%]
+tests/test_acts_lexical_mutants.py::test_an_equivalent_mutant_elaborates_and_passes_every_fixture[acts-true-decodeRegulatedWith-1] PASSED [ 96%]
+tests/test_acts_lexical_mutants.py::test_an_equivalent_mutant_elaborates_and_passes_every_fixture[conjunct-dropped-check-3] PASSED [ 97%]
+tests/test_acts_lexical_mutants.py::test_an_equivalent_mutant_elaborates_and_passes_every_fixture[conjunct-dropped-decodeRegulatedWith-7] PASSED [ 98%]
+
+ve: English comparator: {"records": 0, "excluded": 0, "planted": 0, "classes": {}} (/tmp/ve-english-comparator-bt7t72i1)
+tests/test_acts_lexical_mutants.py::test_the_killed_check_counts_every_error PASSED [100%]
+
+============================= slowest 15 durations =============================
+40.68s setup    tests/test_acts_lexical_mutants.py::test_the_unmutated_sources_elaborate_cleanly
+0.01s call     tests/test_acts_lexical_mutants.py::test_the_sweep_covers_every_decision_of_the_decoder
+
+(13 durations < 0.005s hidden.  Use -vv to show these durations.)
+============================= 84 passed in 41.10s ==============================
+[mac-pytest 17:49:30Z] summary: ran on ve-mac-1 (aarch64), pytest with 5 args, workers xdist off; HEAD 2df3fd2a (clean); 5474s; exit=0; failed/error ids=0; known Mac-only failures (mac-known-failures.txt): none
