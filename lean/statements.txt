@@ -2313,6 +2313,11 @@ theorem VE.Arith.Site.ok_of_refusal
     VE.Arith.Site.refusal D E depth B s = Option.none → VE.Arith.Site.Ok E depth s
   -- uses VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Refusal@VE.Arith.Defs VE.Arith.Site.Ok@VE.Arith.Bounded VE.Arith.Site.refusal@VE.Arith.Defs VE.Arith.Site@VE.Arith.Defs
   -- expr 148804266
+theorem VE.Arith.Term.evalB_bits
+  ∀ (E : VE.Arith.OpEnv) (limit : Nat) (ρ : List Int) (t : VE.Arith.Term) (w : Nat) (x : Int) (w' : Nat),
+    VE.Arith.Term.evalB E limit ρ t w = Option.some (x, w') → VE.Arith.bits x ≤ limit ∧ w' ≤ limit
+  -- uses VE.Arith.OpEnv@VE.Arith.Bounded VE.Arith.Term.evalB@VE.Arith.Bounded VE.Arith.Term@VE.Arith.Syntax VE.Arith.bits@VE.Arith.Bounded
+  -- expr 3694090624
 theorem VE.Arith.Term.evalB_mono
   ∀ {O O' : VE.Arith.OpEnv} {limit limit' : Nat},
     VE.Arith.Extends O O' →
@@ -2432,6 +2437,22 @@ theorem VE.Arith.arithOutcome_unbounded_iff
       VE.Arith.Formula.Bounded D φ = Bool.false
   -- uses VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula.Bounded@VE.Arith.Defs VE.Arith.Formula@VE.Arith.Syntax VE.Arith.arithOutcome@VE.Arith.Bounded VE.Numbers.Outcome.unknown@VE.Numbers.Round VE.Numbers.Outcome@VE.Numbers.Round VE.Numbers.UnknownReason.unboundedStatement@VE.Numbers.Round
   -- expr 4139093868
+theorem VE.Arith.bits_add_le
+  ∀ (x y : Int), VE.Arith.bits (x + y) ≤ Max.max (VE.Arith.bits x) (VE.Arith.bits y) + 1
+  -- uses VE.Arith.bits@VE.Arith.Bounded
+  -- expr 4269050433
+theorem VE.Arith.bits_mul_le
+  ∀ (x y : Int), VE.Arith.bits (x * y) ≤ VE.Arith.bits x + VE.Arith.bits y
+  -- uses VE.Arith.bits@VE.Arith.Bounded
+  -- expr 3660033003
+theorem VE.Arith.bits_natAbs_le
+  ∀ {x : Int} {n k : Nat}, x.natAbs ≤ n → n < 2 ^ (k + 1) → VE.Arith.bits x ≤ k + 1
+  -- uses VE.Arith.bits@VE.Arith.Bounded
+  -- expr 2358350136
+theorem VE.Arith.bits_sub_le
+  ∀ (x y : Int), VE.Arith.bits (x - y) ≤ Max.max (VE.Arith.bits x) (VE.Arith.bits y) + 1
+  -- uses VE.Arith.bits@VE.Arith.Bounded
+  -- expr 1605022655
 theorem VE.Arith.boundedNames_snoc
   ∀ (E : VE.Arith.Defs) (d : VE.Arith.Def),
     (E ++ [d]).boundedNames =
@@ -2441,6 +2462,26 @@ theorem VE.Arith.boundedNames_snoc
         if q = p then VE.Arith.Formula.bnd E.boundedNames body else E.boundedNames q
   -- uses VE.Arith.Def@VE.Arith.Syntax VE.Arith.Defs.boundedNames@VE.Arith.Defs VE.Arith.Defs.opEnv.match_1@VE.Arith.Bounded VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula.bnd@VE.Arith.Defs VE.Arith.Formula@VE.Arith.Syntax VE.Arith.Term.bnd@VE.Arith.Defs VE.Arith.Term@VE.Arith.Syntax
   -- expr 3280137390
+theorem VE.Arith.chargeBits_bits
+  ∀ {limit w : Nat} {x y : Int} {w' : Nat},
+    VE.Arith.chargeBits limit x w = Option.some (y, w') → VE.Arith.bits y ≤ limit ∧ w' ≤ limit
+  -- uses VE.Arith.bits@VE.Arith.Bounded VE.Arith.chargeBits@VE.Arith.Bounded
+  -- expr 4182643902
+theorem VE.Arith.chargeBits_eq
+  ∀ {limit w : Nat} {x : Int},
+    w + VE.Arith.bits x ≤ limit → VE.Arith.chargeBits limit x w = Option.some (x, w + VE.Arith.bits x)
+  -- uses VE.Arith.bits@VE.Arith.Bounded VE.Arith.chargeBits@VE.Arith.Bounded
+  -- expr 4142228633
+theorem VE.Arith.chargeBits_mono
+  ∀ {limit limit' w : Nat} {x : Int} {r : Int × Nat},
+    limit ≤ limit' → VE.Arith.chargeBits limit x w = Option.some r → VE.Arith.chargeBits limit' x w = Option.some r
+  -- uses VE.Arith.chargeBits@VE.Arith.Bounded
+  -- expr 3278823892
+theorem VE.Arith.chargeBits_some
+  ∀ {limit w : Nat} {x y : Int} {w' : Nat},
+    VE.Arith.chargeBits limit x w = Option.some (y, w') → y = x ∧ w' = w + VE.Arith.bits x ∧ w + VE.Arith.bits x ≤ limit
+  -- uses VE.Arith.bits@VE.Arith.Bounded VE.Arith.chargeBits@VE.Arith.Bounded
+  -- expr 3461834319
 theorem VE.Arith.charge_eq
   ∀ {α : Type} {limit w : Nat} {k : Nat → Option (α × Nat)}, w < limit → VE.Arith.charge limit w k = k (w + 1)
   -- uses VE.Arith.charge@VE.Arith.Bounded
@@ -2523,6 +2564,10 @@ theorem VE.Arith.foldl_rel
       ∀ (l : List γ) (a : α) (b : β), R a b → R (List.foldl f a l) (List.foldl g b l)
   -- uses
   -- expr 590644498
+theorem VE.Arith.log2_le_of_lt
+  ∀ {n k : Nat}, n < 2 ^ (k + 1) → n.log2 ≤ k
+  -- uses
+  -- expr 1783431650
 theorem VE.Arith.opEnv_extends
   ∀ (D : VE.Arith.Defs) {limit limit' : Nat},
     limit ≤ limit' → VE.Arith.Extends (VE.Arith.Defs.opEnv limit D) (VE.Arith.Defs.opEnv limit' D)
@@ -2588,6 +2633,35 @@ theorem VE.Arith.range_ex
   ∀ (l h : Int) (Q : Int → Prop), (∃ k, k < (h - l + 1).toNat ∧ Q (l + ↑k)) ↔ ∃ i, l ≤ i ∧ i ≤ h ∧ Q i
   -- uses
   -- expr 429845774
+theorem VE.Arith.stepB_mono
+  ∀ {limit limit' : Nat} {cond cond' : Int → Nat → Option (Bool × Nat)},
+    limit ≤ limit' →
+      (∀ (i : Int) (w : Nat) (r : Bool × Nat), cond i w = Option.some r → cond' i w = Option.some r) →
+        ∀ (i : Int) (w : Nat) (r : Bool × Nat),
+          VE.Arith.stepB limit cond i w = Option.some r → VE.Arith.stepB limit' cond' i w = Option.some r
+  -- uses VE.Arith.stepB@VE.Arith.Bounded
+  -- expr 250217693
+theorem VE.Arith.stepB_some
+  ∀ {limit : Nat} {cond : Int → Nat → Option (Bool × Nat)} {i : Int} {w : Nat} {r : Bool × Nat},
+    VE.Arith.stepB limit cond i w = Option.some r →
+      w + VE.Arith.bits i ≤ limit ∧ cond i (w + VE.Arith.bits i) = Option.some r
+  -- uses VE.Arith.bits@VE.Arith.Bounded VE.Arith.stepB@VE.Arith.Bounded
+  -- expr 3927809102
+theorem VE.Arith.stepB_sound
+  ∀ {Q : Int → Prop} {limit : Nat} {cond : Int → Nat → Option (Bool × Nat)},
+    (∀ (i : Int) (w : Nat) (b : Bool) (w' : Nat),
+        cond i w = Option.some (b, w') → (Q i ↔ b = Bool.true) ∧ (w ≤ limit → w' ≤ limit)) →
+      ∀ (i : Int) (w : Nat) (b : Bool) (w' : Nat),
+        VE.Arith.stepB limit cond i w = Option.some (b, w') → (Q i ↔ b = Bool.true) ∧ (w ≤ limit → w' ≤ limit)
+  -- uses VE.Arith.stepB@VE.Arith.Bounded
+  -- expr 2855911647
+theorem VE.Arith.stepB_total
+  ∀ (cond : Nat → Int → Nat → Option (Bool × Nat)),
+    (∀ (i : Int), ∃ b W, ∀ (limit w : Nat), w + W ≤ limit → cond limit i w = Option.some (b, w + W)) →
+      ∀ (i : Int),
+        ∃ b W, ∀ (limit w : Nat), w + W ≤ limit → VE.Arith.stepB limit (cond limit) i w = Option.some (b, w + W)
+  -- uses VE.Arith.stepB@VE.Arith.Bounded
+  -- expr 655937730
 theorem VE.Arith.total_take
   ∀ (D : VE.Arith.Defs),
     D.WellFormed = Bool.true →
