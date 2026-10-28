@@ -1,0 +1,14 @@
+{
+ "job": "sc-5rb-0294040f-sel2",
+ "head": "951f2c50b400271d4e17e44dfcc3657cb055cf1c",
+ "argv": [
+  "sc-5rb-0294040f-sel2",
+  "951f2c50b400271d4e17e44dfcc3657cb055cf1c",
+  "6121d5c1bc541869c55cc91234dfef5509f4070d",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-6f94fd07ef07.tar.zst",
+  "d0e9b0be0f6cd45da213f2e4b3cd71f7362e6e8415a4941decb27266f9be4dfb",
+  "lineage_tags=git tag -f 41887e90 669642c0d7468a0b078dc71df9b89646bef49cdf && git tag -f 68f18dcdc f60df3441940327f6cf0bb8c410fd6b23e699e40 && git tag -f 9160d326 10dd123ca6e1cf723d1562dd740abee831621e7a && git tag -f adefca30 0c2f72221595cb99c99c9f197af087f8bd97fc25",
+  "select=uv run --frozen python tools/select_tests.py --base \"$BASE\" --run --jobs 4",
+  "regen_check=uv run --frozen python tools/regen_generated.py --check"
+ ]
+}
