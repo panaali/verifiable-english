@@ -716,11 +716,13 @@ def test_a_verdict_carries_only_while_what_it_reads_reads_the_same(tmp_path, nam
     import trust_mutants
     before = layered(tmp_path / "before", {})
     m = trust_mutants.Mutant("M001", "Demo/Defs.lean", 5, "Demo.small", "lt-le", 0, 0, (5, 5), "<", "≤")
-    m.raw_status, m.raw_detail = m.detail = "KILLED", "lean/Demo/Examples.lean:5: Expression"
+    m.raw_status, m.raw_detail = "KILLED", "lean/Demo/Examples.lean:5: Expression"
+    m.detail = m.raw_detail
     before.verdict(m)
     assert m.reads and m.killed_at == (5, 5), m
     killed = {"status": "KILLED", "detail": m.detail, "reads": m.reads, "killed_at": list(m.killed_at)}
-    m.raw_status, m.raw_detail = m.detail = "INVALID", "unknown identifier"
+    m.raw_status, m.raw_detail = "INVALID", "unknown identifier"
+    m.detail = m.raw_detail
     before.verdict(m)
     refused = {"status": "INVALID", "detail": m.detail, "reads": m.reads, "killed_at": None}
     after = layered(tmp_path / "after", edits)
