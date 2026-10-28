@@ -11,6 +11,9 @@ ROOT = Path(__file__).resolve().parents[3]
 LEAN, TEST = ROOT / "lean", "lean/VE/Acts/MeaningExamples.lean"
 M, R, G = "lean/VE/Acts/Meaning.lean", "lean/VE/Acts/Readings.lean", "lean/VE/Acts/Grammar.lean"
 CUT = {R: "/-- One meaning (design debate)"}
+# a plant in the rule table fails RuleExamples' raw guards first (ap-2b's evidence), which would stop the build before
+# MeaningExamples: for it, those guards are evaluated without failing, so the meaning's guards are the evidence
+QUIET = {G: "lean/VE/Acts/RuleExamples.lean"}
 # (file, id, definition, behaviour, before, after)
 BUGS = [
     (G, "premodifier-middle-item", "globalRules", "the plan's seeded bug: a third premodifier rule; A8 has 3 meanings",
@@ -69,19 +72,26 @@ def lake(*args: str) -> subprocess.CompletedProcess:
 
 
 def main() -> int:
-    rows = []
+    only = sys.argv[1:]  # ids to rerun; their rows replace the old ones in mutants.json
+    out_json = Path(__file__).parent / "mutants.json"
+    rows = [r for r in json.loads(out_json.read_text())["mutants"] if r["id"] not in only] if only else []
     for src, bug, definition, behaviour, before, after in BUGS:
+        if only and bug not in only:
+            continue
         original = (ROOT / src).read_text()
+        quiet = QUIET.get(src)
         # the statement-only plant keeps the theorems, so their refusal is the evidence
         text0 = original if src not in CUT or bug == "Derived-true" else \
             original[:original.index(CUT[src])] + "end VE.Acts\n"
         try:
             assert text0.count(before) == 1, bug
             (ROOT / src).write_text(text0.replace(before, after))
+            if quiet:
+                (ROOT / quiet).write_text((ROOT / quiet).read_text().replace("#guard ", "#eval "))
             out = lake("build", "VE.Acts.MeaningExamples")
         finally:
             (ROOT / src).write_text(original)
-            subprocess.run(["git", "checkout", "--", src], cwd=ROOT, check=True)
+            subprocess.run(["git", "checkout", "--", src] + ([quiet] if quiet else []), cwd=ROOT, check=True)
         text = out.stdout + out.stderr
         blocks = re.split(r"(?m)^(?=error: )", text)
         guards = sorted({int(m.group(1)) for b in blocks if "did not evaluate to `true`" in b
@@ -94,7 +104,9 @@ def main() -> int:
                      "test": f"{TEST}:{','.join(map(str, guards))}" if guards else f"{src}:{refused[0]}" if refused else ""})
         print(status, bug, rows[-1]["test"], flush=True)
     restored = lake("build", "VE.Acts.MeaningExamples")
-    (Path(__file__).parent / "mutants.json").write_text(json.dumps(
+    order = [b[1] for b in BUGS]
+    rows.sort(key=lambda r: order.index(r["id"]))
+    out_json.write_text(json.dumps(
         {"restored_build_returncode": restored.returncode, "mutants": rows}, indent=1, ensure_ascii=False) + "\n")
     return 0 if restored.returncode == 0 and all(r["status"] != "SURVIVED" for r in rows) else 1
 
