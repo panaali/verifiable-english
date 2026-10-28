@@ -5,7 +5,7 @@
 - **What changed:** new `lean/VE/Calc/{Table,Csv,Jsonl,Data,TableExamples}.lean`: cells, tables, filters with typed
   negated atoms (J9), aggregates, CSV and JSON-lines decoders, and `runCounted` bound to SHA-256 under the budget (J2).
   Every theorem of plan 3.3 and spec 4.1 to 4.3 is proved (12, spec text); spec 4.4's `spanMatches_iff` is me-4b's.
-- **Open:** me-4b (the `Handles` data kind, relay, committed files, spans). Size is ~760 hand-written lines, over the
+- **Open:** me-4b (the `Handles` data kind, relay, committed files, spans). Size is ~870 hand-written lines, over the
   ~600 guide (see "Size").
 
 ## Plan rows
@@ -65,7 +65,8 @@ last, a JSON Boolean in other columns, and the decoded JSON-lines columns. The l
   (DELTA row 1). FOLLOW-UPS "## me-4" asks for the ties pass. `lean/audit.py`: PASS.
 - Size (`git diff --numstat $(git merge-base HEAD main)`, hand-written): Lean 550 (product 414, fixtures 134,
   imports 2), `tools/trust-classes.json` 85, `ve/assurance-manifest.json` 19 (the JSON-lines decoder pinned), allow
-  file 104, DELTA 10. With this report, about 760, over the ~600 guide. Moving more out would have split the
+  file 104, DELTA 10, this report 104: 872, over the ~600 guide (`mutants.json`, 194 lines of evidence
+  data, is not counted). Moving more out would have split the
   decoders from `decodeTable` or the fixtures from what they check; the scope already cut is in the table above.
 - Pilot bytes expected: 0 (plan "Bytes: 0"; ME-P2 lands them after me-4b). Nothing is claimed.
 
