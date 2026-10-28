@@ -1200,12 +1200,13 @@
   },
   {
    "test": "tests/test_readings_rd5_udhr.py",
-   "why": "starts git (git ls-tree, git show) in usecases/udhr-pilot/run-20261010T1400Z/migrate.py",
+   "why": "starts git (git cat-file, git ls-tree, git show) in tests/test_readings_rd5_udhr.py, usecases/udhr-pilot/run-20261010T1400Z/migrate.py",
    "recorded": [
     "coverage map",
     "source"
    ],
    "via": [
+    "tests/test_readings_rd5_udhr.py:<module>: git cat-file",
     "usecases/udhr-pilot/run-20261010T1400Z/migrate.py:git_ls: git ls-tree",
     "usecases/udhr-pilot/run-20261010T1400Z/migrate.py:git_show: git show"
    ]
