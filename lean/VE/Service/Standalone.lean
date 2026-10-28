@@ -40,13 +40,13 @@ def checkRegulated (environment : Json) (predicates : List (String × Json)) : E
   pure ()
 
 /-- What the envelope and family decoders read of `environment` (act-phrases 4.4): when it reads `acts@0`
-(`Norms.Wire.readsActs`), the profile row's refusals on the list as written first, then `Norms.Wire.actsView`, as
-the norms decoder reads it; any other environment as it is. -/
+(`Norms.Wire.readsActs`), the base rows' refusals on the list as written first (`readings@1`, the one profile only
+the whole table admits, is set aside before `validated`), then `Norms.Wire.actsView`, as the norms decoder reads
+it; any other environment as it is. -/
 def actsRead (environment : Json) : Except String Json := do
   let ps := VE.Norms.Wire.actsProfiles true environment
   if ps.isEmpty then return environment
-  let _ ← VE.Compose.gateOf
-    (if ps.contains VE.Compose.environmentWrapper then VE.Compose.profileTable else VE.Compose.baseRows) ps
+  let _ ← VE.Compose.gateOf VE.Compose.baseRows ps
   pure (VE.Norms.Wire.actsView environment ps)
 
 /-- A gated envelope and the environment JSON its family decoders read: the
