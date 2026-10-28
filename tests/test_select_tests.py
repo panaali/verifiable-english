@@ -1308,6 +1308,30 @@ def test_whole_plans_on_this_checkout(head):
     assert "tests/test_vacuity.py" in test_change["selected"]
 
 
+def test_a_workflow_change_selects_only_the_workflow_test(head):
+    """A GitHub workflow is text only GitHub runs: like documentation it selects the tests that read
+    or name it (tests/test_ci_workflow.py) and its directory's listers, never SMOKE nor everything.
+    Another file under .github/ is data, which also runs SMOKE."""
+    workflow, test = ".github/workflows/ve-job.yml", "tests/test_ci_workflow.py"
+    assert select_tests.kind_of(workflow) == select_tests.DATA and select_tests.documentation(workflow)
+    assert select_tests.kind_of(".github/dependabot.yml") == select_tests.DATA
+    assert not select_tests.documentation(".github/dependabot.yml")
+    smoke = set(select_tests.SMOKE)
+    edges = {unit: {} for unit in select_tests.units()}
+    edges[test] = {"r": [workflow], "d": [".github/workflows"]}
+    recorded = make_map(edges, commit=head)
+    edit = plan_for([select_tests.Change(workflow, real(workflow), real(workflow) + "# c\n")], recorded)
+    assert not edit["full"] and edit["selected"] == [test]
+    added = plan_for([select_tests.Change(".github/workflows/other.yml", None, "x\n")], recorded)
+    assert not added["full"] and added["selected"] == [test]
+    # Before the map has recorded the test, the static graph finds it: it names the directory.
+    unrecorded = make_map({unit: {} for unit in select_tests.units()}, commit=head, failed=(test,))
+    added = plan_for([select_tests.Change(".github/workflows/other.yml", None, "x\n")], unrecorded)
+    assert test in added["selected"] and not smoke & set(added["selected"]) and not added["full"]
+    other = plan_for([select_tests.Change(".github/dependabot.yml", None, "x\n")], recorded)
+    assert smoke <= set(other["selected"]) and not other["full"]
+
+
 def test_native_changes_schedule_builds_and_their_runners(head):
     every = select_tests.units()
     edges = {test: {} for test in every}
@@ -1825,7 +1849,8 @@ KIND_EXAMPLES = {
     "python": ("ve/_presence_probe.py", "tests/fixtures/_presence_probe.py"),
     "lean": ("lean/VE/_PresenceProbe.lean",),
     "rust": ("rust/ve-core/src/_presence_probe.rs",),
-    "data": ("tests/fixtures/_presence_probe.json", "docs/_presence_probe.md", "_presence_probe.md"),
+    "data": ("tests/fixtures/_presence_probe.json", "docs/_presence_probe.md", "_presence_probe.md",
+             ".github/workflows/_presence_probe.yml"),
     "everything": ("pyproject.toml", "_presence_probe.cfg"),
 }
 PRESENCE_UNITS = {"reader": "tests/test_background.py", "importer": "tests/test_authoring.py",
