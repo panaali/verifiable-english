@@ -1,0 +1,7 @@
+{"allow": [
+ {"definition": "VE.Service.Standalone.actsRead", "operator": "list-first", "reason": "equivalent: the survivor is `if ps.isEmpty` (line 48), and `(ps.take 1).isEmpty = ps.isEmpty` for every list; list-first on the gate's and actsView's `ps` is killed by the typing guards"},
+ {"definition": "VE.Service.Standalone.actsRead", "operator": "list-last", "reason": "equivalent: the survivor is `if ps.isEmpty` (line 48), and `(ps.reverse.take 1).isEmpty = ps.isEmpty` for every list; list-last on the gate's and actsView's `ps` is killed by the typing guards"},
+ {"definition": "VE.Service.Standalone.actsRead", "operator": "list-empty", "reason": "does not elaborate: `[].isEmpty` leaves the element type a metavariable (line 48); list-empty on the gate's and actsView's `ps` is killed by the typing guards"},
+ {"definition": "VE.Readings.Wire.singleActsOnly", "operator": "list-empty", "reason": "does not elaborate: `[].find? ...` leaves the element type a metavariable (typeclass instance stuck)"},
+ {"definition": "VE.Readings.Wire.decodeEnvironment", "operator": "list-empty", "reason": "does not elaborate: `[].map Prod.fst` leaves the element type a metavariable; the cut of the names reaches D-33's guards through list-first and list-last, both killed"}
+]}
