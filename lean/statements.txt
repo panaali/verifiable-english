@@ -632,6 +632,11 @@ theorem VE.Acts.Lexical.words_intercalate
       VE.Norms.Wire.words (" ".intercalate ws) = ws
   -- uses VE.Norms.Wire.pyWhitespace@VE.Acts.LexicalBase VE.Norms.Wire.words@VE.Acts.LexicalBase
   -- expr 265214043
+theorem VE.Acts.analyse_one
+  ∀ (V : VE.Acts.Vocab) {N b : Nat} {ts : Array VE.Acts.Lexical.Tok} {a : VE.Acts.Atom},
+    VE.Acts.analyse V N b ts = Option.some a → VE.Acts.read V N b ts = VE.Acts.ReadOutcome.ok (VE.Acts.Act.one a)
+  -- uses VE.Acts.Act.one@VE.Acts.Tree VE.Acts.Act@VE.Acts.Tree VE.Acts.Atom@VE.Acts.Tree VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.ReadOutcome.ok@VE.Acts.Read VE.Acts.ReadOutcome@VE.Acts.Read VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.analyse@VE.Acts.Readings VE.Acts.read@VE.Acts.Readings
+  -- expr 3010629314
 theorem VE.Acts.build_wf
   ∀ {rs : List VE.Acts.RuleS},
     (∀ (r : VE.Acts.RuleS), r ∈ rs → r.ok = Bool.true) →
@@ -757,6 +762,32 @@ theorem VE.Acts.readIn_unique
               VE.Grammar.Derives G (VE.Grammar.Sym.n G.start) ts.toList d → μ () d = Except.ok (B, c, ()) → B = A
   -- uses VE.Acts.DerivedIn@VE.Acts.Read VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.ReadOutcome.ok@VE.Acts.Read VE.Acts.ReadOutcome@VE.Acts.Read VE.Acts.Term@VE.Acts.Syntax VE.Acts.instAcceptsTermTok@VE.Acts.Syntax VE.Acts.readIn@VE.Acts.Read VE.Grammar.Derives@VE.Grammar.Derives VE.Grammar.Grammar.start@VE.Grammar.Basic VE.Grammar.Grammar.wf@VE.Grammar.Basic VE.Grammar.Grammar@VE.Grammar.Basic VE.Grammar.Meaning@VE.Grammar.Reading VE.Grammar.Sym.n@VE.Grammar.Basic VE.Grammar.Tree@VE.Grammar.Derives
   -- expr 2901751828
+theorem VE.Acts.read_many
+  ∀ (V : VE.Acts.Vocab),
+    VE.Acts.framesOk V = Bool.true →
+      ∀ {N b : Nat} {ts : Array VE.Acts.Lexical.Tok} {A B : VE.Acts.Act},
+        VE.Acts.read V N b ts = VE.Acts.ReadOutcome.many A B →
+          A ≠ B ∧ VE.Acts.Derived V ts.toList A ∧ VE.Acts.Derived V ts.toList B
+  -- uses VE.Acts.Act@VE.Acts.Tree VE.Acts.Derived@VE.Acts.Readings VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.ReadOutcome.many@VE.Acts.Read VE.Acts.ReadOutcome@VE.Acts.Read VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.framesOk@VE.Acts.Syntax VE.Acts.read@VE.Acts.Readings
+  -- expr 3911704505
+theorem VE.Acts.read_none
+  ∀ (V : VE.Acts.Vocab),
+    VE.Acts.framesOk V = Bool.true →
+      ∀ {N b : Nat} {ts : Array VE.Acts.Lexical.Tok},
+        VE.Acts.read V N b ts = VE.Acts.ReadOutcome.none → ∀ (A : VE.Acts.Act), ¬VE.Acts.Derived V ts.toList A
+  -- uses VE.Acts.Act@VE.Acts.Tree VE.Acts.Derived@VE.Acts.Readings VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.ReadOutcome.none@VE.Acts.Read VE.Acts.ReadOutcome@VE.Acts.Read VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.framesOk@VE.Acts.Syntax VE.Acts.read@VE.Acts.Readings
+  -- expr 3124227645
+theorem VE.Acts.read_unique
+  ∀ (V : VE.Acts.Vocab),
+    VE.Acts.framesOk V = Bool.true →
+      ∀ {N b : Nat} {ts : Array VE.Acts.Lexical.Tok} {A : VE.Acts.Act},
+        VE.Acts.read V N b ts = VE.Acts.ReadOutcome.ok A →
+          VE.Acts.Derived V ts.toList A ∧
+            ∀ (d : VE.Grammar.Tree VE.Acts.Lexical.Tok) (B : VE.Acts.Act) (c : Bool),
+              VE.Grammar.Derives (VE.Acts.grammar V) (VE.Grammar.Sym.n (VE.Acts.grammar V).start) ts.toList d →
+                VE.Acts.meaning V () d = Except.ok (B, c, ()) → B = A
+  -- uses VE.Acts.Act@VE.Acts.Tree VE.Acts.Derived@VE.Acts.Readings VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.ReadOutcome.ok@VE.Acts.Read VE.Acts.ReadOutcome@VE.Acts.Read VE.Acts.Term@VE.Acts.Syntax VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.framesOk@VE.Acts.Syntax VE.Acts.grammar@VE.Acts.Grammar VE.Acts.instAcceptsTermTok@VE.Acts.Syntax VE.Acts.meaning@VE.Acts.Meaning VE.Acts.read@VE.Acts.Readings VE.Grammar.Derives@VE.Grammar.Derives VE.Grammar.Grammar.start@VE.Grammar.Basic VE.Grammar.Sym.n@VE.Grammar.Basic VE.Grammar.Tree@VE.Grammar.Derives
+  -- expr 1897092783
 theorem VE.Acts.readingsIn_exact
   ∀ {α : Type} [inst : DecidableEq α] {G : VE.Grammar.Grammar VE.Acts.Term}
     {μ : VE.Grammar.Meaning VE.Acts.Lexical.Tok Unit String α} {N b : Nat} {ts : Array VE.Acts.Lexical.Tok},
@@ -781,6 +812,35 @@ theorem VE.Acts.readingsIn_nodup
     VE.Acts.readingsIn G μ N b ts = VE.Acts.Listing.ok As → As.Nodup
   -- uses VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Listing.ok@VE.Acts.Read VE.Acts.Listing@VE.Acts.Read VE.Acts.Term@VE.Acts.Syntax VE.Acts.readingsIn@VE.Acts.Read VE.Grammar.Grammar@VE.Grammar.Basic VE.Grammar.Meaning@VE.Grammar.Reading
   -- expr 217654327
+theorem VE.Acts.readings_exact
+  ∀ (V : VE.Acts.Vocab),
+    VE.Acts.framesOk V = Bool.true →
+      ∀ {N b : Nat} {ts : Array VE.Acts.Lexical.Tok} {As : List VE.Acts.Act},
+        VE.Acts.readings V N b ts = VE.Acts.Listing.ok As → ∀ (A : VE.Acts.Act), A ∈ As ↔ VE.Acts.Derived V ts.toList A
+  -- uses VE.Acts.Act@VE.Acts.Tree VE.Acts.Derived@VE.Acts.Readings VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Listing.ok@VE.Acts.Read VE.Acts.Listing@VE.Acts.Read VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.framesOk@VE.Acts.Syntax VE.Acts.readings@VE.Acts.Readings
+  -- expr 3045498389
+theorem VE.Acts.readings_limit
+  ∀ (V : VE.Acts.Vocab) (N b : Nat) (ts : Array VE.Acts.Lexical.Tok),
+    VE.Acts.readings V N b ts = VE.Acts.Listing.limit ↔
+      VE.Grammar.parse (VE.Acts.grammar V) N b ts = Option.none ∨
+        ∃ trees,
+          VE.Grammar.parse (VE.Acts.grammar V) N b ts = Option.some trees ∧
+            (N ≤ trees.length ∨
+              VE.Acts.maxReadings <
+                (VE.Acts.firsts
+                    (List.filterMap
+                      (fun t =>
+                        match VE.Acts.meaning V () t with
+                        | Except.ok (A, fst, snd) => Option.some A
+                        | Except.error a => Option.none)
+                      trees)).length)
+  -- uses VE.Acts.Act@VE.Acts.Tree VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Lexical.instDecidableEqTok@VE.Acts.Lexical VE.Acts.Listing.limit@VE.Acts.Read VE.Acts.Listing@VE.Acts.Read VE.Acts.Term@VE.Acts.Syntax VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.firsts@VE.Acts.Read VE.Acts.grammar@VE.Acts.Grammar VE.Acts.instAcceptsTermTok@VE.Acts.Syntax VE.Acts.instDecidableEqAct@VE.Acts.Tree VE.Acts.instDecidableEqTerm@VE.Acts.Syntax VE.Acts.maxReadings@VE.Acts.Read VE.Acts.meaning@VE.Acts.Meaning VE.Acts.readings@VE.Acts.Readings VE.Acts.readings_limit.match_1@VE.Acts.Readings VE.Grammar.Tree@VE.Grammar.Derives VE.Grammar.parse@VE.Grammar.Table
+  -- expr 2897517344
+theorem VE.Acts.readings_nodup
+  ∀ (V : VE.Acts.Vocab) {N b : Nat} {ts : Array VE.Acts.Lexical.Tok} {As : List VE.Acts.Act},
+    VE.Acts.readings V N b ts = VE.Acts.Listing.ok As → As.Nodup
+  -- uses VE.Acts.Act@VE.Acts.Tree VE.Acts.Lexical.Tok@VE.Acts.Lexical VE.Acts.Listing.ok@VE.Acts.Read VE.Acts.Listing@VE.Acts.Read VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.readings@VE.Acts.Readings
+  -- expr 3252955071
 theorem VE.Acts.schema_ok
   ∀ {V : VE.Acts.Vocab}, VE.Acts.framesOk V = Bool.true → (VE.Acts.schema V).all VE.Acts.RuleS.ok = Bool.true
   -- uses VE.Acts.RuleS.ok@VE.Acts.Grammar VE.Acts.RuleS@VE.Acts.Grammar VE.Acts.Vocab@VE.Acts.Syntax VE.Acts.framesOk@VE.Acts.Syntax VE.Acts.schema@VE.Acts.Grammar
