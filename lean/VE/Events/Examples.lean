@@ -309,6 +309,9 @@ def vL2 : EventsEnv := base [d 9999 12 31, d 10000 1 1]
 #guard !EventsTyped (regenEnv envDay vX) vX && !WellFormedEvents envDay vX
 #guard !EventsTyped (regenEnv envDay vL2) vL2 && !WellFormedEvents envDay vL2
 #guard EventsTyped (regenEnv envDay (base [d 9998 12 31, d 9999 1 1])) (base [d 9998 12 31, d 9999 1 1])
+-- every named date is checked, not only the last: one without its constant, an improper one
+#guard !EventsTyped (regenEnv envDay (base [d 2026 10 13])) (base [d 2026 10 12, d 2026 10 13])
+#guard !EventsTyped (regenEnv envDay (base [d 2026 2 30, d 2026 10 13])) (base [d 2026 2 30, d 2026 10 13])
 #guard embeddable vL (chain ["x"] [(dateName (d 9999 12 31), "x")]) &&
   numbering vL (chain ["x"] [(dateName (d 9999 12 31), "x")]) "x" == dateMax
 #guard embeddable vL (chain ["w", "x"] [(dateName (d 9999 12 31), "x")]) &&
