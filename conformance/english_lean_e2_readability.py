@@ -2,8 +2,8 @@
 
     .venv/bin/python -m conformance.english_lean_e2_readability --out docs/lean-first/e2/evidence/e2.6
 
-The frozen evaluation `experiments/readability-sonnet` is read from its commit (`FROZEN`) with `git archive` into a
-temporary directory; nothing in it is edited. Every recorded writing attempt (`runs/writing.jsonl`, 36 attempts) is
+The frozen evaluation `experiments/readability-sonnet` is read from its commit's tree (`FROZEN`) with `git archive` into
+a temporary directory; nothing in it is edited. Every recorded writing attempt (`runs/writing.jsonl`, 36 attempts) is
 scored by the frozen scorer (`writing_spec.score`) against this checkout's `ve`, and each of the 30 reading items is
 computed by the frozen builder (`build.compute`). Execution-only adjustments, as in E2.5: the frozen modules read the
 checkout (`REPO`), the risk calls drop the obsolete `binary=` argument, and `tests/` is importable for its helpers.

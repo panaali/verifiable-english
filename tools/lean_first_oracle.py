@@ -1,18 +1,19 @@
 """The frozen pre-deletion Python, kept as a test oracle (docs/LEAN-FIRST-PLAN.md, section 6.2;
 DRI answer 7).
 
-The oracle is the commit tagged `lean-first/oracle-python` (batch 0's base): the Python checkers
-before any Lean-first batch deleted a line. `docs/lean-first/oracle.json` freezes, by
-SHA-256 at that commit, what the oracle depends on: its dependency lock, the baseline artifacts,
-the frozen conformance fixtures and the contracts. It is run in isolation as
-`conformance/replay_baseline.py` runs its pinned code: a `git archive` of the commit in a
-temporary directory, imported from there with this checkout's Python environment, which must
-still be the frozen lock's. It labels new fixtures `oracle: lean+pinned-python` and is deleted
-after batch 18 plus 14 clean days.
+The oracle is the tree of batch 0's base (recorded with its commit and the VM's tag
+`lean-first/oracle-python`): the Python checkers before any Lean-first batch deleted a line.
+`docs/lean-first/oracle.json` freezes, by SHA-256 in that tree, what the oracle depends on: its
+dependency lock, the baseline artifacts, the frozen conformance fixtures and the contracts. It is
+run in isolation as `conformance/replay_baseline.py` runs its pinned code: a `git archive` of the
+tree in a temporary directory, imported from there with this checkout's Python environment, which
+must still be the frozen lock's. A clone without the tag (the GitHub export) checks the tree and
+its files alone. It labels new fixtures `oracle: lean+pinned-python` and is deleted after batch 18
+plus 14 clean days.
 
 Usage::
 
-    tools/lean_first_oracle.py --check          # the tag and every frozen file are intact
+    tools/lean_first_oracle.py --check          # every frozen file is intact in the tree (and the tag, if present)
     tools/lean_first_oracle.py --write          # (batch 0 only) record the manifest
     tools/lean_first_oracle.py run SCRIPT.py    # run SCRIPT in the oracle; its stdout is the answer
 """
