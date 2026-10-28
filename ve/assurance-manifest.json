@@ -1448,16 +1448,17 @@
       },
       {
         "file": "lean/VE/Cardinality/Run.lean",
-        "lines": 185,
-        "sha256": "9985c7b0b35eea5bc3a72974d4f95ba29eb0c5cf56f19f37c29c048879428c36",
+        "lines": 221,
+        "sha256": "d183414cf694e56043d1a27b4271756d832fb1cdf8322a72fbffa575248e5b60",
         "ranges": [
           [
             1,
-            185
+            221
           ]
         ],
         "declarations": [
           "decodeCertificate",
+          "checkErased",
           "checkCertificate",
           "claimed",
           "runCase"

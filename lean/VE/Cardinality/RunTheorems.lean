@@ -40,6 +40,12 @@ theorem erasedJson_conclusion {w : CardEnv} {ps : List CFormula} {c : CFormula} 
   rw [h]
   rfl
 
+/-- The runner's erased problem (`problemJson`) is `erasedJson`'s, on the regenerated problem and its identities. -/
+theorem erasedJson_problemJson (w : CardEnv) (ps : List CFormula) (c : CFormula) :
+    erasedJson w ps c = (erasedIds w ps c).map (problemJson (erasedProblem w.env ps c)) := by
+  unfold erasedJson
+  cases erasedIds w ps c <;> rfl
+
 /-- A runner's answer is its row; a refusal is an error row, and in a certificate case it says `valid: false`, so a
 refused certificate is never reported valid. -/
 theorem runCaseReported_ok {j r : Json} (h : runCase j = .ok r) : runCaseReported j = r := by

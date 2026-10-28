@@ -817,6 +817,7 @@
 'VE.Cardinality.Run.checkedProblem_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.Run.decodeCertificate_sound' depends on axioms: [propext, Quot.sound]
 'VE.Cardinality.Run.erasedJson_conclusion' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Cardinality.Run.erasedJson_problemJson' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.Run.erasedThunks_built' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.Run.foldl_add_ge' does not depend on any axioms
 'VE.Cardinality.Run.foldl_capped_ge' does not depend on any axioms
