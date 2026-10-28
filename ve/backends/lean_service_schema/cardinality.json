@@ -194,7 +194,10 @@
           "maxItems": 512,
           "type": "array"
         },
-        "predicates": {"additionalProperties": {"items": {"type": "string"}, "maxItems": 6, "type": "array"}}
+        "predicates": {
+          "additionalProperties": {"items": {"type": "string"}, "maxItems": 6, "type": "array"},
+          "type": "object"
+        }
       },
       "required": ["predicates", "constants"],
       "type": "object"
