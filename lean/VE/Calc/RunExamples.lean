@@ -727,14 +727,18 @@ def nonlinear (path : String) : List String := [s!"NonlinearPremise: {path} (dec
     ["UnknownName: w (declare it before the value that uses it)"])]
 
 -- J10: R-3's line, each square link two numbered premises after the case's (spec 13.6).
-#guard let words (n : String) : Option String :=
+/-- R-3's one derivation rendered with its values' words, or `none` when it decodes otherwise. -/
+def r3Line : Option String :=
+  let words (n : String) : Option String :=
     [("r", "the velocity ratio"), ("s", "the squared velocity ratio"), ("d", "the displacement")].lookup n
   match ((Json.parse r3).toOption.bind (Wire.decodeCase · |>.toOption)).map (·.claims) with
-  | some [(_, Check.follows P links C)] => VE.Calc.English.renderFollows words P links C == some
-      ("Assume the following. 1. The displacement equals the product of 0.4 and the squared velocity ratio. " ++
-       "2. The displacement is less than 0.02. 3. The squared velocity ratio equals the square of the velocity ratio. " ++
-       "4. The velocity ratio is at least 0. From these, it follows that the velocity ratio is less than 1 divided by 4.")
-  | _ => false
+  | some [(_, Check.follows P links C)] => VE.Calc.English.renderFollows words P links C
+  | _ => none
+
+#guard r3Line == some
+  ("Assume the following. 1. The displacement equals the product of 0.4 and the squared velocity ratio. " ++
+   "2. The displacement is less than 0.02. 3. The squared velocity ratio equals the square of the velocity ratio. " ++
+   "4. The velocity ratio is at least 0. From these, it follows that the velocity ratio is less than 1 divided by 4.")
 #guard VE.Calc.English.renderFollows (fun n => some s!"the {n}") [] [("a", "b"), ("c", "d")]
     (.compare ⟨.lt, false⟩ (.val "b") (.lit 1)) == some ("Assume the following. 1. The a equals the square of the b. " ++
   "2. The b is at least 0. 3. The c equals the square of the d. 4. The d is at least 0. From these, it follows that " ++
@@ -929,8 +933,9 @@ def readsCase : String := onX [premise "p1" r#"["ge", ["lit", "1"], ["val", "q"]
 `ValueWordsForm` and `ReservedWord`, each refused and with its nearest accepted words, which answer as "the x" does
 (words are not hashed, 3.3) -/
 
-/-- A case whose one value `x` has the words `w`. -/
-def wx (w : String) : String := req s!"\{\"name\": \"x\", \"words\": \"{w}\", \"stated\": \"1\"}" ok1
+/-- A value `n` stated as 1 with the words `w`, and a case of one such value `x`. -/
+def wx' (n w : String) : String := s!"\{\"name\": \"{n}\", \"words\": \"{w}\", \"stated\": \"1\"}"
+def wx (w : String) : String := req (wx' "x" w) ok1
 
 def form (p : String) : List String := [s!"ValueWordsForm: the words of x must begin with \"the\" and not with \"{p}\""]
 def reserved (r : String) : List String := [s!"ReservedWord: \"{r}\" in the words of x"]
@@ -973,6 +978,8 @@ def reserved (r : String) : List String := [s!"ReservedWord: \"{r}\" in the word
   ("double-space", says (wx "the  x"), ["Verbalisation \"the  x\" must be whitespace-normalized"]),
   ("trailing", says (wx "the x "), ["Verbalisation \"the x \" must be whitespace-normalized"]),
   ("tab", says (wx "the x\\ty"), ["Verbalisation \"the x\\ty\" must be whitespace-normalized"]),
+  ("whitespace-first", says (req (wx' "x" "the x " ++ ", " ++ wx' "y" "baseline") ok1),
+    ["Verbalisation \"the x \" must be whitespace-normalized"]),
   -- every source is checked: a defined and a free value
   ("defined", says (req (x1 ++ ", " ++ r#"{"name": "y", "words": "twice the x", "defined": ["val", "x"]}"#) ok1),
     [r#"ValueWordsForm: the words of y must begin with "the" and not with "twice""#]),
