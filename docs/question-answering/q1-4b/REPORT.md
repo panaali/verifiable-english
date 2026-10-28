@@ -75,6 +75,8 @@ changed, so there are no seeded bugs in those languages.
 
 - Trust: `tools/trust_map.py --check` PASS, K +0, S +0, D +0, G +0, trusted +0. No allowance, no R16 row, no trust
   mutants (no trusted Lean changed).
+- Fix round 3: selected tests (`mac-pytest.sh --select -- --base de7cb4022 --run`, HEAD `c4a134909`): 158 units,
+  0 failed; the F5 probe exits 0.
 - Selected tests on the final code, before this report (`mac-pytest.sh --select -- --base de7cb4022 --run`, HEAD
   `acf66cbb`): 158 units, 0 failed. Before that, the 6 speech files (313 tests), then `tests/test_speech_polar_lean.py`
   (145 passed).
