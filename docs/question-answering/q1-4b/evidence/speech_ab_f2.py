@@ -1,25 +1,29 @@
-"""Q1.4b's check of its saved A/B (plan Q1.4; DRI 2026-10-27 item 4, DRI 2026-10-28 items 1-5).
+"""Q1.4b's check of its saved A/B (plan Q1.4; DRI 2026-10-27 item 4, DRI 2026-10-28 items 1-5, DRI note 2026-10-28c).
 
-The corpus, its recording and its comparison are Q1.4's (`../../q1-4/evidence/speech_ab.py write` and `compare`):
-base.json is `write` at the merge base, head.json is `write` at this item's head, and delta.json is `compare` of the
-two; `augment` adds the cases of `extra_cases` to both. A `verdict` row must be in exactly one signed class.
+The corpus starts with Q1.4's (`../../q1-4/evidence/speech_ab.py write`): base.json.gz is it recorded at the merge
+base (`VE_AB_ROOT`), head.json.gz at this item's head, each grown by `augment SOURCE OUT [JOBS]` with the cases of
+`extra_cases` not yet recorded; `delta BASE HEAD OUT` writes delta.json (`summary`: the counts and the `verdict` and
+`lint` rows) and `delta-md DELTA FIRST` DELTA.md's class (d) rows. A `verdict` row must be in exactly one signed class.
 2026-10-27 item 4: (a) `gloss`, a declared gloss the base read as its one predicate and Lean's lexicon refuses; (b)
 `folded`, a name the base matched after folding its case and Lean refuses; (c) `quantified`, the six `Is every/some
 service reviewed?` in Q1.4's environments, which the base refused as `UnknownAlternative` and Lean reads with a
 quantifier. 2026-10-28: item 1 `negative`, a declared negative verbalisation; item 2 `bare_name` and `quoted_name`,
 a name with a digit or underscore; item 3 `determiner`, a grammar determiner outside (c); items 4 and 5
-`unverbalised`, a predicate declared without a verbalisation; item 5 `opening`, a question of `opening_cases` (one
-sentence per grammar rule, so every way a sentence opens, in every added environment and both polarities) that the
-base refused and Lean reads. A `class` or
-`wording` row must keep R1's (a) and (b) or be R2's rule O1, as in Q1.4. A `lint` row fails, and so does a class
-whose count is not the recorded one, so an empty delta or a head-against-head comparison fails too. `audit` and
-`check` are the same check.
+`unverbalised`, a predicate declared without a verbalisation; item 5 `opening`, any other verdict change of an `Is `
+question this item added. The added questions are `opening_cases`: every word each environment declares in every
+place of every grammar rule's sentence, every pair in every two places, case, spacing and nesting variants, in every
+environment the evidence asks in. A `class` or `wording` row must keep R1's (a) and (b) or be R2's rule O1, as in
+Q1.4. `check` (and `audit`, the same check) recomputes every row from the two recordings and exits 1 on a `lint`
+row, a verdict outside its class, a class whose count is not the recorded one (so an empty delta or a head-against-
+head comparison fails too), a delta.json that is not the recordings' summary, or a question `coverage` finds unasked.
 """
 from __future__ import annotations
 
 import functools
+import gzip
 import itertools
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -65,27 +69,68 @@ def _spellings(raw: dict, word: str) -> list[list[str]]:
     return [form.removeprefix("{0} ").split() for form in forms]
 
 
-def _lexicon(raw: dict, word: str) -> dict[str, list[list[str]]]:
-    """The words of the grammar's vocabulary categories (the nonterminals no grammar rule defines) for the
-    environment `raw` and its one-place predicate `word` over `service`, as `ve/english.py` builds them, each as its
-    alternatives: `atom` and `relative` have one per polarity (`_spellings`); a category the environment cannot fill
-    (`relation`, `object_relative`) is absent, so no sentence is built through it."""
+# The word categories each slot is spelled from (`vocabulary`); the grammar's other vocabulary categories are spelled
+# from them as `ve/english.py` builds them (an atom is a name and a predicate form, `natural_subject` an adjective and a
+# noun, ...); `relation` and `object_relative` need a two-place verbalisation, which no added environment declares
+# (`coverage` fails if one does).
+WORD_CATEGORIES = ("constant", "noun", "label", "adjective", "relative")
+COMPOSITE = {"atom": ("constant", "relative"), "copula_relative": ("is", "adjective"),
+             "copula_adjective": ("adjective",), "natural_subject": ("adjective", "noun"),
+             "owner_clause": ("has", "an", "owner")}
+UNFILLED = ("relation", "object_relative")
+HOLE = object()  # where a nonterminal goes in a sentence being built
+NEST = "nest "  # the tag prefix of a sentence nested in another rule's formula place (`nest_tag`)
+
+
+def vocabulary(raw: dict) -> dict[str, list[tuple[str, ...]]]:
+    """Every word the environment `raw` declares, by word category, as the alternatives a slot of that category is
+    spelled with (DRI note 2026-10-28c (a)): `constant` every declared constant, bare and quoted (the spellings the
+    reader accepts); `noun` every sort's singular and plural (the sort's name when it declares none, which Lean
+    reads); `label` every sort's variable letter numbered 1; `adjective` every one-place predicate whose form is
+    `is <word>` (`ve/natural.py`'s adjective); `relative` each one-place predicate's two forms (`_spellings`). Built from
+    the whole declaration, never from a chosen word; the first alternative of each is of the first one-place
+    predicate's sort, so each rule's first sentence is well sorted."""
     from ve.environment import Environment
     from ve.printer import _fluent_variable_letters
 
-    noun = raw["vocabulary"]["sorts"]["service"]["verbalisation"]["singular"]
-    constant = next(n for n, c in raw["vocabulary"]["constants"].items() if c["sort"] == "service")
-    letter = _fluent_variable_letters({"service": noun}, Environment(raw))["service"]
-    spellings = _spellings(raw, word)
-    return {"noun": [[noun]], "constant": [[constant]], "label": [[letter + "1"]], "adjective": [[word]],
-            "atom": [[constant, *form] for form in spellings], "relative": spellings,
-            "copula_relative": [["is", word]], "copula_adjective": [[word]], "natural_subject": [[word, noun]],
-            "owner_clause": [["has", "an", "owner"]]}
+    v = raw["vocabulary"]
+    unary = [name for name, p in v["predicates"].items() if len(p["arguments"]) == 1]
+    first = v["predicates"][unary[0]]["arguments"][0] if unary else None
+    sorts = sorted(v["sorts"], key=lambda s: s != first)
+    nouns = {s: [v["sorts"][s]["verbalisation"][n] for n in ("singular", "plural")] if "verbalisation" in v["sorts"][s]
+             else [s] for s in sorts}
+    letters = _fluent_variable_letters({s: nouns[s][0] for s in sorts}, Environment(raw))
+    forms = {name: _spellings(raw, name) for name in unary}
+    return {"constant": [(spelling,) for c in sorted(v["constants"], key=lambda c: v["constants"][c]["sort"] != first)
+                         for spelling in (c, f'"{c}"')],
+            "noun": [(noun,) for s in sorts for noun in nouns[s]],
+            "label": [(letters[s] + "1",) for s in sorts],
+            "adjective": [(f[0][1],) for f in forms.values() if len(f[0]) == 2 and f[0][0] == "is"
+                          and re.fullmatch("[a-z]+", f[0][1])],
+            "relative": [tuple(form) for f in forms.values() for form in f]}
+
+
+def closed_classes() -> dict[str, list[tuple]]:
+    """The grammar's closed word classes, each a nonterminal all of whose rules are words only (a marker, a list
+    marker, an article, a count, a relative pronoun), as slot alternatives: one per rule, in rule order. Read from the
+    grammar source, so a class or word the grammar gains is a slot before anyone lists it."""
+    rules = json.loads(GRAMMAR.read_text())
+    tok = lambda s: (s["p"],) if type(s) is dict and s.get("before") else _symbol(s)
+    by = {}
+    for r in rules:
+        by.setdefault(r["lhs"], []).append(r["rhs"])
+    return {lhs: [tuple(tok(s) for s in rhs) for rhs in alts] for lhs, alts in by.items()
+            if all(_symbol(s) is not None for rhs in alts for s in rhs)}
+
+
+def slot_words(raw: dict) -> dict[str, list[tuple]]:
+    """Each slot category's alternatives: the environment's words (`vocabulary`) and the grammar's closed classes."""
+    return vocabulary(raw) | closed_classes()
 
 
 class _Slot(str):
-    """A vocabulary category's place in a sentence, filled with each of its alternatives when the sentence is
-    spelled; while sentences are built it weighs as its first alternative."""
+    """A word category's place in a sentence, filled with each of its alternatives when the sentence is spelled;
+    while sentences are built it weighs as its first alternative."""
 
 
 def _symbol(s) -> str | None:
@@ -101,19 +146,22 @@ def _join(tokens: list) -> str:
     return text
 
 
-def opening_sentences(raw: dict, word: str) -> dict[str, list[list]]:
+def opening_templates(raw: dict) -> dict[str, list]:
     """One sentence per grammar rule, so every way a sentence can open (a marker, `it is not the case that`, `there
     is a`, `this is impossible`, a determiner, a term, a listing, ...) is a corpus case. Each rule is put in the
     shortest sentence that reaches its left-hand side, with every other nonterminal at its shortest expansion; read
     from the grammar source and the environment's words, so a rule the grammar gains is a case before anyone lists
-    it. Returns tag -> the sentence spelled with every combination of its categories' alternatives (each polarity in
-    each place, the first one the all-positive sentence), as tokens (a `before` punctuation mark is a 1-tuple). A
-    rule no sentence reaches is absent."""
+    it. Returns tag -> the sentence as tokens: a word, a `before` punctuation mark as a 1-tuple, or a `_Slot` of a
+    word category or closed class (`slot_words`). A rule no sentence reaches is absent. Also, under `nest_tag`, each
+    rule's sentence that is a formula (`nestable`) in each formula place of each rule (DRI note 2026-10-28c hunt 1:
+    `Is it not the case that every service is reviewed?`)."""
     rules = json.loads(GRAMMAR.read_text())
-    lexicon = _lexicon(raw, word)
+    words = slot_words(raw)
     tok = lambda s: (s["p"],) if type(s) is dict and s.get("before") else _symbol(s)
-    size = lambda tokens: sum(len(lexicon[t][0]) if type(t) is _Slot else 1 for t in tokens)
-    shortest = {category: [_Slot(category)] for category in lexicon}
+    size = lambda tokens: sum(len(words[t][0]) if type(t) is _Slot else 1 for t in tokens)
+    shortest = {c: [_Slot(c)] for c, alternatives in words.items() if alternatives}
+    shortest |= {c: [_Slot(p) if p in WORD_CATEGORIES else p for p in parts] for c, parts in COMPOSITE.items()
+                 if all(p not in WORD_CATEGORIES or words[p] for p in parts)}
     changed = True
     while changed:  # the shortest expansion of each nonterminal, to a fixed point
         changed = False
@@ -122,7 +170,7 @@ def opening_sentences(raw: dict, word: str) -> dict[str, list[list]]:
                 out = [t for s in r["rhs"] for t in ([tok(s)] if _symbol(s) is not None else shortest[s["n"]])]
                 if r["lhs"] not in shortest or size(out) < size(shortest[r["lhs"]]):
                     shortest[r["lhs"]], changed = out, True
-    hole = object()
+    hole = HOLE
     context = {"sentence": [hole]}  # the shortest sentence with a hole where the nonterminal goes
     changed = True
     while changed:
@@ -140,43 +188,213 @@ def opening_sentences(raw: dict, word: str) -> dict[str, list[list]]:
                 out = context[r["lhs"]][:at] + inner + context[r["lhs"]][at + 1:]
                 if s["n"] not in context or size(out) < size(context[s["n"]]):
                     context[s["n"]], changed = out, True
-    sentences = {}
+    templates = {}
     for r in rules:
         if r["lhs"] in context and all(_symbol(s) is not None or s["n"] in shortest for s in r["rhs"]):
             body = [t for s in r["rhs"] for t in ([tok(s)] if _symbol(s) is not None else shortest[s["n"]])]
             at = context[r["lhs"]].index(hole)
-            slotted = context[r["lhs"]][:at] + body + context[r["lhs"]][at + 1:]
-            sentences[r["tag"]] = [[w for t, fill in zip(slotted, fills) for w in (fill if type(t) is _Slot else [t])]
-                                   for fills in itertools.product(*(lexicon[t] if type(t) is _Slot else [None]
-                                                                    for t in slotted))]
-    return sentences
+            templates[r["tag"]] = context[r["lhs"]][:at] + body + context[r["lhs"]][at + 1:]
+    assert context["formula"] == [hole]  # every rule below `sentence` and `marker` has a formula as its sentence
+    formulas = nestable(rules, templates)
+    for r in rules:  # hunt 1: each such rule's sentence in each place of a rule that takes a formula
+        for i, s in enumerate(r["rhs"]):
+            if r["tag"] in templates and s == {"n": "formula"}:
+                outer = [t for j, o in enumerate(r["rhs"]) for t in (
+                    [hole] if j == i else [tok(o)] if _symbol(o) is not None else shortest[o["n"]])]
+                at = context[r["lhs"]].index(hole)
+                outer = context[r["lhs"]][:at] + outer + context[r["lhs"]][at + 1:]
+                for f in formulas:
+                    at = outer.index(hole)
+                    templates[nest_tag(r["tag"], i, f)] = outer[:at] + templates[f] + outer[at + 1:]
+    return templates
 
 
-def opening_inputs() -> list[tuple[str, str]]:
-    """(env, predicate): every environment of `extra_environments` with each of its one-place predicates over
-    `service`, so an environment's own words (a declared negative form, a predicate without a verbalisation, more
-    names) are asked in every opening (recheck 1 F6)."""
-    return [(env, name) for env, raw in extra_environments().items()
-            for name, declared in raw["vocabulary"]["predicates"].items() if declared["arguments"] == ["service"]]
+def nestable(rules: list[dict], templates: dict) -> list[str]:
+    """The rules whose sentence is a formula (all but `sentence` and `marker` rules), which a formula place takes."""
+    return [r["tag"] for r in rules if r["lhs"] not in ("sentence", "marker") and r["tag"] in templates]
 
 
+def nest_tag(outer: str, place: int, inner: str) -> str:
+    """The tag of the sentence with formula rule `inner`'s sentence in rule `outer`'s formula at `place`."""
+    return f"{NEST}{outer}@{place} {inner}"
+
+
+def covering(sizes: list[int]) -> list[tuple[int, ...]]:
+    """Rows of alternative indexes, one per slot: the all-first row, each row that changes one slot of it (each slot
+    varied on its own: `Is there a service that is not reviewed?`), then greedy rows until every two slots have taken
+    every pair of their alternatives together (a pairwise covering array, deterministic). The full product of every
+    environment's words is about 22 million sentences (FOLLOW-UP in REPORT.md); these are what `coverage` requires."""
+    n = len(sizes)
+    if n < 2:
+        return list(itertools.product(*map(range, sizes)))
+    rows = list(dict.fromkeys([(0,) * n] + [(0,) * k + (v,) + (0,) * (n - k - 1)
+                                            for k in range(n) for v in range(1, sizes[k])]))
+    uncovered = {(i, a, j, b) for i, j in itertools.combinations(range(n), 2)
+                 for a in range(sizes[i]) for b in range(sizes[j])}
+    uncovered -= {(p, row[p], q, row[q]) for row in rows for p, q in itertools.combinations(range(n), 2)}
+    while uncovered:
+        i, a, j, b = min(uncovered)
+        row = [None] * n
+        row[i], row[j] = a, b
+        for k in range(n):
+            if row[k] is None:
+                gain = lambda v: sum(((p, row[p], k, v) if p < k else (k, v, p, row[p])) in uncovered
+                                     for p in range(n) if row[p] is not None)
+                row[k] = max(range(sizes[k]), key=lambda v: (gain(v), -v))
+        uncovered -= {(p, row[p], q, row[q]) for p, q in itertools.combinations(range(n), 2)}
+        rows.append(tuple(row))
+    return rows
+
+
+def opening_sentences(raw: dict) -> dict[str, tuple[list, list[tuple]]]:
+    """tag -> (`opening_templates`' sentence, its fills): each fill is one alternative of `slot_words` per slot, in
+    the rows of `covering`, so every slot is spelled with every declared word of its category and every two slots
+    with every pair of them (`Is "atlas2" the same as beacon?`, each polarity in each place); a nested sentence
+    (`nest_tag`) is spelled once, with each slot's first word."""
+    words = slot_words(raw)
+    out = {}
+    for tag, template in opening_templates(raw).items():
+        slots = [t for t in template if type(t) is _Slot]
+        rows = covering([len(words[s]) for s in slots]) if not tag.startswith(NEST) else [(0,) * len(slots)]
+        out[tag] = (template, [tuple(words[s][i] for s, i in zip(slots, row)) for row in rows])
+    return out
+
+
+def spell(template: list, fills: tuple) -> list:
+    """The template's tokens with each slot replaced by its fill's words."""
+    it = iter(fills)
+    return [w for t in template for w in (next(it) if type(t) is _Slot else [t])]
+
+
+def questions(tokens: list) -> list[str]:
+    """The sentence asked with the auxiliary taken out, once for each `is` it has (the inverse of the question reader
+    putting the auxiliary back in one gap, spec 2.2)."""
+    return [f"Is {_join(tokens[:i] + tokens[i + 1:])}?" for i, t in enumerate(tokens) if t == "is"]
+
+
+def variants(tokens: list) -> list[tuple[str, str]]:
+    """(axis, question) for a rule's sentence (DRI note 2026-10-28c hunts 1 and 2): `case`, each word capitalised and
+    in capitals, one at a time (`Is Every service reviewed?`); `space`, each of its questions with each gap doubled,
+    and with each of Q1.4's space characters (`speech_ab.SPACES`) before it, after it and in its first gap."""
+    out = [("case", q) for i, t in enumerate(tokens) if type(t) is str and t.isalpha()
+           for v in dict.fromkeys((t.capitalize(), t.upper())) if v != t
+           for q in questions(tokens[:i] + [v] + tokens[i + 1:])]
+    for q in questions(tokens):
+        gaps = [i for i, c in enumerate(q) if c == " "]
+        out += [("space", q[:i] + " " + q[i:]) for i in gaps]
+        out += [("space", q + c) for c in speech_ab.SPACES] + [("space", c + q) for c in speech_ab.SPACES]
+        out += [("space", q[:gaps[0]] + c + q[gaps[0] + 1:]) for c in speech_ab.SPACES if c != " "]
+    return out
+
+
+def base_shaped(template: list) -> bool:
+    """Whether the sentence is `<name> <predicate form>`, the one shape the base reads as `Is <name> <words>?`: its
+    `variants` are asked for every row, so each name and each declared form in each case and spacing (hunt 2: `Is
+    BEACON reviewed?`, `Is atlas reviewed YET never reviewed?`); other rules' for their first row."""
+    return template == [_Slot("constant"), _Slot("relative")]
+
+
+@functools.cache
+def all_sentences() -> dict[str, dict]:
+    """env -> `opening_sentences` for every environment of `extra_environments`, computed once per run."""
+    return {env: opening_sentences(raw) for env, raw in extra_environments().items()}
+
+
+@functools.cache
 def opening_cases() -> list[tuple[str, str, str]]:
-    """(env, wording, rule tag): each sentence of `opening_sentences` asked with the auxiliary taken out, once for
-    each `is` it has (the inverse of the question reader putting the auxiliary back in one gap, spec 2.2), for every
-    pair of `opening_inputs`."""
-    raws = extra_environments()
+    """(env, wording, tag): every question of every sentence of `all_sentences`, and the `variants` of each rule's
+    first sentence (tagged `<axis> <rule tag>`); computed once per run."""
     cases = {}
-    for env, word in opening_inputs():
-        for tag, spelled in opening_sentences(raws[env], word).items():
-            for tokens in spelled:
-                for i, t in enumerate(tokens):
-                    if t == "is":
-                        cases.setdefault((env, f"Is {_join(tokens[:i] + tokens[i + 1:])}?"), tag)
+    for env, sentences in all_sentences().items():
+        for tag, (template, rows) in sentences.items():
+            for fills in rows:
+                for wording in questions(spell(template, fills)):
+                    cases.setdefault((env, wording), tag)
+            if not tag.startswith(NEST):
+                for fills in rows if base_shaped(template) else rows[:1]:
+                    for axis, wording in variants(spell(template, fills)):
+                        cases.setdefault((env, wording), f"{axis} {tag}")
     return [(env, wording, tag) for (env, wording), tag in cases.items()]
 
 
+def coverage(sentences: dict[str, dict], recorded: set) -> list[str]:
+    """What the corpus left unasked; the corpus is complete only when this is empty (DRI note 2026-10-28c (a)). For
+    every environment of `extra_environments`, every grammar rule has a sentence unless it needs a category the
+    environment cannot fill, and in each rule's sentence every two slots were spelled with every pair of the words
+    `slot_words` gives their categories, and each slot with each word on its own (the rule's first sentence with that
+    one slot changed), in sentences whose questions are all in
+    `recorded` (the saved corpus's (env, wording) pairs); each `variants` question of its first sentence (of every
+    sentence, for a `base_shaped` rule) is in
+    `recorded`; and each `nestable` rule's sentence was asked in each formula place of the rule (`nest_tag`). A rule
+    whose sentence cannot have an `is` is no question and is skipped. `sentences` is env -> `opening_sentences`."""
+    rules = json.loads(GRAMMAR.read_text())
+    categories = ({s["n"] for r in rules for s in r["rhs"] if type(s) is dict and "n" in s}
+                  - {r["lhs"] for r in rules})
+    missing = [f"category {c}: spelled by nothing" for c in sorted(
+        categories - set(WORD_CATEGORIES) - set(COMPOSITE) - set(UNFILLED))]
+    for env, raw in extra_environments().items():
+        binary = [n for n, p in raw["vocabulary"]["predicates"].items()
+                  if len(p["arguments"]) == 2 and "verbalisation" in p]
+        if binary:
+            missing.append(f"{env}: two-place verbalisations {binary}, which no slot spells")
+        if env not in sentences:
+            missing.append(f"{env}: environment never asked")
+            continue
+        words = slot_words(raw)
+        filled = {c for c, alternatives in words.items() if alternatives}
+        filled |= {c for c, parts in COMPOSITE.items() if all(p not in WORD_CATEGORIES or p in filled for p in parts)}
+        changed = True
+        while changed:  # the nonterminals some sentence can spell
+            changed = False
+            for r in rules:
+                if r["lhs"] not in filled and all(_symbol(s) is not None or s["n"] in filled for s in r["rhs"]):
+                    filled.add(r["lhs"])
+                    changed = True
+        for r in rules:
+            tag = r["tag"]
+            if tag not in sentences[env]:
+                if all(_symbol(s) is not None or s["n"] in filled for s in r["rhs"]):
+                    missing.append(f"{env} {tag}: grammar rule with no sentence")
+                continue
+            template, rows = sentences[env][tag]
+            slots = [t for t in template if type(t) is _Slot]
+            if "is" not in template and not any("is" in w for s in slots for w in words[s]):
+                continue
+            for fills in itertools.product(*(words[s] for s in slots)) if base_shaped(template) else [
+                    tuple(words[s][0] for s in slots)]:
+                for axis, q in variants(spell(template, fills)):
+                    if (env, q) not in recorded:
+                        missing.append(f"{env} {tag}: {axis} variant {q!r} never asked")
+            for i, s in enumerate(r["rhs"]):
+                for f in nestable(rules, sentences[env]):
+                    nested = sentences[env].get(nest_tag(tag, i, f)) if s == {"n": "formula"} else ()
+                    if nested == ():
+                        continue
+                    if nested is None or not any(all((env, q) in recorded for q in questions(spell(nested[0], fill)))
+                                                 for fill in nested[1]):
+                        missing.append(f"{env} {tag}: {f} in formula place {i} never asked")
+            asked = [f for f in rows if len(f) == len(slots)
+                     and (qs := questions(spell(template, f))) and all((env, q) in recorded for q in qs)]
+            first = tuple(words[s][0] for s in slots)
+            for i, s in enumerate(slots):  # each slot varied on its own from the first sentence
+                for a in words[s][1:]:
+                    if first[:i] + (a,) + first[i + 1:] not in asked:
+                        missing.append(f"{env} {tag}: slot {i + 1} ({s}) {' '.join(a)!r} alone never asked")
+            for (i, s), (j, t) in itertools.combinations_with_replacement(enumerate(slots), 2):
+                seen = {(f[i], f[j]) for f in asked}
+                for a in words[s]:
+                    for b in (words[t] if i != j else [a]):
+                        if (a, b) not in seen:
+                            missing.append(f"{env} {tag}: slot {i + 1} ({s}) {' '.join(a)!r}" + (
+                                "" if i == j else f" with slot {j + 1} ({t}) {' '.join(b)!r}") + " never asked")
+    return missing
+
+
+
+
 def extra_environments() -> dict[str, dict]:
-    """The environments of the added cases; `speech` is Q1.4's."""
+    """The environments of the added cases: Q1.4's (`speech_ab.environments`) and the three this item adds, so every
+    environment the evidence asks in is asked in every opening (DRI note 2026-10-28c (b), hunt 1)."""
     from test_speech_acts import environment
 
     negative = environment().to_dict()
@@ -186,7 +404,7 @@ def extra_environments() -> dict[str, dict]:
         named["vocabulary"]["constants"][name] = {"sort": "service", "description": name}
     unverbalised = environment().to_dict()
     unverbalised["vocabulary"]["predicates"][UNVERBALISED] = {"arguments": ["service"], "description": UNVERBALISED}
-    return {"speech": environment().to_dict(), "negative": negative, "names": named, "unverbalised": unverbalised}
+    return {**speech_ab.environments(), "negative": negative, "names": named, "unverbalised": unverbalised}
 
 
 def extra_cases() -> list[tuple[str, str, dict]]:
@@ -209,23 +427,78 @@ def named_cases() -> list[tuple[str, str]]:
             + [("names", f"Is {spelling} reviewed?") for name in SPECIAL_NAMES for spelling in (name, f'"{name}"')])
 
 
-def augment(source: str, out: str) -> None:
-    """Append the new cases to a saved base/head corpus using this checkout's parser.
+def load(path) -> list[dict]:
+    """A saved corpus: a list of {env, wording, outcome}, gzipped when its name ends in `.gz`."""
+    path = Path(path)
+    return json.loads(gzip.decompress(path.read_bytes()) if path.suffix == ".gz" else path.read_text())
+
+
+def save(rows: list[dict], path) -> None:
+    """Write a saved corpus, gzipped (reproducibly: no time stamp) when its name ends in `.gz`."""
+    path = Path(path)
+    if path.suffix == ".gz":
+        path.write_bytes(gzip.compress(json.dumps(rows, sort_keys=True).encode() + b"\n", mtime=0))
+    else:
+        path.write_text(json.dumps(rows, indent=1, sort_keys=True) + "\n")
+
+
+@functools.cache
+def _environment(env: str):
+    from ve.environment import Environment
+    return Environment(extra_environments()[env])
+
+
+def _outcomes(batch: list[tuple[str, str]]) -> list[dict]:
+    """`speech_ab.outcome` of each (env, wording), in a worker of `outcomes`."""
+    return [speech_ab.outcome(_environment(env), wording) for env, wording in batch]
+
+
+def outcomes(cases: list[tuple[str, str]], jobs: int = 1) -> list[dict]:
+    """`speech_ab.outcome` of each (env, wording) in order, in `jobs` processes (each with its own Lean service)."""
+    batches = [cases[i:i + 200] for i in range(0, len(cases), 200)]
+    if jobs <= 1:
+        return [o for batch in batches for o in _outcomes(batch)]
+    import multiprocessing
+    from concurrent.futures import ProcessPoolExecutor
+    with ProcessPoolExecutor(jobs, mp_context=multiprocessing.get_context("spawn")) as pool:
+        return [o for done in pool.map(_outcomes, batches) for o in done]
+
+
+def augment(source: str, out: str, jobs: int = 1) -> None:
+    """Append the new cases to a saved base/head corpus using this checkout's parser, in `jobs` processes.
 
     VE_AB_ROOT selects the base parser when recording base answers; the corpus
     and this script always come from the current checkout.
     """
-    from ve.environment import Environment
-
-    rows = json.loads(Path(source).read_text())
+    rows = load(source)
     keys = {(row["env"], row["wording"]) for row in rows}
-    for env_name, wording, raw in extra_cases():
-        if (env_name, wording) in keys:  # in Q1.4's corpus, or recorded by an earlier augment
-            continue
-        keys.add((env_name, wording))
-        rows.append({"env": env_name, "wording": wording,
-                     "outcome": speech_ab.outcome(Environment(raw), wording)})
-    Path(out).write_text(json.dumps(rows, indent=1, sort_keys=True) + "\n")
+    new = []
+    for env_name, wording, _ in extra_cases():
+        if (env_name, wording) not in keys:  # in Q1.4's corpus, or recorded by an earlier augment
+            keys.add((env_name, wording))
+            new.append((env_name, wording))
+    rows += [{"env": env, "wording": wording, "outcome": outcome}
+             for (env, wording), outcome in zip(new, outcomes(new, jobs))]
+    save(rows, out)
+
+
+def compared(base: list[dict], head: list[dict]) -> list[dict]:
+    """Every row whose outcome differs between the two recordings, classed by Q1.4's `speech_ab.kind_of`."""
+    if [(r["env"], r["wording"]) for r in base] != [(r["env"], r["wording"]) for r in head]:
+        raise SystemExit("the two runs do not cover the same corpus")
+    return [{"class": k, "env": b["env"], "wording": b["wording"], "base": b["outcome"], "head": h["outcome"]}
+            for b, h in zip(base, head) if (k := speech_ab.kind_of(b["outcome"], h["outcome"])) is not None]
+
+
+def summary(base: list[dict], head: list[dict], rows: list[dict] | None = None) -> dict:
+    """delta.json: the record and class counts of `compared` (`rows`, when the caller has it), and its `verdict` and
+    `lint` rows (the ones a ruling signs); its `class` and `wording` rows are recomputed from the recordings by
+    `check`."""
+    rows = compared(base, head) if rows is None else rows
+    return {"records": len(base), "counts": {k: sum(r["class"] == k for r in rows)
+                                             for k in ("verdict", "class", "wording", "lint")},
+            "rows": [r for r in rows if r["class"] in ("verdict", "lint")]}
+
 
 GLOSS_PREDICATES = {name for name, _ in speech_ab.GLOSSES} | {"cat"}
 
@@ -240,13 +513,13 @@ def _named(r: dict) -> tuple[str, str] | None:
 
 def gloss(r: dict) -> bool:
     named = _named(r)
-    return (r["class"] == "verdict" and named is not None and named[0] == named[1]
+    return (r["class"] == "verdict" and (r["env"], r["wording"]) in _keys(q14_cases) and named is not None and named[0] == named[1]
             and r["base"]["content"]["body"][1] in GLOSS_PREDICATES and r["head"].get("code") == "SyntaxError")
 
 
 def folded(r: dict) -> bool:
     named = _named(r)
-    return (r["class"] == "verdict" and named is not None and named[0] != named[1]
+    return (r["class"] == "verdict" and (r["env"], r["wording"]) in _keys(q14_cases) and named is not None and named[0] != named[1]
             and named[0].casefold() == named[1] and named[0] != named[1].capitalize()
             and r["head"].get("code") == "SyntaxError")
 
@@ -310,18 +583,29 @@ def unverbalised(r: dict) -> bool:
 
 @functools.cache
 def _keys(cases) -> frozenset[tuple[str, str]]:
-    """The (env, wording) pairs of `named_cases`, `reader_cases` or `opening_cases`, computed once per run."""
+    """The (env, wording) pairs of `named_cases`, `reader_cases` or `q14_cases`, computed once per run."""
     return frozenset((env, wording) for env, wording, *_ in cases())
 
 
+def q14_cases() -> list[tuple[str, str]]:
+    """Q1.4's corpus (`speech_ab.write`), which every recording starts with."""
+    return [(env, wording) for env in speech_ab.environments() for wording in speech_ab.wordings()]
+
+
 def opening(r: dict) -> bool:
-    """Item 5 (class (d)): an `opening_cases` question outside the cases recorded before it (`named_cases`,
-    `reader_cases`) that the base refused and the head reads as a polar question; that the reading is `ve ask`'s is
-    the test's to show (`test_every_opening_verdict_row_is_read_as_ve_ask_reads_it`)."""
-    body = r["head"].get("content", {}).get("body")
-    return (r["class"] == "verdict"
-            and (r["env"], r["wording"]) in _keys(opening_cases) - _keys(reader_cases) - _keys(named_cases)
-            and "error" in r["base"] and r["head"].get("kind") == "question" and type(body) is list)
+    """Item 5 (class (d)): a verdict change of an `Is ` question (after any leading space) this item added, outside
+    Q1.4's corpus and the cases recorded before it (`named_cases`, `reader_cases`), in either direction (item 5 signs
+    any `Is ` verdict change meeting (i)-(iii)); that the head's verdict and text are `ve ask`'s is the test's to show
+    (`test_every_opening_verdict_row_is_read_as_ve_ask_reads_it`), and that every question of the class is asked is
+    `coverage`'s."""
+    return (r["class"] == "verdict" and r["wording"].lstrip("".join(speech_ab.SPACES)).startswith("Is ")
+            and (r["env"], r["wording"]) not in _earlier())
+
+
+@functools.cache
+def _earlier() -> frozenset[tuple[str, str]]:
+    """The cases recorded before class (d): Q1.4's corpus, `reader_cases` and `named_cases`."""
+    return _keys(q14_cases) | _keys(reader_cases) | _keys(named_cases)
 
 
 # Each class, its decision (manage-agents/reviews/) and its count in the recorded delta.
@@ -331,28 +615,91 @@ CLASSES = {"gloss": gloss, "folded": folded, "quantified": quantified, "negative
 DECIDED = {"gloss": 10, "folded": 3, "quantified": 6,  # dri-decisions-20261027-featureplan-gates.md item 4
            "negative": len(NEGATIVE_SUBJECTS), "bare_name": len(SPECIAL_NAMES),  # dri-decisions-20261028-q1-4b.md
            "quoted_name": len(SPECIAL_NAMES), "determiner": 1, "unverbalised": 8,  # items 1, 2, 2, 3, 4 and 5
-           "opening": 206}  # item 5
+           "opening": 6608}  # item 5
+
+
+@functools.cache
+def recordings(folder: str) -> tuple[list[dict], list[dict], list[dict]]:
+    """The saved base and head corpora in `folder` and their `compared` rows, read once per run."""
+    base, head = load(Path(folder) / "base.json.gz"), load(Path(folder) / "head.json.gz")
+    return base, head, compared(base, head)
+
+
+def audit(rows: list[dict]) -> tuple[dict, list[dict]]:
+    """Each class's count over `rows`, and the failing rows: a `lint` row, a `verdict` row not in exactly one signed
+    class, a `class` or `wording` row that neither keeps R1 nor is O1."""
+    counts = {name: sum(map(test, rows)) for name, test in CLASSES.items()}
+    return counts, [r for r in rows if r["class"] == "lint"
+                    or r["class"] == "verdict" and sum(test(r) for test in CLASSES.values()) != 1
+                    or r["class"] in ("class", "wording") and not speech_ab.order_o1(r) and not speech_ab.keeps(r)]
 
 
 def check(delta_path: str) -> int:
-    rows = json.loads(Path(delta_path).read_text())["rows"]
-    counts = {name: sum(map(test, rows)) for name, test in CLASSES.items()}
-    refusals = [r for r in rows if r["class"] in ("class", "wording")]
-    bad = [r for r in rows if r["class"] == "lint"
-           or r["class"] == "verdict" and sum(test(r) for test in CLASSES.values()) != 1
-           or r in refusals and not speech_ab.order_o1(r) and not speech_ab.keeps(r)]
+    """The audit: delta.json is `summary` of base.json.gz and head.json.gz beside it, `audit` finds no failing row
+    and the recorded counts, and the corpus is complete (`coverage`); any other case exits 1."""
+    base, head, rows = recordings(str(Path(delta_path).parent))
+    same = json.loads(Path(delta_path).read_text()) == summary(base, head, rows)
+    counts, bad = audit(rows)
     for r in bad:
         print("fails:", r["class"], r["env"], repr(r["wording"]), r["base"].get("message"), "->",
               r["head"].get("message"))
+    if not same:
+        print("fails: delta.json is not the summary of base.json.gz and head.json.gz")
+    missing = coverage(all_sentences(), {(r["env"], r["wording"]) for r in head})
+    for line in missing[:20]:
+        print("unasked:", line)
+    refusals = [r for r in rows if r["class"] in ("class", "wording")]
     o1 = [r for r in refusals if speech_ab.order_o1(r)]
     print(json.dumps({"rows": len(rows), **counts, "O1": len(o1), "R1": len(refusals) - len(o1),
-                      "failing": len(bad)}))
-    return 1 if bad or counts != DECIDED else 0
+                      "failing": len(bad), "unasked": len(missing)}))
+    return 1 if bad or counts != DECIDED or not same or missing else 0
+
+
+KINDS = {"words": "opening", "case": "case variant", "space": "spacing variant", "nest": "nested in",
+         "earlier": "a case an earlier generator asked (still recorded)"}
+
+
+def _group(r: dict, tags: dict) -> tuple[str, str]:
+    """A class (d) row's DELTA group: the axis that asked it (`KINDS`) and its rule (a nested one's outer rule)."""
+    tag = tags.get((r["env"], r["wording"]))
+    if tag is None:
+        return "earlier", ""
+    if tag.startswith(NEST):
+        return "nest", tag.split()[1].split("@")[0]
+    parts = tag.split()
+    return (parts[0], parts[1]) if len(parts) == 2 else ("words", parts[0])
+
+
+def _cell(outcome: dict) -> str:
+    if "error" in outcome:
+        return f"`{outcome.get('code')}` {outcome.get('message', '')[:100]}".replace("|", "\\|")
+    return f"polar `{json.dumps(outcome['content'].get('body'))}`"
+
+
+def delta_md(delta_path: str, first: int) -> str:
+    """DELTA.md's class (d) rows, one per `_group`, numbered from P`first`: its count, environments and first row."""
+    tags = {(env, wording): tag for env, wording, tag in opening_cases()}
+    groups = {}
+    for r in json.loads(Path(delta_path).read_text())["rows"]:
+        if opening(r):
+            groups.setdefault(_group(r, tags), []).append(r)
+    test = "tests/test_speech_polar_lean.py::test_every_opening_verdict_row_is_read_as_ve_ask_reads_it"
+    return "".join(
+        f"| P{n} | (d) {KINDS[kind]}" + (f", rule `{rule}`" if rule else "") + f", {len(rows):,} rows | "
+        f"{', '.join(sorted({r['env'] for r in rows}))} | `{json.dumps(rows[0]['wording'])[1:-1]}` | "
+        f"{_cell(rows[0]['base'])} | {_cell(rows[0]['head'])} | SIGNED by the DRI 2026-10-28 "
+        f"(reviews/dri-decisions-20261028-q1-4b.md item 5); condition test `{test}` |\n"
+        for n, ((kind, rule), rows) in enumerate(sorted(groups.items()), first))
 
 
 if __name__ == "__main__":
-    if sys.argv[1:2] == ["augment"] and len(sys.argv) == 4:
-        augment(sys.argv[2], sys.argv[3])
+    if sys.argv[1:2] == ["augment"] and len(sys.argv) in (4, 5):
+        augment(sys.argv[2], sys.argv[3], int(sys.argv[4]) if len(sys.argv) == 5 else 1)
+    elif sys.argv[1:2] == ["delta-md"] and len(sys.argv) == 4:
+        sys.stdout.write(delta_md(sys.argv[2], int(sys.argv[3])))
+    elif sys.argv[1:2] == ["delta"] and len(sys.argv) == 5:
+        Path(sys.argv[4]).write_text(json.dumps(summary(load(sys.argv[2]), load(sys.argv[3])), indent=1,
+                                                sort_keys=True) + "\n")
     elif sys.argv[1:2] not in (["check"], ["audit"]) or len(sys.argv) != 3:
         raise SystemExit(__doc__)
     else:
