@@ -1,0 +1,5 @@
+trust_mutants: 5 definitions, 36 mutants (36 to run), 4 jobs, base 8ec4055dd652
+UNKNOWN lean/VE/Readings/Wire.lean:279 VE.Readings.Wire.decodeDocument (D[V], trusted) list-empty: sets -> [] (lean/VE/Readings/Wire.lean:279: don't know how to synthesize implicit argument `α`)
+SURVIVOR lean/VE/Readings/Wire.lean:279 VE.Readings.Wire.decodeDocument (D[V], trusted) list-first: re.profiles -> (re.profiles.take 1)
+SURVIVOR lean/VE/Readings/Wire.lean:279 VE.Readings.Wire.decodeDocument (D[V], trusted) list-drop-last: re.profiles -> (re.profiles.dropLast)
+SURVIVOR lean/VE/Readings/Wire.lean:279 VE.Readings.Wire.decodeDocument (D[V], trusted) list-first: sets -> (sets.take 1)
