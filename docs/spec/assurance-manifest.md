@@ -223,7 +223,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Calc/Run.lean` | 366 | 366 | 1–366 | `b09fc345ee8e…` |
 | `lean/VE/Scope/Wire.lean` | 154 | 154 | 1–154 | `618b837c4a7f…` |
 | `lean/VE/Defaults/Route.lean` | 46 | 46 | 1–46 | `97feda58f0f4…` |
-| **total** | | **38,966** | | |
+| **total** | | **39,002** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner
