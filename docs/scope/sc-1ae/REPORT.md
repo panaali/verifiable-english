@@ -6,6 +6,21 @@ statements (`decodeNorm_name`, `govern_strings`, `govern_no_new_symbols`, `gover
 (**sc-1af**): `Lean.Json.parse` is built of `partial def`s, so no lemma about its output can be proved. So, as the
 decision says, SC-1b's statements may not take `JsonWF` as a hypothesis until sc-1af proves it.
 
+## fix1 (review `sc-1ae-review.final.md`)
+
+One B finding, fixed as a class. **F1 (B)**: deleting `JsonWF`'s `bool` and `num` still built, so the four
+statements could hold vacuously on every real document. The example: F-sym's document is now proved well formed
+(`parts_wf`, through `hcDoc_wf` and `part_wf`, `lean/VE/Scope/Examples.lean`; `part` writes its guard as a term,
+and a `#guard` shows it equals the text `j` parses), a rule object with `"sign": false` too (`leadPart_wf`), and
+`govern_no_new_symbols` is applied to F-sym's document on its `BlockBound` side (both hypotheses proved, the same
+class: no fixture had them hold at once). The general lemma `jsonWF_mkObj` (`lean/VE/Scope/Theorems.lean`) builds
+each. The class: no tool dropped a constructor of a new inductive, so an unread one went unseen. `tools/trust_mutants.py`
+now has `ctor-drop` (each constructor dropped alone, its doc comment with it); a SURVIVOR's detail names the proofs
+it breaks; and `--allow` never allows a constructor drop that breaks no proof, so an unread constructor stays a
+SURVIVOR (exit 1) whatever the allow file says. The PROBE F1 failed before the fix and passes after it (errors at
+`Examples.lean:789` `.num` and `:824` `.bool`). F2, F3 and F5 (C) are left to their FOLLOW-UPs; F4's two allow
+reasons are reworded (`eq-le` INVALID by hand; `BlockBound` `body-false`'s meaningful kill is `Examples.lean:764`).
+
 - Branch `feature/sc-1ae`, worktree `/home/seyran/code/ve-sc-1ae`, merge base `72a241fba` (main, after a merge of
   main at `a93aa5df3`; the work started on `c2a0ee977`).
 - Decision: `reviews/dri-decisions-20261027-featureplan-gates.md` item 2 (manage-agents), fix (a). Plan and spec on
@@ -97,7 +112,17 @@ sc-3ac (rank 88) follows on the same files.
 
 ## Seeded bugs (Lean; [mutants.json](mutants.json), [trust-mutants.json](trust-mutants.json))
 
-Lean is the only language whose product code changed (the Python change is a test's case list).
+Lean is the only language whose product code changed (the Python changes are a test's case list and, in fix1, the
+`trust_mutants` tool and its tests).
+
+**fix1 (F1).** Rerun on `30896a2c9` with the new tool (a full run, its digest changed): 16 mutants of 4 definitions,
+**3 KILLED**, **13 ALLOWED**, 0 SURVIVOR, 0 UNKNOWN, exit 0. The 9 new ones are `ctor-drop`s of `JsonWF` (6) and
+`HasStr` (3); each names the proofs it breaks (`JsonWF`'s `bool`: `Examples.lean:820` `leadPart_wf`; `num`:
+`Examples.lean:772` `part_wf`). Seeded bugs in the tool (Python), each restored: (1) no `ctor-drop` generated:
+`tests/test_trust_mutants.py::test_the_generator_drops_each_constructor_of_an_inductive`, `..._of_json_wf` and
+`test_a_constructor_no_proof_reads_survives_with_no_proof_named_and_is_never_allowed` fail; (2) a SURVIVOR's detail
+empty: the last fails; (3) `--allow` applied to an unread constructor: the last fails. Lean: PROBE F1, below as
+`JsonWF-no-bool-num`.
 
 **Mechanical (R16, checklist 13a).** `zsh mac-pytest.sh --trustmut -- --max-mutants 1000 --allow
 docs/scope/sc-1ae/trust-mutants-allow.json --rescore docs/scope/sc-1ae/trust-mutants.json --json
@@ -107,9 +132,9 @@ SURVIVOR, 0 UNKNOWN, exit 0. The first run (`trust-mutants-run1.json`) had 3 sur
 only evaluated checks, and `HasStr` and `BlockBound` are propositions no `#guard` or `decide` can read. The allow
 file gives each of these definitions and operators its proof kill (below), as me-12a did. `HasStr`'s `= -> ≤`
 is text Lean refuses. `payload`'s `rfl` fixture became a `#guard`, which kills its arms. `JsonWF` has no operator
-site the tool mutates; the hand mutants cover it.
+site the tool mutated before fix1 (`ctor-drop`, above).
 
-**By hand (18).** Each was applied, built with `cd lean && lake build VE.Scope.Examples`, and restored from git. The
+**By hand (19).** Each was applied, built with `cd lean && lake build VE.Scope.Examples`, and restored from git. The
 tree was clean after each.
 
 | Mutant (definition) | Claimed behaviour | First failure |
@@ -129,6 +154,7 @@ tree was clean after each.
 | `tm-BlockBound-body-true`, `tm-BlockBound-body-false` | proof kills of the allowed mechanical mutants | `Theorems.lean:1153` |
 | `tm-HasStr-eq-ne` | proof kill of the allowed mechanical mutant | `Theorems.lean:587` (23 errors) |
 | `tm-payload-{frame,reguard,carveOut}-null` | the arms, with proofs (the `#guard` kills them mechanically) | `Theorems.lean:915`, `:932`, `:946` |
+| `JsonWF-no-bool-num` (`JsonWF`, fix1 F1) | a document with a boolean or a number is well formed | `Examples.lean:789` `part_wf`, `:824` `leadPart_wf` |
 
 A dropped `.WF` fails where the proof uses it. F-raw's `#guard`s are the mechanised reason it cannot be proved
 otherwise: each computes a `govern` answer, or a decoded name, that breaks the statement on a tree no parser builds.
@@ -229,7 +255,8 @@ Definitions and theorems (spec section -> place):
 - 5.1 `govern_no_new_symbols` -> Theorems.lean:1149
 - 5.1 `govern_preserves` -> Theorems.lean:1157 (`unitsOf_patch` :1064, `setObjVal_ne` :1049, `idOf_set` :1061)
 - JSON lemmas: `getObjVal_map` :617 (any `Impl`, via `impl_get_map`), `mkObj_get_mem` :768, `hasStr_set` :790, `hasStr_substOwn` :833, `jsonWF_top` :758
-- 7.1 F-sym -> Examples.lean:751
+- 7.1 F-sym -> Examples.lean:751; its document well formed (`parts_wf`, `hcDoc_wf`, `part_wf`, `leadPart_wf`) and `govern_no_new_symbols` on it -> Examples.lean:768 (fix1 F1); `jsonWF_mkObj` -> Theorems.lean:778
+- fix1 F1 class: `tools/trust_mutants.py` `ctor-drop` (in `mutants`), the SURVIVOR detail (in `run`), `allowed`; tests `tests/test_trust_mutants.py::test_the_generator_drops_each_constructor_*`, `::test_a_constructor_no_proof_reads_*`
 Regression commands:
 - `cd lean && PATH=~/.elan/bin:$PATH lake build VE.Scope.Examples` (every proof and fixture of this item)
 - `uv run pytest -q tests/test_scope_lean.py`
@@ -237,5 +264,5 @@ Regression commands:
 - `uv run python tools/trust_map.py --check`
 Generated files: `lean/declarations.txt`, `lean/statements.txt`, `lean/predicates.txt`, `lean/VE/Audit.lean`, `lean/axioms.txt`, `lean/checkers.lock`: `uv run python tools/regen_generated.py --write` (`--skip route-cases` without the Rust release binary). The audit rejects primed theorem names.
 trust_mutants: `zsh /home/seyran/code/manage-agents/mac-pytest.sh --trustmut -- --max-mutants 1000 --allow docs/scope/sc-1ae/trust-mutants-allow.json --rescore docs/scope/sc-1ae/trust-mutants.json --json docs/scope/sc-1ae/trust-mutants.json`
-Hand mutants: the 18 edits in `docs/scope/sc-1ae/mutants.json` (`mutation.from` -> `mutation.to`), each built with the regression build above.
+Hand mutants: the 19 edits in `docs/scope/sc-1ae/mutants.json` (`mutation.from` -> `mutation.to`), each built with the regression build above.
 ## END FIXMAP
