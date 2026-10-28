@@ -113,7 +113,8 @@ def test_an_effects_definition_no_theorem_uses_is_reported(name):
 
 
 @pytest.mark.parametrize("name", ["VE.Scope.baseObj", "VE.Scope.ordered", "VE.Scope.govern", "VE.Scope.applyEffect",
-                                  "VE.Scope.addOver", "VE.Scope.edgesInto", "VE.Scope.memo"])
+                                  "VE.Scope.addOver", "VE.Scope.edgesInto", "VE.Scope.memo", "VE.Scope.JsonWF",
+                                  "VE.Scope.HasStr", "VE.Scope.payload", "VE.Scope.BlockBound"])
 def test_a_govern_definition_no_theorem_uses_is_reported(name):
-    """The same for `govern` (sc-1ac, sc-1ad): each named definition is reported once its theorems are dropped."""
+    """The same for `govern` (sc-1ac, sc-1ad, sc-1ae): each named definition is reported once its theorems are dropped."""
     assert f"VE/Scope/Govern.lean: {name}" in unexercised_without("VE.Scope.Govern", name)
