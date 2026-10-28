@@ -4,7 +4,7 @@
 `lean/audit.py`, regen and `trust_map --check` pass; trust mutants exit 0 (26 killed, 10 allowed). What changed: Lean types an `acts@0`
 document, checks its models, builds its Background and reads its single acts on the readings route (D-33 for a joined
 act); the UDHR probe document u076 is CHECKED end to end through `ve document check`. Open: ap-1bg (section 5). Size:
-about 600 hand-written lines, at the limit (section 4).
+634 added and 40 changed hand-written lines, about 35 over the ~600 rule (section 4).
 
 Plan and spec on `main`: [act-phrases-PLAN.md](../../spec/act-phrases-PLAN.md) 4 "AP-1";
 [act-phrases.md](../../spec/act-phrases.md) 4.1-4.4, 6.4 (`Readings/Wire.lean`), 10 (D-33); `DRI-DECISIONS-PHASE2.md`
@@ -81,9 +81,11 @@ recorded expression; it is written with `Option.elim` instead). jt-2 merged (`6b
   last Lean change, which re-ran every mutant of `Readings/Wire.lean`). The allow file names six equivalent mutants
   (`isEmpty` of a list's first or last element; a sorted profile list starts with `acts@0`) and four that do not
   elaborate (`[]` without an element type). An earlier run sent to the cloud was refused by its verifier and abandoned.
-- **Size** (`git diff --numstat` against the merge base, generated files, evidence JSON and the oracle excluded): about
-  470 added and 40 changed hand-written lines in code, tests, fixtures, the delta script and side tables, plus DELTA and
-  this report: about 600. Two parts were reverted or cut to stay there (deviation 5).
+- **Size** (`git diff --numstat` against the merge base; generated files, evidence JSON, mutants JSON and the oracle
+  excluded): 634 added and 40 changed hand-written lines: Lean 134 (guards 120), Python 31, tests and fixtures 122, the
+  oracle tool 15, the delta script 114, side tables 40, DELTA and this report about 175. That is about 35 over the ~600
+  rule; deviation 5's revert (the filled environment's shape, binding and fuzz tests, about 90 lines) and the
+  compacted fixtures kept it there, and the rest is named ap-1bg.
 - **Evidence:** [evidence/delta.json](evidence/delta.json) (369 records, 364 identical, DELTA rows 2-3);
   [evidence/commits.txt](evidence/commits.txt) (`git log main..HEAD --no-merges`).
 - **Tests:** `lake build` (1,126 jobs) and `lean/audit.py` PASS; `regen_generated.py --check`: 33 checked; selected tests
