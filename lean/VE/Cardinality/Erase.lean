@@ -73,11 +73,13 @@ def CFormula.erase (E : CEnv) (fs : List CFormula) : CFormula → QFormula
 def nonnegPremises (E : CEnv) (fs : List CFormula) : List QFormula :=
   (regionTable E fs).map fun e => .le (.num dl 0) (.const dl e.1)
 
-/-- One premise per counted universal statement: it holds exactly when the regions outside its body sum to 0. -/
-def bridgePremises (E : CEnv) (fs : List CFormula) : List QFormula :=
-  (countedUniversals E fs).map fun x =>
-    let z : QFormula := .eq (regionSum E fs x.1 (.not x.2.1)) (.num dl 0)
-    .and (.implies x.2.2 z) (.implies z x.2.2)
+/-- A counted universal statement's bridge: it holds exactly when the regions outside its body sum to 0. -/
+def bridge (E : CEnv) (fs : List CFormula) (x : String × Body × QFormula) : QFormula :=
+  let z : QFormula := .eq (regionSum E fs x.1 (.not x.2.1)) (.num dl 0)
+  .and (.implies x.2.2 z) (.implies z x.2.2)
+
+/-- One premise per counted universal statement. -/
+def bridgePremises (E : CEnv) (fs : List CFormula) : List QFormula := (countedUniversals E fs).map (bridge E fs)
 
 /-- The problem handed to W6a: region premises, bridges and the erased premises; the erased conclusion. -/
 def erasedProblem (E : CEnv) (ps : List CFormula) (c : CFormula) : List QFormula × QFormula :=
