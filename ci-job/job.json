@@ -1,0 +1,17 @@
+{
+ "job": "ap-1bd-501f211b",
+ "head": "cf661e96129b5e4baab94f94d09d87a1d24f1dae",
+ "argv": [
+  "ap-1bd-501f211b",
+  "cf661e96129b5e4baab94f94d09d87a1d24f1dae",
+  "8ec4055dd65295fb46bb5ab3ef123e4201f16169",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-6f94fd07ef07.tar.zst",
+  "d0e9b0be0f6cd45da213f2e4b3cd71f7362e6e8415a4941decb27266f9be4dfb",
+  "--max-mutants",
+  "1000",
+  "--allow",
+  "docs/act-phrases/ap-1bd/trust-mutants-allow.json",
+  "--jobs",
+  "4"
+ ]
+}
