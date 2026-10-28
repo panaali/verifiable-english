@@ -20,10 +20,10 @@ import pytest
 from tests import lean_routes
 from tests.test_document import unit, write_doc
 from tests.test_readings_s1_document import SHALL, candidate
-from tests.test_readings_s1_lean import norm
-from tests.test_readings_sd_document import QUERY
-from tests.test_readings_sd_lean import env_sd
+from tests.test_readings_s1_lean import SOFT_PROFILES, env_k, norm
 from ve.errors import CheckerUnavailable, VEError
+
+QUERY = ["forall", "agent", ["forall", "user", ["binary", "avoid_required", ["var", 1], ["var", 0]]]]
 
 LABEL = "default:exception:no-deception"
 DE8 = "Under every reading, the conclusion follows under the assumptions listed for that reading."
@@ -48,7 +48,8 @@ def soft_document(tmp_path, sets, fixed=()):
     from ve.readings_route import document_wire, run_lean
     from ve.readings_s1 import record_situations, search
     from ve.softnorms import SoftEnvironment
-    raw = env_sd()
+    raw = env_k(profiles=("norm-defaults@0", *SOFT_PROFILES))
+    raw["vocabulary"]["predicates"]["avoid_required"]["regulated"]["default"] = "unspecified"
     env = SoftEnvironment(raw)
     text, units, reading_sets = b"", [], []
     for n, (set_id, sentence, readings) in enumerate(sets, 1):

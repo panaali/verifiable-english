@@ -7,13 +7,13 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 | | count |
 |---|---:|
 | leaves:bound | 251 |
-| leaves:closed domain | 267 |
-| leaves:none | 1366 |
+| leaves:closed domain | 285 |
+| leaves:none | 1388 |
 | modes | 38 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 965 |
-| today:shape | 518 |
+| today:not probed | 987 |
+| today:shape | 536 |
 | today:unbound | 137 |
 | answers | 561 |
 | probes | 10204 |
@@ -1946,6 +1946,26 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/components/*/answer/dead_readings/*/index` | integer | none |  | minimum | 0 | not probed |
 | `/components/*/answer/dead_readings/*/set` | string | none |  |  | 0 | not probed |
 | `/components/*/answer/decided_units/*` | string | none |  |  | 0 | not probed |
+| `/components/*/answer/default/conflict` | string | closed domain | enum |  | 0 | shape |
+| `/components/*/answer/default/english/*/choice/*/0` | string | none |  |  | 0 | not probed |
+| `/components/*/answer/default/english/*/choice/*/1` | integer | none |  | minimum | 0 | not probed |
+| `/components/*/answer/default/english/*/row` | string | closed domain | const |  | 0 | shape |
+| `/components/*/answer/default/english/*/row` | string | closed domain | enum |  | 0 | shape |
+| `/components/*/answer/default/per_choice/*/assumptions/*` | string | none |  |  | 0 | not probed |
+| `/components/*/answer/default/per_choice/*/basis` | string | closed domain | enum |  | 0 | shape |
+| `/components/*/answer/default/per_choice/*/choice/*/0` | string | none |  |  | 0 | not probed |
+| `/components/*/answer/default/per_choice/*/choice/*/1` | integer | none |  | minimum | 0 | not probed |
+| `/components/*/answer/default/per_choice/*/collision/deciders/*` | string | none |  |  | 0 | not probed |
+| `/components/*/answer/default/per_choice/*/collision/rules/0` | string | none |  |  | 0 | not probed |
+| `/components/*/answer/default/per_choice/*/collision/rules/1` | string | none |  |  | 0 | not probed |
+| `/components/*/answer/default/per_choice/*/collision/tuple/*` | string | none |  |  | 0 | not probed |
+| `/components/*/answer/default/per_choice/*/conflict` | string | closed domain | const |  | 0 | shape |
+| `/components/*/answer/default/per_choice/*/conflict` | string | closed domain | enum |  | 0 | shape |
+| `/components/*/answer/default/per_choice/*/query` | string | closed domain | const |  | 0 | shape |
+| `/components/*/answer/default/per_choice/*/query` | string | closed domain | enum |  | 0 | shape |
+| `/components/*/answer/default/per_choice/*/situation/filling/@key` | key | none |  |  | 0 | not probed |
+| `/components/*/answer/default/per_choice/*/situation/filling/{}/*/*` | string | none |  |  | 0 | not probed |
+| `/components/*/answer/default/verdict` | string | closed domain | enum |  | 0 | shape |
 | `/components/*/answer/english/*/frame` | string | none |  |  | 0 | not probed |
 | `/components/*/answer/english/*/gaps/*/0` | string | none |  |  | 0 | not probed |
 | `/components/*/answer/english/*/gaps/*/1/*` | string | none |  |  | 0 | not probed |
@@ -2198,6 +2218,26 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/dead_readings/*/index` | integer | none |  | minimum | 0 | not probed |
 | `/dead_readings/*/set` | string | none |  |  | 0 | not probed |
 | `/decided_units/*` | string | none |  |  | 0 | not probed |
+| `/default/conflict` | string | closed domain | enum |  | 0 | shape |
+| `/default/english/*/choice/*/0` | string | none |  |  | 0 | not probed |
+| `/default/english/*/choice/*/1` | integer | none |  | minimum | 0 | not probed |
+| `/default/english/*/row` | string | closed domain | const |  | 0 | shape |
+| `/default/english/*/row` | string | closed domain | enum |  | 0 | shape |
+| `/default/per_choice/*/assumptions/*` | string | none |  |  | 0 | not probed |
+| `/default/per_choice/*/basis` | string | closed domain | enum |  | 0 | shape |
+| `/default/per_choice/*/choice/*/0` | string | none |  |  | 0 | not probed |
+| `/default/per_choice/*/choice/*/1` | integer | none |  | minimum | 0 | not probed |
+| `/default/per_choice/*/collision/deciders/*` | string | none |  |  | 0 | not probed |
+| `/default/per_choice/*/collision/rules/0` | string | none |  |  | 0 | not probed |
+| `/default/per_choice/*/collision/rules/1` | string | none |  |  | 0 | not probed |
+| `/default/per_choice/*/collision/tuple/*` | string | none |  |  | 0 | not probed |
+| `/default/per_choice/*/conflict` | string | closed domain | const |  | 0 | shape |
+| `/default/per_choice/*/conflict` | string | closed domain | enum |  | 0 | shape |
+| `/default/per_choice/*/query` | string | closed domain | const |  | 0 | shape |
+| `/default/per_choice/*/query` | string | closed domain | enum |  | 0 | shape |
+| `/default/per_choice/*/situation/filling/@key` | key | none |  |  | 0 | not probed |
+| `/default/per_choice/*/situation/filling/{}/*/*` | string | none |  |  | 0 | not probed |
+| `/default/verdict` | string | closed domain | enum |  | 0 | shape |
 | `/document_hash` | string | none |  | pattern | 5 | unbound |
 | `/english/*/component` | string | none |  |  | 0 | not probed |
 | `/english/*/frame` | string | none |  |  | 5 | not probed |
@@ -2576,6 +2616,18 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/components/*/answer/dead` |  |  |  |  |
 | `/components/*/answer/dead_readings` |  |  |  |  |
 | `/components/*/answer/decided_units` |  |  |  |  |
+| `/components/*/answer/default/english` |  |  |  |  |
+| `/components/*/answer/default/english/*/choice` |  |  |  |  |
+| `/components/*/answer/default/english/*/choice/*` |  |  |  |  |
+| `/components/*/answer/default/per_choice` |  |  |  |  |
+| `/components/*/answer/default/per_choice/*/assumptions` |  |  |  |  |
+| `/components/*/answer/default/per_choice/*/choice` |  |  |  |  |
+| `/components/*/answer/default/per_choice/*/choice/*` |  |  |  |  |
+| `/components/*/answer/default/per_choice/*/collision/deciders` |  |  |  |  |
+| `/components/*/answer/default/per_choice/*/collision/rules` |  |  |  |  |
+| `/components/*/answer/default/per_choice/*/collision/tuple` |  |  |  |  |
+| `/components/*/answer/default/per_choice/*/situation/filling/{}` |  |  |  |  |
+| `/components/*/answer/default/per_choice/*/situation/filling/{}/*` |  |  |  |  |
 | `/components/*/answer/english` |  |  |  |  |
 | `/components/*/answer/english/*/gaps` |  |  |  |  |
 | `/components/*/answer/english/*/gaps/*` |  |  |  |  |
@@ -2682,6 +2734,18 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/dead` |  |  |  |  |
 | `/dead_readings` |  |  |  |  |
 | `/decided_units` |  |  |  |  |
+| `/default/english` |  |  |  |  |
+| `/default/english/*/choice` |  |  |  |  |
+| `/default/english/*/choice/*` |  |  |  |  |
+| `/default/per_choice` |  |  |  |  |
+| `/default/per_choice/*/assumptions` |  |  |  |  |
+| `/default/per_choice/*/choice` |  |  |  |  |
+| `/default/per_choice/*/choice/*` |  |  |  |  |
+| `/default/per_choice/*/collision/deciders` |  |  |  |  |
+| `/default/per_choice/*/collision/rules` |  |  |  |  |
+| `/default/per_choice/*/collision/tuple` |  |  |  |  |
+| `/default/per_choice/*/situation/filling/{}` |  |  |  |  |
+| `/default/per_choice/*/situation/filling/{}/*` |  |  |  |  |
 | `/english` |  |  |  |  |
 | `/english/*/gaps` |  |  |  |  |
 | `/english/*/gaps/*` |  |  |  |  |
