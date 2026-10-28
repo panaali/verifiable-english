@@ -683,5 +683,9 @@ too; one requirement missing, one other profile, or the layer without `documents
   (["cardinality@0", "order@0", "readings@1", "relational-fol@0", "time@0"], "cardinality@0 with readings@1"),
   (["cardinality@0", "judgments@0", "order@0", "relational-fol@0", "time@0"], "judgments@0 requires documents@1")].all
   fun (ps, e) => gateOf profileTable ps == .error s!"UnsupportedProfile: {e}"
+-- The row refuses every other profile of the table, in code point order: a new row decides how it composes.
+#guard cardinalityOthers == ((profileTable.map (·.profile)).eraseDups.filter fun q =>
+  !["cardinality@0", "documents@1", "judgments@0", "order@0", "relational-fol@0", "time@0"].contains q).mergeSort
+  fun a b => a < b || a == b
 
 end VE.Compose.Examples
