@@ -115,6 +115,7 @@
 'VE.Acts.build_wf' depends on axioms: [propext, Quot.sound]
 'VE.Acts.closed_cl' depends on axioms: [propext, Quot.sound]
 'VE.Acts.closed_ok' depends on axioms: [propext, Quot.sound]
+'VE.Acts.derived_iff' depends on axioms: [propext, Quot.sound]
 'VE.Acts.distinctTexts_ok' depends on axioms: [propext]
 'VE.Acts.firstEqualPair_none' depends on axioms: [propext]
 'VE.Acts.frameRules_ok' depends on axioms: [propext, Quot.sound]

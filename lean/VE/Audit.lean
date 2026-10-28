@@ -523,6 +523,7 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.build_wf
 #print axioms VE.Acts.closed_cl
 #print axioms VE.Acts.closed_ok
+#print axioms VE.Acts.derived_iff
 #print axioms VE.Acts.distinctTexts_ok
 #print axioms VE.Acts.firstEqualPair_none
 #print axioms VE.Acts.frameRules_ok
