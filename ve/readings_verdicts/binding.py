@@ -51,6 +51,8 @@ class _Frame:
             a.get("content") for R in active for a in R["readings"]]
         self.rules = soft_rules(c["norm"] for c in contents if type(c) is dict and type(c.get("norm")) is dict)
         self.choices, self.completion, self.finding_sets = choices, completion, list(finding_sets)
+        # A choice's `defaults-*` request and Lean's `defaults-elaborate` row on it (DF-3; the enumerated route's).
+        self.defaults = None
         self.candidates = [[R.id, i] for R in self.sets for i in range(len(R.candidates))]
 
     def label(self, label):
@@ -304,12 +306,13 @@ def _check_answer(row, case, frame):
         _check_result(row, case, frame, rows)
         _check_dead(row, case, frame)
         _check_english(row, frame, rows)
+        _check_default(row, case, frame)
     for entry in row["per_choice"]:
         pieces = {k for k in sent.get(json.dumps(entry["choice"]), {}) if k != "choice"}
         for piece, error in entry["errors"].items():
             raise CheckerUnavailable(f"ReadingsConformance: Lean refused the {piece} Python built on a reading's "
                                      f"document: {error}")
-        for piece in sorted(pieces - {"conflict"}):
+        for piece in sorted(pieces - {"conflict", "default"}):
             # The lower route checks no witness of a choice its packages certify CONFLICT-FREE.
             if piece == "witness" and entry["conflict"] == "CONFLICT-FREE" and piece not in entry["evidence"]:
                 continue
@@ -320,6 +323,50 @@ def _check_answer(row, case, frame):
         if note.get("accepted") is not True:
             raise CheckerUnavailable("ReadingsConformance: Lean does not confirm the dead reading Python's prover "
                                      "certified")
+
+
+def _check_default(row, case, frame):
+    """The `default` member (defeasible plan DF-3), bound to the request: present exactly when the request asks
+    (`assume_no_exception`) and every strict conflict row is CONFLICT-FREE (`readings_wire_default_present`); one
+    entry per choice of the answer, in its order; a basis exactly with `proved`, its assumptions the labels of the
+    choice's own `default_premises` (Lean's `defaults-elaborate` on the choice's norms, `frame.defaults`), each once
+    and in their order, none exactly with `strict`, `needs` only beside the strict countermodel the request sent; a
+    collision names one of the choice's colliding pairs at a tuple in the request's collision model, with its rules'
+    deciders; every English row names a choice of the member whose entry carries what the row renders. Which rows
+    the member has and what they say is Lean's."""
+    member = row.get("default")
+    asked = case.get("assume_no_exception") is True
+    _need((member is not None) == (asked and all(e["conflict"] == "CONFLICT-FREE" for e in row["per_choice"])))
+    if member is None:
+        return
+    from ..defaults import _deciders, _rules, _situation, _tuple
+    sent = {json.dumps(e["choice"]): e for e in case["evidence"]}
+    entries = {json.dumps(e["choice"]): e for e in member["per_choice"]}
+    _need([e["choice"] for e in member["per_choice"]] == [e["choice"] for e in row["per_choice"]])
+    for key, entry in entries.items():
+        base, elaborated = frame.defaults(json.loads(key))
+        labels = [label for label, _ in elaborated["default_premises"]]
+        evidence = sent.get(key, {})
+        if "basis" in entry:
+            kept = entry["assumptions"]
+            _need(kept == [label for label in labels if label in kept])
+            _need((entry["basis"] == "strict") == (kept == []))
+            _need(entry["basis"] != "needs" or "countermodel" in evidence)
+        if "collision" in entry:
+            found, witness = entry["collision"], evidence.get("default", {}).get("collision")
+            pairs = [[m, n] for m, n, _ in elaborated["coherence_targets"]]
+            _need(witness is not None and found["rules"] in pairs and found["rules"] == witness["rules"])
+            rules = [_rules(base)[name] for name in found["rules"]]
+            _tuple(base, rules[0], found["tuple"], witness, "collision tuple")
+            _need(found["deciders"] == _deciders(base, rules))
+            _situation(entry, witness)
+    for line in member["english"]:
+        if line["row"] == "DE8":
+            continue
+        entry = entries.get(json.dumps(line["choice"]))
+        _need(entry is not None)
+        _need({"DE7": "collision" in entry, "assumptions": entry.get("basis") in ("needs", "unsettled"),
+               "DE12": entry.get("basis") == "unsettled"}[line["row"]])
 
 
 def _check_sup_answer(row, case, route):

@@ -260,6 +260,34 @@ theorem d_bases_sound (z : DVerdicts) :
       exact (basis_needs_sound _ dv.wfc _ _ _ m hs).1
   · cases hp
 
+/-! ### What the member shows agrees with its rows -/
+
+theorem dBasis_proved {e : XEvidence U X} {d : DEvidence U D X} {A Γ : List VE.Formula} {φ : VE.Formula}
+    {p : Basis × List String} (h : dBasis e d A Γ φ = some p) : dQueryRow e d A Γ φ = .proved := by
+  unfold dBasis at h
+  unfold dQueryRow
+  split at h
+  · rw [if_pos (by assumption)]
+  · cases h
+
+/-- A checked collision is never beside a checked gate (`collision_sound`, `defaultCoherenceCheck_sound`), so its row
+    is CONFLICT. -/
+theorem collides_conflict (e : XEvidence U X) (d : DEvidence U D X) (h : d.collides = true) :
+    dConflictRow e d = .conflict := by
+  have hn : d.coherent = false := by
+    cases hc : d.coherent with
+    | false => rfl
+    | true =>
+      exfalso
+      have hd := defaultCoherenceCheck_sound.{0} U D [] d.pairCerts hc
+      unfold DEvidence.collides at h
+      split at h
+      · rename_i w _
+        exact collision_sound _ d.wfc _ _ w.S.M w.S.valid w.F w.m w.n h hd
+      · cases h
+  unfold dConflictRow
+  rw [hn, Bool.and_false, if_neg (by decide), h, Bool.or_true, if_pos rfl]
+
 /-! ### The replay -/
 
 /-- Both branches of `choiceLayeredG` take the choice's soft document as the source's. -/
@@ -399,3 +427,82 @@ theorem readings_wire_default_conflict (j : Lean.Json) (z : DVerdicts) (h : repl
   exact default_conflict_is_gate _ _ _ _ hcs hrs hfree hds hrd hconf
 
 end VE.Readings
+
+/-! ### The `default` member of `readings-verdicts` (plan 2.4) -/
+
+namespace VE.Readings.Run
+open Lean
+open VE.Readings
+open VE.Readings.Wire
+
+def verdictWord : ReadingVerdict → String
+  | .all => "ALL" | .some => "SOME" | .none => "NONE" | .unknown => "UNKNOWN"
+
+/-- One choice's default rows; with FOLLOWS its basis and kept assumptions, with a checked collision the pair, the
+    tuple, DE7's deciders and the situation (`collisionFields`). -/
+def dChoiceJson (z : DVerdicts) (d : (c : Choice) × DChoice z.y.r.N c) : Json :=
+  let A := (choiceDoc z.y.r.N.D d.1).2
+  Json.mkObj ([("choice", choiceJson d.1), ("conflict", .str (word (dConflictRow d.2.1 d.2.2))),
+      ("query", .str (word (dQueryRow d.2.1 d.2.2 A z.y.x.Γ z.y.x.φ)))] ++
+    (match dBasis d.2.1 d.2.2 A z.y.x.Γ z.y.x.φ with
+     | some p => [("basis", .str (VE.Defaults.Wire.basisLabel p.1)), ("assumptions", toJson p.2)]
+     | none => []) ++
+    (match d.2.2.collision, d.2.2.collides with
+     | some w, true => VE.Defaults.Wire.collisionFields (choiceU z.y.r.N d.1) (choiceSoft z.y.r.N d.1) w
+     | _, _ => []))
+
+/-- One English row of the member: DE8, or a row of one choice. -/
+inductive DLine | de8 | de7 (c : Choice) | assumptions (c : Choice) | de12 (c : Choice)
+
+def DLine.json : DLine → Json
+  | .de8 => Json.mkObj [("row", .str "DE8")]
+  | .de7 c => Json.mkObj [("row", .str "DE7"), ("choice", choiceJson c)]
+  | .assumptions c => Json.mkObj [("row", .str "assumptions"), ("choice", choiceJson c)]
+  | .de12 c => Json.mkObj [("row", .str "DE12"), ("choice", choiceJson c)]
+
+/-- The member's English rows, Lean's selection (spec 7.4): with the default conflict fold CONFLICT, DE7 for each
+    choice whose gate fails; with the default fold ALL and some reading not `strict`, DE8, then each such reading's
+    assumption sentences and, for an `unsettled` one, DE12; otherwise none. -/
+def dEnglish (z : DVerdicts) : List DLine :=
+  if foldConflict z.dConflictRows == .conflict then
+    z.ds.filterMap (fun d => if d.2.2.collides then some (.de7 d.1) else none)
+  else if foldEntailment z.dConflictRows z.dQueryRows == .all && z.bases.any (·.2.1 != .strict) then
+    .de8 :: z.bases.flatMap (fun p =>
+      if p.2.1 == .strict then [] else .assumptions p.1 :: if p.2.1 == .unsettled then [.de12 p.1] else [])
+  else []
+
+/-- The member: the default conflict fold and the default fold (`DVerdicts.defaultMember`'s pair), each choice's rows
+    and the English rows. -/
+def defaultJson (z : DVerdicts) : Json :=
+  Json.mkObj [("conflict", .str (word (foldConflict z.dConflictRows))),
+    ("verdict", .str (verdictWord (foldEntailment z.dConflictRows z.dQueryRows))),
+    ("per_choice", Json.arr (z.ds.map (dChoiceJson z)).toArray),
+    ("english", Json.arr ((dEnglish z).map DLine.json).toArray)]
+
+def askedText : String := "InvalidInput: assume_no_exception is true or false, and applies to the query question"
+
+/-- RD-9's `readings-verdicts` under the soft completion (`runVerdictsSD`); when the request asks
+    (`assume_no_exception: true`, the query question, at most 64 compatible choices), RD-9's answer on the same replay
+    (`replaySD`, `ndVerdictsAnswer`) with the `default` member beside it, present only when the strict conflict fold is
+    FREE (`DVerdicts.defaultMember`). -/
+def runVerdictsD (id : String) (b : Admitted2) (j : Json) : Except String Json := do
+  match j.getObjValD "assume_no_exception" with
+  | .null | .bool false => runVerdictsSD id b j
+  | .bool true =>
+    let q ← verdictsRequest b j
+    if q.question = "query" then
+      let r ← admitSDOf b
+      if (choices r.N.D).isEmpty then throw (unsatText r.N.D)
+      if (choices r.N.D).length ≤ maxChoices then
+        let y ← replaySD r "query" q.A j
+        let z ← replayD y j
+        let a := ndVerdictsAnswer id "query" (j.getObjValD "document") r.N.D q.A q.named (some (xInfos y.x)) []
+          q.dead
+        pure (match z.defaultMember with
+          | some _ => a.setObjVal! "default" (defaultJson z)
+          | none => a)
+      else throw "UnsupportedProfile: answers that assume no exception take at most 64 compatible readings"
+    else throw askedText
+  | _ => throw askedText
+
+end VE.Readings.Run
