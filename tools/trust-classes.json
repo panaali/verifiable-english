@@ -7316,7 +7316,8 @@
         "VE.Readings.Wire.keyJson",
         "VE.Readings.Wire.keyText",
         "VE.Readings.Wire.pendingAt",
-        "VE.Readings.Wire.reservedText"
+        "VE.Readings.Wire.reservedText",
+        "VE.Readings.Wire.singleActsOnly"
       ],
       "G[V]": [
         "VE.Readings.Wire.Admitted",
@@ -10048,7 +10049,9 @@
         "VE.Service.Standalone.stripPredicates",
         "VE.Service.Standalone.sugarOf",
         "VE.Service.Standalone.surfaceReader",
-        "VE.Service.Standalone.tableFields"
+        "VE.Service.Standalone.tableFields",
+        "VE.Service.Standalone.regulatedOf",
+        "VE.Service.Standalone.actsRead"
       ],
       "D[I]": [
         "VE.Service.Standalone.legacyEnvironmentId"
@@ -14834,7 +14837,11 @@
         "VE.Service.ActsExamples.ndP",
         "VE.Service.ActsExamples.ndRow",
         "VE.Service.ActsExamples.ndWordings",
-        "VE.Service.ActsExamples.unspecPlain"
+        "VE.Service.ActsExamples.unspecPlain",
+        "VE.Service.ActsExamples.typed",
+        "VE.Service.ActsExamples.every",
+        "VE.Service.ActsExamples.modelled",
+        "VE.Service.ActsExamples.dualEnv"
       ]
     },
     "ResponseShape/Schemas/Calc.lean": {
@@ -15612,6 +15619,29 @@
         "VE.Events.WireExamples.W2",
         "VE.Events.WireExamples.decoded",
         "VE.Events.WireExamples.softP"
+      ]
+    },
+    "VE/Readings/ActsExamples.lean": {
+      "T": [
+        "VE.Readings.ActsExamples.a1",
+        "VE.Readings.ActsExamples.a2",
+        "VE.Readings.ActsExamples.a5",
+        "VE.Readings.ActsExamples.a6",
+        "VE.Readings.ActsExamples.fxs",
+        "VE.Readings.ActsExamples.rdP",
+        "VE.Readings.ActsExamples.reg",
+        "VE.Readings.ActsExamples.env",
+        "VE.Readings.ActsExamples.envA",
+        "VE.Readings.ActsExamples.err",
+        "VE.Readings.ActsExamples.decode",
+        "VE.Readings.ActsExamples.d33",
+        "VE.Readings.ActsExamples.ruleDoc",
+        "VE.Readings.ActsExamples.d4",
+        "VE.Readings.ActsExamples.rule",
+        "VE.Readings.ActsExamples.setDoc",
+        "VE.Readings.ActsExamples.noActs",
+        "VE.Readings.ActsExamples.elabCase",
+        "VE.Readings.ActsExamples.wordings"
       ]
     }
   }
