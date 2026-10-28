@@ -498,6 +498,57 @@ Report, unscored, what changes without N1, without N2 and without N3.
 
 ## 12. Deviations (after running VE; empty at plan time)
 
+From the baseline item `usecase-safetyfw` (2026-10-28; [docs/usecases/safetyfw/REPORT.md](../../docs/usecases/safetyfw/REPORT.md)).
+That item builds the translation, the span accounting and stage 0. It does not answer the key: that is
+`usecase-rsp-run`. No section 1 to 11 cell changed. No key finding: no translation step contradicted a key cell.
+
+1. **One sort for every rule's subject.** Rules speak about a `situation` (a moment of the policy's process), as
+   safety-framework's rules speak about a `proposal`. Section 7's sketch had `model`, `report`, `reviewer`,
+   `proposal`, `requirement` and `day`. Thresholds are constants of sort `threshold` with the source's labels. Days
+   are D3's.
+2. **The row rules quantify over thresholds.** A constant cannot fill an act's slot, so F1 to F4 under RS1 and F5
+   under RS2 are one rule per reading over every listed threshold (`rows-cond`, `rows-uncond`, `f5-strict`,
+   `f5-default`), not one rule per row. RS1 and RS2 are each one set, placed on each row's unit
+   (`rs1_t1` to `rs1_t4`, `rs2_t1` to `rs2_t4`), as M2 counts them.
+3. **Act phrases reworded.** The act-phrase check refuses joins (`and`, `or`, `nor`, `for`), digits and commas
+   outside a fixed phrase. So some acts say less than the sentence, for example "have the Roadmap shared as the
+   policy states", "at least two hundred employees", "within thirty days", "delay AI development as well as
+   deployment", "at least match the posture of the competitors". Each predicate's description keeps the source's full wording. This is AP
+   (fixed phrases) work. No rule's status depends on it.
+4. **Lean's limit of 64 regulated predicates.** The vocabulary needed 67. Three were merged: 3.5's "We will publish
+   a public version" restates F7 (unit `s35-publish`); 3.6.3's written public report restates F16's request for
+   public commentary (`s363-public-comments`); 3.4 step 1 ("will conduct risk assessments and draft") is
+   UNFORMALISED `process_description`.
+5. **RS6, RS8 and RS12 are one set per sentence** (`RS6redact`, `RS6split`, `RS6notice`; `RS8evidence`,
+   `RS8attempt`, `RS8revenue`; `RS12advance`, `RS12strive`, `RS12candid`, `RS12minimize`, `RS12justify`,
+   `RS12review`, `RS12before`), so that no choice on one sentence is forced on another. Section 3.1 states each as
+   one set over "every" such sentence.
+6. **Every reading set is a W2 set with pending readings.** Each reading's rules or premises are named in
+   `build_document.READINGS`. VE's per-choice evaluation, and fsf-r1's content-bearing sets for the sets whose
+   readings are each one rule, are `usecase-rsp-run`'s.
+7. **Attitudes.** The document route admits the attributed acts `says`, `promised`, `believes`, `intends`,
+   `expects` and `denies`. "We want to keep it focused" is written `intends`. The two hopes and the one preference
+   are UNFORMALISED (`hope`, `preference`), not given an act they do not state.
+8. **D2 leaves out T4's harm.** The risk route refuses a harm with no class (`HarmUnclassified: harm_of_automated_rd`,
+   stage 0 P3), and T4 states none. So D2 has the T1 to T3 harms and footnote 1's instance, and S1-T4's "none" is
+   the absence. The threshold descriptions of rows T1 to T3 stay in D1 as OPEN conditions (OT21, OT14), because they
+   define the thresholds. Of the routed units, only footnote 1's instance goes to D2.
+9. **D3 at stage 0** holds the changelog dates and the day counts of F8, F9 and F16 (D1, D2, D3b, D4, D5, each with
+   a certificate VE replays). The cost factor of T5 and the RS9 cadence are not in D3 yet: `t4-cost-factor` waits
+   for QT, and `s31-timing` for ET and QT.
+10. **Open-term records.** Deciders are tokens (`company`, `unstated`, `rso_ceo_board_or_ltbt`,
+    `external_reference`). OT12's three wordings ("promptly", "regularly", "On approximately an annual basis") are
+    one token, `ot12_timing`. OT27 has no record, because RSO duty 2 sits in the LABELLED definition of the RSO's
+    duties.
+11. **Parts of a rule in their own units** (bullet continuations, the row T4 bullets after the first, 4.8's "its
+    effective date ... Change Log") carry no content of their own, and VE labels them LABELLED. Their blocker is
+    their rule's family (`waits` in spans.json).
+12. **Two 3.2 bullets have no rule.** "we will acknowledge when we view certain models as posing significant risks"
+    and "We will put significant effort into investigating" use degree terms that section 3.2 names no open term
+    for. They are UNFORMALISED `degree_term` (JT).
+13. **N2 is applied by kind.** The changelog entries for v1.0 to v3.3 are LABELLED explanations marked `history`, and
+    their dates are routed to D3. N5's answer is that no rule is written from them.
+
 ## 13. Files for the implementation round (not this commit)
 
 `environment.d1.json`, `environment.d2.json`, `environment.d3.json`; `rsp.d1.ve.md`, `rsp.d2.ve.md`, `rsp.d3.ve.md`
