@@ -1638,8 +1638,8 @@ module ScopeBenchMain ee2f1f4bd87baa553cb8515edb1f937a11e999c2e4108e90b867a1df73
 38:0-53:12 def main@ScopeBenchMain
 module SensesMain 05cc0d2c0d864744efa3e0602376447057c5b4710b6188d794e5bae5eeef8d11
 3:0-3:68 def main@SensesMain
-module Serve e12fc724f336784c92f6c0c607f4bd190484e6db2f7af7ea0357abe7b3e7f4c0
-3:0-25:10 def main@Serve
+module Serve 27501a5addd5ffdc0766e711c88d23fb949580331ecdc8250fecca8fade3239a
+4:0-27:10 def main@Serve
 module SpeechActsMain c23ee34c8212d8640da9273099357f993a3ef8fd8ac5b0c88b403a437b038352
 3:0-5:75 def main@SpeechActsMain
 module VE.Acts.Compat 7dd6526608c14887c4b092d1d2425b76e19a7a139bca04683fe738554b48bdbd
@@ -13266,6 +13266,11 @@ module VE.Readings.ActsExamples bdec39830f7db5242fa01ae0828c7ca02e8fa82f9f4be7ff
 69:0-69:112 def VE.Readings.ActsExamples.d4@VE.Readings.ActsExamples
 75:0-76:98 def VE.Readings.ActsExamples.elabCase@VE.Readings.ActsExamples
 77:0-78:83 def VE.Readings.ActsExamples.wordings@VE.Readings.ActsExamples
+module VE.Readings.AdmissionProfile c418ef399d93a0840e32721a5ec94def769d71705dab9c3c2f5039b6a11997cc
+8:0-13:21 def VE.Readings.AdmissionProfile.cpuTicks@VE.Readings.AdmissionProfile
+15:0-28:15 def VE.Readings.AdmissionProfile.timed@VE.Readings.AdmissionProfile
+30:0-57:85 def VE.Readings.AdmissionProfile.profileCase@VE.Readings.AdmissionProfile
+59:0-65:17 def VE.Readings.AdmissionProfile.profileLine@VE.Readings.AdmissionProfile
 module VE.Readings.Asserted 2d8ef381b8bdced4585651fb2fda5ecf0c02bd23ab75fe99c70726f8092b9a12
 20:0-26:16 def VE.Readings.buildAsserted@VE.Readings.Asserted
 28:0-40:43 theorem VE.Readings.build_snd_fold@VE.Readings.Asserted

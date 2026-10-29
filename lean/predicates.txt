@@ -439,6 +439,7 @@ module VE.Question.Spans
 module VE.Question.Strings
 module VE.Question.Texts
 module VE.Readings.ActsExamples
+module VE.Readings.AdmissionProfile
 module VE.Readings.Asserted
 module VE.Readings.Assertions
 module VE.Readings.BaseDown
