@@ -1,0 +1,9 @@
+trust_mutants: 23 definitions, 434 mutants (87 to run), 4 jobs, base 95d65b12edab
+UNKNOWN lean/VE/Events/Wire.lean:116 VE.Events.checkRoles (D[R]) list-empty: V.states -> [] (lean/VE/Events/Wire.lean:116: Invalid field notation: Type of)
+UNKNOWN lean/VE/Events/Wire.lean:117 VE.Events.checkRoles (D[R]) list-empty: (rolePreds V).map -> [] (lean/VE/Events/Wire.lean:117: Function expected at)
+SURVIVOR lean/VE/Events/Wire.lean:105 VE.Events.checkDay (D[R]) list-drop-last: W.sorts -> (W.sorts.dropLast)
+SURVIVOR lean/VE/Events/Wire.lean:58 VE.Events.objectAt (D[R]) list-drop-first: ks -> (ks.drop 1)
+trust_mutants: 62 KILLED, 2 SURVIVOR, 2 UNKNOWN, 14 INVALID, 7 ALLOWED, 0 NOT RUN, 347 OTHER SHARD in 749 s
+trust_mutants: D[R]: 21 KILLED, 2 SURVIVOR, 2 UNKNOWN, 7 INVALID, 134 OTHER SHARD
+trust_mutants: D[V], trusted: 39 KILLED, 7 INVALID, 7 ALLOWED, 208 OTHER SHARD
+trust_mutants: G[V], trusted: 2 KILLED, 5 OTHER SHARD
