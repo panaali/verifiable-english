@@ -1,0 +1,9 @@
+trust_mutants: 23 definitions, 434 mutants (87 to run), 4 jobs, base 95d65b12edab
+UNKNOWN lean/VE/Events/Wire.lean:150 VE.Events.checkPremiseSize (D[R]) list-empty: ls -> [] (lean/VE/Events/Wire.lean:150: Invalid match expression: The type of pattern variable 'l' contains...)
+UNKNOWN lean/VE/Events/Wire.lean:112 VE.Events.checkRoles (D[R]) list-empty: (roleSorts V).map -> [] (lean/VE/Events/Wire.lean:112: Function expected at)
+UNKNOWN lean/VE/Events/Wire.lean:108 VE.Events.checkDay (D[R]) list-empty: V -> [] (lean/VE/Events/Wire.lean:108: Application type mismatch: The argument)
+SURVIVOR lean/VE/Events/Wire.lean:118 VE.Events.checkRoles (D[R]) list-empty: [V.before] -> []
+trust_mutants: 63 KILLED, 1 SURVIVOR, 3 UNKNOWN, 14 INVALID, 6 ALLOWED, 0 NOT RUN, 347 OTHER SHARD in 393 s
+trust_mutants: D[R]: 24 KILLED, 1 SURVIVOR, 3 UNKNOWN, 6 INVALID, 132 OTHER SHARD
+trust_mutants: D[V], trusted: 38 KILLED, 8 INVALID, 6 ALLOWED, 209 OTHER SHARD
+trust_mutants: G[V], trusted: 1 KILLED, 6 OTHER SHARD
