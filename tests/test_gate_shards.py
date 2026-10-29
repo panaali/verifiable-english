@@ -38,7 +38,8 @@ def records(n):
                "shard": {"k": k, "n": n, "digest": plan["digest"], "plan": plan,
                          "collected": plan["collected"], "ran": ran, "seconds": 1.0},
                "pytest_seconds": {node: float(index + 1) for index, node in enumerate(ran)},
-               "quarantine": {"enabled": True, "active": [], "expired": [], "retried": {}}}
+               "quarantine": {"enabled": True, "day": "2026-10-12", "active": [], "expired": [],
+                              "retried": {}}}
         gate.interpret_pytest(row, events, POLICY, ran, families=())
         if k == 1:
             row["counts"].update(rust_passed=2, rust_ignored=0)
@@ -179,6 +180,43 @@ def test_passing_merge_rejects_contradictory_skip_retry_and_native_evidence(muta
     rows = records(2)
     assert gate_shards.merge_records(rows)["status"] == "passed"
     mutation(rows)
+    merged = gate_shards.merge_records(rows)
+    assert merged["status"] == "failed"
+    assert merged["failures"][0]["stage"] == "shards"
+
+
+def test_merge_accepts_retry_of_active_quarantine_test():
+    rows = records(2)
+    for row in rows:
+        row["quarantine"].update(day="2026-10-12", active=[IDS[0]])
+    owner = next(row for row in rows if IDS[0] in row["shard"]["ran"])
+    owner["quarantine"]["retried"][IDS[0]] = {"suite": "failed", "alone": "passed"}
+    merged = gate_shards.merge_records(rows)
+    assert merged["status"] == "passed", merged["failures"]
+    assert merged["quarantine"]["retried"] == owner["quarantine"]["retried"]
+
+
+def test_merge_accepts_disabled_quarantine_without_retries():
+    rows = records(2)
+    for row in rows:
+        row["quarantine"] = {"enabled": False, "active": [], "expired": [], "retried": {}}
+    merged = gate_shards.merge_records(rows)
+    assert merged["status"] == "passed", merged["failures"]
+
+
+@pytest.mark.parametrize("change", [
+    lambda rows: [row["quarantine"].update(enabled=False) for row in rows],
+    lambda rows: [row["quarantine"].update(active=[IDS[1]]) for row in rows],
+    lambda rows: [row["quarantine"].update(active=[]) for row in rows],
+    lambda rows: [row["quarantine"].update(enabled=0) for row in rows],
+])
+def test_merge_refuses_retry_without_enabled_active_quarantine(change):
+    rows = records(2)
+    for row in rows:
+        row["quarantine"].update(day="2026-10-12", active=[IDS[0]])
+    owner = next(row for row in rows if IDS[0] in row["shard"]["ran"])
+    owner["quarantine"]["retried"][IDS[0]] = {"suite": "failed", "alone": "passed"}
+    change(rows)
     merged = gate_shards.merge_records(rows)
     assert merged["status"] == "failed"
     assert merged["failures"][0]["stage"] == "shards"
