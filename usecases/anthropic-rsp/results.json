@@ -1,0 +1,4284 @@
+{
+ "comparison": [
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T0/PROT1",
+   "key": "SOME(uncond)",
+   "ve": "SOME(RS1=uncond)"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T0/PROT2",
+   "key": "SOME(uncond)",
+   "ve": "SOME(RS1=uncond)"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T0/PROT3",
+   "key": "SOME(uncond)",
+   "ve": "SOME(RS1=uncond)"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T0/PROT4",
+   "key": "SOME(uncond)",
+   "ve": "SOME(RS1=uncond)"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T0/ARG1",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T0/ARG2",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T0/ARG3",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T0/ARG4",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T1/PROT1",
+   "key": "SOME(cond | uncond)",
+   "ve": "SOME(RS1=cond | RS1=uncond)"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T1/PROT2",
+   "key": "SOME(uncond)",
+   "ve": "SOME(RS1=uncond)"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T1/PROT3",
+   "key": "SOME(uncond)",
+   "ve": "SOME(RS1=uncond)"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T1/PROT4",
+   "key": "SOME(uncond)",
+   "ve": "SOME(RS1=uncond)"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T1/ARG1",
+   "key": "SOME(Ds)",
+   "ve": "SOME(RS2=Ds&RS2force=strict | RS2=Ds&RS2force=default)"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T1/ARG2",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T1/ARG3",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T1/ARG4",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T2/PROT1",
+   "key": "SOME(uncond)",
+   "ve": "SOME(RS1=uncond)"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T2/PROT2",
+   "key": "SOME(cond | uncond)",
+   "ve": "SOME(RS1=cond | RS1=uncond)"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T2/PROT3",
+   "key": "SOME(uncond)",
+   "ve": "SOME(RS1=uncond)"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T2/PROT4",
+   "key": "SOME(uncond)",
+   "ve": "SOME(RS1=uncond)"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T2/ARG1",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T2/ARG2",
+   "key": "SOME(Ds)",
+   "ve": "SOME(RS2=Ds&RS2force=strict | RS2=Ds&RS2force=default)"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T2/ARG3",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T2/ARG4",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T3/PROT1",
+   "key": "SOME(uncond)",
+   "ve": "SOME(RS1=uncond)"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T3/PROT2",
+   "key": "SOME(uncond)",
+   "ve": "SOME(RS1=uncond)"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T3/PROT3",
+   "key": "SOME(cond | uncond)",
+   "ve": "SOME(RS1=cond | RS1=uncond)"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T3/PROT4",
+   "key": "SOME(uncond)",
+   "ve": "SOME(RS1=uncond)"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T3/ARG1",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T3/ARG2",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T3/ARG3",
+   "key": "SOME(Ds)",
+   "ve": "SOME(RS2=Ds&RS2force=strict | RS2=Ds&RS2force=default)"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T3/ARG4",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T4/PROT1",
+   "key": "SOME(uncond)",
+   "ve": "SOME(RS1=uncond)"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T4/PROT2",
+   "key": "SOME(uncond)",
+   "ve": "SOME(RS1=uncond)"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T4/PROT3",
+   "key": "SOME(uncond)",
+   "ve": "SOME(RS1=uncond)"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T4/PROT4",
+   "key": "SOME(cond | uncond)",
+   "ve": "SOME(RS1=cond | RS1=uncond)"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T4/ARG1",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T4/ARG2",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T4/ARG3",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "A-T4/ARG4",
+   "key": "SOME(Ds)",
+   "ve": "SOME(RS2=Ds&RS2force=strict | RS2=Ds&RS2force=default)"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "B-PUB/INSCOPE",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "B-PUB/ASSESS",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "B-INT/INSCOPE",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "B-INT/ASSESS",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "B-INTD/INSCOPE",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "B-INTD/ASSESS",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "B-AUT/INSCOPE",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "B-AUT/ASSESS",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "B-VOL/INSCOPE",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "B-VOL/ASSESS",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "B-TRN/INSCOPE",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "B-TRN/ASSESS",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "K1",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "K2",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "K3",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "K4",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "K5",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "K6",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "K7",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "K8",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": false,
+   "classification": "translation limit (AP): F4's external-review bullet is bundled in plans_in_place",
+   "id": "K9",
+   "key": "SOME(cond | uncond)",
+   "ve": "UNDECIDED"
+  },
+  {
+   "agree": false,
+   "classification": "translation limit (AP): F4's external-review bullet is bundled in plans_in_place",
+   "id": "K10",
+   "key": "SOME(uncond)",
+   "ve": "UNDECIDED"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "K11",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "K12a",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "K12b",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "K13",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "K14",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "K15a",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "K15b",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "K16",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "K17",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "K18",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "K19a",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "K19b",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "K20",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "K21a",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "K21b",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "K22a",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "K22b",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "T1",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "T2a",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "T2b",
+   "key": "SOME(iffo)",
+   "ve": "SOME(RS3o=iff&RS3i=suff&RS3c=third | RS3o=iff&RS3i=suff&RS3c=result | RS3o=iff&RS3i=iff&RS3c=third | RS3o=iff&RS3i=iff&RS3c=result)"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "T3",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "T4a",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "T4b",
+   "key": "SOME(iffo & iffi)",
+   "ve": "SOME(RS3o=iff&RS3i=iff&RS3c=third | RS3o=iff&RS3i=iff&RS3c=result)"
+  },
+  {
+   "agree": false,
+   "classification": "VE limit (QT): factor-of-five quantity not represented in D3",
+   "id": "T5",
+   "key": "ALL",
+   "ve": "UNDECIDED"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "T6",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "T7",
+   "key": "SOME(result)",
+   "ve": "SOME(RS3o=suff&RS3i=suff&RS3c=result | RS3o=suff&RS3i=iff&RS3c=result | RS3o=iff&RS3i=suff&RS3c=result | RS3o=iff&RS3i=iff&RS3c=result)"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "C1",
+   "key": "SOME(rel)",
+   "ve": "SOME(RS4=rel)"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "C2",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "C3",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "C4",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "C5",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "C6",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "C7",
+   "key": "SOME(rel)",
+   "ve": "SOME(RS4=rel)"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "C-doc",
+   "key": "SOME(rel)",
+   "ve": "SOME(RS4=rel)"
+  },
+  {
+   "agree": false,
+   "classification": "translation limit (AP: no proceed act for the row plans)",
+   "id": "G1",
+   "key": "ALL",
+   "ve": "UNDECIDED"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "G2",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": false,
+   "classification": "translation limit (SC: an unlisted cyber threshold is outside D1's closed vocabulary)",
+   "id": "G3",
+   "key": "ALL",
+   "ve": "UNDECIDED"
+  },
+  {
+   "agree": false,
+   "classification": "VE limit (ET): RS11 at/trigger deadline is not in D3",
+   "id": "G4",
+   "key": "SOME(trigger)",
+   "ve": "UNDECIDED"
+  },
+  {
+   "agree": false,
+   "classification": "translation limit (ET: no reviewer nonresponse consequence in D1)",
+   "id": "G5",
+   "key": "ALL",
+   "ve": "UNDECIDED"
+  },
+  {
+   "agree": false,
+   "classification": "translation limit (SC: no priority between the review and approval duties)",
+   "id": "G6",
+   "key": "ALL",
+   "ve": "UNDECIDED"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "G7",
+   "key": {
+    "COVERED:QUARTERLY_UPDATE": "ALL",
+    "REQUIRED:PROMPT_BOARD_NOTICE": "NONE"
+   },
+   "ve": {
+    "COVERED:QUARTERLY_UPDATE": "ALL",
+    "REQUIRED:PROMPT_BOARD_NOTICE": "NONE"
+   }
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "G8",
+   "key": "SOME(intent)",
+   "ve": "SOME(RS12strive=intent)"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "N1",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "N2",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "N3",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": false,
+   "classification": "VE limit (SC): no exhaustive dead-rule or changelog-rule certificate",
+   "id": "N4",
+   "key": "NONE",
+   "ve": "UNDECIDED"
+  },
+  {
+   "agree": false,
+   "classification": "VE limit (SC): no exhaustive dead-rule or changelog-rule certificate",
+   "id": "N5",
+   "key": "ALL",
+   "ve": "UNDECIDED"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "S1-T1",
+   "key": "catastrophic",
+   "ve": "catastrophic"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "S1-T2",
+   "key": "catastrophic",
+   "ve": "catastrophic"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "S1-T3",
+   "key": "catastrophic",
+   "ve": "catastrophic"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "S1-T4",
+   "key": "none",
+   "ve": "none"
+  },
+  {
+   "agree": false,
+   "classification": "VE limit (WG): no severity order between the T1 and T2 harms",
+   "id": "S2",
+   "key": "NONE",
+   "ve": "UNDECIDED"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "S3",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "S4",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "S5",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "D1",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "D2",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "D3a",
+   "key": "NONE",
+   "ve": "NONE"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "D3b",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "D4",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "classification": "agree",
+   "id": "D5",
+   "key": "ALL",
+   "ve": "ALL"
+  },
+  {
+   "agree": false,
+   "classification": "VE limit (ET/QT): calendar-month cadence or approximate date",
+   "id": "D6a",
+   "key": "NONE",
+   "ve": "UNDECIDED"
+  },
+  {
+   "agree": false,
+   "classification": "VE limit (ET/QT): calendar-month cadence or approximate date",
+   "id": "D6b",
+   "key": "SOME(bound)",
+   "ve": "UNDECIDED"
+  },
+  {
+   "agree": false,
+   "classification": "VE limit (ET/QT): calendar-month cadence or approximate date",
+   "id": "D7",
+   "key": "NONE",
+   "ve": "UNDECIDED"
+  }
+ ],
+ "items": {
+  "A-T0/ARG1": {
+   "choices": [
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS2",
+    "RS2force"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T0/ARG2": {
+   "choices": [
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS2",
+    "RS2force"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T0/ARG3": {
+   "choices": [
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS2",
+    "RS2force"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T0/ARG4": {
+   "choices": [
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS2",
+    "RS2force"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T0/PROT1": {
+   "choices": [
+    {
+     "choice": {
+      "RS1": "cond"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS1": "uncond"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "rows-uncond"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "ov"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS1"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T0/PROT2": {
+   "choices": [
+    {
+     "choice": {
+      "RS1": "cond"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS1": "uncond"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "rows-uncond"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "ov"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS1"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T0/PROT3": {
+   "choices": [
+    {
+     "choice": {
+      "RS1": "cond"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS1": "uncond"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "rows-uncond"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "ov"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS1"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T0/PROT4": {
+   "choices": [
+    {
+     "choice": {
+      "RS1": "cond"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS1": "uncond"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "rows-uncond"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "ov"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS1"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T1/ARG1": {
+   "choices": [
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f5-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f5-default"
+     ]
+    }
+   ],
+   "cone": [
+    "RS2",
+    "RS2force"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T1/ARG2": {
+   "choices": [
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS2",
+    "RS2force"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T1/ARG3": {
+   "choices": [
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS2",
+    "RS2force"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T1/ARG4": {
+   "choices": [
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS2",
+    "RS2force"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T1/PROT1": {
+   "choices": [
+    {
+     "choice": {
+      "RS1": "cond"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "rows-cond"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "uncond"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "rows-uncond"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "ov"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS1"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T1/PROT2": {
+   "choices": [
+    {
+     "choice": {
+      "RS1": "cond"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS1": "uncond"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "rows-uncond"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "ov"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS1"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T1/PROT3": {
+   "choices": [
+    {
+     "choice": {
+      "RS1": "cond"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS1": "uncond"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "rows-uncond"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "ov"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS1"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T1/PROT4": {
+   "choices": [
+    {
+     "choice": {
+      "RS1": "cond"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS1": "uncond"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "rows-uncond"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "ov"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS1"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T2/ARG1": {
+   "choices": [
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS2",
+    "RS2force"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T2/ARG2": {
+   "choices": [
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f5-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f5-default"
+     ]
+    }
+   ],
+   "cone": [
+    "RS2",
+    "RS2force"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T2/ARG3": {
+   "choices": [
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS2",
+    "RS2force"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T2/ARG4": {
+   "choices": [
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS2",
+    "RS2force"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T2/PROT1": {
+   "choices": [
+    {
+     "choice": {
+      "RS1": "cond"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS1": "uncond"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "rows-uncond"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "ov"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS1"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T2/PROT2": {
+   "choices": [
+    {
+     "choice": {
+      "RS1": "cond"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "rows-cond"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "uncond"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "rows-uncond"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "ov"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS1"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T2/PROT3": {
+   "choices": [
+    {
+     "choice": {
+      "RS1": "cond"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS1": "uncond"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "rows-uncond"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "ov"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS1"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T2/PROT4": {
+   "choices": [
+    {
+     "choice": {
+      "RS1": "cond"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS1": "uncond"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "rows-uncond"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "ov"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS1"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T3/ARG1": {
+   "choices": [
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS2",
+    "RS2force"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T3/ARG2": {
+   "choices": [
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS2",
+    "RS2force"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T3/ARG3": {
+   "choices": [
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f5-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f5-default"
+     ]
+    }
+   ],
+   "cone": [
+    "RS2",
+    "RS2force"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T3/ARG4": {
+   "choices": [
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS2",
+    "RS2force"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T3/PROT1": {
+   "choices": [
+    {
+     "choice": {
+      "RS1": "cond"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS1": "uncond"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "rows-uncond"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "ov"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS1"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T3/PROT2": {
+   "choices": [
+    {
+     "choice": {
+      "RS1": "cond"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS1": "uncond"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "rows-uncond"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "ov"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS1"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T3/PROT3": {
+   "choices": [
+    {
+     "choice": {
+      "RS1": "cond"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "rows-cond"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "uncond"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "rows-uncond"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "ov"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS1"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T3/PROT4": {
+   "choices": [
+    {
+     "choice": {
+      "RS1": "cond"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS1": "uncond"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "rows-uncond"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "ov"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS1"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T4/ARG1": {
+   "choices": [
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS2",
+    "RS2force"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T4/ARG2": {
+   "choices": [
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS2",
+    "RS2force"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T4/ARG3": {
+   "choices": [
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS2",
+    "RS2force"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T4/ARG4": {
+   "choices": [
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "F",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "strict"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f5-strict"
+     ]
+    },
+    {
+     "choice": {
+      "RS2": "Ds",
+      "RS2force": "default"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f5-default"
+     ]
+    }
+   ],
+   "cone": [
+    "RS2",
+    "RS2force"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T4/PROT1": {
+   "choices": [
+    {
+     "choice": {
+      "RS1": "cond"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS1": "uncond"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "rows-uncond"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "ov"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS1"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T4/PROT2": {
+   "choices": [
+    {
+     "choice": {
+      "RS1": "cond"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS1": "uncond"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "rows-uncond"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "ov"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS1"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T4/PROT3": {
+   "choices": [
+    {
+     "choice": {
+      "RS1": "cond"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS1": "uncond"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "rows-uncond"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "ov"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS1"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "A-T4/PROT4": {
+   "choices": [
+    {
+     "choice": {
+      "RS1": "cond"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "rows-cond"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "uncond"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "rows-uncond"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "ov"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS1"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "B-AUT/ASSESS": {
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f11-assess"
+     ]
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "B-AUT/INSCOPE": {
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f8-autonomous"
+     ]
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "B-INT/ASSESS": {
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": true,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "B-INT/INSCOPE": {
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "B-INTD/ASSESS": {
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f11-assess"
+     ]
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "B-INTD/INSCOPE": {
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f8-internal"
+     ]
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "B-PUB/ASSESS": {
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f11-assess"
+     ]
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "B-PUB/INSCOPE": {
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f8-public"
+     ]
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "B-TRN/ASSESS": {
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": true,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "B-TRN/INSCOPE": {
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "B-VOL/ASSESS": {
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": true,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "B-VOL/INSCOPE": {
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "C-doc": {
+   "choices": [
+    {
+     "choice": {
+      "RS4": "scope"
+     },
+     "holds": false,
+     "rules": "whole D1",
+     "w1": [
+      "UNKNOWN",
+      "UNKNOWN"
+     ]
+    },
+    {
+     "choice": {
+      "RS4": "rel"
+     },
+     "holds": true,
+     "rules": "whole D1",
+     "w1": [
+      "CONFLICT",
+      "CONFLICT"
+     ]
+    }
+   ],
+   "cone": [
+    "RS4"
+   ],
+   "route": "D1 norms@0 W1 check_conflict with a validated witness model"
+  },
+  "C1": {
+   "choices": [
+    {
+     "choice": {
+      "RS4": "scope"
+     },
+     "holds": false,
+     "rules": [
+      "f24-delay",
+      "f26-need-not-delay"
+     ],
+     "w1": [
+      "UNKNOWN"
+     ]
+    },
+    {
+     "choice": {
+      "RS4": "rel"
+     },
+     "holds": true,
+     "rules": [
+      "f24-delay",
+      "f26-need-not-delay"
+     ],
+     "w1": [
+      "CONFLICT"
+     ]
+    }
+   ],
+   "cone": [
+    "RS4"
+   ],
+   "route": "D1 norms@0 W1 check_conflict with a validated witness model"
+  },
+  "C2": {
+   "choices": [
+    {
+     "choice": {
+      "RS7": "exec"
+     },
+     "holds": false,
+     "rules": [
+      "f12-final",
+      "f12-board-approval"
+     ],
+     "w1": [
+      "UNKNOWN"
+     ]
+    },
+    {
+     "choice": {
+      "RS7": "final"
+     },
+     "holds": false,
+     "rules": [
+      "f12-final",
+      "f12-board-approval"
+     ],
+     "w1": [
+      "UNKNOWN"
+     ]
+    }
+   ],
+   "cone": [
+    "RS7"
+   ],
+   "route": "D1 norms@0 W1 check_conflict with a validated witness model"
+  },
+  "C3": {
+   "choices": [
+    {
+     "choice": {
+      "RS1": "cond"
+     },
+     "holds": false,
+     "rules": [
+      "rows-cond",
+      "rows-uncond",
+      "f10-in-line"
+     ],
+     "w1": [
+      "UNKNOWN"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "uncond"
+     },
+     "holds": false,
+     "rules": [
+      "rows-cond",
+      "rows-uncond",
+      "f10-in-line"
+     ],
+     "w1": [
+      "UNKNOWN"
+     ]
+    },
+    {
+     "choice": {
+      "RS1": "ov"
+     },
+     "holds": false,
+     "rules": [
+      "rows-cond",
+      "rows-uncond",
+      "f10-in-line"
+     ],
+     "w1": [
+      "UNKNOWN"
+     ]
+    }
+   ],
+   "cone": [
+    "RS1"
+   ],
+   "route": "D1 norms@0 W1 check_conflict with a validated witness model"
+  },
+  "C4": {
+   "choices": [
+    {
+     "choice": {
+      "RS6redact": "P"
+     },
+     "holds": false,
+     "rules": [
+      "f13-redact-p",
+      "f16-only-legal"
+     ],
+     "w1": [
+      "UNKNOWN"
+     ]
+    },
+    {
+     "choice": {
+      "RS6redact": "M"
+     },
+     "holds": false,
+     "rules": [
+      "f13-redact-p",
+      "f16-only-legal"
+     ],
+     "w1": [
+      "UNKNOWN"
+     ]
+    }
+   ],
+   "cone": [
+    "RS6redact"
+   ],
+   "route": "D1 norms@0 W1 check_conflict with a validated witness model"
+  },
+  "C5": {
+   "choices": [
+    {
+     "choice": {},
+     "holds": false,
+     "rules": [
+      "f24-delay",
+      "f25-delay"
+     ],
+     "w1": [
+      "UNKNOWN"
+     ]
+    }
+   ],
+   "cone": [],
+   "route": "D1 norms@0 W1 check_conflict with a validated witness model"
+  },
+  "C6": {
+   "choices": [
+    {
+     "choice": {
+      "RS12minimize": "default"
+     },
+     "holds": false,
+     "rules": [
+      "f19-unredacted",
+      "f13-minimize-default"
+     ],
+     "w1": [
+      "UNKNOWN"
+     ]
+    },
+    {
+     "choice": {
+      "RS12minimize": "intent"
+     },
+     "holds": false,
+     "rules": [
+      "f19-unredacted",
+      "f13-minimize-default"
+     ],
+     "w1": [
+      "UNKNOWN"
+     ]
+    }
+   ],
+   "cone": [
+    "RS12minimize"
+   ],
+   "route": "D1 norms@0 W1 check_conflict with a validated witness model"
+  },
+  "C7": {
+   "choices": [
+    {
+     "choice": {
+      "RS4": "scope"
+     },
+     "holds": false,
+     "rules": [
+      "f25-delay",
+      "f26-need-not-delay"
+     ],
+     "w1": [
+      "UNKNOWN"
+     ]
+    },
+    {
+     "choice": {
+      "RS4": "rel"
+     },
+     "holds": true,
+     "rules": [
+      "f25-delay",
+      "f26-need-not-delay"
+     ],
+     "w1": [
+      "CONFLICT"
+     ]
+    }
+   ],
+   "cone": [
+    "RS4"
+   ],
+   "route": "D1 norms@0 W1 check_conflict with a validated witness model"
+  },
+  "D1": {
+   "choices": [
+    {
+     "choice": {},
+     "holds": true,
+     "reason": "D1"
+    }
+   ],
+   "cone": [],
+   "route": "D3 ve-units@1 quantity certificate replay"
+  },
+  "D2": {
+   "choices": [
+    {
+     "choice": {},
+     "holds": true,
+     "reason": "D2"
+    }
+   ],
+   "cone": [],
+   "route": "D3 ve-units@1 quantity certificate replay"
+  },
+  "D3a": {
+   "choices": [
+    {
+     "choice": {},
+     "holds": false,
+     "reason": "30-day limit precedes publication"
+    }
+   ],
+   "cone": [],
+   "route": "D3 ve-units@1 quantity certificate replay"
+  },
+  "D3b": {
+   "choices": [
+    {
+     "choice": {},
+     "holds": true,
+     "reason": "D3b"
+    }
+   ],
+   "cone": [],
+   "route": "D3 ve-units@1 quantity certificate replay"
+  },
+  "D4": {
+   "choices": [
+    {
+     "choice": {},
+     "holds": true,
+     "reason": "D4"
+    }
+   ],
+   "cone": [],
+   "route": "D3 ve-units@1 quantity certificate replay"
+  },
+  "D5": {
+   "choices": [
+    {
+     "choice": {},
+     "holds": true,
+     "reason": "D5"
+    }
+   ],
+   "cone": [],
+   "route": "D3 ve-units@1 quantity certificate replay"
+  },
+  "D6a": {
+   "route": "D3 ve-units@1",
+   "undecided": "VE limit (ET/QT): calendar-month cadence or approximate date"
+  },
+  "D6b": {
+   "route": "D3 ve-units@1",
+   "undecided": "VE limit (ET/QT): calendar-month cadence or approximate date"
+  },
+  "D7": {
+   "route": "D3 ve-units@1",
+   "undecided": "VE limit (ET/QT): calendar-month cadence or approximate date"
+  },
+  "G1": {
+   "route": "D1",
+   "undecided": "translation limit (AP: no proceed act for the row plans)"
+  },
+  "G2": {
+   "choices": [
+    {
+     "choice": {},
+     "holds": true,
+     "reason": "no selected rule on the queried acts"
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion; silence"
+  },
+  "G3": {
+   "route": "D1",
+   "undecided": "translation limit (SC: an unlisted cyber threshold is outside D1's closed vocabulary)"
+  },
+  "G4": {
+   "route": "D3 ve-units@1",
+   "undecided": "VE limit (ET): RS11 at/trigger deadline is not in D3"
+  },
+  "G5": {
+   "route": "D1",
+   "undecided": "translation limit (ET: no reviewer nonresponse consequence in D1)"
+  },
+  "G6": {
+   "route": "D1",
+   "undecided": "translation limit (SC: no priority between the review and approval duties)"
+  },
+  "G7": {
+   "parts": {
+    "COVERED:QUARTERLY_UPDATE": {
+     "choices": [
+      {
+       "choice": {},
+       "default_sensitive": false,
+       "holds": true,
+       "rules": [
+        "f20-quarterly"
+       ]
+      }
+     ],
+     "cone": [],
+     "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+    },
+    "REQUIRED:PROMPT_BOARD_NOTICE": {
+     "choices": [
+      {
+       "choice": {},
+       "default_sensitive": false,
+       "holds": false,
+       "rules": []
+      }
+     ],
+     "cone": [],
+     "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+    }
+   },
+   "route": "D1"
+  },
+  "G8": {
+   "choices": [
+    {
+     "choice": {
+      "RS12strive": "default"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": [
+      "f6-strive-default"
+     ]
+    },
+    {
+     "choice": {
+      "RS12strive": "intent"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS12strive"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion; silence is no selected goals_kept rule"
+  },
+  "K1": {
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f7-publish"
+     ]
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "K10": {
+   "route": "D1",
+   "undecided": "translation limit (AP): F4's external-review bullet is bundled in plans_in_place"
+  },
+  "K11": {
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f14-ltbt-request"
+     ]
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "K12a": {
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f15-select-approval"
+     ]
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "K12b": {
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f15-select-approval"
+     ]
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "K13": {
+   "choices": [
+    {
+     "choice": {
+      "RS8revenue": "strict"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f15-financial-interest"
+     ]
+    },
+    {
+     "choice": {
+      "RS8revenue": "default"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f15-financial-interest"
+     ]
+    }
+   ],
+   "cone": [
+    "RS8revenue"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "K14": {
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f16-share-one-week"
+     ]
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "K15a": {
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f20-notify-board"
+     ]
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "K15b": {
+   "choices": [
+    {
+     "choice": {
+      "RS6notice": "P"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS6notice": "M"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS6notice"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "K16": {
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f20-board-recipient"
+     ]
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "K17": {
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f23-publish"
+     ]
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "K18": {
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f10-in-line"
+     ]
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "K19a": {
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f24-argument"
+     ]
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "K19b": {
+   "choices": [
+    {
+     "choice": {
+      "RS4": "scope"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f24-delay"
+     ]
+    },
+    {
+     "choice": {
+      "RS4": "rel"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f24-delay"
+     ]
+    }
+   ],
+   "cone": [
+    "RS4"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "K2": {
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f9-public"
+     ]
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "K20": {
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f25-meet"
+     ]
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "K21a": {
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f26-effort"
+     ]
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "K21b": {
+   "choices": [
+    {
+     "choice": {
+      "RS4": "scope"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS4": "rel"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS4"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "K22a": {
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f11-goal-missed"
+     ]
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "K22b": {
+   "choices": [
+    {
+     "choice": {
+      "RS4": "scope"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS4": "rel"
+     },
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS4"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "K3": {
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": false,
+     "holds": false,
+     "rules": []
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "K4": {
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f9-internal"
+     ]
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "K5": {
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f11-marginal"
+     ]
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "K6": {
+   "choices": [
+    {
+     "choice": {
+      "RS7": "exec"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f12-board-approval"
+     ]
+    },
+    {
+     "choice": {
+      "RS7": "final"
+     },
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f12-board-approval"
+     ]
+    }
+   ],
+   "cone": [
+    "RS7"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "K7": {
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f12-share"
+     ]
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "K8": {
+   "choices": [
+    {
+     "choice": {},
+     "default_sensitive": false,
+     "holds": true,
+     "rules": [
+      "f14-full-review"
+     ]
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+  },
+  "K9": {
+   "route": "D1",
+   "undecided": "translation limit (AP): F4's external-review bullet is bundled in plans_in_place"
+  },
+  "N1": {
+   "choices": [
+    {
+     "choice": {},
+     "holds": true,
+     "reason": "no selected rule on the queried acts"
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion; silence; family N witness situation"
+  },
+  "N2": {
+   "choices": [
+    {
+     "choice": {
+      "RS4": "scope"
+     },
+     "holds": true,
+     "reason": "no selected rule on the queried acts"
+    },
+    {
+     "choice": {
+      "RS4": "rel"
+     },
+     "holds": true,
+     "reason": "no selected rule on the queried acts"
+    }
+   ],
+   "cone": [
+    "RS4"
+   ],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion; silence; family N witness situation"
+  },
+  "N3": {
+   "choices": [
+    {
+     "choice": {},
+     "holds": true,
+     "reason": "no selected rule on the queried acts"
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion; silence; family N witness situation"
+  },
+  "N4": {
+   "route": "D1",
+   "undecided": "VE limit (SC): no exhaustive dead-rule or changelog-rule certificate"
+  },
+  "N5": {
+   "route": "D1",
+   "undecided": "VE limit (SC): no exhaustive dead-rule or changelog-rule certificate"
+  },
+  "S1-T1": {
+   "reason": "risk environment harm class",
+   "route": "D2 risk@0 risk:class",
+   "value": "catastrophic"
+  },
+  "S1-T2": {
+   "reason": "risk environment harm class",
+   "route": "D2 risk@0 risk:class",
+   "value": "catastrophic"
+  },
+  "S1-T3": {
+   "reason": "risk environment harm class",
+   "route": "D2 risk@0 risk:class",
+   "value": "catastrophic"
+  },
+  "S1-T4": {
+   "reason": "D2 refuses an unclassified T4 harm; no class was assigned",
+   "route": "D2 risk@0 risk:class",
+   "value": "none"
+  },
+  "S2": {
+   "route": "D2 risk@0",
+   "undecided": "VE limit (WG): no severity order between the T1 and T2 harms"
+  },
+  "S3": {
+   "choices": [
+    {
+     "choice": {},
+     "holds": true,
+     "reason": "might cell for T1"
+    }
+   ],
+   "cone": [],
+   "route": "D2 risk@0 risk-decision"
+  },
+  "S4": {
+   "choices": [
+    {
+     "choice": {},
+     "holds": false,
+     "reason": "leads cell for T1"
+    }
+   ],
+   "cone": [],
+   "route": "D2 risk@0 risk-decision"
+  },
+  "S5": {
+   "choices": [
+    {
+     "choice": {},
+     "holds": true,
+     "reason": "footnote 1's stated instance"
+    }
+   ],
+   "cone": [],
+   "route": "D2 risk@0 risk:class"
+  },
+  "T1": {
+   "choices": [
+    {
+     "choice": {
+      "RS3c": "third",
+      "RS3i": "suff",
+      "RS3o": "suff"
+     },
+     "holds": true,
+     "reason": "replayed certificate"
+    },
+    {
+     "choice": {
+      "RS3c": "result",
+      "RS3i": "suff",
+      "RS3o": "suff"
+     },
+     "holds": true,
+     "reason": "replayed certificate"
+    },
+    {
+     "choice": {
+      "RS3c": "third",
+      "RS3i": "iff",
+      "RS3o": "suff"
+     },
+     "holds": true,
+     "reason": "replayed certificate"
+    },
+    {
+     "choice": {
+      "RS3c": "result",
+      "RS3i": "iff",
+      "RS3o": "suff"
+     },
+     "holds": true,
+     "reason": "replayed certificate"
+    },
+    {
+     "choice": {
+      "RS3c": "third",
+      "RS3i": "suff",
+      "RS3o": "iff"
+     },
+     "holds": true,
+     "reason": "replayed certificate"
+    },
+    {
+     "choice": {
+      "RS3c": "result",
+      "RS3i": "suff",
+      "RS3o": "iff"
+     },
+     "holds": true,
+     "reason": "replayed certificate"
+    },
+    {
+     "choice": {
+      "RS3c": "third",
+      "RS3i": "iff",
+      "RS3o": "iff"
+     },
+     "holds": true,
+     "reason": "replayed certificate"
+    },
+    {
+     "choice": {
+      "RS3c": "result",
+      "RS3i": "iff",
+      "RS3o": "iff"
+     },
+     "holds": true,
+     "reason": "replayed certificate"
+    }
+   ],
+   "cone": [
+    "RS3o",
+    "RS3i",
+    "RS3c"
+   ],
+   "route": "D1 relational-fol@0 entailment certificate or validated finite countermodel"
+  },
+  "T2a": {
+   "choices": [
+    {
+     "choice": {
+      "RS3c": "third",
+      "RS3i": "suff",
+      "RS3o": "suff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "result",
+      "RS3i": "suff",
+      "RS3o": "suff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "third",
+      "RS3i": "iff",
+      "RS3o": "suff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "result",
+      "RS3i": "iff",
+      "RS3o": "suff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "third",
+      "RS3i": "suff",
+      "RS3o": "iff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "result",
+      "RS3i": "suff",
+      "RS3o": "iff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "third",
+      "RS3i": "iff",
+      "RS3o": "iff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "result",
+      "RS3i": "iff",
+      "RS3o": "iff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    }
+   ],
+   "cone": [
+    "RS3o",
+    "RS3i",
+    "RS3c"
+   ],
+   "route": "D1 relational-fol@0 entailment certificate or validated finite countermodel"
+  },
+  "T2b": {
+   "choices": [
+    {
+     "choice": {
+      "RS3c": "third",
+      "RS3i": "suff",
+      "RS3o": "suff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "result",
+      "RS3i": "suff",
+      "RS3o": "suff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "third",
+      "RS3i": "iff",
+      "RS3o": "suff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "result",
+      "RS3i": "iff",
+      "RS3o": "suff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "third",
+      "RS3i": "suff",
+      "RS3o": "iff"
+     },
+     "holds": true,
+     "reason": "replayed certificate"
+    },
+    {
+     "choice": {
+      "RS3c": "result",
+      "RS3i": "suff",
+      "RS3o": "iff"
+     },
+     "holds": true,
+     "reason": "replayed certificate"
+    },
+    {
+     "choice": {
+      "RS3c": "third",
+      "RS3i": "iff",
+      "RS3o": "iff"
+     },
+     "holds": true,
+     "reason": "replayed certificate"
+    },
+    {
+     "choice": {
+      "RS3c": "result",
+      "RS3i": "iff",
+      "RS3o": "iff"
+     },
+     "holds": true,
+     "reason": "replayed certificate"
+    }
+   ],
+   "cone": [
+    "RS3o",
+    "RS3i",
+    "RS3c"
+   ],
+   "route": "D1 relational-fol@0 entailment certificate or validated finite countermodel"
+  },
+  "T3": {
+   "choices": [
+    {
+     "choice": {
+      "RS3c": "third",
+      "RS3i": "suff",
+      "RS3o": "suff"
+     },
+     "holds": true,
+     "reason": "replayed certificate"
+    },
+    {
+     "choice": {
+      "RS3c": "result",
+      "RS3i": "suff",
+      "RS3o": "suff"
+     },
+     "holds": true,
+     "reason": "replayed certificate"
+    },
+    {
+     "choice": {
+      "RS3c": "third",
+      "RS3i": "iff",
+      "RS3o": "suff"
+     },
+     "holds": true,
+     "reason": "replayed certificate"
+    },
+    {
+     "choice": {
+      "RS3c": "result",
+      "RS3i": "iff",
+      "RS3o": "suff"
+     },
+     "holds": true,
+     "reason": "replayed certificate"
+    },
+    {
+     "choice": {
+      "RS3c": "third",
+      "RS3i": "suff",
+      "RS3o": "iff"
+     },
+     "holds": true,
+     "reason": "replayed certificate"
+    },
+    {
+     "choice": {
+      "RS3c": "result",
+      "RS3i": "suff",
+      "RS3o": "iff"
+     },
+     "holds": true,
+     "reason": "replayed certificate"
+    },
+    {
+     "choice": {
+      "RS3c": "third",
+      "RS3i": "iff",
+      "RS3o": "iff"
+     },
+     "holds": true,
+     "reason": "replayed certificate"
+    },
+    {
+     "choice": {
+      "RS3c": "result",
+      "RS3i": "iff",
+      "RS3o": "iff"
+     },
+     "holds": true,
+     "reason": "replayed certificate"
+    }
+   ],
+   "cone": [
+    "RS3o",
+    "RS3i",
+    "RS3c"
+   ],
+   "route": "D1 relational-fol@0 entailment certificate or validated finite countermodel"
+  },
+  "T4a": {
+   "choices": [
+    {
+     "choice": {
+      "RS3c": "third",
+      "RS3i": "suff",
+      "RS3o": "suff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "result",
+      "RS3i": "suff",
+      "RS3o": "suff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "third",
+      "RS3i": "iff",
+      "RS3o": "suff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "result",
+      "RS3i": "iff",
+      "RS3o": "suff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "third",
+      "RS3i": "suff",
+      "RS3o": "iff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "result",
+      "RS3i": "suff",
+      "RS3o": "iff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "third",
+      "RS3i": "iff",
+      "RS3o": "iff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "result",
+      "RS3i": "iff",
+      "RS3o": "iff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    }
+   ],
+   "cone": [
+    "RS3o",
+    "RS3i",
+    "RS3c"
+   ],
+   "route": "D1 relational-fol@0 entailment certificate or validated finite countermodel"
+  },
+  "T4b": {
+   "choices": [
+    {
+     "choice": {
+      "RS3c": "third",
+      "RS3i": "suff",
+      "RS3o": "suff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "result",
+      "RS3i": "suff",
+      "RS3o": "suff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "third",
+      "RS3i": "iff",
+      "RS3o": "suff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "result",
+      "RS3i": "iff",
+      "RS3o": "suff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "third",
+      "RS3i": "suff",
+      "RS3o": "iff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "result",
+      "RS3i": "suff",
+      "RS3o": "iff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "third",
+      "RS3i": "iff",
+      "RS3o": "iff"
+     },
+     "holds": true,
+     "reason": "replayed certificate"
+    },
+    {
+     "choice": {
+      "RS3c": "result",
+      "RS3i": "iff",
+      "RS3o": "iff"
+     },
+     "holds": true,
+     "reason": "replayed certificate"
+    }
+   ],
+   "cone": [
+    "RS3o",
+    "RS3i",
+    "RS3c"
+   ],
+   "route": "D1 relational-fol@0 entailment certificate or validated finite countermodel"
+  },
+  "T5": {
+   "route": "D3 ve-units@1",
+   "undecided": "VE limit (QT): factor-of-five quantity not represented in D3"
+  },
+  "T6": {
+   "choices": [
+    {
+     "choice": {
+      "RS3c": "third",
+      "RS3i": "suff",
+      "RS3o": "suff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "result",
+      "RS3i": "suff",
+      "RS3o": "suff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "third",
+      "RS3i": "iff",
+      "RS3o": "suff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "result",
+      "RS3i": "iff",
+      "RS3o": "suff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "third",
+      "RS3i": "suff",
+      "RS3o": "iff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "result",
+      "RS3i": "suff",
+      "RS3o": "iff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "third",
+      "RS3i": "iff",
+      "RS3o": "iff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "result",
+      "RS3i": "iff",
+      "RS3o": "iff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    }
+   ],
+   "cone": [
+    "RS3o",
+    "RS3i",
+    "RS3c"
+   ],
+   "route": "D1 relational-fol@0 entailment certificate or validated finite countermodel"
+  },
+  "T7": {
+   "choices": [
+    {
+     "choice": {
+      "RS3c": "third",
+      "RS3i": "suff",
+      "RS3o": "suff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "result",
+      "RS3i": "suff",
+      "RS3o": "suff"
+     },
+     "holds": true,
+     "reason": "replayed certificate"
+    },
+    {
+     "choice": {
+      "RS3c": "third",
+      "RS3i": "iff",
+      "RS3o": "suff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "result",
+      "RS3i": "iff",
+      "RS3o": "suff"
+     },
+     "holds": true,
+     "reason": "replayed certificate"
+    },
+    {
+     "choice": {
+      "RS3c": "third",
+      "RS3i": "suff",
+      "RS3o": "iff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "result",
+      "RS3i": "suff",
+      "RS3o": "iff"
+     },
+     "holds": true,
+     "reason": "replayed certificate"
+    },
+    {
+     "choice": {
+      "RS3c": "third",
+      "RS3i": "iff",
+      "RS3o": "iff"
+     },
+     "holds": false,
+     "reason": "validated countermodel"
+    },
+    {
+     "choice": {
+      "RS3c": "result",
+      "RS3i": "iff",
+      "RS3o": "iff"
+     },
+     "holds": true,
+     "reason": "replayed certificate"
+    }
+   ],
+   "cone": [
+    "RS3o",
+    "RS3i",
+    "RS3c"
+   ],
+   "route": "D1 relational-fol@0 entailment certificate or validated finite countermodel"
+  }
+ }
+}
