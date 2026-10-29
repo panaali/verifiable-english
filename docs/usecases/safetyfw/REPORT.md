@@ -434,3 +434,16 @@ The previously recorded envelope mismatches resolved by the Lean header check we
 signatures that still describe existing direct-runner or Rust route disagreements were classified under the
 reviewed DF-9 and DF-13 follow-ups in `conformance/difffuzz-baseline.json`; no `TODO` follow-up remains.
 The three tests in `main-known-red.txt` were not edited or treated as branch regressions.
+
+## 22. Route header trust classification
+
+The selected `test_committed_trust_table_covers_every_declaration` found that the new Lean helper had no trust
+class. `tools/trust-classes.json` now classifies `VE.Service.Standalone.routeHeaderAccepted` as S. On this tree,
+`tools/trust_map.py` measures 13 added S lines and 2 added untied V lines, both in
+`lean/VE/Service/Standalone.lean` (15 trusted lines total, K unchanged). The executable three-engine envelope
+regression tests the new definition and failed before its fix. `FOLLOW-UPS.md` records the ties pass required
+by R16.
+
+| Delta | Ruling | Evidence |
+|---|---|---|
+| `lean/VE/Service/Standalone.lean`: S +13, untied V +2, K +0 | SIGNED by standing ruling R16 (DRI-RULINGS.md): 15 new trusted lines for the tested route header guard, with a follow-up ties pass | `tools/trust_map.py --check`; `tests/test_difffuzz.py::test_request_envelope_fields_precede_predicate_sort_fault`; `docs/usecases/safetyfw/FOLLOW-UPS.md` |

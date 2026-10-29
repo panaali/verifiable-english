@@ -1349,6 +1349,20 @@
    "reason": "et-3d: lean/VE/Events/Decl.lean S +1 (EventsTyped: decide (D.year ≤ 9999) per named date and its docstring line; K +0, V +0)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-3d, 2026-10-18",
    "commit": "b8eac74553124f72a8650211b9df8228c621fdfe"
+  },
+  {
+   "class": "S",
+   "lines": 13,
+   "reason": "Route environment header guard and response-shape branch; tests/test_difffuzz.py::test_request_envelope_fields_precede_predicate_sort_fault",
+   "signature": "standing ruling R16 (DRI-RULINGS.md)",
+   "commit": "45e886fee9ee5cc475bd6355ceb6c099345e8332"
+  },
+  {
+   "class": "V",
+   "lines": 2,
+   "reason": "Route environment header guard and response-shape branch; tests/test_difffuzz.py::test_request_envelope_fields_precede_predicate_sort_fault",
+   "signature": "standing ruling R16 (DRI-RULINGS.md)",
+   "commit": "45e886fee9ee5cc475bd6355ceb6c099345e8332"
   }
  ]
 }
