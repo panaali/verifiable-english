@@ -1,0 +1,12 @@
+{
+ "job": "arm-seed-l96-8cf4e616-t235436",
+ "head": "c34e3959dac570eb53ab9f4feb2a0a523c6a287f",
+ "argv": [
+  "arm-seed-l96-8cf4e616-t235436",
+  "c34e3959dac570eb53ab9f4feb2a0a523c6a287f",
+  "0588c58e68bf9277f3d33755ad98d35574b7548d",
+  "-",
+  "-",
+  "4"
+ ]
+}
