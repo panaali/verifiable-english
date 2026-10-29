@@ -325,6 +325,12 @@ impl Environment {
             }
             description(&d["description"])?;
         }
+        // Container shapes are decoded before predicate sort semantics. A malformed
+        // constant declaration therefore cannot be hidden by an undeclared sort
+        // in a predicate; Python and Lean use the same phase order.
+        for decl in consts.values() {
+            object(decl, "InvalidInput")?;
+        }
         let mut predicates = BTreeMap::new();
         let mut regulated = BTreeMap::<String, (String, String, Option<String>, Option<String>)>::new();
         let mut canonical_data = data.clone();

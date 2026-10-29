@@ -31,3 +31,21 @@ fn malformed_nested_definition_precedes_unsupported_field() {
     assert_eq!(error.code, "InvalidInput");
     assert!(error.message.contains("expected exactly fields"));
 }
+
+#[test]
+fn nonobject_constant_precedes_predicate_sort_fault() {
+    let mut case = json!({
+        "language": "ve.core@0.2", "profiles": ["relational-fol@0"],
+        "spec_revision": "ve-v0.2-expand2-2026-09-25",
+        "vocabulary": {
+            "sorts": {}, "predicates": {"dept": {"arguments": ["$string"], "description": "d"}},
+            "constants": {"legal": []}
+        }
+    });
+    let error = Environment::from_value(&case).unwrap_err();
+    assert_eq!(error.code, "InvalidInput");
+    case["vocabulary"]["constants"]["legal"] = json!({"sort": "other", "description": "d"});
+    case["vocabulary"]["predicates"]["dept"]["arguments"] = json!(["missing"]);
+    let error = Environment::from_value(&case).unwrap_err();
+    assert_eq!(error.code, "UnknownSymbol");
+}

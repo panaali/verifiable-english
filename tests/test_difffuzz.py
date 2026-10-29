@@ -108,6 +108,30 @@ def test_unprofiled_definition_checks_nested_fault_before_field_refusal(built):
         surface.close()
 
 
+def test_nonobject_constant_precedes_predicate_sort_fault(built):
+    """A constant's container shape is checked before predicate sort semantics in all three engines."""
+    raw = {"language": "ve.core@0.2", "profiles": ["relational-fol@0"],
+           "spec_revision": "ve-v0.2-expand2-2026-09-25",
+           "vocabulary": {"sorts": {},
+                          "predicates": {"dept": {"arguments": ["$string"], "description": "d"}},
+                          "constants": {"legal": []}}}
+    surface = df.SURFACES["environment"]()
+    try:
+        for constant, argument_sort, code in (([], "$string", "InvalidInput"),
+                                              ({"sort": "other", "description": "d"}, "missing", "UnknownSymbol")):
+            case = deepcopy(raw)
+            case["vocabulary"]["constants"]["legal"] = constant
+            case["vocabulary"]["predicates"]["dept"]["arguments"] = [argument_sort]
+            seed = df.Seed("environment", "envelope", "constant-container-order", case)
+            answers = {"python": surface.python(seed, case),
+                       "lean": surface.lean([(seed, case)])[0],
+                       "rust": surface.rust([(seed, case)])[0]}
+            assert {name: answer["code"] for name, answer in answers.items()} == dict.fromkeys(
+                ("python", "lean", "rust"), code), answers
+    finally:
+        surface.close()
+
+
 def test_f13_duplicate_soft_rank_and_rust_field_error_reproduce(built):
     """DF-15 covers the fixed-seed soft environment disagreement in the CI sample."""
     entry = next(e for e in df.load_baseline()['entries'] if e['id'] == 'environment-ec2b2bc949a09a26')
