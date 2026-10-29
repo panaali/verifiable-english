@@ -14336,6 +14336,10 @@ theorem VE.EvaluationCounts.route_decodeFormulas_length
     VE.Route.Wire.decodeFormulas E j data = Except.ok fs → ∃ arr, j.getArr? = Except.ok arr ∧ fs.length = arr.size
   -- uses VE.Environment@VE.Syntax VE.Formula@VE.Syntax VE.Route.Wire.decodeFormulas@VE.Route.Wire
   -- expr 761532944
+theorem VE.Events.EventsDecoded.typed
+  ∀ (self : VE.Events.EventsDecoded), VE.Events.EventsTyped self.E self.V = Bool.true
+  -- uses VE.Events.EventsDecoded.E@VE.Events.Wire VE.Events.EventsDecoded.V@VE.Events.Wire VE.Events.EventsDecoded@VE.Events.Wire VE.Events.EventsTyped@VE.Events.Decl
+  -- expr 1728719048
 theorem VE.Events.boundRole_mem
   ∀ {V : VE.Events.EventsEnv} {s bd : String},
     VE.Events.boundRole V s = Option.some bd →
@@ -14520,6 +14524,24 @@ theorem VE.Events.eventsPremises_wellFormed
       ∀ (p : VE.Formula), p ∈ VE.Events.eventsX V → VE.Formula.WellFormed (VE.Events.regenEnv E V) [] p
   -- uses VE.Environment@VE.Syntax VE.Events.EventsEnv@VE.Events.Decl VE.Events.WellFormedEvents@VE.Events.Decl VE.Events.eventsX@VE.Events.Premises VE.Events.regenEnv@VE.Events.Decl VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax
   -- expr 1761829896
+theorem VE.Events.eventsX_absent
+  ∀ (environment : Lean.Json),
+    (environment.getObjVal? "events").toOption = Option.none → VE.Events.decodeEvents environment = Except.ok Option.none
+  -- uses VE.Events.EventsDecoded@VE.Events.Wire VE.Events.decodeEvents@VE.Events.Wire
+  -- expr 3833594735
+theorem VE.Events.events_certificate_calendar
+  ∀ (U : VE.NormDefaults.UDoc),
+    VE.NormDefaults.WellFormedU U = Bool.true →
+      ∀ (V : VE.Events.EventsEnv) (X Γ : List VE.Formula) (φ : VE.Formula),
+        (∀ (a : VE.Formula),
+            a ∈ X ++ VE.Events.eventsX V → VE.Formula.WellFormed (VE.Norms.envAt (VE.NormDefaults.fill U) 0) [] a) →
+          ∀ (cert : VE.Tableau.Certificate),
+            VE.Tableau.checkCertificate (VE.Norms.envAt (VE.NormDefaults.fill U) (VE.Norms.size (VE.NormDefaults.fill U)))
+                  (VE.NormDefaults.Wire.premisesX U (X ++ VE.Events.eventsX V) Γ) φ cert =
+                Bool.true →
+              VE.NormDefaults.EntailsX U (X ++ VE.Events.eventsX V) Γ φ
+  -- uses VE.Events.EventsEnv@VE.Events.Decl VE.Events.eventsX@VE.Events.Premises VE.Formula.WellFormed@VE.Syntax VE.Formula@VE.Syntax VE.NormDefaults.EntailsX@VE.NormDefaults.LayeredEntail VE.NormDefaults.UDoc@VE.NormDefaults.Tree VE.NormDefaults.WellFormedU@VE.NormDefaults.Tree VE.NormDefaults.Wire.premisesX@VE.NormDefaults.LayeredEntail VE.NormDefaults.fill@VE.NormDefaults.Tree VE.Norms.envAt@VE.Norms.Tree VE.Norms.size@VE.Norms.Tree VE.Tableau.Certificate@VE.Tableau VE.Tableau.checkCertificate@VE.TableauChecker
+  -- expr 3447330826
 theorem VE.Events.events_conservative
   ∀ (E : VE.Environment) (V : VE.Events.EventsEnv),
     VE.Events.WellFormedEvents E V = Bool.true →
