@@ -662,8 +662,8 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, help="the record (default gate-result.json in the checkout)")
     parser.add_argument("--workers", default="auto",
-                        help="xdist workers for the suite (default auto: the CPUs the load leaves, "
-                             "tests/conftest.py)")
+                        help="xdist workers for the suite and, when numeric, Lean audit jobs "
+                             "(default auto: the CPUs the load leaves, tests/conftest.py)")
     parser.add_argument("--base", help="the commit whose collection the head's is checked against (default: the "
                                            "merge base with main, or on main the first parent)")
     parser.add_argument("--rerun-failed", nargs="?", const="", type=str, metavar="RECORD",
@@ -762,7 +762,10 @@ def main() -> int:
             result["trust"] = read_trust(trust_file)
 
             if selection is None:
-                command(["uv", "run", "--frozen", "--no-sync", "python", "lean/audit.py"],
+                audit_command = ["uv", "run", "--frozen", "--no-sync", "python", "lean/audit.py"]
+                if args.workers != "auto":
+                    audit_command.extend(["--jobs", args.workers])
+                command(audit_command,
                         env=env, stage="Lean audit")
                 result["stages"].append("lean_audit")
 

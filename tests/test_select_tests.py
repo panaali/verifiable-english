@@ -34,6 +34,15 @@ import lean_mode_deps  # noqa: E402
 import select_tests_seeds  # noqa: E402
 
 
+def test_audit_inherits_selector_job_budget(monkeypatch):
+    calls = []
+    monkeypatch.setattr(select_tests.subprocess, 'run', lambda command, **kwargs: (
+        calls.append(command) or types.SimpleNamespace(returncode=0)))
+    assert select_tests.run({'commands': [list(select_tests.AUDIT)], 'lean_build': False},
+                            record=False, jobs=3, full=True) == 0
+    assert calls == [[*select_tests.AUDIT, '--jobs', '3']]
+
+
 @pytest.fixture(autouse=True)
 def private_cache(tmp_path_factory, monkeypatch):
     monkeypatch.setenv("XDG_CACHE_HOME", str(tmp_path_factory.getbasetemp() / "cache"))
