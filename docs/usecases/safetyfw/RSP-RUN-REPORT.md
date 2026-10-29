@@ -41,7 +41,7 @@ M2 records 25 reading sets, 31 SOME answers and at most eight choices per item. 
 untraced rules. M7 records 117 default-sensitive choices. M8 records 26 replayed entailment certificates, 38
 validated finite countermodels and W1 conflict witnesses. M9 has six exact mutant changes. M10 records 303 units,
 76 rules, 49 cases, 282 evaluated choices, 40 built documents and 64 prover calls. The last `run.py --check` took
-95.2 s; wall time is printed, not pinned in JSON. No count here is called audit-verified.
+116.5 s; wall time is printed, not pinned in JSON. No count here is called audit-verified.
 
 ## Seeded bugs
 
@@ -85,5 +85,5 @@ m3 changed C1/C7/C-doc/N2; m4 changed G3; m5 changed T1/T2b/T5; m6 changed D4. T
 9. PASS — Mac `mac-pytest.sh --select` selected 47 units and included `test_safetyfw_usecases.py`, which caught seeded F24.
 10. N.A. — no Lean theorem or statement changed; `lake build` passed.
 11. N.A. — no new public budget or deadline mechanism; `test_rsp_run_recomputes_every_key_item_and_records_causes` records unknowns without a false verdict.
-12. N.A. — no product-path performance change; M10 cost and the 95.2 s `run.py --check` are recorded.
+12. N.A. — no product-path performance change; M10 cost and the 116.5 s `run.py --check` are recorded.
 13. PASS — `gate_collection.py --check --prebuilt` reports zero removed, stale or malformed tests.
