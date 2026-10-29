@@ -290,6 +290,48 @@ item 6).
 | messages sent for the user (a26 to a30) | recipients only | whose claims a message carries, the user's or the agent's |
 | handing work to a sub-agent (a38) | an uncovered tool | commands passed to the sub-agent, and which policy binds it |
 
+## Measured level
+
+The policy family (this case, [cedar-attributes](../cedar-attributes/README.md) and
+[gatekeeper-exemption](../gatekeeper-exemption/README.md)) has no English source, so its level is measured
+against a register of the requirements a policy author would state, [requirements.json](requirements.json).
+Its basis, the feature planner's definition of 2026-10-28, is written in the register's frozen header:
+
+> a unit is one plain-English requirement statement of the family; its size is its UTF-8 byte length; a unit
+> is VERIFIED only when (i) it is expressed by CHECKED VE text on main (the named rules, log records or claim)
+> and (ii) every answer-key case the register links to it agrees in results.json (verdict and deciding rules,
+> M1/M2), or for cedar-attributes/gatekeeper-exemption, its named test passes; every other unit is OPEN and
+> names the missing feature family (speech acts, time, numbers, information flow, Cedar permit/forbid via the
+> W1 adapter, the full Gatekeeper template, the classifiers PLAN section 2 puts outside VE). Source bytes = all
+> units.
+
+The 46 rows are the 26 rules' "In plain English" column above, the 8 checker findings of PLAN section 7, the 4
+out-of-scope bullets of PLAN section 2, the 6 rows of PLAN section 10, cedar-attributes' claim and
+gatekeeper-exemption's operation. Finding rows 1, 2, 3 and 5 state what the checker must report; they do not
+claim that the policy is conflict-free, overlap-free, fully deciding or gap-free. The pre-merge correction to
+those four rows changed the snapshot hash and both measured totals. Later rows are appended with their date,
+never edited.
+[level.py](level.py) only relays: it compares `results.json` with the key and runs the two named tests.
+
+| Measure | Bytes |
+|---|---|
+| Verified (35 rows) | 2,071 |
+| Source (46 rows) | 3,182 |
+| OPEN, speech acts | 445 |
+| OPEN, the classifiers PLAN section 2 puts outside VE | 241 |
+| OPEN, numbers | 134 |
+| OPEN, information flow | 111 |
+| OPEN, Cedar permit/forbid via the W1 adapter | 95 |
+| OPEN, time | 85 |
+| OPEN, the full Gatekeeper template | 0 |
+
+A remeasure runs `uv run python usecases/agent-policy/level.py` on main. When it exits 0, it appends this
+line, with its own UTC time and commit, to the use-case levels table:
+
+```text
+<UTC time>	agent-policy	<verified>	<source>	requirement register (apol-req)	ve usecases/agent-policy/requirements.json, level.py (<commit>)
+```
+
 ## How to run
 
 From the repository root, with `~/.elan/bin` on `PATH`:
@@ -299,7 +341,9 @@ python usecases/agent-policy/check.py base --write       # every action and the 
 python usecases/agent-policy/check.py mutants --write    # the six mutants (several minutes)
 python usecases/agent-policy/check.py replay --write     # Lean and Rust replay of the base evidence
 python usecases/agent-policy/unspecified.py --write      # the default `unspecified`, with Lean replay
+python usecases/agent-policy/level.py                    # the measured level (section above)
 pytest -q tests/test_agent_policy.py tests/test_agent_policy_rerun.py tests/test_agent_policy_unspecified.py
+pytest -q tests/test_agent_policy_level.py
 ```
 
 `tests/test_agent_policy.py` checks the files, the answer key against the plan, and `results.json` against
