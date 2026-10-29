@@ -136,9 +136,11 @@ def case_agrees(case: str, key: dict, results: dict) -> bool:
             want, got = key["actions"][name], results["actions"][name]
             if kind == "report":
                 return type(got["rule_25"]) is str and got["rule_25"] == want["rule_25"]
-            got = got["permission"]
-            return type(got["verdict"]) is str and got["verdict"] == want["verdict"] and all(
-                _sorted(got[side]) == _sorted(want[side]) for side in ("positive", "negative", "open"))
+            permission = got["permission"]
+            return (type(got["verdict"]) is str and got["verdict"] == want["verdict"]
+                    and type(permission["verdict"]) is str and permission["verdict"] == want["verdict"]
+                    and all(_sorted(permission[side]) == _sorted(want[side])
+                            for side in ("positive", "negative", "open")))
         if kind == "policy" and name in POLICY_FIELDS:
             want, got = key["policy"][name], results["policy_summary"][POLICY_FIELDS[name]]
             if name == "required_overlaps":

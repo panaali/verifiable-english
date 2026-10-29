@@ -1,9 +1,9 @@
 # apol-req: the policy family's requirement register and its measured level
 
-Status: built, selected tests pass (GitHub Actions selection run, then the 2 tests it flagged were fixed and rerun: 134 passed); full gate left to the chain. No DRI signature is needed.
-What changed: `usecases/agent-policy/requirements.json` (46 rows), `usecases/agent-policy/level.py` (relay reader), `tests/test_agent_policy_level.py`, a named test for cedar-attributes, README "Measured level".
-Level: **1,944 verified bytes of 3,055 source bytes** (35 VERIFIED rows of 46). Bytes moved by this item: none (it measures).
-Open: the OPEN rows below are the family's next items; DELTA none; trust +0.
+Status: review findings F1 and F2 fixed; final selected tests and Lean build/audit recorded below. No DRI signature is reserved.
+What changed: four PLAN §7 register units now state checker obligations; the reader checks both action verdict fields against M1; regression tests cover both classes.
+Level: **2,071 verified bytes of 3,182 source bytes** (35 VERIFIED rows of 46); the correction adds 127 bytes to each total.
+Open: the OPEN rows below are the family's next items; VE product DELTA none; trust +0; the merge train runs the full gate.
 
 ## Delivered (task rows)
 
@@ -22,13 +22,22 @@ Linked cases compare the key with `results.json`: `action:aNN` verdict and posit
 
 ## Measured level and the line for usecase-levels.tsv
 
-`uv run python usecases/agent-policy/level.py` on 77a78084d: verified 1944, source 3055, exit 0. The line a remeasure appends (I did not edit manage-agents):
+Historical first measure on 77a78084d: verified 1944, source 3055, exit 0. This line was not appended to manage-agents and is superseded by the corrected 2071/3182 measure:
 
 ```text
 2026-10-29T01:14Z	agent-policy	1944	3055	requirement register (apol-req)	ve usecases/agent-policy/requirements.json, level.py (77a78084d)
 ```
 
 The three largest OPEN byte groups, the family's next items: **speech acts 445 B** (scope-3, speech-1, -4, -5, -6; apol-assent), **the classifiers PLAN section 2 puts outside VE 241 B** (scope-1, finding-8), **numbers 134 B** (scope-2). Then information flow 111 B (speech-2; apol-flow), Cedar permit/forbid via W1 95 B (scope-4), time 85 B (speech-3; apol-time), the full Gatekeeper template 0 B.
+
+## Review fixes
+
+| Finding | Fix | Regression | Commit |
+|---|---|---|---|
+| F1 | The four PLAN §7 units now describe the conflict-status, pair, never-deciding and tool-gap checks. The frozen snapshot was corrected before merge and rehashed; the live measure is 2071/3182. The saved key still contains conflict (3, 14), rule 12 and tool gaps. No executable probe was supplied. | `tests/test_agent_policy_level.py::test_policy_finding_requirements_keep_the_source_checker_obligations`, `::test_live_register_passes`, `::test_readme_states_the_measured_level` | See local review-fix commit |
+| F2 | Every `action:` link checks both `actions[id].verdict` and `actions[id].permission.verdict` against M1, plus the existing deciding-rule sets against M2. The review probe failed before the fix and passed after it. | `tests/test_agent_policy_level.py::test_every_linked_action_checks_its_exported_m1_verdict[*]`, `::test_each_check_at_and_around_its_boundary[flipped exported verdict]` | See local review-fix commit |
+
+F3 is a C follow-up outside this A/B fix. The three main-known-red tests were not edited; any occurrence in selection is reported as pre-existing.
 
 ## Choices recorded (no plan file was edited)
 
