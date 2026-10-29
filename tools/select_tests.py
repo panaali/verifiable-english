@@ -1507,21 +1507,22 @@ def main() -> int:
             plan = light_tier(plan, jobs=args.jobs)
         if args.json:
             print(json.dumps(plan, indent=2))
-            return run(plan, record=False, maxfail=args.maxfail, full=args.full) if args.run else 0
-        print(f"impacted{' (full fallback)' if plan['fallback'] else ''}: "
-              f"{plan['selected_count']}/{plan['full_count']} Python test files")
-        if args.tier == "light":
-            print(f"light tier: {plan['tier']['light_count']} light; "
-                  f"{plan['tier']['selected_heavy_count']}/{plan['tier']['heavy_count']} heavy selected "
-                  f"(measured in {plan['tier']['source_run']})")
-        for path in plan["unreached"]:
-            print(f"no test reaches {path}: full suite")
-        for path in plan["scripts_without_tests"]:
-            print(f"warning: no test reaches {path}")
-        print("changed:", ", ".join(paths) or "(none; full fallback)")
-        for command in plan["commands"]:
-            print("+", " ".join(command))
-        return run(plan, record=False, maxfail=args.maxfail, full=args.full) if args.run else 0
+        else:
+            print(f"impacted{' (full fallback)' if plan['fallback'] else ''}: "
+                  f"{plan['selected_count']}/{plan['full_count']} Python test files")
+            if args.tier == "light":
+                print(f"light tier: {plan['tier']['light_count']} light; "
+                      f"{plan['tier']['selected_heavy_count']}/{plan['tier']['heavy_count']} heavy selected "
+                      f"(measured in {plan['tier']['source_run']})")
+            for path in plan["unreached"]:
+                print(f"no test reaches {path}: full suite")
+            for path in plan["scripts_without_tests"]:
+                print(f"warning: no test reaches {path}")
+            print("changed:", ", ".join(paths) or "(none; full fallback)")
+            for command in plan["commands"]:
+                print("+", " ".join(command))
+        return run(plan, record=False, jobs=args.jobs, maxfail=args.maxfail,
+                   full=args.full) if args.run else 0
     if args.commit:
         base, after = f"{args.commit}^", args.commit
     elif args.base:
