@@ -995,6 +995,7 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.Agg.run_sum
 #print axioms VE.Calc.Budgeted.bin_eq
 #print axioms VE.Calc.Check.fault_some
+#print axioms VE.Calc.Check.followsShown_matches
 #print axioms VE.Calc.Check.outcomeMeans_claim
 #print axioms VE.Calc.Check.run_claim
 #print axioms VE.Calc.Check.run_sound
@@ -1016,6 +1017,7 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.Denotes.unique
 #print axioms VE.Calc.Derivation.check_sound
 #print axioms VE.Calc.Derivation.replay_sound
+#print axioms VE.Calc.Derive.shown_matches
 #print axioms VE.Calc.Expr.evalB_eq
 #print axioms VE.Calc.Expr.evalL_agrees
 #print axioms VE.Calc.Expr.evalL_causes
@@ -1113,6 +1115,7 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.Rescale.pos
 #print axioms VE.Calc.Run.outcome_sound
 #print axioms VE.Calc.Run.outcomes_words
+#print axioms VE.Calc.Run.row_matches
 #print axioms VE.Calc.Run.row_outcome
 #print axioms VE.Calc.Run.row_sound
 #print axioms VE.Calc.Run.rows_outcome
@@ -1138,6 +1141,7 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.causes_accumulate
 #print axioms VE.Calc.causes_step
 #print axioms VE.Calc.charge_eq
+#print axioms VE.Calc.checked_steps
 #print axioms VE.Calc.compare_invariant
 #print axioms VE.Calc.convert_by_factors
 #print axioms VE.Calc.counted_bound
