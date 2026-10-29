@@ -163,6 +163,52 @@ def test_rsp_every_rule_and_premise_parses_with_one_reading(rsp_modules):
     assert sum(len(f) for _, f in rsp_translation.facts()) == 15
 
 
+def test_rsp_n1_filters_all_rs0_definition_premises(rsp_modules):
+    """F6: the T4 will/would-consider definitions must use the rule path's N1 switch."""
+    facts = rsp_translation.facts()
+    assert {block.id for block, _ in facts if block.narrowing == "RS0"} == {
+        "t4-suff", "t4-only-if", "s2-suff-result", "s2-suff-third",
+        "s2-only-if-result", "s2-only-if-third"}
+    assert all(block.narrowing == "independent" for block, _ in facts
+               if block.id.startswith("threshold-") or block.id == "highly-capable-t4")
+    choice = rsp_run.BASE
+    expected = {block.id for block, _ in facts if rsp_run.applies(block, choice)}
+    assert {block.id for block, _ in rsp_run.selected_facts(choice)} == expected
+    try:
+        rsp_run.WITHOUT_NARROWING = "N1"
+        assert {block.id for block, _ in rsp_run.selected_facts(choice)} == {
+            block.id for block, _ in facts if rsp_run.applies(block, choice)
+            and block.narrowing == "independent"}
+    finally:
+        rsp_run.WITHOUT_NARROWING = None
+
+
+@pytest.mark.parametrize("item_id,case_id", [
+    ("T1", "T1"), ("T2b", "T2"), ("T3", "T3"), ("T4b", "T4"), ("T7", "T7")])
+def test_rsp_n1_counterfactual_removes_t_family_definition(item_id, case_id, rsp_modules):
+    """F6 probe and adjacent proof/negative-goal cases, with baseline certificates retained."""
+    case = rsp_run.CASES[case_id]
+    baseline = rsp_run.threshold_answer(item_id, case)
+    verdict = rsp_run.verdict(baseline)
+    assert verdict == "ALL" if item_id in ("T1", "T3") else verdict.startswith("SOME(")
+    assert all(row["reason"] != "UNKNOWN" for row in baseline["choices"])
+    try:
+        rsp_run.WITHOUT_NARROWING = "N1"
+        without = rsp_run.threshold_answer(item_id, case)
+        assert rsp_run.verdict(without) == "NONE"
+        assert all(row["reason"] == "validated countermodel" for row in without["choices"])
+    finally:
+        rsp_run.WITHOUT_NARROWING = None
+
+
+def test_rsp_n1_saved_comparison_includes_t_family(rsp_modules):
+    changed = json.loads((RSP / "results.json").read_text())["without_narrowings"]["N1"]["changed"]
+    assert len(changed) == 54
+    assert {item: changed[item]["without"] for item in ("T1", "T2b", "T3", "T4b", "T7")} == {
+        item: "NONE" for item in ("T1", "T2b", "T3", "T4b", "T7")}
+    assert "Removing N1 changes 54 answer cells" in (RSP / "README.md").read_text()
+
+
 def test_rsp_every_byte_is_in_exactly_one_unit(rsp_modules):
     """M3: the saved spans partition the 59,410 bytes; the D1 and master maps each total them; with the pinned source,
     the build reproduces spans.json and coverage.json byte for byte."""

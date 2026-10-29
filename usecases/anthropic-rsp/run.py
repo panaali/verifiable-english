@@ -155,19 +155,25 @@ _MODELS = {}
 _PREMISES_CHECKED = set()
 
 
+def selected_facts(choice):
+    """Use each fact's source reading and N1 classification on every VE route."""
+    return ((block, formulas) for block, formulas in T.facts()
+            if applies(block, choice) and not (WITHOUT_NARROWING == "N1" and block.narrowing == "RS0"))
+
+
 def check_premises(doc, case, choice):
     from ve.evaluate import evaluate
-    key = (frozenset(atoms(case)), tuple((s, choice[s]) for s in ("RS3o", "RS3i", "RS3c")))
+    key = (frozenset(atoms(case)), tuple((s, choice[s]) for s in ("RS3o", "RS3i", "RS3c")),
+           WITHOUT_NARROWING == "N1")
     if key in _PREMISES_CHECKED:
         return
     env = doc.elaborated.base_environment()
     witness = model(doc, case)
-    for block, formulas in T.facts():
-        if applies(block, choice):
-            for formula in formulas:
-                result = evaluate(env, formula, witness, trace=False)
-                if result.value is not True:
-                    raise AssertionError(f"case {case['id']} does not satisfy premise {block.id}: {result.status}")
+    for block, formulas in selected_facts(choice):
+        for formula in formulas:
+            result = evaluate(env, formula, witness, trace=False)
+            if result.value is not True:
+                raise AssertionError(f"case {case['id']} does not satisfy premise {block.id}: {result.status}")
     _PREMISES_CHECKED.add(key)
 
 
@@ -386,7 +392,7 @@ def t_goal(negative=False):
 def t_proof(case, choice, negative=False):
     global PROVER_CALLS
     env = T.base_environment()
-    premises = tuple(f for block, formulas in T.facts() if applies(block, choice) for f in formulas)
+    premises = tuple(f for _, formulas in selected_facts(choice) for f in formulas)
     stated = premises + (t_case_formula(case),)
     goal = t_goal(negative)
     PROVER_CALLS += 1
@@ -421,12 +427,11 @@ def t_countermodel(case, choice, negative=False):
         "domains": {"situation": ["s"], "threshold": list(V.THRESHOLDS)},
         "constants": {c: c for c in env.constants},
         "relations": {p: sorted(v) for p, v in relations.items()}})
-    for block, formulas in T.facts():
-        if applies(block, choice):
-            for formula in formulas:
-                result = evaluate(env, formula, m, trace=False)
-                if result.value is not True:
-                    return None
+    for _, formulas in selected_facts(choice):
+        for formula in formulas:
+            result = evaluate(env, formula, m, trace=False)
+            if result.value is not True:
+                return None
     result = evaluate(env, t_goal(negative), m, trace=False)
     return "validated countermodel" if result.value is False else None
 
