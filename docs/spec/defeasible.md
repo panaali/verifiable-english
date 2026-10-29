@@ -894,14 +894,12 @@ theorem default_conflict_is_gate (N : NDoc) (A : Choice) (cs ds : List (Choice �
     (hconf : foldConflict ds = .conflict) :
     ∃ c, Compatible N.D c ∧ (∀ x ∈ A, x ∈ c) ∧ ¬ DefaultCoherent.{0} (choiceU N c) (choiceSoft N c) []
 
-/-- DF-3's replay: RD-9's (`replayVerdictsSD`) and, per chosen choice, the default rows decoded from its
-    `defaults-coherence`, `defaults-certificate` and `defaults-model` evidence on the same `choiceLayeredG` source,
-    with each FOLLOWS choice's basis and assumptions. -/
+/-- DF-3's replay: RD-9's (`replayVerdictsSD`) and, per chosen choice, its strict and default evidence on the same
+    `choiceLayeredG` source; the default rows and bases are computed from them. -/
 structure DVerdicts where
   y : VE.Readings.Wire.SDVerdicts
-  dConflictRows : List (Choice × ChoiceResult)
-  dQueryRows : List (Choice × ChoiceResult)
-  bases : List (Choice × VE.Defaults.Basis × List String)
+  ds : List ((c : Choice) × DChoice y.r.N c)
+  hds : ds.map (·.1) = chosenOf y.r.N.D y.x.A
 
 def replayVerdictsD (j : Lean.Json) : Except String DVerdicts
 
@@ -963,6 +961,18 @@ theorem readings_wire_default_conflict (j : Lean.Json) (z : DVerdicts) (h : repl
     (r : ReadingVerdict) (hm : z.defaultMember = some (.conflict, r)) :
     ∃ c, Compatible z.y.r.N.D c ∧ (∀ x ∈ z.y.x.A, x ∈ c) ∧
       ¬ DefaultCoherent.{0} (choiceU z.y.r.N c) (choiceSoft z.y.r.N c) []
+```
+
+The three row lists are projections of the checked per-choice evidence, rather than independently supplied fields:
+
+```lean
+def DVerdicts.dConflictRows (z : DVerdicts) : List (Choice × ChoiceResult) :=
+  z.ds.map (fun d => (d.1, dConflictRow d.2.1 d.2.2))
+def DVerdicts.dQueryRows (z : DVerdicts) : List (Choice × ChoiceResult) :=
+  z.ds.map (fun d => (d.1, dQueryRow d.2.1 d.2.2 (choiceDoc z.y.r.N.D d.1).2 z.y.x.Γ z.y.x.φ))
+def DVerdicts.bases (z : DVerdicts) : List (Choice × Basis × List String) :=
+  z.ds.filterMap (fun d => (dBasis d.2.1 d.2.2 (choiceDoc z.y.r.N.D d.1).2 z.y.x.Γ z.y.x.φ).map
+    (fun p => (d.1, p.1, p.2)))
 ```
 
 RD-9's `foldG_*` theorems apply to `dSem N` unchanged. The stub elaborates `foldG_all_sound` at `dSem` as an

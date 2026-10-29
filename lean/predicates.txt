@@ -161,6 +161,8 @@ module VE.Attribution.Structure
 module VE.Attribution.Wire
 module VE.Audit
 module VE.Bridge
+module VE.Calc.Csv
+module VE.Calc.Data
 module VE.Calc.Decls
 module VE.Calc.Derive
 module VE.Calc.DeriveExamples
@@ -171,6 +173,7 @@ module VE.Calc.FourierMotzkin
 module VE.Calc.Identity
 module VE.Calc.IdentityExamples
 module VE.Calc.Inline
+module VE.Calc.Jsonl
 module VE.Calc.Linear
 module VE.Calc.Lower
 module VE.Calc.LowerExamples
@@ -179,6 +182,8 @@ module VE.Calc.Render
 module VE.Calc.Run
 module VE.Calc.RunExamples
 module VE.Calc.Syntax
+module VE.Calc.Table
+module VE.Calc.TableExamples
 module VE.Calc.Units
 module VE.Calc.UnitsExamples
 module VE.Calc.Wire
@@ -316,11 +321,14 @@ module VE.EnglishGrammar.Token
 module VE.EnvironmentProofs
 module VE.EvaluationCounts
 module VE.Events.Calendar
+module VE.Events.Chain
 module VE.Events.Completion
 module VE.Events.Conservative
 module VE.Events.Decl
 module VE.Events.Examples
 module VE.Events.Premises
+module VE.Events.Wire
+module VE.Events.WireExamples
 module VE.Finite
 module VE.Grammar.Basic
 module VE.Grammar.Derives
@@ -446,6 +454,8 @@ module VE.Readings.CompanionsExamples
 module VE.Readings.Components
 module VE.Readings.ComponentsExamples
 module VE.Readings.ComponentsWire
+module VE.Readings.DefaultVerdicts
+module VE.Readings.DefaultVerdictsExamples
 module VE.Readings.Doc
 module VE.Readings.Examples
 module VE.Readings.Faithful
@@ -739,6 +749,7 @@ VE.Calc.Denotes.below@VE.Calc.Syntax
 VE.Calc.Denotes@VE.Calc.Syntax
 VE.Calc.Expr.Overflows@VE.Calc.Decls
 VE.Calc.Expr.ReadsExhausted@VE.Calc.Decls
+VE.Calc.Filter.Selects@VE.Calc.Table
 VE.Calc.Follows@VE.Calc.Lower
 VE.Calc.Frac.Means@VE.Calc.Poly
 VE.Calc.HasCounterexample@VE.Calc.Lower
@@ -1261,6 +1272,11 @@ VE.Scales.Intended@VE.Scales.Intended
 VE.Scales.StrictLinear@VE.Scales.Degrees
 VE.Scales.asMuch@VE.Scales.Degrees
 VE.Scales.below@VE.Scales.Degrees
+VE.Scope.BlockBound@VE.Scope.Govern
+VE.Scope.HasStr.below@VE.Scope.Govern
+VE.Scope.HasStr@VE.Scope.Govern
+VE.Scope.JsonWF.below@VE.Scope.Govern
+VE.Scope.JsonWF@VE.Scope.Govern
 VE.Senses.CandidateGood@VE.Senses.Read
 VE.Senses.UnitGood@VE.Senses.Read
 VE.Senses.glossed_negative@VE.Senses.Dictionary
