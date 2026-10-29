@@ -1,0 +1,96 @@
+"""The small soft-chain document has the pilot probe's profiles, a soft rule and a claim graph."""
+from __future__ import annotations
+
+import json
+from copy import deepcopy
+from pathlib import Path
+
+import pytest
+
+from ve.document import check_document, load_document
+from ve.errors import CheckerUnavailable, VEError
+from ve.norm_defaults_route import admit_norm_defaults_document
+from ve.softnorms import SoftEnvironment, check_soft_source
+
+
+FIXTURE = Path(__file__).parent / "data/rd9-docroute.ve.md"
+THROUGH_FILL = "UnsupportedProfile: norm-defaults@0 documents are checked through fill (ve.norm_defaults)"
+NEEDS_PROFILE = "UnsupportedProfile: unspecified completion requires norm-defaults@0"
+
+
+def _front():
+    raw = FIXTURE.read_bytes()
+    head, body = raw[4:].split(b"\n---\n", 1)
+    return json.loads(head), body
+
+
+def _without_profile(tmp_path):
+    front, body = _front()
+    front["environment"]["profiles"].remove("norm-defaults@0")
+    path = tmp_path / "without-defaults.ve.md"
+    path.write_bytes(b"---\n" + json.dumps(front).encode() + b"\n---\n" + body)
+    return path
+
+
+def _direct_case():
+    front, _ = _front()
+    lower = deepcopy(front["environment"])
+    lower["profiles"].remove("readings@1")
+    document = {
+        "units": [
+            {"id": "u1", "span": front["units"][0]["span"], "kind": "norm",
+             "content": front["units"][0]["content"]},
+            {"id": "u2", "span": front["units"][1]["span"], "kind": "asserted",
+             "content": ["top"]},
+        ],
+        "graph": front["graph"], "lemmas": [], "open_terms": [], "reading_sets": [], "narrowings": [],
+    }
+    return SoftEnvironment(lower), document
+
+
+def test_soft_chain_document_checks_the_filled_route():
+    loaded = load_document(FIXTURE)
+    assert loaded["norm_defaults"] is None  # The soft chain owns its fill.
+    report = check_document(FIXTURE)
+    env, document = _direct_case()
+    admitted = admit_norm_defaults_document(env, document)
+    assert report["admission"]["admitted"] is True
+    assert report["admission"]["report"] == admitted["report"]
+    assert report["admission"]["core_report_id"] == admitted["report_id"]
+
+
+def test_soft_admission_conditions_are_bound_to_the_source(monkeypatch):
+    from ve import norm_defaults_route as route
+    env, document = _direct_case()
+    original = route.run_case
+    for labels in (["soft:coherence:absent,absent"],
+                   ["soft:coherence:absent,absent", "soft:coherence:absent,absent"]):
+        def changed(case):
+            row = original(case)
+            if case["kind"] == "admission":
+                row = {**row, "conditional_on": labels}
+            return row
+        monkeypatch.setattr(route, "run_case", changed)
+        with pytest.raises(CheckerUnavailable, match="unbound condition"):
+            admit_norm_defaults_document(env, document)
+        monkeypatch.setattr(route, "run_case", original)
+
+
+def test_unspecified_without_profile_keeps_its_own_refusal(tmp_path):
+    with pytest.raises(VEError, match="^" + NEEDS_PROFILE + "$"):
+        check_document(_without_profile(tmp_path))
+
+
+def test_plain_soft_document_keeps_its_admission_route(tmp_path):
+    front, body = _front()
+    front["environment"]["profiles"].remove("norm-defaults@0")
+    front["environment"]["vocabulary"]["predicates"]["x_permitted"]["regulated"]["default"] = "deny"
+    path = tmp_path / "plain-soft.ve.md"
+    path.write_bytes(b"---\n" + json.dumps(front).encode() + b"\n---\n" + body)
+    assert check_document(path)["admission"]["admitted"] is True
+
+
+def test_direct_soft_check_of_unfilled_tree_still_refuses():
+    front, _ = _front()
+    with pytest.raises(VEError, match="^" + THROUGH_FILL.replace("(", r"\(").replace(")", r"\)") + "$"):
+        check_soft_source(front["environment"], [front["units"][0]["content"]])
