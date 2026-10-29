@@ -102,7 +102,7 @@ def test_every_item_names_a_case_of_cases_json_or_none(case):
 
 TRANSCRIPTION_SHA256 = {
     "anthropic-rsp": {"answer-key.json": "fd00575d348f0917cc6aebd08ea21cb67c5f2f7f1540a2d970666a127f1d4a50",
-                      "cases.json": "0ed79956454c30e12b7808bec6d0db7b94324a97a14daabf7e8272d5ec8a5405"},
+                      "cases.json": "b9f912ac56eb8cea4d9075b8936c640ec8f52d0e1e7a9bf80390264f8edeb554"},
     "openai-preparedness": {"answer-key.json": "2c8b27504eebd57bdb4953f5527fdc6373ce5e456fc5050bc8a840877b160ac2",
                             "cases.json": "a5b0d0c6a3bade39bd046e9434656231547237d06233651da909c34bd0704397"},
 }
@@ -121,7 +121,7 @@ RSP = USECASES / "anthropic-rsp"
 RSP_EVIDENCE = REPO / "docs" / "usecases" / "safetyfw" / "anthropic-rsp"
 # The case's modules import their siblings by bare names, two of which safety-framework's modules also use; they are
 # loaded apart and stand in sys.modules only while these tests run (as tests/test_safety_framework.py does).
-RSP_NAMES = ("rsp_vocabulary", "rsp_translation", "build_document", "stage0", "measure")
+RSP_NAMES = ("rsp_vocabulary", "rsp_translation", "build_document", "stage0", "measure", "run", "reference")
 
 
 def _load_rsp():
@@ -141,6 +141,7 @@ def _load_rsp():
 RSP_MODULES = _load_rsp()
 rsp_build, rsp_stage0, rsp_measure = RSP_MODULES["build_document"], RSP_MODULES["stage0"], RSP_MODULES["measure"]
 rsp_translation, rsp_vocabulary = RSP_MODULES["rsp_translation"], RSP_MODULES["rsp_vocabulary"]
+rsp_run, rsp_reference = RSP_MODULES["run"], RSP_MODULES["reference"]
 LEAN_SERVICE = REPO / "lean/.lake/build/bin/ve_service"
 
 
@@ -276,3 +277,41 @@ def test_rsp_stage0_rerun_equals_saved(rsp_modules):
     """Stage 0 recomputed by VE; the source probes need the pinned source, which the gate runner does not store
     (tools/gate-optional.json), and are left out without it."""
     assert rsp_stage0.main(["--check"]) == 0
+
+
+@pytest.mark.skipif(not LEAN_SERVICE.exists(), reason="the Lean service is not built")
+def test_rsp_run_recomputes_every_key_item_and_records_causes(rsp_modules):
+    """Every saved answer comes from a fresh VE route, with no key read during answer()."""
+    saved = json.loads((RSP / "results.json").read_text())
+    fresh = rsp_run.run()
+    assert fresh == {k: saved[k] for k in ("items", "comparison", "cost")}
+    assert [r["id"] for r in saved["comparison"]] == [k["id"] for k in items("anthropic-rsp")]
+    assert all(r["status"] in ("agree", "UNDECIDED-faithful") for r in saved["comparison"])
+    assert all(r["cause"] and r["cause"]["feature_family"] for r in saved["comparison"] if not r["agree"])
+    assert all(r["route"] for r in saved["comparison"])
+    assert saved["metrics"]["M1"] == rsp_run.metrics(saved)["M1"]
+    assert saved["metrics"]["M8"]["unknown_items"] == [r["id"] for r in saved["comparison"] if not r["agree"]]
+    # The case audit corrected the 6x factor and the scenario's explicit strong evidence.
+    cases = rsp_run.CASES
+    assert cases["T2"]["findings"]["OT15"] is False
+    assert cases["K21"]["findings"]["OT8"] is True
+    assert "significant_lead" not in json.dumps(json.loads(rsp_translation.parsed_rule("f24-delay"))["guard"])
+    assert rsp_run.verdict(rsp_run.answer({"id": "K19b", "case": "K19b", "item": "REQUIRED:DELAY"})) == "ALL"
+
+
+def test_rsp_independent_reference_and_comparator_catch_wrong_answers(rsp_modules):
+    rows = rsp_reference.compare()
+    assert len(rows) == 68 and all(row["agrees"] for row in rows)
+    assert not rsp_reference.matches("ALL", ("RS1",), lambda c: c["RS1"] == "cond")
+    assert not rsp_reference.matches("NONE", (), lambda c: True)
+    assert not rsp_run.same_set("ALL", {"route": "test", "cone": [],
+                                         "choices": [{"choice": {}, "holds": False}]})
+
+
+@pytest.mark.skipif(not LEAN_SERVICE.exists(), reason="the Lean service is not built")
+def test_rsp_six_mutants_change_exactly_the_named_results(rsp_modules):
+    saved = json.loads((RSP / "results.json").read_text())
+    fresh = rsp_run.mutants({"comparison": saved["comparison"]})
+    assert fresh == saved["mutants"]
+    assert all(value["exact"] for value in fresh.values())
+    assert all(fresh[name]["invention_audit_flags"] for name in ("m2", "m4"))
