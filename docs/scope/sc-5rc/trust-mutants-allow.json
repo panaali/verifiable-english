@@ -1,0 +1,19 @@
+{
+  "allow": [
+    {
+      "definition": "VE.Service.Document.checkDocSetsAnswered",
+      "operator": "list-empty",
+      "reason": "The replacement [] has no inferred element type, so it does not elaborate; it cannot change a compiled checker."
+    },
+    {
+      "definition": "VE.Service.Document.checkDocSetsAnswered",
+      "operator": "list-first",
+      "reason": "Only .isEmpty is read: taking the first element preserves emptiness for every list."
+    },
+    {
+      "definition": "VE.Service.Document.checkDocSetsAnswered",
+      "operator": "list-last",
+      "reason": "Only .isEmpty is read: reversing and taking the first element preserves emptiness for every list."
+    }
+  ]
+}
