@@ -28,6 +28,25 @@ def test_generated_json_equals_lean_table():
     assert expected["format"] == "ve.source-words@1"
 
 
+def test_source_word_export_uses_path_and_prebuilt_module(tmp_path, monkeypatch):
+    module = tmp_path / "lean/.lake/build/lib/lean/VE/EnglishGrammar/SourceWords.olean"
+    module.parent.mkdir(parents=True)
+    module.write_bytes(b"prebuilt")
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    lake = bin_dir / "lake"
+    lake.write_text('#!/bin/sh\nprintf "%s\\n" "$*" >> "$LAKE_CALLS"\nprintf \'{"format":"ve.source-words@1","rows":[]}\\n\'\n')
+    lake.chmod(0o755)
+    calls = tmp_path / "lake-calls"
+    monkeypatch.setenv("HOME", str(tmp_path / "no-home-shim"))
+    monkeypatch.setenv("PATH", str(bin_dir))
+    monkeypatch.setenv("LAKE_CALLS", str(calls))
+    monkeypatch.setenv("VE_LEAN_PREBUILT", "1")
+
+    assert json.loads(G.source_words_blob(tmp_path)) == {"format": "ve.source-words@1", "rows": []}
+    assert calls.read_text().splitlines() == ["env lean --run ../tools/source_words_export.lean"]
+
+
 def test_locked_view_refuses_drift():
     original = (ROOT / G.SOURCE_WORDS_TARGET).read_bytes()
 
