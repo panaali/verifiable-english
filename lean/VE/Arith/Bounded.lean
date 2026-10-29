@@ -119,11 +119,30 @@ def Formula.evalB (E : OpEnv) (limit : Nat) (ρ : List Int) : Formula → Nat �
       | some (h, w) => quantLoop false (stepB limit fun i w => Formula.evalB E limit (i :: ρ) φ w) (h - l + 1).toNat l w
 end
 
-def Defs.opEnv (limit : Nat) (D : Defs) : OpEnv :=
+/-- The list lookup, the reference `Defs.opEnv` is proved to equal (`opEnv_eq_list`): each definition, newest first,
+compares its name with the call's. -/
+def Defs.opEnvList (limit : Nat) (D : Defs) : OpEnv :=
   D.foldl (fun E d => match d with
     | .fn f n body => { E with funs := fun g => if g = f then some (n, fun xs w => Term.evalB E limit xs body w) else E.funs g }
     | .pred p n body => { E with preds := fun q => if q = p then some (n, fun xs w => Formula.evalB E limit xs body w) else E.preds q })
     ⟨fun _ => none, fun _ => none⟩
+
+/-- A name-to-definition table for functions and one for predicates (me-12nc): a call hashes its name once instead of
+comparing it with every earlier definition's. -/
+structure OpTable where
+  funs : Std.HashMap String (Nat × (List Int → Nat → Option (Int × Nat)))
+  preds : Std.HashMap String (Nat × (List Int → Nat → Option (Bool × Nat)))
+
+def OpTable.env (T : OpTable) : OpEnv := ⟨fun g => T.funs[g]?, fun q => T.preds[q]?⟩
+
+/-- One definition into the tables; its body reads the tables of the definitions before it, and a later name replaces
+an earlier equal one, as in the list. -/
+def OpTable.add (limit : Nat) (T : OpTable) : Def → OpTable
+  | .fn f n body => { T with funs := T.funs.insert f (n, fun xs w => Term.evalB T.env limit xs body w) }
+  | .pred p n body => { T with preds := T.preds.insert p (n, fun xs w => Formula.evalB T.env limit xs body w) }
+
+/-- The tables, built once per case. -/
+def Defs.opEnv (limit : Nat) (D : Defs) : OpEnv := (D.foldl (OpTable.add limit) ⟨{}, {}⟩).env
 
 def maxSteps : Nat := VE.Time.maxEvaluations
 
@@ -140,7 +159,35 @@ def arithOutcome (D : Defs) (limit : Nat) (φ : Formula) : Outcome :=
     | none => .unknown (.limit .evaluations)
   else .unknown .unboundedStatement
 
-/-! Proofs: the loops, then the evaluator against the meaning, through an agreement of environments. -/
+/-! Proofs: the tables against the list, the loops, then the evaluator against the meaning, through an agreement of
+environments. -/
+
+/-- The tables return what the list lookup returns, for every name and every definition list, so every theorem about
+`Defs.opEnv` below holds of the list lookup's environment unchanged, answers and units alike. -/
+theorem opEnv_eq_list (limit : Nat) (D : Defs) : D.opEnv limit = D.opEnvList limit := by
+  have h0 : (⟨fun _ => none, fun _ => none⟩ : OpEnv) = (⟨{}, {}⟩ : OpTable).env := by
+    simp only [OpTable.env, Std.HashMap.getElem?_empty]
+  unfold Defs.opEnv Defs.opEnvList
+  rw [h0]
+  generalize (⟨{}, {}⟩ : OpTable) = T
+  induction D generalizing T with
+  | nil => rfl
+  | cons d D ih =>
+    rw [List.foldl_cons, List.foldl_cons, ih]
+    congr 1
+    cases d with
+    | fn f n body =>
+      simp only [OpTable.add, OpTable.env, OpEnv.mk.injEq, and_true]
+      funext g
+      by_cases h : g = f
+      · subst h; simp
+      · simp [h, Std.HashMap.getElem?_insert, Ne.symm h]
+    | pred p n body =>
+      simp only [OpTable.add, OpTable.env, OpEnv.mk.injEq, true_and]
+      funext q
+      by_cases h : q = p
+      · subst h; simp
+      · simp [h, Std.HashMap.getElem?_insert, Ne.symm h]
 
 open Classical in
 theorem quantLoop_true (Q : Int → Prop) (step : Int → Nat → Option (Bool × Nat)) (limit : Nat)
@@ -503,7 +550,7 @@ theorem Formula.evalB_sound {E : Env} {O : OpEnv} {limit : Nat} (hA : Agrees E O
 end
 
 theorem agrees_env (D : Defs) (limit : Nat) : Agrees D.env (D.opEnv limit) limit := by
-  unfold Defs.env Defs.opEnv
+  rw [opEnv_eq_list]; unfold Defs.env Defs.opEnvList
   generalize hE : (⟨fun _ => none, fun _ => none⟩ : Env) = E
   generalize hO : (⟨fun _ => none, fun _ => none⟩ : OpEnv) = O
   have hA : Agrees E O limit := by subst hE hO; exact ⟨by simp, by simp⟩
@@ -767,6 +814,7 @@ theorem foldl_rel {α β γ : Type} (R : α → β → Prop) {f : α → γ → 
 
 theorem opEnv_extends (D : Defs) {limit limit' : Nat} (hl : limit ≤ limit') :
     Extends (D.opEnv limit) (D.opEnv limit') := by
+  rw [opEnv_eq_list, opEnv_eq_list]
   refine foldl_rel Extends (fun O O' d hE => ?_) D _ _ ⟨by simp, by simp⟩
   cases d with
   | fn f n body =>
@@ -1031,7 +1079,7 @@ theorem opEnv_snoc (limit : Nat) (E : Defs) (d : Def) : (E ++ [d]).opEnv limit =
     | .pred p n body => { (E.opEnv limit) with
         preds := fun q => if q = p then some (n, fun xs w => Formula.evalB (E.opEnv limit) limit xs body w)
           else (E.opEnv limit).preds q } := by
-  unfold Defs.opEnv; rw [List.foldl_append]; rfl
+  simp only [opEnv_eq_list]; unfold Defs.opEnvList; rw [List.foldl_append]; rfl
 
 theorem boundedNames_snoc (E : Defs) (d : Def) : (E ++ [d]).boundedNames = match d with
     | .fn f _ body => fun g => if g = f then Term.bnd E.boundedNames body else E.boundedNames g
