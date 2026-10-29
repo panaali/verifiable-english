@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 39011,
+    "total_lines": 39060,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1432,6 +1432,43 @@
         "reason": "W6 unit declarations, quantity syntax and runner; the full file is pinned conservatively"
       },
       {
+        "file": "lean/VE/Cardinality/Wire.lean",
+        "lines": 304,
+        "sha256": "b892dbef05b3118dfd55d4d9951ab66672beb5232ec2d711a3f96264a237c8ab",
+        "ranges": [
+          [
+            1,
+            304
+          ]
+        ],
+        "declarations": [
+          "projectW6",
+          "decodeEnvironment",
+          "elabFormula",
+          "decodeStatement"
+        ],
+        "reason": "ve-cardinality@1 environment (W6a's decoder on the projection) and statement decoders; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Cardinality/Run.lean",
+        "lines": 221,
+        "sha256": "d183414cf694e56043d1a27b4271756d832fb1cdf8322a72fbffa575248e5b60",
+        "ranges": [
+          [
+            1,
+            221
+          ]
+        ],
+        "declarations": [
+          "decodeCertificate",
+          "checkErased",
+          "checkCertificate",
+          "claimed",
+          "runCase"
+        ],
+        "reason": "cardinality certificate decoder, binding and replay, claimed region tables and erased problems, and the case runner; the full file is pinned conservatively"
+      },
+      {
         "file": "lean/VE/Readings/ComponentsWire.lean",
         "lines": 614,
         "sha256": "db7769a98ff71c0bdbbd59e985b765d6a08fda84acc3187c3daef8a12234ac92",
@@ -1919,24 +1956,6 @@
         "reason": "scope@0's front matter in the document mode (SC-1b, scope spec 3 and 1.6): the `scope` block's wire (unknown members refused, optional members absent, never null; each reach and effect; list names; anchors through discourse's decoder), the layout of the document's units from their spans clamped to the source, and the fold of a governor unit's status into the document mode's answer with its bytes by status; full file pinned conservatively"
       },
       {
-        "file": "lean/VE/Cardinality/Wire.lean",
-        "lines": 304,
-        "sha256": "b892dbef05b3118dfd55d4d9951ab66672beb5232ec2d711a3f96264a237c8ab",
-        "ranges": [
-          [
-            1,
-            304
-          ]
-        ],
-        "declarations": [
-          "projectW6",
-          "decodeEnvironment",
-          "elabFormula",
-          "decodeStatement"
-        ],
-        "reason": "ve-cardinality@1 environment (W6a's decoder on the projection) and statement decoders; the full file is pinned conservatively"
-      },
-      {
         "file": "lean/VE/Defaults/Route.lean",
         "lines": 46,
         "sha256": "97feda58f0f4af531097d0c124fbf82d56ee36d2153860f9ebfbc20e8e062a8f",
@@ -1952,24 +1971,6 @@
           "runLayered"
         ],
         "reason": "the layered norm-defaults route's runner, moved from Layered.lean (df-1ae): decodeLayered, then the kind table with the defaults-* row (defaultsCase on viewOf); the full file is pinned"
-      },
-      {
-        "file": "lean/VE/Cardinality/Run.lean",
-        "lines": 172,
-        "sha256": "8bc9a5f0222d2e3c5c8ad5ebbbb31136f1a871b2cd2ec258c27f3af5ef096df5",
-        "ranges": [
-          [
-            1,
-            172
-          ]
-        ],
-        "declarations": [
-          "decodeCertificate",
-          "checkCertificate",
-          "claimed",
-          "runCase"
-        ],
-        "reason": "cardinality certificate decoder, binding and replay, claimed region tables and erased problems, and the case runner; the full file is pinned conservatively"
       }
     ],
     "other_json": {
@@ -2105,7 +2106,8 @@
       "lean/VE/Question/Examples.lean": "fixtures only: question answering Q1.4's #guard checks build request objects for `decodeCaller`'s accepting and refusing sides and compare `modalFields`' rows; no runner path",
       "lean/VE/Scope/Readings.lean": "lean:scope-readings: `governSets` (scope spec 11.2) reads the reading sets of the units it governs per choice, writes each choice's reading content into its unit (setObjVal!) and each governed reading's composed content back into its set; trees are compared with the readings route's proved `jeq`; the rules are decoded by the chain's own decoder, never here; the document mode calls it under scope@0 through `governSetsWith governFast` (sc-5rb, `checkDocSets`)",
       "lean/VE/Scope/ReadingsExamples.lean": "fixtures only: scope spec 11.6's #guard checks build reading sets and hard-constraint documents as JSON literals and run `governSets` on them; no service mode reads this file",
-      "lean/VE/Readings/ActsExamples.lean": "test fixtures only: #guards that build acts@0 environments as a request carries them and read the readings route's decoder answers (ap-1bd); no admission path, service mode or record reads it"
+      "lean/VE/Readings/ActsExamples.lean": "test fixtures only: #guards that build acts@0 environments as a request carries them and read the readings route's decoder answers (ap-1bd); no admission path, service mode or record reads it",
+      "lean/ResponseShape/Encoders/Cardinality.lean": "theorems that the cardinality mode's rows fit its shape, with valid exactly beside a certificate case (getObjVal? in proofs only; not on any runner path)"
     }
   },
   "plan_operations": {
