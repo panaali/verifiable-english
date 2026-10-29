@@ -124,7 +124,7 @@ theorem defaultsCase_fits (v : DefaultsView) (id kind : String) (j : Json)
     | (refine OkP.map (fun x a ha => ?_); cases ha)
     | (apply OkP.pure; intro a ha; cases ha)
   all_goals read_kind
-  all_goals simp only [VE.Route.Wire.ok, elaborateFields, coherenceFields, certFields, modelFields, situationJson,
+  all_goals simp only [VE.Route.Wire.ok, elaborateFields, coherenceFields, collisionFields, certFields, modelFields, situationJson,
     CoherenceReplay.verdict, CertReplay.verdict, ModelReplay.verdict, PairStatus.label, basisLabel, formLabel,
     entityIds, VE.NormDefaults.Wire.witnessRow]
   · fits
