@@ -1,0 +1,21 @@
+{
+ "job": "sc-5rc.s1of2-d4d68b06",
+ "head": "260af3a6e28cd6bd8c9d8589c64fe57dd30cbe53",
+ "argv": [
+  "sc-5rc.s1of2-d4d68b06",
+  "260af3a6e28cd6bd8c9d8589c64fe57dd30cbe53",
+  "a0b559a9c1fc3db5f1d699623d7fa637dca1ca12",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-3be31547bfa1.tar.zst",
+  "e9df8a6f62cd8d7c1df761e7b173d303d59f3cba0503ef823fd16ab481e1be28",
+  "--max-mutants",
+  "1000",
+  "--test",
+  "lean/VE/Service/ScopeExamples.lean",
+  "--allow",
+  "docs/scope/sc-5rc/trust-mutants-allow.json",
+  "--shard",
+  "1/2",
+  "--jobs",
+  "4"
+ ]
+}
