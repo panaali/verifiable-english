@@ -252,7 +252,12 @@ an item and 31 SOME answers; M3 is the unchanged 59,410-byte coverage; M5's iden
 audit each have zero violations; M7 records 117 default-sensitive choices; M8 records 26 replayed entailment
 certificates, 38 validated countermodels and W1 conflict witnesses; M9 detects all six PLAN mutants with exactly
 their named changed IDs; M10 records 303 units, 76 rules, 49 cases, 282 evaluated choices, 64 prover calls and the
-wall time printed by `run.py` (the last local `--check`: 116.5 s). M4's structure-conditional counts are in results.json.
+wall time printed by `run.py` (the review-fix regeneration: 282.0 s). M4's structure-conditional counts are in results.json.
+
+The review fix in [RSP-RUN-REVIEW-FIX.md](RSP-RUN-REVIEW-FIX.md) obtained W1 conflict-freedom certificates for
+the no-conflict rows and preserved undecided outcomes when a certificate is missing. M6 now audits the actual
+mutated rule and listed-threshold inputs. Unscored section 9 reruns without N1, N2 and N3 change 42, 2 and 1
+answer cells respectively; the frozen key and the scored 111/126 result are unchanged.
 
 The three source-fidelity corrections are `f24-delay`'s invented positive `significant_lead` guard removed,
 T2's 6× cost marked `OT15=false`, and K21's General upleveling case given its source-stated `OT8=true`. Each
