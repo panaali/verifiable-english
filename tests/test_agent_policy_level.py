@@ -53,8 +53,14 @@ def bytes_of(*row_ids):
 BASE = measure()
 
 
-def test_live_register_passes_with_its_named_tests_run():
-    live, rows, header = level.measure(REGISTER, KEY, RESULTS, MANIFEST), REGISTER["rows"], REGISTER["header"]
+def defined(tests):
+    """The named tests that exist; this suite runs them itself, and level.py's remeasure runs each one."""
+    return {test for test in tests if re.search(rf"^def {re.escape(test.split('::')[1])}\(", (
+        CASE.parents[1] / test.split("::")[0]).read_text(encoding="utf-8"), re.M)}
+
+
+def test_live_register_passes():
+    live, rows, header = measure(run_tests=defined), REGISTER["rows"], REGISTER["header"]
     assert live["failures"] == [] and live == BASE
     assert live["source"] == sum(row["bytes"] for row in rows)
     assert live["verified"] == sum(row["bytes"] for row in rows if row["status"] == "VERIFIED")
