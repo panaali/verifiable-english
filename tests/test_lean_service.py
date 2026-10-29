@@ -1387,6 +1387,7 @@ _SCHEMA_SEEDS = {
                       "conditional_on": ["alternatives:own"]}),
     "risk": ({"id": "c", "kind": "risk-certificate"}, {"id": "c", "status": "ok", "valid": True, "conditional_on": []}),
     "quantity": ({"id": "c", "kind": "day"}, {"id": "c", "status": "ok", "day": 1}),
+    "cardinality": ({"id": "c", "kind": "certificate"}, {"id": "c", "status": "ok", "valid": True}),
     "norm-defaults": ({"id": "c", "kind": "norm-defaults-certificate"},
                       {"id": "c", "status": "ok", "valid": True, "premises": 0}),
     "discourse": ({"id": "c", "kind": "discourse-validity"}, {"id": "c", "status": "ok", "validity": {}}),
