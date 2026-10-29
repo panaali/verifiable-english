@@ -261,6 +261,14 @@ def test_f1_composed_cites_are_bound_to_authored_reading(mutation, tmp_path, mon
         D.load_document(path)
 
 
+def test_f1_every_structural_mutant_of_cited_answer_is_refused(tmp_path, monkeypatch):
+    meta, body = _split(_rules_in_full("carve_out"))
+    meta["reading_sets"][0]["readings"][0]["content"]["cites"] = {"source": ["u1"]}
+    accepted, count = structural_mutants_accepted(tmp_path, monkeypatch, _text(meta, body), bind_unit="u0")
+    # R8 leaves composed norm semantics to Lean; every mutation of copied citations is request-bound here.
+    assert count > 200 and not [where for where in accepted if "cites" in where], accepted
+
+
 @pytest.mark.parametrize("effect", ["reguard", "carve_out"])
 def test_f1_a_composed_set_of_rules_in_full_answers_every_view(tmp_path, effect):
     """The readings routes, check, coverage and render all read GOVERN's composed rule."""
