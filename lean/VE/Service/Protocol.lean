@@ -842,9 +842,11 @@ def respondMemo (h : Handles) (memo : VE.Readings.Run.AdmissionMemo) (line : Str
           | .ok answer => (answer, h', memo)
           | .error message => (requestError r message, h', memo)
 
+def memoLineTooLong (bytes : Nat) : Bool := bytes > maxLineBytes + 1
+
 def handleLineMemo (h : Handles) (memo : VE.Readings.Run.AdmissionMemo) (line : String) :
     Option Json × Handles × VE.Readings.Run.AdmissionMemo :=
-  if line.utf8ByteSize > maxLineBytes + 1 then
+  if memoLineTooLong line.utf8ByteSize then
     (some (lineError none s!"ResourceLimit: request line exceeds {maxLineBytes} bytes"), h, memo)
   else if line.trim.isEmpty then (none, h, memo)
   else

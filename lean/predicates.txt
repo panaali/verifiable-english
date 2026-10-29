@@ -458,6 +458,7 @@ module VE.Readings.Force
 module VE.Readings.Labels
 module VE.Readings.Lines
 module VE.Readings.Live
+module VE.Readings.MemoExamples
 module VE.Readings.Names
 module VE.Readings.Route
 module VE.Readings.Run
