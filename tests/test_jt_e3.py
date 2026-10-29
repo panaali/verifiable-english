@@ -1,5 +1,6 @@
 """Small, model-free checks of JT-E3's agreement and blind runner."""
 import json
+import csv
 from pathlib import Path
 import sys
 
@@ -27,6 +28,15 @@ def test_answer_retypes_and_rebinds_every_row():
             pass
         else:
             raise AssertionError("bad row count passed")
+    for change in (lambda a: a.pop("class"), lambda a: a.update(extra="x")):
+        mutant = [dict(r) for r in rows]
+        change(mutant[12])
+        try:
+            runner.parse_answer(json.dumps(mutant))
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("bad row shape passed")
     for value in (7, True, None, [], {}, "absent"):
         mutant = [dict(r) for r in rows]
         mutant[12]["id"] = value
@@ -61,6 +71,10 @@ def test_count_excludes_disagreement_and_borderline_independently():
 
 
 def test_sample_and_prompt_are_blind():
-    assert len(runner.input_rows()) == 60
+    rows = runner.input_rows()
+    sample = list(csv.DictReader((ROOT / "SAMPLE.tsv").open(), delimiter="\t"))
+    assert [r["id"] for r in rows] == [f'{r["pilot"]}:{r["term"]}' for r in sample]
+    assert {"ethical_harm", "broad_safety", "genuine_helpfulness",
+            "appropriate_oversight", "good_judgment"} <= {r["term"] for r in rows}
     assert "stratum_class" not in runner.prompt()
     assert "source_sentence" in runner.prompt()
