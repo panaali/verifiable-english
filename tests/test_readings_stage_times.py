@@ -55,8 +55,14 @@ def test_split_w2_fixed_part_completion_is_timed(kind):
 
     document, _, _ = fc1()
     case = {"id": kind, "kind": kind, "environment": env_main(), "document": document}
+    if kind == "readings-verdicts":
+        case.update(question="premises", assumed=[])
     request = json.dumps({"id": "profile", "mode": "readings-route", "cases": [case]}) + "\n"
-    rows = [json.loads(line) for line in run("1", request).stderr.splitlines()]
+    observed = run("1", request)
+    if kind == "readings-verdicts":
+        result = json.loads(observed.stdout.splitlines()[-1])["results"][0]["result"]
+        assert result["status"] == "ok"
+    rows = [json.loads(line) for line in observed.stderr.splitlines()]
     main = [row["stage"] for row in rows if row["part"] == "main"]
     assert main.count("admitS2") >= 2
     assert "admitNDFull" in main
