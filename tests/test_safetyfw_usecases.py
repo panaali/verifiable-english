@@ -495,6 +495,29 @@ def test_pf_exposition_fallback_preserves_claims_and_rs15_readings(pf_modules):
         assert spec["kind"] == ["unformalised", "unmapped_claim"]
 
 
+def test_pf_rs13_and_untranslated_claims_have_named_residuals(pf_modules):
+    records = json.loads((PF / "spans.json").read_text())["units"]
+    summary = next(r for r in records if r.get("reading_set") == "rs13-employee-summary")
+    assert summary["status"] == "OPEN"
+    assert summary["waits"] == ["AT", "AP"]
+    assert pf_build.READINGS["rs13-employee-summary"] == ("RS13", {"permission": [], "might": []})
+    assert pf_translation.READING_SETS["RS13"] == ("permission", "might")
+    exposition, _ = pf_build._fallback(1, 0, b"Contents")
+    claim, _ = pf_build._fallback(1, 0, b"Employees may request a summary")
+    assert exposition["kind"] == "exposition"
+    assert claim["kind"] == ["unformalised", "hedged_claim"]
+    pending = [r for r in records if r.get("reason") in {"unmapped_claim", "unmapped_duty"}]
+    assert pending and all(r["status"] == "UNFORMALISED" and r.get("residual") for r in pending)
+    assert len({r["residual"] for r in pending}) == len(pending)
+    if pf_build.DEFAULT_SOURCE.exists():
+        source = pf_build.DEFAULT_SOURCE.read_bytes()
+        _, rebuilt = pf_build.build(source)
+        assert rebuilt == [{k: v for k, v in r.items() if k != "status"} for r in records]
+        for r in pending:
+            a, b = r["span"]
+            assert r["residual"] == f"{r['id']}-{hashlib.sha256(source[a:b]).hexdigest()[:12]}"
+
+
 def test_pf_checked_has_no_wait_or_unmapped_source_clause(pf_modules):
     units = {r["id"]: r for r in json.loads((PF / "spans.json").read_text())["units"]}
     assert not [r["id"] for r in units.values() if r["status"] == "CHECKED" and r["waits"]]

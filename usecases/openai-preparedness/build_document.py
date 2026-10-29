@@ -64,6 +64,7 @@ PLACEMENTS = {
     "We will periodically review the latest research": ("blocked_rule", "f13-review", ("ET",)),
     "SAG will receive the results of such reviews": ("blocked_rule", "f13-results", ("AP",)),
     "We will document relevant reports": ("rule", "f14-document", ()),
+    "Employees may also request and receive a summary": ("readings", "rs13-employee-summary", ("AT", "AP")),
     "We will track and appropriately investigate": ("rule", "f14-investigate", ("JT",)),
     "and where reports are substantiated": ("rule", "f14-corrective", ("JT",)),
     "We will release information about our Preparedness": ("rule", "f15-disclose", ("JT",)),
@@ -98,11 +99,14 @@ READINGS = {
     "rs12-category": ("RS12", {"suff": ["f17-suff"], "iff": ["f17-iff", "f17-iff-only"]}),
     "rs15-persuasion": ("RS15", {"explanation": [], "rule": []}),
     "rs15-threat-models": ("RS15", {"explanation": [], "rule": []}),
+    # The permission reading needs the sensitive-information exception and the
+    # employee/request/receipt act. Neither choice is admitted as a rule yet.
+    "rs13-employee-summary": ("RS13", {"permission": [], "might": []}),
     "rs9-c2-misalignment": ("RS9", {"strict": ["c2-misalignment-strict"],
                                  "default": ["c2-misalignment-default"]}),
 }
 SET_FAMILIES = {"RS0": "readings", "RS1": "DF", "RS8": "DF", "RS5": "readings",
-                "RS4": "readings", "RS12": "SC", "RS15": "readings", "RS9": "DF"}
+                "RS4": "readings", "RS12": "SC", "RS13": "AT", "RS15": "readings", "RS9": "DF"}
 BLOCKED_RULE_REASONS = {"f5-checkpoint": "event_order", "f5-ambiguous": "unmapped_clause",
                         "f13-review": "event_order", "f13-results": "unmapped_clause",
                         "f7-evaluations": "event_order", "f9-specific": "quantifier_scope",
@@ -339,6 +343,10 @@ def build(source):
                 rec["reason"] = spec["meaning"]["unformalised"]
                 family, explanation = BLOCKER_DETAIL[rec["reason"]]
                 rec["detail"] = f"{family}: {explanation} in {SOURCE_SUBJECT[page]}"
+                if kind is None:
+                    # Keep every untranslated claim independently addressable
+                    # without copying the private source text into the repo.
+                    rec["residual"] = f"{uid}-{hashlib.sha256(source[a:b]).hexdigest()[:12]}"
             if "open" in spec["meaning"]:
                 rec["open_terms"] = spec["meaning"]["open"]
         rec["waits"] = list(waits) if waits else ([wait] if wait else [])

@@ -89,8 +89,8 @@
   "bytes_by_status": {
    "CHECKED": 170,
    "LABELLED": 5327,
-   "OPEN": 6859,
-   "UNFORMALISED": 55062
+   "OPEN": 7052,
+   "UNFORMALISED": 54869
   },
   "total": 67418,
   "units": 389

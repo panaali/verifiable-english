@@ -31,6 +31,7 @@
    "kind": "unformalised",
    "reason": "quantifier_scope",
    "detail": "SC: D1's unary situation rule does not bind each source item in framework introduction",
+   "residual": "p2-u3-c39b4e9a2905",
    "waits": [
     "SC"
    ],
@@ -45,6 +46,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in framework introduction",
+   "residual": "p2-u4-049d036fe396",
    "waits": [
     "AP"
    ],
@@ -59,6 +61,7 @@
    "kind": "unformalised",
    "reason": "quantifier_scope",
    "detail": "SC: D1's unary situation rule does not bind each source item in framework introduction",
+   "residual": "p2-u5-38a08e5d0e62",
    "waits": [
     "SC"
    ],
@@ -73,6 +76,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in framework introduction",
+   "residual": "p2-u6-7d1b8b18bee6",
    "waits": [
     "AP"
    ],
@@ -87,6 +91,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in framework introduction",
+   "residual": "p2-u7-21e8b0e00194",
    "waits": [
     "AP"
    ],
@@ -101,6 +106,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in framework introduction",
+   "residual": "p2-u8-2f55810c3d95",
    "waits": [
     "AP"
    ],
@@ -115,6 +121,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in framework introduction",
+   "residual": "p2-u9-177b03c73173",
    "waits": [
     "AT"
    ],
@@ -129,6 +136,7 @@
    "kind": "unformalised",
    "reason": "quantifier_scope",
    "detail": "SC: D1's unary situation rule does not bind each source item in framework introduction",
+   "residual": "p2-u10-937f5da05150",
    "waits": [
     "SC"
    ],
@@ -143,6 +151,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in framework introduction",
+   "residual": "p2-u11-2f7c192c5aa6",
    "waits": [
     "AP"
    ],
@@ -157,6 +166,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in framework introduction",
+   "residual": "p2-u12-c295e6d05a97",
    "waits": [
     "AT"
    ],
@@ -171,6 +181,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in framework introduction",
+   "residual": "p2-u13-c8b6ce61d403",
    "waits": [
     "AP"
    ],
@@ -185,6 +196,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in framework introduction",
+   "residual": "p2-u14-9b95f321bbd0",
    "waits": [
     "AT"
    ],
@@ -199,6 +211,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in framework introduction",
+   "residual": "p2-u15-75c6a5521213",
    "waits": [
     "AP"
    ],
@@ -227,6 +240,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in framework introduction",
+   "residual": "p2-u17-b06abcf7c03f",
    "waits": [
     "AP"
    ],
@@ -241,6 +255,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in framework introduction",
+   "residual": "p2-u18-b32411bc8152",
    "waits": [
     "AT"
    ],
@@ -255,6 +270,7 @@
    "kind": "unformalised",
    "reason": "event_order",
    "detail": "ET: D1 has no event-order relation for the source temporal qualifier in contents",
+   "residual": "p3-u19-6b925e510a9b",
    "waits": [
     "ET"
    ],
@@ -269,6 +285,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in overview and rationale",
+   "residual": "p4-u20-ac92a11e2d49",
    "waits": [
     "AT"
    ],
@@ -283,6 +300,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
+   "residual": "p4-u21-ff1984492136",
    "waits": [
     "AP"
    ],
@@ -297,6 +315,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
+   "residual": "p4-u22-58e942ecb99d",
    "waits": [
     "AP"
    ],
@@ -311,6 +330,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
+   "residual": "p4-u23-a22c0d6068c6",
    "waits": [
     "AP"
    ],
@@ -325,6 +345,7 @@
    "kind": "unformalised",
    "reason": "event_order",
    "detail": "ET: D1 has no event-order relation for the source temporal qualifier in overview and rationale",
+   "residual": "p4-u24-c14f2df3b47c",
    "waits": [
     "ET"
    ],
@@ -339,6 +360,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
+   "residual": "p4-u25-6fcc9958cabd",
    "waits": [
     "AP"
    ],
@@ -353,6 +375,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in overview and rationale",
+   "residual": "p4-u26-f787a4ac1b74",
    "waits": [
     "AT"
    ],
@@ -367,6 +390,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
+   "residual": "p4-u27-bbccd0511232",
    "waits": [
     "AP"
    ],
@@ -381,6 +405,7 @@
    "kind": "unformalised",
    "reason": "event_order",
    "detail": "ET: D1 has no event-order relation for the source temporal qualifier in overview and rationale",
+   "residual": "p4-u28-74845762e1e9",
    "waits": [
     "ET"
    ],
@@ -395,6 +420,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
+   "residual": "p4-u29-654915299fe3",
    "waits": [
     "AP"
    ],
@@ -409,6 +435,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
+   "residual": "p4-u30-4bbd5af35cb3",
    "waits": [
     "AP"
    ],
@@ -423,6 +450,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
+   "residual": "p4-u31-e28a62354185",
    "waits": [
     "AP"
    ],
@@ -437,6 +465,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
+   "residual": "p4-u32-17d26330eb96",
    "waits": [
     "AP"
    ],
@@ -451,6 +480,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
+   "residual": "p4-u33-89ffdc45721b",
    "waits": [
     "AP"
    ],
@@ -465,6 +495,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
+   "residual": "p4-u34-b5ae1d5353b9",
    "waits": [
     "AP"
    ],
@@ -479,6 +510,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
+   "residual": "p4-u35-e37b11ae015c",
    "waits": [
     "AP"
    ],
@@ -493,6 +525,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
+   "residual": "p4-u36-4cd3d81c63fc",
    "waits": [
     "AP"
    ],
@@ -507,6 +540,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
+   "residual": "p4-u37-bc648720fb29",
    "waits": [
     "AP"
    ],
@@ -521,6 +555,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
+   "residual": "p4-u38-710e8f7b6eec",
    "waits": [
     "AP"
    ],
@@ -535,6 +570,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in overview and rationale",
+   "residual": "p4-u39-d8ae3c526ec5",
    "waits": [
     "readings"
    ],
@@ -549,6 +585,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
+   "residual": "p4-u40-467e31fe3520",
    "waits": [
     "AP"
    ],
@@ -563,6 +600,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in overview and rationale",
+   "residual": "p4-u41-4b3d81fe90cf",
    "waits": [
     "readings"
    ],
@@ -577,6 +615,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
+   "residual": "p4-u42-6eaf8f8f788b",
    "waits": [
     "AP"
    ],
@@ -591,6 +630,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in overview and rationale",
+   "residual": "p4-u43-86ddf9482889",
    "waits": [
     "readings"
    ],
@@ -605,6 +645,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in overview and rationale",
+   "residual": "p4-u44-41740639ac8b",
    "waits": [
     "readings"
    ],
@@ -619,6 +660,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in tracked-category criteria",
+   "residual": "p5-u45-bcf315de7c91",
    "waits": [
     "AP"
    ],
@@ -633,6 +675,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in tracked-category criteria",
+   "residual": "p5-u46-35d28b706df9",
    "waits": [
     "AP"
    ],
@@ -647,6 +690,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in tracked-category criteria",
+   "residual": "p5-u47-7ab95efab004",
    "waits": [
     "AT"
    ],
@@ -661,6 +705,7 @@
    "kind": "unformalised",
    "reason": "event_order",
    "detail": "ET: D1 has no event-order relation for the source temporal qualifier in tracked-category criteria",
+   "residual": "p5-u48-ff7efdfdecf2",
    "waits": [
     "ET"
    ],
@@ -691,6 +736,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in tracked-category criteria",
+   "residual": "p5-u50-6b7e9c4c6d0c",
    "waits": [
     "AP"
    ],
@@ -705,6 +751,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in tracked-category criteria",
+   "residual": "p5-u51-08afad65b047",
    "waits": [
     "AP"
    ],
@@ -719,6 +766,7 @@
    "kind": "unformalised",
    "reason": "event_order",
    "detail": "ET: D1 has no event-order relation for the source temporal qualifier in tracked-category criteria",
+   "residual": "p5-u52-759575673479",
    "waits": [
     "ET"
    ],
@@ -733,6 +781,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in tracked-category criteria",
+   "residual": "p5-u53-55eb61bd246b",
    "waits": [
     "readings"
    ],
@@ -747,6 +796,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in tracked-category criteria",
+   "residual": "p5-u54-908c6626e59e",
    "waits": [
     "readings"
    ],
@@ -761,6 +811,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in tracked-category criteria",
+   "residual": "p5-u55-f84d0703167e",
    "waits": [
     "AP"
    ],
@@ -775,6 +826,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in tracked-category criteria",
+   "residual": "p5-u56-a98e5531b1f4",
    "waits": [
     "AT"
    ],
@@ -789,6 +841,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in tracked-category criteria",
+   "residual": "p5-u57-15044508e9c9",
    "waits": [
     "AT"
    ],
@@ -803,6 +856,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in tracked-category criteria",
+   "residual": "p5-u58-338f1fe96c98",
    "waits": [
     "readings"
    ],
@@ -835,6 +889,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in tracked-category criteria",
+   "residual": "p5-u60-357c315c4cb6",
    "waits": [
     "readings"
    ],
@@ -849,6 +904,7 @@
    "kind": "unformalised",
    "reason": "event_order",
    "detail": "ET: D1 has no event-order relation for the source temporal qualifier in tracked-category criteria",
+   "residual": "p5-u61-030cd908c210",
    "waits": [
     "ET"
    ],
@@ -863,6 +919,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in tracked-category criteria",
+   "residual": "p5-u62-eef9f27ea349",
    "waits": [
     "AT"
    ],
@@ -877,6 +934,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in Table 1 biological and cybersecurity thresholds",
+   "residual": "p6-u63-4968518dd8de",
    "waits": [
     "AT"
    ],
@@ -891,6 +949,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in Table 1 biological and cybersecurity thresholds",
+   "residual": "p6-u64-ef2246547744",
    "waits": [
     "AP"
    ],
@@ -905,6 +964,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in Table 1 biological and cybersecurity thresholds",
+   "residual": "p6-u65-7e76adfea13d",
    "waits": [
     "AT"
    ],
@@ -932,6 +992,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in Table 1 biological and cybersecurity thresholds",
+   "residual": "p6-u67-d7e3a4e58142",
    "waits": [
     "AP"
    ],
@@ -946,6 +1007,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in Table 1 biological and cybersecurity thresholds",
+   "residual": "p6-u68-6a39ad6c71f9",
    "waits": [
     "readings"
    ],
@@ -1008,6 +1070,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in Table 1 biological and cybersecurity thresholds",
+   "residual": "p6-u72-dbb18afad0e0",
    "waits": [
     "AP"
    ],
@@ -1022,6 +1085,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in Table 1 biological and cybersecurity thresholds",
+   "residual": "p6-u73-91781627d0df",
    "waits": [
     "AT"
    ],
@@ -1053,6 +1117,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in Table 1 biological and cybersecurity thresholds",
+   "residual": "p6-u75-67719ef1b4d7",
    "waits": [
     "readings"
    ],
@@ -1080,6 +1145,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in Table 1 biological and cybersecurity thresholds",
+   "residual": "p6-u77-fff7e35bea47",
    "waits": [
     "readings"
    ],
@@ -1094,6 +1160,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in Table 1 biological and cybersecurity thresholds",
+   "residual": "p6-u78-c52464ff727b",
    "waits": [
     "AT"
    ],
@@ -1108,6 +1175,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in Table 1 biological and cybersecurity thresholds",
+   "residual": "p6-u79-702719355d0b",
    "waits": [
     "AT"
    ],
@@ -1122,6 +1190,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in Table 1 biological and cybersecurity thresholds",
+   "residual": "p6-u80-77417885617f",
    "waits": [
     "AP"
    ],
@@ -1172,6 +1241,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in Table 1 biological and cybersecurity thresholds",
+   "residual": "p6-u83-d4b8073c579d",
    "waits": [
     "AP"
    ],
@@ -1186,6 +1256,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in Table 1 biological and cybersecurity thresholds",
+   "residual": "p6-u84-789e5489dfdf",
    "waits": [
     "AP"
    ],
@@ -1213,6 +1284,7 @@
    "kind": "unformalised",
    "reason": "quantifier_scope",
    "detail": "SC: D1's unary situation rule does not bind each source item in Table 1 cybersecurity and self-improvement thresholds",
+   "residual": "p7-u86-35c8c999eaaf",
    "waits": [
     "SC"
    ],
@@ -1227,6 +1299,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in Table 1 cybersecurity and self-improvement thresholds",
+   "residual": "p7-u87-c40b8674607a",
    "waits": [
     "AT"
    ],
@@ -1241,6 +1314,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in Table 1 cybersecurity and self-improvement thresholds",
+   "residual": "p7-u88-dedd4b99434f",
    "waits": [
     "readings"
    ],
@@ -1255,6 +1329,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in Table 1 cybersecurity and self-improvement thresholds",
+   "residual": "p7-u89-2fffbb0ebf13",
    "waits": [
     "AP"
    ],
@@ -1282,6 +1357,7 @@
    "kind": "unformalised",
    "reason": "quantifier_scope",
    "detail": "SC: D1's unary situation rule does not bind each source item in Table 1 cybersecurity and self-improvement thresholds",
+   "residual": "p7-u91-39ed8684060b",
    "waits": [
     "SC"
    ],
@@ -1296,6 +1372,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in Table 1 cybersecurity and self-improvement thresholds",
+   "residual": "p7-u92-4c8e4292c30a",
    "waits": [
     "AT"
    ],
@@ -1310,6 +1387,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in Table 1 cybersecurity and self-improvement thresholds",
+   "residual": "p7-u93-54e3de03c569",
    "waits": [
     "AP"
    ],
@@ -1324,6 +1402,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in Table 1 cybersecurity and self-improvement thresholds",
+   "residual": "p7-u94-77417885617f",
    "waits": [
     "AP"
    ],
@@ -1366,6 +1445,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in Table 1 cybersecurity and self-improvement thresholds",
+   "residual": "p7-u97-24dcdc029992",
    "waits": [
     "AT"
    ],
@@ -1380,6 +1460,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in Table 1 cybersecurity and self-improvement thresholds",
+   "residual": "p7-u98-9bf5bb9b9d39",
    "waits": [
     "AT"
    ],
@@ -1394,6 +1475,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in Table 1 cybersecurity and self-improvement thresholds",
+   "residual": "p7-u99-264095164db8",
    "waits": [
     "AT"
    ],
@@ -1408,6 +1490,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in Table 1 cybersecurity and self-improvement thresholds",
+   "residual": "p7-u100-7e10cb39d828",
    "waits": [
     "AP"
    ],
@@ -1422,6 +1505,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in Table 1 cybersecurity and self-improvement thresholds",
+   "residual": "p7-u101-2d326ada235f",
    "waits": [
     "readings"
    ],
@@ -1436,6 +1520,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in research-category responses",
+   "residual": "p8-u102-d5ba8f1ce26b",
    "waits": [
     "AT"
    ],
@@ -1450,6 +1535,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in research-category responses",
+   "residual": "p8-u103-cc92aa1f1624",
    "waits": [
     "AP"
    ],
@@ -1508,6 +1594,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in research-category responses",
+   "residual": "p8-u107-93cd86975de3",
    "waits": [
     "AP"
    ],
@@ -1522,6 +1609,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in research-category responses",
+   "residual": "p8-u108-7b3e6926806a",
    "waits": [
     "readings"
    ],
@@ -1591,6 +1679,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in research-category responses",
+   "residual": "p8-u113-dbc31c89c9e4",
    "waits": [
     "AP"
    ],
@@ -1605,6 +1694,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in research-category responses",
+   "residual": "p8-u114-5109146ad0d3",
    "waits": [
     "AT"
    ],
@@ -1619,6 +1709,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in research-category responses",
+   "residual": "p8-u115-a1bebf1652ca",
    "waits": [
     "AP"
    ],
@@ -1633,6 +1724,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in research-category responses",
+   "residual": "p8-u116-7041c791ab62",
    "waits": [
     "AT"
    ],
@@ -1647,6 +1739,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in research-category assessment",
+   "residual": "p9-u117-0bcb119ef840",
    "waits": [
     "readings"
    ],
@@ -1661,6 +1754,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in research-category assessment",
+   "residual": "p9-u118-37bf232597a7",
    "waits": [
     "readings"
    ],
@@ -1675,6 +1769,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in research-category assessment",
+   "residual": "p9-u119-ec9d50116416",
    "waits": [
     "readings"
    ],
@@ -1689,6 +1784,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in research-category assessment",
+   "residual": "p9-u120-44233c36c1bb",
    "waits": [
     "AP"
    ],
@@ -1703,6 +1799,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in research-category assessment",
+   "residual": "p9-u121-8ca2b43f694f",
    "waits": [
     "AP"
    ],
@@ -1717,6 +1814,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in research-category assessment",
+   "residual": "p9-u122-db7e89f794e4",
    "waits": [
     "AP"
    ],
@@ -1731,6 +1829,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in research-category assessment",
+   "residual": "p9-u123-13e25f96043b",
    "waits": [
     "AT"
    ],
@@ -1745,6 +1844,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in research-category assessment",
+   "residual": "p9-u124-515194d34587",
    "waits": [
     "AP"
    ],
@@ -1759,6 +1859,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in research-category assessment",
+   "residual": "p9-u125-429b5cd7aad8",
    "waits": [
     "AP"
    ],
@@ -1773,6 +1874,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in research-category assessment",
+   "residual": "p9-u126-c16a2e2470fa",
    "waits": [
     "AP"
    ],
@@ -1787,6 +1889,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in research-category assessment",
+   "residual": "p9-u127-fda0eaf8a19c",
    "waits": [
     "AT"
    ],
@@ -1801,6 +1904,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in research-category assessment",
+   "residual": "p9-u128-5132e46a616a",
    "waits": [
     "AP"
    ],
@@ -1815,6 +1919,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in research-category assessment",
+   "residual": "p9-u129-ce8753fba750",
    "waits": [
     "AT"
    ],
@@ -1829,6 +1934,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in research-category assessment",
+   "residual": "p9-u130-8bbcb87f4166",
    "waits": [
     "AP"
    ],
@@ -1843,6 +1949,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in research-category assessment",
+   "residual": "p9-u131-74ad3af1f7dc",
    "waits": [
     "AT"
    ],
@@ -1857,6 +1964,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in research-category assessment",
+   "residual": "p9-u132-2c1060bf4198",
    "waits": [
     "AP"
    ],
@@ -1871,6 +1979,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in research-category assessment",
+   "residual": "p9-u133-309d9b56855a",
    "waits": [
     "AP"
    ],
@@ -1885,6 +1994,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in research-category assessment",
+   "residual": "p9-u134-14a791d606a4",
    "waits": [
     "readings"
    ],
@@ -1899,6 +2009,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in research-category assessment",
+   "residual": "p9-u135-d0ecc18c31ea",
    "waits": [
     "readings"
    ],
@@ -1913,6 +2024,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in research-category assessment",
+   "residual": "p9-u136-b4a686f33c5b",
    "waits": [
     "AT"
    ],
@@ -1927,6 +2039,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in research-category assessment",
+   "residual": "p9-u137-ec024b8b53bd",
    "waits": [
     "readings"
    ],
@@ -1941,6 +2054,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in research-category assessment",
+   "residual": "p9-u138-530f5ec16806",
    "waits": [
     "AT"
    ],
@@ -1955,6 +2069,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in capability evaluation and deployment scope",
+   "residual": "p10-u139-6cb7e5bb180e",
    "waits": [
     "AP"
    ],
@@ -1969,6 +2084,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in capability evaluation and deployment scope",
+   "residual": "p10-u140-dcc15af43dd4",
    "waits": [
     "AP"
    ],
@@ -1983,6 +2099,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in capability evaluation and deployment scope",
+   "residual": "p10-u141-9a85dfd84345",
    "waits": [
     "readings"
    ],
@@ -2012,6 +2129,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in capability evaluation and deployment scope",
+   "residual": "p10-u143-def7a45e012a",
    "waits": [
     "readings"
    ],
@@ -2026,6 +2144,7 @@
    "kind": "unformalised",
    "reason": "quantifier_scope",
    "detail": "SC: D1's unary situation rule does not bind each source item in capability evaluation and deployment scope",
+   "residual": "p10-u144-1a09ca6b23ab",
    "waits": [
     "SC"
    ],
@@ -2040,6 +2159,7 @@
    "kind": "unformalised",
    "reason": "quantifier_scope",
    "detail": "SC: D1's unary situation rule does not bind each source item in capability evaluation and deployment scope",
+   "residual": "p10-u145-19b7f615be48",
    "waits": [
     "SC"
    ],
@@ -2054,6 +2174,7 @@
    "kind": "unformalised",
    "reason": "quantifier_scope",
    "detail": "SC: D1's unary situation rule does not bind each source item in capability evaluation and deployment scope",
+   "residual": "p10-u146-8f9fec77254d",
    "waits": [
     "SC"
    ],
@@ -2114,6 +2235,7 @@
    "kind": "unformalised",
    "reason": "quantifier_scope",
    "detail": "SC: D1's unary situation rule does not bind each source item in capability evaluation and deployment scope",
+   "residual": "p10-u150-7320c6c4899b",
    "waits": [
     "SC"
    ],
@@ -2128,6 +2250,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in capability evaluation and deployment scope",
+   "residual": "p10-u151-e39f942b55ef",
    "waits": [
     "readings"
    ],
@@ -2157,6 +2280,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in capability evaluation and deployment scope",
+   "residual": "p10-u153-9f31497bfe2d",
    "waits": [
     "readings"
    ],
@@ -2171,6 +2295,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in capability evaluation and deployment scope",
+   "residual": "p10-u154-0fdc39c99088",
    "waits": [
     "AP"
    ],
@@ -2185,6 +2310,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in capability evaluation and deployment scope",
+   "residual": "p10-u155-128447b02d74",
    "waits": [
     "readings"
    ],
@@ -2216,6 +2342,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in safeguard selection",
+   "residual": "p11-u157-3f666eea5c34",
    "waits": [
     "AP"
    ],
@@ -2230,6 +2357,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in safeguard selection",
+   "residual": "p11-u158-1fd1c211a7c1",
    "waits": [
     "AP"
    ],
@@ -2261,6 +2389,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in safeguard selection",
+   "residual": "p11-u160-d50aef1fa4aa",
    "waits": [
     "AP"
    ],
@@ -2306,6 +2435,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in safeguard selection",
+   "residual": "p11-u163-4ec8271ce63c",
    "waits": [
     "AP"
    ],
@@ -2350,6 +2480,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in safeguard selection",
+   "residual": "p11-u166-11bf27d85749",
    "waits": [
     "AP"
    ],
@@ -2364,6 +2495,7 @@
    "kind": "unformalised",
    "reason": "quantifier_scope",
    "detail": "SC: D1's unary situation rule does not bind each source item in safeguard selection",
+   "residual": "p11-u167-c20580648f98",
    "waits": [
     "SC"
    ],
@@ -2378,6 +2510,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard selection",
+   "residual": "p11-u168-9d5b4de624ff",
    "waits": [
     "readings"
    ],
@@ -2392,6 +2525,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in safeguard selection",
+   "residual": "p11-u169-d71d88d8b5af",
    "waits": [
     "AT"
    ],
@@ -2422,6 +2556,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in safeguard selection",
+   "residual": "p11-u171-03a28f25078a",
    "waits": [
     "AP"
    ],
@@ -2436,6 +2571,7 @@
    "kind": "unformalised",
    "reason": "quantifier_scope",
    "detail": "SC: D1's unary situation rule does not bind each source item in safeguard selection",
+   "residual": "p11-u172-b99346963498",
    "waits": [
     "SC"
    ],
@@ -2450,6 +2586,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard selection",
+   "residual": "p11-u173-24bc9f09eb8e",
    "waits": [
     "readings"
    ],
@@ -2464,6 +2601,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard selection",
+   "residual": "p11-u174-04f6e6e7b71b",
    "waits": [
     "readings"
    ],
@@ -2478,6 +2616,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in safeguard selection",
+   "residual": "p11-u175-32a709ea5a21",
    "waits": [
     "AT"
    ],
@@ -2492,6 +2631,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard selection",
+   "residual": "p11-u176-a3068438dc56",
    "waits": [
     "readings"
    ],
@@ -2506,6 +2646,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in safeguard selection",
+   "residual": "p11-u177-52c325693fea",
    "waits": [
     "AP"
    ],
@@ -2520,6 +2661,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard selection",
+   "residual": "p11-u178-bfffde0b81c9",
    "waits": [
     "readings"
    ],
@@ -2534,6 +2676,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard selection",
+   "residual": "p11-u179-b1ef01dad48b",
    "waits": [
     "readings"
    ],
@@ -2548,6 +2691,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard assessment and SAG decisions",
+   "residual": "p12-u180-da33bf1c77f0",
    "waits": [
     "readings"
    ],
@@ -2562,6 +2706,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard assessment and SAG decisions",
+   "residual": "p12-u181-5072aa24972c",
    "waits": [
     "readings"
    ],
@@ -2576,6 +2721,7 @@
    "kind": "unformalised",
    "reason": "event_order",
    "detail": "ET: D1 has no event-order relation for the source temporal qualifier in safeguard assessment and SAG decisions",
+   "residual": "p12-u182-1b709d051f24",
    "waits": [
     "ET"
    ],
@@ -2590,6 +2736,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in safeguard assessment and SAG decisions",
+   "residual": "p12-u183-babb7d9248c7",
    "waits": [
     "AP"
    ],
@@ -2604,6 +2751,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard assessment and SAG decisions",
+   "residual": "p12-u184-b65159aae942",
    "waits": [
     "readings"
    ],
@@ -2618,6 +2766,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard assessment and SAG decisions",
+   "residual": "p12-u185-47260eb7b037",
    "waits": [
     "readings"
    ],
@@ -2632,6 +2781,7 @@
    "kind": "unformalised",
    "reason": "quantifier_scope",
    "detail": "SC: D1's unary situation rule does not bind each source item in safeguard assessment and SAG decisions",
+   "residual": "p12-u186-642149a2d04a",
    "waits": [
     "SC"
    ],
@@ -2646,6 +2796,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard assessment and SAG decisions",
+   "residual": "p12-u187-07efbca30e9b",
    "waits": [
     "readings"
    ],
@@ -2660,6 +2811,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard assessment and SAG decisions",
+   "residual": "p12-u188-7df4f787533d",
    "waits": [
     "readings"
    ],
@@ -2674,6 +2826,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in safeguard assessment and SAG decisions",
+   "residual": "p12-u189-2ea3909efb93",
    "waits": [
     "AP"
    ],
@@ -2688,6 +2841,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard assessment and SAG decisions",
+   "residual": "p12-u190-18d1322ead3c",
    "waits": [
     "readings"
    ],
@@ -2702,6 +2856,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard assessment and SAG decisions",
+   "residual": "p12-u191-de096a980f06",
    "waits": [
     "readings"
    ],
@@ -2716,6 +2871,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard assessment and SAG decisions",
+   "residual": "p12-u192-78df1dfa5e98",
    "waits": [
     "readings"
    ],
@@ -2730,6 +2886,7 @@
    "kind": "unformalised",
    "reason": "quantifier_scope",
    "detail": "SC: D1's unary situation rule does not bind each source item in safeguard assessment and SAG decisions",
+   "residual": "p12-u193-8babc3dedf1d",
    "waits": [
     "SC"
    ],
@@ -2744,6 +2901,7 @@
    "kind": "unformalised",
    "reason": "event_order",
    "detail": "ET: D1 has no event-order relation for the source temporal qualifier in safeguard assessment and SAG decisions",
+   "residual": "p12-u194-7ba5f711aa44",
    "waits": [
     "ET"
    ],
@@ -2758,6 +2916,7 @@
    "kind": "unformalised",
    "reason": "event_order",
    "detail": "ET: D1 has no event-order relation for the source temporal qualifier in safeguard assessment and SAG decisions",
+   "residual": "p12-u195-543c4abff04e",
    "waits": [
     "ET"
    ],
@@ -2772,6 +2931,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard assessment and SAG decisions",
+   "residual": "p12-u196-0ded20a074c1",
    "waits": [
     "readings"
    ],
@@ -2786,6 +2946,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in safeguard assessment and SAG decisions",
+   "residual": "p12-u197-a1cb2048d206",
    "waits": [
     "AP"
    ],
@@ -2800,6 +2961,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in safeguard assessment and SAG decisions",
+   "residual": "p12-u198-c71070bbbaa4",
    "waits": [
     "AP"
    ],
@@ -2814,6 +2976,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in safeguard assessment and SAG decisions",
+   "residual": "p12-u199-647e45877212",
    "waits": [
     "AP"
    ],
@@ -2828,6 +2991,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in safeguard assessment and SAG decisions",
+   "residual": "p12-u200-079783413eb7",
    "waits": [
     "AP"
    ],
@@ -2842,6 +3006,7 @@
    "kind": "unformalised",
    "reason": "quantifier_scope",
    "detail": "SC: D1's unary situation rule does not bind each source item in safeguard assessment and SAG decisions",
+   "residual": "p12-u201-02596b670a42",
    "waits": [
     "SC"
    ],
@@ -2856,6 +3021,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in safeguard assessment and SAG decisions",
+   "residual": "p12-u202-6d75b44677dc",
    "waits": [
     "AT"
    ],
@@ -2902,6 +3068,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in marginal risk and governance",
+   "residual": "p13-u205-a40ab31afeab",
    "waits": [
     "AT"
    ],
@@ -2916,6 +3083,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in marginal risk and governance",
+   "residual": "p13-u206-7f8b079f3b6e",
    "waits": [
     "AT"
    ],
@@ -2947,6 +3115,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in marginal risk and governance",
+   "residual": "p13-u208-4225aae0a7ef",
    "waits": [
     "AP"
    ],
@@ -2961,6 +3130,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in marginal risk and governance",
+   "residual": "p13-u209-be816b0d359d",
    "waits": [
     "AP"
    ],
@@ -2975,6 +3145,7 @@
    "kind": "unformalised",
    "reason": "event_order",
    "detail": "ET: D1 has no event-order relation for the source temporal qualifier in marginal risk and governance",
+   "residual": "p13-u210-884535950152",
    "waits": [
     "ET"
    ],
@@ -3007,6 +3178,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in marginal risk and governance",
+   "residual": "p13-u212-f22b325864d9",
    "waits": [
     "AT"
    ],
@@ -3021,6 +3193,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in marginal risk and governance",
+   "residual": "p13-u213-e9522ae444f7",
    "waits": [
     "AP"
    ],
@@ -3035,6 +3208,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in marginal risk and governance",
+   "residual": "p13-u214-8e816acfbb20",
    "waits": [
     "AT"
    ],
@@ -3049,6 +3223,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in marginal risk and governance",
+   "residual": "p13-u215-67aaea0b1a79",
    "waits": [
     "readings"
    ],
@@ -3063,6 +3238,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in marginal risk and governance",
+   "residual": "p13-u216-4cd41d36b450",
    "waits": [
     "AP"
    ],
@@ -3077,6 +3253,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in marginal risk and governance",
+   "residual": "p13-u217-781cad8fdf09",
    "waits": [
     "readings"
    ],
@@ -3103,13 +3280,13 @@
     40863,
     41056
    ],
-   "kind": "unformalised",
-   "reason": "hedged_claim",
-   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in marginal risk and governance",
+   "kind": "norm",
+   "reading_set": "rs13-employee-summary",
    "waits": [
-    "AT"
+    "AT",
+    "AP"
    ],
-   "status": "UNFORMALISED"
+   "status": "OPEN"
   },
   {
    "id": "p13-u220",
@@ -3120,6 +3297,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in marginal risk and governance",
+   "residual": "p13-u220-5017d2297b8b",
    "waits": [
     "readings"
    ],
@@ -3134,6 +3312,7 @@
    "kind": "unformalised",
    "reason": "quantifier_scope",
    "detail": "SC: D1's unary situation rule does not bind each source item in marginal risk and governance",
+   "residual": "p13-u221-1b1e4e4b4aeb",
    "waits": [
     "SC"
    ],
@@ -3196,6 +3375,7 @@
    "kind": "unformalised",
    "reason": "quantifier_scope",
    "detail": "SC: D1's unary situation rule does not bind each source item in marginal risk and governance",
+   "residual": "p13-u225-d3aeec02dda8",
    "waits": [
     "SC"
    ],
@@ -3227,6 +3407,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in disclosure and independent review",
+   "residual": "p14-u227-48cfe7b21a36",
    "waits": [
     "readings"
    ],
@@ -3241,6 +3422,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in disclosure and independent review",
+   "residual": "p14-u228-6976a5012018",
    "waits": [
     "AT"
    ],
@@ -3255,6 +3437,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in disclosure and independent review",
+   "residual": "p14-u229-b82902abe171",
    "waits": [
     "AP"
    ],
@@ -3269,6 +3452,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in disclosure and independent review",
+   "residual": "p14-u230-f9f5382bd5a8",
    "waits": [
     "AP"
    ],
@@ -3283,6 +3467,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in disclosure and independent review",
+   "residual": "p14-u231-6b6b19b60f10",
    "waits": [
     "AT"
    ],
@@ -3297,6 +3482,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in disclosure and independent review",
+   "residual": "p14-u232-f1a409c9ea34",
    "waits": [
     "AT"
    ],
@@ -3311,6 +3497,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in disclosure and independent review",
+   "residual": "p14-u233-6d2bb5f631ac",
    "waits": [
     "readings"
    ],
@@ -3325,6 +3512,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in disclosure and independent review",
+   "residual": "p14-u234-556d1f71987d",
    "waits": [
     "AP"
    ],
@@ -3339,6 +3527,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in disclosure and independent review",
+   "residual": "p14-u235-f356ed57a8ca",
    "waits": [
     "AT"
    ],
@@ -3353,6 +3542,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in change log",
+   "residual": "p15-u236-b09c6d9c94eb",
    "waits": [
     "AP"
    ],
@@ -3367,6 +3557,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in change log",
+   "residual": "p15-u237-25fc83d889f9",
    "waits": [
     "AP"
    ],
@@ -3381,6 +3572,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in change log",
+   "residual": "p15-u238-fbd1655e3aec",
    "waits": [
     "readings"
    ],
@@ -3395,6 +3587,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in change log",
+   "residual": "p15-u239-a3ebf8baacb3",
    "waits": [
     "AP"
    ],
@@ -3409,6 +3602,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in change log",
+   "residual": "p15-u240-692df1db6e93",
    "waits": [
     "AP"
    ],
@@ -3423,6 +3617,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in change log",
+   "residual": "p15-u241-bb8125f108dc",
    "waits": [
     "AP"
    ],
@@ -3437,6 +3632,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in change log",
+   "residual": "p15-u242-5e2b540634b7",
    "waits": [
     "readings"
    ],
@@ -3451,6 +3647,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in change log",
+   "residual": "p15-u243-6af6bfe2cf35",
    "waits": [
     "readings"
    ],
@@ -3465,6 +3662,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in change log",
+   "residual": "p15-u244-862e4cca0b88",
    "waits": [
     "readings"
    ],
@@ -3479,6 +3677,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in change log",
+   "residual": "p15-u245-b1881efef95f",
    "waits": [
     "AP"
    ],
@@ -3493,6 +3692,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in change log",
+   "residual": "p15-u246-81e97dc3cc14",
    "waits": [
     "AP"
    ],
@@ -3507,6 +3707,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in change log",
+   "residual": "p15-u247-287922f19da1",
    "waits": [
     "AP"
    ],
@@ -3521,6 +3722,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in change log",
+   "residual": "p15-u248-207074d36f8d",
    "waits": [
     "readings"
    ],
@@ -3548,6 +3750,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in change log",
+   "residual": "p15-u250-c5697a5a571f",
    "waits": [
     "AP"
    ],
@@ -3562,6 +3765,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in change log",
+   "residual": "p15-u251-01a11c927003",
    "waits": [
     "AT"
    ],
@@ -3589,6 +3793,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in change log",
+   "residual": "p15-u253-4eb6fd7512c8",
    "waits": [
     "readings"
    ],
@@ -3603,6 +3808,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in change log",
+   "residual": "p15-u254-d40c01edb77b",
    "waits": [
     "AP"
    ],
@@ -3617,6 +3823,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in change log",
+   "residual": "p15-u255-6e96cb6e7386",
    "waits": [
     "AT"
    ],
@@ -3631,6 +3838,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in change log",
+   "residual": "p15-u256-fe6595607bd7",
    "waits": [
     "readings"
    ],
@@ -3645,6 +3853,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in change log",
+   "residual": "p15-u257-5a3e254c2aef",
    "waits": [
     "AT"
    ],
@@ -3659,6 +3868,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in change log",
+   "residual": "p15-u258-8b679dadeccf",
    "waits": [
     "AP"
    ],
@@ -3673,6 +3883,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in change log",
+   "residual": "p15-u259-d3c76be73108",
    "waits": [
     "AP"
    ],
@@ -3687,6 +3898,7 @@
    "kind": "unformalised",
    "reason": "quantifier_scope",
    "detail": "SC: D1's unary situation rule does not bind each source item in change log",
+   "residual": "p15-u260-ad155bbbd546",
    "waits": [
     "SC"
    ],
@@ -3701,6 +3913,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in change log",
+   "residual": "p15-u261-9691ac59a890",
    "waits": [
     "AP"
    ],
@@ -3715,6 +3928,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in change log",
+   "residual": "p15-u262-419262e86240",
    "waits": [
     "AP"
    ],
@@ -3729,6 +3943,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
+   "residual": "p16-u263-71faa78434b9",
    "waits": [
     "readings"
    ],
@@ -3743,6 +3958,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
+   "residual": "p16-u264-9e63d8d5894f",
    "waits": [
     "readings"
    ],
@@ -3757,6 +3973,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in SAG and Board governance",
+   "residual": "p16-u265-37b703a4f74c",
    "waits": [
     "AP"
    ],
@@ -3771,6 +3988,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
+   "residual": "p16-u266-d3ee49a31550",
    "waits": [
     "readings"
    ],
@@ -3785,6 +4003,7 @@
    "kind": "unformalised",
    "reason": "event_order",
    "detail": "ET: D1 has no event-order relation for the source temporal qualifier in SAG and Board governance",
+   "residual": "p16-u267-38d9bb479ca9",
    "waits": [
     "ET"
    ],
@@ -3799,6 +4018,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
+   "residual": "p16-u268-5fd8776e67b2",
    "waits": [
     "readings"
    ],
@@ -3813,6 +4033,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
+   "residual": "p16-u269-3404602abbfb",
    "waits": [
     "readings"
    ],
@@ -3827,6 +4048,7 @@
    "kind": "unformalised",
    "reason": "quantifier_scope",
    "detail": "SC: D1's unary situation rule does not bind each source item in SAG and Board governance",
+   "residual": "p16-u270-a3718e503e9c",
    "waits": [
     "SC"
    ],
@@ -3856,6 +4078,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
+   "residual": "p16-u272-ca191fced427",
    "waits": [
     "readings"
    ],
@@ -3870,6 +4093,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
+   "residual": "p16-u273-878792269403",
    "waits": [
     "readings"
    ],
@@ -3884,6 +4108,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in SAG and Board governance",
+   "residual": "p16-u274-3b3150b60160",
    "waits": [
     "AP"
    ],
@@ -3898,6 +4123,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
+   "residual": "p16-u275-7e440e599b4e",
    "waits": [
     "readings"
    ],
@@ -3912,6 +4138,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
+   "residual": "p16-u276-92195ea96178",
    "waits": [
     "readings"
    ],
@@ -3926,6 +4153,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in SAG and Board governance",
+   "residual": "p16-u277-47456927b84e",
    "waits": [
     "AT"
    ],
@@ -3940,6 +4168,7 @@
    "kind": "unformalised",
    "reason": "quantifier_scope",
    "detail": "SC: D1's unary situation rule does not bind each source item in SAG and Board governance",
+   "residual": "p16-u278-9a6666c20515",
    "waits": [
     "SC"
    ],
@@ -3954,6 +4183,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
+   "residual": "p16-u279-727798755fae",
    "waits": [
     "readings"
    ],
@@ -3968,6 +4198,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
+   "residual": "p16-u280-b433470c8316",
    "waits": [
     "readings"
    ],
@@ -3995,6 +4226,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
+   "residual": "p16-u282-0f22cd93d3d7",
    "waits": [
     "readings"
    ],
@@ -4020,6 +4252,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in SAG and Board governance",
+   "residual": "p16-u284-8e9f707a12d5",
    "waits": [
     "AP"
    ],
@@ -4034,6 +4267,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in SAG and Board governance",
+   "residual": "p16-u285-cf7190dd2010",
    "waits": [
     "AT"
    ],
@@ -4048,6 +4282,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
+   "residual": "p16-u286-eb3f505860b8",
    "waits": [
     "readings"
    ],
@@ -4062,6 +4297,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in SAG and Board governance",
+   "residual": "p16-u287-f012f7648baa",
    "waits": [
     "AP"
    ],
@@ -4076,6 +4312,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
+   "residual": "p16-u288-c12032732b29",
    "waits": [
     "readings"
    ],
@@ -4103,6 +4340,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
+   "residual": "p16-u290-ba9e78fead76",
    "waits": [
     "readings"
    ],
@@ -4117,6 +4355,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in SAG and Board governance",
+   "residual": "p16-u291-36d31ca8a427",
    "waits": [
     "AP"
    ],
@@ -4131,6 +4370,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in SAG and Board governance",
+   "residual": "p16-u292-79953a9e11f6",
    "waits": [
     "AP"
    ],
@@ -4145,6 +4385,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in safeguard examples",
+   "residual": "p17-u293-413d8131bccc",
    "waits": [
     "AT"
    ],
@@ -4159,6 +4400,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in safeguard examples",
+   "residual": "p17-u294-8431f5bd7d99",
    "waits": [
     "AT"
    ],
@@ -4173,6 +4415,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in safeguard examples",
+   "residual": "p17-u295-b67590fb2675",
    "waits": [
     "AT"
    ],
@@ -4223,6 +4466,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard examples",
+   "residual": "p17-u298-b7b6b1329d21",
    "waits": [
     "readings"
    ],
@@ -4237,6 +4481,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in safeguard examples",
+   "residual": "p17-u299-67010c7c44ad",
    "waits": [
     "AP"
    ],
@@ -4251,6 +4496,7 @@
    "kind": "unformalised",
    "reason": "quantifier_scope",
    "detail": "SC: D1's unary situation rule does not bind each source item in safeguard examples",
+   "residual": "p17-u300-a21f1eac2a7d",
    "waits": [
     "SC"
    ],
@@ -4265,6 +4511,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard examples",
+   "residual": "p17-u301-4d7b70546f8a",
    "waits": [
     "readings"
    ],
@@ -4279,6 +4526,7 @@
    "kind": "unformalised",
    "reason": "event_order",
    "detail": "ET: D1 has no event-order relation for the source temporal qualifier in safeguard examples",
+   "residual": "p17-u302-7f2e483d339f",
    "waits": [
     "ET"
    ],
@@ -4293,6 +4541,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in safeguard examples",
+   "residual": "p17-u303-cb002763cb0f",
    "waits": [
     "AP"
    ],
@@ -4307,6 +4556,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in safeguard examples",
+   "residual": "p17-u304-58f81356580a",
    "waits": [
     "AT"
    ],
@@ -4321,6 +4571,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in C.1 safeguard examples",
+   "residual": "p18-u305-ce1c37b09f0c",
    "waits": [
     "AT"
    ],
@@ -4435,6 +4686,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in C.1 safeguard examples",
+   "residual": "p18-u316-d28e25f972d8",
    "waits": [
     "AP"
    ],
@@ -4549,6 +4801,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in C.2 misalignment safeguards",
+   "residual": "p19-u327-bb68d4d78184",
    "waits": [
     "readings"
    ],
@@ -4580,6 +4833,7 @@
    "kind": "unformalised",
    "reason": "quantifier_scope",
    "detail": "SC: D1's unary situation rule does not bind each source item in C.2 misalignment safeguards",
+   "residual": "p19-u329-a21f1eac2a7d",
    "waits": [
     "SC"
    ],
@@ -4634,6 +4888,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in C.2 misalignment safeguards",
+   "residual": "p19-u334-be414cdec8c9",
    "waits": [
     "AP"
    ],
@@ -4648,6 +4903,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in C.2 misalignment safeguards",
+   "residual": "p19-u335-d3a8a1a1cd88",
    "waits": [
     "AT"
    ],
@@ -4662,6 +4918,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in C.2 misalignment safeguards",
+   "residual": "p19-u336-faaff79aadc7",
    "waits": [
     "AT"
    ],
@@ -4676,6 +4933,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in C.2 safeguard examples",
+   "residual": "p20-u337-5e74361f2630",
    "waits": [
     "readings"
    ],
@@ -4740,6 +4998,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in C.2 safeguard examples",
+   "residual": "p20-u343-215b8733e0b8",
    "waits": [
     "readings"
    ],
@@ -4814,6 +5073,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in C.2 safeguard examples",
+   "residual": "p20-u350-33e4458aaa90",
    "waits": [
     "AP"
    ],
@@ -4828,6 +5088,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in C.2 safeguard examples",
+   "residual": "p20-u351-ad2c9b953f55",
    "waits": [
     "readings"
    ],
@@ -4842,6 +5103,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in C.2 safeguard examples",
+   "residual": "p20-u352-33b9696a8f37",
    "waits": [
     "readings"
    ],
@@ -4896,6 +5158,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in C.2 safeguard examples",
+   "residual": "p20-u357-689124137c53",
    "waits": [
     "AP"
    ],
@@ -4980,6 +5243,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in C.2 safeguard examples",
+   "residual": "p20-u365-3a717f4ba47d",
    "waits": [
     "AP"
    ],
@@ -4994,6 +5258,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in C.3 security controls",
+   "residual": "p21-u366-e4241d24d4ca",
    "waits": [
     "readings"
    ],
@@ -5008,6 +5273,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in C.3 security controls",
+   "residual": "p21-u367-774f822f04d2",
    "waits": [
     "AP"
    ],
@@ -5022,6 +5288,7 @@
    "kind": "unformalised",
    "reason": "external_reference",
    "detail": "external reference: the outside standard is not represented in D1 in C.3 security controls",
+   "residual": "p21-u368-1d5d90c588e1",
    "waits": [
     "external reference"
    ],
@@ -5036,6 +5303,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in C.3 security controls",
+   "residual": "p21-u369-32b5fc367006",
    "waits": [
     "AT"
    ],
@@ -5050,6 +5318,7 @@
    "kind": "unformalised",
    "reason": "external_reference",
    "detail": "external reference: the outside standard is not represented in D1 in C.3 security controls",
+   "residual": "p21-u370-c94cd8abde33",
    "waits": [
     "external reference"
    ],
@@ -5081,6 +5350,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in C.3 security controls",
+   "residual": "p21-u372-d2d7779ac617",
    "waits": [
     "AP"
    ],
@@ -5095,6 +5365,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in C.3 security controls",
+   "residual": "p21-u373-ef3742b66415",
    "waits": [
     "AP"
    ],
@@ -5109,6 +5380,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in C.3 security controls",
+   "residual": "p21-u374-732ba7fdc798",
    "waits": [
     "AP"
    ],
@@ -5123,6 +5395,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in C.3 security controls",
+   "residual": "p21-u375-698ed0510f67",
    "waits": [
     "readings"
    ],
@@ -5137,6 +5410,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in C.3 security controls",
+   "residual": "p21-u376-fac144127185",
    "waits": [
     "readings"
    ],
@@ -5151,6 +5425,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in C.3 security controls",
+   "residual": "p21-u377-d0e5aebc6636",
    "waits": [
     "readings"
    ],
@@ -5165,6 +5440,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in C.3 security controls",
+   "residual": "p21-u378-42743bfedb35",
    "waits": [
     "AP"
    ],
@@ -5179,6 +5455,7 @@
    "kind": "unformalised",
    "reason": "quantifier_scope",
    "detail": "SC: D1's unary situation rule does not bind each source item in C.3 security controls",
+   "residual": "p21-u379-a1dec741f51f",
    "waits": [
     "SC"
    ],
@@ -5193,6 +5470,7 @@
    "kind": "unformalised",
    "reason": "hedged_claim",
    "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in C.3 security controls",
+   "residual": "p21-u380-0eb899909db4",
    "waits": [
     "AT"
    ],
@@ -5207,6 +5485,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in C.3 security controls",
+   "residual": "p21-u381-4a92713ed6c2",
    "waits": [
     "AP"
    ],
@@ -5221,6 +5500,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in C.3 security controls",
+   "residual": "p21-u382-7a0eb38313b7",
    "waits": [
     "readings"
    ],
@@ -5235,6 +5515,7 @@
    "kind": "unformalised",
    "reason": "event_order",
    "detail": "ET: D1 has no event-order relation for the source temporal qualifier in C.3 security controls",
+   "residual": "p21-u383-6ad67a16fe71",
    "waits": [
     "ET"
    ],
@@ -5249,6 +5530,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in C.3 security controls",
+   "residual": "p21-u384-ba27d3a34637",
    "waits": [
     "AP"
    ],
@@ -5263,6 +5545,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in C.3 security controls",
+   "residual": "p21-u385-ef93952e20fe",
    "waits": [
     "AP"
    ],
@@ -5277,6 +5560,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in C.3 security controls",
+   "residual": "p22-u386-0319750a64ef",
    "waits": [
     "readings"
    ],
@@ -5291,6 +5575,7 @@
    "kind": "unformalised",
    "reason": "event_order",
    "detail": "ET: D1 has no event-order relation for the source temporal qualifier in C.3 security controls",
+   "residual": "p22-u387-131e0c66a915",
    "waits": [
     "ET"
    ],
@@ -5305,6 +5590,7 @@
    "kind": "unformalised",
    "reason": "unmapped_claim",
    "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in C.3 security controls",
+   "residual": "p22-u388-1436c78fe19a",
    "waits": [
     "readings"
    ],
@@ -5319,6 +5605,7 @@
    "kind": "unformalised",
    "reason": "unmapped_duty",
    "detail": "AP: D1 has no complete regulated act and guard for this duty in C.3 security controls",
+   "residual": "p22-u389-457fe0d5ec0c",
    "waits": [
     "AP"
    ],
