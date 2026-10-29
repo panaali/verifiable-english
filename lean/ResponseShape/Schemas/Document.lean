@@ -176,7 +176,9 @@ def composedReading : Shape :=
   n [obj, .required ["id", "content"],
     closed [("id", str),
       ("content", n [obj, .required ["norm"],
-        closed [("norm", ref "common.json#/$defs/norm_node")]])]]
+        closed [("norm", ref "common.json#/$defs/norm_node"),
+          ("cites", copied "Service.Document.composedReadingRow preserves the authored reading's cites; the client binds the whole value to that reading" <|
+            n [.type ["array", "object"]])]])]]
 
 def composedSet : Shape :=
   n [obj, .required ["set", "version", "unit", "readings"],
@@ -244,6 +246,6 @@ def file : File where
 
 -- The document protocol includes every composed-reading field and every existing row.
 -- Its rendered fingerprint is fixed with this wire change; changing the shape requires review.
-#guard (file.render.toOption.map (hash ·.compress)) == some 14304729640325246445
+#guard (file.render.toOption.map (hash ·.compress)) == some 16537645204567522740
 
 end ResponseShape.Schemas.Document

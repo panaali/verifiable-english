@@ -72,7 +72,11 @@ theorem composedReadingRow_fits (j reading : Json) :
       (VE.Service.Document.composedReadingRow reading) := by
   unfold VE.Service.Document.composedReadingRow
   okfits
-  exact composedNode_fits j _ _
+  split
+  · unfold VE.Reports.encodeNode
+    fits
+    all_goals (simp only [Skel.field] <;> fits)
+  · exact composedNode_fits j _ _
 
 theorem composedList_fits (j : Json) (s : Skel) (xs : List Json)
     (h : ∀ x ∈ xs, Fits j s x) : Fits j (.arr [] s) (toJson xs) := by

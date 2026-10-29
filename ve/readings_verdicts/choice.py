@@ -42,7 +42,7 @@ class _ChoiceDocument:
             from ..environment import Environment
             from ..norms import NormDocument
             self.lower_env = Environment(lower)
-            self.norms = NormDocument(self.lower_env, [c.raw for c in contents if c.kind == "norm"])
+            self.norms = NormDocument(self.lower_env, [c.rule_input() for c in contents if c.kind == "norm"])
             self.env = self.lower_env
             self.layers = [f for _, f in self.norms.premises()]
             self.searched = []
@@ -410,7 +410,7 @@ class _FilledChoiceDocument:
         from ..defaults import _Search, answer, run
         from ..readings_s1 import wire
         if not hasattr(self, "_defaults"):
-            norms = [wire(c.raw) for c in self._contents() if c.kind == "norm"]
+            norms = [wire(c.rule_input()) for c in self._contents() if c.kind == "norm"]
             base = {"environment": wire(self.route.source.senv.lower_data), "norms": norms}
             elaborated = answer({"id": "defaults-elaborate", "kind": "defaults-elaborate", **base})
             layered = run({"id": "norm-defaults-elaborate", "kind": "norm-defaults-elaborate", **base})

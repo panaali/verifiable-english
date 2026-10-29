@@ -291,7 +291,7 @@ def superposed_document(doc):
         frame["vocabulary"]["predicates"][name] = {"arguments": sorts, "description": name}
     contents = superposed_contents(doc)
     soft = SoftNormDocument(SoftEnvironment(frame, generated=True),
-                            [content.raw for content in contents if content.kind == "norm"])
+                            [content.rule_input() for content in contents if content.kind == "norm"])
     for content in contents:
         if content.kind == "assertion":
             formula_from_data(soft.extended_env, content.body, _generated=True)
