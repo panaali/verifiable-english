@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 39627,
+    "total_lines": 39700,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1869,12 +1869,12 @@
       },
       {
         "file": "lean/VE/Calc/Run.lean",
-        "lines": 366,
-        "sha256": "b09fc345ee8eb03a9c54c6ca4ea7280135d0ec51adb921e0728fc87a2a0ee367",
+        "lines": 439,
+        "sha256": "4788f95816e0c3efef8db4ed4f34c2eb14fee544715f20d5dd5bef7ef4c52c62",
         "ranges": [
           [
             1,
-            366
+            439
           ]
         ],
         "declarations": [
@@ -1975,23 +1975,6 @@
         "reason": "cardinality certificate decoder, binding and replay, claimed region tables and erased problems, and the case runner; the full file is pinned conservatively"
       },
       {
-        "file": "lean/VE/Readings/DefaultVerdicts.lean",
-        "lines": 506,
-        "sha256": "79d7da71d2ae2fa105600904a51397f13b601389815c21004ad9e8a9fe08c732",
-        "ranges": [
-          [
-            1,
-            506
-          ]
-        ],
-        "declarations": [
-          "dEvidenceOf",
-          "replayD",
-          "runVerdictsD"
-        ],
-        "reason": "decodes and checks per-choice default evidence in readings-verdicts, then builds the default response; the full replay module is pinned conservatively"
-      },
-      {
         "file": "lean/VE/Calc/Jsonl.lean",
         "lines": 48,
         "sha256": "e79aa00abb9d4ede2f5fe8f64ac733973c8bbbb16607c13394111fb02055ffbc",
@@ -2008,6 +1991,23 @@
           "decodeJsonl"
         ],
         "reason": "the JSON-lines table decoder of a counted value's pinned bytes (ME-4, spec 4.1): flat objects of scalars, a repeated key refused; the full file is pinned"
+      },
+      {
+        "file": "lean/VE/Readings/DefaultVerdicts.lean",
+        "lines": 506,
+        "sha256": "79d7da71d2ae2fa105600904a51397f13b601389815c21004ad9e8a9fe08c732",
+        "ranges": [
+          [
+            1,
+            506
+          ]
+        ],
+        "declarations": [
+          "dEvidenceOf",
+          "replayD",
+          "runVerdictsD"
+        ],
+        "reason": "decodes and checks per-choice default evidence in readings-verdicts, then builds the default response; the full replay module is pinned conservatively"
       }
     ],
     "other_json": {
@@ -2059,7 +2059,7 @@
       "lean/ResponseShape/CaseDeciders.lean": "the runners' tests of the request case that the response shapes select on (CaseDecider.fn calls each runner's own test; the norms one reads the case environment for Norms.Plain.layered); test tooling, not on any runner path",
       "lean/ResponseShape/Skeleton.lean": "the skeletons of the response shapes and Fits, the field-level conformance the encoder theorems prove; JSON only in lemma statements about Json.mkObj and setObjVal! (theorems, not on any runner path)",
       "lean/ResponseShape/FitsTactic.lean": "tactics that build the encoder theorems' proofs, reading Json.mkObj and setObjVal! terms of goals (proof automation, checked by the kernel; not on any runner path)",
-      "lean/ResponseShape/Audit.lean": "the dependency audit of the response-shape theorems (#print axioms only); JSON only in theorem names",
+      "lean/ResponseShapeAudit.lean": "the dependency audit of the response-shape theorems (#print axioms only); JSON only in theorem names",
       "lean/ResponseShape/Encoders/Common.lean": "lemmas the encoder theorems share (claims, reports, the case kind a runner read); JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Encoders/Conformance.lean": "theorems that standalone conformance rows fit their response shapes; JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Encoders/Norms.lean": "theorems that norms rows fit their response shapes; JSON access only in statements and proofs (not on any runner path)",
