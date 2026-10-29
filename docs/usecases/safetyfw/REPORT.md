@@ -171,6 +171,7 @@ None of these gives a wrong verdict. Each is a limit the translation had to work
 | 17 | `usecases/openai-preparedness/measure.py` | mapped `not_translated` to JT rather than readings | `::test_pf_stage0_and_gaps` failed (saved gaps differ) |
 | 18 | `usecases/openai-preparedness/stage0.py` | forced the stated BIO-C `might` cell to false | `::test_pf_stage0_and_gaps` failed on the stage 0 rerun |
 | 19 | `usecases/openai-preparedness/build_document.py` | classified page 2's policy-summary claims as exposition | `::test_pf_every_byte_has_ve_status_and_one_unit` failed on the source rerun |
+| 20 | `docs/usecases/safetyfw/REPORT.md` | changed the OpenAI CHECKED cell from 708 to 709 B | `::test_pf_every_byte_has_ve_status_and_one_unit` failed on the saved-report comparison |
 
 Product code in the reviewed sense: Python under `tools/` (`difffuzz_corpus.py`, one registry entry; bug 4). No
 Lean or Rust file changed. Rows 15–18 are this branch's Python use-case-script mutants; each was restored before
@@ -243,9 +244,9 @@ UNFORMALISED; it failed the saved source check and was restored.
   `test_pf_every_byte_has_ve_status_and_one_unit` and `test_pf_stage0_and_gaps`.
 - Diff review found that page 2's policy-summary claims had been labelled as exposition. The corrected evidence
   assigns those 2,365 bytes to UNFORMALISED, with no CHECKED byte moved. The focused page-2 assertion and seeded
-  bug 19 now guard that boundary.
+  bug 19 now guard that boundary. Bug 20 showed that a stale report cell also fails.
 - `tests/test_safetyfw_usecases.py -k test_pf_`: 3 passed. The new D1, D2 and D3 environment files and all 32 rule
-  blocks passed `test_pf_translation_lint_and_invention_audit`. The four seeded bugs in section 9 each made its
+  blocks passed `test_pf_translation_lint_and_invention_audit`. The six seeded bugs in section 9 each made its
   named test fail, then were restored.
 - The English corpus grew from 40 to 43 environments (D1, D2 and D3). The lexicon report generator found 43 valid,
   0 invalid; both `test_every_corpus_environment_has_a_valid_selected_lexicon` and
@@ -267,12 +268,20 @@ UNFORMALISED; it failed the saved source check and was restored.
   pilot, whole-UDHR/constitution run or local full release gate was made. The three known red tests on main were
   neither edited nor included as fixes.
 
+Acceptance ownership for this baseline:
+
+| Acceptance item | Tag | Status and owner |
+|---|---|---|
+| Pinned hashes, source partition, VE statuses, stage 0, gaps, P7/M6 | AGENT | Built and checked by the named `test_pf_` tests |
+| Publisher's current-version claim | EXTERNAL | Observation only; OpenAI owns any later publication, and no VE verdict depends on it |
+| Independent source fidelity of remaining untranslated clauses | HUMAN | Deferred to `usecase-pf-run`; its builder and DRI own review before any key answer or source-conflict finding |
+
 ## 14. Self-review against BUILDER-CHECKLIST
 
 1. **N.A.** No relay or schema changed; case scripts call `ve.document` and `ve.backends.relay` for every answer.
 2. **PASS** — section 1 task rows, PLAN 12 deviations, `test_pf_every_byte_has_ve_status_and_one_unit`; the sparse
    translation is disclosed and the frozen key is unchanged.
-3. **PASS** — seeded bugs 15–19 in section 9 each failed its named `test_pf_` test before restoration.
+3. **PASS** — seeded bugs 15–20 in section 9 each failed its named `test_pf_` test before restoration.
 4. **N.A.** No checker path changed; DeepMind `run.py --check` reproduced saved results.
 5. **N.A.** No relayed field or request binding changed.
 6. **N.A.** The chain, not this builder, runs the full gate on the committed final HEAD; the selected runner's
