@@ -91,6 +91,27 @@ def test_rows_are_taken_from_the_named_sources():
     assert (count["cedar-"], count["gatekeeper-"]) == (1, 1) and len(rows) == 26 + sum(count.values())
 
 
+def test_policy_finding_requirements_keep_the_source_checker_obligations():
+    """The measured units describe PLAN 7's checks, even when their answers are counterexamples."""
+    plan = (CASE / "PLAN.md").read_text(encoding="utf-8").split("## 7.")[1].split("## 8.")[0]
+    obligations = {
+        "finding-1": ("Document conflict status", "The checker must report the conflict status of each regulated predicate."),
+        "finding-2": ("Opposite-sign pairs", "The checker must identify satisfiable opposite-sign rule pairs among all permission-prohibition pairs."),
+        "finding-3": ("Rules that never decide", "The checker must identify rules whose selection can never decide an action."),
+        "finding-5": ("Per-tool gaps", "The checker must report, for each tool, whether well-formed actions can fall outside every permission and prohibition rule."),
+    }
+    for row_id, (source_heading, required_statement) in obligations.items():
+        row = row_of(REGISTER, row_id)
+        assert source_heading in plan
+        assert row["statement"] == required_statement
+        assert row["bytes"] == len(required_statement.encode("utf-8"))
+        assert row["decided_by"]["cases"]
+    assert KEY["policy"]["satisfiable_pairs"] == [[3, 14]]
+    assert KEY["policy"]["never_deciding"] == [12]
+    assert KEY["policy"]["gap_tools"]
+    assert KEY["policy"]["conflict"]["permitted"] == "CONFLICT"
+
+
 def test_readme_states_the_measured_level():
     section = (CASE / "README.md").read_text(encoding="utf-8").split("## Measured level")[1].split("\n## ")[0]
     assert REGISTER["header"]["basis"] == " ".join(line[2:] for line in section.splitlines() if line.startswith("> "))
@@ -116,6 +137,7 @@ MULTIBYTE = "An action may read a file in the workspace — café."
 # (row edited, its edit, results edit, rows refused); every other row still counts.
 CASES = {
     "flipped linked verdict": (None, None, _set(["actions", "a01", "permission", "verdict"], "REJECTED"), {"rule-01"}),
+    "flipped exported verdict": (None, None, _set(["actions", "a01", "verdict"], "REJECTED"), {"rule-01"}),
     "widened deciding rules": (None, None, _set(["actions", "a02", "permission", "positive"], [1, 2, 3]),
                                {"rule-01", "rule-02"}),
     "reordered deciding rules": (None, None, _set(["actions", "a02", "permission", "positive"], [2, 1]), set()),
@@ -172,6 +194,19 @@ def test_each_check_at_and_around_its_boundary(name):
     assert failed_rows(result) == refused
     moved = result["source"] - BASE["source"]  # a statement edit on an accepted row moves both totals
     assert result["verified"] == BASE["verified"] - bytes_of(*refused) + (moved if not refused else 0)
+
+
+@pytest.mark.parametrize("action_id", sorted({case.split(":")[1] for row in REGISTER["rows"]
+                                              for case in row["decided_by"]["cases"]
+                                              if case.startswith("action:")}))
+def test_every_linked_action_checks_its_exported_m1_verdict(action_id):
+    linked = {row["id"] for row in REGISTER["rows"]
+              if f"action:{action_id}" in row["decided_by"]["cases"]}
+    old = RESULTS["actions"][action_id]["verdict"]
+    changed = "REJECTED" if old != "REJECTED" else "APPROVED"
+    result = measure(results=with_results(_set(["actions", action_id, "verdict"], changed)))
+    assert failed_rows(result) == linked
+    assert result["verified"] == BASE["verified"] - bytes_of(*linked)
 
 
 def test_an_open_row_with_no_feature_family_is_refused():

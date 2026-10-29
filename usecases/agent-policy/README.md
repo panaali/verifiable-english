@@ -305,15 +305,18 @@ Its basis, the feature planner's definition of 2026-10-28, is written in the reg
 > W1 adapter, the full Gatekeeper template, the classifiers PLAN section 2 puts outside VE). Source bytes = all
 > units.
 
-The 46 rows are the 26 rules' "In plain English" column above, the 8 findings of PLAN section 7, the 4
+The 46 rows are the 26 rules' "In plain English" column above, the 8 checker findings of PLAN section 7, the 4
 out-of-scope bullets of PLAN section 2, the 6 rows of PLAN section 10, cedar-attributes' claim and
-gatekeeper-exemption's operation. Later rows are appended with their date, never edited.
+gatekeeper-exemption's operation. Finding rows 1, 2, 3 and 5 state what the checker must report; they do not
+claim that the policy is conflict-free, overlap-free, fully deciding or gap-free. The pre-merge correction to
+those four rows changed the snapshot hash and both measured totals. Later rows are appended with their date,
+never edited.
 [level.py](level.py) only relays: it compares `results.json` with the key and runs the two named tests.
 
 | Measure | Bytes |
 |---|---|
-| Verified (35 rows) | 1,944 |
-| Source (46 rows) | 3,055 |
+| Verified (35 rows) | 2,071 |
+| Source (46 rows) | 3,182 |
 | OPEN, speech acts | 445 |
 | OPEN, the classifiers PLAN section 2 puts outside VE | 241 |
 | OPEN, numbers | 134 |
