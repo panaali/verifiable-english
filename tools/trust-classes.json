@@ -753,7 +753,10 @@
         "ResponseShape.Schemas.ReadingsRoute.verdicts_statuses",
         "ResponseShape.Schemas.ReadingsRoute.verdicts_word",
         "ResponseShape.Schemas.ReadingsRoute.soft_premises",
-        "ResponseShape.Schemas.ReadingsRoute.filledFieldsS"
+        "ResponseShape.Schemas.ReadingsRoute.filledFieldsS",
+        "ResponseShape.Schemas.ReadingsRoute.verdicts_default_choice",
+        "ResponseShape.Schemas.ReadingsRoute.verdicts_default_line",
+        "ResponseShape.Schemas.ReadingsRoute.verdicts_default"
       ]
     },
     "ResponseShape/Schemas/Reports.lean": {
@@ -983,10 +986,19 @@
         "ResponseShape.Skeletons.calc",
         "ResponseShape.Skeletons.diagnose",
         "ResponseShape.Skeletons.normDefaults",
-        "ResponseShape.Skeletons.words"
+        "ResponseShape.Skeletons.words",
+        "ResponseShape.Skeletons.cardinality"
       ],
       "G[I]": [
         "ResponseShape.Skeletons.identity"
+      ]
+    },
+    "ScopeBenchMain.lean": {
+      "T": [
+        "ScopeBench.changed",
+        "ScopeBench.report",
+        "ScopeBench.row",
+        "main"
       ]
     },
     "SensesMain.lean": {
@@ -2083,7 +2095,9 @@
         "VE.Compose.todayHead",
         "VE.Compose.withoutDocumentLayers",
         "VE.Compose.wrapperRows",
-        "VE.Compose.actsRefuses"
+        "VE.Compose.actsRefuses",
+        "VE.Compose.cardinalityOthers",
+        "VE.Compose.modeProfiles"
       ],
       "G[R]": [
         "VE.Compose.pendingWithDefaults"
@@ -7316,7 +7330,8 @@
         "VE.Readings.Wire.keyJson",
         "VE.Readings.Wire.keyText",
         "VE.Readings.Wire.pendingAt",
-        "VE.Readings.Wire.reservedText"
+        "VE.Readings.Wire.reservedText",
+        "VE.Readings.Wire.singleActsOnly"
       ],
       "G[V]": [
         "VE.Readings.Wire.Admitted",
@@ -10048,7 +10063,9 @@
         "VE.Service.Standalone.stripPredicates",
         "VE.Service.Standalone.sugarOf",
         "VE.Service.Standalone.surfaceReader",
-        "VE.Service.Standalone.tableFields"
+        "VE.Service.Standalone.tableFields",
+        "VE.Service.Standalone.regulatedOf",
+        "VE.Service.Standalone.actsRead"
       ],
       "D[I]": [
         "VE.Service.Standalone.legacyEnvironmentId"
@@ -12643,125 +12660,6 @@
         }
       ]
     },
-    "VE/Acts/Grammar.lean": {
-      "S": [
-        "VE.Acts.Core",
-        "VE.Acts.FNT",
-        "VE.Acts.NT",
-        "VE.Acts.RSym",
-        "VE.Acts.RuleS",
-        "VE.Acts.closed",
-        "VE.Acts.fillExcl",
-        "VE.Acts.frameRules",
-        "VE.Acts.globalRules",
-        "VE.Acts.grammar",
-        "VE.Acts.items",
-        "VE.Acts.kwSyms",
-        "VE.Acts.many1",
-        "VE.Acts.schema",
-        "VE.Acts.tail"
-      ],
-      "G[V]": [
-        {
-          "name": "VE.Acts.NT.rank",
-          "tied": [
-            "VE.Acts.schema_ranked"
-          ]
-        },
-        "VE.Acts.RSym.nt?",
-        "VE.Acts.build"
-      ],
-      "P": [
-        "VE.Acts.RuleS.ok"
-      ]
-    },
-    "VE/Acts/RuleExamples.lean": {
-      "T": [
-        "VE.Acts.RuleExamples.K",
-        "VE.Acts.RuleExamples.K2",
-        "VE.Acts.RuleExamples.V5k",
-        "VE.Acts.RuleExamples.ap",
-        "VE.Acts.RuleExamples.cities",
-        "VE.Acts.RuleExamples.corpus",
-        "VE.Acts.RuleExamples.fillWords",
-        "VE.Acts.RuleExamples.fr1",
-        "VE.Acts.RuleExamples.fr2",
-        "VE.Acts.RuleExamples.g5",
-        "VE.Acts.RuleExamples.g8",
-        "VE.Acts.RuleExamples.ln",
-        "VE.Acts.RuleExamples.nevers",
-        "VE.Acts.RuleExamples.noHead",
-        "VE.Acts.RuleExamples.oneWord",
-        "VE.Acts.RuleExamples.parsed",
-        "VE.Acts.RuleExamples.rawOf",
-        "VE.Acts.RuleExamples.rawsOf",
-        "VE.Acts.RuleExamples.reserved",
-        "VE.Acts.RuleExamples.rets",
-        "VE.Acts.RuleExamples.s05",
-        "VE.Acts.RuleExamples.s06",
-        "VE.Acts.RuleExamples.trees",
-        "VE.Acts.RuleExamples.treesOf",
-        "VE.Acts.RuleExamples.unused"
-      ]
-    },
-    "VE/Acts/Meaning.lean": {
-      "S": [
-        "VE.Acts.Att",
-        "VE.Acts.Elt",
-        "VE.Acts.Piece",
-        "VE.Acts.actOk",
-        "VE.Acts.addPiece",
-        "VE.Acts.applyRule",
-        "VE.Acts.atomOk",
-        "VE.Acts.coordAct",
-        "VE.Acts.joinAct",
-        "VE.Acts.meaning",
-        "VE.Acts.piecesOf",
-        "VE.Acts.singleAct"
-      ],
-      "G[V]": [
-        "VE.Acts.Atom.add",
-        "VE.Acts.baseAtom",
-        "VE.Acts.itemOf",
-        "VE.Acts.listOf"
-      ]
-    },
-    "VE/Acts/Readings.lean": {
-      "G[V]": [
-        {
-          "name": "VE.Acts.Derived",
-          "tied": [
-            "VE.Acts.derived_iff"
-          ]
-        },
-        "VE.Acts.analyse",
-        "VE.Acts.read",
-        "VE.Acts.readings"
-      ]
-    },
-    "VE/Acts/MeaningExamples.lean": {
-      "T": [
-        "VE.Acts.MeaningExamples.V3",
-        "VE.Acts.MeaningExamples.V6b",
-        "VE.Acts.MeaningExamples.Va",
-        "VE.Acts.MeaningExamples.Vk",
-        "VE.Acts.MeaningExamples.Vm",
-        "VE.Acts.MeaningExamples.Vs",
-        "VE.Acts.MeaningExamples.at_",
-        "VE.Acts.MeaningExamples.edgeOnly",
-        "VE.Acts.MeaningExamples.fx5",
-        "VE.Acts.MeaningExamples.fx8",
-        "VE.Acts.MeaningExamples.g8t",
-        "VE.Acts.MeaningExamples.meanings",
-        "VE.Acts.MeaningExamples.n",
-        "VE.Acts.MeaningExamples.o",
-        "VE.Acts.MeaningExamples.obj5",
-        "VE.Acts.MeaningExamples.rd",
-        "VE.Acts.MeaningExamples.rd1",
-        "VE.Acts.MeaningExamples.sub",
-        "VE.Acts.MeaningExamples.toks"
-      ]
-    },
     "VE/Acts/GrammarExamples.lean": {
       "T": [
         "VE.Acts.Examples.V10",
@@ -13353,6 +13251,7 @@
         "VE.Scope.Examples.boxUnits",
         "VE.Scope.Examples.carveT",
         "VE.Scope.Examples.contentStr",
+        "VE.Scope.Examples.count",
         "VE.Scope.Examples.coveredL",
         "VE.Scope.Examples.envJ",
         "VE.Scope.Examples.errorOf",
@@ -13363,6 +13262,7 @@
         "VE.Scope.Examples.g2",
         "VE.Scope.Examples.g6",
         "VE.Scope.Examples.g8",
+        "VE.Scope.Examples.gI",
         "VE.Scope.Examples.gN",
         "VE.Scope.Examples.gN8",
         "VE.Scope.Examples.gP",
@@ -13384,6 +13284,7 @@
         "VE.Scope.Examples.hcUnits",
         "VE.Scope.Examples.ibAnchors",
         "VE.Scope.Examples.instructablePieces",
+        "VE.Scope.Examples.inventedC",
         "VE.Scope.Examples.item1",
         "VE.Scope.Examples.item3sign",
         "VE.Scope.Examples.j",
@@ -13515,12 +13416,32 @@
         "VE.Cardinality.dl",
         "VE.Cardinality.CEnv.elab",
         "VE.Cardinality.regionBody",
-        "VE.Cardinality.CTerm.countBodies"
+        "VE.Cardinality.CTerm.countBodies",
+        "VE.Cardinality.countedAmong",
+        "VE.Cardinality.predsAmong",
+        "VE.Cardinality.tableOf",
+        "VE.Cardinality.CEnv.elabBy",
+        "VE.Cardinality.RegionData",
+        "VE.Cardinality.RegionData.predsOn",
+        "VE.Cardinality.RegionData.table",
+        "VE.Cardinality.regionDataOf",
+        "VE.Cardinality.regionData",
+        "VE.Cardinality.firstUseStep",
+        "VE.Cardinality.firstUseH",
+        "VE.Cardinality.instHashableQTerm",
+        "VE.Cardinality.instHashableQFormula",
+        "VE.Cardinality.instHashableBody",
+        "VE.Cardinality.countedSortsH",
+        "VE.Cardinality.countedAmongH",
+        "VE.Cardinality.predsAmongH"
       ],
       "G[R]": [
         "VE.Cardinality.maxCountedSorts",
         "VE.Cardinality.maxPredicates",
-        "VE.Cardinality.problemLimits"
+        "VE.Cardinality.problemLimits",
+        "VE.Cardinality.sortLimit",
+        "VE.Cardinality.predicateLimit",
+        "VE.Cardinality.checkedRegions"
       ]
     },
     "VE/Cardinality/Ratio.lean": {
@@ -13538,9 +13459,7 @@
       "C": [
         "VE.Cardinality.sumTerms",
         "VE.Cardinality.regionSum",
-        "VE.Cardinality.CountAtom.erase",
         "VE.Cardinality.Cmp.erase",
-        "VE.Cardinality.Proportion.erase",
         "VE.Cardinality.CFormula.erase",
         "VE.Cardinality.nonnegPremises",
         "VE.Cardinality.bridgePremises",
@@ -13549,7 +13468,15 @@
         "VE.Cardinality.countFin",
         "VE.Cardinality.withRegionsFinite",
         "VE.Cardinality.refutesC",
-        "VE.Cardinality.CTerm.erase"
+        "VE.Cardinality.CTerm.erase",
+        "VE.Cardinality.bridge",
+        "VE.Cardinality.regionSumBy",
+        "VE.Cardinality.CountAtom.eraseBy",
+        "VE.Cardinality.Proportion.eraseBy",
+        "VE.Cardinality.CTerm.eraseBy",
+        "VE.Cardinality.CFormula.eraseBy",
+        "VE.Cardinality.nonnegOf",
+        "VE.Cardinality.bridgeBy"
       ],
       "P": [
         "VE.Cardinality.regionSize",
@@ -14258,7 +14185,10 @@
         "VE.Scope.unitsOf"
       ],
       "S": [
+        "VE.Scope.BlockBound",
         "VE.Scope.Governor",
+        "VE.Scope.HasStr",
+        "VE.Scope.JsonWF",
         "VE.Scope.Reach",
         "VE.Scope.SDoc",
         "VE.Scope.addOver",
@@ -14274,6 +14204,7 @@
         "VE.Scope.graph",
         "VE.Scope.isFrame",
         "VE.Scope.ordered",
+        "VE.Scope.payload",
         "VE.Scope.position",
         "VE.Scope.unary"
       ]
@@ -14572,7 +14503,8 @@
         "VE.Defaults.Wire.replayCoherenceOn",
         "VE.Defaults.Wire.replayModel",
         "VE.Defaults.Wire.replayModelOn",
-        "VE.Defaults.Wire.viewOf"
+        "VE.Defaults.Wire.viewOf",
+        "VE.Defaults.Wire.viewOn"
       ],
       "D[R]": [
         "VE.Defaults.Wire.notWellFormedText",
@@ -14589,7 +14521,8 @@
         "VE.Defaults.Wire.entityIds",
         "VE.Defaults.Wire.formLabel",
         "VE.Defaults.Wire.modelFields",
-        "VE.Defaults.Wire.situationJson"
+        "VE.Defaults.Wire.situationJson",
+        "VE.Defaults.Wire.collisionFields"
       ],
       "G[R]": [
         "VE.Defaults.Wire.CertReplay.reason"
@@ -14834,7 +14767,11 @@
         "VE.Service.ActsExamples.ndP",
         "VE.Service.ActsExamples.ndRow",
         "VE.Service.ActsExamples.ndWordings",
-        "VE.Service.ActsExamples.unspecPlain"
+        "VE.Service.ActsExamples.unspecPlain",
+        "VE.Service.ActsExamples.typed",
+        "VE.Service.ActsExamples.every",
+        "VE.Service.ActsExamples.modelled",
+        "VE.Service.ActsExamples.dualEnv"
       ]
     },
     "ResponseShape/Schemas/Calc.lean": {
@@ -15130,6 +15067,20 @@
         "VE.Scope.statusOf"
       ]
     },
+    "VE/Acts/Linearize.lean": {
+      "S": [
+        "VE.Acts.Atom.normal",
+        "VE.Acts.Atom.text",
+        "VE.Acts.Atom.withTo",
+        "VE.Acts.Filler.toks",
+        "VE.Acts.Part.toks",
+        "VE.Acts.joinWord",
+        "VE.Acts.listToks",
+        "VE.Acts.partAct",
+        "VE.Acts.tokStr",
+        "VE.Acts.tokText"
+      ]
+    },
     "VE/Acts/Table.lean": {
       "S": [
         "VE.Acts.Op",
@@ -15267,8 +15218,12 @@
       ],
       "C": [
         "VE.Arith.Defs.opEnv",
+        "VE.Arith.Defs.opEnvList",
         "VE.Arith.Formula.evalB",
         "VE.Arith.OpEnv",
+        "VE.Arith.OpTable",
+        "VE.Arith.OpTable.add",
+        "VE.Arith.OpTable.env",
         "VE.Arith.Term.evalB",
         "VE.Arith.Term.evalBs",
         "VE.Arith.bits",
@@ -15298,11 +15253,6 @@
         "VE.Arith.Examples.reuseStmt",
         "VE.Arith.Examples.sqChain",
         "VE.Arith.Examples.yes"
-      ]
-    },
-    "ResponseShape/Encoders/Calc.lean": {
-      "P": [
-        "ResponseShape.Encoders.Calc.tacticRow_fits"
       ]
     },
     "VE/Defaults/Meaning.lean": {
@@ -15346,18 +15296,9 @@
         "VE.Defaults.MeaningFixtures.typedDec"
       ]
     },
-    "VE/Acts/Linearize.lean": {
-      "S": [
-        "VE.Acts.Atom.normal",
-        "VE.Acts.Atom.text",
-        "VE.Acts.Atom.withTo",
-        "VE.Acts.Filler.toks",
-        "VE.Acts.Part.toks",
-        "VE.Acts.joinWord",
-        "VE.Acts.listToks",
-        "VE.Acts.partAct",
-        "VE.Acts.tokStr",
-        "VE.Acts.tokText"
+    "ResponseShape/Encoders/Calc.lean": {
+      "P": [
+        "ResponseShape.Encoders.Calc.tacticRow_fits"
       ]
     },
     "VE/Arith/CompleteExamples.lean": {
@@ -15368,12 +15309,65 @@
         "VE.Arith.Examples.tickEnv"
       ]
     },
-    "ScopeBenchMain.lean": {
+    "VE/Acts/Grammar.lean": {
+      "S": [
+        "VE.Acts.Core",
+        "VE.Acts.FNT",
+        "VE.Acts.NT",
+        "VE.Acts.RSym",
+        "VE.Acts.RuleS",
+        "VE.Acts.closed",
+        "VE.Acts.fillExcl",
+        "VE.Acts.frameRules",
+        "VE.Acts.globalRules",
+        "VE.Acts.grammar",
+        "VE.Acts.items",
+        "VE.Acts.kwSyms",
+        "VE.Acts.many1",
+        "VE.Acts.schema",
+        "VE.Acts.tail"
+      ],
+      "G[V]": [
+        {
+          "name": "VE.Acts.NT.rank",
+          "tied": [
+            "VE.Acts.schema_ranked"
+          ]
+        },
+        "VE.Acts.RSym.nt?",
+        "VE.Acts.build"
+      ],
+      "P": [
+        "VE.Acts.RuleS.ok"
+      ]
+    },
+    "VE/Acts/RuleExamples.lean": {
       "T": [
-        "ScopeBench.changed",
-        "ScopeBench.report",
-        "ScopeBench.row",
-        "main"
+        "VE.Acts.RuleExamples.K",
+        "VE.Acts.RuleExamples.K2",
+        "VE.Acts.RuleExamples.V5k",
+        "VE.Acts.RuleExamples.ap",
+        "VE.Acts.RuleExamples.cities",
+        "VE.Acts.RuleExamples.corpus",
+        "VE.Acts.RuleExamples.fillWords",
+        "VE.Acts.RuleExamples.fr1",
+        "VE.Acts.RuleExamples.fr2",
+        "VE.Acts.RuleExamples.g5",
+        "VE.Acts.RuleExamples.g8",
+        "VE.Acts.RuleExamples.ln",
+        "VE.Acts.RuleExamples.nevers",
+        "VE.Acts.RuleExamples.noHead",
+        "VE.Acts.RuleExamples.oneWord",
+        "VE.Acts.RuleExamples.parsed",
+        "VE.Acts.RuleExamples.rawOf",
+        "VE.Acts.RuleExamples.rawsOf",
+        "VE.Acts.RuleExamples.reserved",
+        "VE.Acts.RuleExamples.rets",
+        "VE.Acts.RuleExamples.s05",
+        "VE.Acts.RuleExamples.s06",
+        "VE.Acts.RuleExamples.trees",
+        "VE.Acts.RuleExamples.treesOf",
+        "VE.Acts.RuleExamples.unused"
       ]
     },
     "VE/Acts/Elaborate.lean": {
@@ -15444,16 +15438,39 @@
         },
         "VE.Cardinality.Run.decodeCertificate",
         "VE.Cardinality.Run.regionsJson",
-        "VE.Cardinality.Run.erasedJson"
+        "VE.Cardinality.Run.erasedJson",
+        {
+          "name": "VE.Cardinality.Run.problemJson",
+          "tied": [
+            "VE.Cardinality.Run.erasedJson_problemJson"
+          ]
+        },
+        {
+          "name": "VE.Cardinality.checkErased",
+          "tied": [
+            "VE.Cardinality.Run.checkErased_eq"
+          ]
+        }
       ],
       "D[I]": [
         "VE.Cardinality.Run.erasedIds",
-        "VE.Cardinality.Run.statementJson"
+        "VE.Cardinality.Run.statementJson",
+        "VE.Cardinality.Run.idsOf"
       ],
       "G[R]": [
-        "VE.Cardinality.Run.problemChecks",
+        {
+          "name": "VE.Cardinality.Run.problemChecks",
+          "tied": [
+            "VE.Cardinality.Run.problemChecks_eq"
+          ]
+        },
         "VE.Cardinality.Run.stale",
-        "VE.Cardinality.Run.claimed"
+        "VE.Cardinality.Run.claimed",
+        "VE.Cardinality.Run.erasedThunks",
+        "VE.Cardinality.Run.chargedNodes",
+        "VE.Cardinality.Run.charge",
+        "VE.Cardinality.Run.ofCharged",
+        "VE.Cardinality.Run.checkedProblem"
       ],
       "G[V]": [
         "VE.Cardinality.Run.runCase",
@@ -15497,7 +15514,9 @@
         "VE.Cardinality.RunExamples.w6Id",
         "VE.Cardinality.RunExamples.wide",
         "VE.Cardinality.RunExamples.withCore",
-        "VE.Cardinality.RunExamples.withW6"
+        "VE.Cardinality.RunExamples.withW6",
+        "VE.Cardinality.RunExamples.anyCount",
+        "VE.Cardinality.RunExamples.charged"
       ]
     },
     "VE/Cardinality/RunTheorems.lean": {},
@@ -15557,6 +15576,333 @@
         "VE.Scope.Examples.wideSet"
       ]
     },
-    "VE/Scope/ReadingsTheorems.lean": {}
+    "VE/Scope/ReadingsTheorems.lean": {},
+    "VE/Acts/Meaning.lean": {
+      "S": [
+        "VE.Acts.Att",
+        "VE.Acts.Elt",
+        "VE.Acts.Piece",
+        "VE.Acts.actOk",
+        "VE.Acts.addPiece",
+        "VE.Acts.applyRule",
+        "VE.Acts.atomOk",
+        "VE.Acts.coordAct",
+        "VE.Acts.joinAct",
+        "VE.Acts.meaning",
+        "VE.Acts.piecesOf",
+        "VE.Acts.singleAct"
+      ],
+      "G[V]": [
+        "VE.Acts.Atom.add",
+        "VE.Acts.baseAtom",
+        "VE.Acts.itemOf",
+        "VE.Acts.listOf"
+      ]
+    },
+    "VE/Acts/Readings.lean": {
+      "G[V]": [
+        {
+          "name": "VE.Acts.Derived",
+          "tied": [
+            "VE.Acts.derived_iff"
+          ]
+        },
+        "VE.Acts.analyse",
+        "VE.Acts.read",
+        "VE.Acts.readings"
+      ]
+    },
+    "VE/Acts/MeaningExamples.lean": {
+      "T": [
+        "VE.Acts.MeaningExamples.V3",
+        "VE.Acts.MeaningExamples.V6b",
+        "VE.Acts.MeaningExamples.Va",
+        "VE.Acts.MeaningExamples.Vk",
+        "VE.Acts.MeaningExamples.Vm",
+        "VE.Acts.MeaningExamples.Vs",
+        "VE.Acts.MeaningExamples.at_",
+        "VE.Acts.MeaningExamples.edgeOnly",
+        "VE.Acts.MeaningExamples.fx5",
+        "VE.Acts.MeaningExamples.fx8",
+        "VE.Acts.MeaningExamples.g8t",
+        "VE.Acts.MeaningExamples.meanings",
+        "VE.Acts.MeaningExamples.n",
+        "VE.Acts.MeaningExamples.o",
+        "VE.Acts.MeaningExamples.obj5",
+        "VE.Acts.MeaningExamples.rd",
+        "VE.Acts.MeaningExamples.rd1",
+        "VE.Acts.MeaningExamples.sub",
+        "VE.Acts.MeaningExamples.toks"
+      ]
+    },
+    "VE/Readings/DefaultVerdicts.lean": {
+      "S": [
+        "VE.Readings.choiceSoft",
+        "VE.Readings.dSem"
+      ],
+      "C": [
+        "VE.Readings.DEvidence",
+        "VE.Readings.DEvidence.coherent",
+        "VE.Readings.DEvidence.collides",
+        "VE.Readings.DEvidence.asX",
+        "VE.Readings.dConflictRow",
+        "VE.Readings.dFollows",
+        "VE.Readings.dQueryRow",
+        "VE.Readings.DChoice",
+        "VE.Readings.DVerdicts",
+        "VE.Readings.DVerdicts.dConflictRows",
+        "VE.Readings.DVerdicts.dQueryRows",
+        "VE.Readings.dEvidenceOf",
+        "VE.Readings.replayD",
+        "VE.Readings.replayVerdictsD"
+      ],
+      "G[V]": [
+        "VE.Readings.dBasis",
+        {
+          "name": "VE.Readings.DVerdicts.bases",
+          "tied": [
+            "VE.Readings.d_bases_sound"
+          ]
+        },
+        {
+          "name": "VE.Readings.DVerdicts.defaultMember",
+          "tied": [
+            "VE.Readings.readings_wire_default_present",
+            "VE.Readings.readings_wire_default_conflict"
+          ]
+        },
+        "VE.Readings.DVerdicts.hasDefaults",
+        "VE.Readings.Run.dEnglish",
+        "VE.Readings.Run.runVerdictsD"
+      ],
+      "D[V]": [
+        "VE.Readings.Run.verdictWord",
+        "VE.Readings.Run.dChoiceJson",
+        "VE.Readings.Run.DLine",
+        "VE.Readings.Run.DLine.json",
+        "VE.Readings.Run.defaultJson"
+      ]
+    },
+    "VE/Readings/DefaultVerdictsExamples.lean": {
+      "T": [
+        "VE.Readings.DefaultExamples.S2",
+        "VE.Readings.DefaultExamples.D2",
+        "VE.Readings.DefaultExamples.rs2",
+        "VE.Readings.DefaultExamples.Nν",
+        "VE.Readings.DefaultExamples.Nρ",
+        "VE.Readings.DefaultExamples.labels",
+        "VE.Readings.DefaultExamples.pairs",
+        "VE.Readings.DefaultExamples.corpus"
+      ]
+    },
+    "VE/Readings/ActsExamples.lean": {
+      "T": [
+        "VE.Readings.ActsExamples.a1",
+        "VE.Readings.ActsExamples.a2",
+        "VE.Readings.ActsExamples.a5",
+        "VE.Readings.ActsExamples.a6",
+        "VE.Readings.ActsExamples.fxs",
+        "VE.Readings.ActsExamples.rdP",
+        "VE.Readings.ActsExamples.reg",
+        "VE.Readings.ActsExamples.env",
+        "VE.Readings.ActsExamples.envA",
+        "VE.Readings.ActsExamples.err",
+        "VE.Readings.ActsExamples.decode",
+        "VE.Readings.ActsExamples.d33",
+        "VE.Readings.ActsExamples.ruleDoc",
+        "VE.Readings.ActsExamples.d4",
+        "VE.Readings.ActsExamples.rule",
+        "VE.Readings.ActsExamples.setDoc",
+        "VE.Readings.ActsExamples.noActs",
+        "VE.Readings.ActsExamples.elabCase",
+        "VE.Readings.ActsExamples.wordings"
+      ]
+    },
+    "VE/Cardinality/Gate.lean": {},
+    "ResponseShape/Schemas/Cardinality.lean": {
+      "G[R]": [
+        "ResponseShape.Schemas.Cardinality.admission",
+        "ResponseShape.Schemas.Cardinality.answer",
+        "ResponseShape.Schemas.Cardinality.answerFields",
+        "ResponseShape.Schemas.Cardinality.body",
+        "ResponseShape.Schemas.Cardinality.certificate",
+        "ResponseShape.Schemas.Cardinality.erased",
+        "ResponseShape.Schemas.Cardinality.error",
+        "ResponseShape.Schemas.Cardinality.file",
+        "ResponseShape.Schemas.Cardinality.formula",
+        "ResponseShape.Schemas.Cardinality.kind",
+        "ResponseShape.Schemas.Cardinality.operand",
+        "ResponseShape.Schemas.Cardinality.printed",
+        "ResponseShape.Schemas.Cardinality.problem",
+        "ResponseShape.Schemas.Cardinality.regions",
+        "ResponseShape.Schemas.Cardinality.row",
+        "ResponseShape.Schemas.Cardinality.rule",
+        "ResponseShape.Schemas.Cardinality.statement"
+      ]
+    },
+    "ResponseShape/Encoders/Cardinality.lean": {
+      "P": [
+        "ResponseShape.Encoders.Cardinality.tacticCardinality_rows"
+      ]
+    },
+    "VE/Arith/TableExamples.lean": {
+      "T": [
+        "VE.Arith.TableExamples.byList",
+        "VE.Arith.TableExamples.call0",
+        "VE.Arith.TableExamples.k",
+        "VE.Arith.TableExamples.name64",
+        "VE.Arith.TableExamples.near",
+        "VE.Arith.TableExamples.nearCases",
+        "VE.Arith.TableExamples.order",
+        "VE.Arith.TableExamples.orderCases",
+        "VE.Arith.TableExamples.twice",
+        "VE.Arith.TableExamples.twiceCases"
+      ]
+    },
+    "VE/Calc/Table.lean": {
+      "S": [
+        "VE.Calc.Agg",
+        "VE.Calc.Agg.run",
+        "VE.Calc.Cell",
+        "VE.Calc.Filter",
+        "VE.Calc.Filter.Selects",
+        "VE.Calc.Table",
+        "VE.Calc.Table.cell",
+        "VE.Calc.Table.numbers",
+        "VE.Calc.mean?"
+      ],
+      "D[V]": [
+        "VE.Calc.ColType",
+        "VE.Calc.readCell",
+        "VE.Calc.tableDimensions"
+      ],
+      "C": [
+        "VE.Calc.Agg.runB",
+        "VE.Calc.Filter.sel",
+        "VE.Calc.Filter.selB",
+        "VE.Calc.Table.select",
+        "VE.Calc.Table.selectB"
+      ]
+    },
+    "VE/Calc/Csv.lean": {
+      "D[V]": [
+        "VE.Calc.CsvMode",
+        "VE.Calc.columnTypes",
+        "VE.Calc.csvRecords",
+        "VE.Calc.decodeCsv"
+      ]
+    },
+    "VE/Calc/Jsonl.lean": {
+      "D[V]": [
+        "VE.Calc.decodeJsonl",
+        "VE.Calc.jsonCell",
+        "VE.Calc.jsonFlatObject",
+        "VE.Calc.jsonScalar"
+      ]
+    },
+    "VE/Calc/Data.lean": {
+      "D[V]": [
+        "VE.Calc.DataDecl",
+        "VE.Calc.Format",
+        "VE.Calc.decodeTable"
+      ],
+      "G[V]": [
+        {
+          "name": "VE.Calc.runCounted",
+          "tied": [
+            "VE.Calc.counted_bound",
+            "VE.Calc.counted_exhausted"
+          ]
+        }
+      ],
+      "G[R]": [
+        "VE.Calc.Agg.columns",
+        "VE.Calc.Filter.columns"
+      ]
+    },
+    "VE/Calc/TableExamples.lean": {
+      "T": [
+        "VE.Calc.TableExamples.T1",
+        "VE.Calc.TableExamples.aggs",
+        "VE.Calc.TableExamples.all5",
+        "VE.Calc.TableExamples.approved32",
+        "VE.Calc.TableExamples.counted",
+        "VE.Calc.TableExamples.csv",
+        "VE.Calc.TableExamples.jsonl",
+        "VE.Calc.TableExamples.ok",
+        "VE.Calc.TableExamples.refusal",
+        "VE.Calc.TableExamples.rows?",
+        "VE.Calc.TableExamples.run",
+        "VE.Calc.TableExamples.t1",
+        "VE.Calc.TableExamples.t1Bytes",
+        "VE.Calc.TableExamples.t1Cols",
+        "VE.Calc.TableExamples.t3",
+        "VE.Calc.TableExamples.t3Claims",
+        "VE.Calc.TableExamples.trial",
+        "VE.Calc.TableExamples.trialCols",
+        "VE.Calc.TableExamples.v5",
+        "VE.Calc.TableExamples.v5Csv"
+      ]
+    },
+    "VE/Events/Wire.lean": {
+      "D[V]": [
+        "VE.Events.EventsDecoded",
+        "VE.Events.VocabView",
+        "VE.Events.vocabView",
+        "VE.Events.VocabView.args",
+        "VE.Events.VocabView.wording",
+        "VE.Events.VocabView.decided",
+        "VE.Events.VocabView.names",
+        "VE.Events.VocabView.env",
+        "VE.Events.strAt",
+        "VE.Events.arrAt",
+        "VE.Events.decodeEventSort",
+        "VE.Events.decodeStateSort",
+        "VE.Events.decodeLinkRaw",
+        "VE.Events.checkLinks",
+        "VE.Events.ownedByEvents",
+        "VE.Events.checkDates",
+        "VE.Events.decodeEvents",
+        "VE.Events.eventsPack"
+      ],
+      "D[R]": [
+        "VE.Events.invalid",
+        "VE.Events.objectAt",
+        "VE.Events.firstFault",
+        "VE.Events.repeatOf",
+        "VE.Events.roleSig",
+        "VE.Events.checkDay",
+        "VE.Events.checkRoles",
+        "VE.Events.checkPremiseSize"
+      ]
+    },
+    "VE/Events/WireExamples.lean": {
+      "T": [
+        "VE.Events.WireExamples.parse",
+        "VE.Events.WireExamples.pred",
+        "VE.Events.WireExamples.vocab",
+        "VE.Events.WireExamples.block",
+        "VE.Events.WireExamples.drop",
+        "VE.Events.WireExamples.env",
+        "VE.Events.WireExamples.set",
+        "VE.Events.WireExamples.setPred",
+        "VE.Events.WireExamples.diag",
+        "VE.Events.WireExamples.link",
+        "VE.Events.WireExamples.by64",
+        "VE.Events.WireExamples.regulated",
+        "VE.Events.WireExamples.state",
+        "VE.Events.WireExamples.states",
+        "VE.Events.WireExamples.setPreds",
+        "VE.Events.WireExamples.badWording",
+        "VE.Events.WireExamples.dates",
+        "VE.Events.WireExamples.days",
+        "VE.Events.WireExamples.withConst",
+        "VE.Events.WireExamples.oneDay",
+        "VE.Events.WireExamples.vocabReg",
+        "VE.Events.WireExamples.W2",
+        "VE.Events.WireExamples.decoded",
+        "VE.Events.WireExamples.softP"
+      ]
+    }
   }
 }

@@ -125,10 +125,13 @@ import VE.Arith.BoundedExamples
 import VE.Arith.CompleteExamples
 import VE.Calc.Lower
 import VE.Calc.LowerExamples
+import VE.Calc.Data
+import VE.Calc.TableExamples
 import VE.Numbers.Examples
 import VE.Numbers.Phrases
 import VE.Scales.Examples
 import VE.Cardinality.Examples
+import VE.Cardinality.Gate
 import VE.Cardinality.Run
 import VE.Cardinality.RunExamples
 import VE.Cardinality.RunTheorems
@@ -205,6 +208,8 @@ import VE.Events.Premises
 import VE.Events.Calendar
 import VE.Events.Completion
 import VE.Events.Examples
+import VE.Events.WireExamples
+import VE.Events.Chain
 import VE.NormDefaults.Packs
 import VE.NormDefaults.PacksLegacy
 import VE.NormDefaults.PacksLabels
@@ -233,4 +238,6 @@ import VE.Defaults.Meaning
 import VE.Defaults.MeaningExamples
 import VE.Defaults.Route
 import VE.Defaults.WireExamples
+import VE.Readings.DefaultVerdicts
+import VE.Readings.DefaultVerdictsExamples
 import VE.Defaults.RouteExamples

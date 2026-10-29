@@ -1,0 +1,64 @@
+{
+ "mutants": [
+  {
+   "id": "dedup-csimp-dropped",
+   "file": "lean/VE/Cardinality/Regions.lean",
+   "claim": "compiled code deduplicates the counted universals with the hash set (F5): without countedAmong's @[csimp] lemma it runs firstUse, and three times the request costs more than 4.5 times the CPU",
+   "source_sha256": "b78f0be696cd86ac00c3a5415353e6daef7fd20fbc91e24563652e6f82dbccc8",
+   "command": [
+    "bash",
+    "-c",
+    "set -u; cd lean && PATH=$HOME/.elan/bin:$PATH lake build ve_service >/dev/null || exit 0; cd .. && T=$(mktemp) && cp lean/checkers.lock $T && PATH=$HOME/.elan/bin:$PATH uv run python tools/regen_generated.py --write --only checker-pins >/dev/null; PATH=$HOME/.elan/bin:$PATH uv run --frozen python -m pytest tools/bench/test_perf.py -k universal_dedup -q -p no:cacheprovider > $T.log 2>&1; cp $T lean/checkers.lock; tail -n 3 $T.log; grep -q 'FAILED tools/bench/test_perf.py::test_cardinality_universal_dedup_near_linear' $T.log && exit 1; exit 0"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 70.3,
+   "output_tail": "ERROR tools/bench/test_perf.py::test_cardinality_universal_dedup_near_linear\nFAILED tools/bench/test_perf.py::test_cardinality_universal_dedup_near_linear\n1 failed, 18 deselected, 1 error in 31.89s\n    Finished `release` profile [optimized] target(s) in 0.08s\n"
+  },
+  {
+   "id": "dedup-hash-constant",
+   "file": "lean/VE/Cardinality/Regions.lean",
+   "claim": "the dedup's hash reads the whole statement (F5): a constant hash of formulas and bodies puts every statement in one bucket, so the hash set scans pairwise again",
+   "source_sha256": "b78f0be696cd86ac00c3a5415353e6daef7fd20fbc91e24563652e6f82dbccc8",
+   "command": [
+    "bash",
+    "-c",
+    "set -u; cd lean && PATH=$HOME/.elan/bin:$PATH lake build ve_service >/dev/null || exit 0; cd .. && T=$(mktemp) && cp lean/checkers.lock $T && PATH=$HOME/.elan/bin:$PATH uv run python tools/regen_generated.py --write --only checker-pins >/dev/null; PATH=$HOME/.elan/bin:$PATH uv run --frozen python -m pytest tools/bench/test_perf.py -k universal_dedup -q -p no:cacheprovider > $T.log 2>&1; cp $T lean/checkers.lock; tail -n 3 $T.log; grep -q 'FAILED tools/bench/test_perf.py::test_cardinality_universal_dedup_near_linear' $T.log && exit 1; exit 0"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 84.0,
+   "output_tail": "ERROR tools/bench/test_perf.py::test_cardinality_universal_dedup_near_linear\nFAILED tools/bench/test_perf.py::test_cardinality_universal_dedup_near_linear\n1 failed, 18 deselected, 1 error in 49.68s\n    Finished `release` profile [optimized] target(s) in 0.05s\n"
+  },
+  {
+   "id": "dedup-step-no-insert",
+   "file": "lean/VE/Cardinality/Regions.lean",
+   "claim": "the hash-set dedup is firstUse (firstUseStep_inv, firstUseH_eq): a step that keeps an item without adding it to the set fails the proof",
+   "source_sha256": "b78f0be696cd86ac00c3a5415353e6daef7fd20fbc91e24563652e6f82dbccc8",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Regions"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 1.6,
+   "output_tail": "_option linter.unusedSimpArgs false`\n\u2716 [15/15] Building VE.Cardinality.Regions (1.5s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3c/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3c/lean/VE/Cardinality/Regions.lean -o /home/seyran/code/ve-qt-a3c/lean/.lake/build/lib/lean/VE/Cardinality/Regions.olean -i /home/seyran/code/ve-qt-a3c/lean/.lake/build/lib/lean/VE/Cardinality/Regions.ilean -c /home/seyran/code/ve-qt-a3c/lean/.lake/build/ir/VE/Cardinality/Regions.c --setup /home/seyran/code/ve-qt-a3c/lean/.lake/build/ir/VE/Cardinality/Regions.setup.json --json\nerror: VE/Cardinality/Regions.lean:36:2: unsolved goals\ncase false\n\u03b2 : Type\ninst\u271d\u00b2 : BEq \u03b2\ninst\u271d\u00b9 : LawfulBEq \u03b2\ninst\u271d : Hashable \u03b2\nacc : Std.HashSet \u03b2 \u00d7 Array \u03b2\nl : List \u03b2\nx : \u03b2\nh1 : \u2200 (y : \u03b2), acc.fst.contains y = l.contains y\nh2 : acc.snd.toList = l\nhx : l.contains x = false\ny : \u03b2\n\u22a2 l.contains y = (x == y || l.contains y)\nwarning: VE/Cardinality/Regions.lean:37:45: This simp argument is unused:\n  Std.HashSet.contains_insert\n\nHint: Omit it from the simp argument list.\n  simp only [Bool.false_eq_true, if_false, S\u0335t\u0335d\u0335.\u0335H\u0335a\u0335s\u0335h\u0335S\u0335e\u0335t\u0335.\u0335c\u0335o\u0335n\u0335t\u0335a\u0335i\u0335n\u0335s\u0335_\u0335i\u0335n\u0335s\u0335e\u0335r\u0335t\u0335,\u0335 \u0335h1 y, List.contains_append, List.contains_cons,\n  \u0332  \u0332 \u0332 \u0332 \u0332 \u0332List.contains_nil, Bool.or_false]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Regions\nerror: build failed\n"
+  },
+  {
+   "id": "dedup-step-no-insert-service",
+   "file": "lean/VE/Cardinality/Regions.lean",
+   "claim": "the runner bridges each counted universal once, in first-use order (firstUseStep_inv's proof, which fails on this mutant (dedup-step-no-insert), is replaced by sorry for the run)",
+   "source_sha256": "b78f0be696cd86ac00c3a5415353e6daef7fd20fbc91e24563652e6f82dbccc8",
+   "command": [
+    "bash",
+    "-c",
+    "set -u; python3 -c \"import pathlib, re; p = pathlib.Path('lean/VE/Cardinality/Regions.lean'); s = p.read_text(); p.write_text(re.sub(r'(theorem firstUseStep_inv .*?:= by\\n).*?(\\ntheorem firstUseH_foldl)', lambda m: m.group(1) + '  sorry\\n' + m.group(2), s, flags=re.S))\" && cd lean && PATH=$HOME/.elan/bin:$PATH lake build ve_service >/dev/null || exit 0; cd .. && T=$(mktemp) && cp lean/checkers.lock $T && PATH=$HOME/.elan/bin:$PATH uv run python tools/regen_generated.py --write --only checker-pins >/dev/null; VE_LEAN_PREBUILT=1 VE_NATIVE_PREBUILT=1 PATH=$HOME/.elan/bin:$PATH uv run --frozen python -m pytest tests/test_cardinality_service.py -q -p no:cacheprovider > $T.log 2>&1; cp $T lean/checkers.lock; tail -n 3 $T.log; grep -q 'FAILED tests/test_cardinality_service.py::test_universals_are_bridged_once_in_first_use_order' $T.log && exit 1; exit 0"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 32.4,
+   "output_tail": "FAILED tests/test_cardinality_service.py::test_route_cases_answer_as_recorded\nFAILED tests/test_cardinality_service.py::test_universals_are_bridged_once_in_first_use_order\n2 failed, 1 passed in 0.94s\n    Finished `release` profile [optimized] target(s) in 0.04s\n"
+  }
+ ]
+}
