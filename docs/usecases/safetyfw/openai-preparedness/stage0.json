@@ -50,9 +50,9 @@
  "P5": {
   "bytes_by_status": {
    "CHECKED": 708,
-   "LABELLED": 20021,
+   "LABELLED": 17656,
    "OPEN": 4444,
-   "UNFORMALISED": 42245
+   "UNFORMALISED": 44610
   },
   "total": 67418,
   "units": 389

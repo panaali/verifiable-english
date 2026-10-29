@@ -2,26 +2,26 @@
  "accounted_bytes": 67418,
  "bytes_by_kind": {
   "asserted": 48,
-  "exposition": 19527,
+  "exposition": 17162,
   "meta": 494,
   "norm": 5104,
-  "unformalised": 42245
+  "unformalised": 44610
  },
  "bytes_by_status": {
   "CHECKED": 708,
-  "LABELLED": 20021,
+  "LABELLED": 17656,
   "OPEN": 4444,
-  "UNFORMALISED": 42245
+  "UNFORMALISED": 44610
  },
  "coverage_percent": 100,
  "default_exceptions_by_decider": {},
  "document": "pf.d1.ve.md (built locally, not committed)",
- "document_sha256": "3ab9408173b1c9a04a9cbe1d424f37d7e640ca64afb12e645d289492d4b80435",
+ "document_sha256": "5b50f1e95422fbbf7f508155889591a2426cdaf13b601912bfecef3eb55c406b",
  "master_bytes_by_status": {
   "CHECKED": 708,
-  "LABELLED": 20021,
+  "LABELLED": 17656,
   "OPEN": 4444,
-  "UNFORMALISED": 42245
+  "UNFORMALISED": 44610
  },
  "residual": {
   "assumptions": 0,
@@ -41,8 +41,8 @@
  "unformalised_reasons": {
   "event_order": 15,
   "external_reference": 2,
-  "hedged_claim": 34,
-  "not_translated": 173,
+  "hedged_claim": 36,
+  "not_translated": 186,
   "quantity": 2
  }
 }

@@ -458,8 +458,8 @@ safety-framework 9. Report, unscored, what changes without N1 and without N2.
 5. **P8 refuses the planned combination.** On F2 with `judgments@0`, `documents@1` and D1's soft norms, Lean says
    `CheckerUnavailable: judgments@0 with soft-norms@0 needs its composed Lean route`. D1 therefore uses W2 open
    names and pending readings, as the plan allowed.
-6. **The 173 `not_translated` units are mapped to “readings” as a translation backlog.** This is not a claim that
-   landing a VE readings feature alone would make their 29,676 sole bytes CHECKED. The stage 0 and coverage files
+6. **The 186 `not_translated` units are mapped to “readings” as a translation backlog.** This is not a claim that
+   landing a VE readings feature alone would make their 31,643 sole bytes CHECKED. The stage 0 and coverage files
    disclose the gap; `usecase-pf-run` must complete and check the source reading of each before answering keys.
 7. **No key cell changed and no key item was answered in this baseline.** The only original-key comparison remains
    the freeze and transcription tests. No conflict is presented as a source finding.
