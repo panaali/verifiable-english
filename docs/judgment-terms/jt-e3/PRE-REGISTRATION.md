@@ -39,8 +39,13 @@ Its `stratum_class` is for the sampling audit only and is never sent to a rater.
 Each rater receives the following fixed instructions and records containing
 `id`, `pilot`, `term`, and one source sentence. The existing `class`,
 `borderline`, `reason`, other rater's answers, and sampling stratum are hidden.
-The sentence is drawn from the pilot source unit containing or illustrating
-the term; a sentence selected by the runner is frozen before calls.
+The sentence is drawn from the pinned pilot source text containing or
+illustrating the term. `INPUT.json` freezes all 60 sentences before calls
+(SHA-256 `4a4a16073c9d4d3f548aabfda270186276b2350c26bc83ffdb7a953503050ddf`).
+The constitution source SHA-256 is
+`fa10ed489e758ab009fe420954a385afbe3b11978afd79c4e9f4ae97e02d50dd`;
+the UDHR source SHA-256 is
+`d6495201e9f6229603d2b13427ac68bd8febf5ad80f1cec329bbc3d04d9c7d3a`.
 
 > Classify each record independently into exactly one of `judgment`,
 > `classification`, `exception`, `attitude`, or `proportion`. Return only a JSON
