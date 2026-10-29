@@ -1309,11 +1309,25 @@
    "commit": "2b13707e76216f82370d81bfcafeb5c064f40b94"
   },
   {
-   "class": "V",
-   "lines": 16,
-   "reason": "qt-a3c: VE/Compose/Dispatch.lean +11 (the cardinality@0 row, cardinalityOthers, modeProfiles), VE/Service/Registry.lean +2, ResponseShape/Schemas.lean +1, ResponseShape/Skeletons.lean +1, VE/Service/Protocol.lean +1; K +0, S +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3c, 2026-10-28",
+   "class": "S",
+   "lines": 1,
+   "reason": "et-3d: lean/VE/Events/Decl.lean S +1 (EventsTyped: decide (D.year ≤ 9999) per named date and its docstring line; K +0, V +0)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-3d, 2026-10-18",
    "commit": "b8eac74553124f72a8650211b9df8228c621fdfe"
+  },
+  {
+   "class": "S",
+   "lines": 6,
+   "reason": "sc-5rb: VE/Scope/Readings.lean +118 (G[V] untied, scope spec 11.2), VE/Service/Document.lean +12 (withSets D[V], check's reading-set case; checkDocSets tied), VE/Service/ScopeAdmission.lean +6 (S, Pinned.withGoverned); K +0, total +136",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-5rb, 2026-10-28",
+   "commit": "d9cff5345ed2874d718bd1fa988b2777d5e2be0f"
+  },
+  {
+   "class": "V",
+   "lines": 130,
+   "reason": "sc-5rb: VE/Scope/Readings.lean +118 (G[V] untied, scope spec 11.2), VE/Service/Document.lean +12 (withSets D[V], check's reading-set case; checkDocSets tied), VE/Service/ScopeAdmission.lean +6 (S, Pinned.withGoverned); K +0, total +136",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-5rb, 2026-10-28",
+   "commit": "d9cff5345ed2874d718bd1fa988b2777d5e2be0f"
   },
   {
    "class": "S",
@@ -1331,17 +1345,17 @@
   },
   {
    "class": "S",
-   "lines": 6,
-   "reason": "sc-5rb: VE/Scope/Readings.lean +118 (G[V] untied, scope spec 11.2), VE/Service/Document.lean +12 (withSets D[V], check's reading-set case; checkDocSets tied), VE/Service/ScopeAdmission.lean +6 (S, Pinned.withGoverned); K +0, total +136",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-5rb, 2026-10-28",
-   "commit": "d9cff5345ed2874d718bd1fa988b2777d5e2be0f"
+   "lines": 12,
+   "reason": "df-3: S +12 (VE/Readings/DefaultVerdicts.lean: choiceSoft, dSem), V +126 (VE/Readings/DefaultVerdicts.lean +80: dBasis, DVerdicts.hasDefaults, dEnglish, runVerdictsD, verdictWord, dChoiceJson, DLine, DLine.json, defaultJson; ResponseShape/Schemas/ReadingsRoute.lean +43: verdicts_default_choice, verdicts_default_line, verdicts_default; VE/Defaults/Wire.lean +3: collisionFields), K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-3, 2026-10-18",
+   "commit": "0df9256dfe7d86d3d4ebf009a9a9026006256447"
   },
   {
    "class": "V",
-   "lines": 130,
-   "reason": "sc-5rb: VE/Scope/Readings.lean +118 (G[V] untied, scope spec 11.2), VE/Service/Document.lean +12 (withSets D[V], check's reading-set case; checkDocSets tied), VE/Service/ScopeAdmission.lean +6 (S, Pinned.withGoverned); K +0, total +136",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-5rb, 2026-10-28",
-   "commit": "d9cff5345ed2874d718bd1fa988b2777d5e2be0f"
+   "lines": 126,
+   "reason": "df-3: S +12 (VE/Readings/DefaultVerdicts.lean: choiceSoft, dSem), V +126 (VE/Readings/DefaultVerdicts.lean +80: dBasis, DVerdicts.hasDefaults, dEnglish, runVerdictsD, verdictWord, dChoiceJson, DLine, DLine.json, defaultJson; ResponseShape/Schemas/ReadingsRoute.lean +43: verdicts_default_choice, verdicts_default_line, verdicts_default; VE/Defaults/Wire.lean +3: collisionFields), K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-3, 2026-10-18",
+   "commit": "0df9256dfe7d86d3d4ebf009a9a9026006256447"
   },
   {
    "class": "V",
@@ -1351,18 +1365,53 @@
    "commit": "de7cb402237e826966f45fe7f495e69de61ce494"
   },
   {
-   "class": "S",
-   "lines": 1,
-   "reason": "et-3d: lean/VE/Events/Decl.lean S +1 (EventsTyped: decide (D.year ≤ 9999) per named date and its docstring line; K +0, V +0)",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-3d, 2026-10-18",
-   "commit": "b8eac74553124f72a8650211b9df8228c621fdfe"
-  },
-  {
    "class": "V",
    "lines": 31,
    "reason": "ap-1bd: V +31 untied (VE/Service/Standalone.lean +19: regulatedOf, actsRead and their call sites; VE/Readings/Wire.lean +12: singleActsOnly, the acts@0 frame decode and the reading-set refusal); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1bd, 2026-10-18",
    "commit": "d8926dc1d1ef52a6783d13c781a9c064c963822f"
+  },
+  {
+   "class": "V",
+   "lines": 16,
+   "reason": "qt-a3c: VE/Compose/Dispatch.lean +11 (the cardinality@0 row, cardinalityOthers, modeProfiles), VE/Service/Registry.lean +2, ResponseShape/Schemas.lean +1, ResponseShape/Skeletons.lean +1, VE/Service/Protocol.lean +1; K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3c, 2026-10-28",
+   "commit": "b8eac74553124f72a8650211b9df8228c621fdfe"
+  },
+  {
+   "class": "S",
+   "lines": 54,
+   "reason": "me-4: VE/Calc/Table.lean +67 (S +54: Cell, Table, Table.cell, Filter, Filter.Selects, Table.numbers, mean?, Agg, Agg.run; D[V] +13: ColType, readCell), VE/Calc/Csv.lean +34 (D[V] CSV decoder), VE/Calc/Jsonl.lean +34 (D[V] JSON-lines decoder), VE/Calc/Data.lean +13 (D[V] Format, DataDecl, decodeTable); K +0; runCounted tied to counted_bound/counted_exhausted",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-4, 2026-10-18",
+   "commit": "379130067eac5519bca086a1ff06b1775ed61dd4"
+  },
+  {
+   "class": "V",
+   "lines": 94,
+   "reason": "me-4: VE/Calc/Table.lean +67 (S +54: Cell, Table, Table.cell, Filter, Filter.Selects, Table.numbers, mean?, Agg, Agg.run; D[V] +13: ColType, readCell), VE/Calc/Csv.lean +34 (D[V] CSV decoder), VE/Calc/Jsonl.lean +34 (D[V] JSON-lines decoder), VE/Calc/Data.lean +13 (D[V] Format, DataDecl, decodeTable); K +0; runCounted tied to counted_bound/counted_exhausted",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-4, 2026-10-18",
+   "commit": "379130067eac5519bca086a1ff06b1775ed61dd4"
+  },
+  {
+   "class": "V",
+   "lines": 2,
+   "reason": "me-4 review F2: shared tableDimensions enforces the spec section 14 row and column caps in CSV and JSONL; total me-4 trusted growth is K +0, S +54, V +96 = 150 over the merge base, with the original R16 allowance covering S +54 and V +94",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-4 review fix, 2026-10-28",
+   "commit": "d25bc343be0f41a29a65c6a8766f18f2b1694e8d"
+  },
+  {
+   "class": "V",
+   "lines": 120,
+   "reason": "et-4: VE/Events/Wire.lean +120 untied D[V] (EventsDecoded, VocabView and its readers, strAt, arrAt, decodeEventSort, decodeStateSort, decodeLinkRaw, checkLinks, ownedByEvents, checkDates, decodeEvents, eventsPack); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-4, 2026-10-18",
+   "commit": "6d0a105269961144688f8511f4cc4cd0c10542e4"
+  },
+  {
+   "class": "S",
+   "lines": 27,
+   "reason": "sc-1ae: lean/VE/Scope/Govern.lean S +27 (JsonWF 9, HasStr 5, payload 6, BlockBound 3 by their source ranges in lean/declarations.txt, and the 4 lines between them): spec 4.2's HasStr, payload, BlockBound and spec 11.3's JsonWF (the DRI's fix (a), 2026-10-27), the meaning of 5.1's statements; K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1ae, 2026-10-18",
+   "commit": "c2a0ee9776ea790a0d54b05af000dfe39f36d984"
   }
  ]
 }
