@@ -12,7 +12,7 @@ Known red on main: the three IDs in `main-known-red.txt` were not edited or repa
 - F2 -> M6 receives the actual extra rule and listed threshold from mutated VE inputs, and the mutants assert observed violations -> `test_rsp_invention_audit_checks_the_actual_mutation` (m2, m4) and `test_rsp_audit_uses_the_mutated_query_input` -> `a5ce6a414`.
 - F3 -> section 9 has unscored VE reruns without N1, N2 and N3, saved separately from key scoring -> `test_rsp_each_narrowing_has_an_unscored_counterfactual`, `test_rsp_each_narrowing_reruns_a_ve_answer`, and `test_rsp_run_recomputes_every_key_item_and_records_causes` -> `a5ce6a414`.
 
-The regenerated scored baseline remains 111/126 agreements and 15 faithful undecided rows. All six planned mutants still change exactly their named results. The unscored comparisons change 42 cells without N1 (including all 20 PROT cells), G1 and N5 without N2, and K13 without N3. Conflict statements about the source remain candidates pending the independent check required by standing ruling R14 (`DRI-RULINGS.md`). There is no VE product verdict or frozen-key delta and no DELTA ruling row.
+The regenerated scored baseline remains 111/126 agreements and 15 faithful undecided rows. All six planned mutants still change exactly their named results. The unscored comparisons change 46 cells without N1 (including all 20 PROT cells), G1 and N5 without N2, and K13 without N3. Conflict statements about the source remain candidates pending the independent check required by standing ruling R14 (`DRI-RULINGS.md`). There is no VE product verdict or frozen-key delta and no DELTA ruling row.
 
 ## Seeded failures and verification
 

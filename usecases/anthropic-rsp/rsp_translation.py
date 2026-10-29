@@ -1,7 +1,9 @@
 """Loads the D1 translation of the anthropic-rsp case: the rules of `rules.d1.ve` and the premises of `facts.d1.ve`.
 
 The block format is safety-framework's (`translation.py` there): a header `## <id> | <when> | <source>` and one line
-of VE English. `<when>` is `always` or a conjunction of reading choices (`RS2=Ds & RS2force=strict`). A rule block is
+of VE English. Rule headers also carry `| RS0` or `| independent` before the source: this records whether removing
+N1 changes that rule from a commitment to a prediction. `<when>` is `always` or a conjunction of reading choices
+(`RS2=Ds & RS2force=strict`). A rule block is
 one VE norm rule, parsed alone with VE's one-reading check; a fact block is one paragraph of VE English sentences.
 The reading sets are PLAN 3.1's; a set the text has on several independent sentences (RS6, RS8, RS12) has one
 harness set per sentence, so that no choice on one sentence is forced on another. N1 (every RS0 statement a
@@ -41,6 +43,7 @@ class Block:
     when: tuple[tuple[str, str], ...]
     source: str
     text: str
+    narrowing: str | None = None
 
 
 def read_blocks(name):
@@ -49,7 +52,10 @@ def read_blocks(name):
         raise SystemExit(f"{name}: a header line without its block")
     blocks = []
     for header, text in zip(lines[::2], lines[1::2]):
-        m = re.fullmatch(r"## ([a-z0-9-]+) \| ([^|]+) \| (.+)", header)
+        if name == "rules.d1.ve":
+            m = re.fullmatch(r"## ([a-z0-9-]+) \| ([^|]+) \| (RS0|independent) \| (.+)", header)
+        else:
+            m = re.fullmatch(r"## ([a-z0-9-]+) \| ([^|]+) \| (.+)", header)
         if m is None or text.startswith("## "):
             raise SystemExit(f"{name}: malformed header {header!r}")
         when = () if m[2].strip() == "always" else tuple(
@@ -57,7 +63,8 @@ def read_blocks(name):
         for set_id, choice in when:
             if choice not in READING_SETS.get(set_id, ()):
                 raise SystemExit(f"{name}: unknown reading {set_id}={choice}")
-        blocks.append(Block(m[1], when, m[3], text))
+        blocks.append(Block(m[1], when, m[4] if name == "rules.d1.ve" else m[3], text,
+                            m[3] if name == "rules.d1.ve" else None))
     return blocks
 
 

@@ -10,7 +10,6 @@ from collections import Counter
 import itertools
 import json
 import copy
-import re
 import sys
 import time
 from functools import lru_cache
@@ -87,7 +86,8 @@ def document(names, default, include=None):
     rules = [json.loads(T.parsed_rule(b.id)) for b in T.rule_blocks()
              if applies(b, choice) and (include is None or b.id in include)]
     if WITHOUT_NARROWING == "N1":
-        rules = [r for r in rules if not commitment_under_n1(r["name"])]
+        n1_commitments = {b.id for b in T.rule_blocks() if b.narrowing == "RS0"}
+        rules = [r for r in rules if r["name"] not in n1_commitments]
     if WITHOUT_NARROWING == "N3":
         rules = [r for r in rules if r["name"] != "f15-financial-interest"]
     if MUTANT == "m3":
@@ -105,18 +105,6 @@ def document(names, default, include=None):
     for rule in rules:
         rule["over"] = [n for n in ({} if MUTANT == "m1" else T.PRECEDENCE).get(rule["name"], ()) if n in included]
     return SoftNormDocument(SoftEnvironment(V.environment(default)), [{"norm": r} for r in rules])
-
-
-@lru_cache(maxsize=None)
-def commitment_under_n1(name):
-    """The strict rules backed by a source commitment, excluding hedges and recommendations."""
-    block = next(b for b in T.rule_blocks() if b.id == name)
-    source = block.source.lower()
-    norm = json.loads(T.parsed_rule(name))
-    return (norm.get("mode", "strict") == "strict" and
-            (bool(re.search(r"\b(will|commit|must|required|requires)\b", source)) or
-             block.source.startswith("F1 to F4,")) and
-            "will not necessarily" not in source and "should" not in source)
 
 
 def atoms(case):
