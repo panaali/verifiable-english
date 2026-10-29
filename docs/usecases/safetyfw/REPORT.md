@@ -252,7 +252,7 @@ an item and 31 SOME answers; M3 is the unchanged 59,410-byte coverage; M5's iden
 audit each have zero violations; M7 records 117 default-sensitive choices; M8 records 26 replayed entailment
 certificates, 38 validated countermodels and W1 conflict witnesses; M9 detects all six PLAN mutants with exactly
 their named changed IDs; M10 records 303 units, 76 rules, 49 cases, 282 evaluated choices, 64 prover calls and the
-wall time printed by `run.py` (the last local `--check`: 95.2 s). M4's structure-conditional counts are in results.json.
+wall time printed by `run.py` (the last local `--check`: 116.5 s). M4's structure-conditional counts are in results.json.
 
 The three source-fidelity corrections are `f24-delay`'s invented positive `significant_lead` guard removed,
 T2's 6× cost marked `OT15=false`, and K21's General upleveling case given its source-stated `OT8=true`. Each

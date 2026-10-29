@@ -26,7 +26,8 @@ from ve.entailment import prove_entailment, check_entailment_certificate  # noqa
 from ve.softnorms import SoftEnvironment, SoftNormDocument  # noqa: E402
 
 RESULTS = HERE / "results.json"
-THRESHOLDS = dict(zip((f"T{i}" for i in range(1, 5)), V.THRESHOLDS))
+THRESHOLDS = {block.id.split("-")[1].upper(): formula.term.name
+              for block, formulas in T.facts() if block.id.startswith("threshold-") for formula in formulas}
 CASES = {c["id"]: c for c in json.loads((HERE / "cases.json").read_text())["cases"]}
 SETS = T.READING_SETS
 BASE = {name: values[0] for name, values in SETS.items()}
