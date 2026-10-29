@@ -1,0 +1,21 @@
+{
+ "job": "en-sw.s2of2-fe16c74c",
+ "head": "82a61be7c805e96d6115b1e33414f9507061c764",
+ "argv": [
+  "en-sw.s2of2-fe16c74c",
+  "82a61be7c805e96d6115b1e33414f9507061c764",
+  "603f64c0d2d2329483badc0ee6796d1c3b75d5d8",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-3be31547bfa1.tar.zst",
+  "e9df8a6f62cd8d7c1df761e7b173d303d59f3cba0503ef823fd16ab481e1be28",
+  "--max-mutants",
+  "1000",
+  "--test",
+  "lean/VE/EnglishGrammar/SourceWordsExamples.lean",
+  "--allow",
+  "docs/english-lean/en-sw/trust-mutants-allow.json",
+  "--shard",
+  "2/2",
+  "--jobs",
+  "4"
+ ]
+}
