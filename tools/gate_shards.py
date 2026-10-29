@@ -1,12 +1,27 @@
 """Deterministic file shards and fail-closed assembly of full gate records."""
 from __future__ import annotations
 
+import datetime
 import hashlib
 import json
 import os
 from pathlib import Path
 
 from tools import gate_collection, test_schedule
+
+
+def _valid_expiry(value: object) -> bool:
+    if type(value) is not str:
+        return False
+    try:
+        return datetime.date.fromisoformat(value).isoformat() == value
+    except ValueError:
+        return False
+
+
+def _valid_evidence(value: object) -> bool:
+    return (type(value) is str and bool(value.strip()) and
+            not Path(value).is_absolute() and ".." not in Path(value).parts)
 
 
 def plan(ids: list[str], estimates: test_schedule.Estimates, count: int,
@@ -97,6 +112,18 @@ def merge_records(records: list[dict]) -> dict:
         shard_plan = metadata["plan"]
         ids = validate_plan(shard_plan)
         n = shard_plan["n"]
+        # A missing identity must not agree with the same missing value in
+        # every shard. These are the source and runner identities of the run.
+        if type(first.get("schema_version")) is not int or first["schema_version"] != 1 or \
+                any(type(first.get(key)) is not str or len(first[key]) != 40 or
+                    any(char not in "0123456789abcdef" for char in first[key])
+                    for key in ("commit_sha", "tree_sha")) or \
+                not isinstance(first.get("runner"), dict) or \
+                any(type(first["runner"].get(key)) is not str or not first["runner"][key].strip()
+                    for key in ("system", "machine")) or \
+                not isinstance(first.get("toolchains"), dict) or not first["toolchains"] or \
+                not isinstance(first.get("environment"), dict):
+            return refuse("missing or malformed shard identity")
         if len(records) != n:
             return refuse(f"missing shard record: expected {n}, got {len(records)}")
         by_number = {}
@@ -114,6 +141,8 @@ def merge_records(records: list[dict]) -> dict:
                 return refuse(f"shard {number}: N or plan digest differs")
             if any(record.get(key) != first.get(key) for key in ("commit_sha", "tree_sha")):
                 return refuse(f"shard {number}: commit or tree differs")
+            if not isinstance(record.get("environment"), dict):
+                return refuse(f"shard {number}: environment missing")
             runner = record.get("runner", {})
             common_runner = first.get("runner", {})
             if not isinstance(runner, dict) or not isinstance(common_runner, dict) or \
@@ -193,6 +222,9 @@ def merge_records(records: list[dict]) -> dict:
                    node not in quarantine["active"] or
                    retry.get("suite") != "failed" or retry.get("alone") not in
                    ("passed", "failed", "skipped", "no result") or
+                   type(retry.get("owner")) is not str or not retry["owner"].strip() or
+                   not _valid_expiry(retry.get("expires")) or
+                   not _valid_evidence(retry.get("evidence")) or
                    (record["status"] == "shard-passed" and retry["alone"] != "passed")
                    for node, retry in retries.items()):
                 return refuse(f"shard {number}: contradictory quarantine retry")
