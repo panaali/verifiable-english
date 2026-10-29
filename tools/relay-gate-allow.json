@@ -2360,6 +2360,65 @@
    "kind": "by-design",
    "id": "ME2C-1",
    "reason": "A row's line is Lean's English (VE.Calc.Run.line, spec 11.1), null where 11.2's nesting rule or a value's words refuse a rendering: which text, and whether there is one, is Lean's semantic answer (R8), checked by the RunExamples line guards and tests/test_calc_service.py::test_row_fields_at_their_boundaries, not by the relay (docs/math-evidence/me-2c/REPORT.md)."
+  },
+  {
+   "route": "service:cardinality",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/erased/premises",
+    "results/*/result/erased/premises/*/Q/*/*",
+    "results/*/result/erased/premises/*/core/*/*",
+    "results/*/result/regions/constants",
+    "results/*/result/regions/predicates",
+    "results/*/result/regions/predicates/*"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:cardinality",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/erased/premises",
+    "results/*/result/regions/constants",
+    "results/*/result/regions/predicates/*"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:cardinality",
+   "mutation": "drop",
+   "path": [
+    "results/*/result/regions/predicates/*"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: a list or map whose length and elements the runners decide (orders, premises, assumptions, reports, rendered lines, legends, conflict targets, witnesses). The client checks binding and well-formedness only (ve/backends/lean_service_schema/README.md, threat model; DRI-RULINGS R8); an emptied or repeated element is a well-formed answer. Listed path by path for each route: a request-bound list (x-rows, x-length, x-zip, x-count), a request name, an id or a name is never listed here (F10, F11)."
+  },
+  {
+   "route": "service:cardinality",
+   "mutation": "rebind",
+   "path": [
+    "results/*/result/regions/predicates/*/*",
+    "results/*/result/erased/premises/*/Q/*/*",
+    "results/*/result/erased/premises/*/core/*/*"
+   ],
+   "kind": "follow-up",
+   "id": "F4",
+   "reason": "Names a request name (predicate, sort, target, unit, set, label, chooser, profile, argument) that the schema does not check against the request: a name the request does not hold is accepted. Bind it with x-references/x-equals in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:cardinality",
+   "mutation": "*",
+   "path": [
+    "results/*/result/regions/constants/*/bits"
+   ],
+   "kind": "by-design",
+   "id": "QTA3C-1",
+   "reason": "A region constant's bits are its region, one truth value per predicate of its sort (VE.Cardinality.regionTable), Lean's computed content pinned by RunExamples' golden region table: the empty string is the one region of a sort with no predicates, so an emptied or rebound bits string is a well-formed answer; which bits belong to which constant is Lean's (R8)"
   }
  ]
 }

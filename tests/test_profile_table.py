@@ -33,9 +33,10 @@ def test_python_reads_the_rows_and_the_environment_profiles():
         assert all(type(pair) is list and len(pair) == 2 and all(type(x) is str for x in pair)
                    for pair in row["refuses"])
     # rows that are no environment profile of their own: discourse's, the rights clauses', scope@0, a wrapper
-    # the Lean document mode runs before the chain (sc-1b), and judgments@0, which Lean's document mode admits (jt-2)
+    # the Lean document mode runs before the chain (sc-1b), judgments@0, which Lean's document mode admits (jt-2),
+    # and cardinality@0, which only the cardinality mode reads until its document hook (qt-a3c, QT-A4)
     assert {r["profile"] for r in profiles.ROWS} - set(profiles.BY_NAME) == {"ve.discourse@1", "right-clauses@0",
-                                                                             "scope@0", "judgments@0"}
+                                                                             "scope@0", "judgments@0", "cardinality@0"}
 
 
 def test_no_python_gate_remains():
