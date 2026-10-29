@@ -91,6 +91,10 @@ def by64 : String := String.mk (List.replicate 64 'b')
 -- Two faults, the first one named: an unknown field, then a missing one, then each field in the block's order.
 #guard diag (env (set "extra" (.num 1) (drop "links" block))) == "InvalidInput: events.extra"
 #guard diag (env (set "day" (.num 3) (drop "links" block))) == "InvalidInput: events.links"
+-- Every key and every required field is looked at (D[R] run): an unknown key read first or last, two fields missing.
+#guard diag (env (set "a_extra" (.num 1))) == "InvalidInput: events.a_extra"
+#guard diag (env (set "zz" (.num 1))) == "InvalidInput: events.zz"
+#guard diag (env (drop "day" (drop "links" block))) == "InvalidInput: events.day"
 #guard [("day", "before"), ("before", "events"), ("events", "states"), ("states", "dates"), ("dates", "anchor"),
   ("anchor", "links")].all fun (a, b) => diag (env (set a (.num 3) (set b (.num 3)))) == s!"InvalidInput: events.{a}"
 #guard diag (env (set "links" (parse "[{\"predicate\": 3, \"form\": \"contributed\", \"decided_by\": \"x\", \"x\": 1}]"))) ==
@@ -114,6 +118,11 @@ def regulated (e : Json) : Json := e.setObjVal! "regulated" (parse "{\"default\"
   "EventsRegulated: contributed_to"
 #guard diag (env block (setPred "committed_on" (regulated (pred "[\"act\", \"day\"]" "{0} happens on {1}")))) ==
   "EventsRegulated: committed_on"
+
+-- The day sort is found wherever it is declared, first or last (D[R] run): the fault is then item 4's.
+#guard diag (env block (vocab.setObjVal! "sorts"
+  (parse "{\"day\": {\"description\": \"d\"}, \"lease\": {\"description\": \"d\"}, \"stay\": {\"description\": \"d\"}}"))) == "EventsSort: act"
+#guard diag (env block (vocab.setObjVal! "sorts" (parse "{\"act\": {\"description\": \"d\"}, \"day\": {\"description\": \"d\"}}"))) == "EventsSort: stay"
 
 -- Item 4: event and state sorts, their roles' signatures and wordings, distinct roles.
 #guard diag (env (set "events" (parse "[{\"sort\": \"deed\", \"on\": \"committed_on\"}]"))) == "EventsSort: deed"
@@ -148,6 +157,18 @@ def states (ss : List String) (b : Json := block) : Json := set "states" (parse 
 #guard diag (env block (setPred "stay_ends" (pred "[\"stay\", \"act\"]" "{0} ends on {1}"))) == "EventsSort: stay_ends"
 #guard diag (env block (setPred "stay_ends" (pred "[\"stay\", \"day\"]" "{0} ends at {1}"))) ==
   "EventsVerbalisation: stay_ends"
+-- Every event and every state is checked, the fault first or last (D[R] run); a state sort an earlier event sort repeats.
+#guard diag (env (set "events" (parse "[{\"sort\": \"act\", \"on\": \"committed_on\"}, {\"sort\": \"lease\", \"on\": \"happens_at\"}]"))) ==
+  "EventsSort: happens_at"
+#guard diag (env (set "events" (parse "[{\"sort\": \"lease\", \"on\": \"happens_at\"}, {\"sort\": \"act\", \"on\": \"committed_on\"}]"))) ==
+  "EventsSort: happens_at"
+#guard diag (env (states [state "stay" "stay_begins" "stay_ends", state "lease" "lease_begins" "happens_at"])) ==
+  "EventsSort: happens_at"
+#guard diag (env (states [state "lease" "lease_begins" "happens_at", state "stay" "stay_begins" "stay_ends"])) ==
+  "EventsSort: happens_at"
+#guard diag (env (states [state "lease" "lease_begins" "lease_ends"] (set "events"
+  (parse "[{\"sort\": \"act\", \"on\": \"committed_on\"}, {\"sort\": \"lease\", \"on\": \"lease_begins\"}]")))) ==
+  "DuplicateDeclaration: state sort lease"
 -- Two faults, in item 4's order: sorts, distinct event sorts, distinct state sorts, signatures, wordings, distinct roles.
 def setPreds (ps : List (String × Json)) : Json :=
   vocab.setObjVal! "predicates" (ps.foldl (fun j (p, e) => j.setObjVal! p e) (vocab.getObjValD "predicates"))
@@ -190,6 +211,7 @@ def dates (ds : List String) (anchor : Option String := none) : Json :=
 #guard diag (env (dates ["1970-01-01", "9999-12-31"])) == "ok [1970-01-01, 9999-12-31] 9 [the drafters]"
 #guard diag (env (dates ["2026-10-12"] (some "2025-13-01"))) == "InvalidDate(2025-13-01)"
 #guard diag (env (dates ["2026-10-12", "2026-10-12"])) == "DuplicateDeclaration: date 2026-10-12"
+#guard diag (env (dates ["2026-10-12", "2026-10-14", "2026-10-12"])) == "DuplicateDeclaration: date 2026-10-12"
 #guard diag (env (dates ["2026-10-12"] (some "2026-10-12"))) == "ok [2026-10-12] 8 [the drafters]"
 def days (n : Nat) : List String := (List.range n).map fun k => (VE.Time.epoch.addDays (2 * k)).iso
 #guard (diag (env (dates (days 64)))).startsWith "ok "
@@ -218,6 +240,8 @@ def oneDay : List (String × VE.Formula) := [("events:irreflexive", .all "day" (
   "ResourceLimit: events premise events:irreflexive"
 -- Every premise is checked, not only the first (review F1).
 #guard (match checkPremiseSize 4 (("events:top", .top) :: oneDay) with | .error e => e | .ok _ => "ok") ==
+  "ResourceLimit: events premise events:irreflexive"
+#guard (match checkPremiseSize 4 (oneDay ++ [("events:top", .top)]) with | .error e => e | .ok _ => "ok") ==
   "ResourceLimit: events premise events:irreflexive"
 -- No block reaches the limit through `decodeEvents`: a premise of every kind (here) has a fixed shape of at most 20 nodes.
 #guard ((decodeEvents (env (set "links" (.arr #[link "contributed_to" "contributed" "x", link "needed_for" "necessary" "y"]))))
