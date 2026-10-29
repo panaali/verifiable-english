@@ -2528,8 +2528,8 @@ theorem VE.Arith.boundedNames_snoc
       | VE.Arith.Def.fn f arity body => fun g => if g = f then VE.Arith.Term.bnd E.boundedNames body else E.boundedNames g
       | VE.Arith.Def.pred p arity body => fun q =>
         if q = p then VE.Arith.Formula.bnd E.boundedNames body else E.boundedNames q
-  -- uses VE.Arith.Def@VE.Arith.Syntax VE.Arith.Defs.boundedNames@VE.Arith.Defs VE.Arith.Defs.opEnv.match_1@VE.Arith.Bounded VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula.bnd@VE.Arith.Defs VE.Arith.Formula@VE.Arith.Syntax VE.Arith.Term.bnd@VE.Arith.Defs VE.Arith.Term@VE.Arith.Syntax
-  -- expr 3280137390
+  -- uses VE.Arith.Def@VE.Arith.Syntax VE.Arith.Defs.boundedNames@VE.Arith.Defs VE.Arith.Defs.opEnvList.match_1@VE.Arith.Bounded VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula.bnd@VE.Arith.Defs VE.Arith.Formula@VE.Arith.Syntax VE.Arith.Term.bnd@VE.Arith.Defs VE.Arith.Term@VE.Arith.Syntax
+  -- expr 2600895271
 theorem VE.Arith.chargeBits_bits
   ∀ {limit w : Nat} {x y : Int} {w' : Nat},
     VE.Arith.chargeBits limit x w = Option.some (y, w') → VE.Arith.bits y ≤ limit ∧ w' ≤ limit
@@ -2636,6 +2636,10 @@ theorem VE.Arith.log2_le_of_lt
   ∀ {n k : Nat}, n < 2 ^ (k + 1) → n.log2 ≤ k
   -- uses
   -- expr 1783431650
+theorem VE.Arith.opEnv_eq_list
+  ∀ (limit : Nat) (D : VE.Arith.Defs), VE.Arith.Defs.opEnv limit D = VE.Arith.Defs.opEnvList limit D
+  -- uses VE.Arith.Defs.opEnv@VE.Arith.Bounded VE.Arith.Defs.opEnvList@VE.Arith.Bounded VE.Arith.Defs@VE.Arith.Syntax VE.Arith.OpEnv@VE.Arith.Bounded
+  -- expr 3930107235
 theorem VE.Arith.opEnv_extends
   ∀ (D : VE.Arith.Defs) {limit limit' : Nat},
     limit ≤ limit' → VE.Arith.Extends (VE.Arith.Defs.opEnv limit D) (VE.Arith.Defs.opEnv limit' D)
@@ -2659,8 +2663,8 @@ theorem VE.Arith.opEnv_snoc
             if q = p then
               Option.some (n, fun xs w => VE.Arith.Formula.evalB (VE.Arith.Defs.opEnv limit E) limit xs body w)
             else (VE.Arith.Defs.opEnv limit E).preds q }
-  -- uses VE.Arith.Def@VE.Arith.Syntax VE.Arith.Defs.opEnv.match_1@VE.Arith.Bounded VE.Arith.Defs.opEnv@VE.Arith.Bounded VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula.evalB@VE.Arith.Bounded VE.Arith.Formula@VE.Arith.Syntax VE.Arith.OpEnv.funs@VE.Arith.Bounded VE.Arith.OpEnv.mk@VE.Arith.Bounded VE.Arith.OpEnv.preds@VE.Arith.Bounded VE.Arith.OpEnv@VE.Arith.Bounded VE.Arith.Term.evalB@VE.Arith.Bounded VE.Arith.Term@VE.Arith.Syntax
-  -- expr 563588754
+  -- uses VE.Arith.Def@VE.Arith.Syntax VE.Arith.Defs.opEnv@VE.Arith.Bounded VE.Arith.Defs.opEnvList.match_1@VE.Arith.Bounded VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula.evalB@VE.Arith.Bounded VE.Arith.Formula@VE.Arith.Syntax VE.Arith.OpEnv.funs@VE.Arith.Bounded VE.Arith.OpEnv.mk@VE.Arith.Bounded VE.Arith.OpEnv.preds@VE.Arith.Bounded VE.Arith.OpEnv@VE.Arith.Bounded VE.Arith.Term.evalB@VE.Arith.Bounded VE.Arith.Term@VE.Arith.Syntax
+  -- expr 3189004836
 theorem VE.Arith.quantLoop_false
   ∀ (Q : Int → Prop) (step : Int → Nat → Option (Bool × Nat)) (limit : Nat),
     (∀ (i : Int) (w : Nat) (b : Bool) (w' : Nat),
@@ -3898,6 +3902,47 @@ theorem VE.Bridge.vocabulary_namesValid
   ∀ (v : VE.Bridge.Vocabulary), v.namesValid = Bool.true → VE.Surface.NamesValid v.environment
   -- uses VE.Bridge.Vocabulary.environment@VE.Bridge VE.Bridge.Vocabulary.namesValid@VE.Bridge VE.Bridge.Vocabulary@VE.Bridge VE.Surface.NamesValid@VE.Surface
   -- expr 1495699119
+theorem VE.Calc.Agg.runB_sound
+  ∀ (limit : Nat) (T : VE.Calc.Table) (f : VE.Calc.Filter) (a : VE.Calc.Agg) (v : Option Rat),
+    VE.Calc.Agg.runB limit T f a = Option.some v → v = VE.Calc.Agg.run T f a
+  -- uses VE.Calc.Agg.run@VE.Calc.Table VE.Calc.Agg.runB@VE.Calc.Table VE.Calc.Agg@VE.Calc.Table VE.Calc.Filter@VE.Calc.Table VE.Calc.Table@VE.Calc.Table
+  -- expr 3236610553
+theorem VE.Calc.Agg.run_count
+  ∀ (T : VE.Calc.Table) (f : VE.Calc.Filter), VE.Calc.Agg.run T f VE.Calc.Agg.count = Option.some ↑(T.select f).length
+  -- uses VE.Calc.Agg.count@VE.Calc.Table VE.Calc.Agg.run@VE.Calc.Table VE.Calc.Cell@VE.Calc.Table VE.Calc.Filter@VE.Calc.Table VE.Calc.Table.select@VE.Calc.Table VE.Calc.Table@VE.Calc.Table
+  -- expr 1273696652
+theorem VE.Calc.Agg.run_empty
+  ∀ (T : VE.Calc.Table) (f : VE.Calc.Filter),
+    T.select f = [] →
+      ∀ (col : String),
+        VE.Calc.Agg.run T f VE.Calc.Agg.count = Option.some 0 ∧
+          VE.Calc.Agg.run T f (VE.Calc.Agg.sum col) = Option.some 0 ∧
+            VE.Calc.Agg.run T f (VE.Calc.Agg.mean col) = Option.none ∧
+              VE.Calc.Agg.run T f (VE.Calc.Agg.min col) = Option.none ∧
+                VE.Calc.Agg.run T f (VE.Calc.Agg.max col) = Option.none
+  -- uses VE.Calc.Agg.count@VE.Calc.Table VE.Calc.Agg.max@VE.Calc.Table VE.Calc.Agg.mean@VE.Calc.Table VE.Calc.Agg.min@VE.Calc.Table VE.Calc.Agg.run@VE.Calc.Table VE.Calc.Agg.sum@VE.Calc.Table VE.Calc.Cell@VE.Calc.Table VE.Calc.Filter@VE.Calc.Table VE.Calc.Table.select@VE.Calc.Table VE.Calc.Table@VE.Calc.Table
+  -- expr 2458323374
+theorem VE.Calc.Agg.run_mean
+  ∀ (T : VE.Calc.Table) (f : VE.Calc.Filter) (col : String) (q : Rat),
+    VE.Calc.Agg.run T f (VE.Calc.Agg.mean col) = Option.some q ↔
+      ∃ xs, T.numbers f col = Option.some xs ∧ xs ≠ [] ∧ q = xs.sum / ↑xs.length
+  -- uses VE.Calc.Agg.mean@VE.Calc.Table VE.Calc.Agg.run@VE.Calc.Table VE.Calc.Filter@VE.Calc.Table VE.Calc.Table.numbers@VE.Calc.Table VE.Calc.Table@VE.Calc.Table
+  -- expr 566995563
+theorem VE.Calc.Agg.run_nonnumber
+  ∀ (T : VE.Calc.Table) (f : VE.Calc.Filter) (col : String) (row : List VE.Calc.Cell),
+    row ∈ T.select f →
+      (∀ (q : Rat), T.cell row col ≠ VE.Calc.Cell.num q) →
+        VE.Calc.Agg.run T f (VE.Calc.Agg.sum col) = Option.none ∧
+          VE.Calc.Agg.run T f (VE.Calc.Agg.mean col) = Option.none ∧
+            VE.Calc.Agg.run T f (VE.Calc.Agg.min col) = Option.none ∧
+              VE.Calc.Agg.run T f (VE.Calc.Agg.max col) = Option.none
+  -- uses VE.Calc.Agg.max@VE.Calc.Table VE.Calc.Agg.mean@VE.Calc.Table VE.Calc.Agg.min@VE.Calc.Table VE.Calc.Agg.run@VE.Calc.Table VE.Calc.Agg.sum@VE.Calc.Table VE.Calc.Cell.num@VE.Calc.Table VE.Calc.Cell@VE.Calc.Table VE.Calc.Filter@VE.Calc.Table VE.Calc.Table.cell@VE.Calc.Table VE.Calc.Table.select@VE.Calc.Table VE.Calc.Table@VE.Calc.Table
+  -- expr 1774260229
+theorem VE.Calc.Agg.run_sum
+  ∀ (T : VE.Calc.Table) (f : VE.Calc.Filter) (col : String),
+    VE.Calc.Agg.run T f (VE.Calc.Agg.sum col) = Option.map List.sum (T.numbers f col)
+  -- uses VE.Calc.Agg.run@VE.Calc.Table VE.Calc.Agg.sum@VE.Calc.Table VE.Calc.Filter@VE.Calc.Table VE.Calc.Table.numbers@VE.Calc.Table VE.Calc.Table@VE.Calc.Table
+  -- expr 336219818
 theorem VE.Calc.Budgeted.bin_eq
   ∀ {α β γ : Type} {x : VE.Calc.Budgeted (Option α)} {y : Nat → VE.Calc.Budgeted (Option β)}
     {f : α → β → Nat → VE.Calc.Budgeted (Option γ)} {X : Option α} {Y : Option β} {F : α → β → Option γ},
@@ -4217,6 +4262,30 @@ theorem VE.Calc.Farkas.combination_eval
       (List.zipWith (fun w f => w * VE.Calc.QLin.eval κ f.form) c.weights fs).sum
   -- uses VE.Calc.Farkas.combination@VE.Calc.Linear VE.Calc.Farkas.weights@VE.Calc.Linear VE.Calc.Farkas@VE.Calc.Linear VE.Calc.QFact.form@VE.Calc.Linear VE.Calc.QFact@VE.Calc.Linear VE.Calc.QLin.eval@VE.Calc.Linear
   -- expr 919770268
+theorem VE.Calc.Filter.bool_atoms
+  ∀ (T : VE.Calc.Table) (c : String) (row : List VE.Calc.Cell),
+    ¬(VE.Calc.Filter.Selects T (VE.Calc.Filter.isTrue c) row ∧ VE.Calc.Filter.Selects T (VE.Calc.Filter.isFalse c) row) ∧
+      ((∀ (b : Bool), T.cell row c ≠ VE.Calc.Cell.bool b) →
+        ¬VE.Calc.Filter.Selects T (VE.Calc.Filter.isTrue c) row ∧
+          ¬VE.Calc.Filter.Selects T (VE.Calc.Filter.isFalse c) row)
+  -- uses VE.Calc.Cell.bool@VE.Calc.Table VE.Calc.Cell@VE.Calc.Table VE.Calc.Filter.Selects@VE.Calc.Table VE.Calc.Filter.isFalse@VE.Calc.Table VE.Calc.Filter.isTrue@VE.Calc.Table VE.Calc.Table.cell@VE.Calc.Table VE.Calc.Table@VE.Calc.Table
+  -- expr 707669186
+theorem VE.Calc.Filter.negated_typed
+  ∀ (T : VE.Calc.Table) (c v : String) (q : Rat) (row : List VE.Calc.Cell),
+    (VE.Calc.Filter.Selects T (VE.Calc.Filter.isNotText c v) row → ∃ s, T.cell row c = VE.Calc.Cell.text s) ∧
+      (VE.Calc.Filter.Selects T (VE.Calc.Filter.notEquals c q) row → ∃ x, T.cell row c = VE.Calc.Cell.num x)
+  -- uses VE.Calc.Cell.num@VE.Calc.Table VE.Calc.Cell.text@VE.Calc.Table VE.Calc.Cell@VE.Calc.Table VE.Calc.Filter.Selects@VE.Calc.Table VE.Calc.Filter.isNotText@VE.Calc.Table VE.Calc.Filter.notEquals@VE.Calc.Table VE.Calc.Table.cell@VE.Calc.Table VE.Calc.Table@VE.Calc.Table
+  -- expr 1740078842
+theorem VE.Calc.Filter.selB_sound
+  ∀ (T : VE.Calc.Table) (r : List VE.Calc.Cell) (f : VE.Calc.Filter) (n : Nat) (b : Bool) (m : Nat),
+    VE.Calc.Filter.selB T r f n = Option.some (b, m) → b = VE.Calc.Filter.sel T f r
+  -- uses VE.Calc.Cell@VE.Calc.Table VE.Calc.Filter.sel@VE.Calc.Table VE.Calc.Filter.selB@VE.Calc.Table VE.Calc.Filter@VE.Calc.Table VE.Calc.Table@VE.Calc.Table
+  -- expr 3818808747
+theorem VE.Calc.Filter.sel_iff
+  ∀ (T : VE.Calc.Table) (f : VE.Calc.Filter) (row : List VE.Calc.Cell),
+    VE.Calc.Filter.sel T f row = Bool.true ↔ VE.Calc.Filter.Selects T f row
+  -- uses VE.Calc.Cell@VE.Calc.Table VE.Calc.Filter.Selects@VE.Calc.Table VE.Calc.Filter.sel@VE.Calc.Table VE.Calc.Filter@VE.Calc.Table VE.Calc.Table@VE.Calc.Table
+  -- expr 2368554434
 theorem VE.Calc.Frac.add?_sound
   ∀ {κ : String → Rat} {f g h : VE.Calc.Frac} {x y : Rat},
     VE.Calc.Frac.Means κ f x → VE.Calc.Frac.Means κ g y → f.add? g = Option.some h → VE.Calc.Frac.Means κ h (x + y)
@@ -4596,6 +4665,20 @@ theorem VE.Calc.Step.derive_sound
           (∀ (l : String × String), l ∈ links → κ l.fst = κ l.snd * κ l.snd ∧ 0 ≤ κ l.snd) → VE.Calc.QFact.Holds κ f
   -- uses VE.Calc.QFact.Holds@VE.Calc.Linear VE.Calc.QFact@VE.Calc.Linear VE.Calc.Step.derive@VE.Calc.Derive VE.Calc.Step@VE.Calc.Derive
   -- expr 1985840783
+theorem VE.Calc.Table.selectB_sound
+  ∀ (T : VE.Calc.Table) (f : VE.Calc.Filter) (rs : List (List VE.Calc.Cell)) (n : Nat) (out : List (List VE.Calc.Cell)),
+    T.selectB f rs n = Option.some out → out = List.filter (VE.Calc.Filter.sel T f) rs
+  -- uses VE.Calc.Cell@VE.Calc.Table VE.Calc.Filter.sel@VE.Calc.Table VE.Calc.Filter@VE.Calc.Table VE.Calc.Table.selectB@VE.Calc.Table VE.Calc.Table@VE.Calc.Table
+  -- expr 1876862524
+theorem VE.Calc.Table.select_iff
+  ∀ (T : VE.Calc.Table) (f : VE.Calc.Filter) (row : List VE.Calc.Cell),
+    row ∈ T.select f ↔ row ∈ T.rows ∧ VE.Calc.Filter.Selects T f row
+  -- uses VE.Calc.Cell@VE.Calc.Table VE.Calc.Filter.Selects@VE.Calc.Table VE.Calc.Filter@VE.Calc.Table VE.Calc.Table.rows@VE.Calc.Table VE.Calc.Table.select@VE.Calc.Table VE.Calc.Table@VE.Calc.Table
+  -- expr 2876862240
+theorem VE.Calc.Table.select_sublist
+  ∀ (T : VE.Calc.Table) (f : VE.Calc.Filter), (T.select f).Sublist T.rows
+  -- uses VE.Calc.Cell@VE.Calc.Table VE.Calc.Filter@VE.Calc.Table VE.Calc.Table.rows@VE.Calc.Table VE.Calc.Table.select@VE.Calc.Table VE.Calc.Table@VE.Calc.Table
+  -- expr 1883088944
 theorem VE.Calc.Units.checkClaim_invariant
   ∀ (u : VE.Calc.Units.UnitEnv) (Γ : String → Option VE.Calc.PhysDim) (words : String) (ρ : VE.Calc.Rescale)
     (σ : VE.Calc.Values) (c : VE.Calc.Claim),
@@ -4713,6 +4796,25 @@ theorem VE.Calc.convert_by_factors
             VE.Calc.Denotes σ ((VE.Calc.Expr.lit (q * fu / fv)).mul (VE.Calc.Expr.val v)) x)
   -- uses VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr.lit@VE.Calc.Syntax VE.Calc.Expr.mul@VE.Calc.Syntax VE.Calc.Expr.val@VE.Calc.Syntax VE.Calc.Values@VE.Calc.Syntax
   -- expr 399966881
+theorem VE.Calc.counted_bound
+  ∀ (limit : Nat) (handles : List (String × ByteArray)) (dd : VE.Calc.DataDecl) (f : VE.Calc.Filter) (a : VE.Calc.Agg)
+    (v : Option Rat),
+    VE.Calc.runCounted limit handles dd f a = Except.ok (VE.Calc.Counted.ok v) →
+      ∃ bytes T,
+        List.lookup dd.handle handles = Option.some bytes ∧
+          VE.CertificateWire.sha256 bytes = dd.handle ∧
+            VE.Calc.decodeTable dd.format dd.columns bytes = Except.ok T ∧ VE.Calc.Agg.run T f a = v
+  -- uses VE.Calc.Agg.run@VE.Calc.Table VE.Calc.Agg@VE.Calc.Table VE.Calc.Counted.ok@VE.Calc.Decls VE.Calc.Counted@VE.Calc.Decls VE.Calc.DataDecl.columns@VE.Calc.Data VE.Calc.DataDecl.format@VE.Calc.Data VE.Calc.DataDecl.handle@VE.Calc.Data VE.Calc.DataDecl@VE.Calc.Data VE.Calc.Filter@VE.Calc.Table VE.Calc.Table@VE.Calc.Table VE.Calc.decodeTable@VE.Calc.Data VE.Calc.runCounted@VE.Calc.Data VE.CertificateWire.sha256@VE.CertificateWire
+  -- expr 3616710491
+theorem VE.Calc.counted_exhausted
+  ∀ (limit : Nat) (handles : List (String × ByteArray)) (dd : VE.Calc.DataDecl) (f : VE.Calc.Filter) (a : VE.Calc.Agg),
+    VE.Calc.runCounted limit handles dd f a = Except.ok VE.Calc.Counted.exhausted →
+      ∃ bytes T,
+        List.lookup dd.handle handles = Option.some bytes ∧
+          VE.CertificateWire.sha256 bytes = dd.handle ∧
+            VE.Calc.decodeTable dd.format dd.columns bytes = Except.ok T ∧ VE.Calc.Agg.runB limit T f a = Option.none
+  -- uses VE.Calc.Agg.runB@VE.Calc.Table VE.Calc.Agg@VE.Calc.Table VE.Calc.Counted.exhausted@VE.Calc.Decls VE.Calc.Counted@VE.Calc.Decls VE.Calc.DataDecl.columns@VE.Calc.Data VE.Calc.DataDecl.format@VE.Calc.Data VE.Calc.DataDecl.handle@VE.Calc.Data VE.Calc.DataDecl@VE.Calc.Data VE.Calc.Filter@VE.Calc.Table VE.Calc.Table@VE.Calc.Table VE.Calc.decodeTable@VE.Calc.Data VE.Calc.runCounted@VE.Calc.Data VE.CertificateWire.sha256@VE.CertificateWire
+  -- expr 3419888216
 theorem VE.Calc.counterexample_of_check
   ∀ (ds : List VE.Calc.Decl),
     VE.Calc.WellFormed ds →
@@ -5026,6 +5128,20 @@ theorem VE.Calc.rsum_append
   ∀ (l m : List Rat), (l ++ m).sum = l.sum + m.sum
   -- uses
   -- expr 1294575389
+theorem VE.Calc.runCounted_reads
+  ∀ (limit : Nat) (handles : List (String × ByteArray)) (dd : VE.Calc.DataDecl) (f : VE.Calc.Filter) (a : VE.Calc.Agg)
+    (r : VE.Calc.Counted),
+    VE.Calc.runCounted limit handles dd f a = Except.ok r →
+      ∃ bytes T,
+        List.lookup dd.handle handles = Option.some bytes ∧
+          VE.CertificateWire.sha256 bytes = dd.handle ∧
+            VE.Calc.decodeTable dd.format dd.columns bytes = Except.ok T ∧
+              r =
+                match VE.Calc.Agg.runB limit T f a with
+                | Option.some v => VE.Calc.Counted.ok v
+                | Option.none => VE.Calc.Counted.exhausted
+  -- uses VE.Calc.Agg.runB@VE.Calc.Table VE.Calc.Agg@VE.Calc.Table VE.Calc.Counted.exhausted@VE.Calc.Decls VE.Calc.Counted.ok@VE.Calc.Decls VE.Calc.Counted@VE.Calc.Decls VE.Calc.DataDecl.columns@VE.Calc.Data VE.Calc.DataDecl.format@VE.Calc.Data VE.Calc.DataDecl.handle@VE.Calc.Data VE.Calc.DataDecl@VE.Calc.Data VE.Calc.Filter@VE.Calc.Table VE.Calc.Table@VE.Calc.Table VE.Calc.decodeTable@VE.Calc.Data VE.Calc.runCounted.match_1@VE.Calc.Data VE.Calc.runCounted@VE.Calc.Data VE.CertificateWire.sha256@VE.CertificateWire
+  -- expr 1580874912
 theorem VE.Calc.sidesAtB_eq
   ∀ (a b : VE.Calc.Expr) (κ : List (String × Rat)) (n : Nat) {r : Option (Rat × Rat)} {m : Nat},
     VE.Calc.sidesAtB a b κ n = Option.some (r, m) →

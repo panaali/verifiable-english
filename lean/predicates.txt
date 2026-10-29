@@ -128,6 +128,7 @@ module VE.Arith.Defs
 module VE.Arith.Examples
 module VE.Arith.Holds
 module VE.Arith.Syntax
+module VE.Arith.TableExamples
 module VE.Ask.Basic
 module VE.Ask.Binding
 module VE.Ask.Examples
@@ -160,6 +161,8 @@ module VE.Attribution.Structure
 module VE.Attribution.Wire
 module VE.Audit
 module VE.Bridge
+module VE.Calc.Csv
+module VE.Calc.Data
 module VE.Calc.Decls
 module VE.Calc.Derive
 module VE.Calc.DeriveExamples
@@ -170,6 +173,7 @@ module VE.Calc.FourierMotzkin
 module VE.Calc.Identity
 module VE.Calc.IdentityExamples
 module VE.Calc.Inline
+module VE.Calc.Jsonl
 module VE.Calc.Linear
 module VE.Calc.Lower
 module VE.Calc.LowerExamples
@@ -178,6 +182,8 @@ module VE.Calc.Render
 module VE.Calc.Run
 module VE.Calc.RunExamples
 module VE.Calc.Syntax
+module VE.Calc.Table
+module VE.Calc.TableExamples
 module VE.Calc.Units
 module VE.Calc.UnitsExamples
 module VE.Calc.Wire
@@ -740,6 +746,7 @@ VE.Calc.Denotes.below@VE.Calc.Syntax
 VE.Calc.Denotes@VE.Calc.Syntax
 VE.Calc.Expr.Overflows@VE.Calc.Decls
 VE.Calc.Expr.ReadsExhausted@VE.Calc.Decls
+VE.Calc.Filter.Selects@VE.Calc.Table
 VE.Calc.Follows@VE.Calc.Lower
 VE.Calc.Frac.Means@VE.Calc.Poly
 VE.Calc.HasCounterexample@VE.Calc.Lower
