@@ -125,6 +125,8 @@ import VE.Arith.BoundedExamples
 import VE.Arith.CompleteExamples
 import VE.Calc.Lower
 import VE.Calc.LowerExamples
+import VE.Calc.Data
+import VE.Calc.TableExamples
 import VE.Numbers.Examples
 import VE.Numbers.Phrases
 import VE.Scales.Examples
