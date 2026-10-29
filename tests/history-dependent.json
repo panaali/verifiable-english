@@ -8,6 +8,16 @@
  },
  "tests": [
   {
+   "test": "tests/test_agent_policy_level.py",
+   "why": "runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tools/nested_pytest.py:command: pytest"
+   ]
+  },
+  {
    "test": "tests/test_agent_policy_unspecified.py",
    "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
    "recorded": [

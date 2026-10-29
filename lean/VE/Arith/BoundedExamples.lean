@@ -1,4 +1,5 @@
 import VE.Arith.Bounded
+import VE.Arith.TableExamples
 import VE.Arith.Examples
 
 /-! The evaluation fixtures of plan 4.3 (spec 13.3, draft 5): M-1, M-1b, M-2, M-4 at its measured bounds, M-4b, M-4x
