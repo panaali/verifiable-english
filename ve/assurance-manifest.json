@@ -2081,6 +2081,7 @@
       "lean/VE/Risk/Eval.lean": "test-only differential harness (risk.md 8.3; service mode risk-eval): decodes its case envelope, then calls the pinned risk decoders; no production path or theorem uses it",
       "lean/VE/Service/EnglishRun.lean": "stage-1 service copy of the English runner; additive dispatch, not yet on an assurance operation path",
       "lean/VE/Service/Protocol.lean": "the service request decoder and dispatcher: each mode is its runner's per-case function, pinned by runMode_* (the statement-layer route modes since lean-first batch 1)",
+      "lean/VE/Service/MemoExamples.lean": "build-time JSON fixtures for the readings admission memo and service envelope; checks only, no runner path",
       "lean/VE/Service/Diagnose.lean": "diagnostic only: no verdict depends on it. The service mode diagnose: reads a case's unit and inner case and returns the ve_diagnose row for them",
       "lean/VE/Core/Layers.lean": "stage-2 core-family glue: decodes definitions and data flags with the pinned FOL route decoders over the FOL projection, adds the computed defined tables to the model and delegates background, evaluate and countermodel cases to the unchanged core route",
       "lean/VE/Norms/Plain.lean": "stage-2 norms-route glue: validates the regulated extension on any family, removes it and delegates background, evaluate and countermodel cases to the unchanged route, adding profile premises (embedded on the closure, core and order families) and the profile model check",

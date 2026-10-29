@@ -233,6 +233,7 @@ import VE.Service.ScopeExamples
 import VE.Defaults.Premises
 import VE.Defaults.Examples
 import VE.Service.ActsExamples
+import VE.Service.MemoExamples
 import VE.Defaults.Wire
 import VE.Defaults.Meaning
 import VE.Defaults.MeaningExamples

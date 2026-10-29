@@ -27,6 +27,18 @@ open Lean VE.Readings.Run VE.Service
     ((c.getObjValD "document").setObjVal! "reading_sets" (Json.arr #[]))
   for item in [mainCase, otherCase, validate, elaborate, verdicts, unsupported, single] do
     if (runCaseReportedMemo {} item).1 != runCaseReported item then return false
+  let .arr sets := (c.getObjValD "document").getObjValD "reading_sets" | return false
+  let twoSets := c.setObjVal! "document"
+    ((c.getObjValD "document").setObjVal! "reading_sets"
+      (Json.arr #[sets[0]!]))
+  if (runCaseReportedMemo {} single).2.admissions != 0 ||
+      (runCaseReportedMemo {} twoSets).2.admissions != 1 ||
+      (runCaseReportedMemo {} mainCase).2.admissions != 1 ||
+      (runCaseReportedMemo {} otherCase).2.admissions != 1 ||
+      (runCaseReportedMemo {} validate).2.admissions != 1 ||
+      (runCaseReportedMemo {} elaborate).2.admissions != 1 ||
+      (runCaseReportedMemo {} verdicts).2.admissions != 0 ||
+      (runCaseReportedMemo {} unsupported).2.admissions != 0 then return false
   let make := fun (name : String) (bytes : Nat) =>
     ({kind := name, environment := .null, document := .null, bytes := bytes, ready := []} : AdmissionMemoEntry)
   if admissionMemoMaxEntries != 4 || admissionMemoMaxBytes != 2097152 then return false
