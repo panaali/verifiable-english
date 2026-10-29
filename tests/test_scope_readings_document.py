@@ -229,6 +229,11 @@ def test_f1_composed_reading_preserves_authored_cites(effect, cites, tmp_path):
     assert D.load_document(path)["meta"]["reading_sets"][0]["readings"][0]["content"]["cites"] == cites
     assert D.check_document(path)["coverage"]["accounted_bytes"] > 0
     assert "One reading is:" in D.render_document(path)
+    if effect in ("reguard", "carve_out"):
+        from ve.readings_verdicts import context
+        query = ["forall", "state", ["forall", "person", ["binary", "protect_required", ["var", 1], ["var", 0]]]]
+        assert context(D.load_document(path)).entailment(query)["verdict"] == (
+            "NONE" if effect == "carve_out" else "ALL")
 
 
 @pytest.mark.parametrize("mutation", ["drop", "add", "replace", "type_swap"])
