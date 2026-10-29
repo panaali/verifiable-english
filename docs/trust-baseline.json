@@ -1370,6 +1370,27 @@
    "reason": "qt-a3c: VE/Compose/Dispatch.lean +11 (the cardinality@0 row, cardinalityOthers, modeProfiles), VE/Service/Registry.lean +2, ResponseShape/Schemas.lean +1, ResponseShape/Skeletons.lean +1, VE/Service/Protocol.lean +1; K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3c, 2026-10-28",
    "commit": "b8eac74553124f72a8650211b9df8228c621fdfe"
+  },
+  {
+   "class": "S",
+   "lines": 54,
+   "reason": "me-4: VE/Calc/Table.lean +67 (S +54: Cell, Table, Table.cell, Filter, Filter.Selects, Table.numbers, mean?, Agg, Agg.run; D[V] +13: ColType, readCell), VE/Calc/Csv.lean +34 (D[V] CSV decoder), VE/Calc/Jsonl.lean +34 (D[V] JSON-lines decoder), VE/Calc/Data.lean +13 (D[V] Format, DataDecl, decodeTable); K +0; runCounted tied to counted_bound/counted_exhausted",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-4, 2026-10-18",
+   "commit": "379130067eac5519bca086a1ff06b1775ed61dd4"
+  },
+  {
+   "class": "V",
+   "lines": 94,
+   "reason": "me-4: VE/Calc/Table.lean +67 (S +54: Cell, Table, Table.cell, Filter, Filter.Selects, Table.numbers, mean?, Agg, Agg.run; D[V] +13: ColType, readCell), VE/Calc/Csv.lean +34 (D[V] CSV decoder), VE/Calc/Jsonl.lean +34 (D[V] JSON-lines decoder), VE/Calc/Data.lean +13 (D[V] Format, DataDecl, decodeTable); K +0; runCounted tied to counted_bound/counted_exhausted",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-4, 2026-10-18",
+   "commit": "379130067eac5519bca086a1ff06b1775ed61dd4"
+  },
+  {
+   "class": "V",
+   "lines": 2,
+   "reason": "me-4 review F2: shared tableDimensions enforces the spec section 14 row and column caps in CSV and JSONL; total me-4 trusted growth is K +0, S +54, V +96 = 150 over the merge base, with the original R16 allowance covering S +54 and V +94",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-4 review fix, 2026-10-28",
+   "commit": "d25bc343be0f41a29a65c6a8766f18f2b1694e8d"
   }
  ]
 }
