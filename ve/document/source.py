@@ -124,6 +124,19 @@ def _parts(units):
             raise VEError("MIXED parts must partition their parent span")
 
 
+def _parts_prefix(units):
+    """The units `_parts` yields before its first fault, without raising it: what a source read ahead of the unit
+    loop collects (the soft source, the rule batch), since that loop reports the fault in source order. Lean's
+    document mode reads the same (`Service.Document.partsPrefix`)."""
+    prefix = []
+    try:
+        for unit, _ in _parts(units):
+            prefix.append(unit)
+    except VEError:
+        pass
+    return prefix
+
+
 def _english_fences(units, fences):
     """The English fences a senses document's units name (RD-8), in unit order (`_parts`, whose structural faults it
     raises): unit id and fence text. Only a string id names a fence; any other id is refused by the unit checks.
