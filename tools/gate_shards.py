@@ -149,12 +149,19 @@ def merge_records(records: list[dict]) -> dict:
                     counts["deselected"] != (len(ids) - len(gate_collection.decode_ids(shard_plan["selected"]))
                                              if number == 1 else 0):
                 return refuse(f"shard {number}: incomplete test events")
+            if number == 1 and (type(counts.get("rust_passed")) is not int or
+                                counts["rust_passed"] <= 0 or type(counts.get("rust_ignored")) is not int or
+                                counts["rust_ignored"] != 0):
+                return refuse("shard 1: incomplete native Rust test events")
             skips = record.get("skips")
             if not isinstance(skips, list) or len(skips) != counts["skipped"] + counts["deselected"] or \
                     any(not isinstance(skip, dict) or type(skip.get("nodeid")) is not str or
-                        skip["nodeid"] not in ids or type(skip.get("allowed")) is not bool
+                        skip["nodeid"] not in ids or type(skip.get("allowed")) is not bool or
+                        type(skip.get("deselected", False)) is not bool
                         for skip in skips) or len({skip["nodeid"] for skip in skips}) != len(skips) or \
-                    {skip["nodeid"] for skip in skips if not skip.get("deselected")} - set(ran):
+                    {skip["nodeid"] for skip in skips if not skip.get("deselected")} - set(ran) or \
+                    sum(skip.get("deselected", False) for skip in skips) != counts["deselected"] or \
+                    (record.get("status") == "shard-passed" and any(skip["allowed"] is not True for skip in skips)):
                 return refuse(f"shard {number}: incomplete skip events")
             failures = record.get("failures")
             if not isinstance(failures, list) or any(not isinstance(failure, dict) or
@@ -167,10 +174,17 @@ def merge_records(records: list[dict]) -> dict:
             if record.get("status") == "failed" and not record.get("failures"):
                 return refuse(f"shard {number}: failed status without a reason")
             if not isinstance(record.get("quarantine"), dict) or not isinstance(first.get("quarantine"), dict) or \
-                    not isinstance(record["quarantine"].get("retried", {}), dict) or \
+                    not isinstance(record["quarantine"].get("retried"), dict) or \
                     any(record["quarantine"].get(key) != first["quarantine"].get(key)
                    for key in ("enabled", "day", "active", "expired")):
                 return refuse(f"shard {number}: quarantine policy differs")
+            retries = record["quarantine"]["retried"]
+            if any(type(node) is not str or node not in ran or not isinstance(retry, dict) or
+                   retry.get("suite") != "failed" or retry.get("alone") not in
+                   ("passed", "failed", "skipped", "no result") or
+                   (record["status"] == "shard-passed" and retry["alone"] != "passed")
+                   for node, retry in retries.items()):
+                return refuse(f"shard {number}: contradictory quarantine retry")
             by_number[number] = record
         if set(by_number) != set(range(1, n + 1)):
             return refuse("missing shard record")
