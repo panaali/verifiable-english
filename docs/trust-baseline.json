@@ -1433,6 +1433,13 @@
    "reason": "sc-5rc review F1: VE/Service/Document.lean +36 D[V], ResponseShape/Schemas/Document.lean +21 G[V]; citations preserved in composed readings; K +0, S +0; R16 ties pass registered in FOLLOW-UPS.md",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-5rc, 2026-10-18",
    "commit": "314b23a42c211ffcd68bd6070fa7ba3770f3a5b0"
+  },
+  {
+   "class": "V",
+   "lines": 43,
+   "reason": "me-5e: VE/Calc/Run.lean +43 untied D[V] for follows wire evidence and reclassification of Check.runShown and Derive.shown; the new Calc response shapes are reject-only G[R]; K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-5e, 2026-10-29",
+   "commit": "b0dce1ea4c96241925fa2ee505e756ca1ee8a54f"
   }
  ]
 }
