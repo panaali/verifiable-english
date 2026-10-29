@@ -1,9 +1,11 @@
 # Audit job cap
 
 Status: complete on branch `infra/audit-jobs`.
-Changed: Lean audit parts now use a bounded worker pool; gate and selector budgets reach it.
+Changed: Lean audit parts use a bounded worker pool; review F1 completes `--impacted` budget forwarding.
 Open items: none. DRI signature: none required. No DELTA rows: this is tooling only, with unchanged audit output.
 The first selected-test chain run found one branch-caused failure in `test_the_audit_replays_lean_output_and_checks_it_as_fresh`: its `axiom_outputs` stub still accepted only two arguments after the audit gained an optional jobs budget. The fixture now accepts the third argument; its focused test passes (1 passed, 59 deselected). The requested selected-test rerun is reported in the final handoff. The full release gate remains assigned to the merge train.
+
+Review F1 (B) is fixed in `55e242082`: the JSON and text `--impacted` paths share one `run()` call with `jobs=args.jobs`. The supplied PROBE F1 failed before the fix (`jobs` absent) and passed after it (`jobs: 2`). `tests/test_select_tests.py::test_impacted_main_forwards_audit_job_budget` is the regression, covering both display modes with and without `--full` through `main()`. A temporary Python mutant that omitted `jobs` from the shared call made `[selected-text]` fail on its assertion; the file was restored. No Lean, Rust, response contract, or user-visible VE verdict changed, so there is no DELTA row or DRI signature to reserve. The three cases in `main-known-red.txt` are pre-existing and were not edited.
 
 ## Delivery
 
