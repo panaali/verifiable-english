@@ -132,6 +132,13 @@ def test_numeric_gate_workers_cap_audit(fake):
     assert len(audit) == 1 and audit[0][-2:] == ["--jobs", "2"]
 
 
+def test_audit_env_budget_overrides_gate_workers(fake, monkeypatch):
+    monkeypatch.setenv("VE_AUDIT_JOBS", "2")
+    fake.run("--workers", "5")
+    audit = [args for stage, args in fake.seen if stage == "Lean audit"]
+    assert len(audit) == 1 and audit[0][-2:] == ["--jobs", "2"]
+
+
 def test_a_rerun_that_fails_again_fails_and_can_itself_be_rerun(fake):
     fake.run()
     code, again = fake.run("--rerun-failed")
