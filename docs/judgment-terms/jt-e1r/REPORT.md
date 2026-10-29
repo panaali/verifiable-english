@@ -36,7 +36,7 @@ Seeded Python bugs were planted and removed before reader calls:
 
 Spec re-read: section 2.4's declaration wording and rejected-template fallback against `docs/spec/judgment-terms-PLAN.md:238–250`; section 6's two bars and fresh-rerun rule against `:756–775`; JT-E1b step 2 and the 2026-10-29 DRI amendment against `docs/judgment-terms/jt-e1b/PROTOCOL.md` and `reviews/lp-answers-20261029T1620.md` item 2. The English generator fills only the declaration row of section 2.4. The status/zone/criterion rows await their owning routes and are outside the evidence of this failed declaration-line gate.
 
-Next item: JT-3 wording revision and fresh-item rerun under the plan's one-revision rule. The human reader audit remains separately owned.
+Next item: JT-3 wording revision and fresh-item rerun under the plan's one-revision rule (follow-up `jt-e1s`); JT-3 stays gated until it passes. The revision should consider showing the zone/conflict rows, since the declaration line alone carries no class information (RESULTS.md). The plan's JT-3 amendment names the acceptance test `tests/test_jt3_english.py::test_declaration_lines_match_jt_e1r_templates`, which JT-3 adds. The human reader audit remains separately owned.
 
 ## Self-review against BUILDER-CHECKLIST
 
