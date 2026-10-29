@@ -26,8 +26,8 @@ def main (args : List String) : IO UInt32 := do
     handles := nextHandles
     memo := nextMemo
     if let some answer := answer then
-      stdout.putStrLn answer.compress
-      stdout.flush
       if stats then
         (← IO.getStderr).putStrLn s!"readings_memo admissions={memo.admissions} hits={memo.hits} entries={memo.entries.length} bytes={memo.entries.foldl (fun n e => n + e.bytes) 0}"
+      stdout.putStrLn answer.compress
+      stdout.flush
   return 0

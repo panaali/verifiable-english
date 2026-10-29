@@ -24,7 +24,7 @@
     "request_count": 6526,
     "readings_route_requests": 82
   },
-  "after": {
+  "memo_only_before_latest_main_merge": {
     "wall": 499.6,
     "lean_cpu_sum": 370.0,
     "lean_wall_sum": 374.9,
@@ -45,6 +45,27 @@
     "request_count": 6526,
     "readings_route_requests": 82
   },
-  "wall_speedup": 5.88,
-  "lean_cpu_speedup": 7.57
+  "after_merged_main": {
+    "wall": 474.9,
+    "lean_cpu_sum": 405.7,
+    "lean_wall_sum": 413.1,
+    "py_cpu": 105.1,
+    "result": {
+      "readings_status": "CONFLICT-FREE",
+      "premises": "model"
+    },
+    "error": null,
+    "load_start": [
+      0,
+      19.89599609375
+    ],
+    "load_end": [
+      450,
+      41.59765625
+    ],
+    "request_count": 6450,
+    "readings_route_requests": 6
+  },
+  "wall_speedup": 6.18,
+  "lean_cpu_speedup": 6.9
 }
