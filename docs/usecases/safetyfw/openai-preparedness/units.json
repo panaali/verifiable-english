@@ -2177,13 +2177,14 @@
   },
   {
    "blockers": [
-    "AT"
+    "AT",
+    "AP"
    ],
    "bytes": 193,
    "id": "p13-u219",
-   "kind": "unformalised",
-   "reason": "hedged_claim",
-   "status": "UNFORMALISED"
+   "kind": "norm",
+   "reading_set": "rs13-employee-summary",
+   "status": "OPEN"
   },
   {
    "blockers": [
