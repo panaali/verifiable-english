@@ -1445,6 +1445,8 @@ def run(plan: dict, *, record: bool = True, jobs: int = 8, maxfail: int = 0, ful
             if code:
                 return code
             continue
+        if command == list(AUDIT):
+            command = [*command, "--jobs", str(jobs)]
         print("+", " ".join(command), flush=True)
         cwd = ROOT / "lean" if command[:2] == ["lake", "build"] else ROOT
         result = subprocess.run(command, cwd=cwd, env=env, check=False)
