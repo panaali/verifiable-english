@@ -346,7 +346,8 @@ def build(source):
                 if kind is None:
                     # Keep every untranslated claim independently addressable
                     # without copying the private source text into the repo.
-                    rec["residual"] = f"{uid}-{hashlib.sha256(source[a:b]).hexdigest()[:12]}"
+                    rec["residual"] = (f"{rec['reason']}-{uid}-"
+                                       f"{hashlib.sha256(source[a:b]).hexdigest()[:12]}")
             if "open" in spec["meaning"]:
                 rec["open_terms"] = spec["meaning"]["open"]
         rec["waits"] = list(waits) if waits else ([wait] if wait else [])

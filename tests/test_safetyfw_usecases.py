@@ -515,7 +515,8 @@ def test_pf_rs13_and_untranslated_claims_have_named_residuals(pf_modules):
         assert rebuilt == [{k: v for k, v in r.items() if k != "status"} for r in records]
         for r in pending:
             a, b = r["span"]
-            assert r["residual"] == f"{r['id']}-{hashlib.sha256(source[a:b]).hexdigest()[:12]}"
+            assert r["residual"] == (f"{r['reason']}-{r['id']}-"
+                                     f"{hashlib.sha256(source[a:b]).hexdigest()[:12]}")
 
 
 def test_pf_checked_has_no_wait_or_unmapped_source_clause(pf_modules):
