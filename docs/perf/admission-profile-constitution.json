@@ -1,0 +1,369 @@
+{
+  "service_sha256": "bc7f178c4b4c6b5b03d18bbee65f3d3fe226ebdf126e56bde13abd0fbfaf53d7",
+  "cpu_hz": 100,
+  "cases": {
+    "admission-constitution-185kb": {
+      "sha256": "451187bd640ad122fab51b5ab3a441bec86d8c24111e36272aa1422bcf863492",
+      "bytes": 136195,
+      "runs": [
+        {
+          "cpu_seconds": 5.4196,
+          "load_1min_before": 48.76,
+          "load_1min_after": 48.3,
+          "transport": "nice fallback",
+          "iso_error": "Failed to connect to bus: No data available",
+          "answer_status": "ok",
+          "answer_error": null,
+          "stages": [
+            {
+              "case": "constitution-185kb.ve-1x",
+              "cpu_ticks": 0,
+              "error": "",
+              "items": 1,
+              "nanos": 167169,
+              "part": "",
+              "stage": "splitCase",
+              "status": "ok",
+              "cpu_seconds": 0.0,
+              "wall_seconds": 0.000167
+            },
+            {
+              "case": "constitution-185kb.ve-1x",
+              "cpu_ticks": 14,
+              "error": "",
+              "items": 2,
+              "nanos": 145289020,
+              "part": "main",
+              "stage": "admitS2",
+              "status": "ok",
+              "cpu_seconds": 0.14,
+              "wall_seconds": 0.145289
+            },
+            {
+              "case": "constitution-185kb.ve-1x",
+              "cpu_ticks": 104,
+              "error": "",
+              "items": 2,
+              "nanos": 1052390208,
+              "part": "main",
+              "stage": "admitNDFull",
+              "status": "ok",
+              "cpu_seconds": 1.04,
+              "wall_seconds": 1.05239
+            },
+            {
+              "case": "constitution-185kb.ve-1x",
+              "cpu_ticks": 2,
+              "error": "",
+              "items": 0,
+              "nanos": 20439258,
+              "part": "main",
+              "stage": "ndTextWith",
+              "status": "ok",
+              "cpu_seconds": 0.02,
+              "wall_seconds": 0.020439
+            },
+            {
+              "case": "constitution-185kb.ve-1x",
+              "cpu_ticks": 87,
+              "error": "",
+              "items": 2,
+              "nanos": 891730758,
+              "part": "main",
+              "stage": "filledAdmission",
+              "status": "ok",
+              "cpu_seconds": 0.87,
+              "wall_seconds": 0.891731
+            },
+            {
+              "case": "constitution-185kb.ve-1x",
+              "cpu_ticks": 15,
+              "error": "",
+              "items": 0,
+              "nanos": 152590030,
+              "part": "main",
+              "stage": "choiceStepText",
+              "status": "ok",
+              "cpu_seconds": 0.15,
+              "wall_seconds": 0.15259
+            },
+            {
+              "case": "constitution-185kb.ve-1x",
+              "cpu_ticks": 16,
+              "error": "",
+              "items": 12,
+              "nanos": 156382779,
+              "part": "force-u0156-s03",
+              "stage": "distinguishingModels",
+              "status": "ok",
+              "cpu_seconds": 0.16,
+              "wall_seconds": 0.156383
+            },
+            {
+              "case": "constitution-185kb.ve-1x",
+              "cpu_ticks": 2,
+              "error": "",
+              "items": 2,
+              "nanos": 26435708,
+              "part": "scope-u0165-s03",
+              "stage": "distinguishingModels",
+              "status": "ok",
+              "cpu_seconds": 0.02,
+              "wall_seconds": 0.026436
+            },
+            {
+              "case": "constitution-185kb.ve-1x",
+              "cpu_ticks": 145,
+              "error": "",
+              "items": 78709,
+              "nanos": 1543390174,
+              "part": "",
+              "stage": "runCase",
+              "status": "ok",
+              "cpu_seconds": 1.45,
+              "wall_seconds": 1.54339
+            }
+          ]
+        },
+        {
+          "cpu_seconds": 4.7506,
+          "load_1min_before": 48.3,
+          "load_1min_after": 48.28,
+          "transport": "nice fallback",
+          "iso_error": "Failed to connect to bus: No data available",
+          "answer_status": "ok",
+          "answer_error": null,
+          "stages": [
+            {
+              "case": "constitution-185kb.ve-1x",
+              "cpu_ticks": 0,
+              "error": "",
+              "items": 1,
+              "nanos": 201980,
+              "part": "",
+              "stage": "splitCase",
+              "status": "ok",
+              "cpu_seconds": 0.0,
+              "wall_seconds": 0.000202
+            },
+            {
+              "case": "constitution-185kb.ve-1x",
+              "cpu_ticks": 15,
+              "error": "",
+              "items": 2,
+              "nanos": 145197050,
+              "part": "main",
+              "stage": "admitS2",
+              "status": "ok",
+              "cpu_seconds": 0.15,
+              "wall_seconds": 0.145197
+            },
+            {
+              "case": "constitution-185kb.ve-1x",
+              "cpu_ticks": 91,
+              "error": "",
+              "items": 2,
+              "nanos": 911861388,
+              "part": "main",
+              "stage": "admitNDFull",
+              "status": "ok",
+              "cpu_seconds": 0.91,
+              "wall_seconds": 0.911861
+            },
+            {
+              "case": "constitution-185kb.ve-1x",
+              "cpu_ticks": 2,
+              "error": "",
+              "items": 0,
+              "nanos": 19951979,
+              "part": "main",
+              "stage": "ndTextWith",
+              "status": "ok",
+              "cpu_seconds": 0.02,
+              "wall_seconds": 0.019952
+            },
+            {
+              "case": "constitution-185kb.ve-1x",
+              "cpu_ticks": 76,
+              "error": "",
+              "items": 2,
+              "nanos": 778602186,
+              "part": "main",
+              "stage": "filledAdmission",
+              "status": "ok",
+              "cpu_seconds": 0.76,
+              "wall_seconds": 0.778602
+            },
+            {
+              "case": "constitution-185kb.ve-1x",
+              "cpu_ticks": 13,
+              "error": "",
+              "items": 0,
+              "nanos": 132129511,
+              "part": "main",
+              "stage": "choiceStepText",
+              "status": "ok",
+              "cpu_seconds": 0.13,
+              "wall_seconds": 0.13213
+            },
+            {
+              "case": "constitution-185kb.ve-1x",
+              "cpu_ticks": 13,
+              "error": "",
+              "items": 12,
+              "nanos": 134108211,
+              "part": "force-u0156-s03",
+              "stage": "distinguishingModels",
+              "status": "ok",
+              "cpu_seconds": 0.13,
+              "wall_seconds": 0.134108
+            },
+            {
+              "case": "constitution-185kb.ve-1x",
+              "cpu_ticks": 2,
+              "error": "",
+              "items": 2,
+              "nanos": 24077298,
+              "part": "scope-u0165-s03",
+              "stage": "distinguishingModels",
+              "status": "ok",
+              "cpu_seconds": 0.02,
+              "wall_seconds": 0.024077
+            },
+            {
+              "case": "constitution-185kb.ve-1x",
+              "cpu_ticks": 129,
+              "error": "",
+              "items": 78709,
+              "nanos": 1428235481,
+              "part": "",
+              "stage": "runCase",
+              "status": "ok",
+              "cpu_seconds": 1.29,
+              "wall_seconds": 1.428235
+            }
+          ]
+        },
+        {
+          "cpu_seconds": 4.8924,
+          "load_1min_before": 48.28,
+          "load_1min_after": 48.41,
+          "transport": "nice fallback",
+          "iso_error": "Failed to connect to bus: No data available",
+          "answer_status": "ok",
+          "answer_error": null,
+          "stages": [
+            {
+              "case": "constitution-185kb.ve-1x",
+              "cpu_ticks": 0,
+              "error": "",
+              "items": 1,
+              "nanos": 200270,
+              "part": "",
+              "stage": "splitCase",
+              "status": "ok",
+              "cpu_seconds": 0.0,
+              "wall_seconds": 0.0002
+            },
+            {
+              "case": "constitution-185kb.ve-1x",
+              "cpu_ticks": 13,
+              "error": "",
+              "items": 2,
+              "nanos": 130336531,
+              "part": "main",
+              "stage": "admitS2",
+              "status": "ok",
+              "cpu_seconds": 0.13,
+              "wall_seconds": 0.130337
+            },
+            {
+              "case": "constitution-185kb.ve-1x",
+              "cpu_ticks": 93,
+              "error": "",
+              "items": 2,
+              "nanos": 946094695,
+              "part": "main",
+              "stage": "admitNDFull",
+              "status": "ok",
+              "cpu_seconds": 0.93,
+              "wall_seconds": 0.946095
+            },
+            {
+              "case": "constitution-185kb.ve-1x",
+              "cpu_ticks": 2,
+              "error": "",
+              "items": 0,
+              "nanos": 27269819,
+              "part": "main",
+              "stage": "ndTextWith",
+              "status": "ok",
+              "cpu_seconds": 0.02,
+              "wall_seconds": 0.02727
+            },
+            {
+              "case": "constitution-185kb.ve-1x",
+              "cpu_ticks": 81,
+              "error": "",
+              "items": 2,
+              "nanos": 839939922,
+              "part": "main",
+              "stage": "filledAdmission",
+              "status": "ok",
+              "cpu_seconds": 0.81,
+              "wall_seconds": 0.83994
+            },
+            {
+              "case": "constitution-185kb.ve-1x",
+              "cpu_ticks": 13,
+              "error": "",
+              "items": 0,
+              "nanos": 133491560,
+              "part": "main",
+              "stage": "choiceStepText",
+              "status": "ok",
+              "cpu_seconds": 0.13,
+              "wall_seconds": 0.133492
+            },
+            {
+              "case": "constitution-185kb.ve-1x",
+              "cpu_ticks": 15,
+              "error": "",
+              "items": 12,
+              "nanos": 147817840,
+              "part": "force-u0156-s03",
+              "stage": "distinguishingModels",
+              "status": "ok",
+              "cpu_seconds": 0.15,
+              "wall_seconds": 0.147818
+            },
+            {
+              "case": "constitution-185kb.ve-1x",
+              "cpu_ticks": 3,
+              "error": "",
+              "items": 2,
+              "nanos": 29328198,
+              "part": "scope-u0165-s03",
+              "stage": "distinguishingModels",
+              "status": "ok",
+              "cpu_seconds": 0.03,
+              "wall_seconds": 0.029328
+            },
+            {
+              "case": "constitution-185kb.ve-1x",
+              "cpu_ticks": 128,
+              "error": "",
+              "items": 78709,
+              "nanos": 1361941936,
+              "part": "",
+              "stage": "runCase",
+              "status": "ok",
+              "cpu_seconds": 1.28,
+              "wall_seconds": 1.361942
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
