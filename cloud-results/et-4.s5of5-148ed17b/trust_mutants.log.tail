@@ -1,0 +1,11 @@
+trust_mutants: 23 definitions, 434 mutants (86 to run), 4 jobs, base 95d65b12edab
+UNKNOWN lean/VE/Events/Wire.lean:108 VE.Events.checkDay (D[R]) append-right: V ++ ->  (lean/VE/Events/Wire.lean:108: Application type mismatch: The argument)
+UNKNOWN lean/VE/Events/Wire.lean:60 VE.Events.objectAt (D[R]) list-empty: ks -> [] (lean/VE/Events/Wire.lean:60: Invalid projection: Type of)
+SURVIVOR lean/VE/Events/Wire.lean:115 VE.Events.checkRoles (D[R]) list-first: V.events -> (V.events.take 1)
+SURVIVOR lean/VE/Events/Wire.lean:115 VE.Events.checkRoles (D[R]) list-last: V.events -> (V.events.reverse.take 1)
+SURVIVOR lean/VE/Events/Wire.lean:115 VE.Events.checkRoles (D[R]) list-last: V.events.map (fun e => roleSig W V.day e.sort e.on) -> ((V.events.map (fun e => roleSig W V.day e.sort e.on)).reverse.take 1)
+SURVIVOR lean/VE/Events/Wire.lean:60 VE.Events.objectAt (D[R]) list-drop-first: required -> (required.drop 1)
+trust_mutants: 62 KILLED, 4 SURVIVOR, 2 UNKNOWN, 12 INVALID, 6 ALLOWED, 0 NOT RUN, 348 OTHER SHARD in 631 s
+trust_mutants: D[R]: 26 KILLED, 4 SURVIVOR, 2 UNKNOWN, 6 INVALID, 128 OTHER SHARD
+trust_mutants: D[V], trusted: 34 KILLED, 6 INVALID, 6 ALLOWED, 215 OTHER SHARD
+trust_mutants: G[V], trusted: 2 KILLED, 5 OTHER SHARD
