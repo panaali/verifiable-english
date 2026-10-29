@@ -1135,6 +1135,19 @@ private def locationOwnedEnvironment (environment : Json) : Bool :=
   environment.getObjValD "language" == .str "ve.core@0.2" &&
     frozenFamilyProfiles environment
 
+/-- Location decoding can refine a vocabulary fault only after the outer
+envelope has its required fields, profile shape and revision. The frozen
+families use the route's exact envelope decoder; composed families may carry
+their own additional blocks, so their owning decoder checks those fields. -/
+private def routeHeaderAccepted (environment : Json) : Bool :=
+  if locationOwnedEnvironment environment then
+    (VE.Route.Gate.decodeEnvelope environment).isOk
+  else
+    ["language", "profiles", "spec_revision", "vocabulary"].all
+      (fun key => (environment.getObjVal? key).isOk) &&
+    (VE.Route.Gate.profilesOf environment).isOk &&
+    environment.getObjValD "spec_revision" == .str VE.Route.Gate.specRevision
+
 /-- Check the frozen outer envelope with its owning decoder while ignoring
 vocabulary contents. This preserves outer-field, profile and revision order. -/
 private def legacyHeaderAccepted (environment : Json) : Bool :=
@@ -1163,7 +1176,9 @@ def reportedEnvironment (j : Json) : Json :=
   match j.getObjVal? "environment" with
   | .error _ => reported environmentCase j
   | .ok environment =>
-    if !locationOwnedEnvironment environment then
+    if environment.getObjValD "language" == .str "ve.core@0.2" &&
+        !routeHeaderAccepted environment then reported environmentCase j
+    else if !locationOwnedEnvironment environment then
       -- Composed families own their envelope and field precedence. For a
       -- valid profile gate, the path-carrying vocabulary decoder supplies
       -- the shared unknown-argument diagnostic before the family decoder.
