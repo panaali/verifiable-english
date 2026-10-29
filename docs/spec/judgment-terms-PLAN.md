@@ -583,6 +583,8 @@ Pre-registered in section 6.
 
 ### JT-3. English rows and the undeclared-word report (5–6 h; english-lean owner, Lean, Python)
 
+2026-10-29 amendment (reviews/lp-answers-20261029T1620.md item 2): JT-E1r gates the wording in this batch using fresh items and section 2.4 template-generated English displays; JT-3 acceptance requires a conformance test that its displayed lines equal JT-E1r's generated templates byte for byte on the frozen frame. JT-E1r does not wait for JT-3 or JT-4 routes.
+
 - **What.** The rows of 2.4, in english-lean's files (`lean/VE/EnglishGrammar/*`) and its catalogue:
   - the declaration line, parsed in authoring to a W2 record and its predicate;
   - the legend and status lines (the status line neutral: "uses the judgment whether …");
@@ -756,6 +758,8 @@ Pre-registered in section 6.
 ## 6. Experiments (pre-registered; each runs only under its own authorisation, with model calls budgeted by the DRI)
 
 ### JT-E1. Do readers see which answers turn on which judgment?
+
+2026-10-29 JT-E1b/JT-E1r amendment (reviews/lp-answers-20261029T1620.md item 2): JT-E1's recorded comparison is invalid. JT-E1r uses a fresh frame, main renderer captures for the control, and mechanically generated section 2.4 templates for English. A rejected or absent template uses the identical identifier fallback in both arms. The JT-3 gate is JT-E1r's result only; JT-3 must match the generated lines byte for byte in its acceptance test. A human reader audit remains separate.
 
 - **Design.** Sonnet 5.5 as the proxy reader, with only what a human gets, as in the readability eval of 2026-10-03.
   - 40 items: 20 UDHR (u037, u045a, u046, u055, u064, u111, J-ι's criterion unit "No arrest ordered by a court is

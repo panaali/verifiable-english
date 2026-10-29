@@ -1,0 +1,17 @@
+{
+  "commit": "8868ce212",
+  "command": [
+    "/home/seyran/code/ve-jt-e1r/.venv/bin/python",
+    "-m",
+    "ve",
+    "render",
+    "--env",
+    "/home/seyran/code/ve-jt-e1r/docs/judgment-terms/jt-e1r/captures/C20.env.json",
+    "--view",
+    "ve_english",
+    "/home/seyran/code/ve-jt-e1r/docs/judgment-terms/jt-e1r/captures/C20.ve"
+  ],
+  "environment": "C20.env.json",
+  "document": "C20.ve",
+  "output": "C20-identifier.txt"
+}

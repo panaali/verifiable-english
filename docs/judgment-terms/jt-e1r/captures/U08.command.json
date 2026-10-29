@@ -1,0 +1,17 @@
+{
+  "commit": "8868ce212",
+  "command": [
+    "/home/seyran/code/ve-jt-e1r/.venv/bin/python",
+    "-m",
+    "ve",
+    "render",
+    "--env",
+    "/home/seyran/code/ve-jt-e1r/docs/judgment-terms/jt-e1r/captures/U08.env.json",
+    "--view",
+    "ve_english",
+    "/home/seyran/code/ve-jt-e1r/docs/judgment-terms/jt-e1r/captures/U08.ve"
+  ],
+  "environment": "U08.env.json",
+  "document": "U08.ve",
+  "output": "U08-identifier.txt"
+}
