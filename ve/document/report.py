@@ -542,8 +542,9 @@ def _report(doc):
                             _lower_rights_document(doc, lower_env))
             result["admission"] = admit_rights_document(lower_env, admission, lower_rights)
         elif soft is not None:
-            from ..soft_route import admit_soft_document
-            result["admission"] = admit_soft_document(lower_env, admission, soft_document=lower_soft)
+            # Lean's norm-defaults service owns fill and its soft-vs-W1 choice;
+            # the ordinary soft route remains the fallback for other profiles.
+            result["admission"] = admit_document(lower_env, admission)
         elif defaults is not None:
             # W1's admission on `fill U`, from the source environment (Lean
             # `VE.NormDefaults.Admission`); the report is over E‴ (`env`).
