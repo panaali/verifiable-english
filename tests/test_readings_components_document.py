@@ -287,6 +287,68 @@ def fc17(tmp_path):
     return write(tmp_path, env2(), document, name="fc17")
 
 
+def test_batched_and_serial_choice_elaboration_have_identical_document_answers(tmp_path, monkeypatch):
+    """F-C17 has at least three two-reading sets across its main and companion cases."""
+    from ve import readings_components
+    path = fc17(tmp_path)
+    assert sum(len(s["readings"]) == 2 for s in load_document(path)["meta"]["reading_sets"]) >= 3
+    batched = json.dumps(check_document(path), ensure_ascii=False)
+    monkeypatch.setattr(readings_components.Components, "_prefetch_choices", lambda self: None)
+    serial = json.dumps(check_document(path), ensure_ascii=False)
+    assert batched == serial
+
+
+def test_component_choice_elaborations_are_one_relay_batch(tmp_path, monkeypatch):
+    """The relay sees one batch with all F-C17 elaborations, instead of one call per choice."""
+    from ve import readings_route
+    from ve.readings_components import context
+    route = context(load_document(fc17(tmp_path)))
+    real_rows = readings_route.rows
+    batches = []
+
+    def recording_rows(mode, cases, **kwargs):
+        elaborations = [case for case in cases if case["kind"] == "readings-choice"
+                        and case["inner"]["kind"] == "norm-defaults-elaborate"]
+        if elaborations:
+            batches.append(elaborations)
+        return real_rows(mode, cases, **kwargs)
+
+    monkeypatch.setattr(readings_route, "rows", recording_rows)
+    route.conflict_answer()
+    expected = sum(len(part.choices or []) for part in route.parts if part.completion)
+    assert expected >= 6
+    assert len(batches) == 1 and len(batches[0]) == expected
+    assert [(case["component"], case["choice"]) for case in batches[0]] == [
+        (part.name, part.choice_json(choice)) for part in route.parts if part.completion
+        for choice in part.choices or []]
+
+
+def test_a_refused_choice_in_the_batch_fails_as_it_did_alone(tmp_path, monkeypatch):
+    from ve import readings_components, readings_route
+    path = fc17(tmp_path)
+    real_run = readings_route.run_lean
+    seen = 0
+
+    def refused(cases, **kwargs):
+        nonlocal seen
+        rows = real_run(cases, **kwargs)
+        if cases[0]["kind"] == "readings-choice" and cases[0]["inner"]["kind"] == "norm-defaults-elaborate":
+            for row in rows:
+                seen += 1
+                if seen == 3:
+                    row["inner"] = {"status": "error", "error": "seeded Lean refusal"}
+        return rows
+
+    monkeypatch.setattr(readings_route, "run_lean", refused)
+    with pytest.raises(CheckerUnavailable) as batched:
+        readings_components.context(load_document(path)).conflict_answer()
+    seen = 0
+    monkeypatch.setattr(readings_components.Components, "_prefetch_choices", lambda self: None)
+    with pytest.raises(CheckerUnavailable) as serial:
+        readings_components.context(load_document(path)).conflict_answer()
+    assert str(batched.value) == str(serial.value)
+
+
 def test_fc17_all_is_gated_on_every_other_component(tmp_path, capsys):
     data = query(capsys, fc17(tmp_path), HELP_PERMITTED, "--sentence", "u_a")
     assert (data["verdict"], data["status"], data["conflict_status"]) == (

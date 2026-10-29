@@ -227,7 +227,10 @@ class _FilledChoiceDocument:
         self.route, self.choice = route, choice
         senv = route.source.senv
         self.chain = senv.chain
-        row = self._inner({"kind": "norm-defaults-elaborate"})
+        prefetched = getattr(route, "_prefetched", {}).pop(route._key(choice), None)
+        if prefetched is not None:
+            route._checked(prefetched, "readings-choice")
+        row = self._answer(prefetched) if prefetched is not None else self._inner({"kind": "norm-defaults-elaborate"})
         self.elaboration = row
         self.base = Environment(row["base_environment"])
         # E‴: the filled frame (the frame's unspecified predicates), Lean's, with the choice's own base predicates
@@ -263,11 +266,16 @@ class _FilledChoiceDocument:
 
     def _row(self, inner):
         row = self.route.lean("readings-choice", choice=self.route.choice_json(self.choice), inner=inner)
+        self._answer(row)
+        return row
+
+    @staticmethod
+    def _answer(row):
         answer = row["inner"]
         if answer.get("status") != "ok":
             raise CheckerUnavailable(f"ReadingsConformance: Lean refused a case Python built on a reading's filled "
                                      f"document: {answer.get('error')}")
-        return row
+        return answer
 
     def _inner(self, inner):
         return self._row(inner)["inner"]
