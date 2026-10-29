@@ -955,14 +955,20 @@ example : ¬ JsonWF rawUdhr := by
       Std.DTreeMap.Internal.Impl.BalancedAtRoot, Std.DTreeMap.Internal.Impl.size,
       Std.DTreeMap.Internal.delta] at hb
 
+#guard [same (govL udhrPieces udhrAnchors udhrDoc [g8]) udhrDoc,
+  same (govL udhrPieces udhrAnchors udhrDoc []) udhrDoc] == [true, true]
+#guard (do
+  let re ← VE.Readings.Wire.decodeEnvironment softEnv
+  pure (patch (sdocL udhrPieces udhrAnchors udhrDoc [g8] re) [] == udhrDoc)) matches .ok true
+
 /-! Two equal-key carve-outs expose any change in merge sort's stable order when a title is removed. -/
 def titleCarveA : Governor := ⟨"titleCarveA", "u109", .carveOut (.arr #["top"]), .anchor "art29", a29⟩
 def titleCarveB : Governor := ⟨"titleCarveB", "u109",
   .carveOut (.arr #["unary", "p", .arr #["var", (1 : Nat)]]), .anchor "art29", a29⟩
-def titleUnless (r : Except String Json) : Option String := r.toOption.map fun o =>
+#guard (let titleUnless := fun (r : Except String Json) => r.toOption.map fun o =>
   (((contentOf o "u110").getObjValD "norm").getObjValD "unless").compress
-#guard [titleUnless (govL udhrPieces udhrAnchors udhrDoc [titleCarveA, g8, titleCarveB]),
-  titleUnless (govL udhrPieces udhrAnchors udhrDoc [titleCarveA, titleCarveB])] ==
+  [titleUnless (govL udhrPieces udhrAnchors udhrDoc [titleCarveA, g8, titleCarveB]),
+   titleUnless (govL udhrPieces udhrAnchors udhrDoc [titleCarveA, titleCarveB])]) ==
   [some "[[\"top\"],[\"unary\",\"p\",[\"var\",1]]]",
    some "[[\"top\"],[\"unary\",\"p\",[\"var\",1]]]"]
 
