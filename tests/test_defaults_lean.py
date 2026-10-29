@@ -251,7 +251,8 @@ def _flag(monkeypatch, path, *flags, conclusion=True):
 def test_flag_refusals(monkeypatch):
     """Each refusal of the flag on both sides, each fixture breaking one condition alone: the P-1 document is asked;
     without a conclusion, with `--under`, `--sentence` or `--narrowing`, on a document with no soft norms, on one
-    with a content-bearing reading set and on one with a reading set, it is refused before any question is sent."""
+    with a split content-bearing set and on one with a reading set, it is refused before any question is sent; a
+    content-bearing set takes the readings' answer (DF-3)."""
     p1 = P1[0]["argv"][3]
     assert _flag(monkeypatch, p1) == _ASKED
     with pytest.raises(VEError, match="requires --conclusion"):
@@ -259,14 +260,19 @@ def test_flag_refusals(monkeypatch):
     for flags in (["--under", "s:0"], ["--sentence", "u0036.s05"], ["--narrowing", "n"]):
         with pytest.raises(VEError, match="takes no --under, --sentence or --narrowing"):
             _flag(monkeypatch, p1, *flags)
-    for name in ("control-strict-no-soft-force-u0036-s05.ve.md", "p2-ce4.ve.md"):
-        with pytest.raises(VEError, match="applies to a soft-norms@0 document without open reading sets"):
-            _flag(monkeypatch, BASELINE / name)
-    # content-bearing alone, and a reading set alone (p2-ce4 has both): the predicate on the loaded P-1 document
+    with pytest.raises(VEError, match="applies to a soft-norms@0 document without open reading sets"):
+        _flag(monkeypatch, BASELINE / "control-strict-no-soft-force-u0036-s05.ve.md")
+    # DF-3: a content-bearing set (p2-ce4 has one) takes the readings' answer, except with --sentence or --narrowing
+    # or beside a split; a reading set alone is still refused (the predicate on the loaded P-1 document)
+    monkeypatch.setattr(cli, "_readings_without_exception", lambda doc, conclusion, args: _ASKED)
+    assert _flag(monkeypatch, BASELINE / "p2-ce4.ve.md") == _ASKED
+    with pytest.raises(VEError, match="takes no --under, --sentence or --narrowing"):
+        _flag(monkeypatch, BASELINE / "p2-ce4.ve.md", "--narrowing", "n")
     doc, args = load_document(BASELINE.parents[4] / p1), argparse.Namespace(under=None, sentence=None, narrowing=None)
     assert cli._assume_no_exception(doc, X_ALL, args) == _ASKED
     reading_set = {"id": "s", "unit": "u", "version": 1}
-    for changed in ({**doc, "readings_s1": {"content_bearing": True}},
+    assert cli._assume_no_exception({**doc, "readings_s1": {"content_bearing": True}}, X_ALL, args) == _ASKED
+    for changed in ({**doc, "readings_s1": {"content_bearing": True}, "readings_components": {}},
                     {**doc, "meta": {**doc["meta"], "reading_sets": [reading_set]}}):
         with pytest.raises(VEError, match="applies to a soft-norms@0 document without open reading sets"):
             cli._assume_no_exception(changed, X_ALL, args)
