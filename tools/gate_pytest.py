@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 
 import pytest
+from tools.platform_contract import covers
 
 
 def pytest_configure(config):
@@ -41,12 +42,17 @@ def pytest_collection_modifyitems(config, items):
     if not isinstance(selectors, list) or not selectors or any(type(s) is not str for s in selectors):
         raise pytest.UsageError("invalid gate selection file")
 
-    # gate.exact_selection_env writes collected node IDs, including the entire
-    # parameter suffix. Prefixes would run an unassigned parametrized sibling.
+    # Shard and quarantine assignments are exact collected IDs. Contract and
+    # rerun entries are pytest selectors, so files/classes/functions include
+    # their collected children without matching similarly named siblings.
+    mode = os.environ.get("VE_GATE_PYTEST_SELECTOR_MODE", "exact")
+    if mode not in ("exact", "covers"):
+        raise pytest.UsageError("invalid gate selection mode")
     selected_ids = set(selectors)
 
     def chosen(nodeid):
-        return nodeid in selected_ids
+        return (nodeid in selected_ids if mode == "exact"
+                else any(covers(selector, nodeid) for selector in selectors))
 
     kept = [item for item in items if chosen(item.nodeid)]
     removed = [item for item in items if not chosen(item.nodeid)]

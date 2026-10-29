@@ -133,7 +133,7 @@ def collect(env: dict[str, str], result_file: Path, *, python: list[str] | None 
     """Run the gate's collection in `env` (plugin autoload off) and return its events."""
     env = nested_pytest.environment(env, VE_GATE_PYTEST_RESULT=str(result_file))
     if files is not None:
-        env = exact_selection_env(env, result_file.parent, files)
+        env = selector_selection_env(env, result_file.parent, files)
     command(collection_command(python or [sys.executable], files), env=env, stage="Python collection")
     return json.loads(result_file.read_text())
 
@@ -148,6 +148,11 @@ def exact_selection_env(env: dict[str, str], scratch: Path, ids: list[str]) -> d
     path = scratch / "pytest-exact-selection.json"
     path.write_text(json.dumps(ids))
     return {**env, "VE_GATE_PYTEST_IDS_FILE": str(path)}
+
+
+def selector_selection_env(env: dict[str, str], scratch: Path, selectors: list[str]) -> dict[str, str]:
+    """Give pytest file/class/function selectors without long parameter IDs in argv."""
+    return {**exact_selection_env(env, scratch, selectors), "VE_GATE_PYTEST_SELECTOR_MODE": "covers"}
 
 
 def exit_reason(stage: str, code: int) -> str:
@@ -872,7 +877,8 @@ def main() -> int:
             try:
                 suite_env = {**pytest_env, "VE_GATE_PYTEST_RESULT": str(events_file)}
                 if selection is not None:
-                    suite_env = exact_selection_env(suite_env, scratch, selection)
+                    suite_env = (exact_selection_env(suite_env, scratch, selection) if shard is not None
+                                 else selector_selection_env(suite_env, scratch, selection))
                 command(suite_command(python, args.workers, selection),
                         env=suite_env, stage="Python suite")
             except RuntimeError as exc:
