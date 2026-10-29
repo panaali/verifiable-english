@@ -31,6 +31,31 @@ def test_one_class_per_code_of_the_service():
     assert list(relay.CLASSES) == HANDSHAKE_CODES == ROW_CODES
 
 
+def test_service_pool_size_setting_uses_spare_vcpus_and_clamps(monkeypatch):
+    monkeypatch.setattr(relay.os, "sched_getaffinity", lambda pid: set(range(32)))
+    monkeypatch.setattr(relay.os, "getloadavg", lambda: (20.0, 0.0, 0.0))
+    monkeypatch.delenv("VE_LEAN_SERVICE_POOL_SIZE", raising=False)
+    assert relay.pool_size() == 2
+    monkeypatch.setenv("VE_LEAN_SERVICE_POOL_SIZE", "8")
+    assert relay.pool_size() == 8
+    monkeypatch.setattr(relay.os, "getloadavg", lambda: (30.0, 0.0, 0.0))
+    assert relay.pool_size() == 2
+    monkeypatch.setattr(relay.os, "getloadavg", lambda: (50.0, 0.0, 0.0))
+    assert relay.pool_size() == 1
+    monkeypatch.setattr(relay.os, "getloadavg", lambda: (0.0, 0.0, 0.0))
+    monkeypatch.setenv("VE_LEAN_SERVICE_POOL_SIZE", "100")
+    assert relay.pool_size() == 32
+    monkeypatch.setenv("VE_LEAN_SERVICE_POOL_SIZE", "0")
+    with pytest.raises(CheckerUnavailable, match="positive integer"):
+        relay.pool_size()
+    sizes = []
+    monkeypatch.setenv("VE_LEAN_SERVICE_POOL_SIZE", "8")
+    monkeypatch.setattr(relay, "LeanServicePool", lambda **kw: sizes.append(kw["size"]) or object())
+    monkeypatch.setattr(relay, "_pool", None)
+    relay._pool_for(None)
+    assert sizes == [8]
+
+
 def test_each_code_has_exactly_one_class_in_ve_errors():
     """Lean-first batch 18: every class of `ve.errors` that declares a code declares one of the service's
     codes, no two declare the same one, and no class is defined twice (a second definition shadowed the
