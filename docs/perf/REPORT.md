@@ -1,6 +1,6 @@
-Status: REVIEW FIXED; the profiler now measures fixed-part completion and normal client handles.
+Status: F3 FIXED; the profiler now measures every split-main `admitS2` call.
 HEAD: `infra/scale-admission-profile`; the final fix commits and evidence are committed with this report.
-Changed: Lean profiling, regressions and seeded faults, three-repeat CPU evidence, corrected analysis.
+Changed: Lean profiling, non-W2 regressions and seeded fault, three-repeat CPU evidence, corrected analysis.
 Open: dense 185 KB under 30 s remains unproven; the 4× UDHR hits the vocabulary limit.
 Signatures: the timing delta is DRI-signed by `reviews/dri-decisions-20261028-scale.md` item 1; the one trusted line is covered by R16.
 
@@ -8,7 +8,7 @@ Signatures: the timing delta is DRI-signed by `reviews/dri-decisions-20261028-sc
 
 ## Decision and deliverables
 
-The decision input is in [admission-profile-20261029.md](admission-profile-20261029.md): the admitted 2× case's main fixed-part `admitNDFull` takes 5.98 CPU s median within a 7.33 s ordinary route call. The previous evidence omitted it and understated the dominant stage. Linear scaling of the current 2× route to 185 KB at the same density is about 62 CPU s, so the earlier 15–25 s projection is withdrawn. The actual 185,033-byte constitution took 0.63 CPU s median because it has only 16 norm-kind units and two reading sets. The 4× dense synthetic UDHR refused at the vocabulary limit. This report measures and proposes an optimization; no admission decision logic changed.
+The decision input is in [admission-profile-20261029.md](admission-profile-20261029.md): the admitted 2× case's main fixed-part `admitNDFull` takes 10.55 CPU s median within a 12.90 s ordinary route call. The earlier evidence omitted the repeated non-W2 main admission and understated stage totals. Linear scaling of the current 2× route to 185 KB at the same density is about 109 CPU s, so the earlier 15–25 s projection is withdrawn. The actual 185,033-byte constitution took 1.00 CPU s median because it has only 16 norm-kind units and two reading sets. The 4× dense synthetic UDHR refused at the vocabulary limit. This report measures and proposes an optimization; no admission decision logic changed.
 
 | Finding | Fix | Regression or check | Commit |
 |---|---|---|---|
@@ -16,6 +16,7 @@ The decision input is in [admission-profile-20261029.md](admission-profile-20261
 | F2 | Register and expand environment handles using the service protocol before profiling | `test_normal_client_profiles_registered_and_reused_handle`; F2 probe | `6431c67d1` |
 | F-ready1 | Build and kill two seeded Lean faults; save the record with changed file paths | `seeded-bugs.json`; review-ready `[mutants]` | `8400da266` |
 | F-ready2 | Record the DRI's item 1 signature in the DELTA Ruling cell | review-ready `[delta]` | `8400da266` |
+| F3 | Time the non-W2 split-main fallback `admitS2`; regenerate all evidence sets and stage fits | `test_split_non_w2_main_records_fallback_admission`, `test_saved_non_w2_prefixes_record_fallback_admission`, `test_saved_stage_table_uses_all_calls_in_each_run`; F3 probe | `9a0a8269d` (code), `d6f2766c8` (evidence) |
 
 | Requirement | Owner | Delivered by | Check |
 |---|---|---|---|
@@ -31,9 +32,10 @@ The evidence files store the source and request hashes, service binary hash, VM 
 ## Checks and seeded bugs
 
 - `cd lean && PATH=$HOME/.elan/bin:$PATH lake build`: PASS, 1,163 jobs on the final Lean source. `python3 lean/audit.py`: PASS, 669 sources and 7,428 named theorem declarations.
-- `uv run --no-sync pytest -q tests/test_readings_stage_times.py`: PASS, 8 tests. The review's F1 and F2 executable probes both pass after initially failing.
+- `.venv/bin/pytest -q tests/test_readings_stage_times.py`: PASS, 15 tests after F3; F1, F2 and F3 probes pass. The F3 probe failed before the fix.
 - `uv run --no-sync python tools/trust_map.py --check`: PASS, K +0, S +0, trusted +1 in `Serve.lean`, unclassified 0. The earlier `trust-mutants.json` has zero applicable definitions; no new trusted definition was added in the fix.
 - `tools/regen_generated.py --write` ran before the final Lean edit; `tools/lean_statements.py` and the checker-pin generator refreshed their outputs after the final build. The service hash in every evidence file equals the final binary hash.
+- F3 final build: PASS, 1,163 jobs. `python3 lean/audit.py`: PASS, 669 sources and 7,428 theorem declarations. `test_saved_stage_table_uses_all_calls_in_each_run` checks the revised table directly against saved CPU ticks, including both non-W2 main admissions.
 - Selected tests: `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` passed 394 files with 0 failed IDs on the Mac. The runner snapshotted the final Lean source and evidence before two test-only assertion commits. On the final HEAD, the tightened timing file passed 8 tests and the one additional selected file, `tests/test_lineage_lint.py`, passed 13 tests. Together these cover the final 395-file selection without repeating the unchanged 394 files.
 - `review-ready.py` on committed `30b66bac5`: PASS for clean, mutants, relay mutation gate, and DELTA. Its sole FAIL is the full release gate assigned to the merge train by this task.
 
@@ -45,6 +47,7 @@ Each temporary fault below was built, failed its named behavior test, and was re
 |---|---|
 | `lean/VE/Service/ReadingsAdmissionProfile.lean`: disable the W2 fixed-part branch | `test_split_w2_fixed_part_completion_is_timed` failed for elaborate, choice, and verdicts |
 | `lean/Serve.lean`: pass an empty handle table to profiling | `test_normal_client_profiles_registered_and_reused_handle` failed on reuse |
+| `lean/VE/Service/ReadingsAdmissionProfile.lean`: restrict the repeated probe to W2 | `test_split_non_w2_main_records_fallback_admission` failed for elaborate and choice |
 
 ## Self-review against BUILDER-CHECKLIST
 

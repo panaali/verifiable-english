@@ -10,5 +10,11 @@
     "fault": "Pass an empty handle table to the profiler on each request",
     "test": "tests/test_readings_stage_times.py::test_normal_client_profiles_registered_and_reused_handle",
     "result": "failed on the second request after successful registration"
+  },
+  {
+    "file": "lean/VE/Service/ReadingsAdmissionProfile.lean",
+    "fault": "Restrict repeated admission profiling to W2 and omit the non-W2 split-main fallback",
+    "test": "tests/test_readings_stage_times.py::test_split_non_w2_main_records_fallback_admission",
+    "result": "both elaborate and choice parameter cases failed after the mutant build"
   }
 ]

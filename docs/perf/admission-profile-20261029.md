@@ -1,5 +1,5 @@
 Status: corrected measurement complete; dense 185 KB admission under 30 s remains to be demonstrated.
-The real 185,033-byte constitution's `runCase` median is 0.63 CPU s (three runs).
+The real 185,033-byte constitution's `runCase` median is 1.00 CPU s (three runs).
 HEAD: this report is committed on `infra/scale-admission-profile`; baseline `471ccc7e4`.
 Changed: opt-in Lean admission timings, reproducible UDHR and constitution inputs, CPU evidence and fits.
 Open: the 4× UDHR is refused at the vocabulary limit; the dense 185 KB target needs a measured optimization. No DRI signature is needed.
@@ -9,15 +9,18 @@ Open: the 4× UDHR is refused at the vocabulary limit; the dense 185 KB target n
 ## Decision
 
 The dominant work on the admitted synthetic 2× case is the main component's
-fixed-part completion: `admitNDFull` takes 5.98 CPU s median, including 5.86 s
-in filled-document admission, within an ordinary `runCase` median of 7.33 s.
+fixed-part completion: `admitNDFull` takes 10.55 CPU s median, including 10.25 s
+in filled-document admission, within an ordinary `runCase` median of 12.90 s.
 The earlier profile omitted this branch entirely. The route first calls `admitS2`
 on the original main document, then calls it again on `fixedPart`, then calls
 `admitNDFull` even though `fixedPart` has no reading sets. The same fixed-part
 path occurs in split elaborate and choice requests and in W2 product verdicts.
+Outside W2, split elaborate and choice mains call `admitS2` again on the
+original document through `admitComponent`. The profiler records both calls
+in each successful prefix repeat.
 On the controlled three-main-set prefixes, filled admission and `admitS2`
-have descriptive fitted exponents of 2.48 and 2.48 against norm count.
-The complete distinguishing-model checks are small in these cases (0.02–0.03 CPU s)
+have descriptive fitted exponents of 2.28 and 2.22 against norm count.
+The complete distinguishing-model checks are small in these cases (0.01–0.02 CPU s)
 but their current validation scans the full author vocabulary for every model.
 The 64-choice whole UDHR also pays for `choiceStepText` once per compatible choice.
 
@@ -31,13 +34,13 @@ changes work order and lookup cost; every candidate, rule, choice and model chec
 still runs and every answer must remain byte-identical. The optimization target
 is an exponent near 1 at bounded choices, with fixed-part admission included.
 Linear scaling of the current 2× route time from 21,832 to 185,033 source bytes
-would be about 62 CPU s at the same density. Reaching 30 s would also need about
-a twofold reduction in work per byte; the earlier 15–25 s projection from
+would be about 109 CPU s at the same density. Reaching 30 s would also need about
+a 3.6-fold reduction in work per byte; the earlier 15–25 s projection from
 low-density prefixes was unsupported for dense input. Indexing and reuse may
 provide that reduction, but this measurement does not establish it. The real
 constitution is already under the 30 s target at its actual density: 64
 predicates, 16 norm-kind units, two reading sets and 1,132 units; its ordinary
-`runCase` stage took 0.63 CPU s median. Source bytes alone are a poor cost predictor.
+`runCase` stage took 1.00 CPU s median. Source bytes alone are a poor cost predictor.
 
 The 4× UDHR has 520 units and 28 independently named companion sets after
 replication; Lean refuses it with `ResourceLimit: vocabulary size` before a
@@ -81,20 +84,20 @@ Each case ran in a fresh Lean service process three times. `measure_admission.py
 first called `zsh /home/seyran/code/manage-agents/iso.sh exp-scale-admission 24G -- …`.
 This VM's user systemd bus returned `Failed to connect to bus: No data available`
 before every attempt; the script used the same service at `nice -n 15` and saved
-that failure in every run. The one-minute VM load was 12.52–17.75 on 32 vCPUs.
+that failure in every run. The one-minute VM load was 56.19–96.13 on 32 vCPUs.
 The CPU figures below are retained; wall timings under shared VM load are not used for
 the fits. The evidence JSON records all repeats, load, status, stage ticks,
 service SHA-256 and exact request hashes.
 
 | Input | Source bytes | Units | Norm-kind units | Sets | Ordinary `runCase` CPU s, median | Process CPU s, median | Outcome |
 |---|---:|---:|---:|---:|---:|---:|---|
-| UDHR 50% | 5,545 | 64 | 13 | 7 | 0.30 | 1.08 | admitted |
-| UDHR 75% | 8,260 | 101 | 19 | 9 | 0.41 | 1.50 | admitted |
-| UDHR 100%, three main sets | 10,916 | 130 | 31 | 10 | 1.81 | 6.58 | admitted, eight main choices |
-| Whole UDHR | 10,916 | 130 | 31 | 14 | 3.64 | 11.71 | admitted, 64 main choices |
-| Synthetic 2× UDHR | 21,832 | 260 | 62 | 14 | 7.33 | 28.42 | admitted; main sets fixed |
-| Synthetic 4× UDHR | 43,664 | 520 | 124 | 28 | 0.02 refusal path | 0.29 | `ResourceLimit: vocabulary size` |
-| Constitution pilot | 185,033 | 1,132 | 16 | 2 | 0.63 | 2.42 | admitted |
+| UDHR 50% | 5,545 | 64 | 13 | 7 | 0.50 | 1.86 | admitted |
+| UDHR 75% | 8,260 | 101 | 19 | 9 | 0.72 | 2.68 | admitted |
+| UDHR 100%, three main sets | 10,916 | 130 | 31 | 10 | 2.60 | 9.69 | admitted, eight main choices |
+| Whole UDHR | 10,916 | 130 | 31 | 14 | 5.36 | 18.78 | admitted, 64 main choices |
+| Synthetic 2× UDHR | 21,832 | 260 | 62 | 14 | 12.90 | 49.16 | admitted; main sets fixed |
+| Synthetic 4× UDHR | 43,664 | 520 | 124 | 28 | 0.03 refusal path | 0.36 | `ResourceLimit: vocabulary size` |
+| Constitution pilot | 185,033 | 1,132 | 16 | 2 | 1.00 | 3.73 | admitted |
 
 The stage table uses the three controlled UDHR prefixes. Entries are medians
 of three runs in CPU seconds, summed over the stage's calls in each run before
@@ -105,18 +108,18 @@ exponent cannot be resolved.
 
 | Stage | 13 norms | 19 norms | 31 norms, 3 main sets | Fitted exponent | Code path |
 |---|---:|---:|---:|---:|---|
-| `splitCase` | <0.01 | <0.01 | <0.01 | unresolved | `Companions.splitCase` |
-| `admitS2` | 0.02 | 0.02 | 0.16 | 2.48 | `SupWire.admitS2` → `Wire.admitReadings` |
-| `admitNDFull` | 0.19 | 0.31 | 1.36 | 2.30 | `UnspecifiedWire.admitNDFull` |
-| `filledAdmission` (inside previous row) | 0.15 | 0.26 | 1.25 | 2.48 | `Wire.admitDecoded` on `fillDoc N` |
-| `choiceStepText` (inside `admitNDFull`) | 0.04 | 0.04 | 0.08 | 0.83 | each complete choice checks the filled document |
-| `ndTextWith` (inside `admitNDFull`) | 0.01 | 0.01 | 0.02 | 0.83 | each active reading's document |
-| `distinguishingModels` | 0.01 | 0.01 | 0.01 | unresolved | `setPairsWith`, each set's complete models |
-| Ordinary `runCase` | 0.30 | 0.41 | 1.81 | 2.11 | actual route dispatch and admission |
+| `splitCase` | <0.01 | <0.01 | 0.01 | unresolved | `Companions.splitCase` |
+| `admitS2` | 0.06 | 0.07 | 0.39 | 2.22 | `SupWire.admitS2` → `Wire.admitReadings`; both main calls included |
+| `admitNDFull` | 0.34 | 0.53 | 1.94 | 2.03 | `UnspecifiedWire.admitNDFull` |
+| `filledAdmission` (inside previous row) | 0.27 | 0.43 | 1.89 | 2.28 | `Wire.admitDecoded` on `fillDoc N` |
+| `choiceStepText` (inside `admitNDFull`) | 0.06 | 0.08 | 0.12 | 0.80 | each complete choice checks the filled document |
+| `ndTextWith` (inside `admitNDFull`) | 0.01 | 0.01 | 0.03 | 1.31 | each active reading's document |
+| `distinguishingModels` | 0.02 | 0.01 | 0.02 | unresolved | `setPairsWith`, each set's complete models |
+| Ordinary `runCase` | 0.50 | 0.72 | 2.60 | 1.93 | actual route dispatch and admission |
 
 The synthetic 2× route has a separate main fixed-part admission absent from the
-controlled-prefix stage table: `admitS2` is called twice (1.25 CPU s total
-median); `admitNDFull` is called on the fixed part (5.98 s), with 5.86 s in
+controlled-prefix stage table: `admitS2` is called twice (2.08 CPU s total
+median); `admitNDFull` is called on the fixed part (10.55 s), with 10.25 s in
 the overlapping `filledAdmission` probe. All three saved repeats record these
 calls. The probes are separate runs of pure stages, so their totals are not
 subtracted from `runCase` or added to its cost.
@@ -130,7 +133,7 @@ also loops nodes with `sortsOf D N.pred` (a linear regulated-list lookup) and
 constructs `collidingPairs`. Those nested scans are candidates for the measured
 superlinear growth. `choiceStepText` loops over compatible
 choices and calls `choiceChainText (fillDoc N)` and `ndChoiceText` for each;
-whole-UDHR CPU for that substage is 0.58 s versus 0.08 s with three main sets.
+whole-UDHR CPU for that substage is 0.89 s versus 0.12 s with three main sets.
 For every distinguishing model, `replayPair` checks its base against
 `authorVocabulary` and then the pair's sides. Its current cost is small in
 these inputs, but a predicate-to-unit index would prevent repeated irrelevant
