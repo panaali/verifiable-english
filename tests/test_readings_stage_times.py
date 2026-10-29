@@ -2,6 +2,7 @@
 import json
 import os
 from pathlib import Path
+from statistics import median
 import subprocess
 
 import pytest
@@ -116,12 +117,34 @@ def test_split_non_w2_main_records_fallback_admission(kind):
     assert all(row["status"] == "ok" and row["items"] == main[0]["items"] for row in main)
 
 
-@pytest.mark.parametrize("name", ["admission-prefix-50", "admission-prefix-75", "admission-prefix-100"])
-def test_saved_non_w2_prefixes_record_fallback_admission(name):
-    evidence = json.loads((ROOT / "docs/perf/admission-profile-evidence.json").read_text())
+@pytest.mark.parametrize("file,name", [
+    ("admission-profile-evidence.json", "admission-prefix-50"),
+    ("admission-profile-evidence.json", "admission-prefix-75"),
+    ("admission-profile-evidence.json", "admission-prefix-100"),
+    ("admission-profile-controlled.json", "admission-prefix-100-main3"),
+])
+def test_saved_non_w2_prefixes_record_fallback_admission(file, name):
+    evidence = json.loads((ROOT / "docs/perf" / file).read_text())
     runs = evidence["cases"][name]["runs"]
     assert len(runs) == 3
     for run in runs:
         main = [row for row in run["stages"] if row["part"] == "main" and row["stage"] == "admitS2"]
         assert len(main) == 2
         assert all(row["status"] == "ok" for row in main)
+
+
+def test_saved_stage_table_uses_all_calls_in_each_run():
+    report = (ROOT / "docs/perf/admission-profile-20261029.md").read_text()
+    evidence = json.loads((ROOT / "docs/perf/admission-profile-evidence.json").read_text())["cases"]
+    controlled = json.loads((ROOT / "docs/perf/admission-profile-controlled.json").read_text())["cases"]
+    cases = [evidence["admission-prefix-50"], evidence["admission-prefix-75"],
+             controlled["admission-prefix-100-main3"]]
+    for stage in ("splitCase", "admitS2", "admitNDFull", "filledAdmission", "choiceStepText",
+                  "ndTextWith", "distinguishingModels", "runCase"):
+        label = f"| `{stage}`" if stage != "runCase" else "| Ordinary `runCase`"
+        row = next(line for line in report.splitlines() if line.startswith(label))
+        shown = [cell.strip() for cell in row.split("|")[2:5]]
+        values = [median(sum(s["cpu_seconds"] for s in run["stages"] if s["stage"] == stage)
+                         for run in case["runs"]) for case in cases]
+        expected = [f"{value:.2f}" if value else "<0.01" for value in values]
+        assert shown == expected, stage
