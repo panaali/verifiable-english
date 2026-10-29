@@ -39,6 +39,23 @@ def _fixed_premises(doc, sets):
     return fixed
 
 
+def _filled_soft_elaboration(doc):
+    """Lean's one elaboration of the soft chain, shared by premise decoding and checking."""
+    if (doc.get("soft_document") is None or doc.get("rights_document") is not None
+            or "norm-defaults@0" not in doc["environment"].profiles):
+        return None
+    if "_filled_soft_elaboration" not in doc:
+        from ..norm_defaults_route import run_case
+        source = doc["environment"].to_dict()
+        source["profiles"] = [p for p in source["profiles"] if p != "readings@1"]
+        doc["_filled_soft_elaboration"] = run_case({
+            "id": "norm-defaults-elaborate", "kind": "norm-defaults-elaborate",
+            "environment": source,
+            "norms": _soft_contents(doc["meta"]["units"],
+                                    _s1_attached(doc["environment"].to_dict(), doc["meta"]))})
+    return doc["_filled_soft_elaboration"]
+
+
 def _checking_environment(doc):
     """The vocabulary in which a document's fixed premises and readings are checked."""
     if doc.get("soft_document") is not None:
@@ -48,6 +65,32 @@ def _checking_environment(doc):
     if doc.get("senses") is not None:
         return doc["senses"].environment
     return doc["environment"]
+
+
+def _report_premise_context(doc):
+    """The report's premise set over Lean's filled soft tree when that route applies.
+
+    The readings query has its own frozen lower-route identity and continues to
+    use `_fixed_premises` and `_checking_environment` directly.
+    """
+    fixed, active = _fixed_and_active(doc)
+    filled = _filled_soft_elaboration(doc)
+    if filled is None:
+        return _checking_environment(doc), fixed, active
+    from ..environment import Environment
+    # Lean's base_environment lists generated declarations; add the authored
+    # predicates so graph leaves and assertions can be decoded in one vocabulary.
+    raw = deepcopy(filled["base_environment"])
+    predicates = raw["vocabulary"]["predicates"]
+    for name, declaration in doc["environment"].to_dict()["vocabulary"]["predicates"].items():
+        base_declaration = {key: value for key, value in declaration.items() if key != "regulated"}
+        if name in predicates and predicates[name] != base_declaration:
+            raise CheckerUnavailable("CheckerUnavailable: filled soft vocabulary collides with source")
+        predicates[name] = base_declaration
+    if not _unresolved_norm_reading(active):
+        fixed.extend(item["ast"] for field in ("background", "premises", "fill", "soft")
+                     for item in filled[field])
+    return Environment(raw), fixed, active
 
 
 def _unresolved_norm_reading(sets):
@@ -93,7 +136,9 @@ def _lower_soft_document(doc):
     """The soft document the lower route checks: under `readings@1` the head strips the profile and hands every
     other case to the lower route (composition-s1.md 4.1), so its environment is the one without it."""
     soft = doc["soft_document"]
-    if "readings@1" not in doc["environment"].profiles or (soft is None and doc["rights_document"] is None):
+    if (("readings@1" not in doc["environment"].profiles and
+         "norm-defaults@0" not in doc["environment"].profiles)
+            or (soft is None and doc["rights_document"] is None)):
         # The norms chain has no soft document, with or without `readings@1` (DRI ruling 4: a norms document with
         # `norm-defaults@0` and `readings@1` reaches this with a claim graph).
         return soft
@@ -441,10 +486,9 @@ def _report(doc):
             if status == "model":
                 result["status"] = statuses["document_status"]
         return result
-    env = _checking_environment(doc)
-    if env.unit_schema is not None:
+    if _checking_environment(doc).unit_schema is not None:
         return _check_quantity_document(doc, active_reading_sets(doc["meta"].get("reading_sets", [])))
-    fixed, active = _fixed_and_active(doc)
+    env, fixed, active = _report_premise_context(doc)
     assertions = [formula_from_data(env, ast) for ast in fixed]
     rights_report = _rights_report(doc)
     result = {"format": doc["meta"]["format"], "source_id": doc["source_id"],
