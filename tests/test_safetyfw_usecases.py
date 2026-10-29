@@ -291,6 +291,7 @@ def test_rsp_run_recomputes_every_key_item_and_records_causes(rsp_modules, monke
     assert all(r["route"] for r in saved["comparison"])
     assert saved["metrics"]["M1"] == rsp_run.metrics(saved)["M1"]
     assert saved["metrics"]["M8"]["unknown_items"] == [r["id"] for r in saved["comparison"] if not r["agree"]]
+    assert rsp_run.without_narrowings(fresh) == saved["without_narrowings"]
     # The case audit corrected the 6x factor and the scenario's explicit strong evidence.
     cases = rsp_run.CASES
     assert cases["T2"]["findings"]["OT15"] is False
@@ -327,3 +328,77 @@ def test_rsp_six_mutants_change_exactly_the_named_results(rsp_modules):
     assert fresh == saved["mutants"]
     assert all(value["exact"] for value in fresh.values())
     assert all(fresh[name]["invention_audit_flags"] for name in ("m2", "m4"))
+
+
+@pytest.mark.parametrize("id_", ("C1", "C2", "C3", "C4", "C5", "C6", "C7", "C-doc"))
+def test_rsp_unknown_w1_is_neither_false_nor_a_scored_answer(rsp_modules, monkeypatch, id_):
+    saved = json.loads((RSP / "results.json").read_text())
+    result = saved["items"][id_]
+    assert all(row["holds"] is not False for row in result["choices"] if "UNKNOWN" in row["w1"])
+    assert all("UNKNOWN" not in row["w1"] for row in result["choices"])
+    from types import SimpleNamespace
+    monkeypatch.setattr(rsp_run, "check_conflict", lambda *args, **kwargs: SimpleNamespace(status="UNKNOWN"))
+    rsp_run._conflict.cache_clear()
+    unresolved = rsp_run.conflict(id_)
+    assert unresolved["undecided"] and all(row["holds"] is None for row in unresolved["choices"])
+    assert rsp_run.verdict(unresolved) == "UNDECIDED"
+    assert not rsp_run.same_set("NONE", unresolved)
+    rsp_run._conflict.cache_clear()
+
+
+@pytest.mark.parametrize("id_", ("D1", "D2", "D3b", "D4", "D5"))
+def test_rsp_missing_quantity_certificate_is_undecided(rsp_modules, monkeypatch, id_):
+    monkeypatch.setattr(rsp_run, "dates", lambda: {"certificates": {id_: False}})
+    assert rsp_run.date_answer(id_)["undecided"]
+    unknown = {"choices": [{"choice": {}, "holds": None}], "cone": [], "route": "test"}
+    assert rsp_run.verdict(unknown) == "UNDECIDED"
+    assert not rsp_run.same_set("NONE", unknown)
+
+
+@pytest.mark.skipif(not LEAN_SERVICE.exists(), reason="the Lean service is not built")
+@pytest.mark.parametrize("mutant,field", [("m2", "untraced"), ("m4", "thresholds_without_premise")])
+def test_rsp_invention_audit_checks_the_actual_mutation(rsp_modules, mutant, field):
+    try:
+        rsp_run.MUTANT = mutant
+        result = rsp_run.run()
+        audit = rsp_run.metrics({**result, "mutants": {}})["M6"]
+        assert audit[field]
+        assert audit == rsp_run.invention_audit_for(result)
+    finally:
+        rsp_run.MUTANT = None
+        rsp_run.document.cache_clear()
+        rsp_run._conflict.cache_clear()
+
+
+@pytest.mark.parametrize("mutant,item_id,field", [("m2", "G1", "untraced"),
+                                                  ("m4", "G3", "thresholds_without_premise")])
+def test_rsp_audit_uses_the_mutated_query_input(rsp_modules, mutant, item_id, field):
+    try:
+        rsp_run.MUTANT = mutant
+        item = rsp_run.gap_probe(item_id)
+        audit = rsp_run.invention_audit_for({"items": {item_id: item}})
+        assert audit[field]
+    finally:
+        rsp_run.MUTANT = None
+
+
+def test_rsp_each_narrowing_has_an_unscored_counterfactual(rsp_modules):
+    saved = json.loads((RSP / "results.json").read_text())["without_narrowings"]
+    assert set(saved) == {"N1", "N2", "N3"}
+    assert all(row["unscored"] and row["changed"] for row in saved.values())
+    assert all(saved["N1"]["changed"][id_]["without"] == "NONE"
+               for id_ in ("A-T0/PROT1", "A-T1/PROT1", "A-T4/PROT4"))
+    assert saved["N2"]["changed"]["G1"]["without"] == "NONE"
+    assert saved["N3"]["changed"]["K13"]["without"] == "NONE"
+
+
+@pytest.mark.parametrize("narrowing,item_id", [("N1", "A-T1/PROT1"), ("N2", "G1"), ("N3", "K13")])
+def test_rsp_each_narrowing_reruns_a_ve_answer(rsp_modules, narrowing, item_id):
+    key = next(item for item in items("anthropic-rsp") if item["id"] == item_id)
+    try:
+        rsp_run.WITHOUT_NARROWING = narrowing
+        rsp_run.document.cache_clear()
+        assert rsp_run.verdict(rsp_run.answer(key)) == "NONE"
+    finally:
+        rsp_run.WITHOUT_NARROWING = None
+        rsp_run.document.cache_clear()

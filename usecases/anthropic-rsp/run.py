@@ -10,6 +10,7 @@ from collections import Counter
 import itertools
 import json
 import copy
+import re
 import sys
 import time
 from functools import lru_cache
@@ -32,6 +33,7 @@ CASES = {c["id"]: c for c in json.loads((HERE / "cases.json").read_text())["case
 SETS = T.READING_SETS
 BASE = {name: values[0] for name, values in SETS.items()}
 MUTANT = None
+WITHOUT_NARROWING = None
 PROVER_CALLS = 0
 OT = {"OT2": "more_capable_than_analyzed", "OT3a": "exceeds_prior_report",
       "OT3b": "exceeds_all_analyzed", "OT4": "significantly_redacted", "OT5": "highly_capable",
@@ -84,6 +86,10 @@ def document(names, default, include=None):
     choice = dict(names)
     rules = [json.loads(T.parsed_rule(b.id)) for b in T.rule_blocks()
              if applies(b, choice) and (include is None or b.id in include)]
+    if WITHOUT_NARROWING == "N1":
+        rules = [r for r in rules if not commitment_under_n1(r["name"])]
+    if WITHOUT_NARROWING == "N3":
+        rules = [r for r in rules if r["name"] != "f15-financial-interest"]
     if MUTANT == "m3":
         rules = [r for r in rules if r["name"] != "f26-need-not-delay"]
         if include is None or "f26-need-not-delay" in include:
@@ -99,6 +105,18 @@ def document(names, default, include=None):
     for rule in rules:
         rule["over"] = [n for n in ({} if MUTANT == "m1" else T.PRECEDENCE).get(rule["name"], ()) if n in included]
     return SoftNormDocument(SoftEnvironment(V.environment(default)), [{"norm": r} for r in rules])
+
+
+@lru_cache(maxsize=None)
+def commitment_under_n1(name):
+    """The strict rules backed by a source commitment, excluding hedges and recommendations."""
+    block = next(b for b in T.rule_blocks() if b.id == name)
+    source = block.source.lower()
+    norm = json.loads(T.parsed_rule(name))
+    return (norm.get("mode", "strict") == "strict" and
+            (bool(re.search(r"\b(will|commit|must|required|requires)\b", source)) or
+             block.source.startswith("F1 to F4,")) and
+            "will not necessarily" not in source and "should" not in source)
 
 
 def atoms(case):
@@ -269,8 +287,10 @@ def date_answer(id_):
             return constant(False, "D3 ve-units@1 quantity certificate replay", "m6: 60-day deadline is later")
         return {"route": "D3 ve-units@1", "undecided": "resource limit: no certificate for changed deadline"}
     certificate = dates()["certificates"].get(id_)
-    if certificate is not None:
-        return constant(certificate, "D3 ve-units@1 quantity certificate replay", id_)
+    if certificate is True:
+        return constant(True, "D3 ve-units@1 quantity certificate replay", id_)
+    if certificate is False:
+        return {"route": "D3 ve-units@1", "undecided": "resource limit: no replayed quantity certificate"}
     if id_ == "D3a":
         env = stage0.date_environment(("start_day", "limit_day"))
         facts = [stage0._q(["date_on", stage0._day("start_day"), ["date", "2026-05-20"]]),
@@ -303,7 +323,20 @@ def witness(id_):
 
 
 @lru_cache(maxsize=None)
+def opposite_sign_pairs():
+    """The only rule pairs that can oppose one another on one regulated act."""
+    rules = [json.loads(T.parsed_rule(b.id)) for b in T.rule_blocks()]
+    return tuple((left["name"], right["name"]) for left, right in itertools.combinations(rules, 2)
+                 if left["predicate"] == right["predicate"] and left["sign"] != right["sign"])
+
+
 def conflict(id_):
+    context = MUTANT if MUTANT in ("m1", "m3") else WITHOUT_NARROWING if WITHOUT_NARROWING == "N1" else None
+    return _conflict(id_, context)
+
+
+@lru_cache(maxsize=None)
+def _conflict(id_, context):
     cluster = CLUSTERS.get(id_)
     if id_ == "C-doc":
         # Only pairs that can select opposite signs on one regulated predicate
@@ -314,16 +347,22 @@ def conflict(id_):
     rows = []
     for assignment in choices(sets):
         choice = {**BASE, **assignment}
-        pair = None if id_ == "C-doc" else cluster
-        doc = document(tuple(sorted(choice.items())), "deny", pair)
         checks = []
-        for target in (("C1", "C2", "C7") if id_ == "C-doc" else (id_,)):
-            checked = check_conflict(doc.elaborated, model=model(doc, witness(target)))
+        pairs = opposite_sign_pairs() if id_ == "C-doc" else (cluster,)
+        for pair in pairs:
+            target = next((name for name, members in CLUSTERS.items()
+                           if len(members) == 2 and set(members) == set(pair)), id_)
+            doc = document(tuple(sorted(choice.items())), "deny", pair)
+            checked = check_conflict(doc.elaborated, model=model(doc, witness(target)), prove=True)
             checks.append(checked.status)
-        rows.append({"choice": assignment, "holds": "CONFLICT" in checks,
-                     "w1": checks, "rules": list(pair) if pair else "whole D1"})
-    return {"route": "D1 norms@0 W1 check_conflict with a validated witness model",
-            "cone": list(sets), "choices": rows}
+        rows.append({"choice": assignment, "holds": True if "CONFLICT" in checks else
+                     False if all(status == "CONFLICT-FREE" for status in checks) else None,
+                     "w1": checks, "rules": "all opposite-sign pairs" if id_ == "C-doc" else list(cluster)})
+    result = {"route": "D1 norms@0 W1 check_conflict with a validated witness model",
+              "cone": list(sets), "choices": rows}
+    if any(row["holds"] is None for row in rows):
+        result["undecided"] = "resource limit: W1 lacks a conflict-freedom certificate"
+    return result
 
 
 def t_case_formula(case):
@@ -500,16 +539,18 @@ def gap_probe(id_):
             "sort": "threshold", "description": "the hypothetical cyber threshold named by G3"}
         values = [(c, None) for c in choices(("RS1",))]
     rows = []
+    audit_rules, audit_thresholds = set(), set()
     for assignment, _ in values:
         choice = {**BASE, **assignment}
         rules = [json.loads(T.parsed_rule(b.id)) for b in T.rule_blocks()
                  if applies(b, choice) and b.id != "f23-website"]
-        if id_ == "G1" and MUTANT == "m2":
+        if id_ == "G1" and (MUTANT == "m2" or WITHOUT_NARROWING == "N2"):
             text = ("Rule 1. Every situation must not proceed, if both that situation has crossed "
                     "\"novel_chem_bio_weapons\" and that situation is classified as \"plans_missing\".")
             data = parse_english(SoftEnvironment(raw), text).rules[0].to_dict()["norm"]
-            data["name"] = "m2-invented-stop"
+            data["name"] = "m2-invented-stop" if MUTANT == "m2" else "without-n2-v2-stop"
             rules.append(data)
+        audit_rules.update(r["name"] for r in rules if r["name"] not in {b.id for b in T.rule_blocks()})
         doc = SoftNormDocument(SoftEnvironment(raw), [{"norm": r} for r in rules])
         env = doc.elaborated.base_environment()
         relations = {p: [] for p in env.predicates}
@@ -522,6 +563,8 @@ def gap_probe(id_):
             relations["crossed"].append(["s", "cyber_capability"])
             if MUTANT == "m4":
                 relations["listed"].append(["cyber_capability"])
+                audit_thresholds.update(threshold for (threshold,) in relations["listed"]
+                                        if threshold not in V.THRESHOLDS)
         m = FiniteModel.from_dict(env, {"complete": True,
             "domains": {"situation": ["s"], "threshold": list(raw["vocabulary"]["constants"])},
             "constants": {c: c for c in env.constants},
@@ -533,10 +576,15 @@ def gap_probe(id_):
         rows.append({"choice": assignment, "holds": not bool(selected_rules),
                      "rules": [r.name for r in selected_rules]})
     return {"route": "D1 soft-norms@0 selected_rules on a query-only vocabulary extension",
-            "cone": ["RS1"] if id_ == "G3" else [], "choices": rows}
+            "cone": ["RS1"] if id_ == "G3" else [], "choices": rows,
+            "audit_input": {"rules": sorted(audit_rules), "thresholds": sorted(audit_thresholds)}}
 
 
 def never_answer(id_):
+    if id_ == "N5" and WITHOUT_NARROWING == "N2":
+        result = gap_probe("G1")
+        result["route"] += "; v2.0 changelog read as a standing stop rule"
+        return result
     if id_ == "N1":
         result = silence(CASES["B-VOL"], ("assessed_in_report",))
     elif id_ == "N2":
@@ -605,7 +653,7 @@ def verdict(result):
         return result["value"]
     if "parts" in result:
         return {name: verdict(part) for name, part in result["parts"].items()}
-    if not result["choices"]:
+    if not result["choices"] or any(row["holds"] is None for row in result["choices"]):
         return "UNDECIDED"
     yes = [r["choice"] for r in result["choices"] if r["holds"]]
     if not yes:
@@ -630,7 +678,7 @@ def same_set(key, result):
     if "parts" in result:
         return isinstance(key, dict) and set(key) == set(result["parts"]) and all(
             same_set(key[name], part) for name, part in result["parts"].items())
-    if not result["choices"]:
+    if not result["choices"] or any(row["holds"] is None for row in result["choices"]):
         return False
     if key in ("ALL", "NONE"):
         return all(row["holds"] == (key == "ALL") for row in result["choices"])
@@ -673,13 +721,30 @@ def run():
     global PROVER_CALLS
     PROVER_CALLS = 0
     document.cache_clear()
-    conflict.cache_clear()
     _MODELS.clear()
     _PREMISES_CHECKED.clear()
     key = json.loads((HERE / "answer-key.json").read_text())["items"]
     items = {k["id"]: answer({name: k[name] for name in ("id", "case", "item")}) for k in key}
     return {"items": items, "comparison": compare(items),
             "cost": {"documents_built": document.cache_info().currsize, "prover_calls": PROVER_CALLS}}
+
+
+def without_narrowings(baseline):
+    """Unscored §9 comparison, rerunning VE with each source narrowing removed alone."""
+    global WITHOUT_NARROWING
+    base = {row["id"]: row["ve"] for row in baseline["comparison"]}
+    out = {}
+    try:
+        for name in ("N1", "N2", "N3"):
+            WITHOUT_NARROWING = name
+            variant = run()
+            out[name] = {"changed": {row["id"]: {"with": base[row["id"]], "without": row["ve"]}
+                                     for row in variant["comparison"] if row["ve"] != base[row["id"]]},
+                         "unscored": True}
+    finally:
+        WITHOUT_NARROWING = None
+        document.cache_clear()
+    return out
 
 
 EXPECTED_MUTANTS = {"m1": ["C2", "C-doc"], "m2": ["G1"],
@@ -695,18 +760,24 @@ def mutants(baseline):
         for name, expected in EXPECTED_MUTANTS.items():
             MUTANT = name
             document.cache_clear()
-            conflict.cache_clear()
-            changed = sorted(row["id"] for row in run()["comparison"] if row["ve"] != base[row["id"]])
-            invented = {"m2": ["m2-invented-stop"], "m4": ["cyber_capability"]}.get(name, [])
-            source_names = {b.id for b in T.rule_blocks()} | set(V.THRESHOLDS)
+            mutated = run()
+            changed = sorted(row["id"] for row in mutated["comparison"] if row["ve"] != base[row["id"]])
+            audit = invention_audit_for(mutated)
             out[name] = {"changed": changed, "expected": sorted(expected),
                          "exact": changed == sorted(expected),
-                         "invention_audit_flags": bool(invented) and all(x not in source_names for x in invented)}
+                         "invention_audit_flags": bool(audit["untraced"] or audit["thresholds_without_premise"])}
     finally:
         MUTANT = None
         document.cache_clear()
-        conflict.cache_clear()
     return out
+
+
+def invention_audit_for(result):
+    import stage0
+    inputs = [item["audit_input"] for item in result["items"].values() if "audit_input" in item]
+    return stage0.invention_audit(
+        {name for item in inputs for name in item["rules"]},
+        {name for item in inputs for name in item["thresholds"]})
 
 
 def metrics(result):
@@ -728,7 +799,7 @@ def metrics(result):
                "bytes_by_kind": coverage["bytes_by_kind"], "residual": coverage["residual"]},
         "M4": {"conditional_by_family": dict(Counter(r["id"][0] for r in rows if
                        isinstance(r["ve"], str) and r["ve"].startswith("SOME(")))},
-        "M5": stage0.identifier_lint(), "M6": stage0.invention_audit(),
+        "M5": stage0.identifier_lint(), "M6": invention_audit_for(result),
         "M7": {"sensitive_choices": sum(r.get("default_sensitive") is True for r in all_choices),
                "insensitive_choices": sum(r.get("default_sensitive") is False for r in all_choices)},
         "M8": {"replayed_certificates": sum(r.get("reason") == "replayed certificate" for r in all_choices),
@@ -752,6 +823,7 @@ def main(argv=None):
     result = run()
     result["mutants"] = mutants(result)
     result["metrics"] = metrics(result)
+    result["without_narrowings"] = without_narrowings(result)
     rendered = json.dumps(result, indent=1, sort_keys=True) + "\n"
     if args.check:
         if RESULTS.read_text() != rendered:
