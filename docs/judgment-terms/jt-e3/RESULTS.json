@@ -1,0 +1,110 @@
+{
+  "table": {
+    "attitude": {
+      "attitude": 2,
+      "classification": 0,
+      "exception": 0,
+      "judgment": 0,
+      "proportion": 0
+    },
+    "classification": {
+      "attitude": 0,
+      "classification": 20,
+      "exception": 0,
+      "judgment": 1,
+      "proportion": 0
+    },
+    "exception": {
+      "attitude": 0,
+      "classification": 0,
+      "exception": 3,
+      "judgment": 0,
+      "proportion": 0
+    },
+    "judgment": {
+      "attitude": 0,
+      "classification": 6,
+      "exception": 0,
+      "judgment": 27,
+      "proportion": 0
+    },
+    "proportion": {
+      "attitude": 0,
+      "classification": 0,
+      "exception": 0,
+      "judgment": 0,
+      "proportion": 1
+    }
+  },
+  "n": 60,
+  "observed": "53/60",
+  "expected": "371/900",
+  "kappa": "424/529",
+  "kappa_decimal": 0.801512,
+  "verdict": "PASS",
+  "disagree_terms": [
+    "community_of_full_development",
+    "democratic_society",
+    "discrimination",
+    "equal_protection_of_the_law",
+    "full_equality",
+    "instruction_abandon_identity_in_persona",
+    "persecution"
+  ],
+  "counts": {
+    "udhr": {
+      "disagree_included_borderline_included": {
+        "units": 18,
+        "bytes": 1945
+      },
+      "disagree_included_borderline_excluded": {
+        "units": 11,
+        "bytes": 1333
+      },
+      "disagree_excluded_borderline_included": {
+        "units": 14,
+        "bytes": 1627
+      },
+      "disagree_excluded_borderline_excluded": {
+        "units": 11,
+        "bytes": 1333
+      }
+    },
+    "udhr_jt0p": {
+      "disagree_included_borderline_included": {
+        "units": 20,
+        "bytes": 2143
+      },
+      "disagree_included_borderline_excluded": {
+        "units": 13,
+        "bytes": 1531
+      },
+      "disagree_excluded_borderline_included": {
+        "units": 16,
+        "bytes": 1825
+      },
+      "disagree_excluded_borderline_excluded": {
+        "units": 13,
+        "bytes": 1531
+      }
+    },
+    "constitution": {
+      "disagree_included_borderline_included": {
+        "units": 507,
+        "bytes": 88989
+      },
+      "disagree_included_borderline_excluded": {
+        "units": 503,
+        "bytes": 88025
+      },
+      "disagree_excluded_borderline_included": {
+        "units": 507,
+        "bytes": 88989
+      },
+      "disagree_excluded_borderline_excluded": {
+        "units": 503,
+        "bytes": 88025
+      }
+    }
+  }
+}
