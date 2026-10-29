@@ -114,6 +114,8 @@ DECIDED = {"usecases/bluedot-grant/document.ve.md", "usecases/bluedot-grant/caus
 DECIDED_ERRORS = {"fence"}
 # The seeds it must refuse, each with the reason it names.
 FAIL_CLOSED = {"usecases/news-article/news-w6a.ve.md": "order@0",
+               # The document mode defers this combination to the composed Python relay.
+               "tests/data/rd9-docroute.ve.md": "soft-norms with norm-defaults, readings",
                "tests/data/readings_s2/constitution-nd-readings.ve.md": "fenced English or strict content",
                "usecases/question-answering/group.ve.md": "surface parser"}
 PYTHON_FALLBACK = {"usecases/udhr-pilot/run-20261010T1400Z/translation.ve.md"}
