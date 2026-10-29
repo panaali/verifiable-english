@@ -753,7 +753,10 @@
         "ResponseShape.Schemas.ReadingsRoute.verdicts_statuses",
         "ResponseShape.Schemas.ReadingsRoute.verdicts_word",
         "ResponseShape.Schemas.ReadingsRoute.soft_premises",
-        "ResponseShape.Schemas.ReadingsRoute.filledFieldsS"
+        "ResponseShape.Schemas.ReadingsRoute.filledFieldsS",
+        "ResponseShape.Schemas.ReadingsRoute.verdicts_default_choice",
+        "ResponseShape.Schemas.ReadingsRoute.verdicts_default_line",
+        "ResponseShape.Schemas.ReadingsRoute.verdicts_default"
       ]
     },
     "ResponseShape/Schemas/Reports.lean": {
@@ -13359,6 +13362,7 @@
         "VE.Scope.Examples.boxUnits",
         "VE.Scope.Examples.carveT",
         "VE.Scope.Examples.contentStr",
+        "VE.Scope.Examples.count",
         "VE.Scope.Examples.coveredL",
         "VE.Scope.Examples.envJ",
         "VE.Scope.Examples.errorOf",
@@ -13369,6 +13373,7 @@
         "VE.Scope.Examples.g2",
         "VE.Scope.Examples.g6",
         "VE.Scope.Examples.g8",
+        "VE.Scope.Examples.gI",
         "VE.Scope.Examples.gN",
         "VE.Scope.Examples.gN8",
         "VE.Scope.Examples.gP",
@@ -13390,6 +13395,7 @@
         "VE.Scope.Examples.hcUnits",
         "VE.Scope.Examples.ibAnchors",
         "VE.Scope.Examples.instructablePieces",
+        "VE.Scope.Examples.inventedC",
         "VE.Scope.Examples.item1",
         "VE.Scope.Examples.item3sign",
         "VE.Scope.Examples.j",
@@ -14290,7 +14296,10 @@
         "VE.Scope.unitsOf"
       ],
       "S": [
+        "VE.Scope.BlockBound",
         "VE.Scope.Governor",
+        "VE.Scope.HasStr",
+        "VE.Scope.JsonWF",
         "VE.Scope.Reach",
         "VE.Scope.SDoc",
         "VE.Scope.addOver",
@@ -14306,6 +14315,7 @@
         "VE.Scope.graph",
         "VE.Scope.isFrame",
         "VE.Scope.ordered",
+        "VE.Scope.payload",
         "VE.Scope.position",
         "VE.Scope.unary"
       ]
@@ -14605,7 +14615,8 @@
         "VE.Defaults.Wire.replayCoherenceOn",
         "VE.Defaults.Wire.replayModel",
         "VE.Defaults.Wire.replayModelOn",
-        "VE.Defaults.Wire.viewOf"
+        "VE.Defaults.Wire.viewOf",
+        "VE.Defaults.Wire.viewOn"
       ],
       "D[R]": [
         "VE.Defaults.Wire.notWellFormedText",
@@ -14622,7 +14633,8 @@
         "VE.Defaults.Wire.entityIds",
         "VE.Defaults.Wire.formLabel",
         "VE.Defaults.Wire.modelFields",
-        "VE.Defaults.Wire.situationJson"
+        "VE.Defaults.Wire.situationJson",
+        "VE.Defaults.Wire.collisionFields"
       ],
       "G[R]": [
         "VE.Defaults.Wire.CertReplay.reason"
@@ -15837,6 +15849,66 @@
         "VE.Calc.TableExamples.trialCols",
         "VE.Calc.TableExamples.v5",
         "VE.Calc.TableExamples.v5Csv"
+      ]
+    },
+    "VE/Readings/DefaultVerdicts.lean": {
+      "S": [
+        "VE.Readings.choiceSoft",
+        "VE.Readings.dSem"
+      ],
+      "C": [
+        "VE.Readings.DEvidence",
+        "VE.Readings.DEvidence.coherent",
+        "VE.Readings.DEvidence.collides",
+        "VE.Readings.DEvidence.asX",
+        "VE.Readings.dConflictRow",
+        "VE.Readings.dFollows",
+        "VE.Readings.dQueryRow",
+        "VE.Readings.DChoice",
+        "VE.Readings.DVerdicts",
+        "VE.Readings.DVerdicts.dConflictRows",
+        "VE.Readings.DVerdicts.dQueryRows",
+        "VE.Readings.dEvidenceOf",
+        "VE.Readings.replayD",
+        "VE.Readings.replayVerdictsD"
+      ],
+      "G[V]": [
+        "VE.Readings.dBasis",
+        {
+          "name": "VE.Readings.DVerdicts.bases",
+          "tied": [
+            "VE.Readings.d_bases_sound"
+          ]
+        },
+        {
+          "name": "VE.Readings.DVerdicts.defaultMember",
+          "tied": [
+            "VE.Readings.readings_wire_default_present",
+            "VE.Readings.readings_wire_default_conflict"
+          ]
+        },
+        "VE.Readings.DVerdicts.hasDefaults",
+        "VE.Readings.Run.dEnglish",
+        "VE.Readings.Run.runVerdictsD"
+      ],
+      "D[V]": [
+        "VE.Readings.Run.verdictWord",
+        "VE.Readings.Run.dChoiceJson",
+        "VE.Readings.Run.DLine",
+        "VE.Readings.Run.DLine.json",
+        "VE.Readings.Run.defaultJson"
+      ]
+    },
+    "VE/Readings/DefaultVerdictsExamples.lean": {
+      "T": [
+        "VE.Readings.DefaultExamples.S2",
+        "VE.Readings.DefaultExamples.D2",
+        "VE.Readings.DefaultExamples.rs2",
+        "VE.Readings.DefaultExamples.Nν",
+        "VE.Readings.DefaultExamples.Nρ",
+        "VE.Readings.DefaultExamples.labels",
+        "VE.Readings.DefaultExamples.pairs",
+        "VE.Readings.DefaultExamples.corpus"
       ]
     }
   }
