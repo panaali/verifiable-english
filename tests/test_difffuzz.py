@@ -159,6 +159,32 @@ def test_legacy_undeclared_builtin_sorts_are_unknown_symbols(built):
         surface.close()
 
 
+def test_order_routes_reject_string_predicate_sort_before_constants(built):
+    """Every composed order decoder rejects $string as an unknown argument sort."""
+    surface = df.SURFACES["environment"]()
+    try:
+        for profiles in (["order@0", "relational-fol@0"],
+                         ["order@0", "relational-fol@0", "time@0"],
+                         ["data@0", "order@0", "relational-fol@0"]):
+            for sort, constants, expected in (("$string", {}, "UnknownSymbol"),
+                                              ("$string", {"bad": []},
+                                               "InvalidInput" if len(profiles) == 2 else "UnknownSymbol"),
+                                              ("$int", {}, "ok")):
+                case = {"language": "ve.core@0.2", "profiles": profiles,
+                        "spec_revision": "ve-v0.2-expand2-2026-09-25",
+                        "vocabulary": {"sorts": {}, "predicates": {
+                            "p": {"arguments": [sort], "description": "d"}},
+                            "constants": constants}}
+                seed = df.Seed("environment", "envelope", "order-builtin-sort", case)
+                answers = {"python": surface.python(seed, case),
+                           "lean": surface.lean([(seed, case)])[0],
+                           "rust": surface.rust([(seed, case)])[0]}
+                assert all(answer["code"] == expected if expected != "ok"
+                           else answer["outcome"] == "ok" for answer in answers.values()), answers
+    finally:
+        surface.close()
+
+
 def test_request_envelope_fields_precede_predicate_sort_fault(built):
     """Required and extra envelope fields win over nested vocabulary faults in every engine."""
     surface = df.SURFACES["requests"]()
