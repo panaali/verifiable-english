@@ -292,6 +292,23 @@ def base : Nat := erasedNodes [] (wide 58)
     let w ← decodeEnvironment predsEnv
     let ps ← (List.replicate (10001 - base) top).mapM (decodeStatement w)
     checkCertificate ps (← decodeStatement w (wide 58)) (← decodeCertificate fa1Cert)) == VE.Time.Wire.aggregateLimit
+-- P3 is charged as the problem is built (`chargedNodes`). A 64-term count erases to over 8,000 nodes, 64 times its
+-- terms' source, and one of them is admitted; 200 of them (1.6 million erased nodes) stop after two, past the limit,
+-- with W6a's text.
+def anyCount : Json :=
+  st s!"[\"count\", \"fomc_policymaker\", [{", ".intercalate (List.replicate 64 "[\"1\", [\"any\"]]")}], \"le\", \"7\"]"
+def charged (ps : List Json) (c : Json) : Nat :=
+  match (do
+      let w ← decodeEnvironment predsEnv
+      pure (chargedNodes w.env ((← ps.mapM (decodeStatement w)).map (·.formula)) (← decodeStatement w c).formula) :
+      Except String Nat) with
+  | .ok n => n
+  | .error _ => 0
+#guard erasedNodes [mentioning 6, anyCount] top - erasedNodes [mentioning 6] top > 8000
+#guard status (case "admission" predsEnv [mentioning 6, anyCount] top) == .str "ok"
+#guard charged [mentioning 6, anyCount] top == erasedNodes [mentioning 6, anyCount] top
+#guard let n := charged (mentioning 6 :: List.replicate 200 anyCount) top; 10000 < n && n < 20000
+#guard err (case "admission" predsEnv (mentioning 6 :: List.replicate 200 anyCount) top) == VE.Time.Wire.aggregateLimit
 -- A statement's own fault comes before the problem's limits.
 #guard err (case "admission" predsEnv [mentioning 7] (st r#"["count", "user", [["1", ["any"]]], "le", "2"]"#)) ==
   "CardinalityNotFinite(user)"

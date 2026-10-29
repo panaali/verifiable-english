@@ -761,6 +761,13 @@ def actsRefuses : List (String × String) :=
   (["closure", "order"].map fun f => (s!"{f}@0", VE.Norms.Wire.actsFamilyRefusal f)) ++
   [("ve.discourse@1", "acts@0 with ve.discourse@1 is not implemented")]
 
+/-- What `cardinality@0` refuses: every profile of the table but W6a's (quantities 4.2, E2) and the document layer
+`judgments@0`, whose own row composes it with `documents@1` (`gate_judgments`). -/
+def cardinalityOthers : List String :=
+  ["acts@0", "alternatives@0", "closure@0", "data@0", "definitions@0", "nary@0", "norm-defaults@0", "norms@0",
+   "readings@1", "reports@0", "right-clauses@0", "rights@0", "risk@0", "scope@0", "soft-norms@0", "speech-acts@0",
+   "ve.discourse@1"]
+
 def baseRows : List ProfileRow := [
   ⟨"alternatives@0", ["norms@0"], refusing "alternatives@0" ["soft-norms@0"], "alternatives"⟩,
   ⟨"risk@0", ["alternatives@0"], [("norm-defaults@0", "risk@0 with norm-defaults@0 is not implemented")], "risk"⟩,
@@ -786,7 +793,9 @@ def baseRows : List ProfileRow := [
   ⟨"definitions@0", [], [], "layer"⟩,
   ⟨"documents@1", [], [], "layer"⟩,
   ⟨"time@0", [], [], "layer"⟩,
-  ⟨"judgments@0", ["documents@1"], [], "layer"⟩]
+  ⟨"judgments@0", ["documents@1"], [], "layer"⟩,
+  -- cardinality@0 (QT-A3): beside W6a's lists only, as its own decoder's E2 (`VE.Cardinality.gate_cardinality`)
+  ⟨"cardinality@0", ["order@0", "relational-fol@0", "time@0"], refusing "cardinality@0" cardinalityOthers, "layer"⟩]
 
 /-- The routes outside the chain, which no wrapper sits on, as `outside` names them. -/
 def outsideProfiles : List String := ["risk@0", "alternatives@0", "speech-acts@0", "reports@0"]
@@ -812,6 +821,10 @@ def withoutDocumentLayers (environment : Lean.Json) : Lean.Json :=
   | .ok (.arr ps) => environment.setObjVal! "profiles" (.arr (ps.filter fun p => !documentLayers.any (.str · == p)))
   | _ => environment
 
+/-- The profiles only their own service mode reads (`cardinality`, QT-A3): Python models no environment with them
+until their document hook (QT-A4). -/
+def modeProfiles : List String := ["cardinality@0"]
+
 /-- The one wrapper an environment lists: the environment mode gates a list with it by the whole table, and any
 other list by the base rows. -/
 def environmentWrapper : String := "readings@1"
@@ -819,7 +832,7 @@ def environmentWrapper : String := "readings@1"
 /-- The profiles whose environments Python models, in table order (`ve/profiles.py` `BY_NAME`): every base row's but
 the document layers, which only the environment and document modes read (JT-2), then the wrapper. -/
 def environmentProfiles : List String :=
-  ((baseRows.map (·.profile)).eraseDups.filter (!documentLayers.contains ·)) ++ [environmentWrapper]
+  ((baseRows.map (·.profile)).eraseDups.filter (!(documentLayers ++ modeProfiles).contains ·)) ++ [environmentWrapper]
 
 /-- The route heads in precedence order: the first one with a listed row is the route. -/
 def heads : List (String × Route) :=
@@ -910,8 +923,8 @@ theorem rowChecks_erase (ps : List String) (hn : ps.Nodup) (hd : "documents@1" �
     List.not_mem_nil, or_false] at hr
   rcases hr with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
     rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
-    simp [rowChecks, refusing, speechOthers, outsideProfiles, actsRefuses, toString, String.reduceAppend,
-      hn.mem_erase_iff, hd]
+    simp [rowChecks, refusing, speechOthers, outsideProfiles, actsRefuses, cardinalityOthers, toString,
+      String.reduceAppend, hn.mem_erase_iff, hd]
 
 theorem find_erase (ps : List String) (f : String → Bool) (h : f "judgments@0" = false) :
     (ps.erase "judgments@0").find? f = ps.find? f := by
@@ -1059,6 +1072,11 @@ theorem todayGate_base (ps : List String) (hs : ps.Pairwise (· < ·)) (h : ∀ 
     · rfl
     · have := h _ (List.contains_iff_mem.mp hc)
       simp [legacyProfiles, registered, wrapperProfiles] at this
+  have hcard : ps.contains "cardinality@0" = false := by
+    cases hc : ps.contains "cardinality@0"
+    · rfl
+    · have := h _ (List.contains_iff_mem.mp hc)
+      simp [legacyProfiles, registered, wrapperProfiles] at this
   unfold todayGate
   rw [hunk, hsp]
   simp only [decide_eq_true hsb, Bool.not_true, Bool.false_eq_true, if_false]
@@ -1069,7 +1087,7 @@ theorem todayGate_base (ps : List String) (hs : ps.Pairwise (· < ·)) (h : ∀ 
     List.map_nil, List.cons_append, List.nil_append, List.append_nil, find_cons_ite, List.contains_cons,
     List.contains_nil, needText, List.find?_nil, String.reduceBEq, Bool.or_false, Bool.or_true,
     Bool.true_and, toString, String.reduceAppend, if_false, if_true, Bool.false_eq_true, faultOf_ite, faultOf_none,
-    actsRefuses, hj, ha, Bool.false_and]
+    actsRefuses, cardinalityOthers, hj, ha, hcard, Bool.false_and]
   simp only [ite_and3]
 
 theorem todayHead_base (ps : List String) : todayHead (base ps) = todayHead ps := by

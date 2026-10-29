@@ -145,6 +145,8 @@ DEADLINES: dict[str, tuple[float, float]] = {
     "metered": (120.0, 30.0),
     # The `calc` mode (math-evidence ME-2): at most 512 claims a case, each stopped at the 4,096-digit limit.
     "calc": (60.0, 60.0),
+    # The `cardinality` mode (quantities QT-A3): W6a's `quantity` deadline, whose problems it erases into.
+    "cardinality": (60.0, 60.0),
 }
 WALL_FACTOR = 10.0
 _MIB = 1 << 20
