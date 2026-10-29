@@ -328,3 +328,14 @@ def test_main_exits_one_on_a_failing_register_and_zero_on_the_live_one(tmp_path,
     broken.write_text("[" * 100_000, encoding="utf-8")
     assert level.main(["--register", str(broken)]) == 1
     assert level.main(["--register", str(tmp_path / "absent.json")]) == 1
+
+
+def test_readme_states_the_measured_level():
+    section = (CASE / "README.md").read_text(encoding="utf-8").split("## Measured level")[1].split("\n## ")[0]
+    assert REGISTER["header"]["basis"] == " ".join(
+        line[2:] for line in section.splitlines() if line.startswith("> "))
+    verified = sum(row["status"] == "VERIFIED" for row in REGISTER["rows"])
+    table = dict(re.findall(r"^\| (.+?) \| ([\d,]+) \|$", section, re.M))
+    assert table.pop(f"Verified ({verified} rows)") == f"{BASE['verified']:,}"
+    assert table.pop(f"Source ({len(REGISTER['rows'])} rows)") == f"{BASE['source']:,}"
+    assert table == {f"OPEN, {family}": f"{size:,}" for family, size in BASE["open"].items()}
