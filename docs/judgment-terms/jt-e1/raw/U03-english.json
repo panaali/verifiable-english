@@ -1,0 +1,113 @@
+{
+  "id": "U03",
+  "arm": "english",
+  "prompt": "Read only the source and displayed lines below as a reader of this document. For the named conclusion, answer in exactly this format: `CLASS: SETTLED|TURNS|CONDITIONAL; DECIDER: <name or NONE>; WHY: <one sentence>`. SETTLED means it holds whatever is judged. TURNS means two admissible judgments can change it. CONDITIONAL means it is certified only given a judgment criterion. Name the decider if the text names one; otherwise say NONE. Do not use outside knowledge.\n\nSOURCE: UDHR u037, synthetic arrest under a fixed independent ban.\nCONCLUSION: this arrest is forbidden\nWhether the arrest is arbitrary is a judgment; the text does not say who makes it.\nSettled: whatever is judged here, the text requires this arrest is forbidden.\n",
+  "call": {
+    "account": "claude-panaali2",
+    "returncode": 0,
+    "stderr": "",
+    "result": {
+      "duration_api_ms": 2416,
+      "stop_reason": "end_turn",
+      "session_id": "22f21b1a-e33a-40d2-b62e-3ba4b0331834",
+      "total_cost_usd": 0.0055385,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 875,
+        "cache_read_input_tokens": 1545,
+        "output_tokens": 188,
+        "output_tokens_details": {
+          "thinking_tokens": 91
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 875,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 188,
+            "cache_read_input_tokens": 1545,
+            "cache_creation_input_tokens": 875,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 875
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "modelUsage": {
+        "claude-sonnet-5-5": {
+          "inputTokens": 2,
+          "outputTokens": 188,
+          "cacheReadInputTokens": 1545,
+          "cacheCreationInputTokens": 875,
+          "webSearchRequests": 0,
+          "costUSD": 0.0055385,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "thinkingTokens": 91,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 875,
+          "canonicalModel": "claude-sonnet-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "permission_denials": [],
+      "terminal_reason": "completed",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required",
+      "subagent_stats": {
+        "spawned": 0,
+        "requested": {
+          "background": 0,
+          "foreground": 0,
+          "unset": 0
+        },
+        "started_in_background": 0,
+        "max_depth": 0,
+        "spawned_by_subagents": 0,
+        "completed": 0,
+        "failed": 0,
+        "killed": {
+          "parent": 0,
+          "user": 0,
+          "system": 0
+        },
+        "refused": {
+          "depth_limit": 0,
+          "concurrency_limit": 0,
+          "budget": 0
+        },
+        "by_type": {}
+      },
+      "safety_stops": 0,
+      "is_error": false,
+      "num_turns": 1,
+      "subtype": "success",
+      "api_error_status": null,
+      "result": "CLASS: SETTLED; DECIDER: NONE; WHY: Although whether the arrest is arbitrary is a judgment and the text names no one to make it, the text states that whatever is judged, it requires this arrest to be forbidden, so the conclusion does not depend on the judgment.",
+      "ttft_ms": 2576,
+      "type": "result",
+      "duration_ms": 2617,
+      "uuid": "379ff878-da3e-4117-b72a-46c6e17a8130",
+      "ttft_stream_ms": 1329,
+      "time_to_request_ms": 200,
+      "first_content_frame_ms": 1330,
+      "queued_turn_count": 0,
+      "result_index": 0
+    },
+    "cw": 2610
+  },
+  "raw_answer": "CLASS: SETTLED; DECIDER: NONE; WHY: Although whether the arrest is arbitrary is a judgment and the text names no one to make it, the text states that whatever is judged, it requires this arrest to be forbidden, so the conclusion does not depend on the judgment."
+}

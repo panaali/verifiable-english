@@ -276,6 +276,35 @@ def govern (D : SDoc) : Except String Json := do
       if (edgesOf D (fun v => t.lookup v) g).isEmpty then throw s!"ScopeNoEffect: {g.id}"
     pure (patch D (comp.map fun (u, o) => (u, addOver (edgesInto D (fun v => t.lookup v) u) o)))
 
+/-! What the statements of 5.1 claim -/
+
+/-- The DRI's fix (a) of 2026-10-27 (spec 11.3's `Pinned.JsonWF`): every JSON object, at any depth, is a
+    well-formed tree, as every JSON parser builds it. F-raw (`Examples.lean`) is why 5.1's statements take it. -/
+inductive JsonWF : Json → Prop
+  | null : JsonWF .null
+  | bool (b : Bool) : JsonWF (.bool b)
+  | num (n : JsonNumber) : JsonWF (.num n)
+  | str (s : String) : JsonWF (.str s)
+  | arr (xs : Array Json) : (∀ x ∈ xs, JsonWF x) → JsonWF (.arr xs)
+  | obj (kvs : Std.TreeMap.Raw String Json) : kvs.WF → (∀ kv ∈ kvs.toList, JsonWF kv.2) → JsonWF (.obj kvs)
+
+/-- A JSON string value occurs in a JSON value (object keys are not values). -/
+inductive HasStr (s : String) : Json → Prop
+  | str : HasStr s (.str s)
+  | arr {xs : Array Json} {x : Json} : x ∈ xs → HasStr s x → HasStr s (.arr xs)
+  | obj {j x : Json} {k : String} : j.getObjVal? k = .ok x → HasStr s x → HasStr s j
+
+/-- What a governor's effect can write into the output: its frame part or its condition; nothing for the others. -/
+def payload : Effect → Json
+  | .frame p => p
+  | .reguard c => c
+  | .carveOut c => c
+  | _ => .null
+
+/-- The decoded governors are bound to the block as written: every string value of a payload is one of the block. -/
+def BlockBound (D : SDoc) : Prop :=
+  ∀ g ∈ D.governors, ∀ s, HasStr s (payload g.effect) → HasStr s D.block
+
 /-! The run path (1.5.8): `govern`'s steps after the admission, reading the order, each reach (as `frameOn` reads
     it, `lv`, and as the other steps read it, `cv`) and each rule unit's base name from tables computed once.
     `governFast_eq` (Theorems.lean) proves that it answers as `govern`. -/

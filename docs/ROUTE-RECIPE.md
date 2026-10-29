@@ -9,7 +9,7 @@ Worked example: the `discourse` mode.
 2. **Shape.** `lean/ResponseShape/Schemas/Discourse.lean` writes the row's shape, typed to the leaves.
 3. **Encoder theorem.** `lean/ResponseShape/Encoders/Discourse.lean` proves
    `ResponseShape.Encoders.Discourse.runCaseReported_fits`: every row the runner writes fits the shape.
-   It is listed in `lean/ResponseShape/Audit.lean`.
+   It is listed in `lean/ResponseShapeAudit.lean`.
 4. **Generated schema.** `ve/backends/lean_service_schema/discourse.json`, rendered from the shape by
    `uv run python tools/response_schemas.py --write`. The handshake's mode list in
    `ve/backends/lean_service_schema/envelope.json` comes from the registry, and `MODES` of

@@ -1,10 +1,19 @@
 import VE.Readings.SoftDefaults
+import VE.Alternatives.Examples
+import VE.Definitions.Alias
+import VE.EnvironmentProofs
+import VE.EvaluationCounts
+import VE.GraphChecks
+import VE.Norms.FlaggedSpec
+import VE.Norms.RunSound
+import VE.ParserContracts
+import VE.Route.RunSound
+import VE.Route.WireSound
 import VE.Readings.SoftWire
 import VE.Readings.SoftVerdicts
 import VE.Readings.SoftExamples
 import VE.Readings.SoftSeparate
 import VE.Readings.SoftSeparateExamples
-import VE.Audit
 import VE.Closure.OrderChecks
 import VE.Grammar.TableProofs
 import VE.Grammar.Meaning
@@ -125,6 +134,8 @@ import VE.Arith.BoundedExamples
 import VE.Arith.CompleteExamples
 import VE.Calc.Lower
 import VE.Calc.LowerExamples
+import VE.Calc.Data
+import VE.Calc.TableExamples
 import VE.Numbers.Examples
 import VE.Numbers.Phrases
 import VE.Scales.Examples
@@ -206,6 +217,8 @@ import VE.Events.Premises
 import VE.Events.Calendar
 import VE.Events.Completion
 import VE.Events.Examples
+import VE.Events.WireExamples
+import VE.Events.Chain
 import VE.NormDefaults.Packs
 import VE.NormDefaults.PacksLegacy
 import VE.NormDefaults.PacksLabels
@@ -235,4 +248,6 @@ import VE.Defaults.Meaning
 import VE.Defaults.MeaningExamples
 import VE.Defaults.Route
 import VE.Defaults.WireExamples
+import VE.Readings.DefaultVerdicts
+import VE.Readings.DefaultVerdictsExamples
 import VE.Defaults.RouteExamples
