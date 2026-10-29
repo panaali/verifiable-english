@@ -15,7 +15,7 @@ Signature: the 2026-10-27 item 2 decision covers the DELTA row.
 | Stable order with a title among governors | `filter_mergeSort` from `List.mergeSort_cons`; `ordered_filter` | Equal-key carve-outs guard and `insertBy` guards |
 | SC-3b condition effects | Not this item; after its approved addendum and SC-2 | Plan dependency |
 
-Pilot bytes expected: 0; no pilot audit or whole-document run claimed. No Python, Rust, route, or response schema changed. There are no answer/refusal deltas. The hand-written change is about 620 lines including fixtures and evidence, near the plan's 600-line target; no work was cut.
+Pilot bytes expected: 0; no pilot audit or whole-document run claimed. No Python, Rust, route, or response schema changed. There are no answer/refusal deltas. The hand-written change is about 630 hand-written lines including fixtures and evidence, near the plan's 600-line target; no work was cut.
 
 ## Proof and mutation evidence
 
