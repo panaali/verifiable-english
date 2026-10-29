@@ -69,6 +69,17 @@ def test_gate_selection_uses_exact_collected_ids(tmp_path, monkeypatch, selected
         node for node in collected if node not in expected]
 
 
+def test_gate_collection_expands_file_and_function_selectors(tmp_path):
+    selectors = ["tests/test_gate_shards.py",
+                 "tests/test_gate_integrity.py::test_gate_selection_uses_exact_collected_ids"]
+    events = gate.collect(dict(os.environ), tmp_path / "collection.json", files=selectors)
+    selected = events["selected"]
+    assert any(node.startswith(selectors[0] + "::") for node in selected)
+    assert any(node.startswith(selectors[1] + "[") for node in selected)
+    assert not any(node.startswith("tests/test_gate_integrity.py::test_gate_collection_expands")
+                   for node in selected)
+
+
 def trust_counts() -> dict:
     """What `tools/trust_map.py --files` writes for a tree of one untrusted file."""
     files = {"VE/Demo.lean": {**trust_map.empty_counts(), "C": 3, "o": 2, "lines": 5}}

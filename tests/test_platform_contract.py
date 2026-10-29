@@ -423,8 +423,15 @@ class ContractGate(FakeGate):
             return super().command(args, env=env, stage=stage, cwd=cwd)
         self.seen.append((stage, [str(arg) for arg in args]))
         targets = [str(arg) for arg in args if str(arg).startswith("tests")]
-        ids = [nodeid for nodeid in CONTRACT_IDS if any(target == "tests" or pc.covers(target, nodeid)
-                                                        for target in targets)]
+        collected = [nodeid for nodeid in CONTRACT_IDS if any(target == "tests" or pc.covers(target, nodeid)
+                                                              for target in targets)]
+        if "VE_GATE_PYTEST_IDS_FILE" in env:
+            selectors = json.loads(Path(env["VE_GATE_PYTEST_IDS_FILE"]).read_text())
+            assert env.get("VE_GATE_PYTEST_SELECTOR_MODE") == "covers"
+        else:
+            selectors = targets
+            assert "VE_GATE_PYTEST_SELECTOR_MODE" not in env
+        ids = [nodeid for nodeid in collected if any(pc.covers(selector, nodeid) for selector in selectors)]
         outcomes = {nodeid: {"outcome": "failed", "reason": "AssertionError"} if nodeid in self.failing
                     else {"outcome": "passed"} for nodeid in ids}
         Path(env["VE_GATE_PYTEST_RESULT"]).write_text(json.dumps(
@@ -443,7 +450,7 @@ def contract_gate(tmp_path, monkeypatch):
 def test_the_contract_run_runs_exactly_the_listed_tests_with_the_gates_stages(contract_gate):
     code, record = contract_gate.run("--contract")
     assert (code, record["status"], record["mode"]) == (0, "contract-passed", "contract")
-    assert contract_gate.pytest_targets() == [["tests/test_a.py", "tests/test_b.py::test_b2"]] * 2
+    assert contract_gate.pytest_targets() == [["tests/test_a.py", "tests/test_b.py"]] * 2
     assert record["counts"]["selected"] == 3 and record["failures"] == []
     assert record["stages"] == list(gate.CONTRACT_STAGES)
     stages = contract_gate.stages()
