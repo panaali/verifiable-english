@@ -567,13 +567,11 @@ def insertBy (le : α → α → Bool) (a : α) : List α → List α
 #guard insertBy (fun x y : Nat × String => decide (x.1 ≤ y.1)) (1, "early")
   [(1, "later"), (2, "tail")] == [(1, "early"), (1, "later"), (2, "tail")]
 #guard insertBy (fun x y : Nat × String => decide (x.1 ≤ y.1)) (1, "solo") [] == [(1, "solo")]
-
 theorem insertBy_head (le : α → α → Bool) (a : α) (ys : List α)
     (h : ∀ b ∈ ys, le a b) : insertBy le a ys = a :: ys := by
   cases ys with
   | nil => rfl
   | cons b bs => simp [insertBy, h b (by simp)]
-
 theorem insertBy_split (le : α → α → Bool) (a : α) :
     ∀ (l₁ l₂ : List α), (∀ b ∈ l₁, !le a b) → (∀ b ∈ l₂, le a b) →
       insertBy le a (l₁ ++ l₂) = l₁ ++ a :: l₂
@@ -583,7 +581,6 @@ theorem insertBy_split (le : α → α → Bool) (a : α) :
       have ht : ∀ c ∈ bs, !le a c := fun c hc => h₁ c (by simp [hc])
       have hab : le a b = false := by cases hc : le a b <;> simp_all
       simp [insertBy, hab, insertBy_split le a bs l₂ ht h₂]
-
 theorem mergeSort_cons_insert {le : α → α → Bool}
     (trans : ∀ a b c, le a b → le b c → le a c)
     (total : ∀ a b, le a b || le b a) (a : α) (l : List α) :
@@ -595,7 +592,6 @@ theorem mergeSort_cons_insert {le : α → α → Bool}
   have h₄ : ∀ b ∈ l₂, le a b := fun b hb => List.rel_of_pairwise_cons hs' hb
   rw [h₁, h₂]
   exact (insertBy_split le a l₁ l₂ h₃ h₄).symm
-
 theorem insertBy_filter {le : α → α → Bool}
     (trans : ∀ a b c, le a b → le b c → le a c)
     (a : α) (p : α → Bool) : ∀ (ys : List α), ys.Pairwise (fun x y => le x y = true) →
@@ -618,7 +614,6 @@ theorem insertBy_filter {le : α → α → Bool}
       have habf : le a b = false := by cases hc : le a b <;> simp_all
       simp only [insertBy, habf, ite_false]
       cases hpa : p a <;> cases hpb : p b <;> simp [hpa, hpb, hi, insertBy, habf]
-
 /-- Stable sorting commutes with a filter for a total transitive comparison. -/
 theorem filter_mergeSort {le : α → α → Bool}
     (trans : ∀ a b c, le a b → le b c → le a c)
@@ -631,7 +626,6 @@ theorem filter_mergeSort {le : α → α → Bool}
     cases h : p a with
     | false => simp [h]
     | true => simp [h, mergeSort_cons_insert trans total]
-
 /-- Removing governors before sorting preserves the relative order of the retained governors. -/
 theorem ordered_filter (D : SDoc) (p : Governor → Bool) :
     (ordered D).filter p = ordered { D with governors := D.governors.filter p } := by
@@ -646,7 +640,6 @@ theorem ordered_filter (D : SDoc) (p : Governor → Bool) :
     simp only [le, Bool.or_eq_true, Bool.and_eq_true, beq_iff_eq, decide_eq_true_eq]
     omega
   simpa [ordered, le, position] using filter_mergeSort ht htotal p D.governors
-
 end Govern
 
 /-! ## Spec 5.1's statements on a well-formed document (sc-1ae, the DRI's fix (a) of 2026-10-27)
@@ -1169,7 +1162,6 @@ theorem unitsOf_patch (D : SDoc) (hw : JsonWF D.doc) (comp : List (String × Jso
 
 section PatchIdentity
 open Std.DTreeMap.Internal Std.DTreeMap.Internal.Impl
-
 /-- Rebalancing an already balanced node without changing its children leaves it unchanged. -/
 theorem balanceR_id (sz : Nat) (k : String) (v : Json) (l r : Impl String (fun _ => Json))
     (hb : Balanced (.inner sz k v l r)) :
@@ -1181,7 +1173,6 @@ theorem balanceR_id (sz : Nat) (k : String) (v : Json) (l r : Impl String (fun _
   case leaf.inner =>
     rename_i szr kr vr lr rr
     cases lr <;> cases rr <;> simp_all [balanceR!, balanced_inner_iff, BalancedAtRoot, size, delta] <;> omega
-
 theorem balanceL_id (sz : Nat) (k : String) (v : Json) (l r : Impl String (fun _ => Json))
     (hb : Balanced (.inner sz k v l r)) :
     balanceL! k v l r = .inner sz k v l r := by
@@ -1192,7 +1183,6 @@ theorem balanceL_id (sz : Nat) (k : String) (v : Json) (l r : Impl String (fun _
   case inner.leaf =>
     rename_i szl kl vl ll rl
     cases ll <;> cases rl <;> simp_all [balanceL!, balanced_inner_iff, BalancedAtRoot, size, delta] <;> omega
-
 theorem insert_same (t : Impl String (fun _ => Json)) (hb : Balanced t) (k : String) (v : Json)
     (h : Const.get? t k = some v) : insert! k v t = t := by
   induction t with
@@ -1213,7 +1203,6 @@ theorem insert_same (t : Impl String (fun _ => Json)) (hb : Balanced t) (k : Str
       subst k
       subst v'
       rfl
-
 /-- Inserting the existing value into a well-formed raw object preserves its representation. -/
 theorem raw_insert_same (t : Std.TreeMap.Raw String Json) (hw : t.WF)
     (k : String) (v : Json) (h : t.get? k = some v) : t.insert k v = t := by
@@ -1223,7 +1212,6 @@ theorem raw_insert_same (t : Std.TreeMap.Raw String Json) (hw : t.WF)
     simp only [Std.TreeMap.Raw.get?, Std.TreeMap.Raw.insert, Std.DTreeMap.Raw.insert] at h ⊢
     change Const.get? inner.inner k = some v at h
     rw [insert_same inner.inner hb k v h]
-
 /-- With a well-formed top-level object and an existing units array, an empty patch is identity as a Lean value. -/
 theorem patch_nil_of_units (D : SDoc) (hw : JsonWF D.doc) (xs : Array Json)
     (h : D.doc.getObjVal? "units" = .ok (.arr xs)) : patch D [] = D.doc := by
@@ -1248,7 +1236,6 @@ theorem patch_nil_of_units (D : SDoc) (hw : JsonWF D.doc) (xs : Array Json)
     rw [hd]
     exact congrArg Json.obj (raw_insert_same t ht "units" (.arr xs) hget)
   | _ => simp [hd, Json.getObjVal?] at h
-
 end PatchIdentity
 
 theorem lookup_mem {β : Type} (k : String) (b : β) : ∀ (l : List (String × β)), l.lookup k = some b → (k, b) ∈ l
@@ -1568,10 +1555,6 @@ theorem admitBlock_drop (D : SDoc) (g : Governor) (hg : g ∈ D.governors) (ht :
   simp only [beq_iff_eq, List.contains_iff_mem, decide_eq_true_eq] at hC
   rw [hC]
   simp only [Except.bind] at ⊢
-  have hnamesDup : firstDup (D.listNames.map (·.1.name)) = none := by
-    cases hh : firstDup (D.listNames.map (·.1.name)) with
-    | none => rfl
-    | some x => exact False.elim (by solve_by_elim)
   simp only [defSpans] at hK ⊢
   rw [hK]
   simp only [Except.bind] at ⊢
