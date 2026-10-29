@@ -2,7 +2,7 @@
 
 **DRI signature needed for DELTA rows 2 and 3.** The prescribed `msg.sh dri sc-5rc` request failed because the sandbox cannot write `/home/seyran/code/manage-agents/inbox/dri`; these rows remain unsigned.
 Status: document answers and rendering built; four `Pinned.JsonWF` proofs moved to sc-5rd because sc-1af's route check is not on main.
-Code HEAD: `815a2e5f9` (plus the collection-trailer commit `15e00a8c0`). Open: DRI ruling and final evidence commit. No full gate run; the chain runs it on committed HEAD.
+Code HEAD: `815a2e5f9` (plus the collection-trailer commit `15e00a8c0`). Open: DRI ruling and the sc-5rd dependency. No full gate run; the chain runs it on committed HEAD.
 
 ## Scope and plan rows
 
