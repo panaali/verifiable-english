@@ -1,3 +1,8 @@
+# VE aarch64 gate job on GitHub Actions (2026-10-28 dri-cloudcpu, reviews/cloud-cpu-20261028.md): ve-job.yml with the run job on
+# ubuntu-24.04-arm (Linux arm64, 4 vCPU / 16 GB, free for public repositories), the aarch64 toolchain (Lean v4.24.0
+# linux_aarch64, uv 0.12.19 aarch64, rustup if the image lacks it; sha256 pinned, digests checked against GitHub's release
+# API 2026-10-28) and a 330-min job timeout (GitHub's job limit is 6 h). Staged only: gha-arm-gate.sh puts it at
+# .github/workflows/ve-job.yml of its own job commits (shadow pilot of the train's aarch64 gate leg); VE main is unchanged.
 # VE compute job on GitHub Actions: a zero-token compute pool (manage-agents dri-gha, 2026-10-28).
 # A job is one push of branch ci-job/<job> by the VM dispatcher (gha-dispatch.sh, via github-push.sh only). Its tip is ONE
 # commit on top of the job's exported head that adds only ci-job/job.json, ci-job/job.sh and this file.
@@ -18,8 +23,8 @@ concurrency:
 jobs:
   run:
     if: github.repository == 'panaali/verifiable-english'
-    runs-on: ubuntu-24.04
-    timeout-minutes: 120
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 330
     permissions:
       contents: read
     outputs:
@@ -50,18 +55,23 @@ jobs:
           set -euo pipefail
           t0=$(date +%s)
           cd "$RUNNER_TEMP"
-          curl -sSfL --retry 3 -o lean.tar.zst https://github.com/leanprover/lean4/releases/download/v4.24.0/lean-4.24.0-linux.tar.zst
-          echo "b14f5e5159219dd1a1956c3b806813319f5e94ccd5bdfd56f54520609a5bb5ec  lean.tar.zst" | sha256sum -c -
-          curl -sSfL --retry 3 -o uv.tgz https://github.com/astral-sh/uv/releases/download/0.12.19/uv-x86_64-unknown-linux-gnu.tar.gz
-          echo "23bf5552d220e0842b65c862097b2ebaeba0064b74eda5e565e77fd25969d8c8  uv.tgz" | sha256sum -c -
+          curl -sSfL --retry 3 -o lean.tar.zst https://github.com/leanprover/lean4/releases/download/v4.24.0/lean-4.24.0-linux_aarch64.tar.zst
+          echo "237f8ef43fb40d16681871fb04b2c56f023afc02a5a3877831d35dd493823c23  lean.tar.zst" | sha256sum -c -
+          curl -sSfL --retry 3 -o uv.tgz https://github.com/astral-sh/uv/releases/download/0.12.19/uv-aarch64-unknown-linux-gnu.tar.gz
+          echo "0804e9b164c64b6914182d5920c08551958a095986f10a3731056df701126436  uv.tgz" | sha256sum -c -
           command -v zstd > /dev/null || { sudo apt-get update -qq && sudo apt-get install -y -qq zstd; }
           sudo mkdir -p /opt/lean && sudo chown "$(id -u)" /opt/lean
           zstd -dc lean.tar.zst | tar -x -C /opt/lean --strip-components=1
           sudo tar -xzf uv.tgz -C /usr/local/bin --strip-components=1
           rm -f lean.tar.zst uv.tgz
           sudo ln -sf /opt/lean/bin/lean /usr/local/bin/lean; sudo ln -sf /opt/lean/bin/lake /usr/local/bin/lake
+          if ! command -v rustup > /dev/null; then
+            curl -sSfL --retry 3 -o rustup-init https://static.rust-lang.org/rustup/archive/1.28.2/aarch64-unknown-linux-gnu/rustup-init
+            echo "e3853c5a252fca15252d07cb23a1bdd9377a8c6f3efa01531109281ae47f841c  rustup-init" | sha256sum -c -
+            chmod +x rustup-init && ./rustup-init -y -q --profile minimal --default-toolchain none && rm -f rustup-init
+            echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"; fi
           printf 'step\trc\tseconds\ntools\t0\t%s\n' "$(( $(date +%s) - t0 ))" > "$RUNNER_TEMP/out/gha-setup.tsv"
-          { echo "run_id=$GITHUB_RUN_ID attempt=$GITHUB_RUN_ATTEMPT runner=$RUNNER_NAME image=${ImageOS:-?}-${ImageVersion:-?}"; lean --version; uv --version; df -h / | tail -1; } > "$RUNNER_TEMP/out/gha.txt"
+          { echo "run_id=$GITHUB_RUN_ID attempt=$GITHUB_RUN_ATTEMPT runner=$RUNNER_NAME image=${ImageOS:-?}-${ImageVersion:-?} arch=$(uname -m) nproc=$(nproc)"; lean --version; uv --version; (command -v rustup || echo "$HOME/.cargo/bin/rustup"); df -h / | tail -1; } > "$RUNNER_TEMP/out/gha.txt"
       - name: job
         run: |
           set -uo pipefail
