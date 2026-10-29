@@ -4,9 +4,9 @@ This case records a first VE translation of the *Preparedness Framework*, versio
 [PLAN.md](PLAN.md) section 6 was frozen before this translation and is unchanged. The baseline measures source
 coverage and stage 0 admission. The key-answering harness remains `usecase-pf-run`.
 
-The translation is deliberately sparse. It covers the six Table 1 level facts, selected F1 guideline readings and
-direct D1 rules. It names other located clauses as OPEN or UNFORMALISED; it does not claim that untranslated Table 2
-responses, Appendix B process, C.3 practices or severe-harm numbers are certified. PLAN section 12 lists deviations
+The translation is deliberately sparse. It covers the six Table 1 level facts, source-linked draft blocks for every
+F family and direct D1 rules. It names other located clauses as OPEN or UNFORMALISED; it does not claim that pending
+Table 2 readings, Appendix B process, C.3 practices or severe-harm numbers are certified. PLAN section 12 lists deviations
 from the planned D1 to D3 translation.
 
 ## Source
@@ -27,7 +27,7 @@ document under `/tmp` for VE's check.
 
 | File | Role |
 |---|---|
-| [pf_vocabulary.py](pf_vocabulary.py), [environment.d1.json](environment.d1.json) | D1 vocabulary: six levels, three categories, 29 regulated predicates |
+| [pf_vocabulary.py](pf_vocabulary.py), [environment.d1.json](environment.d1.json) | D1 vocabulary: six levels, three categories and source-linked regulated acts |
 | [rules.d1.ve](rules.d1.ve), [facts.d1.ve](facts.d1.ve) | Source-linked rules, reading alternatives and six level/category facts |
 | [pf_translation.py](pf_translation.py) | VE one-reading parser for each rule and fact block |
 | [build_document.py](build_document.py), [spans.json](spans.json), [coverage.json](coverage.json) | Source partition and VE coverage status |
@@ -49,9 +49,9 @@ sections remain visible whenever the whole source unit contains a duty or hedge.
 | Status | Units | Bytes | Share |
 |---|---:|---:|---:|
 | CHECKED | 7 | 170 | 0.3% |
-| OPEN | 29 | 5,446 | 8.1% |
+| OPEN | 33 | 6,859 | 10.2% |
 | LABELLED | 48 | 5,327 | 7.9% |
-| UNFORMALISED | 305 | 56,475 | 83.8% |
+| UNFORMALISED | 301 | 55,062 | 81.7% |
 
 Each non-CHECKED byte has a blocker in [gaps.json](../../docs/usecases/safetyfw/openai-preparedness/gaps.json).
 An OPEN reading set remains pending. UNFORMALISED units name the missing D1 feature or
@@ -60,19 +60,19 @@ counts under each. “Alone” means exactly one recorded blocker.
 
 | Family | Units | Bytes | Alone: units, bytes | Here |
 |---|---:|---:|---:|---|
-| AP | 116 | 20,766 | 116, 20,766 | D1 has no act or complete rule for these duties |
+| AP | 119 | 21,638 | 116, 20,766 | D1 has no act or complete rule for these duties |
 | AT | 58 | 12,973 | 56, 12,386 | hedges, beliefs and expectations |
 | DF | 7 | 1,185 | 0, 0 | default readings |
-| ET | 28 | 8,086 | 17, 6,071 | event order and deadlines |
-| JT | 24 | 4,157 | 10, 1,613 | open judgments |
+| ET | 28 | 8,086 | 16, 5,728 | event order and deadlines |
+| JT | 26 | 4,685 | 10, 1,613 | open judgments |
 | QT | 2 | 702 | 1, 305 | quantities and ratios |
-| SC | 27 | 4,457 | 26, 4,341 | per-item or universal scope |
+| SC | 28 | 4,896 | 25, 3,945 | per-item or universal scope |
 | WG | 1 | 183 | 0, 0 | weighing of risks |
 | external reference | 2 | 309 | 2, 309 | outside standards |
 | no claim to check | 48 | 5,327 | 48, 5,327 | title, contents, pure headings and marked examples |
-| readings | 92 | 13,372 | 88, 12,489 | unselected source readings |
+| readings | 92 | 13,583 | 84, 11,178 | unselected source readings |
 
-The 305 UNFORMALISED units carry specific blocker codes in `spans.json`; no unit remains
+The 301 UNFORMALISED units carry specific blocker codes in `spans.json`; no unit remains
 `not_translated`. VE reports 21 declared open terms and 14 unresolved reading sets as
 residual. No assumption, bridge leaf or exception is represented as certified.
 

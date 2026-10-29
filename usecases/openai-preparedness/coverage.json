@@ -3,24 +3,24 @@
  "bytes_by_kind": {
   "asserted": 48,
   "exposition": 5327,
-  "norm": 5568,
-  "unformalised": 56475
+  "norm": 6981,
+  "unformalised": 55062
  },
  "bytes_by_status": {
   "CHECKED": 170,
   "LABELLED": 5327,
-  "OPEN": 5446,
-  "UNFORMALISED": 56475
+  "OPEN": 6859,
+  "UNFORMALISED": 55062
  },
  "coverage_percent": 100,
  "default_exceptions_by_decider": {},
  "document": "pf.d1.ve.md (built locally, not committed)",
- "document_sha256": "78fa9571dacefad223755da56be49bbc419064237dec0db2fdbed9f8150faa53",
+ "document_sha256": "d6a374f3119aaffe1b322c267f881ec758a9ba8d53add837c331b7f845a7632c",
  "master_bytes_by_status": {
   "CHECKED": 170,
   "LABELLED": 5327,
-  "OPEN": 5446,
-  "UNFORMALISED": 56475
+  "OPEN": 6859,
+  "UNFORMALISED": 55062
  },
  "residual": {
   "assumptions": 0,
@@ -29,10 +29,10 @@
   "holistic_overrides": 0,
   "instruction_switches": 0,
   "open_terms": 21,
-  "unresolved_reading_sets": 14,
+  "unresolved_reading_sets": 18,
   "weighing_points": 0
  },
- "residual_total": 35,
+ "residual_total": 39,
  "soft_background_labels": [],
  "soft_residual_labels": [],
  "soft_status": "CHECKED",
@@ -42,10 +42,10 @@
   "event_order": 17,
   "external_reference": 2,
   "hedged_claim": 55,
-  "quantifier_scope": 26,
+  "quantifier_scope": 25,
   "quantity": 2,
-  "unmapped_claim": 86,
-  "unmapped_clause": 2,
-  "unmapped_duty": 114
+  "unmapped_claim": 82,
+  "unmapped_clause": 4,
+  "unmapped_duty": 113
  }
 }

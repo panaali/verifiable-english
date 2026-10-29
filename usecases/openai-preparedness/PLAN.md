@@ -441,13 +441,13 @@ safety-framework 9. Report, unscored, what changes without N1 and without N2.
 
 ## 12. Deviations (after running VE; empty at plan time)
 
-1. **D1 remains a sparse baseline, not the full F1–F17 translation planned in section 7.** The 34 authored rule
-   blocks include F1 guideline alternatives. Twenty-two direct blocks sit in D1 units; four source-linked drafts
-   for F7/F9 are withheld from D1 content because temporal or per-item semantics are not encoded. The reading
-   alternatives remain pending. F5, F6, F11, F12 and F17 have OPEN source units, but their per-choice rules are
-   still to be written.
-   F13's “periodically review” is UNFORMALISED (ET). Other clauses without an admitted rule carry
-   feature-specific blockers and remain outside CHECKED. The follow-up must finish those rules before key answering.
+1. **D1 remains a sparse baseline, not a completed F1–F17 translation.** Source-linked draft blocks now exist for
+   every F family, including F5/F6/F11/F12/F17 and F13. The F6, F11, F12 and F17 reading alternatives are named
+   per choice; the F11 adjustment obligations are shared by both choices. These drafts do not discharge the source
+   gaps: F5's checkpoint and coverage decision remain UNFORMALISED, F13's periodicity and assessment remain
+   UNFORMALISED, and Table 2's row readings remain OPEN with SC/AP waits where the draft omits scope, a disjunction
+   or consultation. All reading content stays pending. Other clauses without a complete admitted rule carry
+   feature-specific blockers and remain outside CHECKED. The follow-up must resolve these gaps before key answering.
 2. **Only six Table 1 level markers carry D1 facts.** They are separate 6- or 10-byte units. Their capability
    descriptions, risk claims and safeguard bullets are separate OPEN or UNFORMALISED units. This prevents the whole
    row from becoming CHECKED when the two stated facts are all D1 encoded.

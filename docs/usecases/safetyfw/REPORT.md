@@ -54,7 +54,7 @@ the same way as safety-framework's `test_span_accounting_is_complete`.
 | DeepMind FSF 3.1 | Oct 18 (fsf-r1) | 4,595 (8.5%) | 7,356 (13.5%) | 35,557 (65.4%) | 6,865 (12.6%) | 54,373 |
 | DeepMind FSF 3.1 | Oct 28 (fsf-r2) | 4,595 (8.5%) | 7,356 (13.5%) | 35,557 (65.4%) | 6,865 (12.6%) | 54,373 |
 | Anthropic RSP 3.4 | Oct 28 (corrected baseline) | 5,327 (9.0%) | 13,214 (22.2%) | 37,248 (62.7%) | 3,621 (6.1%) | 59,410 |
-| OpenAI PF v2 | Oct 29 (clause and label audit) | 170 (0.3%) | 5,446 (8.1%) | 5,327 (7.9%) | 56,475 (83.8%) | 67,418 |
+| OpenAI PF v2 | Oct 29 (D1 family drafts) | 170 (0.3%) | 6,859 (10.2%) | 5,327 (7.9%) | 55,062 (81.7%) | 67,418 |
 
 Sources: [fsf-r2/gaps.json](../safety-framework/fsf-r2/gaps.json) (`master_bytes_by_status`, Oct 1, Oct 18 and
 today), [anthropic-rsp/gaps.json](anthropic-rsp/gaps.json) and
@@ -83,16 +83,16 @@ readings records source claims that still lack a chosen formal reading. The figu
 | Family | DeepMind: all / alone | Anthropic: all / alone | OpenAI: all / alone | Three: all / alone |
 |---|---:|---:|---:|---:|
 | no claim to check | 29,619 / 29,619 | 31,104 / 31,104 | 5,327 / 5,327 | 66,050 / 66,050 |
-| readings | 3,597 / 735 | 3,989 / 2,106 | 13,372 / 12,489 | 20,958 / 15,330 |
-| JT | 7,976 / 5,114 | 11,372 / 6,892 | 4,157 / 1,613 | 23,505 / 13,619 |
+| readings | 3,597 / 735 | 3,989 / 2,106 | 13,583 / 11,178 | 21,169 / 14,019 |
+| JT | 7,976 / 5,114 | 11,372 / 6,892 | 4,685 / 1,613 | 24,033 / 13,619 |
 | AT | 5,617 / 5,617 | 6,510 / 6,510 | 12,973 / 12,386 | 25,100 / 24,513 |
-| ET | 2,212 / 2,212 | 1,390 / 489 | 8,086 / 6,071 | 11,688 / 8,772 |
+| ET | 2,212 / 2,212 | 1,390 / 489 | 8,086 / 5,728 | 11,688 / 8,429 |
 | external reference | 1,978 / 1,978 | 797 / 797 | 309 / 309 | 3,084 / 3,084 |
 | DF | 551 / 551 | 866 / 405 | 1,185 / 0 | 2,602 / 956 |
-| SC | 283 / 283 | 1,935 / 693 | 4,457 / 4,341 | 6,675 / 5,317 |
+| SC | 283 / 283 | 1,935 / 693 | 4,896 / 3,945 | 7,114 / 4,921 |
 | WG | 807 / 807 | 551 / 551 | 183 / 0 | 1,541 / 1,358 |
 | QT | 0 / 0 | 105 / 0 | 702 / 305 | 807 / 305 |
-| AP | 0 / 0 | 0 / 0 | 20,766 / 20,766 | 20,766 / 20,766 |
+| AP | 0 / 0 | 0 / 0 | 21,638 / 20,766 | 21,638 / 20,766 |
 
 AP now carries the largest share of non-CHECKED bytes in the OpenAI case because the D1
 act vocabulary does not express those source duties. The table is regenerated from the saved
@@ -294,7 +294,7 @@ Acceptance ownership for this baseline:
 
 ## 15. Review correction on this branch
 
-F1 remains open. The D1 document still lacks F5/F6/F11/F12/F17 per-choice rules. Its former generic
+At the recheck1 HEAD, F1 remained open. The D1 document lacked F5/F6/F11/F12/F17 per-choice rules. Its former generic
 `not_translated` backlog is classified by immediate blocker, but those source claims remain unformalised.
 D2 still leaves the two AIS causal cells open; D3 still leaves the vague severity quantities open.
 The sparse translation cannot be reported as a completed PLAN 7 deliverable, and no DRI ruling signs a
@@ -372,3 +372,23 @@ test files on the VM; their saved results each have exit 0, including `test_diff
 `test_safetyfw_usecases.py`. The wrapper exited 1 only after the tests, when writing its performance map to
 the read-only home cache (`~/.cache/ve-testmap`). No test failed; the map write needs a writable
 `VE_TESTMAP_CACHE` on a future selection run.
+
+## 18. Recheck1 F1 family completion (2026-10-29)
+
+F1's executable probe failed before this change and passes after it. D1 now has source-linked draft blocks for
+F5, F6, F11, F12 and F17, plus F13, so every planned F1–F17 family has a block. The reading inventory binds F6's
+default, F11's two adjustment interpretations and their shared conditions, the five separate Table 2 responses,
+and F17's sufficient and iff interpretations to their named choices. The F17 iff interpretation includes a
+separate negative guard over the five individual criteria. `test_pf_all_planned_d1_families_have_source_bound_drafts`
+checks all families, source linkage, choice binding, parsed guards and source-unit status. Removing F11's exception
+from the choice inventory made that test fail before restoration.
+
+The source partition still totals 67,418 bytes and keeps 170 CHECKED bytes. The five Table 2 source units are OPEN;
+Sandbagging and Nuclear retain AP waits for the disjunctive response and consultation details. F5's decision and
+checkpoint and F13's periodic review and assessment remain UNFORMALISED. The pending reading sets still contain no
+admitted rule content, so these drafts do not answer any frozen key item. The generated D1 environment, source
+spans, coverage, stage 0 and gaps were refreshed from their owning scripts. There is no checker verdict, diagnostic,
+fault-order or trust-budget delta, hence no new DELTA row or DRI signature.
+
+The three `main-known-red.txt` tests remain pre-existing and were not edited. The full suite and release gate were
+not run under this branch's test instruction.
