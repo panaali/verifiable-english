@@ -132,10 +132,11 @@ def test_soft_fill_uses_every_lean_generated_premise_class():
     assert kind == "soft"
     from ve.softnorms import SoftEnvironment, SoftNormDocument
     environment = SoftEnvironment(source)
+    compiled = [{"id": f"u{i}", "kind": "norm", "content": item}
+                for i, item in enumerate(norms)]
     doc = {"environment": environment, "soft_document": SoftNormDocument(environment, norms),
-           "rights_document": None, "meta": {"units": [
-               {"id": f"u{i}", "kind": "norm", "content": item} for i, item in enumerate(norms)]},
-           "units": [], "norms": None, "norm_defaults": None}
+           "rights_document": None, "meta": {"units": compiled},
+           "units": compiled, "norms": None, "norm_defaults": None}
     row = run_case({"id": "fill", "kind": "norm-defaults-elaborate",
                     "environment": source, "norms": norms})
     assert row["soft"] and row["premises"]
