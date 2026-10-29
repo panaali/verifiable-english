@@ -607,3 +607,200 @@ def test_the_words_route_still_refuses_what_is_not_a_regulated_clause(item, mess
     from ve import words
     with pytest.raises(VEError, match=message):
         words.lines(Environment(environment(**DUAL)), [item])
+
+
+# ap-1bd: typing, the model path, the readings route and `ve document` read `acts@0` (Lean's answers, relayed)
+
+PLAIN = {"paid": ENV["vocabulary"]["predicates"]["paid"]}  # every regulated declaration plain
+
+
+def plain_environment(profiles=None):
+    data = environment(profiles)
+    data["vocabulary"]["predicates"] = copy.deepcopy(PLAIN)
+    return data
+
+
+def test_an_acts_formula_is_typed_and_its_models_checked_by_lean():
+    from ve.ast import Forall, Unary, Var, check_formula
+    from ve.model import FiniteModel
+    env = Environment(environment(**DUAL))
+    check_formula(env, Forall("person", Unary("paid", Var(0))))
+    with pytest.raises(VEError, match="TypeMismatch: Predicate 'paid' expects"):
+        check_formula(env, Forall("case", Unary("paid", Var(0))))
+    def model(may):
+        return {"complete": True, "domains": {"person": ["p"], "case": ["c"]}, "constants": {},
+                "relations": {**{p: [] for p in env.predicates}, "must_hear": [["p", "c"]], "may_hear": may}}
+    FiniteModel.from_dict(env, model([["p", "c"]]))
+    with pytest.raises(VEError, match="required relation must_hear exceeds permission may_hear"):
+        FiniteModel.from_dict(env, model([]))
+
+
+def test_rust_searches_a_wording_only_acts_layer_and_refuses_any_other():
+    """Rust's search reads the environment without an `acts@0` layer that is wording only (every regulated
+    declaration plain); with a permission's act it still refuses the profile. Lean checks every witness."""
+    from ve.ast import Exists, Unary, Var
+    from ve.errors import UnsupportedProfile
+    from ve.profiles import model_environment, without_wording_acts
+    from ve.search import find_countermodel
+    plain = model_environment(plain_environment())
+    view = without_wording_acts(plain)
+    assert view["profiles"] == ["norms@0", "relational-fol@0"] and "acts" not in view["vocabulary"]
+    assert view["vocabulary"]["predicates"]["paid"]["regulated"] == {"role": "plain", "default": "deny"}
+    assert without_wording_acts(view) == view
+    for kept in (model_environment(environment()), model_environment(environment(**DUAL)),
+                 {**view, "vocabulary": {**view["vocabulary"], "acts": {"fixed": FIXED}}}):
+        assert without_wording_acts(kept) == kept
+    found = find_countermodel(Environment(plain_environment()), (), Exists("person", Unary("paid", Var(0))))
+    assert found.status == "Found" and found.model.relations["paid"] == frozenset()
+    with pytest.raises(UnsupportedProfile, match="acts@0"):
+        find_countermodel(Environment(environment()), (), Exists("person", Unary("paid", Var(0))))
+
+
+def readings_row(env, units, sets=()):
+    from ve.readings_route import document_wire
+    [row] = lean_routes.rows("readings-route", [{"id": "v", "kind": "readings-validate", "environment": env,
+                                                 "document": document_wire(units, list(sets))}])
+    return row
+
+
+BASE_REFUSAL = "UnsupportedProfile: Unsupported profile acts@0"
+
+
+def test_the_readings_route_reads_single_acts_and_refuses_a_joined_act():
+    rule = {"norm": {"name": "m", "predicate": "paid", "sign": True, "guard": ["top"], "unless": [], "over": []}}
+    readings = ["acts@0", "norms@0", "readings@1", "relational-fol@0"]
+    assert readings_row(plain_environment(readings), [{"id": "u1", "kind": "norm", "content": rule}]).get("error") is None
+    # a reading set over `acts@0` keeps the base's refusal (ap-1bg)
+    sets = [{"id": "rs1", "unit": "u1", "version": 1, "status": "open", "situations": {}, "readings": [
+        {"id": r, "kind": "norm", "content": {"norm": {**rule["norm"], "sign": r == "a"}}} for r in "ab"]}]
+    assert readings_row(plain_environment(readings), [{"id": "u1"}], sets)["error"] == BASE_REFUSAL
+    joined = plain_environment(readings)
+    joined["vocabulary"]["predicates"]["paid"]["regulated"]["act"] = A5
+    assert readings_row(joined, [])["error"] == ("UnsupportedProfile: acts@0 on the readings route admits single acts "
+                                                 "only; the act of paid joins acts")
+    joined["profiles"].remove("readings@1")
+    assert refusal(joined) == "InvalidInput: act phrase for paid joins acts with 'and' outside a fixed phrase"
+
+
+U076 = "1. Everyone has the right to take part in the government of his country, directly or through freely chosen " \
+       "representatives."
+
+
+def u076(tmp_path, profiles):
+    """The UDHR pilot's act-phrase probe (u076): one plain act with one fixed phrase, a part document (L70)."""
+    from tests.test_document import write_doc
+    act = "{0} to take part in the government of his country directly or through freely chosen representatives"
+    env = {"language": "ve.core@0.2", "profiles": profiles, "spec_revision": ENV["spec_revision"], "vocabulary": {
+        "constants": {}, "sorts": {"person": {"description": "a human person"}},
+        "predicates": {"take_part": predicate(["person"], {"role": "plain", "default": "unspecified", "act": act,
+                                                           "form": "has the right"})},
+        "acts": {"fixed": ["directly or through freely chosen representatives"]}}}
+    norm = {"norm": {"guard": ["top"], "name": "u076", "over": [], "predicate": "take_part", "sign": True,
+                     "unless": []}}
+    return write_doc(tmp_path, U076.encode(), [{"id": "u076", "kind": "norm", "meaning": "specified", "support": "none",
+                                                "span": [0, len(U076.encode())], "content": norm}],
+                     environment_json=env, open_terms=[])
+
+
+def test_a_udhr_act_phrase_unit_is_checked_end_to_end(tmp_path):
+    from ve.document import check_document, render_document
+    path = u076(tmp_path, ["acts@0", "documents@1", "norm-defaults@0", "norms@0", "relational-fol@0"])
+    report = check_document(path)
+    assert report["coverage"]["bytes_by_status"] == {"CHECKED": len(U076.encode())}
+    assert report["premises"]["status"] == "model"
+    assert render_document(path).rstrip().endswith("Checked reading: Every person has the right to take part in the government "
+                                          "of his country directly or through freely chosen representatives.")
+    with pytest.raises(VEError, match=r"fields do not match: expected \[sorts, predicates, constants\], got \[acts"):
+        check_document(u076(tmp_path, ["documents@1", "norm-defaults@0", "norms@0", "relational-fol@0"]))
+
+
+# ap-1bd review F1: an `acts@0` environment with `readings@1` loads, so the wording of its plain acts is asked of the
+# readings route, which runs the elaborate case on the lower route without the head profile (Lean's
+# `Readings.Run.runLower`); before, the norms and norm-defaults routes refused `readings@1` and every English entry
+# point (`EnglishVocabulary`) failed.
+
+def test_a_readings_environment_has_leans_wordings():
+    """PROBE F1."""
+    from ve.norms import plain_wordings
+    env = Environment(plain_environment(["acts@0", "norms@0", "readings@1", "relational-fol@0"]))
+    assert plain_wordings(env) == {"paid": A2_WORDING}
+
+
+def test_every_acts_list_the_environment_mode_accepts_has_leans_wordings():
+    """F1, the class: every list of `acts@0`, `norms@0`, `relational-fol@0` and one or two more profiles that the
+    environment mode accepts with a plain act gives the wording Lean gives without the extra profiles, through
+    `EnglishVocabulary`, which every English entry point builds."""
+    from ve.english import EnglishVocabulary
+    accepted = []
+    for profiles in _acts_lists():
+        try:
+            env = Environment(plain_environment(profiles))
+        except VEError:
+            continue
+        accepted.append(profiles)
+        assert EnglishVocabulary(env).predicates["paid"] == A2_WORDING, profiles
+    assert {"readings@1", "norm-defaults@0"} <= {p for ps in accepted for p in ps if "readings@1" in ps}, accepted
+
+
+def test_a_udhr_act_phrase_unit_with_readings_is_checked_and_rendered(tmp_path):
+    """F1's measured case: u076 with `readings@1` (the UDHR pilot's environment lists it and `norm-defaults@0`)."""
+    from ve.document import check_document, render_document
+    path = u076(tmp_path, ["acts@0", "documents@1", "norm-defaults@0", "norms@0", "readings@1", "relational-fol@0"])
+    assert check_document(path)["coverage"]["bytes_by_status"] == {"CHECKED": len(U076.encode())}
+    assert render_document(path).rstrip().endswith("Checked reading: Every person has the right to take part in the "
+                                                   "government of his country directly or through freely chosen "
+                                                   "representatives.")
+
+
+READINGS_PROFILES = ["acts@0", "norms@0", "readings@1", "relational-fol@0"]
+
+
+@pytest.mark.parametrize("mutant", REBOUND + ["field-dropped"])
+def test_readings_wordings_not_bound_to_the_request_are_unavailable(monkeypatch, mutant):
+    """F1, R8: the readings route's elaborate row (the one `plain_wordings` asks for a `readings@1` environment) is
+    bound by the same `_bind_wordings`."""
+    from ve.backends import relay
+    from ve.errors import CheckerUnavailable
+    from ve.norms import plain_wordings
+    data = environment(READINGS_PROFILES)
+    env = Environment(data)
+    [row] = relay.decide("readings-route", [{"id": "norms-elaborate", "kind": "norms-elaborate", "environment": data,
+                                             "norms": []}])
+    assert row["wordings"] == {"heard": A1_WORDING, "paid": A2_WORDING}
+    if mutant == "field-dropped":
+        del row["wordings"]
+    else:
+        row["wordings"] = dict(_rebound(row["wordings"]))[mutant]
+    asked = []
+    monkeypatch.setattr(relay, "decide_once", lambda mode, case: asked.append(mode) or row)
+    with pytest.raises(CheckerUnavailable, match="wordings are not bound"):
+        plain_wordings(env)
+    assert asked == ["readings-route"]
+
+
+@pytest.mark.parametrize("profiles", [READINGS_PROFILES, sorted(READINGS_PROFILES + ["norm-defaults@0"])])
+@pytest.mark.parametrize("value", RETYPED)
+def test_a_retyped_readings_wordings_field_fails_the_schema(profiles, value):
+    """F1: the readings route's row for a lower route's elaborate case is that route's row, so its `wordings` member
+    is typed by the same generated schema; every retype is refused before a reader sees it."""
+    from tests.lean_build import lean_build
+    from tests.subprocesses import HANG_TIMEOUT
+    from ve.backends.lean_service import LeanService, _decode_json, case_digest, case_texts
+    from ve.backends.service_schema import Invalid, check_response
+    kind = "norm-defaults-elaborate" if "norm-defaults@0" in profiles else "norms-elaborate"
+    cases = [{"id": "w", "kind": kind, "environment": Environment(environment(profiles)).to_dict(), "norms": []}]
+    text = json.dumps(cases, ensure_ascii=False, separators=(",", ":"))
+    with LeanService(lean_build("ve_service") / "ve_service", timeout=HANG_TIMEOUT) as service:
+        _, response = service.exchange("readings-route", text, 1, timeout=HANG_TIMEOUT)
+    request = {"id": response["id"], "mode": "readings-route", "cases": cases,
+               "digests": [case_digest(t) for t in case_texts(text)], "bytes": len(text.encode())}
+    check_response("readings-route", _decode_json(json.dumps(response).encode()), request)
+    assert response["results"][0]["result"]["wordings"] == {"heard": A1_WORDING, "paid": A2_WORDING}
+    mutant = copy.deepcopy(response)
+    if value == "deleted":
+        del mutant["results"][0]["result"]["wordings"]
+    else:
+        mutant["results"][0]["result"]["wordings"] = "DEEP" if value == "deep" else value
+    line = json.dumps(mutant).replace('"DEEP"', "[" * 10_000 + "]" * 10_000).encode()
+    with pytest.raises((Invalid, ValueError)):
+        check_response("readings-route", _decode_json(line), request)
