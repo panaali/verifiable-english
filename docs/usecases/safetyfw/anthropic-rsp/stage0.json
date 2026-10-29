@@ -1,0 +1,250 @@
+{
+ "M6": {
+  "defaults_untraced": [],
+  "narrowings": {
+   "N1": "every RS0 statement is a commitment (no set)",
+   "N2": "the changelog for v1.0 to v3.3 is history: LABELLED, no rule",
+   "N3": "3.6.1 \"may not\" is a prohibition (f15-financial-interest, no set)"
+  },
+  "order_or_causal_predicates": [],
+  "permissions_untraced": [],
+  "thresholds_without_premise": [],
+  "untraced": []
+ },
+ "P1": {
+  "admitted": true,
+  "expected": "admitted; the rule is OPEN",
+  "input": "s36-full-review alone: f14-full-review, whose guard reads the open terms OT5 and OT4",
+  "premises": "model",
+  "route": null,
+  "units": {
+   "s36-full-review": "OPEN"
+  },
+  "unresolved_reading_sets": 0
+ },
+ "P2": {
+  "admitted": true,
+  "expected": "a set with a no-rule reading stays pending",
+  "input": "t1-plan alone with RS1 (cond, uncond, ov: no rule), through ve document check",
+  "premises": "UNKNOWN",
+  "route": null,
+  "units": {
+   "t1-plan": "OPEN"
+  },
+  "unresolved_reading_sets": 1
+ },
+ "P3": {
+  "admitted": true,
+  "classes": {
+   "existential_threats": "catastrophic",
+   "harm_of_misaligned_high_stakes": "catastrophic",
+   "harm_of_non_novel_chem_bio_weapons": "catastrophic",
+   "harm_of_novel_chem_bio_weapons": "catastrophic"
+  },
+  "environment_id": "e64fcee5e0fb01abb86166f27305d28764f0b04982073812b666891944152e84",
+  "expected": "admitted, or S3 and S4 move to D1 as plain facts",
+  "input": "D2: a risk environment of the four row harms and footnote 1's instance, with the stated might cells",
+  "leads_cells": 0,
+  "might_cells": 16,
+  "stated_cells": [
+   {
+    "alternative": "deploy_without_non_novel_chem_bio_weapons_plans",
+    "harm": "harm_of_non_novel_chem_bio_weapons",
+    "leads": false,
+    "might": true
+   },
+   {
+    "alternative": "deploy_without_novel_chem_bio_weapons_plans",
+    "harm": "harm_of_novel_chem_bio_weapons",
+    "leads": false,
+    "might": true
+   },
+   {
+    "alternative": "deploy_without_misaligned_high_stakes_plans",
+    "harm": "harm_of_misaligned_high_stakes",
+    "leads": false,
+    "might": true
+   }
+  ],
+  "with_unclassified_t4_harm": "HarmUnclassified: harm_of_automated_rd"
+ },
+ "P4": {
+  "admitted": true,
+  "certificates": {
+   "D1": true,
+   "D2": true,
+   "D3b": true,
+   "D4": true,
+   "D5": true
+  },
+  "expected": "admitted, with certificates",
+  "input": "D3: the changelog dates and the day counts of F8, F9, F16"
+ },
+ "P5": {
+  "bytes_by_status": {
+   "CHECKED": 4676,
+   "LABELLED": 37899,
+   "OPEN": 13214,
+   "UNFORMALISED": 3621
+  },
+  "expected": "bytes_by_status totals 59,410",
+  "input": "D1 over the 59,410-byte text",
+  "total": 59410,
+  "units": 303
+ },
+ "P6": {
+  "contiguous": true,
+  "expected": "the master map is total and disjoint",
+  "input": "the units routed to D2 and D3",
+  "master_total": 59410,
+  "routed": {
+   "D2": 202,
+   "D3": 449
+  }
+ },
+ "P7": {
+  "rules_per_source": {
+   "F1 to F4": [
+    "rows-cond",
+    "rows-uncond"
+   ],
+   "F10": [
+    "f10-candid-default",
+    "f10-in-line",
+    "f10-attempt-strict",
+    "f10-attempt-default"
+   ],
+   "F11": [
+    "f11-factual",
+    "f11-analyses",
+    "f11-review",
+    "f11-goal-missed",
+    "f11-marginal",
+    "f11-assess"
+   ],
+   "F12": [
+    "f12-internal-feedback",
+    "f12-external-default",
+    "f12-approval",
+    "f12-final",
+    "f12-share",
+    "f12-board-approval"
+   ],
+   "F13": [
+    "f13-minimize-default",
+    "f13-redact-p",
+    "f13-disclose",
+    "f13-justify-default"
+   ],
+   "F14": [
+    "f14-public-review-default",
+    "f14-full-review",
+    "f14-ltbt-request"
+   ],
+   "F15": [
+    "f15-financial-interest",
+    "f15-revenue-strict",
+    "f15-revenue-default",
+    "f15-select-approval"
+   ],
+   "F16": [
+    "f16-share-one-week",
+    "f16-ask-commentary",
+    "f16-before-board-default",
+    "f16-all-sections",
+    "f16-split-p",
+    "f16-only-legal"
+   ],
+   "F18": [
+    "f18-rso"
+   ],
+   "F19": [
+    "f19-brief-ltbt",
+    "f19-unredacted",
+    "f19-minimally-redacted"
+   ],
+   "F20": [
+    "f20-process",
+    "f20-recipients",
+    "f20-investigate",
+    "f20-quarterly",
+    "f20-notify-board",
+    "f20-notice-p",
+    "f20-retaliation",
+    "f20-board-recipient"
+   ],
+   "F21": [
+    "f21-no-impeding",
+    "f21-clause"
+   ],
+   "F22": [
+    "f22-internal-review",
+    "f22-third-party-review"
+   ],
+   "F23": [
+    "f23-approval",
+    "f23-publish",
+    "f23-website"
+   ],
+   "F24": [
+    "f24-argument",
+    "f24-delay"
+   ],
+   "F25": [
+    "f25-meet",
+    "f25-delay"
+   ],
+   "F26": [
+    "f26-effort",
+    "f26-need-not-delay"
+   ],
+   "F5": [
+    "f5-strict",
+    "f5-default"
+   ],
+   "F6": [
+    "f6-maintain"
+   ],
+   "F6 \"It will be shared with all full-time employees as well as our Board of Directors (Board) and Long-Term Benefit Trust (LTBT)": [
+    "f6-share"
+   ],
+   "F6 \"We will also keep past Roadmaps available at that link\"": [
+    "f6-keep-past"
+   ],
+   "F6 \"We will provide updates on whether we achieve the goals": [
+    "f6-updates"
+   ],
+   "F6 \"we will strive to avoid situations where we revise the goals in a less ambitious direction simply because we are unable to achieve them\" (RS12 default)": [
+    "f6-strive-default"
+   ],
+   "F7": [
+    "f7-publish"
+   ],
+   "F8": [
+    "f8-public",
+    "f8-internal",
+    "f8-autonomous"
+   ],
+   "F9": [
+    "f9-public",
+    "f9-internal"
+   ],
+   "row T4": [
+    "f5-evidence-strict"
+   ],
+   "section 1 \"We will strive to advance these recommendations through a mixture of example-setting ...\" (RS12 default; under intent no rule)": [
+    "s1-advance-default"
+   ],
+   "the same \"should\"": [
+    "f5-evidence-default"
+   ]
+  },
+  "violations": []
+ },
+ "P8": {
+  "admitted": false,
+  "diagnostic": "CheckerUnavailable: judgments@0 with soft-norms@0 needs its composed Lean route",
+  "expected": "admitted or refused (jt-2c, the composing modes, is not merged)",
+  "input": "s36-full-review with judgments@0 and documents@1 added to D1's profiles"
+ }
+}
