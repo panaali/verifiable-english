@@ -223,8 +223,8 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Cardinality/Wire.lean` | 304 | 304 | 1–304 | `b892dbef05b3…` |
 | `lean/VE/Defaults/Route.lean` | 46 | 46 | 1–46 | `97feda58f0f4…` |
 | `lean/VE/Cardinality/Run.lean` | 172 | 172 | 1–172 | `8bc9a5f0222d…` |
-| `lean/VE/Calc/Jsonl.lean` | 47 | 47 | 1–47 | `6fa7253c3f35…` |
-| **total** | | **39,046** | | |
+| `lean/VE/Calc/Jsonl.lean` | 48 | 48 | 1–48 | `e79aa00abb9d…` |
+| **total** | | **39,047** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner
