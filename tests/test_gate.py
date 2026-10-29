@@ -1,6 +1,7 @@
 """The full gate must reject missing coverage while honoring exact optional cases."""
 import json
 import os
+from pathlib import Path
 import sys
 
 import pytest
@@ -70,6 +71,32 @@ def test_the_gate_suite_runs_on_xdist_on_any_worker_count():
         command = gate.suite_command([sys.executable], workers)
         assert command[command.index("-n") - 2:command.index("-n") + 2] == ["-p", "xdist", "-n", count]
     assert "-n" not in gate.collection_command([sys.executable])
+
+
+def test_a_long_parameterized_id_never_enters_suite_or_retry_argv():
+    node = "tests/test_route_transport.py::test_the_transport_reads_strict_json[" + "x" * 200_073 + "]"
+    for args in (gate.suite_command(["python"], "1", [node]), gate.retry_command(["python"], [node])):
+        assert node not in args
+        assert "tests/test_route_transport.py" in args
+        gate.subprocess.run(["/bin/true", *args], check=True)
+
+
+def test_selection_file_keeps_a_quarantine_retry_on_one_exact_parameter(tmp_path):
+    (tmp_path / "tests").mkdir()
+    (tmp_path / "tests/test_params.py").write_text(
+        "import pytest\n@pytest.mark.parametrize('value', [1, 2])\ndef test_value(value):\n"
+        "    assert value == 1\n")
+    node = "tests/test_params.py::test_value[1]"
+    result = tmp_path / "events.json"
+    env = nested_pytest.environment({**os.environ, "PYTHONPATH": str(ROOT)},
+                                    VE_GATE_PYTEST_RESULT=str(result))
+    env = gate.exact_selection_env(env, tmp_path, [node])
+    run = gate.subprocess.run(gate.retry_command([sys.executable], [node]), cwd=tmp_path,
+                              env=env, capture_output=True, text=True, timeout=HANG_TIMEOUT)
+    assert run.returncode == 0, run.stdout + run.stderr
+    events = json.loads(Path(result).read_text())
+    assert events["selected"] == [node]
+    assert list(events["tests"]) == [node]
 
 
 SAMPLE = """import pytest
