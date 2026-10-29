@@ -30,6 +30,7 @@ def test_scoring_requires_class_and_decider_and_flags_critical_misreading():
     wrong = runner.score(row, "CLASS: SETTLED; DECIDER: NONE; WHY: checked")
     assert not wrong["correct"] and wrong["critical"]
     assert runner.score(row, "No structured answer; it is checked")["critical"]
+    assert not runner.score(row, "CLASS: TURNS; DECIDER: NONE; WHY: it is not settled")["critical"]
     settled = runner.items()[2]
     assert runner.score(settled, "CLASS: SETTLED; DECIDER: NONE; WHY: independent rule")["correct"]
     assert not runner.score(settled, "CLASS: TURNS; DECIDER: NONE; WHY: maybe")["critical"]
