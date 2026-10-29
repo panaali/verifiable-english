@@ -167,6 +167,7 @@ def merge_records(records: list[dict]) -> dict:
             if record.get("status") == "failed" and not record.get("failures"):
                 return refuse(f"shard {number}: failed status without a reason")
             if not isinstance(record.get("quarantine"), dict) or not isinstance(first.get("quarantine"), dict) or \
+                    not isinstance(record["quarantine"].get("retried", {}), dict) or \
                     any(record["quarantine"].get(key) != first["quarantine"].get(key)
                    for key in ("enabled", "day", "active", "expired")):
                 return refuse(f"shard {number}: quarantine policy differs")
