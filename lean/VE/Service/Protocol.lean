@@ -785,6 +785,72 @@ def handleLine (h : Handles) (line : String) : Option Json × Handles :=
     let (answer, h') := respond h line
     (some answer, h')
 
+/-! The service keeps a readings admission memo beside its environment handles. This path
+shares the request decoder, budget checks, binding, coding and response envelope above. -/
+
+def readingsResults (cases : Array (Except String Json)) (memo : VE.Readings.Run.AdmissionMemo) :
+    Array Json × VE.Readings.Run.AdmissionMemo := Id.run do
+  let mut rows := #[]
+  let mut state := memo
+  for i in [:cases.size] do
+    let (row, next) := match cases[i]! with
+      | .ok j => VE.Readings.Run.runCaseReportedMemo state j
+      | .error message => (caseError .readingsRoute i message, state)
+    state := next
+    rows := rows.push row
+  return (rows, state)
+
+def readingsResponse (r : Request) (cases : Array (Except String Json)) (digests : Array String)
+    (memo : VE.Readings.Run.AdmissionMemo) : Json × VE.Readings.Run.AdmissionMemo :=
+  let (rs, next) := readingsResults cases memo
+  (Json.mkObj [("id", .str r.id), ("status", .str "ok"), ("mode", .str r.mode.name),
+    ("results", .arr (bindResults rs digests)),
+    ("counts", Json.mkObj [("cases", toJson cases.size), ("bytes", toJson r.cases.utf8ByteSize),
+      ("errors", toJson (rs.filter (·.getObjValD "status" == .str "error")).size)])], next)
+
+def runReadingsRequest (h : Handles) (memo : VE.Readings.Run.AdmissionMemo) (r : Request) :
+    Except String (Json × VE.Readings.Run.AdmissionMemo) := do
+  let budget ← r.budget
+  let bytes := r.cases.utf8ByteSize
+  if bytes > budget.bytes then
+    throw s!"ResourceLimit: cases are {bytes} bytes; budget is {budget.bytes}"
+  unless r.cases.trim.startsWith "[" do throw "request field cases must be an array"
+  let cases ← decodeCases r
+  if cases.size > budget.cases then
+    throw s!"ResourceLimit: batch has {cases.size} cases; budget is {budget.cases}"
+  let digests ← caseDigests r.cases
+  unless digests.size == cases.size do throw "batch split mismatch"
+  pure (readingsResponse r (← expandCases h r.mode cases) digests memo)
+
+def respondMemo (h : Handles) (memo : VE.Readings.Run.AdmissionMemo) (line : String) :
+    Json × Handles × VE.Readings.Run.AdmissionMemo :=
+  match objectMembers line with
+  | .error message => (lineError none message, h, memo)
+  | .ok members =>
+    match decodeRequest members with
+    | .error message => (lineError (requestId? members) message, h, memo)
+    | .ok r =>
+      match register h r with
+      | .error message => (requestError r message, h, memo)
+      | .ok h' =>
+        if r.mode == .readingsRoute then
+          match runReadingsRequest h' memo r with
+          | .ok (answer, next) => (answer, h', next)
+          | .error message => (requestError r message, h', memo)
+        else
+          match runRequest h' r with
+          | .ok answer => (answer, h', memo)
+          | .error message => (requestError r message, h', memo)
+
+def handleLineMemo (h : Handles) (memo : VE.Readings.Run.AdmissionMemo) (line : String) :
+    Option Json × Handles × VE.Readings.Run.AdmissionMemo :=
+  if line.utf8ByteSize > maxLineBytes + 1 then
+    (some (lineError none s!"ResourceLimit: request line exceeds {maxLineBytes} bytes"), h, memo)
+  else if line.trim.isEmpty then (none, h, memo)
+  else
+    let (answer, h', next) := respondMemo h memo line
+    (some answer, h', next)
+
 /-- The first line the service prints. The build hash is computed by the supervisor,
 which hashes the executable it starts. `modes` are the registry's (`VE.Service.registry`). `handles` states the handle table's member and bounds,
 which the client mirrors (`Handles.insert`). -/

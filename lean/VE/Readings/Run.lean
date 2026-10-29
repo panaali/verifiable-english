@@ -655,6 +655,52 @@ def admitComponents (kind : String) (parts : List (String × Json × Json)) :
     let (d, a) ← if p.1 == "main" then admitChecked kind p.2.1 p.2.2 else pure (p.2.2, ← admitComponent kind p.2.1 p.2.2)
     pure (p.1, p.2.1, p.2.2, d, a))
 
+/-- Process-local admission memo. Equality checks the decoded environment, document and kind themselves;
+the compressed tuple is used only to charge input bytes, never as a possibly colliding identity. The
+newest entry is first. At most four admissions and 2 MiB of input are retained; an oversized
+admission is answered but not kept. Restarting `ve_service` starts with an empty memo. -/
+structure AdmissionMemoEntry where
+  kind : String
+  environment : Json
+  document : Json
+  bytes : Nat
+  ready : List (String × Json × Json × Json × ComponentAdmission)
+
+structure AdmissionMemo where
+  entries : List AdmissionMemoEntry := []
+  admissions : Nat := 0
+  hits : Nat := 0
+
+def admissionMemoMaxEntries : Nat := 4
+def admissionMemoMaxBytes : Nat := 2097152
+
+def AdmissionMemoEntry.matches (e : AdmissionMemoEntry) (kind : String) (environment document : Json) : Bool :=
+  e.kind == kind && e.environment == environment && e.document == document
+
+/-- Retain the most recently used prefix within both bounds. -/
+def admissionMemoTrim (entries : List AdmissionMemoEntry) : List AdmissionMemoEntry := Id.run do
+  let mut kept := []
+  let mut bytes := 0
+  for e in entries do
+    if kept.length >= admissionMemoMaxEntries || bytes + e.bytes > admissionMemoMaxBytes then break
+    kept := kept ++ [e]
+    bytes := bytes + e.bytes
+  return kept
+
+/-- A hit returns exactly the stored result of `admitComponents`; a miss calls that same function.
+The identity is the full decoded triple, so no hash collision or separator ambiguity can alias cases. -/
+def admitComponentsMemo (memo : AdmissionMemo) (kind : String) (environment document : Json)
+    (parts : List (String × Json × Json)) :
+    Except String ((List (String × Json × Json × Json × ComponentAdmission)) × AdmissionMemo) := do
+  if let some e := memo.entries.find? (·.matches kind environment document) then
+    let rest := memo.entries.filter (!·.matches kind environment document)
+    return (e.ready, { memo with entries := e :: rest, hits := memo.hits + 1 })
+  let ready ← admitComponents kind parts
+  let bytes := (Json.arr #[.str kind, environment, document]).compress.utf8ByteSize
+  let entry := { kind, environment, document, bytes, ready : AdmissionMemoEntry }
+  let entries := if bytes > admissionMemoMaxBytes then memo.entries else admissionMemoTrim (entry :: memo.entries)
+  return (ready, { memo with entries, admissions := memo.admissions + 1 })
+
 /-- A JSON object as itself, anything else as the empty object: a case's environment and documents are objects once
     admitted, and the row says so in its type (`elaborate_components`), so the client never reads another value. -/
 def asObject (j : Json) : Json :=
@@ -720,5 +766,34 @@ def runCaseReported (j : Json) : Json :=
     | .error message => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message)]
     else runLower j
   | _ => runLower j
+
+/-- Service-only stateful path. All answers still use `runAdmitted` and every miss uses
+`admitComponents`; the pure `runCaseReported` remains the reference runner. -/
+def runCaseReportedMemo (memo : AdmissionMemo) (j : Json) : Json × AdmissionMemo :=
+  let run : Except String (Json × AdmissionMemo) := do
+    let kind ← VE.Route.Run.caseKind j
+    unless kind == "readings-validate" || kind == "readings-separate" || s2Kinds.contains kind do
+      return (runLower j, memo)
+    let id ← stringField j "id"
+    let environment ← j.getObjVal? "environment"
+    let document ← j.getObjVal? "document"
+    let parts ← splitCase environment document
+    if parts.length <= 1 then return (runCaseReported j, memo)
+    let named ← componentOfCase j
+    if kind == "readings-verdicts" && named.isNone then return (runCaseReported j, memo)
+    let (ready, next) ← admitComponentsMemo memo kind environment document parts
+    if named.isNone && (kind == "readings-validate" || kind == "readings-elaborate") then
+      return (← runAdmittedComponents j id kind ready, next)
+    let c := named.getD "main"
+    match ready.find? (·.1 == c) with
+    | some p => return (← runAdmitted j id kind p.2.2.2.2, next)
+    | none => throw (unknownComponent c)
+  match run with
+  | .ok answer => answer
+  | .error message =>
+    match VE.Route.Run.caseKind j with
+    | .error _ => (runLower j, memo)
+    | .ok _ =>
+      (Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message)], memo)
 
 end VE.Readings.Run
