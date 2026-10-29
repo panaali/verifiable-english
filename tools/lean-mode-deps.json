@@ -17,6 +17,10 @@
       "VE.Calc.Run",
       "VE.Route.Run"
     ],
+    "cardinality": [
+      "VE.Cardinality.Run",
+      "VE.Route.Run"
+    ],
     "check": [
       "VE.Service.Standalone",
       "VE.Route.Run"
@@ -158,8 +162,8 @@
     ]
   },
   "sources": {
-    "lean/VE/Service/Protocol.lean": "1c1036197f42d18b72d18629b0c9e39074b261e34c259fd8b6eefc0b5db90e71",
-    "lean/VE/Service/Registry.lean": "40d8a93fe8c30a28be587a0f4a253a6e6ca5055ecb8ef742dc56f09d81ed2061",
+    "lean/VE/Service/Protocol.lean": "70c25a9ff863c7b5d3a4d5a2cababbe95bcffe1917cc786ff3667e6d19bf1038",
+    "lean/VE/Service/Registry.lean": "fba2ab9dc2ec1946693e4c240c047d7bae3e2eb995b62ca11e53814bb46e2706",
     "tools/lean_mode_deps.lean": "50dc1459ef617a9ca489fd9a5068a5b875a48c661f3cf6ac573f6a157950c8e7"
   }
 }

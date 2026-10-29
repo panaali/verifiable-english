@@ -535,6 +535,10 @@ def read_question(env, question: str, words, options: dict, *, caller: str | Non
         where = None if span is None else Span(span[0], span[1], question.count("\n", 0, span[0]) + 1,
                                                span[0] - question.rfind("\n", 0, span[0]))
         error = cls(text, span=where)
+        # Lean's lines verbatim (`question_lines`): a code-worded class writes `Code: text` for Python's own checkers
+        # (`errors._CodeWorded`), and the question reader's texts carry no code, so the speech caller's refusal would
+        # differ from what `ve ask` prints (q1-4b loop recheck, DRI 2026-10-28 b item 1 (c)).
+        error.message, error.args = text, (text,)
     error.lean_question = response
     raise error
 
