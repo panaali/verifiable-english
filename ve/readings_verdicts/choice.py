@@ -227,7 +227,8 @@ class _FilledChoiceDocument:
         self.route, self.choice = route, choice
         senv = route.source.senv
         self.chain = senv.chain
-        prefetched = getattr(route, "_prefetched", {}).pop(route._key(choice), None)
+        prefetched = (route._prefetched.pop(route._key(choice), None)
+                      if hasattr(route, "_prefetched") else None)
         if prefetched is not None:
             route._checked(prefetched, "readings-choice")
         row = self._answer(prefetched) if prefetched is not None else self._inner({"kind": "norm-defaults-elaborate"})

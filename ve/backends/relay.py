@@ -52,6 +52,7 @@ ANSWERS_LIMIT = 256
 
 def pool_size() -> int:
     """Number of services at pool creation. The setting caps spare vCPUs; absent means two."""
+    from ..ast import decimal_value
     cpus = len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else os.cpu_count() or 1
     setting = os.environ.get("VE_LEAN_SERVICE_POOL_SIZE")
     if setting is None:
@@ -63,7 +64,7 @@ def pool_size() -> int:
     except OSError:
         load = 0
     free = max(1, cpus - math.ceil(load))
-    return min(int(setting), cpus, free)
+    return min(decimal_value(setting), cpus, free)
 
 
 # The code domain of the service's rejections (Lean's `rejectionCodes`), as its handshake states it.
