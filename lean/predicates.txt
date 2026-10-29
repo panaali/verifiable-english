@@ -1272,6 +1272,11 @@ VE.Scales.Intended@VE.Scales.Intended
 VE.Scales.StrictLinear@VE.Scales.Degrees
 VE.Scales.asMuch@VE.Scales.Degrees
 VE.Scales.below@VE.Scales.Degrees
+VE.Scope.BlockBound@VE.Scope.Govern
+VE.Scope.HasStr.below@VE.Scope.Govern
+VE.Scope.HasStr@VE.Scope.Govern
+VE.Scope.JsonWF.below@VE.Scope.Govern
+VE.Scope.JsonWF@VE.Scope.Govern
 VE.Senses.CandidateGood@VE.Senses.Read
 VE.Senses.UnitGood@VE.Senses.Read
 VE.Senses.glossed_negative@VE.Senses.Dictionary
