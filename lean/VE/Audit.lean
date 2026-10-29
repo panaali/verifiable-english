@@ -157,9 +157,11 @@ import VE.EnglishGrammar.SensesRequest
 import VE.EnvironmentProofs
 import VE.EvaluationCounts
 import VE.Events.Calendar
+import VE.Events.Chain
 import VE.Events.Completion
 import VE.Events.Conservative
 import VE.Events.Premises
+import VE.Events.Wire
 import VE.Finite
 import VE.Grammar.Derives
 import VE.Grammar.Extension
@@ -2400,6 +2402,7 @@ import VE.WireContract.Engine
 #print axioms VE.EvaluationCounts.mapM_length
 #print axioms VE.EvaluationCounts.order_decodeFormulas_length
 #print axioms VE.EvaluationCounts.route_decodeFormulas_length
+#print axioms VE.Events.EventsDecoded.typed
 #print axioms VE.Events.boundRole_mem
 #print axioms VE.Events.calendar_sat
 #print axioms VE.Events.chain_head
@@ -2426,6 +2429,8 @@ import VE.WireContract.Engine
 #print axioms VE.Events.embeddable_sound
 #print axioms VE.Events.eventsPremises_satisfiable
 #print axioms VE.Events.eventsPremises_wellFormed
+#print axioms VE.Events.eventsX_absent
+#print axioms VE.Events.events_certificate_calendar
 #print axioms VE.Events.events_conservative
 #print axioms VE.Events.expansion_typed
 #print axioms VE.Events.guarded_empty
