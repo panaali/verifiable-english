@@ -28,6 +28,8 @@ Spec re-read: `docs/codemap/INDEX.md` and one area file per split, sorted first 
 
 Each mutant was planted in a changed Python file, run against one named test, and removed. Each produced a pytest assertion failure:
 
+The pre-review continuation repeated the first mutant: the named test failed with `AssertionError` on `BROKEN Route one continues.` and passed after restoration. The committed `docs/infra/eff-codemap/seeded-bugs.json` records its changed source file and failing test for the pre-review evidence check.
+
 | File | Seeded bug | Failing test |
 |---|---|---|
 | `tools/code_map.py` | Prefix every extracted sentence with `BROKEN ` | `tests/test_code_map.py::test_synthetic_tree_extracts_first_sentences_and_is_deterministic` |
