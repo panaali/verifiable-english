@@ -129,6 +129,11 @@ def regulated (e : Json) : Json := e.setObjVal! "regulated" (parse "{\"default\"
   "EventsVerbalisation: committed_on"
 #guard diag (env block (setPred "committed_on" (pred "[\"act\", \"day\"]" "{0} x on {1}"))) ==
   "ok [2026-10-12, 2026-10-13, 2026-10-14] 12 [the drafters]"
+-- A role with no wording, or a wording that is not a text, has no right wording (trust mutant any-all, D[R] run).
+#guard diag (env block (setPred "committed_on" (parse "{\"arguments\": [\"act\", \"day\"], \"verbalisation\": 3}"))) ==
+  "EventsVerbalisation: committed_on"
+#guard diag (env block (setPred "committed_on" (parse "{\"arguments\": [\"act\", \"day\"]}"))) ==
+  "EventsVerbalisation: committed_on"
 #guard diag (env (set "states" (parse "[{\"sort\": \"stay\", \"begins\": \"stay_begins\", \"ends\": \"stay_begins\"}]"))) ==
   "DuplicateDeclaration: role stay_begins"
 -- The state sorts and roles as the event ones (review F1): declared and not the day, each role's signature and wording.
