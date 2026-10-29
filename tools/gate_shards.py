@@ -24,6 +24,17 @@ def _valid_evidence(value: object) -> bool:
             not Path(value).is_absolute() and ".." not in Path(value).parts)
 
 
+def _populated_toolchains(value: object) -> bool:
+    """A shared null version is not a toolchain identity."""
+    return (isinstance(value, dict) and any(key != "paths" for key in value) and
+            all(type(key) is str and type(version) is str and version.strip()
+                for key, version in value.items() if key != "paths") and
+            ("paths" not in value or
+             isinstance(value["paths"], dict) and
+             all(type(key) is str and type(path) is str and path.strip()
+                 for key, path in value["paths"].items())))
+
+
 def plan(ids: list[str], estimates: test_schedule.Estimates, count: int,
          *, selected: list[str] | None = None) -> dict:
     if count < 1 or not ids or len(ids) != len(set(ids)):
@@ -121,7 +132,7 @@ def merge_records(records: list[dict]) -> dict:
                 not isinstance(first.get("runner"), dict) or \
                 any(type(first["runner"].get(key)) is not str or not first["runner"][key].strip()
                     for key in ("system", "machine")) or \
-                not isinstance(first.get("toolchains"), dict) or not first["toolchains"] or \
+                not _populated_toolchains(first.get("toolchains")) or \
                 not isinstance(first.get("environment"), dict):
             return refuse("missing or malformed shard identity")
         if len(records) != n:
@@ -148,7 +159,7 @@ def merge_records(records: list[dict]) -> dict:
             if not isinstance(runner, dict) or not isinstance(common_runner, dict) or \
                     any(runner.get(key) != common_runner.get(key) for key in ("system", "machine")):
                 return refuse(f"shard {number}: runner platform differs")
-            if not isinstance(record.get("toolchains"), dict) or \
+            if not _populated_toolchains(record.get("toolchains")) or \
                     {key: value for key, value in record["toolchains"].items() if key != "paths"} != \
                     {key: value for key, value in first["toolchains"].items() if key != "paths"}:
                 return refuse(f"shard {number}: toolchains differ")
@@ -192,6 +203,11 @@ def merge_records(records: list[dict]) -> dict:
                     sum(skip.get("deselected", False) for skip in skips) != counts["deselected"] or \
                     (record.get("status") == "shard-passed" and any(skip["allowed"] is not True for skip in skips)):
                 return refuse(f"shard {number}: incomplete skip events")
+            selected_ids = set(gate_collection.decode_ids(shard_plan["selected"]))
+            deselected_ids = {skip["nodeid"] for skip in skips if skip.get("deselected")}
+            expected_deselected = set(ids) - selected_ids if number == 1 else set()
+            if deselected_ids != expected_deselected:
+                return refuse(f"shard {number}: deselected IDs differ from plan complement")
             failures = record.get("failures")
             if not isinstance(failures, list) or any(not isinstance(failure, dict) or
                                                     type(failure.get("stage")) is not str or
@@ -213,7 +229,8 @@ def merge_records(records: list[dict]) -> dict:
                     (not quarantine["enabled"] and
                      (quarantine["active"] or quarantine["expired"] or quarantine["retried"] or
                       "day" in quarantine)) or \
-                    (quarantine["enabled"] and type(quarantine.get("day")) is not str) or \
+                    (quarantine["enabled"] and not _valid_expiry(quarantine.get("day"))) or \
+                    set(quarantine["active"]) & set(quarantine["expired"]) or \
                     any(quarantine.get(key) != first["quarantine"].get(key)
                    for key in ("enabled", "day", "active", "expired")):
                 return refuse(f"shard {number}: quarantine policy differs")
@@ -224,7 +241,9 @@ def merge_records(records: list[dict]) -> dict:
                    ("passed", "failed", "skipped", "no result") or
                    type(retry.get("owner")) is not str or not retry["owner"].strip() or
                    not _valid_expiry(retry.get("expires")) or
+                   retry["expires"] < quarantine["day"] or
                    not _valid_evidence(retry.get("evidence")) or
+                   node in {skip["nodeid"] for skip in skips} or
                    (record["status"] == "shard-passed" and retry["alone"] != "passed")
                    for node, retry in retries.items()):
                 return refuse(f"shard {number}: contradictory quarantine retry")

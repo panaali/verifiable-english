@@ -198,6 +198,19 @@ def test_merge_accepts_retry_of_active_quarantine_test():
     assert merged["quarantine"]["retried"] == owner["quarantine"]["retried"]
 
 
+@pytest.mark.parametrize("field,value", [
+    ("lean", None), ("lean", ""), ("lean", []), ("lean", False),
+    ("paths", None), ("paths", {"uv": None}),
+])
+def test_merge_refuses_shared_malformed_toolchain_identity(field, value):
+    rows = records(2)
+    for row in rows:
+        row["toolchains"][field] = value
+    merged = gate_shards.merge_records(rows)
+    assert merged["status"] == "failed"
+    assert "toolchain" in merged["failures"][0]["reason"] or "identity" in merged["failures"][0]["reason"]
+
+
 @pytest.mark.parametrize("missing", ["schema_version", "commit_sha", "tree_sha", "runner",
                                       "toolchains", "environment"])
 def test_merge_refuses_absent_identity_even_when_all_shards_agree(missing):
@@ -233,6 +246,46 @@ def test_merge_refuses_incomplete_retry_metadata(field, value):
         retry[field] = value
     owner["quarantine"]["retried"][IDS[0]] = retry
     assert gate_shards.merge_records(rows)["status"] == "failed"
+
+
+@pytest.mark.parametrize("expires", ["2026-10-11", "2026-10-01"])
+def test_merge_refuses_retry_expired_on_recorded_day(expires):
+    rows = records(2)
+    for row in rows:
+        row["quarantine"].update(active=[IDS[0]])
+    owner = next(row for row in rows if IDS[0] in row["shard"]["ran"])
+    owner["quarantine"]["retried"][IDS[0]] = {
+        "suite": "failed", "alone": "passed", "owner": "team", "expires": expires,
+        "evidence": "docs/evidence.json"}
+    merged = gate_shards.merge_records(rows)
+    assert merged["status"] == "failed"
+    assert "retry" in merged["failures"][0]["reason"]
+
+
+def test_merge_accepts_retry_expiring_on_recorded_day():
+    rows = records(2)
+    for row in rows:
+        row["quarantine"].update(active=[IDS[0]])
+    owner = next(row for row in rows if IDS[0] in row["shard"]["ran"])
+    owner["quarantine"]["retried"][IDS[0]] = {
+        "suite": "failed", "alone": "passed", "owner": "team", "expires": "2026-10-12",
+        "evidence": "docs/evidence.json"}
+    assert gate_shards.merge_records(rows)["status"] == "passed"
+
+
+@pytest.mark.parametrize("change", [
+    lambda row: row["quarantine"].update(day=None),
+    lambda row: row["quarantine"].update(day="not-a-day"),
+    lambda row: row["quarantine"].update(expired=[IDS[0]]),
+])
+def test_merge_refuses_invalid_quarantine_day_or_active_expired_overlap(change):
+    rows = records(2)
+    for row in rows:
+        row["quarantine"].update(active=[IDS[0]])
+        change(row)
+    merged = gate_shards.merge_records(rows)
+    assert merged["status"] == "failed"
+    assert "quarantine" in merged["failures"][0]["reason"]
 
 
 def test_merge_accepts_disabled_quarantine_without_retries():
@@ -360,3 +413,14 @@ def test_gate_runs_full_collection_and_only_its_share(tmp_path, monkeypatch, n, 
     assert batch_evidence.gate_problems("a" * 40, merged) == []
     note = gate_collection.record_text("a" * 40, "b" * 40, all_ids, result=merged)
     assert gate_collection.parse_record(note, "a" * 40, "b" * 40) == sorted(all_ids)
+
+
+@pytest.mark.parametrize("replacement", ["selected", "other_selected"])
+def test_merge_refuses_selected_id_reported_as_deselected(tmp_path, monkeypatch, replacement):
+    test_gate_runs_full_collection_and_only_its_share(tmp_path, monkeypatch, 2, True)
+    rows = [json.loads((tmp_path / f"shard{k}.json").read_text()) for k in (1, 2)]
+    selected = rows[0]["shard"]["ran"] if replacement == "selected" else rows[1]["shard"]["ran"]
+    next(skip for skip in rows[0]["skips"] if skip.get("deselected"))["nodeid"] = selected[0]
+    merged = gate_shards.merge_records(rows)
+    assert merged["status"] == "failed"
+    assert "deselected IDs" in merged["failures"][0]["reason"]
