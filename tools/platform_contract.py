@@ -144,7 +144,17 @@ def function_of(nodeid: str) -> str:
 
 def covers(selector: str, nodeid: str) -> bool:
     """Whether running `selector` runs `nodeid`: the selector is the node ID, its file, its class or its function."""
-    return nodeid == selector or nodeid.startswith(selector + "::") or nodeid.startswith(selector + "[")
+    if nodeid == selector:
+        return True
+    # A parameterized node is already a complete selector. Only an
+    # unparameterized file, class or function can have collected children.
+    # Parameter IDs may themselves contain `::`; split the path from the test
+    # before looking for a parameter suffix, rather than splitting at the last
+    # `::` in the entire node ID.
+    if "[" in selector.partition("::")[2]:
+        return False
+    return ((nodeid.startswith(selector + "::") and len(nodeid) > len(selector) + 2)
+            or (nodeid.startswith(selector + "[") and nodeid.endswith("]")))
 
 
 # The tree: test definitions, read with Python's parser
