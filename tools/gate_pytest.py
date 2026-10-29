@@ -41,9 +41,12 @@ def pytest_collection_modifyitems(config, items):
     if not isinstance(selectors, list) or not selectors or any(type(s) is not str for s in selectors):
         raise pytest.UsageError("invalid gate selection file")
 
+    # gate.exact_selection_env writes collected node IDs, including the entire
+    # parameter suffix. Prefixes would run an unassigned parametrized sibling.
+    selected_ids = set(selectors)
+
     def chosen(nodeid):
-        return any(nodeid == selector or nodeid.startswith(selector + "::") or
-                   nodeid.startswith(selector + "[") for selector in selectors)
+        return nodeid in selected_ids
 
     kept = [item for item in items if chosen(item.nodeid)]
     removed = [item for item in items if not chosen(item.nodeid)]

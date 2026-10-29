@@ -10,11 +10,13 @@ import subprocess
 import sys
 import time
 import tomllib
+from types import SimpleNamespace
+from unittest.mock import Mock
 
 import pytest
 
 from subprocesses import HANG_TIMEOUT
-from tools import gate, nested_pytest, trust_map
+from tools import gate, gate_pytest, nested_pytest, trust_map
 
 
 def test_gate_scratch_root_can_avoid_system_tmp(tmp_path, monkeypatch):
@@ -39,6 +41,32 @@ def events():
 
 # The gate's two pytest runs: the serial collection, then the suite under xdist.
 PYTEST_STAGES = ("Python collection", "Python suite")
+
+
+@pytest.mark.parametrize("selected,collected,expected", [
+    (["tests/x.py::test_x[a]"],
+     ["tests/x.py::test_x[a]", "tests/x.py::test_x[a][b]", "tests/x.py::test_x[b]"],
+     ["tests/x.py::test_x[a]"]),
+    (["tests/x.py::test_x"],
+     ["tests/x.py::test_x", "tests/x.py::test_x[a]", "tests/x.py::test_x_extra"],
+     ["tests/x.py::test_x"]),
+    (["tests/x.py::TestGroup"],
+     ["tests/x.py::TestGroup::test_x", "tests/x.py::TestGroup"],
+     ["tests/x.py::TestGroup"]),
+])
+def test_gate_selection_uses_exact_collected_ids(tmp_path, monkeypatch, selected, collected, expected):
+    selection = tmp_path / "ids.json"
+    selection.write_text(json.dumps(selected))
+    monkeypatch.setenv("VE_GATE_PYTEST_IDS_FILE", str(selection))
+    events = {"collected": list(collected), "deselected": []}
+    monkeypatch.setattr(gate_pytest, "_EVENTS", events, raising=False)
+    items = [SimpleNamespace(nodeid=node) for node in collected]
+    config = Mock()
+    gate_pytest.pytest_collection_modifyitems(config, items)
+    assert [item.nodeid for item in items] == expected
+    assert events["collected"] == expected
+    assert [item.nodeid for item in config.hook.pytest_deselected.call_args.kwargs["items"]] == [
+        node for node in collected if node not in expected]
 
 
 def trust_counts() -> dict:
