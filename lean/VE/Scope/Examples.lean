@@ -927,6 +927,45 @@ def rawUdhr : Json := rawJ (nd "x" "X" (nd "units" ((lDoc udhrPieces).getObjValD
 #guard (member (govL udhrPieces udhrAnchors rawUdhr [g8]) "wa", member (govL udhrPieces udhrAnchors rawUdhr []) "wa") ==
   (none, some "\"WA\"")
 
+/-! sc-3ac: the DRI's well-formedness boundary. The real layout document is well formed; F-raw-title is not. -/
+example : JsonWF (lDoc udhrPieces) := by
+  unfold lDoc
+  apply jsonWF_mkObj
+  intro p hp
+  simp only [List.mem_singleton] at hp
+  rcases hp with rfl
+  apply JsonWF.arr
+  intro x hx
+  simp only [List.mem_toArray, List.mem_map] at hx
+  obtain ⟨u, hu, rfl⟩ := hx
+  apply jsonWF_mkObj
+  intro kv hkv
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at hkv
+  rcases hkv with h | h | h
+  · subst kv; exact .str _
+  · subst kv; exact .str _
+  · subst kv; exact .null
+
+example : ¬ JsonWF rawUdhr := by
+  intro h
+  cases h with
+  | obj kvs hw hs =>
+    have hb := Std.DTreeMap.Internal.Impl.WF.balanced hw.out.out
+    simp [nd, Std.DTreeMap.Internal.Impl.balanced_inner_iff,
+      Std.DTreeMap.Internal.Impl.BalancedAtRoot, Std.DTreeMap.Internal.Impl.size,
+      Std.DTreeMap.Internal.delta] at hb
+
+/-! Two equal-key carve-outs expose any change in merge sort's stable order when a title is removed. -/
+def titleCarveA : Governor := ⟨"titleCarveA", "u109", .carveOut (.arr #["top"]), .anchor "art29", a29⟩
+def titleCarveB : Governor := ⟨"titleCarveB", "u109",
+  .carveOut (.arr #["unary", "p", .arr #["var", (1 : Nat)]]), .anchor "art29", a29⟩
+def titleUnless (r : Except String Json) : Option String := r.toOption.map fun o =>
+  (((contentOf o "u110").getObjValD "norm").getObjValD "unless").compress
+#guard [titleUnless (govL udhrPieces udhrAnchors udhrDoc [titleCarveA, g8, titleCarveB]),
+  titleUnless (govL udhrPieces udhrAnchors udhrDoc [titleCarveA, titleCarveB])] ==
+  [some "[[\"top\"],[\"unary\",\"p\",[\"var\",1]]]",
+   some "[[\"top\"],[\"unary\",\"p\",[\"var\",1]]]"]
+
 end Govern
 
 end VE.Scope.Examples
