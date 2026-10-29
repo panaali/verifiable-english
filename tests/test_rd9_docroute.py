@@ -149,6 +149,21 @@ def test_soft_chain_without_readings_uses_the_filled_route():
     assert answer["premises"]["status"] == "model"
 
 
+@pytest.mark.parametrize("with_readings", [False, True])
+def test_filled_soft_source_instruction_declarations_match_lean_base(with_readings):
+    front, body = _front()
+    if not with_readings:
+        front["environment"]["profiles"].remove("readings@1")
+    vocabulary = front["environment"]["vocabulary"]
+    vocabulary["soft"] = {"parties": ["operator"], "outranking": {"mode": "strict"}}
+    vocabulary["predicates"]["q"] = {
+        "arguments": ["assistant"], "description": "instruction", "instruction_of": "operator"}
+    doc = _loaded(front, body)
+    env, _, _ = _report_premise_context(doc)
+    assert env.predicates["q"].description == "instruction"
+    assert _report(doc)["admission"]["admitted"] is True
+
+
 def test_filled_soft_layer_matches_ordinary_w1():
     # The frozen oracle proposes the ordinary W1 tree. Both answers are Lean's.
     from conformance import frozen_norm_defaults as oracle

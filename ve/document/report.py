@@ -82,8 +82,9 @@ def _report_premise_context(doc):
     # predicates so graph leaves and assertions can be decoded in one vocabulary.
     raw = deepcopy(filled["base_environment"])
     predicates = raw["vocabulary"]["predicates"]
+    from ..softnorms import base_predicate_declaration
     for name, declaration in doc["environment"].to_dict()["vocabulary"]["predicates"].items():
-        base_declaration = {key: value for key, value in declaration.items() if key != "regulated"}
+        base_declaration = base_predicate_declaration(declaration)
         if name in predicates and predicates[name] != base_declaration:
             raise CheckerUnavailable("CheckerUnavailable: filled soft vocabulary collides with source")
         predicates[name] = base_declaration
