@@ -1,0 +1,146 @@
+shard 3/4: 26 units; commands: []
+info: syncing channel updates for 1.98.1-x86_64-unknown-linux-gnu
+info: latest update on 2026-09-03 for version 1.98.1 (48a229cea 2026-09-01)
+info: downloading 3 components
+warn: the missing active toolchain `1.98.1-x86_64-unknown-linux-gnu` has been auto-installed
+warn: this might cause rustup commands to take longer time to finish than expected
+info: you may opt out with `RUSTUP_AUTO_INSTALL=0` or `rustup set auto-install disable`
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded block-buffer v0.10.4
+  Downloaded cpufeatures v0.2.17
+  Downloaded crypto-common v0.1.7
+  Downloaded cfg-if v1.0.5
+  Downloaded autocfg v1.5.1
+  Downloaded zmij v1.0.23
+  Downloaded version_check v0.9.5
+  Downloaded serde_derive v1.0.229
+  Downloaded itoa v1.0.18
+  Downloaded generic-array v0.14.7
+  Downloaded digest v0.10.7
+  Downloaded sha2 v0.10.9
+  Downloaded quote v1.0.47
+  Downloaded num-integer v0.1.47
+  Downloaded unicode-ident v1.0.26
+  Downloaded num-traits v0.2.19
+  Downloaded proc-macro2 v1.0.107
+  Downloaded serde_core v1.0.229
+  Downloaded typenum v1.20.1
+  Downloaded serde v1.0.229
+  Downloaded memchr v2.8.3
+  Downloaded num-bigint v0.4.8
+  Downloaded serde_json v1.0.151
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling itoa v1.0.18
+   Compiling cfg-if v1.0.5
+   Compiling cpufeatures v0.2.17
+   Compiling memchr v2.8.3
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.229
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `release` profile [optimized] target(s) in 10.67s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling serde_core v1.0.229
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling serde_json v1.0.151
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling cfg-if v1.0.5
+   Compiling cpufeatures v0.2.17
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling num-integer v0.1.47
+   Compiling sha2 v0.10.9
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 5.68s
+order: failed last time []; changed []; then the rest; --maxfail 5
+recording 26 units with 4 jobs in /tmp/ve-select-run-3bvrv_45
+  tests/test_wire_contract_s5_lean.py: exit 0 in 48.7 s, 877 functions
+  tests/test_run_cache.py: exit 0 in 46.3 s, 360 functions
+  tests/test_hang_guards.py: exit 0 in 34.4 s, 923 functions
+  tests/test_document_lean_switch.py: exit 0 in 18.7 s, 1048 functions
+  tests/test_regen_generated.py: exit 0 in 65.1 s, 821 functions
+  tests/test_single_owner.py: exit 0 in 11.5 s, 687 functions
+  tests/test_repo_map.py: exit 0 in 227.5 s, 483 functions
+  tests/test_order_round2.py: exit 0 in 6.0 s, 514 functions
+  tests/test_answer_cutoff.py: exit 0 in 24.3 s, 592 functions, OPAQUE
+  tests/test_test_schedule.py: exit 0 in 18.9 s, 341 functions
+  tests/test_evidence_toolkit.py: exit 0 in 6.6 s, 489 functions
+  tests/test_lean_first_b13b.py: exit 0 in 5.5 s, 578 functions
+  tests/test_binding_census.py: exit 0 in 9.4 s, 653 functions
+  tests/test_suite_tail.py: exit 0 in 1.9 s, 296 functions
+  tests/test_conformance.py: exit 0 in 1.7 s, 605 functions
+  tests/test_gate_trust.py: exit 0 in 3.6 s, 402 functions
+  tests/test_b16d_evidence.py: exit 0 in 0.8 s, 246 functions
+  tests/test_gate_durations.py: exit 0 in 1.8 s, 351 functions
+  tests/test_gen_inv_design.py: exit 0 in 1.4 s, 244 functions
+  tests/test_frozen_sources.py: exit 0 in 13.2 s, 326 functions
+  tests/test_lean_first_b3b_report.py: exit 0 in 0.6 s, 252 functions
+  tests/test_lean_statements_parts.py: exit 0 in 0.7 s, 253 functions
+  tests/test_judgments_answer.py: exit 0 in 11.6 s, 919 functions
+  tests/test_surface_registry.py: exit 0 in 0.6 s, 422 functions
+  tests/test_select_tests.py: exit 0 in 311.5 s, 719 functions, OPAQUE
+  tests/test_wire_gate_corpus.py: exit 1 in 386.6 s, 3629 functions
+FAILED tests/test_wire_gate_corpus.py (exit 1): tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_test_input_of_every_unit; log /tmp/ve-select-run-3bvrv_45/tests__test_wire_gate_corpus.py.log
+    
+    At index 0 diff: ['tests/test_a.py', 'tests/test_b.py'] != ['tests/test_a.py', 'tests/test_b.py::test_b2']
+    
+    Full diff:
+      [
+          [
+              'tests/test_a.py',
+    -         'tests/test_b.py::test_b2',
+    ?                         ---------
+    +         'tests/test_b.py',
+          ],
+          [
+              'tests/test_a.py',
+    -         'tests/test_b.py::test_b2',
+    ?                         ---------
+    +         'tests/test_b.py',
+          ],
+      ]
+  1 failed, 1514 passed in 271.79s (0:04:31)
+  
+  ve: English comparator: {"records": 0, "excluded": 0, "planted": 0, "classes": {}} (/tmp/ve-english-comparator-08vp3g27)
+  
+assert False
+ +  where False = _complete(CompletedProcess(args=['/home/runner/work/verifiable-english/verifiable-english/.venv/bin/python', '-m', 'pytest', '-p...nglish comparator: {"records": 0, "excluded": 0, "planted": 0, "classes": {}} (/tmp/ve-english-comparator-08vp3g27)\n'))
+7 passed, 1 error in 384.66s (0:06:24)
+recorded 26 units for tree 8c0c510c24; 0 others left to the static graph until they run; 1 failed
