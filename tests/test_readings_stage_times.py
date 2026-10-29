@@ -63,9 +63,10 @@ def test_split_w2_fixed_part_completion_is_timed(kind):
         result = json.loads(observed.stdout.splitlines()[-1])["results"][0]["result"]
         assert result["status"] == "ok"
     rows = [json.loads(line) for line in observed.stderr.splitlines()]
-    main = [row["stage"] for row in rows if row["part"] == "main"]
+    main_rows = [row for row in rows if row["part"] == "main"]
+    main = [row["stage"] for row in main_rows]
     assert main.count("admitS2") >= 2
-    assert "admitNDFull" in main
+    assert any(row["stage"] == "admitNDFull" and row["status"] == "ok" for row in main_rows)
 
 
 def test_normal_client_profiles_registered_and_reused_handle(monkeypatch):
@@ -87,6 +88,7 @@ def test_saved_twofold_profile_records_fixed_part_completion():
     runs = evidence["cases"]["admission-prefix-100-2x"]["runs"]
     assert len(runs) == 3
     for run in runs:
-        main = [row["stage"] for row in run["stages"] if row["part"] == "main"]
+        main_rows = [row for row in run["stages"] if row["part"] == "main"]
+        main = [row["stage"] for row in main_rows]
         assert main.count("admitS2") >= 2
-        assert "admitNDFull" in main
+        assert any(row["stage"] == "admitNDFull" and row["status"] == "ok" for row in main_rows)
