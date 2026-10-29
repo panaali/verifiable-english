@@ -16,13 +16,16 @@ import datetime
 import json
 import os
 from pathlib import Path
+import subprocess
 import sys
 import textwrap
+from types import SimpleNamespace
+from unittest.mock import Mock
 
 import pytest
 
 from test_gate_rerun import FakeGate
-from tools import gate, platform_contract as pc
+from tools import gate, gate_pytest, nested_pytest, platform_contract as pc
 
 ROOT = Path(__file__).resolve().parents[1]
 PIN_TEST = "tests/test_rust_reproducible.py::test_release_binary_is_pinned"
@@ -188,6 +191,81 @@ def test_the_run_selectors_run_each_listed_test_once():
     assert pc.covers("tests/test_a.py::test_x", "tests/test_a.py::test_x[1]")
     assert not pc.covers("tests/test_a.py::test_x", "tests/test_a.py::test_xy")
     assert not pc.covers("tests/test_a.py", "tests/test_ab.py::test_y")
+
+
+@pytest.mark.parametrize("selector,nodeid,covered", [
+    ("tests/x.py", "tests/x.py", True),
+    ("tests/x.py", "tests/x.py::test_x", True),
+    ("tests/x.py::TestX", "tests/x.py::TestX::test_x", True),
+    ("tests/x.py::test_x", "tests/x.py::test_x", True),
+    ("tests/x.py::test_x", "tests/x.py::test_x[a]", True),
+    ("tests/x.py::test_x[a]", "tests/x.py::test_x[a]", True),
+    ("tests/x.py::test_x", "tests/x.py::test_xy", False),
+    ("tests/x.py", "tests/x.py2::test_x", False),
+    ("tests/x.py::TestX", "tests/x.py::TestXY::test_x", False),
+    ("tests/x.py::test_x[a]", "tests/x.py::test_x[a][b]", False),
+    ("tests/x.py::test_x[a]", "tests/x.py::test_x[ab]", False),
+    ("tests", "tests/x.py::test_x", False),
+    ("tests/x.py::test_x", "tests/x.py::test_x[", False),
+])
+def test_selector_coverage_is_shared_by_gate_and_contract(tmp_path, monkeypatch, selector, nodeid, covered):
+    assert pc.covers(selector, nodeid) is covered
+    contract = {"tests": [{"selector": selector, "causes": ["process"]}]}
+    assert bool(pc.coverage(contract, nodeid)) is covered
+    if selector != nodeid:
+        selectors = pc.run_selectors({"tests": contract["tests"] +
+                                     [{"selector": nodeid, "causes": ["process"]}]})
+        assert (nodeid in selectors) is not covered
+    assert bool(pc.estimate(contract, {nodeid: 1.0})["measured_tests"]) is covered
+    for mode in ("exact", "covers"):
+        listing = tmp_path / "ids.json"
+        listing.write_text(json.dumps([selector]))
+        monkeypatch.setenv("VE_GATE_PYTEST_IDS_FILE", str(listing))
+        monkeypatch.setenv("VE_GATE_PYTEST_SELECTOR_MODE", mode)
+        collected = list(dict.fromkeys((selector, nodeid)))
+        gate_pytest._EVENTS = {"collected": collected, "deselected": []}
+        items = [SimpleNamespace(nodeid=value) for value in gate_pytest._EVENTS["collected"]]
+        gate_pytest.pytest_collection_modifyitems(Mock(), items)
+        assert [item.nodeid for item in items] == [value for value in collected
+                                                    if value == selector or
+                                                    (mode == "covers" and covered)]
+
+
+@pytest.mark.parametrize("mode", ["exact", "covers"])
+def test_gate_selector_that_collects_nothing_is_an_error(tmp_path, monkeypatch, mode):
+    listing = tmp_path / "ids.json"
+    listing.write_text(json.dumps(["tests/x.py::test_x[a]"]))
+    monkeypatch.setenv("VE_GATE_PYTEST_IDS_FILE", str(listing))
+    monkeypatch.setenv("VE_GATE_PYTEST_SELECTOR_MODE", mode)
+    gate_pytest._EVENTS = {"collected": ["tests/x.py::test_x[a][b]"], "deselected": []}
+    with pytest.raises(pytest.UsageError, match="tests/x.py::test_x\\[a\\]"):
+        gate_pytest.pytest_collection_modifyitems(
+            Mock(), [SimpleNamespace(nodeid="tests/x.py::test_x[a][b]")])
+
+
+def test_gate_selector_removed_after_item_collection_is_an_error(tmp_path, monkeypatch):
+    listing = tmp_path / "ids.json"
+    listing.write_text(json.dumps(["tests/x.py::test_x"]))
+    monkeypatch.setenv("VE_GATE_PYTEST_IDS_FILE", str(listing))
+    gate_pytest._EVENTS = {"collected": ["tests/x.py::test_x"], "deselected": []}
+    with pytest.raises(pytest.UsageError, match="gate selector collected nothing"):
+        gate_pytest.pytest_collection_modifyitems(Mock(), [])
+
+
+def test_native_pytest_parameter_selector_matches_the_gate_rule(tmp_path):
+    source = tmp_path / "test_parameters.py"
+    source.write_text("import pytest\n"
+                      "@pytest.mark.parametrize('value', [pytest.param(1, id='a'), "
+                      "pytest.param(2, id='ab')])\n"
+                      "def test_x(value): pass\n"
+                      "def test_xy(): pass\n")
+    selector = f"{source}::test_x[a]"
+    done = subprocess.run(nested_pytest.command(["--collect-only", "-q", "-o", "addopts=", selector]),
+                          env=nested_pytest.environment(os.environ), capture_output=True, text=True)
+    assert done.returncode == 0, done.stdout + done.stderr
+    selected = [line for line in done.stdout.splitlines() if line.startswith(source.name + "::")]
+    assert [str(source.parent / line) for line in selected] == [selector]
+    assert not pc.covers(selector, f"{source}::test_x[ab]")
 
 
 def test_contract_check_fails_on_a_stale_list(tmp_path, monkeypatch, capsys):
@@ -483,6 +561,26 @@ def test_a_listed_test_that_collects_nothing_fails_the_contract_run(tmp_path, mo
     assert (code, record["status"]) == (1, "failed")
     assert {"stage": "coverage", "reason": "contract test collected nothing: tests/test_d.py::test_gone"} \
         in record["failures"]
+
+
+def test_contract_parameter_selector_runs_only_its_exact_id(tmp_path, monkeypatch):
+    first = "tests/test_a.py::test_x[a]"
+    second = "tests/test_a.py::test_x[a][b]"
+    monkeypatch.setattr(sys.modules[__name__], "CONTRACT_IDS", [first, second])
+    fake = ContractGate(tmp_path, monkeypatch, selectors=(first,))
+    code, record = fake.run("--contract")
+    assert (code, record["status"], record["counts"]["selected"]) == (0, "contract-passed", 1)
+    fake.failing = {second}
+    code, record = fake.run("--contract")
+    assert (code, record["status"], record["counts"]["selected"]) == (0, "contract-passed", 1)
+
+
+def test_contract_parameter_selector_missing_from_collection_fails(tmp_path, monkeypatch):
+    monkeypatch.setattr(sys.modules[__name__], "CONTRACT_IDS", ["tests/test_a.py::test_x[a][b]"])
+    fake = ContractGate(tmp_path, monkeypatch, selectors=("tests/test_a.py::test_x[a]",))
+    code, record = fake.run("--contract")
+    assert (code, record["status"], record["counts"]["selected"]) == (1, "failed", 0)
+    assert "contract test collected nothing: tests/test_a.py::test_x[a]" in str(record["failures"])
 
 
 def test_a_malformed_contract_list_fails_the_contract_run(contract_gate):
