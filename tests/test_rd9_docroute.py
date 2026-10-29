@@ -103,6 +103,21 @@ def test_soft_admission_row_fields_are_typed():
             check_row("norm-defaults", wrong_type, case, 0)
 
 
+def test_soft_admission_elaborates_fill_once(monkeypatch):
+    from ve import norm_defaults_route as route
+    env, document = _direct_case()
+    original = route.run_case
+    called = []
+
+    def counted(case):
+        called.append(case["kind"])
+        return original(case)
+
+    monkeypatch.setattr(route, "run_case", counted)
+    assert route.admit_norm_defaults_document(env, document)["admitted"] is True
+    assert called == ["admission", "norm-defaults-elaborate"]
+
+
 def test_unspecified_without_profile_keeps_its_own_refusal(tmp_path):
     with pytest.raises(VEError, match="^" + NEEDS_PROFILE + "$"):
         check_document(_without_profile(tmp_path))

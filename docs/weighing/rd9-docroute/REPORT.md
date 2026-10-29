@@ -1,7 +1,7 @@
 # rd9-docroute build report
 
 BLOCKED: the refusal-to-answer DELTA needs a DRI signature; `msg.sh` could not write its read-only inbox.
-HEAD: `feature/rd9-docroute` (implementation `6deb6a2d4`, binder `385f44396`; final report commit follows).
+HEAD: `feature/rd9-docroute` (see `git log -1` for the final local commit).
 Changed: soft document claim-graph admission now reaches Lean's `norm-defaults` fill route; direct unfilled soft checks still refuse.
 Open: DRI decision, final-head chain gate, and the next constitution pilot audit.
 Pilot bytes: 0 newly formalised bytes from routing alone; the previous probe reported 215 CHECKED source bytes, not a checked document answer.
@@ -29,6 +29,7 @@ Each temporary mutation was restored before the final code:
 | Seeded bug | File | Failing test |
 | --- | --- | --- |
 | Skip fill by sending document admission to the direct soft route | `ve/document/report.py` | `test_soft_chain_document_checks_the_filled_route` failed with the original `UnsupportedProfile` |
+| Elaborate the fill twice | `ve/norm_defaults_route.py` | `test_soft_admission_elaborates_fill_once` failed on the extra Lean call |
 | Supply Lean's already filled base environment to admission, applying fill at the wrong stage | `ve/norm_defaults_route.py` | `test_soft_chain_document_checks_the_filled_route` failed with `UnsupportedProfile: norms@0 is required` |
 | Remove the direct W1 unfilled guard | `ve/norms.py` | `test_direct_w1_outcome_of_unfilled_soft_tree_still_refuses` failed with the different soft-route refusal |
 | Accept an unbound `conditional_on` label | `ve/norm_defaults_route.py` | `test_soft_admission_conditions_are_bound_to_the_source` failed (`DID NOT RAISE`) |
@@ -41,7 +42,7 @@ Named fixture, binding, refusal, plain-soft and W1 admission tests passed during
 
 1. PASS — `test_soft_admission_row_fields_are_typed` checks each genuine admission field's type and presence; `test_soft_admission_conditions_are_bound_to_the_source` covers the variant relation.
 2. PASS — plan rows and the DELTA are mapped above; `test_soft_chain_document_checks_the_filled_route` covers D8/SC-8.
-3. PASS — the four seeded bugs above failed named tests; logs under `/tmp/rd9-mutant-*.log`.
+3. PASS — the five seeded bugs above failed named tests; `test_soft_admission_elaborates_fill_once` pins the one-fill call count.
 4. PASS — `test_soft_chain_document_checks_the_filled_route`, `test_plain_soft_document_keeps_its_admission_route`, `test_document_graph_admits_the_layer_of_fill_u`, and `test_every_seed_document_agrees_with_python_or_fails_closed` cover the new and retained paths.
 5. PASS — `test_soft_admission_conditions_are_bound_to_the_source` rejects absent and duplicated labels; `test_soft_admission_row_fields_are_typed` rejects absent and retyped fields.
 6. N.A. — the chain runs the final-head gate after handoff, as this item explicitly directs.
