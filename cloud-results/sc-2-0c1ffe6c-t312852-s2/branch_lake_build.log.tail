@@ -1,0 +1,200 @@
+
+Hint: Omit it from the simp argument list.
+  simp only [getObjValD_set_eq wf, getObjValD_set_ne wf (show "environment" ≠ "kind" by decide), he,
+      getObjVal_set_ne wfe (show "profiles" ≠ "vocabulary" by decide), getObjVal_set_eq wfe, hP,̵
+  ̵ ̵ ̵ ̵ ̵h̵l̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [1117/1159] Replayed ResponseShape.Encoders.Discourse
+warning: ResponseShape/Encoders/Discourse.lean:195:58: This simp argument is unused:
+  List.append_nil
+
+Hint: Omit it from the simp argument list.
+  simp only [List.cons_append, List.nil_append, L̵i̵s̵t̵.̵a̵p̵p̵e̵n̵d̵_̵n̵i̵l̵,̵ ̵choicesJson, jointJson]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [1121/1159] Replayed ResponseShape.Encoders.Alternatives
+warning: ResponseShape/Encoders/Alternatives.lean:40:83: This simp argument is unused:
+  Bool.false_eq_true
+
+Hint: Omit it from the simp argument list.
+  simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte,̵ ̵B̵o̵o̵l̵.̵f̵a̵l̵s̵e̵_̵e̵q̵_̵t̵r̵u̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Encoders/Alternatives.lean:52:83: This simp argument is unused:
+  Bool.false_eq_true
+
+Hint: Omit it from the simp argument list.
+  simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte,̵ ̵B̵o̵o̵l̵.̵f̵a̵l̵s̵e̵_̵e̵q̵_̵t̵r̵u̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Encoders/Alternatives.lean:87:83: This simp argument is unused:
+  Bool.false_eq_true
+
+Hint: Omit it from the simp argument list.
+  simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte,̵ ̵B̵o̵o̵l̵.̵f̵a̵l̵s̵e̵_̵e̵q̵_̵t̵r̵u̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Encoders/Alternatives.lean:97:83: This simp argument is unused:
+  Bool.false_eq_true
+
+Hint: Omit it from the simp argument list.
+  simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte,̵ ̵B̵o̵o̵l̵.̵f̵a̵l̵s̵e̵_̵e̵q̵_̵t̵r̵u̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [1127/1159] Replayed ResponseShape.Encoders.Risk
+warning: ResponseShape/Encoders/Risk.lean:17:59: unused variable `hobj`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: ResponseShape/Encoders/Risk.lean:41:56: unused variable `hobj`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: ResponseShape/Encoders/Risk.lean:49:62: unused variable `hobj`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [1150/1159] Built VE.Scope.Theorems (18s)
+warning: VE/Scope/Theorems.lean:615:33: This simp argument is unused:
+  ite_false
+
+Hint: Omit it from the simp argument list.
+  simp only [insertBy, habf,̵ ̵i̵t̵e̵_̵f̵a̵l̵s̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Scope/Theorems.lean:1175:40: This simp argument is unused:
+  balanceR!
+
+Hint: Omit it from the simp argument list.
+  simp_all [balanceR̵!̵,̵ ̵b̵a̵l̵a̵n̵c̵e̵d_inner_iff, BalancedAtRoot, size, delta]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Scope/Theorems.lean:1185:40: This simp argument is unused:
+  balanceL!
+
+Hint: Omit it from the simp argument list.
+  simp_all [balanceL̵!̵,̵ ̵b̵a̵l̵a̵n̵c̵e̵d_inner_iff, BalancedAtRoot, size, delta]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Scope/Theorems.lean:1229:8: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+warning: VE/Scope/Theorems.lean:1451:84: This simp argument is unused:
+  heq
+
+Hint: Omit it from the simp argument list.
+  simp_all ̵[̵h̵e̵q̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Scope/Theorems.lean:1535:33: This simp argument is unused:
+  hAf
+
+Hint: Omit it from the simp argument list.
+  simp [hlen', hnameslen, hdup', hA̵f̵,̵ ̵h̵Bf]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Scope/Theorems.lean:1535:38: This simp argument is unused:
+  hBf
+
+Hint: Omit it from the simp argument list.
+  simp [hlen', hnameslen, hdup', hAf,̵ ̵h̵B̵f̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Scope/Theorems.lean:1538:25: This simp argument is unused:
+  throw
+
+Hint: Omit it from the simp argument list.
+  simp only [Except.map, throw,̵ ̵t̵h̵r̵o̵w̵The, MonadExceptOf.throw] at ⊢
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Scope/Theorems.lean:1538:32: This simp argument is unused:
+  throwThe
+
+Hint: Omit it from the simp argument list.
+  simp only [Except.map, throw, t̵h̵r̵o̵w̵T̵h̵e̵,̵ ̵MonadExceptOf.throw] at ⊢
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Scope/Theorems.lean:1538:42: This simp argument is unused:
+  MonadExceptOf.throw
+
+Hint: Omit it from the simp argument list.
+  simp only [Except.map, throw, throwThe,̵ ̵M̵o̵n̵a̵d̵E̵x̵c̵e̵p̵t̵O̵f̵.̵t̵h̵r̵o̵w̵] at ⊢
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Scope/Theorems.lean:1540:13: This simp argument is unused:
+  Except.bind
+
+Hint: Omit it from the simp argument list.
+  simp only [̵E̵x̵c̵e̵p̵t̵.̵b̵i̵n̵d̵]̵ ̵at ⊢
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Scope/Theorems.lean:1554:51: This simp argument is unused:
+  Except.map
+
+Hint: Omit it from the simp argument list.
+  simp only [bind, Except.bind, pure, Except.pure, E̵x̵c̵e̵p̵t.̵m̵a̵p̵,̵ ̵t̵hrow, throwThe, MonadExceptOf.throw] at hC
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Scope/Theorems.lean:1554:63: This simp argument is unused:
+  throw
+
+Hint: Omit it from the simp argument list.
+  simp only [bind, Except.bind, pure, Except.pure, Except.map, throw,̵ ̵t̵h̵r̵o̵w̵The, MonadExceptOf.throw] at hC
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Scope/Theorems.lean:1554:70: This simp argument is unused:
+  throwThe
+
+Hint: Omit it from the simp argument list.
+  simp only [bind, Except.bind, pure, Except.pure, Except.map, throw, t̵h̵r̵o̵w̵T̵h̵e̵,̵ ̵MonadExceptOf.throw] at hC
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Scope/Theorems.lean:1554:80: This simp argument is unused:
+  MonadExceptOf.throw
+
+Hint: Omit it from the simp argument list.
+  simp only [bind, Except.bind, pure, Except.pure, Except.map, throw, throwThe,̵ ̵M̵o̵n̵a̵d̵E̵x̵c̵e̵p̵t̵O̵f̵.̵t̵h̵r̵o̵w̵] at hC
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Scope/Theorems.lean:1555:48: This simp argument is unused:
+  decide_eq_true_eq
+
+Hint: Omit it from the simp argument list.
+  simp only [beq_iff_eq, List.contains_iff_mem,̵ ̵d̵e̵c̵i̵d̵e̵_̵e̵q̵_̵t̵r̵u̵e̵_̵e̵q̵] at hC
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Scope/Theorems.lean:1557:13: This simp argument is unused:
+  Except.bind
+
+Hint: Omit it from the simp argument list.
+  simp only [̵E̵x̵c̵e̵p̵t̵.̵b̵i̵n̵d̵]̵ ̵at ⊢
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Scope/Theorems.lean:1560:13: This simp argument is unused:
+  Except.bind
+
+Hint: Omit it from the simp argument list.
+  simp only [̵E̵x̵c̵e̵p̵t̵.̵b̵i̵n̵d̵]̵ ̵at ⊢
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Scope/Theorems.lean:1617:20: This simp argument is unused:
+  graph
+
+Hint: Omit it from the simp argument list.
+  simp [affected, partUnits, ruleUnits, frameOn, governorsOf, ordered, hs, ht,
+  ̵  ̵ ̵ ̵isFrame, unary,̵ ̵g̵r̵a̵p̵h̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Scope/Theorems.lean:1620:49: This simp argument is unused:
+  h
+
+Hint: Omit it from the simp argument list.
+  simp ̵[̵h̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+✔ [1151/1159] Built VE.Scope.ReadingsTheorems (683ms)
+✔ [1152/1159] Built VE.Service.ScopeAdmission (947ms)
+✔ [1153/1159] Built ResponseShape.Encoders.Document (6.2s)
+✔ [1154/1159] Built ResponseShape.Encoders (957ms)
+✔ [1156/1159] Built VE.Scope.Examples (10s)
+✔ [1157/1159] Built VE.Scope.ReadingsExamples (1.2s)
+✔ [1158/1159] Built VE (710ms)
+Build completed successfully (1159 jobs).
