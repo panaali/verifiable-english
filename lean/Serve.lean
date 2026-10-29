@@ -3,8 +3,8 @@ import VE.Service.Protocol
 /-- `ve_service`: the persistent JSON-lines front end over the existing runners
 (docs/spec/SEMANTICS-MIGRATION-PLAN.md, stage 1; `VE.Service` for the protocol).
 Prints the handshake line, then one response line per request line, flushed, until
-end of input. The only state kept between lines is the table of environment handles
-(`VE.Service.Handles`). The supervisor bounds memory and time from outside. -/
+end of input. Process state holds environment handles and a bounded readings admission
+memo. The supervisor bounds memory and time from outside. -/
 def main (args : List String) : IO UInt32 := do
   unless args.isEmpty do
     (← IO.getStderr).putStrLn "usage: ve_service  (JSON lines on stdin and stdout)"
@@ -14,12 +14,17 @@ def main (args : List String) : IO UInt32 := do
   stdout.putStrLn VE.Service.handshake.compress
   stdout.flush
   let mut handles : VE.Service.Handles := {}
+  let mut memo : VE.Readings.Run.AdmissionMemo := {}
+  let stats := (← IO.getEnv "VE_READINGS_MEMO_STATS") == some "1"
   repeat
     let line ← stdin.getLine
     if line.isEmpty then break
-    let (answer, next) := VE.Service.handleLine handles line
-    handles := next
+    let (answer, nextHandles, nextMemo) := VE.Service.handleLineMemo handles memo line
+    handles := nextHandles
+    memo := nextMemo
     if let some answer := answer then
       stdout.putStrLn answer.compress
       stdout.flush
+      if stats then
+        (← IO.getStderr).putStrLn s!"readings_memo admissions={memo.admissions} hits={memo.hits} entries={memo.entries.length} bytes={memo.entries.foldl (fun n e => n + e.bytes) 0}"
   return 0
