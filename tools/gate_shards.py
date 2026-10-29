@@ -173,13 +173,24 @@ def merge_records(records: list[dict]) -> dict:
                 return refuse(f"shard {number}: passing status with failures")
             if record.get("status") == "failed" and not record.get("failures"):
                 return refuse(f"shard {number}: failed status without a reason")
-            if not isinstance(record.get("quarantine"), dict) or not isinstance(first.get("quarantine"), dict) or \
-                    not isinstance(record["quarantine"].get("retried"), dict) or \
-                    any(record["quarantine"].get(key) != first["quarantine"].get(key)
+            quarantine = record.get("quarantine")
+            if not isinstance(quarantine, dict) or not isinstance(first.get("quarantine"), dict) or \
+                    type(quarantine.get("enabled")) is not bool or \
+                    not isinstance(quarantine.get("active"), list) or \
+                    not isinstance(quarantine.get("expired"), list) or \
+                    not isinstance(quarantine.get("retried"), dict) or \
+                    any(type(node) is not str for node in quarantine["active"] + quarantine["expired"]) or \
+                    len(quarantine["active"]) != len(set(quarantine["active"])) or \
+                    (not quarantine["enabled"] and
+                     (quarantine["active"] or quarantine["expired"] or quarantine["retried"] or
+                      "day" in quarantine)) or \
+                    (quarantine["enabled"] and type(quarantine.get("day")) is not str) or \
+                    any(quarantine.get(key) != first["quarantine"].get(key)
                    for key in ("enabled", "day", "active", "expired")):
                 return refuse(f"shard {number}: quarantine policy differs")
-            retries = record["quarantine"]["retried"]
+            retries = quarantine["retried"]
             if any(type(node) is not str or node not in ran or not isinstance(retry, dict) or
+                   node not in quarantine["active"] or
                    retry.get("suite") != "failed" or retry.get("alone") not in
                    ("passed", "failed", "skipped", "no result") or
                    (record["status"] == "shard-passed" and retry["alone"] != "passed")
