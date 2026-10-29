@@ -1,0 +1,5 @@
+job=armsh-seed-l96-8cf4e616-t306423-s1 shard=1/2 nproc=4 arch=aarch64 host=runnervm9u1px date=2026-10-29T20:41:15Z ulimit_s=16384
+Mem:              15           1          10           0           4          14
+/dev/root       145G   41G  104G  29% /
+ 20:41:15 up 4 min,  0 user,  load average: 0.68, 0.23, 0.09
+pilot/codex branches: 98
