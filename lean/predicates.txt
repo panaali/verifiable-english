@@ -454,6 +454,8 @@ module VE.Readings.CompanionsExamples
 module VE.Readings.Components
 module VE.Readings.ComponentsExamples
 module VE.Readings.ComponentsWire
+module VE.Readings.DefaultVerdicts
+module VE.Readings.DefaultVerdictsExamples
 module VE.Readings.Doc
 module VE.Readings.Examples
 module VE.Readings.Faithful
