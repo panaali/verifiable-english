@@ -6,6 +6,7 @@ import argparse
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 
@@ -85,6 +86,16 @@ def run_rater(rater):
         if allowed.returncode:
             raise RuntimeError("Codex is not allowed; stop after preregistration")
         account = None
+        # Codex needs to create local session state, while the account directory
+        # is read-only in this worker. The OAuth file is copied without printing
+        # it; temporary state remains outside the repository.
+        home = Path("/tmp/jt-e3-codex-home")
+        home.mkdir(mode=0o700, exist_ok=True)
+        auth = home / "auth.json"
+        if not auth.exists():
+            shutil.copyfile(Path(env["CODEX_HOME"]) / "auth.json", auth)
+            auth.chmod(0o600)
+        env["CODEX_HOME"] = str(home)
         cmd = ["codex", "exec", "--skip-git-repo-check", "--ephemeral", "--ignore-rules",
                "-s", "read-only", "-C", "/tmp", "-o", str(HERE / "codex.message.txt"), "-"]
     # A single complete batch per model: two rater calls, well below the ten-call cap.
