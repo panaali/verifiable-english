@@ -128,6 +128,7 @@ module VE.Arith.Defs
 module VE.Arith.Examples
 module VE.Arith.Holds
 module VE.Arith.Syntax
+module VE.Arith.TableExamples
 module VE.Ask.Basic
 module VE.Ask.Binding
 module VE.Ask.Examples
