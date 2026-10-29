@@ -20,6 +20,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -49,8 +50,8 @@ class RegisterError(Exception):
 
 
 def rows_sha256(rows) -> str:
-    text = json.dumps(rows, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
-    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+    text = json.dumps(rows, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(text.encode("ascii")).hexdigest()
 
 
 def file_sha256(path: Path) -> str:
@@ -72,6 +73,12 @@ def _row_shape(row, keys):
     for key in ("id", "source", "statement"):
         if type(row[key]) is not str or not row[key]:
             raise RegisterError(f"{key} is not a non-empty string")
+        try:
+            row[key].encode("utf-8")
+        except UnicodeEncodeError:
+            raise RegisterError(f"{key} is not UTF-8 text") from None
+    if not re.fullmatch(r"[a-z]+-[0-9]+", row["id"]):
+        raise RegisterError("id is not a word, a hyphen and a number")
     if row["usecase"] not in USECASES:
         raise RegisterError(f"use case {row['usecase']!r} is not one of {list(USECASES)}")
     if type(row["bytes"]) is not int or row["bytes"] != len(row["statement"].encode("utf-8")):
@@ -167,11 +174,11 @@ def _checked_text(row, results, manifest):
         file = REPO / path
         if not file.is_file():
             raise RegisterError(f"VE text {path} does not exist")
-        if path.startswith("usecases/agent-policy/"):
-            if type(inputs) is not dict or inputs.get(file.name) != file_sha256(file):
-                raise RegisterError(f"VE text {path} is not the text results.json was checked on")
-        elif not path.startswith(f"usecases/{row['usecase']}/"):
+        if Path(path).parent != Path("usecases", row["usecase"]):
             raise RegisterError(f"VE text {path} is outside usecases/{row['usecase']}")
+        if row["usecase"] == "agent-policy" and (
+                type(inputs) is not dict or inputs.get(file.name) != file_sha256(file)):
+            raise RegisterError(f"VE text {path} is not the text results.json was checked on")
     if text["rules"]:
         policy = "usecases/agent-policy/policy.ve"
         if policy not in text["files"] or manifest.get("text_digest") != file_sha256(REPO / policy):
@@ -198,7 +205,7 @@ def run_pytest(nodeids):
     return passed
 
 
-def measure(register, key, results, manifest, run_tests=run_pytest):
+def measure(register, key, results, manifest, run_tests=None):
     """{"verified", "source", "open": {family: bytes}, "rows": {id: status}, "failures": [...]}.
 
     A row that fails a check counts in no verified or OPEN total; when the
@@ -215,9 +222,10 @@ def measure(register, key, results, manifest, run_tests=run_pytest):
             _row_shape(row, keys)
             shaped.append(row)
         except RegisterError as error:
-            level["failures"].append(f"{row.get('id', '?') if type(row) is dict else '?'}: {error}")
+            label = row.get("id") if type(row) is dict and type(row.get("id")) is str else "?"
+            level["failures"].append(f"{label}: {error}")
     tests = sorted({test for row in shaped if row["status"] == "VERIFIED" for test in row["decided_by"]["tests"]})
-    passed = run_tests(tests) if tests else set()
+    passed = (run_tests or run_pytest)(tests) if tests else set()
     for row in shaped:
         level["source"] += row["bytes"]
         try:
@@ -252,7 +260,12 @@ def main(argv=None) -> int:
     parser.add_argument("--manifest", default=HERE / "policy.manifest.json")
     parser.add_argument("--json", action="store_true", help="print the level as JSON")
     args = parser.parse_args(argv)
-    level = measure(_read(args.register), _read(args.key), _read(args.results), _read(args.manifest))
+    try:
+        inputs = [_read(path) for path in (args.register, args.key, args.results, args.manifest)]
+    except (OSError, ValueError, RecursionError) as error:
+        print(f"FAIL unreadable input: {error!r}", file=sys.stderr)
+        return 1
+    level = measure(*inputs)
     if args.json:
         print(json.dumps(level, indent=2, ensure_ascii=False))
     else:
