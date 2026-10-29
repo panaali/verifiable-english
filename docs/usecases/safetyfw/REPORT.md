@@ -1,6 +1,6 @@
 # usecase-safetyfw: three frontier-lab safety frameworks in VE (build report)
 
-- **Status:** source coverage and D2/D3 probes corrected; the full OpenAI D1 translation remains open. No DRI signature is reserved; Rust's fault-order delta is signed by standing ruling R2.
+- **Status:** F1 and F12 from recheck2 are corrected; remaining OpenAI source claims stay explicitly open. No DRI signature is reserved.
 - **HEAD:** see the final local commit; this report records its exact test result below.
 - **What changed:** frozen keys and DeepMind/Anthropic baselines remain; OpenAI has 67,418 bytes in 389 units,
   0.3% CHECKED, stage 0 P1–P8 and gaps by feature family.
@@ -54,7 +54,7 @@ the same way as safety-framework's `test_span_accounting_is_complete`.
 | DeepMind FSF 3.1 | Oct 18 (fsf-r1) | 4,595 (8.5%) | 7,356 (13.5%) | 35,557 (65.4%) | 6,865 (12.6%) | 54,373 |
 | DeepMind FSF 3.1 | Oct 28 (fsf-r2) | 4,595 (8.5%) | 7,356 (13.5%) | 35,557 (65.4%) | 6,865 (12.6%) | 54,373 |
 | Anthropic RSP 3.4 | Oct 28 (corrected baseline) | 5,327 (9.0%) | 13,214 (22.2%) | 37,248 (62.7%) | 3,621 (6.1%) | 59,410 |
-| OpenAI PF v2 | Oct 29 (D1 family drafts) | 170 (0.3%) | 6,859 (10.2%) | 5,327 (7.9%) | 55,062 (81.7%) | 67,418 |
+| OpenAI PF v2 | Oct 29 (D1 family drafts) | 170 (0.3%) | 7,052 (10.5%) | 5,327 (7.9%) | 54,869 (81.4%) | 67,418 |
 
 Sources: [fsf-r2/gaps.json](../safety-framework/fsf-r2/gaps.json) (`master_bytes_by_status`, Oct 1, Oct 18 and
 today), [anthropic-rsp/gaps.json](anthropic-rsp/gaps.json) and
@@ -447,3 +447,27 @@ by R16.
 | Delta | Ruling | Evidence |
 |---|---|---|
 | `lean/VE/Service/Standalone.lean`: S +13, untied V +2, K +0 | SIGNED by standing ruling R16 (DRI-RULINGS.md): 15 new trusted lines for the tested route header guard, with a follow-up ties pass | `tools/trust_map.py --check`; `tests/test_difffuzz.py::test_request_envelope_fields_precede_predicate_sort_fault`; `docs/usecases/safetyfw/FOLLOW-UPS.md` |
+
+## 23. Recheck2 F1 and F12 correction (2026-10-29)
+
+F1 -> OPEN RS13 and source-bound residuals -> `test_pf_rs13_and_untranslated_claims_have_named_residuals`, `test_pf_every_byte_has_ve_status_and_one_unit` -> `fb4103767`, `bc7cadbc0`, `3ecb627f7`.
+F12 -> Rust `UnknownSymbol` parity -> `test_legacy_undeclared_builtin_sorts_are_unknown_symbols` -> `0ce92f6a5`.
+
+F1: the 5.1 employee summary sentence is an RS13 OPEN reading with `permission` and `might` choices, as PLAN 3.1 states. Both choices remain pending because the source limits highly sensitive information without specifying the limit, and D1 has no complete act for request and receipt. It is not counted as CHECKED. Each remaining fallback UNFORMALISED unit carries a unique source-span hash residual in `spans.json`, keeping the 195 broad `unmapped_claim` and `unmapped_duty` cases independently addressable without saving private source prose. `test_pf_rs13_and_untranslated_claims_have_named_residuals` checks the reading, every residual, and the source binding when the pinned source is available. The original F1 probe failed before the change and passed afterward.
+
+F12: legacy undeclared `$int` and `$string` predicate argument sorts now return `UnknownSymbol` in Rust, matching Python and Lean; composed-route delayed built-in validation remains covered by `test_predicate_signature_and_constant_fault_order`. `test_legacy_undeclared_builtin_sorts_are_unknown_symbols` checks all three engines, an ordinary missing sort, and a declared-sort acceptance case. Rust's `environment_definition_order::legacy_undeclared_builtin_sorts_are_unknown_symbols` covers the same boundary. The original F12 probe failed before the change and passed afterward.
+
+F5 (C) is recorded in `FOLLOW-UPS.md` under the 2026-10-29 DRI focus. The three `main-known-red.txt` tests are pre-existing and were not edited. The full suite and release gate were not run under this branch's test instruction.
+
+Validation commands and outputs on this worktree:
+
+- The exact `PROBE F1` and `PROBE F12` commands in `usecase-safetyfw-b-c290542-looprecheck2.final.md` exited 1 before the fixes and 0 after them; F12 then printed `UnknownSymbol` and `unknown predicate argument sort`.
+- `.venv/bin/python -m pytest -q tests/test_safetyfw_usecases.py::test_pf_rs13_and_untranslated_claims_have_named_residuals tests/test_difffuzz.py::test_legacy_undeclared_builtin_sorts_are_unknown_symbols` reported `2 passed`.
+- `cargo test -q --manifest-path rust/Cargo.toml -p ve-kernel --test environment_definition_order` reported `3 passed`. A Python mutant that changed RS13 `permission` to `grant` failed `test_pf_rs13_and_untranslated_claims_have_named_residuals`; a Rust mutant that returned `InvalidInput` for the legacy sort failed `legacy_undeclared_builtin_sorts_are_unknown_symbols`. Both were restored, and the two focused commands passed afterward.
+- `.venv/bin/python usecases/openai-preparedness/build_document.py --check`, `measure.py --check`, and `stage0.py --check` each exited 0. The regenerated partition still has 389 units and 67,418 bytes: 7 CHECKED, 34 OPEN, 48 LABELLED, and 300 UNFORMALISED. The 195 broad unmapped cases each have a source-bound residual.
+- `PATH=$HOME/.elan/bin:$PATH lake build` in `lean/` reported `Build completed successfully (1135 jobs)`; `python3 lean/audit.py` reported `PASS: 653 source files; 7286 named theorem declarations audited`; `python3 tools/rust_build.py --check` reported the Rust release SHA-256 is pinned.
+- `zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on the final code and evidence snapshot `7b547257` reported `recorded 397 units for tree e44a552c6a; 0 failed` and exited 0 (`/tmp/ve-safetyfw-selected-final.log`, Mac summary 2026-10-29 18:44:10 UTC). This run included `tests/test_safetyfw_usecases.py` and `tests/test_difffuzz.py`, each exit 0. An earlier selected snapshot exposed stale README and report coverage numbers; its sole `test_safetyfw_usecases.py` failure was `test_pf_every_byte_has_ve_status_and_one_unit`. After the table correction, that test passed alone (`1 passed`) and in the final selected run. The earlier snapshot was stopped after this fix; no test process remains from it.
+
+| Delta | Ruling | Evidence |
+|---|---|---|
+| The 5.1 employee-summary source unit moves from UNFORMALISED to an OPEN RS13 reading with no admitted rule | SIGNED by DRI (`usecase-safetyfw-b-lp1600-focus.md`, 2026-10-29): the item-specific instruction requires RS13 and forbids semantic coverage from structure alone | `tests/test_safetyfw_usecases.py::test_pf_rs13_and_untranslated_claims_have_named_residuals` |
