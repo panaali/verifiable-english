@@ -1,0 +1,6 @@
+- `ve/adapters/__init__.py` — Audited statement-layer and data adapters.
+- `ve/adapters/attributes.py` — Defined-value translation for Cedar-style attribute and context lookups.
+- `ve/adapters/cedar.py` — Cedar's no-attribute fragment as a finite request norm document.
+- `ve/adapters/cli.py` — File based adapter recomputation: ``ve adapter run``.
+- `ve/adapters/gatekeeper.py` — Gatekeeper image exemption on a finite, recorded input domain.
+- `ve/adapters/records.py` — Recomputable glob, prefix and regex tables with complete error rows.

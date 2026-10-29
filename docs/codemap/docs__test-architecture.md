@@ -1,0 +1,20 @@
+- `docs/test-architecture/cutoff/check_evidence.py` — Check this batch's saved evidence (architecture decision D4: at the batch gate and the merge train, never as a permanent test).
+- `docs/test-architecture/cutoff/mac_job.py` — The batch's measurement jobs on the Mac test runner (never part of the suite).
+- `docs/test-architecture/cutoff/measure.py` — Run one measurement job of this batch on the Mac test runner and decode what it sends back.
+- `docs/test-architecture/cutoff/mutants.py` — Plant this batch's Python bugs one at a time, run the test that must reject each, and restore the source.
+- `docs/test-architecture/cutoff/seeds.py` — Behavioural Lean seeds: is each one caught by a test that the narrowed selections keep?
+- `docs/test-architecture/cutoff/shadow.py` — Contemporaneous shadow comparisons: today's, the `modes` and the `answers` selections against full runs.
+- `docs/test-architecture/cutoff/sweep.py` — Plant every mutant a fixed set of operators makes in this batch's Python code, run tests/test_answer_cutoff.py on each, and restore the source: a test must fai…
+- `docs/test-architecture/cutoff/tables.py` — The report's tables, from the saved evidence only (REPORT.md holds them between generated markers).
+- `docs/test-architecture/manifest-ops/measure.py` — Replay test selection on the merges to main since 2026-10-14 and on the cutoff report's ten shadow changes, to find what still selects every unit (tarch-manife…
+- `docs/test-architecture/select/replay.py` — Replay test selection on the 17 first-parent merges of Oct 11-14 (test-architecture draft 2, section 2.3).
+- `docs/test-architecture/slowtail/mutants.py` — The batch's seeded bugs: plant each one, run the tests that should catch it, record the outcome, restore the file.
+- `docs/test-architecture/slowtail/replay.py` — Replay a measured whole-suite run through the scheduler, to separate what each rule and the fresh durations do.
+- `docs/test-architecture/store/measure_plugin.py` — Step 0 of the answer-store batch: the hit rate of exact request lines between two runs.
+- `docs/test-architecture/store/seeded_bugs.py` — The answer-store batch's seeded bugs, run on the test runner in one job (copy into tests/ to run; not collected here).
+- `docs/test-architecture/store/store_diff.py` — (no module docstring)
+- `docs/test-architecture/store/store_diff2.py` — (no module docstring)
+- `docs/test-architecture/store/store_dump.py` — (no module docstring)
+- `docs/test-architecture/store/store_dump2.py` — (no module docstring)
+- `docs/test-architecture/tarch-binding/seeded_faults.py` — Seeded faults at hand binders' boundaries, judged end to end (tarch-binding, part 3; evidence pinned at a commit).
+- `docs/test-architecture/tarch-split/measure.py` — tarch-split's before/after numbers, from the saved Mac runs and the tests' own input partitions.

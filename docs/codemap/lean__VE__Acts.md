@@ -1,0 +1,19 @@
+- `lean/VE/Acts/Compat.lean` — Theorems of `VE.Acts.Lexical` stated above both `Norms.Wire` and `Acts.Lexical` (docs/spec/act-phrases.md 4.3), where the string lemmas they use are available.
+- `lean/VE/Acts/Elaborate.lean` — Elaboration: joined acts become rules on simple acts (docs/spec/act-phrases.md 6.3, 6.5, 6.6; plan 2.3).
+- `lean/VE/Acts/ElaborateExamples.lean` — Fixtures of the elaboration (docs/spec/act-phrases.md 6.3, 11.3: E1 to E10, E16; sorts `person`, guards `top`).
+- `lean/VE/Acts/Grammar.lean` — The act grammar's rule table (docs/spec/act-phrases.md 5.2) and its well-formedness `grammar_wf` (5.6).
+- `lean/VE/Acts/GrammarExamples.lean` — Fixtures of the act grammar (docs/spec/act-phrases.md 11.2, 11.2a, 11.2b; D-31 in 10).
+- `lean/VE/Acts/Lexical.lean` — Lexical acts (docs/spec/act-phrases.md 1.1 to 1.3, 2.1, 4.2 and 4.3; batch AP-1).
+- `lean/VE/Acts/LexicalBase.lean` — The words of an act phrase (docs/spec/act-phrases.md 4.1), below `VE.Norms.Wire` and `VE.Acts.Lexical`: the reserved words, slot scanning, Python's whitespace …
+- `lean/VE/Acts/LexicalExamples.lean` — Acceptance fixtures of AP-1 (docs/spec/act-phrases.md 11.1: A1-A6, A13, A15-A19, A21-A30, A32, A33), with the boundaries of each limit and each diagnostic of `…
+- `lean/VE/Acts/LexicalProofs.lean` — The string lemmas behind the theorems of `VE.Acts.Lexical` (docs/spec/act-phrases.md 4.3), and the theorems `check_spec`, `check_no_clause` and `fixedOk_unique…
+- `lean/VE/Acts/Linearize.lean` — The normal form and the text of a simple act (docs/spec/act-phrases.md 5.5).
+- `lean/VE/Acts/Meaning.lean` — The meaning of a derivation of an act phrase: its act tree (docs/spec/act-phrases.md 1.5, 5.3; plan D9 (i)).
+- `lean/VE/Acts/MeaningExamples.lean` — Fixtures of the meaning, `readings`, `read` and `analyse` (docs/spec/act-phrases.md 5.3, 5.4, 11.2, 11.2b).
+- `lean/VE/Acts/Read.lean` — Readings and reading of an act phrase, with the limits of D2 (docs/spec/act-phrases.md 1.6, 5.4, 5.6).
+- `lean/VE/Acts/Readings.lean` — The readings of an act phrase, `read` and `analyse` (docs/spec/act-phrases.md 1.6, 5.4), and spec 5.6's theorems about them.
+- `lean/VE/Acts/RuleExamples.lean` — Fixtures of the act grammar's rule table (docs/spec/act-phrases.md 5.2, 5.6, 11.2, 11.2a, 11.2b).
+- `lean/VE/Acts/Syntax.lean` — The act grammar's tokens, vocabulary and terminals (docs/spec/act-phrases.md 1.1, 1.2, 1.4, 5.1).
+- `lean/VE/Acts/Table.lean` — The modal × connective table and the paraphrases of readings (docs/spec/act-phrases.md 1.7, 6.1, 6.2; plan 2.3).
+- `lean/VE/Acts/TableExamples.lean` — Fixtures of the ops, the table, the renderings and the paraphrases (docs/spec/act-phrases.md 5.5, 6.1, 6.2 and 11.3: T1 to T10 on the act trees of 11.2, the pa…
+- `lean/VE/Acts/Tree.lean` — The act trees: the meaning of a derivation of an act phrase (docs/spec/act-phrases.md 1.5, 5.4).

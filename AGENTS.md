@@ -1,7 +1,6 @@
 # Working in this repository
 
-Read this first. It changes only when a rule changes; the facts that change when a route is added
-come from `tools/repo_map.py`, which reads them from the repository each time.
+Read this first. Route facts come from `tools/repo_map.py` and update with the tree.
 
 ## What VE is
 
@@ -25,6 +24,8 @@ and whether it holds; Python and Rust carry the files, the display and a fast pa
 
 ## Where things are
 
+Code map: docs/codemap/INDEX.md (one line per area) and docs/codemap/<area>.md (one line per module, first docstring sentence); service-mode routes: tools/repo_map.py. Generated: never edit by hand.
+
 - `ve/` the Python package: the CLI (`ve/__main__.py`), document loading, display and relays.
 - `ve/backends/` the Lean service client (`ve/backends/lean_service.py`), the one relay entry
   (`ve/backends/relay.py`), the response schemas and their checker (`ve/backends/service_schema.py`).
@@ -46,7 +47,7 @@ and whether it holds; Python and Rust carry the files, the display and a fast pa
 - `uv run python tools/repo_map.py file ve/discourse.py` the modes, layer, tests and generator of a file.
 - `uv run python tools/repo_map.py --check` fails when a mode has no schema file or a schema file no mode.
 
-A cell the repository's data cannot fill says "unknown"; then read the code, and do not guess.
+For an "unknown" cell, read the code; do not guess.
 
 ## Recipe: a relayed Lean route
 

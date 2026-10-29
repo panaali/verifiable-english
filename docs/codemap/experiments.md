@@ -1,0 +1,77 @@
+- `experiments/E0/closure_witnesses/generate.py` — Reproduce 15 checked E0 closure translations from pinned sampled source text.
+- `experiments/E0/closure_witnesses/validate.py` — Check all witnesses, adapter invariants, independent graph truth, and Lean agreement.
+- `experiments/E0/survey_sample.py` — Reproducible sampling and full-dataset mechanical checks for the E0 dataset survey.
+- `experiments/E2E4/__init__.py` — Deterministic materials for the E2 and E4 mechanism demonstrations.
+- `experiments/E2E4/analyze_e4.py` — Analyze E4 paired approvals with templates, never renamed items, as clusters.
+- `experiments/E2E4/colab/export_prompts.py` — Export native E2 or E4 harness conditions; these experiments have no E5 style factor.
+- `experiments/E2E4/colab/score.py` — Score E2/E4 Colab outputs with their native preregistered contrasts.
+- `experiments/E2E4/common.py` — Shared offline proof/replay helpers; no experiment labels enter the checker.
+- `experiments/E2E4/e2.py` — Eight scored inference-shape clusters; fresh vocabulary; growing obligations.
+- `experiments/E2E4/e4.py` — Twelve held-out quantified/relational inference templates, certified by oracle.
+- `experiments/E2E4/fol.py` — Small deterministic renderer for VE's indexed wire AST.
+- `experiments/E2E4/generate.py` — Regenerate complete compressed materials, local JSONL and frozen counts.
+- `experiments/E2E4/materials.py` — Offline E2/E4 materials; dispatchers preserve the shared harness contract.
+- `experiments/E2E4/tests/__init__.py` — (no module docstring)
+- `experiments/E2E4/tests/test_fol.py` — (no module docstring)
+- `experiments/E2E4/tests/test_materials.py` — (no module docstring)
+- `experiments/E5/__init__.py` — (no module docstring)
+- `experiments/E5/calibrate_power.py` — Recompute planning uncertainty from current, complete dev b-a BAD trials.
+- `experiments/E5/check_harness.py` — Read-only contract check against another branch; no harness files or model calls.
+- `experiments/E5/colab/export_prompts.py` — Export E5 to an upload-only gpu/ directory with a separate local label sidecar.
+- `experiments/E5/colab/preflight.py` — Standalone GPU-side exact context check; imports no repo or hidden labels.
+- `experiments/E5/colab/score.py` — Score E5 Colab outputs against the LOCAL labels sidecar.
+- `experiments/E5/colab/test_colab.py` — Offline contracts: assignment, leakage boundary, freeze gate, scoring, context guard.
+- `experiments/E5/leak_audit.py` — Offline dev-trained feature probes across every E5 cell and difficulty.
+- `experiments/E5/materials.py` — Seeded E5 materials and a solver of exactly the records shown to the judge.
+- `experiments/E5/tests/__init__.py` — (no module docstring)
+- `experiments/E5/tests/test_cluster_stats.py` — (no module docstring)
+- `experiments/E5/tests/test_materials.py` — (no module docstring)
+- `experiments/P1-deference/native_counter.py` — Joint native chat counts: OpenRouter wire JSON stdin, integer stdout.
+- `experiments/P1-deference/run_p1.py` — Run from the repository root; see README.md for gates and dollar ceilings.
+- `experiments/P2-flaw-taxonomy/analyze.py` — Tally P2 flaw labels per corpus with Wilson 95% intervals.
+- `experiments/P2-flaw-taxonomy/sample.py` — (no module docstring)
+- `experiments/P3-formalisation-tax/adapters.py` — Per-item OPAQUE predicates: things the VE formalisation needs but VE cannot express (numeric comparison, string globbing, datetime arithmetic).
+- `experiments/P3-formalisation-tax/author_alloy.py` — Author's convenience writer for Alloy item formalisations (part of authoring cost).
+- `experiments/P3-formalisation-tax/author_cedar.py` — Author's convenience writer for Cedar item formalisations (part of authoring cost).
+- `experiments/P3-formalisation-tax/build_items.py` — Build the P3 item set from pinned public artefacts.
+- `experiments/P3-formalisation-tax/build_items_extra.py` — Kubernetes RBAC, AWS IAM and Alloy items (see build_items.py).
+- `experiments/P3-formalisation-tax/coverage.py` — E0-style coverage of each source by the VE formalisation (author-classified).
+- `experiments/P3-formalisation-tax/harness.py` — P3 harness: encode item worlds as VE finite models, run the author's VE formalisation, and differentially test it against the independent reference.
+- `experiments/P3-formalisation-tax/log.py` — Append an authoring-log event: python log.py <item> <event> [note...] Events: start, checker_fix (repair after parse/type/eval feedback), diff_fix (repair afte…
+- `experiments/P3-formalisation-tax/make_review_packets.py` — Structured-review arm: packets for reviewers who answer from the source alone (no VE).
+- `experiments/P3-formalisation-tax/mutation.py` — Mutation adequacy of the differential test.
+- `experiments/P3-formalisation-tax/naive.py` — Does the differential test catch realistic mistranslations?
+- `experiments/P3-formalisation-tax/nversion.py` — N-version check: the item author's VE vs the independent agent's VE on many perturbed worlds; the reference arbitrates any disagreement.
+- `experiments/P3-formalisation-tax/proofs.py` — Prove/countermodel arm: property-level questions a reviewer would ask about an artefact, answered with VE's entailment checker (certificate replayed) or its fi…
+- `experiments/P3-formalisation-tax/reference.py` — Independent reference outcomes for P3 items (never imports ``ve``).
+- `experiments/P3-formalisation-tax/reference_alloy.py` — A small, independent Alloy evaluator (stdlib only).
+- `experiments/P3-formalisation-tax/reference_cedar.py` — Independent reference interpreter for the Cedar subset used by the P3 items. Stdlib only.
+- `experiments/P3-formalisation-tax/reference_rbac.py` — Independent reference evaluators for Kubernetes RBAC and AWS IAM (identity policies).
+- `experiments/P3-formalisation-tax/summarize.py` — Assemble results.json from the P3 runs.
+- `experiments/P3-formalisation-tax/test_harness_regressions.py` — Regressions from the cross-family review of 94274a9 (VE encoding + reference together).
+- `experiments/P3-formalisation-tax/test_reference_cedar.py` — Validate reference_cedar.py against the upstream-recorded Cedar decisions, plus unit tests of tricky semantics.
+- `experiments/P3-formalisation-tax/test_reference_other.py` — Unit tests for reference_rbac.py and reference_alloy.py, plus a dump of every k*/w*/l* answer.
+- `experiments/P3-formalisation-tax/write_naive.py` — Write naive-author variants (items/<id>/naive_variants.json): realistic mistranslations a less careful author would plausibly produce.
+- `experiments/authoring-gates/risk-wording-probe/run.py` — Send sealed sessions to their proxy readers (risk-PLAN.md 2.6).
+- `experiments/authoring-gates/risk-wording-probe/score.py` — Score the risk wording probe mechanically against the sealed key and write RESULTS.md (risk-PLAN.md 2.6).
+- `experiments/authoring-gates/risk-wording-probe/seal.py` — Seal the risk wording probe (docs/spec/risk-PLAN.md 2.6).
+- `experiments/authoring-gates/risk-wording-probe-2/run.py` — Send sealed sessions to their proxy readers (risk-PLAN.md 2.6).
+- `experiments/authoring-gates/risk-wording-probe-2/score.py` — Score risk wording probe 2 (the c5 re-probe) mechanically against the sealed key and write RESULTS.md (risk-PLAN.md 2.6).
+- `experiments/authoring-gates/risk-wording-probe-2/score_one_text.py` — Post-seal scoring wrapper for risk wording probe 2 (not in the manifest; written after the run).
+- `experiments/authoring-gates/risk-wording-probe-2/seal.py` — Seal risk wording probe 2, the c5 re-probe (docs/spec/risk-PLAN.md 2.6 rule 4).
+- `experiments/cluster_stats.py` — Equal-weight paired cluster-t intervals; never resample trials as clusters.
+- `experiments/colab_check_refresh.py` — Audit every prompt after a core/certificate refresh; refuse changed E5 prompts.
+- `experiments/colab_common.py` — Offline Colab exports.
+- `experiments/colab_scoring.py` — Conservative Colab scoring with paired item contrasts and template-cluster t CIs.
+- `experiments/events-time-causation/et8_component.py` — ET-8: the ET-1 component (the seven hard constraints, as run in phase 1) on the completion.
+- `experiments/obfuscated-arguments/Feasibility.lean` — Small feasibility probes for the three physics trees linked by Barnes (2020).
+- `experiments/obfuscated-arguments/iceberg/cost_ledger.py` — Aggregate this worker's Codex token_count events; never copies conversation text.
+- `experiments/obfuscated-arguments/iceberg/qualitative.py` — Render and check ONLY the relational skeleton, with explicit Lean theorem imports.
+- `experiments/obfuscated-arguments/iceberg/verify.py` — Serial, reproducible whole-project build plus iceberg axiom audit.
+- `experiments/oracle/measure_unknown.py` — Seeded synthetic template audit; no calls to model providers or rewards.
+- `experiments/p1.py` — Executable P1 adapter.
+- `experiments/p1_history.py` — Reconstruct frozen P1 requests without relabelling a current checker build.
+- `experiments/p1_preflight.py` — P1 gate execution.
+- `experiments/prereg_inventory.py` — Offline assignment/budget audit only: no provider SDK, network or model scoring.
+- `experiments/trial_analysis.py` — Offline complete paired assignment checks and conservative endpoint scoring.
+- `experiments/validate_materials.py` — Independently replay frozen E5/E2/E4 labels; no generation and no model calls.

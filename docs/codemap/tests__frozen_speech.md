@@ -1,0 +1,3 @@
+- `tests/frozen_speech/__init__.py` — Frozen pre-switch speech oracle.
+- `tests/frozen_speech/speech_acts.py` — Strict experimental speech-acts@0 semantic core.
+- `tests/frozen_speech/speech_document.py` — Experimental ve-document@2 source wrapper; never admits P0 evidence.

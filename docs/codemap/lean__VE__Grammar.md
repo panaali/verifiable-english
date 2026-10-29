@@ -1,0 +1,9 @@
+- `lean/VE/Grammar/Basic.lean` — The grammar engine: matching, symbols, rules, grammars and well-formedness (docs/spec/english-lean.md 2.4 and 5.2).
+- `lean/VE/Grammar/Derives.lean` — Trees and derivations (docs/spec/english-lean.md 2.5 and 5.3).
+- `lean/VE/Grammar/Expect.lean` — Where a sentence without a derivation stops (docs/spec/english-lean-e2.md 4.5).
+- `lean/VE/Grammar/Extension.lean` — Extensions (docs/spec/english-lean.md 2.11 and 5.7).
+- `lean/VE/Grammar/Meaning.lean` — Meanings (docs/spec/english-lean.md 2.7 and 5.5).
+- `lean/VE/Grammar/Reading.lean` — Readings and documents (docs/spec/english-lean.md 2.8 and 5.6).
+- `lean/VE/Grammar/Table.lean` — The parser and the verdict (docs/spec/english-lean.md 2.6 and 5.4).
+- `lean/VE/Grammar/TableInvariant.lean` — The cap invariant of the table (docs/spec/english-lean.md 2.6 and 5.4).
+- `lean/VE/Grammar/TableProofs.lean` — The statements of the parser and the verdict (docs/spec/english-lean.md 5.4).

@@ -1,0 +1,5 @@
+- `docs/lean-first/b16d/make_ab.py` — Compare the complete nine-corpus recordings and save an exact delta.
+- `docs/lean-first/b16d/measure.py` — Capture batch 16d's exact cases from the saved 16c residue ledger.
+- `docs/lean-first/b16d/report.py` — Render batch 16d metrics from committed evidence only.
+- `docs/lean-first/b16d/seed_faults.py` — Temporarily plant each batch 16d bug, run the test meant to catch it, and save every result, caught or not.
+- `docs/lean-first/b16d/splice_recording.py` — Replace affected corpus rows after a focused rerecord, preserving all nine corpora.

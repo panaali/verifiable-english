@@ -1,0 +1,6 @@
+- `lean/VE/Compose/Adjoin.lean` — The lifting lemma (docs/spec/composition.md 9.5; composition-s2.md 4.4, 8.2).
+- `lean/VE/Compose/Content.lean` — The candidate content type (docs/spec/composition.md 1.6, 9.4).
+- `lean/VE/Compose/Dispatch.lean` — The dispatcher (docs/spec/composition.md 1.1 to 1.3, 4.2, 8, 9.3).
+- `lean/VE/Compose/Examples.lean` — The item-1 acceptance fixtures of docs/spec/composition.md section 10 as build-time checks (`#guard`: the build fails if one is false), and the two definitiona…
+- `lean/VE/Compose/ProfilesMain.lean` — Prints `ve/profile_table.json` (tools/profile_table.py): the profiles an environment lists and the rows of `VE.Compose.profileTable`, which Python reads and ne…
+- `lean/VE/Compose/Slot.lean` — The base-premise slot (docs/spec/composition.md 1.4, 1.5, 4.3, 4.4, 9.2).

@@ -1,0 +1,2 @@
+- `docs/math-evidence-me-1c/evidence/ties/measure_render.py` — ties-me-1c: per-declaration trust of VE/Calc/Render.lean and every dumped theorem naming one.
+- `docs/math-evidence-me-1c/evidence/ties/seed_tie.py` — Plant one seeded tie in the checkout, run trust_map --check, restore the file (git checkout).

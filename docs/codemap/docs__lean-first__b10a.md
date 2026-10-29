@@ -1,0 +1,4 @@
+- `docs/lean-first/b10a/fuzzer_gate.py` — Run the fourteen dated differential samples on the base and this batch.
+- `docs/lean-first/b10a/report.py` — Lean-first batch 10a: the tables of DELTA.md, rendered from the evidence files.
+- `docs/lean-first/b10a/timing.py` — Paired base/head timings for lean-first batch 10a (docs/LEAN-FIRST-PLAN.md 5.1 item 4).
+- `docs/lean-first/b10a/trace_fuzzer.py` — Run either checkout's differential fuzzer and fingerprint every sampled answer.

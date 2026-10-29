@@ -1,0 +1,11 @@
+- `docs/infra/eff-20261020-1/builder_shape.py` — Plan a small non-Lean change at the base of each replayed main commit whose drift holds a Lean change.
+- `docs/infra/eff-20261020-1/replay.py` — Replay `select_tests.py --commit <c> --json` from one checkout over main's last N first-parent commits.
+- `docs/infra/eff-20261021-1/replay.py` — Replay the eff-20261021-1 corpus (review F2): each hand mutant's selection, generation and verdict, measured.
+- `docs/infra/eff-20261021-1/verify_evidence.py` — Check the eff-20261021-1 stop decision against the raw tool output it rests on; exit 1 on any failed or unmeasured row.
+- `docs/infra/eff-20261026-1/check.py` — Check the eff-20261026-1 stop decision against the raw tool output it rests on; exit 1 on any missing, failed or skipped row.
+- `docs/infra/eff-20261026-1/replay.py` — Replay the eff-20261026-1 corpus: does `trust_mutants.py --classes all` select, generate and kill each hand mutant?
+- `docs/infra/eff-20261026-1b/compare.py` — eff-20261026-1b's real-tree check, on saved evidence only (architecture decision D4): `python3 docs/infra/eff-20261026-1b/compare.py` exits 0 when, on df-1ad's…
+- `docs/infra/eff-20261027-1/check.py` — eff-20261027-1 evidence check: recompute every row of evidence.json from the saved runs (runs/*.json).
+- `docs/infra/eff-20261027-1/probe.py` — eff-20261027-1 measurement probe: one cold statement dump of a Lean tree, timed per Lean run.
+- `docs/infra/speed-vocabpar/check.py` — speed-vocabpar's measurement and its stop rule, regenerated from the saved run logs.
+- `docs/infra/speed-vocabpar/rss.py` — The peak memory of a command's whole process tree (Linux /proc), for speed-vocabpar's stop rule (8 GB).

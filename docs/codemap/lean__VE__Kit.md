@@ -1,0 +1,1 @@
+- `lean/VE/Kit/Except.lean` — Facts about `Except` that every route's proofs share (consolidation step 4a).

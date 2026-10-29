@@ -1,0 +1,5 @@
+- `docs/lean-first/b14c/date_seed_replay.py` — Check dated fuzz signatures against batch 14c's base revision.
+- `docs/lean-first/b14c/finalize_evidence.py` — Save and check batch 14c evidence after the full gate on committed HEAD.
+- `docs/lean-first/b14c/fuzzer_seeds.py` — Run the fourteen dated CI differential samples on this batch's final code.
+- `docs/lean-first/b14c/latency.py` — Measure batch 14c's core route CPU and wall on the same host.
+- `docs/lean-first/b14c/targeted_ab.py` — Compare the n-ary shape absent from the large corpus on base and head.
