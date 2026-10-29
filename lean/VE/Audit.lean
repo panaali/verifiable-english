@@ -66,7 +66,9 @@ import VE.Calc.Run
 import VE.Calc.Units
 import VE.Calc.Wire
 import VE.Cardinality.Examples
+import VE.Cardinality.Gate
 import VE.Cardinality.Ratio
+import VE.Cardinality.Regions
 import VE.Cardinality.Run
 import VE.Cardinality.RunTheorems
 import VE.Cardinality.Syntax
@@ -1232,8 +1234,19 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.Examples.two_some
 #print axioms VE.Cardinality.Examples.weighted_two
 #print axioms VE.Cardinality.Examples.wellFormed_cases
+#print axioms VE.Cardinality.Run.charge_fst
+#print axioms VE.Cardinality.Run.charge_over
+#print axioms VE.Cardinality.Run.charge_snd
+#print axioms VE.Cardinality.Run.checkErased_eq
+#print axioms VE.Cardinality.Run.checkedProblem_eq
 #print axioms VE.Cardinality.Run.decodeCertificate_sound
 #print axioms VE.Cardinality.Run.erasedJson_conclusion
+#print axioms VE.Cardinality.Run.erasedJson_problemJson
+#print axioms VE.Cardinality.Run.erasedThunks_built
+#print axioms VE.Cardinality.Run.foldl_add_ge
+#print axioms VE.Cardinality.Run.foldl_capped_ge
+#print axioms VE.Cardinality.Run.foldl_capped_gt
+#print axioms VE.Cardinality.Run.problemChecks_eq
 #print axioms VE.Cardinality.Run.regionsJson_constants
 #print axioms VE.Cardinality.Run.runCaseReported_error
 #print axioms VE.Cardinality.Run.runCaseReported_ok
@@ -1264,12 +1277,15 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.bridge_hold
 #print axioms VE.Cardinality.cardinality_elab_sound
 #print axioms VE.Cardinality.checkCertificate_sound
+#print axioms VE.Cardinality.checkedRegions_eq
 #print axioms VE.Cardinality.countAtom_holds_iff
 #print axioms VE.Cardinality.countFin_eq
 #print axioms VE.Cardinality.count_atLeast_agree
 #print axioms VE.Cardinality.count_atMost_agree
 #print axioms VE.Cardinality.count_exactly_agree
 #print axioms VE.Cardinality.count_nOfM_agree
+#print axioms VE.Cardinality.countedAmong_eq_H
+#print axioms VE.Cardinality.countedSorts_eq_H
 #print axioms VE.Cardinality.countedUniversals_spec
 #print axioms VE.Cardinality.counted_of_mem
 #print axioms VE.Cardinality.counts_iff
@@ -1283,7 +1299,11 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.erasedProblem_admitted
 #print axioms VE.Cardinality.evalFin_iff
 #print axioms VE.Cardinality.exists_nodup_filter
+#print axioms VE.Cardinality.firstUseH_eq
+#print axioms VE.Cardinality.firstUseH_foldl
+#print axioms VE.Cardinality.firstUseStep_inv
 #print axioms VE.Cardinality.firstUse_nodup
+#print axioms VE.Cardinality.gate_cardinality
 #print axioms VE.Cardinality.get_of_data
 #print axioms VE.Cardinality.hasCount_exists_unique
 #print axioms VE.Cardinality.hasCount_regionSize
@@ -1305,6 +1325,8 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.not_regionName
 #print axioms VE.Cardinality.percentOf_holds_iff
 #print axioms VE.Cardinality.percentRoundsTo_holds_iff
+#print axioms VE.Cardinality.predsAmong_eq_H
+#print axioms VE.Cardinality.predsOn_not_counted
 #print axioms VE.Cardinality.proportion_holds_iff
 #print axioms VE.Cardinality.ratioTyped_iff
 #print axioms VE.Cardinality.ratio_cmp
@@ -1312,6 +1334,10 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.regionBody_holds
 #print axioms VE.Cardinality.regionConst_inj
 #print axioms VE.Cardinality.regionConst_startsWith
+#print axioms VE.Cardinality.regionData_predsOn
+#print axioms VE.Cardinality.regionData_sorts
+#print axioms VE.Cardinality.regionData_table
+#print axioms VE.Cardinality.regionData_universals
 #print axioms VE.Cardinality.regionSize_eq
 #print axioms VE.Cardinality.regionSize_filter
 #print axioms VE.Cardinality.regionSize_sum
@@ -1324,6 +1350,7 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.roundsTo_ratio_agree
 #print axioms VE.Cardinality.split_underscore
 #print axioms VE.Cardinality.startsWith_of_data
+#print axioms VE.Cardinality.sublist_of_sorted
 #print axioms VE.Cardinality.substrEq_prefix
 #print axioms VE.Cardinality.sumTerms_denote
 #print axioms VE.Cardinality.sumTerms_typed
@@ -2639,6 +2666,7 @@ import VE.WireContract.Engine
 #print axioms VE.NormDefaults.Packs.assemble_nil
 #print axioms VE.NormDefaults.Packs.assemble_order
 #print axioms VE.NormDefaults.Packs.assemble_wellFormed
+#print axioms VE.NormDefaults.Packs.bridge_identifier_sep
 #print axioms VE.NormDefaults.Packs.dispatch_legacy
 #print axioms VE.NormDefaults.Packs.elaborateArrays_keys
 #print axioms VE.NormDefaults.Packs.elaborateArrays_legacy
@@ -2656,6 +2684,8 @@ import VE.WireContract.Engine
 #print axioms VE.NormDefaults.Packs.kindCase_eq
 #print axioms VE.NormDefaults.Packs.layeredCase_some
 #print axioms VE.NormDefaults.Packs.legacy_drop
+#print axioms VE.NormDefaults.Packs.legacy_labels_nodup_of_actKeys
+#print axioms VE.NormDefaults.Packs.legacy_labels_nodup_of_identifiers
 #print axioms VE.NormDefaults.Packs.legacy_take
 #print axioms VE.NormDefaults.Packs.lookup_flatMap_mem
 #print axioms VE.NormDefaults.Packs.lookup_flatMap_none
@@ -2667,16 +2697,25 @@ import VE.WireContract.Engine
 #print axioms VE.NormDefaults.Packs.packPremises_absent
 #print axioms VE.NormDefaults.Packs.packPremises_legacy
 #print axioms VE.NormDefaults.Packs.packPremises_sub
+#print axioms VE.NormDefaults.Packs.pk_check_ok
 #print axioms VE.NormDefaults.Packs.pk_coh
+#print axioms VE.NormDefaults.Packs.pk_cond_ident
 #print axioms VE.NormDefaults.Packs.pk_exc_inj
 #print axioms VE.NormDefaults.Packs.pk_exc_ne_coh
 #print axioms VE.NormDefaults.Packs.pk_exc_nec
 #print axioms VE.NormDefaults.Packs.pk_exc_parts
 #print axioms VE.NormDefaults.Packs.pk_exc_suff
+#print axioms VE.NormDefaults.Packs.pk_identifier_sep
+#print axioms VE.NormDefaults.Packs.pk_keyPremise
+#print axioms VE.NormDefaults.Packs.pk_kindWord_sep
 #print axioms VE.NormDefaults.Packs.pk_kind_sep
+#print axioms VE.NormDefaults.Packs.pk_limBody_ident
 #print axioms VE.NormDefaults.Packs.pk_mem_exc
+#print axioms VE.NormDefaults.Packs.pk_rights_data
+#print axioms VE.NormDefaults.Packs.pk_rights_inj
 #print axioms VE.NormDefaults.Packs.pk_ruleName
 #print axioms VE.NormDefaults.Packs.pk_ruleName_sep
+#print axioms VE.NormDefaults.Packs.pk_soft_head
 #print axioms VE.NormDefaults.Packs.pk_split
 #print axioms VE.NormDefaults.Packs.pk_toString
 #print axioms VE.NormDefaults.Packs.pk_zip_fst
@@ -6489,6 +6528,7 @@ import VE.WireContract.Engine
 #print axioms VE.Service.runMode_ask
 #print axioms VE.Service.runMode_bundle
 #print axioms VE.Service.runMode_calc
+#print axioms VE.Service.runMode_cardinality
 #print axioms VE.Service.runMode_check
 #print axioms VE.Service.runMode_checkCertificate
 #print axioms VE.Service.runMode_diagnose
