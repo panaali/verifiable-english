@@ -1,5 +1,4 @@
 import VE.NormDefaults.Layered
-import VE.Defaults.Route
 import VE.NormDefaults.LayeredAdmission
 import VE.NormDefaults.Admission
 import VE.NormDefaults.Explain
@@ -11,8 +10,7 @@ norms route is unchanged; this executable adds the `norm-defaults@0` branch and
 delegates every other case to it.
 
 * `norm-defaults-elaborate`: `norms` → the regenerated outputs of `fill U`
-  (`Wire.regeneratedU`), with the source's plain-act `wordings` (`Norms.Run.wordingsJson`), or the decoder's
-  diagnostic.
+  (`Wire.regeneratedU`), or the decoder's diagnostic.
 * `norm-defaults-conflict`: `norms` and `packages` (target of `fill U` → package)
   → `CONFLICT-FREE` when every target's certificate is bound and accepted over
   `E‴_base` and `Background_base(E‴) ++ Fill_T` (`Wire.normDefaults_wire_conflict_sound`),
@@ -45,8 +43,6 @@ delegates every other case to it.
   `fill (soften T)` or `fill (soften (correlate D))` with the route's base premises
   (`Wire.layered_conflict_sound`, `Wire.layered_report_sound`); evidence is a base
   situation `model` with a separate `filling`.
-* The `defaults-*` kinds on those branches (`Wire.defaultsKinds`, docs/spec/defeasible.md 7.2): the same runner
-  (`Wire.runLayered`, `Defaults/Route.lean`), by defeasible's row of the kind table (`Defaults.Wire.defaultsCase`).
 * `norm-defaults-certificate`: `norms`, `premises`, `conclusion`, `certificate` →
   `valid` over `Background(E‴) ++ Fill_T ++ layer premises of T‴ ++ premises`
   (`Wire.normDefaults_wire_acceptance`).
@@ -216,8 +212,7 @@ def runOtherCase (id kind : String) (j : Json) : Except String Json := do
   let env := j.getObjValD "environment"
   if !Wire.hasProfile env && !(Wire.unspecifiedNames env).isEmpty then
     throw "UnsupportedProfile: unspecified completion requires norm-defaults@0"
-  if Wire.hasProfile env && (Wire.layeredRoute env).isSome &&
-      (kind.startsWith "norm-defaults-" || Wire.defaultsKinds.contains kind) then
+  if Wire.hasProfile env && (Wire.layeredRoute env).isSome && kind.startsWith "norm-defaults-" then
     return ← Wire.runLayered id kind j
   if kind == "norm-defaults-elaborate" then
     let environment ← j.getObjVal? "environment"
@@ -236,8 +231,7 @@ def runOtherCase (id kind : String) (j : Json) : Except String Json := do
     return VE.Route.Wire.ok id (Wire.regeneratedU s.U ++
       [("filled_environment_id", .str filledId), ("fill_hash", .str fillHash),
        ("fill_labels", toJson (Admission.fillLabels s.U)),
-       ("environment_id", .str sourceId), ("document_hash", .str documentHash),
-       ("wordings", VE.Norms.Run.wordingsJson s.src.ne)])
+       ("environment_id", .str sourceId), ("document_hash", .str documentHash)])
   if kind == "norm-defaults-conflict" && (j.getObjVal? "witness").toBool then
     let ⟨s, w⟩ ← Wire.replayWitnessU j
     return VE.Route.Wire.ok id ([("verdict", .str (if w.conflict then "CONFLICT" else "UNKNOWN")),

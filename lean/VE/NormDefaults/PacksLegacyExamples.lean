@@ -1,14 +1,12 @@
 import VE.NormDefaults.PacksExamples
 import VE.NormDefaults.PacksLegacy
-import VE.NormDefaults.PacksLabels
 import VE.Rights.Examples
 import VE.Readings.UnspecifiedWire
 import VE.Defaults.Examples
 
 /-! The premise-pack fixtures over today's sources (docs/spec/premise-packs.md 4): today's rights documents assemble
 unchanged, `envX` and `fullEnv` on a real tree, F1, and F1′, the counterexample to the approved
-`legacy_labels_nodup` and the act-key hypothesis of its replacement `legacy_labels_nodup_of_actKeys`; the kind
-table's legacy rows (2.10); and the norms chain's empty pack list. -/
+`legacy_labels_nodup`; the kind table's legacy rows (2.10); and the norms chain's empty pack list. -/
 namespace VE.NormDefaults.Packs.Fixtures
 open VE.NormDefaults.Packs
 
@@ -104,9 +102,7 @@ def legacyAnswers (L : VE.NormDefaults.Wire.LayeredU) : List String :=
 `WellFormedRights` checks neither limitation names nor predicate names for `:` (only the route's JSON environment
 decoder applies `VE.Bridge.identifier` to predicate names). With limitations `x` and `x:p` over every line, and act
 keys `p:q` and `q`, the label `rights:limitation:<limitation>:<act>:necessary:c` of (`x`, `p:q`) is that of
-(`x:p`, `q`). The statement's hypotheses hold and its conclusion fails. Its replacement
-`legacy_labels_nodup_of_actKeys` (DRI decision 2026-10-27, item 3) adds that no act key has `:`, which `cx` fails
-and the decoded route ensures (`bridge_identifier_sep`). -/
+(`x:p`, `q`). The statement's hypotheses hold and its conclusion fails; its repair is a DRI decision. -/
 
 open VE.Rights.Examples (mkRights line strictNode block) in
 open VE.Norms.Checks (perm) in
@@ -127,18 +123,6 @@ def cx : VE.Rights.RightsDoc :=
 -- The route's own repeated-label check refuses it (no decoded document reaches this: predicates are identifiers).
 #guard diag (assemble (legacyU cx) 0 (legacyPacks cx)) ==
   "InvalidInput: premise label rights:limitation:x:p:q:necessary:c of pack rights is used twice"
-
--- The act-key hypothesis of `legacy_labels_nodup_of_actKeys`: `cx` fails it; the well-formed sources hold it (their
--- act keys are route identifiers), and their labels are distinct, as the theorem says.
-#guard (VE.Rights.condKeys cx).any (·.2.1.toList.contains ':')
-#guard (rightsDocs.take 6).all fun R => (VE.Rights.condKeys R).all (fun k => !k.2.1.toList.contains ':' &&
-  VE.Bridge.identifier k.2.1) && decide (legacyLabels R).Nodup
-#guard (rightsDocs.take 6).any fun R => !(VE.Rights.condKeys R).isEmpty
--- `VE.Bridge.identifier`, the route's check on predicate names, refuses `:` anywhere and accepts its neighbours
--- `9` and `_`; `;` (just past `:`) and the 64-byte budget are refused too.
-#guard ["p", "q", "p9", "p_q", "publish_about_permitted", "a" ++ "".pushn '0' 63].all VE.Bridge.identifier
-#guard ["p:q", ":", "p:", ":p", "x:p", "p;", "", "P", "9p", "a" ++ "".pushn '0' 64].all (!VE.Bridge.identifier ·)
-#guard (["p:q", "x:p", "q", "p_q"].filter VE.Bridge.identifier) == ["q", "p_q"]
 
 end VE.NormDefaults.Packs.Fixtures
 

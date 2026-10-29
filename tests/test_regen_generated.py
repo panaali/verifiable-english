@@ -20,7 +20,6 @@ import dataclasses
 import fnmatch
 import hashlib
 import json
-import re
 from pathlib import Path
 import shutil
 import subprocess
@@ -37,13 +36,6 @@ from subprocesses import HANG_TIMEOUT  # noqa: E402
 import trust_map  # noqa: E402
 
 TRACKED = subprocess.run(["git", "ls-files"], cwd=ROOT, capture_output=True, text=True, check=True).stdout.split()
-
-
-@pytest.fixture(autouse=True)
-def _no_timing_log(monkeypatch):
-    """The runs these tests make leave no line in the checkout's timing log (`RegenLog`); a test of the log
-    points it under tmp_path."""
-    monkeypatch.setenv("VE_REGEN_LOG", "off")
 
 
 # The registry
@@ -997,78 +989,3 @@ def test_assurance_doc_check_fails_on_a_stale_table(tmp_path, monkeypatch):
     monkeypatch.setattr(assurance_manifest, "DOC", stale)
     assert assurance_manifest.main(["--check"]) == 1
     assert "stale" in stale.read_text()  # --check writes nothing
-
-
-# The timing log (eff-20261027-1): one line per entry run, in the git common directory; VE_REGEN_LOG=off turns it
-# off; a log that cannot be written changes nothing. This file runs with it off (`_no_timing_log`); these tests
-# point it into tmp_path.
-
-
-LOG_KEYS = {"t", "mode", "phase", "entry", "seconds", "rc", "head", "worktree"}
-
-
-def _log_tree(tmp_path, monkeypatch):
-    """A git repository at tmp_path with three entries: `one` (its check passes), `two` (its check fails) and
-    `three` (a check, no writer); each step prints a line."""
-    root = tmp_path / "tree"
-    root.mkdir()
-    _git(root, "init", "-q")
-    _git(root, "config", "user.email", "t@example.com")
-    _git(root, "config", "user.name", "t")
-    _commit(root, {"README": "x\n"}, "base")
-    step = tmp_path / "step.py"
-    step.write_text("import sys\nprint('step', sys.argv[1])\nsys.exit(int(sys.argv[2]))\n")
-    run = lambda name, code: (sys.executable, str(step), name, str(code))  # noqa: E731
-    monkeypatch.setattr(R, "GENERATED", (
-        R.Generated("one", (), (run("write one", 0),), (run("check one", 0),)),
-        R.Generated("two", (), (run("write two", 0),), (run("check two", 1),)),
-        R.Generated("three", (), None, (run("check three", 0),))))
-    monkeypatch.setattr(R, "ROOT", root)
-    monkeypatch.setattr(R, "_service_digest", lambda: None)
-    monkeypatch.chdir(tmp_path)
-    return root
-
-
-def _lines(path) -> list[dict]:
-    return [json.loads(line) for line in path.read_text().splitlines()] if path.is_file() else []
-
-
-def test_the_regen_log_gets_one_line_per_entry_run_in_the_git_common_directory(tmp_path, monkeypatch):
-    root = _log_tree(tmp_path, monkeypatch)
-    monkeypatch.delenv("VE_REGEN_LOG")
-    log = root / ".git" / R.RegenLog.NAME
-    head = _git(root, "rev-parse", "HEAD").stdout.strip()
-    assert R.main(["--check"]) == 1
-    assert R.main(["--write"]) == 0
-    lines = _lines(log)
-    assert all(set(line) == LOG_KEYS for line in lines)
-    assert [(line["mode"], line["phase"], line["entry"], line["rc"]) for line in lines] == [
-        ("check", "check", "one", 0), ("check", "check", "two", 1), ("check", "check", "three", 0),
-        ("write", "write", "one", 0), ("write", "write", "two", 0)]
-    assert all(line["head"] == head and line["worktree"] == str(root) for line in lines)
-    assert all(isinstance(line["seconds"], float) and line["seconds"] >= 0 for line in lines)
-    assert all(re.fullmatch(r"\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ", line["t"]) for line in lines)
-
-
-def test_the_regen_log_is_not_written_when_off(tmp_path, monkeypatch):
-    root = _log_tree(tmp_path, monkeypatch)
-    monkeypatch.setenv("VE_REGEN_LOG", "off")
-    assert R.main(["--check"]) == 1
-    assert R.main(["--write"]) == 0
-    assert not (root / ".git" / R.RegenLog.NAME).exists()
-    assert sorted(path.name for path in tmp_path.iterdir()) == ["step.py", "tree"]
-
-
-def test_an_unwritable_regen_log_changes_neither_the_exit_code_nor_the_output(tmp_path, monkeypatch, capfd):
-    root = _log_tree(tmp_path, monkeypatch)
-    blocker = tmp_path / "a-file"
-    blocker.write_text("")
-    results = {}
-    for setting in ("off", str(blocker / "log.jsonl"), str(tmp_path), str(root / "log.jsonl")):
-        monkeypatch.setenv("VE_REGEN_LOG", setting)
-        results[setting] = [(R.main([mode]), capfd.readouterr()) for mode in ("--check", "--write")]
-    assert results["off"][0][0] == 1 and "step check two" in results["off"][0][1].out
-    assert results[str(blocker / "log.jsonl")] == results["off"]
-    assert results[str(tmp_path)] == results["off"]
-    assert results[str(root / "log.jsonl")] == results["off"]  # a writable one, for contrast
-    assert len(_lines(root / "log.jsonl")) == 5

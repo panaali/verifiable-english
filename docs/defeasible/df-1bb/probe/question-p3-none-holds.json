@@ -1,1 +1,0 @@
-["forall", "claude_instance", ["forall", "instruction", ["implies", ["and", ["not", ["unary", "unsafe", ["var", 0]]], ["and", ["not", ["unary", "unethical", ["var", 0]]], ["not", ["unary", "against_guidelines", ["var", 0]]]]], ["binary", "compliance_required", ["var", 1], ["var", 0]]]]]

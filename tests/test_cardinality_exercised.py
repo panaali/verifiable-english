@@ -64,27 +64,3 @@ def test_a_definition_no_theorem_uses_is_reported():
     without = {theorem: found for theorem, found in proved.items() if not found or body not in found}
     assert trust_map.unexercised(table, without, cardinality_modules()) == [
         "VE/Cardinality/Semantics.lean: VE.Cardinality.Body.holds"]
-
-
-# Review F1 of qt-a3: the elaborators' parts were classed C, but `admits` checks typing only, so "fewer
-# than 3" could decode as "at most 3" with every check passing. They are D[V], as W6a's `elabTerm` is
-# (`elabFormula` stays C, as W6a's does), each stated about by the theorem that pins its cases; F2's
-# S2 depth (`arrayDepth`, `sourceFits`) likewise. The decoded formulas are pinned by the `pins` guards
-# of `lean/VE/Cardinality/WireExamples.lean`.
-WIRE_FILE, WIRE = "VE/Cardinality/Wire.lean", "VE.Cardinality.Wire"
-QT_A3 = {
-    "items": "items_ok", "elabBody": "elabBody_cases", "elabOperand": "elabOperand_cases",
-    "elabRatio": "elabRatio_sound", "ruleNames": "ruleNames_spelled", "elabRule": "ruleNames_spelled",
-    "printed": "printed_eq", "elabName": "relNames_spelled", "relNames": "relNames_spelled",
-    "cmpNames": "cmpNames_spelled", "arrayDepth": "sourceFits_iff", "sourceFits": "decodeStatement_fits",
-}
-
-
-def test_each_qt_a3_f1_helper_is_trusted_and_stated_about_by_its_theorem():
-    table = trust_map.load_table()[WIRE_FILE]
-    proved = trust_map.statements(STATEMENTS)
-    for name, theorem in QT_A3.items():
-        assert table[f"{WIRE}.{name}"] == "D[V]", name
-        assert trust_map.ident(WIRE_FILE, f"{WIRE}.{name}") in (proved.get(f"{WIRE}.{theorem}") or set()), \
-            (name, theorem)
-    assert table[f"{WIRE}.elabFormula"] == "C"

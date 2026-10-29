@@ -5,7 +5,6 @@ from itertools import product
 import re
 
 from .ast import _Checker, _Decoder, _to_data
-from .backends.english_lean import QUESTION_CALLERS, SPEECH_CALLER, read_question
 from .english import parse_english
 from .environment import RESERVED
 from .errors import VEError
@@ -148,21 +147,6 @@ def _command_candidates(env, scope):
             yield phrase, predicate, tuple(value for _, value in bindings), reg.role
 
 
-# The beginnings of the wordings Lean reads for the speech-acts caller: its contract's `callers` (`Is it the case
-# that ` (F1), and `Must ` and `Can `, which Lean refuses with `ModalQuestion`), and F2's fronted `Is ` (Q1.4b, DRI
-# 2026-10-27 item 4), which Lean's reader reads with the caller's auxiliary `is`.
-_LEAN_PREFIXES = (*QUESTION_CALLERS[SPEECH_CALLER], "Is ")
-
-
-def _polar(env, text):
-    """A polar question (F1 or F2), or a `Must` or `Can` wording, as Lean's `english.question` reads it for the
-    speech-acts caller (docs/spec/question-answering-PLAN.md Q1.4): its formula, or Lean's refusal raised as Lean
-    gives it."""
-    from .english import EnglishVocabulary
-    answer = read_question(env, text, EnglishVocabulary(env, _defer_overlay_refusals=True), {}, caller=SPEECH_CALLER)
-    return {"mode": "polar", "body": answer["ast"]}, "question"
-
-
 def parse_speech(env, source, scope, *, query=None, reading_set=None, warnings=None):
     """Return a typed wire content object and its kind; reject other wordings.
 
@@ -182,8 +166,13 @@ def parse_speech(env, source, scope, *, query=None, reading_set=None, warnings=N
             raise VEError("InvalidInput: query required")
         _sentence(env, text[len("Does it follow from these premises that "):-1] + ".", warnings)
         return {"mode": "follows", "query": query}, "question"
-    if text.startswith(_LEAN_PREFIXES):
-        return _polar(env, text)
+    if text.startswith("Is it the case that ") and text.endswith("?"):
+        formula = _formula(env, text[len("Is it the case that "):-1] + ".")
+        return {"mode": "polar", "body": _to_data(formula)}, "question"
+    match = re.fullmatch(r"Is ([A-Za-z][A-Za-z0-9_]*) (.+)\?", text)
+    if match:
+        name = _name(env, match[1])
+        return {"mode": "polar", "body": _to_data(_copular(env, name, "is " + match[2], warnings))}, "question"
     for mode, pattern in (("which_one", r"Which one of (.+) is (.+)\?"),
                           ("which_all", r"Which of (.+) are (.+)\?")):
         match = re.fullmatch(pattern, text)
@@ -195,6 +184,8 @@ def parse_speech(env, source, scope, *, query=None, reading_set=None, warnings=N
             rest = "is " + match[2]
             return {"mode": mode, "sort": sort, "domain": domain,
                     "body": _body(env, domain[0], rest, warnings)}, "question"
+    if text.startswith("Must ") or text.startswith("Can "):
+        raise VEError("ModalQuestion: choose an explicit question")
     if text.startswith("Which "):
         raise VEError("OpenDomainWhich: list the named alternatives")
     if text.startswith("You may "):

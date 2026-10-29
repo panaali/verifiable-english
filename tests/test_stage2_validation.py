@@ -207,13 +207,11 @@ def test_lean_names_a_rejection_both_checkers_make(monkeypatch):
         Environment(raw)
 
 
-def test_a_row_naming_another_identity_is_unavailable(monkeypatch):
-    """ap-1bb F1: the row's identity must be the one of the environment Python built (one identity, one
-    environment), so a row naming another identity is no answer."""
+def test_lean_acceptance_with_wrong_identity_is_unavailable(monkeypatch):
     raw = pm.raw_environment(())
     raw["vocabulary"]["predicates"]["base"]["arguments"] = ["absent"]
     fake_lean(monkeypatch, lambda mode, case: {"id": "environment", "status": "ok",
-                                               "environment_id": "0" * 64, "acts": {}})
+                                               "environment_id": "0" * 64})
     with pytest.raises(CheckerUnavailable, match="identities differ"):
         Environment(raw)
 
@@ -227,15 +225,15 @@ def test_lean_acceptance_of_an_unconstructible_source_is_unavailable(monkeypatch
         Environment(raw)
 
 
-def test_a_mismatched_identity_is_unavailable_and_an_accepted_row_is_cached(monkeypatch):
+def test_identity_mismatch_is_unavailable_and_acceptance_is_cached(monkeypatch):
     raw = pm.raw_environment(())
     identity = Environment(raw).environment_id
     calls = fake_lean(monkeypatch, lambda mode, case: {"id": "environment", "status": "ok",
-                                                       "environment_id": "0" * 64, "acts": {}})
+                                                       "environment_id": "0" * 64})
     with pytest.raises(CheckerUnavailable, match="identities differ"):
         Environment(raw)
     calls = fake_lean(monkeypatch, lambda mode, case: {"id": "environment", "status": "ok",
-                                                       "environment_id": identity, "acts": {}})
+                                                       "environment_id": identity})
     Environment(raw)
     Environment(raw)
     assert calls == ["environment"]

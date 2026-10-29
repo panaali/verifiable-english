@@ -1,6 +1,0 @@
-{"allow": [
- {"definition": "VE.Acts.Lexical.Grouped", "operator": "eq-le", "reason": "891: `= false` to `≤ false` on Bool is equivalent (b ≤ false iff b = false); 889: `≤` on token lists has no LE instance, so it does not elaborate"},
- {"definition": "VE.Acts.Lexical.Grouped", "operator": "lt-eq", "reason": "does not elaborate: 890 turns `<:+` into `=:+` (a parse error), 891 leaves `ps[i]` with no index proof"},
- {"definition": "VE.Acts.Lexical.Grouped", "operator": "lt-le", "reason": "does not elaborate: 890 turns `<:+` into `≤:+` (a parse error), 891 leaves `ps[i]` with no index proof"},
- {"definition": "VE.Acts.Lexical.expand", "operator": "list-empty", "reason": "the two UNKNOWN do not elaborate: `[]` for `ts` leaves `.fixed` with no expected type, `[]` for `ts.flatMap` is applied to a function"}
-]}

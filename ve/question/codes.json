@@ -9,7 +9,6 @@
   ["QuestionWithMarker", "SyntaxError"],
   ["IndefiniteQuestion", "SyntaxError"],
   ["QuestionWordMoved", "SyntaxError"],
-  ["ModalQuestion", "VEError"],
   ["SourceTooLong", "ResourceLimit"],
   ["TextTooLong", "ResourceLimit"],
   ["BadCharacter", "SyntaxError"],
@@ -46,7 +45,6 @@
  "statuses": [
   ["notQuestion", ["NotOneQuestion"]],
   ["none", ["QuestionForm", "NoDerivation"]],
-  ["modal", ["ModalQuestion"]],
   ["budget", ["QuestionTooLong", "Budget"]],
   ["many", ["Ambiguous", "AmbiguousQuestion"]],
   ["indefinite", ["IndefiniteQuestion"]],
@@ -63,13 +61,9 @@
   ["rejected", [["code", "class", "text", "span"], []]],
   ["notQuestion", [["code", "class", "text", "span"], []]],
   ["budget", [["code", "class", "text", "span"], []]],
-  ["invalidGrammar", [["code", "class", "text"], ["fault", "failure"]]],
-  ["modal", [["code", "class", "text"], []]]
+  ["invalidGrammar", [["code", "class", "text"], ["fault", "failure"]]]
  ],
  "texts": [
   ["unanswered", "VE does not answer questions yet. It shows only the sentence it reads the question as."]
- ],
- "callers": [
-  ["speech-acts", ["Is it the case that ", "Must ", "Can "]]
  ]
 }

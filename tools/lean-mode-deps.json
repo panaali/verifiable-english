@@ -13,10 +13,6 @@
       "VE.Service.FamilyBundle",
       "VE.Route.Run"
     ],
-    "calc": [
-      "VE.Calc.Run",
-      "VE.Route.Run"
-    ],
     "check": [
       "VE.Service.Standalone",
       "VE.Route.Run"
@@ -158,8 +154,8 @@
     ]
   },
   "sources": {
-    "lean/VE/Service/Protocol.lean": "1c1036197f42d18b72d18629b0c9e39074b261e34c259fd8b6eefc0b5db90e71",
-    "lean/VE/Service/Registry.lean": "40d8a93fe8c30a28be587a0f4a253a6e6ca5055ecb8ef742dc56f09d81ed2061",
+    "lean/VE/Service/Protocol.lean": "2b58458cab9d75d44c2c76ed8d34ea5c8035d77cbe1d31d470571bd1e2f8542e",
+    "lean/VE/Service/Registry.lean": "b6e6b0c57a98d94cd58db8399fbc1f418ca7429bbacdea9ab6921344e2b457d8",
     "tools/lean_mode_deps.lean": "50dc1459ef617a9ca489fd9a5068a5b875a48c661f3cf6ac573f6a157950c8e7"
   }
 }

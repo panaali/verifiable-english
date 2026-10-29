@@ -50,16 +50,45 @@ A cell the repository's data cannot fill says "unknown"; then read the code, and
 
 ## Recipe: a relayed Lean route
 
-Adding or changing a relayed mode: follow `docs/ROUTE-RECIPE.md` (seven steps, worked example `discourse`).
+Worked example: the `discourse` mode.
+
+1. **Lean runner.** `lean/VE/Discourse/Run.lean` defines `VE.Discourse.Run.runCaseReported`.
+   The mode is registered in `lean/VE/Service/Registry.lean` (its `Mode` constructor, name and `modes` entry).
+   `VE.Service.runMode` in `lean/VE/Service/Protocol.lean` dispatches the mode to it, and the equation
+   `VE.Service.runMode_discourse` is listed in `lean/VE/Audit.lean`.
+2. **Shape.** `lean/ResponseShape/Schemas/Discourse.lean` writes the row's shape, typed to the leaves.
+3. **Encoder theorem.** `lean/ResponseShape/Encoders/Discourse.lean` proves
+   `ResponseShape.Encoders.Discourse.runCaseReported_fits`: every row the runner writes fits the shape.
+   It is listed in `lean/ResponseShape/Audit.lean`.
+4. **Generated schema.** `ve/backends/lean_service_schema/discourse.json`, rendered from the shape by
+   `uv run python tools/response_schemas.py --write`. The handshake's mode list in
+   `ve/backends/lean_service_schema/envelope.json` comes from the registry, and `MODES` of
+   `ve/backends/service_schema.py` reads it; add the mode's CPU deadline to `DEADLINES` in
+   `ve/backends/lean_service.py` (Python's operational policy).
+5. **Python relay.** `ve/discourse.py` sends the case with `rows` from `ve/backends/relay.py` and binds
+   the answer to the document it asked about; it checks schema and binding only (R8 in the DRI rulings).
+6. **Fixtures.** Genuine cases recorded from the suite in `tests/data/route-cases.jsonl`
+   (`tests/route_case_recorder.py`), checked against the schemas by `tests/test_route_row_schemas.py`;
+   the route's own documents in `tests/test_discourse_lean.py`.
+7. **Fuzz tests.** `tests/test_discourse_answer.py` mutates genuine answers one and two faults at a time
+   (each member dropped, emptied, retyped, duplicated or reordered, an index pushed out of range):
+   every mutant is `CheckerUnavailable` or changes nothing the relay shows.
 
 ## Generated files
 
-Never hand-edit or hand-merge; use each generator.
+Never edit a generated file by hand, and never hand-merge one: regenerate it with its own tool.
+`tools/regen_generated.py` is the one inventory of generated files and their generators:
 
-- `uv run python tools/regen_generated.py --list`: files, generators, checks; `uv run python tools/regen_generated.py --owner <path>`: owner; `uv run python tools/repo_map.py file <path>`: generator.
-- `uv run python tools/regen_generated.py --check`: stale files; `--write`: regenerates all in dependency order; `--resolve`: finishes `git merge --no-commit` if only generated files conflict.
-- Gate ties test IDs to commit; `tools/gate_collection.py --check` compares to merge base; no collection file committed.
-- `lean/checkers.lock` pins built checkers; `python3 tools/rust_build.py --check` fails on unpinned Rust binary.
+- `uv run python tools/regen_generated.py --list` every generated file, its generator and its check.
+- `uv run python tools/regen_generated.py --owner <path>` the entry that owns one file;
+  `uv run python tools/repo_map.py file <path>` prints the same entry as its `generator` line.
+- `uv run python tools/regen_generated.py --check` fails when a generated file is stale;
+  `--write` regenerates them all, in dependency order; `--resolve` finishes a `git merge --no-commit`
+  whose only conflicts are generated files.
+- The gate records collected test IDs with the commit it checked. `tools/gate_collection.py --check`
+  compares the current collection with its merge base; there is no committed collection file.
+- `lean/checkers.lock` pins the built checkers; `python3 tools/rust_build.py --check` fails when the
+  Rust binary is not pinned.
 
 ## Standard commands
 

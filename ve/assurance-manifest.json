@@ -63,10 +63,10 @@
     "ve/softnorms.py:decode_rule": "After Lean accepts the quoted rule, Python AST construction failures are operational CheckerUnavailable errors.",
     "ve/softnorms.py:load_soft_document": "After Lean accepts the source, Python container construction failures are operational CheckerUnavailable errors.",
     "ve/stream_audit.py:decoded_views": "decoder audit of text: a crashing decoder yields no view, which is the conservative outcome",
-    "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
+    "ve/readings_verdicts.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 39011,
+    "total_lines": 37307,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -215,21 +215,20 @@
       },
       {
         "file": "lean/VE/CertificateWire.lean",
-        "lines": 321,
-        "sha256": "d81be730d087e7908329df473c8e34f8b1f26afd87b8b81a294e131b6afb9add",
+        "lines": 312,
+        "sha256": "bf814b58737fdab33616a65a899a130e1b3a08b0564d7921fd295a4ac7b1c3c0",
         "ranges": [
           [
             46,
-            216
+            221
           ],
           [
-            231,
-            240
+            236,
+            245
           ]
         ],
         "declarations": [
           "sha256",
-          "canonicalWith",
           "canonical",
           "digest",
           "decodeTrace",
@@ -308,12 +307,12 @@
       },
       {
         "file": "lean/VE/EnglishGrammar/Encode.lean",
-        "lines": 764,
-        "sha256": "c68b8627d4e6edc12b8bb270ff52fb96382966403c22df38bbda8b99865d131f",
+        "lines": 755,
+        "sha256": "f884e8d56dc67e586c5c5a4cfa6dffc0b25f0fa880c9455a39414839568b5f82",
         "ranges": [
           [
             1,
-            764
+            755
           ]
         ],
         "declarations": [
@@ -351,12 +350,12 @@
       },
       {
         "file": "lean/VE/Question/Run.lean",
-        "lines": 257,
-        "sha256": "0eb404095ecfc924d996e26421b6acb02b5f826315866177e7812efe27f7409b",
+        "lines": 219,
+        "sha256": "431e6147b032834040c2b4d78e7ce5b335c9ea87d3475b6542b2e927c0e22f29",
         "ranges": [
           [
             1,
-            257
+            219
           ]
         ],
         "declarations": [
@@ -365,10 +364,7 @@
           "lexicalFields",
           "outcomeFields",
           "oneFields",
-          "askedFields",
-          "decodeCaller",
-          "modalFields",
-          "caseFields"
+          "askedFields"
         ],
         "reason": "question answering Q1.2 (docs/spec/question-answering.md 4.1, 8): english.question decodes the case (E2's decodeCase for the environment, overlay and lexicon; the question, which must be the source, authoring mode at cap 2) and writes 4.1's fields of what `ask` shows (a moved-out reading refused; the A0 line gated) and the identities; the export case answers the question contract; the full file is pinned conservatively"
       },
@@ -391,12 +387,12 @@
       },
       {
         "file": "lean/VE/NormDefaults/Admission.lean",
-        "lines": 344,
-        "sha256": "ab4fe1851cdc4597e8ac052738180c28783e71bcf6abbf4d9eaccdad97d54845",
+        "lines": 367,
+        "sha256": "ccd91ae09c6073570545482dd51e135d32e3f07c20d420b9734a3a4a3edb65de",
         "ranges": [
           [
             1,
-            344
+            367
           ]
         ],
         "declarations": [
@@ -409,12 +405,12 @@
       },
       {
         "file": "lean/VE/NormDefaults/Layered.lean",
-        "lines": 463,
-        "sha256": "c77f2d9e3b5bb5f660001049aeedfc197280cde0cce3285815b1cb3e192502e7",
+        "lines": 469,
+        "sha256": "9c6c0c4beb3d43257ec9a3abac9a68b24b6155f366d8efb720d44f229031716a",
         "ranges": [
           [
             1,
-            463
+            469
           ]
         ],
         "declarations": [
@@ -428,7 +424,8 @@
           "witnessConflictX",
           "replayStatusX",
           "suppliedX",
-          "neverX"
+          "neverX",
+          "runLayered"
         ],
         "reason": "norm-defaults@0 soft and rights branch decoder: the placeholder source through the soft or rights decoder, packages bound to the source and the layered base background, base situations with a separate filling, statuses and supplied witnesses; the full file is pinned conservatively; `layeredCase` is the one dispatch of this branch, shared with a readings choice's inner case under the completion"
       },
@@ -476,12 +473,12 @@
       },
       {
         "file": "lean/VE/NormDefaults/Wire.lean",
-        "lines": 450,
-        "sha256": "29de5c515b80377abf895a43336b490e1fb68458f38a9244f248d30e2615bd48",
+        "lines": 447,
+        "sha256": "c3e8614ba02860ef348417414ffe12db08aeb6b7e1227b1034f6ef33a32a17c6",
         "ranges": [
           [
             1,
-            450
+            447
           ]
         ],
         "declarations": [
@@ -535,16 +532,16 @@
       },
       {
         "file": "lean/VE/Norms/Replay.lean",
-        "lines": 406,
-        "sha256": "1540ad633e87de376efb2166c9567a32984952147a219ca01ff3eaf7ff010a9a",
+        "lines": 404,
+        "sha256": "741968e0457a1e196589f05d7c26580a2dddbbec765a29b252eec476b02cd14b",
         "ranges": [
           [
             103,
-            153
+            151
           ],
           [
-            285,
-            304
+            283,
+            302
           ]
         ],
         "declarations": [
@@ -556,12 +553,12 @@
       },
       {
         "file": "lean/VE/Norms/Wire.lean",
-        "lines": 412,
-        "sha256": "f983fdee5a5c49470ef062c570abad9e6e28c80c38a63a1c4855ed9c99764b0e",
+        "lines": 324,
+        "sha256": "3c1209445f6c5226c7684a142e586a655ed4b0a36d0c326961dc71a681e00d23",
         "ranges": [
           [
             28,
-            410
+            322
           ]
         ],
         "declarations": [
@@ -569,14 +566,6 @@
           "decodeRegulatedWith",
           "decodeRegulatedIn",
           "decodeRegulated",
-          "plainWording",
-          "plainWordings",
-          "actsFixed",
-          "readsActs",
-          "actsProfiles",
-          "actsView",
-          "canonicalEnvironmentJson",
-          "canonicalActs",
           "decodeNormsEnvironment",
           "normFields",
           "decodeNorm",
@@ -629,12 +618,12 @@
       },
       {
         "file": "lean/VE/Readings/Companions.lean",
-        "lines": 923,
-        "sha256": "69a9b55c501a6177666596e56b0e3e217cba80e3723f77129f12a882c60ee508",
+        "lines": 924,
+        "sha256": "00b32a8d7627ad9afdda9fb7775793793af85aa7de7f30efd40ae719cfd0d240",
         "ranges": [
           [
             1,
-            923
+            924
           ]
         ],
         "declarations": [
@@ -795,17 +784,16 @@
       },
       {
         "file": "lean/VE/Readings/Wire.lean",
-        "lines": 1019,
-        "sha256": "652336147f29e5e0f05cb0f7005e6e01550f06d2c47d6e0396d6fbc552dbabaa",
+        "lines": 1007,
+        "sha256": "033cb89380dbb07e2d6ecb9d60eda271e3dc34986eb12b061896629dc301cb53",
         "ranges": [
           [
             1,
-            1019
+            1007
           ]
         ],
         "declarations": [
           "placeholderFrame",
-          "singleActsOnly",
           "decodeEnvironment",
           "decodeContent",
           "decodeReading",
@@ -821,7 +809,7 @@
           "replayPair",
           "replaySeparate"
         ],
-        "reason": "readings@1 S1 decoder: environment on the three chains, W2 units and active reading sets, situations, keys and probes, and (DRI ruling 2 of 2026-10-03) the chain text that reports `ResourceLimit: decision predicate <n>` first, and (DRI ruling 4) the frame of a norm-defaults@0 environment read with each `unspecified` completion as the placeholder `deny`; the full file is pinned conservatively; readings-defaults RD-2a: the abstention only off the norms chain, and S1's admission after decoding (`admitDecoded`), which the filled document's admission also runs; jt-crossplan-fixes X3: on the norms chain the readings environment decodes its frame with the v0 constant fields (no `verbalisation` on a nonliteral constant); jt-2: the frame and the lowered JSON read without Compose.documentLayers (judgments@0), the gate and identities with the list as written"
+        "reason": "readings@1 S1 decoder: environment on the three chains, W2 units and active reading sets, situations, keys and probes, and (DRI ruling 2 of 2026-10-03) the chain text that reports `ResourceLimit: decision predicate <n>` first, and (DRI ruling 4) the frame of a norm-defaults@0 environment read with each `unspecified` completion as the placeholder `deny`; the full file is pinned conservatively; readings-defaults RD-2a: the abstention only off the norms chain, and S1's admission after decoding (`admitDecoded`), which the filled document's admission also runs; jt-crossplan-fixes X3: on the norms chain the readings environment decodes its frame with the v0 constant fields (no `verbalisation` on a nonliteral constant)"
       },
       {
         "file": "lean/VE/Rights/Admission.lean",
@@ -1102,12 +1090,12 @@
       },
       {
         "file": "lean/VE/Service/Document.lean",
-        "lines": 2016,
-        "sha256": "26ba09ba4dd3eac95dcccdc30000417b77a5ceac8cc3d29fa01f596d34be3137",
+        "lines": 1842,
+        "sha256": "f6d4799b6d2f800be386d8b43b7164bbb87b2d3318c2121867ee2cbdee1553a0",
         "ranges": [
           [
             1,
-            2016
+            1842
           ]
         ],
         "declarations": [
@@ -1130,12 +1118,7 @@
           "blockCoverage",
           "admitGraph",
           "check",
-          "checkCore",
-          "lowerScope",
-          "profilesOf",
-          "withUnits",
-          "scopeReadings",
-          "checkDoc",
+          "documentCase",
           "softSourceNorms",
           "softSource",
           "environmentFault",
@@ -1154,12 +1137,9 @@
           "sensesContentOf",
           "partsPrefix",
           "yieldedParts",
-          "typedFormula",
-          "setCandidates",
-          "withSets",
-          "checkDocSets"
+          "typedFormula"
         ],
-        "reason": "W2 document service wrapper: front matter (its JSON forms Python reads as other values deferred) and its gates (the environment mode's fault where no route is composed), unit partition and contents, a rights document's rights source (the rights route's decoder), a soft-norms document's soft source, E'' and rule source (the soft route's decoders), soft canonical content and statuses, plain norm content (the norms route's decoders), reading sets and their status fold, narrowings, graph admission, located model and fence diagnostics, statuses and coverage; JT-2: judgments@0's records and admission (Judgments.records after W2), each active set's raw readings (setCandidates), the unit statuses and the usage map, and the decoders reading the environment without the document layers; jt-2 review F1: the parse, model and English cases read Env.forModes, and a located model's identity is the list's as written; merge with SC-1b: check refuses judgments@0 with scope@0, whose fold (Scope.foldGovernors) writes no judgments member; full file pinned conservatively; sc-5rb: checkDocSets, the entry with scope's per-choice GOVERN (VE.Scope.governSetsWith), and withSets, which hands check GOVERN's reading sets (withUnits drops a case's own)"
+        "reason": "W2 document service wrapper: front matter (its JSON forms Python reads as other values deferred) and its gates (the environment mode's fault where no route is composed), unit partition and contents, a rights document's rights source (the rights route's decoder), a soft-norms document's soft source, E'' and rule source (the soft route's decoders), soft canonical content and statuses, plain norm content (the norms route's decoders), reading sets and their status fold, narrowings, graph admission, located model and fence diagnostics, statuses and coverage; full file pinned conservatively"
       },
       {
         "file": "lean/VE/Service/Family.lean",
@@ -1206,12 +1186,12 @@
       },
       {
         "file": "lean/VE/Service/FamilyNorms.lean",
-        "lines": 393,
-        "sha256": "418076df3e0aaf7c4194110db9e9bd055eb4b832a0b2beabea4fcfc5af14b8df",
+        "lines": 390,
+        "sha256": "f7ba731cdfa5ab7ff6d36b6f6a352f8a7eee36795231f769d81940f149bbba3d",
         "ranges": [
           [
             1,
-            393
+            390
           ]
         ],
         "declarations": [
@@ -1286,12 +1266,12 @@
       },
       {
         "file": "lean/VE/SoftNorms/Admission.lean",
-        "lines": 309,
-        "sha256": "b087217d8faeb5650b63fc32101f3f31aa0f64f0ce072ace5971716d0cf338fc",
+        "lines": 332,
+        "sha256": "5f867e8a26a78cf4b0a1aba6716354a32d9c609b0ed45d94311143e5a5e4d82b",
         "ranges": [
           [
             1,
-            309
+            332
           ]
         ],
         "declarations": [
@@ -1416,12 +1396,12 @@
       },
       {
         "file": "lean/VE/Time/Wire.lean",
-        "lines": 856,
-        "sha256": "147a419f9ee340e04b3e2c600f0474ad6019401172b41058911f60665a467c81",
+        "lines": 844,
+        "sha256": "92e7b2be4458d645096ac7745cd2400c6ec2cc96b071a77751046b6520d02c9e",
         "ranges": [
           [
             1,
-            856
+            844
           ]
         ],
         "declarations": [
@@ -1571,7 +1551,7 @@
       {
         "file": "lean/VE/Ask/Run.lean",
         "lines": 152,
-        "sha256": "2217292ac0c9d92e4899a6a8b1e3c6cfaae905beadf5dd6a2b1940037feb99d6",
+        "sha256": "fcc0c0d47f687e02d40501847815c56bc77cac9997bdafa2395d92b1383c1759",
         "ranges": [
           [
             1,
@@ -1790,7 +1770,7 @@
       {
         "file": "lean/VE/Calc/Units.lean",
         "lines": 222,
-        "sha256": "3ccdfd38167eea5ff0ce721f55946805383288decd63550029361630ace369af",
+        "sha256": "fda31837236b2ff040a19d87ccd59cc8cf8cbdf60332ac6c4fc6fde0dd7ba110",
         "ranges": [
           [
             1,
@@ -1808,40 +1788,13 @@
         "reason": "ve-units@2 (math-evidence spec 6.2, me-6b): its only decoder, its identity and the claim-level dimension checks; ve-units@1 through W6a's decodeEnvironment; the full file is pinned"
       },
       {
-        "file": "lean/VE/Defaults/Wire.lean",
-        "lines": 786,
-        "sha256": "6bd1efcf1347af17d8323232e765d9cc40838136b2854c7f636237dd1e9a880d",
-        "ranges": [
-          [
-            1,
-            786
-          ]
-        ],
-        "declarations": [
-          "viewRest",
-          "viewOf",
-          "filledOf",
-          "collisionOf",
-          "bindPair",
-          "pairCertsOf",
-          "replayCertOn",
-          "replayCert",
-          "replayCoherenceOn",
-          "replayCoherence",
-          "replayModelOn",
-          "replayModel",
-          "defaultsCase"
-        ],
-        "reason": "defaults-* kinds on the layered source (docs/spec/defeasible.md 7.2): the source through the pinned decodeLayered, then the request's premises, conclusion, certificates (bound by bindCertX and bindingOk), pair list, collision and models through situationX and decodeFilling; the full file is pinned conservatively"
-      },
-      {
         "file": "lean/VE/Calc/Wire.lean",
-        "lines": 494,
-        "sha256": "ebeb66b7142d77d3e32eb2cf50a6e4f63d66b84bffc6137900489a168d2c2e42",
+        "lines": 380,
+        "sha256": "f3c0849eff1c7e2e17649bccad49047ad61f3b3a673d565ddeebbe57a6598511",
         "ranges": [
           [
             1,
-            494
+            380
           ]
         ],
         "declarations": [
@@ -1851,10 +1804,6 @@
           "expr",
           "claim",
           "recordJson",
-          "checkWords",
-          "checkVerbalisations",
-          "premise",
-          "check",
           "value",
           "entry",
           "admit",
@@ -1863,123 +1812,53 @@
           "decode",
           "decodeCase"
         ],
-        "reason": "the case ve-calc@0 (math-evidence spec 3.1 to 3.3, me-2): its only decoder, its limits in order, its definition order and its identity (meaning_id, claim ids), and the premises and derivations of me-5c with their refusals (UnknownPremise, UnknownLink, NonlinearPremise), and the value words checks of me-2d (W6's verbalisation rule, ValueWordsForm, ReservedWord, VerbalisationCollision); the full file is pinned"
+        "reason": "the case ve-calc@0 (math-evidence spec 3.1 to 3.3, me-2): its only decoder, its limits in order, its definition order and its identity (meaning_id, claim ids); the full file is pinned"
       },
       {
         "file": "lean/VE/Calc/Run.lean",
-        "lines": 366,
-        "sha256": "b09fc345ee8eb03a9c54c6ca4ea7280135d0ec51adb921e0728fc87a2a0ee367",
+        "lines": 162,
+        "sha256": "8ef6da20db135901d4def4824f5c8df5a7a882a4290d739ea1a60b73855da44d",
         "ranges": [
           [
             1,
-            366
+            162
           ]
         ],
         "declarations": [
-          "wordsIn",
-          "claimFields",
-          "shownJson",
           "rowJson",
           "runCaseReported",
           "outcomeAt"
         ],
-        "reason": "the calc runner's answer (math-evidence spec 3.4, me-2): one row per claim with its outcome, and the reader of a row's outcome that Run.row_sound is stated over, and the kind of each row (me-5c), and each row's line, finding, and a claim's sides, display and tie, with the values' words read from the request (me-2c), and a derivation's certificate and counterexample (me-5d); the full file is pinned"
+        "reason": "the calc runner's answer (math-evidence spec 3.4, me-2): one row per claim with its outcome, and the reader of a row's outcome that Run.row_sound is stated over; the full file is pinned"
       },
       {
-        "file": "lean/VE/Scope/Wire.lean",
-        "lines": 154,
-        "sha256": "618b837c4a7fc2398c732805ff271357fd1def4719dc33697e6e3d3fb867ad31",
+        "file": "lean/VE/Defaults/Wire.lean",
+        "lines": 359,
+        "sha256": "30d728c3724dcce4bb1812d65fc2a8850bf28e1e7070b2a76e794e055ba80ac7",
         "ranges": [
           [
             1,
-            154
+            359
           ]
         ],
         "declarations": [
-          "governorStatus",
-          "wireFault",
-          "membersIn",
-          "memberOf",
-          "textOf",
-          "textsOf",
-          "decodeReach",
-          "decodeEffect",
-          "decodeGovernor",
-          "decodeListName",
-          "listMember",
-          "decodeParts",
-          "spanIn",
-          "layoutOf",
-          "decodeBlock",
-          "statusOf",
-          "changers",
-          "byStatus",
-          "foldGovernors"
+          "viewRest",
+          "viewOf",
+          "collisionOf",
+          "bindPair",
+          "pairCertsOf",
+          "replayCoherenceOn",
+          "replayCoherence",
+          "defaultsCase"
         ],
-        "reason": "scope@0's front matter in the document mode (SC-1b, scope spec 3 and 1.6): the `scope` block's wire (unknown members refused, optional members absent, never null; each reach and effect; list names; anchors through discourse's decoder), the layout of the document's units from their spans clamped to the source, and the fold of a governor unit's status into the document mode's answer with its bytes by status; full file pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Cardinality/Wire.lean",
-        "lines": 304,
-        "sha256": "b892dbef05b3118dfd55d4d9951ab66672beb5232ec2d711a3f96264a237c8ab",
-        "ranges": [
-          [
-            1,
-            304
-          ]
-        ],
-        "declarations": [
-          "projectW6",
-          "decodeEnvironment",
-          "elabFormula",
-          "decodeStatement"
-        ],
-        "reason": "ve-cardinality@1 environment (W6a's decoder on the projection) and statement decoders; the full file is pinned conservatively"
-      },
-      {
-        "file": "lean/VE/Defaults/Route.lean",
-        "lines": 46,
-        "sha256": "97feda58f0f4af531097d0c124fbf82d56ee36d2153860f9ebfbc20e8e062a8f",
-        "ranges": [
-          [
-            1,
-            46
-          ]
-        ],
-        "declarations": [
-          "defaultsRows",
-          "layeredKindCase",
-          "runLayered"
-        ],
-        "reason": "the layered norm-defaults route's runner, moved from Layered.lean (df-1ae): decodeLayered, then the kind table with the defaults-* row (defaultsCase on viewOf); the full file is pinned"
-      },
-      {
-        "file": "lean/VE/Cardinality/Run.lean",
-        "lines": 172,
-        "sha256": "8bc9a5f0222d2e3c5c8ad5ebbbb31136f1a871b2cd2ec258c27f3af5ef096df5",
-        "ranges": [
-          [
-            1,
-            172
-          ]
-        ],
-        "declarations": [
-          "decodeCertificate",
-          "checkCertificate",
-          "claimed",
-          "runCase"
-        ],
-        "reason": "cardinality certificate decoder, binding and replay, claimed region tables and erased problems, and the case runner; the full file is pinned conservatively"
+        "reason": "defaults-* kinds on the layered source (docs/spec/defeasible.md 7.2): the source through the pinned decodeLayered, then the request's pair list (certificates bound by bindingOk) and collision (situationX, decodeFilling); the full file is pinned conservatively"
       }
     ],
     "other_json": {
-      "lean/ScopeBenchMain.lean": "measurement only: the ve_scope_bench executable of scope benchmark B1 (tools/bench/test_perf.py::test_scope_b1) reads a document case from a JSON file, runs decodeScope and governFast, and prints the layout rows, the list run and the run path's answer as JSON; no admission path, service mode or record reads it",
       "lean/EnglishLeanBenchMain.lean": "measurement only: the ve_english_lean_bench executable of the english-lean G1a measurement and the lexer differential reads grammars, sentences and sources from a JSON file and prints JSON rows; no admission path, service mode or record reads it",
       "lean/VE/SearchBudget/Run.lean": "lean:runner-glue: the search-budget case (premise ASTs read leniently into facts, the requested sorts) and its budget row; the row only bounds an untrusted search whose models Lean checks (demand_sound, sortBounds_sound)",
-      "lean/VE/Scope/Effects.lean": "lean:scope-effects: `mergeParts` joins a lead-in's part and an item's part as JSON objects (Json.mkObj of the members `lookups` reads), and `substOwn` rewrites a condition's JSON; scope decodes no rule field; the document mode reaches it under scope@0 through `governFast` (SC-1b)",
+      "lean/VE/Scope/Effects.lean": "lean:scope-effects: `mergeParts` joins a lead-in's part and an item's part as JSON objects (Json.mkObj of the members `lookups` reads), and `substOwn` rewrites a condition's JSON; scope decodes no rule field, and no service mode or route calls it yet (SC-1b)",
       "lean/VE/Scope/Theorems.lean": "statements about scope@0's JSON effects and `govern` (mergeParts_keys, lookups_spec, getObjVal? of the joined object, govern_identity); no runtime JSON handling",
-      "lean/VE/Cardinality/WireTheorems.lean": "statements about the ve-cardinality@1 decoders and their parts (items_ok over Json.getArr?, the elaborators' cases on JSON arrays, decodeStatement_fits); no runtime JSON handling",
-      "lean/VE/Cardinality/WireExamples.lean": "fixtures only: #guard checks of docs/spec/quantities.md 4.2 and 9.1 decode cardinality environments and statements built with Json.parse and Json.mkObj; no runner path",
       "lean/VE/Scope/Examples.lean": "scope@0 acceptance fixtures: JSON parts and conditions built with Json.parse and Json.mkObj and checked by #guard and decide; no runtime JSON handling",
       "lean/VE/Discourse/Run.lean": "lean:runner-glue: ve_discourse_route case dispatch and response rows",
       "lean/VE/Discourse/Wire.lean": "lean:discourse-wire: the ve.discourse@1 manifest decoder and discourse report rows; decoded values are validated, never trusted (discourse_wire_binding, discourse_report_sound)",
@@ -2034,7 +1913,6 @@
       "lean/ResponseShape/Encoders/Alternatives.lean": "theorems that the alternatives mode's rows fit its shape, with the decoded block's taken tied to the case (getObjVal? in statements and proofs only; not on any runner path)",
       "lean/ResponseShape/Encoders/Quantity.lean": "theorems that the quantity mode's rows fit its shape, with value and evaluations tied to the case's model (getObjVal? in statements and proofs only; not on any runner path)",
       "lean/ResponseShape/Encoders/RiskEval.lean": "theorems that the risk-eval mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
-      "lean/ResponseShape/Encoders/Calc.lean": "theorems that the calc mode's rows fit its shape, with a row's reproduction tied to the case's software member (getObjVal? in proofs only; not on any runner path)",
       "lean/ResponseShape/Encoders/SpeechActs.lean": "theorems that the speech-acts mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Encoders/Family.lean": "theorems that the graph, readings, bundle and family-norms modes' rows fit their shapes; its one Json-taking def is a proof (familyNormsFolFits), not on any runner path",
       "lean/ResponseShape/EnumSites.lean": "lists every enum and const of the response shapes and the fields that resolve to one, for tests/test_enum_domains.py (test tooling; JSON only to print the list and in proof helpers; not on any runner path)",
@@ -2070,8 +1948,6 @@
       "lean/VE/Question/Fixtures.lean": "fixtures only: generated #guard checks of the Q1 fixture table (tools/question_fixtures.py) parse each frame's case JSON and compare english.question's result; no runner path",
       "lean/ResponseShape/Encoders/Ask.lean": "theorems that the ask mode's rows fit their response shapes; JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Schemas/Metered.lean": "the metered mode's response shape (metered.json) and the JSON constants of its three results; test tooling beside lean/ResponseShape.lean, not on any runner path",
-      "lean/VE/Readings/ActsExamples.lean": "test fixtures only: #guards that build acts@0 environments as a request carries them and read the readings route's decoder answers (ap-1bd); no admission path, service mode or record reads it",
-      "lean/ResponseShape/Schemas/NormDefaults.lean": "the norm-defaults mode's response shapes (norm-defaults.json) and a #guard reading the members of its rendered elaborate row (ap-1be); test tooling beside lean/ResponseShape.lean, not on any runner path",
       "lean/VE/Words/Situation.lean": "question answering Q2.3 and Q2.4: wording only; reads the environment JSON's constant verbalisations and regulated declarations (constantName, regulatedOf) to word a line, and decides nothing",
       "lean/VE/LimitTies.lean": "build-time checks only: its #guards build JSON inputs to check the frozen decoders' limits against VE.Limits at the limit and one past it (lf-18 review F2); no executable, service mode or record reads it",
       "lean/VE/Numbers/PhrasesMain.lean": "generator only: prints the fixed comparison phrase table as JSON for ve/numbers_phrases.json; reads no request and is not a service decoder",
@@ -2086,24 +1962,10 @@
       "lean/VE/NormDefaults/PacksExamples.lean": "fixtures only: #guard checks of docs/spec/premise-packs.md 2.10 compare the kind table's answers as compressed JSON; no runner path",
       "lean/VE/NormDefaults/PacksLegacyExamples.lean": "fixtures only: #guard checks of docs/spec/premise-packs.md 2.10 run the kind table on a decoded soft source with a case JSON and compare compressed answers; no runner path",
       "lean/VE/Acts/LexicalExamples.lean": "fixtures only: #guard cases of act-phrases AP-1 (spec 11.1) that build regulated declarations as JSON test inputs; no admission path, service mode or record reads it",
-      "lean/VE/Scope/Govern.lean": "lean:scope-govern: `govern` reads the document's units and contents as JSON, writes each composed rule into its unit's content (setObjVal!), and reads reading sets' units; the rules are decoded by the chain's own decoder, never by scope; the document mode calls it under scope@0 through `governFast` (SC-1b, `checkDoc`)",
+      "lean/VE/Scope/Govern.lean": "lean:scope-govern: `govern` reads the document's units and contents as JSON, writes each composed rule into its unit's content (setObjVal!), and reads reading sets' units; the rules are decoded by the chain's own decoder, never by scope, and no service mode or route calls it yet (SC-1b)",
       "lean/VE/Acts/Compat.lean": "theorems of act-phrases 4.3 (check_extends, wording_subject_first) that relate the two act checks of a JSON act phrase; JSON access only in statements and proofs (not on any runner path)",
       "lean/VE/Calc/RunExamples.lean": "fixtures only: #guard route cases of the calc runner (spec 13.2, 13.3, 13.6) read each answer's rows, outcomes and meaning_id; no runner path",
-      "lean/VE/Defaults/WireExamples.lean": "test fixtures only: df-1ac's and df-1ad's `#guard`s build defaults-* case JSON and certificates from literals and run `viewOf` and `defaultsCase` (pinned in Wire.lean) on them; no service mode reads this file",
-      "lean/VE/Acts/LexicalProofs.lean": "theorems of act-phrases 4.3 (check_spec against the independent Accepts, check_no_clause) about the act check of a JSON act phrase; JSON access only in Accepts and in statements and proofs (not on any runner path)",
-      "lean/VE/Service/ActsExamples.lean": "fixtures only: #guard cases of act-phrases AP-1's profile part (ap-1b) that build acts@0 environments as JSON test inputs; no admission path, service mode or record reads it",
-      "lean/VE/Service/ScopeAdmission.lean": "statements about scope@0 in the document mode (governor_status_weakest, governor_status_none, decodeScope_layout, scope_admission, scope_absent_unchanged); no runtime JSON handling; sc-5rb: scope_admission_sets, checkDocSets_no_sets and checkDocSets_absent_unchanged about `checkDocSets`, with `Pinned.withGoverned`, the case they name, defined from `withUnits` and `withSets`",
-      "lean/VE/Scope/WireExamples.lean": "fixtures only: SC-1b's #guard checks build scope blocks, document units and a document-mode answer as JSON literals and run the pinned decoder and fold (Wire.lean) on them; no service mode reads this file",
-      "lean/VE/Service/ScopeExamples.lean": "fixtures only: SC-1b's #guard checks build small scope@0 part documents as request JSON and run the document mode (`checkDoc`) on them; no service mode reads this file",
-      "lean/VE/Defaults/RouteExamples.lean": "fixtures only: #guard checks of the defaults-* kinds through the norm-defaults mode (docs/spec/defeasible.md 8.1) build request JSON; no runner path",
-      "lean/ResponseShape/DefaultsExamples.lean": "fixtures only: #guard checks of the defaults-* rows of norm-defaults.json on the mode's answers and their variants build JSON; no runner path",
-      "lean/VE/Compose/Dispatch.lean": "the profile gate's table; JT-2's withoutDocumentLayers rewrites only an environment's profile list for the decoders (documentLayers), and decodes nothing",
-      "lean/VE/Question/Examples.lean": "fixtures only: question answering Q1.4's #guard checks build request objects for `decodeCaller`'s accepting and refusing sides and compare `modalFields`' rows; no runner path",
-      "lean/VE/Events/Examples.lean": "fixtures only: #guard checks of docs/spec/events-time-causation.md 8 and et-3d's year boundary; two build a day-number request with Json.mkObj for W6a's runConversion and read its answer; no runner path",
-      "lean/VE/Cardinality/RunExamples.lean": "fixtures only: #guard checks of docs/spec/quantities.md 4.1, 4.2 and 9.1 run the cardinality case runner on cases built with Json.parse and Json.mkObj; no runner path",
-      "lean/VE/Cardinality/RunTheorems.lean": "statements about the cardinality certificate decoder and runner (decodeCertificate_sound over Json.getObjVal?, the regionsJson and erasedJson answer fields, the runCaseReported rows); no runtime JSON handling",
-      "lean/VE/Scope/Readings.lean": "lean:scope-readings: `governSets` (scope spec 11.2) reads the reading sets of the units it governs per choice, writes each choice's reading content into its unit (setObjVal!) and each governed reading's composed content back into its set; trees are compared with the readings route's proved `jeq`; the rules are decoded by the chain's own decoder, never here; the document mode calls it under scope@0 through `governSetsWith governFast` (sc-5rb, `checkDocSets`)",
-      "lean/VE/Scope/ReadingsExamples.lean": "fixtures only: scope spec 11.6's #guard checks build reading sets and hard-constraint documents as JSON literals and run `governSets` on them; no service mode reads this file"
+      "lean/VE/Defaults/WireExamples.lean": "test fixtures only: df-1ac's `#guard`s build defaults-* case JSON and a certificate from literals and run `viewOf` and `defaultsCase` (pinned in Wire.lean) on them; no service mode reads this file"
     }
   },
   "plan_operations": {

@@ -12,13 +12,12 @@ import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
 BASELINE = "6798e034c4aa7082dafacbb7b130879cd4eec4f6"
-BASELINE_TREE = "07aa3557e8df61fcf06f75e682fdef65467ffc8d"
 OUTPUT = ROOT / "conformance/v0-replay-baseline.json"
 
 
 def main():
     archive = subprocess.check_output(
-        ["git", "archive", BASELINE_TREE, "ve", "conformance", "examples"], cwd=ROOT)
+        ["git", "archive", BASELINE, "ve", "conformance", "examples"], cwd=ROOT)
     with tempfile.TemporaryDirectory(prefix="ve-v0-replay-") as directory:
         with tarfile.open(fileobj=io.BytesIO(archive)) as tree:
             tree.extractall(directory, filter="data")

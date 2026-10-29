@@ -106,8 +106,7 @@
           "search-budget",
           "ask",
           "words",
-          "metered",
-          "calc"
+          "metered"
         ]
       },
       "protocol": {"const": 2},

@@ -20,7 +20,7 @@ An explicitly owned surface parser remains outside the relay even when only a
 relayed file adapter imports it.
 
 A second rule keeps the unspecified completion's `fill` in Lean (readings-defaults plan, RD-2b and D12) and the soft
-decisions' names too (rd-9 soft-chain plan SC-8): no readings module (`READINGS_GLOBS`) holds a string literal or a
+decisions' names too (rd-9 soft-chain plan SC-8): no readings module (`ve/readings*.py`) holds a string literal or a
 comment containing a reserved completion name prefix (`RESERVED`) or the soft layer's decision prefix
 (`READINGS_RESERVED`), so none builds a filled name or a decision's name. A literal that only keeps such names out
 of the English (a non-wording guard) carries the marker `# relay-lint: non-wording` on its line; marked literals are
@@ -39,14 +39,8 @@ that interpolates after a literal ending in ` is ` (an element line built from p
 clause that stay Python's until their own move, and the gates' grammars that read Lean's lines back, each with its
 reason. Lean's lines reach these modules through `ve/words.py` (`VE.Words`, the `words` service mode).
 
-A fifth rule keeps the labels of the no-exception premises in Lean (defeasible plan DF-1b): no module of `ve/`
-(`DEFAULTS_GLOB`) holds a string literal (docstrings included) or a comment containing the label prefix `default:`
-followed by anything but white space (`DEFAULT_LABEL`), so none builds or matches a label of `Dflt_T`
-(`lean/VE/Defaults/Premises.lean`, `dfltLabelled`). English such as "(default: every candidate)" is no label.
-
-Usage: ``python tools/relay_lint.py [PATH ...]`` (default: `RELAYED`, the readings modules for the second rule,
-the senses path for the third and every `ve/` module for the fifth; given paths, every rule reads each path). Exit 1
-on a finding.
+Usage: ``python tools/relay_lint.py [PATH ...]`` (default: `RELAYED`, the readings modules for the second rule
+and the senses path for the third; given paths, every rule reads each path). Exit 1 on a finding.
 """
 from __future__ import annotations
 
@@ -54,7 +48,6 @@ import ast
 import importlib
 import io
 import pkgutil
-import re
 import sys
 import tokenize
 from pathlib import Path
@@ -65,26 +58,24 @@ sys.path.insert(0, str(ROOT))
 # The modules whose diagnostics are Lean's (batch 0: the relay itself; batch 3: the readings route;
 # batch 4: discourse; batch 7: rights; batch 8: reports; batch 10b: norm defaults;
 # batch 11b: speech source; batch 13b: norms admission; question answering Q1.2: `ve ask`;
-# Q2.4: situation and point wording; defeasible DF-1b: the defaults relay).
+# Q2.4: situation and point wording).
 RELAYED = ("ve/backends/relay.py", "ve/readings_route.py", "ve/discourse.py",
            "ve/rights_route.py", "ve/reports.py", "ve/reports_route.py",
            "ve/norm_defaults.py", "ve/norm_defaults_route.py",
            "ve/backends/speech_source.py", "ve/speech_document.py", "ve/backends/english_lean.py",
-           "ve/norm_admission.py", "ve/ask.py", "ve/words.py", "ve/defaults.py", "ve/calc.py")
+           "ve/norm_admission.py", "ve/ask.py", "ve/words.py")
 # Relayed functions of a module that also holds Python's own code (English E2, spec 2.9: the admission path of
 # `ve/english.py`; the producer, the renderer, the statement reader and the comparator in the same module write
-# their own diagnostics and are outside it; question answering Q1.4: the speech parser's polar path, `_polar`).
+# their own diagnostics and are outside it).
 RELAYED_FUNCTIONS = {"ve/english.py": ("_lean_reading", "_parse_english_document_uncached",
                                        "_parse_english_document", "parse_english_with_metadata", "parse_english",
-                                       "parse_english_argument"),
-                     "ve/speech_english.py": ("_polar",)}
+                                       "parse_english_argument")}
 # W2's English text-to-structure parser remains the experimental English E3
 # owner. SpeechDocument only supplies its structured fence to Lean for checking.
 OWNED_SURFACES = frozenset({"ve.speech_english"})
 FILE_IO = "# relay-lint: file I/O"
-# The modules that may not build the completion's names, and the reserved prefixes (norm-defaults 2.1): every
-# readings module, and every module of a readings package (AR-16b split `ve/readings_verdicts.py` into its package).
-READINGS_GLOBS = ("ve/readings*.py", "ve/readings*/*.py")
+# The modules that may not build the completion's names, and the reserved prefixes (norm-defaults 2.1).
+READINGS_GLOB = "ve/readings*.py"
 from ve.environment import RESERVED_PREFIXES as RESERVED  # noqa: E402  (one table with the checker's)
 from ve.environment import WORDING_LAYER_PREFIXES  # noqa: E402
 # The readings modules also never spell a soft decision's name (rd-9 soft-chain plan SC-8): they find it by its key in
@@ -96,11 +87,8 @@ NON_WORDING = "# relay-lint: non-wording"
 PARSE_FREE = ("ve/senses_document.py", "ve/backends/senses.py", "ve/senses/__init__.py")
 SENSES_LOADER = "ve/document"
 ENGLISH_READER = "parse_english"
-# The default-label rule (defeasible DF-1b): the modules it reads and the label prefix it forbids.
-DEFAULTS_GLOB = "ve/**/*.py"
-DEFAULT_LABEL = re.compile(r"default:(?!\s)")
 # The situation-wording rule (Q2.4): the modules, the phrases only Lean words, and the listed frames.
-WORDING_GLOBS = (*READINGS_GLOBS, "ve/norm_defaults*.py")
+WORDING_GLOBS = ("ve/readings*.py", "ve/norm_defaults*.py")
 WORDING = ("is a ", "is an ", "does not say whether")
 _FRAME = "a frame around Lean's clause; stays Python's until its own move (plan 5)"
 _LEGEND = "the legend's sentences (norm-defaults 4.1), outside Q2.4's list; the clause is Python's legend wording"
@@ -265,25 +253,6 @@ def reserved_literals(path: Path, marked: list | None = None) -> list[str]:
     return out
 
 
-def default_labels(path: Path) -> list[str]:
-    """Every string literal (f-string parts and docstrings included) and every comment of the module that contains a
-    `Dflt_T` label prefix (`DEFAULT_LABEL`), read with Python's own parser and tokenizer."""
-    text = path.read_text()
-    where = path.relative_to(ROOT) if path.is_relative_to(ROOT) else path
-    out = [f"{where}:{node.lineno}: a module holds a no-exception premise label"
-           for node in ast.walk(ast.parse(text, filename=str(path)))
-           if isinstance(node, ast.Constant) and isinstance(node.value, str) and DEFAULT_LABEL.search(node.value)]
-    out += [f"{where}:{token.start[0]}: a module's comment spells a no-exception premise label"
-            for token in tokenize.generate_tokens(io.StringIO(text).readline)
-            if token.type == tokenize.COMMENT and DEFAULT_LABEL.search(token.string)]
-    return out
-
-
-def defaults_modules() -> list[Path]:
-    """The modules the fifth rule reads (`DEFAULTS_GLOB`)."""
-    return sorted(ROOT.glob(DEFAULTS_GLOB))
-
-
 def _docstrings(tree: ast.AST) -> set[int]:
     out = set()
     for node in ast.walk(tree):
@@ -369,17 +338,12 @@ def english_reads(path: Path, *, branches_only: bool = False) -> list[str]:
     return out
 
 
-def readings_modules() -> list[Path]:
-    """The modules the second rule reads (`READINGS_GLOBS`)."""
-    return sorted(p for pattern in READINGS_GLOBS for p in ROOT.glob(pattern))
-
-
 def main(argv: list[str] | None = None) -> int:
     paths = [Path(p).resolve() for p in (argv if argv else [str(ROOT / r) for r in RELAYED])]
     if not argv:
         paths += helpers(paths)
     scoped = {} if argv else {(ROOT / name).resolve(): functions for name, functions in RELAYED_FUNCTIONS.items()}
-    readings = paths if argv else readings_modules()
+    readings = paths if argv else sorted(ROOT.glob(READINGS_GLOB))
     missing = [p for p in [*paths, *scoped] if not p.is_file()]
     if missing:
         print("\n".join(f"relayed module not found: {p}" for p in missing))
@@ -401,16 +365,13 @@ def main(argv: list[str] | None = None) -> int:
     if not argv:
         found += [f"{name}: {function} is listed in WORDING_FRAMES but holds no such literal (a stale entry)"
                   for name, function in sorted(set(WORDING_FRAMES) - frames)]
-    labelled = paths if argv else defaults_modules()
-    found += [f for p in labelled for f in default_labels(p)]
     io = f"; {len(marked)} file I/O diagnostic(s): {', '.join(marked)}" if marked else ""
     io += f"; {len(guards)} non-wording guard(s): {', '.join(guards)}" if guards else ""
     print("\n".join(found) if found else
           f"PASS: {len(paths)} relayed module(s) and {sum(len(f) for f in scoped.values())} relayed function(s), "
           f"no own content diagnostic; {len(readings)} readings module(s), no reserved completion name; "
           f"{len(senses)} senses module(s), no English reader; {len(wording)} readings and norm-defaults "
-          f"module(s), no situation or point wording outside {len(frames)} listed frame(s); {len(labelled)} ve "
-          f"module(s), no no-exception premise label{io}")
+          f"module(s), no situation or point wording outside {len(frames)} listed frame(s){io}")
     return 1 if found else 0
 
 

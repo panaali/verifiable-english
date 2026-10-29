@@ -25,10 +25,9 @@ How a change selects tests:
   ran them; Rust: the tests that ran a Rust binary, and `cargo test`.
 * Every file, whatever its kind: the tests that read it, and, for an added or
   removed file, the tests that listed any directory above it, the root "."
-  included (it may make its directory appear or vanish). Documentation and
-  GitHub workflows (`.github/workflows/*.yml`) only select these. `kind_of`
-  and `file_impact` are the one rule for both the plan and the drift check
-  below.
+  included (it may make its directory appear or vanish). Documentation only
+  selects these. `kind_of` and `file_impact` are the one rule for both the
+  plan and the drift check below.
 * The map is recorded for an earlier commit. Code that changed since then
   ("drift") may call the changed code anew: drift units that name what changed
   add their own tests. Tests the map does not cover (new, failed or opaque when
@@ -36,14 +35,10 @@ How a change selects tests:
   (tools/source_graph.py), which is also the whole answer without a usable map.
 * Unknown files, `tests/conftest.py`, `pyproject.toml` and `uv.lock` select
   everything. Anything selected beyond documentation also runs SMOKE.
-* A change that can make tests/history-dependent.json stale (`history_inventory`:
-  a Python file under tests/, the list, its map extract or its lint, or a module
-  the list names) also runs that lint, HISTORY_TEST, in both paths below.
 
 ``--impacted`` is the other, map-free fast path: only the tests whose static
 dependencies (imports, conftest files, named data and native checkers) changed,
-plus ALWAYS (and HISTORY_TEST, as above); it runs them in one plain pytest
-process (docs/TESTING.md).
+plus ALWAYS; it runs them in one plain pytest process (docs/TESTING.md).
 """
 from __future__ import annotations
 
@@ -64,7 +59,6 @@ import tempfile
 import time
 
 from change_units import Summary, delta
-import history_tests
 from layer_policy import APP_AREAS, ROOT, lean_default_targets, lean_executables, python_exports
 import lean_mode_deps
 import nested_pytest
@@ -77,10 +71,6 @@ TESTS = sorted((ROOT / "tests").glob("test_*.py"))
 EXTRA_UNITS = test_map.EXTRA_UNITS
 # Fast tests across parser, environment, wire and both native backends.
 SMOKE = ("tests/test_conformance.py", "tests/test_surface_registry.py", "tests/test_definitions.py")
-# The lint of the history-dependent test list (tools/history_tests.py), run by any change that can make it stale
-# (`history_inventory`).
-HISTORY_TEST = "tests/test_history_tests.py"
-HISTORY_REASON = "history inventory"
 # `--run` stops after this many failed tests outside the quarantine (`--maxfail`; 0 runs everything).
 MAXFAIL = 5
 UV_PYTHON = ("uv", "run", "--frozen", "--group", "dev", "python")
@@ -108,19 +98,10 @@ LEAN_LAYER_INPUTS = {"tools/lean-layer-exceptions.json", "tools/check_lean_impor
                      "tools/lean_header_imports.lean", "tools/layer_policy.py"}
 RUST_LAYER_INPUTS = {"tools/check_rust_deps.py", "tools/layer_policy.py"}
 KNOWN_AREAS = {"ve", "tests", "tools", "conformance", "lean", "rust", "docs", "examples", "data", "bench",
-               "design", ".github", *APP_AREAS}
-# GitHub Actions workflows: only GitHub runs them, and tests/test_ci_workflow.py reads them as text,
-# so like documentation they select their readers and the listers of their directory, never SMOKE.
-WORKFLOWS = ".github/workflows/"
-WORKFLOW_SUFFIXES = (".yml", ".yaml")
+               "design", *APP_AREAS}
 # Cached drift results depend on this file's rules as well as the graph's.
 SELECTOR_VERSION = hashlib.sha256(source_graph.CODE_VERSION.encode()
                                   + Path(__file__).read_bytes()).hexdigest()[:16]
-
-
-def documentation(path: str) -> bool:
-    """Text no test runs (documentation or a workflow): it selects only the tests that name or read it."""
-    return path.endswith(DOCUMENT_SUFFIXES) or (path.startswith(WORKFLOWS) and path.endswith(WORKFLOW_SUFFIXES))
 
 
 def units() -> list[str]:
@@ -579,7 +560,7 @@ def rust_change(sel: Selection, change: Change) -> None:
 
 def data_change(sel: Selection, change: Change, rust_sources: dict[str, str]) -> None:
     path = change.path
-    if not documentation(path):
+    if not path.endswith(DOCUMENT_SUFFIXES):
         sel.code = True
     mapped(sel, change)
     sel.static(mentions_path(path), f"names {path}")
@@ -915,21 +896,9 @@ def lean_cutoff(base: str, after: str | None, known: bool = True) -> dict:
     return {**found, "state": "applied", "rebuilt": sorted(rebuilt), "same": sorted(names - rebuilt)}
 
 
-def history_inventory(paths: list[str]) -> list[str]:
-    """The changed paths that can make tests/history-dependent.json stale, so that the plan runs its lint
-    (HISTORY_TEST): a Python file under tests/ (added, edited or deleted, a conftest too), the lint's inputs and
-    code (`history_tests.INPUTS`), and a Python file the list or its map extract names (`history_tests.named_sources`,
-    read now from the tree: main renaming a function of one makes a branch's copy of the list stale; none when the
-    files are unreadable). Documentation is none of these."""
-    named = history_tests.named_sources() if any(path.endswith(".py") for path in paths) else frozenset()
-    return [path for path in paths if path in history_tests.INPUTS
-            or path.endswith(".py") and (path.startswith("tests/") or path in named)]
-
-
 def finish(sel: Selection, changes: list[Change], paths: list[str], started: float,
            drift_files: int) -> dict:
     full = bool(sel.full)
-    history = history_inventory(paths)
     if full:
         selected = list(sel.all_units)
         sel.lean = sel.audit = sel.rust = True
@@ -937,8 +906,6 @@ def finish(sel: Selection, changes: list[Change], paths: list[str], started: flo
     else:
         if sel.code:
             sel.add(SMOKE, "smoke")
-        if history:
-            sel.add([HISTORY_TEST], HISTORY_REASON)
         selected = sorted(sel.reasons)
     pytest_files = [t for t in selected if t.startswith("tests/")]
     extra = [t for t in selected if t in EXTRA_UNITS]
@@ -983,8 +950,7 @@ def finish(sel: Selection, changes: list[Change], paths: list[str], started: flo
         commands.append(nested_pytest.command(["-q", *pytest_files], python=UV_PYTHON))
     return {"changed": paths, "selected": selected, "selected_count": len(selected),
             "full_count": len(sel.all_units), "full": full, "full_reasons": sel.full,
-            "smoke": list(SMOKE), "history_inventory": history,
-            "reasons": {t: sorted(r) for t, r in sorted(sel.reasons.items())},
+            "smoke": list(SMOKE), "reasons": {t: sorted(r) for t, r in sorted(sel.reasons.items())},
             "map": None if cov is None else {"commit": cov.commit, "path": str(cov.path or ""),
                                              "files_changed_since": drift_files,
                                              "uncertain_units": len(sel.unmapped)},
@@ -1266,14 +1232,11 @@ def impacted(paths: list[str], *, full: bool = False) -> dict:
             product = not changed.endswith(".py") or changed.startswith("ve/")
             (unreached if product else scripts).append(changed)
     fallback = full or not paths or bool(unreached)
-    history = history_inventory(paths)
-    selected = sorted(tests if fallback else {t for hits in reached.values() for t in hits} | ALWAYS
-                      | ({HISTORY_TEST} if history else set()))
+    selected = sorted(tests if fallback else {t for hits in reached.values() for t in hits} | ALWAYS)
     commands, lean, rust = native_commands(paths, selected, fallback)
     return {"mode": "impacted", "changed": paths, "reached": reached, "unreached": unreached,
             "scripts_without_tests": scripts, "fallback": fallback, "selected": selected,
             "selected_count": len(selected), "full_count": len(TESTS), "always": sorted(ALWAYS),
-            "history_inventory": history,
             "commands": commands, "lean_build": lean, "rust_build": rust}
 
 

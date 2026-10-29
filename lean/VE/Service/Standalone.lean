@@ -24,30 +24,12 @@ decoders used by the route; successful model answers require a checked model. -/
 namespace VE.Service.Standalone
 open Lean
 
-/-- The `regulated` declarations of `environment`'s predicates `predicates`, read as
-`Norms.Wire.decodeNormsEnvironment` reads them: with the act check of the profiles and fixed phrases from which it
-reads `acts@0` (`actsProfiles`, `actsFixed`; act-phrases 4.1, finding F1), as `decodeRegulatedAll` without them. -/
-def regulatedOf (environment : Json) (predicates : List (String × Json)) :
-    Except String (List VE.Norms.Regulated) := do
-  let ps := VE.Norms.Wire.actsProfiles true environment
-  VE.Norms.Plain.decodeRegulatedAllIn ps (← VE.Norms.Wire.actsFixed ps environment) predicates
-
 /-- The `regulated` extension checked as `Norms.Wire.decodeNormsEnvironment`
 checks it, on any family: Python validates it in the environment constructor,
 whichever checker family the envelope selects. -/
-def checkRegulated (environment : Json) (predicates : List (String × Json)) : Except String Unit := do
-  let _ ← regulatedOf environment predicates
+def checkRegulated (predicates : List (String × Json)) : Except String Unit := do
+  let _ ← VE.Norms.Plain.decodeRegulatedAll predicates
   pure ()
-
-/-- What the envelope and family decoders read of `environment` (act-phrases 4.4): when it reads `acts@0`
-(`Norms.Wire.readsActs`), the base rows' refusals on the list as written first (`readings@1`, the one profile only
-the whole table admits, is set aside before `validated`), then `Norms.Wire.actsView`, as the norms decoder reads
-it; any other environment as it is. -/
-def actsRead (environment : Json) : Except String Json := do
-  let ps := VE.Norms.Wire.actsProfiles true environment
-  if ps.isEmpty then return environment
-  let _ ← VE.Compose.gateOf VE.Compose.baseRows ps
-  pure (VE.Norms.Wire.actsView environment ps)
 
 /-- A gated envelope and the environment JSON its family decoders read: the
 submitted one, with any `regulated` extension removed after it is checked.
@@ -206,19 +188,18 @@ already validated them. Validation and model modes do not use these relaxations.
 def validated (environment : Json) (typing : Bool := false) : Except String Validated := do
   -- Typing only: other modes keep the gate's refusal of these statement profiles.
   let environment ← if typing then typingReduced environment else pure environment
-  let view ← actsRead environment
-  let e ← VE.Route.Gate.decodeEnvelope view
+  let e ← VE.Route.Gate.decodeEnvelope environment
   for kind in ["sorts", "predicates", "constants"] do
     for (name, _) in ← VE.Bridge.fields (← e.vocabulary.getObjVal? kind) do
       if pythonReserved.contains name then
         throw s!"DuplicateDeclaration: Schema identifier '{name}' is reserved"
   let predicates ← VE.Bridge.fields (← e.vocabulary.getObjVal? "predicates")
-  let mut v : Validated := { envelope := e, decodable := view }
+  let mut v : Validated := { envelope := e, decodable := environment }
   if e.profiles.contains "norms@0" &&
       predicates.any (fun (_, entry) => (entry.getObjVal? "regulated").isOk) then
     -- Check the regulated extension, then strip it: the family decoders see
     -- regulated predicates as ordinary ones.
-    checkRegulated environment predicates
+    checkRegulated predicates
     v ← stripPredicates v.envelope v.decodable ["regulated"]
   checkDataFlagFields e.profiles predicates
   if typing && e.family == .closureNary then
@@ -242,16 +223,12 @@ def validatedEnvironment (environment : Json) : Except String VE.Route.Gate.Enve
 statement layer validates its own declarations; the core decoder handles the
 remaining families. `Compose.profileTable` is the single gate for the full registry: its base rows, and the whole
 table for a list with `Compose.environmentWrapper`. -/
-def validatedLayerEnvironment (environment : Json) : Except String VE.Route.Gate.Envelope := do
+def validatedComposedEnvironment (environment : Json) : Except String VE.Route.Gate.Envelope := do
   let rawProfiles := (VE.Bridge.strings (environment.getObjValD "profiles")).toOption.getD []
   if rawProfiles.contains "norm-defaults@0" && !rawProfiles.contains "norms@0" then
     let _ ← VE.Compose.gateOf VE.Compose.baseRows rawProfiles
     pure ()
-  -- `acts@0` is read by the norms decoder only: its row's refusals come before every decoder (act-phrases 4.4)
-  if rawProfiles.contains "acts@0" then
-    let _ ← VE.Compose.gateOf (if rawProfiles.contains VE.Compose.environmentWrapper then VE.Compose.profileTable
-      else VE.Compose.baseRows) rawProfiles
-  let named :=(VE.Route.Gate.profilesOf environment).toOption.getD []
+  let named := (VE.Route.Gate.profilesOf environment).toOption.getD []
   let empty := Json.arr #[]
   if named.contains "risk@0" || (environment.getObjVal? "risk").isOk then
     let _ ← VE.Risk.Wire.decodeRiskSource environment
@@ -294,11 +271,10 @@ def validatedLayerEnvironment (environment : Json) : Except String VE.Route.Gate
     pure ()
   else if named.contains "norms@0" then
     let predicates ← VE.Bridge.fields (← (← environment.getObjVal? "vocabulary").getObjVal? "predicates")
-    -- under `acts@0` the norms decoder below checks the declarations with the act check of act-phrases 3.2
-    if !named.contains "norm-defaults@0" && !named.contains "acts@0" &&
+    if !named.contains "norm-defaults@0" &&
         predicates.any (fun (_, entry) => (entry.getObjVal? "regulated").isOk) &&
         (VE.NormDefaults.Wire.unspecifiedNames environment).isEmpty then
-      checkRegulated environment predicates
+      checkRegulated predicates
     let _ ← VE.NormDefaults.Wire.decodeEnvironmentU environment
     pure ()
   else
@@ -311,17 +287,6 @@ def validatedLayerEnvironment (environment : Json) : Except String VE.Route.Gate
     else if ps.contains "nary@0" then .closureNary
     else if ps.contains "closure@0" then .closure else .fol
   pure ⟨ps, family, ← environment.getObjVal? "vocabulary"⟩
-
-/-- `validatedLayerEnvironment` over the environment without `Compose.documentLayers`, then the table's gate over
-the list as written, which `Compose.gate_judgments` shows adds only the layer's own requirement. -/
-def validatedComposedEnvironment (environment : Json) : Except String VE.Route.Gate.Envelope := do
-  let listed := (VE.Bridge.strings (environment.getObjValD "profiles")).toOption.getD []
-  unless listed.any VE.Compose.documentLayers.contains do return ← validatedLayerEnvironment environment
-  let e ← validatedLayerEnvironment (VE.Compose.withoutDocumentLayers environment)
-  let ps ← VE.Route.Gate.profilesOf environment
-  let _ ← VE.Compose.gateOf
-    (if ps.contains VE.Compose.environmentWrapper then VE.Compose.profileTable else VE.Compose.baseRows) ps
-  pure { e with profiles := ps }
 
 /-- A model's tables use the checker vocabulary, including profile words, but
 its identity stays bound to the complete submitted environment. The owning
@@ -448,17 +413,11 @@ def environmentCase (j : Json) : Except String Json := do
     return VE.Route.Wire.ok id ([("environment_id", .str envId)] ++
       (match l with
        | .v0 _ => [("profile", environment.getObjValD "profile")]
-       -- a frozen envelope regulates nothing: no act
-       | _ => [("profiles", environment.getObjValD "profiles")]) ++ [("family", .str l.family)] ++
-      (match l with | .v0 _ => [] | _ => [("acts", Json.mkObj [])]))
+       | _ => [("profiles", environment.getObjValD "profiles")]) ++ [("family", .str l.family)])
   let e ← validatedComposedEnvironment environment
-  -- `environmentIdOf` of the identity environment, with the canonical acts it hashes, which Python stores
-  let canonical ← VE.Norms.Wire.canonicalEnvironmentJson (← identityEnvironment environment e.profiles)
-  let environmentId ← VE.Route.Wire.environmentId e.profiles canonical
-  let acts ← VE.Norms.Wire.canonicalActs canonical
+  let environmentId ← environmentIdOf e.profiles (← identityEnvironment environment e.profiles)
   pure (VE.Route.Wire.ok id [("environment_id", .str environmentId),
-    ("profiles", toJson e.profiles), ("family", .str e.family.name),
-    ("acts", Json.mkObj (acts.map fun (p, a) => (p, .str a)))])
+    ("profiles", toJson e.profiles), ("family", .str e.family.name)])
 
 /-- Python sorts relation rows by typed tuple order. In the order family,
 `$int` cells compare numerically even though they travel as strings. -/
@@ -582,7 +541,7 @@ def modelCase (j : Json) : Except String Json := do
   -- it: each required relation within its permission (`Plain.profileOk`).
   let predicates ← VE.Bridge.fields (← (← modelEnv.getObjVal? "vocabulary").getObjVal? "predicates")
   if predicates.any (fun (_, entry) => (entry.getObjVal? "regulated").isOk) then
-    VE.Norms.Plain.profileOk ⟨← regulatedOf modelEnv predicates, [], []⟩ model
+    VE.Norms.Plain.profileOk ⟨← VE.Norms.Plain.decodeRegulatedAll predicates, [], []⟩ model
   let originalProfiles ← VE.Route.Gate.profilesOf environment
   let environmentId ← environmentIdOf originalProfiles
     (← identityEnvironment environment originalProfiles)
@@ -699,7 +658,7 @@ each declared norms pair, as `Norms.Plain` regenerates it. -/
 def folBackground (environment : Json) (rv : VE.Route.Wire.RouteVocabulary) :
     Except String (List (VE.Formula × String)) := do
   let predicates ← VE.Bridge.fields (← (← environment.getObjVal? "vocabulary").getObjVal? "predicates")
-  let T : VE.Norms.Tree := ⟨← regulatedOf environment predicates, [], []⟩
+  let T : VE.Norms.Tree := ⟨← VE.Norms.Plain.decodeRegulatedAll predicates, [], []⟩
   pure (VE.Route.Wire.fullBackground rv ++ (VE.Norms.pairPremises T).map (·, "profile"))
 
 /-! ## Parsing -/

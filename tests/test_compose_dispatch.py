@@ -18,10 +18,7 @@ from tests.profile_gate_oracle import checker_family
 
 # S0's literal table is frozen over its original sixteen profiles. S1 adds a
 # wrapper; testing that wrapper must not rewrite the S0 Lean literal table.
-# Rows added after AR-10's table: their gate is checked by their own theorems and guards (`acts@0`: `gate_acts`,
-# lean/VE/Compose/Examples.lean); the lists below are the composition spec's legacy registry.
-LATER_ROWS = frozenset({"acts@0"})
-REGISTERED = tuple(sorted(set(BY_NAME) - {"readings@1"} - LATER_ROWS))
+REGISTERED = tuple(sorted(set(BY_NAME) - {"readings@1"}))
 SPEC_REGISTERED = frozenset({
     "alternatives@0", "closure@0", "data@0", "definitions@0", "documents@1",
     "nary@0", "norm-defaults@0", "norms@0", "soft-norms@0", "order@0", "relational-fol@0",
@@ -129,7 +126,7 @@ def _today_literals():
 
 def test_all_registered_subsets():
     assert set(REGISTERED) == SPEC_REGISTERED
-    assert set(BY_NAME) == SPEC_REGISTERED | {"readings@1"} | LATER_ROWS
+    assert set(BY_NAME) == SPEC_REGISTERED | {"readings@1"}
     texts, codes = _today_literals()
     assert texts[0] == "UnsupportedProfile: Missing profile relational-fol@0"
     assert len(codes) == 65_536

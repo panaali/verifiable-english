@@ -10,8 +10,7 @@ plus `question`. It is decoded by `VE.EnglishGrammar.Run.decodeCase`, imported a
 the question, read in authoring mode at cap 2, so the six identities of E2 (`source_sha256` over the question) are
 the ones `english.read` would give for the same request; `question_version` is added.
 
-The result is `readQuestion`'s outcome under the caller's auxiliaries (`Caller.auxs`) and E2's `workBudget`, with the
-fields of 4.1's row for
+The result is `readQuestion`'s outcome under `auxiliaries` and E2's `workBudget`, with the fields of 4.1's row for
 that outcome. Every span is in code points of the question. A case that cannot be read is an `error` row.
 `one` also carries `text`, the A0 line of 3.3, so the CLI prints only Lean's words.
 
@@ -38,7 +37,6 @@ def codeClasses : List (String × String) := newCodeClasses ++ VE.EnglishGrammar
 def statusCodes : List (String × List String) :=
   [("notQuestion", ["NotOneQuestion"]),
    ("none", ["QuestionForm", "NoDerivation"]),
-   ("modal", ["ModalQuestion"]),
    ("budget", ["QuestionTooLong", "Budget"]),
    ("many", ["Ambiguous", "AmbiguousQuestion"]),
    ("indefinite", ["IndefiniteQuestion"]),
@@ -56,8 +54,7 @@ def statusFields : List (String × List String × List String) :=
    ("rejected", ["code", "class", "text", "span"], []),
    ("notQuestion", ["code", "class", "text", "span"], []),
    ("budget", ["code", "class", "text", "span"], []),
-   ("invalidGrammar", ["code", "class", "text"], ["fault", "failure"]),
-   ("modal", ["code", "class", "text"], [])]
+   ("invalidGrammar", ["code", "class", "text"], ["fault", "failure"])]
 
 theorem statusCodes_classed : ∀ s ∈ statusCodes, ∀ c ∈ s.2, (codeClasses.lookup c).isSome = true := by
   decide
@@ -111,8 +108,8 @@ def ambiguousFields (q : String) (E : Env) (L : Lexicon) (c : Candidate) : Excep
   | _ => throw "InvalidInput: an ambiguous candidate has no two derivations"
 
 /-- Row 15's advice: the indefinite article's, else E2's advice row for the closest candidate's tokens. -/
-def noneAdvice (auxs profiles : List String) (q : String) (cl : Option Candidate) : List (String × Json) :=
-  let row := match indefiniteSwaps auxs q with
+def noneAdvice (profiles : List String) (q : String) (cl : Option Candidate) : List (String × Json) :=
+  let row := match indefiniteSwaps auxiliaries q with
     | some (art, _, _) => some ("question-indefinite", s!"Write \"every\" or \"some\" in place of \"{art}\".")
     | none => cl.bind fun c => match lex c.sentence with
       | .ok ss => advice profiles ((ss[0]?).getD #[]).toList
@@ -120,14 +117,14 @@ def noneAdvice (auxs profiles : List String) (q : String) (cl : Option Candidate
   row.toList.map fun (name, tip) => ("advice", Json.mkObj [("id", .str name), ("text", .str tip)])
 
 /-- Row 15: no reading, with the closest candidate's diagnosis mapped onto the question when it is found. -/
-def noneFields (auxs profiles : List String) (q : String) (E : Env) (L : Lexicon) (cl : Option Candidate) :
+def noneFields (profiles : List String) (q : String) (E : Env) (L : Lexicon) (cl : Option Candidate) :
     List (String × Json) :=
   let found := cl.bind fun c => (diagnosisOf E L c).map (c, ·)
   let main := match found with
     | some (c, d) => status "none" ++ coded "NoDerivation" (noDerivationText ++ closestText c d) ++
         [("span", pointSpan q (mapSpan c caseFrame.utf8ByteSize d.span))]
     | none => status "none" ++ coded "NoDerivation" noDerivationText ++ whole q
-  main ++ noneAdvice auxs profiles q cl
+  main ++ noneAdvice profiles q cl
 
 /-- Row 1: one reading. Its A0 line is shown only when it passes the answer frames' all-derivations gate and its
     asked sentence reads back with exactly `φ` (`askedGate`; spec 3.3); otherwise the case is an error row. -/
@@ -139,8 +136,8 @@ def oneFields (q : String) (E : Env) (L : Lexicon) (c : Candidate) (φ : EFormul
       ("ast", φ.encode), ("spans", Json.arr #[spanJson (0, q.length)])])
   else throw "InvalidInput: the asked line does not pass the answer frames' gate"
 
-/-- The fields of 4.1's row for an outcome of `readQuestion auxs`. -/
-def outcomeFields (auxs profiles : List String) (q : String) (E : Env) (L : Lexicon) :
+/-- The fields of 4.1's row for an outcome. -/
+def outcomeFields (profiles : List String) (q : String) (E : Env) (L : Lexicon) :
     Outcome → Except String (List (String × Json))
   | .one c φ => oneFields q E L c φ
   | .meanings _ rs => pure (status "many" ++ coded "AmbiguousQuestion" ambiguousQuestionText ++ whole q ++
@@ -148,12 +145,12 @@ def outcomeFields (auxs profiles : List String) (q : String) (E : Env) (L : Lexi
   | .ambiguous c => ambiguousFields q E L c
   | .indefinite art rs => pure (status "indefinite" ++ coded "IndefiniteQuestion" (indefiniteText art) ++
       whole q ++ [("rephrasings", toJson rs)])
-  | .none cl => pure (noneFields auxs profiles q E L cl)
+  | .none cl => pure (noneFields profiles q E L cl)
   | .refused c o => refusedFields q E L c o
-  | .form wh => pure (status "none" ++ coded "QuestionForm" (if wh then whQuestionText else formText auxs) ++
+  | .form wh => pure (status "none" ++ coded "QuestionForm" (if wh then whQuestionText else formText auxiliaries) ++
       whole q)
   | .text (.invalidGrammar g) => pure (invalidFields "english.question" ⟨E, {}, L, none, []⟩ g)
-  | .text (.lexical r) => pure (lexicalFields q (shape auxs q).offset r)
+  | .text (.lexical r) => pure (lexicalFields q (shape auxiliaries q).offset r)
   | .text _ => throw "InvalidInput: the question's text outcome is neither its vocabulary nor its lexing"
   | .notQuestion => pure (status "notQuestion" ++ coded "NotOneQuestion" notOneQuestionText ++ whole q)
   | .limit => pure (status "budget" ++ coded "QuestionTooLong" questionTooLongText ++ whole q)
@@ -161,9 +158,9 @@ def outcomeFields (auxs profiles : List String) (q : String) (E : Env) (L : Lexi
 
 /-- The fields of what the mode shows (`ask`): 4.1's row of `readQuestion`'s outcome, or the moved-out refusal with
     the questions VE reads in its place. -/
-def askedFields (auxs profiles : List String) (q : String) (E : Env) (L : Lexicon) :
+def askedFields (profiles : List String) (q : String) (E : Env) (L : Lexicon) :
     Asked → Except String (List (String × Json))
-  | .read o => outcomeFields auxs profiles q E L o
+  | .read o => outcomeFields profiles q E L o
   | .moved c rs =>
     let aux := match c.form with
       | .fronted a _ => a
@@ -171,48 +168,14 @@ def askedFields (auxs profiles : List String) (q : String) (E : Env) (L : Lexico
     pure (status "moved" ++ coded "QuestionWordMoved" (movedText aux rs.length) ++ whole q ++
       (if rs.isEmpty then [] else [("rephrasings", toJson rs)]))
 
-/-- The mode's callers (`caller`, absent for `ve ask`): `ve ask` reads with `auxiliaries`; speech acts (plan Q1.4) read
-    with `speechAuxiliaries` and refuse a wording whose first word is a word of `modalWords` (`modalFields`). -/
-inductive Caller
-  | ask
-  | speechActs
-  deriving DecidableEq
-
-def Caller.auxs : Caller → List String
-  | .ask => auxiliaries
-  | .speechActs => speechAuxiliaries
-
-def decodeCaller (j : Json) : Except String Caller :=
-  match j.getObjVal? "caller" with
-  | .error _ => pure .ask
-  | .ok (.str "speech-acts") => pure .speechActs
-  | .ok _ => throw "InvalidInput: caller is \"speech-acts\" when present"
-
-/-- The beginnings of the speech-acts wordings the caller sends to this mode: F1's `caseFrame`, then each word of
-    `modalWords` followed by a space. Exported, so the speech parser keeps no list of its own. F2's fronted `Is` joins
-    them in Q1.4b, once its A/B rows are decided (docs/question-answering/q1-4/REPORT.md). -/
-def speechPrefixes : List String := caseFrame :: modalWords.map (· ++ " ")
-
-/-- The speech-acts caller's refusal of a wording whose first word is a word of `modalWords`, without a span, as speech
-    acts have always given it; `none` otherwise. -/
-def modalFields (q : String) : Option (List (String × Json)) :=
-  if modalWords.any fun w => (w ++ " ").isPrefixOf q then
-    some (status "modal" ++ coded "ModalQuestion" modalQuestionText)
-  else none
-
 /-- The texts the mode's clients show as they are: `unanswered`, `ve ask` without `--reading`. -/
 def texts : List (String × String) := [("unanswered", unansweredText)]
 
 /-- The question contract's own table (`{"id", "export": "codes"}`). -/
 def codesCase (id : String) : Json :=
   VE.Route.Wire.ok id [("result", Json.mkObj [("codes", toJson codeClasses), ("statuses", toJson statusCodes),
-    ("fields", toJson statusFields), ("texts", toJson texts), ("callers", toJson [("speech-acts", speechPrefixes)]),
+    ("fields", toJson statusFields), ("texts", toJson texts),
     ("question_version", .str questionVersion)])]
-
-/-- The fields a question case holds: `english.read`'s, `question`, and `caller` when it is present. -/
-def caseFields (j : Json) : List String :=
-  ["id", "environment", "lexicon", "source", "mode", "cap", "question"] ++ optionalFields j ++
-    (if (j.getObjVal? "caller").toOption.isSome then ["caller"] else [])
 
 def questionCase (j : Json) : Except String Json := do
   if (j.getObjVal? "export").isOk then
@@ -220,20 +183,19 @@ def questionCase (j : Json) : Except String Json := do
     let id ← VE.Bridge.stringField j "id"
     unless (← VE.Bridge.stringField j "export") == "codes" do throw "InvalidInput: export is codes when present"
     return codesCase id
-  VE.Bridge.exactFields j (caseFields j)
+  VE.Bridge.exactFields j ((["id", "environment", "lexicon", "source", "mode", "cap", "question"] ++
+    optionalFields j))
   let id ← VE.Bridge.stringField j "id"
   let q ← VE.Bridge.stringField j "question"
   unless (← VE.Bridge.stringField j "source") == q do throw "InvalidInput: the source is not the question"
   unless (← VE.Bridge.stringField j "mode") == "authoring" do throw "InvalidInput: a question is read in authoring mode"
   unless (← (← j.getObjVal? "cap").getNat?) == 2 do throw "InvalidInput: a question is read at cap 2"
-  let caller ← decodeCaller j
   let c ← decodeCase j
   let identities := Json.mkObj ([("source_sha256", .str (VE.CertificateWire.sha256 q.toUTF8))] ++ c.identities ++
     [("question_version", .str questionVersion)])
-  let fields ← match (if caller == .speechActs then modalFields q else none), c.overlayFailure with
-    | some f, _ => pure f
-    | none, some f => pure (invalidOverlayFields "english.question" f)
-    | none, none => askedFields caller.auxs c.E.profiles q c.E c.L (ask caller.auxs c.E {} c.L workBudget q)
+  let fields ← match c.overlayFailure with
+    | some f => pure (invalidOverlayFields "english.question" f)
+    | none => askedFields c.E.profiles q c.E c.L (ask auxiliaries c.E {} c.L workBudget q)
   pure (VE.Route.Wire.ok id [("result", Json.mkObj (fields ++ [("identities", identities)]))])
 
 /-- A one row's A0 line passed the gate: it has one derivation, A0's, whose sentence reads back with exactly `φ`. -/

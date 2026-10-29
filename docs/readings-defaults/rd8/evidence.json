@@ -2,14 +2,12 @@
   "batch": "RD-8",
   "branch": "readings-defaults/rd8",
   "base": "167eb8ff",
-  "base_tree": "a1124437421147a190700b11c58587c0ba0e3745",
-  "base_subject": "Merge readings-defaults/integrate (readings-defaults): approved by review; synced and verified",
   "commits": [
-    {"hash": "c3d86995", "tree": "91eca5fd1ab3b16597520f497237eb2bdb296993", "subject": "lean: senses requests read a document's fences and front-matter defaults (RD-8)"},
-    {"hash": "fd807ff9", "tree": "43ac71ae307a6546aa4b74a13bab06f0ed38375a", "subject": "manifest: pin the RD-8 senses runner and list its theorems"},
-    {"hash": "b87766c5", "tree": "4fef7633899ae9e0ac39baf4fa0a833e56f60c03", "subject": "document: senses documents read their English fences through Lean (RD-8)"},
-    {"hash": "787781a9", "tree": "cae5c6c68c034af72237917721e2891238d1ef03", "subject": "tests: RD-8 budget, deadline and identity checks for fence requests"},
-    {"hash": "d7f8055b", "tree": "0d70a811274d8c4cf238eace8224fe7e8ecc6ebc", "subject": "docs: RD-8 report, saved evidence and the test that checks one against the other"}
+    {"hash": "c3d86995", "subject": "lean: senses requests read a document's fences and front-matter defaults (RD-8)"},
+    {"hash": "fd807ff9", "subject": "manifest: pin the RD-8 senses runner and list its theorems"},
+    {"hash": "b87766c5", "subject": "document: senses documents read their English fences through Lean (RD-8)"},
+    {"hash": "787781a9", "subject": "tests: RD-8 budget, deadline and identity checks for fence requests"},
+    {"hash": "d7f8055b", "subject": "docs: RD-8 report, saved evidence and the test that checks one against the other"}
   ],
   "theorems": [
     "VE.Senses.readSents_ok",
@@ -64,16 +62,15 @@
     "tools_tests_passed": 51
   },
   "review_fix_commits": [
-    {"hash": "f687b55c", "tree": "d70a77d92889b78211bae9dc4cb59ed52f59c1a2", "subject": "senses: let Lean decide open fence admission and bind fence sentences"},
-    {"hash": "6656559f", "tree": "fa66034eb65f0b8706dd06ae85901102f3d1174e", "subject": "docs: RD-8 review fixes and final gate evidence"},
-    {"hash": "493cb831", "tree": "2705a554285e7749622605b2e8c28b4d24e44651", "subject": "build: refresh RD-8 generated tables and test inventory"},
-    {"hash": "837e2807", "tree": "8c2dd325f9437ea4da0396a5e02676adf5ad8cd7", "subject": "docs: RD-8 review fixes and final gate evidence"},
-    {"hash": "b0739788", "tree": "2c7b105f9c7a511547e344dd312b9d462b8304fd", "subject": "senses: a malformed reading-set unit or fence id is refused, never a TypeError"},
-    {"hash": "60914d2c", "tree": "da50b50d23d8154beb12383b6fbf578e197f9b9d", "subject": "senses: open-fence text counts the author's fences and fence-id refusals name their fault"},
-    {"hash": "4fe6ceb5", "tree": "c645f0595e62996045372305ec460076772162e3", "subject": "tests: the RD-8 report commit is looked up in HEAD's history only"}
+    {"hash": "f687b55c", "subject": "senses: let Lean decide open fence admission and bind fence sentences"},
+    {"hash": "6656559f", "subject": "docs: RD-8 review fixes and final gate evidence"},
+    {"hash": "493cb831", "subject": "build: refresh RD-8 generated tables and test inventory"},
+    {"hash": "837e2807", "subject": "docs: RD-8 review fixes and final gate evidence"},
+    {"hash": "b0739788", "subject": "senses: a malformed reading-set unit or fence id is refused, never a TypeError"},
+    {"hash": "60914d2c", "subject": "senses: open-fence text counts the author's fences and fence-id refusals name their fault"},
+    {"hash": "4fe6ceb5", "subject": "tests: the RD-8 report commit is looked up in HEAD's history only"}
   ],
   "report_commit": "69a8dbdaf1eb330ff09214955715351816d7d4d9",
-  "report_tree": "3ade2bc7934a3225bbe660cb6d3a7d9d51935448",
   "final_gate": {
     "target": "self",
     "checks": ["lake build", "python3 lean/audit.py", "full pytest"],

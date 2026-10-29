@@ -1,7 +1,7 @@
 """act-phrases AP-1, first part (ap-1a): `VE.Acts.Lexical` and the profile-aware regulated decoder.
 
-Without `acts@0` every document decodes with today's act check (`decodeRegulated_without_acts`); with it (its
-row landed in ap-1b, `tests/test_acts_profile.py`) the norms route reads the act with `Lexical.check`. These cases go
+`acts@0` has no profile row yet (ap-1b), so no document reaches `Lexical.check`: the envelope refuses the
+profile, and every document decodes with today's act check (`decodeRegulated_without_acts`). These cases go
 through the Lean service's norms mode and read Lean's text only; the fixtures of the new check are `#guard`s in
 `lean/VE/Acts/LexicalExamples.lean`, which `lake build` elaborates.
 """
@@ -57,19 +57,9 @@ def test_todays_document_is_answered():
     assert answer().get("status") != "error"
 
 
-def test_under_the_acts_profile_the_norms_route_reads_the_act_with_the_lexical_check():
-    # ap-1b: the row landed; A1 (97 B) needs its fixed phrase for its "and"
-    regulated = {"role": "permission", "default": "allow", "act": A1}
-    profiles = ["acts@0", "norms@0", "relational-fol@0"]
-    assert message(answer(regulated, profiles)) == (
-        "InvalidInput: act phrase for heard joins acts with 'and' outside a fixed phrase")
-    case = copy.deepcopy(BASE)
-    case["environment"]["profiles"] = profiles
-    case["environment"]["vocabulary"]["predicates"]["heard"]["regulated"] = regulated
-    case["environment"]["vocabulary"]["acts"] = {
-        "fixed": ["a fair and public hearing by an independent and impartial tribunal"]}
-    status, rows, stderr = lean_routes.run("norms", [case])
-    assert rows is not None and rows[0].get("status") != "error", (status, rows, stderr)
+def test_the_acts_profile_is_refused_until_its_row_lands():
+    row = answer(profiles=["acts@0", "norms@0", "relational-fol@0"])
+    assert message(row) == "UnsupportedProfile: Unsupported profile acts@0"
 
 
 @pytest.mark.parametrize("regulated", [

@@ -1,9 +1,0 @@
-exit 1
-trust_mutants: 3 definitions, 5 mutants (5 to run), 4 jobs, base 7855620f3e06
-SURVIVOR lean/VE/Arith/Defs.lean:72 VE.Arith.Term.sitesList (G[R]) append-left: ++ Term.sitesList k ts -> 
-SURVIVOR lean/VE/Arith/Defs.lean:67 VE.Arith.Term.sites (G[R]) append-left: ++ Term.sites k b -> 
-SURVIVOR lean/VE/Arith/Defs.lean:77 VE.Arith.Formula.sites (G[R]) append-left: ++ Formula.sites k ψ -> 
-SURVIVOR lean/VE/Arith/Defs.lean:79 VE.Arith.Formula.sites (G[R]) append-left: ++ Term.sites k hi -> 
-UNKNOWN lean/VE/Arith/Defs.lean:68 VE.Arith.Term.sites (G[R]) list-empty: args -> [] (lean/VE/Arith/Defs.lean:68: don't know how to synthesize implicit argument `α`)
-trust_mutants: 0 KILLED, 4 SURVIVOR, 1 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 50 s
-trust_mutants: G[R]: 4 SURVIVOR, 1 UNKNOWN

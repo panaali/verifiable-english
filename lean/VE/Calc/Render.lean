@@ -12,19 +12,13 @@ def reservedWords : List String :=
 def phraseWords : List String :=
   ["the sum of", "the product of", "the square of", "the cube of", "twice", "half of"]
 
-/-- The phrase word that the words `w` begin with, as whole words. -/
-def leadingPhrase (w : String) : Option String :=
-  phraseWords.find? fun p => (" " ++ w ++ " ").startsWith (" " ++ p ++ " ")
-
-/-- The first reserved word, in 11.2's order, that the words `w` contain as whole words. -/
-def reservedIn (w : String) : Option String :=
-  reservedWords.find? fun r => ((" " ++ w ++ " ").splitOn (" " ++ r ++ " ")).length > 1
-
 /-- 11.2's form of value words: single-spaced words beginning with "the", not beginning with a phrase
 word and containing no reserved word, so that an atom never reads as a phrase. -/
 def valueWordsOk (w : String) : Bool :=
+  let padded := " " ++ w ++ " "
   w.startsWith "the " && (w.splitOn " ").all (fun t => !t.isEmpty) &&
-    (leadingPhrase w).isNone && (reservedIn w).isNone
+    !(phraseWords.any fun p => padded.startsWith (" " ++ p ++ " ")) &&
+    !(reservedWords.any fun r => (padded.splitOn (" " ++ r ++ " ")).length > 1)
 
 private def natWords : Nat → String
   | 1 => "one" | 2 => "two" | 3 => "three" | 4 => "four" | 5 => "five"
@@ -121,15 +115,5 @@ def renderClaim (words : String → Option String) (c : Claim) : Option String :
           | .down => v ++ " is " ++ printed ++ " when rounded down to " ++ places
           | .up => v ++ " is " ++ printed ++ " when rounded up to " ++ places
   pure (line.capitalize ++ ".")
-
-/-- A derivation (J10): its premises numbered, each square link `(s, r)` as two more, "S equals the square of R."
-and "R is at least 0.", then its conclusion. -/
-def renderFollows (words : String → Option String) (P : List Claim) (links : List (String × String)) (C : Claim) :
-    Option String := do
-  let linked : List Claim := links.flatMap fun (s, r) =>
-    [.compare ⟨.eq, false⟩ (.val s) (.pow (.val r) 2), .compare ⟨.le, true⟩ (.val r) (.lit 0)]
-  let lines ← (P ++ linked).mapM (renderClaim words)
-  pure ("Assume the following. " ++ " ".intercalate (lines.zipIdx.map fun (l, i) => s!"{i + 1}. {l}") ++
-    " From these, it follows that " ++ (← renderClaim words C).decapitalize)
 
 end VE.Calc.English

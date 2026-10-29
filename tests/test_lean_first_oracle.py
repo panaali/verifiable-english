@@ -19,25 +19,7 @@ def test_a_changed_frozen_file_or_tag_is_found(tmp_path, monkeypatch):
     monkeypatch.setattr(oracle, "MANIFEST", tampered)
     assert any("frozen files differ" in problem for problem in oracle.check())
     tampered.write_text(json.dumps({**manifest, "tag": "lean-first/no-such-tag"}))
-    assert oracle.check() == []  # a missing VM-only tag is permitted when the tree and files match
-    tampered.write_text(json.dumps({**manifest, "tree": "0" * 40}))
-    assert any("oracle tree" in problem for problem in oracle.check())
-
-
-def test_present_tag_must_match_the_recorded_commit_and_tree(monkeypatch):
-    original = oracle.git
-
-    def wrong_tag(*args):
-        if args[0] == "rev-parse" and args[1].startswith("refs/tags/"):
-            return b"wrong-commit\n"
-        if args == ("rev-parse", "wrong-commit^{tree}"):
-            return b"wrong-tree\n"
-        return original(*args)
-
-    monkeypatch.setattr(oracle, "git", wrong_tag)
-    problems = oracle.check()
-    assert any("names wrong-commit" in problem for problem in problems)
-    assert any("does not name the frozen tree" in problem for problem in problems)
+    assert oracle.check() == ["tag lean-first/no-such-tag does not exist"]
 
 
 def test_the_oracle_runs_the_pre_deletion_python(tmp_path, capfd):

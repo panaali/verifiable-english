@@ -41,7 +41,7 @@
 {"path": "ve/readings_s1.py", "scope": "Side.document_hash", "domain": "ve-rights-{}\n", "owner": "lean", "removed_by": "AR-15"},
 {"path": "ve/readings_s1.py", "scope": "Side.document_hash", "domain": "ve-soft-norms-{}\n", "owner": "lean", "removed_by": "AR-15"},
 {"path": "ve/readings_s1.py", "scope": "Side.document_hash", "domain": "ve-norms-{}\n", "owner": "lean", "removed_by": "AR-15"},
-{"path": "ve/readings_verdicts/choice.py", "scope": "_ChoiceDocument._bound", "domain": "ve-environment-{}\n", "owner": "lean", "removed_by": "AR-15"},
-{"path": "ve/readings_verdicts/choice.py", "scope": "_ChoiceDocument._bound.meaning", "domain": "ve-meaning-{}\n", "owner": "lean", "removed_by": "AR-15"},
-{"path": "ve/readings_verdicts/choice.py", "scope": "_FilledChoiceDocument._packages.meaning", "domain": "ve-meaning-{}\n", "owner": "lean", "removed_by": "AR-15"}
+{"path": "ve/readings_verdicts.py", "scope": "_ChoiceDocument._bound", "domain": "ve-environment-{}\n", "owner": "lean", "removed_by": "AR-15"},
+{"path": "ve/readings_verdicts.py", "scope": "_ChoiceDocument._bound.meaning", "domain": "ve-meaning-{}\n", "owner": "lean", "removed_by": "AR-15"},
+{"path": "ve/readings_verdicts.py", "scope": "_FilledChoiceDocument._packages.meaning", "domain": "ve-meaning-{}\n", "owner": "lean", "removed_by": "AR-15"}
 ]

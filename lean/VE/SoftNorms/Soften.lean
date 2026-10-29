@@ -477,8 +477,8 @@ def checkW1 (D : Doc) : Except String Unit := do
     unless r.sorts.length == 1 || r.sorts.length == 2 do
       throw s!"UnsupportedArity: regulated predicate {r.name}"
     unless r.sorts.all D.E.sorts.contains do throw s!"UnknownSymbol: sort of {r.name}"
-    -- a plain act is `acts@0`'s, which the decoders admit (act-phrases 3.2): the readings route's norms chain reads it
     match r.role, r.act with
+    | .plain, some _ => throw s!"InvalidInput: invalid regulated fields for {r.name}"
     | .permission, none | .obligation, none =>
       throw s!"InvalidInput: invalid regulated fields for {r.name}"
     | _, _ => pure ()

@@ -37,9 +37,7 @@ that constant's. `tools/trust_map.py` classifies these declarations and fails on
     python3 tools/lean_statements.py --diff OLD NEW   # compare two dumps
 
 The dump is produced by a Lean script that imports `VE` and runs in `lake env lean`; the script
-is generated into a temporary file, so no Lean source under `lean/` changes. The statements are
-printed by `statement_count()` runs of that one script at once, each over a contiguous part of the
-sorted names (`statement_parts`), their outputs joined in part order. A dump of inputs that
+is generated into a temporary file, so no Lean source under `lean/` changes. A dump of inputs that
 an earlier run on this machine dumped is replayed from `tools/lean_dump_cache.py` (`VE_RUN_CACHE=off`
 turns that off).
 """
@@ -189,41 +187,6 @@ ALONE = PRELUDE + r"""
 """
 
 
-# The most runs of SCRIPT at once. One run pretty-prints its theorems one after another and its time grows
-# faster than their number: the 6,625 theorems of main took 215-253 s in one run and 10-22 s in 8 parts
-# (VM, load 20-50, docs/infra/eff-20261027-1). Each part imports VE (1.6 GB peak), so 8 parts peak at about
-# 13 GB together, below the 19 parts lean/audit.py runs at once on the same tree (24.5 GB).
-STATEMENT_PARTS = 8
-
-
-def statement_count() -> int:
-    """The number of parts the statements are printed in: STATEMENT_PARTS, at most one per core."""
-    return max(1, min(STATEMENT_PARTS, os.cpu_count() or 1))
-
-
-def statement_parts(names: list[str], count: int) -> list[list[str]]:
-    """`names` cut into `count` contiguous parts of near-equal size, in order (fewer when there are fewer
-    names, never an empty one but for no names at all); joined, they are `names`."""
-    count = max(1, min(count, len(names)))
-    bounds = [len(names) * index // count for index in range(count + 1)]
-    return [names[start:end] for start, end in zip(bounds, bounds[1:])]
-
-
-def print_statements(root: Path, folder: Path, names: list[str], count: int) -> str:
-    """SCRIPT's output over `names`, printed by one run per part at once and joined in part order. One part
-    is the single run `Statements` over `names.txt`; part i of several is `Statements<i>` over `names<i>.txt`.
-    A failed part fails the dump with its label and output (`run_lean`), so no part's output is ever left out."""
-    parts = statement_parts(names, count)
-    runs = [("Statements", "names.txt")] if len(parts) == 1 else [
-        (f"Statements{index}", f"names{index}.txt") for index in range(len(parts))]
-    for part, (_, file) in zip(parts, runs):
-        (folder / file).write_text("\n".join(part) + "\n")
-    with ThreadPoolExecutor(max_workers=len(runs)) as pool:
-        texts = list(pool.map(lambda run: run_lean(root, folder, SCRIPT, run[0],
-                                                   {"VE_STATEMENT_NAMES": str(folder / run[1])}), runs))
-    return "".join(texts)
-
-
 def audited_names(root: Path = ROOT) -> list[str]:
     text = code_only((root / "lean/VE/Audit.lean").read_text())
     return sorted(set(re.findall(r"^#print axioms (\S+)", text, re.M)))
@@ -267,8 +230,7 @@ def dump_all(root: Path = ROOT, cache: bool = False) -> tuple[str, str, str]:
     tree (each built first: a file no target imports has no object file until it is named). One
     Lean run imports `VE`; each module outside it is read by its own run, in parallel. The
     statements are those of the theorems of `lean/VE/Audit.lean` as `lean/audit.py --write`
-    generates it from this declaration list, read by runs that import `VE`, one per part
-    (`print_statements`); each audit
+    generates it from this declaration list, read by a second run that imports `VE`; each audit
     manifest's hash is that of its generated text, so the list is current once the manifests are.
     With `cache` (the command line's), a dump of the same inputs that an earlier run stored is
     replayed instead (`tools/lean_dump_cache.py`)."""
@@ -306,7 +268,8 @@ def dump_all(root: Path = ROOT, cache: bool = False) -> tuple[str, str, str]:
         except (ValueError, AssertionError) as error:
             raise SystemExit(f"the declaration dump cannot give the audit manifests: {error}")
         names = sorted(manifests[audit.MANIFESTS[0]])
-        theorems = print_statements(root, folder, names, statement_count())
+        (folder / "names.txt").write_text("\n".join(names) + "\n")
+        theorems = run_lean(root, folder, SCRIPT, "Statements", {"VE_STATEMENT_NAMES": str(folder / "names.txt")})
     entries = parse(theorems)
     if sorted(entries) != names:
         missing = sorted(set(names) - set(entries))[:10]

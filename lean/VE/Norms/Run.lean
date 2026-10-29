@@ -133,10 +133,6 @@ theorem runAdmission_sound (id : String) (environment document answer : Json)
     ⟨hsound, hnodes, hleaves, hcit, hch⟩,
     fun S hS hf hg ho => Admission.norms_wire_report_consequence environment document res hr S hS hf hg ho⟩
 
-/-- An elaborate row's `wordings` (the norms and norm-defaults routes'): `Wire.plainWordings`, by predicate. -/
-def wordingsJson (ne : Wire.NormsEnvironment) : Json :=
-  Json.mkObj ((Wire.plainWordings ne).map fun (p, w) => (p, .str w))
-
 def runCase (j : Json) : Except String Json := do
   let id ← VE.Bridge.stringField j "id"
   let kind ← VE.Route.Run.caseKind j
@@ -147,7 +143,7 @@ def runCase (j : Json) : Except String Json := do
   if kind == "norms-elaborate" then
     let environment ← j.getObjVal? "environment"
     let src ← Wire.decodeSource environment (j.getObjValD "norms") (flags := true)
-    return VE.Route.Wire.ok id (Flagged.regenerated src ++ [("wordings", wordingsJson src.ne)])
+    return VE.Route.Wire.ok id (Flagged.regenerated src)
   if kind == "norms-certificate" then
     let r ← Flagged.replayEntailment j
     let steps := VE.Route.Steps.fol r.cert.trace

@@ -56,21 +56,18 @@ def _filled_premises(document, premises):
             + [(f, False) for f in premises])
 
 
-def _source_binding(document, premises, conclusion, *, listed=None):
+def _source_binding(document, premises, conclusion):
     """The binding Lean checks: the source environment (profile included) by
-    `ve.core@0.2` identity and the ASTs of the premise list and conclusion. `listed`, generated
-    formulas in place of the premise list, binds a generated conclusion to them (a colliding pair's
-    coherence premise, as `Defaults.Wire.bindPair` binds it; `ve.defaults`)."""
+    `ve.core@0.2` identity and the ASTs of the premise list and conclusion."""
     env, filled = document.env, document.filled.env
 
     def meaning(formula, generated):
         return digest(f"ve-meaning-{env.identity_version}\n",
                       {"environment_id": env.environment_id,
                        "ast": formula_to_data(filled, formula, _generated=generated)})
-    pairs = _filled_premises(document, premises) if listed is None else [(f, True) for f in listed]
     return {"environment_id": env.environment_id,
-            "premise_meaning_ids": [meaning(f, g) for f, g in pairs],
-            "conclusion_meaning_id": meaning(conclusion, listed is not None)}
+            "premise_meaning_ids": [meaning(f, g) for f, g in _filled_premises(document, premises)],
+            "conclusion_meaning_id": meaning(conclusion, False)}
 
 
 def _filled_proof(document, premises, conclusion, **kwargs):

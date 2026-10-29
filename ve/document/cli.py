@@ -26,9 +26,6 @@ def main(argv=None):
     sub.choices["readings"].add_argument("--sentence", metavar="UNIT",
                                          help="the sentence checked by itself the conclusion is about "
                                               "(readings-defaults 4.5)")
-    sub.choices["readings"].add_argument("--assume-no-exception", action="store_true",
-                                         help="if the conclusion does not follow strictly, ask whether it follows "
-                                              "unless an exception applies (defeasible plan DF-1b)")
     args = parser.parse_args(argv)
     if args.command == "render":
         print(render_document(args.path), end="")
@@ -43,10 +40,6 @@ def main(argv=None):
             raise VEError("--under requires --conclusion")
         elif args.sentence and not args.conclusion:
             raise VEError("--sentence requires --conclusion")
-        elif args.assume_no_exception and not args.conclusion:
-            raise VEError("--assume-no-exception requires --conclusion")
-        elif args.assume_no_exception:
-            data = _assume_no_exception(doc, json.loads(Path(args.conclusion).read_text()), args)
         elif args.conclusion:
             conclusion = json.loads(Path(args.conclusion).read_text())
             if _content_bearing(doc):
@@ -123,24 +116,6 @@ def main(argv=None):
             data = doc["reading_plan"]
     print(json.dumps(data, ensure_ascii=False, indent=2))
     return 0
-
-
-def _assume_no_exception(doc, conclusion, args):
-    """`--assume-no-exception` (defeasible plan DF-1b): Lean's strict answer, else its answer with no exception
-    assumed (`ve.defaults.ask`), on a soft-norms@0 document without open reading sets; the document's assertions are
-    the question's premises."""
-    from ..defaults import ask
-    from ..readings_s1 import READINGS
-    if args.under or args.sentence or args.narrowing:
-        raise VEError("--assume-no-exception takes no --under, --sentence or --narrowing")
-    if doc.get("soft_document") is None or _content_bearing(doc) or active_reading_sets(
-            doc["meta"].get("reading_sets", [])):
-        raise VEError("--assume-no-exception applies to a soft-norms@0 document without open reading sets")
-    environment = doc["environment"].to_dict()
-    environment["profiles"] = [p for p in environment["profiles"] if p != READINGS]
-    norms = [u["content"] for u in doc["units"] if u["kind"] == "norm"]
-    premises = [u["content"] for u in doc["units"] if u["kind"] == "asserted" and u["content"] is not None]
-    return ask(environment, norms, premises, conclusion)
 
 
 if __name__ == "__main__":

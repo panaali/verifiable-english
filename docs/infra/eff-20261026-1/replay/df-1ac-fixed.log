@@ -1,4 +1,0 @@
-exit 0
-trust_mutants: 1 definitions, 1 mutants (1 to run), 4 jobs, base c5197da78807
-trust_mutants: 1 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 421 s
-trust_mutants: G[V] tied: 1 KILLED

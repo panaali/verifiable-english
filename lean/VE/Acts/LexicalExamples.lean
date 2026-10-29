@@ -245,13 +245,6 @@ def phrase (i : Nat) : String :=
   "x" ++ c ++ " y" ++ c
 #guard (decodeFixed ((List.range 128).map phrase)).isOk
 #guard errFixed ((List.range 129).map phrase) == some "ResourceLimit: more than 128 fixed phrases"
--- fault order (ap-1a review F2, ap-1b DELTA row 4): the act's shape before its bytes, the number of phrases before
--- each phrase, and a plain act's both-or-neither before its form's value
-#guard errS (chk [] 1 (a22 ++ " a1")) == some "InvalidInput: invalid act phrase for p"
-#guard errFixed ("the court that is competent" :: (List.range 128).map phrase) ==
-  some "ResourceLimit: more than 128 fixed phrases"
-#guard errReg (plainReg [("form", .str "may")]) ==
-  some "InvalidInput: a plain act for p needs its form, and a form needs its act"
 def long (n : Nat) : String := "ab" ++ String.join (List.replicate n " ab")
 #guard (long 99).utf8ByteSize == 299 && (decodeFixed [long 99 ++ "c"]).isOk
 #guard errFixed [long 99 ++ "cd"] ==

@@ -18,7 +18,7 @@ import sys
 from types import ModuleType
 
 _ROOT = Path(__file__).resolve().parents[1]
-REVISION = "856f0869141926b19275f496fcb3098d8c8101e2"  # root tree of the frozen sources
+REVISION = "41887e90"
 FROZEN = {
     "norm_defaults_english": "0ffbeb82354c0b52a8d80d244b29fb26b76beecf7566a2c23aa888bbd6346085",
     "norm_english": "48a92121a1825f99774fc0e130a5f830baebe0acd720ffc19ab6d7b1b6d60778",

@@ -315,27 +315,12 @@ def _names_the_list(path: Path) -> bool:
 
 
 def test_only_the_lint_reads_the_list():
-    """The list is an inventory and a lint only: no gate, merge or cache code reads it, so no run skips or reuses
-    a test because of it. Only its lint, the lint's test, the generated-file registry, which runs the lint as the
-    list's writer and checker, the lineage revision lint, and the selector, which runs the lint when a change can
-    make the list stale (the next test), and the selector's test name it."""
+    """The list is an inventory and a lint only: no gate, merge, selection or cache code reads it, so no run
+    skips or reuses a test because of it. Only its lint, the lint's test and the generated-file registry, which
+    runs the lint as the list's writer and checker, name it."""
     readers = sorted(path.relative_to(ROOT).as_posix() for directory in ("tools", "tests", "ve", "conformance")
                      for path in (ROOT / directory).rglob("*.py") if _names_the_list(path))
-    assert readers == ["tests/test_history_tests.py", "tests/test_lineage_lint.py", "tests/test_select_tests.py",
-                       "tools/history_tests.py",
-                       "tools/regen_generated.py", "tools/select_tests.py"]
-
-
-def test_the_selector_reads_the_list_only_to_run_its_lint():
-    """tools/select_tests.py reaches the lint's module in `history_inventory` alone, and names no other file of it;
-    tests/test_select_tests.py checks that what it answers only adds tests/test_history_tests.py to a plan."""
-    tree = ast.parse((ROOT / "tools/select_tests.py").read_text(encoding="utf-8"))
-    rule = next(node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == "history_inventory")
-    inside = {id(node) for node in ast.walk(rule)}
-    uses = [node for node in ast.walk(tree) if isinstance(node, ast.Name) and node.id == "history_tests"]
-    assert uses and all(id(node) in inside for node in uses)
-    assert {node.attr for node in ast.walk(rule) if isinstance(node, ast.Attribute)
-            and isinstance(node.value, ast.Name) and node.value.id == "history_tests"} == {"named_sources", "INPUTS"}
+    assert readers == ["tests/test_history_tests.py", "tools/history_tests.py", "tools/regen_generated.py"]
 
 
 def test_every_unit_the_saved_map_saw_read_history_is_found_from_its_source_alone():

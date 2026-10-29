@@ -2,48 +2,6 @@
 
 ## Changes in this draft
 
-Draft 7 (2026-10-28, me-2n fix 1) answers the review of draft 6 (`manage-agents/me-2n-review.final.md`). Draft 6's
-text is at `43268f467`.
-- F1, work that was not charged: a derivation is now charged for every entry it visits, `entryUnits` = 2^11 units for
-  each coefficient or weight (3.2 (b)). The steps that visit each entry once per other entry are rewritten to make one
-  pass, each equal to 5's definition: `QLin.norm`, `QLin.isConst`, `FM.pick`, `Farkas.check`, and the decoder's
-  `nonlinearAt`, which now lowers each side once. "Why 2^33" is redone from measured times per unit. 13.3 adds N-1 and
-  K-1 (the review's two cases), and P-2 is retuned to keep 72/73.
-- F2, a widening: a side beyond the digit limit now keeps 5's linearity. `Lowered.tooLarge` carries the side's shape,
-  and an operation whose linearity the shapes leave open is lowered exactly, charged its bound first (`exactC`). The
-  decoder therefore refuses exactly what it refuses today (`Expr.linearC_tooLarge`). 13.3 adds S-1 to S-10.
-- The new statements are type-checked in the stub, and every guard passes. 3.2 (c) lists the changes they make.
-
-Draft 6 (2026-10-27, me-2n) is the `calc@0` sibling of draft 5, for me-2b's review F1, under the DRI's rule of
-2026-10-27: each value is evaluated once, and its size is charged. Draft 5's text is at `d9cff5345`.
-- 3.2 gains limit 10 (2^33 units of 12.2's unit per case, `ResourceLimit`), (a) a value table, (b) the size charge,
-  2.4's guard by comparison, and powers ruled out before they are computed. It also holds derivations' lowering and
-  search to the digit limit (`derivationInconclusive`), and (c) lists the answers that change.
-- One clause each in 5, 13.1 and 14. 13.3 adds F1-24 to P-2.
-- No statement of 2.3, 2.4 or 3.4 changes; every new statement is type-checked in
-  [me-2n-calc-work-stub.lean](math-evidence/me-2n-calc-work-stub.lean). Its independent review is the ME-S bounded
-  re-check of 3.2.
-- To reread when building (me-2nb, me-2nc):
-  - the `calc` comment in `ve/backends/lean_service.py`'s `DEADLINES`;
-  - 2.4's `Expr.evalL`, which stays the meaning `Expr.evalC` must agree with;
-  - plan ME-2's "Proves 3.2" and ME-5's search limits;
-  - 3.4's rows (`sides`, `display` and `tie` read the claim's evaluated values);
-  - 13.4, which has no calc row to change.
-
-Draft 5 (2026-10-27, me-12n) changes 12.2 and 13.3 only, adding and restating text as the DRI decided on 2026-10-27
-for me-12aa's N1 (`manage-agents/reviews/dri-decisions-20261027-me-12-n1.md`, item 1). Under the new budget, every
-term-node visit costs one unit, and a function call costs one visit plus its body's visits. Every value a term yields,
-and every value a range step binds, also costs its bit length. Draft 4's text is at `ab010c3f0`.
-- 12.2 gains `bits`, `chargeBits`, `stepB` and the restated evaluator.
-- New statements: `Term.evalB_bits` and the bit-length bounds.
-- `decideBounded_sound`, `_mono`, `_work` and `_complete` keep their text.
-- 13.3's units are recomputed *by hand* and fixtures B-1 to B-4 are added.
-- The statements were type-checked in [me-12n-budget-stub.lean](math-evidence/me-12n-budget-stub.lean), with
-  `sorry` proofs, against `main`'s `lean/`. Its independent review is the ME-S bounded re-check of 12.2 and 13.3.
-- me-12nb (the build) restates in draft 5's units, as the DRI decided (`dri-decisions-20261027-me-12n.md`), the
-  counts and units outside 12.2 and 13.3: 12.5's `budget` and `units`, 13.4's M-1b rows, 13.6's R-7, section 14's
-  `arith` row and section 16's C6. No statement changes.
-
 Draft 4 (2026-10-13) applies phase 1 (ME-0, [math-evidence-phase1.md](../research/math-evidence-phase1.md)) with the
 plan's draft 5. It changes fixtures and prose only: **no Lean statement changes**, so the untracked stub
 `lean/SpecStubs_math-evidence.lean` needs no edit for this draft (it is not tracked in this branch, and its
@@ -802,187 +760,9 @@ Premise ids and claim ids share one namespace (`DuplicateClaimId`).
 
 1. 10,000 JSON nodes; 2. JSON depth 64; 3. 512 values; 4. 512 claims; 5. `pow` exponents and `sci` exponents at most
 64 in absolute value; 6. literals at most 40 digits (W6's `maxNumeralChars`); 7. names and claim ids at most 64 bytes;
-8. 512 premises (ME-5); 9. `binomial-tail` trials at most 1,000 (ME-7); 10. (draft 6) the work of computing the case
-at most `maxWork` = 2^33 = 8,589,934,592 units, the unit of 12.2 (below).
-Limits 1 to 9 are checked before anything else is read; limit 10 is checked while the case is computed, after the
-decoder's name, order and id checks (3.1), in this order: the value table, then the lowering of each premise in order and of each
-derivation's conclusion in claim order (the decoder's `NonlinearPremise` check, which meets them in that order), then
-each claim's expressions and each derivation's search, claims in order. The first exceeded limit refuses the case with
-`ResourceLimit: <limit> exceeds <n>` (an UNKNOWN to the relay); limit 10's is
-`ResourceLimit: the work of the calculation exceeds 8589934592`. A computed value beyond 4,096 digits is not a
-refusal: the claims that need it are `unknown` (2.4).
-
-**Why limit 10 (draft 6, me-2n).** Under draft 5, a value was recomputed at every read (`values` and `valuesL` of 2.3
-and 2.4 are folds of closures), and a claim was evaluated up to five times: for its outcome, its verdict, `sides`,
-`display` and `tie`. So me-2b's review F1 chain v(i+1) = v(i) + v(i) costs 2^k evaluations: 3.2 s at 22 values on
-`ve_service`, and past the 60 s deadline at 28 (the whole request is then `CheckerUnavailable`). Three more growths of
-the same class were measured on `main` (13.3): G-1, one power of a 2,560-digit value, takes 18.7 s, because 2.4's
-`Small` builds the digit list of the 163,840-digit power; L-3, a premise over a constant c^(64³), takes 12.7 s, because
-5's lowering holds no constant to the digit limit (L-4 is 64 times larger); P-1, one premise of 8,191 inlined nodes
-that 20 derivations name 450 times, takes 29 s, because each mention lowers it again. The comment on `calc`'s
-deadline in `ve/backends/lean_service.py` ("each stopped at the 4,096-digit limit") is wrong under draft 5.
-
-**(a) Each value computed once.** The meaning is unchanged. The runner computes each declaration's value once, in
-order, into a table that later declarations and every claim read (`valueTable`); `valueTable_read` (proved in the
-stub) makes the table 2.4's `valuesL`, so every statement of 2.3, 2.4 and 3.4 holds as written. Each claim's
-expressions are evaluated once, and its outcome (`Claim.ofSides`, equal to `Claim.run` by `Claim.ofSides_eq`), its
-`sides`, `display` and `tie` read those values. A read is a lookup: `Expr.evalC`'s `val` clause charges one visit and
-the value's size whatever its definition, so a read never re-evaluates. The guard is F1-511 (512 values, 396,545
-units, where re-evaluation would cost 2^511). For derivations, each premise is lowered once per case, and each
-conclusion once: the decoder's linearity check and every derivation that names the premise read the same facts. The
-decoder lowers each side once, bottom-up (`nonlinearAtC`, draft 7), not once per part (`Wire.nonlinearAt` lowers
-every part again from its leaves).
-
-**(b) The size charge.** The unit is 12.2's: one per node visited, plus the size of each value computed, in bits
-(`bits`, which me-12n chose: a value's bit length is what its arithmetic costs and what memory holds, and one unit
-serves both profiles). A rational's size is its numerator's plus its denominator's (`qbits`). The case has one count,
-in limit 10's order, and a charge that would pass `maxWork` refuses the case before anything else is computed.
-- *Claims and the table* (`Expr.evalC`, `valueTableC`, `runC`): a literal, a value read, and each operation's result
-  are charged their size, then held to the digit limit. 2.4's guard is decided by two comparisons with 10^4,096
-  (`Val.check`, equal to `Val.guard` by `digitCount_le_iff`), never by a digit list. A power whose base gives
-  `(bits − 1) · k ≥ 13,607` for its numerator or denominator is beyond the limit, since 2^13,607 > 10^4,096; it is
-  `tooLarge` without being computed (`powTooLarge_sound`). Every other power is computed.
-- *Derivations* (`Expr.linearC`, me-2nc): **every step is charged for each entry it visits** (draft 7). A node of an
-  inlined side costs one visit. Each form built costs `entryUnits` = 2^11 per coefficient, plus its size. Each row of
-  5's search costs `rowCost`: 1, plus `entryUnits` per coefficient and per weight, plus `rowSize`. Each pass over a
-  stage's rows costs `passCost`: 1 per row, plus `entryUnits` per coefficient. These passes are `eliminate`'s three
-  filters and `pick`'s two. An entry's units cover its small arithmetic and its lookups among at most
-  `FM.maxUnknowns` names ("Why 2^33").
-  - *One pass each.* No step may visit an entry once per other entry, since its work would then grow faster than its
-    charge (the review's N-1 and K-1). me-2nc replaces the following, each proved equal to 5's definition, so no
-    answer changes:
-    - `QLin.norm` (and `FM.firstAppearance` under it) by `QLin.normOnce`, one map from names to sums;
-    - `QLin.isConst` by `QLin.isConstOnce`;
-    - `FM.pick` by `pickOnce`: a row holds at `x = v` exactly when `v` is within its bound, so one pass finds the
-      tightest bounds, and the candidates are 5's, in 5's order;
-    - `Farkas.check` by `Farkas.checkOnce`, whose combination is normalised once instead of `coeffOf` per name;
-    - the decoder's `Wire.nonlinearAt` by `nonlinearAtC`: each side lowered once, bottom-up, so it names the same
-      innermost part at the cost of one `linearC`.
-  - *Held to the digit limit.* The following end the derivation as `unknown derivationInconclusive` (1.5's text: no
-    certificate and no counterexample was found): a form with a constant or coefficient beyond the digit limit; a
-    power of a constant that `powTooLarge` rules out (never computed); a search row beyond the limit; and a value of
-    back-substitution's point (`pick`'s bound, midpoint or step, each from rows and earlier values within the limit)
-    beyond it. A Farkas combination is a sum of at most 64 products of values within the limit, so it needs no hold.
-    `inlineTable` and `nodesWithin` are unchanged. This is the identity's rule (8.2: a coefficient of more than 4,096
-    digits ends it as `limit .polyTerms`), and no statement of 3.4 changes: `Check.UnknownCause` asks only that a
-    derivation's other reasons be among its `reasons`.
-  - *Linearity is 5's, exactly* (draft 7). A side beyond the digit limit is `tooLarge` with its **shape**: constant
-    (known nonzero, known zero, or neither), not constant, or unknown. Its values are not kept. A product, quotient or
-    power decides its linearity from its operands' shapes, as 5 does from their forms. For example, `x + c^4096` is
-    not constant, so its square is not linear and the decoder refuses it (`NonlinearPremise`), as it does today. The
-    shapes can leave the answer open only when two sides that are not constant were added (their coefficients
-    beyond the limit may cancel) or a constant's nonzeroness is unknown. Then that node is lowered exactly
-    (`exactC`), charged first `Expr.exactBound`, a bound from its shape alone that charges each value
-    `b · (log₂ b + 1)` units for `b` bits, so a case that cannot afford it is refused by limit 10 before it is
-    computed. The result stays `tooLarge`. So `.nonlinear` is exactly 5's `none` (`Expr.linearC_nonlinear` and
-    `Expr.linearC_tooLarge`). The decoder refuses exactly the cases it refuses today, and a value beyond the limit
-    only ends a derivation.
-
-```lean
-def qbits (q : Rat) : Nat := bits q.num + bits q.den        -- 12.2's `bits`
-def maxWork : Nat := 2 ^ 33
-def Val.check (q : Rat) : Val                                 -- two comparisons with 10 ^ maxDigits
-theorem Val.check_eq (q : Rat) : Val.check q = Val.guard q
-def powTooLarge (x : Rat) (k : Nat) : Bool                    -- 13607 ≤ (bits − 1) · k, numerator or denominator
-theorem powTooLarge_sound (x : Rat) (k : Nat) (h : powTooLarge x k = true) : Val.guard (x ^ k) = .tooLarge
-def valueTable (ds : List Decl) : Table
-theorem valueTable_read (ds : List Decl) : (valueTable ds).read = valuesL ds
-def Expr.evalC (limit : Nat) (t : Table) : Expr → Nat → Option (Val × Nat)
-def runC (limit : Nat) (c : Case) : Option (List (Outcome × List Val) × Nat)
-theorem Expr.evalC_agrees (limit : Nat) (t : Table) (e : Expr) (w : Nat) (v : Val) (w' : Nat)
-    (h : Expr.evalC limit t e w = some (v, w')) : v = e.evalL t.read
-theorem Claim.ofSides_eq (ds : List Decl) (h : WellFormed ds) (c : Claim) :
-    Claim.ofSides c (c.exprs.map (Expr.evalL (valuesL ds))) = c.run ds
-theorem runC_sound (limit : Nat) (c : Case) (h : WellFormed c.decls) (rows : List (Outcome × List Val)) (w : Nat)
-    (hr : runC limit c = some (rows, w)) : rows.map Prod.fst = c.claims.map fun k => k.2.run c.decls
-theorem runC_mono (limit limit' : Nat) (c : Case) (r : List (Outcome × List Val) × Nat)
-    (h : runC limit c = some r) (hl : limit ≤ limit') : runC limit' c = some r
-theorem runC_work (limit : Nat) (c : Case) (r : List (Outcome × List Val) × Nat)
-    (h : runC limit c = some r) : r.2 ≤ limit
-theorem runC_complete (c : Case) : ∃ limit r, runC limit c = some r
-def entryUnits : Nat := 2 ^ 11                               -- draft 7: one coefficient or weight visited
-def QLin.normOnce (L : QLin) : QLin                           -- one pass; isConstOnce, pickOnce, checkOnce alike
-theorem QLin.normOnce_eq (L : QLin) : L.normOnce = L.norm
-theorem QLin.isConstOnce_eq (L : QLin) : L.isConstOnce = L.isConst
-theorem pickOnce_eq (x : String) (rows : List FM.Row) (κ : List (String × Rat)) : pickOnce x rows κ = FM.pick x rows κ
-theorem Farkas.checkOnce_eq (fs : List QFact) (c : Farkas) : Farkas.checkOnce fs c = c.check fs
-inductive Shape | const (nonzero : Option Bool) | nonconst | unknown
-inductive Lowered | form (L : QLin) | nonlinear | tooLarge (s : Shape)
-def Expr.exactBound (e : Expr) : Nat                          -- from e's shape: visits, entries, b · (log₂ b + 1)
-def exactC (limit : Nat) (e : Expr) (w : Nat) : Option (Lowered × Nat)  -- 5's linearity, charged its bound first
-def Expr.linearC (limit : Nat) : Expr → Nat → Option (Lowered × Nat)
-theorem Expr.linearC_form (limit : Nat) (e : Expr) (w : Nat) (L : QLin) (w' : Nat)
-    (h : Expr.linearC limit e w = some (.form L, w')) : e.linear = some L
-theorem Expr.linearC_nonlinear (limit : Nat) (e : Expr) (w w' : Nat)
-    (h : Expr.linearC limit e w = some (.nonlinear, w')) : e.linear = none
-theorem Expr.linearC_tooLarge (limit : Nat) (e : Expr) (w : Nat) (s : Shape) (w' : Nat)
-    (h : Expr.linearC limit e w = some (.tooLarge s, w')) : ∃ L, e.linear = some L ∧ Shape.Sound L s
-def nonlinearAtC (limit : Nat) (t : Inlined) (path : String) (e : Expr) (w : Nat) :
-    Option ((Option String × Option Lowered) × Nat)           -- the decoder's check, each side lowered once
-theorem nonlinearAtC_eq (limit : Nat) (t : Inlined) (path : String) (e : Expr) (w : Nat) (r : Option String)
-    (l : Option Lowered) (w' : Nat) (h : nonlinearAtC limit t path e w = some ((r, l), w')) :
-    r = Wire.nonlinearAt t path e
-def rowSize (r : FM.Row) : Nat                                -- its form's and its weights' sizes
-def rowCost (r : FM.Row) : Nat                                -- 1 + entryUnits · entries + rowSize
-def passCost (rows : List FM.Row) : Nat                       -- 1 + entryUnits · coefficients, per row
-```
-
-The bodies are those of [me-2n-calc-work-stub.lean](math-evidence/me-2n-calc-work-stub.lean). `runC_mono` and
-`runC_work` make the refusal depend on the case alone: a case is refused exactly when its work passes `maxWork`.
-
-**Claims never reach limit 10.** A leaf (a literal or a value read) costs at most 1 + 2 · 13,607 = 27,215 units. An
-operation on two values within the digit limit costs at most 1 + 27,215 + 27,214 = 54,430: its result is below
-2 · 10^8,192, and its denominator below 10^8,192. A power that is computed costs at most 1 + 2 · 13,670 = 27,341. A
-leaf takes at least 3 JSON values, an operation 2 of its own and a power 3, and a tree has fewer operations than
-leaves. So an expression costs at most (27,215 + 54,430)/5 = 16,329 units per JSON value, and a case at most
-163,290,000, which is under `maxWork` by a factor of 52 (H-1 reaches 107,837,424). No claim case is refused by limit
-10. The limit binds only derivations, whose sizes the digit limit holds per value but whose forms and rows it does
-not count.
-
-**Why 2^33** (draft 7). The limit bounds time only if every kind of work is charged in proportion to its time. Draft
-6 said a unit's time was bounded because every value is within twice the digit limit. That was false: an entry
-visited once per other entry was never charged (the review's K-1 and N-1). Draft 7 charges each kind, and none of
-them outgrows its charge (one pass each, (b)). The times below were measured on today's `ve_service` on the VM, where
-each of these steps is slower than it will be after me-2nc's one-pass rewrite.
-- *Size.* A unit of size covers arithmetic on values within twice the digit limit. P-2 measures 0.51 ns a unit (72
-  premises, 8.5 × 10⁹ units, 4.4 s); draft 6's P-2 measured 0.58 (7.1 × 10⁹ units, 4.1 s). A gcd of 27,000-bit values
-  is the costliest step per bit, which I estimate at about 2 ns a bit (not measured).
-- *Entries.* An entry visited costs `entryUnits` = 2,048 units. The costliest entry measured is a coefficient in
-  `FM.pick`'s fit check: its rational product and sum, and its lookup among 14 names. K-1 measures 0.86 µs per entry
-  (one derivation, 6.4 s for about 493,000 row checks of 15 coefficients), which is 0.42 ns a unit.
-- *Visits.* A node visited costs 1 unit and the size of its form, so a node of small constants is undercharged
-  (0.2 to 0.4 µs a node in C-1 below). The count of visits bounds them instead. Each side is lowered once and has
-  at most `maxPolyTerms` = 10,000 inlined nodes, and a case has at most 1,024 claims with at most 3 sides each. That
-  is at most 3.1 × 10⁷ visits, 6 to 11 s. C-1 measures this: 256 premises over a constant of 8,191 inlined nodes take
-  0.98 to 1.50 s today across runs, lowering each one twice.
-- *The exact fallback* (`exactC`) charges `b · (log₂ b + 1)` a value of `b` bits, because arithmetic beyond twice the
-  digit limit costs more than its size. It runs only where the shapes leave linearity open.
-
-So a case at the limit runs for at most about 2^33 × 0.58 ns = 5 s of size and entry work, up to 17 s if the gcd
-estimate holds, plus at most 11 s of visits: at most about 28 s, short of the 60 s deadline. A lower limit would
-refuse cases that finish quickly today: P-2 with 10 premises passes 2^30 and takes 0.73 s. me-2nb and me-2nc measure
-the time at the limit in `tools/bench/` (not in the suite), re-measure `entryUnits` against the one-pass steps, and
-pin the units in Lean guards.
-
-**(c) What changes on `main`** (fixtures in 13.3; times on `ve_service` today).
-- *Claims (me-2nb)*: no answer that today's runner gives within its deadline changes (`runC_sound`, and the bound
-  above). Requests it does not finish now get 2.4's outcomes: F1-28 `holds` (today `CheckerUnavailable`), and
-  G-1x512 512 `unknown (limit .digits)` rows (today `CheckerUnavailable`). Answered today and faster after: F1-24
-  (4.8 s), G-1 (18.7 s). No claim case ends `ResourceLimit`.
-- *Derivations (me-2nc)*: (i) Unavailable today → answered: L-4 (`derivationInconclusive`), P-1 (same rows, 29 s
-  today), and K-1 with 12 derivations (`fails`, 61 s today; its y stages cost about 2.7 × 10⁹ units). (ii) Decided
-  today → `unknown derivationInconclusive`: a derivation whose lowering or search meets a value beyond the digit
-  limit, such as L-2 (holds in 0.07 s) and L-3 (holds in 12.7 s), and one whose point has a value beyond it.
-  (iii) Answered today → `ResourceLimit`: a case over 2^33 units, such as P-2 with 73 premises (4.7 s today). Since
-  draft 7 charges entries, these also include K-1's decreasing order with 39 or more derivations (0.16 s each today,
-  over 2.2 × 10⁸ units each, so me-2nc pins the exact count), and N-1 with 122 to about 130 premises (about 55 to
-  63 s today, near the deadline). Their other rows are lost. (iv) **Nothing else changes.** No case refused today is
-  accepted, and no case accepted today is refused except by limit 10. The one-pass steps are equal to 5's (`_eq`
-  theorems). `.nonlinear` is exactly 5's `none` (`Expr.linearC_nonlinear`, `Expr.linearC_tooLarge`), so S-1 to S-3,
-  S-9 and S-10 stay `NonlinearPremise` as today. Draft 6 accepted S-1 and S-2 (review F2); draft 7 removes that
-  widening.
-- *At and under the limit*: F1-24 at 1,124, 1,125 and 1,126 units (the charged runner, with the limit as a
-  parameter), P-2 at 72 premises (under 2^33) and 73 (over it), and N-1 at 121 and 122.
+8. 512 premises (ME-5); 9. `binomial-tail` trials at most 1,000 (ME-7).
+The first exceeded limit refuses the case with `ResourceLimit: <limit> exceeds <n>` (an UNKNOWN to the relay). A
+computed value beyond 4,096 digits is not a refusal: the claims that need it are `unknown` (2.4).
 
 ### 3.3 Identity
 
@@ -1396,7 +1176,7 @@ Fourier-Motzkin elimination within 64 facts, 16 unknowns and 10,000 combination 
 Outcomes: **follows** (a replayed certificate; outcome `holds`), **does not follow** (a counterexample checked by
 evaluation, square links included; outcome `fails`), **undefined** (a premise or the conclusion reads a value that has
 none, 3.4), or **unknown** (`limit .derivationSteps`, or `derivationInconclusive` when a needed step is outside the
-square rule or, from draft 6, when the lowering, the search or (draft 7) its point meets a value beyond the digit limit, 3.2 (b)). The search tries the claimed bound itself as a counterexample candidate first. Physical laws enter as
+square rule). The search tries the claimed bound itself as a counterexample candidate first. Physical laws enter as
 premises with `support: assumption`.
 
 A square link `(s, r)` is two assumptions, the square equation s = r · r and the root's nonnegativity 0 ≤ r, and the
@@ -2278,32 +2058,17 @@ def Defs.boundedNames (D : Defs) : String → Bool :=
 def Formula.Bounded (D : Defs) (φ : Formula) : Bool := Formula.bnd D.boundedNames φ
 ```
 
-**Fuel accounting (draft 5, me-12n: the DRI's decision of 2026-10-27 on me-12aa's N1).** One unit is charged per
-**node visit**, term and formula nodes alike, as W6's `VE.Time.evalB` charges a formula node: a visit is refused
-(UNKNOWN) when the units already spent reach the budget. A function call, like a predicate call, is one visit plus its
-arguments' and its body's visits. Every term node is also charged the **size of the value it yields**, once its visit
-and its children are done: a literal, a variable's value, the result of `add`, `sub` or `mul`, a call's result and a
-count. Each step of a bounded quantifier or a count is charged the size of the value it binds, then its condition's
-visits. A charge that would pass the budget is refused (UNKNOWN). A count visits every value in its range;
-connectives short-circuit left to right (`imp` evaluates its antecedent first); a bounded quantifier tries lo,
-lo + 1, … in order and stops at the first decisive value. The budget is
+**Fuel accounting.** One unit is charged per **formula-node visit**, exactly as W6's `VE.Time.evalB`: a visit is
+refused (UNKNOWN) when the units already spent reach the budget. Term nodes are free; a count is charged through its
+condition's visits, once per value in its range; a predicate call is one visit plus its body's visits. Connectives
+short-circuit left to right (`imp` evaluates its antecedent first); a bounded quantifier tries lo, lo + 1, … in order
+and stops at the first decisive value; a count visits every value in its range. The budget is
 `maxSteps = VE.Time.maxEvaluations = 1,000,000` by default and at most; a case may set a smaller `"budget"`. The
 following evaluator is the accounting:
 
 ```lean
-/-- The size of a value: the bit length of its magnitude, and 1 for 0. -/
-def bits (x : Int) : Nat := x.natAbs.log2 + 1
-
 def charge {α : Type} (limit w : Nat) (k : Nat → Option (α × Nat)) : Option (α × Nat) :=
   if limit ≤ w then none else k (w + 1)
-
-/-- A value is charged its size once it is computed: refused (none) when the units would pass the budget. -/
-def chargeBits (limit : Nat) (x : Int) (w : Nat) : Option (Int × Nat) :=
-  if limit < w + bits x then none else some (x, w + bits x)
-
-/-- A range step charges the size of the value it binds, then visits the condition at that value. -/
-def stepB (limit : Nat) (cond : Int → Nat → Option (Bool × Nat)) (i : Int) (w : Nat) : Option (Bool × Nat) :=
-  (chargeBits limit i w).bind fun r => cond i r.2
 
 def quantLoop (universal : Bool) (step : Int → Nat → Option (Bool × Nat)) :
     Nat → Int → Nat → Option (Bool × Nat)
@@ -2324,28 +2089,27 @@ structure OpEnv where
 
 mutual
 def Term.evalB (E : OpEnv) (limit : Nat) (ρ : List Int) : Term → Nat → Option (Int × Nat)
-  | .var i, w => charge limit w fun w => (ρ[i]?).bind fun x => chargeBits limit x w
-  | .num n, w => charge limit w fun w => chargeBits limit n w
-  | .add a b, w => charge limit w fun w => match Term.evalB E limit ρ a w with
+  | .var i, w => (ρ[i]?).map fun x => (x, w)
+  | .num n, w => some (n, w)
+  | .add a b, w => match Term.evalB E limit ρ a w with
     | none => none
-    | some (x, w) => (Term.evalB E limit ρ b w).bind fun r => chargeBits limit (x + r.1) r.2
-  | .sub a b, w => charge limit w fun w => match Term.evalB E limit ρ a w with
+    | some (x, w) => (Term.evalB E limit ρ b w).map fun r => (x + r.1, r.2)
+  | .sub a b, w => match Term.evalB E limit ρ a w with
     | none => none
-    | some (x, w) => (Term.evalB E limit ρ b w).bind fun r => chargeBits limit (x - r.1) r.2
-  | .mul a b, w => charge limit w fun w => match Term.evalB E limit ρ a w with
+    | some (x, w) => (Term.evalB E limit ρ b w).map fun r => (x - r.1, r.2)
+  | .mul a b, w => match Term.evalB E limit ρ a w with
     | none => none
-    | some (x, w) => (Term.evalB E limit ρ b w).bind fun r => chargeBits limit (x * r.1) r.2
-  | .call f args, w => charge limit w fun w => match E.funs f with
+    | some (x, w) => (Term.evalB E limit ρ b w).map fun r => (x * r.1, r.2)
+  | .call f args, w => match E.funs f with
     | none => none
     | some (n, g) => match Term.evalBs E limit ρ args w with
       | none => none
-      | some (xs, w) => if xs.length = n then (g xs w).bind fun r => chargeBits limit r.1 r.2 else none
-  | .countFromTo lo hi φ, w => charge limit w fun w => match Term.evalB E limit ρ lo w with
+      | some (xs, w) => if xs.length = n then g xs w else none
+  | .countFromTo lo hi φ, w => match Term.evalB E limit ρ lo w with
     | none => none
     | some (l, w) => match Term.evalB E limit ρ hi w with
       | none => none
-      | some (h, w) => (countLoop (stepB limit fun i w => Formula.evalB E limit (i :: ρ) φ w)
-          (h - l + 1).toNat l 0 w).bind fun r => chargeBits limit r.1 r.2
+      | some (h, w) => countLoop (fun i w => Formula.evalB E limit (i :: ρ) φ w) (h - l + 1).toNat l 0 w
 def Term.evalBs (E : OpEnv) (limit : Nat) (ρ : List Int) : List Term → Nat → Option (List Int × Nat)
   | [], w => some ([], w)
   | t :: ts, w => match Term.evalB E limit ρ t w with
@@ -2390,12 +2154,12 @@ def Formula.evalB (E : OpEnv) (limit : Nat) (ρ : List Int) : Formula → Nat �
     | none => none
     | some (l, w) => match Term.evalB E limit ρ hi w with
       | none => none
-      | some (h, w) => quantLoop true (stepB limit fun i w => Formula.evalB E limit (i :: ρ) φ w) (h - l + 1).toNat l w
+      | some (h, w) => quantLoop true (fun i w => Formula.evalB E limit (i :: ρ) φ w) (h - l + 1).toNat l w
   | .exFromTo lo hi φ, w => charge limit w fun w => match Term.evalB E limit ρ lo w with
     | none => none
     | some (l, w) => match Term.evalB E limit ρ hi w with
       | none => none
-      | some (h, w) => quantLoop false (stepB limit fun i w => Formula.evalB E limit (i :: ρ) φ w) (h - l + 1).toNat l w
+      | some (h, w) => quantLoop false (fun i w => Formula.evalB E limit (i :: ρ) φ w) (h - l + 1).toNat l w
 end
 
 def Defs.opEnv (limit : Nat) (D : Defs) : OpEnv :=
@@ -2419,13 +2183,6 @@ theorem decideBounded_work (D : Defs) (φ : Formula) (limit : Nat) (b : Bool) (w
     (h : decideBounded D limit φ = some (b, w)) : w ≤ limit
 theorem decideBounded_complete (D : Defs) (hD : D.WellFormed = true) (φ : Formula)
     (hφ : φ.Scoped D 0 = true) (hb : φ.Bounded D = true) : ∃ limit r, decideBounded D limit φ = some r
-
-/-- Every value a term yields within budget `limit` has at most `limit` bits, in any environment (draft 5). -/
-theorem Term.evalB_bits (E : OpEnv) (limit : Nat) (ρ : List Int) (t : Term) (w : Nat) (x : Int) (w' : Nat)
-    (h : Term.evalB E limit ρ t w = some (x, w')) : bits x ≤ limit ∧ w' ≤ limit
-theorem bits_add_le (x y : Int) : bits (x + y) ≤ max (bits x) (bits y) + 1
-theorem bits_sub_le (x y : Int) : bits (x - y) ≤ max (bits x) (bits y) + 1
-theorem bits_mul_le (x y : Int) : bits (x * y) ≤ bits x + bits y
 
 /-- A statement's row. An unbounded statement is classified before any evaluation. -/
 def arithOutcome (D : Defs) (limit : Nat) (φ : Formula) : Outcome :=
@@ -2451,73 +2208,6 @@ end VE.Arith
 `decideBounded_sound` is the agreement of the evaluator with `Holds` that debate F4 asks for, conditional on
 completion; `decideBounded_mono` says a larger budget never changes an answer. A well-scoped statement always denotes,
 so `arith@0` has no undefined verdict; an exhausted budget is unknown and is tested apart (fixtures M-4x, M-1b).
-
-**The size is the bit length (draft 5).** `bits x` is the bit length of |x| (1 for 0). This draft uses bits rather
-than decimal digits because (1) bits are what a value occupies: Lean's `Int` stores a large value as a GMP number of
-⌈bits / 64⌉ words, so the charge measures memory; (2) the bit length costs nothing to compute (`Nat.log2` is the
-runtime's `lean_nat_log2`, GMP's `mpz_sizeinbase`), while counting decimal digits converts the number, which is
-superlinear work; and (3) bits satisfy the bounds below, `bits_mul_le` and `bits_add_le`. A decimal digit is about
-3.32 bits, so the digits a request can create are fewer than its budget, as the decision asks.
-
-**Why every yielded value, not only `add`, `sub` and `mul` (the decision's (b)).** Charging only the three results
-bounds the digits a request creates, but not the work of reading a large value again: a variable is read for one unit
-however large its value is. Fixture B-4 (13.3) builds a 32,769-bit and a 65,537-bit value, passes them as a
-function's parameters, and divides one by the other at each step of a count:
-- under draft 4's accounting it holds in 999,001 units after 107 s;
-- with only the decision's (a) and (b), it is UNKNOWN after 29 s and about 270,000 divisions, at 3 units each;
-- under this draft it is UNKNOWN within a second.
-
-These times are measured interpreted, with `lake env lean`, beyond the 1.3 s the stub takes to load. Charging a value
-at the node that yields it applies rule (b) to every value a node hands to its parent, in the conservative direction
-the decision chose. A range step's value is charged for the same reason, because the loop computes `i + 1` at every
-step.
-
-**What the charge bounds.** Every term clause ends in `chargeBits`. So every value a term yields within budget n has
-at most n bits (`Term.evalB_bits`, a theorem proved in the stub by cases, with no induction, in any environment), and
-so does every value a step binds.
-- **Refused values.** The one value computed beyond the budget, whose charge is refused, is built from operands of at
-  most n bits each. A product then has at most 2n bits (`bits_mul_le`); a sum, a difference or a step's next value has
-  at most n + 1 (`bits_add_le`, `bits_sub_le`). All three bounds are proved in the stub.
-- **Memory.** The bits of all yielded values together are at most the units spent. A value read again is read
-  through a variable, which charges it again, so live memory is at most the values in scope, each of at most n bits.
-- **Time.** Time is linear in the units up to:
-  - GMP's multiplication and division, superlinear in the size of an operand of at most n bits;
-  - two costs whose bounds the wire's limits fix (12.5). A variable read walks ρ: fewer than 64 binders (JSON
-    depth 64) plus the parameters, which fit in 10,000 JSON nodes. A call looks its name up among at most 512
-    definitions.
-  - Measured worst cases, each before UNKNOWN at 1,000,000 units (me-12nb,
-    [uncharged-costs.lean](../math-evidence/me-12nb/uncharged-costs.lean); interpreted with `lake env lean`, then
-    compiled): reading the last of 4,000 parameters 1.3 s and 0.8 s; a range up to a 65,537-bit bound under 0.3 s
-    and 0.05 s; a call of the first of 512 definitions whose 64-byte names differ only at the end, 1,024 times per
-    step, 37 s and 2.5 to 2.9 s. The name lookup's cost is the implementation's (a walk with a full-name compare), not
-    the charge's: me-12nc replaces it with a table built once per case, which changes no unit count, before me-12b
-    exposes the evaluator (DRI, 2026-10-27, `dri-decisions-20261027-me-12nb.md`).
-- **Not charged.** A range's remaining count is a natural number of at most n + 1 bits, decremented at each step. A
-  range up to a 65,537-bit bound measured as UNKNOWN within about a second.
-
-**The theorems under the new charge.** `decideBounded_sound`, `_mono`, `_work` and `_complete` keep draft 4's text,
-and each stays true:
-- **Sound.** `chargeBits` returns its value unchanged, and `stepB` passes the bound value to the condition, so a
-  completed evaluation computes draft 4's values.
-- **Work.** Every charge is refused before it would pass the budget, so `_work` keeps its form. Its new companion is
-  `Term.evalB_bits`.
-- **Mono.** No charge depends on the budget: a visit costs 1 and a value costs its bits. A charge refused at a larger
-  budget is therefore refused at every smaller one.
-- **Complete.** The units of a bounded, admitted statement are still fixed by the statement and its definitions. The
-  same holds for me-12ab's `decideBounded_covered` (in `Bounded.lean`, not in this text).
-
-me-12ab merged its proofs of `_mono`, `_complete` and `_covered` over draft 4's charge (4a850162c). No statement text
-changes, so none is named for restatement. The build, me-12nb, re-proves all five over this charge.
-
-**What this draft keeps, rejects and rereads.**
-- **Rejected.** Evaluating each zero-parameter definition once is rejected as the fix (DRI, 2026-10-27): it bounds
-  neither a call tree whose definitions take parameters (B-2p) nor digit growth (B-3). It may come later only as an
-  optimisation that leaves every unit count unchanged: a call answered from a cache is still charged its body's visits
-  and sizes.
-  `maxSteps` stays 1,000,000.
-- **Text outside 12.2.** 12.5's `budget` and `units`, section 14's `arith` row, 13.4's M-1b rows, 13.6's R-7 (its
-  units are 337,735 and 33, 13.3) and section 16's C6 are restated in this draft's units (me-12nb). So are the plan's
-  D19, 2.13, 3.9 and ME-12 ("one unit per formula-node visit") and its M-4 reference count (248, now 87; 13.3).
 
 ### 12.3 The example vocabulary (`lean/VE/Arith/Examples.lean`)
 
@@ -2619,7 +2309,7 @@ This section does for `arith@0` what 3.1 to 3.4 do for `calc@0` (Fable's E6).
 | `format` | yes | `"ve-arith@0"` |
 | `definitions` | yes (may be empty) | a list of definitions, in order |
 | `statements` | yes | a nonempty list of `{"id": <statement id>, "formula": <formula>}`; every statement gets one row |
-| `budget` | no | a positive integer at most 1,000,000 (`maxSteps`, the default): the units of each statement: node visits and value sizes (12.2) |
+| `budget` | no | a positive integer at most 1,000,000 (`maxSteps`, the default): the formula-node visits of each statement (12.2) |
 | `imports` | no (ME-13) | a list of `{"statement": <statement id>, "record": <import record>}`, the record with the fields of `Import` (12.4) in snake case (`statement_id`, `means_digest`, `project`, `project_rev`, `toolchain`, `mathlib_rev`, `declaration`, `check_digest`, `axioms`) |
 
 A definition is `{"name": f, "kind": "function" | "predicate", "params": [x, …], "words": w, "body": b}`: `b` is a
@@ -2749,8 +2439,8 @@ end ResponseShape.Encoders.Arith
 
 **Rows.** A refused case answers the common case error. Otherwise each statement has one row, in order, with
 `statement` (the request's id), `statement_id`, `outcome` (`holds`, `fails` or `unknown`; never `undefined`),
-`reason` (1.5's text for unknown, else `null`), `bounded` (`Formula.Bounded`), `units` (the units spent, node visits
-and value sizes (12.2), when evaluation decided it, else `null`), `deciding` (`{"variable": x, "value": "<integer>"}` with the request's name
+`reason` (1.5's text for unknown, else `null`), `bounded` (`Formula.Bounded`), `units` (the formula-node visits spent
+when evaluation decided it, else `null`), `deciding` (`{"variable": x, "value": "<integer>"}` with the request's name
 of the outermost binder, else `null`), `line` (11.3's rendering), `import` (`importLabel`, else `null`) and `rests_on`
 (for an imported row its residual line "Proved in Lean with Mathlib at revision <rev>, declaration <name>; VE did not
 replay this proof.", else empty). With the deciding value, M-5's row says "fails at n = 1" (13.3). The relay
@@ -2769,7 +2459,7 @@ outcomes (1.5).
 | Code | Batch | When | Text |
 |---|---|---|---|
 | `InvalidInput` | ME-2 | a field is missing, of the wrong JSON type, or unknown | `InvalidInput: <path> <what is wrong>` |
-| `ResourceLimit` | ME-2 | a limit of 3.2 (limit 10, the case's work, while it is computed) | `ResourceLimit: <limit> exceeds <n>` |
+| `ResourceLimit` | ME-2 | a limit of 3.2 | `ResourceLimit: <limit> exceeds <n>` |
 | `UnknownName` | ME-2 | an expression reads a name not declared before it | `UnknownName: <name> (declare it before the value that uses it)` |
 | `DuplicateName` | ME-2 | two values share a name | `DuplicateName: <name>` |
 | `DuplicateClaimId` | ME-2 | two claims share an id | `DuplicateClaimId: <id>` |
@@ -2913,18 +2603,6 @@ so a finding over it stays "transcription unchecked" (2.5).
 | V-11 | **unknown** (`limit .digits`), **undefined**, **fails** | digit counts of 10³⁹, 10^(39·64), 10^(39·128): 40, 2,497, 4,993 |
 | V-12 | checked, refused, checked, checked, checked, refused, refused, refused | `spanText`: ".296", "176", "4,792", "43.90"; `spanMatches`: [31,35) vs (296,3) true, vs (297,3) false; [21,24) vs (176,0) true; [71,76) vs (4792,0) true; [78,83) vs (4390,2) true, vs (439,1) false; [30,35) (" .296") false; [31,200) (outside) false |
 | V-13 | `source`, `transcriptionUnchecked`, `transcriptionUnchecked`, `softwareUnreproduced` | as computed |
-| F1-24, F1-28 | *by hand* (draft 6): holds, holds; 1,125 and 1,479 units; refused at 1,124 with the limit as a parameter, holds at 1,125 and 1,126 | me-2b review F1: v0 = 1 and v(i+1) = v(i) + v(i), claim `v_k = 2^k`. The table: v0 1 + 2, v_i 1 + 2(1 + i + 1) + (i + 2); the claim's two sides 2(1 + k + 2): 9 + 9k + 3k(k + 1)/2 units. On `ve_service` today: 3.2 s at 22, 4.8 s at 24, `CheckerUnavailable` at 28. Product code agrees at k = 12 |
-| F1-511 | *by hand* (draft 6): holds in 396,545 units | `0 < v511`: 512 values, the most 3.2 allows. Re-evaluating at each read would cost 2^511; this is the guard that a read is a lookup |
-| G-1, G-1x512 | *by hand* (draft 6): unknown (`limit .digits`), in 17,288 units; 512 such rows in 4,366,409 | v0 = 10^40 − 1, v1 = v0^64 (2,560 digits, 8,505 bits), claim `v1^64 < 0`: (8,505 − 1) · 64 ≥ 13,607, so the power is not computed. Today: 18.7 s for one claim (the digit list of a 163,840-digit power), and 50 claims pass the deadline |
-| V-11s | *by hand* (draft 6): fails, fails, unknown (`limit .digits`), unknown (`limit .digits`) in 25,297 units; the same as product code | V-11's shape: 10^39, its 64th power (2,497 digits) and that power squared (4,993 digits, not computed), then a division by 0 after the limit |
-| H-1 | *by hand* (draft 6): 497 unknown rows in 107,837,424 units, under 3.2's bound 163,290,000 | b = r^64 · r^38 with r = (10^40 − 1)/(10^40 − 3): 4,080 digits over 4,080 (27,108 bits); 497 claims `b · b = b · b` (20 JSON values each) fill 10,000 JSON values; each product (54,214 bits) is charged, then refused at the digit limit |
-| L-1 to L-4 | *by hand* (draft 6): L-1 lowers to the constant c^64 in 8,642 units; L-2 to L-4 are `derivationInconclusive` in 8,643 to 8,645 | a premise over c^(64^k), c = 10^40 − 1. L-1's power is computed (2,560 digits); the others are ruled out by `powTooLarge` from the base. Today: L-1 and L-2 hold (0.00 s and 0.07 s), L-3 holds in 12.7 s, L-4 is not run (its constant would have 671 million digits) |
-| P-1 | *by hand* (draft 7): the premise lowers once, in 16,824,301 units (draft 6: 49,133; each of its 8,191 forms now pays its coefficient's entry), to 5's form | a0 = u (free) and a(i+1) = a(i) + a(i) to a12: 8,191 inlined nodes. Today, 20 derivations that name it 450 times take 29 s, and 300 derivations naming it 15 times take 16.9 s |
-| P-2 | *by hand* (draft 7): one premise lowers in 118,478,125 units, most of them its forms' entries; a case with 72 such premises is under `maxWork`, and one with 73 is over it (`ResourceLimit`) | 16 free values, big = c^20 (800 digits; draft 6 had c^64 · c^38, 4,080 digits, which the entry charge would move to 62/63), a0 = big · (u0 + … + u15), and a(i+1) = a(i) + a(i) to a8 (inside `maxPolyTerms`); premise i is `a8 < i`. Today: 0.73 s with 10 premises, 4.37 s with 72, 4.67 s with 73. me-2nc pins the case's exact units |
-| S-1 to S-10 | *by hand* (draft 7): 5's linearity in every row (`Expr.linear` agrees): S-1 to S-3, S-9 and S-10 not linear (`NonlinearPremise`); S-4 to S-8 linear and `tooLarge`, S-8 with shape constant zero. S-1 in 10,698 units; S-8 in 144,138,778 (its exact fallback's bound) | C = c^4096 (beyond the digit limit, never computed). S-1 `(x + C)^2`, S-2 `(x + C) · x`, S-3 `x / (x + C)`; S-4 `(x + C) · C`, S-5 `(x + C) / C`, S-6 and S-7 `(x + C)^1` and `(x + C)^0`; S-8 `(C·x − C·x) · x` (the coefficients cancel: lowered exactly), S-9 `(C·x − C·y) · x`, S-10 `x / (C − C)`. Review F2: today S-1 and S-2 get `NonlinearPremise` in 0.06 s; draft 6 accepted them |
-| N-1 | *by hand* (draft 7): one premise side lowers in 70,576,397 units; 121 premises are under `maxWork`, 122 over it (`ResourceLimit`) | review F1 (`QLin.norm`): s = a balanced sum of 400 free values, and premise i is `s + … + s < i`, 8 mentions balanced. Today: 0.14 s with 1 mention and 10 premises, 4.46 s with 8 and 10, and 58 to 63 s with 8 and 130 (the deadline): `norm` is quadratic and `nonlinearAt` lowers every part again |
-| K-1 | *by hand* (draft 7): the y stage has 993 rows; its rows (`rowCost`) and `pick`'s two passes (`passCost`) cost 221,757,785 units a derivation; `pickOnce` equals `FM.pick` on the stage (8 by 7 premises, both orders) | review F1 (`FM.pick`): 32 premises 0 < x − 1000·i and 31 premises x < s + j (s = y + z1 + … + z14), conclusion y < 0 (`fails`). With bounds increasing in row order, each candidate is checked against every earlier row. Today: 6.5 s for one derivation and 13.1 s for two (61 s for 12 in the review); decreasing, 0.16 s |
-| C-1 | measured (draft 7): visits of small constants are bounded by their count | a(i+1) = a(i) + a(i) to a12 from a0 = 1 (8,191 inlined nodes); premise i is `x < a12 + i`, no derivation. Today: 0.27 s with 64 premises, 0.98 to 1.50 s with 256 |
 | I-1 | *by hand*: `canonical` succeeds; the two wavelength spellings give one `meaning_id`; the `"20000000"` spelling gives another | canonical value literals `"11"` and `"0.000000589"`; canonical claim `["rounds",["div",["val","length"],["val","wavelength"]],["2","-7"],"ties-up"]`; `"20000000"` is `["20000000","0"]`; draft 1's encoding `["2",-7]` gives `Except.error "Natural number expected"` (Astra evaluated the frozen functions read-only); the digests are pinned by ME-2 |
 | I-2 | *by hand*: `environmentId` succeeds; the reordered environment has the same id; the `ve-units@1` id is W6a's today | canonical text `{"base_dimensions":["length","time"],"unit_schema":"ve-units@2","units":{"meter_per_second":{"base_exponents":{"length":"1","time":"-1"},"factor":"1"}}}`; without J1's strings the exponent −1 gives "Natural number expected"; the digests are pinned by ME-6 |
 | D-1 | holds | 15 + 2 = 17 |
@@ -2954,43 +2632,25 @@ so a finding over it stays "transcription unchecked" (2.5).
 | T-1 | empty: count 0, sum 0, mean, min, max undefined; 32B: 2, 8, 4, 3, 5; approved: count 2, sum, mean, min, max undefined (an absent score); *by hand*: not approved: count 1 (the 32B row with false), sum, mean, min and max 5; judge is not 32B: count 3, sum undefined (an absent score); score does not equal 3: count 3, sum 15, mean 5, min 4, max 6 | the three-row results are the stub's (the two added rows change none of them); draft 1's `not approved` would select the absent and the text cell too: count 3 |
 | T-2 | refused (`DigestMismatch`) | decoder check (ME-4) |
 | T-3 | *by hand*: at budget 6, c1 and c2 **unknown** (`limit .evaluations`; c2 through `share`'s definition), c3 and c4 **undefined** (the empty mean is the first fault), c5 **unknown**; without `budget`, c1 and c2 hold and c3 to c5 are undefined | `mean_7b`'s filter is one node over five rows, five visits within 6; `approved_32b`'s is three nodes, at least two visits per row, at least ten; at the default budget `approved_32b` = 1 (the first row only) and `share` = 1/2 |
-| M-1 | holds | *by hand* (draft 5): `decideBounded primeDefs 1,000,000` = (true, 337,735 units); draft 4: 17,011 |
-| M-1b | *by hand* (draft 5): unknown at 337,734; holds at 337,735 and 337,736 | exactly the units M-1 spends; 13.2's budgets 17,010 and 17,011 (draft 4's boundary, also 13.4's `arithOutcome_exhausted_iff` row) are both unknown now, and 13.4 reads them as 337,734 and 337,735 |
-| M-2 | holds | *by hand* (draft 5): (true, 7,420 units); unknown at 7,419; draft 4: 395 |
+| M-1 | holds | `decideBounded primeDefs 1,000,000` = (true, 17,011 units) |
+| M-1b | unknown at 17,010; holds at 17,011 | exactly the units M-1 spends |
+| M-2 | holds | (true, 395 units) |
 | M-3 | stated, not decided (`unboundedStatement`); proved only by import (EX-1) | `Bounded` false |
 | M-3r | reading set; the real reading stays residual | — |
-| M-4 | *by hand* (draft 5): holds through 87 within 1,000,000 units; unknown from 88, so unknown at 13.2's 200, 248, 249 and 1,000 | `2 ≤ π(x) − π(x/2)` at x = 10: (false, 890 units), at 11: (true, 1,072); at N = 87: (true, 973,791); at 88: none, and (true, 1,004,183) with a budget of 1,004,183; at 200: (true, 9,694,873) with a budget of 10,000,000. Draft 4: through 248 (998,395 units), 111 and 127 units for the two differences |
-| M-4b | *phase 1*: each pair holds from its threshold to its measured bound; each instance at x = T − 1 fails | primeCount − halfPrimeCount at x = 1, 16, 28, 40 is 0, 2, 3, 4 (one less than k), at x = 2, 17, 29, 41 it is 1, 3, 4, 5; its minimum over T … 1,000 is k for each pair (exact counts in phase 1). *By hand* (draft 5), the bounds N at 1,000,000 units, with the units at N and those N + 1 needs: (1, 2) 87: 977,913 and 1,008,304; (3, 17) 88: 995,531 and 1,027,872; (4, 29) 89: 989,822 and 1,022,334; (5, 41) 91: 981,126 and 1,013,976 |
-| M-4x | unknown (`limit .evaluations`) | none at budget 1,000 (draft 5: M-1 needs 337,735) |
-| M-5 | **fails** at n = 1: deciding value 1 | *by hand* (draft 5): (false, 33 units); unknown at 32; draft 4: 2 units. The ∀ node 1, its lo `1` 1 + 1 and hi `161` 1 + 8 (12); the step at n = 1: bits 1 (13); the ∃ node 1 (14); its lo `n + 1`: add 1, `n` 1 + 1, `1` 1 + 1, bits 2 (21); its hi `2n − 1`: sub 1, the mul 1 + `2` 3 + `n` 2 + bits 2, `1` 2, bits 1 (33); the range 2…1 is empty. `decidingValue` is 1, the first n, since the evaluator stops there |
+| M-4 | holds through 248 within 1,000,000 units; unknown from 249 | π(10) − π(5) = 1 (111 units) and π(11) − π(5) = 2 (127 units); at N = 200: (true, 576,518); at 248: (true, 998,395); at 249: none, and (true, 1,008,568) with a budget of 2,000,000; at 1,000: none |
+| M-4b | *phase 1*: each pair holds from its threshold to its measured bound; each instance at x = T − 1 fails | primeCount − halfPrimeCount at x = 1, 16, 28, 40 is 0, 2, 3, 4 (one less than k), at x = 2, 17, 29, 41 it is 1, 3, 4, 5; its minimum over T … 1,000 is k for each pair (exact counts in phase 1); the bounds N are ME-12's, as for M-4 |
+| M-4x | unknown (`limit .evaluations`) | none at budget 1,000 |
+| M-5 | **fails** at n = 1: deciding value 1 | (false, 2 units): the range 2…1 is empty; *by hand*: `decidingValue` is 1, the first n, since the evaluator stops there |
 | M-6 | agree on 0…400 | 78 primes |
-| B-1 | *by hand* (draft 5): N1's pin is unknown at budgets 1, 1,000 and 12,272, and holds at 12,273 and 12,274 (draft 4: (true, 1) at budget 1) | f0 = 1 and f(i+1) = f(i) + f(i) for i < 10, all without parameters; the statement is `1024 = f10`. Let c_i be the units of `f_i()`. Then c_0 = 4: the call 1, `1` 1 + 1, the result 1. And c_(i+1) = 2c_i + 2(i + 2) + 2: the call 1, the add 1, two calls, and the sum's i + 2 bits, charged by the add and again by the call. So c_10 = 12,260; with the eq node 1 and `1024` 1 + 11, the statement costs 12,273 |
-| B-2 | *by hand* (draft 5): unknown at 1,000,000, within seconds | N1's doubling chain at k = 24, statement `0 < f24`: c_24 > 4 · 2^24. Draft 4: 1 unit for 2^24 evaluations of f0, 55.8 s (me-12aa REPORT, N1). Draft 5: 0.7 s |
-| B-2p | *by hand* (draft 5): unknown at 1,000,000 | B-2 with a parameter: f0(x) = x and f(i+1)(x) = f(i)(x) + f(i)(x); the statement is `0 < f24(1)`. Evaluating each zero-parameter definition once would not shorten it. At k = 2, `4 = f2(1)` holds in 55 units |
-| B-3 | *by hand* (draft 5): unknown at 1,000,000, within seconds | F1's squaring chain: sq(x) = x × x, g0 = 2 and g(i+1) = sq(g(i)) for i < 31; the statement is `0 < g31`. g_k = 2^(2^k) has b_k = 2^k + 1 bits. A level costs 2 + 8b_i: g's call, sq's call and the mul (1 each), two reads of g_i (1 + b_i each), and the product's bits three times. So `0 < g_k` costs 8 · 2^k + 10k + 1 units: 95 at k = 3, 524,449 at 16 (holds) and 1,048,747 at 17 (unknown at 1,000,000). The largest value computed is g17, 131,073 bits, whose charge is refused. Draft 4: 1 unit, 40 s and 1.8 GB at 31 levels (me-12aa review, F1). Draft 5: no measurable time |
-| B-4 | *by hand* (draft 5): unknown at 1,000,000, within a second | A reused value: B-3's definitions through g16, and r(a, b) = the count of i from 1 through 999,000 such that a divides b; the statement is `0 ≤ r(g15 + 1, g16)`. Draft 4: holds in 999,001 units, after 107 s. With only the decision's (a) and (b): unknown after 29 s. Draft 5: each read of b costs 65,538 units |
 | E-1 | c1 discharged, c2 not (fails), c3 not (missing); statuses CHECKED, OPEN, UNFORMALISED, UNFORMALISED | as computed |
 | DL-1 | *phase 1*: holds × 6 | 0.85 ≤ 0.96 ≤ 1.16, 2.7 ≤ 2.8 ≤ 4.0, 1.2 ≤ 1.5 ≤ 1.6, 3.1 ≤ 3.5 ≤ 4.2; 0.96 < 2.8, 1.5 < 3.5 |
 | DL-2 | *phase 1*: holds, holds, **fails** | 4.8/0.6 = 8; 9.2/1.1 = 92/11 = 8.36…; 18/2.1 = 60/7 = 8.57…, outside [7.5, 8.5); in translation "8×" is a reading set, and this row distinguishes its readings |
 | DL-3 | *phase 1*: **fails**, **fails** | 355,993 is not 350,000 (places 0), and 355,993 × 10⁻⁴ = 35.5993 is outside [34.5, 35.5) (it rounds to 36, that is 360,000); the open tolerance reading is not decided (no tolerance is stated and no decider exists), so it stays unresolved |
 | DL-4 | *phase 1*: holds | 0.4 + 0.7 = 1.1 < 6.1 |
 
-The rows marked *by hand (draft 6)* or *(draft 7)* were computed by the evaluator in
-[me-2n-calc-work-stub.lean](math-evidence/me-2n-calc-work-stub.lean), where each is a `#guard`, not by product code.
-me-2nb pins the claim rows in `lean/VE/Calc/Examples.lean`, and me-2nc pins the derivation rows. Times are wall times
-of one request to `ve_service` on `main` (d9cff5345, compiled), and they are evidence, not semantics. Draft 7's times
-were taken on 2026-10-28 on the VM, with the same `lean/` tree; they vary with its load (C-1: 0.98 to 1.50 s).
-
 M-4's candidate bounds were 200 and 1,000 (debate F5). Under the accounting of 12.2, which is part of the semantics,
-the largest completing bound is 87 (draft 4: 248). me-12nb re-measures it, and M-4b's bounds, with its implementation,
-which must charge identically, so the counts are the same, and pins them. No runtime estimate is part of the
-semantics.
-
-The units marked *by hand (draft 5)* were computed by the evaluator in
-[me-12n-budget-stub.lean](math-evidence/me-12n-budget-stub.lean), where each is a `#guard`. They are not computed by
-product code. The derivations in M-5, B-1 and B-3 above check that evaluator against 12.2's text; me-12nb pins the
-units in `BoundedExamples.lean`. The B fixtures are defined here, so 13.2 is unchanged. Their times were measured
-interpreted, with `lake env lean`, beyond the 1.3 s the stub takes to load. They are evidence, not semantics.
+the largest completing bound is 248; ME-12 re-measures it with its implementation (which must charge identically, so
+the count is the same) and pins it. No runtime estimate is part of the semantics.
 
 ### 13.4 Each "exactly when" in both directions
 
@@ -3018,7 +2678,7 @@ interpreted, with `lake env lean`, beyond the 1.3 s the stub takes to load. They
 | `calcLeaf_discharged_iff` | E-1 c1 | E-1 c2 (fails), c3 (missing) |
 | `decideBounded_sound` | M-1 (true; it holds) | M-5 (false; it fails) |
 | `arithOutcome_unbounded_iff` | M-3 | M-1 |
-| `arithOutcome_exhausted_iff` | M-4x; M-1b at 337,734 | M-1b at 337,735; M-3 (unbounded, not exhausted) |
+| `arithOutcome_exhausted_iff` | M-4x; M-1b at 17,010 | M-1b at 17,011; M-3 (unbounded, not exhausted) |
 | `arithOutcome_decided` | M-1 (holds) | M-5 (fails) |
 | `Case.outcome_bounded` (draft 2) | R-7's m1 (holds; it means) | R-7's m5 (fails; it does not) |
 | `Stat.run_isSome` (draft 2) | S-5's population variance of one value (some 0; 1 ≤ 1) | S-5's variance of one value (none; 2 > 1) |
@@ -3228,11 +2888,11 @@ weight on the strict fact, as the stub's `Farkas.check` found for H-6.
 
 ```json
 [{"status": "ok", "statement": "m1", "statement_id": "<hex64>", "outcome": "holds", "reason": null, "bounded": true,
-  "units": 337735, "deciding": null,
+  "units": 17011, "deciding": null,
   "line": "For every whole number n from 1 through 161, there is an integer p from the sum of n and 1 through twice n such that p is prime.",
   "import": null, "rests_on": []},
  {"status": "ok", "statement": "m5", "statement_id": "<hex64>", "outcome": "fails", "reason": null, "bounded": true,
-  "units": 33, "deciding": {"variable": "n", "value": "1"}, "line": "<display>", "import": null, "rests_on": []},
+  "units": 2, "deciding": {"variable": "n", "value": "1"}, "line": "<display>", "import": null, "rests_on": []},
  {"status": "ok", "statement": "m3", "statement_id": "<hex64>", "outcome": "unknown",
   "reason": "stated, not decided: a quantifier has no bound", "bounded": false, "units": null, "deciding": null,
   "line": "For every whole number n, if n is at least 1, then there is a whole number p such that p is prime, n is less than p, and p is at most twice n.",
@@ -3240,7 +2900,7 @@ weight on the strict fact, as the stub's `Farkas.check` found for H-6.
 ```
 
 The decoder gives exactly the stub's formulas (`FxArith.m1 161`, `FxArith.m5`, `bertrand` and `primeBody` in de Bruijn
-form), so the units are 13.3's 337,735 and 33 (draft 5; draft 4: 17,011 and 2).
+form), so the units are the stub's 17,011 and 2.
 
 **R-8, an exhausted budget** (M-4x): R-7's definitions, the statement m1 alone and `"budget": 1000`. Its row is
 `{"status": "ok", "statement": "m1", "statement_id": "<hex64>", "outcome": "unknown", "reason": "unknown: the budget
@@ -3367,15 +3027,14 @@ is a witness; t + 1 = 1 + t), and the `*_undefined` rows are unchanged.
 | exponents (`pow`, `sci`) | 64 | refused |
 | literal digits | 40 (W6's `maxNumeralChars`) | refused |
 | `binomial-tail` trials | 1,000 | refused (`ResourceLimit`) |
-| exact value digits | 4,096 in numerator or denominator | every check that needs the value unknown (`limit .digits`; for derivations, consistency checks and identities only in the lowering, 2.7); a derivation whose lowering or search meets one, unknown (`derivationInconclusive`, 3.2 (b)) |
-| `calc` work | 2^33 units per case (12.2's unit, 3.2 limit 10) | refused (`ResourceLimit`) |
+| exact value digits | 4,096 in numerator or denominator | every check that needs the value unknown (`limit .digits`; for derivations, consistency checks and identities only in the lowering, 2.7) |
 | table bytes, rows, columns | 16 MB per handle (the service's line cap); 1,000,000; 64 | refused |
 | table evaluation | 1,000,000 (row, filter node) visits per counted value, or the case's smaller `budget` | every check reading it unknown (`limit .evaluations`), through definitions too |
 | derivation search | 64 facts, 16 unknowns, 10,000 combination steps | unknown (`limit .derivationSteps`) |
 | consistency search | 4,096 candidate points | unknown (`limit .witnessPoints`) |
 | identity normal form | 10,000 monomials | unknown (`limit .polyTerms`) |
 | sign flips | 16 values | refused (`SignFlipTooLong`) |
-| `arith` evaluation | 1,000,000 units (node visits and value sizes, 12.2) per statement, or the case's smaller `budget` | unknown (`limit .evaluations`) |
+| `arith` evaluation | 1,000,000 formula-node visits per statement, or the case's smaller `budget` | unknown (`limit .evaluations`) |
 | `arith` JSON nodes, depth, definitions, statements, numerals, names | 10,000; 64; 512; 512; 40 digits; 64 bytes | refused (`ResourceLimit`) |
 
 Trusted and not certified: SHA-256 (as for the risk log); the decoders (pinned in `ve/assurance-manifest.json` by hand);
@@ -3417,9 +3076,8 @@ The edits of the plan review (`manage-agents/debates/design-math-evidence/`), as
 - **C5.** `arith@0`'s meaning interprets definitions in order (`Defs.env`) instead of inlining them (plan 3.9's
   `Defs.expand`): the same meaning without substitution under binders and without an expansion that can grow
   exponentially. `Defs.Means D φ` keeps its name and role.
-- **C6.** `arith`'s accounting charges every node visit, term and formula nodes alike, and every value's bit length
-  (draft 5, 12.2; draft 4 charged formula-node visits only, as W6 does). Every loop therefore costs at least one unit
-  per iteration, and no value grows past the budget.
+- **C6.** `arith`'s accounting charges formula-node visits only, as W6 does; term nodes are free, and a count is
+  charged through its condition. Every loop therefore costs at least one unit per iteration.
 - **C7.** The expression grammar of 11.2 puts infix phrases only at the top with an atom on the left. The plan's
   nesting rule (one phrase inside another) is kept; its own rewrite of the first refused sentence nests three phrases,
   so this draft's rewrite names the squared ratio as well.

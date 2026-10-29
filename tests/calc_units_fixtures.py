@@ -31,30 +31,9 @@ def lean_str(value) -> str:
     return json.dumps(json.dumps(value, ensure_ascii=False), ensure_ascii=False)
 
 
-def meter(factor):
-    return lean_str(units(["length"], meter=({"length": 1}, factor)))
-
-
-def spelled(factor) -> str:
-    """The meter's factor `factor` as its environment's identity spells it, or the environment's refusal."""
-    return (f'says ((fun (u : UnitEnv) => (u.identity.getObjValD "units" |>.getObjValD "meter" |>.getObjValD "factor")'
-            f'.compress) <$> (Json.parse {meter(factor)} >>= decode)) id')
-
-
-def same_id(a, b) -> str:
-    """Whether the meter's factor written `a` and written `b` give one `environment_id`."""
-    ids = [f"(Json.parse {meter(f)} >>= decode >>= UnitEnv.environmentId)" for f in (a, b)]
-    return f"says (do pure ((← {ids[0]}) == (← {ids[1]}))) toString"
-
-
 PHYSICS = units(["length", "time", "fringe"], meter=({"length": 1}, "1"), kilometer=({"length": 1}, "1000.0"),
                 second=({"time": 1}, "1"), meter_per_second=({"length": 1, "time": -1}, "1"),
                 fringe_width=({"fringe": 1}, "1"))
-# PHYSICS with every factor but one written `["sci", d, e]`; its identity is PHYSICS's (me-6c).
-PHYSICS_SCI = units(["length", "time", "fringe"], meter=({"length": 1}, ["sci", "1", 0]),
-                    kilometer=({"length": 1}, ["sci", "1", 3]), second=({"time": 1}, ["sci", "10", -1]),
-                    meter_per_second=({"length": 1, "time": -1}, ["sci", "0.1", 1]), fringe_width=({"fringe": 1}, "1"))
-PHYSICS_ID = "cb0ef65f08f172d62305ff6587cfd41fcea9ee305d8589c739ff7b4ed1563526"
 I2 = {"unit_schema": "ve-units@2", "base_dimensions": ["length", "time"],
       "units": {"meter_per_second": {"base_exponents": {"length": 1, "time": -1}, "factor": "1"}}}
 I2_REORDERED = {"units": {"meter_per_second": {"factor": "1", "base_exponents": {"time": -1, "length": 1}}},
@@ -63,7 +42,6 @@ I2_REORDERED = {"units": {"meter_per_second": {"factor": "1", "base_exponents": 
 # The Lean definitions the fixtures name: (name, type, term).
 DEFINITIONS = [
     ("physics", "String", lean_str(PHYSICS)),
-    ("physicsSci", "String", lean_str(PHYSICS_SCI)),
     # H-7's names: D and the wavelength are lengths, V and v velocities, T a time; the shift is in fringes.
     ("h7", "List (String × Option String)",
      '[("d", some "meter"), ("lam", some "meter"), ("vv", some "meter_per_second"), ("v", some "meter_per_second"),\n'
@@ -170,7 +148,7 @@ FIXTURES = [
          "InvalidInput: units.meter.factor must be more than zero"),
         ("negative-below-one", units(["length"], meter=({"length": 1}, "-0.5")),
          "InvalidInput: units.meter.factor must be more than zero"),
-        ("number", units(["length"], meter=({"length": 1}, 1)), "InvalidInput: units.meter.factor must be a literal"),
+        ("number", units(["length"], meter=({"length": 1}, 1)), "InvalidInput: units.meter.factor must be a decimal string"),
         ("text", units(["length"], meter=({"length": 1}, "1e3")), "InvalidInput: units.meter.factor must be a decimal"),
         ("digits", units(["length"], meter=({"length": 1}, "1" * 41)),
          "ResourceLimit: Decimal literal exceeds 40 digits"),
@@ -220,60 +198,6 @@ FIXTURES = [
                   'pure (toString (u.identity.compress == j.compress) ++ " " ++ '
                   '(← VE.Time.Wire.decodeEnvironment j).environmentId)) id',
      "ok true b4a20af92b499f3c44cab20a05cb687ffa980b23af4697bcd579282fe19a5c33"),
-    # me-6c: factors written `["sci", d, e]` (3.1's literal; DRI 2026-10-27 item 6). (i) A `sci` factor and its plain
-    # decimal give one identity and the same answers (11: no `sci` exponent remains).
-    ("sci-physics-id", "says (env! physicsSci).environmentId id", f"ok {PHYSICS_ID}"),
-    ("sci-physics-id-plain", "says (env! physics).environmentId id", f"ok {PHYSICS_ID}"),
-    ("sci-values", 'reprStr (["meter", "kilometer", "second", "meter_per_second"].map (env! physicsSci).values)',
-     "[some 1, some 1000, some 1, some 1]"),
-    ("sci-values-plain", 'reprStr (["meter", "kilometer", "second", "meter_per_second"].map (env! physics).values)',
-     "[some 1, some 1000, some 1, some 1]"),
-    ("sci-h7c", 'rescaled physicsSci h7 sigma (.compare ⟨.eq, false⟩ (.mul (.lit (5/2)) (.val "kilometer")) '
-                '(.mul (.lit 2500) (.val "meter")))', "ok holds holds"),
-    ("sci-h7c-n", 'rescaled physicsSci h7 sigma (.compare ⟨.eq, false⟩ (.mul (.lit (5/2)) (.val "kilometer")) '
-                  '(.mul (.lit (5/2)) (.val "meter")))', "ok fails fails"),
-    ("sci-h7-time", 'dims physicsSci h7 (.div (.val "d") (.sub (.val "vv") (.val "v")))', "ok time"),
-    *((f"sci-same-{key}", same_id(a, b), want) for key, a, b, want in [
-        ("small", ["sci", "5.89", -7], "0.000000589", "ok true"),
-        ("large", ["sci", "2", 7], "20000000", "ok true"),
-        ("places", ["sci", "0.020", 1], "0.2", "ok true"),
-        ("nano", ["sci", "1", -9], "0.000000001", "ok true"),
-        ("other", ["sci", "2", 6], "20000000", "ok false"),  # a different value is a different identity
-    ]),
-    *((f"sci-{key}", spelled(literal), want) for key, literal, want in [
-        ("spelling", ["sci", "2", 7], 'ok "20000000"'),
-        ("spelling-small", ["sci", "5.89", -7], 'ok "0.000000589"'),
-        ("spelling-places", ["sci", "0.020", 1], 'ok "0.2"'),
-        ("spelling-exponent-zero", ["sci", "1609.344", 0], 'ok "1609.344"'),
-        ("spelling-integer", ["sci", "1.5", 3], 'ok "1500"'),
-        ("spelling-whole", ["sci", "10", -1], 'ok "1"'),
-        # (ii) Limit 5 (3.2): an exponent of 64 in absolute value is read, 65 is refused, on both sides of zero.
-        ("exponent-63", ["sci", "1", 63], f'ok "1{"0" * 63}"'),
-        ("exponent-64", ["sci", "1", 64], f'ok "1{"0" * 64}"'),
-        ("exponent-65", ["sci", "1", 65], "ResourceLimit: an exponent exceeds 64"),
-        ("exponent-minus-63", ["sci", "1", -63], f'ok "0.{"0" * 62}1"'),
-        ("exponent-minus-64", ["sci", "1", -64], f'ok "0.{"0" * 63}1"'),
-        ("exponent-minus-65", ["sci", "1", -65], "ResourceLimit: an exponent exceeds 64"),
-        ("exponent-1000", ["sci", "1", 1000], "ResourceLimit: an exponent exceeds 64"),
-        ("exponent-minus-1000", ["sci", "1", -1000], "ResourceLimit: an exponent exceeds 64"),
-        ("exponent-first", ["sci", "1" * 41, 65], "ResourceLimit: an exponent exceeds 64"),  # limit 5 before 6
-        # (iii) A zero or negative `sci` factor is refused; the nearest positive ones are read.
-        ("zero", ["sci", "0", 5], "InvalidInput: units.meter.factor must be more than zero"),
-        ("zero-places", ["sci", "0.000", -64], "InvalidInput: units.meter.factor must be more than zero"),
-        ("negative", ["sci", "-1", 3], "InvalidInput: units.meter.factor must be more than zero"),
-        ("negative-small", ["sci", "-5.89", -7], "InvalidInput: units.meter.factor must be more than zero"),
-        ("positive-small", ["sci", "0.001", -64], f'ok "0.{"0" * 66}1"'),
-        # Limit 6 and the literal's own form.
-        ("digits", ["sci", "1" * 41, 0], "ResourceLimit: Decimal literal exceeds 40 digits"),
-        ("digits-40", ["sci", "1" * 40, -30], f'ok "{"1" * 10}.{"1" * 30}"'),
-        ("integer", ["sci", "1", 1.5], "InvalidInput: units.meter.factor.2 must be an integer"),
-        ("integer-text", ["sci", "1", "3"], "InvalidInput: units.meter.factor.2 must be an integer"),
-        ("decimal", ["sci", "1e3", 3], "InvalidInput: units.meter.factor must be a decimal"),
-        ("number", ["sci", 1, 3], "InvalidInput: units.meter.factor must be a literal"),
-        ("short", ["sci", "1"], "InvalidInput: units.meter.factor must be a literal"),
-        ("long", ["sci", "1", 3, 4], "InvalidInput: units.meter.factor must be a literal"),
-        ("tag", ["lit", "1"], "InvalidInput: units.meter.factor must be a literal"),
-    ]),
 ]
 
 # Malformed environments (checklist item 5): I-2 with one node replaced by 7, true, null, [], {} or 10,000 nested
@@ -300,7 +224,7 @@ MALFORMED_ANSWERS = {
         f"InvalidInput: {UNIT}.base_exponents.length must be an integer", {"7": 'ok ["meter_per_second"]'}),
     ("units", "meter_per_second", "base_exponents", "time"): (
         f"InvalidInput: {UNIT}.base_exponents.time must be an integer", {"7": 'ok ["meter_per_second"]'}),
-    ("units", "meter_per_second", "factor"): (f"InvalidInput: {UNIT}.factor must be a literal", {}),
+    ("units", "meter_per_second", "factor"): (f"InvalidInput: {UNIT}.factor must be a decimal string", {}),
 }
 
 

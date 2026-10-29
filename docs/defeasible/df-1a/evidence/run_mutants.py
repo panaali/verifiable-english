@@ -5,9 +5,7 @@ Each mutant edits one definition of lean/VE/Defaults/Premises.lean. The run join
 theorem removed (a mutant must fail a guard, not a proof), and the body of lean/VE/Defaults/Examples.lean into one file
 and elaborates it with `lake env lean`. The unmutated control must pass every guard; each mutant must fail at least
 the guards its entry names, and no mutant may fail anywhere but at a `#guard`. An entry with `theorems` (a mutant of a
-`Prop`, which no `#guard` can evaluate) keeps every theorem and must fail inside each theorem it names, and one with
-`examples` must also fail inside each `example` whose statement line starts with an entry there. An entry with
-`"in": "fixtures"` edits the fixtures file in place of the source. A mutants file
+`Prop`, which no `#guard` can evaluate) keeps every theorem and must fail inside each theorem it names. A mutants file
 may name another `source` and `fixtures` (paths under lean/), the theorems a definition of the source uses (`keep`),
 and the source's own module, whose import the joined file drops. Usage, from the repository root, with another item's
 mutants file as the optional argument:
@@ -43,8 +41,7 @@ def without_theorems(src: str, used: tuple[str, ...] = ()) -> str:
 
 
 def run(premises: str, examples: str, keep: bool = False, used: tuple[str, ...] = (), module: str = "") -> list[str]:
-    """The text of each failing `#guard`, `THEOREM <name>` for an error inside a kept theorem, `EXAMPLE <statement>`
-    for one inside an `example`, or the error."""
+    """The text of each failing `#guard`, `THEOREM <name>` for an error inside a kept theorem, or the error."""
     src = premises if keep else without_theorems(premises, used)
     imports = [l for l in (src + "\n" + examples).splitlines() if l.startswith("import ") and l != f"import {module}"]
     body = lambda s: "\n".join(l for l in s.splitlines() if not l.startswith("import "))
@@ -55,7 +52,7 @@ def run(premises: str, examples: str, keep: bool = False, used: tuple[str, ...] 
         done = subprocess.run(["lake", "env", "lean", str(path)], cwd=LEAN, capture_output=True, text=True)
     lines = text.splitlines()
     failed = []
-    for m in re.finditer(r"Mutant\.lean:(\d+):\d+: error(?:\([^)]*\))?: (.*)", done.stdout + done.stderr):
+    for m in re.finditer(r"Mutant\.lean:(\d+):\d+: error: (.*)", done.stdout + done.stderr):
         n = int(m.group(1)) - 1
         src = lines[n]
         owner = next((l for l in reversed(lines[: n + 1]) if l[:1].isalpha() or l.startswith("#")), "")
@@ -63,8 +60,6 @@ def run(premises: str, examples: str, keep: bool = False, used: tuple[str, ...] 
             failed.append(src.strip()[:90])
         elif keep and owner.startswith("theorem "):
             failed.append("THEOREM " + owner.split()[1])
-        elif owner.startswith("example "):
-            failed.append("EXAMPLE " + owner.strip()[:90])
         else:
             failed.append("NOT A GUARD: " + m.group(2)[:90])
     return failed
@@ -84,18 +79,11 @@ def main() -> int:
         if "find" not in e:
             print(f"{e['id']} {e['definition']}: not run here ({e['test']})")
             continue
-        src, fix = premises, examples
-        if e.get("in") == "fixtures":
-            assert examples.count(e["find"]) == 1, e["id"]
-            fix = examples.replace(e["find"], e["replace"])
-        else:
-            assert premises.count(e["find"]) == 1, e["id"]
-            src = premises.replace(e["find"], e["replace"])
-        failed = run(src, fix, keep="theorems" in e, used=used, module=module)
+        assert premises.count(e["find"]) == 1, e["id"]
+        failed = run(premises.replace(e["find"], e["replace"]), examples, keep="theorems" in e, used=used, module=module)
         hit = [x for x in e["guards"] if any(g.startswith(x[:90]) for g in failed)]
         hit += [t for t in e.get("theorems", []) if "THEOREM " + t in failed]
-        hit += [x for x in e.get("examples", []) if any(g.startswith("EXAMPLE " + x[:90]) for g in failed)]
-        want = len(e["guards"]) + len(e.get("theorems", [])) + len(e.get("examples", []))
+        want = len(e["guards"]) + len(e.get("theorems", []))
         good = failed and all(not g.startswith("NOT A GUARD") for g in failed) and len(hit) == want
         ok &= bool(good)
         print(f"{e['id']} {e['definition']}: {'FAILS' if good else 'SURVIVES'} {len(failed)} guards")

@@ -441,14 +441,7 @@ def corpus():
             "readings-choices": [{**choice_plan, "limit": 64},
                                  {**choice_plan, "limit": 1}, choice_verdict],
             "search-budget": [*search_budget_cases(), *ADVERSARIAL],
-            "metered": metered_cases(), "calc": [*calc_cases(), *ADVERSARIAL]}
-
-
-def calc_cases():
-    """The `calc` mode's route cases (`tests/data/route-cases.jsonl`): every outcome, a reproduction row and each
-    refusal of the hostile set."""
-    rows = (json.loads(line) for line in (ROOT / "tests/data/route-cases.jsonl").read_text().splitlines())
-    return [case for mode, case in rows if mode == "calc"]
+            "metered": metered_cases()}
 
 
 def metered_cases():

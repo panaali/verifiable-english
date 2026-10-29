@@ -579,7 +579,7 @@ def test_lx14_every_wording_python_selects_on_the_corpus_is_subject_first():
                     selected += 1
                     if not subject_first(w):
                         bad.append((name, field, p, w))
-    assert count == 40 and selected > 700
+    assert count == 39 and selected > 700
     assert bad == []
 
 

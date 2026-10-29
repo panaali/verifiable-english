@@ -9,7 +9,7 @@ unchanged; each of its tags is its own base dimension (`legacyDim`) and has no f
 namespace VE.Calc.Units
 open Lean VE.Calc VE.Numbers
 open VE.Bridge (fields identifier)
-open VE.Calc.Wire (invalid checkFields plain literal exponentFault literalFault)
+open VE.Calc.Wire (invalid checkFields plain)
 
 def affineNames : List String := ["celsius", "degree_celsius", "fahrenheit", "degree_fahrenheit"]
 def logarithmicNames : List String := ["decibel", "bel", "neper"]
@@ -37,14 +37,14 @@ def decodeExponents (bases : List String) (path : String) (j : Json) : Except St
     if k = 0 then throw (invalid s!"{path}.{b}" "must not be zero")
     pure ⟨insertExp (b, k) d.exps⟩
 
-/-- An exact positive factor written as a literal of 3.1 (`"<decimal>"` or `["sci", "<decimal>", e]`) within
-limits 5 and 6 of 3.2, and its shortest plain decimal (11: no `sci` exponent remains). -/
+/-- An exact positive factor written as a decimal (W6's `parseDecimal`), and its shortest spelling. -/
 def decodeFactor (path : String) (j : Json) : Except String (Rat × String) := do
-  if let some e := exponentFault j <|> literalFault (if j matches .str _ then .arr #[.str "lit", j] else j) then
-    throw e
-  let p ← literal path j
-  unless 0 < p.value do throw (invalid path "must be more than zero")
-  pure (p.value, plain p)
+  let .ok s := j.getStr? | throw (invalid path "must be a decimal string")
+  let d ← match VE.Time.parseDecimal s with
+    | .ok d => pure d
+    | .error e => throw (if e.startsWith "ResourceLimit" then e else invalid path "must be a decimal")
+  unless 0 < decValue d do throw (invalid path "must be more than zero")
+  pure (decValue d, plain (Printed.ofDec d))
 
 def decodeUnit (bases : List String) (name : String) (record : Json) :
     Except String (UnitDef × (String × Json)) := do

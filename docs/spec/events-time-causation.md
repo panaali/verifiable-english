@@ -1479,16 +1479,3 @@ Events (1.6 to 1.8, 2.4, 4, 6.2, 6.3, 7, 8):
 - **SR-B4.** "within n days of D" has three bounded candidates, W1 to W3, each with its direction and end points.
   Fixture T11d.
 - **SR-B5.** T3's "denotes no day" is a `#guard` fixture only.
-
-## 13. Amendment signed by the DRI after the build (et-3d, 2026-10-27)
-
-- **`EventsTyped`** (6.1) also requires `decide (D.year ≤ 9999)` of every named date: in the conjunct over
-  `V.dates`, `D.properB && decide (D.year ≤ 9999) && E.constants (dateName D) == some V.day`. As approved, the type
-  admitted a date that the decoder never builds (1.3: dates run to 9999-12-31, `Civil.Valid`), and `embeddable_sound`
-  was false on it: one day named 10000-01-01 passes `calendarCheck` with number `dateMax + 1`, and no numbering
-  embeds it (et-3b's counterexample, `lean/VE/Events/Examples.lean`). `WellFormedEvents` already had the bound, so
-  `regen_typed` still holds; `embeddable_sound` keeps its 6.2 text and is proved with no extra hypothesis; every
-  other statement of 6.1 and 6.2 is unchanged. Ruling: `manage-agents/reviews/dri-decisions-20261027-featureplan-gates.md`
-  item 1 and `dri-decisions-20261028-et-3d.md` (the decoders' texts: `parseIso` refuses "10000-01-01" with
-  `InvalidDate(10000-01-01)`, the day-number decoder refuses day 2932897 with `DateRange(2932897)`). The text of 6.1
-  above is the approved draft; the Lean definition is the amended one.

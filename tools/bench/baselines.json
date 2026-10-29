@@ -67,8 +67,6 @@
     "test_kernel_bounded_batches[w6a-route-limits]::test_supplied_tuples_count_toward_the_defined_tuple_limit_three_ways:ve": 0.114,
     "test_kernel_bounded_batches[w6a-route-limits]::test_supplied_tuples_count_toward_the_defined_tuple_limit_three_ways:ve_conformance": 0.457,
     "test_precommit_large_staged_change::hook": 5.511,
-    "test_scope_b1::layout": 0.151,
-    "test_scope_b1::layout and governFast": 0.539,
     "test_soft_exponential_unfoldings_are_refused_cheaply[soft4-coherence-doubling-40]::lean": 0.239,
     "test_soft_exponential_unfoldings_are_refused_cheaply[soft4-coherence-doubling-40]::python": 0.057,
     "test_soft_exponential_unfoldings_are_refused_cheaply[soft4-coherence-negations-26]::lean": 0.131,

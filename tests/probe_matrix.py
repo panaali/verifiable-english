@@ -164,7 +164,7 @@ def runtime_sha256():
 
 def pinned_runtime_sha256():
     """Hash the frozen Stage 0 Python tree independently of the current adapters."""
-    revision = "f87ff6e2ab905c8fdcb4be6148ebc92196f7cb5a"  # frozen Stage 0 root tree
+    revision = "f4286ef0d911c9db527abcc387e8280df8858e59"
     paths = subprocess.check_output(
         ["git", "ls-tree", "-r", "--name-only", revision, "--", "ve"],
         cwd=ROOT, text=True).splitlines()

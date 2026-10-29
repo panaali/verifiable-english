@@ -46,8 +46,6 @@ _KEPT = ModelReduction(kept=True)
 # environment first; the engines answer model questions only, over the
 # vocabulary a model interprets.
 MODEL_REDUCTIONS = {
-    # acts@0: kept, so Rust and Lean's model path refuse the environment (UnsupportedProfile; act-phrases 2.9)
-    "acts@0": _KEPT,
     "alternatives@0": ModelReduction(blocks=("alternatives",)),
     "closure@0": _KEPT,
     "data@0": _KEPT,
@@ -111,18 +109,3 @@ def model_environment(data: dict, *, layers=None, display: bool = True) -> dict:
                   for key, block in data["vocabulary"].items() if key not in vocabulary_blocks}
     return {**{key: value for key, value in data.items() if key not in blocks},
             "profiles": [p for p, r in zip(profiles, reductions) if r.kept], "vocabulary": vocabulary}
-
-
-def without_wording_acts(data: dict) -> dict:
-    """The model environment `data` of a Rust search without `acts@0` when every regulated declaration is plain:
-    the profile then adds only the `acts` block and each plain declaration's `act` and `form`, its wording
-    (act-phrases 2.1), which no model reads. Rust refuses every `acts@0` environment (act-phrases 2.9); Lean checks
-    its witnesses over the whole environment. Any other environment as it is."""
-    vocabulary = data.get("vocabulary")
-    if "acts@0" not in (data.get("profiles") or ()) or any(
-            decl["regulated"]["role"] != "plain" for decl in vocabulary["predicates"].values() if "regulated" in decl):
-        return data
-    predicates = {name: {**decl, "regulated": {k: v for k, v in decl["regulated"].items() if k not in ("act", "form")}}
-                  if "regulated" in decl else decl for name, decl in vocabulary["predicates"].items()}
-    return {**data, "profiles": [p for p in data["profiles"] if p != "acts@0"],
-            "vocabulary": {**{k: v for k, v in vocabulary.items() if k != "acts"}, "predicates": predicates}}

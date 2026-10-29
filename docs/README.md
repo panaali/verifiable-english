@@ -12,7 +12,6 @@
 | Language specifications | [Specifications](spec/) |
 | Testing and verification | [Testing guide](TESTING.md) |
 | Contributor instructions | [AGENTS.md](../AGENTS.md) |
-| Relayed Lean route recipe | [ROUTE-RECIPE.md](ROUTE-RECIPE.md) |
 | Worked applications | [Use cases](../usecases/) |
 | Small language examples | [Examples](../examples/) |
 | Research experiments | [Experiments](../experiments/) |

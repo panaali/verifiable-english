@@ -15,7 +15,7 @@ from .assurance import semantic_entry
 from .ast import (And, Binary, Bottom, Exists, Forall, Implies, Not, Or,
                   Top, Unary, Var, _Checker, _Decoder, _to_data)
 from .background import dependency_order
-from .environment import NORM_DEFAULTS_PROFILE, UNSAID_PREFIX
+from .environment import UNSAID_PREFIX
 from .errors import CheckerUnavailable, DuplicateDeclaration, ResourceLimit, VEError
 from .search import _used_predicates
 from .wire import digest, require_fields
@@ -185,40 +185,6 @@ class Norm:
                          "over": list(self.over)}}
 
 
-def _plain_acts(env) -> set[str]:
-    """The request's plain predicates with an act (only `acts@0` admits one, act-phrases 3.2)."""
-    return {p for p, d in env.predicates.items()
-            if d.regulated is not None and d.regulated.role == "plain" and d.regulated.act is not None}
-
-
-def _bind_wordings(env, row, kind="norms-elaborate") -> None:
-    """R8: an elaborate row's `wordings` (the family route gives none) name exactly the request's plain acts, and
-    the slots of each name exactly its predicate's argument positions (`relay.slots_bound`)."""
-    from .backends.relay import slots_bound
-    wordings = row.get("wordings", {})
-    if set(wordings) != _plain_acts(env) or not all(
-            slots_bound(wording, len(env.predicates[p].arguments)) for p, wording in wordings.items()):
-        raise CheckerUnavailable(f"CheckerUnavailable: {kind} wordings are not bound to the request")
-
-
-def plain_wordings(env) -> dict[str, str]:
-    """Lean's wording of each plain act of `env` by its predicate (act-phrases 2.1: "{0} has the right …",
-    "{0} is entitled …"), from the elaborate row over the environment alone of the route that reads it (the
-    norms route's `norms-elaborate`, or the norm-defaults route's `norm-defaults-elaborate` for a `norm-defaults@0`
-    environment), bound to the request. A `readings@1` environment is asked of the readings route, whose runner
-    strips the head profile and runs the same case on the lower route (`Readings.Run.runLower`); Python drops no
-    profile. Python computes no wording; an environment without a plain act asks nothing."""
-    if not _plain_acts(env):
-        return {}
-    from .backends.relay import decide_once
-    lower = "norm-defaults" if NORM_DEFAULTS_PROFILE in env.profiles else "norms"
-    kind = f"{lower}-elaborate"
-    mode = "readings-route" if "readings@1" in env.profiles else lower
-    row = decide_once(mode, {"id": kind, "kind": kind, "environment": env.to_dict(), "norms": []})
-    _bind_wordings(env, row, kind)
-    return dict(row["wordings"])
-
-
 def norm_meaning_id(env, rule):
     """The W1 unit identity uses the same AST domain as formula units."""
     return digest(f"ve-meaning-{env.identity_version}\n",
@@ -376,7 +342,6 @@ class NormDocument:
             if (len(targets) != len(expected) or {t["target"] for t in targets} != set(expected)
                     or any(t["sorts"] != expected[t["target"]] for t in targets)):
                 raise CheckerUnavailable("CheckerUnavailable: norms-elaborate targets are not bound to the request")
-            _bind_wordings(self.env, row)
             cached = self._regenerated = row
         return cached
 
@@ -480,22 +445,16 @@ class NormDocument:
             from .errors import CheckerUnavailable
             raise CheckerUnavailable("alternatives@0 requires the Lean checker")
         from .environment import Environment
-        data = base_data(self.env.to_dict())
+        data = self.env.to_dict()
+        data["vocabulary"]["predicates"] = {
+            name: decl for name, decl in data["vocabulary"]["predicates"].items()
+            if "regulated" not in decl}
+        # `readings@1` is the head's layer, never the base vocabulary's (DRI ruling 4's class).
+        data["profiles"] = [p for p in data["profiles"] if p not in ("norms@0", "readings@1")]
         if "speech-acts@0" in data["profiles"]:
             data["profiles"].remove("speech-acts@0")
             data.pop("speech_acts", None)
         return Environment(data)
-
-
-def base_data(data: dict) -> dict:
-    """The stored environment `data` without its norms layer: the regulated predicates, `norms@0`, and `acts@0` with
-    its block (act-phrases 2.8); `readings@1` is the head's layer, never the base vocabulary's (DRI ruling 4's
-    class). Lean's projection is `Norms.Replay.baseEnvironmentJson`."""
-    data["vocabulary"]["predicates"] = {
-        name: decl for name, decl in data["vocabulary"]["predicates"].items() if "regulated" not in decl}
-    data["profiles"] = [p for p in data["profiles"] if p not in ("norms@0", "readings@1", "acts@0")]
-    data["vocabulary"].pop("acts", None)
-    return data
 
 
 @dataclass(frozen=True, slots=True)

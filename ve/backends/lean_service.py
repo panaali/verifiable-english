@@ -143,8 +143,6 @@ DEADLINES: dict[str, tuple[float, float]] = {
     # The metered evaluator and the non-vacuity check (lean-first batch 18): the one-shot `ve_metered`'s
     # route limit before, a share per MiB like the core modes'.
     "metered": (120.0, 30.0),
-    # The `calc` mode (math-evidence ME-2): at most 512 claims a case, each stopped at the 4,096-digit limit.
-    "calc": (60.0, 60.0),
 }
 WALL_FACTOR = 10.0
 _MIB = 1 << 20

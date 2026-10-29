@@ -1,9 +1,0 @@
-exit 1
-trust_mutants: 3 definitions, 5 mutants (5 to run), 4 jobs, base 7855620f3e06
-UNKNOWN lean/VE/Arith/Defs.lean:67 VE.Arith.Term.sites (G[R]) append-left: ++ Term.sites k b ->  (lean/VE/Arith/Examples.lean:292: Expression (VE.Arith.Formula.sites, which it reads, is not what ...)
-UNKNOWN lean/VE/Arith/Defs.lean:68 VE.Arith.Term.sites (G[R]) list-empty: args -> [] (lean/VE/Arith/Defs.lean:68: don't know how to synthesize implicit argument `α`)
-UNKNOWN lean/VE/Arith/Defs.lean:79 VE.Arith.Formula.sites (G[R]) append-left: ++ Term.sites k hi ->  (lean/VE/Arith/Examples.lean:292: Expression (VE.Arith.Term.sites, which it reads, is not what it ...)
-UNKNOWN lean/VE/Arith/Defs.lean:77 VE.Arith.Formula.sites (G[R]) append-left: ++ Formula.sites k ψ ->  (lean/VE/Arith/Examples.lean:290: Expression (VE.Arith.Term.sites, which it reads, is not what it ...)
-UNKNOWN lean/VE/Arith/Defs.lean:72 VE.Arith.Term.sitesList (G[R]) append-left: ++ Term.sitesList k ts ->  (lean/VE/Arith/Examples.lean:292: Expression (VE.Arith.Formula.sites, which it reads, is not what ...)
-trust_mutants: 0 KILLED, 0 SURVIVOR, 5 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 111 s
-trust_mutants: G[R]: 5 UNKNOWN

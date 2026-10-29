@@ -160,17 +160,6 @@ def coverage : Shape :=
       ("residual_total", ref "common.json#/$defs/nat"),
       ("alternatives", ref "#/$defs/cells")]]
 
-/-- Under `judgments@0`, `Judgments.usageMap` (judgment-terms.md 8.3): each used term with the units that depend on
-it, then the unused terms. The client binds every name to the request's open terms and every id to its units. -/
-def judgments : Shape :=
-  c "Service.Document.usageJson: the usage map of the bound judgments." [
-    obj, .required ["used", "unused"],
-    closed [
-      ("used", n [arr, .items (n [obj, .required ["term", "units"],
-        closed [("term", ref "common.json#/$defs/token"),
-          ("units", n [arr, .minItems 1, .items (ref "common.json#/$defs/token")])]])]),
-      ("unused", n [arr, .items (ref "common.json#/$defs/token")])]]
-
 /-- A rejected case with no location: the request's id, the message. -/
 def plain_error : Shape :=
   n [obj, .required ["id", "status", "error"],
@@ -211,15 +200,14 @@ def «row» : Shape :=
         ("source_id", ref "common.json#/$defs/hex64"),
         ("source", str),
         ("units", n [arr, .items (ref "#/$defs/unit")]),
-        ("coverage", ref "#/$defs/coverage"),
-        ("judgments", ref "#/$defs/judgments")]]]
+        ("coverage", ref "#/$defs/coverage")]]]
 
 def file : File where
   name := "document.json"
   comment := some "Mode document: W2 wrapper byte partition, inferred unit statuses and base coverage."
   top := [("row", «row»)]
   defs := [("plain_error", .schema plain_error), ("model_error", .schema model_error),
-    ("fence_error", .schema fence_error), ("unit", .schema unit), ("meaning", .schema meaning), ("narrowing", .schema narrowing), ("coverage", .schema coverage), ("judgments", .schema judgments), ("cells", .schema cells),
+    ("fence_error", .schema fence_error), ("unit", .schema unit), ("meaning", .schema meaning), ("narrowing", .schema narrowing), ("coverage", .schema coverage), ("cells", .schema cells),
     ("block_coverage", .schema blockCoverage), ("soft_exception", .schema soft_exception),
     ("soft_norm", .schema soft_norm), ("cites", .schema cites), ("soft_content", .schema soft_content),
     ("rights_line", .schema rights_line), ("rights_condition", .schema rights_condition),

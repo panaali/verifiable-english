@@ -59,9 +59,6 @@ def placeholderJson (environment : Json) : Except String Json := do
   -- Setting the profile aside must not hide a repeated one from the envelope gate.
   if profiles.count profile > 1 then
     throw (VE.Route.Gate.unsupported "profiles must be sorted and unique")
-  -- Nor the order of a list from which `acts@0` would be read (`Norms.Wire.readsActs` reads the list it is given).
-  if profiles.contains "acts@0" && !VE.Norms.Wire.readsActs profiles then
-    throw (VE.Route.Gate.unsupported "profiles must be sorted and unique")
   pure ((environment.setObjVal! "vocabulary" (vocab.setObjVal! "predicates" (Json.mkObj preds'))).setObjVal!
     "profiles" (toJson (profiles.filter (· != profile))))
 
@@ -77,7 +74,7 @@ def decodeEnvironmentU (environment : Json) : Except String VE.Norms.Wire.NormsE
     unless (unspecifiedNames environment).isEmpty do
       throw "UnsupportedProfile: unspecified completion requires norm-defaults@0"
     pure environment
-  let ne ← VE.Norms.Wire.decodeNormsEnvironment frame (acts := true)
+  let ne ← VE.Norms.Wire.decodeNormsEnvironment frame
   unless ne.rv.definitions.isEmpty || ne.profiles.contains "definitions@0" do
     throw "Definitions require definitions@0"
   pure ne

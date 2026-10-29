@@ -142,29 +142,19 @@ def test_seeded_readings_modules(tmp_path, line, found):
 
 
 def test_every_readings_module_is_read_by_the_reserved_rule():
-    """The rule reads the globs, not a hand-kept list: every `ve/readings*.py` file and every module of a readings
-    package (`ve/readings_verdicts/`, AR-16b), and nothing fewer."""
-    modules = relay_lint.readings_modules()
-    assert {p.relative_to(ROOT).as_posix() for p in modules} >= {
-        "ve/readings.py", "ve/readings_route.py", "ve/readings_s1.py", "ve/readings_s2_english.py",
-        "ve/readings_s2_wording.py", "ve/readings_sup.py", "ve/readings_english.py",
-        *(p.relative_to(ROOT).as_posix() for p in (ROOT / "ve/readings_verdicts").glob("*.py"))}
-    assert len(list((ROOT / "ve/readings_verdicts").glob("*.py"))) >= 6
+    """The rule reads the glob, not a hand-kept list: every `ve/readings*.py` file, and nothing fewer."""
+    modules = sorted(ROOT.glob(relay_lint.READINGS_GLOB))
+    assert {p.name for p in modules} >= {"readings.py", "readings_route.py", "readings_s1.py",
+                                          "readings_s2_english.py", "readings_s2_wording.py",
+                                          "readings_verdicts.py", "readings_sup.py", "readings_english.py"}
     for path in modules:
         assert relay_lint.reserved_literals(path) == [], path
-
-
-def test_the_wording_rule_reads_every_readings_module():
-    """The fourth rule reads every module the second does (AR-16b: the modules of `ve/readings_verdicts/` too)."""
-    wording = {p for pattern in relay_lint.WORDING_GLOBS for p in ROOT.glob(pattern)}
-    assert set(relay_lint.readings_modules()) <= wording
-    assert ROOT / "ve/readings_verdicts/binding.py" in wording
 
 
 def test_probe_a2_no_readings_module_spells_a_soft_or_unsaid_name():
     """PROBE A2 of rd-9-looprecheck2: `! grep -n 'soft__\\|unsaid__' ve/readings*.py`. The readings modules find a
     decision's name by its key in Lean's row, never by spelling it (plan SC-8)."""
-    for path in relay_lint.readings_modules():
+    for path in sorted(ROOT.glob(relay_lint.READINGS_GLOB)):
         text = path.read_text()
         assert "soft__" not in text and "unsaid__" not in text, path
 
@@ -211,37 +201,3 @@ def test_the_senses_path_is_read_by_the_third_rule():
     loader = "".join(path.read_text() for path in modules)
     assert "if senses is not None" in loader and "parse_english" in loader
     assert all(relay_lint.english_reads(path, branches_only=True) == [] for path in modules)
-
-# The fifth rule (defeasible plan DF-1b): no `ve/` module spells a no-exception premise label.
-
-@pytest.mark.parametrize("line, found", [
-    ('label = "default:exception:" + rule', True),
-    ('label = f"default:switch:{rule}:{body}"', True),
-    ('label = "default:"', True),
-    ('"""Docstrings count: default:ranking:l:h:a."""', True),
-    ('kind = rule  # a default:exception label', True),
-    ('kind = "x default:y"', True),
-    ('"""(default: every candidate different)."""', False),
-    ('kind = "default: "', False),
-    ('kind = "default:\\n"', False),
-    ('kind = {"default": rule}', False),
-    ('kind = "default" + ":"', False),
-    ('kind = rule  # the default: the first rule', False),
-])
-def test_seeded_default_labels(tmp_path, line, found):
-    module = tmp_path / "defaults_x.py"
-    module.write_text(f"def f(rule, body, default: int = 0):\n    {line}\n")
-    assert bool(relay_lint.default_labels(module)) is found
-    assert relay_lint.main([str(module)]) == (1 if found else 0)
-
-
-def test_the_defaults_relay_is_relayed_and_every_ve_module_is_read():
-    """`ve/defaults.py` is in `RELAYED`, its English is linted with it (a helper only it imports), both pass every
-    rule, and the fifth rule reads every module of `ve/`, packages included."""
-    assert "ve/defaults.py" in relay_lint.RELAYED
-    assert ROOT / "ve/defaults_english.py" in relay_lint.helpers([ROOT / path for path in relay_lint.RELAYED])
-    modules = set(relay_lint.defaults_modules())
-    assert {ROOT / "ve/defaults.py", ROOT / "ve/defaults_english.py", ROOT / "ve/document/cli.py"} <= modules
-    assert modules == {p for p in (ROOT / "ve").rglob("*.py")}
-    for name in ("ve/defaults.py", "ve/defaults_english.py"):
-        assert relay_lint.main([str(ROOT / name)]) == 0, name

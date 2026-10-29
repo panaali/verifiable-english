@@ -7,8 +7,6 @@ open VE.Grammar (Derives)
 
 
 def auxiliaries : List String := ["is", "must", "may"]
-/-- The fronted words of F2 for the speech-acts caller (plan Q1.4). -/
-def speechAuxiliaries : List String := ["is"]
 def caseFrame : String := "Is it the case that "
 def whWords : List String := ["Who", "What", "Which", "Whom", "Whose", "Where", "When", "Why", "How"]
 def maxQuestionBytes : Nat := 4096

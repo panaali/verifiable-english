@@ -1,7 +1,0 @@
-PY1 tools/layer_policy.py: lean_layer without VE.Defaults.RouteExamples (seeded at d2049f39a, then restored)
-$ python3 tools/check_lean_imports.py   # seeded
-new outward Lean import: VE.Defaults.RouteExamples -> VE.NormDefaults.Run
-exit=1
-$ python3 tools/check_lean_imports.py   # restored
-Lean layer graph kept (619 modules, 22 reviewed legacy edges)
-exit=0

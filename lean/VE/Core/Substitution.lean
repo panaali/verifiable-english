@@ -169,16 +169,16 @@ theorem unfold_denote {E : Environment} {S : Structure} (hS : S.Admissible E)
   have hat := edge_at_denote S ρ e t r x y ht hr (by
     intro q a h; rw [hb q a h]; exact ⟨hx,hy⟩)
   cases k with
-  | star => simp [unfold, Formula.denote, reach_denote, ht, hr, Reachable, VE.Paths.Reachable, eq_comm]
+  | star => simp [unfold, Formula.denote, reach_denote, ht, hr, Reachable, eq_comm]
   | plus =>
     change ((e.at t r).denote S ρ ∨ ∃ v, S.domain s v ∧
       (e.shift.at (liftTerm t) (.var 0)).denote S (v :: ρ) ∧
       (Formula.reach .plus e.shift (.var 0) (liftTerm r)).denote S (v :: ρ)) ↔ _
-    simp only [reach_denote, liftTerm_denote, ht, hr, Reachable, VE.Paths.Reachable, edge_shift_denote,
+    simp only [reach_denote, liftTerm_denote, ht, hr, Reachable, edge_shift_denote,
       show ∀ v : S.Carrier, (Term.var 0).denote S (v :: ρ) = some v from fun _ => rfl,
       Option.some.injEq]
     simp only [pair_values]
-    rw [hat, VE.Paths.Path.unfold]
+    rw [hat, Path.unfold]
     have hh (v : S.Carrier) (hv : S.domain s v) :
         (e.shift.at (liftTerm t) (.var 0)).denote S (v :: ρ) ↔ e.denote S ρ x v := by
       rw [edge_at_denote S (v :: ρ) e.shift (liftTerm t) (.var 0) x v

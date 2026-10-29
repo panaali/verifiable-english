@@ -16,7 +16,6 @@ from pathlib import Path
 
 import pytest
 
-from tests.check_mutants import replace, weakenings
 from ve.errors import CheckerUnavailable
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -385,9 +384,32 @@ def _checks(tree):
                 yield function.name, node.value, False
 
 
+def _weakenings(node, refuses):
+    """Every sub-condition of a check whose replacement by a constant weakens it: by False where it refuses, by True
+    where it accepts. `and`/`or` keep the polarity; `not` flips it."""
+    yield node, not refuses
+    if isinstance(node, ast.BoolOp):
+        for value in node.values:
+            yield from _weakenings(value, refuses)
+    elif isinstance(node, ast.UnaryOp) and isinstance(node.op, ast.Not):
+        yield from _weakenings(node.operand, not refuses)
+
+
 def _sites(tree):
     return [(function, node, value) for function, check, refuses in _checks(tree)
-            for node, value in weakenings(check, refuses)]
+            for node, value in _weakenings(check, refuses)]
+
+
+def _replace(tree, old, new):
+    for parent in ast.walk(tree):
+        for field, value in ast.iter_fields(parent):
+            if value is old:
+                setattr(parent, field, new)
+                return
+            if isinstance(value, list) and any(item is old for item in value):
+                value[[item is old for item in value].index(True)] = new
+                return
+    raise AssertionError("site not found")
 
 
 def _mutants():
@@ -398,7 +420,7 @@ def _mutants():
         tree = ast.parse(source)
         function, node, value = _sites(tree)[index]
         description = f"{function}:{node.lineno}: {ast.unparse(node)} -> {value}"
-        replace(tree, node, ast.Constant(value))
+        _replace(tree, node, ast.Constant(value))
         namespace = {"__name__": "ve.rights_route", "__package__": "ve", "__file__": str(path)}
         exec(compile(ast.fix_missing_locations(tree), str(path), "exec"), namespace)
         yield description, namespace

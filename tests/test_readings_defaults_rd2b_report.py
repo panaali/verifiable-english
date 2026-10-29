@@ -14,10 +14,6 @@ LEDGER = (HERE / "LEDGER.md").read_text()
 GATE = json.loads((HERE / "evidence/gate.json").read_text())
 
 
-# A seeded bug's file that later became a package (AR-16b split `ve/readings_verdicts.py` into `ve/readings_verdicts/`).
-MOVED = {"ve/readings_verdicts.py": "ve/readings_verdicts/__init__.py"}
-
-
 def test_suite_chunks():
     chunks = GATE["suite"]["chunks"]
     assert len(chunks) == 6 and all(c["passed"] > 0 for c in chunks)
@@ -91,7 +87,7 @@ def test_seeded_bugs_name_real_tests_and_rows():
     for bug in bugs:
         row = re.search(rf"^\| {bug['id']} \| (.*)$", DELTA, re.M)
         assert row, bug["id"]
-        assert (ROOT / MOVED.get(bug["file"], bug["file"])).exists()
+        assert (ROOT / bug["file"]).exists()
         count = bug["failed_count"]
         assert count >= 1 and f"{count} {'test' if count == 1 else 'tests'}" in row[1], bug["id"]
         assert any(test.split("::")[1] in row[1] for test in bug["failed"]), bug["id"]

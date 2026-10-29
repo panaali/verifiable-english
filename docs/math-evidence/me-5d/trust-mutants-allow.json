@@ -1,9 +1,0 @@
-{
- "allow": [
-  {"definition": "VE.Calc.Run.factJson", "operator": "list-empty", "reason": "No mutant is built: `f.form.coeffs.map` -> `[]` leaves its function argument applied to a list (Function expected), which Lean refuses, so the tool reads UNKNOWN. A goal's coefficients emptied or cut are killed through list-first/list-last and the `two-unknowns` and `r3` guards in RunExamples."},
-  {"definition": "VE.Calc.Run.stepJson", "operator": "list-empty", "reason": "No mutant is built: `cert.weights.map` -> `[]` leaves its function argument applied to a list (Function expected). The weights cut or reordered are killed by the `r3`, `h6p` and `no-solution` guards (seed-weights-reversed)."},
-  {"definition": "VE.Calc.Run.shownJson", "operator": "list-empty", "reason": "No mutant is built: `(reads ds k).map` -> `[]` leaves its function argument applied to a list (Function expected). An empty or cut counterexample is killed by the `r4`, `reads` and `one-premise` guards."},
-  {"definition": "VE.Calc.Run.reads", "operator": "list-empty", "reason": "No mutant is built: `k.exprs` -> `[]` leaves `.filterMap` on a list of unknown type (Invalid field notation); `k.exprs.filterMap` and `links.flatMap` -> `[]` leave a function applied to a list (Function expected); `Expr.names` -> `[]` is not a function for `flatMap` (Application type mismatch). The same lists cut by list-first, list-last and list-drop-last are killed by the `reads` guard (two links, a name read only by the last expression)."},
-  {"definition": "VE.Calc.Run.reads", "operator": "append-right", "reason": "No mutant is built: dropping `Expr.names ++` leaves `inlined.flatMap linked`, a list of strings where a function is expected (Application type mismatch). Dropping the links instead (append-left) is killed by the `reads` guard."}
- ]
-}

@@ -731,13 +731,10 @@ theorem decodeVocabulary_flag_not_defined (profiles : List String) (v : Json) (r
   cases hdef2.1
 
 
-/-- `normsEnvironment_flag_not_defined` with or without the decoder's `acts@0` reading. -/
-theorem normsEnvironment_flag_not_defined_in (environment : Json) (acts : Bool)
-    (ne : VE.Norms.Wire.NormsEnvironment)
-    (h : VE.Norms.Wire.decodeNormsEnvironment environment true acts = .ok ne) :
+theorem normsEnvironment_flag_not_defined (environment : Json) (ne : VE.Norms.Wire.NormsEnvironment)
+    (h : VE.Norms.Wire.decodeNormsEnvironment environment = .ok ne) :
     ∀ f ∈ ne.rv.flags, ∀ d ∈ ne.rv.definitions, f.name ≠ d.name := by
   unfold VE.Norms.Wire.decodeNormsEnvironment at h
-  extract_lets ps at h
   obtain ⟨e, _, h⟩ := bind_ok h
   extract_lets vocab jpX jpY at h
   split at h
@@ -751,7 +748,6 @@ theorem normsEnvironment_flag_not_defined_in (environment : Json) (acts : Bool)
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
-  obtain ⟨_, _, h⟩ := bind_ok h
   extract_lets vocab2 at h
   obtain ⟨rv, hrv, h⟩ := bind_ok h
   obtain ⟨_, _, h⟩ := bind_ok h
@@ -761,13 +757,8 @@ theorem normsEnvironment_flag_not_defined_in (environment : Json) (acts : Bool)
   obtain ⟨_, _, h⟩ := bind_ok h
   dsimp (config := { zeta := false }) only [jpZ] at h
   obtain ⟨_, _, h⟩ := bind_ok h
-  obtain rfl := Except.ok.inj h
+  cases h
   exact decodeVocabulary_flag_not_defined _ _ rv hrv
-
-theorem normsEnvironment_flag_not_defined (environment : Json) (ne : VE.Norms.Wire.NormsEnvironment)
-    (h : VE.Norms.Wire.decodeNormsEnvironment environment = .ok ne) :
-    ∀ f ∈ ne.rv.flags, ∀ d ∈ ne.rv.definitions, f.name ≠ d.name :=
-  normsEnvironment_flag_not_defined_in environment false ne h
 
 /-- Rejection (a) for a decoded norm source: no flag names one of its definitions. -/
 theorem decodeSource_flag_not_defined (environment norms : Json) (flags : Bool) (src : VE.Norms.Wire.Source)
@@ -800,7 +791,7 @@ theorem decodeSource_flag_not_defined (environment norms : Json) (flags : Bool) 
   · cases h
     intro f hf d hd
     obtain ⟨d', hd', rfl⟩ := List.mem_map.mp hd
-    exact normsEnvironment_flag_not_defined_in _ _ ne hne f hf d' hd'
+    exact normsEnvironment_flag_not_defined _ ne hne f hf d' hd'
 
 /-! ## Rejection (b) and the empty-target case -/
 

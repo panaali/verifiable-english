@@ -56,15 +56,13 @@ def kind : Def :=
     ("norms-certificate", kindIs "norms-certificate"),
     ("norms-conflict", kindIs "norms-conflict")]
 
-/-- The `norms-elaborate` row over `formula`, with the `extra` members one route adds (required). -/
-def elaborateWith (formula : Shape) (extra : List (String × Shape) := []) : Shape :=
+def elaborateWith (formula : Shape) : Shape :=
   c
     "Norms.Wire.regenerated: one layer (order entry, premise) per regulated predicate; Background in generator order; one conflict target per layer, then per profile pair. These lists are the service's (Lean invariants and Python parity in tests/test_lean_service_schema.py)."
     [
       obj,
-      .required (["id", "status", "order", "background", "premises", "conflict_targets", "fragment"] ++
-        extra.map (·.1)),
-      closed ([
+      .required ["id", "status", "order", "background", "premises", "conflict_targets", "fragment"],
+      closed [
         ("id", n [str, .equals "/id"]),
         ("status", constS "ok"),
         ("order", ref "common.json#/$defs/strings"),
@@ -93,13 +91,9 @@ def elaborateWith (formula : Shape) (extra : List (String × Shape) := []) : Sha
                 ("target", str),
                 ("sorts", ref "common.json#/$defs/strings"),
                 ("ast", formula)]])]),
-        ("fragment", .type ["boolean"])] ++ extra)]
+        ("fragment", .type ["boolean"])]]
 
-/-- The norms route's row also gives the wording of each plain act by its predicate (`Norms.Wire.plainWordings`,
-act-phrases 2.1), which Python binds to the request's plain acts and displays. -/
 def «norms-elaborate» : Shape := elaborateWith (ref "common.json#/$defs/generated_formula")
-  [("wordings", c "Norms.Wire.plainWordings: one wording per plain predicate with an act, by its name."
-    [ref "common.json#/$defs/string_map"])]
 
 def «norms-certificate» : Shape :=
   n [
@@ -164,10 +158,5 @@ def file : File where
     ("norms-certificate", .schema «norms-certificate»),
     ("norms-witness", .schema «norms-witness»),
     ("norms-conflict", .schema «norms-conflict»)]
-
-/- The `norms-elaborate` row as `tools/response_schemas.py` renders it, pinned (ap-1bb): every member required and
-closed, `wordings` a `string_map` beside the regenerated lists the encoder theorem reads. -/
-#guard (ResponseShape.render "norms.json" 64 «norms-elaborate»).toOption.map (·.compress) == some
-  "{\"$comment\":\"Norms.Wire.regenerated: one layer (order entry, premise) per regulated predicate; Background in generator order; one conflict target per layer, then per profile pair. These lists are the service's (Lean invariants and Python parity in tests/test_lean_service_schema.py).\",\"additionalProperties\":false,\"properties\":{\"background\":{\"items\":{\"additionalProperties\":false,\"properties\":{\"ast\":{\"$ref\":\"common.json#/$defs/generated_formula\"},\"generator\":{\"enum\":[\"flags\",\"definitions\",\"literals\",\"profile\"]}},\"required\":[\"generator\",\"ast\"],\"type\":\"object\"},\"type\":\"array\"},\"conflict_targets\":{\"items\":{\"additionalProperties\":false,\"properties\":{\"ast\":{\"$ref\":\"common.json#/$defs/generated_formula\"},\"sorts\":{\"$ref\":\"common.json#/$defs/strings\"},\"target\":{\"type\":\"string\"}},\"required\":[\"target\",\"sorts\",\"ast\"],\"type\":\"object\"},\"type\":\"array\"},\"fragment\":{\"type\":\"boolean\"},\"id\":{\"type\":\"string\",\"x-equals\":\"/id\"},\"order\":{\"$ref\":\"common.json#/$defs/strings\"},\"premises\":{\"items\":{\"additionalProperties\":false,\"properties\":{\"ast\":{\"$ref\":\"common.json#/$defs/generated_formula\"},\"label\":{\"pattern\":\"layer:norms:.*\",\"type\":\"string\"}},\"required\":[\"label\",\"ast\"],\"type\":\"object\"},\"type\":\"array\"},\"status\":{\"const\":\"ok\"},\"wordings\":{\"$comment\":\"Norms.Wire.plainWordings: one wording per plain predicate with an act, by its name.\",\"$ref\":\"common.json#/$defs/string_map\"}},\"required\":[\"id\",\"status\",\"order\",\"background\",\"premises\",\"conflict_targets\",\"fragment\",\"wordings\"],\"type\":\"object\"}"
 
 end ResponseShape.Schemas.Norms

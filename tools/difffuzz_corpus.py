@@ -75,15 +75,11 @@ EXCLUDED = {
     "usecases/eligibility/cases.json": ("no-input", "applicant profiles the use case's script turns into documents"),
     "usecases/eligibility/rules.json": ("no-input", "rule records the use case's script turns into documents"),
     "usecases/safety-framework/cases.json": ("no-input", "case facts the use case's script turns into documents"),
-    "usecases/anthropic-rsp/cases.json": ("no-input", "case facts transcribed from the plan, for the use case's script"),
-    "usecases/openai-preparedness/cases.json": (
-        "no-input", "case facts transcribed from the plan, for the use case's script"),
     "usecases/gatekeeper-exemption/*.json": ("no-input", "a glob@1 policy request, outside the VE checker"),
     "usecases/udhr-pilot/*/answers/*.json": ("artifact", "a UDHR pilot run's recorded query answers"),
     "usecases/udhr-pilot/*/reports/*.check.json": ("artifact", "a UDHR pilot run's recorded check report"),
     "usecases/udhr-pilot/*/metrics.json": ("artifact", "a UDHR pilot run's measurements"),
     "usecases/udhr-pilot/*/unmigrated.json": ("artifact", "a UDHR pilot run's record of sets not migrated"),
-    "usecases/udhr-pilot/*/frozen-run.json": ("artifact", "an earlier UDHR pilot run's files, frozen for migration"),
 }
 
 def _generated(module, name, convert=lambda value: value):
