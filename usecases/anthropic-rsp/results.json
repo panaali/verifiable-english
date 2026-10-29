@@ -5270,6 +5270,26 @@
     "K8": {
      "with": "ALL",
      "without": "NONE"
+    },
+    "T1": {
+     "with": "ALL",
+     "without": "NONE"
+    },
+    "T2b": {
+     "with": "SOME(RS3o=iff&RS3i=suff&RS3c=third | RS3o=iff&RS3i=suff&RS3c=result | RS3o=iff&RS3i=iff&RS3c=third | RS3o=iff&RS3i=iff&RS3c=result)",
+     "without": "NONE"
+    },
+    "T3": {
+     "with": "ALL",
+     "without": "NONE"
+    },
+    "T4b": {
+     "with": "SOME(RS3o=iff&RS3i=iff&RS3c=third | RS3o=iff&RS3i=iff&RS3c=result)",
+     "without": "NONE"
+    },
+    "T7": {
+     "with": "SOME(RS3o=suff&RS3i=suff&RS3c=result | RS3o=suff&RS3i=iff&RS3c=result | RS3o=iff&RS3i=suff&RS3c=result | RS3o=iff&RS3i=iff&RS3c=result)",
+     "without": "NONE"
     }
    },
    "unscored": true

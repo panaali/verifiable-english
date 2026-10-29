@@ -154,8 +154,8 @@ The 15 faithful undecided rows in `results.json` name the missing AP, SC, ET, QT
 translation's conflicts remain candidates until the independent source check under R14. The answer counts remain
 unvalidated until `uc-audit` has checked the source units and the item dependencies.
 
-`results.json` also records three unscored section 9 comparisons. Removing N1 changes 46 answer cells, including
-all 20 PROT cells; removing N2 changes G1 and N5; removing N3 changes K13. These variants rerun the VE routes with
+`results.json` also records three unscored section 9 comparisons. Removing N1 changes 54 answer cells, including
+all 20 PROT cells and T1, T2b, T3, T4b and T7; removing N2 changes G1 and N5; removing N3 changes K13. These variants rerun the VE routes with
 each narrowing removed alone. W1 conflict-free rows now have replayed proof certificates, and a failed W1 or D3
 proof stays undecided. M6 audits the rules and threshold facts built by the m2 and m4 mutants, rather than names
 inferred from their presets.
