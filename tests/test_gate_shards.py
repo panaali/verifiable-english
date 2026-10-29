@@ -125,6 +125,7 @@ def test_merge_cli_writes_one_full_record(tmp_path):
     (lambda row: row["counts"].update(selected=True), "incomplete test events"),
     (lambda row: row.update(collection=[]), "full collection"),
     (lambda row: row.update(quarantine=[]), "quarantine"),
+    (lambda row: row["quarantine"].update(retried=[]), "quarantine"),
     (lambda row: row.update(mode="full"), "schema or mode"),
     (lambda row: row.update(status="failed"), "without a reason"),
 ])
