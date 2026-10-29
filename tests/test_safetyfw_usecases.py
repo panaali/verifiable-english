@@ -324,6 +324,66 @@ def test_pf_translation_lint_and_invention_audit(pf_modules):
     assert all(len(fs) == 2 for _, fs in pf_translation.facts())
 
 
+def test_pf_all_planned_d1_families_have_source_bound_drafts(pf_modules):
+    blocks = {b.id: b for b in pf_translation.rule_blocks()}
+    assert {int(m.group(1)) for name in blocks if (m := re.match(r"f(\d+)-", name))} == set(range(1, 18))
+    placements = {value[1] for value in pf_build.PLACEMENTS.values()
+                  if value[0] in ("rule", "blocked_rule")}
+    choices = {name for _, readings in pf_build.READINGS.values()
+               for names in readings.values() for name in names}
+    assert set(blocks) <= placements | choices
+    assert all(block.source.strip() for block in blocks.values())
+
+    for set_id, (harness, readings) in pf_build.READINGS.items():
+        assert set(readings) == set(pf_translation.READING_SETS[harness])
+        for choice, names in readings.items():
+            for name in names:
+                assert name in blocks
+                assert not blocks[name].when or (harness, choice) in blocks[name].when
+
+    assert [name for name in pf_build.READINGS["rs8-distilled"][1]["rel"]] == ["f6-rel"]
+    assert pf_build.READINGS["rs8-distilled"][1]["pred"] == []
+    f6 = json.loads(pf_translation.parsed_rule("f6-rel"))
+    assert f6["sign"] is False and f6["predicate"] == "additional_safety_measures"
+    assert f6["mode"] == "default"
+    assert "significant_increase" in json.dumps(f6["unless"])
+
+    f11 = pf_build.READINGS["rs5-adjustment"][1]
+    assert {"f11-acknowledge", "f11-protect", "f11-share"} <= set(f11["within"]) & set(f11["exception"])
+    assert json.loads(pf_translation.parsed_rule("f11-within"))["predicate"] == "adjustment_permission"
+    exception = json.loads(pf_translation.parsed_rule("f11-exception"))
+    assert exception["predicate"] == "safeguards_before_deployment" and exception["sign"] is False
+    assert {"adjustment_confirmed", "adjustment_conditions"} <= set(re.findall(
+        r'"([a-z_]+)"', json.dumps(exception["guard"])))
+
+    rows = {"lra": "lra_found", "sandbagging": "sandbagging_found", "ara": "ara_found",
+            "undermining": "undermining_found", "nuclear": "nuclear_found"}
+    for row, predicate in rows.items():
+        assert pf_build.READINGS[f"rs4-{row}"][1] == {"N": [f"f12-{row}"], "P": []}
+        guard = json.dumps(json.loads(pf_translation.parsed_rule(f"f12-{row}"))["guard"])
+        assert predicate in guard
+        if row in ("lra", "undermining"):
+            assert "high_capability" in guard and "critical_capability" in guard
+
+    f17 = pf_build.READINGS["rs12-category"][1]
+    assert f17 == {"suff": ["f17-suff"], "iff": ["f17-iff", "f17-iff-only"]}
+    negative = json.loads(pf_translation.parsed_rule("f17-iff-only"))
+    assert negative["sign"] is False and negative["guard"][0] == "not"
+    for criterion in ("plausible", "measurable", "severe", "net_new", "irremediable"):
+        assert criterion in json.dumps(negative["guard"])
+
+    units = {unit["id"]: unit for unit in json.loads((PF / "spans.json").read_text())["units"]}
+    assert {units[key]["blocked_rule"] for key in ("p10-u147", "p10-u148", "p8-u104", "p8-u105")} == {
+        "f5-checkpoint", "f5-ambiguous", "f13-review", "f13-results"}
+    assert all(units[key]["status"] == "UNFORMALISED" for key in ("p10-u147", "p10-u148"))
+    for row, unit_id in {"lra": "p8-u106", "sandbagging": "p8-u109", "ara": "p8-u110",
+                         "undermining": "p8-u111", "nuclear": "p8-u112"}.items():
+        assert units[unit_id]["status"] == "OPEN"
+        assert units[unit_id]["reading_set"] == f"rs4-{row}"
+    assert units["p8-u109"]["waits"][-1] == "AP"
+    assert units["p8-u112"]["waits"][-1] == "AP"
+
+
 def test_pf_reading_blocks_match_the_choice_that_selects_them(pf_modules, monkeypatch):
     assert pf_stage0.invention_audit()["choice_mismatches"] == []
     original = pf_build.READINGS["rs1-misuse-bio"]

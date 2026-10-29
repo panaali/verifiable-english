@@ -180,7 +180,7 @@ def invention_audit():
         for choice, ids in choices.items():
             for block_id in ids:
                 block = next((b for b in T.rule_blocks() if b.id == block_id), None)
-                if block is None or (harness, choice) not in block.when:
+                if block is None or (block.when and (harness, choice) not in block.when):
                     choice_mismatches.append((set_id, choice, block_id))
     return {"untraced": untraced, "defaults_untraced": defaults, "permissions_untraced": [],
             "choice_mismatches": choice_mismatches,
