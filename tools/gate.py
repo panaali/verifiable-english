@@ -98,7 +98,11 @@ def read_trust(path: Path) -> dict:
 
 def pytest_args(files: list[str] | None = None) -> tuple[str, ...]:
     """PYTEST_ARGS over `files` (test files under tests/) instead of the whole of tests/."""
-    return PYTEST_ARGS if files is None else (*PYTEST_ARGS[:-1], *files)
+    if files is None:
+        return PYTEST_ARGS
+    # A parametrized node ID may exceed Linux's per-argument limit. File shards
+    # own whole files; exact retry/shard selection is passed through the event plugin.
+    return (*PYTEST_ARGS[:-1], *dict.fromkeys(item.split("::", 1)[0] for item in files))
 
 
 def collection_command(python: list[str], files: list[str] | None = None) -> list[str]:
@@ -128,13 +132,22 @@ def collect(env: dict[str, str], result_file: Path, *, python: list[str] | None 
             files: list[str] | None = None) -> dict:
     """Run the gate's collection in `env` (plugin autoload off) and return its events."""
     env = nested_pytest.environment(env, VE_GATE_PYTEST_RESULT=str(result_file))
+    if files is not None:
+        env = exact_selection_env(env, result_file.parent, files)
     command(collection_command(python or [sys.executable], files), env=env, stage="Python collection")
     return json.loads(result_file.read_text())
 
 
 def retry_command(python: list[str], tests: list[str]) -> list[str]:
     """PYTEST_ARGS over the node IDs `tests`, serially: a quarantined failure's run alone."""
-    return nested_pytest.command((*PYTEST_ARGS[:-1], *tests), python=python)
+    return nested_pytest.command(pytest_args(tests), python=python)
+
+
+def exact_selection_env(env: dict[str, str], scratch: Path, ids: list[str]) -> dict[str, str]:
+    """Give pytest exact IDs through a file, never a potentially oversized argv item."""
+    path = scratch / "pytest-exact-selection.json"
+    path.write_text(json.dumps(ids))
+    return {**env, "VE_GATE_PYTEST_IDS_FILE": str(path)}
 
 
 def exit_reason(stage: str, code: int) -> str:
@@ -359,7 +372,8 @@ def retry_quarantined(result: dict, events: dict, env: dict[str, str], python: l
         return
     retry_file = scratch / "pytest-quarantine.json"
     try:
-        command(retry_command(python, failed), env={**env, "VE_GATE_PYTEST_RESULT": str(retry_file)},
+        command(retry_command(python, failed), env=exact_selection_env(
+            {**env, "VE_GATE_PYTEST_RESULT": str(retry_file)}, scratch, failed),
                 stage="Quarantine retry")
     except RuntimeError:
         pass  # a retry that fails exits 1: its events say which test failed again
@@ -856,8 +870,11 @@ def main() -> int:
                 result["collection"]["head_ids"] = len(collection["collected"])
                 result["collection"]["base_ids"] = result["collection"].get("base_ids", 0)
             try:
+                suite_env = {**pytest_env, "VE_GATE_PYTEST_RESULT": str(events_file)}
+                if selection is not None:
+                    suite_env = exact_selection_env(suite_env, scratch, selection)
                 command(suite_command(python, args.workers, selection),
-                        env={**pytest_env, "VE_GATE_PYTEST_RESULT": str(events_file)}, stage="Python suite")
+                        env=suite_env, stage="Python suite")
             except RuntimeError as exc:
                 result["failures"].append({"stage": "pytest command", "reason": str(exc)})
             if not events_file.exists():

@@ -228,7 +228,8 @@ def test_gate_runs_full_collection_and_only_its_share(tmp_path, monkeypatch, n, 
                 "collected": all_ids, "selected": IDS, "deselected": [live_id] if live else [],
                 "collection_reports": []}))
         if stage == "Python suite":
-            selected = [node for node in IDS if node in args] if any(node in args for node in IDS) else IDS
+            selected = (json.loads(Path(env["VE_GATE_PYTEST_IDS_FILE"]).read_text())
+                        if "VE_GATE_PYTEST_IDS_FILE" in env else IDS)
             runs.append(selected)
             Path(env["VE_GATE_PYTEST_RESULT"]).write_text(json.dumps({
                 "tests": {node: OUTCOMES[node] for node in selected},

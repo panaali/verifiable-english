@@ -31,6 +31,31 @@ def pytest_itemcollected(item):
     _EVENTS["collected"].append(item.nodeid)
 
 
+@pytest.hookimpl(trylast=True)
+def pytest_collection_modifyitems(config, items):
+    """Apply gate selectors from a file so long parametrized IDs never enter argv."""
+    listing = os.environ.get("VE_GATE_PYTEST_IDS_FILE")
+    if not listing:
+        return
+    selectors = json.loads(Path(listing).read_text())
+    if not isinstance(selectors, list) or not selectors or any(type(s) is not str for s in selectors):
+        raise pytest.UsageError("invalid gate selection file")
+
+    def chosen(nodeid):
+        return any(nodeid == selector or nodeid.startswith(selector + "::") or
+                   nodeid.startswith(selector + "[") for selector in selectors)
+
+    kept = [item for item in items if chosen(item.nodeid)]
+    removed = [item for item in items if not chosen(item.nodeid)]
+    if removed:
+        config.hook.pytest_deselected(items=removed)
+        items[:] = kept
+    # As with pytest's own node selectors, unrelated tests in an assigned file
+    # are outside this run's collection, not policy deselections.
+    _EVENTS["collected"] = [node for node in _EVENTS["collected"] if chosen(node)]
+    _EVENTS["deselected"] = [node for node in _EVENTS["deselected"] if chosen(node)]
+
+
 def pytest_collection_finish(session):
     _EVENTS["selected"] = [item.nodeid for item in session.items]
 
