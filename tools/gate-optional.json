@@ -11,6 +11,7 @@
     {"nodeid": "tests/test_nary_folio.py::test_full_nary_folio_accounting_when_corpus_is_available", "reason": "optional pinned FOLIO v2 corpus is not downloaded"},
     {"nodeid": "tests/test_safety_framework.py::test_build_check_writes_nothing_beside_the_source", "reason": "the pinned source is not stored on this machine"},
     {"nodeid": "tests/test_safety_framework.py::test_readings_rerun_equals_committed_readings", "reason": "the pinned source is not stored on this machine"},
+    {"nodeid": "tests/test_safety_framework.py::test_fsf_r2_probes_rerun_equals_saved_probes", "reason": "the pinned source is not stored on this machine"},
     {"nodeid": "tests/test_p1_native_counter.py::test_retained_deepinfra_smoke_native_count*", "reason": "pinned tokenizer not cached; test never downloads"},
     {"nodeid": "tests/test_p1_amendment7.py::test_all_19_retained_calls_reuse_exact_original_responses", "reason": "local dev evidence absent in clean checkout"},
     {"nodeid": "tests/test_p1_amendment7.py::test_actual_dev_prefix_reconstructs_without_duplicate_trials", "reason": "local dev evidence absent in clean checkout"},

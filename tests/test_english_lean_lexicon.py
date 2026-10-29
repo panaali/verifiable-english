@@ -85,7 +85,7 @@ def test_lean_fixtures_are_generated_from_the_python_reference():
 
 def test_every_corpus_environment_has_a_valid_selected_lexicon():
     report = X.corpus_report()
-    assert len(report['environments']) == 39
+    assert len(report['environments']) == 40
     assert report['valid'] == len(report['environments'])
     assert report['invalid'] == 0
     assert report['failures_by_condition'] == {}
