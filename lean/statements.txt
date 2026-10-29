@@ -5681,6 +5681,46 @@ theorem VE.Cardinality.Examples.wellFormed_cases
       ¬VE.Cardinality.Examples.colliding.WellFormed ∧ ¬VE.Cardinality.Examples.ghost.WellFormed
   -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.Examples.colliding@VE.Cardinality.Examples VE.Cardinality.Examples.ghost@VE.Cardinality.Examples VE.Cardinality.Examples.named@VE.Cardinality.Examples VE.Cardinality.Examples.users@VE.Cardinality.Examples
   -- expr 2834057780
+theorem VE.Cardinality.Run.charge_fst
+  ∀ (qs : List (Unit → VE.Time.QFormula)) (acc : Nat × List VE.Time.QFormula),
+    (List.foldl VE.Cardinality.Run.charge acc qs).fst =
+      List.foldl
+        (fun used q => if used > VE.Limits.maxNodes then used else used + VE.Order.Wire.formulaNodes (q ()).erase) acc.fst
+        qs
+  -- uses VE.Cardinality.Run.charge@VE.Cardinality.Run VE.Limits.maxNodes@VE.Limits VE.Order.Wire.formulaNodes@VE.Order.Wire VE.Time.QFormula.erase@VE.Time.Syntax VE.Time.QFormula@VE.Time.Syntax
+  -- expr 1216409554
+theorem VE.Cardinality.Run.charge_over
+  ∀ {acc : Nat × List VE.Time.QFormula},
+    acc.fst > VE.Limits.maxNodes →
+      ∀ (qs : List (Unit → VE.Time.QFormula)), List.foldl VE.Cardinality.Run.charge acc qs = acc
+  -- uses VE.Cardinality.Run.charge@VE.Cardinality.Run VE.Limits.maxNodes@VE.Limits VE.Time.QFormula@VE.Time.Syntax
+  -- expr 1168747995
+theorem VE.Cardinality.Run.charge_snd
+  ∀ (qs : List (Unit → VE.Time.QFormula)) (acc : Nat × List VE.Time.QFormula),
+    (List.foldl VE.Cardinality.Run.charge acc qs).fst ≤ VE.Limits.maxNodes →
+      (List.foldl VE.Cardinality.Run.charge acc qs).snd = (List.map (fun x => x ()) qs).reverse ++ acc.snd
+  -- uses VE.Cardinality.Run.charge@VE.Cardinality.Run VE.Limits.maxNodes@VE.Limits VE.Time.QFormula@VE.Time.Syntax
+  -- expr 1986464197
+theorem VE.Cardinality.Run.checkErased_eq
+  ∀ {w : VE.Cardinality.CardEnv} (ps : List (VE.Cardinality.CAdmission w)) (c : VE.Cardinality.CAdmission w)
+    {R : VE.Cardinality.RegionData} {table : List (String × String × VE.Cardinality.Region)}
+    {ep : List VE.Time.QFormula × VE.Time.QFormula} {ids : List (String × String) × String × String}
+    (cert : VE.Cardinality.CardCertificate),
+    VE.Cardinality.Run.checkedProblem w.env (List.map (fun x => x.formula) ps) c.formula = Except.ok (R, table, ep) →
+      VE.Cardinality.Run.idsOf w ep = Except.ok ids →
+        VE.Cardinality.checkErased ps c table ep ids cert = VE.Cardinality.checkCertificate ps c cert
+  -- uses VE.Cardinality.CAdmission.formula@VE.Cardinality.Wire VE.Cardinality.CAdmission@VE.Cardinality.Wire VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.CardCertificate@VE.Cardinality.Run VE.Cardinality.CardEnv.env@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Region@VE.Cardinality.Regions VE.Cardinality.RegionData@VE.Cardinality.Regions VE.Cardinality.Run.checkedProblem@VE.Cardinality.Run VE.Cardinality.Run.idsOf@VE.Cardinality.Run VE.Cardinality.checkCertificate@VE.Cardinality.Run VE.Cardinality.checkErased@VE.Cardinality.Run VE.Time.QFormula@VE.Time.Syntax
+  -- expr 4013213666
+theorem VE.Cardinality.Run.checkedProblem_eq
+  ∀ (E : VE.Cardinality.CEnv) (ps : List VE.Cardinality.CFormula) (c : VE.Cardinality.CFormula),
+    VE.Cardinality.Run.checkedProblem E ps c =
+      Except.map
+        (fun x =>
+          (VE.Cardinality.regionData E (c :: ps), VE.Cardinality.regionTable E (c :: ps),
+            VE.Cardinality.erasedProblem E ps c))
+        (VE.Cardinality.Run.problemChecks E ps c)
+  -- uses VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.Region@VE.Cardinality.Regions VE.Cardinality.RegionData@VE.Cardinality.Regions VE.Cardinality.Run.checkedProblem@VE.Cardinality.Run VE.Cardinality.Run.problemChecks@VE.Cardinality.Run VE.Cardinality.erasedProblem@VE.Cardinality.Erase VE.Cardinality.regionData@VE.Cardinality.Regions VE.Cardinality.regionTable@VE.Cardinality.Regions VE.Time.QFormula@VE.Time.Syntax
+  -- expr 2805100846
 theorem VE.Cardinality.Run.decodeCertificate_sound
   ∀ {j : Lean.Json} {cert : VE.Cardinality.CardCertificate},
     VE.Cardinality.Run.decodeCertificate j = Except.ok cert →
@@ -5703,9 +5743,45 @@ theorem VE.Cardinality.Run.erasedJson_conclusion
                 ("meaning_id", Lean.Json.str cid.fst), ("core_meaning_id", Lean.Json.str cid.snd)]))
   -- uses VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.CardEnv.env@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Run.erasedIds@VE.Cardinality.Run VE.Cardinality.Run.erasedJson@VE.Cardinality.Run VE.Cardinality.erasedProblem@VE.Cardinality.Erase VE.Time.QFormula.erase@VE.Time.Syntax VE.Time.QFormula@VE.Time.Syntax VE.Time.Wire.encCore@VE.Time.Wire VE.Time.Wire.encQ@VE.Time.Wire
   -- expr 3998950269
+theorem VE.Cardinality.Run.erasedJson_problemJson
+  ∀ (w : VE.Cardinality.CardEnv) (ps : List VE.Cardinality.CFormula) (c : VE.Cardinality.CFormula),
+    VE.Cardinality.Run.erasedJson w ps c =
+      Except.map (VE.Cardinality.Run.problemJson (VE.Cardinality.erasedProblem w.env ps c))
+        (VE.Cardinality.Run.erasedIds w ps c)
+  -- uses VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.CardEnv.env@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Run.erasedIds@VE.Cardinality.Run VE.Cardinality.Run.erasedJson@VE.Cardinality.Run VE.Cardinality.Run.problemJson@VE.Cardinality.Run VE.Cardinality.erasedProblem@VE.Cardinality.Erase
+  -- expr 4149155385
+theorem VE.Cardinality.Run.erasedThunks_built
+  ∀ (E : VE.Cardinality.CEnv) (ps : List VE.Cardinality.CFormula) (c : VE.Cardinality.CFormula),
+    List.map (fun x => x ())
+        (VE.Cardinality.Run.erasedThunks E (VE.Cardinality.regionData E (c :: ps))
+          (VE.Cardinality.regionTable E (c :: ps)) ps c) =
+      (VE.Cardinality.erasedProblem E ps c).snd :: (VE.Cardinality.erasedProblem E ps c).fst
+  -- uses VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.Run.erasedThunks@VE.Cardinality.Run VE.Cardinality.erasedProblem@VE.Cardinality.Erase VE.Cardinality.regionData@VE.Cardinality.Regions VE.Cardinality.regionTable@VE.Cardinality.Regions VE.Time.QFormula@VE.Time.Syntax
+  -- expr 2571549316
+theorem VE.Cardinality.Run.foldl_add_ge
+  ∀ (xs : List Nat) (u : Nat), u ≤ List.foldl (fun x1 x2 => x1 + x2) u xs
+  -- uses
+  -- expr 2237739851
+theorem VE.Cardinality.Run.foldl_capped_ge
+  ∀ (M : Nat) (xs : List Nat) (u : Nat), u ≤ List.foldl (fun a n => if a > M then a else a + n) u xs
+  -- uses
+  -- expr 569617177
+theorem VE.Cardinality.Run.foldl_capped_gt
+  ∀ (M : Nat) (xs : List Nat) (u : Nat),
+    List.foldl (fun a n => if a > M then a else a + n) u xs > M ↔ List.foldl (fun x1 x2 => x1 + x2) u xs > M
+  -- uses
+  -- expr 611315846
+theorem VE.Cardinality.Run.problemChecks_eq
+  ∀ (E : VE.Cardinality.CEnv) (ps : List VE.Cardinality.CFormula) (c : VE.Cardinality.CFormula),
+    VE.Cardinality.Run.problemChecks E ps c = do
+      VE.Cardinality.problemLimits E (c :: ps)
+      VE.Time.Wire.quantityLimits.aggregate
+          ((VE.Cardinality.erasedProblem E ps c).snd :: (VE.Cardinality.erasedProblem E ps c).fst)
+  -- uses VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.Run.problemChecks@VE.Cardinality.Run VE.Cardinality.erasedProblem@VE.Cardinality.Erase VE.Cardinality.problemLimits@VE.Cardinality.Regions VE.Time.QFormula@VE.Time.Syntax VE.Time.Wire.quantityLimits.aggregate@VE.Time.Wire
+  -- expr 2772685334
 theorem VE.Cardinality.Run.regionsJson_constants
-  ∀ (E : VE.Cardinality.CEnv) (fs : List VE.Cardinality.CFormula),
-    (VE.Cardinality.Run.regionsJson E fs).getObjVal? "constants" =
+  ∀ (R : VE.Cardinality.RegionData) (table : List (String × String × VE.Cardinality.Region)),
+    (VE.Cardinality.Run.regionsJson R table).getObjVal? "constants" =
       Except.ok
         (Lean.ToJson.toJson
           (List.map
@@ -5713,9 +5789,9 @@ theorem VE.Cardinality.Run.regionsJson_constants
               Lean.Json.mkObj
                 [("constant", Lean.Json.str e.fst), ("sort", Lean.Json.str e.snd.fst),
                   ("bits", Lean.Json.str (VE.Cardinality.bitString e.snd.snd))])
-            (VE.Cardinality.regionTable E fs)))
-  -- uses VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.Region@VE.Cardinality.Regions VE.Cardinality.Run.regionsJson@VE.Cardinality.Run VE.Cardinality.bitString@VE.Cardinality.Regions VE.Cardinality.regionTable@VE.Cardinality.Regions
-  -- expr 1333388031
+            table))
+  -- uses VE.Cardinality.Region@VE.Cardinality.Regions VE.Cardinality.RegionData@VE.Cardinality.Regions VE.Cardinality.Run.regionsJson@VE.Cardinality.Run VE.Cardinality.bitString@VE.Cardinality.Regions
+  -- expr 32322998
 theorem VE.Cardinality.Run.runCaseReported_error
   ∀ {j : Lean.Json} {m : String},
     VE.Cardinality.Run.runCase j = Except.error m →
@@ -5939,6 +6015,12 @@ theorem VE.Cardinality.checkCertificate_sound
           cert.conclusionId = c.meaningId ∧ VE.Cardinality.CEntails w.env (List.map (fun x => x.formula) ps) c.formula
   -- uses VE.Cardinality.CAdmission.formula@VE.Cardinality.Wire VE.Cardinality.CAdmission.meaningId@VE.Cardinality.Wire VE.Cardinality.CAdmission@VE.Cardinality.Wire VE.Cardinality.CEntails@VE.Cardinality.Semantics VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.CardCertificate.conclusionId@VE.Cardinality.Run VE.Cardinality.CardCertificate.environmentId@VE.Cardinality.Run VE.Cardinality.CardCertificate.premiseIds@VE.Cardinality.Run VE.Cardinality.CardCertificate@VE.Cardinality.Run VE.Cardinality.CardEnv.env@VE.Cardinality.Wire VE.Cardinality.CardEnv.environmentId@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.checkCertificate@VE.Cardinality.Run
   -- expr 3850057825
+theorem VE.Cardinality.checkedRegions_eq
+  ∀ (E : VE.Cardinality.CEnv) (fs : List VE.Cardinality.CFormula),
+    VE.Cardinality.checkedRegions E fs =
+      Except.map (fun x => VE.Cardinality.regionData E fs) (VE.Cardinality.problemLimits E fs)
+  -- uses VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.RegionData@VE.Cardinality.Regions VE.Cardinality.checkedRegions@VE.Cardinality.Regions VE.Cardinality.problemLimits@VE.Cardinality.Regions VE.Cardinality.regionData@VE.Cardinality.Regions
+  -- expr 576579414
 theorem VE.Cardinality.countAtom_holds_iff
   ∀ {α : Type u} {E : VE.Cardinality.CEnv} {T : VE.Time.TStructure α},
     VE.Cardinality.Admissible E T →
@@ -6004,6 +6086,14 @@ theorem VE.Cardinality.count_nOfM_agree
                     VE.Order.Formula.denote T.lower [] (VE.Time.nOfM s n m sel.toFormula prop.toFormula)
   -- uses VE.Cardinality.Admissible@VE.Cardinality.Semantics VE.Cardinality.Body.toFormula@VE.Cardinality.Theorems VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.BodyTyped@VE.Cardinality.Syntax VE.Cardinality.CEnv.finite@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.nOfMFormula@VE.Cardinality.Theorems VE.Order.Formula.denote@VE.Order.Semantics VE.Order.Structure.Carrier@VE.Order.Semantics VE.Order.Value@VE.Order.Semantics VE.Time.TStructure.lower@VE.Time.Semantics VE.Time.TStructure@VE.Time.Semantics VE.Time.nOfM@VE.Time.Count
   -- expr 1226029124
+theorem VE.Cardinality.countedAmong_eq_H
+  VE.Cardinality.countedAmong = VE.Cardinality.countedAmongH
+  -- uses VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.countedAmong@VE.Cardinality.Regions VE.Cardinality.countedAmongH@VE.Cardinality.Regions VE.Time.QFormula@VE.Time.Syntax
+  -- expr 1119746687
+theorem VE.Cardinality.countedSorts_eq_H
+  VE.Cardinality.countedSorts = VE.Cardinality.countedSortsH
+  -- uses VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.countedSorts@VE.Cardinality.Regions VE.Cardinality.countedSortsH@VE.Cardinality.Regions
+  -- expr 3546235577
 theorem VE.Cardinality.countedUniversals_spec
   ∀ {E : VE.Cardinality.CEnv} {fs : List VE.Cardinality.CFormula},
     (∀ (a : VE.Cardinality.CFormula), a ∈ fs → VE.Cardinality.Admitted E a) →
@@ -6132,10 +6222,43 @@ theorem VE.Cardinality.exists_nodup_filter
   ∀ {α : Type u} (P : α → Prop) (xs : List α), ∃ ys, ys.Nodup ∧ ∀ (x : α), x ∈ ys ↔ x ∈ xs ∧ P x
   -- uses
   -- expr 3200230773
+theorem VE.Cardinality.firstUseH_eq
+  ∀ {β : Type} [inst : BEq β] [LawfulBEq β] [inst_2 : Hashable β] (xs : List β),
+    VE.Cardinality.firstUseH xs = VE.Cardinality.firstUse xs
+  -- uses VE.Cardinality.firstUse@VE.Cardinality.Regions VE.Cardinality.firstUseH@VE.Cardinality.Regions
+  -- expr 720334210
+theorem VE.Cardinality.firstUseH_foldl
+  ∀ {β : Type} [inst : BEq β] [LawfulBEq β] [inst_2 : Hashable β] (xs : List β) (acc : Std.HashSet β × Array β)
+    (l : List β),
+    (∀ (y : β), acc.fst.contains y = l.contains y) →
+      acc.snd.toList = l →
+        (List.foldl VE.Cardinality.firstUseStep acc xs).snd.toList =
+          List.foldl (fun acc x => if acc.contains x = Bool.true then acc else acc ++ [x]) l xs
+  -- uses VE.Cardinality.firstUseStep@VE.Cardinality.Regions
+  -- expr 817300403
+theorem VE.Cardinality.firstUseStep_inv
+  ∀ {β : Type} [inst : BEq β] [LawfulBEq β] [inst_2 : Hashable β] (acc : Std.HashSet β × Array β) (l : List β) (x : β),
+    (∀ (y : β), acc.fst.contains y = l.contains y) →
+      acc.snd.toList = l →
+        (∀ (y : β),
+            (VE.Cardinality.firstUseStep acc x).fst.contains y =
+              (if l.contains x = Bool.true then l else l ++ [x]).contains y) ∧
+          (VE.Cardinality.firstUseStep acc x).snd.toList = if l.contains x = Bool.true then l else l ++ [x]
+  -- uses VE.Cardinality.firstUseStep@VE.Cardinality.Regions
+  -- expr 2921543236
 theorem VE.Cardinality.firstUse_nodup
   ∀ {β : Type} [inst : BEq β] [LawfulBEq β] (xs : List β), (VE.Cardinality.firstUse xs).Nodup
   -- uses VE.Cardinality.firstUse@VE.Cardinality.Regions
   -- expr 745461169
+theorem VE.Cardinality.gate_cardinality
+  ∀ (ps : List String),
+    "cardinality@0" ∈ ps →
+      ¬"judgments@0" ∈ ps →
+        ∀ (r : VE.Compose.Route),
+          VE.Compose.gateOf VE.Compose.profileTable ps = Except.ok r ↔
+            ps ∈ VE.Cardinality.Wire.profileLists ∧ r = VE.Compose.Route.frozen
+  -- uses VE.Cardinality.Wire.profileLists@VE.Cardinality.Wire VE.Compose.Route.frozen@VE.Compose.Dispatch VE.Compose.Route@VE.Compose.Dispatch VE.Compose.gateOf@VE.Compose.Dispatch VE.Compose.profileTable@VE.Compose.Dispatch
+  -- expr 3140971446
 theorem VE.Cardinality.get_of_data
   ∀ {s : String} {A rest : List Char} {c : Char},
     s.data = A ++ c :: rest → s.get { byteIdx := String.utf8ByteSize.go A } = c
@@ -6270,6 +6393,15 @@ theorem VE.Cardinality.percentRoundsTo_holds_iff
             0 < zd ∧ VE.Cardinality.erasedRounding r (100 * zn) zd D k
   -- uses VE.Cardinality.CFormula.holds@VE.Cardinality.Semantics VE.Cardinality.CFormula.percentRoundsTo@VE.Cardinality.Syntax VE.Cardinality.CTerm.Denotes@VE.Cardinality.Semantics VE.Cardinality.CTerm@VE.Cardinality.Syntax VE.Cardinality.erasedRounding@VE.Cardinality.Ratio VE.Numbers.Rounding@VE.Numbers.Round VE.Time.TStructure@VE.Time.Semantics
   -- expr 1348203355
+theorem VE.Cardinality.predsAmong_eq_H
+  VE.Cardinality.predsAmong = VE.Cardinality.predsAmongH
+  -- uses VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.predsAmong@VE.Cardinality.Regions VE.Cardinality.predsAmongH@VE.Cardinality.Regions VE.Time.QFormula@VE.Time.Syntax
+  -- expr 6982935
+theorem VE.Cardinality.predsOn_not_counted
+  ∀ {E : VE.Cardinality.CEnv} {fs : List VE.Cardinality.CFormula} {s : String},
+    ¬s ∈ VE.Cardinality.countedSorts fs → VE.Cardinality.predsOn E fs s = []
+  -- uses VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.countedSorts@VE.Cardinality.Regions VE.Cardinality.predsOn@VE.Cardinality.Regions
+  -- expr 2873371874
 theorem VE.Cardinality.proportion_holds_iff
   ∀ {α : Type u} (E : VE.Cardinality.CEnv) (T : VE.Time.TStructure α),
     VE.Cardinality.Admissible E T →
@@ -6324,6 +6456,26 @@ theorem VE.Cardinality.regionConst_startsWith
     (VE.Cardinality.regionConst s r).startsWith VE.Cardinality.regionPrefix = Bool.true
   -- uses VE.Cardinality.Region@VE.Cardinality.Regions VE.Cardinality.regionConst@VE.Cardinality.Regions VE.Cardinality.regionPrefix@VE.Cardinality.Syntax
   -- expr 627247050
+theorem VE.Cardinality.regionData_predsOn
+  ∀ (E : VE.Cardinality.CEnv) (fs : List VE.Cardinality.CFormula),
+    (VE.Cardinality.regionData E fs).predsOn = VE.Cardinality.predsOn E fs
+  -- uses VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.RegionData.predsOn@VE.Cardinality.Regions VE.Cardinality.predsOn@VE.Cardinality.Regions VE.Cardinality.regionData@VE.Cardinality.Regions
+  -- expr 1635970568
+theorem VE.Cardinality.regionData_sorts
+  ∀ (E : VE.Cardinality.CEnv) (fs : List VE.Cardinality.CFormula),
+    (VE.Cardinality.regionData E fs).sorts = VE.Cardinality.countedSorts fs
+  -- uses VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.RegionData.sorts@VE.Cardinality.Regions VE.Cardinality.countedSorts@VE.Cardinality.Regions VE.Cardinality.regionData@VE.Cardinality.Regions
+  -- expr 1681257740
+theorem VE.Cardinality.regionData_table
+  ∀ (E : VE.Cardinality.CEnv) (fs : List VE.Cardinality.CFormula),
+    (VE.Cardinality.regionData E fs).table = VE.Cardinality.regionTable E fs
+  -- uses VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.Region@VE.Cardinality.Regions VE.Cardinality.RegionData.table@VE.Cardinality.Regions VE.Cardinality.regionData@VE.Cardinality.Regions VE.Cardinality.regionTable@VE.Cardinality.Regions
+  -- expr 2244648114
+theorem VE.Cardinality.regionData_universals
+  ∀ (E : VE.Cardinality.CEnv) (fs : List VE.Cardinality.CFormula),
+    (VE.Cardinality.regionData E fs).universals = VE.Cardinality.countedUniversals E fs
+  -- uses VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CEnv@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.RegionData.universals@VE.Cardinality.Regions VE.Cardinality.countedUniversals@VE.Cardinality.Regions VE.Cardinality.regionData@VE.Cardinality.Regions VE.Time.QFormula@VE.Time.Syntax
+  -- expr 790527829
 theorem VE.Cardinality.regionSize_eq
   ∀ {α : Type u} {T : VE.Time.TStructure α} {s : String} {b : VE.Cardinality.Body} {n : Nat},
     VE.Cardinality.HasCount T s b n → VE.Cardinality.regionSize T s b = n
@@ -6412,6 +6564,12 @@ theorem VE.Cardinality.startsWith_of_data
   ∀ (s p : String) (r : List Char), s.data = p.data ++ r → s.startsWith p = Bool.true
   -- uses
   -- expr 3588905589
+theorem VE.Cardinality.sublist_of_sorted
+  ∀ {l m : List String},
+    List.Pairwise (fun x1 x2 => x1 < x2) l →
+      List.Pairwise (fun x1 x2 => x1 < x2) m → (∀ (x : String), x ∈ l → x ∈ m) → l.Sublist m
+  -- uses
+  -- expr 782490565
 theorem VE.Cardinality.substrEq_prefix
   ∀ (s p : String) (r : List Char),
     s.data = p.data ++ r →
@@ -45164,6 +45322,10 @@ theorem VE.Service.runMode_calc
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.calc j = VE.Calc.Run.runCaseReported j
   -- uses VE.Calc.Run.runCaseReported@VE.Calc.Run VE.Service.Mode.calc@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 3103349118
+theorem VE.Service.runMode_cardinality
+  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.cardinality j = VE.Cardinality.Run.runCaseReported j
+  -- uses VE.Cardinality.Run.runCaseReported@VE.Cardinality.Run VE.Service.Mode.cardinality@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
+  -- expr 26778175
 theorem VE.Service.runMode_check
   ∀ (j : Lean.Json),
     VE.Service.runMode VE.Service.Mode.check j = VE.Service.Standalone.reported VE.Service.Standalone.checkCase j
