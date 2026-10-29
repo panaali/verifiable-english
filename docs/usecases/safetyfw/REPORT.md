@@ -256,7 +256,7 @@ wall time printed by `run.py` (the review-fix regeneration: 282.0 s). M4's struc
 
 The review fix in [RSP-RUN-REVIEW-FIX.md](RSP-RUN-REVIEW-FIX.md) obtained W1 conflict-freedom certificates for
 the no-conflict rows and preserved undecided outcomes when a certificate is missing. M6 now audits the actual
-mutated rule and listed-threshold inputs. Unscored section 9 reruns without N1, N2 and N3 change 42, 2 and 1
+mutated rule and listed-threshold inputs. Unscored section 9 reruns without N1, N2 and N3 change 46, 2 and 1
 answer cells respectively; the frozen key and the scored 111/126 result are unchanged.
 
 The three source-fidelity corrections are `f24-delay`'s invented positive `significant_lead` guard removed,

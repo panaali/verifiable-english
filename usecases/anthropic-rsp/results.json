@@ -5161,6 +5161,10 @@
      "with": "ALL",
      "without": "NONE"
     },
+    "B-INTD/INSCOPE": {
+     "with": "ALL",
+     "without": "NONE"
+    },
     "B-PUB/ASSESS": {
      "with": "ALL",
      "without": "NONE"
@@ -5219,11 +5223,23 @@
      "with": "ALL",
      "without": "NONE"
     },
+    "K2": {
+     "with": "ALL",
+     "without": "NONE"
+    },
     "K20": {
      "with": "ALL",
      "without": "NONE"
     },
     "K21a": {
+     "with": "ALL",
+     "without": "NONE"
+    },
+    "K22a": {
+     "with": "ALL",
+     "without": "NONE"
+    },
+    "K4": {
      "with": "ALL",
      "without": "NONE"
     },

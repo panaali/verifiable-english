@@ -387,9 +387,40 @@ def test_rsp_each_narrowing_has_an_unscored_counterfactual(rsp_modules):
     assert set(saved) == {"N1", "N2", "N3"}
     assert all(row["unscored"] and row["changed"] for row in saved.values())
     assert all(saved["N1"]["changed"][id_]["without"] == "NONE"
-               for id_ in ("A-T0/PROT1", "A-T1/PROT1", "A-T4/PROT4"))
+               for id_ in ("A-T0/PROT1", "A-T1/PROT1", "A-T4/PROT4",
+                           "B-INTD/INSCOPE", "K2", "K4", "K22a"))
     assert saved["N2"]["changed"]["G1"]["without"] == "NONE"
     assert saved["N3"]["changed"]["K13"]["without"] == "NONE"
+
+
+def test_rsp_n1_classification_is_explicit_for_every_rule(rsp_modules):
+    """RS0 is a source reading, including clauses that inherit 'will' from an earlier sentence."""
+    blocks = rsp_translation.rule_blocks()
+    assert len({block.id for block in blocks}) == len(blocks)
+    assert all(block.narrowing in {"RS0", "independent"} for block in blocks)
+    assert all(json.loads(rsp_translation.parsed_rule(block.id)).get("mode", "strict") == "strict"
+               for block in blocks if block.narrowing == "RS0")
+    assert {block.id for block in blocks if block.narrowing == "RS0"} >= {
+        "f8-internal", "f9-public", "f9-internal", "f11-goal-missed"}
+    assert {block.id for block in blocks if block.narrowing == "independent"} >= {
+        "f5-strict", "f15-financial-interest", "f26-need-not-delay"}
+
+
+@pytest.mark.parametrize("case_id,predicate", [
+    ("B-INTD", "in_scope"),
+    ("K2", "off_cycle_published"),
+    ("K4", "off_cycle_published"),
+    ("K22", "goal_miss_addressed"),
+])
+def test_rsp_n1_prediction_removes_inherited_commitments(rsp_modules, case_id, predicate):
+    """F4: the selected Lean rules disappear when N1 is removed, even without a local 'will'."""
+    try:
+        rsp_run.WITHOUT_NARROWING = "N1"
+        rsp_run.document.cache_clear()
+        assert rsp_run.verdict(rsp_run.query(rsp_run.CASES[case_id], predicate)) == "NONE"
+    finally:
+        rsp_run.WITHOUT_NARROWING = None
+        rsp_run.document.cache_clear()
 
 
 @pytest.mark.parametrize("narrowing,item_id", [("N1", "A-T1/PROT1"), ("N2", "G1"), ("N3", "K13")])
