@@ -151,9 +151,12 @@ def fullUnits : Json := toJson (units (some (Json.mkObj [("norm", (item "r1").me
   let second := Json.mkObj [("id", .str "t"), ("unit", .str "i2"), ("version", toJson (1 : Nat)),
     ("status", .str "open"), ("readings", toJson [reading.setObjVal! "id" (.str "b")
       |>.setObjVal! "content" (part "r2")])]
+  let singleton := case ((front (units none (some (part "r2")))
+    ["norms@0", "readings@1", "relational-fol@0", "scope@0"]).setObjVal! "reading_sets" (toJson [set]))
   let request := case ((front (units none none)
     ["norms@0", "readings@1", "relational-fol@0", "scope@0"]).setObjVal! "reading_sets" (toJson [set, second]))
   let answered := checkDocSetsAnswered request
+  let answeredOne := checkDocSetsAnswered singleton
   (answered.toOption.map (fun row =>
     (((row.getObjValD "composed_readings").getArr?.toOption.getD #[]).toList.map fun s =>
       (s.getObjValD "set", s.getObjValD "version", s.getObjValD "unit",
@@ -161,6 +164,8 @@ def fullUnits : Json := toJson (units (some (Json.mkObj [("norm", (item "r1").me
          (r.getObjValD "id", ((r.getObjValD "content").getObjValD "norm").getObjValD "sign"))))) ==
     some [(.str "s", toJson (1 : Nat), .str "i1", [(.str "a", .bool false)]),
           (.str "t", toJson (1 : Nat), .str "i2", [(.str "b", .bool false)])]) &&
+  (answeredOne.toOption.map (fun row => ((row.getObjValD "composed_readings").getArr?.toOption.getD #[]).size) ==
+    some 1) &&
   member (checkDocSetsAnswered doc) "composed_readings" == .null &&
   member (checkDocSetsAnswered full) "composed_readings" == .null
 
