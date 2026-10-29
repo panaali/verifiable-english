@@ -20,6 +20,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
 import subprocess
 import sys
@@ -27,6 +28,9 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
+sys.path.insert(0, str(REPO))
+
+from tools import nested_pytest  # noqa: E402
 
 # The closed list of missing feature families, in the words of the basis.
 FAMILIES = ("speech acts", "time", "numbers", "information flow",
@@ -198,8 +202,8 @@ def run_pytest(nodeids):
     """The named tests that pass, each run on its own."""
     passed = set()
     for nodeid in nodeids:
-        run = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", nodeid],
-                             cwd=REPO, capture_output=True, text=True)
+        run = subprocess.run(nested_pytest.command(["-q", "-p", "no:cacheprovider", nodeid]), cwd=REPO,
+                             env=nested_pytest.environment(os.environ), capture_output=True, text=True)
         if run.returncode == 0:
             passed.add(nodeid)
     return passed
