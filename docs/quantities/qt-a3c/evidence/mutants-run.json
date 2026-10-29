@@ -1,0 +1,169 @@
+{
+ "mutants": [
+  {
+   "id": "row-requires",
+   "file": "lean/VE/Compose/Dispatch.lean",
+   "claim": "the cardinality@0 row requires W6a's three profiles",
+   "source_sha256": "6c9502c0439e1ff2978ea6385c192310239fe5fb9337d31eb5f956113e7897d0",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Compose.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 85.9,
+   "output_tail": " Building VE.Compose.Examples (55s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3c/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3c/lean/VE/Compose/Examples.lean -o /home/seyran/code/ve-qt-a3c/lean/.lake/build/lib/lean/VE/Compose/Examples.olean -i /home/seyran/code/ve-qt-a3c/lean/.lake/build/lib/lean/VE/Compose/Examples.ilean -c /home/seyran/code/ve-qt-a3c/lean/.lake/build/ir/VE/Compose/Examples.c --setup /home/seyran/code/ve-qt-a3c/lean/.lake/build/ir/VE/Compose/Examples.setup.json --json\nerror: VE/Compose/Examples.lean:679:0: Expression\n  [([\"cardinality@0\", \"order@0\", \"relational-fol@0\"], \"cardinality@0 requires time@0\"),\n        ([\"cardinality@0\", \"relational-fol@0\", \"time@0\"], \"cardinality@0 requires order@0\"),\n        ([\"cardinality@0\"], \"Missing profile relational-fol@0\"),\n        ([\"cardinality@0\", \"norms@0\", \"order@0\", \"relational-fol@0\", \"time@0\"], \"cardinality@0 with norms@0\"),\n        ([\"cardinality@0\", \"order@0\", \"readings@1\", \"relational-fol@0\", \"time@0\"], \"cardinality@0 with readings@1\"),\n        ([\"cardinality@0\", \"judgments@0\", \"order@0\", \"relational-fol@0\", \"time@0\"],\n          \"judgments@0 requires documents@1\")].all\n    fun x =>\n    match x with\n    | (ps, e) => gateOf profileTable ps == Except.error (toString \"UnsupportedProfile: \" ++ toString e)\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Compose.Examples\nerror: build failed\n"
+  },
+  {
+   "id": "others-norms",
+   "file": "lean/VE/Compose/Dispatch.lean",
+   "claim": "cardinalityOthers: the row refuses every other profile",
+   "source_sha256": "6c9502c0439e1ff2978ea6385c192310239fe5fb9337d31eb5f956113e7897d0",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Compose.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 91.6,
+   "output_tail": " Building VE.Compose.Examples (52s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3c/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3c/lean/VE/Compose/Examples.lean -o /home/seyran/code/ve-qt-a3c/lean/.lake/build/lib/lean/VE/Compose/Examples.olean -i /home/seyran/code/ve-qt-a3c/lean/.lake/build/lib/lean/VE/Compose/Examples.ilean -c /home/seyran/code/ve-qt-a3c/lean/.lake/build/ir/VE/Compose/Examples.c --setup /home/seyran/code/ve-qt-a3c/lean/.lake/build/ir/VE/Compose/Examples.setup.json --json\nerror: VE/Compose/Examples.lean:679:0: Expression\n  [([\"cardinality@0\", \"order@0\", \"relational-fol@0\"], \"cardinality@0 requires time@0\"),\n        ([\"cardinality@0\", \"relational-fol@0\", \"time@0\"], \"cardinality@0 requires order@0\"),\n        ([\"cardinality@0\"], \"Missing profile relational-fol@0\"),\n        ([\"cardinality@0\", \"norms@0\", \"order@0\", \"relational-fol@0\", \"time@0\"], \"cardinality@0 with norms@0\"),\n        ([\"cardinality@0\", \"order@0\", \"readings@1\", \"relational-fol@0\", \"time@0\"], \"cardinality@0 with readings@1\"),\n        ([\"cardinality@0\", \"judgments@0\", \"order@0\", \"relational-fol@0\", \"time@0\"],\n          \"judgments@0 requires documents@1\")].all\n    fun x =>\n    match x with\n    | (ps, e) => gateOf profileTable ps == Except.error (toString \"UnsupportedProfile: \" ++ toString e)\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Compose.Examples\nerror: build failed\n"
+  },
+  {
+   "id": "modeProfiles-empty",
+   "file": "lean/VE/Compose/Dispatch.lean",
+   "claim": "modeProfiles: Python's environment list leaves cardinality@0 out",
+   "source_sha256": "6c9502c0439e1ff2978ea6385c192310239fe5fb9337d31eb5f956113e7897d0",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Compose.Examples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 86.8,
+   "output_tail": "`set_option linter.unusedVariables false`\nwarning: VE/SpeechActs/Consequence.lean:189:92: unused variable `hq`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\nwarning: VE/SpeechActs/Consequence.lean:190:35: unused variable `h\u03c6`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\nwarning: VE/SpeechActs/Consequence.lean:215:38: unused variable `h`\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\n\u2714 [118/119] Built VE.Compose.Dispatch (33s)\n\u2716 [119/119] Building VE.Compose.Examples (52s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3c/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3c/lean/VE/Compose/Examples.lean -o /home/seyran/code/ve-qt-a3c/lean/.lake/build/lib/lean/VE/Compose/Examples.olean -i /home/seyran/code/ve-qt-a3c/lean/.lake/build/lib/lean/VE/Compose/Examples.ilean -c /home/seyran/code/ve-qt-a3c/lean/.lake/build/ir/VE/Compose/Examples.c --setup /home/seyran/code/ve-qt-a3c/lean/.lake/build/ir/VE/Compose/Examples.setup.json --json\nerror: VE/Compose/Examples.lean:240:0: Expression\n  environmentProfiles.length == 18 && !environmentProfiles.contains \"judgments@0\" &&\n      !environmentProfiles.contains \"cardinality@0\" &&\n    environmentProfiles.getLast? == some \"readings@1\"\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Compose.Examples\nerror: build failed\n"
+  },
+  {
+   "id": "registry-name",
+   "file": "lean/VE/Service/Registry.lean",
+   "claim": "Mode.name: the mode is named cardinality",
+   "source_sha256": "fba2ab9dc2ec1946693e4c240c047d7bae3e2eb995b62ca11e53814bb46e2706",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build ResponseShape.Skeletons"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 89.7,
+   "output_tail": "i\u0335s\u0335t\u0335.\u0335c\u0335o\u0335n\u0335t\u0335a\u0335i\u0335n\u0335s\u0335_\u0335i\u0335f\u0335f\u0335_\u0335m\u0335e\u0335m\u0335,\u0335 \u0335List.mem_filter, Bool.not_eq_true',\n  \u0332  \u0332 \u0332 \u0332 \u0332 \u0332Bool.or_eq_false_iff, beq_eq_false_iff_ne, ne_eq] at this\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: ResponseShape/Skeleton.lean:430:87: This simp argument is unused:\n  List.mem_filter\n\nHint: Omit it from the simp argument list.\n  simp only [List.contains_cons, Bool.or_eq_true, beq_iff_eq, List.contains_iff_mem, \u0335L\u0335i\u0335s\u0335t\u0335.\u0335m\u0335e\u0335m\u0335_\u0335f\u0335i\u0335l\u0335t\u0335e\u0335r\u0335,\u0335\n        Bool.not_eq_true', Bool.or_eq_false_iff, beq_eq_false_iff_ne, ne_eq] at this\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2716 [472/473] Building ResponseShape.Schemas (4.2s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3c/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3c/lean/ResponseShape/Schemas.lean -o /home/seyran/code/ve-qt-a3c/lean/.lake/build/lib/lean/ResponseShape/Schemas.olean -i /home/seyran/code/ve-qt-a3c/lean/.lake/build/lib/lean/ResponseShape/Schemas.ilean -c /home/seyran/code/ve-qt-a3c/lean/.lake/build/ir/ResponseShape/Schemas.c --setup /home/seyran/code/ve-qt-a3c/lean/.lake/build/ir/ResponseShape/Schemas.setup.json --json\nerror: ResponseShape/Schemas.lean:100:0: Expression\n  VE.Service.registry.all fun r => (row r.mode.name).isSome\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- ResponseShape.Schemas\nerror: build failed\n"
+  },
+  {
+   "id": "dispatch-w6a",
+   "file": "lean/VE/Service/Protocol.lean",
+   "claim": "runMode: the mode runs the cardinality runner",
+   "source_sha256": "70c25a9ff863c7b5d3a4d5a2cababbe95bcffe1917cc786ff3667e6d19bf1038",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && python3 -c \"import pathlib; p = pathlib.Path('VE/Service/Protocol.lean'); s = p.read_text(); p.write_text(s.replace('runMode .cardinality j = VE.Cardinality.Run.runCaseReported j := rfl', 'runMode .cardinality j = VE.Cardinality.Run.runCaseReported j := sorry'))\" && cd .. && uv run pytest -q -x tests/test_cardinality_service.py"
+   ],
+   "killed": true,
+   "mutant_exit": 3,
+   "seconds": 911.4,
+   "output_tail": "117:0: 'VE.check_iff_wellFormed' depends on axioms: [propext, Quot.sound]\nINTERNALERROR> info: VE/Audit.lean:7118:0: 'VE.composition_sound' depends on axioms: [propext, Quot.sound]\nINTERNALERROR> info: VE/Audit.lean:7119:0: 'VE.countermodelCheck_iff' depends on axioms: [propext, Classical.choice, Quot.sound]\nINTERNALERROR> info: VE/Audit.lean:7120:0: 'VE.countermodel_sound' depends on axioms: [propext, Classical.choice, Quot.sound]\nINTERNALERROR> info: VE/Audit.lean:7121:0: 'VE.document_eval_iff_denote' depends on axioms: [propext, Classical.choice, Quot.sound]\nINTERNALERROR> info: VE/Audit.lean:7122:0: 'VE.entails_cut' does not depend on any axioms\nINTERNALERROR> info: VE/Audit.lean:7123:0: 'VE.eval_false_iff_not_denote' depends on axioms: [propext, Classical.choice, Quot.sound]\nINTERNALERROR> info: VE/Audit.lean:7124:0: 'VE.eval_iff_denote' depends on axioms: [propext, Classical.choice, Quot.sound]\nINTERNALERROR> info: VE/Audit.lean:7125:0: 'VE.no_certificate_countermodel_conflict' depends on axioms: [propext, Classical.choice, Quot.sound]\nINTERNALERROR> info: VE/Audit.lean:7126:0: 'VE.term_defined' does not depend on any axioms\nINTERNALERROR> info: VE/Audit.lean:7127:0: 'VE.typed_cons' depends on axioms: [propext]\nINTERNALERROR> info: VE/Audit.lean:7128:0: 'VE.typed_empty' depends on axioms: [propext]\nINTERNALERROR> \u2714 [1139/1140] Built VE (2.0s)\nINTERNALERROR> Some required targets logged failures:\nINTERNALERROR> - ResponseShape.Encoders\nINTERNALERROR> error: build failed\n"
+  },
+  {
+   "id": "encoder-statement",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "runCaseReported_fits: a statement row has its meaning id and formula",
+   "source_sha256": "9985c7b0b35eea5bc3a72974d4f95ba29eb0c5cf56f19f37c29c048879428c36",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build ResponseShape.Encoders.Cardinality"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 131.8,
+   "output_tail": "String\nhid : VE.Bridge.stringField j \"id\" = Except.ok id\nw\u271d : Json\nhobj : j.getObjVal? \"id\" = Except.ok w\u271d\nx\u271d : Except String Json\na\u271d\u00b9\u00b3 : String\nhkj : j.getObjVal? \"kind\" = Except.error a\u271d\u00b9\u00b3\nhK : (CaseCond.lacks \"kind\").holds j = true\na\u271d\u00b9\u00b2 : (\"admission\" == \"admission\" || \"admission\" == \"certificate\") = true\na\u271d\u00b9\u00b9 : Json\nh\u271d\u00b9\u2070 : j.getObjVal? \"environment\" = Except.ok a\u271d\u00b9\u00b9\na\u271d\u00b9\u2070 : CardEnv\nh\u271d\u2079 : Wire.decodeEnvironment a\u271d\u00b9\u00b9 = Except.ok a\u271d\u00b9\u2070\na\u271d\u2079 : Json\nh\u271d\u2078 : j.getObjVal? \"premises\" = Except.ok a\u271d\u2079\na\u271d\u2078 : Array Json\nh\u271d\u2077 : a\u271d\u2079.getArr? = Except.ok a\u271d\u2078\na\u271d\u2077 : List (CAdmission a\u271d\u00b9\u2070)\nh\u271d\u2076 : List.mapM (Wire.decodeStatement a\u271d\u00b9\u2070) a\u271d\u2078.toList = Except.ok a\u271d\u2077\na\u271d\u2076 : Json\nh\u271d\u2075 : j.getObjVal? \"conclusion\" = Except.ok a\u271d\u2076\na\u271d\u2075 : CAdmission a\u271d\u00b9\u2070\nh\u271d\u2074 : Wire.decodeStatement a\u271d\u00b9\u2070 a\u271d\u2076 = Except.ok a\u271d\u2075\na\u271d\u2074 : Unit\nh\u271d\u00b3 : Run.problemChecks a\u271d\u00b9\u2070.env (List.map (fun x => x.formula) a\u271d\u2077) a\u271d\u2075.formula = Except.ok a\u271d\u2074\na\u271d\u00b3 : Json\nh\u271d\u00b2 : Run.erasedJson a\u271d\u00b9\u2070 (List.map (fun x => x.formula) a\u271d\u2077) a\u271d\u2075.formula = Except.ok a\u271d\u00b3\na\u271d\u00b2 : Unit\nh\u271d\u00b9 :\n  Run.claimed j \"regions\" (Run.regionsJson a\u271d\u00b9\u2070.env (a\u271d\u2075.formula :: List.map (fun x => x.formula) a\u271d\u2077))\n      \"region table differs from the regenerated one\" =\n    Except.ok a\u271d\u00b2\na\u271d\u00b9 : Unit\nh\u271d : Run.claimed j \"erased\" a\u271d\u00b3 \"erased problem differs from the regenerated one\" = Except.ok a\u271d\u00b9\na\u271d : (\"admission\" == \"admission\") = true\n\u22a2 \u00ac(\"admission\" == \"admission\") = true\nerror: Lean exited with code 1\nSome required targets logged failures:\n- ResponseShape.Encoders.Cardinality\nerror: build failed\n"
+  },
+  {
+   "id": "tactic-certificate",
+   "file": "lean/ResponseShape/Encoders/Cardinality.lean",
+   "claim": "cardinality_rows: a certificate row only for the kind certificate",
+   "source_sha256": "8f6cfdfebd16637f598487599cdebdc83188d4e2c8704c1cac667fedf4054bf3",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build ResponseShape.Encoders.Cardinality"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 130.2,
+   "output_tail": "getObjValD \"kind\" = Json.str kind\na\u271d\u00b9\u2075 : (kind == \"admission\" || kind == \"certificate\") = true\na\u271d\u00b9\u2074 : Json\nh\u271d\u00b9\u00b3 : j.getObjVal? \"environment\" = Except.ok a\u271d\u00b9\u2074\na\u271d\u00b9\u00b3 : CardEnv\nh\u271d\u00b9\u00b2 : Wire.decodeEnvironment a\u271d\u00b9\u2074 = Except.ok a\u271d\u00b9\u00b3\na\u271d\u00b9\u00b2 : Json\nh\u271d\u00b9\u00b9 : j.getObjVal? \"premises\" = Except.ok a\u271d\u00b9\u00b2\na\u271d\u00b9\u00b9 : Array Json\nh\u271d\u00b9\u2070 : a\u271d\u00b9\u00b2.getArr? = Except.ok a\u271d\u00b9\u00b9\na\u271d\u00b9\u2070 : List (CAdmission a\u271d\u00b9\u00b3)\nh\u271d\u2079 : List.mapM (Wire.decodeStatement a\u271d\u00b9\u00b3) a\u271d\u00b9\u00b9.toList = Except.ok a\u271d\u00b9\u2070\na\u271d\u2079 : Json\nh\u271d\u2078 : j.getObjVal? \"conclusion\" = Except.ok a\u271d\u2079\na\u271d\u2078 : CAdmission a\u271d\u00b9\u00b3\nh\u271d\u2077 : Wire.decodeStatement a\u271d\u00b9\u00b3 a\u271d\u2079 = Except.ok a\u271d\u2078\na\u271d\u2077 : Unit\nh\u271d\u2076 : Run.problemChecks a\u271d\u00b9\u00b3.env (List.map (fun x => x.formula) a\u271d\u00b9\u2070) a\u271d\u2078.formula = Except.ok a\u271d\u2077\na\u271d\u2076 : Json\nh\u271d\u2075 : Run.erasedJson a\u271d\u00b9\u00b3 (List.map (fun x => x.formula) a\u271d\u00b9\u2070) a\u271d\u2078.formula = Except.ok a\u271d\u2076\na\u271d\u2075 : Unit\nh\u271d\u2074 :\n  Run.claimed j \"regions\" (Run.regionsJson a\u271d\u00b9\u00b3.env (a\u271d\u2078.formula :: List.map (fun x => x.formula) a\u271d\u00b9\u2070))\n      \"region table differs from the regenerated one\" =\n    Except.ok a\u271d\u2075\na\u271d\u2074 : Unit\nh\u271d\u00b3 : Run.claimed j \"erased\" a\u271d\u2076 \"erased problem differs from the regenerated one\" = Except.ok a\u271d\u2074\na\u271d\u00b3 : \u00ac(kind == \"admission\") = true\na\u271d\u00b2 : Json\nh\u271d\u00b2 : j.getObjVal? \"certificate\" = Except.ok a\u271d\u00b2\na\u271d\u00b9 : CardCertificate\nh\u271d\u00b9 : Run.decodeCertificate a\u271d\u00b2 = Except.ok a\u271d\u00b9\na\u271d : Bool\nh\u271d : VE.Cardinality.checkCertificate a\u271d\u00b9\u2070 a\u271d\u2078 a\u271d\u00b9 = Except.ok a\u271d\n\u22a2 \u00ac(\"admission\" == \"admission\") = true\nerror: Lean exited with code 1\nSome required targets logged failures:\n- ResponseShape.Encoders.Cardinality\nerror: build failed\n"
+  },
+  {
+   "id": "charged-nostop",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "chargedNodes: the build stops once the total passes the limit",
+   "source_sha256": "9985c7b0b35eea5bc3a72974d4f95ba29eb0c5cf56f19f37c29c048879428c36",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 729.2,
+   "output_tail": "list.\n  simp only [Bool.and_eq_true, decide_eq_true_eq, List.length_append, List.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [137/138] Built VE.Cardinality.Run (2.9s)\n\u2716 [138/138] Building VE.Cardinality.RunExamples (726s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3c/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3c/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3c/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3c/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3c/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3c/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:310:0: Expression\n  let n := charged (mentioning 6 :: List.replicate 200 anyCount) top;\n  decide (10000 < n) && decide (n < 20000)\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "charged-bridges",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "erasedThunks: the bridges are counted",
+   "source_sha256": "9985c7b0b35eea5bc3a72974d4f95ba29eb0c5cf56f19f37c29c048879428c36",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunTheorems"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 5.5,
+   "output_tail": "a3c/lean/VE/Cardinality/RunTheorems.lean -o /home/seyran/code/ve-qt-a3c/lean/.lake/build/lib/lean/VE/Cardinality/RunTheorems.olean -i /home/seyran/code/ve-qt-a3c/lean/.lake/build/lib/lean/VE/Cardinality/RunTheorems.ilean -c /home/seyran/code/ve-qt-a3c/lean/.lake/build/ir/VE/Cardinality/RunTheorems.c --setup /home/seyran/code/ve-qt-a3c/lean/.lake/build/ir/VE/Cardinality/RunTheorems.setup.json --json\nerror: VE/Cardinality/RunTheorems.lean:86:84: unsolved goals\nE : CEnv\nps : List CFormula\nc : CFormula\n\u22a2 Limits.maxNodes <\n      List.foldl (fun x1 x2 => x1 + x2)\n        (List.foldl (fun x1 x2 => x1 + x2) (Order.Wire.formulaNodes (CFormula.erase E (c :: ps) c).erase)\n          (List.map (fun x => Order.Wire.formulaNodes x.erase) (nonnegPremises E (c :: ps))))\n        (List.map (fun x => Order.Wire.formulaNodes (CFormula.erase E (c :: ps) x).erase) ps) \u2194\n    Limits.maxNodes <\n      List.foldl (fun x1 x2 => x1 + x2)\n        (List.foldl (fun x1 x2 => x1 + x2)\n          (List.foldl (fun x1 x2 => x1 + x2) (Order.Wire.formulaNodes (CFormula.erase E (c :: ps) c).erase)\n            (List.map (fun x => Order.Wire.formulaNodes x.erase) (nonnegPremises E (c :: ps))))\n          (List.map (fun x => Order.Wire.formulaNodes (bridge E (c :: ps) x).erase) (countedUniversals E (c :: ps))))\n        (List.map (fun x => Order.Wire.formulaNodes (CFormula.erase E (c :: ps) x).erase) ps)\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunTheorems\nerror: build failed\n"
+  },
+  {
+   "id": "charged-text",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "problemChecks: P3's refusal is W6a's aggregate text",
+   "source_sha256": "9985c7b0b35eea5bc3a72974d4f95ba29eb0c5cf56f19f37c29c048879428c36",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 175.2,
+   "output_tail": "ples.lean -o /home/seyran/code/ve-qt-a3c/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3c/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3c/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3c/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:287:0: Expression\n  err (case \"admission\" predsEnv (List.replicate (10001 - base) top) (wide 58)) == Time.Wire.aggregateLimit\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:289:0: Expression\n  err (case \"certificate\" predsEnv (List.replicate (10001 - base) top) (wide 58) [(\"certificate\", p \"{}\")]) ==\n    Time.Wire.aggregateLimit\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:291:0: Expression\n  (said do\n      let w \u2190 decodeEnvironment predsEnv\n      let ps \u2190 List.mapM (decodeStatement w) (List.replicate (10001 - base) top)\n      let __do_lift \u2190 decodeStatement w (wide 58)\n      let __do_lift_1 \u2190 decodeCertificate fa1Cert\n      checkCertificate ps __do_lift __do_lift_1) ==\n    Time.Wire.aggregateLimit\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:311:0: Expression\n  err (case \"admission\" predsEnv (mentioning 6 :: List.replicate 200 anyCount) top) == Time.Wire.aggregateLimit\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "py-deadline",
+   "file": "ve/backends/lean_service.py",
+   "claim": "DEADLINES: the mode has its CPU deadline",
+   "source_sha256": "982a7689a30a793a42a726eeacaf9cbcf2b68ee63882d354e540c57a2c960514",
+   "command": [
+    "bash",
+    "-c",
+    "uv run pytest -q -x tests/test_lean_service.py -k deadline_keys"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 569.6,
+   "output_tail": "F\n=================================== FAILURES ===================================\n_______________ test_the_deadline_keys_are_the_handshakes_modes ________________\n\n    def test_the_deadline_keys_are_the_handshakes_modes():\n        \"\"\"AR-10: the deadlines stay in Python, keyed by exactly the modes the handshake states (`MODES`, read\n        from envelope.json, which pins the handshake's list); a missing or an extra key fails.\"\"\"\n>       assert deadline_key_faults(DEADLINES, MODES) == []\nE       AssertionError: assert ['mode cardin... no deadline'] == []\nE         \nE         Left contains one more item: 'mode cardinality has no deadline'\nE         Use -v to get more diff\n\ntests/test_lean_service.py:992: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_lean_service.py::test_the_deadline_keys_are_the_handshakes_modes\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 211 deselected in 0.84s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-9gfggw34)\n"
+  }
+ ]
+}
