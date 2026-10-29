@@ -1,0 +1,111 @@
+{
+  "id": "U01",
+  "arm": "english",
+  "account": "claude-danielsaeedi37",
+  "prompt": "Read only the source and displayed lines below as a reader of this document. For the named conclusion, answer in exactly this format: `CLASS: SETTLED|TURNS|CONDITIONAL; DECIDER: <name or NONE>; WHY: <one sentence>`. SETTLED means it holds whatever is judged. TURNS means two admissible judgments can change it. CONDITIONAL means it is certified only given a judgment criterion. Name the decider if the text names one; otherwise say NONE. Do not use outside knowledge.\n\nSOURCE: UDHR art 24 synthetic: A worker gets rest if a break is reasonable; a workplace board decides whether this break is reasonable.\nCONCLUSION: this worker gets rest\nJUDGMENT: reasonable_break means whether this break is reasonable; decider: workplace board.\nWhether this break is reasonable is a judgment for workplace board.\n",
+  "cli": {
+    "duration_api_ms": 1950,
+    "stop_reason": "end_turn",
+    "session_id": "9fb908e1-5227-4efa-a5c2-ba527ded1064",
+    "total_cost_usd": 0.0183404,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 4099,
+      "cache_read_input_tokens": 10704,
+      "output_tokens": 87,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 4099,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 87,
+          "cache_read_input_tokens": 10704,
+          "cache_creation_input_tokens": 4099,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 4099
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 87,
+        "cacheReadInputTokens": 10704,
+        "cacheCreationInputTokens": 4099,
+        "webSearchRequests": 0,
+        "costUSD": 0.0183404,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 0,
+        "cacheCreationEphemeral5mInputTokens": 0,
+        "cacheCreationEphemeral1hInputTokens": 4099,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 1,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "CLASS: CONDITIONAL; DECIDER: workplace board; WHY: The conclusion that this worker gets rest follows only if the break is reasonable, and the text assigns that judgment to the workplace board, so it is certified only given the board's criterion.",
+    "ttft_ms": 2312,
+    "type": "result",
+    "duration_ms": 2378,
+    "uuid": "0a96c919-61ef-4fda-a5f4-4cc3a5e5159f",
+    "ttft_stream_ms": 1387,
+    "time_to_request_ms": 581,
+    "first_content_frame_ms": 1388,
+    "queued_turn_count": 0,
+    "result_index": 0
+  },
+  "stderr": "",
+  "exit_code": 0,
+  "charged_cw": 14892,
+  "answer": "CLASS: CONDITIONAL; DECIDER: workplace board; WHY: The conclusion that this worker gets rest follows only if the break is reasonable, and the text assigns that judgment to the workplace board, so it is certified only given the board's criterion."
+}

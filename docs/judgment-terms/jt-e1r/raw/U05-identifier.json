@@ -1,0 +1,111 @@
+{
+  "id": "U05",
+  "arm": "identifier",
+  "account": "claude-danielsaeedi37",
+  "prompt": "Read only the source and displayed lines below as a reader of this document. For the named conclusion, answer in exactly this format: `CLASS: SETTLED|TURNS|CONDITIONAL; DECIDER: <name or NONE>; WHY: <one sentence>`. SETTLED means it holds whatever is judged. TURNS means two admissible judgments can change it. CONDITIONAL means it is certified only given a judgment criterion. Name the decider if the text names one; otherwise say NONE. Do not use outside knowledge.\n\nSOURCE: UDHR art 23 synthetic: Equal pay applies to a fair comparison; an employment panel decides whether this comparison is fair.\nCONCLUSION: equal pay applies\nJUDGMENT: fair_comparison means whether this comparison is fair; decider: employment panel.\nFocus is classified as \"fair_comparison\".\n",
+  "cli": {
+    "duration_api_ms": 1968,
+    "stop_reason": "end_turn",
+    "session_id": "7cdd1cc5-29ee-4223-9fdc-da3bf1361838",
+    "total_cost_usd": 0.0183484,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 4091,
+      "cache_read_input_tokens": 10704,
+      "output_tokens": 91,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 4091,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 91,
+          "cache_read_input_tokens": 10704,
+          "cache_creation_input_tokens": 4091,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 4091
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 91,
+        "cacheReadInputTokens": 10704,
+        "cacheCreationInputTokens": 4091,
+        "webSearchRequests": 0,
+        "costUSD": 0.0183484,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 0,
+        "cacheCreationEphemeral5mInputTokens": 0,
+        "cacheCreationEphemeral1hInputTokens": 4091,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 1,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "CLASS: CONDITIONAL; DECIDER: employment panel; WHY: \"Equal pay applies\" holds only if the comparison is fair, and the text assigns that fairness judgment to the employment panel, so the conclusion is certified only given the panel's criterion.",
+    "ttft_ms": 2225,
+    "type": "result",
+    "duration_ms": 2269,
+    "uuid": "d715fba7-34c4-487f-a011-2ea6bf5ff66e",
+    "ttft_stream_ms": 1555,
+    "time_to_request_ms": 397,
+    "first_content_frame_ms": 1555,
+    "queued_turn_count": 0,
+    "result_index": 0
+  },
+  "stderr": "",
+  "exit_code": 0,
+  "charged_cw": 14888,
+  "answer": "CLASS: CONDITIONAL; DECIDER: employment panel; WHY: \"Equal pay applies\" holds only if the comparison is fair, and the text assigns that fairness judgment to the employment panel, so the conclusion is certified only given the panel's criterion."
+}
