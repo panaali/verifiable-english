@@ -1,0 +1,102 @@
+{
+  "trusted_definitions": [
+    {
+      "definition": "VE.EnglishGrammar.SourceWordKind",
+      "file": "VE/EnglishGrammar/SourceWords.lean",
+      "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean",
+      "statuses": {
+        "ALLOWED": 3
+      }
+    },
+    {
+      "definition": "VE.EnglishGrammar.SourceWordKind.toJson",
+      "file": "VE/EnglishGrammar/SourceWords.lean",
+      "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean",
+      "statuses": {
+        "ALLOWED": 6,
+        "INVALID": 12,
+        "KILLED": 14
+      }
+    },
+    {
+      "definition": "VE.EnglishGrammar.SourceWordRow.toJson",
+      "file": "VE/EnglishGrammar/SourceWords.lean",
+      "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean",
+      "statuses": {
+        "KILLED": 8
+      }
+    },
+    {
+      "definition": "VE.EnglishGrammar.SourceWordRow.validIdentity",
+      "file": "VE/EnglishGrammar/SourceWords.lean",
+      "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean",
+      "statuses": {
+        "ALLOWED": 4,
+        "INVALID": 4,
+        "KILLED": 9
+      }
+    },
+    {
+      "definition": "VE.EnglishGrammar.SourceWordRow.validKind",
+      "file": "VE/EnglishGrammar/SourceWords.lean",
+      "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean",
+      "statuses": {
+        "ALLOWED": 13,
+        "INVALID": 8,
+        "KILLED": 42
+      }
+    },
+    {
+      "definition": "VE.EnglishGrammar.sourceWords",
+      "file": "VE/EnglishGrammar/SourceWords.lean",
+      "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean",
+      "statuses": {
+        "ALLOWED": 2
+      }
+    },
+    {
+      "definition": "VE.EnglishGrammar.sourceWordsJson",
+      "file": "VE/EnglishGrammar/SourceWords.lean",
+      "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean",
+      "statuses": {
+        "ALLOWED": 4,
+        "KILLED": 11
+      }
+    },
+    {
+      "definition": "VE.EnglishGrammar.sourceWordsValid",
+      "file": "VE/EnglishGrammar/SourceWords.lean",
+      "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean",
+      "statuses": {
+        "ALLOWED": 2,
+        "KILLED": 18
+      }
+    }
+  ],
+  "manual_seeded_bugs": [
+    {
+      "behaviour": "readings minimum",
+      "file": "lean/VE/EnglishGrammar/SourceWords.lean",
+      "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean",
+      "failure": "Lean fixture build failed"
+    },
+    {
+      "behaviour": "refusal substring",
+      "file": "lean/VE/EnglishGrammar/SourceWords.lean",
+      "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean",
+      "failure": "Lean fixture build failed"
+    },
+    {
+      "behaviour": "unique contextual key",
+      "file": "lean/VE/EnglishGrammar/SourceWords.lean",
+      "test": "lean/VE/EnglishGrammar/SourceWordsExamples.lean",
+      "failure": "Lean fixture build failed"
+    },
+    {
+      "behaviour": "Python loader selects generated catalogue",
+      "file": "ve/english_grammar/__init__.py",
+      "test": "tests/test_source_words.py::test_generated_json_equals_lean_table",
+      "failure": "pytest assertion failed"
+    }
+  ]
+}
