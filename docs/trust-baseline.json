@@ -1433,6 +1433,13 @@
    "reason": "en-sw F1: VE/EnglishGrammar/SourceWords.lean S +7 for sourceWordNormal and normalized catalogue checks; cumulative en-sw growth S +55, G[V] +20, K +0; SourceWordsExamples #guards cover the added definition",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-sw F1, 2026-10-29",
    "commit": "785927e109ecc9cafcc320da40ea2b1cc5d2c5da"
+  },
+  {
+   "class": "V",
+   "lines": 43,
+   "reason": "me-5e: VE/Calc/Run.lean +43 untied D[V] for follows wire evidence and reclassification of Check.runShown and Derive.shown; the new Calc response shapes are reject-only G[R]; K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-5e, 2026-10-29",
+   "commit": "b0dce1ea4c96241925fa2ee505e756ca1ee8a54f"
   }
  ]
 }
