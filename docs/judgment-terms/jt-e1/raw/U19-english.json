@@ -1,0 +1,113 @@
+{
+  "id": "U19",
+  "arm": "english",
+  "prompt": "Read only the source and displayed lines below as a reader of this document. For the named conclusion, answer in exactly this format: `CLASS: SETTLED|TURNS|CONDITIONAL; DECIDER: <name or NONE>; WHY: <one sentence>`. SETTLED means it holds whatever is judged. TURNS means two admissible judgments can change it. CONDITIONAL means it is certified only given a judgment criterion. Name the decider if the text names one; otherwise say NONE. Do not use outside knowledge.\n\nSOURCE: J-iota, synthetic criterion for a recorded order.\nCONCLUSION: the rules are conflict-free under this criterion\nWhether the arrest is arbitrary is a judgment for court.\nConflict-free, given these sentences: J-iota, synthetic criterion for a recorded order.. the rules are conflict-free under this criterion.\n",
+  "call": {
+    "account": "claude-panaali2",
+    "returncode": 0,
+    "stderr": "",
+    "result": {
+      "duration_api_ms": 1925,
+      "stop_reason": "end_turn",
+      "session_id": "4a6a1a20-57ac-49bf-bb89-12bc4c039c7e",
+      "total_cost_usd": 0.0048545,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 889,
+        "cache_read_input_tokens": 1545,
+        "output_tokens": 114,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 889,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 114,
+            "cache_read_input_tokens": 1545,
+            "cache_creation_input_tokens": 889,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 889
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "modelUsage": {
+        "claude-sonnet-5-5": {
+          "inputTokens": 2,
+          "outputTokens": 114,
+          "cacheReadInputTokens": 1545,
+          "cacheCreationInputTokens": 889,
+          "webSearchRequests": 0,
+          "costUSD": 0.0048545,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "thinkingTokens": 0,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 889,
+          "canonicalModel": "claude-sonnet-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "permission_denials": [],
+      "terminal_reason": "completed",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required",
+      "subagent_stats": {
+        "spawned": 0,
+        "requested": {
+          "background": 0,
+          "foreground": 0,
+          "unset": 0
+        },
+        "started_in_background": 0,
+        "max_depth": 0,
+        "spawned_by_subagents": 0,
+        "completed": 0,
+        "failed": 0,
+        "killed": {
+          "parent": 0,
+          "user": 0,
+          "system": 0
+        },
+        "refused": {
+          "depth_limit": 0,
+          "concurrency_limit": 0,
+          "budget": 0
+        },
+        "by_type": {}
+      },
+      "safety_stops": 0,
+      "is_error": false,
+      "num_turns": 1,
+      "subtype": "success",
+      "api_error_status": null,
+      "result": "CLASS: CONDITIONAL; DECIDER: NONE; WHY: The conflict-free conclusion is certified only \"under this criterion\" (J-iota, a synthetic criterion for a recorded order), and while the text says whether the arrest is arbitrary is for court, that is a different question from the conclusion, so no decider is named for it.",
+      "ttft_ms": 2118,
+      "type": "result",
+      "duration_ms": 2148,
+      "uuid": "e4ad4f50-ea0d-42e8-b6b0-126a1dc88d86",
+      "ttft_stream_ms": 1221,
+      "time_to_request_ms": 224,
+      "first_content_frame_ms": 1221,
+      "queued_turn_count": 0,
+      "result_index": 0
+    },
+    "cw": 2550
+  },
+  "raw_answer": "CLASS: CONDITIONAL; DECIDER: NONE; WHY: The conflict-free conclusion is certified only \"under this criterion\" (J-iota, a synthetic criterion for a recorded order), and while the text says whether the arrest is arbitrary is for court, that is a different question from the conclusion, so no decider is named for it."
+}
