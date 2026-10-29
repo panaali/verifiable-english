@@ -42,7 +42,7 @@ The branch overlap check found old refs `foundation/me-1` (root, registry, merge
 | Full and candidate gate stage stays present | `tools/gate.py`: changed stage label | `test_lean_audit_stage_runs_in_full_and_candidate_mode[True]` |
 | x86 must reject an audit failure | `tests/test_lean_service_audit.py`: accepted nonzero exit | `test_x86_audit_refuses_failure_and_accepts_success` |
 
-All five test runs exited 1 and each mutated file was restored. The accepting side is covered by the focused passing runs; `test_gi1_route_guard_accepts_exactly_nondefault_modules` also probes an exact nondefault module, direct import, and globbed module.
+All five test runs exited 1 and each mutated file was restored. `mutants.json` records the three mutations in changed Lean and Python source files with their failing test IDs for the pre-review check. The accepting side is covered by the focused passing runs; `test_gi1_route_guard_accepts_exactly_nondefault_modules` also probes an exact nondefault module, direct import, and globbed module.
 
 ## Next item
 
