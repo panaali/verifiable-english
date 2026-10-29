@@ -1043,6 +1043,16 @@
    ]
   },
   {
+   "test": "tests/test_rd9_docroute.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
    "test": "tests/test_rd9_dri_signatures.py",
    "why": "starts git (git show) in tests/test_rd9_dri_signatures.py",
    "recorded": [

@@ -7,7 +7,8 @@ from pathlib import Path
 
 import pytest
 
-from ve.document import check_document, load_document
+from ve.document import _load_document, check_document, load_document
+from ve.document.report import _report, _report_premise_context
 from ve.errors import CheckerUnavailable, VEError
 from ve.admission import admit_document
 from ve.ast import formula_to_data
@@ -25,6 +26,11 @@ def _front():
     raw = FIXTURE.read_bytes()
     head, body = raw[4:].split(b"\n---\n", 1)
     return json.loads(head), body
+
+
+def _loaded(front, body):
+    return _load_document(b"---\n" + json.dumps(front).encode() + b"\n---\n" + body,
+                          FIXTURE, None)
 
 
 def _without_profile(tmp_path):
@@ -60,6 +66,87 @@ def test_soft_chain_document_checks_the_filled_route():
     assert report["admission"]["admitted"] is True
     assert report["admission"]["report"] == admitted["report"]
     assert report["admission"]["core_report_id"] == admitted["report_id"]
+
+
+def test_filled_soft_premises_make_a_contradiction_vacuous():
+    front, body = _front()
+    norm = front["units"][0]["content"]["norm"]
+    norm["mode"] = "strict"
+    norm.pop("exception")
+    denied = ["not", ["forall", "assistant", ["unary", "x_required", ["var", 0]]]]
+    front["units"][1]["content"]["ast"] = denied
+    front["graph"]["nodes"][0]["ast"] = denied
+    answer = _report(_loaded(front, body))
+    assert answer["admission"]["admitted"] is True
+    assert answer["premises"]["status"] == "INCONSISTENT"
+    assert answer["admission"]["vacuous"] is True
+
+
+@pytest.mark.parametrize("label", ["layer:norms:x_permitted", "layer:norms:x_required",
+                                         "unsaid:pair:x_required,x_permitted"])
+def test_filled_graph_leaves_decode_in_the_filled_vocabulary(label):
+    from ve.norm_defaults_route import run_case
+    doc = load_document(FIXTURE)
+    source = doc["environment"].to_dict()
+    source["profiles"].remove("readings@1")
+    row = run_case({"id": "fill", "kind": "norm-defaults-elaborate", "environment": source,
+                    "norms": [doc["meta"]["units"][0]["content"]]})
+    generated = {item["label"]: item["ast"] for item in row["premises"]}
+    generated["unsaid:pair:x_required,x_permitted"] = row["fill"][0]["ast"]
+    doc["meta"]["graph"] = {"root": "leaf", "nodes": [{"name": "leaf", "label": label,
+                                                     "ast": generated[label]}]}
+    assert _report(doc)["admission"]["admitted"] is True
+
+
+def test_soft_fill_uses_every_lean_generated_premise_class():
+    from conformance.norm_defaults_layered import fixtures
+    from ve.norm_defaults_route import run_case
+    kind, source, norms, _ = next((kind, env, rules, situations)
+                                   for name, kind, env, rules, situations in fixtures()
+                                   if name == "coherent")
+    assert kind == "soft"
+    from ve.softnorms import SoftEnvironment, SoftNormDocument
+    environment = SoftEnvironment(source)
+    doc = {"environment": environment, "soft_document": SoftNormDocument(environment, norms),
+           "rights_document": None, "meta": {"units": [{"kind": "norm", "content": item} for item in norms]},
+           "units": [], "norms": None, "norm_defaults": None}
+    row = run_case({"id": "fill", "kind": "norm-defaults-elaborate",
+                    "environment": source, "norms": norms})
+    assert row["soft"] and row["premises"]
+    expected = [item["ast"] for field in ("background", "premises", "fill", "soft")
+                for item in row[field]]
+    env, fixed, _ = _report_premise_context(doc)
+    assert fixed == expected
+    assert "unsaid__y_permitted" in env.predicates
+    assert "soft__excepted__must_x" in env.predicates
+
+
+def test_soft_coherence_graph_leaf_uses_filled_vocabulary():
+    from conformance.norm_defaults_layered import fixtures
+    from ve.norm_defaults_route import run_case
+    front, body = _front()
+    _, kind, source, norms, _ = next(item for item in fixtures() if item[0] == "coherent")
+    assert kind == "soft"
+    row = run_case({"id": "fill", "kind": "norm-defaults-elaborate",
+                    "environment": source, "norms": norms})
+    coherence = next(item for item in row["soft"] if item["label"].startswith("soft:coherence:"))
+    front["environment"] = source
+    front["units"][0]["content"] = norms[0]
+    front["units"][0]["span"] = [0, 12]
+    front["units"].insert(1, {**front["units"][0], "id": "u1b", "span": [12, 24],
+                               "content": norms[1]})
+    front["graph"] = {"root": "coherence", "nodes": [
+        {"name": "coherence", "label": coherence["label"], "ast": coherence["ast"]}]}
+    answer = _report(_loaded(front, body))
+    assert answer["admission"]["admitted"] is True
+
+
+def test_soft_chain_without_readings_uses_the_filled_route():
+    front, body = _front()
+    front["environment"]["profiles"].remove("readings@1")
+    answer = _report(_loaded(front, body))
+    assert answer["admission"]["admitted"] is True
+    assert answer["premises"]["status"] == "model"
 
 
 def test_filled_soft_layer_matches_ordinary_w1():
