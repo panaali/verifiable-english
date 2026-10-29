@@ -6035,6 +6035,7 @@
         "VE.Service.ReadingsAdmissionProfile.profileComponent",
         "VE.Service.ReadingsAdmissionProfile.profileLine",
         "VE.Service.ReadingsAdmissionProfile.profileND",
+        "VE.Service.ReadingsAdmissionProfile.profilePairs",
         "VE.Service.ReadingsAdmissionProfile.profileProductPart",
         "VE.Service.ReadingsAdmissionProfile.profileS2",
         "VE.Service.ReadingsAdmissionProfile.timed"

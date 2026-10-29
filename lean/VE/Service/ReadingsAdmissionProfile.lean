@@ -45,9 +45,15 @@ def profileND (caseId part : String) (b : Admitted2) : IO Bool := do
         (fun _ => setPairsWith (ndPairFacts f) f.fa.a R RJ) (·.length)
   return true
 
+def profilePairs (caseId : String) (a : Admitted) : IO Unit := do
+  for R in a.D.sets.filter contentBearing do
+    if let some RJ := setJ a.doc R.id then
+      let _ ← timed caseId R.id "distinguishingModels" (fun _ => setPairs a R RJ) (·.length)
+
 def profileS2 (caseId part : String) (environment document : Json) : IO (Option Admitted2) := do
   let .ok b ← timed caseId part "admitS2" (fun _ => admitS2 environment document)
     (fun b => b.D.sets.length) | return none
+  unless underCompletion b.a.re b.D do profilePairs caseId b.a
   return some b
 
 /-- Replay the admission path of `admitComponent` or unsplit `runOne`.
@@ -61,9 +67,15 @@ def profileComponent (caseId part kind : String) (split : Bool) (environment doc
       let .ok b ← timed caseId part "admitS2Of" (fun _ => admitS2Of a document)
         (fun b => b.D.sets.length) | return none
       unless (← profileND caseId part b) do return none
+    else if !split && underSoftCompletion a.re a.D then
+      let .ok b ← timed caseId part "admitS2Of" (fun _ => admitS2Of a document)
+        (fun b => b.D.sets.length) | return none
+      let .ok r ← timed caseId part "admitSDOf" (fun _ => admitSDOf b) (fun _ => 0) | return none
+      let .ok _ ← timed caseId part "admitUnsaid" (fun _ => admitUnsaid r) (fun _ => 0) | return none
     else if split then
       let .ok _ ← timed caseId part "splitAdmissible"
         (fun _ => splitAdmissible a.re a.D a) (fun _ => 0) | return none
+    unless underCompletion a.re a.D do profilePairs caseId a
     return some none
   let some b ← profileS2 caseId part environment document | return none
   if underCompletion b.a.re b.D then
@@ -136,6 +148,7 @@ def profileCase (j : Json) : IO Unit := do
   let .ok environment := j.getObjVal? "environment" | return
   let .ok document := j.getObjVal? "document" | return
   let .ok kind := VE.Route.Run.caseKind j | return
+  unless kind == "readings-validate" || kind == "readings-separate" || s2Kinds.contains kind do return
   let .ok parts ← timed caseId "" "splitCase" (fun _ => splitCase environment document) (·.length) | return
   profileAdmissions caseId kind j parts
   let _ ← timed caseId "" "runCase" (fun _ => runCase j) (fun r => r.compress.length)
