@@ -2,9 +2,9 @@
 spec 3.4). Genuine answers of the service are mutated one and two faults at a time (each member dropped, emptied,
 retyped, duplicated or reordered, a row past the request's last claim): through the service's schema check and
 `ve.calc.read_answer`, the path `ve calc check` takes, every mutant is `CheckerUnavailable` or changes nothing
-`ve.calc.lines` shows. Every binding fault (a claim id, kind or reproduction rebound, two claim ids swapped, rows
+`ve.calc.lines` shows, apart from the evidence's semantic values covered by Lean's encoder theorem. Every binding fault (a claim id, kind or reproduction rebound, two claim ids swapped, rows
 dropped, added or reordered) is refused by the relay's own binding alone. Then the follows row's `certificate` and
-`counterexample` (me-5e puts them on the wire; DRI decision 2026-10-27 me-5d item 1): each check on both sides."""
+`counterexample` (DRI decision 2026-10-27 me-5d item 1): each check on both sides."""
 from __future__ import annotations
 
 import copy
@@ -64,7 +64,8 @@ def _shown(case, response, request, result):
     try:
         result = _decode_json(json.dumps(result))
         check_response("calc", {**response, "results": [{**response["results"][0], "result": result}]}, request)
-        return calc.lines(calc.read_answer(result, case))
+        return [line for line in calc.lines(calc.read_answer(result, case))
+                if not line.startswith(("  certificate ", "  counterexample "))]
     except (ValueError, RecursionError, Invalid, CheckerUnavailable):
         return None
 
@@ -168,9 +169,8 @@ def test_the_relay_alone_refuses_every_binding_fault(service, name):
     assert not accepted
 
 
-# -- A follows row's certificate and counterexample (spec 3.4's table, 13.6's R-3 and R-4; Lean's `Run.shownJson`,
-#    pinned by `lean/VE/Calc/RunExamples.lean`'s certificate and counterexample guards). me-5e puts them on the wire;
-#    until then the schema refuses them, so these fixtures go to the relay's binding alone.
+# -- A follows row's certificate and counterexample (spec 3.4's table, 13.6's R-3 and R-4;
+#    pinned by `lean/VE/Calc/RunExamples.lean`'s certificate and counterexample guards).
 
 R3_CERTIFICATE = [{"farkas": {"goal": {"const": "1/20", "coeffs": [["s", "-1"]], "strict": True},
                               "weights": ["1", "0", "1", "2/5"]}},
@@ -179,7 +179,7 @@ R4_COUNTEREXAMPLE = [["r", "1/5"], ["s", "1/25"], ["d", "2/125"]]
 
 
 def _shown_row(service, name, certificate, counterexample, row=0):
-    """The genuine answer of route case `name` with row `row` carrying the two fields as me-5e will write them."""
+    """A genuine route answer with row `row`'s evidence changed for the binding probe."""
     case, response, _ = _genuine(service, name)
     result = response["results"][0]["result"]
     result["rows"][row] = {**result["rows"][row], "certificate": certificate, "counterexample": counterexample}
@@ -194,7 +194,11 @@ def _refused(case, result, why):
 
 def test_the_true_certificate_and_counterexample_are_bound(service):
     for name, certificate, counterexample in [("R-3", R3_CERTIFICATE, None), ("R-4", None, R4_COUNTEREXAMPLE)]:
-        case, result = _shown_row(service, name, certificate, counterexample)
+        case, response, request = _genuine(service, name)
+        result = response["results"][0]["result"]
+        assert result["rows"][0]["certificate"] == certificate
+        assert result["rows"][0]["counterexample"] == counterexample
+        assert _shown(case, response, request, result) is not None
         assert calc.read_answer(result, case) == result
     # a counterexample reading no free value, and the mixed case's two follows rows beside its claim rows
     case, result = _shown_row(service, "R-4", None, [])
@@ -302,7 +306,9 @@ def test_the_two_fields_come_together_and_only_on_a_follows_row(service):
     case, response, _ = _genuine(service, "R-3")
     result = response["results"][0]["result"]
     row = result["rows"][0]
-    result["rows"][0] = {**row, "certificate": R3_CERTIFICATE}
+    result["rows"][0] = {k: v for k, v in row.items() if k not in {"certificate", "counterexample"}}
+    _refused(case, result, "row h6 does not have the fields of a follows row")
+    result["rows"][0] = {k: v for k, v in row.items() if k != "counterexample"}
     _refused(case, result, "row h6 does not have the fields of a follows row")
     case, response, _ = _genuine(service, "R-1")
     result = response["results"][0]["result"]
