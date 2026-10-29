@@ -15,7 +15,7 @@ import shutil
 import subprocess
 import tomllib
 
-from subprocesses import HANG_TIMEOUT
+from tests.subprocesses import HANG_TIMEOUT
 
 ROOT = Path(__file__).resolve().parents[1]
 LEAN = ROOT / "lean"
