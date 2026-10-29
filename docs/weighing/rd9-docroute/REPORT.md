@@ -1,8 +1,8 @@
 # rd9-docroute build report
 
-FIXED: the DRI signed the refusal-to-answer DELTA (reviews/dri-decisions-20261029-rd9-docroute.md item 1); selected tests pass.
+FIXED: F5's displaced norm is absent from the filled premise set; the route DELTA is signed by the DRI (reviews/dri-decisions-20261029-rd9-docroute.md item 1).
 HEAD: `feature/rd9-docroute` (see `git log -1` for the final local commit).
-Changed: soft document claim-graph admission and premise reporting use Lean's filled tree and generated vocabulary; direct unfilled soft checks still refuse.
+Changed: soft document claim-graph admission and premise reporting use Lean's filled tree, generated vocabulary, and free norm selection; direct unfilled soft checks still refuse.
 Open: merge-train gate and the next constitution pilot audit.
 Pilot bytes: 0 newly formalised bytes from routing alone; the previous probe reported 215 CHECKED source bytes, not a checked document answer.
 
@@ -71,3 +71,9 @@ The first selected run exposed two history lint failures and three frozen readin
 ## F4 recheck fix (2026-10-29)
 
 The original F4 probe raised `CheckerUnavailable` before the fix and passed after it. Both new regression variants failed before the fix and passed after it. A temporary mutation of `ve/softnorms.py` retained `instruction_of`; both variants failed again, and the mutation was restored (`seeded-bugs.json`). The complete `test_rd9_docroute.py` file passed (18 tests). The selected Mac run covered 139 units on the code snapshot for `6b9ba415d`, with zero failures (tree `9c3a958271`). `lake build` and `python3 lean/audit.py` passed. The three known-red main tests listed in `main-known-red.txt` were not changed and did not fail in this selection. No Lean or Rust product code changed; no full suite or release gate was run, as directed.
+
+## F5 recheck fix (2026-10-29)
+
+F5 -> The filled report now sends Lean the free norm units selected by the loader's `_free_norms`, excluding units replaced by active reading sets and units attached to open sets -> `tests/test_rd9_docroute.py::test_filled_soft_premises_exclude_norm_replaced_by_assertion_reading[authored]` and `[open]` -> `e620911e8`.
+
+The exact F5 probe failed before the fix (`INCONSISTENT` instead of `model`) and passed afterward. The regression checks both reading-set statuses and keeps a strict, unreplaced norm as a contradictory control. A temporary mutation that dropped the active-set exclusion failed the authored regression; it was restored and recorded in `seeded-bugs.json`. The focused file passed all 20 tests. `lake build` and `python3 lean/audit.py` passed. No Lean or Rust product code changed. The three tests in `main-known-red.txt` remain pre-existing and were not edited. No full suite or release gate was run, as directed.
