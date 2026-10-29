@@ -1,0 +1,6 @@
+job=armsh-cand-sc-3ac-8868ce21-t306330-s1 shard=1/2 nproc=4 arch=aarch64 host=runnervm9u1px date=2026-10-29T20:39:44Z ulimit_s=16384
+Mem:              15           1          10           0           4          14
+/dev/root       145G   41G  104G  29% /
+ 20:39:44 up 5 min,  0 user,  load average: 0.83, 0.34, 0.15
+pilot/codex branches: 98
+[gate] failed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 0 passed, 0 skipped, 1 failures
