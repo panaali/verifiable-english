@@ -748,6 +748,61 @@ def rawRule : Json := rawJ (nd "over" (.arr #[]) (nd "guard" (j "[\"top\"]") .le
 #guard (member (.ok rawRule) "name", (do pure (← VE.Readings.Wire.decodeNorm (← VE.Readings.Wire.decodeEnvironment softEnv) rawRule).name : Except String String).toOption) ==
   (none, some "hidden")
 
+/-! SC-2 without AT-3a's attitude decoder: a syntactic replacement and its separate narrowing reading. -/
+-- F3: all seven guards substitute their own source guard, not the first rule's guard.
+#guard let c := j "[\"or\",[\"and\",\"own\",[\"unary\",\"knows_guard\",[\"var\",1]]],[\"unary\",\"likely_guard\",[\"var\",1]]]"
+  let result := gov (hcDoc parts) [g1, {g2 with effect := .reguard c}] hcNames
+  let re := (VE.Readings.Wire.decodeEnvironment envJ).toOption
+  (result.toOption.map fun d => seven.map fun u => (normOf (contentOf d u)).map (·.getObjValD "guard")) ==
+    some (seven.map fun u => (parts.lookup u).map fun p =>
+      substOwn ((p.getObjValD "part").getObjValD "guard") depthLimit c) &&
+  ((result.toOption.bind fun d => (normOf (contentOf d "u0165.s01")).bind fun o =>
+    re.bind fun r => (VE.Readings.Wire.decodeNorm r o).toOption).isSome) &&
+  ((result.toOption.bind fun d => (normOf (contentOf d "u0165.s07")).bind fun o =>
+    re.bind fun r => (VE.Readings.Wire.decodeNorm r o).toOption).isSome)
+
+-- F4 and F4-r3: L(G) holds while G does not; replacement applies and narrowing does not.
+#guard let c := j "[\"or\",[\"and\",\"own\",[\"unary\",\"knows_guard\",[\"var\",1]]],[\"unary\",\"likely_guard\",[\"var\",1]]]"
+  let rep := gov (hcDoc parts) [g1, {g2 with effect := .reguard c}] hcNames
+  let nar := gov (hcDoc parts) [g1, {g2 with effect := .reguard (.arr #[.str "and", .str "own", c])}] hcNames
+  let model : VE.FiniteModel String := ⟨(fun s => if s == "person" then ["Claude", "case"] else []), (fun _ => none), (fun p => if p == "likely_guard" then [["case"]] else [])⟩
+  let read := fun (r : Except String Json) => r.toOption.bind fun d =>
+    (normOf (contentOf d "u0165.s01")).bind fun o =>
+      (VE.Readings.Wire.decodeEnvironment envJ).toOption.bind fun re => (VE.Readings.Wire.decodeNorm re o).toOption
+  ((read rep).map fun N => (VE.Norms.applies N.toNode).eval model ["Claude", "case"]) == some true &&
+  ((read nar).map fun N => (VE.Norms.applies N.toNode).eval model ["Claude", "case"]) == some false &&
+  ((read rep).map fun N => N.guard.eval model ["Claude", "case"]) == some true &&
+  ((read nar).map fun N => N.guard.eval model ["Claude", "case"]) == some false
+
+-- F4-c: replacement leaves the original carve-out in place on both sides of T.
+#guard let c := j "[\"or\",[\"and\",\"own\",[\"unary\",\"knows_guard\",[\"var\",1]]],[\"unary\",\"likely_guard\",[\"var\",1]]]"
+  let t := j "[\"unary\",\"tested_by_anthropic\",[\"var\",1]]"
+  let carved := gov (hcDoc parts)
+    [{g1 with effect := .frame (leadPart.setObjVal! "unless" (.arr #[t]))}, {g2 with effect := .reguard c}] hcNames
+  let rule := carved.toOption.bind fun d => (normOf (contentOf d "u0165.s01")).bind fun o =>
+    (VE.Readings.Wire.decodeEnvironment envJ).toOption.bind fun re => (VE.Readings.Wire.decodeNorm re o).toOption
+  let model := fun tested => (⟨(fun s => if s == "person" then ["Claude", "case"] else []), (fun _ => none),
+    (fun p => if p == "likely_guard" then [["case"]] else if p == "tested_by_anthropic" && tested then [["case"]] else [])⟩ : VE.FiniteModel String)
+  (rule.map (·.carveOuts.length)) == some 1 &&
+  (rule.map fun N => (VE.Norms.applies N.toNode).eval (model false) ["Claude", "case"]) == some true &&
+  (rule.map fun N => (VE.Norms.applies N.toNode).eval (model true) ["Claude", "case"]) == some false
+-- F6: the later carve-out reaches exactly the seven registered rules.
+#guard let sizes := fun (r : Except String Json) => r.toOption.map fun d => seven.map fun u =>
+    (normOf (contentOf d u)).map (·.getObjValD "unless" |>.getArr?.toOption.map (·.size))
+  sizes (gov (hcDoc parts) [g1, g6] hcNames) == some (seven.map fun _ => some (some 1)) &&
+  sizes (gov (hcDoc parts) [g1] hcNames) == some (seven.map fun _ => some (some 0))
+-- F6′: the chain accepts the eighth carve-out and refuses a ninth with its own unchanged diagnostic.
+#guard let result : Except String (Except String Nat × Except String Nat) := do
+    let re ← VE.Readings.Wire.decodeEnvironment softEnv
+    let base := j "{\"name\":\"r\",\"predicate\":\"p\",\"sign\":false,\"guard\":[\"top\"],\"unless\":[],\"over\":[]}"
+    let eight := base.setObjVal! "unless" (.arr ((List.replicate 8 (j "[\"top\"]")).toArray))
+    let nine ← applyEffect "u" (.carveOut (j "[\"top\"]")) eight
+    pure ((VE.Readings.Wire.decodeNorm re eight).map (·.carveOuts.length),
+      (VE.Readings.Wire.decodeNorm re nine).map (·.carveOuts.length))
+  match result with
+  | .ok (.ok 8, .error e) => e == "InvalidInput: invalid sign or too many carve-outs"
+  | _ => false
+
 /-! F-sym (spec 7.1, sc-1ae): `block = null`, the frame `g1` and a carve-out whose condition names `invented`. The
     answer has the string, the document and the block do not: `govern_strings` holds (it is `gI`'s payload) and
     `BlockBound` fails, so `govern_no_new_symbols` does not apply. With the condition in the block it holds. -/
