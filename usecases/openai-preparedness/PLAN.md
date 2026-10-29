@@ -451,12 +451,15 @@ safety-framework 9. Report, unscored, what changes without N1 and without N2.
 2. **Only six Table 1 level markers carry D1 facts.** They are separate 6- or 10-byte units. Their capability
    descriptions, risk claims and safeguard bullets are separate OPEN or UNFORMALISED units. This prevents the whole
    row from becoming CHECKED when the two stated facts are all D1 encoded.
-3. **D2 is admitted as a separate risk probe.** Its severe-harm class has the two disjuncts in footnote 1; the
-   BIO-C “could cause millions of deaths” is one `might` cell and does not become a `leads` cell. The other Table 1
-   causal units have no D2 decision record yet. No source byte is promoted by this probe.
-4. **D3 certifies only the version date before retrieval.** The 1/5th self-improvement ratio and the severe-harm
-   quantities remain `quantity` units (QT), and “several months” also waits for ET. P4 records this explicitly;
-   those source bytes are not CHECKED.
+3. **D2 is admitted as a separate risk probe.** Its severe-harm class has the two disjuncts in footnote 1.
+   BIO-H, BIO-C, CYB-H and CYB-C have source-linked `might` cells without any `leads` cell or severity ranking.
+   AIS-H and AIS-C remain AT gaps: acceleration is not itself a harm, and the loss-of-control chain is not a
+   direct cause. No source byte is promoted by this probe.
+4. **D3 admits the one-fifth elapsed-time bound and certifies the literal date bridges.** P4 represents the
+   self-improvement ratio as `5 * current_progress_time <= baseline_progress_time` and replays certificates for
+   the 2025-04-15 to 2026-04-15 and 2026-01-05 to 2027-01-05 365-day shifts, plus 2021 before 2024. These
+   arithmetic facts do not choose RS10 or RS14. The severe-harm “thousands” and “hundreds of billions” thresholds
+   remain QT gaps because the source gives no exact numerical boundary; “several months” remains ET.
 5. **P8 refuses the planned combination.** On F2 with `judgments@0`, `documents@1` and D1's soft norms, Lean says
    `CheckerUnavailable: judgments@0 with soft-norms@0 needs its composed Lean route`. D1 therefore uses W2 open
    names and pending readings, as the plan allowed.

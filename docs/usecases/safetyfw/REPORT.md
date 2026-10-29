@@ -297,8 +297,8 @@ Acceptance ownership for this baseline:
 
 F1 remains open. The D1 document still lacks F5/F6/F11/F12/F17 per-choice rules. Its former generic
 `not_translated` backlog is classified by immediate blocker, but those source claims remain unformalised.
-D2 still omits Table 1 causal cells; D3 still omits the ratio, severity quantities and remaining date
-bridges. The sparse translation cannot be reported as a completed PLAN 7 deliverable, and no DRI ruling signs a
+D2 still leaves the two AIS causal cells open; D3 still leaves the vague severity quantities open.
+The sparse translation cannot be reported as a completed PLAN 7 deliverable, and no DRI ruling signs a
 scope move. `usecase-pf-run` remains the answering harness; it does not cover this translation gap.
 
 F2 is corrected as a coverage claim: the F7 predeployment and three F9 per-item source units are
@@ -341,3 +341,9 @@ F8 and F9 stale artifacts were regenerated and committed as `3609ce939`; their p
 run passed 80 units with zero failures on the Mac runner (snapshot `d08c1950`). The local `lake build` and
 `python3 lean/audit.py` passed. The full suite and release gate were not run under this branch's test instruction.
 The three `main-known-red.txt` tests are pre-existing and were not changed.
+
+D2/P3 now checks BIO-H, BIO-C, CYB-H and CYB-C as `might` cells and confirms none becomes `leads`.
+The AIS-H and AIS-C rows retain explicit AT blockers. D3/P4 admits the source's one-fifth time inequality,
+distinguishes the frozen T1/T2 durations with Lean certificates, and replays the three conditional date bridges.
+`test_pf_p3_p4_are_recomputed_without_source_text` and
+`test_pf_one_fifth_time_bound_distinguishes_the_two_frozen_cases` cover these additions.
