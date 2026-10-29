@@ -36,7 +36,7 @@ from ve.backends.service_schema import DIRECTORY, MODES, Compiler, Context, Inva
 ROOT = Path(__file__).resolve().parents[1]
 CASES = ROOT / "tests/data/route-cases.jsonl"
 ROUTE_MODES = ("soft-norms", "rights", "speech-acts", "reports", "alternatives", "risk", "risk-eval",
-               "quantity", "norm-defaults", "discourse", "readings-route", "diagnose", "calc")
+               "quantity", "norm-defaults", "discourse", "readings-route", "diagnose", "calc", "cardinality")
 # Top-level answer fields that are maps keyed by request names (an empty map is an answer).
 MAPS = {"worst_cases", "bound", "meaning_ids", "presuppositions", "validity", "statuses", "reading_verdicts",
         "units", "mentions", "default_exceptions_by_decider", "rule_acts"}
@@ -247,7 +247,8 @@ def test_route_answer_mutations_agree_with_lean(fuzz, executables):
 @pytest.mark.parametrize("weaken", [
     "soft-prime-optional", "environment-open", "soft-path-never", "packages-detail-free", "quantity-model-free",
     "rights-kinds-unbound", "risk-decision-open", "discourse-statuses-free", "reports-kind-acts",
-    "readings-pair-open", "diagnose-record-open", "risk-eval-witness-free", "calc-rows-unbound", "calc-reason-free"])
+    "readings-pair-open", "diagnose-record-open", "risk-eval-witness-free", "calc-rows-unbound", "calc-reason-free",
+    "cardinality-sorts-unbound", "cardinality-premises-unbound"])
 def test_fuzz_detects_a_weakened_route_schema(tmp_path, fuzz, weaken):
     """Each weakening of a route schema disagrees with the Lean side on some mutation."""
     for path in DIRECTORY.glob("*.json"):
@@ -284,6 +285,9 @@ def test_fuzz_detects_a_weakened_route_schema(tmp_path, fuzz, weaken):
         lambda d: d["answer"]["properties"].update(rows={"type": "array", "items": {"$ref": "#/$defs/claim_row"}})),
      "calc-reason-free": lambda: defs("calc.json",
         lambda d: [branch["properties"].update(reason={}) for branch in d["claim_row"]["anyOf"]]),
+     "cardinality-sorts-unbound": lambda: defs("cardinality.json", lambda d: d["admission"].pop("x-references")),
+     "cardinality-premises-unbound": lambda: defs("cardinality.json",
+        lambda d: [d[k]["properties"]["premises"].pop("x-length") for k in ("admission", "certificate")]),
      }[weaken]()
     compiler = Compiler(tmp_path)
     rows = {mode: compiler.ref(f"{mode}.json", "#/row") for mode in MODES}
