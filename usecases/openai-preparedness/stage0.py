@@ -21,8 +21,15 @@ OUT = REPO / "docs/usecases/safetyfw/openai-preparedness/stage0.json"
 
 def risk_environment():
     """D2 vocabulary: the two stated alternatives of footnote 1's severe-harm definition."""
+    from itertools import combinations
     from conformance.risk import base, const
     from ve.profiles import LANGUAGE, SPEC_REVISION
+    risk_harms = {
+        "biological_terror_events": ("biological or chemical terror events", "bio_terror"),
+        "cyberoffense_balance_upset": ("the cyberoffense-cyberdefense balance is upset", "cyber_balance"),
+        "cyber_catastrophe": ("catastrophe from unilateral cyber operations", "catastrophic_cyber_risk"),
+    }
+    classes = ["severe", *(risk_harms[h][1] for h in sorted(risk_harms))]
     env = {"language": LANGUAGE, "profiles": ["alternatives@0", "norms@0", "relational-fol@0", "risk@0"],
            "spec_revision": SPEC_REVISION,
            "vocabulary": {"sorts": {k: {"description": k} for k in ("developer", "action", "harm")},
@@ -37,14 +44,17 @@ def risk_environment():
                                                       "regulated": {"role": "obligation", "default": "deny",
                                                                     "act": "{0} be taken", "permission": "permitted"}}},
                           "constants": {"death_or_grave_injury": const("harm", "thousands of people"),
-                                        "economic_damage": const("harm", "hundreds of billions of dollars")}},
+                                        "economic_damage": const("harm", "hundreds of billions of dollars"),
+                                        **{h: const("harm", desc) for h, (desc, _) in risk_harms.items()}}},
            "alternatives": {"chooser": "developer", "action": "action", "harm": "harm", "available": "available",
                             "leads_to": "leads_to", "outcomes": "signed", "decided_by": "OpenAI",
                             "performed": {"permission": "permitted", "obligation": "required"},
                             "inaction": "inaction", "taken": "taken"},
-           "risk": {"severity": {"sort": "severity", "classes": ["severe"], "more_severe": [], "unranked": [],
+           "risk": {"severity": {"sort": "severity", "classes": classes,
+                                  "more_severe": [], "unranked": [list(pair) for pair in combinations(classes, 2)],
                                   "decided_by": "the text's definition"},
-                    "harm_classes": [[h, "severe"] for h in ("death_or_grave_injury", "economic_damage")],
+                    "harm_classes": [[h, "severe"] for h in ("death_or_grave_injury", "economic_damage")]
+                                    + [[h, label] for h, (_, label) in risk_harms.items()],
                     "unexamined": "possible"}}
     return env
 
@@ -60,7 +70,18 @@ def risk_probe():
     log = Log()
     log.add(1, "BIO-C", "statement", statement("deploy_biological_critical", "death_or_grave_injury",
                                                "might", author="the policy", support="testimony"))
+    log.add(2, "BIO-H", "statement", statement("deploy_biological_high_without_safeguards",
+        "biological_terror_events", "might", author="the policy", support="testimony"))
+    log.add(3, "CYB-H", "statement", statement("deploy_cybersecurity_high_without_safeguards",
+        "cyberoffense_balance_upset", "might", author="the policy", support="testimony"))
+    log.add(4, "CYB-C", "statement", statement("deploy_cybersecurity_critical",
+        "cyber_catastrophe", "might", author="the policy", support="testimony"))
     alternatives = [{"name": "deploy_biological_critical", "label": "BIO-C deployment"},
+                    {"name": "deploy_biological_high_without_safeguards",
+                     "label": "BIO-H deployment without safeguards"},
+                    {"name": "deploy_cybersecurity_high_without_safeguards",
+                     "label": "CYB-H deployment without safeguards"},
+                    {"name": "deploy_cybersecurity_critical", "label": "CYB-C deployment"},
                     {"name": "nothing", "label": "no deployment", "inaction": True}]
     decision = log.add(100, "D", "decision", record("severity", "openai", "OpenAI",
         (row["environment_id"], row["document_hash"]), alternatives, [], log.cite(*[e["id"] for e in log.entries])))
@@ -71,28 +92,43 @@ def risk_probe():
     might = {(m["alternative"], m["harm"]) for m in decision_row["tables"]["might"]}
     leads = {(m["alternative"], m["harm"]) for m in decision_row["tables"]["leads"]}
     cell = ("deploy_biological_critical", "death_or_grave_injury")
+    high_cell = ("deploy_biological_high_without_safeguards", "biological_terror_events")
+    table1_cells = {"BIO-H": high_cell, "BIO-C": cell,
+                    "CYB-H": ("deploy_cybersecurity_high_without_safeguards", "cyberoffense_balance_upset"),
+                    "CYB-C": ("deploy_cybersecurity_critical", "cyber_catastrophe")}
     return {"admitted": True, "status": row.get("status"),
             "classes": sorted({p["ast"][2][1] for p in row.get("risk_premises", []) if p["label"] == "risk:class"}),
-            "stated_might": cell in might, "invented_leads": cell in leads, "diagnostic": None}
+            "stated_might": cell in might, "bio_h_might": high_cell in might,
+            "table1_might": {name: value in might for name, value in table1_cells.items()},
+            "table1_unformalised": {"AIS-H": "AT: acceleration is a possibility, not a harm outcome",
+                                    "AIS-C": "AT: the conditional loss-of-control chain is not a direct cause"},
+            "invented_leads": bool(set(table1_cells.values()) & leads), "diagnostic": None}
 
 
 def quantity_environment():
-    """D3 W6a units and dates; the ratio and severe-harm quantity bridges remain gaps."""
+    """D3 W6a dates and elapsed-time comparison; vague harm counts remain QT."""
     from ve.profiles import LANGUAGE, SPEC_REVISION
     return {"language": LANGUAGE, "profiles": ["order@0", "relational-fol@0", "time@0"],
         "spec_revision": SPEC_REVISION, "unit_schema": "ve-units@1",
-        "units": {"day": {"scale": "1", "display": {"kind": "iso_date"}}},
+        "units": {"day": {"scale": "1", "display": {"kind": "iso_date"}},
+                  "elapsed_day": {"scale": "1", "display": {"kind": "decimal", "label": "days"}}},
         "vocabulary": {"sorts": {}, "predicates": {}, "constants": {
             "version_date": {"sort": "$int", "unit": "day", "description": "version date",
                              "verbalisation": "the version date"},
             "retrieval_date": {"sort": "$int", "unit": "day", "description": "retrieval date",
-                               "verbalisation": "the retrieval date"}}}}
+                               "verbalisation": "the retrieval date"},
+            "current_progress_time": {"sort": "$int", "unit": "elapsed_day",
+                                      "description": "wall-clock time for the current model's generational progress",
+                                      "verbalisation": "the current progress duration"},
+            "baseline_progress_time": {"sort": "$int", "unit": "elapsed_day",
+                                       "description": "wall-clock time for equivalent progress in 2024",
+                                       "verbalisation": "the baseline progress duration"}}}}
 
 
 def quantity_probe():
-    """D3: the source's date is before retrieval, certified and replayed by VE W6a."""
+    """D3: certify literal dates and admit the source's one-fifth time bound."""
     from ve.environment import Environment
-    from ve.units import prove_quantity, check_quantity_certificate
+    from ve.units import prove_quantity, check_quantity_certificate, elaborate_quantity
     env = Environment(quantity_environment())
     stated = [{"format": "ve-quantity@1", "formula": ["date_on", ["const", "day", "version_date"],
                                                  ["date", "2025-04-15"]]},
@@ -101,9 +137,24 @@ def quantity_probe():
     goal = {"format": "ve-quantity@1", "formula": ["date_before", ["const", "day", "version_date"],
                                                 ["const", "day", "retrieval_date"]]}
     cert = prove_quantity(env, stated, goal)
+    ratio = {"format": "ve-quantity@1", "formula": ["le",
+        ["scale", "elapsed_day", "5", ["const", "elapsed_day", "current_progress_time"]],
+        ["const", "elapsed_day", "baseline_progress_time"]]}
+    canonical_ratio, _ = elaborate_quantity(env, ratio)
+    date_cases = {
+        "D2_publication": ["shift_days", ["date", "2026-04-15"], ["date", "2025-04-15"], "365"],
+        "D3_appointment": ["shift_days", ["date", "2027-01-05"], ["date", "2026-01-05"], "365"],
+        "D4_baselines": ["date_before", ["date", "2021-01-01"], ["date", "2024-01-01"]],
+    }
+    certified_dates = {}
+    for case_id, formula in date_cases.items():
+        assertion = {"format": "ve-quantity@1", "formula": formula}
+        witness = prove_quantity(env, [], assertion)
+        certified_dates[case_id] = bool(witness and check_quantity_certificate(env, [], assertion, witness))
     return {"admitted": bool(cert and check_quantity_certificate(env, stated, goal, cert)),
             "date_certificate_replayed": bool(cert and check_quantity_certificate(env, stated, goal, cert)),
-            "ratio": "not represented: 1/5th is a separate quantity bridge (QT)",
+            "ratio": canonical_ratio["formula"], "ratio_admitted": True,
+            "conditional_date_bridges": certified_dates,
             "severe_harm_counts": "not represented: thousands and hundreds of billions need quantity bridges (QT)"}
 
 

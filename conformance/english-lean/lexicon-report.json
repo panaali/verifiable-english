@@ -231,14 +231,14 @@
   {
    "environment": "usecases/openai-preparedness/environment.d2.json",
    "failures": [],
-   "lexicon_id": "1866313fb4bce12d8e2fa68f8ddb4ab1de8338c3809909cd378d2582e3dd78c8",
-   "symbols": 22
+   "lexicon_id": "2a5173f7fb321bc5b75a4052d710b70206ad0d18b9b462d9bc6c3029a6fb2ff8",
+   "symbols": 28
   },
   {
    "environment": "usecases/openai-preparedness/environment.d3.json",
    "failures": [],
-   "lexicon_id": "0b5d6c1c912699115e4871541325e73f124810d0265f83c23905e3e1fd811a0f",
-   "symbols": 2
+   "lexicon_id": "23b890d3bbc5316979ac56beac9bb6fbc7a34633534af8c521a828121b5febb3",
+   "symbols": 4
   },
   {
    "environment": "usecases/safety-framework/environment.d1.json",

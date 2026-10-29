@@ -13,6 +13,13 @@
       "display": {
         "kind": "iso_date"
       }
+    },
+    "elapsed_day": {
+      "scale": "1",
+      "display": {
+        "kind": "decimal",
+        "label": "days"
+      }
     }
   },
   "vocabulary": {
@@ -30,6 +37,18 @@
         "unit": "day",
         "description": "retrieval date",
         "verbalisation": "the retrieval date"
+      },
+      "current_progress_time": {
+        "sort": "$int",
+        "unit": "elapsed_day",
+        "description": "wall-clock time for the current model's generational progress",
+        "verbalisation": "the current progress duration"
+      },
+      "baseline_progress_time": {
+        "sort": "$int",
+        "unit": "elapsed_day",
+        "description": "wall-clock time for equivalent progress in 2024",
+        "verbalisation": "the baseline progress duration"
       }
     }
   }

@@ -364,8 +364,28 @@ def test_pf_p3_p4_are_recomputed_without_source_text(pf_modules):
     saved = json.loads((PF_EVIDENCE / "stage0.json").read_text())
     assert result["P3"] == saved["P3"] and result["P4"] == saved["P4"]
     assert result["P3"]["admitted"] and result["P3"]["stated_might"]
+    assert result["P3"]["bio_h_might"]
+    assert result["P3"]["table1_might"] == {name: True for name in ("BIO-H", "BIO-C", "CYB-H", "CYB-C")}
+    assert set(result["P3"]["table1_unformalised"]) == {"AIS-H", "AIS-C"}
     assert not result["P3"]["invented_leads"]
     assert result["P4"]["date_certificate_replayed"]
+    assert result["P4"]["ratio"] == ["le", ["scale", "elapsed_day", "5",
+        ["const", "elapsed_day", "current_progress_time"]],
+        ["const", "elapsed_day", "baseline_progress_time"]]
+    assert all(result["P4"]["conditional_date_bridges"].values())
+
+
+def test_pf_one_fifth_time_bound_distinguishes_the_two_frozen_cases(pf_modules):
+    from ve.environment import Environment
+    from ve.units import prove_quantity, check_quantity_certificate
+    env = Environment(pf_stage0.quantity_environment())
+    def assertion(current_days):
+        return {"format": "ve-quantity@1", "formula": ["le",
+            ["scale", "elapsed_day", "5", ["num", "elapsed_day", str(current_days)]],
+            ["num", "elapsed_day", "140"]]}
+    certificate = prove_quantity(env, [], assertion(28))
+    assert certificate and check_quantity_certificate(env, [], assertion(28), certificate)
+    assert prove_quantity(env, [], assertion(35)) is None
 
 
 def test_pf_temporal_and_per_item_rules_are_not_weakened_into_checked_claims(pf_modules):

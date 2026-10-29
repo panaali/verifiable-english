@@ -33,19 +33,56 @@
  },
  "P3": {
   "admitted": true,
+  "bio_h_might": true,
   "classes": [
+   "biological_terror_events",
+   "cyber_catastrophe",
+   "cyberoffense_balance_upset",
    "death_or_grave_injury",
    "economic_damage"
   ],
   "diagnostic": null,
   "invented_leads": false,
   "stated_might": true,
-  "status": "ok"
+  "status": "ok",
+  "table1_might": {
+   "BIO-C": true,
+   "BIO-H": true,
+   "CYB-C": true,
+   "CYB-H": true
+  },
+  "table1_unformalised": {
+   "AIS-C": "AT: the conditional loss-of-control chain is not a direct cause",
+   "AIS-H": "AT: acceleration is a possibility, not a harm outcome"
+  }
  },
  "P4": {
   "admitted": true,
+  "conditional_date_bridges": {
+   "D2_publication": true,
+   "D3_appointment": true,
+   "D4_baselines": true
+  },
   "date_certificate_replayed": true,
-  "ratio": "not represented: 1/5th is a separate quantity bridge (QT)",
+  "ratio": [
+   "le",
+   [
+    "scale",
+    "elapsed_day",
+    "5",
+    [
+     "const",
+     "elapsed_day",
+     "current_progress_time"
+    ]
+   ],
+   [
+    "const",
+    "elapsed_day",
+    "baseline_progress_time"
+   ]
+  ],
+  "ratio_admitted": true,
   "severe_harm_counts": "not represented: thousands and hundreds of billions need quantity bridges (QT)"
  },
  "P5": {

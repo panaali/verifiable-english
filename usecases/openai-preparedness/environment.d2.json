@@ -82,6 +82,18 @@
       "economic_damage": {
         "sort": "harm",
         "description": "hundreds of billions of dollars"
+      },
+      "biological_terror_events": {
+        "sort": "harm",
+        "description": "biological or chemical terror events"
+      },
+      "cyberoffense_balance_upset": {
+        "sort": "harm",
+        "description": "the cyberoffense-cyberdefense balance is upset"
+      },
+      "cyber_catastrophe": {
+        "sort": "harm",
+        "description": "catastrophe from unilateral cyber operations"
       }
     }
   },
@@ -104,10 +116,38 @@
     "severity": {
       "sort": "severity",
       "classes": [
-        "severe"
+        "severe",
+        "bio_terror",
+        "catastrophic_cyber_risk",
+        "cyber_balance"
       ],
       "more_severe": [],
-      "unranked": [],
+      "unranked": [
+        [
+          "severe",
+          "bio_terror"
+        ],
+        [
+          "severe",
+          "catastrophic_cyber_risk"
+        ],
+        [
+          "severe",
+          "cyber_balance"
+        ],
+        [
+          "bio_terror",
+          "catastrophic_cyber_risk"
+        ],
+        [
+          "bio_terror",
+          "cyber_balance"
+        ],
+        [
+          "catastrophic_cyber_risk",
+          "cyber_balance"
+        ]
+      ],
       "decided_by": "the text's definition"
     },
     "harm_classes": [
@@ -118,6 +158,18 @@
       [
         "economic_damage",
         "severe"
+      ],
+      [
+        "biological_terror_events",
+        "bio_terror"
+      ],
+      [
+        "cyberoffense_balance_upset",
+        "cyber_balance"
+      ],
+      [
+        "cyber_catastrophe",
+        "catastrophic_cyber_risk"
       ]
     ],
     "unexamined": "possible"

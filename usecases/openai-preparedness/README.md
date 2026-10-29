@@ -31,7 +31,7 @@ document under `/tmp` for VE's check.
 | [rules.d1.ve](rules.d1.ve), [facts.d1.ve](facts.d1.ve) | Source-linked rules, reading alternatives and six level/category facts |
 | [pf_translation.py](pf_translation.py) | VE one-reading parser for each rule and fact block |
 | [build_document.py](build_document.py), [spans.json](spans.json), [coverage.json](coverage.json) | Source partition and VE coverage status |
-| [stage0.py](stage0.py), [environment.d2.json](environment.d2.json), [environment.d3.json](environment.d3.json) | D2 risk and D3 date probes, P1 to P8, P7 lint and M6 audit |
+| [stage0.py](stage0.py), [environment.d2.json](environment.d2.json), [environment.d3.json](environment.d3.json) | D2 risk and D3 quantity/date probes, P1 to P8, P7 lint and M6 audit |
 | [measure.py](measure.py), [gaps.json](../../docs/usecases/safetyfw/openai-preparedness/gaps.json) | Families and sole blockers for each non-CHECKED unit |
 | [cases.json](cases.json), [answer-key.json](answer-key.json) | Frozen-key transcription: 67 cases, 239 items |
 
@@ -80,7 +80,9 @@ residual. No assumption, bridge leaf or exception is represented as certified.
 
 [stage0.json](../../docs/usecases/safetyfw/openai-preparedness/stage0.json) saves the VE answers. P1 admits F2 as
 OPEN. P2 admits the strict/default Table 1 set with UNKNOWN premises and one unresolved reading set. P3 admits the
-severe-harm risk environment and checks one stated BIO-C `might` cell without deriving `leads`. P4 replays a W6a
-certificate that the version date precedes retrieval; the 1/5th ratio and harm counts remain QT gaps. P5 and P6
+severe-harm risk environment and checks four Table 1 `might` cells without deriving `leads`; the two AIS cells
+retain stated AT gaps. P4 replays W6a certificates for the version/retrieval ordering, two conditional 365-day
+date shifts and the 2021/2024 baseline ordering. It admits the one-fifth elapsed-time inequality; the vague
+harm-count thresholds remain QT gaps. P5 and P6
 confirm the 67,418-byte partition. P7 finds no packed identifier and M6 finds no untraced authored block. P8
 refuses D1 with `judgments@0` plus `soft-norms@0`: the composed Lean route is unavailable.
