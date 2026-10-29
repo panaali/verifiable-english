@@ -14,8 +14,7 @@ inductive CsvMode where
 def csvRecords : List Char → CsvMode → List Char → List String → List (List String) →
     Except String (List (List String))
   | [], .quoted, _, _, _ => .error "TableFormat: a quoted field is not closed"
-  | [], m, cur, fs, rs =>
-      .ok (if m = .plain ∧ cur = [] ∧ fs = [] then rs.reverse else ((String.mk cur.reverse :: fs).reverse :: rs).reverse)
+  | [], m, cur, fs, rs => .ok (match m, cur, fs with | .plain, [], [] => rs.reverse | _, _, _ => (((String.mk cur.reverse :: fs).reverse :: rs).reverse))
   | '"' :: '"' :: cs, .quoted, cur, fs, rs => csvRecords cs .quoted ('"' :: cur) fs rs
   | '"' :: cs, .quoted, cur, fs, rs => csvRecords cs .closed cur fs rs
   | c :: cs, .quoted, cur, fs, rs => csvRecords cs .quoted (c :: cur) fs rs
@@ -36,6 +35,7 @@ def columnTypes (decl : List (String × ColType)) (header : List String) : Excep
 def decodeCsv (decl : List (String × ColType)) (bytes : ByteArray) : Except String Table := do
   let some text := String.fromUTF8? bytes | throw "TableFormat: the bytes are not UTF-8"
   let header :: rows ← csvRecords text.toList .plain [] [] [] | throw "TableFormat: no header row"
+  tableDimensions decl.length rows.length
   let types ← columnTypes decl header
   let rows ← rows.mapM fun r =>
     if r.length = types.length then pure (types.zipWith readCell r) else throw "TableFormat: a row of the wrong length"

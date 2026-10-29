@@ -36,6 +36,7 @@ def decodeJsonl (decl : List (String × ColType)) (bytes : ByteArray) : Except S
   let some text := String.fromUTF8? bytes | throw "TableFormat: the bytes are not UTF-8"
   let lines := text.splitOn "\n"
   let lines := if lines.getLast? = some "" then lines.dropLast else lines
+  tableDimensions decl.length lines.length
   let rows ← lines.mapM fun l => do
     let some pairs := (Parser.run jsonFlatObject l).toOption | throw "TableFormat: a line is not a flat JSON object"
     let keys := pairs.map Prod.fst

@@ -15,6 +15,8 @@ structure Table where
   columns : List String
   rows : List (List Cell)
 
+def tableDimensions (columns rows : Nat) : Except String Unit := if columns > 64 then .error "TableFormat: too many columns" else if rows > 1000000 then .error "TableFormat: too many rows" else .ok ()
+
 def Table.cell (T : Table) (row : List Cell) (col : String) : Cell :=
   match T.columns.idxOf? col with
   | some i => row.getD i .absent
@@ -228,5 +230,4 @@ def readCell : ColType → String → Cell
   | .bool, "true" => .bool true
   | .bool, "false" => .bool false
   | _, s => .text s
-
 end VE.Calc

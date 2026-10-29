@@ -61,11 +61,6 @@
    "reason": "No mutant is built: `xs` -> `[]` leaves `[].sum` of an unknown element type (don't know how to synthesize implicit argument), which Lean refuses; the tool reports the refusal as UNKNOWN"
   },
   {
-   "definition": "VE.Calc.csvRecords",
-   "operator": "eq-le",
-   "reason": "Equivalent for `cur = []` and `fs = []` (in List's lexicographic order l ≤ [] holds exactly when l = []); for `m = .plain` no mutant is built: CsvMode has no order, which Lean refuses"
-  },
-  {
    "definition": "VE.Calc.columnTypes",
    "operator": "list-empty",
    "reason": "No mutant is built: `header` -> `[]` inside `eraseDups.length` leaves a stuck typeclass problem or a type mismatch, which Lean refuses; the tool reports the refusal as UNKNOWN"

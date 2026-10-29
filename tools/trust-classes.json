@@ -15572,7 +15572,8 @@
       ],
       "D[V]": [
         "VE.Calc.ColType",
-        "VE.Calc.readCell"
+        "VE.Calc.readCell",
+        "VE.Calc.tableDimensions"
       ],
       "C": [
         "VE.Calc.Agg.runB",
