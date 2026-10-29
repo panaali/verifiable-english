@@ -238,4 +238,6 @@ import VE.Defaults.Meaning
 import VE.Defaults.MeaningExamples
 import VE.Defaults.Route
 import VE.Defaults.WireExamples
+import VE.Readings.DefaultVerdicts
+import VE.Readings.DefaultVerdictsExamples
 import VE.Defaults.RouteExamples
