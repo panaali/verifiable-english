@@ -1,0 +1,16 @@
+trust_mutants: 23 definitions, 434 mutants (87 to run), 4 jobs, base 95d65b12edab
+SURVIVOR lean/VE/Events/Wire.lean:117 VE.Events.checkRoles (D[R]) any-all: any -> all
+UNKNOWN lean/VE/Events/Wire.lean:58 VE.Events.objectAt (D[R]) list-empty: ks -> [] (lean/VE/Events/Wire.lean:58: Invalid match expression: The type of pattern variable 'snd✝' contai...)
+UNKNOWN lean/VE/Events/Wire.lean:92 VE.Events.firstFault (D[R]) list-empty: cs -> [] (lean/VE/Events/Wire.lean:92: Invalid projection: Type of)
+UNKNOWN lean/VE/Events/Wire.lean:115 VE.Events.checkRoles (D[R]) list-empty: V.events -> [] (lean/VE/Events/Wire.lean:115: Invalid field notation: Type of)
+UNKNOWN lean/VE/Events/Wire.lean:116 VE.Events.checkRoles (D[R]) list-empty: V.states.flatMap -> [] (lean/VE/Events/Wire.lean:116: Function expected at)
+SURVIVOR lean/VE/Events/Wire.lean:58 VE.Events.objectAt (D[R]) list-first: optional -> (optional.take 1)
+SURVIVOR lean/VE/Events/Wire.lean:116 VE.Events.checkRoles (D[R]) list-first: V.states -> (V.states.take 1)
+SURVIVOR lean/VE/Events/Wire.lean:118 VE.Events.checkRoles (D[R]) list-drop-last: [V.before] -> ([V.before].dropLast)
+SURVIVOR lean/VE/Events/Wire.lean:150 VE.Events.checkPremiseSize (D[R]) list-last: ls -> (ls.reverse.take 1)
+SURVIVOR lean/VE/Events/Wire.lean:58 VE.Events.objectAt (D[R]) list-last: optional -> (optional.reverse.take 1)
+SURVIVOR lean/VE/Events/Wire.lean:60 VE.Events.objectAt (D[R]) list-last: required -> (required.reverse.take 1)
+trust_mutants: 56 KILLED, 7 SURVIVOR, 4 UNKNOWN, 12 INVALID, 8 ALLOWED, 0 NOT RUN, 347 OTHER SHARD in 459 s
+trust_mutants: D[R]: 17 KILLED, 7 SURVIVOR, 4 UNKNOWN, 5 INVALID, 133 OTHER SHARD
+trust_mutants: D[V], trusted: 37 KILLED, 7 INVALID, 8 ALLOWED, 209 OTHER SHARD
+trust_mutants: G[V], trusted: 2 KILLED, 5 OTHER SHARD
