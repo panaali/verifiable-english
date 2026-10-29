@@ -16,5 +16,23 @@
     "fault": "Restrict repeated admission profiling to W2 and omit the non-W2 split-main fallback",
     "test": "tests/test_readings_stage_times.py::test_split_non_w2_main_records_fallback_admission",
     "result": "both elaborate and choice parameter cases failed after the mutant build"
+  },
+  {
+    "file": "lean/VE/Service/ReadingsAdmissionProfile.lean",
+    "fault": "F4: if false then\n      if let some b := selected then",
+    "test": "tests/test_readings_stage_times.py::test_named_enumerated_verdict_records_both_completion_calls",
+    "result": "failed under mutant build; restored build passes"
+  },
+  {
+    "file": "lean/VE/Service/ReadingsAdmissionProfile.lean",
+    "fault": "F5: if false then",
+    "test": "tests/test_readings_stage_times.py::test_unsplit_validation_uses_s1_admission_only",
+    "result": "failed under mutant build; restored build passes"
+  },
+  {
+    "file": "lean/VE/Service/ReadingsAdmissionProfile.lean",
+    "fault": "F6: let some b := result | continue",
+    "test": "tests/test_readings_stage_times.py::test_split_admission_stops_before_companions_after_main_failure",
+    "result": "failed under mutant build; restored build passes"
   }
 ]
