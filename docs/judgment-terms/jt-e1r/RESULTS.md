@@ -15,4 +15,6 @@ The same 20 row IDs were incorrect in both arms: U01, U04, U05, U08, U09, U12, U
 
 All 80 calls reported `claude-sonnet-5-5` exclusively, successful CLI results and `fallback_credit: null`; the account picker selected `claude-danielsaeedi37` for all 80. The runner charged **1,191,512 CW** from the four reported usage fields, below the 3M cap; 80 is below the 100-call cap. The `--score` output and the raw-record summary command in [`REPORT.md`](REPORT.md) reproduce the counts. Full prompts, CLI wrappers, answers and usage are in [`raw/`](raw/). No model call failed or was retried.
 
+What the failure shows (an inference, for the follow-up): the arms differ in one line only, because the shared `JUDGMENT` line already shows the atom and decider in both. Section 2.4's declaration row says only that something is a judgment and who decides it. It does not say whether the conclusion is settled, left to someone, or holds only given a criterion. Those are the zone and conflict rows, which JT-E1r did not render. So these results do not show that the declaration wording confuses readers. They show that the declaration line alone does not help a reader tell TURNS from CONDITIONAL.
+
 The plan's one wording revision and rerun on a fresh frame is a follow-up; no revision was applied to this frozen experiment.

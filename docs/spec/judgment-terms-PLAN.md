@@ -583,7 +583,7 @@ Pre-registered in section 6.
 
 ### JT-3. English rows and the undeclared-word report (5–6 h; english-lean owner, Lean, Python)
 
-2026-10-29 amendment (reviews/lp-answers-20261029T1620.md item 2): JT-E1r gates the wording in this batch using fresh items and section 2.4 template-generated English displays; JT-3 acceptance requires a conformance test that its displayed lines equal JT-E1r's generated templates byte for byte on the frozen frame. JT-E1r does not wait for JT-3 or JT-4 routes.
+2026-10-29 amendment (reviews/lp-answers-20261029T1620.md item 2): JT-E1r gates the wording in this batch using fresh items and section 2.4 template-generated English displays; JT-3's acceptance condition is the conformance test `tests/test_jt3_english.py::test_declaration_lines_match_jt_e1r_templates`, which JT-3 adds: its declaration lines equal `docs/judgment-terms/jt-e1r/render.py`'s output byte for byte on every row of `docs/judgment-terms/jt-e1r/items.tsv`. JT-E1r's 2026-10-29 result is FAIL, so JT-3's wording waits for the one-revision fresh rerun. JT-E1r does not wait for JT-3 or JT-4 routes.
 
 - **What.** The rows of 2.4, in english-lean's files (`lean/VE/EnglishGrammar/*`) and its catalogue:
   - the declaration line, parsed in authoring to a W2 record and its predicate;
