@@ -623,8 +623,8 @@ def h6 (n : String) (links : String := r#"[["s", "r"]]"#) : String :=
 def r3 : String := req rsd (h6 "4") (h6P "0.02")
 def r4 : String := req rsd (h6 "5") (h6P "0.02")
 
-#guard (answer r3).compress == r#"{"meaning_id":"3c3a2954052d22eb052c63806177a653dcae39bacaf7e6e65f14816e1c87ef32","rows":[{"claim":"h6","claim_id":"9bcd6eb6e369e68ef65aec41156ba5c6707016e9af7b9f1ed1ca1478cb94b08c","finding":null,"kind":"follows","line":"Assume the following. 1. The displacement equals the product of 0.4 and the squared velocity ratio. 2. The displacement is less than 0.02. 3. The squared velocity ratio equals the square of the velocity ratio. 4. The velocity ratio is at least 0. From these, it follows that the velocity ratio is less than 1 divided by 4.","outcome":"holds","reason":null,"reproduction":null,"status":"ok"}],"status":"ok"}"#
-#guard (answer r4).compress == r#"{"meaning_id":"3648cca05ab8e1b20013ad47ea9648f021dada6fb32638bd495af5e049fef02e","rows":[{"claim":"h6","claim_id":"4dee606f697d7fea6bac0ab5b7eee2b2f69ba5f70d99c4d2e0d90fdede93a868","finding":null,"kind":"follows","line":"Assume the following. 1. The displacement equals the product of 0.4 and the squared velocity ratio. 2. The displacement is less than 0.02. 3. The squared velocity ratio equals the square of the velocity ratio. 4. The velocity ratio is at least 0. From these, it follows that the velocity ratio is less than 1 divided by 5.","outcome":"fails","reason":null,"reproduction":null,"status":"ok"}],"status":"ok"}"#
+#guard (answer r3).compress == r#"{"meaning_id":"3c3a2954052d22eb052c63806177a653dcae39bacaf7e6e65f14816e1c87ef32","rows":[{"certificate":[{"farkas":{"goal":{"coeffs":[["s","-1"]],"const":"1/20","strict":true},"weights":["1","0","1","2/5"]}},{"square":{"a":"1/20","b":"1/4","root":"r","square":"s"}}],"claim":"h6","claim_id":"9bcd6eb6e369e68ef65aec41156ba5c6707016e9af7b9f1ed1ca1478cb94b08c","counterexample":null,"finding":null,"kind":"follows","line":"Assume the following. 1. The displacement equals the product of 0.4 and the squared velocity ratio. 2. The displacement is less than 0.02. 3. The squared velocity ratio equals the square of the velocity ratio. 4. The velocity ratio is at least 0. From these, it follows that the velocity ratio is less than 1 divided by 4.","outcome":"holds","reason":null,"reproduction":null,"status":"ok"}],"status":"ok"}"#
+#guard (answer r4).compress == r#"{"meaning_id":"3648cca05ab8e1b20013ad47ea9648f021dada6fb32638bd495af5e049fef02e","rows":[{"certificate":null,"claim":"h6","claim_id":"4dee606f697d7fea6bac0ab5b7eee2b2f69ba5f70d99c4d2e0d90fdede93a868","counterexample":[["r","1/5"],["s","1/25"],["d","2/125"]],"finding":null,"kind":"follows","line":"Assume the following. 1. The displacement equals the product of 0.4 and the squared velocity ratio. 2. The displacement is less than 0.02. 3. The squared velocity ratio equals the square of the velocity ratio. 4. The velocity ratio is at least 0. From these, it follows that the velocity ratio is less than 1 divided by 5.","outcome":"fails","reason":null,"reproduction":null,"status":"ok"}],"status":"ok"}"#
 
 /-- A case over a free `x` with these premises and one derivation `c1` of `conclusion` from them. -/
 def onX (ps : List String) (conclusion ids : String) (links : String := "[]") (values : String := free "x" "the x") :
@@ -879,6 +879,12 @@ def shown (s : String) : List String :=
 -- fact (d − 0.4 s ≥ 0, 0.4 s − d ≥ 0, 0.02 − d > 0, then the negated goal s − 1/20 ≥ 0), then the square step; and
 -- R-4's counterexample, the claimed bound r = 1/5 with s = r · r and d = 0.4 s, one per free value in declaration order.
 def r3Certificate : String := r#"[{"farkas":{"goal":{"coeffs":[["s","-1"]],"const":"1/20","strict":true},"weights":["1","0","1","2/5"]}},{"square":{"a":"1/20","b":"1/4","root":"r","square":"s"}}]"#
+
+#guard !Shown.matches (.decided .holds) (.certificate [])
+#guard Shown.matches (.decided .holds) (.certificate [.square "s" "r" 0 1])
+#guard Shown.matches (.decided .fails) (.counterexample [])
+#guard Shown.matches (.decided .undefined) .nothing
+#guard Shown.matches (.unknown .derivationInconclusive) .nothing
 def h6pCertificate : String := r#"[{"farkas":{"goal":{"coeffs":[["s","-1"]],"const":"1/40","strict":true},"weights":["1","0","1","2/5"]}},{"square":{"a":"1/40","b":"1/6","root":"r","square":"s"}}]"#
 /-- Free `y`, `u`, `x`, `s`, `t`, `v` and `w`, and `q` = x + y; `c1` derives x < 0 from 1 ≥ q (q read only by the last
 expression) with the links (s, t) and (v, w). -/

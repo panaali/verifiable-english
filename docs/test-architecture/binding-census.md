@@ -8,11 +8,11 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 |---|---:|
 | leaves:bound | 255 |
 | leaves:closed domain | 268 |
-| leaves:none | 1380 |
+| leaves:none | 1390 |
 | modes | 39 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 979 |
+| today:not probed | 989 |
 | today:shape | 523 |
 | today:unbound | 137 |
 | answers | 574 |
@@ -3296,23 +3296,39 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 |---|---|---|---|---|---:|---|
 | `/case_index` | integer | bound | x-index |  | 1 | shape |
 | `/error` | string | none |  | minLength | 4 | not probed |
-| `/meaning_id` | string | none |  | pattern | 3 | not probed |
-| `/rows/*/claim` | string | bound | x-equals |  | 3 | shape |
-| `/rows/*/claim_id` | string | none |  | pattern | 3 | not probed |
+| `/meaning_id` | string | none |  | pattern | 2 | not probed |
+| `/rows/*/certificate/*/farkas/goal/coeffs/*/0` | string | none |  |  | 0 | not probed |
+| `/rows/*/certificate/*/farkas/goal/coeffs/*/1` | string | none |  | pattern | 0 | not probed |
+| `/rows/*/certificate/*/farkas/goal/const` | string | none |  | pattern | 0 | not probed |
+| `/rows/*/certificate/*/farkas/weights/*` | string | none |  | pattern | 0 | not probed |
+| `/rows/*/certificate/*/square/a` | string | none |  | pattern | 0 | not probed |
+| `/rows/*/certificate/*/square/b` | string | none |  | pattern | 0 | not probed |
+| `/rows/*/certificate/*/square/root` | string | none |  |  | 0 | not probed |
+| `/rows/*/certificate/*/square/square` | string | none |  |  | 0 | not probed |
+| `/rows/*/claim` | string | bound | x-equals |  | 2 | shape |
+| `/rows/*/claim_id` | string | none |  | pattern | 2 | not probed |
+| `/rows/*/counterexample/*/0` | string | none |  |  | 0 | not probed |
+| `/rows/*/counterexample/*/1` | string | none |  | pattern | 0 | not probed |
 | `/rows/*/display` | string | none |  | pattern | 2 | not probed |
-| `/rows/*/kind` | string | closed domain | const |  | 3 | shape |
-| `/rows/*/line` | string | none |  | minLength | 2 | not probed |
-| `/rows/*/outcome` | string | closed domain | const |  | 3 | shape |
-| `/rows/*/outcome` | string | closed domain | enum |  | 3 | shape |
+| `/rows/*/kind` | string | closed domain | const |  | 2 | shape |
+| `/rows/*/line` | string | none |  | minLength | 1 | not probed |
+| `/rows/*/outcome` | string | closed domain | const |  | 2 | shape |
+| `/rows/*/outcome` | string | closed domain | enum |  | 2 | shape |
 | `/rows/*/reason` | string | closed domain | enum |  | 0 | shape |
 | `/rows/*/reproduction` | string | closed domain | const |  | 1 | shape |
 | `/rows/*/sides/*` | string | none |  | pattern | 2 | not probed |
-| `/rows/*/status` | string | closed domain | const |  | 3 | shape |
-| `/status` | string | closed domain | const |  | 7 | shape |
+| `/rows/*/status` | string | closed domain | const |  | 2 | shape |
+| `/status` | string | closed domain | const |  | 6 | shape |
 
 | array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
 |---|---|---|---|---|
 | `/rows` | x-zip | x-zip |  |  |
+| `/rows/*/certificate` |  |  |  |  |
+| `/rows/*/certificate/*/farkas/goal/coeffs` |  |  |  |  |
+| `/rows/*/certificate/*/farkas/goal/coeffs/*` |  |  |  |  |
+| `/rows/*/certificate/*/farkas/weights` |  |  |  |  |
+| `/rows/*/counterexample` |  |  |  |  |
+| `/rows/*/counterexample/*` |  |  |  |  |
 | `/rows/*/sides` |  |  |  |  |
 
 ## cardinality

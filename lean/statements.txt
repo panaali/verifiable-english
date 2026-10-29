@@ -3958,6 +3958,13 @@ theorem VE.Calc.Check.fault_some
       ∃ e, e ∈ k.exprs ∧ VE.Calc.Expr.inline ds (VE.Calc.Check.keep ds k) e = Except.error v
   -- uses VE.Calc.Check.exprs@VE.Calc.Wire VE.Calc.Check.fault@VE.Calc.Run VE.Calc.Check.keep@VE.Calc.Run VE.Calc.Check@VE.Calc.Wire VE.Calc.Decl@VE.Calc.Decls VE.Calc.Expr.inline@VE.Calc.Inline VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Val@VE.Calc.Decls VE.Calc.inlineTable@VE.Calc.Inline
   -- expr 3760766454
+theorem VE.Calc.Check.followsShown_matches
+  ∀ (ds : List VE.Calc.Decl) (P : List VE.Calc.Claim) (links : List (String × String)) (C : VE.Calc.Claim),
+    VE.Calc.Shown.matches (VE.Calc.Check.runShown ds (VE.Calc.Check.follows P links C)).fst
+        (VE.Calc.Check.runShown ds (VE.Calc.Check.follows P links C)).snd =
+      Bool.true
+  -- uses VE.Calc.Check.follows@VE.Calc.Wire VE.Calc.Check.runShown@VE.Calc.Run VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Decl@VE.Calc.Decls VE.Calc.Shown.matches@VE.Calc.Run VE.Calc.Shown@VE.Calc.Run VE.Numbers.Outcome@VE.Numbers.Round
+  -- expr 1345610440
 theorem VE.Calc.Check.outcomeMeans_claim
   ∀ (ds : List VE.Calc.Decl) (c : VE.Calc.Claim) (v : VE.Numbers.Verdict),
     VE.Calc.Check.OutcomeMeans ds (VE.Calc.Check.claim c) (VE.Numbers.Outcome.decided v) ↔
@@ -4095,6 +4102,11 @@ theorem VE.Calc.Derivation.replay_sound
             ∀ (f : VE.Calc.QFact), f ∈ fs → VE.Calc.QFact.Holds κ f
   -- uses VE.Calc.Derivation.replay@VE.Calc.Derive VE.Calc.QFact.Holds@VE.Calc.Linear VE.Calc.QFact@VE.Calc.Linear VE.Calc.Step@VE.Calc.Derive
   -- expr 2374285068
+theorem VE.Calc.Derive.shown_matches
+  ∀ (P : List VE.Calc.QFact) (links : List (String × String)) (g : VE.Calc.QFact),
+    VE.Calc.Shown.matches (VE.Calc.Derive.shown P links g).fst (VE.Calc.Derive.shown P links g).snd = Bool.true
+  -- uses VE.Calc.Derive.shown@VE.Calc.Run VE.Calc.QFact@VE.Calc.Linear VE.Calc.Shown.matches@VE.Calc.Run VE.Calc.Shown@VE.Calc.Run VE.Numbers.Outcome@VE.Numbers.Round
+  -- expr 2086807563
 theorem VE.Calc.Expr.evalB_eq
   ∀ (σ : VE.Calc.Values) (c : Nat) (e : VE.Calc.Expr) (n : Nat) {r : Option Rat} {m : Nat},
     VE.Calc.Expr.evalB σ c e n = Option.some (r, m) → r = VE.Calc.Expr.eval σ e
@@ -4622,6 +4634,14 @@ theorem VE.Calc.Run.outcomes_words
     List.find? (fun x => VE.Calc.Run.words x == VE.Calc.Run.words o) VE.Calc.Run.outcomes = Option.some o
   -- uses VE.Calc.Run.outcomes@VE.Calc.Run VE.Calc.Run.words@VE.Calc.Run VE.Numbers.Outcome@VE.Numbers.Round
   -- expr 133560894
+theorem VE.Calc.Run.row_matches
+  ∀ (c : VE.Calc.Case) (cl : String × VE.Calc.Check),
+    match cl.snd with
+    | VE.Calc.Check.claim c => True
+    | VE.Calc.Check.follows P links C =>
+      VE.Calc.Shown.matches (VE.Calc.Run.row c cl).outcome (VE.Calc.Run.row c cl).shown = Bool.true
+  -- uses VE.Calc.Case@VE.Calc.Wire VE.Calc.Check.reasons.match_1@VE.Calc.Run VE.Calc.Check@VE.Calc.Wire VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Row.outcome@VE.Calc.Run VE.Calc.Row.shown@VE.Calc.Run VE.Calc.Run.row@VE.Calc.Run VE.Calc.Shown.matches@VE.Calc.Run
+  -- expr 2580751620
 theorem VE.Calc.Run.row_outcome
   ∀ (c : VE.Calc.Case) (cl : String × VE.Calc.Check), (VE.Calc.Run.row c cl).outcome = VE.Calc.Check.run c.decls cl.snd
   -- uses VE.Calc.Case.decls@VE.Calc.Wire VE.Calc.Case@VE.Calc.Wire VE.Calc.Check.run@VE.Calc.Run VE.Calc.Check@VE.Calc.Wire VE.Calc.Row.outcome@VE.Calc.Run VE.Calc.Run.row@VE.Calc.Run VE.Numbers.Outcome@VE.Numbers.Round
@@ -4777,6 +4797,11 @@ theorem VE.Calc.charge_eq
   ∀ {α : Type} {c n : Nat} {x : Unit → α} {r : α} {m : Nat}, VE.Calc.charge c n x = Option.some (r, m) → r = x ()
   -- uses VE.Calc.Budgeted@VE.Calc.Poly VE.Calc.charge@VE.Calc.Poly
   -- expr 1341710049
+theorem VE.Calc.checked_steps
+  ∀ (P : List VE.Calc.QFact) (links : List (String × String)) (g : VE.Calc.QFact) (d : VE.Calc.Derivation),
+    VE.Calc.Derivation.check P links g d = Bool.true → d.steps ≠ []
+  -- uses VE.Calc.Derivation.check@VE.Calc.Derive VE.Calc.Derivation.steps@VE.Calc.Derive VE.Calc.Derivation@VE.Calc.Derive VE.Calc.QFact@VE.Calc.Linear VE.Calc.Step@VE.Calc.Derive
+  -- expr 2412847626
 theorem VE.Calc.compare_invariant
   ∀ (Γ : String → Option VE.Calc.PhysDim) (ρ : VE.Calc.Rescale) (σ : VE.Calc.Values) (c : VE.Numbers.Comparison)
     (a b : VE.Calc.Expr) (d : VE.Calc.PhysDim),
