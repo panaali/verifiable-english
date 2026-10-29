@@ -1,0 +1,23 @@
+{
+  "item": "me-5e",
+  "mutants": [
+    {
+      "file": "lean/VE/Calc/Run.lean",
+      "change": "rowJson writes null instead of the follows certificate",
+      "test": "lake build VE.Calc.RunExamples (#guard answer r3)",
+      "result": "failed at RunExamples.lean:626; restored"
+    },
+    {
+      "file": "ve/calc.py",
+      "change": "_FIELDS accepts a follows row without certificate and counterexample",
+      "test": "tests/test_calc_answer.py::test_the_two_fields_come_together_and_only_on_a_follows_row",
+      "result": "failed; restored"
+    },
+    {
+      "file": "ve/calc.py",
+      "change": "lines omits a nonnull certificate",
+      "test": "tests/test_calc_lean.py::test_check_shows_leans_rows[20]",
+      "result": "failed; restored"
+    }
+  ]
+}
