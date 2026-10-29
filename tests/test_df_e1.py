@@ -14,6 +14,10 @@ source = Path(__file__).resolve().parents[1] / "docs/defeasible/df-e1/runner.py"
 spec = importlib.util.spec_from_file_location("df_e1_runner", source)
 runner = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(runner)
+prepare_source = source.with_name("prepare.py")
+prepare_spec = importlib.util.spec_from_file_location("df_e1_prepare", prepare_source)
+prepare = importlib.util.module_from_spec(prepare_spec)
+prepare_spec.loader.exec_module(prepare)
 
 
 def fixture(tmp_path, monkeypatch):
@@ -38,7 +42,8 @@ def fixture(tmp_path, monkeypatch):
             "reserved_cw": 10, "exit_code": 0, "subtype": "success", "cli_error": None,
             "is_error": False, "model": runner.MODEL, "modelUsage": {runner.MODEL: {}},
             "usage": {"input_tokens": 0, "cache_creation_input_tokens": 0,
-                      "cache_read_input_tokens": 0, "output_tokens": 0},
+                      "cache_read_input_tokens": 0, "output_tokens": 3},
+            "prompt": body, "cli_stdout": "{}", "cli_stderr": "",
             "prompt_sha256": hashlib.sha256(body.encode()).hexdigest()}))
     return rows, raw
 
@@ -48,6 +53,15 @@ def test_prompt_contains_only_rule_answer_and_question(tmp_path, monkeypatch):
     body = runner.prompt(rows[0], "short")
     assert body == ("Rule text:\nRule 0\n\nRendered answer:\nShort answer 0\n\n" +
                     runner.QUESTION + "\n\nANSWER: YES or NO")
+
+
+def test_saved_item_bytes_equal_checked_renderers():
+    saved = json.loads((source.parent / "items.json").read_text())
+    fresh = prepare.reader_items()
+    assert [(r["id"], r["rule_text"], r["lean_answer"], r["rendered"])
+            for r in saved] == [(r["id"], r["rule_text"], r["lean_answer"], r["rendered"])
+                             for r in fresh]
+    assert len(saved) == 24 and sum("short" in r["rendered"] for r in saved) == 6
 
 
 def test_ambiguous_answer_is_not_scored():
@@ -128,7 +142,6 @@ def test_dispatch_rejected_charge_cannot_score_or_resume(tmp_path, monkeypatch, 
     assert not runner.valid_answer(record)
     with pytest.raises(ValueError, match="failed or unverified"):
         runner.score()
-    monkeypatch.setattr(runner, "DISPATCH_CW_BOUND", 100_000)
     monkeypatch.setattr(runner, "account", Mock())
     with pytest.raises(RuntimeError, match="needs inspection"):
         runner._run_locked(runner.jobs(runner.items()), raw)
@@ -139,12 +152,12 @@ def test_aggregate_charge_cap_applies_to_score_and_resume(tmp_path, monkeypatch)
     _, raw = fixture(tmp_path, monkeypatch)
     for path in raw.glob("*.json"):
         record = json.loads(path.read_text())
-        record["reserved_cw"] = 100_001
-        record["charged_cw"] = 100_001
+        record["usage"]["output_tokens"] = 29_413
+        record["reserved_cw"] = 100_004
+        record["charged_cw"] = 100_004
         path.write_text(json.dumps(record))
     with pytest.raises(ValueError, match="reader cap exceeded"):
         runner.score()
-    monkeypatch.setattr(runner, "DISPATCH_CW_BOUND", 100_001)
     monkeypatch.setattr(runner, "account", Mock())
     with pytest.raises(RuntimeError, match="reader cap exceeded"):
         runner._run_locked(runner.jobs(runner.items()), raw)
@@ -156,7 +169,6 @@ def test_failed_attempt_is_reserved_before_dispatch_and_never_retried(tmp_path, 
     (raw / "I23__long.json").unlink()
     monkeypatch.setattr(runner, "prereg_committed", lambda: None)
     monkeypatch.setattr(runner, "account", lambda: "/tmp/mock-account")
-    monkeypatch.setattr(runner, "DISPATCH_CW_BOUND", 100_000)
     call = Mock(return_value=SimpleNamespace(returncode=0, stdout="[]", stderr=""))
     monkeypatch.setattr(runner.subprocess, "run", call)
     for _ in range(41):
@@ -165,26 +177,31 @@ def test_failed_attempt_is_reserved_before_dispatch_and_never_retried(tmp_path, 
     assert call.call_count == 1
     record = json.loads((raw / "I23__long.json").read_text())
     assert record["cli_error"] == "invalid CLI JSON object"
-    assert record["reserved_cw"] == 100_000
+    assert record["reserved_cw"] == 10
 
 
-def test_no_enforceable_charge_bound_blocks_dispatch(tmp_path, monkeypatch):
+def test_failed_attempt_blocks_resume(tmp_path, monkeypatch):
     _, raw = fixture(tmp_path, monkeypatch)
     (raw / "I23__long.json").unlink()
     monkeypatch.setattr(runner, "prereg_committed", lambda: None)
     call = Mock()
     monkeypatch.setattr(runner.subprocess, "run", call)
-    with pytest.raises(RuntimeError, match="no enforceable"):
-        runner.run()
+    (raw / "I23__long.json").write_text("{}")
+    with pytest.raises(RuntimeError, match="needs inspection"):
+        runner._run_locked(runner.jobs(runner.items()), raw)
     call.assert_not_called()
 
 
-def test_budget_reserves_full_bounded_charge(tmp_path, monkeypatch):
+def test_budget_reserves_largest_prior_charge(tmp_path, monkeypatch):
     _, raw = fixture(tmp_path, monkeypatch)
     (raw / "I23__long.json").unlink()
     monkeypatch.setattr(runner, "prereg_committed", lambda: None)
     monkeypatch.setattr(runner, "account", lambda: "/tmp/mock-account")
-    monkeypatch.setattr(runner, "DISPATCH_CW_BOUND", runner.MAX_CW)
+    for path in raw.glob("*.json"):
+        record = json.loads(path.read_text())
+        record["charged_cw"] = 100_004
+        record["usage"]["output_tokens"] = 29_413
+        path.write_text(json.dumps(record))
     call = Mock()
     monkeypatch.setattr(runner.subprocess, "run", call)
     with pytest.raises(RuntimeError, match="reader cap reached"):
