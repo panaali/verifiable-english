@@ -388,7 +388,7 @@ def test_rsp_each_narrowing_has_an_unscored_counterfactual(rsp_modules):
     assert all(row["unscored"] and row["changed"] for row in saved.values())
     assert all(saved["N1"]["changed"][id_]["without"] == "NONE"
                for id_ in ("A-T0/PROT1", "A-T1/PROT1", "A-T4/PROT4",
-                           "B-INTD/INSCOPE", "K2", "K4", "K22a"))
+                           "B-INTD/INSCOPE", "K2", "K4", "K22a", "D3b", "D4", "D5"))
     assert saved["N2"]["changed"]["G1"]["without"] == "NONE"
     assert saved["N3"]["changed"]["K13"]["without"] == "NONE"
 
@@ -421,6 +421,22 @@ def test_rsp_n1_prediction_removes_inherited_commitments(rsp_modules, case_id, p
     finally:
         rsp_run.WITHOUT_NARROWING = None
         rsp_run.document.cache_clear()
+
+
+def test_rsp_date_obligations_follow_their_source_rules(rsp_modules):
+    """N1 changes the obligation, while D3's arithmetic certificate remains available."""
+    rules = {b.id: b for b in rsp_translation.rule_blocks()}
+    date_cases = rsp_stage0.DATE_QUESTIONS
+    assert set(date_cases) == {"D3a", "D3b", "D4", "D5"}
+    assert all(case[4] in rules and rules[case[4]].narrowing == "RS0" for case in date_cases.values())
+    assert {id_: rsp_run.verdict(rsp_run.date_answer(id_)) for id_ in date_cases} == {
+        "D3a": "NONE", "D3b": "ALL", "D4": "ALL", "D5": "ALL"}
+    try:
+        rsp_run.WITHOUT_NARROWING = "N1"
+        assert {id_: rsp_run.verdict(rsp_run.date_answer(id_)) for id_ in date_cases} == {
+            id_: "NONE" for id_ in date_cases}
+    finally:
+        rsp_run.WITHOUT_NARROWING = None
 
 
 @pytest.mark.parametrize("narrowing,item_id", [("N1", "A-T1/PROT1"), ("N2", "G1"), ("N3", "K13")])
