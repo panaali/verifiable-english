@@ -6026,21 +6026,6 @@
         "VE.Question.askedText"
       ]
     },
-    "VE/Service/ReadingsAdmissionProfile.lean": {
-      "T": [
-        "VE.Service.ReadingsAdmissionProfile.cpuTicks",
-        "VE.Service.ReadingsAdmissionProfile.profileAdmissions",
-        "VE.Service.ReadingsAdmissionProfile.profileCase",
-        "VE.Service.ReadingsAdmissionProfile.profileChecked",
-        "VE.Service.ReadingsAdmissionProfile.profileComponent",
-        "VE.Service.ReadingsAdmissionProfile.profileLine",
-        "VE.Service.ReadingsAdmissionProfile.profileND",
-        "VE.Service.ReadingsAdmissionProfile.profilePairs",
-        "VE.Service.ReadingsAdmissionProfile.profileProductPart",
-        "VE.Service.ReadingsAdmissionProfile.profileS2",
-        "VE.Service.ReadingsAdmissionProfile.timed"
-      ]
-    },
     "VE/Readings/Asserted.lean": {
       "G[V]": [
         "VE.Readings.buildAsserted"
