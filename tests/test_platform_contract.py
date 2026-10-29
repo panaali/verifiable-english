@@ -227,12 +227,13 @@ def test_selector_coverage_is_shared_by_gate_and_contract(tmp_path, monkeypatch,
         monkeypatch.setenv("VE_GATE_PYTEST_IDS_FILE", str(listing))
         monkeypatch.setenv("VE_GATE_PYTEST_SELECTOR_MODE", mode)
         collected = list(dict.fromkeys((selector, nodeid)))
-        gate_pytest._EVENTS = {"collected": collected, "deselected": []}
-        items = [SimpleNamespace(nodeid=value) for value in gate_pytest._EVENTS["collected"]]
-        gate_pytest.pytest_collection_modifyitems(Mock(), items)
-        assert [item.nodeid for item in items] == [value for value in collected
-                                                    if value == selector or
-                                                    (mode == "covers" and covered)]
+        with monkeypatch.context() as patch:
+            patch.setattr(gate_pytest, "_EVENTS", {"collected": collected, "deselected": []}, raising=False)
+            items = [SimpleNamespace(nodeid=value) for value in gate_pytest._EVENTS["collected"]]
+            gate_pytest.pytest_collection_modifyitems(Mock(), items)
+            assert [item.nodeid for item in items] == [value for value in collected
+                                                        if value == selector or
+                                                        (mode == "covers" and covered)]
 
 
 @pytest.mark.parametrize("mode", ["exact", "covers"])
@@ -241,19 +242,23 @@ def test_gate_selector_that_collects_nothing_is_an_error(tmp_path, monkeypatch, 
     listing.write_text(json.dumps(["tests/x.py::test_x[a]"]))
     monkeypatch.setenv("VE_GATE_PYTEST_IDS_FILE", str(listing))
     monkeypatch.setenv("VE_GATE_PYTEST_SELECTOR_MODE", mode)
-    gate_pytest._EVENTS = {"collected": ["tests/x.py::test_x[a][b]"], "deselected": []}
-    with pytest.raises(pytest.UsageError, match="tests/x.py::test_x\\[a\\]"):
-        gate_pytest.pytest_collection_modifyitems(
-            Mock(), [SimpleNamespace(nodeid="tests/x.py::test_x[a][b]")])
+    with monkeypatch.context() as patch:
+        patch.setattr(gate_pytest, "_EVENTS", {"collected": ["tests/x.py::test_x[a][b]"], "deselected": []},
+                      raising=False)
+        with pytest.raises(pytest.UsageError, match="tests/x.py::test_x\\[a\\]"):
+            gate_pytest.pytest_collection_modifyitems(
+                Mock(), [SimpleNamespace(nodeid="tests/x.py::test_x[a][b]")])
 
 
 def test_gate_selector_removed_after_item_collection_is_an_error(tmp_path, monkeypatch):
     listing = tmp_path / "ids.json"
     listing.write_text(json.dumps(["tests/x.py::test_x"]))
     monkeypatch.setenv("VE_GATE_PYTEST_IDS_FILE", str(listing))
-    gate_pytest._EVENTS = {"collected": ["tests/x.py::test_x"], "deselected": []}
-    with pytest.raises(pytest.UsageError, match="gate selector collected nothing"):
-        gate_pytest.pytest_collection_modifyitems(Mock(), [])
+    with monkeypatch.context() as patch:
+        patch.setattr(gate_pytest, "_EVENTS", {"collected": ["tests/x.py::test_x"], "deselected": []},
+                      raising=False)
+        with pytest.raises(pytest.UsageError, match="gate selector collected nothing"):
+            gate_pytest.pytest_collection_modifyitems(Mock(), [])
 
 
 def test_native_pytest_parameter_selector_matches_the_gate_rule(tmp_path):
