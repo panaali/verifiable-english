@@ -325,8 +325,8 @@ def rust_environment(env) -> dict:
     without what each statement-layer profile adds that no model reads (their
     Lean routes and the English layer check those). Rust answers carry no
     environment identity; witnesses are validated over `env` itself."""
-    from ..profiles import model_environment
-    return model_environment(env.to_dict())
+    from ..profiles import model_environment, without_wording_acts
+    return without_wording_acts(model_environment(env.to_dict()))
 
 
 def cached_rust_environment(env) -> dict:
