@@ -729,6 +729,7 @@ def main() -> int:
               "failures": [], "status": "failed"}
     rerun = None  # the failed tests' files, when this gate reruns them alone
     contract = None  # the contract's pytest selectors, when this is the platform contract run
+    contract_entries = None  # all source selectors, including those subsumed for execution
     selection = None  # what the suite runs instead of tests/: the rerun's files or the contract's selectors
     head_ids = None  # the head's full collection, recorded for its commit at the end
     # A killed process must never leave the previous run's passing record intact.
@@ -765,7 +766,8 @@ def main() -> int:
             if args.contract is not None:
                 from tools import platform_contract
                 listing = (ROOT / args.contract).resolve()
-                contract = platform_contract.run_selectors(platform_contract.read_contract(listing))
+                contract_entries = platform_contract.read_contract(listing)["tests"]
+                contract = platform_contract.run_selectors({"tests": contract_entries})
                 result["mode"] = "contract"
                 result["contract"] = {"list": str(listing.relative_to(ROOT)) if listing.is_relative_to(ROOT)
                                       else str(listing),
@@ -897,7 +899,10 @@ def main() -> int:
                 # No collection check (the complete gates check the whole collection); each listed selector must
                 # still collect a test, so a listed test that went away cannot pass unseen.
                 interpret_pytest(result, events, policy, events["collected"], families=())
-                for selector in contract:
+                # `run_selectors` removes entries covered by a broader selector
+                # for execution. Check the source list here: a stale narrower
+                # entry must not disappear merely because its file still exists.
+                for selector in sorted({entry["selector"] for entry in contract_entries}):
                     if not any(platform_contract.covers(selector, nodeid) for nodeid in events["selected"]):
                         result["failures"].append({"stage": "coverage",
                                                    "reason": f"contract test collected nothing: {selector}"})

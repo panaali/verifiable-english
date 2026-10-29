@@ -205,6 +205,10 @@ def test_the_run_selectors_run_each_listed_test_once():
     ("tests/x.py::TestX", "tests/x.py::TestXY::test_x", False),
     ("tests/x.py::test_x[a]", "tests/x.py::test_x[a][b]", False),
     ("tests/x.py::test_x[a]", "tests/x.py::test_x[ab]", False),
+    ("tests/x.py::test_x[a::b]", "tests/x.py::test_x[a::b]", True),
+    ("tests/x.py::test_x[a::b]", "tests/x.py::test_x[a::b][c]", False),
+    ("tests/x.py::test_x[a::b]", "tests/x.py::test_x[a::b]::test_y", False),
+    ("tests/x.py::test_x", "tests/x.py::test_x[a::b]", True),
     ("tests", "tests/x.py::test_x", False),
     ("tests/x.py::test_x", "tests/x.py::test_x[", False),
 ])
@@ -256,16 +260,18 @@ def test_native_pytest_parameter_selector_matches_the_gate_rule(tmp_path):
     source = tmp_path / "test_parameters.py"
     source.write_text("import pytest\n"
                       "@pytest.mark.parametrize('value', [pytest.param(1, id='a'), "
-                      "pytest.param(2, id='ab')])\n"
+                      "pytest.param(2, id='ab'), pytest.param(3, id='a::b'), "
+                      "pytest.param(4, id='a::b[c]')])\n"
                       "def test_x(value): pass\n"
                       "def test_xy(): pass\n")
-    selector = f"{source}::test_x[a]"
-    done = subprocess.run(nested_pytest.command(["--collect-only", "-q", "-o", "addopts=", selector]),
-                          env=nested_pytest.environment(os.environ), capture_output=True, text=True)
-    assert done.returncode == 0, done.stdout + done.stderr
-    selected = [line for line in done.stdout.splitlines() if line.startswith(source.name + "::")]
-    assert [str(source.parent / line) for line in selected] == [selector]
-    assert not pc.covers(selector, f"{source}::test_x[ab]")
+    for parameter, sibling in (("a", "ab"), ("a::b", "a::b[c]")):
+        selector = f"{source}::test_x[{parameter}]"
+        done = subprocess.run(nested_pytest.command(["--collect-only", "-q", "-o", "addopts=", selector]),
+                              env=nested_pytest.environment(os.environ), capture_output=True, text=True)
+        assert done.returncode == 0, done.stdout + done.stderr
+        selected = [line for line in done.stdout.splitlines() if line.startswith(source.name + "::")]
+        assert [str(source.parent / line) for line in selected] == [selector]
+        assert not pc.covers(selector, f"{source}::test_x[{sibling}]")
 
 
 def test_contract_check_fails_on_a_stale_list(tmp_path, monkeypatch, capsys):
@@ -560,6 +566,16 @@ def test_a_listed_test_that_collects_nothing_fails_the_contract_run(tmp_path, mo
     code, record = fake.run("--contract")
     assert (code, record["status"]) == (1, "failed")
     assert {"stage": "coverage", "reason": "contract test collected nothing: tests/test_d.py::test_gone"} \
+        in record["failures"]
+
+
+def test_covered_but_missing_contract_selector_fails_the_run(tmp_path, monkeypatch):
+    fake = ContractGate(tmp_path, monkeypatch,
+                        selectors=("tests/test_a.py", "tests/test_a.py::test_gone"))
+    code, record = fake.run("--contract")
+    assert record["contract"]["selectors"] == ["tests/test_a.py"]
+    assert (code, record["status"]) == (1, "failed")
+    assert {"stage": "coverage", "reason": "contract test collected nothing: tests/test_a.py::test_gone"} \
         in record["failures"]
 
 

@@ -148,7 +148,10 @@ def covers(selector: str, nodeid: str) -> bool:
         return True
     # A parameterized node is already a complete selector. Only an
     # unparameterized file, class or function can have collected children.
-    if "[" in selector.rsplit("::", 1)[-1]:
+    # Parameter IDs may themselves contain `::`; split the path from the test
+    # before looking for a parameter suffix, rather than splitting at the last
+    # `::` in the entire node ID.
+    if "[" in selector.partition("::")[2]:
         return False
     return ((nodeid.startswith(selector + "::") and len(nodeid) > len(selector) + 2)
             or (nodeid.startswith(selector + "[") and nodeid.endswith("]")))
