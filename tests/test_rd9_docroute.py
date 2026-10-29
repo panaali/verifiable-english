@@ -191,6 +191,65 @@ def test_filled_soft_report_selects_compiled_units(mixed, omit_norm_content):
     assert _report(doc)["admission"]["admitted"] is True
 
 
+def _wrapped(units):
+    return [{"id": "p", "span": [0, 38], "status": "MIXED",
+             "parts": [{**unit, "status": "CHECKED"} for unit in units]}]
+
+
+def _soft_lines(coverage):
+    return {key: coverage[key] for key in
+            ("soft_status", "default_exceptions_by_decider", "soft_residual_labels", "soft_background_labels")}
+
+
+@pytest.mark.parametrize("chain", ["filled", "plain"])
+def test_mixed_container_keeps_soft_decisions(chain, tmp_path):
+    # F7: the soft source reads a MIXED unit's parts, so wrapping the units keeps the decision predicate, the
+    # default exception and the OPEN soft status, on the filled chain and on the plain soft chain Lean answers.
+    answers = []
+    for mixed in (False, True):
+        front, body = _front()
+        if chain == "plain":
+            front["environment"]["profiles"].remove("norm-defaults@0")
+            front["environment"]["vocabulary"]["predicates"]["x_permitted"]["regulated"]["default"] = "deny"
+        if mixed:
+            front["units"] = _wrapped(front["units"])
+        doc = _loaded(front, body)
+        path = tmp_path / f"{chain}-{mixed}.ve.md"
+        path.write_bytes(b"---\n" + json.dumps(front).encode() + b"\n---\n" + body)
+        answers.append((sorted(doc["soft_document"].extended_env.decision_names), _soft_lines(_report(doc)["coverage"]),
+                        _soft_lines(check_document(path)["coverage"])))
+    assert answers[1] == answers[0]
+    assert answers[0][0] == ["soft__excepted__s"]
+    assert answers[0][1]["soft_status"] == answers[0][2]["soft_status"] == "OPEN"
+    assert answers[0][1]["default_exceptions_by_decider"] == {"unstated": 1}
+
+
+def _unit(uid, start, end, kind, content, status=None):
+    return {"id": uid, "span": [start, end], "kind": kind, "meaning": "specified", "support": "none",
+            "content": content, **({"status": status} if status else {})}
+
+
+_RULE = {"norm": {"name": "s"}}
+_CHECKED = [_unit("u1", 0, 24, "norm", _RULE, "CHECKED"), _unit("u2", 24, 38, "asserted", ["top"], "CHECKED")]
+
+
+def _mixed(parts, end=38):
+    return {"id": "p", "span": [0, end], "status": "MIXED", "parts": parts}
+
+
+@pytest.mark.parametrize("units, norms", [
+    ([_unit("u1", 0, 24, "norm", _RULE), _unit("u2", 24, 38, "asserted", ["top"])], [_RULE]),
+    ([_mixed(_CHECKED)], [_RULE]),
+    ([_mixed(_CHECKED, 40)], [_RULE]),
+    ([_mixed(_CHECKED[::-1]), _unit("u3", 38, 40, "norm", _RULE)], []),
+    ([_unit("u1", 0, 24, "norm", _RULE), 1, _unit("u3", 24, 38, "norm", _RULE)], [_RULE]),
+], ids=["flat", "mixed", "short-parent", "misplaced-part", "non-object"])
+def test_soft_source_reads_mixed_parts(units, norms):
+    # The units of `VE.Service.SoftSourceExamples`, whose `#guard`s check Lean's `softSourceNorms` on them.
+    from ve.document.containers import _soft_contents
+    assert _soft_contents(units) == norms
+
+
 @pytest.mark.parametrize("with_readings", [False, True])
 def test_filled_soft_source_instruction_declarations_match_lean_base(with_readings):
     front, body = _front()

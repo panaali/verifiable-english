@@ -1103,7 +1103,7 @@
       {
         "file": "lean/VE/Service/Document.lean",
         "lines": 2016,
-        "sha256": "26ba09ba4dd3eac95dcccdc30000417b77a5ceac8cc3d29fa01f596d34be3137",
+        "sha256": "a20bae66c44cefb38206f1df9c10947275a62d955206de2493ad7949c5c63a75",
         "ranges": [
           [
             1,
@@ -2094,6 +2094,7 @@
       "lean/VE/Service/ScopeAdmission.lean": "statements about scope@0 in the document mode (governor_status_weakest, governor_status_none, decodeScope_layout, scope_admission, scope_absent_unchanged); no runtime JSON handling; sc-5rb: scope_admission_sets, checkDocSets_no_sets and checkDocSets_absent_unchanged about `checkDocSets`, with `Pinned.withGoverned`, the case they name, defined from `withUnits` and `withSets`",
       "lean/VE/Scope/WireExamples.lean": "fixtures only: SC-1b's #guard checks build scope blocks, document units and a document-mode answer as JSON literals and run the pinned decoder and fold (Wire.lean) on them; no service mode reads this file",
       "lean/VE/Service/ScopeExamples.lean": "fixtures only: SC-1b's #guard checks build small scope@0 part documents as request JSON and run the document mode (`checkDoc`) on them; no service mode reads this file",
+      "lean/VE/Service/SoftSourceExamples.lean": "fixtures only: rd9-docroute F7's #guard checks build small unit lists as request JSON and run the document mode's soft source (`softSourceNorms`) on them; no service mode reads this file",
       "lean/VE/Defaults/RouteExamples.lean": "fixtures only: #guard checks of the defaults-* kinds through the norm-defaults mode (docs/spec/defeasible.md 8.1) build request JSON; no runner path",
       "lean/ResponseShape/DefaultsExamples.lean": "fixtures only: #guard checks of the defaults-* rows of norm-defaults.json on the mode's answers and their variants build JSON; no runner path",
       "lean/VE/Cardinality/RunExamples.lean": "fixtures only: #guard checks of docs/spec/quantities.md 4.1, 4.2 and 9.1 run the cardinality case runner on cases built with Json.parse and Json.mkObj; no runner path",

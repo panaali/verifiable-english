@@ -5,7 +5,7 @@ from __future__ import annotations
 from ..environment import listed_profiles
 from ..errors import VEError
 from ..readings import plan_choices, s1_content_kind
-from .source import _RIGHTS_KINDS, _environment, _parts
+from .source import _RIGHTS_KINDS, _environment, _parts, _parts_prefix
 
 
 def _wire_unit(unit):
@@ -23,7 +23,9 @@ def _wire_unit(unit):
 
 
 def _soft_contents(units, exclude=frozenset()):
-    return [u.get("content") for u in units
+    """The soft source's norm objects: the content of each unit of kind `norm` with norm content, a `MIXED` unit's
+    parts included, over the units `_parts` yields before its first fault (Lean `Service.Document.softSourceNorms`)."""
+    return [u.get("content") for u in _parts_prefix(units)
             if type(u) is dict and u.get("kind") == "norm" and u.get("id") not in exclude
             and type(u.get("content")) is dict and "norm" in u["content"]]
 

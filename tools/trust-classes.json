@@ -15128,6 +15128,15 @@
         "VE.Service.ScopeExamples.unsorted"
       ]
     },
+    "VE/Service/SoftSourceExamples.lean": {
+      "T": [
+        "VE.Service.SoftSourceExamples.checked",
+        "VE.Service.SoftSourceExamples.flat",
+        "VE.Service.SoftSourceExamples.mixed",
+        "VE.Service.SoftSourceExamples.rule",
+        "VE.Service.SoftSourceExamples.unit"
+      ]
+    },
     "VE/Service/ScopeAdmission.lean": {
       "S": [
         "VE.Scope.Pinned.withGoverned"
