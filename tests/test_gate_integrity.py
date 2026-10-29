@@ -59,14 +59,15 @@ def test_gate_selection_uses_exact_collected_ids(tmp_path, monkeypatch, selected
     selection.write_text(json.dumps(selected))
     monkeypatch.setenv("VE_GATE_PYTEST_IDS_FILE", str(selection))
     events = {"collected": list(collected), "deselected": []}
-    monkeypatch.setattr(gate_pytest, "_EVENTS", events, raising=False)
-    items = [SimpleNamespace(nodeid=node) for node in collected]
-    config = Mock()
-    gate_pytest.pytest_collection_modifyitems(config, items)
-    assert [item.nodeid for item in items] == expected
-    assert events["collected"] == expected
-    assert [item.nodeid for item in config.hook.pytest_deselected.call_args.kwargs["items"]] == [
-        node for node in collected if node not in expected]
+    with monkeypatch.context() as patch:
+        patch.setattr(gate_pytest, "_EVENTS", events, raising=False)
+        items = [SimpleNamespace(nodeid=node) for node in collected]
+        config = Mock()
+        gate_pytest.pytest_collection_modifyitems(config, items)
+        assert [item.nodeid for item in items] == expected
+        assert events["collected"] == expected
+        assert [item.nodeid for item in config.hook.pytest_deselected.call_args.kwargs["items"]] == [
+            node for node in collected if node not in expected]
 
 
 def test_gate_collection_expands_file_and_function_selectors(tmp_path):
