@@ -49,19 +49,19 @@ sections remain visible whenever the whole source unit contains a duty or hedge.
 | Status | Units | Bytes | Share |
 |---|---:|---:|---:|
 | CHECKED | 7 | 170 | 0.3% |
-| OPEN | 33 | 6,859 | 10.2% |
+| OPEN | 34 | 7,052 | 10.5% |
 | LABELLED | 48 | 5,327 | 7.9% |
-| UNFORMALISED | 301 | 55,062 | 81.7% |
+| UNFORMALISED | 300 | 54,869 | 81.4% |
 
 Each non-CHECKED byte has a blocker in [gaps.json](../../docs/usecases/safetyfw/openai-preparedness/gaps.json).
-An OPEN reading set remains pending. UNFORMALISED units name the missing D1 feature or
+OPEN reading sets remain pending. UNFORMALISED units name the missing D1 feature or
 source clause; these classifications do not certify the source claim. A unit with several blockers
 counts under each. “Alone” means exactly one recorded blocker.
 
 | Family | Units | Bytes | Alone: units, bytes | Here |
 |---|---:|---:|---:|---|
-| AP | 119 | 21,638 | 116, 20,766 | D1 has no act or complete rule for these duties |
-| AT | 58 | 12,973 | 56, 12,386 | hedges, beliefs and expectations |
+| AP | 120 | 21,831 | 116, 20,766 | D1 has no act or complete rule for these duties |
+| AT | 58 | 12,973 | 55, 12,193 | hedges, beliefs and expectations |
 | DF | 7 | 1,185 | 0, 0 | default readings |
 | ET | 28 | 8,086 | 16, 5,728 | event order and deadlines |
 | JT | 26 | 4,685 | 10, 1,613 | open judgments |
@@ -72,8 +72,8 @@ counts under each. “Alone” means exactly one recorded blocker.
 | no claim to check | 48 | 5,327 | 48, 5,327 | title, contents, pure headings and marked examples |
 | readings | 92 | 13,583 | 84, 11,178 | unselected source readings |
 
-The 301 UNFORMALISED units carry specific blocker codes in `spans.json`; no unit remains
-`not_translated`. VE reports 21 declared open terms and 14 unresolved reading sets as
+The 300 UNFORMALISED units carry specific blocker codes in `spans.json`; no unit remains
+`not_translated`. VE reports 21 declared open terms and 19 unresolved reading sets as
 residual. No assumption, bridge leaf or exception is represented as certified.
 
 ## Stage 0
