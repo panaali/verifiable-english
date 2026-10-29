@@ -6,6 +6,13 @@
       "failing_test": "tests/test_rd9_docroute.py::test_filled_soft_premises_make_a_contradiction_vacuous",
       "observed": "model != INCONSISTENT",
       "restored": true
+    },
+    {
+      "file": "ve/softnorms.py",
+      "mutation": "Retain instruction_of in the shared base predicate projection",
+      "failing_test": "tests/test_rd9_docroute.py::test_filled_soft_source_instruction_declarations_match_lean_base",
+      "observed": "both readings variants raised CheckerUnavailable: filled soft vocabulary collides with source",
+      "restored": true
     }
   ]
 }
