@@ -18,7 +18,7 @@ def main (args : List String) : IO UInt32 := do
   repeat
     let line ← stdin.getLine
     if line.isEmpty then break
-    VE.Service.ReadingsAdmissionProfile.profileLine line
+    VE.Service.ReadingsAdmissionProfile.profileLine handles line
     let (answer, next) := VE.Service.handleLine handles line
     handles := next
     if let some answer := answer then

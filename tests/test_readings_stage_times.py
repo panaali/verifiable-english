@@ -1,6 +1,7 @@
 """The readings admission profiler is opt-in and writes only stage JSON to stderr."""
 import json
 import os
+from pathlib import Path
 import subprocess
 
 import pytest
@@ -9,19 +10,22 @@ from tests.lean_routes import SERVICE
 from tests.subprocesses import HANG_TIMEOUT
 
 
+ROOT = Path(__file__).resolve().parents[1]
+
+
 CASE = {"id": "profile", "kind": "readings-validate", "environment": {},
         "document": {"units": [], "reading_sets": []}}
 REQUEST = json.dumps({"id": "profile", "mode": "readings-route", "cases": [CASE]}) + "\n"
 
 
-def run(value):
+def run(value, request=REQUEST):
     if not SERVICE.exists():
         pytest.skip("the Lean service has not been built")
     env = os.environ.copy()
     env.pop("VE_READINGS_STAGE_TIMES", None)
     if value is not None:
         env["VE_READINGS_STAGE_TIMES"] = value
-    return subprocess.run([str(SERVICE)], input=REQUEST, text=True, capture_output=True,
+    return subprocess.run([str(SERVICE)], input=request, text=True, capture_output=True,
                           timeout=HANG_TIMEOUT, env=env, check=True)
 
 
@@ -43,3 +47,40 @@ def test_readings_stage_times_do_not_change_the_answer():
     assert on == off
     response = json.loads(off.splitlines()[-1])
     assert response["status"] == "ok" and response["results"][0]["result"]["id"] == "profile"
+
+
+@pytest.mark.parametrize("kind", ["readings-elaborate", "readings-choice", "readings-verdicts"])
+def test_split_w2_fixed_part_completion_is_timed(kind):
+    from tests.test_readings_companions_lean import env_main, fc1
+
+    document, _, _ = fc1()
+    case = {"id": kind, "kind": kind, "environment": env_main(), "document": document}
+    request = json.dumps({"id": "profile", "mode": "readings-route", "cases": [case]}) + "\n"
+    rows = [json.loads(line) for line in run("1", request).stderr.splitlines()]
+    main = [row["stage"] for row in rows if row["part"] == "main"]
+    assert main.count("admitS2") >= 2
+    assert "admitNDFull" in main
+
+
+def test_normal_client_profiles_registered_and_reused_handle(monkeypatch):
+    from ve.backends.lean_service import LeanService
+
+    monkeypatch.setenv("VE_READINGS_STAGE_TIMES", "1")
+    with LeanService(timeout=HANG_TIMEOUT, allow_unlisted_build=True) as service:
+        for repeat in range(2):
+            start, _ = service.stderr()
+            answer = service.run("readings-route", [CASE], timeout=HANG_TIMEOUT)
+            assert answer[0]["id"] == "profile"
+            _, stderr = service.stderr(start)
+            rows = [json.loads(line) for line in stderr.splitlines()]
+            assert any(row["stage"] == "splitCase" and row["case"] == "profile" for row in rows), repeat
+
+
+def test_saved_twofold_profile_records_fixed_part_completion():
+    evidence = json.loads((ROOT / "docs/perf/admission-profile-evidence.json").read_text())
+    runs = evidence["cases"]["admission-prefix-100-2x"]["runs"]
+    assert len(runs) == 3
+    for run in runs:
+        main = [row["stage"] for row in run["stages"] if row["part"] == "main"]
+        assert main.count("admitS2") >= 2
+        assert "admitNDFull" in main
