@@ -1,9 +1,9 @@
 # rd9-docroute build report
 
-BLOCKED: the refusal-to-answer DELTA needs a DRI signature; `msg.sh` could not write its read-only inbox.
+FIXED: the DRI signed the refusal-to-answer DELTA (reviews/dri-decisions-20261029-rd9-docroute.md item 1); selected tests pass.
 HEAD: `feature/rd9-docroute` (see `git log -1` for the final local commit).
-Changed: soft document claim-graph admission now reaches Lean's `norm-defaults` fill route; direct unfilled soft checks still refuse.
-Open: DRI decision, final-head chain gate, and the next constitution pilot audit.
+Changed: soft document claim-graph admission and premise reporting use Lean's filled tree and generated vocabulary; direct unfilled soft checks still refuse.
+Open: merge-train gate and the next constitution pilot audit.
 Pilot bytes: 0 newly formalised bytes from routing alone; the previous probe reported 215 CHECKED source bytes, not a checked document answer.
 
 ## Plan and spec rows
@@ -16,7 +16,7 @@ Pilot bytes: 0 newly formalised bytes from routing alone; the previous probe rep
 | R8: typed and request-bound relay | Admission fields are checked by the existing schema and report binder; `conditional_on` is checked against Lean's elaboration of the same source. The admitted variant is checked against that Lean row. | AGENT: `test_soft_admission_row_fields_are_typed`, `test_soft_admission_conditions_are_bound_to_the_source`. |
 | Original pilot probe before and after | Before is copied from the 06:00Z `soft-chain-probe.json`; the small fixture has an exact before/after check in `probe.json`. The full pilot after is deferred under L70. | EXTERNAL: next pilot audit owns the whole-document result. |
 | Document seed inventory | The new small fixture is classified as `FAIL_CLOSED` for Lean's document wrapper, whose composed-route deferral is expected; Python's document path answers it. | AGENT: `test_every_seed_document_agrees_with_python_or_fails_closed` passed after this inventory entry. |
-| DELTA signature | Not delivered. The new availability is not signed by R1–R18; prior RD-9 B1 signed a different, earlier readings availability item. `msg.sh dri rd9-docroute` failed with `read-only file system` at the DRI inbox. | HUMAN: DRI decision required before review-ready. |
+| DELTA signature | The DRI signed the expanded row in `reviews/dri-decisions-20261029-rd9-docroute.md` item 1; commit `b3f062755` records it in `DELTA.md`. | HUMAN: completed by the DRI. The seven tests named in the decision passed in the selected run. |
 
 No theorem statement was added or changed. No Lean or Rust product code changed. No generated-file input changed, so regeneration, Lean build/audit and trust mutants are N.A. The local branch started clean at `main` `71b1d27ad`. An in-flight branch scan found no overlap in the handwritten files touched. `tools/trust_map.py --check` measured K +0, S +0, D +0, G +0, trusted +0 against that base. Handwritten additions are below the 600-line item limit (`git diff --numstat`); no work was cut.
 
@@ -25,6 +25,8 @@ No theorem statement was added or changed. No Lean or Rust product code changed.
 The 06:00Z pilot probe loaded, then its check returned 1 with the exact through-fill refusal; the 18:00Z file records the same. On the small committed fixture, check returned 1 before the repair and 0 after. The after report has `admission.admitted: true`, a direct filled-route report equality, and `premises.status: model` (`probe.json`). No full pilot document was run.
 
 Each temporary mutation was restored before the final code:
+
+The review fix round ran probes F1, F2 and F3 before the fix; each failed with the reported wrong status, `UnknownSymbol`, and through-fill refusal, respectively. All three probes passed after the fix. The new regressions cover the generated norm layers, `Fill_T`, soft coherence, a strict contradiction, and a soft document without `readings@1`. A temporary mutation of `ve/document/report.py` omitted Lean's filled norm layers; `test_filled_soft_premises_make_a_contradiction_vacuous` failed (`model` instead of `INCONSISTENT`). It was restored and recorded in `seeded-bugs.json` for review-ready F-ready1. No Lean or Rust product code changed in this round.
 
 | Seeded bug | File | Failing test |
 | --- | --- | --- |
@@ -46,10 +48,21 @@ Named fixture, binding, refusal, plain-soft and W1 admission tests passed during
 4. PASS — `test_soft_chain_document_checks_the_filled_route`, `test_filled_soft_layer_matches_ordinary_w1`, `test_plain_soft_document_keeps_its_admission_route`, `test_document_graph_admits_the_layer_of_fill_u`, and `test_every_seed_document_agrees_with_python_or_fails_closed` cover the new and retained paths.
 5. PASS — `test_soft_admission_conditions_are_bound_to_the_source` rejects absent and duplicated labels; `test_soft_admission_row_fields_are_typed` rejects absent and retyped fields.
 6. N.A. — the chain runs the final-head gate after handoff, as this item explicitly directs.
-7. N.A. — blocked on the DRI signature recorded in DELTA; the DRI inbox is read-only here.
+7. PASS — the DRI signed the DELTA row in `reviews/dri-decisions-20261029-rd9-docroute.md` item 1; `b3f062755` records the signature.
 8. PASS — the single new availability delta is in `DELTA.md`; `probe.json` records both small-fixture outcomes.
 9. PASS — the Mac `--select` run selected `test_rd9_docroute.py` and `test_lean_document_wrapper.py`; its one failed ID passed on targeted rerun.
 10. N.A. — no Lean statement or proof changed (`git diff --name-only main...HEAD`).
 11. N.A. — no budget, deadline or evaluator changed; `test_direct_soft_check_of_unfilled_tree_still_refuses` retains failure behavior.
 12. N.A. — L70 forbids a full constitution pilot check; the small fixture's CLI probe is in `probe.json`.
 13. N.A. — no test was removed or renamed (`git diff --name-status main...HEAD`).
+
+## Review fix round (2026-10-29)
+
+| Finding | Fix | Regression | Commit |
+| --- | --- | --- | --- |
+| F1 | Report premises now include Lean's filled norm layers, `Fill_T`, soft premises and background | `tests/test_rd9_docroute.py::test_filled_soft_premises_make_a_contradiction_vacuous`; `test_soft_fill_uses_every_lean_generated_premise_class` | `b6b590294` |
+| F2 | Graph assumptions are decoded in the report's filled vocabulary | `tests/test_rd9_docroute.py::test_filled_graph_leaves_decode_in_the_filled_vocabulary`; `test_soft_coherence_graph_leaf_uses_filled_vocabulary` | `b6b590294` |
+| F3 | The lower soft document is built from the placeholder with or without `readings@1` | `tests/test_rd9_docroute.py::test_soft_chain_without_readings_uses_the_filled_route` | `b6b590294` |
+| F-ready1 | Seeded a dropped filled-layer bug in the changed Python file, observed the regression fail, restored it and committed `seeded-bugs.json` | `tests/test_rd9_docroute.py::test_filled_soft_premises_make_a_contradiction_vacuous`; review-ready `[mutants]` PASS | `b6b590294` |
+
+The first selected run exposed two history lint failures and three frozen readings ID mismatches from applying the filled report context to the readings CLI. Regenerating `tests/history-dependent.json` fixed the lint; keeping the filled context inside `_report` preserved the frozen readings IDs. The five failed IDs passed targeted checks after that fix, and all 21 focused tests passed locally. `lake build` and `python3 lean/audit.py` passed. The final `mac-pytest.sh --select` run covered 489 selected units on the Mac, with zero failures and none left unrun (snapshot `fe540373`, code commit `b6b590294`). No full gate or full suite was run in this fix round, as directed.
