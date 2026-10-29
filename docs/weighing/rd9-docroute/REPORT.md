@@ -1,9 +1,9 @@
 # rd9-docroute build report
 
-STOP (L52): F6 is fixed, but the graph-free soft-chain availability DELTA needs a DRI signature; the claim-graph row alone is signed (reviews/dri-decisions-20261029-rd9-docroute.md item 1).
+STOP (L52): F7 is fixed, but DELTA row 3 (a `MIXED` container's soft norms on the plain `soft-norms@0` route, a verdict change outside R5) needs a DRI signature; rows 1 and 2 are signed (reviews/dri-decisions-20261029-rd9-docroute.md item 1, reviews/dri-decisions-20261029-rd9-docroute-graphfree.md item 1).
 HEAD: `feature/rd9-docroute` (see `git log -1` for the final local commit).
 Changed: soft document claim-graph admission and premise reporting use Lean's filled tree, generated vocabulary, and free norm selection; direct unfilled soft checks still refuse.
-Open: DRI signature for graph-free availability, merge-train gate, and the next constitution pilot audit.
+Open: DRI signature for DELTA row 3, merge-train gate, and the next constitution pilot audit.
 Pilot bytes: 0 newly formalised bytes from routing alone; the previous probe reported 215 CHECKED source bytes, not a checked document answer.
 
 ## Plan and spec rows
@@ -85,3 +85,11 @@ The selected run on `dcf922a36` exercised 146 units on the VM after the Mac conn
 F6 -> The filled report now passes the loader's compiled units to the shared `_free_norms` selector, as the other document paths do -> `tests/test_rd9_docroute.py::test_filled_soft_report_selects_compiled_units` (four variants) -> `0c5e47feb`.
 
 The exact F6 probe failed before the fix with `KeyError: 'content'` and passed afterward. The regression combines present or omitted norm content with flat or `MIXED` units. A seeded mutation back to raw metadata made three variants fail (`KeyError: 'content'` or `'kind'`); it was restored and recorded in `seeded-bugs.json`. This is a Python document-route fix; no Lean or Rust product code changed. The three tests in `main-known-red.txt` remain pre-existing and were not edited. The graph-free availability row remains unsigned under L52.
+
+## F7 recheck fix (2026-10-29)
+
+F7 -> The soft source reads a `MIXED` unit's parts: `_soft_contents` and Lean's `softSourceNorms` read the units `_parts` yields before its first fault through one shared walk (`_parts_prefix`, Lean `partsPrefix`), which the rule batch now uses too, so the unit loop still reports a structural fault in source order -> `tests/test_rd9_docroute.py::test_mixed_container_keeps_soft_decisions[filled]`, `[plain]`, `test_soft_source_reads_mixed_parts` (five cases) and the `#guard`s of `lean/VE/Service/SoftSourceExamples.lean` on the same units -> `2ffa2bfa4`.
+
+The exact F7 probe failed before the fix (`AssertionError`: `soft_status` `CHECKED`) and passed afterward. The class reaches past the filled chain: every soft source (the loader's `check_soft_source` and `SoftNormDocument`, the report's lower soft document, and Lean's `document` mode `softSource` and `softLayer`) read top-level units only, so on `main` the plain `soft-norms@0` route answers a wrapped document `CHECKED` too. Fixing it there is a verdict change no standing ruling covers, recorded as DELTA row 3 for the DRI. The rights source already read `_parts`, and `_free_norms` and the premise selectors read compiled units.
+
+This round changed Lean product code (`lean/VE/Service/Document.lean`; `softSourceNorms` moved below `partsPrefix`, which moved unchanged), so its seeded bug, `lake build`, `python3 lean/audit.py` and the regenerated inventories apply: `lean/checkers.lock` pins the new `ve_service`, `ve/assurance-manifest.json` re-pins `Document.lean` (declaration list unchanged) and classifies the new examples file, and `tools/trust-classes.json` classes its definitions `T`, so the trust budget does not grow. Seeded bugs: top-level-only `_soft_contents` failed 6 of the 7 new regressions; top-level-only `softSourceNorms` failed four `#guard`s at build (`seeded-bugs.json`). Both were restored.
