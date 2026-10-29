@@ -6331,6 +6331,7 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.admit_governor
 #print axioms VE.Scope.admit_governor_unit
 #print axioms VE.Scope.admitted_ids_nodup
+#print axioms VE.Scope.admitted_list_names_nodup
 #print axioms VE.Scope.affected_drop
 #print axioms VE.Scope.affected_title_only
 #print axioms VE.Scope.anchor_reach_iff
@@ -6429,6 +6430,7 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.jsonWF_mkObj
 #print axioms VE.Scope.jsonWF_top
 #print axioms VE.Scope.label_reach_iff
+#print axioms VE.Scope.listName_run
 #print axioms VE.Scope.list_singleton_of_drop_empty
 #print axioms VE.Scope.lookup_mem
 #print axioms VE.Scope.lookups_absent
@@ -6451,6 +6453,7 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.mkObj_get_mem
 #print axioms VE.Scope.mkObj_one
 #print axioms VE.Scope.newContent_src
+#print axioms VE.Scope.nodup_map_unique
 #print axioms VE.Scope.nonrule_refused
 #print axioms VE.Scope.normFields_name
 #print axioms VE.Scope.orderCheck_drop
