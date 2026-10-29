@@ -175,6 +175,21 @@ def test_soft_chain_without_readings_uses_the_filled_route():
     assert answer["premises"]["status"] == "model"
 
 
+@pytest.mark.parametrize("mixed", [False, True])
+@pytest.mark.parametrize("omit_norm_content", [False, True])
+def test_filled_soft_report_selects_compiled_units(mixed, omit_norm_content):
+    front, body = _front()
+    if omit_norm_content:
+        front["units"][0].pop("content")
+    if mixed:
+        parts = [{**unit, "status": "LABELLED" if omit_norm_content and unit["id"] == "u1"
+                  else "CHECKED"} for unit in front["units"]]
+        front["units"] = [{"id": "parent", "span": [0, 38], "status": "MIXED", "parts": parts}]
+    doc = _loaded(front, body)
+    assert [unit["id"] for unit in doc["units"]] == ["u1", "u2"]
+    assert _report(doc)["admission"]["admitted"] is True
+
+
 @pytest.mark.parametrize("with_readings", [False, True])
 def test_filled_soft_source_instruction_declarations_match_lean_base(with_readings):
     front, body = _front()

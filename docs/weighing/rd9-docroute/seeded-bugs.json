@@ -20,6 +20,13 @@
       "failing_test": "tests/test_rd9_docroute.py::test_filled_soft_premises_exclude_norm_replaced_by_assertion_reading[authored]",
       "observed": "INCONSISTENT != model",
       "restored": true
+    },
+    {
+      "file": "ve/document/report.py",
+      "mutation": "Pass raw metadata units instead of compiled units to free norm selection",
+      "failing_test": "tests/test_rd9_docroute.py::test_filled_soft_report_selects_compiled_units",
+      "observed": "three of four variants failed: KeyError content for omitted content and KeyError kind for MIXED container",
+      "restored": true
     }
   ]
 }
