@@ -1202,7 +1202,7 @@
   }
  ],
  "cost": {
-  "documents_built": 40,
+  "documents_built": 42,
   "prover_calls": 64
  },
  "items": {
@@ -2974,11 +2974,11 @@
       "RS7": "exec"
      },
      "holds": false,
-     "rules": "whole D1",
+     "rules": "all opposite-sign pairs",
      "w1": [
-      "UNKNOWN",
-      "UNKNOWN",
-      "UNKNOWN"
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE"
      ]
     },
     {
@@ -2987,11 +2987,11 @@
       "RS7": "final"
      },
      "holds": false,
-     "rules": "whole D1",
+     "rules": "all opposite-sign pairs",
      "w1": [
-      "UNKNOWN",
-      "UNKNOWN",
-      "UNKNOWN"
+      "CONFLICT-FREE",
+      "CONFLICT-FREE",
+      "CONFLICT-FREE"
      ]
     },
     {
@@ -3000,10 +3000,10 @@
       "RS7": "exec"
      },
      "holds": true,
-     "rules": "whole D1",
+     "rules": "all opposite-sign pairs",
      "w1": [
+      "CONFLICT-FREE",
       "CONFLICT",
-      "UNKNOWN",
       "CONFLICT"
      ]
     },
@@ -3013,10 +3013,10 @@
       "RS7": "final"
      },
      "holds": true,
-     "rules": "whole D1",
+     "rules": "all opposite-sign pairs",
      "w1": [
+      "CONFLICT-FREE",
       "CONFLICT",
-      "UNKNOWN",
       "CONFLICT"
      ]
     }
@@ -3039,7 +3039,7 @@
       "f26-need-not-delay"
      ],
      "w1": [
-      "UNKNOWN"
+      "CONFLICT-FREE"
      ]
     },
     {
@@ -3073,7 +3073,7 @@
       "f12-board-approval"
      ],
      "w1": [
-      "UNKNOWN"
+      "CONFLICT-FREE"
      ]
     },
     {
@@ -3086,7 +3086,7 @@
       "f12-board-approval"
      ],
      "w1": [
-      "UNKNOWN"
+      "CONFLICT-FREE"
      ]
     }
    ],
@@ -3108,7 +3108,7 @@
       "f10-in-line"
      ],
      "w1": [
-      "UNKNOWN"
+      "CONFLICT-FREE"
      ]
     },
     {
@@ -3122,7 +3122,7 @@
       "f10-in-line"
      ],
      "w1": [
-      "UNKNOWN"
+      "CONFLICT-FREE"
      ]
     },
     {
@@ -3136,7 +3136,7 @@
       "f10-in-line"
      ],
      "w1": [
-      "UNKNOWN"
+      "CONFLICT-FREE"
      ]
     }
    ],
@@ -3157,7 +3157,7 @@
       "f16-only-legal"
      ],
      "w1": [
-      "UNKNOWN"
+      "CONFLICT-FREE"
      ]
     },
     {
@@ -3170,7 +3170,7 @@
       "f16-only-legal"
      ],
      "w1": [
-      "UNKNOWN"
+      "CONFLICT-FREE"
      ]
     }
    ],
@@ -3189,7 +3189,7 @@
       "f25-delay"
      ],
      "w1": [
-      "UNKNOWN"
+      "CONFLICT-FREE"
      ]
     }
    ],
@@ -3208,7 +3208,7 @@
       "f13-minimize-default"
      ],
      "w1": [
-      "UNKNOWN"
+      "CONFLICT-FREE"
      ]
     },
     {
@@ -3221,7 +3221,7 @@
       "f13-minimize-default"
      ],
      "w1": [
-      "UNKNOWN"
+      "CONFLICT-FREE"
      ]
     }
    ],
@@ -3242,7 +3242,7 @@
       "f26-need-not-delay"
      ],
      "w1": [
-      "UNKNOWN"
+      "CONFLICT-FREE"
      ]
     },
     {
@@ -3343,6 +3343,10 @@
    "undecided": "VE limit (ET/QT): calendar-month cadence or approximate date"
   },
   "G1": {
+   "audit_input": {
+    "rules": [],
+    "thresholds": []
+   },
    "choices": [
     {
      "choice": {},
@@ -3365,6 +3369,10 @@
    "route": "D1 soft-norms@0 selected_rules, deny and allow completion; silence"
   },
   "G3": {
+   "audit_input": {
+    "rules": [],
+    "thresholds": []
+   },
    "choices": [
     {
      "choice": {
@@ -4678,7 +4686,7 @@
   "M10": {
    "cases": 49,
    "choices": 282,
-   "documents_built": 40,
+   "documents_built": 42,
    "prover_calls": 64,
    "rules": 76,
    "units": 303,
@@ -5056,6 +5064,209 @@
     "D4"
    ],
    "invention_audit_flags": false
+  }
+ },
+ "without_narrowings": {
+  "N1": {
+   "changed": {
+    "A-T0/PROT1": {
+     "with": "SOME(RS1=uncond)",
+     "without": "NONE"
+    },
+    "A-T0/PROT2": {
+     "with": "SOME(RS1=uncond)",
+     "without": "NONE"
+    },
+    "A-T0/PROT3": {
+     "with": "SOME(RS1=uncond)",
+     "without": "NONE"
+    },
+    "A-T0/PROT4": {
+     "with": "SOME(RS1=uncond)",
+     "without": "NONE"
+    },
+    "A-T1/PROT1": {
+     "with": "SOME(RS1=cond | RS1=uncond)",
+     "without": "NONE"
+    },
+    "A-T1/PROT2": {
+     "with": "SOME(RS1=uncond)",
+     "without": "NONE"
+    },
+    "A-T1/PROT3": {
+     "with": "SOME(RS1=uncond)",
+     "without": "NONE"
+    },
+    "A-T1/PROT4": {
+     "with": "SOME(RS1=uncond)",
+     "without": "NONE"
+    },
+    "A-T2/PROT1": {
+     "with": "SOME(RS1=uncond)",
+     "without": "NONE"
+    },
+    "A-T2/PROT2": {
+     "with": "SOME(RS1=cond | RS1=uncond)",
+     "without": "NONE"
+    },
+    "A-T2/PROT3": {
+     "with": "SOME(RS1=uncond)",
+     "without": "NONE"
+    },
+    "A-T2/PROT4": {
+     "with": "SOME(RS1=uncond)",
+     "without": "NONE"
+    },
+    "A-T3/PROT1": {
+     "with": "SOME(RS1=uncond)",
+     "without": "NONE"
+    },
+    "A-T3/PROT2": {
+     "with": "SOME(RS1=uncond)",
+     "without": "NONE"
+    },
+    "A-T3/PROT3": {
+     "with": "SOME(RS1=cond | RS1=uncond)",
+     "without": "NONE"
+    },
+    "A-T3/PROT4": {
+     "with": "SOME(RS1=uncond)",
+     "without": "NONE"
+    },
+    "A-T4/PROT1": {
+     "with": "SOME(RS1=uncond)",
+     "without": "NONE"
+    },
+    "A-T4/PROT2": {
+     "with": "SOME(RS1=uncond)",
+     "without": "NONE"
+    },
+    "A-T4/PROT3": {
+     "with": "SOME(RS1=uncond)",
+     "without": "NONE"
+    },
+    "A-T4/PROT4": {
+     "with": "SOME(RS1=cond | RS1=uncond)",
+     "without": "NONE"
+    },
+    "B-AUT/ASSESS": {
+     "with": "ALL",
+     "without": "NONE"
+    },
+    "B-AUT/INSCOPE": {
+     "with": "ALL",
+     "without": "NONE"
+    },
+    "B-INTD/ASSESS": {
+     "with": "ALL",
+     "without": "NONE"
+    },
+    "B-PUB/ASSESS": {
+     "with": "ALL",
+     "without": "NONE"
+    },
+    "B-PUB/INSCOPE": {
+     "with": "ALL",
+     "without": "NONE"
+    },
+    "C-doc": {
+     "with": "SOME(RS4=rel&RS7=exec | RS4=rel&RS7=final)",
+     "without": "NONE"
+    },
+    "C1": {
+     "with": "SOME(RS4=rel)",
+     "without": "NONE"
+    },
+    "C7": {
+     "with": "SOME(RS4=rel)",
+     "without": "NONE"
+    },
+    "G7": {
+     "with": {
+      "COVERED:QUARTERLY_UPDATE": "ALL",
+      "REQUIRED:PROMPT_BOARD_NOTICE": "NONE"
+     },
+     "without": {
+      "COVERED:QUARTERLY_UPDATE": "NONE",
+      "REQUIRED:PROMPT_BOARD_NOTICE": "NONE"
+     }
+    },
+    "K1": {
+     "with": "ALL",
+     "without": "NONE"
+    },
+    "K11": {
+     "with": "ALL",
+     "without": "NONE"
+    },
+    "K14": {
+     "with": "ALL",
+     "without": "NONE"
+    },
+    "K16": {
+     "with": "ALL",
+     "without": "NONE"
+    },
+    "K18": {
+     "with": "ALL",
+     "without": "NONE"
+    },
+    "K19a": {
+     "with": "ALL",
+     "without": "NONE"
+    },
+    "K19b": {
+     "with": "ALL",
+     "without": "NONE"
+    },
+    "K20": {
+     "with": "ALL",
+     "without": "NONE"
+    },
+    "K21a": {
+     "with": "ALL",
+     "without": "NONE"
+    },
+    "K5": {
+     "with": "ALL",
+     "without": "NONE"
+    },
+    "K6": {
+     "with": "ALL",
+     "without": "NONE"
+    },
+    "K7": {
+     "with": "ALL",
+     "without": "NONE"
+    },
+    "K8": {
+     "with": "ALL",
+     "without": "NONE"
+    }
+   },
+   "unscored": true
+  },
+  "N2": {
+   "changed": {
+    "G1": {
+     "with": "ALL",
+     "without": "NONE"
+    },
+    "N5": {
+     "with": "UNDECIDED",
+     "without": "NONE"
+    }
+   },
+   "unscored": true
+  },
+  "N3": {
+   "changed": {
+    "K13": {
+     "with": "ALL",
+     "without": "NONE"
+    }
+   },
+   "unscored": true
   }
  }
 }

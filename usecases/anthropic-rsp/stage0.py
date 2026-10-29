@@ -270,7 +270,7 @@ def identifier_lint():
     return {"violations": violations, "rules_per_source": per_source}
 
 
-def invention_audit():
+def invention_audit(extra_rules=(), extra_thresholds=()):
     """M6: every rule and premise is traced to a span: it has a source quote and a unit carries it (as its content,
     a restatement or a reading); every default rule is the default reading of a force or aim set; every permission
     is the P reading of an RS6 set; every threshold is a premise on its own row's unit; the vocabulary has no order,
@@ -285,6 +285,7 @@ def invention_audit():
                     readings.setdefault(part, []).append((harness, choice))
     blocks = list(T.rule_blocks()) + [b for b, _ in T.facts()]
     untraced = [b.id for b in blocks if not b.source.strip() or (b.id not in placed and b.id not in readings)]
+    untraced += sorted(set(extra_rules) - {b.id for b in blocks})
     defaults, permissions = [], []
     for block in T.rule_blocks():
         norm = json.loads(T.parsed_rule(block.id))
@@ -299,7 +300,8 @@ def invention_audit():
     banned = [p for p in V.environment()["vocabulary"]["predicates"]
               if re.search(r"leads_to|causes|above|ranked|more_severe|order", p)]
     return {"untraced": untraced, "defaults_untraced": defaults, "permissions_untraced": permissions,
-            "thresholds_without_premise": sorted({f"threshold-{k}" for k in ("t1", "t2", "t3", "t4")} - thresholds),
+            "thresholds_without_premise": sorted(({f"threshold-{k}" for k in ("t1", "t2", "t3", "t4")}
+                                                  | set(extra_thresholds)) - thresholds),
             "order_or_causal_predicates": banned,
             "narrowings": {"N1": "every RS0 statement is a commitment (no set)", "N2": "the changelog for v1.0 to "
                            "v3.3 is history: LABELLED, no rule", "N3": "3.6.1 \"may not\" is a prohibition "
