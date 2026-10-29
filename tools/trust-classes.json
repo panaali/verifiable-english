@@ -4381,6 +4381,32 @@
         "VE.EnglishGrammar.sensesRequest"
       ]
     },
+    "VE/EnglishGrammar/SourceWords.lean": {
+      "S": [
+        "VE.EnglishGrammar.SourceWordKind",
+        "VE.EnglishGrammar.SourceWordReading",
+        "VE.EnglishGrammar.SourceWordRow",
+        "VE.EnglishGrammar.SourceWordRow.key",
+        "VE.EnglishGrammar.SourceWordRow.validIdentity",
+        "VE.EnglishGrammar.SourceWordRow.validKind",
+        "VE.EnglishGrammar.sourceWords",
+        "VE.EnglishGrammar.sourceWordsValid"
+      ],
+      "G[V]": [
+        "VE.EnglishGrammar.SourceWordKind.toJson",
+        "VE.EnglishGrammar.SourceWordRow.toJson",
+        "VE.EnglishGrammar.sourceWordsJson"
+      ]
+    },
+    "VE/EnglishGrammar/SourceWordsExamples.lean": {
+      "T": [
+        "VE.EnglishGrammar.SourceWordsExamples.a",
+        "VE.EnglishGrammar.SourceWordsExamples.b",
+        "VE.EnglishGrammar.SourceWordsExamples.base",
+        "VE.EnglishGrammar.SourceWordsExamples.reading",
+        "VE.EnglishGrammar.SourceWordsExamples.refusal"
+      ]
+    },
     "VE/EnglishGrammar/Syntax.lean": {
       "G[V]": [
         "VE.EnglishGrammar.DState",

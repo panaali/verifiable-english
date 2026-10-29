@@ -1561,6 +1561,16 @@
    ]
   },
   {
+   "test": "tests/test_source_words.py",
+   "why": "starts git (git cat-file) in tools/english_grammar_gen.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tools/english_grammar_gen.py:git_blob: git cat-file"
+   ]
+  },
+  {
    "test": "tests/test_stage0_probe_matrix.py",
    "why": "starts git (git ls-tree, git show) in tests/probe_matrix.py",
    "recorded": [
