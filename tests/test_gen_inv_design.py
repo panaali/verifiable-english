@@ -86,18 +86,19 @@ def test_gi1_dump_build_omits_both_audit_modules(monkeypatch):
     assert called == [["lake", "build", "VE", "ResponseShape"]]
 
 
-def audit_stage(source: str, *, selection, candidate: bool):
+def audit_stage(source: str, *, selection, candidate: bool, shard=None):
     """Execute the gate's actual audit branch with recording stubs, including its selection guard."""
     tree = ast.parse(source)
     main = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == "main")
     branches = [n for n in ast.walk(main) if isinstance(n, ast.If)
-                and ast.unparse(n.test) == "selection is None"
+                and any(isinstance(term, ast.Compare) and ast.unparse(term) == "selection is None"
+                        for term in ast.walk(n.test))
                 and "Lean audit" in ast.unparse(n)]
     assert len(branches) == 1
     branch = ast.fix_missing_locations(ast.Module(body=[branches[0]], type_ignores=[]))
     calls = []
     args = type("Args", (), {"workers": "auto", "base": "candidate-base" if candidate else None})()
-    scope = {"selection": selection, "args": args, "env": {}, "result": {"stages": []},
+    scope = {"selection": selection, "shard": shard, "args": args, "env": {}, "result": {"stages": []},
              "os": type("OS", (), {"environ": {}})(),
              "command": lambda argv, **kw: calls.append((argv, kw))}
     exec(compile(branch, "gate-audit-branch", "exec"), scope)
@@ -114,6 +115,7 @@ def test_lean_audit_stage_runs_in_full_and_candidate_mode(candidate):
     assert calls[0][1]["stage"] == "Lean audit"
     assert stages == ["lean_audit"]
     assert audit_stage(source, selection=[], candidate=candidate) == ([], [])
+    assert audit_stage(source, selection=None, candidate=candidate, shard=(2, 2)) == ([], [])
 
 
 def test_lean_audit_stage_guard_refuses_missing_stage():
