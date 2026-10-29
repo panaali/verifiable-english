@@ -11,7 +11,8 @@ from ve.document import _load_document, check_document, load_document
 from ve.document.report import _report, _report_premise_context
 from ve.errors import CheckerUnavailable, VEError
 from ve.admission import admit_document
-from ve.ast import formula_to_data
+from ve.ast import Top, formula_to_data
+from ve.identity import meaning_id
 from ve.norm_defaults_route import admit_norm_defaults_document
 from ve.norms import NormDocument
 from ve.softnorms import SoftEnvironment, check_soft_source
@@ -82,6 +83,30 @@ def test_filled_soft_premises_make_a_contradiction_vacuous():
     assert answer["admission"]["vacuous"] is True
 
 
+@pytest.mark.parametrize("status", ["authored", "open"])
+def test_filled_soft_premises_exclude_norm_replaced_by_assertion_reading(status):
+    front, body = _front()
+    norm = front["units"][0]["content"]["norm"]
+    norm["mode"] = "strict"
+    norm.pop("exception")
+    denied = ["not", ["forall", "assistant", ["unary", "x_required", ["var", 0]]]]
+    front["units"][1]["content"]["ast"] = denied
+    front["graph"]["nodes"][0]["ast"] = denied
+    assert _report(_loaded(front, body))["premises"]["status"] == "INCONSISTENT"
+
+    env = _loaded(front, body)["soft_document"].extended_env
+    front["reading_sets"] = [{
+        "id": "r", "unit": "u1", "version": 1, "status": status,
+        **({"signature": "a"} if status == "authored" else {}),
+        "readings": [{"id": "c", "kind": "asserted", "meaning_id": meaning_id(env, Top()),
+                      "content": ["top"],
+                      "admission": {"who": "a", "why": "a", "distinguishing_models": {}}}],
+    }]
+    answer = _report(_loaded(front, body))
+    assert answer["premises"]["status"] == "model"
+    assert answer["admission"]["vacuous"] is False
+
+
 @pytest.mark.parametrize("label", ["layer:norms:x_permitted", "layer:norms:x_required",
                                          "unsaid:pair:x_required,x_permitted"])
 def test_filled_graph_leaves_decode_in_the_filled_vocabulary(label):
@@ -108,7 +133,8 @@ def test_soft_fill_uses_every_lean_generated_premise_class():
     from ve.softnorms import SoftEnvironment, SoftNormDocument
     environment = SoftEnvironment(source)
     doc = {"environment": environment, "soft_document": SoftNormDocument(environment, norms),
-           "rights_document": None, "meta": {"units": [{"kind": "norm", "content": item} for item in norms]},
+           "rights_document": None, "meta": {"units": [
+               {"id": f"u{i}", "kind": "norm", "content": item} for i, item in enumerate(norms)]},
            "units": [], "norms": None, "norm_defaults": None}
     row = run_case({"id": "fill", "kind": "norm-defaults-elaborate",
                     "environment": source, "norms": norms})

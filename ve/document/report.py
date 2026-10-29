@@ -14,7 +14,7 @@ from ..readings import active_reading_sets
 from ..wire import digest
 from ..vacuity import premise_status
 from .source import _RIGHTS_KINDS, _environment
-from .containers import _content_bearing, _in_rights_source, _rights_units, _s1_attached, _soft_contents, _wire_unit
+from .containers import _content_bearing, _free_norms, _in_rights_source, _rights_units, _s1_attached, _soft_contents, _wire_unit
 from .load import _load
 
 
@@ -39,7 +39,7 @@ def _fixed_premises(doc, sets):
     return fixed
 
 
-def _filled_soft_elaboration(doc):
+def _filled_soft_elaboration(doc, active):
     """Lean's one elaboration of the soft chain, shared by premise decoding and checking."""
     if (doc.get("soft_document") is None or doc.get("rights_document") is not None
             or "norm-defaults@0" not in doc["environment"].profiles):
@@ -48,11 +48,11 @@ def _filled_soft_elaboration(doc):
         from ..norm_defaults_route import run_case
         source = doc["environment"].to_dict()
         source["profiles"] = [p for p in source["profiles"] if p != "readings@1"]
+        attached = _s1_attached(doc["environment"].to_dict(), doc["meta"])
         doc["_filled_soft_elaboration"] = run_case({
             "id": "norm-defaults-elaborate", "kind": "norm-defaults-elaborate",
             "environment": source,
-            "norms": _soft_contents(doc["meta"]["units"],
-                                    _s1_attached(doc["environment"].to_dict(), doc["meta"]))})
+            "norms": _free_norms(doc["meta"]["units"], active, attached)})
     return doc["_filled_soft_elaboration"]
 
 
@@ -74,7 +74,7 @@ def _report_premise_context(doc):
     use `_fixed_premises` and `_checking_environment` directly.
     """
     fixed, active = _fixed_and_active(doc)
-    filled = _filled_soft_elaboration(doc)
+    filled = _filled_soft_elaboration(doc, active)
     if filled is None:
         return _checking_environment(doc), fixed, active
     from ..environment import Environment
