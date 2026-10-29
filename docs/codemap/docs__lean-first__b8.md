@@ -1,0 +1,4 @@
+- `docs/lean-first/b8/lean_seeds.py` — Build two temporary Lean defects and prove the reports tests reject them.
+- `docs/lean-first/b8/profile_ab.py` — Frozen-base A/B for the 1,000 generated reports documents of fixture χ.
+- `docs/lean-first/b8/record_faults.py` — Record a checkout's public answer to every reports fault-corpus document.
+- `docs/lean-first/b8/seeds.py` — Temporarily seed three reports relay defects and record the targeted failures.

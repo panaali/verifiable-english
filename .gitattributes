@@ -33,6 +33,7 @@ lean/checkers.lock merge=ve-generated
 ve/backends/lean_service_schema/*.json merge=ve-generated
 docs/test-architecture/binding-census.json merge=ve-generated
 docs/test-architecture/binding-census.md merge=ve-generated
+docs/codemap/** merge=ve-generated
 ve/english_grammar/codes.json merge=ve-generated
 ve/question/codes.json merge=ve-generated
 ve/question/LOCK.json merge=ve-generated
