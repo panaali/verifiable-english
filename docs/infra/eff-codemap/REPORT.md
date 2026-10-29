@@ -16,7 +16,7 @@ DRI signature: none required; no trusted Lean, product decision path, or DELTA r
 | Candidate regeneration entry | HUMAN: DRI, after merge | Add the exact line `codemap` to `manage-agents/cand-regen-entries.txt` | VM timings below; candidate timing is the DRI's merge-train step |
 | Final full gate | EXTERNAL: chain | Runs on committed final HEAD | Not run by this builder, as directed |
 
-`/usr/bin/time -f 'codemap_write_seconds=%e' python3 tools/code_map.py --write` printed `codemap_write_seconds=6.52` on the VM. The matching `--check` command printed `codemap_check_seconds=6.13` and exited 0. `python3 tools/code_map.py --missing | wc -l` printed `165`; `--missing` is informational. The map size command (`Path('docs/codemap').glob('*.md')`, file byte sizes, approximate tokens as ceil(bytes/4)) printed `files bytes approximate_tokens index_bytes: 134 281495 70374 9958`. Sizes for every file are below.
+The final `/usr/bin/time -f 'codemap_regen_write_seconds=%e' env UV_CACHE_DIR=/tmp/eff-codemap-uv uv run python tools/regen_generated.py --write --only codemap` printed `codemap_regen_write_seconds=6.91` on the VM and exited 0. `/usr/bin/time -f 'codemap_check_seconds=%e' python3 tools/code_map.py --check` printed `codemap_check_seconds=6.97` and exited 0. `python3 tools/code_map.py --missing | wc -l` printed `165`; `--missing` is informational. The map size command (`Path('docs/codemap').glob('*.md')`, file byte sizes, approximate tokens as ceil(bytes/4)) printed `files bytes approximate_tokens index_bytes: 134 281369 70343 9832`. Sizes for every file are below.
 
 `timeout 3000 env UV_CACHE_DIR=/tmp/eff-codemap-uv uv run python tools/regen_generated.py --write` exited 0 and ended `regen_generated: wrote 34 entries` (`/tmp/eff-codemap-regen.log`, final 50 lines inspected). No Lean source changed, so no separate Lean build, Lean audit, or trust mutants run was required. The full release gate is reserved for the chain.
 
@@ -32,13 +32,14 @@ Each mutant was planted in a changed Python file, run against one named test, an
 |---|---|---|
 | `tools/code_map.py` | Prefix every extracted sentence with `BROKEN ` | `tests/test_code_map.py::test_synthetic_tree_extracts_first_sentences_and_is_deterministic` |
 | `tools/code_map.py` | Return success immediately for `--check` | `tests/test_code_map.py::test_check_detects_stale_and_extra_files_then_accepts_write` |
+| `tools/code_map.py` | Treat a README Markdown table as its first sentence | `tests/test_code_map.py::test_readme_table_is_not_an_area_sentence` |
 | `tools/regen_generated.py` | Add advisory drift to fatal failures | `tests/test_regen_generated.py::test_advisory_check_warns_without_failing_and_strict_check_still_fails` |
 
 ## Self-review against BUILDER-CHECKLIST
 
 1. N.A. No Lean answer or request decoder changed.
 2. PASS — acceptance table above; `tests/test_code_map.py`, `tests/test_regen_generated.py`, `tests/test_repo_map.py`.
-3. PASS — three seeded failures listed above.
+3. PASS — four seeded failures listed above.
 4. N.A. No product Python, Lean, or Rust semantics changed.
 5. N.A. No relayed answer or R8 binding changed.
 6. N.A. The chain runs the final-HEAD gate, as required by this task.
@@ -57,7 +58,7 @@ Approximate tokens are ceil(bytes/4), a sizing estimate rather than a tokenizer 
 
 | File | Bytes | Approx. tokens |
 |---|---:|---:|
-| `docs/codemap/INDEX.md` | 9958 | 2490 |
+| `docs/codemap/INDEX.md` | 9832 | 2458 |
 | `docs/codemap/bench.md` | 409 | 103 |
 | `docs/codemap/conformance.md` | 7903 | 1976 |
 | `docs/codemap/docs__act-phrases.md` | 3748 | 937 |

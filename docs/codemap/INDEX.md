@@ -4,7 +4,7 @@ Service-mode routes: `tools/repo_map.py`. Regenerate with `python tools/code_map
 Regenerated on every merge to main; on a branch it may lag that branch's own changes.
 
 - [bench/](bench.md) — 4 modules — -
-- [conformance/](conformance.md) — 62 modules — Portable VE v0 conformance cases `evaluation.json` contains **701** valid environment/model/document cases
+- [conformance/](conformance.md) — 62 modules — `evaluation.json` contains **701** valid environment/model/document cases (**4,912 formulas**).
 - [docs/act-phrases/](docs__act-phrases.md) — 25 modules — -
 - [docs/arch/](docs__arch.md) — 26 modules — -
 - [docs/architecture/](docs__architecture.md) — 1 modules — -
@@ -65,7 +65,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/test-tail/](docs__test-tail.md) — 1 modules — -
 - [examples/](examples.md) — 1 modules — -
 - [experiments/](experiments.md) — 77 modules — -
-- [lean/](lean.md) — 15 modules — Lean 4 reference semantics for VE v0 This project uses Lean **4.24.0**, core Lean and `Std`, with no Mathlib or external
+- [lean/](lean.md) — 15 modules — This project uses Lean **4.24.0**, core Lean and `Std`, with no Mathlib or external Lake dependencies.
 - [lean/ResponseShape/](lean__ResponseShape.md) — 75 modules — -
 - [lean/VE/](lean__VE.md) — 33 modules — -
 - [lean/VE/Acts/](lean__VE__Acts.md) — 19 modules — -
@@ -108,7 +108,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Time/](lean__VE__Time.md) — 8 modules — -
 - [lean/VE/WireContract/](lean__VE__WireContract.md) — 13 modules — -
 - [lean/VE/Words/](lean__VE__Words.md) — 2 modules — -
-- [paper/](paper.md) — 10 modules — Negative-result and methods note Drafted by GPT-6 Astra on `paper/v1`, after merging `ve-integration`.
+- [paper/](paper.md) — 10 modules — Drafted by GPT-6 Astra on `paper/v1`, after merging `ve-integration`.
 - [research/](research.md) — 2 modules — -
 - [rust/](rust.md) — 30 modules — -
 - [tests/ part 1](tests--part-1.md) — 96 modules — -
@@ -122,7 +122,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tools/ part 2](tools--part-2.md) — 1 modules — -
 - [tools/bench/](tools__bench.md) — 7 modules — -
 - [tools/evidence/](tools__evidence.md) — 7 modules — The evidence toolkit (docs/ARCHITECTURE-REVIEW-2026-10.md, T6 and AR-5a): one implementation of each batch measurement, so a batch writes `docs/<track>/<batch>…
-- [tools/hooks/](tools__hooks.md) — 1 modules — Git hooks `pre-commit` runs fast checks on the **staged** content of a commit.
+- [tools/hooks/](tools__hooks.md) — 1 modules — `pre-commit` runs fast checks on the **staged** content of a commit.
 - [usecases/](usecases.md) — 51 modules — -
 - [ve/](ve.md) — 78 modules — VE v0 experimental language, finite semantics and checked argument API.
 - [ve/adapters/](ve__adapters.md) — 6 modules — Audited statement-layer and data adapters.
@@ -135,4 +135,4 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [ve/senses/](ve__senses.md) — 1 modules — Sense pack transport and review provenance.
 - [ve/surface/](ve__surface.md) — 13 modules — Registry of VE surface constructs.
 - [ve/wire_contract/](ve__wire_contract.md) — 2 modules — Diagnostic wire tables.
-- [ve_experiments/](ve_experiments.md) — 34 modules — ve_experiments: experiment harness | Module | Purpose |
+- [ve_experiments/](ve_experiments.md) — 34 modules — -
