@@ -444,3 +444,8 @@ def test_merge_refuses_selected_id_reported_as_deselected(tmp_path, monkeypatch,
     merged = gate_shards.merge_records(rows)
     assert merged["status"] == "failed"
     assert "deselected IDs" in merged["failures"][0]["reason"]
+
+
+def test_seeded_arm_shard_fault():
+    """Seeded fault (dri-actions-gate-arm 2026-10-29): must FAIL the sharded arm64 leg; never merged."""
+    assert False, "seeded fault for the sharded arm64 Actions leg"
