@@ -43,9 +43,13 @@ def profileCase (j : Json) : IO Unit := do
       (kind == "readings-elaborate" || kind == "readings-choice")
     let product := kind == "readings-verdicts" && parts.length > 1 &&
       (match named with | .ok none => true | _ => false)
-    let fixed := w2 && (checkedMain || product)
-    let admitted ← if fixed then
-      timed caseId part "admitS2" (fun _ => admitS2 env (fixedPart doc)) (fun b => b.D.sets.length)
+    -- `admitChecked` probes the split main before delegating to `admitComponent`.
+    -- Outside W2 that delegation admits the original document a second time.
+    let repeated := checkedMain || (w2 && product)
+    let fixed := w2 && repeated
+    let admitted ← if repeated then
+      timed caseId part "admitS2" (fun _ => admitS2 env (if fixed then fixedPart doc else doc))
+        (fun b => b.D.sets.length)
       else pure (.ok b)
     if fixed || underCompletion b.a.re b.D then
       if let .ok b' := admitted then

@@ -92,3 +92,36 @@ def test_saved_twofold_profile_records_fixed_part_completion():
         main = [row["stage"] for row in main_rows]
         assert main.count("admitS2") >= 2
         assert any(row["stage"] == "admitNDFull" and row["status"] == "ok" for row in main_rows)
+
+
+@pytest.mark.parametrize("kind", ["readings-elaborate", "readings-choice"])
+def test_split_non_w2_main_records_fallback_admission(kind):
+    from docs.perf.admission_cases import case_from
+
+    case = case_from(ROOT / "docs/perf/inputs/prefix-50.ve.md", 1)
+    case["kind"] = kind
+    if kind == "readings-choice":
+        main_sets = [s for s in case["document"]["reading_sets"]
+                     if not any("companion" in r for r in s["readings"])]
+        case.update(choice=[[s["id"], 0] for s in main_sets],
+                    inner={"kind": "norm-defaults-elaborate"})
+    request = json.dumps({"id": "profile", "mode": "readings-route", "cases": [case]}) + "\n"
+    observed = run("1", request)
+    result = json.loads(observed.stdout.splitlines()[-1])["results"][0]["result"]
+    assert result["status"] == "ok"
+    rows = [json.loads(line) for line in observed.stderr.splitlines()]
+    assert next(row for row in rows if row["stage"] == "splitCase")["items"] > 1
+    main = [row for row in rows if row["part"] == "main" and row["stage"] == "admitS2"]
+    assert len(main) == 2
+    assert all(row["status"] == "ok" and row["items"] == main[0]["items"] for row in main)
+
+
+@pytest.mark.parametrize("name", ["admission-prefix-50", "admission-prefix-75", "admission-prefix-100"])
+def test_saved_non_w2_prefixes_record_fallback_admission(name):
+    evidence = json.loads((ROOT / "docs/perf/admission-profile-evidence.json").read_text())
+    runs = evidence["cases"][name]["runs"]
+    assert len(runs) == 3
+    for run in runs:
+        main = [row for row in run["stages"] if row["part"] == "main" and row["stage"] == "admitS2"]
+        assert len(main) == 2
+        assert all(row["status"] == "ok" for row in main)
