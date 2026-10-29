@@ -1,0 +1,15 @@
+{
+ "job": "probe10290053-148ed17b",
+ "head": "21753f32786be6e762ba7cc013521d0a1f57642a",
+ "argv": [
+  "probe10290053-148ed17b",
+  "21753f32786be6e762ba7cc013521d0a1f57642a",
+  "95d65b12edab5635ea787fa412d5125fc6e313c5",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-b870dd74226c.tar.zst",
+  "93585165768e0573a207196f04f6b83a7ea5b79d84cb9af86975fdab75c69649",
+  "--max-mutants",
+  "3",
+  "--jobs",
+  "4"
+ ]
+}
