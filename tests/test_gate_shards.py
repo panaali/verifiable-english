@@ -40,6 +40,8 @@ def records(n):
                "pytest_seconds": {node: float(index + 1) for index, node in enumerate(ran)},
                "quarantine": {"enabled": True, "active": [], "expired": [], "retried": {}}}
         gate.interpret_pytest(row, events, POLICY, ran, families=())
+        if k == 1:
+            row["counts"].update(rust_passed=2, rust_ignored=0)
         rows.append(row)
     return rows
 
@@ -161,6 +163,25 @@ def test_merge_refuses_missing_or_malformed_test_events():
     merged = gate_shards.merge_records(rows)
     assert merged["status"] == "failed"
     assert "incomplete failure events" in merged["failures"][0]["reason"]
+
+
+@pytest.mark.parametrize("mutation", [
+    lambda rows: next(row for row in rows if row["skips"])["skips"][0].update(allowed=False),
+    lambda rows: rows[0]["counts"].update(rust_passed=0),
+    lambda rows: rows[0]["counts"].update(rust_passed=True),
+    lambda rows: rows[0]["counts"].update(rust_ignored=1),
+    lambda rows: rows[0]["counts"].update(rust_ignored=False),
+    lambda rows: rows[0]["quarantine"]["retried"].update({IDS[0]: {"suite": "failed", "alone": "failed"}}),
+    lambda rows: rows[0]["quarantine"]["retried"].update({IDS[0]: {"suite": "failed", "alone": "passed"},
+                                                            IDS[1]: {"suite": "failed", "alone": "no result"}}),
+])
+def test_passing_merge_rejects_contradictory_skip_retry_and_native_evidence(mutation):
+    rows = records(2)
+    assert gate_shards.merge_records(rows)["status"] == "passed"
+    mutation(rows)
+    merged = gate_shards.merge_records(rows)
+    assert merged["status"] == "failed"
+    assert merged["failures"][0]["stage"] == "shards"
 
 
 def test_plan_is_repeatable_and_partitions_each_collected_id_once():
