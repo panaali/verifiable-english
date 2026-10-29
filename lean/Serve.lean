@@ -1,5 +1,8 @@
 import VE.Service.Protocol
 
+def readingsMemoStatsEnabled (value : Option String) : Bool := value == some "1"
+#guard readingsMemoStatsEnabled (some "1") && !readingsMemoStatsEnabled (some "0")
+
 /-- `ve_service`: the persistent JSON-lines front end over the existing runners
 (docs/spec/SEMANTICS-MIGRATION-PLAN.md, stage 1; `VE.Service` for the protocol).
 Prints the handshake line, then one response line per request line, flushed, until
@@ -15,7 +18,7 @@ def main (args : List String) : IO UInt32 := do
   stdout.flush
   let mut handles : VE.Service.Handles := {}
   let mut memo : VE.Readings.Run.AdmissionMemo := {}
-  let stats := (← IO.getEnv "VE_READINGS_MEMO_STATS") == some "1"
+  let stats := readingsMemoStatsEnabled (← IO.getEnv "VE_READINGS_MEMO_STATS")
   repeat
     let line ← stdin.getLine
     if line.isEmpty then break

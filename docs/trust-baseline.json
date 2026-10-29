@@ -1384,6 +1384,20 @@
    "reason": "qt-a3c: VE/Compose/Dispatch.lean +11 (the cardinality@0 row, cardinalityOthers, modeProfiles), VE/Service/Registry.lean +2, ResponseShape/Schemas.lean +1, ResponseShape/Skeletons.lean +1, VE/Service/Protocol.lean +1; K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3c, 2026-10-28",
    "commit": "b8eac74553124f72a8650211b9df8228c621fdfe"
+  },
+  {
+   "class": "V",
+   "lines": 143,
+   "reason": "scale-lean-memo: Run.lean +75 (bounded admission memo and service runner), Protocol.lean +63 (memo request dispatch), Serve.lean +5 (process state and stats); K +0, S +0, V +143; tests/test_readings_memo.py covers every new definition",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), scale-lean-memo, 2026-10-29",
+   "commit": "b0dce1ea4c96241925fa2ee505e756ca1ee8a54f"
+  },
+  {
+   "class": "V",
+   "lines": 3,
+   "reason": "scale-lean-memo check fix: Protocol.memoLineTooLong +2, Serve.readingsMemoStatsEnabled +1; K +0, S +0, V +3; MemoExamples and Serve guards exercise both",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), scale-lean-memo, 2026-10-29",
+   "commit": "b0dce1ea4c96241925fa2ee505e756ca1ee8a54f"
   }
  ]
 }
