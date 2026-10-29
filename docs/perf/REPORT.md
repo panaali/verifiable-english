@@ -34,7 +34,8 @@ The evidence files store the source and request hashes, service binary hash, VM 
 - `uv run --no-sync pytest -q tests/test_readings_stage_times.py`: PASS, 8 tests. The review's F1 and F2 executable probes both pass after initially failing.
 - `uv run --no-sync python tools/trust_map.py --check`: PASS, K +0, S +0, trusted +1 in `Serve.lean`, unclassified 0. The earlier `trust-mutants.json` has zero applicable definitions; no new trusted definition was added in the fix.
 - `tools/regen_generated.py --write` ran before the final Lean edit; `tools/lean_statements.py` and the checker-pin generator refreshed their outputs after the final build. The service hash in every evidence file equals the final binary hash.
-- Selected tests: final result to record after the foreground `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` finishes.
+- Selected tests: `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` passed 394 files with 0 failed IDs on the Mac. The runner snapshotted the final Lean source and evidence before two test-only assertion commits. On the final HEAD, the tightened timing file passed 8 tests and the one additional selected file, `tests/test_lineage_lint.py`, passed 13 tests. Together these cover the final 395-file selection without repeating the unchanged 394 files.
+- `review-ready.py` on committed `30b66bac5`: PASS for clean, mutants, relay mutation gate, and DELTA. Its sole FAIL is the full release gate assigned to the merge train by this task.
 
 `git diff --check main...HEAD` flags one trailing space in the copied 50% UDHR source and one blank final line in the copied 75% source. They are retained to preserve the exact inputs from the scale review; the authored code and report files have no whitespace findings.
 
@@ -55,7 +56,7 @@ Each temporary fault below was built, failed its named behavior test, and was re
 6. N.A. — the user explicitly assigns the final full gate to the chain; `gate-result.json` is not yet produced on this branch.
 7. PASS — [DELTA.md](DELTA.md) cites the DRI decision item 1 and R16, with a silent-default test and a ties follow-up in [FOLLOW-UPS.md](FOLLOW-UPS.md).
 8. PASS — `test_readings_stage_times_do_not_change_the_answer` and `test_readings_stage_times_are_silent_by_default` exercise the only user-visible output delta; DELTA lists the opt-in stderr change.
-9. Pending — the fix round's selected runner is still in the foreground and its final result will be recorded above.
+9. PASS — the Mac selected run passed 394 files; the one final-HEAD addition and the tightened timing file passed separately as recorded above.
 10. N.A. — no Lean theorem or approved statement changed; `lean/audit.py` passed.
 11. N.A. — no public budget, deadline, limit or verdict behavior changed; timing tests use no sleep or elapsed-time assertion.
 12. PASS — `admission-profile-evidence.json` and `admission-profile-constitution.json` record CPU and load; the hook is off by default by `test_readings_stage_times_are_silent_by_default`.
