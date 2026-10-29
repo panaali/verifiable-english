@@ -71,8 +71,47 @@ def needs_items() -> list[dict]:
     return items
 
 
+def strict_items() -> list[dict]:
+    """Use the existing strict route and its JSON display on real Lean certificates."""
+    acts = ["review content", "flag risk", "explain decisions", "seek consent",
+            "record outcomes", "report misuse", "inspect records", "notify users",
+            "protect data", "log access", "verify sources", "escalate alerts"]
+    items = []
+    for index, act in enumerate(acts, 13):
+        environment, norms = copy.deepcopy(DOCS["zeta"])
+        for predicate in ("x_required", "x_permitted"):
+            environment["vocabulary"]["predicates"][predicate]["regulated"]["act"] = "{0} " + act
+        answer = defaults.ask(environment, norms, [], X_ALL)
+        assert answer == {"question": "strict", "valid": True}, (act, answer)
+        rule_text = render_english(SoftNormDocument(SoftEnvironment(environment), norms))[0]
+        items.append({"id": f"S{index-12:02d}", "class": "strict", "source": "zeta",
+                      "rule_text": rule_text, "lean_answer": answer,
+                      "rendered": {"long": [json.dumps(answer, ensure_ascii=False, indent=2)]},
+                      "expected": "no"})
+    return items
+
+
+def reader_items() -> list[dict]:
+    from subprocess import check_output
+    commit = check_output(["git", "rev-parse", "HEAD"], text=True).strip()
+    result = []
+    for item in needs_items() + strict_items():
+        item["render_commit"] = commit
+        item["render_command"] = "uv run python docs/defeasible/df-e1/prepare.py --items"
+        if item["id"].startswith("N") and int(item["id"][1:]) > 6:
+            item["rendered"].pop("short")
+        result.append(item)
+    return result
+
+
 if __name__ == "__main__":
-    items = needs_items()
-    (HERE / "needs.json").write_text("[\n" + ",\n".join(json.dumps(item, ensure_ascii=False)
-                                                            for item in items) + "\n]\n")
-    print("generated", len(items), "checked needs answers")
+    import sys
+    if sys.argv[1:] == ["--items"]:
+        items = reader_items()
+        (HERE / "items.json").write_text(json.dumps(items, ensure_ascii=False, indent=2) + "\n")
+        print("generated", len(items), "checked reader items")
+    else:
+        items = needs_items()
+        (HERE / "needs.json").write_text("[\n" + ",\n".join(json.dumps(item, ensure_ascii=False)
+                                                                for item in items) + "\n]\n")
+        print("generated", len(items), "checked needs answers")
