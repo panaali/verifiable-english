@@ -1,0 +1,6 @@
+job=arm-cand-apol-req-c952caae-t244988 nproc=4 arch=aarch64 host=runnervm9u1px date=2026-10-29T03:37:25Z ulimit_s=16384
+Mem:              15           1          10           0           4          14
+/dev/root       145G   41G  104G  29% /
+ 03:37:25 up 2 min,  0 user,  load average: 0.86, 0.25, 0.08
+pilot/codex branches: 98
+[gate] passed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 29867 passed, 94 skipped, 0 failures
