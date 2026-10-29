@@ -6026,12 +6026,12 @@
         "VE.Question.askedText"
       ]
     },
-    "VE/Readings/AdmissionProfile.lean": {
+    "VE/Service/ReadingsAdmissionProfile.lean": {
       "T": [
-        "VE.Readings.AdmissionProfile.cpuTicks",
-        "VE.Readings.AdmissionProfile.timed",
-        "VE.Readings.AdmissionProfile.profileCase",
-        "VE.Readings.AdmissionProfile.profileLine"
+        "VE.Service.ReadingsAdmissionProfile.cpuTicks",
+        "VE.Service.ReadingsAdmissionProfile.timed",
+        "VE.Service.ReadingsAdmissionProfile.profileCase",
+        "VE.Service.ReadingsAdmissionProfile.profileLine"
       ]
     },
     "VE/Readings/Asserted.lean": {
