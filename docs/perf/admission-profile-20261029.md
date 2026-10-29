@@ -15,8 +15,9 @@ The complete distinguishing-model checks are small in these cases (0.02–0.03 C
 but their current validation scans the full author vocabulary for every model.
 The 64-choice whole UDHR also pays for `choiceStepText` once per compatible choice.
 
-A near-linear implementation can build indexes once per admission: rule name and
-predicate to norms, predicate to units that use it, and set to candidate units;
+A near-linear implementation can build indexes once per admission: item and rule
+names to their positions, predicate to norms, predicate to units that use it,
+and set to candidate units;
 validate the complete model's declared tables once, then evaluate each model only
 against the units whose predicates it uses. Reuse the filled frame and derived
 norm layers across the checks of those units and across compatible choices. This

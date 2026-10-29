@@ -8,7 +8,7 @@ Signatures: the timing delta is DRI-signed by `reviews/dri-decisions-20261028-sc
 
 ## Decision and deliverables
 
-The decision input is in [admission-profile-20261029.md](admission-profile-20261029.md): `admitS2` and filled-document admission have controlled-prefix fitted exponents 2.93 and 2.47. Indexing norms and relevant units and reusing filled checks should reduce admission to exponent about 1.0–1.2 at bounded choices, with an estimated 15–25 CPU s for an admissible UDHR-density 185 KB document. The actual 185,033-byte constitution took 1.29 CPU s median for ordinary `runCase`, because it has only 16 norm-kind units and two reading sets. The 4× dense synthetic UDHR refused at the vocabulary limit, so no admission time is claimed for it. This report is measurement and a fix proposal; no admission decision logic was changed.
+The decision input is in [admission-profile-20261029.md](admission-profile-20261029.md): `admitS2` and filled-document admission have controlled-prefix fitted exponents 2.93 and 2.47. Indexing item names, norms and relevant units and reusing filled checks should reduce admission to exponent about 1.0–1.2 at bounded choices, with an estimated 15–25 CPU s for an admissible UDHR-density 185 KB document. The actual 185,033-byte constitution took 1.29 CPU s median for ordinary `runCase`, because it has only 16 norm-kind units and two reading sets. The 4× dense synthetic UDHR refused at the vocabulary limit, so no admission time is claimed for it. This report is measurement and a fix proposal; no admission decision logic was changed.
 
 | Requirement | Owner | Delivered by | Check |
 |---|---|---|---|
