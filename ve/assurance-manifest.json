@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 39694,
+    "total_lines": 39767,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1873,12 +1873,12 @@
       },
       {
         "file": "lean/VE/Calc/Run.lean",
-        "lines": 366,
-        "sha256": "b09fc345ee8eb03a9c54c6ca4ea7280135d0ec51adb921e0728fc87a2a0ee367",
+        "lines": 439,
+        "sha256": "4788f95816e0c3efef8db4ed4f34c2eb14fee544715f20d5dd5bef7ef4c52c62",
         "ranges": [
           [
             1,
-            366
+            439
           ]
         ],
         "declarations": [
@@ -2063,7 +2063,6 @@
       "lean/ResponseShape/CaseDeciders.lean": "the runners' tests of the request case that the response shapes select on (CaseDecider.fn calls each runner's own test; the norms one reads the case environment for Norms.Plain.layered); test tooling, not on any runner path",
       "lean/ResponseShape/Skeleton.lean": "the skeletons of the response shapes and Fits, the field-level conformance the encoder theorems prove; JSON only in lemma statements about Json.mkObj and setObjVal! (theorems, not on any runner path)",
       "lean/ResponseShape/FitsTactic.lean": "tactics that build the encoder theorems' proofs, reading Json.mkObj and setObjVal! terms of goals (proof automation, checked by the kernel; not on any runner path)",
-      "lean/ResponseShape/Audit.lean": "the dependency audit of the response-shape theorems (#print axioms only); JSON only in theorem names",
       "lean/ResponseShape/Encoders/Common.lean": "lemmas the encoder theorems share (claims, reports, the case kind a runner read); JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Encoders/Conformance.lean": "theorems that standalone conformance rows fit their response shapes; JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Encoders/Norms.lean": "theorems that norms rows fit their response shapes; JSON access only in statements and proofs (not on any runner path)",
@@ -2105,6 +2104,8 @@
       "lean/VE/Senses/Project.lean": "senses projection (docs/spec/senses.md 2.5): builds the projected environment JSON from the validated environment JSON for the admitted reading; this module does not decode JSON",
       "lean/VE/EnglishGrammar/ProfileExamples.lean": "fixtures only: S3 profile environment and reader #guard checks; no runner path",
       "lean/VE/EnglishGrammar/E2Examples.lean": "fixtures only: E2 port, overlay check, guards, texts and advice #guard checks (spec section 8); no runner path",
+      "lean/VE/EnglishGrammar/SourceWords.lean": "source-word catalogue JSON encoder only; it exports the checked Lean table to the generated read-only Python view and decodes no request",
+      "lean/VE/EnglishGrammar/SourceWordsExamples.lean": "fixtures only: #guard checks of source-word row boundaries and JSON encoding; no runner path",
       "lean/VE/Service/ParseDiagnostic.lean": "diagnostic only after a rejected checked parse: builds the first source fault and span; cannot accept",
       "lean/VE/Readings/UnspecifiedExamples.lean": "fixtures: an empty environment JSON for `checkAuthorN` in `#guard` (readings-defaults 8.3); on no runner path",
       "lean/VE/Readings/CompanionsExamples.lean": "readings-defaults RD-4a: #guard fixtures that build JSON documents and environments for the merge and the split; no decoder",
@@ -2148,7 +2149,8 @@
       "lean/VE/Scope/Readings.lean": "lean:scope-readings: `governSets` (scope spec 11.2) reads the reading sets of the units it governs per choice, writes each choice's reading content into its unit (setObjVal!) and each governed reading's composed content back into its set; trees are compared with the readings route's proved `jeq`; the rules are decoded by the chain's own decoder, never here; the document mode calls it under scope@0 through `governSetsWith governFast` (sc-5rb, `checkDocSets`)",
       "lean/VE/Scope/ReadingsExamples.lean": "fixtures only: scope spec 11.6's #guard checks build reading sets and hard-constraint documents as JSON literals and run `governSets` on them; no service mode reads this file",
       "lean/VE/Readings/ActsExamples.lean": "test fixtures only: #guards that build acts@0 environments as a request carries them and read the readings route's decoder answers (ap-1bd); no admission path, service mode or record reads it",
-      "lean/ResponseShape/Encoders/Cardinality.lean": "theorems that the cardinality mode's rows fit its shape, with valid exactly beside a certificate case (getObjVal? in proofs only; not on any runner path)"
+      "lean/ResponseShape/Encoders/Cardinality.lean": "theorems that the cardinality mode's rows fit its shape, with valid exactly beside a certificate case (getObjVal? in proofs only; not on any runner path)",
+      "lean/ResponseShapeAudit.lean": "the dependency audit of the response-shape theorems (#print axioms only); JSON only in theorem names"
     }
   },
   "plan_operations": {

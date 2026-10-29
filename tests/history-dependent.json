@@ -597,6 +597,17 @@
    ]
   },
   {
+   "test": "tests/test_gen_inv_design.py",
+   "why": "starts git (git ls-files, git rev-parse) in tools/cache_store.py, tools/source_graph.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tools/cache_store.py:git_common_directory: git rev-parse",
+    "tools/source_graph.py:tracked: git ls-files"
+   ]
+  },
+  {
    "test": "tests/test_hang_guards.py",
    "why": "starts git (git cat-file, git merge-base, git rev-parse, git show) in conformance/frozen_norm_defaults.py, tools/english_grammar_gen.py, tools/evidence/__init__.py, tools/hooks/precommit.py",
    "recorded": [
@@ -1577,6 +1588,16 @@
    ],
    "via": [
     "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_source_words.py",
+   "why": "starts git (git cat-file) in tools/english_grammar_gen.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tools/english_grammar_gen.py:git_blob: git cat-file"
    ]
   },
   {
