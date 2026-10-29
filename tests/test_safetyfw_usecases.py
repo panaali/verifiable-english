@@ -338,6 +338,9 @@ def test_pf_every_byte_has_ve_status_and_one_unit(pf_modules):
     for status, amount in coverage["master_bytes_by_status"].items():
         count = sum(u["status"] == status for u in units)
         assert f"| {status} | {count} | {amount:,} | {amount / 67418:.1%} |" in readme
+        report_row = next(line for line in (PF_EVIDENCE.parent / "REPORT.md").read_text().splitlines()
+                          if line.startswith("| OpenAI PF v2 |"))
+        assert f"{amount:,} ({amount / 67418:.1%})" in report_row
     if pf_build.DEFAULT_SOURCE.exists():
         assert pf_build.main(["--check"]) == 0
 
