@@ -20926,7 +20926,7 @@ module VE.Service.ScopeAdmission 8dee1113a002db19e02d181cfa3d7758f5370b198b7e1c9
 157:0-180:10 theorem VE.Scope.scope_admission_sets@VE.Service.ScopeAdmission
 182:0-196:7 theorem VE.Scope.checkDocSets_no_sets@VE.Service.ScopeAdmission
 198:0-202:15 theorem VE.Scope.checkDocSets_absent_unchanged@VE.Service.ScopeAdmission
-module VE.Service.ScopeExamples 989dcd708cd81de57f2bf208fb58781aeb2c818c5cfb9311ab5d79945b87b868
+module VE.Service.ScopeExamples d029acb85f1a8b2eaf2f8baa295a77361cc6fcfc6959ef2193e0704fefe49a9a
 12:0-12:76 def VE.Service.ScopeExamples.source@VE.Service.ScopeExamples
 13:0-13:103 def VE.Service.ScopeExamples.lead@VE.Service.ScopeExamples
 14:0-14:113 def VE.Service.ScopeExamples.item@VE.Service.ScopeExamples
