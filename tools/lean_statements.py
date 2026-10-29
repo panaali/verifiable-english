@@ -152,7 +152,7 @@ TREE = "import Lean\nimport VE\n" + PRELUDE + r"""
 """
 
 # The statements of the theorems named in VE_STATEMENT_NAMES.
-SCRIPT = "import Lean\nimport VE\n" + PRELUDE + r"""
+SCRIPT = PRELUDE + r"""
 set_option format.width 100 in
 set_option pp.fullNames true in
 #eval show MetaM Unit from do
@@ -209,7 +209,7 @@ def statement_parts(names: list[str], count: int) -> list[list[str]]:
     return [names[start:end] for start, end in zip(bounds, bounds[1:])]
 
 
-def print_statements(root: Path, folder: Path, names: list[str], count: int) -> str:
+def print_statements(root: Path, folder: Path, names: list[str], count: int, imports: list[str] | tuple[str, ...] = ()) -> str:
     """SCRIPT's output over `names`, printed by one run per part at once and joined in part order. One part
     is the single run `Statements` over `names.txt`; part i of several is `Statements<i>` over `names<i>.txt`.
     A failed part fails the dump with its label and output (`run_lean`), so no part's output is ever left out."""
@@ -218,8 +218,9 @@ def print_statements(root: Path, folder: Path, names: list[str], count: int) -> 
         (f"Statements{index}", f"names{index}.txt") for index in range(len(parts))]
     for part, (_, file) in zip(parts, runs):
         (folder / file).write_text("\n".join(part) + "\n")
+    script = "import Lean\nimport VE\n" + "".join(f"import {module}\n" for module in imports) + SCRIPT
     with ThreadPoolExecutor(max_workers=len(runs)) as pool:
-        texts = list(pool.map(lambda run: run_lean(root, folder, SCRIPT, run[0],
+        texts = list(pool.map(lambda run: run_lean(root, folder, script, run[0],
                                                    {"VE_STATEMENT_NAMES": str(folder / run[1])}), runs))
     return "".join(texts)
 
@@ -275,7 +276,9 @@ def dump_all(root: Path = ROOT, cache: bool = False) -> tuple[str, str, str]:
     if cache:
         return tuple(lean_dump_cache.cached(lean_dump_cache.STATEMENTS, root, lambda: sources(root),
                                             lambda: list(dump_all(root)), count=3))
-    modules = tree_modules(root)
+    all_modules = tree_modules(root)
+    manifests = {module_name(path) for path in audit.MANIFESTS}
+    modules = [module for module in all_modules if module not in manifests]
     built = subprocess.run(["lake", "build", *modules], cwd=root / "lean", text=True, capture_output=True,
                            check=False)
     if built.returncode:
@@ -302,11 +305,12 @@ def dump_all(root: Path = ROOT, cache: bool = False) -> tuple[str, str, str]:
             elif line.startswith("module "):
                 declared[line.removeprefix("module ")], pending = pending, []
         try:
-            manifests = audit.manifest_theorems({m: declared_constants(m, declared.get(m, [])) for m in modules})
+            manifest_theorems = audit.manifest_theorems({m: declared_constants(m, declared.get(m, [])) for m in modules})
         except (ValueError, AssertionError) as error:
             raise SystemExit(f"the declaration dump cannot give the audit manifests: {error}")
-        names = sorted(manifests[audit.MANIFESTS[0]])
-        theorems = print_statements(root, folder, names, statement_count())
+        names = sorted(manifest_theorems[audit.MANIFESTS[0]])
+        theorem_imports = sorted(set(manifest_theorems[audit.MANIFESTS[0]].values()) & set(outside))
+        theorems = print_statements(root, folder, names, statement_count(), theorem_imports)
     entries = parse(theorems)
     if sorted(entries) != names:
         missing = sorted(set(names) - set(entries))[:10]
@@ -316,12 +320,13 @@ def dump_all(root: Path = ROOT, cache: bool = False) -> tuple[str, str, str]:
         raise SystemExit(f"the predicate scan read {len(scanned)} modules of the tree's {len(modules)}: "
                          f"missing {sorted(set(modules) - set(scanned))[:10]}")
     predicates = sorted(line.removeprefix("predicate ") for line in lines if line.startswith("predicate "))
-    if hashes != {m: source_hash(p) for m, p in zip(modules, sources(root))}:
+    if hashes != {m: source_hash(p) for m, p in zip(all_modules, sources(root))}:
         raise SystemExit("a Lean source changed while the dump ran; rerun tools/lean_statements.py")
     for manifest in audit.MANIFESTS:
         if module_name(manifest) in hashes:
-            text = audit.manifest_text(manifest, manifests[manifest])
+            text = audit.manifest_text(manifest, manifest_theorems[manifest])
             hashes[module_name(manifest)] = hashlib.sha256(text.encode()).hexdigest()
+            declared[module_name(manifest)] = []
 
     def position(entry: str) -> tuple[int, ...]:
         """Ranged constants by their range, then the generated ones (no range) by name."""
@@ -330,11 +335,11 @@ def dump_all(root: Path = ROOT, cache: bool = False) -> tuple[str, str, str]:
         return tuple(int(x) for x in re.split(r"[:-]", entry.split(" ", 1)[0]))
 
     return (HEADER + "".join(f"theorem {name}\n{entries[name]}" for name in names),
-            PREDICATES_HEADER + "".join(f"module {m}\n" for m in modules)
+            PREDICATES_HEADER + "".join(f"module {m}\n" for m in all_modules)
             + "".join(f"{name}\n" for name in predicates),
             DECLARATIONS_HEADER + "".join(f"module {m} {hashes[m]}\n"
                                           + "".join(f"{e}\n" for e in sorted(declared[m], key=lambda e: (position(e), e)))
-                                          for m in modules))
+                                          for m in all_modules))
 
 
 def locate(token: str) -> tuple[str, str] | None:

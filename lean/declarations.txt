@@ -142,7 +142,6 @@ module ResponseDecode 6b49aff772a791f4f732b75946162d0f71a8a007211302e869e68099ff
 347:0-350:46 def ResponseDecode.contentCheck@ResponseDecode
 352:0-359:60 def ResponseDecode.line@ResponseDecode
 364:0-374:10 def main@ResponseDecode
-module ResponseShape.Audit 8abb7344da85feefe64c86d1beda2b11250bf1045e6d79475442dd32028e7a81
 module ResponseShape.CaseDeciders 1b58f0b0a9c88f49876e8f3ceb5acfe1213edbd0f35ce569e2dd2f53e90018bb
 18:0-29:57 inductive ResponseShape.CaseDecider@ResponseShape.CaseDeciders
 29:11-29:20 def ResponseShape.instInhabitedCaseDecider.default@ResponseShape.CaseDeciders
@@ -1631,6 +1630,7 @@ module ResponseShape a89af379dc2e885f997404f83595dbfce86f6e898b830d94905fac35763
 789:0-789:113 def ResponseShape.tok@ResponseShape
 796:0-796:84 def ResponseShape.disagreeing@ResponseShape
 797:0-800:14 def ResponseShape.brokenOn@ResponseShape
+module ResponseShapeAudit 8abb7344da85feefe64c86d1beda2b11250bf1045e6d79475442dd32028e7a81
 module ScopeBenchMain ee2f1f4bd87baa553cb8515edb1f937a11e999c2e4108e90b867a1df73f6d2cb
 18:0-20:111 def ScopeBench.row@ScopeBenchMain
 22:0-24:97 def ScopeBench.changed@ScopeBenchMain
@@ -23395,4 +23395,4 @@ module VE.Words.Situation 04a0781486d2ef00feb590ccf206ff7ba43f98dff6689995a7770e
 149:0-160:13 def VE.Words.bindings@VE.Words.Situation
 162:0-173:50 def VE.Words.pairSentence@VE.Words.Situation
 190:0-192:91 def VE.Words.nounsOnly@VE.Words.Situation
-module VE 794d4570c7219215a34595fb136197693b706ca66fa62ad5170ec444d37a6f22
+module VE 18daef6a3dea97aad1eb21e03952f238e1890caac36c9832a28aefbcf48036cb
