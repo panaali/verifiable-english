@@ -1,5 +1,5 @@
 import VE.Service.Protocol
-import VE.Readings.AdmissionProfile
+import VE.Service.ReadingsAdmissionProfile
 
 /-- `ve_service`: the persistent JSON-lines front end over the existing runners
 (docs/spec/SEMANTICS-MIGRATION-PLAN.md, stage 1; `VE.Service` for the protocol).
@@ -18,7 +18,7 @@ def main (args : List String) : IO UInt32 := do
   repeat
     let line ← stdin.getLine
     if line.isEmpty then break
-    VE.Readings.AdmissionProfile.profileLine line
+    VE.Service.ReadingsAdmissionProfile.profileLine line
     let (answer, next) := VE.Service.handleLine handles line
     handles := next
     if let some answer := answer then

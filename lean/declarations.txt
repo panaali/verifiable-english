@@ -1638,7 +1638,7 @@ module ScopeBenchMain ee2f1f4bd87baa553cb8515edb1f937a11e999c2e4108e90b867a1df73
 38:0-53:12 def main@ScopeBenchMain
 module SensesMain 05cc0d2c0d864744efa3e0602376447057c5b4710b6188d794e5bae5eeef8d11
 3:0-3:68 def main@SensesMain
-module Serve 27501a5addd5ffdc0766e711c88d23fb949580331ecdc8250fecca8fade3239a
+module Serve f06b2c16167911be4f5f84c0850638584c103daa23b18f1bf4b2b6978280004d
 4:0-27:10 def main@Serve
 module SpeechActsMain c23ee34c8212d8640da9273099357f993a3ef8fd8ac5b0c88b403a437b038352
 3:0-5:75 def main@SpeechActsMain
@@ -13266,11 +13266,6 @@ module VE.Readings.ActsExamples bdec39830f7db5242fa01ae0828c7ca02e8fa82f9f4be7ff
 69:0-69:112 def VE.Readings.ActsExamples.d4@VE.Readings.ActsExamples
 75:0-76:98 def VE.Readings.ActsExamples.elabCase@VE.Readings.ActsExamples
 77:0-78:83 def VE.Readings.ActsExamples.wordings@VE.Readings.ActsExamples
-module VE.Readings.AdmissionProfile c418ef399d93a0840e32721a5ec94def769d71705dab9c3c2f5039b6a11997cc
-8:0-13:21 def VE.Readings.AdmissionProfile.cpuTicks@VE.Readings.AdmissionProfile
-15:0-28:15 def VE.Readings.AdmissionProfile.timed@VE.Readings.AdmissionProfile
-30:0-57:85 def VE.Readings.AdmissionProfile.profileCase@VE.Readings.AdmissionProfile
-59:0-65:17 def VE.Readings.AdmissionProfile.profileLine@VE.Readings.AdmissionProfile
 module VE.Readings.Asserted 2d8ef381b8bdced4585651fb2fda5ecf0c02bd23ab75fe99c70726f8092b9a12
 20:0-26:16 def VE.Readings.buildAsserted@VE.Readings.Asserted
 28:0-40:43 theorem VE.Readings.build_snd_fold@VE.Readings.Asserted
@@ -20871,6 +20866,11 @@ module VE.Service.Readings 357a25dda81bfbce40b2361f8f437a74231e199228e53130f099f
 139:0-151:71 theorem VE.Service.Readings.readings_some_sound@VE.Service.Readings
 155:0-161:24 def VE.Service.Readings.decodeModel@VE.Service.Readings
 163:0-213:56 def VE.Service.Readings.readingsCase@VE.Service.Readings
+module VE.Service.ReadingsAdmissionProfile 633ce664a315fbb3f29fdfc97d542c3c436543923f8a22b379c1879f47b71e43
+8:0-13:21 def VE.Service.ReadingsAdmissionProfile.cpuTicks@VE.Service.ReadingsAdmissionProfile
+15:0-28:15 def VE.Service.ReadingsAdmissionProfile.timed@VE.Service.ReadingsAdmissionProfile
+30:0-57:85 def VE.Service.ReadingsAdmissionProfile.profileCase@VE.Service.ReadingsAdmissionProfile
+59:0-65:17 def VE.Service.ReadingsAdmissionProfile.profileLine@VE.Service.ReadingsAdmissionProfile
 module VE.Service.ReadingsChoices 9881463bf7607b77d6a448d01d81e24452dc5adfa467673a91a7b1a13c86b4a5
 11:0-12:48 def VE.Service.ReadingsChoices.arr@VE.Service.ReadingsChoices
 14:0-15:69 def VE.Service.ReadingsChoices.index@VE.Service.ReadingsChoices

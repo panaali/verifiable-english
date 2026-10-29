@@ -439,7 +439,6 @@ module VE.Question.Spans
 module VE.Question.Strings
 module VE.Question.Texts
 module VE.Readings.ActsExamples
-module VE.Readings.AdmissionProfile
 module VE.Readings.Asserted
 module VE.Readings.Assertions
 module VE.Readings.BaseDown
@@ -607,6 +606,7 @@ module VE.Service.Graph
 module VE.Service.ParseDiagnostic
 module VE.Service.Protocol
 module VE.Service.Readings
+module VE.Service.ReadingsAdmissionProfile
 module VE.Service.ReadingsChoices
 module VE.Service.Registry
 module VE.Service.ScopeAdmission

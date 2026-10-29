@@ -2,8 +2,8 @@ import VE.Readings.Run
 
 /-! Optional, diagnostic-only timings for the readings route. The service still answers
      through its ordinary pure runner; these probes do not feed an answer. -/
-namespace VE.Readings.AdmissionProfile
-open Lean VE.Readings.Wire VE.Readings.Run
+namespace VE.Service.ReadingsAdmissionProfile
+open Lean VE.Readings VE.Readings.Wire VE.Readings.Run
 
 def cpuTicks : IO Nat := do
   try
@@ -64,4 +64,4 @@ def profileLine (line : String) : IO Unit := do
   for j in cases do
     profileCase j
 
-end VE.Readings.AdmissionProfile
+end VE.Service.ReadingsAdmissionProfile
