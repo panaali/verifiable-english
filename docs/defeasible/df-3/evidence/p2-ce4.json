@@ -1,0 +1,43 @@
+{
+ "item": "df-3",
+ "document": "docs/research/evidence/defeasible/baseline/p2-ce4.ve.md",
+ "command": "ve document readings p2-ce4.ve.md --conclusion question-<set>.json --assume-no-exception",
+ "baseline": "docs/research/evidence/defeasible/baseline/baseline.json (p2: SOME on each set)",
+ "sets": {
+  "force-u0036-s05": {
+   "strict": "SOME",
+   "default": "ALL",
+   "default_conflict": "CONFLICT-FREE",
+   "choices": 16,
+   "bases": {
+    "strict": 1,
+    "unsettled": 7,
+    "needs": 8
+   },
+   "english_lines": 40
+  },
+  "force-u0156-s03": {
+   "strict": "SOME",
+   "default": "ALL",
+   "default_conflict": "CONFLICT-FREE",
+   "choices": 16,
+   "bases": {
+    "strict": 8,
+    "needs": 8
+   },
+   "english_lines": 21
+  },
+  "force-u0263-s04-p2": {
+   "strict": "SOME",
+   "default": "ALL",
+   "default_conflict": "CONFLICT-FREE",
+   "choices": 16,
+   "bases": {
+    "strict": 1,
+    "needs": 8,
+    "unsettled": 7
+   },
+   "english_lines": 40
+  }
+ }
+}
