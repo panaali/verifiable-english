@@ -10,6 +10,7 @@
       {
         "additionalProperties": false,
         "properties": {
+          "composed_readings": {"$ref": "#/$defs/composed_readings"},
           "coverage": {"$ref": "#/$defs/coverage"},
           "document_id": {"$ref": "common.json#/$defs/hex64"},
           "id": {"type": "string", "x-equals": "/id"},
@@ -131,6 +132,32 @@
     "cites": {
       "$comment": "Rights.Wire.decodeCites: each citation key with the unit ids it cites (a null one is absent).",
       "additionalProperties": {"anyOf": [{"type": "null"}, {"items": {"type": "string"}, "minItems": 1, "type": "array"}]},
+      "type": "object"
+    },
+    "composed_reading": {
+      "additionalProperties": false,
+      "properties": {
+        "content": {
+          "additionalProperties": false,
+          "properties": {"norm": {"$ref": "common.json#/$defs/norm_node"}},
+          "required": ["norm"],
+          "type": "object"
+        },
+        "id": {"type": "string"}
+      },
+      "required": ["id", "content"],
+      "type": "object"
+    },
+    "composed_readings": {"items": {"$ref": "#/$defs/composed_set"}, "type": "array"},
+    "composed_set": {
+      "additionalProperties": false,
+      "properties": {
+        "readings": {"items": {"$ref": "#/$defs/composed_reading"}, "minItems": 1, "type": "array"},
+        "set": {"type": "string"},
+        "unit": {"type": "string"},
+        "version": {"$ref": "common.json#/$defs/nat"}
+      },
+      "required": ["set", "version", "unit", "readings"],
       "type": "object"
     },
     "coverage": {

@@ -152,13 +152,49 @@ def test_a_governed_readings_meaning_id_is_read_as_the_written_in_full_document_
         assert governed[0]["u0165.s03"]["status"] == written[0]["u0165.s03"]["status"] == "OPEN"
 
 
-def test_render_refuses_a_set_composed_per_choice_naming_its_unit(tmp_path):
-    """Render shows each reading, which here is a part Lean composes: not relayed yet (sc-5rc), so unavailable, with
-    the unit main's refusal named (DELTA row 2)."""
+def test_render_shows_a_set_composed_per_choice_naming_its_unit(tmp_path):
+    """Render reads GOVERN's two rules for u0165.s03, each keyed to its authored reading."""
     path = tmp_path / "sr1.ve.md"
     path.write_text(_doc())
-    with pytest.raises(CheckerUnavailable, match="u0165.s03's reading set is composed per choice"):
-        D.render_document(path)
+    row = D._lean_answer(path.read_bytes(), True)
+    assert [(s["set"], s["version"], s["unit"]) for s in row["composed_readings"]] == [(SET, 1, "u0165.s03")]
+    assert [r["id"] for r in row["composed_readings"][0]["readings"]] == ["wide", "narrow"]
+    assert [r["content"]["norm"]["sign"] for r in row["composed_readings"][0]["readings"]] == [False, False]
+    shown = D.render_document(path)
+    assert "This sentence could mean:" in shown and "One reading is:" in shown and "Another reading is:" in shown
+    assert "u0165.s03's reading set is composed per choice" not in shown
+
+
+def test_render_keeps_an_unrelated_set_as_authored(tmp_path):
+    """An ungoverned set is absent from the new field and still renders its authored rule."""
+    def unrelated(meta, rs):
+        frame = meta["scope"]["governors"][0]["effect"]["frame"]
+        rule = {**_part("wide")["part"], **frame, "name": "unrelated"}
+        meta["reading_sets"].append({"id": "unrelated", "unit": "u0166.s01", "version": 1,
+                                     "status": "open", "readings": [{"id": "alone", "kind": "norm",
+                                     "meaning_id": "m", "content": {"norm": rule},
+                                     "admission": {"who": "translator", "why": "open"}}]})
+    path = tmp_path / "unrelated.ve.md"
+    path.write_text(_doc(unrelated))
+    row = D._lean_answer(path.read_bytes(), True)
+    assert [s["set"] for s in row["composed_readings"]] == [SET]
+    loaded = D.load_document(path)
+    assert loaded["meta"]["reading_sets"][1]["readings"][0]["content"]["norm"]["name"] == "unrelated"
+    assert D.render_document(path).count("One reading is:") == 2
+
+
+def test_document_answer_keeps_two_governed_sets():
+    """The document route relays every composed set when two list items hold sets."""
+    def second(meta, rs):
+        unit = next(u for u in meta["units"] if u["id"] == "u0165.s04")
+        content = unit.pop("content")
+        meta["reading_sets"].append({"id": "second", "unit": "u0165.s04", "version": 1,
+                                     "status": "open", "readings": [{"id": "only", "kind": "norm", "meaning_id": "m",
+                                     "content": content, "admission": {"who": "translator", "why": "part under scope"}}]})
+    rows, answer = _rows(_doc(second))
+    assert rows is not None, answer
+    assert [(s["set"], s["unit"], [r["id"] for r in s["readings"]]) for s in answer["composed_readings"]] == [
+        (SET, "u0165.s03", ["wide", "narrow"]), ("second", "u0165.s04", ["only"])]
 
 
 def test_every_structural_mutant_of_the_sr1_answer_is_refused(tmp_path, monkeypatch):
@@ -180,31 +216,44 @@ def _rules_in_full(effect):
 
 
 @pytest.mark.parametrize("effect", ["reguard", "carve_out"])
-def test_f1_a_composed_set_of_rules_in_full_is_unavailable_to_every_view(tmp_path, effect):
-    """Fix round 1 F1: Lean composes the reading per choice and its answer does not carry it (sc-5rc), so no view reads
-    the reading as written: the carve-out probe certified ALL from it where the composed rule gives NONE. Load (and
-    so the readings queries and coverage), check and render are unavailable, naming the unit. Of the six effects, the
-    other four never govern such a set: precedes and yields have no effect over the list (`ScopeNoEffect`), title's
-    reach is refused (`ScopeReach`), and frame reads parts (SR-1)."""
+def test_f1_a_composed_set_of_rules_in_full_answers_every_view(tmp_path, effect):
+    """The readings routes, check, coverage and render all read GOVERN's composed rule."""
     from ve.readings_verdicts import context
     text = _rules_in_full(effect)
     assert _rows(text)[0] is not None
     path = tmp_path / "f1.ve.md"
     path.write_text(text)
     query = ["forall", "state", ["forall", "person", ["binary", "protect_required", ["var", 1], ["var", 0]]]]
-    for view in (D.load_document, D.check_document, D.render_document,
-                 lambda p: context(D.load_document(p)).entailment(query)):
-        with pytest.raises(CheckerUnavailable, match="^CheckerUnavailable: u2's reading set is composed per choice"):
-            view(path)
+    loaded = D.load_document(path)
+    written = _split(text)[0]["reading_sets"][0]["readings"][0]["content"]
+    composed = loaded["meta"]["reading_sets"][0]["readings"][0]["content"]
+    assert composed["norm"] and composed != written
+    assert D.check_document(path)["coverage"]["accounted_bytes"] > 0
+    assert "One reading is:" in D.render_document(path)
+    assert context(loaded).entailment(query)["verdict"] == ("NONE" if effect == "carve_out" else "ALL")
 
 
-def test_f1_the_composed_sets_are_read_from_the_request():
-    """`composed_set_units`: the sets on the units a governor names, in unit order; none without `scope@0`."""
-    from ve.document.lean import composed_set_units
-    meta, _ = _meta()
-    assert composed_set_units(meta) == ["u0165.s03"]
-    meta["environment"]["profiles"] = [p for p in meta["environment"]["profiles"] if p != "scope@0"]
-    assert composed_set_units(meta) == []
+@pytest.mark.parametrize("field,value", [("set", "absent"), ("version", 2), ("version", True),
+                                         ("unit", "absent"), ("reading", "absent"), ("extra", None),
+                                         ("missing", None)])
+def test_f1_the_composed_sets_are_bound_to_the_request(tmp_path, monkeypatch, field, value):
+    from ve.backends import relay
+    path = tmp_path / "sr1.ve.md"
+    path.write_text(_doc())
+    row = D._lean_answer(path.read_bytes(), True)
+    changed = json.loads(json.dumps(row))
+    target = changed["composed_readings"][0]
+    if field == "reading":
+        target["readings"][0]["id"] = value
+    elif field == "extra":
+        changed["composed_readings"].append(json.loads(json.dumps(target)))
+    elif field == "missing":
+        target["readings"].pop()
+    else:
+        target[field] = value
+    monkeypatch.setattr(relay, "answer", lambda mode, case: (changed, None))
+    with pytest.raises(CheckerUnavailable):
+        D.load_document(path)
 
 
 def _many_choices(meta, rs):

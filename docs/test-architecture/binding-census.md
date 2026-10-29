@@ -8,11 +8,11 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 |---|---:|
 | leaves:bound | 255 |
 | leaves:closed domain | 286 |
-| leaves:none | 1402 |
+| leaves:none | 1409 |
 | modes | 39 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 1001 |
+| today:not probed | 1008 |
 | today:shape | 541 |
 | today:unbound | 137 |
 | answers | 574 |
@@ -2928,6 +2928,13 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | leaf | kind | class | keyword | format | observed | bound today |
 |---|---|---|---|---|---:|---|
 | `/case_index` | integer | bound | x-index |  | 0 | shape |
+| `/composed_readings/*/readings/*/content/norm/name` | string | none |  |  | 0 | not probed |
+| `/composed_readings/*/readings/*/content/norm/over/*` | string | none |  |  | 0 | not probed |
+| `/composed_readings/*/readings/*/content/norm/predicate` | string | none |  |  | 0 | not probed |
+| `/composed_readings/*/readings/*/id` | string | none |  |  | 0 | not probed |
+| `/composed_readings/*/set` | string | none |  |  | 0 | not probed |
+| `/composed_readings/*/unit` | string | none |  |  | 0 | not probed |
+| `/composed_readings/*/version` | integer | none |  | minimum | 0 | not probed |
 | `/coverage/accounted_bytes` | integer | none |  | minimum | 3 | hand: `ve/document/lean.py:require` |
 | `/coverage/alternatives/alternatives_declared/*/action` | string | none |  |  | 0 | unbound |
 | `/coverage/alternatives/alternatives_declared/*/chooser` | string | none |  |  | 0 | unbound |
@@ -3084,6 +3091,8 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 
 | grammar at | grammar | bound whole by | observed |
 |---|---|---|---:|
+| `/composed_readings/*/readings/*/content/norm/guard` | generated_formula |  | 0 |
+| `/composed_readings/*/readings/*/content/norm/unless/*` | generated_formula |  | 0 |
 | `/units/*/content` | generated_formula |  | 11 |
 | `/units/*/content/norm/exception/necessary/*` | generated_formula |  | 0 |
 | `/units/*/content/norm/exception/sufficient/*` | generated_formula |  | 0 |
@@ -3118,6 +3127,10 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 
 | array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
 |---|---|---|---|---|
+| `/composed_readings` |  |  |  |  |
+| `/composed_readings/*/readings` |  |  |  |  |
+| `/composed_readings/*/readings/*/content/norm/over` |  |  |  |  |
+| `/composed_readings/*/readings/*/content/norm/unless` |  |  |  |  |
 | `/coverage/alternatives/alternatives_declared` |  |  |  | drop: accept/ve/document/lean.py:require; duplicate: accept/ve/document/lean.py:require |
 | `/coverage/alternatives/assumed_harm_free` |  |  |  | drop: accept/ve/document/lean.py:require; duplicate: accept/ve/document/lean.py:require |
 | `/coverage/alternatives/counterfactual_leaves` |  |  |  | drop: accept/ve/document/lean.py:require; duplicate: accept/ve/document/lean.py:require |

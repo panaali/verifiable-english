@@ -219,6 +219,7 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool, prepare
             # the front matter, reads the units Lean's chain read (`Service.Document.withUnits`), each governed rule
             # as the bound answer composed it, never as written.
             meta = _with_governed_units(meta, governed, units)
+        _bind_composed_readings(meta, row)
         rights_document = soft_document = None
         # A senses document's units are read in the senses route's projected environment.
         formula_env = env if senses is None else senses.environment
@@ -273,10 +274,6 @@ def _lean_document(raw: bytes, path: Path, row: dict, *, admitted: bool, prepare
                      if selected or any(d.regulated is not None for d in env.predicates.values()) else None)
         reading_sets = meta.get("reading_sets", [])
         companions, s1_content = _readings_routes(env, reading_sets)
-        composed = composed_set_units(meta)
-        if composed and (companions or s1_content):
-            # The readings routes read every reading's content, and a composed set's is Lean's, not the authored one.
-            raise composed_unavailable(composed[0])
         readings_s1 = readings_s2 = readings_components = None
         if companions:
             from ..readings_components import load as load_components
@@ -325,9 +322,10 @@ def _bind_document_answer(body, meta, declared, row, senses=None):
             raise ValueError("Lean document row disagrees with its request")
 
     judged = "judgments@0" in listed_profiles(meta.get("environment"))
+    composed = bool(composed_set_units(meta))
     require(type(row) is dict and type(row.get("source")) is str and
             set(row) == {"id", "status", "document_id", "source_id", "source", "units", "coverage"} |
-            ({"judgments"} if judged else set()))
+            ({"judgments"} if judged else set()) | ({"composed_readings"} if composed else set()))
     if judged:
         require(_judgments_bound(row["judgments"], meta.get("open_terms", []), [u.get("id") for u, _ in declared]))
     source = row["source"].encode("utf-8")
@@ -473,9 +471,7 @@ def composed_set_units(meta) -> list:
     """The units, in front-matter order, whose reading set Lean's `document` mode composes per choice under `scope@0`
     (scope 11.1, `VE.Scope.governedSetUnits`): read from the request, never recomputed. A set on a unit a governor
     names is admitted only when GOVERN composes it per choice (any other is `ScopeReadings: <unit>`), so in a document
-    Lean admitted these are exactly the sets on named units. Their readings as written are not their meaning: Lean's
-    answer does not carry the composed readings yet (scope 11.7 item 7, sc-5rc), so whatever reads a reading of one
-    is `composed_unavailable`, never the authored content."""
+    Lean admitted these are exactly the sets on named units. The bound answer supplies their composed readings."""
     if "scope@0" not in listed_profiles(meta.get("environment")):
         return []
     named = _named_units(meta)
@@ -486,10 +482,29 @@ def composed_set_units(meta) -> list:
             if type(u) is dict and u.get("id") in named and u.get("id") in on]
 
 
-def composed_unavailable(unit: str) -> CheckerUnavailable:
-    """The one refusal of whatever would read the readings of a set `composed_set_units` names."""
-    return CheckerUnavailable(f"CheckerUnavailable: {unit}'s reading set is composed per choice by scope@0, and its "
-                              "composed readings are not relayed yet")
+def _bind_composed_readings(meta: dict, row: dict) -> None:
+    """Relay only Lean's rules for the governed sets, using the request's full set and reading identities."""
+    def require(condition):
+        if not condition:
+            raise ValueError("Lean composed readings disagree with their request")
+
+    units = set(composed_set_units(meta))
+    expected = [s for s in meta.get("reading_sets", []) if s["unit"] in units]
+    answered = row.get("composed_readings")
+    if not expected:
+        require(answered is None)
+        return
+    require(type(answered) is list and len(answered) == len(expected))
+    for supplied, authored in zip(answered, expected, strict=True):
+        require(type(supplied) is dict and set(supplied) == {"set", "version", "unit", "readings"})
+        require(supplied["set"] == authored["id"] and type(supplied["version"]) is int and
+                supplied["version"] == authored["version"] and supplied["unit"] == authored["unit"])
+        readings = supplied["readings"]
+        require(type(readings) is list and len(readings) == len(authored["readings"]))
+        for result, candidate in zip(readings, authored["readings"], strict=True):
+            require(type(result) is dict and set(result) == {"id", "content"} and
+                    result["id"] == candidate["id"])
+            candidate["content"] = result["content"]
 
 
 def _with_governed_units(meta: dict, governed: set, rows: list) -> dict:
