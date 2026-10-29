@@ -4,9 +4,9 @@ from __future__ import annotations
 import importlib.util
 import json
 from pathlib import Path
-import subprocess
 import sys
 
+from tests.lean_build import lean_build
 from ve.english_grammar import source_words
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -17,10 +17,8 @@ spec.loader.exec_module(G)
 
 
 def test_lean_boundary_fixtures():
-    lake = str(Path.home() / ".elan/bin/lake")
-    done = subprocess.run([lake, "build", "VE.EnglishGrammar.SourceWordsExamples"],
-                          cwd=ROOT / "lean", capture_output=True, text=True, check=False)
-    assert done.returncode == 0, done.stdout + done.stderr
+    lean_build("VE")
+    assert (ROOT / "lean/.lake/build/lib/lean/VE/EnglishGrammar/SourceWordsExamples.olean").is_file()
 
 
 def test_generated_json_equals_lean_table():
