@@ -1,10 +1,9 @@
 # usecase-safetyfw: three frontier-lab safety frameworks in VE (build report)
 
-- **Status:** the OpenAI baseline has two coverage corrections; completion of its planned D1–D3 translation remains open. No DRI signature is reserved; trust +0 (no Lean file changed).
-- **HEAD:** the branch tip; original baseline code at 18e9c937d, source-coverage correction at 92a2fd643
-  (base main 6d0a10526).
-- **What changed:** the frozen keys and DeepMind/Anthropic baselines from the parent item remain; OpenAI now has
-  67,418 bytes in 389 units, 0.7% CHECKED, stage 0 P1–P8 and gaps by feature family.
+- **Status:** source coverage and D2/D3 probes corrected; the full OpenAI D1 translation remains open. No DRI signature is reserved; Rust's fault-order delta is signed by standing ruling R2.
+- **HEAD:** see the final local commit; this report records its exact test result below.
+- **What changed:** frozen keys and DeepMind/Anthropic baselines remain; OpenAI has 67,418 bytes in 389 units,
+  0.3% CHECKED, stage 0 P1–P8 and gaps by feature family.
 - **Open items:** completion of the OpenAI translation before `usecase-pf-run`, `usecase-rsp-run`, `fsf-r3`.
   No key finding.
 
@@ -349,3 +348,23 @@ distinguishes the frozen T1/T2 durations with Lean certificates, and replays the
 `test_pf_one_fifth_time_bound_distinguishes_the_two_frozen_cases` cover these additions.
 Python mutants changing the one-fifth coefficient to four and changing BIO-H's `might` to `leads`
 each failed `test_pf_p3_p4_are_recomputed_without_source_text` before restoration.
+
+## 17. Selected-run differential fault order
+
+On committed `b469eacdf`, the final selected run found one new differential case in
+`tests/test_difffuzz.py::test_ci_run`: a `defined` field on a plain relational predicate also contained an
+invalid variable index. Python and Lean reported `UnboundVariable`; Rust reported the outer extra-field
+`InvalidInput`. The single-test Mac rerun reproduced it. Rust now decodes the nested definition before
+rejecting the unsupported field, following Lean's deterministic order. A well-formed nested definition still
+gets the outer `InvalidInput`.
+
+| Delta | Ruling | Evidence |
+|---|---|---|
+| Rust diagnostic order for a malformed nested `defined` on a relational-only predicate | SIGNED by standing ruling R2 (DRI-RULINGS.md): the nested variable fault precedes the outer field fault, deterministically | `tests/test_difffuzz.py::test_unprofiled_definition_checks_nested_fault_before_field_refusal`; `rust/ve-kernel/tests/environment_definition_order.rs::malformed_nested_definition_precedes_unsupported_field` |
+
+Restoring Rust's earlier outer-field-first branch as a seeded mutant made the new Rust regression fail; the
+restored source passed. No Lean or Python product code changed for this diagnostic. The `main-known-red.txt`
+tests remain untouched.
+The baseline generator dropped the two now-fixed DF-20 entries (242 to 240). After that regeneration, the
+focused Mac rerun of `test_ci_run` and the new three-way regression passed, 2/2. The initial selected run
+had 79/80 units pass and this one difffuzz failure. Final selection on the Rust commit is pending.

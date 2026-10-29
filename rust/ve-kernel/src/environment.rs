@@ -339,7 +339,8 @@ impl Environment {
             if flagged && !(route && profiles.iter().any(|p| p == "data@0")) {
                 return error("UnsupportedProfile", "Predicate flags require data@0");
             }
-            let is_defined = definitions_profile && decl.get("defined").is_some();
+            let has_definition = decl.get("defined").is_some();
+            let is_defined = definitions_profile && has_definition;
             if decl.get("regulated").is_some() && is_defined {
                 return error("InvalidInput", format!("RegulatedDefinedPredicate: {name}"));
             }
@@ -350,7 +351,7 @@ impl Environment {
                 return error("UnsupportedProfile", "definitions on the order family require an order definition layer");
             }
             let mut keys = vec!["arguments", "description"];
-            if is_defined { keys.push("defined"); }
+            if has_definition { keys.push("defined"); }
             if decl.get("functional").is_some() { keys.push("functional"); }
             if decl.get("total").is_some() { keys.push("total"); }
             if soft && decl.get("instruction_of").is_some() { keys.push("instruction_of"); }
@@ -428,7 +429,7 @@ impl Environment {
                 }
                 regulated.insert(name.clone(), (role.into(), default.into(), act, permission));
             }
-            if is_defined {
+            if has_definition {
                 defined.push((name.clone(), signature.clone(), d["defined"].clone()));
             }
             predicates.insert(name.clone(), signature);
@@ -521,6 +522,21 @@ impl Environment {
             id: digest(&format!("ve-environment-{version}\n"), &canonical_data)?,
         };
         env.definitions = env.elaborate(defined)?;
+        // Lean decodes a submitted definition body before rejecting the
+        // unsupported field on a plain relational environment. Keep the
+        // field check, but let a malformed nested body own its diagnostic.
+        if !definitions_profile {
+            for (_, decl) in preds {
+                if decl.get("defined").is_some() {
+                    let mut keys = vec!["arguments", "description"];
+                    if decl.get("functional").is_some() { keys.push("functional"); }
+                    if decl.get("total").is_some() { keys.push("total"); }
+                    if soft && decl.get("instruction_of").is_some() { keys.push("instruction_of"); }
+                    entry_fields(decl, &keys, true,
+                        route && env.profiles.iter().any(|p| p == "norms@0"))?;
+                }
+            }
+        }
         Ok(env)
     }
     /// Order the identity-bound definitions by the one dependency DAG and check
