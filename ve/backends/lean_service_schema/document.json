@@ -139,7 +139,7 @@
       "properties": {
         "content": {
           "additionalProperties": false,
-          "properties": {"norm": {"$ref": "common.json#/$defs/norm_node"}},
+          "properties": {"cites": {"type": ["array", "object"]}, "norm": {"$ref": "common.json#/$defs/norm_node"}},
           "required": ["norm"],
           "type": "object"
         },

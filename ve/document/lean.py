@@ -504,6 +504,12 @@ def _bind_composed_readings(meta: dict, row: dict) -> None:
         for result, candidate in zip(readings, authored["readings"], strict=True):
             require(type(result) is dict and set(result) == {"id", "content"} and
                     result["id"] == candidate["id"])
+            written = candidate["content"]
+            content = result["content"]
+            require(type(written) is dict and type(content) is dict and
+                    ("cites" in content) == ("cites" in written) and
+                    ("cites" not in written or json.dumps(content["cites"], sort_keys=True, allow_nan=False) ==
+                     json.dumps(written["cites"], sort_keys=True, allow_nan=False)))
             candidate["content"] = result["content"]
 
 

@@ -215,6 +215,47 @@ def _rules_in_full(effect):
     return _text(meta, body)
 
 
+@pytest.mark.parametrize("effect", ["frame", "reguard", "carve_out"])
+@pytest.mark.parametrize("cites", [{}, {"source": ["u1"]}])
+def test_f1_composed_reading_preserves_authored_cites(effect, cites, tmp_path):
+    """The answer and every document view keep citations on a rule written in full."""
+    meta, body = _split(_rules_in_full(effect))
+    meta["reading_sets"][0]["readings"][0]["content"]["cites"] = cites
+    path = tmp_path / "cited.ve.md"
+    path.write_text(_text(meta, body))
+    row = D._lean_answer(path.read_bytes(), True)
+    assert row["status"] == "ok"
+    assert row["composed_readings"][0]["readings"][0]["content"]["cites"] == cites
+    assert D.load_document(path)["meta"]["reading_sets"][0]["readings"][0]["content"]["cites"] == cites
+    assert D.check_document(path)["coverage"]["accounted_bytes"] > 0
+    assert "One reading is:" in D.render_document(path)
+
+
+@pytest.mark.parametrize("mutation", ["drop", "add", "replace", "type_swap"])
+def test_f1_composed_cites_are_bound_to_authored_reading(mutation, tmp_path, monkeypatch):
+    from ve.backends import relay
+    meta, body = _split(_rules_in_full("carve_out"))
+    written = meta["reading_sets"][0]["readings"][0]["content"]
+    if mutation != "add":
+        written["cites"] = {"source": ["u1"]}
+    path = tmp_path / "cited.ve.md"
+    path.write_text(_text(meta, body))
+    row = D._lean_answer(path.read_bytes(), True)
+    changed = json.loads(json.dumps(row))
+    content = changed["composed_readings"][0]["readings"][0]["content"]
+    if mutation == "drop":
+        del content["cites"]
+    elif mutation == "add":
+        content["cites"] = {}
+    elif mutation == "replace":
+        content["cites"]["source"] = ["u3"]
+    else:
+        content["cites"]["source"] = [True]
+    monkeypatch.setattr(relay, "answer", lambda mode, case: (changed, None))
+    with pytest.raises(CheckerUnavailable):
+        D.load_document(path)
+
+
 @pytest.mark.parametrize("effect", ["reguard", "carve_out"])
 def test_f1_a_composed_set_of_rules_in_full_answers_every_view(tmp_path, effect):
     """The readings routes, check, coverage and render all read GOVERN's composed rule."""

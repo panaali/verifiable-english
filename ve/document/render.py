@@ -113,7 +113,8 @@ def render_document(path):
                         f"{description} The source presents this as {kind_description(kind)}.")
             from ..norms import NormDocument
             from ..norm_english import render_rule_sentence
-            rule = NormDocument._decode(content)
+            from ..readings_s1 import norm_rule_input
+            rule = NormDocument._decode(norm_rule_input(content))
             claim = render_rule_sentence(rule, doc["environment"] if vocabulary is None else vocabulary)
             if rule.over:
                 claim += " Exception to " + ", ".join(rule.over) + "."

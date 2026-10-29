@@ -1102,12 +1102,12 @@
       },
       {
         "file": "lean/VE/Service/Document.lean",
-        "lines": 2069,
-        "sha256": "c4047790a5c616c3b66d00c077befe926e1bcb5a68445363fdf8918259868b06",
+        "lines": 2083,
+        "sha256": "0a9686bc946bb08740dcef5d68ea74b9c96cd5a707b734d93f15fa602925d57c",
         "ranges": [
           [
             1,
-            2069
+            2083
           ]
         ],
         "declarations": [

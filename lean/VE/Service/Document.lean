@@ -1904,9 +1904,14 @@ def checkDoc (j : Json) : Except String Json :=
 
 /-- Decode a composed reading with the norms route's decoder before relaying its canonical form. -/
 def composedReadingRow (reading : Json) : Except String Json := do
-  let node ← VE.Norms.Wire.decodeNorm (reading.getObjValD "content")
+  let content ← reading.getObjVal? "content"
+  let norm ← content.getObjVal? "norm"
+  let node ← VE.Norms.Wire.decodeNorm (Json.mkObj [("norm", norm)])
+  let encoded := match content.getObjVal? "cites" with
+    | .ok cites => (VE.Reports.encodeNode node).setObjVal! "cites" cites
+    | .error _ => VE.Reports.encodeNode node
   pure (Json.mkObj [("id", .str (VE.Scope.idOf reading)),
-    ("content", VE.Reports.encodeNode node)])
+    ("content", encoded)])
 
 #guard [true, false].all fun sign =>
   let reading := Json.mkObj [("id", .str "r"), ("content", Json.mkObj [("norm", Json.mkObj
@@ -1915,6 +1920,15 @@ def composedReadingRow (reading : Json) : Except String Json := do
      ("over", toJson ([] : List String))])])]
   (composedReadingRow reading).toOption.map (fun r =>
     ((r.getObjValD "content").getObjValD "norm").getObjValD "sign") == some (.bool sign)
+
+#guard [Json.mkObj [], Json.arr #[]].all fun cites =>
+  let content := Json.mkObj [("norm", Json.mkObj
+    [("name", .str "n"), ("predicate", .str "p"), ("sign", .bool true),
+     ("guard", toJson (["top"] : List String)), ("unless", toJson ([] : List Json)),
+     ("over", toJson ([] : List String))]), ("cites", cites)]
+  let reading := Json.mkObj [("id", .str "r"), ("content", content)]
+  (composedReadingRow reading).toOption.map (fun r =>
+    (r.getObjValD "content").getObjValD "cites") == some cites
 
 def composedSetRow (out authored : Json) : Except String Json := do
   let set ← match (VE.Scope.setsJson out).find? (fun s =>
