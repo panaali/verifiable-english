@@ -2,8 +2,8 @@
 
 BLOCKED: F1 still needs an item-specific DRI rendering decision and real reader calls; no signature is reserved.
 HEAD: feature/df-e1, based on main `71b1d27ad` (the final commit is named at handoff).
-F2 and F3: failed answers cannot score or silently resume; attempts are durably reserved before dispatch.
-Open: 12 strict controls, preregistration, raw answers, results, and the broad selected test run. No model calls were made.
+F2–F4: rejected answers cannot score or silently resume; attempts are durably reserved before dispatch.
+Open: 12 strict controls, preregistration, raw answers and results. No model calls were made.
 The subscription CLI has no enforceable output-token limit, so dispatch now stops before any call.
 
 ## Statement gate and blocker
@@ -114,4 +114,27 @@ Verification on the fix commits: `tests/test_df_e1.py` passed (21 cases); F2 and
 slots stayed occupied, and VM fallback hit read-only home caches. With caches redirected to `/tmp`, the selector
 expanded this branch to 488 pytest files, effectively the full suite, which the task prohibits. Its narrower
 `--impacted` plan still selected 75 files; a parallel run was stopped at roughly 1% after sustained slow progress.
-No selected-suite pass is claimed. The merge train remains responsible for branch verification.
+At that fix round, no selected-suite pass was claimed. The later loop recheck run below passed.
+
+## Loop recheck fix (F4)
+
+F4: `valid_answer` now enforces the same per-call charge bound used at dispatch. Scoring and resume both call
+`valid_record`, so a completed call whose measured charge exceeds its reservation cannot pass either path. The
+`within_caps` predicate also checks the cumulative call and CW limits on saved records before resume and scoring,
+and is used before each new reservation. The raw record is read once for both scoring and charge accounting.
+`tests/test_df_e1.py::test_dispatch_rejected_charge_cannot_score_or_resume` reproduces the review's million-token
+case and an invalid reservation; `test_aggregate_charge_cap_applies_to_score_and_resume` covers individually valid
+records whose total exceeds 3M CW. The F4 probe failed before the fix and passed afterward. Replacing the
+per-call bound check with `True` made the first regression fail; the source was restored. The code and regression
+tests are committed in `2ba100d3f`. The selected run exposed a stale generated history inventory for the DF-E1 test
+import; `tools/history_tests.py --write` refreshed it in `8013482cb`. Its two failed test IDs passed on targeted
+rerun, and the final selection passed 161 units with zero failures on the Mac snapshot of `8013482cb` plus the
+then-current report draft. The focused DF-E1 file passed 24 cases; the exact F2, F3 and F4 probes passed.
+`lake build` and `python3 lean/audit.py` passed. No full suite or release gate was run, as required by this fix task.
+
+F1 remains open: its required strict controls, preregistration, real raw answers and results are absent. The F1
+probe fails. The strict rendering issue needs an item-specific DRI decision, and the real reader experiment
+requires model calls, which this fix task forbids. No placeholder files or invented answers were added; an
+artifact-presence regression would remain red until the external work occurs. No Lean or Rust product code changed,
+so there is no cross-language mirror or user-visible product delta. DELTA has no rows. The three known red tests on
+main were not edited.
