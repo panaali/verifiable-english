@@ -14,6 +14,7 @@ module ResponseShape.DefaultsExamples
 module ResponseShape.Encoders.Alternatives
 module ResponseShape.Encoders.Ask
 module ResponseShape.Encoders.Calc
+module ResponseShape.Encoders.Cardinality
 module ResponseShape.Encoders.Common
 module ResponseShape.Encoders.Conformance
 module ResponseShape.Encoders.Discourse
@@ -45,6 +46,7 @@ module ResponseShape.Schemas.Alternatives
 module ResponseShape.Schemas.Ask
 module ResponseShape.Schemas.Bundle
 module ResponseShape.Schemas.Calc
+module ResponseShape.Schemas.Cardinality
 module ResponseShape.Schemas.Check
 module ResponseShape.Schemas.CheckCertificate
 module ResponseShape.Schemas.Common
@@ -126,6 +128,7 @@ module VE.Arith.Defs
 module VE.Arith.Examples
 module VE.Arith.Holds
 module VE.Arith.Syntax
+module VE.Arith.TableExamples
 module VE.Ask.Basic
 module VE.Ask.Binding
 module VE.Ask.Examples
@@ -158,6 +161,8 @@ module VE.Attribution.Structure
 module VE.Attribution.Wire
 module VE.Audit
 module VE.Bridge
+module VE.Calc.Csv
+module VE.Calc.Data
 module VE.Calc.Decls
 module VE.Calc.Derive
 module VE.Calc.DeriveExamples
@@ -168,6 +173,7 @@ module VE.Calc.FourierMotzkin
 module VE.Calc.Identity
 module VE.Calc.IdentityExamples
 module VE.Calc.Inline
+module VE.Calc.Jsonl
 module VE.Calc.Linear
 module VE.Calc.Lower
 module VE.Calc.LowerExamples
@@ -176,11 +182,14 @@ module VE.Calc.Render
 module VE.Calc.Run
 module VE.Calc.RunExamples
 module VE.Calc.Syntax
+module VE.Calc.Table
+module VE.Calc.TableExamples
 module VE.Calc.Units
 module VE.Calc.UnitsExamples
 module VE.Calc.Wire
 module VE.Cardinality.Erase
 module VE.Cardinality.Examples
+module VE.Cardinality.Gate
 module VE.Cardinality.Ratio
 module VE.Cardinality.Regions
 module VE.Cardinality.Run
@@ -429,6 +438,7 @@ module VE.Question.Run
 module VE.Question.Spans
 module VE.Question.Strings
 module VE.Question.Texts
+module VE.Readings.ActsExamples
 module VE.Readings.Asserted
 module VE.Readings.Assertions
 module VE.Readings.BaseDown
@@ -737,6 +747,7 @@ VE.Calc.Denotes.below@VE.Calc.Syntax
 VE.Calc.Denotes@VE.Calc.Syntax
 VE.Calc.Expr.Overflows@VE.Calc.Decls
 VE.Calc.Expr.ReadsExhausted@VE.Calc.Decls
+VE.Calc.Filter.Selects@VE.Calc.Table
 VE.Calc.Follows@VE.Calc.Lower
 VE.Calc.Frac.Means@VE.Calc.Poly
 VE.Calc.HasCounterexample@VE.Calc.Lower
