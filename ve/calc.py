@@ -23,9 +23,9 @@ from .errors import CheckerUnavailable
 
 MODE = "calc"
 _COMMON = frozenset({"status", "claim", "claim_id", "kind", "outcome", "reason", "line", "finding", "reproduction"})
-# Each kind's fields beyond the common ones (spec 3.4's table); a follows row carries none of them until me-5e.
+# Each kind's fields beyond the common ones (spec 3.4's table).
 _FIELDS = {"claim": (frozenset({"sides", "display", "tie"}),),
-           "follows": (frozenset(), frozenset({"certificate", "counterexample"}))}
+           "follows": (frozenset({"certificate", "counterexample"}),)}
 _OUTCOMES = frozenset({"holds", "fails", "undefined", "unknown"})
 # An exact value, as the generated schema types it (`VE.Calc.Run.exact`).
 _EXACT = re.compile(json.loads((Path(__file__).resolve().parent / "backends/lean_service_schema/calc.json")
@@ -155,7 +155,7 @@ def _row_problem(row, claim, software: bool, free: list) -> str | None:
             return f"row {claim_id}'s display is not text"
         if not (row["tie"] is None or type(row["tie"]) is bool):
             return f"row {claim_id}'s tie is not a flag"
-    elif "certificate" in row:
+    else:
         return _shown_problem(row, check, free)
     return None
 
@@ -194,6 +194,11 @@ def lines(result: dict) -> list[str]:
                 shown.append(f"  display {row['display']}")
             if row["tie"] is not None:
                 shown.append(f"  tie {str(row['tie']).lower()}")
+        else:
+            if row["certificate"] is not None:
+                shown.append("  certificate " + json.dumps(row["certificate"], ensure_ascii=False, separators=(",", ":")))
+            if row["counterexample"] is not None:
+                shown.append("  counterexample " + json.dumps(row["counterexample"], ensure_ascii=False, separators=(",", ":")))
         if row["reproduction"] is not None:
             shown.append(f"  reproduction {row['reproduction']}")
     return shown
