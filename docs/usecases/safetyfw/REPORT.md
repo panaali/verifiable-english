@@ -499,3 +499,8 @@ The F13 probe exited 1 before the fix and 0 afterward. `lake build` completed 1,
 recorded 397 units with 0 failed and exited 0 on the VM (2026-10-29 21:51 UTC). Its first attempt
 stopped before collection because the default `uv` cache was read-only; the successful run set
 `UV_CACHE_DIR=/tmp/ve-safetyfw-f13-uv-cache`.
+The generated lock was refreshed again from its prior committed state after the selected run,
+so only the final Rust release digest was added (`c7b18fc81`); the checker-pin generator and
+Rust pin checks both passed.
+The same selected command on this final code and lock state recorded 397 units, 0 failed,
+and exited 0 on the VM (2026-10-29 23:42 UTC; tree `f540f4f050`).
