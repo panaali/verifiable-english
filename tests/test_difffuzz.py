@@ -81,6 +81,33 @@ def test_ci_run(built, tmp_path, record_property):
     assert work_problems(report) == [], report["work"]
 
 
+def test_unprofiled_definition_checks_nested_fault_before_field_refusal(built):
+    """The same malformed definition has one diagnostic in Python, Lean and Rust."""
+    raw = {"language": "ve.core@0.2", "profiles": ["relational-fol@0"],
+           "spec_revision": "ve-v0.2-expand2-2026-09-25",
+           "vocabulary": {"sorts": {"person": {"description": "a person"}},
+                          "predicates": {
+                              "base": {"arguments": ["person", "person"], "description": "base relation"},
+                              "above": {"arguments": ["person", "person"], "description": "above relation",
+                                        "defined": {"arguments": ["person", "person"],
+                                                    "body": ["binary", "base", ["var", 1], ["var", {}]]}}},
+                          "constants": {}}}
+    surface = df.SURFACES["environment"]()
+    try:
+        for body, code in ((["binary", "base", ["var", 1], ["var", {}]], "UnboundVariable"),
+                           (["binary", "base", ["var", 1], ["var", 0]], "InvalidInput")):
+            case = deepcopy(raw)
+            case["vocabulary"]["predicates"]["above"]["defined"]["body"] = body
+            seed = df.Seed("environment", "envelope", "definition-order", case)
+            answers = {"python": surface.python(seed, case),
+                       "lean": surface.lean([(seed, case)])[0],
+                       "rust": surface.rust([(seed, case)])[0]}
+            assert {name: answer["code"] for name, answer in answers.items()} == dict.fromkeys(
+                ("python", "lean", "rust"), code), answers
+    finally:
+        surface.close()
+
+
 def test_f13_duplicate_soft_rank_and_rust_field_error_reproduce(built):
     """DF-15 covers the fixed-seed soft environment disagreement in the CI sample."""
     entry = next(e for e in df.load_baseline()['entries'] if e['id'] == 'environment-ec2b2bc949a09a26')

@@ -2201,63 +2201,46 @@
    "follow_up": "DF-9"
   },
   {
-   "id": "environment-92974c7b159d8163",
+   "id": "environment-ec2b2bc949a09a26",
    "surface": "environment",
-   "profile": "envelope",
-   "seed": "conformance/elaborated-document.json/55/environment",
+   "profile": "soft-norms",
+   "seed": "rd-9b-looprecheck1.final.md/F13",
    "engines": [
     "python",
     "lean",
     "rust"
    ],
    "meta": {},
-   "mutation": [
-    [
-     "type",
-     [
-      "vocabulary",
-      "predicates",
-      "above",
-      "defined",
-      "body",
-      2,
-      2,
-      1,
-      3,
-      0
-     ],
-     "number"
-    ]
-   ],
+   "mutation": [],
    "input": {
     "language": "ve.core@0.2",
     "profiles": [
-     "relational-fol@0"
+     "norms@0",
+     "relational-fol@0",
+     "soft-norms@0"
     ],
     "spec_revision": "ve-v0.2-expand2-2026-09-25",
     "vocabulary": {
+     "constants": {
+      "alice": {
+       "description": "a",
+       "sort": "user",
+       "verbalisation": "A"
+      }
+     },
+     "predicates": {},
+     "soft": {
+      "outranking": {},
+      "ranks": [
+       "a",
+       "a"
+      ]
+     },
      "sorts": {
-      "person": {
-       "description": "a"
+      "user": {
+       "description": "u"
       }
-     },
-     "predicates": {
-      "above": {
-       "arguments": [
-        "person",
-        "person"
-       ],
-       "description": "s",
-       "defined": {
-        "arguments": [
-         "person",
-         "person"
-        ],
-        "body": []
-       }
-      }
-     },
-     "constants": {}
+     }
     }
    },
    "classes": [
@@ -2266,22 +2249,22 @@
    "answers": {
     "python": {
      "outcome": "error",
-     "code": "SyntaxError",
-     "text": "SyntaxError: AST nodes must be nonempty tagged JSON arrays"
+     "code": "DuplicateDeclaration",
+     "text": "DuplicateDeclaration: rank a"
     },
     "lean": {
      "outcome": "error",
-     "code": "SyntaxError",
-     "text": "SyntaxError: AST nodes must be nonempty tagged JSON arrays"
+     "code": "DuplicateDeclaration",
+     "text": "DuplicateDeclaration: rank a"
     },
     "rust": {
      "outcome": "error",
      "code": "InvalidInput",
-     "text": "expected exactly fields [\"arguments\", \"description\"]"
+     "text": "expected exactly fields [\"sort\", \"description\"]"
     }
    },
-   "signature": "92974c7b159d8163",
-   "follow_up": "DF-20"
+   "signature": "ec2b2bc949a09a26",
+   "follow_up": "DF-15"
   },
   {
    "id": "requests-0118b2cc107d0c39",
@@ -46064,117 +46047,6 @@
    "follow_up": "DF-6"
   },
   {
-   "id": "requests-8ec65670ef111025",
-   "surface": "requests",
-   "profile": "elaborated-document:evaluate",
-   "seed": "conformance/elaborated-document.json/55",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {
-    "kind": "evaluate",
-    "family": "core",
-    "lean": "route",
-    "rust": {
-     "fields": [
-      "id",
-      "environment",
-      "model",
-      "ast"
-     ],
-     "constants": {
-      "kind": "evaluate-budgeted"
-     },
-     "operation": "evaluate-budgeted"
-    }
-   },
-   "mutation": [
-    [
-     "absent",
-     [
-      "environment",
-      "vocabulary",
-      "constants",
-      "alice"
-     ],
-     null
-    ],
-    [
-     "type",
-     [
-      "environment",
-      "vocabulary",
-      "predicates",
-      "above",
-      "defined",
-      "body",
-      1,
-      2
-     ],
-     "array"
-    ]
-   ],
-   "input": {
-    "id": "conformance/elaborated-document.json/55",
-    "kind": "evaluate",
-    "environment": {
-     "language": "ve.core@0.2",
-     "profiles": [
-      "relational-fol@0"
-     ],
-     "spec_revision": "ve-v0.2-expand2-2026-09-25",
-     "vocabulary": {
-      "sorts": {
-       "person": {
-        "description": "a"
-       }
-      },
-      "predicates": {
-       "above": {
-        "arguments": [
-         "person",
-         "person"
-        ],
-        "description": "s",
-        "defined": {
-         "arguments": [
-          "person",
-          "person"
-         ],
-         "body": []
-        }
-       }
-      },
-      "constants": {}
-     }
-    }
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "SyntaxError",
-     "text": "SyntaxError: AST nodes must be nonempty tagged JSON arrays"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "SyntaxError",
-     "text": "SyntaxError: AST nodes must be nonempty tagged JSON arrays"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "InvalidInput: expected exactly fields [\"arguments\", \"description\"]"
-    }
-   },
-   "signature": "8ec65670ef111025",
-   "follow_up": "DF-20"
-  },
-  {
    "id": "wire-93ad2ea4d583e105",
    "surface": "wire",
    "profile": "soft-norms@0",
@@ -46375,72 +46247,6 @@
    },
    "signature": "fcbf283fe5b17271",
    "follow_up": "DF-14"
-  },
-  {
-   "id": "environment-ec2b2bc949a09a26",
-   "surface": "environment",
-   "profile": "soft-norms",
-   "seed": "rd-9b-looprecheck1.final.md/F13",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {},
-   "mutation": [],
-   "input": {
-    "language": "ve.core@0.2",
-    "profiles": [
-     "norms@0",
-     "relational-fol@0",
-     "soft-norms@0"
-    ],
-    "spec_revision": "ve-v0.2-expand2-2026-09-25",
-    "vocabulary": {
-     "constants": {
-      "alice": {
-       "description": "a",
-       "sort": "user",
-       "verbalisation": "A"
-      }
-     },
-     "predicates": {},
-     "soft": {
-      "outranking": {},
-      "ranks": [
-       "a",
-       "a"
-      ]
-     },
-     "sorts": {
-      "user": {
-       "description": "u"
-      }
-     }
-    }
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "DuplicateDeclaration",
-     "text": "DuplicateDeclaration: rank a"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "DuplicateDeclaration",
-     "text": "DuplicateDeclaration: rank a"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "expected exactly fields [\"sort\", \"description\"]"
-    }
-   },
-   "signature": "ec2b2bc949a09a26",
-   "follow_up": "DF-15"
   }
  ]
 }
