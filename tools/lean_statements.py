@@ -152,7 +152,7 @@ TREE = "import Lean\nimport VE\n" + PRELUDE + r"""
 """
 
 # The statements of the theorems named in VE_STATEMENT_NAMES.
-SCRIPT = PRELUDE + r"""
+SCRIPT = "import Lean\nimport VE\n" + PRELUDE + r"""
 set_option format.width 100 in
 set_option pp.fullNames true in
 #eval show MetaM Unit from do
@@ -218,7 +218,7 @@ def print_statements(root: Path, folder: Path, names: list[str], count: int, imp
         (f"Statements{index}", f"names{index}.txt") for index in range(len(parts))]
     for part, (_, file) in zip(parts, runs):
         (folder / file).write_text("\n".join(part) + "\n")
-    script = "import Lean\nimport VE\n" + "".join(f"import {module}\n" for module in imports) + SCRIPT
+    script = SCRIPT.replace("import VE\n", "import VE\n" + "".join(f"import {module}\n" for module in imports), 1)
     with ThreadPoolExecutor(max_workers=len(runs)) as pool:
         texts = list(pool.map(lambda run: run_lean(root, folder, script, run[0],
                                                    {"VE_STATEMENT_NAMES": str(folder / run[1])}), runs))
