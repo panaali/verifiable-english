@@ -190,10 +190,49 @@ def test_merge_accepts_retry_of_active_quarantine_test():
     for row in rows:
         row["quarantine"].update(day="2026-10-12", active=[IDS[0]])
     owner = next(row for row in rows if IDS[0] in row["shard"]["ran"])
-    owner["quarantine"]["retried"][IDS[0]] = {"suite": "failed", "alone": "passed"}
+    owner["quarantine"]["retried"][IDS[0]] = {
+        "suite": "failed", "alone": "passed", "owner": "team", "expires": "2026-10-15",
+        "evidence": "docs/evidence.json"}
     merged = gate_shards.merge_records(rows)
     assert merged["status"] == "passed", merged["failures"]
     assert merged["quarantine"]["retried"] == owner["quarantine"]["retried"]
+
+
+@pytest.mark.parametrize("missing", ["schema_version", "commit_sha", "tree_sha", "runner",
+                                      "toolchains", "environment"])
+def test_merge_refuses_absent_identity_even_when_all_shards_agree(missing):
+    rows = records(2)
+    for row in rows:
+        row.pop(missing)
+    assert gate_shards.merge_records(rows)["status"] == "failed"
+
+
+@pytest.mark.parametrize("field", ["system", "machine"])
+def test_merge_refuses_missing_runner_platform(field):
+    rows = records(2)
+    for row in rows:
+        row["runner"].pop(field)
+    assert gate_shards.merge_records(rows)["status"] == "failed"
+
+
+@pytest.mark.parametrize("field,value", [
+    ("owner", None), ("expires", None), ("evidence", None),
+    ("owner", ""), ("expires", "not-a-day"), ("evidence", []),
+    ("evidence", "/tmp/outside.json"), ("evidence", "../outside.json"),
+])
+def test_merge_refuses_incomplete_retry_metadata(field, value):
+    rows = records(2)
+    for row in rows:
+        row["quarantine"].update(active=[IDS[0]])
+    owner = next(row for row in rows if IDS[0] in row["shard"]["ran"])
+    retry = {"suite": "failed", "alone": "passed", "owner": "team",
+             "expires": "2026-10-15", "evidence": "docs/evidence.json"}
+    if value is None:
+        retry.pop(field)
+    else:
+        retry[field] = value
+    owner["quarantine"]["retried"][IDS[0]] = retry
+    assert gate_shards.merge_records(rows)["status"] == "failed"
 
 
 def test_merge_accepts_disabled_quarantine_without_retries():
@@ -257,7 +296,7 @@ def test_gate_runs_full_collection_and_only_its_share(tmp_path, monkeypatch, n, 
     monkeypatch.setattr(gate, "REQUIRED_FAMILIES", ())
     monkeypatch.setattr(gate, "source_identity", lambda env: ("a" * 40, False))
     monkeypatch.setattr(gate, "tree_identity", lambda env: "b" * 40)
-    monkeypatch.setattr(gate, "check_toolchains", lambda result, env: None)
+    monkeypatch.setattr(gate, "check_toolchains", lambda result, env: result["toolchains"].update(lean="4.24.0"))
     monkeypatch.setattr(gate, "check_python_project", lambda result, env: None)
     monkeypatch.setattr(gate.lake_outputs, "drop_stale", lambda *args, **kwargs: None)
     monkeypatch.setattr(gate.lake_outputs, "stale", lambda *args, **kwargs: [])
