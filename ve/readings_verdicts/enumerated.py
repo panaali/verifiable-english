@@ -34,6 +34,7 @@ class Enumerated(_Route):
         self._dead = None    # the dead readings' certificates, once Lean names the untaken candidates
         self._answers = {}
         self._notes = None   # choice → Lean's notes on its conflict package and witness, once the conflict is asked
+        self._pieces = {}    # a query's request key → the query evidence sent with it
         self.requests = {}   # id of an answer → the request it answers
 
     def _choice(self, choice):
@@ -88,8 +89,10 @@ class Enumerated(_Route):
         finding = (self.row.get("finding") or {}).get("text")
         if finding is not None and not finding.startswith(_NOT_SUPERPOSABLE):
             raise CheckerUnavailable("ReadingsConformance: the enumerated route's finding names no sets")
-        return _Frame(case, None if self.choices is None else [self.choice_json(c) for c in self.choices],
-                      self.completion, [] if finding is None else finding.removeprefix(_NOT_SUPERPOSABLE).split(", "))
+        frame = _Frame(case, None if self.choices is None else [self.choice_json(c) for c in self.choices],
+                       self.completion, [] if finding is None else finding.removeprefix(_NOT_SUPERPOSABLE).split(", "))
+        frame.defaults = lambda choice_json: self._choice(self._of(choice_json)).defaults()[:2]
+        return frame
 
     def _conflict_answer(self):
         """The conflict question: each choice's packages, then a witness for every choice Lean leaves without
@@ -189,8 +192,44 @@ class Enumerated(_Route):
                     query[self._key(choice)] = {"countermodel": found}
             if query:
                 row = self._verdicts("query", query=query, **fields)
+            self._pieces[_request_key(conclusion_ast, premises, assumed)] = query
         self._answers[("query", _request_key(conclusion_ast, premises, assumed))] = row
         return row["result"]
+
+    def default_answer(self, conclusion_ast, premises=(), assumed=None):
+        """Lean's answer to the query with its `default` member (defeasible plan DF-3), when the soft completion
+        applies: the strict question first (`query_answer`), then, past its gate, each choice's `default` evidence
+        (`default_case`) beside the strict evidence, and the answer bound (`_check_default`). Lean decides whether the
+        member is present (only when the strict conflict fold is FREE) and everything it says."""
+        if not self.completion or self.source.senv.chain != "soft":
+            raise VEError("--assume-no-exception applies to readings under the soft completion")
+        strict = self.query_answer(conclusion_ast, assumed, premises)
+        key = _request_key(conclusion_ast, premises, assumed)
+        query = {k: dict(v) for k, v in self._pieces.get(key, {}).items()}
+        if "conflict_status" not in strict["result"] and "budget" not in strict["result"]:
+            for entry in strict["per_choice"]:
+                choice = self._of(entry["choice"])
+                query.setdefault(self._key(choice), {})["default"] = self._choice(choice).default_case(
+                    conclusion_ast, premises)
+        fields = {"premises": list(premises), "conclusion": conclusion_ast, "assume_no_exception": True}
+        if assumed is not None:
+            fields["assumed"] = [list(x) for x in assumed]
+        return self._verdicts("query", query=query, **fields)
+
+    def default_english(self, row, wording):
+        """The rendered English of `row`'s `default` member (`ve.defaults_english.readings`): each reading named as
+        `wording` names it, each choice's request its own `defaults-*` request with the collision sent for it."""
+        from ..defaults_english import readings
+        sent = {json.dumps(e["choice"]): e for e in self.requests[id(row)]["evidence"]}
+
+        def under(choice_json):
+            return " and ".join(f"sentence {number} read as {name}" for number, name in wording.readings(choice_json))
+
+        def choice_case(choice_json):
+            base, _ = self.frame(self.requests[id(row)]).defaults(choice_json)
+            witness = sent.get(json.dumps(choice_json), {}).get("default", {}).get("collision")
+            return {**base, **({"collision": witness} if witness else {})}
+        return readings(row["default"], under, choice_case)
 
     def query_answer(self, conclusion_ast, assumed=None, premises=()):
         """Lean's whole answer to the `entailment` request for this conclusion (its English plan included), asked
