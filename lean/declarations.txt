@@ -1638,7 +1638,7 @@ module ScopeBenchMain ee2f1f4bd87baa553cb8515edb1f937a11e999c2e4108e90b867a1df73
 38:0-53:12 def main@ScopeBenchMain
 module SensesMain 05cc0d2c0d864744efa3e0602376447057c5b4710b6188d794e5bae5eeef8d11
 3:0-3:68 def main@SensesMain
-module Serve 8ecda0d80f9138810232a5f777ecb88ca115c0f1a7122076f27da3d8d13986f3
+module Serve 095a5f01a7ec05cf49ec774ae64b78b2407543af288a0ffe74d149135afd7ff5
 3:0-3:80 def readingsMemoStatsEnabled@Serve
 6:0-33:10 def main@Serve
 module SpeechActsMain c23ee34c8212d8640da9273099357f993a3ef8fd8ac5b0c88b403a437b038352
@@ -20683,7 +20683,7 @@ module VE.Service.Graph e27c762fff7a13689df799082ee369d1f93ed8597f0e307202202b2a
 238:0-244:54 theorem VE.Service.Graph.graph_sound@VE.Service.Graph
 246:0-249:56 theorem VE.Service.Graph.graph_entails@VE.Service.Graph
 251:0-254:56 theorem VE.Service.Graph.graph_unfolds@VE.Service.Graph
-module VE.Service.MemoExamples b16f63fe4fab38ce24ec2e1339bc3a681ebbe3943c2c8ad6f796c5876fa1d884
+module VE.Service.MemoExamples e6cabf340ddafbff47600250341e4ca700d390c10d9de124ef839f7d6cb4e806
 module VE.Service.ParseDiagnostic 7e27424725f2b15a76a6c438bfa5b4b27c714bf8cfa08b960a7a09cd522305a0
 11:0-15:12 structure VE.Service.ParseDiagnostic.Error@VE.Service.ParseDiagnostic
 12:2-12:6 def VE.Service.ParseDiagnostic.Error.code@VE.Service.ParseDiagnostic
