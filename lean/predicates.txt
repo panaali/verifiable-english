@@ -14,6 +14,7 @@ module ResponseShape.DefaultsExamples
 module ResponseShape.Encoders.Alternatives
 module ResponseShape.Encoders.Ask
 module ResponseShape.Encoders.Calc
+module ResponseShape.Encoders.Cardinality
 module ResponseShape.Encoders.Common
 module ResponseShape.Encoders.Conformance
 module ResponseShape.Encoders.Discourse
@@ -45,6 +46,7 @@ module ResponseShape.Schemas.Alternatives
 module ResponseShape.Schemas.Ask
 module ResponseShape.Schemas.Bundle
 module ResponseShape.Schemas.Calc
+module ResponseShape.Schemas.Cardinality
 module ResponseShape.Schemas.Check
 module ResponseShape.Schemas.CheckCertificate
 module ResponseShape.Schemas.Common
@@ -182,6 +184,7 @@ module VE.Calc.UnitsExamples
 module VE.Calc.Wire
 module VE.Cardinality.Erase
 module VE.Cardinality.Examples
+module VE.Cardinality.Gate
 module VE.Cardinality.Ratio
 module VE.Cardinality.Regions
 module VE.Cardinality.Run
