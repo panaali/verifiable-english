@@ -73,6 +73,8 @@ def rows? (t : Option Table) : Option (List (List Cell)) := t.map (·.rows)
 #guard ["j,a,s\nx,,", "j,a,s\nx,,\n"].map (rows? <| csv · [("j", .text), ("a", .bool), ("s", .number)]) =
   List.replicate 2 (some [[.text "x", .absent, .absent]])
 #guard ["j\nx", "j\n\"\"", "j\n"].map (rows? <| csv · [("j", .text)]) = [some [[.text "x"]], some [[.absent]], some []]
+#guard ["!", "\t"].map (fun s => rows? (csv ("j\n" ++ s) [("j", .text)])) =
+  [some [[.text "!"]], some [[.text "\t"]]]
 #guard rows? (csv "s,j,a\n1,x,true" [("j", .text), ("a", .bool), ("s", .number)]) = some [[.num 1, .text "x", .bool true]]
 #guard (decodeCsv t1Cols (ByteArray.mk #[0xff])).toOption.isNone
 #guard ["0.30", "-1.5", "0", "007", "1e3", ".5", " 1"].map (readCell .number) =
@@ -92,6 +94,22 @@ def jsonl (s : String) : Option Table := (decodeJsonl t1Cols s.toUTF8).toOption
   (jsonl · |>.isNone)
 #guard rows? (jsonl "{}") = some [[.absent, .absent, .absent]] ∧ rows? (jsonl "") = some []
 #guard (jsonl "{}\n{}").map (·.rows.length) = some 2 ∧ (jsonl "{}").map (·.columns) = some ["judge", "approved", "score"]
+
+/-! Table dimensions (14): one shared bound for both decoders; each boundary is accepting beside a refusal. -/
+#guard [64, 65].map (fun n =>
+  let cols : List (String × ColType) := (List.range n).map fun i => (s!"c{i}", .text)
+  (decodeCsv cols ((",".intercalate (cols.map Prod.fst) ++ "\n").toUTF8)).toOption.isSome) = [true, false]
+#guard [64, 65].map (fun n =>
+  let cols : List (String × ColType) := (List.range n).map fun i => (s!"c{i}", .text)
+  (decodeJsonl cols "{}".toUTF8).toOption.isSome) = [true, false]
+#guard (tableDimensions 64 1000000).toOption.isSome ∧
+  (tableDimensions 65 0).toOption.isNone ∧ (tableDimensions 0 1000001).toOption.isNone
+#guard match decodeCsv [("j", .text)] ("j\n" ++ String.join (List.replicate 1000001 "x\n")).toUTF8 with
+  | .error e => e == "TableFormat: too many rows"
+  | .ok _ => false
+#guard match decodeJsonl [("j", .text)] (String.join (List.replicate 1000001 "{}\n")).toUTF8 with
+  | .error e => e == "TableFormat: too many rows"
+  | .ok _ => false
 
 /-! A synthetic 30-row trial: row i is in arm "drug" when i is even, at site A, B or C by i mod 3, responded unless
 4 divides i, aged 40 + i. -/
