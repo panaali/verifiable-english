@@ -1,10 +1,10 @@
 # DF-E1 build report
 
-BLOCKED: an item specific DRI decision is needed for the strict controls and the controlled long variant; no signature is reserved.
+BLOCKED: F1 still needs an item-specific DRI rendering decision and real reader calls; no signature is reserved.
 HEAD: feature/df-e1, based on main `71b1d27ad` (the final commit is named at handoff).
-Prepared 12 checked `needs` answers, an isolated Sonnet 5.5 runner, and five tests; no model calls were made.
-Open: 12 strict rendered controls, the full preregistration, raw reader answers, and results.
-The requested `msg.sh dri df-e1` could not write to the management inbox: read-only filesystem.
+F2 and F3: failed answers cannot score or silently resume; attempts are durably reserved before dispatch.
+Open: 12 strict rendered controls, committed preregistration, raw reader answers, and results. No model calls were made.
+The subscription CLI has no enforceable output-token limit, so dispatch now stops before any call.
 
 ## Statement gate and blocker
 
@@ -78,6 +78,33 @@ df-e1b applies the result in Lean; no such outcome is claimed yet.
 8. PASS — no product change, so no user-visible delta; `git diff --name-only`.
 9. N.A. — final test selection follows completion of the item.
 10. N.A. — no theorem statement or proof changed.
-11. PASS — `tests/test_df_e1.py::test_cw_uses_subscription_plan_weights`; runner caps calls and CW.
+11. PASS for dispatch safety — `tests/test_df_e1.py::test_no_enforceable_charge_bound_blocks_dispatch`;
+    the current CLI cannot supply the bound required to run the experiment.
 12. N.A. — no product CPU or memory path changed.
 13. N.A. — no test was removed or renamed.
+
+## Review fix round (F1–F3)
+
+F1 remains open. `PROBE F1` fails because the experiment artifacts are genuinely absent. The task's statement gate
+requires both answer forms from real Lean rows, which the strict path cannot render. No item-specific ruling signs an
+alternate renderer, and this fix round expressly forbids model calls. A regression test requiring raw answers would
+fail until the DRI decides the renderer and the authorized reader run actually takes place; no placeholder evidence
+has been added.
+
+F2: `valid_record` is shared by scoring and resume. It binds id, form and prompt and checks exit status, CLI subtype,
+error, model provenance, full usage, charge and a single parseable answer. `modelUsage` is saved in the raw record.
+`tests/test_df_e1.py::test_failed_or_unverified_answer_cannot_score` mutates each of these fields. `PROBE F2` now passes.
+
+F3: a lock serializes the ledger; an atomic, fsynced reservation precedes every call. Failed and interrupted records
+stop resume. Non-object CLI JSON is recorded as failure. The cap check reserves the full enforced per-call CW bound.
+The installed subscription CLI does not expose such a ceiling, so production dispatch fails closed. Tests
+`test_failed_attempt_is_reserved_before_dispatch_and_never_retried`, `test_budget_reserves_full_bounded_charge`, and
+`test_no_enforceable_charge_bound_blocks_dispatch` cover the class; `PROBE F3` now passes. A transport with an actual
+billed-token ceiling is required to run DF-E1 within its frozen 3M CW cap.
+
+Seeded Python bugs, restored: replacing `valid_record` with accept-all fails
+`test_failed_or_unverified_answer_cannot_score[change0]`; omitting `save` fails
+`test_failed_attempt_is_reserved_before_dispatch_and_never_retried` (41 dispatches). Both were killed in memory.
+
+No product route, Lean meaning, Rust accelerator or user-visible answer changed. DELTA has no rows; trust growth is
+zero. The three pre-existing main failures in `main-known-red.txt` were not edited.
