@@ -1,0 +1,6 @@
+job=arm-seed-l96-8cf4e616-t235436 nproc=4 arch=aarch64 host=runnervm9u1px date=2026-10-29T00:58:17Z ulimit_s=16384
+Mem:              15           1          10           0           4          14
+/dev/root       145G   41G  104G  29% /
+ 00:58:17 up 1 min,  0 user,  load average: 1.25, 0.43, 0.15
+pilot/codex branches: 98
+[gate] failed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 0 passed, 0 skipped, 1 failures
