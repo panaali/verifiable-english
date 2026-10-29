@@ -554,9 +554,35 @@ That item builds the translation, the span accounting and stage 0. It does not a
     reporting-chain scope are not represented by the existing organizational rule. This corrects the baseline's
     overcount of CHECKED bytes without changing section 6 or the frozen key.
 
-## 13. Files for the implementation round (not this commit)
+From `usecase-rsp-run` (2026-10-29), after checking all 76 rule blocks, 11 fact blocks and 49 case records against
+the pinned source with the translation fidelity checklist. Section 6 remains frozen.
+
+15. **Three source-fidelity corrections.** `f24-delay` no longer requires a positive `significant_lead` finding:
+    the source says the duty lasts "until and unless we no longer believe we have a significant lead"; that is a
+    possible release, not a positive entry guard. The full sentence is beside the corrected rule. T2's 6× cost is
+    now `OT15=false`, since the source says "at competitive costs (i.e., within a factor of 5)"; the full sentence
+    is beside the case. K21's "General upleveling" scenario now carries `OT8=true`: its full source sentence
+    explicitly begins "We have strong evidence" and is beside the case. No key answer was changed.
+16. **Answering routes.** `run.py` asks D1's selected rules under both completion defaults, W1 for conflict
+    witnesses, D1's relational-FOL prover for T-family entailment and its finite-model evaluator for
+    countermodels, D2's risk route for severity, and D3's quantity certificates for dates and cost factors. The
+    independent `reference.py` compares the frozen A, B, C and G key cells from PLAN 3–4 (68/68).
+17. **Useful answers and limits.** 111/126 match the frozen key; 15 are faithful undecided answers, not false
+    verdicts. K9 and K10 need F4's review bullet separated from the row-plan bundle (AP); K12a and K12b need
+    consultation and approval as separate acts (SC); K15a and K17 need prompt/effective-date order (ET). G4, G5,
+    G6, N4, N5, S2 and D6a, D6b, D7 name their ET, SC, WG or calendar-unit limits in `results.json`. The six
+    section-11 mutants each change exactly their named results (M9). The counts are not audit-validated until
+    `uc-audit` checks the source units and dependencies. W1 conflicts are candidates about this translation, not
+    source-policy conflict findings under DRI ruling R14.
+18. **Key findings.** None from the independent 68-cell reference or VE run. The corrections in item 15 repair
+    the case facts and a rule guard; they leave PLAN section 6 and `answer-key.json` untouched.
+
+## 13. Files for the implementation and run rounds
 
 `environment.d1.json`, `environment.d2.json`, `environment.d3.json`; `rsp.d1.ve.md`, `rsp.d2.ve.md`, `rsp.d3.ve.md`
 (generated with the source prose from the pinned PDF, never committed with the full text); `spans.json` (byte
 spans, unit ids, statuses and feature families only); `cases.json` and `answer-key.json` (transcribed from section
-6 in a separate commit that changes no key); `reference.py`; `run.py`; `coverage.json`; `README.md`.
+6 in a separate commit that changes no key); `reference.py`; `run.py`; `results.json`; `coverage.json`; `README.md`.
+D2 and D3 environments are generated in `stage0.py` for their disjoint questions, as deviation 8 says; no separate
+environment file or generated document containing source prose is committed. `run.py --check` checks the saved
+answers and metrics, and `reference.py` independently checks the A/B/C/G key cells.
