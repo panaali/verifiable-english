@@ -1,0 +1,12 @@
+[
+  {
+    "id": "F-ready1-arity",
+    "file": "lean/VE/Arith/Bounded.lean",
+    "mutation": "OpTable.add stores function arity n + 1 instead of n; opEnv_eq_list was temporarily admitted so the executable guard, rather than the proof, could detect the bug",
+    "test": "lean/VE/Arith/TableExamples.lean:#guard twiceCases.map (decideBounded twice maxSteps)",
+    "command": "cd lean && PATH=~/.elan/bin:$PATH lake build VE.Arith.TableExamples",
+    "mutant_exit": 1,
+    "failure": "VE/Arith/TableExamples.lean:13:0: Expression did not evaluate to true; guards at lines 14, 23, 26, 31, 32, and 35 also failed",
+    "restored": true
+  }
+]
