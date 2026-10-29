@@ -13,6 +13,13 @@
       "failing_test": "tests/test_rd9_docroute.py::test_filled_soft_source_instruction_declarations_match_lean_base",
       "observed": "both readings variants raised CheckerUnavailable: filled soft vocabulary collides with source",
       "restored": true
+    },
+    {
+      "file": "ve/document/report.py",
+      "mutation": "Pass no active reading sets to free norm selection, retaining a replaced strict norm",
+      "failing_test": "tests/test_rd9_docroute.py::test_filled_soft_premises_exclude_norm_replaced_by_assertion_reading[authored]",
+      "observed": "INCONSISTENT != model",
+      "restored": true
     }
   ]
 }
