@@ -10,6 +10,7 @@ import pytest
 from ve.document import check_document, load_document
 from ve.errors import CheckerUnavailable, VEError
 from ve.norm_defaults_route import admit_norm_defaults_document
+from ve.norms import NormDocument
 from ve.softnorms import SoftEnvironment, check_soft_source
 
 
@@ -75,6 +76,32 @@ def test_soft_admission_conditions_are_bound_to_the_source(monkeypatch):
             admit_norm_defaults_document(env, document)
         monkeypatch.setattr(route, "run_case", original)
 
+    def missing(case):
+        row = original(case)
+        if case["kind"] == "admission":
+            row = {key: value for key, value in row.items() if key != "conditional_on"}
+        return row
+    monkeypatch.setattr(route, "run_case", missing)
+    with pytest.raises(CheckerUnavailable, match="another filled route"):
+        admit_norm_defaults_document(env, document)
+
+
+def test_soft_admission_row_fields_are_typed():
+    from ve import norm_defaults_route as route
+    from ve.backends.service_schema import Invalid, check_row
+    env, document = _direct_case()
+    case = {"id": "admission", "kind": "admission", "environment": env.to_dict(), "document": document}
+    row = route.run_case(case)
+    check_row("norm-defaults", row, case, 0)
+    for field in row:
+        missing = {key: value for key, value in row.items() if key != field}
+        wrong_type = {**row, field: 7}
+        if field != "conditional_on":
+            with pytest.raises(Invalid):
+                check_row("norm-defaults", missing, case, 0)
+        with pytest.raises(Invalid):
+            check_row("norm-defaults", wrong_type, case, 0)
+
 
 def test_unspecified_without_profile_keeps_its_own_refusal(tmp_path):
     with pytest.raises(VEError, match="^" + NEEDS_PROFILE + "$"):
@@ -94,3 +121,10 @@ def test_direct_soft_check_of_unfilled_tree_still_refuses():
     front, _ = _front()
     with pytest.raises(VEError, match="^" + THROUGH_FILL.replace("(", r"\(").replace(")", r"\)") + "$"):
         check_soft_source(front["environment"], [front["units"][0]["content"]])
+
+
+def test_direct_w1_outcome_of_unfilled_soft_tree_still_refuses():
+    front, _ = _front()
+    document = NormDocument(SoftEnvironment(front["environment"]), [])
+    with pytest.raises(VEError, match="^" + THROUGH_FILL.replace("(", r"\(").replace(")", r"\)") + "$"):
+        document.outcome("x_required")

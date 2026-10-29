@@ -321,6 +321,7 @@ class NormDocument:
     def _require_completion(self):
         # An unspecified completion has no W1 layer of its own: norm-defaults
         # elaborates the document by `fill` into an ordinary W1 tree first.
+        # Keep this guard for direct callers even when document admission routes through fill.
         if "norm-defaults@0" in self.env.profiles:
             raise VEError("UnsupportedProfile: norm-defaults@0 documents are checked through fill "
                           "(ve.norm_defaults)")
