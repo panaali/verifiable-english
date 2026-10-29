@@ -36,9 +36,9 @@ After sc-2b and sc-2c, the dependent feature item is sc-3b (headings and labels,
 - Three seeded Lean bugs in changed fixture code were planted independently, failed the named `#guard` with `lake build VE.Scope.Examples` exit 1, and were removed: [mutants.json](mutants.json). No Python or Rust product code changed.
 - Hand-written overlap check across in-flight `lean-first/*`, `feature/*`, `infra/*`, and `foundation/*` branches printed no overlap for `Theorems.lean` or `Examples.lean`. `df -h .` reported 145 G available. No test was removed or renamed.
 
-## Spec re-read and self-review against BUILDER-CHECKLIST
-
 Spec re-read: `listName_run` against `docs/spec/scope.md:1306`; named reach and exact manifest against `:153-166`; `own` substitution against `:182-204`; effect order against `:205-245`; the no-attitude limit against `:1237-1242`. The copied plan's SC-2 row is `docs/spec/scope-PLAN.md:754-848` at `72a241fba`.
+
+## Self-review against BUILDER-CHECKLIST
 
 1. N.A. — no relayed answer or request decoder changed.
 2. PASS — plan-row table above and `git diff --stat main...HEAD`; partial size cut is explicit.
