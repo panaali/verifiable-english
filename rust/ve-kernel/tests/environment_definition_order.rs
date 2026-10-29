@@ -52,3 +52,24 @@ fn predicate_signature_and_constant_fault_order() {
     let error = Environment::from_value(&case).unwrap_err();
     assert_eq!(error.code, "UnknownSymbol");
 }
+
+#[test]
+fn legacy_undeclared_builtin_sorts_are_unknown_symbols() {
+    for sort in ["$int", "$string", "missing"] {
+        let case = json!({
+            "language": "ve.core@0", "profile": "relational-fol@0",
+            "spec_revision": "ve-v0-draft-2026-09-20",
+            "vocabulary": {"sorts": {}, "predicates": {
+                "p": {"arguments": [sort], "description": "d"}}, "constants": {}}
+        });
+        let error = Environment::from_value(&case).unwrap_err();
+        assert_eq!(error.code, "UnknownSymbol", "{sort}");
+    }
+    let valid = json!({
+        "language": "ve.core@0", "profile": "relational-fol@0",
+        "spec_revision": "ve-v0-draft-2026-09-20",
+        "vocabulary": {"sorts": {"person": {"description": "d"}},
+            "predicates": {"p": {"arguments": ["person"], "description": "d"}}, "constants": {}}
+    });
+    assert!(Environment::from_value(&valid).is_ok());
+}
