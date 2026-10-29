@@ -367,4 +367,8 @@ restored source passed. No Lean or Python product code changed for this diagnost
 tests remain untouched.
 The baseline generator dropped the two now-fixed DF-20 entries (242 to 240). After that regeneration, the
 focused Mac rerun of `test_ci_run` and the new three-way regression passed, 2/2. The initial selected run
-had 79/80 units pass and this one difffuzz failure. Final selection on the Rust commit is pending.
+had 79/80 units pass and this one difffuzz failure. On `db162a36f`, the final selector ran all 366 selected
+test files on the VM; their saved results each have exit 0, including `test_difffuzz.py` and
+`test_safetyfw_usecases.py`. The wrapper exited 1 only after the tests, when writing its performance map to
+the read-only home cache (`~/.cache/ve-testmap`). No test failed; the map write needs a writable
+`VE_TESTMAP_CACHE` on a future selection run.
