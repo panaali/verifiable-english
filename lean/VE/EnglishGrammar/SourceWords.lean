@@ -72,8 +72,8 @@ def SourceWordRow.toJson (row : SourceWordRow) : Json := Json.mkObj [
   ("kind", row.kind.toJson)]
 
 /-- This is the sole source of the generated Python view. -/
-def sourceWordsJson : Json := Json.mkObj [
+def sourceWordsJson (rows : List SourceWordRow := sourceWords) : Json := Json.mkObj [
   ("format", "ve.source-words@1"),
-  ("rows", Json.arr ((sourceWords.map SourceWordRow.toJson).toArray))]
+  ("rows", Json.arr ((rows.map SourceWordRow.toJson).toArray))]
 
 end VE.EnglishGrammar

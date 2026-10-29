@@ -4,6 +4,7 @@ import VE.EnglishGrammar.SourceWords
 namespace VE.EnglishGrammar.SourceWordsExamples
 
 open VE.EnglishGrammar
+open Lean
 
 def reading (wording situation : String) : SourceWordReading := ⟨wording, situation⟩
 def a : SourceWordReading := reading "before" "The first event ended before the second."
@@ -16,6 +17,8 @@ def base : SourceWordRow := ⟨"until", "", "", "ET-5", .readings [a, b]⟩
 #guard sourceWordsValid [base, { base with frame := "time clause" }]
 #guard sourceWordsValid [base, { base with profile := "events@0" }]
 #guard sourceWordsValid [base, { base with word := "by" }]
+#guard !sourceWordsValid [base, { base with word := "by", owner := "" }]
+#guard !sourceWordsValid [{ base with word := "by", owner := "" }, base]
 
 #guard !sourceWordsValid [{ base with kind := .readings [] }]
 #guard !sourceWordsValid [{ base with kind := .readings [a] }]
@@ -25,6 +28,7 @@ def base : SourceWordRow := ⟨"until", "", "", "ET-5", .readings [a, b]⟩
 #guard sourceWordsValid [{ base with kind := .readings [a, b, reading "during" "One overlaps."] }]
 #guard !sourceWordsValid [{ base with kind := .readings [reading "before" "", b] }]
 #guard sourceWordsValid [{ base with kind := .readings [reading "before" "x", b] }]
+#guard !sourceWordsValid [{ base with kind := .readings [a, reading "by" ""] }]
 
 def refusal (code advice rewrite : String) : SourceWordRow :=
   { base with kind := .refuse code advice rewrite }
@@ -42,8 +46,33 @@ def refusal (code advice rewrite : String) : SourceWordRow :=
 
 #guard sourceWordsValid [{ base with kind := .fixed "before" }]
 #guard !sourceWordsValid [{ base with word := "Until" }]
+#guard !sourceWordsValid [{ base with word := "uNtil" }]
 #guard !sourceWordsValid [{ base with word := "" }]
 #guard !sourceWordsValid [{ base with owner := "" }]
+#guard sourceWordsValid [{ base with word := "x", owner := "x" }]
 #guard sourceWordsValid [{ base with word := "in most cases" }]
+
+def kindReadingJson : Json := Json.mkObj [
+  ("type", "readings"), ("candidates", Json.arr #[
+    Json.mkObj [("wording", "before"), ("situation", a.situation)],
+    Json.mkObj [("wording", "by"), ("situation", b.situation)]])]
+def kindRefuseJson : Json := Json.mkObj [
+  ("type", "refuse"), ("code", "SW01"), ("advice", "Use a dated phrase."),
+  ("rewrite", "before the deadline")]
+def kindFixedJson : Json := Json.mkObj [("type", "fixed"), ("wording", "before")]
+def rowJson (word kind : Json) : Json := Json.mkObj [
+  ("word", word), ("frame", ""), ("profile", ""), ("owner", "ET-5"), ("kind", kind)]
+
+#guard SourceWordKind.toJson base.kind == kindReadingJson
+#guard SourceWordKind.toJson (refusal "SW01" "Use a dated phrase." "before the deadline").kind == kindRefuseJson
+#guard SourceWordKind.toJson (.fixed "before") == kindFixedJson
+#guard SourceWordRow.toJson base == rowJson "until" kindReadingJson
+#guard SourceWordRow.toJson { base with frame := "time", profile := "events@0", owner := "ET-6" } ==
+  Json.mkObj [("word", "until"), ("frame", "time"), ("profile", "events@0"),
+    ("owner", "ET-6"), ("kind", kindReadingJson)]
+#guard sourceWordsJson [base, refusal "SW01" "Use a dated phrase." "before the deadline"] ==
+  Json.mkObj [("format", "ve.source-words@1"),
+    ("rows", Json.arr #[rowJson "until" kindReadingJson, rowJson "until" kindRefuseJson])]
+#guard sourceWordsJson == sourceWordsJson sourceWords
 
 end VE.EnglishGrammar.SourceWordsExamples

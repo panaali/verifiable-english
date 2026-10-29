@@ -19,7 +19,7 @@
   "lean/VE/EnglishGrammar/Rules.lean": "87aeab4e98c32ef462b90f036808de81c88cdb3967febcd13d3806bc277fe85b",
   "lean/VE/EnglishGrammar/Run.lean": "f9355148f683d663abd23260fab6d3d318f9e575e7bdebaf910bb40f95b86245",
   "lean/VE/EnglishGrammar/SensesRequest.lean": "46f8f486350fe97d4ac5942d8a3afb6e8e864aac64efe93dea2246eac21c6599",
-  "lean/VE/EnglishGrammar/SourceWords.lean": "76e312ce752b97aa4c06c9ed4eaa7c8d8abeafdf1b7ca811dbb67c5ab1c5ee1f",
+  "lean/VE/EnglishGrammar/SourceWords.lean": "e4b796b23654bec0382717b9555ebeef5cc6c2b2a6536aab464a4a6400aae6bd",
   "lean/VE/EnglishGrammar/Syntax.lean": "d296ed3fe824d17ef1f22821d1f826a8d9d6379cbdd97c868677356968aead81",
   "lean/VE/EnglishGrammar/Token.lean": "98861a1a8696810186d9f9fc934678fae257b464356c5beaf6aec07e9c7f57ac",
   "lean/VE/Grammar/Basic.lean": "74adf159cfee0b28003a2945b98ec7e7ae2fab29017a210352601c873ee044db",
