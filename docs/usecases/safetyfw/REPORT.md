@@ -1,6 +1,6 @@
 # usecase-safetyfw: three frontier-lab safety frameworks in VE (build report)
 
-- **Status:** F1 and F12 from recheck2 are corrected; remaining OpenAI source claims stay explicitly open. No DRI signature is reserved.
+- **Status:** F1, F12 and F13 from the rechecks are corrected; remaining OpenAI source claims stay explicitly open. No DRI signature is reserved.
 - **HEAD:** see the final local commit; this report records its exact test result below.
 - **What changed:** frozen keys and DeepMind/Anthropic baselines remain; OpenAI has 67,418 bytes in 389 units,
   0.3% CHECKED, stage 0 P1–P8 and gaps by feature family.
@@ -471,3 +471,31 @@ Validation commands and outputs on this worktree:
 | Delta | Ruling | Evidence |
 |---|---|---|
 | The 5.1 employee-summary source unit moves from UNFORMALISED to an OPEN RS13 reading with no admitted rule | SIGNED by DRI (`usecase-safetyfw-b-lp1600-focus.md`, 2026-10-29): the item-specific instruction requires RS13 and forbids semantic coverage from structure alone | `tests/test_safetyfw_usecases.py::test_pf_rs13_and_untranslated_claims_have_named_residuals` |
+
+## 24. Recheck1 F13 correction (2026-10-29)
+
+F13 -> Rust composed order sort classification matches Lean -> `tests/test_difffuzz.py::test_order_routes_reject_string_predicate_sort_before_constants`, `rust/ve-kernel/tests/environment_definition_order.rs::composed_order_rejects_string_predicate_sort_before_constants` -> `4a1ce48bc`.
+
+The executable F13 probe and both new regressions failed before the fix. Rust now returns
+`UnknownSymbol` for an undeclared `$string` predicate argument on every composed order route,
+including `time@0` and `data@0`. `$int` still succeeds. The exact order route retains Lean's
+constant-first fault order; composed order routes report the argument-sort fault first. The
+three-engine regression tests all of these cases, including malformed constants. The probe,
+Rust unit tests, and three-engine regression pass after the fix. Lean's answer is unchanged.
+Restoring the old `InvalidInput` branch as a seeded Rust mutant made the new Rust regression
+fail; restoring the committed code made all four Rust tests pass again.
+
+| Delta | Ruling | Evidence |
+|---|---|---|
+| With both an undeclared `$string` predicate sort and a malformed constant, composed order routes report the sort fault first; the exact order route reports the constant fault first | SIGNED by standing ruling R2 (DRI-RULINGS.md): Lean's route-specific order is deterministic | `tests/test_difffuzz.py::test_order_routes_reject_string_predicate_sort_before_constants`; `rust/ve-kernel/tests/environment_definition_order.rs::composed_order_rejects_string_predicate_sort_before_constants` |
+
+The single-fault Rust diagnostic correction is parity with the unchanged Lean owner, rather than
+a public Lean verdict delta. The three `main-known-red.txt` tests remain pre-existing and were
+not edited. The full suite and release gate were not run under this branch's test instruction.
+The F13 probe exited 1 before the fix and 0 afterward. `lake build` completed 1,135 jobs,
+`python3 lean/audit.py` passed 653 source files and 7,286 named theorem declarations, and
+`python3 tools/rust_build.py --check` confirmed the generated checker pin. The selected command
+`zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`
+recorded 397 units with 0 failed and exited 0 on the VM (2026-10-29 21:51 UTC). Its first attempt
+stopped before collection because the default `uv` cache was read-only; the successful run set
+`UV_CACHE_DIR=/tmp/ve-safetyfw-f13-uv-cache`.
