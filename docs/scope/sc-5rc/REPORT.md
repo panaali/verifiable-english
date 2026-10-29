@@ -1,8 +1,8 @@
 # sc-5rc build and review-fix report
 
-**Status: F1 and F2 fixed; no DRI signature remains pending.** The selected run and R16 mutation sweep are still in progress.
+**Status: F1 and F2 fixed; no DRI signature remains pending.** The selected run finished with one branch-owned stale census, now fixed, and one independently confirmed main failure.
 F1's cited composed readings are encoded, bound, checked and rendered. The DRI signed DELTA rows 2 and 3 and registered F2's ties pass in `reviews/dri-decisions-20261029-sc-5rc.md` items 1–3. The four `Pinned.JsonWF` proofs remain assigned to sc-5rd pending sc-1af.
-Checks: both review probes, 11 targeted regressions, all 37 scope-reading document tests, the Lean build, audit and trust-budget check pass. No full gate was run, per this fix task.
+Checks: both review probes, 11 targeted regressions, all 37 scope-reading document tests, the Lean build, audit, trust-budget check and 141-mutant R16 sweep pass. The selected run covered 402 units; its two failed IDs are accounted for below. No full gate was run, per this fix task.
 
 ## Review fixes (2026-10-29)
 
@@ -15,6 +15,12 @@ F1: `composedReadingRow` decodes the norm member and relays `cites` from the gov
 F2: the DRI registered the ties pass under `## sc-5rc` in `/home/seyran/code/manage-agents/FOLLOW-UPS.md`; the original probe now passes. It cannot be a repository regression test: the tracker is outside the checkout and hermetic tests cannot depend on that mutable external file. The registration names `lean/VE/Service/Document.lean` (+36 D[V]) and `lean/ResponseShape/Schemas/Document.lean` (+21 G[V]), the render, wire and encoder theorem ties, and failing checks for the new trusted definitions.
 
 The current trust measurement is K +0, S +0, V +57 against `314b23a42c21`; the new +7 V allowance is recorded under standing ruling R16 after the registration. `tools/trust_map.py --check` passes. DELTA rows 2 and 3 are signed by the DRI in the decision file above.
+
+## Review-fix verification
+
+`docs/scope/sc-5rc/trust-mutants-fix.json` records 141 mutants over nine trusted definitions in the fix snapshot: 138 KILLED, 3 ALLOWED, 0 SURVIVOR, 0 UNKNOWN and 0 NOT RUN. The three allowed cases are the previously documented equivalent or ill-typed `governedSetUnits` replacements in `trust-mutants-allow.json`; the changed citation paths are killed. The full `lake build` finished 1,161 jobs, and `python3 lean/audit.py` audited 668 source files and 7,435 theorem declarations using only the standard axiom allowlist. The original F1 and F2 probes pass after the fix.
+
+The selected run planned 402 units. The Mac slot was busy; three GitHub Actions shards ultimately completed successfully, but one result missed the wrapper's collection deadline, so it also ran on the VM. The VM run finished with two failed IDs. `tests/test_binding_census.py::test_the_census_is_current` detected the new document schema fingerprint; `tools/binding_census.py --write` regenerated only that fingerprint in `docs/test-architecture/binding-census.json`, and the exact test passed on rerun (`ca0be2cb2`). `tests/test_safety_framework.py::test_fsf_r2_probes_rerun_equals_saved_probes` found DF-a's saved diagnostic stale; the exact ID failed again on this branch and on clean main `87a8c66d7`, with the same `probes.json is out of date` error and the same pinned local source. The current diagnostic is `--assume-no-exception applies to readings on the enumerated route`; the saved diagnostic is `--assume-no-exception applies to a soft-norms@0 document without open reading sets`. This test and its evidence are untouched here as a pre-existing main failure, though it was absent from `main-known-red.txt`.
 
 ## Initial build record
 
