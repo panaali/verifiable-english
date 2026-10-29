@@ -43,6 +43,29 @@ def test_audit_inherits_selector_job_budget(monkeypatch):
     assert calls == [[*select_tests.AUDIT, '--jobs', '3']]
 
 
+@pytest.mark.parametrize("json_mode", [False, True], ids=["text", "json"])
+@pytest.mark.parametrize("full", [False, True], ids=["selected", "full"])
+def test_impacted_main_forwards_audit_job_budget(monkeypatch, json_mode, full):
+    """Both display paths must pass the caller's cap to the shared audit runner."""
+    plan = {"fallback": False, "selected_count": 0, "full_count": 1,
+            "unreached": [], "scripts_without_tests": [], "commands": [list(select_tests.AUDIT)]}
+    calls = []
+    monkeypatch.delenv("VE_AUDIT_JOBS", raising=False)
+    monkeypatch.setattr(select_tests, "impacted", lambda paths, *, full: plan)
+    monkeypatch.setattr(select_tests, "run", lambda received, **kwargs: (
+        calls.append((received, kwargs)) or 0))
+    flags = ["--impacted", "--paths", "lean/audit.py", "--run", "--jobs", "2"]
+    if json_mode:
+        flags.append("--json")
+    if full:
+        flags.append("--full")
+    monkeypatch.setattr(sys, "argv", ["select_tests", *flags])
+
+    assert select_tests.main() == 0
+    assert calls == [(plan, {"record": False, "jobs": 2, "maxfail": 0 if full else select_tests.MAXFAIL,
+                             "full": full})]
+
+
 @pytest.fixture(autouse=True)
 def private_cache(tmp_path_factory, monkeypatch):
     monkeypatch.setenv("XDG_CACHE_HOME", str(tmp_path_factory.getbasetemp() / "cache"))
