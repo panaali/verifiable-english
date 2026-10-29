@@ -6026,6 +6026,14 @@
         "VE.Question.askedText"
       ]
     },
+    "VE/Readings/AdmissionProfile.lean": {
+      "T": [
+        "VE.Readings.AdmissionProfile.cpuTicks",
+        "VE.Readings.AdmissionProfile.timed",
+        "VE.Readings.AdmissionProfile.profileCase",
+        "VE.Readings.AdmissionProfile.profileLine"
+      ]
+    },
     "VE/Readings/Asserted.lean": {
       "G[V]": [
         "VE.Readings.buildAsserted"
