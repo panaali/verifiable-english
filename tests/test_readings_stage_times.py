@@ -37,7 +37,7 @@ def test_readings_stage_times_are_silent_by_default():
 
 def test_readings_stage_times_are_json_lines_for_each_stage():
     rows = [json.loads(line) for line in run("1").stderr.splitlines()]
-    assert [row["stage"] for row in rows] == ["splitCase", "admitS2", "runCase"]
+    assert [row["stage"] for row in rows] == ["splitCase", "admitReadings", "runCase"]
     assert all(row["case"] == "profile" and type(row["nanos"]) is int and row["nanos"] >= 0
                and type(row["cpu_ticks"]) is int and row["status"] in ("ok", "error") for row in rows)
 
@@ -115,6 +115,67 @@ def test_split_non_w2_main_records_fallback_admission(kind):
     main = [row for row in rows if row["part"] == "main" and row["stage"] == "admitS2"]
     assert len(main) == 2
     assert all(row["status"] == "ok" and row["items"] == main[0]["items"] for row in main)
+
+
+def test_named_enumerated_verdict_records_both_completion_calls():
+    from docs.perf.admission_cases import case_from
+
+    case = case_from(ROOT / "docs/perf/inputs/prefix-50.ve.md", 1)
+    case.update(kind="readings-verdicts", component="main", question="premises", assumed=[])
+    request = json.dumps({"id": "profile", "mode": "readings-route", "cases": [case]}) + "\n"
+    observed = run("1", request)
+    result = json.loads(observed.stdout.splitlines()[-1])["results"][0]["result"]
+    assert result["status"] == "ok"
+    rows = [json.loads(line) for line in observed.stderr.splitlines()]
+    main = [row for row in rows if row["part"] == "main" and row["stage"] == "admitNDFull"]
+    assert len(main) == 2
+    assert all(row["status"] == "ok" for row in main)
+
+
+def test_unsplit_enumerated_verdict_records_both_completion_calls():
+    from tests.test_readings_nd_lean import doc1, env1
+
+    environment = env1()
+    document, _ = doc1(environment)
+    case = {"id": "profile", "kind": "readings-verdicts", "environment": environment,
+            "document": document, "question": "premises", "assumed": []}
+    request = json.dumps({"id": "profile", "mode": "readings-route", "cases": [case]}) + "\n"
+    observed = run("1", request)
+    result = json.loads(observed.stdout.splitlines()[-1])["results"][0]["result"]
+    assert result["status"] == "ok"
+    rows = [json.loads(line) for line in observed.stderr.splitlines()]
+    completions = [row for row in rows if row["part"] == "main" and row["stage"] == "admitNDFull"]
+    assert len(completions) == 2
+    assert all(row["status"] == "ok" for row in completions)
+
+
+def test_unsplit_validation_uses_s1_admission_only():
+    from tests.test_readings_companions_lean import env_main
+
+    case = {**CASE, "environment": env_main()}
+    request = json.dumps({"id": "profile", "mode": "readings-route", "cases": [case]}) + "\n"
+    observed = run("1", request)
+    result = json.loads(observed.stdout.splitlines()[-1])["results"][0]["result"]
+    assert result["status"] == "ok"
+    rows = [json.loads(line) for line in observed.stderr.splitlines()]
+    assert [row["stage"] for row in rows] == ["splitCase", "admitReadings", "runCase"]
+    assert rows[1]["status"] == "ok"
+
+
+def test_split_admission_stops_before_companions_after_main_failure():
+    from tests.test_readings_companions_lean import fc1, env_main
+
+    document, *_ = fc1()
+    document["units"].append(document["units"][0])
+    case = {"id": "profile", "kind": "readings-elaborate",
+            "environment": env_main(), "document": document}
+    request = json.dumps({"id": "profile", "mode": "readings-route", "cases": [case]}) + "\n"
+    observed = run("1", request)
+    result = json.loads(observed.stdout.splitlines()[-1])["results"][0]["result"]
+    assert result["status"] == "error"
+    rows = [json.loads(line) for line in observed.stderr.splitlines()]
+    assert any(row["part"] == "main" and row["status"] == "error" for row in rows)
+    assert not any(row["part"] in ("rs_a", "rs_b") for row in rows)
 
 
 @pytest.mark.parametrize("file,name", [

@@ -6029,9 +6029,15 @@
     "VE/Service/ReadingsAdmissionProfile.lean": {
       "T": [
         "VE.Service.ReadingsAdmissionProfile.cpuTicks",
-        "VE.Service.ReadingsAdmissionProfile.timed",
+        "VE.Service.ReadingsAdmissionProfile.profileAdmissions",
         "VE.Service.ReadingsAdmissionProfile.profileCase",
-        "VE.Service.ReadingsAdmissionProfile.profileLine"
+        "VE.Service.ReadingsAdmissionProfile.profileChecked",
+        "VE.Service.ReadingsAdmissionProfile.profileComponent",
+        "VE.Service.ReadingsAdmissionProfile.profileLine",
+        "VE.Service.ReadingsAdmissionProfile.profileND",
+        "VE.Service.ReadingsAdmissionProfile.profileProductPart",
+        "VE.Service.ReadingsAdmissionProfile.profileS2",
+        "VE.Service.ReadingsAdmissionProfile.timed"
       ]
     },
     "VE/Readings/Asserted.lean": {
