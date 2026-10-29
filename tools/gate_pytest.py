@@ -54,6 +54,12 @@ def pytest_collection_modifyitems(config, items):
         return (nodeid in selected_ids if mode == "exact"
                 else any(covers(selector, nodeid) for selector in selectors))
 
+    unmatched = [selector for selector in selectors
+                 if not any((item.nodeid == selector if mode == "exact" else covers(selector, item.nodeid))
+                            for item in items)]
+    if unmatched:
+        raise pytest.UsageError(f"gate selector collected nothing: {unmatched[0]}")
+
     kept = [item for item in items if chosen(item.nodeid)]
     removed = [item for item in items if not chosen(item.nodeid)]
     if removed:
