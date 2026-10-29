@@ -317,10 +317,54 @@ def test_pf_translation_lint_and_invention_audit(pf_modules):
     assert pf_stage0.identifier_lint()["violations"] == []
     audit = pf_stage0.invention_audit()
     assert audit["untraced"] == audit["defaults_untraced"] == audit["permissions_untraced"] == []
+    assert audit["choice_mismatches"] == []
     assert audit["thresholds_without_premise"] == audit["order_or_causal_predicates"] == []
     for block in pf_translation.rule_blocks():
         assert json.loads(pf_translation.parsed_rule(block.id))["name"] == block.id
     assert all(len(fs) == 2 for _, fs in pf_translation.facts())
+
+
+def test_pf_reading_blocks_match_the_choice_that_selects_them(pf_modules, monkeypatch):
+    assert pf_stage0.invention_audit()["choice_mismatches"] == []
+    original = pf_build.READINGS["rs1-misuse-bio"]
+    monkeypatch.setitem(pf_build.READINGS, "rs1-misuse-bio",
+                        ("RS1", {"strict": original[1]["default"], "default": original[1]["strict"]}))
+    assert {tuple(row) for row in pf_stage0.invention_audit()["choice_mismatches"]} == {
+        ("rs1-misuse-bio", "strict", "f1-misuse-bio-default"),
+        ("rs1-misuse-bio", "default", "f1-misuse-bio-strict")}
+
+
+def test_pf_checked_norms_keep_their_source_scope(pf_modules):
+    units = {unit["id"]: unit for unit in json.loads((PF / "spans.json").read_text())["units"]}
+    assert units["p16-u271"]["status"] == "CHECKED"
+    guard = json.loads(pf_translation.parsed_rule("f16-sag-recommend"))["guard"]
+    assert "framework_deployment" in json.dumps(guard)
+    assert "covered" in json.dumps(guard)
+
+
+def test_pf_appendix_c2_should_is_a_pending_norm_reading(pf_modules):
+    units = {unit["id"]: unit for unit in json.loads((PF / "spans.json").read_text())["units"]}
+    unit = units["p19-u328"]
+    assert unit["status"] == "OPEN" and unit["reading_set"] == "rs9-c2-misalignment"
+    _, choices = pf_build.READINGS[unit["reading_set"]]
+    assert set(choices) == {"strict", "default"}
+    assert {json.loads(pf_translation.parsed_rule(ids[0])).get("mode", "strict") for ids in choices.values()} == {
+        "strict", "default"}
+    if pf_build.DEFAULT_SOURCE.exists():
+        _, rebuilt = pf_build.build(pf_build.DEFAULT_SOURCE.read_bytes())
+        assert next(r for r in rebuilt if r["id"] == unit["id"])["reading_set"] == unit["reading_set"]
+    for page in (18, 19, 20):
+        spec, wait = pf_build._fallback(page, 0, b"Safeguards should minimize risk.")
+        assert spec["kind"] == ["unformalised", "not_translated"] and wait == "readings"
+
+
+def test_pf_p3_p4_are_recomputed_without_source_text(pf_modules):
+    result = pf_stage0.run(None)
+    saved = json.loads((PF_EVIDENCE / "stage0.json").read_text())
+    assert result["P3"] == saved["P3"] and result["P4"] == saved["P4"]
+    assert result["P3"]["admitted"] and result["P3"]["stated_might"]
+    assert not result["P3"]["invented_leads"]
+    assert result["P4"]["date_certificate_replayed"]
 
 
 def test_pf_temporal_and_per_item_rules_are_not_weakened_into_checked_claims(pf_modules):

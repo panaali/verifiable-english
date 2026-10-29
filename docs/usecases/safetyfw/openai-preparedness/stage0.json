@@ -1,5 +1,6 @@
 {
  "M6": {
+  "choice_mismatches": [],
   "defaults_untraced": [],
   "narrowings": {
    "N1": "only the named RS0 commitment readings carry norms",
@@ -50,8 +51,8 @@
  "P5": {
   "bytes_by_status": {
    "CHECKED": 454,
-   "LABELLED": 10345,
-   "OPEN": 5292,
+   "LABELLED": 10191,
+   "OPEN": 5446,
    "UNFORMALISED": 51327
   },
   "total": 67418,
@@ -62,7 +63,7 @@
   "master_total": 67418
  },
  "P7": {
-  "regulated_predicates": 28,
+  "regulated_predicates": 29,
   "violations": []
  },
  "P8": {

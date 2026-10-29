@@ -4256,9 +4256,16 @@
     57026,
     57180
    ],
-   "kind": "exposition",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "norm",
+   "reading_set": "rs9-c2-misalignment",
+   "open_terms": [
+    "ot2"
+   ],
+   "waits": [
+    "JT",
+    "DF"
+   ],
+   "status": "OPEN"
   },
   {
    "id": "p19-u329",
@@ -4476,9 +4483,12 @@
     60045,
     60253
    ],
-   "kind": "exposition",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "waits": [
+    "readings"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p20-u351",
@@ -4546,9 +4556,12 @@
     60846,
     61045
    ],
-   "kind": "exposition",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "waits": [
+    "readings"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p20-u358",

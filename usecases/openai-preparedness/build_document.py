@@ -63,6 +63,7 @@ PLACEMENTS = {
     "Additionally, if the model is beyond a High threshold": ("rule", "f15-safeguards", ("JT",)),
     "For each deployment under the Preparedness Framework, providing recommendations": ("rule", "f16-sag-recommend", ()),
     "The Safety and Security Committee (SSC)": ("rule", "f16-ssc-visibility", ()),
+    "Safeguards should sufficiently minimize the risk associated with a misaligned model": ("readings", "rs9-c2-misalignment", ("JT", "DF")),
     "informed by SAG’s recommendations": ("readings", "rs0-informed", ("readings",)),
     "at least once a year": ("readings", "rs0-year", ("ET",)),
     "Going forward we will handle risks related to persuasion": ("readings", "rs15-persuasion", ("AT",)),
@@ -85,9 +86,11 @@ READINGS = {
     "rs12-category": ("RS12", {"suff": [], "iff": []}),
     "rs15-persuasion": ("RS15", {"explanation": [], "rule": []}),
     "rs15-threat-models": ("RS15", {"explanation": [], "rule": []}),
+    "rs9-c2-misalignment": ("RS9", {"strict": ["c2-misalignment-strict"],
+                                 "default": ["c2-misalignment-default"]}),
 }
 SET_FAMILIES = {"RS0": "readings", "RS1": "DF", "RS8": "DF", "RS5": "readings",
-                "RS4": "readings", "RS12": "SC", "RS15": "readings"}
+                "RS4": "readings", "RS12": "SC", "RS15": "readings", "RS9": "DF"}
 BLOCKED_RULE_REASONS = {"f7-evaluations": "event_order", "f9-specific": "quantifier_scope",
                         "f9-efficacy": "quantifier_scope", "f9-threshold": "quantifier_scope"}
 OPEN_FOR = {
@@ -101,6 +104,7 @@ OPEN_FOR = {
     "f14-investigate": ("ot19",), "f15-disclose": ("ot13",),
     "f14-corrective": ("ot19",), "f15-safeguards": ("ot1", "ot13"), "f9-risk-paths": ("ot2",),
     "rs8-distilled": ("ot20",), "rs5-adjustment": ("ot12",), "rs12-category": ("ot16",),
+    "rs9-c2-misalignment": ("ot2",),
 }
 
 # Table 1's six levels: each matched occurrence gets the two source-stated facts for that row.
@@ -159,6 +163,10 @@ def _model():
 
 
 def _fallback(page, start, text):
+    # Page furniture and illustrative tables are labelled only when they contain no modal claim.
+    # A new requirement in an appendix must remain a visible translation gap until placed.
+    if page in (1, 3, 18, 19, 20) and re.search(rb"\b(?:must|should|shall|require|requires|required|will)\b", text, re.I):
+        return unformalised("not_translated"), "readings"
     if page in (1, 3, 18, 19, 20):
         return label("exposition"), None
     if text.strip().startswith((b"Contents", b"Appendix", b"Table ")):

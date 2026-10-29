@@ -55,7 +55,7 @@ the same way as safety-framework's `test_span_accounting_is_complete`.
 | DeepMind FSF 3.1 | Oct 18 (fsf-r1) | 4,595 (8.5%) | 7,356 (13.5%) | 35,557 (65.4%) | 6,865 (12.6%) | 54,373 |
 | DeepMind FSF 3.1 | Oct 28 (fsf-r2) | 4,595 (8.5%) | 7,356 (13.5%) | 35,557 (65.4%) | 6,865 (12.6%) | 54,373 |
 | Anthropic RSP 3.4 | Oct 28 (corrected baseline) | 5,327 (9.0%) | 13,214 (22.2%) | 37,248 (62.7%) | 3,621 (6.1%) | 59,410 |
-| OpenAI PF v2 | Oct 29 (coverage correction) | 454 (0.7%) | 5,292 (7.8%) | 10,345 (15.3%) | 51,327 (76.1%) | 67,418 |
+| OpenAI PF v2 | Oct 29 (coverage correction) | 454 (0.7%) | 5,446 (8.1%) | 9,784 (14.5%) | 51,734 (76.7%) | 67,418 |
 
 Sources: [fsf-r2/gaps.json](../safety-framework/fsf-r2/gaps.json) (`master_bytes_by_status`, Oct 1, Oct 18 and
 today), [anthropic-rsp/gaps.json](anthropic-rsp/gaps.json) and
@@ -78,18 +78,18 @@ or diagnostic changed (`test_rsp_reviewer_prohibitions_are_separate_coverage_uni
 A unit counts under every blocker it has; “alone” counts a unit only when it has one blocker. The source files are
 [DeepMind fsf-r2](../safety-framework/fsf-r2/gaps.json), [Anthropic](anthropic-rsp/gaps.json), and
 [OpenAI](openai-preparedness/gaps.json). DeepMind and Anthropic retain their earlier measurements. The OpenAI
-baseline has 219 `not_translated` units mapped to “readings”: this is a translation backlog, not evidence that a
+baseline has 221 `not_translated` units mapped to “readings”: this is a translation backlog, not evidence that a
 VE feature alone will certify those bytes. The figures below are all-blocker bytes, followed by sole-blocker bytes.
 
 | Family | DeepMind: all / alone | Anthropic: all / alone | OpenAI: all / alone | Three: all / alone |
 |---|---:|---:|---:|---:|
-| no claim to check | 29,619 / 29,619 | 31,104 / 31,104 | 10,345 / 10,345 | 71,068 / 71,068 |
-| readings | 3,597 / 735 | 3,989 / 2,106 | 37,657 / 36,774 | 45,243 / 39,615 |
-| JT | 7,976 / 5,114 | 11,372 / 6,892 | 4,003 / 1,613 | 23,351 / 13,619 |
+| no claim to check | 29,619 / 29,619 | 31,104 / 31,104 | 9,784 / 9,784 | 70,507 / 70,507 |
+| readings | 3,597 / 735 | 3,989 / 2,106 | 38,064 / 37,181 | 45,650 / 40,022 |
+| JT | 7,976 / 5,114 | 11,372 / 6,892 | 4,157 / 1,613 | 23,505 / 13,619 |
 | AT | 5,617 / 5,617 | 6,510 / 6,510 | 10,246 / 9,659 | 22,373 / 21,786 |
 | ET | 2,212 / 2,212 | 1,390 / 489 | 6,319 / 4,304 | 9,921 / 7,005 |
 | external reference | 1,978 / 1,978 | 797 / 797 | 309 / 309 | 3,084 / 3,084 |
-| DF | 551 / 551 | 866 / 405 | 1,031 / 0 | 2,448 / 956 |
+| DF | 551 / 551 | 866 / 405 | 1,185 / 0 | 2,602 / 956 |
 | SC | 283 / 283 | 1,935 / 693 | 284 / 168 | 2,502 / 1,144 |
 | WG | 807 / 807 | 551 / 551 | 183 / 0 | 1,541 / 1,358 |
 | QT | 0 / 0 | 105 / 0 | 702 / 305 | 807 / 305 |

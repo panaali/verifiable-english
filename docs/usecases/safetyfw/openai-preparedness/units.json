@@ -3221,12 +3221,14 @@
   },
   {
    "blockers": [
-    "no claim to check"
+    "JT",
+    "DF"
    ],
    "bytes": 154,
    "id": "p19-u328",
-   "kind": "exposition",
-   "status": "LABELLED"
+   "kind": "norm",
+   "reading_set": "rs9-c2-misalignment",
+   "status": "OPEN"
   },
   {
    "blockers": [
@@ -3419,12 +3421,13 @@
   },
   {
    "blockers": [
-    "no claim to check"
+    "readings"
    ],
    "bytes": 208,
    "id": "p20-u350",
-   "kind": "exposition",
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
   },
   {
    "blockers": [
@@ -3482,12 +3485,13 @@
   },
   {
    "blockers": [
-    "no claim to check"
+    "readings"
    ],
    "bytes": 199,
    "id": "p20-u357",
-   "kind": "exposition",
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "status": "UNFORMALISED"
   },
   {
    "blockers": [
