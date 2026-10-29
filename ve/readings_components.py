@@ -209,15 +209,23 @@ class _Part(Enumerated):
         self._docs, self._conflict, self._premise, self._answers = {}, {}, {}, {}
         self._dead, self._notes = None, None
         self.requests = {}
+        self._prefetched = {}
 
-    def lean(self, kind, **fields):
-        from .readings_route import run_lean
-        [row] = run_lean([{"id": kind, "kind": kind, "environment": self.product.environment,
-                           "document": self.product.document, "component": self.name, **fields}])
+    def _case(self, kind, **fields):
+        return {"id": kind, "kind": kind, "environment": self.product.environment,
+                "document": self.product.document, "component": self.name, **fields}
+
+    @staticmethod
+    def _checked(row, kind):
         if row.get("status") != "ok":
             raise CheckerUnavailable(f"ReadingsConformance: Lean refused the {kind} case Python built: "
                                      f"{row.get('error')}")
         return row
+
+    def lean(self, kind, **fields):
+        from .readings_route import run_lean
+        [row] = run_lean([self._case(kind, **fields)])
+        return self._checked(row, kind)
 
     def frame(self, case):
         finding = (self.row.get("finding") or {}).get("text")
@@ -301,10 +309,24 @@ class Components:
 
     # -- the questions
 
+    def _prefetch_choices(self):
+        """Ask for every filled choice's elaboration together, in the order the serial route uses."""
+        from .readings_route import run_lean
+        pending = [(part, choice) for part in self.parts if part.completion
+                   for choice in part.choices or []
+                   if part._key(choice) not in part._docs and part._key(choice) not in part._prefetched]
+        if not pending:
+            return
+        cases = [part._case("readings-choice", choice=part.choice_json(choice),
+                            inner={"kind": "norm-defaults-elaborate"}) for part, choice in pending]
+        for (part, choice), row in zip(pending, run_lean(cases)):
+            part._prefetched[part._key(choice)] = row
+
     def conflict_answer(self):
         """The conflict question: every case's packages, then a witness for every choice Lean leaves without
         CONFLICT-FREE (`readings-choice`'s order of 4.3), every case in one request."""
         if "conflict" not in self._answers:
+            self._prefetch_choices()
             for part in self.parts:
                 for choice in part.choices or []:
                     case = part._choice(choice).conflict_case()
