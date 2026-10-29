@@ -1,0 +1,84 @@
+{
+ "item": "qt-a3c (fix round 1, F1)",
+ "how": "uv run python tools/mutants.py docs/quantities/qt-a3c/mutants-fix1.json --no-baseline --evidence docs/quantities/qt-a3c/evidence/mutants-fix1-run.json, after a passing build with the build pinned. A command that runs a test first rebuilds ve_service with the mutant and pins that build for the run only (lean/checkers.lock is copied back; a suite test runs with VE_LEAN_PREBUILT, as the mutant also fails the proofs and guards the suite's own build checks), and exits 1 only when the named test is in pytest's FAILED summary; the harness restores the mutated file's exact bytes.",
+ "mutants": [
+  {
+   "id": "regions-rescan",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "the runner's erasure reads the region structure computed once (F1): each premise's erasure rescanning the problem (`CFormula.erase E (c :: ps)`, the base) makes three times the request cost more than five times the CPU",
+   "find": "ps.map (fun p _ => p.eraseBy E R.predsOn)",
+   "replace": "ps.map (fun p _ => p.erase E (c :: ps))",
+   "command": [
+    "bash",
+    "-c",
+    "set -u; cd lean && PATH=$HOME/.elan/bin:$PATH lake build ve_service >/dev/null || exit 0; cd .. && T=$(mktemp) && cp lean/checkers.lock $T && PATH=$HOME/.elan/bin:$PATH uv run python tools/regen_generated.py --write --only checker-pins >/dev/null; PATH=$HOME/.elan/bin:$PATH uv run --frozen python -m pytest tools/bench/test_perf.py -k cardinality_region -q -p no:cacheprovider > $T.log 2>&1; cp $T lean/checkers.lock; tail -n 3 $T.log; grep -q 'FAILED tools/bench/test_perf.py::test_cardinality_region_structure_once' $T.log && exit 1; exit 0"
+   ],
+   "test": "tools/bench/test_perf.py::test_cardinality_region_structure_once"
+  },
+  {
+   "id": "charge-keeps",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "the charge keeps each formula it builds, and the answer and the replay read that list (F1 sweep d)",
+   "find": "(acc.1 + VE.Order.Wire.formulaNodes f.erase, f :: acc.2)",
+   "replace": "(acc.1 + VE.Order.Wire.formulaNodes f.erase, acc.2)",
+   "command": [
+    "bash",
+    "-c",
+    "set -u; cd lean && PATH=$HOME/.elan/bin:$PATH lake build ve_service >/dev/null || exit 0; cd .. && T=$(mktemp) && cp lean/checkers.lock $T && PATH=$HOME/.elan/bin:$PATH uv run python tools/regen_generated.py --write --only checker-pins >/dev/null; VE_LEAN_PREBUILT=1 VE_NATIVE_PREBUILT=1 PATH=$HOME/.elan/bin:$PATH uv run --frozen python -m pytest tests/test_cardinality_service.py -q -p no:cacheprovider > $T.log 2>&1; cp $T lean/checkers.lock; tail -n 3 $T.log; grep -q 'FAILED tests/test_cardinality_service.py::test_route_cases_answer_as_recorded' $T.log && exit 1; exit 0"
+   ],
+   "test": "tests/test_cardinality_service.py::test_route_cases_answer_as_recorded (fa1-claimed, fa1-certificate)"
+  },
+  {
+   "id": "charge-keeps-proof",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "the erased problem the charge built is erasedProblem (checkedProblem_eq)",
+   "find": "(acc.1 + VE.Order.Wire.formulaNodes f.erase, f :: acc.2)",
+   "replace": "(acc.1 + VE.Order.Wire.formulaNodes f.erase, acc.2)",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunTheorems"
+   ],
+   "test": "VE/Cardinality/RunTheorems.lean charge_snd, checkedProblem_eq"
+  },
+  {
+   "id": "preds-row",
+   "file": "lean/VE/Cardinality/Regions.lean",
+   "claim": "the region structure's predicates are predsOn's (regionData_predsOn)",
+   "find": "  | some e => e.2\n  | none => []",
+   "replace": "  | some e => e.2.reverse\n  | none => []",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Theorems"
+   ],
+   "test": "VE/Cardinality/Theorems.lean regionData_predsOn"
+  },
+  {
+   "id": "preds-row-service",
+   "file": "lean/VE/Cardinality/Regions.lean",
+   "claim": "the runner's region table is the regenerated one (the answer does not change) (regionData_predsOn's proof, which fails on this mutant (preds-row), is replaced by sorry for the run and restored)",
+   "find": "  | some e => e.2\n  | none => []",
+   "replace": "  | some e => e.2.reverse\n  | none => []",
+   "command": [
+    "bash",
+    "-c",
+    "set -u; python3 -c \"import pathlib, re; p = pathlib.Path('lean/VE/Cardinality/Theorems.lean'); s = p.read_text(); p.write_text(re.sub(r'(theorem regionData_predsOn .*?:= by\\n).*?(\\ntheorem regionData_sorts)', lambda m: m.group(1) + '  sorry\\n' + m.group(2), s, flags=re.S))\" && cd lean && PATH=$HOME/.elan/bin:$PATH lake build ve_service >/dev/null || { cd .. ; git checkout -- lean/VE/Cardinality/Theorems.lean; exit 0; }; cd .. && T=$(mktemp) && cp lean/checkers.lock $T && PATH=$HOME/.elan/bin:$PATH uv run python tools/regen_generated.py --write --only checker-pins >/dev/null; VE_LEAN_PREBUILT=1 VE_NATIVE_PREBUILT=1 PATH=$HOME/.elan/bin:$PATH uv run --frozen python -m pytest tests/test_cardinality_service.py -q -p no:cacheprovider > $T.log 2>&1; cp $T lean/checkers.lock; git checkout -- lean/VE/Cardinality/Theorems.lean; tail -n 3 $T.log; grep -q 'FAILED tests/test_cardinality_service.py::test_route_cases_answer_as_recorded' $T.log && exit 1; exit 0"
+   ],
+   "test": "tests/test_cardinality_service.py::test_route_cases_answer_as_recorded (fa1-claimed)"
+  },
+  {
+   "id": "elab-once",
+   "file": "lean/VE/Cardinality/Regions.lean",
+   "claim": "CEnv.elab reads its region table (elab_declared, regionSum_typed)",
+   "find": "if table.any (·.1 == c) then some (.qty dl)",
+   "replace": "if table.all (·.1 == c) then some (.qty dl)",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.Theorems"
+   ],
+   "test": "VE/Cardinality/Theorems.lean regionSum_typed, elab_declared"
+  }
+ ]
+}

@@ -131,6 +131,7 @@ import VE.Numbers.Examples
 import VE.Numbers.Phrases
 import VE.Scales.Examples
 import VE.Cardinality.Examples
+import VE.Cardinality.Gate
 import VE.Cardinality.Run
 import VE.Cardinality.RunExamples
 import VE.Cardinality.RunTheorems

@@ -5,6 +5,7 @@ import VE.Acts.LexicalExamples
 import VE.Norms.Run
 import VE.Words.Situation
 import VE.NormDefaults.Run
+import VE.Readings.ActsExamples
 
 /-! act-phrases AP-1, the profile part (ap-1b): `acts@0` documents through the norms decoder, the environment
 mode, the family route and Lean's English (spec 2.1, 2.8, 3.1-3.3, 4.4; fixtures A1-A3, A5, A6, A19 of 11.1).
@@ -167,9 +168,9 @@ def core0 := frozen "ve.core@0" ("profile", .str "relational-fol@0") "ve-v0-draf
 /-! ### 4.4: the environment mode and the family route gate `acts@0` by its row first -/
 
 #guard err (VE.Service.Standalone.validatedComposedEnvironment envA) == "ok"
--- the row admits the readings route, whose decoder does not read `acts@0` yet (ap-1bb): it refuses the profile
+-- the row admits the readings route, whose decoder reads `acts@0` (ap-1bd; its refusals in section "ap-1bd")
 #guard err (VE.Service.Standalone.validatedComposedEnvironment (envA ["acts@0", "norms@0", "readings@1",
-  "relational-fol@0"])) == "UnsupportedProfile: Unsupported profile acts@0"
+  "relational-fol@0"])) == "ok"
 #guard err (VE.Service.Standalone.validatedComposedEnvironment (envA ["acts@0", "norms@0", "relational-fol@0",
   "soft-norms@0"])) == "UnsupportedProfile: acts@0 with soft-norms@0 is not implemented"
 #guard err (VE.Service.Standalone.validatedComposedEnvironment (envA ["acts@0", "relational-fol@0"])) ==
@@ -407,5 +408,48 @@ def unspecPlain : List (String × Json) := [("heard", pred ["person"] [("role", 
 #guard members (ndRow (env ndP unspecPlain)) == some ["background", "conflict_targets", "document_hash",
   "environment_id", "fill", "fill_hash", "fill_labels", "filled_environment_id", "fragment", "fragment_fill", "id",
   "order", "premises", "reached", "status", "unsaid", "unspecified", "wordings"]
+
+/-! ### ap-1bd: typing, the model path and the readings route read `acts@0` (`Standalone.regulatedOf`, `actsRead`;
+`Readings.Wire.singleActsOnly`, D-33: the readings route's own in `VE.Readings.ActsExamples`) -/
+
+def typed (j : Json) (ast : Json := Json.arr #[.str "top"]) : String :=
+  err (VE.Service.Standalone.checkCase (Json.mkObj [("id", .str "c"), ("environment", j), ("ast", ast)]))
+def every (sort p : String) : Json :=
+  toJson [toJson "forall", toJson sort, toJson [toJson "unary", toJson p, toJson [toJson "var", toJson 0]]]
+-- typing reads the environment: with and without `norm-defaults@0`, and a formula on a plain act's predicate
+#guard [typed envA, typed (envA ndP), typed envA (every "person" "paid")] == ["ok", "ok", "ok"]
+#guard typed envA (every "case" "paid") == "TypeMismatch: Predicate 'paid' expects ('person',), received ('case',)"
+-- refused: without `acts@0` as today, an unsorted list as the base refuses it, the row's refusals first
+#guard typed (envA ["norms@0", "relational-fol@0"]) == "InvalidInput: invalid regulated fields for heard"
+#guard unsorted.all fun ps => typed (envA ps) == sortedRefusal
+#guard typed (envA ["acts@0", "closure@0", "norms@0", "relational-fol@0"]) ==
+  "UnsupportedProfile: acts@0 on the closure family is not implemented"
+#guard typed (envA ["acts@0", "relational-fol@0"]) == "UnsupportedProfile: acts@0 requires norms@0"
+#guard typed (envA ["acts@0"]) == "UnsupportedProfile: Missing profile relational-fol@0"
+-- the act check is `acts@0`'s, with the block's fixed phrases: A1 without them joins acts; 400 bytes and one past
+#guard typed (env actsP [("heard", pred ["person", "case"] (plain a1 "is entitled"))]) ==
+  "InvalidInput: act phrase for heard joins acts with 'and' outside a fixed phrase"
+#guard [typed (permEnv actsP VE.Acts.LexicalExamples.a21), typed (permEnv actsP (ab 132 " a"))] ==
+  ["ok", "ResourceLimit: act phrase for p is over 400 bytes"]
+
+-- the model path: a model is checked against the profile pair of an obligation whose act is `acts@0`'s (97 B)
+def modelled (j : Json) (rels : List (String × Json)) : String :=
+  err (VE.Service.Standalone.modelCase (Json.mkObj [("id", .str "m"), ("environment", j), ("model", Json.mkObj [
+    ("complete", .bool true), ("domains", Json.mkObj [("person", toJson ["p"]), ("case", toJson ["c"])]),
+    ("constants", Json.mkObj []), ("relations", Json.mkObj rels)])]))
+def dualEnv := env actsP dual (some (block fxs))
+#guard modelled envA [("heard", Json.arr #[]), ("paid", toJson [["p"]]), ("protected", Json.arr #[])] == "ok"
+#guard modelled dualEnv [("must_hear", toJson [["p", "c"]]), ("may_hear", toJson [["p", "c"]])] == "ok"
+#guard modelled dualEnv [("must_hear", toJson [["p", "c"]]), ("may_hear", Json.arr #[])] ==
+  "InvalidModel(profile): required relation must_hear exceeds permission may_hear"
+#guard modelled (permEnv ["norms@0", "relational-fol@0"] (ab 26)) [("p", Json.arr #[])] ==
+  "InvalidInput: invalid act phrase for p"
+-- the family routes' Background holds that pair's profile premise
+#guard ((decodeA dualEnv).toOption.bind fun ne => (VE.Service.Standalone.folBackground dualEnv ne.rv).toOption.map
+  fun bg => (bg.filter (·.2 == "profile")).length) == some 1
+
+-- the environment mode gives the readings route's D-33 (its fixtures in `VE.Readings.ActsExamples`)
+#guard err (VE.Service.Standalone.validatedComposedEnvironment (VE.Readings.ActsExamples.env [("p", "plain", a5)])) ==
+  VE.Readings.ActsExamples.d33 "p"
 
 end VE.Service.ActsExamples
