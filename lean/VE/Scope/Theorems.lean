@@ -560,6 +560,86 @@ theorem label_reach_iff (D : SDoc) (hd : (D.layout.map (·.id)).Nodup) (i : Stri
     (hc : covered D (.label i) = .ok us) (u : String) : u ∈ us ↔ VE.Layout.ItemUnit D.layout i u :=
   VE.Layout.itemRun_iff D.layout hd i us hc u
 
+/-! Stable merge sort commutes with retaining any subset. `mergeSort_cons` identifies its stable insertion point. -/
+def insertBy (le : α → α → Bool) (a : α) : List α → List α
+  | [] => [a]
+  | b :: bs => if le a b then a :: b :: bs else b :: insertBy le a bs
+#guard insertBy (fun x y : Nat × String => decide (x.1 ≤ y.1)) (1, "early")
+  [(1, "later"), (2, "tail")] == [(1, "early"), (1, "later"), (2, "tail")]
+#guard insertBy (fun x y : Nat × String => decide (x.1 ≤ y.1)) (1, "solo") [] == [(1, "solo")]
+theorem insertBy_head (le : α → α → Bool) (a : α) (ys : List α)
+    (h : ∀ b ∈ ys, le a b) : insertBy le a ys = a :: ys := by
+  cases ys with
+  | nil => rfl
+  | cons b bs => simp [insertBy, h b (by simp)]
+theorem insertBy_split (le : α → α → Bool) (a : α) :
+    ∀ (l₁ l₂ : List α), (∀ b ∈ l₁, !le a b) → (∀ b ∈ l₂, le a b) →
+      insertBy le a (l₁ ++ l₂) = l₁ ++ a :: l₂
+  | [], l₂, _, h₂ => by simp [insertBy_head le a l₂ h₂]
+  | b :: bs, l₂, h₁, h₂ => by
+      have hb := h₁ b (by simp)
+      have ht : ∀ c ∈ bs, !le a c := fun c hc => h₁ c (by simp [hc])
+      have hab : le a b = false := by cases hc : le a b <;> simp_all
+      simp [insertBy, hab, insertBy_split le a bs l₂ ht h₂]
+theorem mergeSort_cons_insert {le : α → α → Bool}
+    (trans : ∀ a b c, le a b → le b c → le a c)
+    (total : ∀ a b, le a b || le b a) (a : α) (l : List α) :
+    List.mergeSort (a :: l) le = insertBy le a (List.mergeSort l le) := by
+  obtain ⟨l₁, l₂, h₁, h₂, h₃⟩ := List.mergeSort_cons trans total a l
+  have hs := List.sorted_mergeSort trans total (a :: l)
+  rw [h₁] at hs
+  have hs' : (a :: l₂).Pairwise (fun x y => le x y = true) := (List.pairwise_append.mp hs).2.1
+  have h₄ : ∀ b ∈ l₂, le a b := fun b hb => List.rel_of_pairwise_cons hs' hb
+  rw [h₁, h₂]
+  exact (insertBy_split le a l₁ l₂ h₃ h₄).symm
+theorem insertBy_filter {le : α → α → Bool}
+    (trans : ∀ a b c, le a b → le b c → le a c)
+    (a : α) (p : α → Bool) : ∀ (ys : List α), ys.Pairwise (fun x y => le x y = true) →
+      (insertBy le a ys).filter p = if p a then insertBy le a (ys.filter p) else ys.filter p
+  | [], _ => by cases h : p a <;> simp [insertBy, h]
+  | b :: bs, hs => by
+    have hbs : bs.Pairwise (fun x y => le x y = true) := hs.tail
+    by_cases hab : le a b = true
+    · have ha : ∀ c ∈ b :: bs, le a c := by
+        intro c hc
+        rcases List.mem_cons.mp hc with rfl | hc
+        · exact hab
+        · exact trans a b c hab (List.rel_of_pairwise_cons hs hc)
+      have haf : ∀ c ∈ (b :: bs).filter p, le a c := by
+        intro c hc
+        exact ha c ((List.mem_filter.mp hc).1)
+      simp only [insertBy, hab, ite_true, insertBy_head le a _ haf]
+      cases hpa : p a <;> simp [hpa]
+    · have hi := insertBy_filter trans a p bs hbs
+      have habf : le a b = false := by cases hc : le a b <;> simp_all
+      simp only [insertBy, habf, ite_false]
+      cases hpa : p a <;> cases hpb : p b <;> simp [hpa, hpb, hi, insertBy, habf]
+/-- Stable sorting commutes with a filter for a total transitive comparison. -/
+theorem filter_mergeSort {le : α → α → Bool}
+    (trans : ∀ a b c, le a b → le b c → le a c)
+    (total : ∀ a b, le a b || le b a) (p : α → Bool) :
+    ∀ l : List α, (List.mergeSort l le).filter p = List.mergeSort (l.filter p) le
+  | [] => by simp
+  | a :: l => by
+    rw [mergeSort_cons_insert trans total, insertBy_filter trans a p _
+      (List.sorted_mergeSort trans total l), filter_mergeSort trans total p l]
+    cases h : p a with
+    | false => simp [h]
+    | true => simp [h, mergeSort_cons_insert trans total]
+/-- Removing governors before sorting preserves the relative order of the retained governors. -/
+theorem ordered_filter (D : SDoc) (p : Governor → Bool) :
+    (ordered D).filter p = ordered { D with governors := D.governors.filter p } := by
+  let le : Governor → Governor → Bool := fun g h => classOf g.reach < classOf h.reach ||
+    (classOf g.reach == classOf h.reach && position D g.unit ≤ position D h.unit)
+  have ht : ∀ a b c : Governor, le a b → le b c → le a c := by
+    intro a b c hab hbc
+    simp only [le, Bool.or_eq_true, Bool.and_eq_true, beq_iff_eq, decide_eq_true_eq] at *
+    omega
+  have htotal : ∀ a b : Governor, le a b || le b a := by
+    intro a b
+    simp only [le, Bool.or_eq_true, Bool.and_eq_true, beq_iff_eq, decide_eq_true_eq]
+    omega
+  simpa [ordered, le, position] using filter_mergeSort ht htotal p D.governors
 end Govern
 
 /-! ## Spec 5.1's statements on a well-formed document (sc-1ae, the DRI's fix (a) of 2026-10-27)
@@ -1080,6 +1160,84 @@ theorem unitsOf_patch (D : SDoc) (hw : JsonWF D.doc) (comp : List (String × Jso
     rfl
   | _ => rw [setObjVal_null _ (by simp)]; rfl
 
+section PatchIdentity
+open Std.DTreeMap.Internal Std.DTreeMap.Internal.Impl
+/-- Rebalancing an already balanced node without changing its children leaves it unchanged. -/
+theorem balanceR_id (sz : Nat) (k : String) (v : Json) (l r : Impl String (fun _ => Json))
+    (hb : Balanced (.inner sz k v l r)) :
+    balanceR! k v l r = .inner sz k v l r := by
+  cases l <;> cases r
+  all_goals simp [balanceR!, balanced_inner_iff, BalancedAtRoot, size, delta] at *
+  all_goals try omega
+  all_goals try grind
+  case leaf.inner =>
+    rename_i szr kr vr lr rr
+    cases lr <;> cases rr <;> simp_all [balanceR!, balanced_inner_iff, BalancedAtRoot, size, delta] <;> omega
+theorem balanceL_id (sz : Nat) (k : String) (v : Json) (l r : Impl String (fun _ => Json))
+    (hb : Balanced (.inner sz k v l r)) :
+    balanceL! k v l r = .inner sz k v l r := by
+  cases l <;> cases r
+  all_goals simp [balanceL!, balanced_inner_iff, BalancedAtRoot, size, delta] at *
+  all_goals try omega
+  all_goals try grind
+  case inner.leaf =>
+    rename_i szl kl vl ll rl
+    cases ll <;> cases rl <;> simp_all [balanceL!, balanced_inner_iff, BalancedAtRoot, size, delta] <;> omega
+theorem insert_same (t : Impl String (fun _ => Json)) (hb : Balanced t) (k : String) (v : Json)
+    (h : Const.get? t k = some v) : insert! k v t = t := by
+  induction t with
+  | leaf => simp [Const.get?] at h
+  | inner sz k' v' l r ihl ihr =>
+    have hbal := (balanced_inner_iff.mp hb)
+    simp only [Const.get?, insert!] at h ⊢
+    cases hc : compare k k' with
+    | lt =>
+      simp only [hc] at h ⊢
+      rw [ihl hbal.1 h, balanceL_id sz k' v' l r hb]
+    | gt =>
+      simp only [hc] at h ⊢
+      rw [ihr hbal.2.1 h, balanceR_id sz k' v' l r hb]
+    | eq =>
+      simp only [hc, Option.some.injEq] at h ⊢
+      have hk : k = k' := Std.LawfulEqCmp.compare_eq_iff_eq.mp hc
+      subst k
+      subst v'
+      rfl
+/-- Inserting the existing value into a well-formed raw object preserves its representation. -/
+theorem raw_insert_same (t : Std.TreeMap.Raw String Json) (hw : t.WF)
+    (k : String) (v : Json) (h : t.get? k = some v) : t.insert k v = t := by
+  cases t with
+  | mk inner =>
+    have hb := Std.DTreeMap.Internal.Impl.WF.balanced hw.out.out
+    simp only [Std.TreeMap.Raw.get?, Std.TreeMap.Raw.insert, Std.DTreeMap.Raw.insert] at h ⊢
+    change Const.get? inner.inner k = some v at h
+    rw [insert_same inner.inner hb k v h]
+/-- With a well-formed top-level object and an existing units array, an empty patch is identity as a Lean value. -/
+theorem patch_nil_of_units (D : SDoc) (hw : JsonWF D.doc) (xs : Array Json)
+    (h : D.doc.getObjVal? "units" = .ok (.arr xs)) : patch D [] = D.doc := by
+  cases hd : D.doc with
+  | obj t =>
+    have ht := jsonWF_top _ hw t hd
+    have hget : t.get? "units" = some (.arr xs) := by
+      simp only [hd, Json.getObjVal?, Std.TreeMap.Raw.get?_eq_getElem?] at h ⊢
+      cases he : t["units"]? with
+      | none => simp [he] at h
+      | some v =>
+        simp only [he] at h
+        change Except.ok v = Except.ok (.arr xs) at h
+        cases h
+        simpa using he
+    have hu : unitsOf D.doc = xs.toList := by
+      simp [unitsOf, Json.getObjValD, h, Except.toOption, Option.getD]
+    simp only [patch, List.lookup_nil]
+    rw [hu]
+    have hm : (xs.toList.map fun u => u) = xs.toList := by simp
+    rw [hm, Array.toArray_toList]
+    rw [hd]
+    exact congrArg Json.obj (raw_insert_same t ht "units" (.arr xs) hget)
+  | _ => simp [hd, Json.getObjVal?] at h
+end PatchIdentity
+
 theorem lookup_mem {β : Type} (k : String) (b : β) : ∀ (l : List (String × β)), l.lookup k = some b → (k, b) ∈ l
   | [], h => by cases h
   | (k', b') :: l, h => by
@@ -1189,6 +1347,358 @@ theorem govern_preserves (D : SDoc) (hw : JsonWF D.doc) (out : Json) (ho : gover
       exact absurd (comp_entry D comp hc _ o' hm).1 hn
     · exact ⟨fun _ _ => rfl, fun _ => rfl⟩
 
+/-! A title affects admission but never the computed rule or graph effect. -/
+theorem firstDup_none_nodup : ∀ l : List String, firstDup l = none → l.Nodup
+  | [], _ => .nil
+  | x :: xs, h => by
+    unfold firstDup at h
+    split at h
+    · cases h
+    · rename_i hc
+      exact List.nodup_cons.mpr ⟨by simpa using hc, firstDup_none_nodup xs h⟩
+set_option maxHeartbeats 1200000 in
+theorem admitted_ids_nodup (D : SDoc) (h : admitBlock D = .ok ()) :
+    (D.governors.map (·.id)).Nodup := by
+  unfold admitBlock at h
+  generalize hA : (forIn D.governors PUnit.unit _ : Except String PUnit) = A at h
+  generalize hB : (forIn D.governors PUnit.unit _ : Except String PUnit) = B at h
+  simp only [bind, Except.bind, pure, Except.pure] at h
+  repeat (split at h; · cases h)
+  apply firstDup_none_nodup
+  cases hd : firstDup (D.governors.map (·.id)) with
+  | none => rfl
+  | some x => exact False.elim (by solve_by_elim)
+theorem id_unique (gs : List Governor) (hd : (gs.map (·.id)).Nodup)
+    (x g : Governor) (hx : x ∈ gs) (hg : g ∈ gs) (he : x.id = g.id) : x = g := by
+  induction gs with
+  | nil => cases hx
+  | cons y ys ih =>
+    simp only [List.map_cons, List.nodup_cons] at hd
+    rcases List.mem_cons.mp hx with rfl | hx
+    · rcases List.mem_cons.mp hg with h | hg
+      · exact h.symm
+      · exact False.elim (hd.1 (List.mem_map.mpr ⟨g, hg, he.symm⟩))
+    · rcases List.mem_cons.mp hg with h | hg
+      · subst g
+        exact False.elim (hd.1 (List.mem_map.mpr ⟨x, hx, he⟩))
+      · exact ih hd.2 hx hg
+theorem filter_drop_title (gs : List Governor) (hd : (gs.map (·.id)).Nodup)
+    (g : Governor) (hg : g ∈ gs) (q : Governor → Bool) (hq : q g = false) :
+    (gs.filter (·.id != g.id)).filter q = gs.filter q := by
+  simp only [List.filter_filter]
+  apply List.filter_congr
+  intro x hx
+  by_cases he : x.id = g.id
+  · have hxe := id_unique gs hd x g hx hg he
+    subst x
+    simp [hq]
+  · simp [he]
+theorem frameOn_drop (D : SDoc) (g : Governor) (hg : g ∈ D.governors) (ht : g.effect = .title)
+    (hd : (D.governors.map (·.id)).Nodup) (u : String) :
+    frameOn {D with governors := D.governors.filter (·.id != g.id)} u = frameOn D u := by
+  unfold frameOn
+  change ((D.governors.filter (·.id != g.id)).filter
+    (fun x => isFrame x.effect && ((coveredLayout D x.reach).toOption.getD []).contains u)) = _
+  exact filter_drop_title D.governors hd g hg _ (by simp [ht, isFrame])
+theorem baseObj_drop (D : SDoc) (g : Governor) (hg : g ∈ D.governors) (ht : g.effect = .title)
+    (hd : (D.governors.map (·.id)).Nodup) (u : String) :
+    baseObj {D with governors := D.governors.filter (·.id != g.id)} u = baseObj D u := by
+  simp only [baseObj, frameOn_drop D g hg ht hd]
+theorem covered_drop (D : SDoc) (g : Governor) (hg : g ∈ D.governors) (ht : g.effect = .title)
+    (hd : (D.governors.map (·.id)).Nodup) (r : Reach) :
+    covered {D with governors := D.governors.filter (·.id != g.id)} r = covered D r := by
+  cases r <;> simp only [covered, coveredLayout, ruleUnits, baseName, baseObj_drop D g hg ht hd]
+theorem ordered_drop_active (D : SDoc) (g : Governor) (hg : g ∈ D.governors)
+    (hd : (D.governors.map (·.id)).Nodup) (q : Governor → Bool) (hq : q g = false) :
+    (ordered {D with governors := D.governors.filter (·.id != g.id)}).filter q =
+      (ordered D).filter q := by
+  rw [← ordered_filter D (·.id != g.id)]
+  have hd' : ((ordered D).map (·.id)).Nodup := by
+    exact ((List.mergeSort_perm D.governors _).map (·.id)).nodup_iff.mpr hd
+  exact filter_drop_title (ordered D) hd' g ((mem_ordered D g).mpr hg) q hq
+theorem coversU_drop (D : SDoc) (g : Governor) (hg : g ∈ D.governors) (ht : g.effect = .title)
+    (hd : (D.governors.map (·.id)).Nodup) (x : Governor) (u : String) :
+    coversU {D with governors := D.governors.filter (·.id != g.id)} x u = coversU D x u := by
+  simp only [coversU, covered_drop D g hg ht hd]
+theorem governorsOf_drop (D : SDoc) (g : Governor) (hg : g ∈ D.governors) (ht : g.effect = .title)
+    (hd : (D.governors.map (·.id)).Nodup) (u : String) :
+    governorsOf {D with governors := D.governors.filter (·.id != g.id)} u = governorsOf D u := by
+  unfold governorsOf
+  simp only [coversU_drop D g hg ht hd]
+  exact ordered_drop_active D g hg hd _ (by simp [ht, unary])
+theorem composed_drop (D : SDoc) (g : Governor) (hg : g ∈ D.governors) (ht : g.effect = .title)
+    (hd : (D.governors.map (·.id)).Nodup) (u : String) :
+    composed {D with governors := D.governors.filter (·.id != g.id)} u = composed D u := by
+  simp only [composed, governorsOf_drop D g hg ht hd, baseObj_drop D g hg ht hd]
+theorem orderCheck_drop (D : SDoc) (g : Governor) (hg : g ∈ D.governors) (ht : g.effect = .title)
+    (hd : (D.governors.map (·.id)).Nodup) :
+    orderCheck {D with governors := D.governors.filter (·.id != g.id)} = orderCheck D := by
+  simp only [orderCheck, governorsOf_drop D g hg ht hd]
+theorem any_drop_title (gs : List Governor) (hd : (gs.map (·.id)).Nodup)
+    (g : Governor) (hg : g ∈ gs) (q : Governor → Bool) (hq : q g = false) :
+    (gs.filter (·.id != g.id)).any q = gs.any q := by
+  have heq : ((gs.filter (·.id != g.id)).any q = true) ↔ (gs.any q = true) := by
+    simp only [List.any_eq_true, List.mem_filter]
+    constructor
+    · rintro ⟨x, ⟨hx, -⟩, hqx⟩
+      exact ⟨x, hx, hqx⟩
+    · rintro ⟨x, hx, hqx⟩
+      by_cases he : x.id = g.id
+      · have xe := id_unique gs hd x g hx hg he
+        subst x
+        simp [hq] at hqx
+      · exact ⟨x, ⟨hx, by simp [he]⟩, hqx⟩
+  cases h₁ : (gs.filter (·.id != g.id)).any q <;> cases h₂ : gs.any q <;> simp_all [heq]
+theorem affected_drop (D : SDoc) (g : Governor) (hg : g ∈ D.governors) (ht : g.effect = .title)
+    (hd : (D.governors.map (·.id)).Nodup) :
+    affected {D with governors := D.governors.filter (·.id != g.id)} = affected D := by
+  unfold affected
+  simp only [ruleUnits, frameOn_drop D g hg ht hd, governorsOf_drop D g hg ht hd]
+  congr 1
+  funext u
+  simp only [coversU_drop D g hg ht hd]
+  exact congrArg (fun b => isPart (contentOf D.doc u) || !(frameOn D u).isEmpty ||
+    !(governorsOf D u).isEmpty || b)
+    (any_drop_title D.governors hd g hg _ (by simp [ht]))
+theorem edgesOf_drop (D : SDoc) (g : Governor) (hg : g ∈ D.governors) (ht : g.effect = .title)
+    (hd : (D.governors.map (·.id)).Nodup) (rule : String → Option VE.SoftNorms.SoftNode)
+    (x : Governor) :
+    edgesOf {D with governors := D.governors.filter (·.id != g.id)} rule x = edgesOf D rule x := by
+  simp only [edgesOf, covered_drop D g hg ht hd]
+theorem edgesInto_drop (D : SDoc) (g : Governor) (hg : g ∈ D.governors) (ht : g.effect = .title)
+    (hd : (D.governors.map (·.id)).Nodup) (rule : String → Option VE.SoftNorms.SoftNode)
+    (u : String) :
+    edgesInto {D with governors := D.governors.filter (·.id != g.id)} rule u = edgesInto D rule u := by
+  unfold edgesInto
+  rw [ordered_drop_active D g hg hd _ (by simp [ht, graph])]
+  have he : edgesOf {D with governors := D.governors.filter (·.id != g.id)} rule = edgesOf D rule := by
+    funext x
+    exact edgesOf_drop D g hg ht hd rule x
+  rw [he]
+theorem ruleTable_drop (D : SDoc) (g : Governor) (hg : g ∈ D.governors) (ht : g.effect = .title)
+    (hd : (D.governors.map (·.id)).Nodup) :
+    ruleTable {D with governors := D.governors.filter (·.id != g.id)} = ruleTable D := by
+  unfold ruleTable
+  rw [ordered_drop_active D g hg hd _ (by simp [ht, graph])]
+  simp only [ruleUnits, coversU_drop D g hg ht hd, composed_drop D g hg ht hd]
+theorem forIn_filter_ok {α ε : Type} (f : α → PUnit.{1} → Except ε (ForInStep PUnit.{1}))
+    (hf : ∀ x r, f x PUnit.unit = .ok r → r = .yield PUnit.unit)
+    (xs : List α) (p : α → Bool) (r : PUnit.{1}) (h : forIn xs PUnit.unit f = .ok r) :
+    forIn (xs.filter p) PUnit.unit f = .ok PUnit.unit := by
+  cases r
+  rw [VE.NormDefaults.forIn_unit_ok f hf xs] at h
+  rw [VE.NormDefaults.forIn_unit_ok f hf (xs.filter p)]
+  intro x hx
+  exact h x (List.mem_filter.mp hx).1
+theorem firstDup_none_iff : ∀ l : List String, firstDup l = none ↔ l.Nodup
+  | [] => by simp [firstDup]
+  | x :: xs => by
+    by_cases hx : x ∈ xs <;> simp [firstDup, hx, firstDup_none_iff xs, List.nodup_cons]
+theorem map_filter_id (gs : List Governor) (id : String) :
+  ((gs.filter (·.id != id)).map (·.id)) = (gs.map (·.id)).filter (· != id) := by
+  induction gs with
+  | nil => rfl
+  | cons x xs ih => cases hx : (x.id != id) <;> simp [hx, ih]
+set_option maxHeartbeats 1200000 in
+theorem admitBlock_drop (D : SDoc) (g : Governor) (hg : g ∈ D.governors) (ht : g.effect = .title)
+    (hd : (D.governors.map (·.id)).Nodup) (ha : admitBlock D = .ok ()) :
+    admitBlock {D with governors := D.governors.filter (·.id != g.id)} = .ok () := by
+  unfold admitBlock at ha
+  generalize hA : (forIn D.governors PUnit.unit _ : Except String PUnit) = A at ha
+  generalize hB : (forIn D.governors PUnit.unit _ : Except String PUnit) = B at ha
+  generalize hC : (forIn D.listNames PUnit.unit _ : Except String PUnit) = C at ha
+  generalize hK : VE.Layout.anchorsOk D.anchors (defSpans D) (VE.Discourse.unaryPred D.re.se.ne.rv.environment) = K at ha
+  simp only [bind, Except.bind, pure, Except.pure] at ha
+  repeat (split at ha; · cases ha)
+  have hAf := forIn_filter_ok _ (by
+    intro x r hx
+    split at hx
+    · injection hx with h; exact h.symm
+    · cases hx) D.governors (·.id != g.id) _ hA
+  have hBf := forIn_filter_ok _ (by
+    intro x r hx
+    simp only [bind, Except.bind, pure, Except.pure] at hx
+    repeat' split at hx
+    all_goals (try (cases hx; done))
+    all_goals (try (injection hx with hx; exact hx.symm))
+    all_goals (try rfl)) D.governors (·.id != g.id) _ hB
+  have hlen' : ¬ 256 < (D.governors.filter (·.id != g.id)).length := by
+    have := List.length_filter_le (·.id != g.id) D.governors
+    omega
+  have hdup' : firstDup ((D.governors.filter (·.id != g.id)).map (·.id)) = none := by
+    apply (firstDup_none_iff _).mpr
+    rw [map_filter_id]
+    exact hd.filter _
+  have hnameslen : ¬ 256 < D.listNames.length := by assumption
+  unfold admitBlock
+  simp only [covered_drop D g hg ht hd]
+  simp [hlen', hnameslen, hdup', hAf, hBf]
+  simp only [List.contains_iff_mem, bind, Except.bind, pure, Except.pure] at hAf
+  simp only [bind, Except.bind, pure, Except.pure, Functor.map] at ⊢
+  simp only [Except.map, throw, throwThe, MonadExceptOf.throw] at ⊢
+  rw [hAf]
+  simp only [Except.bind] at ⊢
+  have hcond : (D.governors.filter (·.id != g.id)).any
+      (fun x => !(conditions x.effect).isEmpty) =
+      D.governors.any (fun x => !(conditions x.effect).isEmpty) :=
+    any_drop_title D.governors hd g hg _ (by simp [ht, conditions])
+  simp only [hcond] at ⊢
+  have hreserved : (D.governors.any (fun x => !(conditions x.effect).isEmpty) &&
+      (vocabularyNames D).contains "own") = false := by
+    cases hh : (D.governors.any (fun x => !(conditions x.effect).isEmpty) &&
+      (vocabularyNames D).contains "own") with
+    | false => rfl
+    | true => exact False.elim (by solve_by_elim)
+  simp only [vocabularyNames] at hreserved ⊢
+  simp only [hreserved, Bool.false_eq_true, ↓reduceIte] at ⊢
+  simp only [bind, Except.bind, pure, Except.pure, Except.map, throw, throwThe, MonadExceptOf.throw] at hC
+  simp only [beq_iff_eq, List.contains_iff_mem, decide_eq_true_eq] at hC
+  rw [hC]
+  simp only [Except.bind] at ⊢
+  simp only [defSpans] at hK ⊢
+  rw [hK]
+  simp only [Except.bind] at ⊢
+  simp only [List.forIn_cons] at hBf
+  simp only [bind_assoc] at hBf
+  simpa only [bind, Except.bind, pure, Except.pure, Except.map, throw, throwThe, MonadExceptOf.throw, beq_iff_eq, List.contains_iff_mem, decide_eq_true_eq, Bool.or_eq_true] using hBf
+set_option maxHeartbeats 1200000 in
+theorem govern_drop_nonempty (D : SDoc) (g : Governor) (hg : g ∈ D.governors)
+    (ht : g.effect = .title) (hd : (D.governors.map (·.id)).Nodup)
+    (ha : admitBlock D = .ok ())
+    (hne' : (D.governors.filter (·.id != g.id)).isEmpty = false) :
+    govern {D with governors := D.governors.filter (·.id != g.id)} = govern D := by
+  have hne : D.governors.isEmpty = false := by
+    cases h : D.governors.isEmpty with
+    | false => rfl
+    | true => rw [List.isEmpty_iff.mp h] at hg; cases hg
+  have ha' := admitBlock_drop D g hg ht hd ha
+  unfold govern
+  simp only [ha, ha', hne, hne', Bool.false_eq_true, ↓reduceIte, bind, Except.bind,
+    pure, Except.pure]
+  rw [orderCheck_drop D g hg ht hd, affected_drop D g hg ht hd,
+    ruleTable_drop D g hg ht hd]
+  simp only [composed_drop D g hg ht hd]
+  simp only [edgesOf_drop D g hg ht hd, edgesInto_drop D g hg ht hd]
+  rw [ordered_drop_active D g hg hd _ (by simp [ht, graph])]
+  rfl
+theorem list_singleton_of_drop_empty (gs : List Governor) (g : Governor)
+    (hd : (gs.map (·.id)).Nodup) (hg : g ∈ gs)
+    (he : gs.filter (·.id != g.id) = []) : gs = [g] := by
+  induction gs with
+  | nil => cases hg
+  | cons x xs ih =>
+    simp only [List.map_cons, List.nodup_cons] at hd
+    have hx : x.id = g.id := by
+      by_cases hn : x.id = g.id
+      · exact hn
+      · have : x ∈ (x :: xs).filter (·.id != g.id) :=
+          List.mem_filter.mpr ⟨List.mem_cons_self, by simp [hn]⟩
+        rw [he] at this
+        cases this
+    have hxs : xs = [] := by
+      cases xs with
+      | nil => rfl
+      | cons y ys =>
+        have hxy : x.id ≠ y.id := by
+          intro eq
+          exact hd.1 (List.mem_map.mpr ⟨y, List.mem_cons_self, eq.symm⟩)
+        have hyneq : y.id ≠ g.id := by
+          intro eq
+          exact hxy (hx.trans eq.symm)
+        simp [hx, hyneq] at he
+    simp [hxs] at hg
+    subst x
+    simp [hxs]
+theorem affected_title_only (D : SDoc) (g : Governor) (hg : g ∈ D.governors)
+    (ht : g.effect = .title) (hd : (D.governors.map (·.id)).Nodup)
+    (he : D.governors.filter (·.id != g.id) = []) : affected D = partUnits D := by
+  have hs := list_singleton_of_drop_empty D.governors g hd hg he
+  simp [affected, partUnits, ruleUnits, frameOn, governorsOf, ordered, hs, ht,
+    isFrame, unary, graph]
+  apply List.filter_congr
+  intro u hu
+  cases h : isPart (contentOf D.doc u) <;> simp [h]
+set_option maxHeartbeats 1200000 in
+theorem partUnits_nil_title_success (D : SDoc) (g : Governor) (hg : g ∈ D.governors)
+    (ht : g.effect = .title) (hd : (D.governors.map (·.id)).Nodup)
+    (he : D.governors.filter (·.id != g.id) = []) (out : Lean.Json)
+    (ho : govern D = .ok out) : partUnits D = [] := by
+  obtain h | ⟨comp, t, hc, hr, hout⟩ := govern_ok D out ho
+  · rw [h.1] at hg; cases hg
+  · cases hp : partUnits D with
+    | nil => rfl
+    | cons u us =>
+      have hu : u ∈ partUnits D := by rw [hp]; simp
+      have hpart : isPart (contentOf D.doc u) = true := (List.mem_filter.mp hu).2
+      have hs := list_singleton_of_drop_empty D.governors g hd hg he
+      have hbase : baseObj D u = .error s!"ScopeOrphanPart: {u}" := by
+        simp [baseObj, frameOn, hs, ht, isFrame, hpart]
+      rw [affected_title_only D g hg ht hd he, hp, List.mapM_cons] at hc
+      simp [composed, hbase, bind, Except.bind] at hc
+set_option maxHeartbeats 1200000 in
+theorem admit_governor_unit (D : SDoc) (ha : admitBlock D = .ok ())
+    (g : Governor) (hg : g ∈ D.governors) : g.unit ∈ unitIds D.doc := by
+  unfold admitBlock at ha
+  generalize hA : (forIn D.governors PUnit.unit _ : Except String PUnit) = A at ha
+  generalize hB : (forIn D.governors PUnit.unit _ : Except String PUnit) = B at ha
+  generalize hC : (forIn D.listNames PUnit.unit _ : Except String PUnit) = C at ha
+  generalize hK : VE.Layout.anchorsOk D.anchors (defSpans D) (VE.Discourse.unaryPred D.re.se.ne.rv.environment) = K at ha
+  simp only [bind, Except.bind, pure, Except.pure] at ha
+  repeat (split at ha; · cases ha)
+  have hx := (VE.NormDefaults.forIn_unit_ok _ ?_ D.governors).mp hA g hg
+  · simp only at hx
+    split at hx
+    · rename_i h; exact (List.contains_iff_mem).mp h
+    · cases hx
+  · intro x r hx
+    split at hx
+    · injection hx with h; exact h.symm
+    · cases hx
+theorem units_array_of_mem (doc : Lean.Json) (u : String) (hu : u ∈ unitIds doc) :
+    ∃ xs, doc.getObjVal? "units" = .ok (.arr xs) := by
+  cases h : doc.getObjVal? "units" with
+  | error e => simp [unitIds, unitsOf, Lean.Json.getObjValD, Except.toOption, h] at hu
+  | ok j =>
+    cases j with
+    | arr xs => exact ⟨xs, rfl⟩
+    | null => simp [unitIds, unitsOf, Lean.Json.getObjValD, Except.toOption, h] at hu
+    | bool b => simp [unitIds, unitsOf, Lean.Json.getObjValD, Except.toOption, h] at hu
+    | num n => simp [unitIds, unitsOf, Lean.Json.getObjValD, Except.toOption, h] at hu
+    | str s => simp [unitIds, unitsOf, Lean.Json.getObjValD, Except.toOption, h] at hu
+    | obj kv => simp [unitIds, unitsOf, Lean.Json.getObjValD, Except.toOption, h] at hu
+set_option maxHeartbeats 1200000 in
+theorem title_only_out (D : SDoc) (g : Governor) (hg : g ∈ D.governors)
+    (ht : g.effect = .title) (hw : JsonWF D.doc)
+    (hd : (D.governors.map (·.id)).Nodup)
+    (he : D.governors.filter (·.id != g.id) = []) (out : Lean.Json)
+    (ho : govern D = .ok out) : out = D.doc := by
+  have hp := partUnits_nil_title_success D g hg ht hd he out ho
+  have hcomp : affected D = [] := by rw [affected_title_only D g hg ht hd he, hp]
+  have hout : out = patch D [] := by
+    obtain h | ⟨comp, t, hc, hr, hout⟩ := govern_ok D out ho
+    · rw [h.1] at hg; cases hg
+    · rw [hcomp] at hc
+      simp only [List.mapM_nil, pure, Except.pure, Except.ok.injEq] at hc
+      subst comp
+      simpa using hout
+  have hu := admit_governor_unit D (govern_admits D out ho) g hg
+  obtain ⟨xs, hxs⟩ := units_array_of_mem D.doc g.unit hu
+  rw [hout, patch_nil_of_units D hw xs hxs]
+set_option maxHeartbeats 1200000 in
+theorem title_identity (D : SDoc) (g : Governor) (hg : g ∈ D.governors)
+    (h : g.effect = .title) (hw : JsonWF D.doc) (out : Lean.Json)
+    (ho : govern D = .ok out) :
+    govern {D with governors := D.governors.filter (·.id != g.id)} = .ok out := by
+  have ha := govern_admits D out ho
+  have hd := admitted_ids_nodup D ha
+  cases he : (D.governors.filter (·.id != g.id)).isEmpty with
+  | false => rw [govern_drop_nonempty D g hg h hd ha he, ho]
+  | true =>
+    have he' := List.isEmpty_iff.mp he
+    have hout := title_only_out D g hg h hw hd he' out ho
+    rw [hout]
+    exact govern_identity {D with governors := D.governors.filter (·.id != g.id)}
+      (admitBlock_drop D g hg h hd ha) he' (by exact partUnits_nil_title_success D g hg h hd he' out ho)
 end Statements
 
 end VE.Scope
