@@ -407,3 +407,21 @@ passed after it. The Rust release binary was rebuilt and `lean/checkers.lock` re
 | Delta | Ruling | Evidence |
 |---|---|---|
 | Rust chooses the constant-container fault before a predicate-sort fault on the same malformed environment | SIGNED by standing ruling R2 (DRI-RULINGS.md): container shape precedes predicate semantics deterministically | `tests/test_difffuzz.py::test_nonobject_constant_precedes_predicate_sort_fault`; `rust/ve-kernel/tests/environment_definition_order.rs::nonobject_constant_precedes_predicate_sort_fault` |
+
+## 20. Selected-run request-envelope fault order
+
+The focused rerun of `tests/test_difffuzz.py::test_ci_run` found a request whose environment omitted required
+outer fields and also named an undeclared predicate argument sort. The public Python path reported the nested
+sort fault through the Lean environment service, while the Lean request runner and Rust reported the envelope
+fault. The service now checks the route envelope before using the shared vocabulary location decoder to refine
+a diagnostic. The frozen route uses its exact envelope decoder; composed routes first require their common
+header fields, profile shape and revision. The existing response-shape proof covers the new branch.
+
+`tests/test_difffuzz.py::test_request_envelope_fields_precede_predicate_sort_fault` failed before the change and
+passes after it. It checks missing profiles, missing revision and an extra outer field against all three engines.
+The Lean library and executables built successfully after the proof change; `lean/checkers.lock` was regenerated
+by its owner for the new executable hash.
+
+| Delta | Ruling | Evidence |
+|---|---|---|
+| The environment service reports an outer field fault before a nested predicate-sort fault on the same malformed route environment | SIGNED by standing ruling R2 (DRI-RULINGS.md): envelope fields precede vocabulary semantics deterministically | `tests/test_difffuzz.py::test_request_envelope_fields_precede_predicate_sort_fault`; `ResponseShape.Encoders.Standalone.environment_reported` |
