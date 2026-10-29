@@ -1,10 +1,45 @@
 # et-4 build report: the `events` block decoder, the pack, the certificate theorem
 
-**Status:** done for this cut, ready for the gate. No DELTA signature is reserved: row 1 cites R16.
+**Status:** done for this cut; review F1 fixed (below); ready for the gate. No signature reserved (row 1: R16).
 **What changed:** `decodeEvents` checks spec 4 items 2 to 7 in order and regenerates the environment; `eventsPack`
 is PK-1's `events` pack; `date__` is in PK-1's prefix table; `events_certificate_calendar` matches spec 6.3 exactly.
 Nothing reaches a route yet (Python and Rust unchanged).
-**Open items:** et-4b, cut by the size rule (below). Bytes 0.
+**Open items:** et-4b, cut by the size rule (below). Bytes 0. The review's C notes F2-F4 are below.
+
+## Review fix (et-4 review F1)
+
+**The finding, as a class:** a check of `decodeEvents` was tested only on its accepting side, or only through a
+fixture that another check refuses first. The trusted mutant run never selected the reject-only checks (D[R]), so no
+tool mutant reached them. The review's probe left 7 mutants alive before the fix, and none after it.
+
+**The fix, structural:** the decoder's product code is unchanged; only fixtures and tests are added.
+- `tests/test_events_wire_mutants.py` plants the review's 7. It also plants 66 mutants generated from `Wire.lean`'s
+  own source, of kinds beyond the tool's operators: each check step of a `do` block dropped (21), each role list read
+  for its sibling (22), and each two adjacent independent check steps swapped, which pins the fault order (23). 4 are
+  equivalent, and the test shows each still passes. Before the new fixtures, 34 of these survived; now none do.
+- The tool ran over the reject-only class (`--classes D[R]`, 166 mutants). The first run, at 5e4dc8828 (4 VM shards,
+  merged), found 18 survivors of the same class: an unknown key read first or last, the first of two missing
+  fields, the day sort first or last among the sorts, the first or last event's or state's roles, a repeat that is
+  not adjacent, and the first of two premises. Each now has a fixture. `reject-mutants.json` is a full Mac run on
+  97792c45: 120 KILLED, 0 SURVIVOR, 0 UNKNOWN, 28 INVALID, 18 ALLOWED, exit 0.
+- `reject-mutants-allow.json` explains each of the 18 allowed, checked against the record's `raw_status`:
+  - 13 are mutant texts Lean refuses (an untyped `[]`; `rolePreds linkPreds`).
+  - 5 are equivalent. `optional` has at most one field. The seed `[V.before]` of the repeated-role check is dead,
+    because a role named `before` is refused earlier by `checkDay`'s signature and line 112.
+- The node limit inside `decodeEvents` cannot be reached: every generated premise has at most 20 nodes, and a
+  `#guard` pins this. `checkPremiseSize` is now pinned on its own at both ends of its list.
+- The new fixtures add no definition, so the trust classes stay the same: `trust_map.py --check` gives V +120 and
+  passes. The R16 run (`trust-mutants.json`, a full Mac run on 97792c45) is unchanged: 199 KILLED, 0 SURVIVOR, exit 0.
+
+**Seeded bugs** (Lean is the only language whose code is tested here; Python adds only the test): each mutant above
+is a seeded bug in `lean/VE/Events/Wire.lean`, and the fixture that fails is in `WireExamples.lean`. The review's 7
+are `test_every_mutant_fails_a_fixture[review-*]`; before the fixtures each was "survives every #guard".
+
+**C notes:**
+- F2: DELTA row 1 now quotes the final run.
+- F3: the size grows with this fix (see Size).
+- F4: these notes are et-4b's (FOLLOW-UP line of the review): count the 64 date constants in `assemble`'s name
+  limit; run `LinkNotOpen` inside `decodeEvents`, before the date checks; fill `origins`.
 
 Item: feature item et-4 (rank 95 of the feature feed, acting DRI dri-featurefeed, 2026-10-18). Branch
 `feature/et-4` from main 6d0a10526. Plan and spec are on main, so nothing was copied.
@@ -69,9 +104,8 @@ replay fixture needs a mode that produces one. With (1) and (2) at 420 lines of 
 | `eventsPack-calendar-only` | `lean/VE/Events/Wire.lean` | `#guard … (eventsPack d).labelled == eventsLabelled d.V` |
 | `roles-before-day` (fault order) | `lean/VE/Events/Wire.lean` | `#guard … == "EventsSort: date"`, `"EventsSort: stay_begins"` |
 
-**Trust mutants:** `trust-mutants.json` comes from a full Mac run with
-`--test lean/VE/Events/WireExamples.lean --allow trust-mutants-allow.json`, then rescored after the allow file's
-reformat. It exits 0:
+**Trust mutants:** `trust-mutants.json` is a full Mac run on the final Lean tree (97792c45), with
+`--test lean/VE/Events/WireExamples.lean --allow trust-mutants-allow.json`. It exits 0:
 - 199 KILLED, 0 SURVIVOR, 0 UNKNOWN, 36 INVALID, 33 ALLOWED.
 - Of the 22 allow entries, 5 are equivalent survivors: `≤`/`<` on distinct dates, two `Option.toList` takes, and the
   prefix row's position under the owner filter. The other 17 are mutant texts Lean refuses (type errors).
@@ -82,7 +116,9 @@ reformat. It exits 0:
 - **Trust:** `uv run python tools/trust_map.py --check` against 6d0a10526 gives K +0, S +0, **V +120**
   (`VE/Events/Wire.lean`), unclassified 0. It passes with the R16 allowance in `docs/trust-baseline.json`. The ties
   row is in `manage-agents/FOLLOW-UPS.md` `## et-4`. Reject-only checks are D[R], fixtures T, the theorem P.
-- **Size:** about 650 hand-written lines with this report, measured with `git diff --numstat 6d0a10526`, without
+- **Size:** 1108 hand-written lines before this round's report edits; the review measured about 705 at 7efef75a6,
+  not 650 (F3). The fix adds the mutant test (294), fixtures (88), the D[R] allow file (12) and 4 trust-class lines.
+  The first cut's figure was about 650 hand-written lines with this report, measured with `git diff --numstat 6d0a10526`, without
   generated inventories or tool-written evidence JSON. Of those, 420 are code and fixtures: `Wire.lean` 192,
   `WireExamples.lean` 204, `Chain.lean` 23, `Packs.lean` 1. The rest is the trust classes (57), the harness (46),
   the allow file (24), DELTA (13), two root imports and two manifest lines. That is over the ~600 rule by the
@@ -109,7 +145,7 @@ Acceptance items: all AGENT; none HUMAN or EXTERNAL.
 
 1. Lean answers typed and contained: N.A. No route, relay or response schema changes; `decodeEvents` is unreachable. Its malformed-input sides are `#guard`s (`events`, `events.day`, `events.states`, `events.dates`, `events.anchor`).
 2. Deliverables: PASS. Every plan row is in the table, with what moved to et-4b by the size rule. Rule grep of `git diff main...HEAD`: no Python or Rust decision, no report test. No in-flight `feature/*`, `infra/*`, `lean-first/*` or `foundation/*` branch edits `Packs.lean` or `Events/{Wire,Chain,WireExamples}`.
-3. Tests can fail: PASS. `mutants.json` (9 bugs, each failing a `#guard` or a proof); `trust-mutants.json` (exit 0, Mac).
+3. Tests can fail: PASS. `mutants.json` (9 bugs, each failing a `#guard` or a proof); `trust-mutants.json` and `reject-mutants.json` (exit 0, Mac); `tests/test_events_wire_mutants.py` (73 mutants, 4 equivalent, each shown to pass).
 4. Py/Lean/Rust agree: N.A. Only Lean changed, and it reaches no route.
 5. R8 binding: N.A. No Lean answer is read by Python.
 6. Gate evidence on final HEAD: PASS for what I ran. The selected tests ran on a592c61fd and the two fixes on b887dcc11; later commits change only evidence and docs. The chain runs the gate on the final HEAD.
@@ -127,12 +163,15 @@ Files:
 - lean/VE/Events/Chain.lean: events_certificate_calendar
 - lean/VE/Events/WireExamples.lean: fixtures; lean/VE/NormDefaults/Packs.lean:41: the events prefix row
 - tools/trust-classes.json, docs/trust-baseline.json, ve/assurance-manifest.json, lean/VE.lean (roots)
-- docs/events-time-causation/et-4/: DELTA, REPORT, mutants.json, trust-mutants.json, trust-mutants-allow.json, evidence/
+- docs/events-time-causation/et-4/: DELTA, REPORT, mutants.json, trust-mutants.json, trust-mutants-allow.json, reject-mutants.json, reject-mutants-allow.json, evidence/
+- tests/test_events_wire_mutants.py: the decoder's generated mutants (review F1)
 Regression commands:
 - cd lean && PATH=~/.elan/bin:$PATH lake build VE.Events.WireExamples VE.Events.Chain
 - python3 docs/events-time-causation/et-4/evidence/seeded-bugs-harness.py.txt "$PWD" (prints mutants.json)
 - uv run pytest -q tests/test_lean_limits.py tests/test_assurance_manifest.py
 - uv run python tools/trust_map.py --check
+- uv run pytest -q tests/test_events_wire_mutants.py
+- zsh /home/seyran/code/manage-agents/mac-pytest.sh --trustmut -- --classes 'D[R]' --max-mutants 1000 --test lean/VE/Events/WireExamples.lean --allow docs/events-time-causation/et-4/reject-mutants-allow.json --json docs/events-time-causation/et-4/reject-mutants.json
 - zsh /home/seyran/code/manage-agents/mac-pytest.sh --trustmut -- --max-mutants 1000 --test lean/VE/Events/WireExamples.lean --allow docs/events-time-causation/et-4/trust-mutants-allow.json --json docs/events-time-causation/et-4/trust-mutants.json
 Generated files: lean/VE/Audit.lean, lean/{axioms,declarations,predicates,statements}.txt, lean/checkers.lock ->
   uv run python tools/regen_generated.py --write (route-cases needs the Rust release binary: python3 tools/rust_build.py)
