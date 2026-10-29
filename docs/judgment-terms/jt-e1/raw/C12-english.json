@@ -1,0 +1,113 @@
+{
+  "id": "C12",
+  "arm": "english",
+  "prompt": "Read only the source and displayed lines below as a reader of this document. For the named conclusion, answer in exactly this format: `CLASS: SETTLED|TURNS|CONDITIONAL; DECIDER: <name or NONE>; WHY: <one sentence>`. SETTLED means it holds whatever is judged. TURNS means two admissible judgments can change it. CONDITIONAL means it is certified only given a judgment criterion. Name the decider if the text names one; otherwise say NONE. Do not use outside knowledge.\n\nSOURCE: Constitution hard constraint, synthetic unconditional protection of secrets.\nCONCLUSION: this secret must be protected\nWhether the request is privacy-sensitive is a judgment; the text does not say who makes it.\nSettled: whatever is judged here, the text requires this secret must be protected.\n",
+  "call": {
+    "account": "claude-panaali2",
+    "returncode": 0,
+    "stderr": "",
+    "result": {
+      "duration_api_ms": 2282,
+      "stop_reason": "end_turn",
+      "session_id": "324295b6-8357-44cf-a290-278e007ff01d",
+      "total_cost_usd": 0.0044965000000000005,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 872,
+        "cache_read_input_tokens": 1545,
+        "output_tokens": 85,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 872,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 85,
+            "cache_read_input_tokens": 1545,
+            "cache_creation_input_tokens": 872,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 872
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "modelUsage": {
+        "claude-sonnet-5-5": {
+          "inputTokens": 2,
+          "outputTokens": 85,
+          "cacheReadInputTokens": 1545,
+          "cacheCreationInputTokens": 872,
+          "webSearchRequests": 0,
+          "costUSD": 0.0044965000000000005,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "thinkingTokens": 0,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 872,
+          "canonicalModel": "claude-sonnet-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "permission_denials": [],
+      "terminal_reason": "completed",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required",
+      "subagent_stats": {
+        "spawned": 0,
+        "requested": {
+          "background": 0,
+          "foreground": 0,
+          "unset": 0
+        },
+        "started_in_background": 0,
+        "max_depth": 0,
+        "spawned_by_subagents": 0,
+        "completed": 0,
+        "failed": 0,
+        "killed": {
+          "parent": 0,
+          "user": 0,
+          "system": 0
+        },
+        "refused": {
+          "depth_limit": 0,
+          "concurrency_limit": 0,
+          "budget": 0
+        },
+        "by_type": {}
+      },
+      "safety_stops": 0,
+      "is_error": false,
+      "num_turns": 1,
+      "subtype": "success",
+      "api_error_status": null,
+      "result": "CLASS: SETTLED; DECIDER: NONE; WHY: The displayed text states that whatever is judged about privacy-sensitivity, the text requires the secret be protected, so the conclusion holds regardless of who judges, and no decider is named.",
+      "ttft_ms": 2462,
+      "type": "result",
+      "duration_ms": 2494,
+      "uuid": "5edc7d3f-debd-4a07-b38b-660a4dda5a28",
+      "ttft_stream_ms": 1737,
+      "time_to_request_ms": 213,
+      "first_content_frame_ms": 1737,
+      "queued_turn_count": 0,
+      "result_index": 0
+    },
+    "cw": 2504
+  },
+  "raw_answer": "CLASS: SETTLED; DECIDER: NONE; WHY: The displayed text states that whatever is judged about privacy-sensitivity, the text requires the secret be protected, so the conclusion holds regardless of who judges, and no decider is named."
+}

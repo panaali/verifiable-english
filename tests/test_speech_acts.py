@@ -497,44 +497,39 @@ def test_answer_and_compliance_records_reference_units_by_name():
 
 def test_a_declared_gloss_is_one_opaque_atom_and_the_word_lint_only_warns():
     # Directive (2.1, 6): a declared predicate gloss is author-declared vocabulary, one opaque atom whose
-    # English VE does not and cannot check. "Is atlas reviewed despite remaining unreviewed?" against the
-    # gloss "{0} is reviewed despite remaining unreviewed" (the loop's reproducer, which passed the word
-    # list) and every wording the earlier refusal named read as the one declared predicate; the closed
-    # word list is an advisory `OpaqueWording` warning, never a gate, so no gloss is refused or accepted
-    # because of its English.
+    # English VE does not and cannot check. Each gloss of the loop's reproducers, asked as `Which one of …`,
+    # reads as the one declared predicate; the closed word list is an advisory `OpaqueWording` warning, never
+    # a gate, so no gloss is refused or accepted because of its English. A polar `Is <Name> …?` is Lean's
+    # reader's since Q1.4b (DRI 2026-10-27 item 4), which reads a gloss only as its lexicon reads it
+    # (tests/test_speech_polar_lean.py).
     raw = environment().to_dict()
     predicates = raw["vocabulary"]["predicates"]
-    glosses = [("contradictory", "{0} is reviewed and not reviewed", "Is atlas reviewed and not reviewed?"),
-               ("atlas_linked", "{0} is linked to atlas", "Is atlas linked to atlas?"),
-               ("desk_near", "{0} is near the desk", "Is beacon near the desk?"),
-               ("yet_never", "{0} is reviewed yet never reviewed", "Is atlas reviewed yet never reviewed?"),
-               ("comma", "{0} is vetted, sadly", "Is atlas vetted, sadly?"),
-               ("twice", "{0} is vetted really vetted", "Is atlas vetted really vetted?"),
-               ("staffed", "{0} is reviewed by staff", "Is atlas reviewed by staff?")]
-    for name, gloss, _ in glosses:
+    glosses = [("contradictory", "{0} is reviewed and not reviewed"), ("atlas_linked", "{0} is linked to atlas"),
+               ("desk_near", "{0} is near the desk"), ("yet_never", "{0} is reviewed yet never reviewed"),
+               ("comma", "{0} is vetted, sadly"), ("twice", "{0} is vetted really vetted"),
+               ("staffed", "{0} is reviewed by staff")]
+    for name, gloss in glosses:
         predicates[name] = {"arguments": ["service"], "description": name, "verbalisation": gloss}
     predicates["despite"] = {"arguments": ["service"], "description": "despite",
                              "verbalisation": "{0} is reviewed despite remaining unreviewed"}
     predicates["vetted"] = {"arguments": ["service"], "description": "vetted", "verbalisation": "{0} is vetted"}
     env = Environment(raw)
-    for name, _, text in glosses:
+    for name, gloss in glosses:
         lint = []
-        subject = text.split()[1]
-        assert parse_speech(env, text, env.speech_acts, warnings=lint)[0]["body"] == \
-            ["unary", name, ["const", subject]]
+        text = "Which one of atlas and beacon " + gloss[4:] + "?"
+        assert parse_speech(env, text, env.speech_acts, warnings=lint)[0]["body"] == ["unary", name, ["var", 0]]
         assert len(lint) == 1 and lint[0].startswith("OpaqueWording: ")
-    which = parse_speech(env, "Which one of atlas and beacon is reviewed yet never reviewed?", env.speech_acts)[0]
-    assert which["body"] == ["unary", "yet_never", ["var", 0]]
     # The reproducer: the question is about that one atom, and the document carries the lint as a warning.
-    text = "Is atlas reviewed despite remaining unreviewed?"
-    assert parse_speech(env, text, env.speech_acts)[0]["body"] == ["unary", "despite", ["const", "atlas"]]
-    document = SpeechDocument(env, [question("u1", "polar", ["unary", "despite", ["const", "atlas"]], source=text)])
+    text = "Which one of atlas and beacon is reviewed despite remaining unreviewed?"
+    body = ["unary", "despite", ["var", 0]]
+    assert parse_speech(env, text, env.speech_acts)[0]["body"] == body
+    document = SpeechDocument(env, [question("u1", "which_one", body, ("atlas", "beacon"), source=text)])
     assert [w for w in document.warnings if w.startswith("OpaqueWording: ")] == [
         "OpaqueWording: 'is reviewed despite remaining unreviewed' contains 'reviewed' and is read as one "
         "declared predicate in u1"]
     # A gloss that names one property reads as that property, without a warning.
     lint = []
-    assert parse_speech(env, "Is atlas vetted?", env.speech_acts, warnings=lint)[0]["body"] == \
-        ["unary", "vetted", ["const", "atlas"]] and lint == []
+    assert parse_speech(env, "Which one of atlas and beacon is vetted?", env.speech_acts, warnings=lint)[0][
+        "body"] == ["unary", "vetted", ["var", 0]] and lint == []
     assert parse_speech(env, "Is atlas reviewed?", env.speech_acts)[0]["body"] == \
         ["unary", "reviewed", ["const", "atlas"]]
