@@ -1999,6 +1999,9 @@
       "lean/VE/Cardinality/WireTheorems.lean": "statements about the ve-cardinality@1 decoders and their parts (items_ok over Json.getArr?, the elaborators' cases on JSON arrays, decodeStatement_fits); no runtime JSON handling",
       "lean/VE/Cardinality/WireExamples.lean": "fixtures only: #guard checks of docs/spec/quantities.md 4.2 and 9.1 decode cardinality environments and statements built with Json.parse and Json.mkObj; no runner path",
       "lean/VE/Scope/Examples.lean": "scope@0 acceptance fixtures: JSON parts and conditions built with Json.parse and Json.mkObj and checked by #guard and decide; no runtime JSON handling",
+      "lean/VE/Events/Examples.lean": "fixtures only: #guard checks of docs/spec/events-time-causation.md 8 and et-3d's year boundary; two build a day-number request with Json.mkObj for W6a's runConversion and read its answer; no runner path",
+      "lean/VE/Events/Wire.lean": "the events block decoder (ET-4, spec 4 items 2-7); no service mode, route or runner path reaches it until et-4b hooks it into the layered route and pins it here",
+      "lean/VE/Events/WireExamples.lean": "fixtures only: #guard checks of decodeEvents on JSON environments built with Json.parse and Json.mkObj; no runner path",
       "lean/VE/Discourse/Run.lean": "lean:runner-glue: ve_discourse_route case dispatch and response rows",
       "lean/VE/Discourse/Wire.lean": "lean:discourse-wire: the ve.discourse@1 manifest decoder and discourse report rows; decoded values are validated, never trusted (discourse_wire_binding, discourse_report_sound)",
       "lean/VE/Discourse/Admission.lean": "lean:discourse-wire: the profile adapter strips ve.discourse@1 from the environment JSON before every frozen call (setObjVal!, profile_adapter_base)",
@@ -2053,7 +2056,6 @@
       "lean/ResponseShape/Encoders/Quantity.lean": "theorems that the quantity mode's rows fit its shape, with value and evaluations tied to the case's model (getObjVal? in statements and proofs only; not on any runner path)",
       "lean/ResponseShape/Encoders/RiskEval.lean": "theorems that the risk-eval mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Encoders/Calc.lean": "theorems that the calc mode's rows fit its shape, with a row's reproduction tied to the case's software member (getObjVal? in proofs only; not on any runner path)",
-      "lean/ResponseShape/Encoders/Cardinality.lean": "theorems that the cardinality mode's rows fit its shape, with valid exactly beside a certificate case (getObjVal? in proofs only; not on any runner path)",
       "lean/ResponseShape/Encoders/SpeechActs.lean": "theorems that the speech-acts mode's rows fit its shape; JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Encoders/Family.lean": "theorems that the graph, readings, bundle and family-norms modes' rows fit their shapes; its one Json-taking def is a proof (familyNormsFolFits), not on any runner path",
       "lean/ResponseShape/EnumSites.lean": "lists every enum and const of the response shapes and the fields that resolve to one, for tests/test_enum_domains.py (test tooling; JSON only to print the list and in proof helpers; not on any runner path)",
@@ -2120,10 +2122,10 @@
       "lean/ResponseShape/Schemas/NormDefaults.lean": "the norm-defaults mode's response shapes (norm-defaults.json) and a #guard reading the members of its rendered elaborate row (ap-1be); test tooling beside lean/ResponseShape.lean, not on any runner path",
       "lean/VE/Compose/Dispatch.lean": "the profile gate's table; JT-2's withoutDocumentLayers rewrites only an environment's profile list for the decoders (documentLayers), and decodes nothing",
       "lean/VE/Question/Examples.lean": "fixtures only: question answering Q1.4's #guard checks build request objects for `decodeCaller`'s accepting and refusing sides and compare `modalFields`' rows; no runner path",
-      "lean/VE/Events/Examples.lean": "fixtures only: #guard checks of docs/spec/events-time-causation.md 8 and et-3d's year boundary; two build a day-number request with Json.mkObj for W6a's runConversion and read its answer; no runner path",
       "lean/VE/Scope/Readings.lean": "lean:scope-readings: `governSets` (scope spec 11.2) reads the reading sets of the units it governs per choice, writes each choice's reading content into its unit (setObjVal!) and each governed reading's composed content back into its set; trees are compared with the readings route's proved `jeq`; the rules are decoded by the chain's own decoder, never here; the document mode calls it under scope@0 through `governSetsWith governFast` (sc-5rb, `checkDocSets`)",
       "lean/VE/Scope/ReadingsExamples.lean": "fixtures only: scope spec 11.6's #guard checks build reading sets and hard-constraint documents as JSON literals and run `governSets` on them; no service mode reads this file",
-      "lean/VE/Readings/ActsExamples.lean": "test fixtures only: #guards that build acts@0 environments as a request carries them and read the readings route's decoder answers (ap-1bd); no admission path, service mode or record reads it"
+      "lean/VE/Readings/ActsExamples.lean": "test fixtures only: #guards that build acts@0 environments as a request carries them and read the readings route's decoder answers (ap-1bd); no admission path, service mode or record reads it",
+      "lean/ResponseShape/Encoders/Cardinality.lean": "theorems that the cardinality mode's rows fit its shape, with valid exactly beside a certificate case (getObjVal? in proofs only; not on any runner path)"
     }
   },
   "plan_operations": {
