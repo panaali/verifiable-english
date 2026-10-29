@@ -75,8 +75,10 @@ def valid_answer(record):
             and record.get("model") == MODEL and isinstance(model_usage, dict)
             and set(model_usage) == {MODEL} and isinstance(usage, dict)
             and valid_usage(usage) and type(record.get("reserved_cw")) is int
-            and record["reserved_cw"] > 0 and type(record.get("charged_cw")) is int
+            and 0 < record["reserved_cw"] <= MAX_CW
+            and type(record.get("charged_cw")) is int
             and record["charged_cw"] == max(record["reserved_cw"], cw(usage))
+            and record["charged_cw"] <= record["reserved_cw"]
             and parse(record.get("reply")) is not None)
 
 
@@ -85,6 +87,10 @@ def valid_record(record, row, form):
             and record.get("form") == form
             and record.get("prompt_sha256") == hashlib.sha256(prompt(row, form).encode()).hexdigest()
             and valid_answer(record))
+
+
+def within_caps(charges, next_charge=0):
+    return len(charges) + (next_charge > 0) <= MAX_CALLS and sum(charges) + next_charge <= MAX_CW
 
 
 def save(path, record):
@@ -153,14 +159,16 @@ def _run_locked(queue, raw):
         if not valid_record(record, *known[path.name]):
             raise RuntimeError(f"reader call needs inspection: {path}")
         saved[path.name] = record
+    if not within_caps([rec["charged_cw"] for rec in saved.values()]):
+        raise RuntimeError("reader cap exceeded")
     cfg = account()
     for row, form in queue:
         path = raw / f"{row['id']}__{form}.json"
         if path.name in saved:
             continue
-        used = sum(rec["charged_cw"] for rec in saved.values())
-        if len(saved) >= MAX_CALLS or used + bound > MAX_CW:
-            raise RuntimeError(f"reader cap reached: {len(saved)} calls, {used} CW")
+        charges = [rec["charged_cw"] for rec in saved.values()]
+        if not within_caps(charges, bound):
+            raise RuntimeError(f"reader cap reached: {len(saved)} calls, {sum(charges)} CW")
         body = prompt(row, form)
         started = datetime.datetime.now(datetime.timezone.utc).isoformat()
         record = {"id": row["id"], "form": form, "model": MODEL, "account": Path(cfg).name,
@@ -196,7 +204,7 @@ def _run_locked(queue, raw):
                       cli_error=output.get("error"), subtype=output.get("subtype"),
                       is_error=output.get("is_error"), modelUsage=output.get("modelUsage"))
         save(path, record)
-        if record["charged_cw"] > bound or not valid_answer(record):
+        if not valid_answer(record):
             raise RuntimeError(f"reader call {row['id']} {form} failed; raw answer saved, stop for inspection")
         print(row["id"], form, parse(record["reply"]), record["charged_cw"], "CW", flush=True)
 
@@ -206,6 +214,7 @@ def score():
     raw = HERE / "raw"
     expected = {(r["id"], form): r for r, form in jobs(rows)}
     got = {}
+    charges = []
     for path in raw.glob("*.json"):
         try:
             record = json.loads(path.read_text())
@@ -219,8 +228,11 @@ def score():
         if not valid_record(record, expected[key], key[1]):
             raise ValueError(f"failed or unverified reader answer: {path}")
         got[key] = parse(record.get("reply"))
+        charges.append(record["charged_cw"])
     if got.keys() != expected.keys() or None in got.values():
         raise ValueError("missing or unreadable reader answers")
+    if not within_caps(charges):
+        raise ValueError("reader cap exceeded")
     strict = [r for r in rows if r["expected"] == "no"]
     needs = [r for r in rows if r["expected"] == "yes"]
     strict_wrong = sum(got[(r["id"], "long")] == "yes" for r in strict)
@@ -236,8 +248,7 @@ def score():
             "long": {"needs_read_strict": long_wrong, "strict_read_needs": strict_wrong, "pass": long_pass},
             "short": {"needs_read_strict": short_wrong, "strict_read_needs": strict_wrong, "pass": short_pass},
             "short_eligible": {"long_misreadings": long_eligible_wrong, "short_misreadings": short_wrong},
-            "outcome": outcome, "calls": len(got),
-            "charged_cw": sum(json.loads(p.read_text())["charged_cw"] for p in raw.glob("*.json"))}
+            "outcome": outcome, "calls": len(got), "charged_cw": sum(charges)}
 
 
 if __name__ == "__main__":

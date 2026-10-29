@@ -113,6 +113,44 @@ def test_failed_or_unverified_answer_cannot_score(tmp_path, monkeypatch, change)
         runner.score()
 
 
+@pytest.mark.parametrize("charge", [
+    lambda record: record["usage"].update(output_tokens=1_000_000),
+    lambda record: record.update(reserved_cw=runner.MAX_CW + 1,
+                                 charged_cw=runner.MAX_CW + 1),
+])
+def test_dispatch_rejected_charge_cannot_score_or_resume(tmp_path, monkeypatch, charge):
+    _, raw = fixture(tmp_path, monkeypatch)
+    path = raw / "I00__long.json"
+    record = json.loads(path.read_text())
+    charge(record)
+    record["charged_cw"] = max(record["reserved_cw"], runner.cw(record["usage"]))
+    path.write_text(json.dumps(record))
+    assert not runner.valid_answer(record)
+    with pytest.raises(ValueError, match="failed or unverified"):
+        runner.score()
+    monkeypatch.setattr(runner, "DISPATCH_CW_BOUND", 100_000)
+    monkeypatch.setattr(runner, "account", Mock())
+    with pytest.raises(RuntimeError, match="needs inspection"):
+        runner._run_locked(runner.jobs(runner.items()), raw)
+    runner.account.assert_not_called()
+
+
+def test_aggregate_charge_cap_applies_to_score_and_resume(tmp_path, monkeypatch):
+    _, raw = fixture(tmp_path, monkeypatch)
+    for path in raw.glob("*.json"):
+        record = json.loads(path.read_text())
+        record["reserved_cw"] = 100_001
+        record["charged_cw"] = 100_001
+        path.write_text(json.dumps(record))
+    with pytest.raises(ValueError, match="reader cap exceeded"):
+        runner.score()
+    monkeypatch.setattr(runner, "DISPATCH_CW_BOUND", 100_001)
+    monkeypatch.setattr(runner, "account", Mock())
+    with pytest.raises(RuntimeError, match="reader cap exceeded"):
+        runner._run_locked(runner.jobs(runner.items()), raw)
+    runner.account.assert_not_called()
+
+
 def test_failed_attempt_is_reserved_before_dispatch_and_never_retried(tmp_path, monkeypatch):
     _, raw = fixture(tmp_path, monkeypatch)
     (raw / "I23__long.json").unlink()
