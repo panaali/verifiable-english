@@ -28,6 +28,9 @@ Three independent mutations of lean/VE/Scope/Examples.lean, each restored after 
 f4_replacement: exit=1; error: VE/Scope/Examples.lean:765:0: Expression
 f4_carve: exit=1; error: VE/Scope/Examples.lean:778:0: Expression
 f6_limit: exit=1; error: VE/Scope/Examples.lean:795:0: Expression
+Statement probe: replace only `n.units = us` by `n.units = []` in listName_run, then restore.
+PATH=~/.elan/bin:$PATH lake build VE.Scope.Theorems
+statement_mutant exit=1; error: VE/Scope/Theorems.lean:1758:20: Application type mismatch
 
 df -h .
 /dev/root 338G 194G 145G 58% /home/seyran/code/ve-sc-2
