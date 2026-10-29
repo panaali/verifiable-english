@@ -2,726 +2,968 @@
  "comparison": [
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T0/PROT1",
    "key": "SOME(uncond)",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "SOME(RS1=uncond)"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T0/PROT2",
    "key": "SOME(uncond)",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "SOME(RS1=uncond)"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T0/PROT3",
    "key": "SOME(uncond)",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "SOME(RS1=uncond)"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T0/PROT4",
    "key": "SOME(uncond)",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "SOME(RS1=uncond)"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T0/ARG1",
    "key": "NONE",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T0/ARG2",
    "key": "NONE",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T0/ARG3",
    "key": "NONE",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T0/ARG4",
    "key": "NONE",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T1/PROT1",
    "key": "SOME(cond | uncond)",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "SOME(RS1=cond | RS1=uncond)"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T1/PROT2",
    "key": "SOME(uncond)",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "SOME(RS1=uncond)"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T1/PROT3",
    "key": "SOME(uncond)",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "SOME(RS1=uncond)"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T1/PROT4",
    "key": "SOME(uncond)",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "SOME(RS1=uncond)"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T1/ARG1",
    "key": "SOME(Ds)",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "SOME(RS2=Ds&RS2force=strict | RS2=Ds&RS2force=default)"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T1/ARG2",
    "key": "NONE",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T1/ARG3",
    "key": "NONE",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T1/ARG4",
    "key": "NONE",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T2/PROT1",
    "key": "SOME(uncond)",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "SOME(RS1=uncond)"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T2/PROT2",
    "key": "SOME(cond | uncond)",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "SOME(RS1=cond | RS1=uncond)"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T2/PROT3",
    "key": "SOME(uncond)",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "SOME(RS1=uncond)"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T2/PROT4",
    "key": "SOME(uncond)",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "SOME(RS1=uncond)"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T2/ARG1",
    "key": "NONE",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T2/ARG2",
    "key": "SOME(Ds)",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "SOME(RS2=Ds&RS2force=strict | RS2=Ds&RS2force=default)"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T2/ARG3",
    "key": "NONE",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T2/ARG4",
    "key": "NONE",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T3/PROT1",
    "key": "SOME(uncond)",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "SOME(RS1=uncond)"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T3/PROT2",
    "key": "SOME(uncond)",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "SOME(RS1=uncond)"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T3/PROT3",
    "key": "SOME(cond | uncond)",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "SOME(RS1=cond | RS1=uncond)"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T3/PROT4",
    "key": "SOME(uncond)",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "SOME(RS1=uncond)"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T3/ARG1",
    "key": "NONE",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T3/ARG2",
    "key": "NONE",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T3/ARG3",
    "key": "SOME(Ds)",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "SOME(RS2=Ds&RS2force=strict | RS2=Ds&RS2force=default)"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T3/ARG4",
    "key": "NONE",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T4/PROT1",
    "key": "SOME(uncond)",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "SOME(RS1=uncond)"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T4/PROT2",
    "key": "SOME(uncond)",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "SOME(RS1=uncond)"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T4/PROT3",
    "key": "SOME(uncond)",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "SOME(RS1=uncond)"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T4/PROT4",
    "key": "SOME(cond | uncond)",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "SOME(RS1=cond | RS1=uncond)"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T4/ARG1",
    "key": "NONE",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T4/ARG2",
    "key": "NONE",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T4/ARG3",
    "key": "NONE",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "A-T4/ARG4",
    "key": "SOME(Ds)",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "SOME(RS2=Ds&RS2force=strict | RS2=Ds&RS2force=default)"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "B-PUB/INSCOPE",
    "key": "ALL",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "ALL"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "B-PUB/ASSESS",
    "key": "ALL",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "ALL"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "B-INT/INSCOPE",
    "key": "NONE",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "B-INT/ASSESS",
    "key": "NONE",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "B-INTD/INSCOPE",
    "key": "ALL",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "ALL"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "B-INTD/ASSESS",
    "key": "ALL",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "ALL"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "B-AUT/INSCOPE",
    "key": "ALL",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "ALL"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "B-AUT/ASSESS",
    "key": "ALL",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "ALL"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "B-VOL/INSCOPE",
    "key": "NONE",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "B-VOL/ASSESS",
    "key": "NONE",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "B-TRN/INSCOPE",
    "key": "NONE",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "B-TRN/ASSESS",
    "key": "NONE",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "K1",
    "key": "ALL",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "ALL"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "K2",
    "key": "ALL",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "ALL"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "K3",
    "key": "NONE",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "K4",
    "key": "ALL",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "ALL"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "K5",
    "key": "ALL",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "ALL"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "K6",
    "key": "ALL",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "ALL"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "K7",
    "key": "ALL",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "ALL"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "K8",
    "key": "ALL",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "ALL"
   },
   {
    "agree": false,
-   "classification": "translation limit (AP): F4's external-review bullet is bundled in plans_in_place",
+   "cause": {
+    "feature_family": "AP",
+    "kind": "translation limit",
+    "reason": "translation limit (AP): F4's external-review bullet is bundled in plans_in_place"
+   },
    "id": "K9",
    "key": "SOME(cond | uncond)",
+   "route": "D1",
+   "status": "UNDECIDED-faithful",
    "ve": "UNDECIDED"
   },
   {
    "agree": false,
-   "classification": "translation limit (AP): F4's external-review bullet is bundled in plans_in_place",
+   "cause": {
+    "feature_family": "AP",
+    "kind": "translation limit",
+    "reason": "translation limit (AP): F4's external-review bullet is bundled in plans_in_place"
+   },
    "id": "K10",
    "key": "SOME(uncond)",
+   "route": "D1",
+   "status": "UNDECIDED-faithful",
    "ve": "UNDECIDED"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "K11",
    "key": "ALL",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "ALL"
   },
   {
-   "agree": true,
-   "classification": "agree",
+   "agree": false,
+   "cause": {
+    "feature_family": "SC",
+    "kind": "translation limit",
+    "reason": "translation limit (SC): Board consultation and LTBT approval share one act"
+   },
    "id": "K12a",
    "key": "ALL",
-   "ve": "ALL"
+   "route": "D1",
+   "status": "UNDECIDED-faithful",
+   "ve": "UNDECIDED"
   },
   {
-   "agree": true,
-   "classification": "agree",
+   "agree": false,
+   "cause": {
+    "feature_family": "SC",
+    "kind": "translation limit",
+    "reason": "translation limit (SC): Board consultation and LTBT approval share one act"
+   },
    "id": "K12b",
    "key": "ALL",
-   "ve": "ALL"
+   "route": "D1",
+   "status": "UNDECIDED-faithful",
+   "ve": "UNDECIDED"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "K13",
    "key": "ALL",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "ALL"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "K14",
    "key": "ALL",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "ALL"
   },
   {
-   "agree": true,
-   "classification": "agree",
+   "agree": false,
+   "cause": {
+    "feature_family": "ET",
+    "kind": "VE limit",
+    "reason": "VE limit (ET): prompt notice or effective-date order is not encoded"
+   },
    "id": "K15a",
    "key": "ALL",
-   "ve": "ALL"
+   "route": "D1/D3",
+   "status": "UNDECIDED-faithful",
+   "ve": "UNDECIDED"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "K15b",
    "key": "NONE",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "K16",
    "key": "ALL",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "ALL"
   },
   {
-   "agree": true,
-   "classification": "agree",
+   "agree": false,
+   "cause": {
+    "feature_family": "ET",
+    "kind": "VE limit",
+    "reason": "VE limit (ET): prompt notice or effective-date order is not encoded"
+   },
    "id": "K17",
    "key": "ALL",
-   "ve": "ALL"
+   "route": "D1/D3",
+   "status": "UNDECIDED-faithful",
+   "ve": "UNDECIDED"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "K18",
    "key": "ALL",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "ALL"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "K19a",
    "key": "ALL",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "ALL"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "K19b",
    "key": "ALL",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "ALL"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "K20",
    "key": "ALL",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "ALL"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "K21a",
    "key": "ALL",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "ALL"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "K21b",
    "key": "NONE",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "K22a",
    "key": "ALL",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "ALL"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "K22b",
    "key": "NONE",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "T1",
    "key": "ALL",
+   "route": "D1 relational-fol@0 entailment certificate or validated finite countermodel",
+   "status": "agree",
    "ve": "ALL"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "T2a",
    "key": "NONE",
+   "route": "D1 relational-fol@0 entailment certificate or validated finite countermodel",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "T2b",
    "key": "SOME(iffo)",
+   "route": "D1 relational-fol@0 entailment certificate or validated finite countermodel",
+   "status": "agree",
    "ve": "SOME(RS3o=iff&RS3i=suff&RS3c=third | RS3o=iff&RS3i=suff&RS3c=result | RS3o=iff&RS3i=iff&RS3c=third | RS3o=iff&RS3i=iff&RS3c=result)"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "T3",
    "key": "ALL",
+   "route": "D1 relational-fol@0 entailment certificate or validated finite countermodel",
+   "status": "agree",
    "ve": "ALL"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "T4a",
    "key": "NONE",
+   "route": "D1 relational-fol@0 entailment certificate or validated finite countermodel",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "T4b",
    "key": "SOME(iffo & iffi)",
+   "route": "D1 relational-fol@0 entailment certificate or validated finite countermodel",
+   "status": "agree",
    "ve": "SOME(RS3o=iff&RS3i=iff&RS3c=third | RS3o=iff&RS3i=iff&RS3c=result)"
   },
   {
-   "agree": false,
-   "classification": "VE limit (QT): factor-of-five quantity not represented in D3",
+   "agree": true,
+   "cause": null,
    "id": "T5",
    "key": "ALL",
-   "ve": "UNDECIDED"
+   "route": "D3 ve-units@1 quantity certificate replay",
+   "status": "agree",
+   "ve": "ALL"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "T6",
    "key": "NONE",
+   "route": "D1 relational-fol@0 entailment certificate or validated finite countermodel",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "T7",
    "key": "SOME(result)",
+   "route": "D1 relational-fol@0 entailment certificate or validated finite countermodel",
+   "status": "agree",
    "ve": "SOME(RS3o=suff&RS3i=suff&RS3c=result | RS3o=suff&RS3i=iff&RS3c=result | RS3o=iff&RS3i=suff&RS3c=result | RS3o=iff&RS3i=iff&RS3c=result)"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "C1",
    "key": "SOME(rel)",
+   "route": "D1 norms@0 W1 check_conflict with a validated witness model",
+   "status": "agree",
    "ve": "SOME(RS4=rel)"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "C2",
    "key": "NONE",
+   "route": "D1 norms@0 W1 check_conflict with a validated witness model",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "C3",
    "key": "NONE",
+   "route": "D1 norms@0 W1 check_conflict with a validated witness model",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "C4",
    "key": "NONE",
+   "route": "D1 norms@0 W1 check_conflict with a validated witness model",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "C5",
    "key": "NONE",
+   "route": "D1 norms@0 W1 check_conflict with a validated witness model",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "C6",
    "key": "NONE",
+   "route": "D1 norms@0 W1 check_conflict with a validated witness model",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "C7",
    "key": "SOME(rel)",
+   "route": "D1 norms@0 W1 check_conflict with a validated witness model",
+   "status": "agree",
    "ve": "SOME(RS4=rel)"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "C-doc",
    "key": "SOME(rel)",
-   "ve": "SOME(RS4=rel)"
-  },
-  {
-   "agree": false,
-   "classification": "translation limit (AP: no proceed act for the row plans)",
-   "id": "G1",
-   "key": "ALL",
-   "ve": "UNDECIDED"
+   "route": "D1 norms@0 W1 check_conflict with a validated witness model",
+   "status": "agree",
+   "ve": "SOME(RS4=rel&RS7=exec | RS4=rel&RS7=final)"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
+   "id": "G1",
+   "key": "ALL",
+   "route": "D1 soft-norms@0 selected_rules on a query-only vocabulary extension",
+   "status": "agree",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "cause": null,
    "id": "G2",
    "key": "ALL",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion; silence",
+   "status": "agree",
+   "ve": "ALL"
+  },
+  {
+   "agree": true,
+   "cause": null,
+   "id": "G3",
+   "key": "ALL",
+   "route": "D1 soft-norms@0 selected_rules on a query-only vocabulary extension",
+   "status": "agree",
    "ve": "ALL"
   },
   {
    "agree": false,
-   "classification": "translation limit (SC: an unlisted cyber threshold is outside D1's closed vocabulary)",
-   "id": "G3",
-   "key": "ALL",
-   "ve": "UNDECIDED"
-  },
-  {
-   "agree": false,
-   "classification": "VE limit (ET): RS11 at/trigger deadline is not in D3",
+   "cause": {
+    "feature_family": "ET",
+    "kind": "VE limit",
+    "reason": "VE limit (ET): RS11 at/trigger deadline is not in D3"
+   },
    "id": "G4",
    "key": "SOME(trigger)",
+   "route": "D3 ve-units@1",
+   "status": "UNDECIDED-faithful",
    "ve": "UNDECIDED"
   },
   {
    "agree": false,
-   "classification": "translation limit (ET: no reviewer nonresponse consequence in D1)",
+   "cause": {
+    "feature_family": "ET: no reviewer nonresponse consequence in D1",
+    "kind": "translation limit",
+    "reason": "translation limit (ET: no reviewer nonresponse consequence in D1)"
+   },
    "id": "G5",
    "key": "ALL",
+   "route": "D1",
+   "status": "UNDECIDED-faithful",
    "ve": "UNDECIDED"
   },
   {
    "agree": false,
-   "classification": "translation limit (SC: no priority between the review and approval duties)",
+   "cause": {
+    "feature_family": "SC: no priority between the review and approval duties",
+    "kind": "translation limit",
+    "reason": "translation limit (SC: no priority between the review and approval duties)"
+   },
    "id": "G6",
    "key": "ALL",
+   "route": "D1",
+   "status": "UNDECIDED-faithful",
    "ve": "UNDECIDED"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "G7",
    "key": {
     "COVERED:QUARTERLY_UPDATE": "ALL",
     "REQUIRED:PROMPT_BOARD_NOTICE": "NONE"
    },
+   "route": "D1",
+   "status": "agree",
    "ve": {
     "COVERED:QUARTERLY_UPDATE": "ALL",
     "REQUIRED:PROMPT_BOARD_NOTICE": "NONE"
@@ -729,166 +971,240 @@
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "G8",
    "key": "SOME(intent)",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion; silence is no selected goals_kept rule",
+   "status": "agree",
    "ve": "SOME(RS12strive=intent)"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "N1",
    "key": "ALL",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion; silence; family N witness situation",
+   "status": "agree",
    "ve": "ALL"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "N2",
    "key": "ALL",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion; silence; family N witness situation",
+   "status": "agree",
    "ve": "ALL"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "N3",
    "key": "ALL",
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion; silence; family N witness situation",
+   "status": "agree",
    "ve": "ALL"
   },
   {
    "agree": false,
-   "classification": "VE limit (SC): no exhaustive dead-rule or changelog-rule certificate",
+   "cause": {
+    "feature_family": "SC",
+    "kind": "VE limit",
+    "reason": "VE limit (SC): no exhaustive dead-rule or changelog-rule certificate"
+   },
    "id": "N4",
    "key": "NONE",
+   "route": "D1",
+   "status": "UNDECIDED-faithful",
    "ve": "UNDECIDED"
   },
   {
    "agree": false,
-   "classification": "VE limit (SC): no exhaustive dead-rule or changelog-rule certificate",
+   "cause": {
+    "feature_family": "SC",
+    "kind": "VE limit",
+    "reason": "VE limit (SC): no exhaustive dead-rule or changelog-rule certificate"
+   },
    "id": "N5",
    "key": "ALL",
+   "route": "D1",
+   "status": "UNDECIDED-faithful",
    "ve": "UNDECIDED"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "S1-T1",
    "key": "catastrophic",
+   "route": "D2 risk@0 risk:class",
+   "status": "agree",
    "ve": "catastrophic"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "S1-T2",
    "key": "catastrophic",
+   "route": "D2 risk@0 risk:class",
+   "status": "agree",
    "ve": "catastrophic"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "S1-T3",
    "key": "catastrophic",
+   "route": "D2 risk@0 risk:class",
+   "status": "agree",
    "ve": "catastrophic"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "S1-T4",
    "key": "none",
+   "route": "D2 risk@0 risk:class",
+   "status": "agree",
    "ve": "none"
   },
   {
    "agree": false,
-   "classification": "VE limit (WG): no severity order between the T1 and T2 harms",
+   "cause": {
+    "feature_family": "WG",
+    "kind": "VE limit",
+    "reason": "VE limit (WG): no severity order between the T1 and T2 harms"
+   },
    "id": "S2",
    "key": "NONE",
+   "route": "D2 risk@0",
+   "status": "UNDECIDED-faithful",
    "ve": "UNDECIDED"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "S3",
    "key": "ALL",
+   "route": "D2 risk@0 risk-decision",
+   "status": "agree",
    "ve": "ALL"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "S4",
    "key": "NONE",
+   "route": "D2 risk@0 risk-decision",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "S5",
    "key": "ALL",
+   "route": "D2 risk@0 risk:class",
+   "status": "agree",
    "ve": "ALL"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "D1",
    "key": "ALL",
+   "route": "D3 ve-units@1 quantity certificate replay",
+   "status": "agree",
    "ve": "ALL"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "D2",
    "key": "ALL",
+   "route": "D3 ve-units@1 quantity certificate replay",
+   "status": "agree",
    "ve": "ALL"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "D3a",
    "key": "NONE",
+   "route": "D3 ve-units@1 quantity certificate replay",
+   "status": "agree",
    "ve": "NONE"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "D3b",
    "key": "ALL",
+   "route": "D3 ve-units@1 quantity certificate replay",
+   "status": "agree",
    "ve": "ALL"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "D4",
    "key": "ALL",
+   "route": "D3 ve-units@1 quantity certificate replay",
+   "status": "agree",
    "ve": "ALL"
   },
   {
    "agree": true,
-   "classification": "agree",
+   "cause": null,
    "id": "D5",
    "key": "ALL",
+   "route": "D3 ve-units@1 quantity certificate replay",
+   "status": "agree",
    "ve": "ALL"
   },
   {
    "agree": false,
-   "classification": "VE limit (ET/QT): calendar-month cadence or approximate date",
+   "cause": {
+    "feature_family": "ET/QT",
+    "kind": "VE limit",
+    "reason": "VE limit (ET/QT): calendar-month cadence or approximate date"
+   },
    "id": "D6a",
    "key": "NONE",
+   "route": "D3 ve-units@1",
+   "status": "UNDECIDED-faithful",
    "ve": "UNDECIDED"
   },
   {
    "agree": false,
-   "classification": "VE limit (ET/QT): calendar-month cadence or approximate date",
+   "cause": {
+    "feature_family": "ET/QT",
+    "kind": "VE limit",
+    "reason": "VE limit (ET/QT): calendar-month cadence or approximate date"
+   },
    "id": "D6b",
    "key": "SOME(bound)",
+   "route": "D3 ve-units@1",
+   "status": "UNDECIDED-faithful",
    "ve": "UNDECIDED"
   },
   {
    "agree": false,
-   "classification": "VE limit (ET/QT): calendar-month cadence or approximate date",
+   "cause": {
+    "feature_family": "ET/QT",
+    "kind": "VE limit",
+    "reason": "VE limit (ET/QT): calendar-month cadence or approximate date"
+   },
    "id": "D7",
    "key": "NONE",
+   "route": "D3 ve-units@1",
+   "status": "UNDECIDED-faithful",
    "ve": "UNDECIDED"
   }
  ],
+ "cost": {
+  "documents_built": 40,
+  "prover_calls": 64
+ },
  "items": {
   "A-T0/ARG1": {
    "choices": [
@@ -897,7 +1213,7 @@
       "RS2": "F",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -906,7 +1222,7 @@
       "RS2": "F",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -915,7 +1231,7 @@
       "RS2": "Ds",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -924,7 +1240,7 @@
       "RS2": "Ds",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -942,7 +1258,7 @@
       "RS2": "F",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -951,7 +1267,7 @@
       "RS2": "F",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -960,7 +1276,7 @@
       "RS2": "Ds",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -969,7 +1285,7 @@
       "RS2": "Ds",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -987,7 +1303,7 @@
       "RS2": "F",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -996,7 +1312,7 @@
       "RS2": "F",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1005,7 +1321,7 @@
       "RS2": "Ds",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1014,7 +1330,7 @@
       "RS2": "Ds",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -1032,7 +1348,7 @@
       "RS2": "F",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1041,7 +1357,7 @@
       "RS2": "F",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1050,7 +1366,7 @@
       "RS2": "Ds",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1059,7 +1375,7 @@
       "RS2": "Ds",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -1076,7 +1392,7 @@
      "choice": {
       "RS1": "cond"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1094,7 +1410,7 @@
      "choice": {
       "RS1": "ov"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -1110,7 +1426,7 @@
      "choice": {
       "RS1": "cond"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1128,7 +1444,7 @@
      "choice": {
       "RS1": "ov"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -1144,7 +1460,7 @@
      "choice": {
       "RS1": "cond"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1162,7 +1478,7 @@
      "choice": {
       "RS1": "ov"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -1178,7 +1494,7 @@
      "choice": {
       "RS1": "cond"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1196,7 +1512,7 @@
      "choice": {
       "RS1": "ov"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -1213,7 +1529,7 @@
       "RS2": "F",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1222,7 +1538,7 @@
       "RS2": "F",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1262,7 +1578,7 @@
       "RS2": "F",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1271,7 +1587,7 @@
       "RS2": "F",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1280,7 +1596,7 @@
       "RS2": "Ds",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1289,7 +1605,7 @@
       "RS2": "Ds",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -1307,7 +1623,7 @@
       "RS2": "F",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1316,7 +1632,7 @@
       "RS2": "F",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1325,7 +1641,7 @@
       "RS2": "Ds",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1334,7 +1650,7 @@
       "RS2": "Ds",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -1352,7 +1668,7 @@
       "RS2": "F",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1361,7 +1677,7 @@
       "RS2": "F",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1370,7 +1686,7 @@
       "RS2": "Ds",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1379,7 +1695,7 @@
       "RS2": "Ds",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -1416,7 +1732,7 @@
      "choice": {
       "RS1": "ov"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -1432,7 +1748,7 @@
      "choice": {
       "RS1": "cond"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1450,7 +1766,7 @@
      "choice": {
       "RS1": "ov"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -1466,7 +1782,7 @@
      "choice": {
       "RS1": "cond"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1484,7 +1800,7 @@
      "choice": {
       "RS1": "ov"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -1500,7 +1816,7 @@
      "choice": {
       "RS1": "cond"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1518,7 +1834,7 @@
      "choice": {
       "RS1": "ov"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -1535,7 +1851,7 @@
       "RS2": "F",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1544,7 +1860,7 @@
       "RS2": "F",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1553,7 +1869,7 @@
       "RS2": "Ds",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1562,7 +1878,7 @@
       "RS2": "Ds",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -1580,7 +1896,7 @@
       "RS2": "F",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1589,7 +1905,7 @@
       "RS2": "F",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1629,7 +1945,7 @@
       "RS2": "F",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1638,7 +1954,7 @@
       "RS2": "F",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1647,7 +1963,7 @@
       "RS2": "Ds",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1656,7 +1972,7 @@
       "RS2": "Ds",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -1674,7 +1990,7 @@
       "RS2": "F",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1683,7 +1999,7 @@
       "RS2": "F",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1692,7 +2008,7 @@
       "RS2": "Ds",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1701,7 +2017,7 @@
       "RS2": "Ds",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -1718,7 +2034,7 @@
      "choice": {
       "RS1": "cond"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1736,7 +2052,7 @@
      "choice": {
       "RS1": "ov"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -1772,7 +2088,7 @@
      "choice": {
       "RS1": "ov"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -1788,7 +2104,7 @@
      "choice": {
       "RS1": "cond"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1806,7 +2122,7 @@
      "choice": {
       "RS1": "ov"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -1822,7 +2138,7 @@
      "choice": {
       "RS1": "cond"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1840,7 +2156,7 @@
      "choice": {
       "RS1": "ov"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -1857,7 +2173,7 @@
       "RS2": "F",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1866,7 +2182,7 @@
       "RS2": "F",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1875,7 +2191,7 @@
       "RS2": "Ds",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1884,7 +2200,7 @@
       "RS2": "Ds",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -1902,7 +2218,7 @@
       "RS2": "F",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1911,7 +2227,7 @@
       "RS2": "F",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1920,7 +2236,7 @@
       "RS2": "Ds",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1929,7 +2245,7 @@
       "RS2": "Ds",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -1947,7 +2263,7 @@
       "RS2": "F",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1956,7 +2272,7 @@
       "RS2": "F",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -1996,7 +2312,7 @@
       "RS2": "F",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -2005,7 +2321,7 @@
       "RS2": "F",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -2014,7 +2330,7 @@
       "RS2": "Ds",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -2023,7 +2339,7 @@
       "RS2": "Ds",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -2040,7 +2356,7 @@
      "choice": {
       "RS1": "cond"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -2058,7 +2374,7 @@
      "choice": {
       "RS1": "ov"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -2074,7 +2390,7 @@
      "choice": {
       "RS1": "cond"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -2092,7 +2408,7 @@
      "choice": {
       "RS1": "ov"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -2128,7 +2444,7 @@
      "choice": {
       "RS1": "ov"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -2144,7 +2460,7 @@
      "choice": {
       "RS1": "cond"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -2162,7 +2478,7 @@
      "choice": {
       "RS1": "ov"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -2179,7 +2495,7 @@
       "RS2": "F",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -2188,7 +2504,7 @@
       "RS2": "F",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -2197,7 +2513,7 @@
       "RS2": "Ds",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -2206,7 +2522,7 @@
       "RS2": "Ds",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -2224,7 +2540,7 @@
       "RS2": "F",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -2233,7 +2549,7 @@
       "RS2": "F",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -2242,7 +2558,7 @@
       "RS2": "Ds",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -2251,7 +2567,7 @@
       "RS2": "Ds",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -2269,7 +2585,7 @@
       "RS2": "F",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -2278,7 +2594,7 @@
       "RS2": "F",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -2287,7 +2603,7 @@
       "RS2": "Ds",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -2296,7 +2612,7 @@
       "RS2": "Ds",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -2314,7 +2630,7 @@
       "RS2": "F",
       "RS2force": "strict"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -2323,7 +2639,7 @@
       "RS2": "F",
       "RS2force": "default"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -2362,7 +2678,7 @@
      "choice": {
       "RS1": "cond"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -2380,7 +2696,7 @@
      "choice": {
       "RS1": "ov"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -2396,7 +2712,7 @@
      "choice": {
       "RS1": "cond"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -2414,7 +2730,7 @@
      "choice": {
       "RS1": "ov"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -2430,7 +2746,7 @@
      "choice": {
       "RS1": "cond"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -2448,7 +2764,7 @@
      "choice": {
       "RS1": "ov"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -2484,7 +2800,7 @@
      "choice": {
       "RS1": "ov"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -2512,7 +2828,7 @@
    "choices": [
     {
      "choice": {},
-     "default_sensitive": false,
+     "default_sensitive": null,
      "holds": true,
      "rules": [
       "f8-autonomous"
@@ -2538,7 +2854,7 @@
    "choices": [
     {
      "choice": {},
-     "default_sensitive": false,
+     "default_sensitive": null,
      "holds": false,
      "rules": []
     }
@@ -2564,7 +2880,7 @@
    "choices": [
     {
      "choice": {},
-     "default_sensitive": false,
+     "default_sensitive": null,
      "holds": true,
      "rules": [
       "f8-internal"
@@ -2592,7 +2908,7 @@
    "choices": [
     {
      "choice": {},
-     "default_sensitive": false,
+     "default_sensitive": null,
      "holds": true,
      "rules": [
       "f8-public"
@@ -2618,7 +2934,7 @@
    "choices": [
     {
      "choice": {},
-     "default_sensitive": false,
+     "default_sensitive": null,
      "holds": false,
      "rules": []
     }
@@ -2642,7 +2958,7 @@
    "choices": [
     {
      "choice": {},
-     "default_sensitive": false,
+     "default_sensitive": null,
      "holds": false,
      "rules": []
     }
@@ -2654,29 +2970,60 @@
    "choices": [
     {
      "choice": {
-      "RS4": "scope"
+      "RS4": "scope",
+      "RS7": "exec"
      },
      "holds": false,
      "rules": "whole D1",
      "w1": [
+      "UNKNOWN",
       "UNKNOWN",
       "UNKNOWN"
      ]
     },
     {
      "choice": {
-      "RS4": "rel"
+      "RS4": "scope",
+      "RS7": "final"
+     },
+     "holds": false,
+     "rules": "whole D1",
+     "w1": [
+      "UNKNOWN",
+      "UNKNOWN",
+      "UNKNOWN"
+     ]
+    },
+    {
+     "choice": {
+      "RS4": "rel",
+      "RS7": "exec"
      },
      "holds": true,
      "rules": "whole D1",
      "w1": [
       "CONFLICT",
+      "UNKNOWN",
+      "CONFLICT"
+     ]
+    },
+    {
+     "choice": {
+      "RS4": "rel",
+      "RS7": "final"
+     },
+     "holds": true,
+     "rules": "whole D1",
+     "w1": [
+      "CONFLICT",
+      "UNKNOWN",
       "CONFLICT"
      ]
     }
    ],
    "cone": [
-    "RS4"
+    "RS4",
+    "RS7"
    ],
    "route": "D1 norms@0 W1 check_conflict with a validated witness model"
   },
@@ -2996,8 +3343,15 @@
    "undecided": "VE limit (ET/QT): calendar-month cadence or approximate date"
   },
   "G1": {
-   "route": "D1",
-   "undecided": "translation limit (AP: no proceed act for the row plans)"
+   "choices": [
+    {
+     "choice": {},
+     "holds": true,
+     "rules": []
+    }
+   ],
+   "cone": [],
+   "route": "D1 soft-norms@0 selected_rules on a query-only vocabulary extension"
   },
   "G2": {
    "choices": [
@@ -3011,8 +3365,33 @@
    "route": "D1 soft-norms@0 selected_rules, deny and allow completion; silence"
   },
   "G3": {
-   "route": "D1",
-   "undecided": "translation limit (SC: an unlisted cyber threshold is outside D1's closed vocabulary)"
+   "choices": [
+    {
+     "choice": {
+      "RS1": "cond"
+     },
+     "holds": true,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS1": "uncond"
+     },
+     "holds": true,
+     "rules": []
+    },
+    {
+     "choice": {
+      "RS1": "ov"
+     },
+     "holds": true,
+     "rules": []
+    }
+   ],
+   "cone": [
+    "RS1"
+   ],
+   "route": "D1 soft-norms@0 selected_rules on a query-only vocabulary extension"
   },
   "G4": {
    "route": "D3 ve-units@1",
@@ -3046,7 +3425,7 @@
      "choices": [
       {
        "choice": {},
-       "default_sensitive": false,
+       "default_sensitive": true,
        "holds": false,
        "rules": []
       }
@@ -3073,7 +3452,7 @@
      "choice": {
       "RS12strive": "intent"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": true,
      "rules": []
     }
@@ -3116,32 +3495,12 @@
    "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
   },
   "K12a": {
-   "choices": [
-    {
-     "choice": {},
-     "default_sensitive": false,
-     "holds": true,
-     "rules": [
-      "f15-select-approval"
-     ]
-    }
-   ],
-   "cone": [],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1",
+   "undecided": "translation limit (SC): Board consultation and LTBT approval share one act"
   },
   "K12b": {
-   "choices": [
-    {
-     "choice": {},
-     "default_sensitive": false,
-     "holds": true,
-     "rules": [
-      "f15-select-approval"
-     ]
-    }
-   ],
-   "cone": [],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1",
+   "undecided": "translation limit (SC): Board consultation and LTBT approval share one act"
   },
   "K13": {
    "choices": [
@@ -3186,18 +3545,8 @@
    "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
   },
   "K15a": {
-   "choices": [
-    {
-     "choice": {},
-     "default_sensitive": false,
-     "holds": true,
-     "rules": [
-      "f20-notify-board"
-     ]
-    }
-   ],
-   "cone": [],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1/D3",
+   "undecided": "VE limit (ET): prompt notice or effective-date order is not encoded"
   },
   "K15b": {
    "choices": [
@@ -3213,7 +3562,7 @@
      "choice": {
       "RS6notice": "M"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -3238,18 +3587,8 @@
    "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
   },
   "K17": {
-   "choices": [
-    {
-     "choice": {},
-     "default_sensitive": false,
-     "holds": true,
-     "rules": [
-      "f23-publish"
-     ]
-    }
-   ],
-   "cone": [],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1/D3",
+   "undecided": "VE limit (ET): prompt notice or effective-date order is not encoded"
   },
   "K18": {
    "choices": [
@@ -3355,7 +3694,7 @@
      "choice": {
       "RS4": "scope"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -3393,7 +3732,7 @@
      "choice": {
       "RS4": "scope"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     },
@@ -3401,7 +3740,7 @@
      "choice": {
       "RS4": "rel"
      },
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -3415,7 +3754,7 @@
    "choices": [
     {
      "choice": {},
-     "default_sensitive": false,
+     "default_sensitive": true,
      "holds": false,
      "rules": []
     }
@@ -4113,8 +4452,15 @@
    "route": "D1 relational-fol@0 entailment certificate or validated finite countermodel"
   },
   "T5": {
-   "route": "D3 ve-units@1",
-   "undecided": "VE limit (QT): factor-of-five quantity not represented in D3"
+   "choices": [
+    {
+     "choice": {},
+     "holds": true,
+     "reason": "4.5 <= 5.0 under the policy's stated factor"
+    }
+   ],
+   "cone": [],
+   "route": "D3 ve-units@1 quantity certificate replay"
   },
   "T6": {
    "choices": [
@@ -4279,6 +4625,437 @@
     "RS3c"
    ],
    "route": "D1 relational-fol@0 entailment certificate or validated finite countermodel"
+  }
+ },
+ "metrics": {
+  "M1": {
+   "A": {
+    "correct": 40,
+    "faithful_undecided": 0,
+    "key": 40
+   },
+   "B": {
+    "correct": 12,
+    "faithful_undecided": 0,
+    "key": 12
+   },
+   "C": {
+    "correct": 8,
+    "faithful_undecided": 0,
+    "key": 8
+   },
+   "D": {
+    "correct": 6,
+    "faithful_undecided": 3,
+    "key": 9
+   },
+   "G": {
+    "correct": 5,
+    "faithful_undecided": 3,
+    "key": 8
+   },
+   "K": {
+    "correct": 21,
+    "faithful_undecided": 6,
+    "key": 27
+   },
+   "N": {
+    "correct": 3,
+    "faithful_undecided": 2,
+    "key": 5
+   },
+   "S": {
+    "correct": 7,
+    "faithful_undecided": 1,
+    "key": 8
+   },
+   "T": {
+    "correct": 9,
+    "faithful_undecided": 0,
+    "key": 9
+   }
+  },
+  "M10": {
+   "cases": 49,
+   "choices": 282,
+   "documents_built": 40,
+   "prover_calls": 64,
+   "rules": 76,
+   "units": 303,
+   "wall_time": "printed by run.py; intentionally not pinned by --check"
+  },
+  "M2": {
+   "max_choices_per_item": 8,
+   "reading_sets": 25,
+   "some_answers": 31,
+   "ve_readings": "P2 pending (RS1 has a no-rule reading)"
+  },
+  "M3": {
+   "bytes_by_kind": {
+    "asserted": 301,
+    "attributed": 2552,
+    "causal": 551,
+    "definition": 5942,
+    "example": 3118,
+    "explanation": 13478,
+    "exposition": 5913,
+    "hedged": 1903,
+    "meta": 3078,
+    "norm": 18953,
+    "unformalised": 3621
+   },
+   "bytes_by_status": {
+    "CHECKED": 5327,
+    "LABELLED": 37248,
+    "OPEN": 13214,
+    "UNFORMALISED": 3621
+   },
+   "residual": {
+    "assumptions": 0,
+    "bridge_leaves": 0,
+    "default_exceptions": 0,
+    "holistic_overrides": 0,
+    "instruction_switches": 0,
+    "open_terms": 28,
+    "unresolved_reading_sets": 30,
+    "weighing_points": 0
+   }
+  },
+  "M4": {
+   "conditional_by_family": {
+    "A": 24,
+    "C": 3,
+    "G": 1,
+    "T": 3
+   }
+  },
+  "M5": {
+   "rules_per_source": {
+    "F1 to F4": [
+     "rows-cond",
+     "rows-uncond"
+    ],
+    "F10": [
+     "f10-candid-default",
+     "f10-in-line",
+     "f10-attempt-strict",
+     "f10-attempt-default"
+    ],
+    "F11": [
+     "f11-factual",
+     "f11-analyses",
+     "f11-review",
+     "f11-goal-missed",
+     "f11-marginal",
+     "f11-assess"
+    ],
+    "F12": [
+     "f12-internal-feedback",
+     "f12-external-default",
+     "f12-approval",
+     "f12-final",
+     "f12-share",
+     "f12-board-approval"
+    ],
+    "F13": [
+     "f13-minimize-default",
+     "f13-redact-p",
+     "f13-disclose",
+     "f13-justify-default"
+    ],
+    "F14": [
+     "f14-public-review-default",
+     "f14-full-review",
+     "f14-ltbt-request"
+    ],
+    "F15": [
+     "f15-financial-interest",
+     "f15-revenue-strict",
+     "f15-revenue-default",
+     "f15-select-approval"
+    ],
+    "F16": [
+     "f16-share-one-week",
+     "f16-ask-commentary",
+     "f16-before-board-default",
+     "f16-all-sections",
+     "f16-split-p",
+     "f16-only-legal"
+    ],
+    "F18": [
+     "f18-rso"
+    ],
+    "F19": [
+     "f19-brief-ltbt",
+     "f19-unredacted",
+     "f19-minimally-redacted"
+    ],
+    "F20": [
+     "f20-process",
+     "f20-recipients",
+     "f20-investigate",
+     "f20-quarterly",
+     "f20-notify-board",
+     "f20-notice-p",
+     "f20-retaliation",
+     "f20-board-recipient"
+    ],
+    "F21": [
+     "f21-no-impeding",
+     "f21-clause"
+    ],
+    "F22": [
+     "f22-internal-review",
+     "f22-third-party-review"
+    ],
+    "F23": [
+     "f23-approval",
+     "f23-publish",
+     "f23-website"
+    ],
+    "F24": [
+     "f24-argument",
+     "f24-delay"
+    ],
+    "F25": [
+     "f25-meet",
+     "f25-delay"
+    ],
+    "F26": [
+     "f26-effort",
+     "f26-need-not-delay"
+    ],
+    "F5": [
+     "f5-strict",
+     "f5-default"
+    ],
+    "F6": [
+     "f6-maintain"
+    ],
+    "F6 \"It will be shared with all full-time employees as well as our Board of Directors (Board) and Long-Term Benefit Trust (LTBT)": [
+     "f6-share"
+    ],
+    "F6 \"We will also keep past Roadmaps available at that link\"": [
+     "f6-keep-past"
+    ],
+    "F6 \"We will provide updates on whether we achieve the goals": [
+     "f6-updates"
+    ],
+    "F6 \"we will strive to avoid situations where we revise the goals in a less ambitious direction simply because we are unable to achieve them\" (RS12 default)": [
+     "f6-strive-default"
+    ],
+    "F7": [
+     "f7-publish"
+    ],
+    "F8": [
+     "f8-public",
+     "f8-internal",
+     "f8-autonomous"
+    ],
+    "F9": [
+     "f9-public",
+     "f9-internal"
+    ],
+    "row T4": [
+     "f5-evidence-strict"
+    ],
+    "section 1 \"We will strive to advance these recommendations through a mixture of example-setting ...\" (RS12 default; under intent no rule)": [
+     "s1-advance-default"
+    ],
+    "the same \"should\"": [
+     "f5-evidence-default"
+    ]
+   },
+   "violations": []
+  },
+  "M6": {
+   "defaults_untraced": [],
+   "narrowings": {
+    "N1": "every RS0 statement is a commitment (no set)",
+    "N2": "the changelog for v1.0 to v3.3 is history: LABELLED, no rule",
+    "N3": "3.6.1 \"may not\" is a prohibition (f15-financial-interest, no set)"
+   },
+   "order_or_causal_predicates": [],
+   "permissions_untraced": [],
+   "thresholds_without_premise": [],
+   "untraced": []
+  },
+  "M7": {
+   "insensitive_choices": 58,
+   "sensitive_choices": 117
+  },
+  "M8": {
+   "replayed_certificates": 26,
+   "unknown_items": [
+    "K9",
+    "K10",
+    "K12a",
+    "K12b",
+    "K15a",
+    "K17",
+    "G4",
+    "G5",
+    "G6",
+    "N4",
+    "N5",
+    "S2",
+    "D6a",
+    "D6b",
+    "D7"
+   ],
+   "validated_countermodels": 38,
+   "w1_conflict_witnesses": 4
+  },
+  "M9": {
+   "detected": 6,
+   "mutants": {
+    "m1": {
+     "changed": [
+      "C-doc",
+      "C2"
+     ],
+     "exact": true,
+     "expected": [
+      "C-doc",
+      "C2"
+     ],
+     "invention_audit_flags": false
+    },
+    "m2": {
+     "changed": [
+      "G1"
+     ],
+     "exact": true,
+     "expected": [
+      "G1"
+     ],
+     "invention_audit_flags": true
+    },
+    "m3": {
+     "changed": [
+      "C-doc",
+      "C1",
+      "C7",
+      "N2"
+     ],
+     "exact": true,
+     "expected": [
+      "C-doc",
+      "C1",
+      "C7",
+      "N2"
+     ],
+     "invention_audit_flags": false
+    },
+    "m4": {
+     "changed": [
+      "G3"
+     ],
+     "exact": true,
+     "expected": [
+      "G3"
+     ],
+     "invention_audit_flags": true
+    },
+    "m5": {
+     "changed": [
+      "T1",
+      "T2b",
+      "T5"
+     ],
+     "exact": true,
+     "expected": [
+      "T1",
+      "T2b",
+      "T5"
+     ],
+     "invention_audit_flags": false
+    },
+    "m6": {
+     "changed": [
+      "D4"
+     ],
+     "exact": true,
+     "expected": [
+      "D4"
+     ],
+     "invention_audit_flags": false
+    }
+   }
+  }
+ },
+ "mutants": {
+  "m1": {
+   "changed": [
+    "C-doc",
+    "C2"
+   ],
+   "exact": true,
+   "expected": [
+    "C-doc",
+    "C2"
+   ],
+   "invention_audit_flags": false
+  },
+  "m2": {
+   "changed": [
+    "G1"
+   ],
+   "exact": true,
+   "expected": [
+    "G1"
+   ],
+   "invention_audit_flags": true
+  },
+  "m3": {
+   "changed": [
+    "C-doc",
+    "C1",
+    "C7",
+    "N2"
+   ],
+   "exact": true,
+   "expected": [
+    "C-doc",
+    "C1",
+    "C7",
+    "N2"
+   ],
+   "invention_audit_flags": false
+  },
+  "m4": {
+   "changed": [
+    "G3"
+   ],
+   "exact": true,
+   "expected": [
+    "G3"
+   ],
+   "invention_audit_flags": true
+  },
+  "m5": {
+   "changed": [
+    "T1",
+    "T2b",
+    "T5"
+   ],
+   "exact": true,
+   "expected": [
+    "T1",
+    "T2b",
+    "T5"
+   ],
+   "invention_audit_flags": false
+  },
+  "m6": {
+   "changed": [
+    "D4"
+   ],
+   "exact": true,
+   "expected": [
+    "D4"
+   ],
+   "invention_audit_flags": false
   }
  }
 }
