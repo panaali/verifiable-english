@@ -4,6 +4,10 @@
   "baselines": {
     "test_ask_lean_cpu[A1]::lean": 0.6,
     "test_ask_lean_cpu[U3]::lean": 0.7,
+    "test_cardinality_region_structure_once::150 premises": 4.32,
+    "test_cardinality_region_structure_once::50 premises": 1.49,
+    "test_cardinality_universal_dedup_near_linear::1800 universals": 1.37,
+    "test_cardinality_universal_dedup_near_linear::5400 universals": 4.1,
     "test_gate_source_identity::fresh index": 2.502,
     "test_gate_source_identity::repository index": 0.063,
     "test_kernel_bounded_batches[w6a-generator]::test_every_backend_reports_resource_limit_in_bounded_time[0]:ve": 9.114,
