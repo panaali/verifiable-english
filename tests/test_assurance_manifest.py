@@ -594,6 +594,15 @@ def test_decoder_files_are_pinned_whole():
     assert not problems, "\n".join(problems)
 
 
+def test_full_file_decoder_pins_cover_the_current_file():
+    """A refreshed hash must not leave newly added decoder lines outside a claimed full-file range."""
+    for entry in MANIFEST["lean_decoders"]["files"]:
+        if "full file" in entry.get("reason", ""):
+            data = (ROOT / entry["file"]).read_bytes()
+            lines = data.count(b"\n") + (0 if data.endswith(b"\n") or not data else 1)
+            assert entry["ranges"] == [[1, lines]], entry["file"]
+
+
 def test_decoder_pin_detects_code_appended_after_a_range(tmp_path):
     """Review reproducer: a def appended right after a range passed the boundary checks."""
     entry = next(e for e in MANIFEST["lean_decoders"]["files"] if e["file"] == "lean/VE/Route/Wire.lean")
