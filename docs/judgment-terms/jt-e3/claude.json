@@ -1,0 +1,242 @@
+[
+  {
+    "id": "constitution:appropriate_oversight",
+    "class": "judgment"
+  },
+  {
+    "id": "constitution:attempt_to_kill_or_disempower_most_of_humanity",
+    "class": "proportion"
+  },
+  {
+    "id": "constitution:broad_safety",
+    "class": "judgment"
+  },
+  {
+    "id": "constitution:clear_and_substantial_undermining_of_oversight",
+    "class": "judgment"
+  },
+  {
+    "id": "constitution:compliance_unsafe",
+    "class": "judgment"
+  },
+  {
+    "id": "constitution:damaging_cyberweapon_or_malicious_code",
+    "class": "judgment"
+  },
+  {
+    "id": "constitution:ethical_harm",
+    "class": "judgment"
+  },
+  {
+    "id": "constitution:exception_to_asking_for_clarification",
+    "class": "exception"
+  },
+  {
+    "id": "constitution:exception_to_complying_with_exploit_instruction",
+    "class": "exception"
+  },
+  {
+    "id": "constitution:general_exception_to_complying",
+    "class": "exception"
+  },
+  {
+    "id": "constitution:genuine_helpfulness",
+    "class": "judgment"
+  },
+  {
+    "id": "constitution:good_judgment",
+    "class": "judgment"
+  },
+  {
+    "id": "constitution:illegitimate_absolute_control",
+    "class": "judgment"
+  },
+  {
+    "id": "constitution:input_is_information",
+    "class": "classification"
+  },
+  {
+    "id": "constitution:input_is_persona",
+    "class": "classification"
+  },
+  {
+    "id": "constitution:input_is_specific_instructions",
+    "class": "classification"
+  },
+  {
+    "id": "constitution:instruction_abandon_identity_in_persona",
+    "class": "judgment"
+  },
+  {
+    "id": "constitution:instruction_act_against_guidelines",
+    "class": "classification"
+  },
+  {
+    "id": "constitution:instruction_claim_human_when_asked",
+    "class": "classification"
+  },
+  {
+    "id": "constitution:instruction_deceptive_tactics_harming_users",
+    "class": "judgment"
+  },
+  {
+    "id": "constitution:instruction_decline_or_withhold",
+    "class": "classification"
+  },
+  {
+    "id": "constitution:instruction_false_information_deceiving_user",
+    "class": "classification"
+  },
+  {
+    "id": "constitution:instruction_promote_own_products",
+    "class": "classification"
+  },
+  {
+    "id": "constitution:instruction_role_play_custom_persona",
+    "class": "classification"
+  },
+  {
+    "id": "constitution:restricted_action_knowing_or_quite_likely",
+    "class": "attitude"
+  },
+  {
+    "id": "constitution:seemingly_compelling_argument_to_cross_line",
+    "class": "judgment"
+  },
+  {
+    "id": "udhr:adequate",
+    "class": "judgment"
+  },
+  {
+    "id": "udhr:aimed_at_destruction_of_rights",
+    "class": "attitude"
+  },
+  {
+    "id": "udhr:arbitrary",
+    "class": "judgment"
+  },
+  {
+    "id": "udhr:community_of_full_development",
+    "class": "classification"
+  },
+  {
+    "id": "udhr:competent",
+    "class": "classification"
+  },
+  {
+    "id": "udhr:contrary_to_un_purposes_and_principles",
+    "class": "judgment"
+  },
+  {
+    "id": "udhr:democratic_society",
+    "class": "judgment"
+  },
+  {
+    "id": "udhr:determined_by_law",
+    "class": "classification"
+  },
+  {
+    "id": "udhr:discrimination",
+    "class": "judgment"
+  },
+  {
+    "id": "udhr:due_recognition_and_respect",
+    "class": "judgment"
+  },
+  {
+    "id": "udhr:effective",
+    "class": "judgment"
+  },
+  {
+    "id": "udhr:equal_before_law",
+    "class": "classification"
+  },
+  {
+    "id": "udhr:equal_protection_of_the_law",
+    "class": "judgment"
+  },
+  {
+    "id": "udhr:fair",
+    "class": "judgment"
+  },
+  {
+    "id": "udhr:full_equality",
+    "class": "judgment"
+  },
+  {
+    "id": "udhr:guarantees_necessary_for_defence",
+    "class": "judgment"
+  },
+  {
+    "id": "udhr:independent_and_impartial",
+    "class": "judgment"
+  },
+  {
+    "id": "udhr:just_and_favourable_conditions_of_work",
+    "class": "judgment"
+  },
+  {
+    "id": "udhr:justice",
+    "class": "judgment"
+  },
+  {
+    "id": "udhr:member_of_society",
+    "class": "classification"
+  },
+  {
+    "id": "udhr:merit",
+    "class": "judgment"
+  },
+  {
+    "id": "udhr:morality",
+    "class": "judgment"
+  },
+  {
+    "id": "udhr:natural_and_fundamental_group_unit_of_society",
+    "class": "judgment"
+  },
+  {
+    "id": "udhr:non_political_crime",
+    "class": "classification"
+  },
+  {
+    "id": "udhr:of_greatest_importance_for",
+    "class": "judgment"
+  },
+  {
+    "id": "udhr:persecution",
+    "class": "judgment"
+  },
+  {
+    "id": "udhr:protection_of_the_family",
+    "class": "classification"
+  },
+  {
+    "id": "udhr:public_order",
+    "class": "judgment"
+  },
+  {
+    "id": "udhr:reasonable",
+    "class": "judgment"
+  },
+  {
+    "id": "udhr:rights_and_freedoms_set_forth",
+    "class": "classification"
+  },
+  {
+    "id": "udhr:slave_trade",
+    "class": "classification"
+  },
+  {
+    "id": "udhr:slavery",
+    "class": "classification"
+  },
+  {
+    "id": "udhr:social_security",
+    "class": "classification"
+  },
+  {
+    "id": "udhr:status_of_country_or_territory",
+    "class": "classification"
+  }
+]
