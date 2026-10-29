@@ -280,7 +280,7 @@ def test_rsp_stage0_rerun_equals_saved(rsp_modules):
 
 
 @pytest.mark.skipif(not LEAN_SERVICE.exists(), reason="the Lean service is not built")
-def test_rsp_run_recomputes_every_key_item_and_records_causes(rsp_modules):
+def test_rsp_run_recomputes_every_key_item_and_records_causes(rsp_modules, monkeypatch):
     """Every saved answer comes from a fresh VE route, with no key read during answer()."""
     saved = json.loads((RSP / "results.json").read_text())
     fresh = rsp_run.run()
@@ -297,6 +297,15 @@ def test_rsp_run_recomputes_every_key_item_and_records_causes(rsp_modules):
     assert cases["K21"]["findings"]["OT8"] is True
     assert "significant_lead" not in json.dumps(json.loads(rsp_translation.parsed_rule("f24-delay"))["guard"])
     assert rsp_run.verdict(rsp_run.answer({"id": "K19b", "case": "K19b", "item": "REQUIRED:DELAY"})) == "ALL"
+    # A model missing the source-stated T4 -> highly-capable premise is refused.
+    original_atoms = rsp_run.atoms
+    monkeypatch.setattr(rsp_run, "atoms", lambda case: original_atoms(case) - {("highly_capable", "s")})
+    rsp_run._MODELS.clear()
+    rsp_run._PREMISES_CHECKED.clear()
+    choice = rsp_run.BASE
+    doc = rsp_run.document(tuple(sorted(choice.items())), "deny")
+    with pytest.raises(AssertionError, match="highly-capable-t4"):
+        rsp_run.check_premises(doc, rsp_run.CASES["A-T4"], choice)
 
 
 def test_rsp_independent_reference_and_comparator_catch_wrong_answers(rsp_modules):
@@ -306,6 +315,9 @@ def test_rsp_independent_reference_and_comparator_catch_wrong_answers(rsp_module
     assert not rsp_reference.matches("NONE", (), lambda c: True)
     assert not rsp_run.same_set("ALL", {"route": "test", "cone": [],
                                          "choices": [{"choice": {}, "holds": False}]})
+    assert not rsp_run.same_set("ALL", {"route": "test", "cone": [], "choices": []})
+    assert not rsp_run.same_set("SOME(cond)", {"route": "test", "cone": [],
+                                                "choices": [{"choice": {}, "holds": True}]})
 
 
 @pytest.mark.skipif(not LEAN_SERVICE.exists(), reason="the Lean service is not built")

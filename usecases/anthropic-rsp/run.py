@@ -101,28 +101,67 @@ def document(names, default, include=None):
 
 
 def atoms(case):
-    found = {("listed", name) for name in V.THRESHOLDS}
+    found = set(listed_facts())
     found.update(("crossed", "s", THRESHOLDS[t]) for t in case["thresholds"])
     found.update((name, "s") for name in SITUATIONS.get(case["id"], ()))
     for term, value in case["findings"].items():
         if value and term in OT:
             found.add((OT[term], "s"))
+    if "T4" in case["thresholds"]:
+        found.add(("highly_capable", "s"))  # a model witness of the stated 3.6 definition
     if case["findings"].get("OT5"):
         found.add(("crossed", "s", THRESHOLDS["T4"]))
     found.update((name, "s") for name in case.get("extra", ()))
     return found
 
 
+@lru_cache(maxsize=None)
+def listed_facts():
+    """The four threshold constants are facts.d1.ve premises, not a copied table."""
+    out = []
+    for block, formulas in T.facts():
+        if block.id.startswith("threshold-"):
+            for formula in formulas:
+                if type(formula) is not A.Unary or type(formula.term) is not A.Const:
+                    raise AssertionError("threshold fact is not a ground unary premise")
+                out.append((formula.predicate, formula.term.name))
+    return tuple(out)
+
+
 def model(doc, case):
     env = doc.elaborated.base_environment()
+    key = (env.environment_id, frozenset(atoms(case)))
+    if key in _MODELS:
+        return _MODELS[key]
     relations = {p: [] for p in env.predicates}
     for atom in atoms(case):
         if atom[0] in relations:
             relations[atom[0]].append(list(atom[1:]))
-    return FiniteModel.from_dict(env, {"complete": True,
+    _MODELS[key] = FiniteModel.from_dict(env, {"complete": True,
         "domains": {"situation": ["s"], "threshold": list(V.THRESHOLDS)},
         "constants": {c: c for c in env.constants},
         "relations": {p: sorted(v) for p, v in relations.items()}})
+    return _MODELS[key]
+
+
+_MODELS = {}
+_PREMISES_CHECKED = set()
+
+
+def check_premises(doc, case, choice):
+    from ve.evaluate import evaluate
+    key = (frozenset(atoms(case)), tuple((s, choice[s]) for s in ("RS3o", "RS3i", "RS3c")))
+    if key in _PREMISES_CHECKED:
+        return
+    env = doc.elaborated.base_environment()
+    witness = model(doc, case)
+    for block, formulas in T.facts():
+        if applies(block, choice):
+            for formula in formulas:
+                result = evaluate(env, formula, witness, trace=False)
+                if result.value is not True:
+                    raise AssertionError(f"case {case['id']} does not satisfy premise {block.id}: {result.status}")
+    _PREMISES_CHECKED.add(key)
 
 
 def selected(doc, case, predicate, sign, values=None):
@@ -164,6 +203,7 @@ def query(case, predicate, sign=True, values=None, *, extra_sets=(), requirement
         choice = {**BASE, **assignment}
         deny = document(tuple(sorted(choice.items())), "deny")
         allow = document(tuple(sorted(choice.items())), "allow")
+        check_premises(deny, case, choice)
         left = selected(deny, case, predicate, sign, values)
         right = selected(allow, case, predicate, sign, values)
         if requirement and V.REGULATED[predicate]["regulated"]["role"] != "obligation":
@@ -472,8 +512,8 @@ def gap_probe(id_):
         doc = SoftNormDocument(SoftEnvironment(raw), [{"norm": r} for r in rules])
         env = doc.elaborated.base_environment()
         relations = {p: [] for p in env.predicates}
-        for threshold in V.THRESHOLDS:
-            relations["listed"].append([threshold])
+        for predicate, threshold in listed_facts():
+            relations[predicate].append([threshold])
         if id_ == "G1":
             relations["crossed"].append(["s", THRESHOLDS["T2"]])
             relations["plans_missing"].append(["s"])
@@ -564,6 +604,8 @@ def verdict(result):
         return result["value"]
     if "parts" in result:
         return {name: verdict(part) for name, part in result["parts"].items()}
+    if not result["choices"]:
+        return "UNDECIDED"
     yes = [r["choice"] for r in result["choices"] if r["holds"]]
     if not yes:
         return "NONE"
@@ -587,6 +629,8 @@ def same_set(key, result):
     if "parts" in result:
         return isinstance(key, dict) and set(key) == set(result["parts"]) and all(
             same_set(key[name], part) for name, part in result["parts"].items())
+    if not result["choices"]:
+        return False
     if key in ("ALL", "NONE"):
         return all(row["holds"] == (key == "ALL") for row in result["choices"])
     if not isinstance(key, str) or not key.startswith("SOME("):
@@ -595,6 +639,8 @@ def same_set(key, result):
     desired = []
     for term in terms:
         desired.append(dict(ALIASES[x.strip()] for x in term.split("&")))
+    if any(not set(d) <= set(result["cone"]) for d in desired):
+        return False
     return all(row["holds"] == any(all(row["choice"].get(s, BASE[s]) == v for s, v in d.items())
                                    for d in desired) for row in result["choices"])
 
@@ -609,7 +655,7 @@ def compare(items):
         status = "agree" if agrees else ("UNDECIDED-faithful" if reason else "disagree")
         cause = None
         if reason:
-            family = reason.split("(")[1].split(")")[0] if "(" in reason else "unspecified"
+            family = reason.split("(")[1].split(")")[0].split(":")[0] if "(" in reason else "unspecified"
             cause = {"kind": "translation limit" if reason.startswith("translation limit") else
                      "resource limit" if reason.startswith("resource limit") else "VE limit",
                      "feature_family": family, "reason": reason}
@@ -627,6 +673,8 @@ def run():
     PROVER_CALLS = 0
     document.cache_clear()
     conflict.cache_clear()
+    _MODELS.clear()
+    _PREMISES_CHECKED.clear()
     key = json.loads((HERE / "answer-key.json").read_text())["items"]
     items = {k["id"]: answer({name: k[name] for name in ("id", "case", "item")}) for k in key}
     return {"items": items, "comparison": compare(items),

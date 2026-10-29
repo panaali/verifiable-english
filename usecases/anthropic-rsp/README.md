@@ -1,4 +1,4 @@
-# Anthropic's Responsible Scaling Policy, translated into VE (baseline)
+# Anthropic's Responsible Scaling Policy, translated into VE
 
 This case translates a published frontier-lab safety policy into VE: Anthropic's *Responsible Scaling Policy*,
 version 3.4, effective 8 July 2026. It follows the method of [safety-framework](../safety-framework/README.md)
@@ -14,9 +14,9 @@ open term with the person or body who decides it. It adds no default, permission
 text does not state.
 
 The plan, with the answer key written and frozen before any VE run, is [PLAN.md](PLAN.md); the freeze is
-[KEY-FREEZE.md](KEY-FREEZE.md). This is the **baseline**: the translation, the byte-by-byte accounting of the text,
-and the stage 0 probes. The harness that answers the 126 key items is the follow-up `usecase-rsp-run`. PLAN section 12
-lists this round's deviations. No key cell changed.
+[KEY-FREEZE.md](KEY-FREEZE.md). The baseline contains the translation, byte accounting and stage 0 probes. The
+`usecase-rsp-run` round adds the key-answering harness. PLAN section 12 lists both rounds' deviations. No key cell
+changed. The answer counts below are **not audit-validated**; `uc-audit` has not reviewed this translation.
 
 **Conflict of interest.** This is the policy of the company that makes the model that wrote the translation. Every
 rule cites its source sentence. The plan was reviewed by a model of another company (gpt-6-astra). The run round's
@@ -48,6 +48,8 @@ unit ids and short quotations only.
 | [build_document.py](build_document.py), [spans.json](spans.json), [coverage.json](coverage.json) | the byte-by-byte accounting of the source text: 303 units |
 | [stage0.py](stage0.py) | stage 0: probes P1 to P8, the identifier lint and the invention audit ([stage0.json](../../docs/usecases/safetyfw/anthropic-rsp/stage0.json)) |
 | [measure.py](measure.py) | what each byte that is not CHECKED waits for ([units.json, gaps.json](../../docs/usecases/safetyfw/anthropic-rsp/)) |
+| [run.py](run.py), [results.json](results.json) | each key item, VE route and reason, comparison, metrics M1–M10 and six exact-change mutants |
+| [reference.py](reference.py) | independent stdlib reading of PLAN sections 3–4 for families A, B, C and G |
 | [../../tests/test_safetyfw_usecases.py](../../tests/test_safetyfw_usecases.py) | the test: the frozen key and its transcription, the span accounting, stage 0 and the gaps |
 
 Run, after `lake build` in `lean/` and `python3 tools/rust_build.py`:
@@ -57,9 +59,35 @@ uv run python usecases/anthropic-rsp/rsp_vocabulary.py   # environment.d1.json
 uv run python usecases/anthropic-rsp/build_document.py   # spans.json, coverage.json (needs the pinned source)
 uv run python usecases/anthropic-rsp/stage0.py           # stage0.json
 uv run python usecases/anthropic-rsp/measure.py          # units.json, gaps.json
+uv run python usecases/anthropic-rsp/run.py              # results.json and M1–M10
+uv run python usecases/anthropic-rsp/reference.py        # independent A/B/C/G reference
 ```
 
-Each takes `--check` to compare with the committed output instead of writing it.
+The generators take `--check` to compare with the committed output instead of writing it. `reference.py` prints
+its comparison without writing a file.
+
+## Answers to the frozen key (2026-10-29)
+
+`results.json` records one row per key item in `comparison`, with `agree`, `status`, `route` and `cause`. The progress
+score can read `comparison[].agree` for useful answers and `status == "UNDECIDED-faithful"` for faithful undecided
+answers. These counts are not audit-validated until `uc-audit` reviews the translation.
+
+| Family | Correct / key | Faithful undecided |
+|---|---:|---:|
+| A thresholds | 40 / 40 | 0 |
+| B scope | 12 / 12 | 0 |
+| K process | 21 / 27 | 6 |
+| T automated R&D | 9 / 9 | 0 |
+| C conflicts in the translation | 8 / 8 | 0 |
+| G gaps | 5 / 8 | 3 |
+| N never applies | 3 / 5 | 2 |
+| S severity | 7 / 8 | 1 |
+| D dates | 6 / 9 | 3 |
+| **Total** | **111 / 126** | **15** |
+
+All 15 undecided rows name a translation or VE feature limit in `comparison[].cause`; none is counted as a wrong
+verdict. W1 conflict answers identify conflicts in the translated rules. Their status as source-policy conflicts
+awaits the independent source check required by DRI ruling R14.
 
 ## Span accounting (2026-10-28)
 
@@ -120,9 +148,8 @@ From [gaps.json](../../docs/usecases/safetyfw/anthropic-rsp/gaps.json). A unit c
 | P8 D1 with `judgments@0` | refused: `judgments@0 with soft-norms@0 needs its composed Lean route` (jt-2c is not merged) |
 | M6 invention audit | 0 untraced rules or premises; every default rule is a default reading of a set and every permission the P reading of an RS6 set; no order or causal predicate |
 
-## Not in this round
+## Remaining limits
 
-The harness that answers the key, the reference reading and metrics M1, M2, M4 and M7 to M10 are
-`usecase-rsp-run`: a `run.py` that builds each case from cases.json, expands the reading sets per choice, runs
-D1 to D3 under both completion defaults and compares with answer-key.json; a `reference.py`; the seeded mutants
-m1 to m6.
+The 15 faithful undecided rows in `results.json` name the missing AP, SC, ET, QT and WG representations. The
+translation's conflicts remain candidates until the independent source check under R14. The answer counts remain
+unvalidated until `uc-audit` has checked the source units and the item dependencies.
