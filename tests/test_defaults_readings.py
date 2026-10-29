@@ -13,11 +13,15 @@ from __future__ import annotations
 import copy
 import io
 import json
+import subprocess
+import sys
 from contextlib import redirect_stdout
+from pathlib import Path
 
 import pytest
 
 from tests import lean_routes
+from tests.subprocesses import HANG_TIMEOUT
 from tests.test_document import unit, write_doc
 from tests.test_readings_s1_document import SHALL, candidate
 from tests.test_readings_s1_lean import SOFT_PROFILES, env_k, norm
@@ -33,6 +37,16 @@ DE7 = ("Rules no-deception and permit-deception conflict here unless one of them
        "and e0 need not avoid deceiving e0. The text ranks neither above the other, and names no exception that "
        "applies here.")
 DE7AU = "The text names no one who decides which rule gives way."
+
+
+def test_df3_approved_statements_match_the_built_lean_declarations():
+    root = Path(__file__).resolve().parents[1]
+    result = subprocess.run(
+        [sys.executable, str(root / "docs/defeasible/df-1ac/evidence/compare_statements.py"),
+         "lean/VE/Readings/DefaultVerdicts.lean", "7.4"],
+        cwd=root, capture_output=True, text=True, timeout=HANG_TIMEOUT)
+    assert result.returncode == 0, result.stderr
+    assert result.stdout.endswith("17 OK, 0 not OK\n"), result.stdout
 
 
 @pytest.fixture(scope="module", autouse=True)

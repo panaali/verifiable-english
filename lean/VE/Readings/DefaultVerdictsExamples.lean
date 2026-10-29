@@ -28,6 +28,42 @@ def pairs (N : NDoc) : List (Choice × List (String × String × List String)) :
   ([("rs1", 1), ("rs2", 1)], [("no-deception", "permit-deception", ["unstated"])])]
 #guard (labels Nρ).map (·.2.length) == [0, 1, 1, 2]
 
+-- The old unconstrained row-list structure admitted `.free` for this colliding choice.
+-- The model witnesses the failed default-coherence gate on the same DF-ρ source.
+#guard
+  let c : Choice := [("rs1", 1), ("rs2", 1)]
+  let U := choiceU Nρ c
+  let D := choiceSoft Nρ c
+  let M : VE.FiniteModel VE.Bridge.Entity :=
+    { domains := fun s => [(s, "e_" ++ s)],
+      constants := fun k => ((VE.Norms.envAt U.D 0).constants k).map (fun s => (s, "e_" ++ s)),
+      relations := fun _ => [] }
+  let F : VE.NormDefaults.FiniteFill U VE.Bridge.Entity := fun _ => []
+  VE.NormDefaults.WellFormedU U && collisionCheck U D [] M F "no-deception" "permit-deception"
+
+-- The checked witness's base model is admissible for any source environment.
+example (U : VE.NormDefaults.UDoc) :
+    ({ domains := fun s => [(s, "e_" ++ s)],
+       constants := fun k => ((VE.Norms.envAt U.D 0).constants k).map (fun s => (s, "e_" ++ s)),
+       relations := fun _ => [] } : VE.FiniteModel VE.Bridge.Entity).Valid (VE.Norms.envAt U.D 0) := by
+  constructor
+  · intro c s h
+    exact ⟨(s, "e_" ++ s), by simp [VE.FiniteModel.asStructure, h],
+      by simp [VE.FiniteModel.asStructure]⟩
+  · intro p vs h
+    simp [VE.FiniteModel.asStructure] at h
+
+-- DF-ρ's colliding choice cannot carry the `.free` row that the old lists admitted.
+example (M : VE.FiniteModel VE.Bridge.Entity)
+    (F : VE.NormDefaults.FiniteFill (choiceU Nρ [("rs1", 1), ("rs2", 1)]) VE.Bridge.Entity)
+    (hw : VE.NormDefaults.WellFormedU (choiceU Nρ [("rs1", 1), ("rs2", 1)]) = true)
+    (hv : M.Valid (VE.Norms.envAt (choiceU Nρ [("rs1", 1), ("rs2", 1)]).D 0))
+    (hc : collisionCheck (choiceU Nρ [("rs1", 1), ("rs2", 1)])
+      (choiceSoft Nρ [("rs1", 1), ("rs2", 1)]) [] M F "no-deception" "permit-deception" = true) :
+    ¬ HoldsG (dSem.{0} Nρ) [] .bottom [("rs1", 1), ("rs2", 1)] .free := by
+  intro h
+  exact (collision_sound _ hw _ [] M hv F "no-deception" "permit-deception" hc) h.2
+
 /-- F-DF2: on S1's and S2a's documents a choice without a no-exception premise has no colliding pair (its gate holds
     with no certificate, and its default rows are its strict ones), and the member is shown (`hasDefaults`) exactly on
     the documents some of whose choices have a no-exception premise. -/

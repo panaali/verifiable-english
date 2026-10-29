@@ -1,4 +1,4 @@
-# STOPPED — DRI signature needed for df-3's corrected `DVerdicts` statement; F4–F6 fixed
+# DF-3 recheck fixes — D3 signed by the item-specific DRI decision
 
 ## Recheck fixes (2026-10-28)
 
@@ -6,7 +6,9 @@
 - F5 → the hand mutation runner uses `nested_pytest.command` and its sanitized environment, requires the unmutated target tests to pass, and counts a kill only for a pytest test failure. Regressions: `tests/test_nested_pytest.py::test_every_pytest_command_is_built_by_the_builder`, `::test_mutation_kill_requires_a_failed_test`; a P1 smoke run with `PYTEST_ADDOPTS='-k impossible'` still killed its mutant. Commit `250464df7`.
 - F6 → the default evidence search receives the readings route's live budget for proof, coherence and model generation. Lean still decides all rows and folds. Regressions: `tests/test_defaults_readings.py::test_default_query_respects_readings_budget_after_cached_free_gate`, `::test_default_query_with_adequate_budget_is_all`. The original probe changed from strict `UNKNOWN`, default `ALL` to both `UNKNOWN`; removing the budget argument made the new test fail. Commit `0cbea510e`. The zero-budget verdict delta is signed by standing ruling R5 in `DELTA.md`.
 
-The F4 and F5 executable probes failed before these fixes and passed afterward. F1 remains the approved-statement stop recorded below; the D3 cell deliberately reserves the DRI decision and prevents review-ready status. The three tests listed in `main-known-red.txt` are pre-existing main failures, outside this branch's fix scope.
+The F4 and F5 executable probes failed before these fixes and passed afterward. F1's D3 amendment is now signed by the DRI in `reviews/dri-decisions-20261028-df-3.md` item 3: spec 7.4 matches the built structure (17 OK, 0 DIFF), its three row projections are stated, and the DF-ρ `#guard` plus Lean examples show a checked collision and why the old unconstrained structure could admit a false `.free` row. Regression: `tests/test_defaults_readings.py::test_df3_approved_statements_match_the_built_lean_declarations`; the Lean example module builds. The three tests listed in `main-known-red.txt` are pre-existing main failures, outside this branch's fix scope.
+
+## Earlier stop report (historical, superseded by the D3 ruling above)
 
 **Status: STOPPED at spec 7.4's `DVerdicts` / `d_rowsHold`; DRI approval of a corrected statement is needed.**
 F2's shared Python request binding is fixed in this review round; F1 remains the statement approval stop.
