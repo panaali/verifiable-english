@@ -367,9 +367,13 @@ impl Environment {
             for arg in args {
                 let s = string(arg, "UnknownSymbol")?;
                 if !sorts.contains_key(s) && !(order && s == "$int")
-                    && !(route && profiles.iter().any(|p| p == "data@0") && s == "$string") {
+                    && !(route && !order && profiles.iter().any(|p| p == "data@0") && s == "$string") {
                     if s == "$string" || s == "$int" {
-                        if !route {
+                        // The exact order route validates constants first.
+                        // Composed order routes reject $string here; other
+                        // route families defer unsupported built-ins too.
+                        let exact_order_route = profiles == ["order@0", "relational-fol@0"];
+                        if !route || (order && !exact_order_route) {
                             return error("UnknownSymbol", "unknown predicate argument sort");
                         }
                         // The unsupported built-in signature is decided after
@@ -508,7 +512,11 @@ impl Environment {
             return error("ResourceLimit", "At most 64 declared $string literals");
         }
         if invalid_builtin_signature {
-            return error("InvalidInput", "invalid predicate signature");
+            return if order {
+                error("UnknownSymbol", "unknown predicate argument sort")
+            } else {
+                error("InvalidInput", "invalid predicate signature")
+            };
         }
         let version = if route {
             format!("v0.2:{}", profiles.join(","))

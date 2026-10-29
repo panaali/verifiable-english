@@ -73,3 +73,30 @@ fn legacy_undeclared_builtin_sorts_are_unknown_symbols() {
     });
     assert!(Environment::from_value(&valid).is_ok());
 }
+
+#[test]
+fn composed_order_rejects_string_predicate_sort_before_constants() {
+    for profiles in [
+        json!(["order@0", "relational-fol@0"]),
+        json!(["order@0", "relational-fol@0", "time@0"]),
+        json!(["data@0", "order@0", "relational-fol@0"]),
+    ] {
+        let mut case = json!({
+            "language": "ve.core@0.2", "profiles": profiles,
+            "spec_revision": "ve-v0.2-expand2-2026-09-25",
+            "vocabulary": {"sorts": {}, "predicates": {
+                "p": {"arguments": ["$string"], "description": "d"}}, "constants": {}}
+        });
+        assert_eq!(Environment::from_value(&case).unwrap_err().code, "UnknownSymbol");
+        case["vocabulary"]["constants"]["bad"] = json!([]);
+        let expected = if profiles.as_array().unwrap().len() == 2 {
+            "InvalidInput"
+        } else {
+            "UnknownSymbol"
+        };
+        assert_eq!(Environment::from_value(&case).unwrap_err().code, expected);
+        case["vocabulary"]["constants"] = json!({});
+        case["vocabulary"]["predicates"]["p"]["arguments"] = json!(["$int"]);
+        assert!(Environment::from_value(&case).is_ok());
+    }
+}
