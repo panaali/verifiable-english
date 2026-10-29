@@ -205,7 +205,7 @@ def test_a_verified_row_with_no_linked_case_is_refused():
 def test_an_open_row_with_no_feature_family_is_refused():
     for family in (None, "", "speech act", "Speech acts", 7):
         register = edited(lambda row: row.update(family=family), "speech-1")
-        assert failed_rows(measure(register)) == {"speech-1"}
+        assert measure(register)["failures"] == ["speech-1: an OPEN row names no feature family of the basis"]
     register = edited(lambda row: row.update(family="time"), "speech-1")
     result = measure(register)
     assert result["failures"] == [] and result["open"]["time"] == BASE["open"]["time"] + bytes_of("speech-1")
