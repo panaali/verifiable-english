@@ -41,6 +41,8 @@ Size: about 500 hand-written added or deleted lines against main, counting produ
 
 The selected run covered 401 units on ve-mac-1. The changed scope document file passed. Three `tests/test_assurance_manifest.py` IDs failed because the manifest still pinned Document.lean at 2016 lines and its old digest. I reviewed and updated its whole-file pin to 2069 lines and `c4047790…`, added the four decoder declarations, and regenerated the assurance document. The required retry of only those three IDs passed (3/3); `tools/assurance_manifest.py --check` passed. `tools/gate_collection.py --check --prebuilt` reported 4 removed test IDs covered by trailers, 0 refused, 0 stale and 0 malformed. The full release gate was not run by this worker.
 
+The pre-review check at `0a67f5697`, with a writable uv cache, passed clean-tree, commits, seeded-mutant and relay-mutation checks. It reported two remaining stops: the final-HEAD full gate is assigned to the chain, and DELTA rows 2–3 need a DRI signature.
+
 ## Self-review against BUILDER-CHECKLIST
 
 1. PASS — `test_every_structural_mutant_of_the_sr1_answer_is_refused`, `test_f1_the_composed_sets_are_bound_to_the_request`.
