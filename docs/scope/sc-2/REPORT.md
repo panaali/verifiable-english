@@ -23,7 +23,7 @@ The statement review closed **PASS** (`scope-p3ver2.final.md:1`, after `scope-p3
 | F7 and F7′ | Already on main in `Examples.lean`: two own-mentioning reguards refuse with `ScopeOrder`; narrowing plus own-free carve-out is accepted in either order. No duplicate fixture added. |
 | Pilot | No edit. The plan's `u0164.s01` +68 B LABELLED is an estimate; `u0173.s01` +263 B requires AT-3a and is not claimed. |
 
-The size measurement before the second half (`git diff --numstat $(git merge-base HEAD main)`) was 57 handwritten proof lines. The final SC-2 source adds 57 proof lines and changes 55 fixture lines; the other seven exact statements need decoder and order lemmas that do not fit this ~600-line batch alongside both-side fixtures and evidence. The named follow-on is sc-2c. This follows the feed's size-cut rule; it is a partial deliverable, not a claim that SC-2 as a whole is finished.
+The size measurement before the second half (`git diff --numstat $(git merge-base HEAD main)`) was 57 handwritten proof lines. The final SC-2 source adds 57 proof lines and changes 55 fixture lines. The remaining seven exact statements need decoder and order lemmas; **their size is an estimate**, informed by sc-1ae's report of about 600 proof lines for its decoder/string proofs (`docs/scope/sc-1ae/REPORT.md`, “Size”). I cut them to sc-2c under the feed's ~600-line rule rather than claim the batch finished. The actual line count for sc-2c is unverified.
 
 ## Validation and risk
 
@@ -47,7 +47,7 @@ Spec re-read: `listName_run` against `docs/spec/scope.md:1306`; named reach and 
 7. PASS — `DELTA.md` has no behavior row; `trust_map.py --check` reports +0.
 8. PASS — `git diff main...HEAD -- lean/VE/Scope` shows proofs and guards only.
 9. PASS — selected-test command passed 77 units ([evidence/checks.txt](evidence/checks.txt)).
-10. PASS — whitespace comparison printed `statement match: True`; `lake build VE.Scope.Theorems` passed.
+10. PASS — whitespace comparison printed `statement match: True`; replacing `n.units = us` by `n.units = []` made `lake build VE.Scope.Theorems` fail ([evidence/checks.txt](evidence/checks.txt)).
 11. PASS — F6′ `#guard` checks eight accepted and nine refused in `lake build VE.Scope.Examples`.
 12. N.A. — no production computation changed.
 13. N.A. — no test removed or renamed.
