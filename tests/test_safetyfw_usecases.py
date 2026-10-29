@@ -367,6 +367,9 @@ def test_pf_p3_p4_are_recomputed_without_source_text(pf_modules):
     assert result["P3"]["bio_h_might"]
     assert result["P3"]["table1_might"] == {name: True for name in ("BIO-H", "BIO-C", "CYB-H", "CYB-C")}
     assert set(result["P3"]["table1_unformalised"]) == {"AIS-H", "AIS-C"}
+    severity = pf_stage0.risk_environment()["risk"]["severity"]
+    assert severity["more_severe"] == []
+    assert len(severity["unranked"]) == len(severity["classes"]) * (len(severity["classes"]) - 1) // 2
     assert not result["P3"]["invented_leads"]
     assert result["P4"]["date_certificate_replayed"]
     assert result["P4"]["ratio"] == ["le", ["scale", "elapsed_day", "5",

@@ -347,3 +347,5 @@ The AIS-H and AIS-C rows retain explicit AT blockers. D3/P4 admits the source's 
 distinguishes the frozen T1/T2 durations with Lean certificates, and replays the three conditional date bridges.
 `test_pf_p3_p4_are_recomputed_without_source_text` and
 `test_pf_one_fifth_time_bound_distinguishes_the_two_frozen_cases` cover these additions.
+Python mutants changing the one-fifth coefficient to four and changing BIO-H's `might` to `leads`
+each failed `test_pf_p3_p4_are_recomputed_without_source_text` before restoration.
