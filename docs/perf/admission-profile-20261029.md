@@ -54,7 +54,9 @@ also includes parsing, the duplicate probes and JSON output.
 
 Inputs are saved in `inputs/` from the scale review's 50%, 75% and 100% UDHR
 prefixes and the 2026-10-29 06Z constitution pilot. The 100% prefix is the
-whole UDHR. `admission_cases.py` builds each direct `readings-elaborate` case;
+whole UDHR. “Source bytes” in the tables counts authored text after the JSON
+front matter; the saved `.ve.md` files also include the front matter.
+`admission_cases.py` builds each direct `readings-elaborate` case;
 it repeats article units and renames predicates, constants, rules, unit IDs and
 set IDs for the synthetic 2× and 4× cases. Each replica's companion keeps its
 own complete model, and the generator rebinds its situation ID to Lean's split

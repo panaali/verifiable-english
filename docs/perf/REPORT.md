@@ -30,6 +30,8 @@ The evidence files store the source and request hashes, service binary hash, VM 
 - Selected tests: `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` ran 393 mapped test units on the Mac. One failed: `tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified`. Adding the new file to `other_json` made the local failed-ID check pass and the Mac `mac-pytest.sh -- tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified` rerun pass (1 passed). The broad selection was not rerun.
 - `uv run python tools/gate_collection.py --check --prebuilt`: PASS, 30,165 collected, 3 added, 0 refused, 0 stale or malformed trailers. No tests were removed or renamed. Free disk space before the final evidence commit: 141 GB.
 
+`git diff --check main...HEAD` flags one trailing space in the copied 50% UDHR source and one blank final line in the copied 75% source. They are retained to preserve the exact inputs from the scale review; the authored code and report files have no whitespace findings.
+
 Each seeded fault was restored before the final build. These faults changed the behavior under test and each failed its named test, rather than only a hash or build check:
 
 | Changed product file and temporary fault | Failing test |
