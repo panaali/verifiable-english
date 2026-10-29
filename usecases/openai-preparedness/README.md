@@ -27,7 +27,7 @@ document under `/tmp` for VE's check.
 
 | File | Role |
 |---|---|
-| [pf_vocabulary.py](pf_vocabulary.py), [environment.d1.json](environment.d1.json) | D1 vocabulary: six levels, three categories, 28 regulated predicates |
+| [pf_vocabulary.py](pf_vocabulary.py), [environment.d1.json](environment.d1.json) | D1 vocabulary: six levels, three categories, 29 regulated predicates |
 | [rules.d1.ve](rules.d1.ve), [facts.d1.ve](facts.d1.ve) | Source-linked rules, reading alternatives and six level/category facts |
 | [pf_translation.py](pf_translation.py) | VE one-reading parser for each rule and fact block |
 | [build_document.py](build_document.py), [spans.json](spans.json), [coverage.json](coverage.json) | Source partition and VE coverage status |
@@ -43,15 +43,16 @@ tests skip their rerun; saved evidence invariants remain tested.
 
 VE classified 389 contiguous units covering all 67,418 bytes. The master map equals the D1 map: D2 and D3 have
 probes, but no source byte is promoted on their basis. CHECKED covers six short Table 1 markers and four
-source clauses. The four F7/F9 clauses that lost temporal or per-item scope now retain their blockers. The
-change-log RS15 undertakings and Appendix C restatements are OPEN rather than exposition.
+source clauses. The SAG recommendation rule now retains its deployment scope. The four F7/F9 clauses that lost
+temporal or per-item scope retain their blockers. The change-log RS15 undertakings, Appendix C restatements and
+C.2's “should” safeguard requirement are OPEN rather than exposition.
 
 | Status | Units | Bytes | Share |
 |---|---:|---:|---:|
 | CHECKED | 10 | 454 | 0.7% |
-| OPEN | 28 | 5,292 | 7.8% |
-| LABELLED | 67 | 10,345 | 15.3% |
-| UNFORMALISED | 284 | 51,327 | 76.1% |
+| OPEN | 29 | 5,446 | 8.1% |
+| LABELLED | 64 | 9,784 | 14.5% |
+| UNFORMALISED | 286 | 51,734 | 76.7% |
 
 Each non-CHECKED byte has a blocker in [gaps.json](../../docs/usecases/safetyfw/openai-preparedness/gaps.json).
 An OPEN reading set remains pending; a `not_translated` unit is counted under “readings” because its source reading
@@ -60,20 +61,20 @@ certify them. A unit with several blockers counts under each. “Alone” means 
 
 | Family | Units | Bytes | Alone: units, bytes | Here |
 |---|---:|---:|---:|---|
-| readings | 225 | 37,657 | 221, 36,774 | untranslated clauses and pending RS0/RS4/RS5/RS15 choices |
-| no claim to check | 67 | 10,345 | 67, 10,345 | title, contents and illustrative material |
+| readings | 227 | 38,064 | 223, 37,181 | untranslated clauses and pending RS0/RS4/RS5/RS15 choices |
+| no claim to check | 64 | 9,784 | 64, 9,784 | title, contents and illustrative material |
 | AT attitudes | 43 | 10,246 | 41, 9,659 | “could”, “may”, beliefs and expectations without a deontic reading |
 | ET time | 28 | 6,319 | 17, 4,304 | before/during clauses, periodic review, the self-improvement interval |
-| JT judgments | 23 | 4,003 | 10, 1,613 | named open terms, including threshold and safeguard sufficiency |
-| DF defaults | 6 | 1,031 | 0, 0 | Table 1 guidelines and footnote 6 |
+| JT judgments | 24 | 4,157 | 10, 1,613 | named open terms, including threshold and safeguard sufficiency |
+| DF defaults | 7 | 1,185 | 0, 0 | Table 1 guidelines, C.2 and footnote 6 |
 | QT quantities | 2 | 702 | 1, 305 | severe-harm definition and 1/5th over an interval |
 | external reference | 2 | 309 | 2, 309 | named outside standards |
 | WG weighing | 1 | 183 | 0, 0 | marginal-risk adjustment |
 | SC scope | 4 | 284 | 3, 168 | Tracked Category suff/iff choice and per-item F9 scope |
 | AP act phrases | 0 | 0 | 0, 0 | no separate AP-only unit in this partition |
 
-The 284 UNFORMALISED units carry per-unit reasons in `spans.json`: `not_translated` 219, `hedged_claim` 41,
-`event_order` 17, `quantifier_scope` 3, `quantity` 2 and `external_reference` 2. VE reports 21 declared open terms and 13 unresolved
+The 286 UNFORMALISED units carry per-unit reasons in `spans.json`: `not_translated` 221, `hedged_claim` 41,
+`event_order` 17, `quantifier_scope` 3, `quantity` 2 and `external_reference` 2. VE reports 21 declared open terms and 14 unresolved
 reading sets as residual. No assumption, bridge leaf or exception is represented as certified.
 
 ## Stage 0

@@ -59,7 +59,11 @@ Rule 1. Every situation must have public disclosure, if that situation is classi
 ## f15-safeguards | always | 5.2: “if the model is beyond a High threshold, we will include information about safeguards”
 Rule 1. Every situation must have safeguards disclosed, if both that situation is classified as "major_deployment" and that situation is classified as "high_capability".
 ## f16-sag-recommend | always | Appendix B: SAG is responsible for “providing recommendations on potential next steps … to OpenAI Leadership”
-Rule 1. Every situation must have SAG recommendations sent to Leadership, if that situation is covered.
+Rule 1. Every situation must have SAG recommendations sent to Leadership, if both that situation is covered and that situation is classified as "framework_deployment".
+## c2-misalignment-strict | RS9=strict | C.2: “Safeguards should sufficiently minimize the risk associated with a misaligned model”
+Rule 1. Every situation must have safeguards that sufficiently minimize misaligned-model risk, if that situation is classified as "misaligned_model_risk".
+## c2-misalignment-default | RS9=default | C.2: the same “should” requirement under its default reading
+Rule 1. Every situation should have safeguards that sufficiently minimize misaligned-model risk, if that situation is classified as "misaligned_model_risk".
 ## f16-ssc-visibility | always | Appendix B: “The Safety and Security Committee … will be given visibility into processes”
 Rule 1. Every situation must give SSC visibility into the process.
 ## f16-informed | RS0=commitment | Appendix B: Leadership makes “deployment go/no-go decisions, informed by SAG’s recommendations”

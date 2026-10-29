@@ -124,7 +124,15 @@ def invention_audit():
     untraced = [b.id for b in blocks if not b.source.strip() or b.id not in placed | readings]
     defaults = [b.id for b in T.rule_blocks() if json.loads(T.parsed_rule(b.id)).get("mode") == "default"
                 and b.id not in readings]
+    choice_mismatches = []
+    for set_id, (harness, choices) in B.READINGS.items():
+        for choice, ids in choices.items():
+            for block_id in ids:
+                block = next((b for b in T.rule_blocks() if b.id == block_id), None)
+                if block is None or (harness, choice) not in block.when:
+                    choice_mismatches.append((set_id, choice, block_id))
     return {"untraced": untraced, "defaults_untraced": defaults, "permissions_untraced": [],
+            "choice_mismatches": choice_mismatches,
             "thresholds_without_premise": sorted(set(V.LEVELS) - {
                 level for level, block in zip(V.LEVELS, B.FACT_ANCHORS) if block in placed}),
             "order_or_causal_predicates": [p for p in V.BASE if p in ("leads_to", "causes", "above")],
