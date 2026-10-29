@@ -52,7 +52,7 @@ def _filled_soft_elaboration(doc, active):
         doc["_filled_soft_elaboration"] = run_case({
             "id": "norm-defaults-elaborate", "kind": "norm-defaults-elaborate",
             "environment": source,
-            "norms": _free_norms(doc["meta"]["units"], active, attached)})
+            "norms": _free_norms(doc["units"], active, attached)})
     return doc["_filled_soft_elaboration"]
 
 
