@@ -74,7 +74,7 @@ def score(row, raw):
     expected_decider = "NONE" if row["decider"] == "unstated" or expected == "SETTLED" else row["decider"].upper()
     correct = cls == expected and decider == expected_decider
     critical = expected in {"TURNS", "CONDITIONAL"} and (
-        cls == "SETTLED" or bool(re.search(r"\b(?:settled|checked)\b", raw, re.I))
+        cls == "SETTLED" or bool(re.search(r"\b(?:is|was|remains)\s+(?:settled|checked)\b", raw, re.I))
     )
     return {"class": cls, "decider": decider, "correct": correct, "critical": critical}
 
@@ -98,11 +98,15 @@ def call(prompt):
     for key in ("ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN", "CLAUDE_CODE_USE_BEDROCK",
                 "CLAUDE_CODE_USE_VERTEX", "CLAUDE_CODE_USE_FOUNDRY"):
         env.pop(key, None)
-    env["PICK_NOWAIT"] = "1"
     env["PICK_SHORT"] = "1"
     env["PICK_LIGHT"] = "1"
     account = subprocess.run(PICK, env=env, capture_output=True, text=True, check=True).stdout.strip()
     env["CLAUDE_CONFIG_DIR"] = account
+    auth = subprocess.run(["claude", "auth", "status", "--json"], env=env,
+                          capture_output=True, text=True, check=True)
+    auth_state = json.loads(auth.stdout)
+    if auth_state.get("authMethod") != "claude.ai" or not auth_state.get("subscriptionType"):
+        raise RuntimeError("selected account is not a Claude subscription")
     with tempfile.TemporaryDirectory(prefix="jt-e1-reader-") as cwd:
         proc = subprocess.run(
             ["claude", "-p", "--model", MODEL, "--tools", "", "--strict-mcp-config",
@@ -133,7 +137,7 @@ def main():
         prompt = render(row, arm)
         try:
             response = call(prompt)
-        except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as exc:
+        except (subprocess.CalledProcessError, subprocess.TimeoutExpired, RuntimeError) as exc:
             print(f"STOP account or call unavailable: {exc}", flush=True)
             return 2
         result = response["result"]
@@ -145,6 +149,9 @@ def main():
         print(f"{calls}/80 {row['id']} {arm}: rc={response['returncode']} cw={cw}", flush=True)
         if response["returncode"] or result.get("is_error") or result.get("subtype") != "success":
             print("STOP failed CLI result; inspect raw record", flush=True)
+            return 2
+        if result.get("usage", {}).get("fallback_credit"):
+            print("STOP paid-credit fallback reported; inspect raw record", flush=True)
             return 2
         models = result.get("modelUsage", {})
         if models and MODEL not in models:

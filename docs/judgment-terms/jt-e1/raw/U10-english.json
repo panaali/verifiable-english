@@ -1,0 +1,113 @@
+{
+  "id": "U10",
+  "arm": "english",
+  "prompt": "Read only the source and displayed lines below as a reader of this document. For the named conclusion, answer in exactly this format: `CLASS: SETTLED|TURNS|CONDITIONAL; DECIDER: <name or NONE>; WHY: <one sentence>`. SETTLED means it holds whatever is judged. TURNS means two admissible judgments can change it. CONDITIONAL means it is certified only given a judgment criterion. Name the decider if the text names one; otherwise say NONE. Do not use outside knowledge.\n\nSOURCE: UDHR u055, synthetic denial of the independent right to change nationality.\nCONCLUSION: this denial is forbidden\nWhether the deprivation is arbitrary is a judgment; the text does not say who makes it.\nSettled: whatever is judged here, the text requires this denial is forbidden.\n",
+  "call": {
+    "account": "claude-panaali2",
+    "returncode": 0,
+    "stderr": "",
+    "result": {
+      "duration_api_ms": 1907,
+      "stop_reason": "end_turn",
+      "session_id": "0ad19fbc-218d-4dc2-9ca0-383c8131e863",
+      "total_cost_usd": 0.0045905,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 873,
+        "cache_read_input_tokens": 1545,
+        "output_tokens": 94,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 873,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 94,
+            "cache_read_input_tokens": 1545,
+            "cache_creation_input_tokens": 873,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 873
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "modelUsage": {
+        "claude-sonnet-5-5": {
+          "inputTokens": 2,
+          "outputTokens": 94,
+          "cacheReadInputTokens": 1545,
+          "cacheCreationInputTokens": 873,
+          "webSearchRequests": 0,
+          "costUSD": 0.0045905,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "thinkingTokens": 0,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 873,
+          "canonicalModel": "claude-sonnet-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "permission_denials": [],
+      "terminal_reason": "completed",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required",
+      "subagent_stats": {
+        "spawned": 0,
+        "requested": {
+          "background": 0,
+          "foreground": 0,
+          "unset": 0
+        },
+        "started_in_background": 0,
+        "max_depth": 0,
+        "spawned_by_subagents": 0,
+        "completed": 0,
+        "failed": 0,
+        "killed": {
+          "parent": 0,
+          "user": 0,
+          "system": 0
+        },
+        "refused": {
+          "depth_limit": 0,
+          "concurrency_limit": 0,
+          "budget": 0
+        },
+        "by_type": {}
+      },
+      "safety_stops": 0,
+      "is_error": false,
+      "num_turns": 1,
+      "subtype": "success",
+      "api_error_status": null,
+      "result": "`CLASS: SETTLED; DECIDER: NONE; WHY: Although whether the deprivation is arbitrary is a judgment with no named decider, the text states that whatever is judged, it requires this denial is forbidden, so the conclusion holds regardless of judgment.`",
+      "ttft_ms": 2212,
+      "type": "result",
+      "duration_ms": 2250,
+      "uuid": "478b7b49-82e3-474b-b9a1-e1ef868b0949",
+      "ttft_stream_ms": 1545,
+      "time_to_request_ms": 345,
+      "first_content_frame_ms": 1545,
+      "queued_turn_count": 0,
+      "result_index": 0
+    },
+    "cw": 2514
+  },
+  "raw_answer": "`CLASS: SETTLED; DECIDER: NONE; WHY: Although whether the deprivation is arbitrary is a judgment with no named decider, the text states that whatever is judged, it requires this denial is forbidden, so the conclusion holds regardless of judgment.`"
+}

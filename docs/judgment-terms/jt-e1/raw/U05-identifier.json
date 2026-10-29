@@ -1,0 +1,113 @@
+{
+  "id": "U05",
+  "arm": "identifier",
+  "prompt": "Read only the source and displayed lines below as a reader of this document. For the named conclusion, answer in exactly this format: `CLASS: SETTLED|TURNS|CONDITIONAL; DECIDER: <name or NONE>; WHY: <one sentence>`. SETTLED means it holds whatever is judged. TURNS means two admissible judgments can change it. CONDITIONAL means it is certified only given a judgment criterion. Name the decider if the text names one; otherwise say NONE. Do not use outside knowledge.\n\nSOURCE: UDHR u045a, synthetic interference with the home.\nCONCLUSION: whether this interference is forbidden\nOpen reading: \"an interference\" is classified as \"arbitrary_interference\".\nleft_to(arbitrary_interference; decider=court): whether this interference is forbidden\n",
+  "call": {
+    "account": "claude-panaali2",
+    "returncode": 0,
+    "stderr": "",
+    "result": {
+      "duration_api_ms": 1790,
+      "stop_reason": "end_turn",
+      "session_id": "286c5e72-8289-453f-8e53-08ed7e50bfba",
+      "total_cost_usd": 0.0046965,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 867,
+        "cache_read_input_tokens": 1545,
+        "output_tokens": 107,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 867,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 107,
+            "cache_read_input_tokens": 1545,
+            "cache_creation_input_tokens": 867,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 867
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "modelUsage": {
+        "claude-sonnet-5-5": {
+          "inputTokens": 2,
+          "outputTokens": 107,
+          "cacheReadInputTokens": 1545,
+          "cacheCreationInputTokens": 867,
+          "webSearchRequests": 0,
+          "costUSD": 0.0046965,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "thinkingTokens": 0,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 867,
+          "canonicalModel": "claude-sonnet-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "permission_denials": [],
+      "terminal_reason": "completed",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required",
+      "subagent_stats": {
+        "spawned": 0,
+        "requested": {
+          "background": 0,
+          "foreground": 0,
+          "unset": 0
+        },
+        "started_in_background": 0,
+        "max_depth": 0,
+        "spawned_by_subagents": 0,
+        "completed": 0,
+        "failed": 0,
+        "killed": {
+          "parent": 0,
+          "user": 0,
+          "system": 0
+        },
+        "refused": {
+          "depth_limit": 0,
+          "concurrency_limit": 0,
+          "budget": 0
+        },
+        "by_type": {}
+      },
+      "safety_stops": 0,
+      "is_error": false,
+      "num_turns": 1,
+      "subtype": "success",
+      "api_error_status": null,
+      "result": "`CLASS: CONDITIONAL; DECIDER: court; WHY: The text classifies the interference as \"arbitrary_interference\" only as an open reading and explicitly leaves the question of whether it is forbidden to the court (left_to decider=court), so the conclusion is certified only given the court's judgment criterion.`",
+      "ttft_ms": 1909,
+      "type": "result",
+      "duration_ms": 1939,
+      "uuid": "617e249a-2beb-418f-b655-be9e27fb9478",
+      "ttft_stream_ms": 1147,
+      "time_to_request_ms": 147,
+      "first_content_frame_ms": 1147,
+      "queued_turn_count": 0,
+      "result_index": 0
+    },
+    "cw": 2521
+  },
+  "raw_answer": "`CLASS: CONDITIONAL; DECIDER: court; WHY: The text classifies the interference as \"arbitrary_interference\" only as an open reading and explicitly leaves the question of whether it is forbidden to the court (left_to decider=court), so the conclusion is certified only given the court's judgment criterion.`"
+}
