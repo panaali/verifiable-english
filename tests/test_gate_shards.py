@@ -211,6 +211,13 @@ def test_merge_refuses_shared_malformed_toolchain_identity(field, value):
     assert "toolchain" in merged["failures"][0]["reason"] or "identity" in merged["failures"][0]["reason"]
 
 
+def test_merge_refuses_toolchain_paths_without_a_version():
+    rows = records(2)
+    for row in rows:
+        row["toolchains"] = {"paths": {"uv": "/tmp/uv"}}
+    assert gate_shards.merge_records(rows)["status"] == "failed"
+
+
 @pytest.mark.parametrize("missing", ["schema_version", "commit_sha", "tree_sha", "runner",
                                       "toolchains", "environment"])
 def test_merge_refuses_absent_identity_even_when_all_shards_agree(missing):
@@ -271,6 +278,19 @@ def test_merge_accepts_retry_expiring_on_recorded_day():
         "suite": "failed", "alone": "passed", "owner": "team", "expires": "2026-10-12",
         "evidence": "docs/evidence.json"}
     assert gate_shards.merge_records(rows)["status"] == "passed"
+
+
+def test_merge_refuses_retry_of_skipped_test():
+    rows = records(2)
+    for row in rows:
+        row["quarantine"].update(active=[IDS[2]])
+    owner = next(row for row in rows if IDS[2] in row["shard"]["ran"])
+    owner["quarantine"]["retried"][IDS[2]] = {
+        "suite": "failed", "alone": "passed", "owner": "team", "expires": "2026-10-15",
+        "evidence": "docs/evidence.json"}
+    merged = gate_shards.merge_records(rows)
+    assert merged["status"] == "failed"
+    assert "retry" in merged["failures"][0]["reason"]
 
 
 @pytest.mark.parametrize("change", [
