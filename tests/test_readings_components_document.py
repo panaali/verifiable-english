@@ -323,7 +323,8 @@ def test_component_choice_elaborations_are_one_relay_batch(tmp_path, monkeypatch
         for choice in part.choices or []]
 
 
-def test_a_refused_choice_in_the_batch_fails_as_it_did_alone(tmp_path, monkeypatch):
+@pytest.mark.parametrize("refusal_layer", ["outer", "inner"])
+def test_a_refused_choice_in_the_batch_fails_as_it_did_alone(tmp_path, monkeypatch, refusal_layer):
     from ve import readings_components, readings_route
     path = fc17(tmp_path)
     real_run = readings_route.run_lean
@@ -336,7 +337,11 @@ def test_a_refused_choice_in_the_batch_fails_as_it_did_alone(tmp_path, monkeypat
             for row in rows:
                 seen += 1
                 if seen == 3:
-                    row["inner"] = {"status": "error", "error": "seeded Lean refusal"}
+                    if refusal_layer == "outer":
+                        row.clear()
+                        row.update({"status": "error", "error": "seeded Lean refusal"})
+                    else:
+                        row["inner"] = {"status": "error", "error": "seeded Lean refusal"}
         return rows
 
     monkeypatch.setattr(readings_route, "run_lean", refused)
@@ -346,7 +351,9 @@ def test_a_refused_choice_in_the_batch_fails_as_it_did_alone(tmp_path, monkeypat
     monkeypatch.setattr(readings_components.Components, "_prefetch_choices", lambda self: None)
     with pytest.raises(CheckerUnavailable) as serial:
         readings_components.context(load_document(path)).conflict_answer()
+    assert type(batched.value) is type(serial.value)
     assert str(batched.value) == str(serial.value)
+    assert "seeded Lean refusal" in str(batched.value)
 
 
 def test_fc17_all_is_gated_on_every_other_component(tmp_path, capsys):

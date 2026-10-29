@@ -1,8 +1,8 @@
-Status: code complete; the selected run's three own-code failures pass on targeted rerun; release gate belongs to the chain.
-HEAD: d27b2e77c (final code fix); this report's commit is the branch's final HEAD; baseline: 73b77383a.
-Changed: component choice elaborations use one `rows()` batch; the service pool has a load-aware size cap.
+Status: review fix complete; the top-level and inner refusal regressions pass; release gate belongs to the chain.
+HEAD: this report is committed with the review fix; baseline: 73b77383a.
+Changed: component choice elaborations use one `rows()` batch; the pool has a load-aware size cap; the refusal test covers both error layers.
 Open: `iso.sh` could not connect to the user systemd bus, so timing used `nice -n 15`; no DRI signature needed.
-DELTA: none; F-C17's batched and serial document JSON and injected refusal agree.
+DELTA: none; F-C17's batched and serial document JSON and both injected refusals agree.
 
 # Scale choice batch
 
@@ -36,6 +36,9 @@ Each temporary code fault was restored before commit. These are test failures, n
 | `ve/readings_components.py`: reverse the rows assigned to choices | `test_batched_and_serial_choice_elaboration_have_identical_document_answers` |
 | `ve/backends/relay.py`: return a constant pool size of two | `test_service_pool_size_setting_uses_spare_vcpus_and_clamps` |
 | `ve/readings_verdicts/choice.py`: accept an inner Lean refusal | `test_a_refused_choice_in_the_batch_fails_as_it_did_alone` |
+| `ve/readings_verdicts/choice.py`: skip the prefetched row's top-level refusal check | `test_a_refused_choice_in_the_batch_fails_as_it_did_alone[outer]` (`KeyError: 'inner'`) |
+
+The review fix reran the last three mutants and recorded their fault, failing test, and observed failure in `mutants.json`. Each source file was restored before the passing regression run. The top-level refusal mutant is also the review's F1 probe: before the test change it survived; after the change it fails on the outer row.
 
 ## Checklist coverage
 
