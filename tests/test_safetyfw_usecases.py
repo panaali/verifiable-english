@@ -276,3 +276,88 @@ def test_rsp_stage0_rerun_equals_saved(rsp_modules):
     """Stage 0 recomputed by VE; the source probes need the pinned source, which the gate runner does not store
     (tools/gate-optional.json), and are left out without it."""
     assert rsp_stage0.main(["--check"]) == 0
+
+
+# --- openai-preparedness baseline (PLAN 7 to 10) ---------------------------------------------------------------
+
+PF = USECASES / "openai-preparedness"
+PF_EVIDENCE = REPO / "docs/usecases/safetyfw/openai-preparedness"
+PF_NAMES = ("pf_vocabulary", "pf_translation", "build_document", "stage0", "measure")
+
+
+def _load_pf():
+    import importlib
+    import sys
+    saved = {name: sys.modules.pop(name) for name in PF_NAMES if name in sys.modules}
+    sys.path.insert(0, str(PF))
+    try:
+        return {name: importlib.import_module(name) for name in PF_NAMES}
+    finally:
+        sys.path.remove(str(PF))
+        for name in PF_NAMES:
+            sys.modules.pop(name, None)
+        sys.modules.update(saved)
+
+
+PF_MODULES = _load_pf()
+pf_vocab, pf_translation, pf_build = (PF_MODULES[n] for n in ("pf_vocabulary", "pf_translation", "build_document"))
+pf_stage0, pf_measure = (PF_MODULES[n] for n in ("stage0", "measure"))
+
+
+@pytest.fixture
+def pf_modules(monkeypatch):
+    import sys
+    for name, module in PF_MODULES.items():
+        monkeypatch.setitem(sys.modules, name, module)
+
+
+def test_pf_translation_lint_and_invention_audit(pf_modules):
+    assert (PF / "environment.d1.json").read_text() == pf_vocab.text()
+    assert len(pf_vocab.LEVELS) == 6
+    assert pf_stage0.identifier_lint()["violations"] == []
+    audit = pf_stage0.invention_audit()
+    assert audit["untraced"] == audit["defaults_untraced"] == audit["permissions_untraced"] == []
+    assert audit["thresholds_without_premise"] == audit["order_or_causal_predicates"] == []
+    for block in pf_translation.rule_blocks():
+        assert json.loads(pf_translation.parsed_rule(block.id))["name"] == block.id
+    assert all(len(fs) == 2 for _, fs in pf_translation.facts())
+
+
+def test_pf_every_byte_has_ve_status_and_one_unit(pf_modules):
+    coverage = json.loads((PF / "coverage.json").read_text())
+    units = json.loads((PF / "spans.json").read_text())["units"]
+    assert coverage["source_bytes"] == coverage["accounted_bytes"] == pf_build.TEXT_BYTES == 67418
+    assert units[0]["span"][0] == 0 and units[-1]["span"][1] == 67418
+    assert all(a["span"][1] == b["span"][0] for a, b in zip(units, units[1:]))
+    assert sum(coverage["bytes_by_status"].values()) == 67418
+    assert coverage["bytes_by_status"] == coverage["master_bytes_by_status"]
+    assert {u["status"] for u in units} == {"CHECKED", "OPEN", "LABELLED", "UNFORMALISED"}
+    assert all("reason" in u for u in units if u["status"] == "UNFORMALISED")
+    readme = (PF / "README.md").read_text()
+    for status, amount in coverage["master_bytes_by_status"].items():
+        count = sum(u["status"] == status for u in units)
+        assert f"| {status} | {count} | {amount:,} | {amount / 67418:.1%} |" in readme
+    if pf_build.DEFAULT_SOURCE.exists():
+        assert pf_build.main(["--check"]) == 0
+
+
+def test_pf_stage0_and_gaps(pf_modules):
+    saved = json.loads((PF_EVIDENCE / "stage0.json").read_text())
+    assert json.loads((PF / "environment.d2.json").read_text()) == pf_stage0.risk_environment()
+    assert json.loads((PF / "environment.d3.json").read_text()) == pf_stage0.quantity_environment()
+    assert saved["P1"]["admitted"] and set(saved["P1"]["units"].values()) == {"OPEN"}
+    assert saved["P2"]["admitted"] and saved["P2"]["unresolved_reading_sets"] == 1
+    assert saved["P3"]["admitted"] and saved["P3"]["stated_might"] and not saved["P3"]["invented_leads"]
+    assert saved["P4"]["date_certificate_replayed"]
+    assert saved["P5"]["total"] == saved["P6"]["master_total"] == 67418 and saved["P6"]["contiguous"]
+    assert saved["P7"]["violations"] == saved["M6"]["untraced"] == []
+    assert not saved["P8"]["admitted"]
+    units, gaps = pf_measure.measure()
+    assert json.loads((PF_EVIDENCE / "units.json").read_text()) == units
+    assert json.loads((PF_EVIDENCE / "gaps.json").read_text()) == gaps
+    assert gaps["status_bytes_recomputed"] == gaps["master_bytes_by_status"]
+    for unit in units["units"]:
+        assert (unit["status"] == "CHECKED") == (unit["blockers"] == [])
+        assert set(unit["blockers"]) <= set(pf_measure.FAMILIES)
+    if pf_build.DEFAULT_SOURCE.exists():
+        assert pf_stage0.main(["--check"]) == 0

@@ -1,13 +1,14 @@
 # usecase-safetyfw: three frontier-lab safety frameworks in VE (build report)
 
-- **Status:** parts 1, 2, 3 and 5 done; part 4 (the openai-preparedness baseline) is cut for size and named
-  `usecase-safetyfw-b`. No DRI signature is reserved, no DELTA row, trust +0 (no Lean file changed).
+- **Status:** parts 1, 2, 3 and 5 were completed in the parent item; this branch adds the OpenAI
+  baseline. Its deliberately sparse translation and D2/D3 quantity gaps are explicit in PLAN 12. No DRI signature
+  is reserved, no DELTA row, trust +0 (no Lean file changed).
 - **HEAD:** the branch tip; original baseline code at 18e9c937d, source-coverage correction at 92a2fd643
   (base main 6d0a10526).
-- **What changed:** both frozen keys transcribed and pinned; fsf-r2 re-measured the DeepMind case (no byte moved
-  since Oct 18) with one probe per merged item; anthropic-rsp has its corrected baseline: 59,410 bytes in 303 units,
-  9.0% CHECKED, with stage 0 and the gaps by feature family.
-- **Open items:** `usecase-safetyfw-b`, `usecase-rsp-run`, `usecase-pf-run`, `fsf-r3`. No key finding.
+- **What changed:** the frozen keys and DeepMind/Anthropic baselines from the parent item remain; OpenAI now has
+  67,418 bytes in 389 units, 1.1% CHECKED, stage 0 P1–P8 and gaps by feature family.
+- **Open items:** completion of the OpenAI translation before `usecase-pf-run`, `usecase-rsp-run`, `fsf-r3`.
+  No key finding.
 
 ## 1. Task rows
 
@@ -29,8 +30,8 @@
 | 3. shared code with safety-framework by import; safety-framework's outputs unchanged | the unit-spec helpers and `measure` of its build_document.py are imported (loaded apart, as its test loads them) | a0c22aafd | safety-framework's `build_document.py --check` and `run.py --check` pass |
 | 3. CHECKED-bar lint (P7), invention audit (M6) | 0 violations, 0 untraced | a0c22aafd | `::test_rsp_identifiers_and_inventions` |
 | 3. PLAN section 12: only this item's deviations | 13 items | d78e9b9d9 | `::test_section_6_is_the_frozen_key` (section 6 unchanged) |
-| 4. openai-preparedness baseline | **not here**: `usecase-safetyfw-b` (size rule; section 6) | | |
-| 5. README per new case; this REPORT | anthropic-rsp/README.md (with today's numbers), openai-preparedness/README.md (status only) | d78e9b9d9, this commit | |
+| 4. openai-preparedness baseline | 389-unit source partition, D1 vocabulary and source-linked blocks, D2/D3 probes, P1–P8, P7/M6, gaps; sparse translation and quantity gaps recorded in PLAN 12 | this branch | `tests/test_safetyfw_usecases.py -k test_pf_` |
+| 5. README per new case; this REPORT | both READMEs include measured coverage; sections 3–4 rank all three frameworks | d78e9b9d9, this branch | `test_pf_every_byte_has_ve_status_and_one_unit`, saved gaps |
 
 ## 2. The sources and the licence decision
 
@@ -56,10 +57,13 @@ the same way as safety-framework's `test_span_accounting_is_complete`.
 | DeepMind FSF 3.1 | Oct 18 (fsf-r1) | 4,595 (8.5%) | 7,356 (13.5%) | 35,557 (65.4%) | 6,865 (12.6%) | 54,373 |
 | DeepMind FSF 3.1 | Oct 28 (fsf-r2) | 4,595 (8.5%) | 7,356 (13.5%) | 35,557 (65.4%) | 6,865 (12.6%) | 54,373 |
 | Anthropic RSP 3.4 | Oct 28 (corrected baseline) | 5,327 (9.0%) | 13,214 (22.2%) | 37,248 (62.7%) | 3,621 (6.1%) | 59,410 |
-| OpenAI PF v2 | not measured (`usecase-safetyfw-b`) | | | | | 67,418 |
+| OpenAI PF v2 | Oct 28 (sparse baseline) | 708 (1.1%) | 4,444 (6.6%) | 20,021 (29.7%) | 42,245 (62.7%) | 67,418 |
 
-Sources: [fsf-r2/gaps.json](../safety-framework/fsf-r2/gaps.json) (`master_bytes_by_status`, oct1, oct18 and
-today) and [anthropic-rsp/gaps.json](anthropic-rsp/gaps.json). Both plans expected a CHECKED share under 10%.
+Sources: [fsf-r2/gaps.json](../safety-framework/fsf-r2/gaps.json) (`master_bytes_by_status`, Oct 1, Oct 18 and
+today), [anthropic-rsp/gaps.json](anthropic-rsp/gaps.json) and
+[openai-preparedness/gaps.json](openai-preparedness/gaps.json). All three plans expected a CHECKED share under 10%;
+the OpenAI plan expected under 5%. Its lower share is chiefly the deliberately sparse translation in PLAN 12, not
+a like-for-like comparison of VE capability.
 
 The RSP has more OPEN and less UNFORMALISED text than the FSF. Its open terms are named on the rules
 themselves (28 records), and most of its process sentences are commitments without an open term in their guards (34
@@ -73,30 +77,30 @@ or diagnostic changed (`test_rsp_reviewer_prohibitions_are_separate_coverage_uni
 
 ## 4. What the bytes that are not CHECKED wait for, all three frameworks, ranked by bytes
 
-A unit counts under every family it waits for; "alone" counts the units with that one blocker. DeepMind's features
-(fsf-r1's names) are mapped to families in `measure_r2.FAMILIES`; anthropic-rsp's units carry families directly
-(`measure.py`). OpenAI: not measured.
+A unit counts under every blocker it has; “alone” counts a unit only when it has one blocker. The source files are
+[DeepMind fsf-r2](../safety-framework/fsf-r2/gaps.json), [Anthropic](anthropic-rsp/gaps.json), and
+[OpenAI](openai-preparedness/gaps.json). DeepMind and Anthropic retain their earlier measurements. The OpenAI
+baseline has 173 `not_translated` units mapped to “readings”: this is a translation backlog, not evidence that a
+VE feature alone will certify those bytes. The figures below are all-blocker bytes, followed by sole-blocker bytes.
 
-| Family | DeepMind: units, bytes | alone | Anthropic: units, bytes | alone | Both: bytes | alone |
-|---|---|---|---|---|---|---|
-| no claim to check | 165, 29,619 | 29,619 | 130, 31,104 | 31,104 | 60,723 | 60,723 |
-| JT judgment terms | 36, 7,976 | 5,114 | 50, 11,372 | 6,892 | 19,348 | 12,006 |
-| AT attitudes (beliefs, expectations, aims, hedges) | 31, 5,617 | 5,617 | 43, 6,510 | 6,510 | 12,127 | 12,127 |
-| readings (readings differ in which rules hold) | 18, 3,597 | 735 | 17, 3,989 | 2,106 | 7,586 | 2,841 |
-| ET time and process wording | 11, 2,212 | 2,212 | 7, 1,390 | 489 | 3,602 | 2,701 |
-| external reference | 7, 1,978 | 1,978 | 6, 797 | 797 | 2,775 | 2,775 |
-| SC scope (addressee, existential import) | 2, 283 | 283 | 9, 1,935 | 693 | 2,218 | 976 |
-| DF defaults | 2, 551 | 551 | 4, 866 | 405 | 1,417 | 956 |
-| WG weighing and causation | 3, 807 | 807 | 2, 551 | 551 | 1,358 | 1,358 |
-| QT quantities | 0, 0 | 0 | 2, 105 | 0 | 105 | 0 |
-| AP act phrases | 0, 0 | 0 | 0, 0 | 0 | 0 | 0 |
+| Family | DeepMind: all / alone | Anthropic: all / alone | OpenAI: all / alone | Three: all / alone |
+|---|---:|---:|---:|---:|
+| no claim to check | 29,619 / 29,619 | 31,104 / 31,104 | 20,021 / 20,021 | 80,744 / 80,744 |
+| readings | 3,597 / 735 | 3,989 / 2,106 | 29,972 / 29,676 | 37,558 / 32,517 |
+| JT | 7,976 / 5,114 | 11,372 / 6,892 | 3,742 / 1,613 | 23,090 / 13,619 |
+| AT | 5,617 / 5,617 | 6,510 / 6,510 | 8,233 / 8,233 | 20,360 / 20,360 |
+| ET | 2,212 / 2,212 | 1,390 / 489 | 5,668 / 3,914 | 9,270 / 6,615 |
+| external reference | 1,978 / 1,978 | 797 / 797 | 309 / 309 | 3,084 / 3,084 |
+| DF | 551 / 551 | 866 / 405 | 1,031 / 0 | 2,448 / 956 |
+| SC | 283 / 283 | 1,935 / 693 | 116 / 0 | 2,334 / 976 |
+| WG | 807 / 807 | 551 / 551 | 183 / 0 | 1,541 / 1,358 |
+| QT | 0 / 0 | 105 / 0 | 702 / 305 | 807 / 305 |
+| AP | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 |
 
-Among the families with a claim to check, JT is first in both texts, then AT. JT's landing (`judgments@0`) moves no
-byte to CHECKED, because a judged unit stays OPEN by theorem (fsf-r2). The "alone" column is the most a family's
-landing can move, since those units wait for nothing else: AT 12,127 B, external references 2,775 B (if the
-referenced documents are translated), ET 2,701 B, WG 1,358 B, DF 956 B, SC 976 B. Whether a unit then becomes
-CHECKED depends on how the feature represents it, and this item does not measure that. In the RSP, QT appears only
-with JT (`t4-cost-factor`) or ET (the 3-6 month cadence).
+The three-text ranking by all-blocker bytes is readings, JT, AT, ET, external reference, DF, SC, WG, QT,
+then AP, after excluding exposition with no claim to check. The ranking of sole-blocker bytes is readings, AT, JT,
+ET, external reference, WG, SC and DF (the last two have close values), QT, then AP. OpenAI’s very large
+translation backlog dominates its readings figure; compare each case separately before prioritising a VE feature.
 
 ## 5. fsf-r2: the DeepMind case after the merged items
 
@@ -114,8 +118,9 @@ predicates once jt-2c lands, and the "may be adjusted" units as default rules on
 
 ## 6. Key findings
 
-None. No step of the translation contradicted a key cell of either plan, and no key cell was edited. The baseline
-answers no key item (that is `usecase-rsp-run`), so a disagreement can still appear there.
+None. No step of either translation contradicted a frozen key cell, and no key cell was edited. Neither baseline
+answers key items; that remains for `usecase-rsp-run` and `usecase-pf-run`. OpenAI PLAN 12 documents translation
+gaps, especially the unrepresented quantity bridges, without changing an answer.
 
 ## 7. VE observations (no product code changed; repros saved)
 
@@ -139,9 +144,8 @@ None of these gives a wrong verdict. Each is a limit the translation had to work
 
 | Item | What it needs |
 |---|---|
-| `usecase-safetyfw-b` | Part 4: the openai-preparedness baseline by its PLAN 7 to 10 (vocabulary and D1 to D3, rules and premises with sources, the span accounting over 67,418 bytes, stage 0 P1 to P8, the measure). Reuse anthropic-rsp's `build_document.py` W2-set builder, `stage0.py` (part documents, D2, D3, lint, audit) and `measure.py` by import. Factor the shared parts into one module when the second case imports them |
 | `usecase-rsp-run` | `run.py`: cases.json's situations as atoms over the D1 vocabulary; per-choice expansion of `build_document.READINGS` (a reading's rules, premises and `case:` premises); both completion defaults; S from P3's tables, D from P4 (with checked countermodels for D3a and D6a, and RS9 in D3 with a day-count bridge), T5's cost factor in D3; `reference.py` (A, B, C, G from PLAN 3 and 4 alone); results.json; M1, M2, M4, M7 to M10; mutants m1 to m6; fsf-r1's content-bearing sets for the sets whose readings are each one rule (RS8, RS12, RS13, RS6) |
-| `usecase-pf-run` | the same for openai-preparedness, after `usecase-safetyfw-b` |
+| `usecase-pf-run` | complete the explicit F1–F17 source readings and D2/D3 quantity bridges named in PLAN 12, then implement `run.py` and `reference.py` for the 239 frozen items, both completion defaults, results.json and M1/M2/M4/M7–M10; no key cell may change |
 | `fsf-r3` | the re-expressions of fsf-r2 (probes.md): open terms on their predicates under `judgments@0` after jt-2c; "may be adjusted" as a default rule once `ve document check` admits `norm-defaults@0`; RS8 after SC-5. Needs a second-model fidelity check |
 
 ## 9. Seeded bugs (each planted, its test shown failing, then removed)
@@ -162,9 +166,14 @@ None of these gives a wrong verdict. Each is a limit the translation had to work
 | 12 | `usecases/anthropic-rsp/stage0.py` | PLAN mutant m6: D4's "Within 30 days" → 60 | `::test_rsp_stage0_rerun_equals_saved`. On the first try it was **not** caught: D4 and D5 compared the day asked about with the deadline the wrong way round. Fixed in c1fd40403; the saved answers are unchanged |
 | 13 | `tools/difffuzz_corpus.py` | removed the anthropic-rsp cases.json exclusion, then restored it | `tests/test_difffuzz.py::test_every_fixture_is_read_or_excluded_with_a_reason` failed with that fixture unread |
 | 14 | `usecases/anthropic-rsp/build_document.py` | removed the personal-relationships unit, then restored it | `tests/test_safetyfw_usecases.py::test_rsp_reviewer_prohibitions_are_separate_coverage_units` failed with that builder unit absent |
+| 15 | `usecases/openai-preparedness/pf_vocabulary.py` | renamed the CYB-C level constant | `::test_pf_translation_lint_and_invention_audit` failed (environment differs) |
+| 16 | `usecases/openai-preparedness/build_document.py` | changed the pinned source length to 67,417 | `::test_pf_every_byte_has_ve_status_and_one_unit` failed |
+| 17 | `usecases/openai-preparedness/measure.py` | mapped `not_translated` to JT rather than readings | `::test_pf_stage0_and_gaps` failed (saved gaps differ) |
+| 18 | `usecases/openai-preparedness/stage0.py` | forced the stated BIO-C `might` cell to false | `::test_pf_stage0_and_gaps` failed on the stage 0 rerun |
 
 Product code in the reviewed sense: Python under `tools/` (`difffuzz_corpus.py`, one registry entry; bug 4). No
-Lean or Rust file changed.
+Lean or Rust file changed. Rows 15–18 are this branch's Python use-case-script mutants; each was restored before
+the saved checks were run again.
 
 ## 10. Tests and checks run
 
@@ -222,3 +231,53 @@ Lean or Rust file changed.
   runner's preflight completed `lake build` and `python3 lean/audit.py`, then reported `FULL: missing coverage map`
   and expanded pytest to 484 units; that pytest expansion was stopped under this item's selected-only instruction.
   No release gate or model call ran. The three entries in `main-known-red.txt` were left untouched.
+
+## 13. OpenAI baseline verification (this branch)
+
+- Implementation and saved evidence: `8797d5328`. The pinned PDF (170,399 B,
+  `fae6e4cc6f7212a010bb9348fc0cde1fe711b9cad426c6a99db97740ee52729b`) and extracted text (67,418 B,
+  `d2e3dd5b80e5bb86079911230358e0c2bb78f12435757959e14dae50e4d48d0f`) match PLAN 1; neither was
+  committed. D1 `build_document.py --check`, P1–P8 `stage0.py --check`, `measure.py --check` passed through
+  `test_pf_every_byte_has_ve_status_and_one_unit` and `test_pf_stage0_and_gaps`.
+- `tests/test_safetyfw_usecases.py -k test_pf_`: 3 passed. The new D1, D2 and D3 environment files and all 32 rule
+  blocks passed `test_pf_translation_lint_and_invention_audit`. The four seeded bugs in section 9 each made its
+  named test fail, then were restored.
+- The English corpus grew from 40 to 43 environments (D1, D2 and D3). The lexicon report generator found 43 valid,
+  0 invalid; both `test_every_corpus_environment_has_a_valid_selected_lexicon` and
+  `test_lx14_every_wording_python_selects_on_the_corpus_is_subject_first` passed.
+- Shared-code invariance: Anthropic `build_document.py --check`, `measure.py --check` and `stage0.py --check` passed.
+  DeepMind `build_document.py --check`, `measure_r1.py --check`, `readings_r1.py --check` and `run.py --check` passed;
+  the latter reproduced its saved 257/262 agreement and five known disagreements.
+- `tools/trust_map.py --check`: K +0, S +0, D +0, G +0, trusted +0. `tools/gate_collection.py --check --prebuilt`:
+  3 added tests, 0 removed, 0 refused, 0 stale, 0 malformed. `tools/regen_generated.py --write` wrote its 33
+  registered entries once after the initial implementation; the English lexicon report was regenerated by its own
+  generator after the final vocabulary edit.
+- Selected runner: `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` first fell back to the VM
+  and stopped before pytest because the Lean-build cache path was read-only. With `VE_LEAN_BUILDS` and
+  `VE_TESTMAP_CACHE` under `/tmp` and VM fallback forced, it selected 67 files but expanded into recording 486 test
+  units because the VM had no usable coverage map. The one-hour command timeout stopped that recording before the
+  selected pytest phase. Every unit listed as completed in its log exited 0; there is no completed selected-test
+  summary. It was not rerun on unchanged code. The chain's final-HEAD gate remains the next full check.
+- No Lean or Rust source changed, so the Lean rebuild, audit and trust mutants are inapplicable. No model call,
+  pilot, whole-UDHR/constitution run or local full release gate was made. The three known red tests on main were
+  neither edited nor included as fixes.
+
+## 14. Self-review against BUILDER-CHECKLIST
+
+1. **N.A.** No relay or schema changed; case scripts call `ve.document` and `ve.backends.relay` for every answer.
+2. **PASS** — section 1 task rows, PLAN 12 deviations, `test_pf_every_byte_has_ve_status_and_one_unit`; the sparse
+   translation is disclosed and the frozen key is unchanged.
+3. **PASS** — seeded bugs 15–18 in section 9 each failed its named `test_pf_` test before restoration.
+4. **N.A.** No checker path changed; DeepMind `run.py --check` reproduced saved results.
+5. **N.A.** No relayed field or request binding changed.
+6. **N.A.** The chain, not this builder, runs the full gate on the committed final HEAD; the selected runner's
+   timeout is recorded in section 13.
+7. **PASS** — no DELTA row or unsigned user-visible delta; `tools/trust_map.py --check` measured trust +0.
+8. **PASS** — no VE behaviour changed; Anthropic and DeepMind saved-output `--check` commands passed (section 13).
+9. **PASS** — the selector identified `tests/test_safetyfw_usecases.py` and both corpus tests among its 67 files;
+   section 13 records why its VM test phase did not finish.
+10. **N.A.** No Lean theorem or statement changed.
+11. **N.A.** No public budget or deadline path changed; `test_pf_stage0_and_gaps` checks saved UNKNOWN on P2.
+12. **N.A.** No checker path changed; the stage 0 probes are part documents and `test_pf_stage0_and_gaps` passed.
+13. **PASS** — no test was removed or renamed; `tools/gate_collection.py --check --prebuilt` reports 0 removed,
+    refused, stale and malformed.

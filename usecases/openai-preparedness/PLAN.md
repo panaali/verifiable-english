@@ -441,6 +441,29 @@ safety-framework 9. Report, unscored, what changes without N1 and without N2.
 
 ## 12. Deviations (after running VE; empty at plan time)
 
+1. **D1 is a sparse baseline, not the full F1–F17 translation planned in section 7.** The 32 authored rule blocks
+   include F1 guideline alternatives; 20 direct blocks sit in D1 units and the reading alternatives remain
+   pending. F5, F6, F11, F12 and F17 have OPEN source units, but their per-choice rules are still to be written.
+   F13's “periodically review” is UNFORMALISED (ET). The other untranslated clauses are explicit
+   `not_translated` units, not CHECKED. The follow-up must finish those rules before key answering.
+2. **Only six Table 1 level markers carry D1 facts.** They are separate 6- or 10-byte units. Their capability
+   descriptions, risk claims and safeguard bullets are separate OPEN or UNFORMALISED units. This prevents the whole
+   row from becoming CHECKED when the two stated facts are all D1 encoded.
+3. **D2 is admitted as a separate risk probe.** Its severe-harm class has the two disjuncts in footnote 1; the
+   BIO-C “could cause millions of deaths” is one `might` cell and does not become a `leads` cell. The other Table 1
+   causal units have no D2 decision record yet. No source byte is promoted by this probe.
+4. **D3 certifies only the version date before retrieval.** The 1/5th self-improvement ratio and the severe-harm
+   quantities remain `quantity` units (QT), and “several months” also waits for ET. P4 records this explicitly;
+   those source bytes are not CHECKED.
+5. **P8 refuses the planned combination.** On F2 with `judgments@0`, `documents@1` and D1's soft norms, Lean says
+   `CheckerUnavailable: judgments@0 with soft-norms@0 needs its composed Lean route`. D1 therefore uses W2 open
+   names and pending readings, as the plan allowed.
+6. **The 173 `not_translated` units are mapped to “readings” as a translation backlog.** This is not a claim that
+   landing a VE readings feature alone would make their 29,676 sole bytes CHECKED. The stage 0 and coverage files
+   disclose the gap; `usecase-pf-run` must complete and check the source reading of each before answering keys.
+7. **No key cell changed and no key item was answered in this baseline.** The only original-key comparison remains
+   the freeze and transcription tests. No conflict is presented as a source finding.
+
 ## 13. Files for the implementation round (not this commit)
 
 `environment.d1.json`, `environment.d2.json`, `environment.d3.json`; `pf.d1.ve.md`, `pf.d2.ve.md`, `pf.d3.ve.md`

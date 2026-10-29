@@ -223,6 +223,24 @@
    "symbols": 55
   },
   {
+   "environment": "usecases/openai-preparedness/environment.d1.json",
+   "failures": [],
+   "lexicon_id": "16f53fed1aa8b45f951f8c64b459e31864e03f4a03452ecc52240a7bd1d58fb0",
+   "symbols": 61
+  },
+  {
+   "environment": "usecases/openai-preparedness/environment.d2.json",
+   "failures": [],
+   "lexicon_id": "1866313fb4bce12d8e2fa68f8ddb4ab1de8338c3809909cd378d2582e3dd78c8",
+   "symbols": 22
+  },
+  {
+   "environment": "usecases/openai-preparedness/environment.d3.json",
+   "failures": [],
+   "lexicon_id": "0b5d6c1c912699115e4871541325e73f124810d0265f83c23905e3e1fd811a0f",
+   "symbols": 2
+  },
+  {
    "environment": "usecases/safety-framework/environment.d1.json",
    "failures": [],
    "lexicon_id": "0b98135467ea0bd24672f8c5e071221639ea4f56c27e37874efadeccab68336d",
@@ -244,6 +262,6 @@
  "failures_by_condition": {},
  "format": "ve.english-lean-lexicon-report@1",
  "invalid": 0,
- "valid": 40,
+ "valid": 43,
  "wording_key_differences": []
 }
