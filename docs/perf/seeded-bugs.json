@@ -1,0 +1,14 @@
+[
+  {
+    "file": "lean/VE/Service/ReadingsAdmissionProfile.lean",
+    "fault": "Disable the W2 fixed-part branch while leaving the original admission probe enabled",
+    "test": "tests/test_readings_stage_times.py::test_split_w2_fixed_part_completion_is_timed",
+    "result": "3 parameter cases failed: elaborate, choice, verdicts"
+  },
+  {
+    "file": "lean/Serve.lean",
+    "fault": "Pass an empty handle table to the profiler on each request",
+    "test": "tests/test_readings_stage_times.py::test_normal_client_profiles_registered_and_reused_handle",
+    "result": "failed on the second request after successful registration"
+  }
+]
