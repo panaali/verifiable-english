@@ -123,7 +123,11 @@ replay fixture needs a mode that produces one. With (1) and (2) at 420 lines of 
   `WireExamples.lean` 204, `Chain.lean` 23, `Packs.lean` 1. The rest is the trust classes (57), the harness (46),
   the allow file (24), DELTA (13), two root imports and two manifest lines. That is over the ~600 rule by the
   evidence the R16 mutants needed. The product code was cut at (3a).
-- **Tests:** the selected set ran once on the Mac runner over 6 shards (383 units): 381 passed, 2 failed. Both were
+- **Tests (review fix):** the selected set at c23a606a (GitHub Actions, 6 shards, run et-4-c23a606a-t249590):
+  392 units, 392 passed, exit 0, `tests/test_events_wire_mutants.py` among them. `lake build` (1138 jobs),
+  `python3 lean/audit.py` (656 files), `regen_generated.py --check` (33 entries) and `trust_map.py --check` PASS.
+  No `main-known-red.txt` test failed. Not run: the full gate (the merge train's).
+- **Tests (first cut):** the selected set ran once on the Mac runner over 6 shards (383 units): 381 passed, 2 failed. Both were
   fixed in b887dcc11 (`test_lean_limits`'s literal 64; the manifest's `other_json` for the two new files). Both files
   then passed locally: 141 passed. No `main-known-red.txt` test was hit. `gate_collection.py --check --prebuilt`:
   0 added, 0 removed, 0 refused. `lake build` (1135 jobs) and `python3 lean/audit.py` PASS (656 files).
