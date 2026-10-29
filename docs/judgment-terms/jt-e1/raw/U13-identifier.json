@@ -1,0 +1,113 @@
+{
+  "id": "U13",
+  "arm": "identifier",
+  "prompt": "Read only the source and displayed lines below as a reader of this document. For the named conclusion, answer in exactly this format: `CLASS: SETTLED|TURNS|CONDITIONAL; DECIDER: <name or NONE>; WHY: <one sentence>`. SETTLED means it holds whatever is judged. TURNS means two admissible judgments can change it. CONDITIONAL means it is certified only given a judgment criterion. Name the decider if the text names one; otherwise say NONE. Do not use outside knowledge.\n\nSOURCE: UDHR u064, synthetic deprivation with a named tribunal.\nCONCLUSION: whether this deprivation is forbidden\nOpen reading: \"a deprivation\" is classified as \"arbitrary_deprivation\".\nleft_to(arbitrary_deprivation; decider=tribunal): whether this deprivation is forbidden\n",
+  "call": {
+    "account": "claude-panaali2",
+    "returncode": 0,
+    "stderr": "",
+    "result": {
+      "duration_api_ms": 5517,
+      "stop_reason": "end_turn",
+      "session_id": "99015970-d593-4960-8402-de2f075e471e",
+      "total_cost_usd": 0.004798500000000001,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 885,
+        "cache_read_input_tokens": 1545,
+        "output_tokens": 110,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 885,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 110,
+            "cache_read_input_tokens": 1545,
+            "cache_creation_input_tokens": 885,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 885
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "modelUsage": {
+        "claude-sonnet-5-5": {
+          "inputTokens": 2,
+          "outputTokens": 110,
+          "cacheReadInputTokens": 1545,
+          "cacheCreationInputTokens": 885,
+          "webSearchRequests": 0,
+          "costUSD": 0.004798500000000001,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "thinkingTokens": 0,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 885,
+          "canonicalModel": "claude-sonnet-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "permission_denials": [],
+      "terminal_reason": "completed",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required",
+      "subagent_stats": {
+        "spawned": 0,
+        "requested": {
+          "background": 0,
+          "foreground": 0,
+          "unset": 0
+        },
+        "started_in_background": 0,
+        "max_depth": 0,
+        "spawned_by_subagents": 0,
+        "completed": 0,
+        "failed": 0,
+        "killed": {
+          "parent": 0,
+          "user": 0,
+          "system": 0
+        },
+        "refused": {
+          "depth_limit": 0,
+          "concurrency_limit": 0,
+          "budget": 0
+        },
+        "by_type": {}
+      },
+      "safety_stops": 0,
+      "is_error": false,
+      "num_turns": 1,
+      "subtype": "success",
+      "api_error_status": null,
+      "result": "CLASS: CONDITIONAL; DECIDER: tribunal; WHY: The text classifies the deprivation as \"arbitrary_deprivation\" only as an open reading and explicitly leaves the question of whether it is forbidden to the tribunal, so the conclusion is certified only given the tribunal's judgment criterion.",
+      "ttft_ms": 5710,
+      "type": "result",
+      "duration_ms": 5746,
+      "uuid": "ae51e56d-45ec-4ed4-b302-9caacce3cd05",
+      "ttft_stream_ms": 4672,
+      "time_to_request_ms": 232,
+      "first_content_frame_ms": 4672,
+      "queued_turn_count": 0,
+      "result_index": 0
+    },
+    "cw": 2542
+  },
+  "raw_answer": "CLASS: CONDITIONAL; DECIDER: tribunal; WHY: The text classifies the deprivation as \"arbitrary_deprivation\" only as an open reading and explicitly leaves the question of whether it is forbidden to the tribunal, so the conclusion is certified only given the tribunal's judgment criterion."
+}

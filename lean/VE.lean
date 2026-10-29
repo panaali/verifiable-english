@@ -208,6 +208,8 @@ import VE.Events.Premises
 import VE.Events.Calendar
 import VE.Events.Completion
 import VE.Events.Examples
+import VE.Events.WireExamples
+import VE.Events.Chain
 import VE.NormDefaults.Packs
 import VE.NormDefaults.PacksLegacy
 import VE.NormDefaults.PacksLabels
@@ -236,4 +238,6 @@ import VE.Defaults.Meaning
 import VE.Defaults.MeaningExamples
 import VE.Defaults.Route
 import VE.Defaults.WireExamples
+import VE.Readings.DefaultVerdicts
+import VE.Readings.DefaultVerdictsExamples
 import VE.Defaults.RouteExamples
