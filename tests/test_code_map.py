@@ -19,6 +19,7 @@ def test_synthetic_tree_extracts_first_sentences_and_is_deterministic(tmp_path):
     _put(tmp_path, "lean/VE/Route/One.lean", "/-! Route one\ncontinues. Second sentence. -/\n")
     _put(tmp_path, "rust/src/lib.rs", "//! Rust first line\n//! continues. Next sentence.\nfn one() {}\n")
     _put(tmp_path, "ve/empty.py", "def f():\n    return 1\n")
+    _put(tmp_path, "ve/README.md", "# VE\n\nFirst area sentence\nacross lines. Second sentence.\n")
     first, missing = code_map.render(tmp_path)
     second, _ = code_map.render(tmp_path)
     assert first == second
@@ -31,6 +32,7 @@ def test_synthetic_tree_extracts_first_sentences_and_is_deterministic(tmp_path):
     assert "`ve/empty.py` — (no module docstring)" in contents
     assert "Second sentence" not in contents and "Next sentence" not in contents
     assert "Regenerated on every merge to main; on a branch it may lag that branch's own changes." in first[code_map.OUTPUT / "INDEX.md"]
+    assert "— First area sentence across lines." in first[code_map.OUTPUT / "INDEX.md"]
 
 
 def test_check_detects_stale_and_extra_files_then_accepts_write(tmp_path, capsys):
@@ -66,6 +68,13 @@ def test_missing_is_informational_and_sentences_are_capped(tmp_path, capsys):
     description = next(line.split(" — ", 1)[1] for line in output[code_map.OUTPUT / "ve.md"].splitlines()
                        if "ve/long.py" in line)
     assert len(description) == 160 and description.endswith("…")
+
+
+def test_readme_table_is_not_an_area_sentence(tmp_path):
+    _put(tmp_path, "ve/one.py", '"""One."""\n')
+    _put(tmp_path, "ve/README.md", "# VE\n\n| Module | Purpose |\n|---|---|\n| one.py | One. |\n")
+    output, _ = code_map.render(tmp_path)
+    assert "[ve/](ve.md) — 1 modules — -\n" in output[code_map.OUTPUT / "INDEX.md"]
 
 
 def test_real_tree_size_caps():

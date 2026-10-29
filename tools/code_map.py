@@ -123,9 +123,17 @@ def area_description(root: Path, label: str) -> str:
             if name.endswith(".py"):
                 sentence = module_sentence(path)
             else:
-                lines = [line.strip().lstrip("# ") for line in path.read_text(encoding="utf-8").splitlines()
-                         if line.strip() and not line.startswith(("<!--", "[!"))]
-                sentence = first_sentence(" ".join(lines[:2])) if lines else None
+                paragraph: list[str] = []
+                for line in path.read_text(encoding="utf-8").splitlines():
+                    stripped = line.strip()
+                    if not paragraph and (not stripped or stripped.startswith(("#", "<!--", "[!"))):
+                        continue
+                    if not paragraph and stripped.startswith("|"):
+                        break  # a Markdown table header is not a sentence
+                    if not stripped:
+                        break
+                    paragraph.append(stripped)
+                sentence = first_sentence(" ".join(paragraph))
             if sentence:
                 return sentence
     return "-"
