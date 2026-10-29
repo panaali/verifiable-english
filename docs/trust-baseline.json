@@ -1391,6 +1391,13 @@
    "reason": "me-4 review F2: shared tableDimensions enforces the spec section 14 row and column caps in CSV and JSONL; total me-4 trusted growth is K +0, S +54, V +96 = 150 over the merge base, with the original R16 allowance covering S +54 and V +94",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-4 review fix, 2026-10-28",
    "commit": "d25bc343be0f41a29a65c6a8766f18f2b1694e8d"
+  },
+  {
+   "class": "V",
+   "lines": 120,
+   "reason": "et-4: VE/Events/Wire.lean +120 untied D[V] (EventsDecoded, VocabView and its readers, strAt, arrAt, decodeEventSort, decodeStateSort, decodeLinkRaw, checkLinks, ownedByEvents, checkDates, decodeEvents, eventsPack); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), et-4, 2026-10-18",
+   "commit": "6d0a105269961144688f8511f4cc4cd0c10542e4"
   }
  ]
 }
