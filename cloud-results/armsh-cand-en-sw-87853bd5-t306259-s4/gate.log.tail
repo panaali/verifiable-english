@@ -1,0 +1,200 @@
+tests/test_wire_contract_three_way.py::test_admission_adapter_uses_active_norm_units
+tests/test_wire_contract_three_way.py::test_forms_corpus_spec_python_lean
+tests/test_wire_contract_three_way.py::test_overlay_e40_e41_lean_answers_for_a_python_deferral
+tests/test_wire_contract_three_way.py::test_engine_corpus_covers_every_form
+tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_test_input_of_every_unit
+tests/test_wire_gate_corpus.py::test_one_run_records_each_unit_as_its_own_run_does
+tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_source_of_the_soft_conformance_module
+tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_soft_conformance_fixture
+tests/test_wire_gate_corpus.py::test_unit_gate_corpus_holds_every_source_of_its_conformance_scripts[norms@0]
+tests/test_wire_gate_corpus.py::test_unit_gate_corpus_holds_every_source_of_its_conformance_scripts[norm-defaults@0]
+tests/test_wire_gate_corpus.py::test_unit_gate_corpus_holds_every_fixture[norms@0]
+tests/test_wire_gate_corpus.py::test_unit_gate_corpus_holds_every_fixture[norm-defaults@0]
+tests/test_words.py::test_the_python_producers_are_gone
+tests/test_words.py::test_the_lint_refuses_a_producer_that_comes_back[def situation(name, noun):\n    return f"{name} is {noun}"\n]
+tests/test_words.py::test_the_lint_refuses_a_producer_that_comes_back[def shown(clause):\n    return "Here the text does not say whether " + clause\n]
+tests/test_words.py::test_the_lint_refuses_a_producer_that_comes_back[def line(name):\n    return name + " is a member"\n]
+tests/test_words.py::test_the_lint_refuses_a_producer_that_comes_back[def line(name):\n    return name + " is an agent"\n]
+tests/test_words.py::test_the_lint_refuses_a_producer_that_comes_back[def _article(noun):\n    """a or an."""\n    return "a"\n]
+tests/test_words.py::test_the_lint_reads_docstrings_as_documentation_and_the_tree_passes
+tests/test_words.py::test_a_genuine_answer_is_bound
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>0]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>1]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>2]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>3]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>4]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>5]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>6]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>7]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>8]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>9]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item0-kind]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item1-boolean]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item2-fields]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item3-arity]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item4-declared]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item5-declared]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item6-string]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item7-noun]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item8-suppose]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item9-fields]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item10-obligation]
+tests/test_words.py::test_lean_refuses_a_lexicon_of_another_environment
+tests/test_words.py::test_lean_refuses_a_lexicon_that_fails_the_vocabulary_policy
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[0]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[1]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[2]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[3]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[4]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[5]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[6]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[7]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[8]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[9]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[10]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[11]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[12]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[13]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[14]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[15]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[16]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[17]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[18]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[19]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[20]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[21]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[22]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[23]
+tests/test_words.py::test_the_unsaid_description_is_leans
+tests/test_words.py::test_the_ab_evidence_has_no_difference
+
+=============================== warnings summary ===============================
+ve/english.py:1849
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 2bd979058edc0265e539a6ce38ca26192555d8aab371e6ee1d892a8ea99606da: unreviewed
+    english = render_english(document, env, **options)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+30284/30285 tests collected (1 deselected) in 23.55s
+[gate] Python suite: uv run --frozen --no-sync python -m pytest -p hypothesis.extra.pytestplugin -p xdist -n 4 -q -p tools.gate_pytest -o addopts=-ra -m not live tests/test_acts_lexical_mutants.py tests/test_agent_policy_rerun.py tests/test_alternatives_three_way.py tests/test_answer_cutoff.py tests/test_ar6_report.py tests/test_argument_adversarial.py tests/test_ask_cli.py tests/test_ask_fixtures.py tests/test_assist_deadline.py tests/test_assurance_manifest.py tests/test_attacks.py tests/test_b14c.py tests/test_b16c_evidence.py tests/test_b16d_document.py tests/test_b16d_norm_roles.py tests/test_bench_baselines.py tests/test_binding_census.py tests/test_calc_algebra.py tests/test_calc_derive.py tests/test_calc_dimensions.py tests/test_cardinality_exercised.py tests/test_closure.py tests/test_closure_induction.py tests/test_closure_witnesses.py tests/test_count_w6a.py tests/test_cpu_bounds.py tests/test_defaults_checks.py tests/test_defaults_english.py tests/test_defeasible_baseline_evidence.py tests/test_definitions.py tests/test_definitions_differential.py tests/test_definitions_english.py tests/test_discourse.py tests/test_discourse_three_way.py tests/test_e1_core.py tests/test_english_e26_boundary.py tests/test_english_e26_diagnosis.py tests/test_english_e2_ledger_sites.py tests/test_english_e2_python.py tests/test_english_e2_responses.py tests/test_english_lean_tables.py tests/test_english_lean_tokens.py tests/test_english_unambiguity.py tests/test_enum_domains.py tests/test_equivalence_properties.py tests/test_et8_completion.py tests/test_fluent.py tests/test_gate_collection.py tests/test_gen_inv_design.py tests/test_grammar_cli.py tests/test_heavy_tests.py tests/test_judgments_answer.py tests/test_lake_outputs.py tests/test_lean_audit_record.py tests/test_lean_default_build.py tests/test_lean_first_b12_report.py tests/test_lean_first_b13b.py tests/test_lean_first_b6_report.py tests/test_lean_first_rule3_measurement.py tests/test_lean_first_triage.py tests/test_lean_service_schema.py tests/test_lf14a_response_shape.py tests/test_me4_csv_mutants.py tests/test_model_environment.py tests/test_mutants.py tests/test_news_w6a_fixtures.py tests/test_norm_defaults.py tests/test_norm_defaults_layered.py tests/test_norm_defaults_soft_kinds.py tests/test_numbers_phrases.py tests/test_p1_amendment12.py tests/test_p1_amendment15.py tests/test_parser_renderer.py tests/test_premise_scale.py tests/test_presupposition_wordings.py tests/test_question_lean_relay.py tests/test_question_statements.py tests/test_rd9_followup_bindings.py tests/test_rd9_r14_candidates.py tests/test_readings_budget_zero.py tests/test_readings_defaults_english.py tests/test_readings_defaults_rd3_report.py tests/test_readings_defaults_rd6a.py tests/test_readings_defaults_statements.py tests/test_readings_rd5_plain_probe.py tests/test_readings_rd6b_differential.py tests/test_readings_route_fuzz.py tests/test_readings_s2_python.py tests/test_regen_generated.py tests/test_relay_binding_inventory.py tests/test_relay_english_scale.py tests/test_replay_conservativity.py tests/test_report_english.py tests/test_reports_agreement.py tests/test_reports_lean.py tests/test_response_schemas.py tests/test_rights_three_way.py tests/test_risk_diagnostics.py tests/test_risk_every_diagnostic.py tests/test_safetyfw_usecases.py tests/test_scales_exercised.py tests/test_scope_sc5r_stub.py tests/test_select_tests.py tests/test_senses_lean.py tests/test_shape_binding_mutants.py tests/test_soft_request_economy.py tests/test_speech_acts_conformance.py tests/test_speech_acts_lean.py tests/test_speech_source_lean.py tests/test_stage0_probe_matrix.py tests/test_stage2_bundle.py tests/test_stage2_parse.py tests/test_stats.py tests/test_suite_tail.py tests/test_t1c.py tests/test_trust_ratchet.py tests/test_vacuity.py tests/test_w6a2_looprecheck1.py tests/test_wire_contract_engine.py tests/test_wire_contract_generator.py tests/test_wire_contract_lean.py tests/test_wire_contract_s5_admission.py tests/test_wire_contract_s5_lean.py tests/test_wire_gate_corpus.py
+bringing up nodes...
+bringing up nodes...
+
+........................................................................ [  1%]
+........................................................................ [  3%]
+........................................................................ [  5%]
+........................................................................ [  6%]
+........................................................................ [  8%]
+........................................................................ [ 10%]
+........................................................................ [ 11%]
+........................................................................ [ 13%]
+........................................................................ [ 15%]
+........................................................................ [ 16%]
+........................................................................ [ 18%]
+........................................................................ [ 20%]
+........................................................................ [ 22%]
+........................................................................ [ 23%]
+........................................................................ [ 25%]
+........................................................................ [ 27%]
+........................................................................ [ 28%]
+........................................................................ [ 30%]
+........................................................................ [ 32%]
+........................................................................ [ 33%]
+........................................................................ [ 35%]
+........................................................................ [ 37%]
+........................................................................ [ 39%]
+........................................................................ [ 40%]
+........................................................................ [ 42%]
+........................................................................ [ 44%]
+........................................................................ [ 45%]
+........................................................................ [ 47%]
+....................................F..F................................ [ 49%]
+........................................................................ [ 50%]
+........................................................................ [ 52%]
+........................................................................ [ 54%]
+........................................................................ [ 56%]
+........................................................................ [ 57%]
+........................................................................ [ 59%]
+........................................................................ [ 61%]
+........................................................................ [ 62%]
+........................................................................ [ 64%]
+........................................................................ [ 66%]
+........................................................................ [ 67%]
+........................................................................ [ 69%]
+........................................................................ [ 71%]
+........................................................................ [ 73%]
+........................................................................ [ 74%]
+........................................................................ [ 76%]
+........................................................................ [ 78%]
+........................................................................ [ 79%]
+........................................................................ [ 81%]
+........................................................................ [ 83%]
+........................................................................ [ 84%]
+........................................................................ [ 86%]
+........................................................................ [ 88%]
+........................................................................ [ 90%]
+........................................................................ [ 91%]
+........................................................................ [ 93%]
+........................................................................ [ 95%]
+........................................................................ [ 96%]
+........................................................................ [ 98%]
+................................................................         [100%]
+ve: English comparator: {"records": 521, "excluded": 0, "planted": 2, "classes": {"agree": 517, "diagnostic-code,schema": 1, "verdict": 1}} (/tmp/ve-gate-u5m5sqt7/tmp/ve-english-comparator-qh2kwiaj)
+
+=================================== FAILURES ===================================
+______________ test_gitattributes_is_generated_from_the_registry _______________
+[gw3] linux -- Python 3.14.7 /home/runner/work/verifiable-english/verifiable-english/.venv/bin/python
+
+    def test_gitattributes_is_generated_from_the_registry():
+>       assert R.check_attributes() == 0
+E       assert 1 == 0
+E        +  where 1 = <function check_attributes at 0xff82eca91590>()
+E        +    where <function check_attributes at 0xff82eca91590> = R.check_attributes
+
+tests/test_regen_generated.py:139: AssertionError
+----------------------------- Captured stderr call -----------------------------
+.gitattributes differs from the GENERATED list; run tools/regen_generated.py --write
+_______________ test_owner_agrees_with_git_on_every_tracked_file _______________
+[gw3] linux -- Python 3.14.7 /home/runner/work/verifiable-english/verifiable-english/.venv/bin/python
+
+    def test_owner_agrees_with_git_on_every_tracked_file():
+        """git itself is the oracle of the attribute patterns: a tracked file has the driver exactly when an
+        entry owns it."""
+        done = subprocess.run(["git", "check-attr", "--stdin", "merge"], cwd=ROOT, input="\n".join(TRACKED) + "\n",
+                              capture_output=True, text=True, check=True)
+        by_git = {line.rsplit(": merge: ", 1)[0]: line.rsplit(": merge: ", 1)[1] for line in done.stdout.splitlines()}
+        assert by_git.keys() == set(TRACKED)
+        disagree = [name for name in TRACKED if (by_git[name] == R.DRIVER) != (R.owner(name) is not None)]
+>       assert not disagree, disagree[:10]
+E       AssertionError: ['lean/ResponseShapeAudit.lean']
+E       assert not ['lean/ResponseShapeAudit.lean']
+
+tests/test_regen_generated.py:165: AssertionError
+=============================== warnings summary ===============================
+tests/test_p1_amendment12.py::test_qwen_native_replay_is_preserved_for_gemini_attacker
+  /home/runner/work/verifiable-english/verifiable-english/.venv/lib/python3.14/site-packages/google/genai/types.py:42: DeprecationWarning: '_UnionGenericAlias' is deprecated and slated for removal in Python 3.17
+    VersionedUnionType = Union[builtin_types.UnionType, _UnionGenericAlias]
+
+tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results
+tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results
+tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results
+tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results
+  /home/runner/.local/share/uv/python/cpython-3.14.7-linux-aarch64-gnu/lib/python3.14/multiprocessing/popen_fork.py:76: DeprecationWarning: This process (pid=11129) is multi-threaded, use of fork() may lead to deadlocks in the child.
+    self.pid = os.fork()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_regen_generated.py::test_gitattributes_is_generated_from_the_registry
+FAILED tests/test_regen_generated.py::test_owner_agrees_with_git_on_every_tracked_file
+2 failed, 4238 passed, 5 warnings in 1278.34s (0:21:18)
+[gate] commit: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false rev-parse HEAD
+109710d97fc9c20267f08092b6cea8f1e8547219
+[gate] worktree status: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+
+[gate] worktree index: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false read-tree 109710d97fc9c20267f08092b6cea8f1e8547219
+
+[gate] worktree content: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+ M lean/checkers.lock
+[gate-wrap] lean/checkers.lock differs from the commit by this runner's pins only (blob 505fd70583cdc925977596c06493af0ea7072a5b, taken at the wrapper's start)
+[gate] failed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 0 passed, 0 skipped, 2 failures
+[gate] FAILURE: pytest command:  Python suite: exit 1
+[gate] FAILURE: gate:  worker gw0 collected 4240 tests, not the collection run's 4240
