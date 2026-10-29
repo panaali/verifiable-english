@@ -1,0 +1,11 @@
+{
+  "mutants": [
+    {"definition": "VE.Scope.insertBy", "file": "lean/VE/Scope/Theorems.lean", "change": "invert equal-key insertion", "test": "VE.Scope.Theorems #guard insertBy equal key", "result": "FAIL"},
+    {"definition": "VE.Scope.insertBy", "file": "lean/VE/Scope/Theorems.lean", "change": "empty insertion returns []", "test": "VE.Scope.Theorems #guard insertBy empty", "result": "FAIL"},
+    {"definition": "VE.Scope.Examples.titleCarveA", "file": "lean/VE/Scope/Examples.lean", "change": "top condition becomes other", "test": "VE.Scope.Examples #guard equal-key title order", "result": "FAIL"},
+    {"definition": "VE.Scope.Examples.titleCarveB", "file": "lean/VE/Scope/Examples.lean", "change": "literal plus/minus", "test": "trust-mutants.json: lit-plus, lit-minus", "result": "KILLED"},
+    {"definition": "VE.Scope.title_identity", "file": "lean/VE/Scope/Theorems.lean", "change": "drop JsonWF premise", "test": "lake build VE.Scope.Theorems: open goal JsonWF D.doc; Examples F-raw-title guard", "result": "FAIL"},
+    {"definition": "VE.Scope.patch_nil_of_units", "file": "lean/VE/Scope/Theorems.lean", "change": "claim null output", "test": "lake build VE.Scope.Theorems: structural equality proof", "result": "FAIL"},
+    {"definition": "VE.Scope.admitBlock_drop", "file": "lean/VE/Scope/Theorems.lean", "change": "claim ScopeUnknownUnit error", "test": "lake build VE.Scope.Theorems: admission proof", "result": "FAIL"}
+  ]
+}
