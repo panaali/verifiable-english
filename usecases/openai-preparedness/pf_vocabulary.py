@@ -78,7 +78,7 @@ ACTS = {
     "public_disclosure": ("{0} have public disclosure", "5.2: major deployment disclosure"),
     "safeguards_disclosed": ("{0} have safeguards disclosed", "5.2: beyond High disclosure"),
     "sag_recommendation": ("{0} have SAG recommendations sent to Leadership", "Appendix B: SAG role"),
-    "ssc_visibility": ("{0} give SSC visibility into the process", "Appendix B: SSC oversight"),
+    "ssc_visibility": ("{0} give SSC visibility into processes", "Appendix B: SSC is the Safety and Security Committee of the OpenAI Board of Directors"),
     "recommendation_informed": ("{0} have Leadership informed by SAG", "Appendix B: SAG recommendation"),
     "annual_review": ("{0} have an annual review", "Appendix B: at least once a year"),
     "misalignment_risk_minimized": ("{0} have safeguards that sufficiently minimize misaligned-model risk", "C.2: safeguards against a misaligned model"),

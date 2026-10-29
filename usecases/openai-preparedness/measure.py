@@ -14,11 +14,12 @@ import build_document as B  # noqa: E402
 
 EVIDENCE = HERE.parents[1] / "docs/usecases/safetyfw/openai-preparedness"
 REASONS = {"external_reference": "external reference", "hedged_claim": "AT", "event_order": "ET",
-           "not_translated": "readings", "quantity": "QT", "quantifier_scope": "SC"}
+           "quantity": "QT", "quantifier_scope": "SC", "attitude": "AT",
+           "unmapped_clause": "AP", "unmapped_duty": "AP", "unmapped_claim": "readings"}
 
 
 def blockers(record):
-    if record["status"] == "CHECKED":
+    if record["status"] == "CHECKED" and not record.get("waits"):
         return []
     found = list(record.get("waits", []))
     if record["status"] == "UNFORMALISED":

@@ -336,7 +336,8 @@ def test_pf_reading_blocks_match_the_choice_that_selects_them(pf_modules, monkey
 
 def test_pf_checked_norms_keep_their_source_scope(pf_modules):
     units = {unit["id"]: unit for unit in json.loads((PF / "spans.json").read_text())["units"]}
-    assert units["p16-u271"]["status"] == "CHECKED"
+    assert units["p16-u271"]["status"] == "UNFORMALISED"
+    assert units["p16-u271"]["reason"] == "unmapped_clause"
     guard = json.loads(pf_translation.parsed_rule("f16-sag-recommend"))["guard"]
     assert "framework_deployment" in json.dumps(guard)
     assert "covered" in json.dumps(guard)
@@ -355,7 +356,7 @@ def test_pf_appendix_c2_should_is_a_pending_norm_reading(pf_modules):
         assert next(r for r in rebuilt if r["id"] == unit["id"])["reading_set"] == unit["reading_set"]
     for page in (18, 19, 20):
         spec, wait = pf_build._fallback(page, 0, b"Safeguards should minimize risk.")
-        assert spec["kind"] == ["unformalised", "not_translated"] and wait == "readings"
+        assert spec["kind"] == ["unformalised", "unmapped_duty"] and wait == "AP"
 
 
 def test_pf_p3_p4_are_recomputed_without_source_text(pf_modules):
@@ -374,7 +375,8 @@ def test_pf_temporal_and_per_item_rules_are_not_weakened_into_checked_claims(pf_
                "p11-u164": ("quantifier_scope", "SC"),
                "p11-u165": ("quantifier_scope", "SC")}
     by_id = {unit["id"]: unit for unit in units}
-    assert pf_build.BLOCKED_RULE_REASONS == {
+    assert {k: pf_build.BLOCKED_RULE_REASONS[k] for k in (
+        "f7-evaluations", "f9-specific", "f9-efficacy", "f9-threshold")} == {
         "f7-evaluations": "event_order", "f9-specific": "quantifier_scope",
         "f9-efficacy": "quantifier_scope", "f9-threshold": "quantifier_scope"}
     if pf_build.DEFAULT_SOURCE.exists():
@@ -407,7 +409,52 @@ def test_pf_exposition_fallback_preserves_claims_and_rs15_readings(pf_modules):
         assert units[unit_id]["status"] == "OPEN"
     for page in (15, 17):
         spec, _ = pf_build._fallback(page, 0, b"A substantive claim about safeguards.")
-        assert spec["kind"] == ["unformalised", "not_translated"]
+        assert spec["kind"] == ["unformalised", "unmapped_claim"]
+
+
+def test_pf_checked_has_no_wait_or_unmapped_source_clause(pf_modules):
+    units = {r["id"]: r for r in json.loads((PF / "spans.json").read_text())["units"]}
+    assert not [r["id"] for r in units.values() if r["status"] == "CHECKED" and r["waits"]]
+    assert all(r["rule"] in pf_build.CHECKED_CLAUSES for r in units.values()
+               if r["status"] == "CHECKED" and "rule" in r)
+    for uid, rule_id in {"p10-u152": "f7-report", "p13-u218": "f14-document",
+                         "p16-u271": "f16-sag-recommend"}.items():
+        assert units[uid]["status"] == "UNFORMALISED"
+        assert units[uid]["blocked_rule"] == rule_id
+        assert rule_id not in pf_build.CHECKED_CLAUSES
+    assert json.loads(pf_translation.parsed_rule("f14-document"))["predicate"] == "decision_documented"
+    assert "applicable_risks" not in pf_translation.parsed_rule("f16-sag-recommend")
+    assert units["p16-u283"]["status"] == "CHECKED"
+    assert not pf_build._complete_clause_map("f16-ssc-visibility", b"The SSC will be given visibility into processes and reports")
+    if pf_build.DEFAULT_SOURCE.exists():
+        source = pf_build.DEFAULT_SOURCE.read_bytes()[slice(*units["p16-u283"]["span"])]
+        assert pf_build._complete_clause_map("f16-ssc-visibility", source)
+        assert pf_build.main(["--check"]) == 0
+
+
+def test_pf_label_requires_positive_exposition_without_claim_marker(pf_modules):
+    units = {r["id"]: r for r in json.loads((PF / "spans.json").read_text())["units"]}
+    for uid in ("p11-u169", "p19-u327", "p19-u335", "p19-u336"):
+        assert units[uid]["status"] != "LABELLED"
+    if pf_build.DEFAULT_SOURCE.exists():
+        source = pf_build.DEFAULT_SOURCE.read_bytes()
+        for unit in units.values():
+            if unit["status"] == "LABELLED":
+                assert not pf_build.CLAIM_MARKER.search(source[slice(*unit["span"])])
+        _, rebuilt = pf_build.build(source)
+        assert [(r["id"], r["kind"]) for r in rebuilt] == [
+            (r["id"], r["kind"]) for r in units.values()]
+
+
+def test_pf_no_source_unit_is_left_in_translation_backlog():
+    coverage = json.loads((PF / "coverage.json").read_text())
+    assert coverage["unformalised_reasons"].get("not_translated", 0) == 0
+    units = json.loads((PF / "spans.json").read_text())["units"]
+    for unit in units:
+        if unit["status"] == "UNFORMALISED":
+            family, _ = pf_build.BLOCKER_DETAIL[unit["reason"]]
+            assert unit["detail"].startswith(f"{family}: ")
+            assert pf_build.SOURCE_SUBJECT[int(unit["id"].split("-")[0][1:])] in unit["detail"]
 
 
 def test_pf_every_byte_has_ve_status_and_one_unit(pf_modules):

@@ -425,11 +425,11 @@
         "arguments": [
           "situation"
         ],
-        "description": "Appendix B: SSC oversight",
+        "description": "Appendix B: SSC is the Safety and Security Committee of the OpenAI Board of Directors",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} give SSC visibility into the process"
+          "act": "{0} give SSC visibility into processes"
         }
       },
       "recommendation_informed": {

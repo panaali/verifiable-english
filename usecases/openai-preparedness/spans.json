@@ -29,9 +29,10 @@
     166
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
+   "detail": "SC: D1's unary situation rule does not bind each source item in framework introduction",
    "waits": [
-    "readings"
+    "SC"
    ],
    "status": "UNFORMALISED"
   },
@@ -42,9 +43,10 @@
     329
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in framework introduction",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -55,9 +57,10 @@
     472
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
+   "detail": "SC: D1's unary situation rule does not bind each source item in framework introduction",
    "waits": [
-    "readings"
+    "SC"
    ],
    "status": "UNFORMALISED"
   },
@@ -68,9 +71,10 @@
     716
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in framework introduction",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -81,9 +85,10 @@
     890
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in framework introduction",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -94,9 +99,10 @@
     1059
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in framework introduction",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -108,6 +114,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in framework introduction",
    "waits": [
     "AT"
    ],
@@ -120,9 +127,10 @@
     1431
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
+   "detail": "SC: D1's unary situation rule does not bind each source item in framework introduction",
    "waits": [
-    "readings"
+    "SC"
    ],
    "status": "UNFORMALISED"
   },
@@ -133,9 +141,10 @@
     1568
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in framework introduction",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -146,9 +155,10 @@
     1726
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in framework introduction",
    "waits": [
-    "readings"
+    "AT"
    ],
    "status": "UNFORMALISED"
   },
@@ -159,9 +169,10 @@
     1816
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in framework introduction",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -173,6 +184,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in framework introduction",
    "waits": [
     "AT"
    ],
@@ -185,9 +197,10 @@
     2194
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in framework introduction",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -199,6 +212,7 @@
    ],
    "kind": "unformalised",
    "reason": "quantity",
+   "detail": "QT: D1 has no quantity bridge for the source magnitude or ratio in framework introduction",
    "waits": [
     "QT"
    ],
@@ -211,9 +225,10 @@
     2600
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in framework introduction",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -224,9 +239,10 @@
     2735
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in framework introduction",
    "waits": [
-    "readings"
+    "AT"
    ],
    "status": "UNFORMALISED"
   },
@@ -236,9 +252,13 @@
     2735,
     4687
    ],
-   "kind": "exposition",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "event_order",
+   "detail": "ET: D1 has no event-order relation for the source temporal qualifier in contents",
+   "waits": [
+    "ET"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p4-u20",
@@ -248,6 +268,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in overview and rationale",
    "waits": [
     "AT"
    ],
@@ -260,9 +281,10 @@
     4999
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -273,9 +295,10 @@
     5015
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -286,9 +309,10 @@
     5279
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -300,6 +324,7 @@
    ],
    "kind": "unformalised",
    "reason": "event_order",
+   "detail": "ET: D1 has no event-order relation for the source temporal qualifier in overview and rationale",
    "waits": [
     "ET"
    ],
@@ -312,9 +337,10 @@
     5687
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -326,6 +352,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in overview and rationale",
    "waits": [
     "AT"
    ],
@@ -338,9 +365,10 @@
     6014
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -352,6 +380,7 @@
    ],
    "kind": "unformalised",
    "reason": "event_order",
+   "detail": "ET: D1 has no event-order relation for the source temporal qualifier in overview and rationale",
    "waits": [
     "ET"
    ],
@@ -364,9 +393,10 @@
     6411
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -377,9 +407,10 @@
     6675
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -390,9 +421,10 @@
     6923
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -403,9 +435,10 @@
     7001
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -416,9 +449,10 @@
     7154
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -429,9 +463,10 @@
     7344
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -442,9 +477,10 @@
     7520
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -455,9 +491,10 @@
     7743
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -468,9 +505,10 @@
     7803
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -481,9 +519,10 @@
     7993
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -494,7 +533,8 @@
     8228
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in overview and rationale",
    "waits": [
     "readings"
    ],
@@ -507,9 +547,10 @@
     8343
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -520,7 +561,8 @@
     8742
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in overview and rationale",
    "waits": [
     "readings"
    ],
@@ -533,9 +575,10 @@
     8844
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in overview and rationale",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -546,7 +589,8 @@
     9029
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in overview and rationale",
    "waits": [
     "readings"
    ],
@@ -559,7 +603,8 @@
     9036
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in overview and rationale",
    "waits": [
     "readings"
    ],
@@ -572,9 +617,10 @@
     9436
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in tracked-category criteria",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -585,9 +631,10 @@
     9735
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in tracked-category criteria",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -599,6 +646,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in tracked-category criteria",
    "waits": [
     "AT"
    ],
@@ -612,6 +660,7 @@
    ],
    "kind": "unformalised",
    "reason": "event_order",
+   "detail": "ET: D1 has no event-order relation for the source temporal qualifier in tracked-category criteria",
    "waits": [
     "ET"
    ],
@@ -640,9 +689,10 @@
     10309
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in tracked-category criteria",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -653,9 +703,10 @@
     10453
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in tracked-category criteria",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -667,6 +718,7 @@
    ],
    "kind": "unformalised",
    "reason": "event_order",
+   "detail": "ET: D1 has no event-order relation for the source temporal qualifier in tracked-category criteria",
    "waits": [
     "ET"
    ],
@@ -679,7 +731,8 @@
     10787
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in tracked-category criteria",
    "waits": [
     "readings"
    ],
@@ -692,7 +745,8 @@
     10965
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in tracked-category criteria",
    "waits": [
     "readings"
    ],
@@ -705,9 +759,10 @@
     11064
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in tracked-category criteria",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -719,6 +774,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in tracked-category criteria",
    "waits": [
     "AT"
    ],
@@ -732,6 +788,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in tracked-category criteria",
    "waits": [
     "AT"
    ],
@@ -744,7 +801,8 @@
     12011
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in tracked-category criteria",
    "waits": [
     "readings"
    ],
@@ -775,7 +833,8 @@
     12419
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in tracked-category criteria",
    "waits": [
     "readings"
    ],
@@ -789,6 +848,7 @@
    ],
    "kind": "unformalised",
    "reason": "event_order",
+   "detail": "ET: D1 has no event-order relation for the source temporal qualifier in tracked-category criteria",
    "waits": [
     "ET"
    ],
@@ -802,6 +862,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in tracked-category criteria",
    "waits": [
     "AT"
    ],
@@ -815,6 +876,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in Table 1 biological and cybersecurity thresholds",
    "waits": [
     "AT"
    ],
@@ -827,9 +889,10 @@
     13460
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in Table 1 biological and cybersecurity thresholds",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -841,6 +904,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in Table 1 biological and cybersecurity thresholds",
    "waits": [
     "AT"
    ],
@@ -866,9 +930,10 @@
     14106
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in Table 1 biological and cybersecurity thresholds",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -879,7 +944,8 @@
     14257
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in Table 1 biological and cybersecurity thresholds",
    "waits": [
     "readings"
    ],
@@ -940,9 +1006,10 @@
     14770
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in Table 1 biological and cybersecurity thresholds",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -954,6 +1021,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in Table 1 biological and cybersecurity thresholds",
    "waits": [
     "AT"
    ],
@@ -983,7 +1051,8 @@
     15376
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in Table 1 biological and cybersecurity thresholds",
    "waits": [
     "readings"
    ],
@@ -1009,7 +1078,8 @@
     15633
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in Table 1 biological and cybersecurity thresholds",
    "waits": [
     "readings"
    ],
@@ -1023,6 +1093,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in Table 1 biological and cybersecurity thresholds",
    "waits": [
     "AT"
    ],
@@ -1036,6 +1107,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in Table 1 biological and cybersecurity thresholds",
    "waits": [
     "AT"
    ],
@@ -1048,9 +1120,10 @@
     16171
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in Table 1 biological and cybersecurity thresholds",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -1097,9 +1170,10 @@
     16543
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in Table 1 biological and cybersecurity thresholds",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -1110,9 +1184,10 @@
     16773
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in Table 1 biological and cybersecurity thresholds",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -1136,9 +1211,10 @@
     17107
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
+   "detail": "SC: D1's unary situation rule does not bind each source item in Table 1 cybersecurity and self-improvement thresholds",
    "waits": [
-    "readings"
+    "SC"
    ],
    "status": "UNFORMALISED"
   },
@@ -1150,6 +1226,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in Table 1 cybersecurity and self-improvement thresholds",
    "waits": [
     "AT"
    ],
@@ -1162,7 +1239,8 @@
     17475
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in Table 1 cybersecurity and self-improvement thresholds",
    "waits": [
     "readings"
    ],
@@ -1175,9 +1253,10 @@
     17740
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in Table 1 cybersecurity and self-improvement thresholds",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -1201,9 +1280,10 @@
     17926
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
+   "detail": "SC: D1's unary situation rule does not bind each source item in Table 1 cybersecurity and self-improvement thresholds",
    "waits": [
-    "readings"
+    "SC"
    ],
    "status": "UNFORMALISED"
   },
@@ -1215,6 +1295,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in Table 1 cybersecurity and self-improvement thresholds",
    "waits": [
     "AT"
    ],
@@ -1227,9 +1308,10 @@
     18272
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in Table 1 cybersecurity and self-improvement thresholds",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -1240,9 +1322,10 @@
     18343
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in Table 1 cybersecurity and self-improvement thresholds",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -1267,6 +1350,7 @@
    ],
    "kind": "unformalised",
    "reason": "quantity",
+   "detail": "QT: D1 has no quantity bridge for the source magnitude or ratio in Table 1 cybersecurity and self-improvement thresholds",
    "waits": [
     "QT",
     "ET"
@@ -1281,6 +1365,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in Table 1 cybersecurity and self-improvement thresholds",
    "waits": [
     "AT"
    ],
@@ -1293,9 +1378,10 @@
     19445
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in Table 1 cybersecurity and self-improvement thresholds",
    "waits": [
-    "readings"
+    "AT"
    ],
    "status": "UNFORMALISED"
   },
@@ -1307,6 +1393,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in Table 1 cybersecurity and self-improvement thresholds",
    "waits": [
     "AT"
    ],
@@ -1319,9 +1406,10 @@
     19901
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in Table 1 cybersecurity and self-improvement thresholds",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -1332,7 +1420,8 @@
     19958
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in Table 1 cybersecurity and self-improvement thresholds",
    "waits": [
     "readings"
    ],
@@ -1346,6 +1435,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in research-category responses",
    "waits": [
     "AT"
    ],
@@ -1358,9 +1448,10 @@
     20218
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in research-category responses",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -1372,6 +1463,7 @@
    ],
    "kind": "unformalised",
    "reason": "event_order",
+   "detail": "ET: D1 has no event-order relation for the source temporal qualifier in research-category responses",
    "waits": [
     "ET"
    ],
@@ -1384,9 +1476,10 @@
     20483
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in research-category responses",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -1410,9 +1503,10 @@
     21097
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in research-category responses",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -1423,7 +1517,8 @@
     21307
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in research-category responses",
    "waits": [
     "readings"
    ],
@@ -1436,7 +1531,8 @@
     21818
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in research-category responses",
    "waits": [
     "readings"
    ],
@@ -1449,7 +1545,8 @@
     22148
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in research-category responses",
    "waits": [
     "readings"
    ],
@@ -1462,9 +1559,10 @@
     22544
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
+   "detail": "SC: D1's unary situation rule does not bind each source item in research-category responses",
    "waits": [
-    "readings"
+    "SC"
    ],
    "status": "UNFORMALISED"
   },
@@ -1475,7 +1573,8 @@
     22720
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in research-category responses",
    "waits": [
     "readings"
    ],
@@ -1487,9 +1586,13 @@
     22720,
     22990
    ],
-   "kind": "meta",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in research-category responses",
+   "waits": [
+    "AP"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p8-u114",
@@ -1499,6 +1602,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in research-category responses",
    "waits": [
     "AT"
    ],
@@ -1511,9 +1615,10 @@
     23408
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in research-category responses",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -1525,6 +1630,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in research-category responses",
    "waits": [
     "AT"
    ],
@@ -1537,7 +1643,8 @@
     23753
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in research-category assessment",
    "waits": [
     "readings"
    ],
@@ -1550,7 +1657,8 @@
     23958
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in research-category assessment",
    "waits": [
     "readings"
    ],
@@ -1563,7 +1671,8 @@
     24091
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in research-category assessment",
    "waits": [
     "readings"
    ],
@@ -1576,9 +1685,10 @@
     24276
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in research-category assessment",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -1589,9 +1699,10 @@
     24392
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in research-category assessment",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -1602,9 +1713,10 @@
     24583
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in research-category assessment",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -1615,9 +1727,10 @@
     24743
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in research-category assessment",
    "waits": [
-    "readings"
+    "AT"
    ],
    "status": "UNFORMALISED"
   },
@@ -1628,9 +1741,10 @@
     24837
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in research-category assessment",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -1641,9 +1755,10 @@
     24995
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in research-category assessment",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -1654,9 +1769,10 @@
     25235
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in research-category assessment",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -1667,9 +1783,10 @@
     25582
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in research-category assessment",
    "waits": [
-    "readings"
+    "AT"
    ],
    "status": "UNFORMALISED"
   },
@@ -1680,9 +1797,10 @@
     26078
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in research-category assessment",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -1694,6 +1812,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in research-category assessment",
    "waits": [
     "AT"
    ],
@@ -1706,9 +1825,10 @@
     26785
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in research-category assessment",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -1720,6 +1840,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in research-category assessment",
    "waits": [
     "AT"
    ],
@@ -1732,9 +1853,10 @@
     27100
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in research-category assessment",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -1745,9 +1867,10 @@
     27237
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in research-category assessment",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -1758,7 +1881,8 @@
     27289
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in research-category assessment",
    "waits": [
     "readings"
    ],
@@ -1771,7 +1895,8 @@
     27431
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in research-category assessment",
    "waits": [
     "readings"
    ],
@@ -1785,6 +1910,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in research-category assessment",
    "waits": [
     "AT"
    ],
@@ -1797,7 +1923,8 @@
     27784
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in research-category assessment",
    "waits": [
     "readings"
    ],
@@ -1811,6 +1938,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in research-category assessment",
    "waits": [
     "AT"
    ],
@@ -1823,9 +1951,10 @@
     28475
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in capability evaluation and deployment scope",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -1836,9 +1965,10 @@
     28671
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in capability evaluation and deployment scope",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -1849,7 +1979,8 @@
     28792
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in capability evaluation and deployment scope",
    "waits": [
     "readings"
    ],
@@ -1877,7 +2008,8 @@
     29196
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in capability evaluation and deployment scope",
    "waits": [
     "readings"
    ],
@@ -1890,9 +2022,10 @@
     29286
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
+   "detail": "SC: D1's unary situation rule does not bind each source item in capability evaluation and deployment scope",
    "waits": [
-    "readings"
+    "SC"
    ],
    "status": "UNFORMALISED"
   },
@@ -1903,9 +2036,10 @@
     29433
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
+   "detail": "SC: D1's unary situation rule does not bind each source item in capability evaluation and deployment scope",
    "waits": [
-    "readings"
+    "SC"
    ],
    "status": "UNFORMALISED"
   },
@@ -1916,9 +2050,10 @@
     29683
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
+   "detail": "SC: D1's unary situation rule does not bind each source item in capability evaluation and deployment scope",
    "waits": [
-    "readings"
+    "SC"
    ],
    "status": "UNFORMALISED"
   },
@@ -1930,6 +2065,7 @@
    ],
    "kind": "unformalised",
    "reason": "event_order",
+   "detail": "ET: D1 has no event-order relation for the source temporal qualifier in capability evaluation and deployment scope",
    "waits": [
     "ET"
    ],
@@ -1942,7 +2078,8 @@
     30211
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in capability evaluation and deployment scope",
    "waits": [
     "readings"
    ],
@@ -1957,6 +2094,7 @@
    "kind": "unformalised",
    "blocked_rule": "f7-evaluations",
    "reason": "event_order",
+   "detail": "ET: D1 has no event-order relation for the source temporal qualifier in capability evaluation and deployment scope",
    "waits": [
     "ET"
    ],
@@ -1969,9 +2107,10 @@
     30483
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
+   "detail": "SC: D1's unary situation rule does not bind each source item in capability evaluation and deployment scope",
    "waits": [
-    "readings"
+    "SC"
    ],
    "status": "UNFORMALISED"
   },
@@ -1982,7 +2121,8 @@
     30772
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in capability evaluation and deployment scope",
    "waits": [
     "readings"
    ],
@@ -1994,12 +2134,14 @@
     30772,
     30812
    ],
-   "kind": "norm",
-   "rule": "f7-report",
+   "kind": "unformalised",
+   "blocked_rule": "f7-report",
+   "reason": "attitude",
+   "detail": "AT: D1's draft does not preserve the source attitude in capability evaluation and deployment scope",
    "waits": [
     "AT"
    ],
-   "status": "CHECKED"
+   "status": "UNFORMALISED"
   },
   {
    "id": "p10-u153",
@@ -2008,7 +2150,8 @@
     30839
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in capability evaluation and deployment scope",
    "waits": [
     "readings"
    ],
@@ -2021,9 +2164,10 @@
     30858
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in capability evaluation and deployment scope",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -2034,7 +2178,8 @@
     31056
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in capability evaluation and deployment scope",
    "waits": [
     "readings"
    ],
@@ -2064,9 +2209,10 @@
     31880
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in safeguard selection",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -2077,9 +2223,10 @@
     32057
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in safeguard selection",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -2107,9 +2254,10 @@
     32521
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in safeguard selection",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -2138,6 +2286,7 @@
    "kind": "unformalised",
    "blocked_rule": "f9-specific",
    "reason": "quantifier_scope",
+   "detail": "SC: D1's unary situation rule does not bind each source item in safeguard selection",
    "waits": [
     "SC"
    ],
@@ -2150,9 +2299,10 @@
     32787
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in safeguard selection",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -2165,6 +2315,7 @@
    "kind": "unformalised",
    "blocked_rule": "f9-efficacy",
    "reason": "quantifier_scope",
+   "detail": "SC: D1's unary situation rule does not bind each source item in safeguard selection",
    "waits": [
     "SC"
    ],
@@ -2179,6 +2330,7 @@
    "kind": "unformalised",
    "blocked_rule": "f9-threshold",
    "reason": "quantifier_scope",
+   "detail": "SC: D1's unary situation rule does not bind each source item in safeguard selection",
    "waits": [
     "SC"
    ],
@@ -2191,9 +2343,10 @@
     33114
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in safeguard selection",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -2204,9 +2357,10 @@
     33173
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
+   "detail": "SC: D1's unary situation rule does not bind each source item in safeguard selection",
    "waits": [
-    "readings"
+    "SC"
    ],
    "status": "UNFORMALISED"
   },
@@ -2217,7 +2371,8 @@
     33280
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard selection",
    "waits": [
     "readings"
    ],
@@ -2229,9 +2384,13 @@
     33280,
     33474
    ],
-   "kind": "meta",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in safeguard selection",
+   "waits": [
+    "AT"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p11-u170",
@@ -2256,9 +2415,10 @@
     33843
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in safeguard selection",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -2269,9 +2429,10 @@
     33990
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
+   "detail": "SC: D1's unary situation rule does not bind each source item in safeguard selection",
    "waits": [
-    "readings"
+    "SC"
    ],
    "status": "UNFORMALISED"
   },
@@ -2282,7 +2443,8 @@
     34041
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard selection",
    "waits": [
     "readings"
    ],
@@ -2295,7 +2457,8 @@
     34119
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard selection",
    "waits": [
     "readings"
    ],
@@ -2309,6 +2472,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in safeguard selection",
    "waits": [
     "AT"
    ],
@@ -2321,7 +2485,8 @@
     34586
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard selection",
    "waits": [
     "readings"
    ],
@@ -2334,9 +2499,10 @@
     34633
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in safeguard selection",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -2347,7 +2513,8 @@
     34719
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard selection",
    "waits": [
     "readings"
    ],
@@ -2360,7 +2527,8 @@
     34854
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard selection",
    "waits": [
     "readings"
    ],
@@ -2373,7 +2541,8 @@
     34945
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard assessment and SAG decisions",
    "waits": [
     "readings"
    ],
@@ -2386,7 +2555,8 @@
     35229
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard assessment and SAG decisions",
    "waits": [
     "readings"
    ],
@@ -2400,6 +2570,7 @@
    ],
    "kind": "unformalised",
    "reason": "event_order",
+   "detail": "ET: D1 has no event-order relation for the source temporal qualifier in safeguard assessment and SAG decisions",
    "waits": [
     "ET"
    ],
@@ -2412,9 +2583,10 @@
     35693
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in safeguard assessment and SAG decisions",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -2425,7 +2597,8 @@
     35711
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard assessment and SAG decisions",
    "waits": [
     "readings"
    ],
@@ -2438,7 +2611,8 @@
     35842
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard assessment and SAG decisions",
    "waits": [
     "readings"
    ],
@@ -2451,9 +2625,10 @@
     36092
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
+   "detail": "SC: D1's unary situation rule does not bind each source item in safeguard assessment and SAG decisions",
    "waits": [
-    "readings"
+    "SC"
    ],
    "status": "UNFORMALISED"
   },
@@ -2464,7 +2639,8 @@
     36277
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard assessment and SAG decisions",
    "waits": [
     "readings"
    ],
@@ -2477,7 +2653,8 @@
     36437
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard assessment and SAG decisions",
    "waits": [
     "readings"
    ],
@@ -2490,9 +2667,10 @@
     36660
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in safeguard assessment and SAG decisions",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -2502,9 +2680,13 @@
     36660,
     36690
    ],
-   "kind": "meta",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard assessment and SAG decisions",
+   "waits": [
+    "readings"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p12-u191",
@@ -2513,7 +2695,8 @@
     36739
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard assessment and SAG decisions",
    "waits": [
     "readings"
    ],
@@ -2526,7 +2709,8 @@
     36823
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard assessment and SAG decisions",
    "waits": [
     "readings"
    ],
@@ -2539,9 +2723,10 @@
     37040
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
+   "detail": "SC: D1's unary situation rule does not bind each source item in safeguard assessment and SAG decisions",
    "waits": [
-    "readings"
+    "SC"
    ],
    "status": "UNFORMALISED"
   },
@@ -2553,6 +2738,7 @@
    ],
    "kind": "unformalised",
    "reason": "event_order",
+   "detail": "ET: D1 has no event-order relation for the source temporal qualifier in safeguard assessment and SAG decisions",
    "waits": [
     "ET"
    ],
@@ -2566,6 +2752,7 @@
    ],
    "kind": "unformalised",
    "reason": "event_order",
+   "detail": "ET: D1 has no event-order relation for the source temporal qualifier in safeguard assessment and SAG decisions",
    "waits": [
     "ET"
    ],
@@ -2578,7 +2765,8 @@
     37392
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard assessment and SAG decisions",
    "waits": [
     "readings"
    ],
@@ -2591,9 +2779,10 @@
     37561
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in safeguard assessment and SAG decisions",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -2604,9 +2793,10 @@
     37714
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in safeguard assessment and SAG decisions",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -2617,9 +2807,10 @@
     37938
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in safeguard assessment and SAG decisions",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -2630,9 +2821,10 @@
     38084
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in safeguard assessment and SAG decisions",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -2643,9 +2835,10 @@
     38243
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
+   "detail": "SC: D1's unary situation rule does not bind each source item in safeguard assessment and SAG decisions",
    "waits": [
-    "readings"
+    "SC"
    ],
    "status": "UNFORMALISED"
   },
@@ -2656,9 +2849,10 @@
     38303
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in safeguard assessment and SAG decisions",
    "waits": [
-    "readings"
+    "AT"
    ],
    "status": "UNFORMALISED"
   },
@@ -2702,6 +2896,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in marginal risk and governance",
    "waits": [
     "AT"
    ],
@@ -2715,6 +2910,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in marginal risk and governance",
    "waits": [
     "AT"
    ],
@@ -2744,9 +2940,10 @@
     39209
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in marginal risk and governance",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -2757,9 +2954,10 @@
     39272
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in marginal risk and governance",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -2771,6 +2969,7 @@
    ],
    "kind": "unformalised",
    "reason": "event_order",
+   "detail": "ET: D1 has no event-order relation for the source temporal qualifier in marginal risk and governance",
    "waits": [
     "ET"
    ],
@@ -2801,9 +3000,10 @@
     40025
    ],
    "kind": "unformalised",
-   "reason": "event_order",
+   "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in marginal risk and governance",
    "waits": [
-    "ET"
+    "AT"
    ],
    "status": "UNFORMALISED"
   },
@@ -2814,9 +3014,10 @@
     40171
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in marginal risk and governance",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -2828,6 +3029,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in marginal risk and governance",
    "waits": [
     "AT"
    ],
@@ -2840,7 +3042,8 @@
     40647
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in marginal risk and governance",
    "waits": [
     "readings"
    ],
@@ -2853,9 +3056,10 @@
     40747
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in marginal risk and governance",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -2866,7 +3070,8 @@
     40774
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in marginal risk and governance",
    "waits": [
     "readings"
    ],
@@ -2878,10 +3083,14 @@
     40774,
     40863
    ],
-   "kind": "norm",
-   "rule": "f14-document",
-   "waits": [],
-   "status": "CHECKED"
+   "kind": "unformalised",
+   "blocked_rule": "f14-document",
+   "reason": "unmapped_clause",
+   "detail": "AP: the source-linked draft omits an object, condition, or reporting clause in marginal risk and governance",
+   "waits": [
+    "AP"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p13-u219",
@@ -2891,6 +3100,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in marginal risk and governance",
    "waits": [
     "AT"
    ],
@@ -2903,7 +3113,8 @@
     41075
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in marginal risk and governance",
    "waits": [
     "readings"
    ],
@@ -2916,9 +3127,10 @@
     41212
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
+   "detail": "SC: D1's unary situation rule does not bind each source item in marginal risk and governance",
    "waits": [
-    "readings"
+    "SC"
    ],
    "status": "UNFORMALISED"
   },
@@ -2977,9 +3189,10 @@
     41962
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
+   "detail": "SC: D1's unary situation rule does not bind each source item in marginal risk and governance",
    "waits": [
-    "readings"
+    "SC"
    ],
    "status": "UNFORMALISED"
   },
@@ -3007,7 +3220,8 @@
     42132
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in disclosure and independent review",
    "waits": [
     "readings"
    ],
@@ -3021,6 +3235,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in disclosure and independent review",
    "waits": [
     "AT"
    ],
@@ -3033,9 +3248,10 @@
     42630
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in disclosure and independent review",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -3046,9 +3262,10 @@
     42865
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in disclosure and independent review",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -3060,6 +3277,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in disclosure and independent review",
    "waits": [
     "AT"
    ],
@@ -3073,6 +3291,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in disclosure and independent review",
    "waits": [
     "AT"
    ],
@@ -3085,7 +3304,8 @@
     43270
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in disclosure and independent review",
    "waits": [
     "readings"
    ],
@@ -3098,9 +3318,10 @@
     43400
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in disclosure and independent review",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -3112,6 +3333,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in disclosure and independent review",
    "waits": [
     "AT"
    ],
@@ -3124,9 +3346,10 @@
     43762
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in change log",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -3137,9 +3360,10 @@
     43794
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in change log",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -3150,7 +3374,8 @@
     43861
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in change log",
    "waits": [
     "readings"
    ],
@@ -3163,9 +3388,10 @@
     44113
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in change log",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -3176,9 +3402,10 @@
     44319
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in change log",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -3189,9 +3416,10 @@
     44452
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in change log",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -3202,7 +3430,8 @@
     44531
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in change log",
    "waits": [
     "readings"
    ],
@@ -3215,7 +3444,8 @@
     44675
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in change log",
    "waits": [
     "readings"
    ],
@@ -3228,7 +3458,8 @@
     44865
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in change log",
    "waits": [
     "readings"
    ],
@@ -3241,9 +3472,10 @@
     45039
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in change log",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -3254,9 +3486,10 @@
     45095
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in change log",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -3267,9 +3500,10 @@
     45248
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in change log",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -3280,7 +3514,8 @@
     45402
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in change log",
    "waits": [
     "readings"
    ],
@@ -3306,9 +3541,10 @@
     45808
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in change log",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -3319,9 +3555,10 @@
     45968
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in change log",
    "waits": [
-    "readings"
+    "AT"
    ],
    "status": "UNFORMALISED"
   },
@@ -3345,7 +3582,8 @@
     46374
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in change log",
    "waits": [
     "readings"
    ],
@@ -3358,9 +3596,10 @@
     46630
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in change log",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -3372,6 +3611,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in change log",
    "waits": [
     "AT"
    ],
@@ -3384,7 +3624,8 @@
     46908
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in change log",
    "waits": [
     "readings"
    ],
@@ -3397,9 +3638,10 @@
     47062
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in change log",
    "waits": [
-    "readings"
+    "AT"
    ],
    "status": "UNFORMALISED"
   },
@@ -3410,9 +3652,10 @@
     47217
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in change log",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -3423,9 +3666,10 @@
     47442
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in change log",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -3436,9 +3680,10 @@
     47685
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
+   "detail": "SC: D1's unary situation rule does not bind each source item in change log",
    "waits": [
-    "readings"
+    "SC"
    ],
    "status": "UNFORMALISED"
   },
@@ -3449,9 +3694,10 @@
     47858
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in change log",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -3462,9 +3708,10 @@
     48173
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in change log",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -3475,7 +3722,8 @@
     48177
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
    "waits": [
     "readings"
    ],
@@ -3488,7 +3736,8 @@
     48209
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
    "waits": [
     "readings"
    ],
@@ -3501,9 +3750,10 @@
     48380
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in SAG and Board governance",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -3514,7 +3764,8 @@
     48574
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
    "waits": [
     "readings"
    ],
@@ -3528,6 +3779,7 @@
    ],
    "kind": "unformalised",
    "reason": "event_order",
+   "detail": "ET: D1 has no event-order relation for the source temporal qualifier in SAG and Board governance",
    "waits": [
     "ET"
    ],
@@ -3540,7 +3792,8 @@
     48765
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
    "waits": [
     "readings"
    ],
@@ -3553,7 +3806,8 @@
     48913
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
    "waits": [
     "readings"
    ],
@@ -3566,9 +3820,10 @@
     49139
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
+   "detail": "SC: D1's unary situation rule does not bind each source item in SAG and Board governance",
    "waits": [
-    "readings"
+    "SC"
    ],
    "status": "UNFORMALISED"
   },
@@ -3578,10 +3833,14 @@
     49139,
     49294
    ],
-   "kind": "norm",
-   "rule": "f16-sag-recommend",
-   "waits": [],
-   "status": "CHECKED"
+   "kind": "unformalised",
+   "blocked_rule": "f16-sag-recommend",
+   "reason": "unmapped_clause",
+   "detail": "AP: the source-linked draft omits an object, condition, or reporting clause in SAG and Board governance",
+   "waits": [
+    "AP"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p16-u272",
@@ -3590,7 +3849,8 @@
     49315
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
    "waits": [
     "readings"
    ],
@@ -3603,7 +3863,8 @@
     49519
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
    "waits": [
     "readings"
    ],
@@ -3616,9 +3877,10 @@
     49850
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in SAG and Board governance",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -3629,7 +3891,8 @@
     49935
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
    "waits": [
     "readings"
    ],
@@ -3642,7 +3905,8 @@
     49977
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
    "waits": [
     "readings"
    ],
@@ -3656,6 +3920,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in SAG and Board governance",
    "waits": [
     "AT"
    ],
@@ -3668,9 +3933,10 @@
     50253
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
+   "detail": "SC: D1's unary situation rule does not bind each source item in SAG and Board governance",
    "waits": [
-    "readings"
+    "SC"
    ],
    "status": "UNFORMALISED"
   },
@@ -3681,7 +3947,8 @@
     50321
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
    "waits": [
     "readings"
    ],
@@ -3694,7 +3961,8 @@
     50406
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
    "waits": [
     "readings"
    ],
@@ -3720,7 +3988,8 @@
     50675
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
    "waits": [
     "readings"
    ],
@@ -3744,9 +4013,10 @@
     50945
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in SAG and Board governance",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -3758,6 +4028,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in SAG and Board governance",
    "waits": [
     "AT"
    ],
@@ -3770,7 +4041,8 @@
     51077
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
    "waits": [
     "readings"
    ],
@@ -3783,9 +4055,10 @@
     51146
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in SAG and Board governance",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -3796,7 +4069,8 @@
     51305
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
    "waits": [
     "readings"
    ],
@@ -3822,7 +4096,8 @@
     51430
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in SAG and Board governance",
    "waits": [
     "readings"
    ],
@@ -3835,9 +4110,10 @@
     51657
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in SAG and Board governance",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -3848,9 +4124,10 @@
     51774
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in SAG and Board governance",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -3862,6 +4139,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in safeguard examples",
    "waits": [
     "AT"
    ],
@@ -3874,9 +4152,10 @@
     52140
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in safeguard examples",
    "waits": [
-    "readings"
+    "AT"
    ],
    "status": "UNFORMALISED"
   },
@@ -3888,6 +4167,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in safeguard examples",
    "waits": [
     "AT"
    ],
@@ -3936,7 +4216,8 @@
     52847
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard examples",
    "waits": [
     "readings"
    ],
@@ -3949,9 +4230,10 @@
     52965
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in safeguard examples",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -3962,9 +4244,10 @@
     53122
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
+   "detail": "SC: D1's unary situation rule does not bind each source item in safeguard examples",
    "waits": [
-    "readings"
+    "SC"
    ],
    "status": "UNFORMALISED"
   },
@@ -3975,7 +4258,8 @@
     53379
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in safeguard examples",
    "waits": [
     "readings"
    ],
@@ -3989,6 +4273,7 @@
    ],
    "kind": "unformalised",
    "reason": "event_order",
+   "detail": "ET: D1 has no event-order relation for the source temporal qualifier in safeguard examples",
    "waits": [
     "ET"
    ],
@@ -4001,9 +4286,10 @@
     53844
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in safeguard examples",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -4015,6 +4301,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in safeguard examples",
    "waits": [
     "AT"
    ],
@@ -4026,9 +4313,13 @@
     54105,
     54206
    ],
-   "kind": "exposition",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in C.1 safeguard examples",
+   "waits": [
+    "AT"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p18-u306",
@@ -4136,9 +4427,13 @@
     55454,
     55571
    ],
-   "kind": "exposition",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in C.1 safeguard examples",
+   "waits": [
+    "AP"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p18-u317",
@@ -4246,9 +4541,13 @@
     56769,
     57026
    ],
-   "kind": "exposition",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in C.2 misalignment safeguards",
+   "waits": [
+    "readings"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p19-u328",
@@ -4273,9 +4572,13 @@
     57180,
     57337
    ],
-   "kind": "exposition",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "quantifier_scope",
+   "detail": "SC: D1's unary situation rule does not bind each source item in C.2 misalignment safeguards",
+   "waits": [
+    "SC"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p19-u330",
@@ -4323,9 +4626,13 @@
     58065,
     58291
    ],
-   "kind": "exposition",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in C.2 misalignment safeguards",
+   "waits": [
+    "AP"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p19-u335",
@@ -4333,9 +4640,13 @@
     58291,
     58557
    ],
-   "kind": "exposition",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in C.2 misalignment safeguards",
+   "waits": [
+    "AT"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p19-u336",
@@ -4343,9 +4654,13 @@
     58557,
     58816
    ],
-   "kind": "exposition",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in C.2 misalignment safeguards",
+   "waits": [
+    "AT"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p20-u337",
@@ -4353,9 +4668,13 @@
     58816,
     58914
    ],
-   "kind": "exposition",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in C.2 safeguard examples",
+   "waits": [
+    "readings"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p20-u338",
@@ -4413,9 +4732,13 @@
     59395,
     59503
    ],
-   "kind": "exposition",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in C.2 safeguard examples",
+   "waits": [
+    "readings"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p20-u344",
@@ -4484,9 +4807,10 @@
     60253
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in C.2 safeguard examples",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -4496,9 +4820,13 @@
     60253,
     60354
    ],
-   "kind": "exposition",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in C.2 safeguard examples",
+   "waits": [
+    "readings"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p20-u352",
@@ -4506,9 +4834,13 @@
     60354,
     60391
    ],
-   "kind": "exposition",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in C.2 safeguard examples",
+   "waits": [
+    "readings"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p20-u353",
@@ -4557,9 +4889,10 @@
     61045
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in C.2 safeguard examples",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -4639,9 +4972,13 @@
     61655,
     61939
    ],
-   "kind": "exposition",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in C.2 safeguard examples",
+   "waits": [
+    "AP"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p21-u366",
@@ -4650,7 +4987,8 @@
     62112
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in C.3 security controls",
    "waits": [
     "readings"
    ],
@@ -4663,9 +5001,10 @@
     62275
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in C.3 security controls",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -4677,6 +5016,7 @@
    ],
    "kind": "unformalised",
    "reason": "external_reference",
+   "detail": "external reference: the outside standard is not represented in D1 in C.3 security controls",
    "waits": [
     "external reference"
    ],
@@ -4690,6 +5030,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in C.3 security controls",
    "waits": [
     "AT"
    ],
@@ -4703,6 +5044,7 @@
    ],
    "kind": "unformalised",
    "reason": "external_reference",
+   "detail": "external reference: the outside standard is not represented in D1 in C.3 security controls",
    "waits": [
     "external reference"
    ],
@@ -4732,9 +5074,10 @@
     63046
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in C.3 security controls",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -4745,9 +5088,10 @@
     63308
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in C.3 security controls",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -4758,9 +5102,10 @@
     63617
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in C.3 security controls",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -4771,7 +5116,8 @@
     63749
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in C.3 security controls",
    "waits": [
     "readings"
    ],
@@ -4784,7 +5130,8 @@
     64210
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in C.3 security controls",
    "waits": [
     "readings"
    ],
@@ -4797,7 +5144,8 @@
     64353
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in C.3 security controls",
    "waits": [
     "readings"
    ],
@@ -4810,9 +5158,10 @@
     64599
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in C.3 security controls",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -4823,9 +5172,10 @@
     64652
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
+   "detail": "SC: D1's unary situation rule does not bind each source item in C.3 security controls",
    "waits": [
-    "readings"
+    "SC"
    ],
    "status": "UNFORMALISED"
   },
@@ -4837,6 +5187,7 @@
    ],
    "kind": "unformalised",
    "reason": "hedged_claim",
+   "detail": "AT: D1 has no attitude or possibility operator preserving the source hedge in C.3 security controls",
    "waits": [
     "AT"
    ],
@@ -4849,9 +5200,10 @@
     65079
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in C.3 security controls",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -4862,7 +5214,8 @@
     65263
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in C.3 security controls",
    "waits": [
     "readings"
    ],
@@ -4876,6 +5229,7 @@
    ],
    "kind": "unformalised",
    "reason": "event_order",
+   "detail": "ET: D1 has no event-order relation for the source temporal qualifier in C.3 security controls",
    "waits": [
     "ET"
    ],
@@ -4888,9 +5242,10 @@
     65684
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in C.3 security controls",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -4901,9 +5256,10 @@
     65827
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in C.3 security controls",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   },
@@ -4914,7 +5270,8 @@
     66056
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in C.3 security controls",
    "waits": [
     "readings"
    ],
@@ -4928,6 +5285,7 @@
    ],
    "kind": "unformalised",
    "reason": "event_order",
+   "detail": "ET: D1 has no event-order relation for the source temporal qualifier in C.3 security controls",
    "waits": [
     "ET"
    ],
@@ -4940,7 +5298,8 @@
     66774
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in C.3 security controls",
    "waits": [
     "readings"
    ],
@@ -4953,9 +5312,10 @@
     67418
    ],
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
+   "detail": "AP: D1 has no complete regulated act and guard for this duty in C.3 security controls",
    "waits": [
-    "readings"
+    "AP"
    ],
    "status": "UNFORMALISED"
   }

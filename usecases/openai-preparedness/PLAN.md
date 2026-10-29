@@ -446,8 +446,8 @@ safety-framework 9. Report, unscored, what changes without N1 and without N2.
    for F7/F9 are withheld from D1 content because temporal or per-item semantics are not encoded. The reading
    alternatives remain pending. F5, F6, F11, F12 and F17 have OPEN source units, but their per-choice rules are
    still to be written.
-   F13's “periodically review” is UNFORMALISED (ET). The other untranslated clauses are explicit
-   `not_translated` units, not CHECKED. The follow-up must finish those rules before key answering.
+   F13's “periodically review” is UNFORMALISED (ET). Other clauses without an admitted rule carry
+   feature-specific blockers and remain outside CHECKED. The follow-up must finish those rules before key answering.
 2. **Only six Table 1 level markers carry D1 facts.** They are separate 6- or 10-byte units. Their capability
    descriptions, risk claims and safeguard bullets are separate OPEN or UNFORMALISED units. This prevents the whole
    row from becoming CHECKED when the two stated facts are all D1 encoded.
@@ -460,15 +460,19 @@ safety-framework 9. Report, unscored, what changes without N1 and without N2.
 5. **P8 refuses the planned combination.** On F2 with `judgments@0`, `documents@1` and D1's soft norms, Lean says
    `CheckerUnavailable: judgments@0 with soft-norms@0 needs its composed Lean route`. D1 therefore uses W2 open
    names and pending readings, as the plan allowed.
-6. **The 219 `not_translated` units are mapped to “readings” as a translation backlog.** The increase comes from
-   removing blanket exposition labels in the change log and Appendix C. This is not a claim that landing a VE
-   readings feature alone would make their 36,774 sole bytes CHECKED. The stage 0 and coverage files disclose
-   the gap; the source reading of each must be completed and checked before answering keys.
+6. **The former `not_translated` backlog has been classified by its immediate missing feature.** Duties without
+   a complete D1 act or rule are AP, quantifiers without their per-item scope are SC, hedges and attitudes are AT,
+   and descriptive claims without an admitted reading remain under readings. This is a blocker classification,
+   not a completed translation or a claim that any one feature would certify these bytes.
 7. **No key cell changed and no key item was answered in this baseline.** The only original-key comparison remains
    the freeze and transcription tests. No conflict is presented as a source finding.
 8. **Review correction.** Four F7/F9 units lost temporal or per-item constraints in their earlier rule blocks;
    they are UNFORMALISED with ET/SC blockers. The RS15 change-log undertakings and the Appendix C reminders of
    F2/F3 are OPEN. These corrections do not complete the planned D1–D3 translation.
+9. **Appendix C.2 differs from the section 2/3 treatment of illustrative safeguards.** The source says that
+   safeguards "should sufficiently minimize" misaligned-model risk in a sentence before the examples. The
+   source-linked strict/default RS9 drafts record that modal alternative, while the example lists remain factors
+   and are not a definitive checklist. The reading set stays OPEN, so no example is promoted to a requirement.
 
 ## 13. Files for the implementation round (not this commit)
 
