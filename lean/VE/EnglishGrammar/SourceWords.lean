@@ -1,3 +1,4 @@
+import VE.EnglishGrammar.Lexer
 import Lean
 
 /-! The one Lean-owned catalogue of source-word reading sets, refusals and profile-fixed wordings.
@@ -27,21 +28,28 @@ structure SourceWordRow where
   kind : SourceWordKind
   deriving DecidableEq, Repr
 
+/-- Compare catalogue phrases using the lexer's whitespace and the English terminal's case fold. -/
+def sourceWordNormal (s : String) : String :=
+  fold (" ".intercalate ((s.split isSpace).filter (· != "")))
+
 /-- A refused word may not occur even as a substring of the suggested rewrite. -/
 def SourceWordRow.validKind (row : SourceWordRow) : Bool :=
   match row.kind with
   | .readings candidates =>
       candidates.length ≥ 2 &&
-      (candidates.map (·.wording)).Nodup &&
-      candidates.all (fun c => !c.situation.isEmpty)
+      (candidates.map (sourceWordNormal ∘ SourceWordReading.wording)).Nodup &&
+      candidates.all (fun c => !((sourceWordNormal c.wording).isEmpty) &&
+        !((sourceWordNormal c.situation).isEmpty))
   | .refuse code advice rewrite =>
-      !code.isEmpty && !advice.isEmpty && !rewrite.isEmpty &&
-      (rewrite.splitOn row.word).length == 1
-  | .fixed _ => true
+      !(sourceWordNormal code).isEmpty && !(sourceWordNormal advice).isEmpty &&
+      !(sourceWordNormal rewrite).isEmpty &&
+      ((sourceWordNormal rewrite).splitOn row.word).length == 1
+  | .fixed wording => !(sourceWordNormal wording).isEmpty
 
-/-- Every row has a lower-case source phrase and a plan-item owner. -/
+/-- Every row has a canonical ASCII source phrase and a plan-item owner. -/
 def SourceWordRow.validIdentity (row : SourceWordRow) : Bool :=
-  !row.word.isEmpty && row.word.toLower == row.word && !row.owner.isEmpty
+  !row.word.isEmpty && row.word.toList.all (fun c => c.toNat < 128) &&
+  sourceWordNormal row.word == row.word && !(sourceWordNormal row.owner).isEmpty
 
 def SourceWordRow.key (row : SourceWordRow) : String × String × String :=
   (row.word, row.frame, row.profile)
