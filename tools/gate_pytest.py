@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 
 import pytest
+from tools.platform_contract import covers
 
 
 def pytest_configure(config):
@@ -29,6 +30,45 @@ def pytest_configure(config):
 def pytest_itemcollected(item):
     # This fires before collection_modifyitems hooks can remove tests silently.
     _EVENTS["collected"].append(item.nodeid)
+
+
+@pytest.hookimpl(trylast=True)
+def pytest_collection_modifyitems(config, items):
+    """Apply gate selectors from a file so long parametrized IDs never enter argv."""
+    listing = os.environ.get("VE_GATE_PYTEST_IDS_FILE")
+    if not listing:
+        return
+    selectors = json.loads(Path(listing).read_text())
+    if not isinstance(selectors, list) or not selectors or any(type(s) is not str for s in selectors):
+        raise pytest.UsageError("invalid gate selection file")
+
+    # Shard and quarantine assignments are exact collected IDs. Contract and
+    # rerun entries are pytest selectors, so files/classes/functions include
+    # their collected children without matching similarly named siblings.
+    mode = os.environ.get("VE_GATE_PYTEST_SELECTOR_MODE", "exact")
+    if mode not in ("exact", "covers"):
+        raise pytest.UsageError("invalid gate selection mode")
+    selected_ids = set(selectors)
+
+    def chosen(nodeid):
+        return (nodeid in selected_ids if mode == "exact"
+                else any(covers(selector, nodeid) for selector in selectors))
+
+    unmatched = [selector for selector in selectors
+                 if not any((item.nodeid == selector if mode == "exact" else covers(selector, item.nodeid))
+                            for item in items)]
+    if unmatched:
+        raise pytest.UsageError(f"gate selector collected nothing: {unmatched[0]}")
+
+    kept = [item for item in items if chosen(item.nodeid)]
+    removed = [item for item in items if not chosen(item.nodeid)]
+    if removed:
+        config.hook.pytest_deselected(items=removed)
+        items[:] = kept
+    # As with pytest's own node selectors, unrelated tests in an assigned file
+    # are outside this run's collection, not policy deselections.
+    _EVENTS["collected"] = [node for node in _EVENTS["collected"] if chosen(node)]
+    _EVENTS["deselected"] = [node for node in _EVENTS["deselected"] if chosen(node)]
 
 
 def pytest_collection_finish(session):

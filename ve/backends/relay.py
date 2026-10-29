@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import atexit
 import json
+import math
 import os
 from pathlib import Path
 import re
@@ -47,6 +48,23 @@ _lock = threading.Lock()
 # the answer to every copy of that request; another pool (another build) starts empty.
 _answers: weakref.WeakKeyDictionary = weakref.WeakKeyDictionary()
 ANSWERS_LIMIT = 256
+
+
+def pool_size() -> int:
+    """Number of services at pool creation. The setting caps spare vCPUs; absent means two."""
+    from ..ast import decimal_value
+    cpus = len(os.sched_getaffinity(0)) if hasattr(os, "sched_getaffinity") else os.cpu_count() or 1
+    setting = os.environ.get("VE_LEAN_SERVICE_POOL_SIZE")
+    if setting is None:
+        return min(2, cpus)
+    if re.fullmatch(r"[1-9][0-9]*", setting) is None or len(setting) > 10:
+        raise CheckerUnavailable("CheckerUnavailable: VE_LEAN_SERVICE_POOL_SIZE must be a positive integer")
+    try:
+        load = os.getloadavg()[0]
+    except OSError:
+        load = 0
+    free = max(1, cpus - math.ceil(load))
+    return min(decimal_value(setting), cpus, free)
 
 
 # The code domain of the service's rejections (Lean's `rejectionCodes`), as its handshake states it.
@@ -83,10 +101,10 @@ def _pool_for(executable: str | os.PathLike | None) -> LeanServicePool:
     with _lock:
         if path is None:
             if _pool is None:
-                _pool = LeanServicePool()
+                _pool = LeanServicePool(size=pool_size())
             return _pool
         if path not in _pools:
-            _pools[path] = LeanServicePool(executable=path)
+            _pools[path] = LeanServicePool(size=pool_size(), executable=path)
         return _pools[path]
 
 
