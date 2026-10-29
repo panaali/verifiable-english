@@ -1,0 +1,172 @@
+shard 1/3: 17 units; commands: ['python3 tools/rust_build.py test --locked --all-features --manifest-path rust/Ca', 'python3 tools/rust_build.py build --locked --release --manifest-path rust/Cargo.', 'python3 tools/rust_build.py build --locked --manifest-path rust/Cargo.toml -p ve', 'uv run --frozen --group dev python tools/test_layer_policy.py']
++ python3 tools/rust_build.py test --locked --all-features --manifest-path rust/Cargo.toml -- --test-threads=1
+info: syncing channel updates for 1.98.1-x86_64-unknown-linux-gnu
+info: latest update on 2026-09-03 for version 1.98.1 (48a229cea 2026-09-01)
+info: downloading 3 components
+warn: the missing active toolchain `1.98.1-x86_64-unknown-linux-gnu` has been auto-installed
+warn: this might cause rustup commands to take longer time to finish than expected
+info: you may opt out with `RUSTUP_AUTO_INSTALL=0` or `rustup set auto-install disable`
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded cfg-if v1.0.5
+  Downloaded block-buffer v0.10.4
+  Downloaded crypto-common v0.1.7
+  Downloaded autocfg v1.5.1
+  Downloaded cpufeatures v0.2.17
+  Downloaded num-traits v0.2.19
+  Downloaded version_check v0.9.5
+  Downloaded digest v0.10.7
+  Downloaded generic-array v0.14.7
+  Downloaded itoa v1.0.18
+... (75 lines cut; full output in shard-full.txt)
+test ast_budget_counts_nodes_not_canonical_text ... ok
+test defined_declaration_computes_its_table ... ok
+test nary_defined_declaration_computes_its_table ... ok
+test restricted_json_and_canonical_order ... ok
+test shared_countermodel_corpus ... ok
+test shared_evaluation_corpus ... ok
+test shared_identity_fixtures ... ok
+test shared_wire_diagnostic_classes ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.06s
+
+     Running tests/data_flags.rs (rust/target/debug/deps/data_flags-521b90fba2ea2574)
+
+running 1 test
+test data_flags_and_string_slots_are_checked ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/nary.rs (rust/target/debug/deps/nary-66634fbadaac8b88)
+
+running 2 tests
+test hostile_nary_wire_is_rejected ... ok
+test nary_wire_round_trip ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/norm_defaults.rs (rust/target/debug/deps/norm_defaults-d07aa756cabdc2ba)
+
+running 3 tests
+test norm_defaults_profile_is_refused ... ok
+test replay_untrusted_norm_defaults_fillings ... ok
+test switch_certificate_needs_the_switched_fillings ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s
+
+     Running tests/norms.rs (rust/target/debug/deps/norms-21ec777e225b76c8)
+
+running 3 tests
+test act_phrase_whitespace_matches_python_split ... ok
+test regulated_environment_and_profile_model ... ok
+test regulated_predicate_cannot_be_defined_or_flagged ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/premise_scale.rs (rust/target/debug/deps/premise_scale-92f544d2968876db)
+
+running 6 tests
+test a_ground_candidate_the_premises_reject_is_no_witness ... ok
+test a_raised_sort_is_searched_at_its_size ... ok
+test ground_route_on_stated_quantities ... ok
+test shared_bound_cannot_hold_three_distinct_constants ... ok
+test sort_bounds_name_declared_sorts_in_order ... ok
+test the_ground_route_tries_the_stated_facts_alone ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+
+     Running tests/search.rs (rust/target/debug/deps/search-35abf7e625d64595)
+
+running 7 tests
+test constants_may_alias_and_empty_domains_are_not_inferred_inhabited ... ok
+test environment_binding_cannot_be_substituted ... ok
+test flagged_relation_absent_from_query_is_enumerated ... ok
+test limits_are_operational_and_checked_at_exhaustion_boundary ... ok
+test measurement_iterator_uses_the_search_order ... ok
+test mixed_sort_constant_and_relation_products_are_exhaustive ... ok
+test unused_predicates_do_not_expand_search ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/soft_norms.rs (rust/target/debug/deps/soft_norms-12169e7f2a9b8730)
+
+running 1 test
+test replay_untrusted_soft_elaborations ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (rust/target/debug/deps/ve_kernel-31a99c7244783363)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (rust/target/debug/deps/ve_profile-39d349572b160587)
+
+running 3 tests
+test search::domain_size_tests::lazy_sizes_are_the_eager_order ... ok
+test search::domain_size_tests::many_sorts_hold_one_vector ... ok
+test search::domain_size_tests::per_sort_maxima_are_the_eager_order ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+   Doc-tests ve_core
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ve_kernel
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ve_profile
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
++ python3 tools/rust_build.py build --locked --release --manifest-path rust/Cargo.toml -p ve
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.26
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling cpufeatures v0.2.17
+   Compiling itoa v1.0.18
+   Compiling cfg-if v1.0.5
+   Compiling memchr v2.8.3
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.229
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `release` profile [optimized] target(s) in 10.06s
+6422647f908dfbf4bc7728df20719c0f613842d577b4c697f3a6c2aeb8408579  /home/runner/work/verifiable-english/verifiable-english/rust/target/release/ve: pinned in /home/runner/work/verifiable-english/verifiable-english/lean/checkers.lock
++ python3 tools/rust_build.py build --locked --manifest-path rust/Cargo.toml -p ve
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.51s
+    Finished `release` profile [optimized] target(s) in 0.01s
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.01s
+order: failed last time []; changed ['tests/test_safetyfw_usecases.py']; then the rest; --maxfail 5
+recording 17 units with 4 jobs in /tmp/ve-select-run-fdldlsbd
+recorded 17 units for tree ef29ec00bb; 0 others left to the static graph until they run; 0 failed
+SHARD 1/3: exit 0 in 538.1 s; 17 units, 17 passed
