@@ -34,5 +34,17 @@
     "fault": "F6: let some b := result | continue",
     "test": "tests/test_readings_stage_times.py::test_split_admission_stops_before_companions_after_main_failure",
     "result": "failed under mutant build; restored build passes"
+  },
+  {
+    "file": "lean/VE/Service/ReadingsAdmissionProfile.lean",
+    "fault": "F5-soft: else if false then",
+    "test": "tests/test_readings_stage_times.py::test_unsplit_soft_validation_continues_from_s1_into_s2",
+    "result": "failed under mutant build; restored build passes"
+  },
+  {
+    "file": "lean/VE/Service/ReadingsAdmissionProfile.lean",
+    "fault": "F5-unsupported: unless true do return",
+    "test": "tests/test_readings_stage_times.py::test_unsupported_kind_has_no_admission_stages",
+    "result": "failed under mutant build; restored build passes"
   }
 ]

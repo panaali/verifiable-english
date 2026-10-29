@@ -162,6 +162,32 @@ def test_unsplit_validation_uses_s1_admission_only():
     assert rows[1]["status"] == "ok"
 
 
+def test_unsplit_soft_validation_continues_from_s1_into_s2():
+    from tests.test_readings_s1_lean import SOFT_PROFILES, env_k, k1_document
+
+    environment = env_k(profiles=("norm-defaults@0", *SOFT_PROFILES))
+    document, _ = k1_document(environment)
+    case = {"id": "profile", "kind": "readings-validate",
+            "environment": environment, "document": document}
+    request = json.dumps({"id": "profile", "mode": "readings-route", "cases": [case]}) + "\n"
+    observed = run("1", request)
+    result = json.loads(observed.stdout.splitlines()[-1])["results"][0]["result"]
+    assert result["status"] == "ok"
+    rows = [json.loads(line) for line in observed.stderr.splitlines()]
+    assert [row["stage"] for row in rows] == ["splitCase", "admitReadings", "admitS2Of",
+                                               "admitSDOf", "admitUnsaid", "distinguishingModels", "runCase"]
+    assert all(row["status"] == "ok" for row in rows)
+
+
+def test_unsupported_kind_has_no_admission_stages():
+    case = {**CASE, "kind": "unknown-readings-kind"}
+    request = json.dumps({"id": "profile", "mode": "readings-route", "cases": [case]}) + "\n"
+    observed = run("1", request)
+    assert observed.stderr == ""
+    result = json.loads(observed.stdout.splitlines()[-1])["results"][0]["result"]
+    assert result["status"] == "error"
+
+
 def test_split_admission_stops_before_companions_after_main_failure():
     from tests.test_readings_companions_lean import fc1, env_main
 
