@@ -53,7 +53,7 @@ class QuarantineGate(FakeGate):
         if stage != "Quarantine retry":
             return super().command(args, env=env, stage=stage, cwd=cwd)
         self.seen.append((stage, [str(arg) for arg in args]))
-        ids = [str(arg) for arg in args if "::" in str(arg)]
+        ids = json.loads(Path(env["VE_GATE_PYTEST_IDS_FILE"]).read_text())
         Path(env["VE_GATE_PYTEST_RESULT"]).write_text(json.dumps({"tests": {
             nodeid: {"outcome": "failed" if nodeid in self.failing_alone else "passed"} for nodeid in ids}}))
         if self.failing_alone & set(ids):
@@ -79,7 +79,7 @@ def test_a_quarantined_failure_that_passes_alone_does_not_fail_the_gate(fake):
                            "expires": "2026-10-17", "evidence": "evidence.json"}}}
     # Only the quarantined test, serially: no xdist, every other gate option kept.
     [retry] = fake.retries()
-    assert retry[retry.index("not live") + 1:] == [HELD]
+    assert retry[retry.index("not live") + 1:] == ["tests/b.py"]
     assert "-n" not in retry and "xdist" not in retry and "tools.gate_pytest" in retry
 
 
@@ -107,7 +107,7 @@ def test_another_failure_still_fails_the_gate_and_is_never_retried(fake):
     assert [f["nodeid"] for f in record["failures"] if f["stage"] == "pytest"] == [OTHER]
     assert {"stage": "pytest command", "reason": "Python suite: exit 1"} in record["failures"]
     [retry] = fake.retries()
-    assert retry[retry.index("not live") + 1:] == [HELD]
+    assert retry[retry.index("not live") + 1:] == ["tests/b.py"]
 
 
 def test_the_nightly_retries_nothing(fake):
@@ -238,5 +238,6 @@ def test_the_gates_plugin_refuses_to_stop_early(tmp_path, option):
 
 def test_the_retry_command_is_the_gates_pytest_over_the_node_ids():
     command = gate.retry_command(["python"], [HELD, OTHER])
-    assert command == nested_pytest.command([*gate.PYTEST_ARGS[:-1], HELD, OTHER], python=["python"])
-    assert [argument for argument in command if "::" in argument] == [HELD, OTHER]
+    assert command == nested_pytest.command([*gate.PYTEST_ARGS[:-1], "tests/b.py", "tests/c.py"],
+                                            python=["python"])
+    assert not any("::" in argument for argument in command)

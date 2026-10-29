@@ -138,7 +138,7 @@ GENERATED = (
               note="mode roots from the compiled runMode dispatch pins"),
     Generated("lean-statements", ("lean/statements.txt", "lean/predicates.txt", "lean/declarations.txt"),
               ((PY, "tools/lean_statements.py"),), ((PY, "tools/lean_statements.py", "--check"),)),
-    Generated("lean-audit-manifests", ("lean/VE/Audit.lean", "lean/ResponseShape/Audit.lean", "lean/axioms.txt"),
+    Generated("lean-audit-manifests", ("lean/VE/Audit.lean", "lean/ResponseShapeAudit.lean", "lean/axioms.txt"),
               ((PY, "lean/audit.py", "--write"),), ((PY, "lean/audit.py", "--check"),),
               note="generated from lean/declarations.txt, then the axiom audit record"),
     Generated("frozen-inventory", ("lean/VE/Route/frozen-sources.sha256",),
