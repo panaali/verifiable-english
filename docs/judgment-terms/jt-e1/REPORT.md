@@ -1,60 +1,26 @@
-# JT-E1 build report
+# JT-E1 correction report
 
-Status: **PASS** on both pre-registered proxy-readability bars; 80/80 reader calls completed.
-HEAD: `feature/jt-e1`, the commit containing this report (no push).
-Changed: pre-registration, frozen 40-item frame, bounded runner, local tests, raw answers and results; no product code.
-Open items: JT-3 may use the result; no DRI signature is reserved.
-Model calls: `SIGNED by the DRI 2026-10-28 (prompts/dri-task-lp2001.txt item 5; recorded in reviews/lp-answers-20261028T2001.md item 5)`.
+Status: **INVALID** for the JT-3 gate; the earlier go-ahead is withdrawn.
+HEAD: the committed correction on `feature/jt-e1`; no push.
+Changed: archive the invalid comparison, gate future runs on live display, and specify fresh `jt-e1b` measurement.
+Open items: JT-3 wording is gated on `jt-e1b`; no DRI signature is reserved.
+Model calls: none in this correction; the 80 original raw records are unchanged.
 
-## Gate and scope
+## Review findings
 
-Plan: `docs/spec/judgment-terms-PLAN.md` at `32ffc3ec9`, sections 0.2, 2.4, 4.2 and 6 JT-E1; spec `docs/spec/judgment-terms.md`. The statement review's FIX was applied and its corrected statements re-elaborated in the plan/spec change logs. No theorem statement was added or changed. JT-2 and jt-2b are on main; JT-3 has not started. The DRI's item-5 decision authorises this model experiment within the picker caps. SYNTHESIS 4.2/4.3 and DRI-DECISIONS-PHASE2 impose no shared-file edit on this docs-only experiment.
-
-The hand-written files touched are `PRE-REGISTRATION.md`, `items.tsv`, `runner.py`, `RESULTS.md`, this report and `tests/test_jt_e1.py`; `raw/` is call evidence. An overlap check of `main...branch` against 238 in-flight branch refs found no touched-file overlap. No `ve/`, `lean/`, or `rust/` file changed. QT-B4 is not on main: the hard-constraint items use the current form, a deviation recorded in the pre-registration before the first call. The synthetic identifier-shaped future answer lines are an experimental context, not a live JT-4 route; RESULTS states this limitation.
-
-## Plan rows and evidence
-
-| Plan row / directive | Delivery | Evidence |
+| Finding | Correction | Regression |
 |---|---|---|
-| 40 items: 20 UDHR, 20 constitution, named units and synthetic variants | yes | `items.tsv`; `test_frozen_frame_and_two_arm_rendering` |
-| Two arms from the same answer, expected class and decider, prompt and bars frozen before calls | yes | pre-registration commit `959b5205e`; `test_frozen_frame_and_two_arm_rendering` |
-| QT-B4 deviation recorded before calls | yes | `PRE-REGISTRATION.md` in `959b5205e` |
-| Sonnet 5.5, one separate subscription call per item/arm, human-visible context only | yes | 80 `raw/*.json`; model and fallback-credit probe in `RESULTS.md` |
-| At most 100 calls and 3M CW; stop at caps | yes | 80 calls, 205,437 CW; `test_call_and_context_caps` |
-| Correct / 40, difference, critical list and bar verdicts | yes | `RESULTS.md`; 16/40 vs 37/40, +52.5 points, no critical cases |
-| Count items lacking a lint-accepted template | yes | 20/40 in the frozen synthetic frame; `test_frozen_frame_and_two_arm_rendering` |
-| If a bar fails, revise once and rerun separately | not triggered | both bars PASS; JT-3 is next |
+| F1 | The frozen runner can no longer launch a call from invented answer lines. It requires captured live renderer display before any call, then stops because these 40 items have already been seen. The declaration preview names every named decider, including all seven conditional controls. `jt-e1b` requires actual output for every constructor in both arms. | `test_conditional_control_decider_is_visible_for_every_named_row`, `test_missing_or_inconsistent_live_display_cannot_launch_study` |
+| F2 | Every rejected-template preview uses the identifier fallback in both arms. The capture validator rejects unequal arms for such a row. `jt-e1b` will enforce this on its fresh frame. | `test_frozen_frame_and_two_arm_preview`, `test_missing_or_inconsistent_live_display_cannot_launch_study` |
 
-Acceptance is **AGENT** for the frozen protocol, raw-call count, scoring, account metadata and bars. Human comprehension is **HUMAN**, deferred: no human participants were measured. Actual JT-3/JT-4 rendering is **EXTERNAL** to this experiment and belongs to those items. The pilot-byte movement expected from JT-E1 is **0 B**; nothing is claimed before a pilot audit.
+The original 16/40 and 37/40 counts, zero recorded critical misreadings, 80 calls, and 205,437 CW remain in `RESULTS.md` as descriptive evidence of the invalid study. They are not gate results. `PRE-REGISTRATION.md` and `items.tsv` remain frozen; the invalidity arose from the runner's displayed lines and cannot be repaired by rescoring the same answers. The original build report is available in commit `31761f9dd`.
 
-## Seeded bugs and local checks
+## Delta and scope
 
-Three Python runner bugs were planted one at a time and restored; each failed its named test, not a hash or build step:
+No VE product text, diagnostic, verdict, wire response, Lean statement, or Rust behavior changed. The research report's interpretation changed from go-ahead to invalid; that is correction of an unsupported claim, not a product delta. There is no DELTA table row. The pending `jt-e1b` study is a separate item and makes no calls in this branch.
 
-1. `runner.py`: `Open reading:` → `Closed reading:`; `test_frozen_frame_and_two_arm_rendering` failed.
-2. `runner.py`: score class without checking the decider; `test_scoring_requires_class_and_decider_and_flags_critical_misreading` failed.
-3. `runner.py`: allow call 101; `test_call_and_context_caps` failed.
+## Verification
 
-After restoration, `UV_CACHE_DIR=/tmp/uv-jt-e1 uv run pytest -q tests/test_jt_e1.py` passed (3). No Lean/Rust product code changed, so neither language needs a seeded bug. No generated-file input changed; no regeneration, Lean build, Lean audit or trust mutants was required. The full release gate is owned by the chain on the committed final HEAD, per the task instruction; it was not run here.
+Both executable review probes failed before the fix and passed afterward. The regression tests exercise all 40 rows and all three answer kinds, including the seven named conditional controls and all 20 rejected-template rows. The finished branch was checked with the requested selected test command, the regression test module, `lake build`, and `python3 lean/audit.py`. The full release gate was not run, as directed for this branch. Pre-existing failures in `main-known-red.txt` are separate items and were not edited.
 
-Trust: K +0, S +0, V +0 (no Lean edits); `UV_CACHE_DIR=/tmp/uv-jt-e1 uv run python tools/trust_map.py --check` passed against `6f59c66d6899`. DELTA: none; there is no user-visible product change. The source-word catalogue, rendering, diagnostics, verdicts and routes remain untouched.
-
-## Self-review against BUILDER-CHECKLIST
-
-1. N.A.: no Lean response or request decoder changed.
-2. PASS: plan-row table above and `test_frozen_frame_and_two_arm_rendering` cover every experiment deliverable.
-3. PASS: the three named seeded bugs above failed their local tests.
-4. N.A.: no Python/Lean/Rust product semantics changed.
-5. N.A.: no relay binding or response schema changed.
-6. N.A.: the task assigns the final-HEAD full gate to the chain; raw-call evidence is committed here.
-7. PASS: no DELTA or trust growth, verified by `git diff --name-only main...HEAD` and `tools/trust_map.py --check`.
-8. PASS: no user-visible product delta; same diff and the product-file sweep above.
-9. PASS: selected-test run on the finished code, recorded below.
-10. N.A.: no Lean statement, theorem or proof changed.
-11. PASS: `test_call_and_context_caps` checks both caps; each raw call records usage.
-12. N.A.: no product runtime path changed.
-13. N.A.: no test was removed or renamed (`git diff --name-status main...HEAD`).
-
-## Final checks
-
-`zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` passed on the finished worktree snapshot: 148 selected units, 0 failed/error ids, Mac runner `ve-mac-1`, 1906 s. The targeted local run after the scoring fix passed (`test_scoring_requires_class_and_decider_and_flags_critical_misreading`). No full release gate was run by this builder, per the task's chain-gate instruction. The current files are committed below; the chain gates that final HEAD.
+Seeded Python bugs in `runner.py` were planted one at a time and restored: omitting the named decider failed `test_conditional_control_decider_is_visible_for_every_named_row`; bypassing rejected-template fallback failed `test_frozen_frame_and_two_arm_preview`. Each failed at the relevant assertion, then the unmutated module passed. No Lean or Rust product code changed.
