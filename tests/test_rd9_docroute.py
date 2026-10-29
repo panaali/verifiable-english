@@ -9,6 +9,8 @@ import pytest
 
 from ve.document import check_document, load_document
 from ve.errors import CheckerUnavailable, VEError
+from ve.admission import admit_document
+from ve.ast import formula_to_data
 from ve.norm_defaults_route import admit_norm_defaults_document
 from ve.norms import NormDocument
 from ve.softnorms import SoftEnvironment, check_soft_source
@@ -58,6 +60,29 @@ def test_soft_chain_document_checks_the_filled_route():
     assert report["admission"]["admitted"] is True
     assert report["admission"]["report"] == admitted["report"]
     assert report["admission"]["core_report_id"] == admitted["report_id"]
+
+
+def test_filled_soft_layer_matches_ordinary_w1():
+    # The frozen oracle proposes the ordinary W1 tree. Both answers are Lean's.
+    from conformance import frozen_norm_defaults as oracle
+    env, source = _direct_case()
+    filled = oracle.UnspecifiedSoftDocument(env, [source["units"][0]["content"]])
+    label, formula = next((name, ast) for name, ast in filled.filled.premises()
+                          if name == "layer:norms:x_permitted")
+    ast = formula_to_data(filled.filled.env, formula)
+    assert "unsaid__x_permitted" in json.dumps(ast)
+    source["graph"] = {"root": "layer", "nodes": [{"name": "layer", "ast": ast, "label": label}]}
+    routed = admit_norm_defaults_document(env, source)
+    ordinary_env = deepcopy(filled.filled.env.to_dict())
+    ordinary_env["profiles"].remove("soft-norms@0")
+    ordinary = deepcopy(source)
+    ordinary["units"][0]["content"] = filled.filled.rules[0].to_dict()
+    end = ordinary["units"][-1]["span"][1]
+    ordinary["units"].append({"id": "generated", "span": [end, end + 1], "kind": "norm",
+                              "content": filled.filled.rules[1].to_dict()})
+    checked_w1 = admit_document(ordinary_env, ordinary)
+    assert routed["admitted"] is checked_w1["admitted"] is True
+    assert routed["report"] == checked_w1["report"]
 
 
 def test_soft_admission_conditions_are_bound_to_the_source(monkeypatch):
