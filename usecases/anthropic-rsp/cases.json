@@ -273,7 +273,9 @@
    "family": "K",
    "thresholds": [],
    "situation": "\"General upleveling\" scenario",
-   "findings": {}
+   "findings": {
+    "OT8": true
+   }
   },
   {
    "id": "K22",
@@ -300,7 +302,7 @@
    "thresholds": [],
    "situation": "the same at 6x the cost; scenario (2) found not to have occurred",
    "findings": {
-    "OT15": true,
+    "OT15": false,
     "scenario_2": false
    },
    "quantities": {
