@@ -98,9 +98,12 @@ def _situation(case, row, witness):
         entities = _entities(witness)
         for name, rows in filling.items():
             sorts = tables[name]
-            if any(len(values) != len(sorts) or
-                   any(value not in entities.get(sort, ()) for sort, value in zip(sorts, values)) for values in rows):
-                raise _unbound("situation")
+            for values in rows:
+                if len(values) != len(sorts):
+                    raise _unbound("situation")
+                for sort, value in zip(sorts, values):
+                    if value not in entities.get(sort, ()):
+                        raise _unbound("situation")
 
 
 def bind_elaborate(case, row, source):

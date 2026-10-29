@@ -527,6 +527,10 @@ def test_situation_entities_of_every_sort():
     for filling in ({"unsaid__p": [["u", "a"]]}, {"unsaid__p": [["a"]]},
                     {"unsaid__p": [["z", "u"]]}, {"unsaid__p": [], "absent": []}, {}):
         _refused("situation", defaults._situation, case, {"situation": {"filling": filling}}, witness)
+    missing = copy.deepcopy(witness)
+    del missing["model"]["domains"]["user"]
+    _refused("situation", defaults._situation, case,
+             {"situation": {"filling": {"unsaid__p": [["a", "u"]]}}}, missing)
 
 
 _HUNT2: dict = {}
