@@ -9,7 +9,7 @@ Pilot: no translation edit, byte claim, or coverage audit in this item.
 
 On main `8868ce212`, `Effects.lean` already defines all six `Effect` constructors, `hasOwn`, `ownSafe`, `substOwn`, `Commutes`, and `mergeParts`. `Govern.lean` already defines `applyEffect` (reguard replaces the guard with `substOwn` of the original JSON; carve-out appends one substituted condition), `coveredLayout` for a discourse `ContentName`, the registering list's exact-run check in `admitBlock`, `orderCheck`, and `govern`. These came from SC-1a/SC-1b; sc-5rb already uses the two effects per choice. The check uses discourse's decoder, not a second scope name table. sc-1ae supplies `JsonWF`; this cut adds no hypothesis to a 5.4 statement.
 
-The statement review closed **PASS** (`scope-p3ver2.final.md:1`, after `scope-p3ver1.final.md`). A whitespace-normalising comparison of `listName_run` in `docs/spec/scope.md:1306` and `lean/VE/Scope/Theorems.lean` printed `statement match: True` (`python3 - <<'PY'` comparison in the build log). No other 5.4 theorem is claimed proved here. The round-2 synthesis's `substOwn` through AT-3a decoder lemma (edit 1) belongs to sc-2b and is **not** implemented here; its `ContentName` re-pointing (edit 4) was on main before this cut.
+The statement review closed **PASS** (`scope-p3ver2.final.md:1`, after `scope-p3ver1.final.md`). A whitespace-normalising comparison of `listName_run` in `docs/spec/scope.md:1306` and `lean/VE/Scope/Theorems.lean` printed `statement match: True` ([evidence/checks.txt](evidence/checks.txt)). No other 5.4 theorem is claimed proved here. The round-2 synthesis's `substOwn` through AT-3a decoder lemma (edit 1) belongs to sc-2b and is **not** implemented here; its `ContentName` re-pointing (edit 4) was on main before this cut.
 
 ## Plan rows and fixtures
 
@@ -27,10 +27,10 @@ The size measurement before the second half (`git diff --numstat $(git merge-bas
 
 ## Validation and risk
 
-- `UV_CACHE_DIR=/tmp/sc2-uv-cache uv run python tools/regen_generated.py --write`: PASS, 33 entries (`/tmp/sc2-regen-final.log`); the first run lacked a Rust executable, then `python3 tools/rust_build.py` built and pinned it. No Rust product source changed.
-- `PATH=~/.elan/bin:$PATH lake build`: PASS, 1159 jobs (`/tmp/sc2-lake-full.log`). `python3 lean/audit.py`: PASS, 668 files and 7476 declarations, standard axiom allowlist only (`/tmp/sc2-audit.log`).
-- `UV_CACHE_DIR=/tmp/sc2-uv-cache uv run python tools/trust_map.py --check`: PASS, K +0, S +0, trusted +0 against main (`/tmp/sc2-trust-final.log`). There is no new trusted definition or R16 allowance, so the R16 trust-mutant run and ties-pass follow-up do not apply.
-- `zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`: PASS, 3 shards, 24 + 28 + 25 = 77 units and 0 failures (`/tmp/sc2-selected.log:187,360,533-534`). The full release gate was **not run** here; the chain runs it on final committed HEAD as instructed.
+- `UV_CACHE_DIR=/tmp/sc2-uv-cache uv run python tools/regen_generated.py --write`: PASS, 33 entries ([evidence/checks.txt](evidence/checks.txt)); the first run lacked a Rust executable, then `python3 tools/rust_build.py` built and pinned it. No Rust product source changed.
+- `PATH=~/.elan/bin:$PATH lake build`: PASS, 1159 jobs. `python3 lean/audit.py`: PASS, 668 files and 7476 declarations, standard axiom allowlist only ([evidence/checks.txt](evidence/checks.txt)).
+- `UV_CACHE_DIR=/tmp/sc2-uv-cache uv run python tools/trust_map.py --check`: PASS, K +0, S +0, trusted +0 against main ([evidence/checks.txt](evidence/checks.txt)). There is no new trusted definition or R16 allowance, so the R16 trust-mutant run and ties-pass follow-up do not apply.
+- `zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`: PASS, 3 shards, 24 + 28 + 25 = 77 units and 0 failures ([evidence/checks.txt](evidence/checks.txt)). The full release gate was **not run** here; the chain runs it on final committed HEAD as instructed.
 - Three seeded Lean bugs in changed fixture code were planted independently, failed the named `#guard` with `lake build VE.Scope.Examples` exit 1, and were removed: [mutants.json](mutants.json). No Python or Rust product code changed.
 - Hand-written overlap check across in-flight `lean-first/*`, `feature/*`, `infra/*`, and `foundation/*` branches printed no overlap for `Theorems.lean` or `Examples.lean`. `df -h .` reported 145 G available. No test was removed or renamed.
 
@@ -43,10 +43,10 @@ Spec re-read: `listName_run` against `docs/spec/scope.md:1306`; named reach and 
 3. PASS — `mutants.json`, each named `#guard` failed.
 4. N.A. — no production route or decoder changed.
 5. N.A. — no new relayed field or binding changed.
-6. N.A. — chain-owned final-HEAD gate pending; selected run passed (`/tmp/sc2-selected.log:534`).
+6. N.A. — chain-owned final-HEAD gate pending; selected run passed ([evidence/checks.txt](evidence/checks.txt)).
 7. PASS — `DELTA.md` has no behavior row; `trust_map.py --check` reports +0.
 8. PASS — `git diff main...HEAD -- lean/VE/Scope` shows proofs and guards only.
-9. PASS — selected-test command passed 77 units (`/tmp/sc2-selected.log:187,360,533`).
+9. PASS — selected-test command passed 77 units ([evidence/checks.txt](evidence/checks.txt)).
 10. PASS — whitespace comparison printed `statement match: True`; `lake build VE.Scope.Theorems` passed.
 11. PASS — F6′ `#guard` checks eight accepted and nine refused in `lake build VE.Scope.Examples`.
 12. N.A. — no production computation changed.
