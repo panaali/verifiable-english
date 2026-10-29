@@ -14389,6 +14389,8 @@
         "VE.Calc.Run.reads",
         "VE.Calc.Run.rowJson",
         "VE.Calc.Run.shownJson",
+        "VE.Calc.Check.runShown",
+        "VE.Calc.Derive.shown",
         "VE.Calc.Run.sides",
         "VE.Calc.Run.stepJson",
         "VE.Calc.Run.tie",
@@ -14400,7 +14402,8 @@
           ]
         },
         "VE.Calc.Run.wordsIn",
-        "VE.Calc.Shown"
+        "VE.Calc.Shown",
+        "VE.Calc.Shown.matches"
       ],
       "G[V]": [
         {
@@ -14432,9 +14435,7 @@
       "C": [
         "VE.Calc.Check.fault",
         "VE.Calc.Check.run",
-        "VE.Calc.Check.runShown",
         "VE.Calc.Claim.factsIn",
-        "VE.Calc.Derive.shown",
         "VE.Calc.instDecidableOutcomeMeansClaimDecided"
       ]
     },
@@ -14809,12 +14810,15 @@
       "G[R]": [
         "ResponseShape.Schemas.Calc.answer",
         "ResponseShape.Schemas.Calc.byForm",
+        "ResponseShape.Schemas.Calc.certificate",
         "ResponseShape.Schemas.Calc.claimKind",
         "ResponseShape.Schemas.Calc.claimRow",
         "ResponseShape.Schemas.Calc.comparisons",
+        "ResponseShape.Schemas.Calc.counterexample",
         "ResponseShape.Schemas.Calc.derivation",
         "ResponseShape.Schemas.Calc.digits",
         "ResponseShape.Schemas.Calc.exact",
+        "ResponseShape.Schemas.Calc.fact",
         "ResponseShape.Schemas.Calc.fields",
         "ResponseShape.Schemas.Calc.file",
         "ResponseShape.Schemas.Calc.flag",
@@ -14826,10 +14830,13 @@
         "ResponseShape.Schemas.Calc.refusal",
         "ResponseShape.Schemas.Calc.roundings",
         "ResponseShape.Schemas.Calc.row",
+        "ResponseShape.Schemas.Calc.shownMembers",
         "ResponseShape.Schemas.Calc.sides",
+        "ResponseShape.Schemas.Calc.step",
         "ResponseShape.Schemas.Calc.truncated",
         "ResponseShape.Schemas.Calc.undefinedMembers",
-        "ResponseShape.Schemas.Calc.unknownMembers"
+        "ResponseShape.Schemas.Calc.unknownMembers",
+        "ResponseShape.Schemas.Calc.valuedName"
       ]
     },
     "VE/Arith/Syntax.lean": {
