@@ -108,8 +108,8 @@ def test_unprofiled_definition_checks_nested_fault_before_field_refusal(built):
         surface.close()
 
 
-def test_nonobject_constant_precedes_predicate_sort_fault(built):
-    """A constant's container shape is checked before predicate sort semantics in all three engines."""
+def test_predicate_signature_and_constant_fault_order(built):
+    """Built-in and ordinary unknown predicate sorts keep their distinct fault codes."""
     raw = {"language": "ve.core@0.2", "profiles": ["relational-fol@0"],
            "spec_revision": "ve-v0.2-expand2-2026-09-25",
            "vocabulary": {"sorts": {},

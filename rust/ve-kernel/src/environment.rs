@@ -325,17 +325,12 @@ impl Environment {
             }
             description(&d["description"])?;
         }
-        // Container shapes are decoded before predicate sort semantics. A malformed
-        // constant declaration therefore cannot be hidden by an undeclared sort
-        // in a predicate; Python and Lean use the same phase order.
-        for decl in consts.values() {
-            object(decl, "InvalidInput")?;
-        }
         let mut predicates = BTreeMap::new();
         let mut regulated = BTreeMap::<String, (String, String, Option<String>, Option<String>)>::new();
         let mut canonical_data = data.clone();
         let mut predicate_flags = BTreeMap::new();
         let mut defined = Vec::new();
+        let mut invalid_builtin_signature = false;
         let definitions_profile = route && profiles.iter().any(|p| p == "definitions@0");
         for (name, decl) in preds {
             let flagged = decl.get("functional").is_some() || decl.get("total").is_some();
@@ -373,7 +368,13 @@ impl Environment {
                 let s = string(arg, "UnknownSymbol")?;
                 if !sorts.contains_key(s) && !(order && s == "$int")
                     && !(route && profiles.iter().any(|p| p == "data@0") && s == "$string") {
-                    return error("UnknownSymbol", "unknown predicate argument sort");
+                    if s == "$string" || s == "$int" {
+                        // The unsupported built-in signature is decided after
+                        // the constants, as in Lean's environment decoder.
+                        invalid_builtin_signature = true;
+                    } else {
+                        return error("UnknownSymbol", "unknown predicate argument sort");
+                    }
                 }
                 signature.push(s.to_owned());
             }
@@ -502,6 +503,9 @@ impl Environment {
         }
         if route && constants.values().filter(|s| *s == "$string").count() > 64 {
             return error("ResourceLimit", "At most 64 declared $string literals");
+        }
+        if invalid_builtin_signature {
+            return error("InvalidInput", "invalid predicate signature");
         }
         let version = if route {
             format!("v0.2:{}", profiles.join(","))

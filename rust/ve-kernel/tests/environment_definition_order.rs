@@ -33,7 +33,7 @@ fn malformed_nested_definition_precedes_unsupported_field() {
 }
 
 #[test]
-fn nonobject_constant_precedes_predicate_sort_fault() {
+fn predicate_signature_and_constant_fault_order() {
     let mut case = json!({
         "language": "ve.core@0.2", "profiles": ["relational-fol@0"],
         "spec_revision": "ve-v0.2-expand2-2026-09-25",
@@ -46,6 +46,9 @@ fn nonobject_constant_precedes_predicate_sort_fault() {
     assert_eq!(error.code, "InvalidInput");
     case["vocabulary"]["constants"]["legal"] = json!({"sort": "other", "description": "d"});
     case["vocabulary"]["predicates"]["dept"]["arguments"] = json!(["missing"]);
+    let error = Environment::from_value(&case).unwrap_err();
+    assert_eq!(error.code, "UnknownSymbol");
+    case["vocabulary"]["constants"]["legal"] = json!("x");
     let error = Environment::from_value(&case).unwrap_err();
     assert_eq!(error.code, "UnknownSymbol");
 }
