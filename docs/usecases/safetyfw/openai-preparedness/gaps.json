@@ -2,18 +2,19 @@
  "d1_bytes_by_status": {
   "CHECKED": 170,
   "LABELLED": 5327,
-  "OPEN": 5446,
-  "UNFORMALISED": 56475
+  "OPEN": 6859,
+  "UNFORMALISED": 55062
  },
  "features": {
   "AP": {
-   "bytes": 20766,
+   "bytes": 21638,
    "sole_bytes": 20766,
    "sole_units": 116,
    "statuses": {
-    "UNFORMALISED": 20766
+    "OPEN": 687,
+    "UNFORMALISED": 20951
    },
-   "units": 116
+   "units": 119
   },
   "AT": {
    "bytes": 12973,
@@ -36,8 +37,8 @@
   },
   "ET": {
    "bytes": 8086,
-   "sole_bytes": 6071,
-   "sole_units": 17,
+   "sole_bytes": 5728,
+   "sole_units": 16,
    "statuses": {
     "OPEN": 1618,
     "UNFORMALISED": 6468
@@ -45,13 +46,14 @@
    "units": 28
   },
   "JT": {
-   "bytes": 4157,
+   "bytes": 4685,
    "sole_bytes": 1613,
    "sole_units": 10,
    "statuses": {
-    "OPEN": 4157
+    "OPEN": 4157,
+    "UNFORMALISED": 528
    },
-   "units": 24
+   "units": 26
   },
   "QT": {
    "bytes": 702,
@@ -63,14 +65,14 @@
    "units": 2
   },
   "SC": {
-   "bytes": 4457,
-   "sole_bytes": 4341,
-   "sole_units": 26,
+   "bytes": 4896,
+   "sole_bytes": 3945,
+   "sole_units": 25,
    "statuses": {
-    "OPEN": 116,
-    "UNFORMALISED": 4341
+    "OPEN": 951,
+    "UNFORMALISED": 3945
    },
-   "units": 27
+   "units": 28
   },
   "WG": {
    "bytes": 183,
@@ -100,12 +102,12 @@
    "units": 48
   },
   "readings": {
-   "bytes": 13372,
-   "sole_bytes": 12489,
-   "sole_units": 88,
+   "bytes": 13583,
+   "sole_bytes": 11178,
+   "sole_units": 84,
    "statuses": {
-    "OPEN": 1472,
-    "UNFORMALISED": 11900
+    "OPEN": 2885,
+    "UNFORMALISED": 10698
    },
    "units": 92
   }
@@ -113,15 +115,15 @@
  "master_bytes_by_status": {
   "CHECKED": 170,
   "LABELLED": 5327,
-  "OPEN": 5446,
-  "UNFORMALISED": 56475
+  "OPEN": 6859,
+  "UNFORMALISED": 55062
  },
  "source_bytes": 67418,
  "status_bytes_recomputed": {
   "CHECKED": 170,
   "LABELLED": 5327,
-  "OPEN": 5446,
-  "UNFORMALISED": 56475
+  "OPEN": 6859,
+  "UNFORMALISED": 55062
  },
  "units": 389
 }

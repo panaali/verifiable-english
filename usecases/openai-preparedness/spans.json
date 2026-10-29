@@ -1462,6 +1462,7 @@
     20307
    ],
    "kind": "unformalised",
+   "blocked_rule": "f13-review",
    "reason": "event_order",
    "detail": "ET: D1 has no event-order relation for the source temporal qualifier in research-category responses",
    "waits": [
@@ -1476,8 +1477,9 @@
     20483
    ],
    "kind": "unformalised",
-   "reason": "unmapped_duty",
-   "detail": "AP: D1 has no complete regulated act and guard for this duty in research-category responses",
+   "blocked_rule": "f13-results",
+   "reason": "unmapped_clause",
+   "detail": "AP: the source-linked draft omits an object, condition, or reporting clause in research-category responses",
    "waits": [
     "AP"
    ],
@@ -1490,9 +1492,10 @@
     20922
    ],
    "kind": "norm",
-   "reading_set": "rs4-research",
+   "reading_set": "rs4-lra",
    "waits": [
-    "readings"
+    "readings",
+    "SC"
    ],
    "status": "OPEN"
   },
@@ -1530,13 +1533,13 @@
     21307,
     21818
    ],
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in research-category responses",
+   "kind": "norm",
+   "reading_set": "rs4-sandbagging",
    "waits": [
-    "readings"
+    "readings",
+    "AP"
    ],
-   "status": "UNFORMALISED"
+   "status": "OPEN"
   },
   {
    "id": "p8-u110",
@@ -1544,13 +1547,12 @@
     21818,
     22148
    ],
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in research-category responses",
+   "kind": "norm",
+   "reading_set": "rs4-ara",
    "waits": [
     "readings"
    ],
-   "status": "UNFORMALISED"
+   "status": "OPEN"
   },
   {
    "id": "p8-u111",
@@ -1558,13 +1560,13 @@
     22148,
     22544
    ],
-   "kind": "unformalised",
-   "reason": "quantifier_scope",
-   "detail": "SC: D1's unary situation rule does not bind each source item in research-category responses",
+   "kind": "norm",
+   "reading_set": "rs4-undermining",
    "waits": [
+    "readings",
     "SC"
    ],
-   "status": "UNFORMALISED"
+   "status": "OPEN"
   },
   {
    "id": "p8-u112",
@@ -1572,13 +1574,13 @@
     22544,
     22720
    ],
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in research-category responses",
+   "kind": "norm",
+   "reading_set": "rs4-nuclear",
    "waits": [
-    "readings"
+    "readings",
+    "AP"
    ],
-   "status": "UNFORMALISED"
+   "status": "OPEN"
   },
   {
    "id": "p8-u113",
@@ -2064,9 +2066,11 @@
     30026
    ],
    "kind": "unformalised",
+   "blocked_rule": "f5-checkpoint",
    "reason": "event_order",
    "detail": "ET: D1 has no event-order relation for the source temporal qualifier in capability evaluation and deployment scope",
    "waits": [
+    "JT",
     "ET"
    ],
    "status": "UNFORMALISED"
@@ -2078,10 +2082,11 @@
     30211
    ],
    "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "detail": "readings: D1 has no admitted descriptive predicate or selected reading for this claim in capability evaluation and deployment scope",
+   "blocked_rule": "f5-ambiguous",
+   "reason": "unmapped_clause",
+   "detail": "AP: the source-linked draft omits an object, condition, or reporting clause in capability evaluation and deployment scope",
    "waits": [
-    "readings"
+    "JT"
    ],
    "status": "UNFORMALISED"
   },

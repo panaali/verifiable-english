@@ -1038,17 +1038,18 @@
    "bytes": 176,
    "id": "p8-u105",
    "kind": "unformalised",
-   "reason": "unmapped_duty",
+   "reason": "unmapped_clause",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "readings",
+    "SC"
    ],
    "bytes": 439,
    "id": "p8-u106",
    "kind": "norm",
-   "reading_set": "rs4-research",
+   "reading_set": "rs4-lra",
    "status": "OPEN"
   },
   {
@@ -1073,13 +1074,14 @@
   },
   {
    "blockers": [
-    "readings"
+    "readings",
+    "AP"
    ],
    "bytes": 511,
    "id": "p8-u109",
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "status": "UNFORMALISED"
+   "kind": "norm",
+   "reading_set": "rs4-sandbagging",
+   "status": "OPEN"
   },
   {
    "blockers": [
@@ -1087,29 +1089,31 @@
    ],
    "bytes": 330,
    "id": "p8-u110",
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "status": "UNFORMALISED"
+   "kind": "norm",
+   "reading_set": "rs4-ara",
+   "status": "OPEN"
   },
   {
    "blockers": [
+    "readings",
     "SC"
    ],
    "bytes": 396,
    "id": "p8-u111",
-   "kind": "unformalised",
-   "reason": "quantifier_scope",
-   "status": "UNFORMALISED"
+   "kind": "norm",
+   "reading_set": "rs4-undermining",
+   "status": "OPEN"
   },
   {
    "blockers": [
-    "readings"
+    "readings",
+    "AP"
    ],
    "bytes": 176,
    "id": "p8-u112",
-   "kind": "unformalised",
-   "reason": "unmapped_claim",
-   "status": "UNFORMALISED"
+   "kind": "norm",
+   "reading_set": "rs4-nuclear",
+   "status": "OPEN"
   },
   {
    "blockers": [
@@ -1452,6 +1456,7 @@
   },
   {
    "blockers": [
+    "JT",
     "ET"
    ],
    "bytes": 343,
@@ -1462,12 +1467,13 @@
   },
   {
    "blockers": [
-    "readings"
+    "JT",
+    "AP"
    ],
    "bytes": 185,
    "id": "p10-u148",
    "kind": "unformalised",
-   "reason": "unmapped_claim",
+   "reason": "unmapped_clause",
    "status": "UNFORMALISED"
   },
   {

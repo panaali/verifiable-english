@@ -22,6 +22,9 @@
       },
       "requirement": {
         "description": "a stated safeguard requirement"
+      },
+      "capability": {
+        "description": "a frontier capability considered for a Tracked Category"
       }
     },
     "predicates": {
@@ -156,6 +159,142 @@
           "requirement"
         ],
         "description": "{0} is a requirement"
+      },
+      "coverage_ambiguous": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "coverage of {0} is ambiguous"
+      },
+      "forecast_severe_before_deployment": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "forecasts and threat models justify a severe-risk development checkpoint at {0}"
+      },
+      "distilled_from_below_high": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "{0} derives from a model determined below High"
+      },
+      "significant_increase": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "{0} has a significant capability increase"
+      },
+      "adjustment_confirmed": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "another developer's unsafeguarded High or Critical release is rigorously confirmed at {0}"
+      },
+      "adjustment_made": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "OpenAI adjusts safeguards at {0}"
+      },
+      "lra_found": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "Long-range Autonomy is found at {0}"
+      },
+      "sandbagging_found": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "sandbagging is found at {0}"
+      },
+      "ara_found": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "Autonomous Replication and Adaptation is found at {0}"
+      },
+      "undermining_found": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "undermining of safeguards is found at {0}"
+      },
+      "nuclear_found": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "Nuclear and Radiological capability is found at {0}"
+      },
+      "research_category_review": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "{0} is a Research Category review"
+      },
+      "plausible": {
+        "arguments": [
+          "capability"
+        ],
+        "description": "{0} meets the plausible-pathway criterion"
+      },
+      "measurable": {
+        "arguments": [
+          "capability"
+        ],
+        "description": "{0} meets the measurable criterion"
+      },
+      "severe": {
+        "arguments": [
+          "capability"
+        ],
+        "description": "{0} meets the severe-harm criterion"
+      },
+      "net_new": {
+        "arguments": [
+          "capability"
+        ],
+        "description": "{0} meets the net-new criterion"
+      },
+      "irremediable": {
+        "arguments": [
+          "capability"
+        ],
+        "description": "{0} meets the instantaneous-or-irremediable criterion"
+      },
+      "criteria_tracking": {
+        "arguments": [
+          "capability"
+        ],
+        "description": "{0} is tracked as a category",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} be tracked as a category",
+          "permission": "criteria_exclusion"
+        }
+      },
+      "criteria_exclusion": {
+        "arguments": [
+          "capability"
+        ],
+        "description": "{0} may be tracked as a category",
+        "regulated": {
+          "role": "permission",
+          "default": "allow",
+          "act": "{0} be tracked as a category"
+        }
+      },
+      "adjustment_permission": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "{0} may have safeguards adjusted",
+        "regulated": {
+          "role": "permission",
+          "default": "allow",
+          "act": "{0} have its required safeguards adjusted"
+        }
       },
       "misuse_safeguards": {
         "arguments": [
@@ -474,6 +613,138 @@
           "role": "obligation",
           "default": "deny",
           "act": "{0} have the category tracked"
+        }
+      },
+      "coverage_decided": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "3.2: ambiguous coverage",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have SAG make the final coverage determination"
+        }
+      },
+      "checkpoint_selected": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "3.2: forecast-based checkpoint",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have a development checkpoint selected"
+        }
+      },
+      "additional_safety_measures": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "footnote 6: ordinarily no additional measures",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} require additional safety measures"
+        }
+      },
+      "adjustment_acknowledged": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "4.3: adjustment condition",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have its adjustment publicly acknowledged"
+        }
+      },
+      "more_protective": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "4.3: adjustment condition",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} keep safeguards more protective than the other developer's"
+        }
+      },
+      "validation_shared": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "4.3: adjustment condition",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have validation information shared"
+        }
+      },
+      "misalignment_report": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "Table 2: Long-range Autonomy response",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have a misalignment safeguards report"
+        }
+      },
+      "sandbagging_bound": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "Table 2: Sandbagging response; elicitation or conservative bound remains open",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have sandbagging addressed"
+        }
+      },
+      "ara_tracking": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "Table 2: ARA response",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have the research category tracked"
+        }
+      },
+      "robust_case": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "Table 2: Undermining Safeguards response",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have a safeguards case robust to the discovered capability"
+        }
+      },
+      "nuclear_safeguards": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "Table 2: Nuclear response; consultation remains open",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} heighten nuclear safeguards"
+        }
+      },
+      "research_results_received": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "2.3: SAG receives Research Category review results",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have SAG receive the research results"
         }
       }
     },
