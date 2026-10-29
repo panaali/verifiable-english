@@ -1,19 +1,10 @@
 """Measured level of the policy family (apol-req): verified bytes over source bytes.
 
-`python usecases/agent-policy/level.py` reads the requirement register
-(`requirements.json`), `answer-key.json`, `results.json` and
-`policy.manifest.json`, and prints verified bytes, source bytes and the OPEN
-bytes of each missing feature family. It is a relay: it compares answers VE
-already wrote to `results.json` with the frozen answer key, and runs the named
-tests of the cedar-attributes and gatekeeper-exemption rows. It decides
-nothing VE decides.
-
-It exits 1, and counts no bytes for the row concerned, when the register is
-malformed or its frozen rows changed, a row's bytes are not the UTF-8 length
-of its statement, a VERIFIED row links no case or test, a linked case does
-not agree, a named test fails, a row's VE text is not the text VE checked
-(policy.ve, log.ve and log-schema.ve as `results.json` records them, rule
-names bound by the manifest), or an OPEN row names no feature family.
+A relay: it reads the requirement register (`requirements.json`), compares the
+answers VE wrote to `results.json` with `answer-key.json`, runs the named tests
+of the cedar-attributes and gatekeeper-exemption rows, and prints verified,
+source and per-family OPEN bytes. It decides nothing VE decides. A row that
+fails a check counts nothing, and the run exits 1.
 """
 from __future__ import annotations
 
@@ -41,10 +32,8 @@ ROW_KEYS = {"id", "usecase", "source", "statement", "bytes", "status", "ve_text"
 APPENDED_KEYS = ROW_KEYS | {"date"}
 HEADER_KEYS = {"frozen_utc", "rows_sha256", "basis_by", "basis"}
 # Answer-key policy fields and the results.json policy_summary field each is compared with.
-POLICY_FIELDS = {"conflict": "conflict", "satisfiable_pairs": "satisfiable_pairs",
-                 "pair_queries": "pair_queries", "never_deciding": "never_deciding",
-                 "dead_guards": "dead_guards", "covered_tools": "covered_tools",
-                 "gap_tools": "gap_tools", "required_overlaps": "overlaps"}
+POLICY_FIELDS = {name: name for name in ("conflict", "satisfiable_pairs", "pair_queries", "never_deciding",
+                                         "dead_guards", "covered_tools", "gap_tools")} | {"required_overlaps": "overlaps"}
 # The one gap results.json lists that the key states separately, as `unnamed_tool: "gap or OPEN"`.
 UNDECLARED_TOOL = "(an undeclared tool)"
 
@@ -140,9 +129,7 @@ def _sorted(value):
 
 
 def case_agrees(case: str, key: dict, results: dict) -> bool:
-    """Whether results.json gives the answer the key states for one linked case.
-
-    Raises RegisterError when the case is not in the key or not in results.json."""
+    """Whether results.json gives the key's answer for one linked case; RegisterError if either lacks it."""
     kind, _, name = case.partition(":")
     try:
         if kind in ("action", "report"):
@@ -210,10 +197,8 @@ def run_pytest(nodeids):
 
 
 def measure(register, key, results, manifest, run_tests=None):
-    """{"verified", "source", "open": {family: bytes}, "rows": {id: status}, "failures": [...]}.
-
-    A row that fails a check counts in no verified or OPEN total; when the
-    register itself is malformed nothing is counted."""
+    """{"verified", "source", "open": {family: bytes}, "rows": {id: status}, "failures": [...]}; a failing
+    row counts in no verified or OPEN total, and a malformed register counts nothing."""
     level = {"verified": 0, "source": 0, "open": {family: 0 for family in FAMILIES}, "rows": {}, "failures": []}
     try:
         rows = rows_of(register)
@@ -262,7 +247,6 @@ def main(argv=None) -> int:
     parser.add_argument("--results", default=HERE / "results.json")
     parser.add_argument("--key", default=HERE / "answer-key.json")
     parser.add_argument("--manifest", default=HERE / "policy.manifest.json")
-    parser.add_argument("--json", action="store_true", help="print the level as JSON")
     args = parser.parse_args(argv)
     try:
         inputs = [_read(path) for path in (args.register, args.key, args.results, args.manifest)]
@@ -270,15 +254,11 @@ def main(argv=None) -> int:
         print(f"FAIL unreadable input: {error!r}", file=sys.stderr)
         return 1
     level = measure(*inputs)
-    if args.json:
-        print(json.dumps(level, indent=2, ensure_ascii=False))
-    else:
-        print(f"verified bytes: {level['verified']}")
-        print(f"source bytes: {level['source']}")
-        for family, size in sorted(level["open"].items(), key=lambda item: (-item[1], item[0])):
-            print(f"OPEN bytes, {family}: {size}")
-        for failure in level["failures"]:
-            print(f"FAIL {failure}", file=sys.stderr)
+    print(f"verified bytes: {level['verified']}\nsource bytes: {level['source']}")
+    for family, size in sorted(level["open"].items(), key=lambda item: (-item[1], item[0])):
+        print(f"OPEN bytes, {family}: {size}")
+    for failure in level["failures"]:
+        print(f"FAIL {failure}", file=sys.stderr)
     return 1 if level["failures"] else 0
 
 
