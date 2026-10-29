@@ -13329,6 +13329,8 @@
         "VE.Scope.Examples.situationsPieces",
         "VE.Scope.Examples.softEnv",
         "VE.Scope.Examples.spanOver",
+        "VE.Scope.Examples.titleCarveA",
+        "VE.Scope.Examples.titleCarveB",
         "VE.Scope.Examples.u0173",
         "VE.Scope.Examples.udhrAnchors",
         "VE.Scope.Examples.udhrDoc",
@@ -14037,7 +14039,11 @@
         "VE.Scope.substOwn"
       ]
     },
-    "VE/Scope/Theorems.lean": {},
+    "VE/Scope/Theorems.lean": {
+      "P": [
+        "VE.Scope.insertBy"
+      ]
+    },
     "VE/Events/Conservative.lean": {
       "S": [
         "VE.Events.oldEnv"
