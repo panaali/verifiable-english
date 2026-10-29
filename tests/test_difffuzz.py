@@ -132,6 +132,34 @@ def test_nonobject_constant_precedes_predicate_sort_fault(built):
         surface.close()
 
 
+def test_request_envelope_fields_precede_predicate_sort_fault(built):
+    """Required and extra envelope fields win over nested vocabulary faults in every engine."""
+    surface = df.SURFACES["requests"]()
+    try:
+        seed = next(s for s in surface.seeds() if s.id == "conformance/elaborated-document.json/11")
+        for fault in ("missing_profiles", "missing_revision", "extra_field"):
+            root = deepcopy(seed.root)
+            root["environment"] = {
+                "language": "ve.core@0.2", "profiles": ["relational-fol@0"],
+                "spec_revision": "ve-v0.2-expand2-2026-09-25",
+                "vocabulary": {"sorts": {}, "predicates": {
+                    "in_legal": {"arguments": ["p"], "description": "w"}}, "constants": {}},
+            }
+            if fault == "missing_profiles":
+                del root["environment"]["profiles"]
+            elif fault == "missing_revision":
+                del root["environment"]["spec_revision"]
+            else:
+                root["environment"]["extra"] = 1
+            answers = {"python": surface.python(seed, root),
+                       "lean": surface.lean([(seed, root)])[0],
+                       "rust": surface.rust([(seed, root)])[0]}
+            assert {name: answer["code"] for name, answer in answers.items()} == dict.fromkeys(
+                ("python", "lean", "rust"), "InvalidInput"), (fault, answers)
+    finally:
+        surface.close()
+
+
 def test_f13_duplicate_soft_rank_and_rust_field_error_reproduce(built):
     """DF-15 covers the fixed-seed soft environment disagreement in the CI sample."""
     entry = next(e for e in df.load_baseline()['entries'] if e['id'] == 'environment-ec2b2bc949a09a26')
