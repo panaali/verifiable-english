@@ -40,6 +40,8 @@ from typing import Callable, Iterable
 
 ROOT = Path(__file__).resolve().parents[1]
 LOCK = "ve/english_grammar/LOCK.json"
+SOURCE_WORDS_TARGET = "ve/english_grammar/source_words.json"
+SOURCE_WORDS_SOURCE = "lean/VE/EnglishGrammar/SourceWords.lean"
 LOCK_FORMAT = "ve.english-grammar-lock@1"
 VERSION_TARGET = "lean/VE/EnglishGrammar/Fixed/Version.lean"
 
@@ -78,6 +80,7 @@ TRUSTED = (
     "lean/VE/EnglishGrammar/Diagnose.lean",
     "lean/VE/EnglishGrammar/Syntax.lean",
     "lean/VE/EnglishGrammar/Catalogue.lean",
+    SOURCE_WORDS_SOURCE,
     "lean/VE/EnglishGrammar/Rules.lean",
     "lean/VE/EnglishGrammar/Actions.lean",
     "lean/VE/EnglishGrammar/Encode.lean",
@@ -94,6 +97,7 @@ UNTRUSTED = {
     "lean/VE/Grammar/TableInvariant.lean": "parser invariants: proved",
     "lean/VE/Grammar/TableProofs.lean": "parser proofs",
     "lean/VE/EnglishGrammar/EngineExamples.lean": "fixtures",
+    "lean/VE/EnglishGrammar/SourceWordsExamples.lean": "boundary fixtures",
     "lean/VE/EnglishGrammar/Examples.lean": "fixtures",
     "lean/VE/EnglishGrammar/FoldAgree.lean": "a theorem: foldChar agrees with the discourse fold",
     "lean/VE/EnglishGrammar/LexiconFixtures.lean": "generated fixtures",
@@ -474,7 +478,23 @@ def hashed_files() -> list[str]:
     """Every file the lock hashes: the table sources, the generated tables, the staged catalogue, the list of
     tables, the trusted Lean files."""
     return sorted({p for source, target, _ in PROFILES.values() for p in (source, target)} | set(TRUSTED)
-                  | {STAGED_TARGET, TABLES_TARGET})
+                  | {STAGED_TARGET, TABLES_TARGET, SOURCE_WORDS_TARGET})
+
+
+def source_words_blob(root: Path) -> bytes:
+    """Ask Lean for the checked catalogue; Python never parses Lean source or repeats its invariants."""
+    lake = str(Path.home() / ".elan/bin/lake")
+    for argv in ([lake, "build", "VE.EnglishGrammar.SourceWords"],
+                 [lake, "env", "lean", "--run", "../tools/source_words_export.lean"]):
+        done = subprocess.run(argv, cwd=root / "lean", capture_output=True, check=False)
+        if done.returncode:
+            raise GrammarSourceError(f"SourceWords Lean export failed: {done.stderr.decode('utf-8', 'replace')[-1200:]}")
+    return done.stdout
+
+
+def action_hashes(hashes: dict[str, str]) -> dict[str, str]:
+    """The source-word view is locked, but it does not change grammar actions_version."""
+    return {p: h for p, h in hashes.items() if p not in {SOURCE_WORDS_SOURCE, SOURCE_WORDS_TARGET}}
 
 
 def generated_extras() -> dict[str, bytes]:
@@ -593,7 +613,7 @@ def check(read: Read, listing: Callable[[], Iterable[str]], base_lock: bytes | N
             errors.append(str(exc))
             return errors
         if base["actions_version"] == lock["actions_version"]:
-            for path in sorted(set(base["files"]) | set(now)):
+            for path in sorted(set(action_hashes(base["files"])) | set(action_hashes(now))):
                 before, after = base["files"].get(path), now.get(path)
                 if before != after:
                     errors.append(f"{path}: SHA-256 {before or 'absent'} at the base, {after or 'absent'} now, "
@@ -646,8 +666,9 @@ def write(root: Path, actions_version: str | None = None) -> list[str]:
             raise GrammarSourceError(f"{path}: hashed by the lock but missing")
         hashes[path] = sha256(blob)
     version = actions_version or old["actions_version"]
-    if old is not None and hashes != old["files"] and version == old["actions_version"]:
-        changed = sorted(p for p in set(hashes) | set(old["files"]) if hashes.get(p) != old["files"].get(p))
+    if old is not None and action_hashes(hashes) != action_hashes(old["files"]) and version == old["actions_version"]:
+        changed = sorted(p for p in set(action_hashes(hashes)) | set(action_hashes(old["files"]))
+                         if hashes.get(p) != old["files"].get(p))
         raise GrammarSourceError(f"{', '.join(changed)} changed: give a new --actions-version "
                                  f"(now {old['actions_version']!r})")
     outputs[VERSION_TARGET] = render_version(version)
@@ -679,11 +700,16 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         if args.write:
+            source_words = args.root / SOURCE_WORDS_TARGET
+            source_words.parent.mkdir(parents=True, exist_ok=True)
+            source_words.write_bytes(source_words_blob(args.root))
             for path in write(args.root, args.actions_version):
                 print(path)
             return 0
         base = git_blob(args.root, args.base, LOCK) if args.base else None
         errors = check(file_reader(args.root), file_listing(args.root), base)
+        if (actual := file_reader(args.root)(SOURCE_WORDS_TARGET)) != source_words_blob(args.root):
+            errors.append(f"{SOURCE_WORDS_TARGET}: differs from the Lean catalogue; run --write")
     except GrammarSourceError as exc:
         print(f"english_grammar_gen: {exc}", file=sys.stderr)
         return 1
