@@ -14,7 +14,7 @@ Open items: gi-2a follows; no DRI signature is reserved. Pilot bytes expected: 0
 | Update the hand-reviewed JSON classification and route recipe path | AGENT | `ve/assurance-manifest.json`, `docs/ROUTE-RECIPE.md`; `test_every_json_handling_lean_file_is_classified`, `test_every_path_named_in_agents_md_exists[ROUTE-RECIPE.md]` |
 | Exclude both manifests from the statement dump build and imports; retain their generated hashes in declarations | AGENT | `tools/lean_statements.py`; `test_gi1_dump_build_omits_both_audit_modules`, `test_committed_manifests_are_the_generated_ones`; no `lean/statements.txt` diff |
 | Derive the two `RUN_ONLY` entries from `audit.MANIFESTS`, and reject either manifest returning to the default closure | AGENT | `tools/check_lean_imports.py`; `test_every_lean_source_is_built_by_the_default_build`; Lean import mutant below |
-| Full gate and candidate checkout run `Lean audit`; x86 essentials audits when the Mac leg is absent | AGENT | `test_lean_audit_stage_runs_in_full_and_candidate_mode`; `tests/test_lean_service_audit.py` matches x86 essentials' `test_lean_service*.py` selector and runs `lean/audit.py` on its x86 scratch path; `test_x86_audit_refuses_failure_and_accepts_success` |
+| Full gate and candidate checkout run `Lean audit`; x86 essentials audits when the Mac leg is absent | AGENT | `test_lean_audit_stage_runs_in_full_and_candidate_mode`; `tests/test_lean_service_audit.py` matches x86 essentials' `test_lean_service*.py` selector and runs `lean/audit.py` on its x86 scratch path; `test_x86_audit_refuses_failure_and_accepts_success`; `x86_essentials.essential_files()` probe includes the file |
 | Signed statement gate: no theorem statement changes | AGENT | `git diff main...HEAD -- lean/statements.txt` is empty; DRI decisions `dri-decisions-20261028-gen-inv-design.md` item 1 and `-b.md` items 1, 3 |
 | Final candidate gate | EXTERNAL, merge chain | Runs on committed HEAD after handoff, per BUILDER_TEST_BUDGET; not run by builder. |
 
@@ -55,11 +55,11 @@ gi-2a: train-only registry field, inventory overlay and `inventory_path` accesso
 3. Tests and gates can fail: PASS (five seeded bugs and their named failures above).
 4. Python, Lean and Rust agree: N.A. (no answer or Rust behavior change).
 5. R8 binding: N.A. (no relayed field change).
-6. Gate evidence matches final HEAD: PASS (`lean/audit.py`, final `lake build`; the chain owns the final-HEAD gate).
+6. Gate evidence matches final HEAD: N.A. (the chain owns the final-HEAD full gate; `git status --short` is clean).
 7. No unsigned item: PASS (`tools/trust_map.py --check`, `DELTA.md`).
 8. Every user-visible change in DELTA: PASS (`lean/statements.txt` and `lean/axioms.txt` byte-identical; no answer path changed).
 9. Test selection finds the checks: PASS (selected run recorded below).
 10. Lean statements and proofs: PASS (empty `lean/statements.txt` diff; `test_committed_manifests_are_the_generated_ones`).
 11. Budgets, limits and deadlines: N.A. (no runtime limit changed).
-12. CPU or memory regression: PASS (`timing.json`; no evaluator changed).
+12. CPU or memory regression: N.A. (no evaluator changed; build wall times are in `timing.json`).
 13. Removed test trailers: N.A. (no test removed or renamed).
