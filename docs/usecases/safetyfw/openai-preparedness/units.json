@@ -20,62 +20,62 @@
   },
   {
    "blockers": [
-    "readings"
+    "SC"
    ],
    "bytes": 101,
    "id": "p2-u3",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 163,
    "id": "p2-u4",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "SC"
    ],
    "bytes": 143,
    "id": "p2-u5",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 244,
    "id": "p2-u6",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 174,
    "id": "p2-u7",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 169,
    "id": "p2-u8",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -90,42 +90,42 @@
   },
   {
    "blockers": [
-    "readings"
+    "SC"
    ],
    "bytes": 209,
    "id": "p2-u10",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 137,
    "id": "p2-u11",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AT"
    ],
    "bytes": 158,
    "id": "p2-u12",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "hedged_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 90,
    "id": "p2-u13",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -140,12 +140,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 143,
    "id": "p2-u15",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -160,32 +160,33 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 101,
    "id": "p2-u17",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AT"
    ],
    "bytes": 135,
    "id": "p2-u18",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "hedged_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "no claim to check"
+    "ET"
    ],
    "bytes": 1952,
    "id": "p3-u19",
-   "kind": "exposition",
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "event_order",
+   "status": "UNFORMALISED"
   },
   {
    "blockers": [
@@ -199,32 +200,32 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 198,
    "id": "p4-u21",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 16,
    "id": "p4-u22",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 264,
    "id": "p4-u23",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -239,12 +240,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 175,
    "id": "p4-u25",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -259,12 +260,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 133,
    "id": "p4-u27",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -279,102 +280,102 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 200,
    "id": "p4-u29",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 264,
    "id": "p4-u30",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 248,
    "id": "p4-u31",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 78,
    "id": "p4-u32",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 153,
    "id": "p4-u33",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 190,
    "id": "p4-u34",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 176,
    "id": "p4-u35",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 223,
    "id": "p4-u36",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 60,
    "id": "p4-u37",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 190,
    "id": "p4-u38",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -384,17 +385,17 @@
    "bytes": 235,
    "id": "p4-u39",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 115,
    "id": "p4-u40",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -404,17 +405,17 @@
    "bytes": 399,
    "id": "p4-u41",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 102,
    "id": "p4-u42",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -424,7 +425,7 @@
    "bytes": 185,
    "id": "p4-u43",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -434,27 +435,27 @@
    "bytes": 7,
    "id": "p4-u44",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 400,
    "id": "p5-u45",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 299,
    "id": "p5-u46",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -490,22 +491,22 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 129,
    "id": "p5-u50",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 144,
    "id": "p5-u51",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -525,7 +526,7 @@
    "bytes": 230,
    "id": "p5-u53",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -535,17 +536,17 @@
    "bytes": 178,
    "id": "p5-u54",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 99,
    "id": "p5-u55",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -575,7 +576,7 @@
    "bytes": 112,
    "id": "p5-u58",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -595,7 +596,7 @@
    "bytes": 158,
    "id": "p5-u60",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -630,12 +631,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 124,
    "id": "p6-u64",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -657,12 +658,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 279,
    "id": "p6-u67",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -672,7 +673,7 @@
    "bytes": 151,
    "id": "p6-u68",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -707,12 +708,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 328,
    "id": "p6-u72",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -744,7 +745,7 @@
    "bytes": 214,
    "id": "p6-u75",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -761,7 +762,7 @@
    "bytes": 251,
    "id": "p6-u77",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -786,12 +787,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 71,
    "id": "p6-u80",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -820,22 +821,22 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 154,
    "id": "p6-u83",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 230,
    "id": "p6-u84",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -847,12 +848,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "SC"
    ],
    "bytes": 324,
    "id": "p7-u86",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
    "status": "UNFORMALISED"
   },
   {
@@ -872,17 +873,17 @@
    "bytes": 184,
    "id": "p7-u88",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 265,
    "id": "p7-u89",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -894,12 +895,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "SC"
    ],
    "bytes": 180,
    "id": "p7-u91",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
    "status": "UNFORMALISED"
   },
   {
@@ -914,22 +915,22 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 270,
    "id": "p7-u93",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 71,
    "id": "p7-u94",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -962,12 +963,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "AT"
    ],
    "bytes": 402,
    "id": "p7-u98",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "hedged_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -982,12 +983,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 148,
    "id": "p7-u100",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -997,7 +998,7 @@
    "bytes": 57,
    "id": "p7-u101",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -1012,12 +1013,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 70,
    "id": "p8-u103",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -1032,12 +1033,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 176,
    "id": "p8-u105",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -1052,12 +1053,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 175,
    "id": "p8-u107",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -1067,7 +1068,7 @@
    "bytes": 210,
    "id": "p8-u108",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -1077,7 +1078,7 @@
    "bytes": 511,
    "id": "p8-u109",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -1087,17 +1088,17 @@
    "bytes": 330,
    "id": "p8-u110",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "SC"
    ],
    "bytes": 396,
    "id": "p8-u111",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
    "status": "UNFORMALISED"
   },
   {
@@ -1107,17 +1108,18 @@
    "bytes": 176,
    "id": "p8-u112",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "no claim to check"
+    "AP"
    ],
    "bytes": 270,
    "id": "p8-u113",
-   "kind": "meta",
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "unmapped_duty",
+   "status": "UNFORMALISED"
   },
   {
    "blockers": [
@@ -1131,12 +1133,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 164,
    "id": "p8-u115",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -1156,7 +1158,7 @@
    "bytes": 67,
    "id": "p9-u117",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -1166,7 +1168,7 @@
    "bytes": 205,
    "id": "p9-u118",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -1176,97 +1178,97 @@
    "bytes": 133,
    "id": "p9-u119",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 185,
    "id": "p9-u120",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 116,
    "id": "p9-u121",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 191,
    "id": "p9-u122",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AT"
    ],
    "bytes": 160,
    "id": "p9-u123",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "hedged_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 94,
    "id": "p9-u124",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 158,
    "id": "p9-u125",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 240,
    "id": "p9-u126",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AT"
    ],
    "bytes": 347,
    "id": "p9-u127",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "hedged_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 496,
    "id": "p9-u128",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -1281,12 +1283,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 249,
    "id": "p9-u130",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -1301,22 +1303,22 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 54,
    "id": "p9-u132",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 137,
    "id": "p9-u133",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -1326,7 +1328,7 @@
    "bytes": 52,
    "id": "p9-u134",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -1336,7 +1338,7 @@
    "bytes": 142,
    "id": "p9-u135",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -1356,7 +1358,7 @@
    "bytes": 156,
    "id": "p9-u137",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -1371,22 +1373,22 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 404,
    "id": "p10-u139",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 196,
    "id": "p10-u140",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -1396,7 +1398,7 @@
    "bytes": 121,
    "id": "p10-u141",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -1415,37 +1417,37 @@
    "bytes": 42,
    "id": "p10-u143",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "SC"
    ],
    "bytes": 90,
    "id": "p10-u144",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "SC"
    ],
    "bytes": 147,
    "id": "p10-u145",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "SC"
    ],
    "bytes": 250,
    "id": "p10-u146",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
    "status": "UNFORMALISED"
   },
   {
@@ -1465,7 +1467,7 @@
    "bytes": 185,
    "id": "p10-u148",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -1480,12 +1482,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "SC"
    ],
    "bytes": 186,
    "id": "p10-u150",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
    "status": "UNFORMALISED"
   },
   {
@@ -1495,15 +1497,18 @@
    "bytes": 289,
    "id": "p10-u151",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
-   "blockers": [],
+   "blockers": [
+    "AT"
+   ],
    "bytes": 40,
    "id": "p10-u152",
-   "kind": "norm",
-   "status": "CHECKED"
+   "kind": "unformalised",
+   "reason": "attitude",
+   "status": "UNFORMALISED"
   },
   {
    "blockers": [
@@ -1512,17 +1517,17 @@
    "bytes": 27,
    "id": "p10-u153",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 19,
    "id": "p10-u154",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -1532,7 +1537,7 @@
    "bytes": 198,
    "id": "p10-u155",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -1548,22 +1553,22 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 309,
    "id": "p11-u157",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 177,
    "id": "p11-u158",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -1578,12 +1583,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 68,
    "id": "p11-u160",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -1607,12 +1612,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 72,
    "id": "p11-u163",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -1637,22 +1642,22 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 219,
    "id": "p11-u166",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "SC"
    ],
    "bytes": 59,
    "id": "p11-u167",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
    "status": "UNFORMALISED"
   },
   {
@@ -1662,17 +1667,18 @@
    "bytes": 107,
    "id": "p11-u168",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "no claim to check"
+    "AT"
    ],
    "bytes": 194,
    "id": "p11-u169",
-   "kind": "meta",
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
   },
   {
    "blockers": [
@@ -1685,22 +1691,22 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 64,
    "id": "p11-u171",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "SC"
    ],
    "bytes": 147,
    "id": "p11-u172",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
    "status": "UNFORMALISED"
   },
   {
@@ -1710,7 +1716,7 @@
    "bytes": 51,
    "id": "p11-u173",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -1720,7 +1726,7 @@
    "bytes": 78,
    "id": "p11-u174",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -1740,17 +1746,17 @@
    "bytes": 178,
    "id": "p11-u176",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 47,
    "id": "p11-u177",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -1760,7 +1766,7 @@
    "bytes": 86,
    "id": "p11-u178",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -1770,7 +1776,7 @@
    "bytes": 135,
    "id": "p11-u179",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -1780,7 +1786,7 @@
    "bytes": 91,
    "id": "p12-u180",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -1790,7 +1796,7 @@
    "bytes": 284,
    "id": "p12-u181",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -1805,12 +1811,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 169,
    "id": "p12-u183",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -1820,7 +1826,7 @@
    "bytes": 18,
    "id": "p12-u184",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -1830,17 +1836,17 @@
    "bytes": 131,
    "id": "p12-u185",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "SC"
    ],
    "bytes": 250,
    "id": "p12-u186",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
    "status": "UNFORMALISED"
   },
   {
@@ -1850,7 +1856,7 @@
    "bytes": 185,
    "id": "p12-u187",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -1860,27 +1866,28 @@
    "bytes": 160,
    "id": "p12-u188",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AP"
+   ],
+   "bytes": 223,
+   "id": "p12-u189",
+   "kind": "unformalised",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
     "readings"
    ],
-   "bytes": 223,
-   "id": "p12-u189",
-   "kind": "unformalised",
-   "reason": "not_translated",
-   "status": "UNFORMALISED"
-  },
-  {
-   "blockers": [
-    "no claim to check"
-   ],
    "bytes": 30,
    "id": "p12-u190",
-   "kind": "meta",
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "unmapped_claim",
+   "status": "UNFORMALISED"
   },
   {
    "blockers": [
@@ -1889,7 +1896,7 @@
    "bytes": 49,
    "id": "p12-u191",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -1899,17 +1906,17 @@
    "bytes": 84,
    "id": "p12-u192",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "SC"
    ],
    "bytes": 217,
    "id": "p12-u193",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
    "status": "UNFORMALISED"
   },
   {
@@ -1939,67 +1946,67 @@
    "bytes": 71,
    "id": "p12-u196",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 169,
    "id": "p12-u197",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 153,
    "id": "p12-u198",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 224,
    "id": "p12-u199",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 146,
    "id": "p12-u200",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "SC"
    ],
    "bytes": 159,
    "id": "p12-u201",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AT"
    ],
    "bytes": 60,
    "id": "p12-u202",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "hedged_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -2054,22 +2061,22 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 92,
    "id": "p13-u208",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 63,
    "id": "p13-u209",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -2094,22 +2101,22 @@
   },
   {
    "blockers": [
-    "ET"
+    "AT"
    ],
    "bytes": 185,
    "id": "p13-u212",
    "kind": "unformalised",
-   "reason": "event_order",
+   "reason": "hedged_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 146,
    "id": "p13-u213",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -2129,17 +2136,17 @@
    "bytes": 46,
    "id": "p13-u215",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 100,
    "id": "p13-u216",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -2149,15 +2156,18 @@
    "bytes": 27,
    "id": "p13-u217",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
-   "blockers": [],
+   "blockers": [
+    "AP"
+   ],
    "bytes": 89,
    "id": "p13-u218",
-   "kind": "norm",
-   "status": "CHECKED"
+   "kind": "unformalised",
+   "reason": "unmapped_clause",
+   "status": "UNFORMALISED"
   },
   {
    "blockers": [
@@ -2176,17 +2186,17 @@
    "bytes": 19,
    "id": "p13-u220",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "SC"
    ],
    "bytes": 137,
    "id": "p13-u221",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
    "status": "UNFORMALISED"
   },
   {
@@ -2218,12 +2228,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "SC"
    ],
    "bytes": 278,
    "id": "p13-u225",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
    "status": "UNFORMALISED"
   },
   {
@@ -2242,7 +2252,7 @@
    "bytes": 44,
    "id": "p14-u227",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -2257,22 +2267,22 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 353,
    "id": "p14-u229",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 235,
    "id": "p14-u230",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -2302,17 +2312,17 @@
    "bytes": 165,
    "id": "p14-u233",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 130,
    "id": "p14-u234",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -2327,22 +2337,22 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 226,
    "id": "p15-u236",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 32,
    "id": "p15-u237",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -2352,37 +2362,37 @@
    "bytes": 67,
    "id": "p15-u238",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 252,
    "id": "p15-u239",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 206,
    "id": "p15-u240",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 133,
    "id": "p15-u241",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -2392,7 +2402,7 @@
    "bytes": 79,
    "id": "p15-u242",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -2402,7 +2412,7 @@
    "bytes": 144,
    "id": "p15-u243",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -2412,37 +2422,37 @@
    "bytes": 190,
    "id": "p15-u244",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 174,
    "id": "p15-u245",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 56,
    "id": "p15-u246",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 153,
    "id": "p15-u247",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -2452,7 +2462,7 @@
    "bytes": 154,
    "id": "p15-u248",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -2468,22 +2478,22 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 81,
    "id": "p15-u250",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AT"
    ],
    "bytes": 160,
    "id": "p15-u251",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "hedged_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -2504,17 +2514,17 @@
    "bytes": 144,
    "id": "p15-u253",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 256,
    "id": "p15-u254",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -2534,67 +2544,67 @@
    "bytes": 44,
    "id": "p15-u256",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AT"
    ],
    "bytes": 154,
    "id": "p15-u257",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "hedged_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 155,
    "id": "p15-u258",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 225,
    "id": "p15-u259",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "SC"
    ],
    "bytes": 243,
    "id": "p15-u260",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 173,
    "id": "p15-u261",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 315,
    "id": "p15-u262",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -2604,7 +2614,7 @@
    "bytes": 4,
    "id": "p16-u263",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -2614,17 +2624,17 @@
    "bytes": 32,
    "id": "p16-u264",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 171,
    "id": "p16-u265",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -2634,7 +2644,7 @@
    "bytes": 194,
    "id": "p16-u266",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -2654,7 +2664,7 @@
    "bytes": 52,
    "id": "p16-u268",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -2664,25 +2674,28 @@
    "bytes": 148,
    "id": "p16-u269",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "SC"
    ],
    "bytes": 226,
    "id": "p16-u270",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
    "status": "UNFORMALISED"
   },
   {
-   "blockers": [],
+   "blockers": [
+    "AP"
+   ],
    "bytes": 155,
    "id": "p16-u271",
-   "kind": "norm",
-   "status": "CHECKED"
+   "kind": "unformalised",
+   "reason": "unmapped_clause",
+   "status": "UNFORMALISED"
   },
   {
    "blockers": [
@@ -2691,7 +2704,7 @@
    "bytes": 21,
    "id": "p16-u272",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -2701,17 +2714,17 @@
    "bytes": 204,
    "id": "p16-u273",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 331,
    "id": "p16-u274",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -2721,7 +2734,7 @@
    "bytes": 85,
    "id": "p16-u275",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -2731,7 +2744,7 @@
    "bytes": 42,
    "id": "p16-u276",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -2746,12 +2759,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "SC"
    ],
    "bytes": 64,
    "id": "p16-u278",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
    "status": "UNFORMALISED"
   },
   {
@@ -2761,7 +2774,7 @@
    "bytes": 68,
    "id": "p16-u279",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -2771,7 +2784,7 @@
    "bytes": 85,
    "id": "p16-u280",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -2791,7 +2804,7 @@
    "bytes": 119,
    "id": "p16-u282",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -2803,12 +2816,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 148,
    "id": "p16-u284",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -2828,17 +2841,17 @@
    "bytes": 39,
    "id": "p16-u286",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 69,
    "id": "p16-u287",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -2848,7 +2861,7 @@
    "bytes": 159,
    "id": "p16-u288",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -2869,27 +2882,27 @@
    "bytes": 12,
    "id": "p16-u290",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 227,
    "id": "p16-u291",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 117,
    "id": "p16-u292",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -2904,12 +2917,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "AT"
    ],
    "bytes": 106,
    "id": "p17-u294",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "hedged_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -2949,27 +2962,27 @@
    "bytes": 309,
    "id": "p17-u298",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 118,
    "id": "p17-u299",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "SC"
    ],
    "bytes": 157,
    "id": "p17-u300",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
    "status": "UNFORMALISED"
   },
   {
@@ -2979,7 +2992,7 @@
    "bytes": 257,
    "id": "p17-u301",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -2994,12 +3007,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 161,
    "id": "p17-u303",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -3014,12 +3027,13 @@
   },
   {
    "blockers": [
-    "no claim to check"
+    "AT"
    ],
    "bytes": 101,
    "id": "p18-u305",
-   "kind": "exposition",
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
   },
   {
    "blockers": [
@@ -3113,12 +3127,13 @@
   },
   {
    "blockers": [
-    "no claim to check"
+    "AP"
    ],
    "bytes": 117,
    "id": "p18-u316",
-   "kind": "exposition",
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "unmapped_duty",
+   "status": "UNFORMALISED"
   },
   {
    "blockers": [
@@ -3212,12 +3227,13 @@
   },
   {
    "blockers": [
-    "no claim to check"
+    "readings"
    ],
    "bytes": 257,
    "id": "p19-u327",
-   "kind": "exposition",
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "unmapped_claim",
+   "status": "UNFORMALISED"
   },
   {
    "blockers": [
@@ -3232,12 +3248,13 @@
   },
   {
    "blockers": [
-    "no claim to check"
+    "SC"
    ],
    "bytes": 157,
    "id": "p19-u329",
-   "kind": "exposition",
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "quantifier_scope",
+   "status": "UNFORMALISED"
   },
   {
    "blockers": [
@@ -3277,39 +3294,43 @@
   },
   {
    "blockers": [
-    "no claim to check"
+    "AP"
    ],
    "bytes": 226,
    "id": "p19-u334",
-   "kind": "exposition",
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "unmapped_duty",
+   "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "no claim to check"
+    "AT"
    ],
    "bytes": 266,
    "id": "p19-u335",
-   "kind": "exposition",
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "no claim to check"
+    "AT"
    ],
    "bytes": 259,
    "id": "p19-u336",
-   "kind": "exposition",
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "no claim to check"
+    "readings"
    ],
    "bytes": 98,
    "id": "p20-u337",
-   "kind": "exposition",
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "unmapped_claim",
+   "status": "UNFORMALISED"
   },
   {
    "blockers": [
@@ -3358,12 +3379,13 @@
   },
   {
    "blockers": [
-    "no claim to check"
+    "readings"
    ],
    "bytes": 108,
    "id": "p20-u343",
-   "kind": "exposition",
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "unmapped_claim",
+   "status": "UNFORMALISED"
   },
   {
    "blockers": [
@@ -3421,31 +3443,33 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 208,
    "id": "p20-u350",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "no claim to check"
+    "readings"
    ],
    "bytes": 101,
    "id": "p20-u351",
-   "kind": "exposition",
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "unmapped_claim",
+   "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "no claim to check"
+    "readings"
    ],
    "bytes": 37,
    "id": "p20-u352",
-   "kind": "exposition",
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "unmapped_claim",
+   "status": "UNFORMALISED"
   },
   {
    "blockers": [
@@ -3485,12 +3509,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 199,
    "id": "p20-u357",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -3558,12 +3582,13 @@
   },
   {
    "blockers": [
-    "no claim to check"
+    "AP"
    ],
    "bytes": 284,
    "id": "p20-u365",
-   "kind": "exposition",
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "unmapped_duty",
+   "status": "UNFORMALISED"
   },
   {
    "blockers": [
@@ -3572,17 +3597,17 @@
    "bytes": 173,
    "id": "p21-u366",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 163,
    "id": "p21-u367",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -3626,32 +3651,32 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 211,
    "id": "p21-u372",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 262,
    "id": "p21-u373",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 309,
    "id": "p21-u374",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -3661,7 +3686,7 @@
    "bytes": 132,
    "id": "p21-u375",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -3671,7 +3696,7 @@
    "bytes": 461,
    "id": "p21-u376",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -3681,27 +3706,27 @@
    "bytes": 143,
    "id": "p21-u377",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 246,
    "id": "p21-u378",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "SC"
    ],
    "bytes": 53,
    "id": "p21-u379",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "quantifier_scope",
    "status": "UNFORMALISED"
   },
   {
@@ -3716,12 +3741,12 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 77,
    "id": "p21-u381",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -3731,7 +3756,7 @@
    "bytes": 184,
    "id": "p21-u382",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -3746,22 +3771,22 @@
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 84,
    "id": "p21-u384",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 143,
    "id": "p21-u385",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   },
   {
@@ -3771,7 +3796,7 @@
    "bytes": 229,
    "id": "p22-u386",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
@@ -3791,17 +3816,17 @@
    "bytes": 81,
    "id": "p22-u388",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_claim",
    "status": "UNFORMALISED"
   },
   {
    "blockers": [
-    "readings"
+    "AP"
    ],
    "bytes": 644,
    "id": "p22-u389",
    "kind": "unformalised",
-   "reason": "not_translated",
+   "reason": "unmapped_duty",
    "status": "UNFORMALISED"
   }
  ]

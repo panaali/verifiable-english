@@ -92,7 +92,43 @@ READINGS = {
 SET_FAMILIES = {"RS0": "readings", "RS1": "DF", "RS8": "DF", "RS5": "readings",
                 "RS4": "readings", "RS12": "SC", "RS15": "readings", "RS9": "DF"}
 BLOCKED_RULE_REASONS = {"f7-evaluations": "event_order", "f9-specific": "quantifier_scope",
-                        "f9-efficacy": "quantifier_scope", "f9-threshold": "quantifier_scope"}
+                        "f9-efficacy": "quantifier_scope", "f9-threshold": "quantifier_scope",
+                        "f7-report": "attitude", "f14-document": "unmapped_clause",
+                        "f16-sag-recommend": "unmapped_clause"}
+BLOCKER_FAMILY = {"event_order": "ET", "quantifier_scope": "SC", "attitude": "AT",
+                  "unmapped_clause": "AP"}
+
+# Each source fragment must map to a named element of the admitted rule or its
+# vocabulary. The fragments must cover every word in the source unit. A new
+# CHECKED rule requires an entry for every condition, quantifier and object.
+CHECKED_CLAUSES = {
+    "f16-ssc-visibility": (
+        ("The Safety and Security Committee (SSC) of the OpenAI Board of Directors (Board)",
+         "description", "Safety and Security Committee of the OpenAI Board of Directors"),
+        ("will be given", "sign", True),
+        ("visibility into processes", "act", "visibility into processes"),
+    ),
+}
+
+
+def _complete_clause_map(block_id, source_text):
+    clauses = CHECKED_CLAUSES.get(block_id)
+    if not clauses:
+        return False
+    norm = json.loads(T.parsed_rule(block_id))
+    predicate = T.vocabulary.environment()["vocabulary"]["predicates"][norm["predicate"]]
+    elements = {"description": predicate["description"], "sign": norm["sign"],
+                "act": predicate["regulated"]["act"], "guard": json.dumps(norm["guard"])}
+    residual = source_text.decode()
+    for fragment, element, expected in clauses:
+        if residual.count(fragment) != 1:
+            return False
+        target = elements[element]
+        matches = target == expected if isinstance(expected, bool) else expected in target
+        if not matches:
+            return False
+        residual = residual.replace(fragment, "", 1)
+    return not re.search(r"\w", residual)
 OPEN_FOR = {
     "rs1-misuse-bio": ("ot1", "ot4"), "rs1-misuse-cyb": ("ot1", "ot4"),
     "rs1-alignment-cyb": ("ot1", "ot5"), "rs1-security": ("ot1", "ot3"),
@@ -162,22 +198,56 @@ def _model():
         "constants": {c: c for c in env.constants}, "relations": relations})
 
 
+CLAIM_MARKER = re.compile(rb"\b(?:must|shall|will|should|may|might|could|required|require|requires|"
+                          rb"commit|committed|ensure|undertake|we|our|can)\b", re.I)
+
+
 def _fallback(page, start, text):
-    # Page furniture and illustrative tables are labelled only when they contain no modal claim.
-    # A new requirement in an appendix must remain a visible translation gap until placed.
-    if page in (1, 3, 18, 19, 20) and re.search(rb"\b(?:must|should|shall|require|requires|required|will)\b", text, re.I):
-        return unformalised("not_translated"), "readings"
-    if page in (1, 3, 18, 19, 20):
+    # Positive exposition kinds are recognised on the whole unit. A heading
+    # prefix cannot hide a claim later in the same source span.
+    stripped = text.strip()
+    if not CLAIM_MARKER.search(stripped) and (
+        re.fullmatch(rb"(?:Contents|Appendix [A-Z0-9. :_-]+|Table [0-9]+(?:: [^.!?]+)?|[0-9.]+ [A-Z][^.!?]{0,70})", stripped)
+        or re.fullmatch(rb"[0-9]+", stripped)
+        or stripped.startswith((b"Preparedness Framework Version", b"Last updated:"))
+        or (page in (18, 19, 20) and stripped.startswith(b"\xe2\x80\xa2"))
+    ):
         return label("exposition"), None
-    if text.strip().startswith((b"Contents", b"Appendix", b"Table ")):
-        return meta(), None
     if b"ISO " in text or b"SOC2" in text or b"NIST " in text or b"FedRAMP" in text:
         return unformalised("external_reference"), "external reference"
-    if b"could " in text or b"may " in text or b"might " in text:
+    if re.search(rb"\b(?:could|may|might|believe|expect|aim|suggests)\b", text, re.I):
         return unformalised("hedged_claim"), "AT"
     if b"before " in text or b"during " in text or b"within " in text:
         return unformalised("event_order"), "ET"
-    return unformalised("not_translated"), "readings"
+    if re.search(rb"\b(?:each|every|all|any|only)\b", text, re.I):
+        return unformalised("quantifier_scope"), "SC"
+    if CLAIM_MARKER.search(text):
+        return unformalised("unmapped_duty"), "AP"
+    return unformalised("unmapped_claim"), "readings"
+
+
+SOURCE_SUBJECT = {
+    1: "front matter", 2: "framework introduction", 3: "contents", 4: "overview and rationale",
+    5: "tracked-category criteria", 6: "Table 1 biological and cybersecurity thresholds",
+    7: "Table 1 cybersecurity and self-improvement thresholds", 8: "research-category responses",
+    9: "research-category assessment", 10: "capability evaluation and deployment scope",
+    11: "safeguard selection", 12: "safeguard assessment and SAG decisions",
+    13: "marginal risk and governance", 14: "disclosure and independent review",
+    15: "change log", 16: "SAG and Board governance", 17: "safeguard examples",
+    18: "C.1 safeguard examples", 19: "C.2 misalignment safeguards",
+    20: "C.2 safeguard examples", 21: "C.3 security controls", 22: "C.3 security controls",
+}
+BLOCKER_DETAIL = {
+    "unmapped_claim": ("readings", "D1 has no admitted descriptive predicate or selected reading for this claim"),
+    "unmapped_duty": ("AP", "D1 has no complete regulated act and guard for this duty"),
+    "unmapped_clause": ("AP", "the source-linked draft omits an object, condition, or reporting clause"),
+    "quantifier_scope": ("SC", "D1's unary situation rule does not bind each source item"),
+    "hedged_claim": ("AT", "D1 has no attitude or possibility operator preserving the source hedge"),
+    "attitude": ("AT", "D1's draft does not preserve the source attitude"),
+    "event_order": ("ET", "D1 has no event-order relation for the source temporal qualifier"),
+    "quantity": ("QT", "D1 has no quantity bridge for the source magnitude or ratio"),
+    "external_reference": ("external reference", "the outside standard is not represented in D1"),
+}
 
 
 def build(source):
@@ -204,6 +274,11 @@ def build(source):
         page = sum(p <= a for p in page_starts)
         uid = f"p{page}-u{i+1}"
         kind, ident, waits = placements.get(i, (None, None, ()))
+        if kind == "rule" and not OPEN_FOR.get(ident) and (
+            waits or not _complete_clause_map(ident, source[a:b])
+        ):
+            reason = BLOCKED_RULE_REASONS.get(ident, "unmapped_clause")
+            kind, waits = "blocked_rule", (BLOCKER_FAMILY[reason],)
         if kind is None:
             spec, wait = _fallback(page, a, source[a:b])
         elif kind == "facts":
@@ -211,7 +286,7 @@ def build(source):
         elif kind == "unformalised":
             spec, wait = unformalised(ident), None
         elif kind == "blocked_rule":
-            spec, wait = unformalised(BLOCKED_RULE_REASONS[ident]), None
+            spec, wait = unformalised(BLOCKED_RULE_REASONS.get(ident, "unmapped_clause")), None
         elif kind == "readings":
             spec, wait = readings(ident, *OPEN_FOR.get(ident, ())), None
         elif kind == "condition":
@@ -248,6 +323,8 @@ def build(source):
         if isinstance(spec["meaning"], dict):
             if "unformalised" in spec["meaning"]:
                 rec["reason"] = spec["meaning"]["unformalised"]
+                family, explanation = BLOCKER_DETAIL[rec["reason"]]
+                rec["detail"] = f"{family}: {explanation} in {SOURCE_SUBJECT[page]}"
             if "open" in spec["meaning"]:
                 rec["open_terms"] = spec["meaning"]["open"]
         rec["waits"] = list(waits) if waits else ([wait] if wait else [])

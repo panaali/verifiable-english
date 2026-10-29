@@ -65,7 +65,7 @@ Rule 1. Every situation must have safeguards that sufficiently minimize misalign
 ## c2-misalignment-default | RS9=default | C.2: the same “should” requirement under its default reading
 Rule 1. Every situation should have safeguards that sufficiently minimize misaligned-model risk, if that situation is classified as "misaligned_model_risk".
 ## f16-ssc-visibility | always | Appendix B: “The Safety and Security Committee … will be given visibility into processes”
-Rule 1. Every situation must give SSC visibility into the process.
+Rule 1. Every situation must give SSC visibility into processes.
 ## f16-informed | RS0=commitment | Appendix B: Leadership makes “deployment go/no-go decisions, informed by SAG’s recommendations”
 Rule 1. Every situation must have Leadership informed by SAG.
 ## f16-year | RS0=commitment | Appendix B: “review the Preparedness Framework … at least once a year”

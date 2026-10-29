@@ -55,7 +55,7 @@ the same way as safety-framework's `test_span_accounting_is_complete`.
 | DeepMind FSF 3.1 | Oct 18 (fsf-r1) | 4,595 (8.5%) | 7,356 (13.5%) | 35,557 (65.4%) | 6,865 (12.6%) | 54,373 |
 | DeepMind FSF 3.1 | Oct 28 (fsf-r2) | 4,595 (8.5%) | 7,356 (13.5%) | 35,557 (65.4%) | 6,865 (12.6%) | 54,373 |
 | Anthropic RSP 3.4 | Oct 28 (corrected baseline) | 5,327 (9.0%) | 13,214 (22.2%) | 37,248 (62.7%) | 3,621 (6.1%) | 59,410 |
-| OpenAI PF v2 | Oct 29 (coverage correction) | 454 (0.7%) | 5,446 (8.1%) | 9,784 (14.5%) | 51,734 (76.7%) | 67,418 |
+| OpenAI PF v2 | Oct 29 (clause and label audit) | 170 (0.3%) | 5,446 (8.1%) | 5,327 (7.9%) | 56,475 (83.8%) | 67,418 |
 
 Sources: [fsf-r2/gaps.json](../safety-framework/fsf-r2/gaps.json) (`master_bytes_by_status`, Oct 1, Oct 18 and
 today), [anthropic-rsp/gaps.json](anthropic-rsp/gaps.json) and
@@ -78,27 +78,26 @@ or diagnostic changed (`test_rsp_reviewer_prohibitions_are_separate_coverage_uni
 A unit counts under every blocker it has; “alone” counts a unit only when it has one blocker. The source files are
 [DeepMind fsf-r2](../safety-framework/fsf-r2/gaps.json), [Anthropic](anthropic-rsp/gaps.json), and
 [OpenAI](openai-preparedness/gaps.json). DeepMind and Anthropic retain their earlier measurements. The OpenAI
-baseline has 221 `not_translated` units mapped to “readings”: this is a translation backlog, not evidence that a
-VE feature alone will certify those bytes. The figures below are all-blocker bytes, followed by sole-blocker bytes.
+source classification now has zero `not_translated` units. AP records duties without a complete D1 act or rule;
+readings records source claims that still lack a chosen formal reading. The figures below are all-blocker bytes, followed by sole-blocker bytes.
 
 | Family | DeepMind: all / alone | Anthropic: all / alone | OpenAI: all / alone | Three: all / alone |
 |---|---:|---:|---:|---:|
-| no claim to check | 29,619 / 29,619 | 31,104 / 31,104 | 9,784 / 9,784 | 70,507 / 70,507 |
-| readings | 3,597 / 735 | 3,989 / 2,106 | 38,064 / 37,181 | 45,650 / 40,022 |
+| no claim to check | 29,619 / 29,619 | 31,104 / 31,104 | 5,327 / 5,327 | 66,050 / 66,050 |
+| readings | 3,597 / 735 | 3,989 / 2,106 | 13,372 / 12,489 | 20,958 / 15,330 |
 | JT | 7,976 / 5,114 | 11,372 / 6,892 | 4,157 / 1,613 | 23,505 / 13,619 |
-| AT | 5,617 / 5,617 | 6,510 / 6,510 | 10,246 / 9,659 | 22,373 / 21,786 |
-| ET | 2,212 / 2,212 | 1,390 / 489 | 6,319 / 4,304 | 9,921 / 7,005 |
+| AT | 5,617 / 5,617 | 6,510 / 6,510 | 12,973 / 12,386 | 25,100 / 24,513 |
+| ET | 2,212 / 2,212 | 1,390 / 489 | 8,086 / 6,071 | 11,688 / 8,772 |
 | external reference | 1,978 / 1,978 | 797 / 797 | 309 / 309 | 3,084 / 3,084 |
 | DF | 551 / 551 | 866 / 405 | 1,185 / 0 | 2,602 / 956 |
-| SC | 283 / 283 | 1,935 / 693 | 284 / 168 | 2,502 / 1,144 |
+| SC | 283 / 283 | 1,935 / 693 | 4,457 / 4,341 | 6,675 / 5,317 |
 | WG | 807 / 807 | 551 / 551 | 183 / 0 | 1,541 / 1,358 |
 | QT | 0 / 0 | 105 / 0 | 702 / 305 | 807 / 305 |
-| AP | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 |
+| AP | 0 / 0 | 0 / 0 | 20,766 / 20,766 | 20,766 / 20,766 |
 
-The three-text ranking by all-blocker bytes is readings, JT, AT, ET, external reference, DF, SC, WG, QT,
-then AP, after excluding exposition with no claim to check. The ranking of sole-blocker bytes is readings, AT, JT,
-ET, external reference, WG, SC and DF (the last two have close values), QT, then AP. OpenAI’s very large
-translation backlog dominates its readings figure; compare each case separately before prioritising a VE feature.
+AP now carries the largest share of non-CHECKED bytes in the OpenAI case because the D1
+act vocabulary does not express those source duties. The table is regenerated from the saved
+gap counts; the other two cases retain their earlier measurements.
 
 ## 5. fsf-r2: the DeepMind case after the merged items
 
@@ -296,8 +295,9 @@ Acceptance ownership for this baseline:
 
 ## 15. Review correction on this branch
 
-F1 remains open. The D1 document still lacks F5/F6/F11/F12/F17 per-choice rules and has 219 `not_translated`
-units. D2 still omits Table 1 causal cells; D3 still omits the ratio, severity quantities and remaining date
+F1 remains open. The D1 document still lacks F5/F6/F11/F12/F17 per-choice rules. Its former generic
+`not_translated` backlog is classified by immediate blocker, but those source claims remain unformalised.
+D2 still omits Table 1 causal cells; D3 still omits the ratio, severity quantities and remaining date
 bridges. The sparse translation cannot be reported as a completed PLAN 7 deliverable, and no DRI ruling signs a
 scope move. `usecase-pf-run` remains the answering harness; it does not cover this translation gap.
 
@@ -314,3 +314,30 @@ The two RS15 undertakings are OPEN reading sets, and the two Appendix C restatem
 both pages. A seed mutation restoring the page-15 blanket label failed that test before restoration. The F3
 probe now passes. These coverage corrections do not change Lean, Python relay, or Rust checker verdicts; there is
 no checker DELTA row or claim of a signed scope change.
+
+## 16. Recheck2 correction (2026-10-29)
+
+Status: class W and L source coverage corrected; F1 translation remains open.
+HEAD for the selected run: `3609ce939` plus the uncommitted class correction (Mac snapshot `d08c1950`).
+The source partition still totals 67,418 bytes; the frozen key did not change.
+No DRI signature is reserved, and no checker verdict or Lean trust budget changed.
+
+The D1 rule admission now fails closed when a draft has a wait or lacks an exhaustive source-clause map.
+`p10-u152` (AT wait), `p13-u218` (SAG reports and reasoning), and `p16-u271` (recommendation contents)
+are UNFORMALISED with blockers. `p16-u283` is CHECKED after its Board/process clauses were mapped and its
+rule act was completed. The other source-linked draft rules remain available for future completion.
+The label classifier acts on the whole source unit and requires a positive
+exposition kind without any duty or hedge marker. It exposes `p11-u169`, `p19-u327`, `p19-u335` and
+`p19-u336` as non-LABELLED. `test_pf_checked_has_no_wait_or_unmapped_source_clause` and
+`test_pf_label_requires_positive_exposition_without_claim_marker` check these classes.
+
+The single requested adversarial hunt found the previously unlisted W form `p16-u271` and L forms
+`p11-u169`, `p19-u327` and `p19-u336`. All are covered by the same tests. Before restoration, a Python
+mutant that bypassed the clause-map gate failed
+`test_pf_checked_has_no_wait_or_unmapped_source_clause`; a mutant that restored the page-18–20 blanket
+label failed `test_pf_label_requires_positive_exposition_without_claim_marker`. No second hunt ran.
+
+F8 and F9 stale artifacts were regenerated and committed as `3609ce939`; their probes passed. The selected
+run passed 80 units with zero failures on the Mac runner (snapshot `d08c1950`). The local `lake build` and
+`python3 lean/audit.py` passed. The full suite and release gate were not run under this branch's test instruction.
+The three `main-known-red.txt` tests are pre-existing and were not changed.
