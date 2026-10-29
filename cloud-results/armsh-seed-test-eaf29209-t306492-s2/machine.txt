@@ -1,0 +1,6 @@
+job=armsh-seed-test-eaf29209-t306492-s2 shard=2/2 nproc=4 arch=aarch64 host=runnervm9u1px date=2026-10-29T20:47:43Z ulimit_s=16384
+Mem:              15           1           9           0           4          14
+/dev/root       145G   41G  104G  29% /
+ 20:47:43 up 0 min,  0 user,  load average: 1.06, 0.28, 0.10
+pilot/codex branches: 98
+[gate] failed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 0 passed, 0 skipped, 2 failures
