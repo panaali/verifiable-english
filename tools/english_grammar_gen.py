@@ -25,13 +25,15 @@ when a hash changed and `actions_version` did not. The fixed rule `k` of a table
 `fixedActs` holds one action per fixed row, in order (spec 5.2).
 
 The module reads files only through a `read(path) -> bytes | None` and a `listing() -> paths` function, so the
-commit hook runs the same checks on staged blobs; it imports nothing outside the standard library.
+commit hook runs the same checks on staged blobs. The Lean export uses the repository's toolchain and timeout
+helpers.
 """
 from __future__ import annotations
 
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path, PurePosixPath
 import re
 import subprocess
@@ -483,10 +485,23 @@ def hashed_files() -> list[str]:
 
 def source_words_blob(root: Path) -> bytes:
     """Ask Lean for the checked catalogue; Python never parses Lean source or repeats its invariants."""
-    lake = str(Path.home() / ".elan/bin/lake")
-    for argv in ([lake, "build", "VE.EnglishGrammar.SourceWords"],
-                 [lake, "env", "lean", "--run", "../tools/source_words_export.lean"]):
-        done = subprocess.run(argv, cwd=root / "lean", capture_output=True, check=False)
+    if str(ROOT) not in sys.path:
+        sys.path.insert(0, str(ROOT))
+    from tools.lake_outputs import lean_executable
+    from tests.subprocesses import HANG_TIMEOUT
+
+    lake = lean_executable(name="lake")
+    module = root / "lean/.lake/build/lib/lean/VE/EnglishGrammar/SourceWords.olean"
+    if os.environ.get("VE_LEAN_PREBUILT"):
+        if not module.is_file():
+            raise GrammarSourceError(f"SourceWords Lean export needs the prebuilt module: {module}")
+        commands = []
+    else:
+        commands = [[lake, "build", "VE.EnglishGrammar.SourceWords"]]
+    commands.append([lake, "env", "lean", "--run", "../tools/source_words_export.lean"])
+    for argv in commands:
+        done = subprocess.run(argv, cwd=root / "lean", capture_output=True, check=False,
+                              timeout=HANG_TIMEOUT)
         if done.returncode:
             raise GrammarSourceError(f"SourceWords Lean export failed: {done.stderr.decode('utf-8', 'replace')[-1200:]}")
     return done.stdout
