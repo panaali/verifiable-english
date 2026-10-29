@@ -1,0 +1,668 @@
+{
+ "source": "PLAN.md section 5 case facts: the model has reached the levels named (L0: none), and under RS2 = nest also the High level of the same category as each Critical level named; no others; the proposal is of the named activity; the deployment is a covered deployment (OT7) and, for family B, a major deployment (OT13); no Critical standard has been specified (OT6 false); every other open term is unset unless the case says so (findings: true found, false found not to hold); transcribed, not changed",
+ "activities": {
+  "DEV": "further development",
+  "INT": "internal deployment",
+  "LINT": "large-scale internal deployment",
+  "EXT": "external deployment"
+ },
+ "cases": [
+  {
+   "id": "A-L0-DEV",
+   "family": "A",
+   "levels": [],
+   "activity": "DEV",
+   "situation": "no threshold reached; activity DEV",
+   "findings": {}
+  },
+  {
+   "id": "A-L0-INT",
+   "family": "A",
+   "levels": [],
+   "activity": "INT",
+   "situation": "no threshold reached; activity INT",
+   "findings": {}
+  },
+  {
+   "id": "A-L0-LINT",
+   "family": "A",
+   "levels": [],
+   "activity": "LINT",
+   "situation": "no threshold reached; activity LINT",
+   "findings": {}
+  },
+  {
+   "id": "A-L0-EXT",
+   "family": "A",
+   "levels": [],
+   "activity": "EXT",
+   "situation": "no threshold reached; activity EXT",
+   "findings": {}
+  },
+  {
+   "id": "A-BIO-H-DEV",
+   "family": "A",
+   "levels": [
+    "BIO-H"
+   ],
+   "activity": "DEV",
+   "situation": "BIO-H reached; activity DEV",
+   "findings": {}
+  },
+  {
+   "id": "A-BIO-H-INT",
+   "family": "A",
+   "levels": [
+    "BIO-H"
+   ],
+   "activity": "INT",
+   "situation": "BIO-H reached; activity INT",
+   "findings": {}
+  },
+  {
+   "id": "A-BIO-H-LINT",
+   "family": "A",
+   "levels": [
+    "BIO-H"
+   ],
+   "activity": "LINT",
+   "situation": "BIO-H reached; activity LINT",
+   "findings": {}
+  },
+  {
+   "id": "A-BIO-H-EXT",
+   "family": "A",
+   "levels": [
+    "BIO-H"
+   ],
+   "activity": "EXT",
+   "situation": "BIO-H reached; activity EXT",
+   "findings": {}
+  },
+  {
+   "id": "A-BIO-C-DEV",
+   "family": "A",
+   "levels": [
+    "BIO-C"
+   ],
+   "activity": "DEV",
+   "situation": "BIO-C reached; activity DEV",
+   "findings": {}
+  },
+  {
+   "id": "A-BIO-C-INT",
+   "family": "A",
+   "levels": [
+    "BIO-C"
+   ],
+   "activity": "INT",
+   "situation": "BIO-C reached; activity INT",
+   "findings": {}
+  },
+  {
+   "id": "A-BIO-C-LINT",
+   "family": "A",
+   "levels": [
+    "BIO-C"
+   ],
+   "activity": "LINT",
+   "situation": "BIO-C reached; activity LINT",
+   "findings": {}
+  },
+  {
+   "id": "A-BIO-C-EXT",
+   "family": "A",
+   "levels": [
+    "BIO-C"
+   ],
+   "activity": "EXT",
+   "situation": "BIO-C reached; activity EXT",
+   "findings": {}
+  },
+  {
+   "id": "A-CYB-H-DEV",
+   "family": "A",
+   "levels": [
+    "CYB-H"
+   ],
+   "activity": "DEV",
+   "situation": "CYB-H reached; activity DEV",
+   "findings": {}
+  },
+  {
+   "id": "A-CYB-H-INT",
+   "family": "A",
+   "levels": [
+    "CYB-H"
+   ],
+   "activity": "INT",
+   "situation": "CYB-H reached; activity INT",
+   "findings": {}
+  },
+  {
+   "id": "A-CYB-H-LINT",
+   "family": "A",
+   "levels": [
+    "CYB-H"
+   ],
+   "activity": "LINT",
+   "situation": "CYB-H reached; activity LINT",
+   "findings": {}
+  },
+  {
+   "id": "A-CYB-H-EXT",
+   "family": "A",
+   "levels": [
+    "CYB-H"
+   ],
+   "activity": "EXT",
+   "situation": "CYB-H reached; activity EXT",
+   "findings": {}
+  },
+  {
+   "id": "A-CYB-C-DEV",
+   "family": "A",
+   "levels": [
+    "CYB-C"
+   ],
+   "activity": "DEV",
+   "situation": "CYB-C reached; activity DEV",
+   "findings": {}
+  },
+  {
+   "id": "A-CYB-C-INT",
+   "family": "A",
+   "levels": [
+    "CYB-C"
+   ],
+   "activity": "INT",
+   "situation": "CYB-C reached; activity INT",
+   "findings": {}
+  },
+  {
+   "id": "A-CYB-C-LINT",
+   "family": "A",
+   "levels": [
+    "CYB-C"
+   ],
+   "activity": "LINT",
+   "situation": "CYB-C reached; activity LINT",
+   "findings": {}
+  },
+  {
+   "id": "A-CYB-C-EXT",
+   "family": "A",
+   "levels": [
+    "CYB-C"
+   ],
+   "activity": "EXT",
+   "situation": "CYB-C reached; activity EXT",
+   "findings": {}
+  },
+  {
+   "id": "A-AIS-H-DEV",
+   "family": "A",
+   "levels": [
+    "AIS-H"
+   ],
+   "activity": "DEV",
+   "situation": "AIS-H reached; activity DEV",
+   "findings": {}
+  },
+  {
+   "id": "A-AIS-H-INT",
+   "family": "A",
+   "levels": [
+    "AIS-H"
+   ],
+   "activity": "INT",
+   "situation": "AIS-H reached; activity INT",
+   "findings": {}
+  },
+  {
+   "id": "A-AIS-H-LINT",
+   "family": "A",
+   "levels": [
+    "AIS-H"
+   ],
+   "activity": "LINT",
+   "situation": "AIS-H reached; activity LINT",
+   "findings": {}
+  },
+  {
+   "id": "A-AIS-H-EXT",
+   "family": "A",
+   "levels": [
+    "AIS-H"
+   ],
+   "activity": "EXT",
+   "situation": "AIS-H reached; activity EXT",
+   "findings": {}
+  },
+  {
+   "id": "A-AIS-C-DEV",
+   "family": "A",
+   "levels": [
+    "AIS-C"
+   ],
+   "activity": "DEV",
+   "situation": "AIS-C reached; activity DEV",
+   "findings": {}
+  },
+  {
+   "id": "A-AIS-C-INT",
+   "family": "A",
+   "levels": [
+    "AIS-C"
+   ],
+   "activity": "INT",
+   "situation": "AIS-C reached; activity INT",
+   "findings": {}
+  },
+  {
+   "id": "A-AIS-C-LINT",
+   "family": "A",
+   "levels": [
+    "AIS-C"
+   ],
+   "activity": "LINT",
+   "situation": "AIS-C reached; activity LINT",
+   "findings": {}
+  },
+  {
+   "id": "A-AIS-C-EXT",
+   "family": "A",
+   "levels": [
+    "AIS-C"
+   ],
+   "activity": "EXT",
+   "situation": "AIS-C reached; activity EXT",
+   "findings": {}
+  },
+  {
+   "id": "B-L0",
+   "family": "B",
+   "levels": [],
+   "activity": null,
+   "situation": "no threshold reached; a major deployment (OT13)",
+   "findings": {
+    "OT13": true
+   }
+  },
+  {
+   "id": "B-BIO-H",
+   "family": "B",
+   "levels": [
+    "BIO-H"
+   ],
+   "activity": null,
+   "situation": "BIO-H reached; a major deployment (OT13)",
+   "findings": {
+    "OT13": true
+   }
+  },
+  {
+   "id": "B-BIO-C",
+   "family": "B",
+   "levels": [
+    "BIO-C"
+   ],
+   "activity": null,
+   "situation": "BIO-C reached; a major deployment (OT13)",
+   "findings": {
+    "OT13": true
+   }
+  },
+  {
+   "id": "B-CYB-H",
+   "family": "B",
+   "levels": [
+    "CYB-H"
+   ],
+   "activity": null,
+   "situation": "CYB-H reached; a major deployment (OT13)",
+   "findings": {
+    "OT13": true
+   }
+  },
+  {
+   "id": "B-CYB-C",
+   "family": "B",
+   "levels": [
+    "CYB-C"
+   ],
+   "activity": null,
+   "situation": "CYB-C reached; a major deployment (OT13)",
+   "findings": {
+    "OT13": true
+   }
+  },
+  {
+   "id": "B-AIS-H",
+   "family": "B",
+   "levels": [
+    "AIS-H"
+   ],
+   "activity": null,
+   "situation": "AIS-H reached; a major deployment (OT13)",
+   "findings": {
+    "OT13": true
+   }
+  },
+  {
+   "id": "B-AIS-C",
+   "family": "B",
+   "levels": [
+    "AIS-C"
+   ],
+   "activity": null,
+   "situation": "AIS-C reached; a major deployment (OT13)",
+   "findings": {
+    "OT13": true
+   }
+  },
+  {
+   "id": "K1",
+   "family": "K",
+   "levels": [],
+   "activity": null,
+   "situation": "a covered system appears likely to cross a threshold (OT9); no formal determination",
+   "findings": {
+    "OT9": true
+   }
+  },
+  {
+   "id": "K2",
+   "family": "K",
+   "levels": [],
+   "activity": null,
+   "situation": "the SAG determines that a threshold has been crossed; corresponding safeguards have not already been implemented and assessed",
+   "findings": {
+    "OT1": true
+   }
+  },
+  {
+   "id": "K3",
+   "family": "K",
+   "levels": [],
+   "activity": null,
+   "situation": "a model distilled from one determined not High; OT20 false",
+   "findings": {
+    "OT20": false
+   }
+  },
+  {
+   "id": "K4",
+   "family": "K",
+   "levels": [],
+   "activity": null,
+   "situation": "the same model with an unexpectedly significant increase in capability (OT20 true)",
+   "findings": {
+    "OT20": true
+   }
+  },
+  {
+   "id": "K5",
+   "family": "K",
+   "levels": [],
+   "activity": null,
+   "situation": "reasonable evidence that safeguards are not working (OT11)",
+   "findings": {
+    "OT11": true
+   }
+  },
+  {
+   "id": "K6",
+   "family": "K",
+   "levels": [],
+   "activity": null,
+   "situation": "another developer released a High system without comparable safeguards (OT12 confirmed); OpenAI adjusts its safeguards",
+   "findings": {
+    "OT12": true
+   }
+  },
+  {
+   "id": "K7",
+   "family": "K",
+   "levels": [],
+   "activity": null,
+   "situation": "a model forecasted to reach Critical (OT10); not reached",
+   "findings": {
+    "OT10": true
+   }
+  },
+  {
+   "id": "K8",
+   "family": "K",
+   "levels": [],
+   "activity": null,
+   "situation": "the same (as K7)",
+   "findings": {
+    "OT10": true
+   }
+  },
+  {
+   "id": "K9",
+   "family": "K",
+   "levels": [],
+   "activity": null,
+   "situation": "a model with High capability in a Tracked Category and a discovered capability to undermine safeguards",
+   "findings": {}
+  },
+  {
+   "id": "K10",
+   "family": "K",
+   "levels": [],
+   "activity": null,
+   "situation": "a model shows a sandbagging ability or propensity",
+   "findings": {}
+  },
+  {
+   "id": "K11",
+   "family": "K",
+   "levels": [],
+   "activity": null,
+   "situation": "it is ambiguous whether a model is covered",
+   "findings": {}
+  },
+  {
+   "id": "K12",
+   "family": "K",
+   "levels": [],
+   "activity": null,
+   "situation": "any time",
+   "findings": {}
+  },
+  {
+   "id": "K13",
+   "family": "K",
+   "levels": [],
+   "activity": null,
+   "situation": "a risk of severe harm rapidly develops (OT18), a fast track is requested, and immediate reaction is needed (OT21)",
+   "findings": {
+    "OT18": true,
+    "OT21": true
+   }
+  },
+  {
+   "id": "K14",
+   "family": "K",
+   "levels": [],
+   "activity": null,
+   "situation": "a deployment warrants deeper testing (OT14), third parties available and feasible",
+   "findings": {
+    "OT14": true
+   }
+  },
+  {
+   "id": "K15",
+   "family": "K",
+   "levels": [],
+   "activity": null,
+   "situation": "a Research Category review is completed",
+   "findings": {}
+  },
+  {
+   "id": "K16",
+   "family": "K",
+   "levels": [],
+   "activity": null,
+   "situation": "an employee requests a summary of testing results; no highly sensitive information is involved",
+   "findings": {}
+  },
+  {
+   "id": "K17",
+   "family": "K",
+   "levels": [],
+   "activity": null,
+   "situation": "a noncompliance report is substantiated",
+   "findings": {}
+  },
+  {
+   "id": "K18",
+   "family": "K",
+   "levels": [],
+   "activity": null,
+   "situation": "a model is found to have the Nuclear and Radiological capability",
+   "findings": {}
+  },
+  {
+   "id": "K19",
+   "family": "K",
+   "levels": [],
+   "activity": null,
+   "situation": "a model is found to have the Autonomous Replication and Adaptation capability",
+   "findings": {}
+  },
+  {
+   "id": "K20",
+   "family": "K",
+   "levels": [],
+   "activity": null,
+   "situation": "a Safeguards Report is compiled",
+   "findings": {}
+  },
+  {
+   "id": "T1",
+   "family": "T",
+   "levels": [],
+   "activity": null,
+   "situation": "a generational improvement in 4 weeks; the equivalent 2024 progress took 20 weeks",
+   "findings": {},
+   "quantities": {
+    "weeks": 4,
+    "weeks_2024": 20
+   }
+  },
+  {
+   "id": "T2",
+   "family": "T",
+   "levels": [],
+   "activity": null,
+   "situation": "a generational improvement in 5 weeks; the equivalent 2024 progress took 20 weeks",
+   "findings": {},
+   "quantities": {
+    "weeks": 5,
+    "weeks_2024": 20
+   }
+  },
+  {
+   "id": "G1",
+   "family": "G",
+   "levels": [
+    "BIO-C"
+   ],
+   "activity": "DEV",
+   "situation": "BIO-C; a Critical standard specified but not implemented; further development proposed",
+   "findings": {
+    "OT6": true
+   }
+  },
+  {
+   "id": "G2",
+   "family": "G",
+   "levels": [
+    "BIO-C"
+   ],
+   "activity": "EXT",
+   "situation": "external deployment of a Critical model with no Critical standard",
+   "findings": {}
+  },
+  {
+   "id": "G3",
+   "family": "G",
+   "levels": [
+    "CYB-H"
+   ],
+   "activity": "EXT",
+   "situation": "CYB-H, external deployment",
+   "findings": {}
+  },
+  {
+   "id": "G4",
+   "family": "G",
+   "levels": [
+    "AIS-H"
+   ],
+   "activity": "EXT",
+   "situation": "AIS-H, external deployment",
+   "findings": {}
+  },
+  {
+   "id": "G5",
+   "family": "G",
+   "levels": [],
+   "activity": null,
+   "situation": "a nuclear or radiological capability comparable to High",
+   "findings": {}
+  },
+  {
+   "id": "G6",
+   "family": "G",
+   "levels": [],
+   "activity": null,
+   "situation": "a persuasion capability",
+   "findings": {}
+  },
+  {
+   "id": "G7",
+   "family": "G",
+   "levels": [],
+   "activity": null,
+   "situation": "a chemical-only capability, no biological capability",
+   "findings": {}
+  },
+  {
+   "id": "G8",
+   "family": "G",
+   "levels": [
+    "BIO-H"
+   ],
+   "activity": "DEV",
+   "situation": "BIO-H reached during development, before any deployment",
+   "findings": {}
+  },
+  {
+   "id": "G9",
+   "family": "G",
+   "levels": [],
+   "activity": null,
+   "situation": "a model at no threshold in a deployment that is not covered (OT7 false)",
+   "findings": {
+    "OT7": false
+   }
+  },
+  {
+   "id": "G10",
+   "family": "G",
+   "levels": [
+    "BIO-H"
+   ],
+   "activity": "EXT",
+   "situation": "the SAG finds the safeguards insufficient and Leadership deploys anyway (BIO-H, EXT)",
+   "findings": {
+    "OT2": false
+   }
+  }
+ ]
+}
