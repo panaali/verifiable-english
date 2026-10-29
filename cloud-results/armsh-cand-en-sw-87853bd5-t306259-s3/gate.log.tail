@@ -1,0 +1,200 @@
+...................s.................................................... [  5%]
+........................................................................ [  6%]
+........................................................................ [  7%]
+........................................................................ [  8%]
+........................................................................ [  9%]
+........................................................................ [ 10%]
+........................................................................ [ 11%]
+........................................................................ [ 12%]
+........................................................................ [ 13%]
+........................................................................ [ 14%]
+........................................................................ [ 15%]
+........................................................................ [ 16%]
+........................................................................ [ 17%]
+........................................................................ [ 18%]
+........................................................................ [ 19%]
+........................................................................ [ 20%]
+........................................................................ [ 21%]
+........................................................................ [ 22%]
+........................................................................ [ 23%]
+........................................................................ [ 24%]
+........................................................................ [ 25%]
+........................................................................ [ 26%]
+........................................................................ [ 27%]
+........................................................................ [ 28%]
+........................................................................ [ 29%]
+........................................................................ [ 30%]
+........................................................................ [ 31%]
+........................................................................ [ 32%]
+........................................................................ [ 33%]
+........................................................................ [ 34%]
+........................................................................ [ 35%]
+........................................................................ [ 36%]
+........................................................................ [ 37%]
+........................................................................ [ 38%]
+........................................................................ [ 39%]
+........................................................................ [ 40%]
+........................................................................ [ 41%]
+........................................................................ [ 42%]
+........................................................................ [ 43%]
+........................................................................ [ 44%]
+........................................................................ [ 45%]
+.................s...s...s.............................................. [ 46%]
+........................................................................ [ 47%]
+........................................................................ [ 48%]
+........................................................................ [ 49%]
+........................................................................ [ 50%]
+........................................................................ [ 51%]
+........................................................................ [ 52%]
+........................................................................ [ 53%]
+........................................................................ [ 54%]
+........................................................................ [ 55%]
+........................................................................ [ 56%]
+........................................................................ [ 57%]
+........................................................................ [ 58%]
+........................................................................ [ 59%]
+........................................................................ [ 60%]
+........................................................................ [ 61%]
+........................................................................ [ 62%]
+........................................................................ [ 63%]
+........................................................................ [ 64%]
+........................................................................ [ 65%]
+........................................................................ [ 66%]
+........................................................................ [ 67%]
+........................................................................ [ 68%]
+........................................................................ [ 69%]
+........................................................................ [ 70%]
+.....................................F.................................. [ 71%]
+........................................................................ [ 72%]
+........................................................................ [ 73%]
+........................................................................ [ 74%]
+.......................F................................................ [ 75%]
+........................................................................ [ 76%]
+......................................sss............................... [ 77%]
+........................................................................ [ 78%]
+........................................................................ [ 79%]
+........................................................................ [ 80%]
+........................................................................ [ 81%]
+........................................................................ [ 82%]
+........................................................................ [ 83%]
+........................................................................ [ 84%]
+........................................................................ [ 85%]
+........................................................................ [ 86%]
+........................................................................ [ 87%]
+........................................................................ [ 88%]
+........................................................................ [ 89%]
+........................................................................ [ 90%]
+........................................................................ [ 91%]
+........................................................................ [ 92%]
+........................................................................ [ 93%]
+........................................................................ [ 94%]
+........................................................................ [ 95%]
+........................................................................ [ 96%]
+........................................................................ [ 97%]
+........................................................................ [ 98%]
+........................................................................ [ 99%]
+...................................                                      [100%]
+ve: English comparator: {"records": 13274, "excluded": 0, "planted": 0, "classes": {"agree": 13271, "diagnostic-code,schema,verdict": 3}} (/tmp/ve-gate-lchnly61/tmp/ve-english-comparator-8twjufvw)
+
+=================================== FAILURES ===================================
+_____________________________ test_the_tree_passes _____________________________
+[gw3] linux -- Python 3.14.7 /home/runner/work/verifiable-english/verifiable-english/.venv/bin/python
+
+    def test_the_tree_passes():
+        """The lint on this checkout: every unit that starts git or reads .git is listed, as generated. The lint
+        itself reads the saved extract and Python sources only: it starts no git and reads no .git."""
+        events, active = [], [True]
+    
+        def hook(event, args):  # an audit hook stays for the process: it records only while the lint runs
+            if active[0] and (event in ("subprocess.Popen", "os.posix_spawn", "os.exec", "os.system") or event == "open"
+                              and isinstance(args[0], (str, Path)) and "/.git" in str(args[0])):
+                events.append((event, args[:2]))
+    
+        sys.addaudithook(hook)
+        try:
+            findings = history_tests.lint()
+        finally:
+            active[0] = False
+>       assert findings.errors == []
+E       AssertionError: assert ['missing: te...pendent.json'] == []
+E         
+E         Left contains 3 more items, first extra item: 'missing: tests/test_gate_shards.py reads history and is not listed (starts git (git archive, git rev-parse, git show)...gate_collection.py, tools/trust_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py)'
+E         Use -v to get more diff
+
+tests/test_history_tests.py:85: AssertionError
+________________ test_the_command_line_lint_passes_on_the_tree _________________
+[gw3] linux -- Python 3.14.7 /home/runner/work/verifiable-english/verifiable-english/.venv/bin/python
+
+    def test_the_command_line_lint_passes_on_the_tree():
+        run = subprocess.run([sys.executable, "tools/history_tests.py", "--check"], cwd=ROOT, capture_output=True,
+                             text=True, timeout=HANG_TIMEOUT)
+>       assert run.returncode == 0, run.stderr
+E       AssertionError: missing: tests/test_gate_shards.py reads history and is not listed (starts git (git archive, git rev-parse, git show) in conformance/frozen_norm_defaults.py, tools/gate.py, tools/gate_collection.py, tools/trust_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py)
+E         missing: tests/test_gen_inv_design.py reads history and is not listed (starts git (git ls-files, git rev-parse) in tools/cache_store.py, tools/source_graph.py)
+E         run `python tools/history_tests.py --write` and commit tests/history-dependent.json
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['/home/runner/work/verifiable-english/verifiable-english/.venv/bin/python', 'tools/history_test...ore.py, tools/source_graph.py)\nrun `python tools/history_tests.py --write` and commit tests/history-dependent.json\n').returncode
+
+tests/test_history_tests.py:92: AssertionError
+=============================== warnings summary ===============================
+tests/test_natural.py::test_lowercase_alias_and_conclusion_initials_roundtrip
+  /home/runner/work/verifiable-english/verifiable-english/ve/printer.py:652: UnreviewedVocabularyWarning: English overlay 0334e56c0a227743ad227cc2dff500cd267289c6847637e27d1a8b16cf47e538: unreviewed
+    return render_english(value, env, conclusions=conclusions, vocabulary=vocabulary,
+
+tests/test_p1_amendment14.py::test_visible_wire_and_billed_reserve_are_separate[304-True]
+  /home/runner/work/verifiable-english/verifiable-english/.venv/lib/python3.14/site-packages/google/genai/types.py:42: DeprecationWarning: '_UnionGenericAlias' is deprecated and slated for removal in Python 3.17
+    VersionedUnionType = Union[builtin_types.UnionType, _UnionGenericAlias]
+
+tests/test_lexicon.py::test_unknown_warning_is_advisory_and_adoption_still_explicit
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 99b00148757645434344bb677b40b5382e02a56d56787d18efb16fdf3d4b847e: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_lexicon.py::test_known_and_declared_tokens_suppress_all_unknown_flag
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 0f864ab4363826ffcd3d9bcdabca56080a5cf3d786a943a2c096a44e2be00101: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_lexicon.py::test_known_and_declared_tokens_suppress_all_unknown_flag
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 136a1e7dd584d59907199d9fef3e4dfc5a35264ad99be1065432adf2cdf77a7a: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_lexicon.py::test_token_boundaries_are_only_annotations
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 8f7cf2217f364d4f24cc7b7e1f89291e931b092662306b89b31fef94da8796cb: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_lexicon.py::test_article_led_opaque_phrase_remains_allowed[a member of the guild]
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 792f6aa43d1b4c26be8d0bba03b62ff618a16e69a237cf1168992b96a84c6261: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_lexicon.py::test_article_led_opaque_phrase_remains_allowed[a member OF THE guild]
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 4d61bb69d64684a8d732465c296c9665e9c5d79dc7d0d487de11150e8b7523f4: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_lexicon.py::test_lexical_evidence_cannot_be_tampered_with_even_after_redigest
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 97b120333eac45a5322365c21b320eb1eaa060db5106c0d9c2e114507c17e144: unreviewed
+    english = render_english(document, env, **options)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_assist.py:90: P5 materials not available
+SKIPPED [1] tests/test_safety_framework.py:182: the pinned source is not stored on this machine
+SKIPPED [1] tests/test_safety_framework.py:247: the pinned source is not stored on this machine
+SKIPPED [1] tests/test_safety_framework.py:308: the pinned source is not stored on this machine
+SKIPPED [1] tests/test_p0_three_way.py:93: dependency-order is outside Rust scope
+SKIPPED [1] tests/test_p0_three_way.py:93: labels is outside Rust scope
+SKIPPED [1] tests/test_p0_three_way.py:93: admission is outside Rust scope
+FAILED tests/test_history_tests.py::test_the_tree_passes - AssertionError: as...
+FAILED tests/test_history_tests.py::test_the_command_line_lint_passes_on_the_tree
+2 failed, 7154 passed, 7 skipped, 9 warnings in 1445.67s (0:24:05)
+[gate] commit: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false rev-parse HEAD
+109710d97fc9c20267f08092b6cea8f1e8547219
+[gate] worktree status: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+
+[gate] worktree index: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false read-tree 109710d97fc9c20267f08092b6cea8f1e8547219
+
+[gate] worktree content: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+ M lean/checkers.lock
+[gate-wrap] lean/checkers.lock differs from the commit by this runner's pins only (blob 505fd70583cdc925977596c06493af0ea7072a5b, taken at the wrapper's start)
+[gate] failed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 0 passed, 0 skipped, 2 failures
+[gate] FAILURE: pytest command:  Python suite: exit 1
+[gate] FAILURE: gate:  worker gw0 collected 7163 tests, not the collection run's 7163
