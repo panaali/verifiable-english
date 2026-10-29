@@ -3,7 +3,7 @@
 BLOCKED: F1 still needs an item-specific DRI rendering decision and real reader calls; no signature is reserved.
 HEAD: feature/df-e1, based on main `71b1d27ad` (the final commit is named at handoff).
 F2 and F3: failed answers cannot score or silently resume; attempts are durably reserved before dispatch.
-Open: 12 strict rendered controls, committed preregistration, raw reader answers, and results. No model calls were made.
+Open: 12 strict controls, preregistration, raw answers, results, and the broad selected test run. No model calls were made.
 The subscription CLI has no enforceable output-token limit, so dispatch now stops before any call.
 
 ## Statement gate and blocker
@@ -108,3 +108,10 @@ Seeded Python bugs, restored: replacing `valid_record` with accept-all fails
 
 No product route, Lean meaning, Rust accelerator or user-visible answer changed. DELTA has no rows; trust growth is
 zero. The three pre-existing main failures in `main-known-red.txt` were not edited.
+
+Verification on the fix commits: `tests/test_df_e1.py` passed (21 cases); F2 and F3 probes passed; `lake build` and
+`python3 lean/audit.py` passed. The requested merge-base selected-test command was attempted on the Mac runner; both
+slots stayed occupied, and VM fallback hit read-only home caches. With caches redirected to `/tmp`, the selector
+expanded this branch to 488 pytest files, effectively the full suite, which the task prohibits. Its narrower
+`--impacted` plan still selected 75 files; a parallel run was stopped at roughly 1% after sustained slow progress.
+No selected-suite pass is claimed. The merge train remains responsible for branch verification.
