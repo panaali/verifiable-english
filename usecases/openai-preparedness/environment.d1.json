@@ -222,15 +222,15 @@
           "act": "{0} have security practices"
         }
       },
-      "evaluations": {
+      "evaluations_before_deployment": {
         "arguments": [
           "situation"
         ],
-        "description": "3.3: Scalable Evaluations",
+        "description": "3.3: Scalable Evaluations before deployment",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} undergo evaluations"
+          "act": "{0} undergo evaluations before deployment"
         }
       },
       "capabilities_report": {
@@ -277,7 +277,7 @@
           "act": "{0} identify ways severe harm can arise"
         }
       },
-      "specific_safeguards": {
+      "specific_safeguards_per_path": {
         "arguments": [
           "situation"
         ],
@@ -285,10 +285,10 @@
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} identify specific safeguards"
+          "act": "{0} identify specific safeguards per risk path"
         }
       },
-      "efficacy_methods": {
+      "efficacy_methods_per_safeguard": {
         "arguments": [
           "situation"
         ],
@@ -296,10 +296,10 @@
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} identify efficacy methods"
+          "act": "{0} identify efficacy methods per safeguard"
         }
       },
-      "efficacy_threshold": {
+      "efficacy_threshold_per_safeguard": {
         "arguments": [
           "situation"
         ],
@@ -307,7 +307,7 @@
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} identify an efficacy threshold"
+          "act": "{0} identify an efficacy threshold per safeguard"
         }
       },
       "validate_evidence": {

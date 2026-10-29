@@ -323,6 +323,49 @@ def test_pf_translation_lint_and_invention_audit(pf_modules):
     assert all(len(fs) == 2 for _, fs in pf_translation.facts())
 
 
+def test_pf_temporal_and_per_item_rules_are_not_weakened_into_checked_claims(pf_modules):
+    units = json.loads((PF / "spans.json").read_text())["units"]
+    blocked = {"p10-u149": ("event_order", "ET"),
+               "p11-u162": ("quantifier_scope", "SC"),
+               "p11-u164": ("quantifier_scope", "SC"),
+               "p11-u165": ("quantifier_scope", "SC")}
+    by_id = {unit["id"]: unit for unit in units}
+    assert pf_build.BLOCKED_RULE_REASONS == {
+        "f7-evaluations": "event_order", "f9-specific": "quantifier_scope",
+        "f9-efficacy": "quantifier_scope", "f9-threshold": "quantifier_scope"}
+    if pf_build.DEFAULT_SOURCE.exists():
+        _, rebuilt = pf_build.build(pf_build.DEFAULT_SOURCE.read_bytes())
+        assert {unit["id"]: unit["reason"] for unit in rebuilt if unit["id"] in blocked} == {
+            unit_id: reason for unit_id, (reason, _) in blocked.items()}
+    for unit_id, (reason, feature) in blocked.items():
+        unit = by_id[unit_id]
+        assert unit["status"] == "UNFORMALISED"
+        assert unit["reason"] == reason and feature in unit["waits"]
+        assert "rule" not in unit and "blocked_rule" in unit
+    for block_id, predicate in {
+        "f7-evaluations": "evaluations_before_deployment",
+        "f9-specific": "specific_safeguards_per_path",
+        "f9-efficacy": "efficacy_methods_per_safeguard",
+        "f9-threshold": "efficacy_threshold_per_safeguard",
+    }.items():
+        assert json.loads(pf_translation.parsed_rule(block_id))["predicate"] == predicate
+
+
+def test_pf_exposition_fallback_preserves_claims_and_rs15_readings(pf_modules):
+    units = {unit["id"]: unit for unit in json.loads((PF / "spans.json").read_text())["units"]}
+    assert {units[unit_id]["reading_set"] for unit_id in ("p15-u249", "p15-u252")} == {
+        "rs15-persuasion", "rs15-threat-models"}
+    assert pf_build.PLACEMENTS["Going forward we will handle risks related to persuasion"][0] == "readings"
+    assert pf_build.PLACEMENTS["For these areas, in collaboration with external experts, we commit"][0] == "readings"
+    assert pf_build.PLACEMENTS["As a reminder, covered systems that reach High capability must have"][0] == "rule"
+    assert pf_build.PLACEMENTS["Systems that reach Critical capability also require sufficient safeguards"][0] == "rule"
+    for unit_id in ("p15-u249", "p15-u252", "p17-u296", "p17-u297"):
+        assert units[unit_id]["status"] == "OPEN"
+    for page in (15, 17):
+        spec, _ = pf_build._fallback(page, 0, b"A substantive claim about safeguards.")
+        assert spec["kind"] == ["unformalised", "not_translated"]
+
+
 def test_pf_every_byte_has_ve_status_and_one_unit(pf_modules):
     coverage = json.loads((PF / "coverage.json").read_text())
     units = json.loads((PF / "spans.json").read_text())["units"]

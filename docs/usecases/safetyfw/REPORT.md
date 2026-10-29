@@ -1,12 +1,10 @@
 # usecase-safetyfw: three frontier-lab safety frameworks in VE (build report)
 
-- **Status:** parts 1, 2, 3 and 5 were completed in the parent item; this branch adds the OpenAI
-  baseline. Its deliberately sparse translation and D2/D3 quantity gaps are explicit in PLAN 12. No DRI signature
-  is reserved, no DELTA row, trust +0 (no Lean file changed).
+- **Status:** the OpenAI baseline has two coverage corrections; completion of its planned D1–D3 translation remains open. No DRI signature is reserved; trust +0 (no Lean file changed).
 - **HEAD:** the branch tip; original baseline code at 18e9c937d, source-coverage correction at 92a2fd643
   (base main 6d0a10526).
 - **What changed:** the frozen keys and DeepMind/Anthropic baselines from the parent item remain; OpenAI now has
-  67,418 bytes in 389 units, 1.1% CHECKED, stage 0 P1–P8 and gaps by feature family.
+  67,418 bytes in 389 units, 0.7% CHECKED, stage 0 P1–P8 and gaps by feature family.
 - **Open items:** completion of the OpenAI translation before `usecase-pf-run`, `usecase-rsp-run`, `fsf-r3`.
   No key finding.
 
@@ -57,7 +55,7 @@ the same way as safety-framework's `test_span_accounting_is_complete`.
 | DeepMind FSF 3.1 | Oct 18 (fsf-r1) | 4,595 (8.5%) | 7,356 (13.5%) | 35,557 (65.4%) | 6,865 (12.6%) | 54,373 |
 | DeepMind FSF 3.1 | Oct 28 (fsf-r2) | 4,595 (8.5%) | 7,356 (13.5%) | 35,557 (65.4%) | 6,865 (12.6%) | 54,373 |
 | Anthropic RSP 3.4 | Oct 28 (corrected baseline) | 5,327 (9.0%) | 13,214 (22.2%) | 37,248 (62.7%) | 3,621 (6.1%) | 59,410 |
-| OpenAI PF v2 | Oct 28 (sparse baseline) | 708 (1.1%) | 4,444 (6.6%) | 17,656 (26.2%) | 44,610 (66.2%) | 67,418 |
+| OpenAI PF v2 | Oct 29 (coverage correction) | 454 (0.7%) | 5,292 (7.8%) | 10,345 (15.3%) | 51,327 (76.1%) | 67,418 |
 
 Sources: [fsf-r2/gaps.json](../safety-framework/fsf-r2/gaps.json) (`master_bytes_by_status`, Oct 1, Oct 18 and
 today), [anthropic-rsp/gaps.json](anthropic-rsp/gaps.json) and
@@ -80,19 +78,19 @@ or diagnostic changed (`test_rsp_reviewer_prohibitions_are_separate_coverage_uni
 A unit counts under every blocker it has; “alone” counts a unit only when it has one blocker. The source files are
 [DeepMind fsf-r2](../safety-framework/fsf-r2/gaps.json), [Anthropic](anthropic-rsp/gaps.json), and
 [OpenAI](openai-preparedness/gaps.json). DeepMind and Anthropic retain their earlier measurements. The OpenAI
-baseline has 186 `not_translated` units mapped to “readings”: this is a translation backlog, not evidence that a
+baseline has 219 `not_translated` units mapped to “readings”: this is a translation backlog, not evidence that a
 VE feature alone will certify those bytes. The figures below are all-blocker bytes, followed by sole-blocker bytes.
 
 | Family | DeepMind: all / alone | Anthropic: all / alone | OpenAI: all / alone | Three: all / alone |
 |---|---:|---:|---:|---:|
-| no claim to check | 29,619 / 29,619 | 31,104 / 31,104 | 17,656 / 17,656 | 78,379 / 78,379 |
-| readings | 3,597 / 735 | 3,989 / 2,106 | 31,939 / 31,643 | 39,525 / 34,484 |
-| JT | 7,976 / 5,114 | 11,372 / 6,892 | 3,742 / 1,613 | 23,090 / 13,619 |
-| AT | 5,617 / 5,617 | 6,510 / 6,510 | 8,631 / 8,631 | 20,758 / 20,758 |
-| ET | 2,212 / 2,212 | 1,390 / 489 | 5,668 / 3,914 | 9,270 / 6,615 |
+| no claim to check | 29,619 / 29,619 | 31,104 / 31,104 | 10,345 / 10,345 | 71,068 / 71,068 |
+| readings | 3,597 / 735 | 3,989 / 2,106 | 37,657 / 36,774 | 45,243 / 39,615 |
+| JT | 7,976 / 5,114 | 11,372 / 6,892 | 4,003 / 1,613 | 23,351 / 13,619 |
+| AT | 5,617 / 5,617 | 6,510 / 6,510 | 10,246 / 9,659 | 22,373 / 21,786 |
+| ET | 2,212 / 2,212 | 1,390 / 489 | 6,319 / 4,304 | 9,921 / 7,005 |
 | external reference | 1,978 / 1,978 | 797 / 797 | 309 / 309 | 3,084 / 3,084 |
 | DF | 551 / 551 | 866 / 405 | 1,031 / 0 | 2,448 / 956 |
-| SC | 283 / 283 | 1,935 / 693 | 116 / 0 | 2,334 / 976 |
+| SC | 283 / 283 | 1,935 / 693 | 284 / 168 | 2,502 / 1,144 |
 | WG | 807 / 807 | 551 / 551 | 183 / 0 | 1,541 / 1,358 |
 | QT | 0 / 0 | 105 / 0 | 702 / 305 | 807 / 305 |
 | AP | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 |
@@ -274,13 +272,13 @@ Acceptance ownership for this baseline:
 |---|---|---|
 | Pinned hashes, source partition, VE statuses, stage 0, gaps, P7/M6 | AGENT | Built and checked by the named `test_pf_` tests |
 | Publisher's current-version claim | EXTERNAL | Observation only; OpenAI owns any later publication, and no VE verdict depends on it |
-| Independent source fidelity of remaining untranslated clauses | HUMAN | Deferred to `usecase-pf-run`; its builder and DRI own review before any key answer or source-conflict finding |
+| Completion and independent source fidelity of remaining untranslated clauses | AGENT | Open in this branch; no DRI ruling has moved the planned D1–D3 translation to another batch |
 
 ## 14. Self-review against BUILDER-CHECKLIST
 
 1. **N.A.** No relay or schema changed; case scripts call `ve.document` and `ve.backends.relay` for every answer.
-2. **PASS** — section 1 task rows, PLAN 12 deviations, `test_pf_every_byte_has_ve_status_and_one_unit`; the sparse
-   translation is disclosed and the frozen key is unchanged.
+2. **FAIL for the OpenAI D1–D3 deliverable** — PLAN 7 requires the complete translation. PLAN 12 discloses the
+   sparse baseline but is not a DRI ruling that moves the remaining work.
 3. **PASS** — seeded bugs 15–20 in section 9 each failed its named `test_pf_` test before restoration.
 4. **N.A.** No checker path changed; DeepMind `run.py --check` reproduced saved results.
 5. **N.A.** No relayed field or request binding changed.
@@ -295,3 +293,24 @@ Acceptance ownership for this baseline:
 12. **N.A.** No checker path changed; the stage 0 probes are part documents and `test_pf_stage0_and_gaps` passed.
 13. **PASS** — no test was removed or renamed; `tools/gate_collection.py --check --prebuilt` reports 0 removed,
     refused, stale and malformed.
+
+## 15. Review correction on this branch
+
+F1 remains open. The D1 document still lacks F5/F6/F11/F12/F17 per-choice rules and has 219 `not_translated`
+units. D2 still omits Table 1 causal cells; D3 still omits the ratio, severity quantities and remaining date
+bridges. The sparse translation cannot be reported as a completed PLAN 7 deliverable, and no DRI ruling signs a
+scope move. `usecase-pf-run` remains the answering harness; it does not cover this translation gap.
+
+F2 is corrected as a coverage claim: the F7 predeployment and three F9 per-item source units are
+UNFORMALISED with ET/SC blockers. Their source-linked draft blocks use explicit temporal/per-item act names but
+are not attached as CHECKED content. `test_pf_temporal_and_per_item_rules_are_not_weakened_into_checked_claims`
+checks both the rebuilt source partition and saved statuses. Seed mutations changing the F7 or F9 blocker reason
+each failed that test before restoration. The F2 print probe now shows
+`evaluations_before_deployment` in the parsed draft.
+
+F3 is corrected in the page classifier: the blanket change-log and Appendix C exposition ranges were removed.
+The two RS15 undertakings are OPEN reading sets, and the two Appendix C restatements are OPEN F2/F3 rules.
+`test_pf_exposition_fallback_preserves_claims_and_rs15_readings` guards the four spans and an unlisted claim on
+both pages. A seed mutation restoring the page-15 blanket label failed that test before restoration. The F3
+probe now passes. These coverage corrections do not change Lean, Python relay, or Rust checker verdicts; there is
+no checker DELTA row or claim of a signed scope change.

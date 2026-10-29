@@ -43,14 +43,14 @@ PLACEMENTS = {
     "We will require the following practices": ("rule", "f4-security", ("JT",)),
     "plausible chance of reaching a capability threshold": ("condition", "ot7", ("JT",)),
     "ordinarily not require additional safety measures": ("readings", "rs8-distilled", ("DF", "JT")),
-    "every covered model undergoes": ("rule", "f7-evaluations", ("ET",)),
+    "every covered model undergoes": ("blocked_rule", "f7-evaluations", ("ET",)),
     "The SAG reviews the Capabilities Report": ("rule", "f7-report", ("AT",)),
     "appears likely to cross": ("rule", "f8-start", ("JT", "ET")),
     "planned safeguards needed to minimize": ("rule", "f9-report", ("JT",)),
     "We first identify the plausible ways": ("rule", "f9-risk-paths", ("JT",)),
-    "For each of those, we then identify": ("rule", "f9-specific", ()),
-    "For each identified safeguard, we identify": ("rule", "f9-efficacy", ()),
-    "and an efficacy threshold": ("rule", "f9-threshold", ()),
+    "For each of those, we then identify": ("blocked_rule", "f9-specific", ("SC",)),
+    "For each identified safeguard, we identify": ("blocked_rule", "f9-efficacy", ("SC",)),
+    "and an efficacy threshold": ("blocked_rule", "f9-threshold", ("SC",)),
     "If we find reasonable evidence": ("rule", "f10-validate", ("JT",)),
     "review the 11": ("rule", "f10-review", ("JT",)),
     "could adjust accordingly": ("readings", "rs5-adjustment", ("JT", "WG")),
@@ -65,6 +65,10 @@ PLACEMENTS = {
     "The Safety and Security Committee (SSC)": ("rule", "f16-ssc-visibility", ()),
     "informed by SAG’s recommendations": ("readings", "rs0-informed", ("readings",)),
     "at least once a year": ("readings", "rs0-year", ("ET",)),
+    "Going forward we will handle risks related to persuasion": ("readings", "rs15-persuasion", ("AT",)),
+    "For these areas, in collaboration with external experts, we commit": ("readings", "rs15-threat-models", ("AT",)),
+    "As a reminder, covered systems that reach High capability must have": ("rule", "f2-reminder", ("JT", "ET")),
+    "Systems that reach Critical capability also require sufficient safeguards": ("rule", "f3-reminder", ("JT", "ET")),
 }
 
 READINGS = {
@@ -79,14 +83,19 @@ READINGS = {
     "rs5-adjustment": ("RS5", {"within": [], "exception": []}),
     "rs4-research": ("RS4", {"N": [], "P": []}),
     "rs12-category": ("RS12", {"suff": [], "iff": []}),
+    "rs15-persuasion": ("RS15", {"explanation": [], "rule": []}),
+    "rs15-threat-models": ("RS15", {"explanation": [], "rule": []}),
 }
 SET_FAMILIES = {"RS0": "readings", "RS1": "DF", "RS8": "DF", "RS5": "readings",
-                "RS4": "readings", "RS12": "SC"}
+                "RS4": "readings", "RS12": "SC", "RS15": "readings"}
+BLOCKED_RULE_REASONS = {"f7-evaluations": "event_order", "f9-specific": "quantifier_scope",
+                        "f9-efficacy": "quantifier_scope", "f9-threshold": "quantifier_scope"}
 OPEN_FOR = {
     "rs1-misuse-bio": ("ot1", "ot4"), "rs1-misuse-cyb": ("ot1", "ot4"),
     "rs1-alignment-cyb": ("ot1", "ot5"), "rs1-security": ("ot1", "ot3"),
     "rs1-halt": ("ot1", "ot6"),
-    "f2-deploy": ("ot1", "ot2"), "f3-develop": ("ot1", "ot10"),
+    "f2-deploy": ("ot1", "ot2"), "f2-reminder": ("ot1", "ot2"),
+    "f3-develop": ("ot1", "ot10"), "f3-reminder": ("ot1", "ot10"),
     "f4-security": ("ot1", "ot3"), "f8-start": ("ot9",), "f9-report": ("ot2",),
     "f10-validate": ("ot11",), "f10-review": ("ot11",),
     "f14-investigate": ("ot19",), "f15-disclose": ("ot13",),
@@ -150,7 +159,7 @@ def _model():
 
 
 def _fallback(page, start, text):
-    if page in (1, 3, 17, 18, 19, 20) or 43318 <= start < 48336:
+    if page in (1, 3, 18, 19, 20):
         return label("exposition"), None
     if text.strip().startswith((b"Contents", b"Appendix", b"Table ")):
         return meta(), None
@@ -193,6 +202,8 @@ def build(source):
             spec, wait = facts(ident), None
         elif kind == "unformalised":
             spec, wait = unformalised(ident), None
+        elif kind == "blocked_rule":
+            spec, wait = unformalised(BLOCKED_RULE_REASONS[ident]), None
         elif kind == "readings":
             spec, wait = readings(ident, *OPEN_FOR.get(ident, ())), None
         elif kind == "condition":
@@ -206,6 +217,8 @@ def build(source):
         if kind == "rule":
             unit["content"] = {"norm": json.loads(T.parsed_rule(ident))}
             rec["rule"] = ident
+        elif kind == "blocked_rule":
+            rec["blocked_rule"] = ident
         elif kind == "facts":
             formulas = fact_blocks[ident]
             conjunction = formulas[0]

@@ -15,7 +15,8 @@ import pf_vocabulary as vocabulary  # noqa: E402
 
 READING_SETS = {"RS1": ("strict", "default"), "RS3": ("ext", "any"), "RS5": ("within", "exception"),
                 "RS9": ("strict", "default"), "RS18": ("inuse", "devonly"), "RS0": ("commitment", "prediction"),
-                "RS8": ("rel", "pred"), "RS4": ("N", "P"), "RS12": ("suff", "iff")}
+                "RS8": ("rel", "pred"), "RS4": ("N", "P"), "RS12": ("suff", "iff"),
+                "RS15": ("explanation", "rule")}
 
 
 @dataclass(frozen=True)
