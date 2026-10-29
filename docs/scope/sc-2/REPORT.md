@@ -25,6 +25,8 @@ The statement review closed **PASS** (`scope-p3ver2.final.md:1`, after `scope-p3
 
 The size measurement before the second half (`git diff --numstat $(git merge-base HEAD main)`) was 57 handwritten proof lines. The final SC-2 source adds 57 proof lines and changes 55 fixture lines. The remaining seven exact statements need decoder and order lemmas; **their size is an estimate**, informed by sc-1ae's report of about 600 proof lines for its decoder/string proofs (`docs/scope/sc-1ae/REPORT.md`, “Size”). I cut them to sc-2c under the feed's ~600-line rule rather than claim the batch finished. The actual line count for sc-2c is unverified.
 
+After sc-2b and sc-2c, the dependent feature item is sc-3b (headings and labels, the constitution's second queue).
+
 ## Validation and risk
 
 - `UV_CACHE_DIR=/tmp/sc2-uv-cache uv run python tools/regen_generated.py --write`: PASS, 33 entries ([evidence/checks.txt](evidence/checks.txt)); the first run lacked a Rust executable, then `python3 tools/rust_build.py` built and pinned it. No Rust product source changed.
