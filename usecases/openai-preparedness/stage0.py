@@ -117,7 +117,7 @@ def identifier_lint():
 
 
 def invention_audit():
-    placed = {value[1] for value in B.PLACEMENTS.values() if value[0] == "rule"}
+    placed = {value[1] for value in B.PLACEMENTS.values() if value[0] in ("rule", "blocked_rule")}
     placed |= set(B.FACT_ANCHORS)
     readings = {block for _, choices in B.READINGS.values() for blocks in choices.values() for block in blocks}
     blocks = list(T.rule_blocks()) + list(T.read_blocks("facts.d1.ve"))

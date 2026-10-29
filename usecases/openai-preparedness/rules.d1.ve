@@ -22,10 +22,14 @@ Rule 1. Every situation should halt further development, if both that situation 
 Rule 1. Every situation must have safeguards before deployment, if both that situation is covered and that situation is classified as "high_capability".
 ## f3-develop | always | 4.4: “Such models require additional safeguards … during development”
 Rule 1. Every situation must have safeguards during development, if both that situation is covered and that situation is classified as "critical_capability".
+## f2-reminder | always | Appendix C: “covered systems that reach High capability must have safeguards … before they are deployed”
+Rule 1. Every situation must have safeguards before deployment, if both that situation is covered and that situation is classified as "high_capability".
+## f3-reminder | always | Appendix C: “Systems that reach Critical capability also require sufficient safeguards during development”
+Rule 1. Every situation must have safeguards during development, if both that situation is covered and that situation is classified as "critical_capability".
 ## f4-security | always | C.3: “We will require the following practices for High capability models”
 Rule 1. Every situation must have security practices, if both that situation is covered and that situation is classified as "high_capability".
-## f7-evaluations | always | 3.3: “Prior to deployment, every covered model undergoes Scalable Evaluations”
-Rule 1. Every situation must undergo evaluations, if that situation is covered.
+## f7-evaluations | always | 3.3: “Prior to deployment, every covered model undergoes Scalable Evaluations”; temporal relation remains ET-blocked
+Rule 1. Every situation must undergo evaluations before deployment, if that situation is covered.
 ## f7-report | always | 3.3: “The SAG reviews the Capabilities Report”
 Rule 1. Every situation must have SAG review the Capabilities Report, if that situation is covered.
 ## f8-start | always | 4: “If a covered system appears likely to cross a capability threshold, we will start to work on safeguards”
@@ -34,12 +38,12 @@ Rule 1. Every situation must start safeguard work, if both that situation is cov
 Rule 1. Every situation must have a Safeguards Report, if that situation is classified as "safeguard_selection".
 ## f9-risk-paths | always | 4.1: “We first identify the plausible ways in which … severe harm can come to fruition”
 Rule 1. Every situation must identify ways severe harm can arise, if that situation is classified as "safeguard_selection".
-## f9-specific | always | 4.1: “For each of those, we then identify specific safeguards”
-Rule 1. Every situation must identify specific safeguards, if that situation is classified as "safeguard_selection".
-## f9-efficacy | always | 4.1: “For each identified safeguard, we identify methods to measure their efficacy”
-Rule 1. Every situation must identify efficacy methods, if that situation is classified as "safeguard_selection".
-## f9-threshold | always | 4.1: “and an efficacy threshold” for each safeguard
-Rule 1. Every situation must identify an efficacy threshold, if that situation is classified as "safeguard_selection".
+## f9-specific | always | 4.1: “For each of those, we then identify specific safeguards”; per-item quantification remains SC-blocked
+Rule 1. Every situation must identify specific safeguards per risk path, if that situation is classified as "safeguard_selection".
+## f9-efficacy | always | 4.1: “For each identified safeguard, we identify methods to measure their efficacy”; per-item quantification remains SC-blocked
+Rule 1. Every situation must identify efficacy methods per safeguard, if that situation is classified as "safeguard_selection".
+## f9-threshold | always | 4.1: “and an efficacy threshold” for each safeguard; per-item quantification remains SC-blocked
+Rule 1. Every situation must identify an efficacy threshold per safeguard, if that situation is classified as "safeguard_selection".
 ## f10-validate | always | 4.2: “If we find reasonable evidence … we will validate the information being received”
 Rule 1. Every situation must validate the evidence, if that situation is classified as "reasonable_evidence".
 ## f10-review | always | 4.2: “review the sufficiency of our safeguards” on that evidence

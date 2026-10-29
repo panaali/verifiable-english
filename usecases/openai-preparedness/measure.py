@@ -14,7 +14,7 @@ import build_document as B  # noqa: E402
 
 EVIDENCE = HERE.parents[1] / "docs/usecases/safetyfw/openai-preparedness"
 REASONS = {"external_reference": "external reference", "hedged_claim": "AT", "event_order": "ET",
-           "not_translated": "readings", "quantity": "QT"}
+           "not_translated": "readings", "quantity": "QT", "quantifier_scope": "SC"}
 
 
 def blockers(record):
