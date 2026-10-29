@@ -374,7 +374,7 @@ def audit_tree(tmp_path, monkeypatch):
     monkeypatch.setattr(C, "code_files", lambda code_root: list(C.CODE_STARTS))
     record, runs = (ROOT / "lean/axioms.txt").read_text(), []
 
-    def outputs(imports, texts):
+    def outputs(imports, texts, jobs=None):
         runs.append(len(texts))
         return [record] + [""] * (len(texts) - 1)
     monkeypatch.setattr(audit, "axiom_outputs", outputs)
