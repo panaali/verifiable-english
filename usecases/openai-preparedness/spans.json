@@ -28,9 +28,12 @@
     65,
     166
    ],
-   "kind": "exposition",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "waits": [
+    "readings"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p2-u4",
@@ -38,9 +41,12 @@
     166,
     329
    ],
-   "kind": "exposition",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "waits": [
+    "readings"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p2-u5",
@@ -48,9 +54,12 @@
     329,
     472
    ],
-   "kind": "exposition",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "waits": [
+    "readings"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p2-u6",
@@ -58,9 +67,12 @@
     472,
     716
    ],
-   "kind": "exposition",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "waits": [
+    "readings"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p2-u7",
@@ -68,9 +80,12 @@
     716,
     890
    ],
-   "kind": "exposition",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "waits": [
+    "readings"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p2-u8",
@@ -78,9 +93,12 @@
     890,
     1059
    ],
-   "kind": "exposition",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "waits": [
+    "readings"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p2-u9",
@@ -88,9 +106,12 @@
     1059,
     1222
    ],
-   "kind": "exposition",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "waits": [
+    "AT"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p2-u10",
@@ -98,9 +119,12 @@
     1222,
     1431
    ],
-   "kind": "exposition",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "waits": [
+    "readings"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p2-u11",
@@ -108,9 +132,12 @@
     1431,
     1568
    ],
-   "kind": "exposition",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "waits": [
+    "readings"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p2-u12",
@@ -118,9 +145,12 @@
     1568,
     1726
    ],
-   "kind": "exposition",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "waits": [
+    "readings"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p2-u13",
@@ -128,9 +158,12 @@
     1726,
     1816
    ],
-   "kind": "exposition",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "waits": [
+    "readings"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p2-u14",
@@ -138,9 +171,12 @@
     1816,
     2051
    ],
-   "kind": "exposition",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "hedged_claim",
+   "waits": [
+    "AT"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p2-u15",
@@ -148,9 +184,12 @@
     2051,
     2194
    ],
-   "kind": "exposition",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "waits": [
+    "readings"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p2-u16",
@@ -171,9 +210,12 @@
     2499,
     2600
    ],
-   "kind": "exposition",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "waits": [
+    "readings"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p2-u18",
@@ -181,9 +223,12 @@
     2600,
     2735
    ],
-   "kind": "exposition",
-   "waits": [],
-   "status": "LABELLED"
+   "kind": "unformalised",
+   "reason": "not_translated",
+   "waits": [
+    "readings"
+   ],
+   "status": "UNFORMALISED"
   },
   {
    "id": "p3-u19",

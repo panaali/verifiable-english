@@ -150,7 +150,7 @@ def _model():
 
 
 def _fallback(page, start, text):
-    if page in (1, 2, 3, 17, 18, 19, 20) or 43318 <= start < 48336:
+    if page in (1, 3, 17, 18, 19, 20) or 43318 <= start < 48336:
         return label("exposition"), None
     if text.strip().startswith((b"Contents", b"Appendix", b"Table ")):
         return meta(), None

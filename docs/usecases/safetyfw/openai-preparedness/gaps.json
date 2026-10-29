@@ -1,19 +1,19 @@
 {
  "d1_bytes_by_status": {
   "CHECKED": 708,
-  "LABELLED": 20021,
+  "LABELLED": 17656,
   "OPEN": 4444,
-  "UNFORMALISED": 42245
+  "UNFORMALISED": 44610
  },
  "features": {
   "AT": {
-   "bytes": 8233,
-   "sole_bytes": 8233,
-   "sole_units": 34,
+   "bytes": 8631,
+   "sole_bytes": 8631,
+   "sole_units": 36,
    "statuses": {
-    "UNFORMALISED": 8233
+    "UNFORMALISED": 8631
    },
-   "units": 34
+   "units": 36
   },
   "DF": {
    "bytes": 1031,
@@ -80,37 +80,37 @@
    "units": 2
   },
   "no claim to check": {
-   "bytes": 20021,
-   "sole_bytes": 20021,
-   "sole_units": 125,
+   "bytes": 17656,
+   "sole_bytes": 17656,
+   "sole_units": 110,
    "statuses": {
-    "LABELLED": 20021
+    "LABELLED": 17656
    },
-   "units": 125
+   "units": 110
   },
   "readings": {
-   "bytes": 29972,
-   "sole_bytes": 29676,
-   "sole_units": 175,
+   "bytes": 31939,
+   "sole_bytes": 31643,
+   "sole_units": 188,
    "statuses": {
     "OPEN": 885,
-    "UNFORMALISED": 29087
+    "UNFORMALISED": 31054
    },
-   "units": 177
+   "units": 190
   }
  },
  "master_bytes_by_status": {
   "CHECKED": 708,
-  "LABELLED": 20021,
+  "LABELLED": 17656,
   "OPEN": 4444,
-  "UNFORMALISED": 42245
+  "UNFORMALISED": 44610
  },
  "source_bytes": 67418,
  "status_bytes_recomputed": {
   "CHECKED": 708,
-  "LABELLED": 20021,
+  "LABELLED": 17656,
   "OPEN": 4444,
-  "UNFORMALISED": 42245
+  "UNFORMALISED": 44610
  },
  "units": 389
 }

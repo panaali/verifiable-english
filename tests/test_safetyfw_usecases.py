@@ -333,6 +333,7 @@ def test_pf_every_byte_has_ve_status_and_one_unit(pf_modules):
     assert coverage["bytes_by_status"] == coverage["master_bytes_by_status"]
     assert {u["status"] for u in units} == {"CHECKED", "OPEN", "LABELLED", "UNFORMALISED"}
     assert all("reason" in u for u in units if u["status"] == "UNFORMALISED")
+    assert all(u["status"] != "LABELLED" for u in units if u["id"].startswith("p2-"))
     readme = (PF / "README.md").read_text()
     for status, amount in coverage["master_bytes_by_status"].items():
         count = sum(u["status"] == status for u in units)

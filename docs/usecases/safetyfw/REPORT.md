@@ -57,7 +57,7 @@ the same way as safety-framework's `test_span_accounting_is_complete`.
 | DeepMind FSF 3.1 | Oct 18 (fsf-r1) | 4,595 (8.5%) | 7,356 (13.5%) | 35,557 (65.4%) | 6,865 (12.6%) | 54,373 |
 | DeepMind FSF 3.1 | Oct 28 (fsf-r2) | 4,595 (8.5%) | 7,356 (13.5%) | 35,557 (65.4%) | 6,865 (12.6%) | 54,373 |
 | Anthropic RSP 3.4 | Oct 28 (corrected baseline) | 5,327 (9.0%) | 13,214 (22.2%) | 37,248 (62.7%) | 3,621 (6.1%) | 59,410 |
-| OpenAI PF v2 | Oct 28 (sparse baseline) | 708 (1.1%) | 4,444 (6.6%) | 20,021 (29.7%) | 42,245 (62.7%) | 67,418 |
+| OpenAI PF v2 | Oct 28 (sparse baseline) | 708 (1.1%) | 4,444 (6.6%) | 17,656 (26.2%) | 44,610 (66.2%) | 67,418 |
 
 Sources: [fsf-r2/gaps.json](../safety-framework/fsf-r2/gaps.json) (`master_bytes_by_status`, Oct 1, Oct 18 and
 today), [anthropic-rsp/gaps.json](anthropic-rsp/gaps.json) and
@@ -80,15 +80,15 @@ or diagnostic changed (`test_rsp_reviewer_prohibitions_are_separate_coverage_uni
 A unit counts under every blocker it has; “alone” counts a unit only when it has one blocker. The source files are
 [DeepMind fsf-r2](../safety-framework/fsf-r2/gaps.json), [Anthropic](anthropic-rsp/gaps.json), and
 [OpenAI](openai-preparedness/gaps.json). DeepMind and Anthropic retain their earlier measurements. The OpenAI
-baseline has 173 `not_translated` units mapped to “readings”: this is a translation backlog, not evidence that a
+baseline has 186 `not_translated` units mapped to “readings”: this is a translation backlog, not evidence that a
 VE feature alone will certify those bytes. The figures below are all-blocker bytes, followed by sole-blocker bytes.
 
 | Family | DeepMind: all / alone | Anthropic: all / alone | OpenAI: all / alone | Three: all / alone |
 |---|---:|---:|---:|---:|
-| no claim to check | 29,619 / 29,619 | 31,104 / 31,104 | 20,021 / 20,021 | 80,744 / 80,744 |
-| readings | 3,597 / 735 | 3,989 / 2,106 | 29,972 / 29,676 | 37,558 / 32,517 |
+| no claim to check | 29,619 / 29,619 | 31,104 / 31,104 | 17,656 / 17,656 | 78,379 / 78,379 |
+| readings | 3,597 / 735 | 3,989 / 2,106 | 31,939 / 31,643 | 39,525 / 34,484 |
 | JT | 7,976 / 5,114 | 11,372 / 6,892 | 3,742 / 1,613 | 23,090 / 13,619 |
-| AT | 5,617 / 5,617 | 6,510 / 6,510 | 8,233 / 8,233 | 20,360 / 20,360 |
+| AT | 5,617 / 5,617 | 6,510 / 6,510 | 8,631 / 8,631 | 20,758 / 20,758 |
 | ET | 2,212 / 2,212 | 1,390 / 489 | 5,668 / 3,914 | 9,270 / 6,615 |
 | external reference | 1,978 / 1,978 | 797 / 797 | 309 / 309 | 3,084 / 3,084 |
 | DF | 551 / 551 | 866 / 405 | 1,031 / 0 | 2,448 / 956 |
@@ -170,10 +170,12 @@ None of these gives a wrong verdict. Each is a limit the translation had to work
 | 16 | `usecases/openai-preparedness/build_document.py` | changed the pinned source length to 67,417 | `::test_pf_every_byte_has_ve_status_and_one_unit` failed |
 | 17 | `usecases/openai-preparedness/measure.py` | mapped `not_translated` to JT rather than readings | `::test_pf_stage0_and_gaps` failed (saved gaps differ) |
 | 18 | `usecases/openai-preparedness/stage0.py` | forced the stated BIO-C `might` cell to false | `::test_pf_stage0_and_gaps` failed on the stage 0 rerun |
+| 19 | `usecases/openai-preparedness/build_document.py` | classified page 2's policy-summary claims as exposition | `::test_pf_every_byte_has_ve_status_and_one_unit` failed on the source rerun |
 
 Product code in the reviewed sense: Python under `tools/` (`difffuzz_corpus.py`, one registry entry; bug 4). No
 Lean or Rust file changed. Rows 15–18 are this branch's Python use-case-script mutants; each was restored before
-the saved checks were run again.
+the saved checks were run again. Bug 19 was planted after the review correction that moved page 2 from LABELLED to
+UNFORMALISED; it failed the saved source check and was restored.
 
 ## 10. Tests and checks run
 
@@ -239,6 +241,9 @@ the saved checks were run again.
   `d2e3dd5b80e5bb86079911230358e0c2bb78f12435757959e14dae50e4d48d0f`) match PLAN 1; neither was
   committed. D1 `build_document.py --check`, P1–P8 `stage0.py --check`, `measure.py --check` passed through
   `test_pf_every_byte_has_ve_status_and_one_unit` and `test_pf_stage0_and_gaps`.
+- Diff review found that page 2's policy-summary claims had been labelled as exposition. The corrected evidence
+  assigns those 2,365 bytes to UNFORMALISED, with no CHECKED byte moved. The focused page-2 assertion and seeded
+  bug 19 now guard that boundary.
 - `tests/test_safetyfw_usecases.py -k test_pf_`: 3 passed. The new D1, D2 and D3 environment files and all 32 rule
   blocks passed `test_pf_translation_lint_and_invention_audit`. The four seeded bugs in section 9 each made its
   named test fail, then were restored.
@@ -267,7 +272,7 @@ the saved checks were run again.
 1. **N.A.** No relay or schema changed; case scripts call `ve.document` and `ve.backends.relay` for every answer.
 2. **PASS** — section 1 task rows, PLAN 12 deviations, `test_pf_every_byte_has_ve_status_and_one_unit`; the sparse
    translation is disclosed and the frozen key is unchanged.
-3. **PASS** — seeded bugs 15–18 in section 9 each failed its named `test_pf_` test before restoration.
+3. **PASS** — seeded bugs 15–19 in section 9 each failed its named `test_pf_` test before restoration.
 4. **N.A.** No checker path changed; DeepMind `run.py --check` reproduced saved results.
 5. **N.A.** No relayed field or request binding changed.
 6. **N.A.** The chain, not this builder, runs the full gate on the committed final HEAD; the selected runner's

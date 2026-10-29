@@ -49,8 +49,8 @@ source clauses. The remaining source claims keep explicit OPEN or UNFORMALISED s
 |---|---:|---:|---:|
 | CHECKED | 14 | 708 | 1.1% |
 | OPEN | 24 | 4,444 | 6.6% |
-| LABELLED | 125 | 20,021 | 29.7% |
-| UNFORMALISED | 226 | 42,245 | 62.7% |
+| LABELLED | 110 | 17,656 | 26.2% |
+| UNFORMALISED | 241 | 44,610 | 66.2% |
 
 Each non-CHECKED byte has a blocker in [gaps.json](../../docs/usecases/safetyfw/openai-preparedness/gaps.json).
 An OPEN reading set remains pending; a `not_translated` unit is counted under “readings” because its source reading
@@ -59,9 +59,9 @@ certify them. A unit with several blockers counts under each. “Alone” means 
 
 | Family | Units | Bytes | Alone: units, bytes | Here |
 |---|---:|---:|---:|---|
-| readings | 177 | 29,972 | 175, 29,676 | untranslated clauses and pending RS0/RS4/RS5 choices |
-| no claim to check | 125 | 20,021 | 125, 20,021 | title, contents, motivation, change log, illustrative C.1 and C.2 material |
-| AT attitudes | 34 | 8,233 | 34, 8,233 | “could”, “may”, beliefs and expectations without a deontic reading |
+| readings | 190 | 31,939 | 188, 31,643 | untranslated clauses and pending RS0/RS4/RS5 choices |
+| no claim to check | 110 | 17,656 | 110, 17,656 | title, contents, change log, illustrative C.1 and C.2 material |
+| AT attitudes | 36 | 8,631 | 36, 8,631 | “could”, “may”, beliefs and expectations without a deontic reading |
 | ET time | 24 | 5,668 | 15, 3,914 | before/during clauses, periodic review, the self-improvement interval |
 | JT judgments | 21 | 3,742 | 10, 1,613 | named open terms, including threshold and safeguard sufficiency |
 | DF defaults | 6 | 1,031 | 0, 0 | Table 1 guidelines and footnote 6 |
@@ -71,7 +71,7 @@ certify them. A unit with several blockers counts under each. “Alone” means 
 | SC scope | 1 | 116 | 0, 0 | Tracked Category suff/iff choice |
 | AP act phrases | 0 | 0 | 0, 0 | no separate AP-only unit in this partition |
 
-The 226 UNFORMALISED units carry per-unit reasons in `spans.json`: `not_translated` 173, `hedged_claim` 34,
+The 241 UNFORMALISED units carry per-unit reasons in `spans.json`: `not_translated` 186, `hedged_claim` 36,
 `event_order` 15, `quantity` 2 and `external_reference` 2. VE reports 21 declared open terms and 11 unresolved
 reading sets as residual. No assumption, bridge leaf or exception is represented as certified.
 
