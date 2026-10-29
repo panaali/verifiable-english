@@ -575,6 +575,11 @@ def test_pf_every_byte_has_ve_status_and_one_unit(pf_modules):
     assert all("reason" in u for u in units if u["status"] == "UNFORMALISED")
     assert all(u["status"] != "LABELLED" for u in units if u["id"].startswith("p2-"))
     readme = (PF / "README.md").read_text()
+    gaps = json.loads((PF_EVIDENCE / "gaps.json").read_text())
+    for family, data in gaps["features"].items():
+        assert (f"| {family} | {data['units']} | {data['bytes']:,} | "
+                f"{data['sole_units']}, {data['sole_bytes']:,} |") in readme
+    assert f"{coverage['residual']['unresolved_reading_sets']} unresolved reading sets" in readme
     for status, amount in coverage["master_bytes_by_status"].items():
         count = sum(u["status"] == status for u in units)
         assert f"| {status} | {count} | {amount:,} | {amount / 67418:.1%} |" in readme
