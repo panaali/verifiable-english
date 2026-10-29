@@ -132,6 +132,33 @@ def test_predicate_signature_and_constant_fault_order(built):
         surface.close()
 
 
+def test_legacy_undeclared_builtin_sorts_are_unknown_symbols(built):
+    surface = df.SURFACES["environment"]()
+    try:
+        for sort in ("$int", "$string", "missing"):
+            case = {"language": "ve.core@0", "profile": "relational-fol@0",
+                    "spec_revision": "ve-v0-draft-2026-09-20",
+                    "vocabulary": {"sorts": {}, "predicates": {
+                        "p": {"arguments": [sort], "description": "d"}}, "constants": {}}}
+            seed = df.Seed("environment", "envelope", f"legacy-sort-{sort}", case)
+            answers = {"python": surface.python(seed, case),
+                       "lean": surface.lean([(seed, case)])[0],
+                       "rust": surface.rust([(seed, case)])[0]}
+            assert {name: answer["code"] for name, answer in answers.items()} == dict.fromkeys(
+                ("python", "lean", "rust"), "UnknownSymbol"), answers
+        valid = {"language": "ve.core@0", "profile": "relational-fol@0",
+                 "spec_revision": "ve-v0-draft-2026-09-20",
+                 "vocabulary": {"sorts": {"person": {"description": "d"}},
+                                "predicates": {"p": {"arguments": ["person"], "description": "d"}},
+                                "constants": {}}}
+        seed = df.Seed("environment", "envelope", "legacy-declared-sort", valid)
+        answers = (surface.python(seed, valid), surface.lean([(seed, valid)])[0],
+                   surface.rust([(seed, valid)])[0])
+        assert all(answer["outcome"] == "ok" for answer in answers), answers
+    finally:
+        surface.close()
+
+
 def test_request_envelope_fields_precede_predicate_sort_fault(built):
     """Required and extra envelope fields win over nested vocabulary faults in every engine."""
     surface = df.SURFACES["requests"]()

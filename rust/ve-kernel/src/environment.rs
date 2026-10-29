@@ -369,6 +369,9 @@ impl Environment {
                 if !sorts.contains_key(s) && !(order && s == "$int")
                     && !(route && profiles.iter().any(|p| p == "data@0") && s == "$string") {
                     if s == "$string" || s == "$int" {
+                        if !route {
+                            return error("UnknownSymbol", "unknown predicate argument sort");
+                        }
                         // The unsupported built-in signature is decided after
                         // the constants, as in Lean's environment decoder.
                         invalid_builtin_signature = true;
