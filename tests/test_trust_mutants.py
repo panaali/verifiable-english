@@ -2497,7 +2497,8 @@ def test_merge_refuses_a_part_this_tool_does_not_write(sharded, capsys, name, ch
 # with that status and nothing else, so no part's unowned row can give the merge a verdict (M002 is part 2's, M007
 # past --max-mutants 6 and no part's); each changed part is resealed, so its counts agree with its rows
 IDLE_ROWS = [
-    *((f"{i}-{'-'.join(v)}", lambda ps, i=i, v=v: ps[0]["mutants"][int(i[1:]) - 1].update(v),
+    *((f"{i}-{'-'.join(k for k in v if k != 'raw_detail')}",
+       lambda ps, i=i, v=v: ps[0]["mutants"][int(i[1:]) - 1].update(v),
        f"{i} has a verdict in") for i in ("M002", "M007") for v in (
         {"status": "KILLED", "raw_status": "KILLED"}, {"status": "SURVIVOR", "raw_status": "SURVIVOR"},
         {"status": "ALLOWED", "raw_status": "UNKNOWN", "raw_detail": ""}, {"detail": "x"}, {"reused_from": "h"},
