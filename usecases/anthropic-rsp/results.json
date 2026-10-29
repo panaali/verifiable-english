@@ -5185,6 +5185,18 @@
      "with": "SOME(RS4=rel)",
      "without": "NONE"
     },
+    "D3b": {
+     "with": "ALL",
+     "without": "NONE"
+    },
+    "D4": {
+     "with": "ALL",
+     "without": "NONE"
+    },
+    "D5": {
+     "with": "ALL",
+     "without": "NONE"
+    },
     "G7": {
      "with": {
       "COVERED:QUARTERLY_UPDATE": "ALL",

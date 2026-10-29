@@ -32,6 +32,16 @@ CHANGELOG = {"v1_0": "2023-09-19", "v2_0": "2024-10-15", "v2_1": "2025-03-31", "
              "v3_0": "2026-02-24", "v3_1": "2026-04-02", "v3_2": "2026-04-29", "v3_3": "2026-05-26",
              "v3_4": "2026-07-08"}
 
+# Each date question that asks whether a policy requirement holds has one
+# source rule. The rule header owns its RS0/N1 classification; these rows own
+# only the question's calendar facts and the link to that rule.
+DATE_QUESTIONS = {
+    "D3a": ("2026-05-20", "2026-07-01", "30", "publication within", "f8-public"),
+    "D3b": ("2026-06-10", "2026-07-01", "30", "publication within", "f8-public"),
+    "D4": ("2026-08-03", "2026-09-02", "30", "deadline by", "f9-internal"),
+    "D5": ("2026-09-01", "2026-09-08", "7", "deadline by", "f16-share-one-week"),
+}
+
 
 # --- D2: harm classes and might cells (P3) --------------------------------------------------------------------------
 
@@ -158,10 +168,9 @@ def d3():
     # D3b: the coverage date is "no more than 30 days prior to the publication" (F8): the publication is no later
     # than 30 days after it. D4, D5: the deadline ("Within 30 days" of F9; "within one week" of F16, 7 days) is no
     # later than the day asked about.
-    counts = {"D3b": ("2026-06-10", "2026-07-01", "30", "publication within"),
-              "D4": ("2026-08-03", "2026-09-02", "30", "deadline by"), "D5": ("2026-09-01", "2026-09-08", "7",
-                                                                             "deadline by")}
-    for item, (start, day, days, question) in counts.items():
+    for item, (start, day, days, question, _) in DATE_QUESTIONS.items():
+        if item == "D3a":
+            continue  # the failing coverage-date example is checked by date_answer
         env = date_environment(("start_day", "limit_day"))
         facts = [_q(["date_on", _day("start_day"), ["date", start]]),
                  _q(["shift_days", _day("limit_day"), _day("start_day"), days])]

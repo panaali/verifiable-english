@@ -265,6 +265,11 @@ def dates():
 
 def date_answer(id_):
     import stage0
+    if WITHOUT_NARROWING == "N1" and id_ in stage0.DATE_QUESTIONS:
+        source_rule = stage0.DATE_QUESTIONS[id_][4]
+        if next(b for b in T.rule_blocks() if b.id == source_rule).narrowing == "RS0":
+            return constant(False, "D3 ve-units@1 with D1 source rule",
+                            f"{source_rule}: prediction reading supplies no deadline obligation")
     if id_ == "D4" and MUTANT == "m6":
         env = stage0.date_environment(("start_day", "limit_day"))
         facts = [stage0._q(["date_on", stage0._day("start_day"), ["date", "2026-08-03"]]),
@@ -280,11 +285,12 @@ def date_answer(id_):
     if certificate is False:
         return {"route": "D3 ve-units@1", "undecided": "resource limit: no replayed quantity certificate"}
     if id_ == "D3a":
+        start, day, days, _, _ = stage0.DATE_QUESTIONS[id_]
         env = stage0.date_environment(("start_day", "limit_day"))
-        facts = [stage0._q(["date_on", stage0._day("start_day"), ["date", "2026-05-20"]]),
-                 stage0._q(["shift_days", stage0._day("limit_day"), stage0._day("start_day"), "30"])]
+        facts = [stage0._q(["date_on", stage0._day("start_day"), ["date", start]]),
+                 stage0._q(["shift_days", stage0._day("limit_day"), stage0._day("start_day"), days])]
         late = stage0._proved(env, facts, stage0._q(["date_before", stage0._day("limit_day"),
-                                                      ["date", "2026-07-01"]]))
+                                                      ["date", day]]))
         if late:
             return constant(False, "D3 ve-units@1 quantity certificate replay", "30-day limit precedes publication")
         return {"route": "D3 ve-units@1", "undecided": "resource limit: no certificate for the 30-day violation"}
