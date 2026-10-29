@@ -1,0 +1,2697 @@
+{
+ "units": [
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 39,
+   "id": "p1-title",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 23,
+   "id": "p1-effective",
+   "kind": "meta",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 71,
+   "id": "p1-more-info",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 750,
+   "id": "p2-contents",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 371,
+   "id": "intro-purpose",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 61,
+   "id": "intro-living",
+   "kind": "attributed",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "ET"
+   ],
+   "bytes": 253,
+   "id": "intro-update",
+   "kind": "unformalised",
+   "reason": "no_deadline_or_trigger",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 61,
+   "id": "intro-components",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 195,
+   "id": "intro-recommendations",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 104,
+   "id": "intro-table",
+   "kind": "attributed",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 131,
+   "id": "intro-planned",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 96,
+   "id": "intro-change",
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 111,
+   "id": "intro-collective",
+   "kind": "attributed",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 202,
+   "id": "intro-previous",
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 87,
+   "id": "intro-societal",
+   "kind": "attributed",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "WG"
+   ],
+   "bytes": 382,
+   "id": "intro-pause",
+   "kind": "causal",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 99,
+   "id": "intro-prepare",
+   "kind": "attributed",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 173,
+   "id": "intro-separate",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 165,
+   "id": "intro-aspire",
+   "kind": "unformalised",
+   "reason": "aim_without_force",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 53,
+   "id": "intro-cannot-commit",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 62,
+   "id": "intro-roadmaps",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 111,
+   "id": "intro-roadmaps-describe",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 168,
+   "id": "intro-goals",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 104,
+   "id": "intro-not-hard",
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 42,
+   "id": "intro-risk-reports",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 547,
+   "id": "intro-rr-contents",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 159,
+   "id": "intro-rr-published",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 108,
+   "id": "intro-aim-review",
+   "kind": "unformalised",
+   "reason": "aim_without_force",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 136,
+   "id": "intro-governance",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 249,
+   "id": "intro-one-part",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 102,
+   "id": "intro-may-serve",
+   "kind": "hedged",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 75,
+   "id": "intro-focused",
+   "kind": "attributed",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 40,
+   "id": "p3-footer",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 98,
+   "id": "intro-focused-2",
+   "kind": "attributed",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "external reference"
+   ],
+   "bytes": 124,
+   "id": "intro-separate-documents",
+   "kind": "unformalised",
+   "reason": "external_reference",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 48,
+   "id": "s1-heading",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 188,
+   "id": "s1-outlines",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 394,
+   "id": "s1-table",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 219,
+   "id": "s1-distinction",
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 144,
+   "id": "s1-cannot-commit",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 73,
+   "id": "s1-drive",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 120,
+   "id": "s1-north-star",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 181,
+   "id": "s1-strive",
+   "kind": "norm",
+   "reading_set": "rs12_strive_advance",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 232,
+   "id": "s1-competitor",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 236,
+   "id": "s1-no-detail",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 190,
+   "id": "s1-structured",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 105,
+   "id": "s1-flexibility",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 143,
+   "id": "s1-challenge",
+   "kind": "hedged",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 202,
+   "id": "fn1-catastrophic",
+   "kind": "meta",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 96,
+   "id": "fn1-plain-meaning",
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "external reference"
+   ],
+   "bytes": 158,
+   "id": "fn1-sb53",
+   "kind": "unformalised",
+   "reason": "external_reference",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 40,
+   "id": "p4-footer",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 313,
+   "id": "s1-ultimately",
+   "kind": "attributed",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "SC"
+   ],
+   "bytes": 190,
+   "id": "s1-harmonize",
+   "kind": "unformalised",
+   "reason": "addressed_to_others",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 204,
+   "id": "s1-shorter-run",
+   "kind": "hedged",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 165,
+   "id": "s1-expect-evolve",
+   "kind": "attributed",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 76,
+   "id": "s1-hope",
+   "kind": "unformalised",
+   "reason": "hope",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 161,
+   "id": "fn2-single-analysis",
+   "kind": "hedged",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "SC"
+   ],
+   "bytes": 179,
+   "id": "fn2-spare",
+   "kind": "unformalised",
+   "reason": "addressed_to_others",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 40,
+   "id": "p5-footer",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 122,
+   "id": "p6-table-header",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 50,
+   "id": "t1-name",
+   "kind": "asserted",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 250,
+   "id": "t1-description",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "JT",
+    "readings"
+   ],
+   "bytes": 373,
+   "id": "t1-plan",
+   "kind": "norm",
+   "reading_set": "rs1_t1",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 132,
+   "id": "t1-plan-robust",
+   "kind": "norm",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 165,
+   "id": "t1-expect",
+   "kind": "attributed",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "JT",
+    "SC"
+   ],
+   "bytes": 237,
+   "id": "t1-argument",
+   "kind": "norm",
+   "reading_set": "rs2_t1",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 398,
+   "id": "t1-likely-require",
+   "kind": "example",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 190,
+   "id": "fn3-overview",
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 40,
+   "id": "p6-footer",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 122,
+   "id": "p7-table-header",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 46,
+   "id": "t2-name",
+   "kind": "asserted",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 517,
+   "id": "t2-description",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "JT",
+    "readings"
+   ],
+   "bytes": 390,
+   "id": "t2-plan",
+   "kind": "norm",
+   "reading_set": "rs1_t2",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "JT",
+    "SC"
+   ],
+   "bytes": 252,
+   "id": "t2-argument",
+   "kind": "norm",
+   "reading_set": "rs2_t2",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 346,
+   "id": "t2-likely-require",
+   "kind": "example",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "external reference"
+   ],
+   "bytes": 269,
+   "id": "t2-rand-sl4",
+   "kind": "unformalised",
+   "reason": "external_reference",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [],
+   "bytes": 47,
+   "id": "t3-name",
+   "kind": "asserted",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 249,
+   "id": "t3-description",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "JT",
+    "readings"
+   ],
+   "bytes": 154,
+   "id": "t3-plan",
+   "kind": "norm",
+   "reading_set": "rs1_t3",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 99,
+   "id": "t3-expect",
+   "kind": "attributed",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "JT",
+    "SC"
+   ],
+   "bytes": 180,
+   "id": "t3-argument",
+   "kind": "norm",
+   "reading_set": "rs2_t3",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 149,
+   "id": "t3-may-initially",
+   "kind": "hedged",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 83,
+   "id": "t3-likely-include",
+   "kind": "example",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 309,
+   "id": "fn4-7-examples",
+   "kind": "example",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 125,
+   "id": "fn4-covid",
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 40,
+   "id": "p7-footer",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 122,
+   "id": "p8-table-header",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 142,
+   "id": "t3-description-2",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 274,
+   "id": "t3-near-term",
+   "kind": "attributed",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 123,
+   "id": "t3-down-the-line",
+   "kind": "hedged",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 113,
+   "id": "t3-expect-2",
+   "kind": "attributed",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 434,
+   "id": "t3-likely-include-2",
+   "kind": "example",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 30,
+   "id": "t4-name",
+   "kind": "asserted",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 331,
+   "id": "t4-description",
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 136,
+   "id": "t4-focus",
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "JT",
+    "readings"
+   ],
+   "bytes": 236,
+   "id": "t4-plan-moonshot",
+   "kind": "norm",
+   "reading_set": "rs1_t4",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 141,
+   "id": "t4-plan-eyes",
+   "kind": "norm",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "JT",
+    "SC"
+   ],
+   "bytes": 263,
+   "id": "t4-argument",
+   "kind": "norm",
+   "reading_set": "rs2_t4",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 341,
+   "id": "t4-likely-require",
+   "kind": "example",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "external reference"
+   ],
+   "bytes": 77,
+   "id": "t4-rand-sl4",
+   "kind": "unformalised",
+   "reason": "external_reference",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 159,
+   "id": "t4-calibrated",
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 47,
+   "id": "t4-actors",
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 40,
+   "id": "p8-footer",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 122,
+   "id": "p9-table-header",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 56,
+   "id": "t4-focus-2",
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "WG"
+   ],
+   "bytes": 169,
+   "id": "t4-could-accelerate",
+   "kind": "causal",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "JT",
+    "readings"
+   ],
+   "bytes": 185,
+   "id": "t4-definition",
+   "kind": "norm",
+   "reading_set": "rs3o_t4",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "JT",
+    "QT"
+   ],
+   "bytes": 49,
+   "id": "t4-cost-factor",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 133,
+   "id": "t4-scenario-2",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "JT",
+    "readings"
+   ],
+   "bytes": 440,
+   "id": "t4-scenario-2-definition",
+   "kind": "norm",
+   "reading_set": "rs3i_t4",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 306,
+   "id": "t4-plan-eyes-2",
+   "kind": "norm",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 219,
+   "id": "t4-plan-alignment",
+   "kind": "norm",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 249,
+   "id": "t4-plan-red-teaming",
+   "kind": "norm",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 56,
+   "id": "t4-actors-2",
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 141,
+   "id": "t4-argument-insiders",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 178,
+   "id": "t4-insiders-requires",
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 297,
+   "id": "t4-insiders-likely",
+   "kind": "example",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 155,
+   "id": "t4-argument-goals",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 334,
+   "id": "t4-goals-likely",
+   "kind": "example",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "JT",
+    "DF"
+   ],
+   "bytes": 461,
+   "id": "t4-evidentiary",
+   "kind": "norm",
+   "reading_set": "rs8_evidentiary",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 41,
+   "id": "fn9-generations",
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 120,
+   "id": "fn8-double-rate",
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 243,
+   "id": "fn8-example",
+   "kind": "example",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 145,
+   "id": "fn8-not-productivity",
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 40,
+   "id": "p9-footer",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 122,
+   "id": "p10-table-header",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 70,
+   "id": "t4-scenario-2-factors",
+   "kind": "example",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "JT",
+    "readings"
+   ],
+   "bytes": 105,
+   "id": "t4-continuation",
+   "kind": "norm",
+   "reading_set": "rs3c_t4",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 111,
+   "id": "t4-highly-capable",
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 148,
+   "id": "t4-may-add",
+   "kind": "hedged",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 209,
+   "id": "t4-plan-publish",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 175,
+   "id": "t4-expect",
+   "kind": "attributed",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 41,
+   "id": "p10-footer",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 215,
+   "id": "s2-maintain",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 77,
+   "id": "s2-part-of-work",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 158,
+   "id": "s2-share",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [],
+   "bytes": 87,
+   "id": "s2-updates",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 50,
+   "id": "s2-subject-to-change",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 95,
+   "id": "s2-may-reflect",
+   "kind": "hedged",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 146,
+   "id": "s2-strive",
+   "kind": "norm",
+   "reading_set": "rs12_less_ambitious",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 337,
+   "id": "s2-hope",
+   "kind": "unformalised",
+   "reason": "hope",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 114,
+   "id": "s2-may-help",
+   "kind": "hedged",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "external reference"
+   ],
+   "bytes": 103,
+   "id": "s2-available",
+   "kind": "unformalised",
+   "reason": "external_reference",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [],
+   "bytes": 56,
+   "id": "s2-keep-past",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [],
+   "bytes": 196,
+   "id": "s3-publish",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 165,
+   "id": "s3-system-cards",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 22,
+   "id": "s31-heading",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 180,
+   "id": "s31-coverage-date",
+   "kind": "meta",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [],
+   "bytes": 69,
+   "id": "s31-public",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 295,
+   "id": "s31-internal",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 204,
+   "id": "s31-at-minimum",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 88,
+   "id": "s31-in-scope-name",
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 168,
+   "id": "s31-voluntary",
+   "kind": "hedged",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "ET",
+    "QT"
+   ],
+   "bytes": 56,
+   "id": "s31-timing",
+   "kind": "norm",
+   "reading_set": "rs9_cadence",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 95,
+   "id": "s31-not-each-release",
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 256,
+   "id": "s31-off-cycle",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "JT",
+    "ET"
+   ],
+   "bytes": 316,
+   "id": "s31-off-cycle-public",
+   "kind": "norm",
+   "reading_set": "rs11_off_cycle",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 186,
+   "id": "fn10-more-recent",
+   "kind": "hedged",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 41,
+   "id": "p11-footer",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "JT",
+    "ET"
+   ],
+   "bytes": 324,
+   "id": "s31-off-cycle-internal",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 43,
+   "id": "s32-heading",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 55,
+   "id": "s32-principles",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 155,
+   "id": "s32-intend",
+   "kind": "norm",
+   "reading_set": "rs12_candid",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 257,
+   "id": "s32-acknowledge",
+   "kind": "unformalised",
+   "reason": "degree_term",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 148,
+   "id": "s32-effort",
+   "kind": "unformalised",
+   "reason": "degree_term",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 258,
+   "id": "s32-in-line",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "DF"
+   ],
+   "bytes": 139,
+   "id": "s32-strong-attempt",
+   "kind": "norm",
+   "reading_set": "rs8_strong_attempt",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 14,
+   "id": "s33-heading",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 141,
+   "id": "s33-factual",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 239,
+   "id": "s33-factual-items-1",
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 307,
+   "id": "s33-evidence",
+   "kind": "unformalised",
+   "reason": "as_appropriate",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 303,
+   "id": "s33-factual-items-4",
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 125,
+   "id": "s33-risk-analyses",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 659,
+   "id": "s33-analysis-items",
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 41,
+   "id": "p12-footer",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 115,
+   "id": "s33-looking-forward",
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 60,
+   "id": "s33-review",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 586,
+   "id": "s33-review-items",
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 91,
+   "id": "s33-goals-missed",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 287,
+   "id": "s33-marginal",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 706,
+   "id": "s33-marginal-items",
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 75,
+   "id": "s33-each-model",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 154,
+   "id": "s33-groupings",
+   "kind": "attributed",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "ET"
+   ],
+   "bytes": 145,
+   "id": "s34-step1",
+   "kind": "unformalised",
+   "reason": "process_description",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [],
+   "bytes": 223,
+   "id": "s34-step2",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 71,
+   "id": "s34-may-refine",
+   "kind": "hedged",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "DF"
+   ],
+   "bytes": 90,
+   "id": "s34-usually",
+   "kind": "norm",
+   "reading_set": "rs13_external_feedback",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [],
+   "bytes": 205,
+   "id": "s34-step3",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 151,
+   "id": "s34-ultimate",
+   "kind": "norm",
+   "reading_set": "rs7_ultimate",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "JT",
+    "ET"
+   ],
+   "bytes": 205,
+   "id": "s34-step4",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 197,
+   "id": "fn11-marginal",
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 41,
+   "id": "p13-footer",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 301,
+   "id": "s34-step5",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 85,
+   "id": "s35-publish",
+   "kind": "norm",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 158,
+   "id": "s35-aim",
+   "kind": "norm",
+   "reading_set": "rs12_minimize_redactions",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 649,
+   "id": "s35-reasons",
+   "kind": "norm",
+   "reading_set": "rs6_redaction_reasons",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [],
+   "bytes": 90,
+   "id": "s35-disclose",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 123,
+   "id": "s35-aim-justify",
+   "kind": "norm",
+   "reading_set": "rs12_justify_redactions",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 122,
+   "id": "s36-work-toward",
+   "kind": "norm",
+   "reading_set": "rs12_public_review",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 223,
+   "id": "s36-means",
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 231,
+   "id": "s36-commentary",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 131,
+   "id": "s36-intent",
+   "kind": "attributed",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 133,
+   "id": "s36-experiment",
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 220,
+   "id": "s36-full-review",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [],
+   "bytes": 128,
+   "id": "s36-highly-capable",
+   "kind": "asserted",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 429,
+   "id": "s36-significantly-redacted",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 181,
+   "id": "s36-employees",
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 174,
+   "id": "s36-ltbt-request",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 41,
+   "id": "p14-footer",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 193,
+   "id": "s361-select",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 149,
+   "id": "s361-important",
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 180,
+   "id": "s361-candid",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "DF"
+   ],
+   "bytes": 176,
+   "id": "s361-should-not",
+   "kind": "norm",
+   "reading_set": "rs8_revenue_example",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 66,
+   "id": "s361-conflicts",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [],
+   "bytes": 95,
+   "id": "s361-financial-interest",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "SC"
+   ],
+   "bytes": 182,
+   "id": "s361-individual-financial-interest",
+   "kind": "unformalised",
+   "reason": "addressed_to_others",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [
+    "SC"
+   ],
+   "bytes": 142,
+   "id": "s361-personal-relationships",
+   "kind": "unformalised",
+   "reason": "addressed_to_others",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [],
+   "bytes": 101,
+   "id": "s361-consult",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [],
+   "bytes": 195,
+   "id": "s362-one-week",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [],
+   "bytes": 105,
+   "id": "s362-ask-30-days",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 149,
+   "id": "s362-try",
+   "kind": "norm",
+   "reading_set": "rs12_review_before_board",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [],
+   "bytes": 82,
+   "id": "s362-all-sections",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 125,
+   "id": "s362-may-split",
+   "kind": "norm",
+   "reading_set": "rs6_split",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [],
+   "bytes": 163,
+   "id": "s362-only-legal",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 117,
+   "id": "s362-expect",
+   "kind": "attributed",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 524,
+   "id": "s363-contents",
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 225,
+   "id": "s363-redactions",
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 263,
+   "id": "fn12-example",
+   "kind": "example",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 41,
+   "id": "p15-footer",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 523,
+   "id": "s363-redaction-items",
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 141,
+   "id": "s363-public-comments",
+   "kind": "norm",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 402,
+   "id": "s363-bound",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 110,
+   "id": "s4-commit",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 158,
+   "id": "s4-rso",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 550,
+   "id": "s4-rso-duties",
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 193,
+   "id": "s4-ltbt-brief",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [],
+   "bytes": 131,
+   "id": "s4-unredacted-200",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [],
+   "bytes": 97,
+   "id": "s4-minimally-redacted",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [],
+   "bytes": 170,
+   "id": "s4-noncompliance-process",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [],
+   "bytes": 147,
+   "id": "s4-recipients",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 175,
+   "id": "s4-investigate",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [],
+   "bytes": 123,
+   "id": "s4-quarterly",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 125,
+   "id": "s4-notify-board",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 47,
+   "id": "s4-may-public-notice",
+   "kind": "norm",
+   "reading_set": "rs6_public_notice",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [],
+   "bytes": 51,
+   "id": "s4-retaliation",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [],
+   "bytes": 108,
+   "id": "s4-rso-report",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [],
+   "bytes": 232,
+   "id": "s4-non-disparagement",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [],
+   "bytes": 176,
+   "id": "s4-clause",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 103,
+   "id": "s4-internal-review",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 188,
+   "id": "s4-compliance-review",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 75,
+   "id": "s4-compliance-focus",
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 132,
+   "id": "s4-changes",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [],
+   "bytes": 80,
+   "id": "s4-publish-update",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 41,
+   "id": "p16-footer",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "ET"
+   ],
+   "bytes": 91,
+   "id": "s4-publish-update-2",
+   "kind": "norm",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 64,
+   "id": "s4-website",
+   "kind": "norm",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 58,
+   "id": "appa-heading",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 58,
+   "id": "appa-limited",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 164,
+   "id": "appa-best-judgment",
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 239,
+   "id": "appa-may-help",
+   "kind": "hedged",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 159,
+   "id": "appa-not-preclude",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 211,
+   "id": "appa-priority",
+   "kind": "attributed",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 199,
+   "id": "appa-lead-scenario",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 152,
+   "id": "appa-lead-argument",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 138,
+   "id": "appa-lead-delay",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "JT",
+    "SC"
+   ],
+   "bytes": 310,
+   "id": "appa-strong-scenario",
+   "kind": "norm",
+   "reading_set": "rs5_all_competitors",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 192,
+   "id": "appa-strong-meet",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 99,
+   "id": "appa-strong-delay",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 307,
+   "id": "appa-uplevel-scenario",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "JT"
+   ],
+   "bytes": 80,
+   "id": "appa-uplevel-effort",
+   "kind": "norm",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "readings"
+   ],
+   "bytes": 87,
+   "id": "appa-uplevel-not-delay",
+   "kind": "norm",
+   "reading_set": "rs4_not_necessarily",
+   "status": "OPEN"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 129,
+   "id": "appb-earlier",
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 128,
+   "id": "appb-still",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 105,
+   "id": "fn13-highly-capable",
+   "kind": "definition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 41,
+   "id": "p17-footer",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 82,
+   "id": "appb-still-2",
+   "kind": "exposition",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "AT"
+   ],
+   "bytes": 335,
+   "id": "appb-prefer",
+   "kind": "unformalised",
+   "reason": "preference",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [],
+   "bytes": 40,
+   "id": "cl-v1-0-date",
+   "kind": "meta",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 42,
+   "id": "cl-v1-0",
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 28,
+   "id": "cl-v2-0-date",
+   "kind": "meta",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 2953,
+   "id": "cl-v2-0",
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 41,
+   "id": "p18-footer",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 2584,
+   "id": "cl-v2-0-2",
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 26,
+   "id": "cl-v2-1-date",
+   "kind": "meta",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 1266,
+   "id": "cl-v2-1",
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 41,
+   "id": "p19-footer",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 24,
+   "id": "cl-v2-2-date",
+   "kind": "meta",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 815,
+   "id": "cl-v2-2",
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 29,
+   "id": "cl-v3-0-date",
+   "kind": "meta",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 51,
+   "id": "cl-v3-0",
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "external reference"
+   ],
+   "bytes": 66,
+   "id": "cl-v3-0-see-here",
+   "kind": "unformalised",
+   "reason": "external_reference",
+   "status": "UNFORMALISED"
+  },
+  {
+   "blockers": [],
+   "bytes": 25,
+   "id": "cl-v3-1-date",
+   "kind": "meta",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 647,
+   "id": "cl-v3-1",
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 26,
+   "id": "cl-v3-2-date",
+   "kind": "meta",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 228,
+   "id": "cl-v3-2",
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 24,
+   "id": "cl-v3-3-date",
+   "kind": "meta",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 262,
+   "id": "cl-v3-3",
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [],
+   "bytes": 24,
+   "id": "cl-v3-4-date",
+   "kind": "meta",
+   "status": "CHECKED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 739,
+   "id": "cl-v3-4",
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 41,
+   "id": "p20-footer",
+   "kind": "meta",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 1452,
+   "id": "cl-v3-4-2",
+   "kind": "explanation",
+   "status": "LABELLED"
+  },
+  {
+   "blockers": [
+    "no claim to check"
+   ],
+   "bytes": 41,
+   "id": "p21-footer",
+   "kind": "meta",
+   "status": "LABELLED"
+  }
+ ]
+}
