@@ -1,0 +1,40 @@
+{
+  "collected": 20287,
+  "plans": {
+    "10": {
+      "digest": "72409f9e68ec5e681ffb6925619839e7966f32730f99e44389d21b2a457fae54",
+      "max_seconds": 3114.5,
+      "min_seconds": 2552.3,
+      "seconds": [
+        3114.5,
+        2552.3,
+        2552.3,
+        2552.3,
+        2552.3,
+        2552.3,
+        2552.3,
+        2552.3,
+        2552.4,
+        2552.3
+      ]
+    },
+    "6": {
+      "digest": "a0239e2e9ca47a015b212de40c251fc43eccac82ca4154fc876dc8f45e04510f",
+      "max_seconds": 4347.6,
+      "min_seconds": 4347.5,
+      "seconds": [
+        4347.5,
+        4347.6,
+        4347.6,
+        4347.6,
+        4347.6,
+        4347.5
+      ]
+    }
+  },
+  "recorded_durations": 2218,
+  "selected": 20286,
+  "source_commit": "d25bc343be0f41a29a65c6a8766f18f2b1694e8d",
+  "source_record": "mac-gate-cand-me-3.raw.json",
+  "source_tree": "6ebb32b069dbba9dfe11459309a660d4ec20a6d7"
+}
