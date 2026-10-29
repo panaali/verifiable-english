@@ -21,23 +21,36 @@ open Lean VE.Readings.Run VE.Service
     (Json.arr #[Json.arr #[.str "rs_b", toJson (0 : Nat)]])
   let validate := c.setObjVal! "kind" (.str "readings-validate")
   let elaborate := c.setObjVal! "kind" (.str "readings-elaborate")
-  let verdicts := c.setObjVal! "kind" (.str "readings-verdicts")
+  let withoutComponent := fun j => match j with
+    | Json.obj kvs => Json.obj (kvs.erase "component")
+    | _ => j
+  let verdicts := withoutComponent (c.setObjVal! "kind" (.str "readings-verdicts"))
+  let choiceUnnamed := withoutComponent c
   let unsupported := c.setObjVal! "kind" (.str "other-kind")
-  let single := c.setObjVal! "document"
-    ((c.getObjValD "document").setObjVal! "reading_sets" (Json.arr #[]))
-  for item in [mainCase, otherCase, validate, elaborate, verdicts, unsupported, single] do
+  let .arr units := (c.getObjValD "document").getObjValD "units" | return false
+  let singleDocument := (c.getObjValD "document").setObjVal! "reading_sets" (Json.arr #[])
+  let single := c.setObjVal! "document" (singleDocument.setObjVal! "units" (Json.arr #[units[0]!]))
+  let single := single.setObjVal! "kind" (.str "readings-validate")
+  let single := single.setObjVal! "component" (.str "main")
+  let single := single.setObjVal! "choice" (Json.arr #[])
+  for item in [mainCase, otherCase, validate, elaborate, verdicts, choiceUnnamed, unsupported, single] do
     if (runCaseReportedMemo {} item).1 != runCaseReported item then return false
   let .arr sets := (c.getObjValD "document").getObjValD "reading_sets" | return false
   let twoSets := c.setObjVal! "document"
     ((c.getObjValD "document").setObjVal! "reading_sets"
       (Json.arr #[sets[0]!]))
+  let twoValidate := withoutComponent (twoSets.setObjVal! "kind" (.str "readings-validate"))
+  let twoElaborate := withoutComponent (twoSets.setObjVal! "kind" (.str "readings-elaborate"))
   if (runCaseReportedMemo {} single).2.admissions != 0 ||
+      (runCaseReportedMemo {} single).1.getObjValD "status" != .str "ok" ||
       (runCaseReportedMemo {} twoSets).2.admissions != 1 ||
       (runCaseReportedMemo {} mainCase).2.admissions != 1 ||
       (runCaseReportedMemo {} otherCase).2.admissions != 1 ||
       (runCaseReportedMemo {} validate).2.admissions != 1 ||
       (runCaseReportedMemo {} elaborate).2.admissions != 1 ||
       (runCaseReportedMemo {} verdicts).2.admissions != 0 ||
+      (runCaseReportedMemo {} twoValidate).2.admissions != 1 ||
+      (runCaseReportedMemo {} twoElaborate).2.admissions != 1 ||
       (runCaseReportedMemo {} unsupported).2.admissions != 0 then return false
   let make := fun (name : String) (bytes : Nat) =>
     ({kind := name, environment := .null, document := .null, bytes := bytes, ready := []} : AdmissionMemoEntry)
