@@ -1,9 +1,9 @@
 # rd9-docroute build report
 
-FIXED: F5's displaced norm is absent from the filled premise set; the route DELTA is signed by the DRI (reviews/dri-decisions-20261029-rd9-docroute.md item 1).
+STOP (L52): F5 is fixed, but the graph-free soft-chain availability DELTA needs a DRI signature; the claim-graph row alone is signed (reviews/dri-decisions-20261029-rd9-docroute.md item 1).
 HEAD: `feature/rd9-docroute` (see `git log -1` for the final local commit).
 Changed: soft document claim-graph admission and premise reporting use Lean's filled tree, generated vocabulary, and free norm selection; direct unfilled soft checks still refuse.
-Open: merge-train gate and the next constitution pilot audit.
+Open: DRI signature for graph-free availability, merge-train gate, and the next constitution pilot audit.
 Pilot bytes: 0 newly formalised bytes from routing alone; the previous probe reported 215 CHECKED source bytes, not a checked document answer.
 
 ## Plan and spec rows
@@ -77,3 +77,5 @@ The original F4 probe raised `CheckerUnavailable` before the fix and passed afte
 F5 -> The filled report now sends Lean the free norm units selected by the loader's `_free_norms`, excluding units replaced by active reading sets and units attached to open sets -> `tests/test_rd9_docroute.py::test_filled_soft_premises_exclude_norm_replaced_by_assertion_reading[authored]` and `[open]` -> `e620911e8`.
 
 The exact F5 probe failed before the fix (`INCONSISTENT` instead of `model`) and passed afterward. The regression checks both reading-set statuses and keeps a strict, unreplaced norm as a contradictory control. A temporary mutation that dropped the active-set exclusion failed the authored regression; it was restored and recorded in `seeded-bugs.json`. The focused file passed all 20 tests. `lake build` and `python3 lean/audit.py` passed. No Lean or Rust product code changed. The three tests in `main-known-red.txt` remain pre-existing and were not edited. No full suite or release gate was run, as directed.
+
+The final-HEAD selected run exercised 146 units on the VM after the Mac connection timed out. Two failed: `test_one_selection_serves_both_python_paths` counted two callers of `_free_norms` before the report became a third, and `test_fsf_r2_probes_rerun_equals_saved_probes` found the saved graph-free DF-c probe stale. The call-site test now covers all three uses. `measure_r2.py` regenerated the saved probe, changing only DF-c's document status from `UnsupportedProfile` to `CHECKED`, and `test_fsf_r2_probes_record_lean_s_answer_on_each_merged_item` now asserts it. The two failed IDs and the new assertion passed on targeted reruns. The graph-free availability change has its own DELTA row, awaiting a DRI signature under L52; the earlier claim-graph decision does not sign it.

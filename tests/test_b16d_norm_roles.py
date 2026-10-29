@@ -191,8 +191,8 @@ def test_attached_norm_unit_is_left_out_of_the_free_document(tmp_path):
 
 
 def test_one_selection_serves_both_python_paths():
-    """`_free_norms` is the only Python reading of which norm units are rules of the free document."""
+    """The two loader paths and the filled report use the same free-norm selection."""
     # AR-16a: the document module is the package `ve.document`; its source is that of every module in it.
     source = "".join(path.read_text() for path in sorted(Path(D.__file__).parent.glob("*.py")))
     assert source.count("def _free_norms(") == 1
-    assert source.count("_free_norms(") == 3
+    assert source.count("_free_norms(") == 4

@@ -298,6 +298,7 @@ def test_fsf_r2_probes_record_lean_s_answer_on_each_merged_item():
     assert {u for row in probes["JT-d"]["judgments"]["used"] for u in row["units"]} == set(probes["JT-d"]["units"])
     assert not probes["DF-a"]["admitted"] and probes["DF-a"]["status"]["units"] == {"s135-holistic": "OPEN"}
     assert probes["DF-c"]["answer"]["verdict"] == "UNKNOWN"
+    assert probes["DF-c"]["status"] == {"admitted": True, "units": {"s135-holistic": "CHECKED"}}
     assert probes["SC-c"]["diagnostic"] == "ScopeReadings: s135-bullet2-only"
 
 
