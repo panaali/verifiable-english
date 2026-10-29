@@ -51,8 +51,8 @@ Each was planted, shown failing and restored (`mutants.json`):
 | S9, S10 end of file drops a last record without a line end | `Csv.lean` | guards `:68-75` |
 | H1 to H4 `Table.cell`, `decodeTable`, `Filter.Selects`, `Agg.run` | `Table.lean`, `Data.lean` | guards `:32`, `:39`; `Filter.sel_iff`; guards `:23`, `:27` |
 
-`tools/trust_mutants.py` (12 definitions, full run on the merged HEAD `0f35bb7c8` in the cloud): 253 KILLED,
-0 SURVIVOR, 0 UNKNOWN, 24 INVALID, 68 ALLOWED (`trust-mutants.json`). The allowed ones (`trust-mutants-allow.json`)
+`tools/trust_mutants.py` (12 definitions, saved full run after the CSV and dimension guards): 270 KILLED,
+0 SURVIVOR, 0 UNKNOWN, 24 INVALID, 67 ALLOWED (`trust-mutants.json`). The allowed ones (`trust-mutants-allow.json`)
 are `Filter.Selects` (a proposition no evaluated check reads; every mutant falsifies `Filter.sel_iff`), equivalents
 (`l ≤ []` is `l = []`; `(l.reverse.take 1).getLast?` is `l.getLast?`) and mutants Lean refuses to build. Its
 survivors in earlier runs became fixtures: the CSV end-of-file cases, a key or column missing first, in the middle or
@@ -61,7 +61,7 @@ last, a JSON Boolean in other columns, and the decoded JSON-lines columns. The l
 
 ## Trust, size, bytes
 
-- `tools/trust_map.py --check` on the final HEAD: K +0, S +54, untied V +94, total +148; PASS with the R16 allowance
+- `tools/trust_map.py --check` after the CSV and dimension guards: K +0, S +54, untied V +96, total +150; PASS with the R16 allowance
   (DELTA row 1). FOLLOW-UPS "## me-4" asks for the ties pass. `lean/audit.py`: PASS.
 - Size (`git diff --numstat $(git merge-base HEAD main)`, hand-written): Lean 550 (product 414, fixtures 134,
   imports 2), `tools/trust-classes.json` 85, `ve/assurance-manifest.json` 19 (the JSON-lines decoder pinned), allow
@@ -74,8 +74,10 @@ last, a JSON Boolean in other columns, and the decoded JSON-lines columns. The l
 
 - Selected tests (`mac-pytest.sh --select`, GitHub Actions, 4 shards, 90 units): 89 passed. One failure,
   `tests/test_assurance_manifest.py::test_every_json_handling_lean_file_is_classified`, was the new JSON-lines
-  decoder not yet in the manifest. It is now pinned (`ve/assurance-manifest.json`, total 39046), and the file's
-  137 tests pass locally.
+  decoder not yet in the manifest. It is now pinned (`ve/assurance-manifest.json`, total 39047), and the file's
+  137 tests pass locally. The subsequent JSONL guard changed the decoder to 48 lines; the reviewed manifest pin now
+  covers all 48 lines, and `test_full_file_decoder_pins_cover_the_current_file` checks that a later pin refresh cannot
+  leave a new line outside a claimed full-file range.
 - `gate_collection.py --check --prebuilt`: 0 added, 0 refused, 0 stale, 0 malformed. `regen_generated.py`: 33 entries
   written after the merge. The full gate is the chain's.
 

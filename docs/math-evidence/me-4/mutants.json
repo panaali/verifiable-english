@@ -190,5 +190,5 @@
    "test": "lean/VE/Calc/TableExamples.lean:23,23"
   }
  },
- "trust_mutants": "docs/math-evidence/me-4/trust-mutants.json (253 KILLED, 0 SURVIVOR, 0 UNKNOWN, 24 INVALID, 68 ALLOWED)"
+ "trust_mutants": "docs/math-evidence/me-4/trust-mutants.json (270 KILLED, 0 SURVIVOR, 0 UNKNOWN, 24 INVALID, 67 ALLOWED)"
 }
