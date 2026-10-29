@@ -51,6 +51,7 @@ import VE.Attribution.Status
 import VE.Attribution.Structure
 import VE.Attribution.Wire
 import VE.Bridge
+import VE.Calc.Data
 import VE.Calc.Decls
 import VE.Calc.Derive
 import VE.Calc.Dimension
@@ -63,6 +64,7 @@ import VE.Calc.Lower
 import VE.Calc.LowerExamples
 import VE.Calc.Poly
 import VE.Calc.Run
+import VE.Calc.Table
 import VE.Calc.Units
 import VE.Calc.Wire
 import VE.Cardinality.Examples
@@ -983,6 +985,12 @@ import VE.WireContract.Engine
 #print axioms VE.Bridge.modelData_valid
 #print axioms VE.Bridge.tupleCheck_iff
 #print axioms VE.Bridge.vocabulary_namesValid
+#print axioms VE.Calc.Agg.runB_sound
+#print axioms VE.Calc.Agg.run_count
+#print axioms VE.Calc.Agg.run_empty
+#print axioms VE.Calc.Agg.run_mean
+#print axioms VE.Calc.Agg.run_nonnumber
+#print axioms VE.Calc.Agg.run_sum
 #print axioms VE.Calc.Budgeted.bin_eq
 #print axioms VE.Calc.Check.fault_some
 #print axioms VE.Calc.Check.outcomeMeans_claim
@@ -1031,6 +1039,10 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.FM.firstAppearance_spec
 #print axioms VE.Calc.Farkas.check_sound
 #print axioms VE.Calc.Farkas.combination_eval
+#print axioms VE.Calc.Filter.bool_atoms
+#print axioms VE.Calc.Filter.negated_typed
+#print axioms VE.Calc.Filter.selB_sound
+#print axioms VE.Calc.Filter.sel_iff
 #print axioms VE.Calc.Frac.add?_sound
 #print axioms VE.Calc.Frac.div?_sound
 #print axioms VE.Calc.Frac.flag_eq
@@ -1105,6 +1117,9 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.Run.unknown_named
 #print axioms VE.Calc.Run.verdict_sound
 #print axioms VE.Calc.Step.derive_sound
+#print axioms VE.Calc.Table.selectB_sound
+#print axioms VE.Calc.Table.select_iff
+#print axioms VE.Calc.Table.select_sublist
 #print axioms VE.Calc.Units.checkClaim_invariant
 #print axioms VE.Calc.Units.dimE_ok
 #print axioms VE.Calc.Units.except_bind_ok
@@ -1123,6 +1138,8 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.charge_eq
 #print axioms VE.Calc.compare_invariant
 #print axioms VE.Calc.convert_by_factors
+#print axioms VE.Calc.counted_bound
+#print axioms VE.Calc.counted_exhausted
 #print axioms VE.Calc.counterexample_of_check
 #print axioms VE.Calc.denotes_rescale
 #print axioms VE.Calc.differsAt_sound
@@ -1168,6 +1185,7 @@ import VE.WireContract.Engine
 #print axioms VE.Calc.rpow_mul
 #print axioms VE.Calc.rpow_ne
 #print axioms VE.Calc.rsum_append
+#print axioms VE.Calc.runCounted_reads
 #print axioms VE.Calc.sidesAtB_eq
 #print axioms VE.Calc.sum_by_names
 #print axioms VE.Calc.sum_nonzero
