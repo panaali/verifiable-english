@@ -225,8 +225,8 @@
   {
    "environment": "usecases/openai-preparedness/environment.d1.json",
    "failures": [],
-   "lexicon_id": "5bb3fbc0ec245483e561d383b2e717d53c0ad44517cea2d588a137bc9f0c42e3",
-   "symbols": 61
+   "lexicon_id": "33561c8d6786a9b126761d62b3c36a47dfb006b734c36029fb7054bd15bf3c43",
+   "symbols": 64
   },
   {
    "environment": "usecases/openai-preparedness/environment.d2.json",
