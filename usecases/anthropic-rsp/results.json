@@ -931,7 +931,7 @@
   {
    "agree": false,
    "cause": {
-    "feature_family": "ET: no reviewer nonresponse consequence in D1",
+    "feature_family": "ET",
     "kind": "translation limit",
     "reason": "translation limit (ET: no reviewer nonresponse consequence in D1)"
    },
@@ -944,7 +944,7 @@
   {
    "agree": false,
    "cause": {
-    "feature_family": "SC: no priority between the review and approval duties",
+    "feature_family": "SC",
     "kind": "translation limit",
     "reason": "translation limit (SC: no priority between the review and approval duties)"
    },
