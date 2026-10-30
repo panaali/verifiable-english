@@ -1,0 +1,200 @@
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item4-declared]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item5-declared]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item6-string]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item7-noun]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item8-suppose]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item9-fields]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item10-obligation]
+tests/test_words.py::test_lean_refuses_a_lexicon_of_another_environment
+tests/test_words.py::test_lean_refuses_a_lexicon_that_fails_the_vocabulary_policy
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[0]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[1]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[2]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[3]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[4]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[5]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[6]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[7]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[8]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[9]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[10]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[11]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[12]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[13]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[14]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[15]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[16]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[17]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[18]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[19]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[20]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[21]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[22]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[23]
+tests/test_words.py::test_the_unsaid_description_is_leans
+tests/test_words.py::test_the_ab_evidence_has_no_difference
+
+=============================== warnings summary ===============================
+ve/english.py:1849
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 2bd979058edc0265e539a6ce38ca26192555d8aab371e6ee1d892a8ea99606da: unreviewed
+    english = render_english(document, env, **options)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+30391/30392 tests collected (1 deselected) in 25.15s
+[gate] Python suite: uv run --frozen --no-sync python -m pytest -p hypothesis.extra.pytestplugin -p xdist -n 4 -q -p tools.gate_pytest -o addopts=-ra -m not live tests/test_agent_policy_rerun.py tests/test_alternatives_three_way.py tests/test_ar3_report.py tests/test_ask_cli.py tests/test_b16c_evidence.py tests/test_bench_timing.py tests/test_binding_census.py tests/test_calc_algebra.py tests/test_calc_answer.py tests/test_calc_dimensions.py tests/test_cardinality_exercised.py tests/test_cedar_attributes.py tests/test_defaults_checks.py tests/test_defaults_lean.py tests/test_document_lean_switch.py tests/test_encoder_shapes.py tests/test_english_e2_responses.py tests/test_english_grammar_gen.py tests/test_english_lean_rejections.py tests/test_english_lean_tokens.py tests/test_english_unambiguity.py tests/test_enum_domains.py tests/test_equivalence.py tests/test_fol_names.py tests/test_fret_w6a_rerating.py tests/test_gate_durations.py tests/test_gen_inv_design.py tests/test_identity_lint.py tests/test_inventory_lint.py tests/test_judgments_exercised.py tests/test_lean_certificates.py tests/test_lean_first_triage.py tests/test_lean_handles.py tests/test_metered_differential.py tests/test_mutants.py tests/test_nary_folio.py tests/test_nested_pytest.py tests/test_news_w6a_fixtures.py tests/test_norm_defaults_layered.py tests/test_norm_defaults_three_way.py tests/test_norms_three_way.py tests/test_p1_amendment9.py tests/test_p1_preflight.py tests/test_presupposition_wordings.py tests/test_question_lean_relay.py tests/test_rd9_r14_candidates.py tests/test_readings_budget_zero.py tests/test_readings_defaults_rd3_report.py tests/test_readings_s1_integration.py tests/test_readings_s2_answer.py tests/test_readings_s2_python.py tests/test_readings_sd_lean.py tests/test_readings_sup_verdicts.py tests/test_relay_mutation_gate.py tests/test_replay_conservativity.py tests/test_rights.py tests/test_rights_licence_relay.py tests/test_risk_generated_policies.py tests/test_risk_lean_route.py tests/test_run_cache.py tests/test_safetyfw_usecases.py tests/test_scales_exercised.py tests/test_scope_lean.py tests/test_service_schema_compiler.py tests/test_single_owner.py tests/test_soft_norms_conformance.py tests/test_soft_request_economy.py tests/test_softnorms_contract.py tests/test_speech_acts.py tests/test_stage2_bundle.py tests/test_stage2_evaluation.py tests/test_stage2_parse.py tests/test_stage2_readings.py tests/test_statement_block_environment.py tests/test_t1c.py tests/test_units_lean_w6a.py tests/test_vacuity.py tests/test_views.py tests/test_views_polish.py tests/test_w6a_review_regressions.py tests/test_w6b_gates.py tests/test_wire_contract_lean.py tests/test_wire_gate_corpus.py
+bringing up nodes...
+bringing up nodes...
+
+........................................................................ [  2%]
+........................................................................ [  4%]
+........................................................................ [  7%]
+........................................................................ [  9%]
+........................................................................ [ 12%]
+........................................................................ [ 14%]
+........................................................................ [ 17%]
+........................................................................ [ 19%]
+........................................................................ [ 22%]
+........................................................................ [ 24%]
+...........................................xxx.xxxxxxxxxxxxxxxxxxxxx.xxx [ 26%]
+xxxxxxxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxxxxxxxxxxx.xxxxx.............. [ 29%]
+........................................................................ [ 31%]
+........................................................................ [ 34%]
+........................................................................ [ 36%]
+........................................................................ [ 39%]
+........................................................................ [ 41%]
+........................................................................ [ 44%]
+........................................................................ [ 46%]
+........................................................................ [ 48%]
+........................................................................ [ 51%]
+........................................................................ [ 53%]
+........................................................................ [ 56%]
+........................................................................ [ 58%]
+........................................................................ [ 61%]
+........................................................................ [ 63%]
+........................................................................ [ 66%]
+........................................................................ [ 68%]
+........................................................................ [ 70%]
+........................................................................ [ 73%]
+........................................................................ [ 75%]
+.............................................s.......................... [ 78%]
+........................................................................ [ 80%]
+........................................................................ [ 83%]
+........................................................................ [ 85%]
+........................................................................ [ 88%]
+........................................................................ [ 90%]
+........................................................................ [ 92%]
+........................................................................ [ 95%]
+........................................................................ [ 97%]
+................................................................         [100%]
+ve: English comparator: {"records": 144, "excluded": 0, "planted": 2, "classes": {"agree": 141, "verdict": 1}} (/tmp/ve-gate-nf_cpbwb/tmp/ve-english-comparator-ej3pm3zk)
+
+=============================== warnings summary ===============================
+tests/test_p1_amendment9.py::test_attacker_cap_cannot_be_increased_by_caller
+  /home/runner/work/verifiable-english/verifiable-english/.venv/lib/python3.14/site-packages/google/genai/types.py:42: DeprecationWarning: '_UnionGenericAlias' is deprecated and slated for removal in Python 3.17
+    VersionedUnionType = Union[builtin_types.UnionType, _UnionGenericAlias]
+
+tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results
+tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results
+tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results
+tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results
+  /home/runner/.local/share/uv/python/cpython-3.14.7-linux-aarch64-gnu/lib/python3.14/multiprocessing/popen_fork.py:76: DeprecationWarning: This process (pid=3517) is multi-threaded, use of fork() may lead to deadlocks in the child.
+    self.pid = os.fork()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_nary_folio.py:18: optional pinned FOLIO v2 corpus is not downloaded
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1078] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1098] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/110] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1118] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/116] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1160] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1164] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1178] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1182] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1190] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1192] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1194] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1218] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1220] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/124] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1258] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1268] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/128] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1292] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1360] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1362] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1378] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1390] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1412] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1444] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1468] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1472] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1488] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1498] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1510] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1520] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1531] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/156] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1560] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1564] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1599] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1610] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1650] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1681] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1682] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1696] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1702] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1714] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1718] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1732] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1741] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1742] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1784] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1785] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1795] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/200] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/208] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/294] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/298] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/306] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/376] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/410] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/418] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/456] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/464] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/484] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/508] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/516] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/548] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/6] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/604] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/606] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/618] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/632] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/684] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/718] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/730] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/772] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/810] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/824] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/844] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/906] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/908] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/922] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/930] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/950] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/970] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/978] - path pending lf-12: located Lean decoders will restore these paths
+2860 passed, 1 skipped, 83 xfailed, 5 warnings in 939.17s (0:15:39)
+[gate] commit: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false rev-parse HEAD
+9b1d8511bed8b09a2c3e0790b0fb6196a0b8359a
+[gate] worktree status: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+
+[gate] worktree index: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false read-tree 9b1d8511bed8b09a2c3e0790b0fb6196a0b8359a
+
+[gate] worktree content: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+ M lean/checkers.lock
+[gate-wrap] lean/checkers.lock differs from the commit by this runner's pins only (blob 6fbad126ed536e8c4b20ad9913d3c76cc96ff2db, taken at the wrapper's start)
+[gate] failed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 0 passed, 0 skipped, 1 failures
+[gate] FAILURE: gate:  worker gw0 collected 2944 tests, not the collection run's 2944
