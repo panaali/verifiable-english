@@ -4381,6 +4381,37 @@
         "VE.EnglishGrammar.sensesRequest"
       ]
     },
+    "VE/EnglishGrammar/SourceWords.lean": {
+      "S": [
+        "VE.EnglishGrammar.SourceWordKind",
+        "VE.EnglishGrammar.SourceWordReading",
+        "VE.EnglishGrammar.SourceWordRow",
+        "VE.EnglishGrammar.SourceWordRow.key",
+        "VE.EnglishGrammar.SourceWordRow.validIdentity",
+        "VE.EnglishGrammar.SourceWordRow.validKind",
+        "VE.EnglishGrammar.sourceWords",
+        "VE.EnglishGrammar.sourceWordNormal",
+        "VE.EnglishGrammar.sourceWordsValid"
+      ],
+      "G[V]": [
+        "VE.EnglishGrammar.SourceWordKind.toJson",
+        "VE.EnglishGrammar.SourceWordRow.toJson",
+        "VE.EnglishGrammar.sourceWordsJson"
+      ]
+    },
+    "VE/EnglishGrammar/SourceWordsExamples.lean": {
+      "T": [
+        "VE.EnglishGrammar.SourceWordsExamples.a",
+        "VE.EnglishGrammar.SourceWordsExamples.b",
+        "VE.EnglishGrammar.SourceWordsExamples.base",
+        "VE.EnglishGrammar.SourceWordsExamples.kindFixedJson",
+        "VE.EnglishGrammar.SourceWordsExamples.kindReadingJson",
+        "VE.EnglishGrammar.SourceWordsExamples.kindRefuseJson",
+        "VE.EnglishGrammar.SourceWordsExamples.reading",
+        "VE.EnglishGrammar.SourceWordsExamples.refusal",
+        "VE.EnglishGrammar.SourceWordsExamples.rowJson"
+      ]
+    },
     "VE/EnglishGrammar/Syntax.lean": {
       "G[V]": [
         "VE.EnglishGrammar.DState",
@@ -13329,6 +13360,8 @@
         "VE.Scope.Examples.situationsPieces",
         "VE.Scope.Examples.softEnv",
         "VE.Scope.Examples.spanOver",
+        "VE.Scope.Examples.titleCarveA",
+        "VE.Scope.Examples.titleCarveB",
         "VE.Scope.Examples.u0173",
         "VE.Scope.Examples.udhrAnchors",
         "VE.Scope.Examples.udhrDoc",
@@ -14037,7 +14070,11 @@
         "VE.Scope.substOwn"
       ]
     },
-    "VE/Scope/Theorems.lean": {},
+    "VE/Scope/Theorems.lean": {
+      "P": [
+        "VE.Scope.insertBy"
+      ]
+    },
     "VE/Events/Conservative.lean": {
       "S": [
         "VE.Events.oldEnv"
@@ -14358,6 +14395,8 @@
         "VE.Calc.Run.reads",
         "VE.Calc.Run.rowJson",
         "VE.Calc.Run.shownJson",
+        "VE.Calc.Check.runShown",
+        "VE.Calc.Derive.shown",
         "VE.Calc.Run.sides",
         "VE.Calc.Run.stepJson",
         "VE.Calc.Run.tie",
@@ -14369,7 +14408,8 @@
           ]
         },
         "VE.Calc.Run.wordsIn",
-        "VE.Calc.Shown"
+        "VE.Calc.Shown",
+        "VE.Calc.Shown.matches"
       ],
       "G[V]": [
         {
@@ -14401,9 +14441,7 @@
       "C": [
         "VE.Calc.Check.fault",
         "VE.Calc.Check.run",
-        "VE.Calc.Check.runShown",
         "VE.Calc.Claim.factsIn",
-        "VE.Calc.Derive.shown",
         "VE.Calc.instDecidableOutcomeMeansClaimDecided"
       ]
     },
@@ -14778,12 +14816,15 @@
       "G[R]": [
         "ResponseShape.Schemas.Calc.answer",
         "ResponseShape.Schemas.Calc.byForm",
+        "ResponseShape.Schemas.Calc.certificate",
         "ResponseShape.Schemas.Calc.claimKind",
         "ResponseShape.Schemas.Calc.claimRow",
         "ResponseShape.Schemas.Calc.comparisons",
+        "ResponseShape.Schemas.Calc.counterexample",
         "ResponseShape.Schemas.Calc.derivation",
         "ResponseShape.Schemas.Calc.digits",
         "ResponseShape.Schemas.Calc.exact",
+        "ResponseShape.Schemas.Calc.fact",
         "ResponseShape.Schemas.Calc.fields",
         "ResponseShape.Schemas.Calc.file",
         "ResponseShape.Schemas.Calc.flag",
@@ -14795,10 +14836,13 @@
         "ResponseShape.Schemas.Calc.refusal",
         "ResponseShape.Schemas.Calc.roundings",
         "ResponseShape.Schemas.Calc.row",
+        "ResponseShape.Schemas.Calc.shownMembers",
         "ResponseShape.Schemas.Calc.sides",
+        "ResponseShape.Schemas.Calc.step",
         "ResponseShape.Schemas.Calc.truncated",
         "ResponseShape.Schemas.Calc.undefinedMembers",
-        "ResponseShape.Schemas.Calc.unknownMembers"
+        "ResponseShape.Schemas.Calc.unknownMembers",
+        "ResponseShape.Schemas.Calc.valuedName"
       ]
     },
     "VE/Arith/Syntax.lean": {
