@@ -540,7 +540,10 @@ def test_pf_translation_lint_and_invention_audit(pf_modules):
     assert audit["thresholds_without_premise"] == audit["order_or_causal_predicates"] == []
     for block in pf_translation.rule_blocks():
         assert json.loads(pf_translation.parsed_rule(block.id))["name"] == block.id
-    assert all(len(fs) == 2 for _, fs in pf_translation.facts())
+    facts = {block.id: formulas for block, formulas in pf_translation.facts()}
+    assert all(len(facts[block]) == 2 for block in pf_build.FACT_ANCHORS if block in facts)
+    assert set(facts) - set(pf_build.FACT_ANCHORS) == {"rs2-nest", "no-critical-models"}
+    assert all(len(facts[block]) == 1 for block in ("rs2-nest", "no-critical-models"))
 
 
 def test_pf_all_planned_d1_families_have_source_bound_drafts(pf_modules):
@@ -553,12 +556,13 @@ def test_pf_all_planned_d1_families_have_source_bound_drafts(pf_modules):
     assert set(blocks) <= placements | choices
     assert all(block.source.strip() for block in blocks.values())
 
+    reading_blocks = {**blocks, **{b.id: b for b in pf_translation.read_blocks("facts.d1.ve")}}
     for set_id, (harness, readings) in pf_build.READINGS.items():
         assert set(readings) == set(pf_translation.READING_SETS[harness])
         for choice, names in readings.items():
             for name in names:
-                assert name in blocks
-                assert not blocks[name].when or (harness, choice) in blocks[name].when
+                assert name in reading_blocks
+                assert not reading_blocks[name].when or (harness, choice) in reading_blocks[name].when
 
     assert [name for name in pf_build.READINGS["rs8-distilled"][1]["rel"]] == ["f6-rel"]
     assert pf_build.READINGS["rs8-distilled"][1]["pred"] == []
@@ -578,11 +582,15 @@ def test_pf_all_planned_d1_families_have_source_bound_drafts(pf_modules):
     rows = {"lra": "lra_found", "sandbagging": "sandbagging_found", "ara": "ara_found",
             "undermining": "undermining_found", "nuclear": "nuclear_found"}
     for row, predicate in rows.items():
-        assert pf_build.READINGS[f"rs4-{row}"][1] == {"N": [f"f12-{row}"], "P": []}
+        assert pf_build.READINGS[f"rs4-{row}"][1] == {"N": [f"f12-{row}", f"f12-{row}-unscoped"], "P": []}
         guard = json.dumps(json.loads(pf_translation.parsed_rule(f"f12-{row}"))["guard"])
-        assert predicate in guard
+        unscoped = json.dumps(json.loads(pf_translation.parsed_rule(f"f12-{row}-unscoped"))["guard"])
+        assert predicate in guard and predicate not in unscoped
         if row in ("lra", "undermining"):
-            assert "high_capability" in guard and "critical_capability" in guard
+            for text in (guard, unscoped):
+                assert '"reached"' in text and '"high"' in text and '"critical"' in text
+        else:
+            assert unscoped == '["top"]'
 
     f17 = pf_build.READINGS["rs12-category"][1]
     assert f17 == {"suff": ["f17-suff"], "iff": ["f17-iff", "f17-iff-only"]}
@@ -705,7 +713,7 @@ def test_pf_exposition_fallback_preserves_claims_and_rs15_readings(pf_modules):
         "rs15-persuasion", "rs15-threat-models"}
     assert pf_build.PLACEMENTS["Going forward we will handle risks related to persuasion"][0] == "readings"
     assert pf_build.PLACEMENTS["For these areas, in collaboration with external experts, we commit"][0] == "readings"
-    assert pf_build.PLACEMENTS["As a reminder, covered systems that reach High capability must have"][0] == "rule"
+    assert pf_build.PLACEMENTS["As a reminder, covered systems that reach High capability must have"][0] == "readings"
     assert pf_build.PLACEMENTS["Systems that reach Critical capability also require sufficient safeguards"][0] == "rule"
     for unit_id in ("p15-u249", "p15-u252", "p17-u296", "p17-u297"):
         assert units[unit_id]["status"] == "OPEN"
@@ -719,7 +727,10 @@ def test_pf_rs13_and_untranslated_claims_have_named_residuals(pf_modules):
     summary = next(r for r in records if r.get("reading_set") == "rs13-employee-summary")
     assert summary["status"] == "OPEN"
     assert summary["waits"] == ["AT", "AP"]
-    assert pf_build.READINGS["rs13-employee-summary"] == ("RS13", {"permission": [], "might": []})
+    assert pf_build.READINGS["rs13-employee-summary"] == ("RS13", {"permission": ["f14-summary"], "might": []})
+    summary_rule = json.loads(pf_translation.parsed_rule("f14-summary"))
+    assert summary_rule["predicate"] == "summary_access" and summary_rule["sign"] is True
+    assert "highly_sensitive" in json.dumps(summary_rule["unless"])
     assert pf_translation.READING_SETS["RS13"] == ("permission", "might")
     exposition, _ = pf_build._fallback(1, 0, b"Contents")
     claim, _ = pf_build._fallback(1, 0, b"Employees may request a summary")
