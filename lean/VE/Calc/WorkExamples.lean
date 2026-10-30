@@ -100,6 +100,22 @@ def hugeCancel : Expr := .mul (.sub (.mul hugeC (.val "x")) (.mul hugeC (.val "x
 #guard (powS .nonconst 0 matches .linear (.const (some true))) && (powS .nonconst 1 matches .linear .nonconst)
 #guard (powS (.const none) 2 matches .linear (.const none)) && (powS .nonconst 2 matches .nonlinear) && (powS .unknown 2 matches .unknown)
 
+/-! What a shape says of a form (`Shape.Sound`), both ways: a constant known zero, known nonzero or neither, a form
+whose coefficients cancel, and one that is not constant. -/
+instance (L : QLin) (s : Shape) : Decidable (Shape.Sound L s) := by
+  cases s <;> unfold Shape.Sound <;> infer_instance
+def zero : QLin := ⟨0, []⟩
+def one : QLin := ⟨1, []⟩
+def cancels : QLin := ⟨2, [("x", 1), ("x", -1)]⟩
+def open' : QLin := ⟨0, [("x", 1)]⟩
+def soundRows : List (QLin × Shape × Bool) :=
+  [(one, .const (some true), true), (one, .const (some false), false), (one, .const none, true),
+   (zero, .const (some false), true), (zero, .const (some true), false), (zero, .const none, true),
+   (cancels, .const (some true), true), (cancels, .const (some false), false), (cancels, .nonconst, false),
+   (open', .const none, false), (open', .const (some false), false), (open', .nonconst, true),
+   (one, .nonconst, false), (zero, .nonconst, false), (one, .unknown, true), (open', .unknown, true)]
+#guard soundRows.all fun (L, s, want) => decide (Shape.Sound L s) == want
+
 /-! The one-pass steps equal 5's (me-2n review F1). N-1 is `QLin.norm`'s case: a side of 8 mentions of a sum of 400
 free values. -/
 def names (k : Nat) : List String := (List.range k).map (s!"v{·}")
