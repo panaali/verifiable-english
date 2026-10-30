@@ -249,7 +249,7 @@ In m3, rule 2 also overlaps with each rule it now shares an action with. That fo
   2,325 are over the base environment. The other 163 are completed-outcome certificates. Lean replays those on
   the P0 route with the norm layers passed as ordinary premises, which checks the inference but not the layer
   generation.
-- **87 model evaluations** (witnesses and the paired models of OPEN results) re-evaluated by **Rust: 87 agree**.
+- **87 model evaluations** (witnesses and the paired models of OPEN results) re-evaluated by **Rust** (`ve conformance`, case kind `evaluate-budgeted`): **87 agree**.
 - **Lean norms route** on the flag-free environment: the `permitted` conflict witness replays as CONFLICT.
   Python checks the same model against the `tool` flags. The obligation rules replay as CONFLICT-FREE, and so
   does the whole fixed policy of mutant m1. A certificate over fewer premises stays valid when the flags are
