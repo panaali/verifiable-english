@@ -2387,9 +2387,9 @@ theorem VE.Arith.Site.ok_of_refusal
   -- expr 148804266
 theorem VE.Arith.Term.evalB_bits
   ∀ (E : VE.Arith.OpEnv) (limit : Nat) (ρ : List Int) (t : VE.Arith.Term) (w : Nat) (x : Int) (w' : Nat),
-    VE.Arith.Term.evalB E limit ρ t w = Option.some (x, w') → VE.Arith.bits x ≤ limit ∧ w' ≤ limit
-  -- uses VE.Arith.OpEnv@VE.Arith.Bounded VE.Arith.Term.evalB@VE.Arith.Bounded VE.Arith.Term@VE.Arith.Syntax VE.Arith.bits@VE.Arith.Bounded
-  -- expr 3694090624
+    VE.Arith.Term.evalB E limit ρ t w = Option.some (x, w') → VE.Numbers.bits x ≤ limit ∧ w' ≤ limit
+  -- uses VE.Arith.OpEnv@VE.Arith.Bounded VE.Arith.Term.evalB@VE.Arith.Bounded VE.Arith.Term@VE.Arith.Syntax VE.Numbers.bits@VE.Numbers.Bits
+  -- expr 125393531
 theorem VE.Arith.Term.evalB_mono
   ∀ {O O' : VE.Arith.OpEnv} {limit limit' : Nat},
     VE.Arith.Extends O O' →
@@ -2510,21 +2510,21 @@ theorem VE.Arith.arithOutcome_unbounded_iff
   -- uses VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula.Bounded@VE.Arith.Defs VE.Arith.Formula@VE.Arith.Syntax VE.Arith.arithOutcome@VE.Arith.Bounded VE.Numbers.Outcome.unknown@VE.Numbers.Round VE.Numbers.Outcome@VE.Numbers.Round VE.Numbers.UnknownReason.unboundedStatement@VE.Numbers.Round
   -- expr 4139093868
 theorem VE.Arith.bits_add_le
-  ∀ (x y : Int), VE.Arith.bits (x + y) ≤ Max.max (VE.Arith.bits x) (VE.Arith.bits y) + 1
-  -- uses VE.Arith.bits@VE.Arith.Bounded
-  -- expr 4269050433
+  ∀ (x y : Int), VE.Numbers.bits (x + y) ≤ Max.max (VE.Numbers.bits x) (VE.Numbers.bits y) + 1
+  -- uses VE.Numbers.bits@VE.Numbers.Bits
+  -- expr 4100010599
 theorem VE.Arith.bits_mul_le
-  ∀ (x y : Int), VE.Arith.bits (x * y) ≤ VE.Arith.bits x + VE.Arith.bits y
-  -- uses VE.Arith.bits@VE.Arith.Bounded
-  -- expr 3660033003
+  ∀ (x y : Int), VE.Numbers.bits (x * y) ≤ VE.Numbers.bits x + VE.Numbers.bits y
+  -- uses VE.Numbers.bits@VE.Numbers.Bits
+  -- expr 3483444216
 theorem VE.Arith.bits_natAbs_le
-  ∀ {x : Int} {n k : Nat}, x.natAbs ≤ n → n < 2 ^ (k + 1) → VE.Arith.bits x ≤ k + 1
-  -- uses VE.Arith.bits@VE.Arith.Bounded
-  -- expr 2358350136
+  ∀ {x : Int} {n k : Nat}, x.natAbs ≤ n → n < 2 ^ (k + 1) → VE.Numbers.bits x ≤ k + 1
+  -- uses VE.Numbers.bits@VE.Numbers.Bits
+  -- expr 704060551
 theorem VE.Arith.bits_sub_le
-  ∀ (x y : Int), VE.Arith.bits (x - y) ≤ Max.max (VE.Arith.bits x) (VE.Arith.bits y) + 1
-  -- uses VE.Arith.bits@VE.Arith.Bounded
-  -- expr 1605022655
+  ∀ (x y : Int), VE.Numbers.bits (x - y) ≤ Max.max (VE.Numbers.bits x) (VE.Numbers.bits y) + 1
+  -- uses VE.Numbers.bits@VE.Numbers.Bits
+  -- expr 1534112600
 theorem VE.Arith.boundedNames_snoc
   ∀ (E : VE.Arith.Defs) (d : VE.Arith.Def),
     (E ++ [d]).boundedNames =
@@ -2536,14 +2536,14 @@ theorem VE.Arith.boundedNames_snoc
   -- expr 2600895271
 theorem VE.Arith.chargeBits_bits
   ∀ {limit w : Nat} {x y : Int} {w' : Nat},
-    VE.Arith.chargeBits limit x w = Option.some (y, w') → VE.Arith.bits y ≤ limit ∧ w' ≤ limit
-  -- uses VE.Arith.bits@VE.Arith.Bounded VE.Arith.chargeBits@VE.Arith.Bounded
-  -- expr 4182643902
+    VE.Arith.chargeBits limit x w = Option.some (y, w') → VE.Numbers.bits y ≤ limit ∧ w' ≤ limit
+  -- uses VE.Arith.chargeBits@VE.Arith.Bounded VE.Numbers.bits@VE.Numbers.Bits
+  -- expr 3845745898
 theorem VE.Arith.chargeBits_eq
   ∀ {limit w : Nat} {x : Int},
-    w + VE.Arith.bits x ≤ limit → VE.Arith.chargeBits limit x w = Option.some (x, w + VE.Arith.bits x)
-  -- uses VE.Arith.bits@VE.Arith.Bounded VE.Arith.chargeBits@VE.Arith.Bounded
-  -- expr 4142228633
+    w + VE.Numbers.bits x ≤ limit → VE.Arith.chargeBits limit x w = Option.some (x, w + VE.Numbers.bits x)
+  -- uses VE.Arith.chargeBits@VE.Arith.Bounded VE.Numbers.bits@VE.Numbers.Bits
+  -- expr 3868591070
 theorem VE.Arith.chargeBits_mono
   ∀ {limit limit' w : Nat} {x : Int} {r : Int × Nat},
     limit ≤ limit' → VE.Arith.chargeBits limit x w = Option.some r → VE.Arith.chargeBits limit' x w = Option.some r
@@ -2551,9 +2551,10 @@ theorem VE.Arith.chargeBits_mono
   -- expr 3278823892
 theorem VE.Arith.chargeBits_some
   ∀ {limit w : Nat} {x y : Int} {w' : Nat},
-    VE.Arith.chargeBits limit x w = Option.some (y, w') → y = x ∧ w' = w + VE.Arith.bits x ∧ w + VE.Arith.bits x ≤ limit
-  -- uses VE.Arith.bits@VE.Arith.Bounded VE.Arith.chargeBits@VE.Arith.Bounded
-  -- expr 3461834319
+    VE.Arith.chargeBits limit x w = Option.some (y, w') →
+      y = x ∧ w' = w + VE.Numbers.bits x ∧ w + VE.Numbers.bits x ≤ limit
+  -- uses VE.Arith.chargeBits@VE.Arith.Bounded VE.Numbers.bits@VE.Numbers.Bits
+  -- expr 3683845254
 theorem VE.Arith.charge_eq
   ∀ {α : Type} {limit w : Nat} {k : Nat → Option (α × Nat)}, w < limit → VE.Arith.charge limit w k = k (w + 1)
   -- uses VE.Arith.charge@VE.Arith.Bounded
@@ -2779,9 +2780,9 @@ theorem VE.Arith.stepB_mono
 theorem VE.Arith.stepB_some
   ∀ {limit : Nat} {cond : Int → Nat → Option (Bool × Nat)} {i : Int} {w : Nat} {r : Bool × Nat},
     VE.Arith.stepB limit cond i w = Option.some r →
-      w + VE.Arith.bits i ≤ limit ∧ cond i (w + VE.Arith.bits i) = Option.some r
-  -- uses VE.Arith.bits@VE.Arith.Bounded VE.Arith.stepB@VE.Arith.Bounded
-  -- expr 3927809102
+      w + VE.Numbers.bits i ≤ limit ∧ cond i (w + VE.Numbers.bits i) = Option.some r
+  -- uses VE.Arith.stepB@VE.Arith.Bounded VE.Numbers.bits@VE.Numbers.Bits
+  -- expr 3216470720
 theorem VE.Arith.stepB_sound
   ∀ {Q : Int → Prop} {limit : Nat} {cond : Int → Nat → Option (Bool × Nat)},
     (∀ (i : Int) (w : Nat) (b : Bool) (w' : Nat),
@@ -4015,6 +4016,17 @@ theorem VE.Calc.Budgeted.bin_eq
           ∀ {r : Option γ} {m : Nat}, x.bin y f = Option.some (r, m) → r = X.bind fun a => Y.bind (F a)
   -- uses VE.Calc.Budgeted.bin@VE.Calc.Poly VE.Calc.Budgeted@VE.Calc.Poly
   -- expr 3247572537
+theorem VE.Calc.Case.sidesC_mono
+  ∀ {limit limit' : Nat} (c : VE.Calc.Case) (r : List (List VE.Calc.Val) × Nat),
+    limit ≤ limit' → VE.Calc.Case.sidesC limit c = Option.some r → VE.Calc.Case.sidesC limit' c = Option.some r
+  -- uses VE.Calc.Case.sidesC@VE.Calc.Wire VE.Calc.Case@VE.Calc.Wire VE.Calc.Val@VE.Calc.Decls
+  -- expr 1232508045
+theorem VE.Calc.Case.sidesC_some
+  ∀ (limit : Nat) (c : VE.Calc.Case) (vss : List (List VE.Calc.Val)) (w : Nat),
+    VE.Calc.Case.sidesC limit c = Option.some (vss, w) →
+      vss = List.map (fun x => VE.Calc.Check.sides (VE.Calc.valuesL c.decls) x.snd) c.claims ∧ w ≤ limit
+  -- uses VE.Calc.Case.claims@VE.Calc.Wire VE.Calc.Case.decls@VE.Calc.Wire VE.Calc.Case.sidesC@VE.Calc.Wire VE.Calc.Case@VE.Calc.Wire VE.Calc.Check.sides@VE.Calc.Wire VE.Calc.Check@VE.Calc.Wire VE.Calc.Val@VE.Calc.Decls VE.Calc.valuesL@VE.Calc.Decls
+  -- expr 4291057546
 theorem VE.Calc.Check.fault_some
   ∀ {ds : List VE.Calc.Decl} {k : VE.Calc.Check} {v : VE.Calc.Val},
     VE.Calc.Check.fault (VE.Calc.inlineTable ds (VE.Calc.Check.keep ds k)) k = Option.some v →
@@ -4043,6 +4055,19 @@ theorem VE.Calc.Check.run_sound
     VE.Calc.WellFormed ds → ∀ (k : VE.Calc.Check), VE.Calc.Check.OutcomeMeans ds k (VE.Calc.Check.run ds k)
   -- uses VE.Calc.Check.OutcomeMeans@VE.Calc.Run VE.Calc.Check.run@VE.Calc.Run VE.Calc.Check@VE.Calc.Wire VE.Calc.Decl@VE.Calc.Decls VE.Calc.WellFormed@VE.Calc.Decls
   -- expr 1148172859
+theorem VE.Calc.Check.sidesC_mono
+  ∀ {limit limit' : Nat} (t : VE.Calc.Work.Table) (ks : List VE.Calc.Check) (w : Nat) (r : List (List VE.Calc.Val) × Nat),
+    limit ≤ limit' →
+      VE.Calc.Check.sidesC limit t ks w = Option.some r → VE.Calc.Check.sidesC limit' t ks w = Option.some r
+  -- uses VE.Calc.Check.sidesC@VE.Calc.Wire VE.Calc.Check@VE.Calc.Wire VE.Calc.Val@VE.Calc.Decls VE.Calc.Work.Table@VE.Calc.Decls
+  -- expr 3173292631
+theorem VE.Calc.Check.sidesC_some
+  ∀ (limit : Nat) (t : VE.Calc.Work.Table) (ks : List VE.Calc.Check) (w : Nat) (vss : List (List VE.Calc.Val)) (w' : Nat),
+    w ≤ limit →
+      VE.Calc.Check.sidesC limit t ks w = Option.some (vss, w') →
+        vss = List.map (VE.Calc.Check.sides t.read) ks ∧ w ≤ w' ∧ w' ≤ limit
+  -- uses VE.Calc.Check.sides@VE.Calc.Wire VE.Calc.Check.sidesC@VE.Calc.Wire VE.Calc.Check@VE.Calc.Wire VE.Calc.Val@VE.Calc.Decls VE.Calc.Work.Table.read@VE.Calc.Decls VE.Calc.Work.Table@VE.Calc.Decls
+  -- expr 388587520
 theorem VE.Calc.Claim.decide_fails
   ∀ (σ : VE.Calc.Values) (c : VE.Calc.Claim),
     VE.Calc.Claim.decide σ c = VE.Numbers.Verdict.fails ↔ VE.Calc.Claim.Defined σ c ∧ ¬VE.Calc.Claim.Holds σ c
@@ -4697,6 +4722,28 @@ theorem VE.Calc.Run.outcomes_words
     List.find? (fun x => VE.Calc.Run.words x == VE.Calc.Run.words o) VE.Calc.Run.outcomes = Option.some o
   -- uses VE.Calc.Run.outcomes@VE.Calc.Run VE.Calc.Run.words@VE.Calc.Run VE.Numbers.Outcome@VE.Numbers.Round
   -- expr 133560894
+theorem VE.Calc.Run.rowOf_matches
+  ∀ (c : VE.Calc.Case) (cl : String × VE.Calc.Check) (vs : List VE.Calc.Val),
+    match cl.snd with
+    | VE.Calc.Check.claim c => True
+    | VE.Calc.Check.follows P links C =>
+      VE.Calc.Shown.matches (VE.Calc.Run.rowOf c cl vs).outcome (VE.Calc.Run.rowOf c cl vs).shown = Bool.true
+  -- uses VE.Calc.Case@VE.Calc.Wire VE.Calc.Check.reasons.match_1@VE.Calc.Run VE.Calc.Check@VE.Calc.Wire VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Row.outcome@VE.Calc.Run VE.Calc.Row.shown@VE.Calc.Run VE.Calc.Run.rowOf@VE.Calc.Run VE.Calc.Shown.matches@VE.Calc.Run VE.Calc.Val@VE.Calc.Decls
+  -- expr 1258779348
+theorem VE.Calc.Run.rowOf_outcome
+  ∀ (c : VE.Calc.Case),
+    VE.Calc.WellFormed c.decls →
+      ∀ (cl : String × VE.Calc.Check),
+        (VE.Calc.Run.rowOf c cl (VE.Calc.Check.sides (VE.Calc.valuesL c.decls) cl.snd)).outcome =
+          VE.Calc.Check.run c.decls cl.snd
+  -- uses VE.Calc.Case.decls@VE.Calc.Wire VE.Calc.Case@VE.Calc.Wire VE.Calc.Check.run@VE.Calc.Run VE.Calc.Check.sides@VE.Calc.Wire VE.Calc.Check@VE.Calc.Wire VE.Calc.Row.outcome@VE.Calc.Run VE.Calc.Run.rowOf@VE.Calc.Run VE.Calc.WellFormed@VE.Calc.Decls VE.Calc.valuesL@VE.Calc.Decls VE.Numbers.Outcome@VE.Numbers.Round
+  -- expr 1416977365
+theorem VE.Calc.Run.rowOf_reproduction
+  ∀ (c : VE.Calc.Case) (cl : String × VE.Calc.Check) (vs : List VE.Calc.Val),
+    (VE.Calc.Run.rowOf c cl vs).reproduction =
+      Option.map (fun x => VE.Numbers.Outcome.unknown VE.Numbers.UnknownReason.floatingPointNotModelled) c.software
+  -- uses VE.Calc.Case.software@VE.Calc.Wire VE.Calc.Case@VE.Calc.Wire VE.Calc.Check@VE.Calc.Wire VE.Calc.Row.reproduction@VE.Calc.Run VE.Calc.Run.rowOf@VE.Calc.Run VE.Calc.Val@VE.Calc.Decls VE.Numbers.Outcome.unknown@VE.Numbers.Round VE.Numbers.Outcome@VE.Numbers.Round VE.Numbers.UnknownReason.floatingPointNotModelled@VE.Numbers.Round
+  -- expr 3088794282
 theorem VE.Calc.Run.row_matches
   ∀ (c : VE.Calc.Case) (cl : String × VE.Calc.Check),
     match cl.snd with
@@ -4717,6 +4764,25 @@ theorem VE.Calc.Run.row_sound
           VE.Calc.Check.OutcomeMeans c.decls c.claims[i].snd o
   -- uses VE.Calc.Case.claims@VE.Calc.Wire VE.Calc.Case.decls@VE.Calc.Wire VE.Calc.Case@VE.Calc.Wire VE.Calc.Check.OutcomeMeans@VE.Calc.Run VE.Calc.Check@VE.Calc.Wire VE.Calc.Run.outcomeAt@VE.Calc.Run VE.Calc.Run.runCaseReported@VE.Calc.Run VE.Calc.Wire.decodeCase@VE.Calc.Wire VE.Numbers.Outcome@VE.Numbers.Round
   -- expr 1243167305
+theorem VE.Calc.Run.rowsC_rows
+  ∀ (limit : Nat) (c : VE.Calc.Case) (rs : List (VE.Calc.Row × List VE.Calc.Val)) (w : Nat),
+    VE.Calc.Run.rowsC limit c = Option.some (rs, w) →
+      ∀ (x : (String × VE.Calc.Check) × VE.Calc.Row × List VE.Calc.Val),
+        x ∈ c.claims.zip rs → x.snd.fst = VE.Calc.Run.rowOf c x.fst x.snd.snd
+  -- uses VE.Calc.Case.claims@VE.Calc.Wire VE.Calc.Case@VE.Calc.Wire VE.Calc.Check@VE.Calc.Wire VE.Calc.Row@VE.Calc.Run VE.Calc.Run.rowOf@VE.Calc.Run VE.Calc.Run.rowsC@VE.Calc.Run VE.Calc.Val@VE.Calc.Decls
+  -- expr 3947265458
+theorem VE.Calc.Run.rowsC_some
+  ∀ (limit : Nat) (c : VE.Calc.Case) (rs : List (VE.Calc.Row × List VE.Calc.Val)) (w : Nat),
+    VE.Calc.Run.rowsC limit c = Option.some (rs, w) →
+      rs =
+          List.map
+            (fun cl =>
+              (VE.Calc.Run.rowOf c cl (VE.Calc.Check.sides (VE.Calc.valuesL c.decls) cl.snd),
+                VE.Calc.Check.sides (VE.Calc.valuesL c.decls) cl.snd))
+            c.claims ∧
+        w ≤ limit
+  -- uses VE.Calc.Case.claims@VE.Calc.Wire VE.Calc.Case.decls@VE.Calc.Wire VE.Calc.Case@VE.Calc.Wire VE.Calc.Check.sides@VE.Calc.Wire VE.Calc.Check@VE.Calc.Wire VE.Calc.Row@VE.Calc.Run VE.Calc.Run.rowOf@VE.Calc.Run VE.Calc.Run.rowsC@VE.Calc.Run VE.Calc.Val@VE.Calc.Decls VE.Calc.valuesL@VE.Calc.Decls
+  -- expr 2482548326
 theorem VE.Calc.Run.rows_outcome
   ∀ (c : VE.Calc.Case) (i : Nat) (hi : i < c.claims.length),
     (VE.Calc.Run.rows c)[i].outcome = VE.Calc.Check.run c.decls c.claims[i].snd
@@ -4809,6 +4875,12 @@ theorem VE.Calc.Val.guard_agrees
   ∀ (q : Rat), VE.Calc.Val.Agrees✝ (VE.Calc.Val.guard q) (Option.some q)
   -- uses VE.Calc.Val.Agrees@VE.Calc.Decls VE.Calc.Val.guard@VE.Calc.Decls
   -- expr 724329628
+theorem VE.Calc.Wire.decodeCase_decode
+  ∀ (j : Lean.Json) (c : VE.Calc.Case),
+    VE.Calc.Wire.decodeCase j = Except.ok c →
+      (∃ m, VE.Calc.Wire.decode j = Except.ok (c, m)) ∧ ∃ r, VE.Calc.Case.sidesC VE.Calc.Work.maxWork c = Option.some r
+  -- uses VE.Calc.Case.sidesC@VE.Calc.Wire VE.Calc.Case@VE.Calc.Wire VE.Calc.Val@VE.Calc.Decls VE.Calc.Wire.decode@VE.Calc.Wire VE.Calc.Wire.decodeCase@VE.Calc.Wire VE.Calc.Work.maxWork@VE.Calc.Decls
+  -- expr 179784828
 theorem VE.Calc.Wire.decodeCase_wellFormed
   ∀ (j : Lean.Json) (c : VE.Calc.Case), VE.Calc.Wire.decodeCase j = Except.ok c → VE.Calc.WellFormed c.decls
   -- uses VE.Calc.Case.decls@VE.Calc.Wire VE.Calc.Case@VE.Calc.Wire VE.Calc.WellFormed@VE.Calc.Decls VE.Calc.Wire.decodeCase@VE.Calc.Wire
@@ -4825,6 +4897,120 @@ theorem VE.Calc.Wire.firstUnknown_order
           ∀ (n : String), n ∈ e.names → n ∈ known ++ List.map VE.Calc.Decl.name (List.take i ds)
   -- uses VE.Calc.Decl.name@VE.Calc.Decls VE.Calc.Decl.source@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.Expr.names@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Source.defined@VE.Calc.Decls VE.Calc.Source@VE.Calc.Decls VE.Calc.Wire.firstUnknown@VE.Calc.Wire
   -- expr 1120487184
+theorem VE.Calc.Work.Claim.ofSides_eq
+  ∀ (ds : List VE.Calc.Decl),
+    VE.Calc.WellFormed ds →
+      ∀ (c : VE.Calc.Claim),
+        VE.Calc.Work.Claim.ofSides c (List.map (VE.Calc.Expr.evalL (VE.Calc.valuesL ds)) c.exprs) = VE.Calc.Claim.run ds c
+  -- uses VE.Calc.Claim.exprs@VE.Calc.Syntax VE.Calc.Claim.run@VE.Calc.Decls VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Decl@VE.Calc.Decls VE.Calc.Expr.evalL@VE.Calc.Decls VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Val@VE.Calc.Decls VE.Calc.WellFormed@VE.Calc.Decls VE.Calc.Work.Claim.ofSides@VE.Calc.Decls VE.Calc.valuesL@VE.Calc.Decls VE.Numbers.Outcome@VE.Numbers.Round
+  -- expr 3755267757
+theorem VE.Calc.Work.Decl.valC_mono
+  ∀ {limit limit' : Nat} {t : VE.Calc.Work.Table} {d : VE.Calc.Decl} {w : Nat} {r : VE.Calc.Val × Nat},
+    limit ≤ limit' →
+      VE.Calc.Work.Decl.valC limit t d w = Option.some r → VE.Calc.Work.Decl.valC limit' t d w = Option.some r
+  -- uses VE.Calc.Decl@VE.Calc.Decls VE.Calc.Val@VE.Calc.Decls VE.Calc.Work.Decl.valC@VE.Calc.Decls VE.Calc.Work.Table@VE.Calc.Decls
+  -- expr 766284996
+theorem VE.Calc.Work.Decl.valC_some
+  ∀ {limit : Nat} {t : VE.Calc.Work.Table} {d : VE.Calc.Decl} {w : Nat} {v : VE.Calc.Val} {w' : Nat},
+    w ≤ limit → VE.Calc.Work.Decl.valC limit t d w = Option.some (v, w') → v = d.valL t.read ∧ w ≤ w' ∧ w' ≤ limit
+  -- uses VE.Calc.Decl.valL@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.Val@VE.Calc.Decls VE.Calc.Work.Decl.valC@VE.Calc.Decls VE.Calc.Work.Table.read@VE.Calc.Decls VE.Calc.Work.Table@VE.Calc.Decls
+  -- expr 726385685
+theorem VE.Calc.Work.Expr.evalC_agrees
+  ∀ (limit : Nat) (t : VE.Calc.Work.Table) (e : VE.Calc.Expr) (w : Nat) (v : VE.Calc.Val) (w' : Nat),
+    VE.Calc.Work.Expr.evalC limit t e w = Option.some (v, w') → v = VE.Calc.Expr.evalL t.read e
+  -- uses VE.Calc.Expr.evalL@VE.Calc.Decls VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Val@VE.Calc.Decls VE.Calc.Work.Expr.evalC@VE.Calc.Decls VE.Calc.Work.Table.read@VE.Calc.Decls VE.Calc.Work.Table@VE.Calc.Decls
+  -- expr 4183351876
+theorem VE.Calc.Work.Expr.evalC_mono
+  ∀ {limit limit' : Nat} (t : VE.Calc.Work.Table) (e : VE.Calc.Expr) (w : Nat) (r : VE.Calc.Val × Nat),
+    limit ≤ limit' →
+      VE.Calc.Work.Expr.evalC limit t e w = Option.some r → VE.Calc.Work.Expr.evalC limit' t e w = Option.some r
+  -- uses VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Val@VE.Calc.Decls VE.Calc.Work.Expr.evalC@VE.Calc.Decls VE.Calc.Work.Table@VE.Calc.Decls
+  -- expr 39725378
+theorem VE.Calc.Work.Expr.evalC_some
+  ∀ (limit : Nat) (t : VE.Calc.Work.Table) (e : VE.Calc.Expr) (w : Nat) (v : VE.Calc.Val) (w' : Nat),
+    VE.Calc.Work.Expr.evalC limit t e w = Option.some (v, w') → v = VE.Calc.Expr.evalL t.read e ∧ w < w' ∧ w' ≤ limit
+  -- uses VE.Calc.Expr.evalL@VE.Calc.Decls VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Val@VE.Calc.Decls VE.Calc.Work.Expr.evalC@VE.Calc.Decls VE.Calc.Work.Table.read@VE.Calc.Decls VE.Calc.Work.Table@VE.Calc.Decls
+  -- expr 1457470472
+theorem VE.Calc.Work.Expr.evalsC_mono
+  ∀ {limit limit' : Nat} (t : VE.Calc.Work.Table) (es : List VE.Calc.Expr) (w : Nat) (r : List VE.Calc.Val × Nat),
+    limit ≤ limit' →
+      VE.Calc.Work.Expr.evalsC limit t es w = Option.some r → VE.Calc.Work.Expr.evalsC limit' t es w = Option.some r
+  -- uses VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Val@VE.Calc.Decls VE.Calc.Work.Expr.evalsC@VE.Calc.Decls VE.Calc.Work.Table@VE.Calc.Decls
+  -- expr 1238555857
+theorem VE.Calc.Work.Expr.evalsC_some
+  ∀ (limit : Nat) (t : VE.Calc.Work.Table) (es : List VE.Calc.Expr) (w : Nat) (vs : List VE.Calc.Val) (w' : Nat),
+    w ≤ limit →
+      VE.Calc.Work.Expr.evalsC limit t es w = Option.some (vs, w') →
+        vs = List.map (VE.Calc.Expr.evalL t.read) es ∧ w ≤ w' ∧ w' ≤ limit
+  -- uses VE.Calc.Expr.evalL@VE.Calc.Decls VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Val@VE.Calc.Decls VE.Calc.Work.Expr.evalsC@VE.Calc.Decls VE.Calc.Work.Table.read@VE.Calc.Decls VE.Calc.Work.Table@VE.Calc.Decls
+  -- expr 1397440657
+theorem VE.Calc.Work.binC_mono
+  ∀ {limit limit' : Nat} {f : Rat → Rat → Option Rat} {a b : VE.Calc.Val} {w : Nat} {r : VE.Calc.Val × Nat},
+    limit ≤ limit' → VE.Calc.Work.binC limit f a b w = Option.some r → VE.Calc.Work.binC limit' f a b w = Option.some r
+  -- uses VE.Calc.Val@VE.Calc.Decls VE.Calc.Work.binC@VE.Calc.Decls
+  -- expr 705139818
+theorem VE.Calc.Work.binC_some
+  ∀ {limit : Nat} {f : Rat → Rat → Option Rat} {a b v : VE.Calc.Val} {w w' : Nat},
+    w ≤ limit →
+      VE.Calc.Work.binC limit f a b w = Option.some (v, w') →
+        v = VE.Calc.Val.bin (fun x y => (f x y).elim VE.Calc.Val.undefined VE.Calc.Val.guard) a b ∧ w ≤ w' ∧ w' ≤ limit
+  -- uses VE.Calc.Val.bin@VE.Calc.Decls VE.Calc.Val.guard@VE.Calc.Decls VE.Calc.Val.undefined@VE.Calc.Decls VE.Calc.Val@VE.Calc.Decls VE.Calc.Work.binC@VE.Calc.Decls
+  -- expr 1314431573
+theorem VE.Calc.Work.chargeQ_mono
+  ∀ {limit limit' : Nat} {q : Rat} {w : Nat} {r : VE.Calc.Val × Nat},
+    limit ≤ limit' → VE.Calc.Work.chargeQ limit q w = Option.some r → VE.Calc.Work.chargeQ limit' q w = Option.some r
+  -- uses VE.Calc.Val@VE.Calc.Decls VE.Calc.Work.chargeQ@VE.Calc.Decls
+  -- expr 2714930787
+theorem VE.Calc.Work.chargeQ_some
+  ∀ {limit : Nat} {q : Rat} {w : Nat} {v : VE.Calc.Val} {w' : Nat},
+    VE.Calc.Work.chargeQ limit q w = Option.some (v, w') → v = VE.Calc.Val.guard q ∧ w ≤ w' ∧ w' ≤ limit
+  -- uses VE.Calc.Val.guard@VE.Calc.Decls VE.Calc.Val@VE.Calc.Decls VE.Calc.Work.chargeQ@VE.Calc.Decls
+  -- expr 2566928377
+theorem VE.Calc.Work.firstFault_none
+  ∀ {vs : List VE.Calc.Val}, VE.Calc.firstFault vs = Option.none → ∀ (v : VE.Calc.Val), v ∈ vs → ∃ q, v = VE.Calc.Val.ok q
+  -- uses VE.Calc.Val.ok@VE.Calc.Decls VE.Calc.Val@VE.Calc.Decls VE.Calc.firstFault@VE.Calc.Decls
+  -- expr 1146675679
+theorem VE.Calc.Work.powTooLarge_sound
+  ∀ (x : Rat) (k : Nat), VE.Calc.Work.powTooLarge x k = Bool.true → VE.Calc.Val.guard (x ^ k) = VE.Calc.Val.tooLarge
+  -- uses VE.Calc.Val.guard@VE.Calc.Decls VE.Calc.Val.tooLarge@VE.Calc.Decls VE.Calc.Val@VE.Calc.Decls VE.Calc.Work.powTooLarge@VE.Calc.Decls
+  -- expr 326103245
+theorem VE.Calc.Work.pow_beyond
+  ∀ (a k : Nat), VE.Calc.Work.smallBits ≤ a.log2 * k → VE.Calc.digitBound ≤ a ^ k
+  -- uses VE.Calc.Work.smallBits@VE.Calc.Decls VE.Calc.digitBound@VE.Calc.Decls
+  -- expr 1458641914
+theorem VE.Calc.Work.valueTableC_eq
+  ∀ (limit : Nat) (ds : List VE.Calc.Decl) (t : VE.Calc.Work.Table) (w : Nat),
+    VE.Calc.Work.valueTableC limit ds [] 0 = Option.some (t, w) → t = VE.Calc.Work.valueTable ds
+  -- uses VE.Calc.Decl@VE.Calc.Decls VE.Calc.Val@VE.Calc.Decls VE.Calc.Work.Table@VE.Calc.Decls VE.Calc.Work.valueTable@VE.Calc.Decls VE.Calc.Work.valueTableC@VE.Calc.Decls
+  -- expr 1805909376
+theorem VE.Calc.Work.valueTableC_mono
+  ∀ {limit limit' : Nat} (ds : List VE.Calc.Decl) (t : VE.Calc.Work.Table) (w : Nat) (r : VE.Calc.Work.Table × Nat),
+    limit ≤ limit' →
+      VE.Calc.Work.valueTableC limit ds t w = Option.some r → VE.Calc.Work.valueTableC limit' ds t w = Option.some r
+  -- uses VE.Calc.Decl@VE.Calc.Decls VE.Calc.Work.Table@VE.Calc.Decls VE.Calc.Work.valueTableC@VE.Calc.Decls
+  -- expr 2775990875
+theorem VE.Calc.Work.valueTableC_some
+  ∀ (limit : Nat) (ds : List VE.Calc.Decl) (t : VE.Calc.Work.Table) (w : Nat) (t' : VE.Calc.Work.Table) (w' : Nat),
+    w ≤ limit →
+      VE.Calc.Work.valueTableC limit ds t w = Option.some (t', w') →
+        t' = List.foldl (fun t d => (d.name, d.valL t.read) :: t) t ds ∧ w ≤ w' ∧ w' ≤ limit
+  -- uses VE.Calc.Decl.name@VE.Calc.Decls VE.Calc.Decl.valL@VE.Calc.Decls VE.Calc.Decl@VE.Calc.Decls VE.Calc.Val@VE.Calc.Decls VE.Calc.Work.Table.read@VE.Calc.Decls VE.Calc.Work.Table@VE.Calc.Decls VE.Calc.Work.valueTableC@VE.Calc.Decls
+  -- expr 2503795374
+theorem VE.Calc.Work.valueTable_read
+  ∀ (ds : List VE.Calc.Decl), (VE.Calc.Work.valueTable ds).read = VE.Calc.valuesL ds
+  -- uses VE.Calc.Decl@VE.Calc.Decls VE.Calc.Val@VE.Calc.Decls VE.Calc.Work.Table.read@VE.Calc.Decls VE.Calc.Work.valueTable@VE.Calc.Decls VE.Calc.valuesL@VE.Calc.Decls
+  -- expr 3850400271
+theorem VE.Calc.Work.visitC_mono
+  ∀ {α : Type} {limit limit' w : Nat} {k k' : Nat → Option (α × Nat)} {r : α × Nat},
+    (∀ (w : Nat) (r : α × Nat), k w = Option.some r → k' w = Option.some r) →
+      limit ≤ limit' → VE.Calc.Work.visitC limit w k = Option.some r → VE.Calc.Work.visitC limit' w k' = Option.some r
+  -- uses VE.Calc.Work.visitC@VE.Calc.Decls
+  -- expr 2361721980
+theorem VE.Calc.Work.visitC_some
+  ∀ {α : Type} {limit w : Nat} {k : Nat → Option (α × Nat)} {r : α × Nat},
+    VE.Calc.Work.visitC limit w k = Option.some r → w < limit ∧ k (w + 1) = Option.some r
+  -- uses VE.Calc.Work.visitC@VE.Calc.Decls
+  -- expr 865582078
 theorem VE.Calc.assign_wellFormed
   ∀ (ds : List VE.Calc.Decl),
     VE.Calc.WellFormed ds → ∀ (ns : List String) (κ : String → Rat), VE.Calc.WellFormed (VE.Calc.assign ds ns κ)
@@ -4926,6 +5112,10 @@ theorem VE.Calc.differsAt_sound
       ∃ x y, VE.Calc.Denotes (fun n => List.lookup n κ) a x ∧ VE.Calc.Denotes (fun n => List.lookup n κ) b y ∧ x ≠ y
   -- uses VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax VE.Calc.differsAt@VE.Calc.Poly
   -- expr 3249091442
+theorem VE.Calc.digitCount_le_iff
+  ∀ (n : Nat), VE.Calc.digitCount n ≤ VE.Calc.maxDigits ↔ n < 10 ^ VE.Calc.maxDigits
+  -- uses VE.Calc.digitCount@VE.Calc.Decls VE.Calc.maxDigits@VE.Calc.Decls
+  -- expr 2300436323
 theorem VE.Calc.findingKind_source_iff
   ∀ (software : Option String) (checks : List Bool),
     VE.Calc.findingKind software checks = VE.Calc.FindingKind.source ↔
@@ -5216,6 +5406,24 @@ theorem VE.Calc.rsum_append
   ∀ (l m : List Rat), (l ++ m).sum = l.sum + m.sum
   -- uses
   -- expr 1294575389
+theorem VE.Calc.runC_mono
+  ∀ (limit limit' : Nat) (c : VE.Calc.Case) (r : List (VE.Numbers.Outcome × List VE.Calc.Val) × Nat),
+    VE.Calc.runC limit c = Option.some r → limit ≤ limit' → VE.Calc.runC limit' c = Option.some r
+  -- uses VE.Calc.Case@VE.Calc.Wire VE.Calc.Val@VE.Calc.Decls VE.Calc.runC@VE.Calc.Run VE.Numbers.Outcome@VE.Numbers.Round
+  -- expr 1060205021
+theorem VE.Calc.runC_sound
+  ∀ (limit : Nat) (c : VE.Calc.Case),
+    VE.Calc.WellFormed c.decls →
+      ∀ (rows : List (VE.Numbers.Outcome × List VE.Calc.Val)) (w : Nat),
+        VE.Calc.runC limit c = Option.some (rows, w) →
+          List.map Prod.fst rows = List.map (fun k => VE.Calc.Check.run c.decls k.snd) c.claims
+  -- uses VE.Calc.Case.claims@VE.Calc.Wire VE.Calc.Case.decls@VE.Calc.Wire VE.Calc.Case@VE.Calc.Wire VE.Calc.Check.run@VE.Calc.Run VE.Calc.Check@VE.Calc.Wire VE.Calc.Val@VE.Calc.Decls VE.Calc.WellFormed@VE.Calc.Decls VE.Calc.runC@VE.Calc.Run VE.Numbers.Outcome@VE.Numbers.Round
+  -- expr 578717762
+theorem VE.Calc.runC_work
+  ∀ (limit : Nat) (c : VE.Calc.Case) (r : List (VE.Numbers.Outcome × List VE.Calc.Val) × Nat),
+    VE.Calc.runC limit c = Option.some r → r.snd ≤ limit
+  -- uses VE.Calc.Case@VE.Calc.Wire VE.Calc.Val@VE.Calc.Decls VE.Calc.runC@VE.Calc.Run VE.Numbers.Outcome@VE.Numbers.Round
+  -- expr 1308023033
 theorem VE.Calc.runCounted_reads
   ∀ (limit : Nat) (handles : List (String × ByteArray)) (dd : VE.Calc.DataDecl) (f : VE.Calc.Filter) (a : VE.Calc.Agg)
     (r : VE.Calc.Counted),
@@ -5261,6 +5469,15 @@ theorem VE.Calc.sum_split
         (List.map (fun p => p.snd * κ p.fst) (List.filter (fun p => !p.fst == n) l)).sum
   -- uses
   -- expr 2525146929
+theorem VE.Calc.toDigitsCore_le_iff
+  ∀ (fuel n k : Nat) (ds : List Char),
+    n < fuel → ((Nat.toDigitsCore 10 fuel n ds).length ≤ ds.length + (k + 1) ↔ n < 10 ^ (k + 1))
+  -- uses
+  -- expr 1874660017
+theorem VE.Calc.toDigitsCore_length_ge
+  ∀ (fuel n : Nat) (ds : List Char), 0 < fuel → ds.length + 1 ≤ (Nat.toDigitsCore 10 fuel n ds).length
+  -- uses
+  -- expr 1596786366
 theorem VE.Calc.valuesL_agrees
   ∀ (ds : List VE.Calc.Decl),
     VE.Calc.WellFormed ds → ∀ (n : String), VE.Calc.Val.Agrees✝ (VE.Calc.valuesL ds n) (VE.Calc.values ds n)

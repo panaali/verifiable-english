@@ -1,0 +1,69 @@
+{
+  "allow": [
+    {
+      "definition": "readingsMemoStatsEnabled",
+      "operator": "body-true",
+      "reason": "The mutated Lean does not elaborate (Function expected at); no executable answer exists for this mutation"
+    },
+    {
+      "definition": "readingsMemoStatsEnabled",
+      "operator": "body-false",
+      "reason": "The mutated Lean does not elaborate (Function expected at); no executable answer exists for this mutation"
+    },
+    {
+      "definition": "VE.Readings.Run.AdmissionMemo",
+      "operator": "lit-plus",
+      "reason": "The mutated Lean does not elaborate (Expression (Lean elaborates it otherwise than without the mutant)); no executable answer exists for this mutation"
+    },
+    {
+      "definition": "VE.Service.readingsResults",
+      "operator": "list-empty",
+      "reason": "The mutated Lean does not elaborate (The expected type of `.ok` could not be determined); no executable answer exists for this mutation"
+    },
+    {
+      "definition": "VE.Service.handleLineMemo",
+      "operator": "list-empty",
+      "reason": "The mutated Lean does not elaborate (don't know how to synthesize implicit argument `\u03b1`); no executable answer exists for this mutation"
+    },
+    {
+      "definition": "VE.Readings.Run.runCaseReportedMemo",
+      "operator": "list-empty",
+      "reason": "The mutated Lean does not elaborate (don't know how to synthesize implicit argument `\u03b1`); no executable answer exists for this mutation"
+    },
+    {
+      "definition": "VE.Readings.Run.admissionMemoTrim",
+      "operator": "list-empty",
+      "reason": "The mutated Lean does not elaborate (don't know how to synthesize implicit argument `\u03b1`); no executable answer exists for this mutation"
+    },
+    {
+      "definition": "VE.Service.readingsResponse",
+      "operator": "list-empty",
+      "reason": "The mutated Lean does not elaborate (The environment does not contain `List.size`); no executable answer exists for this mutation"
+    },
+    {
+      "definition": "VE.Service.readingsResults",
+      "operator": "list-drop-last",
+      "reason": "The mutated Lean does not elaborate (failed to construct 'ForIn' instance for collection); no executable answer exists for this mutation"
+    },
+    {
+      "definition": "VE.Service.readingsResponse",
+      "operator": "list-drop-last",
+      "reason": "The mutated Lean does not elaborate (The expected type of `.str` could not be determined); no executable answer exists for this mutation"
+    },
+    {
+      "definition": "VE.Service.readingsResults",
+      "operator": "list-drop-first",
+      "reason": "The mutated Lean does not elaborate (failed to construct 'ForIn' instance for collection); no executable answer exists for this mutation"
+    },
+    {
+      "definition": "VE.Readings.Run.runCaseReportedMemo",
+      "operator": "le-eq",
+      "reason": "parts always includes main, so its length is at least one; <= 1 and = 1 are equivalent here"
+    },
+    {
+      "definition": "VE.Service.handleLineMemo",
+      "operator": "list-first",
+      "reason": "line.trim.take 1 is empty exactly when line.trim is empty, so this guard is equivalent"
+    }
+  ]
+}

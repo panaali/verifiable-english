@@ -5,9 +5,9 @@ import VE.Rights.Examples
 import ResponseShape.Schemas.NormDefaults
 
 /-! Statement stub of PK-1, premise packs (docs/spec/premise-packs.md). Evidence for the statement review, not
-product code: it lives under docs/, imports the tree on `main` unchanged, and some proofs are `sorry` (the build item
-pk-1 proves them in the files of spec section 5). Check it from `lean/` with
-`PATH=~/.elan/bin:$PATH lake env lean ../docs/spec/premise-packs/SpecStubs_pk1.lean`.
+product code: it lives under docs/, imports the tree before pk-1 (`49a926ee7`; pk-1 declares these names) unchanged,
+and some proofs are `sorry` (the build item pk-1 proves them in the files of spec section 5). Check it from that tree's
+`lean/` with `PATH=~/.elan/bin:$PATH lake env lean ../docs/spec/premise-packs/SpecStubs_pk1.lean`.
 
 Section numbers in comments are the spec's. `planFiles` (section 5, at the end) gives the pk-1 file of every
 declaration, and a check there fails when a declaration uses a module or declaration its file cannot import. -/
@@ -158,10 +158,10 @@ theorem softLabelledU_labels_nodup (U : UDoc) (D : VE.SoftNorms.SoftDoc)
     (hs : VE.SoftNorms.WellFormedSoft D = true) (hw : WellFormedU U = true) :
     ((softLabelledU U D).map (·.1)).Nodup := sorry
 
-/-- 2.6: the hypothesis is the rights source's own `wf` (`Rights/Wire.lean:270`): `WellFormedSoft (correlate R)`
-does not see repeated limitation or condition names (fixture F1). -/
-theorem legacy_labels_nodup (U : UDoc) (R : VE.Rights.RightsDoc)
-    (hs : VE.Rights.WellFormedRights R = true) (hw : WellFormedU U = true) :
+/-- 2.6: `hs` is the rights source's own `wf` (`Rights/Wire.lean:270`): `WellFormedSoft (correlate R)` does not see
+repeated limitation or condition names (fixture F1). `hk` is the DRI's repair of 2026-10-27 (spec 2.6, fixture `cx`). -/
+theorem legacy_labels_nodup_of_actKeys (U : UDoc) (R : VE.Rights.RightsDoc) (hs : VE.Rights.WellFormedRights R = true)
+    (hw : WellFormedU U = true) (hk : ∀ k ∈ VE.Rights.condKeys R, ':' ∉ k.2.1.toList) :
     ((softLabelledU U (VE.Rights.correlate R) ++ VE.Rights.limPremisesLabelled R).map (·.1)).Nodup := sorry
 
 /-- 2.6 (5): assembly accepts today's soft source unchanged. -/
@@ -495,7 +495,7 @@ def elaborateKeys : List String := closedKeys ResponseShape.Schemas.NormDefaults
 #guard !packOrder.any (fun i => i != "soft" && i != "rights" && elaborateKeys.contains i)
 
 -- F1: `WellFormedSoft (correlate R)` and `WellFormedU` hold on a rights document that repeats a limitation (or a
--- condition), yet its labels repeat; `WellFormedRights`, the hypothesis of `legacy_labels_nodup`, refuses it.
+-- condition), yet its labels repeat; `WellFormedRights`, `hs` of `legacy_labels_nodup_of_actKeys`, refuses it.
 open VE.Rights.Examples (alpha gamma gamma7 rho epsilon l29) in
 def rightsDocs : List VE.Rights.RightsDoc :=
   [alpha, gamma, gamma7, rho, epsilon, { gamma with limits := [l29, l29] },
@@ -544,7 +544,7 @@ def planFiles : List PlanFile := [
    [``softPack, ``rightsPack, ``legacyKinds, ``legacyRows]⟩,
   ⟨"lean/VE/NormDefaults/PacksLegacy.lean", some [`VE.NormDefaults.Layered],
    [`VE.NormDefaults.LayeredAdmission, `VE.Readings.UnspecifiedWire],
-   [``softLabelledU_labels_nodup, ``legacy_labels_nodup, ``assemble_legacy_soft, ``assemble_legacy_rights,
+   [``softLabelledU_labels_nodup, ``legacy_labels_nodup_of_actKeys, ``assemble_legacy_soft, ``assemble_legacy_rights,
     ``packPremises_legacy, ``packFault_legacy_rights, ``packFault_legacy_soft, ``filledX_whole, ``dispatch_legacy]⟩,
   ⟨"lean/VE/Readings/SupPacks.lean", some [`VE.Readings.SupExtra], [],
    [``VE.Readings.transfers_append, ``VE.Readings.transfers_X]⟩,
@@ -614,8 +614,11 @@ run_meta do
       else bad := bad ++ (faults env k allowed n).toArray.map (s!"{f.file}: " ++ ·)
   for n in stubDecls env do
     if (fileOf n).isNone then bad := bad.push s!"{n} has no file in planFiles"
-  unless (env.find? ``legacy_labels_nodup).any (·.type.getUsedConstants.contains ``VE.Rights.WellFormedRights) do
-    bad := bad.push "legacy_labels_nodup does not assume the rights source's WellFormedRights (F1)"
+  let assumes (c : Name) := (env.find? ``legacy_labels_nodup_of_actKeys).any (·.type.getUsedConstants.contains c)
+  unless assumes ``VE.Rights.WellFormedRights do
+    bad := bad.push "legacy_labels_nodup_of_actKeys does not assume the rights source's WellFormedRights (F1)"
+  unless assumes ``VE.Rights.condKeys do
+    bad := bad.push "legacy_labels_nodup_of_actKeys does not assume `hk` on the act keys (spec 2.6, `cx`)"
   unless bad.isEmpty do throwError m!"section 5's files do not build:\n{"\n".intercalate bad.toList}"
 
 end VE.NormDefaults.Packs.Plan

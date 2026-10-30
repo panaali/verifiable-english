@@ -410,7 +410,8 @@ def stringSites : List (String → String) := [
 #guard stringSites.all fun site => strings64.all fun s =>
   (says (site s)).all (!·.startsWith "ResourceLimit") && says (site (s ++ "x")) == ["ResourceLimit: a string exceeds 64"]
 
--- A value's `words` of any length is no resource limit.
+-- A value's `words` within W6's 256 characters is no resource limit; beyond them W6's verbalisation rule refuses it
+-- ("Verbalisation exceeds 256 characters", the words checks below).
 #guard strings64.all fun s => meaning (req s!"\{\"name\": \"x\", \"words\": \"the {s}{s}{s}\", \"stated\": \"1\"}" ok1) != ""
 
 -- A literal of more than 40 digits and 64 bytes is limit 6, at each place a literal is read; earlier limits come
@@ -948,7 +949,8 @@ def reserved (r : String) : List String := [s!"ReservedWord: \"{r}\" in the word
 #guard ["the x", "the island", "the minuses", "the bees", "the throughput", "the sumo of things", "the summary",
     "the sum", "the product", "the square", "the cube", "the half", "the twice-told tale", "the x divided",
     "the x to the", "the x times ten", "the x when", "the band", "the isle", "the bequest", "the equalsign",
-    "the theory", "the the", "the x-and-y", "the X", "the café", s!"the {ones 252}"].all fun w =>
+    "the theory", "the the", "the x-and-y", "the X", "the café", s!"the {ones 252}", "the sum offset",
+    "the square often"].all fun w =>
   says (wx w) == ["c1 holds"] && meaning (wx w) == meaning (req x1 ok1)
 #guard expect [
   -- ValueWordsForm: "the" first, and no phrase word first (naming the phrase word, else the first word)
@@ -1000,5 +1002,87 @@ def reserved (r : String) : List String := [s!"ReservedWord: \"{r}\" in the word
   ("no-collision", says (req (x1 ++ ", " ++ r#"{"name": "y", "words": "the x2", "stated": "1"}"#) ok1), ["c1 holds"]),
   ("words-before-collision", says (req (x1 ++ ", " ++ r#"{"name": "y", "words": "the x and y", "stated": "1"}"# ++ ", " ++
       r#"{"name": "z", "words": "the x", "stated": "1"}"#) ok1), [r#"ReservedWord: "and" in the words of y"#])]
+
+/-! ## The work of a case (spec 3.2 (a), (b) and limit 10; 13.3's F1, G-1, V-11s and H-1; me-2nb): exact units of the
+charged runner `runC`, each limit on both sides -/
+
+namespace WorkCases
+open VE.Calc.Work
+
+def eqc : Comparison := ⟨.eq, false⟩
+def ltc : Comparison := ⟨.lt, false⟩
+def st (n : String) (q : Rat) : Decl := ⟨n, .stated q⟩
+def df (n : String) (e : Expr) : Decl := ⟨n, .defined e⟩
+def mk (ds : List Decl) (cs : List Claim) : Case := ⟨ds, cs.zipIdx.map fun (c, i) => (s!"c{i}", .claim c), none⟩
+def units (limit : Nat) (c : Case) : Option Nat := (runC limit c).map (·.2)
+def outcomes (c : Case) : Option (List Outcome) := (runC maxWork c).map fun r => r.1.map (·.1)
+/-- 2.4's rows, re-reading every value (`Claim.run`), for agreement where that is fast enough. -/
+def reread (c : Case) : List Outcome := c.claims.map fun k => k.2.run c.decls
+def nines : Rat := 10 ^ 40 - 1
+
+-- 2.4's digit limit by two comparisons (`digitCount_le_iff`): the same answer as the digit list, under, at and over
+-- 10^4,096 in the numerator and the denominator.
+#guard ([10 ^ maxDigits - 1, 10 ^ maxDigits, 1 / (10 ^ maxDigits - 1), 1 / 10 ^ maxDigits] : List Rat).map
+  (fun q => (decide (Small q), digitCount q.num.natAbs ≤ maxDigits && digitCount q.den ≤ maxDigits)) =
+  [(true, true), (false, false), (true, true), (false, false)]
+
+-- `powTooLarge`: 2^13,607 is beyond the limit and known from its base, 2^13,606 is not (the numerator's side, then
+-- the denominator's); a power it rules out is beyond the limit when computed.
+#guard [powTooLarge 2 13607, powTooLarge 2 13606, powTooLarge (1 / 2) 13607, powTooLarge (1 / 2) 13606,
+    powTooLarge 1 64, powTooLarge 0 64] = [true, false, true, false, false, false] &&
+  Val.guard ((2 : Rat) ^ 13607) == .tooLarge && Val.guard ((2 : Rat) ^ 13606) == .ok (2 ^ 13606)
+
+/-! F1-24, F1-28, F1-511: me-2b review F1's chain v0 = 1, v(i+1) = v(i) + v(i), 9 + 9k + 3k(k + 1)/2 units for
+`v_k = 2^k`, where re-reading costs 2^k evaluations; the same rows as 2.4's re-reading at k = 12; F1-24 under, at and
+over its units (a limit that is reached refuses nothing, one unit less refuses the case). -/
+def f1 (k : Nat) : List Decl :=
+  st "v0" 1 :: (List.range k).map fun i => df s!"v{i + 1}" (.add (.val s!"v{i}") (.val s!"v{i}"))
+def f1Case (k : Nat) : Case := mk (f1 k) [.compare eqc (.val s!"v{k}") (.lit (2 ^ k))]
+def f1511 : Case := mk (f1 511) [.compare ltc (.lit 0) (.val "v511")]
+#guard [24, 28].map (fun k => units maxWork (f1Case k)) = [some 1125, some 1479]
+#guard [24, 28].all fun k => units maxWork (f1Case k) == some (9 + 9 * k + 3 * k * (k + 1) / 2)
+#guard outcomes (f1Case 28) = some [.decided .holds]
+#guard units maxWork f1511 = some 396545 && outcomes f1511 == some [.decided .holds]
+#guard some (reread (f1Case 12)) = outcomes (f1Case 12)
+#guard [1124, 1125, 1126].map (units · (f1Case 24)) = [none, some 1125, some 1125]
+
+/-! G-1: one power of a 2,560-digit value, known beyond the limit from its base and never computed; G-1x512: the same
+claim 512 times, every row `unknown (limit .digits)`. -/
+def g1 (n : Nat) : Case := mk [st "v0" nines, df "v1" (.pow (.val "v0") 64)]
+  ((List.range n).map fun _ => .compare ltc (.pow (.val "v1") 64) (.lit 0))
+#guard units maxWork (g1 1) = some 17288 && outcomes (g1 1) == some [.unknown (.limit .digits)]
+#guard units maxWork (g1 512) = some 4366409 &&
+  outcomes (g1 512) == some (List.replicate 512 (.unknown (.limit .digits)))
+
+/-! V-11s: values at 40, 2,497 and 4,993 digits, and a zero divisor after a limit; 2.4's re-reading agrees. -/
+def v11 : Case := mk [st "a" (10 ^ 39), df "b" (.pow (.val "a") 64), df "c" (.pow (.val "b") 2)]
+  [.compare ltc (.val "a") (.lit 0), .compare ltc (.val "b") (.lit 0), .compare ltc (.val "c") (.lit 0),
+   .compare ltc (.div (.val "c") (.lit 0)) (.lit 0)]
+#guard some (reread v11) = outcomes v11 && units maxWork v11 == some 25297
+
+/-! H-1: near the most a claim case can spend: 497 claims b·b = b·b over a value of 4,080 digits over 4,080 fill
+10,000 JSON values; 107,837,424 units, under 3.2's claim bound 163,290,000 and far under limit 10. -/
+def heavy (n : Nat) : Case :=
+  let m : Expr := .mul (.val "b") (.val "b")
+  mk [st "r" ((10 ^ 40 - 1) / (10 ^ 40 - 3)), df "b" (.mul (.pow (.val "r") 64) (.pow (.val "r") 38))]
+    ((List.range n).map fun _ => .compare eqc m m)
+#guard units maxWork (heavy 497) = some 107837424 && 107837424 < 163290000 && 163290000 < maxWork &&
+  outcomes (heavy 497) == some (List.replicate 497 (.unknown (.limit .digits)))
+
+-- Each charged step's other answers: `within` under, at and over its bounds; a fault in either operand decides
+-- (undefined, then beyond the limit); a counted value that ran out; a name the table lacks.
+#guard outcomes (mk [st "x" 2] [.within (.val "x") (.lit 0) (.lit 1), .within (.val "x") (.lit 2) (.lit 2),
+    .within (.val "x") (.lit 3) (.lit 4)]) = some [.decided .fails, .decided .holds, .decided .fails]
+#guard outcomes (mk [st "v0" nines, df "v1" (.pow (.val "v0") 64)]
+    [.compare ltc (.add (.lit 1) (.div (.lit 1) (.lit 0))) (.lit 0), .compare ltc (.add (.lit 1) (.mul (.val "v1") (.val "v1"))) (.lit 0)]) =
+  some [.decided .undefined, .unknown (.limit .digits)]
+#guard outcomes (mk [⟨"n", .counted (Thunk.pure none) .exhausted⟩] [.compare eqc (.val "n") (.lit 0)]) =
+  some [.unknown (.limit .evaluations)]
+#guard outcomes (mk [] [.compare eqc (.val "q") (.lit 0)]) = some [.decided .undefined]
+
+-- Limit 10's refusal text (3.2), from `Wire.limit` with the others.
+#guard Wire.workLimit = "ResourceLimit: the work of the calculation exceeds 8589934592"
+
+end WorkCases
 
 end VE.Calc.RunExamples
