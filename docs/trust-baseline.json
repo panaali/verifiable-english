@@ -1510,6 +1510,13 @@
    "reason": "me-6cc: lean/VE/Calc/Units.lean V +2 (decodeFactor: the shape guard line and one doc line; 8 to 10 lines)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-6cc, 2026-10-30",
    "commit": "62d8329d4dd96a08301764a64405d8333aeb42af"
+  },
+  {
+   "class": "V",
+   "lines": 4,
+   "reason": "df-1bbb: VE/Defaults/Wire.lean +2, ResponseShape/Schemas/NormDefaults.lean +2",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-1bbb, 2026-10-18",
+   "commit": "bf28108dc14e7534f037e578850cd5ae5df69ff0"
   }
  ]
 }
