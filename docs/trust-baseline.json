@@ -1482,6 +1482,20 @@
    "reason": "sc-1af: VE/Scope/Wire.lean +1 (decodeBlock's boundary call; the check jsonWF?/listWF?/implWF?/balanced?/ascending is G[R] +31 in VE/Scope/Govern.lean and illFormed D[R] +10 in VE/Scope/Wire.lean, untrusted)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1af, 2026-10-18",
    "commit": "81b8371210db46ae992a2eff54f1a6d0039d2d0d"
+  },
+  {
+   "class": "S",
+   "lines": 13,
+   "reason": "Route environment header guard and response-shape branch; tests/test_difffuzz.py::test_request_envelope_fields_precede_predicate_sort_fault",
+   "signature": "standing ruling R16 (DRI-RULINGS.md)",
+   "commit": "45e886fee9ee5cc475bd6355ceb6c099345e8332"
+  },
+  {
+   "class": "V",
+   "lines": 2,
+   "reason": "Route environment header guard and response-shape branch; tests/test_difffuzz.py::test_request_envelope_fields_precede_predicate_sort_fault",
+   "signature": "standing ruling R16 (DRI-RULINGS.md)",
+   "commit": "45e886fee9ee5cc475bd6355ceb6c099345e8332"
   }
  ]
 }
