@@ -1,0 +1,2317 @@
+{
+ "commit": "22b7f5382083ad8d2295815326af186bb910342b",
+ "configs": {
+  "accepted-suggestions": {
+   "max_ms": 232.233,
+   "moved": 6,
+   "one_formula": 300,
+   "p95_ms": 14.919,
+   "questions": 2119,
+   "sentences": 300,
+   "transport_ms": 6.828309968113899
+  },
+  "adopted-unary": {
+   "max_ms": 161.686,
+   "moved": 30,
+   "one_formula": 300,
+   "p95_ms": 50.861,
+   "questions": 2143,
+   "sentences": 300,
+   "transport_ms": 35.041508032009006
+  },
+  "birthright-citizenship-debate": {
+   "max_ms": 19.647,
+   "moved": 30,
+   "one_formula": 300,
+   "p95_ms": 7.836,
+   "questions": 2170,
+   "sentences": 300,
+   "transport_ms": 2.464439021423459
+  },
+  "birthright-citizenship-debate-reviewed": {
+   "max_ms": 32.504,
+   "moved": 19,
+   "one_formula": 300,
+   "p95_ms": 19.768,
+   "questions": 2126,
+   "sentences": 300,
+   "transport_ms": 12.705469038337469
+  },
+  "claude-constitution-excerpt": {
+   "max_ms": 27.105,
+   "moved": 19,
+   "one_formula": 300,
+   "p95_ms": 13.67,
+   "questions": 2137,
+   "sentences": 300,
+   "transport_ms": 6.602009991183877
+  },
+  "claude-constitution-excerpt-reviewed": {
+   "max_ms": 210.847,
+   "moved": 0,
+   "one_formula": 300,
+   "p95_ms": 155.778,
+   "questions": 2100,
+   "sentences": 300,
+   "transport_ms": 135.28585096355528
+  },
+  "closure": {
+   "max_ms": 18.16,
+   "moved": 6,
+   "one_formula": 300,
+   "p95_ms": 7.123,
+   "questions": 2084,
+   "sentences": 300,
+   "transport_ms": 2.0165800233371556
+  },
+  "colliding_aliases": {
+   "max_ms": 17.7,
+   "moved": 16,
+   "one_formula": 300,
+   "p95_ms": 7.684,
+   "questions": 2125,
+   "sentences": 300,
+   "transport_ms": 2.0866800332441926
+  },
+  "function_identifiers": {
+   "max_ms": 13.724,
+   "moved": 19,
+   "one_formula": 300,
+   "p95_ms": 6.794,
+   "questions": 2131,
+   "sentences": 300,
+   "transport_ms": 2.2145899711176753
+  },
+  "function_words": {
+   "max_ms": 19.809,
+   "moved": 60,
+   "one_formula": 300,
+   "p95_ms": 8.282,
+   "questions": 2202,
+   "sentences": 300,
+   "transport_ms": 2.415369963273406
+  },
+  "news-article": {
+   "max_ms": 121.719,
+   "moved": 12,
+   "one_formula": 300,
+   "p95_ms": 30.253,
+   "questions": 2110,
+   "sentences": 300,
+   "transport_ms": 14.42751899594441
+  },
+  "news-article-reviewed": {
+   "max_ms": 270.206,
+   "moved": 0,
+   "one_formula": 300,
+   "p95_ms": 169.186,
+   "questions": 2100,
+   "sentences": 300,
+   "transport_ms": 156.955468992237
+  },
+  "order": {
+   "max_ms": 169.204,
+   "moved": 76,
+   "one_formula": 300,
+   "p95_ms": 12.167,
+   "questions": 2157,
+   "sentences": 300,
+   "transport_ms": 3.03204997908324
+  },
+  "ordinary": {
+   "max_ms": 17.843,
+   "moved": 6,
+   "one_formula": 300,
+   "p95_ms": 6.741,
+   "questions": 2117,
+   "sentences": 300,
+   "transport_ms": 2.6443800306878984
+  },
+  "precision_templates": {
+   "max_ms": 49.662,
+   "moved": 13,
+   "one_formula": 300,
+   "p95_ms": 7.115,
+   "questions": 2143,
+   "sentences": 300,
+   "transport_ms": 2.4345399579033256
+  },
+  "us-constitution-14th-s1": {
+   "max_ms": 26.424,
+   "moved": 0,
+   "one_formula": 300,
+   "p95_ms": 12.893,
+   "questions": 2100,
+   "sentences": 300,
+   "transport_ms": 5.827439017593861
+  },
+  "us-constitution-14th-s1-reviewed": {
+   "max_ms": 155.129,
+   "moved": 0,
+   "one_formula": 300,
+   "p95_ms": 123.596,
+   "questions": 2100,
+   "sentences": 300,
+   "transport_ms": 95.73651297250763
+  },
+  "usecases/agent-policy/environment.allow-must.json": {
+   "max_ms": 121.247,
+   "moved": 0,
+   "one_formula": 100,
+   "p95_ms": 36.157,
+   "questions": 700,
+   "sentences": 100,
+   "transport_ms": 16.88880898291245
+  },
+  "usecases/agent-policy/environment.allow-neednot.json": {
+   "max_ms": 47.776,
+   "moved": 0,
+   "one_formula": 100,
+   "p95_ms": 38.158,
+   "questions": 700,
+   "sentences": 100,
+   "transport_ms": 14.517339004669338
+  },
+  "usecases/agent-policy/environment.deny-must.json": {
+   "max_ms": 231.504,
+   "moved": 0,
+   "one_formula": 100,
+   "p95_ms": 38.138,
+   "questions": 700,
+   "sentences": 100,
+   "transport_ms": 19.03979800408706
+  },
+  "usecases/agent-policy/environment.deny-neednot.json": {
+   "max_ms": 44.71,
+   "moved": 0,
+   "one_formula": 100,
+   "p95_ms": 36.875,
+   "questions": 700,
+   "sentences": 100,
+   "transport_ms": 16.60137897124514
+  },
+  "usecases/agent-policy/environment.lean.json": {
+   "max_ms": 44.7,
+   "moved": 0,
+   "one_formula": 100,
+   "p95_ms": 37.127,
+   "questions": 700,
+   "sentences": 100,
+   "transport_ms": 19.444889039732516
+  },
+  "usecases/agent-policy/environment.unspecified.json": {
+   "max_ms": 46.017,
+   "moved": 0,
+   "one_formula": 100,
+   "p95_ms": 34.439,
+   "questions": 700,
+   "sentences": 100,
+   "transport_ms": 13.670508982613683
+  },
+  "usecases/agent-policy/environment.unspecified.lean.json": {
+   "max_ms": 224.042,
+   "moved": 0,
+   "one_formula": 100,
+   "p95_ms": 31.022,
+   "questions": 700,
+   "sentences": 100,
+   "transport_ms": 17.248268995899707
+  },
+  "usecases/anthropic-rsp/environment.d1.json": {
+   "max_ms": 325.757,
+   "moved": 0,
+   "one_formula": 100,
+   "p95_ms": 248.568,
+   "questions": 700,
+   "sentences": 100,
+   "transport_ms": 182.29736702051014
+  },
+  "usecases/asimov-extended/environment.json": {
+   "max_ms": 60.606,
+   "moved": 0,
+   "one_formula": 100,
+   "p95_ms": 52.754,
+   "questions": 700,
+   "sentences": 100,
+   "transport_ms": 27.30850799707696
+  },
+  "usecases/asimov-laws/environment.json": {
+   "max_ms": 28.995,
+   "moved": 0,
+   "one_formula": 100,
+   "p95_ms": 24.602,
+   "questions": 700,
+   "sentences": 100,
+   "transport_ms": 11.817529040854424
+  },
+  "usecases/birthright-citizenship-debate/environment.json": {
+   "max_ms": 32.685,
+   "moved": 2,
+   "one_formula": 100,
+   "p95_ms": 10.738,
+   "questions": 705,
+   "sentences": 100,
+   "transport_ms": 3.4388790372759104
+  },
+  "usecases/birthright-citizenship-debate/environment.json+overlay": {
+   "max_ms": 35.718,
+   "moved": 0,
+   "one_formula": 100,
+   "p95_ms": 31.435,
+   "questions": 700,
+   "sentences": 100,
+   "transport_ms": 22.063028998672962
+  },
+  "usecases/bluedot-grant/causal.ve.md": {
+   "max_ms": null,
+   "moved": 0,
+   "one_formula": 0,
+   "p95_ms": null,
+   "questions": 0,
+   "sentences": 1,
+   "transport_ms": 8.242758980486542
+  },
+  "usecases/bluedot-grant/document.ve.md": {
+   "max_ms": null,
+   "moved": 0,
+   "one_formula": 0,
+   "p95_ms": null,
+   "questions": 0,
+   "sentences": 41,
+   "transport_ms": 99.09318300196901
+  },
+  "usecases/cedar-attributes/environment.json": {
+   "max_ms": 20.209,
+   "moved": 3,
+   "one_formula": 85,
+   "p95_ms": 8.791,
+   "questions": 600,
+   "sentences": 100,
+   "transport_ms": 2.283399982843548
+  },
+  "usecases/claude-constitution-excerpt/environment.json": {
+   "max_ms": 24.749,
+   "moved": 0,
+   "one_formula": 100,
+   "p95_ms": 19.733,
+   "questions": 700,
+   "sentences": 100,
+   "transport_ms": 8.493329980410635
+  },
+  "usecases/claude-constitution-excerpt/environment.json+overlay": {
+   "max_ms": 180.023,
+   "moved": 0,
+   "one_formula": 100,
+   "p95_ms": 163.494,
+   "questions": 700,
+   "sentences": 100,
+   "transport_ms": 86.25378395663574
+  },
+  "usecases/eligibility/environment.json": {
+   "max_ms": 71.54,
+   "moved": 0,
+   "one_formula": 100,
+   "p95_ms": 58.814,
+   "questions": 700,
+   "sentences": 100,
+   "transport_ms": 29.387938033323735
+  },
+  "usecases/math-mini-paper/environment-closure.json": {
+   "max_ms": 29.956,
+   "moved": 0,
+   "one_formula": 100,
+   "p95_ms": 10.686,
+   "questions": 700,
+   "sentences": 100,
+   "transport_ms": 2.883758977986872
+  },
+  "usecases/math-mini-paper/environment.json": {
+   "max_ms": 21.839,
+   "moved": 0,
+   "one_formula": 100,
+   "p95_ms": 18.398,
+   "questions": 700,
+   "sentences": 100,
+   "transport_ms": 7.2683089529164135
+  },
+  "usecases/news-article/environment.json": {
+   "max_ms": 50.756,
+   "moved": 0,
+   "one_formula": 100,
+   "p95_ms": 33.374,
+   "questions": 700,
+   "sentences": 100,
+   "transport_ms": 15.237129002343863
+  },
+  "usecases/news-article/environment.json+overlay": {
+   "max_ms": 214.258,
+   "moved": 0,
+   "one_formula": 100,
+   "p95_ms": 166.149,
+   "questions": 700,
+   "sentences": 100,
+   "transport_ms": 128.0684510129504
+  },
+  "usecases/news-article/news-w6a.ve.md": {
+   "max_ms": null,
+   "moved": 0,
+   "one_formula": 0,
+   "p95_ms": null,
+   "questions": 0,
+   "sentences": 12,
+   "transport_ms": 6.776159978471696
+  },
+  "usecases/openai-preparedness/environment.d1.json": {
+   "max_ms": 141.301,
+   "moved": 0,
+   "one_formula": 100,
+   "p95_ms": 127.984,
+   "questions": 700,
+   "sentences": 100,
+   "transport_ms": 86.02479397086427
+  },
+  "usecases/openai-preparedness/environment.d2.json": {
+   "max_ms": 63.885,
+   "moved": 0,
+   "one_formula": 100,
+   "p95_ms": 26.064,
+   "questions": 700,
+   "sentences": 100,
+   "transport_ms": 12.00547895859927
+  },
+  "usecases/openai-preparedness/environment.d3.json": {
+   "max_ms": 162.631,
+   "moved": 64,
+   "one_formula": 100,
+   "p95_ms": 7.375,
+   "questions": 742,
+   "sentences": 100,
+   "transport_ms": 2.468439983204007
+  },
+  "usecases/question-answering/agent-policy/a-conflict.ve.md": {
+   "max_ms": 153.937,
+   "moved": 34,
+   "one_formula": 93,
+   "p95_ms": 71.628,
+   "questions": 851,
+   "sentences": 119,
+   "transport_ms": 45.47145700780675
+  },
+  "usecases/question-answering/agent-policy/a-deny.ve.md": {
+   "max_ms": 89.859,
+   "moved": 34,
+   "one_formula": 93,
+   "p95_ms": 71.572,
+   "questions": 851,
+   "sentences": 119,
+   "transport_ms": 41.832567017991096
+  },
+  "usecases/question-answering/agent-policy/a-rules.ve.md": {
+   "max_ms": null,
+   "moved": 0,
+   "one_formula": 0,
+   "p95_ms": null,
+   "questions": 0,
+   "sentences": 26,
+   "transport_ms": 48.3598270220682
+  },
+  "usecases/question-answering/agent-policy/a-unspecified.ve.md": {
+   "max_ms": 99.375,
+   "moved": 34,
+   "one_formula": 93,
+   "p95_ms": 71.942,
+   "questions": 851,
+   "sentences": 119,
+   "transport_ms": 48.01741702249274
+  },
+  "usecases/question-answering/group.ve.md": {
+   "max_ms": 11.457,
+   "moved": 1,
+   "one_formula": 3,
+   "p95_ms": 10.851,
+   "questions": 33,
+   "sentences": 3,
+   "transport_ms": 3.629589977208525
+  },
+  "usecases/question-answering/udhr-part07.ve.md": {
+   "max_ms": null,
+   "moved": 0,
+   "one_formula": 0,
+   "p95_ms": null,
+   "questions": 0,
+   "sentences": 12,
+   "transport_ms": 20.31512896064669
+  },
+  "usecases/safety-framework/environment.d1.json": {
+   "max_ms": 99.708,
+   "moved": 0,
+   "one_formula": 100,
+   "p95_ms": 80.265,
+   "questions": 700,
+   "sentences": 100,
+   "transport_ms": 43.39189699385315
+  },
+  "usecases/us-constitution-14th-s1/environment.json": {
+   "max_ms": 22.384,
+   "moved": 0,
+   "one_formula": 100,
+   "p95_ms": 19.858,
+   "questions": 700,
+   "sentences": 100,
+   "transport_ms": 7.715668994933367
+  },
+  "usecases/us-constitution-14th-s1/environment.json+overlay": {
+   "max_ms": 323.807,
+   "moved": 0,
+   "one_formula": 100,
+   "p95_ms": 121.559,
+   "questions": 700,
+   "sentences": 100,
+   "transport_ms": 125.19095098832622
+  }
+ },
+ "f1": {
+  "misses": [
+   {
+    "code": "QuestionTooLong",
+    "config": "closure",
+    "question": "Is it the case that all of the following hold:\n  (a) starting from alice, alice is reachable by zero or more steps, where a step from a first person to a second person satisfies this condition: legacy is reviewed;\n  (b) all of the following hold:\n    (i) both of the following hold:\n      (a) there is a first person such that it is not the case that starting from legacy, legacy is reachable by zero or more steps, where a step from a service named S1 to a service named S2 satisfies this condition: S1 depends on S2;\n      (b) it is not the case that at least one of the following holds:\n        (i) at least one of the following holds:\n          (a) it is not the case that this holds in all cases;\n          (b) for every service named S1, this is impossible;\n        (ii) it is not the case that there is a service named S1 such that this is impossible;\n    (ii) all of the following hold:\n      (a) for every service named S1, starting from legacy, S1 is reachable by one or more steps, where a step from a service named S2 to a service named S3 satisfies this condition: all of the following hold:\n        (i) both alice owns S1 and legacy is the same as S1;\n        (ii) for every first person, S3 is deployed;\n      (b) both of the following hold:\n        (i) starting from legacy, legacy is reachable by zero or more \"links\" steps;\n        (ii) starting from alice, alice is reachable by one or more steps, where a step from a first person to a second person satisfies this condition: if this is impossible, then the second person owns legacy?",
+    "status": "budget"
+   },
+   {
+    "code": "QuestionTooLong",
+    "config": "colliding_aliases",
+    "question": "Is it the case that for every entity of sort \"person\" named E1, if at least one of the following holds:\n  (a) at least one of the following holds:\n    (i) all of the following hold:\n      (a) all of the following hold:\n        (i) there is an entity of sort \"person\" named E2 such that legacy has the recorded relation \"links\" to legacy;\n        (ii) both of the following hold:\n          (a) legacy has the recorded relation \"links\" to legacy;\n          (b) there is an entity of sort \"person\" named E2 such that this holds in all cases;\n      (b) it is not the case that if it is not the case that this holds in all cases, then legacy is classified as \"reviewed\";\n    (ii) it is not the case that it is not the case that if either legacy has the recorded relation \"links\" to legacy or this is impossible, or both, then this holds in all cases;\n  (b) if this is impossible, then there is an entity of sort \"person\" named E2 such that this holds in all cases, then there is an entity of sort \"person\" named E2 such that if all of the following hold:\n  (a) both of the following hold:\n    (i) there is an entity of sort \"service\" such that it is not the case that E2 has the recorded relation \"owns\" to that entity of sort \"service\";\n    (ii) E2 has the recorded relation \"owns\" to legacy;\n  (b) for every entity of sort \"service\", for every entity of sort \"person\" named E3, this holds in all cases, then at least one of the following holds:\n  (a) it is not the case that it is not the case that there is an entity of sort \"service\" such that legacy has the recorded relation \"links\" to legacy;\n  (b) there is an entity of sort \"person\" named E3 such that for every entity of sort \"person\" named E4, both legacy is classified as \"reviewed\" and legacy has the recorded relation \"links\" to legacy?",
+    "status": "budget"
+   },
+   {
+    "code": "QuestionTooLong",
+    "config": "colliding_aliases",
+    "question": "Is it the case that at least one of the following holds:\n  (a) if there is a first entity of sort \"person\" such that at least one of the following holds:\n    (i) it is not the case that there is a second entity of sort \"person\" such that this is impossible;\n    (ii) if this holds in all cases, then if if it is not the case that alice has the recorded relation \"owns\" to legacy, then there is a first entity of sort \"service\" such that legacy is classified as \"reviewed\", then at least one of the following holds:\n      (a) it is not the case that the first entity of sort \"person\" has the recorded relation \"owns\" to legacy;\n      (b) the first entity of sort \"person\" has the recorded relation \"owns\" to legacy, then if at least one of the following holds:\n    (i) if at least one of the following holds:\n      (a) at least one of the following holds:\n        (i) either legacy is classified as \"deployed\" or legacy has the recorded relation \"links\" to legacy, or both;\n        (ii) legacy has the recorded relation \"links\" to legacy;\n      (b) for every first entity of sort \"person\", either the first entity of sort \"person\" has the recorded relation \"owns\" to legacy or this is impossible, or both, then all of the following hold:\n      (a) at least one of the following holds:\n        (i) this holds in all cases;\n        (ii) it is not the case that alice is the same as alice;\n      (b) legacy is classified as \"deployed\";\n    (ii) if it is not the case that both of the following hold:\n      (a) for every first entity of sort \"service\", alice is the same as alice;\n      (b) legacy is classified as \"deployed\", then it is not the case that there is a first entity of sort \"person\" such that legacy is classified as \"deployed\", then legacy has the recorded relation \"links\" to legacy;\n  (b) for every first entity of sort \"service\", there is a second entity of sort \"service\" such that it is not the case that all of the following hold:\n    (i) at least one of the following holds:\n      (a) this holds in all cases;\n      (b) for every first entity of sort \"person\", it is not the case that the first entity of sort \"service\" is classified as \"reviewed\";\n    (ii) both of the following hold:\n      (a) it is not the case that either the first entity of sort \"service\" is classified as \"deployed\" or this holds in all cases, or both;\n      (b) for every first entity of sort \"person\", there is a second entity of sort \"person\" such that this is impossible?",
+    "status": "budget"
+   },
+   {
+    "code": "QuestionTooLong",
+    "config": "us-constitution-14th-s1",
+    "question": "Is it the case that if at least one of the following holds:\n  (a) it is not the case that it is not the case that if for every state, it is not the case that either this holds in all cases or this holds in all cases, or both, then all of the following hold:\n    (i) all of the following hold:\n      (a) both this is impossible and this holds in all cases;\n      (b) there is a law such that this holds in all cases;\n    (ii) all of the following hold:\n      (a) both this holds in all cases and this is impossible;\n      (b) if this holds in all cases, then this is impossible;\n  (b) if this holds in all cases, then this is impossible, then if if if all of the following hold:\n  (a) at least one of the following holds:\n    (i) this is impossible;\n    (ii) if for every state, this is impossible, then there is a law such that this holds in all cases;\n  (b) all of the following hold:\n    (i) for every state, it is not the case that this is impossible;\n    (ii) all of the following hold:\n      (a) there is a state such that this is impossible;\n      (b) if this is impossible, then this holds in all cases, then there is a state such that there is a person such that that state denies the equal protection of the laws to that person, then for every law, it is not the case that at least one of the following holds:\n  (a) that law is the same as that law;\n  (b) there is a person such that this is impossible, then it is not the case that for every state, that state is the same as that state?",
+    "status": "budget"
+   },
+   {
+    "code": "QuestionTooLong",
+    "config": "us-constitution-14th-s1",
+    "question": "Is it the case that at least one of the following holds:\n  (a) for every first state, all of the following hold:\n    (i) for every person, at least one of the following holds:\n      (a) for every law, this is impossible;\n      (b) if all of the following hold:\n        (i) both the first state is the same as the first state and that person is within the jurisdiction of the first state;\n        (ii) if this holds in all cases, then that person is within the jurisdiction of the first state, then this is impossible;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) if if every person is subject to the jurisdiction of the United States, then both this is impossible and this is impossible, then there is a second state such that if the second state is the same as the first state, then this holds in all cases;\n        (ii) the first state is the same as the first state;\n      (b) both this holds in all cases and this is impossible;\n  (b) if at least one of the following holds:\n    (i) if every person is a citizen of the United States, then it is not the case that it is not the case that at least one of the following holds:\n      (a) there is a law such that this is impossible;\n      (b) every person was born in the United States;\n    (ii) there is a first state such that it is not the case that all of the following hold:\n      (a) all of the following hold:\n        (i) it is not the case that this is impossible;\n        (ii) if this is impossible, then the first state is the same as the first state;\n      (b) all of the following hold:\n        (i) this is impossible;\n        (ii) both the first state is the same as the first state and the first state is the same as the first state, then for every law, both of the following hold:\n    (i) that law is the same as that law;\n    (ii) for every first state, if this is impossible, then at least one of the following holds:\n      (a) either the first state enforces that law or the first state enforces that law, or both;\n      (b) this is impossible?",
+    "status": "budget"
+   },
+   {
+    "code": "QuestionTooLong",
+    "config": "us-constitution-14th-s1",
+    "question": "Is it the case that at least one of the following holds:\n  (a) for every first state, there is a second state such that if there is a person such that if it is not the case that this holds in all cases, then either this holds in all cases or that person is subject to the jurisdiction of the United States, or both, then it is not the case that at least one of the following holds:\n    (i) there is a person who is a citizen of the first state;\n    (ii) if this is impossible, then the second state is the same as the second state;\n  (b) if it is not the case that all of the following hold:\n    (i) all of the following hold:\n      (a) at least one of the following holds:\n        (i) it is not the case that this holds in all cases;\n        (ii) this holds in all cases;\n      (b) at least one of the following holds:\n        (i) either this is impossible or this is impossible, or both;\n        (ii) either this holds in all cases or this holds in all cases, or both;\n    (ii) at least one of the following holds:\n      (a) it is not the case that either this is impossible or this is impossible, or both;\n      (b) there is a law named L1 such that both L1 is the same as L1 and L1 is the same as L1, then there is a law named L1 such that all of the following hold:\n    (i) for every law named L2, if this is impossible, then for every law named L3, L2 is the same as L3;\n    (ii) at least one of the following holds:\n      (a) it is not the case that this holds in all cases;\n      (b) at least one of the following holds:\n        (i) there is a first state that enforces L1;\n        (ii) both this is impossible and this holds in all cases?",
+    "status": "budget"
+   },
+   {
+    "code": "QuestionTooLong",
+    "config": "us-constitution-14th-s1",
+    "question": "Is it the case that if if if at least one of the following holds:\n  (a) at least one of the following holds:\n    (i) if both this is impossible and this holds in all cases, then if this is impossible, then this is impossible;\n    (ii) both of the following hold:\n      (a) for every law, that law is the same as that law;\n      (b) for every law, this holds in all cases;\n  (b) there is a state such that there is a first person such that it is not the case that that state is the same as that state, then for every law, every first person is a citizen of the United States, then all of the following hold:\n  (a) at least one of the following holds:\n    (i) for every first person, for every law, it is not the case that that law abridges the privileges or immunities of the first person;\n    (ii) all of the following hold:\n      (a) at least one of the following holds:\n        (i) for every law, this is impossible;\n        (ii) this holds in all cases;\n      (b) for every state, this is impossible;\n  (b) it is not the case that for every first person, at least one of the following holds:\n    (i) there is a second person such that this holds in all cases;\n    (ii) if this holds in all cases, then the first person was naturalized in the United States, then all of the following hold:\n  (a) if at least one of the following holds:\n    (i) it is not the case that it is not the case that this is impossible;\n    (ii) this is impossible, then this holds in all cases;\n  (b) there is a law such that both of the following hold:\n    (i) that law is the same as that law;\n    (ii) there is a first person such that at least one of the following holds:\n      (a) the first person is a citizen of the United States;\n      (b) either the first person is the same as the first person or the first person was born in the United States, or both?",
+    "status": "budget"
+   },
+   {
+    "code": "QuestionTooLong",
+    "config": "us-constitution-14th-s1",
+    "question": "Is it the case that all of the following hold:\n  (a) all of the following hold:\n    (i) if both of the following hold:\n      (a) it is not the case that for every law, all of the following hold:\n        (i) either this holds in all cases or that law is the same as that law, or both;\n        (ii) either that law is the same as that law or this holds in all cases, or both;\n      (b) it is not the case that both of the following hold:\n        (i) for every person, it is not the case that that person was naturalized in the United States;\n        (ii) for every law, it is not the case that this is impossible, then this holds in all cases;\n    (ii) there is a first state such that if both of the following hold:\n      (a) it is not the case that at least one of the following holds:\n        (i) for every second state, this is impossible;\n        (ii) the first state is the same as the first state;\n      (b) this holds in all cases, then there is a person such that there is a second state that deprives that person of life, liberty, or property;\n  (b) at least one of the following holds:\n    (i) all of the following hold:\n      (a) both of the following hold:\n        (i) it is not the case that all of the following hold:\n          (a) there is a law such that for every person, this is impossible;\n          (b) if this is impossible, then there is a law such that this holds in all cases;\n        (ii) it is not the case that this holds in all cases;\n      (b) all of the following hold:\n        (i) at least one of the following holds:\n          (a) for every person, it is not the case that that person is a citizen of the United States;\n          (b) it is not the case that it is not the case that if this is impossible, then this holds in all cases;\n        (ii) at least one of the following holds:\n          (a) there is a law such that if if this is impossible, then that law is the same as that law, then both this holds in all cases and that law is the same as that law;\n          (b) all of the following hold:\n            (i) for every law, this holds in all cases;\n            (ii) if it is not the case that this is impossible, then there is a person who is subject to the jurisdiction of the United States;\n    (ii) it is not the case that at least one of the following holds:\n      (a) it is not the case that at least one of the following holds:\n        (i) all of the following hold:\n          (a) if this is impossible, then this holds in all cases;\n          (b) there is a person such that that person is the same as that person;\n        (ii) it is not the case that both this is impossible and this holds in all cases;\n      (b) if this is impossible, then there is a person who was born in the United States?",
+    "status": "budget"
+   },
+   {
+    "code": "QuestionTooLong",
+    "config": "us-constitution-14th-s1",
+    "question": "Is it the case that at least one of the following holds:\n  (a) if if it is not the case that both of the following hold:\n    (i) there is a first law such that there is a state such that there is a first person such that that state enforces the first law;\n    (ii) there is a first person such that all of the following hold:\n      (a) it is not the case that the first person is subject to the jurisdiction of the United States;\n      (b) if this is impossible, then this is impossible, then at least one of the following holds:\n    (i) at least one of the following holds:\n      (a) if all of the following hold:\n        (i) either this is impossible or this is impossible, or both;\n        (ii) if this holds in all cases, then this is impossible, then there is a first person who is subject to the jurisdiction of the United States;\n      (b) it is not the case that all of the following hold:\n        (i) there is a state such that this holds in all cases;\n        (ii) both this holds in all cases and this is impossible;\n    (ii) this holds in all cases, then there is a first person such that at least one of the following holds:\n    (i) at least one of the following holds:\n      (a) the first person was born in the United States;\n      (b) for every second person, it is not the case that for every first law, the second person is a citizen of the United States;\n    (ii) it is not the case that it is not the case that all of the following hold:\n      (a) the first person is subject to the jurisdiction of the United States;\n      (b) either the first person is the same as the first person or the first person is a citizen of the United States, or both;\n  (b) there is a first law such that if if the first law is the same as the first law, then if at least one of the following holds:\n    (i) at least one of the following holds:\n      (a) there is a second law such that this is impossible;\n      (b) the first law is the same as the first law;\n    (ii) there is a first person who was naturalized in the United States, then for every state, it is not the case that both the first law is the same as the first law and that state is the same as that state, then at least one of the following holds:\n    (i) at least one of the following holds:\n      (a) there is a second law such that if it is not the case that this holds in all cases, then there is a first person such that this is impossible;\n      (b) there is a first person such that if this holds in all cases, then there is a state that deprives the first person of life, liberty, or property;\n    (ii) this holds in all cases?",
+    "status": "budget"
+   },
+   {
+    "code": "QuestionTooLong",
+    "config": "usecases/math-mini-paper/environment-closure.json",
+    "question": "Is it the case that all of the following hold:\n  (a) there is a point named P1 such that for every point named P2, starting from P1, P2 is reachable by zero or more steps, where a step from a point named P3 to a point named P4 satisfies this condition: starting from P4, P1 is reachable by zero or more steps, where a step from a point named P5 to a point named P6 satisfies this condition: P6 does not span P1;\n  (b) all of the following hold:\n    (i) both of the following hold:\n      (a) it is not the case that all of the following hold:\n        (i) if at least one of the following holds:\n          (a) this is impossible;\n          (b) for every point named P1, this is impossible, then for every point named P1, if this is impossible, then P1 spans P1;\n        (ii) if every point named P1 does not link P1, then this is impossible;\n      (b) there is a point named P1 such that starting from P1, P1 is reachable by zero or more steps, where a step from a point named P2 to a point named P3 satisfies this condition: if at least one of the following holds:\n        (i) both P2 is the same as P3 and P3 spans P1;\n        (ii) both P1 links P2 and P3 links P3, then all of the following hold:\n        (i) if P1 links P3, then P1 is the same as P3;\n        (ii) P1 spans P2;\n    (ii) if if if for every point named P1, P1 is the same as P1, then this is impossible, then this is impossible, then all of the following hold:\n      (a) if if it is not the case that if this is impossible, then this holds in all cases, then if for every point named P1, this is impossible, then every point named P1 spans P1, then it is not the case that this holds in all cases;\n      (b) at least one of the following holds:\n        (i) at least one of the following holds:\n          (a) it is not the case that if this holds in all cases, then this holds in all cases;\n          (b) every point named P1 spans P1;\n        (ii) all of the following hold:\n          (a) if there is a point named P1 that links P1, then either this holds in all cases or this holds in all cases, or both;\n          (b) all of the following hold:\n            (i) every point named P1 spans P1;\n            (ii) both this holds in all cases and this is impossible?",
+    "status": "budget"
+   }
+  ],
+  "questions": 7967,
+  "same": 7957,
+  "share": 0.998745
+ },
+ "f2": {
+  "many": 0,
+  "many_causes": [],
+  "misses": [],
+  "other_sentence": [],
+  "questions": 269,
+  "same": 269,
+  "share": 1.0
+ },
+ "format": "ve.question-reverse@1",
+ "latency": {
+  "budget_ms": 100.0,
+  "max_ms": 325.757,
+  "met": false,
+  "p95_ms": 126.47,
+  "p95_ms_by_kind": {
+   "f1": 144.105,
+   "f2": 85.832,
+   "mutant": 124.142
+  },
+  "q64_budget_ms": 1000.0,
+  "q64_max_ms": 4111.46,
+  "q64_met": false,
+  "q64_runs": 156,
+  "questions": 56897
+ },
+ "limits": [
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "ordinary",
+   "ms": 164.147,
+   "question": "Is service that is deployed is deployed every service that is it is not the case that that service is the same as that service service that is deployed and is deployed is deployed every service that is deployed and is it is not the case that that service is the same as that service service that is deployed and is and is deployed is deployed?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "ordinary",
+   "ms": 156.173,
+   "question": "Is service that is deployed is deployed every service that is it is not the case that that service is the same as that service service that is deployed and is deployed is deployed every service that is deployed and is it is not the case that that service is the same as that service service that is deployed and is and is deployed is deployed?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "ordinary",
+   "ms": 161.434,
+   "question": "Is service that is deployed is deployed every service that is it is not the case that that service is the same as that service service that is deployed and is deployed is deployed every service that is deployed and is it is not the case that that service is the same as that service service that is deployed and is and is deployed is deployed?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "ordinary",
+   "ms": 3.03,
+   "question": "Is service that is deployed is deployed every service that is it is not the case that that service is the same as that service service that is deployed and is deployed is deployed every service that is deployed and is it is not the case that that service is the same as that service service that is deployed and is and is deployed is deployed every?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "closure",
+   "ms": 160.47,
+   "question": "Is service that is deployed is deployed every service that is it is not the case that that service is the same as that service service that is deployed and is deployed is deployed every service that is deployed and is it is not the case that that service is the same as that service service that is deployed and is and is deployed is deployed?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "closure",
+   "ms": 160.133,
+   "question": "Is service that is deployed is deployed every service that is it is not the case that that service is the same as that service service that is deployed and is deployed is deployed every service that is deployed and is it is not the case that that service is the same as that service service that is deployed and is and is deployed is deployed?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "closure",
+   "ms": 158.005,
+   "question": "Is service that is deployed is deployed every service that is it is not the case that that service is the same as that service service that is deployed and is deployed is deployed every service that is deployed and is it is not the case that that service is the same as that service service that is deployed and is and is deployed is deployed?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "closure",
+   "ms": 2.637,
+   "question": "Is service that is deployed is deployed every service that is it is not the case that that service is the same as that service service that is deployed and is deployed is deployed every service that is deployed and is it is not the case that that service is the same as that service service that is deployed and is and is deployed is deployed every?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "colliding_aliases",
+   "ms": 148.4,
+   "question": "Is entity of sort that is classified as is classified as every entity of sort that is classified as it is not the case that that entity of sort is the same as that entity of sort entity of sort that is classified as and is classified as is classified as every entity of sort that is classified as and is classified as it is not?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "colliding_aliases",
+   "ms": 148.993,
+   "question": "Is entity of sort that is classified as is classified as every entity of sort that is classified as it is not the case that that entity of sort is the same as that entity of sort entity of sort that is classified as and is classified as is classified as every entity of sort that is classified as and is classified as it is not?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "colliding_aliases",
+   "ms": 151.279,
+   "question": "Is entity of sort that is classified as is classified as every entity of sort that is classified as it is not the case that that entity of sort is the same as that entity of sort entity of sort that is classified as and is classified as is classified as every entity of sort that is classified as and is classified as it is not?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "colliding_aliases",
+   "ms": 2.631,
+   "question": "Is entity of sort that is classified as is classified as every entity of sort that is classified as it is not the case that that entity of sort is the same as that entity of sort entity of sort that is classified as and is classified as is classified as every entity of sort that is classified as and is classified as it is not the?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "function_words",
+   "ms": 165.073,
+   "question": "Is entity of sort that is classified as is classified as every entity of sort that is classified as it is not the case that that entity of sort is the same as that entity of sort entity of sort that is classified as and is classified as is classified as every entity of sort that is classified as and is classified as it is not?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "function_words",
+   "ms": 163.47,
+   "question": "Is entity of sort that is classified as is classified as every entity of sort that is classified as it is not the case that that entity of sort is the same as that entity of sort entity of sort that is classified as and is classified as is classified as every entity of sort that is classified as and is classified as it is not?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "function_words",
+   "ms": 161.352,
+   "question": "Is entity of sort that is classified as is classified as every entity of sort that is classified as it is not the case that that entity of sort is the same as that entity of sort entity of sort that is classified as and is classified as is classified as every entity of sort that is classified as and is classified as it is not?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "function_words",
+   "ms": 2.974,
+   "question": "Is entity of sort that is classified as is classified as every entity of sort that is classified as it is not the case that that entity of sort is the same as that entity of sort entity of sort that is classified as and is classified as is classified as every entity of sort that is classified as and is classified as it is not the?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "function_identifiers",
+   "ms": 140.097,
+   "question": "Is entity of sort that is classified as is classified as every entity of sort that is classified as it is not the case that that entity of sort is the same as that entity of sort entity of sort that is classified as and is classified as is classified as every entity of sort that is classified as and is classified as it is not?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "function_identifiers",
+   "ms": 138.645,
+   "question": "Is entity of sort that is classified as is classified as every entity of sort that is classified as it is not the case that that entity of sort is the same as that entity of sort entity of sort that is classified as and is classified as is classified as every entity of sort that is classified as and is classified as it is not?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "function_identifiers",
+   "ms": 138.626,
+   "question": "Is entity of sort that is classified as is classified as every entity of sort that is classified as it is not the case that that entity of sort is the same as that entity of sort entity of sort that is classified as and is classified as is classified as every entity of sort that is classified as and is classified as it is not?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "function_identifiers",
+   "ms": 2.403,
+   "question": "Is entity of sort that is classified as is classified as every entity of sort that is classified as it is not the case that that entity of sort is the same as that entity of sort entity of sort that is classified as and is classified as is classified as every entity of sort that is classified as and is classified as it is not the?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "precision_templates",
+   "ms": 163.565,
+   "question": "Is service that is fully deployed is fully deployed every service that is fully it is not the case that that service is the same as that service service that is fully deployed and is fully deployed is fully deployed every service that is fully deployed and is fully it is not the case that that service is the same as that service service that is?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "precision_templates",
+   "ms": 158.585,
+   "question": "Is service that is fully deployed is fully deployed every service that is fully it is not the case that that service is the same as that service service that is fully deployed and is fully deployed is fully deployed every service that is fully deployed and is fully it is not the case that that service is the same as that service service that is?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "precision_templates",
+   "ms": 158.318,
+   "question": "Is service that is fully deployed is fully deployed every service that is fully it is not the case that that service is the same as that service service that is fully deployed and is fully deployed is fully deployed every service that is fully deployed and is fully it is not the case that that service is the same as that service service that is?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "precision_templates",
+   "ms": 3.133,
+   "question": "Is service that is fully deployed is fully deployed every service that is fully it is not the case that that service is the same as that service service that is fully deployed and is fully deployed is fully deployed every service that is fully deployed and is fully it is not the case that that service is the same as that service service that is fully?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "birthright-citizenship-debate",
+   "ms": 145.235,
+   "question": "Is person who is classified as is classified as every person who is classified as it is not the case that that person is the same as that person person who is classified as and is classified as is classified as every person who is classified as and is classified as it is not the case that that person is the same as that person person?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "birthright-citizenship-debate",
+   "ms": 145.353,
+   "question": "Is person who is classified as is classified as every person who is classified as it is not the case that that person is the same as that person person who is classified as and is classified as is classified as every person who is classified as and is classified as it is not the case that that person is the same as that person person?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "birthright-citizenship-debate",
+   "ms": 143.311,
+   "question": "Is person who is classified as is classified as every person who is classified as it is not the case that that person is the same as that person person who is classified as and is classified as is classified as every person who is classified as and is classified as it is not the case that that person is the same as that person person?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "birthright-citizenship-debate",
+   "ms": 2.982,
+   "question": "Is person who is classified as is classified as every person who is classified as it is not the case that that person is the same as that person person who is classified as and is classified as is classified as every person who is classified as and is classified as it is not the case that that person is the same as that person person who?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "claude-constitution-excerpt",
+   "ms": 345.552,
+   "question": "Is entity of sort that is classified as is classified as every entity of sort that is classified as it is not the case that that entity of sort is the same as that entity of sort entity of sort that is classified as and is classified as is classified as every entity of sort that is classified as and is classified as it is not?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "claude-constitution-excerpt",
+   "ms": 344.064,
+   "question": "Is entity of sort that is classified as is classified as every entity of sort that is classified as it is not the case that that entity of sort is the same as that entity of sort entity of sort that is classified as and is classified as is classified as every entity of sort that is classified as and is classified as it is not?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "claude-constitution-excerpt",
+   "ms": 346.603,
+   "question": "Is entity of sort that is classified as is classified as every entity of sort that is classified as it is not the case that that entity of sort is the same as that entity of sort entity of sort that is classified as and is classified as is classified as every entity of sort that is classified as and is classified as it is not?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "claude-constitution-excerpt",
+   "ms": 6.804,
+   "question": "Is entity of sort that is classified as is classified as every entity of sort that is classified as it is not the case that that entity of sort is the same as that entity of sort entity of sort that is classified as and is classified as is classified as every entity of sort that is classified as and is classified as it is not the?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "news-article",
+   "ms": 573.459,
+   "question": "Is decision that is unanimous is unanimous every decision that is it is not the case that that decision is the same as that decision decision that is unanimous and is unanimous is unanimous every decision that is unanimous and is it is not the case that that decision is the same as that decision decision that is unanimous and is and is unanimous is unanimous?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "news-article",
+   "ms": 747.731,
+   "question": "Is decision that is unanimous is unanimous every decision that is it is not the case that that decision is the same as that decision decision that is unanimous and is unanimous is unanimous every decision that is unanimous and is it is not the case that that decision is the same as that decision decision that is unanimous and is and is unanimous is unanimous?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "news-article",
+   "ms": 833.596,
+   "question": "Is decision that is unanimous is unanimous every decision that is it is not the case that that decision is the same as that decision decision that is unanimous and is unanimous is unanimous every decision that is unanimous and is it is not the case that that decision is the same as that decision decision that is unanimous and is and is unanimous is unanimous?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "news-article",
+   "ms": 15.012,
+   "question": "Is decision that is unanimous is unanimous every decision that is it is not the case that that decision is the same as that decision decision that is unanimous and is unanimous is unanimous every decision that is unanimous and is it is not the case that that decision is the same as that decision decision that is unanimous and is and is unanimous is unanimous every?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "us-constitution-14th-s1",
+   "ms": 267.92,
+   "question": "Is person who was born in the was born in the every person who was born in the it is not the case that that person is the same as that person person who was born in the and was born in the was born in the every person who was born in the and was born in the it is not the case that that?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "us-constitution-14th-s1",
+   "ms": 267.934,
+   "question": "Is person who was born in the was born in the every person who was born in the it is not the case that that person is the same as that person person who was born in the and was born in the was born in the every person who was born in the and was born in the it is not the case that that?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "us-constitution-14th-s1",
+   "ms": 270.34,
+   "question": "Is person who was born in the was born in the every person who was born in the it is not the case that that person is the same as that person person who was born in the and was born in the was born in the every person who was born in the and was born in the it is not the case that that?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "us-constitution-14th-s1",
+   "ms": 5.334,
+   "question": "Is person who was born in the was born in the every person who was born in the it is not the case that that person is the same as that person person who was born in the and was born in the was born in the every person who was born in the and was born in the it is not the case that that person?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "birthright-citizenship-debate-reviewed",
+   "ms": 235.279,
+   "question": "Is person who is born in the is born in the every person who is born in the it is not the case that that person is the same as that person person who is born in the and is born in the is born in the every person who is born in the and is born in the it is not the case that that?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "birthright-citizenship-debate-reviewed",
+   "ms": 228.764,
+   "question": "Is person who is born in the is born in the every person who is born in the it is not the case that that person is the same as that person person who is born in the and is born in the is born in the every person who is born in the and is born in the it is not the case that that?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "birthright-citizenship-debate-reviewed",
+   "ms": 229.48,
+   "question": "Is person who is born in the is born in the every person who is born in the it is not the case that that person is the same as that person person who is born in the and is born in the is born in the every person who is born in the and is born in the it is not the case that that?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "birthright-citizenship-debate-reviewed",
+   "ms": 13.408,
+   "question": "Is person who is born in the is born in the every person who is born in the it is not the case that that person is the same as that person person who is born in the and is born in the is born in the every person who is born in the and is born in the it is not the case that that person?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "claude-constitution-excerpt-reviewed",
+   "ms": 1111.669,
+   "question": "Is model that is current is current every model that is it is not the case that that model is the same as that model model that is current and is current is current every model that is current and is it is not the case that that model is the same as that model model that is current and is and is current is current?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "claude-constitution-excerpt-reviewed",
+   "ms": 1073.183,
+   "question": "Is model that is current is current every model that is it is not the case that that model is the same as that model model that is current and is current is current every model that is current and is it is not the case that that model is the same as that model model that is current and is and is current is current?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "claude-constitution-excerpt-reviewed",
+   "ms": 1043.085,
+   "question": "Is model that is current is current every model that is it is not the case that that model is the same as that model model that is current and is current is current every model that is current and is it is not the case that that model is the same as that model model that is current and is and is current is current?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "claude-constitution-excerpt-reviewed",
+   "ms": 119.963,
+   "question": "Is model that is current is current every model that is it is not the case that that model is the same as that model model that is current and is current is current every model that is current and is it is not the case that that model is the same as that model model that is current and is and is current is current every?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "news-article-reviewed",
+   "ms": 1739.035,
+   "question": "Is decision that is unanimous is unanimous every decision that is it is not the case that that decision is the same as that decision decision that is unanimous and is unanimous is unanimous every decision that is unanimous and is it is not the case that that decision is the same as that decision decision that is unanimous and is and is unanimous is unanimous?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "news-article-reviewed",
+   "ms": 1495.32,
+   "question": "Is decision that is unanimous is unanimous every decision that is it is not the case that that decision is the same as that decision decision that is unanimous and is unanimous is unanimous every decision that is unanimous and is it is not the case that that decision is the same as that decision decision that is unanimous and is and is unanimous is unanimous?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "news-article-reviewed",
+   "ms": 1578.538,
+   "question": "Is decision that is unanimous is unanimous every decision that is it is not the case that that decision is the same as that decision decision that is unanimous and is unanimous is unanimous every decision that is unanimous and is it is not the case that that decision is the same as that decision decision that is unanimous and is and is unanimous is unanimous?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "news-article-reviewed",
+   "ms": 163.464,
+   "question": "Is decision that is unanimous is unanimous every decision that is it is not the case that that decision is the same as that decision decision that is unanimous and is unanimous is unanimous every decision that is unanimous and is it is not the case that that decision is the same as that decision decision that is unanimous and is and is unanimous is unanimous every?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "us-constitution-14th-s1-reviewed",
+   "ms": 1094.21,
+   "question": "Is person who was born in the was born in the every person who was born in the it is not the case that that person is the same as that person person who was born in the and was born in the was born in the every person who was born in the and was born in the it is not the case that that?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "us-constitution-14th-s1-reviewed",
+   "ms": 1107.174,
+   "question": "Is person who was born in the was born in the every person who was born in the it is not the case that that person is the same as that person person who was born in the and was born in the was born in the every person who was born in the and was born in the it is not the case that that?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "us-constitution-14th-s1-reviewed",
+   "ms": 1114.159,
+   "question": "Is person who was born in the was born in the every person who was born in the it is not the case that that person is the same as that person person who was born in the and was born in the was born in the every person who was born in the and was born in the it is not the case that that?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "us-constitution-14th-s1-reviewed",
+   "ms": 94.217,
+   "question": "Is person who was born in the was born in the every person who was born in the it is not the case that that person is the same as that person person who was born in the and was born in the was born in the every person who was born in the and was born in the it is not the case that that person?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "accepted-suggestions",
+   "ms": 318.903,
+   "question": "Is service that is deployed is deployed every service that is it is not the case that that service is the same as that service service that is deployed and is deployed is deployed every service that is deployed and is it is not the case that that service is the same as that service service that is deployed and is and is deployed is deployed?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "accepted-suggestions",
+   "ms": 327.482,
+   "question": "Is service that is deployed is deployed every service that is it is not the case that that service is the same as that service service that is deployed and is deployed is deployed every service that is deployed and is it is not the case that that service is the same as that service service that is deployed and is and is deployed is deployed?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "accepted-suggestions",
+   "ms": 323.282,
+   "question": "Is service that is deployed is deployed every service that is it is not the case that that service is the same as that service service that is deployed and is deployed is deployed every service that is deployed and is it is not the case that that service is the same as that service service that is deployed and is and is deployed is deployed?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "accepted-suggestions",
+   "ms": 7.877,
+   "question": "Is service that is deployed is deployed every service that is it is not the case that that service is the same as that service service that is deployed and is deployed is deployed every service that is deployed and is it is not the case that that service is the same as that service service that is deployed and is and is deployed is deployed every?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "adopted-unary",
+   "ms": 575.361,
+   "question": "Is person who is born in the is born in the every person who is born in the it is not the case that that person is the same as that person person who is born in the and is born in the is born in the every person who is born in the and is born in the it is not the case that that?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "adopted-unary",
+   "ms": 480.54,
+   "question": "Is person who is born in the is born in the every person who is born in the it is not the case that that person is the same as that person person who is born in the and is born in the is born in the every person who is born in the and is born in the it is not the case that that?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "adopted-unary",
+   "ms": 533.46,
+   "question": "Is person who is born in the is born in the every person who is born in the it is not the case that that person is the same as that person person who is born in the and is born in the is born in the every person who is born in the and is born in the it is not the case that that?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "adopted-unary",
+   "ms": 35.877,
+   "question": "Is person who is born in the is born in the every person who is born in the it is not the case that that person is the same as that person person who is born in the and is born in the is born in the every person who is born in the and is born in the it is not the case that that person?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "order",
+   "ms": 336.871,
+   "question": "Is service that costs is deployed service that is deployed and costs costs is a service that costs every service that costs budget is less than is at most and is reserved budget is the same as or is less than or both service that is deployed is deployed every service that is it is not the case that that service is the same as that?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "order",
+   "ms": 280.99,
+   "question": "Is service that costs is deployed service that is deployed and costs costs is a service that costs every service that costs budget is less than is at most and is reserved budget is the same as or is less than or both service that is deployed is deployed every service that is it is not the case that that service is the same as that?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "order",
+   "ms": 277.735,
+   "question": "Is service that costs is deployed service that is deployed and costs costs is a service that costs every service that costs budget is less than is at most and is reserved budget is the same as or is less than or both service that is deployed is deployed every service that is it is not the case that that service is the same as that?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "order",
+   "ms": 5.788,
+   "question": "Is service that costs is deployed service that is deployed and costs costs is a service that costs every service that costs budget is less than is at most and is reserved budget is the same as or is less than or both service that is deployed is deployed every service that is it is not the case that that service is the same as that service?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/agent-policy/environment.allow-must.json",
+   "ms": 839.83,
+   "question": "Is every every action that reads that file reads that file every for every action that reads that it is not the case that that action is the same as that action every every action that reads that file and reads that file reads that file every for every action that reads that file and reads that it is not the case that that action is?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/agent-policy/environment.allow-must.json",
+   "ms": 865.358,
+   "question": "Is every every action that reads that file reads that file every for every action that reads that it is not the case that that action is the same as that action every every action that reads that file and reads that file reads that file every for every action that reads that file and reads that it is not the case that that action is?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/agent-policy/environment.allow-must.json",
+   "ms": 878.449,
+   "question": "Is every every action that reads that file reads that file every for every action that reads that it is not the case that that action is the same as that action every every action that reads that file and reads that file reads that file every for every action that reads that file and reads that it is not the case that that action is?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/agent-policy/environment.allow-must.json",
+   "ms": 17.967,
+   "question": "Is every every action that reads that file reads that file every for every action that reads that it is not the case that that action is the same as that action every every action that reads that file and reads that file reads that file every for every action that reads that file and reads that it is not the case that that action is the?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/agent-policy/environment.allow-neednot.json",
+   "ms": 825.919,
+   "question": "Is every every action that reads that file reads that file every for every action that reads that it is not the case that that action is the same as that action every every action that reads that file and reads that file reads that file every for every action that reads that file and reads that it is not the case that that action is?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/agent-policy/environment.allow-neednot.json",
+   "ms": 761.139,
+   "question": "Is every every action that reads that file reads that file every for every action that reads that it is not the case that that action is the same as that action every every action that reads that file and reads that file reads that file every for every action that reads that file and reads that it is not the case that that action is?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/agent-policy/environment.allow-neednot.json",
+   "ms": 771.345,
+   "question": "Is every every action that reads that file reads that file every for every action that reads that it is not the case that that action is the same as that action every every action that reads that file and reads that file reads that file every for every action that reads that file and reads that it is not the case that that action is?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/agent-policy/environment.allow-neednot.json",
+   "ms": 15.307,
+   "question": "Is every every action that reads that file reads that file every for every action that reads that it is not the case that that action is the same as that action every every action that reads that file and reads that file reads that file every for every action that reads that file and reads that it is not the case that that action is the?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/agent-policy/environment.deny-must.json",
+   "ms": 1019.685,
+   "question": "Is every every action that reads that file reads that file every for every action that reads that it is not the case that that action is the same as that action every every action that reads that file and reads that file reads that file every for every action that reads that file and reads that it is not the case that that action is?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/agent-policy/environment.deny-must.json",
+   "ms": 960.151,
+   "question": "Is every every action that reads that file reads that file every for every action that reads that it is not the case that that action is the same as that action every every action that reads that file and reads that file reads that file every for every action that reads that file and reads that it is not the case that that action is?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/agent-policy/environment.deny-must.json",
+   "ms": 1009.564,
+   "question": "Is every every action that reads that file reads that file every for every action that reads that it is not the case that that action is the same as that action every every action that reads that file and reads that file reads that file every for every action that reads that file and reads that it is not the case that that action is?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/agent-policy/environment.deny-must.json",
+   "ms": 18.76,
+   "question": "Is every every action that reads that file reads that file every for every action that reads that it is not the case that that action is the same as that action every every action that reads that file and reads that file reads that file every for every action that reads that file and reads that it is not the case that that action is the?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/agent-policy/environment.deny-neednot.json",
+   "ms": 937.96,
+   "question": "Is every every action that reads that file reads that file every for every action that reads that it is not the case that that action is the same as that action every every action that reads that file and reads that file reads that file every for every action that reads that file and reads that it is not the case that that action is?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/agent-policy/environment.deny-neednot.json",
+   "ms": 949.92,
+   "question": "Is every every action that reads that file reads that file every for every action that reads that it is not the case that that action is the same as that action every every action that reads that file and reads that file reads that file every for every action that reads that file and reads that it is not the case that that action is?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/agent-policy/environment.deny-neednot.json",
+   "ms": 790.791,
+   "question": "Is every every action that reads that file reads that file every for every action that reads that it is not the case that that action is the same as that action every every action that reads that file and reads that file reads that file every for every action that reads that file and reads that it is not the case that that action is?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/agent-policy/environment.deny-neednot.json",
+   "ms": 17.943,
+   "question": "Is every every action that reads that file reads that file every for every action that reads that it is not the case that that action is the same as that action every every action that reads that file and reads that file reads that file every for every action that reads that file and reads that it is not the case that that action is the?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/agent-policy/environment.lean.json",
+   "ms": 507.422,
+   "question": "Is every every action that reads that file reads that file every for every action that reads that it is not the case that that action is the same as that action every every action that reads that file and reads that file reads that file every for every action that reads that file and reads that it is not the case that that action is?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/agent-policy/environment.lean.json",
+   "ms": 572.616,
+   "question": "Is every every action that reads that file reads that file every for every action that reads that it is not the case that that action is the same as that action every every action that reads that file and reads that file reads that file every for every action that reads that file and reads that it is not the case that that action is?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/agent-policy/environment.lean.json",
+   "ms": 542.772,
+   "question": "Is every every action that reads that file reads that file every for every action that reads that it is not the case that that action is the same as that action every every action that reads that file and reads that file reads that file every for every action that reads that file and reads that it is not the case that that action is?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/agent-policy/environment.lean.json",
+   "ms": 11.861,
+   "question": "Is every every action that reads that file reads that file every for every action that reads that it is not the case that that action is the same as that action every every action that reads that file and reads that file reads that file every for every action that reads that file and reads that it is not the case that that action is the?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/agent-policy/environment.unspecified.json",
+   "ms": 536.657,
+   "question": "Is every every action that reads that file reads that file every for every action that reads that it is not the case that that action is the same as that action every every action that reads that file and reads that file reads that file every for every action that reads that file and reads that it is not the case that that action is?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/agent-policy/environment.unspecified.json",
+   "ms": 532.187,
+   "question": "Is every every action that reads that file reads that file every for every action that reads that it is not the case that that action is the same as that action every every action that reads that file and reads that file reads that file every for every action that reads that file and reads that it is not the case that that action is?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/agent-policy/environment.unspecified.json",
+   "ms": 522.996,
+   "question": "Is every every action that reads that file reads that file every for every action that reads that it is not the case that that action is the same as that action every every action that reads that file and reads that file reads that file every for every action that reads that file and reads that it is not the case that that action is?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/agent-policy/environment.unspecified.json",
+   "ms": 11.631,
+   "question": "Is every every action that reads that file reads that file every for every action that reads that it is not the case that that action is the same as that action every every action that reads that file and reads that file reads that file every for every action that reads that file and reads that it is not the case that that action is the?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/agent-policy/environment.unspecified.lean.json",
+   "ms": 569.866,
+   "question": "Is every every action that reads that file reads that file every for every action that reads that it is not the case that that action is the same as that action every every action that reads that file and reads that file reads that file every for every action that reads that file and reads that it is not the case that that action is?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/agent-policy/environment.unspecified.lean.json",
+   "ms": 840.6,
+   "question": "Is every every action that reads that file reads that file every for every action that reads that it is not the case that that action is the same as that action every every action that reads that file and reads that file reads that file every for every action that reads that file and reads that it is not the case that that action is?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/agent-policy/environment.unspecified.lean.json",
+   "ms": 808.229,
+   "question": "Is every every action that reads that file reads that file every for every action that reads that it is not the case that that action is the same as that action every every action that reads that file and reads that file reads that file every for every action that reads that file and reads that it is not the case that that action is?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/agent-policy/environment.unspecified.lean.json",
+   "ms": 17.298,
+   "question": "Is every every action that reads that file reads that file every for every action that reads that it is not the case that that action is the same as that action every every action that reads that file and reads that file reads that file every for every action that reads that file and reads that it is not the case that that action is the?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/anthropic-rsp/environment.d1.json",
+   "ms": 2048.983,
+   "question": "Is threshold that is listed is listed every threshold that is it is not the case that that threshold is the same as that threshold threshold that is listed and is listed is listed every threshold that is listed and is it is not the case that that threshold is the same as that threshold threshold that is listed and is and is listed is listed?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/anthropic-rsp/environment.d1.json",
+   "ms": 3102.784,
+   "question": "Is threshold that is listed is listed every threshold that is it is not the case that that threshold is the same as that threshold threshold that is listed and is listed is listed every threshold that is listed and is it is not the case that that threshold is the same as that threshold threshold that is listed and is and is listed is listed?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/anthropic-rsp/environment.d1.json",
+   "ms": 3379.649,
+   "question": "Is threshold that is listed is listed every threshold that is it is not the case that that threshold is the same as that threshold threshold that is listed and is listed is listed every threshold that is listed and is it is not the case that that threshold is the same as that threshold threshold that is listed and is and is listed is listed?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/anthropic-rsp/environment.d1.json",
+   "ms": 185.703,
+   "question": "Is threshold that is listed is listed every threshold that is it is not the case that that threshold is the same as that threshold threshold that is listed and is listed is listed every threshold that is listed and is it is not the case that that threshold is the same as that threshold threshold that is listed and is and is listed is listed every?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/asimov-extended/environment.json",
+   "ms": 1180.758,
+   "question": "Is every every action available to that robot is available to that robot every for every action that is available to that it is not the case that that action is the same as that action every every action that is available to that robot and is available to that robot is available to that robot every for every action that is available to that robot?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/asimov-extended/environment.json",
+   "ms": 1154.812,
+   "question": "Is every every action available to that robot is available to that robot every for every action that is available to that it is not the case that that action is the same as that action every every action that is available to that robot and is available to that robot is available to that robot every for every action that is available to that robot?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/asimov-extended/environment.json",
+   "ms": 1143.392,
+   "question": "Is every every action available to that robot is available to that robot every for every action that is available to that it is not the case that that action is the same as that action every every action that is available to that robot and is available to that robot is available to that robot every for every action that is available to that robot?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/asimov-extended/environment.json",
+   "ms": 27.352,
+   "question": "Is every every action available to that robot is available to that robot every for every action that is available to that it is not the case that that action is the same as that action every every action that is available to that robot and is available to that robot is available to that robot every for every action that is available to that robot and?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/asimov-laws/environment.json",
+   "ms": 672.714,
+   "question": "Is every every action available to that robot is available to that robot every for every action that is available to that it is not the case that that action is the same as that action every every action that is available to that robot and is available to that robot is available to that robot every for every action that is available to that robot?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/asimov-laws/environment.json",
+   "ms": 626.084,
+   "question": "Is every every action available to that robot is available to that robot every for every action that is available to that it is not the case that that action is the same as that action every every action that is available to that robot and is available to that robot is available to that robot every for every action that is available to that robot?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/asimov-laws/environment.json",
+   "ms": 642.899,
+   "question": "Is every every action available to that robot is available to that robot every for every action that is available to that it is not the case that that action is the same as that action every every action that is available to that robot and is available to that robot is available to that robot every for every action that is available to that robot?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/asimov-laws/environment.json",
+   "ms": 10.446,
+   "question": "Is every every action available to that robot is available to that robot every for every action that is available to that it is not the case that that action is the same as that action every every action that is available to that robot and is available to that robot is available to that robot every for every action that is available to that robot and?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/birthright-citizenship-debate/environment.json",
+   "ms": 303.791,
+   "question": "Is person who is classified as is classified as every person who is classified as it is not the case that that person is the same as that person person who is classified as and is classified as is classified as every person who is classified as and is classified as it is not the case that that person is the same as that person person?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/birthright-citizenship-debate/environment.json",
+   "ms": 252.798,
+   "question": "Is person who is classified as is classified as every person who is classified as it is not the case that that person is the same as that person person who is classified as and is classified as is classified as every person who is classified as and is classified as it is not the case that that person is the same as that person person?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/birthright-citizenship-debate/environment.json",
+   "ms": 249.187,
+   "question": "Is person who is classified as is classified as every person who is classified as it is not the case that that person is the same as that person person who is classified as and is classified as is classified as every person who is classified as and is classified as it is not the case that that person is the same as that person person?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/birthright-citizenship-debate/environment.json",
+   "ms": 4.324,
+   "question": "Is person who is classified as is classified as every person who is classified as it is not the case that that person is the same as that person person who is classified as and is classified as is classified as every person who is classified as and is classified as it is not the case that that person is the same as that person person who?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/birthright-citizenship-debate/environment.json+overlay",
+   "ms": 393.732,
+   "question": "Is person who is born in the is born in the every person who is born in the it is not the case that that person is the same as that person person who is born in the and is born in the is born in the every person who is born in the and is born in the it is not the case that that?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/birthright-citizenship-debate/environment.json+overlay",
+   "ms": 394.078,
+   "question": "Is person who is born in the is born in the every person who is born in the it is not the case that that person is the same as that person person who is born in the and is born in the is born in the every person who is born in the and is born in the it is not the case that that?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/birthright-citizenship-debate/environment.json+overlay",
+   "ms": 393.87,
+   "question": "Is person who is born in the is born in the every person who is born in the it is not the case that that person is the same as that person person who is born in the and is born in the is born in the every person who is born in the and is born in the it is not the case that that?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/birthright-citizenship-debate/environment.json+overlay",
+   "ms": 23.454,
+   "question": "Is person who is born in the is born in the every person who is born in the it is not the case that that person is the same as that person person who is born in the and is born in the is born in the every person who is born in the and is born in the it is not the case that that person?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/cedar-attributes/environment.json",
+   "ms": 187.01,
+   "question": "Is if this holds in all then this is then this holds in all cases this holds in all then if this is then this holds in all cases department of alice is finance is not the case that the department of alice is finance every the department of alice is sales is not the case that the department of alice is sales is a first?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/cedar-attributes/environment.json",
+   "ms": 182.761,
+   "question": "Is if this holds in all then this is then this holds in all cases this holds in all then if this is then this holds in all cases department of alice is finance is not the case that the department of alice is finance every the department of alice is sales is not the case that the department of alice is sales is a first?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/cedar-attributes/environment.json",
+   "ms": 185.314,
+   "question": "Is if this holds in all then this is then this holds in all cases this holds in all then if this is then this holds in all cases department of alice is finance is not the case that the department of alice is finance every the department of alice is sales is not the case that the department of alice is sales is a first?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/cedar-attributes/environment.json",
+   "ms": 3.027,
+   "question": "Is if this holds in all then this is then this holds in all cases this holds in all then if this is then this holds in all cases department of alice is finance is not the case that the department of alice is finance every the department of alice is sales is not the case that the department of alice is sales is a first person?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/claude-constitution-excerpt/environment.json",
+   "ms": 453.031,
+   "question": "Is entity of sort that is classified as is classified as every entity of sort that is classified as it is not the case that that entity of sort is the same as that entity of sort entity of sort that is classified as and is classified as is classified as every entity of sort that is classified as and is classified as it is not?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/claude-constitution-excerpt/environment.json",
+   "ms": 600.208,
+   "question": "Is entity of sort that is classified as is classified as every entity of sort that is classified as it is not the case that that entity of sort is the same as that entity of sort entity of sort that is classified as and is classified as is classified as every entity of sort that is classified as and is classified as it is not?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/claude-constitution-excerpt/environment.json",
+   "ms": 597.152,
+   "question": "Is entity of sort that is classified as is classified as every entity of sort that is classified as it is not the case that that entity of sort is the same as that entity of sort entity of sort that is classified as and is classified as is classified as every entity of sort that is classified as and is classified as it is not?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/claude-constitution-excerpt/environment.json",
+   "ms": 8.965,
+   "question": "Is entity of sort that is classified as is classified as every entity of sort that is classified as it is not the case that that entity of sort is the same as that entity of sort entity of sort that is classified as and is classified as is classified as every entity of sort that is classified as and is classified as it is not the?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/claude-constitution-excerpt/environment.json+overlay",
+   "ms": 713.413,
+   "question": "Is model that is current is current every model that is it is not the case that that model is the same as that model model that is current and is current is current every model that is current and is it is not the case that that model is the same as that model model that is current and is and is current is current?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/claude-constitution-excerpt/environment.json+overlay",
+   "ms": 875.783,
+   "question": "Is model that is current is current every model that is it is not the case that that model is the same as that model model that is current and is current is current every model that is current and is it is not the case that that model is the same as that model model that is current and is and is current is current?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/claude-constitution-excerpt/environment.json+overlay",
+   "ms": 682.192,
+   "question": "Is model that is current is current every model that is it is not the case that that model is the same as that model model that is current and is current is current every model that is current and is it is not the case that that model is the same as that model model that is current and is and is current is current?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/claude-constitution-excerpt/environment.json+overlay",
+   "ms": 84.902,
+   "question": "Is model that is current is current every model that is it is not the case that that model is the same as that model model that is current and is current is current every model that is current and is it is not the case that that model is the same as that model model that is current and is and is current is current every?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/eligibility/environment.json",
+   "ms": 1293.635,
+   "question": "Is every first every second person who has the recorded relation to the first person has the recorded relation to the first person every first for every second person who has the recorded relation to the first it is not the case that the second person is the same as the second person every first every second person who has the recorded relation to the first?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/eligibility/environment.json",
+   "ms": 1356.472,
+   "question": "Is every first every second person who has the recorded relation to the first person has the recorded relation to the first person every first for every second person who has the recorded relation to the first it is not the case that the second person is the same as the second person every first every second person who has the recorded relation to the first?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/eligibility/environment.json",
+   "ms": 1278.692,
+   "question": "Is every first every second person who has the recorded relation to the first person has the recorded relation to the first person every first for every second person who has the recorded relation to the first it is not the case that the second person is the same as the second person every first every second person who has the recorded relation to the first?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/eligibility/environment.json",
+   "ms": 30.008,
+   "question": "Is every first every second person who has the recorded relation to the first person has the recorded relation to the first person every first for every second person who has the recorded relation to the first it is not the case that the second person is the same as the second person every first every second person who has the recorded relation to the first person?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/math-mini-paper/environment-closure.json",
+   "ms": 218.796,
+   "question": "Is every first every second point that links the first point links the first point every first for every second point that links the first it is not the case that the second point is the same as the second point every first every second point that links the first point and links the first point links the first point every first for every second point?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/math-mini-paper/environment-closure.json",
+   "ms": 239.072,
+   "question": "Is every first every second point that links the first point links the first point every first for every second point that links the first it is not the case that the second point is the same as the second point every first every second point that links the first point and links the first point links the first point every first for every second point?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/math-mini-paper/environment-closure.json",
+   "ms": 240.742,
+   "question": "Is every first every second point that links the first point links the first point every first for every second point that links the first it is not the case that the second point is the same as the second point every first every second point that links the first point and links the first point links the first point every first for every second point?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/math-mini-paper/environment-closure.json",
+   "ms": 3.873,
+   "question": "Is every first every second point that links the first point links the first point every first for every second point that links the first it is not the case that the second point is the same as the second point every first every second point that links the first point and links the first point links the first point every first for every second point that?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/math-mini-paper/environment.json",
+   "ms": 411.074,
+   "question": "Is point that is greatest is greatest every point that is it is not the case that that point is the same as that point point that is greatest and is greatest is greatest every point that is greatest and is it is not the case that that point is the same as that point point that is greatest and is and is greatest is greatest?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/math-mini-paper/environment.json",
+   "ms": 402.64,
+   "question": "Is point that is greatest is greatest every point that is it is not the case that that point is the same as that point point that is greatest and is greatest is greatest every point that is greatest and is it is not the case that that point is the same as that point point that is greatest and is and is greatest is greatest?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/math-mini-paper/environment.json",
+   "ms": 389.548,
+   "question": "Is point that is greatest is greatest every point that is it is not the case that that point is the same as that point point that is greatest and is greatest is greatest every point that is greatest and is it is not the case that that point is the same as that point point that is greatest and is and is greatest is greatest?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/math-mini-paper/environment.json",
+   "ms": 7.799,
+   "question": "Is point that is greatest is greatest every point that is it is not the case that that point is the same as that point point that is greatest and is greatest is greatest every point that is greatest and is it is not the case that that point is the same as that point point that is greatest and is and is greatest is greatest every?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/news-article/environment.json",
+   "ms": 852.349,
+   "question": "Is decision that is unanimous is unanimous every decision that is it is not the case that that decision is the same as that decision decision that is unanimous and is unanimous is unanimous every decision that is unanimous and is it is not the case that that decision is the same as that decision decision that is unanimous and is and is unanimous is unanimous?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/news-article/environment.json",
+   "ms": 802.027,
+   "question": "Is decision that is unanimous is unanimous every decision that is it is not the case that that decision is the same as that decision decision that is unanimous and is unanimous is unanimous every decision that is unanimous and is it is not the case that that decision is the same as that decision decision that is unanimous and is and is unanimous is unanimous?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/news-article/environment.json",
+   "ms": 856.238,
+   "question": "Is decision that is unanimous is unanimous every decision that is it is not the case that that decision is the same as that decision decision that is unanimous and is unanimous is unanimous every decision that is unanimous and is it is not the case that that decision is the same as that decision decision that is unanimous and is and is unanimous is unanimous?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/news-article/environment.json",
+   "ms": 16.794,
+   "question": "Is decision that is unanimous is unanimous every decision that is it is not the case that that decision is the same as that decision decision that is unanimous and is unanimous is unanimous every decision that is unanimous and is it is not the case that that decision is the same as that decision decision that is unanimous and is and is unanimous is unanimous every?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/news-article/environment.json+overlay",
+   "ms": 1339.474,
+   "question": "Is decision that is unanimous is unanimous every decision that is it is not the case that that decision is the same as that decision decision that is unanimous and is unanimous is unanimous every decision that is unanimous and is it is not the case that that decision is the same as that decision decision that is unanimous and is and is unanimous is unanimous?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/news-article/environment.json+overlay",
+   "ms": 1342.296,
+   "question": "Is decision that is unanimous is unanimous every decision that is it is not the case that that decision is the same as that decision decision that is unanimous and is unanimous is unanimous every decision that is unanimous and is it is not the case that that decision is the same as that decision decision that is unanimous and is and is unanimous is unanimous?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/news-article/environment.json+overlay",
+   "ms": 1379.216,
+   "question": "Is decision that is unanimous is unanimous every decision that is it is not the case that that decision is the same as that decision decision that is unanimous and is unanimous is unanimous every decision that is unanimous and is it is not the case that that decision is the same as that decision decision that is unanimous and is and is unanimous is unanimous?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/news-article/environment.json+overlay",
+   "ms": 133.346,
+   "question": "Is decision that is unanimous is unanimous every decision that is it is not the case that that decision is the same as that decision decision that is unanimous and is unanimous is unanimous every decision that is unanimous and is it is not the case that that decision is the same as that decision decision that is unanimous and is and is unanimous is unanimous every?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/openai-preparedness/environment.d1.json",
+   "ms": 2153.162,
+   "question": "Is situation that is covered is covered every situation that is it is not the case that that situation is the same as that situation situation that is covered and is covered is covered every situation that is covered and is it is not the case that that situation is the same as that situation situation that is covered and is and is covered is covered?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/openai-preparedness/environment.d1.json",
+   "ms": 2165.056,
+   "question": "Is situation that is covered is covered every situation that is it is not the case that that situation is the same as that situation situation that is covered and is covered is covered every situation that is covered and is it is not the case that that situation is the same as that situation situation that is covered and is and is covered is covered?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/openai-preparedness/environment.d1.json",
+   "ms": 2234.79,
+   "question": "Is situation that is covered is covered every situation that is it is not the case that that situation is the same as that situation situation that is covered and is covered is covered every situation that is covered and is it is not the case that that situation is the same as that situation situation that is covered and is and is covered is covered?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/openai-preparedness/environment.d1.json",
+   "ms": 90.643,
+   "question": "Is situation that is covered is covered every situation that is it is not the case that that situation is the same as that situation situation that is covered and is covered is covered every situation that is covered and is it is not the case that that situation is the same as that situation situation that is covered and is and is covered is covered every?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/openai-preparedness/environment.d2.json",
+   "ms": 686.298,
+   "question": "Is every every action available to that developer is available to that developer every for every action that is available to that it is not the case that that action is the same as that action every every action that is available to that developer and is available to that developer is available to that developer every for every action that is available to that developer?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/openai-preparedness/environment.d2.json",
+   "ms": 700.195,
+   "question": "Is every every action available to that developer is available to that developer every for every action that is available to that it is not the case that that action is the same as that action every every action that is available to that developer and is available to that developer is available to that developer every for every action that is available to that developer?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/openai-preparedness/environment.d2.json",
+   "ms": 702.98,
+   "question": "Is every every action available to that developer is available to that developer every for every action that is available to that it is not the case that that action is the same as that action every every action that is available to that developer and is available to that developer is available to that developer every for every action that is available to that developer?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/openai-preparedness/environment.d2.json",
+   "ms": 12.584,
+   "question": "Is every every action available to that developer is available to that developer every for every action that is available to that it is not the case that that action is the same as that action every every action that is available to that developer and is available to that developer is available to that developer every for every action that is available to that developer and?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/openai-preparedness/environment.d3.json",
+   "ms": 160.161,
+   "question": "Is if this holds in all then this is then this holds in all cases this holds in all then if this is then this holds in all cases is at most holds in all cases is not the case that is less than is at most it is not the case that if this is then is less than then all of the following is?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/openai-preparedness/environment.d3.json",
+   "ms": 158.875,
+   "question": "Is if this holds in all then this is then this holds in all cases this holds in all then if this is then this holds in all cases is at most holds in all cases is not the case that is less than is at most it is not the case that if this is then is less than then all of the following is?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/openai-preparedness/environment.d3.json",
+   "ms": 165.784,
+   "question": "Is if this holds in all then this is then this holds in all cases this holds in all then if this is then this holds in all cases is at most holds in all cases is not the case that is less than is at most it is not the case that if this is then is less than then all of the following is?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/openai-preparedness/environment.d3.json",
+   "ms": 3.157,
+   "question": "Is if this holds in all then this is then this holds in all cases this holds in all then if this is then this holds in all cases is at most holds in all cases is not the case that is less than is at most it is not the case that if this is then is less than then all of the following is less?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/safety-framework/environment.d1.json",
+   "ms": 1685.156,
+   "question": "Is level that is critical is critical every level that is it is not the case that that level is the same as that level level that is critical and is critical is critical every level that is critical and is it is not the case that that level is the same as that level level that is critical and is and is critical is critical?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/safety-framework/environment.d1.json",
+   "ms": 1746.826,
+   "question": "Is level that is critical is critical every level that is it is not the case that that level is the same as that level level that is critical and is critical is critical every level that is critical and is it is not the case that that level is the same as that level level that is critical and is and is critical is critical?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/safety-framework/environment.d1.json",
+   "ms": 1889.355,
+   "question": "Is level that is critical is critical every level that is it is not the case that that level is the same as that level level that is critical and is critical is critical every level that is critical and is it is not the case that that level is the same as that level level that is critical and is and is critical is critical?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/safety-framework/environment.d1.json",
+   "ms": 45.556,
+   "question": "Is level that is critical is critical every level that is it is not the case that that level is the same as that level level that is critical and is critical is critical every level that is critical and is it is not the case that that level is the same as that level level that is critical and is and is critical is critical every?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/us-constitution-14th-s1/environment.json",
+   "ms": 422.157,
+   "question": "Is person who was born in the was born in the every person who was born in the it is not the case that that person is the same as that person person who was born in the and was born in the was born in the every person who was born in the and was born in the it is not the case that that?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/us-constitution-14th-s1/environment.json",
+   "ms": 415.8,
+   "question": "Is person who was born in the was born in the every person who was born in the it is not the case that that person is the same as that person person who was born in the and was born in the was born in the every person who was born in the and was born in the it is not the case that that?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/us-constitution-14th-s1/environment.json",
+   "ms": 431.193,
+   "question": "Is person who was born in the was born in the every person who was born in the it is not the case that that person is the same as that person person who was born in the and was born in the was born in the every person who was born in the and was born in the it is not the case that that?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/us-constitution-14th-s1/environment.json",
+   "ms": 8.263,
+   "question": "Is person who was born in the was born in the every person who was born in the it is not the case that that person is the same as that person person who was born in the and was born in the was born in the every person who was born in the and was born in the it is not the case that that person?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/us-constitution-14th-s1/environment.json+overlay",
+   "ms": 1156.17,
+   "question": "Is person who was born in the was born in the every person who was born in the it is not the case that that person is the same as that person person who was born in the and was born in the was born in the every person who was born in the and was born in the it is not the case that that?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/us-constitution-14th-s1/environment.json+overlay",
+   "ms": 1160.312,
+   "question": "Is person who was born in the was born in the every person who was born in the it is not the case that that person is the same as that person person who was born in the and was born in the was born in the every person who was born in the and was born in the it is not the case that that?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/us-constitution-14th-s1/environment.json+overlay",
+   "ms": 1271.993,
+   "question": "Is person who was born in the was born in the every person who was born in the it is not the case that that person is the same as that person person who was born in the and was born in the was born in the every person who was born in the and was born in the it is not the case that that?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/us-constitution-14th-s1/environment.json+overlay",
+   "ms": 122.271,
+   "question": "Is person who was born in the was born in the every person who was born in the it is not the case that that person is the same as that person person who was born in the and was born in the was born in the every person who was born in the and was born in the it is not the case that that person?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/bluedot-grant/causal.ve.md",
+   "ms": 749.04,
+   "question": "Is proof label could increase false confidence about premise truth or faithful formalisation proof label could increase false confidence about premise truth or faithful formalisation proof label could increase false confidence about premise truth or faithful formalisation proof label could increase false confidence about premise truth or faithful formalisation proof label could increase false confidence about premise truth or faithful formalisation proof label could increase false?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/bluedot-grant/causal.ve.md",
+   "ms": 737.903,
+   "question": "Is proof label could increase false confidence about premise truth or faithful formalisation proof label could increase false confidence about premise truth or faithful formalisation proof label could increase false confidence about premise truth or faithful formalisation proof label could increase false confidence about premise truth or faithful formalisation proof label could increase false confidence about premise truth or faithful formalisation proof label could increase false?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/bluedot-grant/causal.ve.md",
+   "ms": 712.097,
+   "question": "Is proof label could increase false confidence about premise truth or faithful formalisation proof label could increase false confidence about premise truth or faithful formalisation proof label could increase false confidence about premise truth or faithful formalisation proof label could increase false confidence about premise truth or faithful formalisation proof label could increase false confidence about premise truth or faithful formalisation proof label could increase false?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/bluedot-grant/causal.ve.md",
+   "ms": 8.724,
+   "question": "Is proof label could increase false confidence about premise truth or faithful formalisation proof label could increase false confidence about premise truth or faithful formalisation proof label could increase false confidence about premise truth or faithful formalisation proof label could increase false confidence about premise truth or faithful formalisation proof label could increase false confidence about premise truth or faithful formalisation proof label could increase false confidence?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/bluedot-grant/document.ve.md",
+   "ms": 4111.46,
+   "question": "Is testing a verified checker and auditable evidence layer against on smuggled equivocation and shifting definitions testing mandatory checked proofs against obfuscated with proposed mandatory evidence for statistical and approximate claims mandatory checked proofs for formalisable claims and developing mandatory evidence for statistical and approximate to improve oversight of untrusted work and flaw localisation in arguments of to separating deduction false premises and misleading formalisation real?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/bluedot-grant/document.ve.md",
+   "ms": 3935.663,
+   "question": "Is testing a verified checker and auditable evidence layer against on smuggled equivocation and shifting definitions testing mandatory checked proofs against obfuscated with proposed mandatory evidence for statistical and approximate claims mandatory checked proofs for formalisable claims and developing mandatory evidence for statistical and approximate to improve oversight of untrusted work and flaw localisation in arguments of to separating deduction false premises and misleading formalisation real?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/bluedot-grant/document.ve.md",
+   "ms": 3802.798,
+   "question": "Is testing a verified checker and auditable evidence layer against on smuggled equivocation and shifting definitions testing mandatory checked proofs against obfuscated with proposed mandatory evidence for statistical and approximate claims mandatory checked proofs for formalisable claims and developing mandatory evidence for statistical and approximate to improve oversight of untrusted work and flaw localisation in arguments of to separating deduction false premises and misleading formalisation real?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/bluedot-grant/document.ve.md",
+   "ms": 98.709,
+   "question": "Is testing a verified checker and auditable evidence layer against on smuggled equivocation and shifting definitions testing mandatory checked proofs against obfuscated with proposed mandatory evidence for statistical and approximate claims mandatory checked proofs for formalisable claims and developing mandatory evidence for statistical and approximate to improve oversight of untrusted work and flaw localisation in arguments of to separating deduction false premises and misleading formalisation real artefacts?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/news-article/news-w6a.ve.md",
+   "ms": 317.897,
+   "question": "Is and signaled that further rate increases could come in the following new chief joined a unanimous which characterizes as an implicit acknowledgment that the administration has not yet succeeded in controlling inflation taking the target range to projections show of the policymakers expect at least one more rate increase before the end of with only of the expecting rates to stay where they are again?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/news-article/news-w6a.ve.md",
+   "ms": 306.236,
+   "question": "Is and signaled that further rate increases could come in the following new chief joined a unanimous which characterizes as an implicit acknowledgment that the administration has not yet succeeded in controlling inflation taking the target range to projections show of the policymakers expect at least one more rate increase before the end of with only of the expecting rates to stay where they are again?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/news-article/news-w6a.ve.md",
+   "ms": 309.101,
+   "question": "Is and signaled that further rate increases could come in the following new chief joined a unanimous which characterizes as an implicit acknowledgment that the administration has not yet succeeded in controlling inflation taking the target range to projections show of the policymakers expect at least one more rate increase before the end of with only of the expecting rates to stay where they are again?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/news-article/news-w6a.ve.md",
+   "ms": 7.744,
+   "question": "Is and signaled that further rate increases could come in the following new chief joined a unanimous which characterizes as an implicit acknowledgment that the administration has not yet succeeded in controlling inflation taking the target range to projections show of the policymakers expect at least one more rate increase before the end of with only of the expecting rates to stay where they are again did?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/question-answering/agent-policy/a-conflict.ve.md",
+   "ms": 1482.517,
+   "question": "Is action may be if there is a file such that both that action reads that file and that file resides in workspace action may be if there is a file such that both that action reads that file and that action is confirmed action may be if there is a file such that both that action writes that file and that file resides in workspace?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/question-answering/agent-policy/a-conflict.ve.md",
+   "ms": 1397.086,
+   "question": "Is action may be if there is a file such that both that action reads that file and that file resides in workspace action may be if there is a file such that both that action reads that file and that action is confirmed action may be if there is a file such that both that action writes that file and that file resides in workspace?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/question-answering/agent-policy/a-conflict.ve.md",
+   "ms": 1441.222,
+   "question": "Is action may be if there is a file such that both that action reads that file and that file resides in workspace action may be if there is a file such that both that action reads that file and that action is confirmed action may be if there is a file such that both that action writes that file and that file resides in workspace?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/question-answering/agent-policy/a-conflict.ve.md",
+   "ms": 46.876,
+   "question": "Is action may be if there is a file such that both that action reads that file and that file resides in workspace action may be if there is a file such that both that action reads that file and that action is confirmed action may be if there is a file such that both that action writes that file and that file resides in workspace action?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/question-answering/agent-policy/a-deny.ve.md",
+   "ms": 1477.783,
+   "question": "Is action may be if there is a file such that both that action reads that file and that file resides in workspace action may be if there is a file such that both that action reads that file and that action is confirmed action may be if there is a file such that both that action writes that file and that file resides in workspace?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/question-answering/agent-policy/a-deny.ve.md",
+   "ms": 1551.753,
+   "question": "Is action may be if there is a file such that both that action reads that file and that file resides in workspace action may be if there is a file such that both that action reads that file and that action is confirmed action may be if there is a file such that both that action writes that file and that file resides in workspace?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/question-answering/agent-policy/a-deny.ve.md",
+   "ms": 1405.013,
+   "question": "Is action may be if there is a file such that both that action reads that file and that file resides in workspace action may be if there is a file such that both that action reads that file and that action is confirmed action may be if there is a file such that both that action writes that file and that file resides in workspace?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/question-answering/agent-policy/a-deny.ve.md",
+   "ms": 39.876,
+   "question": "Is action may be if there is a file such that both that action reads that file and that file resides in workspace action may be if there is a file such that both that action reads that file and that action is confirmed action may be if there is a file such that both that action writes that file and that file resides in workspace action?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/question-answering/agent-policy/a-rules.ve.md",
+   "ms": 1479.581,
+   "question": "Is action may be if there is a file such that both that action reads that file and that file resides in workspace action may be if there is a file such that both that action reads that file and that action is confirmed action may be if there is a file such that both that action writes that file and that file resides in workspace?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/question-answering/agent-policy/a-rules.ve.md",
+   "ms": 1479.304,
+   "question": "Is action may be if there is a file such that both that action reads that file and that file resides in workspace action may be if there is a file such that both that action reads that file and that action is confirmed action may be if there is a file such that both that action writes that file and that file resides in workspace?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/question-answering/agent-policy/a-rules.ve.md",
+   "ms": 1385.6,
+   "question": "Is action may be if there is a file such that both that action reads that file and that file resides in workspace action may be if there is a file such that both that action reads that file and that action is confirmed action may be if there is a file such that both that action writes that file and that file resides in workspace?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/question-answering/agent-policy/a-rules.ve.md",
+   "ms": 52.478,
+   "question": "Is action may be if there is a file such that both that action reads that file and that file resides in workspace action may be if there is a file such that both that action reads that file and that action is confirmed action may be if there is a file such that both that action writes that file and that file resides in workspace action?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/question-answering/agent-policy/a-unspecified.ve.md",
+   "ms": 1391.692,
+   "question": "Is action may be if there is a file such that both that action reads that file and that file resides in workspace action may be if there is a file such that both that action reads that file and that action is confirmed action may be if there is a file such that both that action writes that file and that file resides in workspace?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/question-answering/agent-policy/a-unspecified.ve.md",
+   "ms": 1378.522,
+   "question": "Is action may be if there is a file such that both that action reads that file and that file resides in workspace action may be if there is a file such that both that action reads that file and that action is confirmed action may be if there is a file such that both that action writes that file and that file resides in workspace?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/question-answering/agent-policy/a-unspecified.ve.md",
+   "ms": 1487.353,
+   "question": "Is action may be if there is a file such that both that action reads that file and that file resides in workspace action may be if there is a file such that both that action reads that file and that action is confirmed action may be if there is a file such that both that action writes that file and that file resides in workspace?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/question-answering/agent-policy/a-unspecified.ve.md",
+   "ms": 47.925,
+   "question": "Is action may be if there is a file such that both that action reads that file and that file resides in workspace action may be if there is a file such that both that action reads that file and that action is confirmed action may be if there is a file such that both that action writes that file and that file resides in workspace action?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/question-answering/group.ve.md",
+   "ms": 352.218,
+   "question": "Is member is registered member who is registered is eligible is verified member is registered member who is registered is eligible is verified member is registered member who is registered is eligible is verified member is registered member who is registered is eligible is verified member is registered member who is registered is eligible is verified member is registered member who is registered is eligible is?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/question-answering/group.ve.md",
+   "ms": 348.861,
+   "question": "Is member is registered member who is registered is eligible is verified member is registered member who is registered is eligible is verified member is registered member who is registered is eligible is verified member is registered member who is registered is eligible is verified member is registered member who is registered is eligible is verified member is registered member who is registered is eligible is?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/question-answering/group.ve.md",
+   "ms": 321.98,
+   "question": "Is member is registered member who is registered is eligible is verified member is registered member who is registered is eligible is verified member is registered member who is registered is eligible is verified member is registered member who is registered is eligible is verified member is registered member who is registered is eligible is verified member is registered member who is registered is eligible is?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/question-answering/group.ve.md",
+   "ms": 4.748,
+   "question": "Is member is registered member who is registered is eligible is verified member is registered member who is registered is eligible is verified member is registered member who is registered is eligible is verified member is registered member who is registered is eligible is verified member is registered member who is registered is eligible is verified member is registered member who is registered is eligible is verified?",
+   "status": "budget"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/question-answering/udhr-part07.ve.md",
+   "ms": 913.548,
+   "question": "Is has the right to form and to join trade unions for the protection of his interests has the right to rest and including reasonable limitation of working hours and periodic holidays with pay and the right to security in the event of old age or other lack of livelihood in circumstances beyond his control and childhood are entitled to special care and assistance whether born?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/question-answering/udhr-part07.ve.md",
+   "ms": 907.336,
+   "question": "Is has the right to form and to join trade unions for the protection of his interests has the right to rest and including reasonable limitation of working hours and periodic holidays with pay and the right to security in the event of old age or other lack of livelihood in circumstances beyond his control and childhood are entitled to special care and assistance whether born?",
+   "status": "none"
+  },
+  {
+   "candidates": 64,
+   "code": "NoDerivation",
+   "config": "usecases/question-answering/udhr-part07.ve.md",
+   "ms": 860.071,
+   "question": "Is has the right to form and to join trade unions for the protection of his interests has the right to rest and including reasonable limitation of working hours and periodic holidays with pay and the right to security in the event of old age or other lack of livelihood in circumstances beyond his control and childhood are entitled to special care and assistance whether born?",
+   "status": "none"
+  },
+  {
+   "candidates": 65,
+   "code": "QuestionTooLong",
+   "config": "usecases/question-answering/udhr-part07.ve.md",
+   "ms": 22.296,
+   "question": "Is has the right to form and to join trade unions for the protection of his interests has the right to rest and including reasonable limitation of working hours and periodic holidays with pay and the right to security in the event of old age or other lack of livelihood in circumstances beyond his control and childhood are entitled to special care and assistance whether born in?",
+   "status": "budget"
+  }
+ ],
+ "load_average": {
+  "cpus": 32,
+  "end": [
+   55.5,
+   55.1,
+   45.1
+  ],
+  "start": [
+   10.8,
+   14.3,
+   21.1
+  ]
+ },
+ "mutants": {
+  "capital-body:f1": {
+   "budget:QuestionTooLong": 10,
+   "one": 7458,
+   "questions": 7468,
+   "same": 7458
+  },
+  "capital-body:f2": {
+   "one": 13,
+   "questions": 13,
+   "same": 13
+  },
+  "double-space:f1": {
+   "questions": 7967,
+   "rejected:BadSpacing": 7967,
+   "same": 0
+  },
+  "double-space:f2": {
+   "questions": 269,
+   "rejected:BadSpacing": 269,
+   "same": 0
+  },
+  "leading-space:f1": {
+   "none:QuestionForm": 7967,
+   "questions": 7967,
+   "same": 0
+  },
+  "leading-space:f2": {
+   "none:QuestionForm": 269,
+   "questions": 269,
+   "same": 0
+  },
+  "lower-initial:f1": {
+   "none:QuestionForm": 7967,
+   "questions": 7967,
+   "same": 0
+  },
+  "lower-initial:f2": {
+   "none:QuestionForm": 269,
+   "questions": 269,
+   "same": 0
+  },
+  "space-before-mark:f1": {
+   "questions": 7967,
+   "rejected:BadSpacing": 7967,
+   "same": 0
+  },
+  "space-before-mark:f2": {
+   "questions": 269,
+   "rejected:BadSpacing": 269,
+   "same": 0
+  },
+  "upper-auxiliary:f1": {
+   "none:QuestionForm": 7967,
+   "questions": 7967,
+   "same": 0
+  },
+  "upper-auxiliary:f2": {
+   "none:QuestionForm": 269,
+   "questions": 269,
+   "same": 0
+  }
+ },
+ "odd": {
+  "acceptances": [],
+  "accepted": 0,
+  "accepted_same": 0,
+  "f2_questions": 230,
+  "moved_sentences": 484
+ },
+ "per_config": 300,
+ "per_usecase": 100
+}
