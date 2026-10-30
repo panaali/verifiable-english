@@ -42,12 +42,12 @@ def _effect_key(effect) -> str | None:
     return effect if type(effect) is str else None
 
 
-def answer_problem(row, meta) -> str | None:
+def answer_problem(row, meta, case_id: str = _CASE_ID) -> str | None:
     """Why Lean's `scope` row is not an answer about the document `meta` (R8: its binding), or None. Rows follow the
     document's unit order, each unit once. Every governor a row names is one of the document's, once, with its unit,
     its effect and its recorded reach, which holds the row's unit (or, for `precedes`, its unit is the row's).
     `governed` is the document's governors in order, each with exactly the units whose rows name it."""
-    if type(row) is not dict or set(row) != {"id", "status", "rows", "governed"} or row["id"] != _CASE_ID \
+    if type(row) is not dict or set(row) != {"id", "status", "rows", "governed"} or row["id"] != case_id \
             or row["status"] != "ok" or type(row["rows"]) is not list or type(row["governed"]) is not list:
         return "the row is not an answer to the case"
     units, governors = _declared(meta)
@@ -81,26 +81,32 @@ def answer_problem(row, meta) -> str | None:
     return None
 
 
-def explain(raw: bytes) -> tuple[list[dict], dict, bytes]:
-    """Lean's rows for the document `raw`, after the binding check, with the front matter and the source they are
-    bound to; a refusal raises Lean's diagnostic, whatever Python reads of the document."""
-    from .backends.relay import rejection, rows
+def read_answer(row, case: dict) -> tuple[list[dict], dict, bytes]:
+    """Lean's rows of the `ok` row `row` answering `case`, after the binding check (`answer_problem`), with the front
+    matter and the source they are bound to."""
     from .document.source import _split
     try:
-        text = raw.decode("utf-8")
-    except UnicodeError:
-        raise VEError("InvalidInput: the document is not UTF-8 text") from None  # relay-lint: file I/O
-    [row] = rows(MODE, [request(text)])
-    if type(row) is dict and row.get("status") == "error" and type(row.get("error")) is str and "case_index" not in row:
-        raise rejection(row["error"].split(":", 1)[0], row["error"])
-    try:
-        meta, source, _ = _split(raw)
+        meta, source, _ = _split(case["document"].encode("utf-8"))
     except VEError:
         meta, source = None, b""
-    problem = answer_problem(row, meta) if type(meta) is dict else "Lean answered a document Python cannot read"
+    problem = answer_problem(row, meta, case.get("id")) if type(meta) is dict else "Lean answered a document Python cannot read"
     if problem is not None:
         raise CheckerUnavailable(f"CheckerUnavailable: Lean's scope answer is not bound to its document: {problem}")
     return row["rows"], meta, source
+
+
+def explain(raw: bytes) -> tuple[list[dict], dict, bytes]:
+    """`read_answer` of Lean's answer to the document `raw`; a refusal raises Lean's diagnostic, whatever Python
+    reads of the document."""
+    from .backends.relay import answer
+    try:
+        case = request(raw.decode("utf-8"))
+    except UnicodeError:
+        raise VEError("InvalidInput: the document is not UTF-8 text") from None  # relay-lint: file I/O
+    row, error = answer(MODE, case)
+    if error is not None:
+        raise error
+    return read_answer(row, case)
 
 
 def lines(rows: list[dict], meta, source: bytes, *, ids: bool = False) -> list[str]:
