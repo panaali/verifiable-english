@@ -1,50 +1,14 @@
 [
-  {
-    "file": "lean/VE/Service/ReadingsAdmissionProfile.lean",
-    "fault": "Disable the W2 fixed-part branch while leaving the original admission probe enabled",
-    "test": "tests/test_readings_stage_times.py::test_split_w2_fixed_part_completion_is_timed",
-    "result": "3 parameter cases failed: elaborate, choice, verdicts"
-  },
-  {
-    "file": "lean/Serve.lean",
-    "fault": "Pass an empty handle table to the profiler on each request",
-    "test": "tests/test_readings_stage_times.py::test_normal_client_profiles_registered_and_reused_handle",
-    "result": "failed on the second request after successful registration"
-  },
-  {
-    "file": "lean/VE/Service/ReadingsAdmissionProfile.lean",
-    "fault": "Restrict repeated admission profiling to W2 and omit the non-W2 split-main fallback",
-    "test": "tests/test_readings_stage_times.py::test_split_non_w2_main_records_fallback_admission",
-    "result": "both elaborate and choice parameter cases failed after the mutant build"
-  },
-  {
-    "file": "lean/VE/Service/ReadingsAdmissionProfile.lean",
-    "fault": "F4: if false then\n      if let some b := selected then",
-    "test": "tests/test_readings_stage_times.py::test_named_enumerated_verdict_records_both_completion_calls",
-    "result": "failed under mutant build; restored build passes"
-  },
-  {
-    "file": "lean/VE/Service/ReadingsAdmissionProfile.lean",
-    "fault": "F5: if false then",
-    "test": "tests/test_readings_stage_times.py::test_unsplit_validation_uses_s1_admission_only",
-    "result": "failed under mutant build; restored build passes"
-  },
-  {
-    "file": "lean/VE/Service/ReadingsAdmissionProfile.lean",
-    "fault": "F6: let some b := result | continue",
-    "test": "tests/test_readings_stage_times.py::test_split_admission_stops_before_companions_after_main_failure",
-    "result": "failed under mutant build; restored build passes"
-  },
-  {
-    "file": "lean/VE/Service/ReadingsAdmissionProfile.lean",
-    "fault": "F5-soft: else if false then",
-    "test": "tests/test_readings_stage_times.py::test_unsplit_soft_validation_continues_from_s1_into_s2",
-    "result": "failed under mutant build; restored build passes"
-  },
-  {
-    "file": "lean/VE/Service/ReadingsAdmissionProfile.lean",
-    "fault": "F5-unsupported: unless true do return",
-    "test": "tests/test_readings_stage_times.py::test_unsupported_kind_has_no_admission_stages",
-    "result": "failed under mutant build; restored build passes"
-  }
+ {
+  "file": "docs/perf/measure_admission.py",
+  "fault": "Set os.environ[\"VE_READINGS_STAGE_TIMES\"] = \"1\" at the start of each run",
+  "test": "tests/test_admission_evidence.py::test_measurement_scripts_do_not_set_the_withdrawn_stage_variable",
+  "result": "failed; restored, 4 passed"
+ },
+ {
+  "file": "docs/perf/admission-profile-constitution.json",
+  "fault": "Add a stages row with a numeric cpu_ticks to the first constitution run",
+  "test": "tests/test_admission_evidence.py::test_no_numeric_stage_count_or_total",
+  "result": "failed; restored, 4 passed"
+ }
 ]

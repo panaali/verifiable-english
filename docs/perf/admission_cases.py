@@ -9,7 +9,6 @@ from __future__ import annotations
 import argparse
 import copy
 import json
-import os
 from pathlib import Path
 import subprocess
 import sys
@@ -169,9 +168,8 @@ def case_from(path: Path, copies: int, main_sets: int | None = None) -> dict:
 def repair_situations(case: dict, service: Path) -> None:
     """Use Lean's split output to bind each replica's recorded model IDs to its merged environment."""
     request = {"id": "parts", "mode": "readings-route", "cases": [case]}
-    env = {**os.environ, "VE_READINGS_STAGE_TIMES": "0"}
     proc = subprocess.run([str(service)], input=json.dumps(request, separators=(",", ":")) + "\n",
-                          text=True, capture_output=True, check=True, env=env)
+                          text=True, capture_output=True, check=True)
     result = json.loads(proc.stdout.splitlines()[-1])["results"][0]["result"]
     if result["status"] != "ok":
         raise ValueError(f"Lean refused synthetic split: {result['error']}")
