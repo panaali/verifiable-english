@@ -114,13 +114,15 @@
           {"required": ["reason"]},
           {"not": {"required": ["basis"]}},
           {"not": {"required": ["form"]}},
-          {"not": {"required": ["assumptions"]}}
+          {"not": {"required": ["assumptions"]}},
+          {"not": {"required": ["deciders"]}}
         ]
       },
       "if": {"properties": {"verdict": {"const": "FOLLOWS"}}},
       "properties": {
         "assumptions": {"$ref": "common.json#/$defs/strings"},
         "basis": {"enum": ["strict", "needs", "unsettled"]},
+        "deciders": {"$ref": "common.json#/$defs/strings"},
         "form": {"enum": ["short", "long"]},
         "id": {"$ref": "common.json#/$defs/id_ok"},
         "reason": {"type": "string"},
@@ -128,7 +130,7 @@
         "verdict": {"enum": ["FOLLOWS", "UNKNOWN"]}
       },
       "required": ["id", "status", "verdict"],
-      "then": {"allOf": [{"required": ["basis", "form", "assumptions"]}, {"not": {"required": ["reason"]}}]},
+      "then": {"allOf": [{"required": ["basis", "form", "assumptions", "deciders"]}, {"not": {"required": ["reason"]}}]},
       "type": "object"
     },
     "defaults_coherence": {
@@ -181,6 +183,7 @@
           },
           "type": "array"
         },
+        "deciders": {"$ref": "common.json#/$defs/strings"},
         "default_premises": {
           "items": {
             "maxItems": 2,
@@ -193,7 +196,7 @@
         "id": {"$ref": "common.json#/$defs/id_ok"},
         "status": {"const": "ok"}
       },
-      "required": ["id", "status", "default_premises", "coherence_targets"],
+      "required": ["id", "status", "deciders", "default_premises", "coherence_targets"],
       "type": "object"
     },
     "defaults_model": {
