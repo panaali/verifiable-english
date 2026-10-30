@@ -71,7 +71,8 @@ mode, which delegates to the route on the environment without it.
   each breaks a `#guard` of `lean/VE/Compose/Examples.lean` or `lean/VE/Defaults/RouteExamples.lean` (`lake build`
   of that module: "error: ... Expression" at the guard).
 - Mechanical mutants (`zsh mac-pytest.sh --trustmut -- --max-mutants 1000 --test lean/VE/Defaults/RouteExamples.lean
-  --allow ... --json docs/judgment-terms/jt-2c/trust-mutants.json`): see `trust-mutants.json` `counts`. Allowed
+  --allow ... --json docs/judgment-terms/jt-2c/trust-mutants.json`, exit 0): "52 KILLED, 0 SURVIVOR, 0 UNKNOWN,
+  5 INVALID, 18 ALLOWED, 0 NOT RUN" over 6 definitions (75 mutants), run on the Lean tree of this HEAD. Allowed
   survivors are listed with reasons in `trust-mutants-allow.json`: equivalent cuts of the one-element
   `documentLayers`, two cuts that do not elaborate, the `ProfilesMain` IO generator (checked by
   `tests/test_profile_table.py`), `ownedProfiles` (unchanged, selected only by the deleted neighbour) and the
