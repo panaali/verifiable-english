@@ -241,6 +241,9 @@ import VE.Scope.WireExamples
 import VE.Scope.Readings
 import VE.Scope.ReadingsTheorems
 import VE.Scope.ReadingsExamples
+import VE.Scope.English
+import VE.Scope.Run
+import VE.Scope.RunExamples
 import VE.Service.ScopeAdmission
 import VE.Service.ScopeExamples
 import VE.Service.SoftSourceExamples
