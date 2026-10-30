@@ -5306,6 +5306,49 @@ theorem VE.Cardinality.CardEnv.wf
   ∀ (self : VE.Cardinality.CardEnv), self.env.WellFormed
   -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CardEnv.env@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire
   -- expr 59726500
+theorem VE.Cardinality.Document.admitGraph_sound
+  ∀ {γ : Type} {w : VE.Cardinality.CardEnv} {decodeCert : Lean.Json → Except String γ}
+    {check : List (VE.Cardinality.CAdmission w) → VE.Cardinality.CAdmission w → γ → Except String Bool},
+    VE.Cardinality.Document.Checks w check →
+      ∀ {d : Lean.Json} {g : VE.Cardinality.Document.Graph w γ},
+        VE.Cardinality.Document.admitGraph w decodeCert check d = Except.ok g →
+          VE.Cardinality.CardReport.Sound w.env g.report
+  -- uses VE.Cardinality.CAdmission@VE.Cardinality.Wire VE.Cardinality.CardEnv.env@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.CardReport.Sound@VE.Cardinality.Document VE.Cardinality.Document.Checks@VE.Cardinality.Document VE.Cardinality.Document.Graph.report@VE.Cardinality.Document VE.Cardinality.Document.Graph@VE.Cardinality.Document VE.Cardinality.Document.admitGraph@VE.Cardinality.Document
+  -- expr 3402134789
+theorem VE.Cardinality.Document.checkGraph_sound
+  ∀ {γ : Type} {w : VE.Cardinality.CardEnv}
+    {check : List (VE.Cardinality.CAdmission w) → VE.Cardinality.CAdmission w → γ → Except String Bool},
+    VE.Cardinality.Document.Checks w check →
+      ∀ (all ns : List (VE.Cardinality.Document.CNode w γ)) (used : Nat)
+        (acc out : List (VE.Cardinality.Document.Entry w)),
+        (∀ (n : VE.Cardinality.Document.CNode w γ), n ∈ ns → n ∈ all) →
+          (∀ (e : VE.Cardinality.Document.Entry w), e ∈ acc → VE.Cardinality.Document.Entry.Sound all e) →
+            VE.Cardinality.Document.checkGraph w check ns used acc = Except.ok out →
+              ∀ (e : VE.Cardinality.Document.Entry w), e ∈ out → VE.Cardinality.Document.Entry.Sound all e
+  -- uses VE.Cardinality.CAdmission@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Document.CNode@VE.Cardinality.Document VE.Cardinality.Document.Checks@VE.Cardinality.Document VE.Cardinality.Document.Entry.Sound@VE.Cardinality.Document VE.Cardinality.Document.Entry@VE.Cardinality.Document VE.Cardinality.Document.checkGraph@VE.Cardinality.Document
+  -- expr 1418050486
+theorem VE.Cardinality.Document.foldl_insert_mem
+  ∀ (xs : List String) (s : Std.HashSet String) (x : String),
+    x ∈ s ∨ x ∈ xs → x ∈ List.foldl (fun x1 x2 => x1.insert x2) s xs
+  -- uses
+  -- expr 2855120237
+theorem VE.Cardinality.Document.lookup_mem
+  ∀ {w : VE.Cardinality.CardEnv} {acc : List (VE.Cardinality.Document.Entry w)} {p : String}
+    {e : VE.Cardinality.Document.Entry w}, VE.Cardinality.Document.lookup acc p = Except.ok e → e ∈ acc
+  -- uses VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Document.Entry@VE.Cardinality.Document VE.Cardinality.Document.lookup@VE.Cardinality.Document
+  -- expr 3564305834
+theorem VE.Cardinality.Document.mapM_lookup_mem
+  ∀ {w : VE.Cardinality.CardEnv} {acc : List (VE.Cardinality.Document.Entry w)} {ps : List String}
+    {cs : List (VE.Cardinality.Document.Entry w)},
+    List.mapM (VE.Cardinality.Document.lookup acc) ps = Except.ok cs →
+      ∀ (c : VE.Cardinality.Document.Entry w), c ∈ cs → c ∈ acc
+  -- uses VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Document.Entry@VE.Cardinality.Document VE.Cardinality.Document.lookup@VE.Cardinality.Document
+  -- expr 2622330085
+theorem VE.Cardinality.Document.union_mem
+  ∀ (sets : List (Std.HashSet String)) (s : Std.HashSet String) (x : String),
+    (x ∈ s ∨ ∃ t, t ∈ sets ∧ x ∈ t) → x ∈ List.foldl (fun s t => List.foldl (fun x1 x2 => x1.insert x2) s t.toList) s sets
+  -- uses
+  -- expr 1240910524
 theorem VE.Cardinality.Examples.admissible_cases
   VE.Cardinality.Admissible VE.Cardinality.Examples.users VE.Cardinality.Examples.two ∧
     ¬VE.Cardinality.Admissible VE.Cardinality.Examples.users VE.Cardinality.Examples.everyNat ∧
@@ -5842,6 +5885,10 @@ theorem VE.Cardinality.Run.charge_snd
       (List.foldl VE.Cardinality.Run.charge acc qs).snd = (List.map (fun x => x ()) qs).reverse ++ acc.snd
   -- uses VE.Cardinality.Run.charge@VE.Cardinality.Run VE.Limits.maxNodes@VE.Limits VE.Time.QFormula@VE.Time.Syntax
   -- expr 1986464197
+theorem VE.Cardinality.Run.checkDeduction_sound
+  ∀ (w : VE.Cardinality.CardEnv), VE.Cardinality.Document.Checks w VE.Cardinality.checkDeduction
+  -- uses VE.Cardinality.CardCertificate@VE.Cardinality.Run VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Document.Checks@VE.Cardinality.Document VE.Cardinality.checkDeduction@VE.Cardinality.Run
+  -- expr 4088317180
 theorem VE.Cardinality.Run.checkErased_eq
   ∀ {w : VE.Cardinality.CardEnv} (ps : List (VE.Cardinality.CAdmission w)) (c : VE.Cardinality.CAdmission w)
     {R : VE.Cardinality.RegionData} {table : List (String × String × VE.Cardinality.Region)}
@@ -6077,6 +6124,11 @@ theorem VE.Cardinality.Wire.wellFormed_of
       { q := v.env, finite := finite }.WellFormed
   -- uses VE.Cardinality.CEnv.WellFormed@VE.Cardinality.Syntax VE.Cardinality.CEnv.mk@VE.Cardinality.Syntax VE.Cardinality.regionPrefix@VE.Cardinality.Syntax VE.Time.QType@VE.Time.Syntax VE.Time.Wire.QVocab.constants@VE.Time.Wire VE.Time.Wire.QVocab.env@VE.Time.Wire VE.Time.Wire.QVocab.sorts@VE.Time.Wire VE.Time.Wire.QVocab@VE.Time.Wire
   -- expr 2856143815
+theorem VE.Cardinality.admit_cardinality_report_sound
+  ∀ (w : VE.Cardinality.CardEnv) (d : Lean.Json) (res : VE.Cardinality.CardReport),
+    VE.Cardinality.admitDocument w d = Except.ok res → VE.Cardinality.CardReport.Sound w.env res
+  -- uses VE.Cardinality.CardEnv.env@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.CardReport.Sound@VE.Cardinality.Document VE.Cardinality.CardReport@VE.Cardinality.Document VE.Cardinality.admitDocument@VE.Cardinality.Run
+  -- expr 181648678
 theorem VE.Cardinality.admits_complete
   ∀ (E : VE.Cardinality.CEnv) (a : VE.Cardinality.CFormula),
     VE.Cardinality.Admitted E a → VE.Cardinality.CFormula.admits E a = Bool.true

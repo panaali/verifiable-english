@@ -796,6 +796,12 @@
 'VE.Cardinality.CEnv.WellFormed.finiteDeclared' depends on axioms: [propext]
 'VE.Cardinality.CEnv.WellFormed.fresh' depends on axioms: [propext]
 'VE.Cardinality.CardEnv.wf' depends on axioms: [propext]
+'VE.Cardinality.Document.admitGraph_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Cardinality.Document.checkGraph_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Cardinality.Document.foldl_insert_mem' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Cardinality.Document.lookup_mem' depends on axioms: [propext, Quot.sound]
+'VE.Cardinality.Document.mapM_lookup_mem' depends on axioms: [propext, Quot.sound]
+'VE.Cardinality.Document.union_mem' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.Examples.admissible_cases' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.Examples.admittedRules_cases' depends on axioms: [propext]
 'VE.Cardinality.Examples.admitted_cases' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -842,6 +848,7 @@
 'VE.Cardinality.Run.charge_fst' does not depend on any axioms
 'VE.Cardinality.Run.charge_over' does not depend on any axioms
 'VE.Cardinality.Run.charge_snd' depends on axioms: [propext, Quot.sound]
+'VE.Cardinality.Run.checkDeduction_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.Run.checkErased_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.Run.checkedProblem_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.Run.decodeCertificate_sound' depends on axioms: [propext, Quot.sound]
@@ -871,6 +878,7 @@
 'VE.Cardinality.Wire.ruleNames_spelled' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.Wire.sourceFits_iff' depends on axioms: [propext]
 'VE.Cardinality.Wire.wellFormed_of' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Cardinality.admit_cardinality_report_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.admits_complete' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.admits_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.admits_sound' depends on axioms: [propext, Classical.choice, Quot.sound]

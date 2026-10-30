@@ -318,4 +318,156 @@ def charged (ps : List Json) (c : Json) : Nat :=
 #guard err (case "admission" env [] (st r#"["count", "user", [["1", ["is", "curious"]]], "le", "2"]"#)) ==
   "CardinalityNotFinite(user)"
 
+/-! ## qt-a3d: the `document` case (the claim graph) -/
+
+def docCase (document : Json) (environment : Json := WireExamples.envDocs) : Json :=
+  Json.mkObj [("id", .str "d"), ("kind", .str "document"), ("environment", environment), ("document", document)]
+def leaf (name : String) (statement : Json) : Json := Json.mkObj [("name", .str name), ("statement", statement)]
+def deduce (name : String) (statement : Json) (premises : List String) (cert : Json) : Json :=
+  Json.mkObj [("name", .str name), ("statement", statement), ("premises", toJson premises), ("certificate", cert)]
+def graph (root : String) (nodes : List Json) : Json :=
+  Json.mkObj [("root", .str root), ("nodes", Json.arr nodes.toArray)]
+def report (j : Json) : Json := (answer j).getObjValD "report"
+def leafNames (j : Json) : List Json :=
+  (((report j).getObjValD "leaves").getArr?.toOption.getD #[]).toList.map (·.getObjValD "name")
+
+/-- FA1 in the documents environment: four leaves and the root deduced from them by FA1's certificate. -/
+def docAdmission : Json := answer (case "admission" WireExamples.envDocs fa1Premises fa1Conclusion)
+def docCert : Json := certificate docAdmission Examples.fa1Trace
+def names : List String := ["total", "increase", "stay", "exclusive"]
+def fa1Leaves : List Json := (names.zip fa1Premises).map fun (n, s) => leaf n s
+def fa1Doc (extra : List Json := []) (premises := names) (cert := docCert) : Json :=
+  graph "root" (fa1Leaves ++ extra ++ [deduce "root" fa1Conclusion premises cert])
+
+-- FA1 as a claim graph: the root's statement and meaning id, and its four leaves in submitted order.
+#guard (answer (docCase fa1Doc)).getObjValD "status" == .str "ok"
+#guard leafNames (docCase fa1Doc) == names.map Json.str
+#guard (report (docCase fa1Doc)).getObjValD "root" == Json.mkObj [("name", .str "root"),
+  ("meaning_id", (docAdmission.getObjValD "conclusion").getObjValD "meaning_id"),
+  ("formula", fa1Conclusion.getObjValD "formula")]
+#guard ids ((report (docCase fa1Doc)).getObjValD "leaves") "meaning_id" == ids (docAdmission.getObjValD "premises")
+  "meaning_id"
+#guard (answer (docCase fa1Doc)).getObjValD "environment_id" == docAdmission.getObjValD "environment_id"
+-- A leaf the root does not rest on is not in the report; a root without a deduction rests on itself.
+#guard leafNames (docCase (fa1Doc [leaf "unused" top])) == names.map Json.str
+#guard leafNames (docCase (graph "total" fa1Leaves)) == [.str "total"]
+-- Two levels, the middle node used twice (a trace that closes at once): the root rests on FA1's leaves, each once.
+def twoCert : Json :=
+  certificate (answer (case "admission" WireExamples.envDocs [fa1Conclusion, fa1Conclusion] fa1Conclusion)) .close
+def twoLevel (premises : List String) : Json :=
+  graph "root" (fa1Leaves ++ [deduce "mid" fa1Conclusion names docCert, deduce "root" fa1Conclusion premises twoCert])
+#guard leafNames (docCase (twoLevel ["mid", "mid"])) == names.map Json.str
+-- Refused: a leaf dropped from the deduction, an unproved root (FA1b's certificate does not close), a dangling, later
+-- or duplicate name, a missing root, a premise list without a certificate, and no `documents@1`.
+#guard err (docCase (fa1Doc (premises := names.dropLast))) == stale
+#guard err (docCase (twoLevel ["mid"])) == stale
+def fa1bDocCert : Json :=
+  certificate (answer (case "admission" WireExamples.envDocs fa1Premises.dropLast fa1Conclusion)) Examples.fa1Trace
+#guard err (docCase (fa1Doc (premises := names.dropLast) (cert := fa1bDocCert))) == Document.graphRejected
+#guard err (docCase (fa1Doc (premises := names.dropLast ++ ["nope"]))) == Document.graphRejected
+#guard err (docCase (graph "root" (deduce "root" fa1Conclusion names docCert :: fa1Leaves))) == Document.graphRejected
+#guard err (docCase (fa1Doc [leaf "total" top])) == Document.graphRejected
+#guard err (docCase ((fa1Doc).setObjVal! "root" (.str "nope"))) == Document.graphRejected
+#guard err (docCase (graph "total" [(leaf "total" top).setObjVal! "premises" (toJson ["total"])])) ==
+  "premises and certificate come together"
+#guard err (docCase fa1Doc WireExamples.env) == "UnsupportedProfile: cardinality documents require documents@1"
+#guard err (docCase (graph "u" [leaf "u" (st r#"["count", "user", [["1", ["any"]]], "le", "2"]"#)])) ==
+  "CardinalityNotFinite(user)"
+#guard (err (docCase ((fa1Doc).setObjVal! "extra" .null))).startsWith "fields do not match"
+#guard (err (docCase (graph "t" [(leaf "t" top).setObjVal! "label" (.str "asserted")]))).startsWith "fields do not match"
+-- The node limit: 1,000 nodes are read, 1,001 refused before any is decoded.
+def tops (n : Nat) : Json := graph "n0" ((List.range n).map fun i => leaf s!"n{i}" top)
+#guard leafNames (docCase (tops 1000)) == [.str "n0"]
+#guard err (docCase (tops 1001)) == Document.nodeLimit
+-- The deductions' charge, over the whole graph: "mid" reads 27 statement nodes (7 + 4 + 4 + 4 + 8), then "big" its
+-- statement and `k` premises "t" of 2 nodes each. 50,000 are read (and P3 refuses the problem), 50,001 are not.
+#guard (fa1Conclusion :: fa1Premises).map (fun s => VE.Time.Wire.jsonNodes 300 (s.getObjValD "formula")) == [7, 4, 4, 4, 8]
+def charged2 (big : Json) (k : Nat) : Json := graph "big" (fa1Leaves ++
+  [deduce "mid" fa1Conclusion names docCert, leaf "t" top, deduce "big" big (List.replicate k "t") docCert])
+def top3 : Json := st r#"["quantity", ["not", ["top"]]]"#
+#guard err (docCase (charged2 top3 24985)) == VE.Time.Wire.aggregateLimit
+#guard err (docCase (charged2 top 24986)) == Document.deductionLimit
+#guard err (docCase (graph "big" [leaf "t" top, deduce "big" top (List.replicate 50001 "t") docCert])) ==
+  Document.deductionLimit
+
+/-! ## qt-a3d: the `paraphrase` case, the plan's rows (quantities-PLAN.md 2.1) -/
+
+def paraEnv : Json := env.setObjVal! "cardinality" (p r#"{"finite_sorts": ["fomc_policymaker", "user"]}"#)
+def para (formula : String) (environment := paraEnv) : Json :=
+  answer (Json.mkObj [("id", .str "p"), ("kind", .str "paraphrase"), ("environment", environment),
+    ("statement", st formula)])
+def line (formula : String) (environment := paraEnv) : Json := (para formula environment).getObjValD "paraphrase"
+
+-- The declaration is shown as the document's assumption, one per finite sort.
+#guard (para r#"["quantity", ["top"]]"#).getObjValD "assumptions" ==
+  toJson ["The document assumes there are finitely many FOMC policymakers.",
+    "The document assumes there are finitely many users."]
+#guard (para r#"["quantity", ["top"]]"# env).getObjValD "assumptions" ==
+  toJson ["The document assumes there are finitely many FOMC policymakers."]
+#guard (para r#"["quantity", ["top"]]"#).getObjValD "statement" == Json.mkObj
+  [("meaning_id", .str (WireExamples.meaningId (p r#"["quantity", ["top"]]"#) paraEnv)), ("formula", p r#"["quantity", ["top"]]"#)]
+-- "More than half of the users are curious." and "At least 1 in 1,000 of the users …": at least one user.
+#guard line r#"["proportion", "user", ["any"], ["is", "curious"], "gt", "1", "2"]"# ==
+  .str "There is at least one user, and of the users x, more than 1 in 2 are such that x is curious."
+#guard line r#"["proportion", "user", ["any"], ["is", "curious"], "ge", "1", "1000"]"# ==
+  .str "There is at least one user, and of the users x, at least 1 in 1000 are such that x is curious."
+#guard line r#"["proportion", "user", ["is", "curious"], ["not", ["is", "curious"]], "eq", "0", "1"]"# ==
+  .str ("There is at least one user x such that x is curious, and of the users x such that x is curious, exactly 0 " ++
+    "in 1 are such that it is not the case that (x is curious).")
+#guard line r#"["proportion", "user", ["any"], ["is", "curious"], "lt", "1", "2"]"# ==
+  .str "There is at least one user, and of the users x, fewer than 1 in 2 are such that x is curious."
+-- The rounding texts: ties up rounds up, to the larger number; half even to the even digit.
+def share (rule : String) : String := s!"[\"rounds_to\", \"{rule}\", [\"count\", \"fomc_policymaker\", [\"is\", " ++
+  "\"expects_further_increase\"]], [\"count\", \"fomc_policymaker\", [\"any\"]], \"0.296\"]"
+#guard line (share "ties_up") == .str ("The number of FOMC policymakers x such that x expects a further increase, " ++
+  "divided by the number of FOMC policymakers, rounds to 0.296, rounded to the nearest thousandth; there is at least " ++
+  "one FOMC policymaker; a value exactly halfway rounds up, to the larger number.")
+#guard line (share "half_even") == .str ("The number of FOMC policymakers x such that x expects a further increase, " ++
+  "divided by the number of FOMC policymakers, rounds to 0.296, rounded to the nearest thousandth; there is at least " ++
+  "one FOMC policymaker; a value exactly halfway rounds to the even digit.")
+def estimates (op rule : String) (printed : String) : String :=
+  s!"[\"{op}\", {rule}[\"quantity\", [\"const\", \"bp\", \"sept\"]], [\"quantity\", [\"const\", \"bp\", \"june\"]], " ++
+    s!"\"{printed}\"]"
+#guard line (estimates "percent_rounds_to" "\"ties_up\", " "105") == .str ("The September estimate is 105 percent of " ++
+  "the June estimate, to the nearest percent; the June estimate is more than zero; a value exactly halfway rounds up, " ++
+  "to the larger number.")
+#guard line (estimates "percent_rounds_to" "\"half_even\", " "105.5") == .str ("The September estimate is 105.5 " ++
+  "percent of the June estimate, to the nearest tenth of a percent; the June estimate is more than zero; a value " ++
+  "exactly halfway rounds to the even digit.")
+#guard line (estimates "percent_of" "" "105") == .str ("The September estimate is exactly 105 percent of the June " ++
+  "estimate; the June estimate is more than zero.")
+#guard line (estimates "rounds_to" "\"ties_up\", " "1") == .str ("The September estimate, divided by the June " ++
+  "estimate, rounds to 1, rounded to the nearest whole number; the June estimate is more than zero; a value exactly " ++
+  "halfway rounds up, to the larger number.")
+-- Counts, coefficients, connectives (each operand in parentheses) and W6a parts.
+#guard line r#"["count", "fomc_policymaker", [["1", ["any"]]], "eq", "18"]"# ==
+  .str "The number of FOMC policymakers is exactly 18."
+#guard line r#"["count", "fomc_policymaker", [["1", ["is", "expects_rates_to_stay"]]], "lt", "3"]"# ==
+  .str "The number of FOMC policymakers x such that x expects rates to stay is less than 3."
+#guard line (r#"["implies", ["count", "fomc_policymaker", [["2", ["and", ["is", "expects_further_increase"], "# ++
+    r#"["not", ["is", "expects_rates_to_stay"]]]], ["-1", ["or", ["any"], ["is", "expects_rates_to_stay"]]]], "le", "7"], "# ++
+    r#"["not", ["quantity", ["top"]]]]"#) ==
+  .str ("If (2 times the number of FOMC policymakers x such that (x expects a further increase) and (it is not the " ++
+    "case that (x expects rates to stay)) plus -1 times the number of FOMC policymakers x such that (x is any object) " ++
+    "or (x expects rates to stay) is at most 7), then (it is not the case that (the W6a statement [\"top\"] holds)).")
+#guard line r#"["and", ["quantity", ["top"]], ["or", ["quantity", ["top"]], ["quantity", ["bottom"]]]]"# ==
+  .str ("(the W6a statement [\"top\"] holds) and ((the W6a statement [\"top\"] holds) or (the W6a statement " ++
+    "[\"bottom\"] holds)).")
+-- A statement's fault is its text; the line and each assumption are at most 65,536 bytes, charged as they are built.
+#guard (para r#"["count", "user", [["1", ["any"]]], "le", "2"]"# env).getObjValD "error" ==
+  .str "CardinalityNotFinite(user)"
+def described (group name : String) (text : String) : Json :=
+  let v := paraEnv.getObjValD "vocabulary"
+  let g := v.getObjValD group
+  paraEnv.setObjVal! "vocabulary" (v.setObjVal! group (g.setObjVal! name ((g.getObjValD name).setObjVal!
+    "description" (.str text))))
+def curiousCount : String := r#"["count", "user", [["1", ["is", "curious"]]], "eq", "2"]"#
+def fixed : Nat := ("The number of users x such that x " ++ " is exactly 2.").utf8ByteSize
+#guard ((line curiousCount (described "predicates" "curious" (String.mk (List.replicate (65536 - fixed) 'a')))).getStr?
+  |>.toOption.map (·.utf8ByteSize)) == some 65536
+#guard (para curiousCount (described "predicates" "curious" (String.mk (List.replicate (65537 - fixed) 'a')))).getObjValD
+  "error" == .str Render.tooLong
+#guard (para r#"["quantity", ["top"]]"# (described "sorts" "user" (String.mk (List.replicate 65536 'a')))).getObjValD
+  "error" == .str Render.tooLong
+
 end VE.Cardinality.RunExamples

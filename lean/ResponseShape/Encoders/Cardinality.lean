@@ -28,21 +28,22 @@ theorem erasedJson_fits (w : CardEnv) (ps : List CFormula) (c : CFormula) :
 
 /-- The runner answers a certificate row only for the kind `certificate`. -/
 theorem certificate_kind {j : Json} {kind : String} (hK : j.getObjValD "kind" = .str kind)
-    (h1 : (kind == "admission" || kind == "certificate") = true) (h2 : ¬(kind == "admission") = true) :
+    (h1 : (kind == "admission" || kind == "certificate" || kind == "document" || kind == "paraphrase") = true)
+    (hd : ¬(kind == "document") = true) (hp : ¬(kind == "paraphrase") = true) (h2 : ¬(kind == "admission") = true) :
     (CaseCond.kind "certificate").holds j = true := by
-  simp only [Bool.or_eq_true, beq_iff_eq] at h1 h2
-  obtain rfl := h1.resolve_left h2
+  simp only [Bool.or_eq_true, beq_iff_eq] at h1 h2 hd hp
+  obtain rfl := ((h1.resolve_right hp).resolve_right hd).resolve_left h2
   simp only [CaseCond.holds, hK]
   rfl
 
 set_option hygiene false in
-/-- An admission or certificate row, by the kind the runner read (the case's `kind` string, else `admission`). -/
+/-- An admission, certificate, document or paraphrase row, by the kind the runner read (the case's `kind` string, else `admission`). -/
 macro "cardinality_rows" : tactic =>
   `(tactic|(okfits <;> kind_subst <;> (try simp only [VE.Time.Wire.ok, Run.statementJson]) <;>
     (try fits using regionsJson_fits) <;>
     first
       | exact problemJson_fits _ _
-      | exact certificate_kind hK ‹_› ‹_›
+      | exact certificate_kind hK (by assumption) (by assumption) (by assumption) (by assumption)
       | exact absurd (by decide) ‹¬("admission" == "admission") = true›))
 
 theorem runCase_fits (j : Json) : OkFits j Skeletons.cardinality (Run.runCase j) := by
