@@ -1,0 +1,71 @@
+{
+  "document_sha256": "c0543b5fc42ed3b60ea48db1e7b9c89e709f3b18537758598eb55b3198cd23f8",
+  "baseline_source": "/home/seyran/code/manage-agents/scale-20261028/runs/p100-check.json",
+  "baseline_method": "exp-scale scope, per reviews/scale-20261028.md",
+  "after_method": "prof.py direct after iso.sh failed: Failed to connect to bus: No data available",
+  "before": {
+    "wall": 2935.6,
+    "lean_cpu_sum": 2799.9,
+    "lean_wall_sum": 2852.7,
+    "py_cpu": 81.1,
+    "result": {
+      "readings_status": "CONFLICT-FREE",
+      "premises": "model"
+    },
+    "error": null,
+    "load_start": [
+      0,
+      21.95361328125
+    ],
+    "load_end": [
+      2910,
+      11.82861328125
+    ],
+    "request_count": 6526,
+    "readings_route_requests": 82
+  },
+  "memo_only_before_latest_main_merge": {
+    "wall": 499.6,
+    "lean_cpu_sum": 370.0,
+    "lean_wall_sum": 374.9,
+    "py_cpu": 116.0,
+    "result": {
+      "readings_status": "CONFLICT-FREE",
+      "premises": "model"
+    },
+    "error": null,
+    "load_start": [
+      0,
+      30.2919921875
+    ],
+    "load_end": [
+      480,
+      26.08935546875
+    ],
+    "request_count": 6526,
+    "readings_route_requests": 82
+  },
+  "after_merged_main": {
+    "wall": 474.9,
+    "lean_cpu_sum": 405.7,
+    "lean_wall_sum": 413.1,
+    "py_cpu": 105.1,
+    "result": {
+      "readings_status": "CONFLICT-FREE",
+      "premises": "model"
+    },
+    "error": null,
+    "load_start": [
+      0,
+      19.89599609375
+    ],
+    "load_end": [
+      450,
+      41.59765625
+    ],
+    "request_count": 6450,
+    "readings_route_requests": 6
+  },
+  "wall_speedup": 6.18,
+  "lean_cpu_speedup": 6.9
+}
