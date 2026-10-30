@@ -289,11 +289,12 @@
   },
   {
    "test": "tests/test_df_e1.py",
-   "why": "starts git (git show) in docs/defeasible/df-e1/runner.py",
+   "why": "starts git (git rev-parse, git show) in docs/defeasible/df-e1/prepare.py, docs/defeasible/df-e1/runner.py",
    "recorded": [
     "source"
    ],
    "via": [
+    "docs/defeasible/df-e1/prepare.py:reader_items: git rev-parse",
     "docs/defeasible/df-e1/runner.py:prereg_committed: git show"
    ]
   },
@@ -1588,6 +1589,16 @@
    ],
    "via": [
     "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_source_words.py",
+   "why": "starts git (git cat-file) in tools/english_grammar_gen.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tools/english_grammar_gen.py:git_blob: git cat-file"
    ]
   },
   {

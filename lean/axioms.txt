@@ -5911,6 +5911,7 @@
 'VE.Scope.admit_governor' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.admit_governor_unit' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.admitted_ids_nodup' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.admitted_list_names_nodup' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.affected_drop' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.affected_title_only' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.anchor_reach_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -6009,6 +6010,7 @@
 'VE.Scope.jsonWF_mkObj' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.jsonWF_top' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.label_reach_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.listName_run' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.list_singleton_of_drop_empty' depends on axioms: [propext, Quot.sound]
 'VE.Scope.lookup_mem' does not depend on any axioms
 'VE.Scope.lookups_absent' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -6031,6 +6033,7 @@
 'VE.Scope.mkObj_get_mem' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.mkObj_one' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.newContent_src' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Scope.nodup_map_unique' depends on axioms: [propext, Quot.sound]
 'VE.Scope.nonrule_refused' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Scope.normFields_name' depends on axioms: [propext, Quot.sound]
 'VE.Scope.orderCheck_drop' depends on axioms: [propext, Classical.choice, Quot.sound]

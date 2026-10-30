@@ -1701,4 +1701,61 @@ theorem title_identity (D : SDoc) (g : Governor) (hg : g ∈ D.governors)
       (admitBlock_drop D g hg h hd ha) he' (by exact partUnits_nil_title_success D g hg h hd he' out ho)
 end Statements
 
+/-! ## SC-2: a registered list name denotes the admitted layout run. -/
+
+theorem admitted_list_names_nodup (D : SDoc) (h : admitBlock D = .ok ()) :
+    (D.listNames.map (·.1.name)).Nodup := by
+  apply firstDup_none_nodup
+  cases hf : firstDup (D.listNames.map (·.1.name)) with
+  | none => rfl
+  | some n =>
+    unfold admitBlock at h
+    simp only [bind, Except.bind, pure, Except.pure] at h
+    simp [hf] at h
+    repeat (split at h; · cases h)
+    cases h
+
+theorem nodup_map_unique {α β : Type} [DecidableEq β] (f : α → β) (xs : List α)
+    (hd : (xs.map f).Nodup) (a b : α) (ha : a ∈ xs) (hb : b ∈ xs)
+    (he : f a = f b) : a = b := by
+  induction xs generalizing a b with
+  | nil => cases ha
+  | cons x ys ih =>
+    obtain ⟨hx, hy⟩ := List.nodup_cons.mp hd
+    rcases List.mem_cons.mp ha with hxa | haya
+    · rcases List.mem_cons.mp hb with hxb | hbyb
+      · exact hxa.trans hxb.symm
+      · have he' : f x = f b := by simpa [hxa] using he
+        exact False.elim (hx (List.mem_map.mpr ⟨b, hbyb, he'.symm⟩))
+    · rcases List.mem_cons.mp hb with hxb | hbyb
+      · have he' : f a = f x := by simpa [hxb] using he
+        exact False.elim (hx (List.mem_map.mpr ⟨a, haya, he'⟩))
+      · exact ih hy a b haya hbyb he
+
+/-- A list name names exactly its lead-in's run. -/
+theorem listName_run (D : SDoc) (h₀ : admitBlock D = .ok ()) (n : VE.Discourse.ContentName)
+    (lead unit : String) (h : (n, lead, unit) ∈ D.listNames) (us : List String)
+    (hc : covered D (.listName n.name) = .ok us) :
+    VE.Layout.listRun D.layout lead = .ok us ∧ n.units = us := by
+  have hd := admitted_list_names_nodup D h₀
+  simp only [covered, coveredLayout] at hc
+  cases hf : D.listNames.find? (·.1.name == n.name) with
+  | none => simp [hf] at hc
+  | some found =>
+    rcases found with ⟨cn, lead', unit'⟩
+    have hm := List.mem_of_find?_eq_some hf
+    have hn : cn.name = n.name := by simpa using List.find?_some hf
+    have heq := nodup_map_unique (·.1.name) D.listNames hd (cn, lead', unit')
+      (n, lead, unit) hm h hn
+    cases heq
+    simp only [hf] at hc
+    cases hrun : VE.Layout.listRun D.layout lead with
+    | error err => simp [hrun, bind, Except.bind] at hc
+    | ok xs =>
+      by_cases hmatch : n.units = xs
+      · simp [hrun, hmatch, bind, Except.bind] at hc
+        cases hc
+        exact ⟨rfl, hmatch⟩
+      · simp [hrun, hmatch, bind, Except.bind] at hc
+
 end VE.Scope
