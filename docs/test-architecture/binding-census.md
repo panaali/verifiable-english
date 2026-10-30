@@ -15,7 +15,7 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 | today:not probed | 1027 |
 | today:shape | 546 |
 | today:unbound | 137 |
-| answers | 574 |
+| answers | 578 |
 | probes | 10204 |
 | hand_binders | 51 |
 
@@ -3454,23 +3454,23 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 
 ## scope
 
-0 recorded answers.
+4 recorded answers.
 
 | leaf | kind | class | keyword | format | observed | bound today |
 |---|---|---|---|---|---:|---|
 | `/case_index` | integer | bound | x-index |  | 0 | shape |
-| `/error` | string | none |  | minLength | 0 | not probed |
-| `/governed/*/id` | string | none |  |  | 0 | not probed |
-| `/governed/*/units/*` | string | none |  |  | 0 | not probed |
-| `/id` | any | bound | x-echo |  | 0 | shape |
-| `/id` | string | bound | x-equals |  | 0 | shape |
-| `/rows/*/governors/*/effect` | string | closed domain | enum |  | 0 | shape |
-| `/rows/*/governors/*/id` | string | none |  |  | 0 | not probed |
-| `/rows/*/governors/*/provenance` | string | none |  |  | 0 | not probed |
-| `/rows/*/governors/*/reach/*` | string | none |  |  | 0 | not probed |
-| `/rows/*/governors/*/unit` | string | none |  |  | 0 | not probed |
-| `/rows/*/unit` | string | none |  |  | 0 | not probed |
-| `/status` | string | closed domain | const |  | 0 | shape |
+| `/error` | string | none |  | minLength | 1 | not probed |
+| `/governed/*/id` | string | none |  |  | 3 | not probed |
+| `/governed/*/units/*` | string | none |  |  | 2 | not probed |
+| `/id` | any | bound | x-echo |  | 4 | shape |
+| `/id` | string | bound | x-equals |  | 4 | shape |
+| `/rows/*/governors/*/effect` | string | closed domain | enum |  | 2 | shape |
+| `/rows/*/governors/*/id` | string | none |  |  | 2 | not probed |
+| `/rows/*/governors/*/provenance` | string | none |  |  | 2 | not probed |
+| `/rows/*/governors/*/reach/*` | string | none |  |  | 2 | not probed |
+| `/rows/*/governors/*/unit` | string | none |  |  | 2 | not probed |
+| `/rows/*/unit` | string | none |  |  | 2 | not probed |
+| `/status` | string | closed domain | const |  | 4 | shape |
 
 | array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
 |---|---|---|---|---|

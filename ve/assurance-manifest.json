@@ -2027,6 +2027,7 @@
       "lean/VE/Events/Wire.lean": "the events block decoder (ET-4, spec 4 items 2-7); no service mode, route or runner path reaches it until et-4b hooks it into the layered route and pins it here",
       "lean/VE/Events/WireExamples.lean": "fixtures only: #guard checks of decodeEvents on JSON environments built with Json.parse and Json.mkObj; no runner path",
       "lean/VE/Discourse/Run.lean": "lean:runner-glue: ve_discourse_route case dispatch and response rows",
+      "lean/VE/Scope/Run.lean": "lean:runner-glue: the `scope` mode (SC-1c) reads the case's `id` and `document` (the document mode's `split` and scope's `decodeBlock`, unchanged) and writes its answer rows (govJson, rowJson, governedJson); no decoder of its own",
       "lean/VE/Discourse/Wire.lean": "lean:discourse-wire: the ve.discourse@1 manifest decoder and discourse report rows; decoded values are validated, never trusted (discourse_wire_binding, discourse_report_sound)",
       "lean/VE/Discourse/Admission.lean": "lean:discourse-wire: the profile adapter strips ve.discourse@1 from the environment JSON before every frozen call (setObjVal!, profile_adapter_base)",
       "lean/VE/Discourse/Loader.lean": "lean:discourse-wire: the ve-document@2 loader reads the front matter and embedded or imported documents' metadata fields",
