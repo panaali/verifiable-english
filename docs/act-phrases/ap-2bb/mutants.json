@@ -80,7 +80,7 @@
    "definition": "VE.Acts.normalOk",
    "behaviour": "the subject slot {0} is accepted as a part",
    "status": "KILLED",
-   "test": "lean/VE/Acts/RenderExamples.lean:66, lean/VE/Acts/RenderExamples.lean:70"
+   "test": "lean/VE/Acts/RenderExamples.lean:66, lean/VE/Acts/RenderExamples.lean:70, lean/VE/Acts/RenderExamples.lean:87, lean/VE/Acts/RenderExamples.lean:89"
   },
   {
    "id": "nodup-dropped",
@@ -98,7 +98,7 @@
    "definition": "VE.Acts.normalOk",
    "behaviour": "a joined filler under a split marker is accepted",
    "status": "KILLED",
-   "test": "lean/VE/Acts/RenderExamples.lean:80, lean/VE/Acts/RenderExamples.lean:83"
+   "test": "lean/VE/Acts/RenderExamples.lean:80, lean/VE/Acts/RenderExamples.lean:83, lean/VE/Acts/RenderExamples.lean:95"
   },
   {
    "id": "two-parts-dropped",
@@ -107,7 +107,7 @@
    "definition": "VE.Acts.normalOk",
    "behaviour": "a joined filler of fewer than two parts is accepted",
    "status": "KILLED",
-   "test": "lean/VE/Acts/RenderExamples.lean:103, lean/VE/Acts/RenderExamples.lean:105, lean/VE/Acts/RenderExamples.lean:112"
+   "test": "lean/VE/Acts/RenderExamples.lean:114, lean/VE/Acts/RenderExamples.lean:116, lean/VE/Acts/RenderExamples.lean:124, lean/VE/Acts/RenderExamples.lean:128"
   },
   {
    "id": "two-parts-one",
@@ -116,7 +116,7 @@
    "definition": "VE.Acts.normalOk",
    "behaviour": "a joined filler of one part is accepted",
    "status": "KILLED",
-   "test": "lean/VE/Acts/RenderExamples.lean:103, lean/VE/Acts/RenderExamples.lean:112"
+   "test": "lean/VE/Acts/RenderExamples.lean:114, lean/VE/Acts/RenderExamples.lean:124, lean/VE/Acts/RenderExamples.lean:128"
   },
   {
    "id": "d9-dropped",
@@ -125,7 +125,16 @@
    "definition": "VE.Acts.normalOk",
    "behaviour": "a joined filler with a long first or last part is accepted",
    "status": "KILLED",
-   "test": "lean/VE/Acts/RenderExamples.lean:102, lean/VE/Acts/RenderExamples.lean:107, lean/VE/Acts/RenderExamples.lean:112, lean/VE/Acts/RenderExamples.lean:99"
+   "test": "lean/VE/Acts/RenderExamples.lean:110, lean/VE/Acts/RenderExamples.lean:113, lean/VE/Acts/RenderExamples.lean:118, lean/VE/Acts/RenderExamples.lean:128"
+  },
+  {
+   "id": "no-frame-accepted",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Linearize.lean",
+   "definition": "VE.Acts.normalOk",
+   "behaviour": "an atom whose head no frame declares is accepted",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RenderExamples.lean:98"
   },
   {
    "id": "atomOk-dropped",
@@ -134,7 +143,7 @@
    "definition": "VE.Acts.normalOk",
    "behaviour": "an atom that does not fit its frame is accepted",
    "status": "KILLED",
-   "test": "lean/VE/Acts/RenderExamples.lean:87"
+   "test": "lean/VE/Acts/RenderExamples.lean:98"
   },
   {
    "id": "longEnd-first-only",
