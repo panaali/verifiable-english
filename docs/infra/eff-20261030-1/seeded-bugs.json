@@ -1,0 +1,98 @@
+[
+ {
+  "bug": "the chunk rule drops the last node",
+  "file": "tools/test_chunks.py",
+  "test": "tests/test_test_chunks.py::test_the_parts_cover_every_node_exactly_once",
+  "exit": 1,
+  "summary": "1 failed in 0.39s",
+  "caught": true
+ },
+ {
+  "bug": "the union check is skipped",
+  "file": "tools/select_tests.py",
+  "test": "tests/test_test_chunks.py::test_a_test_missing_from_every_chunk_fails_the_unit",
+  "exit": 1,
+  "summary": "1 failed in 1.19s",
+  "caught": true
+ },
+ {
+  "bug": "a failed chunk is ignored",
+  "file": "tools/select_tests.py",
+  "test": "tests/test_test_chunks.py::test_a_failed_chunk_fails_the_unit",
+  "exit": 1,
+  "summary": "1 failed in 1.66s",
+  "caught": true
+ },
+ {
+  "bug": "the map keeps only chunk 1's edges",
+  "file": "tools/select_tests.py",
+  "test": "tests/test_test_chunks.py::test_the_map_entry_of_a_chunked_file_is_the_union_of_its_chunks",
+  "exit": 1,
+  "summary": "1 failed in 0.31s",
+  "caught": true
+ },
+ {
+  "bug": "chunking is applied to a full run",
+  "file": "tools/select_tests.py",
+  "test": "tests/test_test_chunks.py::test_a_full_run_never_chunks",
+  "exit": 1,
+  "summary": "1 failed in 0.30s",
+  "caught": true
+ },
+ {
+  "bug": "a setup-dominated file is chunked",
+  "file": "tools/select_tests.py",
+  "test": "tests/test_test_chunks.py::test_a_setup_dominated_file_is_never_chunked",
+  "exit": 1,
+  "summary": "1 failed in 0.29s",
+  "caught": true
+ },
+ {
+  "bug": "the plan lists chunks without --chunk-heavy",
+  "file": "tools/select_tests.py",
+  "test": "tests/test_test_chunks.py::test_the_plan_lists_chunks_only_with_the_option",
+  "exit": 1,
+  "summary": "1 failed, 1 passed in 0.31s",
+  "caught": true
+ },
+ {
+  "bug": "a chunk's failures do not count towards --maxfail",
+  "file": "tools/select_tests.py",
+  "test": "tests/test_test_chunks.py::test_maxfail_stops_across_chunks_as_across_units",
+  "exit": 1,
+  "summary": "1 failed in 3.26s",
+  "caught": true
+ },
+ {
+  "bug": "the suite's conftest does not register the chunk hook",
+  "file": "tests/conftest.py",
+  "test": "tests/test_test_chunks.py::test_the_suites_conftest_applies_the_chunk",
+  "exit": 1,
+  "summary": "1 failed in 2.43s",
+  "caught": true
+ },
+ {
+  "bug": "a nested run inherits the chunk",
+  "file": "tools/nested_pytest.py",
+  "test": "tests/test_test_chunks.py::test_a_nested_run_never_inherits_the_chunk",
+  "exit": 1,
+  "summary": "1 failed in 0.25s",
+  "caught": true
+ },
+ {
+  "bug": "the hook keeps the chunk before -m deselects",
+  "file": "tools/test_chunks.py",
+  "test": "tests/test_test_chunks.py::test_the_chunk_applies_after_marker_deselection",
+  "exit": 1,
+  "summary": "1 failed in 1.10s",
+  "caught": true
+ },
+ {
+  "bug": "JUnit node IDs drop the class",
+  "file": "tools/run_order.py",
+  "test": "tests/test_test_chunks.py::test_junit_cases_are_the_node_ids_of_the_file",
+  "exit": 1,
+  "summary": "1 failed in 1.17s",
+  "caught": true
+ }
+]
