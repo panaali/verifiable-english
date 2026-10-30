@@ -1,0 +1,12 @@
+## bio-high | always | Table 1: “Biological and Chemical” [High]
+"biological_and_chemical_high" concerns "biological_and_chemical". "biological_and_chemical_high" is high.
+## bio-critical | always | Table 1: “Biological and Chemical” [Critical]
+"biological_and_chemical_critical" concerns "biological_and_chemical". "biological_and_chemical_critical" is critical.
+## cyb-high | always | Table 1: “Cybersecurity” [High]
+"cybersecurity_high" concerns cybersecurity. "cybersecurity_high" is high.
+## cyb-critical | always | Table 1: “Cybersecurity” [Critical]
+"cybersecurity_critical" concerns cybersecurity. "cybersecurity_critical" is critical.
+## ais-high | always | Table 1: “AI Self-improvement” [High]
+"ai_self_improvement_high" concerns "ai_self_improvement". "ai_self_improvement_high" is high.
+## ais-critical | always | Table 1: “AI Self-improvement” [Critical]
+"ai_self_improvement_critical" concerns "ai_self_improvement". "ai_self_improvement_critical" is critical.
