@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 39767,
+    "total_lines": 40080,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1961,12 +1961,12 @@
       },
       {
         "file": "lean/VE/Cardinality/Run.lean",
-        "lines": 221,
-        "sha256": "d183414cf694e56043d1a27b4271756d832fb1cdf8322a72fbffa575248e5b60",
+        "lines": 248,
+        "sha256": "9aafe568d16a901ebd6141aa69464879b4cc4cb16e8cf4bdbe4b39862deb0b6f",
         "ranges": [
           [
             1,
-            221
+            248
           ]
         ],
         "declarations": [
@@ -1974,9 +1974,29 @@
           "checkErased",
           "checkCertificate",
           "claimed",
-          "runCase"
+          "runCase",
+          "checkDeduction",
+          "admitDocument",
+          "reportJson"
         ],
-        "reason": "cardinality certificate decoder, binding and replay, claimed region tables and erased problems, and the case runner; the full file is pinned conservatively"
+        "reason": "cardinality certificate decoder, binding and replay, claimed region tables and erased problems, the document case's deduction check (checkDeduction) and report, and the case runner; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Cardinality/Document.lean",
+        "lines": 286,
+        "sha256": "9b40c960ba84bc7d114a066505ed1ed88a4fa2f0b8cdf4ba4862f09964b91521",
+        "ranges": [
+          [
+            1,
+            286
+          ]
+        ],
+        "declarations": [
+          "decodeNode",
+          "checkGraph",
+          "admitGraph"
+        ],
+        "reason": "the cardinality claim graph (qt-a3d): node decoder (decodeStatement on each node, premises with their certificate), graph check and its charges; the full file is pinned"
       },
       {
         "file": "lean/VE/Readings/DefaultVerdicts.lean",
