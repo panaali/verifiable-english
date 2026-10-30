@@ -14,5 +14,7 @@
  {"definition": "VE.Acts.normalOk", "operator": "list-first", "reason": "equivalent on `ws` in `!ws.isEmpty` (`(ws.take 1).isEmpty` is `ws.isEmpty`), ill-typed on the lambda `(·.2.parts)`; every other list-first mutant of normalOk is killed by a RenderExamples guard (raw_status KILLED)"},
  {"definition": "VE.Acts.normalOk", "operator": "list-last", "reason": "equivalent on `ws` in `!ws.isEmpty` (`(ws.reverse.take 1).isEmpty` is `ws.isEmpty`), ill-typed on the lambda `(·.2.parts)`; every other list-last mutant of normalOk is killed by a RenderExamples guard (raw_status KILLED)"},
  {"definition": "VE.Acts.longEnd", "operator": "list-first", "reason": "equivalent: on `ps.head?`, `(ps.take 1).head?` is `ps.head?`; on `ps.getLast?` it is killed by the last-part guards (raw_status KILLED)"},
- {"definition": "VE.Acts.longEnd", "operator": "list-last", "reason": "equivalent: on `ps.getLast?`, `(ps.reverse.take 1).getLast?` is `ps.getLast?`; on `ps.head?` it is killed by the first-part guards (raw_status KILLED)"}
+ {"definition": "VE.Acts.longEnd", "operator": "list-last", "reason": "equivalent: on `ps.getLast?`, `(ps.reverse.take 1).getLast?` is `ps.getLast?`; on `ps.head?` it is killed by the first-part guards (raw_status KILLED)"},
+ {"definition": "VE.Acts.longEnd", "operator": "list-drop-first", "reason": "equivalent: on a list of two or more parts the cut keeps the end it reads; on a one-part list the first and last part are one part, which the other side of `||` reads"},
+ {"definition": "VE.Acts.longEnd", "operator": "list-drop-last", "reason": "equivalent: on a list of two or more parts the cut keeps the end it reads; on a one-part list the first and last part are one part, which the other side of `||` reads"}
 ]}
