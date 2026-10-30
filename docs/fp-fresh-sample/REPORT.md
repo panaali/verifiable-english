@@ -65,7 +65,7 @@ All in Python, the only language changed. File: /home/seyran/code/manage-agents/
 3. Tests can fail: PASS, 8 seeded bugs (table above, mutants.json).
 4. Python, Lean and Rust agree: N.A., Python tooling only; the sample uses the original script's own `draw`.
 5. R8 binding: N.A., no VE binding.
-6. Gate evidence matches the final HEAD: PASS. The chain runs the gate on the final HEAD; the selected-test run is cited below.
+6. Gate evidence matches the final HEAD: PASS. The chain runs the gate on the final HEAD. Selected tests, run once on 11574c728: `mac-pytest.sh --select -- --base 70da2be4d --run` rc 0, "48 units, 48 passed" (GitHub Actions run fp-fresh-sample-11574c72-t362896, 2009 s).
 7. No unsigned item: PASS. There is no DELTA row, and the DRI decision item 1 is SIGNED in its decision file.
 8. User-visible change in DELTA: N.A., no VE user-visible change.
 9. Test selection: N.A., no VE source changed. tools-local tests run by file.
