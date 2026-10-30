@@ -2393,7 +2393,8 @@
     "results/*/result/erased/premises/*/core/*/*",
     "results/*/result/regions/constants",
     "results/*/result/regions/predicates",
-    "results/*/result/regions/predicates/*"
+    "results/*/result/regions/predicates/*",
+    "results/*/result/sizes"
    ],
    "kind": "by-design",
    "id": "B0",
@@ -2405,7 +2406,8 @@
    "path": [
     "results/*/result/erased/premises",
     "results/*/result/regions/constants",
-    "results/*/result/regions/predicates/*"
+    "results/*/result/regions/predicates/*",
+    "results/*/result/sizes"
    ],
    "kind": "by-design",
    "id": "B0",
