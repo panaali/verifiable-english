@@ -9,11 +9,15 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT / "tools"))
+
+import nested_pytest  # noqa: E402
 TESTS = "tests/test_test_chunks.py"
 BUGS = [
     {"bug": "the chunk rule drops the last node", "file": "tools/test_chunks.py",
@@ -78,8 +82,9 @@ def main() -> int:
             raise SystemExit(f"{bug['bug']}: the text to replace occurs {text.count(bug['old'])} times in {bug['file']}")
         try:
             path.write_text(text.replace(bug["old"], bug["new"]))
-            done = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", "-n", "0",
-                                   bug["test"]], cwd=ROOT, capture_output=True, text=True, check=False)
+            done = subprocess.run(nested_pytest.command(["-q", "-p", "no:cacheprovider", bug["test"]]), cwd=ROOT,
+                                  env=nested_pytest.environment(os.environ), capture_output=True, text=True,
+                                  check=False)
         finally:
             path.write_bytes(original)
         failed = done.returncode == 1 and "failed" in done.stdout.splitlines()[-1]
