@@ -83,6 +83,17 @@ def joinedObj (h : String) : Atom := ⟨true, false, [h], [("", .joined .and [.s
 #guard atomOk Vs (joinedObj "seek") && !normalOk Vs (joinedObj "seek")
 #guard normalOk Vs (joinedObj "keep") && roundTrip Vs (joinedObj "keep")
 #guard normalOk Vk (obj (.joined .and [.slot 2, .fixed 0])) && roundTrip Vk (obj (.joined .and [.slot 2, .fixed 0]))
+-- every argument and every modifier is checked, the refused one first or last
+#guard [give [("", help), ("to", .one (.slot 0))] [], give [("", .one (.slot 0)), ("to", .one (.slot 1))] []].all
+  (!normalOk Vk ·)
+#guard [[.prep "at" (.slot 1), .prep "in" (.slot 0)], [.prep "in" (.slot 0), .prep "at" (.slot 1)],
+  [.adv "now", .prep "in" (.slot 0)]].all (fun ms => !normalOk Vk (give [("", help)] ms))
+#guard normalOk Vk (give [("", help)] [.adv "now", .prep "at" (.slot 1), .prep "in" (.slot 2)])
+-- two split markers: a joined filler under either is refused, under the plain marker accepted
+def V2s : Vocab := frames [fr "send" ["", "to", "by", "with"] ["to", "by"] []]
+def send (m : String) : Atom := ⟨true, false, ["send"], [("", help), (m, .joined .or [.slot 1, .slot 2])], []⟩
+#guard framesOk V2s && !normalOk V2s (send "to") && !normalOk V2s (send "by")
+#guard normalOk V2s (send "with") && roundTrip V2s (send "with")
 -- `atomOk` refused: an undeclared head, a missing object
 #guard !normalOk Vk ⟨true, false, ["take"], [], []⟩ && !normalOk Vk (give [("to", .one (.slot 1))] [])
 
@@ -109,6 +120,11 @@ def held2 : List (List Part) := [[w "secret", .fixed 0], [.slot 1, w "secret"], 
 #guard held2.all (fun ps => normalOk V7 (heldBy1 ps) && roundTrip V7 (heldBy1 ps))
 #guard [[w "help", w "advice"], [w "help", w "good advice", w "time"]].all (fun ps =>
   normalOk Vk (obj (.joined .and ps)) && roundTrip Vk (obj (.joined .and ps)))
+-- a later argument's joined filler is checked too; `longEnd` on a one-part list and at each end
+#guard !normalOk Vk (give [("", help), ("to", .joined .or [.slot 1])] []) &&
+  normalOk Vk (give [("", help), ("to", .joined .or [.slot 1, .slot 2])] [])
+#guard [[w "secret vote"], [w "secret vote", .slot 1], [.slot 1, w "secret vote"]].all longEnd &&
+  ![[], [w "secret"], [.slot 1], [w "secret", w "free voting", .slot 1]].any longEnd
 #guard !normalOk Vk (obj (.joined .and [w "help", w "good advice"])) &&
   !normalOk Vk (obj (.joined .and [.slot 2])) && !normalOk Vk (obj (.joined .and []))
 
