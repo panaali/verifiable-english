@@ -1,0 +1,8 @@
+{
+  "mutants": [
+    {"file": "lean/VE/Defaults/Wire.lean", "bug": "defaults-elaborate deciders changed to []", "test": "lean/VE/Defaults/WireExamples.lean: defaults-elaborate #guard", "result": "failed"},
+    {"file": "lean/VE/Defaults/Wire.lean", "bug": "certFields deciders changed to []", "test": "lean/VE/Defaults/WireExamples.lean: DF-alpha FOLLOWS #guard", "result": "failed"},
+    {"file": "ve/defaults.py", "bug": "undeclared decider names accepted", "test": "tests/test_defaults_answer.py::test_deciders_are_typed_and_bound_on_both_rows", "result": "failed"},
+    {"file": "ve/defaults_english.py", "bug": "DE5 unnamed-decider suffix omitted", "test": "tests/test_defaults_english.py::test_strict_basis_uses_lean_deciders", "result": "failed"}
+  ]
+}
