@@ -1,0 +1,3 @@
+- `lean/VE/Layout/Anchors.lean` — Anchors (scope@0, docs/spec/scope.md 1.2 and 4.1): which units an anchor holds, and the anchor checks.
+- `lean/VE/Layout/Discourse.lean` — Discourse reads anchors through the layout's bodies (scope@0, docs/spec/scope.md 1.2 and 5.5).
+- `lean/VE/Layout/List.lean` — Scope's layout (scope@0, docs/spec/scope.md 1.2 and 4.1): what the source bytes say about each unit, the list run of a lead-in and the label reach of an item.

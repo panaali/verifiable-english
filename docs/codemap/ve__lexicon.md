@@ -1,0 +1,1 @@
+- `ve/lexicon/__init__.py` — Advisory lexical evidence for proposals only; never used by the parser.

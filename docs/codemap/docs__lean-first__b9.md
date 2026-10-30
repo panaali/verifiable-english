@@ -1,0 +1,5 @@
+- `docs/lean-first/b9/capture_quantity.py` — Capture the quantity corpus of the lean-first gate (docs/LEAN-FIRST-PLAN.md 5.1 item 2, batch 9).
+- `docs/lean-first/b9/difffuzz_ab.py` — The differential fuzzer at the base and the head of lean-first batch 9 (gate item 2: its baseline must not grow).
+- `docs/lean-first/b9/mutants.py` — Seeded bugs for lean-first batch 9: each must make its test fail; every file is restored.
+- `docs/lean-first/b9/report.py` — Lean-first batch 9: the tables of DELTA.md, rendered from the evidence files.
+- `docs/lean-first/b9/timing.py` — Per-operation wall and CPU of the W6 public operations, for the latency item of the batch-9 gate.

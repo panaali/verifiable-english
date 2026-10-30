@@ -1,0 +1,3 @@
+- `docs/lean-first/b3d/profile/Prof.lean` — Lean-first batch 3d: where a UDHR validation and a pair spend their CPU, step by step (plan F5d).
+- `docs/lean-first/b3d/report.py` — Lean-first batch 3d: the tables of DELTA.md, rendered from the evidence files.
+- `docs/lean-first/b3d/timing.py` — Lean-first batch 3d timing: the readings corpus and a pilot document, base and head side by side.

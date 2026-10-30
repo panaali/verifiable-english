@@ -1347,6 +1347,113 @@ theorem govern_preserves (D : SDoc) (hw : JsonWF D.doc) (out : Json) (ho : gover
       exact absurd (comp_entry D comp hc _ o' hm).1 hn
     · exact ⟨fun _ _ => rfl, fun _ => rfl⟩
 
+/-! `govern_provenance` (sc-1aeb) -/
+
+theorem mapM_ok_of_mem {α β ε : Type} (f : α → Except ε β) :
+    ∀ (l : List α) (t : List β), l.mapM f = .ok t → ∀ x ∈ l, ∃ y ∈ t, f x = .ok y
+  | [], _, _, x, hx => absurd hx List.not_mem_nil
+  | x :: l, t, h, z, hz => by
+    rw [List.mapM_cons] at h
+    obtain ⟨b, hb, h⟩ := (ebind_ok _ _ _).mp h
+    obtain ⟨bs, hbs, h⟩ := (ebind_ok _ _ _).mp h
+    cases h
+    rcases List.mem_cons.mp hz with rfl | hz
+    · exact ⟨b, List.mem_cons_self, hb⟩
+    · obtain ⟨y, hy, hfy⟩ := mapM_ok_of_mem f l bs hbs z hz
+      exact ⟨y, List.mem_cons_of_mem _ hy, hfy⟩
+
+/-- A key every entry of which carries the same value is looked up to it, through a map that keeps the keys. -/
+theorem lookup_map_eq (G : String → Json → Json) (k : String) (w : Json) : ∀ (l : List (String × Json)),
+    (k, w) ∈ l → (∀ v, (k, v) ∈ l → v = w) → (l.map fun p => (p.1, G p.1 p.2)).lookup k = some (G k w)
+  | [], h, _ => absurd h List.not_mem_nil
+  | (k', v') :: l, h, hv => by
+    simp only [List.map_cons, List.lookup]
+    by_cases hk : k = k'
+    · subst hk; rw [hv v' List.mem_cons_self]; simp
+    · have hb : (k == k') = false := by simpa using hk
+      rw [hb]
+      exact lookup_map_eq G k w l ((List.mem_cons.mp h).resolve_left (by simp [hk]))
+        fun v hm => hv v (List.mem_cons_of_mem _ hm)
+
+theorem find_map_id (F : Json → Json) (u : String) : ∀ (ys : List Json), (∀ y ∈ ys, idOf (F y) = idOf y) →
+    (ys.map F).find? (idOf · == u) = (ys.find? (idOf · == u)).map F
+  | [], _ => rfl
+  | y :: ys, h => by
+    simp only [List.map_cons, List.find?_cons, h y List.mem_cons_self]
+    split
+    · rfl
+    · exact find_map_id F u ys fun z hz => h z (List.mem_cons_of_mem _ hz)
+
+theorem members_ne_obj (c : Json) (hk : keysOf c ≠ []) : ∃ kvs, c = .obj kvs := by
+  cases c with
+  | obj kvs => exact ⟨kvs, rfl⟩
+  | _ => exact absurd rfl hk
+
+/-- The content `patch` writes reads back the rule it was given, in `norm`. -/
+theorem normOf_newContent (c o : Json) (hw : JsonWF c) (hc : (isPart c || isNorm c) = true) :
+    normOf (newContent c o) = some o := by
+  unfold newContent normOf
+  split
+  · next hp =>
+    have hk : ((members c).filter (·.1 != "part") ++ [("norm", o)]).map (·.1) =
+        (keysOf c).filter (· != "part") ++ ["norm"] := by
+      simp only [List.map_append, keysOf, List.filter_map]; rfl
+    have hd : (((members c).filter (·.1 != "part") ++ [("norm", o)]).map (·.1)).Nodup := by
+      rw [hk]; unfold isPart at hp
+      rcases Bool.or_eq_true _ _ ▸ hp with h | h <;> rw [eq_of_beq h] <;> decide
+    rw [(mkObj_getObjVal _ hd "norm" o).mpr (List.mem_append_right _ List.mem_cons_self)]; rfl
+  · next hp =>
+    have hn : isNorm c = true := by simpa [hp] using hc
+    obtain ⟨kvs, rfl⟩ := members_ne_obj c (by
+      unfold isNorm at hn; rcases Bool.or_eq_true _ _ ▸ hn with h | h <;> rw [eq_of_beq h] <;> simp)
+    rw [setObjVal_self kvs (jsonWF_top _ hw kvs rfl)]; rfl
+
+/-- Provenance: an affected unit's rule is its base object, then exactly its unary governors in order, then the
+    precedence edges into it. -/
+theorem govern_provenance (D : SDoc) (hw : JsonWF D.doc) (out : Json) (ho : govern D = .ok out) (u : String)
+    (hu : u ∈ affected D) :
+    ∃ o₀ o₁ es, baseObj D u = .ok o₀ ∧
+      (governorsOf D u).foldlM (fun o g => applyEffect u g.effect o) o₀ = .ok o₁ ∧
+      edgesFor D u = .ok es ∧
+      normOf (contentOf out u) = some (addOver es o₁) ∧
+      ∀ g ∈ governorsOf D u, ∃ us, covered D g.reach = .ok us ∧ u ∈ us := by
+  have hr := (List.mem_filter.mp hu).1
+  rcases govern_ok D out ho with ⟨hg, hp, -⟩ | ⟨comp, t, hc, ht, rfl⟩
+  · have : u ∈ partUnits D := by
+      simp only [affected, frameOn, governorsOf, ordered, hg, List.filter_nil, List.mergeSort_nil, List.isEmpty_nil,
+        List.any_nil, Bool.not_true, Bool.or_false, List.mem_filter] at hu
+      exact List.mem_filter.mpr ⟨(List.mem_filter.mp hu.1).1, hu.2⟩
+    rw [hp] at this; cases this
+  obtain ⟨⟨_, o₁⟩, hm, he⟩ := mapM_ok_of_mem _ _ comp hc u hu
+  obtain ⟨o₁', hco, he⟩ := (ebind_ok _ _ _).mp he
+  cases he
+  obtain ⟨o₀, h₀, hf⟩ := (ebind_ok _ _ _).mp hco
+  refine ⟨o₀, o₁, _, h₀, hf, (edgesFor_ok D u _).mpr ⟨t, ht, rfl⟩, ?_,
+    fun g hg => ((governorsOf_iff D u g).mp hg).2.2⟩
+  have hl := lookup_map_eq (fun u o => addOver (edgesInto D (fun v => t.lookup v) u) o) u o₁ comp hm fun v hv => by
+    have := (comp_entry D comp hc u v hv).2
+    rw [hco] at this; cases this; rfl
+  have hu' : ∀ y ∈ unitsOf D.doc, ∀ kvs, y = .obj kvs → kvs.WF := fun y hy => jsonWF_top _ ((unitsOf_mem _ y hy).2 hw)
+  obtain ⟨y, hy, hyu⟩ := List.mem_map.mp (List.mem_filter.mp hr).1
+  obtain ⟨x, hx⟩ := Option.isSome_iff_exists.mp (List.find?_isSome.mpr ⟨y, hy, by simp [hyu]⟩ :
+    ((unitsOf D.doc).find? (idOf · == u)).isSome)
+  have hxu : idOf x = u := by simpa using List.find?_some hx
+  have hxm := List.mem_of_find?_eq_some hx
+  unfold contentOf
+  rw [unitsOf_patch D hw, find_map_id _ u _ fun z hz => by split <;> first | exact idOf_set z (hu' z hz) _ | rfl, hx]
+  simp only [Option.map_some, Option.getD_some, hxu, hl]
+  have hcx : contentOf D.doc u = x.getObjValD "content" := by unfold contentOf; rw [hx]; rfl
+  have hpn := (List.mem_filter.mp hr).2
+  rw [hcx] at hpn
+  obtain ⟨kvs, rfl⟩ : ∃ kvs, x = .obj kvs := by
+    cases x with
+    | obj kvs => exact ⟨kvs, rfl⟩
+    | _ => rw [show Json.getObjValD _ "content" = Json.null from rfl] at hpn; exact absurd hpn (by decide)
+  have hv : ∀ v, ((Json.obj kvs).setObjVal! "content" v).getObjValD "content" = v := fun v => by
+    simp only [Json.getObjValD, setObjVal_self kvs (hu' _ hxm kvs rfl)]; rfl
+  rw [hv]
+  exact normOf_newContent _ _ (jsonWF_getD _ ((unitsOf_mem _ _ hxm).2 hw) _) hpn
+
 /-! A title affects admission but never the computed rule or graph effect. -/
 theorem firstDup_none_nodup : ∀ l : List String, firstDup l = none → l.Nodup
   | [], _ => .nil
@@ -1700,5 +1807,62 @@ theorem title_identity (D : SDoc) (g : Governor) (hg : g ∈ D.governors)
     exact govern_identity {D with governors := D.governors.filter (·.id != g.id)}
       (admitBlock_drop D g hg h hd ha) he' (by exact partUnits_nil_title_success D g hg h hd he' out ho)
 end Statements
+
+/-! ## SC-2: a registered list name denotes the admitted layout run. -/
+
+theorem admitted_list_names_nodup (D : SDoc) (h : admitBlock D = .ok ()) :
+    (D.listNames.map (·.1.name)).Nodup := by
+  apply firstDup_none_nodup
+  cases hf : firstDup (D.listNames.map (·.1.name)) with
+  | none => rfl
+  | some n =>
+    unfold admitBlock at h
+    simp only [bind, Except.bind, pure, Except.pure] at h
+    simp [hf] at h
+    repeat (split at h; · cases h)
+    cases h
+
+theorem nodup_map_unique {α β : Type} [DecidableEq β] (f : α → β) (xs : List α)
+    (hd : (xs.map f).Nodup) (a b : α) (ha : a ∈ xs) (hb : b ∈ xs)
+    (he : f a = f b) : a = b := by
+  induction xs generalizing a b with
+  | nil => cases ha
+  | cons x ys ih =>
+    obtain ⟨hx, hy⟩ := List.nodup_cons.mp hd
+    rcases List.mem_cons.mp ha with hxa | haya
+    · rcases List.mem_cons.mp hb with hxb | hbyb
+      · exact hxa.trans hxb.symm
+      · have he' : f x = f b := by simpa [hxa] using he
+        exact False.elim (hx (List.mem_map.mpr ⟨b, hbyb, he'.symm⟩))
+    · rcases List.mem_cons.mp hb with hxb | hbyb
+      · have he' : f a = f x := by simpa [hxb] using he
+        exact False.elim (hx (List.mem_map.mpr ⟨a, haya, he'⟩))
+      · exact ih hy a b haya hbyb he
+
+/-- A list name names exactly its lead-in's run. -/
+theorem listName_run (D : SDoc) (h₀ : admitBlock D = .ok ()) (n : VE.Discourse.ContentName)
+    (lead unit : String) (h : (n, lead, unit) ∈ D.listNames) (us : List String)
+    (hc : covered D (.listName n.name) = .ok us) :
+    VE.Layout.listRun D.layout lead = .ok us ∧ n.units = us := by
+  have hd := admitted_list_names_nodup D h₀
+  simp only [covered, coveredLayout] at hc
+  cases hf : D.listNames.find? (·.1.name == n.name) with
+  | none => simp [hf] at hc
+  | some found =>
+    rcases found with ⟨cn, lead', unit'⟩
+    have hm := List.mem_of_find?_eq_some hf
+    have hn : cn.name = n.name := by simpa using List.find?_some hf
+    have heq := nodup_map_unique (·.1.name) D.listNames hd (cn, lead', unit')
+      (n, lead, unit) hm h hn
+    cases heq
+    simp only [hf] at hc
+    cases hrun : VE.Layout.listRun D.layout lead with
+    | error err => simp [hrun, bind, Except.bind] at hc
+    | ok xs =>
+      by_cases hmatch : n.units = xs
+      · simp [hrun, hmatch, bind, Except.bind] at hc
+        cases hc
+        exact ⟨rfl, hmatch⟩
+      · simp [hrun, hmatch, bind, Except.bind] at hc
 
 end VE.Scope
