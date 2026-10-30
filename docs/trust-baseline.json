@@ -1482,6 +1482,62 @@
    "reason": "qt-a3d review F1, F2, F4: VE/Cardinality/Wire.lean +30 D[V] (encode, encBody, encOperand, encPrinted: formula encoders filed D[I], qt-a3a/b's, reclassified as the answers' formulas), VE/Cardinality/Run.lean +14 (statementJson, claimJson, reportJson D[I] to D[V]; runCase's report_id), VE/Cardinality/Document.lean +24 G[V] (CNode, Entry, Graph G[I] to G[V]; Entries); K +0, S +0 over the qt-a3d allowance; R16 ties pass in FOLLOW-UPS.md",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3d, 2026-10-30",
    "commit": "1f28dddfb3ef480ba7680d6a7c51cb801e9cb876"
+  },
+  {
+   "class": "V",
+   "lines": 1,
+   "reason": "sc-1af: VE/Scope/Wire.lean +1 (decodeBlock's boundary call; the check jsonWF?/listWF?/implWF?/balanced?/ascending is G[R] +31 in VE/Scope/Govern.lean and illFormed D[R] +10 in VE/Scope/Wire.lean, untrusted)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1af, 2026-10-18",
+   "commit": "81b8371210db46ae992a2eff54f1a6d0039d2d0d"
+  },
+  {
+   "class": "S",
+   "lines": 13,
+   "reason": "Route environment header guard and response-shape branch; tests/test_difffuzz.py::test_request_envelope_fields_precede_predicate_sort_fault",
+   "signature": "standing ruling R16 (DRI-RULINGS.md)",
+   "commit": "45e886fee9ee5cc475bd6355ceb6c099345e8332"
+  },
+  {
+   "class": "V",
+   "lines": 2,
+   "reason": "Route environment header guard and response-shape branch; tests/test_difffuzz.py::test_request_envelope_fields_precede_predicate_sort_fault",
+   "signature": "standing ruling R16 (DRI-RULINGS.md)",
+   "commit": "45e886fee9ee5cc475bd6355ceb6c099345e8332"
+  },
+  {
+   "class": "V",
+   "lines": 2,
+   "reason": "me-6cc: lean/VE/Calc/Units.lean V +2 (decodeFactor: the shape guard line and one doc line; 8 to 10 lines)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-6cc, 2026-10-30",
+   "commit": "62d8329d4dd96a08301764a64405d8333aeb42af"
+  },
+  {
+   "class": "V",
+   "lines": 4,
+   "reason": "df-1bbb: VE/Defaults/Wire.lean +2, ResponseShape/Schemas/NormDefaults.lean +2",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-1bbb, 2026-10-18",
+   "commit": "bf28108dc14e7534f037e578850cd5ae5df69ff0"
+  },
+  {
+   "class": "V",
+   "lines": 143,
+   "reason": "scale-lean-memo: Run.lean +75 (bounded admission memo and service runner), Protocol.lean +63 (memo request dispatch), Serve.lean +5 (process state and stats); K +0, S +0, V +143; tests/test_readings_memo.py covers every new definition",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), scale-lean-memo, 2026-10-29",
+   "commit": "b0dce1ea4c96241925fa2ee505e756ca1ee8a54f"
+  },
+  {
+   "class": "V",
+   "lines": 3,
+   "reason": "scale-lean-memo check fix: Protocol.memoLineTooLong +2, Serve.readingsMemoStatsEnabled +1; K +0, S +0, V +3; MemoExamples and Serve guards exercise both",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), scale-lean-memo, 2026-10-29",
+   "commit": "b0dce1ea4c96241925fa2ee505e756ca1ee8a54f"
+  },
+  {
+   "class": "V",
+   "lines": 2,
+   "reason": "scale-lean-memo review fix (F1): Run.lean +2 (admitComponentsMemo takes the counted admission onMiss in place of the request's parts; runCaseReportedMemo builds it and keeps the memo state on a refusal); total scale-lean-memo trusted growth K +0, S +0, V +148 (Run.lean +77, Protocol.lean +65, Serve.lean +6) over the merge base, within R16's 150; tests/test_readings_memo.py and lean/VE/Service/MemoExamples.lean exercise both",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), scale-lean-memo review fix, 2026-10-30",
+   "commit": "314b23a42c211ffcd68bd6070fa7ba3770f3a5b0"
   }
  ]
 }
