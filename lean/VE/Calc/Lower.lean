@@ -39,7 +39,7 @@ def Expr.linear : Expr → Option QLin
 /-- 5's `QLin.isConst` in one pass: every coefficient cancels. -/
 def QLin.isConstOnce (L : QLin) : Bool := (QLin.normOnce L).coeffs.isEmpty
 
-theorem QLin.isConstOnce_eq (L : QLin) : L.isConstOnce = L.isConst := by
+theorem QLin.isConstOnce_eq (L : QLin) : QLin.isConstOnce L = L.isConst := by
   simp only [QLin.isConstOnce, QLin.normOnce_eq, QLin.norm_coeffs_isEmpty, QLin.isConst]
 
 namespace Work
@@ -156,14 +156,16 @@ def Expr.exactBound (e : Expr) : Nat :=
 
 /-- The exact lowering, charged its bound first: only where the shapes leave 5's linearity unknown (a product,
 quotient or power of a side whose coefficients beyond the digit limit may cancel). It stays `tooLarge`. -/
-def exactC (e : Expr) : Node := ⟨Expr.exactBound e, fun _ => match e.linear with
+def exactNode (e : Expr) : Node := ⟨Expr.exactBound e, fun _ => match e.linear with
   | none => .nonlinear
   | some L => .tooLarge (shapeOf L)⟩
+
+def exactC (limit : Nat) (e : Expr) (w : Nat) : Option (Lowered × Nat) := (exactNode e).run limit w
 
 def decided (e : Expr) : Linearity → Node
   | .linear s => .free (.tooLarge s)
   | .nonlinear => .free .nonlinear
-  | .unknown => exactC e
+  | .unknown => exactNode e
 
 /-- Two operands' lowerings: forms are combined and charged; a side not linear decides; otherwise the shapes do. -/
 def binL (e : Expr) (f : QLin → QLin → Option QLin) (g : Shape → Shape → Linearity) : Lowered → Lowered → Node
@@ -355,7 +357,7 @@ theorem decided_sound (e : Expr) (l : Linearity) (h : Linearity.Sound e.linear l
   | linear s => exact h
   | nonlinear => exact h
   | unknown =>
-    simp only [decided, exactC]
+    simp only [decided, exactNode]
     cases he : e.linear with
     | none => rfl
     | some L => exact ⟨L, rfl, shapeOf_sound L⟩
