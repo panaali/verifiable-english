@@ -68,6 +68,17 @@ def Farkas.check (fs : List QFact) (c : Farkas) : Bool :=
   (decide (comb.const < 0) ||
     (comb.const == 0 && (List.zipWith (fun w f => decide (0 < w) && f.strict) c.weights fs).any id))
 
+namespace Work
+
+/-- The units of one entry visited (a coefficient of a form, a weight of a row): its small arithmetic and its lookups
+among at most `FM.maxUnknowns` names (3.2 (b), "Why 2^33"). -/
+def entryUnits : Nat := 2 ^ 11
+
+/-- A linear form's size: its constant's and its coefficients'. -/
+def formSize (L : QLin) : Nat := qbits L.const + (L.coeffs.map fun p => qbits p.2).sum
+
+end Work
+
 /-- Names in order of first appearance, each once. -/
 def FM.firstAppearance (ns : List String) : List String :=
   ns.foldl (fun acc n => if n ∈ acc then acc else acc ++ [n]) []
