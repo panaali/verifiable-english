@@ -1,0 +1,2 @@
+- `docs/lean-first/b4/capture_discourse.py` — Capture the discourse corpus of the lean-first gate (docs/LEAN-FIRST-PLAN.md 5.1 item 2, batch 4).
+- `docs/lean-first/b4/cpu.py` — Python CPU against Lean CPU of `check_document` over the discourse corpus (lean-first batch 4).

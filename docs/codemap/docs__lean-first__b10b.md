@@ -1,0 +1,3 @@
+- `docs/lean-first/b10b/fuzzer_gate.py` — Run the fourteen dated differential samples on the base and this batch.
+- `docs/lean-first/b10b/trace_items.py` — Run a checkout's differential fuzzer against a named baseline and record every answer.
+- `docs/lean-first/b10b/verify_report.py` — Verify batch 10b's evidence and print the numbers `DELTA.md` reports.

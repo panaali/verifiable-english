@@ -1,0 +1,2 @@
+- `docs/question-answering/q1-4/evidence/speech_ab.py` — Q1.4's A/B over the speech-acts corpus (plan Q1.4, 6.4): `parse_speech`'s content, kind and lint, or refusal.
+- `docs/question-answering/q1-4b/evidence/speech_ab_f2.py` — Q1.4b's check of its saved A/B (plan Q1.4; DRI 2026-10-27 item 4, DRI 2026-10-28 items 1-5, DRI note 2026-10-28c).

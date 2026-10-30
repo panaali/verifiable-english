@@ -1433,6 +1433,55 @@
    "reason": "scale-lean-memo review fix (F1): Run.lean +2 (admitComponentsMemo takes the counted admission onMiss in place of the request's parts; runCaseReportedMemo builds it and keeps the memo state on a refusal); total scale-lean-memo trusted growth K +0, S +0, V +148 (Run.lean +77, Protocol.lean +65, Serve.lean +6) over the merge base, within R16's 150; tests/test_readings_memo.py and lean/VE/Service/MemoExamples.lean exercise both",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), scale-lean-memo review fix, 2026-10-30",
    "commit": "314b23a42c211ffcd68bd6070fa7ba3770f3a5b0"
+  },
+  {
+   "class": "S",
+   "lines": 48,
+   "reason": "en-sw: VE/EnglishGrammar/SourceWords.lean S +48, G[V] +20; K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-sw, 2026-10-29",
+   "commit": "ffddf155ccb5366464d5358fe1bfd19c931f9d68"
+  },
+  {
+   "class": "V",
+   "lines": 20,
+   "reason": "en-sw: VE/EnglishGrammar/SourceWords.lean S +48, G[V] +20; K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-sw, 2026-10-29",
+   "commit": "ffddf155ccb5366464d5358fe1bfd19c931f9d68"
+  },
+  {
+   "class": "S",
+   "lines": 7,
+   "reason": "en-sw F1: VE/EnglishGrammar/SourceWords.lean S +7 for sourceWordNormal and normalized catalogue checks; cumulative en-sw growth S +55, G[V] +20, K +0; SourceWordsExamples #guards cover the added definition",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-sw F1, 2026-10-29",
+   "commit": "785927e109ecc9cafcc320da40ea2b1cc5d2c5da"
+  },
+  {
+   "class": "V",
+   "lines": 43,
+   "reason": "me-5e: VE/Calc/Run.lean +43 untied D[V] for follows wire evidence and reclassification of Check.runShown and Derive.shown; the new Calc response shapes are reject-only G[R]; K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-5e, 2026-10-29",
+   "commit": "b0dce1ea4c96241925fa2ee505e756ca1ee8a54f"
+  },
+  {
+   "class": "V",
+   "lines": 48,
+   "reason": "sc-5rc: VE/Service/Document.lean +31 D[V]; ResponseShape/Schemas/Document.lean +17 G[V]; K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-5rc, 2026-10-29",
+   "commit": "471ccc7e4cb9f163cdcbd6c3bf66f3462d6d2b6d"
+  },
+  {
+   "class": "V",
+   "lines": 2,
+   "reason": "sc-5rc: VE/Service/Document.lean +31, ResponseShape/Schemas/Document.lean +19",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-5rc, 2026-10-29",
+   "commit": "471ccc7e4cb9f163cdcbd6c3bf66f3462d6d2b6d"
+  },
+  {
+   "class": "V",
+   "lines": 7,
+   "reason": "sc-5rc review F1: VE/Service/Document.lean +36 D[V], ResponseShape/Schemas/Document.lean +21 G[V]; citations preserved in composed readings; K +0, S +0; R16 ties pass registered in FOLLOW-UPS.md",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-5rc, 2026-10-18",
+   "commit": "314b23a42c211ffcd68bd6070fa7ba3770f3a5b0"
   }
  ]
 }

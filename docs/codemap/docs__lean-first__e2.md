@@ -1,0 +1,2 @@
+- `docs/lean-first/e2/evidence/coverage_directed.py` — Directed E2.5 fixed-rule comparison.
+- `docs/lean-first/e2/evidence/readability_report.py` — Render the saved readability comparison; no checkout or live git queries.

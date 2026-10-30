@@ -1,0 +1,25 @@
+- `docs/act-phrases/ap-1a/byte_identity.py` — A31 of the act-phrases specification for ap-1a: without `acts@0`, today's documents decode byte-identically.
+- `docs/act-phrases/ap-1a/seed_bugs.py` — Seeded bugs of ap-1a: at least one per new trusted definition (R16), each planted, built and restored.
+- `docs/act-phrases/ap-1b/delta.py` — ap-1b's user-visible delta on `acts@0` inputs, base against head (DELTA.md rows 2 to 4), saved as evidence.
+- `docs/act-phrases/ap-1b/oracle_acts.py` — Append the `acts@0` environments to the model oracle `tests/data/b15b-model-oracle.json.gz` (ap-1b).
+- `docs/act-phrases/ap-1b/seed_bugs.py` — Seeded bugs of ap-1b: one per new trusted definition and per claimed behaviour (R16), planted, run and restored.
+- `docs/act-phrases/ap-1bb/delta.py` — ap-1bb's delta, base against head: every record that changes, and why.
+- `docs/act-phrases/ap-1bb/seed_bugs.py` — Seeded bugs of ap-1bb: one per claimed behaviour and per new trusted definition (R16), planted, run and restored.
+- `docs/act-phrases/ap-1bc/delta.py` — ap-1bc's delta, base against head: the words route's lines of `acts@0` clauses (DELTA row 1), and a control.
+- `docs/act-phrases/ap-1bc/seed_bugs.py` — Seeded bugs of ap-1bc: one per claimed behaviour of `VE.Words.regulatedOf`, planted, run and restored.
+- `docs/act-phrases/ap-1bd/delta.py` — ap-1bd's delta, base against head: every record that changes, and why.
+- `docs/act-phrases/ap-1be/delta.py` — ap-1be's delta, base against head: every record that changes, and why.
+- `docs/act-phrases/ap-1be/seed_bugs.py` — Seeded bugs of ap-1be: one per claimed behaviour of the norm-defaults route's `wordings`, planted, run and restored.
+- `docs/act-phrases/ap-1c/seed_bugs.py` — Seeded bugs of ap-1c: each makes `check_extends` false, and must break its proof; planted, built and restored.
+- `docs/act-phrases/ap-1d/seed_bugs.py` — Seeded bugs of ap-1d: each makes a theorem of `LexicalProofs.lean` false and must break its proof.
+- `docs/act-phrases/ap-1d/statements.py` — Statement gate of ap-1d: each theorem it proves equals docs/spec/act-phrases.md 4.3, whitespace normalised.
+- `docs/act-phrases/ap-1e/seed_bugs.py` — Seeded bugs of ap-1e: each makes a theorem or a `#guard` of `LexicalProofs.lean` false and must break it.
+- `docs/act-phrases/ap-1f/seed_bugs.py` — Seeded bugs of ap-1f: each makes `decodeRegulated_plain` (or its helper `ite_ok_cases`) false and must break it.
+- `docs/act-phrases/ap-2/measure_n.py` — ap-2 first step: re-measure the raw derivation budget N and the step budget after D9 (act-phrases PLAN 11, item 4).
+- `docs/act-phrases/ap-2/seed_bugs.py` — ap-2 seeded bugs: plant each bug, show that its check fails, restore the file.
+- `docs/act-phrases/ap-2b/seed_bugs.py` — ap-2b seeded bugs: plant each in lean/VE/Acts/Grammar.lean with its proofs cut (so a fixture must catch it, not a proof), build VE.Acts.RuleExamples, record th…
+- `docs/act-phrases/ap-2c/seed_bugs.py` — ap-2c seeded bugs: plant each in its file (Readings.lean with its theorems cut, so a fixture must catch it, not a proof), build VE.Acts.MeaningExamples, record…
+- `docs/act-phrases/ap-3/seed_bugs.py` — ap-3 seeded bugs and hand mutants: plant each one, build the fixtures, restore the file.
+- `docs/act-phrases/ap-3b/seed_bugs.py` — ap-3b seeded bugs and the constructor sweep: plant each one, show that the fixtures fail, restore the file.
+- `docs/act-phrases/ap-3c/check_statements.py` — ap-3c statement gate: each 6.6 theorem Elaborate.lean proves equals draft 2's text, whitespace normalised.
+- `docs/act-phrases/ap-3c/seed_bugs.py` — ap-3c seeded bugs: plant each one in Elaborate.lean, show that a fixture fails, restore the file.

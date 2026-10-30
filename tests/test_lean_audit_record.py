@@ -198,7 +198,7 @@ SCRATCH = {
                         'theorem _root_.root_result : True := trivial\nend VE.Scratch\n'),
     'ResponseShape/Shape.lean': 'theorem ResponseShape.shape_ok : 1 = 1 := rfl\n',
     'VE/Audit.lean': '-- empty until the first --write\n',
-    'ResponseShape/Audit.lean': '-- empty until the first --write\n',
+    'ResponseShapeAudit.lean': '-- empty until the first --write\n',
 }
 
 
@@ -233,7 +233,7 @@ def test_scratch_theorem_needs_write_and_check_passes_after(scratch, capsys):
     assert text == (f'{audit.HEADER}-- The `#print axioms` audit of {audit.SCOPE["VE/Audit.lean"]}.\n'
                     f'import VE.Scratch\n\n#print axioms VE.Scratch.Nested.result\n#print axioms {instance}\n'
                     '#print axioms VE.Scratch.kept\n#print axioms root_result\n')
-    assert (lean / 'ResponseShape/Audit.lean').read_text().endswith(
+    assert (lean / 'ResponseShapeAudit.lean').read_text().endswith(
         'import ResponseShape.Shape\n\n#print axioms ResponseShape.shape_ok\n')
     assert audit.recorded_names((lean / 'axioms.txt').read_text()) == [
         'VE.Scratch.Nested.result', instance, 'VE.Scratch.kept', 'root_result', 'ResponseShape.shape_ok']
