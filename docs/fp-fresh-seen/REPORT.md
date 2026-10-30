@@ -1,6 +1,6 @@
 # fp-fresh-seen (2026-10-30): the fresh draw rebuilds the saved pools
 
-Status: built; 13 new tests and the 9 fp-fulltext tests pass. Installed in manage-agents tools-local (not a git repository); this branch carries only this report.
+Status: built on base f58ef91bb, HEAD is the commit of this report; 13 new tests and the 9 fp-fulltext tests pass. Installed in manage-agents tools-local (not a git repository); this branch carries only this report.
 What changed: `fidelity-pilot-units-fresh.py` now marks only the units drawn as seen, so `apol` rebuilds both saved pools (38 and 18 ids) and exits 0.
 Open for fp-apol: the complement is 40 units (33 assent + 7 flow), not 10. The ruling's "5+5" and "flow 13 left" do not match what this script returns; see "Open item". No script change was made for it.
 No signature is needed: no VE product code, no DELTA row, no Ruling cell.
@@ -71,7 +71,7 @@ For fp-apol's preparer; the task did not ask to settle this, so nothing was deci
 6. Gate evidence: N.A. for the builder, the chain gates the final HEAD.
 7. Nothing unsigned: PASS, no DELTA row; the branch diff is this report only (`git diff --stat main...HEAD`).
 8. User-visible change: PASS, draw.json `repeated` and the stdout field, both listed here; test_profile_composition_units_do_not_change.
-9. Test selection: PASS, the selection on this branch, see the commit that follows this report.
+9. Test selection: PASS, `tools/select_tests.py --base $(git merge-base HEAD main)` printed `8/500 test units`, changed: docs/fp-fresh-seen/REPORT.md (not every unit; the fresh-draw tests live outside this repository, so the selection cannot reach them, and they are run directly as above). `mac-pytest.sh --select` on efa1ba611: `ran on ve-mac-1 ... 2006s; exit=0; failed/error ids=0`.
 10. Lean statements: N.A., no Lean.
 11. Budgets: N.A., no budget or deadline.
 12. CPU: N.A., no VE path; the suite's 13 tests take about 7 s.
