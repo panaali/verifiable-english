@@ -1,0 +1,34 @@
+- `ve_experiments/__init__.py` — (no module docstring)
+- `ve_experiments/assist_haiku.py` — Claude proposer backend for ``ve assist`` via the audited claude CLI endpoint.
+- `ve_experiments/claude_cli.py` — Audited subscription endpoint (copied from ve-codex-v4; see ve_experiments/assist_haiku.py).
+- `ve_experiments/colab.py` — Batch backend for open-weight judges (vLLM on a Colab GPU), producing the same trial records as hosted judges.
+- `ve_experiments/e1/__init__.py` — (no module docstring)
+- `ve_experiments/e1/analysis.py` — E1 analysis as preregistered: `uv run python -m ve_experiments.e1.analysis <split> <run dir name> [<e1b run dir name>] [out.md]`.
+- `ve_experiments/e1/attacks.py` — Mechanical attacks on wire-format ASTs, meaning-preserving rewrites, and validation.
+- `ve_experiments/e1/balance.py` — Explanation-balance gate: `uv run python -m ve_experiments.e1.balance <split> [--write]`.
+- `ve_experiments/e1/build.py` — Build E1 candidates: `uv run python -m ve_experiments.e1.build dev [--no-llm]`.
+- `ve_experiments/e1/colab_run.py` — E1 on the open-weight judges: `uv run python -m ve_experiments.e1.colab_run export|submit|fetch|score|hosted <split> <job id>`.
+- `ve_experiments/e1/covariates.py` — Per-view length covariates and the ve_fluent contraction rate on real items: `uv run python -m ve_experiments.e1.covariates dev`.
+- `ve_experiments/e1/diag_legend.py` — DEV-ONLY diagnostic, not a cell of E1: does the long JSON legend explain why the open-weight judges approve far more often under the current prompt than on the…
+- `ve_experiments/e1/pilot.py` — Dev-split pilot: `uv run python -m ve_experiments.e1.pilot [gate|cells|e1b|report] ...`.
+- `ve_experiments/e1/prompts.py` — The one judge prompt of E1 and the E1b comprehension prompt.
+- `ve_experiments/e1/results.py` — Compose experiments/E1/RESULTS.md: `uv run python -m ve_experiments.e1.results <split> <run> <e1b run> <out.md> [units]`.
+- `ve_experiments/e1/templates.py` — Semantic templates: careful requirement prose + the faithful v0 AST (wire format).
+- `ve_experiments/e1/tuning.py` — Dev-only difficulty tuning for E1: `uv run python -m ve_experiments.e1.tuning run|report`.
+- `ve_experiments/e1/views.py` — The deterministic views of one AST, all rendered by the `ve` package from one shared traversal (`ve.printer.render`): fol_symbols, fol_keywords, ve_strict, ve_…
+- `ve_experiments/e1/vocab.py` — Fresh vocabularies for E1.
+- `ve_experiments/llm.py` — Shared model client over the `claude` and `codex` CLIs.
+- `ve_experiments/paid.py` — Serial native-role API calls with durable, fail-closed dollar reservations.
+- `ve_experiments/runner.py` — Generic runner for "items x conditions x judges" experiments.
+- `ve_experiments/smoke.py` — Live smoke test of the model client: `uv run python -m ve_experiments.smoke [model ...]`.
+- `ve_experiments/stats.py` — Metrics and paired bootstrap for approve/reject experiments.
+- `ve_experiments/t1c/__init__.py` — T1c: separating certificates for "cannot access" claims.
+- `ve_experiments/t1c/certificates.py` — Separating-set certificates for "u cannot access x", in VE closure@0 with closure induction.
+- `ve_experiments/t1c/context.py` — Context safety: byte upper bound, then authenticated native token count if needed.
+- `ve_experiments/t1c/covariates.py` — A1 covariates and binding-construction checks (descriptive; computed from the frozen items).
+- `ve_experiments/t1c/materials.py` — T1c materials: large cyclic RBAC policies, "cannot access" claims, independent ground truth.
+- `ve_experiments/t1c/metrics.py` — Item-cluster inference; k samples are not k independent policies.
+- `ve_experiments/t1c/protocol.py` — T1c arms, prompts and authenticated trusted verdicts.
+- `ve_experiments/t1c/run.py` — T1c runner: separating certificates for "cannot access" claims. Commands (repository root, UV_CACHE_DIR=/private/tmp/ve-uv-cache-t4): prepare generate items, c…
+- `ve_experiments/t1c/transport.py` — T1c copy of the T1b A3 audited subscription endpoint (session limits pause instead of stop).
+- `ve_experiments/ve_iface.py` — Thin interface between the experiment harness and the `ve` language package.

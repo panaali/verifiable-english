@@ -1,0 +1,7 @@
+- `docs/lean-first/b16b/capture_documents.py` — Freeze the `document` corpus of `tools/lean_first_diff.py` (lean-first batch 16b).
+- `docs/lean-first/b16b/fuzz_seeds.py` — Save the 16b differential-fuzzer evidence from base and head reports (`tools/difffuzz.py --report`).
+- `docs/lean-first/b16b/latency.py` — Gate item 4 for 16b: `check_document` on the owned seed documents, in one checkout (run at the base and at the head on the same host, one after the other).
+- `docs/lean-first/b16b/make_delta.py` — Write the 16b signed list (`delta.json`) from a `tools/lean_first_diff.py compare --json` run without one.
+- `docs/lean-first/b16b/mutants.py` — Seeded faults for 16b: one per behaviour the switch claims. Each is applied alone, its test is run (it must fail), and the source is restored; a Lean fault is …
+- `docs/lean-first/b16b/report.py` — The 16b report numbers: saved once from git, then regenerated from the saved evidence only.
+- `docs/lean-first/b16b/share.py` — How many documents the 16b switch hands to Lean, per corpus (saved as `evidence/share.json`).

@@ -1,0 +1,10 @@
+- `paper/analysis/check_numbers.py` — Independent stdlib check of headline post hoc arithmetic against raw trials.
+- `paper/analysis/e4_sensitivity.py` — Offline E4 parser sensitivity; no model calls.
+- `paper/analysis/reanalyse_e1.py` — POST HOC offline reanalysis.
+- `paper/analysis/reanalyse_e4_e0.py` — POST HOC E4 lenient results/reply inspection and E0 dispute ledger.
+- `paper/build.py` — Assemble paper/sections/*.md into build/paper.md.
+- `paper/figures/gen_e0_tables.py` — Recompute Wilson intervals from pinned counts; retain frozen/adjudicated separation.
+- `paper/figures/gen_implementation_tables.py` — Build example displays and corpus/performance tables from repository artifacts.
+- `paper/figures/gen_judge_ladder.py` — DEV-PILOT plot and tables from committed raw-count summaries, never live calls.
+- `paper/figures/gen_system.py` — Draw the committed interface schematic without a TeX dependency.
+- `paper/verify.py` — Check provenance and assembled artifacts; not a scientific claim verifier.
