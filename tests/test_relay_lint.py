@@ -236,12 +236,14 @@ def test_seeded_default_labels(tmp_path, line, found):
 
 
 def test_the_defaults_relay_is_relayed_and_every_ve_module_is_read():
-    """`ve/defaults.py` is in `RELAYED`, its English is linted with it (a helper only it imports), both pass every
-    rule, and the fifth rule reads every module of `ve/`, packages included."""
-    assert "ve/defaults.py" in relay_lint.RELAYED
-    assert ROOT / "ve/defaults_english.py" in relay_lint.helpers([ROOT / path for path in relay_lint.RELAYED])
+    """The defaults relay and its English renderer are both linted; the fifth rule reads every module of `ve/`,
+    packages included. The renderer is explicitly relayed because readings also imports it."""
+    assert {"ve/defaults.py", "ve/defaults_english.py"} <= set(relay_lint.RELAYED)
     modules = set(relay_lint.defaults_modules())
     assert {ROOT / "ve/defaults.py", ROOT / "ve/defaults_english.py", ROOT / "ve/document/cli.py"} <= modules
     assert modules == {p for p in (ROOT / "ve").rglob("*.py")}
+    classes = relay_lint.content_classes()
     for name in ("ve/defaults.py", "ve/defaults_english.py"):
-        assert relay_lint.main([str(ROOT / name)]) == 0, name
+        path = ROOT / name
+        assert relay_lint.findings(path, classes) == [], name
+        assert relay_lint.default_labels(path) == [], name
