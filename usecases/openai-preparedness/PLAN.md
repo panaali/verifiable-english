@@ -441,6 +441,42 @@ safety-framework 9. Report, unscored, what changes without N1 and without N2.
 
 ## 12. Deviations (after running VE; empty at plan time)
 
+1. **D1 remains a sparse baseline, not a completed F1–F17 translation.** Source-linked draft blocks now exist for
+   every F family, including F5/F6/F11/F12/F17 and F13. The F6, F11, F12 and F17 reading alternatives are named
+   per choice; the F11 adjustment obligations are shared by both choices. These drafts do not discharge the source
+   gaps: F5's checkpoint and coverage decision remain UNFORMALISED, F13's periodicity and assessment remain
+   UNFORMALISED, and Table 2's row readings remain OPEN with SC/AP waits where the draft omits scope, a disjunction
+   or consultation. All reading content stays pending. Other clauses without a complete admitted rule carry
+   feature-specific blockers and remain outside CHECKED. The follow-up must resolve these gaps before key answering.
+2. **Only six Table 1 level markers carry D1 facts.** They are separate 6- or 10-byte units. Their capability
+   descriptions, risk claims and safeguard bullets are separate OPEN or UNFORMALISED units. This prevents the whole
+   row from becoming CHECKED when the two stated facts are all D1 encoded.
+3. **D2 is admitted as a separate risk probe.** Its severe-harm class has the two disjuncts in footnote 1.
+   BIO-H, BIO-C, CYB-H and CYB-C have source-linked `might` cells without any `leads` cell or severity ranking.
+   AIS-H and AIS-C remain AT gaps: acceleration is not itself a harm, and the loss-of-control chain is not a
+   direct cause. No source byte is promoted by this probe.
+4. **D3 admits the one-fifth elapsed-time bound and certifies the literal date bridges.** P4 represents the
+   self-improvement ratio as `5 * current_progress_time <= baseline_progress_time` and replays certificates for
+   the 2025-04-15 to 2026-04-15 and 2026-01-05 to 2027-01-05 365-day shifts, plus 2021 before 2024. These
+   arithmetic facts do not choose RS10 or RS14. The severe-harm “thousands” and “hundreds of billions” thresholds
+   remain QT gaps because the source gives no exact numerical boundary; “several months” remains ET.
+5. **P8 refuses the planned combination.** On F2 with `judgments@0`, `documents@1` and D1's soft norms, Lean says
+   `CheckerUnavailable: judgments@0 with soft-norms@0 needs its composed Lean route`. D1 therefore uses W2 open
+   names and pending readings, as the plan allowed.
+6. **The former `not_translated` backlog has been classified by its immediate missing feature.** Duties without
+   a complete D1 act or rule are AP, quantifiers without their per-item scope are SC, hedges and attitudes are AT,
+   and descriptive claims without an admitted reading remain under readings. This is a blocker classification,
+   not a completed translation or a claim that any one feature would certify these bytes.
+7. **No key cell changed and no key item was answered in this baseline.** The only original-key comparison remains
+   the freeze and transcription tests. No conflict is presented as a source finding.
+8. **Review correction.** Four F7/F9 units lost temporal or per-item constraints in their earlier rule blocks;
+   they are UNFORMALISED with ET/SC blockers. The RS15 change-log undertakings and the Appendix C reminders of
+   F2/F3 are OPEN. These corrections do not complete the planned D1–D3 translation.
+9. **Appendix C.2 differs from the section 2/3 treatment of illustrative safeguards.** The source says that
+   safeguards "should sufficiently minimize" misaligned-model risk in a sentence before the examples. The
+   source-linked strict/default RS9 drafts record that modal alternative, while the example lists remain factors
+   and are not a definitive checklist. The reading set stays OPEN, so no example is promoted to a requirement.
+
 ## 13. Files for the implementation round (not this commit)
 
 `environment.d1.json`, `environment.d2.json`, `environment.d3.json`; `pf.d1.ve.md`, `pf.d2.ve.md`, `pf.d3.ve.md`

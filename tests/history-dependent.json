@@ -300,7 +300,7 @@
   },
   {
    "test": "tests/test_difffuzz.py",
-   "why": "starts git (git show) in conformance/frozen_norm_defaults.py, docs/defeasible/df-e1/runner.py, ve_experiments/runner.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py, docs/defeasible/df-e1/runner.py, docs/judgment-terms/jt-e1r/runner.py, ve_experiments/runner.py",
    "recorded": [
     "coverage map",
     "source"
@@ -308,6 +308,7 @@
    "via": [
     "conformance/frozen_norm_defaults.py:<module>: git show",
     "docs/defeasible/df-e1/runner.py:prereg_committed: git show",
+    "docs/judgment-terms/jt-e1r/runner.py:committed: git show",
     "ve_experiments/runner.py:_git: git",
     "ve_experiments/runner.py:require_committed: git show"
    ]
@@ -673,6 +674,16 @@
     "tests/test_identity_lint.py:test_the_ratchet_starts_at_the_commit_that_adds_the_allowlist: git show",
     "tests/test_identity_lint.py:test_the_tree_passes_and_has_not_grown_since_the_merge_base: git merge-base",
     "tools/identity_lint.py:base_entries: git cat-file, git rev-parse, git show"
+   ]
+  },
+  {
+   "test": "tests/test_jt_e1r.py",
+   "why": "starts git (git show) in docs/judgment-terms/jt-e1r/runner.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "docs/judgment-terms/jt-e1r/runner.py:committed: git show"
    ]
   },
   {
@@ -1078,6 +1089,16 @@
    "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
    "recorded": [
     "coverage map",
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_rd9_docroute.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
+   "recorded": [
     "source"
    ],
    "via": [

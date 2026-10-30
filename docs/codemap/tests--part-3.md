@@ -26,7 +26,7 @@
 - `tests/test_gate_shards.py` — A merged gate is a full gate only after every planned test was accounted for.
 - `tests/test_gate_trust.py` — arch-AR-4 review F2: AR-4 moves the per-file trust tables out of the tree and into the gate record (`tools/trust_map.py --files`), but no gate wrote them.
 - `tests/test_gatekeeper_adapter.py` — (no module docstring)
-- `tests/test_gen_inv_design.py` — The gen-inv-design document covers every route the code gives it (gen-inv-design review F1, F2).
+- `tests/test_gen_inv_design.py` — The gen-inv-design document covers every route the code gives it (gen-inv-design review F1, F2, F3, F5, F8).
 - `tests/test_grammar.py` — Executable contract for bounded constrained-decoding grammars.
 - `tests/test_grammar_backends.py` — Optional smoke tests against constrained-decoding backend compilers.
 - `tests/test_grammar_cli.py` — (no module docstring)
@@ -37,6 +37,7 @@
 - `tests/test_inventory_lint.py` — The Gate 2 inventory lint (tools/inventory_lint.py).
 - `tests/test_jt_crossplan_ties.py` — The ties pass of jt-crossplan-fixes: the statement it proposes for `PolicyCtx.of` is the one Lean checks.
 - `tests/test_jt_e1.py` — Local JT-E1 protocol checks; never makes a model call.
+- `tests/test_jt_e1r.py` — JT-E1r pre-call checks.
 - `tests/test_jt_e3.py` — Small, model-free checks of JT-E3's agreement and blind runner.
 - `tests/test_judgments_answer.py` — The relay of the `document` mode's `judgments` field (judgment-terms-PLAN.md JT-2, Python; docs/spec/ judgment-terms.md 8.3): schema and binding only (R8), and…
 - `tests/test_judgments_document.py` — `judgments@0` in Lean's `document` mode (judgment-terms-PLAN.md JT-2; docs/spec/judgment-terms.md 8): the fixtures of spec 11.2 and 11.3 replayed through the s…
@@ -86,4 +87,3 @@
 - `tests/test_llm.py` — (no module docstring)
 - `tests/test_me4_csv_mutants.py` — The saved mutation run must not waive CSV character regressions.
 - `tests/test_merge_tooling_evidence.py` — docs/merge-tooling.md against its saved evidence (docs/merge-tooling/*.json).
-- `tests/test_metered_answer.py` — The `metered` relay never shows a trace binding the request does not hold (lf-18 review F1; DRI-RULINGS R8 (b), FINDING-CLASSES 4 and 15).
