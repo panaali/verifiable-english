@@ -1,0 +1,15 @@
+{
+  "item": "q1-4bb",
+  "mutants": [
+    {"language": "lean", "file": "lean/VE/Question/Run.lean", "definition": "VE.Question.Run.speechPrefixes",
+     "mutation": "drop `++ speechAuxiliaries.map (capitalise · ++ \" \")` (no \"Is \" in Lean's list)",
+     "test": "lean/VE/Question/Examples.lean:92 #guard Run.speechPrefixes", "result": "build failed: Examples.lean:92:0"},
+    {"language": "python", "file": "ve/speech_english.py", "definition": "_LEAN_PREFIXES",
+     "mutation": "stale literal beside the contract read: (*QUESTION_CALLERS[SPEECH_CALLER], \"Is \")",
+     "test": "tests/test_speech_polar_lean.py::test_the_speech_parser_keeps_no_prefix_of_its_own",
+     "also": "tests/test_speech_polar_lean.py::test_the_routed_prefixes_are_the_contracts", "result": "2 failed"},
+    {"language": "python", "file": "ve/speech_english.py", "definition": "_LEAN_PREFIXES",
+     "mutation": "contract read that drops the fronted prefix: QUESTION_CALLERS[SPEECH_CALLER][:3]",
+     "test": "tests/test_speech_polar_lean.py::test_an_f2_wording_is_sent", "result": "5 parametrisations failed"}
+  ]
+}
