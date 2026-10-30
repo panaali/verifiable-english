@@ -115,8 +115,8 @@ time limit.
   at `:117` does fail on them, but the tool cannot count it, since the check reads an instance that reads `Shape.Sound`
   (`allow` reasons). The wider `--classes all` run (523 mutants) was **not run**; the 40 hand bugs stand for the C code.
 - **Selected tests:** `mac-pytest.sh --select`, GitHub Actions, 6 shards, run me-2nc-75dac3b2-t392237: exit 0, 400 of
-  400 units passed (`/tmp/me2nc/select.log`). This ran before this report and `mutants.json`-only commits; no code
-  changed after it.
+  400 units passed (`/tmp/me2nc/select.log`). It ran at 75dac3b27; the commits after it add only this report and
+  DELTA.md.
 - **Others:** `uv run pytest -q tests/test_calc_service.py`: 26 passed. `tests/test_assurance_manifest.py`: 138 passed
   (Wire.lean re-pinned, 849 lines). `tools/gate_collection.py --check --prebuilt`: "4 added, 0 removed by a trailer, 0
   refused, 0 stale and 0 malformed". `repo_map.py --check`: PASS, 39 modes. No test in `main-known-red.txt` was touched.
