@@ -1,0 +1,1 @@
+- `docs/devtime/devtime-1/seed_bugs.py` — Plant each seeded bug of mutants.json, run its test, restore the file, and print whether the test failed.

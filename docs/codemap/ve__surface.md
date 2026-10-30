@@ -1,0 +1,13 @@
+- `ve/surface/__init__.py` — Registry of VE surface constructs.
+- `ve/surface/alternatives.py` — Alternatives statement vocabulary, scoped to alternatives@0.
+- `ve/surface/count.py` — Bounded user-sort counting sugar, expanded before identity and certification.
+- `ve/surface/data.py` — Checked data sugar; both forms elaborate to ordinary binary atoms.
+- `ve/surface/definitions.py` — English authoring of identity-bound definitions and document glossaries.
+- `ve/surface/nary.py` — The nary@0 wire constructor and surface extension point.
+- `ve/surface/norms.py` — W1 statement surface declarations.
+- `ve/surface/registry.py` — Statement-initial surface dispatch, ordered by longest English keyword.
+- `ve/surface/rights.py` — Rights incident English, reusing the audited soft rule grammar.
+- `ve/surface/risk.py` — Risk English forms and their single, profile-scoped readings.
+- `ve/surface/softnorms.py` — English surface of ``soft-norms@0``.
+- `ve/surface/time.py` — Controlled W6 quantity wordings for explicit, identity-bound constant names.
+- `ve/surface/unambiguity.py` — Admit English only after the complete Earley derivation check.

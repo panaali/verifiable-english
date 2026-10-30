@@ -316,6 +316,8 @@ module VE.EnglishGrammar.ReadExamples
 module VE.EnglishGrammar.Rules
 module VE.EnglishGrammar.Run
 module VE.EnglishGrammar.SensesRequest
+module VE.EnglishGrammar.SourceWords
+module VE.EnglishGrammar.SourceWordsExamples
 module VE.EnglishGrammar.Syntax
 module VE.EnglishGrammar.Token
 module VE.EnvironmentProofs

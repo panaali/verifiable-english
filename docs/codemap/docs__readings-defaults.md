@@ -1,0 +1,7 @@
+- `docs/readings-defaults/rd2a/latency.py` — Admission cost of a readings document under the unspecified completion (RD-2a report; review B2).
+- `docs/readings-defaults/rd2b/latency.py` — Cost of `readings-elaborate` under the unspecified completion before and after RD-2b (RD-2b report).
+- `docs/readings-defaults/rd5/ab_rerun.py` — Rerun, one at a time, the pilot records an A/B comparison found different or unavailable (RD-5's A/B).
+- `docs/readings-defaults/rd5/ab_summary.py` — Summarise RD-5's saved A/B evidence (`ab.json.gz` and its reruns) into `ab-summary.json`.
+- `docs/readings-defaults/rd5/check_delta.py` — Check RD-5's DELTA.md against its saved evidence (DRI-RULINGS R11, D4: checked at the gate and the merge).
+- `docs/readings-defaults/rd5/check_evidence.py` — RD-5 saved-evidence checks, run by check_delta.py at the batch gate and merge stage.
+- `docs/readings-defaults/rd5/mutants.py` — RD-5's seeded bugs: plant each, run the test that should catch it, record the failure, restore the file.

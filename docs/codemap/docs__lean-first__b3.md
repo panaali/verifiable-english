@@ -1,0 +1,1 @@
+- `docs/lean-first/b3/timing.py` — Lean-first batch 3 timing: the readings route before and after the deletion of Python's regeneration.
