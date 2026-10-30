@@ -55,7 +55,8 @@ def Filler.parts : Filler → List Part
 
 /-- An atom whose normal form reads back (5.5): it fits its frame (`atomOk`); every part of an argument or a modifier
 is a non-empty run of the frame's filler words, a slot other than the subject `{0}`, or a fixed phrase; no argument
-marker occurs twice; and no joined filler sits under a split marker (the object's `""` included). -/
+marker occurs twice; and every joined filler has two or more parts, does not sit under a split marker (the object's
+`""` included) and, by D9 (i), has no first or last part of two or more words (`longEnd`; DRI 2026-10-30, ap-2bb). -/
 def normalOk (V : Vocab) (a : Atom) : Bool :=
   atomOk V a &&
   match V.frames.find? (·.head == a.head) with
@@ -66,7 +67,7 @@ def normalOk (V : Vocab) (a : Atom) : Bool :=
       | .slot i => i != 0
       | .fixed _ => true) &&
     decide (a.args.map (·.1)).Nodup &&
-    a.args.all (fun | (m, .joined _ _) => !f.split.contains m | (_, .one _) => true)
+    a.args.all (fun | (m, .joined _ ps) => !f.split.contains m && 2 ≤ ps.length && !longEnd ps | (_, .one _) => true)
 
 def tokStr (fx : List String) : Tok → String
   | .word w => w
