@@ -156,10 +156,12 @@ def test_unset_or_one_chunk_runs_every_test(tmp_path, setting):
 def test_the_chunk_applies_after_marker_deselection(tmp_path):
     """`-m` deselects first, then the chunk splits what is left: the parts are those of the listing a unit gets."""
     root = project(tmp_path, {**TREE, "pytest.ini": "[pytest]\nmarkers =\n    slow: x\n",
-                              "tests/test_many.py": "import pytest\n\n\n@pytest.mark.slow\ndef test_slow():\n"
+                              "tests/test_many.py": "import pytest\n\n\n@pytest.mark.slow\ndef test_0slow():\n"
                                                     "    pass\n\n\ndef test_a():\n    pass\n\n\ndef test_b():\n"
-                                                    "    pass\n"})
+                                                    "    pass\n\n\ndef test_c():\n    pass\n"})
     whole = listed(pytest_run(root, "--collect-only", "-m", "not slow", "tests/test_many.py"))
+    # Split before `-m`, chunk 1 would be test_b alone (0slow, b | a, c); after it, it is test_a and test_c.
+    assert test_chunks.chunk(whole, 1, 2) == ["tests/test_many.py::test_a", "tests/test_many.py::test_c"]
     for index in (1, 2):
         kept = listed(pytest_run(root, "--collect-only", "-m", "not slow", "tests/test_many.py",
                                  VE_TEST_CHUNK=f"{index}/2"))
@@ -290,12 +292,13 @@ def test_a_failed_chunk_or_a_problem_fails_the_folded_unit(exits, problems, expe
 
 # --- the decision: which units are chunked, into how many ---
 
-def test_only_units_over_the_threshold_are_chunked_and_capped():
-    decisions = {"tests/test_other.py": {}}
+def test_only_measured_units_over_the_threshold_are_chunked_and_capped():
     seconds = {"tests/test_a.py": select_tests.CHUNK_SECONDS + 1, "tests/test_b.py": select_tests.CHUNK_SECONDS,
-               "tests/test_c.py": 100 * select_tests.CHUNK_TARGET_SECONDS}
+               "tests/test_c.py": 100 * select_tests.CHUNK_TARGET_SECONDS, "tests/test_unmeasured.py": 1e6}
+    decisions = {unit: {} for unit in seconds if unit != "tests/test_unmeasured.py"}
     counts = select_tests.chunk_counts(sorted(seconds), seconds, decisions)
     assert "tests/test_b.py" not in counts and counts["tests/test_c.py"] == select_tests.MAX_CHUNKS
+    assert "tests/test_unmeasured.py" not in counts
     assert counts["tests/test_a.py"] == min(select_tests.MAX_CHUNKS, -(-seconds["tests/test_a.py"]
                                                                        // select_tests.CHUNK_TARGET_SECONDS))
     assert select_tests.chunk_counts(sorted(seconds), seconds, {}) == {}  # no measured rows: nothing chunked
@@ -434,7 +437,8 @@ def test_junit_cases_are_the_node_ids_of_the_file(tmp_path):
     report = tmp_path / "junit.xml"
     pytest_run(root, *run_order.junit_options(report), "tests/test_many.py")
     whole = listed(pytest_run(root, "--collect-only", "tests/test_many.py"))
-    assert run_order.junit_cases(report, "tests/test_many.py") == whole
+    assert [nodeid for nodeid, _ in run_order.junit_cases(report, "tests/test_many.py")] == whole
+    assert {outcome for _, outcome in run_order.junit_cases(report, "tests/test_many.py")} == {"passed"}
     assert run_order.junit_cases(tmp_path / "absent.xml", "tests/test_many.py") is None
 
 

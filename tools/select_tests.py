@@ -1306,10 +1306,11 @@ def working_changes(commit: str) -> tuple[dict[str, str], dict[str, tuple[str | 
 # would cost more than the split saves. Measured data, not a generated file, with its run, as tests/heavy.json.
 CHUNK_DATA = ROOT / "tools/test-chunks.json"
 CHUNK_FORMAT = "ve-test-chunks@1"
-# A unit is chunked only when the coverage map recorded it at more than CHUNK_SECONDS: below that it is not the
-# floor of a selected run (the run's other units take that long on the --jobs pool anyway), and a split only
-# repeats its setup.
-CHUNK_SECONDS = 600.0
+# A unit is chunked only when the coverage map recorded it at more than CHUNK_SECONDS. The step 1 table's files
+# worth chunking were recorded at 592-1928 s in the map of 2026-10-30 (the loaded VM's seconds; 130-608 s alone on
+# the Mac): the lightest, test_acts_vocab_mutants (1383 s on a 4-vCPU Actions runner), is L115's long pole. Below
+# that a file is not the floor of a selected run, and a split only repeats its setup.
+CHUNK_SECONDS = 500.0
 # Each chunk is to take about this long: k = ceil(seconds / CHUNK_TARGET_SECONDS).
 CHUNK_TARGET_SECONDS = 400.0
 # At most this many chunks: the --jobs width of an Actions runner (4 vCPUs), so one file's chunks can all run at
@@ -1331,17 +1332,16 @@ def chunk_decisions(path: Path = CHUNK_DATA) -> dict[str, dict]:
 
 
 def chunk_counts(units: list[str], seconds: dict[str, float], decisions: dict[str, dict]) -> dict[str, int]:
-    """The units to chunk and the number of chunks of each (2 or more): a test file the map recorded at more
-    than CHUNK_SECONDS, in ceil(seconds / CHUNK_TARGET_SECONDS) chunks, at most MAX_CHUNKS and at most the
-    measured row's `max_chunks`; never one whose measured row says `never` (setup-dominated). With no measured
-    rows at all (`chunk_decisions` found none) nothing is chunked."""
-    if not decisions:
-        return {}
+    """The units to chunk and the number of chunks of each (2 or more): a measured test file (a row of
+    `decisions`) the map recorded at more than CHUNK_SECONDS, in ceil(seconds / CHUNK_TARGET_SECONDS) chunks, at
+    most MAX_CHUNKS and at most the row's `max_chunks`; never one whose row says `never` (its setup or one test
+    would eat the split). A file without a row is not chunked: what its chunks would repeat is unknown (L18 measured
+    test_wire_gate_corpus.py at 166 s of setup to 70 s of tests); measure.sh and chunk_table.py add its row."""
     counts = {}
     for unit in units:
-        row = decisions.get(unit, {})
+        row = decisions.get(unit)
         recorded = seconds.get(unit) or 0.0
-        if not unit.startswith("tests/") or unit in EXTRA_UNITS or row.get("never") or recorded <= CHUNK_SECONDS:
+        if row is None or row.get("never") or unit in EXTRA_UNITS or recorded <= CHUNK_SECONDS:
             continue
         count = min(MAX_CHUNKS, math.ceil(recorded / CHUNK_TARGET_SECONDS), row.get("max_chunks") or MAX_CHUNKS)
         if count >= 2:
@@ -1532,15 +1532,17 @@ def record_ordered(ordered: list[str], work: Path, jobs: int, maxfail: int,
             if failed:
                 failures[file] = failed
             continue
-        ran = {index: run_order.junit_cases(reports[labels[index]], file) for index in done}
+        cases = {index: run_order.junit_cases(reports[labels[index]], file) for index in done}
+        ran = {index: None if found is None else [nodeid for nodeid, _ in found] for index, found in cases.items()}
         problems = chunk_problems(file, counts[file], listings.get(file), ran, seconds)
         results[file] = fold_chunks(file, counts[file], done, problems)
         failures[file] = sorted({*failed, file}) if problems else failed
+        outcomes = [outcome for found in cases.values() for _, outcome in found or ()]
         print(f"chunked {file}: {len(done)} of {counts[file]} chunks, exit {results[file]['exit']}, "
-              f"{results[file]['seconds']} s in all; "
-              + ("; ".join(problems) if problems else
-                 f"each of its {sum(len(cases or ()) for cases in ran.values())} tests ran in exactly one chunk"),
-              flush=True)
+              f"{results[file]['seconds']} s in all, longest chunk {max(done[i]['seconds'] for i in done)} s; "
+              + ", ".join(f"{outcomes.count(outcome)} {outcome}" for outcome in ("passed", "skipped", "failed"))
+              + "; " + ("; ".join(problems) if problems else
+                        f"each of its {len(outcomes)} tests ran in exactly one chunk"), flush=True)
     return results, failures
 
 
