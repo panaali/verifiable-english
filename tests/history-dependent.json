@@ -677,6 +677,16 @@
    ]
   },
   {
+   "test": "tests/test_inventory_path.py",
+   "why": "starts git (git check-ignore) in tests/test_inventory_path.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tests/test_inventory_path.py:test_the_overlay_is_git_ignored_and_the_committed_copies_are_not.<locals>.<lambda>: git check-ignore"
+   ]
+  },
+  {
    "test": "tests/test_jt_e1r.py",
    "why": "starts git (git show) in docs/judgment-terms/jt-e1r/runner.py",
    "recorded": [
