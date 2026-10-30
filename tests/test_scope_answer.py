@@ -57,6 +57,7 @@ def test_each_effect_is_explained_by_its_governor_and_sentence(tmp_path, effect,
     path = _write(tmp_path, _governed_text("norms", effect))
     found, meta, _ = scope.explain(path.read_bytes())
     assert [(r["unit"], [(x["id"], x["provenance"]) for x in r["governors"]]) for r in found] == rows
+    assert {x["effect"] for r in found for x in r["governors"]} <= {effect.replace("_", "-")}
 
 
 def test_the_reader_sees_each_units_text_and_its_sentences_and_the_ids_only_in_the_provenance_view(tmp_path, capsys):
@@ -172,3 +173,16 @@ def test_route_cases_answer_their_rows():
         else:
             assert scope.answer_problem(row, _split(case["document"])[0], case["id"]) is None, (case["id"], row)
 
+
+
+def test_the_proved_statements_are_spec_5_3s_text():
+    """The statement gate: `explain_bound` and `explain_rows_iff` are the reviewed text (scope.md 5.3), whitespace aside."""
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[1]
+    spec, lean = (root / "docs/spec/scope.md").read_text(), (root / "lean/VE/Scope/Run.lean").read_text()
+
+    def statement(text, name):
+        rest = text[text.index(f"theorem {name} "):]
+        return " ".join(rest[:min(i for i in (rest.find(":="), rest.find("\n\n")) if i >= 0)].split())
+    for name in ("explain_bound", "explain_rows_iff"):
+        assert statement(lean, name) == statement(spec, name), name

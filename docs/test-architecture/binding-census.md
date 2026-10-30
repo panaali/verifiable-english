@@ -8,11 +8,11 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 |---|---:|
 | leaves:bound | 258 |
 | leaves:closed domain | 288 |
-| leaves:none | 1426 |
+| leaves:none | 1428 |
 | modes | 40 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 1025 |
+| today:not probed | 1027 |
 | today:shape | 546 |
 | today:unbound | 137 |
 | answers | 574 |
@@ -3460,22 +3460,25 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 |---|---|---|---|---|---:|---|
 | `/case_index` | integer | bound | x-index |  | 0 | shape |
 | `/error` | string | none |  | minLength | 0 | not probed |
+| `/governed/*/id` | string | none |  |  | 0 | not probed |
+| `/governed/*/units/*` | string | none |  |  | 0 | not probed |
 | `/id` | any | bound | x-echo |  | 0 | shape |
 | `/id` | string | bound | x-equals |  | 0 | shape |
 | `/rows/*/governors/*/effect` | string | closed domain | enum |  | 0 | shape |
 | `/rows/*/governors/*/id` | string | none |  |  | 0 | not probed |
+| `/rows/*/governors/*/provenance` | string | none |  |  | 0 | not probed |
 | `/rows/*/governors/*/reach/*` | string | none |  |  | 0 | not probed |
 | `/rows/*/governors/*/unit` | string | none |  |  | 0 | not probed |
-| `/rows/*/provenance/*` | string | none |  |  | 0 | not probed |
 | `/rows/*/unit` | string | none |  |  | 0 | not probed |
 | `/status` | string | closed domain | const |  | 0 | shape |
 
 | array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
 |---|---|---|---|---|
+| `/governed` |  |  |  |  |
+| `/governed/*/units` |  |  |  |  |
 | `/rows` |  |  |  |  |
-| `/rows/*/governors` |  |  | x-same-length |  |
+| `/rows/*/governors` |  |  |  |  |
 | `/rows/*/governors/*/reach` |  |  |  |  |
-| `/rows/*/provenance` |  |  | x-same-length |  |
 
 ## Grammars
 
