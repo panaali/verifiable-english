@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 40282,
+    "total_lines": 40551,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1842,12 +1842,12 @@
       },
       {
         "file": "lean/VE/Calc/Wire.lean",
-        "lines": 580,
-        "sha256": "5020183caff9494242b547a784c0c88886da0fb51338f92c6384b2d64246b918",
+        "lines": 849,
+        "sha256": "944d524215cc4dbb45470ba7316ba0dfcf1b942fc5fb025482e67c1496d461e1",
         "ranges": [
           [
             1,
-            580
+            849
           ]
         ],
         "declarations": [
@@ -1869,7 +1869,12 @@
           "decode",
           "decodeCase",
           "Case.sidesC",
-          "workLimit"
+          "workLimit",
+          "judged",
+          "derivations",
+          "nonlinearAtC",
+          "firstNonlinearC",
+          "loweredC"
         ],
         "reason": "the case ve-calc@0 (math-evidence spec 3.1 to 3.3, me-2): its only decoder, its limits in order, its definition order and its identity (meaning_id, claim ids), and the premises and derivations of me-5c with their refusals (UnknownPremise, UnknownLink, NonlinearPremise), and the value words checks of me-2d (W6's verbalisation rule, ValueWordsForm, ReservedWord, VerbalisationCollision), and limit 10 (me-2nb: decodeCase refuses a case whose claims' work, Case.sidesC over the value table, passes maxWork, with workLimit's text); the full file is pinned"
       },
