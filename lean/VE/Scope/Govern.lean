@@ -289,9 +289,9 @@ inductive JsonWF : Json → Prop
   | obj (kvs : Std.TreeMap.Raw String Json) : kvs.WF → (∀ kv ∈ kvs.toList, JsonWF kv.2) → JsonWF (.obj kvs)
 
 /-! `JsonWF` as a check (sc-1af, the DRI's decision of 2026-10-28 item 1): the route runs it on every document it
-    parses, since no lemma can be proved about a `partial` parser's output. A tree is well formed when its stored sizes
-    are right and it is balanced at every node (`Impl.Balanced`), and its keys ascend in order (`Impl.Ordered`). Each
-    node is read once; the keys are listed only once the tree is balanced, so in `O(n log n)`. -/
+    parses, since no lemma can be proved about the output of a parser that is not total. A tree is well formed when
+    its stored sizes are right and it is balanced at every node (`Impl.Balanced`), and its keys ascend in order
+    (`Impl.Ordered`). Each node is read once; the keys are listed only once the tree is balanced, so in `O(n log n)`. -/
 
 /-- Strictly ascending keys. -/
 def ascending : List String → Bool
@@ -356,7 +356,8 @@ theorem jsonWF?_sound {j : Json} (h : jsonWF? j = true) : JsonWF j := match j, h
     simp only [jsonWF?, Bool.and_eq_true] at h
     have ho : t.Ordered := List.pairwise_map.mp (ascending_sound _ h.1.2)
     refine .obj _ ⟨⟨.wf (balanced?_sound t h.1.1) ho⟩⟩ fun kv hkv => ?_
-    · simp only [Std.TreeMap.Raw.toList, Std.DTreeMap.Raw.Const.toList, Std.DTreeMap.Internal.Impl.Const.toList_eq_toListModel_map,
+    · simp only [Std.TreeMap.Raw.toList, Std.DTreeMap.Raw.Const.toList,
+        Std.DTreeMap.Internal.Impl.Const.toList_eq_toListModel_map,
         List.mem_map] at hkv
       obtain ⟨e, he, rfl⟩ := hkv
       exact implWF?_sound h.2 e he
