@@ -688,4 +688,27 @@ too; one requirement missing, one other profile, or the layer without `documents
   !["cardinality@0", "documents@1", "judgments@0", "order@0", "relational-fol@0", "time@0"].contains q).mergeSort
   fun a b => a < b || a == b
 
+/-! jt-2c: `decidingEnvironment`, what every mode that composes with a document layer decides over: the list
+without the layer, or a refusal by name of a profile the layer does not compose with yet. -/
+private def listing (ps : List String) : Lean.Json := Lean.Json.mkObj [("profiles", Lean.toJson ps)]
+private def decided (ps : List String) : String :=
+  match decidingEnvironment (listing ps) with
+  | .ok j => j.compress
+  | .error e => e
+
+#guard decided ["documents@1", "judgments@0", "norms@0", "relational-fol@0"] ==
+  (listing ["documents@1", "norms@0", "relational-fol@0"]).compress
+#guard decided ["documents@1", "norms@0", "relational-fol@0"] == (listing ["documents@1", "norms@0", "relational-fol@0"]).compress
+#guard ["alternatives@0", "rights@0", "risk@0", "soft-norms@0"].all fun p =>
+  decided ["documents@1", "judgments@0", p, "relational-fol@0"] ==
+    s!"CheckerUnavailable: judgments@0 with {p} needs its composed Lean route" &&
+  decided ["documents@1", p, "relational-fol@0"] == (listing ["documents@1", p, "relational-fol@0"]).compress
+#guard decided ["judgments@0", "rights@0", "soft-norms@0"] ==
+  "CheckerUnavailable: judgments@0 with rights@0 needs its composed Lean route"
+#guard ((profileTable.map (·.profile)).eraseDups.filter fun p =>
+    !["alternatives@0", "rights@0", "risk@0", "soft-norms@0"].contains p).all fun p =>
+  !(decided ["judgments@0", p]).startsWith "CheckerUnavailable"
+#guard (decidingEnvironment (Lean.Json.mkObj [("profile", "relational-fol@0")])).toOption.map (·.compress) ==
+  some (Lean.Json.mkObj [("profile", "relational-fol@0")]).compress
+
 end VE.Compose.Examples

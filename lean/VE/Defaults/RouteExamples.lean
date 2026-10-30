@@ -69,4 +69,16 @@ def plainEnv : Json := αEnv.setObjVal! "profiles" (toJson ["norm-defaults@0", "
 #guard holds dγ fun L => run (req αEnv γR "norm-defaults-elaborate") ==
   shown (VE.NormDefaults.Wire.layeredCase L "c" "norm-defaults-elaborate" (req αEnv γR "norm-defaults-elaborate"))
 
+/-! jt-2c: under a document layer only `norm-defaults-elaborate` of the route's own kinds is answered; the replay
+kinds and defeasible's are refused by name (jt-2d), and every other kind and list is not refused here. -/
+private def layerCase (kind : String) (ps : List String) : Json :=
+  Json.mkObj [("id", "c"), ("kind", kind), ("environment", Json.mkObj [("profiles", toJson ps)])]
+
+#guard (["norm-defaults-gaps", "norm-defaults-conflict", "norm-defaults-report", "defaults-model"].all fun k =>
+  VE.NormDefaults.Run.pendingDocumentLayer (layerCase k ["judgments@0", "norm-defaults@0"]) ==
+    some s!"CheckerUnavailable: judgments@0 with {k} needs its composed Lean route")
+#guard ["norm-defaults-elaborate", "background", "countermodel"].all fun k =>
+  VE.NormDefaults.Run.pendingDocumentLayer (layerCase k ["judgments@0", "norm-defaults@0"]) == none
+#guard VE.NormDefaults.Run.pendingDocumentLayer (layerCase "norm-defaults-gaps" ["norm-defaults@0"]) == none
+
 end VE.Defaults.RouteFixtures
