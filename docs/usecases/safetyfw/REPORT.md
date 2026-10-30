@@ -680,3 +680,22 @@ The single-fault code changes are parity with the unchanged Lean owner: a consta
 `InvalidInput` on the route decoder; soft-norms@0's refusal of checker lists, definitions and data
 flags; the untyped `$string` definition. They are bug fixes, not deltas. Ten baseline signatures
 that Rust now answers as Lean does were dropped by two `--update-baseline` passes (`e39a10df7`).
+
+### 25.7 Commands on the final code HEAD `a75497c3d`
+
+- `cd lean && PATH=~/.elan/bin:$PATH lake build`: `Build completed successfully (1135 jobs).`
+- `python3 lean/audit.py`: `PASS: 653 source files; 7286 named theorem declarations audited`.
+- `python3 tools/rust_build.py --check`: `a4ce3be4…b9921 rust/target/release/ve: pinned in lean/checkers.lock`.
+  Each intermediate digest was replaced, so only the final one is pinned.
+- `uv run python tools/regen_generated.py --check`: exit 0, `checked 33 entries`.
+- `cargo test --locked --release --workspace` (with `tools/rust_build.py`'s Cargo environment): exit 0,
+  every crate `ok`. `environment_definition_order` has 7 tests.
+- `.venv/bin/python -m tools.difffuzz --ci`: `passed` true; 0 new, 0 not reproduced, 0 unreviewed.
+- `usecases/openai-preparedness/{build_document,measure,stage0}.py --check`: each exit 0.
+- `usecases/anthropic-rsp/{build_document,measure,stage0}.py --check`: each exit 0.
+- `usecases/safety-framework/{run,build_document,readings_r1,measure_r1,measure_r2}.py --check`:
+  each exit 0.
+- `zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`:
+  `recorded 397 units for tree a0a636e298 … 0 failed`, on ve-mac-1 (aarch64), HEAD `a75497c3` (clean),
+  5,125 s, exit 0. The three `main-known-red.txt` tests are pre-existing and were not edited.
+- Not run: the full suite and the release gate (`tools/gate.py`), as this round's instructions say.
