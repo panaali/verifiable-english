@@ -815,12 +815,12 @@ sensitive predicates are exactly the silent ones (`sensitive_exactly_where_silen
 marker and VE's selected rules are default-mode under that choice for the 14 that are not MREP; M8 12 items
 answered by a replayed entailment or quantity certificate (N1, T1, T2, S1 to S5, D1 to D4), 33 W1 conflict
 witnesses and 117 W1 conflict-freedom certificates, unknown items G7 and N4; M9 6/6 mutants exact; M10 389 units, 86 rules, 67 cases, 1,032 evaluated
-choices, 158 documents, 10 prover calls, wall time printed by `run.py` and not pinned.
+choices, 162 documents, 10 prover calls, wall time printed by `run.py` and not pinned.
 
 | Mutant (PLAN 11) | Changed results (`results.json` `mutants`) |
 |---|---|
 | m1 F11's precedence removed | C1 → SOME(RS5=exception), C-doc |
-| m2 invented High-level deployment permission | C-doc → ALL; M6 flags `m2-invented-permission` |
+| m2 invented High-level deployment permission | C-doc → ALL; M6 flags `m2-invented-permission`, read from the C-doc documents that built it (section 33) |
 | m3 "for large-scale internal deployment" deleted | A-CYB-H ALN at DEV, INT, EXT; A-CYB-C ALN at DEV, INT, EXT; G3 |
 | m4 "1/5th" → "1/4th" | T2 |
 | m5 "thousands" → "millions" | S1 (S2 stays NONE, S5 stays ALL) |
@@ -924,9 +924,10 @@ docstring ("the items of its frozen answer key that VE answers as the key says, 
    `::test_pf_run_recomputes_every_key_item_and_records_causes`. No Python copy of a Lean decision (the harness
    asks VE for every answer), no permanent report test (D4: the tests recompute results.json, they do not pin
    report numbers against git).
-3. Tests can fail: PASS. Five seeded bugs (section 30) each made a named test fail; the comparator refuses
-   `ALL` on a false row, an empty row list, a SOME outside the cone and an UNKNOWN row
-   (`::test_pf_independent_reference_and_comparator_catch_wrong_answers`).
+3. Tests can fail: PASS after the review fix. Five seeded bugs (section 30) each made a named test fail; the
+   comparator refuses `ALL` on a false row, an empty row list, a SOME outside the cone and an UNKNOWN row
+   (`::test_pf_independent_reference_and_comparator_catch_wrong_answers`). Review F1 found the M6 m2 flag
+   hard-coded, so the m2 test could not catch a broken audit; section 33 replaces it and seeds five more bugs.
 4. Python, Lean and Rust agree: N.A. for product code (none changed); the corpus side is
    `tests/test_difffuzz.py::test_ci_run` (passed after the baseline classification, section 31).
 5. R8 binding: N.A., no Lean answer field is newly read.
@@ -946,3 +947,46 @@ docstring ("the items of its frozen answer key that VE answers as the key says, 
     (`::test_pf_six_mutants_change_exactly_the_named_results[m1…m6]`); premise checks refuse a case model without
     the nest premise and keep the sep model (`::test_pf_case_model_must_satisfy_the_selected_premises`); every
     REPORT number above names its command.
+
+## 33. Review fix F1, F2 (`usecase-pf-run`, 2026-10-30)
+
+Status: F1 and F2 (B) fixed in 6cadd6e63; no Lean or Rust file changed, no DELTA row, no DRI signature asked.
+The answers, mutants and narrowing reruns in `results.json` are unchanged (231 / 239); N3's witnesses and M10's
+document count (158 → 162) changed. F3 to F7 (C) are left for follow-up.
+
+**The class.** M6 and N3 read lists that each route wrote for itself, not what VE built or selected: m2's
+invented rule was flagged because `MUTANT == "m2"` (and its opposite pair was a hand-written stub), and N3 took
+every name in any row's `rules` as selected, though W1 cluster rows and N1's guard rows list rules VE never
+selected. Ten commitments were "a scored case" only through C1, C2, C4 or C6.
+
+**The fix (`usecases/openai-preparedness/run.py`).** One document builder, `build()`, and one selection,
+`pick()`, which checks the case model against the choice's premises before it selects. Both record into every
+answer still open: `recorded()` wraps `answer()` and N3, and `traced_cache` replays what a cached `document()` or
+`_conflict()` built into later answers. Each answer in `results.json` now carries `audit_input.rules` (built rules
+that are no `rules.d1.ve` block) and `selected_rules` (rules VE selected under both completion defaults on one
+validated case model, the standard `witness_for` already used). M6 reads the first, N3 the second. m2's rule
+is parsed once (`invented_rules()`) and both `document()` and `opposite_pairs()` read it. N2's probe no longer
+overwrites each rule's name with its block id, so a renamed rule there is untraced too. Nine of the ten
+commitments now carry their own witness model; f6-rel is selected in K3. N3 still answers NONE.
+
+| Finding | Regression test |
+|---|---|
+| F1 probe: a renamed built rule is untraced | `tests/test_safetyfw_usecases.py::test_pf_invention_audit_reads_every_document_a_route_builds[A-BIO-H-EXT/SUF]`, `[G6]`, `[N2]`, `[C1]` (each answered twice: the second reads the caches) |
+| F1: m2 exactly flagged, no other mutant | `::test_pf_six_mutants_change_exactly_the_named_results[m1…m6]` (now `untraced == ["m2-invented-permission"]` or `[]`) |
+| F1 (opposite-pair stub) | `::test_pf_m2_opposite_pairs_come_from_the_parsed_invented_rule` |
+| F2 probe: cluster and N1 rows are no witnesses | `::test_pf_n3_counts_only_rules_ve_selected` |
+| F2: a witness needs both defaults | `::test_pf_a_scored_witness_needs_both_completion_defaults` |
+| F2: saved evidence agrees | `::test_pf_saved_n3_witnesses_are_saved_selections` |
+
+Seeded bugs (Python, the one product-side language changed; each planted in `run.py`, the test shown failing,
+then restored with `git checkout`):
+
+| Bug | Failing test |
+|---|---|
+| `build()` records no rule names | `::test_pf_invention_audit_reads_every_document_a_route_builds` (4 of 4) |
+| `traced_cache` does not replay cached records | same test (`[A-BIO-H-EXT/SUF]`, `[G6]`, `[C1]`) |
+| `dead_rules` reads row `rules` again | `::test_pf_n3_counts_only_rules_ve_selected` |
+| `recorded()` counts a selection under one default | `::test_pf_a_scored_witness_needs_both_completion_defaults` |
+| `opposite_pairs` uses the m2 stub again | `::test_pf_m2_opposite_pairs_come_from_the_parsed_invented_rule` |
+
+Both review probes failed before the fix and pass after it. `run.py` regenerated `results.json` (231 / 239, exit 0).
