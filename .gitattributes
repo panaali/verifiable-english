@@ -10,6 +10,7 @@ conformance/wire-contract/contracts/contracts.lock merge=ve-generated
 docs/spec/*-wire-table.md merge=ve-generated
 lean/VE/EnglishGrammar/Fixed/*.lean merge=ve-generated
 ve/english_grammar/LOCK.json merge=ve-generated
+ve/english_grammar/source_words.json merge=ve-generated
 lean/VE/EnglishGrammar/LexiconFixtures.lean merge=ve-generated
 lean/VE/Question/Fixtures.lean merge=ve-generated
 lean/VE/Calc/UnitsExamples.lean merge=ve-generated
