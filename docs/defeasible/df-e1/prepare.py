@@ -82,7 +82,9 @@ def strict_items() -> list[dict]:
         for predicate in ("x_required", "x_permitted"):
             environment["vocabulary"]["predicates"][predicate]["regulated"]["act"] = "{0} " + act
         answer = defaults.ask(environment, norms, [], X_ALL)
-        assert answer == {"question": "strict", "valid": True}, (act, answer)
+        # DF-ζ's default rule gives `Dflt_T` a decider, so the strict answer carries DE5 (plan DF-ζ).
+        assert answer == {"question": "strict", "valid": True, "deciders": ["assistant"],
+                          "english": ["This holds whatever the assistant decides."]}, (act, answer)
         rule_text = render_english(SoftNormDocument(SoftEnvironment(environment), norms))[0]
         items.append({"id": f"S{index-12:02d}", "class": "strict", "source": "zeta",
                       "rule_text": rule_text, "lean_answer": answer,
