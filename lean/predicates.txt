@@ -124,6 +124,8 @@ module VE.Alternatives.Wire
 module VE.Arith.Bounded
 module VE.Arith.BoundedExamples
 module VE.Arith.CompleteExamples
+module VE.Arith.Deciding
+module VE.Arith.DecidingExamples
 module VE.Arith.Defs
 module VE.Arith.Examples
 module VE.Arith.Holds
