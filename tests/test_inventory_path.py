@@ -8,6 +8,7 @@ condition 1(b)). The guard below fails on a literal read of a train-only path an
 from __future__ import annotations
 
 import ast
+from collections import Counter
 import functools
 import json
 from pathlib import Path
@@ -189,24 +190,29 @@ def test_scan_tree_hashes_the_manifest_copy_the_accessor_gives(tmp_path, monkeyp
 
 # (file, function or "" for module level, train-only path): why it may still name or read the path itself. Keyed by
 # function, so a new read of an allowed path elsewhere in the same file still fails.
-PIN_READERS = {"tools/answer_cutoff.py": ("", "pinned"), "tools/gate.py": ("main",), "tools/gate_collection.py": ("build_rust",),
-               "tools/lean_first_cache.py": ("pinned_checkers",), "tools/lean_output_diff.py": ("", "save_baseline"),
-               "tools/lean_share.py": ("", "pinned"), "tools/rust_build.py": ("", "pinned_digests"),
-               "ve/backends/lean_service.py": ("_spawn",), "ve/backends/rust_jsonl.py": ("", "run"),
+PIN_READERS = {"tools/answer_cutoff.py": ("", "pinned"), "tools/gate.py": ("main",),
+               "tools/gate_collection.py": ("build_rust",), "tools/lean_first_cache.py": ("pinned_checkers",),
+               "tools/lean_output_diff.py": ("", "save_baseline"), "tools/lean_share.py": ("", "pinned"),
+               "tools/rust_build.py": ("", "pinned_digests"), "ve/backends/rust_jsonl.py": ("", "run"),
                "research/defeasible/baseline.py": ("main",)}
 INVENTORY_NAMES = ("lean/statements.txt", "lean/predicates.txt", "lean/declarations.txt", "lean/axioms.txt")
 ALLOWED = {
     **{(f, where, "lean/checkers.lock"): "a pin reader gi-2b merges into its one pin reader (DESIGN.md 4 step 5)"
        for f, functions in PIN_READERS.items() for where in functions},
     ("tools/test_map_recorder.py", "", "lean/checkers.lock"): "records that a test read the file; reads no key",
-    ("tools/lean_first_oracle.py", "", "lean/checkers.lock"): "hashes a revision's frozen files (git ls-tree); reads no key",
+    ("ve/backends/lean_service.py", "_spawn", "lean/checkers.lock"):
+        "names the lock in its refusal when the accessor fails; reads the pins through `build_lock` (the accessor)",
+    ("tools/lean_first_oracle.py", "", "lean/checkers.lock"):
+        "hashes a revision's frozen files (git ls-tree); reads no key",
     ("tools/lean_share.py", "lean_tree", "lean/checkers.lock"): "leaves the pins out of HEAD's tree hash; reads no key",
-    **{("tools/regen_generated.py", "", path): "the registry: the one list of train-only files" for path in R.train_only()},
+    **{("tools/regen_generated.py", "", path): "the registry: the one list of train-only files"
+       for path in R.train_only()},
     **{("lean/audit.py", "", path): "the manifests' writer names its outputs; it reads them through inventory_path"
        for path in ("lean/VE/Audit.lean", "lean/ResponseShapeAudit.lean")},
     **{("tools/trust_mutants.py", "", path): "names the inventories a check-only change regenerates; reads none"
        for path in INVENTORY_NAMES},
-    **{("tools/architecture_numbers.py", "", path): "counts the lines of a revision's blobs (`read_tree`), not the checkout's"
+    **{("tools/architecture_numbers.py", "", path):
+       "counts the lines of a revision's blobs (`read_tree`), not the checkout's"
        for path in INVENTORY_NAMES},
     ("tools/assurance_manifest.py", "document", "docs/spec/assurance-manifest.md"):
         "the hand-written template of the document; --check compares the accessor's copy with it",
@@ -218,17 +224,25 @@ ALLOWED = {
                                                                             "lean/checkers.lock")},
     ("tests/test_regen_generated.py", "", "lean/checkers.lock"): "FAKE_USER reads the pins of the tmp tree it is given",
 }
+SITES = {("tools/gate.py", "main", "lean/checkers.lock"): 2,  # an allowed function's lines, when more than one
+         ("ve/backends/lean_service.py", "_spawn", "lean/checkers.lock"): 2}
 GUARD = "tests/test_inventory_path.py"  # its cases are sources that read the paths
 
 
-# The guard (DRI condition 1(b)) fails on a literal read of a train-only path, whatever its spelling. It parses each
-# file and folds every expression to its possible spellings: strings, f-strings, `+`, `/`, `%`, `.format`, `Path`,
-# `joinpath`, `os.path.join`, `str.join` and `glob`, through local and module names, loop variables, tuples and calls
-# of the same file, and through a name another module exports (`exported`), so `ROOT / "lean/x"`, a path in a local
-# variable and `audit.ROOT / LOCK` are one case. tools/, lean/, ve/ and research/ may name a path only to the accessor,
-# in a docstring or in prose. tests/ may also name one as data or join it onto a tree of their own: `tmp_path` and what
-# is made from it. A parameter is a test's own tree only when no call in the file passes it anything else, so
-# `def f(root): ...` called with ROOT is a read. A string that parses as Python is a child script and is scanned too.
+# The guard (DRI condition 1(b)) fails on a literal read of a train-only path, whatever its spelling (review F1). It
+# parses every tracked Python file but docs/ and folds each expression to its possible spellings: strings, f-strings,
+# `+`, `/`, `%`, `.format`, `Path`, `joinpath`, `os.path.join`, `str.join`, `glob`, `dict`/`zip`, comprehensions and
+# subscripts, through local and module names, tuple unpacking, loop variables, calls and fixtures of the same file, the
+# registry (`entry_named(...).paths`, `train_only()`, the registry modules' own names by value) and the constants other
+# modules export (`exported`, `module.NAME` through the file's imports). So `ROOT / "lean/x"`, `open("lean/x")`, a path
+# in a local variable or a module tuple and `audit.ROOT / LOCK` are one case. Outside tests a path may be spelled only
+# for the accessor (its calls and its own body), in a docstring or in prose: the guard fails where a path is first
+# spelled. In tests it fails on a read (a join, `open`, `Path`, `.read_text`; not `.name` nor a comparison) onto a tree
+# the test did not make; `tmp_path` and what is made from it are the test's own. A parameter is a test's own tree only
+# when no call in the file passes it anything else, so `def f(root): ...` called with ROOT is a read. A string that
+# parses as Python is a child script and is scanned too; a command's words are scanned as paths. A file name split
+# inside its stem is not a literal (`can_spell`). Folds are memoised per scope and cut short (`_short`), so the scan of
+# the whole tree stays bounded.
 HOLE, OWN_TREE = "\0", "\1"  # in a spelling: a part the file does not say; a tree the test made
 ACCESSORS = {"inventory_path", "inventory_status", "overlay_copy", "inventory_target", "write_inventory"}
 TREES = {"tmp_path", "tmp_path_factory", "tmpdir", "mkdtemp", "mktemp", "TemporaryDirectory"}
@@ -236,6 +250,8 @@ JOINS = {"Path", "PurePath", "PosixPath", "joinpath", "glob", "rglob", "join"}  
 SAME = {"str", "resolve", "absolute", "fspath", "abspath", "normpath", "realpath", "expanduser", "as_posix", "sorted",
         "list", "tuple", "set", "reversed"}
 READS = {"open", "read_text", "read_bytes"}
+NAMES_OF = {"name", "stem", "suffix"}  # a path's file name: not a read
+MERGES = {"dict", "zip", "items", "keys", "enumerate", "chain"}  # what they give holds what they are given
 SHELLS = {"run", "check_output", "check_call", "call", "Popen", "system", "popen", "getoutput"}
 DEFS = (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda)
 SHORT = 64
@@ -310,8 +326,9 @@ def _short(spellings: set[str]) -> set[str]:
 class Spellings:
     """What one file's expressions can spell: `scope` holds each function's names, each with its values."""
 
-    def __init__(self, tree: ast.Module, exported: dict[str, frozenset[str]]):
-        self.tree, self.exported, self.scope, self.defs, self.calls, self.functions = tree, exported, {tree: {}}, {}, {}, []
+    def __init__(self, tree: ast.Module, exported: dict[str, frozenset[str]], module: str = ""):
+        self.module, self.tree, self.exported, self.scope = module, tree, exported, {tree: {}}
+        self.defs, self.calls, self.functions = {}, {}, []
         self.folded: dict[tuple[int, ...], set[str]] = {}
         self.imports = {alias.asname or alias.name.split(".")[0]: f"{node.module.rsplit('.', 1)[-1]}.{alias.name}"
                         if isinstance(node, ast.ImportFrom) and node.module else alias.name.rsplit(".", 1)[-1]
@@ -332,7 +349,8 @@ class Spellings:
         elif isinstance(target, (ast.Tuple, ast.List)):
             same = isinstance(value, (ast.Tuple, ast.List)) and len(value.elts) == len(target.elts)
             for at, item in enumerate(target.elts):
-                self._bind(env, item, value.elts[at] if same else _Item(value, at) if value is not None else None, chain)
+                item_value = value.elts[at] if same else _Item(value, at) if value is not None else None
+                self._bind(env, item, item_value, chain)
 
     def _bind_names(self, node, chain) -> None:
         env = chain[-1]
@@ -438,8 +456,9 @@ class Spellings:
             if node.id in TREES:
                 return {OWN_TREE}
             for env in reversed(chain):
-                if node.id in env:
-                    return set().union(*[self.fold(value, inner) for value, inner in env[node.id]])
+                if node.id in env:  # a module name of the registry's own modules: also its value (`EXPORTED`)
+                    return set().union(*[self.fold(value, inner) for value, inner in env[node.id]],
+                                       self.exported.get(f"{self.module}.{node.id}", set()) if env is chain[0] else ())
             return set(self.exported.get(self.imports.get(node.id, ""), {HOLE}))
         if _registry(node):
             return set(_registry(node))
@@ -464,9 +483,11 @@ class Spellings:
         if name in JOINS and (name != "join" or getattr(receiver, "attr", "") == "path"):
             parts = ([receiver] if name in ("joinpath", "glob", "rglob") else []) + node.args
             return _joined([fold(part) for part in parts], "/") if parts else {HOLE}
+        if name in MERGES:
+            return set().union(*map(fold, [*node.args, *([receiver] if receiver else [])])) or {HOLE}
         if name in SAME or name in READS:
-            return fold(node.args[0] if name in ("open", "str", "fspath") and node.args or receiver is None and node.args
-                        else receiver)
+            first = name in ("open", "str", "fspath") or receiver is None
+            return fold(node.args[0] if first and node.args else receiver)
         if name == "removeprefix" and receiver is not None and node.args and isinstance(node.args[0], ast.Constant):
             return {text.removeprefix(node.args[0].value) for text in fold(receiver)}
         if name == "format" and receiver is not None:
@@ -497,9 +518,9 @@ def spelled(text: str) -> list[str]:
 
 def _is_read(node, text: str, parent) -> bool:
     """A read: `/` onto a tree, `+` or an f-string onto a root, or `open`, `Path(...)`, a path join or `.read_text()`;
-    not the file name of one (`.name`, `.stem`, `.suffix`)."""
-    if isinstance(parent, ast.Attribute) and parent.attr in ("name", "stem", "suffix"):
-        return False
+    not the file name of one (`.name`, `.stem`, `.suffix`) nor a comparison with one."""
+    if isinstance(parent, ast.Compare) or isinstance(parent, ast.Attribute) and parent.attr in NAMES_OF:
+        return False  # its file name, or a comparison with it
     if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):  # a root string and a literal: not two tuples
         return text.startswith(HOLE) and isinstance(node.right, (ast.Constant, ast.JoinedStr))
     if isinstance(node, ast.JoinedStr):
@@ -519,9 +540,9 @@ def _carries(node) -> bool:
 
 def literal_reads(source: str | Spellings, anywhere: bool, exported: dict[str, frozenset[str]] | None = None
                     ) -> list[tuple[int, str, str]]:
-    """(line, train-only path, the function it is in or "") for each place `source` spells a path outside the accessor: where a path is first
-    spelled (`anywhere`: tools and the like) and each read of one (in tests, onto a tree the test did not make), each
-    command argument and each child script."""
+    """(line, train-only path, the function it is in or "") for each place `source` spells a path outside the
+    accessor: where a path is first spelled (`anywhere`: tools and the like) and each read of one (in tests, onto
+    a tree the test did not make), each command argument and each child script."""
     spellings = (source if isinstance(source, Spellings) else Spellings(ast.parse(source), {})).use(exported or {})
     tree, found = spellings.tree, []
     parents = {id(child): node for node in ast.walk(tree) for child in ast.iter_child_nodes(node)}
@@ -531,7 +552,8 @@ def literal_reads(source: str | Spellings, anywhere: bool, exported: dict[str, f
     def paths(node, chain, read=False) -> set[str]:
         if (id(node), read) not in known:
             known[id(node), read] = {
-                path for text in spellings.fold(node, chain) if not SPACE.search(text) and (anywhere or OWN_TREE not in text)
+                path for text in spellings.fold(node, chain)
+                if not SPACE.search(text) and (anywhere or OWN_TREE not in text)
                 and (not read or _is_read(node, text, parents.get(id(node)))) for path in spelled(text)}
         return known[id(node), read]
 
@@ -541,7 +563,8 @@ def literal_reads(source: str | Spellings, anywhere: bool, exported: dict[str, f
         for text in spellings.fold(node, chain):
             if ("\n" in text or "(" in text) and any(path.rsplit("/", 1)[1] in text for path in R.train_only()):
                 try:
-                    inner = literal_reads(textwrap.dedent(text.replace(HOLE, "_").replace(OWN_TREE, "_")), False, exported)
+                    script = textwrap.dedent(text.replace(HOLE, "_").replace(OWN_TREE, "_"))
+                    inner = literal_reads(script, False, exported)
                 except (SyntaxError, ValueError):
                     continue
                 found.extend((node.lineno + line - 1, path, where) for line, path, _ in inner)
@@ -559,7 +582,8 @@ def literal_reads(source: str | Spellings, anywhere: bool, exported: dict[str, f
             if isinstance(node, ast.Call) and _called(node) in SHELLS and (not any(
                     OWN_TREE in text for keyword in node.keywords if keyword.arg == "cwd"
                     for text in spellings.fold(keyword.value, chain)) or anywhere):
-                found.extend((node.lineno, path, where) for argument in node.args for text in spellings.fold(argument, chain)
+                found.extend((node.lineno, path, where) for argument in node.args
+                             for text in spellings.fold(argument, chain)
                              for word in text.split() for path in spelled(word))
             if anywhere and not _carries(node):
                 inner = set().union(*[paths(child, chain) for child in ast.iter_child_nodes(node)
@@ -628,6 +652,9 @@ def can_spell(source: str, exported: dict[str, str]) -> bool:
     ('from tools import lean_statements as L\ndef test_f():\n    return (ROOT / L.STATEMENTS).read_text()\n', False,
      ["lean/statements.txt"]),
     ('SCRIPT = """\nfrom pathlib import Path\nPath("lean/checkers.lock").read_text()\n"""\n', False, ["lean/checkers.lock"]),
+    ('import lean_statements as L\ndef f():\n    fresh = dict(zip((L.STATEMENTS, L.DECLARATIONS), dump()))\n'
+     '    return {name: (ROOT / name).read_text() for name in fresh}\n', True, ["lean/declarations.txt", "lean/statements.txt"]),
+    ('import lean_statements as L\ndef f(path):\n    return path != ROOT / L.STATEMENTS\n', True, []),
     ('def f(tmp_path):\n    return tmp_path / "lean/statements.txt"\n', False, []),
     ('def g(root):\n    return root / "lean/statements.txt"\ndef test_f(tmp_path):\n    g(tmp_path / "t")\n', False, []),
     ('def test_f():\n    assert R.train_only()[0] == "lean/statements.txt"\n', False, []),
@@ -638,6 +665,15 @@ def can_spell(source: str, exported: dict[str, str]) -> bool:
 def test_the_guard_sees_a_literal_read_and_nothing_else(source, anywhere, reads):
     exported = exported_paths({"lean/audit.py": Spellings(ast.parse((ROOT / "lean/audit.py").read_text()), {})})
     assert sorted({p for _, p, _ in literal_reads(source, anywhere, exported)}) == reads
+
+
+def test_the_guard_reads_a_registry_modules_own_names_by_their_value():
+    """A name the registry computes (`regen_generated.PIN_FILE`) is a path in its own module too (seeded S2)."""
+    source = ('PIN_FILE = next(e for e in GENERATED if e.name == "checker-pins").paths[0]\n'
+              'def _lock():\n    return json.loads((ROOT / PIN_FILE).read_text())\n')
+    assert {p for _, p, _ in literal_reads(Spellings(ast.parse(source), {}, "regen_generated"), True)} == {
+        "lean/checkers.lock"}
+    assert literal_reads(Spellings(ast.parse(source), {}, "other"), True) == []
 
 
 def test_the_file_filter_keeps_every_file_the_guard_finds_a_read_in():
@@ -651,9 +687,11 @@ def test_no_train_only_path_is_read_outside_the_accessor():
     names = subprocess.run(["git", "ls-files", "*.py"], cwd=ROOT, capture_output=True, text=True, check=True).stdout
     files = {name: source for name in names.split() if not name.startswith("docs/") and name != GUARD
              for source in [(ROOT / name).read_text()] if can_spell(source, {})}
-    spellings = {name: Spellings(ast.parse(source), {}) for name, source in files.items()}
+    spellings = {name: Spellings(ast.parse(source), {}, Path(name).stem) for name, source in files.items()}
     exported = exported_paths(spellings)
-    found = {(name, where, p) for name, source in files.items() if can_spell(source, exported)
-             for _, p, where in literal_reads(spellings[name], not name.startswith("tests/"), exported)}
-    assert sorted(found - set(ALLOWED)) == []
-    assert sorted(set(ALLOWED) - found) == [], "an allow-list entry that no longer reads the path goes"
+    found = Counter((name, where, p) for name, source in files.items() if can_spell(source, exported)
+                    for _, p, where in literal_reads(spellings[name], not name.startswith("tests/"), exported))
+    allowed = {key: SITES.get(key, 1) for key in ALLOWED}
+    assert sorted((key, sites) for key, sites in found.items() if allowed.get(key, 0) != sites) == [], \
+        "a read outside the accessor, or another site in an allowed function"
+    assert sorted(set(ALLOWED) - set(found)) == [], "an allow-list entry that no longer reads the path goes"
