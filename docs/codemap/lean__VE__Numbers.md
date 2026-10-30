@@ -1,3 +1,4 @@
+- `lean/VE/Numbers/Bits.lean` — The size of a value (spec 12.2 and 3.2): one owner for `arith@0`'s budget and `calc@0`'s work.
 - `lean/VE/Numbers/Decimal.lean` — (no module docstring)
 - `lean/VE/Numbers/Examples.lean` — Fixtures for every `VE.Numbers` definition (me-1a).
 - `lean/VE/Numbers/Phrases.lean` — (no module docstring)

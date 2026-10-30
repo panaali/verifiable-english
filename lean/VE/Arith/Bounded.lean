@@ -1,6 +1,7 @@
 import VE.Arith.Holds
 import VE.Arith.Defs
 import VE.Time.Budget
+import VE.Numbers.Bits
 
 /-! The budget (spec 12.2, draft 5; me-12n): one unit per node visit, term and formula nodes alike, as W6's
 `VE.Time.evalB` charges a formula node; a call, of a function or a predicate, is one visit plus its arguments' and its
@@ -11,9 +12,6 @@ an answer into unknown. -/
 
 namespace VE.Arith
 open VE.Numbers
-
-/-- The size of a value: the bit length of its magnitude, and 1 for 0. -/
-def bits (x : Int) : Nat := x.natAbs.log2 + 1
 
 def charge {α : Type} (limit w : Nat) (k : Nat → Option (α × Nat)) : Option (α × Nat) :=
   if limit ≤ w then none else k (w + 1)
