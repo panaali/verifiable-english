@@ -1,3 +1,5 @@
+- `tests/test_search_options.py` — Request budgets and non-degenerate witnesses at public API boundaries.
+- `tests/test_select_tests.py` — The test selector: AST change units, map lookups, drift, the recorder, whole plans, and the map-free `--impacted` fast path.
 - `tests/test_senses_document.py` — RD-8 (readings-defaults plan, section 6): senses in `ve document`.
 - `tests/test_senses_lean.py` — Source checks of the senses layer in Lean (docs/spec/senses.md 5.2 and 5.3).
 - `tests/test_senses_pack.py` — Transport and provenance checks for the Python part of senses B2.
@@ -14,6 +16,7 @@
 - `tests/test_soft_review_regressions.py` — Regressions for the reviewed soft route and its visible open terms.
 - `tests/test_softnorms_contract.py` — Pilot contract checks: the existing soft validator still owns the verdict.
 - `tests/test_softnorms_public_contract.py` — The public soft-source rejection boundary of wire-contract-s4.md item 1.
+- `tests/test_source_words.py` — The source-word table and every boundary fixture are checked by Lean.
 - `tests/test_speech_acts.py` — Deterministic experimental speech-act core fixtures (no trusted route).
 - `tests/test_speech_acts_conformance.py` — Shared section-9 speech-act fixtures across Python, Lean, and Rust FOL evaluation.
 - `tests/test_speech_acts_lean.py` — The Lean `ve_speech_acts_route` on hand-written fixtures of speech-acts.md section 9.
