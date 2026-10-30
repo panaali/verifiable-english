@@ -1,4 +1,3 @@
-- `tests/test_search_options.py` — Request budgets and non-degenerate witnesses at public API boundaries.
 - `tests/test_select_tests.py` — The test selector: AST change units, map lookups, drift, the recorder, whole plans, and the map-free `--impacted` fast path.
 - `tests/test_senses_document.py` — RD-8 (readings-defaults plan, section 6): senses in `ve document`.
 - `tests/test_senses_lean.py` — Source checks of the senses layer in Lean (docs/spec/senses.md 5.2 and 5.3).

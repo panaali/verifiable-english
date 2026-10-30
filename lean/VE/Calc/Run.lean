@@ -227,6 +227,89 @@ theorem Run.rows_outcome (c : Case) (i : Nat) (hi : i < c.claims.length) :
     ((Run.rows c)[i]'(by simpa [Run.rows] using hi)).outcome = (c.claims[i]'hi).2.run c.decls := by
   simp [Run.rows, Run.row_outcome]
 
+/-- A row from its check's sides (3.2 (a)): a claim's outcome read from its values, evaluated once; a derivation's
+row is 5's (`Run.row`). -/
+def Run.rowOf (c : Case) (cl : String × Check) (vs : List Val) : Row :=
+  match cl.2 with
+  | .claim k =>
+    { id := cl.1, outcome := Work.Claim.ofSides k vs, shown := Shown.nothing,
+      reproduction := c.software.map fun _ => .unknown .floatingPointNotModelled }
+  | .follows .. => Run.row c cl
+
+/-- The case's rows within `limit` units, each with its claim's sides: the table, then each claim's expressions once,
+in claim order (limit 10). -/
+def Run.rowsC (limit : Nat) (c : Case) : Option (List (Row × List Val) × Nat) :=
+  (c.sidesC limit).map fun (vss, w) => (List.zipWith (fun cl vs => (Run.rowOf c cl vs, vs)) c.claims vss, w)
+
+/-- The case's claim rows within `limit` units, with each claim's sides (3.2). -/
+def runC (limit : Nat) (c : Case) : Option (List (Outcome × List Val) × Nat) :=
+  (Run.rowsC limit c).map fun r => (r.1.map fun (row, vs) => (row.outcome, vs), r.2)
+
+theorem Run.rowOf_outcome (c : Case) (h : WellFormed c.decls) (cl : String × Check) :
+    (Run.rowOf c cl (cl.2.sides (valuesL c.decls))).outcome = cl.2.run c.decls := by
+  rcases cl with ⟨id, k⟩
+  cases k with
+  | claim k => exact Work.Claim.ofSides_eq c.decls h k
+  | follows => rfl
+
+theorem Run.rowsC_some (limit : Nat) (c : Case) (rs : List (Row × List Val)) (w : Nat)
+    (hr : Run.rowsC limit c = some (rs, w)) :
+    rs = c.claims.map (fun cl => (Run.rowOf c cl (cl.2.sides (valuesL c.decls)), cl.2.sides (valuesL c.decls))) ∧
+      w ≤ limit := by
+  obtain ⟨⟨vss, w'⟩, hs, h⟩ := Option.map_eq_some_iff.mp hr
+  cases h
+  obtain ⟨rfl, hw⟩ := Case.sidesC_some _ _ _ _ hs
+  refine ⟨?_, hw⟩
+  generalize c.claims = l
+  induction l <;> simp_all
+
+theorem Run.rowOf_matches (c : Case) (cl : String × Check) (vs : List Val) :
+    match cl.2 with
+    | .claim _ => True
+    | .follows .. => Shown.matches (Run.rowOf c cl vs).outcome (Run.rowOf c cl vs).shown = true := by
+  rcases cl with ⟨id, k⟩
+  cases k with
+  | claim _ => trivial
+  | follows => exact Run.row_matches c (id, .follows ..)
+
+theorem Run.rowOf_reproduction (c : Case) (cl : String × Check) (vs : List Val) :
+    (Run.rowOf c cl vs).reproduction = c.software.map fun _ => .unknown .floatingPointNotModelled := by
+  rcases cl with ⟨id, k⟩
+  cases k <;> rfl
+
+/-- Each row the charged run gives is its check's, from the sides it is paired with. -/
+theorem Run.rowsC_rows (limit : Nat) (c : Case) (rs : List (Row × List Val)) (w : Nat)
+    (hr : Run.rowsC limit c = some (rs, w)) : ∀ x ∈ c.claims.zip rs, x.2.1 = Run.rowOf c x.1 x.2.2 := by
+  rw [(Run.rowsC_some _ _ _ _ hr).1]
+  generalize c.claims = l
+  induction l with
+  | nil => simp
+  | cons cl l ih => intro x hx; simp only [List.map_cons, List.zip_cons_cons, List.mem_cons] at hx; rcases hx with rfl | hx
+                    · rfl
+                    · exact ih x hx
+
+/-- The charged run means what 2.4 and 3.4 say (3.2 (a)). -/
+theorem runC_sound (limit : Nat) (c : Case) (h : WellFormed c.decls) (rows : List (Outcome × List Val)) (w : Nat)
+    (hr : runC limit c = some (rows, w)) : rows.map Prod.fst = c.claims.map fun k => k.2.run c.decls := by
+  obtain ⟨⟨rs, w'⟩, hs, he⟩ := Option.map_eq_some_iff.mp hr
+  cases he
+  obtain ⟨rfl, _⟩ := Run.rowsC_some _ _ _ _ hs
+  simp only [List.map_map]
+  exact List.map_congr_left fun cl _ => Run.rowOf_outcome c h cl
+
+/-- Its refusal depends only on the case: within a limit, the same answer under any larger one. -/
+theorem runC_mono (limit limit' : Nat) (c : Case) (r : List (Outcome × List Val) × Nat)
+    (h : runC limit c = some r) (hl : limit ≤ limit') : runC limit' c = some r := by
+  obtain ⟨r1, h1, rfl⟩ := Option.map_eq_some_iff.mp h
+  obtain ⟨r2, h2, rfl⟩ := Option.map_eq_some_iff.mp h1
+  simp only [runC, Run.rowsC, Case.sidesC_mono _ _ hl h2, Option.map_some]
+
+/-- It never passes its limit. -/
+theorem runC_work (limit : Nat) (c : Case) (r : List (Outcome × List Val) × Nat)
+    (h : runC limit c = some r) : r.2 ≤ limit := by
+  obtain ⟨⟨rs, w⟩, hs, rfl⟩ := Option.map_eq_some_iff.mp h
+  exact (Run.rowsC_some _ _ _ _ hs).2
+
 namespace Run
 
 /-- An outcome's `outcome` and `reason` on the wire (1.5). -/
@@ -317,42 +400,40 @@ def truncated (k : Int) (x : Rat) : String :=
   (if x < 0 then "-" else "") ++ VE.Time.renderAmount k.toNat (y.num.natAbs / y.den * 10 ^ (-k).toNat) ++
     (if y.num.natAbs % y.den = 0 then "" else "…")
 
-/-- A claim's sides: each expression's value under the case's bounded values (`Claim.run` reads the same). -/
-def sides (σ : String → Val) (c : Claim) : List Val := c.exprs.map (Expr.evalL σ)
-
-/-- A rounding claim's display, at two places beyond the printed ones (2.5), where its value is known. -/
-def display (σ : String → Val) : Claim → Option String
-  | .rounds _ e p => match e.evalL σ with
-    | .ok x => some (truncated (p.places + 2) x)
+/-- A rounding claim's display, at two places beyond the printed ones (2.5), where its value is known; `vs` is the
+claim's sides, evaluated once (`Check.sides`). -/
+def display (vs : List Val) : Claim → Option String
+  | .rounds _ _ p => match vs with
+    | [.ok x] => some (truncated (p.places + 2) x)
     | _ => none
   | _ => none
 
 /-- 2.2's tie flag (`Claim.tieSensitive`), `none` where a rule's claim has no known value. -/
-def tie (σ : String → Val) : Claim → Option Bool
-  | .rounds .tiesUp e p | .rounds .halfEven e p => match e.evalL σ with
-    | .ok x => some (tieAt p.places x)
-    | .undefined => some false
+def tie (vs : List Val) : Claim → Option Bool
+  | .rounds .tiesUp _ p | .rounds .halfEven _ p => match vs with
+    | [.ok x] => some (tieAt p.places x)
+    | [.undefined] => some false
     | _ => none
   | _ => some false
 
-/-- The members of a claim row beyond a follows row's: its sides, display and tie. -/
-def claimFields (σ : String → Val) : Check → List (String × Json)
-  | .claim c => [("sides", .arr (sides σ c |>.map fun | .ok q => .str (exact q) | _ => .null).toArray),
-    ("display", (display σ c).elim .null Json.str), ("tie", (tie σ c).elim .null Json.bool)]
+/-- The members of a claim row beyond a follows row's: its sides, display and tie, read from its sides `vs`. -/
+def claimFields (vs : List Val) : Check → List (String × Json)
+  | .claim c => [("sides", .arr (vs.map fun | .ok q => .str (exact q) | _ => .null).toArray),
+    ("display", (display vs c).elim .null Json.str), ("tie", (tie vs c).elim .null Json.bool)]
   | .follows .. => []
 
 def rowJson (ds : List Decl) (claimId : String) (named : String → Option String)
-    (σ : String → Val) (k : Check) (r : Row) : Json :=
+    (vs : List Val) (k : Check) (r : Row) : Json :=
   Json.mkObj ([("status", .str "ok"), ("claim", .str r.id), ("claim_id", .str claimId), ("kind", .str (kind k)),
     ("outcome", .str (words r.outcome).1), ("reason", (words r.outcome).2.elim .null Json.str),
     ("line", (line named k).elim .null Json.str), ("finding", .null),
-    ("reproduction", if r.reproduction.isSome then .str "unknown" else .null)] ++ claimFields σ k ++
+    ("reproduction", if r.reproduction.isSome then .str "unknown" else .null)] ++ claimFields vs k ++
     match k with
     | .claim _ => []
     | .follows .. => let (cert, cx) := shownJson ds k r.shown
       [("certificate", cert), ("counterexample", cx)])
 
-#guard let row := rowJson [] "" (fun _ => none) (fun _ => .undefined) (Check.follows [] [] (.compare ⟨.eq, false⟩ (.lit 0) (.lit 0))) { id := "c", outcome := .decided .holds, shown := .certificate [.square "s" "r" 0 1], reproduction := none }
+#guard let row := rowJson [] "" (fun _ => none) [] (Check.follows [] [] (.compare ⟨.eq, false⟩ (.lit 0) (.lit 0))) { id := "c", outcome := .decided .holds, shown := .certificate [.square "s" "r" 0 1], reproduction := none }
   (row.getObjVal? "certificate").toOption.isSome &&
     (row.getObjVal? "counterexample").toOption.isSome
 
@@ -360,10 +441,11 @@ def rowJson (ds : List Decl) (claimId : String) (named : String → Option Strin
 translated document, so no row has a finding (2.5, 13.6). -/
 def runCaseReported (j : Json) : Json :=
   match Wire.decode j with
-  | .ok (c, mid, ids) =>
-    let σ := valuesL c.decls
-    Json.mkObj [("status", .str "ok"), ("meaning_id", .str mid),
-      ("rows", .arr (c.claims.mapIdx fun i cl => rowJson c.decls (ids.getD i "") (wordsIn j) σ cl.2 (Run.row c cl)).toArray)]
+  | .ok (c, mid, ids) => match Run.rowsC Work.maxWork c with
+    | some (rows, _) => Json.mkObj [("status", .str "ok"), ("meaning_id", .str mid),
+      ("rows", .arr ((c.claims.zip rows).mapIdx fun i (cl, r, vs) =>
+        rowJson c.decls (ids.getD i "") (wordsIn j) vs cl.2 r).toArray)]
+    | none => Json.mkObj [("status", .str "error"), ("error", .str Wire.workLimit)]
   | .error e => Json.mkObj [("status", .str "error"), ("error", .str e)]
 
 /-- The outcome row `i` of an answer states. -/
@@ -379,35 +461,41 @@ def outcomeAt (answer : Json) (i : Nat) : Option Outcome := do
 theorem outcome_sound (j : Lean.Json) (c : Case) (h : Wire.decodeCase j = .ok c) (i : Nat)
     (hi : i < c.claims.length) :
     Run.outcomeAt (Run.runCaseReported j) i = some ((c.claims[i]'hi).2.run c.decls) := by
-  unfold Wire.decodeCase at h
-  cases hd : Wire.decode j with
-  | error e => rw [hd] at h; cases h
-  | ok d =>
-    rw [hd] at h
-    cases h
-    have get : ∀ (l : List (String × Json)) (k : String) (v : Json), (l.map (·.1)).Nodup → (k, v) ∈ l →
-        (Json.mkObj l).getObjVal? k = .ok v := fun l k v hn hm => by
-      have hp : l.Pairwise (fun a b => ¬ compare a.1 b.1 = .eq) :=
-        (List.pairwise_map.mp hn).imp (fun hne heq => hne (Std.LawfulEqOrd.eq_of_compare heq))
-      simp only [Json.mkObj, Json.getObjVal?, Std.TreeMap.Raw.get?_eq_getElem?,
-        Std.TreeMap.Raw.getElem?_ofList_of_mem (cmp := compare) (k_eq := Std.ReflCmp.compare_self) hp hm]
-      rfl
-    have hrows : (runCaseReported j).getObjVal? "rows" =
-        .ok (.arr (d.1.claims.mapIdx fun i cl =>
-          rowJson d.1.decls (d.2.2.getD i "") (wordsIn j) (valuesL d.1.decls) cl.2 (Run.row d.1 cl)).toArray) := by
-      simp only [runCaseReported, hd]
-      exact get _ _ _ (by simp) (by simp)
-    have ho := outcomes_words ((d.1.claims[i]'hi).2.run d.1.decls)
-    have hout (k : Check) (r : Row) :
-        (rowJson d.1.decls (d.2.2.getD i "") (wordsIn j) (valuesL d.1.decls) k r).getObjVal? "outcome" =
-          .ok (.str (words r.outcome).1) := get _ _ _ (by cases k <;> simp [claimFields, rowJson]) (by simp [rowJson])
-    have hreason (k : Check) (r : Row) :
-        (rowJson d.1.decls (d.2.2.getD i "") (wordsIn j) (valuesL d.1.decls) k r).getObjVal? "reason" =
-          .ok ((words r.outcome).2.elim .null Json.str) := get _ _ _ (by cases k <;> simp [claimFields, rowJson]) (by simp [rowJson])
-    simp only [outcomeAt, hrows, List.getElem?_toArray, List.getElem?_mapIdx, List.getElem?_eq_getElem hi,
-      Option.map_some, Option.bind_eq_bind, Option.bind_some, hout, hreason, Run.row_outcome]
-    generalize words ((d.1.claims[i]'hi).2.run d.1.decls) = wo at ho ⊢
-    rcases wo with ⟨w, _ | s⟩ <;> exact ho
+  obtain ⟨⟨⟨mid, ids⟩, hd⟩, ⟨⟨vss, w⟩, hs⟩⟩ := Wire.decodeCase_decode j c h
+  have hwf := Wire.decodeCase_wellFormed j c h
+  let g := fun (cl : String × Check) => (Run.rowOf c cl (cl.2.sides (valuesL c.decls)), cl.2.sides (valuesL c.decls))
+  obtain ⟨rs, w', hrc, hrs⟩ : ∃ rs w', Run.rowsC Work.maxWork c = some (rs, w') ∧ rs = c.claims.map g := by
+    have hrc : Run.rowsC Work.maxWork c =
+        some (List.zipWith (fun cl vs => (Run.rowOf c cl vs, vs)) c.claims vss, w) := by
+      simp only [Run.rowsC, hs, Option.map_some]
+    exact ⟨_, _, hrc, (Run.rowsC_some _ _ _ _ hrc).1⟩
+  have hz : c.claims.zip rs = c.claims.map fun cl => (cl, g cl) := by
+    rw [hrs]; generalize c.claims = l; induction l <;> simp_all
+  have get : ∀ (l : List (String × Json)) (k : String) (v : Json), (l.map (·.1)).Nodup → (k, v) ∈ l →
+      (Json.mkObj l).getObjVal? k = .ok v := fun l k v hn hm => by
+    have hp : l.Pairwise (fun a b => ¬ compare a.1 b.1 = .eq) :=
+      (List.pairwise_map.mp hn).imp (fun hne heq => hne (Std.LawfulEqOrd.eq_of_compare heq))
+    simp only [Json.mkObj, Json.getObjVal?, Std.TreeMap.Raw.get?_eq_getElem?,
+      Std.TreeMap.Raw.getElem?_ofList_of_mem (cmp := compare) (k_eq := Std.ReflCmp.compare_self) hp hm]
+    rfl
+  have hrows : (runCaseReported j).getObjVal? "rows" =
+      .ok (.arr ((c.claims.map fun cl => (cl, g cl)).mapIdx fun i (x : (String × Check) × Row × List Val) =>
+        rowJson c.decls (ids.getD i "") (wordsIn j) x.2.2 x.1.2 x.2.1).toArray) := by
+    simp only [runCaseReported, hd, hrc, ← hz]
+    exact get _ _ _ (by simp) (by simp)
+  have ho := outcomes_words ((c.claims[i]'hi).2.run c.decls)
+  have hout (vs : List Val) (k : Check) (r : Row) :
+      (rowJson c.decls (ids.getD i "") (wordsIn j) vs k r).getObjVal? "outcome" =
+        .ok (.str (words r.outcome).1) := get _ _ _ (by cases k <;> simp [claimFields, rowJson]) (by simp [rowJson])
+  have hreason (vs : List Val) (k : Check) (r : Row) :
+      (rowJson c.decls (ids.getD i "") (wordsIn j) vs k r).getObjVal? "reason" =
+        .ok ((words r.outcome).2.elim .null Json.str) :=
+    get _ _ _ (by cases k <;> simp [claimFields, rowJson]) (by simp [rowJson])
+  simp only [outcomeAt, hrows, List.getElem?_toArray, List.getElem?_mapIdx, List.getElem?_map,
+    List.getElem?_eq_getElem hi, Option.map_some, Option.bind_eq_bind, Option.bind_some, hout, hreason, g,
+    Run.rowOf_outcome c hwf]
+  generalize words ((c.claims[i]'hi).2.run c.decls) = wo at ho ⊢
+  rcases wo with ⟨w, _ | s⟩ <;> exact ho
 
 /-- The row theorem on the wire, for every kind. -/
 theorem row_sound (j : Lean.Json) (c : Case) (h : Wire.decodeCase j = .ok c) (i : Nat)

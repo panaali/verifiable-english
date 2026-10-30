@@ -339,8 +339,10 @@ def outside_base_set(records: list[dict]) -> list[dict]:
             text = wording_text(r["wording"])
         except VEError:
             continue
-        if ("content" in r["outcome"] and text.startswith("Is ") and not text.startswith(
-                tuple(QUESTION_CALLERS[SPEECH_CALLER])) and not in_base_set(extra_environments()[r["env"]], r["wording"])):
+        # The F1 prefixes: the contract's list without F2's fronted `Is ` (which q1-4bb added to it).
+        f1 = tuple(prefix for prefix in QUESTION_CALLERS[SPEECH_CALLER] if prefix != "Is ")
+        if ("content" in r["outcome"] and text.startswith("Is ") and not text.startswith(f1)
+                and not in_base_set(extra_environments()[r["env"]], r["wording"])):
             out.append(r)
     return out
 

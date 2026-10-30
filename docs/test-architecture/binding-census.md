@@ -6,14 +6,14 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 
 | | count |
 |---|---:|
-| leaves:bound | 255 |
+| leaves:bound | 257 |
 | leaves:closed domain | 286 |
-| leaves:none | 1419 |
+| leaves:none | 1423 |
 | modes | 39 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 1018 |
-| today:shape | 541 |
+| today:not probed | 1022 |
+| today:shape | 543 |
 | today:unbound | 137 |
 | answers | 574 |
 | probes | 10204 |
@@ -1652,6 +1652,7 @@ Delegates: `/` to norms.
 | `/conditional_on/*` | string | none |  | pattern | 0 | not probed |
 | `/conflict_targets/*/sorts/*` | string | none |  |  | 8 | hand: `ve/norm_defaults.py:__init__` |
 | `/conflict_targets/*/target` | string | none |  | minLength | 7 | hand: `ve/norm_defaults.py:__init__` |
+| `/deciders/*` | string | none |  |  | 0 | not probed |
 | `/default_premises/*/0` | string | none |  | minLength | 0 | not probed |
 | `/detail` | string | none |  | minLength | 2 | unbound |
 | `/differs/*/predicate` | string | none |  |  | 0 | not probed |
@@ -1753,6 +1754,7 @@ Delegates: `/` to norms.
 | `/conditional_on` |  |  |  |  |
 | `/conflict_targets` |  |  |  | drop: accept/accepted, accept/ve/norm_defaults.py:__init__; duplicate: accept/accepted, accept/ve/norm_defaults.py:__init__; replace: accept/accepted; reverse: accept/accepted |
 | `/conflict_targets/*/sorts` |  |  |  | drop: accept/accepted, accept/ve/norm_defaults.py:__init__; duplicate: accept/accepted, accept/ve/norm_defaults.py:__init__; replace: accept/accepted; reverse: accept/accepted |
+| `/deciders` |  |  |  |  |
 | `/default_premises` |  |  |  |  |
 | `/default_premises/*` |  |  |  |  |
 | `/differs` |  |  |  |  |
@@ -3430,6 +3432,11 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/regions/constants/*/sort` | string | bound | x-references |  | 12 | shape |
 | `/regions/predicates/@key` | key | none |  |  | 3 | not probed |
 | `/regions/predicates/{}/*` | string | none |  |  | 6 | not probed |
+| `/report/leaves/*/meaning_id` | string | none |  | pattern | 0 | not probed |
+| `/report/leaves/*/name` | string | bound | x-references |  | 0 | shape |
+| `/report/root/meaning_id` | string | none |  | pattern | 0 | not probed |
+| `/report/root/name` | string | bound | x-equals |  | 0 | shape |
+| `/report_id` | string | none |  | pattern | 0 | not probed |
 | `/status` | string | closed domain | const |  | 13 | shape |
 | `/w6_environment_id` | string | none |  | pattern | 5 | not probed |
 | `/w6_target_environment_id` | string | none |  | pattern | 5 | not probed |
@@ -3442,6 +3449,8 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/erased/premises/*/Q` | q_formula |  | 472 |
 | `/erased/premises/*/core` | core_formula |  | 371 |
 | `/premises/*/formula` | formula |  | 139 |
+| `/report/leaves/*/formula` | formula |  | 0 |
+| `/report/root/formula` | formula |  | 0 |
 
 | array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
 |---|---|---|---|---|
@@ -3449,6 +3458,7 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/premises` | x-length |  |  |  |
 | `/regions/constants` |  |  |  |  |
 | `/regions/predicates/{}` |  |  |  |  |
+| `/report/leaves` |  |  |  |  |
 
 ## Grammars
 

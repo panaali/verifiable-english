@@ -21,6 +21,7 @@ import emit_log  # noqa: E402
 import environments  # noqa: E402
 import mutants  # noqa: E402
 import reference_policy  # noqa: E402
+from ve.errors import CheckerUnavailable  # noqa: E402
 from ve.norm_english import render_english  # noqa: E402
 from ve.ast import Document, Top, Bottom  # noqa: E402
 
@@ -315,3 +316,82 @@ def test_evidence_was_replayed_in_lean_and_rust():
     assert rows == {"witness:permitted": "CONFLICT", "packages:policy": "UNKNOWN",
                     "packages:obligation rules only": "CONFLICT-FREE", "packages:mutant m1": "CONFLICT-FREE"}
     assert RESULTS["M10"]["unknown"] == 0
+
+
+def _model_case(formula, value):
+    environment = {"language": "ve.core@0.2", "profiles": ["relational-fol@0"],
+                   "spec_revision": "ve-v0.2-expand2-2026-09-25",
+                   "vocabulary": {"sorts": {}, "predicates": {}, "constants": {}}}
+    return {"environment": environment, "ast": [[formula]], "value": value,
+            "model": {"complete": True, "domains": {}, "relations": {}, "constants": {}}}
+
+
+def _replay_with(monkeypatch, stdout, cases=None):
+    """`replay_rust` on the given raw answer, in place of the binary."""
+    monkeypatch.setattr(check, "RUST", HERE / "check.py")
+    answer = lambda *_, **__: type("Done", (), {"stdout": stdout})()  # noqa: E731
+    monkeypatch.setattr(check.subprocess, "run", answer)
+    return check.replay_rust({"rust": cases or [_model_case("top", True)]})
+
+
+GENUINE_ROW = {"id": "0", "status": "Satisfied", "value": True, "evaluations": 1}
+
+
+def test_rust_evaluates_the_model_cases_and_counts_each_answer():
+    if not check.RUST.exists():
+        pytest.skip("cargo has not produced rust/target/release/ve")
+    cases = [_model_case("top", True), _model_case("bottom", False), _model_case("top", False)]
+    assert check.replay_rust({"rust": cases}) == {"models": 3, "agree": 2}
+
+
+def test_rust_replay_batches_keep_every_case_and_its_id():
+    if not check.RUST.exists():
+        pytest.skip("cargo has not produced rust/target/release/ve")
+    assert check.replay_rust({"rust": [_model_case("top", True)] * 5}, batch=2) == {"models": 5, "agree": 5}
+
+
+def test_a_genuine_rust_row_is_counted(monkeypatch):
+    assert _replay_with(monkeypatch, json.dumps([GENUINE_ROW])) == {"models": 1, "agree": 1}
+
+
+def test_a_different_rust_value_is_a_disagreement_not_an_agreement(monkeypatch):
+    stdout = json.dumps([{**GENUINE_ROW, "status": "Violated", "value": False}])
+    assert _replay_with(monkeypatch, stdout) == {"models": 1, "agree": 0}
+
+
+@pytest.mark.parametrize("expected", [True, False])
+def test_an_exhausted_budget_in_the_rust_replay_never_counts_as_agreement(monkeypatch, expected):
+    stdout = json.dumps([{**GENUINE_ROW, "status": "ResourceLimit", "value": None}])
+    assert _replay_with(monkeypatch, stdout, [_model_case("top", expected)]) == {"models": 1, "agree": 0}
+
+
+RETYPED_FIELDS = [(field, bad) for field in sorted(GENUINE_ROW)
+                  for bad in [7, True, None, [], {}, 1.5, "\ud800", "absent", -1]
+                  if (field, bad) not in (("value", True), ("evaluations", 7))]  # these two are well typed
+
+
+@pytest.mark.parametrize("field, bad", RETYPED_FIELDS)
+def test_a_retyped_rust_row_is_refused(monkeypatch, field, bad):
+    with pytest.raises(CheckerUnavailable):
+        _replay_with(monkeypatch, json.dumps([{**GENUINE_ROW, field: bad}]))
+
+
+@pytest.mark.parametrize("field", sorted(GENUINE_ROW))
+def test_a_rust_row_without_a_field_is_refused(monkeypatch, field):
+    row = {k: v for k, v in GENUINE_ROW.items() if k != field}
+    with pytest.raises(CheckerUnavailable):
+        _replay_with(monkeypatch, json.dumps([row]))
+
+
+@pytest.mark.parametrize("stdout", [
+    "", "\xff", "7", "null", "{}", "[]", json.dumps([GENUINE_ROW, GENUINE_ROW]),
+    json.dumps([{**GENUINE_ROW, "extra": 1}]), json.dumps([{"id": "0", "status": "error", "error": {}}])])
+def test_rust_output_not_bound_to_the_request_is_refused(monkeypatch, stdout):
+    with pytest.raises(CheckerUnavailable):
+        _replay_with(monkeypatch, stdout)
+
+
+def test_rust_rows_in_the_wrong_order_are_refused(monkeypatch):
+    rows = [{**GENUINE_ROW, "id": "1"}, GENUINE_ROW]
+    with pytest.raises(CheckerUnavailable):
+        _replay_with(monkeypatch, json.dumps(rows), [_model_case("top", True)] * 2)
