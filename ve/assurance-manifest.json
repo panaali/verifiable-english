@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 39957,
+    "total_lines": 40282,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1966,12 +1966,12 @@
       },
       {
         "file": "lean/VE/Cardinality/Run.lean",
-        "lines": 221,
-        "sha256": "d183414cf694e56043d1a27b4271756d832fb1cdf8322a72fbffa575248e5b60",
+        "lines": 258,
+        "sha256": "7207cf54e9c632245b11702dda93d34fd541c6192e5d222680b5c23c8eee4a69",
         "ranges": [
           [
             1,
-            221
+            258
           ]
         ],
         "declarations": [
@@ -1979,9 +1979,47 @@
           "checkErased",
           "checkCertificate",
           "claimed",
-          "runCase"
+          "runCase",
+          "checkDeduction",
+          "admitDocument",
+          "reportJson",
+          "reportId"
         ],
-        "reason": "cardinality certificate decoder, binding and replay, claimed region tables and erased problems, and the case runner; the full file is pinned conservatively"
+        "reason": "cardinality certificate decoder, binding and replay, claimed region tables and erased problems, the document case's deduction check (checkDeduction), report and report identity (reportId), and the case runner; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Cardinality/Document.lean",
+        "lines": 288,
+        "sha256": "4bbc57c938eefa1b957eceb88b190c0f040fa7db675c10989f28944017fb44da",
+        "ranges": [
+          [
+            1,
+            288
+          ]
+        ],
+        "declarations": [
+          "decodeNode",
+          "checkGraph",
+          "admitGraph"
+        ],
+        "reason": "the cardinality claim graph (qt-a3d): node decoder (decodeStatement on each node, premises with their certificate), graph check and its charges; the full file is pinned"
+      },
+      {
+        "file": "lean/VE/Readings/DefaultVerdicts.lean",
+        "lines": 506,
+        "sha256": "79d7da71d2ae2fa105600904a51397f13b601389815c21004ad9e8a9fe08c732",
+        "ranges": [
+          [
+            1,
+            506
+          ]
+        ],
+        "declarations": [
+          "dEvidenceOf",
+          "replayD",
+          "runVerdictsD"
+        ],
+        "reason": "decodes and checks per-choice default evidence in readings-verdicts, then builds the default response; the full replay module is pinned conservatively"
       },
       {
         "file": "lean/VE/Calc/Jsonl.lean",
@@ -2000,23 +2038,6 @@
           "decodeJsonl"
         ],
         "reason": "the JSON-lines table decoder of a counted value's pinned bytes (ME-4, spec 4.1): flat objects of scalars, a repeated key refused; the full file is pinned"
-      },
-      {
-        "file": "lean/VE/Readings/DefaultVerdicts.lean",
-        "lines": 506,
-        "sha256": "79d7da71d2ae2fa105600904a51397f13b601389815c21004ad9e8a9fe08c732",
-        "ranges": [
-          [
-            1,
-            506
-          ]
-        ],
-        "declarations": [
-          "dEvidenceOf",
-          "replayD",
-          "runVerdictsD"
-        ],
-        "reason": "decodes and checks per-choice default evidence in readings-verdicts, then builds the default response; the full replay module is pinned conservatively"
       }
     ],
     "other_json": {
