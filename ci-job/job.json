@@ -1,0 +1,21 @@
+{
+ "job": "jt-2c.s3of4-e4317d4d",
+ "head": "eb25ed92aa05e5ebaad6af05236ecec4b1bb143b",
+ "argv": [
+  "jt-2c.s3of4-e4317d4d",
+  "eb25ed92aa05e5ebaad6af05236ecec4b1bb143b",
+  "6949746bf2916aad8ccd632a5fa953351701921a",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-24dfe81065d2.tar.zst",
+  "af515e9efc1eede152b51b99011e853be60249e593b75bc8ada038f85054aee1",
+  "--max-mutants",
+  "1000",
+  "--test",
+  "lean/VE/Defaults/RouteExamples.lean",
+  "--allow",
+  "docs/judgment-terms/jt-2c/trust-mutants-allow.json",
+  "--shard",
+  "3/4",
+  "--jobs",
+  "4"
+ ]
+}
