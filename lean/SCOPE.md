@@ -138,8 +138,9 @@ writes fail as the spec states them on objects no JSON parser builds (F-raw belo
 adds `JsonWF` (`Govern.lean`: every object at any depth a well-formed tree) as their hypothesis, with spec 4.2's
 `HasStr`, `payload` and `BlockBound`. From sc-1ae: `decodeNorm_name` (both chains read a rule's `name` by lookup; the
 soft chain through `ruleFields_name`), `govern_strings`, `govern_no_new_symbols` and `govern_preserves`, through
-`composed_src`, `patch_src`, `addOver_src` and `unitsOf_patch`. `govern_provenance` is sc-1aeb; the lemma that the
-parser builds `JsonWF` objects is sc-1af (`Lean.Json.parse` is `partial`, so nothing can be proved of it).
+`composed_src`, `patch_src`, `addOver_src` and `unitsOf_patch`. From sc-1aeb: `govern_provenance`, under the same
+hypothesis (`normOf_newContent`: `patch` writes the composed rule back as `norm`). The lemma that the parser builds
+`JsonWF` objects is sc-1af (`Lean.Json.parse` is `partial`, so nothing can be proved of it).
 From sc-3ab: `anchor_reach_iff` and `label_reach_iff` (spec 5.5: a heading's reach and a label's reach are the
 layout's). `title_identity` fails as spec 5.5 states it on the same objects (F-raw-title below) and waits for the
 same decision (sc-3ac).
