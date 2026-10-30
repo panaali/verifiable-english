@@ -114,7 +114,7 @@ functions of them. The statement review fixes names and bodies (SYNTHESIS 2, fir
 - Both have `origins = []`. Today's relays bind the `"soft"` and `"rights"` arrays as `docs/spec/rd-9-relay-binding.md`
   says, and obligation 5 (section 3) binds new providers only.
 - `legacyIds` (stub:154) are the id lists whose outputs and texts are today's: `[]`, `[soft]`, `[soft, rights]`.
-- `softLabelledU_labels_nodup` and `legacy_labels_nodup` (stub:157, 163). Today's labels are already distinct.
+- `softLabelledU_labels_nodup` and `legacy_labels_nodup_of_actKeys` (stub:157, 163). Today's labels are already distinct.
   Each assumes the well-formedness its decoder's source carries: `WellFormedSoft D` for soft (`src.wf`,
   `SoftNorms/Wire.lean:90`) and `WellFormedRights R` for rights (`src.wf`, `Rights/Wire.lean:270`). pk-1 proves them
   from checks the decoders already run:
@@ -124,6 +124,11 @@ functions of them. The statement review fixes names and bodies (SYNTHESIS 2, fir
     (`Rights/Correlate.lean:365`) and a repeated condition name (`:403`), and `limActs` is deduplicated
     (`Rights/Tree.lean:230`). Sorting does not make them distinct;
   - soft labels begin with `soft:` and rights labels with `rights:`.
+
+  `legacy_labels_nodup_of_actKeys` also assumes `(hk : ∀ k ∈ VE.Rights.condKeys R, ':' ∉ k.2.1.toList)`, what the route's
+  decoder enforces. It replaces the false `legacy_labels_nodup`, whose counterexample `cx`
+  (`lean/VE/NormDefaults/PacksLegacyExamples.lean`) has `:` in a predicate name (DRI decision 2026-10-27, item 3:
+  `reviews/dri-decisions-20261027-featureplan-gates.md`).
 
   `WellFormedSoft (correlate R)` is not enough for rights: it never sees limitation or condition names. Fixture F1
   (stub:497–512) is a rights document repeating a limitation, and one repeating a condition. On both,
@@ -278,7 +283,7 @@ that the check fails on the draft's placement (`transfers_X` in the core) and on
 |---|---|---|---|
 | `lean/VE/NormDefaults/Packs.lean` (new, the core) | `Layered.lean`'s own imports: `VE.NormDefaults.Explain`, `VE.Rights.Wire` | `Layered.lean` | 2.1–2.5; `legacyIds`; 2.6's `X_legacy`, `legacy_take`, `legacy_drop`, `packPremises_absent`, `X_soft_first`; 2.7's `labelledJson`, `elaborateArrays`, `elaborateArrays_keys`, `elaborateArrays_legacy`; 2.8 without the legacy theorems; 2.9 without `filledX_whole`; pk-1b: `KindRow`, `dispatch` |
 | `lean/VE/NormDefaults/Layered.lean` (hunks below) | unchanged, plus `Packs` | as today | `softPack`, `rightsPack` (after `softLabelledU`, before `LayeredU`); pk-1b: `legacyKinds`, `legacyRows` (before `layeredCase`) |
-| `lean/VE/NormDefaults/PacksLegacy.lean` (new, theorems) | `VE.NormDefaults.Layered` | `LayeredAdmission.lean`, `Readings/UnspecifiedWire.lean` | `softLabelledU_labels_nodup`, `legacy_labels_nodup`, `assemble_legacy_soft`, `assemble_legacy_rights`, `packPremises_legacy`, `packFault_legacy_rights`, `packFault_legacy_soft`, `filledX_whole`; pk-1b: `dispatch_legacy` |
+| `lean/VE/NormDefaults/PacksLegacy.lean` (new, theorems) | `VE.NormDefaults.Layered` | `LayeredAdmission.lean`, `Readings/UnspecifiedWire.lean` | `softLabelledU_labels_nodup`, `legacy_labels_nodup_of_actKeys`, `assemble_legacy_soft`, `assemble_legacy_rights`, `packPremises_legacy`, `packFault_legacy_rights`, `packFault_legacy_soft`, `filledX_whole`; pk-1b: `dispatch_legacy` |
 | `lean/VE/Readings/SupPacks.lean` (new, theorems) | `VE.Readings.SupExtra` | nothing yet | `transfers_append`, `transfers_X` |
 | `lean/VE/NormDefaults/PacksExamples.lean` (new) | `PacksLegacy`, `VE.Rights.Examples`, `ResponseShape.Schemas.NormDefaults` | nothing | fixtures A1–A9, A9′ and F1 |
 | The first provider (AT-2) | above all of these | | `packEntry`, `furtherEntries` (with its shape row), `expandBy`, `ExpandsOn`, `OriginsExact` |
@@ -338,15 +343,15 @@ keeping today's `filledX` text.
   `elaborateArrays_keys`, `transfers_append`.
 - **Proved, extra (1):** `transfers_X`.
 - **`sorry`, for pk-1 to prove (13):** `assemble_order`, `assemble_fresh`, `assemble_wellFormed`,
-  `softLabelledU_labels_nodup`, `legacy_labels_nodup`, `assemble_legacy_soft`, `assemble_legacy_rights`,
+  `softLabelledU_labels_nodup`, `legacy_labels_nodup_of_actKeys`, `assemble_legacy_soft`, `assemble_legacy_rights`,
   `X_soft_first`, `elaborateArrays_legacy`, `firstFailing_some`, `packFault_legacy_rights`,
   `packFault_legacy_soft`, `dispatch_legacy` (pk-1b).
 - If pk-1 finds one false, it stops and reports with a mechanised counterexample; it never adds a hypothesis
   (DRI-RULINGS, never covered).
 
-Seeded bugs in the stub: `docs/spec/premise-packs/mutants.json`, seventeen mutants, each failing a `#guard`, a proof
-or the file check. `uv run python docs/spec/premise-packs/mutants.py` regenerates it (M11: F1's hypothesis; M12–M16:
-the file split; M17: the closed elaborate shape).
+Seeded bugs in the stub: `docs/spec/premise-packs/mutants.json`, nineteen mutants, each failing a `#guard`, a proof
+or the file check. `uv run python docs/spec/premise-packs/mutants.py` regenerates it on the tree before pk-1 (M11: F1's
+hypothesis; M12–M16: the file split; M17: the closed elaborate shape; M18–M19: `hk`).
 
 ## 7. Requests from the provider plans that PK-1 does not take
 
