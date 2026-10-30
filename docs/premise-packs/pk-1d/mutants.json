@@ -1,0 +1,94 @@
+{
+ "item": "pk-1d",
+ "base": "79ce58936 (merge base)",
+ "note": "S1-S6 were planted in the real file, run against tests/test_premise_packs_stub.py with -x, then restored. M11, M18 and M19 are the stub's own mutants (docs/spec/premise-packs/mutants.py), run with all nineteen on 49a926ee7, because the stub has 54 errors on today's tree (pk-1 declares its names). The item changes no product code and adds no trusted definition (trust_map: K +0, S +0, D +0, G +0, trusted +0).",
+ "mutants": [
+  {
+   "id": "S1",
+   "language": "Python test over the spec and stub",
+   "file": "docs/spec/premise-packs/SpecStubs_pk1.lean",
+   "behaviour": "the stub keeps the old text: hk dropped",
+   "failed": true,
+   "test": "tests/test_premise_packs_stub.py::test_the_stub_states_the_built_theorem",
+   "tree": "this branch"
+  },
+  {
+   "id": "S2",
+   "language": "Python test over the spec and stub",
+   "file": "docs/spec/premise-packs/SpecStubs_pk1.lean",
+   "behaviour": "the stub keeps the old name",
+   "failed": true,
+   "test": "tests/test_premise_packs_stub.py::test_the_stub_states_the_built_theorem",
+   "tree": "this branch"
+  },
+  {
+   "id": "S3",
+   "language": "Python test over the spec and stub",
+   "file": "docs/spec/premise-packs/SpecStubs_pk1.lean",
+   "behaviour": "hk reversed in the stub",
+   "failed": true,
+   "test": "tests/test_premise_packs_stub.py::test_the_stub_states_the_built_theorem",
+   "tree": "this branch"
+  },
+  {
+   "id": "S4",
+   "language": "Python test over the spec and stub",
+   "file": "docs/spec/premise-packs.md",
+   "behaviour": "spec 2.6 loses hk's text",
+   "failed": true,
+   "test": "tests/test_premise_packs_stub.py::test_spec_2_6_states_the_hypothesis_and_cites_the_decision",
+   "tree": "this branch"
+  },
+  {
+   "id": "S5",
+   "language": "Python test over the spec and stub",
+   "file": "docs/spec/premise-packs.md",
+   "behaviour": "the spec's sorry list keeps the old name",
+   "failed": true,
+   "test": "tests/test_premise_packs_stub.py::test_the_superseded_name_stays_only_in_the_spec_note",
+   "tree": "this branch"
+  },
+  {
+   "id": "S6",
+   "language": "Python test over the spec and stub",
+   "file": "docs/spec/premise-packs/mutants.py",
+   "behaviour": "M11 keeps the pre-pk-1d text to mutate",
+   "failed": true,
+   "test": "tests/test_premise_packs_stub.py::test_every_stub_mutant_still_applies_and_is_recorded",
+   "tree": "this branch"
+  },
+  {
+   "id": "M11",
+   "language": "Lean",
+   "file": "docs/spec/premise-packs/SpecStubs_pk1.lean",
+   "behaviour": "the file check still requires WellFormedRights, under the new name",
+   "failed": true,
+   "errors": 1,
+   "test": "SpecStubs_pk1.lean:603",
+   "message": "section 5's files do not build: legacy_labels_nodup_of_actKeys does not assume the rights source's WellFormedRights (F1)",
+   "tree": "49a926ee7 with the stub copied over it"
+  },
+  {
+   "id": "M18",
+   "language": "Lean",
+   "file": "docs/spec/premise-packs/SpecStubs_pk1.lean",
+   "behaviour": "the file check requires `hk`: the old statement under the new name fails",
+   "failed": true,
+   "errors": 1,
+   "test": "SpecStubs_pk1.lean:603",
+   "message": "section 5's files do not build: legacy_labels_nodup_of_actKeys does not assume `hk` on the act keys (spec 2.6, `cx`)",
+   "tree": "49a926ee7 with the stub copied over it"
+  },
+  {
+   "id": "M19",
+   "language": "Lean",
+   "file": "docs/spec/premise-packs/SpecStubs_pk1.lean",
+   "behaviour": "the old name and old statement fail",
+   "failed": true,
+   "errors": 2,
+   "test": "SpecStubs_pk1.lean:547",
+   "message": "Unknown constant `legacy_labels_nodup_of_actKeys`",
+   "tree": "49a926ee7 with the stub copied over it"
+  }
+ ]
+}
