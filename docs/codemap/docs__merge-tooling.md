@@ -1,0 +1,1 @@
+- `docs/merge-tooling/survey.py` — Evidence: which historical sync merges on main conflicted only in files tools/regen_generated.py owns.

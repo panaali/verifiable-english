@@ -1,0 +1,14 @@
+- `lean/VE/Risk/Admission.lean` — W2 graph admission over a regenerated risk source (docs/spec/risk.md 3.4 and 7.2).
+- `lean/VE/Risk/Audit.lean` — The log and the audit (docs/spec/risk.md 4.10 and 7.2).
+- `lean/VE/Risk/Background.lean` — The Background slot `risk`, `BaseAdmissibleRisk` and the policy checks (docs/spec/risk.md 4.6, 4.7 and 7.2).
+- `lean/VE/Risk/Cond.lean` — Conditions of `risk@0` records (docs/spec/risk.md 3.2, 4.2 and 7.1).
+- `lean/VE/Risk/Decl.lean` — Risk documents (docs/spec/risk.md 1.1, 1.2, 4.1, 4.5 and 7.1).
+- `lean/VE/Risk/Derive.lean` — Endpoint evaluation (docs/spec/risk.md 4.3 and 7.2).
+- `lean/VE/Risk/Eval.lean` — The risk differential harness of docs/spec/risk.md 8.3 (`ve_service` mode `risk-eval`).
+- `lean/VE/Risk/Piecewise.lean` — `status_piecewise_constant` and the certified scans (docs/spec/risk.md 4.9 and 7.2).
+- `lean/VE/Risk/Record.lean` — Decision records, log entries and admission (docs/spec/risk.md 1.3, 1.4, 3.2, 3.3 and 4.4 A1 to A3).
+- `lean/VE/Risk/Report.lean` — Margins (docs/spec/risk.md 4.9 and 7.2): endpoints, perturbation, the outcome of a perturbed record, the candidates, the candidate limit and the three scans.
+- `lean/VE/Risk/Run.lean` — The `ve_service` mode `risk` (docs/spec/risk.md 7.3), formerly the one-shot `ve_risk_route`.
+- `lean/VE/Risk/Severity.lean` — The severity order and the alternatives document of a risk policy (docs/spec/risk.md 4.1 and 7.2).
+- `lean/VE/Risk/Wire.lean` — The risk decoder (docs/spec/risk.md 1.1, 3 and 7.3): the profile gate, the strict `risk` block decoder, the W6 unit extension, the `excludes` fulfilment body, …
+- `lean/VE/Risk/Words.lean` — The two defined words (docs/spec/risk.md 4.5 and 7.2): typing of their bodies, `risk_inline_faithful`, and the properties of `less_worst` over every structure …

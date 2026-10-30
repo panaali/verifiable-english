@@ -1447,6 +1447,27 @@
    "reason": "sc-1af: VE/Scope/Wire.lean +1 (decodeBlock's boundary call; the check jsonWF?/listWF?/implWF?/balanced?/ascending is G[R] +31 in VE/Scope/Govern.lean and illFormed D[R] +10 in VE/Scope/Wire.lean, untrusted)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1af, 2026-10-18",
    "commit": "81b8371210db46ae992a2eff54f1a6d0039d2d0d"
+  },
+  {
+   "class": "V",
+   "lines": 48,
+   "reason": "sc-5rc: VE/Service/Document.lean +31 D[V]; ResponseShape/Schemas/Document.lean +17 G[V]; K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-5rc, 2026-10-29",
+   "commit": "471ccc7e4cb9f163cdcbd6c3bf66f3462d6d2b6d"
+  },
+  {
+   "class": "V",
+   "lines": 2,
+   "reason": "sc-5rc: VE/Service/Document.lean +31, ResponseShape/Schemas/Document.lean +19",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-5rc, 2026-10-29",
+   "commit": "471ccc7e4cb9f163cdcbd6c3bf66f3462d6d2b6d"
+  },
+  {
+   "class": "V",
+   "lines": 7,
+   "reason": "sc-5rc review F1: VE/Service/Document.lean +36 D[V], ResponseShape/Schemas/Document.lean +21 G[V]; citations preserved in composed readings; K +0, S +0; R16 ties pass registered in FOLLOW-UPS.md",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-5rc, 2026-10-18",
+   "commit": "314b23a42c211ffcd68bd6070fa7ba3770f3a5b0"
   }
  ]
 }

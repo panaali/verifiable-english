@@ -96,7 +96,7 @@ def test_every_structural_mutant_of_the_f1_answer_is_refused(tmp_path, monkeypat
     assert count > 200 and not accepted, accepted
 
 
-def structural_mutants_accepted(tmp_path, monkeypatch, text):
+def structural_mutants_accepted(tmp_path, monkeypatch, text, bind_unit="u0164.s02"):
     """The one-fault mutants of a scope@0 document's genuine row that the schema and the binding let through."""
     from tests.test_document_lean_switch import _structural_mutants
     from ve.backends import relay
@@ -106,7 +106,7 @@ def structural_mutants_accepted(tmp_path, monkeypatch, text):
     path.write_text(text)
     case = {"id": "document", "document": path.read_text(), "admit": True}
     row = D._lean_answer(path.read_bytes(), True)
-    lead = next(i for i, u in enumerate(row["units"]) if u["id"] == "u0164.s02")
+    lead = next(i for i, u in enumerate(row["units"]) if u["id"] == bind_unit)
     rebound = [(("rename", "absent"), lambda r: r["units"][lead].update(id="absent")),
                (("span", "+1"), lambda r: r["units"][lead].update(span=[n + 1 for n in r["units"][lead]["span"]])),
                (("extra",), lambda r: r["units"].append({**r["units"][lead], "id": "u9999.s01"})),

@@ -925,6 +925,35 @@ theorem leadPart_wf : JsonWF (Json.mkObj [("sign", false), ("unless", .arr #[]),
     · exact .arr _ (by simp)
     · exact .arr _ (by simp)
 
+/-! F1-g as `govern_provenance`'s conclusion (sc-1aeb): on a well-formed document (`parts_wf`) the theorem applies;
+    `provenanceOf` computes its conclusion for one unit, each affected unit holds it, and an answer that is not
+    `govern`'s, or a unit that is not affected, does not -/
+example (re : VE.Readings.Wire.ReadingsEnvironment) (out : Json) (ho : govern (sdoc (hcDoc parts) [g1] [] re) = .ok out)
+    (u : String) (hu : u ∈ affected (sdoc (hcDoc parts) [g1] [] re)) :=
+  govern_provenance _ parts_wf out ho u hu
+def provenanceOf (D : SDoc) (out : Json) (u : String) : Bool :=
+  match baseObj D u, edgesFor D u with
+  | .ok o₀, .ok es => match (governorsOf D u).foldlM (fun o g => applyEffect u g.effect o) o₀ with
+    | .ok o₁ => normOf (contentOf out u) == some (addOver es o₁) &&
+      (governorsOf D u).all fun g => match covered D g.reach with | .ok us => us.contains u | .error _ => false
+    | .error _ => false
+  | _, _ => false
+/-- The affected units, and the conclusion at each unit given against `govern`'s answer or against `alt`. -/
+def provAt (gs : List Governor) (us : List String) (alt : Option Json := none) : Option (List String × List Bool) := do
+  let re ← (VE.Readings.Wire.decodeEnvironment envJ).toOption
+  let D := sdoc (hcDoc parts) gs hcNames re
+  let out ← alt.orElse fun _ => (govern D).toOption
+  pure (affected D, us.map (provenanceOf D out))
+-- F1-g: the frame over seven part units; the lead-in (before them) and u0166.s01 (after them) are not affected
+#guard provAt [g1] ("u0164.s02" :: seven ++ ["u0166.s01"]) == some (seven, false :: seven.map (fun _ => true) ++ [false])
+-- with a unary governor (`gN`), and with precedence edges into every item but u0165.s02 and u0165.s07
+#guard provAt [g1, gN, gP, gY] seven == some (seven, seven.map fun _ => true)
+-- refused: the ungoverned document; `g1`'s answer, without the edges or without the unary governor
+#guard (provAt [g1] seven (some (hcDoc parts))).map (·.2) == some (seven.map fun _ => false)
+#guard (provAt [g1, gP, gY] seven (gov (hcDoc parts) [g1]).toOption).map (·.2) ==
+  some [false, true, false, false, false, false, true]
+#guard (provAt [g1, gN] seven (gov (hcDoc parts) [g1]).toOption).map (·.2) == some (seven.map fun _ => false)
+
 /-! `HasStr`, `payload` and `JsonWF` (sc-1ae): a string value at any depth, and never a key -/
 example : HasStr "a" (.arr #["b", .arr #["a"]]) := .arr (x := .arr #["a"]) (by simp) (.arr (by simp) .str)
 example : HasStr "a" (Json.mkObj [("k", "a")]) := .obj ((mkObj_getObjVal [("k", "a")] (by simp) "k" _).mpr (by simp)) .str
