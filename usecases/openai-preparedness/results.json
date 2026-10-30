@@ -23076,7 +23076,20 @@
    "soft_rows": 18
   },
   "M8": {
-   "replayed_certificates": 7,
+   "certificate_items": [
+    "D1",
+    "D2",
+    "D3",
+    "D4",
+    "N1",
+    "S1",
+    "S2",
+    "S3",
+    "S4",
+    "S5",
+    "T1",
+    "T2"
+   ],
    "unknown_items": [
     "G7",
     "N4"

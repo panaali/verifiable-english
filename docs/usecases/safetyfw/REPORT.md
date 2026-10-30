@@ -1,4 +1,6 @@
-# Safety-framework use cases: baseline and RSP run
+# Safety-framework use cases: baseline, RSP run and Preparedness run
+
+- **This item (`usecase-pf-run`, 2026-10-30):** the OpenAI Preparedness key answered by VE: 231/239 agree (`results.json` `comparison[].agree`), 2 undecided with a named limit (G7, N4), 6 disagreements that are truncated key cells (key finding, section 6); all six PLAN 11 mutants exact. Counts await `uc-audit`. Product code: none; trust +0; no DELTA row, no DRI signature reserved. Details: sections 28 to 32.
 
 - **Status:** two merged items. This branch (`usecase-safetyfw-b`): F14 (B) fixed as a class (section 25): one Rust table of Lean's sort decoders, a three-engine truth table over all 1,045 admitted profile lists, two hunts; F1-F4, F6-F13 stay fixed. From `usecase-rsp-run`: RSP run complete, 111/126 answers agree with the frozen key, 15 are faithful undecided; counts await
   `uc-audit`. No DRI signature or DELTA row is reserved.
@@ -56,7 +58,8 @@ the same way as safety-framework's `test_span_accounting_is_complete`.
 | DeepMind FSF 3.1 | Oct 18 (fsf-r1) | 4,595 (8.5%) | 7,356 (13.5%) | 35,557 (65.4%) | 6,865 (12.6%) | 54,373 |
 | DeepMind FSF 3.1 | Oct 28 (fsf-r2) | 4,595 (8.5%) | 7,356 (13.5%) | 35,557 (65.4%) | 6,865 (12.6%) | 54,373 |
 | Anthropic RSP 3.4 | Oct 28 (corrected baseline) | 5,327 (9.0%) | 13,214 (22.2%) | 37,248 (62.7%) | 3,621 (6.1%) | 59,410 |
-| OpenAI PF v2 | Oct 29 (D1 family drafts) | 170 (0.3%) | 7,052 (10.5%) | 5,327 (7.9%) | 54,869 (81.4%) | 67,418 |
+| OpenAI PF v2 (baseline) | Oct 29 (D1 family drafts) | 170 (0.3%) | 7,052 (10.5%) | 5,327 (7.9%) | 54,869 (81.4%) | 67,418 |
+| OpenAI PF v2 | Oct 30 (usecase-pf-run) | 170 (0.3%) | 9,073 (13.5%) | 5,327 (7.9%) | 52,848 (78.4%) | 67,418 |
 
 Sources: [fsf-r2/gaps.json](../safety-framework/fsf-r2/gaps.json) (`master_bytes_by_status`, Oct 1, Oct 18 and
 today), [anthropic-rsp/gaps.json](anthropic-rsp/gaps.json) and
@@ -116,8 +119,13 @@ predicates once jt-2c lands, and the "may be adjusted" units as default rules on
 
 ## 6. Key findings
 
-None. No step of either translation contradicted a frozen key cell, and no key cell was edited. Neither baseline
-answers key items; that remains for `usecase-rsp-run` and `usecase-pf-run`. OpenAI PLAN 12 documents translation
+No key cell was edited. `usecase-pf-run` found one transcription defect: `answer-key.json` holds `"key": "SOME(N"`
+(and a stray `"soft": "RS1=default"`) for the six B-*L*/MREP items, where PLAN 6.2 says `SOME(N ∧ unscoped)`. Source
+sentence (Table 2, Long-range Autonomy): "If a model has High or Critical capabilities in any of the Tracked
+Categories, require a "misalignment" safeguards report (see Section 4.2)." VE's answer and the independent
+`reference.py` both equal the PLAN cell; the six rows are scored as disagreements with cause "key finding" (OpenAI
+PLAN 12 item 15). Whether to repair the pinned transcription is the DRI's decision. Before this item neither
+baseline answered key items. OpenAI PLAN 12 documents translation
 gaps, especially the unrepresented quantity bridges, without changing an answer.
 
 ## 7. VE observations (no product code changed; repros saved)
@@ -143,7 +151,10 @@ None of these gives a wrong verdict. Each is a limit the translation had to work
 | Item | What it needs |
 |---|---|
 | `usecase-rsp-run` | `run.py`: cases.json's situations as atoms over the D1 vocabulary; per-choice expansion of `build_document.READINGS` (a reading's rules, premises and `case:` premises); both completion defaults; S from P3's tables, D from P4 (with checked countermodels for D3a and D6a, and RS9 in D3 with a day-count bridge), T5's cost factor in D3; `reference.py` (A, B, C, G from PLAN 3 and 4 alone); results.json; M1, M2, M4, M7 to M10; mutants m1 to m6; fsf-r1's content-bearing sets for the sets whose readings are each one rule (RS8, RS12, RS13, RS6) |
-| `usecase-pf-run` | complete the explicit F1–F17 source readings and D2/D3 quantity bridges named in PLAN 12, then implement `run.py` and `reference.py` for the 239 frozen items, both completion defaults, results.json and M1/M2/M4/M7–M10; no key cell may change |
+| `usecase-pf-run` | done (sections 28 to 32) |
+| `uc-audit` of openai-preparedness | the source audit of the 86 rules, 8 facts and 67 cases before the 231/239 is audit-verified |
+| PF transcription repair | a DRI decision on the six truncated MREP cells (section 6) |
+| PF G7, N4 | a D1 relation between evaluations and capabilities (G7, SC); a closure premise for the level sort (N4, SC) |
 | `fsf-r3` | the re-expressions of fsf-r2 (probes.md): open terms on their predicates under `judgments@0` after jt-2c; "may be adjusted" as a default rule once `ve document check` admits `norm-defaults@0`; RS8 after SC-5. Needs a second-model fidelity check |
 
 ## 9. Seeded bugs (each planted, its test shown failing, then removed)
@@ -764,3 +775,110 @@ marked undecided when VE cannot separate it.
 | 9. Conflict-making reading | all reading-conditioned blocks; C1–C7 and C-doc | none | W1 checks the translated acts and precedence; C1/C7 are candidate translated-rule conflicts. No claim of a source-policy conflict is made before the independent R14 check. |
 | 10. Key cell | all 126 key rows; A/B/C/G independently recomputed (68) | none | No contradiction to a frozen cell was found; 15 answers stay faithful undecided and are not counted as agreement. |
 | 11. Elided quote | all headers with ellipses: `rows-cond`, `f5-strict`, `s1-advance-default`, `f8-internal`, `f9-internal`, `f12-board-approval`, `t4-suff`, `s2-suff-result`, `s2-suff-third` | none | Their full source sentences were checked in the pinned text; conditions omitted from a short header remain in the predicate legend, a separate fact, or an OPEN unit. The three corrected blocks carry their full sentences. |
+
+## 28. OpenAI Preparedness answers (`usecase-pf-run`, 2026-10-30)
+
+The pinned PDF and text match PLAN 1's SHA-256 hashes (`sha256sum` of
+`~/code/manage-agents/pilots/openai-preparedness/source/{preparedness-framework-v2.pdf,pf-v2.txt}`: `fae6e4cc…`,
+`d2e3dd5b…`). No PDF, extracted text or generated source document is committed. PLAN 6 and `answer-key.json` are
+unchanged (`test_section_6_is_the_frozen_key`, `test_transcription_is_pinned`). `usecase-rsp-run` merged first:
+`run.py` imports its `verdict()` and `applies()` unchanged and follows its pattern (case atoms, per-choice
+documents under both completion defaults, premise check of every case model, W1 with certificates, the six
+mutants and the unscored narrowing reruns). These counts are **not audit-validated** until `uc-audit` runs.
+
+| Family | Correct / key | Undecided (named limit) | Disagree | Main cause |
+|---|---:|---:|---:|---|
+| A per level and activity | 140 / 140 | 0 | 0 | |
+| B per level | 36 / 42 | 0 | 6 | key finding: the truncated MREP cells (section 6) |
+| K process triggers | 22 / 22 | 0 | 0 | |
+| T AIS-C indicator | 2 / 2 | 0 | 0 | |
+| C conflicts | 7 / 7 | 0 | 0 | C6 and C-doc are translated-rule conflict candidates (R14) |
+| G gaps | 9 / 10 | 1 | 0 | G7: footnote 5's indicator relation (SC) |
+| N never applies | 3 / 4 | 1 | 0 | N4: no closure premise for the level sort (SC) |
+| S severity | 8 / 8 | 0 | 0 | |
+| D dates | 4 / 4 | 0 | 0 | |
+| **Total** | **231 / 239** | **2** | **6** | |
+
+Source of every number: `usecases/openai-preparedness/results.json`, written by `uv run python
+usecases/openai-preparedness/run.py` (output `231 / 239 (679.8 s)`), recomputed by
+`test_pf_run_recomputes_every_key_item_and_records_causes`. **Useful answers for `tools-local/usecase-progress.py`:
+231/239**, read from `comparison[].agree` (the RSP shape; `metrics.useful_answers` repeats it). The two undecided
+rows have status `UNDECIDED-faithful` (VE names its limit) but the key decides them, so they are not counted as
+correct; the six key-finding rows would agree against PLAN 6.2's cells (237/239). There are no resource-limit rows
+and no unclassified disagreement.
+
+Metrics (`results.json` `metrics`): M2 20 reading sets (RS0 narrowed by N1), at most 128 choices on an item (C-doc),
+51 SOME answers; M3 the coverage of section 3 (OPEN 9,073 bytes, 31 unresolved reading sets, 21 open terms); M4
+SOME answers by family A 30, B 10, C 2, D 2, G 1, K 6; M5 no packed identifier, 58 regulated predicates (the limit
+is 64); M6 no untraced block, no choice mismatch; M7 669 default-sensitive choices, and on every selection row the
+sensitive predicates are exactly the silent ones (`sensitive_exactly_where_silent`); 20 key items carry a "soft"
+marker and VE's selected rules are default-mode under that choice for the 14 that are not MREP; M8 12 items
+answered by a replayed entailment or quantity certificate (N1, T1, T2, S1 to S5, D1 to D4), 33 W1 conflict
+witnesses and 117 W1 conflict-freedom certificates, unknown items G7 and N4; M9 6/6 mutants exact; M10 389 units, 86 rules, 67 cases, 1,032 evaluated
+choices, 158 documents, 10 prover calls, wall time printed by `run.py` and not pinned.
+
+| Mutant (PLAN 11) | Changed results (`results.json` `mutants`) |
+|---|---|
+| m1 F11's precedence removed | C1 → SOME(RS5=exception), C-doc |
+| m2 invented High-level deployment permission | C-doc → ALL; M6 flags `m2-invented-permission` |
+| m3 "for large-scale internal deployment" deleted | A-CYB-H ALN at DEV, INT, EXT; A-CYB-C ALN at DEV, INT, EXT; G3 |
+| m4 "1/5th" → "1/4th" | T2 |
+| m5 "thousands" → "millions" | S1 (S2 stays NONE, S5 stays ALL) |
+| m6 N2's precedence removed | C2 → SOME(RS6=req & RS7=noinput), C-doc |
+
+Unscored reruns (`without_narrowings`): without N1, 35 answers change (34 rest on "we will" or present-tense
+statements: B's CAPREP, SAFEREP, DISC and PUBRES, K1, K4, K5, K12, K14, K15, K17 and G10 become NONE; N3 becomes
+undecided). Without N2 only C2 and C-doc change, as PLAN 6.5 says.
+
+`reference.py` (stdlib only, no `ve` import) recomputes the 199 A, B, C and G items from PLAN 3 and 4: 193 agree and
+exactly the six MREP cells differ; against the PLAN 6.2 cell they agree
+(`test_pf_independent_reference_and_comparator_catch_wrong_answers`).
+
+What this round changed in the translation, with the source sentence beside each block (PLAN 12 items 10 to 17):
+rules now quantify over Table 1's levels (`there is a level such that that situation has reached that level and that
+level is high`) instead of situation flags; F2 and section 1's deployment sentence carry RS3, F3 carries RS18 and its
+forecast branch, Table 2 carries RS4s, and F7 (RS16), F9 (RS9 residual risk), F14 (RS13), F15 (third parties),
+Appendix B (RS6, RS7, RS11, RS17, the fast track) and C.3 (access) have the blocks their reading sets name. Ten
+units move from UNFORMALISED to OPEN (2,021 bytes); CHECKED is unchanged at 170 bytes (`build_document.py`, output
+`{'LABELLED': 5327, 'UNFORMALISED': 52848, 'OPEN': 9073, 'CHECKED': 170}`).
+
+VE observation (not a VE bug): `pf_vocabulary.environment()` returns declarations shared with the module, so a
+caller that changes a completion default changes it for every later caller. `run.py` copies the vocabulary before
+it sets a default; the first full run, before the copy, gave order-dependent W1 answers (C-doc UNKNOWN after a
+deny-default document had been built). No product code is involved.
+
+## 29. Fidelity checklist (openai-preparedness)
+
+Scope: every block of `rules.d1.ve` (86), `facts.d1.ve` (8) and `cases.json` (67), checked against the pinned
+67,418-byte text with the 11-class checklist (`prompts/translation-fidelity-checklist.md`). “All” includes every
+block of that file; the named blocks are the ones the class bears on.
+
+| Class | Blocks checked | Fixed | Kept, with reason |
+|---|---|---|---|
+| 1. Dropped clause | all; especially `f2-deploy*`, `f12-nuclear*`, `c3-access-*`, `f16-board-reverse`, `f14-summary`, `no-critical-models`, `f1-contrib-*` | 2.2's "and appropriate security controls as they are developed" (`f2-security-developed`); Table 2's "in consultation with appropriate US government actors" (`f12-nuclear*`) | C.3's "and may require additional approvals" is a possibility, not a requirement (unit stays OPEN); the Board's "and/or mandate a revised course of action" is a second act C6 does not need (unit OPEN, AP); 4.4's "and we expect to further update" is an attitude (unit UNFORMALISED, AT); Table 2's "consider further actions" and "accounting for … classified information" are not requirements; F14's summary object "and SAG recommendation" stays in the predicate description because an act phrase admits no "and" (PLAN 12 item 17) |
+| 2. Quantifier scope | all; especially `f1-security-*`, `f2-*`, `f3-*`, `f4-security`, `f9-report`, `f12-lra*`, `f12-undermining*`, `f15-safeguards`, `rs2-nest`, `no-critical-models` | none | Each Table 1 bullet is one row's rule and the act is the same in every High row, so "some High level reached" is the union of the rows; "a capability threshold" (section 4) and "any of the Tracked Categories" (Table 2) are existential in the source; `rs2-nest` is per category |
+| 3. Exclusive only, closed lists | all; especially `f11-*` ("but only if"), `c3-access-*` ("For all models"), G9, N4 | none | The three 4.3 conditions are necessary conditions of an adjustment (obligations given `adjustment_made`); no list of examples (3.2, Appendix C) is closed; N4 stays undecided rather than closing the level sort |
+| 4. Reused predicate | all; especially `security_controls`, `safeguards_before_deployment`, `safeguards_during_development`, `misuse_safeguards`, `pandemic_policy_contribution`, `cyberdefense_contribution` | 2.2's development security controls get their own act (`development_security_controls`), apart from Table 1's "meeting High standard" | F2's three statements (2.2, 4.2, Appendix C) and F3's (4.4, Appendix C) restate one rule; the BIO-H and CYB-H misuse bullets have the same wording, distinguished by their level constant |
+| 5. Modal strength | all; especially `f11-within` ("could adjust … only if"), `f14-summary` ("may"), `f16-board-reverse` ("may"), `f16-without-*` ("can"), every RS1/RS9 pair | none | "could", "may" and "can" are permissions or "need not" under their reading set, never a sufficient condition for an obligation; "should" and Table 1's guideline imperatives keep a strict and a default choice |
+| 6. Obligation made method | all; especially `f9-residual-*`, `f12-sandbagging*`, `f16-chair-*` | none | Each act is the outcome the source demands; Sandbagging's "elicitation … or … conservative upper bound" stays one disjunctive outcome act |
+| 7. Invented guard | all rules and facts; and every harness case atom | removed the "covered" guard from `f1-security-*`, `f3-develop*` and `f4-security` (their sentences say "models", not covered systems); `f9-report`'s opaque `safeguard_selection` replaced by section 4's scope | `f1-halt-*` and `f3-*` carry the proposal's activity ("halt further development", "during development"), the object the key asks about, not an extra condition; `f16-informed` is scoped to Leadership's decisions, the bullet's subject; `f14-summary`'s "subject to certain limits" is a carve-out (silent), not an exclusion |
+| 8. Case fixes an open term | all 67 cases and `run.SITUATIONS`/`STATED_FALSE` | none | cases.json leaves every open term unset that PLAN 5 leaves unset; the harness reads an unset term as false only where no queried rule tests it negatively, otherwise the item is undecided (`test_pf_an_unset_negated_open_term_is_undecided`); K9's unnamed category is asked for each High level |
+| 9. Conflict-making reading | every reading-conditioned block; C1 to C6, C-doc | none | The only conflict is RS11 = final with RS17 = bperm, the key's own C6 cell; it is a translated-rule candidate under R14, not a source finding. N2 and F11's precedence are stated by the text |
+| 10. Key cell | all 239 key rows; A, B, C, G recomputed by `reference.py` (199) | none in the key | The six MREP transcription cells are a key finding (section 6, PLAN 12 item 15). No PLAN 6 cell was found wrong |
+| 11. Elided quote | every header with "…": `f1-misuse-*`, `f1-alignment-cyb-*`, `f9-residual-*`, `f9-risk-paths`, `f10-validate`, `f15-disclose`, `f16-sag-recommend`, `cl4-persuasion`, `f16-ssc-visibility`, `f16-year`, `f5-ambiguous`, `f5-checkpoint`, `f11-within`, `f13-results` | none beyond class 1 | Each full sentence was read in the pinned text; the cut parts are an open-term qualifier ("meeting High standard (Appendix C.1)"), a list of examples, or a clause kept in an OPEN or UNFORMALISED unit |
+
+## 30. Seeded bugs (`usecase-pf-run`; each planted, its test shown failing, then restored)
+
+The only changed product-language code is Python (no Lean, no Rust).
+
+| # | File | Planted bug | Test that failed |
+|---|---|---|---|
+| 1 | `usecases/openai-preparedness/run.py` | `key_terms` no longer strips parentheses | `::test_pf_independent_reference_and_comparator_catch_wrong_answers` (`key_terms('SOME(inuse \| (nest & any))')` returned None) |
+| 2 | `usecases/openai-preparedness/run.py` | `unset_negations` returns `[]` | `::test_pf_an_unset_negated_open_term_is_undecided` (`KeyError: 'undecided'`) |
+| 3 | `usecases/openai-preparedness/run.py` | D1/D4 answer `bool(holds)` without a certificate | `::test_pf_missing_quantity_certificate_is_undecided[D1]` and `[D4]` |
+| 4 | `usecases/openai-preparedness/reference.py` | SUF ignores RS18 = inuse | `::test_pf_independent_reference_and_comparator_catch_wrong_answers` (A-*-C-INT/SUF differ) |
+| 5 | `usecases/openai-preparedness/run.py` | a large-scale internal deployment is no internal deployment | `::test_pf_run_recomputes_every_key_item_and_records_causes` (fresh run differs from results.json) |
+
+Bug 3 was first a real defect: the first version answered D1 and D4 `False` when no certificate was found; the
+test caught it and both now stay undecided. The six PLAN 11 mutants are the translation's seeded changes
+(`::test_pf_six_mutants_change_exactly_the_named_results[m1]` … `[m6]`).
