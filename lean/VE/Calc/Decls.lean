@@ -1,4 +1,5 @@
 import VE.Calc.Eval
+import VE.Numbers.Bits
 
 namespace VE.Calc
 open VE.Numbers
@@ -141,9 +142,54 @@ def digitCount (n : Nat) : Nat := (Nat.toDigits 10 n).length
 def Small (q : Rat) : Prop :=
   digitCount q.num.natAbs ≤ maxDigits ∧ digitCount q.den ≤ maxDigits
 
-instance (q : Rat) : Decidable (Small q) := by
-  unfold Small
-  infer_instance
+theorem toDigitsCore_length_ge (fuel n : Nat) (ds : List Char) (hf : 0 < fuel) :
+    ds.length + 1 ≤ (Nat.toDigitsCore 10 fuel n ds).length := by
+  induction fuel generalizing n ds with
+  | zero => omega
+  | succ fuel ih =>
+    unfold Nat.toDigitsCore
+    dsimp only
+    split
+    · simp
+    · cases fuel with
+      | zero => simp [Nat.toDigitsCore]
+      | succ f => have := ih (n / 10) ((n % 10).digitChar :: ds) (by omega); simp at this; omega
+
+theorem toDigitsCore_le_iff (fuel n k : Nat) (ds : List Char) (hn : n < fuel) :
+    (Nat.toDigitsCore 10 fuel n ds).length ≤ ds.length + (k + 1) ↔ n < 10 ^ (k + 1) := by
+  induction fuel generalizing n k ds with
+  | zero => omega
+  | succ fuel ih =>
+    unfold Nat.toDigitsCore
+    dsimp only
+    split
+    · simp only [List.length_cons]
+      have : 10 ≤ 10 ^ (k + 1) := Nat.le_self_pow (by omega) _
+      constructor <;> intro <;> omega
+    · have hlt : n / 10 < fuel := by omega
+      cases k with
+      | zero =>
+        have := toDigitsCore_length_ge fuel (n / 10) ((n % 10).digitChar :: ds) (by omega)
+        simp only [List.length_cons] at this
+        constructor <;> intro <;> omega
+      | succ k =>
+        have := ih (n / 10) k ((n % 10).digitChar :: ds) hlt
+        simp only [List.length_cons] at this
+        rw [show ds.length + (k + 1 + 1) = ds.length + 1 + (k + 1) by omega, this, Nat.div_lt_iff_lt_mul (by omega),
+          Nat.pow_succ 10 (k + 1)]
+
+set_option exponentiation.threshold 4096 in
+/-- 2.4's digit limit as one comparison (3.2 (b)): no digit list is built. -/
+theorem digitCount_le_iff (n : Nat) : digitCount n ≤ maxDigits ↔ n < 10 ^ maxDigits := by
+  exact toDigitsCore_le_iff (n + 1) n 4095 [] (by omega)
+
+/-- `10 ^ maxDigits`, the least value of more than `maxDigits` digits; irreducible, so no proof unfolds the power. -/
+@[irreducible] def digitBound : Nat := 10 ^ maxDigits
+
+/-- `Small` by two comparisons (`digitCount_le_iff`): every `Val.guard` is decided without a digit list. -/
+instance (q : Rat) : Decidable (Small q) :=
+  decidable_of_iff (q.num.natAbs < digitBound ∧ q.den < digitBound) (by
+    simp only [Small, digitCount_le_iff]; unfold digitBound; exact Iff.rfl)
 
 inductive Val where
   | ok (q : Rat) | undefined | tooLarge | exhausted
@@ -856,5 +902,349 @@ theorem Claim.run_complete (ds : List Decl) (h : WellFormed ds) (c : Claim)
       rcases hu with ⟨_, hover⟩ | ⟨_, hread⟩
       · exact False.elim (hc hover)
       · exact False.elim (he hread)
+
+namespace Work
+
+/-! ## The work of a case (spec 3.2 (a), (b) and limit 10; me-2nb): each value computed once, its size charged. The
+names are the stub's, in its namespace (`VE.Calc.Table` is ME-4's data table). -/
+
+/-- The size of an exact value: its numerator's and its denominator's (12.2's `bits`). -/
+def qbits (q : Rat) : Nat := bits q.num + bits q.den
+
+/-- Limit 10: the units one case may spend, 12.2's unit (one per visit, plus the size of each value computed). -/
+def maxWork : Nat := 2 ^ 33
+
+/-- `10 ^ maxDigits` lies between `2 ^ (smallBits - 1)` and `2 ^ smallBits`. -/
+def smallBits : Nat := 13607
+
+/-- A power that is beyond the digit limit, known from its base's size before it is computed. -/
+def powTooLarge (x : Rat) (k : Nat) : Bool :=
+  smallBits ≤ (bits x.num - 1) * k || smallBits ≤ (bits x.den - 1) * k
+
+theorem pow_beyond (a k : Nat) (h : smallBits ≤ a.log2 * k) : digitBound ≤ a ^ k := by
+  have ha : a ≠ 0 := by intro h0; subst h0; simp [Nat.log2_zero, smallBits] at h
+  have hb : digitBound ≤ 2 ^ smallBits := by unfold digitBound maxDigits smallBits; decide +kernel
+  calc digitBound ≤ 2 ^ smallBits := hb
+    _ ≤ 2 ^ (a.log2 * k) := Nat.pow_le_pow_right (by omega) h
+    _ = (2 ^ a.log2) ^ k := Nat.pow_mul _ _ _
+    _ ≤ a ^ k := Nat.pow_le_pow_left (Nat.log2_self_le ha) _
+
+theorem powTooLarge_sound (x : Rat) (k : Nat) (h : powTooLarge x k = true) : Val.guard (x ^ k) = .tooLarge := by
+  have hs : ¬ Small (x ^ k) := fun hs => by
+    have hd : (x ^ k).num.natAbs < digitBound ∧ (x ^ k).den < digitBound := by
+      unfold digitBound; simpa only [Small, digitCount_le_iff] using hs
+    simp only [Rat.num_pow, Rat.den_pow, Int.natAbs_pow] at hd
+    simp only [powTooLarge, bits, Nat.add_sub_cancel, Int.natAbs_natCast, Bool.or_eq_true, decide_eq_true_eq] at h
+    rcases h with h | h
+    · have := pow_beyond _ k h; omega
+    · have := pow_beyond _ k h; omega
+  simp [Val.guard, hs]
+
+/-- The values so far, the latest declaration first. -/
+abbrev Table := List (String × Val)
+
+def Table.read (t : Table) (n : String) : Val := (t.lookup n).getD .undefined
+
+/-- 2.4's values, each declaration's computed once from the entries before it. -/
+def valueTable (ds : List Decl) : Table := ds.foldl (fun (t : Table) d => (d.name, d.valL t.read) :: t) []
+
+/-- The meaning: the table reads what 2.4's `valuesL` gives, so every theorem of 2.4 and 3.4 is unchanged. -/
+theorem valueTable_read (ds : List Decl) : (valueTable ds).read = valuesL ds := by
+  suffices h : ∀ (t : Table) (τ : String → Val), t.read = τ →
+      Table.read (ds.foldl (fun (t : Table) d => (d.name, d.valL t.read) :: t) t) =
+        ds.foldl (fun τ d n => if n = d.name then d.valL τ else τ n) τ from
+    h [] _ (funext fun _ => rfl)
+  induction ds with
+  | nil => intro t τ h; exact h
+  | cons d rest ih =>
+    intro t τ h
+    apply ih
+    funext n
+    subst h
+    by_cases hn : n = d.name
+    · subst hn; simp [Table.read]
+    · have : (n == d.name) = false := by simpa using hn
+      simp only [Table.read, List.lookup, this, hn, if_false]
+
+/-- One visit, refused when the units would pass `limit`. -/
+def visitC {α : Type} (limit w : Nat) (k : Nat → Option (α × Nat)) : Option (α × Nat) :=
+  if limit ≤ w then none else k (w + 1)
+
+/-- A value computed is charged its size, then held to the digit limit. -/
+def chargeQ (limit : Nat) (q : Rat) (w : Nat) : Option (Val × Nat) :=
+  if limit < w + qbits q then none else some (Val.guard q, w + qbits q)
+
+/-- A value read from the table is charged its size; a fault costs nothing more. -/
+def chargeV (limit : Nat) (v : Val) (w : Nat) : Option (Val × Nat) :=
+  match v with
+  | .ok q => if limit < w + qbits q then none else some (v, w + qbits q)
+  | v => some (v, w)
+
+/-- 2.4's `Val.bin`, charged: `f` computes a value only from two values, and the first fault decides. -/
+def binC (limit : Nat) (f : Rat → Rat → Option Rat) (a b : Val) (w : Nat) : Option (Val × Nat) :=
+  match a, b with
+  | .ok x, .ok y => match f x y with
+    | some q => chargeQ limit q w
+    | none => some (.undefined, w)
+  | .ok _, v => some (v, w)
+  | v, _ => some (v, w)
+
+/-- 2.4's `Expr.evalL` over the table, charged; `none` when the units would pass `limit`. A read is a lookup. -/
+def Expr.evalC (limit : Nat) (t : Table) : Expr → Nat → Option (Val × Nat)
+  | .lit q, w => visitC limit w (chargeQ limit q)
+  | .val n, w => visitC limit w (chargeV limit (t.read n))
+  | .add a b, w => visitC limit w fun w => (Expr.evalC limit t a w).bind fun (x, w) =>
+      (Expr.evalC limit t b w).bind fun (y, w) => binC limit (fun x y => some (x + y)) x y w
+  | .sub a b, w => visitC limit w fun w => (Expr.evalC limit t a w).bind fun (x, w) =>
+      (Expr.evalC limit t b w).bind fun (y, w) => binC limit (fun x y => some (x - y)) x y w
+  | .mul a b, w => visitC limit w fun w => (Expr.evalC limit t a w).bind fun (x, w) =>
+      (Expr.evalC limit t b w).bind fun (y, w) => binC limit (fun x y => some (x * y)) x y w
+  | .div a b, w => visitC limit w fun w => (Expr.evalC limit t a w).bind fun (x, w) =>
+      (Expr.evalC limit t b w).bind fun (y, w) => binC limit (fun x y => if y = 0 then none else some (x / y)) x y w
+  | .pow a k, w => visitC limit w fun w => (Expr.evalC limit t a w).bind fun
+    | (.ok x, w) => if powTooLarge x k then some (.tooLarge, w) else chargeQ limit (x ^ k) w
+    | (v, w) => some (v, w)
+
+def Decl.valC (limit : Nat) (t : Table) (d : Decl) (w : Nat) : Option (Val × Nat) :=
+  match d.source with
+  | .stated q | .counted _ (.ok (some q)) => visitC limit w (chargeQ limit q)
+  | .defined e => Expr.evalC limit t e w
+  | .free | .counted _ (.ok none) => some (.undefined, w)
+  | .counted _ .exhausted => some (.exhausted, w)
+
+/-- The table, charged: each declaration once, in order. -/
+def valueTableC (limit : Nat) : List Decl → Table → Nat → Option (Table × Nat)
+  | [], t, w => some (t, w)
+  | d :: ds, t, w => (Decl.valC limit t d w).bind fun (v, w) => valueTableC limit ds ((d.name, v) :: t) w
+
+/-- Expressions in order, each once. -/
+def Expr.evalsC (limit : Nat) (t : Table) : List Expr → Nat → Option (List Val × Nat)
+  | [], w => some ([], w)
+  | e :: es, w => (Expr.evalC limit t e w).bind fun (v, w) => (Expr.evalsC limit t es w).map fun r => (v :: r.1, r.2)
+
+/-- A claim's verdict from its sides' values, in `Claim.exprs`' order (2.2's `Claim.decide`, read from the sides). -/
+def Claim.decideSides : Claim → List Rat → Verdict
+  | .compare c _ _, [x, y] => if c.Holds x y then .holds else .fails
+  | .within .., [x, l, h] => if l ≤ x ∧ x ≤ h then .holds else .fails
+  | .rounds r _ p, [x] => if RoundsTo r p x then .holds else .fails
+  | _, _ => .undefined
+
+/-- 2.4's `Claim.run`, read from the sides evaluated once; the row's `sides`, `display` and `tie` read them too. -/
+def Claim.ofSides (c : Claim) (vs : List Val) : Outcome :=
+  match firstFault vs with
+  | some .tooLarge => .unknown (.limit .digits)
+  | some .exhausted => .unknown (.limit .evaluations)
+  | some _ => .decided .undefined
+  | none => .decided (Claim.decideSides c (vs.filterMap fun | .ok q => some q | _ => none))
+
+/-! What the charged steps mean: 2.4's value with no more than `limit` units spent (`_some`), and the same answer
+under any larger limit (`_mono`). -/
+
+theorem visitC_some {α : Type} {limit w : Nat} {k : Nat → Option (α × Nat)} {r : α × Nat}
+    (h : visitC limit w k = some r) : w < limit ∧ k (w + 1) = some r := by
+  unfold visitC at h; split at h
+  · cases h
+  · exact ⟨by omega, h⟩
+
+theorem visitC_mono {α : Type} {limit limit' w : Nat} {k k' : Nat → Option (α × Nat)} {r : α × Nat}
+    (hk : ∀ w r, k w = some r → k' w = some r) (hl : limit ≤ limit') (h : visitC limit w k = some r) :
+    visitC limit' w k' = some r := by
+  obtain ⟨hw, h⟩ := visitC_some h
+  unfold visitC; rw [if_neg (by omega)]; exact hk _ _ h
+
+theorem chargeQ_some {limit : Nat} {q : Rat} {w : Nat} {v : Val} {w' : Nat} (h : chargeQ limit q w = some (v, w')) :
+    v = Val.guard q ∧ w ≤ w' ∧ w' ≤ limit := by
+  unfold chargeQ at h; split at h
+  · cases h
+  · cases h; exact ⟨rfl, by omega, by omega⟩
+
+theorem chargeQ_mono {limit limit' : Nat} {q : Rat} {w : Nat} {r : Val × Nat} (hl : limit ≤ limit')
+    (h : chargeQ limit q w = some r) : chargeQ limit' q w = some r := by
+  unfold chargeQ at *; split at h
+  · cases h
+  · rw [if_neg (by omega)]; exact h
+
+theorem binC_some {limit : Nat} {f : Rat → Rat → Option Rat} {a b v : Val} {w w' : Nat} (hw : w ≤ limit)
+    (h : binC limit f a b w = some (v, w')) :
+    v = Val.bin (fun x y => (f x y).elim .undefined Val.guard) a b ∧ w ≤ w' ∧ w' ≤ limit := by
+  cases a <;> cases b <;> simp only [binC, Val.bin] at h ⊢
+  case ok.ok x y =>
+    cases hq : f x y with
+    | some q => rw [hq] at h; exact chargeQ_some h
+    | none => rw [hq] at h; cases h; exact ⟨rfl, by omega, hw⟩
+  all_goals (cases h; exact ⟨rfl, by omega, hw⟩)
+
+theorem binC_mono {limit limit' : Nat} {f : Rat → Rat → Option Rat} {a b : Val} {w : Nat} {r : Val × Nat}
+    (hl : limit ≤ limit') (h : binC limit f a b w = some r) : binC limit' f a b w = some r := by
+  cases a <;> cases b <;> simp only [binC] at h ⊢
+  case ok.ok x y =>
+    cases hq : f x y with
+    | some q => rw [hq] at h; exact chargeQ_mono hl h
+    | none => rw [hq] at h; exact h
+  all_goals exact h
+
+theorem Expr.evalC_some (limit : Nat) (t : Table) (e : Expr) (w : Nat) (v : Val) (w' : Nat)
+    (h : Expr.evalC limit t e w = some (v, w')) : v = e.evalL t.read ∧ w < w' ∧ w' ≤ limit := by
+  induction e generalizing w v w' with
+  | lit q =>
+    obtain ⟨hw, h⟩ := visitC_some h; obtain ⟨rfl, h1, h2⟩ := chargeQ_some h; exact ⟨rfl, by omega, h2⟩
+  | val n =>
+    obtain ⟨hw, h⟩ := visitC_some h
+    unfold chargeV at h; split at h
+    · split at h
+      · cases h
+      · cases h; exact ⟨rfl, by omega, by omega⟩
+    · cases h; exact ⟨rfl, by omega, by omega⟩
+  | add a b iha ihb | sub a b iha ihb | mul a b iha ihb | div a b iha ihb =>
+    obtain ⟨hw, h⟩ := visitC_some h
+    obtain ⟨⟨x, w1⟩, ha, h⟩ := Option.bind_eq_some_iff.mp h
+    obtain ⟨⟨y, w2⟩, hb, h⟩ := Option.bind_eq_some_iff.mp h
+    obtain ⟨rfl, ha1, ha2⟩ := iha _ _ _ ha
+    obtain ⟨rfl, hb1, hb2⟩ := ihb _ _ _ hb
+    obtain ⟨rfl, h1, h2⟩ := binC_some hb2 h
+    refine ⟨?_, by omega, h2⟩
+    simp only [Expr.evalL]
+    first | rfl | (congr 1; funext x y; split <;> rfl)
+  | pow a k iha =>
+    obtain ⟨hw, h⟩ := visitC_some h
+    obtain ⟨⟨x, w1⟩, ha, h⟩ := Option.bind_eq_some_iff.mp h
+    obtain ⟨hx, ha1, ha2⟩ := iha _ _ _ ha
+    simp only [Expr.evalL, ← hx]
+    cases x with
+    | ok q =>
+      simp only at h ⊢
+      by_cases hp : powTooLarge q k = true
+      · rw [if_pos hp] at h; cases h; exact ⟨(powTooLarge_sound _ _ hp).symm, by omega, ha2⟩
+      · rw [if_neg hp] at h; obtain ⟨rfl, h1, h2⟩ := chargeQ_some h; exact ⟨rfl, by omega, h2⟩
+    | _ => simp only at h; cases h; exact ⟨rfl, by omega, ha2⟩
+
+/-- A value evaluated once over the table is 2.4's (3.2 (a)). -/
+theorem Expr.evalC_agrees (limit : Nat) (t : Table) (e : Expr) (w : Nat) (v : Val) (w' : Nat)
+    (h : Expr.evalC limit t e w = some (v, w')) : v = e.evalL t.read :=
+  (Expr.evalC_some limit t e w v w' h).1
+
+theorem Expr.evalC_mono {limit limit' : Nat} (t : Table) (e : Expr) (w : Nat) (r : Val × Nat) (hl : limit ≤ limit')
+    (h : Expr.evalC limit t e w = some r) : Expr.evalC limit' t e w = some r := by
+  induction e generalizing w r with
+  | lit q => exact visitC_mono (fun _ _ => chargeQ_mono hl) hl h
+  | val n =>
+    refine visitC_mono (fun w r h => ?_) hl h
+    unfold chargeV at *; split at h
+    · split at h
+      · cases h
+      · rw [if_neg (by omega)]; exact h
+    · exact h
+  | add a b iha ihb | sub a b iha ihb | mul a b iha ihb | div a b iha ihb =>
+    refine visitC_mono (fun w r h => ?_) hl h
+    obtain ⟨⟨x, w1⟩, ha, h⟩ := Option.bind_eq_some_iff.mp h
+    obtain ⟨⟨y, w2⟩, hb, h⟩ := Option.bind_eq_some_iff.mp h
+    simp only [iha _ _ ha, ihb _ _ hb, Option.bind_some]
+    exact binC_mono hl h
+  | pow a k iha =>
+    refine visitC_mono (fun w r h => ?_) hl h
+    obtain ⟨⟨x, w1⟩, ha, h⟩ := Option.bind_eq_some_iff.mp h
+    simp only [iha _ _ ha, Option.bind_some]
+    cases x with
+    | ok q =>
+      simp only at h ⊢
+      by_cases hp : powTooLarge q k = true
+      · rw [if_pos hp] at h ⊢; exact h
+      · rw [if_neg hp] at h ⊢; exact chargeQ_mono hl h
+    | _ => exact h
+
+theorem Decl.valC_some {limit : Nat} {t : Table} {d : Decl} {w : Nat} {v : Val} {w' : Nat} (hw : w ≤ limit)
+    (h : Decl.valC limit t d w = some (v, w')) : v = d.valL t.read ∧ w ≤ w' ∧ w' ≤ limit := by
+  unfold Decl.valC at h; unfold Decl.valL
+  split at h <;> rename_i hs <;> rw [hs]
+  · obtain ⟨_, h⟩ := visitC_some h; obtain ⟨rfl, _, h2⟩ := chargeQ_some h; exact ⟨rfl, by omega, h2⟩
+  · obtain ⟨_, h⟩ := visitC_some h; obtain ⟨rfl, _, h2⟩ := chargeQ_some h; exact ⟨rfl, by omega, h2⟩
+  · obtain ⟨rfl, h1, h2⟩ := Expr.evalC_some _ _ _ _ _ _ h; exact ⟨rfl, by omega, h2⟩
+  all_goals cases h; exact ⟨rfl, by omega, hw⟩
+
+theorem Decl.valC_mono {limit limit' : Nat} {t : Table} {d : Decl} {w : Nat} {r : Val × Nat} (hl : limit ≤ limit')
+    (h : Decl.valC limit t d w = some r) : Decl.valC limit' t d w = some r := by
+  unfold Decl.valC at *
+  split at h
+  · exact visitC_mono (fun _ _ => chargeQ_mono hl) hl h
+  · exact visitC_mono (fun _ _ => chargeQ_mono hl) hl h
+  · exact Expr.evalC_mono _ _ _ _ hl h
+  all_goals exact h
+
+theorem valueTableC_some (limit : Nat) (ds : List Decl) (t : Table) (w : Nat) (t' : Table) (w' : Nat)
+    (hw : w ≤ limit) (h : valueTableC limit ds t w = some (t', w')) :
+    t' = ds.foldl (fun (t : Table) d => (d.name, d.valL t.read) :: t) t ∧ w ≤ w' ∧ w' ≤ limit := by
+  induction ds generalizing t w with
+  | nil => cases h; exact ⟨rfl, by omega, hw⟩
+  | cons d ds ih =>
+    obtain ⟨⟨v, w1⟩, hv, h⟩ := Option.bind_eq_some_iff.mp h
+    obtain ⟨rfl, h1, h2⟩ := Decl.valC_some hw hv
+    obtain ⟨rfl, h3, h4⟩ := ih _ _ h2 h
+    exact ⟨rfl, by omega, h4⟩
+
+theorem valueTableC_eq (limit : Nat) (ds : List Decl) (t : Table) (w : Nat)
+    (h : valueTableC limit ds [] 0 = some (t, w)) : t = valueTable ds :=
+  (valueTableC_some limit ds [] 0 t w (Nat.zero_le _) h).1
+
+theorem valueTableC_mono {limit limit' : Nat} (ds : List Decl) (t : Table) (w : Nat) (r : Table × Nat)
+    (hl : limit ≤ limit') (h : valueTableC limit ds t w = some r) : valueTableC limit' ds t w = some r := by
+  induction ds generalizing t w with
+  | nil => exact h
+  | cons d ds ih =>
+    obtain ⟨⟨v, w1⟩, hv, h⟩ := Option.bind_eq_some_iff.mp h
+    simp only [valueTableC, Decl.valC_mono hl hv, Option.bind_some]
+    exact ih _ _ h
+
+theorem Expr.evalsC_some (limit : Nat) (t : Table) (es : List Expr) (w : Nat) (vs : List Val) (w' : Nat)
+    (hw : w ≤ limit) (h : Expr.evalsC limit t es w = some (vs, w')) :
+    vs = es.map (Expr.evalL t.read) ∧ w ≤ w' ∧ w' ≤ limit := by
+  induction es generalizing w vs with
+  | nil => cases h; exact ⟨rfl, by omega, hw⟩
+  | cons e es ih =>
+    obtain ⟨⟨v, w1⟩, hv, h⟩ := Option.bind_eq_some_iff.mp h
+    obtain ⟨⟨vs', w2⟩, hr, h⟩ := Option.map_eq_some_iff.mp h
+    cases h
+    obtain ⟨rfl, h1, h2⟩ := Expr.evalC_some _ _ _ _ _ _ hv
+    obtain ⟨rfl, h3, h4⟩ := ih _ _ h2 hr
+    exact ⟨rfl, by omega, h4⟩
+
+theorem Expr.evalsC_mono {limit limit' : Nat} (t : Table) (es : List Expr) (w : Nat) (r : List Val × Nat)
+    (hl : limit ≤ limit') (h : Expr.evalsC limit t es w = some r) : Expr.evalsC limit' t es w = some r := by
+  induction es generalizing w r with
+  | nil => exact h
+  | cons e es ih =>
+    obtain ⟨⟨v, w1⟩, hv, h⟩ := Option.bind_eq_some_iff.mp h
+    obtain ⟨r', hr, rfl⟩ := Option.map_eq_some_iff.mp h
+    simp only [Expr.evalsC, Expr.evalC_mono _ _ _ _ hl hv, Option.bind_some, ih _ _ hr, Option.map_some]
+
+theorem firstFault_none {vs : List Val} (h : firstFault vs = none) : ∀ v ∈ vs, ∃ q, v = .ok q := by
+  induction vs with
+  | nil => simp
+  | cons v vs ih => cases v <;> simp_all [firstFault]
+
+/-- A claim's outcome from its sides is 2.4's `Claim.run`. -/
+theorem Claim.ofSides_eq (ds : List Decl) (h : WellFormed ds) (c : Claim) :
+    Claim.ofSides c (c.exprs.map (Expr.evalL (valuesL ds))) = c.run ds := by
+  unfold Claim.ofSides Claim.run
+  cases hf : firstFault (c.exprs.map (Expr.evalL (valuesL ds))) with
+  | some v => cases v <;> rfl
+  | none =>
+  have hok : ∀ e ∈ c.exprs, ∃ q, e.evalL (valuesL ds) = .ok q ∧ e.eval (values ds) = some q := fun e he => by
+    obtain ⟨q, hq⟩ := firstFault_none hf _ (List.mem_map_of_mem he)
+    have := Expr.evalL_agrees e (valuesL ds) (values ds) (valuesL_agrees ds h)
+    rw [hq] at this; exact ⟨q, hq, this⟩
+  congr 1
+  cases c with
+  | compare k a b =>
+    obtain ⟨x, hx, hx'⟩ := hok a (by simp [Claim.exprs]); obtain ⟨y, hy, hy'⟩ := hok b (by simp [Claim.exprs])
+    simp [Claim.exprs, Claim.decideSides, Claim.decide, hx, hy, hx', hy']
+  | within e lo hi =>
+    obtain ⟨x, hx, hx'⟩ := hok e (by simp [Claim.exprs]); obtain ⟨l, hl, hl'⟩ := hok lo (by simp [Claim.exprs])
+    obtain ⟨u, hu, hu'⟩ := hok hi (by simp [Claim.exprs])
+    simp [Claim.exprs, Claim.decideSides, Claim.decide, hx, hl, hu, hx', hl', hu']
+  | rounds r e p =>
+    obtain ⟨x, hx, hx'⟩ := hok e (by simp [Claim.exprs])
+    simp [Claim.exprs, Claim.decideSides, Claim.decide, hx, hx']
+
+end Work
 
 end VE.Calc

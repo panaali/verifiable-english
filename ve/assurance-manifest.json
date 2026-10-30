@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 39781,
+    "total_lines": 39955,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1842,12 +1842,12 @@
       },
       {
         "file": "lean/VE/Calc/Wire.lean",
-        "lines": 494,
-        "sha256": "ebeb66b7142d77d3e32eb2cf50a6e4f63d66b84bffc6137900489a168d2c2e42",
+        "lines": 580,
+        "sha256": "5020183caff9494242b547a784c0c88886da0fb51338f92c6384b2d64246b918",
         "ranges": [
           [
             1,
-            494
+            580
           ]
         ],
         "declarations": [
@@ -1867,18 +1867,20 @@
           "checkCase",
           "identify",
           "decode",
-          "decodeCase"
+          "decodeCase",
+          "Case.sidesC",
+          "workLimit"
         ],
-        "reason": "the case ve-calc@0 (math-evidence spec 3.1 to 3.3, me-2): its only decoder, its limits in order, its definition order and its identity (meaning_id, claim ids), and the premises and derivations of me-5c with their refusals (UnknownPremise, UnknownLink, NonlinearPremise), and the value words checks of me-2d (W6's verbalisation rule, ValueWordsForm, ReservedWord, VerbalisationCollision); the full file is pinned"
+        "reason": "the case ve-calc@0 (math-evidence spec 3.1 to 3.3, me-2): its only decoder, its limits in order, its definition order and its identity (meaning_id, claim ids), and the premises and derivations of me-5c with their refusals (UnknownPremise, UnknownLink, NonlinearPremise), and the value words checks of me-2d (W6's verbalisation rule, ValueWordsForm, ReservedWord, VerbalisationCollision), and limit 10 (me-2nb: decodeCase refuses a case whose claims' work, Case.sidesC over the value table, passes maxWork, with workLimit's text); the full file is pinned"
       },
       {
         "file": "lean/VE/Calc/Run.lean",
-        "lines": 439,
-        "sha256": "4788f95816e0c3efef8db4ed4f34c2eb14fee544715f20d5dd5bef7ef4c52c62",
+        "lines": 527,
+        "sha256": "576ba58b428bf7c4fa7453b8dc0b834bf757ac362e9765c1cba64025793cb76e",
         "ranges": [
           [
             1,
-            439
+            527
           ]
         ],
         "declarations": [
@@ -1887,9 +1889,11 @@
           "shownJson",
           "rowJson",
           "runCaseReported",
-          "outcomeAt"
+          "outcomeAt",
+          "Run.rowOf",
+          "Run.rowsC"
         ],
-        "reason": "the calc runner's answer (math-evidence spec 3.4, me-2): one row per claim with its outcome, and the reader of a row's outcome that Run.row_sound is stated over, and the kind of each row (me-5c), and each row's line, finding, and a claim's sides, display and tie, with the values' words read from the request (me-2c), and a derivation's certificate and counterexample (me-5d); the full file is pinned"
+        "reason": "the calc runner's answer (math-evidence spec 3.4, me-2): one row per claim with its outcome, and the reader of a row's outcome that Run.row_sound is stated over, and the kind of each row (me-5c), and each row's line, finding, and a claim's sides, display and tie, with the values' words read from the request (me-2c), and a derivation's certificate and counterexample (me-5d), and each claim's outcome, sides, display and tie read from its values evaluated once (me-2nb: Run.rowsC, Run.rowOf), refused with limit 10's text past maxWork; the full file is pinned"
       },
       {
         "file": "lean/VE/Scope/Wire.lean",
@@ -1980,6 +1984,23 @@
         "reason": "cardinality certificate decoder, binding and replay, claimed region tables and erased problems, and the case runner; the full file is pinned conservatively"
       },
       {
+        "file": "lean/VE/Readings/DefaultVerdicts.lean",
+        "lines": 506,
+        "sha256": "79d7da71d2ae2fa105600904a51397f13b601389815c21004ad9e8a9fe08c732",
+        "ranges": [
+          [
+            1,
+            506
+          ]
+        ],
+        "declarations": [
+          "dEvidenceOf",
+          "replayD",
+          "runVerdictsD"
+        ],
+        "reason": "decodes and checks per-choice default evidence in readings-verdicts, then builds the default response; the full replay module is pinned conservatively"
+      },
+      {
         "file": "lean/VE/Calc/Jsonl.lean",
         "lines": 48,
         "sha256": "e79aa00abb9d4ede2f5fe8f64ac733973c8bbbb16607c13394111fb02055ffbc",
@@ -1996,23 +2017,6 @@
           "decodeJsonl"
         ],
         "reason": "the JSON-lines table decoder of a counted value's pinned bytes (ME-4, spec 4.1): flat objects of scalars, a repeated key refused; the full file is pinned"
-      },
-      {
-        "file": "lean/VE/Readings/DefaultVerdicts.lean",
-        "lines": 506,
-        "sha256": "79d7da71d2ae2fa105600904a51397f13b601389815c21004ad9e8a9fe08c732",
-        "ranges": [
-          [
-            1,
-            506
-          ]
-        ],
-        "declarations": [
-          "dEvidenceOf",
-          "replayD",
-          "runVerdictsD"
-        ],
-        "reason": "decodes and checks per-choice default evidence in readings-verdicts, then builds the default response; the full replay module is pinned conservatively"
       }
     ],
     "other_json": {
