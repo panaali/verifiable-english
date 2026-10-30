@@ -16038,6 +16038,15 @@
         "VE.Cardinality.Document.nodeLimit",
         "VE.Cardinality.Document.deductionLimit"
       ]
+    },
+    "VE/Service/SoftSourceExamples.lean": {
+      "T": [
+        "VE.Service.SoftSourceExamples.checked",
+        "VE.Service.SoftSourceExamples.flat",
+        "VE.Service.SoftSourceExamples.mixed",
+        "VE.Service.SoftSourceExamples.rule",
+        "VE.Service.SoftSourceExamples.unit"
+      ]
     }
   }
 }
