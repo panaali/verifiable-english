@@ -50,6 +50,9 @@ OUTPUT = ROOT / "conformance/english-lean/e2-evidence.json"
 FORMAT = "ve.english-lean-e2-evidence@1"
 PARTS = ("g3", "reverse", "mutation", "parity", "overlay", "latency")
 FRESH_SEEDS = 14
+# The corpus's size: texts per round-trip configuration (`unique_asts_roundtripped` of corpus-seal.json) and per
+# use-case environment (these streams are not in the seal; E2 chose their size).
+PER_CONFIG, PER_USECASE = 5000, 500
 
 # Filled before the workers fork: (name, env, options, words) per configuration.
 CONFIGS: list = []
@@ -171,11 +174,22 @@ def _bounded(fn, seconds: float = 2.0):
 STALLED: dict[str, int] = {}
 
 
+def use_case_claims(name: str, env) -> list:
+    """The claims of a round-trip configuration named after a use case, which `english_surface` draws after the
+    directed formulas of the stream it seals."""
+    from ve import parse
+    base = name.removesuffix("-reviewed")
+    if base not in {path.name for path in (ROOT / "usecases").iterdir()}:
+        return []
+    return list(parse(env, (ROOT / "usecases" / base / "claims.ve").read_bytes()).formulas)
+
+
 def streams(index: int, per_config: int, documents: int, fresh: list[int],
-            fresh_count: int = 0) -> list[tuple[str, str, list | None]]:
+            fresh_count: int = 0, *, claims: bool = False) -> list[tuple[str, str, list | None]]:
     """(stream, text, the formulas it was rendered from) for one configuration: the sealed stream (the audit's
     seed), its documents of five sentences, and each fresh seed's stream. A draw that stalls ends its stream
-    (counted in `STALLED`)."""
+    (counted in `STALLED`). With `claims` the stream also draws `use_case_claims`, as the sealed one does; E2's
+    saved evidence was drawn without them."""
     from conformance.english_surface import SEED, directed_formulas, random_formula as unbounded
     from ve import ast
     from ve.english import EnglishTraversal
@@ -220,6 +234,8 @@ def streams(index: int, per_config: int, documents: int, fresh: list[int],
         directed = list(dict.fromkeys(_bounded(lambda: list(directed_formulas(env, words)), 20.0)))
     except Exception:
         directed = []
+    if claims:
+        directed = list(dict.fromkeys(directed + use_case_claims(name, env)))
     stream("sealed", random.Random(SEED + index), per_config, directed)
     rng = random.Random(SEED + 100_000 + index)
     for _ in range(documents):
@@ -883,8 +899,8 @@ def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--part", nargs="+", choices=PARTS, default=list(PARTS))
     parser.add_argument("--workers", type=int, default=8)
-    parser.add_argument("--per-config", type=int, default=5000, help="sealed texts per round-trip configuration")
-    parser.add_argument("--per-usecase", type=int, default=500, help="texts per use-case environment")
+    parser.add_argument("--per-config", type=int, default=PER_CONFIG, help="sealed texts per round-trip configuration")
+    parser.add_argument("--per-usecase", type=int, default=PER_USECASE, help="texts per use-case environment")
     parser.add_argument("--fresh-per-seed", type=int, default=200, help="texts per fresh seed per configuration")
     parser.add_argument("--documents", type=int, default=50)
     parser.add_argument("--reverse-samples", type=int, default=300)
