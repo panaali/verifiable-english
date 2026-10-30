@@ -173,8 +173,8 @@ def test_a_shard_worker_may_collect_its_share_in_any_order(workers):
 @pytest.mark.parametrize("ids,word", [(SHARE[:2], "1 missing"), ([*SHARE, "tests/c.py::test_c"], "1 extra"),
                                       ([*SHARE, SHARE[0]], "1 duplicate"), ([SHARE[0], SHARE[0], SHARE[2]],
                                                                             "1 missing, 0 extra, 1 duplicate"),
-                                      ("tests/a.py::test_a[1]", "no list")],
-                         ids=["missing", "extra", "duplicate", "duplicate for missing", "not a list"])
+                                      ("tests/a.py::test_a[1]", "no list"), ([*SHARE[:2], {"id": 1}], "no list")],
+                         ids=["missing", "extra", "duplicate", "duplicate for missing", "not a list", "not an ID"])
 def test_a_shard_worker_must_collect_exactly_its_share(ids, word):
     subset = {"collected": SHARE, "selected": SHARE, "deselected": [], "collection_reports": []}
     with pytest.raises(RuntimeError, match=f"worker gw1 .*{re.escape(word)}"):
