@@ -334,11 +334,10 @@ def inventory_status(name: str, root: Path = ROOT) -> tuple[Path, list[str]]:
     The committed copy describes it when no module the entry covers differs from the committed declaration
     list's record (an entry that covers no module: always; its own check decides). So a module the branch
     changed, with no fresh overlay, is never read from the committed copy: it is named here."""
-    entry = _train_entry(name)
-    current = _inputs(entry, root)
+    entry, current = _train_entry(name), None
     try:
-        stamp = json.loads(_stamp_path(entry, root).read_text())
-        files = stamp["files"]
+        stamp = json.loads(_stamp_path(entry, root).read_text())  # no stamp: no overlay, and nothing else is read
+        files, current = stamp["files"], _inputs(entry, root)
         fresh = stamp["inputs"] == current and all(
             isinstance(files.get(path), str) and overlay_copy(path, root).is_file()
             and source_hash(overlay_copy(path, root)) == files[path] for path in entry.paths)
@@ -348,7 +347,7 @@ def inventory_status(name: str, root: Path = ROOT) -> tuple[Path, list[str]]:
         return overlay_copy(name, root), []
     if not _describes_lean(entry):
         return root / name, []
-    outputs = {module_name(manifest) for manifest in audit.MANIFESTS}
+    outputs, current = {module_name(manifest) for manifest in audit.MANIFESTS}, current or _inputs(entry, root)
     try:
         recorded = {m: h for m, h in declaration_list(root / DECLARATIONS)[1].items() if m not in outputs}
     except (OSError, ValueError):
