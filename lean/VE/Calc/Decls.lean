@@ -964,7 +964,7 @@ theorem valueTable_read (ds : List Decl) : (valueTable ds).read = valuesL ds := 
       simp only [Table.read, List.lookup, this, hn, if_false]
 
 /-- One visit, refused when the units would pass `limit`. -/
-def charge {α : Type} (limit w : Nat) (k : Nat → Option (α × Nat)) : Option (α × Nat) :=
+def visitC {α : Type} (limit w : Nat) (k : Nat → Option (α × Nat)) : Option (α × Nat) :=
   if limit ≤ w then none else k (w + 1)
 
 /-- A value computed is charged its size, then held to the digit limit. -/
@@ -988,23 +988,23 @@ def binC (limit : Nat) (f : Rat → Rat → Option Rat) (a b : Val) (w : Nat) : 
 
 /-- 2.4's `Expr.evalL` over the table, charged; `none` when the units would pass `limit`. A read is a lookup. -/
 def Expr.evalC (limit : Nat) (t : Table) : Expr → Nat → Option (Val × Nat)
-  | .lit q, w => charge limit w (chargeQ limit q)
-  | .val n, w => charge limit w (chargeV limit (t.read n))
-  | .add a b, w => charge limit w fun w => (Expr.evalC limit t a w).bind fun (x, w) =>
+  | .lit q, w => visitC limit w (chargeQ limit q)
+  | .val n, w => visitC limit w (chargeV limit (t.read n))
+  | .add a b, w => visitC limit w fun w => (Expr.evalC limit t a w).bind fun (x, w) =>
       (Expr.evalC limit t b w).bind fun (y, w) => binC limit (fun x y => some (x + y)) x y w
-  | .sub a b, w => charge limit w fun w => (Expr.evalC limit t a w).bind fun (x, w) =>
+  | .sub a b, w => visitC limit w fun w => (Expr.evalC limit t a w).bind fun (x, w) =>
       (Expr.evalC limit t b w).bind fun (y, w) => binC limit (fun x y => some (x - y)) x y w
-  | .mul a b, w => charge limit w fun w => (Expr.evalC limit t a w).bind fun (x, w) =>
+  | .mul a b, w => visitC limit w fun w => (Expr.evalC limit t a w).bind fun (x, w) =>
       (Expr.evalC limit t b w).bind fun (y, w) => binC limit (fun x y => some (x * y)) x y w
-  | .div a b, w => charge limit w fun w => (Expr.evalC limit t a w).bind fun (x, w) =>
+  | .div a b, w => visitC limit w fun w => (Expr.evalC limit t a w).bind fun (x, w) =>
       (Expr.evalC limit t b w).bind fun (y, w) => binC limit (fun x y => if y = 0 then none else some (x / y)) x y w
-  | .pow a k, w => charge limit w fun w => (Expr.evalC limit t a w).bind fun
+  | .pow a k, w => visitC limit w fun w => (Expr.evalC limit t a w).bind fun
     | (.ok x, w) => if powTooLarge x k then some (.tooLarge, w) else chargeQ limit (x ^ k) w
     | (v, w) => some (v, w)
 
 def Decl.valC (limit : Nat) (t : Table) (d : Decl) (w : Nat) : Option (Val × Nat) :=
   match d.source with
-  | .stated q | .counted _ (.ok (some q)) => charge limit w (chargeQ limit q)
+  | .stated q | .counted _ (.ok (some q)) => visitC limit w (chargeQ limit q)
   | .defined e => Expr.evalC limit t e w
   | .free | .counted _ (.ok none) => some (.undefined, w)
   | .counted _ .exhausted => some (.exhausted, w)
@@ -1037,17 +1037,17 @@ def Claim.ofSides (c : Claim) (vs : List Val) : Outcome :=
 /-! What the charged steps mean: 2.4's value with no more than `limit` units spent (`_some`), and the same answer
 under any larger limit (`_mono`). -/
 
-theorem charge_some {α : Type} {limit w : Nat} {k : Nat → Option (α × Nat)} {r : α × Nat}
-    (h : charge limit w k = some r) : w < limit ∧ k (w + 1) = some r := by
-  unfold charge at h; split at h
+theorem visitC_some {α : Type} {limit w : Nat} {k : Nat → Option (α × Nat)} {r : α × Nat}
+    (h : visitC limit w k = some r) : w < limit ∧ k (w + 1) = some r := by
+  unfold visitC at h; split at h
   · cases h
   · exact ⟨by omega, h⟩
 
-theorem charge_mono {α : Type} {limit limit' w : Nat} {k k' : Nat → Option (α × Nat)} {r : α × Nat}
-    (hk : ∀ w r, k w = some r → k' w = some r) (hl : limit ≤ limit') (h : charge limit w k = some r) :
-    charge limit' w k' = some r := by
-  obtain ⟨hw, h⟩ := charge_some h
-  unfold charge; rw [if_neg (by omega)]; exact hk _ _ h
+theorem visitC_mono {α : Type} {limit limit' w : Nat} {k k' : Nat → Option (α × Nat)} {r : α × Nat}
+    (hk : ∀ w r, k w = some r → k' w = some r) (hl : limit ≤ limit') (h : visitC limit w k = some r) :
+    visitC limit' w k' = some r := by
+  obtain ⟨hw, h⟩ := visitC_some h
+  unfold visitC; rw [if_neg (by omega)]; exact hk _ _ h
 
 theorem chargeQ_some {limit : Nat} {q : Rat} {w : Nat} {v : Val} {w' : Nat} (h : chargeQ limit q w = some (v, w')) :
     v = Val.guard q ∧ w ≤ w' ∧ w' ≤ limit := by
@@ -1084,16 +1084,16 @@ theorem Expr.evalC_some (limit : Nat) (t : Table) (e : Expr) (w : Nat) (v : Val)
     (h : Expr.evalC limit t e w = some (v, w')) : v = e.evalL t.read ∧ w < w' ∧ w' ≤ limit := by
   induction e generalizing w v w' with
   | lit q =>
-    obtain ⟨hw, h⟩ := charge_some h; obtain ⟨rfl, h1, h2⟩ := chargeQ_some h; exact ⟨rfl, by omega, h2⟩
+    obtain ⟨hw, h⟩ := visitC_some h; obtain ⟨rfl, h1, h2⟩ := chargeQ_some h; exact ⟨rfl, by omega, h2⟩
   | val n =>
-    obtain ⟨hw, h⟩ := charge_some h
+    obtain ⟨hw, h⟩ := visitC_some h
     unfold chargeV at h; split at h
     · split at h
       · cases h
       · cases h; exact ⟨rfl, by omega, by omega⟩
     · cases h; exact ⟨rfl, by omega, by omega⟩
   | add a b iha ihb | sub a b iha ihb | mul a b iha ihb | div a b iha ihb =>
-    obtain ⟨hw, h⟩ := charge_some h
+    obtain ⟨hw, h⟩ := visitC_some h
     obtain ⟨⟨x, w1⟩, ha, h⟩ := Option.bind_eq_some_iff.mp h
     obtain ⟨⟨y, w2⟩, hb, h⟩ := Option.bind_eq_some_iff.mp h
     obtain ⟨rfl, ha1, ha2⟩ := iha _ _ _ ha
@@ -1103,7 +1103,7 @@ theorem Expr.evalC_some (limit : Nat) (t : Table) (e : Expr) (w : Nat) (v : Val)
     simp only [Expr.evalL]
     first | rfl | (congr 1; funext x y; split <;> rfl)
   | pow a k iha =>
-    obtain ⟨hw, h⟩ := charge_some h
+    obtain ⟨hw, h⟩ := visitC_some h
     obtain ⟨⟨x, w1⟩, ha, h⟩ := Option.bind_eq_some_iff.mp h
     obtain ⟨hx, ha1, ha2⟩ := iha _ _ _ ha
     simp only [Expr.evalL, ← hx]
@@ -1123,22 +1123,22 @@ theorem Expr.evalC_agrees (limit : Nat) (t : Table) (e : Expr) (w : Nat) (v : Va
 theorem Expr.evalC_mono {limit limit' : Nat} (t : Table) (e : Expr) (w : Nat) (r : Val × Nat) (hl : limit ≤ limit')
     (h : Expr.evalC limit t e w = some r) : Expr.evalC limit' t e w = some r := by
   induction e generalizing w r with
-  | lit q => exact charge_mono (fun _ _ => chargeQ_mono hl) hl h
+  | lit q => exact visitC_mono (fun _ _ => chargeQ_mono hl) hl h
   | val n =>
-    refine charge_mono (fun w r h => ?_) hl h
+    refine visitC_mono (fun w r h => ?_) hl h
     unfold chargeV at *; split at h
     · split at h
       · cases h
       · rw [if_neg (by omega)]; exact h
     · exact h
   | add a b iha ihb | sub a b iha ihb | mul a b iha ihb | div a b iha ihb =>
-    refine charge_mono (fun w r h => ?_) hl h
+    refine visitC_mono (fun w r h => ?_) hl h
     obtain ⟨⟨x, w1⟩, ha, h⟩ := Option.bind_eq_some_iff.mp h
     obtain ⟨⟨y, w2⟩, hb, h⟩ := Option.bind_eq_some_iff.mp h
     simp only [iha _ _ ha, ihb _ _ hb, Option.bind_some]
     exact binC_mono hl h
   | pow a k iha =>
-    refine charge_mono (fun w r h => ?_) hl h
+    refine visitC_mono (fun w r h => ?_) hl h
     obtain ⟨⟨x, w1⟩, ha, h⟩ := Option.bind_eq_some_iff.mp h
     simp only [iha _ _ ha, Option.bind_some]
     cases x with
@@ -1153,8 +1153,8 @@ theorem Decl.valC_some {limit : Nat} {t : Table} {d : Decl} {w : Nat} {v : Val} 
     (h : Decl.valC limit t d w = some (v, w')) : v = d.valL t.read ∧ w ≤ w' ∧ w' ≤ limit := by
   unfold Decl.valC at h; unfold Decl.valL
   split at h <;> rename_i hs <;> rw [hs]
-  · obtain ⟨_, h⟩ := charge_some h; obtain ⟨rfl, _, h2⟩ := chargeQ_some h; exact ⟨rfl, by omega, h2⟩
-  · obtain ⟨_, h⟩ := charge_some h; obtain ⟨rfl, _, h2⟩ := chargeQ_some h; exact ⟨rfl, by omega, h2⟩
+  · obtain ⟨_, h⟩ := visitC_some h; obtain ⟨rfl, _, h2⟩ := chargeQ_some h; exact ⟨rfl, by omega, h2⟩
+  · obtain ⟨_, h⟩ := visitC_some h; obtain ⟨rfl, _, h2⟩ := chargeQ_some h; exact ⟨rfl, by omega, h2⟩
   · obtain ⟨rfl, h1, h2⟩ := Expr.evalC_some _ _ _ _ _ _ h; exact ⟨rfl, by omega, h2⟩
   all_goals cases h; exact ⟨rfl, by omega, hw⟩
 
@@ -1162,8 +1162,8 @@ theorem Decl.valC_mono {limit limit' : Nat} {t : Table} {d : Decl} {w : Nat} {r 
     (h : Decl.valC limit t d w = some r) : Decl.valC limit' t d w = some r := by
   unfold Decl.valC at *
   split at h
-  · exact charge_mono (fun _ _ => chargeQ_mono hl) hl h
-  · exact charge_mono (fun _ _ => chargeQ_mono hl) hl h
+  · exact visitC_mono (fun _ _ => chargeQ_mono hl) hl h
+  · exact visitC_mono (fun _ _ => chargeQ_mono hl) hl h
   · exact Expr.evalC_mono _ _ _ _ hl h
   all_goals exact h
 
