@@ -1,0 +1,127 @@
+{
+ "format": "ve.seeded-bugs@1",
+ "language": "Python",
+ "mutants": [
+  {
+   "behaviour": "f2 fronts the wrong word (the word after the auxiliary)",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "return f\"{words[k].capitalize()} {",
+    "to": "return f\"{words[k + 1].capitalize()} {"
+   },
+   "test": "tests/test_question_reverse.py::test_f2_fronts_the_word_after_the_subject",
+   "killed": true,
+   "result": "1 failed in 0.48s"
+  },
+  {
+   "behaviour": "f2 accepts a subject with a clause",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "w.lower() not in CLAUSE_WORDS + AUXILIARIES",
+    "to": "w.lower() not in AUXILIARIES"
+   },
+   "test": "tests/test_question_reverse.py::test_f2_is_not_built_for_other_subjects",
+   "killed": true,
+   "result": "1 failed in 0.51s"
+  },
+  {
+   "behaviour": "a mutant generator returns the question unchanged",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "(\"double-space\", question.replace(\" \", \"  \"))",
+    "to": "(\"double-space\", question)"
+   },
+   "test": "tests/test_question_reverse.py::test_every_mutant_differs_and_has_its_kind",
+   "killed": true,
+   "result": "1 failed in 0.54s"
+  },
+  {
+   "behaviour": "the F1 share over the wrong denominator (every question)",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "share(sum(q[\"same\"] for q in f1s), len(f1s))",
+    "to": "share(sum(q[\"same\"] for q in f1s), len(questions))"
+   },
+   "test": "tests/test_question_reverse.py::test_each_share_has_its_forms_denominator",
+   "killed": true,
+   "result": "1 failed in 0.53s"
+  },
+  {
+   "behaviour": "the F2 share leaves out many",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "share(len(f2_same) + len(many), len(f2s))",
+    "to": "share(len(f2_same), len(f2s))"
+   },
+   "test": "tests/test_question_reverse.py::test_each_share_has_its_forms_denominator",
+   "killed": true,
+   "result": "1 failed in 0.55s"
+  },
+  {
+   "behaviour": "the moved-word sentences skip the first gap",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "if word.start() > 0]",
+    "to": "if word.start() > 0][1:]"
+   },
+   "test": "tests/test_question_reverse.py::test_candidates_are_the_word_gaps_left_to_right",
+   "killed": true,
+   "result": "1 failed in 0.50s"
+  },
+  {
+   "behaviour": "p95 off by one rank",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "math.ceil(0.95 * len(ordered)) - 1]",
+    "to": "min(math.ceil(0.95 * len(ordered)), len(ordered) - 1)]"
+   },
+   "test": "tests/test_question_reverse.py::test_p95_and_share",
+   "killed": true,
+   "result": "1 failed in 0.45s"
+  },
+  {
+   "behaviour": "the latency budget met only below its bound",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "p95(corpus_ms) <= BUDGET_MS",
+    "to": "p95(corpus_ms) < BUDGET_MS"
+   },
+   "test": "tests/test_question_reverse.py::test_the_latency_budget_is_met_at_its_bound_only",
+   "killed": true,
+   "result": "1 failed in 0.46s"
+  },
+  {
+   "behaviour": "the long question one word short (63 candidates)",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "for i in range(words))",
+    "to": "for i in range(words - 1))"
+   },
+   "test": "tests/test_question_reverse.py::test_the_candidate_limit_is_leans_on_both_sides",
+   "killed": true,
+   "result": "1 failed in 1.25s"
+  },
+  {
+   "behaviour": "a formula not compared (any one counts as same)",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "return outcome[\"status\"] == \"one\" and outcome.get(\"ast\") == formula",
+    "to": "return outcome[\"status\"] == \"one\""
+   },
+   "test": "tests/test_question_reverse.py::test_a_reading_counts_only_with_the_sentences_formula",
+   "killed": true,
+   "result": "1 failed in 0.70s"
+  },
+  {
+   "behaviour": "the many status counted as reading",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "return outcome[\"status\"] == \"one\" and",
+    "to": "return outcome[\"status\"] in (\"one\", \"many\") and"
+   },
+   "test": "tests/test_question_reverse.py::test_a_reading_counts_only_with_the_sentences_formula",
+   "killed": true,
+   "result": "1 failed in 0.67s"
+  }
+ ]
+}

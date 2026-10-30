@@ -141,6 +141,11 @@ def ask(env, words, options, question: str) -> tuple[dict, float]:
             if k in answer}, ms
 
 
+def reads_with(outcome: dict, formula) -> bool:
+    """Whether a question's checked answer is `one` with exactly the sentence's formula."""
+    return outcome["status"] == "one" and outcome.get("ast") == formula
+
+
 def run_config(name: str, env, words, options, sentences: list[str]) -> dict:
     """Every record of one configuration: the sentences Lean reads with one formula, their questions and
     mutants, and the moved-word sentences of each F2 question."""
@@ -157,7 +162,7 @@ def run_config(name: str, env, words, options, sentences: list[str]) -> dict:
                 outcome, ms = ask(env, words, options, text)
                 questions.append({"config": name, "sentence": sentence, "kind": kind, "question": text,
                                   "expected": expected, "outcome": outcome, "ms": round(ms, 3),
-                                  "same": outcome["status"] == "one" and outcome.get("ast") == formula})
+                                  "same": reads_with(outcome, formula)})
     odd_read = read_sentences(env, words, options, [c for _, _, c, _ in odd])
     moved = [{"config": name, "sentence": s, "question": q, "moved": c, "status": r["status"],
               "same": r["status"] == "one" and r["ast"] == [formula]}
