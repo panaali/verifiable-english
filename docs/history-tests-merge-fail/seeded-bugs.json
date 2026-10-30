@@ -1,0 +1,18 @@
+{
+ "item": "history-tests-merge-fail",
+ "note": "each bug was planted in a changed file, the named test failed, and the file was restored (Python only: no Lean or Rust product code changed)",
+ "seeded": [
+  {"id": "S1", "language": "python", "file": "tools/regen_generated.py",
+   "bug": "history-tests loses at_merge=True: the merge refresh no longer rewrites a stale merged list",
+   "test": "tests/test_history_tests.py::test_a_clean_merge_keeps_a_stale_list_and_the_merge_refresh_rewrites_it",
+   "failed": "assert refresh('--check') == 1: got 0 (nothing selected)"},
+  {"id": "S2", "language": "python", "file": "tools/regen_generated.py",
+   "bug": "selected() ignores --at-merge: every entry, Lean builds included, is selected",
+   "test": "tests/test_regen_generated.py::test_the_entries_refreshed_at_merge_are_tree_only_writers",
+   "failed": "--names --at-merge printed gitattributes and 31 more entries"},
+  {"id": "S3", "language": "python", "file": "tools/regen_generated.py",
+   "bug": "platform-contract loses at_merge=True: the entry the train refreshed before (L61) is dropped from the registry's list",
+   "test": "tests/test_regen_generated.py::test_the_entries_refreshed_at_merge_are_tree_only_writers",
+   "failed": "{platform-contract, binding-census, history-tests} <= at_merge entries"}
+ ]
+}
