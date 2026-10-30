@@ -109,10 +109,11 @@ for a change, any other change, a file it cannot read) it is a full run, and one
 
 Every --json records where the time went (`steps`, eff-tm-control; a run fact, like "seconds", that no verdict
 reads): `wall`, the seconds of each phase of the run in turn (`WALL`: the plan, the scratch copies, the control
-build, the probe's install, the checks' probes without a mutant, the mutants, the reads); `lake`, the seconds Lake
-ran in each step summed over the jobs (`LAKE`: those control phases, then in the mutants' builds the mutated
-module's stage, the check modules' stage and the outside --test files, the stage controls, and the mutants' probes),
-and `runs`, how many Lake runs each took. One line prints them. --merge writes each part's in its `shards` entry
+build, the probe's install, the mutants, the scratch copies' removal, the reads); `lake`, the seconds Lake ran in
+each step summed over the jobs (`LAKE`: the control build, the probe's install, the checks' probes without a mutant
+(`Probes`: each file's once, when a verdict first reads it, during the mutants), then in the mutants' builds the
+mutated module's stage, the check modules' stage and the outside --test files, the stage controls, and the mutants'
+probes), and `runs`, how many Lake runs each took. One line prints them. --merge writes each part's in its `shards` entry
 and their sums as the record's.
 """
 from __future__ import annotations
@@ -930,7 +931,7 @@ def cut_proof(path: Path, first: int, last: int) -> bool:
     return bool(found)
 
 
-WALL = ("plan", "scratch", "control_build", "probe_install", "control_probes", "mutants", "cleanup", "reads")  # `main`'s phases
+WALL = ("plan", "scratch", "control_build", "probe_install", "mutants", "cleanup", "reads")  # `main`'s phases
 LAKE = ("control_build", "probe_install", "control_probes", "mutant_builds", "mutant_checks", "outside_checks",
         "stage_controls", "mutant_probes", "other")  # the steps a Lake run counts under (`Steps.step`)
 
@@ -1000,6 +1001,33 @@ def timed(d) -> bool:
         for p, keys, types in (("wall", WALL, (int, float)), ("lake", LAKE, (int, float)), ("runs", LAKE, (int,))))
 
 
+class Probes:
+    """What `probe` gives each check without a mutant, by (file, span), for `run`'s `reading`: each of `files` (file
+    -> its path in `scratch` and its roles) probed once, when a verdict first asks for one of its checks, in `scratch`,
+    a copy no mutant is built in. A file not in `files` has none. `reading` asks only for a check that fails in a
+    mutant's build, so a file none of whose checks fails is never probed (eff-tm-control: probing every check file up
+    front, before any mutant, was 1,264 s of jt-2c's 4,327 s on the VM, paid again by each --shard part, and 4 of its
+    7 files were never read). The value is the one an up-front probe gives: the same file, build and environment."""
+
+    def __init__(self, scratch: Scratch, env: dict, files: dict[str, tuple[Path, list]]):
+        self.scratch, self.env, self.files = scratch, env, files
+        self.lock, self.locks, self.probed = threading.Lock(), {}, {}
+
+    def get(self, key: tuple[str, tuple[int, int]]) -> dict | None:
+        f, span = key
+        if f not in self.files:
+            return None
+        with self.lock:
+            lock = self.locks.setdefault(f, threading.Lock())
+        with lock:  # one probe of a file, the other jobs that ask for it wait for it
+            if f not in self.probed:
+                path, roles = self.files[f]
+                with STEPS.step("control_probes"):
+                    self.probed[f] = probe(self.scratch.lake, self.env, path.read_text(), roles,
+                                           beside(self.scratch.lean, f), Path(f).is_absolute())
+        return self.probed[f].get(span)
+
+
 class Scratch:
     """A private copy of lean/, sources and build, that mutants are built in; the checkout is only read."""
 
@@ -1040,7 +1068,7 @@ class Scratch:
 
 
 def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list[Path], env: dict,
-        deep: bool = False, controls: dict | None = None, hashes: dict | None = None,
+        deep: bool = False, controls: dict | None = None, hashes: Probes | dict | None = None,
         timeout: float | None = None) -> tuple[str, str]:
     """(status, detail) of one mutant, built in `scratch`, whose files are restored afterwards. A proof that fails
     is cut and the build repeated, before any other error is read: a check may fail only because a proof it reads
@@ -1802,9 +1830,9 @@ def main(argv: list[str] | None = None) -> int:
     with tempfile.TemporaryDirectory(prefix="trust-mutants-") as scratch_dir:
         pool: queue.Queue = queue.Queue()
         controls: dict = {}  # the builds without a mutant, by stage and cuts: shared by every scratch
-        hashes: dict = {}  # `probe`'s hash of each check without a mutant
+        hashes: Probes | None = None  # `probe`'s hash of each check without a mutant
         since = STEPS.phase("plan", started)
-        if todo:  # the control build, and each check's elaboration, only for the mutants that run
+        if todo:  # the control build and the probe, only for the mutants that run
             first = Scratch(root / "lean", Path(scratch_dir))
             since = STEPS.phase("scratch", since)
             with STEPS.step("control_build"):
@@ -1821,19 +1849,8 @@ def main(argv: list[str] | None = None) -> int:
                 if not install(lambda *a: first.lake(env, *a), first.lean):
                     return print("the Lean probe (READS) does not compile", file=sys.stderr) or 2
             since = STEPS.phase("probe_install", since)
-
-            def control(item: tuple[int, tuple[str, tuple[Path, list]]]) -> dict:
-                i, (key, (path, roles)) = item
-                with STEPS.step("control_probes"):
-                    got = probe(first.lake, env, path.read_text(), roles, beside(first.lean, key),
-                                Path(key).is_absolute())
-                return {(key, span): said for span, said in got.items()}
-            with ThreadPoolExecutor(max_workers=jobs) as executor:  # each check's elaboration without a mutant
-                hashes.update({k: v for part in executor.map(control, enumerate(files.items())) for k, v in
-                               part.items()})
-            since = STEPS.phase("control_probes", since)
-            pool.put(first)
-            for _ in range(min(jobs, len(todo)) - 1):
+            hashes = Probes(first, env, files)  # `first` stays as it is: no mutant is built in it
+            for _ in range(min(jobs, len(todo))):
                 pool.put(Scratch(root / "lean", Path(scratch_dir), first))
             since = STEPS.phase("scratch", since)
 
