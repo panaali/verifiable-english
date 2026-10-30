@@ -217,13 +217,17 @@ report") follow norms.md 0 and 2.4: the object is inside the declared act phrase
 
 Every wording has exactly one reading, conditional on the legend, which is itself the first thing the reader sees.
 Imperatives are the declared act phrase (norms.md 2.4) with slot 0 dropped and the later slots filled by a declared
-constant name or a bound definite phrase, so elaboration to `demand(c)` is mechanical. `<rest>` is the remainder of a
-copular predicate wording `{0} is <rest>` matching a declared one-place gloss, read as that one predicate; `<sentence>`
-is any closed sentence of the existing English surface.
+constant name or a bound definite phrase, so elaboration to `demand(c)` is mechanical. In a which-question, `<rest>`
+is the remainder of a copular predicate wording `{0} is <rest>` matching a declared one-place gloss, read as that one
+predicate; `<sentence>` is any closed sentence of the existing English surface. A polar question (`Is it the case that
+<sentence>?`, or a fronted `Is <constant> <rest>?`) and a `Must` or `Can` wording are not matched by the speech parser:
+it sends each wording that begins with a prefix of the list Lean exports (`VE.Question.Run.speechPrefixes`, the
+`callers` of `ve/question/codes.json`) to Lean's `english.question` with the speech-acts caller, and the question's
+formula, or its refusal, is Lean's reading (question-answering-PLAN.md Q1.4).
 
-**A declared gloss is an opaque atom.** A predicate's gloss (`verbalisation`) is author-declared vocabulary: the
-wording that matches it means exactly the declared predicate, as the predicate's name does, and VE does not and cannot
-decide whether the English inside a gloss is compound or self-contradictory ("{0} is reviewed despite remaining
+**A declared gloss is an opaque atom** (in a which-question). A predicate's gloss (`verbalisation`) is
+author-declared vocabulary: the wording that matches it means exactly the declared predicate, as the predicate's name
+does, and VE does not and cannot decide whether the English inside a gloss is compound or self-contradictory ("{0} is reviewed despite remaining
 unreviewed" declares one predicate, and a question about it is answered by that predicate's table or proofs, never by
 the English). Fidelity of a gloss to its predicate is the author's declaration, reviewed with the vocabulary like any
 other declaration. The **gloss lint** is advisory: a matching gloss whose `<rest>` holds a connective, negation,
@@ -240,8 +244,8 @@ lint is not a correctness gate, its word list is closed, and it is not extended 
 | `<Act phrase after slot 0, first word capitalised, later slots filled>.` e.g. `Click Check.` | In this task, you are required to click Check. Nothing is claimed about whether you did. | `demand`: `+` on the obligation predicate, guard `x0 = you ∧ x1 = Check` |
 | `Do not <act phrase, same shape>.` e.g. `Do not share the token.` | In this task, you are not permitted to share the token. | `demand`: `−` on the permission predicate |
 | `..., if <condition>.` on a command | The demand holds only in situations where the condition holds. | guard `G_c` |
-| `Is <constant> <rest>?` e.g. `Is Atlas reviewed?` | Asks whether Atlas is reviewed; "yes" is correct exactly when it is, "no" exactly when it is not. | polar, `F(yes) = P`, `F(no) = ¬P` |
-| `Is it the case that <sentence>?` | Asks whether the sentence holds; the same contract. | polar over any closed sentence |
+| `Is <constant> <rest>?` e.g. `Is Atlas reviewed?` | Asks whether Atlas is reviewed; "yes" is correct exactly when it is, "no" exactly when it is not. | polar, `F(yes) = P`, `F(no) = ¬P`, `P` the formula Lean reads for the question with the caller's fronted `is` |
+| `Is it the case that <sentence>?` | Asks whether the sentence holds; the same contract. | polar over the closed sentence Lean reads |
 | `Which of <A>, <B>[, <C>...] and <Z> are <rest>?` | Asks for the complete list of these named alternatives that are `<rest>`; "none" is a possible answer; nothing is presupposed about anything not named. | which_all, `H = ⊤` |
 | `Which one of <A>, ... and <Z> is <rest>?` | Asks which single named alternative is `<rest>`; that exactly one is, is presupposed and shown in the residual. | which_one, `H` = exactly one |
 | `Does it follow from these premises that <sentence>?` | Asks whether the sentence follows from the premises above; the answer is a checked proof, a checked counter-situation, or "not established". | follows over query `(B_q, P)` |
@@ -404,8 +408,8 @@ The surface kind reads the wording and each act phrase through **one normalisati
 fold to `a`-`z`. Every other character, the other ASCII control characters (`\x1c`-`\x1f`, `\x7f`) included, is an
 ordinary character; a non-ASCII character never reaches it. Every other reader of a wording keeps that
 rule: the source wrapper trims a span and a fence, and the speech parser its wording, of those six ASCII whitespace
-characters only (Python's `wording_text`), and the parser matches act phrases, constant names and glosses folding only
-`A`-`Z` (`ascii_fold`), so a wording the parser reads as a command or question has that surface kind and no path
+characters only (Python's `wording_text`), and the parser matches act phrases and a which-question's constant names
+and glosses folding only `A`-`Z` (`ascii_fold`; a polar question is read by Lean, 2.1), so a wording the parser reads as a command or question has that surface kind and no path
 (original kind, inline or fenced form) sees another sentence. The parser's command match folds only `A`-`Z` on both
 sides (no Unicode case mapping, so "Do not ßcheck." is not "Do not SScheck.") and a which-question's alternatives are
 trimmed of ASCII whitespace only. The surface kind is decided in this order: a question when its normalised form ends
@@ -873,7 +877,7 @@ action glosses earn no C: an action declaration cannot hide a sentence behind an
 | `CheckerConflict` | `follows` and `gap` artifacts for one `(E, Π_q, P)` (debate-protocol.md) | operational error |
 | `ResourceLimit: rules` / `alternatives` / `definites` / `questions` / `open-term name` | W1's 256 rules including commands; more than 16 alternatives; 64 definites; 256 questions; a reading question's unit id over 47 bytes (W2's 64-byte token limit on `intended-reading.<u>`, 4.6) | error |
 | `CoordinatedActs`, `PermissionNotCommand`, `ModalQuestion`, `OpenDomainWhich`, `TemporalWording` | English-layer hints with the rewrites of 2.3 (Python only) | hint |
-| `OpaqueWording: '<rest>' contains '<word>' and is read as one declared predicate in <u>` | the advisory gloss lint (2.1): a copular `<rest>` matches a declared one-place gloss containing a connective, negation, contrast or quantifier word, sentence punctuation, a repeated word, another declared one-place property, a declared constant or a bound definite phrase; the gloss is an opaque atom and the unit is otherwise unaffected (Python only) | warning |
+| `OpaqueWording: '<rest>' contains '<word>' and is read as one declared predicate in <u>` | the advisory gloss lint (2.1): a which-question's copular `<rest>` matches a declared one-place gloss containing a connective, negation, contrast or quantifier word, sentence punctuation, a repeated word, another declared one-place property, a declared constant or a bound definite phrase; the gloss is an opaque atom and the unit is otherwise unaffected (Python only) | warning |
 | `Overlap(<n>, <m>)`, `DependencyCycle`, `PrecedenceAcrossPredicates`, `ConsequenceArguments`, ... | W1's, unchanged, on `policy(D)` | as W1 |
 
 Order: the profile gate; the environment block; W1's declaration checks; units in document order (kind, content, slots,

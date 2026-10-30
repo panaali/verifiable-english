@@ -258,10 +258,11 @@ def soft_admission : Shape :=
 def defaults_elaborate : Shape :=
   c "Defaults.Wire.elaborateFields (defaults-elaborate): Dflt_T's labelled premises, then each colliding pair's two rule names and coherence premise (Defaults.Wire.elaborateRows)." [
     obj,
-    .required ["id", "status", "default_premises", "coherence_targets"],
+    .required ["id", "status", "deciders", "default_premises", "coherence_targets"],
     closed [
       ("id", ref "common.json#/$defs/id_ok"),
       ("status", constS "ok"),
+      ("deciders", ref "common.json#/$defs/strings"),
       ("default_premises", n [arr, .items (n [arr, .prefixItems [ref "common.json#/$defs/text",
         ref "common.json#/$defs/generated_formula"], .minItems 2, .maxItems 2])]),
       ("coherence_targets", n [arr, .items (n [arr, .prefixItems [str, str, ref "common.json#/$defs/generated_formula"],
@@ -302,11 +303,12 @@ def defaults_certificate : Shape :=
       ("basis", enumS ["strict", "needs", "unsettled"]),
       ("form", enumS ["short", "long"]),
       ("assumptions", ref "common.json#/$defs/strings"),
+      ("deciders", ref "common.json#/$defs/strings"),
       ("reason", str)],
     .ite (props [("verdict", constS "FOLLOWS")])
-      (.allOf [.required ["basis", "form", "assumptions"], .not (.required ["reason"])])
+      (.allOf [.required ["basis", "form", "assumptions", "deciders"], .not (.required ["reason"])])
       (.allOf [.required ["reason"], .not (.required ["basis"]), .not (.required ["form"]),
-        .not (.required ["assumptions"])])]
+        .not (.required ["assumptions"]), .not (.required ["deciders"])])]
 
 def defaults_model : Shape :=
   c "Defaults.Wire.modelFields (defaults-model): DOES-NOT-FOLLOW with the situation and each exception the text's own conditions force there (defaults_model_sound, forcedAt_sound), or UNKNOWN." [

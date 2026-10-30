@@ -89,6 +89,7 @@ def rest (L : VE.NormDefaults.Wire.LayeredU) : String :=
 #guard holds dγ fun L => match VE.SoftNorms.collidingPairs L.D with
   | [(P, Q)] => ans (req αEnv γR "defaults-elaborate") "default_premises" ==
       toJson ((dfltLabelled L.D).map fun (l, a) => Json.arr #[.str l, fJ a]) &&
+    ans (req αEnv γR "defaults-elaborate") "deciders" == toJson (decidersOf L.D) &&
     ans (req αEnv γR "defaults-elaborate") "coherence_targets" ==
       toJson [Json.arr #[.str "r1", .str "r2", fJ (VE.NormDefaults.Wire.cohPremiseU L.U L.D P Q)]]
   | _ => false
@@ -198,7 +199,8 @@ def αModels (strict : List String) : List (String × Json) := match dα with
   | .ok L => [("model", model (modelJ L [])), ("strict_model", model (modelJ L strict))]
   | .error _ => []
 def follows (basis form : String) (as : List String) : Json :=
-  VE.Route.Wire.ok "c" [("verdict", .str "FOLLOWS"), ("basis", .str basis), ("form", .str form), ("assumptions", toJson as)]
+  VE.Route.Wire.ok "c" [("verdict", .str "FOLLOWS"), ("basis", .str basis), ("form", .str form),
+    ("assumptions", toJson as), ("deciders", toJson (["assistant"] : List String))]
 def unknownBecause (r : String) : Json := VE.Route.Wire.ok "c" [("verdict", .str "UNKNOWN"), ("reason", .str r)]
 
 -- DF-α: FOLLOWS, needs (the strict countermodel {excepted r1} checks), short, the one exception kept
