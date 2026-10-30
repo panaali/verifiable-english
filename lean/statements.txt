@@ -44168,6 +44168,13 @@ theorem VE.Scope.filter_mergeSort
         ∀ (p : α → Bool) (l : List α), List.filter p (l.mergeSort le) = (List.filter p l).mergeSort le
   -- uses
   -- expr 3550286953
+theorem VE.Scope.find_map_id
+  ∀ (F : Lean.Json → Lean.Json) (u : String) (ys : List Lean.Json),
+    (∀ (y : Lean.Json), y ∈ ys → VE.Scope.idOf (F y) = VE.Scope.idOf y) →
+      List.find? (fun x => VE.Scope.idOf x == u) (List.map F ys) =
+        Option.map F (List.find? (fun x => VE.Scope.idOf x == u) ys)
+  -- uses VE.Scope.idOf@VE.Scope.Govern
+  -- expr 1711943891
 theorem VE.Scope.firstDup_none_iff
   ∀ (l : List String), VE.Scope.firstDup l = Option.none ↔ l.Nodup
   -- uses VE.Scope.firstDup@VE.Scope.Govern
@@ -44368,6 +44375,23 @@ theorem VE.Scope.govern_preserves
                       (¬VE.Scope.idOf y ∈ VE.Scope.affected D → x = y)
   -- uses VE.Scope.JsonWF@VE.Scope.Govern VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.affected@VE.Scope.Govern VE.Scope.govern@VE.Scope.Govern VE.Scope.idOf@VE.Scope.Govern VE.Scope.unitsOf@VE.Scope.Govern
   -- expr 2901292131
+theorem VE.Scope.govern_provenance
+  ∀ (D : VE.Scope.SDoc),
+    VE.Scope.JsonWF D.doc →
+      ∀ (out : Lean.Json),
+        VE.Scope.govern D = Except.ok out →
+          ∀ (u : String),
+            u ∈ VE.Scope.affected D →
+              ∃ o₀ o₁ es,
+                VE.Scope.baseObj D u = Except.ok o₀ ∧
+                  List.foldlM (fun o g => VE.Scope.applyEffect u g.effect o) o₀ (VE.Scope.governorsOf D u) =
+                      Except.ok o₁ ∧
+                    VE.Scope.edgesFor D u = Except.ok es ∧
+                      VE.Scope.normOf (VE.Scope.contentOf out u) = Option.some (VE.Scope.addOver es o₁) ∧
+                        ∀ (g : VE.Scope.Governor),
+                          g ∈ VE.Scope.governorsOf D u → ∃ us, VE.Scope.covered D g.reach = Except.ok us ∧ u ∈ us
+  -- uses VE.Scope.Governor.effect@VE.Scope.Govern VE.Scope.Governor.reach@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.JsonWF@VE.Scope.Govern VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.addOver@VE.Scope.Govern VE.Scope.affected@VE.Scope.Govern VE.Scope.applyEffect@VE.Scope.Govern VE.Scope.baseObj@VE.Scope.Govern VE.Scope.contentOf@VE.Scope.Govern VE.Scope.covered@VE.Scope.Govern VE.Scope.edgesFor@VE.Scope.Govern VE.Scope.govern@VE.Scope.Govern VE.Scope.governorsOf@VE.Scope.Govern VE.Scope.normOf@VE.Scope.Govern
+  -- expr 875368262
 theorem VE.Scope.govern_refused
   ∀ (D : VE.Scope.SDoc), VE.Scope.admitBlock D ≠ Except.ok () → (VE.Scope.govern D).isOk = Bool.false
   -- uses VE.Scope.SDoc@VE.Scope.Govern VE.Scope.admitBlock@VE.Scope.Govern VE.Scope.govern@VE.Scope.Govern
@@ -44558,6 +44582,13 @@ theorem VE.Scope.list_singleton_of_drop_empty
     (List.map (fun x => x.id) gs).Nodup → g ∈ gs → List.filter (fun x => x.id != g.id) gs = [] → gs = [g]
   -- uses VE.Scope.Governor.id@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern
   -- expr 1139459985
+theorem VE.Scope.lookup_map_eq
+  ∀ (G : String → Lean.Json → Lean.Json) (k : String) (w : Lean.Json) (l : List (String × Lean.Json)),
+    (k, w) ∈ l →
+      (∀ (v : Lean.Json), (k, v) ∈ l → v = w) →
+        List.lookup k (List.map (fun p => (p.fst, G p.fst p.snd)) l) = Option.some (G k w)
+  -- uses
+  -- expr 3694553335
 theorem VE.Scope.lookup_mem
   ∀ {β : Type} (k : String) (b : β) (l : List (String × β)), List.lookup k l = Option.some b → (k, b) ∈ l
   -- uses
@@ -44585,6 +44616,11 @@ theorem VE.Scope.mapM_ok_mem
     List.mapM f l = Except.ok t → ∀ (y : β), y ∈ t → ∃ x, x ∈ l ∧ f x = Except.ok y
   -- uses
   -- expr 4262899139
+theorem VE.Scope.mapM_ok_of_mem
+  ∀ {α β ε : Type} (f : α → Except ε β) (l : List α) (t : List β),
+    List.mapM f l = Except.ok t → ∀ (x : α), x ∈ l → ∃ y, y ∈ t ∧ f x = Except.ok y
+  -- uses
+  -- expr 2741401135
 theorem VE.Scope.mapM_some_mem
   ∀ {st : String → Option VE.Reports.Status} {us : List String} {ts : List VE.Reports.Status},
     List.mapM st us = Option.some ts →
@@ -44609,6 +44645,10 @@ theorem VE.Scope.members_get
         (k, x) ∈ VE.Scope.members (Lean.Json.obj kvs) → (Lean.Json.obj kvs).getObjVal? k = Except.ok x
   -- uses VE.Scope.members@VE.Scope.Effects
   -- expr 3820158723
+theorem VE.Scope.members_ne_obj
+  ∀ (c : Lean.Json), VE.Scope.keysOf c ≠ [] → ∃ kvs, c = Lean.Json.obj kvs
+  -- uses VE.Scope.keysOf@VE.Scope.Govern
+  -- expr 3972706346
 theorem VE.Scope.members_nodup
   ∀ (kvs : Std.TreeMap.Raw String Lean.Json Ord.compare),
     kvs.WF → (List.map (fun x => x.fst) (VE.Scope.members (Lean.Json.obj kvs))).Nodup
@@ -44701,6 +44741,12 @@ theorem VE.Scope.normFields_name
     VE.Norms.Wire.normFields j = Except.ok r → (j.getObjValD "norm").getObjValD "name" = Lean.Json.str r.fst
   -- uses VE.Norms.Wire.normFields@VE.Norms.Wire
   -- expr 410811411
+theorem VE.Scope.normOf_newContent
+  ∀ (c o : Lean.Json),
+    VE.Scope.JsonWF c →
+      (VE.Scope.isPart c || VE.Scope.isNorm c) = Bool.true → VE.Scope.normOf (VE.Scope.newContent c o) = Option.some o
+  -- uses VE.Scope.JsonWF@VE.Scope.Govern VE.Scope.isNorm@VE.Scope.Govern VE.Scope.isPart@VE.Scope.Govern VE.Scope.newContent@VE.Scope.Govern VE.Scope.normOf@VE.Scope.Govern
+  -- expr 2435479764
 theorem VE.Scope.orderCheck_drop
   ∀ (D : VE.Scope.SDoc) (g : VE.Scope.Governor),
     g ∈ D.governors →
