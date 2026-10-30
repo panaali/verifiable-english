@@ -1,3 +1,6 @@
+- `tests/test_entailment.py` — (no module docstring)
+- `tests/test_entailment_adversarial.py` — Adversarial checks for the small trusted tableau replayer.
+- `tests/test_entailment_properties.py` — Independent bounded semantic check of every generated positive certificate.
 - `tests/test_enum_domains.py` — Every enumeration of the response schemas is kept by the encoder theorems (shapes-fix3, B4).
 - `tests/test_environment_field_types.py` — Wrong-typed top-level environment fields (the env-profiles directive).
 - `tests/test_equivalence.py` — (no module docstring)
@@ -84,4 +87,3 @@
 - `tests/test_me4_csv_mutants.py` — The saved mutation run must not waive CSV character regressions.
 - `tests/test_merge_tooling_evidence.py` — docs/merge-tooling.md against its saved evidence (docs/merge-tooling/*.json).
 - `tests/test_metered_answer.py` — The `metered` relay never shows a trace binding the request does not hold (lf-18 review F1; DRI-RULINGS R8 (b), FINDING-CLASSES 4 and 15).
-- `tests/test_metered_differential.py` — Batch 15a review fixes: Lean's metered route (`ve_metered`) against Python.
