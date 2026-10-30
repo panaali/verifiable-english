@@ -327,12 +327,12 @@
       },
       {
         "file": "lean/VE/EnglishGrammar/Run.lean",
-        "lines": 735,
-        "sha256": "f9355148f683d663abd23260fab6d3d318f9e575e7bdebaf910bb40f95b86245",
+        "lines": 738,
+        "sha256": "a614aab8eeff8f4106268b364502dca3de0d107aa7a258c269e631cb6ddb58f2",
         "ranges": [
           [
             1,
-            735
+            738
           ]
         ],
         "declarations": [
@@ -347,7 +347,7 @@
           "readCase",
           "grammarCase"
         ],
-        "reason": "english-lean S2.4 (docs/spec/english-lean-s2.md 2.10, 4.3, 4.4): ve_english_route decodes the case (environment through Env.decode, overlay, the ve.english-lexicon@1 lexicon, which must name the environment), computes the six identities and writes the english.read and english.grammar answers; shadow only while english.admission keeps authority python; S3 validates alternatives and risk profile environments at the reader boundary (docs/spec/english-lean-s3.md 2.3); the full file is pinned conservatively"
+        "reason": "english-lean S2.4 (docs/spec/english-lean-s2.md 2.10, 4.3, 4.4): ve_english_route decodes the case (environment through Env.decode, overlay, the ve.english-lexicon@1 lexicon, which must name the environment), computes the six identities and writes the english.read and english.grammar answers; shadow only while english.admission keeps authority python; S3 validates alternatives and risk profile environments at the reader boundary (docs/spec/english-lean-s3.md 2.3); the full file is pinned conservatively; jt-2c: `decodeCase` and `environmentId` read the environment through `VE.Compose.decidingEnvironment` (without the document layers), the identities as written"
       },
       {
         "file": "lean/VE/Question/Run.lean",
@@ -1102,12 +1102,12 @@
       },
       {
         "file": "lean/VE/Service/Document.lean",
-        "lines": 2083,
-        "sha256": "0a9686bc946bb08740dcef5d68ea74b9c96cd5a707b734d93f15fa602925d57c",
+        "lines": 2080,
+        "sha256": "9ed031adb840b3fa16bb9d3c83b03e2d17f35734283dfe90a50e6d747cc11a0b",
         "ranges": [
           [
             1,
-            2083
+            2080
           ]
         ],
         "declarations": [
@@ -1163,7 +1163,7 @@
           "composedReadings",
           "checkDocSetsAnswered"
         ],
-        "reason": "W2 document service wrapper: front matter (its JSON forms Python reads as other values deferred) and its gates (the environment mode's fault where no route is composed), unit partition and contents, a rights document's rights source (the rights route's decoder), a soft-norms document's soft source, E'' and rule source (the soft route's decoders), soft canonical content and statuses, plain norm content (the norms route's decoders), reading sets and their status fold, narrowings, graph admission, located model and fence diagnostics, statuses and coverage; JT-2: judgments@0's records and admission (Judgments.records after W2), each active set's raw readings (setCandidates), the unit statuses and the usage map, and the decoders reading the environment without the document layers; jt-2 review F1: the parse, model and English cases read Env.forModes, and a located model's identity is the list's as written; merge with SC-1b: check refuses judgments@0 with scope@0, whose fold (Scope.foldGovernors) writes no judgments member; full file pinned conservatively; sc-5rb: checkDocSets, the entry with scope's per-choice GOVERN (VE.Scope.governSetsWith), and withSets, which hands check GOVERN's reading sets (withUnits drops a case's own); sc-5rc: composedReadingRow, composedSetRow, composedReadings and checkDocSetsAnswered relay the governed readings by set, version, unit and reading id"
+        "reason": "W2 document service wrapper: front matter (its JSON forms Python reads as other values deferred) and its gates (the environment mode's fault where no route is composed), unit partition and contents, a rights document's rights source (the rights route's decoder), a soft-norms document's soft source, E'' and rule source (the soft route's decoders), soft canonical content and statuses, plain norm content (the norms route's decoders), reading sets and their status fold, narrowings, graph admission, located model and fence diagnostics, statuses and coverage; JT-2: judgments@0's records and admission (Judgments.records after W2), each active set's raw readings (setCandidates), the unit statuses and the usage map, and the decoders reading the environment without the document layers; jt-2 review F1: the parse, model and English cases read Env.forModes, and a located model's identity is the list's as written; merge with SC-1b: check refuses judgments@0 with scope@0, whose fold (Scope.foldGovernors) writes no judgments member; full file pinned conservatively; sc-5rb: checkDocSets, the entry with scope's per-choice GOVERN (VE.Scope.governSetsWith), and withSets, which hands check GOVERN's reading sets (withUnits drops a case's own); sc-5rc: composedReadingRow, composedSetRow, composedReadings and checkDocSetsAnswered relay the governed readings by set, version, unit and reading id; jt-2c: `environmentOf` refuses a document layer beside a profile it does not compose with by `VE.Compose.decidingEnvironment` (was `judgmentsApart`)"
       },
       {
         "file": "lean/VE/Service/Family.lean",
@@ -2150,7 +2150,8 @@
       "lean/VE/Scope/ReadingsExamples.lean": "fixtures only: scope spec 11.6's #guard checks build reading sets and hard-constraint documents as JSON literals and run `governSets` on them; no service mode reads this file",
       "lean/VE/Readings/ActsExamples.lean": "test fixtures only: #guards that build acts@0 environments as a request carries them and read the readings route's decoder answers (ap-1bd); no admission path, service mode or record reads it",
       "lean/ResponseShape/Encoders/Cardinality.lean": "theorems that the cardinality mode's rows fit its shape, with valid exactly beside a certificate case (getObjVal? in proofs only; not on any runner path)",
-      "lean/ResponseShapeAudit.lean": "the dependency audit of the response-shape theorems (#print axioms only); JSON only in theorem names"
+      "lean/ResponseShapeAudit.lean": "the dependency audit of the response-shape theorems (#print axioms only); JSON only in theorem names",
+      "lean/VE/Compose/Examples.lean": "checks only: jt-2c's #guards build environment JSON for `VE.Compose.decidingEnvironment`; no decoder"
     }
   },
   "plan_operations": {

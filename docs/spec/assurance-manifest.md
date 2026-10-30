@@ -148,7 +148,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Core/Wire.lean` | 209 | 209 | 1–209 | `1d5198a59d4c…` |
 | `lean/VE/Definitions/Bundle.lean` | 471 | 471 | 1–471 | `fc86d51a7f84…` |
 | `lean/VE/EnglishGrammar/Encode.lean` | 764 | 764 | 1–764 | `c68b8627d4e6…` |
-| `lean/VE/EnglishGrammar/Run.lean` | 735 | 735 | 1–735 | `f9355148f683…` |
+| `lean/VE/EnglishGrammar/Run.lean` | 738 | 738 | 1–738 | `a614aab8eeff…` |
 | `lean/VE/Question/Run.lean` | 257 | 257 | 1–257 | `0eb404095ecf…` |
 | `lean/VE/Json.lean` | 141 | 141 | 1–141 | `10dcb30ca301…` |
 | `lean/VE/NormDefaults/Admission.lean` | 344 | 344 | 1–344 | `ab4fe1851cdc…` |
@@ -182,7 +182,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Route/Wire.lean` | 727 | 727 | 1–727 | `4829a9c7b8ee…` |
 | `lean/VE/Senses/Decode.lean` | 93 | 93 | 1–93 | `5f0f5265fe8d…` |
 | `lean/VE/Senses/Run.lean` | 252 | 252 | 1–252 | `3f2d07fc6aed…` |
-| `lean/VE/Service/Document.lean` | 2083 | 2083 | 1–2083 | `0a9686bc946b…` |
+| `lean/VE/Service/Document.lean` | 2080 | 2080 | 1–2080 | `9ed031adb840…` |
 | `lean/VE/Service/Family.lean` | 814 | 814 | 1–814 | `6c3ab030f934…` |
 | `lean/VE/Service/FamilyBundle.lean` | 500 | 500 | 1–500 | `75698a329690…` |
 | `lean/VE/Service/FamilyNorms.lean` | 393 | 393 | 1–393 | `418076df3e0a…` |
