@@ -1011,7 +1011,8 @@
     },
     "Serve.lean": {
       "G[V]": [
-        "main"
+        "main",
+        "readingsMemoStatsEnabled"
       ]
     },
     "SpeechActsMain.lean": {
@@ -6612,7 +6613,15 @@
         "VE.Readings.Run.runSeparateSD",
         "VE.Readings.Run.runElaborateSD",
         "VE.Readings.Run.runChoiceSD",
-        "VE.Readings.Run.sdRefusal"
+        "VE.Readings.Run.sdRefusal",
+        "VE.Readings.Run.AdmissionMemo",
+        "VE.Readings.Run.AdmissionMemoEntry",
+        "VE.Readings.Run.AdmissionMemoEntry.matches",
+        "VE.Readings.Run.admissionMemoMaxBytes",
+        "VE.Readings.Run.admissionMemoMaxEntries",
+        "VE.Readings.Run.admissionMemoTrim",
+        "VE.Readings.Run.admitComponentsMemo",
+        "VE.Readings.Run.runCaseReportedMemo"
       ],
       "G[I]": [
         "VE.Readings.Run.documentHash"
@@ -10017,7 +10026,13 @@
         "VE.Service.runMode",
         "VE.Service.runRequest",
         "VE.Service.space",
-        "VE.Service.trimmed"
+        "VE.Service.trimmed",
+        "VE.Service.handleLineMemo",
+        "VE.Service.memoLineTooLong",
+        "VE.Service.readingsResponse",
+        "VE.Service.readingsResults",
+        "VE.Service.respondMemo",
+        "VE.Service.runReadingsRequest"
       ],
       "G[R]": [
         "VE.Service.caseError",
@@ -10070,7 +10085,8 @@
         "VE.Service.Standalone.rawParseAst",
         "VE.Service.Standalone.reportedFault",
         "VE.Service.Standalone.reportedModel",
-        "VE.Service.Standalone.reportedParse"
+        "VE.Service.Standalone.reportedParse",
+        "VE.Service.Standalone.routeHeaderAccepted"
       ],
       "D[V]": [
         "VE.Service.Standalone.Legacy",
@@ -12489,6 +12505,9 @@
         }
       ],
       "G[R]": [
+        "VE.Calc.Work.maxWork",
+        "VE.Calc.Work.smallBits",
+        "VE.Calc.digitBound",
         "VE.Calc.findingKind",
         "VE.Calc.firstFault",
         "VE.Calc.maxDigits"
@@ -12500,6 +12519,21 @@
         "VE.Calc.Val.all",
         "VE.Calc.Val.bin",
         "VE.Calc.Val.guard",
+        "VE.Calc.Work.Claim.decideSides",
+        "VE.Calc.Work.Claim.ofSides",
+        "VE.Calc.Work.Decl.valC",
+        "VE.Calc.Work.Expr.evalC",
+        "VE.Calc.Work.Expr.evalsC",
+        "VE.Calc.Work.Table",
+        "VE.Calc.Work.Table.read",
+        "VE.Calc.Work.binC",
+        "VE.Calc.Work.chargeQ",
+        "VE.Calc.Work.chargeV",
+        "VE.Calc.Work.powTooLarge",
+        "VE.Calc.Work.qbits",
+        "VE.Calc.Work.valueTable",
+        "VE.Calc.Work.valueTableC",
+        "VE.Calc.Work.visitC",
         "VE.Calc.digitCount",
         "VE.Calc.instDecidableSmall",
         "VE.Calc.valuesL"
@@ -13329,6 +13363,7 @@
         "VE.Scope.Examples.lDoc",
         "VE.Scope.Examples.layoutOf",
         "VE.Scope.Examples.leadPart",
+        "VE.Scope.Examples.leaf1",
         "VE.Scope.Examples.led",
         "VE.Scope.Examples.member",
         "VE.Scope.Examples.mergePartsText",
@@ -13349,6 +13384,8 @@
         "VE.Scope.Examples.prosePieces",
         "VE.Scope.Examples.provAt",
         "VE.Scope.Examples.provenanceOf",
+        "VE.Scope.Examples.rawA",
+        "VE.Scope.Examples.rawB",
         "VE.Scope.Examples.rawJ",
         "VE.Scope.Examples.rawRule",
         "VE.Scope.Examples.rawUdhr",
@@ -13376,6 +13413,7 @@
         "VE.Scope.Examples.udhrDoc",
         "VE.Scope.Examples.udhrPieces",
         "VE.Scope.Examples.unordered",
+        "VE.Scope.Examples.withUnit",
         "VE.Scope.Examples.without"
       ]
     },
@@ -14117,10 +14155,15 @@
     "VE/Scope/Govern.lean": {
       "G[R]": [
         "VE.Scope.admitBlock",
+        "VE.Scope.ascending",
+        "VE.Scope.balanced?",
         "VE.Scope.conditions",
         "VE.Scope.defSpans",
         "VE.Scope.firstDup",
+        "VE.Scope.implWF?",
+        "VE.Scope.jsonWF?",
         "VE.Scope.kindOf",
+        "VE.Scope.listWF?",
         "VE.Scope.orderCheck",
         "VE.Scope.orderCheckF",
         "VE.Scope.setUnits",
@@ -14364,7 +14407,8 @@
         "VE.Calc.Wire.nonlinearAt",
         "VE.Calc.Wire.scan",
         "VE.Calc.Wire.stringFault",
-        "VE.Calc.Wire.unworded"
+        "VE.Calc.Wire.unworded",
+        "VE.Calc.Wire.workLimit"
       ],
       "D[I]": [
         "VE.Calc.Wire.identify",
@@ -14372,6 +14416,11 @@
         "VE.Calc.Wire.printedJson",
         "VE.Calc.Wire.recordJson",
         "VE.Calc.Wire.supports"
+      ],
+      "C": [
+        "VE.Calc.Case.sidesC",
+        "VE.Calc.Check.sides",
+        "VE.Calc.Check.sidesC"
       ]
     },
     "VE/Calc/Run.lean": {
@@ -14406,7 +14455,6 @@
         "VE.Calc.Run.shownJson",
         "VE.Calc.Check.runShown",
         "VE.Calc.Derive.shown",
-        "VE.Calc.Run.sides",
         "VE.Calc.Run.stepJson",
         "VE.Calc.Run.tie",
         "VE.Calc.Run.truncated",
@@ -14434,9 +14482,21 @@
           ]
         },
         {
+          "name": "VE.Calc.Run.rowOf",
+          "tied": [
+            "VE.Calc.Run.rowOf_outcome"
+          ]
+        },
+        {
           "name": "VE.Calc.Run.rows",
           "tied": [
             "VE.Calc.Run.rows_outcome"
+          ]
+        },
+        {
+          "name": "VE.Calc.Run.rowsC",
+          "tied": [
+            "VE.Calc.Run.rowsC_some"
           ]
         },
         {
@@ -14451,11 +14511,27 @@
         "VE.Calc.Check.fault",
         "VE.Calc.Check.run",
         "VE.Calc.Claim.factsIn",
-        "VE.Calc.instDecidableOutcomeMeansClaimDecided"
+        "VE.Calc.instDecidableOutcomeMeansClaimDecided",
+        "VE.Calc.runC"
       ]
     },
     "VE/Calc/RunExamples.lean": {
       "T": [
+        "VE.Calc.RunExamples.WorkCases.df",
+        "VE.Calc.RunExamples.WorkCases.eqc",
+        "VE.Calc.RunExamples.WorkCases.f1",
+        "VE.Calc.RunExamples.WorkCases.f1511",
+        "VE.Calc.RunExamples.WorkCases.f1Case",
+        "VE.Calc.RunExamples.WorkCases.g1",
+        "VE.Calc.RunExamples.WorkCases.heavy",
+        "VE.Calc.RunExamples.WorkCases.ltc",
+        "VE.Calc.RunExamples.WorkCases.mk",
+        "VE.Calc.RunExamples.WorkCases.nines",
+        "VE.Calc.RunExamples.WorkCases.outcomes",
+        "VE.Calc.RunExamples.WorkCases.reread",
+        "VE.Calc.RunExamples.WorkCases.st",
+        "VE.Calc.RunExamples.WorkCases.units",
+        "VE.Calc.RunExamples.WorkCases.v11",
         "VE.Calc.RunExamples.answer",
         "VE.Calc.RunExamples.bad",
         "VE.Calc.RunExamples.c1",
@@ -15044,6 +15120,7 @@
         "VE.Scope.WireExamples.ansUnits",
         "VE.Scope.WireExamples.answer",
         "VE.Scope.WireExamples.blockWith",
+        "VE.Scope.WireExamples.boundary",
         "VE.Scope.WireExamples.decoded",
         "VE.Scope.WireExamples.effectTag",
         "VE.Scope.WireExamples.errorOf",
@@ -15052,7 +15129,9 @@
         "VE.Scope.WireExamples.foldGov",
         "VE.Scope.WireExamples.gov",
         "VE.Scope.WireExamples.listName",
-        "VE.Scope.WireExamples.st"
+        "VE.Scope.WireExamples.st",
+        "VE.Scope.WireExamples.wfFault",
+        "VE.Scope.WireExamples.withScope"
       ]
     },
     "VE/Service/ScopeExamples.lean": {
@@ -15089,6 +15168,7 @@
     },
     "VE/Scope/Wire.lean": {
       "D[R]": [
+        "VE.Scope.illFormed",
         "VE.Scope.memberOf",
         "VE.Scope.membersIn",
         "VE.Scope.textOf",
@@ -15279,7 +15359,6 @@
         "VE.Arith.OpTable.env",
         "VE.Arith.Term.evalB",
         "VE.Arith.Term.evalBs",
-        "VE.Arith.bits",
         "VE.Arith.charge",
         "VE.Arith.chargeBits",
         "VE.Arith.countLoop",
@@ -16032,6 +16111,40 @@
         "VE.Cardinality.Document.Entry",
         "VE.Cardinality.Document.Graph",
         "VE.Cardinality.Document.Entries"
+      ]
+    },
+    "VE/Service/SoftSourceExamples.lean": {
+      "T": [
+        "VE.Service.SoftSourceExamples.checked",
+        "VE.Service.SoftSourceExamples.flat",
+        "VE.Service.SoftSourceExamples.mixed",
+        "VE.Service.SoftSourceExamples.rule",
+        "VE.Service.SoftSourceExamples.unit"
+      ]
+    },
+    "VE/Arith/Deciding.lean": {
+      "C": [
+        "VE.Arith.decidingAt",
+        "VE.Arith.decidingLoop",
+        "VE.Arith.decidingValue"
+      ]
+    },
+    "VE/Arith/DecidingExamples.lean": {
+      "C": [
+        "VE.Arith.Examples.decIsPrime",
+        "VE.Arith.Examples.isPrimeB"
+      ],
+      "T": [
+        "VE.Arith.Examples.agreeCount",
+        "VE.Arith.Examples.agreesUpTo",
+        "VE.Arith.Examples.exPrime",
+        "VE.Arith.Examples.stops",
+        "VE.Arith.Examples.vePrime"
+      ]
+    },
+    "VE/Numbers/Bits.lean": {
+      "C": [
+        "VE.Numbers.bits"
       ]
     }
   }

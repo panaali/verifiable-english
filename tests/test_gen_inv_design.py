@@ -1,4 +1,4 @@
-"""The gen-inv-design document covers every route the code gives it (gen-inv-design review F1, F2).
+"""The gen-inv-design document covers every route the code gives it (gen-inv-design review F1, F2, F3, F5, F8).
 
 Design (a) makes the audit manifests and the checker pins train-only: a branch holds main's copies. So every default
 build route that compiles a manifest must be one gi-1 removes, and every pin key of `lean/checkers.lock` must be one
@@ -11,6 +11,7 @@ from __future__ import annotations
 import json
 import ast
 from pathlib import Path
+import re
 import sys
 import tomllib
 
@@ -27,6 +28,8 @@ DESIGN = ROOT / "docs/infra/gen-inv-design/DESIGN.md"
 GLOB = {"andSubmodules": "{}.*", "submodules": "{}.+", "one": "{}"}
 # The word the candidate prep's row uses for the checker each pin key pins.
 CHECKER = {"ve_service": "ve_service", "rust_jsonl": "Rust"}
+# Files that name the lock and read no pin key: the first hashes the whole file, the second records that it was read.
+NOT_PIN_READERS = {"tools/lean_first_oracle.py", "tools/test_map_recorder.py"}
 
 
 def module(path: str) -> str:
@@ -131,3 +134,40 @@ def test_the_candidate_prep_writes_every_pin_key():
     for key in json.loads((ROOT / "lean/checkers.lock").read_text()):
         assert key in CHECKER, f"pin key {key}: the design's candidate prep must name its checker"
         assert CHECKER[key] in prep, key
+
+
+def lock_users(root: Path = ROOT) -> set[str]:
+    """Every Python file outside the tests whose code (not a docstring) names `lean/checkers.lock`."""
+    found = set()
+    for path in (p for top in ("tools", "ve", "research") for p in (root / top).rglob("*.py")):
+        tree = ast.parse(path.read_text())
+        docs = {id(n.body[0].value) for n in ast.walk(tree)
+                if isinstance(n, (ast.Module, ast.ClassDef, ast.FunctionDef)) and ast.get_docstring(n) is not None}
+        if any(isinstance(n, ast.Constant) and isinstance(n.value, str) and n.value.endswith("checkers.lock")
+               and id(n) not in docs for n in ast.walk(tree)):
+            found.add(path.relative_to(root).as_posix())
+    return found
+
+
+def test_gi2b_names_every_pin_reader():
+    """PROBE F8: the design named four readers; `regen_generated` and four more read the lock too."""
+    design = DESIGN.read_text()
+    row = design[design.index("| gi-2b |"):design.index("| gi-3 |")]
+    for reader in sorted(lock_users() - NOT_PIN_READERS):
+        assert re.search(rf"\b{Path(reader).stem}\b", row), f"{reader} reads a pin key: gi-2b's scope must name it"
+
+
+def test_the_accessor_never_falls_back_to_the_committed_copy():
+    """PROBE F5: the overlay's accessor must match DRI condition 1(b), where a stale overlay is an error."""
+    design = DESIGN.read_text()
+    step = design[design.index("2. **A local inventory overlay.**"):design.index("3. **The committed copy stays on main**")]
+    assert "and the committed copy otherwise" not in step
+    assert "never falls back to the committed" in step
+
+
+def test_the_cost_estimate_counts_the_prep_build_and_its_lock():
+    """PROBE F3: "4-6 min per Lean candidate" left out the prep's `lake build` and its one locked worktree."""
+    design = DESIGN.read_text()
+    effect = design[design.index("**Expected effect"):design.index("## 9. No check gets weaker")]
+    assert "4-6" not in effect
+    assert "`lake build`" in effect and "`ve-cand-regen`" in effect
