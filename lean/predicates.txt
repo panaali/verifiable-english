@@ -189,6 +189,7 @@ module VE.Calc.TableExamples
 module VE.Calc.Units
 module VE.Calc.UnitsExamples
 module VE.Calc.Wire
+module VE.Calc.WorkExamples
 module VE.Cardinality.Erase
 module VE.Cardinality.Examples
 module VE.Cardinality.Gate
@@ -774,6 +775,10 @@ VE.Calc.QFact.Holds@VE.Calc.Linear
 VE.Calc.Small@VE.Calc.Decls
 VE.Calc.Val.Agrees@VE.Calc.Decls
 VE.Calc.WellFormed@VE.Calc.Decls
+VE.Calc.Work.AtSpec@VE.Calc.Wire
+VE.Calc.Work.Linearity.Sound@VE.Calc.Lower
+VE.Calc.Work.Lowered.Sound@VE.Calc.Lower
+VE.Calc.Work.Shape.Sound@VE.Calc.Lower
 VE.Cardinality.Admissible@VE.Cardinality.Semantics
 VE.Cardinality.Admitted.below@VE.Cardinality.Syntax
 VE.Cardinality.Admitted@VE.Cardinality.Syntax

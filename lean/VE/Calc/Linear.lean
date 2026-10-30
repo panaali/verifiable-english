@@ -108,21 +108,21 @@ def Farkas.checkOnce (fs : List QFact) (c : Farkas) : Bool :=
     (comb.const == 0 && (List.zipWith (fun w f => decide (0 < w) && f.strict) c.weights fs).any id))
 
 /-- The sum of `n`'s coefficients in `l`, `QLin.coeffOf` on a list. -/
-private def sumOf (l : List (String × Rat)) (n : String) : Rat := ((l.filter (·.1 == n)).map (·.2)).sum
+def sumOf (l : List (String × Rat)) (n : String) : Rat := ((l.filter (·.1 == n)).map (·.2)).sum
 
-private theorem sumOf_snoc (l : List (String × Rat)) (m n : String) (c : Rat) :
+theorem sumOf_snoc (l : List (String × Rat)) (m n : String) (c : Rat) :
     sumOf (l ++ [(m, c)]) n = if n = m then sumOf l n + c else sumOf l n := by
   by_cases h : m = n
   · subst h; simp [sumOf, List.filter_append, rsum_append, Rat.add_zero]
   · have h' : n ≠ m := fun e => h e.symm
     simp [sumOf, List.filter_append, h, h']
 
-private theorem firstAppearance_snoc (l : List String) (m : String) :
+theorem firstAppearance_snoc (l : List String) (m : String) :
     FM.firstAppearance (l ++ [m]) =
       if m ∈ FM.firstAppearance l then FM.firstAppearance l else FM.firstAppearance l ++ [m] := by
   simp [FM.firstAppearance, List.foldl_append]
 
-private theorem mem_firstAppearance_of (l : List String) (acc : List String) (n : String) (h : n ∈ acc) :
+theorem mem_firstAppearance_of (l : List String) (acc : List String) (n : String) (h : n ∈ acc) :
     n ∈ l.foldl (fun acc n => if n ∈ acc then acc else acc ++ [n]) acc := by
   induction l generalizing acc with
   | nil => exact h
@@ -144,7 +144,7 @@ theorem FM.mem_firstAppearance (l : List String) (n : String) : n ∈ FM.firstAp
   simpa using key l []
 
 /-- The pass's invariant over the entries read so far: the order is `firstAppearance`, the map holds each sum. -/
-private theorem normOnce_fold (l pre : List (String × Rat)) (order : Array String) (sums : Std.HashMap String Rat)
+theorem normOnce_fold (l pre : List (String × Rat)) (order : Array String) (sums : Std.HashMap String Rat)
     (ho : order.toList = FM.firstAppearance (pre.map (·.1)))
     (hs : ∀ n, sums[n]? = if n ∈ order.toList then some (sumOf pre n) else none) :
     let r := l.foldl (fun (acc : Array String × Std.HashMap String Rat) (n, c) =>
