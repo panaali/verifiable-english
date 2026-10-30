@@ -13778,16 +13778,28 @@
         "VE.Calc.QLin.eval"
       ],
       "C": [
+        "VE.Calc.FM.firstAppearance",
+        "VE.Calc.FM.unknowns",
         "VE.Calc.Farkas",
         "VE.Calc.Farkas.check",
+        "VE.Calc.Farkas.checkOnce",
         "VE.Calc.Farkas.combination",
         "VE.Calc.QFact",
         "VE.Calc.QFact.negate",
         "VE.Calc.QLin",
         "VE.Calc.QLin.add",
         "VE.Calc.QLin.coeffOf",
+        "VE.Calc.QLin.norm",
+        "VE.Calc.QLin.normOnce",
         "VE.Calc.QLin.scale",
+        "VE.Calc.Work.formSize",
         "VE.Calc.instDecidableHolds"
+      ],
+      "G[R]": [
+        "VE.Calc.Work.entryUnits"
+      ],
+      "P": [
+        "VE.Calc.sumOf"
       ]
     },
     "VE/Calc/Poly.lean": {
@@ -13857,6 +13869,8 @@
         "VE.Calc.FM.maxUnknowns"
       ],
       "C": [
+        "VE.Calc.FM.Entry",
+        "VE.Calc.FM.Entry.holds",
         "VE.Calc.FM.Result",
         "VE.Calc.FM.Row",
         "VE.Calc.FM.Row.combine",
@@ -13865,15 +13879,25 @@
         "VE.Calc.FM.Search",
         "VE.Calc.FM.admits",
         "VE.Calc.FM.backSubstitute",
+        "VE.Calc.FM.candidates",
         "VE.Calc.FM.eliminate",
-        "VE.Calc.FM.firstAppearance",
+        "VE.Calc.FM.highOk",
+        "VE.Calc.FM.highs",
         "VE.Calc.FM.inputRows",
+        "VE.Calc.FM.lowOk",
+        "VE.Calc.FM.lows",
         "VE.Calc.FM.pick",
+        "VE.Calc.FM.pickOnce",
         "VE.Calc.FM.run",
         "VE.Calc.FM.search",
-        "VE.Calc.FM.unknowns",
+        "VE.Calc.FM.tightest",
         "VE.Calc.FM.upperBound",
-        "VE.Calc.QLin.norm"
+        "VE.Calc.FM.zeroOk"
+      ],
+      "P": [
+        "VE.Calc.FM.boundsOf",
+        "VE.Calc.FM.highOk'",
+        "VE.Calc.FM.lowOk'"
       ]
     },
     "VE/Calc/Derive.lean": {
@@ -14394,7 +14418,60 @@
       "C": [
         "VE.Calc.Case.sidesC",
         "VE.Calc.Check.sides",
-        "VE.Calc.Check.sidesC"
+        "VE.Calc.Check.sidesC",
+        "VE.Calc.Wire.judged",
+        "VE.Calc.Work.firstNonlinearC",
+        "VE.Calc.Work.loweredC",
+        "VE.Calc.Work.markC",
+        "VE.Calc.Work.nodeC",
+        "VE.Calc.Work.nonlinearAtC"
+      ],
+      "P": [
+        "VE.Calc.Work.AtSpec"
+      ]
+    },
+    "VE/Calc/WorkExamples.lean": {
+      "T": [
+        "VE.Calc.WorkExamples.C",
+        "VE.Calc.WorkExamples.bad",
+        "VE.Calc.WorkExamples.balanced",
+        "VE.Calc.WorkExamples.beyond",
+        "VE.Calc.WorkExamples.big",
+        "VE.Calc.WorkExamples.decoderDecls",
+        "VE.Calc.WorkExamples.decoderSides",
+        "VE.Calc.WorkExamples.decoderTable",
+        "VE.Calc.WorkExamples.defd",
+        "VE.Calc.WorkExamples.dense",
+        "VE.Calc.WorkExamples.eqc",
+        "VE.Calc.WorkExamples.failing",
+        "VE.Calc.WorkExamples.fan",
+        "VE.Calc.WorkExamples.forms",
+        "VE.Calc.WorkExamples.hugeC",
+        "VE.Calc.WorkExamples.hugeCancel",
+        "VE.Calc.WorkExamples.isBeyond",
+        "VE.Calc.WorkExamples.judge",
+        "VE.Calc.WorkExamples.keep",
+        "VE.Calc.WorkExamples.limitValue",
+        "VE.Calc.WorkExamples.linearity",
+        "VE.Calc.WorkExamples.lowerName",
+        "VE.Calc.WorkExamples.lowered",
+        "VE.Calc.WorkExamples.mixed",
+        "VE.Calc.WorkExamples.n1Side",
+        "VE.Calc.WorkExamples.names",
+        "VE.Calc.WorkExamples.nines",
+        "VE.Calc.WorkExamples.over",
+        "VE.Calc.WorkExamples.pairUp",
+        "VE.Calc.WorkExamples.powChain",
+        "VE.Calc.WorkExamples.probeFacts",
+        "VE.Calc.WorkExamples.shapes",
+        "VE.Calc.WorkExamples.sideA12",
+        "VE.Calc.WorkExamples.stageY",
+        "VE.Calc.WorkExamples.tableUnits",
+        "VE.Calc.WorkExamples.tied",
+        "VE.Calc.WorkExamples.twice",
+        "VE.Calc.WorkExamples.xC",
+        "VE.Calc.WorkExamples.zs",
+        "VE.Calc.WorkExamples.κz"
       ]
     },
     "VE/Calc/Run.lean": {
@@ -14778,14 +14855,44 @@
     "VE/Calc/Lower.lean": {
       "S": [
         "VE.Calc.Follows",
-        "VE.Calc.HasCounterexample"
+        "VE.Calc.HasCounterexample",
+        "VE.Calc.Work.Shape.Sound"
       ],
       "C": [
         "VE.Calc.Claim.facts",
         "VE.Calc.Claim.lower",
         "VE.Calc.Expr.linear",
         "VE.Calc.QFact.sub",
-        "VE.Calc.QLin.isConst"
+        "VE.Calc.QLin.isConst",
+        "VE.Calc.QLin.isConstOnce",
+        "VE.Calc.Work.Expr.bitsBound",
+        "VE.Calc.Work.Expr.exactBound",
+        "VE.Calc.Work.Expr.leaves",
+        "VE.Calc.Work.Expr.linearC",
+        "VE.Calc.Work.Linearity",
+        "VE.Calc.Work.Lowered",
+        "VE.Calc.Work.Lowered.shape",
+        "VE.Calc.Work.Node",
+        "VE.Calc.Work.Node.free",
+        "VE.Calc.Work.Node.run",
+        "VE.Calc.Work.Shape",
+        "VE.Calc.Work.Shape.scale",
+        "VE.Calc.Work.addS",
+        "VE.Calc.Work.binL",
+        "VE.Calc.Work.chargeL",
+        "VE.Calc.Work.decided",
+        "VE.Calc.Work.divS",
+        "VE.Calc.Work.exactC",
+        "VE.Calc.Work.mulS",
+        "VE.Calc.Work.powS",
+        "VE.Calc.Work.shapeOf",
+        "VE.Calc.Work.stepNode"
+      ],
+      "P": [
+        "VE.Calc.Work.Linearity.Sound",
+        "VE.Calc.Work.Lowered.Sound",
+        "VE.Calc.Work.divOp",
+        "VE.Calc.Work.mulOp"
       ]
     },
     "VE/Calc/LowerExamples.lean": {

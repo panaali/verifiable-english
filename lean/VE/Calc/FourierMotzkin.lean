@@ -108,7 +108,7 @@ def pickOnce (x : String) (rows : List Row) (κ : List (String × Rat)) : Rat :=
   | none, none, some (h, _) => h - 1
   | none, none, none => 0
 
-private theorem tightest_all (better : Rat → Rat → Bool) (ok : Rat × Bool → Bool) (bs : List (Rat × Bool))
+theorem tightest_all (better : Rat → Rat → Bool) (ok : Rat × Bool → Bool) (bs : List (Rat × Bool))
     (acc : Option (Rat × Bool))
     (hs : ∀ a t b s, (if better b a then ok (b, s) else if b == a then ok (a, t || s) else ok (a, t)) =
       (ok (a, t) && ok (b, s))) :
@@ -128,7 +128,7 @@ private theorem tightest_all (better : Rat → Rat → Bool) (ok : Rat × Bool �
       simp only [Option.all_some, ← Bool.and_assoc, ← this]
       by_cases h1 : better b a = true <;> by_cases h2 : (b == a) = true <;> simp [h1, h2]
 
-private theorem tightest_first (better : Rat → Rat → Bool) (m : Rat → Rat → Rat) (bs : List (Rat × Bool)) (a : Rat)
+theorem tightest_first (better : Rat → Rat → Bool) (m : Rat → Rat → Rat) (bs : List (Rat × Bool)) (a : Rat)
     (t : Bool) (hm : ∀ a b, (if better b a then b else if b == a then a else a) = m a b) :
     (bs.foldl (fun acc (b, s) => match acc with
       | none => some (b, s)
@@ -145,12 +145,12 @@ private theorem tightest_first (better : Rat → Rat → Bool) (m : Rat → Rat 
       · simp only [h1, h2, if_true, Bool.false_eq_true, if_false]; exact ih a _
       · simp only [h1, h2, Bool.false_eq_true, if_false]; exact ih a t
 
-private theorem scaled (a b : Rat) (ha : 0 < a) : (0 < a * b ↔ 0 < b) ∧ (0 ≤ a * b ↔ 0 ≤ b) := by
+theorem scaled (a b : Rat) (ha : 0 < a) : (0 < a * b ↔ 0 < b) ∧ (0 ≤ a * b ↔ 0 ≤ b) := by
   refine ⟨Rat.mul_pos_iff_of_pos_left ha, ?_⟩
   have := Rat.mul_neg_iff_of_pos_left (b := b) ha
   rw [← Rat.not_lt, ← Rat.not_lt, this]
 
-private theorem pos_bound (r c v : Rat) (hc : 0 < c) : (0 < r + c * v ↔ -r / c < v) ∧ (0 ≤ r + c * v ↔ -r / c ≤ v) := by
+theorem pos_bound (r c v : Rat) (hc : 0 < c) : (0 < r + c * v ↔ -r / c < v) ∧ (0 ≤ r + c * v ↔ -r / c ≤ v) := by
   have hb : -r / c * c = -r := Rat.div_mul_cancel (by grind)
   generalize -r / c = b at hb ⊢
   have he : r + c * v = c * (v - b) := by grind
@@ -158,7 +158,7 @@ private theorem pos_bound (r c v : Rat) (hc : 0 < c) : (0 < r + c * v ↔ -r / c
   obtain ⟨h1, h2⟩ := scaled c (v - b) hc
   rw [h1, h2]; constructor <;> constructor <;> grind
 
-private theorem neg_bound (r c v : Rat) (hc : c < 0) : (0 < r + c * v ↔ v < -r / c) ∧ (0 ≤ r + c * v ↔ v ≤ -r / c) := by
+theorem neg_bound (r c v : Rat) (hc : c < 0) : (0 < r + c * v ↔ v < -r / c) ∧ (0 ≤ r + c * v ↔ v ≤ -r / c) := by
   have hb : -r / c * c = -r := Rat.div_mul_cancel (by grind)
   generalize -r / c = b at hb ⊢
   have he : r + c * v = (-c) * (b - v) := by grind
@@ -166,11 +166,11 @@ private theorem neg_bound (r c v : Rat) (hc : c < 0) : (0 < r + c * v ↔ v < -r
   obtain ⟨h1, h2⟩ := scaled (-c) (b - v) (by grind)
   rw [h1, h2]; constructor <;> constructor <;> grind
 
-private def lowOk' (v : Rat) (q : Rat × Bool) : Bool := lowOk v (some q)
-private def highOk' (v : Rat) (q : Rat × Bool) : Bool := highOk v (some q)
+def lowOk' (v : Rat) (q : Rat × Bool) : Bool := lowOk v (some q)
+def highOk' (v : Rat) (q : Rat × Bool) : Bool := highOk v (some q)
 
 /-- One pass over the entries decides every row at `v`: the rows without `x`, then the two tightest bounds. -/
-private theorem entries_all (cs : List Entry) (v : Rat) :
+theorem entries_all (cs : List Entry) (v : Rat) :
     cs.all (Entry.holds v) = (zeroOk cs && (lows cs).all (lowOk' v) && (highs cs).all (highOk' v)) := by
   induction cs with
   | nil => rfl
@@ -202,7 +202,7 @@ private theorem entries_all (cs : List Entry) (v : Rat) :
       cases (if 0 < c then [(-r / c, s)] else []).all (lowOk' v) <;>
       cases (if c < 0 then [(-r / c, s)] else []).all (highOk' v) <;> simp
 
-private theorem low_step (v a : Rat) (t : Bool) (b : Rat) (s : Bool) :
+theorem low_step (v a : Rat) (t : Bool) (b : Rat) (s : Bool) :
     (if decide (a < b) then lowOk' v (b, s) else if b == a then lowOk' v (a, t || s) else lowOk' v (a, t)) =
       (lowOk' v (a, t) && lowOk' v (b, s)) := by
   simp only [lowOk', lowOk]
@@ -217,7 +217,7 @@ private theorem low_step (v a : Rat) (t : Bool) (b : Rat) (s : Bool) :
       cases s <;> cases t <;> simp only [Bool.true_eq, Bool.false_eq_true, if_true, if_false,
         Bool.and_iff_left_iff_imp, decide_eq_true_eq] <;> grind
 
-private theorem high_step (v a : Rat) (t : Bool) (b : Rat) (s : Bool) :
+theorem high_step (v a : Rat) (t : Bool) (b : Rat) (s : Bool) :
     (if decide (b < a) then highOk' v (b, s) else if b == a then highOk' v (a, t || s) else highOk' v (a, t)) =
       (highOk' v (a, t) && highOk' v (b, s)) := by
   simp only [highOk', highOk]
@@ -232,7 +232,7 @@ private theorem high_step (v a : Rat) (t : Bool) (b : Rat) (s : Bool) :
       cases s <;> cases t <;> simp only [Bool.true_eq, Bool.false_eq_true, if_true, if_false,
         Bool.and_iff_left_iff_imp, decide_eq_true_eq] <;> grind
 
-private theorem low_all (bs : List (Rat × Bool)) (v : Rat) :
+theorem low_all (bs : List (Rat × Bool)) (v : Rat) :
     bs.all (lowOk' v) = lowOk v (tightest (fun b a => decide (a < b)) bs) := by
   have := tightest_all (fun b a => decide (a < b)) (lowOk' v) bs none (low_step v)
   simp only [Option.all_none, Bool.true_and] at this
@@ -240,7 +240,7 @@ private theorem low_all (bs : List (Rat × Bool)) (v : Rat) :
   generalize List.foldl _ _ bs = r
   cases r <;> rfl
 
-private theorem high_all (bs : List (Rat × Bool)) (v : Rat) :
+theorem high_all (bs : List (Rat × Bool)) (v : Rat) :
     bs.all (highOk' v) = highOk v (tightest (fun b a => decide (b < a)) bs) := by
   have := tightest_all (fun b a => decide (b < a)) (highOk' v) bs none (high_step v)
   simp only [Option.all_none, Bool.true_and] at this
@@ -248,7 +248,7 @@ private theorem high_all (bs : List (Rat × Bool)) (v : Rat) :
   generalize List.foldl _ _ bs = r
   cases r <;> rfl
 
-private theorem low_max (bs : List (Rat × Bool)) :
+theorem low_max (bs : List (Rat × Bool)) :
     (tightest (fun b a => decide (a < b)) bs).map (·.1) = (bs.map (·.1)).max? := by
   cases bs with
   | nil => rfl
@@ -265,7 +265,7 @@ private theorem low_max (bs : List (Rat × Bool)) :
         subst this; simp
       · simp [h, hb]
 
-private theorem high_min (bs : List (Rat × Bool)) :
+theorem high_min (bs : List (Rat × Bool)) :
     (tightest (fun b a => decide (b < a)) bs).map (·.1) = (bs.map (·.1)).min? := by
   cases bs with
   | nil => rfl
@@ -282,10 +282,10 @@ private theorem high_min (bs : List (Rat × Bool)) :
       · simp [h, hb]
       · grind
 
-private def boundsOf (cs : List Entry) : List (Rat × Rat) :=
+def boundsOf (cs : List Entry) : List (Rat × Rat) :=
   cs.filterMap fun (c, r, _) => if c == 0 then none else some (c, -r / c)
 
-private theorem boundsOf_parts (cs : List Entry) :
+theorem boundsOf_parts (cs : List Entry) :
     (boundsOf cs).map (·.2) = candidates cs ∧
       ((boundsOf cs).filter (0 < ·.1)).map (·.2) = (lows cs).map (·.1) ∧
       ((boundsOf cs).filter (·.1 < 0)).map (·.2) = (highs cs).map (·.1) := by
@@ -304,14 +304,14 @@ private theorem boundsOf_parts (cs : List Entry) :
       have h3' : ¬ c < 0 := by grind
       simp [h, h0, h3', h1, h2, h3]
 
-private theorem eval_update (l : List (String × Rat)) (x : String) (f : String → Rat) (v : Rat) :
+theorem eval_update (l : List (String × Rat)) (x : String) (f : String → Rat) (v : Rat) :
     (l.map fun p => p.2 * (if p.1 = x then v else f p.1)).sum =
       (l.map fun p => p.2 * (if p.1 = x then 0 else f p.1)).sum + ((l.filter (·.1 == x)).map (·.2)).sum * v := by
   induction l with
   | nil => simp [Rat.zero_mul, Rat.add_zero]
   | cons p l ih => by_cases h : p.1 = x <;> simp [h, ih] <;> grind
 
-private theorem row_holds (x : String) (f : String → Rat) (v : Rat) (r : Row) :
+theorem row_holds (x : String) (f : String → Rat) (v : Rat) (r : Row) :
     decide (r.fact.Holds fun n => if n = x then v else f n) =
       Entry.holds v (r.fact.form.coeffOf x, r.fact.form.eval (fun n => if n = x then 0 else f n), r.fact.strict) := by
   have he : r.fact.form.eval (fun n => if n = x then v else f n) =
