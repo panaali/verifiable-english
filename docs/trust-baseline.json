@@ -1426,6 +1426,34 @@
    "reason": "sc-1ae: lean/VE/Scope/Govern.lean S +27 (JsonWF 9, HasStr 5, payload 6, BlockBound 3 by their source ranges in lean/declarations.txt, and the 4 lines between them): spec 4.2's HasStr, payload, BlockBound and spec 11.3's JsonWF (the DRI's fix (a), 2026-10-27), the meaning of 5.1's statements; K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1ae, 2026-10-18",
    "commit": "c2a0ee9776ea790a0d54b05af000dfe39f36d984"
+  },
+  {
+   "class": "S",
+   "lines": 48,
+   "reason": "en-sw: VE/EnglishGrammar/SourceWords.lean S +48, G[V] +20; K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-sw, 2026-10-29",
+   "commit": "ffddf155ccb5366464d5358fe1bfd19c931f9d68"
+  },
+  {
+   "class": "V",
+   "lines": 20,
+   "reason": "en-sw: VE/EnglishGrammar/SourceWords.lean S +48, G[V] +20; K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-sw, 2026-10-29",
+   "commit": "ffddf155ccb5366464d5358fe1bfd19c931f9d68"
+  },
+  {
+   "class": "S",
+   "lines": 7,
+   "reason": "en-sw F1: VE/EnglishGrammar/SourceWords.lean S +7 for sourceWordNormal and normalized catalogue checks; cumulative en-sw growth S +55, G[V] +20, K +0; SourceWordsExamples #guards cover the added definition",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-sw F1, 2026-10-29",
+   "commit": "785927e109ecc9cafcc320da40ea2b1cc5d2c5da"
+  },
+  {
+   "class": "V",
+   "lines": 43,
+   "reason": "me-5e: VE/Calc/Run.lean +43 untied D[V] for follows wire evidence and reclassification of Check.runShown and Derive.shown; the new Calc response shapes are reject-only G[R]; K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-5e, 2026-10-29",
+   "commit": "b0dce1ea4c96241925fa2ee505e756ca1ee8a54f"
   }
  ]
 }
