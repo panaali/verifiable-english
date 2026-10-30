@@ -1220,10 +1220,9 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.Document.admitGraph_sound
 #print axioms VE.Cardinality.Document.checkGraph_sound
 #print axioms VE.Cardinality.Document.decodeNode_statement
-#print axioms VE.Cardinality.Document.foldl_insert_mem
 #print axioms VE.Cardinality.Document.lookup_mem
 #print axioms VE.Cardinality.Document.mapM_lookup_mem
-#print axioms VE.Cardinality.Document.union_mem
+#print axioms VE.Cardinality.Document.union_testBit
 #print axioms VE.Cardinality.Examples.admissible_cases
 #print axioms VE.Cardinality.Examples.admittedRules_cases
 #print axioms VE.Cardinality.Examples.admitted_cases
