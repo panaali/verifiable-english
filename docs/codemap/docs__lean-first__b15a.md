@@ -1,0 +1,2 @@
+- `docs/lean-first/b15a/capture_metrics.py` — Freeze main..HEAD implementation metrics before the report commit.
+- `docs/lean-first/b15a/review_mutants.py` — Seed the batch 15a review's mutants one at a time, rebuild `ve_metered`, and record which focused tests fail.
