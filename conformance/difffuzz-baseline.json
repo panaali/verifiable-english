@@ -457,76 +457,6 @@
    "minimised": false
   },
   {
-   "id": "environment-2fe7028deaf61868",
-   "surface": "environment",
-   "profile": "envelope",
-   "seed": "conformance/elaborated-document.json/56/environment",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {},
-   "mutation": [
-    [
-     "unicode",
-     [
-      "vocabulary",
-      "predicates",
-      "senior",
-      "arguments",
-      0
-     ],
-     "double-space"
-    ]
-   ],
-   "input": {
-    "language": "ve.core@0.2",
-    "profiles": [
-     "relational-fol@0"
-    ],
-    "spec_revision": "ve-v0.2-expand2-2026-09-25",
-    "vocabulary": {
-     "sorts": {},
-     "predicates": {
-      "senior": {
-       "arguments": [
-        "p"
-       ],
-       "description": "i"
-      },
-      "boss": {
-       "defined": {},
-       "functional": true
-      }
-     },
-     "constants": {}
-    }
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "fields do not match: expected ['arguments', 'description', 'defined', 'functional'], got ['defined', 'functional']"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "fields do not match: expected ['arguments', 'description', 'defined', 'functional'], got ['defined', 'functional']"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "UnsupportedProfile",
-     "text": "Defined predicates cannot carry functional or total flags"
-    }
-   },
-   "signature": "2fe7028deaf61868",
-   "follow_up": "DF-9"
-  },
-  {
    "id": "environment-37a5426bc5ccd8cd",
    "surface": "environment",
    "profile": "soft-norms",
@@ -616,71 +546,6 @@
    "signature": "37a5426bc5ccd8cd",
    "follow_up": "DF-15",
    "minimised": false
-  },
-  {
-   "id": "environment-455cf2f49a85c802",
-   "surface": "environment",
-   "profile": "soft-norms",
-   "seed": "conformance/wire-contract/soft-norms@0-test-inputs.json/1/1",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {},
-   "mutation": [
-    [
-     "type",
-     [
-      "vocabulary",
-      "constants",
-      "a",
-      "sort"
-     ],
-     "number"
-    ]
-   ],
-   "input": {
-    "language": "ve.core@0.2",
-    "profiles": [
-     "norms@0",
-     "relational-fol@0",
-     "soft-norms@0"
-    ],
-    "spec_revision": "ve-v0.2-expand2-2026-09-25",
-    "vocabulary": {
-     "constants": {
-      "a": {
-       "description": "a",
-       "sort": 7
-      }
-     },
-     "predicates": {},
-     "sorts": {}
-    }
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "String expected"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "String expected"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "expected a string"
-    }
-   },
-   "signature": "455cf2f49a85c802",
-   "follow_up": "DF-13"
   },
   {
    "id": "environment-459e326da66f3031",
@@ -1034,70 +899,6 @@
    "signature": "672f2e53c7769c5b",
    "follow_up": "DF-15",
    "minimised": false
-  },
-  {
-   "id": "environment-87492aa83e9a9a54",
-   "surface": "environment",
-   "profile": "envelope",
-   "seed": "conformance/wire-contract/norms@0-test-inputs.json/50/1",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {},
-   "mutation": [
-    [
-     "type",
-     [
-      "vocabulary",
-      "constants",
-      "k",
-      "sort"
-     ],
-     "boolean"
-    ]
-   ],
-   "input": {
-    "language": "ve.core@0.2",
-    "profiles": [
-     "norms@0",
-     "relational-fol@0"
-    ],
-    "spec_revision": "ve-v0.2-expand2-2026-09-25",
-    "vocabulary": {
-     "constants": {
-      "k": {
-       "description": "k",
-       "sort": true
-      }
-     },
-     "predicates": {},
-     "sorts": {}
-    }
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "String expected"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "String expected"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "expected a string"
-    }
-   },
-   "signature": "87492aa83e9a9a54",
-   "follow_up": "DF-6"
   },
   {
    "id": "environment-883070d8c18a79f8",
@@ -1795,71 +1596,6 @@
    "minimised": false
   },
   {
-   "id": "environment-166b6a5d0308d1be",
-   "surface": "environment",
-   "profile": "soft-norms",
-   "seed": "usecases/safety-framework/environment.d1.json",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {},
-   "mutation": [
-    [
-     "unicode",
-     [
-      "vocabulary",
-      "constants",
-      "cbrn_uplift_tcl",
-      "sort"
-     ],
-     "upper"
-    ]
-   ],
-   "input": {
-    "language": "ve.core@0.2",
-    "profiles": [
-     "norms@0",
-     "relational-fol@0",
-     "soft-norms@0"
-    ],
-    "spec_revision": "ve-v0.2-expand2-2026-09-25",
-    "vocabulary": {
-     "sorts": {},
-     "predicates": {},
-     "constants": {
-      "cyber": {
-       "sort": "d",
-       "description": "C"
-      }
-     }
-    }
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "unknown constant sort: cyber"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "unknown constant sort: cyber"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "unknown constant sort"
-    }
-   },
-   "signature": "166b6a5d0308d1be",
-   "follow_up": "DF-9"
-  },
-  {
    "id": "environment-ec2b2bc949a09a26",
    "surface": "environment",
    "profile": "soft-norms",
@@ -1924,6 +1660,72 @@
    },
    "signature": "ec2b2bc949a09a26",
    "follow_up": "DF-15"
+  },
+  {
+   "id": "environment-458cd20c6c1aeff2",
+   "surface": "environment",
+   "profile": "soft-norms",
+   "seed": "conformance/wire-contract/soft-norms@0-test-inputs.json/32/1",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {},
+   "mutation": [
+    [
+     "unicode",
+     [
+      "vocabulary",
+      "predicates",
+      "x_required",
+      "arguments",
+      0
+     ],
+     "dotted-i"
+    ]
+   ],
+   "input": {
+    "language": "ve.core@0.2",
+    "profiles": [
+     "soft-norms@0"
+    ],
+    "spec_revision": "ve-v0.2-expand2-2026-09-25",
+    "vocabulary": {
+     "constants": {},
+     "predicates": {
+      "x_required": {
+       "arguments": [
+        "a"
+       ],
+       "description": "o"
+      }
+     },
+     "sorts": {}
+    }
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "UnknownSymbol",
+     "text": "UnknownSymbol: Undeclared predicate argument sort: 'a'"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "UnknownSymbol",
+     "text": "UnknownSymbol: Undeclared predicate argument sort: 'a'"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "Missing profile relational-fol@0"
+    }
+   },
+   "signature": "458cd20c6c1aeff2",
+   "follow_up": "DF-13"
   },
   {
    "id": "requests-0118b2cc107d0c39",
@@ -10662,88 +10464,6 @@
    "follow_up": "DF-9"
   },
   {
-   "id": "requests-3d2829baccc10447",
-   "surface": "requests",
-   "profile": "elaborated-document:search",
-   "seed": "conformance/elaborated-document.json/23",
-   "engines": [
-    "python",
-    "rust"
-   ],
-   "meta": {
-    "kind": "search",
-    "family": "core",
-    "lean": null,
-    "rust": {
-     "fields": [
-      "id",
-      "environment",
-      "premises",
-      "conclusion",
-      "max_domain_size"
-     ],
-     "constants": {},
-     "operation": "search"
-    }
-   },
-   "mutation": [
-    [
-     "unicode",
-     [
-      "environment",
-      "vocabulary",
-      "constants",
-      "alice",
-      "sort"
-     ],
-     "control"
-    ]
-   ],
-   "input": {
-    "id": "conformance/elaborated-document.json/23",
-    "kind": "search",
-    "environment": {
-     "language": "ve.core@0.2",
-     "profiles": [
-      "data@0",
-      "relational-fol@0"
-     ],
-     "spec_revision": "ve-v0.2-expand2-2026-09-25",
-     "vocabulary": {
-      "sorts": {},
-      "predicates": {},
-      "constants": {
-       "alice": {
-        "sort": "p",
-        "description": "A"
-       }
-      }
-     }
-    },
-    "max_domain_size": 1
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "InvalidInput: unknown constant sort: alice"
-    },
-    "lean": {
-     "outcome": "n/a"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "UnknownSymbol: unknown constant sort"
-    }
-   },
-   "signature": "3d2829baccc10447",
-   "follow_up": "DF-9"
-  },
-  {
    "id": "requests-3f0a2234e4ccdaf1",
    "surface": "requests",
    "profile": "identity:evaluate",
@@ -15241,89 +14961,6 @@
    "signature": "5b8f7a6b03709385",
    "follow_up": "DF-6",
    "minimised": false
-  },
-  {
-   "id": "requests-5c2472049161d912",
-   "surface": "requests",
-   "profile": "usecase:cedar-attributes:evaluate",
-   "seed": "usecases/cedar-attributes/model.json@environment.json",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {
-    "kind": "evaluate",
-    "family": "core",
-    "lean": "route",
-    "rust": {
-     "fields": [
-      "id",
-      "environment",
-      "model",
-      "ast"
-     ],
-     "constants": {},
-     "operation": "evaluate"
-    }
-   },
-   "mutation": [
-    [
-     "type",
-     [
-      "environment",
-      "vocabulary",
-      "constants",
-      "alice",
-      "sort"
-     ],
-     "boolean"
-    ]
-   ],
-   "input": {
-    "id": "usecases/cedar-attributes/model.json@environment.json",
-    "kind": "evaluate",
-    "environment": {
-     "language": "ve.core@0.2",
-     "profiles": [
-      "data@0",
-      "relational-fol@0"
-     ],
-     "spec_revision": "ve-v0.2-expand2-2026-09-25",
-     "vocabulary": {
-      "sorts": {},
-      "predicates": {},
-      "constants": {
-       "alice": {
-        "sort": true,
-        "description": "A"
-       }
-      }
-     }
-    }
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "InvalidInput: String expected"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "rejected: String expected"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "UnknownSymbol: expected a string"
-    }
-   },
-   "signature": "5c2472049161d912",
-   "follow_up": "DF-9"
   },
   {
    "id": "requests-5f81d4d82a7ac036",
@@ -27537,130 +27174,6 @@
    },
    "signature": "a96e73a28ff9070d",
    "follow_up": "DF-7"
-  },
-  {
-   "id": "requests-aa73541ccbcf53eb",
-   "surface": "requests",
-   "profile": "elaborated-document:evaluate",
-   "seed": "conformance/elaborated-document.json/57",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {
-    "kind": "evaluate",
-    "family": "core",
-    "lean": "route",
-    "rust": {
-     "fields": [
-      "id",
-      "environment",
-      "model",
-      "ast"
-     ],
-     "constants": {
-      "kind": "evaluate-budgeted"
-     },
-     "operation": "evaluate-budgeted"
-    }
-   },
-   "mutation": [
-    [
-     "unicode",
-     [
-      "environment",
-      "vocabulary",
-      "predicates",
-      "a",
-      "arguments",
-      0
-     ],
-     "control"
-    ]
-   ],
-   "input": {
-    "id": "conformance/elaborated-document.json/57",
-    "kind": "evaluate",
-    "environment": {
-     "language": "ve.core@0.2",
-     "profiles": [
-      "definitions@0",
-      "order@0",
-      "relational-fol@0"
-     ],
-     "spec_revision": "ve-v0.2-expand2-2026-09-25",
-     "vocabulary": {
-      "sorts": {
-       "point": {
-        "description": "a point"
-       }
-      },
-      "predicates": {
-       "base": {
-        "arguments": [
-         "point"
-        ],
-        "description": "base"
-       },
-       "a": {
-        "arguments": [
-         "point\u001c"
-        ],
-        "description": "a",
-        "defined": {
-         "arguments": [
-          "point"
-         ],
-         "body": [
-          "unary",
-          "base",
-          [
-           "var",
-           0
-          ]
-         ]
-        }
-       }
-      },
-      "constants": {}
-     }
-    },
-    "model": {
-     "complete": true,
-     "domains": {},
-     "constants": {},
-     "relations": {}
-    },
-    "ast": [
-     [
-      "top"
-     ]
-    ]
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "UnknownSymbol: Undeclared predicate argument sort: 'point\\x1c'"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "UnsupportedProfile",
-     "text": "UnsupportedProfile: definitions on the order family require an order definition layer"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "UnsupportedProfile",
-     "text": "UnsupportedProfile: definitions on the order family require an order definition layer"
-    }
-   },
-   "signature": "aa73541ccbcf53eb",
-   "follow_up": "DF-9",
-   "minimised": false
   },
   {
    "id": "requests-abcf82ab8e1139dc",
@@ -45252,6 +44765,168 @@
    "follow_up": "DF-6"
   },
   {
+   "id": "requests-b3e5f5fa0d27de1b",
+   "surface": "requests",
+   "profile": "admission:admission",
+   "seed": "conformance/admission.json/9",
+   "engines": [
+    "python",
+    "lean"
+   ],
+   "meta": {
+    "kind": "admission",
+    "family": "core",
+    "lean": "route",
+    "rust": null
+   },
+   "mutation": [
+    [
+     "unicode",
+     [
+      "environment",
+      "vocabulary",
+      "predicates",
+      "in_legal",
+      "arguments",
+      0
+     ],
+     "double-space"
+    ]
+   ],
+   "input": {
+    "id": "conformance/admission.json/9",
+    "kind": "admission",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "relational-fol@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25",
+     "vocabulary": {
+      "sorts": {},
+      "predicates": {
+       "in_legal": {
+        "arguments": [
+         "p"
+        ],
+        "description": "w"
+       }
+      },
+      "constants": {}
+     }
+    }
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "UnknownSymbol",
+     "text": "UnknownSymbol: Undeclared predicate argument sort: 'p'"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "InvalidInput",
+     "text": "rejected: invalid signature: in_legal"
+    },
+    "rust": {
+     "outcome": "n/a"
+    }
+   },
+   "signature": "b3e5f5fa0d27de1b",
+   "follow_up": "DF-9"
+  },
+  {
+   "id": "requests-d7bdb0333114c38f",
+   "surface": "requests",
+   "profile": "elaborated-document:evaluate",
+   "seed": "conformance/elaborated-document.json/57",
+   "engines": [
+    "python",
+    "lean",
+    "rust"
+   ],
+   "meta": {
+    "kind": "evaluate",
+    "family": "core",
+    "lean": "route",
+    "rust": {
+     "fields": [
+      "id",
+      "environment",
+      "model",
+      "ast"
+     ],
+     "constants": {
+      "kind": "evaluate-budgeted"
+     },
+     "operation": "evaluate-budgeted"
+    }
+   },
+   "mutation": [
+    [
+     "unicode",
+     [
+      "environment",
+      "vocabulary",
+      "predicates",
+      "a",
+      "arguments",
+      0
+     ],
+     "control"
+    ]
+   ],
+   "input": {
+    "id": "conformance/elaborated-document.json/57",
+    "kind": "evaluate",
+    "environment": {
+     "language": "ve.core@0.2",
+     "profiles": [
+      "order@0",
+      "relational-fol@0"
+     ],
+     "spec_revision": "ve-v0.2-expand2-2026-09-25",
+     "vocabulary": {
+      "sorts": {},
+      "predicates": {
+       "a": {
+        "arguments": [
+         "p"
+        ],
+        "description": "a",
+        "defined": {}
+       }
+      },
+      "constants": {}
+     }
+    }
+   },
+   "classes": [
+    "code"
+   ],
+   "answers": {
+    "python": {
+     "outcome": "error",
+     "code": "UnknownSymbol",
+     "text": "UnknownSymbol: Undeclared predicate argument sort: 'p'"
+    },
+    "lean": {
+     "outcome": "error",
+     "code": "UnsupportedProfile",
+     "text": "UnsupportedProfile: definitions on the order family require an order definition layer"
+    },
+    "rust": {
+     "outcome": "error",
+     "code": "UnknownSymbol",
+     "text": "UnknownSymbol: unknown predicate argument sort"
+    }
+   },
+   "signature": "d7bdb0333114c38f",
+   "follow_up": "DF-21"
+  },
+  {
    "id": "wire-93ad2ea4d583e105",
    "surface": "wire",
    "profile": "soft-norms@0",
@@ -45454,83 +45129,10 @@
    "follow_up": "DF-14"
   },
   {
-   "id": "requests-b3e5f5fa0d27de1b",
-   "surface": "requests",
-   "profile": "admission:admission",
-   "seed": "conformance/admission.json/9",
-   "engines": [
-    "python",
-    "lean"
-   ],
-   "meta": {
-    "kind": "admission",
-    "family": "core",
-    "lean": "route",
-    "rust": null
-   },
-   "mutation": [
-    [
-     "unicode",
-     [
-      "environment",
-      "vocabulary",
-      "predicates",
-      "in_legal",
-      "arguments",
-      0
-     ],
-     "double-space"
-    ]
-   ],
-   "input": {
-    "id": "conformance/admission.json/9",
-    "kind": "admission",
-    "environment": {
-     "language": "ve.core@0.2",
-     "profiles": [
-      "relational-fol@0"
-     ],
-     "spec_revision": "ve-v0.2-expand2-2026-09-25",
-     "vocabulary": {
-      "sorts": {},
-      "predicates": {
-       "in_legal": {
-        "arguments": [
-         "p"
-        ],
-        "description": "w"
-       }
-      },
-      "constants": {}
-     }
-    }
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "UnknownSymbol: Undeclared predicate argument sort: 'p'"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "rejected: invalid signature: in_legal"
-    },
-    "rust": {
-     "outcome": "n/a"
-    }
-   },
-   "signature": "b3e5f5fa0d27de1b",
-   "follow_up": "DF-9"
-  },
-  {
-   "id": "environment-458cd20c6c1aeff2",
+   "id": "environment-2fe7028deaf61868",
    "surface": "environment",
-   "profile": "soft-norms",
-   "seed": "conformance/wire-contract/soft-norms@0-test-inputs.json/32/1",
+   "profile": "envelope",
+   "seed": "conformance/wire-contract/norms@0-test-inputs.json/120/1",
    "engines": [
     "python",
     "lean",
@@ -45539,35 +45141,20 @@
    "meta": {},
    "mutation": [
     [
-     "unicode",
+     "reorder",
      [
-      "vocabulary",
-      "predicates",
-      "x_required",
-      "arguments",
-      0
+      "profiles"
      ],
-     "dotted-i"
+     null
     ]
    ],
    "input": {
     "language": "ve.core@0.2",
     "profiles": [
-     "soft-norms@0"
+     "norms@0"
     ],
-    "spec_revision": "ve-v0.2-expand2-2026-09-25",
-    "vocabulary": {
-     "constants": {},
-     "predicates": {
-      "x_required": {
-       "arguments": [
-        "a"
-       ],
-       "description": "o"
-      }
-     },
-     "sorts": {}
-    }
+    "spec_revision": "v",
+    "vocabulary": {}
    },
    "classes": [
     "code"
@@ -45575,13 +45162,13 @@
    "answers": {
     "python": {
      "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "UnknownSymbol: Undeclared predicate argument sort: 'a'"
+     "code": "InvalidInput",
+     "text": "property not found: predicates"
     },
     "lean": {
      "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "UnknownSymbol: Undeclared predicate argument sort: 'a'"
+     "code": "InvalidInput",
+     "text": "property not found: predicates"
     },
     "rust": {
      "outcome": "error",
@@ -45589,307 +45176,8 @@
      "text": "Missing profile relational-fol@0"
     }
    },
-   "signature": "458cd20c6c1aeff2",
-   "follow_up": "DF-13"
-  },
-  {
-   "id": "environment-67f9be29550cf4b5",
-   "surface": "environment",
-   "profile": "envelope",
-   "seed": "conformance/elaborated-document.json/56/environment",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {},
-   "mutation": [
-    [
-     "type",
-     [
-      "vocabulary",
-      "predicates",
-      "boss",
-      "arguments",
-      0
-     ],
-     "boolean"
-    ]
-   ],
-   "input": {
-    "language": "ve.core@0.2",
-    "profiles": [
-     "relational-fol@0"
-    ],
-    "spec_revision": "ve-v0.2-expand2-2026-09-25",
-    "vocabulary": {
-     "sorts": {},
-     "predicates": {
-      "boss": {
-       "arguments": [
-        true
-       ],
-       "description": "s",
-       "functional": true
-      }
-     },
-     "constants": {}
-    }
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "UnknownSymbol: Undeclared predicate argument sort: true"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "UnknownSymbol: Undeclared predicate argument sort: true"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "UnsupportedProfile",
-     "text": "Predicate flags require data@0"
-    }
-   },
-   "signature": "67f9be29550cf4b5",
-   "follow_up": "DF-9"
-  },
-  {
-   "id": "environment-996535acb2977f50",
-   "surface": "environment",
-   "profile": "envelope",
-   "seed": "conformance/elaborated-document.json/27/environment",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {},
-   "mutation": [
-    [
-     "type",
-     [
-      "vocabulary",
-      "constants",
-      "alice",
-      "sort"
-     ],
-     "string"
-    ]
-   ],
-   "input": {
-    "language": "ve.core@0.2",
-    "profiles": [
-     "data@0",
-     "relational-fol@0"
-    ],
-    "spec_revision": "ve-v0.2-expand2-2026-09-25",
-    "vocabulary": {
-     "sorts": {},
-     "predicates": {},
-     "constants": {
-      "alice": {
-       "sort": "x",
-       "description": "A"
-      }
-     }
-    }
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "unknown constant sort: alice"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "unknown constant sort: alice"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "unknown constant sort"
-    }
-   },
-   "signature": "996535acb2977f50",
-   "follow_up": "DF-9"
-  },
-  {
-   "id": "environment-59c9ba199018ab1c",
-   "surface": "environment",
-   "profile": "soft-norms",
-   "seed": "conformance/wire-contract/soft-norms@0-test-inputs.json/19/1",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {},
-   "mutation": [
-    [
-     "unicode",
-     [
-      "vocabulary",
-      "predicates",
-      "x_required",
-      "arguments",
-      0
-     ],
-     "control"
-    ],
-    [
-     "type",
-     [
-      "vocabulary",
-      "predicates",
-      "x_permitted",
-      "regulated",
-      "act"
-     ],
-     "string"
-    ]
-   ],
-   "input": {
-    "language": "ve.core@0.2",
-    "profiles": [
-     "norms@0",
-     "relational-fol@0",
-     "soft-norms@0"
-    ],
-    "spec_revision": "ve-v0.2-expand2-2026-09-25",
-    "vocabulary": {
-     "constants": {},
-     "predicates": {
-      "x_permitted": {
-       "arguments": [
-        "assistant"
-       ],
-       "description": "p",
-       "regulated": {}
-      },
-      "x_required": {
-       "arguments": [
-        "a"
-       ],
-       "description": "o"
-      }
-     },
-     "sorts": {
-      "assistant": {
-       "description": "a"
-      }
-     }
-    }
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "UnknownSymbol: Undeclared predicate argument sort: 'a'"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "UnknownSymbol: Undeclared predicate argument sort: 'a'"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "regulated role is required"
-    }
-   },
-   "signature": "59c9ba199018ab1c",
-   "follow_up": "DF-13"
-  },
-  {
-   "id": "environment-381919addab7eb62",
-   "surface": "environment",
-   "profile": "envelope",
-   "seed": "conformance/norm_defaults_rust.json/66/environment",
-   "engines": [
-    "python",
-    "lean",
-    "rust"
-   ],
-   "meta": {},
-   "mutation": [
-    [
-     "unicode",
-     [
-      "vocabulary",
-      "predicates",
-      "c",
-      "arguments",
-      0
-     ],
-     "double-space"
-    ],
-    [
-     "unicode",
-     [
-      "vocabulary",
-      "predicates",
-      "a_permitted",
-      "regulated",
-      "default"
-     ],
-     "upper"
-    ]
-   ],
-   "input": {
-    "language": "ve.core@0.2",
-    "profiles": [
-     "relational-fol@0"
-    ],
-    "spec_revision": "ve-v0.2-expand2-2026-09-25",
-    "vocabulary": {
-     "constants": {},
-     "predicates": {
-      "a_permitted": {
-       "arguments": [
-        "a"
-       ],
-       "description": "p",
-       "regulated": {}
-      }
-     },
-     "sorts": {}
-    }
-   },
-   "classes": [
-    "code"
-   ],
-   "answers": {
-    "python": {
-     "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "UnknownSymbol: Undeclared predicate argument sort: 'a'"
-    },
-    "lean": {
-     "outcome": "error",
-     "code": "UnknownSymbol",
-     "text": "UnknownSymbol: Undeclared predicate argument sort: 'a'"
-    },
-    "rust": {
-     "outcome": "error",
-     "code": "InvalidInput",
-     "text": "expected exactly fields [\"arguments\", \"description\"]"
-    }
-   },
-   "signature": "381919addab7eb62",
-   "follow_up": "DF-9"
+   "signature": "2fe7028deaf61868",
+   "follow_up": "DF-6"
   }
  ]
 }
