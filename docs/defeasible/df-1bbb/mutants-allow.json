@@ -1,0 +1,29 @@
+{
+  "allow": [
+    {
+      "definition": "ResponseShape.Schemas.NormDefaults.defaults_certificate",
+      "operator": "list-drop-first",
+      "reason": "The closed object node already requires an object; the preceding obj node is redundant."
+    },
+    {
+      "definition": "VE.Defaults.Wire.certFields",
+      "operator": "list-first",
+      "reason": "The operator rewrites an append expression into an ill-typed term (Invalid dotted identifier notation); it cannot produce a response."
+    },
+    {
+      "definition": "VE.Defaults.Wire.certFields",
+      "operator": "list-drop-first",
+      "reason": "The operator rewrites an append expression into an ill-typed term (Invalid dotted identifier notation); it cannot produce a response."
+    },
+    {
+      "definition": "VE.Defaults.Wire.certFields",
+      "operator": "list-last",
+      "reason": "The operator rewrites an append expression into an ill-typed term (Invalid dotted identifier notation); it cannot produce a response."
+    },
+    {
+      "definition": "VE.Defaults.Wire.certFields",
+      "operator": "list-drop-last",
+      "reason": "The operator rewrites an append expression into an ill-typed term (Invalid dotted identifier notation); it cannot produce a response."
+    }
+  ]
+}
