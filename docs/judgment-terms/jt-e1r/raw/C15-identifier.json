@@ -1,0 +1,111 @@
+{
+  "id": "C15",
+  "arm": "identifier",
+  "account": "claude-danielsaeedi37",
+  "prompt": "Read only the source and displayed lines below as a reader of this document. For the named conclusion, answer in exactly this format: `CLASS: SETTLED|TURNS|CONDITIONAL; DECIDER: <name or NONE>; WHY: <one sentence>`. SETTLED means it holds whatever is judged. TURNS means two admissible judgments can change it. CONDITIONAL means it is certified only given a judgment criterion. Name the decider if the text names one; otherwise say NONE. Do not use outside knowledge.\n\nSOURCE: Claude constitution synthetic user-agency case: These rules are conflict-free given the criterion that choices with recorded consent are voluntary; a consent reviewer decides voluntariness.\nCONCLUSION: these rules are conflict-free\nJUDGMENT: voluntary_choice means whether this choice is voluntary; decider: consent reviewer.\nFocus is classified as \"voluntary_choice\".\n",
+  "cli": {
+    "duration_api_ms": 1618,
+    "stop_reason": "end_turn",
+    "session_id": "8631a230-4624-4a7d-9a6c-8b9f9c1ae05f",
+    "total_cost_usd": 0.0184404,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 4114,
+      "cache_read_input_tokens": 10704,
+      "output_tokens": 91,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 4114,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 91,
+          "cache_read_input_tokens": 10704,
+          "cache_creation_input_tokens": 4114,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 4114
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 91,
+        "cacheReadInputTokens": 10704,
+        "cacheCreationInputTokens": 4114,
+        "webSearchRequests": 0,
+        "costUSD": 0.0184404,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 0,
+        "cacheCreationEphemeral5mInputTokens": 0,
+        "cacheCreationEphemeral1hInputTokens": 4114,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 1,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "CLASS: CONDITIONAL; DECIDER: consent reviewer; WHY: The conflict-free conclusion is certified only given the criterion that choices with recorded consent count as voluntary, and the text names the consent reviewer as the one who decides voluntariness.",
+    "ttft_ms": 1923,
+    "type": "result",
+    "duration_ms": 1968,
+    "uuid": "aaafafd7-8751-4f46-93f3-15609ec6ac25",
+    "ttft_stream_ms": 1156,
+    "time_to_request_ms": 410,
+    "first_content_frame_ms": 1156,
+    "queued_turn_count": 0,
+    "result_index": 0
+  },
+  "stderr": "",
+  "exit_code": 0,
+  "charged_cw": 14911,
+  "answer": "CLASS: CONDITIONAL; DECIDER: consent reviewer; WHY: The conflict-free conclusion is certified only given the criterion that choices with recorded consent count as voluntary, and the text names the consent reviewer as the one who decides voluntariness."
+}
