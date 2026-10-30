@@ -13,7 +13,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/eff-tests/](docs__eff-tests.md) — 1 modules — -
 - [docs/events-time-causation/](docs__events-time-causation.md) — 1 modules — -
 - [docs/infra/](docs__infra.md) — 11 modules — -
-- [docs/judgment-terms/](docs__judgment-terms.md) — 3 modules — -
+- [docs/judgment-terms/](docs__judgment-terms.md) — 5 modules — -
 - [docs/lean-first/b0/](docs__lean-first__b0.md) — 1 modules — -
 - [docs/lean-first/b1/](docs__lean-first__b1.md) — 2 modules — -
 - [docs/lean-first/b10a/](docs__lean-first__b10a.md) — 4 modules — -
@@ -71,7 +71,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/](lean__VE.md) — 33 modules — -
 - [lean/VE/Acts/](lean__VE__Acts.md) — 19 modules — -
 - [lean/VE/Alternatives/](lean__VE__Alternatives.md) — 13 modules — -
-- [lean/VE/Arith/](lean__VE__Arith.md) — 8 modules — -
+- [lean/VE/Arith/](lean__VE__Arith.md) — 10 modules — -
 - [lean/VE/Ask/](lean__VE__Ask.md) — 15 modules — -
 - [lean/VE/Attribution/](lean__VE__Attribution.md) — 15 modules — -
 - [lean/VE/Calc/](lean__VE__Calc.md) — 26 modules — -
@@ -103,7 +103,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Scope/](lean__VE__Scope.md) — 9 modules — -
 - [lean/VE/SearchBudget/](lean__VE__SearchBudget.md) — 4 modules — -
 - [lean/VE/Senses/](lean__VE__Senses.md) — 12 modules — -
-- [lean/VE/Service/](lean__VE__Service.md) — 21 modules — -
+- [lean/VE/Service/](lean__VE__Service.md) — 20 modules — -
 - [lean/VE/SoftNorms/](lean__VE__SoftNorms.md) — 11 modules — -
 - [lean/VE/SpeechActs/](lean__VE__SpeechActs.md) — 8 modules — -
 - [lean/VE/Time/](lean__VE__Time.md) — 8 modules — -

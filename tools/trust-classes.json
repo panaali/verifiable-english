@@ -15993,6 +15993,26 @@
         "VE.Service.SoftSourceExamples.rule",
         "VE.Service.SoftSourceExamples.unit"
       ]
+    },
+    "VE/Arith/Deciding.lean": {
+      "C": [
+        "VE.Arith.decidingAt",
+        "VE.Arith.decidingLoop",
+        "VE.Arith.decidingValue"
+      ]
+    },
+    "VE/Arith/DecidingExamples.lean": {
+      "C": [
+        "VE.Arith.Examples.decIsPrime",
+        "VE.Arith.Examples.isPrimeB"
+      ],
+      "T": [
+        "VE.Arith.Examples.agreeCount",
+        "VE.Arith.Examples.agreesUpTo",
+        "VE.Arith.Examples.exPrime",
+        "VE.Arith.Examples.stops",
+        "VE.Arith.Examples.vePrime"
+      ]
     }
   }
 }
