@@ -5319,14 +5319,15 @@ theorem VE.Cardinality.Document.checkGraph_sound
   ∀ {γ : Type} {w : VE.Cardinality.CardEnv}
     {check : List (VE.Cardinality.CAdmission w) → VE.Cardinality.CAdmission w → γ → Except String Bool},
     VE.Cardinality.Document.Checks w check →
-      ∀ (all ns : List (VE.Cardinality.Document.CNode w γ)) (used : Nat)
-        (acc out : List (VE.Cardinality.Document.Entry w)),
-        (∀ (n : VE.Cardinality.Document.CNode w γ), n ∈ ns → n ∈ all) →
-          (∀ (e : VE.Cardinality.Document.Entry w), e ∈ acc → VE.Cardinality.Document.Entry.Sound all e) →
-            VE.Cardinality.Document.checkGraph w check ns used acc = Except.ok out →
-              ∀ (e : VE.Cardinality.Document.Entry w), e ∈ out → VE.Cardinality.Document.Entry.Sound all e
-  -- uses VE.Cardinality.CAdmission@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Document.CNode@VE.Cardinality.Document VE.Cardinality.Document.Checks@VE.Cardinality.Document VE.Cardinality.Document.Entry.Sound@VE.Cardinality.Document VE.Cardinality.Document.Entry@VE.Cardinality.Document VE.Cardinality.Document.checkGraph@VE.Cardinality.Document
-  -- expr 1418050486
+      ∀ (all ns : List (VE.Cardinality.Document.CNode w γ)) (i used : Nat) (acc out : VE.Cardinality.Document.Entries w),
+        List.drop i all = ns →
+          (∀ (p : String) (e : VE.Cardinality.Document.Entry w),
+              acc[p]? = Option.some e → VE.Cardinality.Document.Entry.Sound all e) →
+            VE.Cardinality.Document.checkGraph w check ns i used acc = Except.ok out →
+              ∀ (p : String) (e : VE.Cardinality.Document.Entry w),
+                out[p]? = Option.some e → VE.Cardinality.Document.Entry.Sound all e
+  -- uses VE.Cardinality.CAdmission@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Document.CNode@VE.Cardinality.Document VE.Cardinality.Document.Checks@VE.Cardinality.Document VE.Cardinality.Document.Entries@VE.Cardinality.Document VE.Cardinality.Document.Entry.Sound@VE.Cardinality.Document VE.Cardinality.Document.Entry@VE.Cardinality.Document VE.Cardinality.Document.checkGraph@VE.Cardinality.Document
+  -- expr 3843672853
 theorem VE.Cardinality.Document.decodeNode_statement
   ∀ {γ : Type} {w : VE.Cardinality.CardEnv} {decodeCert : Lean.Json → Except String γ} {j : Lean.Json}
     {n : VE.Cardinality.Document.CNode w γ},
@@ -5334,28 +5335,24 @@ theorem VE.Cardinality.Document.decodeNode_statement
       ∃ s, j.getObjVal? "statement" = Except.ok s ∧ VE.Cardinality.Wire.decodeStatement w s = Except.ok n.adm
   -- uses VE.Cardinality.CAdmission@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Document.CNode.adm@VE.Cardinality.Document VE.Cardinality.Document.CNode@VE.Cardinality.Document VE.Cardinality.Document.decodeNode@VE.Cardinality.Document VE.Cardinality.Wire.decodeStatement@VE.Cardinality.Wire
   -- expr 2703516712
-theorem VE.Cardinality.Document.foldl_insert_mem
-  ∀ (xs : List String) (s : Std.HashSet String) (x : String),
-    x ∈ s ∨ x ∈ xs → x ∈ List.foldl (fun x1 x2 => x1.insert x2) s xs
-  -- uses
-  -- expr 2855120237
 theorem VE.Cardinality.Document.lookup_mem
-  ∀ {w : VE.Cardinality.CardEnv} {acc : List (VE.Cardinality.Document.Entry w)} {p : String}
-    {e : VE.Cardinality.Document.Entry w}, VE.Cardinality.Document.lookup acc p = Except.ok e → e ∈ acc
-  -- uses VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Document.Entry@VE.Cardinality.Document VE.Cardinality.Document.lookup@VE.Cardinality.Document
-  -- expr 3564305834
+  ∀ {w : VE.Cardinality.CardEnv} {acc : VE.Cardinality.Document.Entries w} {p : String}
+    {e : VE.Cardinality.Document.Entry w}, VE.Cardinality.Document.lookup acc p = Except.ok e → acc[p]? = Option.some e
+  -- uses VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Document.Entries@VE.Cardinality.Document VE.Cardinality.Document.Entry@VE.Cardinality.Document VE.Cardinality.Document.lookup@VE.Cardinality.Document
+  -- expr 1001500037
 theorem VE.Cardinality.Document.mapM_lookup_mem
-  ∀ {w : VE.Cardinality.CardEnv} {acc : List (VE.Cardinality.Document.Entry w)} {ps : List String}
+  ∀ {w : VE.Cardinality.CardEnv} {acc : VE.Cardinality.Document.Entries w} {ps : List String}
     {cs : List (VE.Cardinality.Document.Entry w)},
     List.mapM (VE.Cardinality.Document.lookup acc) ps = Except.ok cs →
-      ∀ (c : VE.Cardinality.Document.Entry w), c ∈ cs → c ∈ acc
-  -- uses VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Document.Entry@VE.Cardinality.Document VE.Cardinality.Document.lookup@VE.Cardinality.Document
-  -- expr 2622330085
-theorem VE.Cardinality.Document.union_mem
-  ∀ (sets : List (Std.HashSet String)) (s : Std.HashSet String) (x : String),
-    (x ∈ s ∨ ∃ t, t ∈ sets ∧ x ∈ t) → x ∈ List.foldl (fun s t => List.foldl (fun x1 x2 => x1.insert x2) s t.toList) s sets
+      ∀ (c : VE.Cardinality.Document.Entry w), c ∈ cs → ∃ p, acc[p]? = Option.some c
+  -- uses VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Document.Entries@VE.Cardinality.Document VE.Cardinality.Document.Entry@VE.Cardinality.Document VE.Cardinality.Document.lookup@VE.Cardinality.Document
+  -- expr 1978393564
+theorem VE.Cardinality.Document.union_testBit
+  ∀ (sets : List Nat) (s i : Nat),
+    (s.testBit i = Bool.true ∨ ∃ t, t ∈ sets ∧ t.testBit i = Bool.true) →
+      (List.foldl (fun x1 x2 => x1 ||| x2) s sets).testBit i = Bool.true
   -- uses
-  -- expr 1240910524
+  -- expr 3281919795
 theorem VE.Cardinality.Examples.admissible_cases
   VE.Cardinality.Admissible VE.Cardinality.Examples.users VE.Cardinality.Examples.two ∧
     ¬VE.Cardinality.Admissible VE.Cardinality.Examples.users VE.Cardinality.Examples.everyNat ∧

@@ -222,11 +222,11 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Scope/Wire.lean` | 154 | 154 | 1–154 | `618b837c4a7f…` |
 | `lean/VE/Cardinality/Wire.lean` | 304 | 304 | 1–304 | `b892dbef05b3…` |
 | `lean/VE/Defaults/Route.lean` | 46 | 46 | 1–46 | `97feda58f0f4…` |
-| `lean/VE/Cardinality/Run.lean` | 248 | 248 | 1–248 | `9aafe568d16a…` |
-| `lean/VE/Cardinality/Document.lean` | 286 | 286 | 1–286 | `9b40c960ba84…` |
+| `lean/VE/Cardinality/Run.lean` | 258 | 258 | 1–258 | `7207cf54e9c6…` |
+| `lean/VE/Cardinality/Document.lean` | 288 | 288 | 1–288 | `4bbc57c938ee…` |
 | `lean/VE/Readings/DefaultVerdicts.lean` | 506 | 506 | 1–506 | `79d7da71d2ae…` |
 | `lean/VE/Calc/Jsonl.lean` | 48 | 48 | 1–48 | `e79aa00abb9d…` |
-| **total** | | **40,080** | | |
+| **total** | | **40,092** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner

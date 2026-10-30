@@ -8,11 +8,11 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 |---|---:|
 | leaves:bound | 257 |
 | leaves:closed domain | 286 |
-| leaves:none | 1421 |
+| leaves:none | 1422 |
 | modes | 39 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 1020 |
+| today:not probed | 1021 |
 | today:shape | 543 |
 | today:unbound | 137 |
 | answers | 574 |
@@ -3434,6 +3434,7 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/report/leaves/*/name` | string | bound | x-references |  | 0 | shape |
 | `/report/root/meaning_id` | string | none |  | pattern | 0 | not probed |
 | `/report/root/name` | string | bound | x-equals |  | 0 | shape |
+| `/report_id` | string | none |  | pattern | 0 | not probed |
 | `/status` | string | closed domain | const |  | 13 | shape |
 | `/w6_environment_id` | string | none |  | pattern | 5 | not probed |
 | `/w6_target_environment_id` | string | none |  | pattern | 5 | not probed |
