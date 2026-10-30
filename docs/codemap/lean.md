@@ -1,0 +1,15 @@
+- `lean/EnglishLeanBenchMain.lean` — G1a measurement of the grammar engine (docs/spec/english-lean-PLAN.md section 5, S1a).
+- `lean/EnglishMain.lean` — (no module docstring)
+- `lean/EnglishRunMain.lean` — (no module docstring)
+- `lean/Iceberg.lean` — Package 3b: a direct conditional proof of the original three-tub root.
+- `lean/Main.lean` — (no module docstring)
+- `lean/MeteredMain.lean` — (no module docstring)
+- `lean/ResponseDecode.lean` — `ve_response_decode`: the Lean side of the tests of service responses.
+- `lean/ResponseShape.lean` — # Response shapes: the one source of the client's response schemas The service's responses are described once, here and in `ResponseShape.Schemas`, as `Shape` …
+- `lean/ResponseShapeAudit.lean` — (no module docstring)
+- `lean/ScopeBenchMain.lean` — B1's measurement of the scope layout and the run path (docs/spec/scope-PLAN.md, benchmark B1).
+- `lean/SensesMain.lean` — (no module docstring)
+- `lean/Serve.lean` — (no module docstring)
+- `lean/SpeechActsMain.lean` — (no module docstring)
+- `lean/VE.lean` — (no module docstring)
+- `lean/audit.py` — Audit every project Lean source and every named theorem's dependencies.

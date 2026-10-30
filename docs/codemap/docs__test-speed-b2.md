@@ -1,0 +1,4 @@
+- `docs/test-speed-b2/check_evidence.py` — Check the saved B2 map, mutations and fixed-merge shadow evidence.
+- `docs/test-speed-b2/mode_mutants.py` — Plant one wrong Lean dependency extraction per service mode and save proposed witnesses.
+- `docs/test-speed-b2/mutants.py` — Plant B2 bugs one at a time, run the rejecting test, and restore the source.
+- `docs/test-speed-b2/shadow.py` — Saved retrospective shadow replay for ten merged items. Write uses fixed merge commits and a recorded v7 map.

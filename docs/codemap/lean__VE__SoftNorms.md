@@ -1,0 +1,11 @@
+- `lean/VE/SoftNorms/Admission.lean` — W2 admission on the soft-norms route (docs/spec/soft-norms.md 9.3, 9.4), W1's `Norms.Admission` with the soft decoder.
+- `lean/VE/SoftNorms/Coherence.lean` — Decision assignments, coherence and what CONFLICT-FREE means (docs/spec/soft-norms.md 6, 9.3).
+- `lean/VE/SoftNorms/Once.lean` — The layers of a soft document computed once (lean-first plan F5d).
+- `lean/VE/SoftNorms/Phases.lean` — The soft validation table (docs/spec/soft-norms.md 8), as ordered phases.
+- `lean/VE/SoftNorms/RankProof.lean` — Comparable default rules remain mutually exclusive after full layer substitution, even in structures with undefined or ill-typed constants.
+- `lean/VE/SoftNorms/Run.lean` — The `ve_service` mode `soft-norms` (docs/spec/soft-norms.md 9.4), formerly the one-shot `ve_soft_norms_route`.
+- `lean/VE/SoftNorms/Semantics.lean` — The direct semantics `ValueSoft` (docs/spec/soft-norms.md 4.2, 9.1) and its relation to the elaboration (9.2).
+- `lean/VE/SoftNorms/Soften.lean` — The elaboration `soften(T) = T′` over `E′` (docs/spec/soft-norms.md 4.2, 5 and 6.1) and the executable well-formedness check `WellFormedSoft` (4.1, 8).
+- `lean/VE/SoftNorms/Status.lean` — The classification of colliding pairs (docs/spec/soft-norms.md 6.2) and its soundness.
+- `lean/VE/SoftNorms/Tree.lean` — Soft-norm documents (docs/spec/soft-norms.md sections 1, 3 and 9.1): the three independent rule attributes (mode, alterable, rank), the environment `soft` bloc…
+- `lean/VE/SoftNorms/Wire.lean` — The soft-norms decoder and replays (docs/spec/soft-norms.md 3, 9.3 and 9.4).

@@ -35,6 +35,7 @@ its merge strategy:
 | checker-pins | `lean/checkers.lock` (pins the built `ve_service` and the Rust release binary) | json |
 | response-schemas | `ve/backends/lean_service_schema/*.json` | regenerate |
 | binding-census | `docs/test-architecture/binding-census.{json,md}` (from the schemas and the recorded answers) | regenerate |
+| codemap | `docs/codemap/**` (working-tree source paths and first module doc sentences; branch check is advisory) | regenerate |
 | english-codes | `ve/english_grammar/codes.json` | regenerate |
 | question-codes | `ve/question/codes.json` | regenerate |
 | question-lock | `ve/question/LOCK.json` | regenerate |
@@ -52,7 +53,7 @@ its merge strategy:
 `python tools/regen_generated.py --list` prints every command. `--write` runs the writers in that order,
 `--check` runs the checks (a writer without a check is checked by rewriting and comparing, then restoring);
 `--only`/`--skip NAME` select entries; `VE_REGEN_NO_RUST=1` leaves the Rust pin alone. On a clean tree
-`--check` passes every entry (16 minutes on the VM, most of it `lean/audit.py` and the statement dump) and
+`--check` passes every required entry (16 minutes on the VM, most of it `lean/audit.py` and the statement dump) and
 `--write` changes nothing.
 
 Entries whose writer or check starts the Lean service carry `service` (`--list` shows it;

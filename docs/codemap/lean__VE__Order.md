@@ -1,0 +1,16 @@
+- `lean/VE/Order/Checks.lean` — (no module docstring)
+- `lean/VE/Order/Consequence.lean` — (no module docstring)
+- `lean/VE/Order/Conservativity.lean` — (no module docstring)
+- `lean/VE/Order/Finite.lean` — (no module docstring)
+- `lean/VE/Order/Gate.lean` — (no module docstring)
+- `lean/VE/Order/Linear.lean` — Linear integer forms over declared integer constants.
+- `lean/VE/Order/ModelCheck.lean` — Executable admissibility for finite order presentations.
+- `lean/VE/Order/ProfileGate.lean` — A general profile gate for every JSON entry point.
+- `lean/VE/Order/Semantics.lean` — (no module docstring)
+- `lean/VE/Order/Surface.lean` — Executable strict order surface.
+- `lean/VE/Order/Syntax.lean` — The opt-in order core.
+- `lean/VE/Order/Tableau.lean` — Signed tableaux for order@0 with a Farkas closing rule.
+- `lean/VE/Order/TableauChecks.lean` — Executable regressions for the order@0 Farkas checker.
+- `lean/VE/Order/Typing.lean` — (no module docstring)
+- `lean/VE/Order/Wire.lean` — The order@0 wire adapter, reached only through the separate `order` subcommand.
+- `lean/VE/Order/WireGate.lean` — The profile gate for the separate `order` route.

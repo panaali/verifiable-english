@@ -1,0 +1,12 @@
+- `lean/VE/Rights/Admission.lean` — W2 admission on a regenerated rights document.
+- `lean/VE/Rights/Bar.lean` — The bar of Art.
+- `lean/VE/Rights/Correlate.lean` — The elaboration `correlate(D) = (E″, T″)` and `Lim_D` (docs/spec/rights.md 1.3–1.6, 4.1, 4.2, 5.1), the syntactic narrowing inventory of 4.5 and the executable…
+- `lean/VE/Rights/Distinction.lean` — `noDistinction` and the restricted invariance claim (docs/spec/rights.md 4.6, 9.2).
+- `lean/VE/Rights/Examples.lean` — Concrete rights documents in the shapes of the item-1 fixtures (docs/spec/rights.md 10) and build-time regression checks on them (`#guard`: the build fails if …
+- `lean/VE/Rights/Projections.lean` — Who owes what to whom (docs/spec/rights.md 4.4, 9.2): projections of which line instances select on `T″`, attributed to their right and line.
+- `lean/VE/Rights/Route.lean` — The conditional contract and the restated route (docs/spec/rights.md 5, 9.3).
+- `lean/VE/Rights/Run.lean` — The `ve_service` mode `rights` (docs/spec/rights.md 9.4), formerly the one-shot `ve_rights_route`.
+- `lean/VE/Rights/Scope.lean` — `Narrows`, licensing and the audit `limitationScope` (docs/spec/rights.md 4.5, 9.2).
+- `lean/VE/Rights/Semantics.lean` — The direct semantics `ValueRight` (docs/spec/rights.md 4.3, 9.1) and its relation to the elaboration (9.2).
+- `lean/VE/Rights/Tree.lean` — Rights documents (docs/spec/rights.md sections 1, 3 and 9.1): the environment `rights` block, rights and their incident lines, limitations with named condition…
+- `lean/VE/Rights/Wire.lean` — The rights decoder and replays (docs/spec/rights.md 3, 9.3 and 9.4).

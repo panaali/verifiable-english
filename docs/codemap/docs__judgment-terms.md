@@ -1,0 +1,3 @@
+- `docs/judgment-terms/jt-e1/runner.py` — JT-E1 archive and prospective prompt checks.
+- `docs/judgment-terms/jt-e3/analyze.py` — JT-E3 agreement and instrument sensitivity; no model calls.
+- `docs/judgment-terms/jt-e3/runner.py` — Run the two preregistered blind subscription raters, one call each.

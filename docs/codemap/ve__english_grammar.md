@@ -1,0 +1,1 @@
+- `ve/english_grammar/__init__.py` — The data of English in Lean that Python produces or names (docs/spec/english-lean-s2.md 2.9, 2.10).

@@ -1,0 +1,12 @@
+- `lean/VE/Question/Basic.lean` — (no module docstring)
+- `lean/VE/Question/Examples.lean` — (no module docstring)
+- `lean/VE/Question/Fixtures.lean` — The Q1 fixture table (`tests/question_fixtures.py`, docs/spec/question-answering.md section 7) as `#guard`s.
+- `lean/VE/Question/Frames.lean` — The answer's sentences and their all-derivations gate (docs/spec/question-answering.md 3.3; W7; review B of the Q1 reviews, Astra: the A0 line).
+- `lean/VE/Question/Help.lean` — (no module docstring)
+- `lean/VE/Question/Moved.lean` — The auxiliary of F2 is not moved out of a clause (DRI ruling of 2026-10-09 on the Q1 reviews, B: G11).
+- `lean/VE/Question/Properties.lean` — (no module docstring)
+- `lean/VE/Question/Read.lean` — (no module docstring)
+- `lean/VE/Question/Run.lean` — The `english.question` service mode (docs/spec/question-answering.md 4.1 and 8; plan 4.8, Q1.2).
+- `lean/VE/Question/Spans.lean` — The emitted spans of a question answer in code points (spec 2.5, 5.1): the response converts both byte bounds of `mapSpan` with `Run.codepointsBefore`, which i…
+- `lean/VE/Question/Strings.lean` — Facts about `String` as a list of characters, for the question reader's statements (spec 5.1): `isPrefixOf` is list prefix, `drop`, `dropRight 1` and `extract`…
+- `lean/VE/Question/Texts.lean` — Question-specific response wording.

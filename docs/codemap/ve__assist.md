@@ -1,0 +1,17 @@
+- `ve/assist/__init__.py` — ``ve assist``: interactive, sentence-level assisted formalisation.
+- `ve/assist/ambiguity_patterns.py` — Versioned, deterministic *possible* readings of source English.
+- `ve/assist/api.py` — JSON tool-calling API for ``ve assist`` (Anthropic-style tool schemas).
+- `ve/assist/cli.py` — ``python -m ve assist``: a small human CLI over the same session and ledger.
+- `ve/assist/ground.py` — Fast countermodel search for ground (quantifier-free, equality-free) steps.
+- `ve/assist/premises.py` — Missing-premise suggestions for an unproved step.
+- `ve/assist/proposer.py` — ``propose(sentence)``: a cheap model drafts 1-3 VE candidates for ONE sentence.
+- `ve/assist/recovery.py` — Revisioned recovery and meaning-approval service for W8 consumers.
+- `ve/assist/recovery_commands.py` — The recovery commands: each public method records one command; its ``_name`` transition derives state.
+- `ve/assist/recovery_journal.py` — The recovery ledger: its records, one command's observations, and the sealed derived state.
+- `ve/assist/recovery_replay.py` — Checking a ``RecoveryService`` against the replay of its ledger, and revalidating approvals.
+- `ve/assist/session.py` — Interactive, sentence-level assisted formalisation (``ve assist``).
+- `ve/assist/session_proposals.py` — The authoring actions of an assist session: targets, nodes, vocabulary, checks and proposals.
+- `ve/assist/session_state.py` — The assist session's records: formats, errors, the node record, formula helpers and the ledger.
+- `ve/assist/session_views.py` — The read-only views of an assist session: nodes, targets, models, status and export.
+- `ve/assist/sources.py` — Source prose for an assist session: sentences, roles, and frozen target slots.
+- `ve/assist/verify.py` — Evaluator-side verification of a ``ve assist`` session ledger.

@@ -1,0 +1,70 @@
+- `lean/VE/Readings/ActsExamples.lean` — act-phrases AP-1 (ap-1bd): the readings route's frame decoder reads `acts@0` single acts and refuses a joined act with D-33 (spec 6.4, 10); a rule on a plain a…
+- `lean/VE/Readings/Asserted.lean` — The assertions in force of a choice's document are typed over the shared vocabulary (docs/spec/composition-s2.md 1.7 and 8.4, `asserted_shared`).
+- `lean/VE/Readings/Assertions.lean` — Formula-only documents: superposition is W2's shortcut (docs/spec/composition-s2.md 4.7, 8.4 `superpose_assertions`).
+- `lean/VE/Readings/BaseDown.lean` — Bases correspond, downward (docs/spec/composition-s2.md 8.4 `base_down`).
+- `lean/VE/Readings/BaseUp.lean` — Bases correspond, upward (docs/spec/composition-s2.md 8.4 `base_up`).
+- `lean/VE/Readings/Children.lean` — The children of a rule in a choice's document and in the superposed document correspond (the `childFwd`, `childBack` and `sibling` conditions of `Sim`; docs/sp…
+- `lean/VE/Readings/Choice.lean` — Choices, the choice vocabulary, the superposed document and `Choice_D` (docs/spec/composition-s2.md 1.2 to 1.8, 8.3).
+- `lean/VE/Readings/ChoiceFacts.lean` — The nodes of a choice's document and of the superposed document, and the map between them (docs/spec/composition-s2.md 1.4, 1.7; the proof of `superpose_faithf…
+- `lean/VE/Readings/ChoiceTyped.lean` — The vocabulary of a compatible choice's document and the typing of its elaboration (docs/spec/composition-s2.md 8.4, the structural part of `choice_wellFormed`…
+- `lean/VE/Readings/ChoiceValid.lean` — A compatible choice's document is valid as W1 reads it (docs/spec/composition-s2.md 8.4, the structural part of `choice_wellFormed`).
+- `lean/VE/Readings/ChoiceWF.lean` — `choice_wellFormed` (docs/spec/composition-s2.md 8.4) with the route's soft check of every choice as its hypothesis (DRI ruling 5 of 2026-10-03).
+- `lean/VE/Readings/Companions.lean` — Readings that carry their own vocabulary (docs/spec/readings-defaults.md 1.9, 3, 4.1 step 0, 5 rows 6 to 13, 6.6's wire part; plan RD-4a).
+- `lean/VE/Readings/CompanionsExamples.lean` — The fixtures of RD-4a's merge and split (docs/spec/readings-defaults.md 8.4, 5 rows 6 to 11), each a `#guard` on `mergeCompanions`, `mergeOpenTerms` and `split…
+- `lean/VE/Readings/Components.lean` — A document's components and the product fold (docs/spec/readings-defaults.md 1.9, 1.10, 4.5 and 6.6; plan RD-4b).
+- `lean/VE/Readings/ComponentsExamples.lean` — The computed fixtures of RD-4b (docs/spec/readings-defaults.md 8.4), each a `#guard`: 1.10's rule (`fixedDecided`, `setDecided`) on the rows the spec lists, ea…
+- `lean/VE/Readings/ComponentsWire.lean` — `readings-verdicts` over a document's components (docs/spec/readings-defaults.md 1.9, 1.10, 2.4, 3, 4.5, 5 rows 16 to 18; plan RD-4b).
+- `lean/VE/Readings/DefaultVerdicts.lean` — Readings unless an exception applies (docs/spec/defeasible.md 3.9 and 7.4; plan 2.4, 3.5 and batch DF-3).
+- `lean/VE/Readings/DefaultVerdictsExamples.lean` — DF-3's computed fixtures (docs/spec/defeasible.md 8.3, plan 4.3 F-DF2): each choice's soft document, its no-exception premises and its colliding pairs, on RD-9…
+- `lean/VE/Readings/Doc.lean` — Reading candidates with content and a candidate's document (docs/spec/composition-s1.md 1.1 to 1.4, 4.2 to 4.4, 8.2).
+- `lean/VE/Readings/Examples.lean` — The item-1 fixtures of docs/spec/composition-s1.md 9.2 on one small document, as build-time checks (`#guard`: the build fails if one is false).
+- `lean/VE/Readings/Faithful.lean` — `superpose_faithful` (docs/spec/composition-s2.md 8.4): the superposed document decides every act as a compatible choice's document does on the pulled structur…
+- `lean/VE/Readings/Force.lean` — `decision_only_sound` (docs/spec/composition-s1.md 1.7, 8.3).
+- `lean/VE/Readings/Labels.lean` — The labels of `Choice_D` are distinct (docs/spec/composition-s2.md 1.6, 8.4 `slot_wellLabelled`).
+- `lean/VE/Readings/Lines.lean` — The line order of a candidate's document and the uniqueness of source keys (docs/spec/composition-s1.md 4.4, 8.3; DRI ruling 1 of 2026-10-02).
+- `lean/VE/Readings/Live.lean` — Liveness corresponds, through the name map (docs/spec/composition-s2.md 1.7; the `live`, `dead` and `outweighs` conditions of `Sim`).
+- `lean/VE/Readings/Names.lean` — Facts about the names of the superposed document (docs/spec/composition-s2.md 1.4, 1.7).
+- `lean/VE/Readings/Route.lean` — The route of a `readings@1` document and the regenerated elaboration (docs/spec/composition-s2.md 1.1, 1.8, 3, 4.1, 4.6).
+- `lean/VE/Readings/Run.lean` — The `ve_service` mode `readings-route` (docs/spec/composition-s1.md 8.4), formerly the one-shot `ve_readings_route`.
+- `lean/VE/Readings/RunExamples.lean` — How much of the other reading's side the route's pair check evaluates, as build-time checks (`#guard`), with no timing (batch 3d review B).
+- `lean/VE/Readings/Scan.lean` — The other reading's side of a pair, scanned lazily (lean-first plan F5b; batch 3b review B1, batch 3d review B).
+- `lean/VE/Readings/Separate.lean` — Separating situations (docs/spec/composition-s1.md 1.5 to 1.7, 4.5, 4.6, 4.9, 8.3).
+- `lean/VE/Readings/Shape.lean` — The shape of the documents S1's `build` and S2's `sup` assemble (docs/spec/composition-s2.md 1.4, 8.3): every field of the soft document but the rule list is t…
+- `lean/VE/Readings/Simulate.lean` — A simulation of soft documents (docs/spec/composition-s2.md 1.4, 8.4: the proof of `superpose_faithful`).
+- `lean/VE/Readings/Situation.lean` — The situations of `sup D` and of a reading's document agree (docs/spec/composition-s2.md 4.3, 8.4 `superpose_situation`).
+- `lean/VE/Readings/SoftDefaults.lean` — Documents and extra base premises for readings on the soft completion.
+- `lean/VE/Readings/SoftExamples.lean` — RD-9's F-SD1 admission boundary: the default twin adds one decision predicate, yet contributes no soft premise when it has no exception formula.
+- `lean/VE/Readings/SoftFacts.lean` — Facts that a well-formed soft document guarantees, read off the executable checks: every rule name is a W1 rule name (`[a-z][a-z0-9-]*`), every `over` entry na…
+- `lean/VE/Readings/SoftSeparate.lean` — Separation on filled sides (docs/spec/rd-9-soft-chain.md 1.5, 4.2 and 6.6; plan SC-2).
+- `lean/VE/Readings/SoftSeparateExamples.lean` — RD-9 SC-2's fixtures (docs/spec/rd-9-soft-chain.md 8.1 and 8.2), each value computed here by `#guard` against the value the spec records: separation on filled …
+- `lean/VE/Readings/SoftVerdicts.lean` — `readings-verdicts` under the soft completion (docs/spec/rd-9-soft-chain.md 4.4 and 6.9; plan SC-5).
+- `lean/VE/Readings/SoftWire.lean` — The wire under the soft completion (docs/spec/rd-9-soft-chain.md 1.1, 3, 4.1 to 4.3 and 6.8; plan SC-4).
+- `lean/VE/Readings/Strings.lean` — Prefixes of strings of one-byte characters (docs/spec/composition-s2.md 8.3: `copyCites` and the reserved names).
+- `lean/VE/Readings/SupAll.lean` — ALL under `A` (docs/spec/composition-s2.md 4.5, 8.4 `superpose_all`, `superpose_all_base`).
+- `lean/VE/Readings/SupConflict.lean` — Conflict-freedom of `sup D` and of a reading's document (docs/spec/composition-s2.md 4.4, 8.4 `superpose_conflict_iff`).
+- `lean/VE/Readings/SupDependencies.lean` — RD-7: dependency replay and set mentions belong to Lean.
+- `lean/VE/Readings/SupEnv.lean` — The vocabulary of a well-formed soft document and of `sup D` at level 0 (docs/spec/composition-s2.md 1.3, 1.6): which names `envAt (soften X) 0` declares, and …
+- `lean/VE/Readings/SupExtra.lean` — S2a with a carried base-premise family (docs/spec/readings-defaults.md 6.7, plan RD-6a).
+- `lean/VE/Readings/SupExtraExamples.lean` — The fixtures of RD-6a (docs/spec/readings-defaults-PLAN.md RD-6a) on S2a's M1 document `K1`: X1 and X2 as `#guard`s, X3 as a Lean refutation.
+- `lean/VE/Readings/SupFill.lean` — The lemmas behind `fill_transfers` (docs/spec/readings-defaults.md 6.7, plan RD-6b).
+- `lean/VE/Readings/SupFillWire.lean` — The superposed kinds under the unspecified completion (docs/spec/readings-defaults-PLAN.md RD-6b; spec 6.7).
+- `lean/VE/Readings/SupFree.lean` — Conflict-freedom under every reading, in one check (docs/spec/composition-s2.md 4.4, 8.4 `superpose_conflict_free`; no non-emptiness hypothesis on either side).
+- `lean/VE/Readings/SupPacks.lean` — Premise packs on the superposed readings route (docs/spec/premise-packs.md 2.11): carried families concatenate, so one family per pack gives the family of the …
+- `lean/VE/Readings/SupRun.lean` — The case kinds of S2a on `ve_readings_route` (docs/spec/composition-s2.md 3).
+- `lean/VE/Readings/SupSlot.lean` — The superposed document without open sets, and the shape of the slot (docs/spec/composition-s2.md 8.4: `sup_no_sets`, `slot_wellLabelled`, `slot_wellFormed`).
+- `lean/VE/Readings/SupVerdictsExamples.lean` — (no module docstring)
+- `lean/VE/Readings/SupVerdictsSound.lean` — RD-7's wire evidence chained with the fold.
+- `lean/VE/Readings/SupVerdictsWire.lean` — RD-7.
+- `lean/VE/Readings/SupWire.lean` — The wire of S2a (docs/spec/composition-s2.md 3, 4.1, 7, 8.5): the couplings and narrowings decoded with W2's and rights 3.3's texts, the admission of a superpo…
+- `lean/VE/Readings/SupWireSound.lean` — The wire theorems of S2a (docs/spec/composition-s2.md 8.5).
+- `lean/VE/Readings/SupWitness.lean` — A checked model of `sup D` is a situation of the reading its atoms encode (docs/spec/composition-s2.md 4.4, 4.5, 8.4 `superpose_conflict_witness`, `superpose_c…
+- `lean/VE/Readings/Superpose.lean` — The theorems of the superposed route (docs/spec/composition-s2.md 8.4).
+- `lean/VE/Readings/Unspecified.lean` — `fill` on a readings document and separation under the completion (docs/spec/readings-defaults.md 1.2 to 1.5 and 6.2; plan RD-1).
+- `lean/VE/Readings/UnspecifiedExamples.lean` — The fixtures of RD-1 (docs/spec/readings-defaults.md 8.1) and RD-2a's admission limits (8.3: F-ND4, F-ND5, F-ND10), each a `#guard` on `fillDoc` and on separat…
+- `lean/VE/Readings/UnspecifiedWire.lean` — The wire under the unspecified completion (docs/spec/readings-defaults.md 1.1, 3, 4.1 to 4.3, 5 and 6.3; plan RD-2a).
+- `lean/VE/Readings/UpPremises.lean` — The lifted base satisfies `sup D`'s exception and coherence premises (docs/spec/composition-s2.md 8.4 `base_up`).
+- `lean/VE/Readings/UpSlot.lean` — The lifted base satisfies the slot of `sup D` (docs/spec/composition-s2.md 1.6, 8.4 `base_up`): the one, coupling and narrowing premises because the bits spell…
+- `lean/VE/Readings/Verdicts.lean` — Verdicts across readings in Lean, on the enumerated route (docs/spec/readings-defaults.md 1.6 to 1.8, 2.3 to 2.5, 4.4, 6.4 and 6.5; plan RD-3).
+- `lean/VE/Readings/VerdictsExamples.lean` — The fixtures of RD-3 (docs/spec/readings-defaults.md 8.2), each a `#guard`: the gate of the entailment fold (3.1 to 3.3), each direction of ALL and NONE (3.4 t…
+- `lean/VE/Readings/VerdictsWire.lean` — The kind `readings-verdicts` on the enumerated route (docs/spec/readings-defaults.md 3, 4.4, 2.3 to 2.5, 6.4 and 6.5; plan RD-3).
+- `lean/VE/Readings/Wire.lean` — The wire of `readings@1` part A (docs/spec/composition-s1.md 3, 4.1, 7, 8.4).

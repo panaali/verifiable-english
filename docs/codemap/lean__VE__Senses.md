@@ -1,0 +1,12 @@
+- `lean/VE/Senses/Assignment.lean` — Assignments of defaults (docs/spec/senses.md 2.4 and 5.2; batch B4).
+- `lean/VE/Senses/Decode.lean` — The pack decoder and the dictionary identity (docs/spec/senses.md 2.2 and 2.7, plan 2.7; batch B2's Lean half).
+- `lean/VE/Senses/Dictionary.lean` — The dictionary of senses (docs/spec/senses.md 2.1 to 2.3, 4.2 and 5.2; batch B1).
+- `lean/VE/Senses/Document.lean` — Senses in `ve document` (readings-defaults plan, section 6, batch RD-8).
+- `lean/VE/Senses/DocumentExamples.lean` — The fixtures of RD-8 (readings-defaults plan, section 6), as `#guard` checks: the senses spec's s1, s9, s16 and s22 as a document's English fences read as `ve …
+- `lean/VE/Senses/Examples.lean` — The acceptance fixtures of docs/spec/senses.md section 8, as `#guard` checks on the built definitions.
+- `lean/VE/Senses/Fixtures.lean` — The fixture dictionaries, environments and lexicons of docs/spec/senses.md section 8, and the summaries the checks of `VE.Senses.Examples` compare by `==`.
+- `lean/VE/Senses/Preamble.lean` — The preamble: the lines that choose defaults (docs/spec/senses.md 2.4, 3.2 and 5.3; batch B4).
+- `lean/VE/Senses/Project.lean` — The projection of a dictionary onto S2's lexicon (docs/spec/senses.md 2.5 and 5.3; batch B3).
+- `lean/VE/Senses/Read.lean` — Reading with senses (docs/spec/senses.md 2.6, 3.3 and 5.3; batch B5, on the merged S2 grammar).
+- `lean/VE/Senses/Request.lean` — The senses route's request: E2's check of the submitted lexicon (`sensesRequest`), then the reader of a source or of a document's English fences and front-matt…
+- `lean/VE/Senses/Run.lean` — A one-shot admission boundary for the senses reader.

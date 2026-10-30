@@ -1,0 +1,1 @@
+- `docs/scale-choice-batch/measure.py` — Measure the readings report of one already loaded document, without model calls.
