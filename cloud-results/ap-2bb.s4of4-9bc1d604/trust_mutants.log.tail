@@ -1,0 +1,13 @@
+trust_mutants: 6 definitions, 218 mutants (54 to run), 4 jobs, base 6949746bf291
+UNKNOWN lean/VE/Acts/Linearize.lean:65 VE.Acts.normalOk (S, trusted) append-right: (·.2.parts) ++ ->  (lean/VE/Acts/Linearize.lean:65: Application type mismatch: The argument)
+UNKNOWN lean/VE/Acts/Linearize.lean:49 VE.Acts.Atom.normal (S, trusted) list-empty: a.canon.args -> [] (lean/VE/Acts/Linearize.lean:49: Invalid projection: Type of)
+UNKNOWN lean/VE/Acts/Linearize.lean:42 VE.Acts.Atom.canon (S, trusted) append-right: (· matches .adv _) ++ ->  (lean/VE/Acts/Linearize.lean:42: Function expected at)
+UNKNOWN lean/VE/Acts/Linearize.lean:65 VE.Acts.normalOk (S, trusted) list-empty: a.args.flatMap (·.2.parts) -> [] (lean/VE/Acts/Linearize.lean:65: Invalid dotted identifier notation: The expected type of `.prep` ...)
+UNKNOWN lean/VE/Acts/Linearize.lean:65 VE.Acts.normalOk (S, trusted) list-empty: (·.2.parts) -> [] (lean/VE/Acts/Linearize.lean:65: Application type mismatch: The argument)
+UNKNOWN lean/VE/Acts/Linearize.lean:65 VE.Acts.normalOk (S, trusted) list-empty: a.mods -> [] (lean/VE/Acts/Linearize.lean:65: Invalid projection: Type of)
+UNKNOWN lean/VE/Acts/Linearize.lean:42 VE.Acts.Atom.canon (S, trusted) list-empty: (· matches .adv _) -> [] (lean/VE/Acts/Linearize.lean:42: Application type mismatch: The argument)
+UNKNOWN lean/VE/Acts/Linearize.lean:70 VE.Acts.normalOk (S, trusted) list-empty: a.args -> [] (lean/VE/Acts/Linearize.lean:70: Invalid dotted identifier notation: The expected type of `.joined`)
+SURVIVOR lean/VE/Acts/Linearize.lean:66 VE.Acts.normalOk (S, trusted) list-first: ws -> (ws.take 1)
+UNKNOWN lean/VE/Acts/Linearize.lean:65 VE.Acts.normalOk (S, trusted) list-drop-first: (·.2.parts) -> ((·.2.parts).drop 1) (lean/VE/Acts/Linearize.lean:65: Invalid dotted identifier notation: The expected type of `.prep` ...)
+trust_mutants: 42 KILLED, 1 SURVIVOR, 9 UNKNOWN, 2 INVALID, 0 ALLOWED, 0 NOT RUN, 164 OTHER SHARD in 724 s
+trust_mutants: S, trusted: 42 KILLED, 1 SURVIVOR, 9 UNKNOWN, 2 INVALID, 164 OTHER SHARD
