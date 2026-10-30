@@ -1,0 +1,17 @@
+{
+  "commit": "8868ce212",
+  "command": [
+    "/home/seyran/code/ve-jt-e1r/.venv/bin/python",
+    "-m",
+    "ve",
+    "render",
+    "--env",
+    "/home/seyran/code/ve-jt-e1r/docs/judgment-terms/jt-e1r/captures/C02.env.json",
+    "--view",
+    "ve_english",
+    "/home/seyran/code/ve-jt-e1r/docs/judgment-terms/jt-e1r/captures/C02.ve"
+  ],
+  "environment": "C02.env.json",
+  "document": "C02.ve",
+  "output": "C02-identifier.txt"
+}

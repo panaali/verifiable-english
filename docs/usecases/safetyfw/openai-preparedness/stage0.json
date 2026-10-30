@@ -1,0 +1,111 @@
+{
+ "M6": {
+  "choice_mismatches": [],
+  "defaults_untraced": [],
+  "narrowings": {
+   "N1": "only the named RS0 commitment readings carry norms",
+   "N2": "the avoidance-of-doubt priority is not encoded in this baseline"
+  },
+  "order_or_causal_predicates": [],
+  "permissions_untraced": [],
+  "thresholds_without_premise": [],
+  "untraced": []
+ },
+ "P1": {
+  "admitted": true,
+  "input": "F2 High deployment rule with its open sufficiency judgment",
+  "premises": "model",
+  "route": null,
+  "units": {
+   "p5-u59": "OPEN"
+  },
+  "unresolved_reading_sets": 0
+ },
+ "P2": {
+  "admitted": true,
+  "input": "Table 1 misuse guideline, RS1 strict/default pending readings",
+  "premises": "UNKNOWN",
+  "route": null,
+  "units": {
+   "p6-u70": "OPEN"
+  },
+  "unresolved_reading_sets": 1
+ },
+ "P3": {
+  "admitted": true,
+  "bio_h_might": true,
+  "classes": [
+   "biological_terror_events",
+   "cyber_catastrophe",
+   "cyberoffense_balance_upset",
+   "death_or_grave_injury",
+   "economic_damage"
+  ],
+  "diagnostic": null,
+  "invented_leads": false,
+  "stated_might": true,
+  "status": "ok",
+  "table1_might": {
+   "BIO-C": true,
+   "BIO-H": true,
+   "CYB-C": true,
+   "CYB-H": true
+  },
+  "table1_unformalised": {
+   "AIS-C": "AT: the conditional loss-of-control chain is not a direct cause",
+   "AIS-H": "AT: acceleration is a possibility, not a harm outcome"
+  }
+ },
+ "P4": {
+  "admitted": true,
+  "conditional_date_bridges": {
+   "D2_publication": true,
+   "D3_appointment": true,
+   "D4_baselines": true
+  },
+  "date_certificate_replayed": true,
+  "ratio": [
+   "le",
+   [
+    "scale",
+    "elapsed_day",
+    "5",
+    [
+     "const",
+     "elapsed_day",
+     "current_progress_time"
+    ]
+   ],
+   [
+    "const",
+    "elapsed_day",
+    "baseline_progress_time"
+   ]
+  ],
+  "ratio_admitted": true,
+  "severe_harm_counts": "not represented: thousands and hundreds of billions need quantity bridges (QT)"
+ },
+ "P5": {
+  "bytes_by_status": {
+   "CHECKED": 170,
+   "LABELLED": 5327,
+   "OPEN": 7052,
+   "UNFORMALISED": 54869
+  },
+  "total": 67418,
+  "units": 389
+ },
+ "P6": {
+  "contiguous": true,
+  "master_total": 67418
+ },
+ "P7": {
+  "regulated_predicates": 44,
+  "violations": []
+ },
+ "P8": {
+  "admitted": false,
+  "diagnostic": "CheckerUnavailable: judgments@0 with soft-norms@0 needs its composed Lean route",
+  "input": "F2 with judgments@0 and documents@1 alongside D1 profiles"
+ }
+}
