@@ -347,7 +347,10 @@ def fa1Doc (extra : List Json := []) (premises := names) (cert := docCert) : Jso
   ("formula", fa1Conclusion.getObjValD "formula")]
 #guard ids ((report (docCase fa1Doc)).getObjValD "leaves") "meaning_id" == ids (docAdmission.getObjValD "premises")
   "meaning_id"
-#guard (answer (docCase fa1Doc)).getObjValD "environment_id" == docAdmission.getObjValD "environment_id"
+#guard answer (docCase fa1Doc) == Json.mkObj [("id", .str "d"), ("status", .str "ok"),
+  ("environment_id", docAdmission.getObjValD "environment_id"),
+  ("w6_environment_id", docAdmission.getObjValD "w6_environment_id"),
+  ("w6_target_environment_id", docAdmission.getObjValD "w6_target_environment_id"), ("report", report (docCase fa1Doc))]
 -- A leaf the root does not rest on is not in the report; a root without a deduction rests on itself.
 #guard leafNames (docCase (fa1Doc [leaf "unused" top])) == names.map Json.str
 #guard leafNames (docCase (graph "total" fa1Leaves)) == [.str "total"]
