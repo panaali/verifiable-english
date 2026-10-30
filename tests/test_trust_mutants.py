@@ -306,11 +306,12 @@ def test_a_check_file_is_probed_once_and_only_when_a_verdict_reads_it(tmp_path, 
     probed, and one outside its files has no probe (UNKNOWN in `reading`)."""
     import threading
     import trust_mutants as tm
-    calls, gate = [], threading.Event()
+    calls, gate, asking = [], threading.Event(), []
 
     def probe(lake, env, text, roles, path, outside=False):
         calls.append((text, roles, path, outside, env["E"]))
-        gate.wait(HANG_TIMEOUT)  # every job asks while the first probe runs
+        if asking:
+            gate.wait(HANG_TIMEOUT)  # every job asks while the first probe runs
         return {(1, 2): {"flags": {"hash 1"}, "consts": {}}, (4, 4): {"flags": {"hash 2"}, "consts": {"c": "h"}}}
     monkeypatch.setattr(tm, "probe", probe)
     scratch = object.__new__(tm.Scratch)
@@ -323,6 +324,8 @@ def test_a_check_file_is_probed_once_and_only_when_a_verdict_reads_it(tmp_path, 
     probes = tm.Probes(scratch, {"E": "1"}, {"A/Ex.lean": (scratch.lean / "A/Ex.lean", ["roles"]),
                                              "A/Other.lean": (scratch.lean / "A/Other.lean", []),
                                              str(outside): (outside, ["out roles"])})
+    assert calls == []  # nothing is probed before a verdict asks
+    asking.append(True)
     got: list = []
     jobs = [threading.Thread(target=lambda span=span: got.append(probes.get(("A/Ex.lean", span))))
             for span in ((1, 2), (4, 4), (1, 2), (9, 9))]
