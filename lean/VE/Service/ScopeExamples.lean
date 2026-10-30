@@ -1,4 +1,5 @@
 import VE.Service.Document
+import VE.Scope.ReadingsExamples
 
 /-! scope@0 in the document mode (SC-1b; docs/spec/scope.md 1.6, 3, 5.2 and 7.2) on a small part document built as a
 request carries it: a lead-in "Agents must not:" framing two items, and a closing sentence. F1-doc (the governor's
@@ -129,5 +130,47 @@ def fullUnits : Json := toJson (units (some (Json.mkObj [("norm", (item "r1").me
 -- The layout is read from the source bytes of exactly the document's units.
 #guard (VE.Scope.decodeScope doc).toOption.map (fun D => D.layout.map fun x => (x.id, x.lead, x.item)) ==
   some [("u1", true, none), ("i1", false, some 0), ("i2", false, some 0), ("u3", false, none)]
+
+-- The answer carries both governed sets, each with both composed readings, in authored order.
+#guard
+  let result := do
+    let re ← VE.Readings.Wire.decodeEnvironment VE.Scope.Examples.envJ
+    let D := VE.Scope.Examples.sdoc
+      (VE.Scope.Examples.setDoc [VE.Scope.Examples.s03, VE.Scope.Examples.s05set]
+        VE.Scope.Examples.twoSets) [VE.Scope.Examples.g1] [] re
+    let out ← VE.Scope.governSetsWith VE.Scope.governFast D
+    VE.Service.Document.composedReadings D out
+  result.toOption.map (fun rows => match rows with
+    | .arr xs => xs.toList.map fun s =>
+      (s.getObjValD "set", (VE.Scope.readingsJson s).map (·.getObjValD "id"))
+    | _ => []) == some [(.str "scope-u0165-s03", [.str "wide", .str "narrow"]),
+                       (.str "scope-u0165-s05", [.str "a", .str "b"])]
+
+-- A real document-mode case relays the composed rule; no governed set carries no such field.
+#guard
+  let reading := Json.mkObj [("id", .str "a"), ("kind", .str "norm"), ("meaning_id", .str "m"),
+    ("content", part "r1"), ("admission", Json.mkObj [("who", .str "translator"), ("why", .str "open")])]
+  let set := Json.mkObj [("id", .str "s"), ("unit", .str "i1"), ("version", toJson (1 : Nat)),
+    ("status", .str "open"), ("readings", toJson [reading])]
+  let second := Json.mkObj [("id", .str "t"), ("unit", .str "i2"), ("version", toJson (1 : Nat)),
+    ("status", .str "open"), ("readings", toJson [reading.setObjVal! "id" (.str "b")
+      |>.setObjVal! "content" (part "r2")])]
+  let singleton := case ((front (units none (some (part "r2")))
+    ["norms@0", "readings@1", "relational-fol@0", "scope@0"]).setObjVal! "reading_sets" (toJson [set]))
+  let request := case ((front (units none none)
+    ["norms@0", "readings@1", "relational-fol@0", "scope@0"]).setObjVal! "reading_sets" (toJson [set, second]))
+  let answered := checkDocSetsAnswered request
+  let answeredOne := checkDocSetsAnswered singleton
+  (answered.toOption.map (fun row =>
+    (((row.getObjValD "composed_readings").getArr?.toOption.getD #[]).toList.map fun s =>
+      (s.getObjValD "set", s.getObjValD "version", s.getObjValD "unit",
+       (VE.Scope.readingsJson s).map (fun r =>
+         (r.getObjValD "id", ((r.getObjValD "content").getObjValD "norm").getObjValD "sign"))))) ==
+    some [(.str "s", toJson (1 : Nat), .str "i1", [(.str "a", .bool false)]),
+          (.str "t", toJson (1 : Nat), .str "i2", [(.str "b", .bool false)])]) &&
+  (answeredOne.toOption.map (fun row => ((row.getObjValD "composed_readings").getArr?.toOption.getD #[]).size) ==
+    some 1) &&
+  member (checkDocSetsAnswered doc) "composed_readings" == .null &&
+  member (checkDocSetsAnswered full) "composed_readings" == .null
 
 end VE.Service.ScopeExamples

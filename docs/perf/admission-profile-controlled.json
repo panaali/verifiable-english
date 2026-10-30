@@ -1,0 +1,38 @@
+{
+  "service_sha256": "92dd48e7b9935cfde24e639ab003fb03c6448797826b4fc0b078952786f0ba32",
+  "cases": {
+    "admission-prefix-100-main3": {
+      "sha256": "9e7fa70bbfdd5d85479e6a99784c1a450f4b4a222916c39563c5012d4f9677a7",
+      "bytes": 99091,
+      "runs": [
+        {
+          "cpu_seconds": 2.7102,
+          "load_1min_before": 25.77,
+          "load_1min_after": 25.55,
+          "transport": "iso.sh",
+          "iso_error": null,
+          "answer_status": "ok",
+          "answer_error": null
+        },
+        {
+          "cpu_seconds": 2.4932,
+          "load_1min_before": 25.55,
+          "load_1min_after": 25.55,
+          "transport": "iso.sh",
+          "iso_error": null,
+          "answer_status": "ok",
+          "answer_error": null
+        },
+        {
+          "cpu_seconds": 3.2444,
+          "load_1min_before": 25.55,
+          "load_1min_after": 26.14,
+          "transport": "iso.sh",
+          "iso_error": null,
+          "answer_status": "ok",
+          "answer_error": null
+        }
+      ]
+    }
+  }
+}
