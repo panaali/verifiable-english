@@ -1,0 +1,21 @@
+trust_mutants: 1 definitions, 18 mutants (18 to run), 4 jobs, base 6949746bf291
+SURVIVOR lean/VE/Calc/Lower.lean:214 VE.Calc.Work.Shape.Sound (S, trusted) eq-le: = -> ≤ (the proofs it breaks: lean/VE/Calc/Lower.lean:327, lean/VE/Calc/Lower.lean:384, lean/VE/Calc/Lowe...)
+SURVIVOR lean/VE/Calc/Lower.lean:214 VE.Calc.Work.Shape.Sound (S, trusted) arm-true: L.isConst = true ∧ ∀ b, nz = some b → (L.const != 0) = b -> True (the proofs it breaks: lean/VE/Calc/Lower.lean:327, lean/VE/Calc/Lower.lean:384, lean/VE/Calc/Lowe...)
+SURVIVOR lean/VE/Calc/Lower.lean:214 VE.Calc.Work.Shape.Sound (S, trusted) arm-false: L.isConst = true ∧ ∀ b, nz = some b → (L.const != 0) = b -> False (the proofs it breaks: lean/VE/Calc/Lower.lean:327, lean/VE/Calc/Lower.lean:336, lean/VE/Calc/Lowe...)
+SURVIVOR lean/VE/Calc/Lower.lean:214 VE.Calc.Work.Shape.Sound (S, trusted) and-or: ∧ -> ∨ (the proofs it breaks: lean/VE/Calc/Lower.lean:327, lean/VE/Calc/Lower.lean:384, lean/VE/Calc/Lowe...)
+SURVIVOR lean/VE/Calc/Lower.lean:214 VE.Calc.Work.Shape.Sound (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/Calc/Lower.lean:327, lean/VE/Calc/Lower.lean:336, lean/VE/Calc/Lowe...)
+SURVIVOR lean/VE/Calc/Lower.lean:214 VE.Calc.Work.Shape.Sound (S, trusted) bool-flip: true -> false (the proofs it breaks: lean/VE/Calc/Lower.lean:336, lean/VE/Calc/Lower.lean:384, lean/VE/Calc/Lowe...)
+SURVIVOR lean/VE/Calc/Lower.lean:214 VE.Calc.Work.Shape.Sound (S, trusted) ne-eq: != -> == (the proofs it breaks: lean/VE/Calc/Lower.lean:336, lean/VE/Calc/Lower.lean:384, lean/VE/Calc/Lowe...)
+SURVIVOR lean/VE/Calc/Lower.lean:214 VE.Calc.Work.Shape.Sound (S, trusted) lit-plus: 0 -> 1 (the proofs it breaks: lean/VE/Calc/Lower.lean:336, lean/VE/Calc/Lower.lean:384, lean/VE/Calc/Lowe...)
+SURVIVOR lean/VE/Calc/Lower.lean:215 VE.Calc.Work.Shape.Sound (S, trusted) arm-false: L.isConst = false -> False (the proofs it breaks: lean/VE/Calc/Lower.lean:327, lean/VE/Calc/Lower.lean:336, lean/VE/Calc/Lowe...)
+SURVIVOR lean/VE/Calc/Lower.lean:215 VE.Calc.Work.Shape.Sound (S, trusted) arm-true: L.isConst = false -> True (the proofs it breaks: lean/VE/Calc/Lower.lean:327, lean/VE/Calc/Lower.lean:404, lean/VE/Calc/Lowe...)
+SURVIVOR lean/VE/Calc/Lower.lean:214 VE.Calc.Work.Shape.Sound (S, trusted) eq-le: = -> ≤ (the proofs it breaks: lean/VE/Calc/Lower.lean:336, lean/VE/Calc/Lower.lean:384, lean/VE/Calc/Lowe...)
+SURVIVOR lean/VE/Calc/Lower.lean:214 VE.Calc.Work.Shape.Sound (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/Calc/Lower.lean:336, lean/VE/Calc/Lower.lean:384, lean/VE/Calc/Lowe...)
+SURVIVOR lean/VE/Calc/Lower.lean:215 VE.Calc.Work.Shape.Sound (S, trusted) bool-flip: false -> true (the proofs it breaks: lean/VE/Calc/Lower.lean:336, lean/VE/Calc/Lower.lean:391, lean/VE/Calc/Lowe...)
+SURVIVOR lean/VE/Calc/Lower.lean:214 VE.Calc.Work.Shape.Sound (S, trusted) eq-le: = -> ≤ (the proofs it breaks: lean/VE/Calc/Lower.lean:384, lean/VE/Calc/Lower.lean:404, lean/VE/Calc/Lowe...)
+SURVIVOR lean/VE/Calc/Lower.lean:214 VE.Calc.Work.Shape.Sound (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/Calc/Lower.lean:336, lean/VE/Calc/Lower.lean:384, lean/VE/Calc/Lowe...)
+SURVIVOR lean/VE/Calc/Lower.lean:216 VE.Calc.Work.Shape.Sound (S, trusted) bool-flip: True -> False (the proofs it breaks: lean/VE/Calc/Lower.lean:391, lean/VE/Calc/Lower.lean:404)
+SURVIVOR lean/VE/Calc/Lower.lean:215 VE.Calc.Work.Shape.Sound (S, trusted) eq-le: = -> ≤ (the proofs it breaks: lean/VE/Calc/Lower.lean:327, lean/VE/Calc/Lower.lean:336, lean/VE/Calc/Lowe...)
+SURVIVOR lean/VE/Calc/Lower.lean:215 VE.Calc.Work.Shape.Sound (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/Calc/Lower.lean:327, lean/VE/Calc/Lower.lean:336, lean/VE/Calc/Lowe...)
+trust_mutants: 0 KILLED, 18 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 336 s
+trust_mutants: S, trusted: 18 SURVIVOR
