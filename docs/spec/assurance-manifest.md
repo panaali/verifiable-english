@@ -225,7 +225,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Cardinality/Run.lean` | 221 | 221 | 1–221 | `d183414cf694…` |
 | `lean/VE/Calc/Jsonl.lean` | 48 | 48 | 1–48 | `e79aa00abb9d…` |
 | `lean/VE/Readings/DefaultVerdicts.lean` | 506 | 506 | 1–506 | `79d7da71d2ae…` |
-| **total** | | **39,777** | | |
+| **total** | | **39,779** | | |
 <!-- END GENERATED -->
 
 Outside the decoder count: `lean/VE/Order/Surface.lean` (order text parser, `lean:order-surface-parser`), the runner
