@@ -34,6 +34,9 @@ EXPECTED = {
     "p1-sorts": "ResourceLimit: At most 8 counted sorts",
     "p2-predicates": "ResourceLimit: At most 6 predicates on counted sort fomc_policymaker (64 regions)",
     "p3-charged": "ResourceLimit: premises and conclusion exceed aggregate 10000-node limit",
+    "document-fa1": "ok", "document-leaf-dropped": STALE,
+    "document-unproved": "graph rejected: cycle, duplicate name, dangling premise or invalid certificate",
+    "document-no-profile": "UnsupportedProfile: cardinality documents require documents@1",
 }
 
 
@@ -60,7 +63,8 @@ def says(result: dict) -> str:
 
 def test_route_cases_answer_as_recorded(service):
     """FA1 and FA1b admitted and certified (FA1b's trace does not close its problem), forged claims and FA11's
-    stale certificate refused, and one case per diagnostic class of the hostile set, in spec 4.2's order."""
+    stale certificate refused, and one case per diagnostic class of the hostile set, in spec 4.2's order; FA1 as a
+    claim graph, with a leaf dropped, unproved and without `documents@1`."""
     cases = route_cases()
     assert "cardinality" in MODES and [case["id"] for case in cases] == list(EXPECTED)
     answers = [says(bound["result"]) for bound in exchange(service, cases)[1]["results"]]
@@ -103,6 +107,85 @@ def test_answers_are_typed_and_bound_to_their_request(service):
     refused(1, {k: v for k, v in certificate.items() if k != "valid"})
     refused(1, {**certificate, "valid": "true"})
     refused(1, {**certificate, "regions": admission["regions"]})
+
+
+# Values every typed member refuses (BUILDER-CHECKLIST 1).
+BAD = (7, True, None, [], {}, 1.5, "\ud800", [[[]]])
+
+
+def test_document_rows_are_typed_and_bound(service):
+    """qt-a3d, R8: the report names the request's root and its nodes only; each retyped or rebound member is
+    refused."""
+    case = next(case for case in route_cases() if case["id"] == "document-fa1")
+    request, response = exchange(service, [case])
+    row = response["results"][0]["result"]
+    report, leaves = row["report"], row["report"]["leaves"]
+    assert [leaf["name"] for leaf in leaves] == ["total", "increase", "stay", "exclusive"]
+    for mutant in ({**row, "report": {**report, "root": {**report["root"], "name": "total"}}},
+                   {**row, "report": {**report, "leaves": [{**leaves[0], "name": "unknown"}, *leaves[1:]]}},
+                   {**row, "report": {**report, "leaves": [{**leaves[0], "meaning_id": 3}, *leaves[1:]]}},
+                   {**row, "report": {**report, "leaves": [{**leaves[0], "formula": ["most"]}, *leaves[1:]]}},
+                   {**row, "report": {**report, "extra": []}},
+                   {k: v for k, v in row.items() if k != "report"}, {**row, "premises": []}, {**row, "valid": True},
+                   {k: v for k, v in row.items() if k != "report_id"},
+                   *({**row, key: bad} for key in row for bad in BAD),
+                   *({**row, "report": {**report, "root": {**report["root"], key: bad}}}
+                     for key in report["root"] for bad in BAD),
+                   *({**row, "report": {**report, "leaves": [{**leaves[0], key: bad}, *leaves[1:]]}}
+                     for key in leaves[0] for bad in BAD)):
+        mutated = deepcopy(response)
+        mutated["results"][0]["result"] = mutant
+        with pytest.raises(Invalid):
+            check_response("cardinality", mutated, request)
+
+
+def _report_mutants(report):
+    """(label, report) of FA1's document report with one fault each (review F1 of qt-a3d)."""
+    root, leaves = report["root"], report["leaves"]
+    yield "leaves emptied", {**report, "leaves": []}
+    yield "a leaf dropped", {**report, "leaves": leaves[1:]}
+    yield "a leaf duplicated", {**report, "leaves": [*leaves, leaves[0]]}
+    yield "leaves reordered", {**report, "leaves": leaves[::-1]}
+    yield "meaning ids swapped", {**report, "leaves": [{**leaves[0], "meaning_id": leaves[1]["meaning_id"]},
+                                                       {**leaves[1], "meaning_id": leaves[0]["meaning_id"]}, *leaves[2:]]}
+    yield "formulas swapped", {**report, "leaves": [{**leaves[0], "formula": leaves[1]["formula"]},
+                                                    {**leaves[1], "formula": leaves[0]["formula"]}, *leaves[2:]]}
+    yield "a leaf as the root", {**report, "root": {**leaves[0], "name": root["name"]}}
+
+
+def test_document_report_id_binds_both_identities_the_document_and_the_report(service):
+    """Review F1 of qt-a3d (spec 4.1: reports carry both identities and bind both): `report_id` is the `ve-report`
+    digest, in the environment's identity version, of the cardinality and both W6a identities, the document as sent
+    and the report, as `VE.Time.Document.runDocument`'s; so a report with its leaves emptied, dropped, duplicated or
+    reordered, its meaning ids or formulas swapped, or a leaf as its root, is not the report `report_id` names, and
+    neither is the same report beside another document or other identities. QT-A4's relay checks this digest."""
+    from ve.wire import digest
+    case = next(case for case in route_cases() if case["id"] == "document-fa1")
+    _, response = exchange(service, [case])
+    row = response["results"][0]["result"]
+    profiles = case["environment"]["profiles"]
+    assert profiles == sorted(profiles) and profiles[0] == "cardinality@0"
+
+    def identity(report, document=case["document"], **ids):
+        identities = {key: row[key] for key in ("environment_id", "w6_environment_id", "w6_target_environment_id")}
+        return digest(f"ve-report-v0.2:{','.join(profiles)}\n",
+                      {**identities, **ids, "document": document, "report": report})
+    assert row["report_id"] == identity(row["report"])
+    labels = []
+    for label, report in _report_mutants(row["report"]):
+        assert report != row["report"] and identity(report) != row["report_id"], label
+        labels.append(label)
+    assert len(labels) == 7
+    other = {**case["document"], "nodes": [*case["document"]["nodes"], {"name": "unused", "statement": case[
+        "document"]["nodes"][0]["statement"]}]}
+    assert identity(row["report"], other) != row["report_id"]
+    for key in ("environment_id", "w6_environment_id", "w6_target_environment_id"):
+        assert identity(row["report"], **{key: row["w6_environment_id" if key == "environment_id" else
+                                              "environment_id"]}) != row["report_id"], key
+    # The same report beside another document is answered under that document's identity.
+    _, other_response = exchange(service, [{**case, "document": other}])
+    other_row = other_response["results"][0]["result"]
+    assert other_row["report"] == row["report"] and other_row["report_id"] == identity(row["report"], other)
 
 
 def universal(i: int, depth: int = 6, bits: int = 4) -> dict:

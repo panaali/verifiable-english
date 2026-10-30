@@ -9,7 +9,8 @@
         "x-select": [
           {"then": {"$ref": "#/$defs/admission"}, "when": {"$ref": "common.json#/$defs/no_kind"}},
           {"then": {"$ref": "#/$defs/admission"}, "when": {"$ref": "#/$defs/kind/admission"}},
-          {"then": {"$ref": "#/$defs/certificate"}, "when": {"$ref": "#/$defs/kind/certificate"}}
+          {"then": {"$ref": "#/$defs/certificate"}, "when": {"$ref": "#/$defs/kind/certificate"}},
+          {"then": {"$ref": "#/$defs/document"}, "when": {"$ref": "#/$defs/kind/document"}}
         ]
       }
     ]
@@ -77,6 +78,41 @@
         "conclusion"
       ],
       "type": "object"
+    },
+    "claim": {
+      "$comment": "Cardinality.Run.claimJson: a node of the request's graph with its meaning id and canonical formula.",
+      "additionalProperties": false,
+      "properties": {
+        "formula": {"$ref": "#/$defs/formula"},
+        "meaning_id": {"$ref": "common.json#/$defs/hex64"},
+        "name": {"type": "string"}
+      },
+      "required": ["name", "meaning_id", "formula"],
+      "type": "object"
+    },
+    "document": {
+      "$comment": "Cardinality.Run.runCase document: the admitted graph's report, its root and the leaves it rests on, and the report's identity (Cardinality.Run.reportId: the ve-report digest of the three environment identities, the document as sent and the report).",
+      "additionalProperties": false,
+      "properties": {
+        "environment_id": {"$ref": "common.json#/$defs/hex64"},
+        "id": {"$ref": "common.json#/$defs/id_ok"},
+        "report": {
+          "additionalProperties": false,
+          "properties": {
+            "leaves": {"items": {"$ref": "#/$defs/claim"}, "type": "array"},
+            "root": {"$ref": "#/$defs/claim", "properties": {"name": {"x-equals": "/document/root"}}}
+          },
+          "required": ["root", "leaves"],
+          "type": "object"
+        },
+        "report_id": {"$ref": "common.json#/$defs/hex64"},
+        "status": {"const": "ok"},
+        "w6_environment_id": {"$ref": "common.json#/$defs/hex64"},
+        "w6_target_environment_id": {"$ref": "common.json#/$defs/hex64"}
+      },
+      "required": ["id", "status", "environment_id", "w6_environment_id", "w6_target_environment_id", "report", "report_id"],
+      "type": "object",
+      "x-references": {"array": "/report/leaves", "field": "name", "in": "/document/nodes/*/name"}
     },
     "erased": {
       "$comment": "Cardinality.Run.erasedJson: a regenerated W6a formula with its annotated and core identities.",
@@ -152,7 +188,8 @@
     },
     "kind": {
       "admission": {"properties": {"kind": {"const": "admission"}}, "required": ["kind"], "type": "object"},
-      "certificate": {"properties": {"kind": {"const": "certificate"}}, "required": ["kind"], "type": "object"}
+      "certificate": {"properties": {"kind": {"const": "certificate"}}, "required": ["kind"], "type": "object"},
+      "document": {"properties": {"kind": {"const": "document"}}, "required": ["kind"], "type": "object"}
     },
     "operand": {
       "$comment": "Cardinality.Wire.encOperand: a closed W6a term or a count.",
