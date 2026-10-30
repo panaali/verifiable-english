@@ -1,3 +1,5 @@
+- `tests/test_calc_algebra.py` — ME-9: algebraic identities (math-evidence spec 8.2, plan 3.8; fixtures H-1 to H-4 and R-6).
+- `tests/test_calc_answer.py` — The relay never takes a Lean `calc` answer that is not an answer to the request it sent (R8; math-evidence ME-3, spec 3.4).
 - `tests/test_calc_derive.py` — Derivations over rational unknowns in the `calc` mode (math-evidence ME-5, me-5c): spec 13.6's R-3 and R-4 and the plan's physics fixtures H-6, H-6p, H-6n and …
 - `tests/test_calc_dimensions.py` — ME-6: physical dimensions (math-evidence spec 6.1; fixtures H-7, H-7u, H-7c, H-7l).
 - `tests/test_calc_lean.py` — `ve calc check FILE` (math-evidence ME-3): the `calc` route's own cases through `ve.calc`, the relay of the Lean service's `calc` mode.
@@ -87,6 +89,3 @@
 - `tests/test_english_lean_tokens.py` — Python's English grammar converted to word tokens reads like Python (plan section 4, S0 first cut).
 - `tests/test_english_runner_root.py` — The one-shot English executable has a distinct root and preserves its wire bytes.
 - `tests/test_english_unambiguity.py` — (no module docstring)
-- `tests/test_entailment.py` — (no module docstring)
-- `tests/test_entailment_adversarial.py` — Adversarial checks for the small trusted tableau replayer.
-- `tests/test_entailment_properties.py` — Independent bounded semantic check of every generated positive certificate.
