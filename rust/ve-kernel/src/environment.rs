@@ -144,15 +144,18 @@ pub(crate) enum SortJudge {
     Layered,
 }
 
-/// The judge, and whether the located decoder runs before it with the answer
-/// for every fault it finds: `ve.core@0.2` over the frozen checker profiles only
-/// (`frozenFamilyProfiles` Standalone.lean:350, `reportedEnvironment` Standalone.lean:1197-1201).
-/// It checks each constant's fields and sort (Standalone.lean:969-977) before the
-/// judge reads a cell it skipped (Standalone.lean:957-958).
+/// The decoder that judges a vocabulary's sorts once Lean's located decoder
+/// has passed it (`located_pass`).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) struct SortTable {
     pub(crate) judge: SortJudge,
-    pub(crate) located: bool,
+    /// The frozen checker lists (`frozenFamilyProfiles`, Standalone.lean:350),
+    /// where every located fault is the answer.
+    pub(crate) frozen: bool,
+    /// The norms routes that check every regulated block before the family
+    /// decoder reads a sort (Standalone.lean:198-203, 270-282); soft-norms@0
+    /// checks them after its vocabulary (Norms/Wire.lean:194-204).
+    pub(crate) regulated_first: bool,
 }
 
 /// Lean's answer for one undeclared argument cell.
@@ -161,10 +164,9 @@ pub(crate) enum SortVerdict {
     Accepted,
     /// This code at the predicate, after its own display fields.
     AtSort(&'static str),
-    /// This code once each constant's fields and sort are checked, before their displays.
+    /// This code once the constants are checked in full: the core decoder
+    /// after the layered route decoder (Core/Layers.lean:229-232).
     AfterConstants(&'static str),
-    /// This code once the constants are checked in full.
-    AfterDisplays(&'static str),
 }
 
 /// A constant entry's fields: a `$string` literal's description is optional
@@ -189,11 +191,14 @@ impl SortTable {
     /// (`VE.Core.Layers.usesLayers`, Standalone.lean:208).
     pub(crate) fn of(route: bool, legacy_order: bool, profiles: &[String], layers: bool) -> Self {
         if !route {
-            return SortTable { judge: SortJudge::Legacy { order: legacy_order }, located: false };
+            return SortTable { judge: SortJudge::Legacy { order: legacy_order }, frozen: false,
+                               regulated_first: false };
         }
         let has = |p: &str| profiles.iter().any(|q| q == p);
-        let located = !profiles.is_empty() && profiles.iter().all(|p| CHECKER_PROFILES.contains(&p.as_str()));
-        let judge = if has("soft-norms@0") && !located {
+        let frozen = !profiles.is_empty() && profiles.iter().all(|p| CHECKER_PROFILES.contains(&p.as_str()));
+        let regulated_first = has("norms@0") && !has("soft-norms@0")
+            && (has("closure@0") || has("nary@0") || has("order@0"));
+        let judge = if has("soft-norms@0") {
             SortJudge::Route
         } else if has("order@0") {
             SortJudge::Order
@@ -204,7 +209,7 @@ impl SortTable {
         } else {
             SortJudge::Route
         };
-        SortTable { judge, located }
+        SortTable { judge, frozen, regulated_first }
     }
 
     /// The verdict on an undeclared cell `sort` of a predicate of `arity`
@@ -217,16 +222,13 @@ impl SortTable {
             SortJudge::Route => if data && sort == "$string" { Accepted } else { AtSort("InvalidInput") },
             SortJudge::Order if sort == "$int" => Accepted,
             SortJudge::Order | SortJudge::Core => AtSort("UnknownSymbol"),
-            SortJudge::Layered => match (SortTable { judge: SortJudge::Route, located: false })
+            SortJudge::Layered => match (SortTable { judge: SortJudge::Route, ..self })
                     .argument(sort, data, arity, defined) {
                 AtSort(code) if arity <= 2 && !defined => AtSort(code),
-                _ => AfterDisplays("UnknownSymbol"),
+                _ => AfterConstants("UnknownSymbol"),
             },
         };
-        match verdict {
-            AtSort(code) if self.located => AfterConstants(code),
-            verdict => verdict,
-        }
+        verdict
     }
 
     /// Whether an undeclared constant sort is admitted: `$string` literals
@@ -241,10 +243,10 @@ impl SortTable {
 
     /// The code of an undeclared constant sort: the route decoder's
     /// "unknown constant sort" (Route/Wire.lean:196), else the shared
-    /// `constantSort` validator's (Bridge.lean:58), which the located decoder uses.
+    /// `constantSort` validator's (Bridge.lean:58).
     pub(crate) fn constant_fault(self) -> &'static str {
         match self.judge {
-            SortJudge::Route | SortJudge::Layered if !self.located => "InvalidInput",
+            SortJudge::Route | SortJudge::Layered => "InvalidInput",
             _ => "UnknownSymbol",
         }
     }
@@ -261,41 +263,141 @@ impl SortTable {
     }
 }
 
-/// The located decoder's pass over the predicates (Standalone.lean:942-967), which
-/// precedes every family decoder on `ve.core@0.2`: a cell it does not skip
-/// (Standalone.lean:957-958) and that it does not admit is UnknownSymbol, unless an
-/// earlier located fault ends the pass first.
-fn located_argument_fault(
+/// One predicate's `regulated` block over `arity` slots: its role, default,
+/// canonical act phrase and permission dual.
+type Regulation = (String, String, Option<String>, Option<String>);
+
+fn regulation(raw: &Value, arity: usize) -> Result<Regulation> {
+    let r = object(raw, "InvalidInput")?;
+    let role = r.get("role").map(|v| string(v, "InvalidInput")).transpose()?
+        .ok_or_else(|| Error::new("InvalidInput", "regulated role is required"))?;
+    let default = r.get("default").map(|v| string(v, "InvalidInput")).transpose()?
+        .ok_or_else(|| Error::new("InvalidInput", "regulated default is required"))?;
+    if default == "unspecified" && ["permission", "obligation", "plain"].contains(&role) {
+        // norm-defaults 2.1: Rust decodes no norm-defaults@0 environment.
+        return error("UnsupportedProfile",
+                     "UnsupportedProfile: unspecified completion requires norm-defaults@0");
+    }
+    if !["permission", "obligation", "plain"].contains(&role)
+        || !["allow", "deny"].contains(&default) {
+        return error("InvalidInput", "invalid regulated role or default");
+    }
+    let mut keys = vec!["role", "default"];
+    let act = if role == "plain" { None } else {
+        keys.push("act");
+        Some(act_phrase(r.get("act").ok_or_else(|| Error::new("InvalidInput", "act is required"))?, arity)?)
+    };
+    if role == "obligation" && r.contains_key("permission") {
+        keys.push("permission");
+    }
+    fields(raw, &keys, "InvalidInput")?;
+    let permission = r.get("permission").map(|v| string(v, "InvalidInput")
+        .map(str::to_owned)).transpose()?;
+    Ok((role.into(), default.into(), act, permission))
+}
+
+/// The checks across the regulated predicates, each read by `signature`: at
+/// most 64, one predicate per act and role, and each obligation's permission dual.
+fn regulation_pairs(
+    regulated: &BTreeMap<String, Regulation>,
+    signature: impl Fn(&str) -> Value,
+) -> Result<Vec<(String, String)>> {
+    if regulated.len() > 64 {
+        return error("ResourceLimit", "regulated predicates");
+    }
+    let mut acts = BTreeMap::new();
+    for (name, (role, _, act, _)) in regulated {
+        if let Some(act) = act {
+            let key = (signature(name).to_string(), act.clone(), role.clone());
+            if acts.insert(key, name.clone()).is_some() {
+                return error("InvalidInput", format!("DuplicateActRole: {role}, {act}"));
+            }
+        }
+    }
+    let mut profile_pairs = Vec::new();
+    for (name, (role, _, act, permission)) in regulated {
+        if role != "obligation" { continue; }
+        let expected = acts.get(&(signature(name).to_string(), act.clone().unwrap(), "permission".into()));
+        if permission.is_none() && expected.is_some() {
+            return error("InvalidInput", format!("MissingPermissionDual: {name}, {}", expected.unwrap()));
+        }
+        if let Some(dual) = permission {
+            let Some((target_role, _, target_act, _)) = regulated.get(dual) else {
+                return error("InvalidInput", format!("MissingPermissionDual: {name}, {dual}"));
+            };
+            if target_role != "permission" {
+                return error("InvalidInput", format!("MissingPermissionDual: {name}, {dual}"));
+            }
+            if signature(name) != signature(dual) {
+                return error("InvalidInput", format!("DualSortMismatch: {name}, {dual}"));
+            }
+            if act != target_act {
+                return error("InvalidInput", format!("DualActMismatch: {name}, {dual}"));
+            }
+            profile_pairs.push((name.clone(), dual.clone()));
+        }
+    }
+    Ok(profile_pairs)
+}
+
+/// Lean's located decoder (`locatedEnvironmentFields`, Standalone.lean:942-977),
+/// which runs before every family decoder. On the frozen checker lists
+/// (`authoritative`) each fault it finds is the answer (Standalone.lean:1197-1201);
+/// elsewhere only its unknown argument sort is (Standalone.lean:1165-1168,
+/// 1187-1191), and any other fault ends the pass. A cell it skips
+/// (Standalone.lean:957-958) is the family decoder's.
+fn located_pass(
     preds: &serde_json::Map<String, Value>,
+    consts: &serde_json::Map<String, Value>,
     sorts: &serde_json::Map<String, Value>,
     profiles: &[String],
+    authoritative: bool,
 ) -> Result<()> {
     const OPTIONAL: &[&str] = &["defined", "functional", "total", "regulated", "argument_units",
         "instruction_of", "verbalisation", "negative_verbalisation"];
     let has = |p: &str| profiles.iter().any(|q| q == p);
     let (order, data) = (has("order@0"), has("data@0"));
     let maximum = if has("nary@0") { 6 } else { 2 };
+    let fault = |result: Result<()>| if authoritative { result } else { Ok(()) };
+    let present = |entry: &serde_json::Map<String, Value>, required: &[&'static str], optional: &[&'static str]| {
+        required.iter().chain(optional.iter().filter(|k| entry.contains_key(**k))).copied().collect::<Vec<_>>()
+    };
     for entry in preds.values() {
-        let Some(entry) = entry.as_object() else { return Ok(()) };
-        if !entry.contains_key("arguments") || !entry.contains_key("description")
-            || entry.keys().any(|k| k != "arguments" && k != "description" && !OPTIONAL.contains(&k.as_str())) {
-            return Ok(());
+        let Some(object) = entry.as_object() else { return fault(error("InvalidInput", "object expected")) };
+        if let Err(e) = fields(entry, &present(object, &["arguments", "description"], OPTIONAL), "InvalidInput") {
+            return fault(Err(e));
         }
-        let Some(cells) = entry["arguments"].as_array().filter(|a| (1..=maximum).contains(&a.len())) else {
-            return Ok(());
+        let Some(cells) = object["arguments"].as_array().filter(|a| (1..=maximum).contains(&a.len())) else {
+            return fault(error("InvalidInput", format!("predicate arity must be one to {maximum}")));
         };
         let skipped = (!data && cells.contains(&json!("$string"))) || (!order && cells.contains(&json!("$int")));
         if !skipped && cells.iter().any(|cell| !cell.as_str().is_some_and(|s|
                 sorts.contains_key(s) || (order && s == "$int") || (data && s == "$string"))) {
             return error("UnknownSymbol", "unknown predicate argument sort");
         }
-        if let Some(defined) = entry.get("defined") {
-            if fields(defined, &["arguments", "body"], "InvalidInput").is_err() {
-                return Ok(());
+        if let Some(defined) = object.get("defined") {
+            if let Err(e) = fields(defined, &["arguments", "body"], "InvalidInput") {
+                return fault(Err(e));
             }
         }
-        if description(&entry["description"]).is_err() {
-            return Ok(());
+        if let Err(e) = description(&object["description"]) {
+            return fault(Err(e));
+        }
+    }
+    if !authoritative {
+        return Ok(());
+    }
+    for entry in consts.values() {
+        let Some(object) = entry.as_object() else { return error("InvalidInput", "object expected") };
+        let literal = object.get("sort") == Some(&json!("$string"));
+        let required: &[&'static str] = if !literal || object.contains_key("description") {
+            &["sort", "description"]
+        } else {
+            &["sort"]
+        };
+        fields(entry, &present(object, required, &["unit", "verbalisation"]), "InvalidInput")?;
+        if !object["sort"].as_str().is_some_and(|s| sorts.contains_key(s) || (order && s == "$int") || s == "$string") {
+            return error("UnknownSymbol", "unknown constant sort");
         }
     }
     Ok(())
@@ -514,30 +616,50 @@ impl Environment {
         let mut canonical_data = data.clone();
         let mut predicate_flags = BTreeMap::new();
         let mut defined = Vec::new();
-        // The first sort fault Lean's decoders report only after the constants'
-        // fields and sorts, and only after the constants in full.
-        let (mut after_constants, mut after_displays): (Option<&'static str>, Option<&'static str>) = (None, None);
+        // The first sort fault Lean's decoders report only after the constants.
+        let mut after_constants: Option<&'static str> = None;
         let definitions_profile = route && profiles.iter().any(|p| p == "definitions@0");
         let data_profile = route && profiles.iter().any(|p| p == "data@0");
         let layers = preds.values().any(|decl| ["defined", "functional", "total"]
             .iter().any(|key| decl.get(*key).is_some()));
         let table = SortTable::of(route, order, &profiles, layers);
-        if route {
-            located_argument_fault(preds, sorts, &profiles)?;
-        }
+        let listed: Vec<String> = if route { profiles.clone() } else {
+            obj.get("profiles").and_then(Value::as_array).into_iter().flatten()
+                .filter_map(|p| p.as_str().map(str::to_owned)).collect()
+        };
+        located_pass(preds, consts, sorts, &listed, table.frozen)?;
         let refuse_definitions = || if table.refuses_definitions() && preds.values().any(|decl| decl.get("defined").is_some()) {
             error("UnsupportedProfile", "definitions on the order family require an order definition layer")
         } else {
             Ok(())
         };
-        // The order decoder checks its definitions, then the `$string` literals,
-        // before any predicate (lean/VE/Route/Wire.lean:240-245).
-        if table.judge == SortJudge::Order && !table.located {
+        // `checkRegulated` (Standalone.lean:198-203) before the family decoder.
+        let mut early_pairs = None;
+        if table.regulated_first {
+            for (name, decl) in preds {
+                if let Some(raw) = decl.get("regulated") {
+                    let arity = decl.get("arguments").and_then(Value::as_array).map_or(0, Vec::len);
+                    let r = regulation(raw, arity)?;
+                    if let Some(ref phrase) = r.2 {
+                        canonical_data["vocabulary"]["predicates"][name]["regulated"]["act"] = json!(phrase);
+                    }
+                    regulated.insert(name.clone(), r);
+                }
+            }
+            early_pairs = Some(regulation_pairs(&regulated, |name| preds[name]["arguments"].clone())?);
+        }
+        // The order decoder checks its definitions, then the `$string` literals
+        // and their count, before any predicate (lean/VE/Route/Wire.lean:240-247).
+        if table.judge == SortJudge::Order {
             refuse_definitions()?;
-            for decl in consts.values().filter(|decl| decl.get("sort") == Some(&json!("$string"))) {
+            let literals: Vec<_> = consts.values().filter(|decl| decl.get("sort") == Some(&json!("$string"))).collect();
+            for decl in &literals {
                 if let Some(value) = constant_fields(decl, route, reports)?.get("description") {
                     description(value)?;
                 }
+            }
+            if literals.len() > 64 {
+                return error("ResourceLimit", "At most 64 declared $string literals");
             }
         }
         for (name, decl) in preds {
@@ -584,7 +706,6 @@ impl Environment {
                         SortVerdict::Accepted => {}
                         SortVerdict::AtSort(code) => { at_sort.get_or_insert(code); }
                         SortVerdict::AfterConstants(code) => { after_constants.get_or_insert(code); }
-                        SortVerdict::AfterDisplays(code) => { after_displays.get_or_insert(code); }
                     }
                 }
                 signature.push(s.to_owned());
@@ -611,37 +732,12 @@ impl Environment {
             if let Some(code) = at_sort {
                 return sort_fault(code);
             }
-            if let Some(raw) = d.get("regulated") {
-                let r = object(raw, "InvalidInput")?;
-                let role = r.get("role").map(|v| string(v, "InvalidInput")).transpose()?
-                    .ok_or_else(|| Error::new("InvalidInput", "regulated role is required"))?;
-                let default = r.get("default").map(|v| string(v, "InvalidInput")).transpose()?
-                    .ok_or_else(|| Error::new("InvalidInput", "regulated default is required"))?;
-                if default == "unspecified" && ["permission", "obligation", "plain"].contains(&role) {
-                    // norm-defaults 2.1: Rust decodes no norm-defaults@0 environment.
-                    return error("UnsupportedProfile",
-                                 "UnsupportedProfile: unspecified completion requires norm-defaults@0");
-                }
-                if !["permission", "obligation", "plain"].contains(&role)
-                    || !["allow", "deny"].contains(&default) {
-                    return error("InvalidInput", "invalid regulated role or default");
-                }
-                let mut keys = vec!["role", "default"];
-                let act = if role == "plain" { None } else {
-                    keys.push("act");
-                    Some(act_phrase(r.get("act").ok_or_else(|| Error::new("InvalidInput", "act is required"))?,
-                                    signature.len())?)
-                };
-                if role == "obligation" && r.contains_key("permission") {
-                    keys.push("permission");
-                }
-                fields(raw, &keys, "InvalidInput")?;
-                let permission = r.get("permission").map(|v| string(v, "InvalidInput")
-                    .map(str::to_owned)).transpose()?;
-                if let Some(ref phrase) = act {
+            if let (Some(raw), false) = (d.get("regulated"), table.regulated_first) {
+                let r = regulation(raw, signature.len())?;
+                if let Some(ref phrase) = r.2 {
                     canonical_data["vocabulary"]["predicates"][name]["regulated"]["act"] = json!(phrase);
                 }
-                regulated.insert(name.clone(), (role.into(), default.into(), act, permission));
+                regulated.insert(name.clone(), r);
             }
             if has_definition {
                 defined.push((name.clone(), signature.clone(), d["defined"].clone()));
@@ -649,41 +745,10 @@ impl Environment {
             predicates.insert(name.clone(), signature);
             predicate_flags.insert(name.clone(), (functional, total));
         }
-        if regulated.len() > 64 {
-            return error("ResourceLimit", "regulated predicates");
-        }
-        let mut acts = BTreeMap::new();
-        for (name, (role, _, act, _)) in &regulated {
-            if let Some(act) = act {
-                let key = (predicates[name].clone(), act.clone(), role.clone());
-                if acts.insert(key, name.clone()).is_some() {
-                    return error("InvalidInput", format!("DuplicateActRole: {role}, {act}"));
-                }
-            }
-        }
-        let mut profile_pairs = Vec::new();
-        for (name, (role, _, act, permission)) in &regulated {
-            if role != "obligation" { continue; }
-            let expected = acts.get(&(predicates[name].clone(), act.clone().unwrap(), "permission".into()));
-            if permission.is_none() && expected.is_some() {
-                return error("InvalidInput", format!("MissingPermissionDual: {name}, {}", expected.unwrap()));
-            }
-            if let Some(dual) = permission {
-                let Some((target_role, _, target_act, _)) = regulated.get(dual) else {
-                    return error("InvalidInput", format!("MissingPermissionDual: {name}, {dual}"));
-                };
-                if target_role != "permission" {
-                    return error("InvalidInput", format!("MissingPermissionDual: {name}, {dual}"));
-                }
-                if predicates[name] != predicates[dual] {
-                    return error("InvalidInput", format!("DualSortMismatch: {name}, {dual}"));
-                }
-                if act != target_act {
-                    return error("InvalidInput", format!("DualActMismatch: {name}, {dual}"));
-                }
-                profile_pairs.push((name.clone(), dual.clone()));
-            }
-        }
+        let profile_pairs = match early_pairs {
+            Some(pairs) => pairs,
+            None => regulation_pairs(&regulated, |name| json!(predicates[name]))?,
+        };
         let mut constants = BTreeMap::new();
         let display = |d: &serde_json::Map<String, Value>, s: &str| -> Result<()> {
             if let Some(value) = d.get("description") {
@@ -701,43 +766,19 @@ impl Environment {
         };
         // Each family decoder reads a constant's displays before its sort
         // (Route/Wire.lean:193-196, Order/Wire.lean:76-83, Core/Bridge.lean:41-51).
-        // The frozen families' located decoder checks each constant's fields and
-        // sort alone first (Standalone.lean:969-977); the family decoder then
-        // reports a deferred sort before any constant's display.
-        let located = table.located;
-        let mut displays = Vec::new();
         for (name, decl) in consts {
             let d = constant_fields(decl, route, reports)?;
-            if !located {
-                display(d, d["sort"].as_str().unwrap_or(""))?;
-            }
+            display(d, d["sort"].as_str().unwrap_or(""))?;
             let s = string(&d["sort"], table.constant_fault())?;
             if !sorts.contains_key(s) && !table.constant_admits(s) {
                 return error(table.constant_fault(), "unknown constant sort");
             }
-            if located { displays.push((d, s)); }
             constants.insert(name.clone(), s.into());
-        }
-        if located {
-            // The order decoder's definitions and literals come first here too
-            // (Route/Wire.lean:240-245).
-            if table.judge == SortJudge::Order {
-                refuse_definitions()?;
-                for (d, s) in displays.iter().filter(|(_, s)| *s == "$string") {
-                    display(d, s)?;
-                }
-            }
-            if let Some(code) = after_constants {
-                return sort_fault(code);
-            }
-            for (d, s) in displays {
-                display(d, s)?;
-            }
         }
         if route && constants.values().filter(|s| *s == "$string").count() > 64 {
             return error("ResourceLimit", "At most 64 declared $string literals");
         }
-        if let Some(code) = after_constants.or(after_displays) {
+        if let Some(code) = after_constants {
             return sort_fault(code);
         }
         let version = if route {

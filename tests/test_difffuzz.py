@@ -199,8 +199,9 @@ SORT_TABLE_CONSTANTS = {"none": {}, "malformed": {"bad": []},
 # The forms the adversarial hunts found (REPORT.md section 25), each beside an unflagged `$int` or `$string`
 # predicate `p`: a constant whose sort is not a string; a `$string` literal with an empty description, which
 # the order decoder reads before any predicate; the predicate's own empty description or verbalisation, which
-# every family decoder reads before its sorts; a definition over the built-in sort beside `q` over it; and a
-# ternary signature.
+# every family decoder reads before its sorts; a definition over the built-in sort beside `q` over it; a
+# ternary signature (hunt 1); 65 literals, whose limit the order decoder checks before any predicate; and a
+# malformed regulated block on a later predicate, which the norms routes check before every sort (hunt 2).
 SORT_TABLE_FORMS = {
     "constant-sort-not-a-string": lambda p: {"predicates": {"p": p}, "constants": {"c": {"sort": 7, "description": "d"}}},
     "literal-empty-description": lambda p: {"predicates": {"p": p},
@@ -211,6 +212,12 @@ SORT_TABLE_FORMS = {
                                                                 "body": ["unary", "q", ["var", 0]]}},
                                          "q": p}},
     "ternary": lambda p: {"predicates": {"p": {**p, "arguments": ["thing", "thing", *p["arguments"]]}}},
+    "literal-limit": lambda p: {"predicates": {"p": p}, "constants": {f"l{i}": {"sort": "$string"} for i in range(65)}},
+    "bad-regulated-later": lambda p: {"predicates": {"a": p, "b": {"arguments": ["thing"], "description": "d",
+                                                                   "regulated": {"role": "bogus", "default": "allow"}}}},
+    "regulated": lambda p: {"predicates": {"a": {**p, "regulated": {"role": "plain", "default": "allow"}},
+                                           "b": {"arguments": ["thing"], "description": "d",
+                                                 "regulated": {"role": "bogus", "default": "allow"}}}},
 }
 
 
@@ -223,7 +230,7 @@ def _sort_cell(head, sort, constants, flagged, form=None):
     vocabulary = {"predicates": {"p": predicate}, "constants": deepcopy(SORT_TABLE_CONSTANTS[constants])}
     if form is not None:
         vocabulary = {"constants": {}, **SORT_TABLE_FORMS[form](predicate)}
-    uses_thing = flagged or sort == "thing" or form == "ternary"
+    uses_thing = flagged or sort == "thing" or form in ("ternary", "bad-regulated-later", "regulated")
     return {**head, "vocabulary": {"sorts": {"thing": {"description": "d"}} if uses_thing else {}, **vocabulary}}
 
 
