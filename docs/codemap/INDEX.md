@@ -13,7 +13,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/eff-tests/](docs__eff-tests.md) — 1 modules — -
 - [docs/events-time-causation/](docs__events-time-causation.md) — 1 modules — -
 - [docs/infra/](docs__infra.md) — 11 modules — -
-- [docs/judgment-terms/](docs__judgment-terms.md) — 5 modules — -
+- [docs/judgment-terms/](docs__judgment-terms.md) — 3 modules — -
 - [docs/lean-first/b0/](docs__lean-first__b0.md) — 1 modules — -
 - [docs/lean-first/b1/](docs__lean-first__b1.md) — 2 modules — -
 - [docs/lean-first/b10a/](docs__lean-first__b10a.md) — 4 modules — -
@@ -75,7 +75,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Ask/](lean__VE__Ask.md) — 15 modules — -
 - [lean/VE/Attribution/](lean__VE__Attribution.md) — 15 modules — -
 - [lean/VE/Calc/](lean__VE__Calc.md) — 26 modules — -
-- [lean/VE/Cardinality/](lean__VE__Cardinality.md) — 14 modules — -
+- [lean/VE/Cardinality/](lean__VE__Cardinality.md) — 15 modules — -
 - [lean/VE/Closure/](lean__VE__Closure.md) — 14 modules — -
 - [lean/VE/Compose/](lean__VE__Compose.md) — 6 modules — -
 - [lean/VE/Core/](lean__VE__Core.md) — 22 modules — -
@@ -111,20 +111,20 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Words/](lean__VE__Words.md) — 2 modules — -
 - [paper/](paper.md) — 10 modules — Drafted by GPT-6 Astra on `paper/v1`, after merging `ve-integration`.
 - [research/](research.md) — 2 modules — -
-- [rust/](rust.md) — 31 modules — -
+- [rust/](rust.md) — 30 modules — -
 - [tests/ part 1](tests--part-1.md) — 95 modules — -
 - [tests/ part 2](tests--part-2.md) — 91 modules — -
 - [tests/ part 3](tests--part-3.md) — 89 modules — -
 - [tests/ part 4](tests--part-4.md) — 90 modules — -
 - [tests/ part 5](tests--part-5.md) — 82 modules — -
-- [tests/ part 6](tests--part-6.md) — 86 modules — -
+- [tests/ part 6](tests--part-6.md) — 85 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 3 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 101 modules — -
 - [tools/ part 2](tools--part-2.md) — 2 modules — -
 - [tools/bench/](tools__bench.md) — 7 modules — -
 - [tools/evidence/](tools__evidence.md) — 7 modules — The evidence toolkit (docs/ARCHITECTURE-REVIEW-2026-10.md, T6 and AR-5a): one implementation of each batch measurement, so a batch writes `docs/<track>/<batch>…
 - [tools/hooks/](tools__hooks.md) — 1 modules — `pre-commit` runs fast checks on the **staged** content of a commit.
-- [usecases/](usecases.md) — 59 modules — -
+- [usecases/](usecases.md) — 53 modules — -
 - [ve/](ve.md) — 78 modules — VE v0 experimental language, finite semantics and checked argument API.
 - [ve/adapters/](ve__adapters.md) — 6 modules — Audited statement-layer and data adapters.
 - [ve/assist/](ve__assist.md) — 17 modules — ``ve assist``: interactive, sentence-level assisted formalisation.

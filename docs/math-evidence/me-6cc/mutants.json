@@ -1,0 +1,19 @@
+{"method": "each mutant applied alone to the file named, on the code of 3e82f060d; lake build VE.Calc.UnitsExamples (the guard named fails), then one Lean file importing VE.Calc.Units only printed every row of tests/calc_units_fixtures.py that differs (the rows named). pytest stops at the failed lake build, so the rows are named this way, as in me-6c; the table is the one test_fixture[...] reads. Baseline: no row differs. Restored; lake build VE.Calc.UnitsExamples passes.",
+ "mutants": [
+  {"id": "guard-dropped", "behaviour": "a non-literal factor is must be a literal (this is main's behaviour)",
+   "file": "lean/VE/Calc/Units.lean", "definition": "VE.Calc.Units.decodeFactor",
+   "change": "if shaped then throw e -> throw e",
+   "guard": "sci", "tests": ["sci-shape-pow-65", "sci-shape-lit-41", "sci-shape-rounds-41", "sci-shape-stated-41"], "killed": true},
+  {"id": "guard-every-list", "behaviour": "only a sci list is a literal list",
+   "file": "lean/VE/Calc/Units.lean", "definition": "VE.Calc.Units.decodeFactor",
+   "change": ".arr xs => (xs.toList matches .str \"sci\" :: _) -> .arr _ => true",
+   "guard": "sci", "tests": ["sci-shape-pow-65", "sci-shape-lit-41", "sci-shape-rounds-41"], "killed": true},
+  {"id": "str-left-out", "behaviour": "a string factor keeps limit 6",
+   "file": "lean/VE/Calc/Units.lean", "definition": "VE.Calc.Units.decodeFactor",
+   "change": ".str _ => true -> .str _ => false",
+   "guard": "refuse", "tests": ["refuse-digits"], "killed": true},
+  {"id": "guard-exact-sci", "behaviour": "every list that starts with sci keeps its limits, malformed ones included",
+   "file": "lean/VE/Calc/Units.lean", "definition": "VE.Calc.Units.decodeFactor",
+   "change": ".str \"sci\" :: _ -> [.str \"sci\", _, _]",
+   "guard": "sci", "tests": ["sci-shape-sci-short-41"], "killed": true}
+ ]}

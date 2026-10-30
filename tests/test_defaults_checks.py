@@ -17,7 +17,8 @@ from pathlib import Path
 import pytest
 
 from tests import check_mutants, test_defaults_lean
-from tests.test_defaults_answer import BOTH_SIDES
+from tests import test_defaults_answer
+from tests.test_defaults_answer import BOTH_SIDES, NOT_BOTH_SIDES
 from ve import defaults
 from ve.document import cli
 
@@ -70,6 +71,18 @@ def test_review_f1_every_check_is_needed_by_a_both_sides_test():
     assert survivors == [], "\n".join(survivors)
 
 
+def test_review_df_1bbb_f2_every_binding_test_is_run_against_the_seeded_bugs():
+    """BOTH_SIDES is every test of tests/test_defaults_answer.py, once per parameter set, but the reasoned exclusions,
+    each a test that exists (review df-1bbb F2: the hand-kept list had left the deciders test out)."""
+    tests = {name for name, value in vars(test_defaults_answer).items() if name.startswith("test_") and callable(value)}
+    assert set(NOT_BOTH_SIDES) < tests and all(NOT_BOTH_SIDES.values())
+    run = {test.__name__.split("[")[0] for test in BOTH_SIDES}
+    assert run == tests - set(NOT_BOTH_SIDES)
+    assert {"test_deciders_are_typed_and_bound_on_both_rows", "test_deciders_from_every_source_of_the_request",
+            "test_a_holistic_ranking_without_its_decider_names_unstated"} <= run
+    situation = [test for test in BOTH_SIDES if test.__name__.startswith("test_situation_filling_tables")]
+    assert len(situation) == 6 == len({test.__name__ for test in situation})
+
 def test_review_f9_a_strict_answer_lean_rejected_is_never_shown():
     """PROBE F9's seeded bug: `ask` reading Lean's `valid` as `is not None` shows the strict answer for a certificate
     Lean rejected, which the both-sides test of the strict answer finds."""
@@ -78,8 +91,8 @@ def test_review_f9_a_strict_answer_lean_rejected_is_never_shown():
     assert source.count(site) == 1
     namespace = {"__name__": defaults.__name__, "__package__": defaults.__package__, "__file__": str(path)}
     exec(compile(source.replace(site, '["valid"] is not None'), str(path), "exec"), namespace)
-    test = BOTH_SIDES[-1]
-    assert test.__name__ == "test_strict_answer_only_when_lean_says_valid" and not _fails(test)
+    [test] = [test for test in BOTH_SIDES if test.__name__ == "test_strict_answer_only_when_lean_says_valid"]
+    assert not _fails(test)
     with pytest.MonkeyPatch.context() as patch:
         patch.setattr(defaults, "ask", namespace["ask"])
         assert _fails(test)
