@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 40080,
+    "total_lines": 40090,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1893,12 +1893,12 @@
       },
       {
         "file": "lean/VE/Scope/Wire.lean",
-        "lines": 154,
-        "sha256": "618b837c4a7fc2398c732805ff271357fd1def4719dc33697e6e3d3fb867ad31",
+        "lines": 164,
+        "sha256": "3b4a6dd0e503cd19551fab1d3f25edaa3e028ea8e1dc2da351291469660d165a",
         "ranges": [
           [
             1,
-            154
+            164
           ]
         ],
         "declarations": [
@@ -1916,13 +1916,14 @@
           "decodeParts",
           "spanIn",
           "layoutOf",
+          "illFormed",
           "decodeBlock",
           "statusOf",
           "changers",
           "byStatus",
           "foldGovernors"
         ],
-        "reason": "scope@0's front matter in the document mode (SC-1b, scope spec 3 and 1.6): the `scope` block's wire (unknown members refused, optional members absent, never null; each reach and effect; list names; anchors through discourse's decoder), the layout of the document's units from their spans clamped to the source, and the fold of a governor unit's status into the document mode's answer with its bytes by status; full file pinned conservatively"
+        "reason": "scope@0's front matter in the document mode (SC-1b, scope spec 3 and 1.6): the `scope` block's wire (unknown members refused, optional members absent, never null; each reach and effect; list names; anchors through discourse's decoder), the layout of the document's units from their spans clamped to the source, and the fold of a governor unit's status into the document mode's answer with its bytes by status; full file pinned conservatively; sc-1af: `illFormed`, the boundary that refuses a document `jsonWF?` fails before `decodeBlock` reads the block"
       },
       {
         "file": "lean/VE/Cardinality/Wire.lean",
