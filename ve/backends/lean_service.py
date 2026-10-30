@@ -94,7 +94,8 @@ from .service_schema import MODES, Invalid, check_handshake, check_response
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_EXECUTABLE = ROOT / "lean/.lake/build/bin/ve_service"
-BUILD_LOCK = ROOT / "lean/checkers.lock"
+# The pins a build must be in: None, the tree's `lean/checkers.lock` as `build_lock` reads it; a test's file otherwise.
+BUILD_LOCK: Path | None = None
 BATCH_CASES = 256
 BATCH_BYTES = 4 * 1024 * 1024
 STARTUP_TIMEOUT = 30.0
@@ -345,6 +346,18 @@ _hashes: dict[tuple, str] = {}
 _HEX64 = re.compile(r"[0-9a-f]{64}")
 
 
+def build_lock() -> Path:
+    """The pin file of the tree: `lean/checkers.lock` through `inventory_path` (tools/lean_statements.py), the
+    local overlay's copy when it is fresh, else the committed one (docs/infra/gen-inv-design/DESIGN.md 4)."""
+    if BUILD_LOCK is not None:
+        return BUILD_LOCK
+    tools = str(ROOT / "tools")
+    if tools not in sys.path:
+        sys.path.append(tools)
+    from lean_statements import inventory_path
+    return inventory_path("lean/checkers.lock", ROOT)
+
+
 def executable_sha256(path: Path) -> str:
     """SHA-256 of the executable file, cached while its filesystem identity (device, inode, size,
     modification and change times) is unchanged: in this process, and across processes in the sidecar
@@ -484,10 +497,12 @@ class LeanService:
             elif self.allow_unlisted_build:
                 allowed = None
             else:
+                lock = BUILD_LOCK or ROOT / "lean/checkers.lock"
                 try:
-                    allowed = set(json.loads(BUILD_LOCK.read_text())["ve_service"])
-                except (OSError, ValueError, KeyError, TypeError):
-                    raise CheckerUnavailable(f"CheckerUnavailable: invalid build lock {BUILD_LOCK}") from None
+                    lock = build_lock()
+                    allowed = set(json.loads(lock.read_text())["ve_service"])
+                except (ImportError, OSError, ValueError, KeyError, TypeError):
+                    raise CheckerUnavailable(f"CheckerUnavailable: invalid build lock {lock}") from None
             build = self.build
             if allowed is not None and build not in allowed:
                 raise CheckerUnavailable(f"CheckerUnavailable: {self.executable} has unlisted build {build}, "
