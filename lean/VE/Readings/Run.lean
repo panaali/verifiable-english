@@ -687,19 +687,20 @@ def admissionMemoTrim (entries : List AdmissionMemoEntry) : List AdmissionMemoEn
     bytes := bytes + e.bytes
   return kept
 
-/-- A hit returns exactly the stored result of `admitComponents`; a miss calls that same function.
-The identity is the full decoded triple, so no hash collision or separator ambiguity can alias cases. -/
-def admitComponentsMemo (memo : AdmissionMemo) (kind : String) (environment document : Json)
-    (parts : List (String × Json × Json)) :
-    Except String ((List (String × Json × Json × Json × ComponentAdmission)) × AdmissionMemo) := do
-  if let some e := memo.entries.find? (·.matches kind environment document) then
-    let rest := memo.entries.filter (!·.matches kind environment document)
-    return (e.ready, { memo with entries := e :: rest, hits := memo.hits + 1 })
-  let ready ← admitComponents kind parts
+/-- A hit returns the stored entry; only a miss runs `admit`, which counts its runs in `admissions`. The identity is
+the full decoded triple, so no hash collision or separator ambiguity can alias cases. -/
+def admitComponentsMemo (kind : String) (environment document : Json)
+    (admit : Unit → ExceptT String (StateM AdmissionMemo) (List (String × Json × Json × Json × ComponentAdmission))) :
+    ExceptT String (StateM AdmissionMemo) (List (String × Json × Json × Json × ComponentAdmission)) := do
+  if let some e := (← get).entries.find? (·.matches kind environment document) then
+    modify fun m =>
+      { m with entries := e :: m.entries.filter (!·.matches kind environment document), hits := m.hits + 1 }
+    return e.ready
+  let ready ← admit ()
   let bytes := (Json.arr #[.str kind, environment, document]).compress.utf8ByteSize
   let entry := { kind, environment, document, bytes, ready : AdmissionMemoEntry }
-  let entries := if bytes > admissionMemoMaxBytes then memo.entries else admissionMemoTrim (entry :: memo.entries)
-  return (ready, { memo with entries, admissions := memo.admissions + 1 })
+  unless bytes > admissionMemoMaxBytes do modify fun m => { m with entries := admissionMemoTrim (entry :: m.entries) }
+  return ready
 
 /-- A JSON object as itself, anything else as the empty object: a case's environment and documents are objects once
     admitted, and the row says so in its type (`elaborate_components`), so the client never reads another value. -/
@@ -767,33 +768,34 @@ def runCaseReported (j : Json) : Json :=
     else runLower j
   | _ => runLower j
 
-/-- Service-only stateful path. All answers still use `runAdmitted` and every miss uses
-`admitComponents`; the pure `runCaseReported` remains the reference runner. -/
+/-- Service-only stateful path. All answers still use `runAdmitted` and every miss uses `admitComponents`; the
+pure `runCaseReported` remains the reference runner. An error answer keeps the memo's admissions and hits. -/
 def runCaseReportedMemo (memo : AdmissionMemo) (j : Json) : Json × AdmissionMemo :=
-  let run : Except String (Json × AdmissionMemo) := do
+  let run : ExceptT String (StateM AdmissionMemo) Json := do
     let kind ← VE.Route.Run.caseKind j
     unless kind == "readings-validate" || kind == "readings-separate" || s2Kinds.contains kind do
-      return (runLower j, memo)
+      return runLower j
     let id ← stringField j "id"
     let environment ← j.getObjVal? "environment"
     let document ← j.getObjVal? "document"
     let parts ← splitCase environment document
-    if parts.length <= 1 then return (runCaseReported j, memo)
+    if parts.length <= 1 then return runCaseReported j
     let named ← componentOfCase j
-    if kind == "readings-verdicts" && named.isNone then return (runCaseReported j, memo)
-    let (ready, next) ← admitComponentsMemo memo kind environment document parts
+    if kind == "readings-verdicts" && named.isNone then return runCaseReported j
+    let ready ← admitComponentsMemo kind environment document fun _ => do
+      modify fun m => { m with admissions := m.admissions + 1 }; admitComponents kind parts
     if named.isNone && (kind == "readings-validate" || kind == "readings-elaborate") then
-      return (← runAdmittedComponents j id kind ready, next)
+      return ← runAdmittedComponents j id kind ready
     let c := named.getD "main"
     match ready.find? (·.1 == c) with
-    | some p => return (← runAdmitted j id kind p.2.2.2.2, next)
+    | some p => return ← runAdmitted j id kind p.2.2.2.2
     | none => throw (unknownComponent c)
-  match run with
-  | .ok answer => answer
-  | .error message =>
+  match run.run.run memo with
+  | (.ok answer, next) => (answer, next)
+  | (.error message, next) =>
     match VE.Route.Run.caseKind j with
-    | .error _ => (runLower j, memo)
+    | .error _ => (runLower j, next)
     | .ok _ =>
-      (Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message)], memo)
+      (Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message)], next)
 
 end VE.Readings.Run
