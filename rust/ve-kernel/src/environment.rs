@@ -120,6 +120,170 @@ fn act_phrase(value: &Value, arity: usize) -> Result<String> {
     Ok(act)
 }
 
+/// The checker family of a `ve.core@0.2` profile list (`VE.Route.Gate.classify`).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum Family {
+    Fol,
+    Order,
+    Nary,
+}
+
+/// The Lean decoder that judges an environment's argument and constant sorts,
+/// chosen as Lean's `environment` mode chooses it
+/// (lean/VE/Service/Standalone.lean `reportedEnvironment`, `validatedLayerEnvironment`,
+/// `validated`). The one table of every sort fault: the decoder loop asks it and
+/// decides nothing about a sort itself.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum SortJudge {
+    /// `ve.core@0`, `ve.core@0.1`: the frozen decoders (`Standalone.decodeLegacy`);
+    /// `order` is the frozen order envelope.
+    Legacy { order: bool },
+    /// `ve.core@0.2` over the frozen checker profiles (`frozenFamilyProfiles`,
+    /// Standalone.lean:350): the located decoder checks the constants before the
+    /// family decoder judges a cell it skipped (Standalone.lean:957-958).
+    Located(Family),
+    /// `VE.Route.Wire.decodeVocabulary` (lean/VE/Route/Wire.lean:170-172, 196): composed
+    /// fol and closure lists, the norms route, and soft-norms@0, which decodes its
+    /// vocabulary without the checker profiles (lean/VE/SoftNorms/Phases.lean:137-154).
+    Route,
+    /// `VE.Order.Wire.decodeEnvironment` (lean/VE/Order/Wire.lean:74, 83).
+    Order,
+    /// `VE.Core.Bridge.decodeEnvironment` (lean/VE/Core/Bridge.lean:38, 51).
+    Core,
+    /// `VE.Core.Layers.decodeLayered` (lean/VE/Core/Layers.lean:64-80, 229-232): the route
+    /// decoder over the binary undefined predicates and the constants, then the core decoder.
+    Layered,
+}
+
+/// Lean's answer for one undeclared argument cell.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum SortVerdict {
+    Accepted,
+    /// This code at the cell, before the constants.
+    AtSort(&'static str),
+    /// This code once the constants are checked.
+    AfterConstants(&'static str),
+}
+
+fn sort_fault<T>(code: &'static str) -> Result<T> {
+    error(code, if code == "InvalidInput" { "invalid predicate signature" } else { "unknown predicate argument sort" })
+}
+
+const CHECKER_PROFILES: &[&str] =&["relational-fol@0", "closure@0", "nary@0", "order@0"];
+
+impl SortJudge {
+    /// `layers`: some predicate carries `defined`, `functional` or `total`
+    /// (`VE.Core.Layers.usesLayers`, Standalone.lean:208).
+    pub(crate) fn of(route: bool, legacy_order: bool, profiles: &[String], layers: bool) -> Self {
+        if !route {
+            return SortJudge::Legacy { order: legacy_order };
+        }
+        let has = |p: &str| profiles.iter().any(|q| q == p);
+        let family = if has("order@0") {
+            Family::Order
+        } else if has("nary@0") {
+            Family::Nary
+        } else {
+            Family::Fol
+        };
+        if !profiles.is_empty() && profiles.iter().all(|p| CHECKER_PROFILES.contains(&p.as_str())) {
+            return SortJudge::Located(family);
+        }
+        if has("soft-norms@0") {
+            return SortJudge::Route;
+        }
+        match family {
+            Family::Order => SortJudge::Order,
+            Family::Nary if layers => SortJudge::Layered,
+            Family::Nary => SortJudge::Core,
+            Family::Fol => SortJudge::Route,
+        }
+    }
+
+    /// The verdict on an undeclared cell `sort` of a predicate of `arity`
+    /// (`defined`: it carries a definition), under `data@0` when `data`.
+    pub(crate) fn argument(self, sort: &str, data: bool, arity: usize, defined: bool) -> SortVerdict {
+        use SortVerdict::*;
+        match self {
+            // Bridge.lean:44, Order/Wire.lean:74: only the order envelope adds `$int`.
+            SortJudge::Legacy { order } => if order && sort == "$int" { Accepted } else { AtSort("UnknownSymbol") },
+            // The family decoder after the located one: the route decoder's
+            // "invalid signature" (Route/Wire.lean:170-172), the order and core
+            // decoders' unknown sort (Order/Wire.lean:74, Core/Bridge.lean:38).
+            SortJudge::Located(Family::Fol) => AfterConstants("InvalidInput"),
+            SortJudge::Located(Family::Order) | SortJudge::Order if sort == "$int" => Accepted,
+            SortJudge::Located(_) => AfterConstants("UnknownSymbol"),
+            SortJudge::Route => if data && sort == "$string" { Accepted } else { AtSort("InvalidInput") },
+            SortJudge::Order | SortJudge::Core => AtSort("UnknownSymbol"),
+            SortJudge::Layered => match SortJudge::Route.argument(sort, data, arity, defined) {
+                AtSort(code) if arity <= 2 && !defined => AtSort(code),
+                _ => AfterConstants("UnknownSymbol"),
+            },
+        }
+    }
+
+    /// Whether an undeclared constant sort is admitted: `$string` literals
+    /// everywhere on the route, `$int` under the order decoders.
+    pub(crate) fn constant_admits(self, sort: &str) -> bool {
+        match self {
+            SortJudge::Legacy { order } => order && sort == "$int",
+            SortJudge::Located(family) => sort == "$string" || (family == Family::Order && sort == "$int"),
+            SortJudge::Order => sort == "$string" || sort == "$int",
+            SortJudge::Route | SortJudge::Core | SortJudge::Layered => sort == "$string",
+        }
+    }
+
+    /// The code of an undeclared constant sort: the route decoder's
+    /// "unknown constant sort" (Route/Wire.lean:196), else the shared
+    /// `constantSort` validator's (Bridge.lean:58).
+    pub(crate) fn constant_fault(self) -> &'static str {
+        match self {
+            SortJudge::Route | SortJudge::Layered => "InvalidInput",
+            _ => "UnknownSymbol",
+        }
+    }
+}
+
+/// The located decoder's pass over the predicates (Standalone.lean:942-967), which
+/// precedes every family decoder on `ve.core@0.2`: a cell it does not skip
+/// (Standalone.lean:957-958) and that it does not admit is UnknownSymbol, unless an
+/// earlier located fault ends the pass first.
+fn located_argument_fault(
+    preds: &serde_json::Map<String, Value>,
+    sorts: &serde_json::Map<String, Value>,
+    profiles: &[String],
+) -> Result<()> {
+    const OPTIONAL: &[&str] = &["defined", "functional", "total", "regulated", "argument_units",
+        "instruction_of", "verbalisation", "negative_verbalisation"];
+    let has = |p: &str| profiles.iter().any(|q| q == p);
+    let (order, data) = (has("order@0"), has("data@0"));
+    let maximum = if has("nary@0") { 6 } else { 2 };
+    for entry in preds.values() {
+        let Some(entry) = entry.as_object() else { return Ok(()) };
+        if !entry.contains_key("arguments") || !entry.contains_key("description")
+            || entry.keys().any(|k| k != "arguments" && k != "description" && !OPTIONAL.contains(&k.as_str())) {
+            return Ok(());
+        }
+        let Some(cells) = entry["arguments"].as_array().filter(|a| (1..=maximum).contains(&a.len())) else {
+            return Ok(());
+        };
+        let skipped = (!data && cells.contains(&json!("$string"))) || (!order && cells.contains(&json!("$int")));
+        if !skipped && cells.iter().any(|cell| !cell.as_str().is_some_and(|s|
+                sorts.contains_key(s) || (order && s == "$int") || (data && s == "$string"))) {
+            return error("UnknownSymbol", "unknown predicate argument sort");
+        }
+        if let Some(defined) = entry.get("defined") {
+            if fields(defined, &["arguments", "body"], "InvalidInput").is_err() {
+                return Ok(());
+            }
+        }
+        if description(&entry["description"]).is_err() {
+            return Ok(());
+        }
+    }
+    Ok(())
+}
+
 #[derive(Clone, Debug)]
 pub struct Environment {
     closure: bool,
@@ -330,8 +494,16 @@ impl Environment {
         let mut canonical_data = data.clone();
         let mut predicate_flags = BTreeMap::new();
         let mut defined = Vec::new();
-        let mut invalid_builtin_signature = false;
+        // The first fault Lean's family decoder reports only after the constants.
+        let mut deferred_sort_fault: Option<&'static str> = None;
         let definitions_profile = route && profiles.iter().any(|p| p == "definitions@0");
+        let data_profile = route && profiles.iter().any(|p| p == "data@0");
+        let layers = preds.values().any(|decl| ["defined", "functional", "total"]
+            .iter().any(|key| decl.get(*key).is_some()));
+        let judge = SortJudge::of(route, order, &profiles, layers);
+        if route {
+            located_argument_fault(preds, sorts, &profiles)?;
+        }
         for (name, decl) in preds {
             let flagged = decl.get("functional").is_some() || decl.get("total").is_some();
             if flagged && decl.get("defined").is_some() {
@@ -353,8 +525,10 @@ impl Environment {
             }
             let mut keys = vec!["arguments", "description"];
             if has_definition { keys.push("defined"); }
-            if decl.get("functional").is_some() { keys.push("functional"); }
-            if decl.get("total").is_some() { keys.push("total"); }
+            // The order decoder has no data flag fields (Order/Wire.lean:66).
+            let flag_fields = !matches!(judge, SortJudge::Order);
+            if flag_fields && decl.get("functional").is_some() { keys.push("functional"); }
+            if flag_fields && decl.get("total").is_some() { keys.push("total"); }
             if soft && decl.get("instruction_of").is_some() { keys.push("instruction_of"); }
             let d = entry_fields(decl, &keys, true,
                 route && profiles.iter().any(|p| p == "norms@0"))?;
@@ -365,35 +539,21 @@ impl Environment {
                 .ok_or_else(|| Error::new("InvalidInput", format!("predicate arity must be one to {maximum_arity}")))?;
             let mut signature = Vec::new();
             for arg in args {
-                let s = string(arg, "UnknownSymbol")?;
-                if !sorts.contains_key(s) && !(order && s == "$int")
-                    && !(route && !order && profiles.iter().any(|p| p == "data@0") && s == "$string") {
-                    if s == "$string" || s == "$int" {
-                        // The exact order route validates constants first.
-                        // Composed order routes reject $string here; other
-                        // route families defer unsupported built-ins too.
-                        let exact_order_route = profiles == ["order@0", "relational-fol@0"];
-                        if !route || (order && !exact_order_route) {
-                            return error("UnknownSymbol", "unknown predicate argument sort");
+                let s = arg.as_str().unwrap_or("");
+                if !arg.is_string() || !sorts.contains_key(s) {
+                    match judge.argument(s, data_profile, args.len(), has_definition) {
+                        // `""` (a cell that is not a string) is never accepted.
+                        SortVerdict::Accepted => {}
+                        SortVerdict::AtSort(code) => return sort_fault(code),
+                        SortVerdict::AfterConstants(code) => {
+                            deferred_sort_fault.get_or_insert(code);
                         }
-                        // The unsupported built-in signature is decided after
-                        // the constants, as in Lean's environment decoder.
-                        invalid_builtin_signature = true;
-                    } else {
-                        return error("UnknownSymbol", "unknown predicate argument sort");
                     }
                 }
                 signature.push(s.to_owned());
             }
             if flagged && signature.len() != 2 {
                 return error("InvalidInput", "Functional and total flags require a binary predicate");
-            }
-            if flagged && signature.iter().any(|s| s == "$int") {
-                return error("UnsupportedProfile", "Data flags on $int slots are not supported");
-            }
-            if order && route && profiles.iter().any(|p| p == "data@0")
-                && (flagged || signature.iter().any(|s| s == "$string")) {
-                return error("UnsupportedProfile", "Data attributes on the order family are not enabled");
             }
             let functional = match d.get("functional") {
                 None => false,
@@ -492,8 +652,8 @@ impl Environment {
             if reports && decl.get("verbalisation").is_some() { keys.push("verbalisation"); }
             let d = fields(decl, &keys, "InvalidInput")?;
             let s = string(&d["sort"], "UnknownSymbol")?;
-            if !sorts.contains_key(s) && !(order && s == "$int") && !(route && s == "$string") {
-                return error("UnknownSymbol", "unknown constant sort");
+            if !sorts.contains_key(s) && !judge.constant_admits(s) {
+                return error(judge.constant_fault(), "unknown constant sort");
             }
             if let Some(value) = d.get("description") {
                 description(value)?;
@@ -511,12 +671,8 @@ impl Environment {
         if route && constants.values().filter(|s| *s == "$string").count() > 64 {
             return error("ResourceLimit", "At most 64 declared $string literals");
         }
-        if invalid_builtin_signature {
-            return if order {
-                error("UnknownSymbol", "unknown predicate argument sort")
-            } else {
-                error("InvalidInput", "invalid predicate signature")
-            };
+        if let Some(code) = deferred_sort_fault {
+            return sort_fault(code);
         }
         let version = if route {
             format!("v0.2:{}", profiles.join(","))
@@ -556,6 +712,19 @@ impl Environment {
                     entry_fields(decl, &keys, true,
                         route && env.profiles.iter().any(|p| p == "norms@0"))?;
                 }
+            }
+        }
+        // soft-norms@0 phase 3, after the vocabulary it decodes without the
+        // checker profiles (lean/VE/SoftNorms/Phases.lean:195-203).
+        if soft {
+            if env.profiles.iter().any(|p| ["closure@0", "nary@0", "order@0"].contains(&p.as_str())) {
+                return error("UnsupportedProfile", "the norms route admits FOL documents only");
+            }
+            if !env.definitions.is_empty() {
+                return error("UnsupportedProfile", "norms route with definitions is not implemented");
+            }
+            if env.predicate_flags.values().any(|(functional, total)| *functional || *total) {
+                return error("UnsupportedProfile", "norms route with data flags is not implemented");
             }
         }
         Ok(env)

@@ -12,6 +12,7 @@ genuine row dropped or retyped is a runner that did not answer.
 from __future__ import annotations
 
 from copy import deepcopy
+import itertools
 import json
 from pathlib import Path
 import re
@@ -183,6 +184,94 @@ def test_order_routes_reject_string_predicate_sort_before_constants(built):
                            else answer["outcome"] == "ok" for answer in answers.values()), answers
     finally:
         surface.close()
+
+
+V02 = {"language": "ve.core@0.2", "spec_revision": "ve-v0.2-expand2-2026-09-25"}
+FROZEN_HEADS = ({"language": "ve.core@0", "profile": "relational-fol@0", "spec_revision": "ve-v0-draft-2026-09-20"},
+                {"language": "ve.core@0.1", "profiles": ["order@0", "relational-fol@0"],
+                 "spec_revision": "ve-v0.1-order-2026-09-22"},
+                {"language": "ve.core@0.1", "profiles": ["closure@0", "relational-fol@0"],
+                 "spec_revision": "ve-v0.1-closure-2026-09-21"})
+# A malformed constant, and one of an undeclared sort: its code tells a sort fault at the predicate from one
+# Lean reports only after the constants.
+SORT_TABLE_CONSTANTS = {"none": {}, "malformed": {"bad": []},
+                        "undeclared": {"c": {"sort": "nosuch", "description": "d"}}}
+
+
+def _sort_cell(head, sort, constants, flagged):
+    """One cell of the truth table: predicate `p` over `sort` (binary after a declared sort, with data flags,
+    when `flagged`), beside the named constants."""
+    predicate = {"arguments": ["thing", sort] if flagged else [sort], "description": "d"}
+    if flagged:
+        predicate.update(functional=True, total=True)
+    sorts = {"thing": {"description": "d"}} if flagged or sort == "thing" else {}
+    return {**head, "vocabulary": {"sorts": sorts, "predicates": {"p": predicate},
+                                   "constants": deepcopy(SORT_TABLE_CONSTANTS[constants])}}
+
+
+def _admitted_profile_lists():
+    """Every profile list of `ve.core@0.2` that Lean's profile table admits (`VE.Compose.TableAdmits` over the
+    rows `tools/profile_table.py` writes from `VE.Compose.profileTable`): finite, so all of them."""
+    table = json.loads((ROOT / "ve/profile_table.json").read_text())
+    others = sorted(set(table["environment"]) - {"relational-fol@0"})
+    admitted = []
+    for size in range(len(others) + 1):
+        for chosen in itertools.combinations(others, size):
+            listed = sorted((*chosen, "relational-fol@0"))
+            if all(all(q in listed for q in row["requires"]) and not any(q in listed for q, _ in row["refuses"])
+                   for row in table["rows"] if row["profile"] in listed or row["profile"] in row["requires"]):
+                admitted.append(listed)
+    return admitted
+
+
+# The PROBE envelopes of the class (usecase-safetyfw-b F12, F13, F14), each a cell of the table.
+BUILTIN_SORT_PROBES = {
+    "F12": _sort_cell(FROZEN_HEADS[0], "$int", "none", False),
+    "F13": _sort_cell({**V02, "profiles": ["order@0", "relational-fol@0"]}, "$string", "none", False),
+    "F14": _sort_cell({**V02, "profiles": ["norms@0", "order@0", "relational-fol@0", "soft-norms@0"]},
+                      "$string", "none", False),
+}
+
+
+def test_builtin_argument_sort_truth_table_agrees_on_every_profile_list(built):
+    """Rust's code for a `$int` or `$string` predicate argument equals Lean's and Python's on every profile list
+    the table admits and on each frozen envelope, beside no constant, a malformed one or one of an undeclared
+    sort, and flagged wherever data@0 is listed (with a declared-sort control in each row). A list Rust's own
+    profile gate refuses is refused alike for every cell, whatever the sort."""
+    heads = [{**V02, "profiles": listed} for listed in _admitted_profile_lists()] + list(FROZEN_HEADS)
+    cells = [(head, sort, constants, flagged) for head in heads for sort in ("$int", "$string", "thing")
+             for constants in SORT_TABLE_CONSTANTS for flagged in (False, True)
+             if not flagged or "data@0" in head.get("profiles", ())]
+    roots = [_sort_cell(*cell) for cell in cells]
+    assert all(probe in roots for probe in BUILTIN_SORT_PROBES.values())
+    surface = df.SURFACES["environment"]()
+    try:
+        items = [(df.Seed("environment", df.lean_route(root), "builtin-sort-table", root), root) for root in roots]
+        lean = surface.lean(items)
+        python = [surface.python(*item) for item in items]
+        with_rust = [i for i, item in enumerate(items) if surface.path("rust", *item)]
+        rust = dict(zip(with_rust, surface.rust([items[i] for i in with_rust])))
+    finally:
+        surface.close()
+    code = lambda answer: answer.get("code", answer["outcome"])
+    control = {json.dumps(head, sort_keys=True): i for i, (head, sort, constants, flagged) in enumerate(cells)
+               if (sort, constants, flagged) == ("thing", "none", False)}
+    differs, gated = [], set()
+    for i, (head, sort, constants, flagged) in enumerate(cells):
+        assert code(python[i]) == code(lean[i]), (roots[i], python[i], lean[i])
+        if i not in rust:
+            continue
+        own = rust[control[json.dumps(head, sort_keys=True)]]
+        if code(own) == "UnsupportedProfile" and re.fullmatch(r"Unsupported profile \S+", own["text"]):
+            # Rust decodes no list with this profile (its gate's own refusal), for any vocabulary.
+            assert rust[i] == own, (roots[i], rust[i])
+            gated.add(own["text"])
+        elif code(rust[i]) != code(lean[i]):
+            differs.append((roots[i], lean[i], rust[i]))
+    assert not differs, json.dumps(differs[:5], indent=1)[:6000]
+    assert all(roots.index(probe) in rust for probe in BUILTIN_SORT_PROBES.values())
+    assert gated <= {"Unsupported profile acts@0", "Unsupported profile readings@1",
+                     "Unsupported profile rights@0", "Unsupported profile norm-defaults@0"}, gated
 
 
 def test_request_envelope_fields_precede_predicate_sort_fault(built):
