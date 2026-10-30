@@ -171,3 +171,23 @@ fn builtin_argument_sort_follows_display_and_definition_faults() {
     assert_eq!(case(&["data@0", "relational-fol@0"], json!({"arguments": ["$string"], "description": "d",
         "defined": {"arguments": ["$string"], "body": ["top"]}})).as_deref(), Some("InvalidInput"));
 }
+
+/// Hunt 2: the order decoder's literal limit and the norms routes' regulated
+/// blocks precede every sort; on the frozen order list the located decoder
+/// admits the regulated field and the order decoder's sort fault comes first.
+#[test]
+fn builtin_argument_sort_follows_literal_limit_and_regulated_blocks() {
+    let case = |profiles: &[&str], constants: serde_json::Value| {
+        Environment::from_value(&json!({"language": "ve.core@0.2", "profiles": profiles,
+            "spec_revision": "ve-v0.2-expand2-2026-09-25",
+            "vocabulary": {"sorts": {"thing": {"description": "d"}}, "constants": constants, "predicates": {
+                "a": {"arguments": ["$string"], "description": "d"},
+                "b": {"arguments": ["thing"], "description": "d",
+                      "regulated": {"role": "bogus", "default": "allow"}}}}}))
+            .err().map(|e| e.code)
+    };
+    let literals: serde_json::Map<_, _> = (0..65).map(|i| (format!("l{i}"), json!({"sort": "$string"}))).collect();
+    assert_eq!(case(&["norms@0", "order@0", "relational-fol@0"], json!({})).as_deref(), Some("InvalidInput"));
+    assert_eq!(case(&["order@0", "relational-fol@0"], json!({})).as_deref(), Some("UnknownSymbol"));
+    assert_eq!(case(&["order@0", "relational-fol@0", "time@0"], json!(literals)).as_deref(), Some("ResourceLimit"));
+}
