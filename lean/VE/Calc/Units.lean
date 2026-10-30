@@ -38,10 +38,12 @@ def decodeExponents (bases : List String) (path : String) (j : Json) : Except St
     pure ⟨insertExp (b, k) d.exps⟩
 
 /-- An exact positive factor written as a literal of 3.1 (`"<decimal>"` or `["sci", "<decimal>", e]`) within
-limits 5 and 6 of 3.2, and its shortest plain decimal (11: no `sci` exponent remains). -/
+limits 5 and 6 of 3.2, and its shortest plain decimal (11: no `sci` exponent remains). A factor's shape is checked
+before its limits; limits apply only to literal factors (6.2: any other is `must be a literal`, at every depth). -/
 def decodeFactor (path : String) (j : Json) : Except String (Rat × String) := do
+  let shaped := match j with | .str _ => true | .arr xs => (xs.toList matches .str "sci" :: _) | _ => false
   if let some e := exponentFault j <|> literalFault (if j matches .str _ then .arr #[.str "lit", j] else j) then
-    throw e
+    if shaped then throw e
   let p ← literal path j
   unless 0 < p.value do throw (invalid path "must be more than zero")
   pure (p.value, plain p)
