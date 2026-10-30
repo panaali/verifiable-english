@@ -501,7 +501,7 @@ def test_rsp_each_narrowing_reruns_a_ve_answer(rsp_modules, narrowing, item_id):
 
 PF = USECASES / "openai-preparedness"
 PF_EVIDENCE = REPO / "docs/usecases/safetyfw/openai-preparedness"
-PF_NAMES = ("pf_vocabulary", "pf_translation", "build_document", "stage0", "measure")
+PF_NAMES = ("pf_vocabulary", "pf_translation", "build_document", "stage0", "measure", "run", "reference")
 
 
 def _load_pf():
@@ -521,6 +521,7 @@ def _load_pf():
 PF_MODULES = _load_pf()
 pf_vocab, pf_translation, pf_build = (PF_MODULES[n] for n in ("pf_vocabulary", "pf_translation", "build_document"))
 pf_stage0, pf_measure = (PF_MODULES[n] for n in ("stage0", "measure"))
+pf_run, pf_reference = PF_MODULES["run"], PF_MODULES["reference"]
 
 
 @pytest.fixture
@@ -841,3 +842,144 @@ def test_pf_stage0_and_gaps(pf_modules):
         assert set(unit["blockers"]) <= set(pf_measure.FAMILIES)
     if pf_build.DEFAULT_SOURCE.exists():
         assert pf_stage0.main(["--check"]) == 0
+
+
+# --- openai-preparedness answers (usecase-pf-run: PLAN 9 to 11) ---------------------------------------------------
+
+PF_STATUSES = {"agree", "disagree", "UNDECIDED-faithful", "resource-limit"}
+
+
+@pytest.fixture
+def pf_clean(pf_modules):
+    """Each test starts and ends with no mutant, no narrowing removed and empty caches."""
+    def reset():
+        pf_run.MUTANT = pf_run.WITHOUT_NARROWING = None
+        pf_run.document.cache_clear()
+        pf_run._conflict.cache_clear()
+        pf_run.opposite_pairs.cache_clear()
+        pf_run._MODELS.clear()
+        pf_run._PREMISES.clear()
+    reset()
+    yield
+    reset()
+
+
+@pytest.mark.skipif(not LEAN_SERVICE.exists(), reason="the Lean service is not built")
+def test_pf_run_recomputes_every_key_item_and_records_causes(pf_clean):
+    """Every saved answer comes from a fresh VE route; every row that does not agree names its cause."""
+    saved = json.loads((PF / "results.json").read_text())
+    fresh = pf_run.run()
+    assert fresh == {k: saved[k] for k in ("items", "comparison", "cost")}
+    rows = saved["comparison"]
+    assert [r["id"] for r in rows] == [k["id"] for k in items("openai-preparedness")]
+    assert {r["status"] for r in rows} <= PF_STATUSES
+    for row in rows:
+        assert set(row) >= {"id", "key", "ve", "agree", "status", "cause", "route"} and row["route"]
+        assert row["agree"] == (row["status"] == "agree")
+        assert row["agree"] or (row["cause"]["kind"] and row["cause"]["feature_family"] and row["cause"]["reason"])
+    assert saved["metrics"]["M1"] == pf_run.metrics(saved)["M1"]
+    useful = saved["metrics"]["useful_answers"]
+    assert (useful["correct"], useful["key"]) == (sum(r["agree"] for r in rows), 239)
+    assert saved["metrics"]["M7"]["sensitive_exactly_where_silent"]
+    # The only disagreements are the six truncated key cells; VE's answer equals PLAN 6.2's cell.
+    disagree = [r for r in rows if r["status"] == "disagree"]
+    assert [r["id"] for r in disagree] == [f"B-{lv}/MREP" for lv in ("BIO-H", "BIO-C", "CYB-H", "CYB-C", "AIS-H", "AIS-C")]
+    assert all(r["cause"]["kind"] == "key finding" and r["cause"]["reason"].endswith("True") for r in disagree)
+
+
+def test_pf_independent_reference_and_comparator_catch_wrong_answers(pf_clean):
+    rows = pf_reference.compare()
+    assert len(rows) == 199
+    assert sorted(r["id"] for r in rows if not r["agrees"]) == sorted(
+        f"B-{lv}/MREP" for lv in ("BIO-H", "BIO-C", "CYB-H", "CYB-C", "AIS-H", "AIS-C"))
+    item = next(k for k in items("openai-preparedness") if k["id"] == "B-BIO-H/MREP")
+    assert item["key"] == "SOME(N"  # the transcription truncated PLAN 6.2's "SOME(N ∧ unscoped)"
+    assert pf_reference.matches("SOME(N ∧ unscoped)", *pf_reference.case_answer(item))
+    assert pf_run.key_terms("SOME(N") is None
+    assert pf_run.key_terms("SOME(inuse | (nest & any))") == [{"RS18": "inuse"}, {"RS2": "nest", "RS3": "any"}]
+    assert not pf_reference.matches("ALL", ("RS2",), lambda c: c["RS2"] == "nest")
+    one = lambda holds, choice=None: {"route": "test", "cone": list(choice or ()),
+                                      "choices": [{"choice": choice or {}, "holds": holds}]}
+    assert not pf_run.same_set("ALL", one(False))
+    assert not pf_run.same_set("ALL", {"route": "test", "cone": [], "choices": []})
+    assert not pf_run.same_set("SOME(nest)", one(True))
+    assert not pf_run.same_set("NONE", one(None))
+    assert pf_run.same_set("SOME(nest)", {"route": "test", "cone": ["RS2"], "choices": [
+        {"choice": {"RS2": "nest"}, "holds": True}, {"choice": {"RS2": "sep"}, "holds": False}]})
+
+
+@pytest.mark.skipif(not LEAN_SERVICE.exists(), reason="the Lean service is not built")
+@pytest.mark.parametrize("mutant", ("m1", "m2", "m3", "m4", "m5", "m6"))
+def test_pf_six_mutants_change_exactly_the_named_results(pf_clean, mutant):
+    """PLAN 11: each seeded mutant changes exactly the results the plan names, recomputed over all 239 items."""
+    saved = json.loads((PF / "results.json").read_text())
+    base = {row["id"]: row["ve"] for row in saved["comparison"]}
+    pf_run.MUTANT = mutant
+    mutated = pf_run.run()
+    changed = sorted(row["id"] for row in mutated["comparison"] if row["ve"] != base[row["id"]])
+    assert changed == sorted(pf_run.EXPECTED_MUTANTS[mutant]) == saved["mutants"][mutant]["changed"]
+    assert bool(pf_run.invention_audit_for(mutated)["untraced"]) == (mutant == "m2")
+    assert saved["mutants"][mutant]["exact"]
+
+
+def test_pf_mutant_expectations_are_plan_section_11(pf_clean):
+    plan = section("openai-preparedness", 11)
+    for name, expected in pf_run.EXPECTED_MUTANTS.items():
+        row = next(line for line in plan.splitlines() if line.startswith(f"| {name} |"))
+        for item_id in expected:
+            family = item_id.split("/")[0].rsplit("-", 1)[0] if "/" in item_id else item_id
+            assert family in row or item_id.split("/")[-1] in row, (name, item_id)
+
+
+@pytest.mark.parametrize("id_", ("C1", "C2", "C6", "C-doc"))
+def test_pf_unknown_w1_is_undecided_not_false(pf_clean, monkeypatch, id_):
+    from types import SimpleNamespace
+    saved = json.loads((PF / "results.json").read_text())["items"][id_]
+    assert all("UNKNOWN" not in row["w1"] for row in saved["choices"])
+    monkeypatch.setattr(pf_run, "check_conflict", lambda *a, **k: SimpleNamespace(status="UNKNOWN"))
+    unresolved = pf_run.conflict(id_)
+    assert unresolved["undecided"].startswith("resource limit")
+    assert all(row["holds"] is None for row in unresolved["choices"])
+    assert pf_run.verdict(unresolved) == "UNDECIDED" and not pf_run.same_set("NONE", unresolved)
+
+
+@pytest.mark.parametrize("id_", ("T1", "T2", "S1", "S4", "S5", "D1", "D2", "D3", "D4"))
+def test_pf_missing_quantity_certificate_is_undecided(pf_clean, monkeypatch, id_):
+    monkeypatch.setattr(pf_run, "certified", lambda *args: None)
+    item = next(k for k in items("openai-preparedness") if k["id"] == id_)
+    result = pf_run.answer(item)
+    assert result["undecided"].startswith("resource limit") and not pf_run.same_set(item["key"], result)
+    assert pf_run.verdict(result) == "UNDECIDED"
+
+
+def test_pf_an_unset_negated_open_term_is_undecided(pf_clean, monkeypatch):
+    """K2's rule tests "not already implemented and assessed": the case must state it, or the answer is open."""
+    item = {"id": "K2", "case": "K2", "item": "REQUIRED:SAG_RECOMMENDS_SAFEGUARDS"}
+    assert pf_run.verdict(pf_run.answer(item)).startswith("SOME(")
+    monkeypatch.setitem(pf_run.STATED_FALSE, "K2", ())
+    result = pf_run.answer(item)
+    assert "safeguards_already_assessed" in result["undecided"] and pf_run.verdict(result) == "UNDECIDED"
+
+
+def test_pf_case_model_must_satisfy_the_selected_premises(pf_clean, monkeypatch):
+    """Under RS2 = nest a Critical case model without its category's High level breaks rs2-nest."""
+    case = pf_run.CASES["A-BIO-C-DEV"]
+    choice = {**pf_run.BASE, "RS2": "nest"}
+    doc = pf_run.document(tuple(sorted(choice.items())), "deny")
+    found = pf_run.atoms(case, choice) - {("reached", "s", "biological_and_chemical_high")}
+    with pytest.raises(AssertionError, match="rs2-nest"):
+        pf_run.check_premises(doc, found, choice)
+    sep = {**pf_run.BASE, "RS2": "sep"}
+    assert ("reached", "s", "biological_and_chemical_high") not in pf_run.atoms(case, sep)
+
+
+@pytest.mark.skipif(not LEAN_SERVICE.exists(), reason="the Lean service is not built")
+def test_pf_each_narrowing_has_an_unscored_counterfactual(pf_clean):
+    saved = json.loads((PF / "results.json").read_text())
+    assert set(saved["without_narrowings"]) == {"N1", "N2"}
+    assert all(v["unscored"] and v["changed"] for v in saved["without_narrowings"].values())
+    assert sorted(saved["without_narrowings"]["N2"]["changed"]) == ["C-doc", "C2"]
+    n1 = saved["without_narrowings"]["N1"]["changed"]
+    assert n1["K12"]["without"] == "NONE" and n1["B-L0/CAPREP"]["without"] == "NONE"
+    assert "A-BIO-H-EXT/SUF" not in n1  # F2 ("are required to") is no RS0 statement
+    assert pf_run.without_narrowings({"comparison": saved["comparison"]}) == saved["without_narrowings"]
