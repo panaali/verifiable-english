@@ -821,6 +821,21 @@ def withoutDocumentLayers (environment : Lean.Json) : Lean.Json :=
   | .ok (.arr ps) => environment.setObjVal! "profiles" (.arr (ps.filter fun p => !documentLayers.any (.str · == p)))
   | _ => environment
 
+/-- What a document layer does not compose with yet (JT-2): their contents are no `Judgments.Content`. -/
+def documentLayersApart : List String := ["alternatives@0", "rights@0", "risk@0", "soft-norms@0"]
+
+/-- The environment a mode that composes with the document layers decides over (jt-2c,
+reviews/dri-decisions-20261028-jt-2c.md item 1): `withoutDocumentLayers`, after refusing by name a list that has a
+layer beside a profile it does not compose with yet. The mode's identities read the environment as written. -/
+def decidingEnvironment (environment : Lean.Json) : Except String Lean.Json := do
+  let listed := match environment.getObjVal? "profiles" with
+    | .ok (.arr ps) => ps.toList.filterMap fun (p : Lean.Json) => p.getStr?.toOption
+    | _ => []
+  if let some l := documentLayers.find? listed.contains then
+    if let some p := documentLayersApart.find? listed.contains then
+      throw s!"CheckerUnavailable: {l} with {p} needs its composed Lean route"
+  pure (withoutDocumentLayers environment)
+
 /-- The profiles only their own service mode reads (`cardinality`, QT-A3): Python models no environment with them
 until their document hook (QT-A4). -/
 def modeProfiles : List String := ["cardinality@0"]

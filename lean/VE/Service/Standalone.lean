@@ -328,7 +328,8 @@ its identity stays bound to the complete submitted environment. The owning
 profile decoders validate the source before these projections are used. -/
 def modelEnvironment (environment : Json) : Except String Json := do
   let ps ← VE.Route.Gate.profilesOf environment
-  let mut view := environment
+  -- The model is read over the environment without the document layers (jt-2c); `modelCase` binds the id as written.
+  let mut view ← VE.Compose.decidingEnvironment environment
   if ps.contains "risk@0" then view ← VE.Risk.Wire.riskNormsView view ps
   else if ps.contains "alternatives@0" then view ← VE.Alternatives.Wire.normsView view ps
   if (view.getObjVal? "unit_schema").isOk then view ← VE.Time.Wire.eraseEnvironment view
@@ -427,7 +428,8 @@ def evaluable (environment : Json) : Except String Validated := do
     let l ← decodeLegacy environment
     pure { envelope := ⟨l.profiles, l.checker, ← environment.getObjVal? "vocabulary"⟩,
            decodable := environment }
-  else validated environment
+  -- Read without the document layers (jt-2c): no evaluation answer carries an identity.
+  else validated (← VE.Compose.decidingEnvironment environment)
 
 def legacyEnvironmentId (l : Legacy) (environment : Json) : Except String String :=
   VE.CertificateWire.digest s!"ve-environment-{l.version}\n" environment
@@ -639,7 +641,8 @@ def checkCase (j : Json) : Except String Json := do
     let items ← ast.getArr?
     return ← legacyCheckCase id environment ast
       (match items[0]? with | some (Json.str _) => true | _ => false) items.toList
-  let checked ← validated environment (typing := true)
+  -- Typed over the environment without the document layers (jt-2c); the identities below read it as written.
+  let checked ← validated (← VE.Compose.decidingEnvironment environment) (typing := true)
   let e := checked.envelope
   let items ← ast.getArr?
   let formula := match items[0]? with

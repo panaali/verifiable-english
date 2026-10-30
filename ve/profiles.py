@@ -14,6 +14,9 @@ BASE = "relational-fol@0"
 _TABLE = json.loads((Path(__file__).with_name("profile_table.json")).read_text())
 ROWS = tuple(_TABLE["rows"])
 BY_NAME = {name: tuple(row for row in ROWS if row["profile"] == name) for name in _TABLE["environment"]}
+# `VE.Compose.documentLayers`: profiles whose records are the document's. Every mode decides without them, by Lean's
+# `VE.Compose.decidingEnvironment`; Python sends them as written (jt-2c).
+DOCUMENT_LAYERS = tuple(_TABLE["document_layers"])
 
 
 # Statement layers whose own Lean routes check them. They declare no vocabulary
@@ -66,6 +69,8 @@ MODEL_REDUCTIONS = {
                              constant_fields=("unit",)),
     "rights@0": ModelReduction(vocabulary=("rights",)),
     "time@0": _KEPT,
+    # Kept as written: Lean's metered mode reads the environment without them, and Rust's search reads no record.
+    **dict.fromkeys(DOCUMENT_LAYERS, _KEPT),
 }
 # English display text, in every environment: identity-bound, read by no model.
 DISPLAY_FIELDS = {"sorts": ("verbalisation",), "predicates": ("verbalisation", "negative_verbalisation"),

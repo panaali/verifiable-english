@@ -55,9 +55,6 @@ def ownedProfiles : List String :=
   ["alternatives@0", "data@0", "definitions@0", "documents@1", "judgments@0", "norm-defaults@0", "norms@0",
    "readings@1", "relational-fol@0", "rights@0", "risk@0", "soft-norms@0", "time@0"]
 
-/-- What `judgments@0` does not compose with in this mode yet: their contents are no `Judgments.Content`. -/
-def judgmentsApart : List String := ["alternatives@0", "rights@0", "risk@0", "soft-norms@0"]
-
 /-- The kinds of a rights source unit (`right`, `right_lines`, `limitation`, `bar`): under `rights@0` each is a unit
 kind of its own (Python's `load_document` skips `_check_kind` for them) and the key of the rights block the unit
 holds. The one table of these names in the mode. -/
@@ -683,7 +680,7 @@ def environmentOf (environment : Json) (units : Json := .null) (senses : Bool :=
   if let some p := listed.find? fun p => !ownedProfiles.contains p then
     throw (undecided environment s!"document checks under {p} need its Lean profile route")
   if listed.contains "judgments@0" then
-    if let some p := judgmentsApart.find? listed.contains then
+    if let some p := VE.Compose.documentLayersApart.find? listed.contains then
       throw (unavailable s!"judgments@0 with {p} needs its composed Lean route")
     if senses then throw (unavailable "judgments@0 with senses needs its composed Lean route")
   let block := blockOf listed
