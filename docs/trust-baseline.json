@@ -1524,6 +1524,41 @@
    "reason": "sc-1c: VE/Service/Registry.lean +1, VE/Service/Protocol.lean +1, ResponseShape/Skeletons.lean +1, ResponseShape/Schemas.lean +1 (the scope mode's registry line, dispatch, skeleton case and schema file entry)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1c, 2026-10-18",
    "commit": "5b0163e94aca67e948a4132676df03fcf3ed8933"
+  },
+  {
+   "class": "V",
+   "lines": 2,
+   "reason": "q1-4bb: VE/Question/Run.lean V +2 (speechPrefixes gains F2's fronted words; replaces the Python literal \"Is \" in ve/speech_english.py, deleted in the same change)",
+   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md), q1-4bb, 2026-10-30",
+   "commit": "b9f2335ab2933b1e0c262f497c06af64e0bac079"
+  },
+  {
+   "class": "S",
+   "lines": 6,
+   "reason": "me-2nc: VE/Calc/Lower.lean S +6 (Shape.Sound, spec 3.2's reading of a side beyond the digit limit); K +0, V +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-2nc, 2026-10-18",
+   "commit": "432763b06d8d4d50d06fdae218c5c53f2f267cec"
+  },
+  {
+   "class": "S",
+   "lines": 7,
+   "reason": "qt-a3d: VE/Cardinality/Document.lean S +7 (CardReport, CardReport.Sound), VE/Cardinality/Run.lean V +4 (runCase's document case); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3d, 2026-10-18",
+   "commit": "4ea3dd8cbd2adeb5050c1ae3d25f0f4b93dbd93f"
+  },
+  {
+   "class": "V",
+   "lines": 4,
+   "reason": "qt-a3d: VE/Cardinality/Document.lean S +7 (CardReport, CardReport.Sound), VE/Cardinality/Run.lean V +4 (runCase's document case); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3d, 2026-10-18",
+   "commit": "4ea3dd8cbd2adeb5050c1ae3d25f0f4b93dbd93f"
+  },
+  {
+   "class": "V",
+   "lines": 68,
+   "reason": "qt-a3d review F1, F2, F4: VE/Cardinality/Wire.lean +30 D[V] (encode, encBody, encOperand, encPrinted: formula encoders filed D[I], qt-a3a/b's, reclassified as the answers' formulas), VE/Cardinality/Run.lean +14 (statementJson, claimJson, reportJson D[I] to D[V]; runCase's report_id), VE/Cardinality/Document.lean +24 G[V] (CNode, Entry, Graph G[I] to G[V]; Entries); K +0, S +0 over the qt-a3d allowance; R16 ties pass in FOLLOW-UPS.md",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3d, 2026-10-30",
+   "commit": "1f28dddfb3ef480ba7680d6a7c51cb801e9cb876"
   }
  ]
 }

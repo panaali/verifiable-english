@@ -49,6 +49,10 @@ EXPECTED = [
     # me-3: claim and follows rows (both outcomes) under a software convention, beside a stated value
     ["w1 holds reproduction unknown", "h6 holds reproduction unknown", "u1 holds reproduction unknown",
      "h7 fails reproduction unknown"],
+    # me-2nb (spec 3.2 (a), (b)): each value computed once, so F1-28, past the deadline before, holds; G-1's power
+    # is known beyond the digit limit from its base and never computed
+    ["f1 holds"],
+    [f"g1 unknown ({DIGITS})"],
 ]
 
 
@@ -76,6 +80,65 @@ def test_route_cases_answer_their_rows(service):
     cases = route_cases()
     response = ask(service, json.dumps(cases, ensure_ascii=False), len(cases))
     assert [says(bound["result"]) for bound in response["results"]] == EXPECTED
+
+
+NINES = "9" * 40
+WORK = "ResourceLimit: the work of the calculation exceeds 8589934592"
+
+
+def free(name: str) -> dict:
+    return {"name": name, "words": f"the {name}", "free": True}
+
+
+def defined(name: str, expr: list) -> dict:
+    return {"name": name, "words": f"the {name}", "defined": expr}
+
+
+def bounded_case(values: list, side: list, premises: int, claims: list) -> str:
+    """A case of `premises` premises `side < i`, one plain claim first (spec 13.3's P-2 and N-1)."""
+    return json.dumps({"format": "ve-calc@0", "values": values, "premises": [
+        {"id": f"p{i}", "claim": ["lt", side, ["lit", str(i)]], "support": "assumption"} for i in range(premises)],
+        "claims": [{"id": "c", "claim": ["lt", ["lit", "0"], ["lit", "1"]]}, *claims]})
+
+
+def p2_case(premises: int) -> str:
+    """P-2: a doubling of a sum of 16 free values with 800-digit coefficients, and a derivation from premise 0, whose
+    conclusion is small: a side over `a8` would be one more lowering at that side's price."""
+    names = [f"u{i}" for i in range(16)]
+    total = ["val", "u0"]
+    for name in names[1:]:
+        total = ["add", total, ["val", name]]
+    values = [free(name) for name in names] + [
+        defined("big", ["pow", ["lit", NINES], 20]), defined("a0", ["mul", ["val", "big"], total]),
+        *(defined(f"a{i + 1}", ["add", ["val", f"a{i}"], ["val", f"a{i}"]]) for i in range(8))]
+    return bounded_case(values, ["val", "a8"], premises,
+                        [{"id": "d", "claim": ["follows", ["lt", ["val", "u0"], ["lit", "1"]], ["p0"], []]}])
+
+
+def balanced(parts: list) -> list:
+    while len(parts) > 1:
+        pairs = [["add", a, b] for a, b in zip(parts[::2], parts[1::2])]
+        parts = pairs + parts[len(pairs) * 2:]
+    return parts[0]
+
+
+def n1_case(premises: int) -> str:
+    """N-1: a balanced sum of 400 free values, 8 mentions balanced in each premise, no derivation."""
+    names = [f"v{i}" for i in range(400)]
+    values = [free(name) for name in names] + [defined("s", balanced([["val", name] for name in names]))]
+    return bounded_case(values, balanced([["val", "s"]] * 8), premises, [])
+
+
+@pytest.mark.parametrize("case, want", [
+    (p2_case(72), ["c holds", "d fails"]),
+    (p2_case(73), WORK),
+    (n1_case(121), ["c holds"]),
+    (n1_case(122), WORK),
+], ids=["P-2 at 72", "P-2 at 73", "N-1 at 121", "N-1 at 122"])
+def test_limit_10_on_the_lowering(service, case, want):
+    """me-2nc (spec 3.2, DRI item 3): the premises' lowering is charged; under the limit the rows are today's, past it
+    the whole case is refused with `Wire.limit`'s text."""
+    assert says(ask(service, f"[{case}]", 1)["results"][0]["result"]) == want
 
 
 CASE = ('{"format": "ve-calc@0", "values": [{"name": "x", "words": "the half-even rate - a test", '

@@ -148,10 +148,10 @@ def _command_candidates(env, scope):
             yield phrase, predicate, tuple(value for _, value in bindings), reg.role
 
 
-# The beginnings of the wordings Lean reads for the speech-acts caller: its contract's `callers` (`Is it the case
-# that ` (F1), and `Must ` and `Can `, which Lean refuses with `ModalQuestion`), and F2's fronted `Is ` (Q1.4b, DRI
-# 2026-10-27 item 4), which Lean's reader reads with the caller's auxiliary `is`.
-_LEAN_PREFIXES = (*QUESTION_CALLERS[SPEECH_CALLER], "Is ")
+# The beginnings of the wordings Lean reads for the speech-acts caller, as its contract's `callers` lists them
+# (`VE.Question.Run.speechPrefixes`): `Is it the case that ` (F1), `Must ` and `Can ` (refused with `ModalQuestion`)
+# and F2's fronted `Is `.
+_LEAN_PREFIXES = QUESTION_CALLERS[SPEECH_CALLER]
 
 
 def _polar(env, text):

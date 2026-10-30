@@ -70,6 +70,6 @@
   ["unanswered", "VE does not answer questions yet. It shows only the sentence it reads the question as."]
  ],
  "callers": [
-  ["speech-acts", ["Is it the case that ", "Must ", "Can "]]
+  ["speech-acts", ["Is it the case that ", "Must ", "Can ", "Is "]]
  ]
 }

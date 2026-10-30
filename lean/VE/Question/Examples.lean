@@ -89,7 +89,7 @@ def isIndefinite (o : Outcome) : Bool := match o with | .indefinite .. => true |
 #guard isOne (readQuestion speechAuxiliaries groupEnv {} groupLex 2100000 "Is it the case that Ann is eligible?")
 #guard speechAuxiliaries == ["is"] && Run.Caller.speechActs.auxs == speechAuxiliaries &&
   Run.Caller.ask.auxs == auxiliaries
-#guard Run.speechPrefixes == ["Is it the case that ", "Must ", "Can "]
+#guard Run.speechPrefixes == ["Is it the case that ", "Must ", "Can ", "Is "]
 -- The caller field: absent is `ve ask`; only the string "speech-acts" names the speech-acts caller.
 #guard (Run.decodeCaller (Lean.Json.mkObj [])).toOption == some .ask
 #guard (Run.decodeCaller (Lean.Json.mkObj [("caller", "speech-acts")])).toOption == some .speechActs

@@ -46,7 +46,7 @@ from ve.ast import (And, Binary, Bottom, Const, Exists, Not, Or, Unary, Var,  # 
 from ve.english import parse_english as parse_sentences  # noqa: E402
 from ve.entailment import _binding, _validate_inputs, check_entailment_certificate, prove_entailment  # noqa: E402
 from ve.environment import Environment  # noqa: E402
-from ve.errors import VEError  # noqa: E402
+from ve.errors import CheckerUnavailable, VEError  # noqa: E402
 from ve.evaluate import evaluate  # noqa: E402
 from ve.model import FiniteModel  # noqa: E402
 from ve.norm_english import parse_english as parse_rules  # noqa: E402
@@ -62,6 +62,7 @@ FOCUSED_NODES = 20000
 LEAN_ROUTE = REPO / "lean/.lake/build/bin/ve_conformance"
 LEAN_SERVICE = REPO / "lean/.lake/build/bin/ve_service"
 RUST = REPO / "rust/target/release/ve"
+RUST_STATUS = {"Satisfied": True, "Violated": False, "ResourceLimit": None}
 
 
 def read_json(name):
@@ -741,6 +742,27 @@ def replay_lean(exported, batch=100):
     return {"certificates": total, "valid": valid}
 
 
+def rust_values(stdout, ids):
+    """The value of each `evaluate-budgeted` row, in request order; None is an exhausted
+    budget. A row that is not typed and bound to the request is refused, never counted."""
+    try:
+        rows = json.loads(stdout)
+    except ValueError as error:
+        raise CheckerUnavailable(f"Rust replay: unreadable output: {error}") from error
+    if not isinstance(rows, list) or len(rows) != len(ids):
+        raise CheckerUnavailable("Rust replay: the rows do not match the request")
+    values = []
+    for row, expected in zip(rows, ids):
+        fine = (isinstance(row, dict) and set(row) == {"id", "status", "value", "evaluations"}
+                and row["id"] == expected and isinstance(row["status"], str)
+                and row["status"] in RUST_STATUS and row["value"] is RUST_STATUS[row["status"]]
+                and type(row["evaluations"]) is int and row["evaluations"] >= 0)
+        if not fine:
+            raise CheckerUnavailable(f"Rust replay: bad row for case {expected}: {str(row)[:200]}")
+        values.append(row["value"])
+    return values
+
+
 def replay_rust(exported, batch=200):
     if not RUST.exists():
         return {"status": "skipped: cargo has not produced rust/target/release/ve"}
@@ -748,12 +770,12 @@ def replay_rust(exported, batch=200):
     agree = 0
     for start in range(0, len(cases), batch):
         chunk = cases[start:start + batch]
-        payload = [{k: v for k, v in c.items() if k != "value"} | {"id": str(start + i)}
-                   for i, c in enumerate(chunk)]
+        payload = [{k: v for k, v in c.items() if k != "value"}
+                   | {"id": str(start + i), "kind": "evaluate-budgeted"} for i, c in enumerate(chunk)]
         done = subprocess.run([str(RUST), "conformance", "-"], input=json.dumps(payload), text=True,
                               capture_output=True, timeout=3600)
-        rows = json.loads(done.stdout)
-        agree += sum(row.get("values") == [case["value"]] for case, row in zip(chunk, rows))
+        values = rust_values(done.stdout, [c["id"] for c in payload])
+        agree += sum(got is case["value"] for case, got in zip(chunk, values))
     return {"models": len(cases), "agree": agree}
 
 

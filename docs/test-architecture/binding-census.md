@@ -6,14 +6,14 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 
 | | count |
 |---|---:|
-| leaves:bound | 258 |
+| leaves:bound | 260 |
 | leaves:closed domain | 288 |
-| leaves:none | 1428 |
+| leaves:none | 1431 |
 | modes | 40 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 1027 |
-| today:shape | 546 |
+| today:not probed | 1030 |
+| today:shape | 548 |
 | today:unbound | 137 |
 | answers | 578 |
 | probes | 10204 |
@@ -3432,6 +3432,11 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/regions/constants/*/sort` | string | bound | x-references |  | 12 | shape |
 | `/regions/predicates/@key` | key | none |  |  | 3 | not probed |
 | `/regions/predicates/{}/*` | string | none |  |  | 6 | not probed |
+| `/report/leaves/*/meaning_id` | string | none |  | pattern | 0 | not probed |
+| `/report/leaves/*/name` | string | bound | x-references |  | 0 | shape |
+| `/report/root/meaning_id` | string | none |  | pattern | 0 | not probed |
+| `/report/root/name` | string | bound | x-equals |  | 0 | shape |
+| `/report_id` | string | none |  | pattern | 0 | not probed |
 | `/status` | string | closed domain | const |  | 13 | shape |
 | `/w6_environment_id` | string | none |  | pattern | 5 | not probed |
 | `/w6_target_environment_id` | string | none |  | pattern | 5 | not probed |
@@ -3444,6 +3449,8 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/erased/premises/*/Q` | q_formula |  | 472 |
 | `/erased/premises/*/core` | core_formula |  | 371 |
 | `/premises/*/formula` | formula |  | 139 |
+| `/report/leaves/*/formula` | formula |  | 0 |
+| `/report/root/formula` | formula |  | 0 |
 
 | array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
 |---|---|---|---|---|
@@ -3451,6 +3458,7 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/premises` | x-length |  |  |  |
 | `/regions/constants` |  |  |  |  |
 | `/regions/predicates/{}` |  |  |  |  |
+| `/report/leaves` |  |  |  |  |
 
 ## scope
 
