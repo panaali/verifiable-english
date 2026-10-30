@@ -651,7 +651,7 @@ def witness_for(block):
             picked = doc.elaborated.selected_rules(rule["predicate"], model(doc, found), (arg,))
             ok = ok and block.id in {r.name for r in picked}
         if ok:
-            return sorted(found - set(table1_facts()))
+            return [list(atom) for atom in sorted(found - set(table1_facts()))]
     return None
 
 
