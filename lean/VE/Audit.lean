@@ -354,6 +354,7 @@ import VE.Scales.Examples
 import VE.Scales.Intended
 import VE.Scales.Theorems
 import VE.Scope.Examples
+import VE.Scope.Govern
 import VE.Scope.ReadingsTheorems
 import VE.Scope.Theorems
 import VE.SearchBudget.Budget
@@ -6331,13 +6332,16 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.admit_governor
 #print axioms VE.Scope.admit_governor_unit
 #print axioms VE.Scope.admitted_ids_nodup
+#print axioms VE.Scope.admitted_list_names_nodup
 #print axioms VE.Scope.affected_drop
 #print axioms VE.Scope.affected_title_only
 #print axioms VE.Scope.anchor_reach_iff
 #print axioms VE.Scope.any_drop_title
 #print axioms VE.Scope.applyEffect_src
+#print axioms VE.Scope.ascending_sound
 #print axioms VE.Scope.balanceL_id
 #print axioms VE.Scope.balanceR_id
+#print axioms VE.Scope.balanced?_sound
 #print axioms VE.Scope.baseName_some
 #print axioms VE.Scope.baseObjF_slow
 #print axioms VE.Scope.baseObj_drop
@@ -6356,7 +6360,9 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.covered_drop
 #print axioms VE.Scope.coversU_drop
 #print axioms VE.Scope.coversU_iff
+#print axioms VE.Scope.decodeBlock_jsonWF
 #print axioms VE.Scope.decodeBlock_layout
+#print axioms VE.Scope.decodeBlock_ok
 #print axioms VE.Scope.decodeNorm_name
 #print axioms VE.Scope.decodeNorm_name_top
 #print axioms VE.Scope.decodeScope_layout
@@ -6372,6 +6378,7 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.faultOf_some
 #print axioms VE.Scope.filter_drop_title
 #print axioms VE.Scope.filter_mergeSort
+#print axioms VE.Scope.find_map_id
 #print axioms VE.Scope.firstDup_none_iff
 #print axioms VE.Scope.firstDup_none_nodup
 #print axioms VE.Scope.firstKeys_mem
@@ -6400,6 +6407,7 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.govern_ok
 #print axioms VE.Scope.govern_orphan
 #print axioms VE.Scope.govern_preserves
+#print axioms VE.Scope.govern_provenance
 #print axioms VE.Scope.govern_refused
 #print axioms VE.Scope.govern_strings
 #print axioms VE.Scope.governor_status_none
@@ -6417,6 +6425,7 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.hasStr_substOwn
 #print axioms VE.Scope.idOf_set
 #print axioms VE.Scope.id_unique
+#print axioms VE.Scope.implWF?_sound
 #print axioms VE.Scope.impl_get_map
 #print axioms VE.Scope.impl_map_eq
 #print axioms VE.Scope.insertBy_filter
@@ -6425,20 +6434,26 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.insert_same
 #print axioms VE.Scope.ite_bind_ok
 #print axioms VE.Scope.itemRule_decoder
+#print axioms VE.Scope.jsonWF?_sound
 #print axioms VE.Scope.jsonWF_getD
 #print axioms VE.Scope.jsonWF_mkObj
 #print axioms VE.Scope.jsonWF_top
 #print axioms VE.Scope.label_reach_iff
+#print axioms VE.Scope.listName_run
+#print axioms VE.Scope.listWF?_sound
 #print axioms VE.Scope.list_singleton_of_drop_empty
+#print axioms VE.Scope.lookup_map_eq
 #print axioms VE.Scope.lookup_mem
 #print axioms VE.Scope.lookups_absent
 #print axioms VE.Scope.lookups_fields
 #print axioms VE.Scope.lookups_spec
 #print axioms VE.Scope.mapM_ok_mem
+#print axioms VE.Scope.mapM_ok_of_mem
 #print axioms VE.Scope.mapM_some_mem
 #print axioms VE.Scope.map_filter_id
 #print axioms VE.Scope.mem_ordered
 #print axioms VE.Scope.members_get
+#print axioms VE.Scope.members_ne_obj
 #print axioms VE.Scope.members_nodup
 #print axioms VE.Scope.members_obj
 #print axioms VE.Scope.memo_map
@@ -6451,8 +6466,10 @@ import VE.WireContract.Engine
 #print axioms VE.Scope.mkObj_get_mem
 #print axioms VE.Scope.mkObj_one
 #print axioms VE.Scope.newContent_src
+#print axioms VE.Scope.nodup_map_unique
 #print axioms VE.Scope.nonrule_refused
 #print axioms VE.Scope.normFields_name
+#print axioms VE.Scope.normOf_newContent
 #print axioms VE.Scope.orderCheck_drop
 #print axioms VE.Scope.ordered_drop_active
 #print axioms VE.Scope.ordered_filter

@@ -343,13 +343,8 @@ def test_plan_is_repeatable_and_partitions_each_collected_id_once():
     assert all(gate_shards.share(first, k) for k in range(1, 4))
 
 
-@pytest.mark.parametrize("n", [1, 2, 3])
-@pytest.mark.parametrize("live", [False, True])
-def test_gate_runs_full_collection_and_only_its_share(tmp_path, monkeypatch, n, live):
-    live_id = "tests/live.py::test_live"
-    all_ids = [*IDS, live_id] if live else IDS
-    root = tmp_path / "project"
-    root.mkdir()
+def gate_project(root, policy_rows, deselected_rows=()):
+    """A checkout `root` with the binaries the gate's stages check and a quarantine policy."""
     (root / "rust/target/release").mkdir(parents=True)
     rust = root / "rust/target/release/ve"
     rust.write_bytes(b"binary")
@@ -360,10 +355,13 @@ def test_gate_runs_full_collection_and_only_its_share(tmp_path, monkeypatch, n, 
         binary.write_bytes(b"binary")
         binary.chmod(0o755)
     policy = root / "policy.json"
-    policy.write_text(json.dumps({"version": 1, **POLICY,
-                                  "deselected_tests": ([{"nodeid": live_id,
-                                                         "reason": "Calls real model CLIs; excluded by the non-live gate."}]
-                                                       if live else [])}))
+    policy.write_text(json.dumps({"version": 1, "optional_tests": list(policy_rows),
+                                  "deselected_tests": list(deselected_rows)}))
+    return rust, policy
+
+
+def patch_gate_stages(monkeypatch, root, rust, policy, base_ids, durations):
+    """Every stage but the two pytest runs reports success; the merge base collected `base_ids()`."""
     monkeypatch.setattr(gate, "ROOT", root)
     monkeypatch.setattr(gate, "POLICY", policy)
     monkeypatch.setattr(gate, "REQUIRED_FAMILIES", ())
@@ -377,23 +375,42 @@ def test_gate_runs_full_collection_and_only_its_share(tmp_path, monkeypatch, n, 
     monkeypatch.setattr(gate, "read_trust", lambda path: {})
     monkeypatch.setattr(gate, "record_collection", lambda *args, **kwargs: "written")
     monkeypatch.setattr(gate, "base_collection", lambda result, *args:
-                        (result.update(collection={"base": "c" * 40, "base_ids": len(all_ids)}) or all_ids, None))
+                        (result.update(collection={"base": "c" * 40, "base_ids": len(base_ids(args[2]))})
+                         or base_ids(args[2]), None))
     monkeypatch.setattr(gate.gate_shards.gate_collection, "merge_base", lambda **kwargs: "c" * 40)
     monkeypatch.setattr(gate, "suite_durations", lambda result, env, path:
-                        path.write_text(test_schedule.durations_text({IDS[0]: 9, IDS[2]: 5}, source="fixture")))
+                        path.write_text(test_schedule.durations_text(durations, source="fixture")))
 
     @contextmanager
     def cargo(env, target_dir):
         yield env, root
 
     monkeypatch.setattr(gate, "isolated_cargo", cargo)
+
+
+def other_stage(args, stage):
+    """The fake output of a stage other than the two pytest runs."""
+    if stage == "native Rust tests":
+        return "test result: ok. 2 passed; 0 failed; 0 ignored;"
+    if stage == gate.TRUST_STAGE:
+        Path(args[-1]).write_text("{}")
+    return ""
+
+
+@pytest.mark.parametrize("n", [1, 2, 3])
+@pytest.mark.parametrize("live", [False, True])
+def test_gate_runs_full_collection_and_only_its_share(tmp_path, monkeypatch, n, live):
+    live_id = "tests/live.py::test_live"
+    all_ids = [*IDS, live_id] if live else IDS
+    root = tmp_path / "project"
+    root.mkdir()
+    rust, policy = gate_project(root, POLICY["optional_tests"],
+                                [{"nodeid": live_id, "reason": "Calls real model CLIs; excluded by the non-live gate."}]
+                                if live else [])
+    patch_gate_stages(monkeypatch, root, rust, policy, lambda env: all_ids, {IDS[0]: 9, IDS[2]: 5})
     runs = []
 
     def fake_command(args, *, env, stage, cwd=None):
-        if stage == "native Rust tests":
-            return "test result: ok. 2 passed; 0 failed; 0 ignored;"
-        if stage == gate.TRUST_STAGE:
-            Path(args[-1]).write_text("{}")
         if stage == "Python collection":
             Path(env["VE_GATE_PYTEST_RESULT"]).write_text(json.dumps({
                 "collected": all_ids, "selected": IDS, "deselected": [live_id] if live else [],
@@ -405,7 +422,7 @@ def test_gate_runs_full_collection_and_only_its_share(tmp_path, monkeypatch, n, 
             Path(env["VE_GATE_PYTEST_RESULT"]).write_text(json.dumps({
                 "tests": {node: OUTCOMES[node] for node in selected},
                 "seconds": {node: 1.0 for node in selected}, "workers": {"gw0": selected}}))
-        return ""
+        return other_stage(args, stage)
 
     monkeypatch.setattr(gate, "command", fake_command)
     unsharded = tmp_path / "unsharded.json"
@@ -444,3 +461,99 @@ def test_merge_refuses_selected_id_reported_as_deselected(tmp_path, monkeypatch,
     merged = gate_shards.merge_records(rows)
     assert merged["status"] == "failed"
     assert "deselected IDs" in merged["failures"][0]["reason"]
+
+
+REPO = Path(__file__).resolve().parents[1]
+# pytest runs these in definition order, never in the sorted order of a shard plan's IDs
+# (gate_collection.encode_ids sorts them): parameters and functions are out of name order.
+PROJECT = {
+    "tests/test_alpha.py": """import pytest
+
+@pytest.mark.parametrize("word", ["zeta", "alpha", "mid"])
+def test_word(word):
+    assert word
+
+def test_b_second():
+    pass
+
+def test_a_third():
+    pass
+
+@pytest.mark.live
+def test_live_call():
+    pass
+""",
+    "tests/nested/test_beta.py": """import pytest
+
+def test_z():
+    pass
+
+def test_optional():
+    pytest.skip("optional")
+
+def test_y():
+    assert FAILS
+""",
+    "tests/test_gamma.py": """def test_two():
+    pass
+
+def test_one():
+    pass
+""",
+}
+FAILING = "tests/nested/test_beta.py::test_y"
+
+
+@pytest.mark.parametrize("fails", [False, True], ids=["passing", "failing-in-shard-2"])
+def test_real_pytest_shards_merge_into_the_unsharded_record(tmp_path, monkeypatch, fails):
+    """The gate's own collection and suite commands, on real pytest with two xdist workers, over a
+    project of three test files (one parametrized, one nested): unsharded, then --shard 1/2 and 2/2.
+    Each worker collects its shard's IDs in pytest's order, not the plan's sorted order; the shards pass
+    that check and merge into the unsharded record, and a failing test of shard 2 is that test's failure."""
+    root = tmp_path / "project"
+    root.mkdir()
+    for name, text in PROJECT.items():
+        (root / name).parent.mkdir(parents=True, exist_ok=True)
+        (root / name).write_text(text.replace("FAILS", "False" if fails else "True"))
+    (root / "pytest.ini").write_text("[pytest]\nmarkers =\n    live: a model call\n")
+    rust, policy = gate_project(
+        root, [{"nodeid": "tests/nested/test_beta.py::test_optional", "reason": "optional"}],
+        [{"nodeid": "tests/test_alpha.py::test_live_call",
+          "reason": "Calls real model CLIs; excluded by the non-live gate."}])
+    # Longest file first: test_alpha.py is shard 1's; nested/test_beta.py and test_gamma.py are shard 2's.
+    patch_gate_stages(monkeypatch, root, rust, policy,
+                      lambda env: json.loads(Path(env["VE_GATE_PYTEST_RESULT"]).read_text())["collected"],
+                      {"tests/test_alpha.py::test_a_third": 9, "tests/nested/test_beta.py::test_z": 5})
+    run_stage = gate.command
+
+    def command(args, *, env, stage, cwd=None):
+        if stage not in ("Python collection", "Python suite"):
+            return other_stage(args, stage)
+        # This environment's interpreter for `uv run`; the gate's event plugin from this checkout.
+        return run_stage([sys.executable, *args[args.index("-m"):]], cwd=root, stage=stage,
+                         env={**env, "PYTHONPATH": str(REPO)})
+
+    monkeypatch.setattr(gate, "command", command)
+    unsharded = tmp_path / "unsharded.json"
+    monkeypatch.setattr(sys, "argv", ["gate.py", "--workers", "2", "--output", str(unsharded)])
+    assert gate.main() == int(fails)
+    baseline = json.loads(unsharded.read_text())
+    rows = []
+    for k in (1, 2):
+        output = tmp_path / f"shard{k}.json"
+        monkeypatch.setattr(sys, "argv", ["gate.py", "--workers", "2", "--shard", f"{k}/2", "--output", str(output)])
+        assert gate.main() == int(fails and k == 2)
+        rows.append(json.loads(output.read_text()))
+    assert [sorted({node.split("::")[0] for node in row["shard"]["ran"]}) for row in rows] == [
+        ["tests/test_alpha.py"], ["tests/nested/test_beta.py", "tests/test_gamma.py"]]
+    assert rows[0]["stages"] == list(gate.REQUIRED_STAGES)
+    assert rows[1]["stages"] == ["toolchains", "lean_build", "pytest"]
+    merged = gate_shards.merge_records(rows)
+    assert merged["status"] == baseline["status"] == ("failed" if fails else "passed")
+    assert merged["counts"] == baseline["counts"]
+    assert merged["counts"]["collected"] == 11 and merged["counts"]["deselected"] == 1
+    assert merged["failures"] == baseline["failures"]
+    assert merged["skips"] == baseline["skips"]
+    assert merged["collection"]["collected_zlib"] == baseline["collection"]["collected_zlib"]
+    assert [failure.get("nodeid") for failure in merged["failures"] if failure["stage"] == "pytest"] == (
+        [FAILING] if fails else [])

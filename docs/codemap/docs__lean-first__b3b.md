@@ -1,0 +1,3 @@
+- `docs/lean-first/b3b/profile/Prof.lean` — Lean-first batch 3b: where the readings route spends its CPU (plan F5; for batches 3c to 3e).
+- `docs/lean-first/b3b/report.py` — Lean-first batch 3b: the timing tables of DELTA.md, rendered from the evidence files.
+- `docs/lean-first/b3b/udhr_timing.py` — Lean-first batch 3b timing: the UDHR pilot's readings call, base and head side by side.

@@ -1,0 +1,2 @@
+- `docs/lean-first/b7/pilot_timing.py` — Lean-first batch 7 review B1: `ve document check` of one pilot document on the base and the head, side by side.
+- `docs/lean-first/b7/rights_delta.py` — Lean-first batch 7: the delta of the rights corpus (review B2, B3) from a `lean_first_diff.py compare --json` run.
