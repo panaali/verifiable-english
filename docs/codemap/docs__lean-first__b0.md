@@ -1,0 +1,1 @@
+- `docs/lean-first/b0/latency.py` — Batch 0's latency item (LEAN-FIRST-PLAN.md 5.1 item 4, section 4 budgets): one service call.
