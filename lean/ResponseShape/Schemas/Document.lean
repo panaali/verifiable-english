@@ -171,6 +171,24 @@ def judgments : Shape :=
           ("units", n [arr, .minItems 1, .items (ref "common.json#/$defs/token")])]])]),
       ("unused", n [arr, .items (ref "common.json#/$defs/token")])]]
 
+/-- GOVERN's rules for a governed set, keyed by the set's authored identity and reading ids. -/
+def composedReading : Shape :=
+  n [obj, .required ["id", "content"],
+    closed [("id", str),
+      ("content", n [obj, .required ["norm"],
+        closed [("norm", ref "common.json#/$defs/norm_node"),
+          ("cites", copied "Service.Document.composedReadingRow preserves the authored reading's cites; the client binds the whole value to that reading" <|
+            n [.type ["array", "object"]])]])]]
+
+def composedSet : Shape :=
+  n [obj, .required ["set", "version", "unit", "readings"],
+    closed [("set", str),
+      ("version", ref "common.json#/$defs/nat"),
+      ("unit", str),
+      ("readings", n [arr, .minItems 1, .items (ref "#/$defs/composed_reading")])]]
+
+def composedReadings : Shape := n [arr, .items (ref "#/$defs/composed_set")]
+
 /-- A rejected case with no location: the request's id, the message. -/
 def plain_error : Shape :=
   n [obj, .required ["id", "status", "error"],
@@ -212,17 +230,22 @@ def «row» : Shape :=
         ("source", str),
         ("units", n [arr, .items (ref "#/$defs/unit")]),
         ("coverage", ref "#/$defs/coverage"),
-        ("judgments", ref "#/$defs/judgments")]]]
+        ("judgments", ref "#/$defs/judgments"),
+        ("composed_readings", ref "#/$defs/composed_readings")]]]
 
 def file : File where
   name := "document.json"
   comment := some "Mode document: W2 wrapper byte partition, inferred unit statuses and base coverage."
   top := [("row", «row»)]
   defs := [("plain_error", .schema plain_error), ("model_error", .schema model_error),
-    ("fence_error", .schema fence_error), ("unit", .schema unit), ("meaning", .schema meaning), ("narrowing", .schema narrowing), ("coverage", .schema coverage), ("judgments", .schema judgments), ("cells", .schema cells),
+    ("fence_error", .schema fence_error), ("unit", .schema unit), ("meaning", .schema meaning), ("narrowing", .schema narrowing), ("coverage", .schema coverage), ("judgments", .schema judgments), ("composed_reading", .schema composedReading), ("composed_set", .schema composedSet), ("composed_readings", .schema composedReadings), ("cells", .schema cells),
     ("block_coverage", .schema blockCoverage), ("soft_exception", .schema soft_exception),
     ("soft_norm", .schema soft_norm), ("cites", .schema cites), ("soft_content", .schema soft_content),
     ("rights_line", .schema rights_line), ("rights_condition", .schema rights_condition),
     ("rights_block", .schema rights_block)]
+
+-- The document protocol includes every composed-reading field and every existing row.
+-- Its rendered fingerprint is fixed with this wire change; changing the shape requires review.
+#guard (file.render.toOption.map (hash ·.compress)) == some 16537645204567522740
 
 end ResponseShape.Schemas.Document

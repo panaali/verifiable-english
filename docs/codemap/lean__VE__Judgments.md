@@ -1,0 +1,4 @@
+- `lean/VE/Judgments/Decl.lean` — Judgment terms (`judgments@0`), W2 records and admission (docs/spec/judgment-terms.md sections 1 and 2).
+- `lean/VE/Judgments/Examples.lean` — The JT-1 fixtures of docs/spec/judgment-terms.md section 11 (11.1 to 11.3, and 11.9), as `#guard` checks on the built definitions.
+- `lean/VE/Judgments/Scan.lean` — The one scan of open names in formulas (docs/spec/judgment-terms.md section 3).
+- `lean/VE/Judgments/Status.lean` — Judgment terms: dependence, status and the usage map (docs/spec/judgment-terms.md section 4).

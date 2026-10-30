@@ -1,0 +1,2 @@
+- `docs/lean-first/b5/difffuzz_ab.py` — Compare 14 date-seed differential fuzz samples against batch 5's base.
+- `docs/lean-first/b5/latency_bench.py` — Time 100 accepted alternatives and risk envelope decodes in one process.

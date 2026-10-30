@@ -80,6 +80,7 @@ class Generated:
     # check), "check" (only the check) or "" (none). Before such a command the run builds and pins ve_service
     # (`_Service`); every entry whose commands import the service client carries it (tests/test_regen_generated.py).
     service: str = ""
+    advisory: bool = False            # --check warns on drift; the merge train still writes it
 
 
 # In dependency order: generated Lean before the build; the build before the statement dumps, the checker pins
@@ -102,7 +103,8 @@ GENERATED = (
                (PY, "-m", "tools.wire_contract", "--check", "--directory", "conformance/wire-contract/contracts")),
               note="a changed contract needs a higher `revision` in its source (WC10)",
               fresh="gate:Wire contract check", service="check"),
-    Generated("english-grammar", ("lean/VE/EnglishGrammar/Fixed/*.lean", "ve/english_grammar/LOCK.json"),
+    Generated("english-grammar", ("lean/VE/EnglishGrammar/Fixed/*.lean", "ve/english_grammar/LOCK.json",
+                                  "ve/english_grammar/source_words.json"),
               ((PY, "tools/english_grammar_gen.py", "--write"),), ((PY, "tools/english_grammar_gen.py", "--check"),),
               note="refuses when a hashed Lean file changed without a new --actions-version (a person decides)",
               fresh="tests/test_english_grammar_gen.py::test_the_repository_is_in_sync"),
@@ -138,7 +140,7 @@ GENERATED = (
               note="mode roots from the compiled runMode dispatch pins"),
     Generated("lean-statements", ("lean/statements.txt", "lean/predicates.txt", "lean/declarations.txt"),
               ((PY, "tools/lean_statements.py"),), ((PY, "tools/lean_statements.py", "--check"),)),
-    Generated("lean-audit-manifests", ("lean/VE/Audit.lean", "lean/ResponseShape/Audit.lean", "lean/axioms.txt"),
+    Generated("lean-audit-manifests", ("lean/VE/Audit.lean", "lean/ResponseShapeAudit.lean", "lean/axioms.txt"),
               ((PY, "lean/audit.py", "--write"),), ((PY, "lean/audit.py", "--check"),),
               note="generated from lean/declarations.txt, then the axiom audit record"),
     Generated("frozen-inventory", ("lean/VE/Route/frozen-sources.sha256",),
@@ -155,6 +157,9 @@ GENERATED = (
     Generated("binding-census", ("docs/test-architecture/binding-census.json", "docs/test-architecture/binding-census.md"),
               ((PY, "tools/binding_census.py", "--write"),), ((PY, "tools/binding_census.py", "--check"),),
               note="from the response schemas and the recorded answers and probes (--record re-records those)"),
+    Generated("codemap", ("docs/codemap/**",),
+              ((PY, "tools/code_map.py", "--write"),), ((PY, "tools/code_map.py", "--check"),),
+              note="regenerated on merge; branch staleness is advisory", advisory=True),
     Generated("english-codes", ("ve/english_grammar/codes.json",),
               ((PY, "tools/english_codes.py", "--write"),), ((PY, "tools/english_codes.py", "--check"),),
               fresh="tests/test_english_e2_responses.py::test_the_code_table_is_the_english_grammar_export",
@@ -802,7 +807,10 @@ def check(entries, log: RegenLog | None = None) -> tuple[list[str], list[str]]:
         else:
             continue
         if code:
-            failed.append(entry.name)
+            if entry.advisory:
+                print(f"WARN: {entry.name} is stale (regenerated on merge)", flush=True)
+            else:
+                failed.append(entry.name)
     return list(dict.fromkeys(failed)), unchecked
 
 
@@ -878,6 +886,7 @@ def listing() -> str:
                     + (f"\n    fresh: {entry.fresh}" if entry.fresh else "")
                     + (f"\n    service: its {'writer (and so its check)' if entry.service == 'write' else 'check'} "
                        "starts the Lean service" if entry.service else "")
+                    + ("\n    check: advisory on branches" if entry.advisory else "")
                     + (f"\n    note: {entry.note}" if entry.note else ""))
     return "\n".join(rows)
 

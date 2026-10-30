@@ -273,7 +273,10 @@
    "family": "K",
    "thresholds": [],
    "situation": "\"General upleveling\" scenario",
-   "findings": {}
+   "source_sentence": "We have strong evidence that a competitor has implemented a risk mitigation that: (1) represents a signiﬁcant improvement on reduction of our prioritized risks relative to our analogous mitigations; and (2) we could implement at comparable (or lower) effort or cost to our competitor.",
+   "findings": {
+    "OT8": true
+   }
   },
   {
    "id": "K22",
@@ -299,8 +302,9 @@
    "family": "T",
    "thresholds": [],
    "situation": "the same at 6x the cost; scenario (2) found not to have occurred",
+   "source_sentence": "We will consider this threshold to be met if we determine that either (1) our models would be able to fully substitute for our entire set of Research Scientists and Research Engineers, at competitive costs (i.e., within a factor of 5); or (2) there is “dramatic acceleration” of the pace of AI progress for reasons that likely relate to the automation of AI R&D.",
    "findings": {
-    "OT15": true,
+    "OT15": false,
     "scenario_2": false
    },
    "quantities": {

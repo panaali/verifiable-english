@@ -1,0 +1,8 @@
+- `lean/VE/Time/Budget.lean` — The W6 finite-evaluation budget (units-schema gate 4).
+- `lean/VE/Time/Calendar.lean` — W6 calendar coordinates (units-schema §6.1).
+- `lean/VE/Time/Count.lean` — Bounded user-sort counting sugar (units-schema §5), expanded on core order@0 formulas exactly as Python `ve/surface/count.py` does, and its meaning.
+- `lean/VE/Time/Decimal.lean` — W6 exact decimal lowering (units-schema §2.3, obligation `Time.decimal_exact`).
+- `lean/VE/Time/Document.lean` — W6a document admission (units-schema §3.2, PLAN-EXPAND2 3.6 on the quantity route).
+- `lean/VE/Time/Semantics.lean` — Direct tagged semantics of W6a statements and their faithfulness to erasure.
+- `lean/VE/Time/Syntax.lean` — W6a annotated statements (units-schema §3.1) and their admission and erasure.
+- `lean/VE/Time/Wire.lean` — The `quantity` subcommand of `ve_conformance`: Lean admission of W6a `ve-units@1` environments and `ve-quantity@1` statements (units-schema §3).

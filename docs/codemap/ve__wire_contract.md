@@ -1,0 +1,2 @@
+- `ve/wire_contract/__init__.py` — Diagnostic wire tables.
+- `ve/wire_contract/registry.py` — Registry of test-only wire contract hooks used by legacy profile contracts.

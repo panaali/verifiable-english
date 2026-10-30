@@ -1,0 +1,6 @@
+- `docs/scope/sc-1ab/evidence/spec_diff.py` — Compare sc-1ab's built declarations with docs/spec/scope.md 4.2 and 5.1, ignoring whitespace and comments, and theorems up to `:=`.
+- `docs/scope/sc-1ac/evidence/spec_diff.py` — Compare sc-1ac's built declarations with docs/spec/scope.md 4.2 and 5.1, ignoring whitespace and comments, and theorems up to `:=`.
+- `docs/scope/sc-1b/evidence/spec_diff.py` — Compare SC-1b's built statements with docs/spec/scope.md 5.2 (spec 8.1's `Pinned.` placeholders resolved to the names built) and with the plan's SC-1b block, i…
+- `docs/scope/sc-3a/evidence/spec_diff.py` — Compare SC-3a's built declarations with docs/spec/scope.md 4.1 and 5.5, ignoring whitespace and comments, and theorems up to `:=`.
+- `docs/scope/sc-3a/evidence/statements_unchanged.py` — Compare every theorem statement of lean/statements.txt at main with HEAD, ignoring the `-- uses` and `-- expr` metadata lines (the expression hash moves when a…
+- `docs/scope/sc-3ab/evidence/spec_diff.py` — sc-3ab's statement gate.

@@ -1,0 +1,39 @@
+{
+  "machine": "ve-gi-1 VM, 2026-10-29 UTC",
+  "method": "Three lake build runs per tree, each after changing only whitespace in ResponseShape/CaseDeciders.lean theorem all_complete; source restored after each set. Same machine and lake build command.",
+  "before_commit": "daed1a8b9",
+  "before": [
+    {
+      "run": 1,
+      "seconds": 530.822,
+      "exit": 0
+    },
+    {
+      "run": 2,
+      "seconds": 401.603,
+      "exit": 0
+    },
+    {
+      "run": 3,
+      "seconds": 439.321,
+      "exit": 0
+    }
+  ],
+  "after": [
+    {
+      "run": 1,
+      "seconds": 291.379,
+      "exit": 0
+    },
+    {
+      "run": 2,
+      "seconds": 419.673,
+      "exit": 0
+    },
+    {
+      "run": 3,
+      "seconds": 610.216,
+      "exit": 0
+    }
+  ]
+}

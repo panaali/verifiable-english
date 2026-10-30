@@ -1,0 +1,20 @@
+[
+  {
+    "file": "lean/VE.lean",
+    "mutation": "Restore import VE.Audit to the default root",
+    "test": "tests/test_lean_default_build.py::test_every_lean_source_is_built_by_the_default_build",
+    "observed": "failed (exit 1); mutation removed"
+  },
+  {
+    "file": "tools/lean_statements.py",
+    "mutation": "Include the audit modules in the statement dump build",
+    "test": "tests/test_gen_inv_design.py::test_gi1_dump_build_omits_both_audit_modules",
+    "observed": "failed (exit 1); mutation removed"
+  },
+  {
+    "file": "lean/audit.py",
+    "mutation": "Restore the old ResponseShape audit manifest path",
+    "test": "tests/test_lean_audit_record.py::test_committed_manifests_are_the_generated_ones",
+    "observed": "failed (exit 1); mutation removed"
+  }
+]

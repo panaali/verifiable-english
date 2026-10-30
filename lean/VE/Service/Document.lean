@@ -1902,6 +1902,64 @@ def checkDoc (j : Json) : Except String Json :=
     pure (VE.Scope.foldGovernors D a)
   else checkCore j
 
+/-- Decode a composed reading with the norms route's decoder before relaying its canonical form. -/
+def composedReadingRow (reading : Json) : Except String Json := do
+  let content ← reading.getObjVal? "content"
+  let norm ← content.getObjVal? "norm"
+  let node ← VE.Norms.Wire.decodeNorm (Json.mkObj [("norm", norm)])
+  let encoded := match content.getObjVal? "cites" with
+    | .ok cites => (VE.Reports.encodeNode node).setObjVal! "cites" cites
+    | .error _ => VE.Reports.encodeNode node
+  pure (Json.mkObj [("id", .str (VE.Scope.idOf reading)),
+    ("content", encoded)])
+
+#guard [true, false].all fun sign =>
+  let reading := Json.mkObj [("id", .str "r"), ("content", Json.mkObj [("norm", Json.mkObj
+    [("name", .str "n"), ("predicate", .str "p"), ("sign", .bool sign),
+     ("guard", toJson (["top"] : List String)), ("unless", toJson ([] : List Json)),
+     ("over", toJson ([] : List String))])])]
+  (composedReadingRow reading).toOption.map (fun r =>
+    ((r.getObjValD "content").getObjValD "norm").getObjValD "sign") == some (.bool sign)
+
+#guard [Json.mkObj [], Json.arr #[]].all fun cites =>
+  let content := Json.mkObj [("norm", Json.mkObj
+    [("name", .str "n"), ("predicate", .str "p"), ("sign", .bool true),
+     ("guard", toJson (["top"] : List String)), ("unless", toJson ([] : List Json)),
+     ("over", toJson ([] : List String))]), ("cites", cites)]
+  let reading := Json.mkObj [("id", .str "r"), ("content", content)]
+  (composedReadingRow reading).toOption.map (fun r =>
+    (r.getObjValD "content").getObjValD "cites") == some cites
+
+def composedSetRow (out authored : Json) : Except String Json := do
+  let set ← match (VE.Scope.setsJson out).find? (fun s =>
+      VE.Scope.idOf s == VE.Scope.idOf authored &&
+      VE.Scope.setVersion s == VE.Scope.setVersion authored) with
+      | some s => pure s
+      | none => throw "CheckerUnavailable: a governed reading set is missing from GOVERN's answer"
+  let readings ← (VE.Scope.readingsJson set).mapM composedReadingRow
+  pure (Json.mkObj [("set", .str (VE.Scope.idOf authored)),
+    ("version", toJson (VE.Scope.setVersion authored)), ("unit", .str (VE.Scope.setUnit authored)),
+    ("readings", toJson readings)])
+
+#guard
+  let norm := Json.mkObj [("norm", Json.mkObj [("name", .str "n"), ("predicate", .str "p"),
+    ("sign", .bool true), ("guard", toJson (["top"] : List String)),
+    ("unless", toJson ([] : List Json)), ("over", toJson ([] : List String))])]
+  let r (id : String) := Json.mkObj [("id", .str id), ("content", norm)]
+  let set (version : Nat) (rs : List Json) := Json.mkObj [("id", .str "s"),
+    ("version", toJson version), ("unit", .str "u"), ("readings", toJson rs)]
+  let authored := set 1 [r "a", r "b"]
+  let out := Json.mkObj [("reading_sets", toJson [set 2 [r "wrong"], authored])]
+  (composedSetRow out authored).toOption.map (fun x =>
+    (x.getObjValD "set", x.getObjValD "version", x.getObjValD "unit",
+     (VE.Scope.readingsJson x).map (·.getObjValD "id"))) ==
+    some (.str "s", toJson (1 : Nat), .str "u", [.str "a", .str "b"])
+
+/-- The governed reading contents in the answer, indexed by the authored set and reading identities. -/
+def composedReadings (D : VE.Scope.SDoc) (out : Json) : Except String Json := do
+  let rows ← (VE.Scope.governedSets D).mapM (composedSetRow out)
+  pure (toJson rows)
+
 /-- The document mode's entry (scope 11, sc-5rb): `checkDoc` with `VE.Scope.governSetsWith VE.Scope.governFast`, the
     chain handed GOVERN's reading sets when a set is governed per choice; with none, `checkDoc`'s answer
     (`checkDocSets_no_sets`). -/
@@ -1913,6 +1971,15 @@ def checkDocSets (j : Json) : Except String Json :=
     let a ← checkCore (if (VE.Scope.governedSetUnits D).isEmpty then withUnits j out else withSets j out)
     pure (VE.Scope.foldGovernors D a)
   else checkCore j
+
+/-- Extend the established document answer with the governed sets' composed rules. -/
+def checkDocSetsAnswered (j : Json) : Except String Json := do
+  let answer ← checkDocSets j
+  if "scope@0" ∉ profilesOf j then pure answer else
+  let D ← VE.Scope.decodeScope j
+  if (VE.Scope.governedSetUnits D).isEmpty then pure answer else
+  let out ← VE.Scope.governSetsWith VE.Scope.governFast D
+  pure (answer.setObjVal! "composed_readings" (← composedReadings D out))
 
 /-! ## A distinguishing model's located diagnostic (batch 16f) -/
 
@@ -2006,7 +2073,7 @@ def locatedRow (j : Json) (message : String) (at_ : Located) : Json :=
   | .none => Json.mkObj [("id", j.getObjValD "id"), ("status", .str "error"), ("error", .str message)]
 
 def runCaseReported (j : Json) : Json :=
-  match checkDocSets j with
+  match checkDocSetsAnswered j with
   | .ok result => result
   | .error message =>
     match locatedOf j message with
