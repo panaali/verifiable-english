@@ -405,6 +405,7 @@ module VE.Norms.Tree
 module VE.Norms.Valid
 module VE.Norms.Wire
 module VE.Norms.WitnessKind
+module VE.Numbers.Bits
 module VE.Numbers.Decimal
 module VE.Numbers.Examples
 module VE.Numbers.Phrases
