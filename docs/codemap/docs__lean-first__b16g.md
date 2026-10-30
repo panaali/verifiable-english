@@ -1,0 +1,1 @@
+- `docs/lean-first/b16g/live_probe.py` — Batch 16g precondition probe: whether Lean's `document` mode decides each named document, or Python keeps it.
