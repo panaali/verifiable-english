@@ -1,0 +1,2 @@
+- `docs/lean-first/b1/latency.py` — `ve document check` wall and CPU time at two checkouts (lean-first batch 1, gate item 4).
+- `docs/lean-first/b1/route_parity.py` — Gate-1 byte parity of lean-first batch 1: each route mode of the service against its one-shot executable.

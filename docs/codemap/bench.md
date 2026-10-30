@@ -1,0 +1,4 @@
+- `bench/check_profile_goldens.py` — Compare pilot document and editor wire output with pre-optimization goldens.
+- `bench/english_lean_g1a.py` — Inputs of the G1a measurement of the English-in-Lean grammar engine (plan section 5, S1a).
+- `bench/profile_english.py` — Offline, measurement-only English/user-path benchmark.
+- `bench/timing.py` — Small offline timing helpers for the English benchmark.

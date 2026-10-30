@@ -1,0 +1,3 @@
+- `docs/lean-first/b6/check_evidence.py` — Check that the batch report's gate, comparison and latency figures match saved evidence.
+- `docs/lean-first/b6/report.py` — The latency table of DELTA.md, rendered from evidence/udhr-timing.json (build checklist 20).
+- `docs/lean-first/b6/udhr_timing.py` — Base against head on every UDHR translation (batch 6 latency evidence, evidence/udhr-timing.json).
