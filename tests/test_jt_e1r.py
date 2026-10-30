@@ -1,6 +1,8 @@
 """JT-E1r pre-call checks. These tests never invoke a reader model."""
 import importlib.util
+import json
 from pathlib import Path
+import subprocess
 import sys
 
 import pytest
@@ -71,14 +73,132 @@ def test_usage_is_fully_reported_and_no_credit_fallback():
     assert runner.within_caps(99, runner.CW_CAP - runner.RESERVE_CW)
     assert not runner.within_caps(100, 0)
     assert not runner.within_caps(0, runner.CW_CAP - runner.RESERVE_CW + 1)
-    assert runner.record_cw({"error": "CLI failed", "charged_cw": runner.RESERVE_CW}) == runner.RESERVE_CW
+    failed = {"error": "CLI failed", "cli": usage, "charged_cw": runner.RESERVE_CW, "answer": ""}
+    assert runner.record_cw(failed) == runner.RESERVE_CW
     with pytest.raises(RuntimeError):
-        runner.record_cw({"error": "CLI failed", "charged_cw": 0})
+        runner.record_cw(failed | {"charged_cw": 0})
+    with pytest.raises(RuntimeError):
+        runner.record_cw({"error": "CLI failed", "charged_cw": runner.RESERVE_CW})
     for bad in ({"usage": {**usage["usage"], "fallback_credit": True}},
                 {"usage": {**usage["usage"], "output_tokens": True}},
                 {"usage": {k: v for k, v in usage["usage"].items() if k != "output_tokens"}}):
         with pytest.raises(RuntimeError):
             runner.usage_cw(bad)
+
+
+def reader_wrapper(cw=50_000, **changes):
+    wrapper = {"subtype": "success", "is_error": False, "result": "CLASS: TURNS; DECIDER: NONE; WHY: x",
+               "modelUsage": {runner.MODEL: {}},
+               "usage": {**dict.fromkeys(runner.USAGE_KEYS, 0),
+                         "input_tokens": cw, "fallback_credit": None}}
+    return wrapper | changes
+
+
+@pytest.mark.parametrize("arm", ["identifier", "english"])
+@pytest.mark.parametrize("row_index", [0, 1, 2], ids=["turns", "settled", "conditional"])
+def test_failed_call_charges_reported_usage_above_reserve(monkeypatch, arm, row_index):
+    row = render.rows()[row_index]
+    wrapper = reader_wrapper()
+    monkeypatch.setattr(runner.subprocess, "run", lambda *a, **k:
+                        subprocess.CompletedProcess([], 1, json.dumps(wrapper), ""))
+    record = runner.call(row, arm, "subscription")
+    assert record["charged_cw"] == 50_000
+    assert runner.record_cw(record) == runner.usage_cw(record["cli"])
+
+
+@pytest.mark.parametrize("outcome,known", [
+    ("failed", True), ("timeout", False), ("timeout_usage", True),
+    ("oversized", True), ("large_record", True),
+    ("invalid_model", True), ("invalid_result", True), ("invalid_usage", False),
+    ("invalid_wrapper", False), ("overflow", True), ("failed_overflow", True),
+])
+def test_every_dispatched_outcome_is_saved_and_restart_is_blocked(tmp_path, monkeypatch, outcome, known):
+    row = render.rows()[0]
+    monkeypatch.setattr(runner, "RAW", tmp_path)
+    monkeypatch.setattr(runner, "committed", lambda: None)
+    monkeypatch.setattr(runner.render, "audit", lambda: None)
+    monkeypatch.setattr(runner.render, "rows", lambda: [row])
+    monkeypatch.setattr(runner, "account", lambda: "subscription")
+    wrapper = reader_wrapper(cw=runner.CW_CAP + 1 if "overflow" in outcome else 50_000)
+    if outcome == "invalid_model":
+        wrapper["modelUsage"] = {"another-model": {}}
+    elif outcome == "invalid_result":
+        wrapper["result"] = []
+    elif outcome == "invalid_usage":
+        wrapper["usage"]["output_tokens"] = True
+    elif outcome == "oversized":
+        wrapper["result"] = "x" * (runner.RAW_CAP + 1)
+    elif outcome == "large_record":
+        wrapper["result"] = "x" * (runner.RAW_CAP - 2000)
+    output = "[]" if outcome == "invalid_wrapper" else json.dumps(wrapper)
+    calls = []
+
+    def fake_run(*args, **kwargs):
+        calls.append(args)
+        assert (tmp_path / f"{row['id']}-identifier.json").exists()
+        if outcome == "timeout":
+            raise subprocess.TimeoutExpired(args[0], 1200)
+        if outcome == "timeout_usage":
+            raise subprocess.TimeoutExpired(args[0], 1200, output=output.encode())
+        return subprocess.CompletedProcess(args[0], 1 if outcome in {"failed", "failed_overflow"} else 0,
+                                           output, "")
+
+    monkeypatch.setattr(runner.subprocess, "run", fake_run)
+    with pytest.raises(RuntimeError):
+        runner.run()
+    assert len(calls) == 1
+    saved = json.loads((tmp_path / f"{row['id']}-identifier.json").read_text())
+    assert (tmp_path / f"{row['id']}-identifier.json").stat().st_size <= runner.RAW_CAP
+    if outcome == "overflow":
+        assert "error" not in saved
+    else:
+        assert saved["error"]
+    if known:
+        assert runner.record_cw(saved) == saved["charged_cw"]
+        assert saved["charged_cw"] >= 50_000
+    else:
+        assert saved["charged_cw"] is None
+        with pytest.raises(RuntimeError):
+            runner.record_cw(saved)
+    with pytest.raises(RuntimeError):
+        runner.run()
+    assert len(calls) == 1
+
+
+def test_interrupted_call_keeps_durable_dispatch_record(tmp_path, monkeypatch):
+    row = render.rows()[0]
+    monkeypatch.setattr(runner, "RAW", tmp_path)
+    monkeypatch.setattr(runner, "committed", lambda: None)
+    monkeypatch.setattr(runner.render, "audit", lambda: None)
+    monkeypatch.setattr(runner.render, "rows", lambda: [row])
+    monkeypatch.setattr(runner, "account", lambda: "subscription")
+
+    def interrupted(*args):
+        assert (tmp_path / f"{row['id']}-identifier.json").exists()
+        raise KeyboardInterrupt
+
+    monkeypatch.setattr(runner, "call", interrupted)
+    with pytest.raises(KeyboardInterrupt):
+        runner.run()
+    saved = json.loads((tmp_path / f"{row['id']}-identifier.json").read_text())
+    assert saved["state"] == "dispatched" and saved["charged_cw"] is None
+    with pytest.raises(RuntimeError, match="unaccounted raw call"):
+        runner.run()
+
+
+@pytest.mark.parametrize("mutation", [
+    lambda record: record.update(answer="changed"),
+    lambda record: record["cli"].update(modelUsage={"another-model": {}}),
+    lambda record: record["cli"]["usage"].update(input_tokens=True),
+    lambda record: record.update(charged_cw=0),
+    lambda record: record.update(state="dispatched"),
+])
+def test_saved_result_rejects_accounting_and_result_tampering(mutation):
+    record = json.loads((ROOT / "raw/C01-english.json").read_text())
+    assert runner.record_cw(record) == record["charged_cw"]
+    mutation(record)
+    with pytest.raises(RuntimeError):
+        runner.record_cw(record)
 
 
 def test_original_items_are_not_reused():

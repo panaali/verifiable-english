@@ -7,6 +7,7 @@ from pathlib import Path
 import re
 import subprocess
 import sys
+import tempfile
 
 import render
 
@@ -52,6 +53,8 @@ def score(row, answer):
 
 
 def usage_cw(result):
+    if not isinstance(result, dict):
+        raise RuntimeError("missing CLI wrapper")
     usage = result.get("usage")
     if not isinstance(usage, dict) or usage.get("fallback_credit", "missing") is not None:
         raise RuntimeError("missing usage or paid-credit fallback")
@@ -60,12 +63,52 @@ def usage_cw(result):
     return sum(usage[key] for key in USAGE_KEYS)
 
 
+def usage_summary(wrapper):
+    """Keep enough of an oversized response to audit a known CW charge."""
+    try:
+        usage_cw(wrapper)
+    except RuntimeError:
+        return {}
+    usage = wrapper["usage"]
+    return {"usage": {key: usage[key] for key in USAGE_KEYS} | {"fallback_credit": None}}
+
+
 def record_cw(record):
-    if record.get("error"):
-        if record.get("charged_cw") != RESERVE_CW:
-            raise RuntimeError("failed call has no reserved charge")
-        return RESERVE_CW
-    return usage_cw(record["cli"])
+    if record.get("state") == "dispatched":
+        raise RuntimeError("reader dispatch has no completed usage")
+    cli = record.get("cli")
+    if not record.get("error"):
+        if (not isinstance(cli, dict) or record.get("exit_code") != 0
+                or cli.get("subtype") != "success" or cli.get("is_error") is not False
+                or not isinstance(cli.get("modelUsage"), dict)
+                or set(cli["modelUsage"]) != {MODEL}
+                or type(cli.get("result")) is not str
+                or record.get("answer") != cli["result"]):
+            raise RuntimeError("raw record is not a successful reader result")
+    elif type(record["error"]) is not str or not record["error"] or record.get("answer") != "":
+        raise RuntimeError("raw record has invalid failure state")
+    reported = usage_cw(cli)
+    charged = max(RESERVE_CW, reported) if record.get("error") else reported
+    if type(record.get("charged_cw")) is not int or record["charged_cw"] != charged:
+        raise RuntimeError("raw record has incorrect CW charge")
+    return charged
+
+
+def save_record(path, record):
+    """Replace a journal entry durably before a call or a cap decision."""
+    with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=path.parent,
+                                     prefix=".reader-", delete=False) as stream:
+        temporary = Path(stream.name)
+        json.dump(record, stream, indent=2, ensure_ascii=False)
+        stream.write("\n")
+        stream.flush()
+        os.fsync(stream.fileno())
+    os.replace(temporary, path)
+    directory = os.open(path.parent, os.O_RDONLY)
+    try:
+        os.fsync(directory)
+    finally:
+        os.close(directory)
 
 
 def within_caps(calls, charged):
@@ -111,26 +154,50 @@ def call(row, arm, cfg):
     env["CLAUDE_CONFIG_DIR"] = cfg
     cmd = ["claude", "-p", "--model", "sonnet", "--max-turns", "1",
            "--restricted", "--no-session-persistence", "--output-format", "json", body]
-    result = subprocess.run(cmd, capture_output=True, text=True, cwd="/tmp", env=env, timeout=1200)
-    if len(result.stdout.encode()) > RAW_CAP:
-        raise RuntimeError("CLI output exceeds raw record limit")
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, cwd="/tmp", env=env, timeout=1200)
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        raw = getattr(exc, "stdout", None) or b""
+        stdout = raw.decode("utf-8", errors="replace") if isinstance(raw, bytes) else raw
+        result = subprocess.CompletedProcess(cmd, -1, stdout, str(exc))
+        process_error = f"CLI did not complete: {type(exc).__name__}"
+    else:
+        process_error = None
+    oversized = len(result.stdout.encode()) > RAW_CAP
     try:
         wrapper = json.loads(result.stdout)
-    except ValueError:
-        wrapper = {"raw_stdout": result.stdout}
+    except (TypeError, ValueError):
+        wrapper = {"raw_stdout": result.stdout[:RAW_CAP]} if not oversized else {}
+    if not isinstance(wrapper, dict):
+        wrapper = {"raw_stdout": result.stdout[:RAW_CAP]} if not oversized else {}
+    if oversized:
+        wrapper = usage_summary(wrapper)
     record = {"id": row["id"], "arm": arm, "account": Path(cfg).name,
               "prompt": body, "cli": wrapper, "stderr": result.stderr,
               "exit_code": result.returncode}
-    if result.returncode or wrapper.get("subtype") != "success" or wrapper.get("is_error") is not False:
-        return record | {"error": f"CLI exit {result.returncode} or unsuccessful result",
-                         "charged_cw": RESERVE_CW, "answer": ""}
-    models = wrapper.get("modelUsage")
-    if not isinstance(models, dict) or set(models) != {MODEL}:
-        raise RuntimeError("CLI did not use Sonnet 5.5 exclusively")
-    charged = usage_cw(wrapper)
-    if type(wrapper.get("result")) is not str:
-        raise RuntimeError("CLI result is not text")
-    return record | {"charged_cw": charged, "answer": wrapper["result"]}
+    error = process_error or ("CLI output exceeds raw record limit" if oversized else None)
+    if not error and (result.returncode or wrapper.get("subtype") != "success"
+                      or wrapper.get("is_error") is not False):
+        error = f"CLI exit {result.returncode} or unsuccessful result"
+    if not error:
+        models = wrapper.get("modelUsage")
+        if not isinstance(models, dict) or set(models) != {MODEL}:
+            error = "CLI did not use Sonnet 5.5 exclusively"
+        elif type(wrapper.get("result")) is not str:
+            error = "CLI result is not text"
+    try:
+        reported = usage_cw(wrapper)
+    except RuntimeError as exc:
+        error = error or str(exc)
+        reported = None
+    charged = max(RESERVE_CW, reported) if error and reported is not None else reported
+    final = record | {"charged_cw": charged, "answer": "" if error else wrapper["result"],
+                      **({"error": error} if error else {})}
+    if len((json.dumps(final, indent=2, ensure_ascii=False) + "\n").encode()) > RAW_CAP:
+        final = record | {"cli": usage_summary(wrapper), "stderr": str(result.stderr)[:4096],
+                          "charged_cw": max(RESERVE_CW, reported) if reported is not None else None,
+                          "answer": "", "error": "CLI record exceeds raw record limit"}
+    return final
 
 
 def run():
@@ -148,11 +215,16 @@ def run():
     charged = 0
     for name, record in saved.items():
         row, arm = known[name]
-        if record["prompt"] != prompt(row, arm) or record["charged_cw"] != record_cw(record):
+        if record["prompt"] != prompt(row, arm):
             raise RuntimeError(f"rebound raw record: {name}")
-        charged += record["charged_cw"]
+        try:
+            charged += record_cw(record)
+        except RuntimeError as exc:
+            raise RuntimeError(f"unaccounted raw call {name}; inspect before continuing") from exc
     if len(saved) > CALL_CAP or charged > CW_CAP:
         raise RuntimeError("saved calls exceed cap")
+    if any(record.get("error") for record in saved.values()):
+        raise RuntimeError("saved reader call failed; inspect before continuing")
     for row, arm in queue:
         name = f"{row['id']}-{arm}.json"
         if name in saved:
@@ -160,10 +232,15 @@ def run():
         if not within_caps(len(saved), charged):
             raise RuntimeError("reader cap reached")
         cfg = account()
+        save_record(RAW / name, {"id": row["id"], "arm": arm, "account": Path(cfg).name,
+                                 "prompt": prompt(row, arm), "state": "dispatched",
+                                 "charged_cw": None})
         record = call(row, arm, cfg)
+        save_record(RAW / name, record)
+        if record["charged_cw"] is None:
+            raise RuntimeError(f"reader usage unknown for {name}; inspect before continuing")
         if charged + record["charged_cw"] > CW_CAP:
             raise RuntimeError("reported CW cap exceeded; inspect last call")
-        (RAW / name).write_text(json.dumps(record, indent=2, ensure_ascii=False) + "\n")
         saved[name] = record
         charged += record["charged_cw"]
         print(f"{name}: {charged} CW / {len(saved)} calls", flush=True)
@@ -176,6 +253,10 @@ def results():
     records = existing()
     if len(records) != 80:
         raise RuntimeError(f"only {len(records)} of 80 reader calls saved")
+    for record in records.values():
+        record_cw(record)
+        if record.get("error"):
+            raise RuntimeError("cannot score a failed reader call")
     scores = {arm: [score(row, records[f"{row['id']}-{arm}.json"]["answer"])
                     for row in rows] for arm in ("identifier", "english")}
     count = {arm: sum(s["correct"] for s in scores[arm]) for arm in scores}
