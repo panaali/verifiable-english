@@ -288,6 +288,100 @@ inductive JsonWF : Json → Prop
   | arr (xs : Array Json) : (∀ x ∈ xs, JsonWF x) → JsonWF (.arr xs)
   | obj (kvs : Std.TreeMap.Raw String Json) : kvs.WF → (∀ kv ∈ kvs.toList, JsonWF kv.2) → JsonWF (.obj kvs)
 
+/-! `JsonWF` as a check (sc-1af, the DRI's decision of 2026-10-28 item 1): the route runs it on every document it
+    parses, since no lemma can be proved about the output of a parser that is not total. A tree is well formed when
+    its stored sizes are right and it is balanced at every node (`Impl.Balanced`), and its keys ascend in order
+    (`Impl.Ordered`). Each node is read once; the keys are listed only once the tree is balanced, so in `O(n log n)`. -/
+
+/-- Strictly ascending keys. -/
+def ascending : List String → Bool
+  | a :: b :: rest => compare a b == .lt && ascending (b :: rest)
+  | _ => true
+
+open Std.DTreeMap.Internal in
+/-- `Impl.Balanced` as a check: each node's stored size, and the balance of its two sides. -/
+def balanced? : Impl String (fun _ => Json) → Bool
+  | .leaf => true
+  | .inner sz _ _ l r => balanced? l && balanced? r &&
+      (l.size + r.size ≤ 1 || l.size ≤ delta * r.size && r.size ≤ delta * l.size) && sz == l.size + 1 + r.size
+
+mutual
+/-- `JsonWF` as a total check: `jsonWF?_sound`. -/
+def jsonWF? : Json → Bool
+  | .null => true
+  | .bool _ => true
+  | .num _ => true
+  | .str _ => true
+  | .arr ⟨xs⟩ => listWF? xs
+  | .obj ⟨⟨t⟩⟩ => balanced? t && ascending (t.toListModel.map (·.1)) && implWF? t
+termination_by structural j => j
+/-- Every member of an array passes `jsonWF?`. -/
+def listWF? : List Json → Bool
+  | [] => true
+  | x :: xs => jsonWF? x && listWF? xs
+termination_by structural xs => xs
+/-- Every value of an object's tree passes `jsonWF?`. -/
+def implWF? : Std.DTreeMap.Internal.Impl String (fun _ => Json) → Bool
+  | .leaf => true
+  | .inner _ _ v l r => implWF? l && jsonWF? v && implWF? r
+termination_by structural t => t
+end
+
+open Std.DTreeMap.Internal in
+theorem balanced?_sound : ∀ t : Impl String (fun _ => Json), balanced? t = true → t.Balanced
+  | .leaf, _ => .leaf
+  | .inner sz _ _ l r, h => by
+    simp only [balanced?, Bool.and_eq_true, Bool.or_eq_true, decide_eq_true_eq, beq_iff_eq] at h
+    exact .inner (balanced?_sound l h.1.1.1) (balanced?_sound r h.1.1.2) h.1.2 h.2
+
+theorem ascending_sound : ∀ ks : List String, ascending ks = true → ks.Pairwise (compare · · = .lt)
+  | [], _ => .nil
+  | [_], _ => List.pairwise_singleton _ _
+  | a :: b :: rest, h => by
+    simp only [ascending, Bool.and_eq_true, beq_iff_eq] at h
+    have ih := ascending_sound (b :: rest) h.2
+    refine List.Pairwise.cons (fun c hc => ?_) ih
+    rcases List.mem_cons.mp hc with rfl | hc
+    · exact h.1
+    · exact Std.TransCmp.lt_trans h.1 (List.rel_of_pairwise_cons ih hc)
+
+mutual
+theorem jsonWF?_sound {j : Json} (h : jsonWF? j = true) : JsonWF j := match j, h with
+  | .null, _ => .null
+  | .bool b, _ => .bool b
+  | .num n, _ => .num n
+  | .str s, _ => .str s
+  | .arr ⟨xs⟩, h => .arr _ fun x hx => listWF?_sound (by simpa [jsonWF?] using h) x (by simpa using hx)
+  | .obj ⟨⟨t⟩⟩, h => by
+    simp only [jsonWF?, Bool.and_eq_true] at h
+    have ho : t.Ordered := List.pairwise_map.mp (ascending_sound _ h.1.2)
+    refine .obj _ ⟨⟨.wf (balanced?_sound t h.1.1) ho⟩⟩ fun kv hkv => ?_
+    · simp only [Std.TreeMap.Raw.toList, Std.DTreeMap.Raw.Const.toList,
+        Std.DTreeMap.Internal.Impl.Const.toList_eq_toListModel_map,
+        List.mem_map] at hkv
+      obtain ⟨e, he, rfl⟩ := hkv
+      exact implWF?_sound h.2 e he
+theorem listWF?_sound {xs : List Json} (h : listWF? xs = true) : ∀ x ∈ xs, JsonWF x := match xs, h with
+  | [], _ => fun _ hx => absurd hx List.not_mem_nil
+  | y :: ys, h => by
+    simp only [listWF?, Bool.and_eq_true] at h
+    intro x hx
+    rcases List.mem_cons.mp hx with rfl | hx
+    · exact jsonWF?_sound h.1
+    · exact listWF?_sound h.2 x hx
+theorem implWF?_sound {t : Std.DTreeMap.Internal.Impl String (fun _ => Json)} (h : implWF? t = true) :
+    ∀ e ∈ t.toListModel, JsonWF e.2 := match t, h with
+  | .leaf, _ => fun _ he => absurd he List.not_mem_nil
+  | .inner _ k v l r, h => by
+    simp only [implWF?, Bool.and_eq_true] at h
+    intro e he
+    simp only [Std.DTreeMap.Internal.Impl.toListModel, List.mem_append, List.mem_cons] at he
+    rcases he with he | rfl | he
+    · exact implWF?_sound h.1.1 e he
+    · exact jsonWF?_sound h.1.2
+    · exact implWF?_sound h.2 e he
+end
+
 /-- A JSON string value occurs in a JSON value (object keys are not values). -/
 inductive HasStr (s : String) : Json → Prop
   | str : HasStr s (.str s)
