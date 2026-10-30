@@ -1,0 +1,200 @@
+✔ [1079/1164] Built VE.Ask.Run (882ms)
+✔ [1081/1164] Built ResponseShape.Schemas.Ask (948ms)
+✔ [1083/1164] Built VE.Service.Protocol (6.7s)
+✔ [1084/1164] Built ResponseShape.Schemas.Envelope (1.3s)
+✔ [1085/1164] Built ResponseShape.CaseDeciders (1.6s)
+✔ [1086/1164] Built ResponseShape.Schemas.Common (2.1s)
+✔ [1090/1164] Built Serve (1.3s)
+✔ [1091/1164] Built ResponseShape.Schemas.NormDefaults (2.2s)
+✔ [1092/1164] Built ResponseShape.Schemas.Discourse (1.8s)
+✔ [1093/1164] Built VE.SpeechActs.Source.Admission.Run (2.9s)
+✔ [1094/1164] Built ResponseShape.Schemas.Norms (1.5s)
+✔ [1095/1164] Built ResponseShape.Schemas.Reports (1.8s)
+✔ [1096/1164] Built ResponseShape.Schemas.Rights (1.9s)
+✔ [1097/1164] Built ResponseShape.Schemas.Risk (1.7s)
+✔ [1098/1164] Built ResponseShape.Schemas.SoftNorms (1.8s)
+✔ [1099/1164] Built ResponseShape.Schemas.SpeechActs (1.5s)
+✔ [1100/1164] Built Serve:c.o (250ms)
+✔ [1101/1164] Built VE.Service.Protocol:c.o (8.2s)
+✔ [1110/1164] Built ve_service:exe (779ms)
+✔ [1111/1164] Built ResponseShape.Schemas.Graph (1.6s)
+✔ [1112/1164] Built ResponseShape.Schemas.NormDefaults:c.o (1.0s)
+✔ [1113/1164] Built SpeechActsMain (1.4s)
+✔ [1114/1164] Built ResponseShape.Schemas.Alternatives (2.3s)
+✔ [1118/1164] Built VE (1.5s)
+✔ [1120/1164] Built ve_speech_acts_route:exe (795ms)
+✔ [1121/1164] Built ResponseShape.Schemas.FamilyNorms (1.4s)
+✔ [1123/1164] Built ResponseShape.Schemas.Document (1.4s)
+⚠ [1125/1164] Built ResponseShape.Skeleton (6.4s)
+warning: ResponseShape/Skeleton.lean:100:10: This simp argument is unused:
+  e
+
+Hint: Omit it from the simp argument list.
+  simp ̵[̵e̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Skeleton.lean:144:22: This simp argument is unused:
+  objectHas
+
+Hint: Omit it from the simp argument list.
+  simp_all [o̵b̵j̵e̵c̵t̵H̵a̵s̵,̵ ̵Except.toBool]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Skeleton.lean:155:37: This simp argument is unused:
+  objectHas
+
+Hint: Omit it from the simp argument list.
+  simp_all [Except.toBool,̵ ̵o̵b̵j̵e̵c̵t̵H̵a̵s̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Skeleton.lean:430:35: This simp argument is unused:
+  Bool.or_eq_true
+
+Hint: Omit it from the simp argument list.
+  simp only [List.contains_cons, B̵o̵o̵l̵.̵o̵r̵_̵e̵q̵_̵t̵r̵u̵e̵,̵ ̵beq_iff_eq, List.contains_iff_mem, List.mem_filter,
+        Bool.not_eq_true', Bool.or_eq_false_iff, beq_eq_false_iff_ne, ne_eq] at this
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Skeleton.lean:430:52: This simp argument is unused:
+  beq_iff_eq
+
+Hint: Omit it from the simp argument list.
+  simp only [List.contains_cons, Bool.or_eq_true, b̵e̵q̵_̵i̵f̵f̵_̵e̵q̵,̵ ̵List.contains_iff_mem, List.mem_filter,
+        Bool.not_eq_true', Bool.or_eq_false_iff, beq_eq_false_iff_ne, ne_eq] at this
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Skeleton.lean:430:64: This simp argument is unused:
+  List.contains_iff_mem
+
+Hint: Omit it from the simp argument list.
+  simp only [List.contains_cons, Bool.or_eq_true, beq_iff_eq, L̵i̵s̵t̵.̵c̵o̵n̵t̵a̵i̵n̵s̵_̵i̵f̵f̵_̵m̵e̵m̵,̵ ̵List.mem_filter, Bool.not_eq_true',
+  ̲  ̲ ̲ ̲ ̲ ̲Bool.or_eq_false_iff, beq_eq_false_iff_ne, ne_eq] at this
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Skeleton.lean:430:87: This simp argument is unused:
+  List.mem_filter
+
+Hint: Omit it from the simp argument list.
+  simp only [List.contains_cons, Bool.or_eq_true, beq_iff_eq, List.contains_iff_mem, ̵L̵i̵s̵t̵.̵m̵e̵m̵_̵f̵i̵l̵t̵e̵r̵,̵
+        Bool.not_eq_true', Bool.or_eq_false_iff, beq_eq_false_iff_ne, ne_eq] at this
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+✔ [1126/1164] Built ResponseShape.Schemas (1.1s)
+✔ [1128/1164] Built ResponseDecode (1.0s)
+✔ [1130/1164] Built ve_response_decode:exe (664ms)
+✔ [1131/1164] Built ResponseShape.DefaultsExamples (6.9s)
+✔ [1132/1164] Built ResponseShape.Skeletons (8.0s)
+✔ [1133/1164] Built ResponseShape.EnumSites (1.6s)
+✔ [1134/1164] Built ResponseShape.FitsTactic (8.4s)
+✔ [1135/1164] Built ResponseShape.Encoders.Common (1.8s)
+✔ [1136/1164] Built ResponseShape.Encoders.Envelope (7.8s)
+✔ [1137/1164] Built ResponseShape.Encoders.Metered (12s)
+✔ [1138/1164] Built ResponseShape.Encoders.English (9.1s)
+✔ [1139/1164] Built ResponseShape.Encoders.Words (3.1s)
+✔ [1140/1164] Built ResponseShape.Encoders.Question (2.9s)
+✔ [1141/1164] Built ResponseShape.Encoders.Ask (26s)
+✔ [1142/1164] Built ResponseShape.Encoders.RiskEval (5.1s)
+✔ [1143/1164] Built ResponseShape.Encoders.Quantity (35s)
+✔ [1144/1164] Built ResponseShape.Encoders.Document (27s)
+✔ [1145/1164] Built ResponseShape.Encoders.Calc (54s)
+✔ [1146/1164] Built ResponseShape.Encoders.EnglishLean (4.5s)
+✔ [1147/1164] Built ResponseShape.Encoders.SearchBudget (3.1s)
+✔ [1148/1164] Built ResponseShape.Encoders.Standalone (16s)
+✔ [1149/1164] Built ResponseShape.Encoders.Conformance (14s)
+✔ [1150/1164] Built ResponseShape.Encoders.Route (17s)
+✔ [1151/1164] Built ResponseShape.Encoders.Cardinality (14s)
+✔ [1152/1164] Built ResponseShape.Encoders.Family (64s)
+✔ [1153/1164] Built ResponseShape.Encoders.Reports (23s)
+✔ [1154/1164] Built ResponseShape.Encoders.Norms (25s)
+⚠ [1155/1164] Built ResponseShape.Encoders.Discourse (36s)
+warning: ResponseShape/Encoders/Discourse.lean:195:58: This simp argument is unused:
+  List.append_nil
+
+Hint: Omit it from the simp argument list.
+  simp only [List.cons_append, List.nil_append, L̵i̵s̵t̵.̵a̵p̵p̵e̵n̵d̵_̵n̵i̵l̵,̵ ̵choicesJson, jointJson]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+✔ [1156/1164] Built ResponseShape.Encoders.SpeechActs (20s)
+✔ [1157/1164] Built ResponseShape.Encoders.SoftNorms (53s)
+⚠ [1158/1164] Built ResponseShape.Encoders.Alternatives (80s)
+warning: ResponseShape/Encoders/Alternatives.lean:40:83: This simp argument is unused:
+  Bool.false_eq_true
+
+Hint: Omit it from the simp argument list.
+  simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte,̵ ̵B̵o̵o̵l̵.̵f̵a̵l̵s̵e̵_̵e̵q̵_̵t̵r̵u̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Encoders/Alternatives.lean:52:83: This simp argument is unused:
+  Bool.false_eq_true
+
+Hint: Omit it from the simp argument list.
+  simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte,̵ ̵B̵o̵o̵l̵.̵f̵a̵l̵s̵e̵_̵e̵q̵_̵t̵r̵u̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Encoders/Alternatives.lean:87:83: This simp argument is unused:
+  Bool.false_eq_true
+
+Hint: Omit it from the simp argument list.
+  simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte,̵ ̵B̵o̵o̵l̵.̵f̵a̵l̵s̵e̵_̵e̵q̵_̵t̵r̵u̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Encoders/Alternatives.lean:97:83: This simp argument is unused:
+  Bool.false_eq_true
+
+Hint: Omit it from the simp argument list.
+  simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte,̵ ̵B̵o̵o̵l̵.̵f̵a̵l̵s̵e̵_̵e̵q̵_̵t̵r̵u̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [1159/1164] Built ResponseShape.Encoders.Rights (26s)
+warning: ResponseShape/Encoders/Rights.lean:98:31: This simp argument is unused:
+  entryJson
+
+Hint: Omit it from the simp argument list.
+  simp only [VE.Route.Wire.ok,̵ ̵e̵n̵t̵r̵y̵J̵s̵o̵n̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+✔ [1160/1164] Built ResponseShape.Encoders.NormDefaults (103s)
+⚠ [1161/1164] Built ResponseShape.Encoders.Risk (29s)
+warning: ResponseShape/Encoders/Risk.lean:17:59: unused variable `hobj`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: ResponseShape/Encoders/Risk.lean:41:56: unused variable `hobj`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: ResponseShape/Encoders/Risk.lean:49:62: unused variable `hobj`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [1162/1164] Built ResponseShape.Encoders.ReadingsRoute (128s)
+warning: ResponseShape/Encoders/ReadingsRoute.lean:829:28: This simp argument is unused:
+  String.reduceEq
+
+Hint: Omit it from the simp argument list.
+  simp only [S̵t̵r̵i̵n̵g̵.̵r̵e̵d̵u̵c̵e̵E̵q̵,̵ ̵Bool.false_eq_true, String.reduceBEq] at *
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Encoders/ReadingsRoute.lean:1243:27: This simp argument is unused:
+  List.toList_toArray
+
+Hint: Omit it from the simp argument list.
+  simp only [Json.getArr?,̵ ̵L̵i̵s̵t̵.̵t̵o̵L̵i̵s̵t̵_̵t̵o̵A̵r̵r̵a̵y̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Encoders/ReadingsRoute.lean:1309:4: This simp argument is unused:
+  List.toList_toArray
+
+Hint: Omit it from the simp argument list.
+  simp only [getObjValD_set_eq wfe, getObjValD_of_ok hP, hPa, toJson_strings, Array.any_toList.symm,̵
+  ̵ ̵ ̵ ̵ ̵L̵i̵s̵t̵.̵t̵o̵L̵i̵s̵t̵_̵t̵o̵A̵r̵r̵a̵y̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Encoders/ReadingsRoute.lean:1334:4: This simp argument is unused:
+  hl
+
+Hint: Omit it from the simp argument list.
+  simp only [getObjValD_set_eq wf, getObjValD_set_ne wf (show "environment" ≠ "kind" by decide), he,
+      getObjVal_set_ne wfe (show "profiles" ≠ "vocabulary" by decide), getObjVal_set_eq wfe, hP,̵
+  ̵ ̵ ̵ ̵ ̵h̵l̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+✔ [1163/1164] Built ResponseShape.Encoders (769ms)
+Build completed successfully (1164 jobs).
