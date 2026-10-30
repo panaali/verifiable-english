@@ -9,6 +9,7 @@ shell. `tests/test_nested_pytest.py` fails on a pytest command built anywhere el
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
+import re
 import sys
 
 # The plugins every run loads, by module: the gate's suite and every nested run.
@@ -49,3 +50,8 @@ def environment(base: Mapping[str, str], **settings: str) -> dict[str, str]:
     env.update(settings)
     env["PYTEST_DISABLE_PLUGIN_AUTOLOAD"] = "1"
     return env
+
+
+def failed_test_run(result) -> bool:
+    """A mutant is killed by a failing test, not by collection, usage or empty selection."""
+    return result.returncode == 1 and re.search(r"(?m)^FAILED\s+\S+", result.stdout) is not None

@@ -1,0 +1,10 @@
+{
+  "allow": [
+    {"definition": "VE.Scope.BlockBound", "operator": "body-true", "reason": "a Prop no evaluated check can read; the build with proofs fails at govern_no_new_symbols (Theorems.lean, hb applied), and Examples' F-sym ¬BlockBound fixture: mutants.json proof_kills tm-BlockBound-body-true"},
+    {"definition": "VE.Scope.BlockBound", "operator": "body-false", "reason": "a Prop no evaluated check can read; the kill that means something is Examples' F-sym BlockBound fixture (Examples.lean:764) and the govern_no_new_symbols instance on it (fix1 F1); govern_no_new_symbols itself holds trivially of False, so its failure there is the proof's shape (review F4)"},
+    {"definition": "VE.Scope.HasStr", "operator": "eq-ne", "reason": "an inductive Prop no evaluated check can read; the build with proofs fails at hasStr_null and 22 other proofs: mutants.json proof_kills tm-HasStr-eq-ne"},
+    {"definition": "VE.Scope.HasStr", "operator": "eq-le", "reason": "INVALID by hand (review F4): Lean refuses the text, Except String Json has no LE instance (failed to synthesize); the tool reports it UNKNOWN"},
+    {"definition": "VE.Scope.JsonWF", "operator": "ctor-drop", "reason": "an inductive Prop no evaluated check can read; each dropped constructor breaks the proofs its detail names (fix1 F1: bool at leadPart_wf, num at part_wf, Examples.lean)"},
+    {"definition": "VE.Scope.HasStr", "operator": "ctor-drop", "reason": "an inductive Prop no evaluated check can read; each dropped constructor breaks the proofs its detail names"}
+  ]
+}
