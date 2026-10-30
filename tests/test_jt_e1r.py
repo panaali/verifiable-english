@@ -201,6 +201,80 @@ def test_saved_result_rejects_accounting_and_result_tampering(mutation):
         runner.record_cw(record)
 
 
+def fail_record(record):
+    record.update(error="CLI failed", exit_code=1, answer="",
+                  charged_cw=max(runner.RESERVE_CW, runner.usage_cw(record["cli"])))
+    return record
+
+
+def test_failed_accounted_call_scores_incorrect_and_not_critical(monkeypatch):
+    """F2: PRE-REGISTRATION.md says call errors count incorrect; the frame still scores."""
+    saved = runner.existing()
+    baseline = runner.results()
+    records = json.loads(json.dumps(saved))
+    monkeypatch.setattr(runner, "existing", lambda: records)
+    fail_record(records["U02-english.json"])
+    probe = runner.results()
+    assert probe["counts"] == {"identifier": baseline["counts"]["identifier"], "english": 19}
+    assert probe["errors"] == ["U02-english"] and baseline["errors"] == []
+    assert probe["cw"] == 1_201_615 == baseline["cw"] + runner.RESERVE_CW - runner.usage_cw(
+        saved["U02-english.json"]["cli"])
+    for name, record in saved.items():
+        records = json.loads(json.dumps(saved))
+        fail_record(records[name])
+        arm = record["arm"]
+        was = runner.score(next(r for r in render.rows() if r["id"] == record["id"]), record["answer"])
+        scored = runner.results()
+        assert scored["counts"][arm] == baseline["counts"][arm] - was["correct"], name
+        assert scored["errors"] == [name.removesuffix(".json")]
+        assert scored["calls"] == 80 and scored["cw"] == sum(r["charged_cw"] for r in records.values())
+
+
+def test_failed_call_answer_is_never_scored_or_critical(monkeypatch):
+    records = json.loads(json.dumps(runner.existing()))
+    for name in ("U01-english.json", "C03-identifier.json"):
+        fail_record(records[name])
+    monkeypatch.setattr(runner, "existing", lambda: records)
+    scored_answers = []
+
+    def misread(row, answer):
+        scored_answers.append(answer)
+        return {"correct": True, "critical": True, "class": "SETTLED", "decider": "NONE"}
+
+    monkeypatch.setattr(runner, "score", misread)
+    result = runner.results()
+    assert len(scored_answers) == 78 and "" not in scored_answers
+    assert result["counts"] == {"identifier": 39, "english": 39}
+    assert "U01" not in result["critical"] and len(result["critical"]) == 39
+    assert result["errors"] == ["C03-identifier", "U01-english"]
+
+
+@pytest.mark.parametrize("mutation", [
+    lambda record: record.update(charged_cw=None),
+    lambda record: record["cli"].pop("usage"),
+    lambda record: record["cli"]["usage"].update(fallback_credit=True),
+    lambda record: record.update(charged_cw=runner.RESERVE_CW - 1),
+    lambda record: record.update(answer="CLASS: TURNS; DECIDER: NONE; WHY: x"),
+    lambda record: record.update(state="dispatched"),
+], ids=["unknown_charge", "no_usage", "credit_fallback", "undercharged", "answer_kept", "dispatched"])
+def test_failed_call_with_unknown_usage_still_blocks_scoring(monkeypatch, mutation):
+    records = json.loads(json.dumps(runner.existing()))
+    mutation(fail_record(records["U02-english.json"]))
+    monkeypatch.setattr(runner, "existing", lambda: records)
+    with pytest.raises(RuntimeError):
+        runner.results()
+
+
+@pytest.mark.parametrize("drop", [1, 2, 80])
+def test_scoring_requires_all_80_records(monkeypatch, drop):
+    records = json.loads(json.dumps(runner.existing()))
+    for name in sorted(records)[:drop]:
+        del records[name]
+    monkeypatch.setattr(runner, "existing", lambda: records)
+    with pytest.raises(RuntimeError, match=f"only {80 - drop} of 80"):
+        runner.results()
+
+
 def test_original_items_are_not_reused():
     with (ROOT.parent / "jt-e1/items.tsv").open() as stream:
         old = stream.read()

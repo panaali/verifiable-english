@@ -52,6 +52,13 @@ def score(row, answer):
             "class": cls, "decider": decider}
 
 
+def record_score(row, record):
+    """A failed call counts incorrect and is not a misreading, so its answer is never scored."""
+    if record.get("error"):
+        return {"correct": False, "critical": False, "class": None, "decider": None}
+    return score(row, record["answer"])
+
+
 def usage_cw(result):
     if not isinstance(result, dict):
         raise RuntimeError("missing CLI wrapper")
@@ -255,9 +262,7 @@ def results():
         raise RuntimeError(f"only {len(records)} of 80 reader calls saved")
     for record in records.values():
         record_cw(record)
-        if record.get("error"):
-            raise RuntimeError("cannot score a failed reader call")
-    scores = {arm: [score(row, records[f"{row['id']}-{arm}.json"]["answer"])
+    scores = {arm: [record_score(row, records[f"{row['id']}-{arm}.json"])
                     for row in rows] for arm in ("identifier", "english")}
     count = {arm: sum(s["correct"] for s in scores[arm]) for arm in scores}
     critical = [row["id"] for row, s in zip(rows, scores["english"], strict=True) if s["critical"]]
@@ -265,6 +270,7 @@ def results():
     b = not critical
     return {"counts": count, "critical": critical, "bar_a": a, "bar_b": b,
             "fallback": [r["id"] for r in rows if r["lint"] != "accepted"],
+            "errors": sorted(f"{r['id']}-{r['arm']}" for r in records.values() if r.get("error")),
             "calls": len(records), "cw": sum(r["charged_cw"] for r in records.values())}
 
 
