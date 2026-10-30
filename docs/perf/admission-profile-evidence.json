@@ -1,0 +1,170 @@
+{
+  "service_sha256": "92dd48e7b9935cfde24e639ab003fb03c6448797826b4fc0b078952786f0ba32",
+  "cases": {
+    "admission-prefix-50": {
+      "sha256": "f185340b49555956852c3b614f237de5111893182332d81a336a2764af7bf034",
+      "bytes": 73571,
+      "runs": [
+        {
+          "cpu_seconds": 0.6648,
+          "load_1min_before": 26.85,
+          "load_1min_after": 26.85,
+          "transport": "iso.sh",
+          "iso_error": null,
+          "answer_status": "ok",
+          "answer_error": null
+        },
+        {
+          "cpu_seconds": 0.7088,
+          "load_1min_before": 26.85,
+          "load_1min_after": 27.35,
+          "transport": "iso.sh",
+          "iso_error": null,
+          "answer_status": "ok",
+          "answer_error": null
+        },
+        {
+          "cpu_seconds": 0.7139,
+          "load_1min_before": 27.35,
+          "load_1min_after": 27.35,
+          "transport": "iso.sh",
+          "iso_error": null,
+          "answer_status": "ok",
+          "answer_error": null
+        }
+      ]
+    },
+    "admission-prefix-75": {
+      "sha256": "a7611a80cfbff06b29da4b9636d7e1fad12f09a2bb4bb20e6970eedfccad2b21",
+      "bytes": 85098,
+      "runs": [
+        {
+          "cpu_seconds": 0.9678,
+          "load_1min_before": 27.35,
+          "load_1min_after": 27.35,
+          "transport": "iso.sh",
+          "iso_error": null,
+          "answer_status": "ok",
+          "answer_error": null
+        },
+        {
+          "cpu_seconds": 0.944,
+          "load_1min_before": 27.35,
+          "load_1min_after": 27.35,
+          "transport": "iso.sh",
+          "iso_error": null,
+          "answer_status": "ok",
+          "answer_error": null
+        },
+        {
+          "cpu_seconds": 0.9051,
+          "load_1min_before": 27.35,
+          "load_1min_after": 27.35,
+          "transport": "iso.sh",
+          "iso_error": null,
+          "answer_status": "ok",
+          "answer_error": null
+        }
+      ]
+    },
+    "admission-prefix-100": {
+      "sha256": "361b9c4e45c142aaf518675d8432900fae55d1a24a77e0a669ec597b588b20f9",
+      "bytes": 122533,
+      "runs": [
+        {
+          "cpu_seconds": 5.7856,
+          "load_1min_before": 27.35,
+          "load_1min_after": 28.56,
+          "transport": "iso.sh",
+          "iso_error": null,
+          "answer_status": "ok",
+          "answer_error": null
+        },
+        {
+          "cpu_seconds": 5.5619,
+          "load_1min_before": 28.56,
+          "load_1min_after": 28.27,
+          "transport": "iso.sh",
+          "iso_error": null,
+          "answer_status": "ok",
+          "answer_error": null
+        },
+        {
+          "cpu_seconds": 5.2175,
+          "load_1min_before": 28.27,
+          "load_1min_after": 28.01,
+          "transport": "iso.sh",
+          "iso_error": null,
+          "answer_status": "ok",
+          "answer_error": null
+        }
+      ]
+    },
+    "admission-prefix-100-2x": {
+      "sha256": "b5efed4aa1d4c50dffc08f2e98f7ee8d9cd7788a61f31a73e37ca947c8187a9a",
+      "bytes": 152388,
+      "runs": [
+        {
+          "cpu_seconds": 12.7267,
+          "load_1min_before": 28.01,
+          "load_1min_after": 28.58,
+          "transport": "iso.sh",
+          "iso_error": null,
+          "answer_status": "ok",
+          "answer_error": null
+        },
+        {
+          "cpu_seconds": 11.4413,
+          "load_1min_before": 28.58,
+          "load_1min_after": 26.82,
+          "transport": "iso.sh",
+          "iso_error": null,
+          "answer_status": "ok",
+          "answer_error": null
+        },
+        {
+          "cpu_seconds": 12.2982,
+          "load_1min_before": 26.82,
+          "load_1min_after": 25.77,
+          "transport": "iso.sh",
+          "iso_error": null,
+          "answer_status": "ok",
+          "answer_error": null
+        }
+      ]
+    },
+    "admission-prefix-100-4x": {
+      "sha256": "29b8364687a531caf5ee2930e7e6115d2a3b6a6b5d5e27c700c1811d62ddd3fa",
+      "bytes": 295586,
+      "runs": [
+        {
+          "cpu_seconds": 0.1371,
+          "load_1min_before": 25.77,
+          "load_1min_after": 25.77,
+          "transport": "iso.sh",
+          "iso_error": null,
+          "answer_status": "error",
+          "answer_error": "ResourceLimit: vocabulary size"
+        },
+        {
+          "cpu_seconds": 0.1402,
+          "load_1min_before": 25.77,
+          "load_1min_after": 25.77,
+          "transport": "iso.sh",
+          "iso_error": null,
+          "answer_status": "error",
+          "answer_error": "ResourceLimit: vocabulary size"
+        },
+        {
+          "cpu_seconds": 0.2017,
+          "load_1min_before": 25.77,
+          "load_1min_after": 25.77,
+          "transport": "iso.sh",
+          "iso_error": null,
+          "answer_status": "error",
+          "answer_error": "ResourceLimit: vocabulary size"
+        }
+      ]
+    }
+  }
+}

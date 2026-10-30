@@ -1,0 +1,38 @@
+{
+  "service_sha256": "92dd48e7b9935cfde24e639ab003fb03c6448797826b4fc0b078952786f0ba32",
+  "cases": {
+    "admission-constitution-185kb": {
+      "sha256": "451187bd640ad122fab51b5ab3a441bec86d8c24111e36272aa1422bcf863492",
+      "bytes": 136195,
+      "runs": [
+        {
+          "cpu_seconds": 1.3511,
+          "load_1min_before": 26.14,
+          "load_1min_after": 26.14,
+          "transport": "iso.sh",
+          "iso_error": null,
+          "answer_status": "ok",
+          "answer_error": null
+        },
+        {
+          "cpu_seconds": 1.3616,
+          "load_1min_before": 26.14,
+          "load_1min_after": 26.69,
+          "transport": "iso.sh",
+          "iso_error": null,
+          "answer_status": "ok",
+          "answer_error": null
+        },
+        {
+          "cpu_seconds": 1.3597,
+          "load_1min_before": 26.69,
+          "load_1min_after": 26.69,
+          "transport": "iso.sh",
+          "iso_error": null,
+          "answer_status": "ok",
+          "answer_error": null
+        }
+      ]
+    }
+  }
+}
