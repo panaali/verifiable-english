@@ -1,0 +1,149 @@
+{
+ "item": "qt-a3d",
+ "how": "uv run python tools/mutants.py docs/quantities/qt-a3d/mutants.json --no-baseline --evidence docs/quantities/qt-a3d/evidence/mutants-run.json, after a passing build. Each mutant is applied alone; its command rebuilds VE.Cardinality.RunExamples, so a #guard there or a proof of a module it imports must fail; the harness restores the file's exact bytes. CardReport.Sound and runCase have trust_mutants' mutants (trust-mutants.json).",
+ "mutants": [
+  {
+   "id": "leaf-dropped-report",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "a leaf dropped from the claim graph's report",
+   "find": "(g.leaves.map fun n => claimJson n.name n.adm).toArray",
+   "replace": "((g.leaves.drop 1).map fun n => claimJson n.name n.adm).toArray",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean qt-a3d guards: FA1's four leaves (leafNames, the leaves' meaning ids, the whole answer)"
+  },
+  {
+   "id": "leaf-dropped-union",
+   "file": "lean/VE/Cardinality/Document.lean",
+   "claim": "a premise's leaf dropped when the leaves are joined",
+   "find": "sets.foldl (fun s t => t.toList.foldl (·.insert ·) s) ∅",
+   "replace": "sets.foldl (fun s t => t.toList.tail.foldl (·.insert ·) s) ∅",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "proof union_mem (Document.lean); VE/Cardinality/RunExamples.lean qt-a3d guards: twoLevel's leaves"
+  },
+  {
+   "id": "unproved-root-runner",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "a root admitted with an unproved leaf: a certificate that does not close accepted",
+   "find": "checkErased ps c table ep (← Run.idsOf w ep) cert",
+   "replace": "(checkErased ps c table ep (← Run.idsOf w ep) cert).map fun _ => true",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean qt-a3d guards: FA1b's certificate refused (graphRejected)"
+  },
+  {
+   "id": "unproved-root-graph",
+   "file": "lean/VE/Cardinality/Document.lean",
+   "claim": "a root admitted with an unproved leaf: the graph keeps a node whose certificate is false",
+   "find": "        | .ok false => .error graphRejected",
+   "replace": "        | .ok false => checkGraph w check ns cost\n            (acc ++ [⟨n.name, n.adm, n.size, union (children.map (·.leaves))⟩])",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "proof checkGraph_sound (Document.lean)"
+  },
+  {
+   "id": "duplicate-name",
+   "file": "lean/VE/Cardinality/Document.lean",
+   "claim": "a duplicate node name refused",
+   "find": "if acc.any (·.name == n.name) then .error graphRejected else",
+   "replace": "if false then .error graphRejected else",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean qt-a3d guards: a second node named total refused"
+  },
+  {
+   "id": "deduction-premises",
+   "file": "lean/VE/Cardinality/Document.lean",
+   "claim": "a deduction's premises are the request's",
+   "find": "| .ok ps, .ok c => pure (some (← strings ps, ← decodeCert c))",
+   "replace": "| .ok _, .ok c => pure (some ([], ← decodeCert c))",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean qt-a3d guards: FA1 as a claim graph"
+  },
+  {
+   "id": "profile",
+   "file": "lean/VE/Cardinality/Document.lean",
+   "claim": "documents need documents@1",
+   "find": "unless w.w6.profiles.contains \"documents@1\" do",
+   "replace": "unless true do",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean qt-a3d guards: no documents@1 refused"
+  },
+  {
+   "id": "node-limit",
+   "file": "lean/VE/Cardinality/Document.lean",
+   "claim": "1,000 nodes are read",
+   "find": "if array.size > maxGraphNodes then throw nodeLimit",
+   "replace": "if array.size ≥ maxGraphNodes then throw nodeLimit",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean qt-a3d guards: tops 1000 admitted"
+  },
+  {
+   "id": "charge-boundary",
+   "file": "lean/VE/Cardinality/Document.lean",
+   "claim": "50,000 statement nodes are read by the deductions",
+   "find": "if cost > maxDeductionNodes then .error deductionLimit else",
+   "replace": "if cost ≥ maxDeductionNodes then .error deductionLimit else",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean qt-a3d guards: charged2 top3 24985 reaches P3"
+  },
+  {
+   "id": "charge-cumulative",
+   "file": "lean/VE/Cardinality/Document.lean",
+   "claim": "the charge is over the whole graph",
+   "find": "let cost := children.foldl (· + ·.size) (used + n.size)",
+   "replace": "let cost := children.foldl (· + ·.size) n.size",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean qt-a3d guards: charged2 top 24986 refused (50,001 with mid's 27)"
+  },
+  {
+   "id": "card-report",
+   "file": "lean/VE/Cardinality/Document.lean",
+   "claim": "CardReport (trusted, S): the root and its leaves",
+   "find": "structure CardReport where\n  root : CFormula\n  leaves : List CFormula",
+   "replace": "structure CardReport where\n  root : CFormula\n  leaves : List CFormula := []\n  extra : CFormula",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "Graph.report's anonymous constructor (Document.lean) does not elaborate"
+  }
+ ]
+}
