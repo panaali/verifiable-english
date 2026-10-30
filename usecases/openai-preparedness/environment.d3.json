@@ -1,0 +1,55 @@
+{
+  "language": "ve.core@0.2",
+  "profiles": [
+    "order@0",
+    "relational-fol@0",
+    "time@0"
+  ],
+  "spec_revision": "ve-v0.2-expand2-2026-09-25",
+  "unit_schema": "ve-units@1",
+  "units": {
+    "day": {
+      "scale": "1",
+      "display": {
+        "kind": "iso_date"
+      }
+    },
+    "elapsed_day": {
+      "scale": "1",
+      "display": {
+        "kind": "decimal",
+        "label": "days"
+      }
+    }
+  },
+  "vocabulary": {
+    "sorts": {},
+    "predicates": {},
+    "constants": {
+      "version_date": {
+        "sort": "$int",
+        "unit": "day",
+        "description": "version date",
+        "verbalisation": "the version date"
+      },
+      "retrieval_date": {
+        "sort": "$int",
+        "unit": "day",
+        "description": "retrieval date",
+        "verbalisation": "the retrieval date"
+      },
+      "current_progress_time": {
+        "sort": "$int",
+        "unit": "elapsed_day",
+        "description": "wall-clock time for the current model's generational progress",
+        "verbalisation": "the current progress duration"
+      },
+      "baseline_progress_time": {
+        "sort": "$int",
+        "unit": "elapsed_day",
+        "description": "wall-clock time for equivalent progress in 2024",
+        "verbalisation": "the baseline progress duration"
+      }
+    }
+  }
+}
