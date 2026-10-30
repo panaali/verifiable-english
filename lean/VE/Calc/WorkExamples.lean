@@ -161,6 +161,13 @@ def decoderTable : Inlined := inlineTable decoderDecls (freeNames decoderDecls)
   ((nonlinearAtC maxWork decoderTable s!"p{i}" e 0).map (·.1.1)) == some (Wire.nonlinearAt decoderTable s!"p{i}" e)
 #guard decoderSides.zipIdx.map (fun (e, i) => Wire.nonlinearAt decoderTable s!"p{i}" e) =
   [some "p0.1", none, none, none, none, some "p5", some "p6", none]
+-- The right operand's path, and a part inside a part: the decoder names the same one, not the node above it.
+def nestedSides : List Expr :=
+  [.add (.lit 1) (.val "sq"), .sub (.lit 1) (.add (.val "x") (.val "sq")), .mul (.lit 2) (.pow (.add (.val "x") (.lit 1)) 2),
+   .div (.val "x") (.add (.val "x") (.lit 1))]
+#guard nestedSides.map (Wire.nonlinearAt decoderTable "p") = [some "p.2", some "p.2.2", some "p.2", some "p"]
+#guard nestedSides.map (fun e => (nonlinearAtC maxWork decoderTable "p" e 0).map (·.1.1)) =
+  [some (some "p.2"), some (some "p.2.2"), some (some "p.2"), some (some "p")]
 -- A side costs its `linearC` and never more: the written sum of two mentions, and P-1's name.
 #guard (nonlinearAtC maxWork (inlineTable (fan 12) keep) "p" (.val "a12") 0).map (·.2) = some 16824301
 def twice : Expr := .add (.val "a11") (.val "a11")
