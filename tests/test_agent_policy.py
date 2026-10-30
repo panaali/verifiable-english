@@ -365,11 +365,13 @@ def test_an_exhausted_budget_in_the_rust_replay_never_counts_as_agreement(monkey
     assert _replay_with(monkeypatch, stdout, [_model_case("top", expected)]) == {"models": 1, "agree": 0}
 
 
-@pytest.mark.parametrize("bad", [7, True, None, [], {}, 1.5, "\ud800", "absent", -1])
-@pytest.mark.parametrize("field", sorted(GENUINE_ROW))
+RETYPED_FIELDS = [(field, bad) for field in sorted(GENUINE_ROW)
+                  for bad in [7, True, None, [], {}, 1.5, "\ud800", "absent", -1]
+                  if (field, bad) not in (("value", True), ("evaluations", 7))]  # these two are well typed
+
+
+@pytest.mark.parametrize("field, bad", RETYPED_FIELDS)
 def test_a_retyped_rust_row_is_refused(monkeypatch, field, bad):
-    if (field, bad) in (("value", True), ("evaluations", 7)):
-        pytest.skip("a well-typed row")
     with pytest.raises(CheckerUnavailable):
         _replay_with(monkeypatch, json.dumps([{**GENUINE_ROW, field: bad}]))
 
