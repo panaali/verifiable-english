@@ -1011,7 +1011,8 @@
     },
     "Serve.lean": {
       "G[V]": [
-        "main"
+        "main",
+        "readingsMemoStatsEnabled"
       ]
     },
     "SpeechActsMain.lean": {
@@ -6612,7 +6613,15 @@
         "VE.Readings.Run.runSeparateSD",
         "VE.Readings.Run.runElaborateSD",
         "VE.Readings.Run.runChoiceSD",
-        "VE.Readings.Run.sdRefusal"
+        "VE.Readings.Run.sdRefusal",
+        "VE.Readings.Run.AdmissionMemo",
+        "VE.Readings.Run.AdmissionMemoEntry",
+        "VE.Readings.Run.AdmissionMemoEntry.matches",
+        "VE.Readings.Run.admissionMemoMaxBytes",
+        "VE.Readings.Run.admissionMemoMaxEntries",
+        "VE.Readings.Run.admissionMemoTrim",
+        "VE.Readings.Run.admitComponentsMemo",
+        "VE.Readings.Run.runCaseReportedMemo"
       ],
       "G[I]": [
         "VE.Readings.Run.documentHash"
@@ -10017,7 +10026,13 @@
         "VE.Service.runMode",
         "VE.Service.runRequest",
         "VE.Service.space",
-        "VE.Service.trimmed"
+        "VE.Service.trimmed",
+        "VE.Service.handleLineMemo",
+        "VE.Service.memoLineTooLong",
+        "VE.Service.readingsResponse",
+        "VE.Service.readingsResults",
+        "VE.Service.respondMemo",
+        "VE.Service.runReadingsRequest"
       ],
       "G[R]": [
         "VE.Service.caseError",
