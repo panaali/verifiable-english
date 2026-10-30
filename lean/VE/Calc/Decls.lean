@@ -903,7 +903,10 @@ theorem Claim.run_complete (ds : List Decl) (h : WellFormed ds) (c : Claim)
       · exact False.elim (hc hover)
       · exact False.elim (he hread)
 
-/-! ## The work of a case (spec 3.2 (a), (b) and limit 10; me-2nb): each value computed once, its size charged -/
+namespace Work
+
+/-! ## The work of a case (spec 3.2 (a), (b) and limit 10; me-2nb): each value computed once, its size charged. The
+names are the stub's, in its namespace (`VE.Calc.Table` is ME-4's data table). -/
 
 /-- The size of an exact value: its numerator's and its denominator's (12.2's `bits`). -/
 def qbits (q : Rat) : Nat := bits q.num + bits q.den
@@ -1241,5 +1244,7 @@ theorem Claim.ofSides_eq (ds : List Decl) (h : WellFormed ds) (c : Claim) :
   | rounds r e p =>
     obtain ⟨x, hx, hx'⟩ := hok e (by simp [Claim.exprs])
     simp [Claim.exprs, Claim.decideSides, Claim.decide, hx, hx']
+
+end Work
 
 end VE.Calc
