@@ -8,7 +8,6 @@ module Iceberg
 module Main
 module MeteredMain
 module ResponseDecode
-module ResponseShape.Audit
 module ResponseShape.CaseDeciders
 module ResponseShape.DefaultsExamples
 module ResponseShape.Encoders.Alternatives
@@ -85,6 +84,7 @@ module ResponseShape.Schemas
 module ResponseShape.Skeleton
 module ResponseShape.Skeletons
 module ResponseShape
+module ResponseShapeAudit
 module ScopeBenchMain
 module SensesMain
 module Serve
@@ -316,6 +316,8 @@ module VE.EnglishGrammar.ReadExamples
 module VE.EnglishGrammar.Rules
 module VE.EnglishGrammar.Run
 module VE.EnglishGrammar.SensesRequest
+module VE.EnglishGrammar.SourceWords
+module VE.EnglishGrammar.SourceWordsExamples
 module VE.EnglishGrammar.Syntax
 module VE.EnglishGrammar.Token
 module VE.EnvironmentProofs
