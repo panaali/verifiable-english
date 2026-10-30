@@ -9,7 +9,7 @@ as follow-up q1-3c. Two of the seal's streams are not asked; q1-3b asks them.
 ## Commands
 
 - **C1**: `uv run python -m conformance.question_reverse --workers 12` (defaults `--per-config 5000 --per-usecase 500`,
-  the whole corpus), run at `7652add57`. It wrote `docs/question-answering/q1-3/evidence/question-reverse.json`. Each
+  the full size of every stream it draws), run at `7652add57`. It wrote `docs/question-answering/q1-3/evidence/question-reverse.json`. Each
   number below cites C1 with its key in that file.
 - **C2**: `python3 -c 'import json;d=json.load(open("docs/question-answering/q1-3/evidence/question-reverse.json"));print(sum(v["sentences"] for v in d["configs"].values()),sum(v["one_formula"] for v in d["configs"].values()))'`
   prints `98452 98187`.

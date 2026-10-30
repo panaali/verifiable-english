@@ -2,7 +2,7 @@
 
 - **Status:** delivered for the corpus below; no DRI signature needed. Branch `feature/q1-3`; the evidence was run at
   `7652add57`.
-- **Result:** over the whole corpus (98,452 sentences), F1 reads with its sentence's formula for 97,532 of 98,187
+- **Result:** over every stream drawn (98,452 sentences), F1 reads with its sentence's formula for 97,532 of 98,187
   questions; the 655 misses are the question limits (`QuestionTooLong`), not Lean's reader. F2 reads for 1,029 of
   1,029, with no `many`. Lean accepts no moved-word sentence (0 of 3,191).
 - **Open:** both latency gates of 3.6 are missed (p95 146.8 ms, 64-candidate maximum 3.4 s); their revision goes to
