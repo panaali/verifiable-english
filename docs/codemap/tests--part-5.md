@@ -1,8 +1,12 @@
+- `tests/test_readings_defaults_rd4b_report.py` — RD-4b's report is checked against immutable evidence captured from the clean code head.
+- `tests/test_readings_defaults_rd6a.py` — RD-6a (docs/spec/readings-defaults-PLAN.md): fixture X1's conflict-freedom premise, end to end on the route.
+- `tests/test_readings_defaults_rd6a_report.py` — RD-6a's report (docs/readings-defaults/rd6a/DELTA.md) against its saved gate evidence.
 - `tests/test_readings_defaults_rd6b_report.py` — RD-6b report checks against committed evidence, independent of the current git graph.
 - `tests/test_readings_defaults_rd8_report.py` — The RD-8 report states the saved evidence (docs/readings-defaults/rd8/evidence.json) and nothing else.
 - `tests/test_readings_defaults_statements.py` — The RD-1 declarations against the approved text of docs/spec/readings-defaults.md 6.2.
 - `tests/test_readings_lazy_pairs.py` — The readings route evaluates the other reading's side of a pair lazily (batch 3d review B; the DRI note of 2026-10-04 on batch 3b's eager completions).
 - `tests/test_readings_lean_sharing.py` — The readings route builds each candidate's document once per request and evaluates a pair lazily (lean-first plan F5b; batch 3b review B1, B2).
+- `tests/test_readings_memo.py` — Process-local readings admission memo through the real Lean service and Python relay.
 - `tests/test_readings_nd_document.py` — Readings under the unspecified completion through `ve document` (readings-defaults plan RD-2b; spec 3, 4.2, 4.3).
 - `tests/test_readings_nd_lean.py` — Readings under the unspecified completion through the Lean service (docs/spec/readings-defaults.md 8.3; plan RD-2a).
 - `tests/test_readings_rd5_plain_probe.py` — A pair separated on a plain regulated predicate gets E24 (readings-defaults RD-5).
@@ -76,7 +80,3 @@
 - `tests/test_scope_b1_input.py` — B1's input and its check (docs/spec/scope-PLAN.md, benchmarks B1 and C11): the case `tools/bench/scope_b1.py` builds is F1-doc's block over the full pinned con…
 - `tests/test_scope_document.py` — SC-1b: the Lean document mode admits `scope@0` (docs/spec/scope.md 5.2, 7.2) on the F1 part document, the pinned constitution's hard-constraint block (u0164.s0…
 - `tests/test_scope_lean.py` — scope@0's Lean core (sc-1a, sc-3a, sc-1ab, sc-1ac, sc-1ad): the layout's list runs, label reaches and anchors, the effects on a rule's JSON object, and `govern…
-- `tests/test_scope_readings_document.py` — Scope spec 11 (sc-5rb): a reading set on a governed unit, checked once per joint choice by the document mode.
-- `tests/test_scope_sc5r_stub.py` — Scope spec section 11's statement stub (sc-5r): every placeholder it leaves to sc-5rb is pinned by a statement.
-- `tests/test_search_budget_answer.py` — The search-budget relay reads only a typed answer bound to its request (R8).
-- `tests/test_search_options.py` — Request budgets and non-degenerate witnesses at public API boundaries.

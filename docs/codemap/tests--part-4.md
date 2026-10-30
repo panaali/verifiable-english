@@ -1,3 +1,4 @@
+- `tests/test_metered_answer.py` — The `metered` relay never shows a trace binding the request does not hold (lf-18 review F1; DRI-RULINGS R8 (b), FINDING-CLASSES 4 and 15).
 - `tests/test_metered_differential.py` — Batch 15a review fixes: Lean's metered route (`ve_metered`) against Python.
 - `tests/test_metered_handles.py` — The decoded environment the service keeps with each handle (lean-first batch 18, DRI note F7; the unbuilt half of LEAN-FIRST-PLAN F2).
 - `tests/test_metered_lean.py` — Batch 15a: Lean's metered evaluator and non-vacuity search filter.
@@ -50,6 +51,7 @@
 - `tests/test_parser_renderer.py` — (no module docstring)
 - `tests/test_platform_contract.py` — `tools/platform_contract.py`: the x86 platform contract suite (test-architecture plan rank 2, section 3.3).
 - `tests/test_precommit_hook.py` — tools/hooks/pre-commit: each check rejects a planted example and passes clean commits.
+- `tests/test_premise_packs_stub.py` — Premise-packs spec 2.6 and its stub state what `PacksLabels.lean` proves (pk-1d, one owner of the statement).
 - `tests/test_premise_scale.py` — premise-scale: Lean's premise-check budget, its per-sort domain bounds, the ground-fact route, and the Rust wall-clock limit (DRI decisions QT2, ME1, ME2, ET1).
 - `tests/test_presupposition_wordings.py` — PS-6r (docs/spec/presupposition-PLAN.md): wording rows for the four pilot nouns.
 - `tests/test_profile_artifacts.py` — Keep published English measurements in sync with their raw samples.
@@ -66,6 +68,7 @@
 - `tests/test_question_reading.py` — Q1 end to end: a question read by Lean's `english.question` (docs/spec/question-answering.md 4.1, 7, 8).
 - `tests/test_question_statements.py` — The Q2 declarations (`lean/VE/Ask`, `lean/VE/Words`) against the approved text of docs/spec/question-answering.md 5.2 (build checklist 17), by `tools/question_…
 - `tests/test_rd9_chain_relay.py` — The readings route's chain is Lean's, relayed (review F25 of rd-9, DRI condition B1(d); DRI ruling R8).
+- `tests/test_rd9_docroute.py` — The small soft-chain document has the pilot probe's profiles, a soft rule and a claim graph.
 - `tests/test_rd9_dri_signatures.py` — The DRI's rd-9 signatures, recorded (review F27 of rd-9; manage-agents/reviews/rd-9-dri-signatures-20261015.md).
 - `tests/test_rd9_followup_bindings.py` — fu-rd9-checks: the two answer fields rd-9's rechecks left unchecked (rd-9-c141730 looprecheck1, FOLLOW-UP).
 - `tests/test_rd9_gap_relay.py` — The RD-9 use of E14's existing sentence with Lean-selected gaps.
@@ -85,6 +88,3 @@
 - `tests/test_readings_defaults_rd2b_report.py` — RD-2b's report against its saved evidence (build checklist 20): every number in docs/readings-defaults/rd2b/DELTA.md is regenerated here from evidence/gate.jso…
 - `tests/test_readings_defaults_rd3_report.py` — RD-3's report against committed evidence, with no read of the current git graph.
 - `tests/test_readings_defaults_rd4a_report.py` — RD-4a's report against its saved evidence (build checklist 20).
-- `tests/test_readings_defaults_rd4b_report.py` — RD-4b's report is checked against immutable evidence captured from the clean code head.
-- `tests/test_readings_defaults_rd6a.py` — RD-6a (docs/spec/readings-defaults-PLAN.md): fixture X1's conflict-freedom premise, end to end on the route.
-- `tests/test_readings_defaults_rd6a_report.py` — RD-6a's report (docs/readings-defaults/rd6a/DELTA.md) against its saved gate evidence.

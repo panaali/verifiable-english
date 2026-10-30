@@ -7,5 +7,7 @@
 - `docs/infra/eff-20261026-1b/compare.py` — eff-20261026-1b's real-tree check, on saved evidence only (architecture decision D4): `python3 docs/infra/eff-20261026-1b/compare.py` exits 0 when, on df-1ad's…
 - `docs/infra/eff-20261027-1/check.py` — eff-20261027-1 evidence check: recompute every row of evidence.json from the saved runs (runs/*.json).
 - `docs/infra/eff-20261027-1/probe.py` — eff-20261027-1 measurement probe: one cold statement dump of a Lean tree, timed per Lean run.
+- `docs/infra/eff-20261030-1/chunk_table.py` — Step 1 (and step 5) table of eff-20261030-1: how much of each heavy test file's wall time chunks could cut.
+- `docs/infra/eff-20261030-1/seeded_bugs.py` — Seeded bugs of eff-20261030-1: plant each in the product file, show the named test fails, restore the file.
 - `docs/infra/speed-vocabpar/check.py` — speed-vocabpar's measurement and its stop rule, regenerated from the saved run logs.
 - `docs/infra/speed-vocabpar/rss.py` — The peak memory of a command's whole process tree (Linux /proc), for speed-vocabpar's stop rule (8 GB).
