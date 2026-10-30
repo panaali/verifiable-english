@@ -26,7 +26,7 @@
 - `tests/test_gate_shards.py` — A merged gate is a full gate only after every planned test was accounted for.
 - `tests/test_gate_trust.py` — arch-AR-4 review F2: AR-4 moves the per-file trust tables out of the tree and into the gate record (`tools/trust_map.py --files`), but no gate wrote them.
 - `tests/test_gatekeeper_adapter.py` — (no module docstring)
-- `tests/test_gen_inv_design.py` — The gen-inv-design document covers every route the code gives it (gen-inv-design review F1, F2).
+- `tests/test_gen_inv_design.py` — The gen-inv-design document covers every route the code gives it (gen-inv-design review F1, F2, F3, F5, F8).
 - `tests/test_grammar.py` — Executable contract for bounded constrained-decoding grammars.
 - `tests/test_grammar_backends.py` — Optional smoke tests against constrained-decoding backend compilers.
 - `tests/test_grammar_cli.py` — (no module docstring)
