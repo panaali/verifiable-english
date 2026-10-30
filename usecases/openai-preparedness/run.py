@@ -1031,8 +1031,8 @@ def metrics(result):
                "soft_rows": sum(bool(r.get("soft")) for r in all_choices),
                "soft_key_items": sum("soft" in r for r in rows),
                "soft_key_items_matched": sum("soft" in r and bool(r["soft"]["ve"]) for r in rows)},
-        "M8": {"replayed_certificates": sum(r.get("reason") in ("replayed certificate", "replayed quantity certificate")
-                                            for r in all_choices),
+        "M8": {"certificate_items": sorted(i for i, item in result["items"].items() if "certificate" in item["route"]
+                                           and "undecided" not in item),
                "w1_conflict_witnesses": sum("CONFLICT" in r.get("w1", []) for r in all_choices),
                "w1_conflict_free": sum(r.get("w1") == ["CONFLICT-FREE"] for r in all_choices),
                "unknown_items": [r["id"] for r in rows if r["status"] in ("UNDECIDED-faithful", "resource-limit")]},
