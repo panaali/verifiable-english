@@ -102,6 +102,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Calc.rowJson_fits
 #print axioms ResponseShape.Encoders.Calc.rowJson_fits_software
 #print axioms ResponseShape.Encoders.Calc.runCaseReported_fits
+#print axioms ResponseShape.Encoders.Calc.stepJson_fits
 #print axioms ResponseShape.Encoders.Calc.tie_fits
 #print axioms ResponseShape.Encoders.Cardinality.certificate_kind
 #print axioms ResponseShape.Encoders.Cardinality.erasedJson_fits
