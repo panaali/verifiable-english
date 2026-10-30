@@ -4,7 +4,7 @@
    "id": "leaf-dropped-report",
    "file": "lean/VE/Cardinality/Run.lean",
    "claim": "a leaf dropped from the claim graph's report",
-   "source_sha256": "9aafe568d16a901ebd6141aa69464879b4cc4cb16e8cf4bdbe4b39862deb0b6f",
+   "source_sha256": "7207cf54e9c632245b11702dda93d34fd541c6192e5d222680b5c23c8eee4a69",
    "command": [
     "bash",
     "-c",
@@ -12,14 +12,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 226.2,
-   "output_tail": "ran/code/ve-qt-a3d/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:344:0: Expression\n  leafNames (docCase fa1Doc) == List.map Json.str names\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:348:0: Expression\n  ids ((report (docCase fa1Doc)).getObjValD \"leaves\") \"meaning_id\" ==\n    ids (docAdmission.getObjValD \"premises\") \"meaning_id\"\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:355:0: Expression\n  leafNames (docCase (fa1Doc [leaf \"unused\" top])) == List.map Json.str names\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:356:0: Expression\n  leafNames (docCase (graph \"total\" fa1Leaves)) == [Json.str \"total\"]\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:362:0: Expression\n  leafNames (docCase (twoLevel [\"mid\", \"mid\"])) == List.map Json.str names\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:383:0: Expression\n  leafNames (docCase (tops 1000)) == [Json.str \"n0\"]\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+   "seconds": 172.9,
+   "output_tail": "ean:370:0: Expression\n  fa1LeafRows.size == 4\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:379:0: Expression\n  leafNames (docCase (fa1Doc [leaf \"unused\" top])) == List.map Json.str names\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:380:0: Expression\n  leafNames (docCase (graph \"total\" fa1Leaves)) == [Json.str \"total\"]\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:388:0: Expression\n  leafNames (docCase (twoLevel [\"mid\", \"mid\"])) == List.map Json.str names\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:393:0: Expression\n  leafNames\n      (docCase\n        (graph \"root\"\n          (fa1Leaves ++\n            [deduce \"mid\" fa1Conclusion names docCert,\n              deduce \"root\" fa1Conclusion (List.replicate 200 \"mid\") (closes 200)]))) ==\n    List.map Json.str names\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:395:0: Expression\n  leafNames\n      (docCase\n        (graph \"root\"\n          (fa1Leaves ++\n            [deduce \"mid\" fa1Conclusion names docCert, deduce \"mid2\" fa1Conclusion names docCert,\n              deduce \"root\" fa1Conclusion [\"mid2\", \"mid\", \"mid2\"] (closes 3)]))) ==\n    List.map Json.str names\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:418:0: Expression\n  leafNames (docCase (tops 1000)) == [Json.str \"n0\"]\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
   },
   {
    "id": "leaf-dropped-union",
    "file": "lean/VE/Cardinality/Document.lean",
    "claim": "a premise's leaf dropped when the leaves are joined",
-   "source_sha256": "9b40c960ba84bc7d114a066505ed1ed88a4fa2f0b8cdf4ba4862f09964b91521",
+   "source_sha256": "4bbc57c938eefa1b957eceb88b190c0f040fa7db675c10989f28944017fb44da",
    "command": [
     "bash",
     "-c",
@@ -27,14 +27,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 30.5,
-   "output_tail": "A _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2716 [137/139] Building VE.Cardinality.Document (30s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3d/lean/VE/Cardinality/Document.lean -o /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/Document.olean -i /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/Document.ilean -c /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/Document.c --setup /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/Document.setup.json --json\nerror: VE/Cardinality/Document.lean:237:24: Application type mismatch: The argument\n  union_mem (List.map Entry.leaves children) ?m.565 m.name\n    (Or.inr (Exists.intro c.leaves \u27e8List.mem_map_of_mem hcm, hml\u27e9))\nhas type\n  m.name \u2208\n    List.foldl (fun s t => List.foldl (fun x1 x2 => x1.insert x2) s t.toList) ?m.565 (List.map Entry.leaves children)\nbut is expected to have type\n  m.name \u2208\n    { name := n.name, adm := n.adm, size := n.size, leaves := union (List.map (fun x => x.leaves) children) }.leaves\nin the application\n  hx m hm hmd\n    (union_mem (List.map Entry.leaves children) ?m.565 m.name\n      (Or.inr (Exists.intro c.leaves \u27e8List.mem_map_of_mem hcm, hml\u27e9)))\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Document\nerror: build failed\n"
+   "seconds": 2.7,
+   "output_tail": ",\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2716 [137/139] Building VE.Cardinality.Document (2.5s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3d/lean/VE/Cardinality/Document.lean -o /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/Document.olean -i /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/Document.ilean -c /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/Document.c --setup /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/Document.setup.json --json\nerror: VE/Cardinality/Document.lean:237:24: Application type mismatch: The argument\n  union_testBit (List.map Entry.leaves children) ?m.626 j\n    (Or.inr (Exists.intro c.leaves \u27e8List.mem_map_of_mem hcm, hml\u27e9))\nhas type\n  (List.foldl (fun x1 x2 => x1 ||| x2) ?m.626 (List.map Entry.leaves children)).testBit j = true\nbut is expected to have type\n  { name := n.name, adm := n.adm, size := n.size,\n            leaves := union (List.map (fun x => x.leaves) children) }.leaves.testBit\n      j =\n    true\nin the application\n  hx j m hm hmd\n    (union_testBit (List.map Entry.leaves children) ?m.626 j\n      (Or.inr (Exists.intro c.leaves \u27e8List.mem_map_of_mem hcm, hml\u27e9)))\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Document\nerror: build failed\n"
   },
   {
    "id": "unproved-root-runner",
    "file": "lean/VE/Cardinality/Run.lean",
    "claim": "a root admitted with an unproved leaf: a certificate that does not close accepted",
-   "source_sha256": "9aafe568d16a901ebd6141aa69464879b4cc4cb16e8cf4bdbe4b39862deb0b6f",
+   "source_sha256": "7207cf54e9c632245b11702dda93d34fd541c6192e5d222680b5c23c8eee4a69",
    "command": [
     "bash",
     "-c",
@@ -42,14 +42,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 186.1,
-   "output_tail": " Omit it from the simp argument list.\n  simp only [Bool.and_eq_true, decide_eq_true_eq, List.length_append, List.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [138/139] Built VE.Cardinality.Run (4.0s)\n\u2716 [139/139] Building VE.Cardinality.RunExamples (181s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3d/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:369:0: Expression\n  err (docCase (fa1Doc [] names.dropLast fa1bDocCert)) == Document.graphRejected\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+   "seconds": 154.7,
+   "output_tail": " Omit it from the simp argument list.\n  simp only [Bool.and_eq_true, decide_eq_true_eq, List.length_append, List.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [138/139] Built VE.Cardinality.Run (2.7s)\n\u2716 [139/139] Building VE.Cardinality.RunExamples (151s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3d/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:404:0: Expression\n  err (docCase (fa1Doc [] names.dropLast fa1bDocCert)) == Document.graphRejected\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
   },
   {
    "id": "unproved-root-graph",
    "file": "lean/VE/Cardinality/Document.lean",
    "claim": "a root admitted with an unproved leaf: the graph keeps a node whose certificate is false",
-   "source_sha256": "9b40c960ba84bc7d114a066505ed1ed88a4fa2f0b8cdf4ba4862f09964b91521",
+   "source_sha256": "4bbc57c938eefa1b957eceb88b190c0f040fa7db675c10989f28944017fb44da",
    "command": [
     "bash",
     "-c",
@@ -57,14 +57,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 2.2,
-   "output_tail": "ist.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2716 [137/139] Building VE.Cardinality.Document (1.0s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3d/lean/VE/Cardinality/Document.lean -o /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/Document.olean -i /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/Document.ilean -c /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/Document.c --setup /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/Document.setup.json --json\nerror: VE/Cardinality/Document.lean:239:8: Dependent elimination failed: Failed to solve equation\n  Except.ok out =\n    checkGraph w check ns (List.foldl (fun x1 x2 => x1 + x2.size) (used + n.size) children)\n      (acc ++\n        [{ name := n.name, adm := n.adm, size := n.size, leaves := union (List.map (fun x => x.leaves) children) }])\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Document\nerror: build failed\n"
+   "seconds": 2.4,
+   "output_tail": "`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2716 [137/139] Building VE.Cardinality.Document (2.1s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3d/lean/VE/Cardinality/Document.lean -o /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/Document.olean -i /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/Document.ilean -c /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/Document.c --setup /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/Document.setup.json --json\nerror: VE/Cardinality/Document.lean:102:13: failed to synthesize\n  HAppend (Entries w) (List ?m.160) ?m.164\n\nHint: Additional diagnostic information may be available using the `set_option diagnostics true` command.\nerror: VE/Cardinality/Document.lean:102:21: Invalid `\u27e8...\u27e9` notation: The expected type of this term could not be determined\nwarning: VE/Cardinality/Document.lean:193:15: declaration uses 'sorry'\nwarning: VE/Cardinality/Document.lean:187:8: declaration uses 'sorry'\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Document\nerror: build failed\n"
   },
   {
    "id": "duplicate-name",
    "file": "lean/VE/Cardinality/Document.lean",
    "claim": "a duplicate node name refused",
-   "source_sha256": "9b40c960ba84bc7d114a066505ed1ed88a4fa2f0b8cdf4ba4862f09964b91521",
+   "source_sha256": "4bbc57c938eefa1b957eceb88b190c0f040fa7db675c10989f28944017fb44da",
    "command": [
     "bash",
     "-c",
@@ -72,14 +72,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 175.1,
-   "output_tail": "  simp only [Bool.and_eq_true, decide_eq_true_eq, List.length_append, List.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [137/139] Built VE.Cardinality.Document (2.0s)\n\u2714 [138/139] Built VE.Cardinality.Run (2.9s)\n\u2716 [139/139] Building VE.Cardinality.RunExamples (169s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3d/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:372:0: Expression\n  err (docCase (fa1Doc [leaf \"total\" top])) == Document.graphRejected\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+   "seconds": 195.0,
+   "output_tail": "  simp only [Bool.and_eq_true, decide_eq_true_eq, List.length_append, List.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [137/139] Built VE.Cardinality.Document (2.4s)\n\u2714 [138/139] Built VE.Cardinality.Run (2.0s)\n\u2716 [139/139] Building VE.Cardinality.RunExamples (189s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3d/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:407:0: Expression\n  err (docCase (fa1Doc [leaf \"total\" top])) == Document.graphRejected\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
   },
   {
    "id": "deduction-premises",
    "file": "lean/VE/Cardinality/Document.lean",
    "claim": "a deduction's premises are the request's",
-   "source_sha256": "9b40c960ba84bc7d114a066505ed1ed88a4fa2f0b8cdf4ba4862f09964b91521",
+   "source_sha256": "4bbc57c938eefa1b957eceb88b190c0f040fa7db675c10989f28944017fb44da",
    "command": [
     "bash",
     "-c",
@@ -87,14 +87,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 1.8,
+   "seconds": 2.5,
    "output_tail": "ument.c --setup /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/Document.setup.json --json\nerror: VE/Cardinality/Document.lean:255:15: Tactic `split` failed: Could not split an `if` or `match` expression in the type\n  Except.ok\n      { name := v\u271d, adm := a, size := Time.Wire.jsonNodes (Limits.maxJsonDepth + 1) (s.getObjValD \"formula\"),\n        deduction := some ([], v\u271d\u00b9) } =\n    Except.ok n\nof `h`\n\nHint: Use `set_option trace.split.failure true` to display additional diagnostic information\n\ncase h_2\n\u03b3 : Type\nw : CardEnv\ndecodeCert : Json \u2192 Except String \u03b3\nj : Json\nn : CNode w \u03b3\nx\u271d\u2076 : Except String Unit\nv\u271d\u00b2 : Unit\nheq\u271d\u2074 : Time.Wire.shape j [\"name\", \"statement\"] [\"premises\", \"certificate\"] = Except.ok v\u271d\u00b2\nx\u271d\u2075 : Except String Json\ns : Json\nhs : j.getObjVal? \"statement\" = Except.ok s\nx\u271d\u2074 : Except String (CAdmission w)\na : CAdmission w\nha : Wire.decodeStatement w s = Except.ok a\nx\u271d\u00b3 x\u271d\u00b2 : Except String Json\na\u271d c\u271d : Json\nheq\u271d\u00b3 : j.getObjVal? \"premises\" = Except.ok a\u271d\nheq\u271d\u00b2 : j.getObjVal? \"certificate\" = Except.ok c\u271d\nx\u271d\u00b9 : Except String \u03b3\nv\u271d\u00b9 : \u03b3\nheq\u271d\u00b9 : decodeCert c\u271d = Except.ok v\u271d\u00b9\nx\u271d : Except String String\nv\u271d : String\nheq\u271d : stringField j \"name\" = Except.ok v\u271d\nh :\n  Except.ok\n      { name := v\u271d, adm := a, size := Time.Wire.jsonNodes (Limits.maxJsonDepth + 1) (s.getObjValD \"formula\"),\n        deduction := some ([], v\u271d\u00b9) } =\n    Except.ok n\n\u22a2 n.adm = a\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Document\nerror: build failed\n"
   },
   {
    "id": "profile",
    "file": "lean/VE/Cardinality/Document.lean",
    "claim": "documents need documents@1",
-   "source_sha256": "9b40c960ba84bc7d114a066505ed1ed88a4fa2f0b8cdf4ba4862f09964b91521",
+   "source_sha256": "4bbc57c938eefa1b957eceb88b190c0f040fa7db675c10989f28944017fb44da",
    "command": [
     "bash",
     "-c",
@@ -102,14 +102,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 135.2,
-   "output_tail": "_true, decide_eq_true_eq, List.length_append, List.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [137/139] Built VE.Cardinality.Document (1.6s)\n\u2714 [138/139] Built VE.Cardinality.Run (2.6s)\n\u2716 [139/139] Building VE.Cardinality.RunExamples (130s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3d/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:376:0: Expression\n  err (docCase fa1Doc env) == \"UnsupportedProfile: cardinality documents require documents@1\"\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+   "seconds": 222.7,
+   "output_tail": "_true, decide_eq_true_eq, List.length_append, List.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [137/139] Built VE.Cardinality.Document (2.1s)\n\u2714 [138/139] Built VE.Cardinality.Run (2.9s)\n\u2716 [139/139] Building VE.Cardinality.RunExamples (217s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3d/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:411:0: Expression\n  err (docCase fa1Doc env) == \"UnsupportedProfile: cardinality documents require documents@1\"\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
   },
   {
    "id": "node-limit",
    "file": "lean/VE/Cardinality/Document.lean",
    "claim": "1,000 nodes are read",
-   "source_sha256": "9b40c960ba84bc7d114a066505ed1ed88a4fa2f0b8cdf4ba4862f09964b91521",
+   "source_sha256": "4bbc57c938eefa1b957eceb88b190c0f040fa7db675c10989f28944017fb44da",
    "command": [
     "bash",
     "-c",
@@ -117,14 +117,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 125.9,
-   "output_tail": "p argument list.\n  simp only [Bool.and_eq_true, decide_eq_true_eq, List.length_append, List.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [137/139] Built VE.Cardinality.Document (1.6s)\n\u2714 [138/139] Built VE.Cardinality.Run (2.3s)\n\u2716 [139/139] Building VE.Cardinality.RunExamples (121s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3d/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:383:0: Expression\n  leafNames (docCase (tops 1000)) == [Json.str \"n0\"]\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+   "seconds": 270.5,
+   "output_tail": "p argument list.\n  simp only [Bool.and_eq_true, decide_eq_true_eq, List.length_append, List.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [137/139] Built VE.Cardinality.Document (3.2s)\n\u2714 [138/139] Built VE.Cardinality.Run (4.3s)\n\u2716 [139/139] Building VE.Cardinality.RunExamples (262s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3d/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:418:0: Expression\n  leafNames (docCase (tops 1000)) == [Json.str \"n0\"]\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
   },
   {
    "id": "charge-boundary",
    "file": "lean/VE/Cardinality/Document.lean",
    "claim": "50,000 statement nodes are read by the deductions",
-   "source_sha256": "9b40c960ba84bc7d114a066505ed1ed88a4fa2f0b8cdf4ba4862f09964b91521",
+   "source_sha256": "4bbc57c938eefa1b957eceb88b190c0f040fa7db675c10989f28944017fb44da",
    "command": [
     "bash",
     "-c",
@@ -132,14 +132,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 118.5,
-   "output_tail": "st.\n  simp only [Bool.and_eq_true, decide_eq_true_eq, List.length_append, List.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [137/139] Built VE.Cardinality.Document (1.4s)\n\u2714 [138/139] Built VE.Cardinality.Run (2.4s)\n\u2716 [139/139] Building VE.Cardinality.RunExamples (114s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3d/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:391:0: Expression\n  err (docCase (charged2 top3 24985)) == Time.Wire.aggregateLimit\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+   "seconds": 323.0,
+   "output_tail": "st.\n  simp only [Bool.and_eq_true, decide_eq_true_eq, List.length_append, List.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [137/139] Built VE.Cardinality.Document (3.1s)\n\u2714 [138/139] Built VE.Cardinality.Run (4.1s)\n\u2716 [139/139] Building VE.Cardinality.RunExamples (315s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3d/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:426:0: Expression\n  err (docCase (charged2 top3 24985)) == Time.Wire.aggregateLimit\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
   },
   {
    "id": "charge-cumulative",
    "file": "lean/VE/Cardinality/Document.lean",
    "claim": "the charge is over the whole graph",
-   "source_sha256": "9b40c960ba84bc7d114a066505ed1ed88a4fa2f0b8cdf4ba4862f09964b91521",
+   "source_sha256": "4bbc57c938eefa1b957eceb88b190c0f040fa7db675c10989f28944017fb44da",
    "command": [
     "bash",
     "-c",
@@ -147,14 +147,14 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 123.9,
-   "output_tail": "list.\n  simp only [Bool.and_eq_true, decide_eq_true_eq, List.length_append, List.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [137/139] Built VE.Cardinality.Document (1.5s)\n\u2714 [138/139] Built VE.Cardinality.Run (1.9s)\n\u2716 [139/139] Building VE.Cardinality.RunExamples (120s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3d/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:392:0: Expression\n  err (docCase (charged2 top 24986)) == Document.deductionLimit\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+   "seconds": 211.9,
+   "output_tail": "list.\n  simp only [Bool.and_eq_true, decide_eq_true_eq, List.length_append, List.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [137/139] Built VE.Cardinality.Document (5.9s)\n\u2714 [138/139] Built VE.Cardinality.Run (4.0s)\n\u2716 [139/139] Building VE.Cardinality.RunExamples (199s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3d/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:427:0: Expression\n  err (docCase (charged2 top 24986)) == Document.deductionLimit\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
   },
   {
    "id": "card-report",
    "file": "lean/VE/Cardinality/Document.lean",
    "claim": "CardReport (trusted, S): the root and its leaves",
-   "source_sha256": "9b40c960ba84bc7d114a066505ed1ed88a4fa2f0b8cdf4ba4862f09964b91521",
+   "source_sha256": "4bbc57c938eefa1b957eceb88b190c0f040fa7db675c10989f28944017fb44da",
    "command": [
     "bash",
     "-c",
@@ -162,8 +162,113 @@
    ],
    "killed": true,
    "mutant_exit": 1,
-   "seconds": 1.6,
-   "output_tail": " := r }.report.root\n\nNote: The full type of `hroot \u03b1 T hT` is\n  (\u2200 (n : CNode w \u03b3), n \u2208 nodes \u2192 n.deduction = none \u2192 n.name \u2208 r.leaves \u2192 CFormula.holds T n.adm.formula) \u2192\n    CFormula.holds T r.adm.formula\n\ncase h_1.refl\n\u03b3 : Type\nw : CardEnv\ndecodeCert : Json \u2192 Except String \u03b3\ncheck : List (CAdmission w) \u2192 CAdmission w \u2192 \u03b3 \u2192 Except String Bool\nhc : Checks w check\nd : Json\nh\u271d\u00b9 : w.w6.profiles.contains \"documents@1\" = true\nx\u271d\u2076 : Except String Unit\nv\u271d\u00b3 : Unit\nheq\u271d\u2074 : exactFields d [\"root\", \"nodes\"] = Except.ok v\u271d\u00b3\nx\u271d\u2075 : Except String String\nv\u271d\u00b2 : String\nheq\u271d\u00b3 : stringField d \"root\" = Except.ok v\u271d\u00b2\nx\u271d\u2074 : Except String Json\nv\u271d\u00b9 : Json\nheq\u271d\u00b2 : d.getObjVal? \"nodes\" = Except.ok v\u271d\u00b9\nx\u271d\u00b3 : Except String (Array Json)\nv\u271d : Array Json\nheq\u271d\u00b9 : v\u271d\u00b9.getArr? = Except.ok v\u271d\nh\u271d : \u00acv\u271d.size > maxGraphNodes\nx\u271d\u00b2 : Except String (List (CNode w \u03b3))\nnodes : List (CNode w \u03b3)\nheq\u271d : List.mapM (decodeNode w decodeCert) v\u271d.toList = Except.ok nodes\nx\u271d\u00b9 : Except String (List (Entry w))\nentries : List (Entry w)\nhg : checkGraph w check nodes 0 [] = Except.ok entries\nx\u271d : Option (Entry w)\nr : Entry w\nhr : List.find? (fun x => x.name == v\u271d\u00b2) entries = some r\nhroot : Entry.Sound nodes r\n\u03b1 : Type v\nT : Time.TStructure \u03b1\nhT : Admissible w.env T\nhleaves : \u2200 (a : CFormula), a \u2208 { nodes := nodes, root := r }.report.leaves \u2192 CFormula.holds T a\n\u22a2 CFormula.holds T { nodes := nodes, root := r }.report.root\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Document\nerror: build failed\n"
+   "seconds": 2.4,
+   "output_tail": ", root := r }.report.root\n\nNote: The full type of `hroot \u03b1 T hT` is\n  (\u2200 (i : Nat) (n : CNode w \u03b3),\n      nodes[i]? = some n \u2192 n.deduction = none \u2192 r.leaves.testBit i = true \u2192 CFormula.holds T n.adm.formula) \u2192\n    CFormula.holds T r.adm.formula\n\ncase h_1.refl\n\u03b3 : Type\nw : CardEnv\ndecodeCert : Json \u2192 Except String \u03b3\ncheck : List (CAdmission w) \u2192 CAdmission w \u2192 \u03b3 \u2192 Except String Bool\nhc : Checks w check\nd : Json\nh\u271d\u00b9 : w.w6.profiles.contains \"documents@1\" = true\nx\u271d\u2076 : Except String Unit\nv\u271d\u00b3 : Unit\nheq\u271d\u2074 : exactFields d [\"root\", \"nodes\"] = Except.ok v\u271d\u00b3\nx\u271d\u2075 : Except String String\nv\u271d\u00b2 : String\nheq\u271d\u00b3 : stringField d \"root\" = Except.ok v\u271d\u00b2\nx\u271d\u2074 : Except String Json\nv\u271d\u00b9 : Json\nheq\u271d\u00b2 : d.getObjVal? \"nodes\" = Except.ok v\u271d\u00b9\nx\u271d\u00b3 : Except String (Array Json)\nv\u271d : Array Json\nheq\u271d\u00b9 : v\u271d\u00b9.getArr? = Except.ok v\u271d\nh\u271d : \u00acv\u271d.size > maxGraphNodes\nx\u271d\u00b2 : Except String (List (CNode w \u03b3))\nnodes : List (CNode w \u03b3)\nheq\u271d : List.mapM (decodeNode w decodeCert) v\u271d.toList = Except.ok nodes\nx\u271d\u00b9 : Except String (Entries w)\nentries : Entries w\nhg : checkGraph w check nodes 0 0 \u2205 = Except.ok entries\nx\u271d : Option (Entry w)\nr : Entry w\nhr : entries[v\u271d\u00b2]? = some r\nhroot : Entry.Sound nodes r\n\u03b1 : Type v\nT : Time.TStructure \u03b1\nhT : Admissible w.env T\nhleaves : \u2200 (a : CFormula), a \u2208 { nodes := nodes, root := r }.report.leaves \u2192 CFormula.holds T a\n\u22a2 CFormula.holds T { nodes := nodes, root := r }.report.root\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Document\nerror: build failed\n"
+  },
+  {
+   "id": "report-id-document",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "review F1: the report identity binds the document as sent",
+   "source_sha256": "7207cf54e9c632245b11702dda93d34fd541c6192e5d222680b5c23c8eee4a69",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 188.0,
+   "output_tail": "ild/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3d/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:359:0: Expression\n  answer (docCase fa1Doc) ==\n    Json.mkObj\n      [(\"id\", Json.str \"d\"), (\"status\", Json.str \"ok\"), (\"environment_id\", docAdmission.getObjValD \"environment_id\"),\n        (\"w6_environment_id\", docAdmission.getObjValD \"w6_environment_id\"),\n        (\"w6_target_environment_id\", docAdmission.getObjValD \"w6_target_environment_id\"),\n        (\"report\", report (docCase fa1Doc)), (\"report_id\", docReportId fa1Doc (report (docCase fa1Doc)))]\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:376:0: Expression\n  reportIdOf (docCase (fa1Doc [leaf \"unused\" top])) == docReportId (fa1Doc [leaf \"unused\" top]) fa1Report\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:377:0: Expression\n  reportIdOf (docCase (fa1Doc [leaf \"unused\" top])) != reportIdOf (docCase fa1Doc)\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "report-id-identities",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "review F1: the report identity binds both W6a identities",
+   "source_sha256": "7207cf54e9c632245b11702dda93d34fd541c6192e5d222680b5c23c8eee4a69",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 186.2,
+   "output_tail": "false`\n\u2714 [138/139] Built VE.Cardinality.Run (2.9s)\n\u2716 [139/139] Building VE.Cardinality.RunExamples (182s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3d/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:359:0: Expression\n  answer (docCase fa1Doc) ==\n    Json.mkObj\n      [(\"id\", Json.str \"d\"), (\"status\", Json.str \"ok\"), (\"environment_id\", docAdmission.getObjValD \"environment_id\"),\n        (\"w6_environment_id\", docAdmission.getObjValD \"w6_environment_id\"),\n        (\"w6_target_environment_id\", docAdmission.getObjValD \"w6_target_environment_id\"),\n        (\"report\", report (docCase fa1Doc)), (\"report_id\", docReportId fa1Doc (report (docCase fa1Doc)))]\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:376:0: Expression\n  reportIdOf (docCase (fa1Doc [leaf \"unused\" top])) == docReportId (fa1Doc [leaf \"unused\" top]) fa1Report\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "report-id-report",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "review F1: the report identity is over the report answered",
+   "source_sha256": "7207cf54e9c632245b11702dda93d34fd541c6192e5d222680b5c23c8eee4a69",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 224.7,
+   "output_tail": "map Json.str names\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:380:0: Expression\n  leafNames (docCase (graph \"total\" fa1Leaves)) == [Json.str \"total\"]\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:382:0: Expression\n  ((report (docCase (graph \"total\" fa1Leaves))).getObjValD \"root\").getObjValD \"name\" == Json.str \"total\"\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:388:0: Expression\n  leafNames (docCase (twoLevel [\"mid\", \"mid\"])) == List.map Json.str names\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:393:0: Expression\n  leafNames\n      (docCase\n        (graph \"root\"\n          (fa1Leaves ++\n            [deduce \"mid\" fa1Conclusion names docCert,\n              deduce \"root\" fa1Conclusion (List.replicate 200 \"mid\") (closes 200)]))) ==\n    List.map Json.str names\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:395:0: Expression\n  leafNames\n      (docCase\n        (graph \"root\"\n          (fa1Leaves ++\n            [deduce \"mid\" fa1Conclusion names docCert, deduce \"mid2\" fa1Conclusion names docCert,\n              deduce \"root\" fa1Conclusion [\"mid2\", \"mid\", \"mid2\"] (closes 3)]))) ==\n    List.map Json.str names\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:418:0: Expression\n  leafNames (docCase (tops 1000)) == [Json.str \"n0\"]\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "leaf-position",
+   "file": "lean/VE/Cardinality/Document.lean",
+   "claim": "review F2: a leaf's bit is its own position",
+   "source_sha256": "4bbc57c938eefa1b957eceb88b190c0f040fa7db675c10989f28944017fb44da",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.3,
+   "output_tail": "length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2716 [137/139] Building VE.Cardinality.Document (3.0s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3d/lean/VE/Cardinality/Document.lean -o /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/Document.olean -i /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/Document.ilean -c /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/Document.c --setup /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/Document.setup.json --json\nerror: VE/Cardinality/Document.lean:218:25: Application type mismatch: The argument\n  Nat.testBit_two_pow_self\nhas type\n  (2 ^ ?m.332).testBit ?m.332 = true\nbut is expected to have type\n  { name := n.name, adm := n.adm, size := n.size, leaves := 2 ^ (i + 1) }.leaves.testBit i = true\nin the application\n  hx i n hn hd Nat.testBit_two_pow_self\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Document\nerror: build failed\n"
+  },
+  {
+   "id": "leaf-position-advanced",
+   "file": "lean/VE/Cardinality/Document.lean",
+   "claim": "review F2: each node takes the next position",
+   "source_sha256": "4bbc57c938eefa1b957eceb88b190c0f040fa7db675c10989f28944017fb44da",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 4.7,
+   "output_tail": "s.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2716 [137/139] Building VE.Cardinality.Document (4.3s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3d/lean/VE/Cardinality/Document.lean -o /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/Document.olean -i /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/Document.ilean -c /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/Document.c --setup /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/Document.setup.json --json\nerror: VE/Cardinality/Document.lean:216:68: Application type mismatch: The argument\n  h\nhas type\n  checkGraph w check ns i used\n      (Std.HashMap.insert acc n.name { name := n.name, adm := n.adm, size := n.size, leaves := 2 ^ i }) =\n    Except.ok out\nbut is expected to have type\n  checkGraph w check ns (i + 1) ?m.320 (Std.HashMap.insert acc n.name ?m.322) = Except.ok out\nin the application\n  checkGraph_sound hc all ns (i + 1) ?m.320 (Std.HashMap.insert acc n.name ?m.322) out hrest (hins ?m.322 ?m.323) h\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.Document\nerror: build failed\n"
+  },
+  {
+   "id": "premise-count",
+   "file": "lean/VE/Cardinality/Document.lean",
+   "claim": "review F3: the premise count is charged before any premise is looked up",
+   "source_sha256": "4bbc57c938eefa1b957eceb88b190c0f040fa7db675c10989f28944017fb44da",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 276.5,
+   "output_tail": "e_eq, List.length_append, List.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [137/139] Built VE.Cardinality.Document (3.7s)\n\u2714 [138/139] Built VE.Cardinality.Run (4.4s)\n\u2716 [139/139] Building VE.Cardinality.RunExamples (267s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3d/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:432:0: Expression\n  err (docCase (graph \"big\" [deduce \"big\" top (List.replicate 50001 \"nope\") docCert])) == Document.deductionLimit\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "root-name",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "review F3: the report's root is the request's root by name",
+   "source_sha256": "7207cf54e9c632245b11702dda93d34fd541c6192e5d222680b5c23c8eee4a69",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 276.2,
+   "output_tail": "de_eq_true_eq, List.length_append, List.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [137/139] Built VE.Cardinality.Document (2.9s)\n\u2714 [138/139] Built VE.Cardinality.Run (4.3s)\n\u2716 [139/139] Building VE.Cardinality.RunExamples (268s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3d/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3d/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3d/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:382:0: Expression\n  ((report (docCase (graph \"total\" fa1Leaves))).getObjValD \"root\").getObjValD \"name\" == Json.str \"total\"\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
   }
  ]
 }
