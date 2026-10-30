@@ -1006,7 +1006,8 @@ def reserved (r : String) : List String := [s!"ReservedWord: \"{r}\" in the word
 /-! ## The work of a case (spec 3.2 (a), (b) and limit 10; 13.3's F1, G-1, V-11s and H-1; me-2nb): exact units of the
 charged runner `runC`, each limit on both sides -/
 
-namespace Work
+namespace WorkCases
+open VE.Calc.Work
 
 def eqc : Comparison := ⟨.eq, false⟩
 def ltc : Comparison := ⟨.lt, false⟩
@@ -1071,6 +1072,6 @@ def heavy (n : Nat) : Case :=
 -- Limit 10's refusal text (3.2), from `Wire.limit` with the others.
 #guard Wire.workLimit = "ResourceLimit: the work of the calculation exceeds 8589934592"
 
-end Work
+end WorkCases
 
 end VE.Calc.RunExamples
