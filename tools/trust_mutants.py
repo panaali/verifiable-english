@@ -99,9 +99,9 @@ for a change, any other change, a file it cannot read) it is a full run, and one
   with status and raw_status `OTHER SHARD`, a status only a part's record holds (counted under its own key);
 - --merge OUT.json PART.json... reads only the parts (no checkout, no Lean; every other option is ignored) and
   writes the record one run with their options writes, but for "seconds" (the parts' longest), "jobs" and "steps"
-  (their sums) and `shards: [{k, n, jobs, seconds, steps}]`, by k; it prints that run's lines and exits with its code. It refuses (exit
-  2) parts that are no part as this tool writes one (`unread`: a field or row not of its type, a status not one
-  it writes, counts that are not its rows'), disagree on N, base, head, options, inputs, the plan or --rescore's
+  (their sums) and `shards: [{k, n, jobs, seconds, steps}]`, by k; it prints that run's lines and exits with its
+  code. It refuses (exit 2) parts that are no part as this tool writes one (`unread`: a field or row not of its
+  type, a status not one it writes, counts that are not its rows'), disagree on N, base, head, options, inputs, the plan or --rescore's
   file, head, mode, changed or full_run, miss or repeat a k, own a mutant twice, never, or with no verdict, or
   hold anything but the plan's row and its status (`idle`) for a mutant they do not run, OTHER SHARD or NOT RUN;
 - --plan prints `{"base", "definitions", "mutants", "to_run", "not_run"}` ("owned" too with --shard) as one JSON
@@ -930,7 +930,8 @@ def cut_proof(path: Path, first: int, last: int) -> bool:
     return bool(found)
 
 
-WALL = ("plan", "scratch", "control_build", "probe_install", "control_probes", "mutants", "cleanup", "reads")  # `main`'s phases
+# `main`'s phases, in turn
+WALL = ("plan", "scratch", "control_build", "probe_install", "control_probes", "mutants", "cleanup", "reads")
 LAKE = ("control_build", "probe_install", "control_probes", "mutant_builds", "mutant_checks", "outside_checks",
         "stage_controls", "mutant_probes", "other")  # the steps a Lake run counts under (`Steps.step`)
 
@@ -981,7 +982,8 @@ STEPS = Steps()
 def steps_line(steps: dict) -> str:
     """The printed line of a `steps` record: each phase and step that took any time."""
     def each(d: dict, runs: dict | None = None) -> str:
-        return ", ".join(f"{k} {v:g} s" + (f" ({runs[k]})" if runs else "") for k, v in d.items() if v or runs and runs[k])
+        return ", ".join(f"{k} {v:g} s" + (f" ({runs[k]})" if runs else "") for k, v in d.items()
+                         if v or runs and runs[k])
     return f"trust_mutants: steps: wall {each(steps['wall'])}; lake {each(steps['lake'], steps['runs'])}"
 
 
