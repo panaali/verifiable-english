@@ -1,1 +1,44 @@
-{"allow": []}
+{
+ "allow": [
+  {
+   "definition": "VE.Calc.Work.Shape.Sound",
+   "operator": "and-or",
+   "reason": "not equivalent: the #guard at WorkExamples.lean:117 (Shape.Sound's truth table) refutes each, and Lower.lean's shape proofs (shapeOf_sound, addS_sound, scale_shape, step_sound_pow) break; the check reads an instance that reads Shape.Sound, so the tool cannot count that #guard (UNKNOWN)"
+  },
+  {
+   "definition": "VE.Calc.Work.Shape.Sound",
+   "operator": "arm-false",
+   "reason": "not equivalent: the #guard at WorkExamples.lean:117 (Shape.Sound's truth table) refutes each, and Lower.lean's shape proofs (shapeOf_sound, addS_sound, scale_shape, step_sound_pow) break; the check reads an instance that reads Shape.Sound, so the tool cannot count that #guard (UNKNOWN)"
+  },
+  {
+   "definition": "VE.Calc.Work.Shape.Sound",
+   "operator": "arm-true",
+   "reason": "not equivalent: the #guard at WorkExamples.lean:117 (Shape.Sound's truth table) refutes each, and Lower.lean's shape proofs (shapeOf_sound, addS_sound, scale_shape, step_sound_pow) break; the check reads an instance that reads Shape.Sound, so the tool cannot count that #guard (UNKNOWN)"
+  },
+  {
+   "definition": "VE.Calc.Work.Shape.Sound",
+   "operator": "bool-flip",
+   "reason": "not equivalent: the #guard at WorkExamples.lean:117 (Shape.Sound's truth table) refutes each, and Lower.lean's shape proofs (shapeOf_sound, addS_sound, scale_shape, step_sound_pow) break; the check reads an instance that reads Shape.Sound, so the tool cannot count that #guard (UNKNOWN)"
+  },
+  {
+   "definition": "VE.Calc.Work.Shape.Sound",
+   "operator": "eq-le",
+   "reason": "line 214's three are refuted by the #guard at WorkExamples.lean:117 (UNKNOWN to the tool: the check reads an instance that reads Shape.Sound); line 215's `L.isConst ≤ false` is equivalent to `L.isConst = false` on Bool, and its survivor breaks only proofs written with `=`"
+  },
+  {
+   "definition": "VE.Calc.Work.Shape.Sound",
+   "operator": "eq-ne",
+   "reason": "not equivalent: the #guard at WorkExamples.lean:117 (Shape.Sound's truth table) refutes each, and Lower.lean's shape proofs (shapeOf_sound, addS_sound, scale_shape, step_sound_pow) break; the check reads an instance that reads Shape.Sound, so the tool cannot count that #guard (UNKNOWN)"
+  },
+  {
+   "definition": "VE.Calc.Work.Shape.Sound",
+   "operator": "lit-plus",
+   "reason": "not equivalent: the #guard at WorkExamples.lean:117 (Shape.Sound's truth table) refutes each, and Lower.lean's shape proofs (shapeOf_sound, addS_sound, scale_shape, step_sound_pow) break; the check reads an instance that reads Shape.Sound, so the tool cannot count that #guard (UNKNOWN)"
+  },
+  {
+   "definition": "VE.Calc.Work.Shape.Sound",
+   "operator": "ne-eq",
+   "reason": "not equivalent: the #guard at WorkExamples.lean:117 (Shape.Sound's truth table) refutes each, and Lower.lean's shape proofs (shapeOf_sound, addS_sound, scale_shape, step_sound_pow) break; the check reads an instance that reads Shape.Sound, so the tool cannot count that #guard (UNKNOWN)"
+  }
+ ]
+}
