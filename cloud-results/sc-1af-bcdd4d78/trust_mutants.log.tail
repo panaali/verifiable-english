@@ -1,0 +1,2 @@
+trust_mutants: 0 definitions, 0 mutants (0 to run), 4 jobs, base 63b97e3ddf4d
+trust_mutants: 0 KILLED, 0 SURVIVOR, 0 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 5 s
