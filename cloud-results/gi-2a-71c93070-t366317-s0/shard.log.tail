@@ -1,0 +1,172 @@
+shard 1/3: 139 units; commands: ['uv run --frozen --group dev python tools/check_python_layers.py', 'python3 lean/audit.py', 'uv run --frozen --group dev python tools/test_layer_policy.py']
++ uv run --frozen --group dev python tools/check_python_layers.py
+
+╔══╗─────────▶╔╗ ╔╗      ╔╗◀───┐
+╚╣╠╝◀─────┐  ╔╝╚╗║║────▶╔╝╚╗   │
+ ║║   ╔══╦══╦╩╗╔╝║║  ╔╦═╩╗╔╝╔═╦══╗
+ ║║╔══╣╔╗║╔╗║╔╣║ ║║ ╔╬╣╔╗║║ ║│║╔═╝
+╔╣╠╣║║║╚╝║╚╝║║║╚╗║╚═╝║║║║║╚╗║═╣║
+╚══╩╩╩╣╔═╩══╩╝╚═╝╚═══╩╩╝╚╩═╩╩═╩╝
+  └──▶║║                    ▲ 
+      ╚╝────────────────────┘
+
+
+---------
+Contracts
+---------
+
+Analyzed 184 files, 1042 dependencies.
+--------------------------------------
+
+... (7504 lines cut; full output in shard-full.txt)
+'ResponseShape.Lit.of_json' does not depend on any axioms
+'ResponseShape.OkP.arrayMapM' depends on axioms: [propext, Quot.sound]
+'ResponseShape.OkP.bind' does not depend on any axioms
+'ResponseShape.OkP.error' does not depend on any axioms
+'ResponseShape.OkP.filterMapM' depends on axioms: [propext]
+'ResponseShape.OkP.filterMapM_loop' depends on axioms: [propext]
+'ResponseShape.OkP.foldlM' depends on axioms: [propext]
+'ResponseShape.OkP.forIn' depends on axioms: [propext, Quot.sound]
+'ResponseShape.OkP.ite' does not depend on any axioms
+'ResponseShape.OkP.map' does not depend on any axioms
+'ResponseShape.OkP.mapM' depends on axioms: [propext, Quot.sound]
+'ResponseShape.OkP.mapOf' does not depend on any axioms
+'ResponseShape.OkP.of' does not depend on any axioms
+'ResponseShape.OkP.ok' does not depend on any axioms
+'ResponseShape.OkP.pure' does not depend on any axioms
+'ResponseShape.OkP.pure_ok' does not depend on any axioms
+'ResponseShape.OkP.throw' does not depend on any axioms
+'ResponseShape.OkP.throw_bind' does not depend on any axioms
+'ResponseShape.Skel.condsOk_field' depends on axioms: [propext, Quot.sound]
+'ResponseShape.Skel.lookup_mem' does not depend on any axioms
+'ResponseShape.getArr_arr' does not depend on any axioms
+'ResponseShape.getObjVal_setObjVal' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.isEmpty_append' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.isEmpty_empty' does not depend on any axioms
+'ResponseShape.isEmpty_iff_data' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.kind_setObjVal' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.not_not_true' depends on axioms: [propext]
+'ResponseShape.setObjVal_mkObj' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.toOption_ok' does not depend on any axioms
+PASS: 673 source files; 7503 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
+info: syncing channel updates for 1.98.1-x86_64-unknown-linux-gnu
+info: latest update on 2026-09-03 for version 1.98.1 (48a229cea 2026-09-01)
+info: downloading 3 components
+warn: the missing active toolchain `1.98.1-x86_64-unknown-linux-gnu` has been auto-installed
+warn: this might cause rustup commands to take longer time to finish than expected
+info: you may opt out with `RUSTUP_AUTO_INSTALL=0` or `rustup set auto-install disable`
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded cpufeatures v0.2.17
+  Downloaded autocfg v1.5.1
+  Downloaded crypto-common v0.1.7
+  Downloaded block-buffer v0.10.4
+  Downloaded cfg-if v1.0.5
+  Downloaded generic-array v0.14.7
+  Downloaded itoa v1.0.18
+  Downloaded version_check v0.9.5
+  Downloaded digest v0.10.7
+  Downloaded num-integer v0.1.47
+  Downloaded quote v1.0.47
+  Downloaded sha2 v0.10.9
+  Downloaded serde_derive v1.0.229
+  Downloaded unicode-ident v1.0.26
+  Downloaded zmij v1.0.23
+  Downloaded serde_core v1.0.229
+  Downloaded num-traits v0.2.19
+  Downloaded proc-macro2 v1.0.107
+  Downloaded typenum v1.20.1
+  Downloaded num-bigint v0.4.8
+  Downloaded memchr v2.8.3
+  Downloaded serde v1.0.229
+  Downloaded serde_json v1.0.151
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.26
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling memchr v2.8.3
+   Compiling cpufeatures v0.2.17
+   Compiling cfg-if v1.0.5
+   Compiling itoa v1.0.18
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling serde_derive v1.0.229
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `release` profile [optimized] target(s) in 14.73s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling autocfg v1.5.1
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling cpufeatures v0.2.17
+   Compiling memchr v2.8.3
+   Compiling itoa v1.0.18
+   Compiling cfg-if v1.0.5
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 7.27s
+order: failed last time []; changed ['tests/test_w6a_looprecheck2.py', 'tests/test_cardinality_exercised.py', 'tests/test_english_lean_s2.py', 'tests/test_gen_inv_design.py', 'tests/test_lean_dump_cache.py']; then the rest; --maxfail 5
+recording 139 units with 4 jobs in /tmp/ve-select-run-j_fd7is7
+  tests/test_answer_cutoff.py: exit 1 in 92.5 s, 624 functions, OPAQUE
+FAILED tests/test_answer_cutoff.py (exit 1): tests/test_answer_cutoff.py::test_a_process_that_ends_without_cleanup_keeps_its_records, tests/test_answer_cutoff.py::test_recorder_records_each_case_the_client_sent; log /tmp/ve-select-run-j_fd7is7/tests__test_answer_cutoff.py.log
+  Full diff:
+    [
+        'client',
+  +     'data',
+    ])
+FAILED tests/test_answer_cutoff.py::test_a_process_that_ends_without_cleanup_keeps_its_records - AssertionError: assert (1 == 1 and {'keys': [0],...'unknown': []} == {'keys': [0],...'unknown': []}
+ +  where 1 = len(['35fd61f7d2c65d80faf570f6c2e6b76fe6b511158175b80c40d1ad5f203fc489'])
+  
+  Omitting 3 identical items, use -vv to show
+  Differing items:
+  {'pins': ['client', 'data']} != {'pins': ['client']}
+  
+  Full diff:
+    {
+        'keys': [
+            0,
+        ],
+        'timed': False,
+        'pins': [
+            'client',
+  +         'data',
+        ],
+        'unknown': [],
+    })
+2 failed, 66 passed in 90.57s (0:01:30)
+recorded 139 units for tree 6c857de1ed; 0 others left to the static graph until they run; 1 failed
+SHARD 1/3: exit 1 in 1866.8 s; 139 units, 138 passed
