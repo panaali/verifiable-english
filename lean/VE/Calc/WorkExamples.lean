@@ -81,6 +81,9 @@ def linearity (e : Expr) : Option Bool := (Expr.linearC maxWork e 0).map fun
 def hugeC : Expr := powChain 4
 def hugeCancel : Expr := .mul (.sub (.mul hugeC (.val "x")) (.mul hugeC (.val "x"))) (.val "x")
 #guard maxWork < Expr.exactBound hugeCancel && (Expr.linearC maxWork hugeCancel 0).isNone
+#guard (exactC maxWork hugeCancel 0).isNone
+#guard (exactC (Expr.exactBound (shapes.getD 7 (.lit 0))) (shapes.getD 7 (.lit 0)) 0).isSome &&
+  (exactC (Expr.exactBound (shapes.getD 7 (.lit 0)) - 1) (shapes.getD 7 (.lit 0)) 0).isNone
 
 /-! The shape rules, each way (5's linearity): a constant zero factor, a nonzero one, and a sum that may cancel. -/
 #guard [addS (.const (some false)) .nonconst, addS .nonconst (.const (some false))].all (· matches .linear .nonconst)
