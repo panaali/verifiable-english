@@ -1995,7 +1995,7 @@ module VE.Acts.LexicalProofs e80ea5a4e42bcad38f54d8bcc66e1171517139091dd4aee6bec
 1117:0-1119:53 def VE.Acts.Lexical.seek@VE.Acts.LexicalProofs
 1120:0-1120:65 def VE.Acts.Lexical.free@VE.Acts.LexicalProofs
 1121:0-1121:87 def VE.Acts.Lexical.grouped@VE.Acts.LexicalProofs
-module VE.Acts.Linearize 9d27ba64dff9fafa20f1a124309c716d0b5d318a8b900a2807536bc431e8f34a
+module VE.Acts.Linearize b09d438237656661e5fb0fd9fe3921afce5888d26cdcacef513d7ed63f0667a3
 17:0-20:17 def VE.Acts.joinWord@VE.Acts.Linearize
 22:0-25:32 def VE.Acts.Part.toks@VE.Acts.Linearize
 27:0-32:57 def VE.Acts.listToks@VE.Acts.Linearize
@@ -2102,7 +2102,7 @@ module VE.Acts.Readings afe8f578bf2210e8a1cb8177c717db98e316a00e307863791b9dd6b6
 49:0-50:21 theorem VE.Acts.readings_nodup@VE.Acts.Readings
 52:0-61:35 theorem VE.Acts.readings_limit@VE.Acts.Readings
 63:0-65:25 theorem VE.Acts.analyse_one@VE.Acts.Readings
-module VE.Acts.RenderExamples a855a4a11265a4f22eda6bfb85597e3671d0c801f8fcb85d5fc7fa6ab8f6efbd
+module VE.Acts.RenderExamples 23f8601e164ca79f3bbf91de371d5141d59ccefdae0a54e5eaf7bbde1bd5767c
 14:0-15:94 def VE.Acts.RenderExamples.back@VE.Acts.RenderExamples
 16:0-17:77 def VE.Acts.RenderExamples.roundTrip@VE.Acts.RenderExamples
 18:0-18:70 def VE.Acts.RenderExamples.text@VE.Acts.RenderExamples
@@ -2123,10 +2123,12 @@ module VE.Acts.RenderExamples a855a4a11265a4f22eda6bfb85597e3671d0c801f8fcb85d5f
 79:0-79:100 def VE.Acts.RenderExamples.toBoth@VE.Acts.RenderExamples
 81:0-81:71 def VE.Acts.RenderExamples.Vs@VE.Acts.RenderExamples
 82:0-82:100 def VE.Acts.RenderExamples.joinedObj@VE.Acts.RenderExamples
-94:0-94:47 def VE.Acts.RenderExamples.Vo@VE.Acts.RenderExamples
-95:0-95:95 def VE.Acts.RenderExamples.c2@VE.Acts.RenderExamples
-96:0-96:92 def VE.Acts.RenderExamples.heldBy1@VE.Acts.RenderExamples
-108:0-108:117 def VE.Acts.RenderExamples.held2@VE.Acts.RenderExamples
+93:0-93:78 def VE.Acts.RenderExamples.V2s@VE.Acts.RenderExamples
+94:0-94:110 def VE.Acts.RenderExamples.send@VE.Acts.RenderExamples
+105:0-105:47 def VE.Acts.RenderExamples.Vo@VE.Acts.RenderExamples
+106:0-106:95 def VE.Acts.RenderExamples.c2@VE.Acts.RenderExamples
+107:0-107:92 def VE.Acts.RenderExamples.heldBy1@VE.Acts.RenderExamples
+119:0-119:117 def VE.Acts.RenderExamples.held2@VE.Acts.RenderExamples
 module VE.Acts.RuleExamples 6e43fe41a28d5e0bad1c7e332b3d55fbebba0ad99b95efd492380886b20f1a7f
 18:0-23:20 def VE.Acts.RuleExamples.parsed@VE.Acts.RuleExamples
 24:0-24:120 def VE.Acts.RuleExamples.rawOf@VE.Acts.RuleExamples
