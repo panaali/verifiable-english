@@ -1,0 +1,318 @@
+{
+ "item": "qt-a3d",
+ "how": "uv run python tools/mutants.py docs/quantities/qt-a3d/mutants.json --no-baseline --evidence docs/quantities/qt-a3d/evidence/mutants-run.json, after a passing build. Each mutant is applied alone; its command rebuilds VE.Cardinality.RunExamples, so a #guard there or a proof of a module it imports must fail; the harness restores the file's exact bytes. CardReport.Sound and runCase have trust_mutants' mutants (trust-mutants.json).",
+ "mutants": [
+  {
+   "id": "leaf-dropped-report",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "a leaf dropped from the claim graph's report",
+   "find": "(g.leaves.map fun n => claimJson n.name n.adm).toArray",
+   "replace": "((g.leaves.drop 1).map fun n => claimJson n.name n.adm).toArray",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean qt-a3d guards: FA1's four leaves (leafNames, the leaves' meaning ids, the whole answer)"
+  },
+  {
+   "id": "leaf-dropped-union",
+   "file": "lean/VE/Cardinality/Document.lean",
+   "claim": "a premise's leaf dropped when the leaves are joined",
+   "find": "  sets.foldl (· ||| ·) 0",
+   "replace": "  sets.headD 0",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "proof checkGraph_sound (Document.lean, union_testBit); VE/Cardinality/RunExamples.lean qt-a3d guards: twoLevel's leaves"
+  },
+  {
+   "id": "unproved-root-runner",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "a root admitted with an unproved leaf: a certificate that does not close accepted",
+   "find": "checkErased ps c table ep (← Run.idsOf w ep) cert",
+   "replace": "(checkErased ps c table ep (← Run.idsOf w ep) cert).map fun _ => true",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean qt-a3d guards: FA1b's certificate refused (graphRejected)"
+  },
+  {
+   "id": "unproved-root-graph",
+   "file": "lean/VE/Cardinality/Document.lean",
+   "claim": "a root admitted with an unproved leaf: the graph keeps a node whose certificate is false",
+   "find": "        | .ok false => .error graphRejected",
+   "replace": "        | .ok false => checkGraph w check ns cost\n            (acc ++ [⟨n.name, n.adm, n.size, union (children.map (·.leaves))⟩])",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "proof checkGraph_sound (Document.lean)"
+  },
+  {
+   "id": "duplicate-name",
+   "file": "lean/VE/Cardinality/Document.lean",
+   "claim": "a duplicate node name refused",
+   "find": "    if acc.contains n.name then .error graphRejected else",
+   "replace": "    if false then .error graphRejected else",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean qt-a3d guards: a second node named total refused"
+  },
+  {
+   "id": "deduction-premises",
+   "file": "lean/VE/Cardinality/Document.lean",
+   "claim": "a deduction's premises are the request's",
+   "find": "| .ok ps, .ok c => pure (some (← strings ps, ← decodeCert c))",
+   "replace": "| .ok _, .ok c => pure (some ([], ← decodeCert c))",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "proof decodeNode_statement (Document.lean); VE/Cardinality/RunExamples.lean qt-a3d guards: FA1 as a claim graph"
+  },
+  {
+   "id": "profile",
+   "file": "lean/VE/Cardinality/Document.lean",
+   "claim": "documents need documents@1",
+   "find": "unless w.w6.profiles.contains \"documents@1\" do",
+   "replace": "unless true do",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean qt-a3d guards: no documents@1 refused"
+  },
+  {
+   "id": "node-limit",
+   "file": "lean/VE/Cardinality/Document.lean",
+   "claim": "1,000 nodes are read",
+   "find": "if array.size > maxGraphNodes then throw nodeLimit",
+   "replace": "if array.size ≥ maxGraphNodes then throw nodeLimit",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean qt-a3d guards: tops 1000 admitted"
+  },
+  {
+   "id": "charge-boundary",
+   "file": "lean/VE/Cardinality/Document.lean",
+   "claim": "50,000 statement nodes are read by the deductions",
+   "find": "if cost > maxDeductionNodes then .error deductionLimit else",
+   "replace": "if cost ≥ maxDeductionNodes then .error deductionLimit else",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean qt-a3d guards: charged2 top3 24985 reaches P3"
+  },
+  {
+   "id": "charge-cumulative",
+   "file": "lean/VE/Cardinality/Document.lean",
+   "claim": "the charge is over the whole graph",
+   "find": "let cost := children.foldl (· + ·.size) (used + n.size)",
+   "replace": "let cost := children.foldl (· + ·.size) n.size",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean qt-a3d guards: charged2 top 24986 refused (50,001 with mid's 27)"
+  },
+  {
+   "id": "card-report",
+   "file": "lean/VE/Cardinality/Document.lean",
+   "claim": "CardReport (trusted, S): the root and its leaves",
+   "find": "structure CardReport where\n  root : CFormula\n  leaves : List CFormula",
+   "replace": "structure CardReport where\n  root : CFormula\n  leaves : List CFormula := []\n  extra : CFormula",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "Graph.report's anonymous constructor (Document.lean) does not elaborate"
+  },
+  {
+   "id": "report-id-document",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "review F1: the report identity binds the document as sent",
+   "find": "(\"w6_target_environment_id\", .str w.w6.targetId), (\"document\", document), (\"report\", report)])",
+   "replace": "(\"w6_target_environment_id\", .str w.w6.targetId), (\"report\", report)])",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean qt-a3d guards: FA1's whole answer (docReportId); another document, another identity"
+  },
+  {
+   "id": "report-id-identities",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "review F1: the report identity binds both W6a identities",
+   "find": "(\"w6_target_environment_id\", .str w.w6.targetId), (\"document\", document)",
+   "replace": "(\"document\", document)",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean qt-a3d guards: FA1's whole answer (docReportId)"
+  },
+  {
+   "id": "report-id-report",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "review F1: the report identity is over the report answered",
+   "find": "(\"report_id\", .str (← reportId w document (reportJson g)))",
+   "replace": "(\"report_id\", .str (← reportId w document Json.null))",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean qt-a3d guards: FA1's whole answer; each tampered report has another identity"
+  },
+  {
+   "id": "leaf-position",
+   "file": "lean/VE/Cardinality/Document.lean",
+   "claim": "review F2: a leaf's bit is its own position",
+   "find": "(acc.insert n.name ⟨n.name, n.adm, n.size, 2 ^ i⟩)",
+   "replace": "(acc.insert n.name ⟨n.name, n.adm, n.size, 2 ^ (i + 1)⟩)",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "proof checkGraph_sound (Document.lean)"
+  },
+  {
+   "id": "leaf-position-advanced",
+   "file": "lean/VE/Cardinality/Document.lean",
+   "claim": "review F2: each node takes the next position",
+   "find": "    | none => checkGraph w check ns (i + 1) used",
+   "replace": "    | none => checkGraph w check ns i used",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "proof checkGraph_sound (Document.lean)"
+  },
+  {
+   "id": "premise-count",
+   "file": "lean/VE/Cardinality/Document.lean",
+   "claim": "review F3: the premise count is charged before any premise is looked up",
+   "find": "if used + ps.length > maxDeductionNodes then",
+   "replace": "if false then",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean qt-a3d guards: 50,001 dangling premises a ResourceLimit (its PROBE F3)"
+  },
+  {
+   "id": "root-name",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "review F3: the report's root is the request's root by name",
+   "find": "(\"root\", claimJson g.root.name g.root.adm)",
+   "replace": "(\"root\", claimJson \"root\" g.root.adm)",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean qt-a3d guards: the root of graph \"total\" is named total"
+  },
+  {
+   "id": "encode-and-order",
+   "file": "lean/VE/Cardinality/Wire.lean",
+   "claim": "review F4: encode writes a conjunction's parts in order",
+   "find": "| .and a b => Json.arr #[.str \"and\", encode a, encode b]",
+   "replace": "| .and a b => Json.arr #[.str \"and\", encode b, encode a]",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/WireExamples.lean and RunExamples.lean guards (review F4: a reclassified [V] encoder)"
+  },
+  {
+   "id": "encode-proportion-parts",
+   "file": "lean/VE/Cardinality/Wire.lean",
+   "claim": "review F4: encode writes a proportion's whole, then its part",
+   "find": "encBody p.whole, encBody p.part,",
+   "replace": "encBody p.part, encBody p.whole,",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/WireExamples.lean and RunExamples.lean guards (review F4: a reclassified [V] encoder)"
+  },
+  {
+   "id": "encBody-or",
+   "file": "lean/VE/Cardinality/Wire.lean",
+   "claim": "review F4: encBody writes a disjunction as or",
+   "find": "| .or a b => Json.arr #[.str \"or\", encBody a, encBody b]",
+   "replace": "| .or a b => Json.arr #[.str \"and\", encBody a, encBody b]",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/WireExamples.lean and RunExamples.lean guards (review F4: a reclassified [V] encoder)"
+  },
+  {
+   "id": "encOperand-count-body",
+   "file": "lean/VE/Cardinality/Wire.lean",
+   "claim": "review F4: encOperand writes a count's body",
+   "find": "| .count s b => Json.arr #[.str \"count\", .str s, encBody b]",
+   "replace": "| .count s b => Json.arr #[.str \"count\", .str s, encBody .any]",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/WireExamples.lean and RunExamples.lean guards (review F4: a reclassified [V] encoder)"
+  },
+  {
+   "id": "encPrinted-places",
+   "file": "lean/VE/Cardinality/Wire.lean",
+   "claim": "review F4: encPrinted writes the printed number's places",
+   "find": ".str (VE.Time.renderAmount k D)",
+   "replace": ".str (VE.Time.renderAmount k (D + 1))",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/WireExamples.lean and RunExamples.lean guards (review F4: a reclassified [V] encoder)"
+  },
+  {
+   "id": "statementJson-formula",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "review F4: statementJson writes the statement's formula",
+   "find": "Json.mkObj [(\"meaning_id\", .str a.meaningId), (\"formula\", encode a.formula)]",
+   "replace": "Json.mkObj [(\"meaning_id\", .str a.meaningId), (\"formula\", .null)]",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/WireExamples.lean and RunExamples.lean guards (review F4: a reclassified [V] encoder)"
+  }
+ ]
+}
