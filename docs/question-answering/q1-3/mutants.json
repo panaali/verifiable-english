@@ -11,7 +11,7 @@
    },
    "test": "tests/test_question_reverse.py::test_f2_fronts_the_word_after_the_subject",
    "killed": true,
-   "result": "1 failed in 0.36s"
+   "result": "1 failed in 0.26s"
   },
   {
    "behaviour": "f2 accepts a subject with a clause",
@@ -22,7 +22,7 @@
    },
    "test": "tests/test_question_reverse.py::test_f2_is_not_built_for_other_subjects",
    "killed": true,
-   "result": "1 failed in 0.46s"
+   "result": "1 failed in 0.27s"
   },
   {
    "behaviour": "a mutant generator returns the question unchanged",
@@ -33,7 +33,7 @@
    },
    "test": "tests/test_question_reverse.py::test_every_mutant_differs_and_has_its_kind",
    "killed": true,
-   "result": "1 failed in 0.38s"
+   "result": "1 failed in 0.27s"
   },
   {
    "behaviour": "the F1 share over the wrong denominator (every question)",
@@ -44,7 +44,7 @@
    },
    "test": "tests/test_question_reverse.py::test_each_share_has_its_forms_denominator",
    "killed": true,
-   "result": "1 failed in 0.41s"
+   "result": "1 failed in 0.29s"
   },
   {
    "behaviour": "the F2 share leaves out many",
@@ -55,7 +55,7 @@
    },
    "test": "tests/test_question_reverse.py::test_each_share_has_its_forms_denominator",
    "killed": true,
-   "result": "1 failed in 0.37s"
+   "result": "1 failed in 0.33s"
   },
   {
    "behaviour": "the moved-word sentences skip the first gap",
@@ -66,7 +66,7 @@
    },
    "test": "tests/test_question_reverse.py::test_candidates_are_the_word_gaps_left_to_right",
    "killed": true,
-   "result": "1 failed in 0.38s"
+   "result": "1 failed in 0.29s"
   },
   {
    "behaviour": "p95 off by one rank",
@@ -77,7 +77,7 @@
    },
    "test": "tests/test_question_reverse.py::test_p95_and_share",
    "killed": true,
-   "result": "1 failed in 0.42s"
+   "result": "1 failed in 0.31s"
   },
   {
    "behaviour": "the latency budget met only below its bound",
@@ -88,7 +88,7 @@
    },
    "test": "tests/test_question_reverse.py::test_the_latency_budget_is_met_at_its_bound_only",
    "killed": true,
-   "result": "1 failed in 0.37s"
+   "result": "1 failed in 0.35s"
   },
   {
    "behaviour": "the long question one word short (63 candidates)",
@@ -99,7 +99,7 @@
    },
    "test": "tests/test_question_reverse.py::test_the_candidate_limit_is_leans_on_both_sides",
    "killed": true,
-   "result": "1 failed in 0.86s"
+   "result": "1 failed in 0.98s"
   },
   {
    "behaviour": "a formula not compared (any one counts as same)",
@@ -110,7 +110,7 @@
    },
    "test": "tests/test_question_reverse.py::test_a_reading_counts_only_with_the_sentences_formula",
    "killed": true,
-   "result": "1 failed in 0.53s"
+   "result": "1 failed in 0.48s"
   },
   {
    "behaviour": "the many status counted as reading",
@@ -121,7 +121,7 @@
    },
    "test": "tests/test_question_reverse.py::test_a_reading_counts_only_with_the_sentences_formula",
    "killed": true,
-   "result": "1 failed in 0.58s"
+   "result": "1 failed in 0.53s"
   },
   {
    "behaviour": "the default run is a sample of the round-trip streams",
@@ -132,7 +132,7 @@
    },
    "test": "tests/test_question_reverse.py::test_the_default_run_is_the_corpus_size",
    "killed": true,
-   "result": "1 failed in 0.37s"
+   "result": "1 failed in 0.27s"
   },
   {
    "behaviour": "the default run is a sample of the use-case streams",
@@ -143,7 +143,7 @@
    },
    "test": "tests/test_question_reverse.py::test_the_default_run_is_the_corpus_size",
    "killed": true,
-   "result": "1 failed in 0.38s"
+   "result": "1 failed in 0.25s"
   },
   {
    "behaviour": "the sealed size is not the seal's",
@@ -154,7 +154,7 @@
    },
    "test": "tests/test_question_reverse.py::test_the_default_run_is_the_corpus_size",
    "killed": true,
-   "result": "1 failed in 0.43s"
+   "result": "1 failed in 0.25s"
   },
   {
    "behaviour": "coverage ignores the run's size",
@@ -165,7 +165,7 @@
    },
    "test": "tests/test_question_reverse.py::test_coverage_is_whole_only_when_nothing_is_left_out",
    "killed": true,
-   "result": "1 failed in 0.44s"
+   "result": "1 failed in 0.24s"
   },
   {
    "behaviour": "coverage ignores an unavailable read",
@@ -176,7 +176,7 @@
    },
    "test": "tests/test_question_reverse.py::test_coverage_is_whole_only_when_nothing_is_left_out",
    "killed": true,
-   "result": "1 failed, 3 passed in 0.38s"
+   "result": "1 failed, 3 passed in 0.23s"
   },
   {
    "behaviour": "coverage ignores a short stream",
@@ -187,7 +187,7 @@
    },
    "test": "tests/test_question_reverse.py::test_coverage_is_whole_only_when_nothing_is_left_out",
    "killed": true,
-   "result": "1 failed, 2 passed in 0.39s"
+   "result": "1 failed, 2 passed in 0.29s"
   },
   {
    "behaviour": "coverage ignores a skipped configuration",
@@ -198,7 +198,7 @@
    },
    "test": "tests/test_question_reverse.py::test_coverage_is_whole_only_when_nothing_is_left_out",
    "killed": true,
-   "result": "1 failed, 4 passed in 0.36s"
+   "result": "1 failed, 4 passed in 0.20s"
   },
   {
    "behaviour": "a plain refusal counts as left out",
@@ -209,7 +209,7 @@
    },
    "test": "tests/test_question_reverse.py::test_coverage_is_whole_with_duplicates_and_plain_refusals",
    "killed": true,
-   "result": "1 failed in 0.35s"
+   "result": "1 failed in 0.23s"
   },
   {
    "behaviour": "a dropped sentence goes uncounted",
@@ -220,7 +220,7 @@
    },
    "test": "tests/test_question_reverse.py::test_every_sentence_is_kept_or_counted_as_dropped",
    "killed": true,
-   "result": "1 failed in 0.67s"
+   "result": "1 failed in 0.63s"
   },
   {
    "behaviour": "a failed service crashes a question",
@@ -231,7 +231,7 @@
    },
    "test": "tests/test_question_reverse.py::test_a_failed_service_is_unavailable_not_a_crash",
    "killed": true,
-   "result": "1 failed in 0.45s"
+   "result": "1 failed in 0.46s"
   },
   {
    "behaviour": "a failed service crashes a read",
@@ -242,7 +242,7 @@
    },
    "test": "tests/test_question_reverse.py::test_a_failed_service_is_unavailable_not_a_crash",
    "killed": true,
-   "result": "1 failed in 0.49s"
+   "result": "1 failed in 0.38s"
   },
   {
    "behaviour": "a text drawn twice is asked twice",
@@ -253,7 +253,7 @@
    },
    "test": "tests/test_question_reverse.py::test_a_run_merges_its_slices_and_accounts_for_every_sentence",
    "killed": true,
-   "result": "1 failed in 1.27s"
+   "result": "1 failed in 1.45s"
   },
   {
    "behaviour": "a stream's drawn count is its unique count",
@@ -264,7 +264,7 @@
    },
    "test": "tests/test_question_reverse.py::test_a_run_merges_its_slices_and_accounts_for_every_sentence",
    "killed": true,
-   "result": "1 failed in 1.29s"
+   "result": "1 failed in 1.42s"
   },
   {
    "behaviour": "only a target's first slice runs",
@@ -275,7 +275,7 @@
    },
    "test": "tests/test_question_reverse.py::test_a_run_merges_its_slices_and_accounts_for_every_sentence",
    "killed": true,
-   "result": "1 failed in 1.22s"
+   "result": "1 failed in 1.51s"
   },
   {
    "behaviour": "coverage ignores a stream that is not the seal's",
@@ -286,7 +286,7 @@
    },
    "test": "tests/test_question_reverse.py::test_coverage_is_whole_only_when_nothing_is_left_out",
    "killed": true,
-   "result": "1 failed, 5 passed in 0.49s"
+   "result": "1 failed, 5 passed in 0.23s"
   },
   {
    "behaviour": "a stream missing from the run counts as sealed",
@@ -297,7 +297,7 @@
    },
    "test": "tests/test_question_reverse.py::test_coverage_needs_every_stream_of_the_seal",
    "killed": true,
-   "result": "1 failed in 0.43s"
+   "result": "1 failed in 0.26s"
   },
   {
    "behaviour": "the seal's other streams go unnamed",
@@ -308,7 +308,7 @@
    },
    "test": "tests/test_question_reverse.py::test_the_seal_names_the_streams_the_run_does_not_draw",
    "killed": true,
-   "result": "1 failed in 0.48s"
+   "result": "1 failed in 0.19s"
   },
   {
    "behaviour": "a listed question keeps its whole text",
@@ -319,7 +319,7 @@
    },
    "test": "tests/test_question_reverse.py::test_a_listed_question_keeps_its_head_length_and_hash",
    "killed": true,
-   "result": "1 failed in 0.39s"
+   "result": "1 failed in 0.21s"
   },
   {
    "behaviour": "the sealed stream goes without its claims",
@@ -330,7 +330,18 @@
    },
    "test": "tests/test_question_reverse.py::test_a_stream_draws_its_use_cases_claims_as_the_sealed_one_does",
    "killed": true,
-   "result": "1 failed in 1.46s"
+   "result": "1 failed in 1.48s"
+  },
+  {
+   "behaviour": "the corpus row says delivered with the seal's other streams unasked",
+   "file": "docs/question-answering/q1-3/REPORT.md",
+   "mutation": {
+    "from": "| delivered for the 17 round-trip streams (each the seal's digest), the 26 use-case streams and the 9 documents: 98,187 sentences, nothing left out (evidence `coverage`). The seal's `english-mixed` and `natural-view` streams are a cut, named in q1-3b |",
+    "to": "| delivered |"
+   },
+   "test": "tests/test_question_reverse.py::test_a_delivered_row_has_the_whole_corpus_behind_it",
+   "killed": true,
+   "result": "1 failed in 0.26s"
   }
  ]
 }
