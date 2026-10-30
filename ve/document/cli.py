@@ -128,9 +128,12 @@ def main(argv=None):
 def _assume_no_exception(doc, conclusion, args):
     """`--assume-no-exception` (defeasible plan DF-1b): Lean's strict answer, else its answer with no exception
     assumed (`ve.defaults.ask`), on a soft-norms@0 document without open reading sets; the document's assertions are
-    the question's premises."""
+    the question's premises. On a document with a content-bearing set (DF-3), the readings' answer with Lean's
+    `default` member (`_readings_without_exception`)."""
     from ..defaults import ask
     from ..readings_s1 import READINGS
+    if _content_bearing(doc) and doc.get("readings_components") is None and not (args.sentence or args.narrowing):
+        return _readings_without_exception(doc, conclusion, args)
     if args.under or args.sentence or args.narrowing:
         raise VEError("--assume-no-exception takes no --under, --sentence or --narrowing")
     if doc.get("soft_document") is None or _content_bearing(doc) or active_reading_sets(
@@ -141,6 +144,31 @@ def _assume_no_exception(doc, conclusion, args):
     norms = [u["content"] for u in doc["units"] if u["kind"] == "norm"]
     premises = [u["content"] for u in doc["units"] if u["kind"] == "asserted" and u["content"] is not None]
     return ask(environment, norms, premises, conclusion)
+
+
+def _readings_without_exception(doc, conclusion, args):
+    """`--assume-no-exception` on readings (defeasible plan DF-3): RD-9's strict answer across the readings with its
+    English, then Lean's `default` member (present only when the strict conflict fold is FREE) and its English."""
+    from ..readings_s2_wording import S2Wording
+    from ..readings_verdicts import Enumerated, context
+    route = context(doc)
+    if not isinstance(route, Enumerated):
+        raise VEError("--assume-no-exception applies to readings on the enumerated route")
+    assumed = None
+    if args.under:
+        assumed = []
+        for item in args.under:
+            set_id, _, index = item.rpartition(":")
+            if not set_id or not index.isdigit():
+                raise VEError("--under takes SET:INDEX")
+            assumed.append((set_id, decimal_value(index)))
+    row = route.default_answer(conclusion, assumed=assumed)
+    wording = S2Wording(doc, route)
+    data = {**row["result"], "english": wording.plan(row, wording.conclusion(conclusion))}
+    if "default" in row:
+        data["default"] = {key: value for key, value in row["default"].items() if key != "english"}
+        data["default_english"] = route.default_english(row, wording)
+    return data
 
 
 if __name__ == "__main__":

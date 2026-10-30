@@ -1,0 +1,41 @@
+id|source|subject|predicate|atom|decider|answer|conclusion|template
+U01|UDHR u037: No one shall be subjected to arbitrary arrest, detention or exile.|an arrest|arbitrary_arrest|the arrest is arbitrary|unstated|turns|whether this arrest is forbidden|yes
+U02|UDHR u037, synthetic arrest ordered by a court.|a court-ordered arrest|arbitrary_arrest|the arrest is arbitrary|court|turns|whether this arrest is forbidden|yes
+U03|UDHR u037, synthetic arrest under a fixed independent ban.|an arrest|arbitrary_arrest|the arrest is arbitrary|unstated|settled|this arrest is forbidden|yes
+U04|UDHR u045a: No one shall be subjected to arbitrary interference with his privacy, family, home or correspondence.|an interference|arbitrary_interference|the interference is arbitrary|unstated|turns|whether this interference is forbidden|yes
+U05|UDHR u045a, synthetic interference with the home.|an interference|arbitrary_interference|the interference is arbitrary|court|turns|whether this interference is forbidden|yes
+U06|UDHR u045a, synthetic independent prohibition on interference.|an interference|arbitrary_interference|the interference is arbitrary|unstated|settled|this interference is forbidden|yes
+U07|UDHR u046, intrusion variant named by plan 4.2.|an intrusion|arbitrary_intrusion|the intrusion is arbitrary|unstated|turns|whether this intrusion is forbidden|yes
+U08|UDHR u046, synthetic intrusion with a named tribunal.|an intrusion|arbitrary_intrusion|the intrusion is arbitrary|tribunal|turns|whether this intrusion is forbidden|yes
+U09|UDHR u055: No one shall be arbitrarily deprived of his nationality nor denied the right to change his nationality.|a deprivation|arbitrary_deprivation|the deprivation is arbitrary|unstated|turns|whether this deprivation is forbidden|yes
+U10|UDHR u055, synthetic denial of the independent right to change nationality.|a denial|arbitrary_deprivation|the deprivation is arbitrary|unstated|settled|this denial is forbidden|yes
+U11|UDHR u055, synthetic narrower adverb scope.|a deprivation|arbitrary_deprivation|the deprivation is arbitrary|court|turns|whether this deprivation is forbidden|yes
+U12|UDHR u064, deprivation variant named by plan 4.2.|a deprivation|arbitrary_deprivation|the deprivation is arbitrary|unstated|turns|whether this deprivation is forbidden|yes
+U13|UDHR u064, synthetic deprivation with a named tribunal.|a deprivation|arbitrary_deprivation|the deprivation is arbitrary|tribunal|turns|whether this deprivation is forbidden|yes
+U14|UDHR u111: meeting the just requirements of morality, public order and the general welfare in a democratic society.|a requirement|just_requirement|the requirement is just|unstated|turns|whether this requirement limits the right|yes
+U15|UDHR u111, synthetic public-order requirement.|a requirement|just_requirement|the requirement is just|court|turns|whether this requirement limits the right|yes
+U16|UDHR u111, synthetic independent unconditional protection.|a protection|just_requirement|the requirement is just|unstated|settled|this protection applies|yes
+U17|J-iota criterion: No arrest ordered by a court is arbitrary.|a court-ordered arrest|arbitrary_arrest|the arrest is arbitrary|court|conditional|the rules are conflict-free under this criterion|yes
+U18|J-iota, synthetic criterion for a tribunal order.|a tribunal-ordered arrest|arbitrary_arrest|the arrest is arbitrary|tribunal|conditional|the rules are conflict-free under this criterion|yes
+U19|J-iota, synthetic criterion for a recorded order.|a recorded arrest|arbitrary_arrest|the arrest is arbitrary|court|conditional|the rules are conflict-free under this criterion|yes
+U20|UDHR u037, synthetic independent protection plus arbitrary-arrest judgment.|an arrest|arbitrary_arrest|the arrest is arbitrary|unstated|conditional|the rules are conflict-free under the stated criterion|yes
+C01|Constitution u0052.s01: Claude should always use good judgment when evaluating conversational inputs.|an evaluation|good_judgment|the evaluation uses good judgment|Claude|turns|whether this evaluation meets the requirement|no
+C02|Constitution u0052.s01, synthetic evaluation of a safety request.|an evaluation|good_judgment|the evaluation uses good judgment|Claude|turns|whether this evaluation meets the requirement|no
+C03|Constitution u0052.s01, synthetic independent ban on a response.|a response|good_judgment|the evaluation uses good judgment|Claude|settled|this response is forbidden|no
+C04|Constitution u0168.s01: When faced with seemingly compelling arguments to cross these lines, Claude should remain firm.|an argument|seemingly_compelling_argument_to_cross_line|the argument is seemingly compelling|unstated|turns|whether Claude must remain firm in this case|no
+C05|Constitution u0168.s01, synthetic argument assessed by a reviewer.|an argument|seemingly_compelling_argument_to_cross_line|the argument is seemingly compelling|reviewer|turns|whether Claude must remain firm in this case|no
+C06|Constitution u0168.s01, synthetic unconditional ban on crossing the line.|an argument|seemingly_compelling_argument_to_cross_line|the argument is seemingly compelling|unstated|settled|crossing this line is forbidden|no
+C07|Constitution hard constraint, current main/pilot form: Claude must not give prohibited assistance.|an assistance request|prohibited_assistance|the assistance is prohibited|policy reviewer|turns|whether this assistance must be refused|no
+C08|Constitution hard constraint, synthetic violence request.|an assistance request|prohibited_assistance|the assistance is prohibited|policy reviewer|turns|whether this assistance must be refused|no
+C09|Constitution hard constraint, synthetic independently banned disclosure.|a disclosure|prohibited_assistance|the assistance is prohibited|unstated|settled|this disclosure is forbidden|no
+C10|Constitution hard constraint, synthetic privacy request.|an assistance request|privacy_sensitive|the request is privacy-sensitive|policy reviewer|turns|whether this request must be refused|no
+C11|Constitution hard constraint, synthetic privacy decision by Claude.|an assistance request|privacy_sensitive|the request is privacy-sensitive|Claude|turns|whether this request must be refused|no
+C12|Constitution hard constraint, synthetic unconditional protection of secrets.|a secret|privacy_sensitive|the request is privacy-sensitive|unstated|settled|this secret must be protected|no
+C13|Constitution u0052.s01, synthetic criterion: evaluations marked careful use good judgment.|an evaluation|good_judgment|the evaluation uses good judgment|Claude|conditional|the rules are conflict-free under this criterion|no
+C14|Constitution u0052.s01, synthetic criterion for reviewed evaluations.|an evaluation|good_judgment|the evaluation uses good judgment|reviewer|conditional|the rules are conflict-free under this criterion|no
+C15|Constitution u0168.s01, synthetic criterion for arguments reviewed as compelling.|an argument|seemingly_compelling_argument_to_cross_line|the argument is seemingly compelling|reviewer|conditional|the rules are conflict-free under this criterion|no
+C16|Constitution hard constraint, synthetic criterion for prohibited assistance.|an assistance request|prohibited_assistance|the assistance is prohibited|policy reviewer|conditional|the rules are conflict-free under this criterion|no
+C17|Constitution hard constraint, synthetic security boundary.|a request|unsafe_request|the request is unsafe|policy reviewer|turns|whether Claude must refuse this request|no
+C18|Constitution hard constraint, synthetic security boundary with Claude as decider.|a request|unsafe_request|the request is unsafe|Claude|turns|whether Claude must refuse this request|no
+C19|Constitution hard constraint, synthetic unconditional prohibition alongside a safety judgment.|a request|unsafe_request|the request is unsafe|unstated|settled|this response is forbidden|no
+C20|Constitution hard constraint, synthetic refusal under a safety judgment.|a request|unsafe_request|the request is unsafe|unstated|turns|whether Claude must refuse this request|no

@@ -227,7 +227,11 @@ class _FilledChoiceDocument:
         self.route, self.choice = route, choice
         senv = route.source.senv
         self.chain = senv.chain
-        row = self._inner({"kind": "norm-defaults-elaborate"})
+        prefetched = (route._prefetched.pop(route._key(choice), None)
+                      if hasattr(route, "_prefetched") else None)
+        if prefetched is not None:
+            route._checked(prefetched, "readings-choice")
+        row = self._answer(prefetched) if prefetched is not None else self._inner({"kind": "norm-defaults-elaborate"})
         self.elaboration = row
         self.base = Environment(row["base_environment"])
         # E‴: the filled frame (the frame's unspecified predicates), Lean's, with the choice's own base predicates
@@ -263,11 +267,16 @@ class _FilledChoiceDocument:
 
     def _row(self, inner):
         row = self.route.lean("readings-choice", choice=self.route.choice_json(self.choice), inner=inner)
+        self._answer(row)
+        return row
+
+    @staticmethod
+    def _answer(row):
         answer = row["inner"]
         if answer.get("status") != "ok":
             raise CheckerUnavailable(f"ReadingsConformance: Lean refused a case Python built on a reading's filled "
                                      f"document: {answer.get('error')}")
-        return row
+        return answer
 
     def _inner(self, inner):
         return self._row(inner)["inner"]
@@ -391,6 +400,38 @@ class _FilledChoiceDocument:
         if certificate is None:
             return None
         return {"kind": "norm-defaults-certificate", "certificate": certificate}
+
+    # -- unless an exception applies (defeasible plan DF-3)
+
+    def defaults(self):
+        """The choice's norms as a `defaults-*` request reads them (`{environment, norms}`, the case's lowered
+        environment), Lean's `defaults-elaborate` row on them (its `default_premises` are the labels a default answer
+        may keep) and the search on Lean's formulas (`ve.defaults._Search`)."""
+        from ..defaults import _Search, answer, run
+        from ..readings_s1 import wire
+        if not hasattr(self, "_defaults"):
+            norms = [wire(c.raw) for c in self._contents() if c.kind == "norm"]
+            base = {"environment": wire(self.route.source.senv.lower_data), "norms": norms}
+            elaborated = answer({"id": "defaults-elaborate", "kind": "defaults-elaborate", **base})
+            layered = run({"id": "norm-defaults-elaborate", "kind": "norm-defaults-elaborate", **base})
+            self._defaults = (base, elaborated, _Search(base, layered, elaborated, budget=BUDGET))
+        return self._defaults
+
+    def default_case(self, conclusion_ast, gamma=()):
+        """The choice's `default` evidence (DF-3): the gate's pair certificates and collision, a certificate of the
+        conclusion from the choice's document with `Dflt_T` (the assertions, then Γ), a model where its premises hold
+        with `Dflt_T`, and without a certificate a countermodel with `Dflt_T`; each absent when the search finds none."""
+        from ..ast import Bottom
+        _, _, search = self.defaults()
+        X, own, phi = [*search.X, *search.dflt], self._gamma(gamma), self._phi(conclusion_ast)
+        piece = dict(search.coherence())
+        certificate = search.certificate(X, own, phi)
+        if certificate is not None:
+            piece["certificate"] = {"certificate": certificate}
+            piece["model"] = search.model(X, own, Bottom())
+        else:
+            piece["countermodel"] = search.model(X, own, phi)
+        return {key: value for key, value in piece.items() if value is not None}
 
     def model_case(self, conclusion_ast, gamma=()):
         """A model of the choice's filled document and Γ with `conclusion_ast` false (any model when None): its base

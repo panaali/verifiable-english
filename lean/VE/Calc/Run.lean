@@ -56,6 +56,19 @@ inductive Shown where
   | counterexample (κ : List (String × Rat))
   deriving Repr, DecidableEq
 
+/-- The evidence carried by each outcome; a replayed certificate has a last step. -/
+def Shown.matches : Outcome → Shown → Bool
+  | .decided .holds, .certificate (_ :: _) => true
+  | .decided .fails, .counterexample _ => true
+  | .decided .undefined, .nothing => true
+  | .unknown _, .nothing => true
+  | _, _ => false
+
+theorem checked_steps (P : List QFact) (links : List (String × String)) (g : QFact)
+    (d : Derivation) (h : d.check P links g = true) : d.steps ≠ [] := by
+  intro he
+  simp [Derivation.check, he, Derivation.replay] at h
+
 /-- A derivation's outcome from the search over its lowered facts (spec 5), with what it shows: follows only with a
 certificate that replays, does not follow only with a counterexample checked by evaluation, square links included. -/
 def Derive.shown (P : List QFact) (links : List (String × String)) (g : QFact) : Outcome × Shown :=
@@ -67,6 +80,22 @@ def Derive.shown (P : List QFact) (links : List (String × String)) (g : QFact) 
     else (.unknown .derivationInconclusive, .nothing)
   | .unknown (.limit .derivationSteps) => (.unknown (.limit .derivationSteps), .nothing)
   | .unknown _ => (.unknown .derivationInconclusive, .nothing)
+
+theorem Derive.shown_matches (P : List QFact) (links : List (String × String)) (g : QFact) :
+    Shown.matches (Derive.shown P links g).1 (Derive.shown P links g).2 = true := by
+  unfold Derive.shown
+  cases hs : Derive.search P links g with
+  | follows d =>
+    simp only [hs]
+    by_cases hc : d.check P links g = true
+    · obtain ⟨st, sts, hsteps⟩ := List.exists_cons_of_ne_nil (checked_steps P links g d hc)
+      simp [hc, hsteps, Shown.matches]
+    · simp [hc, Shown.matches]
+  | counterexample κ =>
+    by_cases hc : counterexampleCheck P links g (Answer.point κ) = true <;> simp [hs, hc, Shown.matches]
+  | unknown u => cases u with
+    | limit l => cases l <;> simp [hs, Shown.matches]
+    | _ => simp [hs, Shown.matches]
 
 /-- A claim's outcome; a derivation's from its inlining's first fault (2.7), else, within `maxPolyTerms` nodes of
 each inlined expression, from the search over the lowered premises and conclusion (spec 5), with what it shows. One
@@ -85,6 +114,30 @@ def Check.runShown (ds : List Decl) : Check → Outcome × Shown
       else match P.mapM (Claim.factsIn t), C.factsIn t with
         | some fss, some [g] => Derive.shown fss.flatten links g
         | _, _ => (.unknown .derivationInconclusive, .nothing)
+
+theorem Check.followsShown_matches (ds : List Decl) (P : List Claim)
+    (links : List (String × String)) (C : Claim) :
+    Shown.matches ((Check.follows P links C).runShown ds).1
+      ((Check.follows P links C).runShown ds).2 = true := by
+  let k := Check.follows P links C
+  let t := inlineTable ds (k.keep ds)
+  cases hf : k.fault t with
+  | some v => cases v <;> simp [Check.runShown, k, t, hf, Shown.matches]
+  | none =>
+    by_cases hb : !k.exprs.all (fun e => (e.subst t).toOption.all (·.nodesWithin maxPolyTerms |>.isSome))
+    · simp [Check.runShown, k, t, hf, hb, Shown.matches]
+    · cases hp : P.mapM (Claim.factsIn t) with
+      | none => simp [Check.runShown, k, t, hf, hb, hp, Shown.matches]
+      | some fss =>
+        cases hc : C.factsIn t with
+        | none => simp [Check.runShown, k, t, hf, hb, hp, hc, Shown.matches]
+        | some gs =>
+          cases gs with
+          | nil => simp [Check.runShown, k, t, hf, hb, hp, hc, Shown.matches]
+          | cons g rest =>
+            cases rest with
+            | nil => simpa [Check.runShown, k, t, hf, hb, hp, hc] using Derive.shown_matches fss.flatten links g
+            | cons h tail => simp [Check.runShown, k, t, hf, hb, hp, hc, Shown.matches]
 
 def Check.run (ds : List Decl) (k : Check) : Outcome := (k.runShown ds).1
 
@@ -148,14 +201,25 @@ theorem Check.run_sound (ds : List Decl) (h : WellFormed ds) (k : Check) : k.Out
 structure Row where
   id : String
   outcome : Outcome
+  shown : Shown
   reproduction : Option Outcome
   deriving Repr
 
 def Run.row (c : Case) (cl : String × Check) : Row :=
-  { id := cl.1, outcome := cl.2.run c.decls,
+  let (outcome, shown) := cl.2.runShown c.decls
+  { id := cl.1, outcome, shown,
     reproduction := c.software.map fun _ => .unknown .floatingPointNotModelled }
 
 def Run.rows (c : Case) : List Row := c.claims.map (Run.row c)
+
+theorem Run.row_matches (c : Case) (cl : String × Check) :
+    match cl.2 with
+    | .claim _ => True
+    | .follows .. => Shown.matches (Run.row c cl).outcome (Run.row c cl).shown = true := by
+  rcases cl with ⟨id, k⟩
+  cases k with
+  | claim _ => trivial
+  | follows P links C => simpa [Run.row] using Check.followsShown_matches c.decls P links C
 
 theorem Run.row_outcome (c : Case) (cl : String × Check) : (Run.row c cl).outcome = cl.2.run c.decls := rfl
 
@@ -277,11 +341,20 @@ def claimFields (σ : String → Val) : Check → List (String × Json)
     ("display", (display σ c).elim .null Json.str), ("tie", (tie σ c).elim .null Json.bool)]
   | .follows .. => []
 
-def rowJson (claimId : String) (named : String → Option String) (σ : String → Val) (k : Check) (r : Row) : Json :=
+def rowJson (ds : List Decl) (claimId : String) (named : String → Option String)
+    (σ : String → Val) (k : Check) (r : Row) : Json :=
   Json.mkObj ([("status", .str "ok"), ("claim", .str r.id), ("claim_id", .str claimId), ("kind", .str (kind k)),
     ("outcome", .str (words r.outcome).1), ("reason", (words r.outcome).2.elim .null Json.str),
     ("line", (line named k).elim .null Json.str), ("finding", .null),
-    ("reproduction", if r.reproduction.isSome then .str "unknown" else .null)] ++ claimFields σ k)
+    ("reproduction", if r.reproduction.isSome then .str "unknown" else .null)] ++ claimFields σ k ++
+    match k with
+    | .claim _ => []
+    | .follows .. => let (cert, cx) := shownJson ds k r.shown
+      [("certificate", cert), ("counterexample", cx)])
+
+#guard let row := rowJson [] "" (fun _ => none) (fun _ => .undefined) (Check.follows [] [] (.compare ⟨.eq, false⟩ (.lit 0) (.lit 0))) { id := "c", outcome := .decided .holds, shown := .certificate [.square "s" "r" 0 1], reproduction := none }
+  (row.getObjVal? "certificate").toOption.isSome &&
+    (row.getObjVal? "counterexample").toOption.isSome
 
 /-- The service answer: the case's `meaning_id` and its rows, or the refusal of the case. A standalone case is no
 translated document, so no row has a finding (2.5, 13.6). -/
@@ -290,7 +363,7 @@ def runCaseReported (j : Json) : Json :=
   | .ok (c, mid, ids) =>
     let σ := valuesL c.decls
     Json.mkObj [("status", .str "ok"), ("meaning_id", .str mid),
-      ("rows", .arr (c.claims.mapIdx fun i cl => rowJson (ids.getD i "") (wordsIn j) σ cl.2 (Run.row c cl)).toArray)]
+      ("rows", .arr (c.claims.mapIdx fun i cl => rowJson c.decls (ids.getD i "") (wordsIn j) σ cl.2 (Run.row c cl)).toArray)]
   | .error e => Json.mkObj [("status", .str "error"), ("error", .str e)]
 
 /-- The outcome row `i` of an answer states. -/
@@ -321,16 +394,16 @@ theorem outcome_sound (j : Lean.Json) (c : Case) (h : Wire.decodeCase j = .ok c)
       rfl
     have hrows : (runCaseReported j).getObjVal? "rows" =
         .ok (.arr (d.1.claims.mapIdx fun i cl =>
-          rowJson (d.2.2.getD i "") (wordsIn j) (valuesL d.1.decls) cl.2 (Run.row d.1 cl)).toArray) := by
+          rowJson d.1.decls (d.2.2.getD i "") (wordsIn j) (valuesL d.1.decls) cl.2 (Run.row d.1 cl)).toArray) := by
       simp only [runCaseReported, hd]
       exact get _ _ _ (by simp) (by simp)
     have ho := outcomes_words ((d.1.claims[i]'hi).2.run d.1.decls)
     have hout (k : Check) (r : Row) :
-        (rowJson (d.2.2.getD i "") (wordsIn j) (valuesL d.1.decls) k r).getObjVal? "outcome" =
-          .ok (.str (words r.outcome).1) := get _ _ _ (by cases k <;> simp [claimFields]) (by simp)
+        (rowJson d.1.decls (d.2.2.getD i "") (wordsIn j) (valuesL d.1.decls) k r).getObjVal? "outcome" =
+          .ok (.str (words r.outcome).1) := get _ _ _ (by cases k <;> simp [claimFields, rowJson]) (by simp [rowJson])
     have hreason (k : Check) (r : Row) :
-        (rowJson (d.2.2.getD i "") (wordsIn j) (valuesL d.1.decls) k r).getObjVal? "reason" =
-          .ok ((words r.outcome).2.elim .null Json.str) := get _ _ _ (by cases k <;> simp [claimFields]) (by simp)
+        (rowJson d.1.decls (d.2.2.getD i "") (wordsIn j) (valuesL d.1.decls) k r).getObjVal? "reason" =
+          .ok ((words r.outcome).2.elim .null Json.str) := get _ _ _ (by cases k <;> simp [claimFields, rowJson]) (by simp [rowJson])
     simp only [outcomeAt, hrows, List.getElem?_toArray, List.getElem?_mapIdx, List.getElem?_eq_getElem hi,
       Option.map_some, Option.bind_eq_bind, Option.bind_some, hout, hreason, Run.row_outcome]
     generalize words ((d.1.claims[i]'hi).2.run d.1.decls) = wo at ho ⊢
