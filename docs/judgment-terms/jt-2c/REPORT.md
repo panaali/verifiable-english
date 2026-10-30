@@ -1,9 +1,10 @@
 # jt-2c report: the composing modes under `judgments@0`
 
-Status: built; no DRI signature reserved. DELTA row 1 is the DRI's (reviews/dri-decisions-20261028-jt-2c.md item 2),
-row 2 is R16 (+23 untied V, K +0, S +0). `ve document` answers a `judgments@0` document; every composing mode decides
-without the layer through `VE.Compose.decidingEnvironment` and names the list as written. Cut to jt-2d: the
-norm-defaults replay kinds under the layer (refused by name now). The chain runs the full gate on the final HEAD.
+Status: built; review F1 (B) fixed; no DRI signature reserved. DELTA row 1 is the DRI's
+(reviews/dri-decisions-20261028-jt-2c.md item 2), row 2 R16 (+35 untied V, K +0, S +0), row 3 R1 (F1's refusal text).
+`ve document` answers a `judgments@0` document; every composing mode decides without the layer through
+`VE.Compose.decidingEnvironment`, after the layer's own gate row over the list as written, and names the list as written.
+Cut to jt-2d: the norm-defaults replay kinds under the layer (refused by name now). The chain runs the full gate on the final HEAD.
 
 Plan: docs/spec/judgment-terms-PLAN.md JT-2 (row at line 68), spec docs/spec/judgment-terms.md 8.1-8.3, jt-2b's REPORT
 (plan row (3), "Composing modes"), the DRI's decision items 1-3. Statement gate: jt-2's REPORT records JT-2's statement
@@ -52,6 +53,27 @@ norm-defaults-gaps needs its composed Lean route`, while load, `render` and `rea
 `test_ve_document_render_is_the_twin_s[pilot]`). The route mode itself is not needed: a listed layer goes to the norms
 mode, which delegates to the route on the environment without it.
 
+## Review fixes (jt-2c-review.final.md, reviewed `ebcf20230`)
+
+- F1 (B), class "a composing mode decides without the layer's own requirement": `decidingEnvironment` set the layer
+  aside without running its row of the table's gate over the list as written, so the check, metered, norms (plain
+  kinds, `norms-elaborate`), `norm-defaults-elaborate` and English modes answered `["definitions@0", "judgments@0",
+  "norms@0", "relational-fol@0"]`, which the environment and model modes refuse. Fixed once for every caller in the one
+  shared function: `VE.Compose.layerGate` runs the document layers' own `profileTable` rows (`rowChecks`, `gateOf`'s
+  text), which `gate_judgments` shows is all the table's gate adds to the list without the layer. So a list with
+  `documents@1` is decided exactly as before. The refusal by name is now `layersApart`; the document mode reads only that
+  (its gate over the written list already runs after its envelope checks, so jt-2's fault order is kept: seeded S4).
+  `#guard`s: the probe's list both ways, every other profile of the table beside the layer both ways, and every D-all
+  list (`layerGate` refuses exactly the lists with the layer and without `documents@1`, never one `gateOf profileTable`
+  admits). PROBE F1 failed on the reviewed behaviour (S3: `ok`, `well_typed`, a `meaning_id`) and passes now. Regression
+  tests: `tests/test_judgments_compose.py::test_the_layer_s_own_requirement_is_checked_by_every_composing_mode` (7 modes,
+  refused without `documents@1`, answered with it and without the layer),
+  `::test_the_english_route_checks_the_layer_s_own_requirement` (the `environmentId` block branch, `:287`, and the reader),
+  `::test_the_document_mode_keeps_jt_2_s_fault_order`. The refusal text against the merge base is DELTA row 3 (R1,
+  `evidence/delta.json`).
+- F2-F4 (C) and the jt-2d FOLLOW-UP: not in this fix round (FOLLOW-UP lines). The English route now has a test with
+  `judgments@0` (part of F3).
+
 ## Seeded bugs
 
 [`mutants.json`](mutants.json); each applied to the committed file, its test run, the file restored:
@@ -67,6 +89,12 @@ mode, which delegates to the route on the environment without it.
 - P3 (Python, `ve/backends/lean_runner.py`): `route_mode` ignores the layer. Fails `..._loads_..[fol]`.
 - R1 (Rust, `rust/ve-kernel/src/environment.rs`): the layer off the allow-list. Fails
   `test_ve_document_check_and_coverage_answer_as_the_twin` (Rust's `UnsupportedProfile`).
+- S3 (Lean, `lean/VE/Compose/Dispatch.lean`, review F1): `layerGate listed` deleted from `decidingEnvironment`. Fails
+  `test_the_layer_s_own_requirement_is_checked_by_every_composing_mode` (5 of 7: check, metered, both norms kinds,
+  norm-defaults; environment and model gate the list themselves) and `test_the_english_route_checks_the_layer_s_own_requirement`;
+  PROBE F1 fails.
+- S4 (Lean, `lean/VE/Service/Document.lean`, review F1): the document mode calls `decidingEnvironment` in place of
+  `layersApart`. Fails `test_the_document_mode_keeps_jt_2_s_fault_order` (it survived every test before that one).
 - M1-M4, one per new trusted definition (`decidingEnvironment` twice, `documentLayersApart`, `pendingDocumentLayer`):
   each breaks a `#guard` of `lean/VE/Compose/Examples.lean` or `lean/VE/Defaults/RouteExamples.lean` (`lake build`
   of that module: "error: ... Expression" at the guard).
@@ -81,7 +109,13 @@ mode, which delegates to the route on the environment without it.
 
 ## Trust, size and evidence
 
-- Trust: `uv run python tools/trust_map.py --check` on this branch, against `1f28dddfb3ef` and again after the merge
+- Trust (review F1, final HEAD): `uv run python tools/trust_map.py --check` against `432763b06d8d`: "K +0, S +0, D +2,
+  G +31, ..., trusted +35" (Dispatch +24: `layersApart`, `layerGate`; the rest as below), exit 0 with the second R16
+  allowance (+12). Trust mutants over the fix (`--max-mutants 1000 --test lean/VE/Defaults/RouteExamples.lean --allow
+  ...`, then `--rescore` after the allow-only edit): "63 KILLED, 0 SURVIVOR, 0 UNKNOWN, 5 INVALID, 27 ALLOWED, 0 NOT
+  RUN", exit 0; the seven new allow entries (11 mutants) are equivalent cuts (one-element lists, rows the filter never
+  picks) and one `[]` that does not elaborate, and two stale `decidingEnvironment` allows were removed.
+- Trust before review F1: `uv run python tools/trust_map.py --check` on this branch, against `1f28dddfb3ef` and again after the merge
   against `432763b06d8d`: "K +0, S +0, D +2, G +32, ..., trusted +23"
   (Dispatch +12, NormDefaults/Run +4, Plain +3, Standalone +3, EnglishGrammar/Run +1); allowance recorded with
   `--allow ... --signed "SIGNED by standing ruling R16 ..."` (`docs/trust-baseline.json`); FOLLOW-UPS.md "## jt-2c"
