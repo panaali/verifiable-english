@@ -15989,6 +15989,15 @@
         "VE.Arith.Examples.stops",
         "VE.Arith.Examples.vePrime"
       ]
+    },
+    "VE/Service/SoftSourceExamples.lean": {
+      "T": [
+        "VE.Service.SoftSourceExamples.checked",
+        "VE.Service.SoftSourceExamples.flat",
+        "VE.Service.SoftSourceExamples.mixed",
+        "VE.Service.SoftSourceExamples.rule",
+        "VE.Service.SoftSourceExamples.unit"
+      ]
     }
   }
 }
