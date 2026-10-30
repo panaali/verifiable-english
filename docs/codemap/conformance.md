@@ -1,0 +1,62 @@
+- `conformance/alternatives.py` — Executable forms of the alternatives spec's finite scenario fixtures.
+- `conformance/binding_probes.py` — One accepted case per declared Lean binding of the assurance manifest.
+- `conformance/certificates.py` — Seeded Python search -> independent Lean replay, with all denominators retained.
+- `conformance/closure.py` — Deterministic closure fixtures; v0 fixture files are never regenerated here.
+- `conformance/closure_certificates.py` — Deterministic closure certificates, hostile mutations and retained search gaps.
+- `conformance/document_wrapper.py` — The `ve-document@1` wrapper: Python's `load_document` and `check_document` against the Lean service's `document` mode (docs/LEAN-FIRST-PLAN.md, row 16a).
+- `conformance/english_artifacts.py` — Regenerate reviewed examples and use-case English documents, without changing environments.
+- `conformance/english_lean.py` — Python/Lean differential for the core English skeleton (PLAN-EXPAND2 W7).
+- `conformance/english_lean_corpus.py` — Run the English-in-Lean engine corpus against the Python reference engine.
+- `conformance/english_lean_e2_6_report.py` — E2.6: the measured section of `docs/lean-first/e2/E2.6.md`, rendered from the saved evidence alone.
+- `conformance/english_lean_e2_ab.py` — E2.6: the corpus A/B of Lean's English authority, compared and classified from saved recordings.
+- `conformance/english_lean_e2_evidence.py` — The E2.5 evidence of English in Lean (docs/spec/english-lean-E2-PLAN.md E2.5 and GE2; spec 2.10).
+- `conformance/english_lean_e2_readability.py` — E2.6: replay the frozen readability evaluation at this checkout, with no model calls.
+- `conformance/english_lean_e2_readability_report.py` — E2.6: compare the saved readability replay with the saved base, from the files alone (no checkout, no git).
+- `conformance/english_lean_e2_report.py` — Render the measured section of `docs/spec/english-lean-e2-report.md` from the E2.5 evidence.
+- `conformance/english_lean_engine.py` — Executable reference of the English-in-Lean grammar engine (item 1, tier A, and the English matching).
+- `conformance/english_lean_lexer.py` — Executable reference of the English lexer of the English-in-Lean instance (spec 2.2, tier B draft).
+- `conformance/english_lean_lexicon.py` — The selected lexicon of English in Lean (spec 2.9, 5.8): Python's export and a reference validity check.
+- `conformance/english_lean_rejections.py` — The rejection sites of Python's English hand parser, classified for English in Lean (S0, spec 4.2, 7).
+- `conformance/english_lean_s0.py` — S0 measurements for English in Lean (plan section 5, spec section 7): grammar sizes, shape checks, terminal classes, synthetic limit environments, sentence len…
+- `conformance/english_lean_s3_compare.py` — Compare the S3 fixture texts at the dispatched English reading boundary.
+- `conformance/english_lean_s3_fixtures.py` — The fixture environments of docs/spec/english-lean-s3.md section 8, as environment JSON.
+- `conformance/english_lean_s3_python.py` — Python's outcome on every fixture of docs/spec/english-lean-s3.md 8.1 to 8.5 and 8.7 (spec ev5, S3.5).
+- `conformance/english_lean_seal.py` — Seal the shadow corpus of English in Lean (plan section 5, S0): hash every source of corpus texts.
+- `conformance/english_lean_tokens.py` — Python's English grammar over word tokens: a first cut at the tree correspondence (plan section 4, S0).
+- `conformance/english_mixed.py` — Mixed-construct English harness (PLAN-EXPAND2 W7): regression evidence only.
+- `conformance/english_surface.py` — Reproduce English round-trip/all-derivations and real-vocabulary measurements.
+- `conformance/extend.py` — Additional portable fixtures derived from the shared evaluation corpus.
+- `conformance/frozen_norm_defaults.py` — Load the pinned pre-switch Python norm-defaults oracle for differential tests.
+- `conformance/frozen_norm_defaults_route.py` — Frozen Python regeneration oracle for conformance only.
+- `conformance/frozen_words.py` — The Python producers of situation and point wording before Q2.4 moved them to Lean (`VE.Words`), for the A/B.
+- `conformance/fuzz.py` — Seeded Python/Rust differential fuzzing with JSONL replay and greedy reduction.
+- `conformance/generate.py` — Regenerate portable evaluator fixtures.
+- `conformance/induction.py` — Untrusted induction examples and certificate construction.
+- `conformance/nary_folio.py` — Offline FOLIO v2 n-ary witness audit; the corpus itself stays gitignored.
+- `conformance/natural_surface.py` — Reproducible natural-view coverage over repository and seeded round-trip corpora.
+- `conformance/norm_defaults.py` — Rust fixtures for norm-defaults@0 (docs/spec/norm-defaults.md section 8).
+- `conformance/norm_defaults_differential.py` — Python/Lean differentials for norm-defaults@0 (docs/spec/norm-defaults.md 8).
+- `conformance/norm_defaults_layered.py` — Python against Lean on the soft and rights branches of norm-defaults@0 (docs/spec/norm-defaults.md 2.3 and 3.3; lean/VE/NormDefaults/Layered.lean).
+- `conformance/norm_defaults_report.py` — Python against Lean on the norm-defaults@0 report (docs/spec/norm-defaults.md 3.2 and 5).
+- `conformance/norm_defaults_three_way.py` — Three-way conformance for norm-defaults@0 on the spec fixtures (docs/spec/norm-defaults.md 8, 9).
+- `conformance/order.py` — order@0 differential conformance: Python search and replay vs the Lean checker.
+- `conformance/p0.py` — P0 route fixtures shared by Python, Rust and the Lean `route` subcommand.
+- `conformance/replay_baseline.py` — Freeze the full v0 corpus using only the pinned pre-closure integration code.
+- `conformance/rights.py` — Deterministic rights-to-soft regeneration checks against the Lean soft route.
+- `conformance/rights_differential.py` — Deterministic rights relay corpus on 1,000 generated documents (rights.md 10).
+- `conformance/rights_three_way.py` — Rights fixtures and the independently checked soft embedding (rights.md 10).
+- `conformance/risk.py` — Executable forms of the risk@0 fixtures (docs/spec/risk.md 8.1) for the Lean route.
+- `conformance/soft_norms.py` — Deterministic Python/Lean regeneration comparison for 1,000 soft trees.
+- `conformance/soft_norms_wire_report.py` — Deterministic Python shadow delta over the generic multi-fault selection.
+- `conformance/soft_oracle.py` — Frozen Python regeneration comparison for the pre-deletion soft oracle.
+- `conformance/softnorms_contract.py` — Python predicates and public rejection boundary for the soft-norms wire table.
+- `conformance/softnorms_legacy.py` — Python schema and regeneration for the soft-norms@0 statement layer.
+- `conformance/three_way.py` — The P0 route adapters shared by the three-way tests and the differential fuzzer.
+- `conformance/wire_contract.py` — Profile-independent, deterministic multi-fault selection for wire tables.
+- `conformance/wire_contract_delta.py` — Collect every prospective public diagnostic delta on the gate corpus.
+- `conformance/wire_contract_engine.py` — Ordered, diagnostic-only interpreter for wire contracts (format 1).
+- `conformance/wire_contract_faults.py` — The fault catalogue of the pilot `soft-norms@0` (wire-contract.md 8.3) and the oracle it feeds.
+- `conformance/wire_contract_faults_norm_defaults.py` — The fault catalogue and the gate corpus of `norm-defaults@0` (wire-contract-s5.md 2.4, 8.2, 8.4).
+- `conformance/wire_contract_faults_norms.py` — The fault catalogue and the gate corpus of `norms@0` (wire-contract-s5.md 2.3, 8.1, 8.4).
+- `conformance/wire_contract_gate.py` — Replay the soft-norms shadow gate (wire-contract.md 8.3 and 9) through Python, Lean and the legacy routes.
+- `conformance/wire_contract_golden.py` — Materialize the hand-derived spec fixture records for review and drift checks.
