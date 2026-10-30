@@ -78,8 +78,6 @@ def fa1Admission : Json := answer (case "admission" env fa1Premises fa1Conclusio
 #guard answer ((case "admission" env fa1Premises fa1Conclusion).setObjVal! "kind" (.str "admission")) ==
   answer (Json.mkObj [("id", .str "c"), ("environment", env), ("premises", Json.arr fa1Premises.toArray),
     ("conclusion", fa1Conclusion)])
-#guard answer (case "countermodel" env fa1Premises fa1Conclusion) ==
-  p r#"{"id": "c", "status": "error", "error": "unknown case kind countermodel"}"#
 
 /-- A trace as the order certificate wire spells it. -/
 def traceJson : VE.Order.Tableau.Trace → Json
@@ -431,5 +429,97 @@ def top3 : Json := st r#"["quantity", ["not", ["top"]]]"#
 -- ResourceLimit, 50,000 a dangling premise.
 #guard err (docCase (graph "big" [deduce "big" top (List.replicate 50001 "nope") docCert])) == Document.deductionLimit
 #guard err (docCase (graph "big" [deduce "big" top (List.replicate 50000 "nope") docCert])) == Document.graphRejected
+
+/-! ## Countermodels (spec 3.9): FA1b refuted, FA1 not; the region sizes computed once and charged -/
+
+/-- A complete model of `env`'s vocabulary: FOMC policymakers `p1`…`pn`, those of `inc` expect a further increase,
+those of `stay` expect rates to stay; no user, no advice, every constant 0. -/
+def model (n : Nat) (inc stay : List Nat) : Json :=
+  let pm := fun (i : Nat) => Json.str s!"p{i}"
+  let rows := fun (xs : List Nat) => toJson (xs.map fun i => Json.arr #[pm i])
+  Json.mkObj [("complete", .bool true),
+    ("domains", Json.mkObj [("fomc_policymaker", toJson ((List.range n).map (pm <| · + 1))),
+      ("user", toJson ([] : List Json))]),
+    ("constants", Json.mkObj (["d1", "d2", "june", "sept"].map (·, .str "0"))),
+    ("relations", Json.mkObj [("advises", toJson ([] : List Json)), ("curious", toJson ([] : List Json)),
+      ("expects_further_increase", rows inc), ("expects_rates_to_stay", rows stay)])]
+
+/-- FA1b's countermodel (neither, stay only, increase only, both) = (1, 1, 15, 1). -/
+def fa1bModel : Json := model 18 (List.range' 1 16) [16, 17]
+
+def refute (premises : List Json) (m : Json) (more : List (String × Json) := []) : Json :=
+  answer (case "countermodel" env premises fa1Conclusion ([("model", m)] ++ more))
+
+def sizes (a : Json) : Json := a.getObjValD "sizes"
+def refusal (a : Json) : String := (a.getObjValD "error").getStr?.toOption.getD ""
+def sized (xs : List (String × Nat)) : Json :=
+  toJson (xs.map fun e =>
+    Json.mkObj [("constant", .str s!"cardinality__fomc_policymaker__{e.1}"), ("size", toJson e.2)])
+
+-- FA1b is refuted by its countermodel; each region's size is Lean's, in the region table's order, beside the
+-- admission's region table.
+#guard (refute fa1Premises.dropLast fa1bModel).getObjValD "refutes" == .bool true
+#guard sizes (refute fa1Premises.dropLast fa1bModel) == sized [("00", 1), ("01", 1), ("10", 15), ("11", 1)]
+#guard (refute fa1Premises.dropLast fa1bModel).getObjValD "regions" ==
+  (answer (case "admission" env fa1Premises.dropLast fa1Conclusion)).getObjValD "regions"
+-- A countermodel that does not refute is not accepted: with FA1's exclusion premise the same model breaks a premise,
+-- and FA1's own model (2 stay, 16 increase, none both) satisfies the conclusion.
+#guard (refute fa1Premises fa1bModel).getObjValD "refutes" == .bool false
+#guard (refute fa1Premises.dropLast (model 18 (List.range' 1 16) [17, 18])).getObjValD "refutes" == .bool false
+#guard sizes (refute fa1Premises.dropLast (model 18 (List.range' 1 16) [17, 18])) ==
+  sized [("00", 0), ("01", 2), ("10", 16), ("11", 0)]
+-- The model is the original vocabulary's: a region constant in it is refused by W6a's model decoder, as is a missing
+-- model; the claims and the statements are read first.
+#guard err (case "countermodel" env fa1Premises fa1Conclusion) == "property not found: model"
+#guard (refusal (refute fa1Premises (obj fa1bModel [("constants", obj (fa1bModel.getObjValD "constants")
+  [("cardinality__fomc_policymaker__00", .str "1")])]))).startsWith "fields do not match"
+#guard refusal (refute fa1Premises (.str "x")) == "object expected"
+#guard refusal (refute fa1Premises (.str "x")
+  [("regions", regions.setObjVal! "constants" (toJson ([] : List Json)))]) ==
+  "region table differs from the regenerated one"
+#guard err (case "countermodel" env [] (st r#"["count", "user", [["1", ["any"]]], "le", "2"]"#)
+  [("model", .str "x")]) == "CardinalityNotFinite(user)"
+
+/-! The growing chain: `k` counted sorts `c0`…, six predicates and `n` objects each; `u` users. The charge is
+2 ^ 6 × n × 7 per sort, so 448,000 for 1,000 objects: two sorts are counted, the third is refused before any size
+is computed. -/
+
+def chainSorts (k : Nat) : List String := (List.range k).map (s!"c{·}")
+def chainPreds (s : String) : List String := (List.range 6).map (s!"{s}_q{·}")
+
+def chainEnv (k : Nat) : Json :=
+  let unary := fun s => Json.mkObj [("arguments", toJson [s]), ("description", .str "q")]
+  let v := vocab.setObjVal! "sorts" (obj (vocab.getObjValD "sorts")
+    ((chainSorts k).map (·, p r#"{"description": "a sort"}"#)))
+  obj env [("vocabulary", v.setObjVal! "predicates" (obj (vocab.getObjValD "predicates")
+      ((chainSorts k).flatMap fun s => (chainPreds s).map (·, unary s)))),
+    ("cardinality", Json.mkObj [("finite_sorts", toJson (chainSorts k))])]
+
+/-- Each sort's objects in the region of all six predicates: at most `n`. -/
+def chainPremise (n : Nat) (s : String) : Json :=
+  let body := (chainPreds s).foldr (fun q b => Json.arr #[.str "and", Json.arr #[.str "is", .str q], b])
+    (Json.arr #[.str "any"])
+  st (Json.compress (Json.arr #[.str "count", .str s, Json.arr #[Json.arr #[.str "1", body]], .str "le",
+    .str (toString n)]))
+
+def chainModel (k n u : Nat) : Json :=
+  let none := toJson ([] : List Json)
+  let ids := fun (pre : String) (m : Nat) => toJson ((List.range m).map (s!"{pre}{·}"))
+  Json.mkObj [("complete", .bool true),
+    ("domains", Json.mkObj ([("fomc_policymaker", none), ("user", ids "u" u)] ++
+      (chainSorts k).map fun s => (s, ids s!"{s}e" n))),
+    ("constants", Json.mkObj (["d1", "d2", "june", "sept"].map (·, .str "0"))),
+    ("relations", Json.mkObj ((["advises", "curious", "expects_further_increase", "expects_rates_to_stay"] ++
+      (chainSorts k).flatMap chainPreds).map (·, none)))]
+
+/-- No `c0` object, refuted by the model; `extra` premises beside the chain's. -/
+def chain (k n u : Nat) (extra : List Json := []) : Json :=
+  case "countermodel" (chainEnv k) ((chainSorts k).map (chainPremise n) ++ extra)
+    (st r#"["count", "c0", [["1", ["any"]]], "lt", "0"]"#) [("model", chainModel k n u)]
+
+-- The region sizes are charged before they are computed (the service test runs the chain to two sorts of 1,000):
+-- three sorts of 1,000 objects are refused, UNKNOWN; small sorts are counted and refuted.
+#guard err (chain 3 1000 0) == VE.Time.Wire.budgetExhausted
+#guard (answer (chain 3 10 0)).getObjValD "refutes" == .bool true
 
 end VE.Cardinality.RunExamples

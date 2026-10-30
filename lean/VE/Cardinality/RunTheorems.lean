@@ -1,4 +1,5 @@
 import VE.Cardinality.Run
+import VE.Route.WireSound
 
 /-! Statements about the cardinality certificate decoder and the case runner (`Run.lean`), kept apart from
 `RunExamples.lean` so a seeded bug in either is caught by a `#guard` there, not only by a proof here. -/
@@ -216,5 +217,62 @@ theorem admit_cardinality_report_sound (w : CardEnv) (d : Lean.Json) (res : Card
     rw [hg] at h
     cases h
     exact Document.admitGraph_sound (Run.checkDeduction_sound w) hg
+
+/-! ## The countermodel case (spec 3.9) -/
+
+/-- A decoded model's sorted presentation is a valid finite model of the vocabulary's environment. -/
+theorem sortDomains_valid {v : VE.Order.Vocabulary} {m : Lean.Json} {d : VE.Order.ModelData VE.Order.Wire.Entity}
+    (h : VE.Route.Decode.decodeOrderModel v m = .ok d) : (VE.Time.Wire.sortDomains d).toModel.Valid v.environment := by
+  have hv := (VE.Order.validModel_iff v d).mp
+    (VE.Route.Decode.validOrderFast_eq v d ▸ VE.Route.WireSound.decodeOrderModel_validFast v m d h)
+  have hs : (VE.Time.Wire.sortDomains d).toModel.asStructure = d.toModel.asStructure := by
+    unfold VE.Order.FiniteModel.asStructure
+    congr 1
+    funext s x
+    exact propext (VE.Time.Wire.sortDomains_perm d s).mem_iff
+  unfold VE.Order.FiniteModel.Valid
+  rw [hs]
+  exact hv
+
+/-- **A countermodel the runner accepts refutes the claim**: on the problem the runner built (`checkedProblem`), a
+model whose region sizes the runner computed once, on which W6a's budgeted countermodel check refutes the erased
+problem, is a model where the premises hold and the conclusion does not (`refutesC_sound`). The hypothesis `hq` is the
+environment decoder's (`decodeEnvironment_sound`). -/
+theorem countermodel_sound {w : CardEnv} (hq : w.env.q = w.w6.vocab.env) (ps : List (CAdmission w))
+    (c : CAdmission w) {R : RegionData} {table : List (String × String × Region)}
+    {ep : List VE.Time.QFormula × VE.Time.QFormula}
+    (hp : Run.checkedProblem w.env (ps.map (·.formula)) c.formula = .ok (R, table, ep)) {m : Lean.Json}
+    {sizes : List (String × Nat)} (h : Run.countermodel w R ep m = .ok (true, sizes)) :
+    ¬ CEntails.{0} w.env (ps.map (·.formula)) c.formula := by
+  rw [Run.checkedProblem_eq] at hp
+  cases hc : Run.problemChecks w.env (ps.map (·.formula)) c.formula with
+  | error e => rw [hc] at hp; cases hp
+  | ok _ =>
+    rw [hc] at hp
+    simp only [Except.map, Except.ok.injEq, Prod.mk.injEq] at hp
+    obtain ⟨rfl, -, rfl⟩ := hp
+    unfold Run.countermodel at h
+    obtain ⟨d, hd, h⟩ := VE.Order.ProfileGate.bind_ok h
+    simp only at h
+    split at h
+    · cases h
+    split at h
+    · rename_i hb
+      obtain ⟨_, -, h⟩ := VE.Order.ProfileGate.bind_ok h
+      obtain ⟨rfl, -⟩ := Prod.mk.inj (Except.ok.inj h)
+      have hmem : ∀ p row, VE.Route.Budget.orderMem (VE.Time.Wire.sortDomains d).toModel
+          (VE.Time.Wire.tableIndex (VE.Time.Wire.predicateNames w.w6) d) p row = true ↔
+            row ∈ (VE.Time.Wire.sortDomains d).toModel.relations p :=
+        VE.Route.Budget.orderMem_iff _ _
+      have hr := VE.Time.refutesB_sound _ (withSizes _ _) _ hmem _ _ _ _ hb
+      rw [withSizes_eq _ _ hmem] at hr
+      have hM : (VE.Time.Wire.sortDomains d).toModel.Valid w.env.q.erase := by
+        rw [hq, ← VE.Time.Wire.QVocab.core_environment]
+        exact sortDomains_valid hd
+      have hps : ∀ a ∈ ps.map (·.formula), Admitted w.env a := fun a ha => by
+        obtain ⟨b, _, rfl⟩ := List.mem_map.mp ha
+        exact admits_sound _ _ b.admitted
+      exact refutesC_sound w.env w.wf _ _ _ hM hps (admits_sound _ _ c.admitted) hr.symm
+    · cases h
 
 end VE.Cardinality
