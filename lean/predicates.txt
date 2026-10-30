@@ -124,6 +124,8 @@ module VE.Alternatives.Wire
 module VE.Arith.Bounded
 module VE.Arith.BoundedExamples
 module VE.Arith.CompleteExamples
+module VE.Arith.Deciding
+module VE.Arith.DecidingExamples
 module VE.Arith.Defs
 module VE.Arith.Examples
 module VE.Arith.Holds
@@ -606,6 +608,7 @@ module VE.Service.FamilyNorms
 module VE.Service.GenericGraph
 module VE.Service.GenericReadings
 module VE.Service.Graph
+module VE.Service.MemoExamples
 module VE.Service.ParseDiagnostic
 module VE.Service.Protocol
 module VE.Service.Readings
@@ -613,6 +616,7 @@ module VE.Service.ReadingsChoices
 module VE.Service.Registry
 module VE.Service.ScopeAdmission
 module VE.Service.ScopeExamples
+module VE.Service.SoftSourceExamples
 module VE.Service.Standalone
 module VE.Service.TypingDiagnostic
 module VE.SoftNorms.Admission

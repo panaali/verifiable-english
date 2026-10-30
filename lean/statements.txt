@@ -2325,6 +2325,10 @@ theorem VE.Arith.Examples.bertrand_means_iff
     ∀ (n : Nat), 1 ≤ n → ∃ p, VE.Arith.Examples.IsPrime p ∧ n < p ∧ p ≤ 2 * n
   -- uses VE.Arith.Defs.Means@VE.Arith.Holds VE.Arith.Examples.IsPrime@VE.Arith.Examples VE.Arith.Examples.bertrand@VE.Arith.Examples VE.Arith.Examples.primeDefs@VE.Arith.Examples
   -- expr 570097480
+theorem VE.Arith.Examples.isPrimeB_iff
+  ∀ (p : Nat), VE.Arith.Examples.isPrimeB p = Bool.true ↔ VE.Arith.Examples.IsPrime p
+  -- uses VE.Arith.Examples.IsPrime@VE.Arith.Examples VE.Arith.Examples.isPrimeB@VE.Arith.DecidingExamples
+  -- expr 942043530
 theorem VE.Arith.Examples.primeBody_iff
   ∀ (E : VE.Arith.Env) (p : Nat), VE.Arith.Holds E [↑p] VE.Arith.Examples.primeBody ↔ VE.Arith.Examples.IsPrime p
   -- uses VE.Arith.Env@VE.Arith.Holds VE.Arith.Examples.IsPrime@VE.Arith.Examples VE.Arith.Examples.primeBody@VE.Arith.Examples VE.Arith.Holds@VE.Arith.Holds
@@ -2627,6 +2631,65 @@ theorem VE.Arith.decideBounded_work
     VE.Arith.decideBounded D limit φ = Option.some (b, w) → w ≤ limit
   -- uses VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula@VE.Arith.Syntax VE.Arith.decideBounded@VE.Arith.Bounded
   -- expr 102672812
+theorem VE.Arith.decidingAt_sound
+  ∀ (D : VE.Arith.Defs) (limit : Nat) (u : Bool) (lo hi : VE.Arith.Term) (ψ : VE.Arith.Formula) (i : Int),
+    Option.map (fun x => x.fst) (VE.Arith.decidingAt (VE.Arith.Defs.opEnv limit D) limit u lo hi ψ) = Option.some i →
+      ∃ l v,
+        VE.Arith.Term.value D.env [] lo = Option.some l ∧
+          VE.Arith.Term.value D.env [] hi = Option.some v ∧
+            l ≤ i ∧
+              i ≤ v ∧
+                (VE.Arith.Holds D.env [i] ψ ↔ u = Bool.false) ∧
+                  ∀ (m : Int), l ≤ m → m < i → (VE.Arith.Holds D.env [m] ψ ↔ u = Bool.true)
+  -- uses VE.Arith.Defs.env@VE.Arith.Holds VE.Arith.Defs.opEnv@VE.Arith.Bounded VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula@VE.Arith.Syntax VE.Arith.Holds@VE.Arith.Holds VE.Arith.Term.value@VE.Arith.Holds VE.Arith.Term@VE.Arith.Syntax VE.Arith.decidingAt@VE.Arith.Deciding
+  -- expr 3054693917
+theorem VE.Arith.decidingLoop_iff
+  ∀ (u : Bool) (step : Int → Nat → Option (Bool × Nat)) (n : Nat) (i : Int) (w w' : Nat),
+    (∃ j, VE.Arith.decidingLoop u step n i w = Option.some (j, w')) ↔
+      VE.Arith.quantLoop u step n i w = Option.some (!u, w')
+  -- uses VE.Arith.decidingLoop@VE.Arith.Deciding VE.Arith.quantLoop@VE.Arith.Bounded
+  -- expr 2620822040
+theorem VE.Arith.decidingLoop_sound
+  ∀ (Q : Int → Prop) (step : Int → Nat → Option (Bool × Nat)) (u : Bool),
+    (∀ (i : Int) (w : Nat) (b : Bool) (w' : Nat), step i w = Option.some (b, w') → (Q i ↔ b = Bool.true)) →
+      ∀ (n : Nat) (i : Int) (w : Nat) (j : Int) (w' : Nat),
+        VE.Arith.decidingLoop u step n i w = Option.some (j, w') →
+          i ≤ j ∧ j < i + ↑n ∧ (Q j ↔ u = Bool.false) ∧ ∀ (m : Int), i ≤ m → m < j → (Q m ↔ u = Bool.true)
+  -- uses VE.Arith.decidingLoop@VE.Arith.Deciding
+  -- expr 2073774861
+theorem VE.Arith.decidingValue_all
+  ∀ (D : VE.Arith.Defs),
+    D.WellFormed = Bool.true →
+      ∀ (lo hi : VE.Arith.Term) (ψ : VE.Arith.Formula),
+        VE.Arith.Formula.Scoped D 0 (VE.Arith.Formula.allFromTo lo hi ψ) = Bool.true →
+          ∀ (limit : Nat) (i : Int),
+            VE.Arith.decidingValue D limit (VE.Arith.Formula.allFromTo lo hi ψ) = Option.some i →
+              ∃ l u,
+                VE.Arith.Term.value D.env [] lo = Option.some l ∧
+                  VE.Arith.Term.value D.env [] hi = Option.some u ∧
+                    l ≤ i ∧ i ≤ u ∧ ¬VE.Arith.Holds D.env [i] ψ ∧ ∀ (m : Int), l ≤ m → m < i → VE.Arith.Holds D.env [m] ψ
+  -- uses VE.Arith.Defs.WellFormed@VE.Arith.Defs VE.Arith.Defs.env@VE.Arith.Holds VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula.Scoped@VE.Arith.Defs VE.Arith.Formula.allFromTo@VE.Arith.Syntax VE.Arith.Formula@VE.Arith.Syntax VE.Arith.Holds@VE.Arith.Holds VE.Arith.Term.value@VE.Arith.Holds VE.Arith.Term@VE.Arith.Syntax VE.Arith.decidingValue@VE.Arith.Deciding
+  -- expr 2111779947
+theorem VE.Arith.decidingValue_ex
+  ∀ (D : VE.Arith.Defs),
+    D.WellFormed = Bool.true →
+      ∀ (lo hi : VE.Arith.Term) (ψ : VE.Arith.Formula),
+        VE.Arith.Formula.Scoped D 0 (VE.Arith.Formula.exFromTo lo hi ψ) = Bool.true →
+          ∀ (limit : Nat) (i : Int),
+            VE.Arith.decidingValue D limit (VE.Arith.Formula.exFromTo lo hi ψ) = Option.some i →
+              ∃ l u,
+                VE.Arith.Term.value D.env [] lo = Option.some l ∧
+                  VE.Arith.Term.value D.env [] hi = Option.some u ∧
+                    l ≤ i ∧ i ≤ u ∧ VE.Arith.Holds D.env [i] ψ ∧ ∀ (m : Int), l ≤ m → m < i → ¬VE.Arith.Holds D.env [m] ψ
+  -- uses VE.Arith.Defs.WellFormed@VE.Arith.Defs VE.Arith.Defs.env@VE.Arith.Holds VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula.Scoped@VE.Arith.Defs VE.Arith.Formula.exFromTo@VE.Arith.Syntax VE.Arith.Formula@VE.Arith.Syntax VE.Arith.Holds@VE.Arith.Holds VE.Arith.Term.value@VE.Arith.Holds VE.Arith.Term@VE.Arith.Syntax VE.Arith.decidingValue@VE.Arith.Deciding
+  -- expr 4056233847
+theorem VE.Arith.decidingValue_of_fails
+  ∀ (D : VE.Arith.Defs) (limit : Nat) (lo hi : VE.Arith.Term) (ψ : VE.Arith.Formula),
+    VE.Arith.arithOutcome D limit (VE.Arith.Formula.allFromTo lo hi ψ) =
+        VE.Numbers.Outcome.decided VE.Numbers.Verdict.fails →
+      (VE.Arith.decidingValue D limit (VE.Arith.Formula.allFromTo lo hi ψ)).isSome = Bool.true
+  -- uses VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula.allFromTo@VE.Arith.Syntax VE.Arith.Formula@VE.Arith.Syntax VE.Arith.Term@VE.Arith.Syntax VE.Arith.arithOutcome@VE.Arith.Bounded VE.Arith.decidingValue@VE.Arith.Deciding VE.Numbers.Outcome.decided@VE.Numbers.Round VE.Numbers.Outcome@VE.Numbers.Round VE.Numbers.Verdict.fails@VE.Numbers.Round
+  -- expr 3926488734
 theorem VE.Arith.foldl_rel
   ∀ {α β γ : Type} (R : α → β → Prop) {f : α → γ → α} {g : β → γ → β},
     (∀ (a : α) (b : β) (c : γ), R a b → R (f a c) (g b c)) →
@@ -44114,6 +44177,11 @@ theorem VE.Scope.applyEffect_src
           ∀ (s : String), VE.Scope.HasStr s o' → VE.Scope.HasStr s o ∨ VE.Scope.HasStr s (VE.Scope.payload e)
   -- uses VE.Scope.Effect@VE.Scope.Effects VE.Scope.HasStr@VE.Scope.Govern VE.Scope.applyEffect@VE.Scope.Govern VE.Scope.payload@VE.Scope.Govern
   -- expr 3443085062
+theorem VE.Scope.ascending_sound
+  ∀ (ks : List String),
+    VE.Scope.ascending ks = Bool.true → List.Pairwise (fun x1 x2 => Ord.compare x1 x2 = Ordering.lt) ks
+  -- uses VE.Scope.ascending@VE.Scope.Govern
+  -- expr 1384076931
 theorem VE.Scope.balanceL_id
   ∀ (sz : Nat) (k : String) (v : Lean.Json) (l r : Std.DTreeMap.Internal.Impl String fun x => Lean.Json),
     (Std.DTreeMap.Internal.Impl.inner sz k v l r).Balanced →
@@ -44126,6 +44194,10 @@ theorem VE.Scope.balanceR_id
       Std.DTreeMap.Internal.Impl.balanceR! k v l r = Std.DTreeMap.Internal.Impl.inner sz k v l r
   -- uses
   -- expr 1692243481
+theorem VE.Scope.balanced?_sound
+  ∀ (t : Std.DTreeMap.Internal.Impl String fun x => Lean.Json), VE.Scope.balanced? t = Bool.true → t.Balanced
+  -- uses VE.Scope.balanced?@VE.Scope.Govern
+  -- expr 3145925104
 theorem VE.Scope.baseName_some
   ∀ (D : VE.Scope.SDoc) (u n : String),
     VE.Scope.baseName D u = Option.some n ↔
@@ -44273,11 +44345,23 @@ theorem VE.Scope.coversU_iff
     VE.Scope.coversU D g u = Bool.true ↔ ∃ us, VE.Scope.covered D g.reach = Except.ok us ∧ u ∈ us
   -- uses VE.Scope.Governor.reach@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.covered@VE.Scope.Govern VE.Scope.coversU@VE.Scope.Govern
   -- expr 1356600155
+theorem VE.Scope.decodeBlock_jsonWF
+  ∀ (front : Lean.Json) (source : String) (re : VE.Readings.Wire.ReadingsEnvironment) (D : VE.Scope.SDoc),
+    VE.Scope.decodeBlock front source re = Except.ok D → VE.Scope.JsonWF D.doc ∧ VE.Scope.JsonWF D.block
+  -- uses VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Scope.JsonWF@VE.Scope.Govern VE.Scope.SDoc.block@VE.Scope.Govern VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.decodeBlock@VE.Scope.Wire
+  -- expr 2924256056
 theorem VE.Scope.decodeBlock_layout
   ∀ (front : Lean.Json) (source : String) (re : VE.Readings.Wire.ReadingsEnvironment) (D : VE.Scope.SDoc),
     VE.Scope.decodeBlock front source re = Except.ok D → D.layout = VE.Scope.layoutOf front source ∧ D.doc = front
   -- uses VE.Layout.Unit@VE.Layout.List VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc.layout@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.decodeBlock@VE.Scope.Wire VE.Scope.layoutOf@VE.Scope.Wire
   -- expr 2730613432
+theorem VE.Scope.decodeBlock_ok
+  ∀ (front : Lean.Json) (source : String) (re : VE.Readings.Wire.ReadingsEnvironment) (D : VE.Scope.SDoc),
+    VE.Scope.decodeBlock front source re = Except.ok D →
+      VE.Scope.jsonWF? front = Bool.true ∧
+        D.layout = VE.Scope.layoutOf front source ∧ D.doc = front ∧ D.block = front.getObjValD "scope"
+  -- uses VE.Layout.Unit@VE.Layout.List VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Scope.SDoc.block@VE.Scope.Govern VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc.layout@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.decodeBlock@VE.Scope.Wire VE.Scope.jsonWF?@VE.Scope.Govern VE.Scope.layoutOf@VE.Scope.Wire
+  -- expr 3003147883
 theorem VE.Scope.decodeNorm_name
   ∀ (re : VE.Readings.Wire.ReadingsEnvironment) (o : Lean.Json),
     VE.Scope.JsonWF o →
@@ -44712,6 +44796,11 @@ theorem VE.Scope.id_unique
     (List.map (fun x => x.id) gs).Nodup → ∀ (x g : VE.Scope.Governor), x ∈ gs → g ∈ gs → x.id = g.id → x = g
   -- uses VE.Scope.Governor.id@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern
   -- expr 1240139277
+theorem VE.Scope.implWF?_sound
+  ∀ {t : Std.DTreeMap.Internal.Impl String fun x => Lean.Json},
+    VE.Scope.implWF? t = Bool.true → ∀ (e : (_ : String) × Lean.Json), e ∈ t.toListModel → VE.Scope.JsonWF e.snd
+  -- uses VE.Scope.JsonWF@VE.Scope.Govern VE.Scope.implWF?@VE.Scope.Govern
+  -- expr 4103993600
 theorem VE.Scope.impl_get_map
   ∀ (f : String → Lean.Json → Lean.Json) (k : String) (t : Std.DTreeMap.Internal.Impl String fun x => Lean.Json),
     Std.DTreeMap.Internal.Impl.Const.get? (Std.DTreeMap.Internal.Impl.map f t) k =
@@ -44762,6 +44851,10 @@ theorem VE.Scope.itemRule_decoder
       ∃ m, VE.Scope.mergeParts u lead item = Except.ok m ∧ VE.Readings.Wire.decodeNorm D.re m = Except.ok N
   -- uses VE.Readings.Wire.decodeNorm@VE.Readings.Wire VE.Scope.SDoc.re@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.itemRule@VE.Scope.Govern VE.Scope.mergeParts@VE.Scope.Effects VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
   -- expr 1772087715
+theorem VE.Scope.jsonWF?_sound
+  ∀ {j : Lean.Json}, VE.Scope.jsonWF? j = Bool.true → VE.Scope.JsonWF j
+  -- uses VE.Scope.JsonWF@VE.Scope.Govern VE.Scope.jsonWF?@VE.Scope.Govern
+  -- expr 791227361
 theorem VE.Scope.jsonWF_getD
   ∀ (j : Lean.Json), VE.Scope.JsonWF j → ∀ (k : String), VE.Scope.JsonWF (j.getObjValD k)
   -- uses VE.Scope.JsonWF@VE.Scope.Govern
@@ -44794,6 +44887,10 @@ theorem VE.Scope.listName_run
               VE.Layout.listRun D.layout lead = Except.ok us ∧ n.units = us
   -- uses VE.Discourse.ContentName.name@VE.Discourse.Manifest VE.Discourse.ContentName.units@VE.Discourse.Manifest VE.Discourse.ContentName@VE.Discourse.Manifest VE.Layout.listRun@VE.Layout.List VE.Scope.Reach.listName@VE.Scope.Govern VE.Scope.SDoc.layout@VE.Scope.Govern VE.Scope.SDoc.listNames@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.admitBlock@VE.Scope.Govern VE.Scope.covered@VE.Scope.Govern
   -- expr 2660182922
+theorem VE.Scope.listWF?_sound
+  ∀ {xs : List Lean.Json}, VE.Scope.listWF? xs = Bool.true → ∀ (x : Lean.Json), x ∈ xs → VE.Scope.JsonWF x
+  -- uses VE.Scope.JsonWF@VE.Scope.Govern VE.Scope.listWF?@VE.Scope.Govern
+  -- expr 3853593037
 theorem VE.Scope.list_singleton_of_drop_empty
   ∀ (gs : List VE.Scope.Governor) (g : VE.Scope.Governor),
     (List.map (fun x => x.id) gs).Nodup → g ∈ gs → List.filter (fun x => x.id != g.id) gs = [] → gs = [g]
