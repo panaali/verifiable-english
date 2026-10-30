@@ -1,0 +1,75 @@
+- `lean/ResponseShape/CaseDeciders.lean` — # The runners' tests of the request case A mode whose answer depends on which runner takes the case (`SoftNorms.Run.usesSoftPath` and the like) says so with an…
+- `lean/ResponseShape/DefaultsExamples.lean` — The `defaults-*` rows of `norm-defaults.json` (`Schemas.NormDefaults`) on the mode's own answers to the route's fixtures (`Defaults/RouteExamples.lean`): every…
+- `lean/ResponseShape/Encoders/Alternatives.lean` — The `alternatives` mode (`Alternatives.Run.runCaseReported`) against `alternatives.json#/row`.
+- `lean/ResponseShape/Encoders/Ask.lean` — The `ask` mode (`VE.Ask.Run.caseReported`) against `ask.json#/row`: every field of an answered question and of a refused one, typed.
+- `lean/ResponseShape/Encoders/Calc.lean` — The `calc` mode (`VE.Calc.Run.runCaseReported`) against `calc.json#/row` (math-evidence spec 3.4).
+- `lean/ResponseShape/Encoders/Cardinality.lean` — The `cardinality` mode (`VE.Cardinality.Run.runCaseReported`) against `cardinality.json#/row` (docs/spec/quantities.md 4.3).
+- `lean/ResponseShape/Encoders/Common.lean` — Encoders several modes share: the claims and reports of an admission (`Route.Run.claimJson`, `Norms.Run.reportJson`).
+- `lean/ResponseShape/Encoders/Conformance.lean` — The `ve_conformance` modes: `evaluate` (`Order.runEvaluationCaseReported`), `check-certificate` (the service's metered `CertificateWire.runCaseReportedSteps`) …
+- `lean/ResponseShape/Encoders/Discourse.lean` — The `discourse` mode (`Discourse.Run.runCaseReported`) against `discourse.json#/row`.
+- `lean/ResponseShape/Encoders/Document.lean` — scope@0 (SC-1b): the fold of a governor unit's status keeps the row's shape.
+- `lean/ResponseShape/Encoders/English.lean` — The `english` mode (`Service.englishReported`, the English runner) against `english.json#/row`, and the `diagnose` mode (`Service.Diagnose.diagnoseCase`) again…
+- `lean/ResponseShape/Encoders/EnglishLean.lean` — (no module docstring)
+- `lean/ResponseShape/Encoders/Envelope.lean` — The service's own lines against `envelope.json`: each result bound to its position and case digest (`Service.Protocol.bound`), the response (`response`) and a …
+- `lean/ResponseShape/Encoders/Family.lean` — The family modes `graph` and `readings` (`Service.Family`), `bundle` (`Service.FamilyBundle`) and `family-norms` (`Service.FamilyNorms`) against their row shap…
+- `lean/ResponseShape/Encoders/Metered.lean` — The `metered` mode (`Route.MeteredRun.runCaseReported`) against `metered.json#/row`: a document result has one of the three statuses, every explanation row is …
+- `lean/ResponseShape/Encoders/NormDefaults.lean` — The `norm-defaults` mode (`NormDefaults.Run.runCaseReported`) against `norm-defaults.json#/row`.
+- `lean/ResponseShape/Encoders/Norms.lean` — The `norms` mode (`Norms.Run.runCaseReported`) against `norms.json#/row`.
+- `lean/ResponseShape/Encoders/Quantity.lean` — The `quantity` mode (`Time.Wire.runCaseReported` with `Time.Document.extension`) against `quantity.json#/row`.
+- `lean/ResponseShape/Encoders/Question.lean` — (no module docstring)
+- `lean/ResponseShape/Encoders/ReadingsRoute.lean` — The `readings-route` mode (`Readings.Run.runCaseReported`) against `readings-route.json#/row`.
+- `lean/ResponseShape/Encoders/Reports.lean` — The `reports` mode (`Reports.Run.runCaseReported`) against `reports.json#/row`.
+- `lean/ResponseShape/Encoders/Rights.lean` — The `rights` mode (`Rights.Run.runCaseReported`) against `rights.json#/row`.
+- `lean/ResponseShape/Encoders/Risk.lean` — The `risk` mode (`Risk.Run.runCaseReported`) against `risk.json#/row`.
+- `lean/ResponseShape/Encoders/RiskEval.lean` — The `risk-eval` mode (`Risk.Eval.runCaseReported`) against `risk-eval.json#/row`.
+- `lean/ResponseShape/Encoders/Route.lean` — The `route` mode (`Route.Run.runCaseReported`) against `route.json#/row`.
+- `lean/ResponseShape/Encoders/SearchBudget.lean` — (no module docstring)
+- `lean/ResponseShape/Encoders/SoftNorms.lean` — The `soft-norms` mode (`SoftNorms.Run.runCaseReported`) against `soft-norms.json#/row`.
+- `lean/ResponseShape/Encoders/SpeechActs.lean` — The `speech-acts` mode (`SpeechActs.Run.runCaseReported`) against `speech-acts.json#/row`.
+- `lean/ResponseShape/Encoders/Standalone.lean` — The standalone modes (`Service.Standalone.reported` of `environmentCase`, `modelCase`, `checkCase`, `identityCase`, `parseCase`) against their row shapes.
+- `lean/ResponseShape/Encoders/Words.lean` — The `words` mode (`VE.Words.Run.caseReported`) against `words.json#/row`.
+- `lean/ResponseShape/Encoders.lean` — # Every encoder against its shape For every mode of the service (every constructor of `VE.Service.Mode`, so a new mode fails the build until it is proved), eve…
+- `lean/ResponseShape/EnumSites.lean` — # Every enumeration of the response schemas, and the field skeleton that keeps it A schema declares allowed values with `enum` or `const` (a one-value enum).
+- `lean/ResponseShape/FitsTactic.lean` — # Tactics for the encoder theorems * `okfits` goes through a runner's `do` block (binds, keeping each `x = .ok a`; conditions; matches; join points) down to ea…
+- `lean/ResponseShape/Schemas/Alternatives.lean` — The source of `ve/backends/lean_service_schema/alternatives.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Ask.lean` — The `ask` row (docs/spec/question-answering.md 4.2, 8; plan 4.8), every field typed.
+- `lean/ResponseShape/Schemas/Bundle.lean` — The source of `ve/backends/lean_service_schema/bundle.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Calc.lean` — The `calc` row (math-evidence spec 3.4, ME-2): the case's `meaning_id` and one row per request claim, in order (`x-zip`), each naming its claim by the request'…
+- `lean/ResponseShape/Schemas/Cardinality.lean` — The source of `ve/backends/lean_service_schema/cardinality.json` (`file`; `tools/response_schemas.py` writes it): the `cardinality` mode's row (`VE.Cardinality…
+- `lean/ResponseShape/Schemas/Check.lean` — The source of `ve/backends/lean_service_schema/check.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/CheckCertificate.lean` — The source of `ve/backends/lean_service_schema/check-certificate.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Common.lean` — `common.json`: the value domains every mode shares.
+- `lean/ResponseShape/Schemas/Diagnose.lean` — The source of `ve/backends/lean_service_schema/diagnose.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Discourse.lean` — The source of `ve/backends/lean_service_schema/discourse.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Document.lean` — The checked projection of the W2 wrapper.
+- `lean/ResponseShape/Schemas/English.lean` — The source of `ve/backends/lean_service_schema/english.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/EnglishLean.lean` — The three formula-level English service rows.
+- `lean/ResponseShape/Schemas/Envelope.lean` — The source of `ve/backends/lean_service_schema/envelope.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Environment.lean` — The source of `ve/backends/lean_service_schema/environment.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Evaluate.lean` — The source of `ve/backends/lean_service_schema/evaluate.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/FamilyNorms.lean` — The source of `ve/backends/lean_service_schema/family-norms.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Graph.lean` — The source of `ve/backends/lean_service_schema/graph.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Identity.lean` — The source of `ve/backends/lean_service_schema/identity.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Metered.lean` — The `metered` row (`VE.Route.MeteredRun.runCaseReported`, batch 15a's metered evaluator, a service mode since lean-first batch 18): for an `evaluate-budgeted` …
+- `lean/ResponseShape/Schemas/Model.lean` — The source of `ve/backends/lean_service_schema/model.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/NormDefaults.lean` — The source of `ve/backends/lean_service_schema/norm-defaults.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Norms.lean` — The source of `ve/backends/lean_service_schema/norms.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Order.lean` — The source of `ve/backends/lean_service_schema/order.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Parse.lean` — The source of `ve/backends/lean_service_schema/parse.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Quantity.lean` — The source of `ve/backends/lean_service_schema/quantity.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Question.lean` — The `english.question` row (docs/spec/question-answering.md 4.1 and 8).
+- `lean/ResponseShape/Schemas/Readings.lean` — The source of `ve/backends/lean_service_schema/readings.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/ReadingsChoices.lean` — Source of `readings-choices.json`; regenerate with tools/regen_generated.py.
+- `lean/ResponseShape/Schemas/ReadingsRoute.lean` — The source of `ve/backends/lean_service_schema/readings-route.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Reports.lean` — The source of `ve/backends/lean_service_schema/reports.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Rights.lean` — The source of `ve/backends/lean_service_schema/rights.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Risk.lean` — The source of `ve/backends/lean_service_schema/risk.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/RiskEval.lean` — The source of `ve/backends/lean_service_schema/risk-eval.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Route.lean` — The source of `ve/backends/lean_service_schema/route.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/SearchBudget.lean` — The `search-budget` row (`VE.SearchBudget.Run`): the premise check's budget and, for each sort the request lists, its raised bounds `{"sort", "least", "most"}`…
+- `lean/ResponseShape/Schemas/SoftNorms.lean` — The source of `ve/backends/lean_service_schema/soft-norms.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/SpeechActs.lean` — The source of `ve/backends/lean_service_schema/speech-acts.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Words.lean` — The `words` row (plan Q2.4): Lean's lines for the readings and norm-defaults English, one per item of the request, with the identities of the environment and l…
+- `lean/ResponseShape/Schemas.lean` — The client's response schemas (`ve/backends/lean_service_schema/`), one module per file.
+- `lean/ResponseShape/Skeleton.lean` — # Skeletons: the fields of a shape, for the theorems that tie each encoder to its shape A `Skel` is what a `Shape` says about the fields of the objects in a va…
+- `lean/ResponseShape/Skeletons.lean` — # The skeleton of every mode's row shape `ResponseShape.Skeletons.<mode>` is the skeleton (`ResponseShape.Skeleton`) of the row shape `<mode>.json#/row`, extra…

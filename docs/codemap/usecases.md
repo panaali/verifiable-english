@@ -1,0 +1,59 @@
+- `usecases/agent-policy/check.py` — Runs VE on every case of the agent-policy use case (PLAN sections 5 to 11).
+- `usecases/agent-policy/emit_log.py` — Emits `log.ve`, standing in for the agent harness and its tools (PLAN section 4).
+- `usecases/agent-policy/environments.py` — Writes the environment files of the agent-policy case from one declaration.
+- `usecases/agent-policy/focused.py` — A focused tableau search that emits ordinary VE entailment certificates.
+- `usecases/agent-policy/level.py` — Measured level of the policy family (apol-req): verified bytes over source bytes.
+- `usecases/agent-policy/mutants.py` — The six seeded mutants of PLAN section 11, as exact text edits.
+- `usecases/agent-policy/reference_policy.py` — An independent reading of the policy, written from PLAN section 3.3 only.
+- `usecases/agent-policy/unspecified.py` — Re-runs the agent-policy case with both completions `unspecified` (norm-defaults@0).
+- `usecases/anthropic-rsp/build_document.py` — Builds the D1 span-accounting document over the pinned RSP v3.4 text (PLAN sections 7 and 10, metric M3).
+- `usecases/anthropic-rsp/measure.py` — The anthropic-rsp baseline: what each byte that is not CHECKED waits for (PLAN 7 feature map, metric M3).
+- `usecases/anthropic-rsp/reference.py` — Independent, stdlib-only reading of PLAN 3 and 4 for A, B, C and G.
+- `usecases/anthropic-rsp/rsp_translation.py` — Loads the D1 translation of the anthropic-rsp case: the rules of `rules.d1.ve` and the premises of `facts.d1.ve`.
+- `usecases/anthropic-rsp/rsp_vocabulary.py` — The D1 vocabulary of the anthropic-rsp case (PLAN sections 3.2 and 7).
+- `usecases/anthropic-rsp/run.py` — Answer the frozen RSP questions with the translated VE documents.
+- `usecases/anthropic-rsp/source/extract_text.py` — Extract the pinned RSP 3.4 text that the span accounting partitions.
+- `usecases/anthropic-rsp/stage0.py` — Stage 0 of the anthropic-rsp case (PLAN section 9): probes P1 to P8, the identifier lint (P7, M5) and the invention audit (M6).
+- `usecases/asimov-extended/asimov_extended_cases.py` — The asimov-extended documents and the 51 decision records of PLAN.md section 5.
+- `usecases/asimov-extended/asimov_extended_check.py` — Runs VE on every case of the asimov-extended use case and compares with the answer key.
+- `usecases/asimov-extended/asimov_extended_reading.py` — An independent reading of the Asimov rules and the authored additions, for one robot.
+- `usecases/asimov-extended/asimov_unspecified.py` — Asimov's v2 rules re-run with `permitted` completed `unspecified` (events-time-causation ET-8, fixture R2).
+- `usecases/bluedot-grant/author_choices.py` — Grant author's operational choices.
+- `usecases/bluedot-grant/build_document.py` — Deterministically wrap the unchanged grant draft as a VE use case.
+- `usecases/bluedot-grant/semantic_readings.py` — Authored readings for the 93 unchanged source spans.
+- `usecases/claude-constitution-excerpt/verify_definitions.py` — Bind the four named properties to the excerpt's recorded content.
+- `usecases/closure-induction/verify.py` — Regenerate and independently replay the four closure-induction examples.
+- `usecases/eligibility/reference.py` — Independent reference reading of the Winter Fuel Payment rules for winter 2026 to 2027.
+- `usecases/eligibility/run.py` — Run VE on every Winter Fuel Payment profile and compare with the answer key.
+- `usecases/eligibility/source/extract_text.py` — Extract the main-content text of a pinned GOV.UK page (stdlib only).
+- `usecases/eligibility/translation.py` — VE translation of the Winter Fuel Payment rules (PLAN.md sections 4 and 6).
+- `usecases/math-mini-paper/boundary/probe.py` — Task B probe: how far does VE get with Euclid's infinitude of primes?
+- `usecases/math-mini-paper/make_paper.py` — Expand `paper.template.md` into `paper.md` using only machine-produced text.
+- `usecases/math-mini-paper/theory.py` — Formal content of the mini-paper: every VE statement is built here, once.
+- `usecases/math-mini-paper/verify.py` — Re-run every check in the mini-paper from scratch and print the results table.
+- `usecases/math-mini-paper/verify_definitions.py` — W3 rerun: definition Background and a labelled T7 citation bundle.
+- `usecases/news-article/build_w6a_document.py` — Build `news-w6a.ve.md`: the news article as a W6a quantity document.
+- `usecases/openai-preparedness/build_document.py` — Partition the pinned PF text and ask VE to classify every unit (PLAN 7, M3).
+- `usecases/openai-preparedness/measure.py` — Map every PF byte outside CHECKED to the feature it awaits (PLAN 7, M3).
+- `usecases/openai-preparedness/pf_translation.py` — The PF D1 blocks use the same two-line format and VE parser as the RSP baseline.
+- `usecases/openai-preparedness/pf_vocabulary.py` — D1 vocabulary for the pinned Preparedness Framework v2 (PLAN 4 and 7).
+- `usecases/openai-preparedness/source/extract_text.py` — Extract the pinned Preparedness Framework v2 text that the span accounting partitions.
+- `usecases/openai-preparedness/stage0.py` — PF stage 0: source parts P1/P2/P5/P6/P8, routed probes P3/P4, lint P7 and audit M6.
+- `usecases/question-answering/agent-policy/build.py` — Build the four source-bound agent-policy question fixtures (plan §6.2).
+- `usecases/question-answering/build_group.py` — Regenerate the small, source-bound G fixture in the question-answering spec.
+- `usecases/safety-framework/build_document.py` — Builds the D1 span-accounting document over the pinned text (PLAN sections 7 and 10, metric M3).
+- `usecases/safety-framework/measure_r1.py` — fsf-r1: every unit's status on Oct 1 and today, its answer-key agreement, and the remaining gaps by feature.
+- `usecases/safety-framework/measure_r2.py` — fsf-r2: the translation re-measured on main after jt-2/jt-2b, df-1b/df-1bb and sc-5r/sc-5rb, with one probe per merged item on a part document.
+- `usecases/safety-framework/readings_r1.py` — fsf-r1: the D1 reading sets with content under `readings@1`, each checked by VE alone and in D1.
+- `usecases/safety-framework/reference.py` — An independent reading of PLAN sections 3 and 4 in plain Python (stdlib only, no `ve` import).
+- `usecases/safety-framework/run.py` — Runs VE on every case of the safety-framework use case (PLAN sections 5, 9 and 10).
+- `usecases/safety-framework/severity_and_dates.py` — Families S and D: the severity document D2 (`risk@0`) and the date document D3 (`ve-units@1`).
+- `usecases/safety-framework/source/extract_text.py` — Extract the pinned FSF 3.1 text that the span accounting partitions.
+- `usecases/safety-framework/translation.py` — Loads the D1 translation: the rule candidates of `rules.d1.ve` and the premises of `facts.d1.ve`.
+- `usecases/safety-framework/vocabulary.py` — The D1 vocabulary of the safety-framework case (PLAN sections 3.2 and 7).
+- `usecases/safetyfw_common.py` — Shared, source-free mechanics for the frontier-framework case studies.
+- `usecases/udhr-pilot/run-20261010T1400Z/measure.py` — RD-5 steps 3 to 5: check, measure and query the migrated UDHR, beside the run of 20261006T1800Z as committed.
+- `usecases/udhr-pilot/run-20261010T1400Z/migrate.py` — RD-5 step 1: migrate the UDHR translation of run 20261006T1800Z to readings with their own vocabulary.
+- `usecases/udhr-pilot/run-20261010T1400Z/situations.py` — RD-5 step 2: separating situations for the migrated UDHR sets, proposed by the search and checked by Lean.
+- `usecases/udhr-pilot/run-20261010T1400Z/summary.py` — Render `SUMMARY.md` from `metrics.json` (RD-5's report, plan section 5): every number is the saved evidence's.
+- `usecases/udhr-pilot/run-20261010T1400Z/witnesses.py` — RD-5 step 3: the companions' status witnesses, replayed by Lean in each component and in each companion alone.

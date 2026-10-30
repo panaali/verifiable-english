@@ -5,6 +5,7 @@ import ResponseShape.Encoders
 import ResponseShape.Encoders.Alternatives
 import ResponseShape.Encoders.Ask
 import ResponseShape.Encoders.Calc
+import ResponseShape.Encoders.Cardinality
 import ResponseShape.Encoders.Common
 import ResponseShape.Encoders.Conformance
 import ResponseShape.Encoders.Discourse
@@ -101,7 +102,14 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Calc.rowJson_fits
 #print axioms ResponseShape.Encoders.Calc.rowJson_fits_software
 #print axioms ResponseShape.Encoders.Calc.runCaseReported_fits
+#print axioms ResponseShape.Encoders.Calc.stepJson_fits
 #print axioms ResponseShape.Encoders.Calc.tie_fits
+#print axioms ResponseShape.Encoders.Cardinality.certificate_kind
+#print axioms ResponseShape.Encoders.Cardinality.erasedJson_fits
+#print axioms ResponseShape.Encoders.Cardinality.problemJson_fits
+#print axioms ResponseShape.Encoders.Cardinality.regionsJson_fits
+#print axioms ResponseShape.Encoders.Cardinality.runCaseReported_fits
+#print axioms ResponseShape.Encoders.Cardinality.runCase_fits
 #print axioms ResponseShape.Encoders.Common.admitDocument_kinds
 #print axioms ResponseShape.Encoders.Common.caseKind_read
 #print axioms ResponseShape.Encoders.Common.claimJson_fits
@@ -152,12 +160,19 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.Document.block_coverage_fits
 #print axioms ResponseShape.Encoders.Document.cells_fits
 #print axioms ResponseShape.Encoders.Document.checkCore_encode
+#print axioms ResponseShape.Encoders.Document.checkDocSetsAnswered_fits
 #print axioms ResponseShape.Encoders.Document.checkDocSets_fits
 #print axioms ResponseShape.Encoders.Document.checkDoc_fits
+#print axioms ResponseShape.Encoders.Document.composedList_fits
+#print axioms ResponseShape.Encoders.Document.composedNode_fits
+#print axioms ResponseShape.Encoders.Document.composedReadingRow_fits
+#print axioms ResponseShape.Encoders.Document.composedReadings_fits
+#print axioms ResponseShape.Encoders.Document.composedSetRow_fits
 #print axioms ResponseShape.Encoders.Document.coverage_fits
 #print axioms ResponseShape.Encoders.Document.document_fits
 #print axioms ResponseShape.Encoders.Document.fold_fits
 #print axioms ResponseShape.Encoders.Document.fold_status_mem
+#print axioms ResponseShape.Encoders.Document.fold_with_readings_fits
 #print axioms ResponseShape.Encoders.Document.locatedRow_fits
 #print axioms ResponseShape.Encoders.Document.meaning_fits
 #print axioms ResponseShape.Encoders.Document.rowKind_fits
@@ -268,9 +283,14 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.ReadingsRoute.conflict_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.contains_filter_ne
 #print axioms ResponseShape.Encoders.ReadingsRoute.contentJson_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.dChoiceJson_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.dConflictWord_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.dLine_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.dQueryWord_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.deadAnswer_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.deadNote_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.dead_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.defaultJson_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.elaborateFields_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.elaborateNDFilled_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.elaborateOne_fits
@@ -299,6 +319,7 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.ReadingsRoute.modelND_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.modelWord_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.model_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.ndDefault_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.ndVerdictsAnswer_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.nd_lower
 #print axioms ResponseShape.Encoders.ReadingsRoute.norms_lower
@@ -371,8 +392,11 @@ import ResponseShape.Skeleton
 #print axioms ResponseShape.Encoders.ReadingsRoute.validateWith_rows
 #print axioms ResponseShape.Encoders.ReadingsRoute.validate_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.verdictsAnswer_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.verdictsD_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.verdictsSD_fits
 #print axioms ResponseShape.Encoders.ReadingsRoute.verdicts_fits
+#print axioms ResponseShape.Encoders.ReadingsRoute.word_conflict
+#print axioms ResponseShape.Encoders.ReadingsRoute.word_proved
 #print axioms ResponseShape.Encoders.Reports.admission_fits
 #print axioms ResponseShape.Encoders.Reports.certificate_fits
 #print axioms ResponseShape.Encoders.Reports.content_fits

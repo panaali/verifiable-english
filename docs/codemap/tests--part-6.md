@@ -1,0 +1,86 @@
+- `tests/test_search_options.py` — Request budgets and non-degenerate witnesses at public API boundaries.
+- `tests/test_select_tests.py` — The test selector: AST change units, map lookups, drift, the recorder, whole plans, and the map-free `--impacted` fast path.
+- `tests/test_senses_document.py` — RD-8 (readings-defaults plan, section 6): senses in `ve document`.
+- `tests/test_senses_lean.py` — Source checks of the senses layer in Lean (docs/spec/senses.md 5.2 and 5.3).
+- `tests/test_senses_pack.py` — Transport and provenance checks for the Python part of senses B2.
+- `tests/test_senses_route.py` — Spec fixture admission through the Python transport and the compiled Lean reader.
+- `tests/test_service_schema_compiler.py` — The response schema compiler (`ve/backends/service_schema.py`): what it reads and when, and that compiling on first use is safe from the service pool's threads.
+- `tests/test_shape_binding_mutants.py` — The generic binding checker on genuine Lean answers: one mutation test per mode (test-architecture rank 10, the first, additive step; ADR 0001).
+- `tests/test_since_pass.py` — Selection against the branch's last passing tree (tools/since_pass.py, test-speed batch B3): the rule's choice of base, its step and age bounds, the shadow row…
+- `tests/test_single_owner.py` — A differential never compares an engine with itself (lean-first batch 15b, review B2).
+- `tests/test_soft_candidate_economy.py` — Batch 6 latency: a document's candidates cost Lean a fixed number of soft requests, not one per candidate (docs/lean-first/b6/DELTA.md, Latency; recheck findin…
+- `tests/test_soft_decision_keys.py` — Each soft decision's key in Lean's soft-norms row (`SoftNorms.keyedDecisions`; rd-9 soft-chain plan SC-8).
+- `tests/test_soft_norms_conformance.py` — Three-way checks against the acceptance fixtures in soft-norms.md §10.
+- `tests/test_soft_norms_lean.py` — Lean soft-norms route (docs/spec/soft-norms.md 9.4, item 4) against the item-1 fixtures.
+- `tests/test_soft_request_economy.py` — Batch 6 latency: soft requests that Lean answers once per document (docs/lean-first/b6/DELTA.md, Latency).
+- `tests/test_soft_review_regressions.py` — Regressions for the reviewed soft route and its visible open terms.
+- `tests/test_softnorms_contract.py` — Pilot contract checks: the existing soft validator still owns the verdict.
+- `tests/test_softnorms_public_contract.py` — The public soft-source rejection boundary of wire-contract-s4.md item 1.
+- `tests/test_source_words.py` — The source-word table and every boundary fixture are checked by Lean.
+- `tests/test_speech_acts.py` — Deterministic experimental speech-act core fixtures (no trusted route).
+- `tests/test_speech_acts_conformance.py` — Shared section-9 speech-act fixtures across Python, Lean, and Rust FOL evaluation.
+- `tests/test_speech_acts_lean.py` — The Lean `ve_speech_acts_route` on hand-written fixtures of speech-acts.md section 9.
+- `tests/test_speech_polar_lean.py` — Speech acts' polar questions and their `Must`/`Can` refusal, read by Lean (question answering Q1.4, Q1.4b).
+- `tests/test_speech_source_lean.py` — The Lean decoded-source wrapper (`speech-source`, docs/spec/speech-acts.md 8.5) against Python's `SpeechSource`.
+- `tests/test_speech_source_relay.py` — The bound Python transport for VE.SpeechActs.Source.report.
+- `tests/test_speech_source_switch.py` — The 11b public projection against the frozen pre-switch W2 checker.
+- `tests/test_stage0_inventory.py` — Stage 0 inventory policy must survive regeneration on another checkout.
+- `tests/test_stage0_probe_matrix.py` — Regressions for rejected Stage 0 baseline probes.
+- `tests/test_stage2_bundle.py` — Lemma bundles on the Lean authority: Lean's route bundle case decides acceptance.
+- `tests/test_stage2_dispatch.py` — Checker boundaries: one owner per operation (no authority to select since lean-first batch 18), Rust transport limits and diagnostic classes.
+- `tests/test_stage2_evaluation.py` — Backend integration on the public evaluation and Background signatures.
+- `tests/test_stage2_faults.py` — Per-adapter fault injection (Gate 2): every public operation dispatched to a backend fails closed when that backend is missing, is an unlisted build, crashes o…
+- `tests/test_stage2_graph.py` — Argument composition on the Lean authority: Lean's `graph` mode (VE/Service/Graph.lean).
+- `tests/test_stage2_norms.py` — Norms operations on the Lean authority: elaboration, certificates, conflicts, admission.
+- `tests/test_stage2_parse.py` — Parsing on the Lean authority: Lean's surface parsers decide acceptance.
+- `tests/test_stage2_readings.py` — Reading-set verdicts on the Lean authority: Lean's `readings` mode checks the evidence.
+- `tests/test_stage2_standalone.py` — Standalone Lean service bindings compared with Python's public identities.
+- `tests/test_stage2_validation.py` — Environment and model validation on the Lean authority (ve/backends/validation.py).
+- `tests/test_statement_block_environment.py` — The statement-layer block routes as environment validators (lf-5 post-merge).
+- `tests/test_stats.py` — (no module docstring)
+- `tests/test_suite_tail.py` — The suite-tail measurement (tools/bench/suite_tail.py) and the profile records it reads (tools/pytest_profile.py).
+- `tests/test_surface_registry.py` — (no module docstring)
+- `tests/test_t1c.py` — T1c offline tests: generator ground truth, certificates (Python + Lean), trusted premises, authenticated verdicts, and known-answer runs of the whole monitor p…
+- `tests/test_test_schedule.py` — The suite starts its slowest tests first (tools/test_schedule.py), and that changes nothing but the order.
+- `tests/test_test_speed_b2.py` — Structural checks for B2 shadow-evidence binding, using synthetic gate data.
+- `tests/test_testing_profile_doc.py` — docs/testing-profile.md states the numbers of its measurement artifacts (testperf review C).
+- `tests/test_time_surface_w6a.py` — Restricted W6 wording derivations; whole document English remains gated.
+- `tests/test_time_w6a.py` — Seven W6a date operations: endpoint and duration behavior on frozen core.
+- `tests/test_trust_budget.py` — The trust budget ratchet on the live tree (architecture decision D3): trusted Lean lines (K, S and untied [V]) rise only by an allowance the DRI signs, recorde…
+- `tests/test_trust_mutants.py` — tools/trust_mutants.py on a tiny Lean package (speed-trustmut step 3): a well-guarded definition has no survivor, a guard over `[]` leaves survivors, a failing…
+- `tests/test_trust_ratchet.py` — The trust budget as a ratchet (architecture plan AR-4, DRI decision D3): `tools/trust_map.py`'s `--check`, `--allow` and `--write` over small git histories, an…
+- `tests/test_units_lean_gate_w6a.py` — No W6 proof claim may pass the frozen Lean route by erasing tags first.
+- `tests/test_units_lean_w6a.py` — W6a conformance: Lean `ve_quantity` admission, and Python's relay of it.
+- `tests/test_units_relay_w6a.py` — The W6a ground family through Python's relay of Lean's quantity typing.
+- `tests/test_units_w6a.py` — W6a admission regression cases: identity, exact grid, dates, and counting.
+- `tests/test_vacuity.py` — (no module docstring)
+- `tests/test_ve_iface.py` — (no module docstring)
+- `tests/test_views.py` — Empirical injectivity, controlled vocabulary, and adversarial scope cases.
+- `tests/test_views_polish.py` — Review regressions: lexical limits, shared scopes, cells, and measurements.
+- `tests/test_w6a2_looprecheck1.py` — W6a loop recheck (round 2, recheck 1) regressions: static limits, three ways.
+- `tests/test_w6a2_numeral_characters.py` — Numeral limits count Unicode characters on every W6a route: the order and countermodel routes in Python, Lean and Rust, the quantity routes in Lean and Python'…
+- `tests/test_w6a_certificate_steps.py` — Certificate replay steps: Python's 10,000-step budget, in Lean too.
+- `tests/test_w6a_citations.py` — W6a loop recheck 1, P1 (directive incomplete): citations on the quantity document route.
+- `tests/test_w6a_documents.py` — W6a quantity documents: Lean admission (`ve_quantity` case `document`) and Python's relay of it (Lean-first batch 9 deleted Python's copy and Rust's quantity r…
+- `tests/test_w6a_limit_generator.py` — W6a limits directive, item 3: a differential limit-busting generator.
+- `tests/test_w6a_limits.py` — W6a limits directive: static limits before any work, metered constructions.
+- `tests/test_w6a_looprecheck1.py` — Regressions for the W6a loop recheck 1 findings, each generalized to its class.
+- `tests/test_w6a_looprecheck2.py` — W6a loop recheck 2 regressions: budgeted checks see one domain order.
+- `tests/test_w6a_review_regressions.py` — Regressions for the W6a review findings, each generalized to its class.
+- `tests/test_w6a_route_limits.py` — W6a limits directive on the `route` subcommand: nothing runs unmetered.
+- `tests/test_w6b_gates.py` — Baseline route rejects integer-quantifier W6b syntax before evidence.
+- `tests/test_wire_contract_corpus.py` — Hand-derived format-1 cases from wire-contract.md section 8.1.
+- `tests/test_wire_contract_engine.py` — Independent cases for the format-1 diagnostic interpreter.
+- `tests/test_wire_contract_faults.py` — The fault catalogue and the oracle of the soft-norms gate (wire-contract.md 8.3), checked without Lean.
+- `tests/test_wire_contract_generator.py` — Selection and oracle rules are independent of any profile catalogue.
+- `tests/test_wire_contract_lean.py` — The Lean wire contract engine (service mode `diagnose`) on the engine corpus of docs/spec/wire-contract.md 8.1.
+- `tests/test_wire_contract_lint.py` — The tooling fixtures of docs/spec/wire-contract.md 8.2 (L1 to L13 and L15; L14 is in tests/test_wire_contract_lean.py), and the lint rules the wire review foun…
+- `tests/test_wire_contract_precondition.py` — Ground the S3-pre inherited-profile discrepancy with a reachable case.
+- `tests/test_wire_contract_s4_lean.py` — Stage S4 item 1, the Lean and tooling fixtures (docs/spec/wire-contract-s4.md section 8.4).
+- `tests/test_wire_contract_s5_admission.py` — Admission boundary checks for the two S5 units in shadow (wire-contract-s5.md 2.6, 7.2, 8.3).
+- `tests/test_wire_contract_s5_lean.py` — Stage S5 item 1, the Lean side (docs/spec/wire-contract-s5.md 2.5, 5.2 and the fixtures of 8.1, 8.2, 8.6).
+- `tests/test_wire_contract_soft_lean.py` — The pilot contract soft-norms@0 in the Lean engine (`ve_diagnose soft-norms@0`), docs/spec/wire-contract.md section 6 and 8.3, against the hand-derived records…
+- `tests/test_wire_contract_three_way.py` — One submission compared with the spec record, Python and Lean engines.
+- `tests/test_wire_gate_corpus.py` — The soft-norms gate's corpus condition (wire loop final, wire2 loop): the gate replays every `soft-norms@0` input that the contract and soft tests submit, ever…
+- `tests/test_words.py` — F2 (qa-q2 review): one owner of situation and point wording (plan Q2.4).
+- `tests/wire_contract_l8.lean` — L8 of docs/spec/wire-contract-s5.md 8.6, over the corpus: the syntax walk of `VE.WireContract.Hooks.Norms` (`synFormula`) and `Norms.Wire.budgetFormula`, on ev…

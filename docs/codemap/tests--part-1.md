@@ -1,0 +1,95 @@
+- `tests/answer_store.py` — The Lean answer store: `ve_service`'s exact answers to the suite's request lines, for R1 only.
+- `tests/b15b_model_cases.py` — Search, premise status and comparison over every fixture environment (lean-first batch 15b, review A1/B1).
+- `tests/b15b_search_oracle.py` — Python's own search answers, recorded at the base of lean-first batch 15b (review B2).
+- `tests/binding_mutants.py` — Mutants of a genuine Lean answer, generated from the Lean shapes, each with the generic checker's predicted verdict.
+- `tests/binding_probe.py` — A pytest plugin that finds which Python hand binder refuses each shape-generated mutant of a Lean answer.
+- `tests/calc_units_fixtures.py` — me-6b: the `ve-units@2` fixtures of math-evidence spec 6.2 (H-7, H-7c, H-7d, H-7l, H-7u and I-2), as one table.
+- `tests/ce4.py` — `CE4`: the four sets of the constitution pilot's run 20261010T1800Z in a small document (docs/spec/ rd-9-soft-chain-PLAN.md 5.2; spec 8.2).
+- `tests/check_mutants.py` — Seeded bugs of a relay's checks, enumerated from its source: each check weakened or deleted in turn.
+- `tests/conftest.py` — Shared test setup for serial and xdist runs.
+- `tests/contract_input_recorder.py` — A pytest plugin that records every input of one wire unit that the tests themselves submit.
+- `tests/explicit_inverse.py` — Independent structural decoder for the four fully grouped test surfaces.
+- `tests/fluent_inverse.py` — Test-only recursive-descent inverse, not a new VE source language.
+- `tests/lean_build.py` — The one way a test fixture builds named Lean targets.
+- `tests/lean_input_recorder.py` — A pytest plugin that records every Lean executable invocation the test session makes.
+- `tests/lean_pool.py` — Elaborate the Lean mutants a test module will run at once, before its tests read them (speed-vocabpar).
+- `tests/lean_routes.py` — The statement-layer Lean routes for tests and harnesses, through the Lean service.
+- `tests/lean_service_corpus.py` — Genuine requests for every service mode and result kind (schema and differential tests).
+- `tests/lineage.py` — Saved commits found again by their content: a commit id names one lineage, its tree and subject every copy.
+- `tests/nonvacuity_oracle.py` — Frozen answers of the pre-deletion Python non-vacuity check, the oracle of Lean's.
+- `tests/p1_findings.py` — The P1 items' reference findings, checked several at a time, once per process.
+- `tests/premise_scale_fixtures.py` — Premise sets for premise-scale's tests and the service corpus: content whose smallest model needs more entities of one sort than the shared domain bound (QT-0p…
+- `tests/probe_matrix.py` — Stage 0 executable Python oracle and frozen behaviour baseline.
+- `tests/profile_gate_oracle.py` — Frozen pre-batch Python profile gate for regression comparisons only.
+- `tests/prover_fair_benchmark.py` — Serial fixed-family benchmark; run directly (not collected by pytest).
+- `tests/prover_fair_fuzz.py` — Independent exhaustive finite-semantics differential audit, serial only.
+- `tests/python_oracle.py` — The retained Python evaluator as a test oracle (lean-first batch 18).
+- `tests/question_fixtures.py` — The Q1 acceptance fixtures of docs/spec/question-answering.md section 7, as one table.
+- `tests/question_reference.py` — An independent Python reading of a question (docs/spec/question-answering.md 2, 3.1 and 4.1), for the differential test `tests/test_question_differential.py`.
+- `tests/read_recorder.py` — A pytest plugin that records what a run reads from the checkout, for `tools/run_cache.py`.
+- `tests/reports_fault_corpus.py` — Malformed reports documents for the public `check_document` path (build checklist 2 and 5).
+- `tests/route_case_recorder.py` — A pytest plugin that records every case the tests send to a statement-layer route mode.
+- `tests/secret_decode.py` — Test-only, INDEPENDENT brute-force decoder (deliberately not ve.stream_audit's): does a secret appear in a value under any composition of JSON parsing, unicode…
+- `tests/subprocesses.py` — Wall-clock guard for external tools, never a test acceptance criterion.
+- `tests/test_acts_lexical.py` — act-phrases AP-1, first part (ap-1a): `VE.Acts.Lexical` and the profile-aware regulated decoder.
+- `tests/test_acts_lexical_mutants.py` — Seeded mutants of the act-phrase decoder each fail a fixture (ap-1a review F1).
+- `tests/test_acts_profile.py` — act-phrases AP-1, the profile part (ap-1b): `acts@0` documents loaded, checked and refused by Lean.
+- `tests/test_acts_tree_mutants.py` — Mutants of the act trees' and the table's data types each fail a fixture (ap-3 review F1).
+- `tests/test_acts_vocab_mutants.py` — Seeded mutants of the act grammar's vocabulary check and limits each fail a fixture (ap-2 review F1).
+- `tests/test_admission_evidence.py` — The saved scale admission evidence holds whole-request CPU only; the stage profiler was withdrawn (reviews/dri-decisions-20261029-scale-admission-profile.md it…
+- `tests/test_agent_policy.py` — Agent-policy use case: authored files, the frozen answer key, and the committed results.
+- `tests/test_agent_policy_level.py` — The policy family's requirement register and its level reader (apol-req), on both sides of each check.
+- `tests/test_agent_policy_rerun.py` — Agent-policy use case: rerun VE on every logged action and every policy query.
+- `tests/test_agent_policy_unspecified.py` — Agent-policy under norm-defaults@0 (docs/spec/norm-defaults.md fixture u4).
+- `tests/test_alternatives_fill.py` — ET-7: `alternatives@0` with the completion (`norm-defaults@0`) on the Lean alternatives route (docs/spec/events-time-causation.md 5 and 6.4; plan ET-7; fixture…
+- `tests/test_alternatives_profile.py` — Python's declaration and authority boundary for alternatives@0.
+- `tests/test_alternatives_three_way.py` — Spec §8 scenarios: Lean's inlined formula evaluated by three implementations.
+- `tests/test_answer_cutoff.py` — The answer-level cutoff (tools/answer_cutoff.py, tools/answer_replay.py) and the request records of tools/test_map_recorder.py: an R1 experiment that tools/gat…
+- `tests/test_answer_store.py` — The Lean answer store (tests/answer_store.py): R1 only, exact batches, every client check on a hit.
+- `tests/test_ap2_limits_provisional.py` — ap-2's raw cap and step budget stay provisional while the plan's condition for dropping the word fails (review F2).
+- `tests/test_ar3_report.py` — AR-3's report and DELTA against their saved evidence (docs/arch/AR-3/evidence), never the live tree or history.
+- `tests/test_ar6_report.py` — The AR-6 report is a view of saved evidence, independent of live git HEAD.
+- `tests/test_ar8_evidence.py` — AR-8's report agrees with its SAVED evidence (fixed base and head commits, never the live tree).
+- `tests/test_architecture_docs.py` — The architecture map (`docs/ARCHITECTURE.md`), its stale-document sweep and the binding ADR (batch AR-7).
+- `tests/test_argument.py` — (no module docstring)
+- `tests/test_argument_adversarial.py` — Adversarial binding, composition, and resource tests for argument packages.
+- `tests/test_argument_fixtures.py` — (no module docstring)
+- `tests/test_arith_uncharged_costs.py` — me-12nb: the uncharged-cost fixtures of spec 12.2 stay selected (DRI decision 2026-10-27 on me-12nb, its condition).
+- `tests/test_asimov_extended.py` — Asimov extended: authored tie-breaking rules added to the unchanged Asimov v2 rules.
+- `tests/test_asimov_laws.py` — Asimov v2: authored English, certified consistency, spec scenarios and regressions.
+- `tests/test_ask_cli.py` — `ve ask` end to end (docs/spec/question-answering.md 4, 8; plan Q2.5): the CLI reads the question, generates the route's evidence, sends the request to Lean's …
+- `tests/test_ask_fixtures.py` — The `ask` fixtures (docs/spec/question-answering.md 7.2, 7.4, 7.5; plan Q2.2: "from recorded evidence files, no generator in the test").
+- `tests/test_ask_null_free.py` — Found by Q2.6's corpus agreement (qa-q2 review F4): `ve ask` sent an exposition unit's missing content as JSON null, which the service's restricted JSON refuse…
+- `tests/test_ask_relay.py` — The relay of Lean's `ask` answer (docs/spec/question-answering.md 8; build checklist 4, 5; DRI ruling R8).
+- `tests/test_assist.py` — ve assist: session, anchoring, checks, status, ledger, API, proposer, suggestions, CLI.
+- `tests/test_assist_deadline.py` — A catalogue review must remain pending when its operation budget expires.
+- `tests/test_assist_invariants.py` — Invariants of ``ve assist`` over random small sessions.
+- `tests/test_assist_recovery.py` — (no module docstring)
+- `tests/test_assist_recovery_replay.py` — Recovery state is derived by replaying recorded commands, never imported.
+- `tests/test_assist_split.py` — AR-9 split the assist recovery and session modules; these pin what the split must keep.
+- `tests/test_assurance_manifest.py` — The operation assurance manifest is bound to the code it describes.
+- `tests/test_attacks.py` — (no module docstring)
+- `tests/test_authoring.py` — (no module docstring)
+- `tests/test_b11b_report.py` — The 11b report's measured numbers are generated from its gate artifacts.
+- `tests/test_b14c.py` — Batch 14c: n-ary definitions have one Lean owner on the core family.
+- `tests/test_b15a_evidence.py` — Recompute batch 15a report numbers from frozen artifacts, never live Git.
+- `tests/test_b15b_evidence.py` — Recompute batch 15b report numbers from saved evidence, never live Git.
+- `tests/test_b16a_evidence.py` — Batch 16a report checks read committed snapshots, never moving Git refs.
+- `tests/test_b16b_evidence.py` — Batch 16b's report numbers come from its saved evidence (docs/lean-first/b16b/evidence/), never from live git: the generated block of DELTA.md is regenerated, …
+- `tests/test_b16c_evidence.py` — The 16c progress report is a view of saved evidence, independent of live git HEAD.
+- `tests/test_b16d_document.py` — Batch 16d: norm-defaults and fenced documents are Lean document answers.
+- `tests/test_b16d_evidence.py` — Check batch 16d's committed measurements without consulting live git state.
+- `tests/test_b16d_norm_roles.py` — Batch 16d review B1 and B2: which norm units make the norm-defaults document.
+- `tests/test_b16e_rights_document.py` — Batch 16e: rights@0 documents (with and without the readings@1 head) are Lean document answers.
+- `tests/test_b16f_document.py` — Batch 16f: the document mode's remaining groups are Lean answers, typed and bound.
+- `tests/test_b16f_senses_document.py` — Batch 16f: a document with `senses` is decided by Lean's `document` mode, which composes the senses route.
+- `tests/test_b17_evidence.py` — Batch 17 report assertions read only saved evidence, never moving Git refs.
+- `tests/test_b17_owner.py` — Batch 17: reported assist and Cedar decisions must cross the Lean boundary.
+- `tests/test_background.py` — (no module docstring)
+- `tests/test_batch_evidence.py` — A stale or incomplete batch gate cannot be reported as a pass.
+- `tests/test_batch_scope.py` — arch-AR-4 review F3: a saved scope (base, commits, changed files) was trusted as written, so a dropped commit or a wrong base passed the batch's evidence check.
+- `tests/test_bench_baselines.py` — tools/bench: the CPU-time benchmarks that replaced the suite's speed assertions.
+- `tests/test_bench_timing.py` — The cold editor call must not determine warm latency p95.
+- `tests/test_binding_census.py` — tools/binding_census.py: ADR 0001's census of every response-shape leaf, and the probe of the hand binders.
+- `tests/test_bluedot_grant.py` — The authored BlueDot reading keeps source bytes, speakers and modalities.
+- `tests/test_bundle.py` — Citation replay and transitive provenance checks.

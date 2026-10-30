@@ -134,8 +134,13 @@ unary and its regenerated reach holds the unit), `ordered_sorted` (order 1.4), `
 (through `admit_governor`, what an admitted block says of each governor); `governFast_eq` (the run path answers as
 `govern`, through `fastReads_eq`, `memo_map` and one `rfl` equation per step, `frameOnF_slow` to `governBody_slow`);
 `ruleTable_decoder`, `edgesFor_ok`, `edgesOf_graph`, `edgesInto_mem`, `addOver_nil`. The theorems about what `govern`
-writes (`govern_preserves`, `govern_provenance`, `govern_strings`, `govern_no_new_symbols`, `decodeNorm_name`) fail
-as the spec states them on objects no JSON parser builds (F-raw below); they wait for the DRI's decision (sc-1ae).
+writes fail as the spec states them on objects no JSON parser builds (F-raw below). The DRI's fix (a) (2026-10-27)
+adds `JsonWF` (`Govern.lean`: every object at any depth a well-formed tree) as their hypothesis, with spec 4.2's
+`HasStr`, `payload` and `BlockBound`. From sc-1ae: `decodeNorm_name` (both chains read a rule's `name` by lookup; the
+soft chain through `ruleFields_name`), `govern_strings`, `govern_no_new_symbols` and `govern_preserves`, through
+`composed_src`, `patch_src`, `addOver_src` and `unitsOf_patch`. From sc-1aeb: `govern_provenance`, under the same
+hypothesis (`normOf_newContent`: `patch` writes the composed rule back as `norm`). The lemma that the parser builds
+`JsonWF` objects is sc-1af (`Lean.Json.parse` is `partial`, so nothing can be proved of it).
 From sc-3ab: `anchor_reach_iff` and `label_reach_iff` (spec 5.5: a heading's reach and a label's reach are the
 layout's). `title_identity` fails as spec 5.5 states it on the same objects (F-raw-title below) and waits for the
 same decision (sc-3ac).
@@ -156,7 +161,8 @@ Theorems (spec 5.2): `governor_status_weakest` (a folded status is the weakest o
 them has it), `governor_status_none`, `decodeScope_layout` (the layout's ids are the document's unit ids, in order),
 `scope_admission` (on a `scope@0` document the mode's answer is the fold of its answer on `govern`'s units; the call
 is `governFast`, carried by `governFast_eq`) and `scope_absent_unchanged` (without `scope@0` the mode is `checkCore`).
-`decodeScope_bound` and `decoded_no_new_symbols` wait for sc-1ae (`BlockBound`, `HasStr`). Fixtures:
+`decodeScope_bound` and `decoded_no_new_symbols` can use sc-1ae's `BlockBound` and `HasStr`, but not `JsonWF` as a
+hypothesis until sc-1af proves it of the parser. Fixtures:
 `VE/Scope/WireExamples.lean` (every reach and effect, each wire fault, the layout, the status table) and
 `VE/Service/ScopeExamples.lean` (F1-doc, F1-bad, F1-off, the row's refusals and the identities on a small part
 document); `tests/test_scope_document.py` runs the pilot's F1 part document end to end.
@@ -193,7 +199,9 @@ carve-outs of one class and of a `rules` reach; and the frontier refusal that st
 step's fixtures (`precedes`, `yields`, `ScopeNoEffect`, a decoder's refusal, `addOver`), `governFast` against
 `govern` on refusals and answers, one fixture per mutant sc-1ac's review found surviving, and F-raw: on an
 unbalanced or unordered tree `setObjVal!` drops a member, exposes a hidden one or loses a unit's `id`, and the soft
-chain's decoder reads a rule's `name` that lookup does not find. sc-3ab adds the `govern` halves of SC-3a's
+chain's decoder reads a rule's `name` that lookup does not find. sc-1ae adds F-sym (a carve-out names `invented`:
+`govern_strings` holds, `BlockBound` fails, and holds with the condition in the block) and fixtures of `HasStr`,
+`payload` and `JsonWF`. sc-3ab adds the `govern` halves of SC-3a's
 fixtures: F8 and F9′ (a heading as a title: the document unchanged, by `govern` and the run path), F8-tree (refused
 at step 7, before step 8), F10 (a label as a title), F-meta's two-root case (discourse's text); step 8's unit
 checks; a narrowing and a `precedes` governor over an anchor; step 7's export check; and F-raw-title (with one title

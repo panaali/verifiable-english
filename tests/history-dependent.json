@@ -8,6 +8,16 @@
  },
  "tests": [
   {
+   "test": "tests/test_agent_policy_level.py",
+   "why": "runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tools/nested_pytest.py:command: pytest"
+   ]
+  },
+  {
    "test": "tests/test_agent_policy_unspecified.py",
    "why": "starts git (git show) in conformance/frozen_norm_defaults.py",
    "recorded": [
@@ -278,14 +288,27 @@
    ]
   },
   {
+   "test": "tests/test_df_e1.py",
+   "why": "starts git (git rev-parse, git show) in docs/defeasible/df-e1/prepare.py, docs/defeasible/df-e1/runner.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "docs/defeasible/df-e1/prepare.py:reader_items: git rev-parse",
+    "docs/defeasible/df-e1/runner.py:prereg_committed: git show"
+   ]
+  },
+  {
    "test": "tests/test_difffuzz.py",
-   "why": "starts git (git show) in conformance/frozen_norm_defaults.py, ve_experiments/runner.py",
+   "why": "starts git (git show) in conformance/frozen_norm_defaults.py, docs/defeasible/df-e1/runner.py, docs/judgment-terms/jt-e1r/runner.py, ve_experiments/runner.py",
    "recorded": [
     "coverage map",
     "source"
    ],
    "via": [
     "conformance/frozen_norm_defaults.py:<module>: git show",
+    "docs/defeasible/df-e1/runner.py:prereg_committed: git show",
+    "docs/judgment-terms/jt-e1r/runner.py:committed: git show",
     "ve_experiments/runner.py:_git: git",
     "ve_experiments/runner.py:require_committed: git show"
    ]
@@ -533,6 +556,25 @@
    ]
   },
   {
+   "test": "tests/test_gate_shards.py",
+   "why": "starts git (git archive, git rev-parse, git show) in conformance/frozen_norm_defaults.py, tools/gate.py, tools/gate_collection.py, tools/trust_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "conformance/frozen_norm_defaults.py:<module>: git show",
+    "tools/gate.py:check_toolchains: git",
+    "tools/gate.py:source_identity: git",
+    "tools/gate.py:tree_identity: git rev-parse",
+    "tools/gate_collection.py:GIT: git",
+    "tools/gate_collection.py:git: git",
+    "tools/nested_pytest.py:command: pytest",
+    "tools/trust_map.py:extract_rev: git archive",
+    "tools/trust_map.py:measure_rev: git show",
+    "tools/trust_map.py:run_git: git"
+   ]
+  },
+  {
    "test": "tests/test_gate_trust.py",
    "why": "starts git (git archive, git cat-file, git rev-parse, git show) in conformance/frozen_norm_defaults.py, docs/arch/AR-4/report.py, tools/batch_evidence.py, tools/batch_scope.py, tools/gate.py, tools/gate_collection.py, tools/trust_map.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
    "recorded": [
@@ -554,6 +596,17 @@
     "tools/trust_map.py:extract_rev: git archive",
     "tools/trust_map.py:measure_rev: git show",
     "tools/trust_map.py:run_git: git"
+   ]
+  },
+  {
+   "test": "tests/test_gen_inv_design.py",
+   "why": "starts git (git ls-files, git rev-parse) in tools/cache_store.py, tools/source_graph.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tools/cache_store.py:git_common_directory: git rev-parse",
+    "tools/source_graph.py:tracked: git ls-files"
    ]
   },
   {
@@ -621,6 +674,16 @@
     "tests/test_identity_lint.py:test_the_ratchet_starts_at_the_commit_that_adds_the_allowlist: git show",
     "tests/test_identity_lint.py:test_the_tree_passes_and_has_not_grown_since_the_merge_base: git merge-base",
     "tools/identity_lint.py:base_entries: git cat-file, git rev-parse, git show"
+   ]
+  },
+  {
+   "test": "tests/test_jt_e1r.py",
+   "why": "starts git (git show) in docs/judgment-terms/jt-e1r/runner.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "docs/judgment-terms/jt-e1r/runner.py:committed: git show"
    ]
   },
   {
@@ -1537,6 +1600,16 @@
    ],
    "via": [
     "conformance/frozen_norm_defaults.py:<module>: git show"
+   ]
+  },
+  {
+   "test": "tests/test_source_words.py",
+   "why": "starts git (git cat-file) in tools/english_grammar_gen.py",
+   "recorded": [
+    "source"
+   ],
+   "via": [
+    "tools/english_grammar_gen.py:git_blob: git cat-file"
    ]
   },
   {

@@ -1,0 +1,38 @@
+{
+  "item": "sc-5rc",
+  "seeded_bugs": [
+    {
+      "file": "ve/document/lean.py",
+      "mutant": "ignore supplied set version",
+      "test": "tests/test_scope_readings_document.py::test_f1_the_composed_sets_are_bound_to_the_request[version-2]",
+      "failure": "DID NOT RAISE CheckerUnavailable"
+    },
+    {
+      "file": "ve/document/lean.py",
+      "mutant": "retain authored rule instead of Lean composed rule",
+      "test": "tests/test_scope_readings_document.py::test_f1_a_composed_set_of_rules_in_full_answers_every_view[carve_out]",
+      "failure": "composed content equalled written content"
+    },
+    {
+      "file": "ve/document/render.py",
+      "mutant": "show only governed reading sets",
+      "test": "tests/test_scope_readings_document.py::test_render_keeps_an_unrelated_set_as_authored",
+      "failure": "one reading shown instead of two"
+    },
+    {
+      "file": "lean/VE/Service/Document.lean",
+      "mutant": "flip the composed norm sign",
+      "test": "lake build VE.Service.Document (composedReadingRow true/false #guard)",
+      "failure": "#guard failed"
+    }
+  ],
+  "trusted_definitions": {
+    "VE.Service.Document.composedReadingRow": "lean/VE/Service/Document.lean true/false #guard; trust-mutants.json",
+    "VE.Service.Document.composedSetRow": "lean/VE/Service/Document.lean id/version/reading #guard; trust-mutants.json",
+    "VE.Service.Document.composedReadings": "lean/VE/Service/ScopeExamples.lean governed set #guards; trust-mutants.json",
+    "VE.Service.Document.checkDocSetsAnswered": "tests/test_scope_readings_document.py::test_render_shows_a_set_composed_per_choice_naming_its_unit; trust-mutants.json",
+    "ResponseShape.Schemas.Document.composedReading": "lean/ResponseShape/Schemas/Document.lean schema fingerprint #guard; trust-mutants.json",
+    "ResponseShape.Schemas.Document.composedSet": "lean/ResponseShape/Schemas/Document.lean schema fingerprint #guard; trust-mutants.json",
+    "ResponseShape.Schemas.Document.composedReadings": "lean/ResponseShape/Schemas/Document.lean schema fingerprint #guard; trust-mutants.json"
+  }
+}

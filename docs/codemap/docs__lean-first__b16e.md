@@ -1,0 +1,5 @@
+- `docs/lean-first/b16e/make_ab.py` — Compare the complete nine-corpus recordings of the merge base and the batch head, and save an exact delta.
+- `docs/lean-first/b16e/measure.py` — Measure the rights residues named by the committed 16c ledger.
+- `docs/lean-first/b16e/report.py` — Render batch 16e metrics from committed evidence only (architecture decision D4: saved evidence, checked at the batch gate and by the merge train; no live git …
+- `docs/lean-first/b16e/seed_faults.py` — Temporarily plant each batch 16e fault, run the test meant to catch it, and save every result, caught or not.
+- `docs/lean-first/b16e/splice_recording.py` — Re-record named cases of a complete nine-corpus recording, and splice them in by key.

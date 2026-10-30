@@ -1,0 +1,1 @@
+- `tools/hooks/precommit.py` — Fast pre-commit checks over STAGED content only; see tools/hooks/README.md.

@@ -1,0 +1,89 @@
+- `tests/test_entailment.py` — (no module docstring)
+- `tests/test_entailment_adversarial.py` — Adversarial checks for the small trusted tableau replayer.
+- `tests/test_entailment_properties.py` — Independent bounded semantic check of every generated positive certificate.
+- `tests/test_enum_domains.py` — Every enumeration of the response schemas is kept by the encoder theorems (shapes-fix3, B4).
+- `tests/test_environment_field_types.py` — Wrong-typed top-level environment fields (the env-profiles directive).
+- `tests/test_equivalence.py` — (no module docstring)
+- `tests/test_equivalence_properties.py` — Independent truth tables and finite semantics, not the production evaluator.
+- `tests/test_et8_completion.py` — ET-8 (events-time-causation plan 5, fixture R2 and the ET-1 component): Asimov's v2 rules and the ET-1 component re-run with `permitted` completed `unspecified…
+- `tests/test_et_e1_probe.py` — ET-E1's pre-registration and scorer (docs/events-time-causation/et-e1): hermetic, no model calls.
+- `tests/test_evaluate_search.py` — (no module docstring)
+- `tests/test_events_wire_mutants.py` — Mutants of the `events` block's decoder each fail a fixture (et-4 review F1).
+- `tests/test_evidence_bounds.py` — Property-based checks of the probability statements in design/evidence-layer-design.md.
+- `tests/test_evidence_toolkit.py` — The evidence toolkit (tools/evidence, tools/batch_evidence.py --check) fails on evidence that shows nothing.
+- `tests/test_evidence_tools.py` — Evidence tools pass only on evidence (lf-1 review B, the class of route_parity.py's empty pass).
+- `tests/test_filling_search.py` — F3: one flip search (`filling_search.split`) serves the asked sentence and the norm-defaults point search; the point-only copy (`extremes`) is gone.
+- `tests/test_fluent.py` — Scope, inverse grammar, all-view consistency, and lexical adversaries.
+- `tests/test_fol_names.py` — (no module docstring)
+- `tests/test_fret_w6a_rerating.py` — The W6a FRET re-rating (PLAN-EXPAND2 W6 acceptance (2)): the 30 sampled items with time-indexed relations over a user time sort.
+- `tests/test_frozen_sources.py` — AR-2, the narrow freeze (architecture decision D2): `lean/VE/Route/frozen.py` hashes only the files with K declarations and the `ve.core@0.1` decoders, `ve/que…
+- `tests/test_gate.py` — The full gate must reject missing coverage while honoring exact optional cases.
+- `tests/test_gate_collection.py` — The gate's collection is the merge base's, less exactly the tests a `Test-removed:` trailer records, with the diff only labelling each removal (tools/gate_coll…
+- `tests/test_gate_durations.py` — Each gate keeps its suite's per-test seconds in its record, and the next gate on that base orders its suite by them.
+- `tests/test_gate_integrity.py` — Regressions for verification-gate accounting, isolation, and run identity.
+- `tests/test_gate_quarantine.py` — Test speed B5: the gate never stops early, and the tracked quarantine (tools/test-quarantine.json).
+- `tests/test_gate_rerun.py` — `tools/gate.py --rerun-failed`: rerun only the failed tests' files of a gate that failed on this tree.
+- `tests/test_gate_shards.py` — A merged gate is a full gate only after every planned test was accounted for.
+- `tests/test_gate_trust.py` — arch-AR-4 review F2: AR-4 moves the per-file trust tables out of the tree and into the gate record (`tools/trust_map.py --files`), but no gate wrote them.
+- `tests/test_gatekeeper_adapter.py` — (no module docstring)
+- `tests/test_gen_inv_design.py` — The gen-inv-design document covers every route the code gives it (gen-inv-design review F1, F2).
+- `tests/test_grammar.py` — Executable contract for bounded constrained-decoding grammars.
+- `tests/test_grammar_backends.py` — Optional smoke tests against constrained-decoding backend compilers.
+- `tests/test_grammar_cli.py` — (no module docstring)
+- `tests/test_hang_guards.py` — No wall-clock wait the suite reaches is a load-dependent bound on a real checker.
+- `tests/test_heavy_tests.py` — The measured split and the light-tier command plan.
+- `tests/test_history_tests.py` — The inventory of tests that read git history (tests/history-dependent.json) and its lint.
+- `tests/test_identity_lint.py` — `tools/identity_lint.py` (architecture plan AR-6): no new Lean-owned identity preimage in Python.
+- `tests/test_inventory_lint.py` — The Gate 2 inventory lint (tools/inventory_lint.py).
+- `tests/test_jt_crossplan_ties.py` — The ties pass of jt-crossplan-fixes: the statement it proposes for `PolicyCtx.of` is the one Lean checks.
+- `tests/test_jt_e1.py` — Local JT-E1 protocol checks; never makes a model call.
+- `tests/test_jt_e1r.py` — JT-E1r pre-call checks.
+- `tests/test_jt_e3.py` — Small, model-free checks of JT-E3's agreement and blind runner.
+- `tests/test_judgments_answer.py` — The relay of the `document` mode's `judgments` field (judgment-terms-PLAN.md JT-2, Python; docs/spec/ judgment-terms.md 8.3): schema and binding only (R8), and…
+- `tests/test_judgments_document.py` — `judgments@0` in Lean's `document` mode (judgment-terms-PLAN.md JT-2; docs/spec/judgment-terms.md 8): the fixtures of spec 11.2 and 11.3 replayed through the s…
+- `tests/test_judgments_exercised.py` — Every trusted definition of the judgment-terms files is stated about by a theorem (standing ruling R16).
+- `tests/test_lake_outputs.py` — tools/lake_outputs.py: an executable whose Lake trace does not record the file beside it is stale (rd-6b review B2: an older `ve_conformance` under a trace cop…
+- `tests/test_lean_audit_record.py` — The committed axiom audit record `lean/axioms.txt` names every theorem, and the audit refuses a stale one.
+- `tests/test_lean_authority_values.py` — No reported evaluation value or count is Rust's (lean-first batch 15b, review B3; batch 18: Lean is the one authority).
+- `tests/test_lean_budget_types.py` — Present replay budgets must never silently become the default.
+- `tests/test_lean_build.py` — `tests/lean_build.py`: a fixture naming a Lean target the lakefile lacks fails, prebuilt or not.
+- `tests/test_lean_certificates.py` — The Python prover searches; the independently proved Lean checker decides.
+- `tests/test_lean_conformance.py` — Portable JSON differential tests.
+- `tests/test_lean_decided_share.py` — `tools/lean_decided_share.py` (readings-defaults 1.10 and 10; plan 3.9, RD-5): sums Lean's decided units' span bytes and decides nothing; Lean's list is untrus…
+- `tests/test_lean_default_build.py` — Every Lean source is compiled by the default `lake build` (et-7 review F2).
+- `tests/test_lean_document_wrapper.py` — The Lean `document` mode (lean-first batch 16a) against Python's `load_document` and `check_document` wrapper.
+- `tests/test_lean_dump_cache.py` — The Lean dump cache (`tools/lean_dump_cache.py`): a stored dump is replayed only while every input it is keyed on is unchanged, and any doubt is a miss that ru…
+- `tests/test_lean_first_b10a_report.py` — Lean-first batch 10a: the tables of `docs/lean-first/b10a/DELTA.md` are rendered from the evidence files (build checklist 20), the corpus A/B found no differen…
+- `tests/test_lean_first_b10b_report.py` — Lean-first batch 10b: the fuzzer gate accepts only the retired DF-19 difference (build checklist 13), and the recorded evidence shows no unexplained difference…
+- `tests/test_lean_first_b12_report.py` — Batch 12's reported numbers come from its gate evidence.
+- `tests/test_lean_first_b13a.py` — Batch 13a: Lean parse diagnostics, order text and replay ownership.
+- `tests/test_lean_first_b13b.py` — Lean-first batch 13b: the core operations default to Lean (docs/lean-first/b13b/DELTA.md).
+- `tests/test_lean_first_b14a.py` — Lean-first batch 14a: the `definitions@0` surface sugar is Lean's.
+- `tests/test_lean_first_b3b_report.py` — Lean-first batch 3b: the timing tables of `docs/lean-first/b3b/DELTA.md` are rendered from the evidence files (build checklist 20), and the paired UDHR runs th…
+- `tests/test_lean_first_b3d_report.py` — Lean-first batch 3d: the tables of `docs/lean-first/b3d/DELTA.md` are rendered from the evidence files (build checklist 20), every paired run they report gave …
+- `tests/test_lean_first_b5_delta.py` — Batch 5's direct-entry changes are visible beside the recorded A/B corpus.
+- `tests/test_lean_first_b6_report.py` — Lean-first batch 6: the latency table of `docs/lean-first/b6/DELTA.md` is rendered from the evidence files (build checklist 20), every paired UDHR run gave ide…
+- `tests/test_lean_first_b9_report.py` — Lean-first batch 9: the numbers of `docs/lean-first/b9/DELTA.md` are rendered from the evidence files (build checklist 20), every A/B difference is a listed on…
+- `tests/test_lean_first_diff.py` — `tools/lean_first_diff.py`: the base-against-head comparison of the lean-first gate (5.1 item 2).
+- `tests/test_lean_first_diff_cache.py` — The lean-first A/B base-record cache (`tools/lean_first_cache.py`, speed-abcache): a hit gives the records a recording writes, every key part is a miss when it…
+- `tests/test_lean_first_oracle.py` — `tools/lean_first_oracle.py`: the frozen pre-deletion Python (LEAN-FIRST-PLAN.md 6.2).
+- `tests/test_lean_first_rule3_measurement.py` — Rule-3 work units count every candidate Lean evaluated, including a batch suffix.
+- `tests/test_lean_first_triage.py` — Lean-first batch 0: the triage of the differential fuzzer's disagreement groups (`docs/lean-first/b0/df-triage.json`, docs/lean-first/b0/TRIAGE.md).
+- `tests/test_lean_handles.py` — Environment handles (docs/LEAN-FIRST-PLAN.md F2, lean-first batch 2) and the persistent Rust checker (F6).
+- `tests/test_lean_import_reader.py` — tools/check_lean_imports.imports accepts only plain headers, and reads those as Lean does.
+- `tests/test_lean_layers_once.py` — Every route the service runs computes a document's layers once (lean-first batch 7 review B1).
+- `tests/test_lean_limits.py` — Every Lean limit has one owner, `lean/VE/Limits.lean` (lf-18 review F2; FINDING-CLASSES 1, build checklist 1).
+- `tests/test_lean_pool.py` — The pool that elaborates a mutant module's selected sources at once (`tests/lean_pool.py`), with a fake elaborate function: it elaborates exactly the sources o…
+- `tests/test_lean_service.py` — Stage 1 Lean service: protocol, byte identity with the one-shot runners, faults.
+- `tests/test_lean_service_audit.py` — The x86 essentials leg audits Lean candidates even when the Mac gate is unavailable.
+- `tests/test_lean_service_schema.py` — Service responses: the client's schemas, the Lean decoders and the Lean invariants.
+- `tests/test_lean_share.py` — tools/lean_share.py: a stored Lean build is used only under its own key and only after its checks (test-architecture plan 3.8, "Shared builds").
+- `tests/test_lean_statements_parts.py` — tools/lean_statements.py prints the statements in parts run at once (eff-20261027-1, PIPELINE-LIMITS L76).
+- `tests/test_legend.py` — Compact legends preserve judge context without JSON document overhead.
+- `tests/test_lexicon.py` — Pinned lexical data, advisory classification, and proposal provenance.
+- `tests/test_lf14a_long_parse.py` — A valid sugar expansion may exceed the public printer's output limit.
+- `tests/test_lf14a_response_shape.py` — Typed parse ASTs and source-bound diagnostics in the shared response schema.
+- `tests/test_lineage_lint.py` — Pinned Git reads in history-dependent tests must name content, not a VM commit.
+- `tests/test_llm.py` — (no module docstring)
+- `tests/test_me4_csv_mutants.py` — The saved mutation run must not waive CSV character regressions.
+- `tests/test_merge_tooling_evidence.py` — docs/merge-tooling.md against its saved evidence (docs/merge-tooling/*.json).

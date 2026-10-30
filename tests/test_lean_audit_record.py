@@ -13,9 +13,11 @@ import re
 import shutil
 import subprocess
 import sys
+import threading
 from types import SimpleNamespace
 
 import pytest
+from tests.subprocesses import HANG_TIMEOUT
 
 ROOT = Path(__file__).resolve().parents[1]
 _spec = importlib.util.spec_from_file_location('ve_lean_audit_record', ROOT / 'lean/audit.py')
@@ -23,6 +25,55 @@ audit = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(audit)
 sys.path.insert(0, str(ROOT / 'tools'))
 import lean_statements  # noqa: E402
+
+
+@pytest.mark.parametrize('override,jobs,cores,expected', [
+    ('2', 5, 32, 2), (None, 3, 32, 3), (None, None, 8, 2), (None, 9, 32, 5),
+])
+def test_audit_parts_obey_job_budget_and_keep_order(monkeypatch, override, jobs, cores, expected):
+    """A stub Lean process records the peak; pool.map must retain the part order."""
+    if override is None:
+        monkeypatch.delenv('VE_AUDIT_JOBS', raising=False)
+    else:
+        monkeypatch.setenv('VE_AUDIT_JOBS', override)
+    monkeypatch.setattr(audit.os, 'cpu_count', lambda: cores)
+    executor = audit.ThreadPoolExecutor
+    workers = []
+
+    class RecordingExecutor(executor):
+        def __init__(self, *args, **kwargs):
+            workers.append(kwargs['max_workers'])
+            super().__init__(*args, **kwargs)
+
+    monkeypatch.setattr(audit, 'ThreadPoolExecutor', RecordingExecutor)
+    lock = threading.Lock()
+    active = peak = 0
+    first_pair = threading.Barrier(2)
+
+    def stub_lean(command, **_):
+        nonlocal active, peak
+        with lock:
+            active += 1
+            peak = max(peak, active)
+        index = int(Path(command[-1]).stem.removeprefix('Part'))
+        if override == '2' and index < 2:
+            first_pair.wait(timeout=HANG_TIMEOUT)
+        with lock:
+            active -= 1
+        return SimpleNamespace(stdout=f'part {index}\n')
+
+    monkeypatch.setattr(audit.subprocess, 'run', stub_lean)
+    assert audit.axiom_outputs([], [f'text {i}' for i in range(5)], jobs) == [f'part {i}\n' for i in range(5)]
+    assert workers == [expected]
+    assert peak <= expected
+    if override == '2':
+        assert peak == 2
+
+
+def test_audit_rejects_nonpositive_job_budget(monkeypatch):
+    monkeypatch.setenv('VE_AUDIT_JOBS', '0')
+    with pytest.raises(ValueError, match='positive'):
+        audit.axiom_outputs([], ['part'])
 
 
 def test_record_names_every_theorem_once():
@@ -147,7 +198,7 @@ SCRATCH = {
                         'theorem _root_.root_result : True := trivial\nend VE.Scratch\n'),
     'ResponseShape/Shape.lean': 'theorem ResponseShape.shape_ok : 1 = 1 := rfl\n',
     'VE/Audit.lean': '-- empty until the first --write\n',
-    'ResponseShape/Audit.lean': '-- empty until the first --write\n',
+    'ResponseShapeAudit.lean': '-- empty until the first --write\n',
 }
 
 
@@ -182,7 +233,7 @@ def test_scratch_theorem_needs_write_and_check_passes_after(scratch, capsys):
     assert text == (f'{audit.HEADER}-- The `#print axioms` audit of {audit.SCOPE["VE/Audit.lean"]}.\n'
                     f'import VE.Scratch\n\n#print axioms VE.Scratch.Nested.result\n#print axioms {instance}\n'
                     '#print axioms VE.Scratch.kept\n#print axioms root_result\n')
-    assert (lean / 'ResponseShape/Audit.lean').read_text().endswith(
+    assert (lean / 'ResponseShapeAudit.lean').read_text().endswith(
         'import ResponseShape.Shape\n\n#print axioms ResponseShape.shape_ok\n')
     assert audit.recorded_names((lean / 'axioms.txt').read_text()) == [
         'VE.Scratch.Nested.result', instance, 'VE.Scratch.kept', 'root_result', 'ResponseShape.shape_ok']

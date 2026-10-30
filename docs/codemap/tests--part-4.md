@@ -1,0 +1,90 @@
+- `tests/test_metered_answer.py` — The `metered` relay never shows a trace binding the request does not hold (lf-18 review F1; DRI-RULINGS R8 (b), FINDING-CLASSES 4 and 15).
+- `tests/test_metered_differential.py` — Batch 15a review fixes: Lean's metered route (`ve_metered`) against Python.
+- `tests/test_metered_handles.py` — The decoded environment the service keeps with each handle (lean-first batch 18, DRI note F7; the unbuilt half of LEAN-FIRST-PLAN F2).
+- `tests/test_metered_lean.py` — Batch 15a: Lean's metered evaluator and non-vacuity search filter.
+- `tests/test_model_environment.py` — The model environment Rust's search and Lean's metered evaluator read (lean-first batch 15b, review A1/B1).
+- `tests/test_mutants.py` — tools/mutants.py, the seeded-mutant harness, on throwaway modules under tmp_path.
+- `tests/test_nary.py` — nary@0 wire and type checks, including repeated argument positions.
+- `tests/test_nary_differential.py` — Generated n-ary certificates and cross-language finite tables.
+- `tests/test_nary_folio.py` — Pinned FOLIO witness accounting, with the large corpus optional in CI.
+- `tests/test_native_build_lock.py` — Regressions for shared native artifacts during parallel pytest runs.
+- `tests/test_natural.py` — The natural view only accepts exact, uniquely parsed English sentences.
+- `tests/test_nested_pytest.py` — Nested pytest runs do not depend on the outer run's plugin settings (testperf review B).
+- `tests/test_news_w6a_fixtures.py` — Pinned news numeric inputs: source-scoped cases, certified consequences, residuals.
+- `tests/test_norm_admission.py` — Active norm units and regenerated layer leaves in W2 FOL documents.
+- `tests/test_norm_defaults.py` — norm-defaults@0 fixtures (docs/spec/norm-defaults.md section 9), Python side.
+- `tests/test_norm_defaults_contract.py` — The `norm-defaults@0` wire table in shadow (wire-contract-s5.md 2.4, 8.2): `UnspecifiedDocument` still owns the verdict; the Python engine names the first chec…
+- `tests/test_norm_defaults_differential.py` — norm-defaults@0 evidence against brute force (docs/spec/norm-defaults.md 2.5, 3.1, 8).
+- `tests/test_norm_defaults_layered.py` — norm-defaults@0 on the soft and rights routes, in Lean (lean-first batch 10a; docs/spec/norm-defaults.md 2.3 and 3.3; lean/VE/NormDefaults/Layered.lean).
+- `tests/test_norm_defaults_relay_english.py` — The English display formats the Lean accepted norm-defaults rows and nothing else.
+- `tests/test_norm_defaults_report.py` — norm-defaults@0 report in Lean (lean-first batch 10a; docs/spec/norm-defaults.md 3.2 and 5).
+- `tests/test_norm_defaults_soft_kinds.py` — RD-9 SC-6: the soft branch's `admission` and `norm-defaults-certificate` under norm-defaults@0 (docs/spec/rd-9-soft-chain.md 1.13, 4.5, 6.10 and 8.3's SC-6 row…
+- `tests/test_norm_defaults_switch.py` — Batch 10b: Lean answers that the Python document and admission paths consume.
+- `tests/test_norm_defaults_three_way.py` — norm-defaults@0: Python, Lean and Rust agree on the spec fixtures (docs/spec/norm-defaults.md 8, 9).
+- `tests/test_norm_english.py` — (no module docstring)
+- `tests/test_norms.py` — Hand-written W1 counterexamples from norms spec 10.1.
+- `tests/test_norms_contract.py` — The `norms@0` wire table in shadow (wire-contract-s5.md 2.3, 2.5, 8.1): the legacy validator still owns the verdict; the Python engine names the first check of…
+- `tests/test_norms_three_way.py` — Committed W1 wire gate: regenerated Python/Lean formulas and Rust evaluation.
+- `tests/test_numbers_phrases.py` — The existing English reader consumes the Lean-generated comparison rows.
+- `tests/test_numeral_conversion.py` — Decimal text from input never reaches a bare `int(` (english-lean looprecheck1, finding 1).
+- `tests/test_oom_mutation_evidence.py` — The OOM mutation record must show the seeded fault, not a stale checker binary.
+- `tests/test_order.py` — order@0: frozen syntax/identity, evaluation, search, Farkas certificates, English, Lean.
+- `tests/test_order_gate.py` — Order foundations must not open either existing certificate trust boundary.
+- `tests/test_order_grammar.py` — Order grammar export is typed in full mode and covers canonical terms.
+- `tests/test_order_round2.py` — The order surface and finite evaluation agree in Python, Rust and Lean.
+- `tests/test_p0_three_way.py` — Three-way P0 conformance: Python, Rust and the Lean `route` subcommand give identical verdicts on every shipped case of the P0 families (PLAN-EXPAND2 3.10(2)).
+- `tests/test_p1.py` — (no module docstring)
+- `tests/test_p1_amendment11.py` — Budget choice and two-turn execution/analysis, without provider calls.
+- `tests/test_p1_amendment12.py` — Ceiling-driven judge substitution: budgets, routing, reuse and disclosure.
+- `tests/test_p1_amendment13.py` — Audited abstentions, gate scope, zero-generation reuse and strict bounds.
+- `tests/test_p1_amendment14.py` — Attacker accounting recovery, exact scored reuse, and partial initial analysis.
+- `tests/test_p1_amendment15.py` — Amendment 15 recovery, bounded visible text, and append-only paid resume (offline).
+- `tests/test_p1_amendment7.py` — Amendment 7: entirely offline dispatch, restart and partial-panel evidence.
+- `tests/test_p1_amendment8.py` — Amendment 8 contract, pricing, recovery, fallback and budget regressions; $0.
+- `tests/test_p1_amendment9.py` — Computed joint bounds and attacker truncation isolation; no provider calls.
+- `tests/test_p1_history.py` — Historical request provenance stays separate from current checker identity.
+- `tests/test_p1_infrastructure.py` — Amendment 5: offline transport failures, no paid/network calls.
+- `tests/test_p1_native_counter.py` — Offline native-counter tests: pinned templates, no downloads or providers.
+- `tests/test_p1_preflight.py` — (no module docstring)
+- `tests/test_p1_reconcile.py` — Append-only budget reconciliation and request reuse across schedule changes.
+- `tests/test_packs_guard_mutants.py` — The premise-pack fixtures can fail (pk-1 review F1, B; standing ruling R16 in DRI-RULINGS.md).
+- `tests/test_parser_renderer.py` — (no module docstring)
+- `tests/test_platform_contract.py` — `tools/platform_contract.py`: the x86 platform contract suite (test-architecture plan rank 2, section 3.3).
+- `tests/test_precommit_hook.py` — tools/hooks/pre-commit: each check rejects a planted example and passes clean commits.
+- `tests/test_premise_scale.py` — premise-scale: Lean's premise-check budget, its per-sort domain bounds, the ground-fact route, and the Rust wall-clock limit (DRI decisions QT2, ME1, ME2, ET1).
+- `tests/test_presupposition_wordings.py` — PS-6r (docs/spec/presupposition-PLAN.md): wording rows for the four pilot nouns.
+- `tests/test_profile_artifacts.py` — Keep published English measurements in sync with their raw samples.
+- `tests/test_profile_table.py` — AR-10: Python reads the profile table Lean generates (`ve/profile_table.json`) and holds no row of its own.
+- `tests/test_profiles.py` — (no module docstring)
+- `tests/test_progress_watch.py` — The progress watch that tells a hung child from a slow one (`subprocesses.run_while_progressing`).
+- `tests/test_properties.py` — (no module docstring)
+- `tests/test_propose.py` — Version 1 proposal acceptance, ambiguity boundaries, and adoption isolation.
+- `tests/test_question_answering_measure_report.py` — F4: published numbers must agree with captured measurements and fixtures.
+- `tests/test_question_answering_q2_report.py` — Question answering Q2's report numbers come from its saved evidence (docs/spec/question-answering-q2/evidence/), never from live git: the generated block of RE…
+- `tests/test_question_differential.py` — Q1 three ways (review C of Astra, a B item of the DRI ruling of 2026-10-09): Lean's question reader against an independent Python reader, and each reading's me…
+- `tests/test_question_fixture_sources.py` — The G and U acceptance sources stay pinned to the reviewed text.
+- `tests/test_question_lean_relay.py` — Request binding at the Python side of the Lean question reader.
+- `tests/test_question_reading.py` — Q1 end to end: a question read by Lean's `english.question` (docs/spec/question-answering.md 4.1, 7, 8).
+- `tests/test_question_statements.py` — The Q2 declarations (`lean/VE/Ask`, `lean/VE/Words`) against the approved text of docs/spec/question-answering.md 5.2 (build checklist 17), by `tools/question_…
+- `tests/test_rd9_chain_relay.py` — The readings route's chain is Lean's, relayed (review F25 of rd-9, DRI condition B1(d); DRI ruling R8).
+- `tests/test_rd9_dri_signatures.py` — The DRI's rd-9 signatures, recorded (review F27 of rd-9; manage-agents/reviews/rd-9-dri-signatures-20261015.md).
+- `tests/test_rd9_followup_bindings.py` — fu-rd9-checks: the two answer fields rd-9's rechecks left unchecked (rd-9-c141730 looprecheck1, FOLLOW-UP).
+- `tests/test_rd9_gap_relay.py` — The RD-9 use of E14's existing sentence with Lean-selected gaps.
+- `tests/test_rd9_r14_candidates.py` — R14 on rd-9's constitution results (review F26 of rd-9, DRI condition B1(c); DRI-RULINGS R14).
+- `tests/test_rd9_soft_split.py` — F32: a document under the soft completion beside a companion set is refused by every kind of the split.
+- `tests/test_rd9_statements.py` — RD-9's Lean declarations against the approved blocks of docs/spec/rd-9-soft-chain.md 6 (checklist 17).
+- `tests/test_readings_budget_zero.py` — Every public verdict op of the readings routes under a zero budget (build checklist 6; rd-2b review B1).
+- `tests/test_readings_companions_lean.py` — Readings with their own vocabulary through the Lean service (docs/spec/readings-defaults.md 1.9, 3, 4.1 step 0, 5 rows 6 to 13, 8.4; plan RD-4a).
+- `tests/test_readings_component_names.py` — Regression for the reserved main component name in the readings split.
+- `tests/test_readings_components_document.py` — Readings with their own vocabulary through `ve document` (docs/spec/readings-defaults.md 1.9, 1.10, 2.4, 4.5, 5 rows 16 to 18, 8.4; plan RD-4b).
+- `tests/test_readings_components_lean.py` — Lean's `readings-verdicts` answer over a document's components, as untrusted output (docs/spec/readings-defaults.md 4.5; plan RD-4b; build checklist 4).
+- `tests/test_readings_components_load.py` — The answers Lean gives at load for a document with companion sets, as untrusted output (docs/spec/readings-defaults.md 1.9, 3; plan RD-4b; build checklist 4 an…
+- `tests/test_readings_constant_display.py` — Constant display words are outside the readings pilot's v0 vocabulary shape.
+- `tests/test_readings_defaults_english.py` — The English of readings under unspecified defaults (docs/spec/readings-defaults.md 2.1 to 2.5): the new wordings E30, E31, E32 and R7, the reused filled-gap an…
+- `tests/test_readings_defaults_names.py` — The `<reading>` slot (docs/spec/readings-defaults.md 2.3, review A4) names readings by what they say, and two readings that say different things never share a …
+- `tests/test_readings_defaults_rd2a_report.py` — RD-2a's report against its saved evidence (build checklist 20).
+- `tests/test_readings_defaults_rd2b_report.py` — RD-2b's report against its saved evidence (build checklist 20): every number in docs/readings-defaults/rd2b/DELTA.md is regenerated here from evidence/gate.jso…
+- `tests/test_readings_defaults_rd3_report.py` — RD-3's report against committed evidence, with no read of the current git graph.
+- `tests/test_readings_defaults_rd4a_report.py` — RD-4a's report against its saved evidence (build checklist 20).
+- `tests/test_readings_defaults_rd4b_report.py` — RD-4b's report is checked against immutable evidence captured from the clean code head.
+- `tests/test_readings_defaults_rd6a.py` — RD-6a (docs/spec/readings-defaults-PLAN.md): fixture X1's conflict-freedom premise, end to end on the route.

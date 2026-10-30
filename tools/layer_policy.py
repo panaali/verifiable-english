@@ -117,13 +117,14 @@ def lean_entry(module: str) -> bool:
 
 
 def lean_layer(module: str) -> int | None:
-    if module in {"VE", "VE.Audit", "Iceberg", "VE.Checks", "VE.Route.Checks", "VE.LimitTies"}:
+    if module in {"VE", "VE.Audit", "ResponseShapeAudit", "Iceberg", "VE.Checks", "VE.Route.Checks", "VE.LimitTies"}:
         return 5  # aggregation and audit targets (VE.LimitTies checks frozen and hashed copies of VE.Limits)
     if module in {"VE.EnglishGrammar.ProfileExamples", "VE.EnglishGrammar.E2Examples",
                   "VE.Question.Examples", "VE.Question.Fixtures", "VE.Alternatives.FillExamples",
-                  "VE.Calc.RunExamples", "VE.Defaults.RouteExamples", "VE.Cardinality.RunExamples"}:
+                  "VE.Calc.RunExamples", "VE.Defaults.RouteExamples", "VE.Readings.ActsExamples",
+                  "VE.Cardinality.RunExamples"}:
         return 4  # runner-boundary acceptance fixtures import EnglishGrammar.Run, Question.Run, Alternatives.Run, Calc.Run,
-        # NormDefaults.Run or Cardinality.Run
+        # NormDefaults.Run, Readings.Run or Cardinality.Run
     if lean_entry(module) or module.endswith(".Run") or module == "VE.Route.MeteredRun" or module.startswith("VE.Service."):
         return 4
     if module == "ResponseShape" or module.startswith("ResponseShape."):

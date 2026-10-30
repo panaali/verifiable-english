@@ -1,0 +1,31 @@
+- `rust/benchmark.py` — Sequential no-trace API-vs-API and kernel-vs-kernel benchmarks.
+- `rust/fuzz_closure.py` — Seeded closure differential extension of conformance/fuzz.py.
+- `rust/ve/examples/rule3_enumerate.rs` — Measurement-only stream of Rust search candidates; no evaluation or verdict.
+- `rust/ve/src/main.rs` — (no module docstring)
+- `rust/ve/src/memory.rs` — The binary's global memory budget.
+- `rust/ve-core/examples/bench.rs` — Timed checked API calls.
+- `rust/ve-core/examples/rule3_order_enumerate.rs` — Measurement-only stream of the order@0 search's candidates (lean-first batch 15b); no evaluation or verdict.
+- `rust/ve-core/src/lib.rs` — Experimental VE v0 and closure@0 core.
+- `rust/ve-core/tests/closure.rs` — (no module docstring)
+- `rust/ve-core/tests/conformance.rs` — (no module docstring)
+- `rust/ve-core/tests/data_flags.rs` — (no module docstring)
+- `rust/ve-core/tests/nary.rs` — (no module docstring)
+- `rust/ve-core/tests/norm_defaults.rs` — (no module docstring)
+- `rust/ve-core/tests/norms.rs` — (no module docstring)
+- `rust/ve-core/tests/premise_scale.rs` — premise-scale: per-sort domain bounds and the ground-fact route of the countermodel search.
+- `rust/ve-core/tests/search.rs` — (no module docstring)
+- `rust/ve-core/tests/soft_norms.rs` — (no module docstring)
+- `rust/ve-kernel/src/ast.rs` — (no module docstring)
+- `rust/ve-kernel/src/environment.rs` — (no module docstring)
+- `rust/ve-kernel/src/graph.rs` — The dependency-DAG order (kernel): `Environment` checks definition order with it and the `ve` binary answers `dependency-order` route cases with it.
+- `rust/ve-kernel/src/internal.rs` — Kernel items the profile and surface crates use but the public API does not offer: they were `pub(crate)` while the three groups shared one crate.
+- `rust/ve-kernel/src/lib.rs` — VE kernel: syntax, environments, finite models, the wire format, the evaluator core and the dependency order.
+- `rust/ve-kernel/src/model.rs` — (no module docstring)
+- `rust/ve-kernel/src/semantics.rs` — The evaluator core (kernel, like Lean `VE.Semantics`; Python's is `ve.evaluate._Evaluator`): `FiniteModel` decoding evaluates defined relations with it; profil…
+- `rust/ve-kernel/src/wire.rs` — (no module docstring)
+- `rust/ve-kernel/tests/environment_definition_order.rs` — (no module docstring)
+- `rust/ve-profile/src/eval.rs` — (no module docstring)
+- `rust/ve-profile/src/ground.rs` — premise-scale: the ground-fact candidate.
+- `rust/ve-profile/src/lib.rs` — VE profiles over the kernel: evaluation, countermodel search and order.
+- `rust/ve-profile/src/order.rs` — Independent order@0 AST and finite-model route.
+- `rust/ve-profile/src/search.rs` — (no module docstring)

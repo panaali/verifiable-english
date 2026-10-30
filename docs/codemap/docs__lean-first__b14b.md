@@ -1,0 +1,12 @@
+- `docs/lean-first/b14b/capture_delta.py` — Record batch 14b's answer changes on n-ary capture documents (lf-14b review F5).
+- `docs/lean-first/b14b/compare.py` — Check and save the batch 14b A/B corpus comparison.
+- `docs/lean-first/b14b/conformance_tail.py` — Resume a timed-out conformance recording or repair unavailable checker cases.
+- `docs/lean-first/b14b/corpus.py` — Batch 14b corpus: norm documents with non-first-order guards on the closure, core and order families.
+- `docs/lean-first/b14b/document_corpus_slice.py` — Record a bounded slice of a generated document A/B corpus.
+- `docs/lean-first/b14b/evidence_manifest.py` — Save or check batch 14b gate evidence against a pinned base and raw archive.
+- `docs/lean-first/b14b/fallback.py` — Check that batch 14b leaves the retained Python norms route as the base had it.
+- `docs/lean-first/b14b/latency.py` — Measure batch 14b's warm family-norms service calls in each checkout.
+- `docs/lean-first/b14b/merge_records.py` — Merge bounded corpus recordings, checking keys and optional case replacement.
+- `docs/lean-first/b14b/mutants.py` — Plant and restore batch 14b faults, recording the tests that detect them.
+- `docs/lean-first/b14b/pilot_repair.py` — Rerecord named pilot cases in a common scratch path after a loaded A/B run.
+- `docs/lean-first/b14b/probe_chunk.py` — Record one disjoint slice of the Stage-0 probe matrix for a long A/B run.
