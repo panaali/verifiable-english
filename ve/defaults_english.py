@@ -183,3 +183,28 @@ def sentences(case, row):
     if case.get("kind") == "defaults-coherence":
         return collision(case, row)
     return []
+
+
+def readings(member, under, choice_case):
+    """The English of the `default` member of a readings answer (DF-3), Lean's rows in Lean's order: DE8 alone; a
+    reading's assumption sentences (DE2 to DE4) after `Under <reading>:`; DE12; DE7 with its decider sentence after
+    `Under <reading>:`. `under(choice)` is the reading slot, `choice_case(choice)` the choice's own `defaults-*`
+    request with the collision the request sent for it; every name a sentence gives is bound there."""
+    import json
+    entries = {json.dumps(entry["choice"]): entry for entry in member["per_choice"]}
+    out = []
+    for line in member["english"]:
+        if line["row"] == "DE8":
+            out.append("Under every reading, the conclusion follows under the assumptions listed for that reading.")
+            continue
+        entry, case = entries[json.dumps(line["choice"])], choice_case(line["choice"])
+        if line["row"] == "DE7":
+            sentences = collision(case, {"verdict": "COLLISION", "collision": entry["collision"]})
+        elif line["row"] == "assumptions":
+            text = _Text(case)
+            sentences = [assumption(text, label) for label in entry["assumptions"]]
+        else:
+            out.append("Whether it also holds without these assumptions was not checked.")
+            continue
+        out += [f"Under {under(line['choice'])}: {sentences[0]}", *sentences[1:]]
+    return out

@@ -1,0 +1,23 @@
+L1 choiceSoft KILLED by lake build VE.Readings.DefaultVerdictsExamples
+L2 dSem KILLED by lake build VE.Readings.DefaultVerdicts
+L3 dConflictRow KILLED by tests/test_defaults_readings.py::test_df_rho_default_conflict_from_the_gate_only
+L4 dBasis KILLED by tests/test_defaults_readings.py::test_df_nu_default_fold_all_with_the_default_readings_assumption
+L5 DVerdicts.hasDefaults KILLED by tests/test_defaults_readings.py::test_without_a_default_premise_there_is_no_member
+L6 dEnglish KILLED by tests/test_defaults_readings.py::test_df_nu_default_fold_all_with_the_default_readings_assumption
+L7 runVerdictsD KILLED by tests/test_defaults_readings.py::test_df_tau_a_strict_conflict_leaves_no_member
+L8 verdictWord KILLED by tests/test_defaults_readings.py::test_df_nu_default_fold_all_with_the_default_readings_assumption
+L9 dChoiceJson KILLED by tests/test_defaults_readings.py::test_df_nu_default_fold_all_with_the_default_readings_assumption
+L10 DLine.json KILLED by tests/test_defaults_readings.py::test_df_rho_default_conflict_from_the_gate_only
+L11 defaultJson KILLED by tests/test_defaults_readings.py::test_df_rho_default_conflict_from_the_gate_only
+L12 collisionFields KILLED by lake build ve_service: error: VE/Defaults/Wire.lean:762:74: Application type mismatch: The argument
+L13 verdicts_default KILLED by lake build ResponseShape.Encoders.ReadingsRoute
+L14 verdicts_default_line KILLED by lake build ResponseShape.Encoders.ReadingsRoute
+L15 verdicts_default_choice KILLED by lake build ResponseShape.Encoders.ReadingsRoute
+L16 DLine KILLED by lake build VE.Readings.DefaultVerdicts
+P1 _check_default (labels) KILLED by tests/test_defaults_readings.py::test_df_nu_every_forged_field_is_refused[a label the choice has not]
+P3 _check_default (presence) KILLED by tests/test_defaults_readings.py::test_df_nu_every_forged_field_is_refused[member absent]
+P4 defaults_english.readings KILLED by tests/test_defaults_readings.py::test_df_rho_english_is_de7_under_the_colliding_reading_never_a_contradiction
+P5 _readings_without_exception (--under) KILLED by tests/test_defaults_readings.py::test_under_names_readings_and_other_flags_are_refused
+P6 default_case KILLED by tests/test_defaults_readings.py::test_df_nu_default_fold_all_with_the_default_readings_assumption
+P2 _check_default (choices) KILLED by tests/test_defaults_readings.py::test_df_nu_every_forged_field_is_refused[a row dropped]
+L7 (rerun on the final runVerdictsD) runVerdictsD KILLED by tests/test_defaults_readings.py::test_df_tau_a_strict_conflict_leaves_no_member

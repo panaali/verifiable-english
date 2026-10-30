@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "tools"))
 import lean_statements  # noqa: E402
 
-MANIFESTS = ("lean/VE/Audit.lean", "lean/ResponseShape/Audit.lean")
+MANIFESTS = ("lean/VE/Audit.lean", "lean/ResponseShapeAudit.lean")
 OUTPUT = Path(__file__).resolve().parent / "evidence/manifests.json"
 
 
