@@ -8,8 +8,10 @@
 - `usecases/agent-policy/unspecified.py` — Re-runs the agent-policy case with both completions `unspecified` (norm-defaults@0).
 - `usecases/anthropic-rsp/build_document.py` — Builds the D1 span-accounting document over the pinned RSP v3.4 text (PLAN sections 7 and 10, metric M3).
 - `usecases/anthropic-rsp/measure.py` — The anthropic-rsp baseline: what each byte that is not CHECKED waits for (PLAN 7 feature map, metric M3).
+- `usecases/anthropic-rsp/reference.py` — Independent, stdlib-only reading of PLAN 3 and 4 for A, B, C and G.
 - `usecases/anthropic-rsp/rsp_translation.py` — Loads the D1 translation of the anthropic-rsp case: the rules of `rules.d1.ve` and the premises of `facts.d1.ve`.
 - `usecases/anthropic-rsp/rsp_vocabulary.py` — The D1 vocabulary of the anthropic-rsp case (PLAN sections 3.2 and 7).
+- `usecases/anthropic-rsp/run.py` — Answer the frozen RSP questions with the translated VE documents.
 - `usecases/anthropic-rsp/source/extract_text.py` — Extract the pinned RSP 3.4 text that the span accounting partitions.
 - `usecases/anthropic-rsp/stage0.py` — Stage 0 of the anthropic-rsp case (PLAN section 9): probes P1 to P8, the identifier lint (P7, M5) and the invention audit (M6).
 - `usecases/asimov-extended/asimov_extended_cases.py` — The asimov-extended documents and the 51 decision records of PLAN.md section 5.

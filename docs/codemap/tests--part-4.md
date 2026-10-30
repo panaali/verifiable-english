@@ -1,3 +1,4 @@
+- `tests/test_metered_differential.py` — Batch 15a review fixes: Lean's metered route (`ve_metered`) against Python.
 - `tests/test_metered_handles.py` — The decoded environment the service keeps with each handle (lean-first batch 18, DRI note F7; the unbuilt half of LEAN-FIRST-PLAN F2).
 - `tests/test_metered_lean.py` — Batch 15a: Lean's metered evaluator and non-vacuity search filter.
 - `tests/test_model_environment.py` — The model environment Rust's search and Lean's metered evaluator read (lean-first batch 15b, review A1/B1).
@@ -87,4 +88,3 @@
 - `tests/test_readings_defaults_rd4b_report.py` — RD-4b's report is checked against immutable evidence captured from the clean code head.
 - `tests/test_readings_defaults_rd6a.py` — RD-6a (docs/spec/readings-defaults-PLAN.md): fixture X1's conflict-freedom premise, end to end on the route.
 - `tests/test_readings_defaults_rd6a_report.py` — RD-6a's report (docs/readings-defaults/rd6a/DELTA.md) against its saved gate evidence.
-- `tests/test_readings_defaults_rd6b_report.py` — RD-6b report checks against committed evidence, independent of the current git graph.
