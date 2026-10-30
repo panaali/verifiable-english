@@ -1,0 +1,5 @@
+trust_mutants: 8 definitions, 95 mutants (23 to run), 4 jobs, base 6949746bf291
+UNKNOWN lean/VE/Compose/Dispatch.lean:879 VE.Compose.layerGate (G[V], trusted) list-empty: (profileTable.filter (documentLayers.contains ·.profile)).flatMap (rowChecks ps) -> [] (lean/VE/Compose/Dispatch.lean:879: Invalid projection: Type of)
+trust_mutants: 19 KILLED, 0 SURVIVOR, 1 UNKNOWN, 3 INVALID, 0 ALLOWED, 0 NOT RUN, 72 OTHER SHARD in 3702 s
+trust_mutants: D[V], trusted: 5 KILLED, 1 INVALID, 31 OTHER SHARD
+trust_mutants: G[V], trusted: 14 KILLED, 1 UNKNOWN, 2 INVALID, 41 OTHER SHARD
