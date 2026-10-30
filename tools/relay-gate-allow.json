@@ -3,6 +3,29 @@
  "$comment": "Accepted mutants of tools/relay_mutation_gate.py that are by design or recorded follow-ups. Each entry names one route (no pattern) and lists its paths; `mutation` and each `path` are fnmatch patterns (`*` spans path separators), and a path of wildcards only is refused. The most specific entry matching a finding lists it (a literal path first). An entry that matches no finding fails the gate. Follow-ups are listed in docs/merge-tooling.md.",
  "entries": [
   {
+   "route": "service:calc",
+   "mutation": "duplicate",
+   "path": [
+    "results/*/result/rows/*/certificate",
+    "results/*/result/rows/*/certificate/*/farkas/goal/coeffs",
+    "results/*/result/rows/*/certificate/*/farkas/weights"
+   ],
+   "kind": "by-design",
+   "id": "ME5E1",
+   "reason": "These lists are Lean's derived certificate steps, coefficients and weights. Their mathematical contents are checked by Lean, while the relay binds each name to a free request value (R8); list duplication that remains typed and bound is not a relay fault."
+  },
+  {
+   "route": "service:calc",
+   "mutation": "empty",
+   "path": [
+    "results/*/result/rows/*/certificate/*/farkas/goal/coeffs",
+    "results/*/result/rows/*/counterexample"
+   ],
+   "kind": "by-design",
+   "id": "ME5E2",
+   "reason": "A fact can have no free coefficients, and a counterexample can read no free value; both are typed forms in spec 3.4. Lean owns their mathematical content (R8)."
+  },
+  {
    "route": "call:ve.backends.speech_source:decide_source",
    "mutation": "duplicate",
    "path": [

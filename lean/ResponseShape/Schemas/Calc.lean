@@ -47,6 +47,24 @@ def byForm (ops : List String) (yes no : Shape) : Shape :=
 
 def null : Shape := .type ["null"]
 
+/-- A name and its exact value, as spec 3.4 writes a free coefficient or a checked point. -/
+def valuedName : Shape := n [arr, .minItems 2, .maxItems 2, .prefixItems [str, ref "#/$defs/exact"]]
+
+def fact : Shape := n [obj, .required ["const", "coeffs", "strict"], closed [
+  ("const", ref "#/$defs/exact"), ("coeffs", n [arr, .items valuedName]), ("strict", .type ["boolean"])]]
+
+def step : Shape := .anyOf [
+  n [obj, .required ["farkas"], closed [("farkas", n [obj, .required ["goal", "weights"], closed [
+    ("goal", fact), ("weights", n [arr, .minItems 1, .items (ref "#/$defs/exact")])]])]],
+  n [obj, .required ["square"], closed [("square", n [obj, .required ["square", "root", "a", "b"], closed [
+    ("square", str), ("root", str), ("a", ref "#/$defs/exact"), ("b", ref "#/$defs/exact")]])]]]
+
+def certificate : Shape := n [arr, .minItems 1, .items (ref "#/$defs/step")]
+def counterexample : Shape := n [arr, .items valuedName]
+
+def shownMembers (cert cx : Shape) : List (String × Shape) :=
+  [("certificate", cert), ("counterexample", cx)]
+
 /-- A tie flag `t`: the skeleton keeps the enumeration (a tie is a boolean or null), the client also its type. -/
 def flag (t : String) : Shape := n [.type [t], .enum [.bool true, .bool false, .null]]
 
@@ -92,8 +110,10 @@ def claimRow (reproduction : Shape) : Shape :=
     .anyOf [fields claimKind known (enumS ["holds", "fails"]) null reproduction,
       fields claimKind undefinedMembers (constS "undefined") null reproduction,
       fields claimKind unknownMembers (constS "unknown") (enumS reasons) reproduction,
-      fields followsKind [] (enumS ["holds", "fails", "undefined"]) null reproduction,
-      fields followsKind [] (constS "unknown") (enumS reasons) reproduction]]
+      fields followsKind (shownMembers certificate null) (constS "holds") null reproduction,
+      fields followsKind (shownMembers null counterexample) (constS "fails") null reproduction,
+      fields followsKind (shownMembers null null) (constS "undefined") null reproduction,
+      fields followsKind (shownMembers null null) (constS "unknown") (enumS reasons) reproduction]]
 
 def answer (rowDef : String) : Shape :=
   c "VE.Calc.Run.runCaseReported: the case's meaning_id (spec 3.3) and one row per request claim, in order." [
@@ -121,6 +141,15 @@ def file : File where
   defs := [("claim_row", .schema (claimRow (.type ["null"]))),
     ("claim_row_software", .schema (claimRow (constS "unknown"))),
     ("answer", .schema (answer "claim_row")), ("answer_software", .schema (answer "claim_row_software")),
-    ("refusal", .schema refusal), ("exact", .schema exact)]
+    ("refusal", .schema refusal), ("exact", .schema exact), ("step", .schema step)]
+
+/-! The wire forms of spec 3.4: these rendered shapes catch a dropped type, required field or bound. -/
+#guard (ResponseShape.render "calc.json" 64 valuedName).toOption.map Lean.Json.compress == some r##"{"maxItems":2,"minItems":2,"prefixItems":[{"type":"string"},{"$ref":"#/$defs/exact"}],"type":"array"}"##
+#guard (ResponseShape.render "calc.json" 64 fact).toOption.map Lean.Json.compress == some r##"{"additionalProperties":false,"properties":{"coeffs":{"items":{"maxItems":2,"minItems":2,"prefixItems":[{"type":"string"},{"$ref":"#/$defs/exact"}],"type":"array"},"type":"array"},"const":{"$ref":"#/$defs/exact"},"strict":{"type":"boolean"}},"required":["const","coeffs","strict"],"type":"object"}"##
+#guard (ResponseShape.render "calc.json" 64 step).toOption.map Lean.Json.compress == some r##"{"anyOf":[{"additionalProperties":false,"properties":{"farkas":{"additionalProperties":false,"properties":{"goal":{"additionalProperties":false,"properties":{"coeffs":{"items":{"maxItems":2,"minItems":2,"prefixItems":[{"type":"string"},{"$ref":"#/$defs/exact"}],"type":"array"},"type":"array"},"const":{"$ref":"#/$defs/exact"},"strict":{"type":"boolean"}},"required":["const","coeffs","strict"],"type":"object"},"weights":{"items":{"$ref":"#/$defs/exact"},"minItems":1,"type":"array"}},"required":["goal","weights"],"type":"object"}},"required":["farkas"],"type":"object"},{"additionalProperties":false,"properties":{"square":{"additionalProperties":false,"properties":{"a":{"$ref":"#/$defs/exact"},"b":{"$ref":"#/$defs/exact"},"root":{"type":"string"},"square":{"type":"string"}},"required":["square","root","a","b"],"type":"object"}},"required":["square"],"type":"object"}]}"##
+#guard (ResponseShape.render "calc.json" 64 certificate).toOption.map Lean.Json.compress == some r##"{"items":{"$ref":"#/$defs/step"},"minItems":1,"type":"array"}"##
+#guard (ResponseShape.render "calc.json" 64 counterexample).toOption.map Lean.Json.compress == some r##"{"items":{"maxItems":2,"minItems":2,"prefixItems":[{"type":"string"},{"$ref":"#/$defs/exact"}],"type":"array"},"type":"array"}"##
+#guard (shownMembers certificate null).map (·.1) == ["certificate", "counterexample"]
+#guard (shownMembers null counterexample).map (·.1) == ["certificate", "counterexample"]
 
 end ResponseShape.Schemas.Calc

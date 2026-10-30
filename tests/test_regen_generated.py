@@ -183,7 +183,7 @@ def test_audit_manifests_are_generated_from_the_declaration_list():
     """AR-1: `lean/audit.py --write` writes both manifests and the record from lean/declarations.txt, so a merge
     takes either side and the writer rebuilds them (collision rule: take either side, run the writer)."""
     entry = R.owner("lean/VE/Audit.lean")
-    assert entry is R.owner("lean/ResponseShape/Audit.lean") is R.owner("lean/axioms.txt")
+    assert entry is R.owner("lean/ResponseShapeAudit.lean") is R.owner("lean/axioms.txt")
     assert entry.name == "lean-audit-manifests" and entry.merge == "regenerate"
     assert entry.write == ((R.PY, "lean/audit.py", "--write"),) and entry.check == ((R.PY, "lean/audit.py", "--check"),)
     assert R.merge_text("lean/VE/Audit.lean", "base\n", "ours\n", "theirs\n") == ("ours\n", True)
