@@ -10054,7 +10054,8 @@
         "VE.Service.Standalone.rawParseAst",
         "VE.Service.Standalone.reportedFault",
         "VE.Service.Standalone.reportedModel",
-        "VE.Service.Standalone.reportedParse"
+        "VE.Service.Standalone.reportedParse",
+        "VE.Service.Standalone.routeHeaderAccepted"
       ],
       "D[V]": [
         "VE.Service.Standalone.Legacy",
