@@ -728,14 +728,11 @@ def layerDecided (ps : List String) : String :=
     (layerListing ([p, "relational-fol@0"].mergeSort (· ≤ ·))).compress
 -- On every list of D-all with the layer, `layerGate` refuses exactly the lists without `documents@1`, so never one
 -- the table's gate admits (`gate_judgments`), and nothing without the layer.
-def layerFault (ps : List String) : String :=
-  match layerGate ps with
-  | .ok () => ""
-  | .error e => e
 #guard (List.range (2 ^ registrySorted.length)).all fun m =>
   let ps := (maskList m ++ ["judgments@0"]).mergeSort (· ≤ ·)
-  layerFault (maskList m) == "" &&
-    layerFault ps == (if ps.contains "documents@1" then "" else "UnsupportedProfile: judgments@0 requires documents@1") &&
+  (layerGate (maskList m) matches .ok ()) &&
+    (if ps.contains "documents@1" then layerGate ps matches .ok ()
+     else layerGate ps matches .error "UnsupportedProfile: judgments@0 requires documents@1") &&
     ((gateOf profileTable ps).isOk <= (layerGate ps).isOk)
 #guard (decidingEnvironment (Lean.Json.mkObj [("profile", "relational-fol@0")])).toOption.map (·.compress) ==
   some (Lean.Json.mkObj [("profile", "relational-fol@0")]).compress

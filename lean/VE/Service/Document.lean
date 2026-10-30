@@ -705,8 +705,7 @@ def environmentOf (environment : Json) (units : Json := .null) (senses : Bool :=
   if let some p := listed.find? fun p => !ownedProfiles.contains p then
     throw (undecided environment s!"document checks under {p} need its Lean profile route")
   if listed.contains "judgments@0" then
-    -- A profile the layer does not compose with yet is refused by name, as by every composing mode (the layer's
-    -- own requirement is the table's gate over the list as written, below).
+    -- Refused by name, as by every composing mode; the layer's requirement is the gate's over the list, below.
     VE.Compose.layersApart listed
     if senses then throw (unavailable "judgments@0 with senses needs its composed Lean route")
   let block := blockOf listed

@@ -1531,6 +1531,13 @@
    "reason": "df-1bbb: VE/Defaults/Wire.lean +2, ResponseShape/Schemas/NormDefaults.lean +2",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-1bbb, 2026-10-18",
    "commit": "bf28108dc14e7534f037e578850cd5ae5df69ff0"
+  },
+  {
+   "class": "V",
+   "lines": 12,
+   "reason": "jt-2c F1: VE/Compose/Dispatch.lean +12 (layersApart, layerGate: the document layer's own requirement over the list as written in decidingEnvironment); cumulative jt-2c growth V +35, K +0, S +0; Compose/Examples #guards and tests/test_judgments_compose.py cover both definitions",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-2c F1, 2026-10-30",
+   "commit": "432763b06d8d4d50d06fdae218c5c53f2f267cec"
   }
  ]
 }
