@@ -42,6 +42,12 @@ def shown (r : Except String (List Row)) : Option (List (String × List String �
 #guard (shown (rowsOf [g1, gY])).map (·.lookup "u0165.s01") == some (some (["g1", "gY"], [fr,
   "hc-2 takes precedence over it; this comes from a later sentence, " ++ item2 ++ "."]))
 #guard (shown (rowsOf [g1, gY])).map (·.lookup "u0165.s02") == some (some (["g1"], [fr]))
+-- the answer's index of its rows: each governor in the block's order with the units whose rows list it
+#guard (do let D ← sd [g1, gR]; pure (Run.governedJson D (← rowsOf [g1, gR])).compress).toOption ==
+  some ("[{\"id\":\"g1\",\"units\":" ++ (Json.arr (seven.map Json.str).toArray).compress ++
+    "},{\"id\":\"gR\",\"units\":[\"u0165.s07\"]}]")
+-- spec 5.3's effect words
+#guard effectWords == ["frame", "reguard", "carve-out", "precedes", "yields", "title"]
 -- 2.3's `<where>` and `<cover>` on each reach kind; `<text>` at and around 12 words
 #guard (do let D ← sd [g1, g2]; pure [whereOf D g1 "u0165.s01", whereOf D g2 "u0165.s01",
   whereOf D {g2 with unit := "u0164.s02"} "u0165.s01", whereOf D {g2 with reach := .label "u0165.s01"} "u0165.s01",
@@ -55,5 +61,6 @@ def shown (r : Except String (List Row)) : Option (List (String × List String �
 -- the answer's cells: [g1, g2] has 7 rows of (7 + 1) + (7 + 1) cells; at the bound it answers, one below it is UNKNOWN
 #guard (do pure (Run.cellBound (← sd [g1, g2]) 7)).toOption == some 112
 #guard (rowsOf [g1, g2] 112).isOk && (rowsOf [g1, g2] 111) matches .error "ResourceLimit: scope explain answer cells"
+#guard (rowsOf [g1, g2] 0) matches .error "ResourceLimit: scope explain answer cells"
 
 end VE.Scope.RunExamples
