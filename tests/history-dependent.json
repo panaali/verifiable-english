@@ -1384,7 +1384,7 @@
   },
   {
    "test": "tests/test_regen_generated.py",
-   "why": "starts git (git check-attr, git config, git ls-files, git merge-file, git rev-parse, git show) in tests/test_regen_generated.py, tools/cache_store.py, tools/regen_generated.py, tools/source_graph.py; reads .git in tests/test_regen_generated.py",
+   "why": "starts git (git add, git cat-file, git check-attr, git config, git ls-files, git merge-base, git merge-file, git rev-list, git rev-parse, git show, git write-tree) in tests/test_regen_generated.py, tools/cache_store.py, tools/regen_generated.py, tools/select_tests.py, tools/source_graph.py, tools/test_layer_policy.py, tools/test_map.py; reads .git in tests/test_regen_generated.py; runs pytest on test files the source does not name, in tools/nested_pytest.py",
    "recorded": [
     "coverage map",
     "source"
@@ -1397,13 +1397,21 @@
     "tests/test_regen_generated.py:test_the_regen_log_gets_one_line_per_entry_run_in_the_git_common_directory: .git",
     "tests/test_regen_generated.py:test_the_regen_log_is_not_written_when_off: .git",
     "tools/cache_store.py:git_common_directory: git rev-parse",
+    "tools/nested_pytest.py:command: pytest",
     "tools/regen_generated.py:RegenLog.__init__: git rev-parse",
     "tools/regen_generated.py:_git: git",
     "tools/regen_generated.py:_stage: git show",
     "tools/regen_generated.py:install_driver: git config",
     "tools/regen_generated.py:merge_text: git merge-file",
     "tools/regen_generated.py:resolve: git rev-parse",
-    "tools/source_graph.py:tracked: git ls-files"
+    "tools/select_tests.py:blobs: git cat-file",
+    "tools/select_tests.py:git_lines: git",
+    "tools/source_graph.py:tracked: git ls-files",
+    "tools/test_layer_policy.py:LayerSelectionTests.test_renames_include_deleted_paths_in_all_git_diff_modes.<locals>.git: git",
+    "tools/test_map.py:find_map: git merge-base, git rev-list",
+    "tools/test_map.py:git: git",
+    "tools/test_map.py:lean_tree: git rev-parse",
+    "tools/test_map.py:working_tree_id: git add, git write-tree"
    ]
   },
   {
