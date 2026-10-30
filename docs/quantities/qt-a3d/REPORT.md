@@ -128,7 +128,7 @@ untied V +72, within R16's 150 lines; per file in DELTA row 2 (`Document.lean` S
 and `report_id`'s lines, recorded with `--allow`, SIGNED by standing ruling R16; the ties-pass row is in manage-agents
 `FOLLOW-UPS.md` under "## qt-a3d round 1".
 
-`mac-pytest.sh --trustmut` (a full run on the final Lean tree, `230618076`): TRUSTMUT_RESULT. Round 1's first full run
+`mac-pytest.sh --trustmut` (a full run on the final Lean tree, `493da762e`, snapshot tree `4453f7ad21a2` = HEAD's): 69 mutants, 60 KILLED, 0 SURVIVOR, 0 UNKNOWN, 4 INVALID, 5 ALLOWED, exit 0 (`trust-mutants.json`); the run at `230618076`, before the case theorems, had the same counts. Round 1's first full run
 (`35a71d7f5`) had 0 survivors and 2 UNKNOWN: `[]` for `g.leaves` in `reportJson` does not elaborate (the element type
 is lost), allowed with that reason (`trust-mutants-allow.json`); the whole member list's `[]` is killed. The other
 allowed ones do not elaborate either: `True` or `False` for `CardReport.Sound`'s body drops its universe, so the
@@ -138,17 +138,22 @@ reclassified encoders, whose lines did not change, are `mutants.json`'s hand mut
 
 ## Tests
 
-- `zsh manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, second run: exit 0, 6 shards on
-  GitHub Actions, 400 units, 400 passed (`SHARD n/6` lines). Only `DELTA.md` and this report changed after it.
-- The first run, on the VM, stopped early with 3 failing units and 338 not run. Two were this item's and are fixed:
-  `tests/test_assurance_manifest.py` (`Document.lean` unpinned, `Run.lean`'s pin stale) and
-  `tests/test_consolidation_tools.py::test_committed_ledger_names_real_declarations` (step 7, 711 to 715).
+- Round 1, `zsh manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` on `493da762e`: exit 0,
+  5 shards on GitHub Actions, 402 units, 402 passed (`SHARD n/5` lines). Only this report, `DELTA.md` and the trust-mutant
+  evidence changed after it.
+- Round 1's first selected run (on `2b26c9d53`, 6 shards, 400 units) failed one file, this item's:
+  `tests/test_cardinality_exercised.py` (two tests): the reclassified encoders were trusted and no theorem stated
+  anything about them. Fixed by `encBody_cases`, `encOperand_cases`, `encPrinted_eq`, `encode_cases` and
+  `reportJson_report` (`493da762e`); the file passes, and is in the second run.
+- Run locally while iterating: `tests/test_cardinality_service.py` (5 passed), `tests/test_trust_budget.py`,
+  `tests/test_assurance_manifest.py` and `tests/test_consolidation_tools.py` (433 passed), `tests/test_cardinality_exercised.py`;
+  `lake build` (1,163 jobs) and `python3 lean/audit.py` PASS on `493da762e`; `tools/regen_generated.py --check`: 34 entries fresh on
+  `493da762e`.
 - **Pre-existing, not fixed:** `tests/test_safety_framework.py::test_fsf_r2_probes_rerun_equals_saved_probes` failed on the VM
-  and is **skipped, not passed**, in the Actions run, which has no pinned source. Rerunning `measure_r2.py` differs from the
-  saved `probes.json` in one line, the diagnostic of `DF-a`, whose text came from main (df-3, `97e36e510`); this item does not touch it. I did
-  not run it on a main checkout, and it is not in `main-known-red.txt`.
-- The full gate is the chain's; it has not run.
-- `uv run python tools/gate_collection.py --check --prebuilt`: 1 added, 0 removed, 0 refused, 0 stale, 0 malformed.
+  in round 0 and is skipped on Actions; this item touches nothing under `usecases/`, and it is not in `main-known-red.txt`
+  (review F10, a FOLLOW-UP).
+- Not run: the full gate (the chain's, on the final HEAD) and the full suite.
+- Round 1 added 321 lines of Lean, tests and benchmark (88 removed), and about 800 of generated dumps, evidence and docs.
 
 ## Pilot bytes
 
