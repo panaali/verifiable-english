@@ -2297,11 +2297,14 @@
   }
  ],
  "cost": {
-  "documents_built": 158,
+  "documents_built": 162,
   "prover_calls": 10
  },
  "items": {
   "A-AIS-C-DEV/ALN": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -2376,9 +2379,13 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-AIS-C-DEV/HALT": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -2445,9 +2452,16 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-halt-default",
+    "f1-halt-strict"
+   ]
   },
   "A-AIS-C-DEV/MIS": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -2522,9 +2536,13 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-AIS-C-DEV/SEC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -2607,9 +2625,18 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-security-default",
+    "f1-security-strict",
+    "f2-security-developed",
+    "f4-security"
+   ]
   },
   "A-AIS-C-DEV/SUF": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -2970,9 +2997,17 @@
     "RS3",
     "RS5"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f3-develop",
+    "f3-develop-inuse",
+    "f3-reminder"
+   ]
   },
   "A-AIS-C-EXT/ALN": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -3047,9 +3082,13 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-AIS-C-EXT/HALT": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -3124,9 +3163,13 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-AIS-C-EXT/MIS": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -3201,9 +3244,13 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-AIS-C-EXT/SEC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -3292,9 +3339,17 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-security-default",
+    "f1-security-strict",
+    "f4-security"
+   ]
   },
   "A-AIS-C-EXT/SUF": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -3647,9 +3702,18 @@
     "RS3",
     "RS5"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f2-deploy",
+    "f2-deploy-any",
+    "f2-reminder",
+    "f2-reminder-any"
+   ]
   },
   "A-AIS-C-INT/ALN": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -3724,9 +3788,13 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-AIS-C-INT/HALT": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -3801,9 +3869,13 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-AIS-C-INT/MIS": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -3878,9 +3950,13 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-AIS-C-INT/SEC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -3969,9 +4045,17 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-security-default",
+    "f1-security-strict",
+    "f4-security"
+   ]
   },
   "A-AIS-C-INT/SUF": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -4314,9 +4398,17 @@
     "RS3",
     "RS5"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f2-deploy-any",
+    "f2-reminder-any",
+    "f3-develop-inuse"
+   ]
   },
   "A-AIS-C-LINT/ALN": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -4391,9 +4483,13 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-AIS-C-LINT/HALT": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -4468,9 +4564,13 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-AIS-C-LINT/MIS": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -4545,9 +4645,13 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-AIS-C-LINT/SEC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -4636,9 +4740,17 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-security-default",
+    "f1-security-strict",
+    "f4-security"
+   ]
   },
   "A-AIS-C-LINT/SUF": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -4981,9 +5093,17 @@
     "RS3",
     "RS5"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f2-deploy-any",
+    "f2-reminder-any",
+    "f3-develop-inuse"
+   ]
   },
   "A-AIS-H-DEV/ALN": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -5021,9 +5141,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-AIS-H-DEV/HALT": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -5061,9 +5185,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-AIS-H-DEV/MIS": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -5101,9 +5229,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-AIS-H-DEV/SEC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -5141,9 +5273,18 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-security-default",
+    "f1-security-strict",
+    "f2-security-developed",
+    "f4-security"
+   ]
   },
   "A-AIS-H-DEV/SUF": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -5311,9 +5452,13 @@
     "RS3",
     "RS5"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-AIS-H-EXT/ALN": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -5351,9 +5496,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-AIS-H-EXT/HALT": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -5391,9 +5540,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-AIS-H-EXT/MIS": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -5431,9 +5584,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-AIS-H-EXT/SEC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -5477,9 +5634,17 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-security-default",
+    "f1-security-strict",
+    "f4-security"
+   ]
   },
   "A-AIS-H-EXT/SUF": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -5655,9 +5820,18 @@
     "RS3",
     "RS5"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f2-deploy",
+    "f2-deploy-any",
+    "f2-reminder",
+    "f2-reminder-any"
+   ]
   },
   "A-AIS-H-INT/ALN": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -5695,9 +5869,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-AIS-H-INT/HALT": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -5735,9 +5913,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-AIS-H-INT/MIS": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -5775,9 +5957,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-AIS-H-INT/SEC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -5821,9 +6007,17 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-security-default",
+    "f1-security-strict",
+    "f4-security"
+   ]
   },
   "A-AIS-H-INT/SUF": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -5995,9 +6189,16 @@
     "RS3",
     "RS5"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f2-deploy-any",
+    "f2-reminder-any"
+   ]
   },
   "A-AIS-H-LINT/ALN": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -6035,9 +6236,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-AIS-H-LINT/HALT": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -6075,9 +6280,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-AIS-H-LINT/MIS": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -6115,9 +6324,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-AIS-H-LINT/SEC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -6161,9 +6374,17 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-security-default",
+    "f1-security-strict",
+    "f4-security"
+   ]
   },
   "A-AIS-H-LINT/SUF": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -6335,9 +6556,16 @@
     "RS3",
     "RS5"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f2-deploy-any",
+    "f2-reminder-any"
+   ]
   },
   "A-BIO-C-DEV/ALN": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -6412,9 +6640,13 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-BIO-C-DEV/HALT": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -6481,9 +6713,16 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-halt-default",
+    "f1-halt-strict"
+   ]
   },
   "A-BIO-C-DEV/MIS": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -6558,9 +6797,13 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-BIO-C-DEV/SEC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -6643,9 +6886,18 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-security-default",
+    "f1-security-strict",
+    "f2-security-developed",
+    "f4-security"
+   ]
   },
   "A-BIO-C-DEV/SUF": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -7006,9 +7258,17 @@
     "RS3",
     "RS5"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f3-develop",
+    "f3-develop-inuse",
+    "f3-reminder"
+   ]
   },
   "A-BIO-C-EXT/ALN": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -7083,9 +7343,13 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-BIO-C-EXT/HALT": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -7160,9 +7424,13 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-BIO-C-EXT/MIS": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -7233,9 +7501,16 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-misuse-bio-default",
+    "f1-misuse-bio-strict"
+   ]
   },
   "A-BIO-C-EXT/SEC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -7324,9 +7599,17 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-security-default",
+    "f1-security-strict",
+    "f4-security"
+   ]
   },
   "A-BIO-C-EXT/SUF": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -7679,9 +7962,18 @@
     "RS3",
     "RS5"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f2-deploy",
+    "f2-deploy-any",
+    "f2-reminder",
+    "f2-reminder-any"
+   ]
   },
   "A-BIO-C-INT/ALN": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -7756,9 +8048,13 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-BIO-C-INT/HALT": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -7833,9 +8129,13 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-BIO-C-INT/MIS": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -7910,9 +8210,13 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-BIO-C-INT/SEC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -8001,9 +8305,17 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-security-default",
+    "f1-security-strict",
+    "f4-security"
+   ]
   },
   "A-BIO-C-INT/SUF": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -8346,9 +8658,17 @@
     "RS3",
     "RS5"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f2-deploy-any",
+    "f2-reminder-any",
+    "f3-develop-inuse"
+   ]
   },
   "A-BIO-C-LINT/ALN": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -8423,9 +8743,13 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-BIO-C-LINT/HALT": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -8500,9 +8824,13 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-BIO-C-LINT/MIS": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -8577,9 +8905,13 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-BIO-C-LINT/SEC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -8668,9 +9000,17 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-security-default",
+    "f1-security-strict",
+    "f4-security"
+   ]
   },
   "A-BIO-C-LINT/SUF": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -9013,9 +9353,17 @@
     "RS3",
     "RS5"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f2-deploy-any",
+    "f2-reminder-any",
+    "f3-develop-inuse"
+   ]
   },
   "A-BIO-H-DEV/ALN": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -9053,9 +9401,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-BIO-H-DEV/HALT": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -9093,9 +9445,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-BIO-H-DEV/MIS": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -9133,9 +9489,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-BIO-H-DEV/SEC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -9173,9 +9533,18 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-security-default",
+    "f1-security-strict",
+    "f2-security-developed",
+    "f4-security"
+   ]
   },
   "A-BIO-H-DEV/SUF": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -9343,9 +9712,13 @@
     "RS3",
     "RS5"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-BIO-H-EXT/ALN": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -9383,9 +9756,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-BIO-H-EXT/HALT": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -9423,9 +9800,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-BIO-H-EXT/MIS": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -9459,9 +9840,16 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-misuse-bio-default",
+    "f1-misuse-bio-strict"
+   ]
   },
   "A-BIO-H-EXT/SEC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -9505,9 +9893,17 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-security-default",
+    "f1-security-strict",
+    "f4-security"
+   ]
   },
   "A-BIO-H-EXT/SUF": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -9683,9 +10079,18 @@
     "RS3",
     "RS5"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f2-deploy",
+    "f2-deploy-any",
+    "f2-reminder",
+    "f2-reminder-any"
+   ]
   },
   "A-BIO-H-INT/ALN": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -9723,9 +10128,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-BIO-H-INT/HALT": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -9763,9 +10172,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-BIO-H-INT/MIS": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -9803,9 +10216,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-BIO-H-INT/SEC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -9849,9 +10266,17 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-security-default",
+    "f1-security-strict",
+    "f4-security"
+   ]
   },
   "A-BIO-H-INT/SUF": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -10023,9 +10448,16 @@
     "RS3",
     "RS5"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f2-deploy-any",
+    "f2-reminder-any"
+   ]
   },
   "A-BIO-H-LINT/ALN": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -10063,9 +10495,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-BIO-H-LINT/HALT": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -10103,9 +10539,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-BIO-H-LINT/MIS": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -10143,9 +10583,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-BIO-H-LINT/SEC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -10189,9 +10633,17 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-security-default",
+    "f1-security-strict",
+    "f4-security"
+   ]
   },
   "A-BIO-H-LINT/SUF": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -10363,9 +10815,16 @@
     "RS3",
     "RS5"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f2-deploy-any",
+    "f2-reminder-any"
+   ]
   },
   "A-CYB-C-DEV/ALN": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -10440,9 +10899,13 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-CYB-C-DEV/HALT": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -10509,9 +10972,16 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-halt-default",
+    "f1-halt-strict"
+   ]
   },
   "A-CYB-C-DEV/MIS": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -10586,9 +11056,13 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-CYB-C-DEV/SEC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -10671,9 +11145,18 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-security-default",
+    "f1-security-strict",
+    "f2-security-developed",
+    "f4-security"
+   ]
   },
   "A-CYB-C-DEV/SUF": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -11034,9 +11517,17 @@
     "RS3",
     "RS5"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f3-develop",
+    "f3-develop-inuse",
+    "f3-reminder"
+   ]
   },
   "A-CYB-C-EXT/ALN": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -11111,9 +11602,13 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-CYB-C-EXT/HALT": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -11188,9 +11683,13 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-CYB-C-EXT/MIS": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -11261,9 +11760,16 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-misuse-cyb-default",
+    "f1-misuse-cyb-strict"
+   ]
   },
   "A-CYB-C-EXT/SEC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -11352,9 +11858,17 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-security-default",
+    "f1-security-strict",
+    "f4-security"
+   ]
   },
   "A-CYB-C-EXT/SUF": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -11707,9 +12221,18 @@
     "RS3",
     "RS5"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f2-deploy",
+    "f2-deploy-any",
+    "f2-reminder",
+    "f2-reminder-any"
+   ]
   },
   "A-CYB-C-INT/ALN": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -11784,9 +12307,13 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-CYB-C-INT/HALT": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -11861,9 +12388,13 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-CYB-C-INT/MIS": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -11938,9 +12469,13 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-CYB-C-INT/SEC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -12029,9 +12564,17 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-security-default",
+    "f1-security-strict",
+    "f4-security"
+   ]
   },
   "A-CYB-C-INT/SUF": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -12374,9 +12917,17 @@
     "RS3",
     "RS5"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f2-deploy-any",
+    "f2-reminder-any",
+    "f3-develop-inuse"
+   ]
   },
   "A-CYB-C-LINT/ALN": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -12447,9 +12998,16 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-alignment-cyb-default",
+    "f1-alignment-cyb-strict"
+   ]
   },
   "A-CYB-C-LINT/HALT": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -12524,9 +13082,13 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-CYB-C-LINT/MIS": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -12601,9 +13163,13 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-CYB-C-LINT/SEC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -12692,9 +13258,17 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-security-default",
+    "f1-security-strict",
+    "f4-security"
+   ]
   },
   "A-CYB-C-LINT/SUF": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -13037,9 +13611,17 @@
     "RS3",
     "RS5"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f2-deploy-any",
+    "f2-reminder-any",
+    "f3-develop-inuse"
+   ]
   },
   "A-CYB-H-DEV/ALN": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -13077,9 +13659,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-CYB-H-DEV/HALT": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -13117,9 +13703,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-CYB-H-DEV/MIS": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -13157,9 +13747,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-CYB-H-DEV/SEC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -13197,9 +13791,18 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-security-default",
+    "f1-security-strict",
+    "f2-security-developed",
+    "f4-security"
+   ]
   },
   "A-CYB-H-DEV/SUF": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -13367,9 +13970,13 @@
     "RS3",
     "RS5"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-CYB-H-EXT/ALN": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -13407,9 +14014,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-CYB-H-EXT/HALT": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -13447,9 +14058,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-CYB-H-EXT/MIS": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -13483,9 +14098,16 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-misuse-cyb-default",
+    "f1-misuse-cyb-strict"
+   ]
   },
   "A-CYB-H-EXT/SEC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -13529,9 +14151,17 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-security-default",
+    "f1-security-strict",
+    "f4-security"
+   ]
   },
   "A-CYB-H-EXT/SUF": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -13707,9 +14337,18 @@
     "RS3",
     "RS5"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f2-deploy",
+    "f2-deploy-any",
+    "f2-reminder",
+    "f2-reminder-any"
+   ]
   },
   "A-CYB-H-INT/ALN": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -13747,9 +14386,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-CYB-H-INT/HALT": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -13787,9 +14430,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-CYB-H-INT/MIS": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -13827,9 +14474,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-CYB-H-INT/SEC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -13873,9 +14524,17 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-security-default",
+    "f1-security-strict",
+    "f4-security"
+   ]
   },
   "A-CYB-H-INT/SUF": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -14047,9 +14706,16 @@
     "RS3",
     "RS5"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f2-deploy-any",
+    "f2-reminder-any"
+   ]
   },
   "A-CYB-H-LINT/ALN": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -14083,9 +14749,16 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-alignment-cyb-default",
+    "f1-alignment-cyb-strict"
+   ]
   },
   "A-CYB-H-LINT/HALT": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -14123,9 +14796,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-CYB-H-LINT/MIS": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -14163,9 +14840,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-CYB-H-LINT/SEC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -14209,9 +14890,17 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-security-default",
+    "f1-security-strict",
+    "f4-security"
+   ]
   },
   "A-CYB-H-LINT/SUF": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -14383,9 +15072,16 @@
     "RS3",
     "RS5"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f2-deploy-any",
+    "f2-reminder-any"
+   ]
   },
   "A-L0-DEV/ALN": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -14423,9 +15119,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-L0-DEV/HALT": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -14463,9 +15163,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-L0-DEV/MIS": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -14503,9 +15207,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-L0-DEV/SEC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -14551,9 +15259,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-L0-DEV/SUF": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -14721,9 +15433,13 @@
     "RS3",
     "RS5"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-L0-EXT/ALN": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -14761,9 +15477,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-L0-EXT/HALT": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -14801,9 +15521,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-L0-EXT/MIS": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -14841,9 +15565,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-L0-EXT/SEC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -14889,9 +15617,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-L0-EXT/SUF": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -15059,9 +15791,13 @@
     "RS3",
     "RS5"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-L0-INT/ALN": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -15099,9 +15835,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-L0-INT/HALT": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -15139,9 +15879,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-L0-INT/MIS": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -15179,9 +15923,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-L0-INT/SEC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -15227,9 +15975,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-L0-INT/SUF": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -15397,9 +16149,13 @@
     "RS3",
     "RS5"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-L0-LINT/ALN": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -15437,9 +16193,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-L0-LINT/HALT": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -15477,9 +16237,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-L0-LINT/MIS": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -15517,9 +16281,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-L0-LINT/SEC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -15565,9 +16333,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "A-L0-LINT/SUF": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -15735,9 +16507,13 @@
     "RS3",
     "RS5"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "B-AIS-C/CAPREP": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -15771,9 +16547,15 @@
    "cone": [
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f7-report"
+   ]
   },
   "B-AIS-C/CONTRIB": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -15856,9 +16638,13 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "B-AIS-C/DISC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -15894,9 +16680,15 @@
    "cone": [
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f15-safeguards"
+   ]
   },
   "B-AIS-C/MREP": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -16044,9 +16836,15 @@
     "RS4",
     "RS4s"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f12-lra-unscoped"
+   ]
   },
   "B-AIS-C/PUBRES": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -16080,9 +16878,15 @@
    "cone": [
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f15-disclose"
+   ]
   },
   "B-AIS-C/SAFEREP": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -16116,9 +16920,15 @@
    "cone": [
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f9-report"
+   ]
   },
   "B-AIS-H/CAPREP": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -16134,9 +16944,15 @@
     }
    ],
    "cone": [],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f7-report"
+   ]
   },
   "B-AIS-H/CONTRIB": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -16178,9 +16994,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "B-AIS-H/DISC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -16196,9 +17016,15 @@
     }
    ],
    "cone": [],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f15-safeguards"
+   ]
   },
   "B-AIS-H/MREP": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -16271,9 +17097,15 @@
     "RS4",
     "RS4s"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f12-lra-unscoped"
+   ]
   },
   "B-AIS-H/PUBRES": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -16289,9 +17121,15 @@
     }
    ],
    "cone": [],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f15-disclose"
+   ]
   },
   "B-AIS-H/SAFEREP": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -16307,9 +17145,15 @@
     }
    ],
    "cone": [],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f9-report"
+   ]
   },
   "B-BIO-C/CAPREP": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -16343,9 +17187,15 @@
    "cone": [
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f7-report"
+   ]
   },
   "B-BIO-C/CONTRIB": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -16428,9 +17278,16 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-contrib-bio-default",
+    "f1-contrib-bio-strict"
+   ]
   },
   "B-BIO-C/DISC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -16466,9 +17323,15 @@
    "cone": [
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f15-safeguards"
+   ]
   },
   "B-BIO-C/MREP": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -16616,9 +17479,15 @@
     "RS4",
     "RS4s"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f12-lra-unscoped"
+   ]
   },
   "B-BIO-C/PUBRES": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -16652,9 +17521,15 @@
    "cone": [
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f15-disclose"
+   ]
   },
   "B-BIO-C/SAFEREP": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -16688,9 +17563,15 @@
    "cone": [
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f9-report"
+   ]
   },
   "B-BIO-H/CAPREP": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -16706,9 +17587,15 @@
     }
    ],
    "cone": [],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f7-report"
+   ]
   },
   "B-BIO-H/CONTRIB": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -16750,9 +17637,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "B-BIO-H/DISC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -16768,9 +17659,15 @@
     }
    ],
    "cone": [],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f15-safeguards"
+   ]
   },
   "B-BIO-H/MREP": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -16843,9 +17740,15 @@
     "RS4",
     "RS4s"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f12-lra-unscoped"
+   ]
   },
   "B-BIO-H/PUBRES": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -16861,9 +17764,15 @@
     }
    ],
    "cone": [],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f15-disclose"
+   ]
   },
   "B-BIO-H/SAFEREP": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -16879,9 +17788,15 @@
     }
    ],
    "cone": [],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f9-report"
+   ]
   },
   "B-CYB-C/CAPREP": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -16915,9 +17830,15 @@
    "cone": [
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f7-report"
+   ]
   },
   "B-CYB-C/CONTRIB": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -17000,9 +17921,16 @@
     "RS1",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-contrib-cyb-default",
+    "f1-contrib-cyb-strict"
+   ]
   },
   "B-CYB-C/DISC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -17038,9 +17966,15 @@
    "cone": [
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f15-safeguards"
+   ]
   },
   "B-CYB-C/MREP": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -17188,9 +18122,15 @@
     "RS4",
     "RS4s"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f12-lra-unscoped"
+   ]
   },
   "B-CYB-C/PUBRES": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -17224,9 +18164,15 @@
    "cone": [
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f15-disclose"
+   ]
   },
   "B-CYB-C/SAFEREP": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -17260,9 +18206,15 @@
    "cone": [
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f9-report"
+   ]
   },
   "B-CYB-H/CAPREP": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -17278,9 +18230,15 @@
     }
    ],
    "cone": [],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f7-report"
+   ]
   },
   "B-CYB-H/CONTRIB": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -17322,9 +18280,16 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f1-contrib-cyb-default",
+    "f1-contrib-cyb-strict"
+   ]
   },
   "B-CYB-H/DISC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -17340,9 +18305,15 @@
     }
    ],
    "cone": [],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f15-safeguards"
+   ]
   },
   "B-CYB-H/MREP": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -17415,9 +18386,15 @@
     "RS4",
     "RS4s"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f12-lra-unscoped"
+   ]
   },
   "B-CYB-H/PUBRES": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -17433,9 +18410,15 @@
     }
    ],
    "cone": [],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f15-disclose"
+   ]
   },
   "B-CYB-H/SAFEREP": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -17451,9 +18434,15 @@
     }
    ],
    "cone": [],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f9-report"
+   ]
   },
   "B-L0/CAPREP": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -17469,9 +18458,15 @@
     }
    ],
    "cone": [],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f7-report"
+   ]
   },
   "B-L0/CONTRIB": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -17513,9 +18508,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "B-L0/DISC": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -17533,9 +18532,13 @@
     }
    ],
    "cone": [],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "B-L0/MREP": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -17610,9 +18613,13 @@
     "RS4",
     "RS4s"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "B-L0/PUBRES": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -17628,9 +18635,15 @@
     }
    ],
    "cone": [],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f15-disclose"
+   ]
   },
   "B-L0/SAFEREP": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -17648,9 +18661,13 @@
     }
    ],
    "cone": [],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "C-doc": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -19816,9 +20833,13 @@
     "f17-suff & f17-iff-only",
     "f17-iff & f17-iff-only"
    ],
-   "route": "D1 norms@0 W1 check_conflict per opposite-sign pair with a validated witness model"
+   "route": "D1 norms@0 W1 check_conflict per opposite-sign pair with a validated witness model",
+   "selected_rules": []
   },
   "C1": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -19897,9 +20918,13 @@
     "RS3",
     "RS5"
    ],
-   "route": "D1 norms@0 W1 check_conflict with a validated witness model"
+   "route": "D1 norms@0 W1 check_conflict with a validated witness model",
+   "selected_rules": []
   },
   "C2": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -19966,9 +20991,13 @@
     "RS6",
     "RS7"
    ],
-   "route": "D1 norms@0 W1 check_conflict with a validated witness model"
+   "route": "D1 norms@0 W1 check_conflict with a validated witness model",
+   "selected_rules": []
   },
   "C3": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -20043,9 +21072,13 @@
     "RS1",
     "RS18"
    ],
-   "route": "D1 norms@0 W1 check_conflict with a validated witness model"
+   "route": "D1 norms@0 W1 check_conflict with a validated witness model",
+   "selected_rules": []
   },
   "C4": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -20079,9 +21112,13 @@
    "cone": [
     "RS8"
    ],
-   "route": "D1 norms@0 W1 check_conflict with a validated witness model"
+   "route": "D1 norms@0 W1 check_conflict with a validated witness model",
+   "selected_rules": []
   },
   "C5": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -20152,9 +21189,13 @@
     "RS1",
     "RS3"
    ],
-   "route": "D1 norms@0 W1 check_conflict with a validated witness model"
+   "route": "D1 norms@0 W1 check_conflict with a validated witness model",
+   "selected_rules": []
   },
   "C6": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -20221,9 +21262,13 @@
     "RS11",
     "RS17"
    ],
-   "route": "D1 norms@0 W1 check_conflict with a validated witness model"
+   "route": "D1 norms@0 W1 check_conflict with a validated witness model",
+   "selected_rules": []
   },
   "D1": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -20232,9 +21277,13 @@
     }
    ],
    "cone": [],
-   "route": "D3 ve-units@1 quantity certificate replay"
+   "route": "D3 ve-units@1 quantity certificate replay",
+   "selected_rules": []
   },
   "D2": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -20254,9 +21303,13 @@
    "cone": [
     "RS10"
    ],
-   "route": "D3 ve-units@1 quantity certificate replay"
+   "route": "D3 ve-units@1 quantity certificate replay",
+   "selected_rules": []
   },
   "D3": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -20276,9 +21329,13 @@
    "cone": [
     "RS14"
    ],
-   "route": "D3 ve-units@1 quantity certificate replay"
+   "route": "D3 ve-units@1 quantity certificate replay",
+   "selected_rules": []
   },
   "D4": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -20287,9 +21344,13 @@
     }
    ],
    "cone": [],
-   "route": "D3 ve-units@1 quantity certificate replay"
+   "route": "D3 ve-units@1 quantity certificate replay",
+   "selected_rules": []
   },
   "G1": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -20369,9 +21430,13 @@
     "RS2",
     "RS3"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion; no rule forbids development"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion; no rule forbids development",
+   "selected_rules": []
   },
   "G10": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -20405,9 +21470,16 @@
    "cone": [
     "RS3"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f2-no-deploy",
+    "f2-no-deploy-any"
+   ]
   },
   "G2": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -20487,9 +21559,13 @@
     "RS18",
     "RS2"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion; no Critical-specific rule"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion; no Critical-specific rule",
+   "selected_rules": []
   },
   "G3": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -20509,9 +21585,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion; silence"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion; silence",
+   "selected_rules": []
   },
   "G4": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -20531,9 +21611,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion; silence"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion; silence",
+   "selected_rules": []
   },
   "G5": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -20702,9 +21786,13 @@
     "RS3",
     "RS5"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion; no threshold rule"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion; no threshold rule",
+   "selected_rules": []
   },
   "G6": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -20726,13 +21814,23 @@
    "cone": [
     "RS15"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion; no rule beyond those of a case without persuasion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion; no rule beyond those of a case without persuasion",
+   "selected_rules": [
+    "cl4-persuasion"
+   ]
   },
   "G7": {
+   "audit_input": {
+    "rules": []
+   },
    "route": "D1",
+   "selected_rules": [],
    "undecided": "translation limit (SC): footnote 5's indicator relation between biological evaluations and the category's capabilities is not in D1"
   },
   "G8": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -20900,9 +21998,13 @@
     "RS3",
     "RS5"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "G9": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -21328,9 +22430,16 @@
     "RS5",
     "RS9"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion; only the C.3 access rule"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion; only the C.3 access rule",
+   "selected_rules": [
+    "c3-access-default",
+    "c3-access-strict"
+   ]
   },
   "K1": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -21346,9 +22455,15 @@
     }
    ],
    "cone": [],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f8-start"
+   ]
   },
   "K10": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -21419,9 +22534,16 @@
     "RS4",
     "RS4s"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f12-sandbagging",
+    "f12-sandbagging-unscoped"
+   ]
   },
   "K11": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -21437,9 +22559,15 @@
     }
    ],
    "cone": [],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f5-ambiguous"
+   ]
   },
   "K12": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -21455,9 +22583,15 @@
     }
    ],
    "cone": [],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f16-year"
+   ]
   },
   "K13": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -21491,9 +22625,16 @@
    "cone": [
     "RS9"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f16-chair-default",
+    "f16-chair-strict"
+   ]
   },
   "K14": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -21509,9 +22650,15 @@
     }
    ],
    "cone": [],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f15-third-party"
+   ]
   },
   "K15": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -21527,9 +22674,15 @@
     }
    ],
    "cone": [],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f13-results"
+   ]
   },
   "K16": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -21565,9 +22718,15 @@
    "cone": [
     "RS13"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f14-summary"
+   ]
   },
   "K17": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -21583,9 +22742,15 @@
     }
    ],
    "cone": [],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f14-corrective"
+   ]
   },
   "K18": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -21656,9 +22821,16 @@
     "RS4",
     "RS4s"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f12-nuclear",
+    "f12-nuclear-unscoped"
+   ]
   },
   "K19": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -21729,9 +22901,16 @@
     "RS4",
     "RS4s"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f12-ara",
+    "f12-ara-unscoped"
+   ]
   },
   "K2": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -21767,9 +22946,15 @@
    "cone": [
     "RS16"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f7-recommend"
+   ]
   },
   "K20": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -21803,9 +22988,16 @@
    "cone": [
     "RS9"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f9-residual-default",
+    "f9-residual-strict"
+   ]
   },
   "K3": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -21841,9 +23033,15 @@
    "cone": [
     "RS8"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f6-rel"
+   ]
   },
   "K4": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -21859,9 +23057,15 @@
     }
    ],
    "cone": [],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f7-report"
+   ]
   },
   "K5": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -21878,9 +23082,16 @@
     }
    ],
    "cone": [],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f10-review",
+    "f10-validate"
+   ]
   },
   "K6a": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -21896,9 +23107,15 @@
     }
    ],
    "cone": [],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f11-protect"
+   ]
   },
   "K6b": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -21914,9 +23131,15 @@
     }
    ],
    "cone": [],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f11-acknowledge"
+   ]
   },
   "K6c": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -21932,9 +23155,15 @@
     }
    ],
    "cone": [],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f11-share"
+   ]
   },
   "K7": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -21968,9 +23197,16 @@
    "cone": [
     "RS18"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": [
+    "f3-develop-forecast",
+    "f3-develop-inuse-forecast"
+   ]
   },
   "K8": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -22008,9 +23244,13 @@
    "cone": [
     "RS1"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion",
+   "selected_rules": []
   },
   "K9": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -22081,9 +23321,16 @@
     "RS4",
     "RS4s"
    ],
-   "route": "D1 soft-norms@0 selected_rules, deny and allow completion; the same for each High level"
+   "route": "D1 soft-norms@0 selected_rules, deny and allow completion; the same for each High level",
+   "selected_rules": [
+    "f12-undermining",
+    "f12-undermining-unscoped"
+   ]
   },
   "N1": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -22117,9 +23364,13 @@
    "cone": [
     "RS2"
    ],
-   "route": "D1 relational-fol@0 entailment certificate per guard"
+   "route": "D1 relational-fol@0 entailment certificate per guard",
+   "selected_rules": []
   },
   "N2": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {
@@ -22139,9 +23390,13 @@
    "cone": [
     "RS15"
    ],
-   "route": "D1 soft-norms@0 selected_rules on a query-only vocabulary extension"
+   "route": "D1 soft-norms@0 selected_rules on a query-only vocabulary extension",
+   "selected_rules": []
   },
   "N3": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -22151,6 +23406,31 @@
    ],
    "cone": [],
    "route": "D1 soft-norms@0 selected_rules: a validated case model per rule",
+   "selected_rules": [
+    "f11-exception",
+    "f11-within",
+    "f12-lra",
+    "f13-review",
+    "f14-document",
+    "f14-investigate",
+    "f16-board-reverse",
+    "f16-final",
+    "f16-informed",
+    "f16-process",
+    "f16-sag-recommend",
+    "f16-ssc-visibility",
+    "f16-without-nodelib",
+    "f16-without-noinput",
+    "f17-iff",
+    "f17-iff-only",
+    "f17-suff",
+    "f5-checkpoint",
+    "f7-evaluations",
+    "f9-efficacy",
+    "f9-risk-paths",
+    "f9-specific",
+    "f9-threshold"
+   ],
    "witnesses": {
     "f1-alignment-cyb-default": "a scored case",
     "f1-alignment-cyb-strict": "a scored case",
@@ -22169,10 +23449,88 @@
     "f10-review": "a scored case",
     "f10-validate": "a scored case",
     "f11-acknowledge": "a scored case",
-    "f11-exception": "a scored case",
+    "f11-exception": [
+     [
+      "adjustment_conditions",
+      "s"
+     ],
+     [
+      "adjustment_confirmed",
+      "s"
+     ],
+     [
+      "reached",
+      "s",
+      "ai_self_improvement_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "ai_self_improvement_high"
+     ],
+     [
+      "reached",
+      "s",
+      "biological_and_chemical_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "biological_and_chemical_high"
+     ],
+     [
+      "reached",
+      "s",
+      "cybersecurity_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "cybersecurity_high"
+     ]
+    ],
     "f11-protect": "a scored case",
     "f11-share": "a scored case",
-    "f11-within": "a scored case",
+    "f11-within": [
+     [
+      "adjustment_conditions",
+      "s"
+     ],
+     [
+      "adjustment_confirmed",
+      "s"
+     ],
+     [
+      "reached",
+      "s",
+      "ai_self_improvement_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "ai_self_improvement_high"
+     ],
+     [
+      "reached",
+      "s",
+      "biological_and_chemical_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "biological_and_chemical_high"
+     ],
+     [
+      "reached",
+      "s",
+      "cybersecurity_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "cybersecurity_high"
+     ]
+    ],
     "f12-ara": "a scored case",
     "f12-ara-unscoped": "a scored case",
     "f12-lra": [
@@ -22324,12 +23682,156 @@
     "f15-disclose": "a scored case",
     "f15-safeguards": "a scored case",
     "f15-third-party": "a scored case",
-    "f16-board-reverse": "a scored case",
+    "f16-board-reverse": [
+     [
+      "board_finds_necessary",
+      "s"
+     ],
+     [
+      "leadership_decision",
+      "s"
+     ],
+     [
+      "reached",
+      "s",
+      "ai_self_improvement_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "ai_self_improvement_high"
+     ],
+     [
+      "reached",
+      "s",
+      "biological_and_chemical_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "biological_and_chemical_high"
+     ],
+     [
+      "reached",
+      "s",
+      "cybersecurity_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "cybersecurity_high"
+     ]
+    ],
     "f16-chair-default": "a scored case",
     "f16-chair-strict": "a scored case",
-    "f16-final": "a scored case",
-    "f16-informed": "a scored case",
-    "f16-process": "a scored case",
+    "f16-final": [
+     [
+      "leadership_decision",
+      "s"
+     ],
+     [
+      "reached",
+      "s",
+      "ai_self_improvement_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "ai_self_improvement_high"
+     ],
+     [
+      "reached",
+      "s",
+      "biological_and_chemical_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "biological_and_chemical_high"
+     ],
+     [
+      "reached",
+      "s",
+      "cybersecurity_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "cybersecurity_high"
+     ]
+    ],
+    "f16-informed": [
+     [
+      "leadership_decision",
+      "s"
+     ],
+     [
+      "reached",
+      "s",
+      "ai_self_improvement_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "ai_self_improvement_high"
+     ],
+     [
+      "reached",
+      "s",
+      "biological_and_chemical_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "biological_and_chemical_high"
+     ],
+     [
+      "reached",
+      "s",
+      "cybersecurity_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "cybersecurity_high"
+     ]
+    ],
+    "f16-process": [
+     [
+      "leadership_decision",
+      "s"
+     ],
+     [
+      "reached",
+      "s",
+      "ai_self_improvement_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "ai_self_improvement_high"
+     ],
+     [
+      "reached",
+      "s",
+      "biological_and_chemical_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "biological_and_chemical_high"
+     ],
+     [
+      "reached",
+      "s",
+      "cybersecurity_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "cybersecurity_high"
+     ]
+    ],
     "f16-sag-recommend": [
      [
       "covered",
@@ -22402,8 +23904,86 @@
       "cybersecurity_high"
      ]
     ],
-    "f16-without-nodelib": "a scored case",
-    "f16-without-noinput": "a scored case",
+    "f16-without-nodelib": [
+     [
+      "decided_without_sag",
+      "s"
+     ],
+     [
+      "leadership_decision",
+      "s"
+     ],
+     [
+      "reached",
+      "s",
+      "ai_self_improvement_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "ai_self_improvement_high"
+     ],
+     [
+      "reached",
+      "s",
+      "biological_and_chemical_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "biological_and_chemical_high"
+     ],
+     [
+      "reached",
+      "s",
+      "cybersecurity_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "cybersecurity_high"
+     ]
+    ],
+    "f16-without-noinput": [
+     [
+      "decided_without_sag",
+      "s"
+     ],
+     [
+      "leadership_decision",
+      "s"
+     ],
+     [
+      "reached",
+      "s",
+      "ai_self_improvement_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "ai_self_improvement_high"
+     ],
+     [
+      "reached",
+      "s",
+      "biological_and_chemical_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "biological_and_chemical_high"
+     ],
+     [
+      "reached",
+      "s",
+      "cybersecurity_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "cybersecurity_high"
+     ]
+    ],
     "f16-year": "a scored case",
     "f17-iff": [
      [
@@ -22592,7 +24172,42 @@
      ]
     ],
     "f6-rel": "a scored case",
-    "f7-evaluations": "a scored case",
+    "f7-evaluations": [
+     [
+      "covered",
+      "s"
+     ],
+     [
+      "reached",
+      "s",
+      "ai_self_improvement_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "ai_self_improvement_high"
+     ],
+     [
+      "reached",
+      "s",
+      "biological_and_chemical_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "biological_and_chemical_high"
+     ],
+     [
+      "reached",
+      "s",
+      "cybersecurity_critical"
+     ],
+     [
+      "reached",
+      "s",
+      "cybersecurity_high"
+     ]
+    ],
     "f7-recommend": "a scored case",
     "f7-report": "a scored case",
     "f8-start": "a scored case",
@@ -22746,10 +24361,17 @@
    }
   },
   "N4": {
+   "audit_input": {
+    "rules": []
+   },
    "route": "D1",
+   "selected_rules": [],
    "undecided": "VE limit (SC): D1 has no closure premise that the level sort holds exactly Table 1's six levels, so an unnamed seventh level is not excluded"
   },
   "S1": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "bridges": [
@@ -22774,9 +24396,13 @@
     }
    ],
    "cone": [],
-   "route": "D3 ve-units@1 quantity certificate replay under both lower-bound bridges"
+   "route": "D3 ve-units@1 quantity certificate replay under both lower-bound bridges",
+   "selected_rules": []
   },
   "S2": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "bridges": [
@@ -22801,9 +24427,13 @@
     }
    ],
    "cone": [],
-   "route": "D3 ve-units@1 quantity certificate replay under both lower-bound bridges"
+   "route": "D3 ve-units@1 quantity certificate replay under both lower-bound bridges",
+   "selected_rules": []
   },
   "S3": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "bridges": [
@@ -22828,9 +24458,13 @@
     }
    ],
    "cone": [],
-   "route": "D3 ve-units@1 quantity certificate replay under both lower-bound bridges"
+   "route": "D3 ve-units@1 quantity certificate replay under both lower-bound bridges",
+   "selected_rules": []
   },
   "S4": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "bridges": [
@@ -22855,9 +24489,13 @@
     }
    ],
    "cone": [],
-   "route": "D3 ve-units@1 quantity certificate replay under both lower-bound bridges"
+   "route": "D3 ve-units@1 quantity certificate replay under both lower-bound bridges",
+   "selected_rules": []
   },
   "S5": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "bridges": [
@@ -22882,9 +24520,13 @@
     }
    ],
    "cone": [],
-   "route": "D3 ve-units@1 quantity certificate replay under both lower-bound bridges"
+   "route": "D3 ve-units@1 quantity certificate replay under both lower-bound bridges",
+   "selected_rules": []
   },
   "S6": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -22893,9 +24535,13 @@
     }
    ],
    "cone": [],
-   "route": "D2 risk@0 admitted severity order"
+   "route": "D2 risk@0 admitted severity order",
+   "selected_rules": []
   },
   "S7": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -22904,9 +24550,13 @@
     }
    ],
    "cone": [],
-   "route": "D2 risk@0 risk-decision might table"
+   "route": "D2 risk@0 risk-decision might table",
+   "selected_rules": []
   },
   "S8": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -22915,9 +24565,13 @@
     }
    ],
    "cone": [],
-   "route": "D2 risk@0 risk-decision leads table"
+   "route": "D2 risk@0 risk-decision leads table",
+   "selected_rules": []
   },
   "T1": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -22926,9 +24580,13 @@
     }
    ],
    "cone": [],
-   "route": "D3 ve-units@1 quantity certificate replay"
+   "route": "D3 ve-units@1 quantity certificate replay",
+   "selected_rules": []
   },
   "T2": {
+   "audit_input": {
+    "rules": []
+   },
    "choices": [
     {
      "choice": {},
@@ -22937,7 +24595,8 @@
     }
    ],
    "cone": [],
-   "route": "D3 ve-units@1 quantity certificate replay"
+   "route": "D3 ve-units@1 quantity certificate replay",
+   "selected_rules": []
   }
  },
  "metrics": {
@@ -23009,7 +24668,7 @@
   "M10": {
    "cases": 67,
    "choices": 1032,
-   "documents_built": 158,
+   "documents_built": 162,
    "prover_calls": 10,
    "rules": 86,
    "units": 389,
