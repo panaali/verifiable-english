@@ -114,8 +114,27 @@ def filled_environment_json(document):
 
 @semantic_entry("admission")
 def admit_norm_defaults_document(environment, document):
-    """Relay W1 admission on `fill U` to the Lean owner."""
-    env = environment if type(environment) is Environment else Environment(environment)
+    """Relay admission on Lean's filled W1 or soft tree, binding its report to the request."""
+    env = environment if isinstance(environment, Environment) else Environment(environment)
     answer = run_case({"id": "admission", "kind": "admission",
                        "environment": env.to_dict(), "document": document})
-    return {key: value for key, value in answer.items() if key not in ("id", "status")}
+    from .admission import bound_admission
+    # Lean's elaboration names the route by its fields. Bind the admission
+    # variant to that choice, then bind any soft labels to the same source.
+    norms = [unit["content"] for unit in document["units"]
+             if type(unit) is dict and unit.get("kind") == "norm"
+             and type(unit.get("content")) is dict and "norm" in unit["content"]]
+    elaborated = run_case({"id": "norm-defaults-elaborate", "kind": "norm-defaults-elaborate",
+                           "environment": env.to_dict(), "norms": norms})
+    soft = "soft" in elaborated
+    if ("conditional_on" in answer) != soft:
+        raise CheckerUnavailable("CheckerUnavailable: Lean admission uses another filled route")
+    if not soft:
+        return bound_admission(env, document, answer)
+    labels = {row["label"] for row in elaborated["soft"]}
+    conditional = answer["conditional_on"]
+    if len(conditional) != len(set(conditional)) or not set(conditional) <= labels:
+        raise CheckerUnavailable("CheckerUnavailable: Lean soft admission names an unbound condition")
+    return {**bound_admission(env, document, {key: value for key, value in answer.items()
+                                             if key != "conditional_on"}),
+            "conditional_on": conditional}

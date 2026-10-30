@@ -23,6 +23,7 @@
 - `rust/ve-kernel/src/model.rs` — (no module docstring)
 - `rust/ve-kernel/src/semantics.rs` — The evaluator core (kernel, like Lean `VE.Semantics`; Python's is `ve.evaluate._Evaluator`): `FiniteModel` decoding evaluates defined relations with it; profil…
 - `rust/ve-kernel/src/wire.rs` — (no module docstring)
+- `rust/ve-kernel/tests/environment_definition_order.rs` — (no module docstring)
 - `rust/ve-profile/src/eval.rs` — (no module docstring)
 - `rust/ve-profile/src/ground.rs` — premise-scale: the ground-fact candidate.
 - `rust/ve-profile/src/lib.rs` — VE profiles over the kernel: evaluation, countermodel search and order.

@@ -1,0 +1,108 @@
+## f1-misuse-bio-strict | RS1=strict | Table 1 BIO-H: “Require safeguards against misuse … before external deployment”
+Rule 1. Every situation must have misuse safeguards, if both that situation has reached "biological_and_chemical_high" and that situation is classified as "external_deployment".
+## f1-misuse-bio-default | RS1=default | Table 1 BIO-H: the same imperative under “Risk-specific safeguard guidelines”
+Rule 1. Every situation should have misuse safeguards, if both that situation has reached "biological_and_chemical_high" and that situation is classified as "external_deployment".
+## f1-misuse-cyb-strict | RS1=strict | Table 1 CYB-H: “Require safeguards against misuse … for external deployment”
+Rule 1. Every situation must have misuse safeguards, if both that situation has reached "cybersecurity_high" and that situation is classified as "external_deployment".
+## f1-misuse-cyb-default | RS1=default | Table 1 CYB-H: the same imperative under “Risk-specific safeguard guidelines”
+Rule 1. Every situation should have misuse safeguards, if both that situation has reached "cybersecurity_high" and that situation is classified as "external_deployment".
+## f1-alignment-cyb-strict | RS1=strict | Table 1 CYB-H: “Require safeguards … against misalignment … for large-scale internal deployment”
+Rule 1. Every situation must have misalignment safeguards, if both that situation has reached "cybersecurity_high" and that situation is classified as "large_scale_internal".
+## f1-alignment-cyb-default | RS1=default | Table 1 CYB-H: the same imperative under “Risk-specific safeguard guidelines”
+Rule 1. Every situation should have misalignment safeguards, if both that situation has reached "cybersecurity_high" and that situation is classified as "large_scale_internal".
+## f1-security-strict | RS1=strict | Table 1: “Require security controls … meeting High standard”
+Rule 1. Every situation must have security controls, if both that situation is covered and that situation is classified as "high_capability".
+## f1-security-default | RS1=default | Table 1: the same imperative under “Risk-specific safeguard guidelines”
+Rule 1. Every situation should have security controls, if both that situation is covered and that situation is classified as "high_capability".
+## f1-halt-strict | RS1=strict | Table 1: “Until we have specified safeguards and security controls … halt further development”
+Rule 1. Every situation must halt further development, if both that situation is classified as "critical_capability" and that situation is classified as "critical_standard_unspecified".
+## f1-halt-default | RS1=default | Table 1: the same imperative under “Risk-specific safeguard guidelines”
+Rule 1. Every situation should halt further development, if both that situation is classified as "critical_capability" and that situation is classified as "critical_standard_unspecified".
+## f2-deploy | always | 2.2: “required to have robust and effective safeguards that sufficiently minimize … before they are deployed”
+Rule 1. Every situation must have safeguards before deployment, if both that situation is covered and that situation is classified as "high_capability".
+## f3-develop | always | 4.4: “Such models require additional safeguards … during development”
+Rule 1. Every situation must have safeguards during development, if both that situation is covered and that situation is classified as "critical_capability".
+## f2-reminder | always | Appendix C: “covered systems that reach High capability must have safeguards … before they are deployed”
+Rule 1. Every situation must have safeguards before deployment, if both that situation is covered and that situation is classified as "high_capability".
+## f3-reminder | always | Appendix C: “Systems that reach Critical capability also require sufficient safeguards during development”
+Rule 1. Every situation must have safeguards during development, if both that situation is covered and that situation is classified as "critical_capability".
+## f4-security | always | C.3: “We will require the following practices for High capability models”
+Rule 1. Every situation must have security practices, if both that situation is covered and that situation is classified as "high_capability".
+## f7-evaluations | always | 3.3: “Prior to deployment, every covered model undergoes Scalable Evaluations”; temporal relation remains ET-blocked
+Rule 1. Every situation must undergo evaluations before deployment, if that situation is covered.
+## f7-report | always | 3.3: “The SAG reviews the Capabilities Report”
+Rule 1. Every situation must have SAG review the Capabilities Report, if that situation is covered.
+## f8-start | always | 4: “If a covered system appears likely to cross a capability threshold, we will start to work on safeguards”
+Rule 1. Every situation must start safeguard work, if both that situation is covered and that situation is classified as "likely_to_cross".
+## f9-report | always | 4.1: “Safeguards Report” records the case for reducing severe-harm risk
+Rule 1. Every situation must have a Safeguards Report, if that situation is classified as "safeguard_selection".
+## f9-risk-paths | always | 4.1: “We first identify the plausible ways in which … severe harm can come to fruition”
+Rule 1. Every situation must identify ways severe harm can arise, if that situation is classified as "safeguard_selection".
+## f9-specific | always | 4.1: “For each of those, we then identify specific safeguards”; per-item quantification remains SC-blocked
+Rule 1. Every situation must identify specific safeguards per risk path, if that situation is classified as "safeguard_selection".
+## f9-efficacy | always | 4.1: “For each identified safeguard, we identify methods to measure their efficacy”; per-item quantification remains SC-blocked
+Rule 1. Every situation must identify efficacy methods per safeguard, if that situation is classified as "safeguard_selection".
+## f9-threshold | always | 4.1: “and an efficacy threshold” for each safeguard; per-item quantification remains SC-blocked
+Rule 1. Every situation must identify an efficacy threshold per safeguard, if that situation is classified as "safeguard_selection".
+## f10-validate | always | 4.2: “If we find reasonable evidence … we will validate the information being received”
+Rule 1. Every situation must validate the evidence, if that situation is classified as "reasonable_evidence".
+## f10-review | always | 4.2: “review the sufficiency of our safeguards” on that evidence
+Rule 1. Every situation must review safeguard sufficiency, if that situation is classified as "reasonable_evidence".
+## f14-document | always | 5.1: “We document SAG reports and decisions”
+Rule 1. Every situation must have the decision documented.
+## f14-investigate | always | 5.1: noncompliance is “tracked and investigated”
+Rule 1. Every situation must have noncompliance investigated.
+## f14-corrective | always | 5.1: “where reports are substantiated, will take appropriate and proportional corrective action”
+Rule 1. Every situation must have corrective action taken, if that situation is classified as "substantiated_noncompliance".
+## f15-disclose | always | 5.2: “We will publish information … for major deployments”
+Rule 1. Every situation must have public disclosure, if that situation is classified as "major_deployment".
+## f15-safeguards | always | 5.2: “if the model is beyond a High threshold, we will include information about safeguards”
+Rule 1. Every situation must have safeguards disclosed, if both that situation is classified as "major_deployment" and that situation is classified as "high_capability".
+## f16-sag-recommend | always | Appendix B: SAG is responsible for “providing recommendations on potential next steps … to OpenAI Leadership”
+Rule 1. Every situation must have SAG recommendations sent to Leadership, if both that situation is covered and that situation is classified as "framework_deployment".
+## c2-misalignment-strict | RS9=strict | C.2: “Safeguards should sufficiently minimize the risk associated with a misaligned model”
+Rule 1. Every situation must have safeguards that sufficiently minimize misaligned-model risk, if that situation is classified as "misaligned_model_risk".
+## c2-misalignment-default | RS9=default | C.2: the same “should” requirement under its default reading
+Rule 1. Every situation should have safeguards that sufficiently minimize misaligned-model risk, if that situation is classified as "misaligned_model_risk".
+## f16-ssc-visibility | always | Appendix B: “The Safety and Security Committee … will be given visibility into processes”
+Rule 1. Every situation must give SSC visibility into processes.
+## f16-informed | RS0=commitment | Appendix B: Leadership makes “deployment go/no-go decisions, informed by SAG’s recommendations”
+Rule 1. Every situation must have Leadership informed by SAG.
+## f16-year | RS0=commitment | Appendix B: “review the Preparedness Framework … at least once a year”
+Rule 1. Every situation must have an annual review.
+## f5-ambiguous | always | 3.2: “In cases of ambiguity … the SAG is responsible for making the final determination”
+Rule 1. Every situation must have SAG make the final coverage determination, if that situation is classified as "coverage_ambiguous".
+## f5-checkpoint | always | 3.2: “If justified by our forecasts and threat models … select an appropriate checkpoint during development”; timing and justification remain open
+Rule 1. Every situation must have a development checkpoint selected, if that situation is classified as "forecast_severe_before_deployment".
+## f6-rel | RS8=rel | footnote 6: “ordinarily not require additional safety measures barring reason to believe a significant increase”
+Rule 1. Every situation generally need not require additional safety measures, if that situation is classified as "distilled_from_below_high", unless that situation is classified as "significant_increase".
+## f11-within | RS5=within | 4.3: “could adjust accordingly … but only if” the three conditions hold; sufficiency remains required
+Rule 1. Every situation may have its required safeguards adjusted, if both that situation is classified as "adjustment_confirmed" and that situation is classified as "adjustment_conditions".
+## f11-exception | RS5=exception | 4.3: conditional adjustment read as an exception to the High deployment rule
+Rule 1. Every situation need not have safeguards before deployment, if both that situation is classified as "adjustment_confirmed" and that situation is classified as "adjustment_conditions".
+## f11-acknowledge | always | 4.3: adjustment only if “we publicly acknowledge that we are making the adjustment”
+Rule 1. Every situation must have its adjustment publicly acknowledged, if that situation is classified as "adjustment_made".
+## f11-protect | always | 4.3: adjustment only if “we keep our safeguards at a level more protective than the other AI developer”
+Rule 1. Every situation must keep safeguards more protective than the other developer's, if that situation is classified as "adjustment_made".
+## f11-share | always | 4.3: adjustment only if “share information to validate this claim”
+Rule 1. Every situation must have validation information shared, if that situation is classified as "adjustment_made".
+## f12-lra | RS4=N | Table 2, Long-range Autonomy: if High or Critical in any Tracked Category, require a misalignment safeguards report
+Rule 1. Every situation must have a misalignment safeguards report, if all of the following hold: (a) that situation is classified as "lra_found"; (b) either that situation is classified as "high_capability" or that situation is classified as "critical_capability", or both.
+## f12-sandbagging | RS4=N | Table 2, Sandbagging: overcoming elicitation or conservative upper bound
+Rule 1. Every situation must have sandbagging addressed, if that situation is classified as "sandbagging_found".
+## f12-ara | RS4=N | Table 2, Autonomous Replication and Adaptation: convert to a Tracked Category
+Rule 1. Every situation must have the research category tracked, if that situation is classified as "ara_found".
+## f12-undermining | RS4=N | Table 2, Undermining Safeguards: if High or Critical in a Tracked Category, require a robust Safeguards case
+Rule 1. Every situation must have a safeguards case robust to the discovered capability, if all of the following hold: (a) that situation is classified as "undermining_found"; (b) either that situation is classified as "high_capability" or that situation is classified as "critical_capability", or both.
+## f12-nuclear | RS4=N | Table 2, Nuclear and Radiological: heighten safeguards in consultation with appropriate US government actors
+Rule 1. Every situation must heighten nuclear safeguards, if that situation is classified as "nuclear_found".
+## f17-suff | RS12=suff | 2.1: “We treat a frontier capability as a Tracked Category if” its risk meets five criteria
+Rule 1. Every capability must be tracked as a category, if all of the following hold: (a) that capability is plausible; (b) all of the following hold: (i) that capability is measurable; (ii) all of the following hold: (a) that capability is severe; (b) both that capability is classified as "net_new" and that capability is irremediable.
+## f17-iff | RS12=iff | 2.1 and 2.3: the five criteria read as necessary and sufficient for Tracked Category treatment
+Rule 1. Every capability must be tracked as a category, if all of the following hold: (a) that capability is plausible; (b) all of the following hold: (i) that capability is measurable; (ii) all of the following hold: (a) that capability is severe; (b) both that capability is classified as "net_new" and that capability is irremediable.
+## f17-iff-only | RS12=iff | 2.1 and 2.3: under the iff reading a missing criterion precludes Tracked Category treatment
+Rule 1. Every capability must not be tracked as a category, if it is not the case that all of the following hold: (a) that capability is plausible; (b) all of the following hold: (i) that capability is measurable; (ii) all of the following hold: (a) that capability is severe; (b) both that capability is classified as "net_new" and that capability is irremediable.
+## f13-review | always | 2.3: “periodically review the latest research and findings for each Research Category”; periodicity remains ET-blocked
+Rule 1. Every situation must have research categories reviewed, if that situation is classified as "research_category_review".
+## f13-results | always | 2.3: “SAG will receive the results of such reviews and evaluate whether …”; assessment remains AP-blocked
+Rule 1. Every situation must have SAG receive the research results, if that situation is classified as "research_category_review".

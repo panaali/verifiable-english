@@ -2,7 +2,8 @@
 
 The recomputed results must equal the committed `results.json`, so any change
 in the policy, the log or VE's behaviour fails here. When `lake build` has
-produced the route runner, Lean also replays every certificate of the rerun.
+produced the route runner, Lean also replays every certificate of the rerun;
+when Cargo has produced the Rust binary, Rust re-evaluates its model cases.
 The six mutants take several minutes each; `check.py mutants` reruns them, and
 `test_agent_policy.py` checks their committed results against the answer key.
 """
@@ -28,7 +29,7 @@ def _json(value):
 
 @pytest.fixture(scope="module")
 def rerun():
-    evidence = check.Evidence(keep=check.LEAN_ROUTE.exists())
+    evidence = check.Evidence(keep=check.LEAN_ROUTE.exists() or check.RUST.exists())
     with multiprocessing.get_context("fork").Pool(check.WORKERS) as pool:
         base = check.run(evidence=evidence, pool=pool)
     return base, evidence
@@ -55,3 +56,10 @@ def test_lean_replays_every_certificate_of_the_rerun(rerun):
     replay = check.replay_lean(evidence.exported)
     assert replay["valid"] == replay["certificates"]
     assert sum(replay["certificates"].values()) == COMMITTED["M10"]["certificates"]
+
+
+def test_rust_replay_of_the_rerun_equals_the_committed_m9(rerun):
+    _, evidence = rerun
+    if not check.RUST.exists():
+        pytest.skip("cargo has not produced rust/target/release/ve")
+    assert check.replay_rust(evidence.exported) == COMMITTED["M9"]["rust_models"]

@@ -49,6 +49,10 @@ EXPECTED = [
     # me-3: claim and follows rows (both outcomes) under a software convention, beside a stated value
     ["w1 holds reproduction unknown", "h6 holds reproduction unknown", "u1 holds reproduction unknown",
      "h7 fails reproduction unknown"],
+    # me-2nb (spec 3.2 (a), (b)): each value computed once, so F1-28, past the deadline before, holds; G-1's power
+    # is known beyond the digit limit from its base and never computed
+    ["f1 holds"],
+    [f"g1 unknown ({DIGITS})"],
 ]
 
 
