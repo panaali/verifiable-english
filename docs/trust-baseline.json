@@ -1489,6 +1489,13 @@
    "reason": "Route environment header guard and response-shape branch; tests/test_difffuzz.py::test_request_envelope_fields_precede_predicate_sort_fault",
    "signature": "standing ruling R16 (DRI-RULINGS.md)",
    "commit": "45e886fee9ee5cc475bd6355ceb6c099345e8332"
+  },
+  {
+   "class": "V",
+   "lines": 2,
+   "reason": "q1-4bb: VE/Question/Run.lean V +2 (speechPrefixes gains F2's fronted words; replaces the Python literal \"Is \" in ve/speech_english.py, deleted in the same change)",
+   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md), q1-4bb, 2026-10-30",
+   "commit": "b9f2335ab2933b1e0c262f497c06af64e0bac079"
   }
  ]
 }
