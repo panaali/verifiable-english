@@ -26,24 +26,41 @@ theorem erasedJson_fits (w : CardEnv) (ps : List CFormula) (c : CFormula) :
   okfits
   exact problemJson_fits _ _
 
+theorem sizesJson_fits (sizes : List (String × Nat)) :
+    Fits req (skel% "cardinality.json#/$defs/sizes") (Run.sizesJson sizes) := by
+  unfold Run.sizesJson
+  simp only [toJson, List.toJson, Array.toJson, List.map_toArray, List.map_map]
+  fits
+
 /-- The runner answers a certificate row only for the kind `certificate`. -/
 theorem certificate_kind {j : Json} {kind : String} (hK : j.getObjValD "kind" = .str kind)
-    (h1 : (kind == "admission" || kind == "certificate" || kind == "document") = true)
-    (hd : ¬(kind == "document") = true) (h2 : ¬(kind == "admission") = true) :
+    (h1 : (kind == "admission" || kind == "certificate" || kind == "document" || kind == "countermodel") = true)
+    (hd : ¬(kind == "document") = true) (h2 : ¬(kind == "admission") = true)
+    (h3 : ¬(kind == "countermodel") = true) :
     (CaseCond.kind "certificate").holds j = true := by
-  simp only [Bool.or_eq_true, beq_iff_eq] at h1 h2 hd
-  obtain rfl := (h1.resolve_right hd).resolve_left h2
+  simp only [Bool.or_eq_true, beq_iff_eq] at h1 h2 hd h3
+  obtain rfl := ((h1.resolve_right h3).resolve_right hd).resolve_left h2
+  simp only [CaseCond.holds, hK]
+  rfl
+
+/-- The runner answers a countermodel row only for the kind `countermodel`. -/
+theorem countermodel_kind {j : Json} {kind : String} (hK : j.getObjValD "kind" = .str kind)
+    (h : (kind == "countermodel") = true) : (CaseCond.kind "countermodel").holds j = true := by
+  simp only [beq_iff_eq] at h
+  subst h
   simp only [CaseCond.holds, hK]
   rfl
 
 set_option hygiene false in
-/-- An admission, certificate or document row, by the kind the runner read (the case's `kind` string, else `admission`). -/
+/-- An admission, certificate, countermodel or document row, by the kind the runner read (the case's `kind` string,
+else `admission`). -/
 macro "cardinality_rows" : tactic =>
   `(tactic|(okfits <;> kind_subst <;> (try simp only [VE.Time.Wire.ok, Run.statementJson]) <;>
-    (try fits using regionsJson_fits) <;>
+    (try fits using regionsJson_fits, sizesJson_fits) <;>
     first
       | exact problemJson_fits _ _
-      | exact certificate_kind hK (by assumption) (by assumption) (by assumption)
+      | exact countermodel_kind hK (by assumption)
+      | exact certificate_kind hK (by assumption) (by assumption) (by assumption) (by assumption)
       | exact absurd (by decide) ‹¬("admission" == "admission") = true›))
 
 theorem runCase_fits (j : Json) : OkFits j Skeletons.cardinality (Run.runCase j) := by
