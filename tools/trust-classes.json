@@ -15747,6 +15747,7 @@
     },
     "VE/Acts/RenderExamples.lean": {
       "T": [
+        "VE.Acts.RenderExamples.V2s",
         "VE.Acts.RenderExamples.Vk",
         "VE.Acts.RenderExamples.Vo",
         "VE.Acts.RenderExamples.Vs",
@@ -15769,6 +15770,7 @@
         "VE.Acts.RenderExamples.participate",
         "VE.Acts.RenderExamples.roundTrip",
         "VE.Acts.RenderExamples.seek",
+        "VE.Acts.RenderExamples.send",
         "VE.Acts.RenderExamples.text",
         "VE.Acts.RenderExamples.toBoth"
       ]
