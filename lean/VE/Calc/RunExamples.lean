@@ -1069,6 +1069,17 @@ def heavy (n : Nat) : Case :=
 #guard units maxWork (heavy 497) = some 107837424 && 107837424 < 163290000 && 163290000 < maxWork &&
   outcomes (heavy 497) == some (List.replicate 497 (.unknown (.limit .digits)))
 
+-- Each charged step's other answers: `within` under, at and over its bounds; a fault in either operand decides
+-- (undefined, then beyond the limit); a counted value that ran out; a name the table lacks.
+#guard outcomes (mk [st "x" 2] [.within (.val "x") (.lit 0) (.lit 1), .within (.val "x") (.lit 2) (.lit 2),
+    .within (.val "x") (.lit 3) (.lit 4)]) = some [.decided .fails, .decided .holds, .decided .fails]
+#guard outcomes (mk [st "v0" nines, df "v1" (.pow (.val "v0") 64)]
+    [.compare ltc (.add (.lit 1) (.div (.lit 1) (.lit 0))) (.lit 0), .compare ltc (.add (.lit 1) (.mul (.val "v1") (.val "v1"))) (.lit 0)]) =
+  some [.decided .undefined, .unknown (.limit .digits)]
+#guard outcomes (mk [⟨"n", .counted (Thunk.pure none) .exhausted⟩] [.compare eqc (.val "n") (.lit 0)]) =
+  some [.unknown (.limit .evaluations)]
+#guard outcomes (mk [] [.compare eqc (.val "q") (.lit 0)]) = some [.decided .undefined]
+
 -- Limit 10's refusal text (3.2), from `Wire.limit` with the others.
 #guard Wire.workLimit = "ResourceLimit: the work of the calculation exceeds 8589934592"
 
