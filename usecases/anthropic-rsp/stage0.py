@@ -21,6 +21,8 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
+sys.path.insert(0, str(HERE.parent))
+from safetyfw_common import part_document as _part_document, ve_check as _ve_check, lean_document as _lean_document  # noqa: E402
 sys.path.insert(0, str(HERE))
 import build_document as B  # noqa: E402
 import rsp_translation as T  # noqa: E402
@@ -187,51 +189,16 @@ def routed_checked():
 # --- P1, P2, P5, P6, P8: part documents over the source ----------------------------------------------------------
 
 def part_document(source, uids, profiles=None):
-    """The units `uids` alone (their bytes, specifications, open terms and reading sets) as a ve-document@1 text."""
     document, records = B.build(source)
-    meta = json.loads(document[4:document.index(b"\n---\n")])
-    keep = {r["id"]: r for r in records if r["id"] in uids}
-    units, body, cursor = [], b"", 0
-    for unit in meta["units"]:
-        if unit["id"] in keep:
-            a, b = unit["span"]
-            units.append({**unit, "span": [cursor, cursor + b - a]})
-            body += source[a:b]
-            cursor += b - a
-    terms = {t for r in keep.values() for t in r.get("open_terms", [])}
-    env = meta["environment"]
-    if profiles is not None:
-        env = {**env, "profiles": profiles}
-    front = {"format": "ve-document@1", "environment": env, "units": units,
-             "open_terms": [t for t in meta["open_terms"] if t["name"] in terms],
-             "reading_sets": [s for s in meta["reading_sets"] if s["unit"] in keep]}
-    return b"---\n" + json.dumps(front, indent=1, ensure_ascii=False).encode() + b"\n---\n" + body
+    return _part_document(document, records, source, uids, profiles)
 
 
 def ve_check(text):
-    """`ve document check` on a part document: each unit's status and the readings route, or the refusal."""
-    from ve.document import check_document, load_document
-    from ve.errors import VEError
-    with tempfile.TemporaryDirectory() as scratch:
-        path = Path(scratch) / "part.ve.md"
-        path.write_bytes(text)
-        try:
-            units = load_document(path)["units"]
-            report = check_document(path)
-        except VEError as exc:
-            return {"admitted": False, "diagnostic": f"{type(exc).__name__}: {exc}"}
-    readings = report.get("readings") or {}
-    return {"admitted": True, "units": {u["id"]: u["status"] for u in units}, "route": readings.get("route"),
-            "premises": report["premises"]["status"],
-            "unresolved_reading_sets": report["coverage"]["residual"]["unresolved_reading_sets"]}
+    return _ve_check(text)
 
 
 def lean_document(text):
-    from ve.backends.relay import answer
-    row, error = answer("document", {"id": "d", "document": text.decode(), "admit": True})
-    if error is not None:
-        return {"admitted": False, "diagnostic": str(error)}
-    return {"admitted": True, "units": {u["id"]: u["status"] for u in row["units"]}}
+    return _lean_document(text)
 
 
 def source_probes(source):

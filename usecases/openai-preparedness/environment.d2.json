@@ -1,0 +1,177 @@
+{
+  "language": "ve.core@0.2",
+  "profiles": [
+    "alternatives@0",
+    "norms@0",
+    "relational-fol@0",
+    "risk@0"
+  ],
+  "spec_revision": "ve-v0.2-expand2-2026-09-25",
+  "vocabulary": {
+    "sorts": {
+      "developer": {
+        "description": "developer"
+      },
+      "action": {
+        "description": "action"
+      },
+      "harm": {
+        "description": "harm"
+      }
+    },
+    "predicates": {
+      "available": {
+        "arguments": [
+          "action",
+          "developer"
+        ],
+        "description": "{0} is available to {1}",
+        "verbalisation": "{0} is available to {1}"
+      },
+      "leads_to": {
+        "arguments": [
+          "action",
+          "harm"
+        ],
+        "description": "{0} leads to {1}",
+        "verbalisation": "{0} leads to {1}"
+      },
+      "inaction": {
+        "arguments": [
+          "action"
+        ],
+        "description": "{0} is inaction",
+        "verbalisation": "{0} is inaction"
+      },
+      "taken": {
+        "arguments": [
+          "action"
+        ],
+        "description": "{0} is taken",
+        "verbalisation": "{0} is taken"
+      },
+      "permitted": {
+        "arguments": [
+          "action"
+        ],
+        "description": "may be taken",
+        "regulated": {
+          "role": "permission",
+          "default": "allow",
+          "act": "{0} be taken"
+        }
+      },
+      "required": {
+        "arguments": [
+          "action"
+        ],
+        "description": "must be taken",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} be taken",
+          "permission": "permitted"
+        }
+      }
+    },
+    "constants": {
+      "death_or_grave_injury": {
+        "sort": "harm",
+        "description": "thousands of people"
+      },
+      "economic_damage": {
+        "sort": "harm",
+        "description": "hundreds of billions of dollars"
+      },
+      "biological_terror_events": {
+        "sort": "harm",
+        "description": "biological or chemical terror events"
+      },
+      "cyberoffense_balance_upset": {
+        "sort": "harm",
+        "description": "the cyberoffense-cyberdefense balance is upset"
+      },
+      "cyber_catastrophe": {
+        "sort": "harm",
+        "description": "catastrophe from unilateral cyber operations"
+      }
+    }
+  },
+  "alternatives": {
+    "chooser": "developer",
+    "action": "action",
+    "harm": "harm",
+    "available": "available",
+    "leads_to": "leads_to",
+    "outcomes": "signed",
+    "decided_by": "OpenAI",
+    "performed": {
+      "permission": "permitted",
+      "obligation": "required"
+    },
+    "inaction": "inaction",
+    "taken": "taken"
+  },
+  "risk": {
+    "severity": {
+      "sort": "severity",
+      "classes": [
+        "severe",
+        "bio_terror",
+        "catastrophic_cyber_risk",
+        "cyber_balance"
+      ],
+      "more_severe": [],
+      "unranked": [
+        [
+          "severe",
+          "bio_terror"
+        ],
+        [
+          "severe",
+          "catastrophic_cyber_risk"
+        ],
+        [
+          "severe",
+          "cyber_balance"
+        ],
+        [
+          "bio_terror",
+          "catastrophic_cyber_risk"
+        ],
+        [
+          "bio_terror",
+          "cyber_balance"
+        ],
+        [
+          "catastrophic_cyber_risk",
+          "cyber_balance"
+        ]
+      ],
+      "decided_by": "the text's definition"
+    },
+    "harm_classes": [
+      [
+        "death_or_grave_injury",
+        "severe"
+      ],
+      [
+        "economic_damage",
+        "severe"
+      ],
+      [
+        "biological_terror_events",
+        "bio_terror"
+      ],
+      [
+        "cyberoffense_balance_upset",
+        "cyber_balance"
+      ],
+      [
+        "cyber_catastrophe",
+        "catastrophic_cyber_risk"
+      ]
+    ],
+    "unexamined": "possible"
+  }
+}
