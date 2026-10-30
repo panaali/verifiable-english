@@ -347,19 +347,54 @@ def fa1Doc (extra : List Json := []) (premises := names) (cert := docCert) : Jso
   ("formula", fa1Conclusion.getObjValD "formula")]
 #guard ids ((report (docCase fa1Doc)).getObjValD "leaves") "meaning_id" == ids (docAdmission.getObjValD "premises")
   "meaning_id"
+/-- Spec 4.1's report identity, spelled out: the `ve-report` digest, in the identity version of the documents
+environment's profiles, of the three identities, the document as sent and `report`. -/
+def docReportId (document report : Json) : Json :=
+  .str ((VE.CertificateWire.digest "ve-report-v0.2:cardinality@0,documents@1,order@0,relational-fol@0,time@0\n"
+    (Json.mkObj [("environment_id", docAdmission.getObjValD "environment_id"),
+      ("w6_environment_id", docAdmission.getObjValD "w6_environment_id"),
+      ("w6_target_environment_id", docAdmission.getObjValD "w6_target_environment_id"),
+      ("document", document), ("report", report)])).toOption.getD "")
+def reportIdOf (j : Json) : Json := (answer j).getObjValD "report_id"
 #guard answer (docCase fa1Doc) == Json.mkObj [("id", .str "d"), ("status", .str "ok"),
   ("environment_id", docAdmission.getObjValD "environment_id"),
   ("w6_environment_id", docAdmission.getObjValD "w6_environment_id"),
-  ("w6_target_environment_id", docAdmission.getObjValD "w6_target_environment_id"), ("report", report (docCase fa1Doc))]
+  ("w6_target_environment_id", docAdmission.getObjValD "w6_target_environment_id"), ("report", report (docCase fa1Doc)),
+  ("report_id", docReportId fa1Doc (report (docCase fa1Doc)))]
+-- The identity binds the report (review F1 of qt-a3d): a report with a leaf emptied, dropped, duplicated or
+-- reordered, its meaning ids swapped or a leaf as its root, has another identity; so does another document with the
+-- same report.
+def fa1Report : Json := report (docCase fa1Doc)
+def fa1LeafRows : Array Json := (fa1Report.getObjValD "leaves").getArr?.toOption.getD #[]
+def withLeaves (rows : Array Json) : Json := fa1Report.setObjVal! "leaves" (Json.arr rows)
+#guard fa1LeafRows.size == 4
+#guard [withLeaves #[], withLeaves fa1LeafRows.pop, withLeaves (fa1LeafRows.push fa1LeafRows[0]!),
+    withLeaves fa1LeafRows.reverse,
+    withLeaves (fa1LeafRows.set! 0 (fa1LeafRows[0]!.setObjVal! "meaning_id" (fa1LeafRows[1]!.getObjValD "meaning_id"))),
+    fa1Report.setObjVal! "root" fa1LeafRows[0]!].all
+  fun r => docReportId fa1Doc r != reportIdOf (docCase fa1Doc)
+#guard reportIdOf (docCase (fa1Doc [leaf "unused" top])) == docReportId (fa1Doc [leaf "unused" top]) fa1Report
+#guard reportIdOf (docCase (fa1Doc [leaf "unused" top])) != reportIdOf (docCase fa1Doc)
 -- A leaf the root does not rest on is not in the report; a root without a deduction rests on itself.
 #guard leafNames (docCase (fa1Doc [leaf "unused" top])) == names.map Json.str
 #guard leafNames (docCase (graph "total" fa1Leaves)) == [.str "total"]
+-- The report's root is the request's root by name, whatever its name (review F3 of qt-a3d).
+#guard ((report (docCase (graph "total" fa1Leaves))).getObjValD "root").getObjValD "name" == .str "total"
 -- Two levels, the middle node used twice (a trace that closes at once): the root rests on FA1's leaves, each once.
 def twoCert : Json :=
   certificate (answer (case "admission" WireExamples.envDocs [fa1Conclusion, fa1Conclusion] fa1Conclusion)) .close
 def twoLevel (premises : List String) : Json :=
   graph "root" (fa1Leaves ++ [deduce "mid" fa1Conclusion names docCert, deduce "root" fa1Conclusion premises twoCert])
 #guard leafNames (docCase (twoLevel ["mid", "mid"])) == names.map Json.str
+-- Review F2 of qt-a3d: leaves are positions, joined once per premise. "mid" reused 200 times, and two middle nodes
+-- over the same leaves (distinct children), each give FA1's leaves once, in submitted order.
+def closes (k : Nat) : Json :=
+  certificate (answer (case "admission" WireExamples.envDocs (List.replicate k fa1Conclusion) fa1Conclusion)) .close
+#guard leafNames (docCase (graph "root" (fa1Leaves ++ [deduce "mid" fa1Conclusion names docCert,
+  deduce "root" fa1Conclusion (List.replicate 200 "mid") (closes 200)]))) == names.map Json.str
+#guard leafNames (docCase (graph "root" (fa1Leaves ++ [deduce "mid" fa1Conclusion names docCert,
+  deduce "mid2" fa1Conclusion names docCert,
+  deduce "root" fa1Conclusion ["mid2", "mid", "mid2"] (closes 3)]))) == names.map Json.str
 -- Refused: a leaf dropped from the deduction, an unproved root (FA1b's certificate does not close), a dangling, later
 -- or duplicate name, a missing root, a premise list without a certificate, and no `documents@1`.
 #guard err (docCase (fa1Doc (premises := names.dropLast))) == stale
@@ -392,5 +427,9 @@ def top3 : Json := st r#"["quantity", ["not", ["top"]]]"#
 #guard err (docCase (charged2 top 24986)) == Document.deductionLimit
 #guard err (docCase (graph "big" [leaf "t" top, deduce "big" top (List.replicate 50001 "t") docCert])) ==
   Document.deductionLimit
+-- The premise count is charged before any premise is looked up (review F3 of qt-a3d): 50,001 dangling premises are a
+-- ResourceLimit, 50,000 a dangling premise.
+#guard err (docCase (graph "big" [deduce "big" top (List.replicate 50001 "nope") docCert])) == Document.deductionLimit
+#guard err (docCase (graph "big" [deduce "big" top (List.replicate 50000 "nope") docCert])) == Document.graphRejected
 
 end VE.Cardinality.RunExamples
