@@ -1,0 +1,5 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (base)
+trust_mutants: 6 definitions, 75 mutants (18 to run), 4 jobs, base 6949746bf291
+trust_mutants: 14 KILLED, 0 SURVIVOR, 0 UNKNOWN, 3 INVALID, 1 ALLOWED, 0 NOT RUN, 57 OTHER SHARD in 2603 s
+trust_mutants: D[V], trusted: 7 KILLED, 1 INVALID, 29 OTHER SHARD
+trust_mutants: G[V], trusted: 7 KILLED, 2 INVALID, 1 ALLOWED, 28 OTHER SHARD
