@@ -1,0 +1,2 @@
+- `docs/oom-rootcause/seed_faults.py` — Plant each seeded fault of the OOM batch, prove its named test fails, then restore the source (evidence/mutants.json).
+- `docs/oom-rootcause/seed_relay_faults.py` — Prove the readings-route response checks fail on seeded faults, then restore every source.

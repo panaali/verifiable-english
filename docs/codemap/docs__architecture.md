@@ -1,0 +1,1 @@
+- `docs/architecture/ar-8/measure.py` — AR-8 evidence: measure `main..HEAD --no-merges` at the code head into evidence.json and render REPORT.md's table.

@@ -1,0 +1,10 @@
+- `docs/speed/abcache/lf18_times.py` — Minutes per corpus and records per (corpus, authority) of an A/B recording, per side.
+- `docs/speed/abcache/mutants.py` — Seeded bugs for the base-record cache: one per rule it claims; each must make a test of tests/test_lean_first_diff_cache.py fail.
+- `docs/speed/abcache/salvage.py` — Finish a cached `record` whose child recording completed: run `record --cache` with the child's finished output standing in for the child, so the segments are …
+- `docs/speed/tmchecks/measure.py` — REPORT section 1a: the consecutive trust_mutants sweeps of one item, Oct 20-26, and whether the change between them was check-only.
+- `docs/speed/tmchecks/replay.py` — REPORT section 1b: replay speed-tmrerun's carry rule (rule.py, `Reads`) on sc-1b 5a0051f93 -> 24504cdd5, and check every carried verdict against the full sweep…
+- `docs/speed/tmrescore/measure.py` — REPORT section 1: the consecutive trust_mutants sweeps of one item whose Lean inputs were identical.
+- `docs/speed/trustmut/claims.py` — speed-trustmut: the sentences of this batch's documents that `CLAIM` reads as saying a budget is met, a probe or test passes, a run used the final tool or a co…
+- `docs/speed/trustmut/hunt/run.py` — speed-trustmut: run the probes of this directory (README) on this checkout and save their exit codes.
+- `docs/speed/trustmut/replay.py` — speed-trustmut step 1: replay tools/trust_mutants.py on the HEADs where the six B findings were raised.
+- `docs/speed/trustmut/sweep.py` — speed-trustmut reviews F7 and F9: the DRI's sweeps over the truth tables of tests/test_trust_mutants.py.

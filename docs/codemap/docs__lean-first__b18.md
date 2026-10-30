@@ -1,0 +1,3 @@
+- `docs/lean-first/b18/difffuzz_ab.py` — The differential fuzzer at the base and the head of lean-first batch 18 (gate item 2: its baseline must not grow).
+- `docs/lean-first/b18/latency.py` — Paired batch-18 latency of the UDHR document, the eligibility harness and the agent-policy harness.
+- `docs/lean-first/b18/seed_mutants.py` — Prove the batch 18 regressions fail on seeded bugs, one per behaviour the batch claims. uv run python docs/lean-first/b18/seed_mutants.py OUT_JSON [--lean LEAN…

@@ -1,0 +1,22 @@
+- `lean/VE/Core/Bridge.lean` — (no module docstring)
+- `lean/VE/Core/Checks.lean` — (no module docstring)
+- `lean/VE/Core/Congruence.lean` — (no module docstring)
+- `lean/VE/Core/Consequence.lean` — (no module docstring)
+- `lean/VE/Core/Conservativity.lean` — (no module docstring)
+- `lean/VE/Core/Finite.lean` — (no module docstring)
+- `lean/VE/Core/Induction.lean` — (no module docstring)
+- `lean/VE/Core/Layers.lean` — Route cases on the core family (`closure@0` + `nary@0`) whose vocabulary declares `definitions@0` defined predicates or `data@0` functional/total flags (the mi…
+- `lean/VE/Core/PathRules.lean` — (no module docstring)
+- `lean/VE/Core/Paths.lean` — `VE.Paths` under the names the Core proofs and statements use: every declaration of the shared module keeps its Core name, as an abbreviation or a corollary wi…
+- `lean/VE/Core/RoundTrip.lean` — (no module docstring)
+- `lean/VE/Core/Route.lean` — (no module docstring)
+- `lean/VE/Core/Substitution.lean` — (no module docstring)
+- `lean/VE/Core/Surface.lean` — (no module docstring)
+- `lean/VE/Core/Syntax.lean` — (no module docstring)
+- `lean/VE/Core/TableauExtended.lean` — Data-only signed tableaux.
+- `lean/VE/Core/TableauExtendedChecker.lean` — (no module docstring)
+- `lean/VE/Core/TableauExtendedClosure.lean` — (no module docstring)
+- `lean/VE/Core/TableauExtendedExtra.lean` — (no module docstring)
+- `lean/VE/Core/TableauExtendedInduction.lean` — (no module docstring)
+- `lean/VE/Core/TableauExtendedRules.lean` — (no module docstring)
+- `lean/VE/Core/Wire.lean` — (no module docstring)
