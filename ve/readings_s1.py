@@ -105,11 +105,12 @@ class S1Environment:
     def author_environment(self):
         """The author's base vocabulary: the frame without regulated predicates (4.5 step 1)."""
         from .environment import Environment
+        from .softnorms import base_predicate_declaration
         data = json.loads(json.dumps(self.frame_data))
         data["vocabulary"].pop("soft", None)
         data["vocabulary"].pop("rights", None)
         data["vocabulary"]["predicates"] = {
-            name: {k: v for k, v in decl.items() if k != "instruction_of"}
+            name: base_predicate_declaration(decl)
             for name, decl in data["vocabulary"]["predicates"].items() if "regulated" not in decl}
         data["profiles"] = [p for p in data["profiles"] if p not in ("norms@0", "soft-norms@0", "rights@0", "readings@1")]
         return Environment(data)
