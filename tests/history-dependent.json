@@ -678,11 +678,12 @@
   },
   {
    "test": "tests/test_inventory_path.py",
-   "why": "starts git (git check-ignore) in tests/test_inventory_path.py",
+   "why": "starts git (git check-ignore, git ls-files) in tests/test_inventory_path.py",
    "recorded": [
     "source"
    ],
    "via": [
+    "tests/test_inventory_path.py:test_no_train_only_path_is_read_outside_the_accessor: git ls-files",
     "tests/test_inventory_path.py:test_the_overlay_is_git_ignored_and_the_committed_copies_are_not.<locals>.<lambda>: git check-ignore"
    ]
   },
