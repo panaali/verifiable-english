@@ -191,6 +191,17 @@ theorem checkDeduction_sound (w : CardEnv) : Document.Checks.{v} w checkDeductio
   rw [checkErased_eq ps c cert hp hi] at h
   exact (checkCertificate_sound.{v} ps c cert h).2.2.2
 
+/-- The document row's report (review F4 of qt-a3d: these encoders are D[V]): the root's and each leaf's name,
+meaning id and canonical formula, the leaves in `Graph.leaves`' order, so the formulas written are exactly
+`Graph.report`'s, the report `admitGraph_sound` proves sound; a statement is its meaning id and canonical formula. -/
+theorem reportJson_report {w : CardEnv} {γ : Type} (g : Document.Graph w γ) (name : String) (a : CAdmission w) :
+    reportJson g = Json.mkObj [("root", claimJson g.root.name g.root.adm),
+      ("leaves", Json.arr (g.leaves.map fun n => claimJson n.name n.adm).toArray)] ∧
+    claimJson name a = Json.mkObj [("name", .str name), ("meaning_id", .str a.meaningId),
+      ("formula", Wire.encode a.formula)] ∧
+    statementJson a = Json.mkObj [("meaning_id", .str a.meaningId), ("formula", Wire.encode a.formula)] ∧
+    g.report = ⟨g.root.adm.formula, g.leaves.map (·.adm.formula)⟩ := ⟨rfl, rfl, rfl, rfl⟩
+
 end VE.Cardinality.Run
 
 namespace VE.Cardinality
