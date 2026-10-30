@@ -142,7 +142,7 @@ def digitCount (n : Nat) : Nat := (Nat.toDigits 10 n).length
 def Small (q : Rat) : Prop :=
   digitCount q.num.natAbs ≤ maxDigits ∧ digitCount q.den ≤ maxDigits
 
-private theorem toDigitsCore_length_ge (fuel n : Nat) (ds : List Char) (hf : 0 < fuel) :
+theorem toDigitsCore_length_ge (fuel n : Nat) (ds : List Char) (hf : 0 < fuel) :
     ds.length + 1 ≤ (Nat.toDigitsCore 10 fuel n ds).length := by
   induction fuel generalizing n ds with
   | zero => omega
@@ -155,7 +155,7 @@ private theorem toDigitsCore_length_ge (fuel n : Nat) (ds : List Char) (hf : 0 <
       | zero => simp [Nat.toDigitsCore]
       | succ f => have := ih (n / 10) ((n % 10).digitChar :: ds) (by omega); simp at this; omega
 
-private theorem toDigitsCore_le_iff (fuel n k : Nat) (ds : List Char) (hn : n < fuel) :
+theorem toDigitsCore_le_iff (fuel n k : Nat) (ds : List Char) (hn : n < fuel) :
     (Nat.toDigitsCore 10 fuel n ds).length ≤ ds.length + (k + 1) ↔ n < 10 ^ (k + 1) := by
   induction fuel generalizing n k ds with
   | zero => omega
@@ -921,7 +921,7 @@ def smallBits : Nat := 13607
 def powTooLarge (x : Rat) (k : Nat) : Bool :=
   smallBits ≤ (bits x.num - 1) * k || smallBits ≤ (bits x.den - 1) * k
 
-private theorem pow_beyond (a k : Nat) (h : smallBits ≤ a.log2 * k) : digitBound ≤ a ^ k := by
+theorem pow_beyond (a k : Nat) (h : smallBits ≤ a.log2 * k) : digitBound ≤ a ^ k := by
   have ha : a ≠ 0 := by intro h0; subst h0; simp [Nat.log2_zero, smallBits] at h
   have hb : digitBound ≤ 2 ^ smallBits := by unfold digitBound maxDigits smallBits; decide +kernel
   calc digitBound ≤ 2 ^ smallBits := hb

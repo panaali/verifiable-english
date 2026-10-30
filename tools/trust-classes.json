@@ -12458,6 +12458,9 @@
         }
       ],
       "G[R]": [
+        "VE.Calc.Work.maxWork",
+        "VE.Calc.Work.smallBits",
+        "VE.Calc.digitBound",
         "VE.Calc.findingKind",
         "VE.Calc.firstFault",
         "VE.Calc.maxDigits"
@@ -12469,6 +12472,21 @@
         "VE.Calc.Val.all",
         "VE.Calc.Val.bin",
         "VE.Calc.Val.guard",
+        "VE.Calc.Work.Claim.decideSides",
+        "VE.Calc.Work.Claim.ofSides",
+        "VE.Calc.Work.Decl.valC",
+        "VE.Calc.Work.Expr.evalC",
+        "VE.Calc.Work.Expr.evalsC",
+        "VE.Calc.Work.Table",
+        "VE.Calc.Work.Table.read",
+        "VE.Calc.Work.binC",
+        "VE.Calc.Work.chargeQ",
+        "VE.Calc.Work.chargeV",
+        "VE.Calc.Work.powTooLarge",
+        "VE.Calc.Work.qbits",
+        "VE.Calc.Work.valueTable",
+        "VE.Calc.Work.valueTableC",
+        "VE.Calc.Work.visitC",
         "VE.Calc.digitCount",
         "VE.Calc.instDecidableSmall",
         "VE.Calc.valuesL"
@@ -12619,6 +12637,11 @@
         "main",
         "phraseJson",
         "relName"
+      ]
+    },
+    "VE/Numbers/Bits.lean": {
+      "C": [
+        "VE.Numbers.bits"
       ]
     },
     "VE/Acts/Syntax.lean": {
@@ -14333,7 +14356,8 @@
         "VE.Calc.Wire.nonlinearAt",
         "VE.Calc.Wire.scan",
         "VE.Calc.Wire.stringFault",
-        "VE.Calc.Wire.unworded"
+        "VE.Calc.Wire.unworded",
+        "VE.Calc.Wire.workLimit"
       ],
       "D[I]": [
         "VE.Calc.Wire.identify",
@@ -14341,6 +14365,11 @@
         "VE.Calc.Wire.printedJson",
         "VE.Calc.Wire.recordJson",
         "VE.Calc.Wire.supports"
+      ],
+      "C": [
+        "VE.Calc.Case.sidesC",
+        "VE.Calc.Check.sides",
+        "VE.Calc.Check.sidesC"
       ]
     },
     "VE/Calc/Run.lean": {
@@ -14375,7 +14404,6 @@
         "VE.Calc.Run.shownJson",
         "VE.Calc.Check.runShown",
         "VE.Calc.Derive.shown",
-        "VE.Calc.Run.sides",
         "VE.Calc.Run.stepJson",
         "VE.Calc.Run.tie",
         "VE.Calc.Run.truncated",
@@ -14403,9 +14431,21 @@
           ]
         },
         {
+          "name": "VE.Calc.Run.rowOf",
+          "tied": [
+            "VE.Calc.Run.rowOf_outcome"
+          ]
+        },
+        {
           "name": "VE.Calc.Run.rows",
           "tied": [
             "VE.Calc.Run.rows_outcome"
+          ]
+        },
+        {
+          "name": "VE.Calc.Run.rowsC",
+          "tied": [
+            "VE.Calc.Run.rowsC_some"
           ]
         },
         {
@@ -14420,11 +14460,27 @@
         "VE.Calc.Check.fault",
         "VE.Calc.Check.run",
         "VE.Calc.Claim.factsIn",
-        "VE.Calc.instDecidableOutcomeMeansClaimDecided"
+        "VE.Calc.instDecidableOutcomeMeansClaimDecided",
+        "VE.Calc.runC"
       ]
     },
     "VE/Calc/RunExamples.lean": {
       "T": [
+        "VE.Calc.RunExamples.WorkCases.df",
+        "VE.Calc.RunExamples.WorkCases.eqc",
+        "VE.Calc.RunExamples.WorkCases.f1",
+        "VE.Calc.RunExamples.WorkCases.f1511",
+        "VE.Calc.RunExamples.WorkCases.f1Case",
+        "VE.Calc.RunExamples.WorkCases.g1",
+        "VE.Calc.RunExamples.WorkCases.heavy",
+        "VE.Calc.RunExamples.WorkCases.ltc",
+        "VE.Calc.RunExamples.WorkCases.mk",
+        "VE.Calc.RunExamples.WorkCases.nines",
+        "VE.Calc.RunExamples.WorkCases.outcomes",
+        "VE.Calc.RunExamples.WorkCases.reread",
+        "VE.Calc.RunExamples.WorkCases.st",
+        "VE.Calc.RunExamples.WorkCases.units",
+        "VE.Calc.RunExamples.WorkCases.v11",
         "VE.Calc.RunExamples.answer",
         "VE.Calc.RunExamples.bad",
         "VE.Calc.RunExamples.c1",
@@ -15248,7 +15304,6 @@
         "VE.Arith.OpTable.env",
         "VE.Arith.Term.evalB",
         "VE.Arith.Term.evalBs",
-        "VE.Arith.bits",
         "VE.Arith.charge",
         "VE.Arith.chargeBits",
         "VE.Arith.countLoop",
