@@ -23,6 +23,8 @@ import VE.Alternatives.Run
 import VE.Alternatives.Validate
 import VE.Alternatives.Wire
 import VE.Arith.Bounded
+import VE.Arith.Deciding
+import VE.Arith.DecidingExamples
 import VE.Arith.Examples
 import VE.Ask.Binding
 import VE.Ask.Groups
@@ -749,6 +751,7 @@ import VE.WireContract.Engine
 #print axioms VE.Arith.Agrees.funs
 #print axioms VE.Arith.Agrees.preds
 #print axioms VE.Arith.Examples.bertrand_means_iff
+#print axioms VE.Arith.Examples.isPrimeB_iff
 #print axioms VE.Arith.Examples.primeBody_iff
 #print axioms VE.Arith.Extends.funs
 #print axioms VE.Arith.Extends.preds
@@ -790,6 +793,12 @@ import VE.WireContract.Engine
 #print axioms VE.Arith.decideBounded_mono
 #print axioms VE.Arith.decideBounded_sound
 #print axioms VE.Arith.decideBounded_work
+#print axioms VE.Arith.decidingAt_sound
+#print axioms VE.Arith.decidingLoop_iff
+#print axioms VE.Arith.decidingLoop_sound
+#print axioms VE.Arith.decidingValue_all
+#print axioms VE.Arith.decidingValue_ex
+#print axioms VE.Arith.decidingValue_of_fails
 #print axioms VE.Arith.foldl_rel
 #print axioms VE.Arith.log2_le_of_lt
 #print axioms VE.Arith.opEnv_eq_list

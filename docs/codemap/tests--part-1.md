@@ -36,6 +36,7 @@
 - `tests/test_acts_profile.py` — act-phrases AP-1, the profile part (ap-1b): `acts@0` documents loaded, checked and refused by Lean.
 - `tests/test_acts_tree_mutants.py` — Mutants of the act trees' and the table's data types each fail a fixture (ap-3 review F1).
 - `tests/test_acts_vocab_mutants.py` — Seeded mutants of the act grammar's vocabulary check and limits each fail a fixture (ap-2 review F1).
+- `tests/test_admission_evidence.py` — The saved scale admission evidence holds whole-request CPU only; the stage profiler was withdrawn (reviews/dri-decisions-20261029-scale-admission-profile.md it…
 - `tests/test_agent_policy.py` — Agent-policy use case: authored files, the frozen answer key, and the committed results.
 - `tests/test_agent_policy_level.py` — The policy family's requirement register and its level reader (apol-req), on both sides of each check.
 - `tests/test_agent_policy_rerun.py` — Agent-policy use case: rerun VE on every logged action and every policy query.
@@ -92,5 +93,3 @@
 - `tests/test_binding_census.py` — tools/binding_census.py: ADR 0001's census of every response-shape leaf, and the probe of the hand binders.
 - `tests/test_bluedot_grant.py` — The authored BlueDot reading keeps source bytes, speakers and modalities.
 - `tests/test_bundle.py` — Citation replay and transitive provenance checks.
-- `tests/test_calc_algebra.py` — ME-9: algebraic identities (math-evidence spec 8.2, plan 3.8; fixtures H-1 to H-4 and R-6).
-- `tests/test_calc_answer.py` — The relay never takes a Lean `calc` answer that is not an answer to the request it sent (R8; math-evidence ME-3, spec 3.4).
