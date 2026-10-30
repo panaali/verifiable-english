@@ -1,0 +1,9 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (lean): lean/VE/Service/Document.lean is a selected declaration's file or in its import closure
+trust_mutants: 6 definitions, 75 mutants (18 to run), 4 jobs, base bab15c522016
+SURVIVOR lean/VE/Norms/Plain.lean:182 VE.Norms.Plain.layered (D[V], trusted) append-right: statementLayers ++ -> 
+SURVIVOR lean/VE/Norms/Plain.lean:182 VE.Norms.Plain.layered (D[V], trusted) any-all: any -> all
+SURVIVOR lean/VE/Norms/Plain.lean:182 VE.Norms.Plain.layered (D[V], trusted) list-drop-first: ps -> (ps.drop 1)
+SURVIVOR lean/VE/Norms/Plain.lean:182 VE.Norms.Plain.layered (D[V], trusted) list-drop-first: statementLayers -> (statementLayers.drop 1)
+trust_mutants: 8 KILLED, 4 SURVIVOR, 0 UNKNOWN, 3 INVALID, 3 ALLOWED, 0 NOT RUN, 57 OTHER SHARD in 2077 s
+trust_mutants: D[V], trusted: 1 KILLED, 4 SURVIVOR, 1 INVALID, 2 ALLOWED, 29 OTHER SHARD
+trust_mutants: G[V], trusted: 7 KILLED, 2 INVALID, 1 ALLOWED, 28 OTHER SHARD
