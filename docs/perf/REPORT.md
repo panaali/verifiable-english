@@ -1,78 +1,36 @@
-Status: F1–F6 and both review-ready findings FIXED; the admission profiler follows split and unsplit route branches.
-HEAD: `infra/scale-admission-profile`; latest code fixes `f010f7577` and `4d0143355`.
-Changed: Lean stage replay, F4–F6 regressions and seeded faults, corrected opt-in stderr DELTA.
-Open: dense 185 KB under 30 s remains unproven; the 4× UDHR hits the vocabulary limit.
-Signatures: the timing delta is DRI-signed by `reviews/dri-decisions-20261028-scale.md` item 1; the one trusted line is covered by R16.
+Status: scope cut done per reviews/dri-decisions-20261029-scale-admission-profile.md item 1 (deletions plus 150 authored lines).
+HEAD: `infra/scale-admission-profile`; the product tree (`lean ve rust tools conformance`) equals base `471ccc7e4`.
+Changed: stage profiler deleted; whole-request admission CPU re-measured with the stage variable unset; stage figures UNKNOWN.
+Open: dense 185 KB under 30 s is not shown (2× extrapolation about 104 CPU s); 4× UDHR hits the vocabulary limit.
+Signatures: none needed; DELTA.md reads "No user-visible delta."
 
 # Build report: scale-admission-profile
 
-## Decision and deliverables
+The decision input is [admission-profile-20261029.md](admission-profile-20261029.md): whole-request CPU per case
+(median of 3), the fit against norms, the labelled 2× extrapolation, the measured constitution (1.36 CPU s) and the
+4× refusal. Every stage-attributed figure from earlier rounds, including the 10.55 s `admitNDFull` claim, the
+stage tables and the stage fits, is withdrawn as UNKNOWN; stage timing moves to row scale-stage-timers
+([FOLLOW-UPS.md](FOLLOW-UPS.md)).
 
-The decision input is in [admission-profile-20261029.md](admission-profile-20261029.md): the admitted 2× case's main fixed-part `admitNDFull` takes 10.55 CPU s median within a 12.90 s ordinary route call. The earlier evidence omitted the repeated non-W2 main admission and understated stage totals. Linear scaling of the current 2× route to 185 KB at the same density is about 109 CPU s, so the earlier 15–25 s projection is withdrawn. The actual 185,033-byte constitution took 1.00 CPU s median because it has only 16 norm-kind units and two reading sets. The 4× dense synthetic UDHR refused at the vocabulary limit. This report measures and proposes an optimization; no admission decision logic changed.
+| Finding | Resolution | Check |
+|---|---|---|
+| F1–F9 | WITHDRAWN by the ruling: `ReadingsAdmissionProfile.lean`, its `Serve.lean` hook and `tests/test_readings_stage_times.py` are deleted, so the F7–F9 probes now stop at `ModuleNotFoundError` | `git diff main...HEAD -- lean ve rust tools conformance` is empty |
+| Whole-request figures | `measure_admission.py` and `admission_cases.py` set no environment variable and keep no stage rows; seven cases × 3 runs re-measured | `tests/test_admission_evidence.py` (4 tests) |
+| F-ready1, F-ready2 | No product code changes, so `[mutants]` needs no product mutant; DELTA has no rows | `seeded-bugs.json`; [DELTA.md](DELTA.md) |
 
-| Finding | Fix | Regression or check | Commit |
-|---|---|---|---|
-| F1 | Time the repeated `admitS2` and fixed-part `admitNDFull` in split main and W2 product paths; regenerate all three evidence sets and the analysis | `test_split_w2_fixed_part_completion_is_timed`, `test_saved_twofold_profile_records_fixed_part_completion`; F1 probe | `6431c67d1`, `f6305c17c`, `864d3dd8c` |
-| F2 | Register and expand environment handles using the service protocol before profiling | `test_normal_client_profiles_registered_and_reused_handle`; F2 probe | `6431c67d1` |
-| F-ready1 | Build and kill two seeded Lean faults; save the record with changed file paths | `seeded-bugs.json`; review-ready `[mutants]` | `8400da266` |
-| F-ready2 | Record the DRI's item 1 signature in the DELTA Ruling cell | review-ready `[delta]` | `8400da266` |
-| F3 | Time the non-W2 split-main fallback `admitS2`; regenerate all evidence sets and stage fits | `test_split_non_w2_main_records_fallback_admission`, `test_saved_non_w2_prefixes_record_fallback_admission`, `test_saved_stage_table_uses_all_calls_in_each_run`; F3 probe | `9a0a8269d` (code), `d6f2766c8` (evidence) |
-| F4 | Replay the selected enumerated verdict's second `admitNDFull` after component admission, for both split and unsplit routes | `test_named_enumerated_verdict_records_both_completion_calls`, `test_unsplit_enumerated_verdict_records_both_completion_calls`; F4 probe | `f010f7577` |
-| F5 | Dispatch validation and separation through S1 admission before S2 when completion requires it; retain the soft-completion continuation and reject unsupported kinds before admission | `test_unsplit_validation_uses_s1_admission_only`, `test_unsplit_soft_validation_continues_from_s1_into_s2`, `test_unsupported_kind_has_no_admission_stages`; F5 probe | `f010f7577`, `4d0143355` |
-| F6 | Stop profiling the split at its first admission error | `test_split_admission_stops_before_companions_after_main_failure`; F6 probe | `f010f7577` |
+Trust baseline, trust classes, assurance manifest, `checkers.lock`, `declarations.txt`, `predicates.txt` and
+`history-dependent.json` were restored to the base and checked by their generators; `trust-mutants.json` was deleted.
 
-| Requirement | Owner | Delivered by | Check |
-|---|---|---|---|
-| Opt-in Lean stage timing, fixed-part and handle paths, unchanged answer | AGENT | `lean/VE/Service/ReadingsAdmissionProfile.lean`, `lean/Serve.lean`; commits `6431c67d1`, `f6305c17c`, `864d3dd8c`, `f010f7577`, `4d0143355` | `tests/test_readings_stage_times.py`, eight seeded failures in `seeded-bugs.json` |
-| Three CPU repeats of 13/19/31-norm prefixes and whole UDHR | AGENT | `admission-profile-evidence.json`, `admission-profile-controlled.json`, saved `inputs/` | Evidence probe: each listed case has exactly three runs |
-| Three CPU repeats of synthetic 2×/4× and source generator | AGENT | `admission_cases.py`, `measure_admission.py`, `admission-profile-evidence.json` | Three runs each; 2× admitted, 4× recorded as vocabulary refusal |
-| 185 KB target, stage fits, cause and bounded decision | AGENT | `admission-profile-constitution.json`, [profile](admission-profile-20261029.md) | Three constitution runs and stage table/fits from saved CPU ticks |
-| R16 trusted growth, assurance inventory, generated Lean records | AGENT | `docs/trust-baseline.json`, `ve/assurance-manifest.json`, `lean/checkers.lock`, `lean/declarations.txt`, `lean/predicates.txt`; commits `f248cf187`, `85334b466`, `e7b2413d9` | `trust_map.py --check`, trust mutation evidence, assurance failed ID rerun |
-| Final release gate on committed HEAD | EXTERNAL (chain) | Deferred by the task instruction | The chain writes `gate-result.json`; no local full gate was run |
+## Checks
 
-The evidence files store the source and request hashes, service binary hash, VM one-minute load, process CPU, and per-stage CPU ticks for each repeat. The attempted `iso.sh exp-scale-admission 24G` call failed at the user systemd bus on this VM; the runner recorded that failure and used the same Lean executable at `nice -n 15`. The fits use CPU seconds under shared VM load, not wall time. No model API calls were made. No permanent test reads a moving Git diff for the report.
-
-## Checks and seeded bugs
-
-- `cd lean && PATH=$HOME/.elan/bin:$PATH lake build`: PASS, 1,163 jobs on the final Lean source. `python3 lean/audit.py`: PASS, 669 sources and 7,428 named theorem declarations.
-- `.venv/bin/pytest -q tests/test_readings_stage_times.py`: PASS, 15 tests after F3; F1, F2 and F3 probes pass. The F3 probe failed before the fix.
-- `uv run --no-sync python tools/trust_map.py --check`: PASS, K +0, S +0, trusted +1 in `Serve.lean`, unclassified 0. The earlier `trust-mutants.json` has zero applicable definitions; no new trusted definition was added in the fix.
-- `tools/regen_generated.py --write` ran before the final Lean edit; `tools/lean_statements.py` and the checker-pin generator refreshed their outputs after the final build. The service hash in every evidence file equals the final binary hash.
-- F3 final build: PASS, 1,163 jobs. `python3 lean/audit.py`: PASS, 669 sources and 7,428 theorem declarations. `test_saved_stage_table_uses_all_calls_in_each_run` checks the revised table directly against saved CPU ticks, including both non-W2 main admissions.
-- Earlier F3 selection: `mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` passed 394 files with 0 failed IDs on the Mac. That result predates the F4–F6 code fixes.
-- `review-ready.py` on committed `30b66bac5`: PASS for clean, mutants, relay mutation gate, and DELTA. Its sole FAIL is the full release gate assigned to the merge train by this task.
-- F4–F6: their exact executable probes failed on `d5a36b481` and passed after `4d0143355`; `tests/test_readings_stage_times.py` passed all 21 cases. The final `lake build` passed 1,163 jobs, `lean/audit.py` passed 669 sources and 7,428 theorem declarations, and `trust_map.py --check` passed with zero unclassified lines and the original trusted +1.
-- The F4–F6 changes add only diagnostic stage replay. The DRI's item 1 decision signs this opt-in measurement; [DELTA.md](DELTA.md) records the changed stderr stages and their tests. No verdict, response schema, Python product code, or Rust product code changed.
-
-`git diff --check main...HEAD` flags one trailing space in the copied 50% UDHR source and one blank final line in the copied 75% source. They are retained to preserve the exact inputs from the scale review; the authored code and report files have no whitespace findings.
-
-Each temporary fault below was built, failed its named behavior test, and was restored before the final build. The machine-readable record is [seeded-bugs.json](seeded-bugs.json).
-
-| Changed product file and temporary fault | Failing test |
-|---|---|
-| `lean/VE/Service/ReadingsAdmissionProfile.lean`: disable the W2 fixed-part branch | `test_split_w2_fixed_part_completion_is_timed` failed for elaborate, choice, and verdicts |
-| `lean/Serve.lean`: pass an empty handle table to profiling | `test_normal_client_profiles_registered_and_reused_handle` failed on reuse |
-| `lean/VE/Service/ReadingsAdmissionProfile.lean`: restrict the repeated probe to W2 | `test_split_non_w2_main_records_fallback_admission` failed for elaborate and choice |
-| `lean/VE/Service/ReadingsAdmissionProfile.lean`: skip the verdict's post-admission completion | `test_named_enumerated_verdict_records_both_completion_calls` failed |
-| `lean/VE/Service/ReadingsAdmissionProfile.lean`: route S1 validation through S2 admission | `test_unsplit_validation_uses_s1_admission_only` failed |
-| `lean/VE/Service/ReadingsAdmissionProfile.lean`: continue after a failed main admission | `test_split_admission_stops_before_companions_after_main_failure` failed |
-| `lean/VE/Service/ReadingsAdmissionProfile.lean`: skip the soft S2 continuation | `test_unsplit_soft_validation_continues_from_s1_into_s2` failed |
-| `lean/VE/Service/ReadingsAdmissionProfile.lean`: profile unsupported kinds | `test_unsupported_kind_has_no_admission_stages` failed |
-
-## Self-review against BUILDER-CHECKLIST
-
-1. N.A. — no Lean response or Python relay schema changed; timing JSON stays on stderr, as checked by `test_readings_stage_times_do_not_change_the_answer`.
-2. PASS — requirement table above maps each task row to commits and checks; `git diff main...HEAD` reviewed for one-owner, generated-file and scope rules.
-3. PASS — two planted faults above each failed a focused test; `docs/perf/trust-mutants.json` from the original build records zero applicable trusted definitions.
-4. PASS — `test_readings_stage_times_do_not_change_the_answer` checks the genuine response bytes with and without timing; no Python or Rust product code changed.
-5. N.A. — no Python field was added to a relayed Lean answer; the diagnostic JSON is never read by Python.
-6. N.A. — the user explicitly assigns the final full gate to the chain; `gate-result.json` is not yet produced on this branch.
-7. PASS — [DELTA.md](DELTA.md) cites the DRI decision item 1 and R16, with a silent-default test and a ties follow-up in [FOLLOW-UPS.md](FOLLOW-UPS.md).
-8. PASS — `test_readings_stage_times_do_not_change_the_answer` and `test_readings_stage_times_are_silent_by_default` exercise the only user-visible output delta; DELTA lists the opt-in stderr change.
-9. PASS — the Mac selected run passed 394 files; the one final-HEAD addition and the tightened timing file passed separately as recorded above.
-10. N.A. — no Lean theorem or approved statement changed; `lean/audit.py` passed.
-11. N.A. — no public budget, deadline, limit or verdict behavior changed; timing tests use no sleep or elapsed-time assertion.
-12. PASS — `admission-profile-evidence.json` and `admission-profile-constitution.json` record CPU and load; the hook is off by default by `test_readings_stage_times_are_silent_by_default`.
-13. The full release gate and its collection check are assigned to the merge train by the task instruction.
-
-No full release gate, full suite, or repeated broad selection was run locally. The external chain owns the final-HEAD gate under the task instruction.
+- `lake build`: PASS, 1,161 jobs; its `ve_service` (`92dd48e7…`) is pinned in main's `checkers.lock`. `lean/audit.py`:
+  PASS, 668 sources, 7,428 theorems. `trust_map.py --check`: PASS, +0. `regen_generated.py --check`: 33 up to date.
+- `test_readings_nd_lean.py`, `test_readings_s1_lean.py`, `test_admission_evidence.py`, `test_hang_guards.py`: 279 passed.
+- `mac-pytest.sh --select` (26 units; VM fallback): `test_hang_guards` read the new test's `cpu > 0` as a time assert, so
+  the bound was dropped and the test passes on rerun. `test_safety_framework.py::test_fsf_r2_probes_rerun_equals_saved_probes`
+  ("probes.json is out of date") fails again on rerun. It is **pre-existing**: it reads only `usecases/` and product code,
+  which equal the base. It is not in main-known-red.txt, so it is left to its own fix item.
+- Seeded faults, each restored: the stage variable set in `measure_admission.py`, and a numeric stage row in the
+  constitution evidence. Each fails its test ([seeded-bugs.json](seeded-bugs.json)).
+- Not run: the full release gate and the full suite (owned by the chain and the merge train). No model calls.
+  The copied 50%/75% UDHR inputs keep a trailing space and a blank final line, to preserve the review's exact inputs.
