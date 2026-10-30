@@ -712,6 +712,31 @@ def layerDecided (ps : List String) : String :=
 #guard ((profileTable.map (·.profile)).eraseDups.filter fun p =>
     !["alternatives@0", "rights@0", "risk@0", "soft-norms@0"].contains p).all fun p =>
   !(layerDecided ["judgments@0", p]).startsWith "CheckerUnavailable"
+-- The layer's own requirement over the list as written (F1 of jt-2c's review): refused without `documents@1` with the
+-- environment mode's text, decided with it; beside every other profile of the table, on either side of the boundary.
+#guard layerDecided ["definitions@0", "judgments@0", "norms@0", "relational-fol@0"] ==
+  "UnsupportedProfile: judgments@0 requires documents@1"
+#guard layerDecided ["definitions@0", "documents@1", "judgments@0", "norms@0", "relational-fol@0"] ==
+  (layerListing ["definitions@0", "documents@1", "norms@0", "relational-fol@0"]).compress
+#guard ((profileTable.map (·.profile)).eraseDups.filter fun p =>
+    !(["documents@1", "judgments@0"] ++ documentLayersApart).contains p).all fun p =>
+  layerDecided ([p, "judgments@0", "relational-fol@0"].mergeSort (· ≤ ·)) ==
+    "UnsupportedProfile: judgments@0 requires documents@1" &&
+  layerDecided ([p, "documents@1", "judgments@0", "relational-fol@0"].mergeSort (· ≤ ·)) ==
+    (layerListing ([p, "documents@1", "relational-fol@0"].mergeSort (· ≤ ·))).compress &&
+  layerDecided ([p, "relational-fol@0"].mergeSort (· ≤ ·)) ==
+    (layerListing ([p, "relational-fol@0"].mergeSort (· ≤ ·))).compress
+-- On every list of D-all with the layer, `layerGate` refuses exactly the lists without `documents@1`, so never one
+-- the table's gate admits (`gate_judgments`), and nothing without the layer.
+def layerFault (ps : List String) : String :=
+  match layerGate ps with
+  | .ok () => ""
+  | .error e => e
+#guard (List.range (2 ^ registrySorted.length)).all fun m =>
+  let ps := (maskList m ++ ["judgments@0"]).mergeSort (· ≤ ·)
+  layerFault (maskList m) == "" &&
+    layerFault ps == (if ps.contains "documents@1" then "" else "UnsupportedProfile: judgments@0 requires documents@1") &&
+    ((gateOf profileTable ps).isOk <= (layerGate ps).isOk)
 #guard (decidingEnvironment (Lean.Json.mkObj [("profile", "relational-fol@0")])).toOption.map (·.compress) ==
   some (Lean.Json.mkObj [("profile", "relational-fol@0")]).compress
 

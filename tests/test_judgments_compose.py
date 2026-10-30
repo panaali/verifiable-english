@@ -103,6 +103,47 @@ def test_a_profile_the_layer_composes_with_is_answered(service, extra):
     assert row["status"] == "ok" and row["well_typed"] is True, row
 
 
+# The layer's own requirement over the list as written (jt-2c review F1, `VE.Compose.layerGate`): every composing mode
+# refuses a list with `judgments@0` and without `documents@1` with the environment mode's text, answers it with
+# `documents@1`, and answers the list without the layer.
+REQUIRES = "UnsupportedProfile: judgments@0 requires documents@1"
+WITHOUT_DOCUMENTS = [p for p in PROFILES if p != "documents@1"]
+COMPOSING = [("environment", {}, []), ("check", {"ast": UPSILON}, []),
+             ("metered", {"kind": "evaluate-budgeted", "model": MODEL, "ast": [UPSILON], "max_evaluations": 1000}, []),
+             ("model", {"model": MODEL}, []), ("norms", {"kind": "background"}, []),
+             ("norms", {"kind": "norms-elaborate", "norms": []}, []),
+             ("norm-defaults", {"kind": "norm-defaults-elaborate", "norms": []}, ["norm-defaults@0"])]
+
+
+@pytest.mark.parametrize("mode, field, extra", COMPOSING,
+                         ids=[f"{m}-{f.get('kind', 'case')}" for m, f, _ in COMPOSING])
+def test_the_layer_s_own_requirement_is_checked_by_every_composing_mode(service, mode, field, extra):
+    """PROBE F1: the check mode answered `ok` over `WITHOUT_DOCUMENTS`, which the environment mode refuses."""
+    def row(profiles):
+        return service.run(mode, [{"id": "x", "environment": environment(profiles=sorted(profiles + extra)),
+                                   **field}])[0]
+    assert row(WITHOUT_DOCUMENTS) == {"id": "x", "status": "error", "error": REQUIRES}
+    assert row(PROFILES)["status"] == "ok", row(PROFILES)
+    assert row([p for p in WITHOUT_DOCUMENTS if p != "judgments@0"])["status"] == "ok"
+
+
+def test_the_english_route_checks_the_layer_s_own_requirement(service):
+    """The English reader's block branch (`EnglishGrammar.Run.environmentId` under `norm-defaults@0`) over a
+    `judgments@0` environment Python builds: read with `documents@1`, refused without it by the environment mode's
+    text, before the lexicon's binding."""
+    from test_acts_profile import seek_environment
+    from ve import english
+    from ve.backends import english_lean
+    from ve.environment import Environment
+    written = ["acts@0", "documents@1", "judgments@0", "norm-defaults@0", "norms@0", "relational-fol@0"]
+    env = Environment(seek_environment(written))
+    case = english_lean.request(env, "Alice may seek asylum.", english.EnglishVocabulary(env), {})
+    [read] = service.run("english.read", [case])
+    assert read["status"] == "ok" and read["result"]["status"] == "one", read
+    case["environment"]["profiles"] = [p for p in written if p != "documents@1"]
+    assert service.run("english.read", [case])[0] == {"id": case["id"], "status": "error", "error": REQUIRES}
+
+
 # `ve document` on a `judgments@0` document (DELTA row 1, the DRI's item 2) and on its twin.
 
 FOL = ["definitions@0", "documents@1", "judgments@0", "relational-fol@0"]
