@@ -8,11 +8,11 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 |---|---:|
 | leaves:bound | 257 |
 | leaves:closed domain | 286 |
-| leaves:none | 1417 |
+| leaves:none | 1414 |
 | modes | 39 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 1016 |
+| today:not probed | 1013 |
 | today:shape | 543 |
 | today:unbound | 137 |
 | answers | 574 |
@@ -3401,7 +3401,6 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 
 | leaf | kind | class | keyword | format | observed | bound today |
 |---|---|---|---|---|---:|---|
-| `/assumptions/*` | string | none |  | minLength | 0 | not probed |
 | `/case_index` | integer | bound | x-index |  | 1 | shape |
 | `/conclusion/meaning_id` | string | none |  | pattern | 5 | not probed |
 | `/environment_id` | string | none |  | pattern | 5 | not probed |
@@ -3412,7 +3411,6 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/error` | string | none |  | minLength | 8 | not probed |
 | `/id` | any | bound | x-echo |  | 9 | shape |
 | `/id` | string | bound | x-equals |  | 9 | shape |
-| `/paraphrase` | string | none |  | minLength | 0 | not probed |
 | `/premises/*/meaning_id` | string | none |  | pattern | 18 | not probed |
 | `/regions/constants/*/bits` | string | none |  | pattern | 12 | not probed |
 | `/regions/constants/*/constant` | string | none |  | pattern | 12 | not probed |
@@ -3423,7 +3421,6 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/report/leaves/*/name` | string | bound | x-references |  | 0 | shape |
 | `/report/root/meaning_id` | string | none |  | pattern | 0 | not probed |
 | `/report/root/name` | string | bound | x-equals |  | 0 | shape |
-| `/statement/meaning_id` | string | none |  | pattern | 0 | not probed |
 | `/status` | string | closed domain | const |  | 13 | shape |
 | `/w6_environment_id` | string | none |  | pattern | 5 | not probed |
 | `/w6_target_environment_id` | string | none |  | pattern | 5 | not probed |
@@ -3438,11 +3435,9 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/premises/*/formula` | formula |  | 139 |
 | `/report/leaves/*/formula` | formula |  | 0 |
 | `/report/root/formula` | formula |  | 0 |
-| `/statement/formula` | formula |  | 0 |
 
 | array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
 |---|---|---|---|---|
-| `/assumptions` | x-length |  |  |  |
 | `/erased/premises` |  |  |  |  |
 | `/premises` | x-length |  |  |  |
 | `/regions/constants` |  |  |  |  |

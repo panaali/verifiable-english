@@ -193,7 +193,6 @@ module VE.Cardinality.Examples
 module VE.Cardinality.Gate
 module VE.Cardinality.Ratio
 module VE.Cardinality.Regions
-module VE.Cardinality.Render
 module VE.Cardinality.Run
 module VE.Cardinality.RunExamples
 module VE.Cardinality.RunTheorems

@@ -10,8 +10,7 @@
           {"then": {"$ref": "#/$defs/admission"}, "when": {"$ref": "common.json#/$defs/no_kind"}},
           {"then": {"$ref": "#/$defs/admission"}, "when": {"$ref": "#/$defs/kind/admission"}},
           {"then": {"$ref": "#/$defs/certificate"}, "when": {"$ref": "#/$defs/kind/certificate"}},
-          {"then": {"$ref": "#/$defs/document"}, "when": {"$ref": "#/$defs/kind/document"}},
-          {"then": {"$ref": "#/$defs/paraphrase"}, "when": {"$ref": "#/$defs/kind/paraphrase"}}
+          {"then": {"$ref": "#/$defs/document"}, "when": {"$ref": "#/$defs/kind/document"}}
         ]
       }
     ]
@@ -189,8 +188,7 @@
     "kind": {
       "admission": {"properties": {"kind": {"const": "admission"}}, "required": ["kind"], "type": "object"},
       "certificate": {"properties": {"kind": {"const": "certificate"}}, "required": ["kind"], "type": "object"},
-      "document": {"properties": {"kind": {"const": "document"}}, "required": ["kind"], "type": "object"},
-      "paraphrase": {"properties": {"kind": {"const": "paraphrase"}}, "required": ["kind"], "type": "object"}
+      "document": {"properties": {"kind": {"const": "document"}}, "required": ["kind"], "type": "object"}
     },
     "operand": {
       "$comment": "Cardinality.Wire.encOperand: a closed W6a term or a count.",
@@ -198,35 +196,6 @@
         "count": [{"type": "string"}, {"$ref": "#/$defs/body"}],
         "quantity": [{"$ref": "quantity.json#/$defs/q_term"}]
       }
-    },
-    "paraphrase": {
-      "$comment": "Cardinality.Run.runCase paraphrase: the statement, Lean's English line for it and one assumption per finite sort.",
-      "additionalProperties": false,
-      "properties": {
-        "assumptions": {
-          "items": {"$ref": "common.json#/$defs/text"},
-          "type": "array",
-          "x-length": "/environment/cardinality/finite_sorts"
-        },
-        "environment_id": {"$ref": "common.json#/$defs/hex64"},
-        "id": {"$ref": "common.json#/$defs/id_ok"},
-        "paraphrase": {"$ref": "common.json#/$defs/text"},
-        "statement": {"$ref": "#/$defs/statement"},
-        "status": {"const": "ok"},
-        "w6_environment_id": {"$ref": "common.json#/$defs/hex64"},
-        "w6_target_environment_id": {"$ref": "common.json#/$defs/hex64"}
-      },
-      "required": [
-        "id",
-        "status",
-        "environment_id",
-        "w6_environment_id",
-        "w6_target_environment_id",
-        "statement",
-        "paraphrase",
-        "assumptions"
-      ],
-      "type": "object"
     },
     "printed": {
       "$comment": "Cardinality.Wire.encPrinted: a decimal (Time.renderAmount).",
