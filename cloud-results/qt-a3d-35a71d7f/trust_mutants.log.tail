@@ -1,0 +1,7 @@
+trust_mutants: 4 definitions, 69 mutants (69 to run), 4 jobs, base bab15c522016
+UNKNOWN lean/VE/Cardinality/Run.lean:187 VE.Cardinality.Run.reportJson (D[V], trusted) list-empty: g.leaves -> [] (lean/VE/Cardinality/Run.lean:187: Invalid field notation: Type of)
+UNKNOWN lean/VE/Cardinality/Run.lean:187 VE.Cardinality.Run.reportJson (D[V], trusted) list-empty: g.leaves.map -> [] (lean/VE/Cardinality/Run.lean:187: Function expected at)
+trust_mutants: 60 KILLED, 0 SURVIVOR, 2 UNKNOWN, 4 INVALID, 3 ALLOWED, 0 NOT RUN in 4160 s
+trust_mutants: D[V], trusted: 15 KILLED, 2 UNKNOWN, 4 INVALID
+trust_mutants: G[V], trusted: 45 KILLED, 1 ALLOWED
+trust_mutants: S, trusted: 2 ALLOWED
