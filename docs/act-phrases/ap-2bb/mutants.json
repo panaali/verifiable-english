@@ -1,0 +1,158 @@
+{
+ "restored_build_returncode": 0,
+ "mutants": [
+  {
+   "id": "canon-args-kept",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Linearize.lean",
+   "definition": "VE.Acts.Atom.canon",
+   "behaviour": "the object is not moved first",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/TableExamples.lean:202, lean/VE/Acts/TableExamples.lean:207"
+  },
+  {
+   "id": "canon-object-last",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Linearize.lean",
+   "definition": "VE.Acts.Atom.canon",
+   "behaviour": "the object after the other arguments",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/TableExamples.lean:202, lean/VE/Acts/TableExamples.lean:207"
+  },
+  {
+   "id": "canon-mods-kept",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Linearize.lean",
+   "definition": "VE.Acts.Atom.canon",
+   "behaviour": "the adverbs are not moved before the prepositional modifiers",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RenderExamples.lean:41, lean/VE/Acts/RenderExamples.lean:44"
+  },
+  {
+   "id": "normal-args-raw",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Linearize.lean",
+   "definition": "VE.Acts.Atom.normal",
+   "behaviour": "the normal form writes the arguments in the atom's order, not canon's",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/TableExamples.lean:202, lean/VE/Acts/TableExamples.lean:207"
+  },
+  {
+   "id": "parts-joined-empty",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Linearize.lean",
+   "definition": "VE.Acts.Filler.parts",
+   "behaviour": "a joined filler's parts are not checked",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RenderExamples.lean:61, lean/VE/Acts/RenderExamples.lean:70"
+  },
+  {
+   "id": "nonempty-dropped",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Linearize.lean",
+   "definition": "VE.Acts.normalOk",
+   "behaviour": "an empty words part is accepted",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RenderExamples.lean:56"
+  },
+  {
+   "id": "filler-words-dropped",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Linearize.lean",
+   "definition": "VE.Acts.normalOk",
+   "behaviour": "any word is accepted in a words part",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RenderExamples.lean:57, lean/VE/Acts/RenderExamples.lean:61"
+  },
+  {
+   "id": "filler-words-case",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Linearize.lean",
+   "definition": "VE.Acts.normalOk",
+   "behaviour": "the filler words are compared without lower-casing",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RenderExamples.lean:57"
+  },
+  {
+   "id": "subject-slot-allowed",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Linearize.lean",
+   "definition": "VE.Acts.normalOk",
+   "behaviour": "the subject slot {0} is accepted as a part",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RenderExamples.lean:66, lean/VE/Acts/RenderExamples.lean:70"
+  },
+  {
+   "id": "nodup-dropped",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Linearize.lean",
+   "definition": "VE.Acts.normalOk",
+   "behaviour": "a repeated argument marker is accepted",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RenderExamples.lean:74, lean/VE/Acts/RenderExamples.lean:76"
+  },
+  {
+   "id": "split-joined-allowed",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Linearize.lean",
+   "definition": "VE.Acts.normalOk",
+   "behaviour": "a joined filler under a split marker is accepted",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RenderExamples.lean:80, lean/VE/Acts/RenderExamples.lean:83"
+  },
+  {
+   "id": "two-parts-dropped",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Linearize.lean",
+   "definition": "VE.Acts.normalOk",
+   "behaviour": "a joined filler of fewer than two parts is accepted",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RenderExamples.lean:103, lean/VE/Acts/RenderExamples.lean:105, lean/VE/Acts/RenderExamples.lean:112"
+  },
+  {
+   "id": "two-parts-one",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Linearize.lean",
+   "definition": "VE.Acts.normalOk",
+   "behaviour": "a joined filler of one part is accepted",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RenderExamples.lean:103, lean/VE/Acts/RenderExamples.lean:112"
+  },
+  {
+   "id": "d9-dropped",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Linearize.lean",
+   "definition": "VE.Acts.normalOk",
+   "behaviour": "a joined filler with a long first or last part is accepted",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RenderExamples.lean:102, lean/VE/Acts/RenderExamples.lean:107, lean/VE/Acts/RenderExamples.lean:112, lean/VE/Acts/RenderExamples.lean:99"
+  },
+  {
+   "id": "atomOk-dropped",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Linearize.lean",
+   "definition": "VE.Acts.normalOk",
+   "behaviour": "an atom that does not fit its frame is accepted",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/RenderExamples.lean:87"
+  },
+  {
+   "id": "longEnd-first-only",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.longEnd",
+   "behaviour": "D9 (i) checks the first part only",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:115, lean/VE/Acts/MeaningExamples.lean:118, lean/VE/Acts/MeaningExamples.lean:120"
+  },
+  {
+   "id": "longEnd-one-word",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.longEnd",
+   "behaviour": "D9 (i) refuses a one-word end",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:112, lean/VE/Acts/MeaningExamples.lean:114, lean/VE/Acts/MeaningExamples.lean:118, lean/VE/Acts/MeaningExamples.lean:120, lean/VE/Acts/MeaningExamples.lean:152, lean/VE/Acts/MeaningExamples.lean:51, lean/VE/Acts/MeaningExamples.lean:90"
+  }
+ ]
+}
