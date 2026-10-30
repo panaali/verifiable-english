@@ -1,0 +1,29 @@
+- `lean/VE/Route/Admission.lean` — Executable admission of documents on the new route (PLAN-EXPAND2 3.6).
+- `lean/VE/Route/AstLimit.lean` — The static AST limits of wire formulas, in Python's decoder order.
+- `lean/VE/Route/Background.lean` — Background premises on the Lean route (PLAN-EXPAND2 3.1).
+- `lean/VE/Route/Budget.lean` — The Python/Rust evaluation budget on the `route` subcommand.
+- `lean/VE/Route/Checker.lean` — The checker parameter of the route (PLAN-EXPAND2 3.4).
+- `lean/VE/Route/Checks.lean` — Executable checks for the route: the profile gate, the dependency DAG, labels, nested kinds and the literal generator.
+- `lean/VE/Route/Closure.lean` — Finite closures as Python and Rust build them, with their charges.
+- `lean/VE/Route/Decode.lean` — Model decoding for the `route` and `quantity` runners.
+- `lean/VE/Route/Examples.lean` — A genuine environment-extending layer, as evidence that the frozen `Layer` contract is satisfiable beyond the identity: `copyLayer` adds a new unary predicate …
+- `lean/VE/Route/Flags.lean` — Functional and total tables in one pass, as Python `_valid_flags` and Rust check them.
+- `lean/VE/Route/Gate.lean` — The `ve.core@0.2` envelope and its profile gate (PLAN-EXPAND2 3.3, 3.4).
+- `lean/VE/Route/Layer.lean` — The route contract of PLAN-EXPAND2 section 3.4: typed, environment-extending layers over an abstract semantics.
+- `lean/VE/Route/Metered.lean` — A document-level meter.
+- `lean/VE/Route/MeteredProofs.lean` — A completed metered document has the value of the total evaluator, hence by each family's `eval_iff_denote` it has its finite-model denotation.
+- `lean/VE/Route/MeteredRun.lean` — The batch-15a Lean entry point.
+- `lean/VE/Route/MeteredTrace.lean` — Explanations are display data.
+- `lean/VE/Route/NonVacuity.lean` — Python's conservative search-side non-vacuity condition, expressed once for the four Lean formula families.
+- `lean/VE/Route/PyDecoder.lean` — Python's view of an AST on the wire: `repr` of a name and the walk of its `_Decoder`.
+- `lean/VE/Route/Readings.lean` — The assertion-only, same-background reading-set rule.
+- `lean/VE/Route/Route.lean` — The route (PLAN-EXPAND2 3.4, 3.5): one dependency DAG over definitions and regulated predicates orders the layers; the checker receives Background, then every …
+- `lean/VE/Route/Run.lean` — The `route` subcommand of `ve_conformance` (PLAN-EXPAND2 3.4).
+- `lean/VE/Route/RunSound.lean` — The claims of `VE.Route.WireSound` at the public entry `Route.Run.runCase` (docs/CONSOLIDATION-PLAN.md step 2a, item 4).
+- `lean/VE/Route/Steps.lean` — Certificate replay steps.
+- `lean/VE/Route/Typed.lean` — The typed check of formulas, family by family (`check`, and `legacy` on the frozen envelopes): the one function both the standalone typing service (`VE.Service…
+- `lean/VE/Route/Wire.lean` — Wire decoding for the `route` subcommand (`ve.core@0.2`).
+- `lean/VE/Route/WireSound.lean` — One acceptance theorem for the `route` runners `Wire.runFol`, `Wire.runClosure` and `Wire.runOrder` (docs/CONSOLIDATION-PLAN.md step 2a).
+- `lean/VE/Route/examples/dag_differential.py` — Differential check of the documented dependency-order algorithm against Lean.
+- `lean/VE/Route/examples/generate.py` — Generate the Lean `route` subcommand's shipped cases.
+- `lean/VE/Route/frozen.py` — Hash test for the narrow freeze (architecture decision D2).

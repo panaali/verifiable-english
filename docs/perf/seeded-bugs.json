@@ -1,0 +1,2 @@
+[{"file": "docs/perf/measure_admission.py", "fault": "Set os.environ[\"VE_READINGS_STAGE_TIMES\"] = \"1\" at the start of each run", "test": "tests/test_admission_evidence.py::test_measurement_scripts_do_not_set_the_withdrawn_stage_variable", "result": "failed; restored, 4 passed"},
+ {"file": "docs/perf/admission-profile-constitution.json", "fault": "Add a stages row with a numeric cpu_ticks to the first constitution run", "test": "tests/test_admission_evidence.py::test_no_numeric_stage_count_or_total", "result": "failed; restored, 4 passed"}]

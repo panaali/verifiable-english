@@ -1,0 +1,78 @@
+- `ve/__init__.py` — VE v0 experimental language, finite semantics and checked argument API.
+- `ve/__main__.py` — Run ``python -m ve --help`` for the small file-based checking interface.
+- `ve/admission.py` — Claim labels, unit kinds and executable document admission on ve.core@0.2 (PLAN-EXPAND2 3.6).
+- `ve/alternatives.py` — Lean-only alternatives route transport.
+- `ve/argument.py` — Committed claim DAGs and experimental, assumption-preserving certification.
+- `ve/argument_fixtures.py` — Executable versions of the debate protocol's worked examples.
+- `ve/ask.py` — `ve ask DOCUMENT QUESTION [--reading] [--json] [--evidence FILE]` (docs/spec/question-answering-PLAN.md 4.8, Q1.2, Q2.5; docs/spec/question-answering.md 4.2, 8…
+- `ve/assurance.py` — Operation assurance manifest: runtime bindings and the authority guard.
+- `ve/ast.py` — Indexed syntax and its extrinsic type/scope checker.
+- `ve/attacks.py` — Experiment attack validation and streaming JSONL CLI.
+- `ve/authoring.py` — Bounded, provider-independent assisted authoring for VE documents.
+- `ve/background.py` — Environment-derived premises and finite-model validity hooks.
+- `ve/bundle.py` — Checked lemma bundles with transitive, labelled premise provenance.
+- `ve/calc.py` — Python relay of the `calc` service mode: a `ve-calc@0` case (math-evidence plan ME-3, spec 3.4).
+- `ve/check.py` — Acceptance records bind exact input bytes, AST, vocabulary and inventory.
+- `ve/closure.py` — Capture-avoiding closure rules, including supplied-invariant induction.
+- `ve/defaults.py` — Answers that hold unless an exception applies: the relay of Lean's `defaults-*` rows (docs/spec/defeasible-PLAN.md 2.2 and 2.3, batch DF-1b; spec docs/spec/def…
+- `ve/defaults_english.py` — The English of answers that hold unless an exception applies (docs/spec/defeasible-PLAN.md 2.8, spec docs/spec/defeasible.md 4; batch DF-1b).
+- `ve/definitions.py` — Pure elaboration of acyclic predicate definitions.
+- `ve/discourse.py` — Python relay for the ve.discourse@1 document profile.
+- `ve/english.py` — Writable, scoped English.
+- `ve/english_phrases.py` — Lexical utilities for diagnostics and explicit unary vocabulary proposals.
+- `ve/english_vocabulary.py` — Display-only English overlays and conservative, explicitly accepted suggestions.
+- `ve/entailment.py` — Checkable semantic-tableau evidence for many-sorted relational FOL.
+- `ve/environment.py` — Immutable local vocabulary; descriptions contribute to artifact identity.
+- `ve/environment_wire.py` — Cached transport text for an immutable, identity-bound environment.
+- `ve/equivalence.py` — Three-valued comparison: checked proofs, checked models, or UNKNOWN.
+- `ve/errors.py` — Stable diagnostics shared by all experimental checking boundaries.
+- `ve/evaluate.py` — Small trusted finite-model evaluator with bounded explanatory traces.
+- `ve/filling_search.py` — The one untrusted flip search (plan Q2.5): candidate fillings that split a target formula.
+- `ve/fluent.py` — Read-only English surface: explicit scope, reversible local contractions.
+- `ve/fol.py` — Explicit adapters from formal first-order AST data to typed VE.
+- `ve/grammar.py` — Environment-specific CFGs for canonical VE, without decoding dependencies.
+- `ve/identity.py` — Domain-separated artifact bindings; identities never certify truth.
+- `ve/limits.py` — The initial v0 runtime envelope; these bounds are not logical axioms. Lean owns every limit (`lean/VE/Limits.lean`, lean-first batch 18).
+- `ve/model.py` — Validated finite structures for the relational v0 profile.
+- `ve/natural.py` — Deterministic, audited English candidates for the untrusted natural view.
+- `ve/norm_admission.py` — W2 admission for documents containing active W1 norm units, relayed to Lean's norms route.
+- `ve/norm_defaults.py` — Relay containers for the Lean norm-defaults route.
+- `ve/norm_defaults_contract.py` — Python hooks and adapter of the `norm-defaults@0` wire table (wire-contract-s5.md 2.4, 2.5).
+- `ve/norm_defaults_english.py` — English for norm-defaults@0 (docs/spec/norm-defaults.md section 4).
+- `ve/norm_defaults_route.py` — Python entry points for the Lean norm-defaults route (service mode `norm-defaults`) (docs/spec/norm-defaults.md 3, 6 and 8).
+- `ve/norm_english.py` — Canonical W1 rule-block view with an identity-bound export manifest.
+- `ve/norm_strict.py` — Strict text for named norm units, sharing the ordinary formula grammar.
+- `ve/norms.py` — W1 norm units, Catala selection, completions, and generated FOL premises.
+- `ve/norms_contract.py` — Python hooks, classifiers and adapter of the `norms@0` wire table (wire-contract-s5.md 2.3, 2.5).
+- `ve/openterms.py` — Reviewed open-term declarations for ve-document@1.
+- `ve/order.py` — order@0 certificates: a signed tableau with a Farkas closing rule.
+- `ve/parser.py` — Strict, non-normalizing parser for the VE v0 surface language.
+- `ve/printer.py` — Deterministic, read-only surfaces of one checked AST.
+- `ve/profiles.py` — Profile data for display and model projection: the rows are Lean's (`ve/profile_table.json`).
+- `ve/propose.py` — Untrusted authoring proposals.
+- `ve/readings.py` — Reading-set structure and conservative checking plans.
+- `ve/readings_components.py` — Readings with their own vocabulary through `ve document` (docs/spec/readings-defaults.md 1.9, 1.10, 2.4, 3, 4.5; plan RD-4b).
+- `ve/readings_english.py` — Report-only English for the S1 reading wrapper.
+- `ve/readings_route.py` — Admission of content-bearing reading sets by the S1 Lean route, relayed (docs/LEAN-FIRST-PLAN.md rule 2).
+- `ve/readings_s1.py` — Python's construction of S1 readings documents (docs/spec/composition-s1.md 1.1 to 1.7), for the English of the checked answer and for the untrusted search for…
+- `ve/readings_s2_english.py` — The English of S2a (composition-s2.md section 2; composition.md 2.1), registered and gated.
+- `ve/readings_s2_wording.py` — The English of S2a across readings (docs/spec/composition-s2.md 2.3), from checked verdicts only, every sentence through W7's gate (`ve/readings_s2_english.py`…
+- `ve/readings_sup.py` — S2a's deterministic choice encoding.
+- `ve/report_english.py` — The reports@0 English of attribution.md section 2: one grammar for typed and rendered text, bound to a manifest (2.4).
+- `ve/reports.py` — Reports document view over Lean's checked elaboration.
+- `ve/reports_route.py` — Checked reports route.
+- `ve/rights.py` — Rights environment and Python views of Lean's rights elaboration.
+- `ve/rights_route.py` — Relay rights decisions and reports from the Lean rights route.
+- `ve/risk.py` — Lean risk route transport.
+- `ve/search.py` — Bounded finite countermodel search (an untrusted convenience).
+- `ve/senses_document.py` — Senses in `ve document` (readings-defaults plan, section 6; batch RD-8): transport and display only.
+- `ve/soft_route.py` — Python entry point for the proved soft-norm admission route.
+- `ve/softnorms.py` — Containers for Lean-accepted soft norms and their regenerated premises.
+- `ve/speech_acts.py` — Speech wording helpers retained for the Python English parser until E3.
+- `ve/speech_document.py` — Source file reading and display projection for Lean's speech-source route.
+- `ve/speech_english.py` — Deliberately narrow, single-reading English for experimental speech acts.
+- `ve/stream_audit.py` — Canonical audit helpers for model-backend streams: ONE credential sanitizer and ONE usage count.
+- `ve/units.py` — W6 annotated quantities.
+- `ve/vacuity.py` — Three-valued finite satisfiability report for a premise set.
+- `ve/wire.py` — Strict JSON and RFC 8785 serialization for VE's restricted JSON subset.
+- `ve/words.py` — Lean's situation lines, point clauses, filled-gap sentences and pair sentences (plan Q2.4): the relay of the `words` service mode (`lean/VE/Words/Run.lean`).
