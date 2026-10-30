@@ -1,0 +1,111 @@
+{
+  "id": "C13",
+  "arm": "english",
+  "account": "claude-danielsaeedi37",
+  "prompt": "Read only the source and displayed lines below as a reader of this document. For the named conclusion, answer in exactly this format: `CLASS: SETTLED|TURNS|CONDITIONAL; DECIDER: <name or NONE>; WHY: <one sentence>`. SETTLED means it holds whatever is judged. TURNS means two admissible judgments can change it. CONDITIONAL means it is certified only given a judgment criterion. Name the decider if the text names one; otherwise say NONE. Do not use outside knowledge.\n\nSOURCE: Claude constitution synthetic user-agency case: A suggestion is retained if this choice is voluntary; a consent reviewer decides whether it is voluntary.\nCONCLUSION: the suggestion is retained\nJUDGMENT: voluntary_choice means whether this choice is voluntary; decider: consent reviewer.\nWhether this choice is voluntary is a judgment for consent reviewer.\n",
+  "cli": {
+    "duration_api_ms": 1901,
+    "stop_reason": "end_turn",
+    "session_id": "5d05d585-23c0-4f06-894b-319302803cc2",
+    "total_cost_usd": 0.018496400000000003,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 4113,
+      "cache_read_input_tokens": 10704,
+      "output_tokens": 97,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 4113,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 97,
+          "cache_read_input_tokens": 10704,
+          "cache_creation_input_tokens": 4113,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 4113
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 97,
+        "cacheReadInputTokens": 10704,
+        "cacheCreationInputTokens": 4113,
+        "webSearchRequests": 0,
+        "costUSD": 0.018496400000000003,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 0,
+        "cacheCreationEphemeral5mInputTokens": 0,
+        "cacheCreationEphemeral1hInputTokens": 4113,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 1,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "CLASS: CONDITIONAL; DECIDER: consent reviewer; WHY: The suggestion is retained only if the choice is voluntary, and the text assigns that voluntariness judgment to the consent reviewer, so the conclusion is certified only given that reviewer's criterion.",
+    "ttft_ms": 2323,
+    "type": "result",
+    "duration_ms": 2366,
+    "uuid": "c174759c-3c43-4127-b2ba-f0f1aef51277",
+    "ttft_stream_ms": 1743,
+    "time_to_request_ms": 461,
+    "first_content_frame_ms": 1743,
+    "queued_turn_count": 0,
+    "result_index": 0
+  },
+  "stderr": "",
+  "exit_code": 0,
+  "charged_cw": 14916,
+  "answer": "CLASS: CONDITIONAL; DECIDER: consent reviewer; WHY: The suggestion is retained only if the choice is voluntary, and the text assigns that voluntariness judgment to the consent reviewer, so the conclusion is certified only given that reviewer's criterion."
+}
