@@ -58,10 +58,10 @@ is a non-empty run of the frame's filler words, a slot other than the subject `{
 marker occurs twice; and every joined filler has two or more parts, does not sit under a split marker (the object's
 `""` included) and, by D9 (i), has no first or last part of two or more words (`longEnd`; DRI 2026-10-30, ap-2bb). -/
 def normalOk (V : Vocab) (a : Atom) : Bool :=
-  atomOk V a &&
   match V.frames.find? (·.head == a.head) with
   | none => false
   | some f =>
+    atomOk V a &&
     (a.args.flatMap (·.2.parts) ++ a.mods.filterMap (fun | .prep _ p => some p | .adv _ => none)).all (fun
       | .words ws => !ws.isEmpty && ws.all (fun w => !(fillExcl V f).contains w.toLower)
       | .slot i => i != 0
