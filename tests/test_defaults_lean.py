@@ -99,9 +99,9 @@ ALPHA_ENGLISH = ["Unless an exception applies, the conclusion follows: Every ass
                  "the text names no case."]
 
 
-def follows(basis, form, assumptions):
+def follows(basis, form, assumptions, deciders=("assistant",)):
     return {"verdict": "FOLLOWS", "basis": basis, "form": form, "assumptions": assumptions,
-            "deciders": ["assistant"]}
+            "deciders": list(deciders)}
 
 
 def test_alpha_needs_its_one_exception_and_the_strict_countermodel(monkeypatch):
@@ -172,7 +172,8 @@ def test_delta_rank_resolved_and_its_ranking_assumption(monkeypatch):
 
 def test_epsilon_switch_is_the_long_form(monkeypatch):
     out, _ = asked(monkeypatch, "epsilon")
-    assert out["answer"] == follows("needs", "long", ["default:exception:r1", "default:switch:r1:user"])
+    assert out["answer"] == follows("needs", "long", ["default:exception:r1", "default:switch:r1:user"],
+                                    ["assistant", "user"])
 
 
 def test_zeta_strict_question_first(monkeypatch):
