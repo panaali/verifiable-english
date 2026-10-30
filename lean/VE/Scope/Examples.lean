@@ -748,6 +748,42 @@ def rawRule : Json := rawJ (nd "over" (.arr #[]) (nd "guard" (j "[\"top\"]") .le
 #guard (member (.ok rawRule) "name", (do pure (← VE.Readings.Wire.decodeNorm (← VE.Readings.Wire.decodeEnvironment softEnv) rawRule).name : Except String String).toOption) ==
   (none, some "hidden")
 
+/-! sc-1af: `jsonWF?`, the check the route runs (the DRI's decision of 2026-10-28 item 1). Every tree of F-raw fails
+    it; every tree a parser builds or `mkObj` writes passes, booleans and numbers included; and each part of the check
+    is shown on both sides of its boundary: the balance ratio `delta` (3) and the `≤ 1` case, a stored size, the key
+    order (a swapped key, a repeated key, a third key out of order), and a bad value at the root, left, right and in
+    an array. The route's refusal is in `WireExamples.lean`. -/
+def rawA : Json := rawJ (nd "x" "X" (nd "units" hcUnits .leaf (nd "w" "W" .leaf (nd "wa" "WA"))))
+def rawB : Json := rawJ (nd "x" "X" (nd "units" hcUnits .leaf (nd "zzz" "Z")))
+def withUnit (u : Json) : Json :=
+  Json.mkObj [("units", .arr ((unitsOf (hcDoc parts)).map fun x => if idOf x == "u0165.s01" then u else x).toArray)]
+#guard [rawA, rawB, rawUnit, withUnit rawUnit, rawRule].map jsonWF? == [false, false, false, false, false]
+#guard [.null, .bool true, .bool false, .num 0, .num (-3), .num ⟨15, 1⟩, .str "", .arr #[], Json.mkObj [],
+  hcDoc parts, softEnv, envJ, leadPart,
+  j "{\"b\": [true, false, null], \"n\": [0, -1, 1.5, 2e3], \"o\": {\"s\": \"x\", \"o\": {}}, \"a\": [[], {}]}"].all jsonWF?
+open Std.DTreeMap.Internal (Impl) in
+def leaf1 (k : String) (v : Json := .null) : Impl String (fun _ => Json) := nd k v
+-- balance: one side of size 1 against none passes, size 2 against none fails; 3 against 1 passes, 4 against 1 fails
+#guard [nd "b" .null (leaf1 "a"), nd "a" .null .leaf (leaf1 "b"),
+  nd "d" .null (nd "b" .null (leaf1 "a") (leaf1 "c")) (leaf1 "e"), nd "b" .null (leaf1 "a") (nd "d" .null (leaf1 "c") (leaf1 "e")),
+  .inner 1 "a" .null .leaf .leaf].map (jsonWF? ∘ rawJ) == [true, true, true, true, true]
+#guard [nd "c" .null (nd "b" .null (leaf1 "a")), nd "a" .null .leaf (nd "b" .null .leaf (leaf1 "c")),
+  nd "e" .null (nd "c" .null (nd "b" .null (leaf1 "a")) (leaf1 "d")) (leaf1 "f"),
+  nd "b" .null (leaf1 "a") (nd "d" .null (leaf1 "c") (nd "e" .null .leaf (leaf1 "f"))),
+  nd "d" .null (nd "c" .null (nd "b" .null (leaf1 "a"))) (leaf1 "e"), nd "b" .null (leaf1 "a") (nd "c" .null .leaf (nd "d" .null .leaf (leaf1 "e"))),
+  .inner 2 "a" .null .leaf .leaf, .inner 0 "a" .null .leaf .leaf].map (jsonWF? ∘ rawJ) ==
+  [false, false, false, false, false, false, false, false]
+-- order: ascending keys pass; a swapped, a repeated, or a third key out of order fails
+#guard [nd "b" .null (leaf1 "a") (leaf1 "c"), nd "b" .null (leaf1 "c") (leaf1 "a"), nd "b" .null (leaf1 "b"),
+  nd "b" .null (leaf1 "a") (leaf1 "a")].map (jsonWF? ∘ rawJ) == [true, false, false, false]
+-- values: an ill-formed value at the root, on the left, on the right, first or second in an array, or deeper, fails
+#guard [nd "b" rawB (leaf1 "a") (leaf1 "c"), nd "b" .null (leaf1 "a" rawB) (leaf1 "c"), nd "b" .null (leaf1 "a") (leaf1 "c" rawB),
+  nd "a" (.arr #[rawB]), nd "a" (.arr #[.null, rawB]), nd "a" (Json.mkObj [("k", .arr #[Json.mkObj [("k", rawB)]])])].map
+  (jsonWF? ∘ rawJ) == [false, false, false, false, false, false]
+#guard [Json.arr #[rawB], .arr #[true, rawB], Json.mkObj [("k", rawUnit)]].map jsonWF? == [false, false, false]
+-- `jsonWF?_sound`: a passing tree is `JsonWF`
+example : JsonWF (Json.mkObj [("b", .bool true), ("n", .num 7)]) := jsonWF?_sound (by decide)
+
 /-! SC-2 without AT-3a's attitude decoder: a syntactic replacement and its separate narrowing reading. -/
 -- F3: all seven guards substitute their own source guard, not the first rule's guard.
 #guard let c := j "[\"or\",[\"and\",\"own\",[\"unary\",\"knows_guard\",[\"var\",1]]],[\"unary\",\"likely_guard\",[\"var\",1]]]"
@@ -1009,6 +1045,8 @@ example : ¬ JsonWF rawUdhr := by
     simp [nd, Std.DTreeMap.Internal.Impl.balanced_inner_iff,
       Std.DTreeMap.Internal.Impl.BalancedAtRoot, Std.DTreeMap.Internal.Impl.size,
       Std.DTreeMap.Internal.delta] at hb
+-- sc-1af: `jsonWF?` agrees with both sides of the boundary above
+#guard [jsonWF? (lDoc udhrPieces), jsonWF? udhrDoc, jsonWF? rawUdhr] == [true, true, false]
 
 #guard [same (govL udhrPieces udhrAnchors udhrDoc [g8]) udhrDoc,
   same (govL udhrPieces udhrAnchors udhrDoc []) udhrDoc] == [true, true]

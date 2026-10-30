@@ -437,3 +437,32 @@ def test_the_proposal_refusal_is_leans_text():
     text = (Path(__file__).resolve().parents[1] / "lean/VE/EnglishGrammar/Run.lean").read_text()
     body = text[text.index("def decodeLexicon"):text.index("theorem riskView_eq")]
     assert f'throw "{PROPOSAL_ELSEWHERE}"' in body
+
+
+def _scalars(value, seen: set) -> set:
+    if isinstance(value, dict):
+        for v in value.values():
+            _scalars(v, seen)
+    elif isinstance(value, list):
+        for v in value:
+            _scalars(v, seen)
+    else:
+        seen.add(type(value))
+    return seen
+
+
+def test_sc1af_every_scope_route_fixture_passes_the_boundary_check():
+    """sc-1af condition (ii): the route runs `jsonWF?` on every parsed document before any `govern_*` path and
+    refuses a failing tree (`lean/VE/Scope/WireExamples.lean`, F-raw). Every scope fixture of this file, each with
+    booleans and numbers, is answered, never refused there, so no answer on main changes."""
+    meta, body = _split(F1.read_text())
+    probe = _written_in_full(meta)
+    probe["environment"]["profiles"] = sorted(probe["environment"]["profiles"] + ["scope@0"])
+    probe["scope"] = {"version": "scope@0", "governors": [
+        {"id": "g1", "unit": "u0166.s01", "reach": {"rules": ["hc-cbrn-uplift"]}, "units": ["u0165.s01"],
+         "effect": {"carve_out": "own"}}]}
+    texts = [F1.read_text(), _text(probe, body)] + [_governed_text(c, e) for c in sorted(CHAINS) for e in sorted(EFFECTS)]
+    for text in texts:
+        assert {bool, int} <= _scalars(_split(text)[0], set())
+        rows, row = _rows(text)
+        assert rows is not None and "well-formed JSON tree" not in str(row), row

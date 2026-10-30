@@ -93,6 +93,9 @@ def errorOf (a : Except String Json) : String := match a with | .error e => e | 
 #guard errorOf (checkDoc (case (front (units (some (part "r1")) (some (part "r2"))) ["norms@0", "relational-fol@0"])))
   == "unknown document metadata"
 #guard profilesOf doc == listed && profilesOf full == ["norms@0", "relational-fol@0"]
+-- sc-1af: the route's parsed documents pass the boundary's check, `false` and spans included
+#guard [doc, case (front (units (some (part "r1")) none)), case (front (units (some (part "r1")) (some (part "r2")) unf))].map
+  (fun c => (VE.Scope.decodeScope c).toOption.map (VE.Scope.jsonWF? ·.doc)) == [some true, some true, some true]
 -- The profile gate (AR-10's row) and the block.
 #guard errorOf (checkDoc (case (front (units none none) ["alternatives@0", "norms@0", "relational-fol@0", "scope@0"])))
   == "UnsupportedProfile: scope@0 with alternatives@0"

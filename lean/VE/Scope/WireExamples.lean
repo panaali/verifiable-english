@@ -1,4 +1,5 @@
 import VE.Scope.Wire
+import VE.Scope.Examples
 
 /-! SC-1b's fixtures for the governor status (F1-doc, F1-bad, F1-none of docs/spec/scope.md 7.2), the block decoder
 (wire 3: every reach and effect, and each fault) and the layout of the document's units. -/
@@ -151,5 +152,25 @@ def answer : Json := Json.mkObj [("id", .str "d"), ("status", .str "OPEN"), ("un
   [("A", toJson (1 : Nat)), ("B", toJson (2 : Nat)), ("C", toJson (3 : Nat))]
 #guard byStatus [Json.mkObj [("status", .str "A"), ("span", toJson [Json.str "x", toJson (4 : Nat)])],
   Json.mkObj [("status", .str "A"), ("span", toJson [toJson (0 : Nat), Json.str "y"])]] == [("A", toJson (4 : Nat))]
+
+/-! sc-1af: the boundary (the DRI's decision of 2026-10-28 item 1). `decodeBlock` refuses a document whose tree no
+    parser builds before the block's own checks and any `govern_*` path, naming the first such unit by its id (by its
+    index when no id can be read), else the scope block, else the document. A well-formed document, booleans and
+    numbers included, goes on to the block's checks. -/
+def boundary (front : Json) : String :=
+  errorOf (do decodeBlock front "" (← VE.Readings.Wire.decodeEnvironment Examples.softEnv))
+def withScope (doc : Json) (block : Json := blockWith []) : Json := doc.setObjVal! "scope" block
+def wfFault (path : String) : String := wireFault path "a well-formed JSON tree"
+open Examples in
+#guard [boundary rawA, boundary rawB, boundary rawUdhr, boundary (withScope (withUnit rawUnit)),
+  boundary (withScope (withUnit (Json.mkObj [("id", "u0165.s01"), ("content", Json.mkObj [("norm", rawRule)])]))),
+  boundary (withScope (withUnit (rawJ (nd "kind" "rule" .leaf (nd "id" "u0165.s01"))))),
+  boundary (withScope (hcDoc parts) (blockWith [] [("x", rawRule)])), boundary (withScope rawA)] ==
+  [wfFault "document", wfFault "document", wfFault "document", wfFault "units.u0165.s01", wfFault "units.u0165.s01",
+   wfFault "units[2]", wfFault "scope", wfFault "document"]
+open Examples in
+#guard [boundary (withScope (hcDoc parts)), boundary (withScope ((hcDoc parts).setObjVal! "n" (toJson [0, 7]))),
+  boundary (withScope (withUnit (Json.mkObj [("id", "u0165.s01"), ("content", Json.mkObj [("norm", leadPart)])]))),
+  boundary (hcDoc parts)] == ["ok", "ok", "ok", "InvalidInput: scope@0 scope must be an object"]
 
 end VE.Scope.WireExamples
