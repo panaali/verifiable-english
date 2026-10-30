@@ -1,4 +1,3 @@
-- `tests/test_scope_sc5r_stub.py` — Scope spec section 11's statement stub (sc-5r): every placeholder it leaves to sc-5rb is pinned by a statement.
 - `tests/test_search_budget_answer.py` — The search-budget relay reads only a typed answer bound to its request (R8).
 - `tests/test_search_options.py` — Request budgets and non-degenerate witnesses at public API boundaries.
 - `tests/test_select_tests.py` — The test selector: AST change units, map lookups, drift, the recorder, whole plans, and the map-free `--impacted` fast path.
