@@ -1461,6 +1461,13 @@
    "reason": "en-sw F1: VE/EnglishGrammar/SourceWords.lean S +7 for sourceWordNormal and normalized catalogue checks; cumulative en-sw growth S +55, G[V] +20, K +0; SourceWordsExamples #guards cover the added definition",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), en-sw F1, 2026-10-29",
    "commit": "785927e109ecc9cafcc320da40ea2b1cc5d2c5da"
+  },
+  {
+   "class": "V",
+   "lines": 23,
+   "reason": "jt-2c: VE/Compose/Dispatch.lean +12 (decidingEnvironment, documentLayersApart), VE/NormDefaults/Run.lean +4 (pendingDocumentLayer, the elaboration's deciding read), VE/Norms/Plain.lean +3, VE/Service/Standalone.lean +3 (check, model, metered), VE/EnglishGrammar/Run.lean +1; K +0, S +0, total +23",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-2c, 2026-10-18",
+   "commit": "1f28dddfb3ef480ba7680d6a7c51cb801e9cb876"
   }
  ]
 }
