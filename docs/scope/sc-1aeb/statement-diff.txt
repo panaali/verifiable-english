@@ -1,0 +1,84 @@
+sc-1aeb statement diff against docs/spec/scope.md 4.2 and 5.1 (whitespace and comments ignored; output of python3 docs/scope/sc-1ac/evidence/spec_diff.py, whose first line names sc-1ac)
+
+exact   inductive Reach
+exact   structure Governor
+exact   structure SDoc
+exact   def keysOf
+exact   def unitsOf
+exact   def idOf
+exact   def unitIds
+exact   def contentOf
+exact   def isPart
+exact   def isNorm
+exact   def objectOf
+exact   def normOf
+exact   def partUnits
+exact   def ruleUnits
+exact   def setUnits
+exact   def applyEffect
+exact   def itemRule
+exact   def isFrame
+exact   def unary
+exact   def graph
+exact   def coveredLayout
+exact   def frameOn
+exact   def baseObj
+exact   def baseName
+exact   def covered
+exact   def classOf
+exact   def position
+exact   def ordered
+exact   def coversU
+exact   def governorsOf
+exact   def composed
+exact   def orderCheck
+exact   def affected
+exact   def edgesOf
+exact   def edgesInto
+exact   def ruleTable
+exact   def edgesFor
+exact   def addOver
+exact   def conditions
+exact   def vocabularyNames
+exact   def firstDup
+exact   def kindOf
+exact   def defSpans
+DIFFERS def admitBlock
+  spec : def admitBlock (D : SDoc) : Except String Unit := do if D.governors.length > 256 then throw "ResourceLimit: scope governors" if D.listNames.length > 256 then throw "ResourceLimit: scope list names" if let some i := firstDup (D.governors.map (·.id)) then throw s!"DuplicateDeclaration: governor {i}" if let some n := firstDup (D.listNames.map (·.1.name)) then throw s!"DuplicateDeclaration: list name {n}" for g in D.governors do unless (unitIds D.doc).contains g.unit do throw s!"ScopeUnknownUnit: {g.unit}" if D.governors.any (fun g => !(conditions g.effect).isEmpty) && (vocabularyNames D).contains "own" then throw "ScopeReserved: own" for (cn, lead, unit) in D.listNames do unless cn.scope == "doc" do throw s!"InvalidInput: scope@0 list_names.{cn.name}.scope must be doc" unless (unitIds D.doc).contains unit do throw s!"ScopeUnknownUnit: {unit}" let us ← VE.Layout.listRun D.layout lead unless cn.units == us do throw s!"ManifestMismatch: scope.list_names.{cn.name}.units" VE.Layout.anchorsOk D.anchors (defSpans D) (VE.Discourse.unaryPred D.re.se.ne.rv.environment) for g in D.governors do for c in conditions g.effect do unless depthOk depthLimit c do throw "ResourceLimit: scope condition depth exceeds 64" unless ownSafe depthLimit c do throw s!"ScopeOwnBound: {g.id}" match g.effect, g.reach with | .frame _, .list lead => unless lead == g.unit do throw s!"ManifestMismatch: scope.governors.{g.id}.unit" | .frame _, .listName n => unless (D.listNames.find? (·.1.name == n)).any (·.2.1 == g.unit) do throw s!"ManifestMismatch: scope.governors.{g.id}.unit" | .frame _, _ => throw s!"ScopeReach: {g.id}" | .title, .anchor _ => pure () | .title, .label _ => pure () | .title, _ => throw s!"ScopeReach: {g.id}" | .precedes, .frontier => throw s!"ScopeReach: {g.id}" | .yields, .frontier => throw s!"ScopeReach: {g.id}" | _, _ => pure () match g.reach with | .anchor a => unless graph g.effect || VE.Layout.headingOf D.layout D.anchors a == some g.unit do throw s!"ManifestMismatch: scope.governors.{g.id}.unit" | .label i => unless graph g.effect || i == g.unit do throw s!"ManifestMismatch: scope.governors.{g.id}.unit" | _ => pure () let us ← covered D g.reach unless us == g.units do throw s!"ManifestMismatch: scope.governors.{g.id}.units" for u in g.unit :: us do if (setUnits D.doc).contains u then throw s!"ScopeReadings: {u}" if isFrame g.effect || unary g.effect then for u in us do let c := contentOf D.doc u unless c == .null || isPart c || isNorm c do throw s!"ScopeNotARule: {u}"
+  built: def admitBlock (D : SDoc) : Except String Unit := do if D.governors.length > 256 then throw "ResourceLimit: scope governors" if D.listNames.length > 256 then throw "ResourceLimit: scope list names" if let some i := firstDup (D.governors.map (·.id)) then throw s!"DuplicateDeclaration: governor {i}" if let some n := firstDup (D.listNames.map (·.1.name)) then throw s!"DuplicateDeclaration: list name {n}" for g in D.governors do unless (unitIds D.doc).contains g.unit do throw s!"ScopeUnknownUnit: {g.unit}" if D.governors.any (fun g => !(conditions g.effect).isEmpty) && (vocabularyNames D).contains "own" then throw "ScopeReserved: own" for (cn, lead, unit) in D.listNames do unless cn.scope == "doc" do throw s!"InvalidInput: scope@0 list_names.{cn.name}.scope must be doc" unless (unitIds D.doc).contains unit do throw s!"ScopeUnknownUnit: {unit}" let us ← VE.Layout.listRun D.layout lead unless cn.units == us do throw s!"ManifestMismatch: scope.list_names.{cn.name}.units" VE.Layout.anchorsOk D.anchors (defSpans D) (VE.Discourse.unaryPred D.re.se.ne.rv.environment) for g in D.governors do for c in conditions g.effect do unless depthOk depthLimit c do throw "ResourceLimit: scope condition depth exceeds 64" unless ownSafe depthLimit c do throw s!"ScopeOwnBound: {g.id}" match g.effect, g.reach with | .frame _, .list lead => unless lead == g.unit do throw s!"ManifestMismatch: scope.governors.{g.id}.unit" | .frame _, .listName n => unless (D.listNames.find? (·.1.name == n)).any (·.2.1 == g.unit) do throw s!"ManifestMismatch: scope.governors.{g.id}.unit" | .frame _, _ => throw s!"ScopeReach: {g.id}" | .title, .anchor _ => pure () | .title, .label _ => pure () | .title, _ => throw s!"ScopeReach: {g.id}" | .precedes, .frontier => throw s!"ScopeReach: {g.id}" | .yields, .frontier => throw s!"ScopeReach: {g.id}" | _, _ => pure () match g.reach with | .anchor a => unless graph g.effect || VE.Layout.headingOf D.layout D.anchors a == some g.unit do throw s!"ManifestMismatch: scope.governors.{g.id}.unit" | .label i => unless graph g.effect || i == g.unit do throw s!"ManifestMismatch: scope.governors.{g.id}.unit" | _ => pure () let us ← covered D g.reach unless us == g.units do throw s!"ManifestMismatch: scope.governors.{g.id}.units" for u in g.unit :: us do if (setUnits D.doc).contains u then throw s!"ScopeReadings: {u}" if isFrame g.effect || unary g.effect then for u in us do let c := contentOf D.doc u unless c.isNull || isPart c || isNorm c do throw s!"ScopeNotARule: {u}"
+exact   def newContent
+exact   def patch
+exact   def govern
+exact   inductive HasStr
+exact   def payload
+exact   def BlockBound
+exact   theorem itemRule_decoder
+exact   theorem govern_identity
+exact   theorem govern_orphan
+exact   theorem govern_admits
+DIFFERS theorem govern_preserves
+  spec : theorem govern_preserves (D : SDoc) (out : Json) (ho : govern D = .ok out) : (∀ k, k ≠ "units" → out.getObjVal? k = D.doc.getObjVal? k) ∧ (unitsOf out).map idOf = (unitsOf D.doc).map idOf ∧ ∀ (i : Nat) (x y : Json), (unitsOf out)[i]? = some x → (unitsOf D.doc)[i]? = some y → (∀ k, k ≠ "content" → x.getObjVal? k = y.getObjVal? k) ∧ (idOf y ∉ affected D → x = y)
+  built: theorem govern_preserves (D : SDoc) (hw : JsonWF D.doc) (out : Json) (ho : govern D = .ok out) : (∀ k, k ≠ "units" → out.getObjVal? k = D.doc.getObjVal? k) ∧ (unitsOf out).map idOf = (unitsOf D.doc).map idOf ∧ ∀ (i : Nat) (x y : Json), (unitsOf out)[i]? = some x → (unitsOf D.doc)[i]? = some y → (∀ k, k ≠ "content" → x.getObjVal? k = y.getObjVal? k) ∧ (idOf y ∉ affected D → x = y)
+DIFFERS theorem govern_provenance
+  spec : theorem govern_provenance (D : SDoc) (out : Json) (ho : govern D = .ok out) (u : String) (hu : u ∈ affected D) : ∃ o₀ o₁ es, baseObj D u = .ok o₀ ∧ (governorsOf D u).foldlM (fun o g => applyEffect u g.effect o) o₀ = .ok o₁ ∧ edgesFor D u = .ok es ∧ normOf (contentOf out u) = some (addOver es o₁) ∧ ∀ g ∈ governorsOf D u, ∃ us, covered D g.reach = .ok us ∧ u ∈ us
+  built: theorem govern_provenance (D : SDoc) (hw : JsonWF D.doc) (out : Json) (ho : govern D = .ok out) (u : String) (hu : u ∈ affected D) : ∃ o₀ o₁ es, baseObj D u = .ok o₀ ∧ (governorsOf D u).foldlM (fun o g => applyEffect u g.effect o) o₀ = .ok o₁ ∧ edgesFor D u = .ok es ∧ normOf (contentOf out u) = some (addOver es o₁) ∧ ∀ g ∈ governorsOf D u, ∃ us, covered D g.reach = .ok us ∧ u ∈ us
+exact   theorem governorsOf_iff
+DIFFERS theorem decodeNorm_name
+  spec : theorem decodeNorm_name (re : VE.Readings.Wire.ReadingsEnvironment) (o : Json) (N : SoftNode) (h : VE.Readings.Wire.decodeNorm re o = .ok N) : HasStr N.name o
+  built: theorem decodeNorm_name (re : VE.Readings.Wire.ReadingsEnvironment) (o : Json) (hw : JsonWF o) (N : SoftNode) (h : VE.Readings.Wire.decodeNorm re o = .ok N) : HasStr N.name o
+DIFFERS theorem govern_strings
+  spec : theorem govern_strings (D : SDoc) (out : Json) (ho : govern D = .ok out) (s : String) (hs : HasStr s out) : HasStr s D.doc ∨ ∃ g ∈ D.governors, HasStr s (payload g.effect)
+  built: theorem govern_strings (D : SDoc) (hw : JsonWF D.doc) (out : Json) (ho : govern D = .ok out) (s : String) (hs : HasStr s out) : HasStr s D.doc ∨ ∃ g ∈ D.governors, HasStr s (payload g.effect)
+DIFFERS theorem govern_no_new_symbols
+  spec : theorem govern_no_new_symbols (D : SDoc) (hb : BlockBound D) (out : Json) (ho : govern D = .ok out) (s : String) (hs : HasStr s out) : HasStr s D.doc ∨ HasStr s D.block
+  built: theorem govern_no_new_symbols (D : SDoc) (hw : JsonWF D.doc) (hb : BlockBound D) (out : Json) (ho : govern D = .ok out) (s : String) (hs : HasStr s out) : HasStr s D.doc ∨ HasStr s D.block
+exact   theorem frontier_graph_refused
+DIFFERS theorem governFast_eq
+  spec : theorem governFast_eq (D : SDoc) : Pinned.governFast D = govern D
+  built: theorem governFast_eq (D : SDoc) : governFast D = govern D
+exact   theorem readings_refused
+exact   theorem nonrule_refused
+
+not built here (sc-1ad, sc-3ab, or later batches): 
+
+not in the spec (helpers): JsonWF, addOver_nil, addOver_src, admitBlock_drop, admit_governor, admit_governor_unit, admitted_ids_nodup, admitted_list_names_nodup, affected_drop, affected_title_only, anchor_reach_iff, any_drop_title, applyEffect_src, balanceL_id, balanceR_id, baseName_some, baseObjF, baseObjF_slow, baseObj_drop, baseObj_src, comp_entry, composedF, composedF_slow, composed_drop, composed_src, contentOf_src, coveredBy, coveredBy_slow, covered_drop, coversU_drop, coversU_iff, decodeNorm_name_top, edgesFor_ok, edgesInto_drop, edgesInto_mem, edgesOfF, edgesOfF_slow, edgesOf_drop, edgesOf_graph, edgesOf_name, fastReads, fastReads_eq, filter_drop_title, filter_mergeSort, find_map_id, firstDup_none_iff, firstDup_none_nodup, fold_src, forIn_filter_ok, frameOnF, frameOnF_slow, frameOn_drop, fresh_mem, getObjValD_str, getObjVal_map, getObjVal_obj, governBody, governBody_slow, governFast, govern_drop_nonempty, govern_ok, govern_refused, governorsOfF, governorsOfF_slow, governorsOf_drop, hasStr_getD, hasStr_inv, hasStr_mkObj, hasStr_null, hasStr_set, hasStr_setObj, hasStr_substOwn, idOf_set, id_unique, impl_get_map, insertBy, insertBy_filter, insertBy_head, insertBy_split, insert_same, ite_bind_ok, jsonWF_getD, jsonWF_mkObj, jsonWF_top, label_reach_iff, listName_run, list_singleton_of_drop_empty, lookup_map_eq, lookup_mem, mapM_ok_mem, mapM_ok_of_mem, map_filter_id, mem_ordered, members_get, members_ne_obj, members_nodup, memo, memo_map, mergeParts_mk, mergeParts_src, mergeSort_cons_insert, mkObj_get_mem, mkObj_one, newContent_src, nodup_map_unique, normFields_name, normOf_newContent, orderCheckF, orderCheck_drop, ordered_drop_active, ordered_filter, ordered_sorted, partUnits_nil_title_success, patch_nil_of_units, patch_src, raw_insert_same, reach_beq, ruleFields_name, ruleTable_decoder, ruleTable_drop, setObjVal_get, setObjVal_ne, setObjVal_null, setObjVal_self, title_identity, title_only_out, top_set, unitsOf_mem, unitsOf_patch, units_array_of_mem, w1_name

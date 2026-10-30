@@ -1,4 +1,4 @@
-sc-1ac statement diff against docs/spec/scope.md 4.2 and 5.1 (whitespace and comments ignored)
+sc-1ae statement diff against docs/spec/scope.md 4.2 and 5.1 (whitespace and comments ignored)
 
 exact   inductive Reach
 exact   structure Governor
