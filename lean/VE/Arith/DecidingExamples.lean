@@ -69,8 +69,8 @@ statement whose outermost node is no bounded quantifier, though one is inside it
     .allNat (.le (lit 0) (.var 0))].map (decidingValue primeDefs maxSteps) = List.replicate 8 none
 
 /-! The budget: a deciding value at exactly the budgets where the evaluator stops early, below and from each
-statement's work on (M-5 33, 8 … 20 at 11, the counterexample 7). -/
-#guard agreesUpTo primeDefs m5 40 && agreesUpTo primeDefs (exPrime (lit 8) (lit 20)) 200 &&
+statement's work on (M-5 33, 8 … 20 322, 1 … 10 84, M-1 to 4 324, 8 … 10 165). -/
+#guard agreesUpTo primeDefs m5 40 && agreesUpTo primeDefs (exPrime (lit 8) (lit 20)) 330 &&
   agreesUpTo [] (.allFromTo (lit 1) (lit 10) (.le (.var 0) (lit 6))) 120 && agreesUpTo primeDefs (m1 4) 400 &&
   agreesUpTo primeDefs (exPrime (lit 8) (lit 10)) 200
 
