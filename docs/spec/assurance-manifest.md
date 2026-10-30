@@ -215,7 +215,7 @@ through the pinned `Gate.decodeEnvelope`.
 | `lean/VE/Readings/SoftWire.lean` | 198 | 198 | 1–198 | `0a0c5f133b9d…` |
 | `lean/VE/Readings/SoftVerdicts.lean` | 190 | 190 | 1–190 | `091687de6752…` |
 | `lean/VE/Alternatives/FillWire.lean` | 564 | 564 | 1–564 | `5b736870014d…` |
-| `lean/VE/Calc/Units.lean` | 222 | 222 | 1–222 | `3ccdfd38167e…` |
+| `lean/VE/Calc/Units.lean` | 224 | 224 | 1–224 | `bfcd9e42c95c…` |
 | `lean/VE/Defaults/Wire.lean` | 799 | 799 | 1–799 | `98d899070ce0…` |
 | `lean/VE/Calc/Wire.lean` | 494 | 494 | 1–494 | `ebeb66b7142d…` |
 | `lean/VE/Calc/Run.lean` | 439 | 439 | 1–439 | `4788f95816e0…` |

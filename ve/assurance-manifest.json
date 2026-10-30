@@ -1793,12 +1793,12 @@
       },
       {
         "file": "lean/VE/Calc/Units.lean",
-        "lines": 222,
-        "sha256": "3ccdfd38167eea5ff0ce721f55946805383288decd63550029361630ace369af",
+        "lines": 224,
+        "sha256": "bfcd9e42c95c6d3af185ddb1f153c9687a34d797a953c45d48ea0615e222a1e4",
         "ranges": [
           [
             1,
-            222
+            224
           ]
         ],
         "declarations": [
