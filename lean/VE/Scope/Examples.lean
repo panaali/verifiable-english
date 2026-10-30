@@ -760,27 +760,36 @@ def withUnit (u : Json) : Json :=
 #guard [rawA, rawB, rawUnit, withUnit rawUnit, rawRule].map jsonWF? == [false, false, false, false, false]
 #guard [.null, .bool true, .bool false, .num 0, .num (-3), .num ⟨15, 1⟩, .str "", .arr #[], Json.mkObj [],
   hcDoc parts, softEnv, envJ, leadPart,
-  j "{\"b\": [true, false, null], \"n\": [0, -1, 1.5, 2e3], \"o\": {\"s\": \"x\", \"o\": {}}, \"a\": [[], {}]}"].all jsonWF?
+  j "{\"b\": [true, false, null], \"n\": [0, -1, 1.5, 2e3], \"o\": {\"s\": \"x\", \"o\": {}},
+    \"a\": [[], {}]}"].all jsonWF?
 open Std.DTreeMap.Internal (Impl) in
 def leaf1 (k : String) (v : Json := .null) : Impl String (fun _ => Json) := nd k v
 -- balance: one side of size 1 against none passes, size 2 against none fails; 3 against 1 passes, 4 against 1 fails
 #guard [nd "b" .null (leaf1 "a"), nd "a" .null .leaf (leaf1 "b"),
-  nd "d" .null (nd "b" .null (leaf1 "a") (leaf1 "c")) (leaf1 "e"), nd "b" .null (leaf1 "a") (nd "d" .null (leaf1 "c") (leaf1 "e")),
+  nd "d" .null (nd "b" .null (leaf1 "a") (leaf1 "c")) (leaf1 "e"),
+  nd "b" .null (leaf1 "a") (nd "d" .null (leaf1 "c") (leaf1 "e")),
   .inner 1 "a" .null .leaf .leaf].map (jsonWF? ∘ rawJ) == [true, true, true, true, true]
 #guard [nd "c" .null (nd "b" .null (leaf1 "a")), nd "a" .null .leaf (nd "b" .null .leaf (leaf1 "c")),
   nd "e" .null (nd "c" .null (nd "b" .null (leaf1 "a")) (leaf1 "d")) (leaf1 "f"),
   nd "b" .null (leaf1 "a") (nd "d" .null (leaf1 "c") (nd "e" .null .leaf (leaf1 "f"))),
-  nd "d" .null (nd "c" .null (nd "b" .null (leaf1 "a"))) (leaf1 "e"), nd "b" .null (leaf1 "a") (nd "c" .null .leaf (nd "d" .null .leaf (leaf1 "e"))),
+  nd "d" .null (nd "c" .null (nd "b" .null (leaf1 "a"))) (leaf1 "e"),
+  nd "b" .null (leaf1 "a") (nd "c" .null .leaf (nd "d" .null .leaf (leaf1 "e"))),
   .inner 2 "a" .null .leaf .leaf, .inner 0 "a" .null .leaf .leaf].map (jsonWF? ∘ rawJ) ==
   [false, false, false, false, false, false, false, false]
 -- order: ascending keys pass; a swapped, a repeated, or a third key out of order fails
 #guard [nd "b" .null (leaf1 "a") (leaf1 "c"), nd "b" .null (leaf1 "c") (leaf1 "a"), nd "b" .null (leaf1 "b"),
   nd "b" .null (leaf1 "a") (leaf1 "a")].map (jsonWF? ∘ rawJ) == [true, false, false, false]
 -- values: an ill-formed value at the root, on the left, on the right, first or second in an array, or deeper, fails
-#guard [nd "b" rawB (leaf1 "a") (leaf1 "c"), nd "b" .null (leaf1 "a" rawB) (leaf1 "c"), nd "b" .null (leaf1 "a") (leaf1 "c" rawB),
-  nd "a" (.arr #[rawB]), nd "a" (.arr #[.null, rawB]), nd "a" (Json.mkObj [("k", .arr #[Json.mkObj [("k", rawB)]])])].map
+#guard [nd "b" rawB (leaf1 "a") (leaf1 "c"), nd "b" .null (leaf1 "a" rawB) (leaf1 "c"),
+  nd "b" .null (leaf1 "a") (leaf1 "c" rawB), nd "a" (.arr #[rawB]), nd "a" (.arr #[.null, rawB]),
+  nd "a" (Json.mkObj [("k", .arr #[Json.mkObj [("k", rawB)]])])].map
   (jsonWF? ∘ rawJ) == [false, false, false, false, false, false]
 #guard [Json.arr #[rawB], .arr #[true, rawB], Json.mkObj [("k", rawUnit)]].map jsonWF? == [false, false, false]
+-- the size the check is charged against: the route's limits (`maxLineBytes`, depth 256 in `VE.Json.parse`); a wide
+-- object and the deepest nesting the parser admits pass, each node read once and the keys listed once
+#guard jsonWF? (Json.mkObj ((List.range 20000).map fun i => (toString i, toJson i))) &&
+  jsonWF? ((List.range 255).foldl (fun x i => if i % 2 == 0 then .arr #[x, true] else Json.mkObj [("k", x)]) (.num 1))
+#guard !jsonWF? ((List.range 255).foldl (fun x _ => Json.mkObj [("k", x)]) rawB)
 -- `jsonWF?_sound`: a passing tree is `JsonWF`
 example : JsonWF (Json.mkObj [("b", .bool true), ("n", .num 7)]) := jsonWF?_sound (by decide)
 
