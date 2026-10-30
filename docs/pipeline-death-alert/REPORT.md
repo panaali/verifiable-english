@@ -78,7 +78,7 @@ Languages: the changed code is Python (pipeline-death-alert.py, checkin-scan.py)
 6. Gate evidence: N.A. for the builder; the chain gates the final HEAD.
 7. Nothing unsigned: PASS. No DELTA row; the branch diff is this report only.
 8. User-visible change: PASS. The new stop final and the 16G refusal are listed here; there is no VE behaviour change. Tests: test_oom_killed_design_pipeline_gets_a_stop_final_once, test_a_4g_scope_is_refused_before_anything_runs.
-9. Test selection: PASS. The selection ran on this branch.
+9. Test selection: PASS. The selection ran once on 5635e8883 (mac-pytest.sh --select: GitHub Actions, 4 shards, exit 0).
 10. Lean statements: N.A., no Lean.
 11. Budgets fail closed: PASS. A cap under 16G stops with a final; an unreadable cgroup does not refuse (test_16g_32g_and_no_cap_run_stage_1). A detector crash is reported by the scan as an anomaly, never as silence (test_checkin_scan_reports_a_detector_crash).
 12. CPU/memory: N.A. One systemctl call per check-in; the 16 tests take about 3 s.
