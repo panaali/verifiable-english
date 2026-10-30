@@ -26,7 +26,7 @@ Adding `"Is "` changes no decision, so there is one list, not a second one for t
 | Plan / task row | Commit | Evidence |
 |---|---|---|
 | (1) `"Is "` in Lean's exported list; `_LEAN_PREFIXES` reads the contract, with no literal left | fd7fa6c1f | `speechPrefixes := caseFrame :: modalWords.map (· ++ " ") ++ speechAuxiliaries.map (capitalise · ++ " ")` (`lean/VE/Question/Run.lean`), derived from the caller's fronted words, not a new literal; `#guard` at `Examples.lean:92`; `ve/question/codes.json` regenerated (`callers` gains `"Is "`); `_LEAN_PREFIXES = QUESTION_CALLERS[SPEECH_CALLER]`; tests `test_the_routed_prefixes_are_the_contracts` (identity with the contract), `test_the_speech_parser_keeps_no_prefix_of_its_own` (no string constant of `ve/speech_english.py` is a routed prefix) |
-| (2) speech-acts.md 2.1, its polar rows and the doc comment describe main | fd7fa6c1f, the spec commit | 2.1: `<rest>` and the opaque-gloss rule are a which-question's; a polar or `Must`/`Can` wording is sent to Lean's `english.question` by Lean's list and its formula or refusal is Lean's; both polar rows name Lean's reading; the normalisation paragraph (old line 407) and the `OpaqueWording` row (old line 876) say the parser's gloss and name matching is a which-question's. The `speechPrefixes` doc comment no longer promises Q1.4b. |
+| (2) speech-acts.md 2.1, its polar rows and the doc comment describe main | fd7fa6c1f, d9eb1dcc2 | 2.1: `<rest>` and the opaque-gloss rule are a which-question's; a polar or `Must`/`Can` wording is sent to Lean's `english.question` by Lean's list and its formula or refusal is Lean's; both polar rows name Lean's reading; the normalisation paragraph (old line 407) and the `OpaqueWording` row (old line 876) say the parser's gloss and name matching is a which-question's. The `speechPrefixes` doc comment no longer promises Q1.4b. |
 | (3) q1-4b's differential and base-acceptance tests pass unchanged | ac3d4e68 (one line of the audit script) | `tests/test_speech_polar_lean.py` passes (rerun below), its tests unedited except the prefix test. One evidence-script line changed: `speech_ab_f2.outside_base_set` read the contract's `callers` as "the F1 prefixes"; with `"Is "` in the list every fronted wording matched them and the audit found nothing outside the base set (`test_the_audit_fails_when_the_base_read_outside_its_acceptance_set`, 5 failed in the first selected run). It now takes the list without the fronted `Is `, which is what it meant; no recording, count or verdict changed. The routed tuple is the same strings in the same order as before (`("Is it the case that ", "Must ", "Can ", "Is ")`, asserted by `test_the_routed_prefixes_are_the_contracts`), so `text.startswith(_LEAN_PREFIXES)` routes every wording as before |
 | (4) seeded bugs | below | `docs/question-answering/q1-4bb/mutants.json` |
 
@@ -67,10 +67,10 @@ Python 17/7, counting the audit line), plus this report and mutants.json. Pilot 
 - `uv run python tools/gate_collection.py --check --prebuilt`: `1 added, 0 removed by a trailer, 0 refused, 0 stale
   and 0 malformed trailers`.
 - `tools/select_tests.py --base $(git merge-base HEAD main)`: 407 test files, `tests/test_speech_polar_lean.py` among them.
-- Selected tests (`mac-pytest.sh --select`, GitHub Actions run q1-4bb-e3337a86-t360983, at d7d4f4e): all units passed
+- Selected tests (`mac-pytest.sh --select`, GitHub Actions run q1-4bb-e3337a86-t360983, at e3337a862): all units passed
   except two files: `tests/test_assurance_manifest.py` (2 failed: Run.lean's reviewed decoder pin) and
   `tests/test_speech_polar_lean.py` (5 failed, the audit above; maxfail stopped the file). Fixed in ac3d4e68 (pin,
-  audit line) and the next commit (`total_lines` 39781, `docs/spec/assurance-manifest.md` regenerated).
+  audit line) and 60d98fa2f (`total_lines` 39781, `docs/spec/assurance-manifest.md` regenerated).
 - Rerun of those two files (`mac-pytest.sh -- -q tests/test_speech_polar_lean.py tests/test_assurance_manifest.py`, at
   ac3d4e68): `2 failed, 9672 passed` (`test_spec_tables_are_generated_from_the_manifest`,
   `test_trusted_decoder_line_ranges_are_pinned`: the generated table and total of the new pin); after the fix,
