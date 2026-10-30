@@ -2,7 +2,7 @@
 
 Status: built, ready for the gate. No DRI signature is reserved or needed.
 `govern_provenance` (spec 5.1) is proved under `(hw : JsonWF D.doc)`, its only change from the spec's text
-(`Theorems.lean:1415`). F1-g is now a `#guard` of the theorem's conclusion, tested on both sides (`Examples.lean:903-910`).
+(`Theorems.lean:1413`). F1-g is now a `#guard` of the theorem's conclusion, tested on both sides (`Examples.lean:903-910`).
 sc-1ae's review F5 is fixed; F4 was already fixed on main. SC-1a's five statements are now all proved.
 Open: sc-1af (the parser condition; waits on the DRI). Trust +0. Selected tests: 80 units passed. Full gate: not run by me (the chain runs it).
 
@@ -15,7 +15,7 @@ and reviews `sc-1ae-review.final.md` and `sc-1ae-review-ov.final.md` (F4, F5).
 
 | Row (task) | Status | Where |
 |---|---|---|
-| (1) `govern_provenance` proved under `JsonWF D.doc`, on sc-1ae's lemmas | delivered | `lean/VE/Scope/Theorems.lean:1415`; it uses `govern_ok`, `comp_entry`, `unitsOf_patch`, `edgesFor_ok`, `governorsOf_iff`, `idOf_set`, `setObjVal_self`, `jsonWF_top`, `unitsOf_mem`, plus five new lemmas (below) |
+| (1) `govern_provenance` proved under `JsonWF D.doc`, on sc-1ae's lemmas | delivered | `lean/VE/Scope/Theorems.lean:1413`; it uses `govern_ok`, `comp_entry`, `unitsOf_patch`, `edgesFor_ok`, `governorsOf_iff`, `idOf_set`, `setObjVal_self`, `jsonWF_top`, `unitsOf_mem`, plus five new lemmas (below) |
 | Statement gate: only `JsonWF D.doc` added, sc-1ae's `JsonWF`, spec text otherwise | delivered, exact | `docs/scope/sc-1aeb/statement-diff.txt` (lines 62-64, `DIFFERS theorem govern_provenance`). Its `built` line minus ` (hw : JsonWF D.doc)` equals its `spec` line (checked by a Python probe on the script's output: `True`) |
 | (2) F-raw's `#guard`s unchanged | delivered | `git diff --numstat` on `Examples.lean`: 29 lines added, 0 removed; F-raw is still at `Examples.lean:738`, `:743`, `:748` |
 | (2) F1-g as a `#guard` of the conclusion | delivered (it was not one before) | `Examples.lean:883-910`: `provenanceOf` computes the conclusion for one unit; one `example` applies the theorem to F1-g's document (`parts_wf`) |
