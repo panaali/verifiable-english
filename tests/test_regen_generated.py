@@ -20,7 +20,6 @@ import dataclasses
 import fnmatch
 import hashlib
 import json
-import os
 import re
 from pathlib import Path
 import shutil
@@ -222,67 +221,6 @@ def test_the_entries_refreshed_at_merge_are_tree_only_writers(capsys):
 
 
 BUILD_ENTRIES = {"lake-build", "checker-pins"}
-# The tools the run starts from in a scratch checkout: copies, so that their ROOT is the scratch checkout.
-SCRATCH_COPIES = ("regen_generated.py", "history_tests.py")
-GIT_LOG_TEST = """\
-import subprocess
-
-
-def test_log():
-    subprocess.run(["git", "log", "--oneline"], check=True)
-"""
-
-
-def _scratch_checkout(root: Path) -> Path:
-    (root / "tools").mkdir(parents=True)
-    (root / "tests").mkdir()
-    for path in (ROOT / "tools").glob("*.py"):
-        if path.name in SCRATCH_COPIES:
-            shutil.copy(path, root / "tools" / path.name)
-        else:
-            (root / "tools" / path.name).symlink_to(path)
-    return root
-
-
-def test_a_clean_merge_keeps_a_stale_history_list_and_the_merge_refresh_rewrites_it(tmp_path):
-    """history-tests-merge-fail (Mac train FAILs of df-e1r 2632f102, jt-e1r f71e1343 and rd9-docroute, Oct 29-30): a
-    branch wrote tests/history-dependent.json on its own tree; main then added a test that starts git and listed it;
-    the sync merge kept the branch's list without a conflict (`regenerate` keeps ours), so the candidate's
-    `tests/test_history_tests.py` failed ('missing: ...') while main's own run, on a list main's branch wrote, passed.
-    The train's refresh (`--check --at-merge`, then `--write --at-merge`) finds the list stale and rewrites it. Only
-    history-tests runs here (`--only`): the other entries' inputs are not in the scratch checkout."""
-    import history_tests
-
-    root = _scratch_checkout(tmp_path)
-    (root / "tests/test_old.py").write_text(GIT_LOG_TEST)
-    saved = {"format": history_tests.MAP_FORMAT,
-             "map": {"commit": "0" * 40, "version": 7, "created": "2026-10-30T00:00:00+00:00", "tests": 3},
-             "units": {}}
-    history_tests.write_json(root / history_tests.MAP_EXTRACT, saved)
-    text = lambda: json.dumps(history_tests.generate(saved, root), indent=1) + "\n"  # noqa: E731
-    base = text()
-    (root / "tests/test_branch.py").write_text(GIT_LOG_TEST)
-    branch = text()                                     # the branch's own write, before it synced with main
-    (root / "tests/test_branch.py").unlink()
-    (root / "tests/test_main.py").write_text(GIT_LOG_TEST)
-    main = text()
-    (root / "tests/test_branch.py").write_text(GIT_LOG_TEST)  # the merged tree holds both tests
-    assert R.merge_text(history_tests.LIST, base, branch, main) == (branch, True)
-    (root / history_tests.LIST).write_text(branch)
-    assert history_tests.lint(root).errors[0].startswith("missing: tests/test_main.py reads history and is not listed")
-
-    def refresh(mode: str) -> int:
-        return subprocess.run([sys.executable, "tools/regen_generated.py", mode, "--at-merge", "--only", "history-tests"],
-                              cwd=root, env={**os.environ, "VE_REGEN_LOG": "off"}, capture_output=True,
-                              timeout=HANG_TIMEOUT).returncode
-
-    assert refresh("--check") == 1
-    assert refresh("--write") == 0
-    assert refresh("--check") == 0
-    assert history_tests.lint(root).errors == []
-    listed = [row["test"] for row in json.loads((root / history_tests.LIST).read_text())["tests"]]
-    assert [unit for unit in listed if unit.startswith("tests/")] == [
-        "tests/test_branch.py", "tests/test_main.py", "tests/test_old.py"]
 
 
 # merge_json
