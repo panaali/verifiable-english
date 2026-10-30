@@ -67,8 +67,8 @@ open Lean VE.Readings.Run VE.Service
   if (admissionMemoTrim [make "a" 1, make "b" 1, make "c" 1, make "d" 1, make "e" 1]).map (·.kind) !=
       ["a", "b", "c", "d"] then return false
   if (admissionMemoTrim [make "large" 2097152, make "extra" 1]).map (·.kind) != ["large"] then return false
-  -- A hit never admits (review F1): `admit` is the memo's only admission. On a hit an admission that fails, or one that
-  -- returns a real admission, is not run: the stored (empty) entry is the answer and `admissions` is unchanged.
+  -- A hit never admits (review F1): `onMiss` is the memo's only admission. On a hit an admission that fails, or one
+  -- that returns a real admission, is not run: the stored (empty) entry is the answer and `admissions` is unchanged.
   -- On a miss each runs, and is counted, exactly once: its failure is the answer and is not kept; its value is kept.
   let real := ((runCaseReportedMemo {} c).2.entries.headD (make "none" 0)).ready
   let failing :
@@ -79,8 +79,8 @@ open Lean VE.Readings.Run VE.Service
     fun _ => do modify fun m => { m with admissions := m.admissions + 1 }; pure real
   let synthetic : AdmissionMemo := { entries := [make "a" 1, make "b" 1, make "c" 1], admissions := 5 }
   if real.length != 3 then return false
-  for admit in [failing, counted] do
-    let (.ok ready, reordered) := (admitComponentsMemo "b" .null .null admit).run.run synthetic | return false
+  for onMiss in [failing, counted] do
+    let (.ok ready, reordered) := (admitComponentsMemo "b" .null .null onMiss).run.run synthetic | return false
     if !ready.isEmpty || reordered.entries.map (·.kind) != ["b", "a", "c"] ||
         reordered.hits != 1 || reordered.admissions != 5 then return false
   let (.error "admitted", failed) := (admitComponentsMemo "x" .null .null failing).run.run synthetic | return false

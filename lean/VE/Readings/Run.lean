@@ -687,16 +687,16 @@ def admissionMemoTrim (entries : List AdmissionMemoEntry) : List AdmissionMemoEn
     bytes := bytes + e.bytes
   return kept
 
-/-- A hit returns the stored entry; only a miss runs `admit`, which counts its runs in `admissions`. The identity is
+/-- A hit returns the stored entry; only a miss runs `onMiss`, which counts its runs in `admissions`. The identity is
 the full decoded triple, so no hash collision or separator ambiguity can alias cases. -/
 def admitComponentsMemo (kind : String) (environment document : Json)
-    (admit : Unit → ExceptT String (StateM AdmissionMemo) (List (String × Json × Json × Json × ComponentAdmission))) :
+    (onMiss : Unit → ExceptT String (StateM AdmissionMemo) (List (String × Json × Json × Json × ComponentAdmission))) :
     ExceptT String (StateM AdmissionMemo) (List (String × Json × Json × Json × ComponentAdmission)) := do
   if let some e := (← get).entries.find? (·.matches kind environment document) then
     modify fun m =>
       { m with entries := e :: m.entries.filter (!·.matches kind environment document), hits := m.hits + 1 }
     return e.ready
-  let ready ← admit ()
+  let ready ← onMiss ()
   let bytes := (Json.arr #[.str kind, environment, document]).compress.utf8ByteSize
   let entry := { kind, environment, document, bytes, ready : AdmissionMemoEntry }
   unless bytes > admissionMemoMaxBytes do modify fun m => { m with entries := admissionMemoTrim (entry :: m.entries) }
