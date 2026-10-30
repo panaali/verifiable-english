@@ -1,3 +1,6 @@
+- `tests/test_entailment.py` — (no module docstring)
+- `tests/test_entailment_adversarial.py` — Adversarial checks for the small trusted tableau replayer.
+- `tests/test_entailment_properties.py` — Independent bounded semantic check of every generated positive certificate.
 - `tests/test_enum_domains.py` — Every enumeration of the response schemas is kept by the encoder theorems (shapes-fix3, B4).
 - `tests/test_environment_field_types.py` — Wrong-typed top-level environment fields (the env-profiles directive).
 - `tests/test_equivalence.py` — (no module docstring)
@@ -34,6 +37,7 @@
 - `tests/test_inventory_lint.py` — The Gate 2 inventory lint (tools/inventory_lint.py).
 - `tests/test_jt_crossplan_ties.py` — The ties pass of jt-crossplan-fixes: the statement it proposes for `PolicyCtx.of` is the one Lean checks.
 - `tests/test_jt_e1.py` — Local JT-E1 protocol checks; never makes a model call.
+- `tests/test_jt_e1r.py` — JT-E1r pre-call checks.
 - `tests/test_jt_e3.py` — Small, model-free checks of JT-E3's agreement and blind runner.
 - `tests/test_judgments_answer.py` — The relay of the `document` mode's `judgments` field (judgment-terms-PLAN.md JT-2, Python; docs/spec/ judgment-terms.md 8.3): schema and binding only (R8), and…
 - `tests/test_judgments_document.py` — `judgments@0` in Lean's `document` mode (judgment-terms-PLAN.md JT-2; docs/spec/judgment-terms.md 8): the fixtures of spec 11.2 and 11.3 replayed through the s…
@@ -83,5 +87,3 @@
 - `tests/test_llm.py` — (no module docstring)
 - `tests/test_me4_csv_mutants.py` — The saved mutation run must not waive CSV character regressions.
 - `tests/test_merge_tooling_evidence.py` — docs/merge-tooling.md against its saved evidence (docs/merge-tooling/*.json).
-- `tests/test_metered_answer.py` — The `metered` relay never shows a trace binding the request does not hold (lf-18 review F1; DRI-RULINGS R8 (b), FINDING-CLASSES 4 and 15).
-- `tests/test_metered_differential.py` — Batch 15a review fixes: Lean's metered route (`ve_metered`) against Python.
