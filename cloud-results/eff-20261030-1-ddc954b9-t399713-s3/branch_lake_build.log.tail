@@ -1,0 +1,200 @@
+⚠ [786/1169] Replayed VE.Calc.Run
+warning: VE/Calc/Run.lean:89:15: This simp argument is unused:
+  hs
+
+Hint: Omit it from the simp argument list.
+  simp only ̵[̵h̵s̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Calc/Run.lean:95:82: This simp argument is unused:
+  hs
+
+Hint: Omit it from the simp argument list.
+  simp [̵h̵s̵,̵ ̵h̵c̵,̵[̲h̲c̲,̲
+  ̲  ̲ ̲ ̲ ̲ ̲Shown.matches]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Calc/Run.lean:97:35: This simp argument is unused:
+  hs
+
+Hint: Omit it from the simp argument list.
+  simp [h̵s̵,̵ ̵Shown.matches]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Calc/Run.lean:98:17: This simp argument is unused:
+  hs
+
+Hint: Omit it from the simp argument list.
+  simp [h̵s̵,̵ ̵Shown.matches]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Calc/Run.lean:489:87: This simp argument is unused:
+  rowJson
+
+Hint: Omit it from the simp argument list.
+  simp [claimFields,̵ ̵r̵o̵w̵J̵s̵o̵n̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Calc/Run.lean:489:107: This simp argument is unused:
+  rowJson
+
+Hint: Omit it from the simp argument list.
+  simp ̵[̵r̵o̵w̵J̵s̵o̵n̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Calc/Run.lean:493:49: This simp argument is unused:
+  rowJson
+
+Hint: Omit it from the simp argument list.
+  simp [claimFields,̵ ̵r̵o̵w̵J̵s̵o̵n̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: VE/Calc/Run.lean:493:69: This simp argument is unused:
+  rowJson
+
+Hint: Omit it from the simp argument list.
+  simp ̵[̵r̵o̵w̵J̵s̵o̵n̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [1124/1169] Replayed ResponseShape.Skeleton
+warning: ResponseShape/Skeleton.lean:100:10: This simp argument is unused:
+  e
+
+Hint: Omit it from the simp argument list.
+  simp ̵[̵e̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Skeleton.lean:144:22: This simp argument is unused:
+  objectHas
+
+Hint: Omit it from the simp argument list.
+  simp_all [o̵b̵j̵e̵c̵t̵H̵a̵s̵,̵ ̵Except.toBool]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Skeleton.lean:155:37: This simp argument is unused:
+  objectHas
+
+Hint: Omit it from the simp argument list.
+  simp_all [Except.toBool,̵ ̵o̵b̵j̵e̵c̵t̵H̵a̵s̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Skeleton.lean:430:35: This simp argument is unused:
+  Bool.or_eq_true
+
+Hint: Omit it from the simp argument list.
+  simp only [List.contains_cons, B̵o̵o̵l̵.̵o̵r̵_̵e̵q̵_̵t̵r̵u̵e̵,̵ ̵beq_iff_eq, List.contains_iff_mem, List.mem_filter,
+        Bool.not_eq_true', Bool.or_eq_false_iff, beq_eq_false_iff_ne, ne_eq] at this
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Skeleton.lean:430:52: This simp argument is unused:
+  beq_iff_eq
+
+Hint: Omit it from the simp argument list.
+  simp only [List.contains_cons, Bool.or_eq_true, b̵e̵q̵_̵i̵f̵f̵_̵e̵q̵,̵ ̵List.contains_iff_mem, List.mem_filter,
+        Bool.not_eq_true', Bool.or_eq_false_iff, beq_eq_false_iff_ne, ne_eq] at this
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Skeleton.lean:430:64: This simp argument is unused:
+  List.contains_iff_mem
+
+Hint: Omit it from the simp argument list.
+  simp only [List.contains_cons, Bool.or_eq_true, beq_iff_eq, L̵i̵s̵t̵.̵c̵o̵n̵t̵a̵i̵n̵s̵_̵i̵f̵f̵_̵m̵e̵m̵,̵ ̵List.mem_filter, Bool.not_eq_true',
+  ̲  ̲ ̲ ̲ ̲ ̲Bool.or_eq_false_iff, beq_eq_false_iff_ne, ne_eq] at this
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Skeleton.lean:430:87: This simp argument is unused:
+  List.mem_filter
+
+Hint: Omit it from the simp argument list.
+  simp only [List.contains_cons, Bool.or_eq_true, beq_iff_eq, List.contains_iff_mem, ̵L̵i̵s̵t̵.̵m̵e̵m̵_̵f̵i̵l̵t̵e̵r̵,̵
+        Bool.not_eq_true', Bool.or_eq_false_iff, beq_eq_false_iff_ne, ne_eq] at this
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [1131/1169] Replayed ResponseShape.Encoders.Rights
+warning: ResponseShape/Encoders/Rights.lean:98:31: This simp argument is unused:
+  entryJson
+
+Hint: Omit it from the simp argument list.
+  simp only [VE.Route.Wire.ok,̵ ̵e̵n̵t̵r̵y̵J̵s̵o̵n̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [1133/1169] Replayed ResponseShape.Encoders.ReadingsRoute
+warning: ResponseShape/Encoders/ReadingsRoute.lean:829:28: This simp argument is unused:
+  String.reduceEq
+
+Hint: Omit it from the simp argument list.
+  simp only [S̵t̵r̵i̵n̵g̵.̵r̵e̵d̵u̵c̵e̵E̵q̵,̵ ̵Bool.false_eq_true, String.reduceBEq] at *
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Encoders/ReadingsRoute.lean:1243:27: This simp argument is unused:
+  List.toList_toArray
+
+Hint: Omit it from the simp argument list.
+  simp only [Json.getArr?,̵ ̵L̵i̵s̵t̵.̵t̵o̵L̵i̵s̵t̵_̵t̵o̵A̵r̵r̵a̵y̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Encoders/ReadingsRoute.lean:1309:4: This simp argument is unused:
+  List.toList_toArray
+
+Hint: Omit it from the simp argument list.
+  simp only [getObjValD_set_eq wfe, getObjValD_of_ok hP, hPa, toJson_strings, Array.any_toList.symm,̵
+  ̵ ̵ ̵ ̵ ̵L̵i̵s̵t̵.̵t̵o̵L̵i̵s̵t̵_̵t̵o̵A̵r̵r̵a̵y̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Encoders/ReadingsRoute.lean:1334:4: This simp argument is unused:
+  hl
+
+Hint: Omit it from the simp argument list.
+  simp only [getObjValD_set_eq wf, getObjValD_set_ne wf (show "environment" ≠ "kind" by decide), he,
+      getObjVal_set_ne wfe (show "profiles" ≠ "vocabulary" by decide), getObjVal_set_eq wfe, hP,̵
+  ̵ ̵ ̵ ̵ ̵h̵l̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [1134/1169] Replayed ResponseShape.Encoders.Discourse
+warning: ResponseShape/Encoders/Discourse.lean:195:58: This simp argument is unused:
+  List.append_nil
+
+Hint: Omit it from the simp argument list.
+  simp only [List.cons_append, List.nil_append, L̵i̵s̵t̵.̵a̵p̵p̵e̵n̵d̵_̵n̵i̵l̵,̵ ̵choicesJson, jointJson]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [1138/1169] Replayed ResponseShape.Encoders.Alternatives
+warning: ResponseShape/Encoders/Alternatives.lean:40:83: This simp argument is unused:
+  Bool.false_eq_true
+
+Hint: Omit it from the simp argument list.
+  simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte,̵ ̵B̵o̵o̵l̵.̵f̵a̵l̵s̵e̵_̵e̵q̵_̵t̵r̵u̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Encoders/Alternatives.lean:52:83: This simp argument is unused:
+  Bool.false_eq_true
+
+Hint: Omit it from the simp argument list.
+  simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte,̵ ̵B̵o̵o̵l̵.̵f̵a̵l̵s̵e̵_̵e̵q̵_̵t̵r̵u̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Encoders/Alternatives.lean:87:83: This simp argument is unused:
+  Bool.false_eq_true
+
+Hint: Omit it from the simp argument list.
+  simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte,̵ ̵B̵o̵o̵l̵.̵f̵a̵l̵s̵e̵_̵e̵q̵_̵t̵r̵u̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Encoders/Alternatives.lean:97:83: This simp argument is unused:
+  Bool.false_eq_true
+
+Hint: Omit it from the simp argument list.
+  simp only [List.filterMap_cons, List.filterMap_nil, String.reduceEq, ↓reduceIte,̵ ̵B̵o̵o̵l̵.̵f̵a̵l̵s̵e̵_̵e̵q̵_̵t̵r̵u̵e̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [1145/1169] Replayed ResponseShape.Encoders.Risk
+warning: ResponseShape/Encoders/Risk.lean:17:59: unused variable `hobj`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: ResponseShape/Encoders/Risk.lean:41:56: unused variable `hobj`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: ResponseShape/Encoders/Risk.lean:49:62: unused variable `hobj`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+Build completed successfully (1169 jobs).
