@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import collections
 from contextlib import contextmanager
 import fnmatch
 import hashlib
@@ -115,16 +116,26 @@ def suite_command(python: list[str], workers: str, files: list[str] | None = Non
                                  xdist=True, python=python)
 
 
-def merge_pytest_events(collection: dict, suite: dict) -> dict:
+def merge_pytest_events(collection: dict, suite: dict, *, any_order: bool = False) -> dict:
     """The collection run's IDs with the suite run's results and seconds. Every xdist worker of the
-    suite run must have collected exactly the collection run's selection."""
+    suite run must have collected exactly the collection run's selection: the same list, or with
+    `any_order` (a shard, whose share comes from the plan's sorted IDs) the same IDs, each once."""
     workers = suite.get("workers")
     if not isinstance(workers, dict) or not workers:
         raise RuntimeError("the suite run recorded no worker collection")
+    selected = collection["selected"]
     for worker, ids in sorted(workers.items()):
-        if ids != collection["selected"]:
+        if not any_order and ids != selected:
             raise RuntimeError(f"worker {worker} collected {len(ids)} tests, not the collection run's "
-                               f"{len(collection['selected'])}")
+                               f"{len(selected)}")
+        if any_order and (not isinstance(ids, list) or len(ids) != len(set(ids)) or set(ids) != set(selected)):
+            if not isinstance(ids, list):
+                raise RuntimeError(f"worker {worker} recorded no list of collected tests")
+            missing, extra = sorted(set(selected) - set(ids)), sorted(set(ids) - set(selected))
+            duplicate = sorted(node for node, times in collections.Counter(ids).items() if times > 1)
+            raise RuntimeError(f"worker {worker} did not collect exactly this shard's {len(selected)} tests: "
+                               f"{len(missing)} missing, {len(extra)} extra, {len(duplicate)} duplicate; first: "
+                               f"{(missing or extra or duplicate)[0]}")
     return {**collection, "tests": suite["tests"], "seconds": suite.get("seconds", {}), "workers": workers}
 
 
@@ -898,7 +909,9 @@ def main() -> int:
             if shard is not None:
                 subset = {"collected": selection, "selected": selection, "deselected": [],
                           "collection_reports": []}
-                events = merge_pytest_events(subset, json.loads(events_file.read_text()))
+                # The share is in the plan's sorted order (gate_collection.encode_ids); the
+                # workers report pytest's order: the same IDs, each once, is the check.
+                events = merge_pytest_events(subset, json.loads(events_file.read_text()), any_order=True)
                 result["pytest_seconds"] = events.get("seconds", {})
             else:
                 events = merge_pytest_events(collection, json.loads(events_file.read_text()))
