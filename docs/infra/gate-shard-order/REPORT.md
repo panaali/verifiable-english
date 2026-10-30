@@ -53,7 +53,8 @@ once in full, and once on share 2 of a 2-way `gate_shards.plan` with the ids fil
 - `merge_pytest_events(collection, suite, *, any_order=False)`. Without `any_order` (the unsharded gate, contract
   and rerun runs), every worker's list must equal the collection run's `selected`, as before; the message is
   unchanged. With `any_order`, every worker's ids must be a list with no duplicate and the same set as the share.
-  The refusal names how many ids are missing, extra and duplicated, and the first one.
+  The refusal names how many ids are missing, extra and duplicated, and the first one. A worker row that is not
+  a list of strings is refused as such, never a `TypeError`.
 - The shard path calls it with `any_order=True`. The plan and its digest are unchanged, and so are the record format,
   `shard.ran` and `gate_shards.merge_records`. No other caller changes.
 
@@ -87,7 +88,7 @@ The test asserts:
 Unit tests (`tests/test_gate.py`), both directions:
 
 - `test_a_shard_worker_may_collect_its_share_in_any_order[plan order|pytest order]`: accepted.
-- `test_a_shard_worker_must_collect_exactly_its_share[missing|extra|duplicate|duplicate for missing|not a list]`: refused.
+- `test_a_shard_worker_must_collect_exactly_its_share[missing|extra|duplicate|duplicate for missing|not a list|not an ID]`: refused.
 - `test_the_unsharded_gate_still_needs_the_collection_runs_order`: the unsharded gate still refuses a reordered list.
 - `test_the_gate_records_a_parallel_suite_run` (existing): the unsharded gate still accepts its exact list.
 
@@ -100,6 +101,7 @@ Each bug was planted in `tools/gate.py`, shown failing with the test named in it
 | 1 | the list comparison comes back in the shard path (`merge_pytest_events(subset, ...)` without `any_order=True`) | `tests/test_gate_shards.py::test_real_pytest_shards_merge_into_the_unsharded_record` | `2 failed`; inner gate: `FAILURE: gate:  worker gw0 collected 5 tests, not the collection run's 5`, the GHA failure itself |
 | 2 | the shard check drops its duplicate test (`len(ids) != len(set(ids))`) | `tests/test_gate.py::test_a_shard_worker_must_collect_exactly_its_share[duplicate]` | `1 failed, 6 passed` |
 | 3 | the unsharded gate becomes order-independent (`any_order` defaults to True) | `tests/test_gate.py::test_the_unsharded_gate_still_needs_the_collection_runs_order` | `1 failed` |
+| 4 | the shard check drops its id type check (`any(type(node) is not str ...)`) | `tests/test_gate.py::test_a_shard_worker_must_collect_exactly_its_share[not an ID]` | `1 failed, 7 passed` |
 
 ## Tests run
 
@@ -111,6 +113,9 @@ Each bug was planted in `tools/gate.py`, shown failing with the test named in it
 - Selected tests on the finished code (`zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, ve-mac-1 aarch64,
   1713 s): `recorded 113 units ...; 0 failed`, `exit=0; failed/error ids=0`. The run started with the changed
   `tests/test_gate.py` and `tests/test_gate_shards.py`.
+- After the selected run, a final hardening (refuse a worker row that is not a list of string ids, seeded bug 4) changed
+  `tools/gate.py` again. I reran the two test files it reaches:
+  `uv run pytest -q tests/test_gate.py tests/test_gate_shards.py` gave `100 passed in 40.29s`.
 - Not run here: the full gate (the chain runs it) and the sharded shadow reruns on arm64. After the merge, manage-agents
   reruns the 2 shadow validations and the seeded run through `gha-arm-shard.sh`.
 
@@ -121,7 +126,7 @@ Each bug was planted in `tools/gate.py`, shown failing with the test named in it
    `test_the_unsharded_gate_still_needs_the_collection_runs_order`. Change 2 is
    `test_real_pytest_shards_merge_into_the_unsharded_record` (3 files, parametrized, nested, `-n 2`, 1/2, 2/2,
    unsharded, failure in shard 2). The report is this file. No new Python copy of a Lean decision and no permanent report test.
-3. PASS: the 3 seeded bugs above, each with its failing test.
+3. PASS: the 4 seeded bugs above, each with its failing test.
 4. N.A.: no Python/Lean/Rust semantics changed.
 5. N.A.: no relayed answer or binding changed.
 6. N.A. here: the chain runs the full gate on the final HEAD; the branch has no batch evidence commit list.

@@ -128,9 +128,9 @@ def merge_pytest_events(collection: dict, suite: dict, *, any_order: bool = Fals
         if not any_order and ids != selected:
             raise RuntimeError(f"worker {worker} collected {len(ids)} tests, not the collection run's "
                                f"{len(selected)}")
-        if any_order and (not isinstance(ids, list) or len(ids) != len(set(ids)) or set(ids) != set(selected)):
-            if not isinstance(ids, list):
-                raise RuntimeError(f"worker {worker} recorded no list of collected tests")
+        if any_order and (not isinstance(ids, list) or any(type(node) is not str for node in ids)):
+            raise RuntimeError(f"worker {worker} recorded no list of collected test IDs")
+        if any_order and (len(ids) != len(set(ids)) or set(ids) != set(selected)):
             missing, extra = sorted(set(selected) - set(ids)), sorted(set(ids) - set(selected))
             duplicate = sorted(node for node, times in collections.Counter(ids).items() if times > 1)
             raise RuntimeError(f"worker {worker} did not collect exactly this shard's {len(selected)} tests: "
