@@ -67,6 +67,9 @@ All in `usecases/agent-policy/check.py`, each restored afterwards; `mutants.json
 ## 6. Checks run
 
 - `uv run pytest -q tests/test_agent_policy.py -k 'rust or evidence_was'`: 55 passed, 2 skipped (the two well-typed rows).
+- Full gate at 4f7f8484b: 30431 passed, 0 failed; it failed only its skip policy on the two well-typed rows of
+  `test_a_retyped_rust_row_is_refused`, which skipped themselves. They are now left out of the parametrization
+  (`RETYPED_FIELDS`) instead of skipped: `-k retyped_rust_row` 34 passed, none skipped.
 - `uv run pytest -q tests/test_agent_policy_rerun.py`: 4 passed in 193.95 s.
 - Selected tests, `mac-pytest.sh --select`: exit 0; shard 1 77 of 77 units, shard 2 80 of 80 units (run
   `ap-rust-replay-8c573879-t360058`).
@@ -85,7 +88,7 @@ count agrees with the text; the Lean gap is stated in section 5. Rust's row shap
 3. Tests can fail: PASS, `mutants.json`, `test_rust_replay_of_the_rerun_equals_the_committed_m9`.
 4. Python, Lean, Rust agree: PASS for the count: `test_rust_replay_of_the_rerun_equals_the_committed_m9`; Lean is limited as section 5 says.
 5. R8 binding: PASS, `test_rust_output_not_bound_to_the_request_is_refused`, `test_rust_rows_in_the_wrong_order_are_refused`.
-6. Gate evidence matches the final HEAD: N.A., the chain runs the gate on the final HEAD.
+6. Gate evidence matches the final HEAD: N.A., the chain runs the gate on the final HEAD (the gate at 4f7f8484b failed only its skip policy; fixed, section 6).
 7. No unsigned item: N.A., no DELTA row and no trust growth.
 8. Every user-visible change in DELTA: N.A., a harness metric; `results.json` diff is empty (the task puts it in this report).
 9. Test selection: PASS, `tools/select_tests.py` output names `tests/test_agent_policy.py` and `tests/test_agent_policy_rerun.py`.
