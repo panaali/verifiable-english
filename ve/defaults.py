@@ -70,6 +70,17 @@ def _deciders(case, rules):
     return [first] if first == second else [first, second]
 
 
+def _bind_decider_names(case, names, has_decisions):
+    """R8: each Lean name occurs in this source, once; a row for decisions is not empty."""
+    rules = _rules(case).values()
+    soft = case["environment"]["vocabulary"].get("soft") or {}
+    available = {"unstated", *(_decider(case, rule) for rule in rules if rule.get("mode") == "default"),
+                 *(party for rule in _rules(case).values() for party in rule.get("alterable", ())),
+                 (soft.get("outranking") or {}).get("decided_by") or "unstated"}
+    if bool(names) != bool(has_decisions) or len(names) != len(set(names)) or any(n not in available for n in names):
+        raise _unbound("deciders")
+
+
 def _entities(witness):
     """Every entity of a request's model (`{"model": {"domains": ...}}`), by sort."""
     return {sort: set(ids) for sort, ids in witness["model"]["domains"].items()}
@@ -114,6 +125,7 @@ def bind_elaborate(case, row, source):
         raise _unbound("default premises")
     if [[m, n] for m, n, _ in row["coherence_targets"]] != source["pairs"]:
         raise _unbound("coherence targets")
+    _bind_decider_names(case, row["deciders"], labels)
     return row
 
 
@@ -140,11 +152,12 @@ def bind_certificate(case, row, labels):
     `default_premises`, each once and in their order, none exactly with `strict`; `needs` only when the request
     carried a `strict_model`; a reason is not empty."""
     follows = row["verdict"] == "FOLLOWS"
-    if any((key in row) != follows for key in ("basis", "form", "assumptions")) or ("reason" in row) == follows:
+    if any((key in row) != follows for key in ("basis", "form", "assumptions", "deciders")) or ("reason" in row) == follows:
         raise _unbound("verdict")
     if not follows and not row["reason"]:
         raise _unbound("reason")
     if follows:
+        _bind_decider_names(case, row["deciders"], labels)
         if (row["assumptions"] != [label for label in labels if label in row["assumptions"]] or
                 (row["basis"] == "strict") != (row["assumptions"] == [])):
             raise _unbound("assumptions")
@@ -316,7 +329,11 @@ def ask(environment, norms, premises, conclusion):
     strict = search.certificate(search.X, gamma, phi)
     if strict is not None and run({"id": "strict", "kind": "norm-defaults-certificate", **question,
                                    "certificate": strict})["valid"] is True:
-        return {"question": "strict", "valid": True}
+        out = {"question": "strict", "valid": True}
+        if elaborated["default_premises"]:
+            from .defaults_english import strict_sentence
+            out.update(deciders=elaborated["deciders"], english=[strict_sentence(elaborated["deciders"])])
+        return out
     X = [*search.X, *search.dflt]
     gate = search.coherence()
     certificate = search.certificate(X, gamma, phi)

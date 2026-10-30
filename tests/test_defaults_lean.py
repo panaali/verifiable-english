@@ -100,7 +100,8 @@ ALPHA_ENGLISH = ["Unless an exception applies, the conclusion follows: Every ass
 
 
 def follows(basis, form, assumptions):
-    return {"verdict": "FOLLOWS", "basis": basis, "form": form, "assumptions": assumptions}
+    return {"verdict": "FOLLOWS", "basis": basis, "form": form, "assumptions": assumptions,
+            "deciders": ["assistant"]}
 
 
 def test_alpha_needs_its_one_exception_and_the_strict_countermodel(monkeypatch):
@@ -177,8 +178,24 @@ def test_epsilon_switch_is_the_long_form(monkeypatch):
 def test_zeta_strict_question_first(monkeypatch):
     """A conclusion the document's own premises give is answered by the strict question; no default case is sent."""
     out, sent = asked(monkeypatch, "zeta")
-    assert out == {"question": "strict", "valid": True}
+    assert out == {"question": "strict", "valid": True, "deciders": ["assistant"],
+                   "english": ["This holds whatever the assistant decides."]}
     assert not any(case.get("kind") in ("defaults-certificate", "defaults-model") for case, _ in sent)
+
+
+def test_de5_strict_decider_boundaries(monkeypatch):
+    """DE5 names all of Lean's deciders, and is absent when there is no default premise."""
+    monkeypatch.setitem(DOCS, "zeta0", (env(), [rule("r0", "x_required", True, default=False)]))
+    out, sent = asked(monkeypatch, "zeta0")
+    assert out == {"question": "strict", "valid": True}
+    assert sent_kind(sent, "defaults-elaborate")[1]["deciders"] == []
+    two = [rule("r0", "x_required", True, default=False), R1,
+           rule("r2", "x_required", True, decider="operator")]
+    monkeypatch.setitem(DOCS, "zeta2", (env({"parties": ["operator"], **STRICT}), two))
+    out, sent = asked(monkeypatch, "zeta2")
+    assert sent_kind(sent, "defaults-elaborate")[1]["deciders"] == ["assistant", "operator"]
+    assert out == {"question": "strict", "valid": True, "deciders": ["assistant", "operator"],
+                   "english": ["This holds whatever the assistant and the operator decide."]}
 
 
 def test_eta_and_theta_are_lean_diagnostics(monkeypatch):
@@ -195,7 +212,8 @@ def test_iota_and_kappa_are_unknown(monkeypatch):
     on them is UNKNOWN, never FOLLOWS; DF-κ: a certificate bound to another premise list is no certificate."""
     contradictory = [["exists", "assistant", un("urgent")], ["forall", "assistant", ["not", un("urgent")]]]
     out, _ = asked(monkeypatch, "beta", UNLESS_URGENT, premises=contradictory)
-    assert out == {"question": "strict", "valid": True}
+    assert out == {"question": "strict", "valid": True, "deciders": ["assistant"],
+                   "english": ["This holds whatever the assistant decides."]}
     _, sent = asked(monkeypatch, "beta", UNLESS_URGENT)
     case, _ = sent_kind(sent, "defaults-certificate")
     assert defaults.answer({**case, "premises": contradictory}, ["default:exception:r1"]) == {

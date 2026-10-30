@@ -8,11 +8,11 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 |---|---:|
 | leaves:bound | 255 |
 | leaves:closed domain | 286 |
-| leaves:none | 1412 |
+| leaves:none | 1413 |
 | modes | 39 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 1011 |
+| today:not probed | 1012 |
 | today:shape | 541 |
 | today:unbound | 137 |
 | answers | 574 |
@@ -1652,6 +1652,7 @@ Delegates: `/` to norms.
 | `/conditional_on/*` | string | none |  | pattern | 0 | not probed |
 | `/conflict_targets/*/sorts/*` | string | none |  |  | 8 | hand: `ve/norm_defaults.py:__init__` |
 | `/conflict_targets/*/target` | string | none |  | minLength | 7 | hand: `ve/norm_defaults.py:__init__` |
+| `/deciders/*` | string | none |  |  | 0 | not probed |
 | `/default_premises/*/0` | string | none |  | minLength | 0 | not probed |
 | `/detail` | string | none |  | minLength | 2 | unbound |
 | `/differs/*/predicate` | string | none |  |  | 0 | not probed |
@@ -1753,6 +1754,7 @@ Delegates: `/` to norms.
 | `/conditional_on` |  |  |  |  |
 | `/conflict_targets` |  |  |  | drop: accept/accepted, accept/ve/norm_defaults.py:__init__; duplicate: accept/accepted, accept/ve/norm_defaults.py:__init__; replace: accept/accepted; reverse: accept/accepted |
 | `/conflict_targets/*/sorts` |  |  |  | drop: accept/accepted, accept/ve/norm_defaults.py:__init__; duplicate: accept/accepted, accept/ve/norm_defaults.py:__init__; replace: accept/accepted; reverse: accept/accepted |
+| `/deciders` |  |  |  |  |
 | `/default_premises` |  |  |  |  |
 | `/default_premises/*` |  |  |  |  |
 | `/differs` |  |  |  |  |

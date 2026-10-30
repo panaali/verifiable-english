@@ -576,7 +576,8 @@ def test_assumptions_in_the_elaborations_label_order(monkeypatch):
     monkeypatch.setitem(DOCS, "rb-ra", (env(base=["calm"]), [calm, other]))
     out, _ = asked(monkeypatch, "rb-ra")
     assert out["answer"] == {"verdict": "FOLLOWS", "basis": "needs", "form": "short",
-                             "assumptions": ["default:exception:rb", "default:exception:ra"]}
+                             "assumptions": ["default:exception:rb", "default:exception:ra"],
+                             "deciders": ["assistant"]}
 
 
 def test_elaborate_labels_and_targets(monkeypatch):
@@ -591,6 +592,19 @@ def test_elaborate_labels_and_targets(monkeypatch):
     relabelled = copy.deepcopy(row)
     relabelled["default_premises"][1][0] = relabelled["default_premises"][0][0]
     _refused("default premises", defaults.bind_elaborate, case, relabelled, source)
+
+
+def test_deciders_are_typed_and_bound_on_both_rows(monkeypatch):
+    case, row, _, _, source = _genuine(monkeypatch, "gamma2", X_ALL, "defaults-elaborate")
+    assert row["deciders"] == ["assistant"]
+    assert defaults.bind_elaborate(case, row, source) is row
+    for names in ([], ["absent"], ["assistant", "assistant"], ["assistant", "absent"]):
+        _refused("deciders", defaults.bind_elaborate, case, {**row, "deciders": names}, source)
+    case, row, labels, *_ = _genuine(monkeypatch, "alpha", X_ALL, "defaults-certificate")
+    assert row["deciders"] == ["assistant"]
+    assert defaults.bind_certificate(case, row, labels) is row
+    for names in ([], ["absent"], ["assistant", "assistant"], ["assistant", "absent"]):
+        _refused("deciders", defaults.bind_certificate, case, {**row, "deciders": names}, labels)
 
 
 def test_soft_source_is_the_exception_tables(monkeypatch):
@@ -633,7 +647,8 @@ def test_strict_answer_only_when_lean_says_valid(monkeypatch):
     (a genuine `valid: false` row), and then the default question is asked, never the strict answer shown; DF-α's
     search finds no strict certificate, so the default question is asked without the strict one."""
     out, sent = asked(monkeypatch, "zeta")
-    assert out == {"question": "strict", "valid": True}
+    assert out == {"question": "strict", "valid": True, "deciders": ["assistant"],
+                   "english": ["This holds whatever the assistant decides."]}
     assert sent_kind(sent, "norm-defaults-certificate")[1]["valid"] is True
     found = defaults._Search.certificate
 
@@ -647,7 +662,8 @@ def test_strict_answer_only_when_lean_says_valid(monkeypatch):
     assert (out["question"], out["kind"]) == ("default", "defaults-certificate"), out
     out, sent = asked(monkeypatch, "alpha")
     assert out == {"question": "default", "kind": "defaults-certificate", "answer": {
-        "verdict": "FOLLOWS", "basis": "needs", "form": "short", "assumptions": ["default:exception:r1"]},
+        "verdict": "FOLLOWS", "basis": "needs", "form": "short", "assumptions": ["default:exception:r1"],
+        "deciders": ["assistant"]},
         "english": ALPHA_ENGLISH}
     assert not any(case.get("kind") == "norm-defaults-certificate" for case, _ in sent)
 
