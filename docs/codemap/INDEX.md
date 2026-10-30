@@ -4,7 +4,7 @@ Service-mode routes: `tools/repo_map.py`. Regenerate with `python tools/code_map
 Regenerated on every merge to main; on a branch it may lag that branch's own changes.
 
 - [bench/](bench.md) — 4 modules — -
-- [conformance/](conformance.md) — 62 modules — `evaluation.json` contains **701** valid environment/model/document cases (**4,912 formulas**).
+- [conformance/](conformance.md) — 63 modules — `evaluation.json` contains **701** valid environment/model/document cases (**4,912 formulas**).
 - [docs/act-phrases/](docs__act-phrases.md) — 25 modules — -
 - [docs/arch/](docs__arch.md) — 26 modules — -
 - [docs/architecture/](docs__architecture.md) — 1 modules — -
@@ -52,7 +52,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/oom-rootcause/](docs__oom-rootcause.md) — 2 modules — -
 - [docs/perf/](docs__perf.md) — 2 modules — -
 - [docs/premise-scale/](docs__premise-scale.md) — 4 modules — -
-- [docs/question-answering/](docs__question-answering.md) — 2 modules — -
+- [docs/question-answering/](docs__question-answering.md) — 3 modules — -
 - [docs/readings-defaults/](docs__readings-defaults.md) — 7 modules — -
 - [docs/scale-choice-batch/](docs__scale-choice-batch.md) — 1 modules — -
 - [docs/scope/](docs__scope.md) — 6 modules — -
@@ -76,8 +76,8 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Arith/](lean__VE__Arith.md) — 10 modules — -
 - [lean/VE/Ask/](lean__VE__Ask.md) — 15 modules — -
 - [lean/VE/Attribution/](lean__VE__Attribution.md) — 15 modules — -
-- [lean/VE/Calc/](lean__VE__Calc.md) — 26 modules — -
-- [lean/VE/Cardinality/](lean__VE__Cardinality.md) — 14 modules — -
+- [lean/VE/Calc/](lean__VE__Calc.md) — 27 modules — -
+- [lean/VE/Cardinality/](lean__VE__Cardinality.md) — 15 modules — -
 - [lean/VE/Closure/](lean__VE__Closure.md) — 14 modules — -
 - [lean/VE/Compose/](lean__VE__Compose.md) — 6 modules — -
 - [lean/VE/Core/](lean__VE__Core.md) — 22 modules — -
@@ -94,7 +94,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Layout/](lean__VE__Layout.md) — 3 modules — -
 - [lean/VE/NormDefaults/](lean__VE__NormDefaults.md) — 25 modules — -
 - [lean/VE/Norms/](lean__VE__Norms.md) — 25 modules — -
-- [lean/VE/Numbers/](lean__VE__Numbers.md) — 5 modules — -
+- [lean/VE/Numbers/](lean__VE__Numbers.md) — 6 modules — -
 - [lean/VE/Order/](lean__VE__Order.md) — 16 modules — -
 - [lean/VE/Question/](lean__VE__Question.md) — 12 modules — -
 - [lean/VE/Readings/](lean__VE__Readings.md) — 70 modules — -
@@ -117,9 +117,10 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tests/ part 1](tests--part-1.md) — 95 modules — -
 - [tests/ part 2](tests--part-2.md) — 91 modules — -
 - [tests/ part 3](tests--part-3.md) — 89 modules — -
-- [tests/ part 4](tests--part-4.md) — 90 modules — -
-- [tests/ part 5](tests--part-5.md) — 82 modules — -
+- [tests/ part 4](tests--part-4.md) — 89 modules — -
+- [tests/ part 5](tests--part-5.md) — 83 modules — -
 - [tests/ part 6](tests--part-6.md) — 90 modules — -
+- [tests/ part 7](tests--part-7.md) — 1 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 3 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 101 modules — -
 - [tools/ part 2](tools--part-2.md) — 2 modules — -
