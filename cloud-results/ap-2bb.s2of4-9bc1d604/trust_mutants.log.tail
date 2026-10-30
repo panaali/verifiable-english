@@ -1,0 +1,11 @@
+trust_mutants: 6 definitions, 218 mutants (55 to run), 4 jobs, base 6949746bf291
+UNKNOWN lean/VE/Acts/Linearize.lean:41 VE.Acts.Atom.canon (S, trusted) append-right: (·.1 == "") ++ ->  (lean/VE/Acts/Linearize.lean:41: Function expected at)
+UNKNOWN lean/VE/Acts/Linearize.lean:69 VE.Acts.normalOk (S, trusted) list-empty: a.args -> [] (lean/VE/Acts/Linearize.lean:69: Invalid projection: Type of)
+UNKNOWN lean/VE/Acts/Linearize.lean:70 VE.Acts.normalOk (S, trusted) list-empty: ps -> [] (lean/VE/Acts/Linearize.lean:70: don't know how to synthesize implicit argument `α`)
+SURVIVOR lean/VE/Acts/Meaning.lean:78 VE.Acts.longEnd (S, trusted) list-first: ps -> (ps.take 1)
+UNKNOWN lean/VE/Acts/Linearize.lean:65 VE.Acts.normalOk (S, trusted) list-drop-last: (·.2.parts) -> ((·.2.parts).dropLast) (lean/VE/Acts/Linearize.lean:65: Invalid dotted identifier notation: The expected type of `.prep` ...)
+SURVIVOR lean/VE/Acts/Meaning.lean:78 VE.Acts.longEnd (S, trusted) list-last: ps -> (ps.reverse.take 1)
+SURVIVOR lean/VE/Acts/Meaning.lean:78 VE.Acts.longEnd (S, trusted) list-drop-first: ps -> (ps.drop 1)
+SURVIVOR lean/VE/Acts/Linearize.lean:66 VE.Acts.normalOk (S, trusted) list-last: ws -> (ws.reverse.take 1)
+trust_mutants: 45 KILLED, 4 SURVIVOR, 4 UNKNOWN, 2 INVALID, 0 ALLOWED, 0 NOT RUN, 163 OTHER SHARD in 871 s
+trust_mutants: S, trusted: 45 KILLED, 4 SURVIVOR, 4 UNKNOWN, 2 INVALID, 163 OTHER SHARD
