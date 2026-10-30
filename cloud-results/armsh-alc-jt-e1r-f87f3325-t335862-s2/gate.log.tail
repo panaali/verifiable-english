@@ -1,0 +1,200 @@
+tests/test_asimov_extended.py::test_rerun_document_equals_the_committed_results
+  /home/runner/.local/share/uv/python/cpython-3.14.7-linux-aarch64-gnu/lib/python3.14/multiprocessing/popen_fork.py:76: DeprecationWarning: This process (pid=3537) is multi-threaded, use of fork() may lead to deadlocks in the child.
+    self.pid = os.fork()
+
+tests/test_english.py::test_suggestions_are_deterministic_linted_and_require_explicit_acceptance
+  /home/runner/work/verifiable-english/verifiable-english/ve/printer.py:652: UnreviewedVocabularyWarning: English overlay 098127b9e7d9dba0da044c69d23e0f797cef4675985519f6c422b99510d957d9: unreviewed
+    return render_english(value, env, conclusions=conclusions, vocabulary=vocabulary,
+
+tests/test_english.py::test_review_status_requires_exact_independently_pinned_digest
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 2e46452e6e29460c0ffb62635354bb53b85371ef814bb21c83edc15b31b58369: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_propose.py: 30 warnings
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 2bd979058edc0265e539a6ce38ca26192555d8aab371e6ee1d892a8ea99606da: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_propose.py::test_adoption_roundtrip_provenance_and_all_derivations
+tests/test_propose.py::test_cli_lead_workflow
+  /home/runner/work/verifiable-english/verifiable-english/ve/printer.py:652: UnreviewedVocabularyWarning: English overlay 2bd979058edc0265e539a6ce38ca26192555d8aab371e6ee1d892a8ea99606da: unreviewed
+    return render_english(value, env, conclusions=conclusions, vocabulary=vocabulary,
+
+tests/test_propose.py::test_positive_negative_and_identifier_rules[an honorary fellow-honorary_fellow]
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 575b267a3b6461f41c200713cf98fcb4608369c1cc42f42a297f57dbc58db2ff: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_propose.py::test_positive_negative_and_identifier_rules[sparkling-sparkling]
+tests/test_propose.py::test_cli_adopt_to_keeps_all_gates
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay cf752d56cee9faf618e1aa205d6216125a331e611b3ee90b3dae3868a4ce2154: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_propose.py::test_positive_negative_and_identifier_rules[must-predicate_must]
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 323158cfafe0eeba0a25530bdf0fb56875085aa9bfbdce262e57af190af961dc: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_propose.py::test_positive_negative_and_identifier_rules[x12-predicate_x12]
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 5d0a277a42757aed2b157b3ed755c04a1b0dc1c5c42dd8e82c98b0b7d5bb781c: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_propose.py::test_nominal_prepositions_are_atomic_without_reference_or_morphology
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay c0f2ae227f9d04fd8ee3a80fb522a66f1d00d0a5a90072e3b6986265351eb1a6: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_propose.py::test_scope_conflicts_and_no_sort_inference
+tests/test_propose.py::test_no_overlay_proposal_can_be_adopted
+tests/test_propose.py::test_cli_adopts_proposal_without_base_overlay
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 89b35f4e2b9cf192cbf60487e257a25ac93e7b9c20c5d1da0f8e4dea900b0e78: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_propose.py::test_normalization_collision_and_length
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 684345749876670ccfda3eb4c11573bb612cfc697e5a5d7d59c59d39ce4ee140: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_propose.py::test_normalization_collision_and_length
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 07eaa38d893382441ff7fdb3593e2e643fc494e479777ed23be62bb3eeedb4a8: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_propose.py::test_near_duplicate_checks_include_sort_symbols
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay b90951139b38f112369707158b9f9ec6e562028fd8fbe23251aab61dc3a031a1: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_propose.py::test_reordered_content_overlap_is_flagged_and_explained[a citizen of the US]
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 10d732c3a415daf4e44befe3315ca4c4be8ecb0273637cad4c4e1ca743a1e6d9: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_propose.py::test_reordered_content_overlap_is_flagged_and_explained[a citizen of the us]
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay ef6a2b7e73a2725207b0a83b3ef21aa00cd54f9e31bb4241f0436681fc5c4d10: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_propose.py::test_content_casing_in_declared_nouns_and_bound_references
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 313ea691058e541b0a741eb301acad9603ad6931c10bce0465d98a32729fa8f7: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_lexicon.py::test_unknown_warning_is_advisory_and_adoption_still_explicit
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 99b00148757645434344bb677b40b5382e02a56d56787d18efb16fdf3d4b847e: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_lexicon.py::test_known_and_declared_tokens_suppress_all_unknown_flag
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 0f864ab4363826ffcd3d9bcdabca56080a5cf3d786a943a2c096a44e2be00101: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_lexicon.py::test_known_and_declared_tokens_suppress_all_unknown_flag
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 136a1e7dd584d59907199d9fef3e4dfc5a35264ad99be1065432adf2cdf77a7a: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_lexicon.py::test_token_boundaries_are_only_annotations
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 8f7cf2217f364d4f24cc7b7e1f89291e931b092662306b89b31fef94da8796cb: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_lexicon.py::test_article_led_opaque_phrase_remains_allowed[a member of the guild]
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 792f6aa43d1b4c26be8d0bba03b62ff618a16e69a237cf1168992b96a84c6261: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_lexicon.py::test_article_led_opaque_phrase_remains_allowed[a member OF THE guild]
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 4d61bb69d64684a8d732465c296c9665e9c5d79dc7d0d487de11150e8b7523f4: unreviewed
+    english = render_english(document, env, **options)
+
+tests/test_lexicon.py::test_lexical_evidence_cannot_be_tampered_with_even_after_redigest
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 97b120333eac45a5322365c21b320eb1eaa060db5106c0d9c2e114507c17e144: unreviewed
+    english = render_english(document, env, **options)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1078] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1098] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/110] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1118] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/116] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1160] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1164] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1178] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1182] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1190] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1192] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1194] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1218] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1220] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/124] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1258] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1268] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/128] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1292] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1360] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1362] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1378] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1390] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1412] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1444] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1468] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1472] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1488] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1498] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1510] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1520] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1531] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/156] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1560] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1564] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1599] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1610] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1650] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1681] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1682] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1696] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1702] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1714] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1718] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1732] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1741] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1742] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1784] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1785] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/1795] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/200] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/208] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/294] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/298] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/306] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/376] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/410] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/418] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/456] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/464] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/484] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/508] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/516] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/548] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/6] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/604] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/606] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/618] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/632] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/684] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/718] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/730] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/772] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/810] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/824] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/844] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/906] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/908] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/922] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/930] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/950] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/970] - path pending lf-12: located Lean decoders will restore these paths
+XFAIL tests/test_document_lean_switch.py::test_pending_lf12_document_paths[mutant/978] - path pending lf-12: located Lean decoders will restore these paths
+FAILED tests/test_history_tests.py::test_the_tree_passes - AssertionError: as...
+FAILED tests/test_history_tests.py::test_the_command_line_lint_passes_on_the_tree
+2 failed, 13797 passed, 83 xfailed, 60 warnings in 1523.00s (0:25:23)
+[gate] commit: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false rev-parse HEAD
+9b1d8511bed8b09a2c3e0790b0fb6196a0b8359a
+[gate] worktree status: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+
+[gate] worktree index: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false read-tree 9b1d8511bed8b09a2c3e0790b0fb6196a0b8359a
+
+[gate] worktree content: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+ M lean/checkers.lock
+[gate-wrap] lean/checkers.lock differs from the commit by this runner's pins only (blob 6fbad126ed536e8c4b20ad9913d3c76cc96ff2db, taken at the wrapper's start)
+[gate] failed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 0 passed, 0 skipped, 2 failures
+[gate] FAILURE: pytest command:  Python suite: exit 1
+[gate] FAILURE: gate:  worker gw0 collected 13882 tests, not the collection run's 13882

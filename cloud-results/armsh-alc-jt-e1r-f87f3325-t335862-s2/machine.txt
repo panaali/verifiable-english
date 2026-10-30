@@ -1,0 +1,7 @@
+job=armsh-alc-jt-e1r-f87f3325-t335862-s2 shard=2/4 nproc=4 arch=aarch64 host=runnervm9u1px date=2026-10-30T04:51:48Z ulimit_s=16384
+Mem:              15           1          10           0           4          14
+/dev/root       145G   41G  104G  29% /
+ 04:51:48 up 5 min,  0 user,  load average: 0.76, 0.35, 0.15
+pilot/codex branches: 98
+ve-cache: lean-build exact key e1698a8994c4 asset lean-build-e1698a8994c4-linux-aarch64.tar.zst sha256 35667093f4cd ok, seal ok, from download, 14.7 s
+[gate] failed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 0 passed, 0 skipped, 2 failures
