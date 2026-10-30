@@ -1,6 +1,6 @@
 # sc-1c: the explain route and relay (scope SC-1c). Build report
 
-- **Status:** built; no DRI signature is reserved. DELTA row 1 cites SYNTHESIS 2.2/4.2 as me-2b's row 1 does, row 2 R16 (V +4).
+- **Status:** built, review F1 (B) fixed (section "Review fix"); no DRI signature is reserved. DELTA row 1 cites SYNTHESIS 2.2/4.2 as me-2b's row 1 does, row 2 R16 (V +4).
 - **What changed:** the service mode `scope` (`VE.Scope.Run.runCaseReported`), its provenance sentences (`VE/Scope/English.lean`),
   the shape `scope.json` with `runCaseReported_fits`, the relay `ve/scope.py` and `python -m ve scope explain FILE [--ids]`.
 - **Open:** size (~1,000 hand-written lines against ~600) is asked of the DRI (inbox `20261030T162456Z-sc-1c-2436193.md`);
@@ -34,7 +34,7 @@ theorems have the recipe's fixed forms: `VE.Service.runMode_scope (j : Json) : r
 | (4) relay `ve/scope.py`, schema and binding only (R8) | yes, through `relay.answer` (the one relay entry; it carries the service's code beside a refusal, which `rows` drops, so a `ManifestMismatch` is raised with its class) | `tests/test_scope_answer.py`; `tools/relay_mutation_gate.py --route service:scope` |
 | (4) `ve scope explain` in `ve/__main__.py` | yes, appended (dispatch and help line) | `test_the_reader_sees_each_units_text_and_its_sentences_and_the_ids_only_in_the_provenance_view` |
 | (5) route cases in `tests/data/route-cases.jsonl` | 12: each effect on the norms chain, a three-governor document, `yields` on soft-norms, `title` (no row), and four refusals | `test_route_cases_answer_their_rows`; `tests/test_route_row_schemas.py` (corpus, shape fuzz, Lean agreement) |
-| (5) fuzz tests in `tests/test_scope_answer.py` | yes: every one-fault structural mutant (drop, add, duplicate, retype), reorders, out-of-range and rebound ids, each effect word, and two-fault drops (a governor with its row); every mutant is refused or shows nothing new, on three documents | `test_every_mutant_of_a_genuine_answer_is_refused_or_changes_nothing_shown` |
+| (5) fuzz tests in `tests/test_scope_answer.py` | yes: every one-fault structural mutant (drop, add, duplicate, empty, retype), reorders, out-of-range and rebound ids, each effect word, two-fault drops (a governor with its row), and each mutant again with `governed` made consistent (omissions aside); every mutant is refused or shows nothing new, on three documents; deleting any binding check lets one through | `test_every_mutant_of_a_genuine_answer_is_refused_or_changes_nothing_shown`, `test_every_binding_check_has_a_mutant_only_it_refuses` |
 | seeded bugs in Lean and Python, one mutant per new trusted definition | yes | `mutants.json` (13), `trust-mutants.json` |
 | evaluate once, size bounded (DRI 2026-10-27) | yes: the order, each reach and each governor unit's base name are read from tables computed once (`fastReads`, `memo`), proved equal to spec 5.3's reads (`explainFast_eq`); the runner splits the document once (`readSplit`, `readSplit_scope`) and quotes each governor unit once (`quotesOf`); the answer is bounded by `cellBound` (rows × the block's recorded reach units), refused past 524,288 cells as `ResourceLimit` (UNKNOWN) | `RunExamples.lean`: at the bound 112 it answers, at 111 and 0 it is UNKNOWN |
 | per-choice GOVERN (sc-5rb) | **sc-1cb**: the gate is spec 5.3's `govern`, so a document with a reading set governed per choice is refused with `ScopeReadings` (the document mode admits it) | FOLLOW-UPS "## sc-1c" |
@@ -55,13 +55,16 @@ text. (d) The relay uses `relay.answer`, not `rows` (above).
 
 ## Seeded bugs
 
-[mutants.json](mutants.json): 13, each planted alone on the committed tree, the named check run, restored.
+[mutants.json](mutants.json): 20, each planted alone on the committed tree, the named check run, restored.
 - **Lean (9):** `contributorsF` without `yields` (`explainFast_eq`); `whereOf` earlier/later swapped (F-ex guard);
   `explainWithin` refusing at the bound (cell guard); `govJson` renaming `reach` (`runCaseReported_fits`); `effectWord`
   `carve_out` (effect-words guard); `quote` with `≥ 12` (the 12-word guard); `governedJson` inverted (the governed
   guard); `.scope` dropped from `modes` (`modes_complete`); `.scope` dispatched to the document runner (`runMode_scope`).
 - **Python (4), `ve/scope.py`:** no reach binding, no `governed` check, the answer's governor order displayed, Lean's
   refusal ignored; each fails its named test in `tests/test_scope_answer.py`.
+- **Python (7), review fix:** `ve/scope.py` without the empty-sentence (PROBE F1), reaches-the-unit, named-twice or
+  row-order check; `ve/document/lean.py` with a cell's names, `table_complete`'s decider or the `unstated` default
+  unbound. Each fails its named test (`mutants.json`).
 - **No Rust** product code changed.
 
 ## Trust, size, bytes
@@ -82,9 +85,35 @@ text. (d) The relay uses `relay.answer`, not `rows` (above).
   (`test_assurance_manifest::test_every_json_handling_lean_file_is_classified`, `test_shape_binding_mutants[scope]`,
   `tools/test_layer_policy.py`), fixed (the `other_json` reason, `binding_census.py --answers`, the layer row) and rerun:
   `mac-pytest.sh -- <the three>`: 42 passed. Pre-existing main failures: none met.
-- `tests/test_scope_answer.py`: 15 passed. `relay_mutation_gate.py --route service:scope`: 1,577 mutants, 0 failures.
+- `tests/test_scope_answer.py`: 15 passed (16 after the review fix). `relay_mutation_gate.py --route service:scope`: 1,577 mutants, 0 failures.
 - `regen_generated.py --check` (34 entries), `gate_collection.py --check --prebuilt` (19 added, 0 removed),
   `repo_map.py --check` (40 modes), `lean/audit.py` PASS. The full gate is the chain's.
+
+## Review fix (sc-1c-review.final)
+
+- **F1 (B), as a class:** answer fuzzers never emptied a field, so an emptiness check had no failing test, and three
+  other binding checks of `ve/scope.py` (reach, named twice, row order) failed no test when deleted.
+  - The shared generator `tests/test_document_lean_switch.py::_structural_mutants` empties each non-empty string, list
+    and object; `tests/test_lean_first_b13b.py` reuses it instead of its own copy.
+  - `tests/test_scope_answer.py` tries each mutant again with `governed` made consistent (`_regoverned`), except pure
+    omissions, which are Lean's (`explain_rows_iff`, R8). `test_every_binding_check_has_a_mutant_only_it_refuses`
+    deletes each check of `answer_problem` in turn (`ast`) and requires the fuzz to catch it. The checks the schema
+    decides first are listed exactly (`SCHEMA_FIRST`), so the list cannot go stale.
+  - Emptied mutants found a gap in another relay: the document relay accepted an empty or undeclared action, chooser,
+    harm or decider in an alternatives coverage cell, and any `table_complete` decider. These are now bound to the
+    request (`ve/document/lean.py`, R8 (b); DELTA intro), with
+    `test_alternatives_cells_name_the_requests_constants_and_deciders`.
+  - PROBE F1: exit 1 before the fix, exit 0 after. Seeded bugs: `mutants.json` (7 added). A seeded test bug (the
+    two-fault mutants turned off) makes the deletion test report the order and reach checks as survivors.
+- Checks: selected tests on the commit with the fix, through `mac-pytest.sh --select` (504 of 504 units passed, exit 0,
+  with `lake build` and `lean/audit.py`); `regen_generated.py --check`, `repo_map.py --check` and
+  `gate_collection.py --check` (23 added, 0 removed) pass. No Lean changed, so the trust mutants were not rerun.
+- FOLLOW-UP: the other relays' own fuzzers (for example `tests/test_metered_answer.py`,
+  `tests/test_english_lean_route.py`, `tests/test_cardinality_service.py`) keep their own retype tuples. Each should
+  reuse one generator that empties fields (their routes' items).
+- FOLLOW-UP (C), as the review lists them: F2 (the display re-sorts Lean's order), F3 (`InvalidInput: ScopeReadings` for
+  a reading set governed per choice should say "not supported yet", sc-1cb), F4 (the `title` sentence is unreachable;
+  "Another rule" is not in spec 2.3), F5 ("1 rule"; the spec example's 15 words), F6 (`relay.answer`, reason above).
 
 ## Spec re-read
 
@@ -103,7 +132,7 @@ FOLLOW-UP: sc-1cb per-choice rows of a governed reading set, generated rules (ex
 
 1. PASS: `test_every_mutant_of_a_genuine_answer_is_refused_or_changes_nothing_shown`; relay gate (1,577 mutants, retypes and 10k-deep).
 2. PASS: the rows table above; one owner: no Python copy of a Lean decision (the relay binds, sorts for display only).
-3. PASS: `mutants.json` (13 killed), `trust-mutants.json` exit 0.
+3. PASS: `mutants.json` (20 killed), `trust-mutants.json` exit 0.
 4. PASS: `tests/test_route_row_schemas.py` (schema and `ve_response_decode` agree on every mutant); three chains in the route cases.
 5. PASS: `test_a_row_lean_did_not_bind_to_the_case_is_no_answer`; the fuzz test's `u9999`, rebound ids, extra and duplicated rows.
 6. PASS: the gate is the chain's, on the committed final HEAD; base from `git merge-base`.
