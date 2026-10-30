@@ -6210,7 +6210,7 @@ module VE.Compose.Dispatch 1f498535574cf1089b0498cb26b38460cc7a4e8584ee4694a4ca7
 1174:0-1193:61 theorem VE.Compose.baseGate_today@VE.Compose.Dispatch
 1198:0-1241:75 theorem VE.Compose.gate_acts@VE.Compose.Dispatch
 1245:0-1285:75 theorem VE.Compose.gate_scope@VE.Compose.Dispatch
-module VE.Compose.Examples d263f60262aee24a9f9890279f501d69244436360e30a27194f3f4b184ddcf97
+module VE.Compose.Examples ebf967896a8cfa53b64685dae4bfa8b11232ff5f88e1a5080981b5d7ae7fb6ee
 26:0-31:19 def VE.Compose.Examples.instBEqExceptStringRoute@VE.Compose.Examples
 162:0-164:224 def VE.Compose.Examples.registrySorted@VE.Compose.Examples
 170:0-172:106 def VE.Compose.Examples.maskList@VE.Compose.Examples
@@ -6899,13 +6899,14 @@ module VE.Defaults.Route 97feda58f0f4af531097d0c124fbf82d56ee36d2153860f9ebfbc20
 26:0-27:61 def VE.NormDefaults.Wire.layeredKindCase@VE.Defaults.Route
 29:0-37:107 theorem VE.NormDefaults.Wire.layeredKindCase_other@VE.Defaults.Route
 39:0-44:113 def VE.NormDefaults.Wire.runLayered@VE.Defaults.Route
-module VE.Defaults.RouteExamples 15fdd93acb06b79d3fdce3efafbacdfc9614d08cec76349f5b21db3999c867e7
+module VE.Defaults.RouteExamples c29069285cda38c9463923d0cfa9c49f2c515e575438a239afb957dfeaa85a6c
 10:0-10:66 def VE.Defaults.RouteFixtures.run@VE.Defaults.RouteExamples
 11:0-11:109 def VE.Defaults.RouteFixtures.refused@VE.Defaults.RouteExamples
 12:0-13:96 def VE.Defaults.RouteFixtures.shown@VE.Defaults.RouteExamples
 26:0-33:100 def VE.Defaults.RouteFixtures.βTwo@VE.Defaults.RouteExamples
 55:0-55:109 def VE.Defaults.RouteFixtures.plainEnv@VE.Defaults.RouteExamples
 74:0-75:97 def VE.Defaults.RouteFixtures.layerCase@VE.Defaults.RouteExamples
+86:0-86:104 def VE.Defaults.RouteFixtures.layeredOf@VE.Defaults.RouteExamples
 module VE.Defaults.Wire 98d899070ce011e81a7e383f39949cec2b4bb26349ba9f4efb48bf7465ae8f7f
 32:0-40:65 structure VE.Defaults.Wire.DefaultsView@VE.Defaults.Wire
 33:2-33:3 def VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire
@@ -9551,7 +9552,7 @@ module VE.EnglishGrammar.Rules 87aeab4e98c32ef462b90f036808de81c88cdb3967febcd13
 492:0-493:40 theorem VE.EnglishGrammar.mem_eraseDups@VE.EnglishGrammar.Rules
 495:0-565:119 theorem VE.EnglishGrammar.valid_subject_first@VE.EnglishGrammar.Rules
 567:0-577:35 theorem VE.EnglishGrammar.lexRules_terminatorFree@VE.EnglishGrammar.Rules
-module VE.EnglishGrammar.Run 35c7218b6a7f3f57169f844f6d23591d425c35ece15bc6137dfcbabdfe245922
+module VE.EnglishGrammar.Run a614aab8eeff8f4106268b364502dca3de0d107aa7a258c269e631cb6ddb58f2
 45:0-76:64 def VE.EnglishGrammar.Run.rejectText@VE.EnglishGrammar.Run
 78:0-82:77 def VE.EnglishGrammar.Run.illTypedText@VE.EnglishGrammar.Run
 83:0-83:110 def VE.EnglishGrammar.Run.notOneSentenceText@VE.EnglishGrammar.Run
@@ -20253,7 +20254,7 @@ module VE.Service.ActsExamples 2017573e19306f727acf24185959132038c98ddfc3244c911
 module VE.Service.Diagnose 0913297b59dc00e6821619a9df029ade52518172aed644518bdc48e13174622b
 13:0-25:61 def VE.Service.Diagnose.diagnoseCase@VE.Service.Diagnose
 27:0-32:29 theorem VE.Service.Diagnose.diagnoseCase_registered@VE.Service.Diagnose
-module VE.Service.Document 0fae50b3a2b4b4d907f9c90f86d6acdd380ccb7913086dd513b9e4535af77d43
+module VE.Service.Document a8331530e39b385d2a1879247a3c1f950fbbda3c735603d3d631ae6ddcf6a313
 49:0-49:74 def VE.Service.Document.unavailable@VE.Service.Document
 51:0-56:84 def VE.Service.Document.ownedProfiles@VE.Service.Document
 58:0-62:28 inductive VE.Service.Document.RightsKind@VE.Service.Document

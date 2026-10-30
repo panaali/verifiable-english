@@ -679,9 +679,9 @@ def environmentOf (environment : Json) (units : Json := .null) (senses : Bool :=
   let listed := listedProfiles environment
   if let some p := listed.find? fun p => !ownedProfiles.contains p then
     throw (undecided environment s!"document checks under {p} need its Lean profile route")
+  -- A document layer beside a profile it does not compose with yet: the composing modes' refusal by name.
+  let _ ← VE.Compose.decidingEnvironment environment
   if listed.contains "judgments@0" then
-    if let some p := VE.Compose.documentLayersApart.find? listed.contains then
-      throw (unavailable s!"judgments@0 with {p} needs its composed Lean route")
     if senses then throw (unavailable "judgments@0 with senses needs its composed Lean route")
   let block := blockOf listed
   if let some refusal := VE.Compose.pendingWithDefaults listed then

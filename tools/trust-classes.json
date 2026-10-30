@@ -15212,7 +15212,8 @@
         "VE.Defaults.RouteFixtures.run",
         "VE.Defaults.RouteFixtures.shown",
         "VE.Defaults.RouteFixtures.βTwo",
-        "VE.Defaults.RouteFixtures.layerCase"
+        "VE.Defaults.RouteFixtures.layerCase",
+        "VE.Defaults.RouteFixtures.layeredOf"
       ]
     },
     "ResponseShape/DefaultsExamples.lean": {

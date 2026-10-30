@@ -330,7 +330,7 @@ def decodeCase (j : Json) : Except String Case := do
     | .error _ => pure []
   pure { E, O, L, overlayFailure, identities := [("environment_id", .str envId)] ++ overlayDigest ++
     [("lexicon_id", .str (← VE.CertificateWire.digest "ve-english-lexicon-v1\n" lexicon)),
-     ("grammar_id", .str (← grammarId ((VE.Route.Gate.profilesOf environment).toOption.getD E.profiles))),
+     ("grammar_id", .str (← grammarId E.profiles)),
      ("actions_version", .str Fixed.actionsVersion)] }
 
 /-! ## Trees -/

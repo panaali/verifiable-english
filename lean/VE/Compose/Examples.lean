@@ -705,6 +705,10 @@ def layerDecided (ps : List String) : String :=
   layerDecided ["documents@1", p, "relational-fol@0"] == (layerListing ["documents@1", p, "relational-fol@0"]).compress
 #guard layerDecided ["judgments@0", "rights@0", "soft-norms@0"] ==
   "CheckerUnavailable: judgments@0 with rights@0 needs its composed Lean route"
+-- the layer and the profile first or last in the list
+#guard [["judgments@0", "soft-norms@0"], ["soft-norms@0", "judgments@0"], ["documents@1", "soft-norms@0", "judgments@0"],
+    ["soft-norms@0", "documents@1", "judgments@0"]].all fun ps =>
+  layerDecided ps == "CheckerUnavailable: judgments@0 with soft-norms@0 needs its composed Lean route"
 #guard ((profileTable.map (·.profile)).eraseDups.filter fun p =>
     !["alternatives@0", "rights@0", "risk@0", "soft-norms@0"].contains p).all fun p =>
   !(layerDecided ["judgments@0", p]).startsWith "CheckerUnavailable"
