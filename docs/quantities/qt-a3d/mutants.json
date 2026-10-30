@@ -19,14 +19,14 @@
    "id": "leaf-dropped-union",
    "file": "lean/VE/Cardinality/Document.lean",
    "claim": "a premise's leaf dropped when the leaves are joined",
-   "find": "sets.foldl (fun s t => t.toList.foldl (·.insert ·) s) ∅",
-   "replace": "sets.foldl (fun s t => t.toList.tail.foldl (·.insert ·) s) ∅",
+   "find": "  sets.foldl (· ||| ·) 0",
+   "replace": "  sets.headD 0",
    "command": [
     "bash",
     "-c",
     "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
    ],
-   "test": "proof union_mem (Document.lean); VE/Cardinality/RunExamples.lean qt-a3d guards: twoLevel's leaves"
+   "test": "proof checkGraph_sound (Document.lean, union_testBit); VE/Cardinality/RunExamples.lean qt-a3d guards: twoLevel's leaves"
   },
   {
    "id": "unproved-root-runner",
@@ -58,8 +58,8 @@
    "id": "duplicate-name",
    "file": "lean/VE/Cardinality/Document.lean",
    "claim": "a duplicate node name refused",
-   "find": "if acc.any (·.name == n.name) then .error graphRejected else",
-   "replace": "if false then .error graphRejected else",
+   "find": "    if acc.contains n.name then .error graphRejected else",
+   "replace": "    if false then .error graphRejected else",
    "command": [
     "bash",
     "-c",
@@ -144,6 +144,97 @@
     "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
    ],
    "test": "Graph.report's anonymous constructor (Document.lean) does not elaborate"
+  },
+  {
+   "id": "report-id-document",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "review F1: the report identity binds the document as sent",
+   "find": "(\"w6_target_environment_id\", .str w.w6.targetId), (\"document\", document), (\"report\", report)])",
+   "replace": "(\"w6_target_environment_id\", .str w.w6.targetId), (\"report\", report)])",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean qt-a3d guards: FA1's whole answer (docReportId); another document, another identity"
+  },
+  {
+   "id": "report-id-identities",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "review F1: the report identity binds both W6a identities",
+   "find": "(\"w6_target_environment_id\", .str w.w6.targetId), (\"document\", document)",
+   "replace": "(\"document\", document)",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean qt-a3d guards: FA1's whole answer (docReportId)"
+  },
+  {
+   "id": "report-id-report",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "review F1: the report identity is over the report answered",
+   "find": "(\"report_id\", .str (← reportId w document (reportJson g)))",
+   "replace": "(\"report_id\", .str (← reportId w document Json.null))",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean qt-a3d guards: FA1's whole answer; each tampered report has another identity"
+  },
+  {
+   "id": "leaf-position",
+   "file": "lean/VE/Cardinality/Document.lean",
+   "claim": "review F2: a leaf's bit is its own position",
+   "find": "(acc.insert n.name ⟨n.name, n.adm, n.size, 2 ^ i⟩)",
+   "replace": "(acc.insert n.name ⟨n.name, n.adm, n.size, 2 ^ (i + 1)⟩)",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "proof checkGraph_sound (Document.lean)"
+  },
+  {
+   "id": "leaf-position-advanced",
+   "file": "lean/VE/Cardinality/Document.lean",
+   "claim": "review F2: each node takes the next position",
+   "find": "    | none => checkGraph w check ns (i + 1) used",
+   "replace": "    | none => checkGraph w check ns i used",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "proof checkGraph_sound (Document.lean)"
+  },
+  {
+   "id": "premise-count",
+   "file": "lean/VE/Cardinality/Document.lean",
+   "claim": "review F3: the premise count is charged before any premise is looked up",
+   "find": "if used + ps.length > maxDeductionNodes then",
+   "replace": "if false then",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean qt-a3d guards: 50,001 dangling premises a ResourceLimit (its PROBE F3)"
+  },
+  {
+   "id": "root-name",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "review F3: the report's root is the request's root by name",
+   "find": "(\"root\", claimJson g.root.name g.root.adm)",
+   "replace": "(\"root\", claimJson \"root\" g.root.adm)",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/RunExamples.lean qt-a3d guards: the root of graph \"total\" is named total"
   }
  ]
 }
