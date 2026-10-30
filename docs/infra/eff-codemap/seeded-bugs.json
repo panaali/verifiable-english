@@ -1,0 +1,10 @@
+{
+  "seeded_bugs": [
+    {
+      "file": "tools/code_map.py",
+      "seed": "Prefix extracted sentences with BROKEN",
+      "test": "tests/test_code_map.py::test_synthetic_tree_extracts_first_sentences_and_is_deterministic",
+      "result": "FAILED with AssertionError; mutant restored and the same test passed"
+    }
+  ]
+}

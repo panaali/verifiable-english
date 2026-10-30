@@ -449,8 +449,10 @@
         {
           "additionalProperties": false,
           "properties": {
+            "certificate": {"items": {"$ref": "#/$defs/step"}, "minItems": 1, "type": "array"},
             "claim": {"type": "string", "x-equals": "/id"},
             "claim_id": {"$ref": "common.json#/$defs/hex64"},
+            "counterexample": {"type": "null"},
             "finding": {
               "$comment": "VE.Calc.Run.rowJson: a standalone case is no translated document (2.5, 13.6).",
               "type": "null"
@@ -466,19 +468,125 @@
               "$comment": "VE.Calc.Run.line: Lean's English (11.1), or null beyond 11.2's nesting rule.",
               "anyOf": [{"$ref": "common.json#/$defs/text"}, {"type": "null"}]
             },
-            "outcome": {"enum": ["holds", "fails", "undefined"]},
+            "outcome": {"const": "holds"},
             "reason": {"type": "null"},
             "reproduction": {"type": "null"},
             "status": {"const": "ok"}
           },
-          "required": ["status", "claim", "claim_id", "kind", "outcome", "reason", "line", "finding", "reproduction"],
+          "required": [
+            "status",
+            "claim",
+            "claim_id",
+            "kind",
+            "outcome",
+            "reason",
+            "line",
+            "finding",
+            "reproduction",
+            "certificate",
+            "counterexample"
+          ],
           "type": "object"
         },
         {
           "additionalProperties": false,
           "properties": {
+            "certificate": {"type": "null"},
             "claim": {"type": "string", "x-equals": "/id"},
             "claim_id": {"$ref": "common.json#/$defs/hex64"},
+            "counterexample": {
+              "items": {
+                "maxItems": 2,
+                "minItems": 2,
+                "prefixItems": [{"type": "string"}, {"$ref": "#/$defs/exact"}],
+                "type": "array"
+              },
+              "type": "array"
+            },
+            "finding": {
+              "$comment": "VE.Calc.Run.rowJson: a standalone case is no translated document (2.5, 13.6).",
+              "type": "null"
+            },
+            "kind": {
+              "const": "follows",
+              "x-case": {
+                "properties": {"claim": {"minItems": 1, "prefixItems": [{"const": "follows"}], "type": "array"}},
+                "required": ["claim"]
+              }
+            },
+            "line": {
+              "$comment": "VE.Calc.Run.line: Lean's English (11.1), or null beyond 11.2's nesting rule.",
+              "anyOf": [{"$ref": "common.json#/$defs/text"}, {"type": "null"}]
+            },
+            "outcome": {"const": "fails"},
+            "reason": {"type": "null"},
+            "reproduction": {"type": "null"},
+            "status": {"const": "ok"}
+          },
+          "required": [
+            "status",
+            "claim",
+            "claim_id",
+            "kind",
+            "outcome",
+            "reason",
+            "line",
+            "finding",
+            "reproduction",
+            "certificate",
+            "counterexample"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "certificate": {"type": "null"},
+            "claim": {"type": "string", "x-equals": "/id"},
+            "claim_id": {"$ref": "common.json#/$defs/hex64"},
+            "counterexample": {"type": "null"},
+            "finding": {
+              "$comment": "VE.Calc.Run.rowJson: a standalone case is no translated document (2.5, 13.6).",
+              "type": "null"
+            },
+            "kind": {
+              "const": "follows",
+              "x-case": {
+                "properties": {"claim": {"minItems": 1, "prefixItems": [{"const": "follows"}], "type": "array"}},
+                "required": ["claim"]
+              }
+            },
+            "line": {
+              "$comment": "VE.Calc.Run.line: Lean's English (11.1), or null beyond 11.2's nesting rule.",
+              "anyOf": [{"$ref": "common.json#/$defs/text"}, {"type": "null"}]
+            },
+            "outcome": {"const": "undefined"},
+            "reason": {"type": "null"},
+            "reproduction": {"type": "null"},
+            "status": {"const": "ok"}
+          },
+          "required": [
+            "status",
+            "claim",
+            "claim_id",
+            "kind",
+            "outcome",
+            "reason",
+            "line",
+            "finding",
+            "reproduction",
+            "certificate",
+            "counterexample"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "certificate": {"type": "null"},
+            "claim": {"type": "string", "x-equals": "/id"},
+            "claim_id": {"$ref": "common.json#/$defs/hex64"},
+            "counterexample": {"type": "null"},
             "finding": {
               "$comment": "VE.Calc.Run.rowJson: a standalone case is no translated document (2.5, 13.6).",
               "type": "null"
@@ -512,7 +620,19 @@
             "reproduction": {"type": "null"},
             "status": {"const": "ok"}
           },
-          "required": ["status", "claim", "claim_id", "kind", "outcome", "reason", "line", "finding", "reproduction"],
+          "required": [
+            "status",
+            "claim",
+            "claim_id",
+            "kind",
+            "outcome",
+            "reason",
+            "line",
+            "finding",
+            "reproduction",
+            "certificate",
+            "counterexample"
+          ],
           "type": "object"
         }
       ]
@@ -922,8 +1042,10 @@
         {
           "additionalProperties": false,
           "properties": {
+            "certificate": {"items": {"$ref": "#/$defs/step"}, "minItems": 1, "type": "array"},
             "claim": {"type": "string", "x-equals": "/id"},
             "claim_id": {"$ref": "common.json#/$defs/hex64"},
+            "counterexample": {"type": "null"},
             "finding": {
               "$comment": "VE.Calc.Run.rowJson: a standalone case is no translated document (2.5, 13.6).",
               "type": "null"
@@ -939,19 +1061,125 @@
               "$comment": "VE.Calc.Run.line: Lean's English (11.1), or null beyond 11.2's nesting rule.",
               "anyOf": [{"$ref": "common.json#/$defs/text"}, {"type": "null"}]
             },
-            "outcome": {"enum": ["holds", "fails", "undefined"]},
+            "outcome": {"const": "holds"},
             "reason": {"type": "null"},
             "reproduction": {"const": "unknown"},
             "status": {"const": "ok"}
           },
-          "required": ["status", "claim", "claim_id", "kind", "outcome", "reason", "line", "finding", "reproduction"],
+          "required": [
+            "status",
+            "claim",
+            "claim_id",
+            "kind",
+            "outcome",
+            "reason",
+            "line",
+            "finding",
+            "reproduction",
+            "certificate",
+            "counterexample"
+          ],
           "type": "object"
         },
         {
           "additionalProperties": false,
           "properties": {
+            "certificate": {"type": "null"},
             "claim": {"type": "string", "x-equals": "/id"},
             "claim_id": {"$ref": "common.json#/$defs/hex64"},
+            "counterexample": {
+              "items": {
+                "maxItems": 2,
+                "minItems": 2,
+                "prefixItems": [{"type": "string"}, {"$ref": "#/$defs/exact"}],
+                "type": "array"
+              },
+              "type": "array"
+            },
+            "finding": {
+              "$comment": "VE.Calc.Run.rowJson: a standalone case is no translated document (2.5, 13.6).",
+              "type": "null"
+            },
+            "kind": {
+              "const": "follows",
+              "x-case": {
+                "properties": {"claim": {"minItems": 1, "prefixItems": [{"const": "follows"}], "type": "array"}},
+                "required": ["claim"]
+              }
+            },
+            "line": {
+              "$comment": "VE.Calc.Run.line: Lean's English (11.1), or null beyond 11.2's nesting rule.",
+              "anyOf": [{"$ref": "common.json#/$defs/text"}, {"type": "null"}]
+            },
+            "outcome": {"const": "fails"},
+            "reason": {"type": "null"},
+            "reproduction": {"const": "unknown"},
+            "status": {"const": "ok"}
+          },
+          "required": [
+            "status",
+            "claim",
+            "claim_id",
+            "kind",
+            "outcome",
+            "reason",
+            "line",
+            "finding",
+            "reproduction",
+            "certificate",
+            "counterexample"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "certificate": {"type": "null"},
+            "claim": {"type": "string", "x-equals": "/id"},
+            "claim_id": {"$ref": "common.json#/$defs/hex64"},
+            "counterexample": {"type": "null"},
+            "finding": {
+              "$comment": "VE.Calc.Run.rowJson: a standalone case is no translated document (2.5, 13.6).",
+              "type": "null"
+            },
+            "kind": {
+              "const": "follows",
+              "x-case": {
+                "properties": {"claim": {"minItems": 1, "prefixItems": [{"const": "follows"}], "type": "array"}},
+                "required": ["claim"]
+              }
+            },
+            "line": {
+              "$comment": "VE.Calc.Run.line: Lean's English (11.1), or null beyond 11.2's nesting rule.",
+              "anyOf": [{"$ref": "common.json#/$defs/text"}, {"type": "null"}]
+            },
+            "outcome": {"const": "undefined"},
+            "reason": {"type": "null"},
+            "reproduction": {"const": "unknown"},
+            "status": {"const": "ok"}
+          },
+          "required": [
+            "status",
+            "claim",
+            "claim_id",
+            "kind",
+            "outcome",
+            "reason",
+            "line",
+            "finding",
+            "reproduction",
+            "certificate",
+            "counterexample"
+          ],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "certificate": {"type": "null"},
+            "claim": {"type": "string", "x-equals": "/id"},
+            "claim_id": {"$ref": "common.json#/$defs/hex64"},
+            "counterexample": {"type": "null"},
             "finding": {
               "$comment": "VE.Calc.Run.rowJson: a standalone case is no translated document (2.5, 13.6).",
               "type": "null"
@@ -985,7 +1213,19 @@
             "reproduction": {"const": "unknown"},
             "status": {"const": "ok"}
           },
-          "required": ["status", "claim", "claim_id", "kind", "outcome", "reason", "line", "finding", "reproduction"],
+          "required": [
+            "status",
+            "claim",
+            "claim_id",
+            "kind",
+            "outcome",
+            "reason",
+            "line",
+            "finding",
+            "reproduction",
+            "certificate",
+            "counterexample"
+          ],
           "type": "object"
         }
       ]
@@ -1001,6 +1241,61 @@
       "properties": {"error": {"$ref": "common.json#/$defs/text"}, "status": {"const": "error"}},
       "required": ["status", "error"],
       "type": "object"
+    },
+    "step": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "farkas": {
+              "additionalProperties": false,
+              "properties": {
+                "goal": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "coeffs": {
+                      "items": {
+                        "maxItems": 2,
+                        "minItems": 2,
+                        "prefixItems": [{"type": "string"}, {"$ref": "#/$defs/exact"}],
+                        "type": "array"
+                      },
+                      "type": "array"
+                    },
+                    "const": {"$ref": "#/$defs/exact"},
+                    "strict": {"type": "boolean"}
+                  },
+                  "required": ["const", "coeffs", "strict"],
+                  "type": "object"
+                },
+                "weights": {"items": {"$ref": "#/$defs/exact"}, "minItems": 1, "type": "array"}
+              },
+              "required": ["goal", "weights"],
+              "type": "object"
+            }
+          },
+          "required": ["farkas"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {
+            "square": {
+              "additionalProperties": false,
+              "properties": {
+                "a": {"$ref": "#/$defs/exact"},
+                "b": {"$ref": "#/$defs/exact"},
+                "root": {"type": "string"},
+                "square": {"type": "string"}
+              },
+              "required": ["square", "root", "a", "b"],
+              "type": "object"
+            }
+          },
+          "required": ["square"],
+          "type": "object"
+        }
+      ]
     }
   }
 }

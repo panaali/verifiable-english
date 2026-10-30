@@ -1,0 +1,1 @@
+- `examples/fluent_views.py` — Print the six-example report, including the byte-identical five-view legend.

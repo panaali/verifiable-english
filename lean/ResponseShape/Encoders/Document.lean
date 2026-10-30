@@ -61,6 +61,40 @@ theorem usage_fits (j : Json) (m : List (String × List String) × List String) 
   unfold VE.Service.Document.usageJson
   fits
 
+theorem composedNode_fits (j : Json) (id : String) (n : VE.Norms.Node) :
+    Fits j (skel% "document.json#/$defs/composed_reading")
+      (Json.mkObj [("id", .str id), ("content", VE.Reports.encodeNode n)]) := by
+  unfold VE.Reports.encodeNode
+  fits
+
+theorem composedReadingRow_fits (j reading : Json) :
+    OkFits j (skel% "document.json#/$defs/composed_reading")
+      (VE.Service.Document.composedReadingRow reading) := by
+  unfold VE.Service.Document.composedReadingRow
+  okfits
+  split
+  · unfold VE.Reports.encodeNode
+    fits
+    all_goals (simp only [Skel.field] <;> fits)
+  · exact composedNode_fits j _ _
+
+theorem composedList_fits (j : Json) (s : Skel) (xs : List Json)
+    (h : ∀ x ∈ xs, Fits j s x) : Fits j (.arr [] s) (toJson xs) := by
+  apply Fits.arrOf
+  intro x hx
+  exact h x (by simpa only [toJson, List.toJson,
+    show (toJson : Json → Json) = id from rfl, Array.map_id, List.mem_toArray] using hx)
+
+theorem composedSetRow_fits (j out authored : Json) :
+    OkFits j (skel% "document.json#/$defs/composed_set")
+      (VE.Service.Document.composedSetRow out authored) := by
+  unfold VE.Service.Document.composedSetRow
+  okfits
+  all_goals
+    rename_i readings hreadings
+    have hrows := OkP.mapM (fun r _ => composedReadingRow_fits j r) readings hreadings
+    fits using composedList_fits j _ readings hrows
+
 theorem document_fits (j : Json) : OkFits j Skeletons.document (VE.Service.Document.checkCore j) := by
   unfold VE.Service.Document.checkCore VE.Service.Document.encode
   okfits
@@ -143,6 +177,41 @@ theorem fold_fits (j : Json) (D : VE.Scope.SDoc) (id : String) (c : VE.Service.D
       simp only [List.filter_cons, List.filter_nil, String.reduceBNe, bne_self_eq_false, Bool.false_eq_true,
         ↓reduceIte, List.cons_append, List.nil_append] <;> fields_split <;> fits using cells_fits
 
+open VE.Service.Document in
+theorem fold_with_readings_fits (j : Json) (D : VE.Scope.SDoc) (id : String)
+    (c : VE.Service.Document.Checked) (rs : Json)
+    (hrs : Fits j (skel% "document.json#/$defs/composed_readings") rs) :
+    Fits j Skeletons.document
+      ((VE.Scope.foldGovernors D (VE.Service.Document.encode id c)).setObjVal! "composed_readings" rs) := by
+  have e : ∀ k v, (k, v) ∈ [("id", Json.str id), ("status", .str "ok"), ("document_id", .str c.documentId),
+      ("source_id", .str c.sourceId), ("source", .str c.source), ("units", toJson (c.rows.map unitJson)),
+      ("coverage", coverageJson c.front c.units c.source.utf8ByteSize c.block)] →
+      (encode id c).getObjValD k = v := by
+    intro k v hk
+    simp only [List.mem_cons, Prod.mk.injEq, List.not_mem_nil, or_false] at hk
+    rcases hk with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ <;>
+      (unfold encode; split <;> rfl)
+  unfold VE.Scope.foldGovernors
+  simp only [e "id" (.str id) (by simp), e "status" (.str "ok") (by simp),
+    e "document_id" (.str c.documentId) (by simp), e "source_id" (.str c.sourceId) (by simp),
+    e "source" (.str c.source) (by simp), e "units" _ (List.mem_cons_of_mem _ (List.mem_cons_of_mem _
+      (List.mem_cons_of_mem _ (List.mem_cons_of_mem _ (List.mem_cons_of_mem _ (List.mem_cons_self ..)))))),
+    e "coverage" (coverageJson c.front c.units c.source.utf8ByteSize c.block) (by simp)]
+  fits using hrs
+  case h_1.isTrue a _ xs heq hm _ =>
+    obtain ⟨u, rfl⟩ := units_mem heq hm
+    exact unit_fits j u
+  case h_1.isFalse a _ xs heq hm _ =>
+    obtain ⟨u, rfl⟩ := units_mem heq hm
+    exact unit_status_fits j u (fold_status_mem _ (fun _ _ h => by
+      simp only [Option.bind_eq_some_iff] at h; obtain ⟨_, _, h⟩ := h; exact statusOf_ne h) _)
+  case h_2 hne => exact (hne _ rfl).elim
+  case h_1 =>
+    unfold coverageJson
+    split <;> refine Fits.setObj (by keys_ok) ?_ (Fits.any _) <;>
+      simp only [List.filter_cons, List.filter_nil, String.reduceBNe, bne_self_eq_false, Bool.false_eq_true,
+        ↓reduceIte, List.cons_append, List.nil_append] <;> fields_split <;> fits using cells_fits
+
 /-- The entry without scope's branch answers an encoded row. -/
 theorem checkCore_encode {j a : Json} (h : VE.Service.Document.checkCore j = .ok a) :
     ∃ id c, a = VE.Service.Document.encode id c := by
@@ -171,6 +240,35 @@ theorem checkDocSets_fits (j : Json) : OkFits j Skeletons.document (VE.Service.D
     exact fold_fits j _ id c
   · exact document_fits j
 
+theorem composedReadings_fits (j : Json) (D : VE.Scope.SDoc) (out : Json) :
+    OkFits j (skel% "document.json#/$defs/composed_readings")
+      (VE.Service.Document.composedReadings D out) := by
+  unfold VE.Service.Document.composedReadings
+  okfits
+  rename_i rows hrows
+  exact composedList_fits j _ rows (OkP.mapM (fun r _ => composedSetRow_fits j out r) rows hrows)
+
+theorem checkDocSetsAnswered_fits (j : Json) :
+    OkFits j Skeletons.document (VE.Service.Document.checkDocSetsAnswered j) := by
+  unfold VE.Service.Document.checkDocSetsAnswered
+  okfits
+  · exact checkDocSets_fits j _ ‹_›
+  · exact checkDocSets_fits j _ ‹_›
+  · rename_i answer hcheck hscope D hD hnon out hout rs hrs
+    have hscope' : "scope@0" ∈ VE.Service.Document.profilesOf j := Classical.byContradiction hscope
+    obtain ⟨D₀, out₀, a, hD₀, hout₀, ha, heq⟩ := VE.Scope.scope_admission_sets j answer hcheck hscope'
+    have hdeq : D₀ = D := by rw [hD] at hD₀; cases hD₀; rfl
+    subst D₀
+    have houteq : out₀ = out := by
+      rw [← VE.Scope.governSetsFast_eq D] at hout₀
+      rw [hout] at hout₀
+      cases hout₀
+      rfl
+    subst out₀
+    obtain ⟨id, c, hc⟩ := checkCore_encode ha
+    rw [heq, hc]
+    exact fold_with_readings_fits j D id c rs (composedReadings_fits j D out rs hrs)
+
 theorem locatedRow_fits (j : Json) (message : String) (at_ : VE.Service.Document.Located) :
     Fits j Skeletons.document (VE.Service.Document.locatedRow j message at_) := by
   unfold VE.Service.Document.locatedRow
@@ -184,7 +282,7 @@ theorem runCaseReported_fits (j : Json) :
     Fits j Skeletons.document (VE.Service.Document.runCaseReported j) := by
   unfold VE.Service.Document.runCaseReported
   split
-  · exact checkDocSets_fits j _ ‹_›
+  · exact checkDocSetsAnswered_fits j _ ‹_›
   · split
     · exact locatedRow_fits j _ _
     · unfold VE.Service.Standalone.reported

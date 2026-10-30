@@ -117,7 +117,7 @@ def lean_entry(module: str) -> bool:
 
 
 def lean_layer(module: str) -> int | None:
-    if module in {"VE", "VE.Audit", "Iceberg", "VE.Checks", "VE.Route.Checks", "VE.LimitTies"}:
+    if module in {"VE", "VE.Audit", "ResponseShapeAudit", "Iceberg", "VE.Checks", "VE.Route.Checks", "VE.LimitTies"}:
         return 5  # aggregation and audit targets (VE.LimitTies checks frozen and hashed copies of VE.Limits)
     if module in {"VE.EnglishGrammar.ProfileExamples", "VE.EnglishGrammar.E2Examples",
                   "VE.Question.Examples", "VE.Question.Fixtures", "VE.Alternatives.FillExamples",

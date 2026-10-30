@@ -8,11 +8,11 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 |---|---:|
 | leaves:bound | 255 |
 | leaves:closed domain | 286 |
-| leaves:none | 1402 |
+| leaves:none | 1419 |
 | modes | 39 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 1001 |
+| today:not probed | 1018 |
 | today:shape | 541 |
 | today:unbound | 137 |
 | answers | 574 |
@@ -2928,6 +2928,13 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | leaf | kind | class | keyword | format | observed | bound today |
 |---|---|---|---|---|---:|---|
 | `/case_index` | integer | bound | x-index |  | 0 | shape |
+| `/composed_readings/*/readings/*/content/norm/name` | string | none |  |  | 0 | not probed |
+| `/composed_readings/*/readings/*/content/norm/over/*` | string | none |  |  | 0 | not probed |
+| `/composed_readings/*/readings/*/content/norm/predicate` | string | none |  |  | 0 | not probed |
+| `/composed_readings/*/readings/*/id` | string | none |  |  | 0 | not probed |
+| `/composed_readings/*/set` | string | none |  |  | 0 | not probed |
+| `/composed_readings/*/unit` | string | none |  |  | 0 | not probed |
+| `/composed_readings/*/version` | integer | none |  | minimum | 0 | not probed |
 | `/coverage/accounted_bytes` | integer | none |  | minimum | 3 | hand: `ve/document/lean.py:require` |
 | `/coverage/alternatives/alternatives_declared/*/action` | string | none |  |  | 0 | unbound |
 | `/coverage/alternatives/alternatives_declared/*/chooser` | string | none |  |  | 0 | unbound |
@@ -3084,6 +3091,8 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 
 | grammar at | grammar | bound whole by | observed |
 |---|---|---|---:|
+| `/composed_readings/*/readings/*/content/norm/guard` | generated_formula |  | 0 |
+| `/composed_readings/*/readings/*/content/norm/unless/*` | generated_formula |  | 0 |
 | `/units/*/content` | generated_formula |  | 11 |
 | `/units/*/content/norm/exception/necessary/*` | generated_formula |  | 0 |
 | `/units/*/content/norm/exception/sufficient/*` | generated_formula |  | 0 |
@@ -3118,6 +3127,10 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 
 | array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
 |---|---|---|---|---|
+| `/composed_readings` |  |  |  |  |
+| `/composed_readings/*/readings` |  |  |  |  |
+| `/composed_readings/*/readings/*/content/norm/over` |  |  |  |  |
+| `/composed_readings/*/readings/*/content/norm/unless` |  |  |  |  |
 | `/coverage/alternatives/alternatives_declared` |  |  |  | drop: accept/ve/document/lean.py:require; duplicate: accept/ve/document/lean.py:require |
 | `/coverage/alternatives/assumed_harm_free` |  |  |  | drop: accept/ve/document/lean.py:require; duplicate: accept/ve/document/lean.py:require |
 | `/coverage/alternatives/counterfactual_leaves` |  |  |  | drop: accept/ve/document/lean.py:require; duplicate: accept/ve/document/lean.py:require |
@@ -3361,8 +3374,18 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/case_index` | integer | bound | x-index |  | 1 | shape |
 | `/error` | string | none |  | minLength | 4 | not probed |
 | `/meaning_id` | string | none |  | pattern | 3 | not probed |
+| `/rows/*/certificate/*/farkas/goal/coeffs/*/0` | string | none |  |  | 0 | not probed |
+| `/rows/*/certificate/*/farkas/goal/coeffs/*/1` | string | none |  | pattern | 0 | not probed |
+| `/rows/*/certificate/*/farkas/goal/const` | string | none |  | pattern | 0 | not probed |
+| `/rows/*/certificate/*/farkas/weights/*` | string | none |  | pattern | 0 | not probed |
+| `/rows/*/certificate/*/square/a` | string | none |  | pattern | 0 | not probed |
+| `/rows/*/certificate/*/square/b` | string | none |  | pattern | 0 | not probed |
+| `/rows/*/certificate/*/square/root` | string | none |  |  | 0 | not probed |
+| `/rows/*/certificate/*/square/square` | string | none |  |  | 0 | not probed |
 | `/rows/*/claim` | string | bound | x-equals |  | 3 | shape |
 | `/rows/*/claim_id` | string | none |  | pattern | 3 | not probed |
+| `/rows/*/counterexample/*/0` | string | none |  |  | 3 | not probed |
+| `/rows/*/counterexample/*/1` | string | none |  | pattern | 3 | not probed |
 | `/rows/*/display` | string | none |  | pattern | 2 | not probed |
 | `/rows/*/kind` | string | closed domain | const |  | 3 | shape |
 | `/rows/*/line` | string | none |  | minLength | 2 | not probed |
@@ -3377,6 +3400,12 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
 |---|---|---|---|---|
 | `/rows` | x-zip | x-zip |  |  |
+| `/rows/*/certificate` |  |  |  |  |
+| `/rows/*/certificate/*/farkas/goal/coeffs` |  |  |  |  |
+| `/rows/*/certificate/*/farkas/goal/coeffs/*` |  |  |  |  |
+| `/rows/*/certificate/*/farkas/weights` |  |  |  |  |
+| `/rows/*/counterexample` |  |  |  |  |
+| `/rows/*/counterexample/*` |  |  |  |  |
 | `/rows/*/sides` |  |  |  |  |
 
 ## cardinality

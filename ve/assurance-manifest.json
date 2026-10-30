@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 39627,
+    "total_lines": 39767,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -1102,12 +1102,12 @@
       },
       {
         "file": "lean/VE/Service/Document.lean",
-        "lines": 2016,
-        "sha256": "26ba09ba4dd3eac95dcccdc30000417b77a5ceac8cc3d29fa01f596d34be3137",
+        "lines": 2083,
+        "sha256": "0a9686bc946bb08740dcef5d68ea74b9c96cd5a707b734d93f15fa602925d57c",
         "ranges": [
           [
             1,
-            2016
+            2083
           ]
         ],
         "declarations": [
@@ -1157,9 +1157,13 @@
           "typedFormula",
           "setCandidates",
           "withSets",
-          "checkDocSets"
+          "checkDocSets",
+          "composedReadingRow",
+          "composedSetRow",
+          "composedReadings",
+          "checkDocSetsAnswered"
         ],
-        "reason": "W2 document service wrapper: front matter (its JSON forms Python reads as other values deferred) and its gates (the environment mode's fault where no route is composed), unit partition and contents, a rights document's rights source (the rights route's decoder), a soft-norms document's soft source, E'' and rule source (the soft route's decoders), soft canonical content and statuses, plain norm content (the norms route's decoders), reading sets and their status fold, narrowings, graph admission, located model and fence diagnostics, statuses and coverage; JT-2: judgments@0's records and admission (Judgments.records after W2), each active set's raw readings (setCandidates), the unit statuses and the usage map, and the decoders reading the environment without the document layers; jt-2 review F1: the parse, model and English cases read Env.forModes, and a located model's identity is the list's as written; merge with SC-1b: check refuses judgments@0 with scope@0, whose fold (Scope.foldGovernors) writes no judgments member; full file pinned conservatively; sc-5rb: checkDocSets, the entry with scope's per-choice GOVERN (VE.Scope.governSetsWith), and withSets, which hands check GOVERN's reading sets (withUnits drops a case's own)"
+        "reason": "W2 document service wrapper: front matter (its JSON forms Python reads as other values deferred) and its gates (the environment mode's fault where no route is composed), unit partition and contents, a rights document's rights source (the rights route's decoder), a soft-norms document's soft source, E'' and rule source (the soft route's decoders), soft canonical content and statuses, plain norm content (the norms route's decoders), reading sets and their status fold, narrowings, graph admission, located model and fence diagnostics, statuses and coverage; JT-2: judgments@0's records and admission (Judgments.records after W2), each active set's raw readings (setCandidates), the unit statuses and the usage map, and the decoders reading the environment without the document layers; jt-2 review F1: the parse, model and English cases read Env.forModes, and a located model's identity is the list's as written; merge with SC-1b: check refuses judgments@0 with scope@0, whose fold (Scope.foldGovernors) writes no judgments member; full file pinned conservatively; sc-5rb: checkDocSets, the entry with scope's per-choice GOVERN (VE.Scope.governSetsWith), and withSets, which hands check GOVERN's reading sets (withUnits drops a case's own); sc-5rc: composedReadingRow, composedSetRow, composedReadings and checkDocSetsAnswered relay the governed readings by set, version, unit and reading id"
       },
       {
         "file": "lean/VE/Service/Family.lean",
@@ -1869,12 +1873,12 @@
       },
       {
         "file": "lean/VE/Calc/Run.lean",
-        "lines": 366,
-        "sha256": "b09fc345ee8eb03a9c54c6ca4ea7280135d0ec51adb921e0728fc87a2a0ee367",
+        "lines": 439,
+        "sha256": "4788f95816e0c3efef8db4ed4f34c2eb14fee544715f20d5dd5bef7ef4c52c62",
         "ranges": [
           [
             1,
-            366
+            439
           ]
         ],
         "declarations": [
@@ -2059,7 +2063,6 @@
       "lean/ResponseShape/CaseDeciders.lean": "the runners' tests of the request case that the response shapes select on (CaseDecider.fn calls each runner's own test; the norms one reads the case environment for Norms.Plain.layered); test tooling, not on any runner path",
       "lean/ResponseShape/Skeleton.lean": "the skeletons of the response shapes and Fits, the field-level conformance the encoder theorems prove; JSON only in lemma statements about Json.mkObj and setObjVal! (theorems, not on any runner path)",
       "lean/ResponseShape/FitsTactic.lean": "tactics that build the encoder theorems' proofs, reading Json.mkObj and setObjVal! terms of goals (proof automation, checked by the kernel; not on any runner path)",
-      "lean/ResponseShape/Audit.lean": "the dependency audit of the response-shape theorems (#print axioms only); JSON only in theorem names",
       "lean/ResponseShape/Encoders/Common.lean": "lemmas the encoder theorems share (claims, reports, the case kind a runner read); JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Encoders/Conformance.lean": "theorems that standalone conformance rows fit their response shapes; JSON access only in statements and proofs (not on any runner path)",
       "lean/ResponseShape/Encoders/Norms.lean": "theorems that norms rows fit their response shapes; JSON access only in statements and proofs (not on any runner path)",
@@ -2145,7 +2148,10 @@
       "lean/VE/Scope/Readings.lean": "lean:scope-readings: `governSets` (scope spec 11.2) reads the reading sets of the units it governs per choice, writes each choice's reading content into its unit (setObjVal!) and each governed reading's composed content back into its set; trees are compared with the readings route's proved `jeq`; the rules are decoded by the chain's own decoder, never here; the document mode calls it under scope@0 through `governSetsWith governFast` (sc-5rb, `checkDocSets`)",
       "lean/VE/Scope/ReadingsExamples.lean": "fixtures only: scope spec 11.6's #guard checks build reading sets and hard-constraint documents as JSON literals and run `governSets` on them; no service mode reads this file",
       "lean/VE/Readings/ActsExamples.lean": "test fixtures only: #guards that build acts@0 environments as a request carries them and read the readings route's decoder answers (ap-1bd); no admission path, service mode or record reads it",
-      "lean/ResponseShape/Encoders/Cardinality.lean": "theorems that the cardinality mode's rows fit its shape, with valid exactly beside a certificate case (getObjVal? in proofs only; not on any runner path)"
+      "lean/ResponseShape/Encoders/Cardinality.lean": "theorems that the cardinality mode's rows fit its shape, with valid exactly beside a certificate case (getObjVal? in proofs only; not on any runner path)",
+      "lean/VE/EnglishGrammar/SourceWords.lean": "source-word catalogue JSON encoder only; it exports the checked Lean table to the generated read-only Python view and decodes no request",
+      "lean/VE/EnglishGrammar/SourceWordsExamples.lean": "fixtures only: #guard checks of source-word row boundaries and JSON encoding; no runner path",
+      "lean/ResponseShapeAudit.lean": "the dependency audit of the response-shape theorems (#print axioms only); JSON only in theorem names"
     }
   },
   "plan_operations": {

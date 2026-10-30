@@ -19,6 +19,10 @@ R3_LINE = ("Assume the following. 1. The displacement equals the product of 0.4 
            "ratio. 4. The velocity ratio is at least 0. From these, it follows that the velocity ratio is less than "
            "1 divided by {}.")
 DIGITS = "unknown: an exact value would have more than 4,096 digits"
+R3_CERT = ('  certificate [{"farkas":{"goal":{"coeffs":[["s","-1"]],"const":"1/20",'
+           '"strict":true},"weights":["1","0","1","2/5"]}},{"square":{"a":"1/20",'
+           '"b":"1/4","root":"r","square":"s"}}]')
+R4_POINT = '  counterexample [["r","1/5"],["s","1/25"],["d","2/125"]]'
 # What `ve calc check` shows of each route case (after its meaning_id line): spec 13.6's R-1 to R-4, V-9, the mixed
 # case of claim and follows rows under a software convention.
 SHOWN = {
@@ -32,14 +36,14 @@ SHOWN = {
         "v2 claim undefined", "  sides null, 1", "  tie false"],
     4: ["c1 claim fails", "  The x is 2.67 when rounded to two decimal places, with exact ties going up.",
         "  sides 107/40", "  display 2.6750", "  tie true", "  reproduction unknown"],
-    20: ["h6 follows holds", "  " + R3_LINE.format(4)],
-    21: ["h6 follows fails", "  " + R3_LINE.format(5)],
+    20: ["h6 follows holds", "  " + R3_LINE.format(4), R3_CERT],
+    21: ["h6 follows fails", "  " + R3_LINE.format(5), R4_POINT],
     28: ["w1 claim holds", "  The eighth is from 0 through 1 divided by 3.", "  sides 1/8, 0, 1/3", "  tie false",
          "  reproduction unknown",
-         "h6 follows holds", "  " + R3_LINE.format(4), "  reproduction unknown",
+         "h6 follows holds", "  " + R3_LINE.format(4), R3_CERT, "  reproduction unknown",
          "u1 claim holds", "  The eighth is 0.13 when rounded to two decimal places, with exact ties going up.",
          "  sides 1/8", "  display 0.1250", "  tie true", "  reproduction unknown",
-         "h7 follows fails", "  " + R3_LINE.format(5), "  reproduction unknown"],
+         "h7 follows fails", "  " + R3_LINE.format(5), R4_POINT, "  reproduction unknown"],
 }
 
 

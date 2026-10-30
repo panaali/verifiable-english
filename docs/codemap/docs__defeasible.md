@@ -1,0 +1,10 @@
+- `docs/defeasible/df-1a/evidence/run_mutants.py` — Run df-1a's seeded bugs (docs/defeasible/df-1a/mutants.json) against the fixtures' `#guard`s alone.
+- `docs/defeasible/df-1ac/evidence/compare_statements.py` — A spec section's declarations (docs/spec/defeasible.md; default 7.2) against a Lean file (default lean/VE/Defaults/Wire.lean), token for token after whitespace…
+- `docs/defeasible/df-1ae/evidence/run_mutants.py` — Run df-1ae's seeded bugs (docs/defeasible/df-1ae/mutants.json) in place.
+- `docs/defeasible/df-1b/evidence/run_mutants.py` — Run df-1b's seeded bugs (docs/defeasible/df-1b/mutants.json) in place: plant each, run its test, restore the file.
+- `docs/defeasible/df-1bb/evidence/run_mutants.py` — Run df-1bb's seeded bugs (docs/defeasible/df-1bb/mutants.json) in place: plant each, run its test, restore the file.
+- `docs/defeasible/df-1bb/evidence/select_route_cases.py` — Append the flag's genuine `norm-defaults` cases to tests/data/route-cases.jsonl (df-1bb, append-only).
+- `docs/defeasible/df-1bb/probe_defaults.py` — The pilot's defaults probe (defeasible plan DF-1b "Pilot", 4.2's P-1 and P-3; df-1bb).
+- `docs/defeasible/df-3/evidence/run_mutants.py` — Seeded bugs for df-3: each applied alone, built (Lean), its named check run, then restored.
+- `docs/defeasible/df-e1/prepare.py` — Build DF-E1 reader items from checked Lean answers; make no model calls.
+- `docs/defeasible/df-e1/runner.py` — DF-E1 blind reader: one subscription Sonnet call for each preregistered item and form.
