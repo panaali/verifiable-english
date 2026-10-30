@@ -165,23 +165,107 @@ def precedence():
     return table
 
 
+# --- What an answer built and selected ---------------------------------------------------------------------------
+# M6 and N3 read these records, never a route's own row lists: every document is made by build() and every
+# selection by pick(), and each records into every answer still open (recorded()).
+_OPEN = []
+
+
+def _frame():
+    return {"built": set(), "selected": {}}
+
+
+def _close(frame):
+    if _OPEN.pop() is not frame:
+        raise AssertionError("answer records closed out of order")
+
+
+def _merge(frame):
+    for open_ in _OPEN:
+        open_["built"] |= frame["built"]
+        for key, defaults in frame["selected"].items():
+            open_["selected"].setdefault(key, set()).update(defaults)
+
+
+def recorded(fn, *args):
+    """fn's answer with what it built and selected: `audit_input.rules`, every built rule that is no rules.d1.ve
+    block (M6), and `selected_rules`, every rule VE selected under both completion defaults on one validated case
+    model (N3's scored witnesses)."""
+    frame = _frame()
+    _OPEN.append(frame)
+    try:
+        result = fn(*args)
+    finally:
+        _close(frame)
+    blocks = {b.id for b in T.rule_blocks()}
+    both = {name for (name, *_), defaults in frame["selected"].items() if {"deny", "allow"} <= defaults}
+    return {**result, "audit_input": {"rules": sorted(frame["built"] - blocks)}, "selected_rules": sorted(both)}
+
+
+def traced_cache(fn):
+    """lru_cache that replays what the first call built and selected into the answers open at every later call."""
+    @lru_cache(maxsize=None)
+    def cached(*args):
+        frame = _frame()
+        _OPEN.append(frame)
+        try:
+            return fn(*args), frame
+        finally:
+            _close(frame)
+
+    def call(*args):
+        value, frame = cached(*args)
+        _merge(frame)
+        return value
+    call.cache_clear, call.cache_info = cached.cache_clear, cached.cache_info
+    return call
+
+
+def build(raw, rules, names, default):
+    """The one document builder: the D1 rules on a vocabulary, read under the choice `names`."""
+    doc = memoized(SoftNormDocument(SoftEnvironment(raw), [{"norm": r} for r in rules]))
+    doc.reading, doc.completion = names, default
+    _merge({"built": {r["name"] for r in rules}, "selected": {}})
+    return doc
+
+
+def pick(doc, found, predicate, args):
+    """The one selection: the rules VE selects for the act on the case model, after the model is checked against
+    every premise the document's choice selects."""
+    check_premises(doc, found, dict(doc.reading))
+    picked = doc.elaborated.selected_rules(predicate, model(doc, found), args)
+    _merge({"built": set(), "selected": {(r.name, doc.reading, found): {doc.completion} for r in picked}})
+    return picked
+
+
+def invented_rules():
+    return list(_invented(MUTANT))
+
+
 @lru_cache(maxsize=None)
+def _invented(mutant):
+    """The rules a mutant adds that are no rules.d1.ve block (m2's invented permission), parsed by VE."""
+    if mutant != "m2":
+        return ()
+    from ve.norm_english import parse_english
+    data = parse_english(SoftEnvironment(vocabulary()), M2_PERMISSION).rules[0].to_dict()["norm"]
+    data["name"] = "m2-invented-permission"
+    return (data,)
+
+
+@traced_cache
 def document(names, default, include=None):
     choice = dict(names)
     rules = [rule_data(b) for b in T.rule_blocks()
              if applies(b, choice) and (include is None or b.id in include)]
     if WITHOUT_NARROWING == "N1":
         rules = [r for r in rules if r["name"] not in prediction_blocks()]
-    if MUTANT == "m2" and (include is None or "m2-invented-permission" in include):
-        from ve.norm_english import parse_english
-        data = parse_english(SoftEnvironment(vocabulary()), M2_PERMISSION).rules[0].to_dict()["norm"]
-        data["name"] = "m2-invented-permission"
-        rules.append(data)
+    rules += [copy.deepcopy(r) for r in invented_rules() if include is None or r["name"] in include]
     included = {r["name"] for r in rules}
     table = precedence()
     for rule in rules:
         rule["over"] = [n for n in table.get(rule["name"], ()) if n in included]
-    return memoized(SoftNormDocument(SoftEnvironment(vocabulary(default)), [{"norm": r} for r in rules]))
+    return build(vocabulary(default), rules, names, default)
 
 
 def memoized(doc):
@@ -279,8 +363,7 @@ def regulated(predicate):
 
 
 def selected(doc, found, predicate, sign):
-    return sorted(r.name for r in doc.elaborated.selected_rules(predicate, model(doc, found), ("s",))
-                  if r.sign == sign)
+    return sorted(r.name for r in pick(doc, found, predicate, ("s",)) if r.sign == sign)
 
 
 def completed(doc, found, predicate):
@@ -466,9 +549,7 @@ def opposite_pairs(context):
     """Rule pairs that can select opposite answers on one act: one predicate with both signs, or an obligation
     with its permission dual."""
     blocks = {b.id: b for b in T.rule_blocks()}
-    rules = [rule_data(b) for b in blocks.values()]
-    if MUTANT == "m2":
-        rules.append({"name": "m2-invented-permission", "predicate": "deployment_permitted", "sign": True})
+    rules = [rule_data(b) for b in blocks.values()] + invented_rules()
     duals = {name: decl["regulated"].get("permission") for name, decl in vocabulary()["vocabulary"]["predicates"].items()
              if "regulated" in decl}
     pairs = []
@@ -490,7 +571,7 @@ def conflict(id_):
     return _conflict(id_, MUTANT, WITHOUT_NARROWING)
 
 
-@lru_cache(maxsize=None)
+@traced_cache
 def _conflict(id_, mutant, narrowing):
     if id_ == "C-doc":
         return document_conflict()
@@ -530,8 +611,6 @@ def document_conflict():
                      "w1": sorted(set(statuses)), "rules": conflicts})
     result = {"route": "D1 norms@0 W1 check_conflict per opposite-sign pair with a validated witness model",
               "cone": list(sets), "choices": rows, "pairs": [" & ".join(p) for p in pairs]}
-    if MUTANT == "m2":
-        result["audit_input"] = {"rules": ["m2-invented-permission"]}
     if any(row["holds"] is None for row in rows):
         result["undecided"] = "resource limit: W1 lacks a conflict-freedom certificate"
     return result
@@ -600,11 +679,9 @@ def persuasion_probe():
     rows = []
     for assignment in choices(("RS15",)):
         choice = {**BASE, **assignment}
-        rules = [{**rule_data(b), "name": b.id} for b in T.rule_blocks() if applies(b, choice)]
-        doc = memoized(SoftNormDocument(SoftEnvironment(raw), [{"norm": r} for r in rules]))
-        found = atoms(case, choice)
-        check_premises(doc, found, choice)
-        picked = [r.name for r in doc.elaborated.selected_rules("persuasion_safeguards", model(doc, found), ("s",))]
+        rules = [rule_data(b) for b in T.rule_blocks() if applies(b, choice)]
+        doc = build(raw, rules, tuple(sorted(choice.items())), None)
+        picked = [r.name for r in pick(doc, atoms(case, choice), "persuasion_safeguards", ("s",))]
         rows.append({"choice": assignment, "holds": not picked, "rules": picked})
     return {"route": "D1 soft-norms@0 selected_rules on a query-only vocabulary extension", "cone": ["RS15"],
             "choices": rows}
@@ -643,13 +720,11 @@ def witness_for(block):
         found = frozenset(found)
         ok = True
         for default in ("deny", "allow"):
-            doc = document(names_, default)
             try:
-                check_premises(doc, found, choice)
+                picked = pick(document(names_, default), found, rule["predicate"], (arg,))
             except AssertionError:
                 ok = False
                 break
-            picked = doc.elaborated.selected_rules(rule["predicate"], model(doc, found), (arg,))
             ok = ok and block.id in {r.name for r in picked}
         if ok:
             return [list(atom) for atom in sorted(found - set(table1_facts()))]
@@ -659,8 +734,7 @@ def witness_for(block):
 def dead_rules(items):
     """N3: every F1 to F17 rule has a witness: a case model on which VE selected it, in a scored item of this
     run or in a model built from the rule's own guard."""
-    seen = {name for item in items.values() for row in item.get("choices", []) for name in row.get("rules", [])
-            if isinstance(row.get("rules"), list)}
+    seen = {name for item in items.values() for name in item.get("selected_rules", ())}
     commitments = [b for b in T.rule_blocks() if re.match(r"f\d+-", b.id)]
     witnesses = {b.id: "a scored case" if b.id in seen else witness_for(b) for b in commitments}
     missing = sorted(n for n, w in witnesses.items() if w is None)
@@ -824,6 +898,10 @@ def gap_answer(id_, case):
 
 
 def answer(item):
+    return recorded(_answer, item)
+
+
+def _answer(item):
     id_, kind = item["id"], item["item"]
     case = CASES.get(item["case"])
     if id_.startswith("A-") or id_.startswith("B-"):
@@ -939,7 +1017,7 @@ def run():
     for k in key:
         items[k["id"]] = answer({name: k[name] for name in ("id", "case", "item")} |
                                 {name: k[name] for name in ("quantities", "dates", "years") if name in k})
-    items["N3"] = dead_rules(items)
+    items["N3"] = recorded(dead_rules, items)
     return {"items": items, "comparison": compare(items),
             "cost": {"documents_built": document.cache_info().currsize, "prover_calls": PROVER_CALLS}}
 

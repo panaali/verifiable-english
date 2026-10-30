@@ -918,7 +918,7 @@ def test_pf_six_mutants_change_exactly_the_named_results(pf_clean, mutant):
     mutated = pf_run.run()
     changed = sorted(row["id"] for row in mutated["comparison"] if row["ve"] != base[row["id"]])
     assert changed == sorted(pf_run.EXPECTED_MUTANTS[mutant]) == saved["mutants"][mutant]["changed"]
-    assert bool(pf_run.invention_audit_for(mutated)["untraced"]) == (mutant == "m2")
+    assert pf_run.invention_audit_for(mutated)["untraced"] == (["m2-invented-permission"] if mutant == "m2" else [])
     assert saved["mutants"][mutant]["exact"]
 
 
@@ -971,6 +971,73 @@ def test_pf_case_model_must_satisfy_the_selected_premises(pf_clean, monkeypatch)
         pf_run.check_premises(doc, found, choice)
     sep = {**pf_run.BASE, "RS2": "sep"}
     assert ("reached", "s", "biological_and_chemical_high") not in pf_run.atoms(case, sep)
+
+
+def pf_item(item_id):
+    entry = next(k for k in items("openai-preparedness") if k["id"] == item_id)
+    return {name: entry[name] for name in ("id", "case", "item")}
+
+
+@pytest.mark.skipif(not LEAN_SERVICE.exists(), reason="the Lean service is not built")
+@pytest.mark.parametrize("item_id", ("A-BIO-H-EXT/SUF", "G6", "N2", "C1"))
+def test_pf_invention_audit_reads_every_document_a_route_builds(pf_clean, monkeypatch, item_id):
+    """M6 reads the rules each answer's documents were built from, on every route that builds one (selection,
+    silence against a baseline, the N2 probe, a W1 cluster), also when the documents come from the cache."""
+    assert pf_run.invention_audit_for({"items": {item_id: pf_run.answer(pf_item(item_id))}})["untraced"] == []
+    pf_run.document.cache_clear()
+    pf_run._conflict.cache_clear()
+    rule_data = pf_run.rule_data
+    monkeypatch.setattr(pf_run, "rule_data", lambda block: {**rule_data(block), "name": "invented-" + block.id})
+    for _ in range(2):  # the second answer reads cached documents and conflicts
+        untraced = pf_run.invention_audit_for({"items": {item_id: pf_run.answer(pf_item(item_id))}})["untraced"]
+        assert untraced and all(name.startswith("invented-") for name in untraced)
+
+
+@pytest.mark.skipif(not LEAN_SERVICE.exists(), reason="the Lean service is not built")
+def test_pf_m2_opposite_pairs_come_from_the_parsed_invented_rule(pf_clean, monkeypatch):
+    pf_run.MUTANT = "m2"
+    invented = pf_run.invented_rules()
+    assert [r["name"] for r in invented] == ["m2-invented-permission"]
+    pairs = [p for p in pf_run.opposite_pairs("m2") if "m2-invented-permission" in p]
+    assert pairs
+    flipped = ({**invented[0], "sign": not invented[0]["sign"]},)
+    monkeypatch.setattr(pf_run, "_invented", lambda mutant: flipped if mutant == "m2" else ())
+    pf_run.opposite_pairs.cache_clear()
+    assert [p for p in pf_run.opposite_pairs("m2") if "m2-invented-permission" in p] != pairs
+
+
+@pytest.mark.skipif(not LEAN_SERVICE.exists(), reason="the Lean service is not built")
+def test_pf_n3_counts_only_rules_ve_selected(pf_clean, monkeypatch):
+    """W1 cluster rows and N1's guard rows name rules VE never selected; only a selection is a scored witness."""
+    monkeypatch.setattr(pf_run, "witness_for", lambda block: "own model")
+    listed = {"C1": pf_run.answer(pf_item("C1")), "N1": pf_run.answer(pf_item("N1"))}
+    assert listed["C1"]["selected_rules"] == listed["N1"]["selected_rules"] == []
+    witnesses = pf_run.dead_rules(listed)["witnesses"]
+    for name in set(pf_run.CLUSTERS["C1"]) | set(pf_run.N1_RULES):
+        assert witnesses[name] == "own model", name
+    k3 = pf_run.answer(pf_item("K3"))
+    assert "f6-rel" in k3["selected_rules"]
+    assert pf_run.dead_rules({"K3": k3})["witnesses"]["f6-rel"] == "a scored case"
+
+
+def test_pf_a_scored_witness_needs_both_completion_defaults(pf_modules):
+    def selecting(*defaults):
+        key = ("f6-rel", (("RS1", "x"),), frozenset())
+        return lambda: pf_run._merge({"built": set(), "selected": {key: set(defaults)}}) or {}
+    assert pf_run.recorded(selecting("deny"))["selected_rules"] == []
+    assert pf_run.recorded(selecting("allow", None))["selected_rules"] == []
+    assert pf_run.recorded(selecting("deny", "allow"))["selected_rules"] == ["f6-rel"]
+    outer = pf_run.recorded(lambda: pf_run.recorded(selecting("deny", "allow")))
+    assert outer["selected_rules"] == ["f6-rel"] and pf_run._OPEN == []
+
+
+def test_pf_saved_n3_witnesses_are_saved_selections():
+    saved = json.loads((PF / "results.json").read_text())["items"]
+    selected = {name for id_, item in saved.items() if id_ != "N3" for name in item["selected_rules"]}
+    witnesses = saved["N3"]["witnesses"]
+    assert {n for n, w in witnesses.items() if w == "a scored case"} == selected & set(witnesses)
+    assert all(isinstance(w, list) and w for w in witnesses.values() if w != "a scored case")
+    assert all(item["audit_input"] == {"rules": []} for item in saved.values())
 
 
 @pytest.mark.skipif(not LEAN_SERVICE.exists(), reason="the Lean service is not built")
