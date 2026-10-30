@@ -1,0 +1,11 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (lean): lean/VE/Service/Document.lean is a selected declaration's file or in its import closure
+trust_mutants: 6 definitions, 75 mutants (19 to run), 4 jobs, base bab15c522016
+SURVIVOR lean/VE/Norms/Plain.lean:181 VE.Norms.Plain.layered (D[V], trusted) body-true: match environment.getObjValD "profiles" with | .arr ps => ps.any (fun p => (statementLayers ++ VE... -> true
+SURVIVOR lean/VE/Norms/Plain.lean:182 VE.Norms.Plain.layered (D[V], trusted) any-all: any -> all
+SURVIVOR lean/VE/Norms/Plain.lean:182 VE.Norms.Plain.layered (D[V], trusted) list-drop-last: (statementLayers ++ VE.Compose.documentLayers) -> ((statementLayers ++ VE.Compose.documentLayers).dropLast)
+SURVIVOR lean/VE/Norms/Plain.lean:182 VE.Norms.Plain.layered (D[V], trusted) list-drop-last: statementLayers -> (statementLayers.dropLast)
+SURVIVOR lean/VE/Norms/Plain.lean:182 VE.Norms.Plain.layered (D[V], trusted) list-drop-last: VE.Compose.documentLayers -> (VE.Compose.documentLayers.dropLast)
+SURVIVOR lean/VE/Norms/Plain.lean:182 VE.Norms.Plain.layered (D[V], trusted) list-drop-first: VE.Compose.documentLayers -> (VE.Compose.documentLayers.drop 1)
+trust_mutants: 4 KILLED, 6 SURVIVOR, 0 UNKNOWN, 0 INVALID, 9 ALLOWED, 0 NOT RUN, 56 OTHER SHARD in 1904 s
+trust_mutants: D[V], trusted: 2 KILLED, 6 SURVIVOR, 7 ALLOWED, 22 OTHER SHARD
+trust_mutants: G[V], trusted: 2 KILLED, 2 ALLOWED, 34 OTHER SHARD
