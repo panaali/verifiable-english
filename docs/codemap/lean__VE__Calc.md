@@ -24,3 +24,4 @@
 - `lean/VE/Calc/Units.lean` — `ve-units@2` (math-evidence spec 6.2, ME-6): its only decoder, its identity (3.3, J1) and the dimension of an expression with its diagnostic.
 - `lean/VE/Calc/UnitsExamples.lean` — The `ve-units@2` fixtures (`tests/calc_units_fixtures.py`, math-evidence spec 6.2) as `#guard`s.
 - `lean/VE/Calc/Wire.lean` — The case `ve-calc@0` (math-evidence spec 3.1 to 3.3, ME-2): its limits in order, its decoder and its identity.
+- `lean/VE/Calc/WorkExamples.lean` — Fixtures of the charged lowering (spec 3.2 (b), 13.3; me-2nc): units *by hand* in 13.3, computed here by product code.
