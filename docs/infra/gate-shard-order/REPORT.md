@@ -1,6 +1,6 @@
 # gate-shard-order: a real sharded gate run can pass
 
-- Status: built; selected tests: see "Tests run"; the full gate is the chain's (not run here).
+- Status: built. The selected tests pass (113 units, 0 failed). The full gate is the chain's to run (not run here).
 - What changed: `tools/gate.py` `merge_pytest_events` takes `any_order=True` for a shard. Each xdist worker must then
   have collected the shard's ids as a set: none missing, none extra, none duplicated. The unsharded gate keeps its exact list comparison.
 - Cause: the shard plan stores its ids sorted (`gate_collection.encode_ids`), so a share is in sorted order. The
@@ -108,7 +108,9 @@ Each bug was planted in `tools/gate.py`, shown failing with the test named in it
 - `uv run pytest -q tests/test_gate.py -k "shard_worker or still_needs or did_not_collect or parallel_suite"` gave `13 passed`.
 - `uv run python tools/select_tests.py --base $(git merge-base HEAD main)` selects 113/499 units, including `tests/test_gate.py` and
   `tests/test_gate_shards.py`.
-- Selected tests on the finished code (`mac-pytest.sh --select`): SELECTED_RESULT
+- Selected tests on the finished code (`zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, ve-mac-1 aarch64,
+  1713 s): `recorded 113 units ...; 0 failed`, `exit=0; failed/error ids=0`. The run started with the changed
+  `tests/test_gate.py` and `tests/test_gate_shards.py`.
 - Not run here: the full gate (the chain runs it) and the sharded shadow reruns on arm64. After the merge, manage-agents
   reruns the 2 shadow validations and the seeded run through `gha-arm-shard.sh`.
 
