@@ -86,18 +86,18 @@ macro "row_fits" : tactic => `(tactic|(
 
 /-- A row: a decided outcome with no reason, or an unknown one with Lean's reason text. -/
 theorem rowJson_fits (ds : List Decl) (id : String) (named : String → Option String)
-    (σ : String → Val) (k : Check) (r : Row)
+    (vs : List Val) (k : Check) (r : Row)
     (h : match k with | .claim _ => True | .follows .. => Shown.matches r.outcome r.shown = true) :
-    Fits req (skel% "calc.json#/$defs/claim_row") (Run.rowJson ds id named σ k r) := by
+    Fits req (skel% "calc.json#/$defs/claim_row") (Run.rowJson ds id named vs k r) := by
   rcases r with ⟨_, o, s, p⟩
   row_fits
 
 /-- The same, with the reproduction `"unknown"` of a case under a software convention. -/
 theorem rowJson_fits_software (ds : List Decl) (id : String) (named : String → Option String)
-    (σ : String → Val) (k : Check) (r : Row)
+    (vs : List Val) (k : Check) (r : Row)
     (h : r.reproduction.isSome)
     (hm : match k with | .claim _ => True | .follows .. => Shown.matches r.outcome r.shown = true) :
-    Fits req (skel% "calc.json#/$defs/claim_row_software") (Run.rowJson ds id named σ k r) := by
+    Fits req (skel% "calc.json#/$defs/claim_row_software") (Run.rowJson ds id named vs k r) := by
   rcases r with ⟨_, o, s, p⟩
   cases p with
   | none => cases h
@@ -115,17 +115,32 @@ theorem runCaseReported_fits (j : Lean.Json) :
     split
     · rename_i hd
       have hs := decode_software j _ hd hl
-      fits
-      obtain ⟨i, hi, rfl⟩ := List.mem_mapIdx.mp ‹_›
-      refine rowJson_fits_software _ _ _ _ _ _ ?_ ?_
-      · simpa [Run.row] using hs
-      · exact Run.row_matches _ _
+      split
+      · rename_i rows _ hr
+        fits
+        obtain ⟨i, hi, rfl⟩ := List.mem_mapIdx.mp ‹_›
+        have hx := Run.rowsC_rows _ _ _ _ hr _ (List.getElem_mem hi)
+        generalize (_ : List _)[i] = x at hx ⊢
+        rcases x with ⟨cl, r, vs⟩
+        simp only at hx ⊢
+        subst hx
+        refine rowJson_fits_software _ _ _ _ _ _ ?_ (Run.rowOf_matches _ _ _)
+        simpa [Run.rowOf_reproduction] using hs
+      · fits
     · fits
   · refine Fits.onCaseT hl ?_
     split
-    · fits
-      obtain ⟨i, hi, rfl⟩ := List.mem_mapIdx.mp ‹_›
-      exact rowJson_fits _ _ _ _ _ _ (Run.row_matches _ _)
+    · split
+      · rename_i rows _ hr
+        fits
+        obtain ⟨i, hi, rfl⟩ := List.mem_mapIdx.mp ‹_›
+        have hx := Run.rowsC_rows _ _ _ _ hr _ (List.getElem_mem hi)
+        generalize (_ : List _)[i] = x at hx ⊢
+        rcases x with ⟨cl, r, vs⟩
+        simp only at hx ⊢
+        subst hx
+        exact rowJson_fits _ _ _ _ _ _ (Run.rowOf_matches _ _ _)
+      · fits
     · fits
 
 end ResponseShape.Encoders.Calc
