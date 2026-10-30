@@ -44,30 +44,25 @@ def _effect_key(effect) -> str | None:
 
 def answer_problem(row, meta) -> str | None:
     """Why Lean's `scope` row is not an answer about the document `meta` (R8: its binding), or None. Rows follow the
-    document's unit order, each unit once; every governor a row names is one of the document's, with its unit, its
-    effect and its recorded reach, and reaches the row's unit (or, for `precedes`, is on it); one sentence a governor."""
-    if type(row) is not dict or row.get("id") != _CASE_ID or row.get("status") != "ok" or type(row.get("rows")) is not list:
+    document's unit order, each unit once. Every governor a row names is one of the document's, once, with its unit,
+    its effect and its recorded reach, which holds the row's unit (or, for `precedes`, its unit is the row's).
+    `governed` is the document's governors in order, each with exactly the units whose rows name it."""
+    if type(row) is not dict or set(row) != {"id", "status", "rows", "governed"} or row["id"] != _CASE_ID \
+            or row["status"] != "ok" or type(row["rows"]) is not list or type(row["governed"]) is not list:
         return "the row is not an answer to the case"
     units, governors = _declared(meta)
     order = {u: i for i, u in enumerate(units)}
-    last = -1
+    listed, last = {}, -1
     for entry in row["rows"]:
-        if type(entry) is not dict or set(entry) != {"unit", "governors", "provenance"}:
-            return "a row's fields are not unit, governors and provenance"
-        unit, named, sentences = entry["unit"], entry["governors"], entry["provenance"]
-        if type(unit) is not str or unit not in order or order[unit] <= last:
-            return "a row names a unit outside the document, out of its order or twice"
+        if type(entry) is not dict or set(entry) != {"unit", "governors"} or type(entry["governors"]) is not list:
+            return "a row's fields are not unit and governors"
+        unit = entry["unit"]
+        if type(unit) is not str or unit not in order or order[unit] <= last or not entry["governors"]:
+            return "a row names a unit outside the document, out of its order or twice, or no governor"
         last = order[unit]
-        if type(named) is not list or not named or type(sentences) is not list or len(sentences) != len(named):
-            return f"{unit}: the row does not have one sentence per governor"
-        if any(type(s) is not str or not s for s in sentences):
-            return f"{unit}: a sentence is not a non-empty string"
-        ids = [x.get("id") if type(x) is dict else None for x in named]
-        if len(set(map(str, ids))) != len(ids):
-            return f"{unit}: a governor is named twice"
-        for x in named:
+        for x in entry["governors"]:
             governor = governors.get(x.get("id")) if type(x) is dict else None
-            if governor is None or set(x) != {"id", "unit", "effect", "reach"}:
+            if governor is None or set(x) != {"id", "unit", "effect", "reach", "provenance"}:
                 return f"{unit}: a governor is not one of the document's"
             if x["unit"] != governor.get("unit") or x["reach"] != governor.get("units"):
                 return f"{unit}: governor {x['id']} is answered with another unit or reach"
@@ -75,6 +70,14 @@ def answer_problem(row, meta) -> str | None:
                 return f"{unit}: governor {x['id']} is answered with another effect"
             if unit not in x["reach"] and not (x["effect"] == "precedes" and x["unit"] == unit):
                 return f"{unit}: governor {x['id']} does not reach the unit"
+            if type(x["provenance"]) is not str or not x["provenance"]:
+                return f"{unit}: governor {x['id']} has no sentence"
+            if unit in listed.setdefault(x["id"], []):
+                return f"{unit}: governor {x['id']} is named twice"
+            listed[x["id"]].append(unit)
+    expected = [{"id": g, "units": listed.get(g, [])} for g in governors]
+    if row["governed"] != expected:
+        return "governed is not the document's governors with the units whose rows name them"
     return None
 
 
@@ -100,17 +103,21 @@ def explain(raw: bytes) -> tuple[list[dict], dict, bytes]:
     return row["rows"], meta, source
 
 
-def lines(rows: list[dict], units: dict, source: bytes, *, ids: bool = False) -> list[str]:
-    """The reader's view: each governed unit's source text, then Lean's sentences under *Where the parts come from:*;
-    with `ids`, the unit and each governor's id, effect and reach (the provenance view)."""
+def lines(rows: list[dict], meta, source: bytes, *, ids: bool = False) -> list[str]:
+    """The reader's view: each governed unit's source text, then Lean's sentences under *Where the parts come from:*,
+    in the block's order of its governors; with `ids`, the unit and each governor's id, effect and reach (the
+    provenance view)."""
+    units, governors = _declared(meta)
+    rank = {g: i for i, g in enumerate(governors)}
     out = []
     for entry in rows:
-        span = units.get(entry["unit"])
+        span = units[entry["unit"]]
         text = source[span[0]:span[1]].decode("utf-8", "replace").strip() if type(span) is list and len(span) == 2 else ""
+        named = sorted(entry["governors"], key=lambda x: rank[x["id"]])
         out.append(f"[{entry['unit']}] {text}" if ids else text)
-        out.append("  Where the parts come from: " + " ".join(entry["provenance"]))
+        out.append("  Where the parts come from: " + " ".join(x["provenance"] for x in named))
         if ids:
-            out.extend(f"    {x['id']} ({x['effect']}, {x['unit']} -> {', '.join(x['reach'])})" for x in entry["governors"])
+            out.extend(f"    {x['id']} ({x['effect']}, {x['unit']} -> {', '.join(x['reach'])})" for x in named)
     return out
 
 
@@ -133,5 +140,5 @@ def main(argv: list[str]) -> int:
         error = exc.to_dict() if isinstance(exc, VEError) else {"code": "InvalidInput", "message": str(exc)}
         print(json.dumps({"status": error["code"], "error": error}, ensure_ascii=False, indent=2))
         return 4 if isinstance(exc, ResourceLimit) else 2
-    print("\n".join(lines(found, _declared(meta)[0], source, ids=options.ids)))
+    print("\n".join(lines(found, meta, source, ids=options.ids)))
     return 0

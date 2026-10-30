@@ -202,13 +202,19 @@ def quotesOf (D : SDoc) (b : ByteArray) : List (String × String) :=
     | some x => quote ((String.fromUTF8? (b.extract x.span.1 x.span.2)).getD "")
     | none => "")
 
-def govJson (x : GovRow) : Json :=
+/-- A contributing governor with its sentence. -/
+def govJson (x : GovRow) (sentence : String) : Json :=
   Json.mkObj [("id", .str x.id), ("unit", .str x.unit), ("effect", .str x.effect),
-    ("reach", .arr (x.reach.map Json.str).toArray)]
+    ("reach", .arr (x.reach.map Json.str).toArray), ("provenance", .str sentence)]
 
 def rowJson (r : Row) : Json :=
-  Json.mkObj [("unit", .str r.unit), ("governors", .arr (r.governors.map govJson).toArray),
-    ("provenance", .arr (r.provenance.map Json.str).toArray)]
+  Json.mkObj [("unit", .str r.unit), ("governors", .arr ((r.governors.zip r.provenance).map fun (x, s) => govJson x s).toArray)]
+
+/-- Each governor of the block, in its order, with the units whose rows list it: the answer's index of its rows, which
+    the relay zips with the request's governors and checks against the rows both ways. -/
+def governedJson (D : SDoc) (rows : List Row) : Json :=
+  .arr (D.governors.map fun g => Json.mkObj [("id", .str g.id), ("units", .arr (rows.filterMap fun r =>
+    if r.governors.any (·.id == g.id) then some (Json.str r.unit) else none).toArray)]).toArray
 
 /-- The rows of `D` over the source `source`, refused past `limit` cells. -/
 def explainWithin (limit : Nat) (D : SDoc) (source : String) : Except String (List Row) := do
@@ -236,8 +242,9 @@ def explainCase (j : Json) : Except String Json := do
   let ps := VE.Service.Document.listedProfiles (doc.front.getObjValD "environment")
   unless ps.contains "scope@0" do throw "UnsupportedProfile: the scope mode explains a document that lists scope@0"
   let _ ← VE.Compose.gateOf VE.Compose.profileTable ps
-  let rows ← explainWithin cellLimit (← readSplit doc) doc.source
-  pure (VE.Route.Wire.ok id [("rows", .arr (rows.map rowJson).toArray)])
+  let D ← readSplit doc
+  let rows ← explainWithin cellLimit D doc.source
+  pure (VE.Route.Wire.ok id [("rows", .arr (rows.map rowJson).toArray), ("governed", governedJson D rows)])
 
 def runCaseReported (j : Json) : Json :=
   match explainCase j with

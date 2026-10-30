@@ -13,39 +13,46 @@
       {
         "additionalProperties": false,
         "properties": {
+          "governed": {"items": {"$ref": "#/$defs/governed"}, "type": "array"},
           "id": {"type": "string", "x-equals": "/id"},
           "rows": {"items": {"$ref": "#/$defs/unit_row"}, "type": "array"},
           "status": {"const": "ok"}
         },
-        "required": ["id", "status", "rows"],
+        "required": ["id", "status", "rows", "governed"],
         "type": "object"
       }
     ]
   },
   "$defs": {
+    "governed": {
+      "$comment": "VE.Scope.Run.governedJson: a governor of the block, in its order, and the units whose rows list it.",
+      "additionalProperties": false,
+      "properties": {"id": {"type": "string"}, "units": {"items": {"type": "string"}, "type": "array"}},
+      "required": ["id", "units"],
+      "type": "object"
+    },
     "governor": {
-      "$comment": "VE.Scope.Run.govJson: a contributing governor's id, unit, effect word and reach.",
+      "$comment": "VE.Scope.Run.govJson: a contributing governor's id, unit, effect word, reach and provenance sentence.",
       "additionalProperties": false,
       "properties": {
         "effect": {"enum": ["frame", "reguard", "carve-out", "precedes", "yields", "title"]},
         "id": {"type": "string"},
+        "provenance": {"type": "string"},
         "reach": {"items": {"type": "string"}, "type": "array"},
         "unit": {"type": "string"}
       },
-      "required": ["id", "unit", "effect", "reach"],
+      "required": ["id", "unit", "effect", "reach", "provenance"],
       "type": "object"
     },
     "unit_row": {
-      "$comment": "VE.Scope.Run.rowJson: a governed unit, its governors and one sentence per governor.",
+      "$comment": "VE.Scope.Run.rowJson: a governed unit and its contributing governors.",
       "additionalProperties": false,
       "properties": {
         "governors": {"items": {"$ref": "#/$defs/governor"}, "minItems": 1, "type": "array"},
-        "provenance": {"items": {"type": "string"}, "minItems": 1, "type": "array"},
         "unit": {"type": "string"}
       },
-      "required": ["unit", "governors", "provenance"],
-      "type": "object",
-      "x-same-length": ["governors", "provenance"]
+      "required": ["unit", "governors"],
+      "type": "object"
     }
   }
 }
