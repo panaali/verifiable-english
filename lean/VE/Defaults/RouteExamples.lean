@@ -81,4 +81,13 @@ def layerCase (kind : String) (ps : List String) : Json :=
   VE.NormDefaults.Run.pendingDocumentLayer (layerCase k ["judgments@0", "norm-defaults@0"]) == none
 #guard VE.NormDefaults.Run.pendingDocumentLayer (layerCase "norm-defaults-gaps" ["norm-defaults@0"]) == none
 
+/-! jt-2c: `Norms.Plain.layered`, a statement layer or a document layer anywhere in the list: the norms mode then
+decides without it. -/
+def layeredOf (ps : List String) : Bool := VE.Norms.Plain.layered (Json.mkObj [("profiles", toJson ps)])
+
+#guard ["reports@0", "soft-norms@0", "rights@0", "speech-acts@0", "judgments@0"].all fun p =>
+  layeredOf [p] && layeredOf ["a@0", p] && layeredOf [p, "z@0"] && layeredOf ["a@0", p, "z@0"]
+#guard !layeredOf [] && !layeredOf ["relational-fol@0"] && !layeredOf ["documents@1", "norms@0", "relational-fol@0"]
+#guard !VE.Norms.Plain.layered (Json.mkObj [("profiles", "judgments@0")])
+
 end VE.Defaults.RouteFixtures
