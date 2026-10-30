@@ -2947,7 +2947,7 @@ module VE.Arith.Deciding 8ceb04fe5fb459ff6987e292e6ed7057b46bb6ea4cc2139f0979bc4
 104:0-111:95 theorem VE.Arith.decidingValue_all@VE.Arith.Deciding
 114:0-121:95 theorem VE.Arith.decidingValue_ex@VE.Arith.Deciding
 123:0-146:13 theorem VE.Arith.decidingValue_of_fails@VE.Arith.Deciding
-module VE.Arith.DecidingExamples 23d4bde07556ad7672580f135695cdc545cbec26fa3f6aa348114fc3d8bcd8ef
+module VE.Arith.DecidingExamples bd87d99f23cf2c8864ac98a9ffc92c2e0f21d487d8296659ac5caadedfb535f7
 10:0-11:89 def VE.Arith.Examples.isPrimeB@VE.Arith.DecidingExamples
 13:0-17:78 theorem VE.Arith.Examples.isPrimeB_iff@VE.Arith.DecidingExamples
 19:0-19:92 instance VE.Arith.Examples.decIsPrime@VE.Arith.DecidingExamples
