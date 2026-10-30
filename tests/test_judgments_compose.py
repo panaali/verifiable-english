@@ -223,3 +223,19 @@ def test_the_pilot_list_s_replay_kinds_are_refused_by_name_until_jt_2d(texts):
     with pytest.raises(CheckerUnavailable, match="judgments@0 with norm-defaults-gaps needs its composed Lean route"):
         check_document(texts["pilot", "judged"])
     assert json.dumps(check_document(texts["pilot", "twin"]))
+
+
+def test_the_document_mode_keeps_jt_2_s_fault_order(service):
+    """The document mode refuses by name only (`VE.Compose.layersApart`); the layer's requirement is its gate's over
+    the list as written, after its envelope checks: a key outside the envelope is named first, with or without
+    `documents@1`, as at jt-2."""
+    from test_judgments_document import answer, document, outcome
+
+    def refusal(profiles):
+        head, front, body = document(service, [unit("u1", kind="meta")], J1, profiles=profiles).split("\n", 2)
+        front = json.loads(front)
+        front["environment"]["zzz"] = 1
+        return outcome(answer(service, "\n".join([head, json.dumps(front), body])))
+    keyed = refusal(PROFILES)
+    assert keyed[1] is None and "zzz" in keyed[0], keyed
+    assert refusal(WITHOUT_DOCUMENTS) == keyed
