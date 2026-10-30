@@ -120,114 +120,120 @@ fn act_phrase(value: &Value, arity: usize) -> Result<String> {
     Ok(act)
 }
 
-/// The checker family of a `ve.core@0.2` profile list (`VE.Route.Gate.classify`).
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum Family {
-    Fol,
-    Order,
-    Nary,
-}
-
 /// The Lean decoder that judges an environment's argument and constant sorts,
 /// chosen as Lean's `environment` mode chooses it
 /// (lean/VE/Service/Standalone.lean `reportedEnvironment`, `validatedLayerEnvironment`,
-/// `validated`). The one table of every sort fault: the decoder loop asks it and
-/// decides nothing about a sort itself.
+/// `validated`, `validateFamily`). With `SortTable`, the one table of every sort
+/// fault: the decoder loop asks it and decides nothing about a sort itself.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum SortJudge {
     /// `ve.core@0`, `ve.core@0.1`: the frozen decoders (`Standalone.decodeLegacy`);
     /// `order` is the frozen order envelope.
     Legacy { order: bool },
-    /// `ve.core@0.2` over the frozen checker profiles (`frozenFamilyProfiles`,
-    /// Standalone.lean:350): the located decoder checks the constants before the
-    /// family decoder judges a cell it skipped (Standalone.lean:957-958).
-    Located(Family),
-    /// `VE.Route.Wire.decodeVocabulary` (lean/VE/Route/Wire.lean:170-172, 196): composed
-    /// fol and closure lists, the norms route, and soft-norms@0, which decodes its
-    /// vocabulary without the checker profiles (lean/VE/SoftNorms/Phases.lean:137-154).
+    /// `VE.Route.Wire.decodeVocabulary` (lean/VE/Route/Wire.lean:170-172, 196): fol and
+    /// closure lists, the norms route, and soft-norms@0, which decodes its vocabulary
+    /// without the checker profiles (lean/VE/SoftNorms/Phases.lean:137-154).
     Route,
-    /// `VE.Order.Wire.decodeEnvironment` (lean/VE/Order/Wire.lean:74, 83).
+    /// `VE.Route.Wire.decodeOrderVocabulary` and `VE.Order.Wire.decodeEnvironment`
+    /// (lean/VE/Route/Wire.lean:240-245, lean/VE/Order/Wire.lean:66-83).
     Order,
-    /// `VE.Core.Bridge.decodeEnvironment` (lean/VE/Core/Bridge.lean:38, 51).
+    /// `VE.Core.Bridge.decodeEnvironment` (lean/VE/Core/Bridge.lean:29-38, 51).
     Core,
     /// `VE.Core.Layers.decodeLayered` (lean/VE/Core/Layers.lean:64-80, 229-232): the route
     /// decoder over the binary undefined predicates and the constants, then the core decoder.
     Layered,
 }
 
+/// The judge, and whether the located decoder runs before it with the answer
+/// for every fault it finds: `ve.core@0.2` over the frozen checker profiles only
+/// (`frozenFamilyProfiles` Standalone.lean:350, `reportedEnvironment` Standalone.lean:1197-1201).
+/// It checks each constant's fields and sort (Standalone.lean:969-977) before the
+/// judge reads a cell it skipped (Standalone.lean:957-958).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) struct SortTable {
+    pub(crate) judge: SortJudge,
+    pub(crate) located: bool,
+}
+
 /// Lean's answer for one undeclared argument cell.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum SortVerdict {
     Accepted,
-    /// This code at the cell, before the constants.
+    /// This code at the predicate, after its own display fields.
     AtSort(&'static str),
-    /// This code once the constants are checked.
+    /// This code once each constant's fields and sort are checked, before their displays.
     AfterConstants(&'static str),
+    /// This code once the constants are checked in full.
+    AfterDisplays(&'static str),
+}
+
+/// A constant entry's fields: a `$string` literal's description is optional
+/// on the route, and only `reports@0` displays a constant.
+fn constant_fields<'a>(decl: &'a Value, route: bool, reports: bool)
+    -> Result<&'a serde_json::Map<String, Value>> {
+    let literal = route && decl.get("sort") == Some(&json!("$string"));
+    let mut keys = vec!["sort"];
+    if !literal || decl.get("description").is_some() { keys.push("description"); }
+    if reports && decl.get("verbalisation").is_some() { keys.push("verbalisation"); }
+    fields(decl, &keys, "InvalidInput")
 }
 
 fn sort_fault<T>(code: &'static str) -> Result<T> {
     error(code, if code == "InvalidInput" { "invalid predicate signature" } else { "unknown predicate argument sort" })
 }
 
-const CHECKER_PROFILES: &[&str] =&["relational-fol@0", "closure@0", "nary@0", "order@0"];
+const CHECKER_PROFILES: &[&str] = &["relational-fol@0", "closure@0", "nary@0", "order@0"];
 
-impl SortJudge {
+impl SortTable {
     /// `layers`: some predicate carries `defined`, `functional` or `total`
     /// (`VE.Core.Layers.usesLayers`, Standalone.lean:208).
     pub(crate) fn of(route: bool, legacy_order: bool, profiles: &[String], layers: bool) -> Self {
         if !route {
-            return SortJudge::Legacy { order: legacy_order };
+            return SortTable { judge: SortJudge::Legacy { order: legacy_order }, located: false };
         }
         let has = |p: &str| profiles.iter().any(|q| q == p);
-        let family = if has("order@0") {
-            Family::Order
+        let located = !profiles.is_empty() && profiles.iter().all(|p| CHECKER_PROFILES.contains(&p.as_str()));
+        let judge = if has("soft-norms@0") && !located {
+            SortJudge::Route
+        } else if has("order@0") {
+            SortJudge::Order
+        } else if has("nary@0") && layers {
+            SortJudge::Layered
         } else if has("nary@0") {
-            Family::Nary
+            SortJudge::Core
         } else {
-            Family::Fol
+            SortJudge::Route
         };
-        if !profiles.is_empty() && profiles.iter().all(|p| CHECKER_PROFILES.contains(&p.as_str())) {
-            return SortJudge::Located(family);
-        }
-        if has("soft-norms@0") {
-            return SortJudge::Route;
-        }
-        match family {
-            Family::Order => SortJudge::Order,
-            Family::Nary if layers => SortJudge::Layered,
-            Family::Nary => SortJudge::Core,
-            Family::Fol => SortJudge::Route,
-        }
+        SortTable { judge, located }
     }
 
     /// The verdict on an undeclared cell `sort` of a predicate of `arity`
     /// (`defined`: it carries a definition), under `data@0` when `data`.
     pub(crate) fn argument(self, sort: &str, data: bool, arity: usize, defined: bool) -> SortVerdict {
         use SortVerdict::*;
-        match self {
+        let verdict = match self.judge {
             // Bridge.lean:44, Order/Wire.lean:74: only the order envelope adds `$int`.
             SortJudge::Legacy { order } => if order && sort == "$int" { Accepted } else { AtSort("UnknownSymbol") },
-            // The family decoder after the located one: the route decoder's
-            // "invalid signature" (Route/Wire.lean:170-172), the order and core
-            // decoders' unknown sort (Order/Wire.lean:74, Core/Bridge.lean:38).
-            SortJudge::Located(Family::Fol) => AfterConstants("InvalidInput"),
-            SortJudge::Located(Family::Order) | SortJudge::Order if sort == "$int" => Accepted,
-            SortJudge::Located(_) => AfterConstants("UnknownSymbol"),
             SortJudge::Route => if data && sort == "$string" { Accepted } else { AtSort("InvalidInput") },
+            SortJudge::Order if sort == "$int" => Accepted,
             SortJudge::Order | SortJudge::Core => AtSort("UnknownSymbol"),
-            SortJudge::Layered => match SortJudge::Route.argument(sort, data, arity, defined) {
+            SortJudge::Layered => match (SortTable { judge: SortJudge::Route, located: false })
+                    .argument(sort, data, arity, defined) {
                 AtSort(code) if arity <= 2 && !defined => AtSort(code),
-                _ => AfterConstants("UnknownSymbol"),
+                _ => AfterDisplays("UnknownSymbol"),
             },
+        };
+        match verdict {
+            AtSort(code) if self.located => AfterConstants(code),
+            verdict => verdict,
         }
     }
 
     /// Whether an undeclared constant sort is admitted: `$string` literals
-    /// everywhere on the route, `$int` under the order decoders.
+    /// on the route, `$int` under the order decoders.
     pub(crate) fn constant_admits(self, sort: &str) -> bool {
-        match self {
+        match self.judge {
             SortJudge::Legacy { order } => order && sort == "$int",
-            SortJudge::Located(family) => sort == "$string" || (family == Family::Order && sort == "$int"),
             SortJudge::Order => sort == "$string" || sort == "$int",
             SortJudge::Route | SortJudge::Core | SortJudge::Layered => sort == "$string",
         }
@@ -235,12 +241,23 @@ impl SortJudge {
 
     /// The code of an undeclared constant sort: the route decoder's
     /// "unknown constant sort" (Route/Wire.lean:196), else the shared
-    /// `constantSort` validator's (Bridge.lean:58).
+    /// `constantSort` validator's (Bridge.lean:58), which the located decoder uses.
     pub(crate) fn constant_fault(self) -> &'static str {
-        match self {
-            SortJudge::Route | SortJudge::Layered => "InvalidInput",
+        match self.judge {
+            SortJudge::Route | SortJudge::Layered if !self.located => "InvalidInput",
             _ => "UnknownSymbol",
         }
+    }
+
+    /// The order decoder refuses every definition before it reads a predicate
+    /// (Route/Wire.lean:240-242).
+    pub(crate) fn refuses_definitions(self) -> bool {
+        self.judge == SortJudge::Order
+    }
+
+    /// Only the core decoders read n-ary predicates (Core/Bridge.lean:36).
+    pub(crate) fn maximum_arity(self) -> usize {
+        if matches!(self.judge, SortJudge::Core | SortJudge::Layered) { 6 } else { 2 }
     }
 }
 
@@ -307,6 +324,9 @@ impl Environment {
     pub fn from_json(bytes: &[u8]) -> Result<Self> {
         Self::from_value(&loads_json(bytes)?)
     }
+    /// An environment as Lean's `environment` mode decodes it
+    /// (`Standalone.reportedEnvironment`), the mode Python validates every
+    /// environment by.
     pub fn from_value(data: &Value) -> Result<Self> {
         canonical_json(data)?;
         let route = data.get("language") == Some(&json!("ve.core@0.2"));
@@ -494,15 +514,31 @@ impl Environment {
         let mut canonical_data = data.clone();
         let mut predicate_flags = BTreeMap::new();
         let mut defined = Vec::new();
-        // The first fault Lean's family decoder reports only after the constants.
-        let mut deferred_sort_fault: Option<&'static str> = None;
+        // The first sort fault Lean's decoders report only after the constants'
+        // fields and sorts, and only after the constants in full.
+        let (mut after_constants, mut after_displays): (Option<&'static str>, Option<&'static str>) = (None, None);
         let definitions_profile = route && profiles.iter().any(|p| p == "definitions@0");
         let data_profile = route && profiles.iter().any(|p| p == "data@0");
         let layers = preds.values().any(|decl| ["defined", "functional", "total"]
             .iter().any(|key| decl.get(*key).is_some()));
-        let judge = SortJudge::of(route, order, &profiles, layers);
+        let table = SortTable::of(route, order, &profiles, layers);
         if route {
             located_argument_fault(preds, sorts, &profiles)?;
+        }
+        let refuse_definitions = || if table.refuses_definitions() && preds.values().any(|decl| decl.get("defined").is_some()) {
+            error("UnsupportedProfile", "definitions on the order family require an order definition layer")
+        } else {
+            Ok(())
+        };
+        // The order decoder checks its definitions, then the `$string` literals,
+        // before any predicate (lean/VE/Route/Wire.lean:240-245).
+        if table.judge == SortJudge::Order && !table.located {
+            refuse_definitions()?;
+            for decl in consts.values().filter(|decl| decl.get("sort") == Some(&json!("$string"))) {
+                if let Some(value) = constant_fields(decl, route, reports)?.get("description") {
+                    description(value)?;
+                }
+            }
         }
         for (name, decl) in preds {
             let flagged = decl.get("functional").is_some() || decl.get("total").is_some();
@@ -520,34 +556,35 @@ impl Environment {
             if decl.get("regulated").is_some() && flagged {
                 return error("InvalidInput", format!("RegulatedFlag: {name}"));
             }
-            if is_defined && order {
-                return error("UnsupportedProfile", "definitions on the order family require an order definition layer");
-            }
             let mut keys = vec!["arguments", "description"];
-            if has_definition { keys.push("defined"); }
+            // The frozen decoders have no definition field.
+            if has_definition && route { keys.push("defined"); }
             // The order decoder has no data flag fields (Order/Wire.lean:66).
-            let flag_fields = !matches!(judge, SortJudge::Order);
+            let flag_fields = table.judge != SortJudge::Order;
             if flag_fields && decl.get("functional").is_some() { keys.push("functional"); }
             if flag_fields && decl.get("total").is_some() { keys.push("total"); }
             if soft && decl.get("instruction_of").is_some() { keys.push("instruction_of"); }
             let d = entry_fields(decl, &keys, true,
                 route && profiles.iter().any(|p| p == "norms@0"))?;
-            let maximum_arity = if route && profiles.iter().any(|p| p == "nary@0") { 6 } else { 2 };
+            let maximum_arity = table.maximum_arity();
             let args = d["arguments"]
                 .as_array()
                 .filter(|a| (1..=maximum_arity).contains(&a.len()))
                 .ok_or_else(|| Error::new("InvalidInput", format!("predicate arity must be one to {maximum_arity}")))?;
             let mut signature = Vec::new();
+            // Every family decoder, the frozen ones too, reads the predicate's display
+            // fields before its sorts (Route/Wire.lean:160-172, Order/Wire.lean:66-74,
+            // Core/Bridge.lean:29-38).
+            let mut at_sort = None;
             for arg in args {
                 let s = arg.as_str().unwrap_or("");
                 if !arg.is_string() || !sorts.contains_key(s) {
-                    match judge.argument(s, data_profile, args.len(), has_definition) {
+                    match table.argument(s, data_profile, args.len(), has_definition) {
                         // `""` (a cell that is not a string) is never accepted.
                         SortVerdict::Accepted => {}
-                        SortVerdict::AtSort(code) => return sort_fault(code),
-                        SortVerdict::AfterConstants(code) => {
-                            deferred_sort_fault.get_or_insert(code);
-                        }
+                        SortVerdict::AtSort(code) => { at_sort.get_or_insert(code); }
+                        SortVerdict::AfterConstants(code) => { after_constants.get_or_insert(code); }
+                        SortVerdict::AfterDisplays(code) => { after_displays.get_or_insert(code); }
                     }
                 }
                 signature.push(s.to_owned());
@@ -571,6 +608,9 @@ impl Environment {
                 }
             }
             description(&d["description"])?;
+            if let Some(code) = at_sort {
+                return sort_fault(code);
+            }
             if let Some(raw) = d.get("regulated") {
                 let r = object(raw, "InvalidInput")?;
                 let role = r.get("role").map(|v| string(v, "InvalidInput")).transpose()?
@@ -645,16 +685,7 @@ impl Environment {
             }
         }
         let mut constants = BTreeMap::new();
-        for (name, decl) in consts {
-            let literal = route && decl.get("sort") == Some(&json!("$string"));
-            let mut keys = vec!["sort"];
-            if !literal || decl.get("description").is_some() { keys.push("description"); }
-            if reports && decl.get("verbalisation").is_some() { keys.push("verbalisation"); }
-            let d = fields(decl, &keys, "InvalidInput")?;
-            let s = string(&d["sort"], "UnknownSymbol")?;
-            if !sorts.contains_key(s) && !judge.constant_admits(s) {
-                return error(judge.constant_fault(), "unknown constant sort");
-            }
+        let display = |d: &serde_json::Map<String, Value>, s: &str| -> Result<()> {
             if let Some(value) = d.get("description") {
                 description(value)?;
             }
@@ -666,12 +697,47 @@ impl Environment {
                     return error("InvalidInput", "holder verbalisation reserved");
                 }
             }
+            Ok(())
+        };
+        // Each family decoder reads a constant's displays before its sort
+        // (Route/Wire.lean:193-196, Order/Wire.lean:76-83, Core/Bridge.lean:41-51).
+        // The frozen families' located decoder checks each constant's fields and
+        // sort alone first (Standalone.lean:969-977); the family decoder then
+        // reports a deferred sort before any constant's display.
+        let located = table.located;
+        let mut displays = Vec::new();
+        for (name, decl) in consts {
+            let d = constant_fields(decl, route, reports)?;
+            if !located {
+                display(d, d["sort"].as_str().unwrap_or(""))?;
+            }
+            let s = string(&d["sort"], table.constant_fault())?;
+            if !sorts.contains_key(s) && !table.constant_admits(s) {
+                return error(table.constant_fault(), "unknown constant sort");
+            }
+            if located { displays.push((d, s)); }
             constants.insert(name.clone(), s.into());
+        }
+        if located {
+            // The order decoder's definitions and literals come first here too
+            // (Route/Wire.lean:240-245).
+            if table.judge == SortJudge::Order {
+                refuse_definitions()?;
+                for (d, s) in displays.iter().filter(|(_, s)| *s == "$string") {
+                    display(d, s)?;
+                }
+            }
+            if let Some(code) = after_constants {
+                return sort_fault(code);
+            }
+            for (d, s) in displays {
+                display(d, s)?;
+            }
         }
         if route && constants.values().filter(|s| *s == "$string").count() > 64 {
             return error("ResourceLimit", "At most 64 declared $string literals");
         }
-        if let Some(code) = deferred_sort_fault {
+        if let Some(code) = after_constants.or(after_displays) {
             return sort_fault(code);
         }
         let version = if route {
@@ -775,6 +841,11 @@ impl Environment {
             let not_typed = || Error::new("InvalidInput",
                 format!("Definition {name}: the body is not a typed formula over the symbols below it"));
             let body = body.ok_or_else(not_typed)?;
+            // A definition ranges over declared sorts only: Lean's typing of a
+            // `$string` argument fails as the body's (Route/Wire.lean:206).
+            if signature.iter().any(|sort| !below.sorts.contains(sort)) {
+                return Err(not_typed());
+            }
             check_in_context(&below, &body, &signature).map_err(|_| not_typed())?;
             below.predicates.insert(name.clone(), signature.clone());
             // The generated biconditional has the AST limits of any formula,

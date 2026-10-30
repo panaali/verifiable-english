@@ -136,8 +136,38 @@ fn builtin_argument_sort_probes_take_lean_codes() {
          Some("UnknownSymbol")),
         // The route decoder's constant sort fault.
         (cell(v02(&["definitions@0", "relational-fol@0"]), "$int", undeclared), Some("InvalidInput")),
+        // Hunt 1: the order decoders read a literal's display before any sort.
+        (cell(v02(&["order@0", "relational-fol@0", "time@0"]), "$string",
+              json!({"c": {"sort": "$string", "description": ""}})), Some("InvalidInput")),
+        (cell(json!({"language": "ve.core@0.1", "profiles": ["order@0", "relational-fol@0"],
+                     "spec_revision": "ve-v0.1-order-2026-09-22"}), "$int",
+              json!({"c": {"sort": "$string", "description": ""}})), Some("InvalidInput")),
+        (cell(v02(&["definitions@0", "relational-fol@0"]), "$int", json!({"c": {"sort": 7, "description": "d"}})),
+         Some("InvalidInput")),
     ];
     for (i, (got, expected)) in cases.into_iter().enumerate() {
         assert_eq!(got.as_deref(), expected, "case {i}");
     }
+}
+
+/// Hunt 1: every family decoder reads a predicate's displays before its sorts,
+/// and the order decoder refuses a definition before any predicate.
+#[test]
+fn builtin_argument_sort_follows_display_and_definition_faults() {
+    let case = |profiles: &[&str], predicate: serde_json::Value| {
+        Environment::from_value(&json!({"language": "ve.core@0.2", "profiles": profiles,
+            "spec_revision": "ve-v0.2-expand2-2026-09-25",
+            "vocabulary": {"sorts": {}, "constants": {}, "predicates": {"p": predicate}}}))
+            .err().map(|e| e.code)
+    };
+    let order = ["definitions@0", "order@0", "relational-fol@0"];
+    assert_eq!(case(&order, json!({"arguments": ["$string"], "description": ""})).as_deref(),
+               Some("InvalidInput"));
+    assert_eq!(case(&order, json!({"arguments": ["$string"], "description": "d",
+        "defined": {"arguments": ["$string"], "body": ["top"]}})).as_deref(), Some("UnsupportedProfile"));
+    assert_eq!(case(&["closure@0", "nary@0", "relational-fol@0", "time@0"],
+                    json!({"arguments": ["$int"], "description": "d", "verbalisation": ""})).as_deref(),
+               Some("InvalidInput"));
+    assert_eq!(case(&["data@0", "relational-fol@0"], json!({"arguments": ["$string"], "description": "d",
+        "defined": {"arguments": ["$string"], "body": ["top"]}})).as_deref(), Some("InvalidInput"));
 }

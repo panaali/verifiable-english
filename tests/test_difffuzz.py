@@ -196,17 +196,35 @@ FROZEN_HEADS = ({"language": "ve.core@0", "profile": "relational-fol@0", "spec_r
 # Lean reports only after the constants.
 SORT_TABLE_CONSTANTS = {"none": {}, "malformed": {"bad": []},
                         "undeclared": {"c": {"sort": "nosuch", "description": "d"}}}
+# The forms the adversarial hunts found (REPORT.md section 25), each beside an unflagged `$int` or `$string`
+# predicate `p`: a constant whose sort is not a string; a `$string` literal with an empty description, which
+# the order decoder reads before any predicate; the predicate's own empty description or verbalisation, which
+# every family decoder reads before its sorts; a definition over the built-in sort beside `q` over it; and a
+# ternary signature.
+SORT_TABLE_FORMS = {
+    "constant-sort-not-a-string": lambda p: {"predicates": {"p": p}, "constants": {"c": {"sort": 7, "description": "d"}}},
+    "literal-empty-description": lambda p: {"predicates": {"p": p},
+                                            "constants": {"c": {"sort": "$string", "description": ""}}},
+    "empty-description": lambda p: {"predicates": {"p": {**p, "description": ""}}},
+    "empty-verbalisation": lambda p: {"predicates": {"p": {**p, "verbalisation": ""}}},
+    "defined": lambda p: {"predicates": {"p": {**p, "defined": {"arguments": p["arguments"],
+                                                                "body": ["unary", "q", ["var", 0]]}},
+                                         "q": p}},
+    "ternary": lambda p: {"predicates": {"p": {**p, "arguments": ["thing", "thing", *p["arguments"]]}}},
+}
 
 
-def _sort_cell(head, sort, constants, flagged):
+def _sort_cell(head, sort, constants, flagged, form=None):
     """One cell of the truth table: predicate `p` over `sort` (binary after a declared sort, with data flags,
-    when `flagged`), beside the named constants."""
+    when `flagged`), beside the named constants, or else in one of the hunts' forms."""
     predicate = {"arguments": ["thing", sort] if flagged else [sort], "description": "d"}
     if flagged:
         predicate.update(functional=True, total=True)
-    sorts = {"thing": {"description": "d"}} if flagged or sort == "thing" else {}
-    return {**head, "vocabulary": {"sorts": sorts, "predicates": {"p": predicate},
-                                   "constants": deepcopy(SORT_TABLE_CONSTANTS[constants])}}
+    vocabulary = {"predicates": {"p": predicate}, "constants": deepcopy(SORT_TABLE_CONSTANTS[constants])}
+    if form is not None:
+        vocabulary = {"constants": {}, **SORT_TABLE_FORMS[form](predicate)}
+    uses_thing = flagged or sort == "thing" or form == "ternary"
+    return {**head, "vocabulary": {"sorts": {"thing": {"description": "d"}} if uses_thing else {}, **vocabulary}}
 
 
 def _admitted_profile_lists():
@@ -233,15 +251,21 @@ BUILTIN_SORT_PROBES = {
 }
 
 
-def test_builtin_argument_sort_truth_table_agrees_on_every_profile_list(built):
-    """Rust's code for a `$int` or `$string` predicate argument equals Lean's and Python's on every profile list
-    the table admits and on each frozen envelope, beside no constant, a malformed one or one of an undeclared
-    sort, and flagged wherever data@0 is listed (with a declared-sort control in each row). A list Rust's own
-    profile gate refuses is refused alike for every cell, whatever the sort."""
+def _sort_table_cells():
     heads = [{**V02, "profiles": listed} for listed in _admitted_profile_lists()] + list(FROZEN_HEADS)
-    cells = [(head, sort, constants, flagged) for head in heads for sort in ("$int", "$string", "thing")
+    cells = [(head, sort, constants, flagged, None) for head in heads for sort in ("$int", "$string", "thing")
              for constants in SORT_TABLE_CONSTANTS for flagged in (False, True)
              if not flagged or "data@0" in head.get("profiles", ())]
+    return cells + [(head, sort, "none", False, form) for head in heads for sort in ("$int", "$string")
+                    for form in SORT_TABLE_FORMS]
+
+
+def test_builtin_argument_sort_truth_table_agrees_on_every_profile_list(built):
+    """Rust's code for a `$int` or `$string` predicate argument equals Lean's and Python's on every profile list
+    the table admits and on each frozen envelope: beside no constant, a malformed one or one of an undeclared
+    sort, flagged wherever data@0 is listed (with a declared-sort control in each row), and in each form the
+    hunts found. A list Rust's own profile gate refuses is refused alike for every cell, whatever the sort."""
+    cells = _sort_table_cells()
     roots = [_sort_cell(*cell) for cell in cells]
     assert all(probe in roots for probe in BUILTIN_SORT_PROBES.values())
     surface = df.SURFACES["environment"]()
@@ -254,10 +278,10 @@ def test_builtin_argument_sort_truth_table_agrees_on_every_profile_list(built):
     finally:
         surface.close()
     code = lambda answer: answer.get("code", answer["outcome"])
-    control = {json.dumps(head, sort_keys=True): i for i, (head, sort, constants, flagged) in enumerate(cells)
-               if (sort, constants, flagged) == ("thing", "none", False)}
+    control = {json.dumps(head, sort_keys=True): i for i, (head, sort, constants, flagged, form) in enumerate(cells)
+               if (sort, constants, flagged, form) == ("thing", "none", False, None)}
     differs, gated = [], set()
-    for i, (head, sort, constants, flagged) in enumerate(cells):
+    for i, (head, *_) in enumerate(cells):
         assert code(python[i]) == code(lean[i]), (roots[i], python[i], lean[i])
         if i not in rust:
             continue
