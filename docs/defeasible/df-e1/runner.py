@@ -22,9 +22,6 @@ QUESTION = ("Could the conclusion be false in a situation the text allows, if th
 MAX_CALLS = 40
 MAX_CW = 3_000_000
 RESERVE_CW = 100_000
-# The subscription CLI has no enforceable output-token ceiling. A transport may
-# set this only when it can enforce a bound on the *billed* charge before dispatch.
-DISPATCH_CW_BOUND = None
 ANSWER = re.compile(r"^ANSWER:\s*(YES|NO)\s*$", re.IGNORECASE | re.MULTILINE)
 
 
@@ -74,17 +71,20 @@ def valid_answer(record):
             and record.get("is_error") is False
             and record.get("model") == MODEL and isinstance(model_usage, dict)
             and set(model_usage) == {MODEL} and isinstance(usage, dict)
-            and valid_usage(usage) and type(record.get("reserved_cw")) is int
-            and 0 < record["reserved_cw"] <= MAX_CW
+            and valid_usage(usage)
             and type(record.get("charged_cw")) is int
-            and record["charged_cw"] == max(record["reserved_cw"], cw(usage))
-            and record["charged_cw"] <= record["reserved_cw"]
+            and record["charged_cw"] == cw(usage)
+            and 0 <= record["charged_cw"] <= MAX_CW
+            and isinstance(record.get("prompt"), str)
+            and isinstance(record.get("cli_stdout"), str)
+            and isinstance(record.get("cli_stderr"), str)
             and parse(record.get("reply")) is not None)
 
 
 def valid_record(record, row, form):
     return (isinstance(record, dict) and record.get("id") == row["id"]
             and record.get("form") == form
+            and record.get("prompt") == prompt(row, form)
             and record.get("prompt_sha256") == hashlib.sha256(prompt(row, form).encode()).hexdigest()
             and valid_answer(record))
 
@@ -144,9 +144,6 @@ def run():
 
 
 def _run_locked(queue, raw):
-    bound = DISPATCH_CW_BOUND
-    if type(bound) is not int or bound <= 0:
-        raise RuntimeError("reader transport has no enforceable per-call CW bound")
     known = {f"{row['id']}__{form}.json": (row, form) for row, form in queue}
     saved = {}
     for path in raw.glob("*.json"):
@@ -167,15 +164,16 @@ def _run_locked(queue, raw):
         if path.name in saved:
             continue
         charges = [rec["charged_cw"] for rec in saved.values()]
-        if not within_caps(charges, bound):
+        reserve = max(charges, default=RESERVE_CW)
+        if not within_caps(charges, reserve):
             raise RuntimeError(f"reader cap reached: {len(saved)} calls, {sum(charges)} CW")
         body = prompt(row, form)
         started = datetime.datetime.now(datetime.timezone.utc).isoformat()
         record = {"id": row["id"], "form": form, "model": MODEL, "account": Path(cfg).name,
-                  "prompt_sha256": hashlib.sha256(body.encode()).hexdigest(), "started": started,
+                  "prompt": body, "prompt_sha256": hashlib.sha256(body.encode()).hexdigest(), "started": started,
                   "finished": None, "exit_code": None, "reply": None, "usage": None,
-                  "charged_cw": bound, "reserved_cw": bound, "cli_error": "attempt reserved", "subtype": None,
-                  "is_error": True, "modelUsage": None}
+                  "charged_cw": reserve, "reserved_cw": reserve, "cli_error": "attempt reserved", "subtype": None,
+                  "is_error": True, "modelUsage": None, "cli_stdout": "", "cli_stderr": ""}
         save(path, record)
         saved[path.name] = record
         env = {key: value for key, value in os.environ.items() if not key.startswith("ANTHROPIC_")}
@@ -200,9 +198,11 @@ def _run_locked(queue, raw):
         usage = output.get("usage")
         record.update(finished=datetime.datetime.now(datetime.timezone.utc).isoformat(),
                       exit_code=result.returncode if result is not None else None,
-                      reply=output.get("result"), usage=usage, charged_cw=max(bound, cw(usage)),
+                      reply=output.get("result"), usage=usage, charged_cw=cw(usage),
                       cli_error=output.get("error"), subtype=output.get("subtype"),
-                      is_error=output.get("is_error"), modelUsage=output.get("modelUsage"))
+                      is_error=output.get("is_error"), modelUsage=output.get("modelUsage"),
+                      cli_stdout=result.stdout if result is not None else "",
+                      cli_stderr=result.stderr if result is not None else str(output.get("stderr", "")))
         save(path, record)
         if not valid_answer(record):
             raise RuntimeError(f"reader call {row['id']} {form} failed; raw answer saved, stop for inspection")

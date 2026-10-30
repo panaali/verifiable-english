@@ -32,6 +32,16 @@ CHANGELOG = {"v1_0": "2023-09-19", "v2_0": "2024-10-15", "v2_1": "2025-03-31", "
              "v3_0": "2026-02-24", "v3_1": "2026-04-02", "v3_2": "2026-04-29", "v3_3": "2026-05-26",
              "v3_4": "2026-07-08"}
 
+# Each date question that asks whether a policy requirement holds has one
+# source rule. The rule header owns its RS0/N1 classification; these rows own
+# only the question's calendar facts and the link to that rule.
+DATE_QUESTIONS = {
+    "D3a": ("2026-05-20", "2026-07-01", "30", "publication within", "f8-public"),
+    "D3b": ("2026-06-10", "2026-07-01", "30", "publication within", "f8-public"),
+    "D4": ("2026-08-03", "2026-09-02", "30", "deadline by", "f9-internal"),
+    "D5": ("2026-09-01", "2026-09-08", "7", "deadline by", "f16-share-one-week"),
+}
+
 
 # --- D2: harm classes and might cells (P3) --------------------------------------------------------------------------
 
@@ -158,10 +168,9 @@ def d3():
     # D3b: the coverage date is "no more than 30 days prior to the publication" (F8): the publication is no later
     # than 30 days after it. D4, D5: the deadline ("Within 30 days" of F9; "within one week" of F16, 7 days) is no
     # later than the day asked about.
-    counts = {"D3b": ("2026-06-10", "2026-07-01", "30", "publication within"),
-              "D4": ("2026-08-03", "2026-09-02", "30", "deadline by"), "D5": ("2026-09-01", "2026-09-08", "7",
-                                                                             "deadline by")}
-    for item, (start, day, days, question) in counts.items():
+    for item, (start, day, days, question, _) in DATE_QUESTIONS.items():
+        if item == "D3a":
+            continue  # the failing coverage-date example is checked by date_answer
         env = date_environment(("start_day", "limit_day"))
         facts = [_q(["date_on", _day("start_day"), ["date", start]]),
                  _q(["shift_days", _day("limit_day"), _day("start_day"), days])]
@@ -270,7 +279,7 @@ def identifier_lint():
     return {"violations": violations, "rules_per_source": per_source}
 
 
-def invention_audit():
+def invention_audit(extra_rules=(), extra_thresholds=()):
     """M6: every rule and premise is traced to a span: it has a source quote and a unit carries it (as its content,
     a restatement or a reading); every default rule is the default reading of a force or aim set; every permission
     is the P reading of an RS6 set; every threshold is a premise on its own row's unit; the vocabulary has no order,
@@ -285,6 +294,7 @@ def invention_audit():
                     readings.setdefault(part, []).append((harness, choice))
     blocks = list(T.rule_blocks()) + [b for b, _ in T.facts()]
     untraced = [b.id for b in blocks if not b.source.strip() or (b.id not in placed and b.id not in readings)]
+    untraced += sorted(set(extra_rules) - {b.id for b in blocks})
     defaults, permissions = [], []
     for block in T.rule_blocks():
         norm = json.loads(T.parsed_rule(block.id))
@@ -299,7 +309,8 @@ def invention_audit():
     banned = [p for p in V.environment()["vocabulary"]["predicates"]
               if re.search(r"leads_to|causes|above|ranked|more_severe|order", p)]
     return {"untraced": untraced, "defaults_untraced": defaults, "permissions_untraced": permissions,
-            "thresholds_without_premise": sorted({f"threshold-{k}" for k in ("t1", "t2", "t3", "t4")} - thresholds),
+            "thresholds_without_premise": sorted(({f"threshold-{k}" for k in ("t1", "t2", "t3", "t4")}
+                                                  | set(extra_thresholds)) - thresholds),
             "order_or_causal_predicates": banned,
             "narrowings": {"N1": "every RS0 statement is a commitment (no set)", "N2": "the changelog for v1.0 to "
                            "v3.3 is history: LABELLED, no rule", "N3": "3.6.1 \"may not\" is a prohibition "

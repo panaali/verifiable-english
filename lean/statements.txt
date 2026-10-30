@@ -43845,6 +43845,10 @@ theorem VE.Scope.admitted_ids_nodup
   ∀ (D : VE.Scope.SDoc), VE.Scope.admitBlock D = Except.ok () → (List.map (fun x => x.id) D.governors).Nodup
   -- uses VE.Scope.Governor.id@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.SDoc.governors@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.admitBlock@VE.Scope.Govern
   -- expr 3613193850
+theorem VE.Scope.admitted_list_names_nodup
+  ∀ (D : VE.Scope.SDoc), VE.Scope.admitBlock D = Except.ok () → (List.map (fun x => x.fst.name) D.listNames).Nodup
+  -- uses VE.Discourse.ContentName.name@VE.Discourse.Manifest VE.Discourse.ContentName@VE.Discourse.Manifest VE.Scope.SDoc.listNames@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.admitBlock@VE.Scope.Govern
+  -- expr 296793020
 theorem VE.Scope.affected_drop
   ∀ (D : VE.Scope.SDoc) (g : VE.Scope.Governor),
     g ∈ D.governors →
@@ -44539,6 +44543,16 @@ theorem VE.Scope.label_reach_iff
           ∀ (u : String), u ∈ us ↔ VE.Layout.ItemUnit D.layout i u
   -- uses VE.Layout.ItemUnit@VE.Layout.List VE.Layout.Unit.id@VE.Layout.List VE.Layout.Unit@VE.Layout.List VE.Scope.Reach.label@VE.Scope.Govern VE.Scope.SDoc.layout@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.covered@VE.Scope.Govern
   -- expr 1985008681
+theorem VE.Scope.listName_run
+  ∀ (D : VE.Scope.SDoc),
+    VE.Scope.admitBlock D = Except.ok () →
+      ∀ (n : VE.Discourse.ContentName) (lead unit : String),
+        (n, lead, unit) ∈ D.listNames →
+          ∀ (us : List String),
+            VE.Scope.covered D (VE.Scope.Reach.listName n.name) = Except.ok us →
+              VE.Layout.listRun D.layout lead = Except.ok us ∧ n.units = us
+  -- uses VE.Discourse.ContentName.name@VE.Discourse.Manifest VE.Discourse.ContentName.units@VE.Discourse.Manifest VE.Discourse.ContentName@VE.Discourse.Manifest VE.Layout.listRun@VE.Layout.List VE.Scope.Reach.listName@VE.Scope.Govern VE.Scope.SDoc.layout@VE.Scope.Govern VE.Scope.SDoc.listNames@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.admitBlock@VE.Scope.Govern VE.Scope.covered@VE.Scope.Govern
+  -- expr 2660182922
 theorem VE.Scope.list_singleton_of_drop_empty
   ∀ (gs : List VE.Scope.Governor) (g : VE.Scope.Governor),
     (List.map (fun x => x.id) gs).Nodup → g ∈ gs → List.filter (fun x => x.id != g.id) gs = [] → gs = [g]
@@ -44664,6 +44678,11 @@ theorem VE.Scope.newContent_src
       ∀ (s : String), VE.Scope.HasStr s (VE.Scope.newContent c o) → VE.Scope.HasStr s c ∨ VE.Scope.HasStr s o
   -- uses VE.Scope.HasStr@VE.Scope.Govern VE.Scope.JsonWF@VE.Scope.Govern VE.Scope.newContent@VE.Scope.Govern
   -- expr 2020678943
+theorem VE.Scope.nodup_map_unique
+  ∀ {α β : Type} [DecidableEq β] (f : α → β) (xs : List α),
+    (List.map f xs).Nodup → ∀ (a b : α), a ∈ xs → b ∈ xs → f a = f b → a = b
+  -- uses
+  -- expr 2998856259
 theorem VE.Scope.nonrule_refused
   ∀ (D : VE.Scope.SDoc) (g : VE.Scope.Governor),
     g ∈ D.governors →
