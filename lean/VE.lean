@@ -134,6 +134,8 @@ import VE.Calc.IdentityExamples
 import VE.Arith.Examples
 import VE.Arith.BoundedExamples
 import VE.Arith.CompleteExamples
+import VE.Arith.Deciding
+import VE.Arith.DecidingExamples
 import VE.Calc.Lower
 import VE.Calc.LowerExamples
 import VE.Calc.Data
