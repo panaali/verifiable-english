@@ -1,0 +1,7 @@
+trust_mutants: 8 definitions, 95 mutants (24 to run), 4 jobs, base 6949746bf291
+SURVIVOR lean/VE/Compose/Dispatch.lean:829 VE.Compose.layersApart (G[V], trusted) list-first: documentLayers -> (documentLayers.take 1)
+SURVIVOR lean/VE/Compose/Dispatch.lean:829 VE.Compose.layersApart (G[V], trusted) list-last: documentLayers -> (documentLayers.reverse.take 1)
+SURVIVOR lean/VE/Compose/Dispatch.lean:879 VE.Compose.layerGate (G[V], trusted) list-last: profileTable.filter (documentLayers.contains ·.profile) -> ((profileTable.filter (documentLayers.contains ·.profile)).reverse.take 1)
+trust_mutants: 13 KILLED, 3 SURVIVOR, 0 UNKNOWN, 2 INVALID, 6 ALLOWED, 0 NOT RUN, 71 OTHER SHARD in 3739 s
+trust_mutants: D[V], trusted: 6 KILLED, 3 ALLOWED, 28 OTHER SHARD
+trust_mutants: G[V], trusted: 7 KILLED, 3 SURVIVOR, 2 INVALID, 3 ALLOWED, 43 OTHER SHARD
