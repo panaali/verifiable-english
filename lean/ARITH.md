@@ -1,6 +1,6 @@
 # `arith@0` Lean core (`lean/VE/Arith/*`)
 
-Specification: [docs/spec/math-evidence.md](../docs/spec/math-evidence.md) §§12.1–12.3 and the ME-12 row of
+Specification: [docs/spec/math-evidence.md](../docs/spec/math-evidence.md) §§12.1–12.3, 12.5's deciding value and the ME-12 row of
 [docs/spec/math-evidence-PLAN.md](../docs/spec/math-evidence-PLAN.md). `arith@0` states facts about whole numbers
 and integers: "for every whole number n from 1 through 161, there is a prime p with n < p and p at most twice n".
 ME-12 is split by the size rule: me-12a is the statement and its meaning; me-12aa adds the budgeted evaluator
@@ -18,6 +18,8 @@ wire, the runner, the rows and the mode (spec 12.5). Nothing public reads the co
 | `Bounded.lean` | the budgeted evaluator: `Term.evalB` and `Formula.evalB` (one unit per node visit and each value's bit length), `maxSteps`, `decideBounded` and a statement's row `arithOutcome` |
 | `BoundedExamples.lean` | the evaluation fixtures M-1, M-1b, M-2, M-3, M-4, M-4b, M-4x and M-5 at each budget boundary, one fixture per clause of the evaluator, and the chains B-1 to B-4 the budget stops |
 | `CompleteExamples.lean` | each statement's work (the first budget that decides it) at, just under and just over it, every larger budget keeping the answer, and each hypothesis of completeness on its refusing side |
+| `Deciding.lean` | the deciding value (spec 12.5): `decidingValue`, the first value at which a statement's outermost "for every … from lo through hi" fails or "there is … from lo through hi" holds, by `decidingLoop`, `quantLoop`'s loop returning the value where it stops |
+| `DecidingExamples.lean` | each deciding value on both sides, at the ends of the range and the budget, and M-6: VE's `prime` against `IsPrime` (decided by `isPrimeB`) on 0 through 400 |
 | `Examples.lean` | the prime vocabulary, Bertrand's postulate (`bertrand`, `IsPrime`, `bertrand_means_iff`), one example per clause of the meaning in both directions, the fixture statements M-1 to M-5 and the admission guards |
 
 ## The meaning, in plain words
@@ -73,3 +75,7 @@ the wire's (me-12b).
 * `decideBounded_covered` and `decideBounded_complete`: a bounded statement over well-formed definitions, with every
   variable bound, has an answer and a number of units fixed by the statement; every budget at least that number
   returns both. So it is decided once the budget covers its work.
+* `decidingValue_all` and `decidingValue_ex`: a deciding value lies in the range, and it is the first counterexample of
+  the "for every" (every value before it passes) or the first witness of the "there is" (none before it holds).
+* `decidingValue_of_fails`: a "for every" whose row fails always has a deciding value, because the loop stops exactly
+  when the evaluator's stops early, after the same units (`decidingLoop_iff`).

@@ -328,6 +328,7 @@
 'VE.Arith.Agrees.funs' does not depend on any axioms
 'VE.Arith.Agrees.preds' does not depend on any axioms
 'VE.Arith.Examples.bertrand_means_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Arith.Examples.isPrimeB_iff' depends on axioms: [propext, Quot.sound]
 'VE.Arith.Examples.primeBody_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Arith.Extends.funs' does not depend on any axioms
 'VE.Arith.Extends.preds' does not depend on any axioms
@@ -369,6 +370,12 @@
 'VE.Arith.decideBounded_mono' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Arith.decideBounded_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Arith.decideBounded_work' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Arith.decidingAt_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Arith.decidingLoop_iff' depends on axioms: [propext, Quot.sound]
+'VE.Arith.decidingLoop_sound' depends on axioms: [propext, Quot.sound]
+'VE.Arith.decidingValue_all' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Arith.decidingValue_ex' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Arith.decidingValue_of_fails' depends on axioms: [propext, Quot.sound]
 'VE.Arith.foldl_rel' does not depend on any axioms
 'VE.Arith.log2_le_of_lt' depends on axioms: [propext]
 'VE.Arith.opEnv_eq_list' depends on axioms: [propext, Classical.choice, Quot.sound]
