@@ -1,0 +1,4 @@
+VE/Acts/Linearize.lean: declarations.txt was not compiled from this source; rerun tools/lean_statements.py
+VE/Acts/RenderExamples.lean: declarations.txt was not compiled from this source; rerun tools/lean_statements.py
+lean/declarations.txt was not compiled from lean/VE/Acts/Linearize.lean; rerun tools/lean_statements.py
+lean/declarations.txt was not compiled from lean/VE/Acts/RenderExamples.lean; rerun tools/lean_statements.py
