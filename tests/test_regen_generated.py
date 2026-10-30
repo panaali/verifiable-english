@@ -205,6 +205,9 @@ def test_audit_manifests_are_generated_from_the_declaration_list():
 # Refreshed at merge: a clean merge keeps one side's copy of a derived file; the train rewrites these entries
 
 
+BUILD_ENTRIES = {"lake-build", "checker-pins"}
+
+
 def test_the_entries_refreshed_at_merge_are_tree_only_writers(capsys):
     """The merge train refreshes the `at_merge` entries on every candidate, under its queue lock: each is a
     `regenerate` file with a writer and a check that start no Lean service, and `--names --at-merge` lists them."""
@@ -213,14 +216,11 @@ def test_the_entries_refreshed_at_merge_are_tree_only_writers(capsys):
     for entry in R.GENERATED:
         if entry.at_merge:
             assert entry.merge == "regenerate" and entry.write and entry.check and not entry.service, entry.name
-            assert BUILD_ENTRIES.isdisjoint({entry.name}), entry.name
+            assert entry.name not in BUILD_ENTRIES, entry.name
     assert R.main(["--names", "--at-merge"]) == 0
     assert capsys.readouterr().out.split() == at_merge
     assert R.main(["--names", "--at-merge", "--only", "history-tests", "--only", "lake-build"]) == 0
     assert capsys.readouterr().out.split() == ["history-tests"]
-
-
-BUILD_ENTRIES = {"lake-build", "checker-pins"}
 
 
 # merge_json
