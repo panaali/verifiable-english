@@ -1,0 +1,1 @@
+- `docs/test-tail/simulate.py` — Simulate xdist's `load` scheduler and tools/test_schedule.py's LongestFirst on a measured run's tests.

@@ -1,0 +1,1 @@
+- `docs/lean-first/b13a/latency.py` — Measure batch 13a's warm parse and certificate service calls in this checkout.

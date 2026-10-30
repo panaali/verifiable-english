@@ -1454,6 +1454,27 @@
    "reason": "qt-a3d: VE/Cardinality/Document.lean S +7 (CardReport, CardReport.Sound), VE/Cardinality/Run.lean V +4 (runCase's document case); K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3d, 2026-10-18",
    "commit": "4ea3dd8cbd2adeb5050c1ae3d25f0f4b93dbd93f"
+  },
+  {
+   "class": "V",
+   "lines": 48,
+   "reason": "sc-5rc: VE/Service/Document.lean +31 D[V]; ResponseShape/Schemas/Document.lean +17 G[V]; K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-5rc, 2026-10-29",
+   "commit": "471ccc7e4cb9f163cdcbd6c3bf66f3462d6d2b6d"
+  },
+  {
+   "class": "V",
+   "lines": 2,
+   "reason": "sc-5rc: VE/Service/Document.lean +31, ResponseShape/Schemas/Document.lean +19",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-5rc, 2026-10-29",
+   "commit": "471ccc7e4cb9f163cdcbd6c3bf66f3462d6d2b6d"
+  },
+  {
+   "class": "V",
+   "lines": 7,
+   "reason": "sc-5rc review F1: VE/Service/Document.lean +36 D[V], ResponseShape/Schemas/Document.lean +21 G[V]; citations preserved in composed readings; K +0, S +0; R16 ties pass registered in FOLLOW-UPS.md",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-5rc, 2026-10-18",
+   "commit": "314b23a42c211ffcd68bd6070fa7ba3770f3a5b0"
   }
  ]
 }

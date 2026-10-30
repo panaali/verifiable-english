@@ -1,0 +1,5 @@
+- `docs/lean-first/b15b/capture_metrics.py` — Freeze main..HEAD implementation metrics before the report commit.
+- `docs/lean-first/b15b/difffuzz_ab.py` — The differential fuzzer at the base and the head of lean-first batch 15b (gate item 2: its baseline must not grow).
+- `docs/lean-first/b15b/latency.py` — Latency of the public operations lean-first batch 15b changes (gate item 4), in one checkout.
+- `docs/lean-first/b15b/mutants.py` — Seeded bugs of lean-first batch 15b, one per behaviour the batch claims (build checklist 13).
+- `docs/lean-first/b15b/rule3.py` — The rule-3 condition of lean-first batch 15b (docs/LEAN-FIRST-PLAN.md, section 5.2 row 15b; DRI answer 2/10).

@@ -1,0 +1,6 @@
+- `docs/lean-first/b2/capture_policy.py` — Capture the agent-policy harness's actual Rust evaluation calls for rule 3.
+- `docs/lean-first/b2/difffuzz_ab.py` — The differential fuzzer at the base and the head of lean-first batch 2 (gate item 2: its baseline must not grow).
+- `docs/lean-first/b2/latency.py` — Per-call latency at the base and the head of lean-first batch 2 (F2 handles, F6 the persistent Rust checker).
+- `docs/lean-first/b2/lean_seeds.py` — Lean-side seeded bugs of lean-first batch 2: each is built into `ve_service` (its theorem's proof stubbed, since the theorem itself refuses the seed at build t…
+- `docs/lean-first/b2/rule3.py` — The rule-3 measurement of lean-first batch 2 (docs/LEAN-FIRST-PLAN.md, section 5.2 row 2; DRI answer 2/10).
+- `docs/lean-first/b2/seeds.py` — Python-side seeded bugs of lean-first batch 2: plant one at a time, run the tests that must catch it, revert (git checkout).
