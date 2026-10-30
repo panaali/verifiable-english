@@ -1,0 +1,37 @@
+[
+ {
+  "id": "drop-one-model",
+  "file": "usecases/agent-policy/check.py",
+  "change": "replay_rust: cases = exported.get(\"rust\", [])[1:]",
+  "test": "tests/test_agent_policy_rerun.py::test_rust_replay_of_the_rerun_equals_the_committed_m9",
+  "result": "failed, then restored"
+ },
+ {
+  "id": "drop-kind",
+  "file": "usecases/agent-policy/check.py",
+  "change": "replay_rust: the payload loses \"kind\": \"evaluate-budgeted\"",
+  "test": "tests/test_agent_policy.py::test_rust_evaluates_the_model_cases_and_counts_each_answer",
+  "result": "failed, then restored"
+ },
+ {
+  "id": "unbound-id",
+  "file": "usecases/agent-policy/check.py",
+  "change": "rust_values: the row[\"id\"] == expected check removed",
+  "test": "tests/test_agent_policy.py::test_rust_rows_in_the_wrong_order_are_refused",
+  "result": "failed, then restored"
+ },
+ {
+  "id": "any-value",
+  "file": "usecases/agent-policy/check.py",
+  "change": "replay_rust: got is not None replaces got is case[\"value\"]",
+  "test": "tests/test_agent_policy.py::test_a_different_rust_value_is_a_disagreement_not_an_agreement",
+  "result": "failed, then restored"
+ },
+ {
+  "id": "budget-agrees",
+  "file": "usecases/agent-policy/check.py",
+  "change": "replay_rust: got is None also counts as agreement",
+  "test": "tests/test_agent_policy.py::test_an_exhausted_budget_in_the_rust_replay_never_counts_as_agreement",
+  "result": "failed, then restored"
+ }
+]

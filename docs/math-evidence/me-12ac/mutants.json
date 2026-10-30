@@ -1,0 +1,135 @@
+{
+ "note": "Hand mutants of me-12ac (Lean only). Each edit is planted alone, at the one occurrence of `before`, in a copy of Deciding.lean joined with DecidingExamples.lean into one file, which `lake env lean` checks whole: Lean goes on past a broken proof, so one run lists the broken proofs (`proofs`) and the failing #guard lines of the committed fixture file (`test`). The control (no mutant) has no error. Line numbers are those of the committed files. The runner was a scratch script (not committed). tools/trust_mutants.py selects 0 definitions (trust-mutants.json): every new definition is C or T, so trust is +0.",
+ "control": {
+  "errors": []
+ },
+ "mutants": [
+  {
+   "id": "S1",
+   "kind": "seeded",
+   "definition": "VE.Arith.decidingLoop",
+   "file": "lean/VE/Arith/Deciding.lean",
+   "bug": "the loop returns the last decisive value instead of the first",
+   "before": "else some (i, w')",
+   "after": "else (decidingLoop universal step n (i + 1) w').orElse fun _ => some (i, w')",
+   "proofs": [
+    "decidingLoop_sound (Deciding.lean:59)",
+    "decidingLoop_iff (Deciding.lean:75)"
+   ],
+   "test": [
+    "lean/VE/Arith/DecidingExamples.lean:54 (first witness 11 of 8 … 20, not 19)",
+    "lean/VE/Arith/DecidingExamples.lean:60 (first counterexample 7 of 1 … 10, not 10)",
+    "lean/VE/Arith/DecidingExamples.lean:63",
+    "lean/VE/Arith/DecidingExamples.lean:84"
+   ],
+   "killed": true
+  },
+  {
+   "id": "S2",
+   "kind": "seeded",
+   "definition": "VE.Arith.decidingAt",
+   "file": "lean/VE/Arith/Deciding.lean",
+   "bug": "off-by-one start index: the loop starts at lo + 1",
+   "before": "(h - l + 1).toNat l w",
+   "after": "(h - l + 1).toNat (l + 1) w",
+   "proofs": [
+    "decidingAt_sound (Deciding.lean:100-101)",
+    "decidingValue_of_fails (Deciding.lean:143)"
+   ],
+   "test": [
+    "lean/VE/Arith/DecidingExamples.lean:50 (M-5's 1)",
+    "lean/VE/Arith/DecidingExamples.lean:54",
+    "lean/VE/Arith/DecidingExamples.lean:60",
+    "lean/VE/Arith/DecidingExamples.lean:62",
+    "lean/VE/Arith/DecidingExamples.lean:63",
+    "lean/VE/Arith/DecidingExamples.lean:67",
+    "lean/VE/Arith/DecidingExamples.lean:73",
+    "lean/VE/Arith/DecidingExamples.lean:78",
+    "lean/VE/Arith/DecidingExamples.lean:84",
+    "lean/VE/Arith/DecidingExamples.lean:90"
+   ],
+   "killed": true
+  },
+  {
+   "id": "S3",
+   "kind": "seeded",
+   "definition": "M-6 #guard",
+   "file": "lean/VE/Arith/DecidingExamples.lean",
+   "bug": "M-6's range cut to 0 … 399 (π(399) = 78 too, so the guard's count of values, 401, fails)",
+   "before": "agreeCount primeDefs 401 = (401, 78)",
+   "after": "agreeCount primeDefs 400 = (401, 78)",
+   "proofs": [],
+   "test": [
+    "lean/VE/Arith/DecidingExamples.lean:33 (M-6)"
+   ],
+   "killed": true
+  },
+  {
+   "id": "D1",
+   "kind": "definition",
+   "definition": "VE.Arith.decidingValue",
+   "file": "lean/VE/Arith/Deciding.lean",
+   "bug": "an existential read as a universal",
+   "before": "limit false lo hi ψ).map",
+   "after": "limit true lo hi ψ).map",
+   "proofs": [
+    "decidingValue_ex (Deciding.lean:120)"
+   ],
+   "test": [
+    "lean/VE/Arith/DecidingExamples.lean:54",
+    "lean/VE/Arith/DecidingExamples.lean:63",
+    "lean/VE/Arith/DecidingExamples.lean:67",
+    "lean/VE/Arith/DecidingExamples.lean:73"
+   ],
+   "killed": true
+  },
+  {
+   "id": "D2",
+   "kind": "definition",
+   "definition": "VE.Arith.Examples.isPrimeB",
+   "file": "lean/VE/Arith/DecidingExamples.lean",
+   "bug": "divisors start at 3, so 4 is prime",
+   "before": "fun d => d < 2 ||",
+   "after": "fun d => d < 3 ||",
+   "proofs": [
+    "isPrimeB_iff (DecidingExamples.lean:16-17)"
+   ],
+   "test": [
+    "lean/VE/Arith/DecidingExamples.lean:21 (0, 1, 2, 3, 4, 397, 399, 400)",
+    "lean/VE/Arith/DecidingExamples.lean:33 (M-6)",
+    "lean/VE/Arith/DecidingExamples.lean:34"
+   ],
+   "killed": true
+  },
+  {
+   "id": "D3",
+   "kind": "definition",
+   "definition": "VE.Arith.Examples.decIsPrime",
+   "file": "lean/VE/Arith/DecidingExamples.lean",
+   "bug": "2 decided not prime (needs a sorry: the instance's type is its proof)",
+   "before": ":= decidable_of_iff _ (isPrimeB_iff p)",
+   "after": ":= if p = 2 then isFalse sorry else decidable_of_iff _ (isPrimeB_iff p)",
+   "proofs": [],
+   "test": [
+    "lean/VE/Arith/DecidingExamples.lean:21",
+    "lean/VE/Arith/DecidingExamples.lean:33 (M-6)",
+    "lean/VE/Arith/DecidingExamples.lean:34"
+   ],
+   "killed": true
+  },
+  {
+   "id": "D4",
+   "kind": "definition",
+   "definition": "VE.Arith.Examples.vePrime (T)",
+   "file": "lean/VE/Arith/DecidingExamples.lean",
+   "bug": "VE's prime within 1,000 units instead of the default budget",
+   "before": "(decideBounded D maxSteps (.call",
+   "after": "(decideBounded D 1000 (.call",
+   "proofs": [],
+   "test": [
+    "lean/VE/Arith/DecidingExamples.lean:33 (M-6)"
+   ],
+   "killed": true
+  }
+ ]
+}

@@ -555,7 +555,7 @@ def test_ev5_a_wrong_expectation_is_a_difference():
 
 
 def test_lx14_every_wording_python_selects_on_the_corpus_is_subject_first():
-    """lx14: over the 39 corpus environments of S0 (the round-trip configurations and the use cases, with
+    """lx14: over the corpus environments of S0 (the round-trip configurations and the use cases, with
     their overlays), every wording, negative and alias Python selects begins with `{0} ` and has its holes in
     increasing order (D8). A counterexample is a finding for the DRI."""
     from conformance.english_lean_lexicon import environments
@@ -579,7 +579,7 @@ def test_lx14_every_wording_python_selects_on_the_corpus_is_subject_first():
                     selected += 1
                     if not subject_first(w):
                         bad.append((name, field, p, w))
-    assert count == 40 and selected > 700
+    assert count == 43 and selected > 700
     assert bad == []
 
 

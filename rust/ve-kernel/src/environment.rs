@@ -120,6 +120,289 @@ fn act_phrase(value: &Value, arity: usize) -> Result<String> {
     Ok(act)
 }
 
+/// The Lean decoder that judges an environment's argument and constant sorts,
+/// chosen as Lean's `environment` mode chooses it
+/// (lean/VE/Service/Standalone.lean `reportedEnvironment`, `validatedLayerEnvironment`,
+/// `validated`, `validateFamily`). With `SortTable`, the one table of every sort
+/// fault: the decoder loop asks it and decides nothing about a sort itself.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum SortJudge {
+    /// `ve.core@0`, `ve.core@0.1`: the frozen decoders (`Standalone.decodeLegacy`);
+    /// `order` is the frozen order envelope.
+    Legacy { order: bool },
+    /// `VE.Route.Wire.decodeVocabulary` (lean/VE/Route/Wire.lean:170-172, 196): fol and
+    /// closure lists, the norms route, and soft-norms@0, which decodes its vocabulary
+    /// without the checker profiles (lean/VE/SoftNorms/Phases.lean:137-154).
+    Route,
+    /// `VE.Route.Wire.decodeOrderVocabulary` and `VE.Order.Wire.decodeEnvironment`
+    /// (lean/VE/Route/Wire.lean:240-245, lean/VE/Order/Wire.lean:66-83).
+    Order,
+    /// `VE.Core.Bridge.decodeEnvironment` (lean/VE/Core/Bridge.lean:29-38, 51).
+    Core,
+    /// `VE.Core.Layers.decodeLayered` (lean/VE/Core/Layers.lean:64-80, 229-232): the route
+    /// decoder over the binary undefined predicates and the constants, then the core decoder.
+    Layered,
+}
+
+/// The decoder that judges a vocabulary's sorts once Lean's located decoder
+/// has passed it (`located_pass`).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) struct SortTable {
+    pub(crate) judge: SortJudge,
+    /// The frozen checker lists (`frozenFamilyProfiles`, Standalone.lean:350),
+    /// where every located fault is the answer.
+    pub(crate) frozen: bool,
+    /// The norms routes that check every regulated block before the family
+    /// decoder reads a sort (Standalone.lean:198-203, 270-282); soft-norms@0
+    /// checks them after its vocabulary (Norms/Wire.lean:194-204).
+    pub(crate) regulated_first: bool,
+}
+
+/// Lean's answer for one undeclared argument cell.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum SortVerdict {
+    Accepted,
+    /// This code at the predicate, after its own display fields.
+    AtSort(&'static str),
+    /// This code once the constants are checked in full: the core decoder
+    /// after the layered route decoder (Core/Layers.lean:229-232).
+    AfterConstants(&'static str),
+}
+
+/// A constant entry's fields: a `$string` literal's description is optional
+/// on the route, and only `reports@0` displays a constant.
+fn constant_fields<'a>(decl: &'a Value, route: bool, reports: bool)
+    -> Result<&'a serde_json::Map<String, Value>> {
+    let literal = route && decl.get("sort") == Some(&json!("$string"));
+    let mut keys = vec!["sort"];
+    if !literal || decl.get("description").is_some() { keys.push("description"); }
+    if reports && decl.get("verbalisation").is_some() { keys.push("verbalisation"); }
+    fields(decl, &keys, "InvalidInput")
+}
+
+fn sort_fault<T>(code: &'static str) -> Result<T> {
+    error(code, if code == "InvalidInput" { "invalid predicate signature" } else { "unknown predicate argument sort" })
+}
+
+const CHECKER_PROFILES: &[&str] = &["relational-fol@0", "closure@0", "nary@0", "order@0"];
+
+impl SortTable {
+    /// `layers`: some predicate carries `defined`, `functional` or `total`
+    /// (`VE.Core.Layers.usesLayers`, Standalone.lean:208).
+    pub(crate) fn of(route: bool, legacy_order: bool, profiles: &[String], layers: bool) -> Self {
+        if !route {
+            return SortTable { judge: SortJudge::Legacy { order: legacy_order }, frozen: false,
+                               regulated_first: false };
+        }
+        let has = |p: &str| profiles.iter().any(|q| q == p);
+        let frozen = !profiles.is_empty() && profiles.iter().all(|p| CHECKER_PROFILES.contains(&p.as_str()));
+        let regulated_first = has("norms@0") && !has("soft-norms@0")
+            && (has("closure@0") || has("nary@0") || has("order@0"));
+        let judge = if has("soft-norms@0") {
+            SortJudge::Route
+        } else if has("order@0") {
+            SortJudge::Order
+        } else if has("nary@0") && layers {
+            SortJudge::Layered
+        } else if has("nary@0") {
+            SortJudge::Core
+        } else {
+            SortJudge::Route
+        };
+        SortTable { judge, frozen, regulated_first }
+    }
+
+    /// The verdict on an undeclared cell `sort` of a predicate of `arity`
+    /// (`defined`: it carries a definition), under `data@0` when `data`.
+    pub(crate) fn argument(self, sort: &str, data: bool, arity: usize, defined: bool) -> SortVerdict {
+        use SortVerdict::*;
+        let verdict = match self.judge {
+            // Bridge.lean:44, Order/Wire.lean:74: only the order envelope adds `$int`.
+            SortJudge::Legacy { order } => if order && sort == "$int" { Accepted } else { AtSort("UnknownSymbol") },
+            SortJudge::Route => if data && sort == "$string" { Accepted } else { AtSort("InvalidInput") },
+            SortJudge::Order if sort == "$int" => Accepted,
+            SortJudge::Order | SortJudge::Core => AtSort("UnknownSymbol"),
+            SortJudge::Layered => match (SortTable { judge: SortJudge::Route, ..self })
+                    .argument(sort, data, arity, defined) {
+                AtSort(code) if arity <= 2 && !defined => AtSort(code),
+                _ => AfterConstants("UnknownSymbol"),
+            },
+        };
+        verdict
+    }
+
+    /// Whether an undeclared constant sort is admitted: `$string` literals
+    /// on the route, `$int` under the order decoders.
+    pub(crate) fn constant_admits(self, sort: &str) -> bool {
+        match self.judge {
+            SortJudge::Legacy { order } => order && sort == "$int",
+            SortJudge::Order => sort == "$string" || sort == "$int",
+            SortJudge::Route | SortJudge::Core | SortJudge::Layered => sort == "$string",
+        }
+    }
+
+    /// The code of an undeclared constant sort: the route decoder's
+    /// "unknown constant sort" (Route/Wire.lean:196), else the shared
+    /// `constantSort` validator's (Bridge.lean:58).
+    pub(crate) fn constant_fault(self) -> &'static str {
+        match self.judge {
+            SortJudge::Route | SortJudge::Layered => "InvalidInput",
+            _ => "UnknownSymbol",
+        }
+    }
+
+    /// The order decoder refuses every definition before it reads a predicate
+    /// (Route/Wire.lean:240-242).
+    pub(crate) fn refuses_definitions(self) -> bool {
+        self.judge == SortJudge::Order
+    }
+
+    /// Only the core decoders read n-ary predicates (Core/Bridge.lean:36).
+    pub(crate) fn maximum_arity(self) -> usize {
+        if matches!(self.judge, SortJudge::Core | SortJudge::Layered) { 6 } else { 2 }
+    }
+}
+
+/// One predicate's `regulated` block over `arity` slots: its role, default,
+/// canonical act phrase and permission dual.
+type Regulation = (String, String, Option<String>, Option<String>);
+
+fn regulation(raw: &Value, arity: usize) -> Result<Regulation> {
+    let r = object(raw, "InvalidInput")?;
+    let role = r.get("role").map(|v| string(v, "InvalidInput")).transpose()?
+        .ok_or_else(|| Error::new("InvalidInput", "regulated role is required"))?;
+    let default = r.get("default").map(|v| string(v, "InvalidInput")).transpose()?
+        .ok_or_else(|| Error::new("InvalidInput", "regulated default is required"))?;
+    if default == "unspecified" && ["permission", "obligation", "plain"].contains(&role) {
+        // norm-defaults 2.1: Rust decodes no norm-defaults@0 environment.
+        return error("UnsupportedProfile",
+                     "UnsupportedProfile: unspecified completion requires norm-defaults@0");
+    }
+    if !["permission", "obligation", "plain"].contains(&role)
+        || !["allow", "deny"].contains(&default) {
+        return error("InvalidInput", "invalid regulated role or default");
+    }
+    let mut keys = vec!["role", "default"];
+    let act = if role == "plain" { None } else {
+        keys.push("act");
+        Some(act_phrase(r.get("act").ok_or_else(|| Error::new("InvalidInput", "act is required"))?, arity)?)
+    };
+    if role == "obligation" && r.contains_key("permission") {
+        keys.push("permission");
+    }
+    fields(raw, &keys, "InvalidInput")?;
+    let permission = r.get("permission").map(|v| string(v, "InvalidInput")
+        .map(str::to_owned)).transpose()?;
+    Ok((role.into(), default.into(), act, permission))
+}
+
+/// The checks across the regulated predicates, each read by `signature`: at
+/// most 64, one predicate per act and role, and each obligation's permission dual.
+fn regulation_pairs(
+    regulated: &BTreeMap<String, Regulation>,
+    signature: impl Fn(&str) -> Value,
+) -> Result<Vec<(String, String)>> {
+    if regulated.len() > 64 {
+        return error("ResourceLimit", "regulated predicates");
+    }
+    let mut acts = BTreeMap::new();
+    for (name, (role, _, act, _)) in regulated {
+        if let Some(act) = act {
+            let key = (signature(name).to_string(), act.clone(), role.clone());
+            if acts.insert(key, name.clone()).is_some() {
+                return error("InvalidInput", format!("DuplicateActRole: {role}, {act}"));
+            }
+        }
+    }
+    let mut profile_pairs = Vec::new();
+    for (name, (role, _, act, permission)) in regulated {
+        if role != "obligation" { continue; }
+        let expected = acts.get(&(signature(name).to_string(), act.clone().unwrap(), "permission".into()));
+        if permission.is_none() && expected.is_some() {
+            return error("InvalidInput", format!("MissingPermissionDual: {name}, {}", expected.unwrap()));
+        }
+        if let Some(dual) = permission {
+            let Some((target_role, _, target_act, _)) = regulated.get(dual) else {
+                return error("InvalidInput", format!("MissingPermissionDual: {name}, {dual}"));
+            };
+            if target_role != "permission" {
+                return error("InvalidInput", format!("MissingPermissionDual: {name}, {dual}"));
+            }
+            if signature(name) != signature(dual) {
+                return error("InvalidInput", format!("DualSortMismatch: {name}, {dual}"));
+            }
+            if act != target_act {
+                return error("InvalidInput", format!("DualActMismatch: {name}, {dual}"));
+            }
+            profile_pairs.push((name.clone(), dual.clone()));
+        }
+    }
+    Ok(profile_pairs)
+}
+
+/// Lean's located decoder (`locatedEnvironmentFields`, Standalone.lean:942-977),
+/// which runs before every family decoder. On the frozen checker lists
+/// (`authoritative`) each fault it finds is the answer (Standalone.lean:1197-1201);
+/// elsewhere only its unknown argument sort is (Standalone.lean:1165-1168,
+/// 1187-1191), and any other fault ends the pass. A cell it skips
+/// (Standalone.lean:957-958) is the family decoder's.
+fn located_pass(
+    preds: &serde_json::Map<String, Value>,
+    consts: &serde_json::Map<String, Value>,
+    sorts: &serde_json::Map<String, Value>,
+    profiles: &[String],
+    authoritative: bool,
+) -> Result<()> {
+    const OPTIONAL: &[&str] = &["defined", "functional", "total", "regulated", "argument_units",
+        "instruction_of", "verbalisation", "negative_verbalisation"];
+    let has = |p: &str| profiles.iter().any(|q| q == p);
+    let (order, data) = (has("order@0"), has("data@0"));
+    let maximum = if has("nary@0") { 6 } else { 2 };
+    let fault = |result: Result<()>| if authoritative { result } else { Ok(()) };
+    let present = |entry: &serde_json::Map<String, Value>, required: &[&'static str], optional: &[&'static str]| {
+        required.iter().chain(optional.iter().filter(|k| entry.contains_key(**k))).copied().collect::<Vec<_>>()
+    };
+    for entry in preds.values() {
+        let Some(object) = entry.as_object() else { return fault(error("InvalidInput", "object expected")) };
+        if let Err(e) = fields(entry, &present(object, &["arguments", "description"], OPTIONAL), "InvalidInput") {
+            return fault(Err(e));
+        }
+        let Some(cells) = object["arguments"].as_array().filter(|a| (1..=maximum).contains(&a.len())) else {
+            return fault(error("InvalidInput", format!("predicate arity must be one to {maximum}")));
+        };
+        let skipped = (!data && cells.contains(&json!("$string"))) || (!order && cells.contains(&json!("$int")));
+        if !skipped && cells.iter().any(|cell| !cell.as_str().is_some_and(|s|
+                sorts.contains_key(s) || (order && s == "$int") || (data && s == "$string"))) {
+            return error("UnknownSymbol", "unknown predicate argument sort");
+        }
+        if let Some(defined) = object.get("defined") {
+            if let Err(e) = fields(defined, &["arguments", "body"], "InvalidInput") {
+                return fault(Err(e));
+            }
+        }
+        if let Err(e) = description(&object["description"]) {
+            return fault(Err(e));
+        }
+    }
+    if !authoritative {
+        return Ok(());
+    }
+    for entry in consts.values() {
+        let Some(object) = entry.as_object() else { return error("InvalidInput", "object expected") };
+        let literal = object.get("sort") == Some(&json!("$string"));
+        let required: &[&'static str] = if !literal || object.contains_key("description") {
+            &["sort", "description"]
+        } else {
+            &["sort"]
+        };
+        fields(entry, &present(object, required, &["unit", "verbalisation"]), "InvalidInput")?;
+        if !object["sort"].as_str().is_some_and(|s| sorts.contains_key(s) || (order && s == "$int") || s == "$string") {
+            return error("UnknownSymbol", "unknown constant sort");
+        }
+    }
+    Ok(())
+}
+
 #[derive(Clone, Debug)]
 pub struct Environment {
     closure: bool,
@@ -143,6 +426,9 @@ impl Environment {
     pub fn from_json(bytes: &[u8]) -> Result<Self> {
         Self::from_value(&loads_json(bytes)?)
     }
+    /// An environment as Lean's `environment` mode decodes it
+    /// (`Standalone.reportedEnvironment`), the mode Python validates every
+    /// environment by.
     pub fn from_value(data: &Value) -> Result<Self> {
         canonical_json(data)?;
         let route = data.get("language") == Some(&json!("ve.core@0.2"));
@@ -330,7 +616,52 @@ impl Environment {
         let mut canonical_data = data.clone();
         let mut predicate_flags = BTreeMap::new();
         let mut defined = Vec::new();
+        // The first sort fault Lean's decoders report only after the constants.
+        let mut after_constants: Option<&'static str> = None;
         let definitions_profile = route && profiles.iter().any(|p| p == "definitions@0");
+        let data_profile = route && profiles.iter().any(|p| p == "data@0");
+        let layers = preds.values().any(|decl| ["defined", "functional", "total"]
+            .iter().any(|key| decl.get(*key).is_some()));
+        let table = SortTable::of(route, order, &profiles, layers);
+        let listed: Vec<String> = if route { profiles.clone() } else {
+            obj.get("profiles").and_then(Value::as_array).into_iter().flatten()
+                .filter_map(|p| p.as_str().map(str::to_owned)).collect()
+        };
+        located_pass(preds, consts, sorts, &listed, table.frozen)?;
+        let refuse_definitions = || if table.refuses_definitions() && preds.values().any(|decl| decl.get("defined").is_some()) {
+            error("UnsupportedProfile", "definitions on the order family require an order definition layer")
+        } else {
+            Ok(())
+        };
+        // `checkRegulated` (Standalone.lean:198-203) before the family decoder.
+        let mut early_pairs = None;
+        if table.regulated_first {
+            for (name, decl) in preds {
+                if let Some(raw) = decl.get("regulated") {
+                    let arity = decl.get("arguments").and_then(Value::as_array).map_or(0, Vec::len);
+                    let r = regulation(raw, arity)?;
+                    if let Some(ref phrase) = r.2 {
+                        canonical_data["vocabulary"]["predicates"][name]["regulated"]["act"] = json!(phrase);
+                    }
+                    regulated.insert(name.clone(), r);
+                }
+            }
+            early_pairs = Some(regulation_pairs(&regulated, |name| preds[name]["arguments"].clone())?);
+        }
+        // The order decoder checks its definitions, then the `$string` literals
+        // and their count, before any predicate (lean/VE/Route/Wire.lean:240-247).
+        if table.judge == SortJudge::Order {
+            refuse_definitions()?;
+            let literals: Vec<_> = consts.values().filter(|decl| decl.get("sort") == Some(&json!("$string"))).collect();
+            for decl in &literals {
+                if let Some(value) = constant_fields(decl, route, reports)?.get("description") {
+                    description(value)?;
+                }
+            }
+            if literals.len() > 64 {
+                return error("ResourceLimit", "At most 64 declared $string literals");
+            }
+        }
         for (name, decl) in preds {
             let flagged = decl.get("functional").is_some() || decl.get("total").is_some();
             if flagged && decl.get("defined").is_some() {
@@ -339,46 +670,48 @@ impl Environment {
             if flagged && !(route && profiles.iter().any(|p| p == "data@0")) {
                 return error("UnsupportedProfile", "Predicate flags require data@0");
             }
-            let is_defined = definitions_profile && decl.get("defined").is_some();
+            let has_definition = decl.get("defined").is_some();
+            let is_defined = definitions_profile && has_definition;
             if decl.get("regulated").is_some() && is_defined {
                 return error("InvalidInput", format!("RegulatedDefinedPredicate: {name}"));
             }
             if decl.get("regulated").is_some() && flagged {
                 return error("InvalidInput", format!("RegulatedFlag: {name}"));
             }
-            if is_defined && order {
-                return error("UnsupportedProfile", "definitions on the order family require an order definition layer");
-            }
             let mut keys = vec!["arguments", "description"];
-            if is_defined { keys.push("defined"); }
-            if decl.get("functional").is_some() { keys.push("functional"); }
-            if decl.get("total").is_some() { keys.push("total"); }
+            // The frozen decoders have no definition field.
+            if has_definition && route { keys.push("defined"); }
+            // The order decoder has no data flag fields (Order/Wire.lean:66).
+            let flag_fields = table.judge != SortJudge::Order;
+            if flag_fields && decl.get("functional").is_some() { keys.push("functional"); }
+            if flag_fields && decl.get("total").is_some() { keys.push("total"); }
             if soft && decl.get("instruction_of").is_some() { keys.push("instruction_of"); }
             let d = entry_fields(decl, &keys, true,
                 route && profiles.iter().any(|p| p == "norms@0"))?;
-            let maximum_arity = if route && profiles.iter().any(|p| p == "nary@0") { 6 } else { 2 };
+            let maximum_arity = table.maximum_arity();
             let args = d["arguments"]
                 .as_array()
                 .filter(|a| (1..=maximum_arity).contains(&a.len()))
                 .ok_or_else(|| Error::new("InvalidInput", format!("predicate arity must be one to {maximum_arity}")))?;
             let mut signature = Vec::new();
+            // Every family decoder, the frozen ones too, reads the predicate's display
+            // fields before its sorts (Route/Wire.lean:160-172, Order/Wire.lean:66-74,
+            // Core/Bridge.lean:29-38).
+            let mut at_sort = None;
             for arg in args {
-                let s = string(arg, "UnknownSymbol")?;
-                if !sorts.contains_key(s) && !(order && s == "$int")
-                    && !(route && profiles.iter().any(|p| p == "data@0") && s == "$string") {
-                    return error("UnknownSymbol", "unknown predicate argument sort");
+                let s = arg.as_str().unwrap_or("");
+                if !arg.is_string() || !sorts.contains_key(s) {
+                    match table.argument(s, data_profile, args.len(), has_definition) {
+                        // `""` (a cell that is not a string) is never accepted.
+                        SortVerdict::Accepted => {}
+                        SortVerdict::AtSort(code) => { at_sort.get_or_insert(code); }
+                        SortVerdict::AfterConstants(code) => { after_constants.get_or_insert(code); }
+                    }
                 }
                 signature.push(s.to_owned());
             }
             if flagged && signature.len() != 2 {
                 return error("InvalidInput", "Functional and total flags require a binary predicate");
-            }
-            if flagged && signature.iter().any(|s| s == "$int") {
-                return error("UnsupportedProfile", "Data flags on $int slots are not supported");
-            }
-            if order && route && profiles.iter().any(|p| p == "data@0")
-                && (flagged || signature.iter().any(|s| s == "$string")) {
-                return error("UnsupportedProfile", "Data attributes on the order family are not enabled");
             }
             let functional = match d.get("functional") {
                 None => false,
@@ -396,90 +729,28 @@ impl Environment {
                 }
             }
             description(&d["description"])?;
-            if let Some(raw) = d.get("regulated") {
-                let r = object(raw, "InvalidInput")?;
-                let role = r.get("role").map(|v| string(v, "InvalidInput")).transpose()?
-                    .ok_or_else(|| Error::new("InvalidInput", "regulated role is required"))?;
-                let default = r.get("default").map(|v| string(v, "InvalidInput")).transpose()?
-                    .ok_or_else(|| Error::new("InvalidInput", "regulated default is required"))?;
-                if default == "unspecified" && ["permission", "obligation", "plain"].contains(&role) {
-                    // norm-defaults 2.1: Rust decodes no norm-defaults@0 environment.
-                    return error("UnsupportedProfile",
-                                 "UnsupportedProfile: unspecified completion requires norm-defaults@0");
-                }
-                if !["permission", "obligation", "plain"].contains(&role)
-                    || !["allow", "deny"].contains(&default) {
-                    return error("InvalidInput", "invalid regulated role or default");
-                }
-                let mut keys = vec!["role", "default"];
-                let act = if role == "plain" { None } else {
-                    keys.push("act");
-                    Some(act_phrase(r.get("act").ok_or_else(|| Error::new("InvalidInput", "act is required"))?,
-                                    signature.len())?)
-                };
-                if role == "obligation" && r.contains_key("permission") {
-                    keys.push("permission");
-                }
-                fields(raw, &keys, "InvalidInput")?;
-                let permission = r.get("permission").map(|v| string(v, "InvalidInput")
-                    .map(str::to_owned)).transpose()?;
-                if let Some(ref phrase) = act {
+            if let Some(code) = at_sort {
+                return sort_fault(code);
+            }
+            if let (Some(raw), false) = (d.get("regulated"), table.regulated_first) {
+                let r = regulation(raw, signature.len())?;
+                if let Some(ref phrase) = r.2 {
                     canonical_data["vocabulary"]["predicates"][name]["regulated"]["act"] = json!(phrase);
                 }
-                regulated.insert(name.clone(), (role.into(), default.into(), act, permission));
+                regulated.insert(name.clone(), r);
             }
-            if is_defined {
+            if has_definition {
                 defined.push((name.clone(), signature.clone(), d["defined"].clone()));
             }
             predicates.insert(name.clone(), signature);
             predicate_flags.insert(name.clone(), (functional, total));
         }
-        if regulated.len() > 64 {
-            return error("ResourceLimit", "regulated predicates");
-        }
-        let mut acts = BTreeMap::new();
-        for (name, (role, _, act, _)) in &regulated {
-            if let Some(act) = act {
-                let key = (predicates[name].clone(), act.clone(), role.clone());
-                if acts.insert(key, name.clone()).is_some() {
-                    return error("InvalidInput", format!("DuplicateActRole: {role}, {act}"));
-                }
-            }
-        }
-        let mut profile_pairs = Vec::new();
-        for (name, (role, _, act, permission)) in &regulated {
-            if role != "obligation" { continue; }
-            let expected = acts.get(&(predicates[name].clone(), act.clone().unwrap(), "permission".into()));
-            if permission.is_none() && expected.is_some() {
-                return error("InvalidInput", format!("MissingPermissionDual: {name}, {}", expected.unwrap()));
-            }
-            if let Some(dual) = permission {
-                let Some((target_role, _, target_act, _)) = regulated.get(dual) else {
-                    return error("InvalidInput", format!("MissingPermissionDual: {name}, {dual}"));
-                };
-                if target_role != "permission" {
-                    return error("InvalidInput", format!("MissingPermissionDual: {name}, {dual}"));
-                }
-                if predicates[name] != predicates[dual] {
-                    return error("InvalidInput", format!("DualSortMismatch: {name}, {dual}"));
-                }
-                if act != target_act {
-                    return error("InvalidInput", format!("DualActMismatch: {name}, {dual}"));
-                }
-                profile_pairs.push((name.clone(), dual.clone()));
-            }
-        }
+        let profile_pairs = match early_pairs {
+            Some(pairs) => pairs,
+            None => regulation_pairs(&regulated, |name| json!(predicates[name]))?,
+        };
         let mut constants = BTreeMap::new();
-        for (name, decl) in consts {
-            let literal = route && decl.get("sort") == Some(&json!("$string"));
-            let mut keys = vec!["sort"];
-            if !literal || decl.get("description").is_some() { keys.push("description"); }
-            if reports && decl.get("verbalisation").is_some() { keys.push("verbalisation"); }
-            let d = fields(decl, &keys, "InvalidInput")?;
-            let s = string(&d["sort"], "UnknownSymbol")?;
-            if !sorts.contains_key(s) && !(order && s == "$int") && !(route && s == "$string") {
-                return error("UnknownSymbol", "unknown constant sort");
-            }
+        let display = |d: &serde_json::Map<String, Value>, s: &str| -> Result<()> {
             if let Some(value) = d.get("description") {
                 description(value)?;
             }
@@ -491,10 +762,24 @@ impl Environment {
                     return error("InvalidInput", "holder verbalisation reserved");
                 }
             }
+            Ok(())
+        };
+        // Each family decoder reads a constant's displays before its sort
+        // (Route/Wire.lean:193-196, Order/Wire.lean:76-83, Core/Bridge.lean:41-51).
+        for (name, decl) in consts {
+            let d = constant_fields(decl, route, reports)?;
+            display(d, d["sort"].as_str().unwrap_or(""))?;
+            let s = string(&d["sort"], table.constant_fault())?;
+            if !sorts.contains_key(s) && !table.constant_admits(s) {
+                return error(table.constant_fault(), "unknown constant sort");
+            }
             constants.insert(name.clone(), s.into());
         }
         if route && constants.values().filter(|s| *s == "$string").count() > 64 {
             return error("ResourceLimit", "At most 64 declared $string literals");
+        }
+        if let Some(code) = after_constants {
+            return sort_fault(code);
         }
         let version = if route {
             format!("v0.2:{}", profiles.join(","))
@@ -521,6 +806,34 @@ impl Environment {
             id: digest(&format!("ve-environment-{version}\n"), &canonical_data)?,
         };
         env.definitions = env.elaborate(defined)?;
+        // Lean decodes a submitted definition body before rejecting the
+        // unsupported field on a plain relational environment. Keep the
+        // field check, but let a malformed nested body own its diagnostic.
+        if !definitions_profile {
+            for (_, decl) in preds {
+                if decl.get("defined").is_some() {
+                    let mut keys = vec!["arguments", "description"];
+                    if decl.get("functional").is_some() { keys.push("functional"); }
+                    if decl.get("total").is_some() { keys.push("total"); }
+                    if soft && decl.get("instruction_of").is_some() { keys.push("instruction_of"); }
+                    entry_fields(decl, &keys, true,
+                        route && env.profiles.iter().any(|p| p == "norms@0"))?;
+                }
+            }
+        }
+        // soft-norms@0 phase 3, after the vocabulary it decodes without the
+        // checker profiles (lean/VE/SoftNorms/Phases.lean:195-203).
+        if soft {
+            if env.profiles.iter().any(|p| ["closure@0", "nary@0", "order@0"].contains(&p.as_str())) {
+                return error("UnsupportedProfile", "the norms route admits FOL documents only");
+            }
+            if !env.definitions.is_empty() {
+                return error("UnsupportedProfile", "norms route with definitions is not implemented");
+            }
+            if env.predicate_flags.values().any(|(functional, total)| *functional || *total) {
+                return error("UnsupportedProfile", "norms route with data flags is not implemented");
+            }
+        }
         Ok(env)
     }
     /// Order the identity-bound definitions by the one dependency DAG and check
@@ -569,6 +882,11 @@ impl Environment {
             let not_typed = || Error::new("InvalidInput",
                 format!("Definition {name}: the body is not a typed formula over the symbols below it"));
             let body = body.ok_or_else(not_typed)?;
+            // A definition ranges over declared sorts only: Lean's typing of a
+            // `$string` argument fails as the body's (Route/Wire.lean:206).
+            if signature.iter().any(|sort| !below.sorts.contains(sort)) {
+                return Err(not_typed());
+            }
             check_in_context(&below, &body, &signature).map_err(|_| not_typed())?;
             below.predicates.insert(name.clone(), signature.clone());
             // The generated biconditional has the AST limits of any formula,
