@@ -186,6 +186,14 @@ def reportJson {w : CardEnv} {γ : Type} (g : Document.Graph w γ) : Json :=
   Json.mkObj [("root", claimJson g.root.name g.root.adm),
     ("leaves", Json.arr (g.leaves.map fun n => claimJson n.name n.adm).toArray)]
 
+/-- The report's identity (spec 4.1: reports bind both identities), as `VE.Time.Document.runDocument`'s: the
+`ve-report` digest, in the cardinality environment's identity version, of the cardinality and both W6a environment
+identities, the document as sent and the report. -/
+def reportId (w : CardEnv) (document report : Json) : Except String String :=
+  VE.CertificateWire.digest s!"ve-report-{VE.Route.Wire.identityVersion w.profiles}\n" (Json.mkObj [
+    ("environment_id", .str w.environmentId), ("w6_environment_id", .str w.w6.environmentId),
+    ("w6_target_environment_id", .str w.w6.targetId), ("document", document), ("report", report)])
+
 /-- The region table: each counted sort's predicates in first-use order, and every region constant with its sort
 and bits (the bit of each of those predicates, in that order), from the region structure and its table. -/
 def regionsJson (R : RegionData) (table : List (String × String × Region)) : Json :=
@@ -223,8 +231,10 @@ def runCase (j : Json) : Except String Json := do
   let envIds := [("environment_id", .str w.environmentId), ("w6_environment_id", .str w.w6.environmentId),
     ("w6_target_environment_id", .str w.w6.targetId)]
   if kind == "document" then
-    let g ← Document.admitGraph w decodeCertificate checkDeduction (← j.getObjVal? "document")
-    return VE.Time.Wire.ok id (envIds ++ [("report", reportJson g)])
+    let document ← j.getObjVal? "document"
+    let g ← Document.admitGraph w decodeCertificate checkDeduction document
+    return VE.Time.Wire.ok id (envIds ++ [("report", reportJson g),
+      ("report_id", .str (← reportId w document (reportJson g)))])
   let ps ← (← (← j.getObjVal? "premises").getArr?).toList.mapM (decodeStatement w)
   let c ← decodeStatement w (← j.getObjVal? "conclusion")
   let (R, table, ep) ← checkedProblem w.env (ps.map (·.formula)) c.formula

@@ -138,16 +138,17 @@ def claim : Shape :=
     closed [("name", str), ("meaning_id", ref "common.json#/$defs/hex64"), ("formula", ref "#/$defs/formula")]]
 
 def document : Shape :=
-  c "Cardinality.Run.runCase document: the admitted graph's report, its root and the leaves it rests on." [
+  c "Cardinality.Run.runCase document: the admitted graph's report, its root and the leaves it rests on, and the report's identity (Cardinality.Run.reportId: the ve-report digest of the three environment identities, the document as sent and the report)." [
     obj,
     .references "/report/leaves" "name" "/document/nodes/*/name",
-    .required (envIds.map (·.1) ++ ["report"]),
+    .required (envIds.map (·.1) ++ ["report", "report_id"]),
     closed (envIds ++ [("report", n [
       obj,
       .required ["root", "leaves"],
       closed [
         ("root", n [ref "#/$defs/claim", props [("name", .equals "/document/root")]]),
-        ("leaves", n [arr, .items (ref "#/$defs/claim")])]])])]
+        ("leaves", n [arr, .items (ref "#/$defs/claim")])]]),
+      ("report_id", ref "common.json#/$defs/hex64")])]
 
 def «row» : Shape :=
   .anyOf [
