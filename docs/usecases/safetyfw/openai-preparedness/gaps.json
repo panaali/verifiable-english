@@ -1,0 +1,129 @@
+{
+ "d1_bytes_by_status": {
+  "CHECKED": 170,
+  "LABELLED": 5327,
+  "OPEN": 7052,
+  "UNFORMALISED": 54869
+ },
+ "features": {
+  "AP": {
+   "bytes": 21831,
+   "sole_bytes": 20766,
+   "sole_units": 116,
+   "statuses": {
+    "OPEN": 880,
+    "UNFORMALISED": 20951
+   },
+   "units": 120
+  },
+  "AT": {
+   "bytes": 12973,
+   "sole_bytes": 12193,
+   "sole_units": 55,
+   "statuses": {
+    "OPEN": 780,
+    "UNFORMALISED": 12193
+   },
+   "units": 58
+  },
+  "DF": {
+   "bytes": 1185,
+   "sole_bytes": 0,
+   "sole_units": 0,
+   "statuses": {
+    "OPEN": 1185
+   },
+   "units": 7
+  },
+  "ET": {
+   "bytes": 8086,
+   "sole_bytes": 5728,
+   "sole_units": 16,
+   "statuses": {
+    "OPEN": 1618,
+    "UNFORMALISED": 6468
+   },
+   "units": 28
+  },
+  "JT": {
+   "bytes": 4685,
+   "sole_bytes": 1613,
+   "sole_units": 10,
+   "statuses": {
+    "OPEN": 4157,
+    "UNFORMALISED": 528
+   },
+   "units": 26
+  },
+  "QT": {
+   "bytes": 702,
+   "sole_bytes": 305,
+   "sole_units": 1,
+   "statuses": {
+    "UNFORMALISED": 702
+   },
+   "units": 2
+  },
+  "SC": {
+   "bytes": 4896,
+   "sole_bytes": 3945,
+   "sole_units": 25,
+   "statuses": {
+    "OPEN": 951,
+    "UNFORMALISED": 3945
+   },
+   "units": 28
+  },
+  "WG": {
+   "bytes": 183,
+   "sole_bytes": 0,
+   "sole_units": 0,
+   "statuses": {
+    "OPEN": 183
+   },
+   "units": 1
+  },
+  "external reference": {
+   "bytes": 309,
+   "sole_bytes": 309,
+   "sole_units": 2,
+   "statuses": {
+    "UNFORMALISED": 309
+   },
+   "units": 2
+  },
+  "no claim to check": {
+   "bytes": 5327,
+   "sole_bytes": 5327,
+   "sole_units": 48,
+   "statuses": {
+    "LABELLED": 5327
+   },
+   "units": 48
+  },
+  "readings": {
+   "bytes": 13583,
+   "sole_bytes": 11178,
+   "sole_units": 84,
+   "statuses": {
+    "OPEN": 2885,
+    "UNFORMALISED": 10698
+   },
+   "units": 92
+  }
+ },
+ "master_bytes_by_status": {
+  "CHECKED": 170,
+  "LABELLED": 5327,
+  "OPEN": 7052,
+  "UNFORMALISED": 54869
+ },
+ "source_bytes": 67418,
+ "status_bytes_recomputed": {
+  "CHECKED": 170,
+  "LABELLED": 5327,
+  "OPEN": 7052,
+  "UNFORMALISED": 54869
+ },
+ "units": 389
+}

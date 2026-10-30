@@ -219,6 +219,13 @@ def _admit_lean(environment, document) -> dict:
     """The Lean route that admits `document`, chosen by the envelope (routing, not a verdict)."""
     from .backends.relay import decide
     from .softnorms import SoftEnvironment
+    profiles = (environment.profiles if isinstance(environment, Environment)
+                else listed_profiles(environment))
+    if "norm-defaults@0" in profiles:
+        # NormDefaults.Run.runCase owns the choice between the filled soft route
+        # and the ordinary filled W1 route. The direct soft route reads no fill.
+        from .norm_defaults_route import admit_norm_defaults_document
+        return admit_norm_defaults_document(environment, document)
     if isinstance(environment, SoftEnvironment) or (type(environment) is dict and
             "soft-norms@0" in listed_profiles(environment)):
         from .soft_route import admit_soft_document
@@ -226,9 +233,6 @@ def _admit_lean(environment, document) -> dict:
     env = environment if type(environment) is Environment else Environment(environment)
     if env.alternatives is not None:
         return _lean_block_admission(env, document)
-    if "norm-defaults@0" in env.profiles:
-        from .norm_defaults_route import admit_norm_defaults_document
-        return admit_norm_defaults_document(env, document)
     if env.language != LANGUAGE:
         raise VEError("admission requires a ve.core@0.2 environment")
     case = {"id": "admission", "kind": "admission", "environment": env.to_dict(), "document": document}

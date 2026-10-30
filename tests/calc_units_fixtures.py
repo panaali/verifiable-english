@@ -273,6 +273,21 @@ FIXTURES = [
         ("short", ["sci", "1"], "InvalidInput: units.meter.factor must be a literal"),
         ("long", ["sci", "1", 3, 4], "InvalidInput: units.meter.factor must be a literal"),
         ("tag", ["lit", "1"], "InvalidInput: units.meter.factor must be a literal"),
+        # me-6cc: a factor's shape is checked before its limits; limits apply only to literal factors. Each shape a
+        # limit of 3.2 reads in a case, on both sides of that limit, and `sci` nested; a `sci` list keeps its limits.
+        *((key, literal, "InvalidInput: units.meter.factor must be a literal") for key, literal in [
+            ("shape-pow-64", ["pow", "1", 64]),
+            ("shape-pow-65", ["pow", "1", 65]),
+            ("shape-lit-40", ["lit", "1" * 40]),
+            ("shape-lit-41", ["lit", "1" * 41]),
+            ("shape-rounds-40", ["rounds-x", 1, "1" * 40]),
+            ("shape-rounds-41", ["rounds-x", 1, "1" * 41]),
+            ("shape-stated-40", {"stated": "1" * 40}),
+            ("shape-stated-41", {"stated": "1" * 41}),
+            ("shape-nested", [["sci", "1", 65]]),
+            ("shape-sci-long-65", ["sci", "1", 65, 4]),
+        ]),
+        ("shape-sci-short-41", ["sci", "1" * 41], "ResourceLimit: Decimal literal exceeds 40 digits"),
     ]),
 ]
 
