@@ -4,14 +4,19 @@ and the group document's questions read by Lean, with the candidate limit on bot
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import pytest
 
+from conformance import english_lean_e2_evidence as E
 from conformance import question_reverse as R
 from ve.english import EnglishVocabulary
 from ve.environment import Environment
 
 pytestmark = pytest.mark.filterwarnings("ignore::ve.english.UnreviewedVocabularyWarning")
+
+ROOT = Path(__file__).resolve().parents[1]
+BATCH = ROOT / "docs/question-answering/q1-3"
 
 
 def test_f1_frames_the_sentence():
@@ -168,3 +173,77 @@ def test_the_candidate_limit_is_leans_on_both_sides(group):
     records = R.limit_records(path, env, words, {}, texts, repeat=1)
     assert [(r["candidates"], r["status"] == "budget", r["code"]) for r in records][1] == (65, True, "QuestionTooLong")
     assert records[0]["candidates"] == 64 and records[0]["status"] != "budget"
+
+
+def test_the_default_run_is_the_whole_sealed_corpus():
+    seal = json.loads((ROOT / "conformance/english-lean/corpus-seal.json").read_text())
+    sizes = {row["unique_asts_roundtripped"] for row in seal["generated"] if row["stream"] == "english-surface"}
+    args = R.arguments([])
+    assert sizes == {args.per_config} and args.per_config == E.PER_CONFIG
+    assert args.per_usecase == E.PER_USECASE
+    assert R.coverage({}, args.per_config, args.per_usecase)["whole"]
+
+
+def _row(**changed):
+    return {"asked": 5, "drawn": 5, "sentences": 5, "dropped": {"none": 1}, **changed}
+
+
+@pytest.mark.parametrize("configs, sizes, left_out", [
+    ({"a": _row()}, (300, 500), {}),                                       # a sample of the round-trip streams
+    ({"a": _row()}, (5000, 100), {}),                                      # a sample of the use-case streams
+    ({"a": _row(drawn=4)}, (5000, 500), {"short_streams": {"a": 4}}),      # a stream that stalled
+    ({"a": _row(dropped={"unavailable": 2})}, (5000, 500), {"unavailable_reads": {"a": 2}}),  # no answer: not "none"
+    ({"a": {"skipped": "ValueError: x"}}, (5000, 500), {"skipped": ["a"]}),
+])
+def test_coverage_is_whole_only_when_nothing_is_left_out(configs, sizes, left_out):
+    result = R.coverage(configs, *sizes)
+    assert result["whole"] is False
+    assert {k: v for k, v in result.items() if k in ("short_streams", "unavailable_reads", "skipped") and v} == left_out
+
+
+def test_coverage_is_whole_with_duplicates_and_plain_refusals():
+    # A text drawn twice is one sentence, and a sentence Lean does not read has an answer: neither leaves anything out.
+    assert R.coverage({"a": _row(sentences=3), "b": {**_row(), "dropped": {"none": 5}}}, 5000, 500)["whole"] is True
+
+
+def test_every_sentence_is_kept_or_counted_as_dropped(group):
+    path, env, words, texts = group
+    sentences = [*texts, "Qqq rrr sss."]
+    result = R.run_config(path, env, words, {}, sentences)
+    assert (result["sentences"], result["one_formula"], result["dropped"]) == (4, 3, {"none": 1})
+    assert "ast" not in result["questions"][0]["outcome"]
+
+
+def test_a_failed_service_is_unavailable_not_a_crash(group, monkeypatch):
+    from ve.backends import relay
+    from ve.errors import CheckerUnavailable
+    path, env, words, texts = group
+
+    def failed(*_args, **_kwargs):
+        raise CheckerUnavailable("CheckerUnavailable: gone")
+    monkeypatch.setattr(relay, "rows", failed)
+    assert R.ask(env, words, {}, R.f1(texts[0]))[0]["status"] == "unavailable"
+    result = R.run_config(path, env, words, {}, texts)
+    assert (result["one_formula"], result["dropped"]) == (0, {"unavailable": 3})
+
+
+def test_a_run_merges_its_slices_and_accounts_for_every_sentence(group, monkeypatch):
+    path, env, words, texts = group
+    monkeypatch.setattr(R, "TARGETS", [(path, env, {}, words)])
+    monkeypatch.setattr(R, "SLICE", 2)
+    configs, questions, moved, limits = R.run({}, {0: [*texts, texts[0], "Qqq rrr sss."]})
+    row = configs[path]
+    assert (row["asked"], row["drawn"], row["sentences"], row["stalled"]) == (5, 5, 4, 0)
+    assert row["one_formula"] + sum(row["dropped"].values()) == row["sentences"]
+    assert (row["questions"], row["moved"]) == (len(questions), len(moved))
+    assert sum(q["kind"] == "f1" for q in questions) == 3 and {r["candidates"] for r in limits} == {64, 65}
+    assert R.coverage(configs, 5000, 500)["whole"] is True
+
+
+def test_a_delivered_row_has_the_whole_corpus_behind_it():
+    evidence = json.loads((BATCH / "evidence/question-reverse.json").read_text())
+    rows = [line for line in (BATCH / "REPORT.md").read_text().splitlines() if line.startswith("| F1 question for every")]
+    assert len(rows) == 1
+    assert evidence["coverage"]["whole"] is True or "| delivered |" not in rows[0]
+    assert (evidence["per_config"], evidence["per_usecase"]) == (E.PER_CONFIG, E.PER_USECASE) or \
+        "| delivered |" not in rows[0]

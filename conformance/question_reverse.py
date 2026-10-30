@@ -1,14 +1,17 @@
 """Q1.3: the reverse question corpus, read by Lean's question reader (docs/spec/question-answering-PLAN.md Q1.3).
 
-    uv run python -m conformance.question_reverse [--per-config N] [--per-usecase N] [--output PATH]
+    uv run python -m conformance.question_reverse [--per-config N] [--per-usecase N] [--workers N] [--output PATH]
 
-For every corpus sentence Lean reads with one formula (the sealed stream of every corpus configuration of
+The defaults are the whole sealed corpus (`english_lean_e2_evidence.PER_CONFIG`, `PER_USECASE`); a smaller run is a
+sample, and the saved `coverage` says so. For every corpus sentence Lean reads with one formula (the sealed stream of every corpus configuration of
 `conformance.english_lean_e2_evidence`, and the units of every use-case `.ve.md` document under its own
 environment), the script builds the F1 question, the F2 question where the sentence begins with a quantified or
 named subject followed by *is*, *must* or *may* (plan 3.2), and spacing and capitalisation mutants of both. Each
 question is sent alone to `english.question` and its answer is checked by the relay's `question_problem`; each
 sentence with its fronted word put back at another word gap (the odd-English measure) is read by `english.read`.
-Lean decides every outcome; this script only builds texts, compares formulas and counts. The result is
+Lean decides every outcome; this script only builds texts, compares formulas and counts. A worker takes one slice of
+one configuration at a time, so the measured times carry the host's load and each other's (`workers`,
+`load_average`). The result is
 `docs/question-answering/q1-3/evidence/question-reverse.json`, cited by `docs/spec/question-answering-q1-report.md`.
 """
 from __future__ import annotations
@@ -17,6 +20,7 @@ import argparse
 from collections import Counter
 import json
 import math
+import multiprocessing
 import os
 from pathlib import Path
 import re
@@ -24,6 +28,8 @@ import subprocess
 import sys
 import time
 import warnings
+
+from conformance import english_lean_e2_evidence as E
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "docs/question-answering/q1-3/evidence/question-reverse.json"
@@ -39,6 +45,10 @@ NAME = re.compile(r'[A-Z][A-Za-z_-]*|"[^"\s]+"')
 MUTANTS = ("double-space", "space-before-mark", "leading-space", "lower-initial", "upper-auxiliary",
            "capital-body")
 BUDGET_MS, BUDGET_64_MS = 100.0, 1000.0  # plan 3.6: p95 of a corpus question; a 64-candidate question
+SLICE = 200  # sentences a worker takes at a time, so that the slow configurations share the workers
+
+# Filled before the workers fork: (name, env, options, words) per configuration, then per use-case document.
+TARGETS: list = []
 
 
 # ------------------------------------------------------------------ the questions (texts only)
@@ -109,11 +119,16 @@ def read_sentences(env, words, options, texts: list[str]) -> list[dict]:
     from ve.backends import english_lean as L
     from ve.backends import relay
     from ve.english_grammar import lexicon_id
+    from ve.errors import CheckerUnavailable
     out = []
     for start in range(0, len(texts), 400):
         cases = [{**L.request(env, text, words, options), "id": f"t{start + k}"}
                  for k, text in enumerate(texts[start:start + 400])]
-        for case, row in zip(cases, relay.rows("english.read", cases), strict=True):
+        try:
+            rows = relay.rows("english.read", cases)
+        except CheckerUnavailable as failure:
+            rows = [{"status": "error", "error": str(failure)}] * len(cases)
+        for case, row in zip(cases, rows, strict=True):
             text = case["source"]
             expected = {**L.identities(env, text, words, case["lexicon"]), "lexicon_id": lexicon_id(case["lexicon"])}
             problem = row.get("error", row) if row.get("status") != "ok" else \
@@ -127,9 +142,13 @@ def ask(env, words, options, question: str) -> tuple[dict, float]:
     """`english.question`'s checked answer to one question, as the relay sends it, and its milliseconds."""
     from ve.backends import english_lean as L
     from ve.backends import relay
+    from ve.errors import CheckerUnavailable
     case = {**L.request(env, question, words, options), "id": L.QUESTION_MODE, "question": question}
     started = time.perf_counter()
-    row = relay.rows(L.QUESTION_MODE, [case])[0]
+    try:
+        row = relay.rows(L.QUESTION_MODE, [case])[0]
+    except CheckerUnavailable as failure:
+        row = {"status": "error", "error": str(failure)}
     ms = (time.perf_counter() - started) * 1000
     if row.get("status") != "ok":
         return {"status": "unavailable", "error": str(row.get("error", row))[:300]}, ms
@@ -148,9 +167,10 @@ def reads_with(outcome: dict, formula) -> bool:
 
 def run_config(name: str, env, words, options, sentences: list[str]) -> dict:
     """Every record of one configuration: the sentences Lean reads with one formula, their questions and
-    mutants, and the moved-word sentences of each F2 question."""
+    mutants, the moved-word sentences of each F2 question, and how many sentences each other outcome dropped."""
     readings = read_sentences(env, words, options, sentences)
     kept = [(s, r["ast"][0]) for s, r in zip(sentences, readings) if r["status"] == "one" and len(r["ast"]) == 1]
+    dropped = Counter(r["status"] for r in readings if r["status"] != "one" or len(r["ast"]) != 1)
     questions, odd = [], []
     for sentence, formula in kept:
         built = [("f1", f1(sentence), None)]
@@ -161,13 +181,14 @@ def run_config(name: str, env, words, options, sentences: list[str]) -> dict:
             for kind, text in [(form, question)] + [(f"{k}:{form}", t) for k, t in mutants(question, form)]:
                 outcome, ms = ask(env, words, options, text)
                 questions.append({"config": name, "sentence": sentence, "kind": kind, "question": text,
-                                  "expected": expected, "outcome": outcome, "ms": round(ms, 3),
-                                  "same": reads_with(outcome, formula)})
+                                  "expected": expected, "ms": round(ms, 3), "same": reads_with(outcome, formula),
+                                  "outcome": {k: v for k, v in outcome.items() if k != "ast"}})
     odd_read = read_sentences(env, words, options, [c for _, _, c, _ in odd])
     moved = [{"config": name, "sentence": s, "question": q, "moved": c, "status": r["status"],
               "same": r["status"] == "one" and r["ast"] == [formula]}
              for (s, q, c, formula), r in zip(odd, odd_read, strict=True)]
-    return {"sentences": len(sentences), "one_formula": len(kept), "questions": questions, "moved": moved}
+    return {"sentences": len(sentences), "one_formula": len(kept), "dropped": dict(dropped), "questions": questions,
+            "moved": moved}
 
 
 def transport_ms(env, words, options, repeat: int = 5) -> float:
@@ -188,6 +209,69 @@ def limit_records(name: str, env, words, options, sentences: list[str], repeat: 
             out.append({"config": name, "candidates": count - 1, "question": question, "status": outcome["status"],
                         "code": outcome.get("code"), "ms": round(ms, 3)})
     return out
+
+
+def stream_of(task: tuple[int, int]) -> tuple[int, list[str], int]:
+    """(target, its stream's texts, the stalls that cut it): a worker's task, the generator's stall alarm being
+    per process."""
+    index, count = task
+    return index, [text for _, text, _ in E.streams(index, count, 0, [])], E.STALLED.get(TARGETS[index][0], 0)
+
+
+def slice_of(task: tuple[int, list[str]]) -> tuple[int, dict]:
+    """A worker's task: `run_config` on some of a target's sentences."""
+    index, sentences = task
+    name, env, options, words = TARGETS[index]
+    return index, run_config(name, env, words, options, sentences)
+
+
+def limits_of(task: tuple[int, list[str]]) -> tuple[int, list[dict], float]:
+    """A worker's task: a target's limit records and transport time."""
+    index, sentences = task
+    name, env, options, words = TARGETS[index]
+    return index, limit_records(name, env, words, options, sentences), transport_ms(env, words, options)
+
+
+def run(asked: dict[int, int], given: dict[int, list[str]], mapper=map) -> tuple[dict, list, list, list]:
+    """(configs, questions, moved, limits) of the targets: `asked` maps a target to the stream size to draw,
+    `given` to its sentences (a document's units). `mapper` runs the workers' tasks, in any order."""
+    drawn, stalled = dict(given), {}
+    for index, texts, stalls in mapper(stream_of, list(asked.items())):
+        drawn[index], stalled[index] = texts, stalls
+    unique = {index: list(dict.fromkeys(texts)) for index, texts in drawn.items()}
+    slices = [(index, texts[k:k + SLICE]) for index, texts in sorted(unique.items())
+              for k in range(0, len(texts), SLICE)]
+    results = {index: [] for index in drawn}
+    for count, (index, result) in enumerate(mapper(slice_of, slices), 1):
+        results[index].append(result)
+        print(f"slice {count} of {len(slices)}", file=sys.stderr, flush=True)
+    limited = {index: rest for index, *rest in mapper(limits_of, sorted(drawn.items()))}
+    configs, questions, moved, limits = {}, [], [], []
+    for index in sorted(drawn):
+        times = [q["ms"] for r in results[index] for q in r["questions"]]
+        dropped = sum((Counter(r["dropped"]) for r in results[index]), Counter())
+        configs[TARGETS[index][0]] = {
+            "asked": asked.get(index, len(given.get(index, ()))), "drawn": len(drawn[index]),
+            "stalled": stalled.get(index, 0), "sentences": len(unique[index]),
+            "one_formula": sum(r["one_formula"] for r in results[index]), "dropped": dict(sorted(dropped.items())),
+            "questions": len(times), "moved": sum(len(r["moved"]) for r in results[index]), "p95_ms": p95(times),
+            "max_ms": max(times, default=None), "transport_ms": limited[index][1]}
+        questions += [q for r in results[index] for q in r["questions"]]
+        moved += [m for r in results[index] for m in r["moved"]]
+        limits += limited[index][0]
+    return configs, questions, moved, limits
+
+
+def coverage(configs: dict, per_config: int, per_usecase: int) -> dict:
+    """What the run left out of the whole corpus; `whole` holds only when it left out nothing: both sizes are the
+    sealed corpus's, every configuration ran, every stream was drawn to its size, and every sentence has an answer."""
+    short = {name: row["drawn"] for name, row in configs.items() if "skipped" not in row and row["drawn"] < row["asked"]}
+    unavailable = {name: row["dropped"]["unavailable"] for name, row in configs.items()
+                   if row.get("dropped", {}).get("unavailable")}
+    skipped = sorted(name for name, row in configs.items() if "skipped" in row)
+    return {"sealed_per_config": E.PER_CONFIG, "sealed_per_usecase": E.PER_USECASE, "short_streams": short,
+            "unavailable_reads": unavailable, "skipped": skipped,
+            "whole": (per_config, per_usecase) == (E.PER_CONFIG, E.PER_USECASE) and not (short or unavailable or skipped)}
 
 
 # ------------------------------------------------------------------ the measures (arithmetic only)
@@ -259,43 +343,41 @@ def documents() -> list[tuple[str, dict, list[str]]]:
     return out
 
 
-def main(argv=None) -> int:
+def arguments(argv=None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--per-config", type=int, default=300, help="sealed texts per round-trip configuration")
-    parser.add_argument("--per-usecase", type=int, default=100, help="sealed texts per use-case environment")
+    parser.add_argument("--per-config", type=int, default=E.PER_CONFIG, help="sealed texts per round-trip configuration")
+    parser.add_argument("--per-usecase", type=int, default=E.PER_USECASE, help="sealed texts per use-case environment")
+    parser.add_argument("--workers", type=int, default=8)
     parser.add_argument("--output", type=Path, default=OUTPUT)
-    args = parser.parse_args(argv)
-    from conformance import english_lean_e2_evidence as E
+    return parser.parse_args(argv)
+
+
+def main(argv=None) -> int:
+    args = arguments(argv)
     from ve.english import EnglishVocabulary
     from ve.environment import Environment
     E._setup()
     warnings.simplefilter("ignore")
     E.CONFIGS.extend(E.configurations())
     load = [round(x, 1) for x in os.getloadavg()]
-    questions, moved, limits, configs = [], [], [], {}
-
-    def one(name, env, words, options, sentences):
-        result = run_config(name, env, words, options, list(dict.fromkeys(sentences)))
-        questions.extend(result["questions"])
-        moved.extend(result["moved"])
-        limits.extend(limit_records(name, env, words, options, sentences))
-        times = [q["ms"] for q in result["questions"]]
-        configs[name] = {"sentences": result["sentences"], "one_formula": result["one_formula"],
-                         "questions": len(times), "moved": len(result["moved"]), "p95_ms": p95(times),
-                         "max_ms": max(times, default=None), "transport_ms": transport_ms(env, words, options)}
-        print(f"{name}: {configs[name]}", file=sys.stderr, flush=True)
-
-    for index, (name, env, options, words) in enumerate(E.CONFIGS):
-        if isinstance(words, Exception):
-            configs[name] = {"skipped": f"{type(words).__name__}: {words}"[:200]}
-            continue
-        count = args.per_config if E.round_trip(name) else args.per_usecase
-        one(name, env, words, options, [text for stream, text, _ in E.streams(index, count, 0, [])])
+    TARGETS.extend(E.CONFIGS)
+    configs = {name: {"skipped": f"{type(words).__name__}: {words}"[:200]}
+               for name, _, _, words in TARGETS if isinstance(words, Exception)}
+    asked = {index: args.per_config if E.round_trip(target[0]) else args.per_usecase
+             for index, target in enumerate(TARGETS) if not isinstance(target[3], Exception)}
+    given = {}
     for path, data, texts in documents():
         env = Environment(data)
-        one(path, env, EnglishVocabulary(env, _defer_overlay_refusals=True), {}, texts)
+        given[len(TARGETS)] = texts
+        TARGETS.append((path, env, {}, EnglishVocabulary(env, _defer_overlay_refusals=True)))
+    started = time.time()
+    with multiprocessing.get_context("fork").Pool(args.workers) as pool:
+        ran, questions, moved, limits = run(asked, given, pool.imap_unordered)
+    configs.update(ran)
     commit = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True).stdout.strip()
     report = {"format": FORMAT, "commit": commit, "per_config": args.per_config, "per_usecase": args.per_usecase,
+              "workers": args.workers, "seconds": round(time.time() - started, 1),
+              "coverage": coverage(configs, args.per_config, args.per_usecase),
               "load_average": {"start": load, "end": [round(x, 1) for x in os.getloadavg()], "cpus": os.cpu_count()},
               "configs": configs, **measures(questions, moved, limits)}
     args.output.parent.mkdir(parents=True, exist_ok=True)
