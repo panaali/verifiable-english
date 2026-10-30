@@ -860,6 +860,7 @@
 'VE.Cardinality.Run.foldl_capped_gt' depends on axioms: [propext]
 'VE.Cardinality.Run.problemChecks_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.Run.regionsJson_constants' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Cardinality.Run.reportJson_report' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.Run.runCaseReported_error' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.Run.runCaseReported_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.Wire.cmpNames_spelled' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -870,6 +871,10 @@
 'VE.Cardinality.Wire.elabName_mem' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.Wire.elabOperand_cases' depends on axioms: [propext, Quot.sound]
 'VE.Cardinality.Wire.elabRatio_sound' depends on axioms: [propext, Quot.sound]
+'VE.Cardinality.Wire.encBody_cases' depends on axioms: [propext]
+'VE.Cardinality.Wire.encOperand_cases' depends on axioms: [propext]
+'VE.Cardinality.Wire.encPrinted_eq' does not depend on any axioms
+'VE.Cardinality.Wire.encode_cases' depends on axioms: [propext]
 'VE.Cardinality.Wire.finiteSorts_length' depends on axioms: [propext, Quot.sound]
 'VE.Cardinality.Wire.items_ok' depends on axioms: [propext, Quot.sound]
 'VE.Cardinality.Wire.printed_eq' does not depend on any axioms

@@ -4281,7 +4281,7 @@ module VE.Attribution.Wire 5dd9512e2a22d1e0d25e266083a337402c6788e6508b7ebb44bce
 493:0-498:65 def VE.Reports.Wire.generated@VE.Attribution.Wire
 500:0-507:75 def VE.Reports.Wire.environmentReportsJson@VE.Attribution.Wire
 509:0-513:101 def VE.Reports.Wire.reportsModelVocabulary@VE.Attribution.Wire
-module VE.Audit e93d801d2adf24fab7f0fd52539d5db8ac6496cff9c7c83d0c9d75233305d8df
+module VE.Audit 6045b9220df550d1e48edfdd6c64f56d02e0bb1c56fb439de2370352089ffd63
 module VE.Bridge 4f7b5313509e488f647f3d8b0a7916ac28dbca6601547b44bf25eda9b833d079
 8:0-8:32 def VE.Bridge.Entity@VE.Bridge
 9:0-9:37 def VE.Bridge.Fields@VE.Bridge
@@ -5564,7 +5564,7 @@ module VE.Cardinality.RunExamples 7aed2b931d6bccb79697abed4b74b2ecce5986d8a7f7c0
 417:0-417:87 def VE.Cardinality.RunExamples.tops@VE.Cardinality.RunExamples
 423:0-424:108 def VE.Cardinality.RunExamples.charged2@VE.Cardinality.RunExamples
 425:0-425:57 def VE.Cardinality.RunExamples.top3@VE.Cardinality.RunExamples
-module VE.Cardinality.RunTheorems fdf9d9a6fbdf8927ad1950f447be6e290f3b6bf2ad434fd793c468303804d7bd
+module VE.Cardinality.RunTheorems 8afbfc4e1164e472f4ab99d5ee033bf8db4144472f8bc09db66cf124f86132cf
 8:0-24:11 theorem VE.Cardinality.Run.decodeCertificate_sound@VE.Cardinality.RunTheorems
 26:0-30:5 theorem VE.Cardinality.Run.regionsJson_constants@VE.Cardinality.RunTheorems
 32:0-41:5 theorem VE.Cardinality.Run.erasedJson_conclusion@VE.Cardinality.RunTheorems
@@ -5582,7 +5582,8 @@ module VE.Cardinality.RunTheorems fdf9d9a6fbdf8927ad1950f447be6e290f3b6bf2ad434f
 142:0-160:61 theorem VE.Cardinality.Run.checkedProblem_eq@VE.Cardinality.RunTheorems
 162:0-175:77 theorem VE.Cardinality.Run.checkErased_eq@VE.Cardinality.RunTheorems
 179:0-192:54 theorem VE.Cardinality.Run.checkDeduction_sound@VE.Cardinality.RunTheorems
-198:0-207:67 theorem VE.Cardinality.admit_cardinality_report_sound@VE.Cardinality.RunTheorems
+194:0-203:89 theorem VE.Cardinality.Run.reportJson_report@VE.Cardinality.RunTheorems
+209:0-218:67 theorem VE.Cardinality.admit_cardinality_report_sound@VE.Cardinality.RunTheorems
 module VE.Cardinality.Semantics a79bc44fa49e7d1ba65bff00476dbe5e1b9316b487a29124295ff9546630d3af
 13:0-18:40 def VE.Cardinality.Body.holds@VE.Cardinality.Semantics
 20:0-23:85 def VE.Cardinality.HasCount@VE.Cardinality.Semantics
@@ -5828,7 +5829,7 @@ module VE.Cardinality.WireExamples f8f116d2a4031b91fd05b76d6ba324cb982f65372c8bf
 301:0-302:112 def VE.Cardinality.WireExamples.e2@VE.Cardinality.WireExamples
 313:0-313:76 def VE.Cardinality.WireExamples.finite@VE.Cardinality.WireExamples
 343:0-343:86 def VE.Cardinality.WireExamples.badCount@VE.Cardinality.WireExamples
-module VE.Cardinality.WireTheorems 04cf144ee48637b8cf9e966e7bfddef20bfbedf1b104bd50a93f650fdbfbd756
+module VE.Cardinality.WireTheorems 34e6de1eae7bf3291c623337550b51e5104a6756b37fd2ef61f250fb04ca480c
 10:0-16:37 theorem VE.Cardinality.Wire.profileLists_projected@VE.Cardinality.WireTheorems
 18:0-27:11 theorem VE.Cardinality.Wire.finiteSorts_length@VE.Cardinality.WireTheorems
 29:0-57:80 theorem VE.Cardinality.Wire.decodeEnvironment_sound@VE.Cardinality.WireTheorems
@@ -5844,6 +5845,10 @@ module VE.Cardinality.WireTheorems 04cf144ee48637b8cf9e966e7bfddef20bfbedf1b104b
 160:0-168:66 theorem VE.Cardinality.Wire.elabOperand_cases@VE.Cardinality.WireTheorems
 170:0-192:87 theorem VE.Cardinality.Wire.elabRatio_sound@VE.Cardinality.WireTheorems
 194:0-197:59 theorem VE.Cardinality.Wire.printed_eq@VE.Cardinality.WireTheorems
+204:0-208:96 theorem VE.Cardinality.Wire.encBody_cases@VE.Cardinality.WireTheorems
+210:0-212:87 theorem VE.Cardinality.Wire.encOperand_cases@VE.Cardinality.WireTheorems
+214:0-215:99 theorem VE.Cardinality.Wire.encPrinted_eq@VE.Cardinality.WireTheorems
+217:0-234:52 theorem VE.Cardinality.Wire.encode_cases@VE.Cardinality.WireTheorems
 module VE.CertificateWire d81be730d087e7908329df473c8e34f8b1f26afd87b8b81a294e131b6afb9add
 11:0-13:27 def VE.CertificateWire.maxSteps@VE.CertificateWire
 15:0-15:82 def VE.CertificateWire.stepLimit@VE.CertificateWire

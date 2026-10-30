@@ -5984,6 +5984,23 @@ theorem VE.Cardinality.Run.regionsJson_constants
             table))
   -- uses VE.Cardinality.Region@VE.Cardinality.Regions VE.Cardinality.RegionData@VE.Cardinality.Regions VE.Cardinality.Run.regionsJson@VE.Cardinality.Run VE.Cardinality.bitString@VE.Cardinality.Regions
   -- expr 32322998
+theorem VE.Cardinality.Run.reportJson_report
+  ∀ {w : VE.Cardinality.CardEnv} {γ : Type} (g : VE.Cardinality.Document.Graph w γ) (name : String)
+    (a : VE.Cardinality.CAdmission w),
+    VE.Cardinality.Run.reportJson g =
+        Lean.Json.mkObj
+          [("root", VE.Cardinality.Run.claimJson g.root.name g.root.adm),
+            ("leaves", Lean.Json.arr (List.map (fun n => VE.Cardinality.Run.claimJson n.name n.adm) g.leaves).toArray)] ∧
+      VE.Cardinality.Run.claimJson name a =
+          Lean.Json.mkObj
+            [("name", Lean.Json.str name), ("meaning_id", Lean.Json.str a.meaningId),
+              ("formula", VE.Cardinality.Wire.encode a.formula)] ∧
+        VE.Cardinality.Run.statementJson a =
+            Lean.Json.mkObj
+              [("meaning_id", Lean.Json.str a.meaningId), ("formula", VE.Cardinality.Wire.encode a.formula)] ∧
+          g.report = { root := g.root.adm.formula, leaves := List.map (fun x => x.adm.formula) g.leaves }
+  -- uses VE.Cardinality.CAdmission.formula@VE.Cardinality.Wire VE.Cardinality.CAdmission.meaningId@VE.Cardinality.Wire VE.Cardinality.CAdmission@VE.Cardinality.Wire VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.CardReport.mk@VE.Cardinality.Document VE.Cardinality.CardReport@VE.Cardinality.Document VE.Cardinality.Document.CNode.adm@VE.Cardinality.Document VE.Cardinality.Document.CNode.name@VE.Cardinality.Document VE.Cardinality.Document.CNode@VE.Cardinality.Document VE.Cardinality.Document.Entry.adm@VE.Cardinality.Document VE.Cardinality.Document.Entry.name@VE.Cardinality.Document VE.Cardinality.Document.Graph.leaves@VE.Cardinality.Document VE.Cardinality.Document.Graph.report@VE.Cardinality.Document VE.Cardinality.Document.Graph.root@VE.Cardinality.Document VE.Cardinality.Document.Graph@VE.Cardinality.Document VE.Cardinality.Run.claimJson@VE.Cardinality.Run VE.Cardinality.Run.reportJson@VE.Cardinality.Run VE.Cardinality.Run.statementJson@VE.Cardinality.Run VE.Cardinality.Wire.encode@VE.Cardinality.Wire
+  -- expr 3833553528
 theorem VE.Cardinality.Run.runCaseReported_error
   ∀ {j : Lean.Json} {m : String},
     VE.Cardinality.Run.runCase j = Except.error m →
@@ -6074,6 +6091,75 @@ theorem VE.Cardinality.Wire.elabRatio_sound
           VE.Cardinality.Wire.elabOperand w y = Except.ok (VE.Time.QType.qty g, b) ∧ g ≠ VE.Time.dayTag
   -- uses VE.Cardinality.CTerm@VE.Cardinality.Syntax VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Wire.elabOperand@VE.Cardinality.Wire VE.Cardinality.Wire.elabRatio@VE.Cardinality.Wire VE.Time.QType.qty@VE.Time.Syntax VE.Time.QType@VE.Time.Syntax VE.Time.dayTag@VE.Time.Syntax
   -- expr 334305473
+theorem VE.Cardinality.Wire.encBody_cases
+  ∀ (p : String) (a b : VE.Cardinality.Body),
+    VE.Cardinality.Wire.encBody (VE.Cardinality.Body.atom p) = Lean.Json.arr #[Lean.Json.str "is", Lean.Json.str p] ∧
+      VE.Cardinality.Wire.encBody VE.Cardinality.Body.any = Lean.Json.arr #[Lean.Json.str "any"] ∧
+        VE.Cardinality.Wire.encBody a.not = Lean.Json.arr #[Lean.Json.str "not", VE.Cardinality.Wire.encBody a] ∧
+          VE.Cardinality.Wire.encBody (a.and b) =
+              Lean.Json.arr #[Lean.Json.str "and", VE.Cardinality.Wire.encBody a, VE.Cardinality.Wire.encBody b] ∧
+            VE.Cardinality.Wire.encBody (a.or b) =
+              Lean.Json.arr #[Lean.Json.str "or", VE.Cardinality.Wire.encBody a, VE.Cardinality.Wire.encBody b]
+  -- uses VE.Cardinality.Body.and@VE.Cardinality.Syntax VE.Cardinality.Body.any@VE.Cardinality.Syntax VE.Cardinality.Body.atom@VE.Cardinality.Syntax VE.Cardinality.Body.not@VE.Cardinality.Syntax VE.Cardinality.Body.or@VE.Cardinality.Syntax VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.Wire.encBody@VE.Cardinality.Wire
+  -- expr 1179966702
+theorem VE.Cardinality.Wire.encOperand_cases
+  ∀ (t : VE.Time.QTerm) (s : String) (b : VE.Cardinality.Body),
+    VE.Cardinality.Wire.encOperand (VE.Cardinality.CTerm.quantity t) =
+        Lean.Json.arr #[Lean.Json.str "quantity", VE.Time.Wire.encTerm t] ∧
+      VE.Cardinality.Wire.encOperand (VE.Cardinality.CTerm.count s b) =
+        Lean.Json.arr #[Lean.Json.str "count", Lean.Json.str s, VE.Cardinality.Wire.encBody b]
+  -- uses VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CTerm.count@VE.Cardinality.Syntax VE.Cardinality.CTerm.quantity@VE.Cardinality.Syntax VE.Cardinality.Wire.encBody@VE.Cardinality.Wire VE.Cardinality.Wire.encOperand@VE.Cardinality.Wire VE.Time.QTerm@VE.Time.Syntax VE.Time.Wire.encTerm@VE.Time.Wire
+  -- expr 3136891915
+theorem VE.Cardinality.Wire.encPrinted_eq
+  ∀ (D : Int) (k : Nat), VE.Cardinality.Wire.encPrinted D k = Lean.Json.str (VE.Time.renderAmount k D)
+  -- uses VE.Cardinality.Wire.encPrinted@VE.Cardinality.Wire VE.Time.renderAmount@VE.Time.Decimal
+  -- expr 3561876456
+theorem VE.Cardinality.Wire.encode_cases
+  ∀ (q : VE.Time.QFormula) (c : VE.Cardinality.CountAtom) (p : VE.Cardinality.Proportion) (r : VE.Numbers.Rounding)
+    (x y : VE.Cardinality.CTerm) (D : Int) (k : Nat) (a b : VE.Cardinality.CFormula),
+    VE.Cardinality.Wire.encode (VE.Cardinality.CFormula.quantity q) =
+        Lean.Json.arr #[Lean.Json.str "quantity", VE.Time.Wire.encQ q] ∧
+      VE.Cardinality.Wire.encode (VE.Cardinality.CFormula.count c) =
+          Lean.Json.arr
+            #[Lean.Json.str "count", Lean.Json.str c.sort,
+              Lean.Json.arr
+                (List.map
+                    (fun kb =>
+                      Lean.Json.arr #[Lean.Json.str (ToString.toString kb.fst), VE.Cardinality.Wire.encBody kb.snd])
+                    c.terms).toArray,
+              Lean.Json.str (VE.Cardinality.Wire.nameOf VE.Cardinality.Wire.relNames c.rel),
+              Lean.Json.str (ToString.toString c.bound)] ∧
+        VE.Cardinality.Wire.encode (VE.Cardinality.CFormula.proportion p) =
+            Lean.Json.arr
+              #[Lean.Json.str "proportion", Lean.Json.str p.sort, VE.Cardinality.Wire.encBody p.whole,
+                VE.Cardinality.Wire.encBody p.part,
+                Lean.Json.str (VE.Cardinality.Wire.nameOf VE.Cardinality.Wire.cmpNames p.cmp),
+                Lean.Json.str (ToString.toString p.num), Lean.Json.str (ToString.toString p.den)] ∧
+          VE.Cardinality.Wire.encode (VE.Cardinality.CFormula.roundsTo r x y D k) =
+              Lean.Json.arr
+                #[Lean.Json.str "rounds_to", Lean.Json.str (VE.Cardinality.Wire.nameOf VE.Cardinality.Wire.ruleNames r),
+                  VE.Cardinality.Wire.encOperand x, VE.Cardinality.Wire.encOperand y,
+                  VE.Cardinality.Wire.encPrinted D k] ∧
+            VE.Cardinality.Wire.encode (VE.Cardinality.CFormula.percentOf x y D k) =
+                Lean.Json.arr
+                  #[Lean.Json.str "percent_of", VE.Cardinality.Wire.encOperand x, VE.Cardinality.Wire.encOperand y,
+                    VE.Cardinality.Wire.encPrinted D k] ∧
+              VE.Cardinality.Wire.encode (VE.Cardinality.CFormula.percentRoundsTo r x y D k) =
+                  Lean.Json.arr
+                    #[Lean.Json.str "percent_rounds_to",
+                      Lean.Json.str (VE.Cardinality.Wire.nameOf VE.Cardinality.Wire.ruleNames r),
+                      VE.Cardinality.Wire.encOperand x, VE.Cardinality.Wire.encOperand y,
+                      VE.Cardinality.Wire.encPrinted D k] ∧
+                VE.Cardinality.Wire.encode a.not = Lean.Json.arr #[Lean.Json.str "not", VE.Cardinality.Wire.encode a] ∧
+                  VE.Cardinality.Wire.encode (a.and b) =
+                      Lean.Json.arr #[Lean.Json.str "and", VE.Cardinality.Wire.encode a, VE.Cardinality.Wire.encode b] ∧
+                    VE.Cardinality.Wire.encode (a.or b) =
+                        Lean.Json.arr #[Lean.Json.str "or", VE.Cardinality.Wire.encode a, VE.Cardinality.Wire.encode b] ∧
+                      VE.Cardinality.Wire.encode (a.implies b) =
+                        Lean.Json.arr
+                          #[Lean.Json.str "implies", VE.Cardinality.Wire.encode a, VE.Cardinality.Wire.encode b]
+  -- uses VE.Cardinality.Body@VE.Cardinality.Syntax VE.Cardinality.CFormula.and@VE.Cardinality.Syntax VE.Cardinality.CFormula.count@VE.Cardinality.Syntax VE.Cardinality.CFormula.implies@VE.Cardinality.Syntax VE.Cardinality.CFormula.not@VE.Cardinality.Syntax VE.Cardinality.CFormula.or@VE.Cardinality.Syntax VE.Cardinality.CFormula.percentOf@VE.Cardinality.Syntax VE.Cardinality.CFormula.percentRoundsTo@VE.Cardinality.Syntax VE.Cardinality.CFormula.proportion@VE.Cardinality.Syntax VE.Cardinality.CFormula.quantity@VE.Cardinality.Syntax VE.Cardinality.CFormula.roundsTo@VE.Cardinality.Syntax VE.Cardinality.CFormula@VE.Cardinality.Syntax VE.Cardinality.CTerm@VE.Cardinality.Syntax VE.Cardinality.Cmp@VE.Cardinality.Syntax VE.Cardinality.CountAtom.bound@VE.Cardinality.Syntax VE.Cardinality.CountAtom.rel@VE.Cardinality.Syntax VE.Cardinality.CountAtom.sort@VE.Cardinality.Syntax VE.Cardinality.CountAtom.terms@VE.Cardinality.Syntax VE.Cardinality.CountAtom@VE.Cardinality.Syntax VE.Cardinality.Proportion.cmp@VE.Cardinality.Syntax VE.Cardinality.Proportion.den@VE.Cardinality.Syntax VE.Cardinality.Proportion.num@VE.Cardinality.Syntax VE.Cardinality.Proportion.part@VE.Cardinality.Syntax VE.Cardinality.Proportion.sort@VE.Cardinality.Syntax VE.Cardinality.Proportion.whole@VE.Cardinality.Syntax VE.Cardinality.Proportion@VE.Cardinality.Syntax VE.Cardinality.Rel@VE.Cardinality.Syntax VE.Cardinality.Wire.cmpNames@VE.Cardinality.Wire VE.Cardinality.Wire.encBody@VE.Cardinality.Wire VE.Cardinality.Wire.encOperand@VE.Cardinality.Wire VE.Cardinality.Wire.encPrinted@VE.Cardinality.Wire VE.Cardinality.Wire.encode@VE.Cardinality.Wire VE.Cardinality.Wire.nameOf@VE.Cardinality.Wire VE.Cardinality.Wire.relNames@VE.Cardinality.Wire VE.Cardinality.Wire.ruleNames@VE.Cardinality.Wire VE.Cardinality.instDecidableEqCmp@VE.Cardinality.Syntax VE.Cardinality.instDecidableEqRel@VE.Cardinality.Syntax VE.Numbers.Rounding@VE.Numbers.Round VE.Numbers.instDecidableEqRounding@VE.Numbers.Round VE.Time.QFormula@VE.Time.Syntax VE.Time.Wire.encQ@VE.Time.Wire
+  -- expr 448838065
 theorem VE.Cardinality.Wire.finiteSorts_length
   ∀ {env : Lean.Json} {xs : List String},
     VE.Cardinality.Wire.finiteSorts env = Except.ok xs → xs.length ≤ VE.Cardinality.Wire.maxFiniteSorts

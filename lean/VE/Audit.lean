@@ -1281,6 +1281,7 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.Run.foldl_capped_gt
 #print axioms VE.Cardinality.Run.problemChecks_eq
 #print axioms VE.Cardinality.Run.regionsJson_constants
+#print axioms VE.Cardinality.Run.reportJson_report
 #print axioms VE.Cardinality.Run.runCaseReported_error
 #print axioms VE.Cardinality.Run.runCaseReported_ok
 #print axioms VE.Cardinality.Wire.cmpNames_spelled
@@ -1291,6 +1292,10 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.Wire.elabName_mem
 #print axioms VE.Cardinality.Wire.elabOperand_cases
 #print axioms VE.Cardinality.Wire.elabRatio_sound
+#print axioms VE.Cardinality.Wire.encBody_cases
+#print axioms VE.Cardinality.Wire.encOperand_cases
+#print axioms VE.Cardinality.Wire.encPrinted_eq
+#print axioms VE.Cardinality.Wire.encode_cases
 #print axioms VE.Cardinality.Wire.finiteSorts_length
 #print axioms VE.Cardinality.Wire.items_ok
 #print axioms VE.Cardinality.Wire.printed_eq
