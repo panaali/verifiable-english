@@ -8,11 +8,11 @@ Every string, integer and map-key leaf of every Lean response shape, its class u
 |---|---:|
 | leaves:bound | 255 |
 | leaves:closed domain | 286 |
-| leaves:none | 1402 |
+| leaves:none | 1412 |
 | modes | 39 |
 | today:hand | 202 |
 | today:later Lean request | 62 |
-| today:not probed | 1001 |
+| today:not probed | 1011 |
 | today:shape | 541 |
 | today:unbound | 137 |
 | answers | 574 |
@@ -3361,8 +3361,18 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | `/case_index` | integer | bound | x-index |  | 1 | shape |
 | `/error` | string | none |  | minLength | 4 | not probed |
 | `/meaning_id` | string | none |  | pattern | 3 | not probed |
+| `/rows/*/certificate/*/farkas/goal/coeffs/*/0` | string | none |  |  | 0 | not probed |
+| `/rows/*/certificate/*/farkas/goal/coeffs/*/1` | string | none |  | pattern | 0 | not probed |
+| `/rows/*/certificate/*/farkas/goal/const` | string | none |  | pattern | 0 | not probed |
+| `/rows/*/certificate/*/farkas/weights/*` | string | none |  | pattern | 0 | not probed |
+| `/rows/*/certificate/*/square/a` | string | none |  | pattern | 0 | not probed |
+| `/rows/*/certificate/*/square/b` | string | none |  | pattern | 0 | not probed |
+| `/rows/*/certificate/*/square/root` | string | none |  |  | 0 | not probed |
+| `/rows/*/certificate/*/square/square` | string | none |  |  | 0 | not probed |
 | `/rows/*/claim` | string | bound | x-equals |  | 3 | shape |
 | `/rows/*/claim_id` | string | none |  | pattern | 3 | not probed |
+| `/rows/*/counterexample/*/0` | string | none |  |  | 3 | not probed |
+| `/rows/*/counterexample/*/1` | string | none |  | pattern | 3 | not probed |
 | `/rows/*/display` | string | none |  | pattern | 2 | not probed |
 | `/rows/*/kind` | string | closed domain | const |  | 3 | shape |
 | `/rows/*/line` | string | none |  | minLength | 2 | not probed |
@@ -3377,6 +3387,12 @@ Delegates: `/` to norm-defaults, `/` to norms, `/` to rights, `/` to soft-norms.
 | array | length bound by | positions bound by | internal agreement | probed (generic/hand) |
 |---|---|---|---|---|
 | `/rows` | x-zip | x-zip |  |  |
+| `/rows/*/certificate` |  |  |  |  |
+| `/rows/*/certificate/*/farkas/goal/coeffs` |  |  |  |  |
+| `/rows/*/certificate/*/farkas/goal/coeffs/*` |  |  |  |  |
+| `/rows/*/certificate/*/farkas/weights` |  |  |  |  |
+| `/rows/*/counterexample` |  |  |  |  |
+| `/rows/*/counterexample/*` |  |  |  |  |
 | `/rows/*/sides` |  |  |  |  |
 
 ## cardinality
