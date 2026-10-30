@@ -1,7 +1,8 @@
 """The explain route (scope SC-1c): `ve scope explain` relays Lean's rows (service mode `scope`) and never shows an
 answer that is not one about the document it asked about. Genuine answers are mutated one and two faults at a time
-(each member dropped, emptied, retyped, duplicated or reordered, an index pushed out of range, an id rebound): every
-mutant is `CheckerUnavailable` or changes nothing the relay shows (R8)."""
+(each member dropped, emptied, retyped, duplicated or reordered, an index pushed out of range, an id rebound, each
+with `governed` made consistent again as its second fault): every mutant is `CheckerUnavailable` or changes nothing
+the relay shows (R8). Deleting any one binding check of the relay lets some mutant through (review F1)."""
 from __future__ import annotations
 
 import copy
@@ -16,6 +17,7 @@ from ve.backends import relay
 from ve.backends.service_schema import ROWS, Context, Invalid
 from ve.errors import CheckerUnavailable, VEError
 
+ANSWER = relay.answer
 LEAD = "The start of this rule comes from the line above the list, \"The rules:\"."
 RULE_A = "\"- **Rule a:** Unit a.\""
 
@@ -121,31 +123,127 @@ def _rebound(row):
         yield f"governed[{i}] unit out of range", lambda r, i=i: r["governed"][i]["units"].append("u9999")
 
 
-@pytest.mark.parametrize("name", ["multi", "precedes", "frame"])
-def test_every_mutant_of_a_genuine_answer_is_refused_or_changes_nothing_shown(tmp_path, capsys, monkeypatch, name):
-    text = multi_text() if name == "multi" else _governed_text("norms", name)
-    path = _write(tmp_path, text)
+def _regoverned(mutant):
+    """The mutant with `governed` made consistent again with its rows (each governor with the units of the rows that
+    name it, in their order, repeats kept): the second fault of a forged row, so the row's own check must refuse it."""
+    try:
+        units = {}
+        for entry in mutant["rows"]:
+            for x in entry["governors"]:
+                units.setdefault(x["id"], []).append(entry["unit"])
+        governed = [{"id": g["id"], "units": units.get(g["id"], [])} for g in mutant["governed"]]
+    except (TypeError, KeyError, AttributeError):
+        return mutant
+    return {**mutant, "governed": governed}
+
+
+def _omits(where) -> bool:
+    """Whether the fault only leaves out rows or a row's governor. With `governed` made consistent again such an answer
+    omits a contribution: which units are governed and by whom is Lean's (`explain_rows_iff`, R8), not the binding's."""
+    if type(where) is str:
+        return "dropped" in where
+    shape = tuple(type(step) if type(step) is int else step for step in where)
+    return shape in {("rows", "=empty"), ("rows", int, "-"), ("rows", int, "governors", "=empty"),
+                     ("rows", int, "governors", int, "-")}
+
+
+def _accepted(text, path, capsys, monkeypatch):
+    """The one- and two-fault mutants of Lean's genuine answer about `text` that pass the service's schema and the
+    relay's binding and change what `ve scope explain` shows, and how many mutants were tried."""
     [genuine] = relay.rows("scope", [scope.request(text)])
+    monkeypatch.setattr(relay, "answer", ANSWER)
     shown = _shown(path, capsys)
     assert _shown(path, capsys, genuine, monkeypatch) == shown  # the stub replays the genuine answer
     case = scope.request(text)
     accepted, count = [], 0
     for where, mutate in [*_structural_mutants(genuine), *_rebound(genuine)]:
-        mutant = copy.deepcopy(genuine)
-        mutate(mutant)
-        if mutant == genuine:
-            continue
-        count += 1
-        try:
-            ROWS["scope"][0](mutant, Context(case), {})
-        except Invalid:
-            continue
-        try:
-            if _shown(path, capsys, mutant, monkeypatch) != shown:
-                accepted.append(where)
-        except CheckerUnavailable:
-            pass
+        once = copy.deepcopy(genuine)
+        mutate(once)
+        twice = [] if _omits(where) else [(_regoverned(once), (where, "governed kept"))]
+        for mutant, fault in [(once, where), *twice]:
+            if mutant == genuine:
+                continue
+            count += 1
+            try:
+                ROWS["scope"][0](mutant, Context(case), {})
+            except Invalid:
+                continue
+            try:
+                if _shown(path, capsys, mutant, monkeypatch) != shown:
+                    accepted.append(fault)
+            except CheckerUnavailable:
+                pass
+    return accepted, count
+
+
+DOCUMENTS = {"multi": multi_text, "precedes": lambda: _governed_text("norms", "precedes"),
+             "frame": lambda: _governed_text("norms", "frame")}
+
+
+@pytest.mark.parametrize("name", DOCUMENTS)
+def test_every_mutant_of_a_genuine_answer_is_refused_or_changes_nothing_shown(tmp_path, capsys, monkeypatch, name):
+    text = DOCUMENTS[name]()
+    accepted, count = _accepted(text, _write(tmp_path, text), capsys, monkeypatch)
     assert count > 100 and not accepted, accepted
+
+
+def _checks():
+    """Each binding check of `scope.answer_problem` with the function that lacks it: every disjunct of a refusing
+    `if` (one at a time), or the whole condition when it is not a disjunction (review F1: no test failed when the
+    empty-sentence, reach, repeat or order check was deleted)."""
+    import ast
+    import inspect
+    import textwrap
+    tree = ast.parse(textwrap.dedent(inspect.getsource(scope.answer_problem)))
+    sites = [node for node in ast.walk(tree) if type(node) is ast.If and type(node.body[0]) is ast.Return
+             and node.body[0].value is not None]
+    for n, site in enumerate(sites):
+        parts = site.test.values if type(site.test) is ast.BoolOp and type(site.test.op) is ast.Or else [site.test]
+        for k, part in enumerate(parts):
+            mutated = copy.deepcopy(tree)
+            target = [node for node in ast.walk(mutated) if type(node) is ast.If
+                      and type(node.body[0]) is ast.Return and node.body[0].value is not None][n]
+            if len(parts) == 1:
+                target.test = ast.Constant(False)
+            else:
+                target.test.values[k] = ast.Constant(False)
+            namespace = dict(vars(scope))
+            exec(compile(ast.fix_missing_locations(mutated), scope.__file__, "exec"), namespace)
+            yield ast.unparse(part), namespace["answer_problem"]
+
+
+# The checks the service's schema (`scope.json`, applied by `run_bound` before the relay reads a row) decides first: a
+# mutant they would refuse never reaches the binding. Each is kept as the relay's own type guard.
+SCHEMA_FIRST = {
+    "type(row) is not dict", "set(row) != {'id', 'status', 'rows', 'governed'}", "row['id'] != case_id",
+    "row['status'] != 'ok'", "type(row['rows']) is not list", "type(row['governed']) is not list",
+    "type(entry) is not dict", "set(entry) != {'unit', 'governors'}", "type(entry['governors']) is not list",
+    "type(unit) is not str", "not entry['governors']", "set(x) != {'id', 'unit', 'effect', 'reach', 'provenance'}",
+    "type(x['effect']) is not str", "type(x['provenance']) is not str"}
+
+
+def test_every_binding_check_has_a_mutant_only_it_refuses(tmp_path, capsys, monkeypatch):
+    """Deleting any binding check of the relay lets some mutant of a genuine answer change what is shown (or crash the
+    relay), unless the schema refuses that mutant first (`SCHEMA_FIRST`, kept exact so it cannot go stale)."""
+    texts = []
+    for name, make in DOCUMENTS.items():
+        (tmp_path / name).mkdir()
+        texts.append((make(), _write(tmp_path / name, make())))
+    survivors = set()
+    for check, weakened in _checks():
+        monkeypatch.setattr(scope, "answer_problem", weakened)
+        killed = False
+        for text, path in texts:
+            try:
+                killed = bool(_accepted(text, path, capsys, monkeypatch)[0])
+            except (TypeError, KeyError, AttributeError, IndexError):
+                killed = True  # the weakened relay crashes on a mutant instead of refusing it
+            if killed:
+                break
+        if not killed:
+            survivors.add(check)
+        monkeypatch.undo()
+    assert survivors == SCHEMA_FIRST, (survivors - SCHEMA_FIRST, SCHEMA_FIRST - survivors)
 
 
 def test_a_row_lean_did_not_bind_to_the_case_is_no_answer(tmp_path, monkeypatch):
