@@ -109,6 +109,10 @@ def test_answers_are_typed_and_bound_to_their_request(service):
     refused(1, {**certificate, "regions": admission["regions"]})
 
 
+# Values every typed member refuses (BUILDER-CHECKLIST 1).
+BAD = (7, True, None, [], {}, 1.5, "\ud800", [[[]]])
+
+
 def test_document_rows_are_typed_and_bound(service):
     """qt-a3d, R8: the report names the request's root and its nodes only; each retyped or rebound member is
     refused."""
@@ -122,7 +126,12 @@ def test_document_rows_are_typed_and_bound(service):
                    {**row, "report": {**report, "leaves": [{**leaves[0], "meaning_id": 3}, *leaves[1:]]}},
                    {**row, "report": {**report, "leaves": [{**leaves[0], "formula": ["most"]}, *leaves[1:]]}},
                    {**row, "report": {**report, "extra": []}},
-                   {k: v for k, v in row.items() if k != "report"}, {**row, "premises": []}, {**row, "valid": True}):
+                   {k: v for k, v in row.items() if k != "report"}, {**row, "premises": []}, {**row, "valid": True},
+                   *({**row, key: bad} for key in row for bad in BAD),
+                   *({**row, "report": {**report, "root": {**report["root"], key: bad}}}
+                     for key in report["root"] for bad in BAD),
+                   *({**row, "report": {**report, "leaves": [{**leaves[0], key: bad}, *leaves[1:]]}}
+                     for key in leaves[0] for bad in BAD)):
         mutated = deepcopy(response)
         mutated["results"][0]["result"] = mutant
         with pytest.raises(Invalid):
