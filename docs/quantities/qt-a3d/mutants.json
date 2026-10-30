@@ -78,7 +78,7 @@
     "-c",
     "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
    ],
-   "test": "VE/Cardinality/RunExamples.lean qt-a3d guards: FA1 as a claim graph"
+   "test": "proof decodeNode_statement (Document.lean); VE/Cardinality/RunExamples.lean qt-a3d guards: FA1 as a claim graph"
   },
   {
    "id": "profile",
