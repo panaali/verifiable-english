@@ -608,11 +608,36 @@ def decodedEnvironment (written : Json) (block : Block) : Except String Env := d
     let _ ← VE.Compose.gateOf VE.Compose.profileTable profiles
   pure ⟨written, checked, rv, profiles, ← Standalone.environmentIdOf profiles written, block, false, none⟩
 
-/-- `_soft_contents`: the soft source's norm objects, the content of each top-level unit of kind `norm` whose
-object content holds `norm` (a `MIXED` unit's parts are not in it). -/
+/-- A `MIXED` unit's parts as Python's `_parts` generator yields them from `cursor`: each part that starts at the
+cursor (`Loader.partOk`), until the first that does not; with the cursor after the last part when every part was
+yielded. -/
+def yieldedParts (cursor : Nat) : List Json → List Json × Option Nat
+  | [] => ([], some cursor)
+  | p :: ps => match Loader.partOk cursor p, (p.getObjValD "span").getArr?.toOption.map Array.toList with
+    | .ok (), some [_, y] =>
+      -- Python's cursor is the part's end as written, and a Boolean equals 0 or 1 (`Loader.pyEqNat`).
+      match (match y with | .bool b => some (if b then 1 else 0) | _ => y.getNat?.toOption) with
+      | some d => let (xs, stop) := yieldedParts d ps; (p :: xs, stop)
+      | none => ([p], none)
+    | _, _ => ([], none)
+
+/-- The units `_parts` yields before its first fault: what `load_document` collects for `check_rule_batch`, which
+swallows that fault, since the unit loop reports it in source order (after any earlier unit's fault). A pre-scan
+that raised it (`Loader.partsOf`) would put a later unit's structural fault before an earlier unit's. -/
+def partsPrefix : List Json → List Json
+  | [] => []
+  | u :: us => match Loader.mixedOf u with
+    | .ok none => u :: partsPrefix us
+    | .ok (some ((a, b), parts)) => match yieldedParts a parts with
+      | (xs, some stop) => if stop == b then xs ++ partsPrefix us else xs
+      | (xs, none) => xs
+    | .error _ => []
+
+/-- `_soft_contents`: the soft source's norm objects, the content of each unit of kind `norm` whose object content
+holds `norm`, over the units `_parts` yields before its first fault (`partsPrefix`, `MIXED` parts included). -/
 def softSourceNorms (units : Json) : List Json :=
   match units with
-  | .arr us => us.toList.filterMap fun u =>
+  | .arr us => (partsPrefix us.toList).filterMap fun u =>
       if u.getObjValD "kind" == .str "norm" && ((u.getObjValD "content").getObjVal? "norm").isOk then
         some (u.getObjValD "content")
       else none
@@ -1047,31 +1072,6 @@ def extendedEnv (json : Json) : Except String Env :=
     pure { json, checked, rv, profiles, envId := ← Standalone.environmentIdOf profiles json, block := .none,
            generated := true }
   built.mapError fun m => unavailable s!"the soft route's extended environment is outside this mode: {m}"
-
-/-- A `MIXED` unit's parts as Python's `_parts` generator yields them from `cursor`: each part that starts at the
-cursor (`Loader.partOk`), until the first that does not; with the cursor after the last part when every part was
-yielded. -/
-def yieldedParts (cursor : Nat) : List Json → List Json × Option Nat
-  | [] => ([], some cursor)
-  | p :: ps => match Loader.partOk cursor p, (p.getObjValD "span").getArr?.toOption.map Array.toList with
-    | .ok (), some [_, y] =>
-      -- Python's cursor is the part's end as written, and a Boolean equals 0 or 1 (`Loader.pyEqNat`).
-      match (match y with | .bool b => some (if b then 1 else 0) | _ => y.getNat?.toOption) with
-      | some d => let (xs, stop) := yieldedParts d ps; (p :: xs, stop)
-      | none => ([p], none)
-    | _, _ => ([], none)
-
-/-- The units `_parts` yields before its first fault: what `load_document` collects for `check_rule_batch`, which
-swallows that fault, since the unit loop reports it in source order (after any earlier unit's fault). A pre-scan
-that raised it (`Loader.partsOf`) would put a later unit's structural fault before an earlier unit's. -/
-def partsPrefix : List Json → List Json
-  | [] => []
-  | u :: us => match Loader.mixedOf u with
-    | .ok none => u :: partsPrefix us
-    | .ok (some ((a, b), parts)) => match yieldedParts a parts with
-      | (xs, some stop) => if stop == b then xs ++ partsPrefix us else xs
-      | (xs, none) => xs
-    | .error _ => []
 
 /-- `SoftNormDocument(env, _soft_contents(units))` and `check_rule_batch`'s source, after the open terms and before
 the units: the soft route's decoding of the soft source, its `E′` and decision predicates, and `_rule_source(E″)`

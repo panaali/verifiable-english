@@ -209,12 +209,22 @@ class SoftBaseEnvironment(Environment):
         super().__init__(data)
 
 
+def base_predicate_declaration(declaration):
+    """The ordinary predicate fields retained in Lean's soft/norm base environment.
+
+    The norm and soft metadata belong to their source layers, not to the
+    vocabulary used to decode the filled tree.
+    """
+    return {key: value for key, value in declaration.items()
+            if key not in ("regulated", "instruction_of")}
+
+
 class SoftenedNormDocument(NormDocument):
     def base_environment(self):
         data = self.env.to_dict()
         data['vocabulary'].pop('soft', None)
         data['vocabulary']['predicates'] = {
-            name: {k: v for k, v in decl.items() if k != 'instruction_of'}
+            name: base_predicate_declaration(decl)
             for name, decl in data['vocabulary']['predicates'].items() if 'regulated' not in decl}
         # `readings@1` is the head's layer, never the base vocabulary's (DRI ruling 4's class).
         data['profiles'] = [p for p in data['profiles'] if p not in ('norms@0', 'soft-norms@0', 'readings@1')]

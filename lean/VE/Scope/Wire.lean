@@ -100,9 +100,19 @@ def spanIn (size : Nat) (u : Json) : Nat × Nat :=
 def layoutOf (doc : Json) (source : String) : List VE.Layout.Unit :=
   VE.Layout.ofSource source ((unitsOf doc).map fun u => (idOf u, spanIn source.utf8ByteSize u))
 
+/-- The DRI's boundary of 2026-10-28 (sc-1af): where a document's JSON tree is one no parser builds (`jsonWF?`), the
+    first such unit by its id (by its index when no id can be read), else the scope block, else the document; none
+    when it is well formed. -/
+def illFormed (front : Json) : Option String :=
+  if jsonWF? front then none else some <|
+    match (unitsOf front).zipIdx.find? (!jsonWF? ·.1) with
+    | some (u, i) => if idOf u == "" then s!"units[{i}]" else s!"units.{idOf u}"
+    | none => if jsonWF? (front.getObjValD "scope") then "document" else "scope"
+
 /-- The scope block of a front matter `front` (the complete document) over its source, read by the chain's
-    environment `re`. -/
-def decodeBlock (front : Json) (source : String) (re : VE.Readings.Wire.ReadingsEnvironment) : Except String SDoc :=
+    environment `re`, once the document is well formed: every rule the route decodes is read from it. -/
+def decodeBlock (front : Json) (source : String) (re : VE.Readings.Wire.ReadingsEnvironment) : Except String SDoc := do
+  if let some p := illFormed front then throw (wireFault p "a well-formed JSON tree")
   (decodeParts (front.getObjValD "scope")).map fun (governors, listNames, anchors) =>
     { layout := layoutOf front source, doc := front, block := front.getObjValD "scope", governors, listNames,
       anchors, re }
