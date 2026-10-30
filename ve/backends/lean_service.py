@@ -71,6 +71,7 @@ alone, not on the handles one process happens to hold.
 from __future__ import annotations
 
 import hashlib
+import importlib
 import itertools
 import json
 from decimal import Decimal
@@ -348,14 +349,16 @@ _HEX64 = re.compile(r"[0-9a-f]{64}")
 
 def build_lock() -> Path:
     """The pin file of the tree: `lean/checkers.lock` through `inventory_path` (tools/lean_statements.py), the
-    local overlay's copy when it is fresh, else the committed one (docs/infra/gen-inv-design/DESIGN.md 4)."""
+    local overlay's copy when it is fresh, else the committed one (docs/infra/gen-inv-design/DESIGN.md 4). The
+    accessor is imported at run time: a static import would put the registry, which names every generator, in
+    the import graph of every test of the service (tools/select_tests.py); tests/test_inventory_path.py imports
+    both and checks this read."""
     if BUILD_LOCK is not None:
         return BUILD_LOCK
     tools = str(ROOT / "tools")
     if tools not in sys.path:
         sys.path.append(tools)
-    from lean_statements import inventory_path
-    return inventory_path("lean/checkers.lock", ROOT)
+    return importlib.import_module("lean_statements").inventory_path("lean/checkers.lock", ROOT)
 
 
 def executable_sha256(path: Path) -> str:
