@@ -7,7 +7,7 @@ from ..ast import Document, formula_from_data
 from ..errors import CheckerUnavailable, VEError
 from ..readings import active_reading_sets
 from .containers import _content_bearing, _rights_block
-from .lean import composed_set_units, composed_unavailable
+from .lean import composed_set_units
 from .load import load_document
 
 
@@ -113,7 +113,8 @@ def render_document(path):
                         f"{description} The source presents this as {kind_description(kind)}.")
             from ..norms import NormDocument
             from ..norm_english import render_rule_sentence
-            rule = NormDocument._decode(content)
+            from ..readings_s1 import norm_rule_input
+            rule = NormDocument._decode(norm_rule_input(content))
             claim = render_rule_sentence(rule, doc["environment"] if vocabulary is None else vocabulary)
             if rule.over:
                 claim += " Exception to " + ", ".join(rule.over) + "."
@@ -177,10 +178,6 @@ def render_document(path):
         if reading_set is not None:
             lines.append("The author's chosen reading is:" if reading_set["status"] == "authored"
                          else "This sentence could mean:")
-            if u["id"] in composed:
-                # scope@0 composes this set per choice; Lean's answer does not carry the composed readings yet (scope
-                # spec 11.7 item 7, sc-5rc), and a reading as written (a part, or a rule before GOVERN) is not one.
-                raise composed_unavailable(u["id"])
             for index, candidate in enumerate(reading_set["readings"]):
                 lead = "One reading is" if index == 0 else "Another reading is"
                 # A coupled axis's label says which reading a coupling chooses together (6.2).
