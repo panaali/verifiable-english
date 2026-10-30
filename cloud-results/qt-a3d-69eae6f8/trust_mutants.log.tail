@@ -1,0 +1,9 @@
+trust_mutants: 2 definitions, 46 mutants (46 to run), 4 jobs, base 462cf4ca1de0
+UNKNOWN lean/VE/Cardinality/Document.lean:26 VE.Cardinality.CardReport.Sound (S, trusted) body-true: CEntails.{v} E r.leaves r.root -> True (lean/VE/Cardinality/Document.lean:264: the failing proof cannot be cut: too many explicit univers...)
+UNKNOWN lean/VE/Cardinality/Document.lean:26 VE.Cardinality.CardReport.Sound (S, trusted) body-false: CEntails.{v} E r.leaves r.root -> False (lean/VE/Cardinality/Document.lean:264: the failing proof cannot be cut: too many explicit univers...)
+UNKNOWN lean/VE/Cardinality/Run.lean:236 VE.Cardinality.Run.runCase (G[V], trusted) list-empty: ps -> [] (lean/VE/Cardinality/Run.lean:236: don't know how to synthesize implicit argument `α`)
+SURVIVOR lean/VE/Cardinality/Run.lean:227 VE.Cardinality.Run.runCase (G[V], trusted) list-first: envIds -> (envIds.take 1)
+SURVIVOR lean/VE/Cardinality/Run.lean:227 VE.Cardinality.Run.runCase (G[V], trusted) list-drop-last: envIds -> (envIds.dropLast)
+trust_mutants: 41 KILLED, 2 SURVIVOR, 3 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 1369 s
+trust_mutants: G[V], trusted: 41 KILLED, 2 SURVIVOR, 1 UNKNOWN
+trust_mutants: S, trusted: 2 UNKNOWN
