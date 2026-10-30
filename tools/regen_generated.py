@@ -60,7 +60,6 @@ ROOT = Path(__file__).resolve().parents[1]
 PY = sys.executable
 DRIVER = "ve-generated"
 ATTRIBUTES = ROOT / ".gitattributes"
-LOCK = ROOT / "lean/checkers.lock"
 
 
 @dataclass(frozen=True)
@@ -81,6 +80,9 @@ class Generated:
     # (`_Service`); every entry whose commands import the service client carries it (tests/test_regen_generated.py).
     service: str = ""
     advisory: bool = False            # --check warns on drift; the merge train still writes it
+    # "train": a function of the compiled tree that branches stop committing (docs/infra/gen-inv-design/DESIGN.md
+    # section 4): its readers go through `inventory_path` (tools/lean_statements.py); `train_only()` lists them.
+    writer: str = ""
 
 
 # In dependency order: generated Lean before the build; the build before the statement dumps, the checker pins
@@ -139,10 +141,10 @@ GENERATED = (
               ((PY, "tools/lean_mode_deps.py", "--check"),),
               note="mode roots from the compiled runMode dispatch pins"),
     Generated("lean-statements", ("lean/statements.txt", "lean/predicates.txt", "lean/declarations.txt"),
-              ((PY, "tools/lean_statements.py"),), ((PY, "tools/lean_statements.py", "--check"),)),
+              ((PY, "tools/lean_statements.py"),), ((PY, "tools/lean_statements.py", "--check"),), writer="train"),
     Generated("lean-audit-manifests", ("lean/VE/Audit.lean", "lean/ResponseShapeAudit.lean", "lean/axioms.txt"),
               ((PY, "lean/audit.py", "--write"),), ((PY, "lean/audit.py", "--check"),),
-              note="generated from lean/declarations.txt, then the axiom audit record"),
+              note="generated from lean/declarations.txt, then the axiom audit record", writer="train"),
     Generated("frozen-inventory", ("lean/VE/Route/frozen-sources.sha256",),
               ((PY, "VE/Route/frozen.py", "--write"),), ((PY, "VE/Route/frozen.py"),), cwd="lean"),
     Generated("trust-tables", ("tools/trust-classes.json", "docs/trust-baseline.json"), None,
@@ -150,7 +152,7 @@ GENERATED = (
               note="ledgers: growth over the base needs `trust_map.py --allow --reason ... --signed ...` "
                    "(the DRI's signature); `--write` is the merge train's, on main"),
     Generated("checker-pins", ("lean/checkers.lock",), ("pin_checkers",), ("check_pins",), merge="json",
-              note="both sides' pins, plus the merged ve_service build and Rust release binary"),
+              note="both sides' pins, plus the merged ve_service build and Rust release binary", writer="train"),
     Generated("response-schemas", ("ve/backends/lean_service_schema/*.json",),
               ((PY, "tools/response_schemas.py", "--write"),), ((PY, "tools/response_schemas.py", "--check"),),
               fresh="tests/test_response_schemas.py::test_every_schema_file_is_the_lean_rendering"),
@@ -175,7 +177,8 @@ GENERATED = (
               merge="json", note="decoder pins are reviewed by hand; a merge keeps each side's pins",
               fresh="tests/test_assurance_manifest.py::test_decoder_files_are_pinned_whole"),
     Generated("assurance-doc", ("docs/spec/assurance-manifest.md",),
-              ((PY, "tools/assurance_manifest.py", "--write"),), ((PY, "tools/assurance_manifest.py", "--check"),)),
+              ((PY, "tools/assurance_manifest.py", "--write"),), ((PY, "tools/assurance_manifest.py", "--check"),),
+              writer="train"),
     Generated("layer-ledgers", ("tools/layer-exceptions.json", "tools/lean-layer-exceptions.json"), None,
               ((PY, "tools/check_lean_imports.py"),), merge="json"),
     Generated("import-contract", (".importlinter",), ((PY, "tools/check_python_layers.py", "--write"),),
@@ -199,6 +202,8 @@ GENERATED = (
               ((PY, "tools/history_tests.py", "--check"),),
               note="after history-map, which it reads with the test sources"),
 )
+# The pin file, `inventory_path`'s name for it.
+PIN_FILE = next(entry for entry in GENERATED if entry.name == "checker-pins").paths[0]
 
 
 # Generated files that are deleted, each with the change that deleted it: `--resolve` settles a conflict on one
@@ -266,6 +271,12 @@ def owner(path: str) -> Generated | None:
     return None
 
 
+def train_only() -> tuple[str, ...]:
+    """The train-only files: every path of an entry with `writer="train"`, the one list of them (each a literal
+    path, never a pattern: `inventory_path` keeps one copy of each)."""
+    return tuple(path for entry in GENERATED if entry.writer == "train" for path in entry.paths)
+
+
 def owned_files(entry: Generated, root: Path = ROOT) -> list[Path]:
     return sorted({path for pattern in entry.paths for path in root.glob(pattern) if path.is_file()})
 
@@ -299,12 +310,20 @@ def check_attributes() -> int:
 # Checker pins
 
 
+def _lean_statements():
+    """tools/lean_statements.py, whose `inventory_path` every reader of a train-only file goes through."""
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import lean_statements
+    return lean_statements
+
+
 def _lock() -> dict:
-    return json.loads(LOCK.read_text())
+    return json.loads(_lean_statements().inventory_path(PIN_FILE, ROOT).read_text())
 
 
 def _write_lock(lock: dict) -> None:
-    LOCK.write_text(json.dumps({key: sorted(set(values)) for key, values in lock.items()}, indent=2) + "\n")
+    _lean_statements().write_inventory(
+        PIN_FILE, json.dumps({key: sorted(set(values)) for key, values in lock.items()}, indent=2) + "\n", ROOT)
 
 
 def _service_digest() -> str | None:
@@ -687,7 +706,7 @@ def _service_current() -> bool:
 def _lean_files(entry: Generated) -> dict[Path, bytes]:
     """The entry's files under lean/ that a build may read (all but the pins)."""
     return {path: path.read_bytes() for path in owned_files(entry)
-            if path.relative_to(ROOT).parts[0] == "lean" and path != LOCK}
+            if path.relative_to(ROOT).parts[0] == "lean" and path != ROOT / PIN_FILE}
 
 
 class _Service:
@@ -887,6 +906,7 @@ def listing() -> str:
                     + (f"\n    service: its {'writer (and so its check)' if entry.service == 'write' else 'check'} "
                        "starts the Lean service" if entry.service else "")
                     + ("\n    check: advisory on branches" if entry.advisory else "")
+                    + ("\n    writer: the merge train (read through inventory_path)" if entry.writer == "train" else "")
                     + (f"\n    note: {entry.note}" if entry.note else ""))
     return "\n".join(rows)
 

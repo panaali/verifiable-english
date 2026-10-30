@@ -30,6 +30,7 @@ from ve.evaluate import evaluate
 from ve.model import FiniteModel
 from ve.profiles import LANGUAGE, SPEC_REVISION
 from ve.units import erased_environment, quantity_countermodel
+from tools.lean_statements import inventory_path  # noqa: E402
 
 pytestmark = pytest.mark.skipif(not lean_routes.SERVICE.exists(), reason="build the Lean service first")
 CONFORMANCE = ROOT / "lean" / ".lake" / "build" / "bin" / "ve_conformance"
@@ -157,7 +158,7 @@ def test_lean_runners_sort_domains_and_audit_the_bridge():
     assert time.count("(sortDomains d).toModel maxEvaluations") == 2
     assert "evalB d.toModel" not in time and "refutesB d.toModel" not in time
     assert "let data₀ := sortModelData (← Decode.decodeModelData" in route
-    audit = (ROOT / "lean" / "VE" / "Audit.lean").read_text()
+    audit = inventory_path("lean/VE/Audit.lean").read_text()
     for name in ("VE.Time.eval_domains_perm", "VE.Time.countermodelCheck_domains_perm",
                  "VE.Time.Wire.sortDomains_perm", "VE.Time.Wire.evalB_sorted_sound",
                  "VE.Time.Wire.refutesB_sorted_sound"):
