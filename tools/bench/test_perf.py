@@ -168,6 +168,66 @@ def test_cardinality_universal_dedup_near_linear(record):
     assert seen[5400] < 4.5 * seen[1800], seen  # near-linear: about 3; the quadratic dedup gave 8.2
 
 
+def cardinality_document(service, reuse: int, width: int = 5000) -> dict:
+    """F2 of the qt-a3d review: 996 leaves "top" named by `width`-byte names, "mid" deduced from all of them, then
+    deductions "r<k>" of "top" that each name "mid" `reuse` times (a trace that closes at once), up to the
+    1,000-node and 50,000-statement-node limits, with certificates from Lean's own admissions."""
+    from tests.lean_service_corpus import cardinality_cases
+    base = next(case for case in cardinality_cases() if case["id"] == "document-fa1")
+    top = {"format": "ve-cardinality@1", "formula": ["quantity", ["top"]]}
+    checker = base["document"]["nodes"][-1]["certificate"]["w6"]["core"]["checker_version"]
+
+    def certificate(premises: int) -> dict:
+        case = {"id": "a", "kind": "admission", "environment": base["environment"], "premises": [top] * premises,
+                "conclusion": top}
+        _, response = service.exchange("cardinality", json.dumps([case]), 1, timeout=HANG_TIMEOUT)
+        a = response["results"][0]["result"]
+        e = a["erased"]
+        return {"format": "ve-cardinality-certificate@1", "environment_id": a["environment_id"],
+                "premise_meaning_ids": [p["meaning_id"] for p in a["premises"]],
+                "conclusion_meaning_id": a["conclusion"]["meaning_id"],
+                "w6": {"format": "ve-quantity-certificate@1", "environment_id": a["w6_environment_id"],
+                       "premise_meaning_ids": [p["meaning_id"] for p in e["premises"]],
+                       "conclusion_meaning_id": e["conclusion"]["meaning_id"],
+                       "core": {"checker_version": checker, "environment_id": a["w6_target_environment_id"],
+                                "premise_meaning_ids": [p["core_meaning_id"] for p in e["premises"]],
+                                "conclusion_meaning_id": e["conclusion"]["core_meaning_id"],
+                                "trace": {"rule": "close"}}}}
+    names = ["x" * (width - 6) + f"{i:06d}" for i in range(996)]
+    nodes = [{"name": name, "statement": top} for name in names]
+    nodes.append({"name": "mid", "statement": top, "premises": names, "certificate": certificate(len(names))})
+    reused, budget = certificate(reuse), 50000 - 2 * len(names) - 2
+    while len(nodes) < 1000 and budget >= 2 * reuse + 2:
+        nodes.append({"name": f"r{len(nodes)}", "statement": top, "premises": ["mid"] * reuse, "certificate": reused})
+        budget -= 2 * reuse + 2
+    return {"id": "d", "kind": "document", "environment": base["environment"],
+            "document": {"root": nodes[-1]["name"], "nodes": nodes}}
+
+
+def test_cardinality_document_leaves_joined_once(record):
+    """F2 of the qt-a3d review: the same 996 leaves under three deductions that name "mid" once each, and then 2,633
+    times each (7,899 premises). Each premise re-read its child's leaf names into a hash set, so the reuse cost 5.6
+    times the time (1.84 s and 10.27 s); as positions joined by one `|||` per premise, about 1.3 times (both include
+    the `report_id` digest of the 10 MB document, about 2.4 s). The build measured is the one in `lean/.lake`,
+    pinned or not: this measures cost, not trust."""
+    from ve.backends.lean_service import DEFAULT_EXECUTABLE, LeanService
+    seen = {}
+    with LeanService(DEFAULT_EXECUTABLE, timeout=HANG_TIMEOUT, allow_unlisted_build=True) as service:
+        for reuse in (1, 2633):
+            wire = json.dumps([cardinality_document(service, reuse)], separators=(",", ":"))
+            before = service.cpu_seconds()
+            _, response = service.exchange("cardinality", wire, 1, timeout=HANG_TIMEOUT)
+            after = service.cpu_seconds()
+            result = response["results"][0]["result"]
+            assert result["status"] == "ok" and len(result["report"]["leaves"]) == 996, result.get("error")
+            if before is None or after is None:
+                pytest.skip("the platform does not report the service's CPU time")
+            seen[reuse] = after - before
+    record("1 reuse", seen[1])
+    record("2633 reuses", seen[2633])
+    assert seen[2633] < 2.5 * seen[1], seen  # about 1.3; re-reading the leaf names per premise gave 5.6
+
+
 def test_scope_b1(record, tmp_path):
     """B1 (docs/spec/scope-PLAN.md): F1-doc's document over the full pinned constitution pilot (184,893 B, 1,132
     units; `tools/bench/scope_b1.py`), through the layout (`layout`: the case read and `VE.Scope.decodeScope`) and
