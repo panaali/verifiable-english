@@ -57,6 +57,8 @@ def dense (k : Nat) : List Decl :=
 
 /-! S-1 to S-10 (me-2n review F2): a side beyond the digit limit keeps 5's linearity. C is beyond the limit and never
 computed; S-8 to S-10 add sides whose coefficients may cancel, decided exactly, charged before it is computed. -/
+-- A power of a form that is not constant: the 0th builds a new form and pays for it, the 1st reuses the form.
+#guard (lowered (.pow (.val "x") 1)).map (·.2) = some 2054 && (lowered (.pow (.val "x") 0)).map (·.2) = some 2056
 def C : Expr := powChain 2
 def xC : Expr := .add (.val "x") C
 def shapes : List Expr :=
