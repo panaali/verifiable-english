@@ -14971,7 +14971,11 @@
         "VE.Cardinality.Wire.relNames",
         "VE.Cardinality.Wire.cmpNames",
         "VE.Cardinality.Wire.arrayDepth",
-        "VE.Cardinality.Wire.sourceFits"
+        "VE.Cardinality.Wire.sourceFits",
+        "VE.Cardinality.Wire.encBody",
+        "VE.Cardinality.Wire.encOperand",
+        "VE.Cardinality.Wire.encPrinted",
+        "VE.Cardinality.Wire.encode"
       ],
       "D[R]": [
         "VE.Cardinality.Wire.checkDeclarations",
@@ -14981,11 +14985,7 @@
       "D[I]": [
         "VE.Cardinality.CardEnv.profiles",
         "VE.Cardinality.Wire.format",
-        "VE.Cardinality.Wire.encBody",
         "VE.Cardinality.Wire.nameOf",
-        "VE.Cardinality.Wire.encOperand",
-        "VE.Cardinality.Wire.encPrinted",
-        "VE.Cardinality.Wire.encode",
         "VE.Cardinality.Wire.canonical"
       ],
       "G[R]": [
@@ -15503,14 +15503,15 @@
           "tied": [
             "VE.Cardinality.Run.checkErased_eq"
           ]
-        }
+        },
+        "VE.Cardinality.Run.statementJson",
+        "VE.Cardinality.Run.claimJson",
+        "VE.Cardinality.Run.reportJson"
       ],
       "D[I]": [
         "VE.Cardinality.Run.erasedIds",
-        "VE.Cardinality.Run.statementJson",
         "VE.Cardinality.Run.idsOf",
-        "VE.Cardinality.Run.claimJson",
-        "VE.Cardinality.Run.reportJson"
+        "VE.Cardinality.Run.reportId"
       ],
       "G[R]": [
         {
@@ -15592,7 +15593,13 @@
         "VE.Cardinality.RunExamples.fa1bDocCert",
         "VE.Cardinality.RunExamples.tops",
         "VE.Cardinality.RunExamples.charged2",
-        "VE.Cardinality.RunExamples.top3"
+        "VE.Cardinality.RunExamples.top3",
+        "VE.Cardinality.RunExamples.docReportId",
+        "VE.Cardinality.RunExamples.reportIdOf",
+        "VE.Cardinality.RunExamples.fa1Report",
+        "VE.Cardinality.RunExamples.fa1LeafRows",
+        "VE.Cardinality.RunExamples.withLeaves",
+        "VE.Cardinality.RunExamples.closes"
       ]
     },
     "VE/Cardinality/RunTheorems.lean": {},
@@ -16013,17 +16020,18 @@
           ]
         }
       ],
-      "G[I]": [
-        "VE.Cardinality.Document.CNode",
-        "VE.Cardinality.Document.Entry",
-        "VE.Cardinality.Document.Graph"
-      ],
       "G[R]": [
         "VE.Cardinality.Document.maxGraphNodes",
         "VE.Cardinality.Document.maxDeductionNodes",
         "VE.Cardinality.Document.graphRejected",
         "VE.Cardinality.Document.nodeLimit",
         "VE.Cardinality.Document.deductionLimit"
+      ],
+      "G[V]": [
+        "VE.Cardinality.Document.CNode",
+        "VE.Cardinality.Document.Entry",
+        "VE.Cardinality.Document.Graph",
+        "VE.Cardinality.Document.Entries"
       ]
     }
   }
