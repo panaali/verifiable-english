@@ -656,7 +656,8 @@ theorem defaults_model_sound (x : ModelReplay) (hv : x.ok = true) :
 def entityIds (vs : List VE.Bridge.Entity) : Json := toJson (vs.map (·.2))
 
 def elaborateFields (v : DefaultsView) : List (String × Json) :=
-  [("default_premises", Json.arr ((elaborateRows v).1.map (fun (l, a) =>
+  [("deciders", toJson (decidersOf v.L.D)),
+   ("default_premises", Json.arr ((elaborateRows v).1.map (fun (l, a) =>
       Json.arr #[.str l, VE.NormDefaults.Wire.enc a])).toArray),
    ("coherence_targets", Json.arr ((elaborateRows v).2.map (fun (P, Q) => Json.arr #[.str P.name, .str Q.name,
       VE.NormDefaults.Wire.enc (VE.NormDefaults.Wire.cohPremiseU v.L.U v.L.D P Q)])).toArray)]
@@ -771,7 +772,8 @@ def formLabel : Form → String
 def certFields (x : CertReplay) : List (String × Json) :=
   [("verdict", .str x.verdict)] ++
   if x.verdict == "FOLLOWS" then
-    [("basis", .str (basisLabel x.basis)), ("form", .str (formLabel x.form)), ("assumptions", toJson x.assumptions)]
+    [("basis", .str (basisLabel x.basis)), ("form", .str (formLabel x.form)),
+      ("assumptions", toJson x.assumptions), ("deciders", toJson (decidersOf x.v.L.D))]
   else [("reason", .str x.reason)]
 
 def modelFields (x : ModelReplay) : List (String × Json) :=

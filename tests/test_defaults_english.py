@@ -38,7 +38,8 @@ def case(name, **extra):
 
 
 def follows(basis="needs", form="short", assumptions=("default:exception:r1",)):
-    return {"verdict": "FOLLOWS", "basis": basis, "form": form, "assumptions": list(assumptions)}
+    return {"verdict": "FOLLOWS", "basis": basis, "form": form, "assumptions": list(assumptions),
+            "deciders": ["assistant"]}
 
 
 # -- genuine answers through Lean
@@ -116,8 +117,18 @@ def test_form_is_lean_s():
     assert short[1:] == long[1:]
 
 
-def test_strict_basis_shows_no_default_sentence():
-    assert defaults_english.sentences(case("zeta"), follows("strict", "short", ())) == []
+def test_strict_basis_uses_lean_deciders():
+    assert defaults_english.sentences(case("zeta"), follows("strict", "short", ())) == [
+        "This holds whatever the assistant decides."]
+    assert defaults_english.sentences(case("zeta"), {**follows("strict", "short", ()),
+                                                      "deciders": ["unstated"]}) == [
+        "This holds whatever is decided where the text names no decider."]
+    assert defaults_english.sentences(case("zeta"), {**follows("strict", "short", ()),
+                                                      "deciders": ["assistant", "unstated"]}) == [
+        "This holds whatever the assistant decides, and whatever is decided where the text names no decider."]
+    assert defaults_english.sentences(case("zeta"), {**follows("strict", "short", ()),
+                                                      "deciders": ["assistant", "operator"]}) == [
+        "This holds whatever the assistant and the operator decide."]
 
 
 def _unstated(sufficient=()):
