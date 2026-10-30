@@ -1,0 +1,2 @@
+ResponseShape/DefaultsExamples.lean: declarations.txt was not compiled from this source; rerun tools/lean_statements.py
+lean/declarations.txt was not compiled from lean/ResponseShape/DefaultsExamples.lean; rerun tools/lean_statements.py
