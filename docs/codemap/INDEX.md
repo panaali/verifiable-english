@@ -71,7 +71,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/](lean__VE.md) — 33 modules — -
 - [lean/VE/Acts/](lean__VE__Acts.md) — 19 modules — -
 - [lean/VE/Alternatives/](lean__VE__Alternatives.md) — 13 modules — -
-- [lean/VE/Arith/](lean__VE__Arith.md) — 10 modules — -
+- [lean/VE/Arith/](lean__VE__Arith.md) — 8 modules — -
 - [lean/VE/Ask/](lean__VE__Ask.md) — 15 modules — -
 - [lean/VE/Attribution/](lean__VE__Attribution.md) — 15 modules — -
 - [lean/VE/Calc/](lean__VE__Calc.md) — 26 modules — -
@@ -111,7 +111,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Words/](lean__VE__Words.md) — 2 modules — -
 - [paper/](paper.md) — 10 modules — Drafted by GPT-6 Astra on `paper/v1`, after merging `ve-integration`.
 - [research/](research.md) — 2 modules — -
-- [rust/](rust.md) — 30 modules — -
+- [rust/](rust.md) — 31 modules — -
 - [tests/ part 1](tests--part-1.md) — 95 modules — -
 - [tests/ part 2](tests--part-2.md) — 91 modules — -
 - [tests/ part 3](tests--part-3.md) — 89 modules — -
@@ -124,7 +124,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tools/bench/](tools__bench.md) — 7 modules — -
 - [tools/evidence/](tools__evidence.md) — 7 modules — The evidence toolkit (docs/ARCHITECTURE-REVIEW-2026-10.md, T6 and AR-5a): one implementation of each batch measurement, so a batch writes `docs/<track>/<batch>…
 - [tools/hooks/](tools__hooks.md) — 1 modules — `pre-commit` runs fast checks on the **staged** content of a commit.
-- [usecases/](usecases.md) — 53 modules — -
+- [usecases/](usecases.md) — 59 modules — -
 - [ve/](ve.md) — 78 modules — VE v0 experimental language, finite semantics and checked argument API.
 - [ve/adapters/](ve__adapters.md) — 6 modules — Audited statement-layer and data adapters.
 - [ve/assist/](ve__assist.md) — 17 modules — ``ve assist``: interactive, sentence-level assisted formalisation.

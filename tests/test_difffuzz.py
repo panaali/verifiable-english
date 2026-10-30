@@ -12,6 +12,7 @@ genuine row dropped or retyped is a runner that did not answer.
 from __future__ import annotations
 
 from copy import deepcopy
+import itertools
 import json
 from pathlib import Path
 import re
@@ -79,6 +80,257 @@ def test_ci_run(built, tmp_path, record_property):
             for outcome in ("ok", "error"):
                 assert report["answers"][name].get(f"{engine}:{outcome}", 0) > 0, (name, engine, outcome)
     assert work_problems(report) == [], report["work"]
+
+
+def test_unprofiled_definition_checks_nested_fault_before_field_refusal(built):
+    """The same malformed definition has one diagnostic in Python, Lean and Rust."""
+    raw = {"language": "ve.core@0.2", "profiles": ["relational-fol@0"],
+           "spec_revision": "ve-v0.2-expand2-2026-09-25",
+           "vocabulary": {"sorts": {"person": {"description": "a person"}},
+                          "predicates": {
+                              "base": {"arguments": ["person", "person"], "description": "base relation"},
+                              "above": {"arguments": ["person", "person"], "description": "above relation",
+                                        "defined": {"arguments": ["person", "person"],
+                                                    "body": ["binary", "base", ["var", 1], ["var", {}]]}}},
+                          "constants": {}}}
+    surface = df.SURFACES["environment"]()
+    try:
+        for body, code in ((["binary", "base", ["var", 1], ["var", {}]], "UnboundVariable"),
+                           (["binary", "base", ["var", 1], ["var", 0]], "InvalidInput")):
+            case = deepcopy(raw)
+            case["vocabulary"]["predicates"]["above"]["defined"]["body"] = body
+            seed = df.Seed("environment", "envelope", "definition-order", case)
+            answers = {"python": surface.python(seed, case),
+                       "lean": surface.lean([(seed, case)])[0],
+                       "rust": surface.rust([(seed, case)])[0]}
+            assert {name: answer["code"] for name, answer in answers.items()} == dict.fromkeys(
+                ("python", "lean", "rust"), code), answers
+    finally:
+        surface.close()
+
+
+def test_predicate_signature_and_constant_fault_order(built):
+    """Built-in and ordinary unknown predicate sorts keep their distinct fault codes."""
+    raw = {"language": "ve.core@0.2", "profiles": ["relational-fol@0"],
+           "spec_revision": "ve-v0.2-expand2-2026-09-25",
+           "vocabulary": {"sorts": {},
+                          "predicates": {"dept": {"arguments": ["$string"], "description": "d"}},
+                          "constants": {"legal": []}}}
+    surface = df.SURFACES["environment"]()
+    try:
+        for constant, argument_sort, code in (([], "$string", "InvalidInput"),
+                                              ({"sort": "other", "description": "d"}, "missing", "UnknownSymbol")):
+            case = deepcopy(raw)
+            case["vocabulary"]["constants"]["legal"] = constant
+            case["vocabulary"]["predicates"]["dept"]["arguments"] = [argument_sort]
+            seed = df.Seed("environment", "envelope", "constant-container-order", case)
+            answers = {"python": surface.python(seed, case),
+                       "lean": surface.lean([(seed, case)])[0],
+                       "rust": surface.rust([(seed, case)])[0]}
+            assert {name: answer["code"] for name, answer in answers.items()} == dict.fromkeys(
+                ("python", "lean", "rust"), code), answers
+    finally:
+        surface.close()
+
+
+def test_legacy_undeclared_builtin_sorts_are_unknown_symbols(built):
+    surface = df.SURFACES["environment"]()
+    try:
+        for sort in ("$int", "$string", "missing"):
+            case = {"language": "ve.core@0", "profile": "relational-fol@0",
+                    "spec_revision": "ve-v0-draft-2026-09-20",
+                    "vocabulary": {"sorts": {}, "predicates": {
+                        "p": {"arguments": [sort], "description": "d"}}, "constants": {}}}
+            seed = df.Seed("environment", "envelope", f"legacy-sort-{sort}", case)
+            answers = {"python": surface.python(seed, case),
+                       "lean": surface.lean([(seed, case)])[0],
+                       "rust": surface.rust([(seed, case)])[0]}
+            assert {name: answer["code"] for name, answer in answers.items()} == dict.fromkeys(
+                ("python", "lean", "rust"), "UnknownSymbol"), answers
+        valid = {"language": "ve.core@0", "profile": "relational-fol@0",
+                 "spec_revision": "ve-v0-draft-2026-09-20",
+                 "vocabulary": {"sorts": {"person": {"description": "d"}},
+                                "predicates": {"p": {"arguments": ["person"], "description": "d"}},
+                                "constants": {}}}
+        seed = df.Seed("environment", "envelope", "legacy-declared-sort", valid)
+        answers = (surface.python(seed, valid), surface.lean([(seed, valid)])[0],
+                   surface.rust([(seed, valid)])[0])
+        assert all(answer["outcome"] == "ok" for answer in answers), answers
+    finally:
+        surface.close()
+
+
+def test_order_routes_reject_string_predicate_sort_before_constants(built):
+    """Every composed order decoder rejects $string as an unknown argument sort."""
+    surface = df.SURFACES["environment"]()
+    try:
+        for profiles in (["order@0", "relational-fol@0"],
+                         ["order@0", "relational-fol@0", "time@0"],
+                         ["data@0", "order@0", "relational-fol@0"]):
+            for sort, constants, expected in (("$string", {}, "UnknownSymbol"),
+                                              ("$string", {"bad": []},
+                                               "InvalidInput" if len(profiles) == 2 else "UnknownSymbol"),
+                                              ("$int", {}, "ok")):
+                case = {"language": "ve.core@0.2", "profiles": profiles,
+                        "spec_revision": "ve-v0.2-expand2-2026-09-25",
+                        "vocabulary": {"sorts": {}, "predicates": {
+                            "p": {"arguments": [sort], "description": "d"}},
+                            "constants": constants}}
+                seed = df.Seed("environment", "envelope", "order-builtin-sort", case)
+                answers = {"python": surface.python(seed, case),
+                           "lean": surface.lean([(seed, case)])[0],
+                           "rust": surface.rust([(seed, case)])[0]}
+                assert all(answer["code"] == expected if expected != "ok"
+                           else answer["outcome"] == "ok" for answer in answers.values()), answers
+    finally:
+        surface.close()
+
+
+V02 = {"language": "ve.core@0.2", "spec_revision": "ve-v0.2-expand2-2026-09-25"}
+FROZEN_HEADS = ({"language": "ve.core@0", "profile": "relational-fol@0", "spec_revision": "ve-v0-draft-2026-09-20"},
+                {"language": "ve.core@0.1", "profiles": ["order@0", "relational-fol@0"],
+                 "spec_revision": "ve-v0.1-order-2026-09-22"},
+                {"language": "ve.core@0.1", "profiles": ["closure@0", "relational-fol@0"],
+                 "spec_revision": "ve-v0.1-closure-2026-09-21"})
+# A malformed constant, and one of an undeclared sort: its code tells a sort fault at the predicate from one
+# Lean reports only after the constants.
+SORT_TABLE_CONSTANTS = {"none": {}, "malformed": {"bad": []},
+                        "undeclared": {"c": {"sort": "nosuch", "description": "d"}}}
+# The forms the adversarial hunts found (REPORT.md section 25), each beside an unflagged `$int` or `$string`
+# predicate `p`: a constant whose sort is not a string; a `$string` literal with an empty description, which
+# the order decoder reads before any predicate; the predicate's own empty description or verbalisation, which
+# every family decoder reads before its sorts; a definition over the built-in sort beside `q` over it; a
+# ternary signature (hunt 1); 65 literals, whose limit the order decoder checks before any predicate; and a
+# malformed regulated block on a later predicate, which the norms routes check before every sort (hunt 2).
+SORT_TABLE_FORMS = {
+    "constant-sort-not-a-string": lambda p: {"predicates": {"p": p}, "constants": {"c": {"sort": 7, "description": "d"}}},
+    "literal-empty-description": lambda p: {"predicates": {"p": p},
+                                            "constants": {"c": {"sort": "$string", "description": ""}}},
+    "empty-description": lambda p: {"predicates": {"p": {**p, "description": ""}}},
+    "empty-verbalisation": lambda p: {"predicates": {"p": {**p, "verbalisation": ""}}},
+    "defined": lambda p: {"predicates": {"p": {**p, "defined": {"arguments": p["arguments"],
+                                                                "body": ["unary", "q", ["var", 0]]}},
+                                         "q": p}},
+    "ternary": lambda p: {"predicates": {"p": {**p, "arguments": ["thing", "thing", *p["arguments"]]}}},
+    "literal-limit": lambda p: {"predicates": {"p": p}, "constants": {f"l{i}": {"sort": "$string"} for i in range(65)}},
+    "bad-regulated-later": lambda p: {"predicates": {"a": p, "b": {"arguments": ["thing"], "description": "d",
+                                                                   "regulated": {"role": "bogus", "default": "allow"}}}},
+    "regulated": lambda p: {"predicates": {"a": {**p, "regulated": {"role": "plain", "default": "allow"}},
+                                           "b": {"arguments": ["thing"], "description": "d",
+                                                 "regulated": {"role": "bogus", "default": "allow"}}}},
+}
+
+
+def _sort_cell(head, sort, constants, flagged, form=None):
+    """One cell of the truth table: predicate `p` over `sort` (binary after a declared sort, with data flags,
+    when `flagged`), beside the named constants, or else in one of the hunts' forms."""
+    predicate = {"arguments": ["thing", sort] if flagged else [sort], "description": "d"}
+    if flagged:
+        predicate.update(functional=True, total=True)
+    vocabulary = {"predicates": {"p": predicate}, "constants": deepcopy(SORT_TABLE_CONSTANTS[constants])}
+    if form is not None:
+        vocabulary = {"constants": {}, **SORT_TABLE_FORMS[form](predicate)}
+    uses_thing = flagged or sort == "thing" or form in ("ternary", "bad-regulated-later", "regulated")
+    return {**head, "vocabulary": {"sorts": {"thing": {"description": "d"}} if uses_thing else {}, **vocabulary}}
+
+
+def _admitted_profile_lists():
+    """Every profile list of `ve.core@0.2` that Lean's profile table admits (`VE.Compose.TableAdmits` over the
+    rows `tools/profile_table.py` writes from `VE.Compose.profileTable`): finite, so all of them."""
+    table = json.loads((ROOT / "ve/profile_table.json").read_text())
+    others = sorted(set(table["environment"]) - {"relational-fol@0"})
+    admitted = []
+    for size in range(len(others) + 1):
+        for chosen in itertools.combinations(others, size):
+            listed = sorted((*chosen, "relational-fol@0"))
+            if all(all(q in listed for q in row["requires"]) and not any(q in listed for q, _ in row["refuses"])
+                   for row in table["rows"] if row["profile"] in listed or row["profile"] in row["requires"]):
+                admitted.append(listed)
+    return admitted
+
+
+# The PROBE envelopes of the class (usecase-safetyfw-b F12, F13, F14), each a cell of the table.
+BUILTIN_SORT_PROBES = {
+    "F12": _sort_cell(FROZEN_HEADS[0], "$int", "none", False),
+    "F13": _sort_cell({**V02, "profiles": ["order@0", "relational-fol@0"]}, "$string", "none", False),
+    "F14": _sort_cell({**V02, "profiles": ["norms@0", "order@0", "relational-fol@0", "soft-norms@0"]},
+                      "$string", "none", False),
+}
+
+
+def _sort_table_cells():
+    heads = [{**V02, "profiles": listed} for listed in _admitted_profile_lists()] + list(FROZEN_HEADS)
+    cells = [(head, sort, constants, flagged, None) for head in heads for sort in ("$int", "$string", "thing")
+             for constants in SORT_TABLE_CONSTANTS for flagged in (False, True)
+             if not flagged or "data@0" in head.get("profiles", ())]
+    return cells + [(head, sort, "none", False, form) for head in heads for sort in ("$int", "$string")
+                    for form in SORT_TABLE_FORMS]
+
+
+def test_builtin_argument_sort_truth_table_agrees_on_every_profile_list(built):
+    """Rust's code for a `$int` or `$string` predicate argument equals Lean's and Python's on every profile list
+    the table admits and on each frozen envelope: beside no constant, a malformed one or one of an undeclared
+    sort, flagged wherever data@0 is listed (with a declared-sort control in each row), and in each form the
+    hunts found. A list Rust's own profile gate refuses is refused alike for every cell, whatever the sort."""
+    cells = _sort_table_cells()
+    roots = [_sort_cell(*cell) for cell in cells]
+    assert all(probe in roots for probe in BUILTIN_SORT_PROBES.values())
+    surface = df.SURFACES["environment"]()
+    try:
+        items = [(df.Seed("environment", df.lean_route(root), "builtin-sort-table", root), root) for root in roots]
+        lean = surface.lean(items)
+        python = [surface.python(*item) for item in items]
+        with_rust = [i for i, item in enumerate(items) if surface.path("rust", *item)]
+        rust = dict(zip(with_rust, surface.rust([items[i] for i in with_rust])))
+    finally:
+        surface.close()
+    code = lambda answer: answer.get("code", answer["outcome"])
+    control = {json.dumps(head, sort_keys=True): i for i, (head, sort, constants, flagged, form) in enumerate(cells)
+               if (sort, constants, flagged, form) == ("thing", "none", False, None)}
+    differs, gated = [], set()
+    for i, (head, *_) in enumerate(cells):
+        assert code(python[i]) == code(lean[i]), (roots[i], python[i], lean[i])
+        if i not in rust:
+            continue
+        own = rust[control[json.dumps(head, sort_keys=True)]]
+        if code(own) == "UnsupportedProfile" and re.fullmatch(r"Unsupported profile \S+", own["text"]):
+            # Rust decodes no list with this profile (its gate's own refusal), for any vocabulary.
+            assert rust[i] == own, (roots[i], rust[i])
+            gated.add(own["text"])
+        elif code(rust[i]) != code(lean[i]):
+            differs.append((roots[i], lean[i], rust[i]))
+    assert not differs, json.dumps(differs[:5], indent=1)[:6000]
+    assert all(roots.index(probe) in rust for probe in BUILTIN_SORT_PROBES.values())
+    assert gated <= {"Unsupported profile acts@0", "Unsupported profile readings@1",
+                     "Unsupported profile rights@0", "Unsupported profile norm-defaults@0"}, gated
+
+
+def test_request_envelope_fields_precede_predicate_sort_fault(built):
+    """Required and extra envelope fields win over nested vocabulary faults in every engine."""
+    surface = df.SURFACES["requests"]()
+    try:
+        seed = next(s for s in surface.seeds() if s.id == "conformance/elaborated-document.json/11")
+        for fault in ("missing_profiles", "missing_revision", "extra_field"):
+            root = deepcopy(seed.root)
+            root["environment"] = {
+                "language": "ve.core@0.2", "profiles": ["relational-fol@0"],
+                "spec_revision": "ve-v0.2-expand2-2026-09-25",
+                "vocabulary": {"sorts": {}, "predicates": {
+                    "in_legal": {"arguments": ["p"], "description": "w"}}, "constants": {}},
+            }
+            if fault == "missing_profiles":
+                del root["environment"]["profiles"]
+            elif fault == "missing_revision":
+                del root["environment"]["spec_revision"]
+            else:
+                root["environment"]["extra"] = 1
+            answers = {"python": surface.python(seed, root),
+                       "lean": surface.lean([(seed, root)])[0],
+                       "rust": surface.rust([(seed, root)])[0]}
+            assert {name: answer["code"] for name, answer in answers.items()} == dict.fromkeys(
+                ("python", "lean", "rust"), "InvalidInput"), (fault, answers)
+    finally:
+        surface.close()
 
 
 def test_f13_duplicate_soft_rank_and_rust_field_error_reproduce(built):
