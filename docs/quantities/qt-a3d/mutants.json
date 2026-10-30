@@ -235,6 +235,84 @@
     "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
    ],
    "test": "VE/Cardinality/RunExamples.lean qt-a3d guards: the root of graph \"total\" is named total"
+  },
+  {
+   "id": "encode-and-order",
+   "file": "lean/VE/Cardinality/Wire.lean",
+   "claim": "review F4: encode writes a conjunction's parts in order",
+   "find": "| .and a b => Json.arr #[.str \"and\", encode a, encode b]",
+   "replace": "| .and a b => Json.arr #[.str \"and\", encode b, encode a]",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/WireExamples.lean and RunExamples.lean guards (review F4: a reclassified [V] encoder)"
+  },
+  {
+   "id": "encode-proportion-parts",
+   "file": "lean/VE/Cardinality/Wire.lean",
+   "claim": "review F4: encode writes a proportion's whole, then its part",
+   "find": "encBody p.whole, encBody p.part,",
+   "replace": "encBody p.part, encBody p.whole,",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/WireExamples.lean and RunExamples.lean guards (review F4: a reclassified [V] encoder)"
+  },
+  {
+   "id": "encBody-or",
+   "file": "lean/VE/Cardinality/Wire.lean",
+   "claim": "review F4: encBody writes a disjunction as or",
+   "find": "| .or a b => Json.arr #[.str \"or\", encBody a, encBody b]",
+   "replace": "| .or a b => Json.arr #[.str \"and\", encBody a, encBody b]",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/WireExamples.lean and RunExamples.lean guards (review F4: a reclassified [V] encoder)"
+  },
+  {
+   "id": "encOperand-count-body",
+   "file": "lean/VE/Cardinality/Wire.lean",
+   "claim": "review F4: encOperand writes a count's body",
+   "find": "| .count s b => Json.arr #[.str \"count\", .str s, encBody b]",
+   "replace": "| .count s b => Json.arr #[.str \"count\", .str s, encBody .any]",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/WireExamples.lean and RunExamples.lean guards (review F4: a reclassified [V] encoder)"
+  },
+  {
+   "id": "encPrinted-places",
+   "file": "lean/VE/Cardinality/Wire.lean",
+   "claim": "review F4: encPrinted writes the printed number's places",
+   "find": ".str (VE.Time.renderAmount k D)",
+   "replace": ".str (VE.Time.renderAmount k (D + 1))",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/WireExamples.lean and RunExamples.lean guards (review F4: a reclassified [V] encoder)"
+  },
+  {
+   "id": "statementJson-formula",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "review F4: statementJson writes the statement's formula",
+   "find": "Json.mkObj [(\"meaning_id\", .str a.meaningId), (\"formula\", encode a.formula)]",
+   "replace": "Json.mkObj [(\"meaning_id\", .str a.meaningId), (\"formula\", .null)]",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "test": "VE/Cardinality/WireExamples.lean and RunExamples.lean guards (review F4: a reclassified [V] encoder)"
   }
  ]
 }
