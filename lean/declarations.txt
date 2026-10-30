@@ -6899,14 +6899,13 @@ module VE.Defaults.Route 97feda58f0f4af531097d0c124fbf82d56ee36d2153860f9ebfbc20
 26:0-27:61 def VE.NormDefaults.Wire.layeredKindCase@VE.Defaults.Route
 29:0-37:107 theorem VE.NormDefaults.Wire.layeredKindCase_other@VE.Defaults.Route
 39:0-44:113 def VE.NormDefaults.Wire.runLayered@VE.Defaults.Route
-module VE.Defaults.RouteExamples c29069285cda38c9463923d0cfa9c49f2c515e575438a239afb957dfeaa85a6c
+module VE.Defaults.RouteExamples 3bb3e28a57736256bc5e0f925b79d6a6603ab7ee929daf0c3b15549d780c4d90
 10:0-10:66 def VE.Defaults.RouteFixtures.run@VE.Defaults.RouteExamples
 11:0-11:109 def VE.Defaults.RouteFixtures.refused@VE.Defaults.RouteExamples
 12:0-13:96 def VE.Defaults.RouteFixtures.shown@VE.Defaults.RouteExamples
 26:0-33:100 def VE.Defaults.RouteFixtures.βTwo@VE.Defaults.RouteExamples
 55:0-55:109 def VE.Defaults.RouteFixtures.plainEnv@VE.Defaults.RouteExamples
 74:0-75:97 def VE.Defaults.RouteFixtures.layerCase@VE.Defaults.RouteExamples
-86:0-86:104 def VE.Defaults.RouteFixtures.layeredOf@VE.Defaults.RouteExamples
 module VE.Defaults.Wire 98d899070ce011e81a7e383f39949cec2b4bb26349ba9f4efb48bf7465ae8f7f
 32:0-40:65 structure VE.Defaults.Wire.DefaultsView@VE.Defaults.Wire
 33:2-33:3 def VE.Defaults.Wire.DefaultsView.L@VE.Defaults.Wire
@@ -20254,7 +20253,7 @@ module VE.Service.ActsExamples 2017573e19306f727acf24185959132038c98ddfc3244c911
 module VE.Service.Diagnose 0913297b59dc00e6821619a9df029ade52518172aed644518bdc48e13174622b
 13:0-25:61 def VE.Service.Diagnose.diagnoseCase@VE.Service.Diagnose
 27:0-32:29 theorem VE.Service.Diagnose.diagnoseCase_registered@VE.Service.Diagnose
-module VE.Service.Document a8331530e39b385d2a1879247a3c1f950fbbda3c735603d3d631ae6ddcf6a313
+module VE.Service.Document 9ed031adb840b3fa16bb9d3c83b03e2d17f35734283dfe90a50e6d747cc11a0b
 49:0-49:74 def VE.Service.Document.unavailable@VE.Service.Document
 51:0-56:84 def VE.Service.Document.ownedProfiles@VE.Service.Document
 58:0-62:28 inductive VE.Service.Document.RightsKind@VE.Service.Document
