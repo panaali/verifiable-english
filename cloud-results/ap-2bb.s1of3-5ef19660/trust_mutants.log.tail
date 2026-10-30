@@ -1,0 +1,4 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (lean): tools/trust-classes.json is no module of lean/, --test file or generated inventory
+trust_mutants: 6 definitions, 218 mutants (73 to run), 4 jobs, base 6949746bf291
+trust_mutants: 59 KILLED, 0 SURVIVOR, 0 UNKNOWN, 2 INVALID, 12 ALLOWED, 0 NOT RUN, 145 OTHER SHARD in 671 s
+trust_mutants: S, trusted: 59 KILLED, 2 INVALID, 12 ALLOWED, 145 OTHER SHARD
