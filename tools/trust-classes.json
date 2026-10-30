@@ -13409,6 +13409,7 @@
         "VE.Scope.Examples.lDoc",
         "VE.Scope.Examples.layoutOf",
         "VE.Scope.Examples.leadPart",
+        "VE.Scope.Examples.leaf1",
         "VE.Scope.Examples.led",
         "VE.Scope.Examples.member",
         "VE.Scope.Examples.mergePartsText",
@@ -13429,6 +13430,8 @@
         "VE.Scope.Examples.prosePieces",
         "VE.Scope.Examples.provAt",
         "VE.Scope.Examples.provenanceOf",
+        "VE.Scope.Examples.rawA",
+        "VE.Scope.Examples.rawB",
         "VE.Scope.Examples.rawJ",
         "VE.Scope.Examples.rawRule",
         "VE.Scope.Examples.rawUdhr",
@@ -13456,6 +13459,7 @@
         "VE.Scope.Examples.udhrDoc",
         "VE.Scope.Examples.udhrPieces",
         "VE.Scope.Examples.unordered",
+        "VE.Scope.Examples.withUnit",
         "VE.Scope.Examples.without"
       ]
     },
@@ -14197,10 +14201,15 @@
     "VE/Scope/Govern.lean": {
       "G[R]": [
         "VE.Scope.admitBlock",
+        "VE.Scope.ascending",
+        "VE.Scope.balanced?",
         "VE.Scope.conditions",
         "VE.Scope.defSpans",
         "VE.Scope.firstDup",
+        "VE.Scope.implWF?",
+        "VE.Scope.jsonWF?",
         "VE.Scope.kindOf",
+        "VE.Scope.listWF?",
         "VE.Scope.orderCheck",
         "VE.Scope.orderCheckF",
         "VE.Scope.setUnits",
@@ -15124,6 +15133,7 @@
         "VE.Scope.WireExamples.ansUnits",
         "VE.Scope.WireExamples.answer",
         "VE.Scope.WireExamples.blockWith",
+        "VE.Scope.WireExamples.boundary",
         "VE.Scope.WireExamples.decoded",
         "VE.Scope.WireExamples.effectTag",
         "VE.Scope.WireExamples.errorOf",
@@ -15132,7 +15142,9 @@
         "VE.Scope.WireExamples.foldGov",
         "VE.Scope.WireExamples.gov",
         "VE.Scope.WireExamples.listName",
-        "VE.Scope.WireExamples.st"
+        "VE.Scope.WireExamples.st",
+        "VE.Scope.WireExamples.wfFault",
+        "VE.Scope.WireExamples.withScope"
       ]
     },
     "VE/Service/ScopeExamples.lean": {
@@ -15178,6 +15190,7 @@
     },
     "VE/Scope/Wire.lean": {
       "D[R]": [
+        "VE.Scope.illFormed",
         "VE.Scope.memberOf",
         "VE.Scope.membersIn",
         "VE.Scope.textOf",
