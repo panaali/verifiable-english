@@ -98,15 +98,17 @@ structure SourceU where
 def authorVocab (environment : Json) (generated : Nat) (U : UDoc) : Nat :=
   (declaredNames environment).length + generated + U.unspec.length
 
-/-- Reserved names and the author-side limits of section 8, in the table's order;
-`generated` counts the predicates the route adds to the author vocabulary (soft's
-decision predicates, rights' generated ones; none on the norms route). -/
-def checkAuthorN (environment : Json) (generated : Nat) (U : UDoc) : Except String Unit := do
+/-- `checkAuthorN`'s two reserved-name loops. -/
+def reservedNamesOk (environment : Json) (U : UDoc) : Except String Unit := do
   for n in declaredNames environment do
     if n.startsWith "unsaid__" then throw s!"InvalidInput: reserved name {n}"
   for N in U.D.T.nodes do
     if N.name.startsWith "unsaid--" then throw s!"InvalidInput: reserved name {N.name}"
-  if authorVocab environment generated U > 256 then
+
+/-- `checkAuthorN`'s limits after its reserved-name loops, in its order and with its texts, the vocabulary counted as
+`n` instead of read from the environment; AP-3's elaboration re-runs them on its result (act-phrases 6.3 step 6). -/
+def authorLimits (n : Nat) (U : UDoc) : Except String Unit := do
+  if n + U.unspec.length > 256 then
     throw "ResourceLimit: vocabulary size"
   if U.D.T.nodes.length + U.unspec.length > 256 then throw "ResourceLimit: rules"
   if U.unspec.any (fun p => p.utf8ByteSize > 56) then throw "ResourceLimit: unspecified name length"
@@ -114,6 +116,16 @@ def checkAuthorN (environment : Json) (generated : Nat) (U : UDoc) : Except Stri
     throw "ResourceLimit: AST exceeds 10,000 nodes"
   if U.D.T.nodes.any (fun N => decide (N.pred ∈ U.unspec) && decide (height U.D.T (fuel U.D.T) N > 15)) then
     throw "ResourceLimit: precedence depth"
+
+/-- Reserved names and the author-side limits of section 8, in the table's order;
+`generated` counts the predicates the route adds to the author vocabulary (soft's
+decision predicates, rights' generated ones; none on the norms route). -/
+def checkAuthorN (environment : Json) (generated : Nat) (U : UDoc) : Except String Unit :=
+  reservedNamesOk environment U *> authorLimits ((declaredNames environment).length + generated) U
+
+theorem checkAuthorN_split (environment : Json) (g : Nat) (U : UDoc) :
+    checkAuthorN environment g U =
+      (reservedNamesOk environment U *> authorLimits ((declaredNames environment).length + g) U) := rfl
 
 /-- The norms route's author check: no generated predicates. -/
 def checkAuthor (environment : Json) (U : UDoc) : Except String Unit := checkAuthorN environment 0 U
