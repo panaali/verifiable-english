@@ -1496,6 +1496,34 @@
    "reason": "q1-4bb: VE/Question/Run.lean V +2 (speechPrefixes gains F2's fronted words; replaces the Python literal \"Is \" in ve/speech_english.py, deleted in the same change)",
    "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md), q1-4bb, 2026-10-30",
    "commit": "b9f2335ab2933b1e0c262f497c06af64e0bac079"
+  },
+  {
+   "class": "V",
+   "lines": 143,
+   "reason": "scale-lean-memo: Run.lean +75 (bounded admission memo and service runner), Protocol.lean +63 (memo request dispatch), Serve.lean +5 (process state and stats); K +0, S +0, V +143; tests/test_readings_memo.py covers every new definition",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), scale-lean-memo, 2026-10-29",
+   "commit": "b0dce1ea4c96241925fa2ee505e756ca1ee8a54f"
+  },
+  {
+   "class": "V",
+   "lines": 3,
+   "reason": "scale-lean-memo check fix: Protocol.memoLineTooLong +2, Serve.readingsMemoStatsEnabled +1; K +0, S +0, V +3; MemoExamples and Serve guards exercise both",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), scale-lean-memo, 2026-10-29",
+   "commit": "b0dce1ea4c96241925fa2ee505e756ca1ee8a54f"
+  },
+  {
+   "class": "V",
+   "lines": 2,
+   "reason": "scale-lean-memo review fix (F1): Run.lean +2 (admitComponentsMemo takes the counted admission onMiss in place of the request's parts; runCaseReportedMemo builds it and keeps the memo state on a refusal); total scale-lean-memo trusted growth K +0, S +0, V +148 (Run.lean +77, Protocol.lean +65, Serve.lean +6) over the merge base, within R16's 150; tests/test_readings_memo.py and lean/VE/Service/MemoExamples.lean exercise both",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), scale-lean-memo review fix, 2026-10-30",
+   "commit": "314b23a42c211ffcd68bd6070fa7ba3770f3a5b0"
+  },
+  {
+   "class": "V",
+   "lines": 4,
+   "reason": "df-1bbb: VE/Defaults/Wire.lean +2, ResponseShape/Schemas/NormDefaults.lean +2",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-1bbb, 2026-10-18",
+   "commit": "bf28108dc14e7534f037e578850cd5ae5df69ff0"
   }
  ]
 }

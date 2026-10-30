@@ -5,13 +5,14 @@ retyped, duplicated or reordered, a label swapped for another case's, a pair mov
 from __future__ import annotations
 
 import copy
+import inspect
 import json
 import re
 from itertools import combinations
 
 import pytest
 
-from tests.test_defaults_lean import ALPHA_ENGLISH, DOCS, STRICT, UNLESS_URGENT, X_ALL, asked, env, rule, sent_kind, un
+from tests.test_defaults_lean import ALPHA_ENGLISH, DOCS, HOLISTIC, STRICT, UNLESS_URGENT, X_ALL, asked, env, rule, sent_kind, un
 from ve import defaults
 from ve.backends import relay
 from ve.backends.lean_service import _decode_json
@@ -576,7 +577,8 @@ def test_assumptions_in_the_elaborations_label_order(monkeypatch):
     monkeypatch.setitem(DOCS, "rb-ra", (env(base=["calm"]), [calm, other]))
     out, _ = asked(monkeypatch, "rb-ra")
     assert out["answer"] == {"verdict": "FOLLOWS", "basis": "needs", "form": "short",
-                             "assumptions": ["default:exception:rb", "default:exception:ra"]}
+                             "assumptions": ["default:exception:rb", "default:exception:ra"],
+                             "deciders": ["assistant"]}
 
 
 def test_elaborate_labels_and_targets(monkeypatch):
@@ -591,6 +593,82 @@ def test_elaborate_labels_and_targets(monkeypatch):
     relabelled = copy.deepcopy(row)
     relabelled["default_premises"][1][0] = relabelled["default_premises"][0][0]
     _refused("default premises", defaults.bind_elaborate, case, relabelled, source)
+
+
+def test_deciders_are_typed_and_bound_on_both_rows(monkeypatch):
+    case, row, _, _, source = _genuine(monkeypatch, "gamma2", X_ALL, "defaults-elaborate")
+    assert row["deciders"] == ["assistant"]
+    assert defaults.bind_elaborate(case, row, source) is row
+    for names in ([], ["absent"], ["unstated"], ["assistant", "assistant"], ["assistant", "absent"]):
+        _refused("deciders", defaults.bind_elaborate, case, {**row, "deciders": names}, source)
+    case, row, labels, *_ = _genuine(monkeypatch, "alpha", X_ALL, "defaults-certificate")
+    assert row["deciders"] == ["assistant"]
+    assert defaults.bind_certificate(case, row, labels) is row
+    for names in ([], ["absent"], ["unstated"], ["assistant", "assistant"], ["assistant", "absent"]):
+        _refused("deciders", defaults.bind_certificate, case, {**row, "deciders": names}, labels)
+    unnamed = copy.deepcopy(case)
+    for item in unnamed["norms"]:
+        if item["norm"].get("mode") == "default":
+            item["norm"]["exception"]["decided_by"] = "unstated"
+    assert defaults._bind_decider_names(unnamed, ["unstated"], labels) is None
+    _refused("deciders", defaults._bind_decider_names, case, row["deciders"], [])  # names without a decision
+
+
+# -- DE5's deciders, source by source (review df-1bbb F2): a default rule's exception decider, a switch party, the
+#    holistic ranking's `decided_by`; never a modeless (strict) rule's, never a strict ranking's, and with no soft
+#    block only the rules' own. (cell, document, the deciders Lean names, the names the request makes available)
+HOLISTIC_OPERATOR = env({"parties": ["operator"], **HOLISTIC, "outranking": {"mode": "holistic", "decided_by": "operator"}})
+DECIDER_SOURCES = [
+    ("holistic-ranking", (HOLISTIC_OPERATOR, DOCS["delta"][1]), ["assistant", "operator"], {"assistant", "operator"}),
+    ("switch-party", DOCS["epsilon"], ["assistant", "user"], {"assistant", "user"}),
+    ("strict-rule-and-ranking", DOCS["zeta"], ["assistant"], {"assistant"}),
+    ("no-soft-block", _decider_doc(["assistant", "assistant"], None, soft=False), ["assistant"], {"assistant"}),
+]
+_SOURCE_ROWS: dict = {}
+
+
+def _source_rows(monkeypatch, cell):
+    """The cell's request, labels and Lean's genuine rows that carry `deciders`, each with its binding (asked once per
+    session, a copy each call)."""
+    name, document, *_ = cell
+    if name not in _SOURCE_ROWS:
+        monkeypatch.setitem(DOCS, f"sources-{name}", document)
+        _, sent = asked(monkeypatch, f"sources-{name}")
+        case, elaborated = sent_kind(sent, "defaults-elaborate")
+        labels = [label for label, _ in elaborated["default_premises"]]
+        rows = [(case, elaborated, defaults.bind_elaborate, defaults.soft_source(case))]
+        rows += [(c, r, defaults.bind_certificate, labels) for c, r in sent
+                 if c.get("kind") == "defaults-certificate" and r.get("verdict") == "FOLLOWS"]
+        _SOURCE_ROWS[name] = rows
+    return copy.deepcopy(_SOURCE_ROWS[name])
+
+
+def test_deciders_from_every_source_of_the_request(monkeypatch):
+    """Lean names each source's deciders (`decidersOf`), and the relay takes them and refuses every name the request
+    does not make available, on the elaborate row and on each FOLLOWS certificate."""
+    for cell in DECIDER_SOURCES:
+        name, _, lean, available = cell
+        rows = _source_rows(monkeypatch, cell)
+        for case, row, bind, given in rows:
+            assert row["deciders"] == lean, (name, case["kind"])
+            assert bind(case, row, given) is row
+            for extra in sorted({"assistant", "operator", "user", "unstated", "nobody"} - available):
+                _refused("deciders", bind, case, {**row, "deciders": [*lean, extra]}, given)
+        assert len(rows) >= 1 + (name in ("holistic-ranking", "switch-party")), name
+
+
+def test_a_holistic_ranking_without_its_decider_names_unstated(monkeypatch):
+    """A holistic ranking with no `decided_by` is decided by "unstated" (`decidersOf`'s `getD`). Lean refuses such a
+    document (MissingExceptionDecider: outranking), so no row of it reaches the relay; the request alone is bound."""
+    [(case, row, *_), *_] = _source_rows(monkeypatch, DECIDER_SOURCES[0])
+    del case["environment"]["vocabulary"]["soft"]["outranking"]["decided_by"]
+    labels = [label for label, _ in row["default_premises"]]
+    assert defaults._bind_decider_names(case, ["assistant", "unstated"], labels) is None
+    _refused("deciders", defaults._bind_decider_names, case, ["assistant", "operator"], labels)
+    monkeypatch.setitem(DOCS, "holistic-undecided", (env({**HOLISTIC, "outranking": {"mode": "holistic"}}),
+                                                     DOCS["delta"][1]))
+    with pytest.raises(VEError, match="MissingExceptionDecider: outranking"):
+        asked(monkeypatch, "holistic-undecided")
 
 
 def test_soft_source_is_the_exception_tables(monkeypatch):
@@ -633,7 +711,8 @@ def test_strict_answer_only_when_lean_says_valid(monkeypatch):
     (a genuine `valid: false` row), and then the default question is asked, never the strict answer shown; DF-α's
     search finds no strict certificate, so the default question is asked without the strict one."""
     out, sent = asked(monkeypatch, "zeta")
-    assert out == {"question": "strict", "valid": True}
+    assert out == {"question": "strict", "valid": True, "deciders": ["assistant"],
+                   "english": ["This holds whatever the assistant decides."]}
     assert sent_kind(sent, "norm-defaults-certificate")[1]["valid"] is True
     found = defaults._Search.certificate
 
@@ -647,19 +726,10 @@ def test_strict_answer_only_when_lean_says_valid(monkeypatch):
     assert (out["question"], out["kind"]) == ("default", "defaults-certificate"), out
     out, sent = asked(monkeypatch, "alpha")
     assert out == {"question": "default", "kind": "defaults-certificate", "answer": {
-        "verdict": "FOLLOWS", "basis": "needs", "form": "short", "assumptions": ["default:exception:r1"]},
+        "verdict": "FOLLOWS", "basis": "needs", "form": "short", "assumptions": ["default:exception:r1"],
+        "deciders": ["assistant"]},
         "english": ALPHA_ENGLISH}
     assert not any(case.get("kind") == "norm-defaults-certificate" for case, _ in sent)
-
-
-# The tests above, which tests/test_defaults_checks.py runs against each seeded bug of the binding.
-BOTH_SIDES = (test_run_binds_the_row_to_its_case, test_forced_condition_index_rule_and_tuple,
-              test_forced_order_rule_then_tuple, test_forced_entries_in_the_requests_order, test_forced_tuple_sorts, test_assumptions_and_basis,
-              test_pairs_and_collision, test_collision_deciders_truth_table, test_collision_refused_field_by_field,
-              test_situation_entities_of_every_sort, test_elaborate_labels_and_targets,
-              test_soft_source_is_the_exception_tables, test_needs_only_with_a_strict_model_not_exactly_with_one,
-              test_a_collision_on_any_colliding_pair, test_answer_binds_each_kind_with_its_binding,
-              test_assumptions_in_the_elaborations_label_order, test_strict_answer_only_when_lean_says_valid)
 
 
 @pytest.mark.parametrize("name", ["alpha", "gamma"])
@@ -688,3 +758,38 @@ def test_elaborate_mutants_lose_evidence_at_most(monkeypatch, name):
         if out != genuine_out and any(v not in ("UNKNOWN", g) for v, g in zip(*verdicts)):
             found.append((path, value, out))
     assert not found, found[:3]
+
+
+# -- the tests tests/test_defaults_checks.py runs against each seeded bug of the binding: every test of this module,
+#    once per parameter set, so a test written later joins by itself (review df-1bbb F2: a hand-kept list left the
+#    deciders test out, and 22 seeded bugs survived). Left out, each for its reason:
+NOT_BOTH_SIDES = {
+    "test_mutants_never_pass_as_answers": "the whole-answer fuzzer: thousands of two-fault rows for each seeded bug",
+    "test_elaborate_mutants_lose_evidence_at_most": "asks Lean afresh for each fault of the elaborate row",
+}
+
+
+def _parameter_sets(test):
+    """Each keyword set of a test's stacked `parametrize` marks (one empty set when it has none)."""
+    sets = [{}]
+    for mark in getattr(test, "pytestmark", ()):
+        assert mark.name == "parametrize" and not mark.kwargs, (test.__name__, mark)
+        names = [n.strip() for n in mark.args[0].split(",")] if isinstance(mark.args[0], str) else list(mark.args[0])
+        sets = [{**given, **dict(zip(names, values if len(names) > 1 else (values,)))}
+                for given in sets for values in mark.args[1]]
+    return sets
+
+
+def _bound(test, parameters):
+    """`test` with its parameters, taking `monkeypatch` (when the test does) as tests/test_defaults_checks.py gives it."""
+    takes = "monkeypatch" in inspect.signature(test).parameters
+
+    def bound(monkeypatch):
+        return test(monkeypatch, **parameters) if takes else test(**parameters)
+    bound.__name__ = test.__name__ + (f"[{parameters}]" if parameters else "")
+    return bound
+
+
+BOTH_SIDES = tuple(_bound(test, parameters) for name, test in list(globals().items())
+                   if name.startswith("test_") and callable(test) and name not in NOT_BOTH_SIDES
+                   for parameters in _parameter_sets(test))
