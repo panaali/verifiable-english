@@ -72,6 +72,10 @@ def itemOf (cs : List Piece) : Option (Option (Bool × Bool) × List String × L
   match cs.filterMap (fun | .head h => some h | _ => none) with
   | [h] => some (cs.findSome? (fun | .fw t b => some (t, b) | _ => none), h, cs)
   | _ => none
+/-- D9 (i): a list whose marker is written once has no meaning when its first or last part is two or more words. -/
+def longEnd (ps : List Part) : Bool :=
+  let long : Option Part → Bool := fun | some (.words (_ :: _ :: _)) => true | _ => false
+  long ps.head? || long ps.getLast?
 /-- A node's pieces from its children's and its rule `r`. `second` says the rule equals the one before it: only an
 edge's two rules are written alike (5.2), and the second reads over all. -/
 def applyRule (r : RuleS) (second : Bool) (cs : List Piece) : Option (List Piece) :=
@@ -93,8 +97,7 @@ def applyRule (r : RuleS) (second : Bool) (cs : List Piece) : Option (List Piece
     let (j, ms) ← listOf cs
     let ps ← ms.mapM part
     -- D9 (i): a marker written once (`PL`) refuses a first or last part of two or more words
-    let long : Option Part → Bool := fun | some (.words (_ :: _ :: _)) => true | _ => false
-    if r.lhs matches .F _ .PL && (long ps.head? || long ps.getLast?) then none else some [.list j ps]
+    if r.lhs matches .F _ .PL && longEnd ps then none else some [.list j ps]
   | .F _ (.LST m true), _, [.list j ps] => some [.split j true (ps.map (.arg m ∘ .one))]
   | .F _ (.LST m false), _, [.list j ps] => some [.elt (.arg m (.joined j ps)) .own]
   | .F _ .O, _, [.part p] => some [.elt (.arg "" (.one p)) .own]

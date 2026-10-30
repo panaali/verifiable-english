@@ -4,8 +4,8 @@ import VE.Acts.MeaningExamples
 
 Each atom's normal form text and what `read` gives it at the production limits: G6's render pair and N1 to N5 read
 back as `one` of the atom in canonical order; `Atom.canon`'s reordering; `normalOk` on both sides of each of its
-conditions, with the review's counterexamples FR3 to FR5 on the refused side; and C1 to C4, the atoms that pass
-`normalOk` as spec 5.5 writes it and do not read back (docs/act-phrases/ap-2bb/QUESTION-read_normal.md).
+conditions, with the review's counterexamples FR3 to FR5 and C1 to C4 (docs/act-phrases/ap-2bb/QUESTION-read_normal.md)
+on the refused side.
 -/
 
 namespace VE.Acts.RenderExamples
@@ -38,7 +38,8 @@ def Vk : Vocab := ⟨[fr "give" ["to", ""] [] ["at", "in", "on"], fr "deceive" [
 def give (args : List (String × Filler)) (mods : List Modifier) : Atom := ⟨true, false, ["give"], args, mods⟩
 def help : Filler := .one (w "help")
 def mixed : Atom := give [("to", .one (.slot 1)), ("", help)] [.prep "at" (.slot 2), .adv "now", .prep "in" (w "time")]
-#guard mixed.canon == give [("", help), ("to", .one (.slot 1))] [.adv "now", .prep "at" (.slot 2), .prep "in" (w "time")]
+#guard mixed.canon ==
+  give [("", help), ("to", .one (.slot 1))] [.adv "now", .prep "at" (.slot 2), .prep "in" (w "time")]
 #guard text [] mixed == "{0} to now give help to {1} at {2} in time"
 #guard normalOk Vk mixed && roundTrip Vk mixed && back Vk mixed != .ok (.one mixed)
 -- already in order: `canon` keeps it; two adverbs and two modifiers keep their own order
@@ -85,18 +86,30 @@ def joinedObj (h : String) : Atom := ⟨true, false, [h], [("", .joined .and [.s
 -- `atomOk` refused: an undeclared head, a missing object
 #guard !normalOk Vk ⟨true, false, ["take"], [], []⟩ && !normalOk Vk (give [("to", .one (.slot 1))] [])
 
-/-! ### C1 to C4: `normalOk` as spec 5.5 writes it, and the normal form does not read back
+/-! ### A joined filler: two or more parts, and D9 (i) at its ends (C1 to C4)
 
-These pin the counterexamples to `read_normal` (QUESTION-read_normal.md); each flips when `normalOk` refuses them. -/
+C1 to C4 are the atoms that passed `normalOk` as spec 5.5 wrote it and do not read back (QUESTION-read_normal.md);
+the DRI's decision of 2026-10-30 (ap-2bb) adds the two conditions that refuse them. Each fits its frame. -/
 
 def Vo : Vocab := frames [fr "form" [""] [] []]
 def c2 : Atom := ⟨false, false, ["form"], [("", .joined .and [w "trade unions", .slot 1])], []⟩
 def heldBy1 (ps : List Part) : Atom := ⟨false, true, ["held"], [("by", .joined .or ps)], []⟩
+#guard framesOk V7 && framesOk Vo
 #guard text fx7 held == "{0} be held by secret vote or equivalent free voting procedures"
-#guard framesOk V7 && framesOk Vo && normalOk V7 held && back V7 held == .none                             -- C1 (G7)
-#guard text [] c2 == "{0} form trade unions and {1}" && normalOk Vo c2 && back Vo c2 == .none              -- C2
-#guard normalOk V7 (heldBy1 [.slot 1]) &&
+#guard atomOk V7 held && !normalOk V7 held && back V7 held == .none                                       -- C1 (G7)
+#guard read V7 rawCap stepBudget (MeaningExamples.toks fx7
+  "{0} be held by secret vote or by equivalent free voting procedures") == .ok g7    -- G7, the marker repeated
+#guard text [] c2 == "{0} form trade unions and {1}" && atomOk Vo c2 && !normalOk Vo c2 && back Vo c2 == .none -- C2
+#guard atomOk V7 (heldBy1 [.slot 1]) && !normalOk V7 (heldBy1 [.slot 1]) &&
   back V7 (heldBy1 [.slot 1]) == .ok (.one ⟨false, true, ["held"], [("by", .one (.slot 1))], []⟩)          -- C3
-#guard normalOk V7 (heldBy1 []) && back V7 (heldBy1 []) == .none                                           -- C4
+#guard atomOk V7 (heldBy1 []) && !normalOk V7 (heldBy1 []) && back V7 (heldBy1 []) == .none               -- C4
+-- the last part long is refused too; two or three parts with one-word ends, a long middle part, are accepted
+#guard !normalOk V7 (heldBy1 [.slot 1, w "secret vote"]) && back V7 (heldBy1 [.slot 1, w "secret vote"]) == .none
+def held2 : List (List Part) := [[w "secret", .fixed 0], [.slot 1, w "secret"], [.slot 1, w "secret vote", .fixed 0]]
+#guard held2.all (fun ps => normalOk V7 (heldBy1 ps) && roundTrip V7 (heldBy1 ps))
+#guard [[w "help", w "advice"], [w "help", w "good advice", w "time"]].all (fun ps =>
+  normalOk Vk (obj (.joined .and ps)) && roundTrip Vk (obj (.joined .and ps)))
+#guard !normalOk Vk (obj (.joined .and [w "help", w "good advice"])) &&
+  !normalOk Vk (obj (.joined .and [.slot 2])) && !normalOk Vk (obj (.joined .and []))
 
 end VE.Acts.RenderExamples
