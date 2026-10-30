@@ -1,0 +1,3 @@
+job=lca-45c5c600-13580c0b-t356378 nproc=4 arch=aarch64 host=runnervm9u1px date=2026-10-30T10:33:49Z
+Mem:              15           1          10           0           4          14
+/dev/root       145G   41G  104G  29% /
