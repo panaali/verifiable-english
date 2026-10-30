@@ -1,0 +1,18 @@
+trust_mutants: 6 definitions, 218 mutants (54 to run), 4 jobs, base 6949746bf291
+UNKNOWN lean/VE/Acts/Linearize.lean:49 VE.Acts.Atom.normal (S, trusted) append-right: Tok.word ++ ->  (lean/VE/Acts/Linearize.lean:49: Type mismatch)
+UNKNOWN lean/VE/Acts/Linearize.lean:65 VE.Acts.normalOk (S, trusted) list-empty: a.args -> [] (lean/VE/Acts/Linearize.lean:65: Invalid projection: Type of)
+UNKNOWN lean/VE/Acts/Linearize.lean:49 VE.Acts.Atom.normal (S, trusted) list-empty: Tok.word -> [] (lean/VE/Acts/Linearize.lean:49: Application type mismatch: The argument)
+UNKNOWN lean/VE/Acts/Linearize.lean:65 VE.Acts.normalOk (S, trusted) list-empty: a.mods.filterMap (fun | .prep _ p => some p | .adv _ => none) -> [] (lean/VE/Acts/Linearize.lean:65: Invalid projection: Type of)
+UNKNOWN lean/VE/Acts/Linearize.lean:66 VE.Acts.normalOk (S, trusted) list-empty: ws -> [] (lean/VE/Acts/Linearize.lean:66: Invalid field notation: Type of)
+UNKNOWN lean/VE/Acts/Linearize.lean:69 VE.Acts.normalOk (S, trusted) list-empty: a.args.map (·.1) -> [] (lean/VE/Acts/Linearize.lean:69: typeclass instance problem is stuck, it is often due to metavaria...)
+SURVIVOR lean/VE/Acts/Meaning.lean:78 VE.Acts.longEnd (S, trusted) list-drop-last: ps -> (ps.dropLast)
+SURVIVOR lean/VE/Acts/Linearize.lean:65 VE.Acts.normalOk (S, trusted) list-first: a.args -> (a.args.take 1)
+UNKNOWN lean/VE/Acts/Linearize.lean:65 VE.Acts.normalOk (S, trusted) list-first: (·.2.parts) -> ((·.2.parts).take 1) (lean/VE/Acts/Linearize.lean:65: Invalid dotted identifier notation: The expected type of `.prep` ...)
+UNKNOWN lean/VE/Acts/Linearize.lean:42 VE.Acts.Atom.canon (S, trusted) list-first: (· matches .adv _) -> ((· matches .adv _).take 1) (lean/VE/Acts/Linearize.lean:42: Invalid dotted identifier notation: The expected type of `.adv` c...)
+SURVIVOR lean/VE/Acts/Linearize.lean:65 VE.Acts.normalOk (S, trusted) list-first: a.mods.filterMap (fun | .prep _ p => some p | .adv _ => none) -> ((a.mods.filterMap (fun | .prep _ p => some p | .adv _ => none)).take 1)
+SURVIVOR lean/VE/Acts/Linearize.lean:70 VE.Acts.normalOk (S, trusted) list-first: a.args -> (a.args.take 1)
+UNKNOWN lean/VE/Acts/Linearize.lean:42 VE.Acts.Atom.canon (S, trusted) list-drop-first: (· matches .adv _) -> ((· matches .adv _).drop 1) (lean/VE/Acts/Linearize.lean:42: Invalid dotted identifier notation: The expected type of `.adv` c...)
+SURVIVOR lean/VE/Acts/Linearize.lean:65 VE.Acts.normalOk (S, trusted) list-last: a.mods -> (a.mods.reverse.take 1)
+SURVIVOR lean/VE/Acts/Linearize.lean:70 VE.Acts.normalOk (S, trusted) list-last: f.split -> (f.split.reverse.take 1)
+trust_mutants: 37 KILLED, 6 SURVIVOR, 9 UNKNOWN, 2 INVALID, 0 ALLOWED, 0 NOT RUN, 164 OTHER SHARD in 755 s
+trust_mutants: S, trusted: 37 KILLED, 6 SURVIVOR, 9 UNKNOWN, 2 INVALID, 164 OTHER SHARD
