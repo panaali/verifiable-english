@@ -36,6 +36,7 @@ import time
 import lake_outputs
 from layer_policy import ROOT, lean_default_targets, lean_executables
 import nested_pytest
+import test_chunks
 import test_map_recorder
 
 # 2: directory listings by the import system and pytest are not recorded.
@@ -83,8 +84,17 @@ def units(root: Path = ROOT) -> list[str]:
 
 
 def unit_command(unit: str, options: Sequence[str] = ()) -> list[str]:
-    return EXTRA_UNITS.get(unit) or nested_pytest.command(["-q", "-p", "no:cacheprovider", *options, unit],
-                                                          python=["uv", "run", "--frozen", "--group", "dev", "python"])
+    """The command of a unit; a chunk label (tools/test_chunks.py) is its file's, which `chunk_setting` narrows."""
+    chunk = test_chunks.parse_label(unit)
+    return EXTRA_UNITS.get(unit) or nested_pytest.command(
+        ["-q", "-p", "no:cacheprovider", *options, chunk[0] if chunk else unit],
+        python=["uv", "run", "--frozen", "--group", "dev", "python"])
+
+
+def chunk_setting(unit: str) -> dict[str, str]:
+    """The environment a unit adds: for a chunk label, the one variable that selects its chunk; else none."""
+    chunk = test_chunks.parse_label(unit)
+    return {test_chunks.VARIABLE: f"{chunk[1]}/{chunk[2]}"} if chunk else {}
 
 
 def environment(out: Path | None = None) -> dict[str, str]:
@@ -365,7 +375,7 @@ def run_unit(unit: str, work: Path, timeout: float, tracked: set[str], *, option
     out.mkdir(parents=True)
     start = time.monotonic()
     stop = stop or Stop()
-    env = environment(out)
+    env = {**environment(out), **chunk_setting(unit)}
     with log.open("w") as handle, stop.on_exit():
         process = stop.start(unit_command(unit, options), cwd=ROOT, env=env, stdout=handle,
                              stderr=subprocess.STDOUT)

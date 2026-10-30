@@ -49,10 +49,12 @@ from __future__ import annotations
 
 import argparse
 import ast
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from functools import cache
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import posixpath
@@ -70,7 +72,9 @@ import lean_mode_deps
 import nested_pytest
 import quarantine
 import source_graph
+import test_chunks
 import test_map
+import test_schedule
 import run_order
 
 TESTS = sorted((ROOT / "tests").glob("test_*.py"))
@@ -1290,6 +1294,183 @@ def working_changes(commit: str) -> tuple[dict[str, str], dict[str, tuple[str | 
     return status, versions
 
 
+# --- Chunks: a heavy test file of a selected run as several processes ---
+#
+# Which tests chunk i of k runs is tools/test_chunks.py's rule (the suite's collection hook applies it); this section
+# alone decides which units are chunked and into how many, and checks that every collected test ran in exactly one
+# chunk. Only a selected run chunks: `run` passes `chunked=not full`, so a --full run records every file whole, and
+# `main` refuses --chunk-heavy with --full; tools/gate.py runs the suite through tools/gate_pytest.py, never here.
+
+# The step 1 measurement of eff-20261030-1 (docs/infra/eff-20261030-1/chunk_table.py writes it): per measured file,
+# its wall time, the setup every chunk would repeat, and whether chunking is refused ("never") because that setup
+# would cost more than the split saves. Measured data, not a generated file, with its run, as tests/heavy.json.
+CHUNK_DATA = ROOT / "tools/test-chunks.json"
+CHUNK_FORMAT = "ve-test-chunks@1"
+# A unit is chunked only when the coverage map recorded it at more than CHUNK_SECONDS: below that it is not the
+# floor of a selected run (the run's other units take that long on the --jobs pool anyway), and a split only
+# repeats its setup.
+CHUNK_SECONDS = 600.0
+# Each chunk is to take about this long: k = ceil(seconds / CHUNK_TARGET_SECONDS).
+CHUNK_TARGET_SECONDS = 400.0
+# At most this many chunks: the --jobs width of an Actions runner (4 vCPUs), so one file's chunks can all run at
+# once there; more would wait for a slot and still repeat the setup each.
+MAX_CHUNKS = 4
+
+
+def chunk_decisions(path: Path = CHUNK_DATA) -> dict[str, dict]:
+    """The measured rows by test file; none (so no unit is chunked) for a missing or malformed file."""
+    try:
+        data = json.loads(path.read_text())
+        rows = data["files"] if data.get("format") == CHUNK_FORMAT else None
+        if not isinstance(rows, dict) or not all(isinstance(row, dict) for row in rows.values()):
+            raise ValueError("no files table")
+    except (OSError, ValueError, AttributeError, KeyError) as exc:
+        print(f"warning: no test file is chunked: {path.name} is unreadable ({exc})", flush=True)
+        return {}
+    return rows
+
+
+def chunk_counts(units: list[str], seconds: dict[str, float], decisions: dict[str, dict]) -> dict[str, int]:
+    """The units to chunk and the number of chunks of each (2 or more): a test file the map recorded at more
+    than CHUNK_SECONDS, in ceil(seconds / CHUNK_TARGET_SECONDS) chunks, at most MAX_CHUNKS and at most the
+    measured row's `max_chunks`; never one whose measured row says `never` (setup-dominated). With no measured
+    rows at all (`chunk_decisions` found none) nothing is chunked."""
+    if not decisions:
+        return {}
+    counts = {}
+    for unit in units:
+        row = decisions.get(unit, {})
+        recorded = seconds.get(unit) or 0.0
+        if not unit.startswith("tests/") or unit in EXTRA_UNITS or row.get("never") or recorded <= CHUNK_SECONDS:
+            continue
+        count = min(MAX_CHUNKS, math.ceil(recorded / CHUNK_TARGET_SECONDS), row.get("max_chunks") or MAX_CHUNKS)
+        if count >= 2:
+            counts[unit] = count
+    return counts
+
+
+def chunk_labels(unit: str, count: int) -> list[str]:
+    """The entries a unit runs as: its chunks' labels, or the unit itself for one chunk."""
+    return [unit] if count == 1 else [test_chunks.label(unit, index, count) for index in range(1, count + 1)]
+
+
+def file_of(unit: str) -> str:
+    """The test file of a unit or a chunk label."""
+    found = test_chunks.parse_label(unit)
+    return found[0] if found else unit
+
+
+def map_seconds(plan: dict) -> dict[str, float]:
+    """The seconds per unit of the coverage map a plan used; none without one."""
+    path = (plan.get("map") or {}).get("path")
+    try:
+        status = test_map.load(Path(path)).get("status", {}) if path else {}
+    except (OSError, ValueError, EOFError):
+        return {}
+    return {unit: float(row.get("seconds") or 0.0) for unit, row in status.items() if isinstance(row, dict)}
+
+
+def chunk_plan(plan: dict, decisions: dict[str, dict] | None = None) -> dict:
+    """--chunk-heavy: the plan with each unit to chunk replaced, in its place in `selected`, by its chunk labels,
+    and `chunk_seconds`, every label's expected seconds: the repeated setup share of the unit's seconds (the
+    measured row's `setup_seconds` / `wall_seconds`) plus 1/k of the rest. A runner given such a plan (`run`) runs
+    each label as that chunk."""
+    decisions = chunk_decisions() if decisions is None else decisions
+    seconds = map_seconds(plan)
+    counts = chunk_counts(plan["selected"], seconds, decisions)
+    expected = {}
+    for unit, count in counts.items():
+        row = decisions.get(unit, {})
+        share = min(1.0, (row.get("setup_seconds") or 0.0) / row["wall_seconds"]) if row.get("wall_seconds") else 0.0
+        for label in chunk_labels(unit, count):
+            expected[label] = round(seconds[unit] * (share + (1 - share) / count), 1)
+    return {**plan, "selected": [label for unit in plan["selected"] for label in chunk_labels(unit, counts.get(unit, 1))],
+            "chunk_seconds": expected}
+
+
+def collected_tests(files: list[str], jobs: int) -> dict[str, list[str] | None]:
+    """Each file's collected node IDs, listed by one `--collect-only` process of the file as a unit runs it (no
+    chunk); None for a file whose listing failed."""
+    env = {**test_map.environment(), "VE_NATIVE_PREBUILT": "1", "VE_LEAN_PREBUILT": "1"}
+
+    def one(file: str) -> tuple[str, list[str] | None]:
+        try:
+            done = subprocess.run(test_map.unit_command(file, ["--collect-only"]), cwd=test_map.ROOT, env=env,
+                                  capture_output=True, text=True, timeout=test_map.UNIT_TIMEOUT, check=False)
+        except subprocess.TimeoutExpired:
+            return file, None
+        if done.returncode not in (0, NO_TESTS_COLLECTED):
+            return file, None
+        return file, [line for line in done.stdout.splitlines() if line.startswith(file + "::")]
+
+    with ThreadPoolExecutor(max(1, min(jobs, len(files)))) as pool:
+        return dict(pool.map(one, files))
+
+
+def chunk_problems(file: str, count: int, listing: list[str] | None, ran: dict[int, list[str] | None],
+                   seconds: dict[str, float]) -> list[str]:
+    """Why the chunks `ran` (index -> the node IDs its report holds; None: no report) of `file` in `count` do not
+    run every test of `listing` in exactly one chunk; empty when they do. Each chunk must run exactly its part
+    (tools/test_chunks.py) of the listing; with every chunk there, their union must be the listing, and no test may
+    be in two. The rule itself is checked on the listing too, so a rule that loses a test is a problem even when
+    only some chunks ran here."""
+    if listing is None:
+        return [f"{file}: the --collect-only listing failed, so its chunks cannot be checked"]
+    collected, problems = set(listing), []
+    parts = test_chunks.partition(listing, count, seconds)
+    every = [nodeid for part in parts for nodeid in part]
+    if len(every) != len(set(every)) or set(every) != collected:
+        problems.append(f"{file}: the chunk rule does not put each of its {len(collected)} tests in exactly one of "
+                        f"{count} chunks")
+
+    def few(nodeids) -> str:
+        nodeids = sorted(nodeids)
+        return ", ".join(nodeids[:5]) + (f" and {len(nodeids) - 5} more" if len(nodeids) > 5 else "")
+
+    seen: dict[str, list[int]] = {}
+    for index, cases in sorted(ran.items()):
+        if cases is None:
+            problems.append(f"{file} chunk {index}/{count}: no readable JUnit report")
+            continue
+        twice = {nodeid for nodeid in cases if cases.count(nodeid) > 1}
+        if twice:
+            problems.append(f"{file} chunk {index}/{count}: ran twice: {few(twice)}")
+        for nodeid in set(cases):
+            seen.setdefault(nodeid, []).append(index)
+        if set(cases) - collected:
+            problems.append(f"{file} chunk {index}/{count}: ran tests the listing does not collect: "
+                            f"{few(set(cases) - collected)}")
+        if set(parts[index - 1]) - set(cases):
+            problems.append(f"{file} chunk {index}/{count}: did not run {len(set(parts[index - 1]) - set(cases))} "
+                            f"of its tests: {few(set(parts[index - 1]) - set(cases))}")
+        if (set(cases) & collected) - set(parts[index - 1]):
+            problems.append(f"{file} chunk {index}/{count}: ran tests of other chunks: "
+                            f"{few((set(cases) & collected) - set(parts[index - 1]))}")
+    overlap = {nodeid for nodeid, indices in seen.items() if len(indices) > 1}
+    if overlap:
+        problems.append(f"{file}: tests ran in more than one chunk: {few(overlap)}")
+    if len(ran) == count and all(cases is not None for cases in ran.values()) and collected - set(seen):
+        problems.append(f"{file}: {len(collected - set(seen))} collected tests ran in no chunk: "
+                        f"{few(collected - set(seen))}")
+    return problems
+
+
+def fold_chunks(file: str, count: int, done: dict[int, dict], problems: list[str]) -> dict:
+    """One unit's result from its chunks' results (index -> result): the union of their edges and opaque reasons,
+    the sum of their seconds; its exit the first chunk's that failed, else 1 with `problems`, else 5 when no chunk
+    collected a test, else 0. `partial` when some of the `count` chunks ran elsewhere (an Actions shard of a
+    --chunk-heavy plan): its edges are not the file's, so the map leaves it to the static graph."""
+    exits = [done[index]["exit"] for index in sorted(done)]
+    failed = [code for code in exits if code not in (0, NO_TESTS_COLLECTED)]
+    result = {key: set().union(*(done[index][key] for index in done)) for key in test_map.EDGE_KEYS}
+    result.update(opaque=sorted({reason for index in done for reason in done[index]["opaque"]}),
+                  seconds=round(sum(done[index]["seconds"] for index in done), 1),
+                  exit=failed[0] if failed else 1 if problems else NO_TESTS_COLLECTED
+                  if all(code == NO_TESTS_COLLECTED for code in exits) else 0,
+                  chunks=count, partial=len(done) < count)
+    return result
+
+
 def quarantined() -> set[str]:
     """The tests of the active quarantine (tools/quarantine.py); none when its file is malformed."""
     try:
@@ -1320,49 +1501,112 @@ def stop_options(maxfail: int, held: set[str]) -> list[str]:
 def record_ordered(ordered: list[str], work: Path, jobs: int, maxfail: int,
                    held: set[str]) -> tuple[dict[str, dict], dict[str, list[str]]]:
     """Record the units in `ordered`, stopping after `maxfail` failed tests outside `held` (0: never): the
-    results of the units that ran to the end, and each one's failed tests."""
+    results of the units that ran to the end, and each one's failed tests.
+
+    An entry may be a chunk label (tools/test_chunks.py): each chunk is a process of the same pool, and its
+    failed tests count towards `maxfail` as it ends, as a unit's do. The chunks of a file are folded into the
+    file's one result (`fold_chunks`), checked against one listing of the file (`chunk_problems`: any test missing,
+    duplicated or run in the wrong chunk fails the file, its failures then naming the file itself). A file with a
+    chunk the run stopped has no result, like a unit the run stopped, but keeps the failed tests of the chunks
+    that ended."""
     reports = {unit: work / (unit.replace("/", "__") + ".xml") for unit in ordered}
+    chunks: dict[str, dict[int, str]] = {}
+    counts: dict[str, int] = {}
+    for unit in ordered:
+        found = test_chunks.parse_label(unit)
+        if found:
+            chunks.setdefault(found[0], {})[found[1]] = unit
+            counts[found[0]] = found[2]
+    listings = collected_tests(sorted(chunks), jobs) if chunks else {}
     results = test_map.record_units(
         ordered, work, jobs, test_map.UNIT_TIMEOUT,
         options=lambda unit: [*stop_options(maxfail, held), *run_order.junit_options(reports[unit])],
         stop_after=maxfail,
-        failures=lambda unit, result: len(set(unit_failures(unit, result, reports[unit])) - held))
-    return results, {unit: unit_failures(unit, result, reports[unit]) for unit, result in results.items()}
+        failures=lambda unit, result: len(set(unit_failures(file_of(unit), result, reports[unit])) - held))
+    failures = {unit: unit_failures(file_of(unit), result, reports[unit]) for unit, result in results.items()}
+    seconds = test_schedule.read_durations() if chunks else {}
+    for file, labels in chunks.items():
+        done = {index: results.pop(label) for index, label in labels.items() if label in results}
+        failed = sorted({nodeid for label in labels.values() for nodeid in failures.pop(label, ())})
+        if len(done) < len(labels):
+            if failed:
+                failures[file] = failed
+            continue
+        ran = {index: run_order.junit_cases(reports[labels[index]], file) for index in done}
+        problems = chunk_problems(file, counts[file], listings.get(file), ran, seconds)
+        results[file] = fold_chunks(file, counts[file], done, problems)
+        failures[file] = sorted({*failed, file}) if problems else failed
+        print(f"chunked {file}: {len(done)} of {counts[file]} chunks, exit {results[file]['exit']}, "
+              f"{results[file]['seconds']} s in all; "
+              + ("; ".join(problems) if problems else
+                 f"each of its {sum(len(cases or ()) for cases in ran.values())} tests ran in exactly one chunk"),
+              flush=True)
+    return results, failures
 
 
-def run_recorded(plan: dict, jobs: int, maxfail: int = 0, held: set[str] | None = None) -> int:
+def run_recorded(plan: dict, jobs: int, maxfail: int = 0, held: set[str] | None = None,
+                 chunked: bool = True) -> int:
     """Run the selected units one process each under the recorder, then save a map for this tree.
 
     The units that failed last time start first, then the changed test files (tools/run_order.py). With
     `maxfail` N > 0 the run stops after N failed tests outside the quarantine `held` (default: the active
     one); the units it did not finish are left to the static graph, like the ones below.
 
+    With `chunked` (a selected run; `run` passes False for a --full one) a heavy test file runs as several
+    processes of the same pool (`chunk_counts`, `record_ordered`), and a plan's chunk labels (`chunk_plan`) run as
+    those chunks; the order, the stop, the quarantine, the last failures and the map still take the file as one
+    unit. Without it a plan that names chunks is refused.
+
     Units the run did not record keep their entries from the map the plan
     used, unless the working tree changed code they ran: those are marked
     unrecorded, so the static graph answers for them until they run again.
     """
-    selected = plan["selected"]
+    given: dict[str, list[str]] = {}
+    selected: list[str] = []
+    for entry in plan["selected"]:
+        if file_of(entry) not in selected:
+            selected.append(file_of(entry))
+        if file_of(entry) != entry:
+            given.setdefault(file_of(entry), []).append(entry)
+    if given and not chunked:
+        raise ValueError(f"a full run never chunks a test file: the plan names chunks of {', '.join(sorted(given))}")
     tree = test_map.working_tree_id()
     test_map.build_natives()
     work = Path(tempfile.mkdtemp(prefix="ve-select-run-"))
     state = run_order.state_path()
     previous, held = run_order.last_failed(state=state), quarantined() if held is None else held
+    base = resolve_map("HEAD", plan["map"]["path"]) if plan["map"] else None
+    counts = chunk_counts([unit for unit in selected if unit not in given],
+                          {unit: row["seconds"] for unit, row in base.status.items()} if base is not None else {},
+                          chunk_decisions()) if chunked else {}
     ordered = run_order.order(selected, changed=plan["changed"], failed=previous)
     print(f"order: failed last time {[unit for unit in ordered if unit in previous]}; changed "
           f"{[unit for unit in ordered if unit in plan['changed'] and unit not in previous]}; then the rest; "
           f"--maxfail {maxfail or 'off'}", flush=True)
+    if counts or given:
+        print(f"chunks: {', '.join(f'{unit} in {count}' for unit, count in sorted(counts.items()))}"
+              + (f"; from the plan: {', '.join(label for labels in given.values() for label in labels)}"
+                 if given else ""), flush=True)
+    ordered = [entry for unit in ordered for entry in given.get(unit) or chunk_labels(unit, counts.get(unit, 1))]
     results, failures = record_ordered(ordered, work, jobs, maxfail, held)
     not_run = [unit for unit in selected if unit not in results]
     selected = [unit for unit in selected if unit in results]
     run_order.write_state(state, run_order.updated(previous, completed=selected, failed=failures))
     failed = [unit for unit in selected if set(failures[unit]) - held]
-    for unit in [unit for unit in selected if failures[unit]]:
-        log = work / (unit.replace("/", "__") + ".log")
-        label = "FAILED" if unit in failed else "QUARANTINED (fails under load; not counted)"
-        print(f"{label} {unit} (exit {results[unit]['exit']}): {', '.join(failures[unit])}; log {log}\n"
-              + "\n".join(log.read_text(errors="replace").splitlines()[-25:]), flush=True)
+    for unit in [unit for unit in selected if failures[unit]] + [unit for unit in not_run if failures.get(unit)]:
+        label = ("FAILED" if set(failures[unit]) - held else "QUARANTINED (fails under load; not counted)") + (
+            "" if unit in results else " (stopped before its other chunks ended)")
+        print(f"{label} {unit} (exit {results[unit]['exit'] if unit in results else 'stopped'}): "
+              f"{', '.join(failures[unit])}", flush=True)
+        for log in sorted(path for path in work.glob("*.log") if path.name == unit.replace("/", "__") + ".log"
+                          or path.name.startswith(unit.replace("/", "__") + "::chunk(")):
+            print(f"log {log}\n" + "\n".join(log.read_text(errors="replace").splitlines()[-25:]), flush=True)
+    # A file only some of whose chunks ran here (the rest on other Actions shards) has part of its edges: the map
+    # leaves it to the static graph, as one the run stopped.
+    partial = [unit for unit in selected if results[unit].get("partial")]
+    for unit in partial:
+        del results[unit]
     every = set(units())
-    base = resolve_map("HEAD", plan["map"]["path"]) if plan["map"] else None
     stale: set[str] = set()
     if base is not None:
         status, versions = working_changes(base.commit)
@@ -1371,20 +1615,22 @@ def run_recorded(plan: dict, jobs: int, maxfail: int = 0, held: set[str] | None 
                                      "dirs": base.dirs, "programs": base.programs,
                                      "operations": base.operations, "presence": base.presence,
                                      "modes": base.modes})
-        for unit in sorted(every - set(selected)):
+        for unit in sorted(every - (set(selected) - set(partial))):
             if unit in edges and unit in base.status:
                 results[unit] = {**edges[unit], **base.status[unit]}
                 if unit in stale:
                     results[unit]["exit"] = "stale"  # ran changed code; not re-run here
-    for unit in not_run:
+    for unit in [*not_run, *partial]:
         if unit in results:
-            results[unit]["exit"] = "stale"  # selected for the change, but the run stopped first
+            results[unit]["exit"] = "stale"  # selected for the change, but the run stopped first or ran part of it
     data = test_map.build_map(results, base.commit if base is not None else "")
     data["tree"] = tree
     test_map.write_map(data, test_map.tree_map_path(tree))
     shutil.rmtree(work, ignore_errors=True)
-    print(f"recorded {len(selected)} units for tree {tree[:10]}; {len(set(stale) | set(not_run))} others left "
-          f"to the static graph until they run; {len(failed)} failed", flush=True)
+    print(f"recorded {len(selected) - len(partial)} units for tree {tree[:10]}; "
+          f"{len(set(stale) | set(not_run) | set(partial))} others left to the static graph until they run"
+          f"{f' ({len(partial)} with only some of their chunks here)' if partial else ''}; {len(failed)} failed",
+          flush=True)
     if not_run:
         print(f"STOPPED EARLY (--maxfail {maxfail}): {len(not_run)} selected units did not run: "
               f"{', '.join(not_run)}", flush=True)
@@ -1453,7 +1699,7 @@ def run(plan: dict, *, record: bool = True, jobs: int = 8, maxfail: int = 0, ful
         if result.returncode:
             return result.returncode
     if record and plan["selected"]:
-        return run_recorded(plan, jobs, maxfail, held)
+        return run_recorded(plan, jobs, maxfail, held, chunked=not full)
     return 0
 
 
@@ -1492,7 +1738,13 @@ def main() -> int:
                              "0 runs everything). The test files that failed last time and the changed ones run "
                              "first. The gate and a --full run never stop early, and a --full run counts "
                              "quarantined failures")
+    parser.add_argument("--chunk-heavy", action="store_true",
+                        help="list each heavy test file the run would chunk as its chunks, '<file>::chunk(<i>/<k>)', "
+                             "in 'selected', with each chunk's expected seconds in 'chunk_seconds' (for a runner "
+                             "that spreads them); a recorded selected run only, never --full")
     args = parser.parse_args()
+    if args.chunk_heavy and (args.full or args.impacted or args.no_record or args.tier):
+        parser.error("--chunk-heavy is for a recorded selected run: not with --full, --impacted, --no-record or --tier")
     if args.maxfail is not None and args.maxfail < 0:
         parser.error("--maxfail is 0 or a positive count")
     if args.full and args.maxfail:
@@ -1551,6 +1803,8 @@ def main() -> int:
         plan = plan_now()
     if args.tier == "light":
         plan = light_tier(plan, jobs=args.jobs)
+    if args.chunk_heavy:
+        plan = chunk_plan(plan)
     if args.json:
         print(json.dumps(plan, indent=2))
     else:
