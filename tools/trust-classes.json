@@ -13427,6 +13427,8 @@
         "VE.Scope.Examples.parts",
         "VE.Scope.Examples.powerPieces",
         "VE.Scope.Examples.prosePieces",
+        "VE.Scope.Examples.provAt",
+        "VE.Scope.Examples.provenanceOf",
         "VE.Scope.Examples.rawJ",
         "VE.Scope.Examples.rawRule",
         "VE.Scope.Examples.rawUdhr",
