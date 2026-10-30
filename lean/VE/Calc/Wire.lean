@@ -468,6 +468,10 @@ def firstNonlinearC (limit : Nat) (t : Inlined) : List (String × Expr) → Nat 
     | some p => some (some p, w)
     | none => firstNonlinearC limit t rest w
 
+/-- The value table, then each side, on the case's one count (3.2's order). -/
+def loweredC (limit : Nat) (ds : List Decl) (t : Inlined) (sides : List (String × Expr)) : Option (Option String × Nat) :=
+  (valueTableC limit ds [] 0).bind fun (_, w) => firstNonlinearC limit t sides w
+
 theorem nodesWithin_add (e : Expr) (n d r : Nat) (h : e.nodesWithin n = some r) :
     e.nodesWithin (n + d) = some (r + d) ∧ r < n := by
   induction e generalizing n d r with
@@ -696,8 +700,7 @@ def derivations (ds : List Decl) (premises : List (String × Claim)) (claims : L
   match lowered.flatMap fun (path, c) => c.exprs.zipIdx.map fun (e, i) => (s!"{path}.{i + 1}", e) with
   | [] => pure ()
   | sides =>
-    let some (_, w) := Work.valueTableC Work.maxWork ds [] 0 | throw workLimit
-    match Work.firstNonlinearC Work.maxWork (inlineTable ds free) sides w with
+    match Work.loweredC Work.maxWork ds (inlineTable ds free) sides with
     | none => throw workLimit
     | some (some p, _) => throw s!"NonlinearPremise: {p} (declare a square link or name the product)"
     | some (none, _) => pure ()
