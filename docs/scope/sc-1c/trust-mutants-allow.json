@@ -1,7 +1,7 @@
 {
  "allow": [
   {"definition": "VE.Service.modes", "operator": "list-drop-first",
-   "reason": "killed by the proof VE.Service.modes_complete (by cases and decide: a mode missing from modes fails lake build), which the tool does not count as a check; the precedent of me-2b and qt-a3c; mutants.json registry-drop-scope shows tests/test_lean_service.py::test_handshake failing as well"},
+   "reason": "killed by the proof VE.Service.modes_complete (by cases and decide: a mode missing from modes fails lake build), which the tool does not count as a check; the precedent of me-2b and qt-a3c; mutants.json registry-drop-scope shows the build failure (Registry.lean:79, decide)"},
   {"definition": "VE.Service.modes", "operator": "list-drop-last",
    "reason": "killed by the proof VE.Service.modes_complete, as list-drop-first (the dropped mode is scope: mutants.json registry-drop-scope)"},
   {"definition": "VE.Service.modes", "operator": "list-drop-middle",
