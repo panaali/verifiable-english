@@ -127,11 +127,20 @@ class S1Environment:
 # ---------------------------------------------------------------------------------------------------------------
 # Contents, names and the document (1.2 to 1.4)
 
+def norm_rule_input(content):
+    """The lower norms checker reads the norm member; the reading retains its citations separately."""
+    return {"norm": content["norm"]}
+
+
 class Content:
     """A decoded content: `kind` is the content's W2 kind word, `body` its JSON, `cites` a norm's citations."""
 
     def __init__(self, kind, body, raw, cites=None):
         self.kind, self.body, self.raw, self.cites = kind, body, raw, cites or {}
+
+    def rule_input(self):
+        """The lower norm checker reads the rule; citations stay on this reading for its other consumers."""
+        return norm_rule_input(self.raw)
 
     def lines(self):
         return self.body.get("lines", []) if self.kind in ("right", "right_lines") else []
