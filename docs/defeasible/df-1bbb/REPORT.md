@@ -1,8 +1,9 @@
 # df-1bbb build report
 
-Status: DE5 delivered as the first coherent part of df-1bbb; no DRI signature is reserved.
+Status: DE5 delivered as the first part of df-1bbb, with review F1 and F2 (`df-1bbb-review.final.md`) fixed; no DRI signature is reserved.
 HEAD: see `git log -1 --oneline` after the report commit. Lean sends `decidersOf`; Python binds and renders DE5.
-Open: gap rows, DE1–DE12's W7 gate, typed `reason`, and one shared `act_phrase` are df-1bbc.
+Review fix: R16's ties-pass row is registered; every binding test now runs against the seeded bugs (no survivors); Wire.lean repinned.
+Open: gap rows, DE1–DE12's W7 gate, typed `reason`, one shared `act_phrase` (df-1bbc); the R16 ties pass (ties-df-1bbb).
 The full release gate is left to the chain on the committed final HEAD, as the task directs.
 
 ## Scope and plan
@@ -20,7 +21,7 @@ Cut under the merge-sized limit: gap rows after DE6 need a Lean predicate/tuple 
 - Focused pytest runs: `tests/test_defaults_lean.py -k 'zeta or alpha_needs or beta_forced or iota'` 4 passed; `tests/test_defaults_answer.py -k 'deciders_are or strict_answer or elaborate_labels or assumptions_in'` 4 passed; `tests/test_defaults_english.py -k 'strict_basis or de1_and_de2'` 2 passed; `test_de5_strict_decider_boundaries` 1 passed. Each was run after a relevant code or fixture change.
 - `uv run python tools/trust_map.py --check`: K +0, S +0, trusted +4, by file `Wire.lean` +2 and `NormDefaults.lean` +2. `docs/trust-baseline.json` records standing ruling R16. `trust-mutants-final.json`: 83 KILLED, 5 ALLOWED (one redundant object marker; four ill-typed list rewrites), 0 SURVIVOR, 0 UNKNOWN, 0 NOT RUN, rescored from `trust-mutants-rescored.json`. The first run's JSON is retained to show why the schema fixture was explicitly selected.
 - Hand seeded bugs and their failing commands are in `mutants.json`: two Lean wire fields, Python's binding, and Python's DE5 wording. Each was restored. `git diff --check` passed before the code commit.
-- The required R16 FOLLOW-UPS row could not be written: `apply_patch` rejected `/home/seyran/code/manage-agents/FOLLOW-UPS.md` as outside the writable project. `msg.sh orchestrator` also failed because its inbox is read-only. The requested row is: “df-1bbb: ties pass for +4 trusted lines in Wire.lean and NormDefaults.lean, binding the decidersOf fields to the encoder theorem and render checks.”
+- The R16 FOLLOW-UPS row is registered in `manage-agents/FOLLOW-UPS.md` ("## df-1bbb (2026-10-30)", infra item ties-df-1bbb) by the review fix; a copy is in [`evidence/follow-ups-row.md`](evidence/follow-ups-row.md). The build's sandbox could not write that file.
 - Size: `git diff --numstat $(git merge-base HEAD main)` before the report was under 200 hand-written changed lines. Pilot bytes expected to move: zero; DE5 changes a displayed answer and does not add a translation unit. No pilot audit was run or claimed.
 
 ## Selected run and next item
@@ -45,3 +46,11 @@ Cut under the merge-sized limit: gap rows after DE6 need a Lean predicate/tuple 
 12. N.A. — no pilot CPU measurement or new search was added.
 13. PASS — the report commit carries a `Test-removed` trailer for the renamed strict-basis test.
 14. PASS — accepting/refusing DE5 fixtures above, spec re-read above, commands and outputs cited in Evidence.
+
+## Review fix (`manage-agents/df-1bbb-review.final.md`, reviewed 8e47b7f0)
+
+- **F1 (A), R16's ties-pass row.** Registered in `manage-agents/FOLLOW-UPS.md` ("## df-1bbb (2026-10-30)"), copied in `evidence/follow-ups-row.md`; DELTA row 3 cites it. Re-measured on the fix HEAD, `uv run python tools/trust_map.py --check`: PASS, K +0, S +0, trusted +4 (`ResponseShape/Schemas/NormDefaults.lean` +2, `VE/Defaults/Wire.lean` +2), so R16's numerical conditions still hold. No probe (an administrative registry row).
+- **F2 (B), the binding test was not run against the seeded bugs.** The class is a hand-kept test list. `BOTH_SIDES` is now generated from `tests/test_defaults_answer.py`: every test, once per parameter set, apart from two exclusions in `NOT_BOTH_SIDES`, each with its reason. `tests/test_defaults_checks.py::test_review_df_1bbb_f2_every_binding_test_is_run_against_the_seeded_bugs` checks that the exclusions name real tests and that the set is complete. A seeded exclusion of the deciders test fails it (`mutants.json`). The ranking and fallback branches are covered by `test_deciders_from_every_source_of_the_request` and `test_a_holistic_ranking_without_its_decider_names_unstated`. The first runs Lean's genuine rows (holistic ranking decided by a party, a switch party, a strict rule with a strict ranking, no soft block); its expected lists mirror `decidersOf`'s `#guard`s in `VE/Defaults/Examples.lean`. Lean refuses a holistic ranking without `decided_by` (MissingExceptionDecider: outranking), so the second binds that request alone. PROBE F2 before the fix: 101 passed, 1 failed with 22 survivors. After: 105 passed, 0 survivors.
+- **Selected run on the fix.** The Mac runner fell back to GitHub Actions (6 shards, 394 units). 393 passed. `tests/test_assurance_manifest.py` failed: `test_decoder_files_are_pinned_whole` and `test_full_file_decoder_pins_cover_the_current_file`. DE5's two `Wire.lean` lines had not been repinned. The fix reviewed the ranges (no new declaration) and repinned the lines, sha256 and total, then regenerated `docs/spec/assurance-manifest.md`. `tests/test_assurance_manifest.py` was then rerun: 138 passed. `tools/regen_generated.py --check` checked 33 entries. None of these failures is in `main-known-red.txt`.
+- `cd lean && lake build`: 1,161 jobs. `python3 lean/audit.py`: PASS, 670 files, 7,473 theorems. No Lean, Rust or Python product code changed in the fix, so no trust-mutant rerun was needed.
+
