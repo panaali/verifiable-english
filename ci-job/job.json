@@ -1,0 +1,21 @@
+{
+ "job": "scale-lean-memo.s2of2-05f308fb",
+ "head": "cf3978d2725cf7e7af8c68ffed51363a3a4d89b9",
+ "argv": [
+  "scale-lean-memo.s2of2-05f308fb",
+  "cf3978d2725cf7e7af8c68ffed51363a3a4d89b9",
+  "a0b559a9c1fc3db5f1d699623d7fa637dca1ca12",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-37af04b55c29.tar.zst",
+  "50ade3743a2f2ba1e5e8c79665c1deb22e2f57db0ec2bb73801c2063e31121d9",
+  "--max-mutants",
+  "1000",
+  "--allow",
+  "docs/scale-lean-memo/trust-mutants-allow.json",
+  "--test",
+  "lean/VE/Service/MemoExamples.lean",
+  "--shard",
+  "2/2",
+  "--jobs",
+  "4"
+ ]
+}
