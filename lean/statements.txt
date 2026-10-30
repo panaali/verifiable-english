@@ -2325,6 +2325,10 @@ theorem VE.Arith.Examples.bertrand_means_iff
     ∀ (n : Nat), 1 ≤ n → ∃ p, VE.Arith.Examples.IsPrime p ∧ n < p ∧ p ≤ 2 * n
   -- uses VE.Arith.Defs.Means@VE.Arith.Holds VE.Arith.Examples.IsPrime@VE.Arith.Examples VE.Arith.Examples.bertrand@VE.Arith.Examples VE.Arith.Examples.primeDefs@VE.Arith.Examples
   -- expr 570097480
+theorem VE.Arith.Examples.isPrimeB_iff
+  ∀ (p : Nat), VE.Arith.Examples.isPrimeB p = Bool.true ↔ VE.Arith.Examples.IsPrime p
+  -- uses VE.Arith.Examples.IsPrime@VE.Arith.Examples VE.Arith.Examples.isPrimeB@VE.Arith.DecidingExamples
+  -- expr 942043530
 theorem VE.Arith.Examples.primeBody_iff
   ∀ (E : VE.Arith.Env) (p : Nat), VE.Arith.Holds E [↑p] VE.Arith.Examples.primeBody ↔ VE.Arith.Examples.IsPrime p
   -- uses VE.Arith.Env@VE.Arith.Holds VE.Arith.Examples.IsPrime@VE.Arith.Examples VE.Arith.Examples.primeBody@VE.Arith.Examples VE.Arith.Holds@VE.Arith.Holds
@@ -2626,6 +2630,65 @@ theorem VE.Arith.decideBounded_work
     VE.Arith.decideBounded D limit φ = Option.some (b, w) → w ≤ limit
   -- uses VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula@VE.Arith.Syntax VE.Arith.decideBounded@VE.Arith.Bounded
   -- expr 102672812
+theorem VE.Arith.decidingAt_sound
+  ∀ (D : VE.Arith.Defs) (limit : Nat) (u : Bool) (lo hi : VE.Arith.Term) (ψ : VE.Arith.Formula) (i : Int),
+    Option.map (fun x => x.fst) (VE.Arith.decidingAt (VE.Arith.Defs.opEnv limit D) limit u lo hi ψ) = Option.some i →
+      ∃ l v,
+        VE.Arith.Term.value D.env [] lo = Option.some l ∧
+          VE.Arith.Term.value D.env [] hi = Option.some v ∧
+            l ≤ i ∧
+              i ≤ v ∧
+                (VE.Arith.Holds D.env [i] ψ ↔ u = Bool.false) ∧
+                  ∀ (m : Int), l ≤ m → m < i → (VE.Arith.Holds D.env [m] ψ ↔ u = Bool.true)
+  -- uses VE.Arith.Defs.env@VE.Arith.Holds VE.Arith.Defs.opEnv@VE.Arith.Bounded VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula@VE.Arith.Syntax VE.Arith.Holds@VE.Arith.Holds VE.Arith.Term.value@VE.Arith.Holds VE.Arith.Term@VE.Arith.Syntax VE.Arith.decidingAt@VE.Arith.Deciding
+  -- expr 3054693917
+theorem VE.Arith.decidingLoop_iff
+  ∀ (u : Bool) (step : Int → Nat → Option (Bool × Nat)) (n : Nat) (i : Int) (w w' : Nat),
+    (∃ j, VE.Arith.decidingLoop u step n i w = Option.some (j, w')) ↔
+      VE.Arith.quantLoop u step n i w = Option.some (!u, w')
+  -- uses VE.Arith.decidingLoop@VE.Arith.Deciding VE.Arith.quantLoop@VE.Arith.Bounded
+  -- expr 2620822040
+theorem VE.Arith.decidingLoop_sound
+  ∀ (Q : Int → Prop) (step : Int → Nat → Option (Bool × Nat)) (u : Bool),
+    (∀ (i : Int) (w : Nat) (b : Bool) (w' : Nat), step i w = Option.some (b, w') → (Q i ↔ b = Bool.true)) →
+      ∀ (n : Nat) (i : Int) (w : Nat) (j : Int) (w' : Nat),
+        VE.Arith.decidingLoop u step n i w = Option.some (j, w') →
+          i ≤ j ∧ j < i + ↑n ∧ (Q j ↔ u = Bool.false) ∧ ∀ (m : Int), i ≤ m → m < j → (Q m ↔ u = Bool.true)
+  -- uses VE.Arith.decidingLoop@VE.Arith.Deciding
+  -- expr 2073774861
+theorem VE.Arith.decidingValue_all
+  ∀ (D : VE.Arith.Defs),
+    D.WellFormed = Bool.true →
+      ∀ (lo hi : VE.Arith.Term) (ψ : VE.Arith.Formula),
+        VE.Arith.Formula.Scoped D 0 (VE.Arith.Formula.allFromTo lo hi ψ) = Bool.true →
+          ∀ (limit : Nat) (i : Int),
+            VE.Arith.decidingValue D limit (VE.Arith.Formula.allFromTo lo hi ψ) = Option.some i →
+              ∃ l u,
+                VE.Arith.Term.value D.env [] lo = Option.some l ∧
+                  VE.Arith.Term.value D.env [] hi = Option.some u ∧
+                    l ≤ i ∧ i ≤ u ∧ ¬VE.Arith.Holds D.env [i] ψ ∧ ∀ (m : Int), l ≤ m → m < i → VE.Arith.Holds D.env [m] ψ
+  -- uses VE.Arith.Defs.WellFormed@VE.Arith.Defs VE.Arith.Defs.env@VE.Arith.Holds VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula.Scoped@VE.Arith.Defs VE.Arith.Formula.allFromTo@VE.Arith.Syntax VE.Arith.Formula@VE.Arith.Syntax VE.Arith.Holds@VE.Arith.Holds VE.Arith.Term.value@VE.Arith.Holds VE.Arith.Term@VE.Arith.Syntax VE.Arith.decidingValue@VE.Arith.Deciding
+  -- expr 2111779947
+theorem VE.Arith.decidingValue_ex
+  ∀ (D : VE.Arith.Defs),
+    D.WellFormed = Bool.true →
+      ∀ (lo hi : VE.Arith.Term) (ψ : VE.Arith.Formula),
+        VE.Arith.Formula.Scoped D 0 (VE.Arith.Formula.exFromTo lo hi ψ) = Bool.true →
+          ∀ (limit : Nat) (i : Int),
+            VE.Arith.decidingValue D limit (VE.Arith.Formula.exFromTo lo hi ψ) = Option.some i →
+              ∃ l u,
+                VE.Arith.Term.value D.env [] lo = Option.some l ∧
+                  VE.Arith.Term.value D.env [] hi = Option.some u ∧
+                    l ≤ i ∧ i ≤ u ∧ VE.Arith.Holds D.env [i] ψ ∧ ∀ (m : Int), l ≤ m → m < i → ¬VE.Arith.Holds D.env [m] ψ
+  -- uses VE.Arith.Defs.WellFormed@VE.Arith.Defs VE.Arith.Defs.env@VE.Arith.Holds VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula.Scoped@VE.Arith.Defs VE.Arith.Formula.exFromTo@VE.Arith.Syntax VE.Arith.Formula@VE.Arith.Syntax VE.Arith.Holds@VE.Arith.Holds VE.Arith.Term.value@VE.Arith.Holds VE.Arith.Term@VE.Arith.Syntax VE.Arith.decidingValue@VE.Arith.Deciding
+  -- expr 4056233847
+theorem VE.Arith.decidingValue_of_fails
+  ∀ (D : VE.Arith.Defs) (limit : Nat) (lo hi : VE.Arith.Term) (ψ : VE.Arith.Formula),
+    VE.Arith.arithOutcome D limit (VE.Arith.Formula.allFromTo lo hi ψ) =
+        VE.Numbers.Outcome.decided VE.Numbers.Verdict.fails →
+      (VE.Arith.decidingValue D limit (VE.Arith.Formula.allFromTo lo hi ψ)).isSome = Bool.true
+  -- uses VE.Arith.Defs@VE.Arith.Syntax VE.Arith.Formula.allFromTo@VE.Arith.Syntax VE.Arith.Formula@VE.Arith.Syntax VE.Arith.Term@VE.Arith.Syntax VE.Arith.arithOutcome@VE.Arith.Bounded VE.Arith.decidingValue@VE.Arith.Deciding VE.Numbers.Outcome.decided@VE.Numbers.Round VE.Numbers.Outcome@VE.Numbers.Round VE.Numbers.Verdict.fails@VE.Numbers.Round
+  -- expr 3926488734
 theorem VE.Arith.foldl_rel
   ∀ {α β γ : Type} (R : α → β → Prop) {f : α → γ → α} {g : β → γ → β},
     (∀ (a : α) (b : β) (c : γ), R a b → R (f a c) (g b c)) →

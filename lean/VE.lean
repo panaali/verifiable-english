@@ -134,6 +134,8 @@ import VE.Calc.IdentityExamples
 import VE.Arith.Examples
 import VE.Arith.BoundedExamples
 import VE.Arith.CompleteExamples
+import VE.Arith.Deciding
+import VE.Arith.DecidingExamples
 import VE.Calc.Lower
 import VE.Calc.LowerExamples
 import VE.Calc.Data
@@ -241,6 +243,7 @@ import VE.Scope.ReadingsTheorems
 import VE.Scope.ReadingsExamples
 import VE.Service.ScopeAdmission
 import VE.Service.ScopeExamples
+import VE.Service.SoftSourceExamples
 import VE.Defaults.Premises
 import VE.Defaults.Examples
 import VE.Service.ActsExamples
