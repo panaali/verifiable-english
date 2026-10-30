@@ -1,4 +1,4 @@
-import VE.Calc.Run
+import VE.Calc.Wire
 
 /-! Fixtures of the charged lowering (spec 3.2 (b), 13.3; me-2nc): units *by hand* in 13.3, computed here by product
 code. The decoder's limit 10 at P-2 and N-1's premise counts is pinned on the service (`tests/test_calc_service.py`):
