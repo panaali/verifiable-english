@@ -1,0 +1,119 @@
+{
+ "base_service": "24fc7ab977b9b62fbdab1250d38d8fc0111951b4d7737be4a8175abcaa319a96",
+ "head_service": "65cc2c9aec446af820271258fd0cdb24b23cae3ade85113b234a80a3f3620ebe",
+ "pairs": [
+  {
+   "base": {
+    "error": "UnsupportedProfile: Unsupported profile judgments@0",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: judgments@0 requires documents@1",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "check/case"
+  },
+  {
+   "base": {
+    "error": "UnsupportedProfile: Unsupported profile judgments@0",
+    "id": "english.read",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: judgments@0 requires documents@1",
+    "id": "english.read",
+    "status": "error"
+   },
+   "probe": "english.read/block"
+  },
+  {
+   "base": {
+    "error": "UnsupportedProfile: judgments@0 requires documents@1",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: judgments@0 requires documents@1",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "environment/case"
+  },
+  {
+   "base": {
+    "error": "UnsupportedProfile: Unsupported profile judgments@0",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: judgments@0 requires documents@1",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "metered/evaluate-budgeted"
+  },
+  {
+   "base": {
+    "error": "UnsupportedProfile: judgments@0 requires documents@1",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: judgments@0 requires documents@1",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "model/case"
+  },
+  {
+   "base": {
+    "error": "UnsupportedProfile: Unsupported profile judgments@0",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: judgments@0 requires documents@1",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "norm-defaults/norm-defaults-elaborate"
+  },
+  {
+   "base": {
+    "error": "UnsupportedProfile: Unsupported profile judgments@0",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: judgments@0 requires documents@1",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "norms/background"
+  },
+  {
+   "base": {
+    "error": "UnsupportedProfile: Unsupported profile judgments@0",
+    "id": "x",
+    "status": "error"
+   },
+   "faults": [],
+   "head": {
+    "error": "UnsupportedProfile: judgments@0 requires documents@1",
+    "id": "x",
+    "status": "error"
+   },
+   "probe": "norms/norms-elaborate"
+  }
+ ],
+ "ruling": "R1"
+}
