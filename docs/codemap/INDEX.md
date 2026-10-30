@@ -67,7 +67,9 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [examples/](examples.md) — 1 modules — -
 - [experiments/](experiments.md) — 77 modules — -
 - [lean/](lean.md) — 15 modules — This project uses Lean **4.24.0**, core Lean and `Std`, with no Mathlib or external Lake dependencies.
-- [lean/ResponseShape/](lean__ResponseShape.md) — 75 modules — -
+- [lean/ResponseShape/](lean__ResponseShape.md) — 8 modules — -
+- [lean/ResponseShape/Encoders/](lean__ResponseShape__Encoders.md) — 29 modules — -
+- [lean/ResponseShape/Schemas/](lean__ResponseShape__Schemas.md) — 40 modules — -
 - [lean/VE/](lean__VE.md) — 33 modules — -
 - [lean/VE/Acts/](lean__VE__Acts.md) — 19 modules — -
 - [lean/VE/Alternatives/](lean__VE__Alternatives.md) — 13 modules — -
@@ -100,10 +102,10 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Risk/](lean__VE__Risk.md) — 14 modules — -
 - [lean/VE/Route/](lean__VE__Route.md) — 29 modules — -
 - [lean/VE/Scales/](lean__VE__Scales.md) — 6 modules — -
-- [lean/VE/Scope/](lean__VE__Scope.md) — 9 modules — -
+- [lean/VE/Scope/](lean__VE__Scope.md) — 12 modules — -
 - [lean/VE/SearchBudget/](lean__VE__SearchBudget.md) — 4 modules — -
 - [lean/VE/Senses/](lean__VE__Senses.md) — 12 modules — -
-- [lean/VE/Service/](lean__VE__Service.md) — 21 modules — -
+- [lean/VE/Service/](lean__VE__Service.md) — 22 modules — -
 - [lean/VE/SoftNorms/](lean__VE__SoftNorms.md) — 11 modules — -
 - [lean/VE/SpeechActs/](lean__VE__SpeechActs.md) — 8 modules — -
 - [lean/VE/Time/](lean__VE__Time.md) — 8 modules — -
@@ -117,7 +119,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tests/ part 3](tests--part-3.md) — 89 modules — -
 - [tests/ part 4](tests--part-4.md) — 90 modules — -
 - [tests/ part 5](tests--part-5.md) — 82 modules — -
-- [tests/ part 6](tests--part-6.md) — 88 modules — -
+- [tests/ part 6](tests--part-6.md) — 89 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 3 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 101 modules — -
 - [tools/ part 2](tools--part-2.md) — 2 modules — -
@@ -125,7 +127,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tools/evidence/](tools__evidence.md) — 7 modules — The evidence toolkit (docs/ARCHITECTURE-REVIEW-2026-10.md, T6 and AR-5a): one implementation of each batch measurement, so a batch writes `docs/<track>/<batch>…
 - [tools/hooks/](tools__hooks.md) — 1 modules — `pre-commit` runs fast checks on the **staged** content of a commit.
 - [usecases/](usecases.md) — 59 modules — -
-- [ve/](ve.md) — 78 modules — VE v0 experimental language, finite semantics and checked argument API.
+- [ve/](ve.md) — 79 modules — VE v0 experimental language, finite semantics and checked argument API.
 - [ve/adapters/](ve__adapters.md) — 6 modules — Audited statement-layer and data adapters.
 - [ve/assist/](ve__assist.md) — 17 modules — ``ve assist``: interactive, sentence-level assisted formalisation.
 - [ve/backends/](ve__backends.md) — 16 modules — Checker backends (docs/spec/SEMANTICS-MIGRATION-PLAN.md, stages 1 and 2).

@@ -1,0 +1,40 @@
+- `lean/ResponseShape/Schemas/Alternatives.lean` — The source of `ve/backends/lean_service_schema/alternatives.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Ask.lean` — The `ask` row (docs/spec/question-answering.md 4.2, 8; plan 4.8), every field typed.
+- `lean/ResponseShape/Schemas/Bundle.lean` — The source of `ve/backends/lean_service_schema/bundle.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Calc.lean` — The `calc` row (math-evidence spec 3.4, ME-2): the case's `meaning_id` and one row per request claim, in order (`x-zip`), each naming its claim by the request'…
+- `lean/ResponseShape/Schemas/Cardinality.lean` — The source of `ve/backends/lean_service_schema/cardinality.json` (`file`; `tools/response_schemas.py` writes it): the `cardinality` mode's row (`VE.Cardinality…
+- `lean/ResponseShape/Schemas/Check.lean` — The source of `ve/backends/lean_service_schema/check.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/CheckCertificate.lean` — The source of `ve/backends/lean_service_schema/check-certificate.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Common.lean` — `common.json`: the value domains every mode shares.
+- `lean/ResponseShape/Schemas/Diagnose.lean` — The source of `ve/backends/lean_service_schema/diagnose.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Discourse.lean` — The source of `ve/backends/lean_service_schema/discourse.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Document.lean` — The checked projection of the W2 wrapper.
+- `lean/ResponseShape/Schemas/English.lean` — The source of `ve/backends/lean_service_schema/english.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/EnglishLean.lean` — The three formula-level English service rows.
+- `lean/ResponseShape/Schemas/Envelope.lean` — The source of `ve/backends/lean_service_schema/envelope.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Environment.lean` — The source of `ve/backends/lean_service_schema/environment.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Evaluate.lean` — The source of `ve/backends/lean_service_schema/evaluate.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/FamilyNorms.lean` — The source of `ve/backends/lean_service_schema/family-norms.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Graph.lean` — The source of `ve/backends/lean_service_schema/graph.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Identity.lean` — The source of `ve/backends/lean_service_schema/identity.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Metered.lean` — The `metered` row (`VE.Route.MeteredRun.runCaseReported`, batch 15a's metered evaluator, a service mode since lean-first batch 18): for an `evaluate-budgeted` …
+- `lean/ResponseShape/Schemas/Model.lean` — The source of `ve/backends/lean_service_schema/model.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/NormDefaults.lean` — The source of `ve/backends/lean_service_schema/norm-defaults.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Norms.lean` — The source of `ve/backends/lean_service_schema/norms.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Order.lean` — The source of `ve/backends/lean_service_schema/order.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Parse.lean` — The source of `ve/backends/lean_service_schema/parse.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Quantity.lean` — The source of `ve/backends/lean_service_schema/quantity.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Question.lean` — The `english.question` row (docs/spec/question-answering.md 4.1 and 8).
+- `lean/ResponseShape/Schemas/Readings.lean` — The source of `ve/backends/lean_service_schema/readings.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/ReadingsChoices.lean` — Source of `readings-choices.json`; regenerate with tools/regen_generated.py.
+- `lean/ResponseShape/Schemas/ReadingsRoute.lean` — The source of `ve/backends/lean_service_schema/readings-route.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Reports.lean` — The source of `ve/backends/lean_service_schema/reports.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Rights.lean` — The source of `ve/backends/lean_service_schema/rights.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Risk.lean` — The source of `ve/backends/lean_service_schema/risk.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/RiskEval.lean` — The source of `ve/backends/lean_service_schema/risk-eval.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Route.lean` — The source of `ve/backends/lean_service_schema/route.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Scope.lean` — The source of `ve/backends/lean_service_schema/scope.json` (`file`; `tools/response_schemas.py` writes it): the `scope` mode's row (`VE.Scope.Run.runCaseReport…
+- `lean/ResponseShape/Schemas/SearchBudget.lean` — The `search-budget` row (`VE.SearchBudget.Run`): the premise check's budget and, for each sort the request lists, its raised bounds `{"sort", "least", "most"}`…
+- `lean/ResponseShape/Schemas/SoftNorms.lean` — The source of `ve/backends/lean_service_schema/soft-norms.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/SpeechActs.lean` — The source of `ve/backends/lean_service_schema/speech-acts.json` (`file`; `tools/response_schemas.py` writes it).
+- `lean/ResponseShape/Schemas/Words.lean` — The `words` row (plan Q2.4): Lean's lines for the readings and norm-defaults English, one per item of the request, with the identities of the environment and l…

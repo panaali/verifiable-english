@@ -1,0 +1,51 @@
+{
+  "$id": "scope.json",
+  "$comment": "Mode scope: VE.Scope.Run.runCaseReported. Each governed unit's governors and provenance sentences.",
+  "row": {
+    "anyOf": [
+      {"$ref": "common.json#/$defs/case_error"},
+      {
+        "additionalProperties": false,
+        "properties": {"error": {"$ref": "common.json#/$defs/text"}, "id": {"x-echo": "/id"}, "status": {"const": "error"}},
+        "required": ["id", "status", "error"],
+        "type": "object"
+      },
+      {
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string", "x-equals": "/id"},
+          "rows": {"items": {"$ref": "#/$defs/unit_row"}, "type": "array"},
+          "status": {"const": "ok"}
+        },
+        "required": ["id", "status", "rows"],
+        "type": "object"
+      }
+    ]
+  },
+  "$defs": {
+    "governor": {
+      "$comment": "VE.Scope.Run.govJson: a contributing governor's id, unit, effect word and reach.",
+      "additionalProperties": false,
+      "properties": {
+        "effect": {"enum": ["frame", "reguard", "carve-out", "precedes", "yields", "title"]},
+        "id": {"type": "string"},
+        "reach": {"items": {"type": "string"}, "type": "array"},
+        "unit": {"type": "string"}
+      },
+      "required": ["id", "unit", "effect", "reach"],
+      "type": "object"
+    },
+    "unit_row": {
+      "$comment": "VE.Scope.Run.rowJson: a governed unit, its governors and one sentence per governor.",
+      "additionalProperties": false,
+      "properties": {
+        "governors": {"items": {"$ref": "#/$defs/governor"}, "minItems": 1, "type": "array"},
+        "provenance": {"items": {"type": "string"}, "minItems": 1, "type": "array"},
+        "unit": {"type": "string"}
+      },
+      "required": ["unit", "governors", "provenance"],
+      "type": "object",
+      "x-same-length": ["governors", "provenance"]
+    }
+  }
+}
