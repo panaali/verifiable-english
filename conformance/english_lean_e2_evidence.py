@@ -50,6 +50,9 @@ OUTPUT = ROOT / "conformance/english-lean/e2-evidence.json"
 FORMAT = "ve.english-lean-e2-evidence@1"
 PARTS = ("g3", "reverse", "mutation", "parity", "overlay", "latency")
 FRESH_SEEDS = 14
+# The sealed corpus's size: texts per round-trip configuration (`unique_asts_roundtripped` of corpus-seal.json) and
+# per use-case environment.
+PER_CONFIG, PER_USECASE = 5000, 500
 
 # Filled before the workers fork: (name, env, options, words) per configuration.
 CONFIGS: list = []
@@ -883,8 +886,8 @@ def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--part", nargs="+", choices=PARTS, default=list(PARTS))
     parser.add_argument("--workers", type=int, default=8)
-    parser.add_argument("--per-config", type=int, default=5000, help="sealed texts per round-trip configuration")
-    parser.add_argument("--per-usecase", type=int, default=500, help="texts per use-case environment")
+    parser.add_argument("--per-config", type=int, default=PER_CONFIG, help="sealed texts per round-trip configuration")
+    parser.add_argument("--per-usecase", type=int, default=PER_USECASE, help="texts per use-case environment")
     parser.add_argument("--fresh-per-seed", type=int, default=200, help="texts per fresh seed per configuration")
     parser.add_argument("--documents", type=int, default=50)
     parser.add_argument("--reverse-samples", type=int, default=300)

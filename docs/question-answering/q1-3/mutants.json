@@ -11,7 +11,7 @@
    },
    "test": "tests/test_question_reverse.py::test_f2_fronts_the_word_after_the_subject",
    "killed": true,
-   "result": "1 failed in 0.48s"
+   "result": "1 failed in 0.37s"
   },
   {
    "behaviour": "f2 accepts a subject with a clause",
@@ -22,7 +22,7 @@
    },
    "test": "tests/test_question_reverse.py::test_f2_is_not_built_for_other_subjects",
    "killed": true,
-   "result": "1 failed in 0.51s"
+   "result": "1 failed in 0.38s"
   },
   {
    "behaviour": "a mutant generator returns the question unchanged",
@@ -33,7 +33,7 @@
    },
    "test": "tests/test_question_reverse.py::test_every_mutant_differs_and_has_its_kind",
    "killed": true,
-   "result": "1 failed in 0.54s"
+   "result": "1 failed in 0.39s"
   },
   {
    "behaviour": "the F1 share over the wrong denominator (every question)",
@@ -44,7 +44,7 @@
    },
    "test": "tests/test_question_reverse.py::test_each_share_has_its_forms_denominator",
    "killed": true,
-   "result": "1 failed in 0.53s"
+   "result": "1 failed in 0.37s"
   },
   {
    "behaviour": "the F2 share leaves out many",
@@ -55,7 +55,7 @@
    },
    "test": "tests/test_question_reverse.py::test_each_share_has_its_forms_denominator",
    "killed": true,
-   "result": "1 failed in 0.55s"
+   "result": "1 failed in 0.41s"
   },
   {
    "behaviour": "the moved-word sentences skip the first gap",
@@ -66,7 +66,7 @@
    },
    "test": "tests/test_question_reverse.py::test_candidates_are_the_word_gaps_left_to_right",
    "killed": true,
-   "result": "1 failed in 0.50s"
+   "result": "1 failed in 0.40s"
   },
   {
    "behaviour": "p95 off by one rank",
@@ -77,7 +77,7 @@
    },
    "test": "tests/test_question_reverse.py::test_p95_and_share",
    "killed": true,
-   "result": "1 failed in 0.45s"
+   "result": "1 failed in 0.37s"
   },
   {
    "behaviour": "the latency budget met only below its bound",
@@ -88,7 +88,7 @@
    },
    "test": "tests/test_question_reverse.py::test_the_latency_budget_is_met_at_its_bound_only",
    "killed": true,
-   "result": "1 failed in 0.46s"
+   "result": "1 failed in 0.40s"
   },
   {
    "behaviour": "the long question one word short (63 candidates)",
@@ -99,7 +99,7 @@
    },
    "test": "tests/test_question_reverse.py::test_the_candidate_limit_is_leans_on_both_sides",
    "killed": true,
-   "result": "1 failed in 1.25s"
+   "result": "1 failed in 1.28s"
   },
   {
    "behaviour": "a formula not compared (any one counts as same)",
@@ -110,7 +110,7 @@
    },
    "test": "tests/test_question_reverse.py::test_a_reading_counts_only_with_the_sentences_formula",
    "killed": true,
-   "result": "1 failed in 0.70s"
+   "result": "1 failed in 1.28s"
   },
   {
    "behaviour": "the many status counted as reading",
@@ -121,7 +121,161 @@
    },
    "test": "tests/test_question_reverse.py::test_a_reading_counts_only_with_the_sentences_formula",
    "killed": true,
-   "result": "1 failed in 0.67s"
+   "result": "1 failed in 0.94s"
+  },
+  {
+   "behaviour": "the default run is a sample of the round-trip streams",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "default=E.PER_CONFIG, help",
+    "to": "default=300, help"
+   },
+   "test": "tests/test_question_reverse.py::test_the_default_run_is_the_whole_sealed_corpus",
+   "killed": true,
+   "result": "1 failed in 0.74s"
+  },
+  {
+   "behaviour": "the default run is a sample of the use-case streams",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "default=E.PER_USECASE, help",
+    "to": "default=100, help"
+   },
+   "test": "tests/test_question_reverse.py::test_the_default_run_is_the_whole_sealed_corpus",
+   "killed": true,
+   "result": "1 failed in 0.62s"
+  },
+  {
+   "behaviour": "the sealed size is not the seal's",
+   "file": "conformance/english_lean_e2_evidence.py",
+   "mutation": {
+    "from": "PER_CONFIG, PER_USECASE = 5000, 500",
+    "to": "PER_CONFIG, PER_USECASE = 300, 100"
+   },
+   "test": "tests/test_question_reverse.py::test_the_default_run_is_the_whole_sealed_corpus",
+   "killed": true,
+   "result": "1 failed in 0.75s"
+  },
+  {
+   "behaviour": "coverage ignores the run's size",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "\"whole\": (per_config, per_usecase) == (E.PER_CONFIG, E.PER_USECASE) and not (",
+    "to": "\"whole\": not ("
+   },
+   "test": "tests/test_question_reverse.py::test_coverage_is_whole_only_when_nothing_is_left_out",
+   "killed": true,
+   "result": "1 failed in 0.62s"
+  },
+  {
+   "behaviour": "coverage ignores an unavailable read",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "and not (short or unavailable or skipped)",
+    "to": "and not (short or skipped)"
+   },
+   "test": "tests/test_question_reverse.py::test_coverage_is_whole_only_when_nothing_is_left_out",
+   "killed": true,
+   "result": "1 failed, 3 passed in 0.65s"
+  },
+  {
+   "behaviour": "coverage ignores a short stream",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "and row[\"drawn\"] < row[\"asked\"]}",
+    "to": "and row[\"drawn\"] < 0}"
+   },
+   "test": "tests/test_question_reverse.py::test_coverage_is_whole_only_when_nothing_is_left_out",
+   "killed": true,
+   "result": "1 failed, 2 passed in 0.55s"
+  },
+  {
+   "behaviour": "coverage ignores a skipped configuration",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "and not (short or unavailable or skipped)",
+    "to": "and not (short or unavailable)"
+   },
+   "test": "tests/test_question_reverse.py::test_coverage_is_whole_only_when_nothing_is_left_out",
+   "killed": true,
+   "result": "1 failed, 4 passed in 0.57s"
+  },
+  {
+   "behaviour": "a plain refusal counts as left out",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "row.get(\"dropped\", {}).get(\"unavailable\")}",
+    "to": "row.get(\"dropped\", {})}"
+   },
+   "test": "tests/test_question_reverse.py::test_coverage_is_whole_with_duplicates_and_plain_refusals",
+   "killed": true,
+   "result": "1 failed in 0.58s"
+  },
+  {
+   "behaviour": "a dropped sentence goes uncounted",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "dropped = Counter(r[\"status\"] for r in readings if r[\"status\"] != \"one\" or len(r[\"ast\"]) != 1)",
+    "to": "dropped = Counter(r[\"status\"] for r in readings if r[\"status\"] not in (\"one\", \"none\"))"
+   },
+   "test": "tests/test_question_reverse.py::test_every_sentence_is_kept_or_counted_as_dropped",
+   "killed": true,
+   "result": "1 failed in 0.78s"
+  },
+  {
+   "behaviour": "a failed service crashes a question",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "row = relay.rows(L.QUESTION_MODE, [case])[0]\n    except CheckerUnavailable as failure:",
+    "to": "row = relay.rows(L.QUESTION_MODE, [case])[0]\n    except ZeroDivisionError as failure:"
+   },
+   "test": "tests/test_question_reverse.py::test_a_failed_service_is_unavailable_not_a_crash",
+   "killed": true,
+   "result": "1 failed in 0.68s"
+  },
+  {
+   "behaviour": "a failed service crashes a read",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "rows = relay.rows(\"english.read\", cases)\n        except CheckerUnavailable as failure:",
+    "to": "rows = relay.rows(\"english.read\", cases)\n        except ZeroDivisionError as failure:"
+   },
+   "test": "tests/test_question_reverse.py::test_a_failed_service_is_unavailable_not_a_crash",
+   "killed": true,
+   "result": "1 failed in 0.79s"
+  },
+  {
+   "behaviour": "a text drawn twice is asked twice",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "unique = {index: list(dict.fromkeys(texts))",
+    "to": "unique = {index: list(texts)"
+   },
+   "test": "tests/test_question_reverse.py::test_a_run_merges_its_slices_and_accounts_for_every_sentence",
+   "killed": true,
+   "result": "1 failed in 2.59s"
+  },
+  {
+   "behaviour": "a stream's drawn count is its unique count",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "\"drawn\": len(drawn[index]),",
+    "to": "\"drawn\": len(unique[index]),"
+   },
+   "test": "tests/test_question_reverse.py::test_a_run_merges_its_slices_and_accounts_for_every_sentence",
+   "killed": true,
+   "result": "1 failed in 2.58s"
+  },
+  {
+   "behaviour": "only a target's first slice runs",
+   "file": "conformance/question_reverse.py",
+   "mutation": {
+    "from": "for k in range(0, len(texts), SLICE)]",
+    "to": "for k in range(0, 1)]"
+   },
+   "test": "tests/test_question_reverse.py::test_a_run_merges_its_slices_and_accounts_for_every_sentence",
+   "killed": true,
+   "result": "1 failed in 1.98s"
   }
  ]
 }
