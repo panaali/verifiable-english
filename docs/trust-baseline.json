@@ -1517,6 +1517,13 @@
    "reason": "df-1bbb: VE/Defaults/Wire.lean +2, ResponseShape/Schemas/NormDefaults.lean +2",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-1bbb, 2026-10-18",
    "commit": "bf28108dc14e7534f037e578850cd5ae5df69ff0"
+  },
+  {
+   "class": "V",
+   "lines": 4,
+   "reason": "sc-1c: VE/Service/Registry.lean +1, VE/Service/Protocol.lean +1, ResponseShape/Skeletons.lean +1, ResponseShape/Schemas.lean +1 (the scope mode's registry line, dispatch, skeleton case and schema file entry)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1c, 2026-10-18",
+   "commit": "5b0163e94aca67e948a4132676df03fcf3ed8933"
   }
  ]
 }
