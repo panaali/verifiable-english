@@ -523,6 +523,21 @@
     "VE/Calc/Decls.lean:940"
    ],
    "test": []
+  },
+  {
+   "id": "P1",
+   "file": "ve/backends/lean_service.py",
+   "definition": "case_texts",
+   "bug": "a comma one level deep splits a case (the request's case texts, which bind each answer)",
+   "edit": [
+    "        elif c == \",\" and depth == 0:",
+    "        elif c == \",\" and depth <= 1:"
+   ],
+   "verdict": "KILLED",
+   "proofs": [],
+   "test": [
+    "tests/test_calc_service.py::test_route_cases_answer_their_rows (CheckerUnavailable: malformed response, counts)"
+   ]
   }
  ]
 }
