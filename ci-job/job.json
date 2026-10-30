@@ -1,0 +1,17 @@
+{
+ "job": "me-2nc-784c3d2f",
+ "head": "21b573b58e43685e9ecbf6483725cb59df0e2118",
+ "argv": [
+  "me-2nc-784c3d2f",
+  "21b573b58e43685e9ecbf6483725cb59df0e2118",
+  "6949746bf2916aad8ccd632a5fa953351701921a",
+  "https://github.com/panaali/verifiable-english/releases/download/lean-cache/lean-build-24dfe81065d2.tar.zst",
+  "af515e9efc1eede152b51b99011e853be60249e593b75bc8ada038f85054aee1",
+  "--max-mutants",
+  "1000",
+  "--allow",
+  "docs/math-evidence/me-2nc/trust-mutants-allow.json",
+  "--jobs",
+  "4"
+ ]
+}
