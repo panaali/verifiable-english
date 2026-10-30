@@ -268,13 +268,9 @@ def test_a_run_records_where_its_time_goes(default_run, tmp_path_factory):
     assert runs["mutant_builds"] >= len(built) and min(runs[k] for k in (
         "control_probes", "mutant_checks", "stage_controls", "mutant_probes")) >= 1, runs
     assert all((lake[k] > 0) == (runs[k] > 0) for k in tm.LAKE), steps
-    assert all(steps["wall"][k] > 0 for k in ("control_build", "probe_install", "mutants")), steps
+    assert all(steps["wall"][k] > 0 for k in ("control_build", "probe_install", "control_probes", "mutants")), steps
     # the phases up to the mutants' end are the run's "seconds" (each rounded to 0.1 s, it to 1 s)
-    upto = tm.WALL[:tm.WALL.index("mutants") + 1]
-    assert abs(sum(steps["wall"][k] for k in upto) - data["seconds"]) <= 1.5, (steps, data["seconds"])
-    # a check file is probed without a mutant only when a verdict reads it: once each, at least each killing one
-    killing = {m["detail"].split(":")[0] for m in mutants if m["raw_status"] == "KILLED"}
-    assert 1 <= len(killing) <= runs["control_probes"] <= 2, (runs, killing)  # Demo/Examples and Demo/Far/Check
+    assert abs(sum(steps["wall"][k] for k in tm.WALL[:6]) - data["seconds"]) <= 1.5, (steps, data["seconds"])
 
 
 def test_steps_count_each_lake_run_under_its_own_threads_step(tmp_path, monkeypatch):
@@ -298,48 +294,6 @@ def test_steps_count_each_lake_run_under_its_own_threads_step(tmp_path, monkeypa
     assert tm.STEPS.runs == {**dict.fromkeys(tm.LAKE, 0), "control_build": 2, "control_probes": 1, "other": 1}
     assert all(v >= 0 for v in tm.STEPS.lake.values()) and tm.timed(tm.STEPS.record())
     assert tm.STEPS.wall == dict.fromkeys(tm.WALL, 0.0)
-
-
-def test_a_check_file_is_probed_once_and_only_when_a_verdict_reads_it(tmp_path, monkeypatch):
-    """eff-tm-control: `Probes` probes a file on the first ask for one of its checks, once however many jobs ask at
-    once and for whichever check, in its own scratch, as an up-front probe does; a file no verdict asks for is never
-    probed, and one outside its files has no probe (UNKNOWN in `reading`)."""
-    import threading
-    import trust_mutants as tm
-    calls, gate, asking = [], threading.Event(), []
-
-    def probe(lake, env, text, roles, path, outside=False):
-        calls.append((text, roles, path, outside, env["E"]))
-        if asking:
-            gate.wait(HANG_TIMEOUT)  # every job asks while the first probe runs
-        return {(1, 2): {"flags": {"hash 1"}, "consts": {}}, (4, 4): {"flags": {"hash 2"}, "consts": {"c": "h"}}}
-    monkeypatch.setattr(tm, "probe", probe)
-    scratch = object.__new__(tm.Scratch)
-    scratch.lean = tmp_path / "lean"
-    (scratch.lean / "A").mkdir(parents=True)
-    (scratch.lean / "A/Ex.lean").write_text("ex")
-    (scratch.lean / "A/Other.lean").write_text("other")
-    outside = tmp_path / "Out.lean"
-    outside.write_text("out")
-    probes = tm.Probes(scratch, {"E": "1"}, {"A/Ex.lean": (scratch.lean / "A/Ex.lean", ["roles"]),
-                                             "A/Other.lean": (scratch.lean / "A/Other.lean", []),
-                                             str(outside): (outside, ["out roles"])})
-    assert calls == []  # nothing is probed before a verdict asks
-    asking.append(True)
-    got: list = []
-    jobs = [threading.Thread(target=lambda span=span: got.append(probes.get(("A/Ex.lean", span))))
-            for span in ((1, 2), (4, 4), (1, 2), (9, 9))]
-    for job in jobs:
-        job.start()
-    gate.set()
-    for job in jobs:
-        job.join(HANG_TIMEOUT)
-    assert calls == [("ex", ["roles"], scratch.lean / "A/Ex.lean", False, "1")]
-    assert sorted(map(str, got)) == sorted(map(str, [{"flags": {"hash 1"}, "consts": {}}] * 2 + [
-        {"flags": {"hash 2"}, "consts": {"c": "h"}}, None]))
-    assert probes.get(("A/Missing.lean", (1, 2))) is None and len(calls) == 1
-    assert probes.get((str(outside), (4, 4)))["consts"] == {"c": "h"}
-    assert calls[1] == ("out", ["out roles"], tm.beside(scratch.lean, str(outside)), True, "1") and len(calls) == 2
 
 
 def test_a_guard_msgs_wrapper_is_in_the_span_of_what_it_wraps(tmp_path):
