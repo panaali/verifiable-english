@@ -67,6 +67,7 @@ import VE.Calc.Run
 import VE.Calc.Table
 import VE.Calc.Units
 import VE.Calc.Wire
+import VE.Cardinality.Document
 import VE.Cardinality.Examples
 import VE.Cardinality.Gate
 import VE.Cardinality.Ratio
@@ -1216,6 +1217,12 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.CEnv.WellFormed.finiteDeclared
 #print axioms VE.Cardinality.CEnv.WellFormed.fresh
 #print axioms VE.Cardinality.CardEnv.wf
+#print axioms VE.Cardinality.Document.admitGraph_sound
+#print axioms VE.Cardinality.Document.checkGraph_sound
+#print axioms VE.Cardinality.Document.foldl_insert_mem
+#print axioms VE.Cardinality.Document.lookup_mem
+#print axioms VE.Cardinality.Document.mapM_lookup_mem
+#print axioms VE.Cardinality.Document.union_mem
 #print axioms VE.Cardinality.Examples.admissible_cases
 #print axioms VE.Cardinality.Examples.admittedRules_cases
 #print axioms VE.Cardinality.Examples.admitted_cases
@@ -1262,6 +1269,7 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.Run.charge_fst
 #print axioms VE.Cardinality.Run.charge_over
 #print axioms VE.Cardinality.Run.charge_snd
+#print axioms VE.Cardinality.Run.checkDeduction_sound
 #print axioms VE.Cardinality.Run.checkErased_eq
 #print axioms VE.Cardinality.Run.checkedProblem_eq
 #print axioms VE.Cardinality.Run.decodeCertificate_sound
@@ -1291,6 +1299,7 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.Wire.ruleNames_spelled
 #print axioms VE.Cardinality.Wire.sourceFits_iff
 #print axioms VE.Cardinality.Wire.wellFormed_of
+#print axioms VE.Cardinality.admit_cardinality_report_sound
 #print axioms VE.Cardinality.admits_complete
 #print axioms VE.Cardinality.admits_iff
 #print axioms VE.Cardinality.admits_sound

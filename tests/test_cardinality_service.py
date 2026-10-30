@@ -34,6 +34,10 @@ EXPECTED = {
     "p1-sorts": "ResourceLimit: At most 8 counted sorts",
     "p2-predicates": "ResourceLimit: At most 6 predicates on counted sort fomc_policymaker (64 regions)",
     "p3-charged": "ResourceLimit: premises and conclusion exceed aggregate 10000-node limit",
+    "document-fa1": "ok", "document-leaf-dropped": STALE,
+    "document-unproved": "graph rejected: cycle, duplicate name, dangling premise or invalid certificate",
+    "document-no-profile": "UnsupportedProfile: cardinality documents require documents@1",
+    "paraphrase-half": "ok", "paraphrase-ties-up": "ok", "paraphrase-not-finite": "CardinalityNotFinite(user)",
 }
 
 
@@ -60,7 +64,8 @@ def says(result: dict) -> str:
 
 def test_route_cases_answer_as_recorded(service):
     """FA1 and FA1b admitted and certified (FA1b's trace does not close its problem), forged claims and FA11's
-    stale certificate refused, and one case per diagnostic class of the hostile set, in spec 4.2's order."""
+    stale certificate refused, and one case per diagnostic class of the hostile set, in spec 4.2's order; FA1 as a
+    claim graph, with a leaf dropped, unproved and without `documents@1`; two of the plan's paraphrase rows."""
     cases = route_cases()
     assert "cardinality" in MODES and [case["id"] for case in cases] == list(EXPECTED)
     answers = [says(bound["result"]) for bound in exchange(service, cases)[1]["results"]]
@@ -103,6 +108,37 @@ def test_answers_are_typed_and_bound_to_their_request(service):
     refused(1, {k: v for k, v in certificate.items() if k != "valid"})
     refused(1, {**certificate, "valid": "true"})
     refused(1, {**certificate, "regions": admission["regions"]})
+
+
+def test_document_and_paraphrase_rows_are_typed_and_bound(service):
+    """qt-a3d, R8: the report names the request's root and its nodes only; a paraphrase has one assumption per
+    finite sort; each retyped or rebound member is refused."""
+    cases = {case["id"]: case for case in route_cases()}
+    for case_id in ("document-fa1", "paraphrase-half"):
+        request, response = exchange(service, [cases[case_id]])
+        row = response["results"][0]["result"]
+        if case_id == "document-fa1":
+            assert [leaf["name"] for leaf in row["report"]["leaves"]] == ["total", "increase", "stay", "exclusive"]
+            report, leaves = row["report"], row["report"]["leaves"]
+            mutants = [{**row, "report": {**report, "root": {**report["root"], "name": "total"}}},
+                       {**row, "report": {**report, "leaves": [{**leaves[0], "name": "unknown"}, *leaves[1:]]}},
+                       {**row, "report": {**report, "leaves": [{**leaves[0], "meaning_id": 3}, *leaves[1:]]}},
+                       {**row, "report": {**report, "leaves": [{**leaves[0], "formula": ["most"]}, *leaves[1:]]}},
+                       {**row, "report": {**report, "extra": []}},
+                       {k: v for k, v in row.items() if k != "report"}, {**row, "premises": []}]
+        else:
+            assert row["assumptions"] == ["The document assumes there are finitely many FOMC policymakers.",
+                                          "The document assumes there are finitely many users."]
+            mutants = [{**row, "assumptions": row["assumptions"][:1]},
+                       {**row, "assumptions": [*row["assumptions"], row["assumptions"][0]]},
+                       {**row, "paraphrase": ""}, {**row, "paraphrase": 1},
+                       {**row, "statement": {**row["statement"], "formula": "x"}},
+                       {k: v for k, v in row.items() if k != "statement"}, {**row, "valid": True}]
+        for mutant in mutants:
+            mutated = deepcopy(response)
+            mutated["results"][0]["result"] = mutant
+            with pytest.raises(Invalid):
+                check_response("cardinality", mutated, request)
 
 
 def universal(i: int, depth: int = 6, bits: int = 4) -> dict:

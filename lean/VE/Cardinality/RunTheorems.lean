@@ -174,4 +174,36 @@ theorem checkErased_eq {w : CardEnv} (ps : List (CAdmission w)) (c : CAdmission 
     unfold checkCertificate
     rw [h, show erasedIds w (ps.map (·.formula)) c.formula = .ok ids from hi]
 
+universe v
+
+/-- A deduction's certificate, accepted on its problem built once, establishes the node from exactly its premises. -/
+theorem checkDeduction_sound (w : CardEnv) : Document.Checks.{v} w checkDeduction := by
+  intro ps c cert h
+  unfold checkDeduction at h
+  simp only [bind, Except.bind] at h
+  split at h
+  · cases h
+  rename_i x hp
+  obtain ⟨R, table, ep⟩ := x
+  split at h
+  · cases h
+  rename_i ids hi
+  rw [checkErased_eq ps c cert hp hi] at h
+  exact (checkCertificate_sound.{v} ps c cert h).2.2.2
+
 end VE.Cardinality.Run
+
+namespace VE.Cardinality
+
+/-- A Lean-admitted cardinality document's root holds wherever its leaves hold. -/
+theorem admit_cardinality_report_sound (w : CardEnv) (d : Lean.Json) (res : CardReport)
+    (h : admitDocument w d = .ok res) : CardReport.Sound.{v} w.env res := by
+  unfold admitDocument at h
+  cases hg : Document.admitGraph w Run.decodeCertificate checkDeduction d with
+  | error e => rw [hg] at h; cases h
+  | ok g =>
+    rw [hg] at h
+    cases h
+    exact Document.admitGraph_sound (Run.checkDeduction_sound w) hg
+
+end VE.Cardinality
