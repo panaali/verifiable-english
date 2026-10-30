@@ -1,0 +1,2 @@
+- `docs/perf/admission_cases.py` — Make readings-route admission inputs from the saved UDHR prefix documents.
+- `docs/perf/measure_admission.py` — Run fresh Lean service admissions three times each, saving whole-request process CPU evidence.
