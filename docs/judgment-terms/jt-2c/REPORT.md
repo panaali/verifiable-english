@@ -89,8 +89,17 @@ mode, which delegates to the route on the environment without it.
   fixtures and the two appended fixture lines left out): Lean 126 (of which `#guard`s and their helpers 48), Python 14, Rust 2,
   tests 207, plus these docs.
 - Tests while iterating: `uv run pytest -q tests/test_judgments_compose.py tests/test_judgments_document.py
-  tests/test_judgments_answer.py tests/test_ask_fixtures.py tests/test_profile_table.py`: "140 passed". The selected
-  run on the Mac runner: see the build report (run after this file was committed).
+  tests/test_judgments_answer.py tests/test_ask_fixtures.py tests/test_profile_table.py`: "140 passed".
+- Selected tests (`zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`, on GitHub Actions, 6
+  shards, at `bd746df88` + no uncommitted change): 500 of 500 units (Compose/Dispatch.lean and Service/Standalone.lean
+  are imported by every service mode), exit 1: three failures, all this item's ledgers, and 31 units not run after
+  `--maxfail 5`. `tests/test_assurance_manifest.py` (the two whole-file pins and Compose/Examples' JSON reason),
+  `tests/test_english_lean_s3_compare.py::test_committed_report_counts_are_derived_from_individual_records` (the S3
+  report re-recorded for actions_version 35) and
+  `tests/test_consolidation_tools.py::test_committed_ledger_names_real_declarations` (CONSOLIDATION-PLAN step 5's
+  measured ties, 464 to 466, from `trust_map.py --ledger`) were fixed; those three files and the 31 units then ran
+  with `zsh mac-pytest.sh -- <ids>`: "1056 passed". `regen_generated.py --check`: "checked 34 entries", exit 0.
+  `gate_collection.py --check --prebuilt`: "35 added, 1 removed by a trailer, 0 refused, 0 stale and 0 malformed".
 - Not run: whole-document pilots (L70), base/head timing (one extra list filter per case).
 - Pilot bytes expected to move: none from this item (no pilot lists `judgments@0`). After JT-5r, JT-5a expects Lean
   statuses on 13 constitution units and JT-5b on 18 UDHR units; the pilots list `norm-defaults@0`, so their
@@ -106,3 +115,36 @@ decode" and "every IDENTITY ... over the list AS WRITTEN" against reviews/dri-de
 
 jt-2d (the norm-defaults replay kinds under a document layer, with their statement review), then JT-5r's audit and
 the JT-5a/5b pilot switch-ons.
+
+## Self-review against BUILDER-CHECKLIST
+
+1. PASS: no relayed field is added; the document route's genuine `judgments@0` answers are relay-gate fixtures,
+   "4984 mutants, 4982 refused, 2 allowed, 0 failures" (`relay_mutation_gate.py --route service:document`).
+2. PASS: plan rows (1)-(6) above with their tests; jt-2d named by its blocker (statement review); no Python copy of a
+   Lean decision (the refusal text has one owner, `decidingEnvironment`, which the document mode now reads too).
+3. PASS: S1, S2, P1-P3, R1, M1-M4 each fail a named test or #guard (`mutants.json`); trust mutants exit 0, "52
+   KILLED, 0 SURVIVOR" (`trust-mutants.json`, `trust-mutants-allow.json`).
+4. PASS: `test_ve_document_check_and_coverage_answer_as_the_twin`, `test_ve_document_render_is_the_twin_s`, the
+   mode twins of `tests/test_judgments_compose.py` (same answers once identities are set aside); lists in
+   other orders and the layer first or last (`#guard`s of Compose/Examples and RouteExamples).
+5. PASS: the twin's claimed environment and model ids are refused for the layer's environment and the reverse
+   (`test_a_model_is_valid_as_for_the_twin_and_the_twin_s_ids_do_not_bind`); a formula with an undeclared predicate
+   is refused with the twin's text (`test_a_formula_the_twin_refuses_is_refused_with_the_same_text`).
+6. PASS: no merge of main was needed (HEAD descends from main `1f28dddfb`); the chain runs the full gate on the
+   final HEAD; evidence commits are this branch's (`git log main..HEAD --no-merges`).
+7. PASS: DELTA row 1 cites the DRI's decision file, row 2 R16 with its per-file counts and FOLLOW-UPS row; nothing
+   reserved.
+8. PASS: DELTA row 1 states the answered commands, the identities and the one remaining refusal (the replay kinds,
+   with its text); a list without the layer is answered as before
+   (`test_without_the_profile_every_answer_is_todays`, and the selected run).
+9. PASS: the selection held `tests/test_judgments_compose.py`, `tests/test_judgments_document.py`,
+   `tests/test_model_environment.py`, `tests/test_profile_table.py` (500 of 500 units: service-wide Lean modules).
+10. PASS: no theorem statement changed; `runGated_fits` keeps its statement (one more `split` in its proof);
+    `git diff 1f28dddfb -- lean/VE/Route` is empty; `python3 lean/audit.py` PASS.
+11. N.A.: no budget, limit or deadline code changed.
+12. PASS: one list filter per case (`decidingEnvironment`); no pilot lists `judgments@0` (base/head timing not run).
+13. PASS: `Test-removed` trailer for the renamed jt-2b test; `gate_collection.py --check --prebuilt`: 0 refused,
+    0 stale, 0 malformed.
+14. PASS: each new check is tested both ways (refused with the layer and not without it, answered with the profiles
+    the layer composes with, the elaboration answered and the replay kinds refused); spec re-read above; every claim
+    here names its command.
