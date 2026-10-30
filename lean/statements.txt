@@ -5327,6 +5327,13 @@ theorem VE.Cardinality.Document.checkGraph_sound
               ∀ (e : VE.Cardinality.Document.Entry w), e ∈ out → VE.Cardinality.Document.Entry.Sound all e
   -- uses VE.Cardinality.CAdmission@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Document.CNode@VE.Cardinality.Document VE.Cardinality.Document.Checks@VE.Cardinality.Document VE.Cardinality.Document.Entry.Sound@VE.Cardinality.Document VE.Cardinality.Document.Entry@VE.Cardinality.Document VE.Cardinality.Document.checkGraph@VE.Cardinality.Document
   -- expr 1418050486
+theorem VE.Cardinality.Document.decodeNode_statement
+  ∀ {γ : Type} {w : VE.Cardinality.CardEnv} {decodeCert : Lean.Json → Except String γ} {j : Lean.Json}
+    {n : VE.Cardinality.Document.CNode w γ},
+    VE.Cardinality.Document.decodeNode w decodeCert j = Except.ok n →
+      ∃ s, j.getObjVal? "statement" = Except.ok s ∧ VE.Cardinality.Wire.decodeStatement w s = Except.ok n.adm
+  -- uses VE.Cardinality.CAdmission@VE.Cardinality.Wire VE.Cardinality.CardEnv@VE.Cardinality.Wire VE.Cardinality.Document.CNode.adm@VE.Cardinality.Document VE.Cardinality.Document.CNode@VE.Cardinality.Document VE.Cardinality.Document.decodeNode@VE.Cardinality.Document VE.Cardinality.Wire.decodeStatement@VE.Cardinality.Wire
+  -- expr 2703516712
 theorem VE.Cardinality.Document.foldl_insert_mem
   ∀ (xs : List String) (s : Std.HashSet String) (x : String),
     x ∈ s ∨ x ∈ xs → x ∈ List.foldl (fun x1 x2 => x1.insert x2) s xs

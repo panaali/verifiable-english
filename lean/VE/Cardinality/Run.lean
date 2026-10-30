@@ -1,7 +1,6 @@
 import VE.Cardinality.Wire
 import VE.Cardinality.Theorems
 import VE.Cardinality.Document
-import VE.Cardinality.Render
 
 /-! Cardinality certificates and the case runner (docs/spec/quantities.md 4.1–4.3).
 
@@ -10,7 +9,7 @@ W6a. A certificate is bound twice: to the cardinality identities of the statemen
 the regenerated problem's W6a identities in the projection's environment (`CardEnv.w6`); its order trace is replayed
 by the frozen checker on that problem (`checkCertificate_sound`). A claimed region table or erased problem must be
 the regenerated one. The runner answers the case kinds `admission`, `certificate`, `document` (the claim graph of
-`Document.lean`, each deduction's problem built once, `checkDeduction`) and `paraphrase` (`Render.lean`); W6a owns the identities
+`Document.lean`, each deduction's problem built once, `checkDeduction`); W6a owns the identities
 (`statementIds`), the aggregate limit (`quantityLimits.aggregate`) and its two binding texts. -/
 namespace VE.Cardinality
 
@@ -218,7 +217,7 @@ def runCase (j : Json) : Except String Json := do
   let kind ← match j.getObjVal? "kind" with
     | .ok k => k.getStr?
     | .error _ => pure "admission"
-  unless kind == "admission" || kind == "certificate" || kind == "document" || kind == "paraphrase" do
+  unless kind == "admission" || kind == "certificate" || kind == "document" do
     throw s!"unknown case kind {kind}"
   let w ← decodeEnvironment (← j.getObjVal? "environment")
   let envIds := [("environment_id", .str w.environmentId), ("w6_environment_id", .str w.w6.environmentId),
@@ -226,10 +225,6 @@ def runCase (j : Json) : Except String Json := do
   if kind == "document" then
     let g ← Document.admitGraph w decodeCertificate checkDeduction (← j.getObjVal? "document")
     return VE.Time.Wire.ok id (envIds ++ [("report", reportJson g)])
-  if kind == "paraphrase" then
-    let a ← decodeStatement w (← j.getObjVal? "statement")
-    return VE.Time.Wire.ok id (envIds ++ [("statement", statementJson a),
-      ("paraphrase", .str (← Render.line w a.formula)), ("assumptions", toJson (← Render.assumptions w))])
   let ps ← (← (← j.getObjVal? "premises").getArr?).toList.mapM (decodeStatement w)
   let c ← decodeStatement w (← j.getObjVal? "conclusion")
   let (R, table, ep) ← checkedProblem w.env (ps.map (·.formula)) c.formula

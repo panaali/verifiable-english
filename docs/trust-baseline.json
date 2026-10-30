@@ -1440,6 +1440,20 @@
    "reason": "me-5e: VE/Calc/Run.lean +43 untied D[V] for follows wire evidence and reclassification of Check.runShown and Derive.shown; the new Calc response shapes are reject-only G[R]; K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-5e, 2026-10-29",
    "commit": "b0dce1ea4c96241925fa2ee505e756ca1ee8a54f"
+  },
+  {
+   "class": "S",
+   "lines": 7,
+   "reason": "qt-a3d: VE/Cardinality/Document.lean S +7 (CardReport, CardReport.Sound), VE/Cardinality/Run.lean V +4 (runCase's document case); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3d, 2026-10-18",
+   "commit": "4ea3dd8cbd2adeb5050c1ae3d25f0f4b93dbd93f"
+  },
+  {
+   "class": "V",
+   "lines": 4,
+   "reason": "qt-a3d: VE/Cardinality/Document.lean S +7 (CardReport, CardReport.Sound), VE/Cardinality/Run.lean V +4 (runCase's document case); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3d, 2026-10-18",
+   "commit": "4ea3dd8cbd2adeb5050c1ae3d25f0f4b93dbd93f"
   }
  ]
 }

@@ -798,6 +798,7 @@
 'VE.Cardinality.CardEnv.wf' depends on axioms: [propext]
 'VE.Cardinality.Document.admitGraph_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.Document.checkGraph_sound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Cardinality.Document.decodeNode_statement' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.Document.foldl_insert_mem' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Cardinality.Document.lookup_mem' depends on axioms: [propext, Quot.sound]
 'VE.Cardinality.Document.mapM_lookup_mem' depends on axioms: [propext, Quot.sound]

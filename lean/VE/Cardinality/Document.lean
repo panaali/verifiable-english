@@ -238,6 +238,26 @@ theorem checkGraph_sound {γ : Type} {w : CardEnv} {check : List (CAdmission w) 
       · cases h
       · cases h
 
+/-- A decoded node's statement is the request node's, decoded by `decodeStatement`. -/
+theorem decodeNode_statement {γ : Type} {w : CardEnv} {decodeCert : Json → Except String γ} {j : Json}
+    {n : CNode w γ} (h : decodeNode w decodeCert j = .ok n) :
+    ∃ s, j.getObjVal? "statement" = .ok s ∧ Wire.decodeStatement w s = .ok n.adm := by
+  unfold decodeNode at h
+  simp only [bind, Except.bind, pure, Except.pure] at h
+  split at h; · cases h
+  split at h; · cases h
+  rename_i s hs
+  split at h; · cases h
+  rename_i a ha
+  refine ⟨s, hs, ?_⟩
+  suffices n.adm = a by rw [this]; exact ha
+  split at h
+  · iterate 3 (split at h; · cases h)
+    cases h; rfl
+  · split at h; · cases h
+    cases h; rfl
+  · cases h
+
 /-- An admitted graph's report is sound: its root holds wherever its leaves hold. -/
 theorem admitGraph_sound {γ : Type} {w : CardEnv} {decodeCert : Json → Except String γ}
     {check : List (CAdmission w) → CAdmission w → γ → Except String Bool} (hc : Checks.{v} w check) {d : Json}

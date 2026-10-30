@@ -12,8 +12,7 @@ def kind : Def :=
   .group none [
     ("admission", kindIs "admission"),
     ("certificate", kindIs "certificate"),
-    ("document", kindIs "document"),
-    ("paraphrase", kindIs "paraphrase")]
+    ("document", kindIs "document")]
 
 def error : Shape :=
   c
@@ -150,14 +149,6 @@ def document : Shape :=
         ("root", n [ref "#/$defs/claim", props [("name", .equals "/document/root")]]),
         ("leaves", n [arr, .items (ref "#/$defs/claim")])]])])]
 
-def paraphrase : Shape :=
-  c "Cardinality.Run.runCase paraphrase: the statement, Lean's English line for it and one assumption per finite sort." [
-    obj,
-    .required (envIds.map (·.1) ++ ["statement", "paraphrase", "assumptions"]),
-    closed (envIds ++ [("statement", ref "#/$defs/statement"), ("paraphrase", ref "common.json#/$defs/text"),
-      ("assumptions", n [arr, .items (ref "common.json#/$defs/text"),
-        .length "/environment/cardinality/finite_sorts"])])]
-
 def «row» : Shape :=
   .anyOf [
     ref "common.json#/$defs/case_error",
@@ -166,8 +157,7 @@ def «row» : Shape :=
       (ref "common.json#/$defs/no_kind", ref "#/$defs/admission"),
       (ref "#/$defs/kind/admission", ref "#/$defs/admission"),
       (ref "#/$defs/kind/certificate", ref "#/$defs/certificate"),
-      (ref "#/$defs/kind/document", ref "#/$defs/document"),
-      (ref "#/$defs/kind/paraphrase", ref "#/$defs/paraphrase")]]
+      (ref "#/$defs/kind/document", ref "#/$defs/document")]]
 
 def file : File where
   name := "cardinality.json"
@@ -188,7 +178,6 @@ def file : File where
     ("admission", .schema admission),
     ("certificate", .schema certificate),
     ("claim", .schema claim),
-    ("document", .schema document),
-    ("paraphrase", .schema paraphrase)]
+    ("document", .schema document)]
 
 end ResponseShape.Schemas.Cardinality

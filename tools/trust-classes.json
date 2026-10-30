@@ -15499,7 +15499,9 @@
       "D[I]": [
         "VE.Cardinality.Run.erasedIds",
         "VE.Cardinality.Run.statementJson",
-        "VE.Cardinality.Run.idsOf"
+        "VE.Cardinality.Run.idsOf",
+        "VE.Cardinality.Run.claimJson",
+        "VE.Cardinality.Run.reportJson"
       ],
       "G[R]": [
         {
@@ -15519,6 +15521,10 @@
       "G[V]": [
         "VE.Cardinality.Run.runCase",
         "VE.Cardinality.Run.runCaseReported"
+      ],
+      "C": [
+        "VE.Cardinality.checkDeduction",
+        "VE.Cardinality.admitDocument"
       ]
     },
     "VE/Cardinality/RunExamples.lean": {
@@ -15560,7 +15566,24 @@
         "VE.Cardinality.RunExamples.withCore",
         "VE.Cardinality.RunExamples.withW6",
         "VE.Cardinality.RunExamples.anyCount",
-        "VE.Cardinality.RunExamples.charged"
+        "VE.Cardinality.RunExamples.charged",
+        "VE.Cardinality.RunExamples.docCase",
+        "VE.Cardinality.RunExamples.leaf",
+        "VE.Cardinality.RunExamples.deduce",
+        "VE.Cardinality.RunExamples.graph",
+        "VE.Cardinality.RunExamples.report",
+        "VE.Cardinality.RunExamples.leafNames",
+        "VE.Cardinality.RunExamples.docAdmission",
+        "VE.Cardinality.RunExamples.docCert",
+        "VE.Cardinality.RunExamples.names",
+        "VE.Cardinality.RunExamples.fa1Leaves",
+        "VE.Cardinality.RunExamples.fa1Doc",
+        "VE.Cardinality.RunExamples.twoCert",
+        "VE.Cardinality.RunExamples.twoLevel",
+        "VE.Cardinality.RunExamples.fa1bDocCert",
+        "VE.Cardinality.RunExamples.tops",
+        "VE.Cardinality.RunExamples.charged2",
+        "VE.Cardinality.RunExamples.top3"
       ]
     },
     "VE/Cardinality/RunTheorems.lean": {},
@@ -15781,7 +15804,10 @@
         "ResponseShape.Schemas.Cardinality.regions",
         "ResponseShape.Schemas.Cardinality.row",
         "ResponseShape.Schemas.Cardinality.rule",
-        "ResponseShape.Schemas.Cardinality.statement"
+        "ResponseShape.Schemas.Cardinality.statement",
+        "ResponseShape.Schemas.Cardinality.envIds",
+        "ResponseShape.Schemas.Cardinality.claim",
+        "ResponseShape.Schemas.Cardinality.document"
       ]
     },
     "ResponseShape/Encoders/Cardinality.lean": {
@@ -15946,6 +15972,49 @@
         "VE.Events.WireExamples.W2",
         "VE.Events.WireExamples.decoded",
         "VE.Events.WireExamples.softP"
+      ]
+    },
+    "VE/Cardinality/Document.lean": {
+      "S": [
+        "VE.Cardinality.CardReport",
+        "VE.Cardinality.CardReport.Sound"
+      ],
+      "P": [
+        "VE.Cardinality.Document.Checks",
+        "VE.Cardinality.Document.Entry.Sound"
+      ],
+      "C": [
+        "VE.Cardinality.Document.lookup",
+        "VE.Cardinality.Document.union",
+        "VE.Cardinality.Document.checkGraph",
+        "VE.Cardinality.Document.admitGraph",
+        "VE.Cardinality.Document.Graph.leaves"
+      ],
+      "D[V]": [
+        {
+          "name": "VE.Cardinality.Document.decodeNode",
+          "tied": [
+            "VE.Cardinality.Document.decodeNode_statement"
+          ]
+        },
+        {
+          "name": "VE.Cardinality.Document.Graph.report",
+          "tied": [
+            "VE.Cardinality.Document.admitGraph_sound"
+          ]
+        }
+      ],
+      "G[I]": [
+        "VE.Cardinality.Document.CNode",
+        "VE.Cardinality.Document.Entry",
+        "VE.Cardinality.Document.Graph"
+      ],
+      "G[R]": [
+        "VE.Cardinality.Document.maxGraphNodes",
+        "VE.Cardinality.Document.maxDeductionNodes",
+        "VE.Cardinality.Document.graphRejected",
+        "VE.Cardinality.Document.nodeLimit",
+        "VE.Cardinality.Document.deductionLimit"
       ]
     }
   }
