@@ -176,6 +176,9 @@ def pins : List (String × CFormula) :=
       .percentOf june sept (-296) 3)]
 
 #guard pins.all fun (s, f) => formulaOf s == some f
+-- And each encodes to what it was decoded from (review F4 of qt-a3d: `encode`, `encBody`, `encOperand` and
+-- `encPrinted` write the answers' formulas), so a swapped argument, connective or body fails here too.
+#guard pins.all fun (s, f) => encode f == p s
 #guard [("ties_up", VE.Numbers.Rounding.tiesUp), ("half_even", .halfEven), ("down", .down), ("up", .up)].all
   fun (name, r) => (elabRule name).toOption == some r
 

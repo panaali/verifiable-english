@@ -1,3 +1,4 @@
+- `lean/VE/Cardinality/Document.lean` — Cardinality documents: the claim graph (docs/spec/quantities.md 4.1, 4.3), following `VE.Time.Document`'s.
 - `lean/VE/Cardinality/Erase.lean` — Erasure of a `cardinality@0` problem into W6a (docs/spec/quantities.md 3.5, 3.9).
 - `lean/VE/Cardinality/Examples.lean` — Fixtures of `cardinality@0`'s core (docs/spec/quantities.md 9.1: FA1, FA1b, FA1c, FA2, FA3, FA4, FA4c, FA4d, FA4e, FA5, FA5b, FA8, FA9a, FA9c, FA9e, FA10).
 - `lean/VE/Cardinality/Gate.lean` — The `cardinality@0` row of AR-10's profile table (SYNTHESIS 2.2; quantities 4.2, E2).
