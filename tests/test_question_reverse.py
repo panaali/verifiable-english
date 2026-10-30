@@ -119,15 +119,15 @@ def test_each_share_has_its_forms_denominator():
 @pytest.mark.parametrize("ms, met", [(100.0, True), (100.001, False)])
 def test_the_latency_budget_is_met_at_its_bound_only(ms, met):
     limits = [{"candidates": 64, "ms": ms * 10}, {"candidates": 65, "ms": 99999.0}]
-    latency = R.measures([_question("f1", True, ms=1.0)] * 19 + [_question("f1", True, ms=ms)] * 2, [], limits)[
+    gates = R.measures([_question("f1", True, ms=1.0)] * 19 + [_question("f1", True, ms=ms)] * 2, [], limits)[
         "latency"]
-    assert (latency["p95_ms"], latency["met"], latency["q64_met"], latency["q64_runs"]) == (ms, met, met, 1)
-    assert latency["max_ms"] == ms and latency["q64_max_ms"] == ms * 10
+    assert (gates["p95_ms"], gates["met"], gates["q64_met"], gates["q64_runs"]) == (ms, met, met, 1)
+    assert gates["max_ms"] == ms and gates["q64_max_ms"] == ms * 10
 
 
 def test_no_question_meets_no_budget():
-    latency = R.measures([], [], [])["latency"]
-    assert latency["met"] is False and latency["q64_met"] is False and latency["p95_ms"] is None
+    gates = R.measures([], [], [])["latency"]
+    assert gates["met"] is False and gates["q64_met"] is False and gates["p95_ms"] is None
 
 
 @pytest.fixture(scope="module")
