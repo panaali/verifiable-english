@@ -1,0 +1,4 @@
+- `docs/premise-scale/ab_documents.py` — Base against head over every document premise-scale's change reaches (build checklist item 8).
+- `docs/premise-scale/measure_pilots.py` — Measure the premise check on the premise-scale pilots (time, memory, premise status).
+- `docs/premise-scale/measure_rust_timeout.py` — Measure the Rust search's wall-clock time against the size of its case (DRI decision ME1).
+- `docs/premise-scale/seed_faults.py` — Plant each seeded fault of premise-scale, prove its named test fails, then restore the source (evidence/mutants.json), one fault at a time.

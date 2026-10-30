@@ -1,0 +1,5 @@
+- `lean/VE/Numbers/Decimal.lean` — (no module docstring)
+- `lean/VE/Numbers/Examples.lean` — Fixtures for every `VE.Numbers` definition (me-1a).
+- `lean/VE/Numbers/Phrases.lean` — (no module docstring)
+- `lean/VE/Numbers/PhrasesMain.lean` — (no module docstring)
+- `lean/VE/Numbers/Round.lean` — (no module docstring)
