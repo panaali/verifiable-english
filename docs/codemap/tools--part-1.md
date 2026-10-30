@@ -88,6 +88,7 @@
 - `tools/semantic_inventory.py` — Generate the Stage 0, AST based dependency and deletion inventory.
 - `tools/since_pass.py` — Select against the branch's last passing tree, not against main (test-speed plan, batch B3).
 - `tools/source_graph.py` — Static dependency graph of the repository's Python files, Lean modules and tests.
+- `tools/source_words_export.lean` — (no module docstring)
 - `tools/stage2_parity.py` — Gate 2 parity: rerun the Stage 0 probe matrix under a backend authority and diff it.
 - `tools/test_layer_policy.py` — Boundary checks for the selector's non-import dependencies and fallback.
 - `tools/test_map.py` — Record and load the per-test coverage map used by tools/select_tests.py.
@@ -98,4 +99,3 @@
 - `tools/trust_map.py` — Trust budget (bundle TB of docs/CONSOLIDATION-PLAN.md, step 0).
 - `tools/trust_mutants.py` — Mechanical mutants of the trusted Lean definitions a branch adds or changes, and the survivors (R16 signs trusted growth only when "every new trusted definitio…
 - `tools/wire_contract.py` — Lint format-1 wire tables and generate their single English reading.
-- `tools/wire_contract_lean.py` — Render format-1 contracts as data-only Lean table modules.
