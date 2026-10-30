@@ -3,7 +3,12 @@
 Feature item sc-1c (plan `docs/spec/scope-PLAN.md` "SC-1c. Explain route and relay", 1.6, 3, 7; spec
 `docs/spec/scope.md` 2.3, 3, 5.3, 7.3; SYNTHESIS 2.2 and 4.2). Base: main at 5b0163e94. Every user-visible change is
 a row. No existing route answers differently: the document mode, its schema and every other mode are unchanged
-(`tests/test_route_row_schemas.py`, `tests/test_lean_service.py` pass on the final HEAD).
+(`tests/test_route_row_schemas.py`, `tests/test_lean_service.py` pass on the final HEAD). The review fix (F1) adds a
+binding check to the document relay (R8 (b)): an alternatives cell's action, chooser and harm are constants of the
+request and its decider is the block's `decided_by` (`unstated` when absent) or `complete_by`. Only an answer that is
+not Lean's about the request is refused; every genuine answer is bound as before, `decided_by` absent included
+(`tests/test_document_lean_switch.py::test_alternatives_cells_name_the_requests_constants_and_deciders`), so it is no
+row.
 
 | # | Change | Evidence | Ruling |
 |---|---|---|---|
