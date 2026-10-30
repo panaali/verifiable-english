@@ -598,13 +598,18 @@ def test_deciders_are_typed_and_bound_on_both_rows(monkeypatch):
     case, row, _, _, source = _genuine(monkeypatch, "gamma2", X_ALL, "defaults-elaborate")
     assert row["deciders"] == ["assistant"]
     assert defaults.bind_elaborate(case, row, source) is row
-    for names in ([], ["absent"], ["assistant", "assistant"], ["assistant", "absent"]):
+    for names in ([], ["absent"], ["unstated"], ["assistant", "assistant"], ["assistant", "absent"]):
         _refused("deciders", defaults.bind_elaborate, case, {**row, "deciders": names}, source)
     case, row, labels, *_ = _genuine(monkeypatch, "alpha", X_ALL, "defaults-certificate")
     assert row["deciders"] == ["assistant"]
     assert defaults.bind_certificate(case, row, labels) is row
-    for names in ([], ["absent"], ["assistant", "assistant"], ["assistant", "absent"]):
+    for names in ([], ["absent"], ["unstated"], ["assistant", "assistant"], ["assistant", "absent"]):
         _refused("deciders", defaults.bind_certificate, case, {**row, "deciders": names}, labels)
+    unnamed = copy.deepcopy(case)
+    for item in unnamed["norms"]:
+        if item["norm"].get("mode") == "default":
+            item["norm"]["exception"]["decided_by"] = "unstated"
+    assert defaults._bind_decider_names(unnamed, ["unstated"], labels) is None
 
 
 def test_soft_source_is_the_exception_tables(monkeypatch):
