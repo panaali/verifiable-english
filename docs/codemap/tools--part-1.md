@@ -1,0 +1,101 @@
+- `tools/answer_cutoff.py` — Narrow the `ve_service` users a Lean change selects: an R1 experiment, off by default.
+- `tools/answer_replay.py` — Replay recorded `ve_service` cases against one build, and compare two builds' answers.
+- `tools/answer_store_replay.py` — Replay the answer store against its build, byte for byte (the answer store's nightly check, tests/answer_store.py).
+- `tools/architecture_numbers.py` — Measure the numbers of the architecture map (`docs/ARCHITECTURE.md`) on one commit and render its tables.
+- `tools/ask_fixtures.py` — Record, or check, the `ask` fixtures (docs/spec/question-answering.md 7.2, 7.4, 7.5; plan Q2.2, Q2.5).
+- `tools/assurance_manifest.py` — Print, or with --write regenerate (--check: compare), the generated tables in docs/spec/assurance-manifest.md.
+- `tools/b17_ab.py` — Batch 17 paired public-path evidence.
+- `tools/batch_evidence.py` — Check that a batch's saved gate, corpus comparison and latency evidence cover HEAD.
+- `tools/batch_scope.py` — A batch's scope, written and checked from git: its base, its head, its commits and the paths it changes.
+- `tools/binding_census.py` — ADR 0001's census: every string and integer leaf of every Lean response shape, and how it is bound today.
+- `tools/build_lexicon.py` — Build the proposal-only OEWN lexicon using Python's standard library.
+- `tools/cache_store.py` — The content-keyed entry store shared by the repository's caches (`tools/run_cache.py`, `tools/lean_dump_cache.py`).
+- `tools/calc_units_fixtures.py` — Write or check `lean/VE/Calc/UnitsExamples.lean`, the Lean `#guard`s of the `ve-units@2` fixture table.
+- `tools/change_units.py` — Split a Python source into the units a change can touch, using `ast`.
+- `tools/check_english_e2_statements.py` — Check the twelve E2 theorem statements against the approved section 5.5 text, with Lean as the oracle.
+- `tools/check_english_s3_statements.py` — Compare the ten added S3 theorem statements with the approved section 5.5 text.
+- `tools/check_lean_imports.py` — Reject new outward Lean imports and stale, exact legacy exceptions.
+- `tools/check_python_layers.py` — Check import-linter's Python contract and its reviewed legacy-edge ledger.
+- `tools/check_rd9_sc1_statements.py` — Compare the implemented RD-9 declarations against the approved Lean blocks of docs/spec/rd-9-soft-chain.md 6.
+- `tools/check_readings_defaults_statements.py` — Compare the RD-1, RD-2a, RD-4a, RD-4b and RD-6a declarations with the approved text of docs/spec/readings-defaults.md 6.2, 6.3, 6.6 and 6.7.
+- `tools/check_rust_deps.py` — Check the Rust workspace's crate graph against the inward-only rule, as cargo reads it.
+- `tools/code_map.py` — Build a compact, deterministic index of source modules from the working tree.
+- `tools/coverage_dashboard.py` — Rebuild the use-case baseline table without changing historical audits.
+- `tools/difffuzz.py` — Cross-language differential fuzzer: Python, the Lean routes and Rust on seeded mutants.
+- `tools/difffuzz_corpus.py` — The differential fuzzer's corpus: every fixture of `conformance/` and `usecases/`, read into seeds.
+- `tools/english_codes.py` — Write or check `ve/english_grammar/codes.json`, Lean's table of codes, classes and statuses.
+- `tools/english_grammar_gen.py` — The fixed rules of English in Lean as data: source checks, the Lean table generator and the lock file.
+- `tools/gate.py` — Full offline verification gate.
+- `tools/gate_collection.py` — The gate's test collection, checked against the merge base's.
+- `tools/gate_pytest.py` — Minimal pytest event recorder for tools/gate.py (loaded with -p).
+- `tools/gate_shards.py` — Deterministic file shards and fail-closed assembly of full gate records.
+- `tools/git_words.py` — Whether a command names the git program: the one definition, for the run and for the source.
+- `tools/heavy_tests.py` — Generate the heavy pytest inventory from a complete duration report.
+- `tools/history_tests.py` — The tests whose result can depend on git history: `tests/history-dependent.json` and its lint.
+- `tools/identity_lint.py` — Fail on a new identity preimage built in Python (architecture plan AR-6, rule 4 of the relay lint; DRI D7).
+- `tools/inventory_lint.py` — Gate 2 inventory lint: no retained code imports a class-A body.
+- `tools/lake_output_hash.lean` — (no module docstring)
+- `tools/lake_outputs.py` — Lake's executables as they are on disk, not as their traces say (finding class 13: a stale binary).
+- `tools/layer_policy.py` — Single source of truth for the five repository layers.
+- `tools/lean_decided_share.py` — The Lean-decided share of a document (docs/spec/readings-defaults.md 1.10 and 10; plan 3.9 and RD-5): display only.
+- `tools/lean_dump_cache.py` — A content-keyed cache of the two Lean dumps of `tools/regen_generated.py`: `cached`.
+- `tools/lean_first_cache.py` — A shared, keyed cache of lean-first A/B recordings (speed-abcache; PIPELINE-LIMITS L75).
+- `tools/lean_first_diff.py` — Lean-first A/B: the base commit and the batch head over the same corpora (docs/LEAN-FIRST-PLAN.md, section 5.1 item 2).
+- `tools/lean_first_oracle.py` — The frozen pre-deletion Python, kept as a test oracle (docs/LEAN-FIRST-PLAN.md, section 6.2; DRI answer 7).
+- `tools/lean_header_imports.lean` — (no module docstring)
+- `tools/lean_mode_deps.lean` — The service dispatch pins are equations proved by `rfl`.
+- `tools/lean_mode_deps.py` — Generate service mode roots from Lean's proved runMode equations.
+- `tools/lean_output_diff.py` — Lean output differential (bundle OUT of docs/CONSOLIDATION-PLAN.md, step 0).
+- `tools/lean_service_common.py` — Shared helpers for the stage-1 Lean service tools (latency, soak).
+- `tools/lean_service_latency.py` — Stage-1 latency: persistent `ve_service` versus the one-shot Lean executables.
+- `tools/lean_service_parity.py` — Gate 1: `ve_service` results are byte-identical to the one-shot Lean executables.
+- `tools/lean_service_soak.py` — Gate 1 soak: 20,000 mixed-mode requests on one `ve_service` process.
+- `tools/lean_share.py` — Shared Lean builds (test-architecture plan 3.8, "Shared builds"): one checked copy of a worktree's `lean/.lake` per key, restored into another worktree of the …
+- `tools/lean_statements.py` — Statement dump (bundle ST of docs/CONSOLIDATION-PLAN.md, step 0).
+- `tools/maxfail_pytest.py` — The `--maxfail` of an agent's selected run (tools/select_tests.py --run), loaded with -p.
+- `tools/mutants.py` — Seeded-mutant harness: every committed mutant must make its named tests fail.
+- `tools/mutation_check.py` — Prove excluded tests stay green for one detectable fault per layer.
+- `tools/nested_pytest.py` — The one builder of a pytest command that another process runs: a test, the gate, or a tool.
+- `tools/numbers_phrases.py` — Write the shared comparison phrase table from its Lean owner.
+- `tools/platform_contract.py` — The x86 platform contract suite (test-architecture plan, rank 2, section 3.3).
+- `tools/profile_table.py` — Write `ve/profile_table.json` from its Lean owner, `VE.Compose.profileTable` (AR-10).
+- `tools/pytest_profile.py` — Pytest plugin: where a test run's time goes (docs/testing-profile.md).
+- `tools/quarantine.py` — The tracked quarantine of tests that fail under machine load: tools/test-quarantine.json.
+- `tools/question_answering_agreement.py` — Q2.6's agreement with the existing check (docs/spec/question-answering-PLAN.md, Q2.6), without model calls.
+- `tools/question_answering_d9_ab.py` — Recheck D9's readings generator against its pre-change package construction.
+- `tools/question_answering_measure.py` — Measure Q2's non-model service and CLI costs on recorded U3 and A1 inputs.
+- `tools/question_answering_report.py` — Render Q2's reproducible non-model measurement report from saved evidence.
+- `tools/question_answering_words_perf.py` — Bounded before/after timing of Q2.4 document reports, without model calls.
+- `tools/question_codes.py` — Write or check `ve/question/codes.json`, Lean's contract of the question reader.
+- `tools/question_fixtures.py` — Write or check `lean/VE/Question/Fixtures.lean`, the Lean `#guard`s of the Q1 fixture table.
+- `tools/question_lock.py` — Generate or verify the Q1 lock: the question version the relay is built for.
+- `tools/question_statements.py` — Compare implemented Q1 and Q2 theorem statements and predicates with the approved sections 5.1 and 5.2.
+- `tools/readings_batch_latency.py` — Measure identical readings-route requests on the base and batch Lean builds.
+- `tools/readings_defaults_rd4b_mutants.py` — Seed RD-4b regressions one at a time, run their tests, restore source, and save the failing results.
+- `tools/readings_s1_pilot.py` — Rerun S1's pilots and report section 11's figures (docs/spec/composition-s1.md 9.3, 11).
+- `tools/regen_generated.py` — Regenerate, check and merge every generated inventory, manifest and lock of the repository.
+- `tools/relay_lint.py` — Fail if a relayed module raises a content diagnostic of its own (docs/LEAN-FIRST-PLAN.md, rule 2 and gate item 3).
+- `tools/relay_mutation_gate.py` — Relay mutation gate: every Lean answer Python relays must refuse every mutant of a genuine answer.
+- `tools/repo_map.py` — Where a service mode lives: its Lean module, response schema, Python relays and tests.
+- `tools/response_schemas.py` — Write or check the client's response schemas from their one source, the Lean shapes.
+- `tools/run_cache.py` — A cache for a nested pytest run whose output is a function of what it reads: `cached_run`.
+- `tools/run_order.py` — The order an agent's run takes its test units in, and what it remembers of the last run.
+- `tools/rust_build.py` — Reproducible Rust checker builds: the same source gives the same binary in any checkout.
+- `tools/rust_output_diff.py` — Rust output differential (bundle D of docs/ARCHITECTURE-LAYERS-PLAN2.md).
+- `tools/select_tests.py` — Select the tests a change can affect, and the builds and checks they need.
+- `tools/select_tests_evidence.py` — Measure tools/select_tests.py on past commits and on seeded bugs.
+- `tools/select_tests_seeds.py` — Seeded edits that check tools/select_tests.py against the complete suite.
+- `tools/semantic_inventory.py` — Generate the Stage 0, AST based dependency and deletion inventory.
+- `tools/since_pass.py` — Select against the branch's last passing tree, not against main (test-speed plan, batch B3).
+- `tools/source_graph.py` — Static dependency graph of the repository's Python files, Lean modules and tests.
+- `tools/stage2_parity.py` — Gate 2 parity: rerun the Stage 0 probe matrix under a backend authority and diff it.
+- `tools/test_layer_policy.py` — Boundary checks for the selector's non-import dependencies and fallback.
+- `tools/test_map.py` — Record and load the per-test coverage map used by tools/select_tests.py.
+- `tools/test_map_recorder.py` — Record what one process of a test-map run executes, reads and starts.
+- `tools/test_profile_report.py` — Summarise the JSON-lines files `tools/pytest_profile.py` writes.
+- `tools/test_schedule.py` — The order an xdist run starts its tests in: the slowest first, so no long test starts last.
+- `tools/trust_changes.py` — The trust report's changed files (architecture decision D2, AR-2): each Lean file changed since a base commit, with the lines it holds in each trusted class.
+- `tools/trust_map.py` — Trust budget (bundle TB of docs/CONSOLIDATION-PLAN.md, step 0).
+- `tools/trust_mutants.py` — Mechanical mutants of the trusted Lean definitions a branch adds or changes, and the survivors (R16 signs trusted growth only when "every new trusted definitio…
+- `tools/wire_contract.py` — Lint format-1 wire tables and generate their single English reading.
+- `tools/wire_contract_lean.py` — Render format-1 contracts as data-only Lean table modules.

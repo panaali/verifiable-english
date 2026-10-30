@@ -1,0 +1,9 @@
+- `ve/document/__init__.py` — ve-document@1: byte-partitioned source, reviewed metadata and P0 admission.
+- `ve/document/__main__.py` — `python -m ve.document`, as `python -m` ran the module `ve/document.py` before AR-16a.
+- `ve/document/cli.py` — `ve document`: the command line (moved from `ve/document.py`, AR-16a).
+- `ve/document/containers.py` — The unit roles and containers both load paths build from a document's units: the soft and rights sources, the free norms, the reading routes and plan (moved fr…
+- `ve/document/lean.py` — The relay of Lean's `document` mode: the case sent, the answer read, and the document built from the answer once it is bound to the document sent (moved from `…
+- `ve/document/load.py` — `load_document`: Lean's `document` answer when it decides, else Python's own loader, the retained path (moved from `ve/document.py`, AR-16a).
+- `ve/document/render.py` — `render_document`: the English display of a loaded document (moved from `ve/document.py`, AR-16a).
+- `ve/document/report.py` — `check_document`: the report of a loaded document, its coverage and its premises (moved from `ve/document.py`, AR-16a).
+- `ve/document/source.py` — A `ve-document` text read: its JSON front matter, its source bytes and `ve` fences, its units' parts, identities and environment (moved from `ve/document.py`, …

@@ -1,0 +1,1 @@
+- `docs/eff-tests/summarize_suite.py` — Summarize one timed suite run for docs/eff-tests/REPORT.md: summarize_suite.py LABEL JUNIT RUN OUT.

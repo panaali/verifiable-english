@@ -1,0 +1,36 @@
+Commands run in /home/seyran/code/ve-sc-2; excerpts from their captured output.
+
+python3 - <<'PY'  # whitespace-normalised listName_run comparison, spec 5.4 to Theorems.lean
+listName_run statement match: True
+
+PATH=~/.elan/bin:$PATH lake build VE.Scope.Theorems
+Build completed successfully (164 jobs).
+PATH=~/.elan/bin:$PATH lake build VE.Scope.Examples
+Build completed successfully (165 jobs).
+
+UV_CACHE_DIR=/tmp/sc2-uv-cache uv run python tools/regen_generated.py --write
+regen_generated: wrote 33 entries
+PATH=~/.elan/bin:$PATH lake build
+Build completed successfully (1159 jobs).
+python3 lean/audit.py
+PASS: 668 source files; 7476 named theorem declarations audited (headline results and helper lemmas); only the declared standard axiom allowlist.
+UV_CACHE_DIR=/tmp/sc2-uv-cache uv run python tools/trust_map.py --check
+against 8868ce2124ec: K +0, S +0, D +0, G +0, tied +0, unclassified +0, trusted +0
+PASS: K, S and untied [V] within 8868ce2124ec and the allowances introduced since
+
+zsh /home/seyran/code/manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run
+SHARD 3/3: exit 0 in 876.4 s; 24 units, 24 passed
+SHARD 1/3: exit 0 in 1132.8 s; 28 units, 28 passed
+SHARD 2/3: exit 0 in 2076.5 s; 25 units, 25 passed
+[gha-select 23:05:01Z] summary: selected tests ran on GitHub Actions (3 shards, run sc-2-0c1ffe6c-t312852); exit=0; 2249s
+
+Three independent mutations of lean/VE/Scope/Examples.lean, each restored after its own lake build:
+f4_replacement: exit=1; error: VE/Scope/Examples.lean:765:0: Expression
+f4_carve: exit=1; error: VE/Scope/Examples.lean:778:0: Expression
+f6_limit: exit=1; error: VE/Scope/Examples.lean:795:0: Expression
+Statement probe: replace only `n.units = us` by `n.units = []` in listName_run, then restore.
+PATH=~/.elan/bin:$PATH lake build VE.Scope.Theorems
+statement_mutant exit=1; error: VE/Scope/Theorems.lean:1758:20: Application type mismatch
+
+df -h .
+/dev/root 338G 194G 145G 58% /home/seyran/code/ve-sc-2

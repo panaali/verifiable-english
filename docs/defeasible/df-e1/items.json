@@ -1,0 +1,802 @@
+[
+  {
+    "source": "alpha",
+    "rule_text": "Rule 1. Every assistant should review content. The exception to rule 1 is decided by \"assistant\".",
+    "lean_form": "short",
+    "lean_answer": {
+      "assumptions": [
+        "default:exception:r1"
+      ],
+      "basis": "needs",
+      "form": "short",
+      "verdict": "FOLLOWS"
+    },
+    "strict_countermodel": {
+      "model": {
+        "complete": true,
+        "domains": {
+          "assistant": [
+            "e0"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "soft__excepted__r1": [
+            [
+              "e0"
+            ]
+          ]
+        }
+      },
+      "filling": {
+        "unsaid__x_required": []
+      }
+    },
+    "rendered": {
+      "long": [
+        "Under the assumptions listed below, the conclusion follows: Every assistant must review content.",
+        "This assumes that the exception to rule r1 does not apply. The assistant decides where it applies; the text names no case."
+      ],
+      "short": [
+        "Unless an exception applies, the conclusion follows: Every assistant must review content.",
+        "This assumes that the exception to rule r1 does not apply. The assistant decides where it applies; the text names no case."
+      ]
+    },
+    "expected": "yes",
+    "id": "N01",
+    "class": "short-eligible",
+    "render_commit": "795e003bdb3bf6a6c8178c78ff9e16e478116ac7",
+    "render_command": "uv run python docs/defeasible/df-e1/prepare.py --items"
+  },
+  {
+    "source": "alpha",
+    "rule_text": "Rule 1. Every assistant should flag risk. The exception to rule 1 is decided by \"assistant\".",
+    "lean_form": "short",
+    "lean_answer": {
+      "assumptions": [
+        "default:exception:r1"
+      ],
+      "basis": "needs",
+      "form": "short",
+      "verdict": "FOLLOWS"
+    },
+    "strict_countermodel": {
+      "model": {
+        "complete": true,
+        "domains": {
+          "assistant": [
+            "e0"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "soft__excepted__r1": [
+            [
+              "e0"
+            ]
+          ]
+        }
+      },
+      "filling": {
+        "unsaid__x_required": []
+      }
+    },
+    "rendered": {
+      "long": [
+        "Under the assumptions listed below, the conclusion follows: Every assistant must flag risk.",
+        "This assumes that the exception to rule r1 does not apply. The assistant decides where it applies; the text names no case."
+      ],
+      "short": [
+        "Unless an exception applies, the conclusion follows: Every assistant must flag risk.",
+        "This assumes that the exception to rule r1 does not apply. The assistant decides where it applies; the text names no case."
+      ]
+    },
+    "expected": "yes",
+    "id": "N02",
+    "class": "short-eligible",
+    "render_commit": "795e003bdb3bf6a6c8178c78ff9e16e478116ac7",
+    "render_command": "uv run python docs/defeasible/df-e1/prepare.py --items"
+  },
+  {
+    "source": "alpha",
+    "rule_text": "Rule 1. Every assistant should explain decisions. The exception to rule 1 is decided by \"assistant\".",
+    "lean_form": "short",
+    "lean_answer": {
+      "assumptions": [
+        "default:exception:r1"
+      ],
+      "basis": "needs",
+      "form": "short",
+      "verdict": "FOLLOWS"
+    },
+    "strict_countermodel": {
+      "model": {
+        "complete": true,
+        "domains": {
+          "assistant": [
+            "e0"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "soft__excepted__r1": [
+            [
+              "e0"
+            ]
+          ]
+        }
+      },
+      "filling": {
+        "unsaid__x_required": []
+      }
+    },
+    "rendered": {
+      "long": [
+        "Under the assumptions listed below, the conclusion follows: Every assistant must explain decisions.",
+        "This assumes that the exception to rule r1 does not apply. The assistant decides where it applies; the text names no case."
+      ],
+      "short": [
+        "Unless an exception applies, the conclusion follows: Every assistant must explain decisions.",
+        "This assumes that the exception to rule r1 does not apply. The assistant decides where it applies; the text names no case."
+      ]
+    },
+    "expected": "yes",
+    "id": "N03",
+    "class": "short-eligible",
+    "render_commit": "795e003bdb3bf6a6c8178c78ff9e16e478116ac7",
+    "render_command": "uv run python docs/defeasible/df-e1/prepare.py --items"
+  },
+  {
+    "source": "alpha",
+    "rule_text": "Rule 1. Every assistant should seek consent. The exception to rule 1 is decided by \"assistant\".",
+    "lean_form": "short",
+    "lean_answer": {
+      "assumptions": [
+        "default:exception:r1"
+      ],
+      "basis": "needs",
+      "form": "short",
+      "verdict": "FOLLOWS"
+    },
+    "strict_countermodel": {
+      "model": {
+        "complete": true,
+        "domains": {
+          "assistant": [
+            "e0"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "soft__excepted__r1": [
+            [
+              "e0"
+            ]
+          ]
+        }
+      },
+      "filling": {
+        "unsaid__x_required": []
+      }
+    },
+    "rendered": {
+      "long": [
+        "Under the assumptions listed below, the conclusion follows: Every assistant must seek consent.",
+        "This assumes that the exception to rule r1 does not apply. The assistant decides where it applies; the text names no case."
+      ],
+      "short": [
+        "Unless an exception applies, the conclusion follows: Every assistant must seek consent.",
+        "This assumes that the exception to rule r1 does not apply. The assistant decides where it applies; the text names no case."
+      ]
+    },
+    "expected": "yes",
+    "id": "N04",
+    "class": "short-eligible",
+    "render_commit": "795e003bdb3bf6a6c8178c78ff9e16e478116ac7",
+    "render_command": "uv run python docs/defeasible/df-e1/prepare.py --items"
+  },
+  {
+    "source": "alpha",
+    "rule_text": "Rule 1. Every assistant should record outcomes. The exception to rule 1 is decided by \"assistant\".",
+    "lean_form": "short",
+    "lean_answer": {
+      "assumptions": [
+        "default:exception:r1"
+      ],
+      "basis": "needs",
+      "form": "short",
+      "verdict": "FOLLOWS"
+    },
+    "strict_countermodel": {
+      "model": {
+        "complete": true,
+        "domains": {
+          "assistant": [
+            "e0"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "soft__excepted__r1": [
+            [
+              "e0"
+            ]
+          ]
+        }
+      },
+      "filling": {
+        "unsaid__x_required": []
+      }
+    },
+    "rendered": {
+      "long": [
+        "Under the assumptions listed below, the conclusion follows: Every assistant must record outcomes.",
+        "This assumes that the exception to rule r1 does not apply. The assistant decides where it applies; the text names no case."
+      ],
+      "short": [
+        "Unless an exception applies, the conclusion follows: Every assistant must record outcomes.",
+        "This assumes that the exception to rule r1 does not apply. The assistant decides where it applies; the text names no case."
+      ]
+    },
+    "expected": "yes",
+    "id": "N05",
+    "class": "short-eligible",
+    "render_commit": "795e003bdb3bf6a6c8178c78ff9e16e478116ac7",
+    "render_command": "uv run python docs/defeasible/df-e1/prepare.py --items"
+  },
+  {
+    "source": "alpha",
+    "rule_text": "Rule 1. Every assistant should report misuse. The exception to rule 1 is decided by \"assistant\".",
+    "lean_form": "short",
+    "lean_answer": {
+      "assumptions": [
+        "default:exception:r1"
+      ],
+      "basis": "needs",
+      "form": "short",
+      "verdict": "FOLLOWS"
+    },
+    "strict_countermodel": {
+      "model": {
+        "complete": true,
+        "domains": {
+          "assistant": [
+            "e0"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "soft__excepted__r1": [
+            [
+              "e0"
+            ]
+          ]
+        }
+      },
+      "filling": {
+        "unsaid__x_required": []
+      }
+    },
+    "rendered": {
+      "long": [
+        "Under the assumptions listed below, the conclusion follows: Every assistant must report misuse.",
+        "This assumes that the exception to rule r1 does not apply. The assistant decides where it applies; the text names no case."
+      ],
+      "short": [
+        "Unless an exception applies, the conclusion follows: Every assistant must report misuse.",
+        "This assumes that the exception to rule r1 does not apply. The assistant decides where it applies; the text names no case."
+      ]
+    },
+    "expected": "yes",
+    "id": "N06",
+    "class": "short-eligible",
+    "render_commit": "795e003bdb3bf6a6c8178c78ff9e16e478116ac7",
+    "render_command": "uv run python docs/defeasible/df-e1/prepare.py --items"
+  },
+  {
+    "source": "beta",
+    "rule_text": "Rule 1. Every assistant should review content. The exception to rule 1 is decided by \"assistant\". Rule 1 is excepted when that assistant is urgent.",
+    "lean_form": "long",
+    "lean_answer": {
+      "assumptions": [
+        "default:exception:r1"
+      ],
+      "basis": "needs",
+      "form": "long",
+      "verdict": "FOLLOWS"
+    },
+    "strict_countermodel": {
+      "model": {
+        "complete": true,
+        "domains": {
+          "assistant": [
+            "e0"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "soft__excepted__r1": [
+            [
+              "e0"
+            ]
+          ],
+          "urgent": []
+        }
+      },
+      "filling": {
+        "unsaid__x_required": []
+      }
+    },
+    "rendered": {
+      "long": [
+        "Under the assumptions listed below, the conclusion follows: For every assistant, if it is not the case that that assistant is urgent, then that assistant must review content.",
+        "This assumes that the exception to rule r1 applies only where the text says it does: that assistant is urgent. The assistant decides any other case."
+      ]
+    },
+    "expected": "yes",
+    "id": "N07",
+    "class": "beta",
+    "render_commit": "795e003bdb3bf6a6c8178c78ff9e16e478116ac7",
+    "render_command": "uv run python docs/defeasible/df-e1/prepare.py --items"
+  },
+  {
+    "source": "beta",
+    "rule_text": "Rule 1. Every assistant should flag risk. The exception to rule 1 is decided by \"assistant\". Rule 1 is excepted when that assistant is urgent.",
+    "lean_form": "long",
+    "lean_answer": {
+      "assumptions": [
+        "default:exception:r1"
+      ],
+      "basis": "needs",
+      "form": "long",
+      "verdict": "FOLLOWS"
+    },
+    "strict_countermodel": {
+      "model": {
+        "complete": true,
+        "domains": {
+          "assistant": [
+            "e0"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "soft__excepted__r1": [
+            [
+              "e0"
+            ]
+          ],
+          "urgent": []
+        }
+      },
+      "filling": {
+        "unsaid__x_required": []
+      }
+    },
+    "rendered": {
+      "long": [
+        "Under the assumptions listed below, the conclusion follows: For every assistant, if it is not the case that that assistant is urgent, then that assistant must flag risk.",
+        "This assumes that the exception to rule r1 applies only where the text says it does: that assistant is urgent. The assistant decides any other case."
+      ]
+    },
+    "expected": "yes",
+    "id": "N08",
+    "class": "beta",
+    "render_commit": "795e003bdb3bf6a6c8178c78ff9e16e478116ac7",
+    "render_command": "uv run python docs/defeasible/df-e1/prepare.py --items"
+  },
+  {
+    "source": "epsilon",
+    "rule_text": "Rule 1 (user may turn off). Every assistant should seek consent. The exception to rule 1 is decided by \"assistant\".",
+    "lean_form": "long",
+    "lean_answer": {
+      "assumptions": [
+        "default:exception:r1",
+        "default:switch:r1:user"
+      ],
+      "basis": "needs",
+      "form": "long",
+      "verdict": "FOLLOWS"
+    },
+    "strict_countermodel": {
+      "model": {
+        "complete": true,
+        "domains": {
+          "assistant": [
+            "e0"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "soft__excepted__r1": [
+            [
+              "e0"
+            ]
+          ],
+          "soft__off__r1__user": []
+        }
+      },
+      "filling": {
+        "unsaid__x_required": []
+      }
+    },
+    "rendered": {
+      "long": [
+        "Under the assumptions listed below, the conclusion follows: Every assistant must seek consent.",
+        "This assumes that the exception to rule r1 does not apply. The assistant decides where it applies; the text names no case.",
+        "This assumes that the user has not turned rule r1 off."
+      ]
+    },
+    "expected": "yes",
+    "id": "N09",
+    "class": "epsilon",
+    "render_commit": "795e003bdb3bf6a6c8178c78ff9e16e478116ac7",
+    "render_command": "uv run python docs/defeasible/df-e1/prepare.py --items"
+  },
+  {
+    "source": "epsilon",
+    "rule_text": "Rule 1 (user may turn off). Every assistant should record outcomes. The exception to rule 1 is decided by \"assistant\".",
+    "lean_form": "long",
+    "lean_answer": {
+      "assumptions": [
+        "default:exception:r1",
+        "default:switch:r1:user"
+      ],
+      "basis": "needs",
+      "form": "long",
+      "verdict": "FOLLOWS"
+    },
+    "strict_countermodel": {
+      "model": {
+        "complete": true,
+        "domains": {
+          "assistant": [
+            "e0"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "soft__excepted__r1": [
+            [
+              "e0"
+            ]
+          ],
+          "soft__off__r1__user": []
+        }
+      },
+      "filling": {
+        "unsaid__x_required": []
+      }
+    },
+    "rendered": {
+      "long": [
+        "Under the assumptions listed below, the conclusion follows: Every assistant must record outcomes.",
+        "This assumes that the exception to rule r1 does not apply. The assistant decides where it applies; the text names no case.",
+        "This assumes that the user has not turned rule r1 off."
+      ]
+    },
+    "expected": "yes",
+    "id": "N10",
+    "class": "epsilon",
+    "render_commit": "795e003bdb3bf6a6c8178c78ff9e16e478116ac7",
+    "render_command": "uv run python docs/defeasible/df-e1/prepare.py --items"
+  },
+  {
+    "source": "delta",
+    "rule_text": "Rule 1. Every assistant should explain decisions. Rule 1 serves safety. The exception to rule 1 is decided by \"assistant\".\nRule 2. Every assistant should not explain decisions. Rule 2 serves helpfulness. The exception to rule 2 is decided by \"assistant\".",
+    "lean_form": "long",
+    "lean_answer": {
+      "assumptions": [
+        "default:exception:r1",
+        "default:exception:r2",
+        "default:ranking:helpfulness:safety:x_permitted"
+      ],
+      "basis": "needs",
+      "form": "long",
+      "verdict": "FOLLOWS"
+    },
+    "strict_countermodel": {
+      "model": {
+        "complete": true,
+        "domains": {
+          "assistant": [
+            "e0"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "soft__excepted__r1": [
+            [
+              "e0"
+            ]
+          ],
+          "soft__excepted__r2": [],
+          "soft__outweighs__helpfulness__safety__x_permitted": []
+        }
+      },
+      "filling": {
+        "unsaid__x_required": []
+      }
+    },
+    "rendered": {
+      "long": [
+        "Under the assumptions listed below, the conclusion follows: Every assistant must explain decisions.",
+        "This assumes that the exception to rule r1 does not apply. The assistant decides where it applies; the text names no case.",
+        "This assumes that the exception to rule r2 does not apply. The assistant decides where it applies; the text names no case.",
+        "This assumes that, on explain decisions, the helpfulness consideration does not outweigh the safety consideration. The assistant decides where it does."
+      ]
+    },
+    "expected": "yes",
+    "id": "N11",
+    "class": "delta",
+    "render_commit": "795e003bdb3bf6a6c8178c78ff9e16e478116ac7",
+    "render_command": "uv run python docs/defeasible/df-e1/prepare.py --items"
+  },
+  {
+    "source": "delta",
+    "rule_text": "Rule 1. Every assistant should report misuse. Rule 1 serves safety. The exception to rule 1 is decided by \"assistant\".\nRule 2. Every assistant should not report misuse. Rule 2 serves helpfulness. The exception to rule 2 is decided by \"assistant\".",
+    "lean_form": "long",
+    "lean_answer": {
+      "assumptions": [
+        "default:exception:r1",
+        "default:exception:r2",
+        "default:ranking:helpfulness:safety:x_permitted"
+      ],
+      "basis": "needs",
+      "form": "long",
+      "verdict": "FOLLOWS"
+    },
+    "strict_countermodel": {
+      "model": {
+        "complete": true,
+        "domains": {
+          "assistant": [
+            "e0"
+          ]
+        },
+        "constants": {},
+        "relations": {
+          "soft__excepted__r1": [
+            [
+              "e0"
+            ]
+          ],
+          "soft__excepted__r2": [],
+          "soft__outweighs__helpfulness__safety__x_permitted": []
+        }
+      },
+      "filling": {
+        "unsaid__x_required": []
+      }
+    },
+    "rendered": {
+      "long": [
+        "Under the assumptions listed below, the conclusion follows: Every assistant must report misuse.",
+        "This assumes that the exception to rule r1 does not apply. The assistant decides where it applies; the text names no case.",
+        "This assumes that the exception to rule r2 does not apply. The assistant decides where it applies; the text names no case.",
+        "This assumes that, on report misuse, the helpfulness consideration does not outweigh the safety consideration. The assistant decides where it does."
+      ]
+    },
+    "expected": "yes",
+    "id": "N12",
+    "class": "delta",
+    "render_commit": "795e003bdb3bf6a6c8178c78ff9e16e478116ac7",
+    "render_command": "uv run python docs/defeasible/df-e1/prepare.py --items"
+  },
+  {
+    "id": "S01",
+    "class": "strict",
+    "source": "zeta",
+    "rule_text": "Rule 1. Every assistant must review content.\nRule 2. Every assistant should review content. The exception to rule 2 is decided by \"assistant\".",
+    "lean_answer": {
+      "question": "strict",
+      "valid": true
+    },
+    "rendered": {
+      "long": [
+        "{\n  \"question\": \"strict\",\n  \"valid\": true\n}"
+      ]
+    },
+    "expected": "no",
+    "render_commit": "795e003bdb3bf6a6c8178c78ff9e16e478116ac7",
+    "render_command": "uv run python docs/defeasible/df-e1/prepare.py --items"
+  },
+  {
+    "id": "S02",
+    "class": "strict",
+    "source": "zeta",
+    "rule_text": "Rule 1. Every assistant must flag risk.\nRule 2. Every assistant should flag risk. The exception to rule 2 is decided by \"assistant\".",
+    "lean_answer": {
+      "question": "strict",
+      "valid": true
+    },
+    "rendered": {
+      "long": [
+        "{\n  \"question\": \"strict\",\n  \"valid\": true\n}"
+      ]
+    },
+    "expected": "no",
+    "render_commit": "795e003bdb3bf6a6c8178c78ff9e16e478116ac7",
+    "render_command": "uv run python docs/defeasible/df-e1/prepare.py --items"
+  },
+  {
+    "id": "S03",
+    "class": "strict",
+    "source": "zeta",
+    "rule_text": "Rule 1. Every assistant must explain decisions.\nRule 2. Every assistant should explain decisions. The exception to rule 2 is decided by \"assistant\".",
+    "lean_answer": {
+      "question": "strict",
+      "valid": true
+    },
+    "rendered": {
+      "long": [
+        "{\n  \"question\": \"strict\",\n  \"valid\": true\n}"
+      ]
+    },
+    "expected": "no",
+    "render_commit": "795e003bdb3bf6a6c8178c78ff9e16e478116ac7",
+    "render_command": "uv run python docs/defeasible/df-e1/prepare.py --items"
+  },
+  {
+    "id": "S04",
+    "class": "strict",
+    "source": "zeta",
+    "rule_text": "Rule 1. Every assistant must seek consent.\nRule 2. Every assistant should seek consent. The exception to rule 2 is decided by \"assistant\".",
+    "lean_answer": {
+      "question": "strict",
+      "valid": true
+    },
+    "rendered": {
+      "long": [
+        "{\n  \"question\": \"strict\",\n  \"valid\": true\n}"
+      ]
+    },
+    "expected": "no",
+    "render_commit": "795e003bdb3bf6a6c8178c78ff9e16e478116ac7",
+    "render_command": "uv run python docs/defeasible/df-e1/prepare.py --items"
+  },
+  {
+    "id": "S05",
+    "class": "strict",
+    "source": "zeta",
+    "rule_text": "Rule 1. Every assistant must record outcomes.\nRule 2. Every assistant should record outcomes. The exception to rule 2 is decided by \"assistant\".",
+    "lean_answer": {
+      "question": "strict",
+      "valid": true
+    },
+    "rendered": {
+      "long": [
+        "{\n  \"question\": \"strict\",\n  \"valid\": true\n}"
+      ]
+    },
+    "expected": "no",
+    "render_commit": "795e003bdb3bf6a6c8178c78ff9e16e478116ac7",
+    "render_command": "uv run python docs/defeasible/df-e1/prepare.py --items"
+  },
+  {
+    "id": "S06",
+    "class": "strict",
+    "source": "zeta",
+    "rule_text": "Rule 1. Every assistant must report misuse.\nRule 2. Every assistant should report misuse. The exception to rule 2 is decided by \"assistant\".",
+    "lean_answer": {
+      "question": "strict",
+      "valid": true
+    },
+    "rendered": {
+      "long": [
+        "{\n  \"question\": \"strict\",\n  \"valid\": true\n}"
+      ]
+    },
+    "expected": "no",
+    "render_commit": "795e003bdb3bf6a6c8178c78ff9e16e478116ac7",
+    "render_command": "uv run python docs/defeasible/df-e1/prepare.py --items"
+  },
+  {
+    "id": "S07",
+    "class": "strict",
+    "source": "zeta",
+    "rule_text": "Rule 1. Every assistant must inspect records.\nRule 2. Every assistant should inspect records. The exception to rule 2 is decided by \"assistant\".",
+    "lean_answer": {
+      "question": "strict",
+      "valid": true
+    },
+    "rendered": {
+      "long": [
+        "{\n  \"question\": \"strict\",\n  \"valid\": true\n}"
+      ]
+    },
+    "expected": "no",
+    "render_commit": "795e003bdb3bf6a6c8178c78ff9e16e478116ac7",
+    "render_command": "uv run python docs/defeasible/df-e1/prepare.py --items"
+  },
+  {
+    "id": "S08",
+    "class": "strict",
+    "source": "zeta",
+    "rule_text": "Rule 1. Every assistant must notify users.\nRule 2. Every assistant should notify users. The exception to rule 2 is decided by \"assistant\".",
+    "lean_answer": {
+      "question": "strict",
+      "valid": true
+    },
+    "rendered": {
+      "long": [
+        "{\n  \"question\": \"strict\",\n  \"valid\": true\n}"
+      ]
+    },
+    "expected": "no",
+    "render_commit": "795e003bdb3bf6a6c8178c78ff9e16e478116ac7",
+    "render_command": "uv run python docs/defeasible/df-e1/prepare.py --items"
+  },
+  {
+    "id": "S09",
+    "class": "strict",
+    "source": "zeta",
+    "rule_text": "Rule 1. Every assistant must protect data.\nRule 2. Every assistant should protect data. The exception to rule 2 is decided by \"assistant\".",
+    "lean_answer": {
+      "question": "strict",
+      "valid": true
+    },
+    "rendered": {
+      "long": [
+        "{\n  \"question\": \"strict\",\n  \"valid\": true\n}"
+      ]
+    },
+    "expected": "no",
+    "render_commit": "795e003bdb3bf6a6c8178c78ff9e16e478116ac7",
+    "render_command": "uv run python docs/defeasible/df-e1/prepare.py --items"
+  },
+  {
+    "id": "S10",
+    "class": "strict",
+    "source": "zeta",
+    "rule_text": "Rule 1. Every assistant must log access.\nRule 2. Every assistant should log access. The exception to rule 2 is decided by \"assistant\".",
+    "lean_answer": {
+      "question": "strict",
+      "valid": true
+    },
+    "rendered": {
+      "long": [
+        "{\n  \"question\": \"strict\",\n  \"valid\": true\n}"
+      ]
+    },
+    "expected": "no",
+    "render_commit": "795e003bdb3bf6a6c8178c78ff9e16e478116ac7",
+    "render_command": "uv run python docs/defeasible/df-e1/prepare.py --items"
+  },
+  {
+    "id": "S11",
+    "class": "strict",
+    "source": "zeta",
+    "rule_text": "Rule 1. Every assistant must verify sources.\nRule 2. Every assistant should verify sources. The exception to rule 2 is decided by \"assistant\".",
+    "lean_answer": {
+      "question": "strict",
+      "valid": true
+    },
+    "rendered": {
+      "long": [
+        "{\n  \"question\": \"strict\",\n  \"valid\": true\n}"
+      ]
+    },
+    "expected": "no",
+    "render_commit": "795e003bdb3bf6a6c8178c78ff9e16e478116ac7",
+    "render_command": "uv run python docs/defeasible/df-e1/prepare.py --items"
+  },
+  {
+    "id": "S12",
+    "class": "strict",
+    "source": "zeta",
+    "rule_text": "Rule 1. Every assistant must escalate alerts.\nRule 2. Every assistant should escalate alerts. The exception to rule 2 is decided by \"assistant\".",
+    "lean_answer": {
+      "question": "strict",
+      "valid": true
+    },
+    "rendered": {
+      "long": [
+        "{\n  \"question\": \"strict\",\n  \"valid\": true\n}"
+      ]
+    },
+    "expected": "no",
+    "render_commit": "795e003bdb3bf6a6c8178c78ff9e16e478116ac7",
+    "render_command": "uv run python docs/defeasible/df-e1/prepare.py --items"
+  }
+]

@@ -1,0 +1,12 @@
+# uv run python /tmp/shardprobe/probe.py 2  (tree 0bd499568 + this branch; tools/gate.py collection_command, gate_shards.plan/share, N=2)
+
+full collected 30334 selected 30333 collected==selected order False
+share 1 12147 files 249 first files ['tests/test_acts_lexical_mutants.py', 'tests/test_acts_tree_mutants.py', 'tests/test_admission_evidence.py', 'tests/test_agent_policy.py', 'tests/test_agent_policy_level.py']
+share 2 18186 files 249 first files ['tests/test_acts_lexical.py', 'tests/test_acts_profile.py', 'tests/test_acts_vocab_mutants.py', 'tests/test_alternatives_fill.py', 'tests/test_answer_cutoff.py']
+share 2 len 18186 selected 18186 same set True same list False
+first diff at 2 
+ share: tests/test_acts_lexical.py::test_without_acts_a_plain_act_or_a_form_is_refused_as_today[permission-form] 
+ coll : tests/test_acts_lexical.py::test_without_acts_a_plain_act_or_a_form_is_refused_as_today[plain-act-and-form]
+file order equal True
+full run selected == sorted: False
+share 2 in the full run's order == the files' explicit collection order: True

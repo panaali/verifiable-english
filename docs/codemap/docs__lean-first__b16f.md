@@ -1,0 +1,6 @@
+- `docs/lean-first/b16f/cpu.py` — CPU of `ve document check` and `ve document render` on batch 16f's pilots, the base checkout against the head.
+- `docs/lean-first/b16f/make_ab.py` — Compare the complete nine-corpus recordings of the merge base and the batch head, and save an exact delta.
+- `docs/lean-first/b16f/measure.py` — Measure batch 16f's residues: the rows of the committed 16c ledger that batches 16d and 16e did not take.
+- `docs/lean-first/b16f/report.py` — Render batch 16f metrics from committed evidence only (architecture decision D4: saved evidence, checked at the batch gate and by the merge train; no live git …
+- `docs/lean-first/b16f/seed_faults.py` — Temporarily plant each batch 16f fault, run the test meant to catch it, and save every result, caught or not.
+- `docs/lean-first/b16f/splice_recording.py` — Re-record named cases of a complete nine-corpus recording, and splice them in by key.
