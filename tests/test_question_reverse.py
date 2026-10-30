@@ -154,6 +154,15 @@ def test_the_group_documents_questions_read_through_lean(group):
     json.dumps(m)
 
 
+def test_a_reading_counts_only_with_the_sentences_formula(group):
+    path, env, words, texts = group
+    formulas = [r["ast"][0] for r in R.read_sentences(env, words, {}, texts)]
+    answer, _ = R.ask(env, words, {}, R.f1(texts[0]))
+    assert R.reads_with(answer, formulas[0])
+    assert not R.reads_with(answer, formulas[2]) and not R.reads_with(answer, None)
+    assert not R.reads_with({**answer, "status": "many"}, formulas[0])
+
+
 def test_the_candidate_limit_is_leans_on_both_sides(group):
     path, env, words, texts = group
     records = R.limit_records(path, env, words, {}, texts, repeat=1)
