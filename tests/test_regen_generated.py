@@ -154,6 +154,19 @@ def test_the_listing_names_every_entry_and_command():
     assert "write: python tools/lean_statements.py\n" in listing
 
 
+def test_advisory_check_warns_without_failing_and_strict_check_still_fails(monkeypatch, capsys):
+    advisory = R.Generated("codemap", ("docs/codemap/**",), None, ("stale",), advisory=True)
+    strict = R.Generated("strict", ("strict.txt",), None, ("stale",))
+    monkeypatch.setattr(R, "_run", lambda entry, command: 1)
+    assert R.check([advisory]) == ([], [])
+    assert "WARN: codemap is stale" in capsys.readouterr().out
+    assert R.check([strict]) == (["strict"], [])
+    assert "WARN" not in capsys.readouterr().out
+    monkeypatch.setattr(R, "GENERATED", (advisory,))
+    assert R.main(["--check", "--only", "codemap"]) == 0
+    assert "WARN: codemap is stale" in capsys.readouterr().out
+
+
 def test_owner_agrees_with_git_on_every_tracked_file():
     """git itself is the oracle of the attribute patterns: a tracked file has the driver exactly when an
     entry owns it."""
