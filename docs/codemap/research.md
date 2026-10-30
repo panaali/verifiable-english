@@ -1,0 +1,2 @@
+- `research/defeasible/baseline.py` — DF-0.3, the defeasible plan's baseline (docs/spec/defeasible-PLAN.md, DF-0 item 3; 0.2's DF-0.3 row).
+- `research/defeasible/baseline_cases.py` — DF-0.3's cases, without git or `ve`: P-1's questions and documents, the plan's expectations, and what counts as answered.

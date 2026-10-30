@@ -1,0 +1,3 @@
+- `docs/lean-first/b11b/latency.py` — Same-host W2 caller timing against the frozen pre-switch Python path.
+- `docs/lean-first/b11b/report.py` — Regenerate the numerical part of batch 11b's report from gate evidence.
+- `docs/lean-first/b11b/speech_availability.py` — Record the three W2 record kinds newly reachable through the public speech caller.

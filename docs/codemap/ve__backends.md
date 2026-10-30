@@ -1,0 +1,16 @@
+- `ve/backends/__init__.py` — Checker backends (docs/spec/SEMANTICS-MIGRATION-PLAN.md, stages 1 and 2).
+- `ve/backends/diagnostics.py` — Diagnostics of the checker that sends no code: the Rust JSONL checker.
+- `ve/backends/dispatch.py` — The single owner of every dispatched operation (docs/LEAN-FIRST-PLAN.md, rules 1 to 4).
+- `ve/backends/english_lean.py` — E2's Lean-authoritative English reader and its untrusted response boundary.
+- `ve/backends/lean.py` — Manifest-bound Lean calls with operational failures kept out of verdicts.
+- `ve/backends/lean_runner.py` — The cases public adapters send to the Lean service; `relay.decide` sends them.
+- `ve/backends/lean_service.py` — Supervisor and client for the persistent Lean service `ve_service`.
+- `ve/backends/process_limits.py` — Memory backstops for the checker processes VE starts.
+- `ve/backends/relay.py` — The one Python entry to Lean's decisions (docs/LEAN-FIRST-PLAN.md, rule 2, batches 0 and 1).
+- `ve/backends/rust_jsonl.py` — Bounded client for Rust's JSON-lines evaluator and searcher.
+- `ve/backends/senses.py` — Admission through the Lean senses reader.
+- `ve/backends/service_schema.py` — Compiled validators for the Lean service response schemas.
+- `ve/backends/shape_binding.py` — The generic binding checker: what the Lean shapes bind in an answer, leaf by leaf (ADR 0001).
+- `ve/backends/soft_relay.py` — Lean's soft route at the Python boundary.
+- `ve/backends/speech_source.py` — Bound transport for the Lean speech-source route.
+- `ve/backends/validation.py` — Lean decides environment and model validity; Python builds accepted containers.
