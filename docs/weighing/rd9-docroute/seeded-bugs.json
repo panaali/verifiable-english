@@ -1,0 +1,46 @@
+{
+  "mutants": [
+    {
+      "file": "ve/document/report.py",
+      "mutation": "Omit Lean's filled norm layers from the premise set",
+      "failing_test": "tests/test_rd9_docroute.py::test_filled_soft_premises_make_a_contradiction_vacuous",
+      "observed": "model != INCONSISTENT",
+      "restored": true
+    },
+    {
+      "file": "ve/softnorms.py",
+      "mutation": "Retain instruction_of in the shared base predicate projection",
+      "failing_test": "tests/test_rd9_docroute.py::test_filled_soft_source_instruction_declarations_match_lean_base",
+      "observed": "both readings variants raised CheckerUnavailable: filled soft vocabulary collides with source",
+      "restored": true
+    },
+    {
+      "file": "ve/document/report.py",
+      "mutation": "Pass no active reading sets to free norm selection, retaining a replaced strict norm",
+      "failing_test": "tests/test_rd9_docroute.py::test_filled_soft_premises_exclude_norm_replaced_by_assertion_reading[authored]",
+      "observed": "INCONSISTENT != model",
+      "restored": true
+    },
+    {
+      "file": "ve/document/report.py",
+      "mutation": "Pass raw metadata units instead of compiled units to free norm selection",
+      "failing_test": "tests/test_rd9_docroute.py::test_filled_soft_report_selects_compiled_units",
+      "observed": "three of four variants failed: KeyError content for omitted content and KeyError kind for MIXED container",
+      "restored": true
+    },
+    {
+      "file": "ve/document/containers.py",
+      "mutation": "Read only top-level units in `_soft_contents` (no `_parts_prefix`), dropping a MIXED unit's norm parts",
+      "failing_test": "tests/test_rd9_docroute.py::test_mixed_container_keeps_soft_decisions[filled]",
+      "observed": "6 of 7 F7 regressions failed: both chains lost soft__excepted__s ([] != ['soft__excepted__s']) and the mixed, short-parent, misplaced-part and non-object soft-source cases differed",
+      "restored": true
+    },
+    {
+      "file": "lean/VE/Service/Document.lean",
+      "mutation": "Read only top-level units in `softSourceNorms` (no `partsPrefix`)",
+      "failing_test": "lean/VE/Service/SoftSourceExamples.lean #guard lines 24, 26, 28 and 30 (lake build VE.Service.SoftSourceExamples)",
+      "observed": "lake build failed: four #guard expressions evaluated to false",
+      "restored": true
+    }
+  ]
+}

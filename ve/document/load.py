@@ -14,7 +14,7 @@ from ..identity import meaning_id, source_id
 from ..openterms import validate_open_terms
 from ..readings import active_reading_sets, validate_couplings, validate_narrowings, validate_reading_sets
 from .source import (STATUSES, SUPPORTS, _RIGHTS_KINDS, _document_id, _english_fences, _environment,
-                     _no_lone_surrogate, _parts, _split, base_environment)
+                     _no_lone_surrogate, _parts, _parts_prefix, _split, base_environment)
 from .containers import (_content_environment, _defaults_environment, _free_norms, _in_rights_source, _reading_plan,
                          _readings_routes, _rights_units, _s1_attached, _soft_contents, _wire_unit)
 from .lean import _lean_answer, _lean_document
@@ -236,16 +236,10 @@ def _load_document(raw: bytes, path: str | Path, lean):
     rule_results = {}
     if soft_enabled:
         from ..softnorms import check_rule_batch
-        authored = []
-        try:
-            for raw, _ in _parts(units):
-                content = raw.get("content")
-                if type(content) is dict and "norm" in content:
-                    authored.append((raw, {"norm": content["norm"]}))
-        except VEError:
-            # The ordinary unit loop below reports this structural fault in
-            # source order, after any earlier per-rule Lean outcome.
-            pass
+        # The ordinary unit loop below reports a structural fault in source
+        # order, after any earlier per-rule Lean outcome.
+        authored = [(raw, {"norm": raw["content"]["norm"]}) for raw in _parts_prefix(units)
+                    if type(raw.get("content")) is dict and "norm" in raw["content"]]
         if authored:
             outcomes = check_rule_batch(formula_env, (content for _, content in authored))
             rule_results = {id(raw): outcome for (raw, _), outcome in zip(authored, outcomes, strict=True)}
