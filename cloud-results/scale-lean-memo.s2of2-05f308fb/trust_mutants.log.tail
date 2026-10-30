@@ -1,0 +1,3 @@
+trust_mutants: 14 definitions, 138 mutants (69 to run), 4 jobs, base a0b559a9c1fc
+trust_mutants: 57 KILLED, 0 SURVIVOR, 0 UNKNOWN, 3 INVALID, 9 ALLOWED, 0 NOT RUN, 69 OTHER SHARD in 3344 s
+trust_mutants: G[V], trusted: 57 KILLED, 3 INVALID, 9 ALLOWED, 69 OTHER SHARD
