@@ -1,50 +1,10 @@
 [
-  {
-    "file": "tools/lean_statements.py",
-    "mutation": "The accessor falls back to the committed copy for a changed module",
-    "test": "tests/test_inventory_path.py::test_a_changed_module_with_no_overlay_is_a_stale_error_naming_it",
-    "observed": "failed (exit 1); mutation removed"
-  },
-  {
-    "file": "tools/lean_statements.py",
-    "mutation": "An overlay copy is fresh whatever tree its stamp records",
-    "test": "tests/test_inventory_path.py::test_a_fresh_overlay_is_read_and_a_stale_one_is_an_error",
-    "observed": "failed (exit 1); mutation removed"
-  },
-  {
-    "file": "tools/lean_statements.py",
-    "mutation": "An unknown VE_INVENTORY value writes the committed path",
-    "test": "tests/test_inventory_path.py::test_writers_write_the_committed_path_unless_the_overlay_is_asked_for",
-    "observed": "failed (exit 1); mutation removed"
-  },
-  {
-    "file": "tools/trust_map.py",
-    "mutation": "scan_tree hashes the committed manifest, not the accessor's copy",
-    "test": "tests/test_inventory_path.py::test_scan_tree_hashes_the_manifest_copy_the_accessor_gives",
-    "observed": "failed (exit 1); mutation removed"
-  },
-  {
-    "file": "tools/trust_map.py",
-    "mutation": "read_tree reads the committed predicate list",
-    "test": "tests/test_inventory_path.py::test_scan_tree_hashes_the_manifest_copy_the_accessor_gives",
-    "observed": "failed (exit 1); mutation removed"
-  },
-  {
-    "file": "ve/backends/lean_service.py",
-    "mutation": "The service client reads the committed pins directly",
-    "test": "tests/test_inventory_path.py::test_the_service_client_reads_its_pins_through_the_accessor",
-    "observed": "failed (exit 1); mutation removed"
-  },
-  {
-    "file": "tools/regen_generated.py",
-    "mutation": "The assurance doc loses its train-only mark",
-    "test": "tests/test_inventory_path.py::test_the_registry_names_exactly_the_train_only_files",
-    "observed": "failed (exit 1); mutation removed"
-  },
-  {
-    "file": "lean/audit.py",
-    "mutation": "The audit reads the committed declaration list itself",
-    "test": "tests/test_inventory_path.py::test_no_train_only_path_is_read_outside_the_accessor",
-    "observed": "failed (exit 1); mutation removed"
-  }
+  {"file": "tools/lean_statements.py", "mutation": "The accessor falls back to the committed copy for a changed module", "test": "tests/test_inventory_path.py::test_a_changed_module_with_no_overlay_is_a_stale_error_naming_it", "observed": "failed (exit 1); mutation removed"},
+  {"file": "tools/lean_statements.py", "mutation": "An overlay copy is fresh whatever tree its stamp records", "test": "tests/test_inventory_path.py::test_a_fresh_overlay_is_read_and_a_stale_one_is_an_error", "observed": "failed (exit 1); mutation removed"},
+  {"file": "tools/lean_statements.py", "mutation": "An unknown VE_INVENTORY value writes the committed path", "test": "tests/test_inventory_path.py::test_writers_write_the_committed_path_unless_the_overlay_is_asked_for", "observed": "failed (exit 1); mutation removed"},
+  {"file": "tools/trust_map.py", "mutation": "scan_tree hashes the committed manifest, not the accessor's copy", "test": "tests/test_inventory_path.py::test_scan_tree_hashes_the_manifest_copy_the_accessor_gives", "observed": "failed (exit 1); mutation removed"},
+  {"file": "tools/trust_map.py", "mutation": "read_tree reads the committed predicate list", "test": "tests/test_inventory_path.py::test_scan_tree_hashes_the_manifest_copy_the_accessor_gives", "observed": "failed (exit 1); mutation removed"},
+  {"file": "ve/backends/lean_service.py", "mutation": "The service client reads the committed pins directly", "test": "tests/test_inventory_path.py::test_the_service_client_reads_its_pins_through_the_accessor", "observed": "failed (exit 1); mutation removed"},
+  {"file": "tools/regen_generated.py", "mutation": "The assurance doc loses its train-only mark", "test": "tests/test_inventory_path.py::test_the_registry_names_exactly_the_train_only_files", "observed": "failed (exit 1); mutation removed"},
+  {"file": "lean/audit.py", "mutation": "The audit reads the committed declaration list itself", "test": "tests/test_inventory_path.py::test_no_train_only_path_is_read_outside_the_accessor", "observed": "failed (exit 1); mutation removed"}
 ]
