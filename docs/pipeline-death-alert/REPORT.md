@@ -1,6 +1,6 @@
 # pipeline-death-alert (2026-10-30): a dead design pipeline alerts; no pipeline under 16G; stage 1 names DRI-CROSSPLAN.md
 
-Status: built and installed in manage-agents (not a git repository); this branch carries only this report. 16 new stub-harness tests pass; 10 seeded bugs are each caught.
+Status: built and installed in manage-agents (not a git repository); this branch carries only this report. 16 new stub-harness tests pass; 16 seeded bugs are each caught (S11-S16 and the F1 fix: see Review fixes).
 Signature: none needed. There is no VE product code, no DELTA row and no Ruling cell.
 For the DRI: en-e3-norm and imprecise-dates sit in the late-synthesis hold inside 10G scopes. They still run the old feature-pipeline.sh, which their zsh holds open, so the new guard does not cover them. Before `rm <n>-pipeline-state/hold`, raise their caps (`systemctl --user set-property ve-research-en-e3-norm-1793270108.scope MemoryMax=32G`, and the same for ve-research-imprecise-dates-1793272546.scope) or relaunch them. If they die in stage 1 anyway, the new alert reports it. This item did not touch either running job.
 
@@ -37,7 +37,7 @@ Every edited file went through `.new`, then `zsh -n` or `py_compile` and a line-
 | Without --write: printed, nothing written | test_without_write_it_prints_and_writes_nothing |
 | hedges-generics, attitudes, risk, commands-imperatives, apol-assent, action-assurance, each finished since: silent | test_old_failures_that_finished_since_stay_silent |
 | apol-assent 01:24Z replay: a stop final older than the scope does not silence it | test_a_final_older_than_the_scope_does_not_count |
-| A later scope (active resume, or a later failed run) or a live process: silent | test_a_restarted_pipeline_stays_silent |
+| A later scope (active resume, a later failed run, a later clean exit), an earlier scope still active, or a live process: silent, each step by its own cause alone (the same sandbox alerts once that cause is removed) | test_a_restarted_pipeline_stays_silent |
 | Two dead runs: the newest alerted once | test_two_dead_runs_alert_the_newest_once |
 | elanbin, freeze-mover, design-hold-end, an active research scope: ignored | test_other_scopes_are_ignored |
 | Names from revise, refresh (env prefix), stage1-resume, design-item, leanrun, research2 scope name | test_pipeline_names_from_each_launcher |
@@ -65,6 +65,12 @@ Each bug was planted in a temp copy and run against the one test below; each run
 | S8 | checkin-scan.py | detector also run with --mark | test_checkin_scan_reports_the_new_stop_final_and_mark_writes_none |
 | S9 | tools-local/pipeline-death-alert.py | state file not read | test_oom_killed_design_pipeline_gets_a_stop_final_once |
 | S10 | checkin-scan.py | detector's exit code ignored | test_checkin_scan_reports_a_detector_crash |
+| S11 | tools-local/pipeline-death-alert.py | live-process check off (` or n in live` deleted; review F1) | test_a_restarted_pipeline_stays_silent |
+| S12 | tools-local/pipeline-death-alert.py | restart check: later start ignored (only an active scope counts) | test_a_restarted_pipeline_stays_silent |
+| S13 | tools-local/pipeline-death-alert.py | restart check: an active scope ignored (only a later start counts) | test_a_restarted_pipeline_stays_silent |
+| S14 | tools-local/pipeline-death-alert.py | failed-state filter off | test_other_scopes_are_ignored |
+| S15 | tools-local/pipeline-death-alert.py | ending-final check off | test_old_failures_that_finished_since_stay_silent |
+| S16 | tools-local/pipeline-death-alert.py | alerted-unit check off | test_oom_killed_design_pipeline_gets_a_stop_final_once |
 
 Languages: the changed code is Python (pipeline-death-alert.py, checkin-scan.py) and zsh (feature-pipeline.sh, launchers). There is no Lean or Rust.
 
@@ -72,7 +78,7 @@ Languages: the changed code is Python (pipeline-death-alert.py, checkin-scan.py)
 
 1. Lean answers typed: N.A., no relayed answer.
 2. Deliverables: PASS. Items 1-3, the install rule, the CURRENT-STATE line and the backlog status are covered by the tests above.
-3. Tests can fail: PASS, S1-S10; test_a_4g_scope_is_refused_before_anything_runs.
+3. Tests can fail: PASS, S1-S16; test_a_4g_scope_is_refused_before_anything_runs.
 4. Python/Lean/Rust agree: N.A., no VE path. Old and new prompt are compared by test_stage_1_without_crossplan_applies_the_converged_edits_as_edits.
 5. R8 binding: PASS for the tool's own input: unknown scopes are ignored (test_other_scopes_are_ignored).
 6. Gate evidence: N.A. for the builder; the chain gates the final HEAD.
@@ -84,3 +90,11 @@ Languages: the changed code is Python (pipeline-death-alert.py, checkin-scan.py)
 12. CPU/memory: N.A. One systemctl call per check-in; the 16 tests take about 3 s.
 13. Test-removed trailers: N.A., no test removed or renamed.
 14. Both directions, cited evidence, spec re-read: PASS. test_without_the_state_file_the_same_unit_is_raised_again, test_16g_32g_and_no_cap_run_stage_1; task and decision re-read before finishing.
+
+## Review fixes (pipeline-death-alert-review.final.md)
+
+**F1 (B): the live-process step of test_a_restarted_pipeline_stays_silent could not fail.** Its loop ran `--write`; the second pass alerted on the failed `p1-apol-flow` scope and left `apol-flow-pipeline-stop.final.md`, which then silenced the live-process step whether or not the check existed. Class: a silence assertion that passes for a cause other than the one it claims, because an earlier step's output (a stop final or a state record) or another silencer also holds. Fix (in manage-agents/tools-local/test_pipeline_death_alert.py, backup `.bak-20261030-pda-f1`): one helper, `Detector.silent_until(undo, about)`. It refuses to start when an earlier step alerted with `--write` (state file present), runs without `--write` so a step leaves nothing behind, asserts the alert is absent and no file appeared, then removes the one silencing cause and asserts the same sandbox raises the alert. Every silence test of the detector uses it: each restart step (a later active resume, a later failed run, a later clean exit, an earlier scope still active), the live process, each of the six finished pipelines (each silenced by its own final alone) and the active en-e3-norm scope. A final `--write` on the live-process sandbox alone checks that nothing is written. The two new restart cases separate the two restart sub-conditions, which the old cases masked (the newest dead run wins anyway, and the active resume was also later).
+
+Probe F1 exits 1 before the fix and 0 after. Mutants S11-S16 above (each silencing condition of `dead()` removed in a temp copy, run with `PDA_SCRIPT`) each fail a Detector test; before the fix S11, S12 and S13 survived. `python3 -I tools-local/test_pipeline_death_alert.py`: `Ran 16 tests ... OK`. The detector itself is unchanged.
+
+Follow-ups F2-F4 (C) are not in this item.
