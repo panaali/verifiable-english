@@ -1,0 +1,580 @@
+{
+ "item": "sc-1af",
+ "harness": "each mutation applied alone to the committed source, `lake build <built>`, restored; proofs_stubbed: balanced?_sound and the mutual jsonWF?_sound block replaced by `sorry` so the #guards run (the same mutant also breaks jsonWF?_sound as written)",
+ "mutants": [
+  {
+   "name": "decodeBlock: the boundary call removed",
+   "file": "lean/VE/Scope/Wire.lean",
+   "mutation": {
+    "from": "  if let some p := illFormed front then throw (wireFault p \"a well-formed JSON tree\")\n",
+    "to": ""
+   },
+   "proofs_stubbed": false,
+   "built": [
+    "VE.Scope.WireExamples"
+   ],
+   "test": "lean/VE/Scope/WireExamples.lean:165 #guard",
+   "killed": true
+  },
+  {
+   "name": "jsonWF?: true on objects",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "  | .obj ⟨⟨t⟩⟩ => balanced? t && ascending (t.toListModel.map (·.1)) && implWF? t\n",
+    "to": "  | .obj ⟨⟨t⟩⟩ => true\n"
+   },
+   "proofs_stubbed": true,
+   "built": [
+    "VE.Scope.Examples"
+   ],
+   "test": "lean/VE/Scope/Examples.lean:760 #guard",
+   "killed": true
+  },
+  {
+   "name": "jsonWF?: objects skip the key order",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "  | .obj ⟨⟨t⟩⟩ => balanced? t && ascending (t.toListModel.map (·.1)) && implWF? t\n",
+    "to": "  | .obj ⟨⟨t⟩⟩ => balanced? t && implWF? t\n"
+   },
+   "proofs_stubbed": true,
+   "built": [
+    "VE.Scope.Examples"
+   ],
+   "test": "lean/VE/Scope/Examples.lean:780 #guard",
+   "killed": true
+  },
+  {
+   "name": "jsonWF?: objects skip the balance",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "  | .obj ⟨⟨t⟩⟩ => balanced? t && ascending (t.toListModel.map (·.1)) && implWF? t\n",
+    "to": "  | .obj ⟨⟨t⟩⟩ => ascending (t.toListModel.map (·.1)) && implWF? t\n"
+   },
+   "proofs_stubbed": true,
+   "built": [
+    "VE.Scope.Examples"
+   ],
+   "test": "lean/VE/Scope/Examples.lean:760 #guard",
+   "killed": true
+  },
+  {
+   "name": "jsonWF?: objects skip their values",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "  | .obj ⟨⟨t⟩⟩ => balanced? t && ascending (t.toListModel.map (·.1)) && implWF? t\n",
+    "to": "  | .obj ⟨⟨t⟩⟩ => balanced? t && ascending (t.toListModel.map (·.1))\n"
+   },
+   "proofs_stubbed": true,
+   "built": [
+    "VE.Scope.Examples"
+   ],
+   "test": "lean/VE/Scope/Examples.lean:760 #guard",
+   "killed": true
+  },
+  {
+   "name": "jsonWF?: true on arrays",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "  | .arr ⟨xs⟩ => listWF? xs\n",
+    "to": "  | .arr ⟨xs⟩ => true\n"
+   },
+   "proofs_stubbed": true,
+   "built": [
+    "VE.Scope.Examples"
+   ],
+   "test": "lean/VE/Scope/Examples.lean:760 #guard",
+   "killed": true
+  },
+  {
+   "name": "jsonWF?: false on null",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "  | .null => true\n",
+    "to": "  | .null => false\n"
+   },
+   "proofs_stubbed": true,
+   "built": [
+    "VE.Scope.Examples"
+   ],
+   "test": "lean/VE/Scope/Examples.lean:761 #guard",
+   "killed": true
+  },
+  {
+   "name": "jsonWF?: false on bool",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "  | .bool _ => true\n",
+    "to": "  | .bool _ => false\n"
+   },
+   "proofs_stubbed": true,
+   "built": [
+    "VE.Scope.Examples"
+   ],
+   "test": "lean/VE/Scope/Examples.lean:761 #guard",
+   "killed": true
+  },
+  {
+   "name": "jsonWF?: false on num",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "  | .num _ => true\n",
+    "to": "  | .num _ => false\n"
+   },
+   "proofs_stubbed": true,
+   "built": [
+    "VE.Scope.Examples"
+   ],
+   "test": "lean/VE/Scope/Examples.lean:761 #guard",
+   "killed": true
+  },
+  {
+   "name": "jsonWF?: false on str",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "  | .str _ => true\n",
+    "to": "  | .str _ => false\n"
+   },
+   "proofs_stubbed": true,
+   "built": [
+    "VE.Scope.Examples"
+   ],
+   "test": "lean/VE/Scope/Examples.lean:761 #guard",
+   "killed": true
+  },
+  {
+   "name": "listWF?: false on []",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "  | [] => true\n  | x :: xs => jsonWF? x && listWF? xs\n",
+    "to": "  | [] => false\n  | x :: xs => jsonWF? x && listWF? xs\n"
+   },
+   "proofs_stubbed": true,
+   "built": [
+    "VE.Scope.Examples"
+   ],
+   "test": "lean/VE/Scope/Examples.lean:761 #guard",
+   "killed": true
+  },
+  {
+   "name": "listWF?: skips the rest",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "  | x :: xs => jsonWF? x && listWF? xs\n",
+    "to": "  | x :: xs => jsonWF? x\n"
+   },
+   "proofs_stubbed": true,
+   "built": [
+    "VE.Scope.Examples"
+   ],
+   "test": "lean/VE/Scope/Examples.lean:760 #guard",
+   "killed": true
+  },
+  {
+   "name": "listWF?: skips the head",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "  | x :: xs => jsonWF? x && listWF? xs\n",
+    "to": "  | x :: xs => listWF? xs\n"
+   },
+   "proofs_stubbed": true,
+   "built": [
+    "VE.Scope.Examples"
+   ],
+   "test": "lean/VE/Scope/Examples.lean:760 #guard",
+   "killed": true
+  },
+  {
+   "name": "implWF?: false on leaf",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "  | .leaf => true\n  | .inner _ _ v l r => implWF? l",
+    "to": "  | .leaf => false\n  | .inner _ _ v l r => implWF? l"
+   },
+   "proofs_stubbed": true,
+   "built": [
+    "VE.Scope.Examples"
+   ],
+   "test": "lean/VE/Scope/Examples.lean:761 #guard",
+   "killed": true
+  },
+  {
+   "name": "implWF?: skips the left",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "implWF? l && jsonWF? v && implWF? r\n",
+    "to": "jsonWF? v && implWF? r\n"
+   },
+   "proofs_stubbed": true,
+   "built": [
+    "VE.Scope.Examples"
+   ],
+   "test": "lean/VE/Scope/Examples.lean:783 #guard",
+   "killed": true
+  },
+  {
+   "name": "implWF?: skips the root value",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "implWF? l && jsonWF? v && implWF? r\n",
+    "to": "implWF? l && implWF? r\n"
+   },
+   "proofs_stubbed": true,
+   "built": [
+    "VE.Scope.Examples"
+   ],
+   "test": "lean/VE/Scope/Examples.lean:760 #guard",
+   "killed": true
+  },
+  {
+   "name": "implWF?: skips the right",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "implWF? l && jsonWF? v && implWF? r\n",
+    "to": "implWF? l && jsonWF? v\n"
+   },
+   "proofs_stubbed": true,
+   "built": [
+    "VE.Scope.Examples"
+   ],
+   "test": "lean/VE/Scope/Examples.lean:783 #guard",
+   "killed": true
+  },
+  {
+   "name": "ascending: a repeated key passes",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "compare a b == .lt && ascending",
+    "to": "compare a b != .gt && ascending"
+   },
+   "proofs_stubbed": true,
+   "built": [
+    "VE.Scope.Examples"
+   ],
+   "test": "lean/VE/Scope/Examples.lean:780 #guard",
+   "killed": true
+  },
+  {
+   "name": "ascending: only the first pair",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "compare a b == .lt && ascending (b :: rest)",
+    "to": "compare a b == .lt"
+   },
+   "proofs_stubbed": true,
+   "built": [
+    "VE.Scope.Examples"
+   ],
+   "test": "lean/VE/Scope/Examples.lean:780 #guard",
+   "killed": true
+  },
+  {
+   "name": "ascending: false on one key",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "  | a :: b :: rest => compare a b == .lt && ascending (b :: rest)\n  | _ => true\n",
+    "to": "  | a :: b :: rest => compare a b == .lt && ascending (b :: rest)\n  | _ => false\n"
+   },
+   "proofs_stubbed": true,
+   "built": [
+    "VE.Scope.Examples"
+   ],
+   "test": "lean/VE/Scope/Examples.lean:761 #guard",
+   "killed": true
+  },
+  {
+   "name": "balanced?: skips the left",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "balanced? l && balanced? r &&",
+    "to": "balanced? r &&"
+   },
+   "proofs_stubbed": true,
+   "built": [
+    "VE.Scope.Examples"
+   ],
+   "test": "lean/VE/Scope/Examples.lean:772 #guard",
+   "killed": true
+  },
+  {
+   "name": "balanced?: skips the right",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "balanced? l && balanced? r &&",
+    "to": "balanced? l &&"
+   },
+   "proofs_stubbed": true,
+   "built": [
+    "VE.Scope.Examples"
+   ],
+   "test": "lean/VE/Scope/Examples.lean:772 #guard",
+   "killed": true
+  },
+  {
+   "name": "balanced?: skips the stored size",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "(l.size + r.size ≤ 1 || l.size ≤ delta * r.size && r.size ≤ delta * l.size) && sz == l.size + 1 + r.size",
+    "to": "(l.size + r.size ≤ 1 || l.size ≤ delta * r.size && r.size ≤ delta * l.size)"
+   },
+   "proofs_stubbed": true,
+   "built": [
+    "VE.Scope.Examples"
+   ],
+   "test": "lean/VE/Scope/Examples.lean:772 #guard",
+   "killed": true
+  },
+  {
+   "name": "balanced?: two against none passes",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "(l.size + r.size ≤ 1 || l.size ≤ delta * r.size && r.size ≤ delta * l.size) && sz == l.size + 1 + r.size",
+    "to": "(l.size + r.size ≤ 2 || l.size ≤ delta * r.size && r.size ≤ delta * l.size) && sz == l.size + 1 + r.size"
+   },
+   "proofs_stubbed": true,
+   "built": [
+    "VE.Scope.Examples"
+   ],
+   "test": "lean/VE/Scope/Examples.lean:772 #guard",
+   "killed": true
+  },
+  {
+   "name": "balanced?: skips the left ratio",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "(l.size + r.size ≤ 1 || l.size ≤ delta * r.size && r.size ≤ delta * l.size) && sz == l.size + 1 + r.size",
+    "to": "(l.size + r.size ≤ 1 || r.size ≤ delta * l.size) && sz == l.size + 1 + r.size"
+   },
+   "proofs_stubbed": true,
+   "built": [
+    "VE.Scope.Examples"
+   ],
+   "test": "lean/VE/Scope/Examples.lean:772 #guard",
+   "killed": true
+  },
+  {
+   "name": "balanced?: skips the right ratio",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "(l.size + r.size ≤ 1 || l.size ≤ delta * r.size && r.size ≤ delta * l.size) && sz == l.size + 1 + r.size",
+    "to": "(l.size + r.size ≤ 1 || l.size ≤ delta * r.size) && sz == l.size + 1 + r.size"
+   },
+   "proofs_stubbed": true,
+   "built": [
+    "VE.Scope.Examples"
+   ],
+   "test": "lean/VE/Scope/Examples.lean:772 #guard",
+   "killed": true
+  },
+  {
+   "name": "illFormed: the unit not named",
+   "file": "lean/VE/Scope/Wire.lean",
+   "mutation": {
+    "from": "if idOf u == \"\" then s!\"units[{i}]\" else s!\"units.{idOf u}\"",
+    "to": "\"document\""
+   },
+   "proofs_stubbed": false,
+   "built": [
+    "VE.Scope.WireExamples"
+   ],
+   "test": "lean/VE/Scope/WireExamples.lean:165 #guard",
+   "killed": true
+  },
+  {
+   "name": "illFormed: no index fallback",
+   "file": "lean/VE/Scope/Wire.lean",
+   "mutation": {
+    "from": "if idOf u == \"\" then s!\"units[{i}]\" else s!\"units.{idOf u}\"",
+    "to": "s!\"units.{idOf u}\""
+   },
+   "proofs_stubbed": false,
+   "built": [
+    "VE.Scope.WireExamples"
+   ],
+   "test": "lean/VE/Scope/WireExamples.lean:165 #guard",
+   "killed": true
+  },
+  {
+   "name": "illFormed: the scope block not named",
+   "file": "lean/VE/Scope/Wire.lean",
+   "mutation": {
+    "from": "then \"document\" else \"scope\"",
+    "to": "then \"document\" else \"document\""
+   },
+   "proofs_stubbed": false,
+   "built": [
+    "VE.Scope.WireExamples"
+   ],
+   "test": "lean/VE/Scope/WireExamples.lean:165 #guard",
+   "killed": true
+  },
+  {
+   "name": "JsonWF: constructor dropped: null",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "  | null : JsonWF .null\n",
+    "to": ""
+   },
+   "proofs_stubbed": false,
+   "built": [
+    "VE.Scope.Govern"
+   ],
+   "test": "lean/VE/Scope/Govern.lean:349 (build: Unknown constant `VE.Scope.JsonWF.null`)",
+   "killed": true
+  },
+  {
+   "name": "JsonWF: constructor dropped: bool",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "  | bool (b : Bool) : JsonWF (.bool b)\n",
+    "to": ""
+   },
+   "proofs_stubbed": false,
+   "built": [
+    "VE.Scope.Govern"
+   ],
+   "test": "lean/VE/Scope/Govern.lean:350 (build: Unknown constant `VE.Scope.JsonWF.bool`)",
+   "killed": true
+  },
+  {
+   "name": "JsonWF: constructor dropped: num",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "  | num (n : JsonNumber) : JsonWF (.num n)\n",
+    "to": ""
+   },
+   "proofs_stubbed": false,
+   "built": [
+    "VE.Scope.Govern"
+   ],
+   "test": "lean/VE/Scope/Govern.lean:351 (build: Unknown constant `VE.Scope.JsonWF.num`)",
+   "killed": true
+  },
+  {
+   "name": "JsonWF: constructor dropped: str",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "  | str (s : String) : JsonWF (.str s)\n",
+    "to": ""
+   },
+   "proofs_stubbed": false,
+   "built": [
+    "VE.Scope.Govern"
+   ],
+   "test": "lean/VE/Scope/Govern.lean:352 (build: Unknown constant `VE.Scope.JsonWF.str`)",
+   "killed": true
+  },
+  {
+   "name": "JsonWF: constructor dropped: arr",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "  | arr (xs : Array Json) : (∀ x ∈ xs, JsonWF x) → JsonWF (.arr xs)\n",
+    "to": ""
+   },
+   "proofs_stubbed": false,
+   "built": [
+    "VE.Scope.Govern"
+   ],
+   "test": "lean/VE/Scope/Govern.lean:353 (build: Unknown constant `VE.Scope.JsonWF.arr`)",
+   "killed": true
+  },
+  {
+   "name": "JsonWF: constructor dropped: obj",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "  | obj (kvs : Std.TreeMap.Raw String Json) : kvs.WF → (∀ kv ∈ kvs.toList, JsonWF kv.2) → JsonWF (.obj kvs)\n",
+    "to": ""
+   },
+   "proofs_stubbed": false,
+   "built": [
+    "VE.Scope.Govern"
+   ],
+   "test": "lean/VE/Scope/Govern.lean:357 (build: Unknown constant `VE.Scope.JsonWF.obj`)",
+   "killed": true
+  },
+  {
+   "name": "jsonWF?: case dropped: .null",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "  | .null => true\n",
+    "to": ""
+   },
+   "proofs_stubbed": false,
+   "built": [
+    "VE.Scope.Govern"
+   ],
+   "test": "lean/VE/Scope/Govern.lean:311 (build: Missing cases:)",
+   "killed": true
+  },
+  {
+   "name": "jsonWF?: case dropped: .bool",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "  | .bool _ => true\n",
+    "to": ""
+   },
+   "proofs_stubbed": false,
+   "built": [
+    "VE.Scope.Govern"
+   ],
+   "test": "lean/VE/Scope/Govern.lean:311 (build: Missing cases:)",
+   "killed": true
+  },
+  {
+   "name": "jsonWF?: case dropped: .num",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "  | .num _ => true\n",
+    "to": ""
+   },
+   "proofs_stubbed": false,
+   "built": [
+    "VE.Scope.Govern"
+   ],
+   "test": "lean/VE/Scope/Govern.lean:311 (build: Missing cases:)",
+   "killed": true
+  },
+  {
+   "name": "jsonWF?: case dropped: .str",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "  | .str _ => true\n",
+    "to": ""
+   },
+   "proofs_stubbed": false,
+   "built": [
+    "VE.Scope.Govern"
+   ],
+   "test": "lean/VE/Scope/Govern.lean:311 (build: Missing cases:)",
+   "killed": true
+  },
+  {
+   "name": "jsonWF?: case dropped: .arr",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "  | .arr ⟨xs⟩ => listWF? xs\n",
+    "to": ""
+   },
+   "proofs_stubbed": false,
+   "built": [
+    "VE.Scope.Govern"
+   ],
+   "test": "lean/VE/Scope/Govern.lean:311 (build: Missing cases:)",
+   "killed": true
+  },
+  {
+   "name": "jsonWF?: case dropped: .obj",
+   "file": "lean/VE/Scope/Govern.lean",
+   "mutation": {
+    "from": "  | .obj ⟨⟨t⟩⟩ => balanced? t && ascending (t.toListModel.map (·.1)) && implWF? t\n",
+    "to": ""
+   },
+   "proofs_stubbed": false,
+   "built": [
+    "VE.Scope.Govern"
+   ],
+   "test": "lean/VE/Scope/Govern.lean:311 (build: Missing cases:)",
+   "killed": true
+  }
+ ]
+}
