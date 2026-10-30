@@ -30,6 +30,74 @@ structure Case where
   claims : List (String × Check)
   software : Option String
 
+/-- A check's sides under the values `τ`: a claim's expressions' values; a derivation has none here. -/
+def Check.sides (τ : String → Val) : Check → List Val
+  | .claim c => c.exprs.map (Expr.evalL τ)
+  | .follows .. => []
+
+/-- The checks' sides over the table, charged (3.2 (a), (b)): each claim's expressions once, in claim order. A
+derivation is charged nothing here: its lowering and search are 5's (me-2nc charges them). -/
+def Check.sidesC (limit : Nat) (t : Work.Table) : List Check → Nat → Option (List (List Val) × Nat)
+  | [], w => some ([], w)
+  | .claim c :: ks, w => (Work.Expr.evalsC limit t c.exprs w).bind fun (vs, w) =>
+      (Check.sidesC limit t ks w).map fun r => (vs :: r.1, r.2)
+  | .follows .. :: ks, w => (Check.sidesC limit t ks w).map fun r => ([] :: r.1, r.2)
+
+/-- The case's work within `limit` units (limit 10): the value table, then each check's sides. -/
+def Case.sidesC (limit : Nat) (c : Case) : Option (List (List Val) × Nat) :=
+  (Work.valueTableC limit c.decls [] 0).bind fun (t, w) => Check.sidesC limit t (c.claims.map (·.2)) w
+
+theorem Check.sidesC_some (limit : Nat) (t : Work.Table) (ks : List Check) (w : Nat) (vss : List (List Val)) (w' : Nat)
+    (hw : w ≤ limit) (h : Check.sidesC limit t ks w = some (vss, w')) :
+    vss = ks.map (Check.sides t.read) ∧ w ≤ w' ∧ w' ≤ limit := by
+  induction ks generalizing w vss with
+  | nil => cases h; exact ⟨rfl, by omega, hw⟩
+  | cons k ks ih =>
+    cases k with
+    | claim c =>
+      obtain ⟨⟨vs, w1⟩, hv, h⟩ := Option.bind_eq_some_iff.mp h
+      obtain ⟨⟨vss', w2⟩, hr, h⟩ := Option.map_eq_some_iff.mp h
+      cases h
+      obtain ⟨rfl, h1, h2⟩ := Work.Expr.evalsC_some _ _ _ _ _ _ hw hv
+      obtain ⟨rfl, h3, h4⟩ := ih _ _ h2 hr
+      exact ⟨rfl, by omega, h4⟩
+    | follows =>
+      obtain ⟨⟨vss', w2⟩, hr, h⟩ := Option.map_eq_some_iff.mp h
+      cases h
+      obtain ⟨rfl, h3, h4⟩ := ih _ _ hw hr
+      exact ⟨rfl, h3, h4⟩
+
+theorem Check.sidesC_mono {limit limit' : Nat} (t : Work.Table) (ks : List Check) (w : Nat)
+    (r : List (List Val) × Nat) (hl : limit ≤ limit') (h : Check.sidesC limit t ks w = some r) :
+    Check.sidesC limit' t ks w = some r := by
+  induction ks generalizing w r with
+  | nil => exact h
+  | cons k ks ih =>
+    cases k with
+    | claim c =>
+      obtain ⟨⟨vs, w1⟩, hv, h⟩ := Option.bind_eq_some_iff.mp h
+      obtain ⟨r', hr, rfl⟩ := Option.map_eq_some_iff.mp h
+      simp only [Check.sidesC, Work.Expr.evalsC_mono _ _ _ _ hl hv, Option.bind_some, ih _ _ hr, Option.map_some]
+    | follows =>
+      obtain ⟨r', hr, rfl⟩ := Option.map_eq_some_iff.mp h
+      simp only [Check.sidesC, ih _ _ hr, Option.map_some]
+
+/-- Within its limit, the case's sides are 2.4's values, read from the table. -/
+theorem Case.sidesC_some (limit : Nat) (c : Case) (vss : List (List Val)) (w : Nat)
+    (h : c.sidesC limit = some (vss, w)) : vss = c.claims.map (·.2.sides (valuesL c.decls)) ∧ w ≤ limit := by
+  obtain ⟨⟨t, w1⟩, ht, h⟩ := Option.bind_eq_some_iff.mp h
+  obtain ⟨ht', _, h1⟩ := Work.valueTableC_some _ _ _ _ _ _ (Nat.zero_le _) ht
+  obtain ⟨rfl, _, h2⟩ := Check.sidesC_some _ _ _ _ _ _ h1 h
+  refine ⟨?_, h2⟩
+  have : t = Work.valueTable c.decls := ht'
+  rw [this, Work.valueTable_read, List.map_map]; rfl
+
+theorem Case.sidesC_mono {limit limit' : Nat} (c : Case) (r : List (List Val) × Nat) (hl : limit ≤ limit')
+    (h : c.sidesC limit = some r) : c.sidesC limit' = some r := by
+  obtain ⟨⟨t, w1⟩, ht, h⟩ := Option.bind_eq_some_iff.mp h
+  simp only [Case.sidesC, Work.valueTableC_mono _ _ _ _ hl ht, Option.bind_some]
+  exact Check.sidesC_mono _ _ _ _ hl h
+
 namespace Wire
 open VE.Bridge (fields identifier)
 
@@ -112,6 +180,9 @@ def unworded (j : Json) : Json := match j.getObjVal? "values" with
 def entries (j : Json) (key : String) : Nat := match j.getObjVal? key with
   | .ok (.arr xs) => xs.size
   | _ => 0
+
+/-- Limit 10's refusal (3.2): the work of computing the case passes `maxWork` units. -/
+def workLimit : String := limit "the work of the calculation" Work.maxWork
 
 /-- The first limit of 3.2 the case exceeds: 10,000 JSON values, depth 64, 512 values, 512 claims, then
 exponents, literals and strings, each anywhere in the case, then 512 premises. -/
@@ -424,8 +495,26 @@ def decode (j : Json) : Except String (Case × String × List String) := do
     (software.elim [] fun s => [("software", .str s)]))) claimJson
   pure (⟨ds, checks, software⟩, mid, ids)
 
-/-- Decodes `ve-calc@0`: the limits of 3.2 first, then fields, words, names, definition order and literals. -/
-def decodeCase (j : Json) : Except String Case := (decode j).map (·.1)
+/-- Decodes `ve-calc@0`: the limits of 3.2 first, then fields, words, names, definition order and literals, then
+limit 10 (the case's work within `maxWork`). -/
+def decodeCase (j : Json) : Except String Case := do
+  let (c, _) ← decode j
+  if (c.sidesC Work.maxWork).isNone then throw workLimit
+  pure c
+
+theorem decodeCase_decode (j : Json) (c : Case) (h : decodeCase j = .ok c) :
+    (∃ m, decode j = .ok (c, m)) ∧ ∃ r, c.sidesC Work.maxWork = some r := by
+  unfold decodeCase at h
+  cases hd : decode j with
+  | error e => rw [hd] at h; cases h
+  | ok d =>
+    rw [hd] at h
+    simp only [bind, Except.bind] at h
+    split at h
+    · cases h
+    · rename_i hs
+      cases h
+      exact ⟨⟨d.2, rfl⟩, Option.isSome_iff_exists.mp (Option.isSome_iff_ne_none.mpr (by simpa using hs))⟩
 
 end Wire
 
@@ -462,13 +551,10 @@ theorem Wire.firstUnknown_order (known : List String) (ds : List Decl) (h : Wire
 
 theorem Wire.decodeCase_wellFormed (j : Lean.Json) (c : Case) (h : Wire.decodeCase j = .ok c) :
     WellFormed c.decls := by
-  unfold Wire.decodeCase at h
-  cases hd : Wire.decode j with
-  | error e => rw [hd] at h; cases h
-  | ok d =>
-    rw [hd] at h
-    cases h
-    obtain ⟨vals, ps, hds, hadm⟩ : ∃ (vals : List (String × Option (Rat ⊕ Expr))) (ps : List (String × Claim)),
+  obtain ⟨⟨m, hd⟩, _⟩ := Wire.decodeCase_decode j c h
+  show WellFormed (c, m).1.decls
+  generalize (c, m) = d at hd ⊢
+  · obtain ⟨vals, ps, hds, hadm⟩ : ∃ (vals : List (String × Option (Rat ⊕ Expr))) (ps : List (String × Claim)),
         d.1.decls = vals.map Wire.decl ∧ Wire.admit d.1.decls ps d.1.claims = .ok () := by
       unfold Wire.decode at hd
       simp only [bind, Except.bind, pure, Except.pure] at hd
