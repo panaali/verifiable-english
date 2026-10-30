@@ -71,7 +71,7 @@ def plainEnv : Json := αEnv.setObjVal! "profiles" (toJson ["norm-defaults@0", "
 
 /-! jt-2c: under a document layer only `norm-defaults-elaborate` of the route's own kinds is answered; the replay
 kinds and defeasible's are refused by name (jt-2d), and every other kind and list is not refused here. -/
-private def layerCase (kind : String) (ps : List String) : Json :=
+def layerCase (kind : String) (ps : List String) : Json :=
   Json.mkObj [("id", "c"), ("kind", kind), ("environment", Json.mkObj [("profiles", toJson ps)])]
 
 #guard (["norm-defaults-gaps", "norm-defaults-conflict", "norm-defaults-report", "defaults-model"].all fun k =>
