@@ -635,14 +635,16 @@ def test_rescore_of_evidence_whose_mutants_differ_is_a_full_run(tmp_path):
     m = trust_mutants.Mutant("M001", "Demo/Defs.lean", 3, "Demo.small", "lt-le", 0, 1, (3, 3), "<", "≤")
     row = {"id": "M001", "file": "Demo/Defs.lean", "line": 3, "definition": "Demo.small", "operator": "lt-le",
            "before": "<", "after": "≤", "status": "ALLOWED", "raw_status": "SURVIVOR", "detail": "a reason",
-           "lines": [3, 3], "trust_class": "C", "trusted": True}
+           "raw_detail": "", "lines": [3, 3], "trust_class": "C", "trusted": True}
     prev = tmp_path / "prev.json"
     now = dict.fromkeys(trust_mutants.OVERALL, "1")
     unread = [{**row, "raw_status": "PASSED"}, {k: v for k, v in row.items() if k != "raw_status"}, {**row, "reads": 7},
               {**row, "killed_at": [1]}, {**row, "killed_at": [1, True]}, {**row, "line": True},  # tm-shard fix1 F1
               {**row, "status": None, "raw_status": None}, {**row, "detail": 7}, {**row, "raw_status": "ALLOWED"},
-              {**row, "status": "OTHER SHARD", "raw_status": "OTHER SHARD", "detail": ""}, {**row, "trusted": 1}]
-    for rows, ok in (([row], True), ([{**row, "after": "="}], False), ([], False), *(([r], False) for r in unread)):
+              {**row, "status": "OTHER SHARD", "raw_status": "OTHER SHARD", "detail": ""}, {**row, "trusted": 1},
+              {**row, "raw_detail": 7}]
+    for rows, ok in (([row], True), ([{**row, "after": "="}], False), ([], False),
+                     ([{k: v for k, v in row.items() if k != "raw_detail"}], False), *(([r], False) for r in unread)):
         prev.write_text(json.dumps({"inputs": now, "head": "h", "mutants": rows}))
         got = trust_mutants.previous(prev, now, [m], lambda names: None)
         assert (got == ("identical", "h", {"M001": {"status": "SURVIVOR", "detail": "", "reads": "", "killed_at": None}},
@@ -650,6 +652,33 @@ def test_rescore_of_evidence_whose_mutants_differ_is_a_full_run(tmp_path):
             "cannot be read" in got) == any(r in unread for r in rows), (rows, got)
     prev.write_text(json.dumps({"inputs": now, "head": "", "mutants": [row]}))
     assert "cannot be read" in trust_mutants.previous(prev, now, [m], lambda names: None)
+
+
+@pytest.mark.parametrize("operator, raw, allowed", [
+    ("ctor-drop", ("SURVIVOR", "the proofs it breaks: lean/Demo/Proofs.lean:3"),
+     "a Prop (the proofs it breaks: lean/Demo/Proofs.lean:3)"),
+    ("lt-le", ("SURVIVOR", "it builds"), "a reason"), ("lt-le", ("UNKNOWN", "past 0 s"), "a reason"),
+    ("lt-le", ("KILLED", "lean/Demo/Examples.lean:5: Expression"), None)])
+def test_rescore_reads_the_whole_verdict_before_allow(tmp_path, operator, raw, allowed):
+    """Review sc-1ae recheck F6, as a class: --rescore reads every row's verdict as it was before --allow, its status
+    (`raw_status`) and its detail (`raw_detail`), whatever the operator and whatever --allow wrote over it. A row
+    --allow changed that records no `raw_detail` is refused (a full run), never read with an empty detail: a
+    ctor-drop's empty detail means it breaks no proof, which no later --allow allows."""
+    import trust_mutants
+    m = trust_mutants.Mutant("M001", "Demo/Defs.lean", 3, "Demo.Ev", operator, 0, 1, (3, 3), "<", "≤")
+    row = {"id": "M001", "file": "Demo/Defs.lean", "line": 3, "definition": "Demo.Ev", "operator": operator,
+           "before": "<", "after": "≤", "raw_status": raw[0], "lines": [3, 3], "trust_class": "C", "trusted": True,
+           **({"status": "ALLOWED", "detail": allowed, "raw_detail": raw[1]} if allowed else
+              {"status": raw[0], "detail": raw[1]})}
+    prev = tmp_path / "prev.json"
+    now = dict.fromkeys(trust_mutants.OVERALL, "1")
+    prev.write_text(json.dumps({"inputs": now, "head": "h", "mutants": [row]}))
+    got = trust_mutants.previous(prev, now, [m], lambda names: None)
+    assert got[2]["M001"] == {"status": raw[0], "detail": raw[1], "reads": "", "killed_at": None}, got
+    if allowed:
+        prev.write_text(json.dumps({"inputs": now, "head": "h", "mutants": [
+            {k: v for k, v in row.items() if k != "raw_detail"}]}))
+        assert "raw_detail" in trust_mutants.previous(prev, now, [m], lambda names: None)
 
 
 LAYERED = {  # speed-tmchecks: a definition whose module imports another, and its checks
@@ -690,11 +719,13 @@ def test_a_verdict_carries_only_while_what_it_reads_reads_the_same(tmp_path, nam
     import trust_mutants
     before = layered(tmp_path / "before", {})
     m = trust_mutants.Mutant("M001", "Demo/Defs.lean", 5, "Demo.small", "lt-le", 0, 0, (5, 5), "<", "≤")
-    m.raw_status, m.detail = "KILLED", "lean/Demo/Examples.lean:5: Expression"
+    m.raw_status, m.raw_detail = "KILLED", "lean/Demo/Examples.lean:5: Expression"
+    m.detail = m.raw_detail
     before.verdict(m)
     assert m.reads and m.killed_at == (5, 5), m
     killed = {"status": "KILLED", "detail": m.detail, "reads": m.reads, "killed_at": list(m.killed_at)}
-    m.raw_status, m.detail = "INVALID", "unknown identifier"
+    m.raw_status, m.raw_detail = "INVALID", "unknown identifier"
+    m.detail = m.raw_detail
     before.verdict(m)
     refused = {"status": "INVALID", "detail": m.detail, "reads": m.reads, "killed_at": None}
     after = layered(tmp_path / "after", edits)
@@ -958,6 +989,98 @@ def test_the_generator_drops_each_middle_element_of_a_literal_list():
         assert mutated.count("[") == mutated.count("]") and "[(1, " in mutated
 
 
+def test_the_generator_drops_each_constructor_of_an_inductive():
+    """Review sc-1ae F1: deleting `JsonWF`'s `bool` and `num` broke no proof and no check, and no operator wrote that
+    mutant. Each constructor is dropped alone: across lines, its doc comment with it, never a `deriving` clause or a
+    `|` inside a bracket; every line after it stays where it was."""
+    import trust_mutants
+    text = ('inductive Ev : Nat → Prop\n'
+            '  | zero : Ev 0\n'
+            '  /-- two more,\n      across lines -/\n'
+            '  | step (n : Nat) (h : Ev n) :\n      Ev (n + 2)\n'
+            '  | odd (h : match 1 with\n  | 0 => True\n  | _ => False) : Ev 1\n'
+            'inductive Color where\n  | red\n  | green\n  deriving Repr\n')
+    split = text.index("inductive Color")
+    drops = [(text[s:e], new) for lo, hi in ((0, split - 1), (split, len(text) - 1))
+             for op, s, e, new in trust_mutants.mutants(text, "inductive", lo, hi) if op == "ctor-drop"]
+    assert drops == [("  | zero : Ev 0", ""),
+                     ("  /-- two more,\n      across lines -/\n  | step (n : Nat) (h : Ev n) :\n      Ev (n + 2)",
+                      "\n\n\n"),
+                     ("  | odd (h : match 1 with\n  | 0 => True\n  | _ => False) : Ev 1", "\n\n"),
+                     ("  | red", ""), ("  | green", "")]
+    assert not [m for m in trust_mutants.mutants(text, "def", 0, split - 1) if m[0] == "ctor-drop"]
+
+
+def test_the_generator_drops_each_constructor_of_json_wf():
+    """Review sc-1ae F1's own declaration: each of `JsonWF`'s six constructors, `bool` and `num` among them."""
+    import trust_mutants
+    text = (ROOT / "lean/VE/Scope/Govern.lean").read_text()
+    declared, _ = trust_mutants.declaration_list(ROOT / "lean/declarations.txt")
+    (r,) = [d for d in declared["VE.Scope.Govern"] if d.name == "VE.Scope.JsonWF"]
+    starts = [0, *(i + 1 for i, ch in enumerate(text) if ch == "\n")]
+    lo, hi = starts[r.start[0] - 1] + r.start[1], starts[r.end[0] - 1] + r.end[1]
+    drops = [text[s:e].split()[1] for op, s, e, _ in trust_mutants.mutants(text, "inductive", lo, hi)
+             if op == "ctor-drop"]
+    assert drops == ["null", "bool", "num", "str", "arr", "obj"]
+
+
+INDUCTIVE = """namespace Demo
+
+/-- `zero` is read by a proof, `step` by nothing. -/
+inductive Ev : Nat → Prop
+  | zero : Ev 0
+  | step (n : Nat) : Ev n → Ev (n + 2)
+
+end Demo
+"""
+INDUCTIVE_PROOFS = """import Demo.Defs
+
+theorem Demo.ev_zero : Demo.Ev 0 := .zero
+"""
+INDUCTIVE_CHECKS = """import Demo.Proofs
+
+#guard (2 : Nat) + 2 == 4
+"""
+
+
+def test_a_constructor_no_proof_reads_survives_with_no_proof_named_and_is_never_allowed(tmp_path_factory):
+    """Review sc-1ae F1 end to end: a Prop's constructors are exercised only by proofs, so both drops survive; the
+    one a proof reads names it (what an --allow reason cites), the one nothing reads names none. The proof is built
+    because a module of checks imports it."""
+    root = tmp_path_factory.mktemp("inductive")
+    scaffold(root, "Far")
+    for name, text in (("Defs", INDUCTIVE), ("Proofs", INDUCTIVE_PROOFS), ("Examples", INDUCTIVE_CHECKS)):
+        (root / f"lean/Demo/{name}.lean").write_text(text)
+    dump(root, tmp_path_factory.mktemp("dump"), ["Demo.ev_zero"])
+    git(root, "add", ".")
+    git(root, "commit", "-qm", "head")
+    run = tmp_path_factory.mktemp("run")
+    done, mutants = tool(root, run)
+    drops = {m["before"].split()[1]: (m["status"], m["detail"]) for m in of(mutants, "Ev")
+             if m["operator"] == "ctor-drop"}
+    assert drops == {"zero": ("SURVIVOR", "the proofs it breaks: lean/Demo/Proofs.lean:3"), "step": ("SURVIVOR", "")}, \
+        done.stdout + done.stderr
+    # --allow never allows the constructor nothing reads; the one it allows keeps the proof it breaks
+    allow = tmp_path_factory.mktemp("allow") / "allow.json"
+    allow.write_text(json.dumps({"allow": [{"definition": "Demo.Ev", "operator": "ctor-drop", "reason": "a Prop"}]}))
+    again = tmp_path_factory.mktemp("again")
+    done, mutants = tool(root, again, "--allow", str(allow), "--rescore", str(run / "evidence.json"))
+    allowed = {m["before"].split()[1]: (m["status"], m["detail"]) for m in of(mutants, "Ev")
+               if m["operator"] == "ctor-drop"}
+    assert allowed == {"zero": ("ALLOWED", "a Prop (the proofs it breaks: lean/Demo/Proofs.lean:3)"),
+                       "step": ("SURVIVOR", "")}, done.stdout + done.stderr
+    assert done.returncode == 1 and [line for line in done.stdout.splitlines()
+                                     if line.startswith("SURVIVOR") and "ctor-drop: | step" in line], done.stdout
+    # review sc-1ae recheck F6: a --rescore of the allowed run's evidence reuses each drop's verdict before --allow:
+    # with the same --allow the allowed drop is still ALLOWED with the proof it breaks, and with none it is the
+    # survivor it was
+    for extra, want in ((("--allow", str(allow)), allowed), ((), drops)):
+        done, mutants = tool(root, tmp_path_factory.mktemp("third"), *extra, "--rescore", str(again / "evidence.json"))
+        got = [m for m in of(mutants, "Ev") if m["operator"] == "ctor-drop"]
+        assert {m["before"].split()[1]: (m["status"], m["detail"]) for m in got} == want and all(
+            m.get("reused_from") for m in got) and done.returncode == 1, done.stdout + done.stderr
+
+
 # Review F7's truth table: every command form `classify` can see, its class, and two readings of a definition: its
 # value (`{v}`, which a check must catch) and a proof the tool cuts (`{p}`, through the witness `{w}`: up front in
 # the mutated module, when the mutant breaks it in another). An outcome a cut or broken proof can change must never
@@ -1188,7 +1311,9 @@ def test_the_truth_table_statuses(table_run):
     for row in rows:
         status, where = statuses[f"{space[row['setting']]}.{row['d']}"]
         lines = range(row["line"] - (row["wrap"] != "bare"), row["line"] + 1)  # the wrapper's or the command's
-        places = [f"{module[row['setting']]}:{n}" for n in lines] if row["expected"] != "SURVIVOR" else [""]
+        # a SURVIVOR names the proofs it breaks, if any (review sc-1ae F1)
+        places = [f"{module[row['setting']]}:{n}" for n in lines] if row["expected"] != "SURVIVOR" else [
+            "", "the proofs it breaks"]
         assert status == row["expected"] and where in places, (row, done.stdout)
 
 
@@ -2261,7 +2386,7 @@ def resealed(data):
     so only the change can refuse it; a part whose rows are no Mutant's is left as it is."""
     import trust_mutants as tm
     try:
-        found = [tm.Mutant(**{"start": 0, "end": 0, **r}) for r in data["mutants"]]
+        found = [tm.row_mutant(r) for r in data["mutants"]]
         data.update({k: tm.record(found, *[None] * 10, shard={})[k] for k in ("counts", "class_counts",
                                                                                   "definitions")})
     except (TypeError, KeyError, AttributeError):
@@ -2372,10 +2497,12 @@ def test_merge_refuses_a_part_this_tool_does_not_write(sharded, capsys, name, ch
 # with that status and nothing else, so no part's unowned row can give the merge a verdict (M002 is part 2's, M007
 # past --max-mutants 6 and no part's); each changed part is resealed, so its counts agree with its rows
 IDLE_ROWS = [
-    *((f"{i}-{'-'.join(v)}", lambda ps, i=i, v=v: ps[0]["mutants"][int(i[1:]) - 1].update(v),
+    *((f"{i}-{'-'.join(k for k in v if k != 'raw_detail')}",
+       lambda ps, i=i, v=v: ps[0]["mutants"][int(i[1:]) - 1].update(v),
        f"{i} has a verdict in") for i in ("M002", "M007") for v in (
         {"status": "KILLED", "raw_status": "KILLED"}, {"status": "SURVIVOR", "raw_status": "SURVIVOR"},
-        {"status": "ALLOWED", "raw_status": "UNKNOWN"}, {"detail": "x"}, {"reused_from": "h"}, {"carried": "checks"},
+        {"status": "ALLOWED", "raw_status": "UNKNOWN", "raw_detail": ""}, {"detail": "x"}, {"reused_from": "h"},
+        {"carried": "checks"},
         {"reads": "r"}, {"killed_at": [1, 1]})),
     ("M007-not-run-other", lambda ps: ps[0]["mutants"][6].update(status="OTHER SHARD", raw_status="OTHER SHARD"),
      "M007 has a verdict"),

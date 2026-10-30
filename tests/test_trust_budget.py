@@ -36,6 +36,24 @@ def test_trust_map_check_passes_on_the_live_tree():
     assert "PASS: K, S and untied [V] within " in run.stdout
 
 
+def test_arith_lookup_and_fixture_helpers_are_classified(live):
+    """me-12nc F2: the table implementation and all fixture helpers have their intended classes.
+
+    Checking every declaration in the fixture module also catches a newly added helper that was
+    omitted from the trust table, instead of relying on today's list of fixture names.
+    """
+    files, _ = live
+    table = files["VE/Arith/TableExamples.lean"]
+    assert table["unclassified"] == 0
+    assert table["trusted"] == 0
+    assert table["T"] > 0
+    assert files["VE/Arith/Bounded.lean"]["unclassified"] == 0
+    classes = trust_map.load_table(ROOT / "tools/trust-classes.json")
+    lookup = {name: cls for name, cls in classes["VE/Arith/Bounded.lean"].items()
+              if name == "VE.Arith.Defs.opEnvList" or name.startswith("VE.Arith.OpTable")}
+    assert lookup and set(lookup.values()) == {"C"}
+
+
 def test_every_allowance_is_signed_or_inherited_from_before_ar4(live):
     """An allowance carries the DRI's signature (a standing ruling's included) or the migration's
     marker, which grants nothing new (`tests/test_trust_ratchet.py`)."""

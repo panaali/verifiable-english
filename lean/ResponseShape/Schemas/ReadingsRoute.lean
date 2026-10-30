@@ -612,13 +612,52 @@ def verdicts_dead : Shape :=
     .required ["accepted"],
     closed [("set", str), ("index", ref "common.json#/$defs/nat"), ("accepted", .type ["boolean"])]]
 
+/-- DF-3: one choice's default rows (`Readings.Run.dChoiceJson`). -/
+def verdicts_default_choice : Shape :=
+  c "Readings.Run.dChoiceJson (defeasible plan DF-3): one choice's rows unless an exception applies; with FOLLOWS its basis and kept assumptions (d_bases_sound), with a checked collision the pair, the tuple, DE7's deciders and the situation (Defaults.Wire.collisionFields)." [
+    obj,
+    .required ["choice", "conflict", "query"],
+    closed [
+      ("choice", ref "#/$defs/choice"),
+      ("conflict", enumS ["CONFLICT-FREE", "CONFLICT", "UNKNOWN"]),
+      ("query", enumS ["proved", "refuted", "UNKNOWN"]),
+      ("basis", enumS ["strict", "needs", "unsettled"]),
+      ("assumptions", ref "common.json#/$defs/strings"),
+      ("collision", n [obj, .required ["rules", "tuple", "deciders"],
+        closed [("rules", ref "common.json#/$defs/string_pair"), ("tuple", ref "common.json#/$defs/strings"),
+          ("deciders", ref "common.json#/$defs/strings")]]),
+      ("situation", n [obj, .required ["filling"],
+        closed [("filling", n [obj, .object [] (some (n [arr, .items (ref "common.json#/$defs/strings")]))])]])],
+    .allOf [
+      n [.ite (.required ["basis"]) (.allOf [.required ["assumptions"], props [("query", constS "proved")]])
+        (.not (.required ["assumptions"]))],
+      n [.ite (.required ["collision"]) (.allOf [.required ["situation"], props [("conflict", constS "CONFLICT")]])
+        (.not (.required ["situation"]))]]]
+
+def verdicts_default_line : Shape :=
+  c "Readings.Run.dEnglish (DF-3): one English row Lean selects, DE8 alone, or a row of one choice." [
+    .anyOf [
+      n [obj, .required ["row"], closed [("row", constS "DE8")]],
+      n [obj, .required ["row", "choice"],
+        closed [("row", enumS ["DE7", "assumptions", "DE12"]), ("choice", ref "#/$defs/choice")]]]]
+
+def verdicts_default : Shape :=
+  c "Readings.Run.defaultJson (DF-3): present only when the request asks and the strict conflict fold is FREE (readings_wire_default_present): the default conflict fold, the default fold, each choice's rows and the English rows." [
+    obj,
+    .required ["conflict", "verdict", "per_choice", "english"],
+    closed [
+      ("conflict", enumS ["CONFLICT-FREE", "CONFLICT", "UNKNOWN"]),
+      ("verdict", enumS ["ALL", "SOME", "NONE", "UNKNOWN"]),
+      ("per_choice", n [arr, .items (ref "#/$defs/verdicts_default_choice")]),
+      ("english", n [arr, .items (ref "#/$defs/verdicts_default_line")])]]
+
 /-- The answer to `question`, its result of that question's form. -/
 def verdictsFor (question result : String) : Shape :=
   n [
       obj,
       .required ["id", "status", "route", "question", "finding_sets", "restrictions", "result", "per_choice", "labels",
         "dead_readings", "untaken", "dead", "english"],
-      closed [
+      closed ([
         ("id", ref "common.json#/$defs/id_ok"),
         ("status", constS "ok"),
         ("route", constS "enumerated"),
@@ -638,7 +677,8 @@ def verdictsFor (question result : String) : Shape :=
         ("untaken", ref "#/$defs/choice"),
         ("dead", n [arr, .items (ref "#/$defs/verdicts_dead")]),
         ("decided_units", ref "common.json#/$defs/strings"),
-        ("english", n [arr, .items (ref "#/$defs/verdicts_line")])]]
+        ("english", n [arr, .items (ref "#/$defs/verdicts_line")])] ++
+        if question == "query" then [("default", ref "#/$defs/verdicts_default")] else [])]
 
 def verdicts : Shape :=
   c
@@ -899,6 +939,9 @@ def file : File where
     ("verdicts_row", .schema verdicts_row),
     ("verdicts_line", .schema verdicts_line),
     ("verdicts_dead", .schema verdicts_dead),
+    ("verdicts_default_choice", .schema verdicts_default_choice),
+    ("verdicts_default_line", .schema verdicts_default_line),
+    ("verdicts_default", .schema verdicts_default),
     ("verdicts", .schema verdicts),
     ("sup_verdicts", .schema supVerdicts),
     ("sup_result", .schema supResult),

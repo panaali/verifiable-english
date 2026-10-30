@@ -1,0 +1,7 @@
+- `tools/bench/baseline.py` — Compare CPU-time measurements with stored baselines (tools/bench/baselines.json).
+- `tools/bench/conftest.py` — CPU-time benchmarks against stored baselines: the speed checks kept out of the test suite.
+- `tools/bench/cpu_per_test.py` — pytest plugin: the CPU seconds each test spends, its own process and the children it reaped.
+- `tools/bench/scope_b1.py` — B1's input (docs/spec/scope-PLAN.md, benchmark B1): F1-doc's document over the full pinned constitution pilot.
+- `tools/bench/suite_tail.py` — Measure the idle tail of a full-suite run: when each xdist worker finishes, and how busy the machine is.
+- `tools/bench/suite_time.py` — Measure a full-suite run: elapsed and CPU seconds, machine load, workers, slowest tests.
+- `tools/bench/test_perf.py` — CPU-time benchmarks of the work the suite once bounded by speed (see conftest.py).

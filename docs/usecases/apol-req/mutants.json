@@ -1,0 +1,11 @@
+{"item": "apol-req", "language": "Python (usecases/agent-policy/level.py, tools/difffuzz_corpus.py)", "restored": true, "mutants": [
+ {"id": "S1", "file": "usecases/agent-policy/level.py", "mutation": "case_agrees ignores the verdict", "test": "tests/test_agent_policy_level.py::test_each_check_at_and_around_its_boundary[flipped linked verdict]"},
+ {"id": "S2", "file": "usecases/agent-policy/level.py", "mutation": "bytes counted as characters, not UTF-8 bytes", "test": "tests/test_agent_policy_level.py::test_each_check_at_and_around_its_boundary[bytes as characters]"},
+ {"id": "S3", "file": "usecases/agent-policy/level.py", "mutation": "a VERIFIED row with no linked case is accepted", "test": "tests/test_agent_policy_level.py::test_each_check_at_and_around_its_boundary[verified, no case]"},
+ {"id": "S4", "file": "usecases/agent-policy/level.py", "mutation": "an OPEN row with family null is accepted", "test": "tests/test_agent_policy_level.py::test_an_open_row_with_no_feature_family_is_refused"},
+ {"id": "S5", "file": "usecases/agent-policy/level.py", "mutation": "VE text not compared with the inputs results.json was checked on", "test": "tests/test_agent_policy_level.py::test_a_policy_text_results_were_not_checked_on_is_refused"},
+ {"id": "S6", "file": "usecases/agent-policy/level.py", "mutation": "required overlaps always agree", "test": "tests/test_agent_policy_level.py::test_each_check_at_and_around_its_boundary[overlap missing]"},
+ {"id": "S7", "file": "usecases/agent-policy/level.py", "mutation": "a failing named test still counts", "test": "tests/test_agent_policy_level.py::test_a_failing_named_test_does_not_count"},
+ {"id": "S8", "file": "usecases/agent-policy/level.py", "mutation": "the frozen rows' SHA-256 is not checked", "test": "tests/test_agent_policy_level.py::test_an_edited_frozen_row_refuses_the_whole_register"},
+ {"id": "S9", "file": "tools/difffuzz_corpus.py", "mutation": "the register's exclusion names a misspelt path", "test": "tests/test_difffuzz.py::test_every_fixture_is_read_or_excluded_with_a_reason"}
+]}

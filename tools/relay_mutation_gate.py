@@ -395,8 +395,13 @@ def _metered_reader(case):
 
 # Service modes whose callers read the transport's answer further: the mode's reader for a case, a function of
 # the decoded response that raises as the caller does.
+def _calc_reader(case):
+    from ve.calc import read_answer
+    return lambda response: read_answer(response["results"][0]["result"], case)
+
+
 SERVICE_READERS = {"ask": _ask_reader, "words": _words_reader, "document": _document_reader,
-                   "metered": _metered_reader}
+                   "metered": _metered_reader, "calc": _calc_reader}
 
 
 def _exchange_outcome(replay: _Replay, mode: str, text: str, read=None) -> tuple[str, str]:

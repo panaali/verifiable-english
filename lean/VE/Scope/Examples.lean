@@ -430,7 +430,7 @@ def hcDoc (cs : List (String × Json)) (extra : List (String × Json) := []) : J
     ("content", (cs.lookup x.id).getD .null)]).toArray)] ++ extra)
 
 def part (name pred atom : String) : Json :=
-  Json.mkObj [("part", Json.mkObj [("name", name), ("predicate", pred), ("guard", j s!"[\"unary\", \"{atom}\", [\"var\", 1]]")])]
+  Json.mkObj [("part", Json.mkObj [("name", name), ("predicate", pred), ("guard", .arr #["unary", atom, .arr #["var", (1 : Nat)]])])]
 /-- The seven item parts; u0165.s01 and u0165.s07 have the names and guards of spec 7.1's F1-g. -/
 def parts : List (String × Json) := seven.zipIdx.map fun (u, i) =>
   (u, if i == 0 then part "hc-cbrn-uplift" "restricted_act_permitted" "mass_casualty_weapon_uplift"
@@ -748,6 +748,230 @@ def rawRule : Json := rawJ (nd "over" (.arr #[]) (nd "guard" (j "[\"top\"]") .le
 #guard (member (.ok rawRule) "name", (do pure (← VE.Readings.Wire.decodeNorm (← VE.Readings.Wire.decodeEnvironment softEnv) rawRule).name : Except String String).toOption) ==
   (none, some "hidden")
 
+/-! sc-1af: `jsonWF?`, the check the route runs (the DRI's decision of 2026-10-28 item 1). Every tree of F-raw fails
+    it; every tree a parser builds or `mkObj` writes passes, booleans and numbers included; and each part of the check
+    is shown on both sides of its boundary: the balance ratio `delta` (3) and the `≤ 1` case, a stored size, the key
+    order (a swapped key, a repeated key, a third key out of order), and a bad value at the root, left, right and in
+    an array. The route's refusal is in `WireExamples.lean`. -/
+def rawA : Json := rawJ (nd "x" "X" (nd "units" hcUnits .leaf (nd "w" "W" .leaf (nd "wa" "WA"))))
+def rawB : Json := rawJ (nd "x" "X" (nd "units" hcUnits .leaf (nd "zzz" "Z")))
+def withUnit (u : Json) : Json :=
+  Json.mkObj [("units", .arr ((unitsOf (hcDoc parts)).map fun x => if idOf x == "u0165.s01" then u else x).toArray)]
+#guard [rawA, rawB, rawUnit, withUnit rawUnit, rawRule].map jsonWF? == [false, false, false, false, false]
+#guard [.null, .bool true, .bool false, .num 0, .num (-3), .num ⟨15, 1⟩, .str "", .arr #[], Json.mkObj [],
+  hcDoc parts, softEnv, envJ, leadPart,
+  j "{\"b\": [true, false, null], \"n\": [0, -1, 1.5, 2e3], \"o\": {\"s\": \"x\", \"o\": {}},
+    \"a\": [[], {}]}"].all jsonWF?
+open Std.DTreeMap.Internal (Impl) in
+def leaf1 (k : String) (v : Json := .null) : Impl String (fun _ => Json) := nd k v
+-- balance: one side of size 1 against none passes, size 2 against none fails; 3 against 1 passes, 4 against 1 fails
+#guard [nd "b" .null (leaf1 "a"), nd "a" .null .leaf (leaf1 "b"),
+  nd "d" .null (nd "b" .null (leaf1 "a") (leaf1 "c")) (leaf1 "e"),
+  nd "b" .null (leaf1 "a") (nd "d" .null (leaf1 "c") (leaf1 "e")),
+  .inner 1 "a" .null .leaf .leaf].map (jsonWF? ∘ rawJ) == [true, true, true, true, true]
+#guard [nd "c" .null (nd "b" .null (leaf1 "a")), nd "a" .null .leaf (nd "b" .null .leaf (leaf1 "c")),
+  nd "e" .null (nd "c" .null (nd "b" .null (leaf1 "a")) (leaf1 "d")) (leaf1 "f"),
+  nd "b" .null (leaf1 "a") (nd "d" .null (leaf1 "c") (nd "e" .null .leaf (leaf1 "f"))),
+  nd "d" .null (nd "c" .null (nd "b" .null (leaf1 "a"))) (leaf1 "e"),
+  nd "b" .null (leaf1 "a") (nd "c" .null .leaf (nd "d" .null .leaf (leaf1 "e"))),
+  .inner 2 "a" .null .leaf .leaf, .inner 0 "a" .null .leaf .leaf].map (jsonWF? ∘ rawJ) ==
+  [false, false, false, false, false, false, false, false]
+-- order: ascending keys pass; a swapped, a repeated, or a third key out of order fails
+#guard [nd "b" .null (leaf1 "a") (leaf1 "c"), nd "b" .null (leaf1 "c") (leaf1 "a"), nd "b" .null (leaf1 "b"),
+  nd "b" .null (leaf1 "a") (leaf1 "a")].map (jsonWF? ∘ rawJ) == [true, false, false, false]
+-- values: an ill-formed value at the root, on the left, on the right, first or second in an array, or deeper, fails
+#guard [nd "b" rawB (leaf1 "a") (leaf1 "c"), nd "b" .null (leaf1 "a" rawB) (leaf1 "c"),
+  nd "b" .null (leaf1 "a") (leaf1 "c" rawB), nd "a" (.arr #[rawB]), nd "a" (.arr #[.null, rawB]),
+  nd "a" (Json.mkObj [("k", .arr #[Json.mkObj [("k", rawB)]])])].map
+  (jsonWF? ∘ rawJ) == [false, false, false, false, false, false]
+#guard [Json.arr #[rawB], .arr #[true, rawB], Json.mkObj [("k", rawUnit)]].map jsonWF? == [false, false, false]
+-- the size the check is charged against: the route's limits (`maxLineBytes`, depth 256 in `VE.Json.parse`); a wide
+-- object and the deepest nesting the parser admits pass, each node read once and the keys listed once
+#guard jsonWF? (Json.mkObj ((List.range 20000).map fun i => (toString i, toJson i))) &&
+  jsonWF? ((List.range 255).foldl (fun x i => if i % 2 == 0 then .arr #[x, true] else Json.mkObj [("k", x)]) (.num 1))
+#guard !jsonWF? ((List.range 255).foldl (fun x _ => Json.mkObj [("k", x)]) rawB)
+-- `jsonWF?_sound`: a passing tree is `JsonWF`
+example : JsonWF (Json.mkObj [("b", .bool true), ("n", .num 7)]) := jsonWF?_sound (by decide)
+
+/-! SC-2 without AT-3a's attitude decoder: a syntactic replacement and its separate narrowing reading. -/
+-- F3: all seven guards substitute their own source guard, not the first rule's guard.
+#guard let c := j "[\"or\",[\"and\",\"own\",[\"unary\",\"knows_guard\",[\"var\",1]]],[\"unary\",\"likely_guard\",[\"var\",1]]]"
+  let result := gov (hcDoc parts) [g1, {g2 with effect := .reguard c}] hcNames
+  let re := (VE.Readings.Wire.decodeEnvironment envJ).toOption
+  (result.toOption.map fun d => seven.map fun u => (normOf (contentOf d u)).map (·.getObjValD "guard")) ==
+    some (seven.map fun u => (parts.lookup u).map fun p =>
+      substOwn ((p.getObjValD "part").getObjValD "guard") depthLimit c) &&
+  ((result.toOption.bind fun d => (normOf (contentOf d "u0165.s01")).bind fun o =>
+    re.bind fun r => (VE.Readings.Wire.decodeNorm r o).toOption).isSome) &&
+  ((result.toOption.bind fun d => (normOf (contentOf d "u0165.s07")).bind fun o =>
+    re.bind fun r => (VE.Readings.Wire.decodeNorm r o).toOption).isSome)
+
+-- F4 and F4-r3: L(G) holds while G does not; replacement applies and narrowing does not.
+#guard let c := j "[\"or\",[\"and\",\"own\",[\"unary\",\"knows_guard\",[\"var\",1]]],[\"unary\",\"likely_guard\",[\"var\",1]]]"
+  let rep := gov (hcDoc parts) [g1, {g2 with effect := .reguard c}] hcNames
+  let nar := gov (hcDoc parts) [g1, {g2 with effect := .reguard (.arr #[.str "and", .str "own", c])}] hcNames
+  let model : VE.FiniteModel String := ⟨(fun s => if s == "person" then ["Claude", "case"] else []), (fun _ => none), (fun p => if p == "likely_guard" then [["case"]] else [])⟩
+  let read := fun (r : Except String Json) => r.toOption.bind fun d =>
+    (normOf (contentOf d "u0165.s01")).bind fun o =>
+      (VE.Readings.Wire.decodeEnvironment envJ).toOption.bind fun re => (VE.Readings.Wire.decodeNorm re o).toOption
+  ((read rep).map fun N => (VE.Norms.applies N.toNode).eval model ["Claude", "case"]) == some true &&
+  ((read nar).map fun N => (VE.Norms.applies N.toNode).eval model ["Claude", "case"]) == some false &&
+  ((read rep).map fun N => N.guard.eval model ["Claude", "case"]) == some true &&
+  ((read nar).map fun N => N.guard.eval model ["Claude", "case"]) == some false
+
+-- F4-c: replacement leaves the original carve-out in place on both sides of T.
+#guard let c := j "[\"or\",[\"and\",\"own\",[\"unary\",\"knows_guard\",[\"var\",1]]],[\"unary\",\"likely_guard\",[\"var\",1]]]"
+  let t := j "[\"unary\",\"tested_by_anthropic\",[\"var\",1]]"
+  let carved := gov (hcDoc parts)
+    [{g1 with effect := .frame (leadPart.setObjVal! "unless" (.arr #[t]))}, {g2 with effect := .reguard c}] hcNames
+  let rule := carved.toOption.bind fun d => (normOf (contentOf d "u0165.s01")).bind fun o =>
+    (VE.Readings.Wire.decodeEnvironment envJ).toOption.bind fun re => (VE.Readings.Wire.decodeNorm re o).toOption
+  let model := fun tested => (⟨(fun s => if s == "person" then ["Claude", "case"] else []), (fun _ => none),
+    (fun p => if p == "likely_guard" then [["case"]] else if p == "tested_by_anthropic" && tested then [["case"]] else [])⟩ : VE.FiniteModel String)
+  (rule.map (·.carveOuts.length)) == some 1 &&
+  (rule.map fun N => (VE.Norms.applies N.toNode).eval (model false) ["Claude", "case"]) == some true &&
+  (rule.map fun N => (VE.Norms.applies N.toNode).eval (model true) ["Claude", "case"]) == some false
+-- F6: the later carve-out reaches exactly the seven registered rules.
+#guard let sizes := fun (r : Except String Json) => r.toOption.map fun d => seven.map fun u =>
+    (normOf (contentOf d u)).map (·.getObjValD "unless" |>.getArr?.toOption.map (·.size))
+  sizes (gov (hcDoc parts) [g1, g6] hcNames) == some (seven.map fun _ => some (some 1)) &&
+  sizes (gov (hcDoc parts) [g1] hcNames) == some (seven.map fun _ => some (some 0))
+-- F6′: the chain accepts the eighth carve-out and refuses a ninth with its own unchanged diagnostic.
+#guard let result : Except String (Except String Nat × Except String Nat) := do
+    let re ← VE.Readings.Wire.decodeEnvironment softEnv
+    let base := j "{\"name\":\"r\",\"predicate\":\"p\",\"sign\":false,\"guard\":[\"top\"],\"unless\":[],\"over\":[]}"
+    let eight := base.setObjVal! "unless" (.arr ((List.replicate 8 (j "[\"top\"]")).toArray))
+    let nine ← applyEffect "u" (.carveOut (j "[\"top\"]")) eight
+    pure ((VE.Readings.Wire.decodeNorm re eight).map (·.carveOuts.length),
+      (VE.Readings.Wire.decodeNorm re nine).map (·.carveOuts.length))
+  match result with
+  | .ok (.ok 8, .error e) => e == "InvalidInput: invalid sign or too many carve-outs"
+  | _ => false
+
+/-! F-sym (spec 7.1, sc-1ae): `block = null`, the frame `g1` and a carve-out whose condition names `invented`. The
+    answer has the string, the document and the block do not: `govern_strings` holds (it is `gI`'s payload) and
+    `BlockBound` fails, so `govern_no_new_symbols` does not apply. With the condition in the block it holds. -/
+def inventedC : Json := .arr #["unary", "invented", .arr #["var", (1 : Nat)]]
+def gI : Governor := ⟨"gI", "u0173.s01", .carveOut inventedC, .listName "the hard constraints", seven⟩
+def count (s : String) (o : Json) : Nat := (o.compress.splitOn s!"\"{s}\"").length - 1
+#guard ((gov (hcDoc parts) [g1, gI] hcNames).toOption.map (count "invented"), count "invented" (hcDoc parts)) ==
+  (some 7, 0)
+#guard (gov (hcDoc parts) [g1, gI] hcNames).toOption.map (fun o => (normOf (contentOf o "u0165.s01")).map
+  (·.getObjValD "unless" |>.compress)) == some (some "[[\"unary\",\"invented\",[\"var\",1]]]")
+theorem invented_payload : HasStr "invented" (payload gI.effect) := .arr (by simp) .str
+example (re : VE.Readings.Wire.ReadingsEnvironment) : ¬ BlockBound (sdoc (hcDoc parts) [g1, gI] hcNames re) :=
+  fun hb => hasStr_null _ (hb gI (by simp [sdoc]) _ invented_payload)
+example (re : VE.Readings.Wire.ReadingsEnvironment) :
+    BlockBound { sdoc (hcDoc parts) [gI] hcNames re with block := .arr #[inventedC] } :=
+  fun g hg s hs => by simp only [sdoc, List.mem_singleton] at hg; subst hg; exact .arr (by simp; rfl) hs
+
+/-! F-sym's document is well formed (review sc-1ae F1), so the `govern` statements' hypotheses all hold on it. No proof
+    unfolds the parser, so `part` writes its guard as a term, the value `j` parses (the `#guard`) -/
+#guard parts.all fun (_, c) => (c.getObjValD "part" |>.getObjValD "guard") ==
+  j s!"[\"unary\", {(c.getObjValD "part" |>.getObjValD "guard" |>.getArrVal? 1).toOption.getD .null}, [\"var\", 1]]"
+theorem part_wf (name pred atom : String) : JsonWF (part name pred atom) :=
+  jsonWF_mkObj _ fun p hp => by
+    simp only [List.mem_singleton] at hp; subst hp
+    refine jsonWF_mkObj _ fun q hq => ?_
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hq
+    rcases hq with rfl | rfl | rfl
+    · exact .str _
+    · exact .str _
+    · refine .arr _ fun x hx => ?_
+      simp only [List.mem_toArray, List.mem_cons, List.not_mem_nil, or_false] at hx
+      rcases hx with rfl | rfl | rfl
+      · exact .str _
+      · exact .str _
+      · refine .arr _ fun y hy => ?_
+        simp only [List.mem_toArray, List.mem_cons, List.not_mem_nil, or_false] at hy
+        rcases hy with rfl | rfl
+        · exact .str _
+        · exact .num _
+theorem hcDoc_wf (cs extra : List (String × Json)) (hc : ∀ p ∈ cs, JsonWF p.2) (he : ∀ p ∈ extra, JsonWF p.2) :
+    JsonWF (hcDoc cs extra) :=
+  jsonWF_mkObj _ fun p hp => by
+    rcases List.mem_append.mp hp with hp | hp
+    · simp only [List.mem_singleton] at hp; subst hp
+      refine .arr _ fun x hx => ?_
+      obtain ⟨y, -, rfl⟩ := List.mem_map.mp (List.mem_toArray.mp hx)
+      refine jsonWF_mkObj _ fun q hq => ?_
+      simp only [List.mem_cons, List.not_mem_nil, or_false] at hq
+      rcases hq with rfl | rfl | rfl
+      · exact .str _
+      · exact .str _
+      · show JsonWF ((cs.lookup y.id).getD .null)
+        cases hl : cs.lookup y.id with
+        | none => exact .null
+        | some v => exact hc _ (lookup_mem _ _ cs hl)
+    · exact he p hp
+theorem parts_wf : JsonWF (hcDoc parts) := hcDoc_wf parts [] (fun p hp => by
+  obtain ⟨⟨u, i⟩, -, rfl⟩ := List.mem_map.mp hp
+  dsimp only; split
+  · exact part_wf ..
+  · split <;> exact part_wf ..) (by simp)
+-- F-sym with the condition in the block: `govern_no_new_symbols` applies to the document as written
+example (re : VE.Readings.Wire.ReadingsEnvironment) (out : Json)
+    (ho : govern { sdoc (hcDoc parts) [gI] hcNames re with block := .arr #[inventedC] } = .ok out) (s : String)
+    (hs : HasStr s out) : HasStr s (hcDoc parts) ∨ HasStr s (.arr #[inventedC]) :=
+  govern_no_new_symbols _ parts_wf
+    (fun g hg s hs => by simp only [sdoc, List.mem_singleton] at hg; subst hg; exact .arr (by simp; rfl) hs) out ho s hs
+-- `leadPart` as a term (the `#guard`): a rule's `sign` is a boolean
+#guard (Json.mkObj [("sign", false), ("unless", .arr #[]), ("over", .arr #[])]) == leadPart
+theorem leadPart_wf : JsonWF (Json.mkObj [("sign", false), ("unless", .arr #[]), ("over", .arr #[])]) :=
+  jsonWF_mkObj _ fun p hp => by
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hp
+    rcases hp with rfl | rfl | rfl
+    · exact .bool _
+    · exact .arr _ (by simp)
+    · exact .arr _ (by simp)
+
+/-! F1-g as `govern_provenance`'s conclusion (sc-1aeb): on a well-formed document (`parts_wf`) the theorem applies;
+    `provenanceOf` computes its conclusion for one unit, each affected unit holds it, and an answer that is not
+    `govern`'s, or a unit that is not affected, does not -/
+example (re : VE.Readings.Wire.ReadingsEnvironment) (out : Json) (ho : govern (sdoc (hcDoc parts) [g1] [] re) = .ok out)
+    (u : String) (hu : u ∈ affected (sdoc (hcDoc parts) [g1] [] re)) :=
+  govern_provenance _ parts_wf out ho u hu
+def provenanceOf (D : SDoc) (out : Json) (u : String) : Bool :=
+  match baseObj D u, edgesFor D u with
+  | .ok o₀, .ok es => match (governorsOf D u).foldlM (fun o g => applyEffect u g.effect o) o₀ with
+    | .ok o₁ => normOf (contentOf out u) == some (addOver es o₁) &&
+      (governorsOf D u).all fun g => match covered D g.reach with | .ok us => us.contains u | .error _ => false
+    | .error _ => false
+  | _, _ => false
+/-- The affected units, and the conclusion at each unit given against `govern`'s answer or against `alt`. -/
+def provAt (gs : List Governor) (us : List String) (alt : Option Json := none) : Option (List String × List Bool) := do
+  let re ← (VE.Readings.Wire.decodeEnvironment envJ).toOption
+  let D := sdoc (hcDoc parts) gs hcNames re
+  let out ← alt.orElse fun _ => (govern D).toOption
+  pure (affected D, us.map (provenanceOf D out))
+-- F1-g: the frame over seven part units; the lead-in (before them) and u0166.s01 (after them) are not affected
+#guard provAt [g1] ("u0164.s02" :: seven ++ ["u0166.s01"]) == some (seven, false :: seven.map (fun _ => true) ++ [false])
+-- with a unary governor (`gN`), and with precedence edges into every item but u0165.s02 and u0165.s07
+#guard provAt [g1, gN, gP, gY] seven == some (seven, seven.map fun _ => true)
+-- refused: the ungoverned document; `g1`'s answer, without the edges or without the unary governor
+#guard (provAt [g1] seven (some (hcDoc parts))).map (·.2) == some (seven.map fun _ => false)
+#guard (provAt [g1, gP, gY] seven (gov (hcDoc parts) [g1]).toOption).map (·.2) ==
+  some [false, true, false, false, false, false, true]
+#guard (provAt [g1, gN] seven (gov (hcDoc parts) [g1]).toOption).map (·.2) == some (seven.map fun _ => false)
+
+/-! `HasStr`, `payload` and `JsonWF` (sc-1ae): a string value at any depth, and never a key -/
+example : HasStr "a" (.arr #["b", .arr #["a"]]) := .arr (x := .arr #["a"]) (by simp) (.arr (by simp) .str)
+example : HasStr "a" (Json.mkObj [("k", "a")]) := .obj ((mkObj_getObjVal [("k", "a")] (by simp) "k" _).mpr (by simp)) .str
+example : ¬ HasStr "a" (.str "b") := by
+  intro h; generalize hj : Json.str "b" = x at h; cases h with
+  | str => simp at hj
+  | arr => cases hj
+  | obj hk _ => subst hj; simp [Json.getObjVal?, throw, throwThe, MonadExceptOf.throw] at hk
+example : ¬ HasStr "k" (Json.mkObj [("k", .null)]) := by
+  intro h; cases h with
+  | obj hk hx => obtain ⟨p, hp, rfl⟩ := mkObj_get_mem _ _ _ hk; simp at hp; subst hp; exact hasStr_null _ hx
+#guard [payload (.frame "p"), payload (.reguard "r"), payload (.carveOut "c"), payload .precedes, payload .yields,
+  payload .title] == ([.str "p", .str "r", .str "c", .null, .null, .null] : List Json)
+example : JsonWF (Json.mkObj [("k", .arr #["a"])]) := .obj _ Std.TreeMap.Raw.WF.ofList fun kv hkv => by
+  obtain ⟨p, hp, he⟩ := mkObj_get_mem [("k", .arr #["a"])] kv.1 kv.2 ((getObjVal_obj _ _ _).mpr
+    ((Std.TreeMap.Raw.mem_toList_iff_getElem?_eq_some Std.TreeMap.Raw.WF.ofList).mp hkv))
+  simp at hp; subst hp; rw [← he]; exact .arr _ fun x hx => by simp at hx; subst hx; exact .str _
+
 /-! ## sc-3ab (spec 7.5): the `govern` halves of F8, F8-tree, F9′ and F10, and F-meta's two-root case. The anchor
     and label reaches are the layout's, and the block's anchors pass discourse's checks (`admitBlock` step 7) -/
 
@@ -831,6 +1055,53 @@ def ibAnchors : List VE.Discourse.Anchor :=
 def rawUdhr : Json := rawJ (nd "x" "X" (nd "units" ((lDoc udhrPieces).getObjValD "units") .leaf (nd "w" "W" .leaf (nd "wa" "WA"))))
 #guard (member (govL udhrPieces udhrAnchors rawUdhr [g8]) "wa", member (govL udhrPieces udhrAnchors rawUdhr []) "wa") ==
   (none, some "\"WA\"")
+
+/-! sc-3ac: the DRI's well-formedness boundary. The real layout document is well formed; F-raw-title is not. -/
+example : JsonWF (lDoc udhrPieces) := by
+  unfold lDoc
+  apply jsonWF_mkObj
+  intro p hp
+  simp only [List.mem_singleton] at hp
+  rcases hp with rfl
+  apply JsonWF.arr
+  intro x hx
+  simp only [List.mem_toArray, List.mem_map] at hx
+  obtain ⟨u, hu, rfl⟩ := hx
+  apply jsonWF_mkObj
+  intro kv hkv
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at hkv
+  rcases hkv with h | h | h
+  · subst kv; exact .str _
+  · subst kv; exact .str _
+  · subst kv; exact .null
+
+example : ¬ JsonWF rawUdhr := by
+  intro h
+  cases h with
+  | obj kvs hw hs =>
+    have hb := Std.DTreeMap.Internal.Impl.WF.balanced hw.out.out
+    simp [nd, Std.DTreeMap.Internal.Impl.balanced_inner_iff,
+      Std.DTreeMap.Internal.Impl.BalancedAtRoot, Std.DTreeMap.Internal.Impl.size,
+      Std.DTreeMap.Internal.delta] at hb
+-- sc-1af: `jsonWF?` agrees with both sides of the boundary above
+#guard [jsonWF? (lDoc udhrPieces), jsonWF? udhrDoc, jsonWF? rawUdhr] == [true, true, false]
+
+#guard [same (govL udhrPieces udhrAnchors udhrDoc [g8]) udhrDoc,
+  same (govL udhrPieces udhrAnchors udhrDoc []) udhrDoc] == [true, true]
+#guard (do
+  let re ← VE.Readings.Wire.decodeEnvironment softEnv
+  pure (patch (sdocL udhrPieces udhrAnchors udhrDoc [g8] re) [] == udhrDoc)) matches .ok true
+
+/-! Two equal-key carve-outs expose any change in merge sort's stable order when a title is removed. -/
+def titleCarveA : Governor := ⟨"titleCarveA", "u109", .carveOut (.arr #["top"]), .anchor "art29", a29⟩
+def titleCarveB : Governor := ⟨"titleCarveB", "u109",
+  .carveOut (.arr #["unary", "p", .arr #["var", (1 : Nat)]]), .anchor "art29", a29⟩
+#guard (let titleUnless := fun (r : Except String Json) => r.toOption.map fun o =>
+  (((contentOf o "u110").getObjValD "norm").getObjValD "unless").compress
+  [titleUnless (govL udhrPieces udhrAnchors udhrDoc [titleCarveA, g8, titleCarveB]),
+   titleUnless (govL udhrPieces udhrAnchors udhrDoc [titleCarveA, titleCarveB])]) ==
+  [some "[[\"top\"],[\"unary\",\"p\",[\"var\",1]]]",
+   some "[[\"top\"],[\"unary\",\"p\",[\"var\",1]]]"]
 
 end Govern
 

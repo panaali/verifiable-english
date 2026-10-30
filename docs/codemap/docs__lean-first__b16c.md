@@ -1,0 +1,2 @@
+- `docs/lean-first/b16c/report.py` — Render the 16c progress block solely from captured evidence.
+- `docs/lean-first/b16c/seed_faults.py` — Plant each 16c boundary fault, prove its named test fails, then restore the source.

@@ -1,0 +1,6 @@
+- `docs/lean-first/b12/cpu_report.py` — Regenerate the isolated Lean CPU comparison for the eligibility harness.
+- `docs/lean-first/b12/cpu_trace/sitecustomize.py` — (no module docstring)
+- `docs/lean-first/b12/difffuzz_ab.py` — The differential fuzzer at the base and the head of lean-first batch 12 (gate item 2: its baseline must not grow).
+- `docs/lean-first/b12/latency.py` — Paired batch-12 latency of the UDHR document and eligibility harness.
+- `docs/lean-first/b12/report.py` — Render batch 12's evidence table from the checked JSON artifacts.
+- `docs/lean-first/b12/signoff.py` — Check the DRI decisions required by LEAN-FIRST-PLAN.md section 5.1.

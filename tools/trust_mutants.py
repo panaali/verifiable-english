@@ -24,9 +24,10 @@ it, and the summary counts the verdicts by class (`class_counts`). LIST is one o
 never reuses or carries a verdict across another selection.
 
 The `OPERATORS` mutate each selected declaration inside its compiled range (lean/declarations.txt), comments and
-strings excluded, on its changed lines only (all of a new one). Every edit keeps each line after the declaration
-where it was (`relined`), so the cuts and the roles, which read the checkout's line numbers, read the mutated text
-right (review F9).
+strings excluded, on its changed lines only (all of a new one); an inductive's `ctor-drop` drops each constructor
+alone (review sc-1ae F1: `JsonWF`'s `bool` and `num` read by no proof or check). Every edit keeps each line after
+the declaration where it was (`relined`), so the cuts and the roles, which read the checkout's line numbers, read the
+mutated text right (review F9).
 
 Each mutant is built in a private scratch copy of lean/ (its build restored from tools/lean_share.py's checked build
 of this tree, else copied from lean/.lake; the checkout is only read): the mutated module, then each module that imports it and holds checks for it: a check whose compiled
@@ -52,7 +53,9 @@ every other case is UNKNOWN (review F11/F12, the DRI's note 2026-10-19c). The mu
   text and outside every tactic block;
 - SURVIVOR when every check passes. A failing proof elsewhere is no kill (BUILDER-CHECKLIST 3): it is cut to
   `sorry` (a `#print` blanked) and the build repeated, before any other error is read; and a check that fails in
-  the control too reads a cut proof (`#eval` refuses a value that depends on `sorry`), so it is cut the same way;
+  the control too reads a cut proof (`#eval` refuses a value that depends on `sorry`), so it is cut the same way.
+  Its detail names each proof it cut ("the proofs it breaks: <file>:<line>, ..."), empty when it broke none: a
+  Prop no check can evaluate is exercised only by those proofs (R16), so an --allow reason for it cites one;
 - UNKNOWN in every other case: an error in a definition, or in a command that is no check, even beside a failing
   check (review F8: a definition's broken proof term leaves `sorry` there, which a check may refuse); a check
   whose message states no refutation (out of budget, stuck, a tactic that fails, an unclassified message: F10,
@@ -62,12 +65,15 @@ every other case is UNKNOWN (review F11/F12, the DRI's note 2026-10-19c). The mu
 
 SURVIVOR and UNKNOWN print as `<STATUS> <file>:<line> <definition> (<class>) <operator>: <before> -> <after>`
 (`kind`: the class, ", trusted" added when R16 counts it), unless --allow FILE lists the definition and operator
-with a reason ({"allow": [{"definition": "VE.X.f", "operator": "lt-le", "reason": "one line"}]}). Exit 0: all ran,
+with a reason ({"allow": [{"definition": "VE.X.f", "operator": "lt-le", "reason": "one line"}]}); a `ctor-drop`
+survivor that breaks no proof is never allowed (no proof or check reads its constructor), and an allowed one keeps
+the proofs it breaks after its reason. Exit 0: all ran,
 none left; 1: a survivor or UNKNOWN left; 3: none left but some NOT RUN; 2: cannot run. Builder and reviewer
 evidence only: no gate, merge train or nightly reads it.
 
 --rescore PREV.json (speed-tmrescore): every --json records `inputs`, digests of the bytes every verdict is computed
-from (`inputs`, with each file's own in `files`), each mutant's status before --allow (`raw_status`), and for each
+from (`inputs`, with each file's own in `files`), each mutant's verdict before --allow (`raw_status`, and
+`raw_detail` on a row --allow changed: review sc-1ae recheck F6), and for each
 KILLED and INVALID one what it reads (`reads`, `killed_at`: `Reads`). When PREV's mutants are this plan's and
 - its `inputs` are this run's (mode "identical"): its KILLED, INVALID and SURVIVOR verdicts are the same by
   construction and are reused (`reused_from: <PREV head>`); only its UNKNOWN mutants (a build past its time limit
@@ -182,7 +188,7 @@ CUTS = {"list-empty": None, "list-first": ".take 1", "list-drop-last": ".dropLas
 OPERATORS = {**dict.fromkeys(("arm-true", "arm-false", "arm-default", "body-true", "body-false", "not-drop", "and-or",
                               "or-and", "lt-le", "le-lt", "lt-eq", "le-eq", "eq-le", "eq-ne", "ne-eq", "all-any",
                               "any-all", "bool-flip", "lit-plus", "lit-minus", "list-empty", "append-left",
-                              "append-right"), 1), "list-first": 2, "list-drop-last": 2, "list-last": 3,
+                              "append-right", "ctor-drop"), 1), "list-first": 2, "list-drop-last": 2, "list-last": 3,
              "list-drop-first": 3, "list-drop-middle": 3}
 LT, LE, EQ = r"(?<![<-])<(?![-|$*;=<>])", r"≤|(?<!<)<=(?!>)", r"(?<![:=!<>])=(?![=>])"
 TOKENS = [("not-drop", r"¬\s*|(?<![\w'!?)\]⟩])!(?=[\w(·])", ""), ("and-or", "∧", "∨"),
@@ -209,6 +215,7 @@ class Mutant:
     detail: str = ""
     edit: tuple[int, str] = (0, "")  # what `run` writes: text[start:edit[0]] -> edit[1] (`relined`)
     raw_status: str = "NOT RUN"  # the status before --allow, which --rescore reads
+    raw_detail: str = ""  # the detail before --allow, which --rescore reads (a ctor-drop's names the proofs it breaks)
     reused_from: str = ""  # the head of the --rescore run whose verdict this is
     carried: str = ""  # "checks" when --rescore carried it across a check-only change (`Reads.carry`)
     reads: str = ""  # a KILLED or INVALID verdict's digest of what it reads (`Reads.verdict`)
@@ -308,6 +315,14 @@ def mutants(text: str, kind: str, lo: int, hi: int) -> list[tuple[str, int, int,
                 out += [("arm-true", s, e, consts[0]), ("arm-false", s, e, consts[1])]
             elif default and (s, e) != default[1:]:
                 out.append(("arm-default", s, e, text[default[1]:default[2]]))
+    if kind == "inductive":  # review sc-1ae F1: each constructor dropped alone, its doc comment with it
+        starts = [lo + a.start() for a in re.finditer(r"(?m)^[ \t]*\|", code)
+                  if sum((c in OPEN) - (c in CLOSE) for c in code[:a.start()]) == 0]
+        for a, b in zip(starts, [*starts[1:], hi]):
+            e = a + len(t[a:(depth0(t, a, b, r"\bderiving\b") or b)].rstrip())
+            while (p := text.rfind("\n", lo, a - 1)) >= 0 and not t[p + 1:a - 1].strip() and text[p + 1:a - 1].strip():
+                a = p + 1
+            out.append(("ctor-drop", a, e, ""))
     for m in re.finditer(rf"\.({LIST_METHODS})(?![\w?!'])", code):  # a list method's receiver and list result
         if (start := atom_before(t, lo + m.start(), lo)) is not None:
             lists += [(start, lo + m.start())] + ([(start, atom_after(t, start, hi))] if m[1] in LIST_RESULTS else [])
@@ -1110,8 +1125,9 @@ def run(m: Mutant, scratch: Scratch, tree: Tree, tests: list[str], outside: list
         failing = {t: out for t in outside if (out := lake(env, "env", "lean", str(t)))[0]}
         if late := next((t for t in failing if failing[t][0] == TIMED_OUT), None):
             return "UNKNOWN", f"{late}: {failing[late][1]}"
-        if not failing:
-            return "SURVIVOR", ""
+        if not failing:  # review sc-1ae F1: the proofs it broke, each cut, which an --allow reason cites
+            broke = [f"lean/{f}:{a}" for f, spans in cuts.items() for a, _ in spans]
+            return "SURVIVOR", f"the proofs it breaks: {', '.join(broke)}" if broke else ""
         key = ("outside", tuple(built), state())
         if key not in controls:
             write(m.file, False)
@@ -1225,7 +1241,7 @@ class Reads:
         m.reads, m.killed_at = "", None
         if m.raw_status == "INVALID":
             m.reads = self.scope(m)
-        elif m.raw_status == "KILLED" and (at := self.killer(m.detail)):
+        elif m.raw_status == "KILLED" and (at := self.killer(m.raw_detail)):
             if span := next(((s, e) for s, e, r, _ in self.roles.get(at[0], ()) if r == "check" and s <= at[1] <= e),
                             None):
                 m.reads, m.killed_at = self.check(m, at[0], *span), span
@@ -1328,7 +1344,9 @@ def previous(path: Path, now: dict, found: list[Mutant], why_not) -> tuple[str, 
         if [tuple(r[k] for k in ("id", "file", "line", "definition", "operator", "before", "after")) for r in rows] != [
                 (m.id, m.file, m.line, m.definition, m.operator, m.before, m.after) for m in found]:
             return "its mutants are not this tree's"
-        verdicts = {r["id"]: {"status": r["raw_status"], "detail": r["detail"] if r["raw_status"] == r["status"] else "",
+        if any(r["raw_status"] != r["status"] and "raw_detail" not in r for r in rows):
+            return "it records no detail before --allow (`raw_detail`) on a row --allow changed"
+        verdicts = {r["id"]: {"status": r["raw_status"], "detail": r.get("raw_detail", r["detail"]),
                               "reads": r.get("reads", ""), "killed_at": r.get("killed_at")} for r in rows}
         return "checks" if differ else "identical", head, verdicts, changed
     except (OSError, ValueError, KeyError, TypeError, AttributeError) as error:
@@ -1399,10 +1417,13 @@ def record(found: list[Mutant], base: str, head: str, jobs: int, max_mutants: in
             **({"rescore": rescore} if rescore else {}),
             "definitions": [f"lean/{f}: {d}" for f, d in sorted({(m.file, m.definition) for m in found})],
             **({"shard": shard} if shard is not None else {}), **({"shards": shards} if shards else {}),
-            "mutants": [{k: v for k, v in asdict(m).items() if k in ROW and (k not in OPTIONAL or v)} for m in found]}
+            "mutants": [{k: v for k, v in asdict(m).items() if k in ROW and (k not in OPTIONAL or v)
+                         and (k != "raw_detail" or (m.raw_status, m.raw_detail) != (m.status, m.detail))}
+                        for m in found]}
 
 
 OPTIONAL = ("reused_from", "carried", "reads", "killed_at")  # a row holds these only when they are set
+# raw_detail: only on a row --allow changed (review sc-1ae recheck F6); a row without it reads its detail
 ROW = {k: t for k, t in get_type_hints(Mutant).items() if k not in ("start", "end", "edit")}  # a row's fields
 PART = {"base": str, "head": str, "jobs": int, "max_mutants": int, "deep": bool, "tests": list[str], "seconds": int,
         "classes": list[str], "inputs": dict, "shard": dict}  # what `record` copies from its arguments
@@ -1435,7 +1456,7 @@ def unwritten(rows) -> str | None:
     if type(rows) is not list:
         return "its mutants are not a list"
     for r in rows:
-        if not fits(r, ROW, OPTIONAL) or not all(r[k] for k in OPTIONAL if k in r):
+        if not fits(r, ROW, (*OPTIONAL, "raw_detail")) or not all(r[k] for k in OPTIONAL if k in r):
             return f"the row of {r.get('id') if type(r) is dict else r!r} is not one of its fields and types"
         if r["status"] not in (*STATUSES, OTHER) or not (r["raw_status"] in ("SURVIVOR", "UNKNOWN") if r[
                 "status"] == "ALLOWED" else r["raw_status"] == r["status"]):
@@ -1443,6 +1464,11 @@ def unwritten(rows) -> str | None:
     if len({r["id"] for r in rows}) != len(rows):
         return "its mutant ids repeat"
     return None
+
+
+def row_mutant(r: dict) -> Mutant:
+    """The mutant of a row `record` writes: no span, and its detail before --allow its detail when the row holds none."""
+    return Mutant(**{"start": 0, "end": 0, "raw_detail": r["detail"], **r})
 
 
 def canon(v) -> str:
@@ -1466,7 +1492,7 @@ def unread(d) -> str | None:
         return "a field is missing or not of its type"
     if why := unwritten(d.get("mutants")):
         return why
-    found = [Mutant(**{"start": 0, "end": 0, **r}) for r in d["mutants"]]
+    found = [row_mutant(r) for r in d["mutants"]]
     again = record(found, d["base"], d["head"], d["jobs"], d["max_mutants"], d["deep"], d["tests"], d["seconds"],
                    d["classes"], d["inputs"], d.get("rescore"), shard=d["shard"])
     if bad := sorted(k for k in again.keys() | d.keys() if canon(again.get(k)) != canon(d.get(k))):
@@ -1551,7 +1577,7 @@ def merge(out: Path, paths: list[Path]) -> int:
             reusable = REUSED if mode == "identical" else ("KILLED", "INVALID")
             if any(r["raw_status"] not in reusable for r in reused_rows):
                 return refuse(f"{p} rescore.mode cannot reuse the row's raw_status")
-        found = [Mutant(**{"start": 0, "end": 0, **rows.get(r["id"], (r,))[0]}) for r in first["mutants"]]
+        found = [row_mutant(rows.get(r["id"], (r,))[0]) for r in first["mutants"]]
         rescore = first.get("rescore") and {**first["rescore"], **{x: sum(d["rescore"][x] for d, _ in parts)
                                                                    for x in ("reused", "rerun")}}
         shards = [{"k": d["shard"]["k"], "n": n, "jobs": d["jobs"], "seconds": d["seconds"]} for d, _ in parts]
@@ -1668,9 +1694,11 @@ def main(argv: list[str] | None = None) -> int:
 
     def allowed(m: Mutant) -> None:
         """The current --allow on a verdict, run or reused, which is printed when it is left."""
-        m.raw_status = m.status
-        if m.status in ("SURVIVOR", "UNKNOWN") and (m.definition, m.operator) in allow:
-            m.status, m.detail = "ALLOWED", allow[(m.definition, m.operator)]
+        m.raw_status, m.raw_detail = m.status, m.detail  # the verdict before --allow, all of it: --rescore reads it
+        unread = m.operator == "ctor-drop" and m.status == "SURVIVOR" and not m.detail  # review sc-1ae F1
+        if m.status in ("SURVIVOR", "UNKNOWN") and (m.definition, m.operator) in allow and not unread:
+            reason = allow[(m.definition, m.operator)]
+            m.status, m.detail = "ALLOWED", f"{reason} ({m.detail})" if m.operator == "ctor-drop" else reason
         if m.status in ("SURVIVOR", "UNKNOWN"):
             print(line(m), flush=True)
     for m in mine:

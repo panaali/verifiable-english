@@ -1,0 +1,111 @@
+{
+  "id": "U19",
+  "arm": "identifier",
+  "account": "claude-danielsaeedi37",
+  "prompt": "Read only the source and displayed lines below as a reader of this document. For the named conclusion, answer in exactly this format: `CLASS: SETTLED|TURNS|CONDITIONAL; DECIDER: <name or NONE>; WHY: <one sentence>`. SETTLED means it holds whatever is judged. TURNS means two admissible judgments can change it. CONDITIONAL means it is certified only given a judgment criterion. Name the decider if the text names one; otherwise say NONE. Do not use outside knowledge.\n\nSOURCE: UDHR art 25 synthetic: These rules are conflict-free given the criterion that inspected dwellings meet adequate_home; a housing panel decides that term.\nCONCLUSION: these rules are conflict-free\nJUDGMENT: adequate_home means whether this dwelling is adequate; decider: housing panel.\nFocus is classified as \"adequate_home\".\n",
+  "cli": {
+    "duration_api_ms": 1632,
+    "stop_reason": "end_turn",
+    "session_id": "83763b0b-1ed0-4ae6-bd0f-774787c7a0b9",
+    "total_cost_usd": 0.0183224,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 4102,
+      "cache_read_input_tokens": 10704,
+      "output_tokens": 84,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 4102,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 84,
+          "cache_read_input_tokens": 10704,
+          "cache_creation_input_tokens": 4102,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 4102
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 84,
+        "cacheReadInputTokens": 10704,
+        "cacheCreationInputTokens": 4102,
+        "webSearchRequests": 0,
+        "costUSD": 0.0183224,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 0,
+        "cacheCreationEphemeral5mInputTokens": 0,
+        "cacheCreationEphemeral1hInputTokens": 4102,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 1,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "CLASS: CONDITIONAL; DECIDER: housing panel; WHY: The source certifies the rules as conflict-free only given the criterion that inspected dwellings meet adequate_home, and it names the housing panel as the one who decides that term.",
+    "ttft_ms": 2085,
+    "type": "result",
+    "duration_ms": 2137,
+    "uuid": "c2950230-2794-43c8-9088-e7a2e493b376",
+    "ttft_stream_ms": 1593,
+    "time_to_request_ms": 499,
+    "first_content_frame_ms": 1594,
+    "queued_turn_count": 0,
+    "result_index": 0
+  },
+  "stderr": "",
+  "exit_code": 0,
+  "charged_cw": 14892,
+  "answer": "CLASS: CONDITIONAL; DECIDER: housing panel; WHY: The source certifies the rules as conflict-free only given the criterion that inspected dwellings meet adequate_home, and it names the housing panel as the one who decides that term."
+}

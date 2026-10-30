@@ -14,6 +14,7 @@ import json
 import pytest
 
 from tests import lean_routes
+from tests.test_defaults_readings import K1, QUERY as DEFAULT_QUERY, route_of, soft_document
 from tests.test_readings_nd_document import QUERY, fnd1, fnd2
 from tests.test_readings_s2_document import _m6, _m8, _m9
 from ve import readings_verdicts
@@ -25,10 +26,10 @@ SWEPT = {
     Superposed: {"conflict", "model", "certificate", "premises", "candidate_premises", "dead_readings", "entailment",
                  "report_fields", "conflict_answer", "premises_answer", "query_answer", "answer_for"},
     Enumerated: {"conflict", "premises", "dead_readings", "entailment", "report_fields", "conflict_answer",
-                 "premises_answer", "query_answer"},
+                 "premises_answer", "query_answer", "default_answer"},
     # RD-3: a choice's document only generates evidence; Lean checks and folds it (`readings-verdicts`).
     _ChoiceDocument: {"conflict_case", "witness_case", "certificate_case", "model_case"},
-    _FilledChoiceDocument: {"conflict_case", "witness_case", "certificate_case", "model_case"},
+    _FilledChoiceDocument: {"conflict_case", "witness_case", "certificate_case", "model_case", "default_case"},
 }
 NOT_BUDGETED = {
     "lean": "the relay to Lean's service, no search",
@@ -39,6 +40,8 @@ NOT_BUDGETED = {
     "over_budget": "the constant answer past 64 choices", "base": "the base environment",
     "check_answer": "Lean's answer checked against its request, no search",
     "frame": "the request's document decoded for that check, no search",
+    "defaults": "Lean's elaboration and the search inputs, no evidence search",
+    "default_english": "rendering Lean's checked default rows, no evidence search",
 }
 X_REQUIRED = ["forall", "act", ["unary", "x_required", ["var", 0]]]  # F-ND2's query (the gated one)
 FIXTURES = {"F-ND1": (fnd1, QUERY), "F-ND1 enumerated oracle": (fnd1, QUERY),
@@ -84,6 +87,23 @@ def public(cls):
 @pytest.mark.parametrize("cls", list(SWEPT), ids=lambda cls: cls.__name__)
 def test_every_public_op_is_swept_or_named_unbudgeted(cls):
     assert public(cls) - set(NOT_BUDGETED) == SWEPT[cls]
+
+
+def test_default_ops_at_zero_budget_after_a_cached_free_gate(tmp_path, monkeypatch):
+    """The new default evidence path cannot certify a choice or the folded query after search is exhausted."""
+    route = route_of(soft_document(tmp_path, [K1]))
+    assert route.conflict_answer()["result"]["status"] == "CONFLICT-FREE"
+    for key in readings_verdicts.BUDGET:
+        monkeypatch.setitem(readings_verdicts.BUDGET, key, 0)
+    for choice in route.choices:
+        piece = route._choice(choice).default_case(DEFAULT_QUERY)
+        assert "certificate" not in piece and "model" not in piece and "countermodel" not in piece
+        assert "collision" not in piece
+        assert all("certificate" not in pair for pair in piece.get("coherence", []))
+    answer = route.default_answer(DEFAULT_QUERY)
+    unknown(answer["result"], "verdict")
+    unknown(answer["default"], "verdict")
+    assert {entry["query"] for entry in answer["default"]["per_choice"]} == {"UNKNOWN"}
 
 
 def sweep_choice(document, conclusion):

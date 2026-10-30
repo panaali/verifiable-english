@@ -10,6 +10,9 @@ themselves, and `tests/test_model_environment.py` runs the same cases over those
 compares the head's answers with that oracle.
 
     python -I tests/b15b_model_cases.py record tests/data/b15b-model-oracle.json.gz
+
+With `--profile P` the saved oracle is updated in place: the environments that list `P` are found and answered
+again, and every other saved environment and answer is kept as recorded (ap-1bd re-recorded `acts@0`'s).
 """
 from __future__ import annotations
 
@@ -177,11 +180,21 @@ def run_all(envs) -> dict:
 
 
 def main() -> None:
-    if len(sys.argv) != 3 or sys.argv[1] != "record":
+    args = sys.argv[1:]
+    if len(args) not in (2, 4) or args[0] != "record" or args[2:3] not in ([], ["--profile"]):
         raise SystemExit(__doc__)
     sys.path.insert(0, str(Path.cwd()))
     envs = environments()
-    answers = run_all(envs)
+    if len(args) == 2:
+        answers = run_all(envs)
+    else:
+        with gzip.open(args[1], "rt") as stream:
+            saved = json.load(stream)
+        envs = [(name, raw) for name, raw in envs if args[3] in (raw.get("profiles") or ())]
+        kept = [(name, raw) for name, raw in saved["environments"] if args[3] not in (raw.get("profiles") or ())]
+        answers = {case: value for case, value in saved["answers"].items()
+                   if case.split("|")[0] in {name for name, _ in kept}} | run_all(envs)
+        envs = kept + envs
     with gzip.open(sys.argv[2], "wt") as stream:
         json.dump({"environments": envs, "answers": answers}, stream, sort_keys=True, indent=0)
     print(len(envs), len(answers))

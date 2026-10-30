@@ -1,0 +1,113 @@
+{
+  "id": "U14",
+  "arm": "identifier",
+  "prompt": "Read only the source and displayed lines below as a reader of this document. For the named conclusion, answer in exactly this format: `CLASS: SETTLED|TURNS|CONDITIONAL; DECIDER: <name or NONE>; WHY: <one sentence>`. SETTLED means it holds whatever is judged. TURNS means two admissible judgments can change it. CONDITIONAL means it is certified only given a judgment criterion. Name the decider if the text names one; otherwise say NONE. Do not use outside knowledge.\n\nSOURCE: UDHR u111: meeting the just requirements of morality, public order and the general welfare in a democratic society.\nCONCLUSION: whether this requirement limits the right\nOpen reading: \"a requirement\" is classified as \"just_requirement\".\nleft_to(just_requirement; decider=unstated): whether this requirement limits the right\n",
+  "call": {
+    "account": "claude-panaali2",
+    "returncode": 0,
+    "stderr": "",
+    "result": {
+      "duration_api_ms": 2769,
+      "stop_reason": "end_turn",
+      "session_id": "18d8a99f-2e11-4eb9-8632-d0200e4530c3",
+      "total_cost_usd": 0.0045885000000000006,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 880,
+        "cache_read_input_tokens": 1545,
+        "output_tokens": 91,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "server_tool_use": {
+          "web_search_requests": 0,
+          "web_fetch_requests": 0
+        },
+        "service_tier": "standard",
+        "cache_creation": {
+          "ephemeral_1h_input_tokens": 880,
+          "ephemeral_5m_input_tokens": 0
+        },
+        "inference_geo": "global",
+        "iterations": [
+          {
+            "input_tokens": 2,
+            "output_tokens": 91,
+            "cache_read_input_tokens": 1545,
+            "cache_creation_input_tokens": 880,
+            "cache_creation": {
+              "ephemeral_5m_input_tokens": 0,
+              "ephemeral_1h_input_tokens": 880
+            },
+            "type": "message"
+          }
+        ],
+        "speed": "standard",
+        "fallback_credit": null
+      },
+      "modelUsage": {
+        "claude-sonnet-5-5": {
+          "inputTokens": 2,
+          "outputTokens": 91,
+          "cacheReadInputTokens": 1545,
+          "cacheCreationInputTokens": 880,
+          "webSearchRequests": 0,
+          "costUSD": 0.0045885000000000006,
+          "contextWindow": 1000000,
+          "maxOutputTokens": 128000,
+          "thinkingTokens": 0,
+          "cacheCreationEphemeral5mInputTokens": 0,
+          "cacheCreationEphemeral1hInputTokens": 880,
+          "canonicalModel": "claude-sonnet-5-5",
+          "provider": "firstParty",
+          "costBasis": "list"
+        }
+      },
+      "permission_denials": [],
+      "terminal_reason": "completed",
+      "fast_mode_state": "off",
+      "fast_mode_disabled_reason": "sdk_opt_in_required",
+      "subagent_stats": {
+        "spawned": 0,
+        "requested": {
+          "background": 0,
+          "foreground": 0,
+          "unset": 0
+        },
+        "started_in_background": 0,
+        "max_depth": 0,
+        "spawned_by_subagents": 0,
+        "completed": 0,
+        "failed": 0,
+        "killed": {
+          "parent": 0,
+          "user": 0,
+          "system": 0
+        },
+        "refused": {
+          "depth_limit": 0,
+          "concurrency_limit": 0,
+          "budget": 0
+        },
+        "by_type": {}
+      },
+      "safety_stops": 0,
+      "is_error": false,
+      "num_turns": 1,
+      "subtype": "success",
+      "api_error_status": null,
+      "result": "CLASS: CONDITIONAL; DECIDER: NONE; WHY: Whether the requirement limits the right is left to whether it counts as a \"just requirement\" (morality, public order, general welfare in a democratic society), a criterion the text does not assign to any named decider.",
+      "ttft_ms": 2935,
+      "type": "result",
+      "duration_ms": 2959,
+      "uuid": "2bbe096b-6838-461f-b15d-55b82a091186",
+      "ttft_stream_ms": 2292,
+      "time_to_request_ms": 189,
+      "first_content_frame_ms": 2292,
+      "queued_turn_count": 0,
+      "result_index": 0
+    },
+    "cw": 2518
+  },
+  "raw_answer": "CLASS: CONDITIONAL; DECIDER: NONE; WHY: Whether the requirement limits the right is left to whether it counts as a \"just requirement\" (morality, public order, general welfare in a democratic society), a criterion the text does not assign to any named decider."
+}

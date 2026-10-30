@@ -14,6 +14,7 @@ inductive Mode where
   | parse | graph | readings | readingsChoices | bundle | familyNorms
   | softNorms | rights | speechActs | reports | alternatives | risk | riskEval | quantity | normDefaults
   | discourse | readingsRoute | diagnose | document | englishQuestion | searchBudget | ask | words | metered | calc
+  | cardinality
   deriving DecidableEq, Repr
 
 def Mode.name : Mode → String
@@ -55,13 +56,14 @@ def Mode.name : Mode → String
   | .words => "words"
   | .metered => "metered"
   | .calc => "calc"
+  | .cardinality => "cardinality"
 
 def modes : List Mode := [.evaluate, .checkCertificate, .order, .route, .norms, .english,
   .englishRead, .englishGrammar, .englishCheck,
   .environment, .model, .check, .identity, .parse, .graph, .readings, .readingsChoices, .bundle, .familyNorms,
   .softNorms, .rights, .speechActs, .reports, .alternatives, .risk, .riskEval, .quantity, .normDefaults,
   .discourse, .readingsRoute, .diagnose, .document, .englishQuestion, .searchBudget, .ask, .words, .metered,
-  .calc]
+  .calc, .cardinality]
 
 def Mode.ofName? (name : String) : Option Mode := modes.find? (·.name == name)
 

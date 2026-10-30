@@ -110,6 +110,18 @@ def test_environment_drops_the_outer_runs_settings():
         "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1"}
 
 
+@pytest.mark.parametrize("code,output,expected", [
+    (1, "FAILED tests/test_example.py::test_mutant - AssertionError\n1 failed", True),
+    (5, "no tests ran", False),
+    (4, "ERROR: unrecognized arguments", False),
+    (1, "ERROR tests/test_example.py - collection failed", False),
+    (0, "1 passed", False),
+])
+def test_mutation_kill_requires_a_failed_test(code, output, expected):
+    result = subprocess.CompletedProcess(args=[], returncode=code, stdout=output, stderr="")
+    assert nested_pytest.failed_test_run(result) is expected
+
+
 # Pytest commands built outside the builder, each with its reason.
 UNBUILT = {
     # Outermost, isolated mutant runs: each script changes one file, runs one targeted failing

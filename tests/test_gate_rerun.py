@@ -126,6 +126,19 @@ def test_a_rerun_runs_only_the_failed_tests_files_and_is_not_a_full_gate(fake):
     assert (code, full["status"], full["mode"]) == (0, "passed", "full") and "Lean audit" in fake.stages()
 
 
+def test_numeric_gate_workers_cap_audit(fake):
+    fake.run("--workers", "2")
+    audit = [args for stage, args in fake.seen if stage == "Lean audit"]
+    assert len(audit) == 1 and audit[0][-2:] == ["--jobs", "2"]
+
+
+def test_audit_env_budget_overrides_gate_workers(fake, monkeypatch):
+    monkeypatch.setenv("VE_AUDIT_JOBS", "2")
+    fake.run("--workers", "5")
+    audit = [args for stage, args in fake.seen if stage == "Lean audit"]
+    assert len(audit) == 1 and audit[0][-2:] == ["--jobs", "2"]
+
+
 def test_a_rerun_that_fails_again_fails_and_can_itself_be_rerun(fake):
     fake.run()
     code, again = fake.run("--rerun-failed")

@@ -14,6 +14,7 @@ import time
 
 import pytest
 
+from test_precommit_hook import fixture_repo  # pytest registers the private-repository fixture
 from conformance.soft_norms import soft4_reproducers
 from subprocesses import HANG_TIMEOUT, ChildCPU
 from tools import nested_pytest
@@ -24,12 +25,12 @@ from ve.softnorms import load_soft_document
 ROOT = Path(__file__).resolve().parents[2]
 
 
-def test_precommit_large_staged_change(record, tmp_path):
+def test_precommit_large_staged_change(record, tmp_path, fixture_repo):
     """The hook's own work on an edit of every Python and hand-written Lean source plus
     1500 new files. `lean --deps` is left out: its share is bounded by its wall-clock
     budget (`lean_header_imports`), not by its work."""
     from test_precommit_hook import Staging, stage_large_change, without_lean
-    staging = Staging(tmp_path)
+    staging = Staging(tmp_path, fixture_repo)
     stage_large_change(staging)
     with ChildCPU() as cpu:
         result = staging.run("--timings", PATH=without_lean(tmp_path))
@@ -96,6 +97,75 @@ def test_ask_lean_cpu(record, ident):
         pytest.skip("the platform does not report the service's CPU time")
     record("lean", found["cpu_s"])
     assert found["cpu_s"] <= 2.0, found  # the plan's registered budget, beside the stored baseline
+
+
+def cardinality_case(premises: int) -> dict:
+    """The recorded `p3-charged` case with `premises` copies of one count premise whose body has 2,048 atoms (six
+    predicates, so 64 regions), well-formed and under the line limit; the conclusion is "top"."""
+    from tests.lean_service_corpus import cardinality_cases
+    base = next(case for case in cardinality_cases() if case["id"] == "p3-charged")
+    atoms = ["a1", "a2", "a3", "a4", "a5", "expects_further_increase"]
+
+    def body(depth, i=0):
+        if depth == 0:
+            return ["is", atoms[i % 6]]
+        return ["and" if depth % 2 else "or", body(depth - 1, 2 * i), body(depth - 1, 2 * i + 1)]
+    count = {"format": "ve-cardinality@1", "formula": ["count", "fomc_policymaker", [["1", body(11)]], "le", "7"]}
+    return {**base, "id": "growth", "premises": [count] * premises,
+            "conclusion": {"format": "ve-cardinality@1", "formula": ["quantity", ["top"]]}}
+
+
+def test_cardinality_region_structure_once(record):
+    """F1 of the qt-a3c review: 50 and then 150 large count premises on a warm service. Each count's erasure read
+    the region structure (`predsOn`) by rescanning the whole problem, so three times the request cost 6.7 times the
+    CPU; computed once per problem (`regionData`, `checkedProblem`) it costs about three times. The build measured is
+    the one in `lean/.lake` (`lake build ve_service`), pinned or not: this measures cost, not trust."""
+    from ve.backends.lean_service import DEFAULT_EXECUTABLE, LeanService
+    seen = {}
+    with LeanService(DEFAULT_EXECUTABLE, timeout=HANG_TIMEOUT, allow_unlisted_build=True) as service:
+        for premises in (50, 150):
+            wire = json.dumps([cardinality_case(premises)], separators=(",", ":"))
+            before = service.cpu_seconds()
+            _, response = service.exchange("cardinality", wire, 1, timeout=HANG_TIMEOUT)
+            after = service.cpu_seconds()
+            assert response["results"][0]["result"]["status"] == "ok", response["results"][0]["result"]
+            if before is None or after is None:
+                pytest.skip("the platform does not report the service's CPU time")
+            seen[premises] = after - before
+    record("50 premises", seen[50])
+    record("150 premises", seen[150])
+    assert seen[150] < 5 * seen[50], seen  # linear: about 3; rescanning the problem at each count gave 6.7
+
+
+def test_cardinality_universal_dedup_near_linear(record):
+    """F5 of the qt-a3c loop recheck (its PROBE F5): one count premise and 1,800 and then 5,400 universal statements
+    over the counted sort that differ only in their last 16 connectives. `firstUse` compared each statement with every
+    one kept before it, so three times the request cost 8.2 times the time; the hash-set dedup (`firstUseH`, run by
+    the `@[csimp]` lemmas of `VE/Cardinality/Regions.lean`) costs about three times. P3 refuses both requests, after
+    the dedup. The build measured is the one in `lean/.lake`, pinned or not: this measures cost, not trust."""
+    from tests.test_cardinality_service import universal
+    from tests.lean_service_corpus import cardinality_cases
+    from ve.backends.lean_service import DEFAULT_EXECUTABLE, LeanService
+    base = next(case for case in cardinality_cases() if case["id"] == "p3-charged")
+    count = {"format": "ve-cardinality@1", "formula": ["count", "fomc_policymaker", [["1", ["any"]]], "eq", "18"]}
+    top = {"format": "ve-cardinality@1", "formula": ["quantity", ["top"]]}
+    seen = {}
+    with LeanService(DEFAULT_EXECUTABLE, timeout=HANG_TIMEOUT, allow_unlisted_build=True) as service:
+        for statements in (1800, 5400):
+            case = {**base, "id": "w", "conclusion": top,
+                    "premises": [count, *(universal(i, depth=30, bits=16) for i in range(statements))]}
+            wire = json.dumps([case], separators=(",", ":"))
+            before = service.cpu_seconds()
+            _, response = service.exchange("cardinality", wire, 1, timeout=HANG_TIMEOUT)
+            after = service.cpu_seconds()
+            result = response["results"][0]["result"]
+            assert result["status"] == "error" and "aggregate" in result["error"], result
+            if before is None or after is None:
+                pytest.skip("the platform does not report the service's CPU time")
+            seen[statements] = after - before
+    record("1800 universals", seen[1800])
+    record("5400 universals", seen[5400])
+    assert seen[5400] < 4.5 * seen[1800], seen  # near-linear: about 3; the quadratic dedup gave 8.2
 
 
 def test_scope_b1(record, tmp_path):

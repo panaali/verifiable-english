@@ -1,0 +1,91 @@
+- `tests/test_calc_algebra.py` — ME-9: algebraic identities (math-evidence spec 8.2, plan 3.8; fixtures H-1 to H-4 and R-6).
+- `tests/test_calc_answer.py` — The relay never takes a Lean `calc` answer that is not an answer to the request it sent (R8; math-evidence ME-3, spec 3.4).
+- `tests/test_calc_derive.py` — Derivations over rational unknowns in the `calc` mode (math-evidence ME-5, me-5c): spec 13.6's R-3 and R-4 and the plan's physics fixtures H-6, H-6p, H-6n and …
+- `tests/test_calc_dimensions.py` — ME-6: physical dimensions (math-evidence spec 6.1; fixtures H-7, H-7u, H-7c, H-7l).
+- `tests/test_calc_lean.py` — `ve calc check FILE` (math-evidence ME-3): the `calc` route's own cases through `ve.calc`, the relay of the Lean service's `calc` mode.
+- `tests/test_calc_service.py` — The `calc` service mode (math-evidence ME-2, me-2b): Lean's answers to the mode's route cases in `tests/data/route-cases.jsonl` through `ve_service`, and the m…
+- `tests/test_calc_units.py` — me-6b: `ve-units@2` (math-evidence spec 6.2; fixtures H-7, H-7c, H-7d, H-7l, H-7u and I-2).
+- `tests/test_calendar_regression_w6b.py` — Independent Art.
+- `tests/test_cardinality_exercised.py` — Every trusted definition of `lean/VE/Cardinality/` is stated about by a theorem (standing ruling R16).
+- `tests/test_cardinality_service.py` — The `cardinality` service mode (quantities QT-A3, qt-a3c): Lean's answers to the mode's route cases in `tests/data/route-cases.jsonl` through `ve_service`, eac…
+- `tests/test_cedar_attributes.py` — (no module docstring)
+- `tests/test_cedar_norms.py` — Runtime-type Cedar conditions from W1 section 10.2.
+- `tests/test_ci_workflow.py` — The security properties of the GitHub Actions workflows (.github/workflows/; gha-wf).
+- `tests/test_cli.py` — (no module docstring)
+- `tests/test_closure.py` — closure@0 semantics, profile boundaries, views, identities and evidence.
+- `tests/test_closure_certificates.py` — New rules are paired with Lean soundness and independent replay evidence.
+- `tests/test_closure_induction.py` — Induction replay, hostile certificates, compatibility and cyclic policies.
+- `tests/test_closure_witnesses.py` — Every selected E0 item has two checked, provenance-bound closure witnesses.
+- `tests/test_code_map.py` — The committed code map depends only on source paths and first module doc sentences.
+- `tests/test_colab.py` — (no module docstring)
+- `tests/test_compose_dispatch.py` — S0's exhaustive Python side of the composition dispatch contract (composition.md 10.1).
+- `tests/test_compose_integration.py` — S0 integration evidence for composition.md 10.2 on a real document: L2's slot, L3–L5 and L7.
+- `tests/test_conformance.py` — (no module docstring)
+- `tests/test_consolidation_tools.py` — Step 0 of docs/CONSOLIDATION-PLAN.md: the trust budget (TB), the statement dump (ST) and the Lean output differential (OUT), with the input recorder OUT replay…
+- `tests/test_constitution_w6a_controls.py` — Authored age reading and negative controls; no source-fidelity claim.
+- `tests/test_count_w6a.py` — Pinned W6 counting expansion and finite evaluation envelope.
+- `tests/test_coverage_dashboard.py` — (no module docstring)
+- `tests/test_cpu_bounds.py` — The CPU-time bound that replaces elapsed-time bounds on backend batches.
+- `tests/test_data_adapters.py` — (no module docstring)
+- `tests/test_data_flags.py` — (no module docstring)
+- `tests/test_data_surface.py` — (no module docstring)
+- `tests/test_data_three_way.py` — Generated data declarations and finite tables across Python and Lean.
+- `tests/test_defaults_answer.py` — The relay never takes a Lean `defaults-*` row that is not an answer to the request it sent (R8; defeasible plan DF-1b).
+- `tests/test_defaults_checks.py` — Every check of the defaults relay and of `--assume-no-exception` is needed by a test (review df-1b F1 and F9, PROBE F1 and PROBE F9).
+- `tests/test_defaults_english.py` — The English of answers that hold unless an exception applies (defeasible plan 2.8, spec 4; batch DF-1b, df-1bb).
+- `tests/test_defaults_lean.py` — Answers that hold unless an exception applies, through the Lean service (defeasible plan 4.1 and 4.2, batch DF-1b).
+- `tests/test_defaults_readings.py` — Readings unless an exception applies (docs/spec/defeasible-PLAN.md 2.4 and batch DF-3; spec docs/spec/defeasible.md 3.9, 7.4 and 8.3): the `default` member of …
+- `tests/test_defeasible_baseline_evidence.py` — DF-0.3, the defeasible plan's baseline, checked from its SAVED evidence only (`docs/research/evidence/defeasible/baseline/`, written by `research/defeasible/ba…
+- `tests/test_definitions.py` — W3 definition elaboration and the identity-bound declaration hook.
+- `tests/test_definitions_differential.py` — Differential elaboration of definitions (PLAN-EXPAND2 W3(7)).
+- `tests/test_definitions_english.py` — English authoring of definitions, glossaries of synonyms and citations (W3, VISION 'Synonyms and varied wording').
+- `tests/test_df_e1.py` — DF-E1's preregistered blind reader transport and scoring, without model calls.
+- `tests/test_difffuzz.py` — The cross-language differential fuzzer (tools/difffuzz.py, conformance/DIFFFUZZ.md).
+- `tests/test_discourse.py` — Regression tests for the Python discourse relay: every verdict, diagnostic, reference, status and joint choice is the Lean route's answer (docs/LEAN-FIRST-PLAN…
+- `tests/test_discourse_answer.py` — The Python relay never accepts a Lean discourse answer that is not an answer to the document it asked about (lf-4 review B; FINDING-CLASSES 8 and 15).
+- `tests/test_discourse_constitution.py` — The constitution example of docs/spec/discourse.md 2.5 (u0214.s02) as a regression fixture.
+- `tests/test_discourse_lean.py` — Discourse item 3 (Lean): the `ve_discourse_route` executable on the item-1 fixtures.
+- `tests/test_discourse_three_way.py` — Discourse evidence on one text (docs/spec/discourse.md 10 alpha and alpha-prime, 11).
+- `tests/test_document.py` — (no module docstring)
+- `tests/test_document_lean_switch.py` — Lean-first batch 16b: `ve-document@1` documents are checked by the Lean `document` mode.
+- `tests/test_document_split.py` — AR-16a split `ve/document.py` into the package `ve/document/`; these pin what the split must keep.
+- `tests/test_e1_core.py` — (no module docstring)
+- `tests/test_e1_prompts.py` — (no module docstring)
+- `tests/test_eff_tests_report.py` — docs/eff-tests/REPORT.md: every number regenerated from the saved evidence in docs/eff-tests/evidence/.
+- `tests/test_eligibility_wfp.py` — Winter Fuel Payment use case (usecases/eligibility): VE against a frozen answer key.
+- `tests/test_encoder_shapes.py` — The encoder theorems (`lean/ResponseShape/Encoders.lean`) can fail (lf-1 recheck 3, B).
+- `tests/test_english.py` — Writable English boundaries, scoped references and independent ambiguity checks.
+- `tests/test_english_e26_ab.py` — English E2.6: the corpus A/B of Lean's English authority, from the saved comparisons alone (no live checkout and no git): every verdict row has a rule and a di…
+- `tests/test_english_e26_boundary.py` — English E2.6: where Lean's English reader refused an environment or a text that Python's reader admitted, found by the corpus A/B under Lean authority, Lean no…
+- `tests/test_english_e26_diagnosis.py` — English E2.6: Lean's diagnosis of a sentence without a reading (`VE.EnglishGrammar.diagnose`, spec 4.5) says what the hand parser said, where it said it: the w…
+- `tests/test_english_e26_evidence.py` — English E2.6: Lean's authority over English admission rests on saved evidence, checked from the files alone (no live checkout, no git): the readability replay …
+- `tests/test_english_e26_report.py` — English E2.6's report: every number comes from saved evidence (the readability comparison, the A/B summary, the commit list of `main..HEAD --no-merges`, the se…
+- `tests/test_english_e2_boundary.py` — The E2 boundary validates every block its typing view drops (review B2 of English Lean E2; spec D7).
+- `tests/test_english_e2_integer_marks.py` — The spacing of the integer marks: Lean reads exactly the spacing Python reads (spec R1; english-lean-e2.md 13).
+- `tests/test_english_e2_ledger_sites.py` — Every call into Python's own English reader is a site the deletion ledger keeps (spec 2.9; recheck 1 of E2, B).
+- `tests/test_english_e2_overlay.py` — The overlay refusals at the public boundary (spec D16, D17, 2.8; fixtures rl8 to rl10, ev15c, ev17, ovc; review A2 of English Lean E2).
+- `tests/test_english_e2_profile_matrix.py` — Lean reads what Python reads on every environment of the probe matrix (review A of English Lean E2, recheck 1).
+- `tests/test_english_e2_python.py` — Python producer behavior needed by the E2 overlay relay (spec 2.8, 8.11).
+- `tests/test_english_e2_relay.py` — E2's Lean-authoritative admission and untrusted response boundary.
+- `tests/test_english_e2_report.py` — The integration report's gate and three-way figures come from committed results.
+- `tests/test_english_e2_responses.py` — E2's untrusted `english.read` answers: every status, every node, against the real service (review B1, B3, B4, B5 of English Lean E2; build checklist 4, 5, 13, …
+- `tests/test_english_e2_saved_evidence.py` — The E2.5 records, saved: the readability failure that kept Python authority then (E2.6 replays it in `test_english_e26_evidence.py`), the directed coverage and…
+- `tests/test_english_e2_selection.py` — Python never selects a wording Lean's lexicon validity refuses (recheck 1 of E2, B).
+- `tests/test_english_e2_statements.py` — The twelve E2 statements of spec 5.5 are checked by Lean, not by reading Lean source as text (review, checklist 11).
+- `tests/test_english_evidence.py` — Merge gates for the two English correspondence harnesses.
+- `tests/test_english_grammar_gen.py` — The fixed rules of English in Lean as data (docs/spec/english-lean-s2.md 2.5, 2.9, 4.5; S2 plan S2.0).
+- `tests/test_english_lean_adapter.py` — E2 English admission: Lean authority, comparator isolation, and response binding.
+- `tests/test_english_lean_engine.py` — The English-in-Lean engine corpus (spec 8.1 to 8.3, 8.7) against the Python reference engine.
+- `tests/test_english_lean_lexer.py` — The English-in-Lean lexer fixtures (spec 8.4) against the Python reference lexer.
+- `tests/test_english_lean_lexicon.py` — Lexicon validity fixtures of English in Lean (spec 8.5) against the Python reference of `Lexicon.valid`.
+- `tests/test_english_lean_rejections.py` — The classification of the English hand parser's rejection sites stays true (S0, spec 4.2).
+- `tests/test_english_lean_route.py` — The English reader of S2.4 end to end (docs/spec/english-lean-s2.md 2.10, 2.11, 4.3, 4.4, 8; base 2.12, 8.8).
+- `tests/test_english_lean_s0.py` — The S0 measurement helpers of English in Lean (plan section 5).
+- `tests/test_english_lean_s2.py` — Source checks of the English instance in Lean (docs/spec/english-lean-s2.md 5.6 and 5.7).
+- `tests/test_english_lean_s3.py` — Stage S3 of English in Lean, the Python side (docs/spec/english-lean-s3.md; S3 plan, S3.0 and S3.1).
+- `tests/test_english_lean_s3_compare.py` — The S3 fixture comparison reports actual outcomes and fails on changed readings.
+- `tests/test_english_lean_seal.py` — The shadow-corpus seal of English in Lean is self-consistent (its drift check is the harness's job).
+- `tests/test_english_lean_tables.py` — The tables that the Lean English instance copies from Python stay equal to Python's.
+- `tests/test_english_lean_tokens.py` — Python's English grammar converted to word tokens reads like Python (plan section 4, S0 first cut).
+- `tests/test_english_runner_root.py` — The one-shot English executable has a distinct root and preserves its wire bytes.
+- `tests/test_english_unambiguity.py` — (no module docstring)

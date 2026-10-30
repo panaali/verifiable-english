@@ -75,13 +75,6 @@ def _entities(witness):
     return {sort: set(ids) for sort, ids in witness["model"]["domains"].items()}
 
 
-def _in_model(rows, witness, what):
-    """Every entity of a situation's rows is one of the request's model."""
-    known = set().union(*_entities(witness).values())
-    if any(value not in known for row in rows for value in row):
-        raise _unbound(what)
-
-
 def _tuple(case, rule, values, witness, what):
     """A tuple of a rule's act: its arity and sorts, each entity in the request's model with that sort."""
     sorts, entities = _sorts(case, rule), _entities(witness)
@@ -89,9 +82,28 @@ def _tuple(case, rule, values, witness, what):
         raise _unbound(what)
 
 
-def _situation(row, witness):
+def _situation(case, row, witness):
+    """The displayed filling has exactly the tables of the request's unspecified regulated predicates.
+
+    Each table uses its predicate's declared argument sorts and the request model's domains. Lean emits all tables,
+    including empty ones (`witnessRow`); its filling decoder accepts an omitted input table as empty.
+    """
     if "situation" in row:
-        _in_model([r for rows in row["situation"]["filling"].values() for r in rows], witness, "situation")
+        predicates = case["environment"]["vocabulary"]["predicates"]
+        tables = {"unsaid__" + name: predicate["arguments"] for name, predicate in predicates.items()
+                  if (predicate.get("regulated") or {}).get("default") == "unspecified"}
+        filling = row["situation"]["filling"]
+        if set(filling) != set(tables):
+            raise _unbound("situation")
+        entities = _entities(witness)
+        for name, rows in filling.items():
+            sorts = tables[name]
+            for values in rows:
+                if len(values) != len(sorts):
+                    raise _unbound("situation")
+                for sort, value in zip(sorts, values):
+                    if value not in entities.get(sort, ()):
+                        raise _unbound("situation")
 
 
 def bind_elaborate(case, row, source):
@@ -119,7 +131,7 @@ def bind_coherence(case, row, targets):
         _tuple(case, rules[0], collision["tuple"], witness, "collision tuple")
         if collision["deciders"] != _deciders(case, rules):
             raise _unbound("collision deciders")
-        _situation(row, witness)
+        _situation(case, row, witness)
     return row
 
 
@@ -165,7 +177,7 @@ def bind_model(case, row, source):
                                                                                 e["tuple"])]) for e in forced]
     if order != sorted(order) or len({repr(o) for o in order}) != len(order):
         raise _unbound("forced order")
-    _situation(row, case["model"])
+    _situation(case, row, case["model"])
     return row
 
 
@@ -206,11 +218,14 @@ class _Search:
     each `unspecified` completion read as `deny`, the unsaid tables and the soft decisions declared, as the readings
     route's filled choice documents read them)."""
 
-    def __init__(self, base, layered, dflt):
+    def __init__(self, base, layered, dflt, budget=None):
         from .ast import formula_from_data
         from .environment import Environment
         from .norm_defaults import _placeholder
         from .softnorms import SoftEnvironment
+        # A readings request supplies its own search limits. Keep the mapping live so a
+        # cached free gate cannot hide a later exhausted query budget.
+        self.budget = budget
         raw = _placeholder(base["environment"])
         self.tables = [item["name"] for item in layered["unsaid"]]
         for item in layered["unsaid"]:
@@ -251,7 +266,9 @@ class _Search:
         pairs, collision = [], None
         for m, n, ast in self.targets:
             entry, target = {"rules": [m, n]}, self.formula(ast)
-            proof = prove_entailment(self.env, premises, target, max_steps=MAX_STEPS, _background=False)
+            proof = prove_entailment(self.env, premises, target,
+                                    max_steps=self.budget["max_steps"] if self.budget is not None else MAX_STEPS,
+                                    _background=False)
             if proof.status == "Found":
                 entry["certificate"] = {**proof.certificate, **_source_binding(view, (), target, listed=premises)}
             elif collision is None and (found := self.model(premises, [], target, layered=False)):
@@ -264,14 +281,18 @@ class _Search:
         from .norm_defaults_route import filled_certificate
         from .readings_verdicts.choice import _FilledView
         view = _FilledView(self.source, self.env, self.fill, self.layers, X)
-        return filled_certificate(view, gamma, phi, max_steps=MAX_STEPS)
+        return filled_certificate(view, gamma, phi,
+                                  max_steps=self.budget["max_steps"] if self.budget is not None else MAX_STEPS)
 
     def model(self, X, gamma, phi, layered=True):
         """A model of `X`, `Fill_T`, the layers and Γ (of `X` and Γ alone when not `layered`) where `φ` fails, as a
         request carries it (its base and its filling apart), or None within the budget."""
         from .search import find_countermodel
         premises = [*X, *self.fill, *self.layers, *gamma] if layered else [*X, *gamma]
-        found = find_countermodel(self.env, premises, phi, max_domain_size=MAX_DOMAIN)
+        limits = ({"max_domain_size": self.budget["max_domain_size"], "max_models": self.budget["max_models"],
+                   "max_evaluations": self.budget["max_evaluations"]} if self.budget is not None else
+                  {"max_domain_size": MAX_DOMAIN})
+        found = find_countermodel(self.env, premises, phi, **limits)
         if found.status != "Found":
             return None
         data = found.model.to_dict()

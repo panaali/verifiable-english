@@ -16,7 +16,9 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
-from check_lean_imports import imports, lake_globs, unbuilt_modules  # noqa: E402
+from check_lean_imports import RUN_ONLY, imports, lake_globs, unbuilt_modules  # noqa: E402
+sys.path.insert(0, str(ROOT / "lean"))
+from audit import MANIFESTS  # noqa: E402
 
 UNBUILT = "Lean module no default target builds (import it from VE.lean, or name its runner in RUN_ONLY): "
 
@@ -29,6 +31,7 @@ def tree():
 
 def test_every_lean_source_is_built_by_the_default_build():
     modules, read = tree()
+    assert {name.removesuffix(".lean").replace("/", ".") for name in MANIFESTS} <= RUN_ONLY.keys()
     assert unbuilt_modules(modules, read, tomllib.loads((ROOT / "lean/lakefile.toml").read_text())) == []
 
 

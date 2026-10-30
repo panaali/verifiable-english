@@ -3,7 +3,7 @@ import VE.Readings.Scan
 import VE.Readings.SupRun
 import VE.Readings.UnspecifiedWire
 import VE.Readings.SupVerdictsSound
-import VE.Readings.SoftVerdicts
+import VE.Readings.DefaultVerdicts
 import VE.Readings.SupFillWire
 import VE.Readings.VerdictsWire
 import VE.Readings.Companions
@@ -498,7 +498,7 @@ def runSDKind (id kind : String) (r : AdmittedSD) (j : Json) : Except String Jso
     (S1 4.9). `b` is the case's one admission. -/
 def runS2ND (lower : List String → Json → Json) (id kind : String) (b : Admitted2) (j : Json) : Except String Json := do
   if underSoftCompletion b.a.re b.D then
-    if kind == "readings-verdicts" then return ← runVerdictsSD id b j
+    if kind == "readings-verdicts" then return ← runVerdictsD id b j
     return ← runSDKind id kind (← admitSDOf b) j
   if kind == "readings-verdicts" then
     if underCompletion b.a.re b.D then

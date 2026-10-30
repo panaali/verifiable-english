@@ -70,7 +70,8 @@ RELAYED = ("ve/backends/relay.py", "ve/readings_route.py", "ve/discourse.py",
            "ve/rights_route.py", "ve/reports.py", "ve/reports_route.py",
            "ve/norm_defaults.py", "ve/norm_defaults_route.py",
            "ve/backends/speech_source.py", "ve/speech_document.py", "ve/backends/english_lean.py",
-           "ve/norm_admission.py", "ve/ask.py", "ve/words.py", "ve/defaults.py", "ve/calc.py")
+           "ve/norm_admission.py", "ve/ask.py", "ve/words.py", "ve/defaults.py",
+           "ve/defaults_english.py", "ve/calc.py")
 # Relayed functions of a module that also holds Python's own code (English E2, spec 2.9: the admission path of
 # `ve/english.py`; the producer, the renderer, the statement reader and the comparator in the same module write
 # their own diagnostics and are outside it; question answering Q1.4: the speech parser's polar path, `_polar`).

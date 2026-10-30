@@ -2103,6 +2103,7 @@
               ]
             },
             "decided_units": {"$ref": "common.json#/$defs/strings"},
+            "default": {"$ref": "#/$defs/verdicts_default"},
             "english": {"items": {"$ref": "#/$defs/verdicts_line"}, "type": "array"},
             "finding_sets": {"$ref": "common.json#/$defs/strings"},
             "id": {"$ref": "common.json#/$defs/id_ok"},
@@ -2349,6 +2350,81 @@
       "properties": {"accepted": {"type": "boolean"}, "index": {"$ref": "common.json#/$defs/nat"}, "set": {"type": "string"}},
       "required": ["accepted"],
       "type": "object"
+    },
+    "verdicts_default": {
+      "$comment": "Readings.Run.defaultJson (DF-3): present only when the request asks and the strict conflict fold is FREE (readings_wire_default_present): the default conflict fold, the default fold, each choice's rows and the English rows.",
+      "additionalProperties": false,
+      "properties": {
+        "conflict": {"enum": ["CONFLICT-FREE", "CONFLICT", "UNKNOWN"]},
+        "english": {"items": {"$ref": "#/$defs/verdicts_default_line"}, "type": "array"},
+        "per_choice": {"items": {"$ref": "#/$defs/verdicts_default_choice"}, "type": "array"},
+        "verdict": {"enum": ["ALL", "SOME", "NONE", "UNKNOWN"]}
+      },
+      "required": ["conflict", "verdict", "per_choice", "english"],
+      "type": "object"
+    },
+    "verdicts_default_choice": {
+      "$comment": "Readings.Run.dChoiceJson (defeasible plan DF-3): one choice's rows unless an exception applies; with FOLLOWS its basis and kept assumptions (d_bases_sound), with a checked collision the pair, the tuple, DE7's deciders and the situation (Defaults.Wire.collisionFields).",
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {"not": {"required": ["assumptions"]}},
+          "if": {"required": ["basis"]},
+          "then": {"allOf": [{"required": ["assumptions"]}, {"properties": {"query": {"const": "proved"}}}]}
+        },
+        {
+          "else": {"not": {"required": ["situation"]}},
+          "if": {"required": ["collision"]},
+          "then": {"allOf": [{"required": ["situation"]}, {"properties": {"conflict": {"const": "CONFLICT"}}}]}
+        }
+      ],
+      "properties": {
+        "assumptions": {"$ref": "common.json#/$defs/strings"},
+        "basis": {"enum": ["strict", "needs", "unsettled"]},
+        "choice": {"$ref": "#/$defs/choice"},
+        "collision": {
+          "additionalProperties": false,
+          "properties": {
+            "deciders": {"$ref": "common.json#/$defs/strings"},
+            "rules": {"$ref": "common.json#/$defs/string_pair"},
+            "tuple": {"$ref": "common.json#/$defs/strings"}
+          },
+          "required": ["rules", "tuple", "deciders"],
+          "type": "object"
+        },
+        "conflict": {"enum": ["CONFLICT-FREE", "CONFLICT", "UNKNOWN"]},
+        "query": {"enum": ["proved", "refuted", "UNKNOWN"]},
+        "situation": {
+          "additionalProperties": false,
+          "properties": {
+            "filling": {
+              "additionalProperties": {"items": {"$ref": "common.json#/$defs/strings"}, "type": "array"},
+              "type": "object"
+            }
+          },
+          "required": ["filling"],
+          "type": "object"
+        }
+      },
+      "required": ["choice", "conflict", "query"],
+      "type": "object"
+    },
+    "verdicts_default_line": {
+      "$comment": "Readings.Run.dEnglish (DF-3): one English row Lean selects, DE8 alone, or a row of one choice.",
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {"row": {"const": "DE8"}},
+          "required": ["row"],
+          "type": "object"
+        },
+        {
+          "additionalProperties": false,
+          "properties": {"choice": {"$ref": "#/$defs/choice"}, "row": {"enum": ["DE7", "assumptions", "DE12"]}},
+          "required": ["row", "choice"],
+          "type": "object"
+        }
+      ]
     },
     "verdicts_line": {
       "$comment": "Readings.Line.json: one line of the English plan (readings-defaults 2.4).",

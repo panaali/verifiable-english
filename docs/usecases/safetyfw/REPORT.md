@@ -1,9 +1,13 @@
-# usecase-safetyfw: three frontier-lab safety frameworks in VE (build report)
+# Safety-framework use cases: baseline and RSP run
 
-- **Status:** F14 (B) fixed as a class (section 25): one Rust table of Lean's sort decoders, a three-engine truth table over all 1,045 admitted profile lists, two hunts. F1-F4, F6-F13 stay fixed. No DRI signature is reserved.
-- **HEAD:** see the final local commit; section 25 records the exact test results.
-- **What changed:** Rust's environment decoder (`rust/ve-kernel/src/environment.rs`) and its tests; the differential baseline. Lean and Python product code are unchanged.
-- **Open items:** H1-c (Lean's request and environment modes order faults differently, DF-21), the out-of-class forms in section 25.4, F5 (C, follow-up); completion of the OpenAI translation before `usecase-pf-run`, `usecase-rsp-run`, `fsf-r3`.
+- **Status:** two merged items. This branch (`usecase-safetyfw-b`): F14 (B) fixed as a class (section 25): one Rust table of Lean's sort decoders, a three-engine truth table over all 1,045 admitted profile lists, two hunts; F1-F4, F6-F13 stay fixed. From `usecase-rsp-run`: RSP run complete, 111/126 answers agree with the frozen key, 15 are faithful undecided; counts await
+  `uc-audit`. No DRI signature or DELTA row is reserved.
+- **HEAD:** see the final local commit; section 25 records this branch's exact test results. The RSP run's baseline commit is 92a2fd643 and its run implementation ef66b44a9.
+- **What changed:** this branch: Rust's environment decoder (`rust/ve-kernel/src/environment.rs`) and its tests; the differential baseline; the OpenAI baseline. `usecase-rsp-run`: the RSP answer runner, independent reference, six exact-change mutants, three fidelity
+  corrections, answer metrics and tests; trust +0 (no Lean change). RSP coverage remains 5,327/59,410 bytes CHECKED.
+- **Open items:** H1-c (Lean's request and environment modes order faults differently, DF-21), the out-of-class forms in section 25.4, F5 (C, follow-up); completion of the OpenAI translation before `usecase-pf-run`, `fsf-r3`; the RSP source audit (`uc-audit`) and the 15 named limits.
+
+Sections 1–12 record the earlier baseline. Sections 13–25 record the OpenAI baseline and this branch's review rounds. The RSP run and its fidelity checklist follow in sections 26–27.
 
 ## 1. Task rows
 
@@ -699,3 +703,64 @@ that Rust now answers as Lean does were dropped by two `--update-baseline` passe
   `recorded 397 units for tree a0a636e298 … 0 failed`, on ve-mac-1 (aarch64), HEAD `a75497c3` (clean),
   5,125 s, exit 0. The three `main-known-red.txt` tests are pre-existing and were not edited.
 - Not run: the full suite and the release gate (`tools/gate.py`), as this round's instructions say.
+
+## 26. Anthropic RSP answers (`usecase-rsp-run`, 2026-10-29)
+
+The pinned PDF and text match PLAN 1's SHA-256 hashes. No PDF, extracted text or generated source document is
+committed. PLAN 6 and `answer-key.json` are unchanged; `test_section_6_is_the_frozen_key` recomputes the freeze.
+`run.py --check` recomputes every row of `results.json`; `reference.py` is a stdlib-only reading of PLAN 3–4 and
+agrees with all 68 A, B, C and G key cells. These counts are **not audit-validated** until `uc-audit` checks the
+source units and item dependencies.
+
+| Family | Correct / key | Faithful undecided | Main cause of undecided rows |
+|---|---:|---:|---|
+| A thresholds | 40 / 40 | 0 | |
+| B scope | 12 / 12 | 0 | |
+| K process | 21 / 27 | 6 | F4 bullet bundled (AP); separate approval acts (SC); timing (ET) |
+| T automated R&D | 9 / 9 | 0 | |
+| C translated-rule conflicts | 8 / 8 | 0 | source-conflict status still a candidate under R14 |
+| G gaps | 5 / 8 | 3 | deadline, reviewer response, rule priority (ET/SC) |
+| N never applies | 3 / 5 | 2 | exhaustive dead-rule and changelog certificates (SC) |
+| S severity | 7 / 8 | 1 | no comparative severity order (WG) |
+| D dates | 6 / 9 | 3 | calendar months and approximate dates (ET/QT) |
+| **Total** | **111 / 126** | **15** | |
+
+Each item has `key`, `ve`, `agree`, `status`, `route` and `cause` in `results.json`'s `comparison` array. The useful
+answers figure for `tools-local/usecase-progress.py` is **111/126** from `comparison[].agree`; the 15
+`UNDECIDED-faithful` rows are separately marked, and the figure is provisional until `uc-audit`. There are zero
+unclassified disagreements and zero resource-limit answers. M2 records 25 reading sets, at most eight choices on
+an item and 31 SOME answers; M3 is the unchanged 59,410-byte coverage; M5's identifier lint and M6's invention
+audit each have zero violations; M7 records 117 default-sensitive choices; M8 records 26 replayed entailment
+certificates, 38 validated countermodels and W1 conflict witnesses; M9 detects all six PLAN mutants with exactly
+their named changed IDs; M10 records 303 units, 76 rules, 49 cases, 282 evaluated choices, 64 prover calls and the
+wall time printed by `run.py` (the review-fix regeneration: 282.0 s). M4's structure-conditional counts are in results.json.
+
+The review fix in [RSP-RUN-REVIEW-FIX.md](RSP-RUN-REVIEW-FIX.md) obtained W1 conflict-freedom certificates for
+the no-conflict rows and preserved undecided outcomes when a certificate is missing. M6 now audits the actual
+mutated rule and listed-threshold inputs. Unscored section 9 reruns without N1, N2 and N3 change 46, 2 and 1
+answer cells respectively; the frozen key and the scored 111/126 result are unchanged.
+
+The three source-fidelity corrections are `f24-delay`'s invented positive `significant_lead` guard removed,
+T2's 6× cost marked `OT15=false`, and K21's General upleveling case given its source-stated `OT8=true`. Each
+corrected block carries its full source sentence. No frozen key cell changed. PLAN 12 lists these deviations.
+
+## 27. Fidelity checklist
+
+Scope: every block of `rules.d1.ve` (76), `facts.d1.ve` (11) and `cases.json` (49), checked against the pinned
+59,410-byte text with the 11-class checklist. The columns name the most relevant blocks; “all” includes the rest
+of that file. A kept composite predicate is treated as one bundle only; a key question about one component is
+marked undecided when VE cannot separate it.
+
+| Class | Blocks checked | Fixed | Kept, with reason |
+|---|---|---|---|
+| 1. Dropped clause | all rules/facts/cases; especially `rows-cond`, `f6-share`, `f16-ask-commentary`, `f20-investigate`, `f23-publish` | none in this run | Their source headers or predicate legends retain the conjuncts. `f20-investigate` remains OPEN for prompt timing and proportional correction. K17 is undecided because the effective-date clause is not an ordered VE act. |
+| 2. Quantifier scope | all; especially `rows-cond`, `rows-uncond`, `f5-strict`, `f8-public`, `f11-assess`, T4 fact blocks and A/B/T cases | none | The threshold argument distinguishes each row; `f11-assess` applies to each `in_scope` model; T4's converse exists only under the iff readings. |
+| 3. Exclusive only and closed lists | all; especially `f16-only-legal`, `f13-redact-p`, `f8-internal`, G1/G3 | none | The legal-only restriction is scoped to the reviewed version; public redaction reasons stay open; no cyber threshold or stop rule is added. |
+| 4. Reused predicate | all; especially `rows-cond`, `f15-select-approval`, `f19-unredacted`, `f19-minimally-redacted`, `f20-notify-board`, `f20-notice-p` | none | Threshold slots and report-version predicates distinguish the rows and versions. `f15-select-approval` still bundles consultation and approval, so K12a/b are undecided rather than two independently checked answers. |
+| 5. Modal strength | all; especially `f5-default`, `f13-redact-p`, `f15-revenue-default`, `f20-notice-p`, `f26-need-not-delay` | none | Defaults, permissions and strict prohibitions keep separate force/readings; public notice is never scored as required. |
+| 6. Obligation made method | all; especially `f14-full-review`, `f20-investigate`, `f25-meet` | none | The acts remain outcome duties; the unrepresented prompt/effective-date constraints yield undecided K15a/K17. |
+| 7. Invented guard | all rules/facts and their case bindings; especially `f24-delay` | removed its positive `significant_lead` guard | The source states a possible release when the company no longer believes it has a lead, not an entry requirement. Other Appendix A scenario guards are in the source; M6 reports no untraced rule. |
+| 8. Case fixes an open term | all 49 cases; especially T1/T2/T4/T7, K8/K9/K10/K20/K21 | T2 `OT15=false`; K21 `OT8=true` | T2's 6× cost fails the source's factor of five, certified by D3. K21's scenario explicitly says “strong evidence”. Other open terms remain unset unless the case names them. |
+| 9. Conflict-making reading | all reading-conditioned blocks; C1–C7 and C-doc | none | W1 checks the translated acts and precedence; C1/C7 are candidate translated-rule conflicts. No claim of a source-policy conflict is made before the independent R14 check. |
+| 10. Key cell | all 126 key rows; A/B/C/G independently recomputed (68) | none | No contradiction to a frozen cell was found; 15 answers stay faithful undecided and are not counted as agreement. |
+| 11. Elided quote | all headers with ellipses: `rows-cond`, `f5-strict`, `s1-advance-default`, `f8-internal`, `f9-internal`, `f12-board-approval`, `t4-suff`, `s2-suff-result`, `s2-suff-third` | none | Their full source sentences were checked in the pinned text; conditions omitted from a short header remain in the predicate legend, a separate fact, or an OPEN unit. The three corrected blocks carry their full sentences. |

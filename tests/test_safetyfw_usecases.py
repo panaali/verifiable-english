@@ -102,7 +102,7 @@ def test_every_item_names_a_case_of_cases_json_or_none(case):
 
 TRANSCRIPTION_SHA256 = {
     "anthropic-rsp": {"answer-key.json": "fd00575d348f0917cc6aebd08ea21cb67c5f2f7f1540a2d970666a127f1d4a50",
-                      "cases.json": "0ed79956454c30e12b7808bec6d0db7b94324a97a14daabf7e8272d5ec8a5405"},
+                      "cases.json": "b9f912ac56eb8cea4d9075b8936c640ec8f52d0e1e7a9bf80390264f8edeb554"},
     "openai-preparedness": {"answer-key.json": "2c8b27504eebd57bdb4953f5527fdc6373ce5e456fc5050bc8a840877b160ac2",
                             "cases.json": "a5b0d0c6a3bade39bd046e9434656231547237d06233651da909c34bd0704397"},
 }
@@ -121,7 +121,7 @@ RSP = USECASES / "anthropic-rsp"
 RSP_EVIDENCE = REPO / "docs" / "usecases" / "safetyfw" / "anthropic-rsp"
 # The case's modules import their siblings by bare names, two of which safety-framework's modules also use; they are
 # loaded apart and stand in sys.modules only while these tests run (as tests/test_safety_framework.py does).
-RSP_NAMES = ("rsp_vocabulary", "rsp_translation", "build_document", "stage0", "measure")
+RSP_NAMES = ("rsp_vocabulary", "rsp_translation", "build_document", "stage0", "measure", "run", "reference")
 
 
 def _load_rsp():
@@ -141,6 +141,7 @@ def _load_rsp():
 RSP_MODULES = _load_rsp()
 rsp_build, rsp_stage0, rsp_measure = RSP_MODULES["build_document"], RSP_MODULES["stage0"], RSP_MODULES["measure"]
 rsp_translation, rsp_vocabulary = RSP_MODULES["rsp_translation"], RSP_MODULES["rsp_vocabulary"]
+rsp_run, rsp_reference = RSP_MODULES["run"], RSP_MODULES["reference"]
 LEAN_SERVICE = REPO / "lean/.lake/build/bin/ve_service"
 
 
@@ -160,6 +161,52 @@ def test_rsp_every_rule_and_premise_parses_with_one_reading(rsp_modules):
     for block in rsp_translation.rule_blocks():
         assert json.loads(rsp_translation.parsed_rule(block.id))["name"] == block.id
     assert sum(len(f) for _, f in rsp_translation.facts()) == 15
+
+
+def test_rsp_n1_filters_all_rs0_definition_premises(rsp_modules):
+    """F6: the T4 will/would-consider definitions must use the rule path's N1 switch."""
+    facts = rsp_translation.facts()
+    assert {block.id for block, _ in facts if block.narrowing == "RS0"} == {
+        "t4-suff", "t4-only-if", "s2-suff-result", "s2-suff-third",
+        "s2-only-if-result", "s2-only-if-third"}
+    assert all(block.narrowing == "independent" for block, _ in facts
+               if block.id.startswith("threshold-") or block.id == "highly-capable-t4")
+    choice = rsp_run.BASE
+    expected = {block.id for block, _ in facts if rsp_run.applies(block, choice)}
+    assert {block.id for block, _ in rsp_run.selected_facts(choice)} == expected
+    try:
+        rsp_run.WITHOUT_NARROWING = "N1"
+        assert {block.id for block, _ in rsp_run.selected_facts(choice)} == {
+            block.id for block, _ in facts if rsp_run.applies(block, choice)
+            and block.narrowing == "independent"}
+    finally:
+        rsp_run.WITHOUT_NARROWING = None
+
+
+@pytest.mark.parametrize("item_id,case_id", [
+    ("T1", "T1"), ("T2b", "T2"), ("T3", "T3"), ("T4b", "T4"), ("T7", "T7")])
+def test_rsp_n1_counterfactual_removes_t_family_definition(item_id, case_id, rsp_modules):
+    """F6 probe and adjacent proof/negative-goal cases, with baseline certificates retained."""
+    case = rsp_run.CASES[case_id]
+    baseline = rsp_run.threshold_answer(item_id, case)
+    verdict = rsp_run.verdict(baseline)
+    assert verdict == "ALL" if item_id in ("T1", "T3") else verdict.startswith("SOME(")
+    assert all(row["reason"] != "UNKNOWN" for row in baseline["choices"])
+    try:
+        rsp_run.WITHOUT_NARROWING = "N1"
+        without = rsp_run.threshold_answer(item_id, case)
+        assert rsp_run.verdict(without) == "NONE"
+        assert all(row["reason"] == "validated countermodel" for row in without["choices"])
+    finally:
+        rsp_run.WITHOUT_NARROWING = None
+
+
+def test_rsp_n1_saved_comparison_includes_t_family(rsp_modules):
+    changed = json.loads((RSP / "results.json").read_text())["without_narrowings"]["N1"]["changed"]
+    assert len(changed) == 54
+    assert {item: changed[item]["without"] for item in ("T1", "T2b", "T3", "T4b", "T7")} == {
+        item: "NONE" for item in ("T1", "T2b", "T3", "T4b", "T7")}
+    assert "Removing N1 changes 54 answer cells" in (RSP / "README.md").read_text()
 
 
 def test_rsp_every_byte_is_in_exactly_one_unit(rsp_modules):
@@ -276,6 +323,178 @@ def test_rsp_stage0_rerun_equals_saved(rsp_modules):
     """Stage 0 recomputed by VE; the source probes need the pinned source, which the gate runner does not store
     (tools/gate-optional.json), and are left out without it."""
     assert rsp_stage0.main(["--check"]) == 0
+
+
+@pytest.mark.skipif(not LEAN_SERVICE.exists(), reason="the Lean service is not built")
+def test_rsp_run_recomputes_every_key_item_and_records_causes(rsp_modules, monkeypatch):
+    """Every saved answer comes from a fresh VE route, with no key read during answer()."""
+    saved = json.loads((RSP / "results.json").read_text())
+    fresh = rsp_run.run()
+    assert fresh == {k: saved[k] for k in ("items", "comparison", "cost")}
+    assert [r["id"] for r in saved["comparison"]] == [k["id"] for k in items("anthropic-rsp")]
+    assert all(r["status"] in ("agree", "UNDECIDED-faithful") for r in saved["comparison"])
+    assert all(r["cause"] and r["cause"]["feature_family"] for r in saved["comparison"] if not r["agree"])
+    assert all(r["route"] for r in saved["comparison"])
+    assert saved["metrics"]["M1"] == rsp_run.metrics(saved)["M1"]
+    assert saved["metrics"]["M8"]["unknown_items"] == [r["id"] for r in saved["comparison"] if not r["agree"]]
+    assert rsp_run.without_narrowings(fresh) == saved["without_narrowings"]
+    # The case audit corrected the 6x factor and the scenario's explicit strong evidence.
+    cases = rsp_run.CASES
+    assert cases["T2"]["findings"]["OT15"] is False
+    assert cases["K21"]["findings"]["OT8"] is True
+    assert "significant_lead" not in json.dumps(json.loads(rsp_translation.parsed_rule("f24-delay"))["guard"])
+    assert rsp_run.verdict(rsp_run.answer({"id": "K19b", "case": "K19b", "item": "REQUIRED:DELAY"})) == "ALL"
+    # A model missing the source-stated T4 -> highly-capable premise is refused.
+    original_atoms = rsp_run.atoms
+    monkeypatch.setattr(rsp_run, "atoms", lambda case: original_atoms(case) - {("highly_capable", "s")})
+    rsp_run._MODELS.clear()
+    rsp_run._PREMISES_CHECKED.clear()
+    choice = rsp_run.BASE
+    doc = rsp_run.document(tuple(sorted(choice.items())), "deny")
+    with pytest.raises(AssertionError, match="highly-capable-t4"):
+        rsp_run.check_premises(doc, rsp_run.CASES["A-T4"], choice)
+
+
+def test_rsp_independent_reference_and_comparator_catch_wrong_answers(rsp_modules):
+    rows = rsp_reference.compare()
+    assert len(rows) == 68 and all(row["agrees"] for row in rows)
+    assert not rsp_reference.matches("ALL", ("RS1",), lambda c: c["RS1"] == "cond")
+    assert not rsp_reference.matches("NONE", (), lambda c: True)
+    assert not rsp_run.same_set("ALL", {"route": "test", "cone": [],
+                                         "choices": [{"choice": {}, "holds": False}]})
+    assert not rsp_run.same_set("ALL", {"route": "test", "cone": [], "choices": []})
+    assert not rsp_run.same_set("SOME(cond)", {"route": "test", "cone": [],
+                                                "choices": [{"choice": {}, "holds": True}]})
+
+
+@pytest.mark.skipif(not LEAN_SERVICE.exists(), reason="the Lean service is not built")
+def test_rsp_six_mutants_change_exactly_the_named_results(rsp_modules):
+    saved = json.loads((RSP / "results.json").read_text())
+    fresh = rsp_run.mutants({"comparison": saved["comparison"]})
+    assert fresh == saved["mutants"]
+    assert all(value["exact"] for value in fresh.values())
+    assert all(fresh[name]["invention_audit_flags"] for name in ("m2", "m4"))
+
+
+@pytest.mark.parametrize("id_", ("C1", "C2", "C3", "C4", "C5", "C6", "C7", "C-doc"))
+def test_rsp_unknown_w1_is_neither_false_nor_a_scored_answer(rsp_modules, monkeypatch, id_):
+    saved = json.loads((RSP / "results.json").read_text())
+    result = saved["items"][id_]
+    assert all(row["holds"] is not False for row in result["choices"] if "UNKNOWN" in row["w1"])
+    assert all("UNKNOWN" not in row["w1"] for row in result["choices"])
+    from types import SimpleNamespace
+    monkeypatch.setattr(rsp_run, "check_conflict", lambda *args, **kwargs: SimpleNamespace(status="UNKNOWN"))
+    rsp_run._conflict.cache_clear()
+    unresolved = rsp_run.conflict(id_)
+    assert unresolved["undecided"] and all(row["holds"] is None for row in unresolved["choices"])
+    assert rsp_run.verdict(unresolved) == "UNDECIDED"
+    assert not rsp_run.same_set("NONE", unresolved)
+    rsp_run._conflict.cache_clear()
+
+
+@pytest.mark.parametrize("id_", ("D1", "D2", "D3b", "D4", "D5"))
+def test_rsp_missing_quantity_certificate_is_undecided(rsp_modules, monkeypatch, id_):
+    monkeypatch.setattr(rsp_run, "dates", lambda: {"certificates": {id_: False}})
+    assert rsp_run.date_answer(id_)["undecided"]
+    unknown = {"choices": [{"choice": {}, "holds": None}], "cone": [], "route": "test"}
+    assert rsp_run.verdict(unknown) == "UNDECIDED"
+    assert not rsp_run.same_set("NONE", unknown)
+
+
+@pytest.mark.skipif(not LEAN_SERVICE.exists(), reason="the Lean service is not built")
+@pytest.mark.parametrize("mutant,field", [("m2", "untraced"), ("m4", "thresholds_without_premise")])
+def test_rsp_invention_audit_checks_the_actual_mutation(rsp_modules, mutant, field):
+    try:
+        rsp_run.MUTANT = mutant
+        result = rsp_run.run()
+        audit = rsp_run.metrics({**result, "mutants": {}})["M6"]
+        assert audit[field]
+        assert audit == rsp_run.invention_audit_for(result)
+    finally:
+        rsp_run.MUTANT = None
+        rsp_run.document.cache_clear()
+        rsp_run._conflict.cache_clear()
+
+
+@pytest.mark.parametrize("mutant,item_id,field", [("m2", "G1", "untraced"),
+                                                  ("m4", "G3", "thresholds_without_premise")])
+def test_rsp_audit_uses_the_mutated_query_input(rsp_modules, mutant, item_id, field):
+    try:
+        rsp_run.MUTANT = mutant
+        item = rsp_run.gap_probe(item_id)
+        audit = rsp_run.invention_audit_for({"items": {item_id: item}})
+        assert audit[field]
+    finally:
+        rsp_run.MUTANT = None
+
+
+def test_rsp_each_narrowing_has_an_unscored_counterfactual(rsp_modules):
+    saved = json.loads((RSP / "results.json").read_text())["without_narrowings"]
+    assert set(saved) == {"N1", "N2", "N3"}
+    assert all(row["unscored"] and row["changed"] for row in saved.values())
+    assert all(saved["N1"]["changed"][id_]["without"] == "NONE"
+               for id_ in ("A-T0/PROT1", "A-T1/PROT1", "A-T4/PROT4",
+                           "B-INTD/INSCOPE", "K2", "K4", "K22a", "D3b", "D4", "D5"))
+    assert saved["N2"]["changed"]["G1"]["without"] == "NONE"
+    assert saved["N3"]["changed"]["K13"]["without"] == "NONE"
+
+
+def test_rsp_n1_classification_is_explicit_for_every_rule(rsp_modules):
+    """RS0 is a source reading, including clauses that inherit 'will' from an earlier sentence."""
+    blocks = rsp_translation.rule_blocks()
+    assert len({block.id for block in blocks}) == len(blocks)
+    assert all(block.narrowing in {"RS0", "independent"} for block in blocks)
+    assert all(json.loads(rsp_translation.parsed_rule(block.id)).get("mode", "strict") == "strict"
+               for block in blocks if block.narrowing == "RS0")
+    assert {block.id for block in blocks if block.narrowing == "RS0"} >= {
+        "f8-internal", "f9-public", "f9-internal", "f11-goal-missed"}
+    assert {block.id for block in blocks if block.narrowing == "independent"} >= {
+        "f5-strict", "f15-financial-interest", "f26-need-not-delay"}
+
+
+@pytest.mark.parametrize("case_id,predicate", [
+    ("B-INTD", "in_scope"),
+    ("K2", "off_cycle_published"),
+    ("K4", "off_cycle_published"),
+    ("K22", "goal_miss_addressed"),
+])
+def test_rsp_n1_prediction_removes_inherited_commitments(rsp_modules, case_id, predicate):
+    """F4: the selected Lean rules disappear when N1 is removed, even without a local 'will'."""
+    try:
+        rsp_run.WITHOUT_NARROWING = "N1"
+        rsp_run.document.cache_clear()
+        assert rsp_run.verdict(rsp_run.query(rsp_run.CASES[case_id], predicate)) == "NONE"
+    finally:
+        rsp_run.WITHOUT_NARROWING = None
+        rsp_run.document.cache_clear()
+
+
+def test_rsp_date_obligations_follow_their_source_rules(rsp_modules):
+    """N1 changes the obligation, while D3's arithmetic certificate remains available."""
+    rules = {b.id: b for b in rsp_translation.rule_blocks()}
+    date_cases = rsp_stage0.DATE_QUESTIONS
+    assert set(date_cases) == {"D3a", "D3b", "D4", "D5"}
+    assert all(case[4] in rules and rules[case[4]].narrowing == "RS0" for case in date_cases.values())
+    assert {id_: rsp_run.verdict(rsp_run.date_answer(id_)) for id_ in date_cases} == {
+        "D3a": "NONE", "D3b": "ALL", "D4": "ALL", "D5": "ALL"}
+    try:
+        rsp_run.WITHOUT_NARROWING = "N1"
+        assert {id_: rsp_run.verdict(rsp_run.date_answer(id_)) for id_ in date_cases} == {
+            id_: "NONE" for id_ in date_cases}
+    finally:
+        rsp_run.WITHOUT_NARROWING = None
+
+
+@pytest.mark.parametrize("narrowing,item_id", [("N1", "A-T1/PROT1"), ("N2", "G1"), ("N3", "K13")])
+def test_rsp_each_narrowing_reruns_a_ve_answer(rsp_modules, narrowing, item_id):
+    key = next(item for item in items("anthropic-rsp") if item["id"] == item_id)
+    try:
+        rsp_run.WITHOUT_NARROWING = narrowing
+        rsp_run.document.cache_clear()
+        assert rsp_run.verdict(rsp_run.answer(key)) == "NONE"
+    finally:
+        rsp_run.WITHOUT_NARROWING = None
+        rsp_run.document.cache_clear()
 
 
 # --- openai-preparedness baseline (PLAN 7 to 10) ---------------------------------------------------------------

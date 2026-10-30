@@ -1,4 +1,5 @@
 import VE.Cardinality.Syntax
+import Std.Data.HashSet
 
 /-! Regions of the counted sorts (docs/spec/quantities.md 3.5).
 
@@ -11,6 +12,48 @@ open VE.Time (QEnv QTerm QFormula)
 
 def firstUse {β : Type} [BEq β] (xs : List β) : List β :=
   xs.foldl (fun acc x => if acc.contains x then acc else acc ++ [x]) []
+
+/-- One step of `firstUseH`: the items kept so far, as a hash set and in first-use order. -/
+def firstUseStep {β : Type} [BEq β] [Hashable β] (acc : Std.HashSet β × Array β) (x : β) :
+    Std.HashSet β × Array β :=
+  if acc.1.contains x then acc else (acc.1.insert x, acc.2.push x)
+
+/-- `firstUse` in near-linear time (`firstUseH_eq`): each item is hashed once and looked up in the set of the items
+kept so far, so a request's statements, deduplicated before P3 is charged, are never compared pairwise. The
+definitions below keep `firstUse`, which the kernel evaluates (`decide`); the `@[csimp]` lemmas after
+`countedSorts`, `countedAmong` and `predsAmong` make compiled code run this one. -/
+def firstUseH {β : Type} [BEq β] [Hashable β] (xs : List β) : List β :=
+  (xs.foldl firstUseStep (∅, #[])).2.toList
+
+/-- One step of `firstUseH` keeps its set and its array equal to `firstUse`'s list. -/
+theorem firstUseStep_inv {β : Type} [BEq β] [LawfulBEq β] [Hashable β] (acc : Std.HashSet β × Array β)
+    (l : List β) (x : β) (h1 : ∀ y, acc.1.contains y = l.contains y) (h2 : acc.2.toList = l) :
+    (∀ y, (firstUseStep acc x).1.contains y = (if l.contains x then l else l ++ [x]).contains y) ∧
+      (firstUseStep acc x).2.toList = (if l.contains x then l else l ++ [x]) := by
+  unfold firstUseStep
+  rw [h1 x]
+  cases hx : l.contains x
+  · refine ⟨fun y => ?_, by simp [h2]⟩
+    simp only [Bool.false_eq_true, if_false, Std.HashSet.contains_insert, h1 y, List.contains_append,
+      List.contains_cons, List.contains_nil, Bool.or_false]
+    rw [Bool.or_comm, BEq.comm]
+  · exact ⟨fun y => by simp [h1 y], by simp [h2]⟩
+
+theorem firstUseH_foldl {β : Type} [BEq β] [LawfulBEq β] [Hashable β] : ∀ (xs : List β)
+    (acc : Std.HashSet β × Array β) (l : List β), (∀ y, acc.1.contains y = l.contains y) → acc.2.toList = l →
+    (xs.foldl firstUseStep acc).2.toList = xs.foldl (fun acc x => if acc.contains x then acc else acc ++ [x]) l
+  | [], _, _, _, h2 => h2
+  | x :: ys, acc, l, h1, h2 => by
+    rw [List.foldl_cons, List.foldl_cons]
+    exact firstUseH_foldl ys _ _ (firstUseStep_inv acc l x h1 h2).1 (firstUseStep_inv acc l x h1 h2).2
+
+/-- The near-linear dedup is `firstUse`: the same items in the same first-use order. -/
+theorem firstUseH_eq {β : Type} [BEq β] [LawfulBEq β] [Hashable β] (xs : List β) : firstUseH xs = firstUse xs :=
+  firstUseH_foldl xs (∅, #[]) [] (fun _ => by simp) rfl
+
+deriving instance Hashable for VE.Time.QTerm
+deriving instance Hashable for VE.Time.QFormula
+deriving instance Hashable for Body
 
 def Body.atoms : Body → List String
   | .atom p => [p]
@@ -76,14 +119,43 @@ def CFormula.countBodies : CFormula → List (String × Body)
 def countedSorts (fs : List CFormula) : List String :=
   firstUse ((fs.flatMap (·.countBodies)).map (·.1))
 
+/-- `countedSorts` as compiled code runs it (`countedSorts_eq_H`). -/
+def countedSortsH (fs : List CFormula) : List String :=
+  firstUseH ((fs.flatMap (·.countBodies)).map (·.1))
+
+@[csimp] theorem countedSorts_eq_H : @countedSorts = @countedSortsH := by
+  funext fs; exact (firstUseH_eq _).symm
+
+/-- The universal statements of `us` over a sort of `sorts`, each once. -/
+def countedAmong (sorts : List String) (us : List (String × Body × QFormula)) : List (String × Body × QFormula) :=
+  firstUse (us.filter (fun x => sorts.contains x.1))
+
+/-- `countedAmong` as compiled code runs it (`countedAmong_eq_H`). -/
+def countedAmongH (sorts : List String) (us : List (String × Body × QFormula)) : List (String × Body × QFormula) :=
+  firstUseH (us.filter (fun x => sorts.contains x.1))
+
+@[csimp] theorem countedAmong_eq_H : @countedAmong = @countedAmongH := by
+  funext sorts us; exact (firstUseH_eq _).symm
+
 /-- Recognised universal statements over a counted sort, each once. -/
 def countedUniversals (E : CEnv) (fs : List CFormula) : List (String × Body × QFormula) :=
-  firstUse ((fs.flatMap (·.universalsC E)).filter (fun x => (countedSorts fs).contains x.1))
+  countedAmong (countedSorts fs) (fs.flatMap (·.universalsC E))
+
+/-- The predicates on sort `s` of the count bodies `bodies` and the counted universal statements `us`, in first-use
+order: count bodies first, then counted universal statements. -/
+def predsAmong (bodies : List (String × Body)) (us : List (String × Body × QFormula)) (s : String) : List String :=
+  firstUse (((bodies.filter (·.1 == s)).flatMap (·.2.atoms)) ++ ((us.filter (·.1 == s)).flatMap (·.2.1.atoms)))
+
+/-- `predsAmong` as compiled code runs it (`predsAmong_eq_H`). -/
+def predsAmongH (bodies : List (String × Body)) (us : List (String × Body × QFormula)) (s : String) : List String :=
+  firstUseH (((bodies.filter (·.1 == s)).flatMap (·.2.atoms)) ++ ((us.filter (·.1 == s)).flatMap (·.2.1.atoms)))
+
+@[csimp] theorem predsAmong_eq_H : @predsAmong = @predsAmongH := by
+  funext bodies us s; exact (firstUseH_eq _).symm
 
 /-- The predicates on sort `s`, in first-use order: count bodies first, then counted universal statements. -/
 def predsOn (E : CEnv) (fs : List CFormula) (s : String) : List String :=
-  firstUse ((((fs.flatMap (·.countBodies)).filter (·.1 == s)).flatMap (·.2.atoms)) ++
-    (((countedUniversals E fs).filter (·.1 == s)).flatMap (·.2.1.atoms)))
+  predsAmong (fs.flatMap (·.countBodies)) (countedUniversals E fs) s
 
 /-- A region: one truth value per predicate of `predsOn`; `regions n` lists all `2 ^ n`, first predicate most
 significant. -/
@@ -108,16 +180,22 @@ def bitString (r : Region) : String := String.mk (r.map (fun b => if b then '1' 
 name. -/
 def regionConst (s : String) (r : Region) : String := regionPrefix ++ s ++ "__" ++ bitString r
 
+/-- Every region constant of the sorts `sorts`, with its sort and region, the predicates on each sort read from `P`. -/
+def tableOf (sorts : List String) (P : String → List String) : List (String × String × Region) :=
+  sorts.flatMap fun s => (regions (P s).length).map fun r => (regionConst s r, s, r)
+
 def regionTable (E : CEnv) (fs : List CFormula) : List (String × String × Region) :=
-  (countedSorts fs).flatMap fun s =>
-    (regions (predsOn E fs s).length).map fun r => (regionConst s r, s, r)
+  tableOf (countedSorts fs) (predsOn E fs)
 
 def dl : String := VE.Time.dimensionless
 
-/-- `E.q` plus one dimensionless integer constant per region of every counted sort. -/
-def CEnv.elab (E : CEnv) (fs : List CFormula) : QEnv :=
-  { E.q with constants := fun c =>
-      if (regionTable E fs).any (·.1 == c) then some (.qty dl) else E.q.constants c }
+/-- `E.q` plus one dimensionless integer constant per region constant of `table`. -/
+def CEnv.elabBy (E : CEnv) (table : List (String × String × Region)) : QEnv :=
+  { E.q with constants := fun c => if table.any (·.1 == c) then some (.qty dl) else E.q.constants c }
+
+/-- `E.q` plus one dimensionless integer constant per region of every counted sort; the region table is computed once,
+not at every read of a constant. -/
+def CEnv.elab (E : CEnv) (fs : List CFormula) : QEnv := E.elabBy (regionTable E fs)
 
 /-- The region's own body: each predicate of `ps` or its negation, as the region's bits say. -/
 def regionBody (ps : List String) (r : Region) : Body :=
@@ -128,14 +206,57 @@ def regionBody (ps : List String) (r : Region) : Body :=
 def maxCountedSorts : Nat := 8
 def maxPredicates : Nat := 6
 
+/-- P1: at most 8 counted sorts. -/
+def sortLimit (sorts : List String) : Except String Unit :=
+  if sorts.length > maxCountedSorts then throw s!"ResourceLimit: At most {maxCountedSorts} counted sorts" else pure ()
+
+/-- P2: at most 6 predicates (64 regions) on each counted sort, in first-use order, read from `P`. -/
+def predicateLimit (sorts : List String) (P : String → List String) : Except String Unit := do
+  for s in sorts do
+    if (P s).length > maxPredicates then
+      throw s!"ResourceLimit: At most {maxPredicates} predicates on counted sort {s} ({2 ^ maxPredicates} regions)"
+
 /-- At most 8 counted sorts, then at most 6 predicates (64 regions) on each, in first-use order; so a problem has at
 most 512 region constants. -/
 def problemLimits (E : CEnv) (fs : List CFormula) : Except String Unit := do
   let sorts := countedSorts fs
-  if sorts.length > maxCountedSorts then
-    throw s!"ResourceLimit: At most {maxCountedSorts} counted sorts"
-  for s in sorts do
-    if (predsOn E fs s).length > maxPredicates then
-      throw s!"ResourceLimit: At most {maxPredicates} predicates on counted sort {s} ({2 ^ maxPredicates} regions)"
+  sortLimit sorts
+  predicateLimit sorts (predsOn E fs)
+
+/-! ## The region structure, computed once per problem (`regionData_predsOn`) -/
+
+/-- A problem's counted sorts, the predicates on each and its counted universal statements, each computed once;
+`regionData` builds it after P1 (`sortLimit`), so the predicates are listed for at most 8 sorts. -/
+structure RegionData where
+  sorts : List String
+  preds : List (String × List String)
+  universals : List (String × Body × QFormula)
+
+/-- The predicates on `s`: its row of `preds`, none on a sort that is not counted (as `predsOn`). -/
+def RegionData.predsOn (R : RegionData) (s : String) : List String :=
+  match R.preds.find? (·.1 == s) with
+  | some e => e.2
+  | none => []
+
+/-- The region table, each sort's predicates read from its row. -/
+def RegionData.table (R : RegionData) : List (String × String × Region) := tableOf R.sorts R.predsOn
+
+/-- The region structure of the counted sorts `sorts` with the count bodies `bodies` and the universal statements
+`us`: one scan of the problem for each sort's predicates. -/
+def regionDataOf (sorts : List String) (bodies : List (String × Body)) (us : List (String × Body × QFormula)) :
+    RegionData :=
+  let counted := countedAmong sorts us
+  ⟨sorts, sorts.map fun s => (s, predsAmong bodies counted s), counted⟩
+
+def regionData (E : CEnv) (fs : List CFormula) : RegionData :=
+  regionDataOf (countedSorts fs) (fs.flatMap (·.countBodies)) (fs.flatMap (·.universalsC E))
+
+/-- P1, the region structure, then P2 on it: `problemLimits` and then `regionData`, each part computed once. -/
+def checkedRegions (E : CEnv) (fs : List CFormula) : Except String RegionData := do
+  let sorts := countedSorts fs
+  sortLimit sorts
+  let R := regionDataOf sorts (fs.flatMap (·.countBodies)) (fs.flatMap (·.universalsC E))
+  predicateLimit sorts R.predsOn
+  pure R
 
 end VE.Cardinality

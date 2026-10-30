@@ -1,0 +1,20 @@
+[
+  {
+    "file": "ve/readings_verdicts/choice.py",
+    "fault": "skip the prefetched row's top-level refusal check",
+    "test": "tests/test_readings_components_document.py::test_a_refused_choice_in_the_batch_fails_as_it_did_alone[outer]",
+    "observed": "FAIL: KeyError: 'inner'"
+  },
+  {
+    "file": "ve/readings_components.py",
+    "fault": "skip choice prefetch and restore serial elaborations",
+    "test": "tests/test_readings_components_document.py::test_component_choice_elaborations_are_one_relay_batch",
+    "observed": "FAIL: six batches instead of one"
+  },
+  {
+    "file": "ve/backends/relay.py",
+    "fault": "return a constant pool size of two for a configured size",
+    "test": "tests/test_relay.py::test_service_pool_size_setting_uses_spare_vcpus_and_clamps",
+    "observed": "FAIL: expected eight, got two"
+  }
+]

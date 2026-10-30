@@ -79,6 +79,8 @@ EXCLUDED = {
     "usecases/openai-preparedness/cases.json": (
         "no-input", "case facts transcribed from the plan, for the use case's script"),
     "usecases/gatekeeper-exemption/*.json": ("no-input", "a glob@1 policy request, outside the VE checker"),
+    "usecases/agent-policy/requirements.json": (
+        "no-input", "the policy family's requirement register, read by its level reader (apol-req)"),
     "usecases/udhr-pilot/*/answers/*.json": ("artifact", "a UDHR pilot run's recorded query answers"),
     "usecases/udhr-pilot/*/reports/*.check.json": ("artifact", "a UDHR pilot run's recorded check report"),
     "usecases/udhr-pilot/*/metrics.json": ("artifact", "a UDHR pilot run's measurements"),

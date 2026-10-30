@@ -38,7 +38,7 @@ def packOrder : List String := ["soft", "rights", "weighing", "attitudes", "scal
 
 /-- 2.3: each reserved prefix with its owner. -/
 def reservedPrefixes : List (String × String) :=
-  [("soft", "soft__"), ("rights", "rights__"), ("norm-defaults", "unsaid__")]
+  [("soft", "soft__"), ("rights", "rights__"), ("norm-defaults", "unsaid__"), ("events", "date__")]
 
 /-- 2.3: an author name that begins with a reserved prefix. -/
 def reserved (n : String) : Bool := reservedPrefixes.any (fun (_, x) => n.startsWith x)

@@ -158,6 +158,11 @@ address-space limit (4 GiB): a line too large to hold kills the process, which t
 
 ## Supervisor (`ve/backends/lean_service.py`)
 
+- `VE_LEAN_SERVICE_POOL_SIZE` is the maximum pool size at first use. Without it, the pool has two
+  services (or one on a single vCPU). With it, the positive integer is clamped to the available
+  vCPU count and the vCPUs left free by the one-minute load average, with a minimum of one. Set it
+  before starting a check; an existing pool keeps its size. For example, on 32 vCPUs at load below
+  24, a setting of `8` permits eight services.
 - Each request carries a fresh nonce id; a response with another id or mode, a result not bound to its
   case (position or digest), a request error not bound to the request's mode and case digests, a
   malformed or short response, a

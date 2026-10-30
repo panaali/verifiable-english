@@ -36,6 +36,7 @@ import ResponseShape.Schemas.SoftNorms
 import ResponseShape.Schemas.SpeechActs
 import ResponseShape.Schemas.SearchBudget
 import ResponseShape.Schemas.Calc
+import ResponseShape.Schemas.Cardinality
 
 /-! The client's response schemas (`ve/backends/lean_service_schema/`), one module per file. -/
 
@@ -83,7 +84,8 @@ def files : List File := [
   SoftNorms.file,
   SpeechActs.file,
   SearchBudget.file,
-  Calc.file].map File.qualified
+  Calc.file,
+  Cardinality.file].map File.qualified
 
 /-- `{file name: document}`: what `tools/response_schemas.py` writes. -/
 def rendered : Except String Json := do

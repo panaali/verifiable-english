@@ -1,0 +1,6859 @@
+{
+  "document": "/home/seyran/code/manage-agents/scale-20261028/docs/prefix-50.ve.md",
+  "wall_seconds": 82.241,
+  "python_cpu_seconds": 7.954,
+  "lean_cpu_seconds": 55.46,
+  "load_1min_start": 54.75,
+  "load_1min_end": 58.27,
+  "readings_status": "CONFLICT-FREE",
+  "request_count": 1141,
+  "readings_choice_requests": 18,
+  "requests": [
+    {
+      "mode": "readings-route",
+      "cases": 1,
+      "wall": 3.782,
+      "cpu": 2.19
+    },
+    {
+      "mode": "environment",
+      "cases": 1,
+      "wall": 0.014,
+      "cpu": 0.01
+    },
+    {
+      "mode": "search-budget",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.006,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.012,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.013,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.012,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "readings-route",
+      "cases": 1,
+      "wall": 3.243,
+      "cpu": 2.18
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.025,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.015,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.012,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.012,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.012,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.012,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.013,
+      "cpu": 0.02
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.012,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.012,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.013,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.012,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.013,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.012,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.019,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.013,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.013,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.012,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.026,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.017,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.02,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.015,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.016,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.02,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.017,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.015,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "readings-route",
+      "cases": 1,
+      "wall": 2.398,
+      "cpu": 2.1
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.012,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.012,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.013,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.012,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.013,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.007,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.061,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.0
+    },
+    {
+      "mode": "readings-route",
+      "cases": 1,
+      "wall": 2.33,
+      "cpu": 2.11
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.012,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.012,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.022,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.032,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.045,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.037,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.024,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.035,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.05,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.024,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.014,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.014,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.014,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.014,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.012,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "readings-route",
+      "cases": 1,
+      "wall": 2.763,
+      "cpu": 2.24
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.014,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.013,
+      "cpu": 0.02
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.012,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.012,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.012,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.013,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.012,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.012,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.013,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.012,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.012,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.014,
+      "cpu": 0.01
+    },
+    {
+      "mode": "readings-route",
+      "cases": 1,
+      "wall": 2.15,
+      "cpu": 2.13
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.078,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.031,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.022,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.017,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.015,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.016,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.012,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "readings-route",
+      "cases": 1,
+      "wall": 3.824,
+      "cpu": 2.11
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.007,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.007,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.007,
+      "cpu": 0.0
+    },
+    {
+      "mode": "readings-route",
+      "cases": 1,
+      "wall": 2.262,
+      "cpu": 2.03
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.012,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.014,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.014,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.035,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.017,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.038,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.094,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.012,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.013,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.017,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.062,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.025,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.039,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.117,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.016,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "readings-route",
+      "cases": 1,
+      "wall": 2.678,
+      "cpu": 2.03
+    },
+    {
+      "mode": "environment",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "environment",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "readings-route",
+      "cases": 1,
+      "wall": 2.237,
+      "cpu": 2.14
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "readings-route",
+      "cases": 1,
+      "wall": 2.161,
+      "cpu": 1.99
+    },
+    {
+      "mode": "environment",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "environment",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "readings-route",
+      "cases": 1,
+      "wall": 2.361,
+      "cpu": 1.97
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "readings-route",
+      "cases": 1,
+      "wall": 2.143,
+      "cpu": 2.04
+    },
+    {
+      "mode": "environment",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "environment",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "readings-route",
+      "cases": 1,
+      "wall": 2.319,
+      "cpu": 2.14
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "readings-route",
+      "cases": 1,
+      "wall": 2.125,
+      "cpu": 2.07
+    },
+    {
+      "mode": "environment",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "environment",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "readings-route",
+      "cases": 1,
+      "wall": 2.368,
+      "cpu": 2.05
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "readings-route",
+      "cases": 1,
+      "wall": 3.42,
+      "cpu": 3.08
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.025,
+      "cpu": 0.02
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.012,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.016,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.021,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.016,
+      "cpu": 0.02
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.019,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.017,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.016,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.013,
+      "cpu": 0.02
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.02,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.034,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.049,
+      "cpu": 0.02
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.034,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.021,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.018,
+      "cpu": 0.02
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.013,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.015,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.013,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.012,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.012,
+      "cpu": 0.02
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.014,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.013,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.013,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.014,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.012,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.014,
+      "cpu": 0.02
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.013,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.013,
+      "cpu": 0.02
+    },
+    {
+      "mode": "model",
+      "cases": 1,
+      "wall": 0.134,
+      "cpu": 0.03
+    },
+    {
+      "mode": "model",
+      "cases": 1,
+      "wall": 0.046,
+      "cpu": 0.03
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.013,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.005,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.004,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.005,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.004,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.018,
+      "cpu": 0.02
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.015,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.016,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.018,
+      "cpu": 0.02
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.013,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.015,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.004,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.005,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.006,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.005,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.021,
+      "cpu": 0.02
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.004,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.006,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.004,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.019,
+      "cpu": 0.02
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.014,
+      "cpu": 0.02
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.004,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.004,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.019,
+      "cpu": 0.02
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.004,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.017,
+      "cpu": 0.02
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.004,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.006,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.007,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.004,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.004,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.004,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.021,
+      "cpu": 0.02
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.01,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.004,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.004,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.004,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.004,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.004,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.004,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.004,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.009,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "model",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "model",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "model",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "model",
+      "cases": 1,
+      "wall": 0.004,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "model",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "model",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.004,
+      "cpu": 0.0
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "model",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.01
+    },
+    {
+      "mode": "model",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.005,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "metered",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "norms",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "readings-route",
+      "cases": 1,
+      "wall": 15.204,
+      "cpu": 11.84
+    },
+    {
+      "mode": "soft-norms",
+      "cases": 1,
+      "wall": 0.045,
+      "cpu": 0.02
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "soft-norms",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "english.check",
+      "cases": 1,
+      "wall": 0.187,
+      "cpu": 0.18
+    },
+    {
+      "mode": "english.check",
+      "cases": 1,
+      "wall": 0.186,
+      "cpu": 0.18
+    },
+    {
+      "mode": "english.read",
+      "cases": 1,
+      "wall": 0.125,
+      "cpu": 0.12
+    },
+    {
+      "mode": "soft-norms",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "soft-norms",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "words",
+      "cases": 1,
+      "wall": 0.004,
+      "cpu": 0.0
+    },
+    {
+      "mode": "words",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "soft-norms",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "soft-norms",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "soft-norms",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "soft-norms",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "soft-norms",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "soft-norms",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.013,
+      "cpu": 0.01
+    },
+    {
+      "mode": "english.check",
+      "cases": 1,
+      "wall": 0.195,
+      "cpu": 0.17
+    },
+    {
+      "mode": "english.check",
+      "cases": 1,
+      "wall": 0.21,
+      "cpu": 0.19
+    },
+    {
+      "mode": "english.read",
+      "cases": 1,
+      "wall": 1.082,
+      "cpu": 0.1
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.005,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "english.check",
+      "cases": 1,
+      "wall": 0.192,
+      "cpu": 0.17
+    },
+    {
+      "mode": "english.check",
+      "cases": 1,
+      "wall": 0.218,
+      "cpu": 0.19
+    },
+    {
+      "mode": "english.read",
+      "cases": 1,
+      "wall": 0.159,
+      "cpu": 0.09
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.012,
+      "cpu": 0.01
+    },
+    {
+      "mode": "english.check",
+      "cases": 1,
+      "wall": 1.105,
+      "cpu": 0.18
+    },
+    {
+      "mode": "english.check",
+      "cases": 1,
+      "wall": 0.204,
+      "cpu": 0.19
+    },
+    {
+      "mode": "english.read",
+      "cases": 1,
+      "wall": 0.293,
+      "cpu": 0.1
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.005,
+      "cpu": 0.01
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.004,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.017,
+      "cpu": 0.0
+    },
+    {
+      "mode": "english.check",
+      "cases": 1,
+      "wall": 0.193,
+      "cpu": 0.17
+    },
+    {
+      "mode": "english.check",
+      "cases": 1,
+      "wall": 0.82,
+      "cpu": 0.17
+    },
+    {
+      "mode": "english.read",
+      "cases": 1,
+      "wall": 0.805,
+      "cpu": 0.12
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.008,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.01
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.004,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.005,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.011,
+      "cpu": 0.01
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.015,
+      "cpu": 0.01
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.013,
+      "cpu": 0.01
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.007,
+      "cpu": 0.01
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "check",
+      "cases": 1,
+      "wall": 0.11,
+      "cpu": 0.01
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.004,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "route",
+      "cases": 1,
+      "wall": 0.001,
+      "cpu": 0.0
+    },
+    {
+      "mode": "words",
+      "cases": 1,
+      "wall": 0.089,
+      "cpu": 0.07
+    },
+    {
+      "mode": "words",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.01
+    },
+    {
+      "mode": "words",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "words",
+      "cases": 1,
+      "wall": 0.003,
+      "cpu": 0.0
+    },
+    {
+      "mode": "words",
+      "cases": 1,
+      "wall": 0.002,
+      "cpu": 0.0
+    }
+  ]
+}

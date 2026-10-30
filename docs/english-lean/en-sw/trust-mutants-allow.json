@@ -1,0 +1,89 @@
+{
+  "allow": [
+    {
+      "definition": "VE.EnglishGrammar.SourceWordKind",
+      "operator": "ctor-drop",
+      "reason": "Removing this constructor leaves the exhaustive catalogue matches ill-typed; no executable mutant exists."
+    },
+    {
+      "definition": "VE.EnglishGrammar.SourceWordKind.toJson",
+      "operator": "list-drop-first",
+      "reason": "This mutation fails Lean type elaboration in a required JSON expression; no executable mutant exists."
+    },
+    {
+      "definition": "VE.EnglishGrammar.SourceWordKind.toJson",
+      "operator": "list-drop-last",
+      "reason": "This mutation fails Lean type elaboration in a required JSON expression; no executable mutant exists."
+    },
+    {
+      "definition": "VE.EnglishGrammar.SourceWordKind.toJson",
+      "operator": "list-empty",
+      "reason": "This mutation fails Lean type elaboration in a required JSON expression; no executable mutant exists."
+    },
+    {
+      "definition": "VE.EnglishGrammar.SourceWordKind.toJson",
+      "operator": "list-first",
+      "reason": "This mutation fails Lean type elaboration in a required JSON expression; no executable mutant exists."
+    },
+    {
+      "definition": "VE.EnglishGrammar.SourceWordKind.toJson",
+      "operator": "list-last",
+      "reason": "This mutation fails Lean type elaboration in a required JSON expression; no executable mutant exists."
+    },
+    {
+      "definition": "VE.EnglishGrammar.SourceWordRow.validIdentity",
+      "operator": "list-empty",
+      "reason": "This mutation fails Lean type elaboration in a required JSON expression; no executable mutant exists."
+    },
+    {
+      "definition": "VE.EnglishGrammar.SourceWordRow.validIdentity",
+      "operator": "list-first",
+      "reason": "Taking one character preserves exactly the nonempty test used for this word or owner."
+    },
+    {
+      "definition": "VE.EnglishGrammar.SourceWordRow.validKind",
+      "operator": "list-empty",
+      "reason": "This mutation fails Lean type elaboration in a required JSON expression; no executable mutant exists."
+    },
+    {
+      "definition": "VE.EnglishGrammar.SourceWordRow.validKind",
+      "operator": "list-first",
+      "reason": "Taking one character preserves exactly the nonempty test used for this situation, code, advice or rewrite."
+    },
+    {
+      "definition": "VE.EnglishGrammar.sourceWords",
+      "operator": "list-drop-first",
+      "reason": "The catalogue is empty in en-sw, so dropping from [] still yields []; future row additions are checked by the export fixture."
+    },
+    {
+      "definition": "VE.EnglishGrammar.sourceWords",
+      "operator": "list-drop-last",
+      "reason": "The catalogue is empty in en-sw, so dropping from [] still yields []; future row additions are checked by the export fixture."
+    },
+    {
+      "definition": "VE.EnglishGrammar.sourceWordsJson",
+      "operator": "list-drop-first",
+      "reason": "This mutation fails Lean type elaboration in a required JSON expression; no executable mutant exists."
+    },
+    {
+      "definition": "VE.EnglishGrammar.sourceWordsJson",
+      "operator": "list-drop-last",
+      "reason": "This mutation fails Lean type elaboration in a required JSON expression; no executable mutant exists."
+    },
+    {
+      "definition": "VE.EnglishGrammar.sourceWordsJson",
+      "operator": "list-first",
+      "reason": "This mutation fails Lean type elaboration in a required JSON expression; no executable mutant exists."
+    },
+    {
+      "definition": "VE.EnglishGrammar.sourceWordsJson",
+      "operator": "list-last",
+      "reason": "This mutation fails Lean type elaboration in a required JSON expression; no executable mutant exists."
+    },
+    {
+      "definition": "VE.EnglishGrammar.sourceWordsValid",
+      "operator": "list-empty",
+      "reason": "This mutation fails Lean type elaboration in a required JSON expression; no executable mutant exists."
+    }
+  ]
+}

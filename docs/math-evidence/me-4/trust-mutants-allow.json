@@ -1,0 +1,99 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Calc.Filter.Selects",
+   "operator": "bool-flip",
+   "reason": "Filter.Selects is the meaning, a proposition over a row (its negated atoms are existentials over strings and rationals) that no evaluated check reads; Filter.sel is unchanged, so every bool-flip mutant falsifies Filter.sel_iff (and through it Table.select_iff), which lake build fails on; the tool cuts that proof to sorry"
+  },
+  {
+   "definition": "VE.Calc.Filter.Selects",
+   "operator": "arm-true",
+   "reason": "Filter.Selects is the meaning, a proposition over a row (its negated atoms are existentials over strings and rationals) that no evaluated check reads; Filter.sel is unchanged, so every arm-true mutant falsifies Filter.sel_iff (and through it Table.select_iff), which lake build fails on; the tool cuts that proof to sorry"
+  },
+  {
+   "definition": "VE.Calc.Filter.Selects",
+   "operator": "arm-false",
+   "reason": "Filter.Selects is the meaning, a proposition over a row (its negated atoms are existentials over strings and rationals) that no evaluated check reads; Filter.sel is unchanged, so every arm-false mutant falsifies Filter.sel_iff (and through it Table.select_iff), which lake build fails on; the tool cuts that proof to sorry"
+  },
+  {
+   "definition": "VE.Calc.Filter.Selects",
+   "operator": "eq-ne",
+   "reason": "Filter.Selects is the meaning, a proposition over a row (its negated atoms are existentials over strings and rationals) that no evaluated check reads; Filter.sel is unchanged, so every eq-ne mutant falsifies Filter.sel_iff (and through it Table.select_iff), which lake build fails on; the tool cuts that proof to sorry"
+  },
+  {
+   "definition": "VE.Calc.Filter.Selects",
+   "operator": "ne-eq",
+   "reason": "Filter.Selects is the meaning, a proposition over a row (its negated atoms are existentials over strings and rationals) that no evaluated check reads; Filter.sel is unchanged, so every ne-eq mutant falsifies Filter.sel_iff (and through it Table.select_iff), which lake build fails on; the tool cuts that proof to sorry"
+  },
+  {
+   "definition": "VE.Calc.Filter.Selects",
+   "operator": "and-or",
+   "reason": "Filter.Selects is the meaning, a proposition over a row (its negated atoms are existentials over strings and rationals) that no evaluated check reads; Filter.sel is unchanged, so every and-or mutant falsifies Filter.sel_iff (and through it Table.select_iff), which lake build fails on; the tool cuts that proof to sorry"
+  },
+  {
+   "definition": "VE.Calc.Filter.Selects",
+   "operator": "or-and",
+   "reason": "Filter.Selects is the meaning, a proposition over a row (its negated atoms are existentials over strings and rationals) that no evaluated check reads; Filter.sel is unchanged, so every or-and mutant falsifies Filter.sel_iff (and through it Table.select_iff), which lake build fails on; the tool cuts that proof to sorry"
+  },
+  {
+   "definition": "VE.Calc.Filter.Selects",
+   "operator": "not-drop",
+   "reason": "Filter.Selects is the meaning, a proposition over a row (its negated atoms are existentials over strings and rationals) that no evaluated check reads; Filter.sel is unchanged, so every not-drop mutant falsifies Filter.sel_iff (and through it Table.select_iff), which lake build fails on; the tool cuts that proof to sorry"
+  },
+  {
+   "definition": "VE.Calc.Filter.Selects",
+   "operator": "eq-le",
+   "reason": "No mutant is built: Cell has no order (failed to synthesize LE Cell), which Lean refuses; the tool reports the refusal as UNKNOWN"
+  },
+  {
+   "definition": "VE.Calc.Filter.Selects",
+   "operator": "all-any",
+   "reason": "No mutant is built: the constructor `.all` becomes `.any`, which Filter does not have (Unknown constant), which Lean refuses; the tool reports the refusal as UNKNOWN"
+  },
+  {
+   "definition": "VE.Calc.mean?",
+   "operator": "eq-le",
+   "reason": "Equivalent: in List's lexicographic order xs ≤ [] holds exactly when xs = []"
+  },
+  {
+   "definition": "VE.Calc.mean?",
+   "operator": "list-empty",
+   "reason": "No mutant is built: `xs` -> `[]` leaves `[].sum` of an unknown element type (don't know how to synthesize implicit argument), which Lean refuses; the tool reports the refusal as UNKNOWN"
+  },
+  {
+   "definition": "VE.Calc.columnTypes",
+   "operator": "list-empty",
+   "reason": "No mutant is built: `header` -> `[]` inside `eraseDups.length` leaves a stuck typeclass problem or a type mismatch, which Lean refuses; the tool reports the refusal as UNKNOWN"
+  },
+  {
+   "definition": "VE.Calc.decodeCsv",
+   "operator": "list-empty",
+   "reason": "No mutant is built: `r` -> `[]` leaves `[].length` of an unknown element type, which Lean refuses; the tool reports the refusal as UNKNOWN"
+  },
+  {
+   "definition": "VE.Calc.jsonCell",
+   "operator": "eq-le",
+   "reason": "No mutant is built: ColType has no order (failed to synthesize LE ColType), which Lean refuses; the tool reports the refusal as UNKNOWN"
+  },
+  {
+   "definition": "VE.Calc.decodeJsonl",
+   "operator": "list-empty",
+   "reason": "No mutant is built: `text.splitOn \"\\n\"` -> `[]` leaves a list of unknown element type, which Lean refuses; the tool reports the refusal as UNKNOWN"
+  },
+  {
+   "definition": "VE.Calc.decodeJsonl",
+   "operator": "eq-le",
+   "reason": "No mutant is built: `lines.getLast? = some \"\"` -> `≤`: Option String has no order, which Lean refuses; the tool reports the refusal as UNKNOWN"
+  },
+  {
+   "definition": "VE.Calc.Agg.run",
+   "operator": "list-empty",
+   "reason": "No mutant is built: `T.select f` or `T.numbers f c` -> `[]` leaves a list of unknown element type or an Option expected, which Lean refuses; the tool reports the refusal as UNKNOWN"
+  },
+  {
+   "definition": "VE.Calc.decodeJsonl",
+   "operator": "list-last",
+   "reason": "Equivalent at `lines.getLast?`: (lines.reverse.take 1).getLast? is lines.getLast?; at `else lines` the mutant keeps one line of a file without a last line end, which the guard `(jsonl \"{}\\n{}\").map (·.rows.length) = some 2` kills"
+  }
+ ]
+}

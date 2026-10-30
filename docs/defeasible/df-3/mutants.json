@@ -1,0 +1,343 @@
+{
+ "item": "df-3",
+ "runner": "docs/defeasible/df-3/evidence/run_mutants.py",
+ "note": "Each mutant applied alone; Lean ones rebuilt (ve_service, its hash added to a scratch copy of lean/checkers.lock, restored after) and their named test or build run; a 'lake build' test means a proof, an encoder theorem or a #guard fails. L1-L16 cover every new trusted definition (tools/trust_map.py); P1-P6 each Python behaviour claimed. P2 was first named against the 'a choice the request has not' forgery, which another check also refuses; it is killed by the dropped-row forgery. L7 was rerun on the final runVerdictsD. No Rust file changed.",
+ "mutants": [
+  {
+   "id": "L1",
+   "definition": "choiceSoft",
+   "file": "lean/VE/Readings/DefaultVerdicts.lean",
+   "language": "Lean",
+   "bug": "one per behaviour claimed / per new trusted definition",
+   "find": [
+    "VE.Rights.correlate (choiceDoc N.D c).1"
+   ],
+   "replace": [
+    "VE.Rights.correlate (choiceDoc N.D []).1"
+   ],
+   "test": "lake build VE.Readings.DefaultVerdictsExamples",
+   "result": "KILLED"
+  },
+  {
+   "id": "L2",
+   "definition": "dSem",
+   "file": "lean/VE/Readings/DefaultVerdicts.lean",
+   "language": "Lean",
+   "bug": "one per behaviour claimed / per new trusted definition",
+   "find": [
+    "free := fun c => (VE.Readings.Wire.sdSem.{u} N).free c ∧ DefaultCoherent.{u} (choiceU N c) (choiceSoft N c) []"
+   ],
+   "replace": [
+    "free := fun c => (VE.Readings.Wire.sdSem.{u} N).free c"
+   ],
+   "test": "lake build VE.Readings.DefaultVerdicts",
+   "result": "KILLED"
+  },
+  {
+   "id": "L3",
+   "definition": "dConflictRow",
+   "file": "lean/VE/Readings/DefaultVerdicts.lean",
+   "language": "Lean",
+   "bug": "plan DF-3: dSem.free without the gate (its executable row, dConflictRow without `d.coherent`; the proofs it breaks cut with `stop`): DF-rho gives FREE, not CONFLICT",
+   "find": [
+    "  if xFree e && d.coherent then .free else",
+    "    HoldsG (dSem.{u} N) [] .bottom c (dConflictRow e d) := by\n",
+    "    dConflictRow e d = .conflict := by\n"
+   ],
+   "replace": [
+    "  if xFree e then .free else",
+    "    HoldsG (dSem.{u} N) [] .bottom c (dConflictRow e d) := by\n  stop\n",
+    "    dConflictRow e d = .conflict := by\n  stop\n"
+   ],
+   "test": "tests/test_defaults_readings.py::test_df_rho_default_conflict_from_the_gate_only",
+   "result": "KILLED"
+  },
+  {
+   "id": "L4",
+   "definition": "dBasis",
+   "file": "lean/VE/Readings/DefaultVerdicts.lean",
+   "language": "Lean",
+   "bug": "one per behaviour claimed / per new trusted definition",
+   "find": [
+    "some (basisOf as ((e.counter.map (xModelOk U X A Γ φ · false)).getD false), as)",
+    "((choiceDoc z.y.r.N.D c).2 ++ z.y.x.Γ) z.y.x.φ) := by\n  intro c b as hm\n"
+   ],
+   "replace": [
+    "some (basisOf as false, as)",
+    "((choiceDoc z.y.r.N.D c).2 ++ z.y.x.Γ) z.y.x.φ) := by\n  stop\n  intro c b as hm\n"
+   ],
+   "test": "tests/test_defaults_readings.py::test_df_nu_default_fold_all_with_the_default_readings_assumption",
+   "result": "KILLED"
+  },
+  {
+   "id": "L5",
+   "definition": "DVerdicts.hasDefaults",
+   "file": "lean/VE/Readings/DefaultVerdicts.lean",
+   "language": "Lean",
+   "bug": "one per behaviour claimed / per new trusted definition",
+   "find": [
+    "  z.ds.any (fun d => !(dfltLabelled (choiceSoft z.y.r.N d.1)).isEmpty)"
+   ],
+   "replace": [
+    "  z.ds.any (fun _ => true)"
+   ],
+   "test": "tests/test_defaults_readings.py::test_without_a_default_premise_there_is_no_member",
+   "result": "KILLED"
+  },
+  {
+   "id": "L6",
+   "definition": "dEnglish",
+   "file": "lean/VE/Readings/DefaultVerdicts.lean",
+   "language": "Lean",
+   "bug": "one per behaviour claimed / per new trusted definition",
+   "find": [
+    "    .de8 :: z.bases.flatMap (fun p =>"
+   ],
+   "replace": [
+    "    z.bases.flatMap (fun p =>"
+   ],
+   "test": "tests/test_defaults_readings.py::test_df_nu_default_fold_all_with_the_default_readings_assumption",
+   "result": "KILLED"
+  },
+  {
+   "id": "L7",
+   "definition": "runVerdictsD",
+   "file": "lean/VE/Readings/DefaultVerdicts.lean",
+   "language": "Lean",
+   "bug": "plan DF-3: the default member shown when the strict fold is not FREE (DF-tau)",
+   "find": [
+    "        | none => a)"
+   ],
+   "replace": [
+    "        | none => a.setObjVal! \"default\" (defaultJson z))"
+   ],
+   "test": "tests/test_defaults_readings.py::test_df_tau_a_strict_conflict_leaves_no_member",
+   "result": "KILLED"
+  },
+  {
+   "id": "L8",
+   "definition": "verdictWord",
+   "file": "lean/VE/Readings/DefaultVerdicts.lean",
+   "language": "Lean",
+   "bug": "one per behaviour claimed / per new trusted definition",
+   "find": [
+    "  | .all => \"ALL\" | .some => \"SOME\""
+   ],
+   "replace": [
+    "  | .all => \"SOME\" | .some => \"SOME\""
+   ],
+   "test": "tests/test_defaults_readings.py::test_df_nu_default_fold_all_with_the_default_readings_assumption",
+   "result": "KILLED"
+  },
+  {
+   "id": "L9",
+   "definition": "dChoiceJson",
+   "file": "lean/VE/Readings/DefaultVerdicts.lean",
+   "language": "Lean",
+   "bug": "one per behaviour claimed / per new trusted definition",
+   "find": [
+    "(\"assumptions\", toJson p.2)]"
+   ],
+   "replace": [
+    "(\"assumptions\", toJson (p.2 ++ p.2))]"
+   ],
+   "test": "tests/test_defaults_readings.py::test_df_nu_default_fold_all_with_the_default_readings_assumption",
+   "result": "KILLED"
+  },
+  {
+   "id": "L10",
+   "definition": "DLine.json",
+   "file": "lean/VE/Readings/DefaultVerdicts.lean",
+   "language": "Lean",
+   "bug": "one per behaviour claimed / per new trusted definition",
+   "find": [
+    "  | .de7 c => Json.mkObj [(\"row\", .str \"DE7\")"
+   ],
+   "replace": [
+    "  | .de7 c => Json.mkObj [(\"row\", .str \"DE12\")"
+   ],
+   "test": "tests/test_defaults_readings.py::test_df_rho_default_conflict_from_the_gate_only",
+   "result": "KILLED"
+  },
+  {
+   "id": "L11",
+   "definition": "defaultJson",
+   "file": "lean/VE/Readings/DefaultVerdicts.lean",
+   "language": "Lean",
+   "bug": "one per behaviour claimed / per new trusted definition",
+   "find": [
+    "Json.mkObj [(\"conflict\", .str (word (foldConflict z.dConflictRows))),"
+   ],
+   "replace": [
+    "Json.mkObj [(\"conflict\", .str (word (foldConflict z.y.x.conflictRows))),"
+   ],
+   "test": "tests/test_defaults_readings.py::test_df_rho_default_conflict_from_the_gate_only",
+   "result": "KILLED"
+  },
+  {
+   "id": "L12",
+   "definition": "collisionFields",
+   "file": "lean/VE/Defaults/Wire.lean",
+   "language": "Lean",
+   "bug": "one per behaviour claimed / per new trusted definition",
+   "find": [
+    "(\"deciders\", toJson (giveWayDeciders D P Q))]),"
+   ],
+   "replace": [
+    "(\"deciders\", toJson ([] : List String))]),"
+   ],
+   "test": "lake build ve_service: error: VE/Defaults/Wire.lean:762:74: Application type mismatch: The argument",
+   "result": "KILLED"
+  },
+  {
+   "id": "L13",
+   "definition": "verdicts_default",
+   "file": "lean/ResponseShape/Schemas/ReadingsRoute.lean",
+   "language": "Lean",
+   "bug": "one per behaviour claimed / per new trusted definition",
+   "find": [
+    "(\"verdict\", enumS [\"ALL\", \"SOME\", \"NONE\", \"UNKNOWN\"]),"
+   ],
+   "replace": [
+    "(\"verdict\", enumS [\"ALL\", \"SOME\", \"NONE\"]),"
+   ],
+   "test": "lake build ResponseShape.Encoders.ReadingsRoute",
+   "result": "KILLED"
+  },
+  {
+   "id": "L14",
+   "definition": "verdicts_default_line",
+   "file": "lean/ResponseShape/Schemas/ReadingsRoute.lean",
+   "language": "Lean",
+   "bug": "one per behaviour claimed / per new trusted definition",
+   "find": [
+    "closed [(\"row\", enumS [\"DE7\", \"assumptions\", \"DE12\"])"
+   ],
+   "replace": [
+    "closed [(\"row\", enumS [\"assumptions\", \"DE12\"])"
+   ],
+   "test": "lake build ResponseShape.Encoders.ReadingsRoute",
+   "result": "KILLED"
+  },
+  {
+   "id": "L15",
+   "definition": "verdicts_default_choice",
+   "file": "lean/ResponseShape/Schemas/ReadingsRoute.lean",
+   "language": "Lean",
+   "bug": "one per behaviour claimed / per new trusted definition",
+   "find": [
+    "      (\"query\", enumS [\"proved\", \"refuted\", \"UNKNOWN\"]),"
+   ],
+   "replace": [
+    "      (\"query\", enumS [\"proved\", \"refuted\"]),"
+   ],
+   "test": "lake build ResponseShape.Encoders.ReadingsRoute",
+   "result": "KILLED"
+  },
+  {
+   "id": "L16",
+   "definition": "DLine",
+   "file": "lean/VE/Readings/DefaultVerdicts.lean",
+   "language": "Lean",
+   "bug": "one per behaviour claimed / per new trusted definition",
+   "find": [
+    "inductive DLine | de8 | de7 (c : Choice) | assumptions (c : Choice) | de12 (c : Choice)"
+   ],
+   "replace": [
+    "inductive DLine | de8 | de7 (c : Choice) | assumptions (c : Choice)"
+   ],
+   "test": "lake build VE.Readings.DefaultVerdicts",
+   "result": "KILLED"
+  },
+  {
+   "id": "P1",
+   "definition": "_check_default (labels)",
+   "file": "ve/readings_verdicts/binding.py",
+   "language": "Python",
+   "bug": "task: a binding check skipping labels",
+   "find": [
+    "            _need(kept == [label for label in labels if label in kept])\n"
+   ],
+   "replace": [
+    ""
+   ],
+   "test": "tests/test_defaults_readings.py::test_df_nu_every_forged_field_is_refused[a label the choice has not]",
+   "result": "KILLED"
+  },
+  {
+   "id": "P2",
+   "definition": "_check_default (choices)",
+   "file": "ve/readings_verdicts/binding.py",
+   "language": "Python",
+   "bug": "plan DF-3: the relay keeps a row not in the request (fuzz)",
+   "find": [
+    "    _need([e[\"choice\"] for e in member[\"per_choice\"]] == [e[\"choice\"] for e in row[\"per_choice\"]])\n"
+   ],
+   "replace": [
+    ""
+   ],
+   "test": "tests/test_defaults_readings.py::test_df_nu_every_forged_field_is_refused[a row dropped]",
+   "result": "KILLED"
+  },
+  {
+   "id": "P3",
+   "definition": "_check_default (presence)",
+   "file": "ve/readings_verdicts/binding.py",
+   "language": "Python",
+   "bug": "one per behaviour claimed / per new trusted definition",
+   "find": [
+    "    _need((member is not None) == defaults)\n"
+   ],
+   "replace": [
+    ""
+   ],
+   "test": "tests/test_defaults_readings.py::test_df_nu_every_forged_field_is_refused[member absent]",
+   "result": "KILLED"
+  },
+  {
+   "id": "P4",
+   "definition": "defaults_english.readings",
+   "file": "ve/defaults_english.py",
+   "language": "Python",
+   "bug": "one per behaviour claimed / per new trusted definition",
+   "find": [
+    "        out += [f\"Under {under(line['choice'])}: {sentences[0]}\", *sentences[1:]]"
+   ],
+   "replace": [
+    "        out += sentences"
+   ],
+   "test": "tests/test_defaults_readings.py::test_df_rho_english_is_de7_under_the_colliding_reading_never_a_contradiction",
+   "result": "KILLED"
+  },
+  {
+   "id": "P5",
+   "definition": "_readings_without_exception (--under)",
+   "file": "ve/document/cli.py",
+   "language": "Python",
+   "bug": "one per behaviour claimed / per new trusted definition",
+   "find": [
+    "    row = route.default_answer(conclusion, assumed=assumed)"
+   ],
+   "replace": [
+    "    row = route.default_answer(conclusion)"
+   ],
+   "test": "tests/test_defaults_readings.py::test_under_names_readings_and_other_flags_are_refused",
+   "result": "KILLED"
+  },
+  {
+   "id": "P6",
+   "definition": "default_case",
+   "file": "ve/readings_verdicts/choice.py",
+   "language": "Python",
+   "bug": "one per behaviour claimed / per new trusted definition",
+   "find": [
+    "            piece[\"model\"] = search.model(X, own, Bottom())\n"
+   ],
+   "replace": [
+    ""
+   ],
+   "test": "tests/test_defaults_readings.py::test_df_nu_default_fold_all_with_the_default_readings_assumption",
+   "result": "KILLED"
+  }
+ ]
+}
