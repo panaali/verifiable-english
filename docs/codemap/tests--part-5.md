@@ -1,4 +1,3 @@
-- `tests/test_readings_defaults_rd4b_report.py` — RD-4b's report is checked against immutable evidence captured from the clean code head.
 - `tests/test_readings_defaults_rd6a.py` — RD-6a (docs/spec/readings-defaults-PLAN.md): fixture X1's conflict-freedom premise, end to end on the route.
 - `tests/test_readings_defaults_rd6a_report.py` — RD-6a's report (docs/readings-defaults/rd6a/DELTA.md) against its saved gate evidence.
 - `tests/test_readings_defaults_rd6b_report.py` — RD-6b report checks against committed evidence, independent of the current git graph.
@@ -80,3 +79,4 @@
 - `tests/test_scope_document.py` — SC-1b: the Lean document mode admits `scope@0` (docs/spec/scope.md 5.2, 7.2) on the F1 part document, the pinned constitution's hard-constraint block (u0164.s0…
 - `tests/test_scope_lean.py` — scope@0's Lean core (sc-1a, sc-3a, sc-1ab, sc-1ac, sc-1ad): the layout's list runs, label reaches and anchors, the effects on a rule's JSON object, and `govern…
 - `tests/test_scope_readings_document.py` — Scope spec 11 (sc-5rb): a reading set on a governed unit, checked once per joint choice by the document mode.
+- `tests/test_scope_sc5r_stub.py` — Scope spec section 11's statement stub (sc-5r): every placeholder it leaves to sc-5rb is pinned by a statement.

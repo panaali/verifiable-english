@@ -69,8 +69,16 @@ def calls(monkeypatch):
 # ------------------------------------------------------------------ the routed prefixes
 
 def test_the_routed_prefixes_are_the_contracts():
-    assert english_lean.QUESTION_CALLERS == {SPEECH: ("Is it the case that ", "Must ", "Can ")}
-    assert speech_english._LEAN_PREFIXES == (*english_lean.QUESTION_CALLERS[SPEECH], "Is ")
+    assert english_lean.QUESTION_CALLERS == {SPEECH: ("Is it the case that ", "Must ", "Can ", "Is ")}
+    assert speech_english._LEAN_PREFIXES is english_lean.QUESTION_CALLERS[SPEECH]
+
+
+def test_the_speech_parser_keeps_no_prefix_of_its_own():
+    """One owner for the routed prefixes (q1-4bb): no string in the speech parser's source is one of them."""
+    import ast
+    tree = ast.parse(Path(speech_english.__file__).read_text())
+    literals = {node.value for node in ast.walk(tree) if isinstance(node, ast.Constant) and type(node.value) is str}
+    assert literals.isdisjoint(english_lean.QUESTION_CALLERS[SPEECH])
 
 
 @pytest.mark.parametrize("wording, body", [
