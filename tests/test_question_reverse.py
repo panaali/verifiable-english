@@ -3,6 +3,7 @@ on a small fixed slice: the builder of each form, the mutants, the moved-word se
 and the group document's questions read by Lean, with the candidate limit on both sides."""
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 
@@ -175,35 +176,65 @@ def test_the_candidate_limit_is_leans_on_both_sides(group):
     assert records[0]["candidates"] == 64 and records[0]["status"] != "budget"
 
 
-def test_the_default_run_is_the_whole_sealed_corpus():
-    seal = json.loads((ROOT / "conformance/english-lean/corpus-seal.json").read_text())
+def test_the_default_run_is_the_corpus_size():
+    seal = json.loads(R.SEAL.read_text())
     sizes = {row["unique_asts_roundtripped"] for row in seal["generated"] if row["stream"] == "english-surface"}
     args = R.arguments([])
     assert sizes == {args.per_config} and args.per_config == E.PER_CONFIG
     assert args.per_usecase == E.PER_USECASE
-    assert R.coverage({}, args.per_config, args.per_usecase)["whole"]
 
 
-def _row(**changed):
-    return {"asked": 5, "drawn": 5, "sentences": 5, "dropped": {"none": 1}, **changed}
+def _configs(**changed):
+    """Rows of a run that left nothing out: every stream of the seal with its digest, and one use-case stream."""
+    seal = json.loads(R.SEAL.read_text())["generated"]
+    row = {"asked": 5, "drawn": 5, "sentences": 5, "dropped": {"none": 1}}
+    rows = {r["vocabulary"]: {**row, "stream_sha256": r["corpus_sha256"]} for r in seal if "vocabulary" in r}
+    return rows | {"ordinary": {**rows["ordinary"], **changed}, "use-case": row}
 
 
-@pytest.mark.parametrize("configs, sizes, left_out", [
-    ({"a": _row()}, (300, 500), {}),                                       # a sample of the round-trip streams
-    ({"a": _row()}, (5000, 100), {}),                                      # a sample of the use-case streams
-    ({"a": _row(drawn=4)}, (5000, 500), {"short_streams": {"a": 4}}),      # a stream that stalled
-    ({"a": _row(dropped={"unavailable": 2})}, (5000, 500), {"unavailable_reads": {"a": 2}}),  # no answer: not "none"
-    ({"a": {"skipped": "ValueError: x"}}, (5000, 500), {"skipped": ["a"]}),
+def test_the_seal_names_the_streams_the_run_does_not_draw():
+    assert R.coverage(_configs(), 5000, 500)["other_sealed_streams"] == {"english-mixed": 6757, "natural-view": 1220}
+    assert R.coverage(_configs(), 5000, 500)["sealed_streams"] == 17
+
+
+def test_a_stream_draws_its_use_cases_claims_as_the_sealed_one_does(monkeypatch):
+    # The whole stream is compared with the seal's digest by `coverage` on a full run; here, that the claims come in.
+    name = "claude-constitution-excerpt"
+    env = Environment(json.loads((ROOT / f"usecases/{name}/environment.json").read_text()))
+    claims = E.use_case_claims(f"{name}-reviewed", env)
+    assert claims and E.use_case_claims("ordinary", env) == []
+    monkeypatch.setattr(E, "CONFIGS", [(name, env, {}, EnglishVocabulary(env))])
+    plain = [text for _, text, _ in E.streams(0, 300, 0, [])]
+    sealed = [text for _, text, _ in E.streams(0, 300, 0, [], claims=True)]
+    assert len(sealed) == 300 and set(sealed) != set(plain)
+
+
+@pytest.mark.parametrize("changed, sizes, left_out", [
+    ({}, (300, 500), {}),                                                  # a sample of the round-trip streams
+    ({}, (5000, 100), {}),                                                 # a sample of the use-case streams
+    ({"drawn": 4}, (5000, 500), {"short_streams": {"ordinary": 4}}),       # a stream that stalled
+    ({"dropped": {"unavailable": 2}}, (5000, 500), {"unavailable_reads": {"ordinary": 2}}),  # no answer: not "none"
+    ({"skipped": "ValueError: x"}, (5000, 500), {"skipped": ["ordinary"], "short_streams": None}),
+    ({"stream_sha256": "0" * 64}, (5000, 500), {"unsealed_streams": ["ordinary"]}),  # not the sealed stream
 ])
-def test_coverage_is_whole_only_when_nothing_is_left_out(configs, sizes, left_out):
-    result = R.coverage(configs, *sizes)
-    assert result["whole"] is False
-    assert {k: v for k, v in result.items() if k in ("short_streams", "unavailable_reads", "skipped") and v} == left_out
+def test_coverage_is_whole_only_when_nothing_is_left_out(changed, sizes, left_out):
+    result = R.coverage(_configs(**changed), *sizes)
+    assert result["whole_streams"] is False
+    names = ("short_streams", "unavailable_reads", "skipped", "unsealed_streams")
+    assert {k: v for k, v in result.items() if k in names and v} == {k: v for k, v in left_out.items() if v}
+
+
+def test_coverage_needs_every_stream_of_the_seal():
+    configs = _configs()
+    del configs["order"]
+    result = R.coverage(configs, 5000, 500)
+    assert result["whole_streams"] is False and result["unsealed_streams"] == ["order"]
 
 
 def test_coverage_is_whole_with_duplicates_and_plain_refusals():
     # A text drawn twice is one sentence, and a sentence Lean does not read has an answer: neither leaves anything out.
-    assert R.coverage({"a": _row(sentences=3), "b": {**_row(), "dropped": {"none": 5}}}, 5000, 500)["whole"] is True
+    configs = _configs(sentences=3, dropped={"none": 5})
+    assert R.coverage(configs, 5000, 500)["whole_streams"] is True
 
 
 def test_every_sentence_is_kept_or_counted_as_dropped(group):
@@ -237,13 +268,27 @@ def test_a_run_merges_its_slices_and_accounts_for_every_sentence(group, monkeypa
     assert row["one_formula"] + sum(row["dropped"].values()) == row["sentences"]
     assert (row["questions"], row["moved"]) == (len(questions), len(moved))
     assert sum(q["kind"] == "f1" for q in questions) == 3 and {r["candidates"] for r in limits} == {64, 65}
-    assert R.coverage(configs, 5000, 500)["whole"] is True
+    assert R.coverage(configs, 5000, 500)["short_streams"] == {}
+
+
+def test_a_listed_question_keeps_its_head_length_and_hash():
+    text = "Is it the case that " + "a " * 1000 + "b?"
+    miss = {"config": "c", "kind": "f1", "question": text, "expected": None, "same": False, "ms": 1.0,
+            "outcome": {"status": "budget", "code": "QuestionTooLong"}}
+    listed = R.measures([miss], [], [])["f1"]["misses"][0]
+    assert listed["question"] == text[:R.LISTED_HEAD] and listed["bytes"] == len(text)
+    assert listed["sha256"] == hashlib.sha256(text.encode()).hexdigest() and listed["status"] == "budget"
 
 
 def test_a_delivered_row_has_the_whole_corpus_behind_it():
     evidence = json.loads((BATCH / "evidence/question-reverse.json").read_text())
     rows = [line for line in (BATCH / "REPORT.md").read_text().splitlines() if line.startswith("| F1 question for every")]
     assert len(rows) == 1
-    assert evidence["coverage"]["whole"] is True or "| delivered |" not in rows[0]
-    assert (evidence["per_config"], evidence["per_usecase"]) == (E.PER_CONFIG, E.PER_USECASE) or \
-        "| delivered |" not in rows[0]
+    assert evidence["coverage"]["whole_streams"] is True or "| delivered |" not in rows[0]
+    assert (evidence["per_config"], evidence["per_usecase"]) == (E.PER_CONFIG, E.PER_USECASE)
+    assert evidence["coverage"]["unsealed_streams"] == [] and evidence["coverage"]["sealed_streams"] == 17
+    assert not evidence["coverage"]["other_sealed_streams"] or "| delivered |" not in rows[0]
+
+
+def test_the_saved_evidence_stays_in_the_tree():
+    assert (BATCH / "evidence/question-reverse.json").stat().st_size < 1_000_000  # DRI decision D4

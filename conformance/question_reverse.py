@@ -2,8 +2,9 @@
 
     uv run python -m conformance.question_reverse [--per-config N] [--per-usecase N] [--workers N] [--output PATH]
 
-The defaults are the whole sealed corpus (`english_lean_e2_evidence.PER_CONFIG`, `PER_USECASE`); a smaller run is a
-sample, and the saved `coverage` says so. For every corpus sentence Lean reads with one formula (the sealed stream of every corpus configuration of
+The defaults are the whole corpus (`english_lean_e2_evidence.PER_CONFIG`, `PER_USECASE`); the saved `coverage` says
+what a run left out, compares each round-trip stream with its digest in the seal, and names the seal's other streams,
+which this script does not draw. For every corpus sentence Lean reads with one formula (the sealed stream of every corpus configuration of
 `conformance.english_lean_e2_evidence`, and the units of every use-case `.ve.md` document under its own
 environment), the script builds the F1 question, the F2 question where the sentence begins with a quantified or
 named subject followed by *is*, *must* or *may* (plan 3.2), and spacing and capitalisation mutants of both. Each
@@ -18,6 +19,7 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter
+import hashlib
 import json
 import math
 import multiprocessing
@@ -33,6 +35,7 @@ from conformance import english_lean_e2_evidence as E
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "docs/question-answering/q1-3/evidence/question-reverse.json"
+SEAL = ROOT / "conformance/english-lean/corpus-seal.json"
 FORMAT = "ve.question-reverse@1"
 FRAME = "Is it the case that "
 AUXILIARIES = ("is", "must", "may")
@@ -46,6 +49,7 @@ MUTANTS = ("double-space", "space-before-mark", "leading-space", "lower-initial"
            "capital-body")
 BUDGET_MS, BUDGET_64_MS = 100.0, 1000.0  # plan 3.6: p95 of a corpus question; a 64-candidate question
 SLICE = 200  # sentences a worker takes at a time, so that the slow configurations share the workers
+LISTED_HEAD = 120  # characters kept of a listed question; DRI decision D4 keeps evidence in the tree under 1 MB
 
 # Filled before the workers fork: (name, env, options, words) per configuration, then per use-case document.
 TARGETS: list = []
@@ -215,7 +219,8 @@ def stream_of(task: tuple[int, int]) -> tuple[int, list[str], int]:
     """(target, its stream's texts, the stalls that cut it): a worker's task, the generator's stall alarm being
     per process."""
     index, count = task
-    return index, [text for _, text, _ in E.streams(index, count, 0, [])], E.STALLED.get(TARGETS[index][0], 0)
+    texts = [text for _, text, _ in E.streams(index, count, 0, [], claims=True)]
+    return index, texts, E.STALLED.get(TARGETS[index][0], 0)
 
 
 def slice_of(task: tuple[int, list[str]]) -> tuple[int, dict]:
@@ -235,9 +240,10 @@ def limits_of(task: tuple[int, list[str]]) -> tuple[int, list[dict], float]:
 def run(asked: dict[int, int], given: dict[int, list[str]], mapper=map) -> tuple[dict, list, list, list]:
     """(configs, questions, moved, limits) of the targets: `asked` maps a target to the stream size to draw,
     `given` to its sentences (a document's units). `mapper` runs the workers' tasks, in any order."""
-    drawn, stalled = dict(given), {}
+    drawn, stalled, digests = dict(given), {}, {}
     for index, texts, stalls in mapper(stream_of, list(asked.items())):
         drawn[index], stalled[index] = texts, stalls
+        digests[index] = hashlib.sha256("".join(f"{text}\n" for text in texts).encode()).hexdigest()
     unique = {index: list(dict.fromkeys(texts)) for index, texts in drawn.items()}
     slices = [(index, texts[k:k + SLICE]) for index, texts in sorted(unique.items())
               for k in range(0, len(texts), SLICE)]
@@ -252,7 +258,7 @@ def run(asked: dict[int, int], given: dict[int, list[str]], mapper=map) -> tuple
         dropped = sum((Counter(r["dropped"]) for r in results[index]), Counter())
         configs[TARGETS[index][0]] = {
             "asked": asked.get(index, len(given.get(index, ()))), "drawn": len(drawn[index]),
-            "stalled": stalled.get(index, 0), "sentences": len(unique[index]),
+            "stalled": stalled.get(index, 0), "stream_sha256": digests.get(index), "sentences": len(unique[index]),
             "one_formula": sum(r["one_formula"] for r in results[index]), "dropped": dict(sorted(dropped.items())),
             "questions": len(times), "moved": sum(len(r["moved"]) for r in results[index]), "p95_ms": p95(times),
             "max_ms": max(times, default=None), "transport_ms": limited[index][1]}
@@ -263,15 +269,23 @@ def run(asked: dict[int, int], given: dict[int, list[str]], mapper=map) -> tuple
 
 
 def coverage(configs: dict, per_config: int, per_usecase: int) -> dict:
-    """What the run left out of the whole corpus; `whole` holds only when it left out nothing: both sizes are the
-    sealed corpus's, every configuration ran, every stream was drawn to its size, and every sentence has an answer."""
+    """What the run left out. `whole_streams` holds only when it left out nothing of the streams it draws: both sizes
+    are the corpus's, every configuration ran, every stream was drawn to its size, each stream in the seal has the
+    seal's digest, and every sentence has an answer. `other_sealed_streams` are the seal's streams it never draws."""
+    generated = json.loads(SEAL.read_text())["generated"]
+    sealed = {row["vocabulary"]: row["corpus_sha256"] for row in generated if row["stream"] == "english-surface"}
     short = {name: row["drawn"] for name, row in configs.items() if "skipped" not in row and row["drawn"] < row["asked"]}
     unavailable = {name: row["dropped"]["unavailable"] for name, row in configs.items()
                    if row.get("dropped", {}).get("unavailable")}
     skipped = sorted(name for name, row in configs.items() if "skipped" in row)
-    return {"sealed_per_config": E.PER_CONFIG, "sealed_per_usecase": E.PER_USECASE, "short_streams": short,
-            "unavailable_reads": unavailable, "skipped": skipped,
-            "whole": (per_config, per_usecase) == (E.PER_CONFIG, E.PER_USECASE) and not (short or unavailable or skipped)}
+    unsealed = sorted(name for name, digest in sealed.items() if configs.get(name, {}).get("stream_sha256") != digest)
+    return {"per_config": E.PER_CONFIG, "per_usecase": E.PER_USECASE, "short_streams": short,
+            "unavailable_reads": unavailable, "skipped": skipped, "unsealed_streams": unsealed,
+            "sealed_streams": len(sealed) - len(unsealed),
+            "other_sealed_streams": {row["stream"]: row.get("texts", row.get("statements")) for row in generated
+                                     if row["stream"] != "english-surface"},
+            "whole_streams": (per_config, per_usecase) == (E.PER_CONFIG, E.PER_USECASE)
+            and not (short or unavailable or skipped or unsealed)}
 
 
 # ------------------------------------------------------------------ the measures (arithmetic only)
@@ -304,7 +318,9 @@ def measures(questions: list[dict], moved: list[dict], limits: list[dict]) -> di
     limit_ms = [r["ms"] for r in limits if r["candidates"] == 64]
 
     def brief(q):
-        return {k: q[k] for k in ("config", "question", "expected") if q.get(k) is not None} | {
+        text = q["question"].encode()
+        return {k: q[k] for k in ("config", "expected") if q.get(k) is not None} | {
+            "question": q["question"][:LISTED_HEAD], "bytes": len(text), "sha256": hashlib.sha256(text).hexdigest()} | {
             k: q["outcome"][k] for k in ("status", "code", "sentence", "rephrasings", "error") if k in q["outcome"]}
     return {
         "f1": {"questions": len(f1s), "same": sum(q["same"] for q in f1s),
@@ -345,8 +361,8 @@ def documents() -> list[tuple[str, dict, list[str]]]:
 
 def arguments(argv=None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--per-config", type=int, default=E.PER_CONFIG, help="sealed texts per round-trip configuration")
-    parser.add_argument("--per-usecase", type=int, default=E.PER_USECASE, help="sealed texts per use-case environment")
+    parser.add_argument("--per-config", type=int, default=E.PER_CONFIG, help="texts per round-trip configuration")
+    parser.add_argument("--per-usecase", type=int, default=E.PER_USECASE, help="texts per use-case environment")
     parser.add_argument("--workers", type=int, default=8)
     parser.add_argument("--output", type=Path, default=OUTPUT)
     return parser.parse_args(argv)
