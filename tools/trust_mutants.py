@@ -101,9 +101,10 @@ for a change, any other change, a file it cannot read) it is a full run, and one
   writes the record one run with their options writes, but for "seconds" (the parts' longest), "jobs" and "steps"
   (their sums) and `shards: [{k, n, jobs, seconds, steps}]`, by k; it prints that run's lines and exits with its
   code. It refuses (exit 2) parts that are no part as this tool writes one (`unread`: a field or row not of its
-  type, a status not one it writes, counts that are not its rows'), disagree on N, base, head, options, inputs, the plan or --rescore's
-  file, head, mode, changed or full_run, miss or repeat a k, own a mutant twice, never, or with no verdict, or
-  hold anything but the plan's row and its status (`idle`) for a mutant they do not run, OTHER SHARD or NOT RUN;
+  type, a status not one it writes, counts that are not its rows'), disagree on N, base, head, options, inputs,
+  the plan or --rescore's file, head, mode, changed or full_run, miss or repeat a k, own a mutant twice, never, or
+  with no verdict, or hold anything but the plan's row and its status (`idle`) for a mutant they do not run, OTHER
+  SHARD or NOT RUN;
 - --plan prints `{"base", "definitions", "mutants", "to_run", "not_run"}` ("owned" too with --shard) as one JSON
   line and builds nothing: what sizes N.
 
