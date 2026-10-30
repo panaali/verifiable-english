@@ -25,7 +25,7 @@ Cut under the merge-sized limit: gap rows after DE6 need a Lean predicate/tuple 
 
 ## Selected run and next item
 
-`zsh manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` selected 63 units on the finished code: 62 passed and `tests/test_defaults_lean.py::test_epsilon_switch_is_the_long_form` failed because its expected decider list omitted the request's switch party. The expected row was corrected; `mac-pytest.sh -- tests/test_defaults_lean.py::test_epsilon_switch_is_the_long_form` then passed (1 test, VM fallback). No product code changed after the selected run. No selected failure is in `main-known-red.txt`.
+`zsh manage-agents/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` selected 63 units: 62 passed and `tests/test_defaults_lean.py::test_epsilon_switch_is_the_long_form` failed because its expected decider list omitted the request's switch party. The expected row was corrected; `mac-pytest.sh -- tests/test_defaults_lean.py::test_epsilon_switch_is_the_long_form` then passed (1 test, VM fallback). Final diff review found that the Python binder admitted `unstated` when every source decider was named; that check was tightened and `tests/test_defaults_answer.py::test_deciders_are_typed_and_bound_on_both_rows` passed (1 test, with accepting and refusing unnamed-decider cases). The full selection was not rerun. No selected failure is in `main-known-red.txt`.
 
 **df-1bbc:** Lean gap rows after DE6, W7's all-derivations gate on every DE1–DE12 frame, typed `reason` with a compatible wire decision, and one shared `act_phrase` after ap-1bd lands. Then DF-4, after QT-A6 per DRI-DECISIONS-PHASE2 X1.
 

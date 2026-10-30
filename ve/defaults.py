@@ -74,9 +74,11 @@ def _bind_decider_names(case, names, has_decisions):
     """R8: each Lean name occurs in this source, once; a row for decisions is not empty."""
     rules = _rules(case).values()
     soft = case["environment"]["vocabulary"].get("soft") or {}
-    available = {"unstated", *(_decider(case, rule) for rule in rules if rule.get("mode") == "default"),
-                 *(party for rule in _rules(case).values() for party in rule.get("alterable", ())),
-                 (soft.get("outranking") or {}).get("decided_by") or "unstated"}
+    available = {*(_decider(case, rule) for rule in rules if rule.get("mode") == "default"),
+                 *(party for rule in _rules(case).values() for party in rule.get("alterable", ()))}
+    ranking = soft.get("outranking") or {}
+    if ranking.get("mode") == "holistic":
+        available.add(ranking.get("decided_by") or "unstated")
     if bool(names) != bool(has_decisions) or len(names) != len(set(names)) or any(n not in available for n in names):
         raise _unbound("deciders")
 
