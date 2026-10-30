@@ -44067,9 +44067,9 @@ theorem VE.Scope.coversU_iff
   -- expr 1356600155
 theorem VE.Scope.decodeBlock_jsonWF
   ∀ (front : Lean.Json) (source : String) (re : VE.Readings.Wire.ReadingsEnvironment) (D : VE.Scope.SDoc),
-    VE.Scope.decodeBlock front source re = Except.ok D → VE.Scope.JsonWF D.doc
-  -- uses VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Scope.JsonWF@VE.Scope.Govern VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.decodeBlock@VE.Scope.Wire
-  -- expr 3120886348
+    VE.Scope.decodeBlock front source re = Except.ok D → VE.Scope.JsonWF D.doc ∧ VE.Scope.JsonWF D.block
+  -- uses VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Scope.JsonWF@VE.Scope.Govern VE.Scope.SDoc.block@VE.Scope.Govern VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.decodeBlock@VE.Scope.Wire
+  -- expr 2924256056
 theorem VE.Scope.decodeBlock_layout
   ∀ (front : Lean.Json) (source : String) (re : VE.Readings.Wire.ReadingsEnvironment) (D : VE.Scope.SDoc),
     VE.Scope.decodeBlock front source re = Except.ok D → D.layout = VE.Scope.layoutOf front source ∧ D.doc = front
@@ -44078,9 +44078,10 @@ theorem VE.Scope.decodeBlock_layout
 theorem VE.Scope.decodeBlock_ok
   ∀ (front : Lean.Json) (source : String) (re : VE.Readings.Wire.ReadingsEnvironment) (D : VE.Scope.SDoc),
     VE.Scope.decodeBlock front source re = Except.ok D →
-      VE.Scope.jsonWF? front = Bool.true ∧ D.layout = VE.Scope.layoutOf front source ∧ D.doc = front
-  -- uses VE.Layout.Unit@VE.Layout.List VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc.layout@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.decodeBlock@VE.Scope.Wire VE.Scope.jsonWF?@VE.Scope.Govern VE.Scope.layoutOf@VE.Scope.Wire
-  -- expr 384880695
+      VE.Scope.jsonWF? front = Bool.true ∧
+        D.layout = VE.Scope.layoutOf front source ∧ D.doc = front ∧ D.block = front.getObjValD "scope"
+  -- uses VE.Layout.Unit@VE.Layout.List VE.Readings.Wire.ReadingsEnvironment@VE.Readings.Wire VE.Scope.SDoc.block@VE.Scope.Govern VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc.layout@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.decodeBlock@VE.Scope.Wire VE.Scope.jsonWF?@VE.Scope.Govern VE.Scope.layoutOf@VE.Scope.Wire
+  -- expr 3003147883
 theorem VE.Scope.decodeNorm_name
   ∀ (re : VE.Readings.Wire.ReadingsEnvironment) (o : Lean.Json),
     VE.Scope.JsonWF o →
