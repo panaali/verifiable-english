@@ -582,7 +582,8 @@ def never_answer(id_):
     if id_ == "N2":
         return persuasion_probe()
     if id_ == "N3":
-        return {"route": "D1", "deferred": "dead rules"}
+        # run() answers N3 last, from every other item's selections (dead_rules); alone it stays open.
+        return {"route": "D1", "undecided": "translation limit (SC): N3 needs the other items' witnesses"}
     return {"route": "D1", "undecided": "VE limit (SC): D1 has no closure premise that the level sort holds "
                                         "exactly Table 1's six levels, so an unnamed seventh level is not excluded"}
 

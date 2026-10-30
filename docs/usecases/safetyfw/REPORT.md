@@ -920,7 +920,7 @@ docstring ("the items of its frozen answer key that VE answers as the key says, 
 1. Lean answers typed and contained: N.A., no relayed route, schema or relay is added; the harness reads VE's
    public Python API (`selected_rules`, `check_conflict`, `prove_entailment`, `prove_quantity`, the risk relay).
 2. Deliverables: PASS. run.py, reference.py, results.json, M1 to M10, mutants, README answers table, REPORT row
-   and PLAN 12 are in commits d592194c6, the docs commit and c259a778e;
+   and PLAN 12 are in commits 0e30be80a, d592194c6, c21fa6959 and c259a778e;
    `::test_pf_run_recomputes_every_key_item_and_records_causes`. No Python copy of a Lean decision (the harness
    asks VE for every answer), no permanent report test (D4: the tests recompute results.json, they do not pin
    report numbers against git).
