@@ -59,7 +59,8 @@ Fixtures (`DecidingExamples.lean`; `lake build` checks them; each line was check
 trusted +0 … PASS". New executables are C (`tools/trust-classes.json`); fixtures are T; theorems are P. No allowance,
 so no R16 row and no FOLLOW-UPS ties-pass row (sibling lesson me-5e F1 checked: no R16 signature is claimed). `mac-pytest.sh
 --trustmut -- --max-mutants 1000 --json docs/math-evidence/me-12ac/trust-mutants.json` (run in the cloud pool):
-"0 definitions, 0 mutants … 0 KILLED, 0 SURVIVOR", exit 0.
+"0 definitions, 0 mutants … 0 KILLED, 0 SURVIVOR", exit 0. It was rerun with `--rescore` after the last fixture edit
+("check-only change: lean/VE/Arith/DecidingExamples.lean"), again 0 definitions, exit 0.
 
 ## Seeded bugs and mutants (Lean; [`mutants.json`](mutants.json))
 
@@ -79,7 +80,9 @@ Each was planted alone in a copy of `Deciding.lean` joined with `DecidingExample
 
 ## Tests and checks
 
-- **Selected tests:** TESTS-PENDING
+- **Selected tests:** `mac-pytest.sh --select -- --base 62d8329d4 --run` on HEAD a4bafc808 (clean) ran on GitHub Actions
+  (run me-12ac-a4bafc80-t346792, 6 shards). It ran 427 units (79 + 70 + 71 + 72 + 69 + 66), 427 passed and 0 failed,
+  exit 0, in 2,857 s. The item adds no pytest file. Its tests are the Lean guards and proofs that `lake build` checks.
 - **Checks on the final code:** `lake build` of the whole library passes (1,163 jobs). `python3 lean/audit.py`
   passes ("672 source files; 7503 named theorem declarations"), and so do `lean_statements.py --check`,
   `repo_map.py --check` ("39 modes") and `trust_map.py --check`. `regen_generated.py --write --skip route-cases`
