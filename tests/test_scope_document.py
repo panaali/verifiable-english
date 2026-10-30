@@ -96,7 +96,7 @@ def test_every_structural_mutant_of_the_f1_answer_is_refused(tmp_path, monkeypat
     assert count > 200 and not accepted, accepted
 
 
-def structural_mutants_accepted(tmp_path, monkeypatch, text):
+def structural_mutants_accepted(tmp_path, monkeypatch, text, bind_unit="u0164.s02"):
     """The one-fault mutants of a scope@0 document's genuine row that the schema and the binding let through."""
     from tests.test_document_lean_switch import _structural_mutants
     from ve.backends import relay
@@ -106,7 +106,7 @@ def structural_mutants_accepted(tmp_path, monkeypatch, text):
     path.write_text(text)
     case = {"id": "document", "document": path.read_text(), "admit": True}
     row = D._lean_answer(path.read_bytes(), True)
-    lead = next(i for i, u in enumerate(row["units"]) if u["id"] == "u0164.s02")
+    lead = next(i for i, u in enumerate(row["units"]) if u["id"] == bind_unit)
     rebound = [(("rename", "absent"), lambda r: r["units"][lead].update(id="absent")),
                (("span", "+1"), lambda r: r["units"][lead].update(span=[n + 1 for n in r["units"][lead]["span"]])),
                (("extra",), lambda r: r["units"].append({**r["units"][lead], "id": "u9999.s01"})),
@@ -437,3 +437,32 @@ def test_the_proposal_refusal_is_leans_text():
     text = (Path(__file__).resolve().parents[1] / "lean/VE/EnglishGrammar/Run.lean").read_text()
     body = text[text.index("def decodeLexicon"):text.index("theorem riskView_eq")]
     assert f'throw "{PROPOSAL_ELSEWHERE}"' in body
+
+
+def _scalars(value, seen: set) -> set:
+    if isinstance(value, dict):
+        for v in value.values():
+            _scalars(v, seen)
+    elif isinstance(value, list):
+        for v in value:
+            _scalars(v, seen)
+    else:
+        seen.add(type(value))
+    return seen
+
+
+def test_sc1af_every_scope_route_fixture_passes_the_boundary_check():
+    """sc-1af condition (ii): the route runs `jsonWF?` on every parsed document before any `govern_*` path and
+    refuses a failing tree (`lean/VE/Scope/WireExamples.lean`, F-raw). Every scope fixture of this file, each with
+    booleans and numbers, is answered, never refused there, so no answer on main changes."""
+    meta, body = _split(F1.read_text())
+    probe = _written_in_full(meta)
+    probe["environment"]["profiles"] = sorted(probe["environment"]["profiles"] + ["scope@0"])
+    probe["scope"] = {"version": "scope@0", "governors": [
+        {"id": "g1", "unit": "u0166.s01", "reach": {"rules": ["hc-cbrn-uplift"]}, "units": ["u0165.s01"],
+         "effect": {"carve_out": "own"}}]}
+    texts = [F1.read_text(), _text(probe, body)] + [_governed_text(c, e) for c in sorted(CHAINS) for e in sorted(EFFECTS)]
+    for text in texts:
+        assert {bool, int} <= _scalars(_split(text)[0], set())
+        rows, row = _rows(text)
+        assert rows is not None and "well-formed JSON tree" not in str(row), row

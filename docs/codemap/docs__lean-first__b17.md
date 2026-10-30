@@ -1,0 +1,1 @@
+- `docs/lean-first/b17/seed_mutants.py` — Prove the batch 17 ownership regressions fail on four seeded bugs.

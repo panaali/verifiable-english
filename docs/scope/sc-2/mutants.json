@@ -1,0 +1,25 @@
+{
+  "mutants": [
+    {
+      "id": "f4_replacement",
+      "file": "lean/VE/Scope/Examples.lean",
+      "change": "F4 fixture condition: or to and",
+      "test": "VE.Scope.Examples F4/F4-r3 #guard (line 765)",
+      "result": "lake build VE.Scope.Examples: exit 1, Expression at line 765"
+    },
+    {
+      "id": "f4_carve",
+      "file": "lean/VE/Scope/Examples.lean",
+      "change": "F4-c model: tested_by_anthropic never holds",
+      "test": "VE.Scope.Examples F4-c #guard (line 778)",
+      "result": "lake build VE.Scope.Examples: exit 1, Expression at line 778"
+    },
+    {
+      "id": "f6_limit",
+      "file": "lean/VE/Scope/Examples.lean",
+      "change": "F6-prime boundary: start with seven carve-outs instead of eight",
+      "test": "VE.Scope.Examples F6-prime #guard (line 795)",
+      "result": "lake build VE.Scope.Examples: exit 1, Expression at line 795"
+    }
+  ]
+}

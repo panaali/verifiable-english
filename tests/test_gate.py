@@ -2,6 +2,7 @@
 import json
 import os
 from pathlib import Path
+import re
 import sys
 
 import pytest
@@ -155,3 +156,32 @@ def test_a_suite_run_whose_workers_did_not_collect_the_selection_fails(workers):
         suite["workers"] = workers
     with pytest.raises(RuntimeError, match="worker"):
         gate.merge_pytest_events(collection, suite)
+
+
+SHARE = ["tests/a.py::test_a[1]", "tests/a.py::test_a[2]", "tests/b.py::test_b"]
+
+
+@pytest.mark.parametrize("workers", [{"gw0": SHARE}, {"gw0": SHARE[::-1], "gw1": [SHARE[1], SHARE[0], SHARE[2]]}],
+                         ids=["plan order", "pytest order"])
+def test_a_shard_worker_may_collect_its_share_in_any_order(workers):
+    """A shard's share is in the plan's sorted order; its workers report pytest's order."""
+    subset = {"collected": SHARE, "selected": SHARE, "deselected": [], "collection_reports": []}
+    events = gate.merge_pytest_events(subset, {"tests": {}, "workers": workers}, any_order=True)
+    assert events["workers"] == workers
+
+
+@pytest.mark.parametrize("ids,word", [(SHARE[:2], "1 missing"), ([*SHARE, "tests/c.py::test_c"], "1 extra"),
+                                      ([*SHARE, SHARE[0]], "1 duplicate"), ([SHARE[0], SHARE[0], SHARE[2]],
+                                                                            "1 missing, 0 extra, 1 duplicate"),
+                                      ("tests/a.py::test_a[1]", "no list"), ([*SHARE[:2], {"id": 1}], "no list")],
+                         ids=["missing", "extra", "duplicate", "duplicate for missing", "not a list", "not an ID"])
+def test_a_shard_worker_must_collect_exactly_its_share(ids, word):
+    subset = {"collected": SHARE, "selected": SHARE, "deselected": [], "collection_reports": []}
+    with pytest.raises(RuntimeError, match=f"worker gw1 .*{re.escape(word)}"):
+        gate.merge_pytest_events(subset, {"tests": {}, "workers": {"gw0": SHARE, "gw1": ids}}, any_order=True)
+
+
+def test_the_unsharded_gate_still_needs_the_collection_runs_order():
+    collection = {"collected": SHARE, "selected": SHARE, "deselected": [], "collection_reports": []}
+    with pytest.raises(RuntimeError, match="worker gw0 collected 3 tests, not the collection run's 3"):
+        gate.merge_pytest_events(collection, {"tests": {}, "workers": {"gw0": SHARE[::-1]}})

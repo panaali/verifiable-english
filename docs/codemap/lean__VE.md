@@ -1,0 +1,33 @@
+- `lean/VE/Audit.lean` — (no module docstring)
+- `lean/VE/Bridge.lean` — (no module docstring)
+- `lean/VE/CertificateWire.lean` — The data-only wire adapter.
+- `lean/VE/Checks.lean` — Executable regressions.
+- `lean/VE/ClaimGraph.lean` — (no module docstring)
+- `lean/VE/Consequence.lean` — (no module docstring)
+- `lean/VE/EnvironmentProofs.lean` — (no module docstring)
+- `lean/VE/EvaluationCounts.lean` — # An evaluation answer has one value per submitted formula Every evaluation runner (the default mode through `VE.Bridge.runCase` and `VE.Closure.Bridge.runCase…
+- `lean/VE/Finite.lean` — (no module docstring)
+- `lean/VE/GraphChecks.lean` — (no module docstring)
+- `lean/VE/Json.lean` — Restricted JSON input boundary.
+- `lean/VE/LexicalProofs.lean` — (no module docstring)
+- `lean/VE/LimitTies.lean` — The limits that frozen, hashed or generated modules keep as literals are `VE.Limits`' values: at the limit and one past it for the frozen decoders' inline lite…
+- `lean/VE/Limits.lean` — The v0 runtime envelope, once (docs/LEAN-FIRST-PLAN.md, batch 18).
+- `lean/VE/ModelProofs.lean` — (no module docstring)
+- `lean/VE/ParserContracts.lean` — (no module docstring)
+- `lean/VE/Paths.lean` — (no module docstring)
+- `lean/VE/RoundTrip.lean` — (no module docstring)
+- `lean/VE/Semantics.lean` — (no module docstring)
+- `lean/VE/Surface.lean` — The `definitions@0` surface sugar (lean-first batch 14a), read by every family parser when the environment has the profile: `no S is P`, `every S x that is P, …
+- `lean/VE/SurfaceProofs.lean` — (no module docstring)
+- `lean/VE/Syntax.lean` — VE v0 raw indexed syntax and extrinsic typing.
+- `lean/VE/Tableau.lean` — Data-only signed tableaux.
+- `lean/VE/TableauChecker.lean` — (no module docstring)
+- `lean/VE/TableauChecks.lean` — (no module docstring)
+- `lean/VE/TableauClosure.lean` — (no module docstring)
+- `lean/VE/TableauExtended.lean` — Data-only signed tableaux.
+- `lean/VE/TableauExtendedChecker.lean` — (no module docstring)
+- `lean/VE/TableauExtendedClosure.lean` — (no module docstring)
+- `lean/VE/TableauExtendedExtra.lean` — (no module docstring)
+- `lean/VE/TableauExtendedInduction.lean` — (no module docstring)
+- `lean/VE/TableauExtendedRules.lean` — (no module docstring)
+- `lean/VE/Typing.lean` — (no module docstring)
