@@ -88,12 +88,33 @@ theorem bind_ok {α β : Type} {x : Except String α} {f : α → Except String 
   | error e => cases h
   | ok a => exact ⟨a, rfl, h⟩
 
-theorem decodeBlock_layout (front : Json) (source : String) (re : VE.Readings.Wire.ReadingsEnvironment) (D : SDoc)
-    (h : decodeBlock front source re = .ok D) : D.layout = layoutOf front source ∧ D.doc = front := by
+theorem decodeBlock_ok (front : Json) (source : String) (re : VE.Readings.Wire.ReadingsEnvironment) (D : SDoc)
+    (h : decodeBlock front source re = .ok D) :
+    jsonWF? front = true ∧ D.layout = layoutOf front source ∧ D.doc = front ∧ D.block = front.getObjValD "scope" := by
   unfold decodeBlock at h
-  cases hp : decodeParts (front.getObjValD "scope") with
-  | error e => rw [hp] at h; cases h
-  | ok p => rw [hp] at h; cases h; exact ⟨rfl, rfl⟩
+  cases hi : illFormed front with
+  | some p => rw [hi] at h; cases h
+  | none =>
+    rw [hi] at h
+    have hw : jsonWF? front = true := by
+      unfold illFormed at hi; split at hi
+      · assumption
+      · cases hi
+    cases hp : decodeParts (front.getObjValD "scope") with
+    | error e => rw [hp] at h; cases h
+    | ok p => rw [hp] at h; cases h; exact ⟨hw, rfl, rfl, rfl⟩
+
+theorem decodeBlock_layout (front : Json) (source : String) (re : VE.Readings.Wire.ReadingsEnvironment) (D : SDoc)
+    (h : decodeBlock front source re = .ok D) : D.layout = layoutOf front source ∧ D.doc = front :=
+  ⟨(decodeBlock_ok front source re D h).2.1, (decodeBlock_ok front source re D h).2.2.1⟩
+
+/-- The boundary (sc-1af): the document of a decoded block passes `jsonWF?`, so it is `JsonWF`, and so is its scope
+    block (spec 11.3: the payloads are read from it), with no hypothesis on the parser. -/
+theorem decodeBlock_jsonWF (front : Json) (source : String) (re : VE.Readings.Wire.ReadingsEnvironment) (D : SDoc)
+    (h : decodeBlock front source re = .ok D) : JsonWF D.doc ∧ JsonWF D.block := by
+  obtain ⟨hw, _, hd, hb⟩ := decodeBlock_ok front source re D h
+  have hf := jsonWF?_sound hw
+  exact ⟨hd ▸ hf, hb ▸ jsonWF_getD front hf "scope"⟩
 
 /-- SC-1b's decoder reads the layout of exactly the document's units, in order. -/
 theorem decodeScope_layout (front : Json) (D : SDoc) (h : decodeScope front = .ok D) :

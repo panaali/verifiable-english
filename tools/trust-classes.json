@@ -4384,6 +4384,37 @@
         "VE.EnglishGrammar.sensesRequest"
       ]
     },
+    "VE/EnglishGrammar/SourceWords.lean": {
+      "S": [
+        "VE.EnglishGrammar.SourceWordKind",
+        "VE.EnglishGrammar.SourceWordReading",
+        "VE.EnglishGrammar.SourceWordRow",
+        "VE.EnglishGrammar.SourceWordRow.key",
+        "VE.EnglishGrammar.SourceWordRow.validIdentity",
+        "VE.EnglishGrammar.SourceWordRow.validKind",
+        "VE.EnglishGrammar.sourceWords",
+        "VE.EnglishGrammar.sourceWordNormal",
+        "VE.EnglishGrammar.sourceWordsValid"
+      ],
+      "G[V]": [
+        "VE.EnglishGrammar.SourceWordKind.toJson",
+        "VE.EnglishGrammar.SourceWordRow.toJson",
+        "VE.EnglishGrammar.sourceWordsJson"
+      ]
+    },
+    "VE/EnglishGrammar/SourceWordsExamples.lean": {
+      "T": [
+        "VE.EnglishGrammar.SourceWordsExamples.a",
+        "VE.EnglishGrammar.SourceWordsExamples.b",
+        "VE.EnglishGrammar.SourceWordsExamples.base",
+        "VE.EnglishGrammar.SourceWordsExamples.kindFixedJson",
+        "VE.EnglishGrammar.SourceWordsExamples.kindReadingJson",
+        "VE.EnglishGrammar.SourceWordsExamples.kindRefuseJson",
+        "VE.EnglishGrammar.SourceWordsExamples.reading",
+        "VE.EnglishGrammar.SourceWordsExamples.refusal",
+        "VE.EnglishGrammar.SourceWordsExamples.rowJson"
+      ]
+    },
     "VE/EnglishGrammar/Syntax.lean": {
       "G[V]": [
         "VE.EnglishGrammar.DState",
@@ -13298,6 +13329,7 @@
         "VE.Scope.Examples.lDoc",
         "VE.Scope.Examples.layoutOf",
         "VE.Scope.Examples.leadPart",
+        "VE.Scope.Examples.leaf1",
         "VE.Scope.Examples.led",
         "VE.Scope.Examples.member",
         "VE.Scope.Examples.mergePartsText",
@@ -13318,6 +13350,8 @@
         "VE.Scope.Examples.prosePieces",
         "VE.Scope.Examples.provAt",
         "VE.Scope.Examples.provenanceOf",
+        "VE.Scope.Examples.rawA",
+        "VE.Scope.Examples.rawB",
         "VE.Scope.Examples.rawJ",
         "VE.Scope.Examples.rawRule",
         "VE.Scope.Examples.rawUdhr",
@@ -13345,6 +13379,7 @@
         "VE.Scope.Examples.udhrDoc",
         "VE.Scope.Examples.udhrPieces",
         "VE.Scope.Examples.unordered",
+        "VE.Scope.Examples.withUnit",
         "VE.Scope.Examples.without"
       ]
     },
@@ -14086,10 +14121,15 @@
     "VE/Scope/Govern.lean": {
       "G[R]": [
         "VE.Scope.admitBlock",
+        "VE.Scope.ascending",
+        "VE.Scope.balanced?",
         "VE.Scope.conditions",
         "VE.Scope.defSpans",
         "VE.Scope.firstDup",
+        "VE.Scope.implWF?",
+        "VE.Scope.jsonWF?",
         "VE.Scope.kindOf",
+        "VE.Scope.listWF?",
         "VE.Scope.orderCheck",
         "VE.Scope.orderCheckF",
         "VE.Scope.setUnits",
@@ -15013,6 +15053,7 @@
         "VE.Scope.WireExamples.ansUnits",
         "VE.Scope.WireExamples.answer",
         "VE.Scope.WireExamples.blockWith",
+        "VE.Scope.WireExamples.boundary",
         "VE.Scope.WireExamples.decoded",
         "VE.Scope.WireExamples.effectTag",
         "VE.Scope.WireExamples.errorOf",
@@ -15021,7 +15062,9 @@
         "VE.Scope.WireExamples.foldGov",
         "VE.Scope.WireExamples.gov",
         "VE.Scope.WireExamples.listName",
-        "VE.Scope.WireExamples.st"
+        "VE.Scope.WireExamples.st",
+        "VE.Scope.WireExamples.wfFault",
+        "VE.Scope.WireExamples.withScope"
       ]
     },
     "VE/Service/ScopeExamples.lean": {
@@ -15058,6 +15101,7 @@
     },
     "VE/Scope/Wire.lean": {
       "D[R]": [
+        "VE.Scope.illFormed",
         "VE.Scope.memberOf",
         "VE.Scope.membersIn",
         "VE.Scope.textOf",
@@ -15924,37 +15968,6 @@
         "VE.Events.WireExamples.W2",
         "VE.Events.WireExamples.decoded",
         "VE.Events.WireExamples.softP"
-      ]
-    },
-    "VE/EnglishGrammar/SourceWords.lean": {
-      "S": [
-        "VE.EnglishGrammar.SourceWordKind",
-        "VE.EnglishGrammar.SourceWordReading",
-        "VE.EnglishGrammar.SourceWordRow",
-        "VE.EnglishGrammar.SourceWordRow.key",
-        "VE.EnglishGrammar.SourceWordRow.validIdentity",
-        "VE.EnglishGrammar.SourceWordRow.validKind",
-        "VE.EnglishGrammar.sourceWords",
-        "VE.EnglishGrammar.sourceWordNormal",
-        "VE.EnglishGrammar.sourceWordsValid"
-      ],
-      "G[V]": [
-        "VE.EnglishGrammar.SourceWordKind.toJson",
-        "VE.EnglishGrammar.SourceWordRow.toJson",
-        "VE.EnglishGrammar.sourceWordsJson"
-      ]
-    },
-    "VE/EnglishGrammar/SourceWordsExamples.lean": {
-      "T": [
-        "VE.EnglishGrammar.SourceWordsExamples.a",
-        "VE.EnglishGrammar.SourceWordsExamples.b",
-        "VE.EnglishGrammar.SourceWordsExamples.base",
-        "VE.EnglishGrammar.SourceWordsExamples.kindFixedJson",
-        "VE.EnglishGrammar.SourceWordsExamples.kindReadingJson",
-        "VE.EnglishGrammar.SourceWordsExamples.kindRefuseJson",
-        "VE.EnglishGrammar.SourceWordsExamples.reading",
-        "VE.EnglishGrammar.SourceWordsExamples.refusal",
-        "VE.EnglishGrammar.SourceWordsExamples.rowJson"
       ]
     }
   }
