@@ -41,6 +41,8 @@ open Lean VE.Readings.Run VE.Service
       (Json.arr #[sets[0]!]))
   let twoValidate := withoutComponent (twoSets.setObjVal! "kind" (.str "readings-validate"))
   let twoElaborate := withoutComponent (twoSets.setObjVal! "kind" (.str "readings-elaborate"))
+  if (runCaseReportedMemo {} twoValidate).1 != runCaseReported twoValidate ||
+      (runCaseReportedMemo {} twoElaborate).1 != runCaseReported twoElaborate then return false
   if (runCaseReportedMemo {} single).2.admissions != 0 ||
       (runCaseReportedMemo {} single).1.getObjValD "status" != .str "ok" ||
       (runCaseReportedMemo {} twoSets).2.admissions != 1 ||
