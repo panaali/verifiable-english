@@ -1,0 +1,21 @@
+trust_mutants: 1 definitions, 18 mutants (18 to run), 4 jobs, base 6949746bf291
+UNKNOWN lean/VE/Calc/Lower.lean:214 VE.Calc.Work.Shape.Sound (S, trusted) eq-le: = -> ≤ (lean/VE/Calc/WorkExamples.lean:117: Expression (VE.Calc.WorkExamples.instDecidableSound, which it...)
+UNKNOWN lean/VE/Calc/Lower.lean:214 VE.Calc.Work.Shape.Sound (S, trusted) arm-true: L.isConst = true ∧ ∀ b, nz = some b → (L.const != 0) = b -> True (lean/VE/Calc/WorkExamples.lean:117: Expression (VE.Calc.WorkExamples.instDecidableSound, which it...)
+UNKNOWN lean/VE/Calc/Lower.lean:214 VE.Calc.Work.Shape.Sound (S, trusted) and-or: ∧ -> ∨ (lean/VE/Calc/WorkExamples.lean:117: Expression (VE.Calc.WorkExamples.instDecidableSound, which it...)
+UNKNOWN lean/VE/Calc/Lower.lean:214 VE.Calc.Work.Shape.Sound (S, trusted) arm-false: L.isConst = true ∧ ∀ b, nz = some b → (L.const != 0) = b -> False (lean/VE/Calc/WorkExamples.lean:117: Expression (VE.Calc.WorkExamples.instDecidableSound, which it...)
+UNKNOWN lean/VE/Calc/Lower.lean:214 VE.Calc.Work.Shape.Sound (S, trusted) eq-ne: = -> ≠ (lean/VE/Calc/WorkExamples.lean:117: Expression (VE.Calc.WorkExamples.instDecidableSound, which it...)
+UNKNOWN lean/VE/Calc/Lower.lean:214 VE.Calc.Work.Shape.Sound (S, trusted) bool-flip: true -> false (lean/VE/Calc/WorkExamples.lean:117: Expression (VE.Calc.WorkExamples.instDecidableSound, which it...)
+UNKNOWN lean/VE/Calc/Lower.lean:214 VE.Calc.Work.Shape.Sound (S, trusted) ne-eq: != -> == (lean/VE/Calc/WorkExamples.lean:117: Expression (VE.Calc.WorkExamples.instDecidableSound, which it...)
+UNKNOWN lean/VE/Calc/Lower.lean:214 VE.Calc.Work.Shape.Sound (S, trusted) lit-plus: 0 -> 1 (lean/VE/Calc/WorkExamples.lean:117: Expression (VE.Calc.WorkExamples.instDecidableSound, which it...)
+UNKNOWN lean/VE/Calc/Lower.lean:214 VE.Calc.Work.Shape.Sound (S, trusted) eq-le: = -> ≤ (lean/VE/Calc/WorkExamples.lean:106: failed to synthesize)
+UNKNOWN lean/VE/Calc/Lower.lean:215 VE.Calc.Work.Shape.Sound (S, trusted) arm-true: L.isConst = false -> True (lean/VE/Calc/WorkExamples.lean:117: Expression (VE.Calc.WorkExamples.instDecidableSound, which it...)
+UNKNOWN lean/VE/Calc/Lower.lean:214 VE.Calc.Work.Shape.Sound (S, trusted) eq-ne: = -> ≠ (lean/VE/Calc/WorkExamples.lean:117: Expression (VE.Calc.WorkExamples.instDecidableSound, which it...)
+UNKNOWN lean/VE/Calc/Lower.lean:214 VE.Calc.Work.Shape.Sound (S, trusted) eq-ne: = -> ≠ (lean/VE/Calc/WorkExamples.lean:117: Expression (VE.Calc.WorkExamples.instDecidableSound, which it...)
+UNKNOWN lean/VE/Calc/Lower.lean:215 VE.Calc.Work.Shape.Sound (S, trusted) arm-false: L.isConst = false -> False (lean/VE/Calc/WorkExamples.lean:117: Expression (VE.Calc.WorkExamples.instDecidableSound, which it...)
+UNKNOWN lean/VE/Calc/Lower.lean:215 VE.Calc.Work.Shape.Sound (S, trusted) bool-flip: false -> true (lean/VE/Calc/WorkExamples.lean:117: Expression (VE.Calc.WorkExamples.instDecidableSound, which it...)
+SURVIVOR lean/VE/Calc/Lower.lean:215 VE.Calc.Work.Shape.Sound (S, trusted) eq-le: = -> ≤ (the proofs it breaks: lean/VE/Calc/Lower.lean:327, lean/VE/Calc/Lower.lean:336, lean/VE/Calc/Lowe...)
+UNKNOWN lean/VE/Calc/Lower.lean:214 VE.Calc.Work.Shape.Sound (S, trusted) eq-le: = -> ≤ (lean/VE/Calc/WorkExamples.lean:117: Expression (VE.Calc.WorkExamples.instDecidableSound, which it...)
+UNKNOWN lean/VE/Calc/Lower.lean:215 VE.Calc.Work.Shape.Sound (S, trusted) eq-ne: = -> ≠ (lean/VE/Calc/WorkExamples.lean:117: Expression (VE.Calc.WorkExamples.instDecidableSound, which it...)
+UNKNOWN lean/VE/Calc/Lower.lean:216 VE.Calc.Work.Shape.Sound (S, trusted) bool-flip: True -> False (lean/VE/Calc/WorkExamples.lean:117: Expression (VE.Calc.WorkExamples.instDecidableSound, which it...)
+trust_mutants: 0 KILLED, 1 SURVIVOR, 17 UNKNOWN, 0 INVALID, 0 ALLOWED, 0 NOT RUN in 727 s
+trust_mutants: S, trusted: 1 SURVIVOR, 17 UNKNOWN
