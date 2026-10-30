@@ -2,7 +2,8 @@
 type-checks the stub from `lean/` with `lake env lean`, records the first error, and restores the file. Every mutant
 must fail (at least one error); the unmutated stub must have none. Writes `mutants.json` next to this script.
 
-Run from the repository root, with `lake` on PATH or in ~/.elan/bin:
+Run from the root of a tree before pk-1 (`49a926ee7`, with this directory copied over it: pk-1 declares the stub's
+names, so the stub has no clean run on a later tree), with `lake` on PATH or in ~/.elan/bin:
 `uv run python docs/spec/premise-packs/mutants.py [ID ...]` (with ids, only those mutants are rerun and the others'
 saved results kept).
 """
@@ -21,6 +22,8 @@ HERE = Path(__file__).resolve().parent
 STUB = HERE / "SpecStubs_pk1.lean"
 REL = STUB.relative_to(ROOT).as_posix()
 OUT = HERE / "mutants.json"
+
+HK = " (hk : ∀ k ∈ VE.Rights.condKeys R, ':' ∉ k.2.1.toList) :\n"
 
 # Each mutant: one or more (old, new) replacements; every `old` occurs exactly once in the stub.
 MUTANTS = [
@@ -46,9 +49,9 @@ MUTANTS = [
                 '  (qs.filter (fun p => p.id != "rights")).map packEntry\n')]},
     {"id": "M10", "mutation": "packPremises reads the first pack whatever its id",
      "edits": [("((qs.find? (·.id == i)).map (·.labelled)).getD []", "((qs.head?).map (·.labelled)).getD []")]},
-    {"id": "M11", "finding": "F1", "mutation": "legacy_labels_nodup assumes WellFormedSoft (correlate R) again",
-     "edits": [("(hs : VE.Rights.WellFormedRights R = true) (hw",
-                "(hs : VE.SoftNorms.WellFormedSoft (VE.Rights.correlate R) = true) (hw")]},
+    {"id": "M11", "finding": "F1", "mutation": "legacy_labels_nodup_of_actKeys assumes WellFormedSoft (correlate R) again",
+     "edits": [("(hs : VE.Rights.WellFormedRights R = true)\n",
+                "(hs : VE.SoftNorms.WellFormedSoft (VE.Rights.correlate R) = true)\n")]},
     {"id": "M12", "finding": "F2a", "mutation": "legacyIds placed in Layered.lean, above packFault's file",
      "edits": [("``X_soft_first, ``legacyIds, ``labelledJson,", "``X_soft_first, ``labelledJson,"),
                ("[``softPack, ``rightsPack, ``legacyKinds,", "[``softPack, ``rightsPack, ``legacyIds, ``legacyKinds,")]},
@@ -68,9 +71,13 @@ MUTANTS = [
      "edits": [('labelledJson l a none)).toArray)]\n\n/-- 2.7: the keys',
                 'labelledJson l a none)).toArray)] ++\n'
                 '  (qs.filter (fun p => p.id != "soft" && p.id != "rights")).map packEntry\n\n/-- 2.7: the keys')]},
+    {"id": "M18", "finding": "DRI 2026-10-27 item 3", "mutation": "legacy_labels_nodup_of_actKeys loses `hk`",
+     "edits": [(HK, " :\n")]},
+    {"id": "M19", "finding": "DRI 2026-10-27 item 3", "mutation": "the stub keeps the old name and the old statement",
+     "edits": [(HK, " :\n"), ("theorem legacy_labels_nodup_of_actKeys", "theorem legacy_labels_nodup")]},
 ]
 
-ERROR = re.compile(r"^(?:\.\./)?" + re.escape(REL) + r":(\d+):\d+: error: (.*?)(?=^\S+:\d+:\d+: |\Z)", re.M | re.S)
+ERROR = re.compile(r"^(?:\.\./)?" + re.escape(REL) + r":(\d+):\d+: error(?:\([\w.]+\))?: (.*?)(?=^\S+:\d+:\d+: |\Z)", re.M | re.S)
 
 
 def lake() -> str:
