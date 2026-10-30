@@ -72,7 +72,8 @@ mode, which delegates to the route on the environment without it.
   of that module: "error: ... Expression" at the guard).
 - Mechanical mutants (`zsh mac-pytest.sh --trustmut -- --max-mutants 1000 --test lean/VE/Defaults/RouteExamples.lean
   --allow ... --json docs/judgment-terms/jt-2c/trust-mutants.json`, exit 0): "52 KILLED, 0 SURVIVOR, 0 UNKNOWN,
-  5 INVALID, 18 ALLOWED, 0 NOT RUN" over 6 definitions (75 mutants), run on the Lean tree of this HEAD. Allowed
+  5 INVALID, 18 ALLOWED, 0 NOT RUN" over 6 definitions (75 mutants); rerun with `--rescore` after the merge of main
+  (base `432763b06d8d`, head `a7db0b1b835a`): the same counts, exit 0. Allowed
   survivors are listed with reasons in `trust-mutants-allow.json`: equivalent cuts of the one-element
   `documentLayers`, two cuts that do not elaborate, the `ProfilesMain` IO generator (checked by
   `tests/test_profile_table.py`), `ownedProfiles` (unchanged, selected only by the deleted neighbour) and the
@@ -80,7 +81,8 @@ mode, which delegates to the route on the environment without it.
 
 ## Trust, size and evidence
 
-- Trust: `uv run python tools/trust_map.py --check` on this branch: "K +0, S +0, D +2, G +32, ..., trusted +23"
+- Trust: `uv run python tools/trust_map.py --check` on this branch, against `1f28dddfb3ef` and again after the merge
+  against `432763b06d8d`: "K +0, S +0, D +2, G +32, ..., trusted +23"
   (Dispatch +12, NormDefaults/Run +4, Plain +3, Standalone +3, EnglishGrammar/Run +1); allowance recorded with
   `--allow ... --signed "SIGNED by standing ruling R16 ..."` (`docs/trust-baseline.json`); FOLLOW-UPS.md "## jt-2c"
   asks for the ties pass.
@@ -130,8 +132,12 @@ the JT-5a/5b pilot switch-ons.
 5. PASS: the twin's claimed environment and model ids are refused for the layer's environment and the reverse
    (`test_a_model_is_valid_as_for_the_twin_and_the_twin_s_ids_do_not_bind`); a formula with an undeclared predicate
    is refused with the twin's text (`test_a_formula_the_twin_refuses_is_refused_with_the_same_text`).
-6. PASS: no merge of main was needed (HEAD descends from main `1f28dddfb`); the chain runs the full gate on the
-   final HEAD; evidence commits are this branch's (`git log main..HEAD --no-merges`).
+6. PASS: main merged at `a7db0b1b8` (one conflict, the manifest pins of Document.lean, re-applied over main's);
+   after it `lake build`, `regen_generated.py --write`, `lean/audit.py` PASS, `trust_map.py --check` +23 against
+   `432763b06d8d`, the document route's relay gate (0 failures), trust mutants (`--rescore`, exit 0) and the targeted
+   files (`tests/test_judgments_*.py`, model environment, profile table, assurance manifest, consolidation ledger,
+   S3 comparison, ask fixtures: "290 passed"). The selected run above was before the merge; the chain runs the full
+   gate on the final HEAD.
 7. PASS: DELTA row 1 cites the DRI's decision file, row 2 R16 with its per-file counts and FOLLOW-UPS row; nothing
    reserved.
 8. PASS: DELTA row 1 states the answered commands, the identities and the one remaining refusal (the replay kinds,
