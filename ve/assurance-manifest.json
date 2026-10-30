@@ -1103,7 +1103,7 @@
       {
         "file": "lean/VE/Service/Document.lean",
         "lines": 2083,
-        "sha256": "0a9686bc946bb08740dcef5d68ea74b9c96cd5a707b734d93f15fa602925d57c",
+        "sha256": "4a9295192a75cae303df841930faf00737b3f1987cd81484cf5f803de56d212d",
         "ranges": [
           [
             1,
@@ -1434,6 +1434,43 @@
           "runCase"
         ],
         "reason": "W6 unit declarations, quantity syntax and runner; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Cardinality/Wire.lean",
+        "lines": 304,
+        "sha256": "b892dbef05b3118dfd55d4d9951ab66672beb5232ec2d711a3f96264a237c8ab",
+        "ranges": [
+          [
+            1,
+            304
+          ]
+        ],
+        "declarations": [
+          "projectW6",
+          "decodeEnvironment",
+          "elabFormula",
+          "decodeStatement"
+        ],
+        "reason": "ve-cardinality@1 environment (W6a's decoder on the projection) and statement decoders; the full file is pinned conservatively"
+      },
+      {
+        "file": "lean/VE/Cardinality/Run.lean",
+        "lines": 221,
+        "sha256": "d183414cf694e56043d1a27b4271756d832fb1cdf8322a72fbffa575248e5b60",
+        "ranges": [
+          [
+            1,
+            221
+          ]
+        ],
+        "declarations": [
+          "decodeCertificate",
+          "checkErased",
+          "checkCertificate",
+          "claimed",
+          "runCase"
+        ],
+        "reason": "cardinality certificate decoder, binding and replay, claimed region tables and erased problems, and the case runner; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Readings/ComponentsWire.lean",
@@ -1926,24 +1963,6 @@
         "reason": "scope@0's front matter in the document mode (SC-1b, scope spec 3 and 1.6): the `scope` block's wire (unknown members refused, optional members absent, never null; each reach and effect; list names; anchors through discourse's decoder), the layout of the document's units from their spans clamped to the source, and the fold of a governor unit's status into the document mode's answer with its bytes by status; full file pinned conservatively; sc-1af: `illFormed`, the boundary that refuses a document `jsonWF?` fails before `decodeBlock` reads the block"
       },
       {
-        "file": "lean/VE/Cardinality/Wire.lean",
-        "lines": 304,
-        "sha256": "b892dbef05b3118dfd55d4d9951ab66672beb5232ec2d711a3f96264a237c8ab",
-        "ranges": [
-          [
-            1,
-            304
-          ]
-        ],
-        "declarations": [
-          "projectW6",
-          "decodeEnvironment",
-          "elabFormula",
-          "decodeStatement"
-        ],
-        "reason": "ve-cardinality@1 environment (W6a's decoder on the projection) and statement decoders; the full file is pinned conservatively"
-      },
-      {
         "file": "lean/VE/Defaults/Route.lean",
         "lines": 46,
         "sha256": "97feda58f0f4af531097d0c124fbf82d56ee36d2153860f9ebfbc20e8e062a8f",
@@ -1959,25 +1978,6 @@
           "runLayered"
         ],
         "reason": "the layered norm-defaults route's runner, moved from Layered.lean (df-1ae): decodeLayered, then the kind table with the defaults-* row (defaultsCase on viewOf); the full file is pinned"
-      },
-      {
-        "file": "lean/VE/Cardinality/Run.lean",
-        "lines": 221,
-        "sha256": "d183414cf694e56043d1a27b4271756d832fb1cdf8322a72fbffa575248e5b60",
-        "ranges": [
-          [
-            1,
-            221
-          ]
-        ],
-        "declarations": [
-          "decodeCertificate",
-          "checkErased",
-          "checkCertificate",
-          "claimed",
-          "runCase"
-        ],
-        "reason": "cardinality certificate decoder, binding and replay, claimed region tables and erased problems, and the case runner; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Calc/Jsonl.lean",
@@ -2152,7 +2152,8 @@
       "lean/ResponseShape/Encoders/Cardinality.lean": "theorems that the cardinality mode's rows fit its shape, with valid exactly beside a certificate case (getObjVal? in proofs only; not on any runner path)",
       "lean/VE/EnglishGrammar/SourceWords.lean": "source-word catalogue JSON encoder only; it exports the checked Lean table to the generated read-only Python view and decodes no request",
       "lean/VE/EnglishGrammar/SourceWordsExamples.lean": "fixtures only: #guard checks of source-word row boundaries and JSON encoding; no runner path",
-      "lean/ResponseShapeAudit.lean": "the dependency audit of the response-shape theorems (#print axioms only); JSON only in theorem names"
+      "lean/ResponseShapeAudit.lean": "the dependency audit of the response-shape theorems (#print axioms only); JSON only in theorem names",
+      "lean/VE/Service/SoftSourceExamples.lean": "fixtures only: rd9-docroute F7's #guard checks build small unit lists as request JSON and run the document mode's soft source (`softSourceNorms`) on them; no service mode reads this file"
     }
   },
   "plan_operations": {
