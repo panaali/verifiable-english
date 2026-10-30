@@ -1,0 +1,7 @@
+trust_mutants: 8 definitions, 252 mutants (84 to run), 4 jobs, base 6949746bf291
+SURVIVOR lean/VE/Acts/RenderExamples.lean:94 VE.Acts.RenderExamples.send (?, trusted) lit-plus: 1 -> 2
+SURVIVOR lean/VE/Acts/RenderExamples.lean:94 VE.Acts.RenderExamples.send (?, trusted) lit-plus: 2 -> 3
+SURVIVOR lean/VE/Acts/Meaning.lean:78 VE.Acts.longEnd (S, trusted) list-drop-first: ps -> (ps.drop 1)
+trust_mutants: 66 KILLED, 3 SURVIVOR, 0 UNKNOWN, 4 INVALID, 11 ALLOWED, 0 NOT RUN, 168 OTHER SHARD in 880 s
+trust_mutants: ?, trusted: 7 KILLED, 2 SURVIVOR, 25 OTHER SHARD
+trust_mutants: S, trusted: 59 KILLED, 1 SURVIVOR, 4 INVALID, 11 ALLOWED, 143 OTHER SHARD
