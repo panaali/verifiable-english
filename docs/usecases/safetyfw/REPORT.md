@@ -882,3 +882,67 @@ The only changed product-language code is Python (no Lean, no Rust).
 Bug 3 was first a real defect: the first version answered D1 and D4 `False` when no certificate was found; the
 test caught it and both now stay undecided. The six PLAN 11 mutants are the translation's seeded changes
 (`::test_pf_six_mutants_change_exactly_the_named_results[m1]` … `[m6]`).
+
+## 31. Tests and checks run (`usecase-pf-run`)
+
+- `uv run python usecases/openai-preparedness/run.py`: `231 / 239 (679.8 s)`, writes `results.json`.
+- `build_document.py --check`, `stage0.py --check`, `measure.py --check` (in `usecases/openai-preparedness`):
+  each exit 0 (`CHECKS-OK`).
+- `uv run python usecases/openai-preparedness/reference.py`: `independent reference versus frozen key: 193/199`,
+  differing exactly at the six MREP items.
+- `uv run python tools/regen_generated.py --check`: exit 0, `checked 34 entries`.
+- `uv run python tools/trust_map.py --check`: `PASS: K, S and untied [V] within 432763b06d8d …`; no Lean file is
+  changed (trust +0).
+- `uv run python conformance/english_lean_lexicon.py`: `{"valid": 43, "invalid": 0, …}`, regenerating
+  `conformance/english-lean/lexicon-report.json` for the changed `environment.d1.json`.
+- `uv run python -m tools.difffuzz --ci --update-baseline`: the changed corpus reseeds the CI sample, which met three
+  existing Rust envelope disagreements (`environment-ac3e8bc51108a1c4` DF-19; `environment-67f9be29550cf4b5`,
+  `environment-381919addab7eb62` DF-13, `conformance/DIFFFUZZ.md`). They are added to the baseline with those
+  follow-ups; no entry was dropped or changed. Not caused by and not fixed in this item.
+- `zsh …/mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run` at tree 40a1dafd93 (GitHub Actions,
+  4 shards, 1,366 s): 48 units, 45 passed, 3 failed: `test_difffuzz.py::test_ci_run` (the sample above),
+  `test_english_lean_lexicon.py::test_every_corpus_environment_has_a_valid_selected_lexicon` (the stale lexicon
+  report) and `test_safetyfw_usecases.py::test_pf_run_recomputes_every_key_item_and_records_causes` (N3's
+  witnesses were tuples in memory, lists in JSON). After the fixes (c259a778e) the three ids were rerun:
+  `zsh …/mac-pytest.sh -- <the three ids>`: `3 passed in 54.92s`, ve-mac-1, HEAD c259a778 (clean), exit 0.
+- None of `main-known-red.txt`'s tests was selected or edited.
+- Not run: the full suite and the release gate (`tools/gate.py`), as this round's instructions say; `lake build`
+  and `lean/audit.py` (no Lean change); `trust_mutants` (not asked; no trusted Lean).
+
+## 32. Self-review against BUILDER-CHECKLIST (`usecase-pf-run`)
+
+Spec re-read: the run protocol, metrics and mutants against `usecases/openai-preparedness/PLAN.md` sections 9 to 11;
+every key cell the harness compares against `answer-key.json` and PLAN 6 (the six MREP cells against PLAN 6.2,
+line "| BIO-H | ALL | ALL | SOME(N ∧ unscoped) |"); the RSP shape of `results.json` against
+`usecases/anthropic-rsp/run.py` `compare()`; the useful-answers rule against `tools-local/usecase-progress.py`'s
+docstring ("the items of its frozen answer key that VE answers as the key says, over the key's size").
+
+1. Lean answers typed and contained: N.A., no relayed route, schema or relay is added; the harness reads VE's
+   public Python API (`selected_rules`, `check_conflict`, `prove_entailment`, `prove_quantity`, the risk relay).
+2. Deliverables: PASS. run.py, reference.py, results.json, M1 to M10, mutants, README answers table, REPORT row
+   and PLAN 12 are in commits d592194c6, the docs commit and c259a778e;
+   `::test_pf_run_recomputes_every_key_item_and_records_causes`. No Python copy of a Lean decision (the harness
+   asks VE for every answer), no permanent report test (D4: the tests recompute results.json, they do not pin
+   report numbers against git).
+3. Tests can fail: PASS. Five seeded bugs (section 30) each made a named test fail; the comparator refuses
+   `ALL` on a false row, an empty row list, a SOME outside the cone and an UNKNOWN row
+   (`::test_pf_independent_reference_and_comparator_catch_wrong_answers`).
+4. Python, Lean and Rust agree: N.A. for product code (none changed); the corpus side is
+   `tests/test_difffuzz.py::test_ci_run` (passed after the baseline classification, section 31).
+5. R8 binding: N.A., no Lean answer field is newly read.
+6. Gate evidence matches HEAD: N.A. here; the chain runs the gate on the final HEAD (instructions).
+7. No unsigned item: PASS, no DELTA row, no trust growth (`tools/trust_map.py --check`), no reserved signature.
+8. User-visible change in DELTA: N.A., no CLI, diagnostic or verdict of VE changes; use-case files only.
+9. Test selection: PASS, `tools/select_tests.py --base $(git merge-base HEAD main)` selects
+   `tests/test_safetyfw_usecases.py` (48/503 units); seeded bug 5 is caught by a selected test.
+10. Lean statements: N.A., no Lean change.
+11. Budgets fail closed: PASS, a missing certificate, an UNKNOWN W1 or an unset negated open term is UNDECIDED,
+    never false (`::test_pf_missing_quantity_certificate_is_undecided`, `::test_pf_unknown_w1_is_undecided_not_false`,
+    `::test_pf_an_unset_negated_open_term_is_undecided`).
+12. No CPU or memory regression: N.A., no product code; the harness memoizes each document's base environment
+    (one build per document), and its wall time is printed, not pinned.
+13. Removed or renamed tests: PASS, none removed or renamed (no `Test-removed` trailer needed).
+14. Both directions and cited evidence: PASS. Mutants change exactly the named items and nothing else
+    (`::test_pf_six_mutants_change_exactly_the_named_results[m1…m6]`); premise checks refuse a case model without
+    the nest premise and keep the sep model (`::test_pf_case_model_must_satisfy_the_selected_premises`); every
+    REPORT number above names its command.
