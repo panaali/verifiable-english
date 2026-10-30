@@ -1,0 +1,21 @@
+{
+  "pilot_20261028T0600Z_before": {
+    "load": "admitted",
+    "check_returncode": 1,
+    "check_error": "ve.errors.UnsupportedProfile: UnsupportedProfile: norm-defaults@0 documents are checked through fill (ve.norm_defaults)"
+  },
+  "small_fixture": "tests/data/rd9-docroute.ve.md",
+  "small_fixture_before": {
+    "check_returncode": 1,
+    "check_error": "ve.errors.UnsupportedProfile: UnsupportedProfile: norm-defaults@0 documents are checked through fill (ve.norm_defaults)"
+  },
+  "small_fixture_after": {
+    "check_returncode": 0,
+    "document_id": "f8515204cde66313315490e4af334f4e5e0c6ca4779aff637a1a00fa8c69832e",
+    "admission_admitted": true,
+    "admission_core_report_id": "1c27996356a8a3c83ec5af33472cddd66e76c1b927210037054da2145e8b767d",
+    "conditional_on": [],
+    "premises_status": "model"
+  },
+  "pilot_after": "not run: L70 forbids a whole pilot document check; the next constitution pilot audit owns that measurement"
+}

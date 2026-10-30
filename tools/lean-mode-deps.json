@@ -162,7 +162,7 @@
     ]
   },
   "sources": {
-    "lean/VE/Service/Protocol.lean": "70c25a9ff863c7b5d3a4d5a2cababbe95bcffe1917cc786ff3667e6d19bf1038",
+    "lean/VE/Service/Protocol.lean": "c8fd3390dc0719395094244a8b2d2170a92a1e74c6f18750170c9f17972ecf06",
     "lean/VE/Service/Registry.lean": "fba2ab9dc2ec1946693e4c240c047d7bae3e2eb995b62ca11e53814bb46e2706",
     "tools/lean_mode_deps.lean": "50dc1459ef617a9ca489fd9a5068a5b875a48c661f3cf6ac573f6a157950c8e7"
   }
