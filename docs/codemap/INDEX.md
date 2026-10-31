@@ -4,15 +4,15 @@ Service-mode routes: `tools/repo_map.py`. Regenerate with `python tools/code_map
 Regenerated on every merge to main; on a branch it may lag that branch's own changes.
 
 - [bench/](bench.md) — 4 modules — -
-- [conformance/](conformance.md) — 63 modules — `evaluation.json` contains **701** valid environment/model/document cases (**4,912 formulas**).
-- [docs/act-phrases/](docs__act-phrases.md) — 25 modules — -
+- [conformance/](conformance.md) — 62 modules — `evaluation.json` contains **701** valid environment/model/document cases (**4,912 formulas**).
+- [docs/act-phrases/](docs__act-phrases.md) — 26 modules — -
 - [docs/arch/](docs__arch.md) — 26 modules — -
 - [docs/architecture/](docs__architecture.md) — 1 modules — -
 - [docs/defeasible/](docs__defeasible.md) — 10 modules — -
 - [docs/devtime/](docs__devtime.md) — 1 modules — -
 - [docs/eff-tests/](docs__eff-tests.md) — 1 modules — -
 - [docs/events-time-causation/](docs__events-time-causation.md) — 1 modules — -
-- [docs/infra/](docs__infra.md) — 14 modules — -
+- [docs/infra/](docs__infra.md) — 11 modules — -
 - [docs/judgment-terms/](docs__judgment-terms.md) — 5 modules — -
 - [docs/lean-first/b0/](docs__lean-first__b0.md) — 1 modules — -
 - [docs/lean-first/b1/](docs__lean-first__b1.md) — 2 modules — -
@@ -52,7 +52,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/oom-rootcause/](docs__oom-rootcause.md) — 2 modules — -
 - [docs/perf/](docs__perf.md) — 2 modules — -
 - [docs/premise-scale/](docs__premise-scale.md) — 4 modules — -
-- [docs/question-answering/](docs__question-answering.md) — 3 modules — -
+- [docs/question-answering/](docs__question-answering.md) — 2 modules — -
 - [docs/readings-defaults/](docs__readings-defaults.md) — 7 modules — -
 - [docs/scale-choice-batch/](docs__scale-choice-batch.md) — 1 modules — -
 - [docs/scope/](docs__scope.md) — 6 modules — -
@@ -67,17 +67,15 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [examples/](examples.md) — 1 modules — -
 - [experiments/](experiments.md) — 77 modules — -
 - [lean/](lean.md) — 15 modules — This project uses Lean **4.24.0**, core Lean and `Std`, with no Mathlib or external Lake dependencies.
-- [lean/ResponseShape/](lean__ResponseShape.md) — 8 modules — -
-- [lean/ResponseShape/Encoders/](lean__ResponseShape__Encoders.md) — 29 modules — -
-- [lean/ResponseShape/Schemas/](lean__ResponseShape__Schemas.md) — 40 modules — -
+- [lean/ResponseShape/](lean__ResponseShape.md) — 75 modules — -
 - [lean/VE/](lean__VE.md) — 33 modules — -
-- [lean/VE/Acts/](lean__VE__Acts.md) — 19 modules — -
+- [lean/VE/Acts/](lean__VE__Acts.md) — 20 modules — -
 - [lean/VE/Alternatives/](lean__VE__Alternatives.md) — 13 modules — -
 - [lean/VE/Arith/](lean__VE__Arith.md) — 10 modules — -
 - [lean/VE/Ask/](lean__VE__Ask.md) — 15 modules — -
 - [lean/VE/Attribution/](lean__VE__Attribution.md) — 15 modules — -
-- [lean/VE/Calc/](lean__VE__Calc.md) — 27 modules — -
-- [lean/VE/Cardinality/](lean__VE__Cardinality.md) — 15 modules — -
+- [lean/VE/Calc/](lean__VE__Calc.md) — 26 modules — -
+- [lean/VE/Cardinality/](lean__VE__Cardinality.md) — 14 modules — -
 - [lean/VE/Closure/](lean__VE__Closure.md) — 14 modules — -
 - [lean/VE/Compose/](lean__VE__Compose.md) — 6 modules — -
 - [lean/VE/Core/](lean__VE__Core.md) — 22 modules — -
@@ -102,7 +100,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Risk/](lean__VE__Risk.md) — 14 modules — -
 - [lean/VE/Route/](lean__VE__Route.md) — 29 modules — -
 - [lean/VE/Scales/](lean__VE__Scales.md) — 6 modules — -
-- [lean/VE/Scope/](lean__VE__Scope.md) — 12 modules — -
+- [lean/VE/Scope/](lean__VE__Scope.md) — 9 modules — -
 - [lean/VE/SearchBudget/](lean__VE__SearchBudget.md) — 4 modules — -
 - [lean/VE/Senses/](lean__VE__Senses.md) — 12 modules — -
 - [lean/VE/Service/](lean__VE__Service.md) — 22 modules — -
@@ -117,18 +115,17 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tests/ part 1](tests--part-1.md) — 95 modules — -
 - [tests/ part 2](tests--part-2.md) — 91 modules — -
 - [tests/ part 3](tests--part-3.md) — 89 modules — -
-- [tests/ part 4](tests--part-4.md) — 89 modules — -
-- [tests/ part 5](tests--part-5.md) — 83 modules — -
+- [tests/ part 4](tests--part-4.md) — 90 modules — -
+- [tests/ part 5](tests--part-5.md) — 82 modules — -
 - [tests/ part 6](tests--part-6.md) — 89 modules — -
-- [tests/ part 7](tests--part-7.md) — 4 modules — -
 - [tests/frozen_speech/](tests__frozen_speech.md) — 3 modules — Frozen pre-switch speech oracle.
 - [tools/ part 1](tools--part-1.md) — 101 modules — -
-- [tools/ part 2](tools--part-2.md) — 3 modules — -
-- [tools/bench/](tools__bench.md) — 8 modules — -
+- [tools/ part 2](tools--part-2.md) — 2 modules — -
+- [tools/bench/](tools__bench.md) — 7 modules — -
 - [tools/evidence/](tools__evidence.md) — 7 modules — The evidence toolkit (docs/ARCHITECTURE-REVIEW-2026-10.md, T6 and AR-5a): one implementation of each batch measurement, so a batch writes `docs/<track>/<batch>…
 - [tools/hooks/](tools__hooks.md) — 1 modules — `pre-commit` runs fast checks on the **staged** content of a commit.
-- [usecases/](usecases.md) — 61 modules — -
-- [ve/](ve.md) — 79 modules — VE v0 experimental language, finite semantics and checked argument API.
+- [usecases/](usecases.md) — 59 modules — -
+- [ve/](ve.md) — 78 modules — VE v0 experimental language, finite semantics and checked argument API.
 - [ve/adapters/](ve__adapters.md) — 6 modules — Audited statement-layer and data adapters.
 - [ve/assist/](ve__assist.md) — 17 modules — ``ve assist``: interactive, sentence-level assisted formalisation.
 - [ve/backends/](ve__backends.md) — 16 modules — Checker backends (docs/spec/SEMANTICS-MIGRATION-PLAN.md, stages 1 and 2).
