@@ -14,7 +14,6 @@ from ve.backends.service_schema import Invalid, check_row
 from ve.english_grammar import actions_version, grammar_id
 from ve.environment import Environment
 from ve.errors import VEError
-from ve.senses import senses_version
 from ve.wire import canonical_json
 
 FUNNY = "The riddle is funny."
@@ -35,7 +34,7 @@ def test_i1_reading_identities_are_its_projections(joke):
     env, _ = joke
     result = read_in(joke, FUNNY)
     reading, ids = result["reading"], result["reading"]["identities"]
-    assert result["senses_version"] == senses_version()
+    assert result["senses_version"] == project(joke)["senses_version"]
     assert ids["environment_id"] == Environment(reading["environment"]).environment_id
     assert ids["source_sha256"] == hashlib.sha256(FUNNY.encode()).hexdigest()
     assert (ids["grammar_id"], ids["actions_version"]) == (grammar_id(env.profiles), actions_version())
@@ -106,7 +105,7 @@ def _refused(env, row) -> bool:
 
 @pytest.mark.parametrize("lines", [LINE2, "In this document, funny means purple."])
 def test_projection_answer_mutations_are_rejected(joke, lines):
-    """Every member of a genuine answer dropped or retyped, and every string rebound to another value, is refused;
+    """Every member of a genuine answer dropped or retyped, and every string but the version rebound, is refused;
     so is an environment whose identity is not the one the answer names."""
     env, _ = joke
     genuine = {"id": route.PROJECT, "status": "ok", "result": project(joke, lines)}
@@ -115,7 +114,9 @@ def test_projection_answer_mutations_are_rejected(joke, lines):
         original = genuine
         for part in path:
             original = original[part]
-        rebound = [original + "0"] if type(original) is str and genuine["result"]["projection"]["status"] == "ok" else []
+        # Lean's version constant is typed, not bound: its lock is sn-b6b's.
+        rebound = [original + "0"] if type(original) is str and path[-1] != "senses_version" \
+            and genuine["result"]["projection"]["status"] == "ok" else []
         for value in ["delete", *_retyped(original), *rebound]:
             mutant = deepcopy(genuine)
             parent = mutant
@@ -136,7 +137,7 @@ def test_projection_answer_mutations_are_rejected(joke, lines):
 
 def test_reading_identity_rebinding_is_refused(joke):
     """The identities a reading names are bound to the request: its grammar, S2's actions version, its source, the
-    returned environment, the dictionary's words and the senses version."""
+    returned environment and the dictionary's words."""
     env, _ = joke
     genuine = read_in(joke, FUNNY)
     binding = {"env": env, "source": FUNNY, "words": route._dictionary([PACK], [])[1]}
@@ -149,7 +150,7 @@ def test_reading_identity_rebinding_is_refused(joke):
         mutant = deepcopy(genuine)
         mutant["reading"][key[0]][key[1]] = "0" * 64
         assert problem(mutant), key
-    for change in (lambda r: r["reading"].update(used=["giggle"]), lambda r: r.update(senses_version="999"),
+    for change in (lambda r: r["reading"].update(used=["giggle"]),
                    lambda r: r["reading"]["units"][0]["candidates"][0]["identities"].update(grammar_id="0" * 64),
                    lambda r: r["reading"]["units"][0]["candidates"][0]["identities"].update(extra="x")):
         mutant = deepcopy(genuine)

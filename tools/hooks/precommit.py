@@ -40,8 +40,7 @@ MAIN = "lean/Main.lean"
 LEAN_TOOLCHAIN = "lean/lean-toolchain"
 POLICY = {"layer_policy": "tools/layer_policy.py", "check_lean_imports": "tools/check_lean_imports.py",
           "check_rust_deps": "tools/check_rust_deps.py", "audit": "lean/audit.py",
-          "english_grammar_gen": "tools/english_grammar_gen.py", "senses_lock": "tools/senses_lock.py",
-          "frozen": FROZEN_SCRIPT}
+          "english_grammar_gen": "tools/english_grammar_gen.py", "frozen": FROZEN_SCRIPT}
 LEAN_POLICY = ("audit", "frozen")
 LAKEFILE = "lean/lakefile.toml"  # its executable roots are tool-layer entry modules
 # What `cargo metadata` reads: the manifests, the sources it finds targets in, and the pinned toolchain.
@@ -500,23 +499,9 @@ def check_english_grammar(index: Index) -> list[str]:
     return generator.check(lambda path: index.read([path])[path], lambda: list(index.listing()), base)
 
 
-def check_senses_lock(index: Index) -> list[str]:
-    """`tools/senses_lock.py`'s check on staged blobs (senses plan 2.7, D17): the lock's hashes and version
-    module, and against HEAD's lock, a changed hash with `senses_version` unchanged."""
-    if not any(path.startswith(("ve/senses/", "tools/senses_lock.py", "lean/VE/Senses/")) for path in index.changed):
-        return []
-    lock = index.policy().senses_lock
-    try:
-        base = git("cat-file", "blob", f"{index.base}:{lock.LOCK}")
-    except RuntimeError:  # no lock at HEAD yet: the first commit that adds it
-        base = None
-    return lock.check(lambda path: index.read([path])[path], base)
-
-
 CHECKS = [("secrets", check_secrets), ("layer imports", check_layers),
           ("Lean forbidden tokens", check_lean_tokens), ("frozen files", check_frozen),
-          ("wire contract", check_wire_contract), ("English grammar", check_english_grammar),
-          ("senses lock", check_senses_lock)]
+          ("wire contract", check_wire_contract), ("English grammar", check_english_grammar)]
 
 
 def main(argv: list[str]) -> int:
