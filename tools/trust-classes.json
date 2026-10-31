@@ -991,7 +991,8 @@
         "ResponseShape.Skeletons.normDefaults",
         "ResponseShape.Skeletons.words",
         "ResponseShape.Skeletons.cardinality",
-        "ResponseShape.Skeletons.scope"
+        "ResponseShape.Skeletons.scope",
+        "ResponseShape.Skeletons.sensesProject"
       ],
       "G[I]": [
         "ResponseShape.Skeletons.identity"
@@ -9485,7 +9486,8 @@
       "D[V]": [
         "VE.Senses.Run.decodeDefaults",
         "VE.Senses.Run.decodeDictionary",
-        "VE.Senses.Run.has"
+        "VE.Senses.Run.has",
+        "VE.Senses.Run.lexiconJson"
       ],
       "G[V]": [
         "VE.Senses.Run.candidateJson",
@@ -9500,13 +9502,22 @@
         "VE.Senses.Run.runCaseReported",
         "VE.Senses.Run.s2Fields",
         "VE.Senses.Run.uncoveredFence",
-        "VE.Senses.Run.unitJson"
+        "VE.Senses.Run.unitJson",
+        "VE.Senses.Run.linesProjection",
+        "VE.Senses.Run.projectCase",
+        "VE.Senses.Run.projectCaseReported"
       ],
       "G[R]": [
         "VE.Senses.Run.fenceLine",
         "VE.Senses.Run.fenceReject",
         "VE.Senses.Run.refusalSource",
-        "VE.Senses.Run.shiftReject"
+        "VE.Senses.Run.shiftReject",
+        "VE.Senses.Run.faultJson"
+      ],
+      "G[I]": [
+        "VE.Senses.Run.projectionIds",
+        "VE.Senses.Run.admittedIds",
+        "VE.Senses.Run.usedOf"
       ]
     },
     "VE/Service/Diagnose.lean": {
@@ -16361,6 +16372,31 @@
         "VE.Cardinality.Document.Entry",
         "VE.Cardinality.Document.Graph",
         "VE.Cardinality.Document.Entries"
+      ]
+    },
+    "VE/Senses/Version.lean": {
+      "G[I]": [
+        "VE.Senses.sensesVersion"
+      ]
+    },
+    "ResponseShape/Schemas/SensesProject.lean": {
+      "G[R]": [
+        "ResponseShape.Schemas.SensesProject.pair",
+        "ResponseShape.Schemas.SensesProject.lexicon",
+        "ResponseShape.Schemas.SensesProject.identities",
+        "ResponseShape.Schemas.SensesProject.details",
+        "ResponseShape.Schemas.SensesProject.projection",
+        "ResponseShape.Schemas.SensesProject.row",
+        "ResponseShape.Schemas.SensesProject.file"
+      ]
+    },
+    "VE/Senses/RunExamples.lean": {
+      "T": [
+        "VE.Senses.RunExamples.caseJ",
+        "VE.Senses.RunExamples.lineFunny2",
+        "VE.Senses.RunExamples.LA",
+        "VE.Senses.RunExamples.sameAs",
+        "VE.Senses.RunExamples.idsOf"
       ]
     }
   }
