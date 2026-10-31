@@ -5087,12 +5087,14 @@
       "C": [
         "VE.NormDefaults.Wire.ConflictReplayU",
         "VE.NormDefaults.Wire.EntailmentReplayU",
+        "VE.NormDefaults.Wire.authorLimits",
         "VE.NormDefaults.Wire.authorVocab",
         "VE.NormDefaults.Wire.checkAuthor",
         "VE.NormDefaults.Wire.checkAuthorN",
         "VE.NormDefaults.Wire.conflictFreeCheckU",
         "VE.NormDefaults.Wire.replayConflictU",
-        "VE.NormDefaults.Wire.replayEntailmentU"
+        "VE.NormDefaults.Wire.replayEntailmentU",
+        "VE.NormDefaults.Wire.reservedNamesOk"
       ],
       "D[V]": [
         "VE.NormDefaults.Wire.SourceU",
@@ -13351,6 +13353,7 @@
         "VE.Scope.Examples.contentStr",
         "VE.Scope.Examples.count",
         "VE.Scope.Examples.coveredL",
+        "VE.Scope.Examples.effectAsStated",
         "VE.Scope.Examples.envJ",
         "VE.Scope.Examples.errorOf",
         "VE.Scope.Examples.exporting",
@@ -13400,9 +13403,16 @@
         "VE.Scope.Examples.noPredicate",
         "VE.Scope.Examples.normP",
         "VE.Scope.Examples.normsDoc",
+        "VE.Scope.Examples.oA",
+        "VE.Scope.Examples.oB",
+        "VE.Scope.Examples.oC",
+        "VE.Scope.Examples.oN",
+        "VE.Scope.Examples.onceRule",
         "VE.Scope.Examples.overOf",
         "VE.Scope.Examples.ownCarve",
         "VE.Scope.Examples.ownEnv",
+        "VE.Scope.Examples.ownModel",
+        "VE.Scope.Examples.ownVal",
         "VE.Scope.Examples.paraAgrees",
         "VE.Scope.Examples.part",
         "VE.Scope.Examples.parts",
@@ -13434,6 +13444,8 @@
         "VE.Scope.Examples.spanOver",
         "VE.Scope.Examples.titleCarveA",
         "VE.Scope.Examples.titleCarveB",
+        "VE.Scope.Examples.twiceG",
+        "VE.Scope.Examples.twiceU",
         "VE.Scope.Examples.u0173",
         "VE.Scope.Examples.udhrAnchors",
         "VE.Scope.Examples.udhrDoc",
@@ -14044,6 +14056,7 @@
             "VE.Acts.Lexical.check_spec"
           ]
         },
+        "VE.Acts.Lexical.checkWith",
         "VE.Acts.Lexical.clash",
         {
           "name": "VE.Acts.Lexical.decodeFixed",
@@ -14059,6 +14072,7 @@
             "VE.Acts.Lexical.group_spec"
           ]
         },
+        "VE.Acts.Lexical.joinCheck",
         {
           "name": "VE.Acts.Lexical.lex",
           "tied": [
@@ -15327,6 +15341,7 @@
         "VE.Acts.distinctTexts",
         "VE.Acts.firstEqualPair",
         "VE.Acts.listText",
+        "VE.Acts.meaningTexts",
         "VE.Acts.modalText",
         "VE.Acts.numbered",
         "VE.Acts.paraphrase",
@@ -15541,12 +15556,16 @@
     },
     "VE/Acts/Grammar.lean": {
       "S": [
+        "VE.Acts.Attach",
         "VE.Acts.Core",
         "VE.Acts.FNT",
+        "VE.Acts.Kind",
         "VE.Acts.NT",
         "VE.Acts.RSym",
         "VE.Acts.RuleS",
+        "VE.Acts.attachOf",
         "VE.Acts.closed",
+        "VE.Acts.edgeLhs",
         "VE.Acts.fillExcl",
         "VE.Acts.frameRules",
         "VE.Acts.globalRules",
@@ -15614,7 +15633,10 @@
         "VE.Acts.splitAtoms"
       ],
       "G[V]": [
+        "VE.Acts.atomsOf",
+        "VE.Acts.declaredAfter",
         "VE.Acts.namesOk",
+        "VE.Acts.partNamesIn",
         "VE.Acts.partsDistinct",
         "VE.Acts.partsOf",
         "VE.Acts.refsOk",
@@ -15623,7 +15645,8 @@
         "VE.Acts.splitEnv",
         "VE.Acts.splitMap",
         "VE.Acts.splitNode",
-        "VE.Acts.splitReg"
+        "VE.Acts.splitReg",
+        "VE.Acts.splitsOf"
       ]
     },
     "VE/Acts/ElaborateExamples.lean": {
@@ -15891,6 +15914,12 @@
           ]
         },
         "VE.Acts.analyse",
+        {
+          "name": "VE.Acts.phraseReadings",
+          "tied": [
+            "VE.Acts.phraseReadings_exact"
+          ]
+        },
         "VE.Acts.read",
         "VE.Acts.readings"
       ]
@@ -16430,6 +16459,57 @@
         "VE.Closure.CoreEquiv.embedToken",
         "VE.Closure.CoreEquiv.embedTrace",
         "VE.Closure.CoreEquiv.embedTraces"
+      ]
+    },
+    "VE/Acts/Wire.lean": {
+      "D[V]": [
+        "VE.Acts.Wire.checkAct",
+        "VE.Acts.Wire.joinedAct"
+      ]
+    },
+    "VE/Acts/Decode.lean": {
+      "D[V]": [
+        "VE.Acts.Decode.ElaboratedU",
+        "VE.Acts.Decode.actsOf",
+        "VE.Acts.Decode.decodeElaboratedU",
+        "VE.Acts.Decode.elaborateSource"
+      ]
+    },
+    "VE/Acts/DecodeExamples.lean": {
+      "T": [
+        "VE.Acts.DecodeExamples.U1",
+        "VE.Acts.DecodeExamples.a14",
+        "VE.Acts.DecodeExamples.a6",
+        "VE.Acts.DecodeExamples.a7",
+        "VE.Acts.DecodeExamples.big",
+        "VE.Acts.DecodeExamples.ck",
+        "VE.Acts.DecodeExamples.dec",
+        "VE.Acts.DecodeExamples.e14",
+        "VE.Acts.DecodeExamples.e15",
+        "VE.Acts.DecodeExamples.errText",
+        "VE.Acts.DecodeExamples.fx14",
+        "VE.Acts.DecodeExamples.jenv",
+        "VE.Acts.DecodeExamples.jrule",
+        "VE.Acts.DecodeExamples.lexical",
+        "VE.Acts.DecodeExamples.pair",
+        "VE.Acts.DecodeExamples.run",
+        "VE.Acts.DecodeExamples.two",
+        "VE.Acts.DecodeExamples.view"
+      ]
+    },
+    "VE/Scope/EffectLemmas.lean": {},
+    "VE/Acts/ReadingsExamples.lean": {
+      "T": [
+        "VE.Acts.ReadingsExamples.atoms",
+        "VE.Acts.ReadingsExamples.edgeSides",
+        "VE.Acts.ReadingsExamples.fx9",
+        "VE.Acts.ReadingsExamples.g10s",
+        "VE.Acts.ReadingsExamples.g11s",
+        "VE.Acts.ReadingsExamples.g12s",
+        "VE.Acts.ReadingsExamples.g9s",
+        "VE.Acts.ReadingsExamples.np",
+        "VE.Acts.ReadingsExamples.pr",
+        "VE.Acts.ReadingsExamples.rsC"
       ]
     }
   }
