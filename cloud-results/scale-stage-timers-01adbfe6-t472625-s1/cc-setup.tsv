@@ -1,0 +1,3 @@
+step	rc	seconds
+setup	0	20
+drop_root	0	49
