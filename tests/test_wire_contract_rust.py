@@ -9,7 +9,7 @@ import pytest
 
 from tests.subprocesses import HANG_TIMEOUT
 from tools import rust_build
-from tools.wire_contract import DATA, ROOT, UNITS, table_rows
+from tools.wire_contract import DATA, KEYS, ROOT, UNITS, table_rows
 from ve.wire import loads_json
 
 CORPUS = ROOT / "conformance/wire-contract/contracts"
@@ -27,7 +27,8 @@ def _expected():
         limits = loads_json((directory / "limits.json").read_bytes())
         for unit in sorted(units or contracts):
             rows += table_rows(contracts[unit], contracts, limits)
-    return rows
+    keys = loads_json((ROOT / KEYS[0]).read_bytes())
+    return rows + table_rows(keys, {"keys@0": keys}, {})
 
 
 def test_rust_table_rows_equal_the_contract_rows(tmp_path):
@@ -42,7 +43,7 @@ def test_rust_table_rows_equal_the_contract_rows(tmp_path):
     assert run.returncode == 0, run.stdout[-4000:] + run.stderr[-4000:]
     dumped = [json.loads(line) for line in dump.read_text(encoding="utf-8").splitlines()]
     expected = _expected()
-    assert {row["contract"] for row in dumped} == set(UNITS) | set(_contracts(CORPUS))
+    assert {row["contract"] for row in dumped} == set(UNITS) | set(_contracts(CORPUS)) | {"keys@0"}
     for got, want in zip(dumped, expected):
         assert got == want
     assert len(dumped) == len(expected)

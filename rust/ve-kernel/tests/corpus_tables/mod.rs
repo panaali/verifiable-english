@@ -3,14 +3,13 @@
 // demo@0.json revision 1 sha256 28478e07dab4226a913dce9f82f8be501b5935940e33fb4c3f275a3a30bba03a
 // forms@0.json revision 2 sha256 4b734f80a6584eed4712ab8c636fad5b1491735e2d7d38c9e85871bc35ecb092
 // inner@0.json revision 1 sha256 71b7abcea0d0cffda948029614a219dd1d7dcea5fd19c3b3857a3abe9e67fc8a
-// keys@0.json revision 1 sha256 3722c9a50bd1dade7c5d7098e39d9784d21160139d761e727dcb63add9eb434b
 // limits.json revision 1 sha256 5ec688f3be9246ce162324ca9ced5e1e1d1171b33aa9acda7cfc070dceec5b84
 // mid@0.json revision 1 sha256 4cc2da4fac5deab08dc9abaa54a14dbd391da59a3b9ccf8070819caacd887ae2
 // names.json revision 1 sha256 e226ffbc3cd811937fe0f532504b5a954c92f54e05b4f7d1b8c676dc1c659ced
 // Do not edit.
 use ve_kernel::contract::*;
 
-pub static SOURCES: &[Source] = &[Source { file: "defer@0.json", revision: 1, sha256: "bf0c582be7258f9c01d80db30a1e81faedb13ef846c4a9f782f44ace7180489e" }, Source { file: "demo@0.json", revision: 1, sha256: "28478e07dab4226a913dce9f82f8be501b5935940e33fb4c3f275a3a30bba03a" }, Source { file: "forms@0.json", revision: 2, sha256: "4b734f80a6584eed4712ab8c636fad5b1491735e2d7d38c9e85871bc35ecb092" }, Source { file: "inner@0.json", revision: 1, sha256: "71b7abcea0d0cffda948029614a219dd1d7dcea5fd19c3b3857a3abe9e67fc8a" }, Source { file: "keys@0.json", revision: 1, sha256: "3722c9a50bd1dade7c5d7098e39d9784d21160139d761e727dcb63add9eb434b" }, Source { file: "limits.json", revision: 1, sha256: "5ec688f3be9246ce162324ca9ced5e1e1d1171b33aa9acda7cfc070dceec5b84" }, Source { file: "mid@0.json", revision: 1, sha256: "4cc2da4fac5deab08dc9abaa54a14dbd391da59a3b9ccf8070819caacd887ae2" }, Source { file: "names.json", revision: 1, sha256: "e226ffbc3cd811937fe0f532504b5a954c92f54e05b4f7d1b8c676dc1c659ced" }];
+pub static SOURCES: &[Source] = &[Source { file: "defer@0.json", revision: 1, sha256: "bf0c582be7258f9c01d80db30a1e81faedb13ef846c4a9f782f44ace7180489e" }, Source { file: "demo@0.json", revision: 1, sha256: "28478e07dab4226a913dce9f82f8be501b5935940e33fb4c3f275a3a30bba03a" }, Source { file: "forms@0.json", revision: 2, sha256: "4b734f80a6584eed4712ab8c636fad5b1491735e2d7d38c9e85871bc35ecb092" }, Source { file: "inner@0.json", revision: 1, sha256: "71b7abcea0d0cffda948029614a219dd1d7dcea5fd19c3b3857a3abe9e67fc8a" }, Source { file: "limits.json", revision: 1, sha256: "5ec688f3be9246ce162324ca9ced5e1e1d1171b33aa9acda7cfc070dceec5b84" }, Source { file: "mid@0.json", revision: 1, sha256: "4cc2da4fac5deab08dc9abaa54a14dbd391da59a3b9ccf8070819caacd887ae2" }, Source { file: "names.json", revision: 1, sha256: "e226ffbc3cd811937fe0f532504b5a954c92f54e05b4f7d1b8c676dc1c659ced" }];
 
 pub static DEFER: Table = Table { contract: "defer@0", revision: 1, residual: ("DEFER_INVALID_INPUT", "InvalidInput"), phases: &[Phase { name: "first", entries: &[
     Entry::Check(Check { id: "d1", loc: Pattern { base: Base::Root, steps: &[Step::Tok("v")] }, guard: &[], kind: Kind::HasType(&[TypeForm::Atom(Atom::Integer)]), code: "DEFER_SHAPE", cls: "InvalidInput", text: &[Piece::Lit("Defer: v")], args: &[], inherited: false })] }, Phase { name: "second", entries: &[
@@ -100,10 +99,6 @@ pub static INNER: Table = Table { contract: "inner@0", revision: 1, residual: ("
     Entry::Each("g1", Pattern { base: Base::Root, steps: &[Step::Tok("ys"), Step::Star] }, &[], &[
         Entry::Check(Check { id: "b2", loc: Pattern { base: Base::Item(0), steps: &[] }, guard: &[], kind: Kind::HasType(&[TypeForm::Atom(Atom::String)]), code: "INNER_BAD", cls: "InvalidInput", text: &[Piece::Lit("Inner: y "), Piece::Arg("index", Renderer::Raw)], args: &[], inherited: false })])] }] };
 
-pub static KEYS: Table = Table { contract: "keys@0", revision: 1, residual: ("KEYS_INVALID_INPUT", "InvalidInput"), phases: &[Phase { name: "shape", entries: &[
-    Entry::Check(Check { id: "1.1", loc: Pattern { base: Base::Root, steps: &[Step::Tok("doc")] }, guard: &[], kind: Kind::Keys(&["ｚ", "😀"], &["a", "b", "𝔞"]), code: "KEYS_SHAPE", cls: "InvalidInput", text: &[Piece::Lit("Shape: document")], args: &[], inherited: false }),
-    Entry::Check(Check { id: "1.2", loc: Pattern { base: Base::Root, steps: &[Step::Tok("doc"), Step::Tok("ｚ")] }, guard: &[], kind: Kind::ExactKeys(&["c", "ｚ", "😀"]), code: "KEYS_SHAPE", cls: "InvalidInput", text: &[Piece::Lit("Shape: "), Piece::Arg("x", Renderer::Json), Piece::Lit(" and "), Piece::Arg("y", Renderer::Raw), Piece::Lit(" in {z}")], args: &[("x", Pattern { base: Base::Root, steps: &[Step::Tok("doc"), Step::Tok("b")] }), ("y", Pattern { base: Base::Root, steps: &[Step::Tok("doc"), Step::Tok("a")] })], inherited: false })] }] };
-
 pub static MID: Table = Table { contract: "mid@0", revision: 1, residual: ("MID_BAD", "InvalidInput"), phases: &[Phase { name: "body", entries: &[
     Entry::Check(Check { id: "m1", loc: Pattern { base: Base::Root, steps: &[Step::Tok("tag")] }, guard: &[], kind: Kind::HasType(&[TypeForm::Atom(Atom::String)]), code: "MID_BAD", cls: "InvalidInput", text: &[Piece::Lit("Mid: tag "), Piece::Arg("value", Renderer::Json)], args: &[], inherited: false }),
     Entry::Scope("m2", Pattern { base: Base::Root, steps: &[Step::Tok("part")] }, None, Some(("MID_INNER", "ResourceLimit")), &[
@@ -111,4 +106,4 @@ pub static MID: Table = Table { contract: "mid@0", revision: 1, residual: ("MID_
         Entry::Each("g1", Pattern { base: Base::Root, steps: &[Step::Tok("ys"), Step::Star] }, &[], &[
             Entry::Check(Check { id: "b2", loc: Pattern { base: Base::Item(0), steps: &[] }, guard: &[], kind: Kind::HasType(&[TypeForm::Atom(Atom::String)]), code: "INNER_BAD", cls: "InvalidInput", text: &[Piece::Lit("Inner: y "), Piece::Arg("index", Renderer::Raw)], args: &[], inherited: false })])])] }] };
 
-pub static TABLES: &[&Table] = &[&DEFER, &DEMO, &FORMS, &INNER, &KEYS, &MID];
+pub static TABLES: &[&Table] = &[&DEFER, &DEMO, &FORMS, &INNER, &MID];

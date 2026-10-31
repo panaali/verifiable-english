@@ -183,7 +183,7 @@ def shipped_copy(tmp_path, monkeypatch):
     shipped = [str(path.relative_to(ROOT)) for pattern in ("docs/spec/*-wire-table.md",
                                                            "conformance/wire-contract/*-catalogue.json")
                for path in sorted(ROOT.glob(pattern))]
-    for relative in ("conformance/wire-contract/engine-golden.json", *shipped, *(t for t, _ in wire_tool.RUST.values())):
+    for relative in ("conformance/wire-contract/engine-golden.json", *shipped, *(t for t, _ in wire_tool.RUST.values()), *wire_tool.KEYS):
         (tmp_path / relative).parent.mkdir(parents=True, exist_ok=True)
         shutil.copy(ROOT / relative, tmp_path / relative)
     monkeypatch.setattr(wire_tool, "ROOT", tmp_path)
