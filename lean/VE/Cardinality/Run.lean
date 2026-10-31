@@ -1,5 +1,6 @@
 import VE.Cardinality.Wire
 import VE.Cardinality.Theorems
+import VE.Cardinality.Document
 
 /-! Cardinality certificates and the case runner (docs/spec/quantities.md 4.1–4.3).
 
@@ -7,7 +8,8 @@ A problem (premises and conclusion) is decoded statement by statement, then chec
 W6a. A certificate is bound twice: to the cardinality identities of the statements, and, as a W6a certificate, to
 the regenerated problem's W6a identities in the projection's environment (`CardEnv.w6`); its order trace is replayed
 by the frozen checker on that problem (`checkCertificate_sound`). A claimed region table or erased problem must be
-the regenerated one. The runner answers the case kinds `admission` and `certificate`; W6a owns the identities
+the regenerated one. The runner answers the case kinds `admission`, `certificate`, `document` (the claim graph of
+`Document.lean`, each deduction's problem built once, `checkDeduction`); W6a owns the identities
 (`statementIds`), the aggregate limit (`quantityLimits.aggregate`) and its two binding texts. -/
 namespace VE.Cardinality
 
@@ -151,6 +153,18 @@ theorem checkCertificate_sound {w : CardEnv} (ps : List (CAdmission w)) (c : CAd
     (VE.Time.tentails_of_entails (fun a ha => hadm a (List.mem_append_left _ ha)) (hadm _ (by simp))
       (VE.Order.Tableau.checkCertificate_sound _ _ _ _ (Except.ok.inj h)))
 
+/-- A deduction's certificate, on its problem built once: the problem's limits and regenerated problem
+(`checkedProblem`), its W6a identities, then `checkErased`; it answers as `checkCertificate` (`checkErased_eq`). -/
+def checkDeduction {w : CardEnv} (ps : List (CAdmission w)) (c : CAdmission w) (cert : CardCertificate) :
+    Except String Bool := do
+  let (_, table, ep) ← Run.checkedProblem w.env (ps.map (·.formula)) c.formula
+  checkErased ps c table ep (← Run.idsOf w ep) cert
+
+/-- A cardinality document's claim graph, its deductions checked by `checkDeduction`; the report is the root's
+statement and its leaves. -/
+def admitDocument (w : CardEnv) (d : Lean.Json) : Except String CardReport :=
+  (Document.admitGraph w Run.decodeCertificate checkDeduction d).map (·.report)
+
 end VE.Cardinality
 
 /-! ## The runner -/
@@ -162,6 +176,23 @@ open VE.Time (QFormula)
 
 def statementJson {w : CardEnv} (a : CAdmission w) : Json :=
   Json.mkObj [("meaning_id", .str a.meaningId), ("formula", encode a.formula)]
+
+/-- A node of the request's graph with its meaning id and canonical formula. -/
+def claimJson {w : CardEnv} (name : String) (a : CAdmission w) : Json :=
+  Json.mkObj [("name", .str name), ("meaning_id", .str a.meaningId), ("formula", encode a.formula)]
+
+/-- The report of an admitted graph: the root and the leaves it rests on, in submitted order (`Graph.report`). -/
+def reportJson {w : CardEnv} {γ : Type} (g : Document.Graph w γ) : Json :=
+  Json.mkObj [("root", claimJson g.root.name g.root.adm),
+    ("leaves", Json.arr (g.leaves.map fun n => claimJson n.name n.adm).toArray)]
+
+/-- The report's identity (spec 4.1: reports bind both identities), as `VE.Time.Document.runDocument`'s: the
+`ve-report` digest, in the cardinality environment's identity version, of the cardinality and both W6a environment
+identities, the document as sent and the report. -/
+def reportId (w : CardEnv) (document report : Json) : Except String String :=
+  VE.CertificateWire.digest s!"ve-report-{VE.Route.Wire.identityVersion w.profiles}\n" (Json.mkObj [
+    ("environment_id", .str w.environmentId), ("w6_environment_id", .str w.w6.environmentId),
+    ("w6_target_environment_id", .str w.w6.targetId), ("document", document), ("report", report)])
 
 /-- The region table: each counted sort's predicates in first-use order, and every region constant with its sort
 and bits (the bit of each of those predicates, in that order), from the region structure and its table. -/
@@ -194,8 +225,16 @@ def runCase (j : Json) : Except String Json := do
   let kind ← match j.getObjVal? "kind" with
     | .ok k => k.getStr?
     | .error _ => pure "admission"
-  unless kind == "admission" || kind == "certificate" do throw s!"unknown case kind {kind}"
+  unless kind == "admission" || kind == "certificate" || kind == "document" do
+    throw s!"unknown case kind {kind}"
   let w ← decodeEnvironment (← j.getObjVal? "environment")
+  let envIds := [("environment_id", .str w.environmentId), ("w6_environment_id", .str w.w6.environmentId),
+    ("w6_target_environment_id", .str w.w6.targetId)]
+  if kind == "document" then
+    let document ← j.getObjVal? "document"
+    let g ← Document.admitGraph w decodeCertificate checkDeduction document
+    return VE.Time.Wire.ok id (envIds ++ [("report", reportJson g),
+      ("report_id", .str (← reportId w document (reportJson g)))])
   let ps ← (← (← j.getObjVal? "premises").getArr?).toList.mapM (decodeStatement w)
   let c ← decodeStatement w (← j.getObjVal? "conclusion")
   let (R, table, ep) ← checkedProblem w.env (ps.map (·.formula)) c.formula
@@ -204,9 +243,7 @@ def runCase (j : Json) : Except String Json := do
   let erased := problemJson ep ids
   claimed j "regions" regions "region table differs from the regenerated one"
   claimed j "erased" erased "erased problem differs from the regenerated one"
-  let answer := [("environment_id", .str w.environmentId), ("w6_environment_id", .str w.w6.environmentId),
-    ("w6_target_environment_id", .str w.w6.targetId), ("premises", Json.arr (ps.map statementJson).toArray),
-    ("conclusion", statementJson c)]
+  let answer := envIds ++ [("premises", Json.arr (ps.map statementJson).toArray), ("conclusion", statementJson c)]
   if kind == "admission" then
     return VE.Time.Wire.ok id (answer ++ [("regions", regions), ("erased", erased)])
   let valid ← checkErased ps c table ep ids (← decodeCertificate (← j.getObjVal? "certificate"))

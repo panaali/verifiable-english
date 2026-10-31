@@ -20,6 +20,7 @@ import ResponseShape.Encoders.Words
 import ResponseShape.Encoders.Metered
 import ResponseShape.Encoders.Calc
 import ResponseShape.Encoders.Cardinality
+import ResponseShape.Encoders.Scope
 
 /-! # Every encoder against its shape
 
@@ -82,5 +83,6 @@ theorem runMode_fits (m : VE.Service.Mode) (j : Json) (hj : CaseWF j) : Fits j (
   · exact Metered.runCaseReported_fits j
   · exact Calc.runCaseReported_fits j
   · exact Cardinality.runCaseReported_fits j
+  · exact Scope.runCaseReported_fits j
 
 end ResponseShape.Encoders
