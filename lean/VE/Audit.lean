@@ -1438,6 +1438,7 @@ import VE.WireContract.Engine
 #print axioms VE.Cardinality.roundsTo_holds_iff
 #print axioms VE.Cardinality.roundsTo_ratio_agree
 #print axioms VE.Cardinality.sizeIndex_get
+#print axioms VE.Cardinality.sizesJson_regionSizes
 #print axioms VE.Cardinality.sortDomains_valid
 #print axioms VE.Cardinality.split_underscore
 #print axioms VE.Cardinality.startsWith_of_data

@@ -234,6 +234,16 @@ theorem sortDomains_valid {v : VE.Order.Vocabulary} {m : Lean.Json} {d : VE.Orde
   rw [hs]
   exact hv
 
+/-- The sizes a countermodel answer reports are each region constant of the table, in its order, with `countFin` of its
+region's body: the number of distinct listed objects of its sort in its region. -/
+theorem sizesJson_regionSizes {α : Type} [DecidableEq α] [Hashable α] {M : VE.Order.FiniteModel α}
+    {mem : String → List (VE.Order.Value α) → Bool} (hmem : ∀ p row, mem p row = true ↔ row ∈ M.relations p)
+    (R : RegionData) :
+    Run.sizesJson (regionSizes mem M R) = Lean.Json.arr (R.table.map fun e => Lean.Json.mkObj [("constant", .str e.1),
+      ("size", Lean.toJson (countFin M e.2.1 (regionBody (R.predsOn e.2.1) e.2.2)))]).toArray := by
+  rw [regionSizes_eq hmem]
+  simp [Run.sizesJson, List.map_map, Function.comp_def]
+
 /-- **A countermodel the runner accepts refutes the claim**: on the problem the runner built (`checkedProblem`), a
 model whose region sizes the runner computed once, on which W6a's budgeted countermodel check refutes the erased
 problem, is a model where the premises hold and the conclusion does not (`refutesC_sound`). The hypothesis `hq` is the

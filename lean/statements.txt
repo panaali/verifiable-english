@@ -7153,6 +7153,24 @@ theorem VE.Cardinality.sizeIndex_get
     (VE.Cardinality.sizeIndex sizes)[c]? = Option.map (fun x => x.snd) (List.find? (fun x => x.fst == c) sizes)
   -- uses VE.Cardinality.sizeIndex@VE.Cardinality.Erase
   -- expr 2273198910
+theorem VE.Cardinality.sizesJson_regionSizes
+  ∀ {α : Type} [inst : DecidableEq α] [inst_1 : Hashable α] {M : VE.Order.FiniteModel α}
+    {mem : String → List (VE.Order.Value α) → Bool},
+    (∀ (p : String) (row : List (VE.Order.Value α)), mem p row = Bool.true ↔ row ∈ M.relations p) →
+      ∀ (R : VE.Cardinality.RegionData),
+        VE.Cardinality.Run.sizesJson (VE.Cardinality.regionSizes mem M R) =
+          Lean.Json.arr
+            (List.map
+                (fun e =>
+                  Lean.Json.mkObj
+                    [("constant", Lean.Json.str e.fst),
+                      ("size",
+                        Lean.ToJson.toJson
+                          (VE.Cardinality.countFin M e.snd.fst
+                            (VE.Cardinality.regionBody (R.predsOn e.snd.fst) e.snd.snd)))])
+                R.table).toArray
+  -- uses VE.Cardinality.Region@VE.Cardinality.Regions VE.Cardinality.RegionData.predsOn@VE.Cardinality.Regions VE.Cardinality.RegionData.table@VE.Cardinality.Regions VE.Cardinality.RegionData@VE.Cardinality.Regions VE.Cardinality.Run.sizesJson@VE.Cardinality.Run VE.Cardinality.countFin@VE.Cardinality.Erase VE.Cardinality.regionBody@VE.Cardinality.Regions VE.Cardinality.regionSizes@VE.Cardinality.Erase VE.Order.FiniteModel.relations@VE.Order.Finite VE.Order.FiniteModel@VE.Order.Finite VE.Order.Value@VE.Order.Semantics
+  -- expr 632300762
 theorem VE.Cardinality.sortDomains_valid
   ∀ {v : VE.Order.Vocabulary} {m : Lean.Json} {d : VE.Order.ModelData VE.Order.Wire.Entity},
     VE.Route.Decode.decodeOrderModel v m = Except.ok d → (VE.Time.Wire.sortDomains d).toModel.Valid v.environment

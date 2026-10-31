@@ -4304,7 +4304,7 @@ module VE.Attribution.Wire 5dd9512e2a22d1e0d25e266083a337402c6788e6508b7ebb44bce
 493:0-498:65 def VE.Reports.Wire.generated@VE.Attribution.Wire
 500:0-507:75 def VE.Reports.Wire.environmentReportsJson@VE.Attribution.Wire
 509:0-513:101 def VE.Reports.Wire.reportsModelVocabulary@VE.Attribution.Wire
-module VE.Audit af28b46575b6ab73194c9e4816ad194b53a77fa9dcd329a56de90e944d1f8524
+module VE.Audit f3e22a139a021ae4b0ca72dc6071dcc2da83526f7edf84906738903c21bd11c1
 module VE.Bridge 4f7b5313509e488f647f3d8b0a7916ac28dbca6601547b44bf25eda9b833d079
 8:0-8:32 def VE.Bridge.Entity@VE.Bridge
 9:0-9:37 def VE.Bridge.Fields@VE.Bridge
@@ -5683,7 +5683,7 @@ module VE.Cardinality.RunExamples c144f7e15f97cf5d0f36a8d1bf88e9bcbe5b2f346ca7fc
 509:0-514:24 def VE.Cardinality.RunExamples.chainPremise@VE.Cardinality.RunExamples
 516:0-524:57 def VE.Cardinality.RunExamples.chainModel@VE.Cardinality.RunExamples
 526:0-529:88 def VE.Cardinality.RunExamples.chain@VE.Cardinality.RunExamples
-module VE.Cardinality.RunTheorems f8e9f395eebd31366abae3b68c37fb72a927ed74ef91193f9e689971f6ec2aee
+module VE.Cardinality.RunTheorems 8885a5fd65529c6eed49ee2553e64baf1a2c166ab802c75714234111910bdb63
 9:0-25:11 theorem VE.Cardinality.Run.decodeCertificate_sound@VE.Cardinality.RunTheorems
 27:0-31:5 theorem VE.Cardinality.Run.regionsJson_constants@VE.Cardinality.RunTheorems
 33:0-42:5 theorem VE.Cardinality.Run.erasedJson_conclusion@VE.Cardinality.RunTheorems
@@ -5704,7 +5704,8 @@ module VE.Cardinality.RunTheorems f8e9f395eebd31366abae3b68c37fb72a927ed74ef9119
 195:0-204:89 theorem VE.Cardinality.Run.reportJson_report@VE.Cardinality.RunTheorems
 210:0-219:67 theorem VE.Cardinality.admit_cardinality_report_sound@VE.Cardinality.RunTheorems
 223:0-235:10 theorem VE.Cardinality.sortDomains_valid@VE.Cardinality.RunTheorems
-237:0-276:13 theorem VE.Cardinality.countermodel_sound@VE.Cardinality.RunTheorems
+237:0-245:55 theorem VE.Cardinality.sizesJson_regionSizes@VE.Cardinality.RunTheorems
+247:0-286:13 theorem VE.Cardinality.countermodel_sound@VE.Cardinality.RunTheorems
 module VE.Cardinality.Semantics a79bc44fa49e7d1ba65bff00476dbe5e1b9316b487a29124295ff9546630d3af
 13:0-18:40 def VE.Cardinality.Body.holds@VE.Cardinality.Semantics
 20:0-23:85 def VE.Cardinality.HasCount@VE.Cardinality.Semantics
