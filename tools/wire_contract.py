@@ -67,6 +67,7 @@ UNITS = {
     "soft-norms@0": ("conformance.softnorms_contract", ("ve.softnorms", "load_soft_document")),
     "norms@0": ("ve.norms_contract", ("ve.norms_contract", "legacy_validation")),
     "norm-defaults@0": ("ve.norm_defaults_contract", ("ve.norm_defaults_contract", "legacy_validation")),
+    "acts@0": ("conformance.acts_contract", ("ve.norms_contract", "legacy_validation")),
 }
 
 
