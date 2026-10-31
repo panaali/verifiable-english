@@ -4,6 +4,8 @@
   "baselines": {
     "test_ask_lean_cpu[A1]::lean": 0.6,
     "test_ask_lean_cpu[U3]::lean": 0.7,
+    "test_cardinality_document_leaves_joined_once::1 reuse": 2.66,
+    "test_cardinality_document_leaves_joined_once::2633 reuses": 3.77,
     "test_cardinality_region_structure_once::150 premises": 4.32,
     "test_cardinality_region_structure_once::50 premises": 1.49,
     "test_cardinality_universal_dedup_near_linear::1800 universals": 1.37,
