@@ -1,0 +1,21 @@
+{
+  "contract": "acts@0",
+  "faults": {
+    "1.1a": [
+      "phrases-over",
+      "phrases-over-with-long-phrase"
+    ],
+    "1.1b": [
+      "phrase-bytes-over"
+    ],
+    "1.1c": [
+      "act-bytes-over"
+    ],
+    "1.1d": [
+      "act-bytes-over-after-phrase",
+      "act-bytes-over-not-an-act",
+      "joined-act"
+    ]
+  },
+  "unreached": {}
+}

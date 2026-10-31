@@ -1,0 +1,85 @@
+{
+  "contract": "acts@0",
+  "revision": 1,
+  "format": 1,
+  "status": "shadow",
+  "input": [
+    "environment",
+    "norms"
+  ],
+  "adapter": "acts_source",
+  "uses": [
+    "limits",
+    "names"
+  ],
+  "codes": {
+    "ACTS_RESOURCE_LIMIT": {
+      "class": "ResourceLimit",
+      "summary": "resource limit"
+    },
+    "ACTS_INVALID_ENVIRONMENT": {
+      "class": "InvalidInput",
+      "summary": "invalid environment"
+    },
+    "ACTS_INVALID_INPUT": {
+      "class": "InvalidInput",
+      "summary": "invalid input"
+    }
+  },
+  "residual": "ACTS_INVALID_INPUT",
+  "phases": [
+    {
+      "name": "environment",
+      "checks": [
+        {
+          "id": "1.1",
+          "kind": "classifier",
+          "classifier": "acts_environment",
+          "at": "/environment",
+          "emits": [
+            {
+              "id": "1.1a",
+              "code": "ACTS_RESOURCE_LIMIT",
+              "text": "{message}",
+              "returns": [
+                "message"
+              ],
+              "inherited": true,
+              "says": "The `acts` block of `/environment/vocabulary` declares at most `maxPhrases` fixed phrases (`VE.Acts.Lexical`)."
+            },
+            {
+              "id": "1.1b",
+              "code": "ACTS_RESOURCE_LIMIT",
+              "text": "{message}",
+              "returns": [
+                "message"
+              ],
+              "inherited": true,
+              "says": "Each declared fixed phrase, normalised, is at most `maxPhraseBytes` bytes long in UTF-8 (`VE.Acts.Lexical`)."
+            },
+            {
+              "id": "1.1c",
+              "code": "ACTS_RESOURCE_LIMIT",
+              "text": "{message}",
+              "returns": [
+                "message"
+              ],
+              "inherited": true,
+              "says": "Each regulated predicate's act phrase, normalised, is at most `maxActBytes` bytes long in UTF-8 (`VE.Acts.Lexical`)."
+            },
+            {
+              "id": "1.1d",
+              "code": "ACTS_INVALID_ENVIRONMENT",
+              "text": "{message}",
+              "returns": [
+                "message"
+              ],
+              "inherited": true,
+              "says": "The norms route's environment decoder, reading `acts@0`, accepts `/environment`, and a `defined` declaration has `definitions@0`."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -55,10 +55,10 @@ def in_domain(environment, norms, *, defaults):
     return (type(listed) is list and "norm-defaults@0" in listed) == defaults
 
 
-def source(case, *, kinds, defaults):
+def source(case, *, kinds, defaults, inside=None):
     """The root of a case whose kind `kinds` accepts, or of an `admission` case, as the Lean adapter builds
     it: a member the case lacks is `null`; any other kind has no wire contract input, and a source outside
-    the unit's domain is refused (2.2)."""
+    the unit's domain (`inside`, by default `in_domain` with `defaults`) is refused (2.2)."""
     kind = case.get("kind") if type(case) is dict else None
     if kind == "admission":
         root = {"environment": case.get("environment"), "norms": active_norms(case.get("document"))}
@@ -67,7 +67,8 @@ def source(case, *, kinds, defaults):
     else:
         shown = kind if type(kind) is str else json.dumps(kind, separators=(",", ":"))
         raise UnsupportedProfile(f"UnsupportedProfile: case kind {shown} has no wire contract input")
-    if not in_domain(root["environment"], root["norms"], defaults=defaults):
+    inside = inside or (lambda environment, norms: in_domain(environment, norms, defaults=defaults))
+    if not inside(root["environment"], root["norms"]):
         raise UnsupportedProfile(OUTSIDE)
     return root
 
