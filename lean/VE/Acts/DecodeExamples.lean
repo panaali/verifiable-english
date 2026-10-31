@@ -47,9 +47,9 @@ def a14 := "{0} abandon its core identity or principles, claim to be human, use 
 -- Every other refusal of `Lexical.check` is its own: a comma at the end, a bad slot.
 #guard errText (ck fx6 V6 "p" 1 (a6 ++ ",")) == "InvalidInput: act phrase for p ends with a comma"
 #guard errText (ck fx6 V6 "p" 2 a6) == "InvalidInput: invalid act phrase for p"
-#guard joinRefusal "p" "InvalidInput: act phrase for q has a comma outside a fixed phrase" == false &&
-  joinRefusal "p" "InvalidInput: act phrase for p joins acts with 'or' outside a fixed phrase" &&
-  !joinRefusal "p" "InvalidInput: act phrase for p joins acts with 'or'"
+-- A comma outside a fixed phrase (D-5) also goes to the grammar: G14v's list.
+#guard errText (ck [] V5 "p" 1 "{0} seek asylum, enjoy asylum") ==
+  "InvalidInput: act phrase for p has no reading under the declared frames"
 
 /-! ### The pilot units from their text: `actsOf`, then `elaborateMap` -/
 
@@ -122,11 +122,14 @@ open VE.Service.ActsExamples (envA rule fxs actsP pred perm block err) in
 section
 def dec (j : Json) (ns : List Json) := (decodeElaboratedU j (Json.arr ns.toArray)).toOption.map fun e =>
   (e.U'.D.T.regulated == e.s.U.D.T.regulated && e.U'.D.T.nodes == e.s.U.D.T.nodes && e.U'.unspec == e.s.U.unspec,
-   e.M, e.D.acts.length, e.D.fixed, e.D.declared)
+   e.U'.D.T.nodes.length, e.M, e.D.acts.length, e.D.fixed, e.D.declared)
 -- All acts lexical: the source itself, an empty map, the block's fixed phrases, three declared predicates.
-#guard dec envA [rule "protected"] == some (true, ⟨[], []⟩, 0, fxs, 3)
+#guard dec envA [rule "protected"] == some (true, 1, ⟨[], []⟩, 0, fxs, 3)
 #guard dec (envA ["acts@0", "norm-defaults@0", "norms@0", "relational-fol@0"]) [rule "protected"] ==
-  some (true, ⟨[], []⟩, 0, fxs, 3)
+  some (true, 1, ⟨[], []⟩, 0, fxs, 3)
+-- Without `acts@0` no act is read: today's act check admits *nor*, which `checkAct` would send to the grammar.
+#guard dec (VE.Service.ActsExamples.env ["norms@0", "relational-fol@0"]
+  [("p", pred ["person"] (perm "{0} seek nor enjoy asylum"))]) [rule "p"] == some (true, 1, ⟨[], []⟩, 0, [], 1)
 #guard dec (envA ["norms@0", "relational-fol@0"]) [] == none
 -- The norms decoder still refuses a joined act (its hook is `Lexical.check` until ap-3db), with its own text.
 #guard err (decodeElaboratedU (VE.Service.ActsExamples.env actsP [("p027", pred ["person"] (perm a6))]

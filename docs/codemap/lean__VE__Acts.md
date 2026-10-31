@@ -1,4 +1,6 @@
 - `lean/VE/Acts/Compat.lean` — Theorems of `VE.Acts.Lexical` stated above both `Norms.Wire` and `Acts.Lexical` (docs/spec/act-phrases.md 4.3), where the string lemmas they use are available.
+- `lean/VE/Acts/Decode.lean` — The decoder after AP-3 (docs/spec/act-phrases.md 6.4): the decoded source, unchanged, and beside it the elaborated document and its map.
+- `lean/VE/Acts/DecodeExamples.lean` — Fixtures of `checkAct`, step 6 and `decodeElaboratedU` (docs/spec/act-phrases.md 6.3, 6.4; D-15 to D-18; 11.3: A6, A7, A14 from the act text, E13 to E15).
 - `lean/VE/Acts/Elaborate.lean` — Elaboration: joined acts become rules on simple acts (docs/spec/act-phrases.md 6.3, 6.5, 6.6; plan 2.3).
 - `lean/VE/Acts/ElaborateExamples.lean` — Fixtures of the elaboration (docs/spec/act-phrases.md 6.3, 11.3: E1 to E10, E16; sorts `person`, guards `top`).
 - `lean/VE/Acts/Grammar.lean` — The act grammar's rule table (docs/spec/act-phrases.md 5.2) and its well-formedness `grammar_wf` (5.6).
@@ -17,3 +19,4 @@
 - `lean/VE/Acts/Table.lean` — The modal × connective table and the paraphrases of readings (docs/spec/act-phrases.md 1.7, 6.1, 6.2; plan 2.3).
 - `lean/VE/Acts/TableExamples.lean` — Fixtures of the ops, the table, the renderings and the paraphrases (docs/spec/act-phrases.md 5.5, 6.1, 6.2 and 11.3: T1 to T10 on the act trees of 11.2, the pa…
 - `lean/VE/Acts/Tree.lean` — The act trees: the meaning of a derivation of an act phrase (docs/spec/act-phrases.md 1.5, 5.4).
+- `lean/VE/Acts/Wire.lean` — The act check under `acts@0` from AP-3 on (docs/spec/act-phrases.md 6.4; D-15 to D-18 in 10).
