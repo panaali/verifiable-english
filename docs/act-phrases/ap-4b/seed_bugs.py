@@ -72,12 +72,15 @@ BUGS = [
     (T, "atom-value-false", "atomSituation", "the witness's act is probed for `false`",
      "[], [], probe, true⟩", "[], [], probe, false⟩", False),
     (T, "atom-probe-other", "atomSituation", "the act probed is the other candidate's",
-     "(rulePreds D s i).find? (fun p => !(rulePreds D s j).contains p)",
-     "(rulePreds D s j).find? (fun p => !(rulePreds D s i).contains p)", False),
+     "match rulePred D s i with", "match rulePred D s j with", False),
     (T, "atom-shared-act", "atomSituation", "an act both candidates regulate may be probed",
-     "(fun p => !(rulePreds D s j).contains p)", "(fun _ => true)", False),
-    (T, "rulePreds-none", "rulePreds", "a candidate's rule names no act", "  | some (.norm N) => [N.pred]\n",
-     "  | some (.norm _) => []\n", False),
+     "if rulePred D s j == some p then .holds", "if false && rulePred D s j == some p then .holds", False),
+    (T, "rulePred-none", "rulePred", "a candidate's rule names no act", "  | some (.norm N) => some N.pred\n",
+     "  | some (.norm _) => none\n", False),
+    (T, "atom-tuple-one", "atomSituation", "the probe's tuple has one element whatever the act's arity",
+     "((VE.SoftNorms.sortsIn D.frame.soft.T.regulated p).map (fun _ => 0))", "[0]", False),
+    (T, "atom-constant-outside", "atomSituation", "a constant names no element of the base",
+     "fun _ => some 0, fun _ => []", "fun _ => some 1, fun _ => []", False),
 ]
 
 

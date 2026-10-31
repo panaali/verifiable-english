@@ -16483,6 +16483,7 @@
         "VE.Acts.ReadingsExamples.cFirst",
         "VE.Acts.ReadingsExamples.cand",
         "VE.Acts.ReadingsExamples.cv",
+        "VE.Acts.ReadingsExamples.d076",
         "VE.Acts.ReadingsExamples.d105",
         "VE.Acts.ReadingsExamples.dec",
         "VE.Acts.ReadingsExamples.e055",
@@ -16566,7 +16567,7 @@
     "VE/Acts/Situation.lean": {
       "G[V]": [
         "VE.Acts.atomSituation",
-        "VE.Acts.rulePreds"
+        "VE.Acts.rulePred"
       ]
     }
   }

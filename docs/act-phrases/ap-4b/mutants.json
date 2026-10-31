@@ -235,7 +235,7 @@
    "definition": "VE.Acts.atomSituation",
    "behaviour": "the witness's act is probed for `false`",
    "status": "KILLED",
-   "test": "lean/VE/Acts/ReadingsExamples.lean:255"
+   "test": "lean/VE/Acts/ReadingsExamples.lean:255, lean/VE/Acts/ReadingsExamples.lean:263"
   },
   {
    "id": "atom-probe-other",
@@ -244,7 +244,7 @@
    "definition": "VE.Acts.atomSituation",
    "behaviour": "the act probed is the other candidate's",
    "status": "KILLED",
-   "test": "lean/VE/Acts/ReadingsExamples.lean:255, lean/VE/Acts/ReadingsExamples.lean:258"
+   "test": "lean/VE/Acts/ReadingsExamples.lean:255, lean/VE/Acts/ReadingsExamples.lean:258, lean/VE/Acts/ReadingsExamples.lean:263"
   },
   {
    "id": "atom-shared-act",
@@ -253,16 +253,34 @@
    "definition": "VE.Acts.atomSituation",
    "behaviour": "an act both candidates regulate may be probed",
    "status": "KILLED",
-   "test": "lean/VE/Acts/ReadingsExamples.lean:261"
+   "test": "lean/VE/Acts/ReadingsExamples.lean:270"
   },
   {
-   "id": "rulePreds-none",
+   "id": "rulePred-none",
    "language": "Lean",
    "file": "lean/VE/Acts/Situation.lean",
-   "definition": "VE.Acts.rulePreds",
+   "definition": "VE.Acts.rulePred",
    "behaviour": "a candidate's rule names no act",
    "status": "KILLED",
-   "test": "lean/VE/Acts/ReadingsExamples.lean:255, lean/VE/Acts/ReadingsExamples.lean:258"
+   "test": "lean/VE/Acts/ReadingsExamples.lean:255, lean/VE/Acts/ReadingsExamples.lean:258, lean/VE/Acts/ReadingsExamples.lean:263"
+  },
+  {
+   "id": "atom-tuple-one",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Situation.lean",
+   "definition": "VE.Acts.atomSituation",
+   "behaviour": "the probe's tuple has one element whatever the act's arity",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/ReadingsExamples.lean:263"
+  },
+  {
+   "id": "atom-constant-outside",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Situation.lean",
+   "definition": "VE.Acts.atomSituation",
+   "behaviour": "a constant names no element of the base",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/ReadingsExamples.lean:265"
   }
  ]
 }
