@@ -670,6 +670,7 @@ module VE.Time.Wire
 module VE.Typing
 module VE.WireContract.Diagnose
 module VE.WireContract.Engine
+module VE.WireContract.Hooks.Acts
 module VE.WireContract.Hooks.Corpus
 module VE.WireContract.Hooks.NormDefaults
 module VE.WireContract.Hooks.Norms
@@ -677,6 +678,7 @@ module VE.WireContract.Hooks.SoftNorms
 module VE.WireContract.Limits
 module VE.WireContract.Names
 module VE.WireContract.Table
+module VE.WireContract.Tables.Acts
 module VE.WireContract.Tables.Corpus
 module VE.WireContract.Tables.NormDefaults
 module VE.WireContract.Tables.Norms

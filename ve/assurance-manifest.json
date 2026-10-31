@@ -4975,7 +4975,8 @@
               "lean/VE/WireContract/Diagnose.lean",
               "lean/VE/WireContract/Hooks/SoftNorms.lean",
               "lean/VE/WireContract/Hooks/Norms.lean",
-              "lean/VE/WireContract/Hooks/NormDefaults.lean"
+              "lean/VE/WireContract/Hooks/NormDefaults.lean",
+              "lean/VE/WireContract/Hooks/Acts.lean"
             ]
           }
         ],
