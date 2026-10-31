@@ -1105,4 +1105,57 @@ def titleCarveB : Governor := ⟨"titleCarveB", "u109",
 
 end Govern
 
+section SC2c
+open Lean
+
+/-! sc-2c: spec 5.4's `order_refused` and `own_congr` on instances, each with the side its premises leave out. The two
+    clashing governors meet only on `b`, the document's last unit. -/
+def oA : Governor := ⟨"oA", "l", .reguard (.arr #[.str "or", .str "own", .arr #[.str "top"]]), .fixed ["b"], ["b"]⟩
+def oB : Governor := ⟨"oB", "l", .reguard (.arr #[.str "not", .str "own"]), .fixed ["b"], ["b"]⟩
+def oN : Governor := ⟨"oN", "l", .reguard (.arr #[.str "and", .str "own", .arr #[.str "top"]]), .fixed ["b"], ["b"]⟩
+def oC : Governor := ⟨"oC", "l", .carveOut (.arr #[.str "bottom"]), .fixed ["b"], ["b"]⟩
+theorem short_order (re : VE.Readings.Wire.ReadingsEnvironment) :
+    oA ∈ governorsOf (short [gt, oA, oB] re) "b" ∧ oB ∈ governorsOf (short [gt, oA, oB] re) "b" ∧
+    "b" ∈ unitIds (short [gt, oA, oB] re).doc ∧ Commutes oA.effect oB.effect = false := by
+  refine ⟨?_, ?_, by rw [show unitIds (short [gt, oA, oB] re).doc = ["l", "a", "b"] from rfl]; simp, rfl⟩ <;>
+    exact (governorsOf_iff _ _ _).mpr ⟨by simp [short], rfl, ["b"], rfl, by simp⟩
+-- refused, naming the unit: the theorem's instance (admission is shown below on the norms chain), and the answer
+example (re : VE.Readings.Wire.ReadingsEnvironment) (h₀ : admitBlock (short [gt, oA, oB] re) = .ok ()) :
+    ∃ e, govern (short [gt, oA, oB] re) = .error e ∧ e.startsWith "ScopeOrder" = true :=
+  order_refused _ h₀ "b" (short_order re).2.2.1 oA oB (short_order re).1 (short_order re).2.1 (by decide)
+    (short_order re).2.2.2
+#guard (VE.Readings.Wire.decodeEnvironment envJ).toOption.map (fun re =>
+    [admitBlock (short [gt, oA, oB] re), admitBlock (short [gt, oN, oC] re)].map (·.toBool)) == some [true, true]
+#guard (VE.Readings.Wire.decodeEnvironment envJ).toOption.map (fun re =>
+    [errorOf (govern (short [gt, oA, oB] re)), errorOf (govern (short [gt, oB, oA] re)),
+     errorOf (govern (short [gt, oN, oC] re)), errorOf (govern (short [gt, oC, oN] re)),
+     errorOf (govern (short [gt, oN, oA] re))]) ==
+  some ["ScopeOrder: b: oA, oB", "ScopeOrder: b: oB, oA", "ok", "ok", "ScopeOrder: b: oN, oA"]
+-- admitted: a narrowing and an own-free carve-out commute, in either order and with the same rule
+#guard (VE.Readings.Wire.decodeEnvironment envJ).toOption.map (fun re =>
+    (govern (short [gt, oN, oC] re)).toOption.map (contentOf · "b") ==
+      (govern (short [gt, oC, oN] re)).toOption.map (contentOf · "b")) == some true
+#guard [Commutes oA.effect oB.effect, Commutes oN.effect oA.effect, Commutes oN.effect oC.effect,
+  Commutes oC.effect oN.effect, Commutes oN.effect oN.effect] == [false, false, true, true, true]
+-- own_congr: guards `p(x₀)` and `top` agree at `a` and not at `b`; the own-safe `own ∨ bottom` agrees exactly where
+-- they do. Under a binder (`∃x. ¬own`, not own-safe) the guards agree at `a` and the conditions do not; at a term
+-- position the substituted condition does not decode.
+def ownModel : VE.FiniteModel String :=
+  ⟨fun s => if s == "person" then ["a", "b"] else [], fun _ => none, fun p => if p == "p" then [["a"]] else []⟩
+def ownVal (c g : Json) (ρ : List String) : Option Bool :=
+  (VE.Norms.Wire.decodeBudgeted (substOwn g depthLimit c)).toOption.map (·.eval ownModel ρ)
+#guard let gP := j "[\"unary\",\"p\",[\"var\",0]]"
+  let gT := j "[\"top\"]"
+  let safe := j "[\"or\",\"own\",[\"bottom\"]]"
+  let bound := j "[\"exists\",\"person\",[\"not\",\"own\"]]"
+  let term := j "[\"unary\",\"p\",\"own\"]"
+  [ownVal "own" gP ["a"], ownVal "own" gT ["a"], ownVal "own" gP ["b"], ownVal "own" gT ["b"]] ==
+    [some true, some true, some false, some true] &&
+  ownSafe depthLimit safe && [ownVal safe gP ["a"], ownVal safe gT ["a"], ownVal safe gP ["b"], ownVal safe gT ["b"]] ==
+    [some true, some true, some false, some true] &&
+  !ownSafe depthLimit bound && [ownVal bound gP ["a"], ownVal bound gT ["a"]] == [some true, some false] &&
+  ownSafe depthLimit term && [ownVal term gP ["a"], ownVal term gT ["a"]] == [none, none]
+
+end SC2c
+
 end VE.Scope.Examples
