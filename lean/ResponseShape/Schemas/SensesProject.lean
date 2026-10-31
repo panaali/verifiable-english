@@ -23,26 +23,39 @@ def identities : Shape :=
   c "VE.Senses.Run.projectionIds with S2's actions version: the projection's environment, lexicon and grammar." [
     obj, .required ["environment_id", "lexicon_id", "grammar_id", "actions_version"],
     closed [("environment_id", ref "common.json#/$defs/hex64"), ("lexicon_id", ref "common.json#/$defs/hex64"),
-      ("grammar_id", ref "common.json#/$defs/hex64"), ("actions_version", str)]]
+      ("grammar_id", ref "common.json#/$defs/hex64"), ("actions_version", ref "common.json#/$defs/text")]]
 
-def details : Shape :=
-  c "VE.Senses.Run.faultFields: a fault's arguments, under the names of SenseFault's fields." [
-    obj, closed [("line", ref "common.json#/$defs/nat"), ("word", str), ("gloss", str),
-      ("sentence", ref "common.json#/$defs/nat"), ("kind", str), ("name", str), ("sense", str), ("what", str),
-      ("words", ref "common.json#/$defs/strings"),
-      ("why", .anyOf [constS "binder", n [obj, .required ["referent"], closed [("referent", str)]]])]]
+/-- A fault with `code`'s status and arguments (`VE.Senses.Run.faultJson`, `faultFields`). -/
+def fault (status code : String) (args : List (String × Shape)) : Shape :=
+  n [obj, .required ["status", "code", "details"],
+    closed [("status", constS status), ("code", constS code),
+      ("details", n [obj, .required (args.map (·.1)), closed args])]]
 
 def projection : Shape :=
+  let nat := ref "common.json#/$defs/nat"
+  let words := ref "common.json#/$defs/strings"
   .anyOf [
     c "The projection: its environment, its lexicon and their identities." [
       obj, .required ["status", "environment", "lexicon", "identities"],
       closed [("status", constS "ok"),
         ("environment", copied "the request's environment with the projection's sorts and predicates (VE.Senses.projectedJson)" obj),
         ("lexicon", ref "#/$defs/lexicon"), ("identities", ref "#/$defs/identities")]],
-    c "VE.Senses.Run.faultJson: the fault's status and code as senses.read gives them, and its arguments." [
-      obj, .required ["status", "code"],
-      closed [("status", enumS ["budget", "rejected"]), ("code", str), ("details", ref "#/$defs/details"),
-        ("failure", n [arr, .prefixItems [str, str, str], .minItems 3, .maxItems 3])]]]
+    c "VE.Senses.Run.faultJson of a dictionary failure: its check, name and reason." [
+      obj, .required ["status", "code", "failure"],
+      closed [("status", constS "rejected"), ("code", constS "InvalidDictionary"),
+        ("failure", n [arr, .prefixItems [str, str, str], .minItems 3, .maxItems 3])]],
+    fault "rejected" "UnknownWord" [("line", nat), ("word", str)],
+    fault "rejected" "UnknownGloss" [("line", nat), ("word", str), ("gloss", str)],
+    fault "rejected" "MalformedPreamble" [("line", nat)],
+    fault "budget" "PreambleBudget" [("line", nat)],
+    fault "rejected" "RepeatedDefault" [("line", nat), ("word", str)],
+    fault "rejected" "PreambleLate" [("sentence", nat)],
+    fault "rejected" "Collision" [("kind", str), ("name", str), ("sense", str)],
+    fault "rejected" "VocabularyLimit" [("what", str)],
+    fault "rejected" "TooManyCandidates" [("sentence", nat), ("words", words)],
+    fault "rejected" "CandidatesDiverge" [("sentence", nat), ("words", words),
+      ("why", .anyOf [constS "binder", n [obj, .required ["referent"], closed [("referent", str)]]])],
+    fault "rejected" "QuotedSense" [("sentence", nat), ("word", str)]]
 
 def «row» : Shape :=
   .anyOf [
@@ -52,7 +65,7 @@ def «row» : Shape :=
     n [obj, .required ["id", "status", "result"],
       closed [("id", n [str, .equals "/id"]), ("status", constS "ok"),
         ("result", n [obj, .required ["dictionary_id", "senses_version", "projection"],
-          closed [("dictionary_id", ref "common.json#/$defs/hex64"), ("senses_version", str),
+          closed [("dictionary_id", ref "common.json#/$defs/hex64"), ("senses_version", ref "common.json#/$defs/text"),
             ("projection", ref "#/$defs/projection")]])]]]
 
 def file : File where
@@ -60,6 +73,6 @@ def file : File where
   comment := some "Mode senses.project: VE.Senses.Run.projectCaseReported. A projection with its identities, or its fault."
   top := [("row", «row»)]
   defs := [("pair", .schema pair), ("lexicon", .schema lexicon), ("identities", .schema identities),
-    ("details", .schema details), ("projection", .schema projection)]
+    ("projection", .schema projection)]
 
 end ResponseShape.Schemas.SensesProject

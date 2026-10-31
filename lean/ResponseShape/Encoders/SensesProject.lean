@@ -7,11 +7,11 @@ open Lean ResponseShape ResponseShape.Skeletons VE.Senses
 
 variable {req : Json}
 
-/-- A fault's status is `budget` or `rejected` (`SensesOutcome.statusCode`), with its arguments. -/
+/-- A fault has its code's status (`SensesOutcome.statusCode`) and arguments (`faultFields`). -/
 theorem faultJson_fits (f : SenseFault) :
     Fits req (skel% "senses.project.json#/$defs/projection") (Run.faultJson f) := by
-  cases f <;> simp only [Run.faultJson, SensesOutcome.statusCode, Run.faultFields, pure, Except.pure, List.cons_append,
-    List.nil_append] <;> (try split) <;> fits
+  cases f <;> simp only [Run.faultJson, SensesOutcome.statusCode, SenseFault.code, Run.faultFields, pure, Except.pure,
+    List.cons_append, List.nil_append] <;> (try split) <;> fits
 
 /-- A projection's lexicon JSON names its environment, and its identities are those three. -/
 theorem projectionIds_ok {c : VE.EnglishGrammar.Run.Case} {P : Projection} {r : Json × List (String × Json)}

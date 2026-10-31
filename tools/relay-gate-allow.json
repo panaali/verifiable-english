@@ -742,7 +742,8 @@
    "mutation": "empty",
    "path": [
     "*/result/reading/sense_map",
-    "*/result/reading/units/*/referents"
+    "*/result/reading/units/*/referents",
+    "*/result/reading/used"
    ],
    "kind": "by-design",
    "id": "B0",
@@ -1624,16 +1625,6 @@
    "reason": "Untyped: every retype of the field is accepted (no type in its schema). Type it in lean/ResponseShape/Schemas."
   },
   {
-   "route": "ve_senses_route::senses.read",
-   "mutation": "*",
-   "path": [
-    "*/result/reading/environment/vocabulary/*"
-   ],
-   "kind": "follow-up",
-   "id": "F9",
-   "reason": "senses.read: the projected environment's vocabulary is only checked to be a valid Environment, not bound to the request's (ve/backends/senses.py _response_problem)."
-  },
-  {
    "route": "call:ve.backends.speech_source:decide_source",
    "mutation": "duplicate",
    "path": [
@@ -2442,6 +2433,75 @@
    "kind": "by-design",
    "id": "QTA3C-1",
    "reason": "A region constant's bits are its region, one truth value per predicate of its sort (VE.Cardinality.regionTable), Lean's computed content pinned by RunExamples' golden region table: the empty string is the one region of a sort with no predicates, so an emptied or rebound bits string is a well-formed answer; which bits belong to which constant is Lean's (R8)"
+  },
+  {
+   "route": "service:senses.project",
+   "mutation": "*",
+   "path": [
+    "*/result/result/projection/environment",
+    "*/result/result/projection/environment/*"
+   ],
+   "kind": "follow-up",
+   "id": "F7",
+   "reason": "Untyped: the projected environment (VE.Senses.projectedJson) has no shape beyond an object in senses.project.json; the relay (ve.backends.senses._projection_problem) reads it whole as an Environment and binds its environment_id and the lexicon's to it. sn-b6b types it in lean/ResponseShape/Schemas."
+  },
+  {
+   "route": "service:senses.project",
+   "mutation": "duplicate",
+   "path": [
+    "*/result/result/projection/lexicon/nouns",
+    "*/result/result/projection/lexicon/letters",
+    "*/result/result/projection/lexicon/wordings",
+    "*/result/result/projection/lexicon/negatives",
+    "*/result/result/projection/lexicon/aliases",
+    "*/result/result/projection/lexicon/spellings"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: the projected lexicon's lists (VE.Senses.projectedLexicon), whose length and elements the projection decides; the relay binds the whole lexicon by lexicon_id (DRI-RULINGS R8)."
+  },
+  {
+   "route": "service:senses.project",
+   "mutation": "empty",
+   "path": [
+    "*/result/result/projection/lexicon/nouns",
+    "*/result/result/projection/lexicon/letters",
+    "*/result/result/projection/lexicon/wordings",
+    "*/result/result/projection/lexicon/negatives",
+    "*/result/result/projection/lexicon/aliases",
+    "*/result/result/projection/lexicon/spellings"
+   ],
+   "kind": "by-design",
+   "id": "B0",
+   "reason": "Content Lean computes: the projected lexicon's lists (VE.Senses.projectedLexicon), whose length and elements the projection decides; the relay binds the whole lexicon by lexicon_id (DRI-RULINGS R8)."
+  },
+  {
+   "route": "service:senses.project",
+   "mutation": "empty",
+   "path": [
+    "*/result/result/projection/lexicon/nouns/*/*",
+    "*/result/result/projection/lexicon/letters/*/*",
+    "*/result/result/projection/lexicon/wordings/*/*",
+    "*/result/result/projection/lexicon/negatives/*/*",
+    "*/result/result/projection/lexicon/aliases/*/*",
+    "*/result/result/projection/details/gloss"
+   ],
+   "kind": "follow-up",
+   "id": "F11",
+   "reason": "Strings the schema lets be empty: the lexicon's entries and a fault's gloss, which Lean writes non-empty from the request; give each a non-empty type in senses.project.json (sn-b6b)."
+  },
+  {
+   "route": "service:senses.project",
+   "mutation": "rebind",
+   "path": [
+    "*/result/result/projection/lexicon/nouns/*/*",
+    "*/result/result/projection/lexicon/letters/*/*",
+    "*/result/result/projection/lexicon/spellings/*/*",
+    "*/result/result/projection/details/word"
+   ],
+   "kind": "follow-up",
+   "id": "F4",
+   "reason": "Names a request name (a sort, constant or word) that the schema does not check against the request; the relay binds the lexicon by lexicon_id (ve.backends.senses._projection_problem). Bind them with x-references in senses.project.json (sn-b6b)."
   }
  ]
 }
