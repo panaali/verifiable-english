@@ -1,0 +1,5 @@
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (lean): lean/VE/Acts/Grammar.lean is a selected declaration's file or in its import closure
+trust_mutants: 9 definitions, 432 mutants (108 to run), 4 jobs, base 598358e43282
+trust_mutants: 95 KILLED, 0 SURVIVOR, 0 UNKNOWN, 2 INVALID, 11 ALLOWED, 0 NOT RUN, 324 OTHER SHARD in 2853 s
+trust_mutants: S, trusted: 95 KILLED, 2 INVALID, 11 ALLOWED, 324 OTHER SHARD
+trust_mutants: steps: wall plan 9.1 s, scratch 3.1 s, control_build 0.2 s, probe_install 1.5 s, control_probes 26.5 s, mutants 2809.8 s, cleanup 2.7 s; lake control_build 0.1 s (1), probe_install 1.4 s (1), control_probes 72.8 s (4), mutant_builds 4318 s (149), mutant_checks 3563.7 s (107), stage_controls 1684.4 s (12), mutant_probes 1520.1 s (95)
