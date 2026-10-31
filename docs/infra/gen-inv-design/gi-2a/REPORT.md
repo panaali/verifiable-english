@@ -1,11 +1,10 @@
 # gi-2a build report
 
-Status: implemented; the chain runs the final full gate on the committed HEAD. No DRI signature is reserved.
-HEAD: `feature/gi-2a` tip at handoff.
-Changed: `writer="train"` in the registry, the overlay `lean/.lake/ve-inventory/`, and `inventory_path`. Every
-reader of a train-only file now goes through `inventory_path`, and a guard test enforces it. Writers still write
-the committed paths. DELTA: none. Trust: +0. Pilot bytes expected: 0.
-Next: gi-2b. Size: 1201 added lines outside generated files, 697 of them the test file (cap ~600; see Size).
+Status: implemented; review F1 and recheck F7 fixed, and the guard's memory bounded (DRI decision and note
+2026-10-31). The chain runs the final full gate on the committed HEAD. No DRI signature is reserved.
+HEAD: `feature/gi-2a` tip at handoff (guard fix c46abab61). DELTA: none. Trust: +0. Pilot bytes expected: 0.
+Changed: `writer="train"` registry, the overlay `lean/.lake/ve-inventory/`, `inventory_path`, every reader moved
+to it, and a guard test; `tests/test_inventory_path.py` peaks at 0.85 GiB RSS (limit 2 GB). Open: F3-F6, F8 (C).
 
 ## Delivery (DESIGN.md 4 steps 1-2 and 4, 7 step 2, 8 row gi-2a, 9; DRI decision 1(b))
 
@@ -16,7 +15,7 @@ Next: gi-2b. Size: 1201 added lines outside generated files, 697 of them the tes
 | (2) `inventory_path`: fresh overlay gives the overlay copy; unchanged modules give the committed copy; a changed module with no or a stale overlay is a stale error naming it | AGENT | `tools/lean_statements.py`; `test_a_fresh_overlay_is_read_and_a_stale_one_is_an_error`, `test_unchanged_modules_read_the_committed_copy`, `test_a_changed_module_with_no_overlay_is_a_stale_error_naming_it` (edited, added, removed module, unreadable list), `test_an_incomplete_or_altered_overlay_is_not_fresh` |
 | (3) Readers moved (table below) | AGENT | d716a982, f401a186 |
 | (4) Writers write the committed path by default; the overlay is opt-in | AGENT | `inventory_target`, `write_inventory`; `test_writers_write_the_committed_path_unless_the_overlay_is_asked_for` (unset, empty, `committed`, `overlay`, refused `Overlay` and `1`) |
-| Condition (a): guard against literal reads, with an allow-list | AGENT | `test_no_train_only_path_is_read_outside_the_accessor` scans every tracked Python file but `docs/` and folds each expression to the paths it can spell (review F1, below). The allow-list is keyed by file, function and path, with the number of sites, one reason each. Its detector has accepting and refusing fixtures: `test_the_guard_sees_a_literal_read_and_nothing_else` (31 cases, one per spelling) |
+| Condition (a): guard against literal reads, with an allow-list | AGENT | `test_no_train_only_path_is_read_outside_the_accessor` scans every tracked Python file but `docs/` and folds each expression to the paths it can spell (review F1, below). The allow-list is keyed by file, function and path, with the number of sites, one reason each. Its detector has accepting and refusing fixtures: `test_the_guard_sees_a_literal_read_and_nothing_else` (31 cases, one per spelling); review F7: `test_the_guard_folds_what_pytest_a_dict_or_an_attribute_passes_and_refuses_the_rest` (25 cases) |
 | Statement gate: no theorem statement changes | AGENT | `git diff --quiet <merge-base> HEAD -- lean/statements.txt ...`: every train-only file is unchanged; no `.lean` file changed |
 | Final full gate | EXTERNAL, merge chain | Runs on the committed HEAD after handoff; the builder did not run it |
 
@@ -41,7 +40,7 @@ membership and by rendering.
 | `lean_service._spawn` pin read | `build_lock()`, which imports the accessor at run time (reason in its docstring) | Same pins, same refusal. `test_the_service_client_reads_its_pins_through_the_accessor` |
 | `assurance_manifest.py --check`; `repo_map`; `check_readings_defaults_statements`; 23 test files | `inventory_path` | Unchanged comparisons |
 
-## Seeded bugs (`mutants.json`; all Python; no Lean or Rust product code changed)
+## Seeded bugs (`mutants.json`; all Python; no Lean or Rust product code changed; S11-S13 seed the guard)
 
 | Behaviour | File | Test that failed (exit 1), then restored |
 |---|---|---|
@@ -60,6 +59,12 @@ membership and by rendering.
 | F1 S5: the manifest check reads `ROOT / manifest` (a module tuple) | `lean/audit.py` | the same test |
 | F1 S6: a test reads `ROOT / "lean/statements.txt"`, ROOT imported | `tests/test_enum_domains.py` | the same test |
 | F1 S7: a second read in an allowed function | `tools/repo_map.py` | the same test |
+| F7 S8: a test reads `ROOT / name`, `name` from `@pytest.mark.parametrize` | `tests/test_enum_domains.py` | `test_no_train_only_path_is_read_outside_the_accessor` |
+| F7 S9: a test reads `ROOT / SEED_PATHS["lock"]`, a module dict literal | `tests/test_enum_domains.py` | the same test |
+| F7 S10: a test method reads `ROOT / self.LOCK`, a class attribute | `tests/test_enum_domains.py` | the same test |
+| F7 S11: `_joined` joins every part before it is cut (the OOM) | `tests/test_inventory_path.py` | `test_a_fold_is_cut_as_it_is_made_and_an_overflow_is_unknown` |
+| F7 S12: a parameter nothing passes is the test's own tree again | `tests/test_inventory_path.py` | `test_the_guard_folds_what_pytest_a_dict_or_an_attribute_passes_and_refuses_the_rest` (the `repo` and `thing.root` cases) |
+| F7 S13: a cut spelling set is the own tree when one member was | `tests/test_inventory_path.py` | `test_a_fold_is_cut_as_it_is_made_and_an_overflow_is_unknown` |
 
 ## Runs
 
@@ -75,6 +80,12 @@ membership and by rendering.
   through a static service import), and 24 units did not start. All were fixed in f401a186. Rerun: the 9 ids plus
   this test file passed (81 passed); `tools/test_layer_policy.py` passed (`OK`); the 24 skipped units passed
   (`10302 passed`).
+
+- F7 round, on c46abab61: selected run (`mac-pytest.sh --select`, GitHub Actions run gi-2a-c46abab6-t409845,
+  3 shards): 391 units passed (132, 129, 130), exit 0, 3085 s. `tools/regen_generated.py --check`: exit 0 (34
+  entries). `tools/gate_collection.py --check`: 92 added, 0 removed, 0 refused, 0 stale, 0 malformed. `lake build`:
+  `Build completed successfully (1164 jobs)`. `python3 lean/audit.py`: `PASS: 673 source files; 7503 named theorem
+  declarations audited`. The full gate was not run here: the merge train's branch verify runs it.
 
 ## Review fix: F1 (review of c51307154)
 
@@ -102,12 +113,47 @@ function and site count, so a new read in an allowed file still fails (seed S7).
   DESIGN.md 4 step 5. `lean_service._spawn` names the lock only for its refusal; it reads through `build_lock`.
 - F2-F6 are C (FOLLOW-UP) and are not part of this fix. F2's five reversions now fail the guard (S1-S5).
 
+## Review fix: F7 and the guard's memory (recheck 1 of 34b47dea0; DRI decision 2026-10-31 item 1 and DRI note)
+
+F7 (B): a parameter nothing in the file called was taken for the test's own tree, so a value pytest passes
+(`parametrize`) reached a read unseen, and a dict literal (`P["lock"]`) or an attribute (`self.LOCK`) folded to
+nothing. The class is "a value the guard cannot fold is taken as safe". Two halves:
+
+- Folded now: `parametrize` on the function, on its class, in `pytestmark` or bound to a name, with
+  `argnames`/`argvalues`, `pytest.param` rows, `indirect` and a fixture's `params` (as `request.param`); a dict
+  literal by key (`P["k"]`, nested `P["a"]["k"]`, `.get`, `.pop`), by iteration and `.keys()` (its keys) and by
+  `.values()`; attributes the file sets (class bodies, `self.X = ...`, `C.X`); a class call's `__init__` parameters;
+  callables held in a dict or list and called as `D[k](...)`. One helper, `_held`, takes keys or values out of dict
+  literals for every reading.
+- Refused now: a parameter nothing passes and an attribute nothing sets are holes, so a path read onto them fails
+  (never the own tree). A spelling set cut at `SHORT` is a hole as well, though one of its members was a made tree.
+- The stricter folds found two real readers the old guard took for own trees; both are allow-listed with a reason:
+  `lean_share._read_pins` (reads the pins `pinned` passes it: a DESIGN.md 4 step 5 pin reader) and the child script of
+  `test_answer_cutoff::test_timeouts_and_data_reads_of_the_pins_are_recorded` (runs with `cwd=ROOT` and reads the pins
+  on purpose; the old guard cut the script before its `{tmp_path}`, so a child script is now scanned whole).
+- PROBE F7: `AssertionError: parametrize blind` on 34b47dea0; exits 0 on c46abab61. PROBE F1 still exits 0.
+- Regression tests: `test_the_guard_folds_what_pytest_a_dict_or_an_attribute_passes_and_refuses_the_rest` (25 cases:
+  20 reads, 5 precise non-reads; 18 of the 20 fail on 34b47dea0's guard) and
+  `test_a_fold_is_cut_as_it_is_made_and_an_overflow_is_unknown`.
+- Seeds S8-S10 (parametrize, dict, attribute readers added to `tests/test_enum_domains.py`) each failed
+  `test_no_train_only_path_is_read_outside_the_accessor` (it listed the three functions); S11-S13 (table above)
+  revert the guard's own fixes.
+
+Memory (DRI note): both F7 rounds were OOM-killed at 23-46 GB. Cause, measured per file under an 8 GiB limit: an
+f-string or `+` chain was joined into the product of every part's spellings before `_short` cut it
+(`tools/lean_service_parity.py` raised MemoryError in `_joined`). `_joined` now cuts after each part, `_sources`
+follows each name once (it was exponential: 23.8M calls for one file), and the tree test drops each file's tree and
+folds once it is scanned. `/usr/bin/time -v prlimit --as=8589934592 .venv/bin/pytest -q tests/test_inventory_path.py`
+on c46abab61: 92 passed, maximum resident set size 896012 kB (0.85 GiB), wall time 1:12. Before (34b47dea0, the
+tree scan alone): 1.1 GiB, 49 s; the uncommitted F7 edit of the killed rounds: MemoryError past 8 GiB.
+
 ## Size
 
-`git diff --numstat <merge-base>`, without the code map and the history list: 1201 added and 141 deleted. Of
-these, 697 are the new test file (about 460 of them the F1 guard), 157 are the accessor, 136 are this batch's
-documents, and about 60 are one- or two-line reader moves in 25 test files. Every row is a deliverable or a DRI
-condition (the guard is condition (a)), so no part was cut to a follow-on item.
+`git diff --numstat <merge-base> c46abab61`, without the code map and the history list: 1457 added and 141
+deleted. Of these, 917 are the new test file (about 680 of them the guard: F1 and F7), 157 are the accessor, 172 are
+this batch's documents, and about 60 are one- or two-line reader moves in 25 test files. Every row is a deliverable
+or a DRI condition (the guard is condition (a)), so no part was cut to a follow-on item; the DRI decision of
+2026-10-31 orders no cut and leaves the size to the next review.
 
 ## Found for gi-2b
 
