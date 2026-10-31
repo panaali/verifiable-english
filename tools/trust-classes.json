@@ -16396,7 +16396,14 @@
         "VE.Senses.RunExamples.lineFunny2",
         "VE.Senses.RunExamples.LA",
         "VE.Senses.RunExamples.sameAs",
-        "VE.Senses.RunExamples.idsOf"
+        "VE.Senses.RunExamples.idsOf",
+        "VE.Senses.RunExamples.overlayJ",
+        "VE.Senses.RunExamples.lexJ",
+        "VE.Senses.RunExamples.req",
+        "VE.Senses.RunExamples.pin",
+        "VE.Senses.RunExamples.projectReq",
+        "VE.Senses.RunExamples.src",
+        "VE.Senses.RunExamples.fenced"
       ]
     }
   }

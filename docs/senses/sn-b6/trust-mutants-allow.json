@@ -1,0 +1,5 @@
+{"allow": [
+  {"definition": "VE.Service.Mode", "operator": "ctor-drop", "reason": "dropping a constructor leaves its uses (Registry.lean Mode.name, Protocol.runMode) unknown: a compile failure outside any check, never a running service"},
+  {"definition": "ResponseShape.Schemas.files", "operator": "list-empty", "reason": "the schema list feeds skel% at compile time: an emptied list fails every Skeletons.lean skeleton's elaboration (unresolved $ref), never a running decoder"},
+  {"definition": "ResponseShape.Schemas.files", "operator": "list-drop-first", "reason": "dropping common.json or envelope.json fails Skeletons.lean's elaboration (unresolved $ref common.json#/$defs/case_error) at compile time, never a running decoder"}
+]}
