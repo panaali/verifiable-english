@@ -330,13 +330,21 @@ theorem kleene_sound {α : Type u} [DecidableEq α] (M : VE.FiniteModel α) (ato
 
 /-! ## `table3`: outcomes in DAG order, unsaid atoms unknown, with the pair rule -/
 
-/-- The value of an atom: a layer symbol from the table, an unsaid atom unknown, a
-base atom from `M`. -/
+/-- The value of an atom: a layer symbol from the table, an atom on an open predicate name
+(`opens`, JT-R1) unknown, a base atom from `M`. -/
+def atomVO {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (opens : List String)
+    (tab : String → List α → Option Bool) (p : String) (vs : List α) : Option Bool :=
+  if p ∈ layerNames (fill U).T then tab p vs
+  else if p ∈ opens then none
+  else some (decide (vs ∈ M.relations p))
+
+/-- `atomVO` at the unsaid names: an unsaid atom unknown. -/
 def atomV {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (tab : String → List α → Option Bool)
     (p : String) (vs : List α) : Option Bool :=
-  if p ∈ layerNames (fill U).T then tab p vs
-  else if p ∈ unsaidNames U then none
-  else some (decide (vs ∈ M.relations p))
+  atomVO U M (unsaidNames U) tab p vs
+
+theorem atomV_eq_open {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α)
+    (tab : String → List α → Option Bool) : atomV U M tab = atomVO U M (unsaidNames U) tab := rfl
 
 /-- "No author rule on `p` decides", over the prefix (`gapF` before substitution). -/
 def gapBody (U : UDoc) (p : String) : VE.Formula := .and (.not (pos U.D.T p)) (.not (neg U.D.T p))
@@ -345,53 +353,70 @@ def gapBody (U : UDoc) (p : String) : VE.Formula := .and (.not (pos U.D.T p)) (.
 is already in the table: `q := yes` where `q` is the permission of a pair whose
 obligation is yes; `q := no` where `q` is the obligation of a pair whose permission
 is no (2.5). -/
-def pairRule {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (tab : String → List α → Option Bool)
-    (q : Regulated) (vs : List α) : Option Bool :=
-  if decide (q.name ∈ U.unspec) && kleene M (atomV U M tab) (tupleVal vs) (gapBody U q.name) == some true then
+def pairRuleO {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (opens : List String)
+    (tab : String → List α → Option Bool) (q : Regulated) (vs : List α) : Option Bool :=
+  if decide (q.name ∈ U.unspec) && kleene M (atomVO U M opens tab) (tupleVal vs) (gapBody U q.name) == some true then
     if (pairs U.D.T).any (fun pr => pr.perm == q.name && tab pr.req vs == some true) then some true
     else if (pairs U.D.T).any (fun pr => pr.req == q.name && tab pr.perm vs == some false) then some false
     else none
   else none
 
 /-- The entry of the symbol placed at this step. -/
-def stepEntry {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (tab : String → List α → Option Bool)
-    (q : Sym) (vs : List α) : Option Bool :=
+def stepEntryO {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (opens : List String)
+    (tab : String → List α → Option Bool) (q : Sym) (vs : List α) : Option Bool :=
   if tupleTypedB M q.sorts vs then
-    match kleene M (atomV U M tab) (tupleVal vs) (q.meaning (fill U).T) with
+    match kleene M (atomVO U M opens tab) (tupleVal vs) (q.meaning (fill U).T) with
     | some b => some b
     | none => match q with
-      | .reg r => pairRule U M tab r vs
+      | .reg r => pairRuleO U M opens tab r vs
       | .defn _ => none
   else none
 
 /-- The profile rule where a pair closes at `q` and the side it sets is the earlier
 member `n`, still unknown and a gap: `n := yes` if `q` is the obligation and yes;
 `n := no` if `q` is the permission and no. -/
-def closeRule {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (tab : String → List α → Option Bool)
-    (q : Sym) (qv : Option Bool) (n : String) (vs : List α) : Option Bool :=
+def closeRuleO {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (opens : List String)
+    (tab : String → List α → Option Bool) (q : Sym) (qv : Option Bool) (n : String) (vs : List α) : Option Bool :=
   match q with
   | .defn _ => none
   | .reg r =>
-    if decide (n ∈ U.unspec) && kleene M (atomV U M tab) (tupleVal vs) (gapBody U n) == some true then
+    if decide (n ∈ U.unspec) && kleene M (atomVO U M opens tab) (tupleVal vs) (gapBody U n) == some true then
       if qv == some true && (pairs U.D.T).any (fun pr => pr.req == r.name && pr.perm == n) then some true
       else if qv == some false && (pairs U.D.T).any (fun pr => pr.perm == r.name && pr.req == n) then some false
       else none
     else none
 
-/-- The table after the first `k` layer symbols of `T‴`. -/
-def tabK {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) : Nat → String → List α → Option Bool
+/-- The table after the first `k` layer symbols of `T‴`, the atoms on `opens` unknown. -/
+def tabKO {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (opens : List String) :
+    Nat → String → List α → Option Bool
   | 0 => fun _ _ => none
   | k + 1 => fun n vs => match (syms (fill U).T)[k]? with
     | some q =>
-      if n = q.name then stepEntry U M (tabK U M k) q vs
-      else match tabK U M k n vs with
+      if n = q.name then stepEntryO U M opens (tabKO U M opens k) q vs
+      else match tabKO U M opens k n vs with
         | some b => some b
-        | none => closeRule U M (tabK U M k) q (stepEntry U M (tabK U M k) q vs) n vs
-    | none => tabK U M k n vs
+        | none => closeRuleO U M opens (tabKO U M opens k) q (stepEntryO U M opens (tabKO U M opens k) q vs) n vs
+    | none => tabKO U M opens k n vs
 
-/-- `table3 U M n vs`: the three-valued outcome of `n` at `vs` (`none`: unknown). -/
+/-- `table3O U M opens n vs`: the three-valued outcome of `n` at `vs`, the atoms on `opens` unknown. -/
+def table3O {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (opens : List String) (n : String)
+    (vs : List α) : Option Bool :=
+  tabKO U M opens (size (fill U)) n vs
+
+/-- `tabKO` at the unsaid names. -/
+def tabK {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (k : Nat) (n : String) (vs : List α) :
+    Option Bool :=
+  tabKO U M (unsaidNames U) k n vs
+
+/-- `table3 U M n vs`: the three-valued outcome of `n` at `vs` (`none`: unknown), `table3O` at the unsaid names. -/
 def table3 {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (n : String) (vs : List α) : Option Bool :=
-  tabK U M (size (fill U)) n vs
+  table3O U M (unsaidNames U) n vs
+
+theorem tabK_eq_open {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) :
+    tabK U M = tabKO U M (unsaidNames U) := rfl
+
+theorem table3_eq_open {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) :
+    table3 U M = table3O U M (unsaidNames U) := rfl
 
 open VE.SoftNorms (canon canon_subst canon_off canon_agrees) in
 /-- `canon`'s relation of a regulated predicate is its outcome at the base, on every tuple. -/
@@ -408,19 +433,21 @@ theorem canon_regulated {D : Doc} (hv : Valid D) (B : VE.Structure.{u}) {r : Reg
 section Table
 open VE.SoftNorms (canon canon_subst canon_off canon_agrees)
 variable {α : Type u} [DecidableEq α] {U : UDoc} (hu : UValid U) (h : WellFormedU U = true)
-  (M : VE.FiniteModel α) (F : FillTables U M.asStructure) (hF : BaseAdmissibleU U (withFill U M.asStructure F))
+  (M : VE.FiniteModel α) (opens : List String) (R : String → List α → Prop)
+  (hF : BaseAdmissibleU U { M.asStructure with relation := R })
 include hu h hF
 
-/-- The outcome of a regulated predicate at the filled base. -/
-abbrev OutB (n : String) (vs : List α) : Prop :=
-  (outcomeBase (fill U) n).denote (withFill U M.asStructure F) (tupleVal vs)
+-- `M` with the relations `R`: carrier, domains and constants are `M`'s
+set_option hygiene false in
+local notation "MR" => ({ M.asStructure with relation := R } : VE.Structure)
 
 omit [DecidableEq α] hu h in
 /-- `Fill_T` at a gap of the permission: the obligation's yes forces the permission's yes. -/
-theorem perm_of_req {pr : Pair} (hpr : pr ∈ pairs U.D.T) (hp : pr.perm ∈ U.unspec) (vs : List α)
-    (htyped : VE.TupleTyped (withFill U M.asStructure F) pr.sorts vs)
-    (hgap : (gapF U pr.perm).denote (withFill U M.asStructure F) (tupleVal vs))
-    (hreq : OutB M F pr.req vs) : OutB M F pr.perm vs := by
+theorem perm_of_reqR {pr : Pair} (hpr : pr ∈ pairs U.D.T) (hp : pr.perm ∈ U.unspec) (vs : List α)
+    (htyped : VE.TupleTyped MR pr.sorts vs)
+    (hgap : (gapF U pr.perm).denote MR (tupleVal vs))
+    (hreq : (outcomeBase (fill U) pr.req).denote MR (tupleVal vs)) :
+    (outcomeBase (fill U) pr.perm).denote MR (tupleVal vs) := by
   have hprem := hF.2 _ (List.mem_map.mpr ⟨pr, List.mem_filter.mpr ⟨hpr, by simp [hp]⟩, rfl⟩)
   rw [bindAll_denote_nil] at hprem
   have := hprem vs htyped
@@ -429,10 +456,11 @@ theorem perm_of_req {pr : Pair} (hpr : pr ∈ pairs U.D.T) (hp : pr.perm ∈ U.u
 
 omit [DecidableEq α] hu h in
 /-- `Fill_T` at a gap of the obligation: the permission's no forces the obligation's no. -/
-theorem notreq_of_notperm {pr : Pair} (hpr : pr ∈ pairs U.D.T) (hp : pr.req ∈ U.unspec) (vs : List α)
-    (htyped : VE.TupleTyped (withFill U M.asStructure F) pr.sorts vs)
-    (hgap : (gapF U pr.req).denote (withFill U M.asStructure F) (tupleVal vs))
-    (hperm : ¬ OutB M F pr.perm vs) : ¬ OutB M F pr.req vs := by
+theorem notreq_of_notpermR {pr : Pair} (hpr : pr ∈ pairs U.D.T) (hp : pr.req ∈ U.unspec) (vs : List α)
+    (htyped : VE.TupleTyped MR pr.sorts vs)
+    (hgap : (gapF U pr.req).denote MR (tupleVal vs))
+    (hperm : ¬ (outcomeBase (fill U) pr.perm).denote MR (tupleVal vs)) :
+    ¬ (outcomeBase (fill U) pr.req).denote MR (tupleVal vs) := by
   have hprem := hF.2 _ (List.mem_map.mpr ⟨pr, List.mem_filter.mpr ⟨hpr, by simp [hp]⟩, rfl⟩)
   rw [bindAll_denote_nil] at hprem
   have := hprem vs htyped
@@ -440,46 +468,47 @@ theorem notreq_of_notperm {pr : Pair} (hpr : pr ∈ pairs U.D.T) (hp : pr.req �
   exact fun hreq => this ⟨hreq, hperm⟩ (Or.inl hgap)
 
 /-- A Kleene-true gap body is the gap at the filled base. -/
-theorem gap_of_kleene (tab : String → List α → Option Bool)
-    (hA : ∀ p vs b, atomV U M tab p vs = some b →
-      ((canon (fill U) (withFill U M.asStructure F)).relation p vs ↔ b = true))
+theorem gap_of_kleeneO (tab : String → List α → Option Bool)
+    (hA : ∀ p vs b, atomVO U M opens tab p vs = some b →
+      ((canon (fill U) MR).relation p vs ↔ b = true))
     {r : Regulated} (hr : r ∈ U.D.T.regulated) (hp : r.name ∈ U.unspec) (vs : List α)
-    (htyped : VE.TupleTyped (withFill U M.asStructure F) r.sorts vs)
-    (hk : kleene M (atomV U M tab) (tupleVal vs) (gapBody U r.name) = some true) :
-    (gapF U r.name).denote (withFill U M.asStructure F) (tupleVal vs) := by
+    (htyped : VE.TupleTyped MR r.sorts vs)
+    (hk : kleene M (atomVO U M opens tab) (tupleVal vs) (gapBody U r.name) = some true) :
+    (gapF U r.name).denote MR (tupleVal vs) := by
   have hv' := valid_of_wellFormed _ (fill_wellFormed U h)
-  have hc : ConstantsTyped (fill U) (withFill U M.asStructure F) := hF.1.1.1
+  have hc : ConstantsTyped (fill U) MR := hF.1.1.1
   have hkk := index_before hu.valid hr
   have hT := rulesTyped_of_valid hu.valid hkk
   have hmono : (gapBody U r.name).WellFormed (envAt (fill U) (before U.D r.name)) r.sorts.reverse := by
     rw [← VE.check_iff_wellFormed]
     exact check_envAt_fill hu ((VE.check_iff_wellFormed _ _ _).mpr
       ⟨decides_wellFormed hT true, decides_wellFormed hT false⟩)
-  have := canon_subst hv' (withFill U M.asStructure F) hc _ _ _ hmono _ (tupleVal_typed _ _ vs htyped)
+  have := canon_subst hv' MR hc _ _ _ hmono _ (tupleVal_typed _ _ vs htyped)
   simp only [gapF, hp, if_true, before_fill hu]
   exact this.mpr ((kleene_sound M _ _ hA _ _ true hk).mpr rfl)
 
 omit [DecidableEq α] hu hF in
 /-- The relation of a regulated predicate at `canon` is its outcome at the filled base. -/
-theorem canonO {r : Regulated} (hr : r ∈ U.D.T.regulated) (vs : List α) :
-    (canon (fill U) (withFill U M.asStructure F)).relation r.name vs ↔ OutB M F r.name vs :=
-  canon_regulated (valid_of_wellFormed _ (fill_wellFormed U h)) (withFill U M.asStructure F)
+theorem canonOR {r : Regulated} (hr : r ∈ U.D.T.regulated) (vs : List α) :
+    (canon (fill U) MR).relation r.name vs ↔ (outcomeBase (fill U) r.name).denote MR (tupleVal vs) :=
+  canon_regulated (valid_of_wellFormed _ (fill_wellFormed U h)) MR
     (show r ∈ (fill U).T.regulated from hr) vs
 
-theorem tabK_sound : ∀ k n vs b, tabK U M k n vs = some b →
-    ((canon (fill U) (withFill U M.asStructure F)).relation n vs ↔ b = true) := by
+theorem tabKO_sound (hoff : ∀ p, p ∉ opens → ∀ ws, R p ws ↔ ws ∈ M.relations p) :
+    ∀ k n vs b, tabKO U M opens k n vs = some b →
+    ((canon (fill U) MR).relation n vs ↔ b = true) := by
   have hw' := fill_wellFormed U h
   have hv' := valid_of_wellFormed _ hw'
-  have hc : ConstantsTyped (fill U) (withFill U M.asStructure F) := hF.1.1.1
+  have hc : ConstantsTyped (fill U) MR := hF.1.1.1
   intro k
   induction k with
   | zero => intro n vs b ht; cases ht
   | succ k ih =>
     -- the atoms are sound for the table below `k`
-    have hA : ∀ p vs b, atomV U M (tabK U M k) p vs = some b →
-        ((canon (fill U) (withFill U M.asStructure F)).relation p vs ↔ b = true) := by
+    have hA : ∀ p vs b, atomVO U M opens (tabKO U M opens k) p vs = some b →
+        ((canon (fill U) MR).relation p vs ↔ b = true) := by
       intro p vs b hb
-      unfold atomV at hb
+      unfold atomVO at hb
       split at hb
       · exact ih p vs b hb
       · rename_i hl
@@ -488,22 +517,22 @@ theorem tabK_sound : ∀ k n vs b, tabK U M k n vs = some b →
         · rename_i hun
           simp only [Option.some.injEq] at hb
           subst hb
-          rw [canon_off _ hl, withFill_off U _ F hun]
-          simp [VE.FiniteModel.asStructure]
-    have hK : ∀ φ ρ b, kleene M (atomV U M (tabK U M k)) ρ φ = some b →
-        (φ.denote (canon (fill U) (withFill U M.asStructure F)) ρ ↔ b = true) :=
+          rw [canon_off _ hl]
+          simpa using hoff p hun vs
+    have hK : ∀ φ ρ b, kleene M (atomVO U M opens (tabKO U M opens k)) ρ φ = some b →
+        (φ.denote (canon (fill U) MR) ρ ↔ b = true) :=
       kleene_sound M _ _ hA
     -- the symbol placed at this step
-    have hstep : ∀ q vs b, (syms (fill U).T)[k]? = some q → stepEntry U M (tabK U M k) q vs = some b →
-        ((canon (fill U) (withFill U M.asStructure F)).relation q.name vs ↔ b = true) := by
+    have hstep : ∀ q vs b, (syms (fill U).T)[k]? = some q → stepEntryO U M opens (tabKO U M opens k) q vs = some b →
+        ((canon (fill U) MR).relation q.name vs ↔ b = true) := by
       intro q vs b hq ht
-      unfold stepEntry at ht
+      unfold stepEntryO at ht
       split at ht
       · rename_i hty
-        have htyX : VE.TupleTyped (canon (fill U) (withFill U M.asStructure F)) q.sorts vs :=
-          (tupleTyped_relation (withFill U M.asStructure F) _ _ vs).mpr
+        have htyX : VE.TupleTyped (canon (fill U) MR) q.sorts vs :=
+          (tupleTyped_relation MR _ _ vs).mpr
             ((tupleTyped_relation M.asStructure _ _ vs).mpr ((tupleTypedB_iff M _ vs).mp hty))
-        have hag := canon_agrees hv' (withFill U M.asStructure F) hc (k + 1) k q (Nat.lt_succ_self k) hq vs htyX
+        have hag := canon_agrees hv' MR hc (k + 1) k q (Nat.lt_succ_self k) hq vs htyX
         split at ht
         · rename_i b' hb'
           simp only [Option.some.injEq] at ht
@@ -513,17 +542,17 @@ theorem tabK_sound : ∀ k n vs b, tabK U M k n vs = some b →
           | defn _ => cases ht
           | reg r =>
             have hr : r ∈ U.D.T.regulated := mem_syms_reg (T := (fill U).T) (List.mem_of_getElem? hq)
-            have htyped : VE.TupleTyped (withFill U M.asStructure F) r.sorts vs :=
+            have htyped : VE.TupleTyped MR r.sorts vs :=
               (tupleTyped_relation M.asStructure _ _ vs).mpr ((tupleTypedB_iff M _ vs).mp hty)
-            change (canon (fill U) (withFill U M.asStructure F)).relation r.name vs ↔ b = true
+            change (canon (fill U) MR).relation r.name vs ↔ b = true
             simp only at ht
-            unfold pairRule at ht
+            unfold pairRuleO at ht
             split at ht
             · rename_i hcond
               simp only [Bool.and_eq_true, decide_eq_true_eq, beq_iff_eq] at hcond
               obtain ⟨hp, hgap⟩ := hcond
-              have hgapB := gap_of_kleene hu h M F hF _ hA hr hp vs htyped hgap
-              rw [canonO h M F hr]
+              have hgapB := gap_of_kleeneO hu h M opens R hF _ hA hr hp vs htyped hgap
+              rw [canonOR h M R hr]
               split at ht
               · rename_i hany
                 simp only [Option.some.injEq] at ht
@@ -535,11 +564,11 @@ theorem tabK_sound : ∀ k n vs b, tabK U M k n vs = some b →
                 obtain ⟨r', hr'', hr'n, _, _, _⟩ := pair_req hpr
                 have hmr : m' = r := hu.regulated_eq hm' hr (hm'n.trans hperm)
                 subst hmr
-                have hreqO : OutB M F pr.req vs := by
-                  rw [← hr'n, ← canonO h M F hr'', hr'n]; exact (ih _ vs true hreq).mpr rfl
+                have hreqO : (outcomeBase (fill U) pr.req).denote MR (tupleVal vs) := by
+                  rw [← hr'n, ← canonOR h M R hr'', hr'n]; exact (ih _ vs true hreq).mpr rfl
                 simp only [iff_true]
                 rw [← hperm]
-                exact perm_of_req M F hF hpr (by rw [hperm]; exact hp) vs (by rw [← hm's]; exact htyped)
+                exact perm_of_reqR M R hF hpr (by rw [hperm]; exact hp) vs (by rw [← hm's]; exact htyped)
                   (by rw [hperm]; exact hgapB) hreqO
               · split at ht
                 · rename_i _ hany
@@ -552,18 +581,18 @@ theorem tabK_sound : ∀ k n vs b, tabK U M k n vs = some b →
                   obtain ⟨m', hm', hm'n, _, _⟩ := pair_perm hu hpr
                   have hrr : r' = r := hu.regulated_eq hr'' hr (hr'n.trans hreq)
                   subst hrr
-                  have hpermO : ¬ OutB M F pr.perm vs := fun hm => by
-                    rw [← hm'n, ← canonO h M F hm', hm'n] at hm
+                  have hpermO : ¬ (outcomeBase (fill U) pr.perm).denote MR (tupleVal vs) := fun hm => by
+                    rw [← hm'n, ← canonOR h M R hm', hm'n] at hm
                     cases (ih _ vs false hperm).mp hm
                   simp only [Bool.false_eq_true, iff_false]
                   rw [← hreq]
-                  exact notreq_of_notperm M F hF hpr (hreq ▸ hp) vs (by rw [← hr's]; exact htyped)
+                  exact notreq_of_notpermR M R hF hpr (hreq ▸ hp) vs (by rw [← hr's]; exact htyped)
                     (hreq ▸ hgapB) hpermO
                 · cases ht
             · cases ht
       · cases ht
     intro n vs b ht
-    simp only [tabK] at ht
+    simp only [tabKO] at ht
     split at ht
     · rename_i q hq
       split at ht
@@ -576,7 +605,7 @@ theorem tabK_sound : ∀ k n vs b, tabK U M k n vs = some b →
           subst ht
           exact ih n vs b' hb'
         · -- a pair closes at `q` and sets the earlier member `n`
-          unfold closeRule at ht
+          unfold closeRuleO at ht
           cases q with
           | defn _ => cases ht
           | reg r =>
@@ -593,26 +622,27 @@ theorem tabK_sound : ∀ k n vs b, tabK U M k n vs = some b →
                 subst ht
                 simp only [Bool.and_eq_true, beq_iff_eq, List.any_eq_true] at hany
                 obtain ⟨hq', pr, hpr, hreq, hperm⟩ := hany
-                have hqO : OutB M F r.name vs := (canonO h M F hr vs).mp ((hstep _ vs true hq hq').mpr rfl)
+                have hqO : (outcomeBase (fill U) r.name).denote MR (tupleVal vs) :=
+                  (canonOR h M R hr vs).mp ((hstep _ vs true hq hq').mpr rfl)
                 have htyq : tupleTypedB M r.sorts vs = true := by
-                  unfold stepEntry at hq'
+                  unfold stepEntryO at hq'
                   split at hq'
                   · assumption
                   · cases hq'
                 obtain ⟨r', hr'', hr'n, _, _, hr's⟩ := pair_req hpr
                 have hrr : r' = r := hu.regulated_eq hr'' hr (hr'n.trans hreq)
                 subst hrr
-                have htyped : VE.TupleTyped (withFill U M.asStructure F) pr.sorts vs := by
+                have htyped : VE.TupleTyped MR pr.sorts vs := by
                   rw [← hr's]
                   exact (tupleTyped_relation M.asStructure _ _ vs).mpr ((tupleTypedB_iff M _ vs).mp htyq)
                 obtain ⟨m', hm', hm'n, _, hm's⟩ := pair_perm hu hpr
                 have hmn : rn = m' := hu.regulated_eq hrn hm' (hrnn.trans (hperm.symm.trans hm'n.symm))
                 subst hmn
-                have hgapB := gap_of_kleene hu h M F hF _ hA hrn (hrnn ▸ hp) vs (by rw [hm's]; exact htyped)
+                have hgapB := gap_of_kleeneO hu h M opens R hF _ hA hrn (hrnn ▸ hp) vs (by rw [hm's]; exact htyped)
                   (by rw [hrnn]; exact hgap)
-                rw [← hrnn, canonO h M F hrn, hrnn, ← hperm]
+                rw [← hrnn, canonOR h M R hrn, hrnn, ← hperm]
                 simp only [iff_true]
-                exact perm_of_req M F hF hpr (by rw [hperm]; exact hp) vs htyped (by rw [hperm, ← hrnn]; exact hgapB)
+                exact perm_of_reqR M R hF hpr (by rw [hperm]; exact hp) vs htyped (by rw [hperm, ← hrnn]; exact hgapB)
                   (by rw [hreq]; exact hqO)
               · split at ht
                 · rename_i _ hany
@@ -620,41 +650,103 @@ theorem tabK_sound : ∀ k n vs b, tabK U M k n vs = some b →
                   subst ht
                   simp only [Bool.and_eq_true, beq_iff_eq, List.any_eq_true] at hany
                   obtain ⟨hq', pr, hpr, hperm, hreq⟩ := hany
-                  have hqO : ¬ OutB M F r.name vs := fun ho => by
-                    cases (hstep _ vs false hq hq').mp ((canonO h M F hr vs).mpr ho)
+                  have hqO : ¬ (outcomeBase (fill U) r.name).denote MR (tupleVal vs) := fun ho => by
+                    cases (hstep _ vs false hq hq').mp ((canonOR h M R hr vs).mpr ho)
                   have htyq : tupleTypedB M r.sorts vs = true := by
-                    unfold stepEntry at hq'
+                    unfold stepEntryO at hq'
                     split at hq'
                     · assumption
                     · cases hq'
                   obtain ⟨m', hm', hm'n, _, hm's⟩ := pair_perm hu hpr
                   have hmr : m' = r := hu.regulated_eq hm' hr (hm'n.trans hperm)
                   subst hmr
-                  have htyped : VE.TupleTyped (withFill U M.asStructure F) pr.sorts vs := by
+                  have htyped : VE.TupleTyped MR pr.sorts vs := by
                     rw [← hm's]
                     exact (tupleTyped_relation M.asStructure _ _ vs).mpr ((tupleTypedB_iff M _ vs).mp htyq)
                   obtain ⟨r', hr'', hr'n, _, _, hr's⟩ := pair_req hpr
                   have hnr : rn = r' := hu.regulated_eq hrn hr'' (hrnn.trans (hreq.symm.trans hr'n.symm))
                   subst hnr
-                  have hgapB := gap_of_kleene hu h M F hF _ hA hrn (hrnn ▸ hp) vs (by rw [hr's]; exact htyped)
+                  have hgapB := gap_of_kleeneO hu h M opens R hF _ hA hrn (hrnn ▸ hp) vs (by rw [hr's]; exact htyped)
                     (by rw [hrnn]; exact hgap)
-                  rw [← hrnn, canonO h M F hrn, hrnn, ← hreq]
+                  rw [← hrnn, canonOR h M R hrn, hrnn, ← hreq]
                   simp only [Bool.false_eq_true, iff_false]
-                  exact notreq_of_notperm M F hF hpr (by rw [hreq]; exact hp) vs htyped (by rw [hreq, ← hrnn]; exact hgapB)
+                  exact notreq_of_notpermR M R hF hpr (by rw [hreq]; exact hp) vs htyped
+                    (by rw [hreq, ← hrnn]; exact hgapB)
                     (by rw [hperm]; exact hqO)
                 · cases ht
             · cases ht
     · exact ih n vs b ht
 
 /-- The value `table3` gives is the outcome at the base in every admissible filling. -/
-theorem table3_outcome {r : Regulated} (hr : r ∈ U.D.T.regulated) (vs : List α) (b : Bool)
-    (ht : table3 U M r.name vs = some b) :
-    (outcomeBase (fill U) r.name).denote (withFill U M.asStructure F) (tupleVal vs) ↔ b = true := by
+theorem table3O_outcome (hoff : ∀ p, p ∉ opens → ∀ ws, R p ws ↔ ws ∈ M.relations p) {r : Regulated}
+    (hr : r ∈ U.D.T.regulated) (vs : List α) (b : Bool)
+    (ht : table3O U M opens r.name vs = some b) :
+    (outcomeBase (fill U) r.name).denote MR (tupleVal vs) ↔ b = true := by
   have hv' := valid_of_wellFormed _ (fill_wellFormed U h)
-  exact (canon_regulated hv' (withFill U M.asStructure F) (show r ∈ (fill U).T.regulated from hr) vs).symm.trans
-    (tabK_sound hu h M F hF _ _ vs b ht)
+  exact (canon_regulated hv' MR (show r ∈ (fill U).T.regulated from hr) vs).symm.trans
+    (tabKO_sound hu h M opens R hF hoff _ _ vs b ht)
 
 end Table
+
+/-- The unsaid tables of a filling leave every other relation as `B`'s: `withFill` agrees with `M` off the
+unsaid names, the hypothesis the general theorems take at `opens = unsaidNames U`. -/
+theorem withFill_off_unsaid {α : Type u} {U : UDoc} (M : VE.FiniteModel α) (F : FillTables U M.asStructure) :
+    ∀ p, p ∉ unsaidNames U → ∀ ws, (withFill U M.asStructure F).relation p ws ↔ ws ∈ M.relations p :=
+  fun _ hp ws => withFill_off U _ F hp ws
+
+section TableUnsaid
+open VE.SoftNorms (canon)
+variable {α : Type u} [DecidableEq α] {U : UDoc} (hu : UValid U) (h : WellFormedU U = true)
+  (M : VE.FiniteModel α) (F : FillTables U M.asStructure) (hF : BaseAdmissibleU U (withFill U M.asStructure F))
+include hu h hF
+
+/-- The outcome of a regulated predicate at the filled base. -/
+abbrev OutB (n : String) (vs : List α) : Prop :=
+  (outcomeBase (fill U) n).denote (withFill U M.asStructure F) (tupleVal vs)
+
+omit [DecidableEq α] hu h in
+/-- `Fill_T` at a gap of the permission: the obligation's yes forces the permission's yes. -/
+theorem perm_of_req {pr : Pair} (hpr : pr ∈ pairs U.D.T) (hp : pr.perm ∈ U.unspec) (vs : List α)
+    (htyped : VE.TupleTyped (withFill U M.asStructure F) pr.sorts vs)
+    (hgap : (gapF U pr.perm).denote (withFill U M.asStructure F) (tupleVal vs))
+    (hreq : OutB M F pr.req vs) : OutB M F pr.perm vs :=
+  perm_of_reqR M _ hF hpr hp vs htyped hgap hreq
+
+omit [DecidableEq α] hu h in
+/-- `Fill_T` at a gap of the obligation: the permission's no forces the obligation's no. -/
+theorem notreq_of_notperm {pr : Pair} (hpr : pr ∈ pairs U.D.T) (hp : pr.req ∈ U.unspec) (vs : List α)
+    (htyped : VE.TupleTyped (withFill U M.asStructure F) pr.sorts vs)
+    (hgap : (gapF U pr.req).denote (withFill U M.asStructure F) (tupleVal vs))
+    (hperm : ¬ OutB M F pr.perm vs) : ¬ OutB M F pr.req vs :=
+  notreq_of_notpermR M _ hF hpr hp vs htyped hgap hperm
+
+/-- A Kleene-true gap body is the gap at the filled base. -/
+theorem gap_of_kleene (tab : String → List α → Option Bool)
+    (hA : ∀ p vs b, atomV U M tab p vs = some b →
+      ((canon (fill U) (withFill U M.asStructure F)).relation p vs ↔ b = true))
+    {r : Regulated} (hr : r ∈ U.D.T.regulated) (hp : r.name ∈ U.unspec) (vs : List α)
+    (htyped : VE.TupleTyped (withFill U M.asStructure F) r.sorts vs)
+    (hk : kleene M (atomV U M tab) (tupleVal vs) (gapBody U r.name) = some true) :
+    (gapF U r.name).denote (withFill U M.asStructure F) (tupleVal vs) :=
+  gap_of_kleeneO hu h M (unsaidNames U) _ hF tab hA hr hp vs htyped hk
+
+omit [DecidableEq α] hu hF in
+/-- The relation of a regulated predicate at `canon` is its outcome at the filled base. -/
+theorem canonO {r : Regulated} (hr : r ∈ U.D.T.regulated) (vs : List α) :
+    (canon (fill U) (withFill U M.asStructure F)).relation r.name vs ↔ OutB M F r.name vs :=
+  canonOR h M _ hr vs
+
+theorem tabK_sound : ∀ k n vs b, tabK U M k n vs = some b →
+    ((canon (fill U) (withFill U M.asStructure F)).relation n vs ↔ b = true) :=
+  tabKO_sound hu h M (unsaidNames U) _ hF (withFill_off_unsaid M F)
+
+/-- The value `table3` gives is the outcome at the base in every admissible filling. -/
+theorem table3_outcome {r : Regulated} (hr : r ∈ U.D.T.regulated) (vs : List α) (b : Bool)
+    (ht : table3 U M r.name vs = some b) :
+    (outcomeBase (fill U) r.name).denote (withFill U M.asStructure F) (tupleVal vs) ↔ b = true :=
+  table3O_outcome hu h M (unsaidNames U) _ hF (withFill_off_unsaid M F) hr vs b ht
+
+end TableUnsaid
 
 /-- `table3_sound`: a definite `table3` entry is the outcome under every checked filling. -/
 theorem table3_sound {α : Type u} [DecidableEq α] (U : UDoc) (h : WellFormedU U = true) (M : VE.FiniteModel α)
@@ -754,10 +846,9 @@ gives a sound answer (`settled_of_enumeration`). They are computed as Python's
 under the same budget: the unsaid atoms on which the Kleene value of the point
 depends, closed under the `Fill_T` instances that mention one of them. -/
 
-/-- An atom with nothing filled: an unsaid atom is unknown and is its own cone. -/
-def coneAtom {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (p : String) (vs : List α) :
-    Option Bool × List (String × List α) :=
-  if p ∈ unsaidNames U then (none, [(p, vs)]) else (some (decide (vs ∈ M.relations p)), [])
+/-- An atom with nothing filled: an atom on an open name is unknown and is its own cone. -/
+def coneAtomO {α : Type u} [DecidableEq α] (M : VE.FiniteModel α) (opens : List String) (p : String) (vs : List α) : Option Bool × List (String × List α) :=
+  if p ∈ opens then (none, [(p, vs)]) else (some (decide (vs ∈ M.relations p)), [])
 
 /-- A binary junction: `stop` is the value that decides it (true for `or`). -/
 def coneJoin {β : Type u} (stop : Bool) (x y : Option Bool × List β) : Option Bool × List β :=
@@ -772,27 +863,35 @@ def coneList {β : Type u} (stop : Bool) (l : List (Option Bool × List β)) : O
   else if l.any (·.1.isNone) then (none, (l.filter (·.1.isNone)).flatMap (·.2))
   else (some (!stop), [])
 
-/-- Kleene evaluation with nothing filled that also returns the unsaid atoms an
-unknown value depends on (a definite value returns none). -/
-def coneEval {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (ρ : List α) :
+/-- Kleene evaluation with nothing filled, the atoms on `opens` unknown, that also returns
+the open atoms an unknown value depends on (a definite value returns none). -/
+def coneEvalO {α : Type u} [DecidableEq α] (M : VE.FiniteModel α) (opens : List String) (ρ : List α) :
     VE.Formula → Option Bool × List (String × List α)
   | .top => (some true, [])
   | .bottom => (some false, [])
   | .unary p t => match t.denote M.asStructure ρ with
-      | some v => coneAtom U M p [v]
+      | some v => coneAtomO M opens p [v]
       | none => (some false, [])
   | .binary p t w => match t.denote M.asStructure ρ, w.denote M.asStructure ρ with
-      | some v, some v' => coneAtom U M p [v, v']
+      | some v, some v' => coneAtomO M opens p [v, v']
       | _, _ => (some false, [])
   | .eq t w => match t.denote M.asStructure ρ, w.denote M.asStructure ρ with
       | some v, some v' => (some (decide (v = v')), [])
       | _, _ => (some false, [])
-  | .not a => let x := coneEval U M ρ a; (kneg x.1, x.2)
-  | .and a b => coneJoin false (coneEval U M ρ a) (coneEval U M ρ b)
-  | .or a b => coneJoin true (coneEval U M ρ a) (coneEval U M ρ b)
-  | .implies a b => let x := coneEval U M ρ a; coneJoin true (kneg x.1, x.2) (coneEval U M ρ b)
-  | .all s a => coneList false ((M.domains s).map (fun v => coneEval U M (v :: ρ) a))
-  | .ex s a => coneList true ((M.domains s).map (fun v => coneEval U M (v :: ρ) a))
+  | .not a => let x := coneEvalO M opens ρ a; (kneg x.1, x.2)
+  | .and a b => coneJoin false (coneEvalO M opens ρ a) (coneEvalO M opens ρ b)
+  | .or a b => coneJoin true (coneEvalO M opens ρ a) (coneEvalO M opens ρ b)
+  | .implies a b => let x := coneEvalO M opens ρ a; coneJoin true (kneg x.1, x.2) (coneEvalO M opens ρ b)
+  | .all s a => coneList false ((M.domains s).map (fun v => coneEvalO M opens (v :: ρ) a))
+  | .ex s a => coneList true ((M.domains s).map (fun v => coneEvalO M opens (v :: ρ) a))
+
+/-- `coneEvalO` at the unsaid names. -/
+def coneEval {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (ρ : List α) (φ : VE.Formula) :
+    Option Bool × List (String × List α) :=
+  coneEvalO M (unsaidNames U) ρ φ
+
+theorem coneEval_eq_open {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) :
+    coneEval U M = coneEvalO M (unsaidNames U) := rfl
 
 /-- The body of the `Fill_T` premise of a pair, before its universal closure. -/
 def fillBody (U : UDoc) (pr : Pair) : VE.Formula :=
@@ -807,48 +906,96 @@ def closeCone {β : Type u} [DecidableEq β] : Nat → List (List β) → List �
     else closeCone k (pending.filter (fun is => !is.any (· ∈ acc))) (acc ++ hit.flatten).eraseDups
 
 /-- The ground `Fill_T` instances (a pair with an unspecified member and a typed tuple)
-whose Kleene value with nothing filled is unknown, each with its unsaid atoms (Python's
+whose Kleene value with nothing filled is unknown, each with its atoms on `opens` (Python's
 `UnspecifiedDocument.instances`, kept where the value is unknown). -/
-def openInstances {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) :
+def openInstancesO {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (opens : List String) :
     List ((Pair × List α) × List (String × List α)) :=
   (openPairs U).flatMap (fun pr => (allTuples M pr.sorts).filterMap (fun ws =>
-    let y := coneEval U M (tupleVal ws) (fillBody U pr)
+    let y := coneEvalO M opens (tupleVal ws) (fillBody U pr)
     if y.1.isNone then some ((pr, ws), y.2) else none))
 
-/-- The closed cone of a formula at a valuation (2.5): the unsaid atoms its Kleene
+/-- The closed cone of a formula at a valuation (2.5): the atoms on `opens` its Kleene
 value depends on, closed under the open `Fill_T` instances that meet them; empty where
-the value is definite (Python's `UnspecifiedDocument.cone`). -/
-def coneOf {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (ρ : List α) (φ : VE.Formula) :
-    List (String × List α) :=
-  let x := coneEval U M ρ φ
+the value is definite (Python's `UnspecifiedDocument.cone` at the unsaid names). -/
+def coneOfO {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (opens : List String) (ρ : List α)
+    (φ : VE.Formula) : List (String × List α) :=
+  let x := coneEvalO M opens ρ φ
   if x.1.isSome then [] else
-  let inst := (openInstances U M).map (·.2)
+  let inst := (openInstancesO U M opens).map (·.2)
   closeCone (inst.length + 1) inst x.2.eraseDups
 
-/-- The closed cone of `n` at `vs` (2.5): empty where the Kleene value is definite. -/
+/-- The closed cone of `n` at `vs` over `opens` (2.5): empty where the Kleene value is definite. -/
+def coneAtomsO {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (opens : List String) (n : String)
+    (vs : List α) : List (String × List α) :=
+  coneOfO U M opens (tupleVal vs) (outcomeBase (fill U) n)
+
+/-- `openInstancesO` at the unsaid names. -/
+def openInstances {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) :
+    List ((Pair × List α) × List (String × List α)) :=
+  openInstancesO U M (unsaidNames U)
+
+/-- `coneOfO` at the unsaid names. -/
+def coneOf {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (ρ : List α) (φ : VE.Formula) :
+    List (String × List α) :=
+  coneOfO U M (unsaidNames U) ρ φ
+
+/-- `coneAtomsO` at the unsaid names: the atoms today's enumeration enumerates. -/
 def coneAtoms {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (n : String) (vs : List α) :
     List (String × List α) :=
-  coneOf U M (tupleVal vs) (outcomeBase (fill U) n)
+  coneAtomsO U M (unsaidNames U) n vs
 
-/-- An assignment of the atoms `C` (true exactly on `A`); other unsaid atoms unknown. -/
-def coneAtomV {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (C A : List (String × List α))
+theorem openInstances_eq_open {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) :
+    openInstances U M = openInstancesO U M (unsaidNames U) := rfl
+
+theorem coneOf_eq_open {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) :
+    coneOf U M = coneOfO U M (unsaidNames U) := rfl
+
+theorem coneAtoms_eq_open {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) :
+    coneAtoms U M = coneAtomsO U M (unsaidNames U) := rfl
+
+/-- An assignment of the atoms `C` (true exactly on `A`); other atoms on `opens` unknown. -/
+def coneAtomVO {α : Type u} [DecidableEq α] (M : VE.FiniteModel α) (opens : List String) (C A : List (String × List α))
     (p : String) (vs : List α) : Option Bool :=
-  if p ∈ unsaidNames U then (if (p, vs) ∈ C then some (decide ((p, vs) ∈ A)) else none)
+  if p ∈ opens then (if (p, vs) ∈ C then some (decide ((p, vs) ∈ A)) else none)
   else some (decide (vs ∈ M.relations p))
 
 /-- The value of `φ` at `ρ` under each assignment of the atoms `C` that no `Fill_T`
 formula refutes in Kleene evaluation (`none` where it stays unknown); `C = []` is plain
 Kleene evaluation. -/
+def coneValuesAtO {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (opens : List String)
+    (C : List (String × List α)) (ρ : List α) (φ : VE.Formula) : List (Option Bool) :=
+  (subsets C).filterMap (fun A =>
+    if (fillPremises U).any (fun ψ => kleene M (coneAtomVO M opens C A) [] ψ == some false) then none
+    else some (kleene M (coneAtomVO M opens C A) ρ φ))
+
+/-- `coneValuesAtO` of the outcome of `n` at `vs`. -/
+def coneValuesO {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (opens : List String)
+    (C : List (String × List α)) (n : String) (vs : List α) : List (Option Bool) :=
+  coneValuesAtO U M opens C (tupleVal vs) (outcomeBase (fill U) n)
+
+/-- `coneAtomVO` at the unsaid names. -/
+def coneAtomV {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (C A : List (String × List α))
+    (p : String) (vs : List α) : Option Bool :=
+  coneAtomVO M (unsaidNames U) C A p vs
+
+/-- `coneValuesAtO` at the unsaid names. -/
 def coneValuesAt {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (C : List (String × List α))
     (ρ : List α) (φ : VE.Formula) : List (Option Bool) :=
-  (subsets C).filterMap (fun A =>
-    if (fillPremises U).any (fun ψ => kleene M (coneAtomV U M C A) [] ψ == some false) then none
-    else some (kleene M (coneAtomV U M C A) ρ φ))
+  coneValuesAtO U M (unsaidNames U) C ρ φ
 
-/-- `coneValuesAt` of the outcome of `n` at `vs`. -/
+/-- `coneValuesO` at the unsaid names. -/
 def coneValues {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (C : List (String × List α))
     (n : String) (vs : List α) : List (Option Bool) :=
-  coneValuesAt U M C (tupleVal vs) (outcomeBase (fill U) n)
+  coneValuesO U M (unsaidNames U) C n vs
+
+theorem coneAtomV_eq_open {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) :
+    coneAtomV U M = coneAtomVO M (unsaidNames U) := rfl
+
+theorem coneValuesAt_eq_open {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) :
+    coneValuesAt U M = coneValuesAtO U M (unsaidNames U) := rfl
+
+theorem coneValues_eq_open {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) :
+    coneValues U M = coneValuesO U M (unsaidNames U) := rfl
 
 /-- The definite value every entry has, when at least one entry is left. -/
 def agreed : List (Option Bool) → Option Bool
@@ -869,38 +1016,51 @@ theorem agreed_all {l : List (Option Bool)} {b : Bool} (h : agreed l = some b) :
     · cases h
   · cases h
 
-/-- `enumerateSettled`: every assignment of the cone's unsaid atoms (at most
-`MAX_UNSAID_ATOMS` of them) that `Fill_T` does not refute gives `b`, and at least one
-assignment is left. -/
+/-- `enumerateSettledO`: every assignment of the ground atoms `atoms` (DF1; at most
+`MAX_UNSAID_ATOMS` of them), the other atoms on `opens` unknown, that `Fill_T` does not
+refute gives `b`, and at least one assignment is left. -/
+def enumerateSettledO {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (opens : List String)
+    (atoms : List (String × List α)) (n : String) (vs : List α) : Option Bool :=
+  if atoms.length > MAX_UNSAID_ATOMS then none else agreed (coneValuesO U M opens atoms n vs)
+
+/-- `enumerateSettled`: `enumerateSettledO` at the unsaid names over the cone's unsaid atoms. -/
 def enumerateSettled {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (n : String) (vs : List α) :
     Option Bool :=
-  let C := coneAtoms U M n vs
-  if C.length > MAX_UNSAID_ATOMS then none else agreed (coneValues U M C n vs)
+  enumerateSettledO U M (unsaidNames U) (coneAtoms U M n vs) n vs
 
-theorem enumerate_all {α : Type u} [DecidableEq α] {U : UDoc} {M : VE.FiniteModel α} {n : String} {vs : List α}
-    {b : Bool} (he : enumerateSettled U M n vs = some b) :
-    ∀ x ∈ coneValues U M (coneAtoms U M n vs) n vs, x = some b := by
-  unfold enumerateSettled at he
-  simp only at he
+theorem enumerateSettled_eq_open {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α) (n : String)
+    (vs : List α) : enumerateSettled U M n vs = enumerateSettledO U M (unsaidNames U) (coneAtoms U M n vs) n vs :=
+  rfl
+
+theorem enumerateO_all {α : Type u} [DecidableEq α] {U : UDoc} {M : VE.FiniteModel α} {opens : List String}
+    {atoms : List (String × List α)} {n : String} {vs : List α} {b : Bool}
+    (he : enumerateSettledO U M opens atoms n vs = some b) : ∀ x ∈ coneValuesO U M opens atoms n vs, x = some b := by
+  unfold enumerateSettledO at he
   split at he
   · cases he
   · exact agreed_all he
 
+theorem enumerate_all {α : Type u} [DecidableEq α] {U : UDoc} {M : VE.FiniteModel α} {n : String} {vs : List α}
+    {b : Bool} (he : enumerateSettled U M n vs = some b) :
+    ∀ x ∈ coneValues U M (coneAtoms U M n vs) n vs, x = some b :=
+  enumerateO_all he
+
 /-- Agreement of every assignment of `C` that `Fill_T` does not refute is the value of `φ`
-under every filling that satisfies `Fill_T`. Any atom list is sound here: such a filling
-agrees with the assignment of its own values on the list, which no `Fill_T` formula refutes
-(each is true under the filling), and a definite Kleene value is the filling's value. -/
-theorem denote_of_coneValuesAt {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α)
-    (C : List (String × List α)) (ρ : List α) (φ : VE.Formula) (b : Bool)
-    (hall : ∀ x ∈ coneValuesAt U M C ρ φ, x = some b) (F : FillTables U M.asStructure)
-    (hF : Sat (withFill U M.asStructure F) (fillPremises U)) :
-    φ.denote (withFill U M.asStructure F) ρ ↔ b = true := by
+under every completion `R` of `M` that agrees with `M` off `opens` and satisfies `Fill_T`.
+Any atom list is sound here: such a completion agrees with the assignment of its own values
+on the list, which no `Fill_T` formula refutes (each is true under it), and a definite Kleene
+value is the completion's value. -/
+theorem denote_of_coneValuesAtO {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α)
+    (opens : List String) (C : List (String × List α)) (ρ : List α) (φ : VE.Formula) (b : Bool)
+    (hall : ∀ x ∈ coneValuesAtO U M opens C ρ φ, x = some b) (R : String → List α → Prop)
+    (hoff : ∀ p, p ∉ opens → ∀ ws, R p ws ↔ ws ∈ M.relations p)
+    (hR : Sat { M.asStructure with relation := R } (fillPremises U)) :
+    φ.denote { M.asStructure with relation := R } ρ ↔ b = true := by
   classical
-  let S := withFill U M.asStructure F
-  let A := C.filter (fun a => decide (S.relation a.1 a.2))
-  have hA : ∀ p ws c, coneAtomV U M C A p ws = some c → (S.relation p ws ↔ c = true) := by
+  let A := C.filter (fun a => decide (R a.1 a.2))
+  have hA : ∀ p ws c, coneAtomVO M opens C A p ws = some c → (R p ws ↔ c = true) := by
     intro p ws c hc
-    unfold coneAtomV at hc
+    unfold coneAtomVO at hc
     split at hc
     · split at hc
       · rename_i _ hC
@@ -912,22 +1072,41 @@ theorem denote_of_coneValuesAt {α : Type u} [DecidableEq α] (U : UDoc) (M : VE
     · rename_i hun
       simp only [Option.some.injEq] at hc
       subst hc
-      rw [withFill_off U _ F hun]
-      simp [VE.FiniteModel.asStructure]
-  have hK : ∀ ψ σ c, kleene M (coneAtomV U M C A) σ ψ = some c → (ψ.denote S σ ↔ c = true) :=
-    kleene_sound M _ S.relation hA
-  have hnot : (fillPremises U).any (fun ψ => kleene M (coneAtomV U M C A) [] ψ == some false) = false := by
+      simpa using hoff p hun ws
+  have hK : ∀ ψ σ c, kleene M (coneAtomVO M opens C A) σ ψ = some c →
+      (ψ.denote { M.asStructure with relation := R } σ ↔ c = true) :=
+    kleene_sound M _ R hA
+  have hnot : (fillPremises U).any (fun ψ => kleene M (coneAtomVO M opens C A) [] ψ == some false) = false := by
     rw [Bool.eq_false_iff]
     intro hany
     obtain ⟨ψ, hψ, hk⟩ := List.any_eq_true.mp hany
-    have := (hK ψ [] false (by simpa using hk)).mp (hF ψ hψ)
+    have := (hK ψ [] false (by simpa using hk)).mp (hR ψ hψ)
     cases this
-  have hmem : kleene M (coneAtomV U M C A) ρ φ ∈ coneValuesAt U M C ρ φ :=
+  have hmem : kleene M (coneAtomVO M opens C A) ρ φ ∈ coneValuesAtO U M opens C ρ φ :=
     List.mem_filterMap.mpr ⟨A, filter_mem_subsets _ C, by simp [hnot]⟩
   exact hK _ _ b (hall _ hmem)
 
+/-- `denote_of_coneValuesAtO` at the unsaid names, over the fillings of the unsaid tables. -/
+theorem denote_of_coneValuesAt {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α)
+    (C : List (String × List α)) (ρ : List α) (φ : VE.Formula) (b : Bool)
+    (hall : ∀ x ∈ coneValuesAt U M C ρ φ, x = some b) (F : FillTables U M.asStructure)
+    (hF : Sat (withFill U M.asStructure F) (fillPremises U)) :
+    φ.denote (withFill U M.asStructure F) ρ ↔ b = true :=
+  denote_of_coneValuesAtO U M (unsaidNames U) C ρ φ b hall _ (withFill_off_unsaid M F) hF
+
+/-- `enumerateSettledO_sound`: agreement of every assignment of `atoms` that `Fill_T` does not
+refute is the outcome of `n` at `vs` under every completion of `M` off `opens` that satisfies
+`Fill_T` (`denote_of_coneValuesAtO`), whatever the atom list. -/
+theorem enumerateSettledO_sound {α : Type u} [DecidableEq α] (U : UDoc) (M : VE.FiniteModel α)
+    (opens : List String) (atoms : List (String × List α)) (n : String) (vs : List α) (b : Bool)
+    (he : enumerateSettledO U M opens atoms n vs = some b) (R : String → List α → Prop)
+    (hoff : ∀ p, p ∉ opens → ∀ ws, R p ws ↔ ws ∈ M.relations p)
+    (hR : Sat { M.asStructure with relation := R } (fillPremises U)) :
+    (outcomeBase (fill U) n).denote { M.asStructure with relation := R } (tupleVal vs) ↔ b = true :=
+  denote_of_coneValuesAtO U M opens atoms (tupleVal vs) (outcomeBase (fill U) n) b (enumerateO_all he) R hoff hR
+
 /-- `settled_of_enumeration`: agreement of every assignment of the cone that `Fill_T`
-does not refute is SETTLED (`denote_of_coneValuesAt`). -/
+does not refute is SETTLED (`enumerateSettledO_sound` at the unsaid names). -/
 theorem settled_of_enumeration {α : Type u} [DecidableEq α] (U : UDoc) (h : WellFormedU U = true)
     (M : VE.FiniteModel α) (valid : M.Valid (envAt U.D 0)) (hb : backgroundValid U.D M = true)
     (r : Regulated) (hr : r ∈ U.D.T.regulated) (vs : List α) (typed : VE.TupleTyped M.asStructure r.sorts vs)
@@ -938,8 +1117,7 @@ theorem settled_of_enumeration {α : Type u} [DecidableEq α] (U : UDoc) (h : We
   have _ := hr
   have _ := typed
   intro F hF
-  exact denote_of_coneValuesAt U M (coneAtoms U M r.name vs) (tupleVal vs) (outcomeBase (fill U) r.name) b
-    (enumerate_all he) F hF.2
+  exact enumerateSettledO_sound U M (unsaidNames U) _ r.name vs b he _ (withFill_off_unsaid M F) hF.2
 
 /-! ## The fragment gate -/
 
