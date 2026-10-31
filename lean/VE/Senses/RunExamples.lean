@@ -153,6 +153,8 @@ def fenced (fs ids allowed : List String) (defaults : List (String × Nat) := []
 #guard pin (projectCaseReported ((projectReq "" ["funny", "tells"]).setObjVal! "packs" (Json.arr #[]) |>.setObjVal! "own" (Json.arr #[sFunny1.toJson, sTells1.toJson]))) == "1cfd57a5f331dd8904065e1cc52c3249a8fe56c07581871cda0be5f8bd11e2ef"
 -- a second used word outside the dictionary
 #guard pin (projectCaseReported (projectReq lineFunny2 ["funny", "giggle"])) == "19bdf30a4256160b6f1b8a478a4d3f4b0c6a15c1ff99c0ff226bf234ffbb19e5"
+-- the used word outside the dictionary first
+#guard pin (projectCaseReported (projectReq lineFunny2 ["giggle", "funny"])) == "19bdf30a4256160b6f1b8a478a4d3f4b0c6a15c1ff99c0ff226bf234ffbb19e5"
 -- every word of the dictionary
 #guard pin (projectCaseReported (projectReq "" ["funny", "odd", "tells", "deployed", "reviewed", "access"])) == "2d0236e945451c2200e679e0ff76de13b9774885166f7f8642bcac8e2b6ebb65"
 -- a one-character line

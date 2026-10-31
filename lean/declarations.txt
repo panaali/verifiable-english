@@ -20695,7 +20695,7 @@ module VE.Senses.Run 12ed6e66153866fdabb3e6729ffce83b14078dd6142337b7d3ed173848f
 309:0-335:113 def VE.Senses.Run.projectCase@VE.Senses.Run
 337:0-341:84 def VE.Senses.Run.projectCaseReported@VE.Senses.Run
 343:0-360:88 def VE.Senses.Run.main@VE.Senses.Run
-module VE.Senses.RunExamples bd839e64af22157445648432872a92cd26f2d3ceb769bcb2e3888b52a7dac5e7
+module VE.Senses.RunExamples 35a3c1efbfb2691870e94e63314d706530fb3cea12f7e478ec3486b111a3daca
 11:0-11:113 def VE.Senses.RunExamples.caseJ@VE.Senses.RunExamples
 13:0-13:67 def VE.Senses.RunExamples.lineFunny2@VE.Senses.RunExamples
 15:0-19:31 def VE.Senses.RunExamples.LA@VE.Senses.RunExamples
