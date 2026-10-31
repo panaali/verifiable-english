@@ -1,0 +1,9 @@
+job=scale-stage-timers-01adbfe6-t472625-s5 job_commit=e001887b5599e1f187d6352902c79473002689e9 session=cse_012rcAu6J26c4yhpUDKZP4Wg nproc=4
+mem_total_mb=16091 mem_avail_mb=15574
+tmp_free=26G
+Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)
+uv 0.12.19 (x86_64-unknown-linux-gnu)
+root_git_global_keys=commit.gpgsign core.checkstat core.trustctime gpg.format gpg.ssh.program http.proxyauthmethod push.negotiate user.email user.name user.signingkey 
+root_git_system_keys=filter.lfs.clean filter.lfs.process filter.lfs.required filter.lfs.smudge 
+run_as=ccrun uid=30033 home=/home/ccrun umask=0022 root_home=/root rewritten=21
+job_rc=0 job_s=2393
