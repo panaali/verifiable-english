@@ -2185,7 +2185,8 @@
       "lean/ResponseShapeAudit.lean": "the dependency audit of the response-shape theorems (#print axioms only); JSON only in theorem names",
       "lean/VE/Service/SoftSourceExamples.lean": "fixtures only: rd9-docroute F7's #guard checks build small unit lists as request JSON and run the document mode's soft source (`softSourceNorms`) on them; no service mode reads this file",
       "lean/VE/Compose/Examples.lean": "checks only: jt-2c's #guards build environment JSON for `VE.Compose.decidingEnvironment`; no decoder",
-      "lean/VE/Scope/Run.lean": "lean:runner-glue: the `scope` mode (SC-1c) reads the case's `id` and `document` (the document mode's `split` and scope's `decodeBlock`, unchanged) and writes its answer rows (govJson, rowJson, governedJson); no decoder of its own"
+      "lean/VE/Scope/Run.lean": "lean:runner-glue: the `scope` mode (SC-1c) reads the case's `id` and `document` (the document mode's `split` and scope's `decodeBlock`, unchanged) and writes its answer rows (govJson, rowJson, governedJson); no decoder of its own",
+      "lean/VE/Closure/CoreEquiv.lean": "proof only: decodeTrace_ne_embed builds one JSON trace node with Json.mkObj, the kernel-checked counterexample to the closure and Core trace decoders' equality (AR-21); no decoder and no runner path"
     }
   },
   "plan_operations": {
