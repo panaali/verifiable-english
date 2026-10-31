@@ -1,0 +1,269 @@
+{
+ "base": "11de39bd88e07d7d1cf75e16ae956e3179b324c3",
+ "changes": [
+  {
+   "added": 7,
+   "deleted": 39,
+   "path": ".importlinter"
+  },
+  {
+   "added": 27,
+   "deleted": 22,
+   "path": "docs/ARCHITECTURE-LAYERS.md"
+  },
+  {
+   "added": 2,
+   "deleted": 2,
+   "path": "docs/ARCHITECTURE.md"
+  },
+  {
+   "added": 20,
+   "deleted": 0,
+   "path": "docs/arch/AR-14/DELTA.md"
+  },
+  {
+   "added": 267,
+   "deleted": 0,
+   "path": "docs/arch/AR-14/REPORT.md"
+  },
+  {
+   "added": 22,
+   "deleted": 0,
+   "path": "docs/arch/AR-14/evidence.toml"
+  },
+  {
+   "added": 109,
+   "deleted": 0,
+   "path": "docs/arch/AR-14/evidence/ab-delta.json"
+  },
+  {
+   "added": 483,
+   "deleted": 0,
+   "path": "docs/arch/AR-14/evidence/ab.json"
+  },
+  {
+   "added": 139,
+   "deleted": 0,
+   "path": "docs/arch/AR-14/evidence/after.json"
+  },
+  {
+   "added": 223,
+   "deleted": 17,
+   "path": "docs/arch/AR-14/evidence/before.json"
+  },
+  {
+   "added": 223,
+   "deleted": 0,
+   "path": "docs/arch/AR-14/evidence/mutants.json"
+  },
+  {
+   "added": 32179,
+   "deleted": 0,
+   "path": "docs/arch/AR-14/evidence/pilot-rerun.json"
+  },
+  {
+   "added": 98,
+   "deleted": 0,
+   "path": "docs/arch/AR-14/measure.py"
+  },
+  {
+   "added": 138,
+   "deleted": 0,
+   "path": "docs/arch/AR-14/mutants.json"
+  },
+  {
+   "added": 51,
+   "deleted": 0,
+   "path": "docs/arch/AR-14/scc.py"
+  },
+  {
+   "added": 4,
+   "deleted": 4,
+   "path": "docs/codemap/INDEX.md"
+  },
+  {
+   "added": 2,
+   "deleted": 0,
+   "path": "docs/codemap/docs__arch.md"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "docs/codemap/tests--part-4.md"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "docs/codemap/tests--part-5.md"
+  },
+  {
+   "added": 1,
+   "deleted": 2,
+   "path": "docs/codemap/tests--part-6.md"
+  },
+  {
+   "added": 2,
+   "deleted": 0,
+   "path": "docs/codemap/tests--part-7.md"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "docs/codemap/tools--part-1.md"
+  },
+  {
+   "added": 2,
+   "deleted": 0,
+   "path": "docs/codemap/usecases.md"
+  },
+  {
+   "added": 69,
+   "deleted": 0,
+   "path": "tests/test_package_facade.py"
+  },
+  {
+   "added": 3,
+   "deleted": 3,
+   "path": "tests/test_precommit_hook.py"
+  },
+  {
+   "added": 1,
+   "deleted": 0,
+   "path": "tests/test_surface_registry.py"
+  },
+  {
+   "added": 10,
+   "deleted": 0,
+   "path": "tools/change_units.py"
+  },
+  {
+   "added": 92,
+   "deleted": 61,
+   "path": "tools/check_python_layers.py"
+  },
+  {
+   "added": 4,
+   "deleted": 37,
+   "path": "tools/layer-exceptions.json"
+  },
+  {
+   "added": 54,
+   "deleted": 16,
+   "path": "tools/layer_policy.py"
+  },
+  {
+   "added": 6,
+   "deleted": 10,
+   "path": "tools/semantic_inventory.py"
+  },
+  {
+   "added": 164,
+   "deleted": 29,
+   "path": "tools/test_layer_policy.py"
+  },
+  {
+   "added": 87,
+   "deleted": 30,
+   "path": "ve/__init__.py"
+  },
+  {
+   "added": 2,
+   "deleted": 1,
+   "path": "ve/argument.py"
+  },
+  {
+   "added": 1,
+   "deleted": 2,
+   "path": "ve/ast.py"
+  },
+  {
+   "added": 4,
+   "deleted": 8,
+   "path": "ve/background.py"
+  },
+  {
+   "added": 3,
+   "deleted": 3,
+   "path": "ve/definitions.py"
+  },
+  {
+   "added": 2,
+   "deleted": 2,
+   "path": "ve/entailment.py"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "ve/environment.py"
+  },
+  {
+   "added": 3,
+   "deleted": 4,
+   "path": "ve/evaluate.py"
+  },
+  {
+   "added": 3,
+   "deleted": 3,
+   "path": "ve/model.py"
+  },
+  {
+   "added": 2,
+   "deleted": 5,
+   "path": "ve/norms.py"
+  },
+  {
+   "added": 1,
+   "deleted": 1,
+   "path": "ve/parser.py"
+  },
+  {
+   "added": 1,
+   "deleted": 2,
+   "path": "ve/softnorms.py"
+  },
+  {
+   "added": 2,
+   "deleted": 0,
+   "path": "ve/surface/__init__.py"
+  }
+ ],
+ "commits": [
+  {
+   "hash": "3aea6e6633bfb2b77e52ee4ffe58f69cf03707de",
+   "subject": "AR-14 evidence and report: before and after counts, A/B (byte-identical), mutants (13/13), DELTA (R11, R7)"
+  },
+  {
+   "hash": "c987e9c50a26f02d02e2cd2c18fa12a716d5d956",
+   "subject": "AR-14: the split-package init check also accepts an inward import (tools/test_layer_policy.py)"
+  },
+  {
+   "hash": "a844ce2b0b470cc8d87dcbe0145f3fafe0c89f41",
+   "subject": "AR-14: fixes from the selected run"
+  },
+  {
+   "hash": "57b6904cbe2d434eb417433ffb23b6099045fae9",
+   "subject": "AR-14: test selection follows the lazy facade (tools/test_layer_policy.py); seeded mutants"
+  },
+  {
+   "hash": "160fa8c0ed7eecda3c2ec1f9acd1f00308caf17f",
+   "subject": "AR-14: regenerated codemap (tools/regen_generated.py --write)"
+  },
+  {
+   "hash": "5895f106884d1440b1d91b39edb49b7828f740be",
+   "subject": "AR-14: module-level imports for the edges T5 makes inward"
+  },
+  {
+   "hash": "31af3a872387cc13e61532839ea32ebb4d6edd78",
+   "subject": "AR-14: ve/__init__.py resolves its public names lazily; import ve loads no submodule"
+  },
+  {
+   "hash": "9a0b0f4a0a594f8498cd9e8cd70afaa99350f347",
+   "subject": "AR-14: Python's five layers after lean-first (T5), checked by import-linter"
+  },
+  {
+   "hash": "49fa322ea8437433139525d1e7eaf4656d2912c4",
+   "subject": "AR-14: before-measurements (layer exceptions, rows, import cycles, import ve) and the measuring scripts"
+  }
+ ],
+ "head": "3aea6e6633bfb2b77e52ee4ffe58f69cf03707de"
+}
