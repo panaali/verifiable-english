@@ -2102,10 +2102,14 @@
         "VE.Compose.wrapperRows",
         "VE.Compose.actsRefuses",
         "VE.Compose.cardinalityOthers",
-        "VE.Compose.modeProfiles"
+        "VE.Compose.modeProfiles",
+        "VE.Compose.decidingEnvironment",
+        "VE.Compose.layersApart",
+        "VE.Compose.listedProfiles"
       ],
       "G[R]": [
-        "VE.Compose.pendingWithDefaults"
+        "VE.Compose.pendingWithDefaults",
+        "VE.Compose.documentLayersApart"
       ],
       "P": [
         "VE.Compose.faultOf",
@@ -2128,7 +2132,9 @@
         "VE.Compose.Examples.todayCodes",
         "VE.Compose.Examples.todayText",
         "VE.Compose.Examples.todayTexts",
-        "VE.Compose.Examples.unsortedLists"
+        "VE.Compose.Examples.unsortedLists",
+        "VE.Compose.Examples.layerListing",
+        "VE.Compose.Examples.layerDecided"
       ]
     },
     "VE/Compose/Slot.lean": {
@@ -5017,6 +5023,9 @@
         },
         "VE.NormDefaults.Admission.softCase",
         "VE.NormDefaults.Run.softAdmissionWitness"
+      ],
+      "G[R]": [
+        "VE.NormDefaults.Run.pendingDocumentLayer"
       ]
     },
     "VE/NormDefaults/Semantics.lean": {
@@ -9710,7 +9719,6 @@
         "VE.Service.Document.checkNormDefaults",
         "VE.Service.Document.checkNorms",
         "VE.Service.Document.environmentFault",
-        "VE.Service.Document.judgmentsApart",
         "VE.Service.Document.locatedFence",
         "VE.Service.Document.locatedModel",
         "VE.Service.Document.locatedOf",
@@ -15394,7 +15402,8 @@
         "VE.Defaults.RouteFixtures.refused",
         "VE.Defaults.RouteFixtures.run",
         "VE.Defaults.RouteFixtures.shown",
-        "VE.Defaults.RouteFixtures.βTwo"
+        "VE.Defaults.RouteFixtures.βTwo",
+        "VE.Defaults.RouteFixtures.layerCase"
       ]
     },
     "ResponseShape/DefaultsExamples.lean": {
