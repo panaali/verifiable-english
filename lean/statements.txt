@@ -4430,6 +4430,29 @@ theorem VE.Calc.Expr.zeroDivisor_sound
     e.zeroDivisor = Bool.true → ∀ (x : Rat), ¬VE.Calc.Denotes (fun v => Option.some (κ v)) e x
   -- uses VE.Calc.Denotes@VE.Calc.Syntax VE.Calc.Expr.zeroDivisor@VE.Calc.Identity VE.Calc.Expr@VE.Calc.Syntax
   -- expr 1342338600
+theorem VE.Calc.FM.boundsOf_parts
+  ∀ (cs : List VE.Calc.FM.Entry),
+    List.map (fun x => x.snd) (VE.Calc.FM.boundsOf cs) = VE.Calc.FM.candidates cs ∧
+      List.map (fun x => x.snd) (List.filter (fun x => Decidable.decide (0 < x.fst)) (VE.Calc.FM.boundsOf cs)) =
+          List.map (fun x => x.fst) (VE.Calc.FM.lows cs) ∧
+        List.map (fun x => x.snd) (List.filter (fun x => Decidable.decide (x.fst < 0)) (VE.Calc.FM.boundsOf cs)) =
+          List.map (fun x => x.fst) (VE.Calc.FM.highs cs)
+  -- uses VE.Calc.FM.Entry@VE.Calc.FourierMotzkin VE.Calc.FM.boundsOf@VE.Calc.FourierMotzkin VE.Calc.FM.candidates@VE.Calc.FourierMotzkin VE.Calc.FM.highs@VE.Calc.FourierMotzkin VE.Calc.FM.lows@VE.Calc.FourierMotzkin
+  -- expr 3169589522
+theorem VE.Calc.FM.entries_all
+  ∀ (cs : List VE.Calc.FM.Entry) (v : Rat),
+    cs.all (VE.Calc.FM.Entry.holds v) =
+      (VE.Calc.FM.zeroOk cs && (VE.Calc.FM.lows cs).all (VE.Calc.FM.lowOk' v) &&
+        (VE.Calc.FM.highs cs).all (VE.Calc.FM.highOk' v))
+  -- uses VE.Calc.FM.Entry.holds@VE.Calc.FourierMotzkin VE.Calc.FM.Entry@VE.Calc.FourierMotzkin VE.Calc.FM.highOk'@VE.Calc.FourierMotzkin VE.Calc.FM.highs@VE.Calc.FourierMotzkin VE.Calc.FM.lowOk'@VE.Calc.FourierMotzkin VE.Calc.FM.lows@VE.Calc.FourierMotzkin VE.Calc.FM.zeroOk@VE.Calc.FourierMotzkin
+  -- expr 1023537772
+theorem VE.Calc.FM.eval_update
+  ∀ (l : List (String × Rat)) (x : String) (f : String → Rat) (v : Rat),
+    (List.map (fun p => p.snd * if p.fst = x then v else f p.fst) l).sum =
+      (List.map (fun p => p.snd * if p.fst = x then 0 else f p.fst) l).sum +
+        (List.map (fun x => x.snd) (List.filter (fun x_1 => x_1.fst == x) l)).sum * v
+  -- uses
+  -- expr 2519180484
 theorem VE.Calc.FM.firstAppearance_spec
   ∀ (ns acc : List String),
     acc.Nodup →
@@ -4437,6 +4460,110 @@ theorem VE.Calc.FM.firstAppearance_spec
         ∀ (n : String), n ∈ List.foldl (fun acc n => if n ∈ acc then acc else acc ++ [n]) acc ns ↔ n ∈ acc ∨ n ∈ ns
   -- uses
   -- expr 1992975206
+theorem VE.Calc.FM.high_all
+  ∀ (bs : List (Rat × Bool)) (v : Rat),
+    bs.all (VE.Calc.FM.highOk' v) = VE.Calc.FM.highOk v (VE.Calc.FM.tightest (fun b a => Decidable.decide (b < a)) bs)
+  -- uses VE.Calc.FM.highOk'@VE.Calc.FourierMotzkin VE.Calc.FM.highOk@VE.Calc.FourierMotzkin VE.Calc.FM.tightest@VE.Calc.FourierMotzkin
+  -- expr 3522179624
+theorem VE.Calc.FM.high_min
+  ∀ (bs : List (Rat × Bool)),
+    Option.map (fun x => x.fst) (VE.Calc.FM.tightest (fun b a => Decidable.decide (b < a)) bs) =
+      (List.map (fun x => x.fst) bs).min?
+  -- uses VE.Calc.FM.tightest@VE.Calc.FourierMotzkin
+  -- expr 2594137297
+theorem VE.Calc.FM.high_step
+  ∀ (v a : Rat) (t : Bool) (b : Rat) (s : Bool),
+    (if Decidable.decide (b < a) = Bool.true then VE.Calc.FM.highOk' v (b, s)
+      else if (b == a) = Bool.true then VE.Calc.FM.highOk' v (a, t || s) else VE.Calc.FM.highOk' v (a, t)) =
+      (VE.Calc.FM.highOk' v (a, t) && VE.Calc.FM.highOk' v (b, s))
+  -- uses VE.Calc.FM.highOk'@VE.Calc.FourierMotzkin
+  -- expr 4113612105
+theorem VE.Calc.FM.low_all
+  ∀ (bs : List (Rat × Bool)) (v : Rat),
+    bs.all (VE.Calc.FM.lowOk' v) = VE.Calc.FM.lowOk v (VE.Calc.FM.tightest (fun b a => Decidable.decide (a < b)) bs)
+  -- uses VE.Calc.FM.lowOk'@VE.Calc.FourierMotzkin VE.Calc.FM.lowOk@VE.Calc.FourierMotzkin VE.Calc.FM.tightest@VE.Calc.FourierMotzkin
+  -- expr 3340552666
+theorem VE.Calc.FM.low_max
+  ∀ (bs : List (Rat × Bool)),
+    Option.map (fun x => x.fst) (VE.Calc.FM.tightest (fun b a => Decidable.decide (a < b)) bs) =
+      (List.map (fun x => x.fst) bs).max?
+  -- uses VE.Calc.FM.tightest@VE.Calc.FourierMotzkin
+  -- expr 110515229
+theorem VE.Calc.FM.low_step
+  ∀ (v a : Rat) (t : Bool) (b : Rat) (s : Bool),
+    (if Decidable.decide (a < b) = Bool.true then VE.Calc.FM.lowOk' v (b, s)
+      else if (b == a) = Bool.true then VE.Calc.FM.lowOk' v (a, t || s) else VE.Calc.FM.lowOk' v (a, t)) =
+      (VE.Calc.FM.lowOk' v (a, t) && VE.Calc.FM.lowOk' v (b, s))
+  -- uses VE.Calc.FM.lowOk'@VE.Calc.FourierMotzkin
+  -- expr 3174300256
+theorem VE.Calc.FM.mem_firstAppearance
+  ∀ (l : List String) (n : String), n ∈ VE.Calc.FM.firstAppearance l ↔ n ∈ l
+  -- uses VE.Calc.FM.firstAppearance@VE.Calc.Linear
+  -- expr 3523721655
+theorem VE.Calc.FM.neg_bound
+  ∀ (r c v : Rat), c < 0 → (0 < r + c * v ↔ v < -r / c) ∧ (0 ≤ r + c * v ↔ v ≤ -r / c)
+  -- uses
+  -- expr 2779791921
+theorem VE.Calc.FM.pickOnce_eq
+  ∀ (x : String) (rows : List VE.Calc.FM.Row) (κ : List (String × Rat)),
+    VE.Calc.FM.pickOnce x rows κ = VE.Calc.FM.pick x rows κ
+  -- uses VE.Calc.FM.Row@VE.Calc.FourierMotzkin VE.Calc.FM.pick@VE.Calc.FourierMotzkin VE.Calc.FM.pickOnce@VE.Calc.FourierMotzkin
+  -- expr 1049554992
+theorem VE.Calc.FM.pos_bound
+  ∀ (r c v : Rat), 0 < c → (0 < r + c * v ↔ -r / c < v) ∧ (0 ≤ r + c * v ↔ -r / c ≤ v)
+  -- uses
+  -- expr 4281632706
+theorem VE.Calc.FM.row_holds
+  ∀ (x : String) (f : String → Rat) (v : Rat) (r : VE.Calc.FM.Row),
+    Decidable.decide (VE.Calc.QFact.Holds (fun n => if n = x then v else f n) r.fact) =
+      VE.Calc.FM.Entry.holds v
+        (r.fact.form.coeffOf x, VE.Calc.QLin.eval (fun n => if n = x then 0 else f n) r.fact.form, r.fact.strict)
+  -- uses VE.Calc.FM.Entry.holds@VE.Calc.FourierMotzkin VE.Calc.FM.Row.fact@VE.Calc.FourierMotzkin VE.Calc.FM.Row@VE.Calc.FourierMotzkin VE.Calc.QFact.Holds@VE.Calc.Linear VE.Calc.QFact.form@VE.Calc.Linear VE.Calc.QFact.strict@VE.Calc.Linear VE.Calc.QLin.coeffOf@VE.Calc.Linear VE.Calc.QLin.eval@VE.Calc.Linear VE.Calc.instDecidableHolds@VE.Calc.Linear
+  -- expr 3672254151
+theorem VE.Calc.FM.scaled
+  ∀ (a b : Rat), 0 < a → (0 < a * b ↔ 0 < b) ∧ (0 ≤ a * b ↔ 0 ≤ b)
+  -- uses
+  -- expr 39559735
+theorem VE.Calc.FM.tightest_all
+  ∀ (better : Rat → Rat → Bool) (ok : Rat × Bool → Bool) (bs : List (Rat × Bool)) (acc : Option (Rat × Bool)),
+    (∀ (a : Rat) (t : Bool) (b : Rat) (s : Bool),
+        (if better b a = Bool.true then ok (b, s) else if (b == a) = Bool.true then ok (a, t || s) else ok (a, t)) =
+          (ok (a, t) && ok (b, s))) →
+      (Option.all ok acc && bs.all ok) =
+        Option.all ok
+          (List.foldl
+            (fun acc x =>
+              match x with
+              | (b, s) =>
+                match acc with
+                | Option.none => Option.some (b, s)
+                | Option.some (a, t) =>
+                  if better b a = Bool.true then Option.some (b, s)
+                  else if (b == a) = Bool.true then Option.some (a, t || s) else Option.some (a, t))
+            acc bs)
+  -- uses VE.Calc.FM.tightest.match_1@VE.Calc.FourierMotzkin VE.Calc.FM.tightest.match_3@VE.Calc.FourierMotzkin
+  -- expr 2936956095
+theorem VE.Calc.FM.tightest_first
+  ∀ (better : Rat → Rat → Bool) (m : Rat → Rat → Rat) (bs : List (Rat × Bool)) (a : Rat) (t : Bool),
+    (∀ (a b : Rat), (if better b a = Bool.true then b else if (b == a) = Bool.true then a else a) = m a b) →
+      Option.map (fun x => x.fst)
+          (List.foldl
+            (fun acc x =>
+              match x with
+              | (b, s) =>
+                match acc with
+                | Option.none => Option.some (b, s)
+                | Option.some (a, t) =>
+                  if better b a = Bool.true then Option.some (b, s)
+                  else if (b == a) = Bool.true then Option.some (a, t || s) else Option.some (a, t))
+            (Option.some (a, t)) bs) =
+        Option.some (List.foldl m a (List.map (fun x => x.fst) bs))
+  -- uses VE.Calc.FM.tightest.match_1@VE.Calc.FourierMotzkin VE.Calc.FM.tightest.match_3@VE.Calc.FourierMotzkin
+  -- expr 1683934500
+theorem VE.Calc.Farkas.checkOnce_eq
+  ∀ (fs : List VE.Calc.QFact) (c : VE.Calc.Farkas), VE.Calc.Farkas.checkOnce fs c = VE.Calc.Farkas.check fs c
+  -- uses VE.Calc.Farkas.check@VE.Calc.Linear VE.Calc.Farkas.checkOnce@VE.Calc.Linear VE.Calc.Farkas@VE.Calc.Linear VE.Calc.QFact@VE.Calc.Linear
+  -- expr 1331404760
 theorem VE.Calc.Farkas.check_sound
   ∀ (fs : List VE.Calc.QFact) (c : VE.Calc.Farkas),
     VE.Calc.Farkas.check fs c = Bool.true → ∀ (κ : String → Rat), ¬∀ (f : VE.Calc.QFact), f ∈ fs → VE.Calc.QFact.Holds κ f
@@ -4730,6 +4857,10 @@ theorem VE.Calc.QLin.eval_add
   ∀ (κ : String → Rat) (L M : VE.Calc.QLin), VE.Calc.QLin.eval κ (L.add M) = VE.Calc.QLin.eval κ L + VE.Calc.QLin.eval κ M
   -- uses VE.Calc.QLin.add@VE.Calc.Linear VE.Calc.QLin.eval@VE.Calc.Linear VE.Calc.QLin@VE.Calc.Linear
   -- expr 619892755
+theorem VE.Calc.QLin.eval_coeffOf
+  ∀ (L : VE.Calc.QLin) (n : String), VE.Calc.QLin.eval (fun m => if m = n then 1 else 0) L = L.const + L.coeffOf n
+  -- uses VE.Calc.QLin.coeffOf@VE.Calc.Linear VE.Calc.QLin.const@VE.Calc.Linear VE.Calc.QLin.eval@VE.Calc.Linear VE.Calc.QLin@VE.Calc.Linear
+  -- expr 2681867905
 theorem VE.Calc.QLin.eval_foldl
   ∀ (κ : String → Rat) (acc : VE.Calc.QLin) (ls : List VE.Calc.QLin),
     VE.Calc.QLin.eval κ (List.foldl VE.Calc.QLin.add acc ls) =
@@ -4742,7 +4873,7 @@ theorem VE.Calc.QLin.eval_isConst
   -- expr 2050223340
 theorem VE.Calc.QLin.eval_norm
   ∀ (κ : String → Rat) (L : VE.Calc.QLin), VE.Calc.QLin.eval κ L.norm = VE.Calc.QLin.eval κ L
-  -- uses VE.Calc.QLin.eval@VE.Calc.Linear VE.Calc.QLin.norm@VE.Calc.FourierMotzkin VE.Calc.QLin@VE.Calc.Linear
+  -- uses VE.Calc.QLin.eval@VE.Calc.Linear VE.Calc.QLin.norm@VE.Calc.Linear VE.Calc.QLin@VE.Calc.Linear
   -- expr 3840590860
 theorem VE.Calc.QLin.eval_of_cancel
   ∀ (κ : String → Rat) (L : VE.Calc.QLin),
@@ -4754,6 +4885,29 @@ theorem VE.Calc.QLin.eval_scale
     VE.Calc.QLin.eval κ (VE.Calc.QLin.scale w L) = w * VE.Calc.QLin.eval κ L
   -- uses VE.Calc.QLin.eval@VE.Calc.Linear VE.Calc.QLin.scale@VE.Calc.Linear VE.Calc.QLin@VE.Calc.Linear
   -- expr 3830586438
+theorem VE.Calc.QLin.foldl_add
+  ∀ (ls : List VE.Calc.QLin) (acc : VE.Calc.QLin),
+    List.foldl VE.Calc.QLin.add acc ls =
+      { const := acc.const + (List.map (fun x => x.const) ls).sum,
+        coeffs := acc.coeffs ++ List.flatMap (fun x => x.coeffs) ls }
+  -- uses VE.Calc.QLin.add@VE.Calc.Linear VE.Calc.QLin.coeffs@VE.Calc.Linear VE.Calc.QLin.const@VE.Calc.Linear VE.Calc.QLin.mk@VE.Calc.Linear VE.Calc.QLin@VE.Calc.Linear
+  -- expr 610840316
+theorem VE.Calc.QLin.isConstOnce_eq
+  ∀ (L : VE.Calc.QLin), L.isConstOnce = L.isConst
+  -- uses VE.Calc.QLin.isConst@VE.Calc.Lower VE.Calc.QLin.isConstOnce@VE.Calc.Lower VE.Calc.QLin@VE.Calc.Linear
+  -- expr 1481659660
+theorem VE.Calc.QLin.isConst_iff
+  ∀ (L : VE.Calc.QLin), L.isConst = Bool.true ↔ ∀ (κ : String → Rat), VE.Calc.QLin.eval κ L = L.const
+  -- uses VE.Calc.QLin.const@VE.Calc.Linear VE.Calc.QLin.eval@VE.Calc.Linear VE.Calc.QLin.isConst@VE.Calc.Lower VE.Calc.QLin@VE.Calc.Linear
+  -- expr 599838134
+theorem VE.Calc.QLin.normOnce_eq
+  ∀ (L : VE.Calc.QLin), L.normOnce = L.norm
+  -- uses VE.Calc.QLin.norm@VE.Calc.Linear VE.Calc.QLin.normOnce@VE.Calc.Linear VE.Calc.QLin@VE.Calc.Linear
+  -- expr 2113867745
+theorem VE.Calc.QLin.norm_coeffs_isEmpty
+  ∀ (L : VE.Calc.QLin), L.norm.coeffs.isEmpty = (List.map (fun x => x.fst) L.coeffs).all fun n => L.coeffOf n == 0
+  -- uses VE.Calc.QLin.coeffOf@VE.Calc.Linear VE.Calc.QLin.coeffs@VE.Calc.Linear VE.Calc.QLin.norm@VE.Calc.Linear VE.Calc.QLin@VE.Calc.Linear
+  -- expr 1364981081
 theorem VE.Calc.Rescale.factor_ne
   ∀ (ρ : VE.Calc.Rescale) (b : String), ρ.factor b ≠ 0
   -- uses VE.Calc.Rescale.factor@VE.Calc.Dimension VE.Calc.Rescale@VE.Calc.Dimension
@@ -5030,6 +5184,49 @@ theorem VE.Calc.Work.Expr.evalsC_some
         vs = List.map (VE.Calc.Expr.evalL t.read) es ∧ w ≤ w' ∧ w' ≤ limit
   -- uses VE.Calc.Expr.evalL@VE.Calc.Decls VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Val@VE.Calc.Decls VE.Calc.Work.Expr.evalsC@VE.Calc.Decls VE.Calc.Work.Table.read@VE.Calc.Decls VE.Calc.Work.Table@VE.Calc.Decls
   -- expr 1397440657
+theorem VE.Calc.Work.Expr.linearC_form
+  ∀ (limit : Nat) (e : VE.Calc.Expr) (w : Nat) (L : VE.Calc.QLin) (w' : Nat),
+    VE.Calc.Work.Expr.linearC limit e w = Option.some (VE.Calc.Work.Lowered.form L, w') → e.linear = Option.some L
+  -- uses VE.Calc.Expr.linear@VE.Calc.Lower VE.Calc.Expr@VE.Calc.Syntax VE.Calc.QLin@VE.Calc.Linear VE.Calc.Work.Expr.linearC@VE.Calc.Lower VE.Calc.Work.Lowered.form@VE.Calc.Lower VE.Calc.Work.Lowered@VE.Calc.Lower
+  -- expr 3065528553
+theorem VE.Calc.Work.Expr.linearC_nonlinear
+  ∀ (limit : Nat) (e : VE.Calc.Expr) (w w' : Nat),
+    VE.Calc.Work.Expr.linearC limit e w = Option.some (VE.Calc.Work.Lowered.nonlinear, w') → e.linear = Option.none
+  -- uses VE.Calc.Expr.linear@VE.Calc.Lower VE.Calc.Expr@VE.Calc.Syntax VE.Calc.QLin@VE.Calc.Linear VE.Calc.Work.Expr.linearC@VE.Calc.Lower VE.Calc.Work.Lowered.nonlinear@VE.Calc.Lower VE.Calc.Work.Lowered@VE.Calc.Lower
+  -- expr 2132052842
+theorem VE.Calc.Work.Expr.linearC_tooLarge
+  ∀ (limit : Nat) (e : VE.Calc.Expr) (w : Nat) (s : VE.Calc.Work.Shape) (w' : Nat),
+    VE.Calc.Work.Expr.linearC limit e w = Option.some (VE.Calc.Work.Lowered.tooLarge s, w') →
+      ∃ L, e.linear = Option.some L ∧ VE.Calc.Work.Shape.Sound L s
+  -- uses VE.Calc.Expr.linear@VE.Calc.Lower VE.Calc.Expr@VE.Calc.Syntax VE.Calc.QLin@VE.Calc.Linear VE.Calc.Work.Expr.linearC@VE.Calc.Lower VE.Calc.Work.Lowered.tooLarge@VE.Calc.Lower VE.Calc.Work.Lowered@VE.Calc.Lower VE.Calc.Work.Shape.Sound@VE.Calc.Lower VE.Calc.Work.Shape@VE.Calc.Lower
+  -- expr 2662531333
+theorem VE.Calc.Work.Lowered.shape_sound
+  ∀ {l : VE.Calc.Work.Lowered} {L : VE.Calc.QLin},
+    VE.Calc.Work.Lowered.Sound (Option.some L) l → VE.Calc.Work.Shape.Sound L l.shape
+  -- uses VE.Calc.QLin@VE.Calc.Linear VE.Calc.Work.Lowered.Sound@VE.Calc.Lower VE.Calc.Work.Lowered.shape@VE.Calc.Lower VE.Calc.Work.Lowered@VE.Calc.Lower VE.Calc.Work.Shape.Sound@VE.Calc.Lower
+  -- expr 2370400759
+theorem VE.Calc.Work.Node.run_some
+  ∀ {limit : Nat} {n : VE.Calc.Work.Node} {w : Nat} {r : VE.Calc.Work.Lowered × Nat},
+    VE.Calc.Work.Node.run limit n w = Option.some r → n.result () = r.fst
+  -- uses VE.Calc.Work.Lowered@VE.Calc.Lower VE.Calc.Work.Node.result@VE.Calc.Lower VE.Calc.Work.Node.run@VE.Calc.Lower VE.Calc.Work.Node@VE.Calc.Lower
+  -- expr 3589473327
+theorem VE.Calc.Work.Shape.Sound.congr
+  ∀ {L M : VE.Calc.QLin} {s : VE.Calc.Work.Shape},
+    (∀ (κ : String → Rat), VE.Calc.QLin.eval κ M = VE.Calc.QLin.eval κ L) →
+      M.const = L.const → VE.Calc.Work.Shape.Sound L s → VE.Calc.Work.Shape.Sound M s
+  -- uses VE.Calc.QLin.const@VE.Calc.Linear VE.Calc.QLin.eval@VE.Calc.Linear VE.Calc.QLin@VE.Calc.Linear VE.Calc.Work.Shape.Sound@VE.Calc.Lower VE.Calc.Work.Shape@VE.Calc.Lower
+  -- expr 1287109987
+theorem VE.Calc.Work.addS_sound
+  ∀ {A B : VE.Calc.QLin} {sa sb : VE.Calc.Work.Shape},
+    VE.Calc.Work.Shape.Sound A sa →
+      VE.Calc.Work.Shape.Sound B sb → VE.Calc.Work.Linearity.Sound (Option.some (A.add B).norm) (VE.Calc.Work.addS sa sb)
+  -- uses VE.Calc.QLin.add@VE.Calc.Linear VE.Calc.QLin.norm@VE.Calc.Linear VE.Calc.QLin@VE.Calc.Linear VE.Calc.Work.Linearity.Sound@VE.Calc.Lower VE.Calc.Work.Shape.Sound@VE.Calc.Lower VE.Calc.Work.Shape@VE.Calc.Lower VE.Calc.Work.addS@VE.Calc.Lower
+  -- expr 3970482443
+theorem VE.Calc.Work.add_comm_shape
+  ∀ {A B : VE.Calc.QLin} {s : VE.Calc.Work.Shape},
+    VE.Calc.Work.Shape.Sound (A.add B).norm s → VE.Calc.Work.Shape.Sound (B.add A).norm s
+  -- uses VE.Calc.QLin.add@VE.Calc.Linear VE.Calc.QLin.norm@VE.Calc.Linear VE.Calc.QLin@VE.Calc.Linear VE.Calc.Work.Shape.Sound@VE.Calc.Lower VE.Calc.Work.Shape@VE.Calc.Lower
+  -- expr 3015362086
 theorem VE.Calc.Work.binC_mono
   ∀ {limit limit' : Nat} {f : Rat → Rat → Option Rat} {a b : VE.Calc.Val} {w : Nat} {r : VE.Calc.Val × Nat},
     limit ≤ limit' → VE.Calc.Work.binC limit f a b w = Option.some r → VE.Calc.Work.binC limit' f a b w = Option.some r
@@ -5042,6 +5239,77 @@ theorem VE.Calc.Work.binC_some
         v = VE.Calc.Val.bin (fun x y => (f x y).elim VE.Calc.Val.undefined VE.Calc.Val.guard) a b ∧ w ≤ w' ∧ w' ≤ limit
   -- uses VE.Calc.Val.bin@VE.Calc.Decls VE.Calc.Val.guard@VE.Calc.Decls VE.Calc.Val.undefined@VE.Calc.Decls VE.Calc.Val@VE.Calc.Decls VE.Calc.Work.binC@VE.Calc.Decls
   -- expr 1314431573
+theorem VE.Calc.Work.binL_sound
+  ∀ {e : VE.Calc.Expr} {f : VE.Calc.QLin → VE.Calc.QLin → Option VE.Calc.QLin}
+    {g : VE.Calc.Work.Shape → VE.Calc.Work.Shape → VE.Calc.Work.Linearity}
+    {op : VE.Calc.QLin → VE.Calc.QLin → Option VE.Calc.QLin} {oa ob : Option VE.Calc.QLin} {la lb : VE.Calc.Work.Lowered},
+    (∀ (L M : VE.Calc.QLin), f L M = op L M) →
+      (∀ (A B : VE.Calc.QLin) (sa sb : VE.Calc.Work.Shape),
+          VE.Calc.Work.Shape.Sound A sa →
+            VE.Calc.Work.Shape.Sound B sb → VE.Calc.Work.Linearity.Sound (op A B) (g sa sb)) →
+        (e.linear = oa.bind fun A => ob.bind (op A)) →
+          VE.Calc.Work.Lowered.Sound oa la →
+            VE.Calc.Work.Lowered.Sound ob lb →
+              VE.Calc.Work.Lowered.Sound e.linear ((VE.Calc.Work.binL e f g la lb).result ())
+  -- uses VE.Calc.Expr.linear@VE.Calc.Lower VE.Calc.Expr@VE.Calc.Syntax VE.Calc.QLin@VE.Calc.Linear VE.Calc.Work.Linearity.Sound@VE.Calc.Lower VE.Calc.Work.Linearity@VE.Calc.Lower VE.Calc.Work.Lowered.Sound@VE.Calc.Lower VE.Calc.Work.Lowered@VE.Calc.Lower VE.Calc.Work.Node.result@VE.Calc.Lower VE.Calc.Work.Shape.Sound@VE.Calc.Lower VE.Calc.Work.Shape@VE.Calc.Lower VE.Calc.Work.binL@VE.Calc.Lower
+  -- expr 3965153964
+theorem VE.Calc.Work.bin_sound
+  ∀ {limit : Nat} {e a b : VE.Calc.Expr},
+    e = a.add b ∨ e = a.sub b ∨ e = a.mul b ∨ e = a.div b →
+      (∀ (w : Nat) (l : VE.Calc.Work.Lowered) (w' : Nat),
+          VE.Calc.Work.Expr.linearC limit a w = Option.some (l, w') → VE.Calc.Work.Lowered.Sound a.linear l) →
+        (∀ (w : Nat) (l : VE.Calc.Work.Lowered) (w' : Nat),
+            VE.Calc.Work.Expr.linearC limit b w = Option.some (l, w') → VE.Calc.Work.Lowered.Sound b.linear l) →
+          ∀ {w w' : Nat} {l : VE.Calc.Work.Lowered},
+            (match VE.Calc.Work.Expr.linearC limit a w with
+                | Option.none => Option.none
+                | Option.some (VE.Calc.Work.Lowered.nonlinear, w) => Option.some (VE.Calc.Work.Lowered.nonlinear, w)
+                | Option.some (la, w) =>
+                  (VE.Calc.Work.Expr.linearC limit b w).bind fun x =>
+                    match x with
+                    | (lb, w) => VE.Calc.Work.Node.run limit (VE.Calc.Work.stepNode e [la, lb]) w) =
+                Option.some (l, w') →
+              VE.Calc.Work.Lowered.Sound e.linear l
+  -- uses VE.Calc.Expr.add@VE.Calc.Syntax VE.Calc.Expr.div@VE.Calc.Syntax VE.Calc.Expr.linear@VE.Calc.Lower VE.Calc.Expr.mul@VE.Calc.Syntax VE.Calc.Expr.sub@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Work.Expr.linearC.match_1@VE.Calc.Lower VE.Calc.Work.Expr.linearC.match_3@VE.Calc.Lower VE.Calc.Work.Expr.linearC@VE.Calc.Lower VE.Calc.Work.Lowered.Sound@VE.Calc.Lower VE.Calc.Work.Lowered.nonlinear@VE.Calc.Lower VE.Calc.Work.Lowered@VE.Calc.Lower VE.Calc.Work.Node.run@VE.Calc.Lower VE.Calc.Work.stepNode@VE.Calc.Lower
+  -- expr 1842835426
+theorem VE.Calc.Work.bin_spec
+  ∀ {limit : Nat} {t : VE.Calc.Inlined} {path : String} {e a b : VE.Calc.Expr} {w w' : Nat} {r : Option String}
+    {l : Option VE.Calc.Work.Lowered},
+    e = a.add b ∨ e = a.sub b ∨ e = a.mul b ∨ e = a.div b →
+      (VE.Calc.Wire.nonlinearAt t path e =
+          ((VE.Calc.Wire.nonlinearAt t (ToString.toString path ++ ToString.toString ".1") a).orElse fun x =>
+                VE.Calc.Wire.nonlinearAt t (ToString.toString path ++ ToString.toString ".2") b).orElse
+            fun x =>
+            match VE.Calc.Wire.judged t e with
+            | Option.some e' => if e'.linear.isNone = Bool.true then Option.some path else Option.none
+            | Option.none => Option.none) →
+        VE.Calc.Work.AtSpec limit t a →
+          VE.Calc.Work.AtSpec limit t b →
+            (match VE.Calc.Work.nonlinearAtC limit t (ToString.toString path ++ ToString.toString ".1") a w with
+                | Option.none => Option.none
+                | Option.some ((Option.some p, snd), w) => Option.some ((Option.some p, Option.none), w)
+                | Option.some ((Option.none, la), w) =>
+                  match VE.Calc.Work.nonlinearAtC limit t (ToString.toString path ++ ToString.toString ".2") b w with
+                  | Option.none => Option.none
+                  | Option.some ((Option.some p, snd), w) => Option.some ((Option.some p, Option.none), w)
+                  | Option.some ((Option.none, lb), w) =>
+                    VE.Calc.Work.visitC limit w (VE.Calc.Work.nodeC limit t path e [la, lb])) =
+                Option.some ((r, l), w') →
+              r = VE.Calc.Wire.nonlinearAt t path e ∧
+                (r = Option.none →
+                  ∀ (e' : VE.Calc.Expr),
+                    VE.Calc.Wire.judged t e = Option.some e' →
+                      ∃ l', l = Option.some l' ∧ VE.Calc.Work.Lowered.Sound e'.linear l')
+  -- uses VE.Calc.Expr.add@VE.Calc.Syntax VE.Calc.Expr.div@VE.Calc.Syntax VE.Calc.Expr.linear@VE.Calc.Lower VE.Calc.Expr.mul@VE.Calc.Syntax VE.Calc.Expr.sub@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Inlined@VE.Calc.Inline VE.Calc.QLin@VE.Calc.Linear VE.Calc.Wire.judged@VE.Calc.Wire VE.Calc.Wire.nonlinearAt@VE.Calc.Wire VE.Calc.Work.AtSpec@VE.Calc.Wire VE.Calc.Work.Lowered.Sound@VE.Calc.Lower VE.Calc.Work.Lowered@VE.Calc.Lower VE.Calc.Work.nodeC@VE.Calc.Wire VE.Calc.Work.nonlinearAtC.match_1@VE.Calc.Wire VE.Calc.Work.nonlinearAtC.match_3@VE.Calc.Wire VE.Calc.Work.nonlinearAtC@VE.Calc.Wire VE.Calc.Work.visitC@VE.Calc.Decls
+  -- expr 1165784117
+theorem VE.Calc.Work.bne_nonzero
+  ∀ {x : Rat}, x ≠ 0 → (x != 0) = Bool.true
+  -- uses
+  -- expr 101957807
+theorem VE.Calc.Work.chargeL_sound
+  ∀ (L : VE.Calc.QLin), VE.Calc.Work.Lowered.Sound (Option.some L) ((VE.Calc.Work.chargeL L).result ())
+  -- uses VE.Calc.QLin@VE.Calc.Linear VE.Calc.Work.Lowered.Sound@VE.Calc.Lower VE.Calc.Work.Node.result@VE.Calc.Lower VE.Calc.Work.chargeL@VE.Calc.Lower
+  -- expr 822194511
 theorem VE.Calc.Work.chargeQ_mono
   ∀ {limit limit' : Nat} {q : Rat} {w : Nat} {r : VE.Calc.Val × Nat},
     limit ≤ limit' → VE.Calc.Work.chargeQ limit q w = Option.some r → VE.Calc.Work.chargeQ limit' q w = Option.some r
@@ -5052,10 +5320,146 @@ theorem VE.Calc.Work.chargeQ_some
     VE.Calc.Work.chargeQ limit q w = Option.some (v, w') → v = VE.Calc.Val.guard q ∧ w ≤ w' ∧ w' ≤ limit
   -- uses VE.Calc.Val.guard@VE.Calc.Decls VE.Calc.Val@VE.Calc.Decls VE.Calc.Work.chargeQ@VE.Calc.Decls
   -- expr 2566928377
+theorem VE.Calc.Work.check_eq
+  ∀ (t : VE.Calc.Inlined) (e : VE.Calc.Expr) (path : String),
+    (if
+          Option.any (fun e => (VE.Calc.Expr.nodesWithin VE.Calc.maxPolyTerms e).isSome && e.linear.isNone)
+              (VE.Calc.Expr.subst t e).toOption =
+            Bool.true then
+        Option.some path
+      else Option.none) =
+      match VE.Calc.Wire.judged t e with
+      | Option.some e' => if e'.linear.isNone = Bool.true then Option.some path else Option.none
+      | Option.none => Option.none
+  -- uses VE.Calc.Expr.linear@VE.Calc.Lower VE.Calc.Expr.nodesWithin@VE.Calc.Poly VE.Calc.Expr.subst@VE.Calc.Inline VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Inlined@VE.Calc.Inline VE.Calc.QLin@VE.Calc.Linear VE.Calc.Val@VE.Calc.Decls VE.Calc.Wire.judged@VE.Calc.Wire VE.Calc.Work.nonlinearAtC.match_1@VE.Calc.Wire VE.Calc.maxPolyTerms@VE.Calc.Poly
+  -- expr 425354991
+theorem VE.Calc.Work.const_norm_add
+  ∀ (A B : VE.Calc.QLin), (A.add B).norm.const = A.const + B.const
+  -- uses VE.Calc.QLin.add@VE.Calc.Linear VE.Calc.QLin.const@VE.Calc.Linear VE.Calc.QLin.norm@VE.Calc.Linear VE.Calc.QLin@VE.Calc.Linear
+  -- expr 317682423
+theorem VE.Calc.Work.const_scale
+  ∀ (w : Rat) (L : VE.Calc.QLin), (VE.Calc.QLin.scale w L).const = w * L.const
+  -- uses VE.Calc.QLin.const@VE.Calc.Linear VE.Calc.QLin.scale@VE.Calc.Linear VE.Calc.QLin@VE.Calc.Linear
+  -- expr 1754521183
+theorem VE.Calc.Work.decided_sound
+  ∀ (e : VE.Calc.Expr) (l : VE.Calc.Work.Linearity),
+    VE.Calc.Work.Linearity.Sound e.linear l → VE.Calc.Work.Lowered.Sound e.linear ((VE.Calc.Work.decided e l).result ())
+  -- uses VE.Calc.Expr.linear@VE.Calc.Lower VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Work.Linearity.Sound@VE.Calc.Lower VE.Calc.Work.Linearity@VE.Calc.Lower VE.Calc.Work.Lowered.Sound@VE.Calc.Lower VE.Calc.Work.Node.result@VE.Calc.Lower VE.Calc.Work.decided@VE.Calc.Lower
+  -- expr 1224401510
+theorem VE.Calc.Work.divS_sound
+  ∀ {A B : VE.Calc.QLin} {sa sb : VE.Calc.Work.Shape},
+    VE.Calc.Work.Shape.Sound A sa →
+      VE.Calc.Work.Shape.Sound B sb → VE.Calc.Work.Linearity.Sound (VE.Calc.Work.divOp A B) (VE.Calc.Work.divS sa sb)
+  -- uses VE.Calc.QLin@VE.Calc.Linear VE.Calc.Work.Linearity.Sound@VE.Calc.Lower VE.Calc.Work.Shape.Sound@VE.Calc.Lower VE.Calc.Work.Shape@VE.Calc.Lower VE.Calc.Work.divOp@VE.Calc.Lower VE.Calc.Work.divS@VE.Calc.Lower
+  -- expr 2555390224
 theorem VE.Calc.Work.firstFault_none
   ∀ {vs : List VE.Calc.Val}, VE.Calc.firstFault vs = Option.none → ∀ (v : VE.Calc.Val), v ∈ vs → ∃ q, v = VE.Calc.Val.ok q
   -- uses VE.Calc.Val.ok@VE.Calc.Decls VE.Calc.Val@VE.Calc.Decls VE.Calc.firstFault@VE.Calc.Decls
   -- expr 1146675679
+theorem VE.Calc.Work.isConst_add
+  ∀ {A B : VE.Calc.QLin}, A.isConst = Bool.true → B.isConst = Bool.true → (A.add B).norm.isConst = Bool.true
+  -- uses VE.Calc.QLin.add@VE.Calc.Linear VE.Calc.QLin.isConst@VE.Calc.Lower VE.Calc.QLin.norm@VE.Calc.Linear VE.Calc.QLin@VE.Calc.Linear
+  -- expr 2768786537
+theorem VE.Calc.Work.judged_bin
+  ∀ {t : VE.Calc.Inlined} {e a b e' : VE.Calc.Expr},
+    e = a.add b ∨ e = a.sub b ∨ e = a.mul b ∨ e = a.div b →
+      VE.Calc.Wire.judged t e = Option.some e' →
+        ∃ a' b',
+          VE.Calc.Wire.judged t a = Option.some a' ∧
+            VE.Calc.Wire.judged t b = Option.some b' ∧ (e' = a'.add b' ∨ e' = a'.sub b' ∨ e' = a'.mul b' ∨ e' = a'.div b')
+  -- uses VE.Calc.Expr.add@VE.Calc.Syntax VE.Calc.Expr.div@VE.Calc.Syntax VE.Calc.Expr.mul@VE.Calc.Syntax VE.Calc.Expr.sub@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Inlined@VE.Calc.Inline VE.Calc.Wire.judged@VE.Calc.Wire
+  -- expr 4115864060
+theorem VE.Calc.Work.judged_pow
+  ∀ {t : VE.Calc.Inlined} {a e' : VE.Calc.Expr} {k : Nat},
+    VE.Calc.Wire.judged t (a.pow k) = Option.some e' → ∃ a', VE.Calc.Wire.judged t a = Option.some a' ∧ e' = a'.pow k
+  -- uses VE.Calc.Expr.pow@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Inlined@VE.Calc.Inline VE.Calc.Wire.judged@VE.Calc.Wire
+  -- expr 2137257837
+theorem VE.Calc.Work.leaf_spec
+  ∀ {limit : Nat} {t : VE.Calc.Inlined} {e : VE.Calc.Expr},
+    (∀ (path : String),
+        VE.Calc.Wire.nonlinearAt t path e =
+          match VE.Calc.Wire.judged t e with
+          | Option.some e' => if e'.linear.isNone = Bool.true then Option.some path else Option.none
+          | Option.none => Option.none) →
+      (∀ (path : String) (w : Nat),
+          VE.Calc.Work.nonlinearAtC limit t path e w =
+            match VE.Calc.Wire.judged t e with
+            | Option.some e' =>
+              (VE.Calc.Work.Expr.linearC limit e' w).bind fun x =>
+                match x with
+                | (l, w) => VE.Calc.Work.markC path l w
+            | Option.none => Option.some ((Option.none, Option.none), w)) →
+        VE.Calc.Work.AtSpec limit t e
+  -- uses VE.Calc.Expr.linear@VE.Calc.Lower VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Inlined@VE.Calc.Inline VE.Calc.QLin@VE.Calc.Linear VE.Calc.Wire.judged@VE.Calc.Wire VE.Calc.Wire.nonlinearAt@VE.Calc.Wire VE.Calc.Work.AtSpec@VE.Calc.Wire VE.Calc.Work.Expr.linearC@VE.Calc.Lower VE.Calc.Work.Lowered@VE.Calc.Lower VE.Calc.Work.markC@VE.Calc.Wire VE.Calc.Work.nodeC.match_1@VE.Calc.Wire VE.Calc.Work.nonlinearAtC.match_1@VE.Calc.Wire VE.Calc.Work.nonlinearAtC@VE.Calc.Wire
+  -- expr 787506431
+theorem VE.Calc.Work.linearC_sound
+  ∀ (limit : Nat) (e : VE.Calc.Expr) (w : Nat) (l : VE.Calc.Work.Lowered) (w' : Nat),
+    VE.Calc.Work.Expr.linearC limit e w = Option.some (l, w') → VE.Calc.Work.Lowered.Sound e.linear l
+  -- uses VE.Calc.Expr.linear@VE.Calc.Lower VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Work.Expr.linearC@VE.Calc.Lower VE.Calc.Work.Lowered.Sound@VE.Calc.Lower VE.Calc.Work.Lowered@VE.Calc.Lower
+  -- expr 3015200307
+theorem VE.Calc.Work.markC_spec
+  ∀ {e' : VE.Calc.Expr} {l0 : VE.Calc.Work.Lowered} {path : String} {w w' : Nat} {r : Option String}
+    {o : Option VE.Calc.Work.Lowered},
+    VE.Calc.Work.Lowered.Sound e'.linear l0 →
+      VE.Calc.Work.markC path l0 w = Option.some ((r, o), w') →
+        (r = if e'.linear.isNone = Bool.true then Option.some path else Option.none) ∧
+          (r = Option.none → ∃ l', o = Option.some l' ∧ VE.Calc.Work.Lowered.Sound e'.linear l')
+  -- uses VE.Calc.Expr.linear@VE.Calc.Lower VE.Calc.Expr@VE.Calc.Syntax VE.Calc.QLin@VE.Calc.Linear VE.Calc.Work.Lowered.Sound@VE.Calc.Lower VE.Calc.Work.Lowered@VE.Calc.Lower VE.Calc.Work.markC@VE.Calc.Wire
+  -- expr 2347336651
+theorem VE.Calc.Work.mulS_sound
+  ∀ {A B : VE.Calc.QLin} {sa sb : VE.Calc.Work.Shape},
+    VE.Calc.Work.Shape.Sound A sa →
+      VE.Calc.Work.Shape.Sound B sb → VE.Calc.Work.Linearity.Sound (VE.Calc.Work.mulOp A B) (VE.Calc.Work.mulS sa sb)
+  -- uses VE.Calc.QLin@VE.Calc.Linear VE.Calc.Work.Linearity.Sound@VE.Calc.Lower VE.Calc.Work.Shape.Sound@VE.Calc.Lower VE.Calc.Work.Shape@VE.Calc.Lower VE.Calc.Work.mulOp@VE.Calc.Lower VE.Calc.Work.mulS@VE.Calc.Lower
+  -- expr 2547245408
+theorem VE.Calc.Work.neg_shape
+  ∀ {L : VE.Calc.QLin} {s : VE.Calc.Work.Shape},
+    VE.Calc.Work.Shape.Sound L s → VE.Calc.Work.Shape.Sound (VE.Calc.QLin.scale (-1) L) s
+  -- uses VE.Calc.QLin.scale@VE.Calc.Linear VE.Calc.QLin@VE.Calc.Linear VE.Calc.Work.Shape.Sound@VE.Calc.Lower VE.Calc.Work.Shape@VE.Calc.Lower
+  -- expr 2806702047
+theorem VE.Calc.Work.nodeC_spec
+  ∀ {limit : Nat} {t : VE.Calc.Inlined} {path : String} {e : VE.Calc.Expr} {parts : List (Option VE.Calc.Work.Lowered)}
+    {w w' : Nat} {r : Option String} {l : Option VE.Calc.Work.Lowered},
+    VE.Calc.Work.nodeC limit t path e parts w = Option.some ((r, l), w') →
+      (∀ (e' : VE.Calc.Expr),
+          VE.Calc.Wire.judged t e = Option.some e' →
+            ∃ ls',
+              List.mapM id parts = Option.some ls' ∧
+                VE.Calc.Work.Lowered.Sound e'.linear ((VE.Calc.Work.stepNode e' ls').result ())) →
+        (r =
+            match VE.Calc.Wire.judged t e with
+            | Option.some e' => if e'.linear.isNone = Bool.true then Option.some path else Option.none
+            | Option.none => Option.none) ∧
+          (r = Option.none →
+            ∀ (e' : VE.Calc.Expr),
+              VE.Calc.Wire.judged t e = Option.some e' →
+                ∃ l', l = Option.some l' ∧ VE.Calc.Work.Lowered.Sound e'.linear l')
+  -- uses VE.Calc.Expr.linear@VE.Calc.Lower VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Inlined@VE.Calc.Inline VE.Calc.QLin@VE.Calc.Linear VE.Calc.Wire.judged@VE.Calc.Wire VE.Calc.Work.Lowered.Sound@VE.Calc.Lower VE.Calc.Work.Lowered@VE.Calc.Lower VE.Calc.Work.Node.result@VE.Calc.Lower VE.Calc.Work.nodeC@VE.Calc.Wire VE.Calc.Work.nonlinearAtC.match_1@VE.Calc.Wire VE.Calc.Work.stepNode@VE.Calc.Lower
+  -- expr 3218931540
+theorem VE.Calc.Work.nodesWithin_add
+  ∀ (e : VE.Calc.Expr) (n d r : Nat),
+    VE.Calc.Expr.nodesWithin n e = Option.some r → VE.Calc.Expr.nodesWithin (n + d) e = Option.some (r + d) ∧ r < n
+  -- uses VE.Calc.Expr.nodesWithin@VE.Calc.Poly VE.Calc.Expr@VE.Calc.Syntax
+  -- expr 1117408029
+theorem VE.Calc.Work.nodesWithin_of_le
+  ∀ {e : VE.Calc.Expr} {n m r : Nat},
+    VE.Calc.Expr.nodesWithin n e = Option.some r → n ≤ m → (VE.Calc.Expr.nodesWithin m e).isSome = Bool.true
+  -- uses VE.Calc.Expr.nodesWithin@VE.Calc.Poly VE.Calc.Expr@VE.Calc.Syntax
+  -- expr 3884665775
+theorem VE.Calc.Work.nonconst_add
+  ∀ {A B : VE.Calc.QLin}, A.isConst = Bool.true → B.isConst = Bool.false → (A.add B).norm.isConst = Bool.false
+  -- uses VE.Calc.QLin.add@VE.Calc.Linear VE.Calc.QLin.isConst@VE.Calc.Lower VE.Calc.QLin.norm@VE.Calc.Linear VE.Calc.QLin@VE.Calc.Linear
+  -- expr 1448082520
+theorem VE.Calc.Work.nonlinearAtC_eq
+  ∀ (limit : Nat) (t : VE.Calc.Inlined) (path : String) (e : VE.Calc.Expr) (w : Nat) (r : Option String)
+    (l : Option VE.Calc.Work.Lowered) (w' : Nat),
+    VE.Calc.Work.nonlinearAtC limit t path e w = Option.some ((r, l), w') → r = VE.Calc.Wire.nonlinearAt t path e
+  -- uses VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Inlined@VE.Calc.Inline VE.Calc.Wire.nonlinearAt@VE.Calc.Wire VE.Calc.Work.Lowered@VE.Calc.Lower VE.Calc.Work.nonlinearAtC@VE.Calc.Wire
+  -- expr 1527544893
+theorem VE.Calc.Work.nonlinearAtC_spec
+  ∀ (limit : Nat) (t : VE.Calc.Inlined) (e : VE.Calc.Expr), VE.Calc.Work.AtSpec limit t e
+  -- uses VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Inlined@VE.Calc.Inline VE.Calc.Work.AtSpec@VE.Calc.Wire
+  -- expr 853846594
 theorem VE.Calc.Work.powTooLarge_sound
   ∀ (x : Rat) (k : Nat), VE.Calc.Work.powTooLarge x k = Bool.true → VE.Calc.Val.guard (x ^ k) = VE.Calc.Val.tooLarge
   -- uses VE.Calc.Val.guard@VE.Calc.Decls VE.Calc.Val.tooLarge@VE.Calc.Decls VE.Calc.Val@VE.Calc.Decls VE.Calc.Work.powTooLarge@VE.Calc.Decls
@@ -5064,6 +5468,39 @@ theorem VE.Calc.Work.pow_beyond
   ∀ (a k : Nat), VE.Calc.Work.smallBits ≤ a.log2 * k → VE.Calc.digitBound ≤ a ^ k
   -- uses VE.Calc.Work.smallBits@VE.Calc.Decls VE.Calc.digitBound@VE.Calc.Decls
   -- expr 1458641914
+theorem VE.Calc.Work.pow_ne
+  ∀ {x : Rat}, x ≠ 0 → ∀ (k : Nat), x ^ k ≠ 0
+  -- uses
+  -- expr 2070579444
+theorem VE.Calc.Work.pow_nonzero
+  ∀ {x : Rat} {k : Nat}, VE.Calc.Work.powTooLarge x k = Bool.true → x ^ k ≠ 0
+  -- uses VE.Calc.Work.powTooLarge@VE.Calc.Decls
+  -- expr 3365229699
+theorem VE.Calc.Work.scale_shape
+  ∀ {w : Rat} {nz : Option Bool} {L : VE.Calc.QLin} {s : VE.Calc.Work.Shape},
+    (∀ (b : Bool), nz = Option.some b → (w != 0) = b) →
+      VE.Calc.Work.Shape.Sound L s → VE.Calc.Work.Shape.Sound (VE.Calc.QLin.scale w L) (VE.Calc.Work.Shape.scale nz s)
+  -- uses VE.Calc.QLin.scale@VE.Calc.Linear VE.Calc.QLin@VE.Calc.Linear VE.Calc.Work.Shape.Sound@VE.Calc.Lower VE.Calc.Work.Shape.scale@VE.Calc.Lower VE.Calc.Work.Shape@VE.Calc.Lower
+  -- expr 1385061145
+theorem VE.Calc.Work.shapeOf_sound
+  ∀ (L : VE.Calc.QLin), VE.Calc.Work.Shape.Sound L (VE.Calc.Work.shapeOf L)
+  -- uses VE.Calc.QLin@VE.Calc.Linear VE.Calc.Work.Shape.Sound@VE.Calc.Lower VE.Calc.Work.shapeOf@VE.Calc.Lower
+  -- expr 2051239600
+theorem VE.Calc.Work.step_sound_bin
+  ∀ {e a b : VE.Calc.Expr},
+    e = a.add b ∨ e = a.sub b ∨ e = a.mul b ∨ e = a.div b →
+      ∀ {la lb : VE.Calc.Work.Lowered},
+        VE.Calc.Work.Lowered.Sound a.linear la →
+          VE.Calc.Work.Lowered.Sound b.linear lb →
+            VE.Calc.Work.Lowered.Sound e.linear ((VE.Calc.Work.stepNode e [la, lb]).result ())
+  -- uses VE.Calc.Expr.add@VE.Calc.Syntax VE.Calc.Expr.div@VE.Calc.Syntax VE.Calc.Expr.linear@VE.Calc.Lower VE.Calc.Expr.mul@VE.Calc.Syntax VE.Calc.Expr.sub@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Work.Lowered.Sound@VE.Calc.Lower VE.Calc.Work.Lowered@VE.Calc.Lower VE.Calc.Work.Node.result@VE.Calc.Lower VE.Calc.Work.stepNode@VE.Calc.Lower
+  -- expr 2466417491
+theorem VE.Calc.Work.step_sound_pow
+  ∀ {a : VE.Calc.Expr} {k : Nat} {la : VE.Calc.Work.Lowered},
+    VE.Calc.Work.Lowered.Sound a.linear la →
+      VE.Calc.Work.Lowered.Sound (a.pow k).linear ((VE.Calc.Work.stepNode (a.pow k) [la]).result ())
+  -- uses VE.Calc.Expr.linear@VE.Calc.Lower VE.Calc.Expr.pow@VE.Calc.Syntax VE.Calc.Expr@VE.Calc.Syntax VE.Calc.Work.Lowered.Sound@VE.Calc.Lower VE.Calc.Work.Lowered@VE.Calc.Lower VE.Calc.Work.Node.result@VE.Calc.Lower VE.Calc.Work.stepNode@VE.Calc.Lower
+  -- expr 2422202055
 theorem VE.Calc.Work.valueTableC_eq
   ∀ (limit : Nat) (ds : List VE.Calc.Decl) (t : VE.Calc.Work.Table) (w : Nat),
     VE.Calc.Work.valueTableC limit ds [] 0 = Option.some (t, w) → t = VE.Calc.Work.valueTable ds
@@ -5097,6 +5534,12 @@ theorem VE.Calc.Work.visitC_some
     VE.Calc.Work.visitC limit w k = Option.some r → w < limit ∧ k (w + 1) = Option.some r
   -- uses VE.Calc.Work.visitC@VE.Calc.Decls
   -- expr 865582078
+theorem VE.Calc.Work.zero_add_shape
+  ∀ {A B : VE.Calc.QLin} {s : VE.Calc.Work.Shape},
+    VE.Calc.Work.Shape.Sound A (VE.Calc.Work.Shape.const (Option.some Bool.false)) →
+      VE.Calc.Work.Shape.Sound B s → VE.Calc.Work.Shape.Sound (A.add B).norm s
+  -- uses VE.Calc.QLin.add@VE.Calc.Linear VE.Calc.QLin.norm@VE.Calc.Linear VE.Calc.QLin@VE.Calc.Linear VE.Calc.Work.Shape.Sound@VE.Calc.Lower VE.Calc.Work.Shape.const@VE.Calc.Lower VE.Calc.Work.Shape@VE.Calc.Lower
+  -- expr 2016976574
 theorem VE.Calc.assign_wellFormed
   ∀ (ds : List VE.Calc.Decl),
     VE.Calc.WellFormed ds → ∀ (ns : List String) (κ : String → Rat), VE.Calc.WellFormed (VE.Calc.assign ds ns κ)
@@ -5208,6 +5651,12 @@ theorem VE.Calc.findingKind_source_iff
       software = Option.none ∧ checks ≠ [] ∧ ∀ (b : Bool), b ∈ checks → b = Bool.true
   -- uses VE.Calc.FindingKind.source@VE.Calc.Decls VE.Calc.FindingKind@VE.Calc.Decls VE.Calc.findingKind@VE.Calc.Decls
   -- expr 3164982574
+theorem VE.Calc.firstAppearance_snoc
+  ∀ (l : List String) (m : String),
+    VE.Calc.FM.firstAppearance (l ++ [m]) =
+      if m ∈ VE.Calc.FM.firstAppearance l then VE.Calc.FM.firstAppearance l else VE.Calc.FM.firstAppearance l ++ [m]
+  -- uses VE.Calc.FM.firstAppearance@VE.Calc.Linear
+  -- expr 2866762473
 theorem VE.Calc.firstFault_mem
   ∀ (vs : List VE.Calc.Val) (v : VE.Calc.Val), VE.Calc.firstFault vs = Option.some v → v ∈ vs
   -- uses VE.Calc.Val@VE.Calc.Decls VE.Calc.firstFault@VE.Calc.Decls
@@ -5413,10 +5862,31 @@ theorem VE.Calc.mapM_facts
         ∀ (f : VE.Calc.QFact), f ∈ fss.flatten → ∃ p, p ∈ P ∧ ∃ fs, VE.Calc.Claim.facts ds p = Option.some fs ∧ f ∈ fs
   -- uses VE.Calc.Claim.facts@VE.Calc.Lower VE.Calc.Claim@VE.Calc.Syntax VE.Calc.Decl@VE.Calc.Decls VE.Calc.QFact@VE.Calc.Linear
   -- expr 3121494242
+theorem VE.Calc.mem_firstAppearance_of
+  ∀ (l acc : List String) (n : String), n ∈ acc → n ∈ List.foldl (fun acc n => if n ∈ acc then acc else acc ++ [n]) acc l
+  -- uses
+  -- expr 1315452361
 theorem VE.Calc.mul_pow_nat
   ∀ (a b : Rat) (k : Nat), (a * b) ^ k = a ^ k * b ^ k
   -- uses
   -- expr 3198866195
+theorem VE.Calc.normOnce_fold
+  ∀ (l pre : List (String × Rat)) (order : Array String) (sums : Std.HashMap String Rat),
+    order.toList = VE.Calc.FM.firstAppearance (List.map (fun x => x.fst) pre) →
+      (∀ (n : String), sums[n]? = if n ∈ order.toList then Option.some (VE.Calc.sumOf pre n) else Option.none) →
+        have r :=
+          List.foldl
+            (fun acc x =>
+              match x with
+              | (n, c) =>
+                match acc.snd[n]? with
+                | Option.some s => (acc.fst, acc.snd.insert n (s + c))
+                | Option.none => (acc.fst.push n, acc.snd.insert n c))
+            (order, sums) l;
+        r.fst.toList = VE.Calc.FM.firstAppearance (List.map (fun x => x.fst) (pre ++ l)) ∧
+          ∀ (n : String), r.snd[n]? = if n ∈ r.fst.toList then Option.some (VE.Calc.sumOf (pre ++ l) n) else Option.none
+  -- uses VE.Calc.FM.firstAppearance@VE.Calc.Linear VE.Calc.QLin.normOnce.match_1@VE.Calc.Linear VE.Calc.QLin.normOnce.match_3@VE.Calc.Linear VE.Calc.sumOf@VE.Calc.Linear
+  -- expr 2597602360
 theorem VE.Calc.notIdentity_of_differsAt
   ∀ (ds : List VE.Calc.Decl),
     VE.Calc.WellFormed ds →
@@ -5533,6 +6003,11 @@ theorem VE.Calc.sidesAtB_eq
         VE.Calc.differsAt a b κ = (Option.map (fun s => s.fst != s.snd) r).getD Bool.false
   -- uses VE.Calc.Budgeted@VE.Calc.Poly VE.Calc.Expr.eval@VE.Calc.Eval VE.Calc.Expr@VE.Calc.Syntax VE.Calc.differsAt@VE.Calc.Poly VE.Calc.sidesAtB@VE.Calc.Poly
   -- expr 2994313240
+theorem VE.Calc.sumOf_snoc
+  ∀ (l : List (String × Rat)) (m n : String) (c : Rat),
+    VE.Calc.sumOf (l ++ [(m, c)]) n = if n = m then VE.Calc.sumOf l n + c else VE.Calc.sumOf l n
+  -- uses VE.Calc.sumOf@VE.Calc.Linear
+  -- expr 1866772892
 theorem VE.Calc.sum_by_names
   ∀ (κ : String → Rat) (U : List String),
     U.Nodup →
@@ -44310,6 +44785,20 @@ theorem VE.Scope.Examples.unordered_join
             Option.some Bool.true
   -- uses VE.Scope.Examples.mergePartsText@VE.Scope.Examples VE.Scope.Examples.unordered@VE.Scope.Examples VE.Scope.mergeParts@VE.Scope.Effects
   -- expr 1307899726
+theorem VE.Scope.Run.explainWithin_effect
+  ∀ {limit : Nat} {D : VE.Scope.SDoc} {source : String} {rows : List VE.Scope.Row},
+    VE.Scope.Run.explainWithin limit D source = Except.ok rows →
+      ∀ (r : VE.Scope.Row), r ∈ rows → ∀ (x : VE.Scope.GovRow), x ∈ r.governors → x.effect ∈ VE.Scope.effectWords
+  -- uses VE.Scope.GovRow.effect@VE.Scope.Run VE.Scope.GovRow@VE.Scope.Run VE.Scope.Row.governors@VE.Scope.Run VE.Scope.Row@VE.Scope.Run VE.Scope.Run.explainWithin@VE.Scope.Run VE.Scope.SDoc@VE.Scope.Govern VE.Scope.effectWords@VE.Scope.Run
+  -- expr 2450938318
+theorem VE.Scope.Run.readSplit_scope
+  ∀ (j : Lean.Json),
+    VE.Scope.decodeScope j = do
+      let __do_lift ← VE.Bridge.stringField j "document"
+      let __do_lift ← VE.Service.Document.split __do_lift Bool.true
+      VE.Scope.Run.readSplit __do_lift
+  -- uses VE.Bridge.stringField@VE.Bridge VE.Discourse.Loader.Split@VE.Discourse.Loader VE.Scope.Run.readSplit@VE.Scope.Run VE.Scope.SDoc@VE.Scope.Govern VE.Scope.decodeScope@VE.Service.Document VE.Service.Document.split@VE.Service.Document
+  -- expr 3463571355
 theorem VE.Scope.addOver_nil
   ∀ (o : Lean.Json), VE.Scope.addOver [] o = o
   -- uses VE.Scope.addOver@VE.Scope.Govern
@@ -44352,6 +44841,11 @@ theorem VE.Scope.admit_governor
   -- uses VE.Scope.Governor.effect@VE.Scope.Govern VE.Scope.Governor.reach@VE.Scope.Govern VE.Scope.Governor.unit@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.Reach.frontier@VE.Scope.Govern VE.Scope.Reach@VE.Scope.Govern VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc.governors@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.admitBlock@VE.Scope.Govern VE.Scope.contentOf@VE.Scope.Govern VE.Scope.covered@VE.Scope.Govern VE.Scope.graph@VE.Scope.Govern VE.Scope.isFrame@VE.Scope.Govern VE.Scope.isNorm@VE.Scope.Govern VE.Scope.isPart@VE.Scope.Govern VE.Scope.setUnits@VE.Scope.Govern VE.Scope.unary@VE.Scope.Govern
   -- expr 3652577887
 theorem VE.Scope.admit_governor_unit
+  ∀ (D : VE.Scope.SDoc),
+    VE.Scope.admitBlock D = Except.ok () → ∀ (g : VE.Scope.Governor), g ∈ D.governors → g.unit ∈ VE.Scope.unitIds D.doc
+  -- uses VE.Scope.Governor.unit@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc.governors@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.admitBlock@VE.Scope.Govern VE.Scope.unitIds@VE.Scope.Govern
+  -- expr 606873540
+theorem VE.Scope.admit_unit
   ∀ (D : VE.Scope.SDoc),
     VE.Scope.admitBlock D = Except.ok () → ∀ (g : VE.Scope.Governor), g ∈ D.governors → g.unit ∈ VE.Scope.unitIds D.doc
   -- uses VE.Scope.Governor.unit@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc.governors@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.admitBlock@VE.Scope.Govern VE.Scope.unitIds@VE.Scope.Govern
@@ -44669,6 +45163,31 @@ theorem VE.Scope.edgesOf_name
     (w, n) ∈ VE.Scope.edgesOf D rule g → ∃ v M, rule v = Option.some M ∧ n = M.name
   -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Scope.Governor@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.edgesOf@VE.Scope.Govern VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
   -- expr 667491140
+theorem VE.Scope.explainFast_eq
+  ∀ [inst : VE.Scope.Quotes] (D : VE.Scope.SDoc), VE.Scope.explainFast D = VE.Scope.explainRows D
+  -- uses VE.Scope.Quotes@VE.Scope.English VE.Scope.Row@VE.Scope.Run VE.Scope.SDoc@VE.Scope.Govern VE.Scope.explainFast@VE.Scope.Run VE.Scope.explainRows@VE.Scope.Run
+  -- expr 3036633156
+theorem VE.Scope.explainRows_effect
+  ∀ [inst : VE.Scope.Quotes] (D : VE.Scope.SDoc) (rows : List VE.Scope.Row),
+    VE.Scope.explainRows D = Except.ok rows →
+      ∀ (r : VE.Scope.Row), r ∈ rows → ∀ (x : VE.Scope.GovRow), x ∈ r.governors → x.effect ∈ VE.Scope.effectWords
+  -- uses VE.Scope.GovRow.effect@VE.Scope.Run VE.Scope.GovRow@VE.Scope.Run VE.Scope.Quotes@VE.Scope.English VE.Scope.Row.governors@VE.Scope.Run VE.Scope.Row@VE.Scope.Run VE.Scope.SDoc@VE.Scope.Govern VE.Scope.effectWords@VE.Scope.Run VE.Scope.explainRows@VE.Scope.Run
+  -- expr 2245486301
+theorem VE.Scope.explain_bound
+  ∀ [inst : VE.Scope.Quotes] (D : VE.Scope.SDoc) (rows : List VE.Scope.Row),
+    VE.Scope.explainRows D = Except.ok rows →
+      ∀ (r : VE.Scope.Row),
+        r ∈ rows →
+          r.unit ∈ VE.Scope.unitIds D.doc ∧
+            ∀ (x : VE.Scope.GovRow),
+              x ∈ r.governors → x.unit ∈ VE.Scope.unitIds D.doc ∧ ∃ g, g ∈ D.governors ∧ g.id = x.id
+  -- uses VE.Scope.GovRow.id@VE.Scope.Run VE.Scope.GovRow.unit@VE.Scope.Run VE.Scope.GovRow@VE.Scope.Run VE.Scope.Governor.id@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.Quotes@VE.Scope.English VE.Scope.Row.governors@VE.Scope.Run VE.Scope.Row.unit@VE.Scope.Run VE.Scope.Row@VE.Scope.Run VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc.governors@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.explainRows@VE.Scope.Run VE.Scope.unitIds@VE.Scope.Govern
+  -- expr 2900027915
+theorem VE.Scope.explain_rows_iff
+  ∀ [inst : VE.Scope.Quotes] (D : VE.Scope.SDoc) (rows : List VE.Scope.Row),
+    VE.Scope.explainRows D = Except.ok rows → ∀ (u : String), (∃ r, r ∈ rows ∧ r.unit = u) ↔ u ∈ VE.Scope.affected D
+  -- uses VE.Scope.Quotes@VE.Scope.English VE.Scope.Row.unit@VE.Scope.Run VE.Scope.Row@VE.Scope.Run VE.Scope.SDoc@VE.Scope.Govern VE.Scope.affected@VE.Scope.Govern VE.Scope.explainRows@VE.Scope.Run
+  -- expr 1812299850
 theorem VE.Scope.fastReads_eq
   ∀ (D : VE.Scope.SDoc),
     VE.Scope.fastReads D =
@@ -47188,6 +47707,10 @@ theorem VE.Service.runMode_route
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.route j = VE.Route.Run.runCaseReported j
   -- uses VE.Route.Run.runCaseReported@VE.Route.Run VE.Service.Mode.route@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 4097467530
+theorem VE.Service.runMode_scope
+  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.scope j = VE.Scope.Run.runCaseReported j
+  -- uses VE.Scope.Run.runCaseReported@VE.Scope.Run VE.Service.Mode.scope@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
+  -- expr 1153227998
 theorem VE.Service.runMode_searchBudget
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.searchBudget j = VE.SearchBudget.Run.runCaseReported j
   -- uses VE.SearchBudget.Run.runCaseReported@VE.SearchBudget.Run VE.Service.Mode.searchBudget@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
