@@ -1,3 +1,5 @@
+- `tests/test_english_runner_root.py` — The one-shot English executable has a distinct root and preserves its wire bytes.
+- `tests/test_english_unambiguity.py` — (no module docstring)
 - `tests/test_entailment.py` — (no module docstring)
 - `tests/test_entailment_adversarial.py` — Adversarial checks for the small trusted tableau replayer.
 - `tests/test_entailment_properties.py` — Independent bounded semantic check of every generated positive certificate.
@@ -86,4 +88,3 @@
 - `tests/test_lineage_lint.py` — Pinned Git reads in history-dependent tests must name content, not a VM commit.
 - `tests/test_llm.py` — (no module docstring)
 - `tests/test_me4_csv_mutants.py` — The saved mutation run must not waive CSV character regressions.
-- `tests/test_merge_tooling_evidence.py` — docs/merge-tooling.md against its saved evidence (docs/merge-tooling/*.json).

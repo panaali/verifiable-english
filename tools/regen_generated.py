@@ -104,7 +104,7 @@ GENERATED = (
     Generated("acts-fault-catalogue", ("conformance/wire-contract/acts@0-catalogue.json",),
               ((PY, "-m", "conformance.wire_contract_faults", "--unit", "acts@0"),),
               ((PY, "-m", "conformance.wire_contract_faults", "--check", "--unit", "acts@0"),),
-              note="the index of conformance/wire_contract_faults_acts.py's faults"),
+              note="the index of conformance/wire_contract_faults_acts.py's faults", service="write"),
     Generated("wire-contract",
               ("lean/VE/WireContract/Limits.lean", "lean/VE/WireContract/Names.lean",
                "lean/VE/WireContract/Tables/*.lean", "ve/wire_contract/contracts.lock",
