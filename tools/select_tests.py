@@ -1020,6 +1020,48 @@ def light_tier(plan: dict, inventory_path: Path = ROOT / "tests/heavy.json", job
                      "source_run": inventory["run"]}}
 
 
+# --defer-heavy (opt-in; builder feedback runs only: tools/gate.py, --full and the chain's own runs never pass it).
+DEFER_SECONDS = 120.0
+
+
+def weak_reason(reason: str) -> bool:
+    """A reason that names no recorded use of the change: the static graph, a listed directory, or SMOKE."""
+    return reason.endswith(" (static)") or reason.startswith("lists the directory of ") or reason == "smoke"
+
+
+def map_seconds(plan: dict) -> dict[str, float]:
+    """The seconds per unit of the coverage map a plan used; none without one."""
+    path = (plan.get("map") or {}).get("path")
+    try:
+        status = test_map.load(Path(path)).get("status", {}) if path else {}
+    except (OSError, ValueError, EOFError):
+        return {}
+    return {unit: float(row.get("seconds") or 0.0) for unit, row in status.items() if isinstance(row, dict)}
+
+
+def defer_heavy(plan: dict, seconds: dict[str, float], *, keep=frozenset(),
+                threshold: float = DEFER_SECONDS) -> dict:
+    """The plan without the heavy test files (over `threshold` seconds in `seconds`, the map's whole-process
+    times) that only weak reasons select; the chain gate runs them (tools/gate.py runs every unit). A full
+    plan defers nothing; a changed test, SMOKE, HISTORY_TEST, a unit in `keep` (failed last time) and a unit
+    with no recorded seconds always stay. `deferred` names each one with its seconds and reasons."""
+    stay = {*plan["changed"], *SMOKE, HISTORY_TEST, *keep}
+    deferred = {} if plan["full"] else {
+        unit: {"seconds": seconds[unit], "reasons": plan["reasons"][unit]} for unit in plan["selected"]
+        if unit.startswith("tests/") and unit not in stay and seconds.get(unit, 0.0) > threshold
+        and plan["reasons"].get(unit) and all(map(weak_reason, plan["reasons"][unit]))}
+    commands = []
+    for command in plan["commands"]:
+        if command[:len(PYTEST)] == PYTEST and deferred:
+            command = [argument for argument in command if argument not in deferred]
+            if not any(argument.startswith("tests/") for argument in command[len(PYTEST):]):
+                continue  # pytest with no file would run the whole suite
+        commands.append(command)
+    selected = [unit for unit in plan["selected"] if unit not in deferred]
+    return {**plan, "selected": selected, "selected_count": len(selected), "commands": commands,
+            "deferred": deferred, "deferred_seconds": round(sum(row["seconds"] for row in deferred.values()), 1)}
+
+
 # --- Impacted mode: the fast path for local iteration (docs/TESTING.md) ---
 #
 # A test runs when a file it depends on changed: a local Python module in its import
@@ -1379,11 +1421,15 @@ def run_recorded(plan: dict, jobs: int, maxfail: int = 0, held: set[str] | None 
     for unit in not_run:
         if unit in results:
             results[unit]["exit"] = "stale"  # selected for the change, but the run stopped first
+    for unit in plan.get("deferred", ()):
+        if unit in results:
+            results[unit]["exit"] = "deferred"  # selected for the change, left to the chain gate
     data = test_map.build_map(results, base.commit if base is not None else "")
     data["tree"] = tree
     test_map.write_map(data, test_map.tree_map_path(tree))
     shutil.rmtree(work, ignore_errors=True)
-    print(f"recorded {len(selected)} units for tree {tree[:10]}; {len(set(stale) | set(not_run))} others left "
+    print(f"recorded {len(selected)} units for tree {tree[:10]}; "
+          f"{len(set(stale) | set(not_run) | set(plan.get('deferred', ())))} others left "
           f"to the static graph until they run; {len(failed)} failed", flush=True)
     if not_run:
         print(f"STOPPED EARLY (--maxfail {maxfail}): {len(not_run)} selected units did not run: "
@@ -1492,6 +1538,10 @@ def main() -> int:
                              "0 runs everything). The test files that failed last time and the changed ones run "
                              "first. The gate and a --full run never stop early, and a --full run counts "
                              "quarantined failures")
+    parser.add_argument("--defer-heavy", action="store_true",
+                        help=f"leave out the test files over {DEFER_SECONDS:g} s in the map that only weak reasons "
+                             "(static graph, a listed directory, smoke) select; the chain gate runs them. For "
+                             "builder runs only, never the gate")
     args = parser.parse_args()
     if args.maxfail is not None and args.maxfail < 0:
         parser.error("--maxfail is 0 or a positive count")
@@ -1499,6 +1549,8 @@ def main() -> int:
         parser.error("--full runs every test and counts every failure; it takes no --maxfail")
     if args.full and args.tier:
         parser.error("--full runs every test; it takes no --tier")
+    if args.defer_heavy and (args.full or args.tier or args.impacted):
+        parser.error("--defer-heavy narrows a mapped selection; it takes no --full, --tier or --impacted")
     args.maxfail = 0 if args.full else MAXFAIL if args.maxfail is None else args.maxfail
     paths = args.paths if args.paths is not None else changed_paths(args.base, args.commit)
     if args.impacted:
@@ -1551,6 +1603,8 @@ def main() -> int:
         plan = plan_now()
     if args.tier == "light":
         plan = light_tier(plan, jobs=args.jobs)
+    if args.defer_heavy:
+        plan = defer_heavy(plan, map_seconds(plan), keep=set(run_order.last_failed()))
     if args.json:
         print(json.dumps(plan, indent=2))
     else:
@@ -1561,6 +1615,9 @@ def main() -> int:
             print(f"light tier: {plan['tier']['light_count']} light; "
                   f"{plan['tier']['selected_heavy_count']}/{plan['tier']['heavy_count']} heavy selected "
                   f"(measured in {plan['tier']['source_run']})")
+        if plan.get("deferred"):
+            print(f"deferred to the chain gate: {len(plan['deferred'])} test files over {DEFER_SECONDS:g} s "
+                  f"selected only for weak reasons ({plan['deferred_seconds']:g} s): {', '.join(plan['deferred'])}")
         print("changed:", ", ".join(paths) or "(none; full fallback)")
         if plan["lean_cutoff"]:
             cutoff = plan["lean_cutoff"]
