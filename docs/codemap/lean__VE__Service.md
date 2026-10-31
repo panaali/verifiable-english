@@ -17,6 +17,7 @@
 - `lean/VE/Service/ScopeAdmission.lean` — SC-1b's theorems (docs/spec/scope.md 5.2): the governor status, the front-matter decoder's layout, and the document mode's answer on a `scope@0` document.
 - `lean/VE/Service/ScopeExamples.lean` — scope@0 in the document mode (SC-1b; docs/spec/scope.md 1.6, 3, 5.2 and 7.2) on a small part document built as a request carries it: a lead-in "Agents must not…
 - `lean/VE/Service/SoftSourceExamples.lean` — The soft source of the document mode (`softSourceNorms`, Python's `_soft_contents`) reads a `MIXED` unit's parts (rd9-docroute F7): wrapping a document's units…
+- `lean/VE/Service/StageTimes.lean` — The env-gated stage timer of `ve_service` (reviews/dri-decisions-20261029-scale-admission-profile.md item 2).
 - `lean/VE/Service/Standalone.lean` — Standalone service validation and identity endpoints.
 - `lean/VE/Service/TypingDiagnostic.lean` — Python-compatible typing diagnostics for the standalone `check` mode.
 - `lean/VE/Service/english_copy.py` — Generate or check VE/Service/EnglishRun.lean, the service's copy of the English runner.
