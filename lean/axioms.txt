@@ -1207,6 +1207,20 @@
 'VE.Closure.warshall_iff_path' depends on axioms: [propext, Quot.sound]
 'VE.Closure.warshall_preserves_closed' depends on axioms: [propext, Quot.sound]
 'VE.Closure.warshall_sound' depends on axioms: [propext, Quot.sound]
+'VE.Compose.Contract.Rewriter.Laws.fresh' depends on axioms: [propext]
+'VE.Compose.Contract.Rewriter.Laws.off' depends on axioms: [propext]
+'VE.Compose.Contract.Rewriter.Laws.preserves' depends on axioms: [propext]
+'VE.Compose.Contract.checkDocSets_pipeline' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Compose.Contract.filterMap_docRewriters' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Compose.Contract.listed_evidence' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Compose.Contract.pipelineOf_scope' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Compose.Contract.pipeline_names' depends on axioms: [propext]
+'VE.Compose.Contract.pipeline_off' depends on axioms: [propext]
+'VE.Compose.Contract.pipeline_preserves' depends on axioms: [propext]
+'VE.Compose.Contract.refuseAll_runs' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Compose.Contract.scopeFaithful' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Compose.Contract.scopePreserves' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Compose.Contract.scopeSetsFaithful' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Compose.SlotChain.A_in' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Compose.SlotChain.A_out' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Compose.SlotChain.E_in' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -1252,6 +1266,8 @@
 'VE.Compose.gate_legacy' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Compose.gate_scope' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Compose.gate_wellFormed' depends on axioms: [propext, Quot.sound]
+'VE.Compose.interface_functional' does not depend on any axioms
+'VE.Compose.interface_slot' does not depend on any axioms
 'VE.Compose.ite_and3' does not depend on any axioms
 'VE.Compose.ite_error_ok' does not depend on any axioms
 'VE.Compose.ite_ok_of' does not depend on any axioms
@@ -1261,6 +1277,7 @@
 'VE.Compose.needs_chain' depends on axioms: [propext]
 'VE.Compose.prefixAdmissibleP_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Compose.refusal_names' depends on axioms: [propext, Quot.sound]
+'VE.Compose.rewriter_ranks_distinct' does not depend on any axioms
 'VE.Compose.rights_acceptance_from_slot' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Compose.rights_background_is_slot' depends on axioms: [propext, Quot.sound]
 'VE.Compose.rights_check_is_slot' depends on axioms: [propext, Quot.sound]
