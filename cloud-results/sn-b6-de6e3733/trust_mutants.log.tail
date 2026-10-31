@@ -1,0 +1,6 @@
+VE/Senses/RunExamples.lean: declarations.txt was not compiled from this source; rerun tools/lean_statements.py
+VE/Service/RegistryExamples.lean: declarations.txt was not compiled from this source; rerun tools/lean_statements.py
+VE.lean: declarations.txt was not compiled from this source; rerun tools/lean_statements.py
+lean/declarations.txt was not compiled from lean/VE.lean; rerun tools/lean_statements.py
+lean/declarations.txt was not compiled from lean/VE/Senses/RunExamples.lean; rerun tools/lean_statements.py
+lean/declarations.txt was not compiled from lean/VE/Service/RegistryExamples.lean; rerun tools/lean_statements.py
