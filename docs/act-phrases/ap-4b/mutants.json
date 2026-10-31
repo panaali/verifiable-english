@@ -10,7 +10,7 @@
    "definition": "VE.Acts.globalRules",
    "behaviour": "the plan's seeded bug: the pre-modifier's `all` reading is dropped, so rs_u105b/c (S1, S8) must be refused",
    "status": "KILLED",
-   "test": "lean/VE/Acts/ReadingsExamples.lean:38, lean/VE/Acts/ReadingsExamples.lean:40, lean/VE/Acts/ReadingsExamples.lean:49, lean/VE/Acts/ReadingsExamples.lean:86, lean/VE/Acts/ReadingsExamples.lean:163, lean/VE/Acts/ReadingsExamples.lean:164, lean/VE/Acts/ReadingsExamples.lean:167, lean/VE/Acts/ReadingsExamples.lean:169, lean/VE/Acts/ReadingsExamples.lean:195, lean/VE/Acts/ReadingsExamples.lean:199"
+   "test": "lean/VE/Acts/ReadingsExamples.lean:38, lean/VE/Acts/ReadingsExamples.lean:40, lean/VE/Acts/ReadingsExamples.lean:49, lean/VE/Acts/ReadingsExamples.lean:86, lean/VE/Acts/ReadingsExamples.lean:163, lean/VE/Acts/ReadingsExamples.lean:164, lean/VE/Acts/ReadingsExamples.lean:167, lean/VE/Acts/ReadingsExamples.lean:169, lean/VE/Acts/ReadingsExamples.lean:198, lean/VE/Acts/ReadingsExamples.lean:202"
   },
   {
    "id": "forall2-unrelated",
@@ -19,7 +19,7 @@
    "definition": "List.Forall₂",
    "behaviour": "the bijection relates nothing pointwise",
    "status": "KILLED",
-   "test": "lean/VE/Acts/Sources.lean:138"
+   "test": "lean/VE/Acts/Sources.lean:139"
   },
   {
    "id": "source-no-units",
@@ -46,7 +46,7 @@
    "definition": "VE.Acts.ruleView",
    "behaviour": "the completion is read from the frame's placeholder, not `unspec`",
    "status": "KILLED",
-   "test": "lean/VE/Acts/ReadingsExamples.lean:199, lean/VE/Acts/ReadingsExamples.lean:200"
+   "test": "lean/VE/Acts/ReadingsExamples.lean:202, lean/VE/Acts/ReadingsExamples.lean:203"
   },
   {
    "id": "ruleView-sign",
@@ -55,7 +55,7 @@
    "definition": "VE.Acts.ruleView",
    "behaviour": "the rule's sign is not compared",
    "status": "KILLED",
-   "test": "lean/VE/Acts/ReadingsExamples.lean:195, lean/VE/Acts/ReadingsExamples.lean:199"
+   "test": "lean/VE/Acts/ReadingsExamples.lean:198, lean/VE/Acts/ReadingsExamples.lean:202"
   },
   {
    "id": "ruleView-guard",
@@ -109,7 +109,7 @@
    "definition": "VE.Acts.choiceRules",
    "behaviour": "the shared units' rules are left out",
    "status": "KILLED",
-   "test": "lean/VE/Acts/ReadingsExamples.lean:163, lean/VE/Acts/ReadingsExamples.lean:164, lean/VE/Acts/ReadingsExamples.lean:167, lean/VE/Acts/ReadingsExamples.lean:169, lean/VE/Acts/ReadingsExamples.lean:198, lean/VE/Acts/ReadingsExamples.lean:202, lean/VE/Acts/ReadingsExamples.lean:222"
+   "test": "lean/VE/Acts/ReadingsExamples.lean:163, lean/VE/Acts/ReadingsExamples.lean:164, lean/VE/Acts/ReadingsExamples.lean:167, lean/VE/Acts/ReadingsExamples.lean:169, lean/VE/Acts/ReadingsExamples.lean:198, lean/VE/Acts/ReadingsExamples.lean:202, lean/VE/Acts/ReadingsExamples.lean:229"
   },
   {
    "id": "choiceRules-all-units",
@@ -136,7 +136,7 @@
    "definition": "VE.Acts.choiceViews",
    "behaviour": "the choices are viewed with no `unspecified` names",
    "status": "KILLED",
-   "test": "lean/VE/Acts/ReadingsExamples.lean:199, lean/VE/Acts/ReadingsExamples.lean:200"
+   "test": "lean/VE/Acts/ReadingsExamples.lean:202, lean/VE/Acts/ReadingsExamples.lean:203"
   },
   {
    "id": "readingViews-first",
@@ -145,7 +145,7 @@
    "definition": "VE.Acts.readingViews",
    "behaviour": "a reading is viewed by its first simple act only",
    "status": "KILLED",
-   "test": "lean/VE/Acts/ReadingsExamples.lean:163, lean/VE/Acts/ReadingsExamples.lean:164, lean/VE/Acts/ReadingsExamples.lean:167, lean/VE/Acts/ReadingsExamples.lean:169, lean/VE/Acts/ReadingsExamples.lean:195, lean/VE/Acts/ReadingsExamples.lean:199, lean/VE/Acts/ReadingsExamples.lean:219"
+   "test": "lean/VE/Acts/ReadingsExamples.lean:163, lean/VE/Acts/ReadingsExamples.lean:164, lean/VE/Acts/ReadingsExamples.lean:167, lean/VE/Acts/ReadingsExamples.lean:169, lean/VE/Acts/ReadingsExamples.lean:198, lean/VE/Acts/ReadingsExamples.lean:202, lean/VE/Acts/ReadingsExamples.lean:229"
   },
   {
    "id": "opOfSource-sign",
@@ -154,7 +154,7 @@
    "definition": "VE.Acts.opOfSource",
    "behaviour": "the template's sign is negated",
    "status": "KILLED",
-   "test": "lean/VE/Acts/ReadingsExamples.lean:163, lean/VE/Acts/ReadingsExamples.lean:164, lean/VE/Acts/ReadingsExamples.lean:167, lean/VE/Acts/ReadingsExamples.lean:169, lean/VE/Acts/ReadingsExamples.lean:173, lean/VE/Acts/ReadingsExamples.lean:176, lean/VE/Acts/ReadingsExamples.lean:177, lean/VE/Acts/ReadingsExamples.lean:179, lean/VE/Acts/ReadingsExamples.lean:195, lean/VE/Acts/ReadingsExamples.lean:199, lean/VE/Acts/ReadingsExamples.lean:205, lean/VE/Acts/ReadingsExamples.lean:219"
+   "test": "lean/VE/Acts/ReadingsExamples.lean:163, lean/VE/Acts/ReadingsExamples.lean:164, lean/VE/Acts/ReadingsExamples.lean:167, lean/VE/Acts/ReadingsExamples.lean:169, lean/VE/Acts/ReadingsExamples.lean:173, lean/VE/Acts/ReadingsExamples.lean:176, lean/VE/Acts/ReadingsExamples.lean:177, lean/VE/Acts/ReadingsExamples.lean:179, lean/VE/Acts/ReadingsExamples.lean:184, lean/VE/Acts/ReadingsExamples.lean:198, lean/VE/Acts/ReadingsExamples.lean:202, lean/VE/Acts/ReadingsExamples.lean:208, lean/VE/Acts/ReadingsExamples.lean:214, lean/VE/Acts/ReadingsExamples.lean:229"
   },
   {
    "id": "sourceExact-ordered",
@@ -163,7 +163,7 @@
    "definition": "VE.Acts.SourceExact",
    "behaviour": "the statement claims the choices in the readings' order",
    "status": "KILLED",
-   "test": "lean/VE/Acts/Sources.lean:175"
+   "test": "lean/VE/Acts/Sources.lean:176"
   },
   {
    "id": "sourceCheck-no-compare",
@@ -172,7 +172,7 @@
    "definition": "VE.Acts.sourceCheck",
    "behaviour": "the choices are not compared",
    "status": "KILLED",
-   "test": "lean/VE/Acts/Sources.lean:174"
+   "test": "lean/VE/Acts/Sources.lean:175"
   },
   {
    "id": "sourceCheck-no-paraphrases",
@@ -181,7 +181,7 @@
    "definition": "VE.Acts.sourceCheck",
    "behaviour": "equal paraphrases are not refused (D-32)",
    "status": "KILLED",
-   "test": "lean/VE/Acts/Sources.lean:161, lean/VE/Acts/Sources.lean:173, lean/VE/Acts/Sources.lean:175"
+   "test": "lean/VE/Acts/Sources.lean:162, lean/VE/Acts/Sources.lean:174, lean/VE/Acts/Sources.lean:176"
   },
   {
    "id": "compare-no-reading-check",
@@ -190,7 +190,7 @@
    "definition": "VE.Acts.compareViews",
    "behaviour": "a choice that is no reading is not named first",
    "status": "KILLED",
-   "test": "lean/VE/Acts/ReadingsExamples.lean:173, lean/VE/Acts/ReadingsExamples.lean:176, lean/VE/Acts/ReadingsExamples.lean:177, lean/VE/Acts/ReadingsExamples.lean:179, lean/VE/Acts/ReadingsExamples.lean:196, lean/VE/Acts/ReadingsExamples.lean:200, lean/VE/Acts/ReadingsExamples.lean:202, lean/VE/Acts/ReadingsExamples.lean:204"
+   "test": "lean/VE/Acts/ReadingsExamples.lean:173, lean/VE/Acts/ReadingsExamples.lean:176, lean/VE/Acts/ReadingsExamples.lean:177, lean/VE/Acts/ReadingsExamples.lean:179, lean/VE/Acts/ReadingsExamples.lean:184, lean/VE/Acts/ReadingsExamples.lean:199, lean/VE/Acts/ReadingsExamples.lean:203, lean/VE/Acts/ReadingsExamples.lean:205, lean/VE/Acts/ReadingsExamples.lean:207, lean/VE/Acts/ReadingsExamples.lean:214"
   },
   {
    "id": "compare-no-pairwise",
@@ -199,7 +199,7 @@
    "definition": "VE.Acts.compareViews",
    "behaviour": "two choices that are one reading pass",
    "status": "KILLED",
-   "test": "lean/VE/Acts/Sources.lean:154"
+   "test": "lean/VE/Acts/Sources.lean:155"
   },
   {
    "id": "compare-no-bijection",
@@ -208,7 +208,7 @@
    "definition": "VE.Acts.compareViews",
    "behaviour": "the matching need not be a bijection",
    "status": "KILLED",
-   "test": "lean/VE/Acts/Sources.lean:154"
+   "test": "lean/VE/Acts/Sources.lean:155"
   },
   {
    "id": "pick-any",
@@ -217,7 +217,7 @@
    "definition": "VE.Acts.pick",
    "behaviour": "a reading is matched by any choice",
    "status": "KILLED",
-   "test": "lean/VE/Acts/Sources.lean:137"
+   "test": "lean/VE/Acts/Sources.lean:138"
   },
   {
    "id": "d29-no-code",
@@ -226,7 +226,7 @@
    "definition": "VE.Acts.d29",
    "behaviour": "D-29's texts lose their code",
    "status": "KILLED",
-   "test": "lean/VE/Acts/ReadingsExamples.lean:169, lean/VE/Acts/ReadingsExamples.lean:173, lean/VE/Acts/ReadingsExamples.lean:176, lean/VE/Acts/ReadingsExamples.lean:177, lean/VE/Acts/ReadingsExamples.lean:179, lean/VE/Acts/ReadingsExamples.lean:196, lean/VE/Acts/ReadingsExamples.lean:200, lean/VE/Acts/ReadingsExamples.lean:202, lean/VE/Acts/ReadingsExamples.lean:204, lean/VE/Acts/ReadingsExamples.lean:219, lean/VE/Acts/ReadingsExamples.lean:234, lean/VE/Acts/ReadingsExamples.lean:236"
+   "test": "lean/VE/Acts/ReadingsExamples.lean:169, lean/VE/Acts/ReadingsExamples.lean:173, lean/VE/Acts/ReadingsExamples.lean:176, lean/VE/Acts/ReadingsExamples.lean:177, lean/VE/Acts/ReadingsExamples.lean:179, lean/VE/Acts/ReadingsExamples.lean:184, lean/VE/Acts/ReadingsExamples.lean:199, lean/VE/Acts/ReadingsExamples.lean:203, lean/VE/Acts/ReadingsExamples.lean:205, lean/VE/Acts/ReadingsExamples.lean:207, lean/VE/Acts/ReadingsExamples.lean:214, lean/VE/Acts/ReadingsExamples.lean:229, lean/VE/Acts/ReadingsExamples.lean:244, lean/VE/Acts/ReadingsExamples.lean:246"
   },
   {
    "id": "atom-value-false",
@@ -235,7 +235,7 @@
    "definition": "VE.Acts.atomSituation",
    "behaviour": "the witness's act is probed for `false`",
    "status": "KILLED",
-   "test": "lean/VE/Acts/ReadingsExamples.lean:245"
+   "test": "lean/VE/Acts/ReadingsExamples.lean:255"
   },
   {
    "id": "atom-probe-other",
@@ -244,7 +244,7 @@
    "definition": "VE.Acts.atomSituation",
    "behaviour": "the act probed is the other candidate's",
    "status": "KILLED",
-   "test": "lean/VE/Acts/ReadingsExamples.lean:245, lean/VE/Acts/ReadingsExamples.lean:248"
+   "test": "lean/VE/Acts/ReadingsExamples.lean:255, lean/VE/Acts/ReadingsExamples.lean:258"
   },
   {
    "id": "atom-shared-act",
@@ -253,7 +253,7 @@
    "definition": "VE.Acts.atomSituation",
    "behaviour": "an act both candidates regulate may be probed",
    "status": "KILLED",
-   "test": "lean/VE/Acts/ReadingsExamples.lean:254"
+   "test": "lean/VE/Acts/ReadingsExamples.lean:261"
   },
   {
    "id": "rulePreds-none",
@@ -262,16 +262,7 @@
    "definition": "VE.Acts.rulePreds",
    "behaviour": "a candidate's rule names no act",
    "status": "KILLED",
-   "test": "lean/VE/Acts/ReadingsExamples.lean:245, lean/VE/Acts/ReadingsExamples.lean:248"
-  },
-  {
-   "id": "choiceRules-all-sets",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Sources.lean",
-   "definition": "VE.Acts.choiceRules",
-   "behaviour": "every set's chosen rule is taken, listed or not",
-   "status": "SURVIVED",
-   "test": ""
+   "test": "lean/VE/Acts/ReadingsExamples.lean:255, lean/VE/Acts/ReadingsExamples.lean:258"
   }
  ]
 }
