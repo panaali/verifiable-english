@@ -1622,6 +1622,13 @@
    "reason": "scale-stage-timers: Serve.lean +2 untied V (main installs the env-gated stage-timer stderr stream, VE_READINGS_STAGE_TIMES); VE/Readings/Stage.lean and VE/Service/StageTimes.lean are G[R] diagnostics (stage_eq, part_eq: the value is the work's own); the five admission stages wrap their bodies on their own lines (+0); K +0, S +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), scale-stage-timers, 2026-10-31",
    "commit": "fc70208186d5017304f4798636ae24282f9fc8fa"
+  },
+  {
+   "class": "V",
+   "lines": 61,
+   "reason": "ap-1bf: V +61 (VE/WireContract/Hooks/Acts.lean +57, VE/WireContract/Diagnose.lean +2, VE/WireContract/Tables/Acts.lean +2), K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-1bf, 2026-10-18",
+   "commit": "11de39bd88e07d7d1cf75e16ae956e3179b324c3"
   }
  ]
 }
