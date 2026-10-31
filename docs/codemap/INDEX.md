@@ -49,6 +49,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [docs/math-evidence/](docs__math-evidence.md) — 3 modules — -
 - [docs/math-evidence-me-1c/](docs__math-evidence-me-1c.md) — 2 modules — -
 - [docs/merge-tooling/](docs__merge-tooling.md) — 1 modules — -
+- [docs/norm-defaults/](docs__norm-defaults.md) — 1 modules — -
 - [docs/oom-rootcause/](docs__oom-rootcause.md) — 2 modules — -
 - [docs/perf/](docs__perf.md) — 2 modules — -
 - [docs/premise-scale/](docs__premise-scale.md) — 4 modules — -
