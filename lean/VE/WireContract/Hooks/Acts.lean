@@ -80,42 +80,75 @@ def registered : List String := ["acts_environment"]
 
 /-! Fixtures at and around each limit, on both sides; the limits are Lexical's. -/
 
-def envOf (fixed : List String) (act : String) (profiles := ["acts@0", "norms@0", "relational-fol@0"]) : Json :=
-  let pred := fun (reg : List (String × Json)) => Json.mkObj [("arguments", toJson ["person"]),
+def envOf (fixed : List String) (act : String) (profiles := ["acts@0", "norms@0", "relational-fol@0"])
+    (args := ["person"]) (others : List String := []) (defined := false) : Json :=
+  let pred := fun (args : List String) (reg : List (String × Json)) => Json.mkObj [("arguments", toJson args),
     ("description", "d"), ("regulated", Json.mkObj reg)]
+  let permission := pred ["person"] [("role", "permission"), ("default", "allow"), ("act", "{0} seek protection")]
+  let c := Json.mkObj ([("arguments", toJson ["person"]), ("description", "c")] ++
+    if defined then [("defined", Json.mkObj [("arguments", toJson ["person"]), ("body", toJson ["top"])])] else [])
   Json.mkObj [("language", "ve.core@0.2"), ("profiles", toJson profiles),
     ("spec_revision", "ve-v0.2-expand2-2026-09-25"),
     ("vocabulary", Json.mkObj [("sorts", Json.mkObj [("person", Json.mkObj [("description", "person")])]),
-      ("predicates", Json.mkObj [("paid", pred [("role", "plain"), ("default", "deny"), ("act", .str act),
-        ("form", "has the right")])]), ("constants", Json.mkObj []), ("acts", Json.mkObj [("fixed", toJson fixed)])])]
+      ("predicates", Json.mkObj ([("paid", pred args [("role", "plain"), ("default", "deny"), ("act", .str act),
+        ("form", "has the right")]), ("c", c)] ++ others.map (·, permission))), ("constants", Json.mkObj []),
+      ("acts", Json.mkObj [("fixed", toJson fixed)])])]
 
 def memberOf (environment : Json) : Option String :=
   match classifier "acts_environment" (Json.mkObj [("environment", environment)]) [] with
   | .ok => none
   | .fail m _ => some m
 
+/-- The engine's record over the generated table: its check, code and class, its path and phase, and its text,
+    which is the decoder's own; `none` when clean. -/
+def recordOf (environment : Json) : Option (List Json) :=
+  (run Tables.Acts.table hooks (Json.mkObj [("environment", environment), ("norms", Json.arr #[])])).map fun f =>
+    let r := record Tables.Acts.table f
+    ["contract", "check", "code", "class", "path", "phase", "text"].map r.getObjValD ++
+      [toJson ((decoded environment).toOption.isNone && (r.getObjValD "text") == .str
+        (match decoded environment with | .error e => e | .ok () => ""))]
+
 def phraseOf (n : Nat) : String := "zeta " ++ String.mk (List.replicate (n - 5) 'a')
 def actOf (n : Nat) : String := "{0} enjoy " ++ String.mk (List.replicate (n - 10) 'b')
 def phrasesOf (n : Nat) : List String :=
   (List.range n).map fun i => let t := String.mk [Char.ofNat (97 + i / 26), Char.ofNat (97 + i % 26)]; s!"p{t} q{t}"
+def around : List String := ["anna", "zora"]
 
 #guard (phraseOf maxPhraseBytes).utf8ByteSize == maxPhraseBytes && (actOf maxActBytes).utf8ByteSize == maxActBytes
 #guard memberOf (envOf [] (actOf maxActBytes)) == none
-#guard memberOf (envOf [] (actOf (maxActBytes + 1))) == some "1.1c"
+#guard memberOf (envOf [] (actOf (maxActBytes + 1)) (others := around)) == some "1.1c"
+#guard memberOf (envOf [] (actOf (maxActBytes - 3) ++ " {1}") (args := ["person", "person"])) == some "1.1c"
 #guard memberOf (envOf [phraseOf maxPhraseBytes] (actOf 20)) == none
-#guard memberOf (envOf [phraseOf (maxPhraseBytes + 1)] (actOf 20)) == some "1.1b"
+#guard memberOf (envOf ["equal pay", phraseOf (maxPhraseBytes + 1), "fair hearing"] (actOf 20)) == some "1.1b"
 #guard memberOf (envOf (phrasesOf maxPhrases) (actOf 20)) == none
 #guard memberOf (envOf (phrasesOf (maxPhrases + 1)) (actOf 20)) == some "1.1a"
--- around: the count before a long phrase, the act's shape before its size, an earlier phrase before a long act
+-- around: the count before a long phrase, the act's shape before its size, an earlier phrase before a long act,
+-- a limit that is none of the three, and `definitions@0`
 #guard memberOf (envOf (phrasesOf maxPhrases ++ [phraseOf (maxPhraseBytes + 1)]) (actOf 20)) == some "1.1a"
 #guard memberOf (envOf [] ("enjoy " ++ actOf maxActBytes)) == some "1.1d"
 #guard memberOf (envOf ["seek and"] (actOf (maxActBytes + 1))) == some "1.1d"
 #guard memberOf (envOf [] "{0} seek and enjoy asylum") == some "1.1d"
--- the adapter reads `acts@0` sources of the norms route only
-#guard (adapter (Json.mkObj [("kind", "norms-elaborate"), ("environment", envOf [] (actOf 20)),
-  ("norms", Json.arr #[])])).isOk
-#guard [["norms@0", "relational-fol@0"], ["acts@0", "norm-defaults@0", "norms@0", "relational-fol@0"]].all fun ps =>
-  !(adapter (Json.mkObj [("kind", "norms-elaborate"), ("environment", envOf [] (actOf 20) ps),
-    ("norms", Json.arr #[])])).isOk
+#guard memberOf (envOf ["equal pay"] (actOf 20) (others := (List.range 64).map (s!"q{·}"))) == some "1.1d"
+#guard memberOf (envOf [] (actOf 20) (defined := true)) == some "1.1d"
+#guard memberOf (envOf [] (actOf 20) ["acts@0", "definitions@0", "norms@0", "relational-fol@0"] (defined := true)) == none
+-- the records through the generated table
+#guard recordOf (envOf [] (actOf maxActBytes)) == none
+#guard [(envOf (phrasesOf (maxPhrases + 1)) (actOf 20), "1.1a", "ACTS_RESOURCE_LIMIT", "ResourceLimit"),
+    (envOf [phraseOf (maxPhraseBytes + 1)] (actOf 20), "1.1b", "ACTS_RESOURCE_LIMIT", "ResourceLimit"),
+    (envOf [] (actOf (maxActBytes + 1)), "1.1c", "ACTS_RESOURCE_LIMIT", "ResourceLimit"),
+    (envOf [] "{0} seek and enjoy asylum", "1.1d", "ACTS_INVALID_ENVIRONMENT", "InvalidInput")].all fun (j, c, k, l) =>
+  recordOf j == some (["acts@0", c, k, l, "/environment", "environment"].map Json.str ++ [(recordOf j).get!.getD 6 .null,
+    toJson true])
+-- the adapter reads `acts@0` sources of the norms route only, wherever `acts@0` is listed
+def caseOf (kind : String) (ps : List String) : Json :=
+  Json.mkObj [("kind", kind), ("environment", envOf [] (actOf 20) ps), ("norms", Json.arr #[])]
+#guard ["norms-elaborate", "norms-conflict", "norms-certificate"].all fun k =>
+  (adapter (caseOf k ["norms@0", "relational-fol@0", "acts@0"])).isOk
+#guard !(adapter (caseOf "norm-defaults-elaborate" ["acts@0", "norms@0", "relational-fol@0"])).isOk
+#guard [["norms@0", "relational-fol@0"], ["acts@0", "norms@0", "relational-fol@0", "norm-defaults@0"],
+    ["acts@0", "norms@0", "relational-fol@0", "soft-norms@0"]].all fun ps =>
+  !(adapter (caseOf "norms-elaborate" ps)).isOk
+#guard !(adapter (Json.mkObj [("kind", "norms-elaborate"), ("environment", Json.mkObj []), ("norms", Json.arr #[])])).isOk
+#guard !refusedWith "a" (.error "b" : Except String Unit) && !refusedWith "a" (.ok () : Except String Unit)
 
 end VE.WireContract.Hooks.Acts
