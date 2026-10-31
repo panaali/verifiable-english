@@ -78,7 +78,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [lean/VE/Attribution/](lean__VE__Attribution.md) — 15 modules — -
 - [lean/VE/Calc/](lean__VE__Calc.md) — 27 modules — -
 - [lean/VE/Cardinality/](lean__VE__Cardinality.md) — 15 modules — -
-- [lean/VE/Closure/](lean__VE__Closure.md) — 14 modules — -
+- [lean/VE/Closure/](lean__VE__Closure.md) — 15 modules — -
 - [lean/VE/Compose/](lean__VE__Compose.md) — 6 modules — -
 - [lean/VE/Core/](lean__VE__Core.md) — 22 modules — -
 - [lean/VE/Data/](lean__VE__Data.md) — 1 modules — -
@@ -127,7 +127,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 - [tools/bench/](tools__bench.md) — 7 modules — -
 - [tools/evidence/](tools__evidence.md) — 7 modules — The evidence toolkit (docs/ARCHITECTURE-REVIEW-2026-10.md, T6 and AR-5a): one implementation of each batch measurement, so a batch writes `docs/<track>/<batch>…
 - [tools/hooks/](tools__hooks.md) — 1 modules — `pre-commit` runs fast checks on the **staged** content of a commit.
-- [usecases/](usecases.md) — 59 modules — -
+- [usecases/](usecases.md) — 61 modules — -
 - [ve/](ve.md) — 79 modules — VE v0 experimental language, finite semantics and checked argument API.
 - [ve/adapters/](ve__adapters.md) — 6 modules — Audited statement-layer and data adapters.
 - [ve/assist/](ve__assist.md) — 17 modules — ``ve assist``: interactive, sentence-level assisted formalisation.

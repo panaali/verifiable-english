@@ -214,6 +214,7 @@ module VE.Closure.Bridge
 module VE.Closure.Checks
 module VE.Closure.Congruence
 module VE.Closure.Consequence
+module VE.Closure.CoreEquiv
 module VE.Closure.Finite
 module VE.Closure.Induction
 module VE.Closure.Order
