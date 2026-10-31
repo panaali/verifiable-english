@@ -39,6 +39,7 @@
 - `lean/VE/Readings/SoftSeparateExamples.lean` — RD-9 SC-2's fixtures (docs/spec/rd-9-soft-chain.md 8.1 and 8.2), each value computed here by `#guard` against the value the spec records: separation on filled …
 - `lean/VE/Readings/SoftVerdicts.lean` — `readings-verdicts` under the soft completion (docs/spec/rd-9-soft-chain.md 4.4 and 6.9; plan SC-5).
 - `lean/VE/Readings/SoftWire.lean` — The wire under the soft completion (docs/spec/rd-9-soft-chain.md 1.1, 3, 4.1 to 4.3 and 6.8; plan SC-4).
+- `lean/VE/Readings/Stage.lean` — Stage markers of the readings admission (reviews/dri-decisions-20261029-scale-admission-profile.md item 2).
 - `lean/VE/Readings/Strings.lean` — Prefixes of strings of one-byte characters (docs/spec/composition-s2.md 8.3: `copyCites` and the reserved names).
 - `lean/VE/Readings/SupAll.lean` — ALL under `A` (docs/spec/composition-s2.md 4.5, 8.4 `superpose_all`, `superpose_all_base`).
 - `lean/VE/Readings/SupConflict.lean` — Conflict-freedom of `sup D` and of a reading's document (docs/spec/composition-s2.md 4.4, 8.4 `superpose_conflict_iff`).

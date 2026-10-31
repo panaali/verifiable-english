@@ -8,9 +8,14 @@ def route_mode(env) -> str:
     """The service mode for a plain route case over a ve.core@0.2 `env`.
 
     The route decoders reject the `regulated` extension; the norms route
-    validates it and answers background, evaluate and countermodel cases.
+    validates it and answers background, evaluate and countermodel cases. It also
+    answers them for an environment that lists a document layer, which it reads
+    without the layer (`Norms.Plain.layered`, jt-2c); the route's gate reads the
+    list as written.
     """
-    return "norms" if any(d.regulated is not None for d in env.predicates.values()) else "route"
+    from ..profiles import DOCUMENT_LAYERS
+    return ("norms" if any(d.regulated is not None for d in env.predicates.values())
+            or any(p in DOCUMENT_LAYERS for p in env.profiles) else "route")
 
 
 def lean_mode(env) -> str:

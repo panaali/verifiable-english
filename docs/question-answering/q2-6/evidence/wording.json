@@ -1,0 +1,1274 @@
+{
+ "fallback": [
+  {
+   "fixture": "G1",
+   "lines": []
+  },
+  {
+   "fixture": "G2",
+   "lines": []
+  },
+  {
+   "fixture": "G3",
+   "lines": []
+  },
+  {
+   "fixture": "G4",
+   "lines": []
+  },
+  {
+   "fixture": "G10",
+   "lines": []
+  },
+  {
+   "fixture": "U2",
+   "lines": []
+  },
+  {
+   "fixture": "U3",
+   "lines": [
+    1,
+    2
+   ]
+  },
+  {
+   "fixture": "U5",
+   "lines": [
+    1,
+    2,
+    5
+   ]
+  },
+  {
+   "fixture": "U6",
+   "lines": []
+  },
+  {
+   "fixture": "U7",
+   "lines": [
+    1,
+    3,
+    5,
+    10
+   ]
+  },
+  {
+   "fixture": "A1",
+   "lines": []
+  },
+  {
+   "fixture": "A2",
+   "lines": []
+  },
+  {
+   "fixture": "A3",
+   "lines": []
+  },
+  {
+   "fixture": "A4",
+   "lines": []
+  },
+  {
+   "fixture": "A5",
+   "lines": []
+  },
+  {
+   "fixture": "A7",
+   "lines": []
+  },
+  {
+   "fixture": "A8",
+   "lines": []
+  }
+ ],
+ "frames": {
+  "S1": [
+   [
+    "lit",
+    "Here is a situation the document allows where it fails: "
+   ],
+   [
+    "slot"
+   ],
+   [
+    "lit",
+    "."
+   ]
+  ],
+  "S2": [
+   [
+    "lit",
+    "Here is a situation where the answer depends on what the text leaves unsaid: "
+   ],
+   [
+    "slot"
+   ],
+   [
+    "lit",
+    "."
+   ]
+  ],
+  "S2p": [
+   [
+    "lit",
+    "The text does not say whether "
+   ],
+   [
+    "slot"
+   ],
+   [
+    "lit",
+    "."
+   ]
+  ],
+  "S3": [
+   [
+    "lit",
+    "Here the text does not say whether "
+   ],
+   [
+    "slot"
+   ],
+   [
+    "lit",
+    "; this situation answers 'no'."
+   ]
+  ]
+ },
+ "method": "each clause of each S1, S2, S2p and S3 line of the saved answers (tests/fixtures/ask/*.json result.lines), with a full stop, read by Lean's English reader (ve.backends.english_lean.read) in the document's environment with its lexicon; status `one` is one reading",
+ "situation_lines": [
+  {
+   "clauses": [
+    {
+     "clause": "ann is a member",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "e1 is a member",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "ann is eligible",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "e1 is eligible",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "ann is registered",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "e1 is registered",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "ann is verified",
+     "code": null,
+     "status": "one"
+    }
+   ],
+   "fixture": "G3",
+   "frame": "S1",
+   "line": 2,
+   "text": "Here is a situation the document allows where it fails: ann is a member; e1 is a member; ann is eligible; e1 is eligible; ann is registered; e1 is registered; ann is verified."
+  },
+  {
+   "clauses": [
+    {
+     "clause": "e0 is a person",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "e0 is classified as \"has_the_right_to_education\"",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "e0 is classified as \"has_the_right_to_form_and_join_trade_unions\"",
+     "code": "NoDerivation",
+     "status": "none"
+    }
+   ],
+   "fixture": "U3",
+   "frame": "S2",
+   "line": 2,
+   "text": "Here is a situation where the answer depends on what the text leaves unsaid: e0 is a person; e0 is classified as \"has_the_right_to_education\"; e0 is classified as \"has_the_right_to_form_and_join_trade_unions\", reading sentence 1 as \"Every person is classified as \"has_the_right_to_form_and_join_trade_unions\"\" and sentence 10 as \"Every person is classified as \"has_the_right_to_education\"\"."
+  },
+  {
+   "clauses": [
+    {
+     "clause": "e0 must be spared exclusion from education",
+     "code": "NoDerivation",
+     "status": "none"
+    }
+   ],
+   "fixture": "U3",
+   "frame": "S2p",
+   "line": 3,
+   "text": "The text does not say whether e0 must be spared exclusion from education."
+  },
+  {
+   "clauses": [
+    {
+     "clause": "e0 is a person",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "e0 is classified as \"has_the_right_to_education\"",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "e0 is classified as \"has_the_right_to_form_and_join_trade_unions\"",
+     "code": "NoDerivation",
+     "status": "none"
+    }
+   ],
+   "fixture": "U5",
+   "frame": "S2",
+   "line": 2,
+   "text": "Here is a situation where the answer depends on what the text leaves unsaid: e0 is a person; e0 is classified as \"has_the_right_to_education\"; e0 is classified as \"has_the_right_to_form_and_join_trade_unions\", reading sentence 1 as \"Every person is classified as \"has_the_right_to_form_and_join_trade_unions\"\" and sentence 10 as \"Every person is classified as \"has_the_right_to_education\"\"."
+  },
+  {
+   "clauses": [
+    {
+     "clause": "e0 may form as well as join trade unions to protect their interests",
+     "code": "NoDerivation",
+     "status": "none"
+    }
+   ],
+   "fixture": "U5",
+   "frame": "S2p",
+   "line": 3,
+   "text": "The text does not say whether e0 may form as well as join trade unions to protect their interests."
+  },
+  {
+   "clauses": [
+    {
+     "clause": "e0 is a person",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "e0 is classified as \"has_the_right_to_education\"",
+     "code": "NoDerivation",
+     "status": "none"
+    }
+   ],
+   "fixture": "U5",
+   "frame": "S2",
+   "line": 5,
+   "text": "Here is a situation where the answer depends on what the text leaves unsaid: e0 is a person; e0 is classified as \"has_the_right_to_education\", reading sentence 1 as \"Every person must be left free to form as well as join trade unions to protect their interests\" (VE has not checked this wording) and sentence 10 as \"Every person is classified as \"has_the_right_to_education\"\"."
+  },
+  {
+   "clauses": [
+    {
+     "clause": "e0 may form as well as join trade unions to protect their interests",
+     "code": "NoDerivation",
+     "status": "none"
+    }
+   ],
+   "fixture": "U5",
+   "frame": "S2p",
+   "line": 6,
+   "text": "The text does not say whether e0 may form as well as join trade unions to protect their interests."
+  },
+  {
+   "clauses": [
+    {
+     "clause": "e0 is an education kind",
+     "code": "NoDerivation",
+     "status": "none"
+    }
+   ],
+   "fixture": "U7",
+   "frame": "S2",
+   "line": 8,
+   "text": "Here is a situation where the answer depends on what the text leaves unsaid: e0 is an education kind, reading sentence 1 as \"Every person must be left free to form as well as join trade unions to protect their interests\" (VE has not checked this wording) and sentence 10 as \"Every person must be spared exclusion from education\" (VE has not checked this wording)."
+  },
+  {
+   "clauses": [
+    {
+     "clause": "e0 must be made generally available",
+     "code": "NoDerivation",
+     "status": "none"
+    }
+   ],
+   "fixture": "U7",
+   "frame": "S2p",
+   "line": 9,
+   "text": "The text does not say whether e0 must be made generally available."
+  },
+  {
+   "clauses": [
+    {
+     "clause": "e0 is an education kind",
+     "code": "NoDerivation",
+     "status": "none"
+    }
+   ],
+   "fixture": "U7",
+   "frame": "S2",
+   "line": 13,
+   "text": "Here is a situation where the answer depends on what the text leaves unsaid: e0 is an education kind, reading sentence 1 as \"Every person may form as well as join trade unions to protect their interests\" (VE has not checked this wording) and sentence 10 as \"Every person must be spared exclusion from education\" (VE has not checked this wording)."
+  },
+  {
+   "clauses": [
+    {
+     "clause": "e0 must be made generally available",
+     "code": "NoDerivation",
+     "status": "none"
+    }
+   ],
+   "fixture": "U7",
+   "frame": "S2p",
+   "line": 14,
+   "text": "The text does not say whether e0 must be made generally available."
+  },
+  {
+   "clauses": [
+    {
+     "clause": "\"a01\" is an action",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"a13\" is an action",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"a25\" is an action",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"a26\" is an action",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"a27\" is an action",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "workspace is a directory",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_bashrc\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_build\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_cron\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_env\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_hosts\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_link\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_main\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_other\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_readme\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_ssh\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"h_debian\" is a host",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"h_github\" is a host",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"h_paste\" is a host",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"h_pypi\" is a host",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"h_weather\" is a host",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"p_colleague\" is a person",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"p_list\" is a person",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"p_user\" is a person",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"h_github\" is allowlisted",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"h_pypi\" is allowlisted",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"f_env\" is confidential",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"f_ssh\" is confidential",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a27\" is confirmed",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a13\" deletes \"f_readme\"",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a25\" messages \"p_user\"",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a26\" messages \"p_colleague\"",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a27\" messages \"p_colleague\"",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"p_user\" is principal",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"f_build\" resides in workspace",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"f_env\" resides in workspace",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"f_main\" resides in workspace",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"f_readme\" resides in workspace",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a01\" uses \"write_file\"",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a13\" uses \"delete_file\"",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a25\" uses \"send_email\"",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a26\" uses \"send_email\"",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a27\" uses \"send_email\"",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"f_main\" is tracked",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"f_other\" is tracked",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"f_readme\" is tracked",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a01\" writes \"f_bashrc\"",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a01\" writes \"f_main\"",
+     "code": null,
+     "status": "one"
+    }
+   ],
+   "fixture": "A1",
+   "frame": "S2",
+   "line": 2,
+   "text": "Here is a situation where the answer depends on what the text leaves unsaid: \"a01\" is an action; \"a13\" is an action; \"a25\" is an action; \"a26\" is an action; \"a27\" is an action; workspace is a directory; \"f_bashrc\" is a file; \"f_build\" is a file; \"f_cron\" is a file; \"f_env\" is a file; \"f_hosts\" is a file; \"f_link\" is a file; \"f_main\" is a file; \"f_other\" is a file; \"f_readme\" is a file; \"f_ssh\" is a file; \"h_debian\" is a host; \"h_github\" is a host; \"h_paste\" is a host; \"h_pypi\" is a host; \"h_weather\" is a host; \"p_colleague\" is a person; \"p_list\" is a person; \"p_user\" is a person; \"h_github\" is allowlisted; \"h_pypi\" is allowlisted; \"f_env\" is confidential; \"f_ssh\" is confidential; \"a27\" is confirmed; \"a13\" deletes \"f_readme\"; \"a25\" messages \"p_user\"; \"a26\" messages \"p_colleague\"; \"a27\" messages \"p_colleague\"; \"p_user\" is principal; \"f_build\" resides in workspace; \"f_env\" resides in workspace; \"f_main\" resides in workspace; \"f_readme\" resides in workspace; \"a01\" uses \"write_file\"; \"a13\" uses \"delete_file\"; \"a25\" uses \"send_email\"; \"a26\" uses \"send_email\"; \"a27\" uses \"send_email\"; \"f_main\" is tracked; \"f_other\" is tracked; \"f_readme\" is tracked; \"a01\" writes \"f_bashrc\"; \"a01\" writes \"f_main\"."
+  },
+  {
+   "clauses": [
+    {
+     "clause": "\"a27\" may be performed",
+     "code": null,
+     "status": "one"
+    }
+   ],
+   "fixture": "A1",
+   "frame": "S2p",
+   "line": 3,
+   "text": "The text does not say whether \"a27\" may be performed."
+  },
+  {
+   "clauses": [
+    {
+     "clause": "\"a01\" is an action",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"a13\" is an action",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"a25\" is an action",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"a26\" is an action",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"a27\" is an action",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "workspace is a directory",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_bashrc\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_build\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_cron\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_env\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_hosts\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_link\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_main\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_other\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_readme\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_ssh\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"h_debian\" is a host",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"h_github\" is a host",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"h_paste\" is a host",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"h_pypi\" is a host",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"h_weather\" is a host",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"p_colleague\" is a person",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"p_list\" is a person",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"p_user\" is a person",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"h_github\" is allowlisted",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"h_pypi\" is allowlisted",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"f_env\" is confidential",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"f_ssh\" is confidential",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a27\" is confirmed",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a13\" deletes \"f_readme\"",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a25\" messages \"p_user\"",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a26\" messages \"p_colleague\"",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a27\" messages \"p_colleague\"",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"p_user\" is principal",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"f_build\" resides in workspace",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"f_env\" resides in workspace",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"f_main\" resides in workspace",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"f_readme\" resides in workspace",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a01\" uses \"write_file\"",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a13\" uses \"delete_file\"",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a25\" uses \"send_email\"",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a26\" uses \"send_email\"",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a27\" uses \"send_email\"",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"f_main\" is tracked",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"f_other\" is tracked",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"f_readme\" is tracked",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a01\" writes \"f_bashrc\"",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a01\" writes \"f_main\"",
+     "code": null,
+     "status": "one"
+    }
+   ],
+   "fixture": "A3",
+   "frame": "S1",
+   "line": 2,
+   "text": "Here is a situation the document allows where it fails: \"a01\" is an action; \"a13\" is an action; \"a25\" is an action; \"a26\" is an action; \"a27\" is an action; workspace is a directory; \"f_bashrc\" is a file; \"f_build\" is a file; \"f_cron\" is a file; \"f_env\" is a file; \"f_hosts\" is a file; \"f_link\" is a file; \"f_main\" is a file; \"f_other\" is a file; \"f_readme\" is a file; \"f_ssh\" is a file; \"h_debian\" is a host; \"h_github\" is a host; \"h_paste\" is a host; \"h_pypi\" is a host; \"h_weather\" is a host; \"p_colleague\" is a person; \"p_list\" is a person; \"p_user\" is a person; \"h_github\" is allowlisted; \"h_pypi\" is allowlisted; \"f_env\" is confidential; \"f_ssh\" is confidential; \"a27\" is confirmed; \"a13\" deletes \"f_readme\"; \"a25\" messages \"p_user\"; \"a26\" messages \"p_colleague\"; \"a27\" messages \"p_colleague\"; \"p_user\" is principal; \"f_build\" resides in workspace; \"f_env\" resides in workspace; \"f_main\" resides in workspace; \"f_readme\" resides in workspace; \"a01\" uses \"write_file\"; \"a13\" uses \"delete_file\"; \"a25\" uses \"send_email\"; \"a26\" uses \"send_email\"; \"a27\" uses \"send_email\"; \"f_main\" is tracked; \"f_other\" is tracked; \"f_readme\" is tracked; \"a01\" writes \"f_bashrc\"; \"a01\" writes \"f_main\"."
+  },
+  {
+   "clauses": [
+    {
+     "clause": "\"a01\" is an action",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "workspace is a directory",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_bashrc\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_build\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_cron\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_env\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_hosts\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_link\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_main\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_other\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_readme\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_ssh\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"h_debian\" is a host",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"h_github\" is a host",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"h_paste\" is a host",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"h_pypi\" is a host",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"h_weather\" is a host",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"p_colleague\" is a person",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"p_list\" is a person",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"p_user\" is a person",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"a01\" uses \"read_file\"",
+     "code": null,
+     "status": "one"
+    }
+   ],
+   "fixture": "A7",
+   "frame": "S2",
+   "line": 2,
+   "text": "Here is a situation where the answer depends on what the text leaves unsaid: \"a01\" is an action; workspace is a directory; \"f_bashrc\" is a file; \"f_build\" is a file; \"f_cron\" is a file; \"f_env\" is a file; \"f_hosts\" is a file; \"f_link\" is a file; \"f_main\" is a file; \"f_other\" is a file; \"f_readme\" is a file; \"f_ssh\" is a file; \"h_debian\" is a host; \"h_github\" is a host; \"h_paste\" is a host; \"h_pypi\" is a host; \"h_weather\" is a host; \"p_colleague\" is a person; \"p_list\" is a person; \"p_user\" is a person; \"a01\" uses \"read_file\"."
+  },
+  {
+   "clauses": [
+    {
+     "clause": "\"a01\" may be performed",
+     "code": null,
+     "status": "one"
+    }
+   ],
+   "fixture": "A7",
+   "frame": "S2p",
+   "line": 3,
+   "text": "The text does not say whether \"a01\" may be performed."
+  },
+  {
+   "clauses": [
+    {
+     "clause": "\"a01\" is an action",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"a13\" is an action",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"a25\" is an action",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"a26\" is an action",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"a27\" is an action",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "workspace is a directory",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_bashrc\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_build\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_cron\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_env\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_hosts\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_link\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_main\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_other\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_readme\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"f_ssh\" is a file",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"h_debian\" is a host",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"h_github\" is a host",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"h_paste\" is a host",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"h_pypi\" is a host",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"h_weather\" is a host",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"p_colleague\" is a person",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"p_list\" is a person",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"p_user\" is a person",
+     "code": "NoDerivation",
+     "status": "none"
+    },
+    {
+     "clause": "\"h_github\" is allowlisted",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"h_pypi\" is allowlisted",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"f_env\" is confidential",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"f_ssh\" is confidential",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a27\" is confirmed",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a13\" deletes \"f_readme\"",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a25\" messages \"p_user\"",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a26\" messages \"p_colleague\"",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a27\" messages \"p_colleague\"",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"p_user\" is principal",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"f_build\" resides in workspace",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"f_env\" resides in workspace",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"f_main\" resides in workspace",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"f_readme\" resides in workspace",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a01\" uses \"write_file\"",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a13\" uses \"delete_file\"",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a25\" uses \"send_email\"",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a26\" uses \"send_email\"",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a27\" uses \"send_email\"",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"f_main\" is tracked",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"f_other\" is tracked",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"f_readme\" is tracked",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a01\" writes \"f_bashrc\"",
+     "code": null,
+     "status": "one"
+    },
+    {
+     "clause": "\"a01\" writes \"f_main\"",
+     "code": null,
+     "status": "one"
+    }
+   ],
+   "fixture": "A8",
+   "frame": "S2",
+   "line": 2,
+   "text": "Here is a situation where the answer depends on what the text leaves unsaid: \"a01\" is an action; \"a13\" is an action; \"a25\" is an action; \"a26\" is an action; \"a27\" is an action; workspace is a directory; \"f_bashrc\" is a file; \"f_build\" is a file; \"f_cron\" is a file; \"f_env\" is a file; \"f_hosts\" is a file; \"f_link\" is a file; \"f_main\" is a file; \"f_other\" is a file; \"f_readme\" is a file; \"f_ssh\" is a file; \"h_debian\" is a host; \"h_github\" is a host; \"h_paste\" is a host; \"h_pypi\" is a host; \"h_weather\" is a host; \"p_colleague\" is a person; \"p_list\" is a person; \"p_user\" is a person; \"h_github\" is allowlisted; \"h_pypi\" is allowlisted; \"f_env\" is confidential; \"f_ssh\" is confidential; \"a27\" is confirmed; \"a13\" deletes \"f_readme\"; \"a25\" messages \"p_user\"; \"a26\" messages \"p_colleague\"; \"a27\" messages \"p_colleague\"; \"p_user\" is principal; \"f_build\" resides in workspace; \"f_env\" resides in workspace; \"f_main\" resides in workspace; \"f_readme\" resides in workspace; \"a01\" uses \"write_file\"; \"a13\" uses \"delete_file\"; \"a25\" uses \"send_email\"; \"a26\" uses \"send_email\"; \"a27\" uses \"send_email\"; \"f_main\" is tracked; \"f_other\" is tracked; \"f_readme\" is tracked; \"a01\" writes \"f_bashrc\"; \"a01\" writes \"f_main\"."
+  },
+  {
+   "clauses": [
+    {
+     "clause": "\"a01\" must be reported to the user",
+     "code": null,
+     "status": "one"
+    }
+   ],
+   "fixture": "A8",
+   "frame": "S2p",
+   "line": 3,
+   "text": "The text does not say whether \"a01\" must be reported to the user."
+  },
+  {
+   "clauses": [
+    {
+     "clause": "\"a25\" must be reported to the user",
+     "code": null,
+     "status": "one"
+    }
+   ],
+   "fixture": "A8",
+   "frame": "S2p",
+   "line": 4,
+   "text": "The text does not say whether \"a25\" must be reported to the user."
+  },
+  {
+   "clauses": [
+    {
+     "clause": "\"a26\" must be reported to the user",
+     "code": null,
+     "status": "one"
+    }
+   ],
+   "fixture": "A8",
+   "frame": "S2p",
+   "line": 5,
+   "text": "The text does not say whether \"a26\" must be reported to the user."
+  },
+  {
+   "clauses": [
+    {
+     "clause": "\"a27\" must be reported to the user",
+     "code": null,
+     "status": "one"
+    }
+   ],
+   "fixture": "A8",
+   "frame": "S2p",
+   "line": 6,
+   "text": "The text does not say whether \"a27\" must be reported to the user."
+  }
+ ]
+}
