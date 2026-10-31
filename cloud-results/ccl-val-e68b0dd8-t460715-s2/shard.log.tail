@@ -1,0 +1,173 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+shard 3/4: 18 units; commands: ['lake build']
++ lake build
+⚠ [95/695] Replayed VE.SoftNorms.Soften
+warning: VE/SoftNorms/Soften.lean:264:19: This simp argument is unused:
+  Option.bind_eq_bind
+
+Hint: Omit it from the simp argument list.
+  simp only [̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵e̵q̵_̵b̵i̵n̵d̵,̵ ̵O̵p̵t̵i̵o̵n̵.̵b̵i̵n̵d̵_̵n̵o̵n̵e̵]̵[̲O̲p̲t̲i̲o̲n̲.̲b̲i̲n̲d̲_̲n̲o̲n̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+⚠ [110/695] Replayed VE.Readings.Separate
+warning: VE/Readings/Separate.lean:1490:50: unused variable `h`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+warning: VE/Readings/Separate.lean:1492:5: unused variable `hr`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+⚠ [118/695] Replayed VE.Readings.Superpose
+warning: VE/Readings/Superpose.lean:311:34: unused variable `h`
+
+... (1532 lines cut; full output in shard-full.txt)
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Encoders/ReadingsRoute.lean:1243:27: This simp argument is unused:
+  List.toList_toArray
+
+Hint: Omit it from the simp argument list.
+  simp only [Json.getArr?,̵ ̵L̵i̵s̵t̵.̵t̵o̵L̵i̵s̵t̵_̵t̵o̵A̵r̵r̵a̵y̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Encoders/ReadingsRoute.lean:1309:4: This simp argument is unused:
+  List.toList_toArray
+
+Hint: Omit it from the simp argument list.
+  simp only [getObjValD_set_eq wfe, getObjValD_of_ok hP, hPa, toJson_strings, Array.any_toList.symm,̵
+  ̵ ̵ ̵ ̵ ̵L̵i̵s̵t̵.̵t̵o̵L̵i̵s̵t̵_̵t̵o̵A̵r̵r̵a̵y̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+warning: ResponseShape/Encoders/ReadingsRoute.lean:1334:4: This simp argument is unused:
+  hl
+
+Hint: Omit it from the simp argument list.
+  simp only [getObjValD_set_eq wf, getObjValD_set_ne wf (show "environment" ≠ "kind" by decide), he,
+      getObjVal_set_ne wfe (show "profiles" ≠ "vocabulary" by decide), getObjVal_set_eq wfe, hP,̵
+  ̵ ̵ ̵ ̵ ̵h̵l̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+Build completed successfully (1188 jobs).
+info: syncing channel updates for '1.98.1-x86_64-unknown-linux-gnu'
+info: latest update on 2026-09-03, rust version 1.98.1 (48a229cea 2026-09-01)
+info: downloading component 'cargo'
+info: downloading component 'rust-std'
+info: downloading component 'rustc'
+info: installing component 'cargo'
+info: installing component 'rust-std'
+info: installing component 'rustc'
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded cfg-if v1.0.5
+  Downloaded itoa v1.0.18
+  Downloaded block-buffer v0.10.4
+  Downloaded digest v0.10.7
+  Downloaded num-integer v0.1.47
+  Downloaded cpufeatures v0.2.17
+  Downloaded crypto-common v0.1.7
+  Downloaded generic-array v0.14.7
+  Downloaded version_check v0.9.5
+  Downloaded autocfg v1.5.1
+  Downloaded memchr v2.8.3
+  Downloaded num-bigint v0.4.8
+  Downloaded num-traits v0.2.19
+  Downloaded serde_core v1.0.229
+  Downloaded serde v1.0.229
+  Downloaded sha2 v0.10.9
+  Downloaded typenum v1.20.1
+  Downloaded unicode-ident v1.0.26
+  Downloaded proc-macro2 v1.0.107
+  Downloaded quote v1.0.47
+  Downloaded serde_json v1.0.151
+  Downloaded zmij v1.0.23
+  Downloaded serde_derive v1.0.229
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde_json v1.0.151
+   Compiling serde v1.0.229
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling memchr v2.8.3
+   Compiling cfg-if v1.0.5
+   Compiling cpufeatures v0.2.17
+   Compiling itoa v1.0.18
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.229
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/tmp/cc-wt/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/tmp/cc-wt/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/tmp/cc-wt/rust/ve-core)
+   Compiling ve v0.1.0 (/tmp/cc-wt/rust/ve)
+    Finished `release` profile [optimized] target(s) in 17.08s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling serde_json v1.0.151
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling itoa v1.0.18
+   Compiling cfg-if v1.0.5
+   Compiling memchr v2.8.3
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/tmp/cc-wt/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/tmp/cc-wt/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/tmp/cc-wt/rust/ve-core)
+   Compiling ve v0.1.0 (/tmp/cc-wt/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 11.18s
+order: failed last time []; changed []; then the rest; --maxfail 5
+recording 18 units with 4 jobs in /var/tmp/cct/ve-select-run-iax38byj
+  tests/test_regen_generated.py: exit 1 in 8.3 s, 282 functions
+stopping after 5 failed tests (--maxfail 5)
+FAILED tests/test_regen_generated.py (exit 1): tests/test_regen_generated.py::test_driver_leaves_a_ledger_value_both_sides_changed_in_conflict, tests/test_regen_generated.py::test_driver_merges_generated_files_without_a_conflict, tests/test_regen_generated.py::test_driver_stops_only_on_ordinary_files, tests/test_regen_generated.py::test_resolve_changes_nothing_when_another_file_conflicts, tests/test_regen_generated.py::test_resolve_finishes_a_merge_whose_conflicts_are_all_generated; log /var/tmp/cct/ve-select-run-iax38byj/tests__test_regen_generated.py.log
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+>               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['git', 'commit', '-q', '-m', 'base']' returned non-zero exit status 128.
+
+/home/ccrun/.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/subprocess.py:578: CalledProcessError
+=========================== short test summary info ============================
+FAILED tests/test_regen_generated.py::test_driver_merges_generated_files_without_a_conflict
+FAILED tests/test_regen_generated.py::test_driver_stops_only_on_ordinary_files
+FAILED tests/test_regen_generated.py::test_driver_leaves_a_ledger_value_both_sides_changed_in_conflict
+FAILED tests/test_regen_generated.py::test_resolve_finishes_a_merge_whose_conflicts_are_all_generated
+FAILED tests/test_regen_generated.py::test_resolve_changes_nothing_when_another_file_conflicts
+!!!!!! stopping after 5 failed tests outside the quarantine (--maxfail 5) !!!!!!
+5 failed, 29 passed in 7.45s
+recorded 3 units for tree 4afa72547e; 15 others left to the static graph until they run; 1 failed
+STOPPED EARLY (--maxfail 5): 15 selected units did not run: tests/test_trust_mutants.py, tests/test_lean_conformance.py, tests/test_lean_dump_cache.py, tests/test_gate_quarantine.py, tests/test_inventory_path.py, tests/test_w6a_looprecheck1.py, tests/test_trust_ratchet.py, tests/test_gate_integrity.py, tests/test_frozen_sources.py, tests/test_readings_verdicts_split.py, tests/test_heavy_tests.py, tests/test_readings_defaults_rd3_report.py, tests/test_premise_packs_stub.py, tests/test_lean_default_build.py, tests/test_lean_statements_parts.py
+SHARD 3/4: exit 1 in 191.9 s; 18 units, 2 passed
