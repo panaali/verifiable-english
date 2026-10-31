@@ -1,0 +1,200 @@
+tests/test_wire_contract_lint.py::test_l13_write_after_a_revision_changes_only_generated_files
+tests/test_wire_contract_precondition.py::test_norm_defaults_profile_rejects_on_both_soft_routes
+tests/test_wire_contract_s4_lean.py::test_l1_diagnose_prints_the_record_of_s1
+tests/test_wire_contract_s4_lean.py::test_t2_status_without_a_revision_is_wc10
+tests/test_wire_contract_s4_lean.py::test_t4_unknown_status_is_wc01
+tests/test_wire_contract_s4_lean.py::test_t3_the_switch_edit_changes_only_the_generated_revision
+tests/test_wire_contract_s5_admission.py::test_shadow_contract_module_has_no_public_boundary[norm-defaults@0]
+tests/test_wire_contract_s5_admission.py::test_shadow_contract_module_has_no_public_boundary[norms@0]
+tests/test_wire_contract_s5_admission.py::test_shadow_admission_retains_legacy_error[norms@0-None]
+tests/test_wire_contract_s5_admission.py::test_shadow_admission_retains_legacy_error[norms@0-N3]
+tests/test_wire_contract_s5_admission.py::test_shadow_admission_retains_legacy_error[norms@0-N7]
+tests/test_wire_contract_s5_admission.py::test_shadow_admission_retains_legacy_error[norm-defaults@0-None]
+tests/test_wire_contract_s5_admission.py::test_shadow_admission_retains_legacy_error[norm-defaults@0-D10]
+tests/test_wire_contract_s5_admission.py::test_shadow_calls_import_no_diagnostic_module
+tests/test_wire_contract_s5_lean.py::test_fixtures_records_and_legacy_agreement[norm-defaults@0]
+tests/test_wire_contract_s5_lean.py::test_fixtures_records_and_legacy_agreement[norms@0]
+tests/test_wire_contract_s5_lean.py::test_exempt_cases_differ_from_python_class_as_listed
+tests/test_wire_contract_s5_lean.py::test_lean_route_rejects_where_the_engine_faults[norm-defaults@0]
+tests/test_wire_contract_s5_lean.py::test_lean_route_rejects_where_the_engine_faults[norms@0]
+tests/test_wire_contract_s5_lean.py::test_l1_and_l3_norms_records
+tests/test_wire_contract_s5_lean.py::test_l2_norm_defaults_record
+tests/test_wire_contract_s5_lean.py::test_l5_outside_the_domain
+tests/test_wire_contract_s5_lean.py::test_l8_harness_reports_a_difference
+tests/test_wire_contract_s5_lean.py::test_l8_syntax_walk_is_budget_formula_on_the_corpus
+tests/test_wire_contract_s5_lean.py::test_both_adapters_share_one_domain[norm-defaults@0]
+tests/test_wire_contract_s5_lean.py::test_both_adapters_share_one_domain[norms@0]
+tests/test_wire_contract_soft_lean.py::test_fixtures_p1_to_p17
+tests/test_wire_contract_soft_lean.py::test_tier0_every_single_fault
+tests/test_wire_contract_soft_lean.py::test_tier_a_pairs_and_triples
+tests/test_wire_contract_soft_lean.py::test_adapter_rejects_other_case_kinds
+tests/test_wire_contract_soft_lean.py::test_s3_pre_norm_defaults_profile
+tests/test_wire_contract_soft_lean.py::test_profiles_outside_the_lean_route_three_way
+tests/test_wire_contract_soft_lean.py::test_decision_names_prefix_order_three_way
+tests/test_wire_contract_three_way.py::test_spec_golden_reports_match_fixtures
+tests/test_wire_contract_three_way.py::test_engine_corpus_spec_python_lean
+tests/test_wire_contract_three_way.py::test_deferred_corpus_spec_python_lean
+tests/test_wire_contract_three_way.py::test_soft_pilot_spec_python_lean
+tests/test_wire_contract_three_way.py::test_s4_public_admission_spec_python_lean
+tests/test_wire_contract_three_way.py::test_admission_adapter_uses_active_norm_units
+tests/test_wire_contract_three_way.py::test_forms_corpus_spec_python_lean
+tests/test_wire_contract_three_way.py::test_overlay_e40_e41_lean_answers_for_a_python_deferral
+tests/test_wire_contract_three_way.py::test_engine_corpus_covers_every_form
+tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_test_input_of_every_unit
+tests/test_wire_gate_corpus.py::test_one_run_records_each_unit_as_its_own_run_does
+tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_source_of_the_soft_conformance_module
+tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_soft_conformance_fixture
+tests/test_wire_gate_corpus.py::test_unit_gate_corpus_holds_every_source_of_its_conformance_scripts[norms@0]
+tests/test_wire_gate_corpus.py::test_unit_gate_corpus_holds_every_source_of_its_conformance_scripts[norm-defaults@0]
+tests/test_wire_gate_corpus.py::test_unit_gate_corpus_holds_every_fixture[norms@0]
+tests/test_wire_gate_corpus.py::test_unit_gate_corpus_holds_every_fixture[norm-defaults@0]
+tests/test_words.py::test_the_python_producers_are_gone
+tests/test_words.py::test_the_lint_refuses_a_producer_that_comes_back[def situation(name, noun):\n    return f"{name} is {noun}"\n]
+tests/test_words.py::test_the_lint_refuses_a_producer_that_comes_back[def shown(clause):\n    return "Here the text does not say whether " + clause\n]
+tests/test_words.py::test_the_lint_refuses_a_producer_that_comes_back[def line(name):\n    return name + " is a member"\n]
+tests/test_words.py::test_the_lint_refuses_a_producer_that_comes_back[def line(name):\n    return name + " is an agent"\n]
+tests/test_words.py::test_the_lint_refuses_a_producer_that_comes_back[def _article(noun):\n    """a or an."""\n    return "a"\n]
+tests/test_words.py::test_the_lint_reads_docstrings_as_documentation_and_the_tree_passes
+tests/test_words.py::test_a_genuine_answer_is_bound
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>0]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>1]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>2]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>3]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>4]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>5]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>6]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>7]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>8]
+tests/test_words.py::test_an_answer_not_bound_to_its_request_is_refused[<lambda>9]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item0-kind]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item1-boolean]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item2-fields]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item3-arity]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item4-declared]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item5-declared]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item6-string]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item7-noun]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item8-suppose]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item9-fields]
+tests/test_words.py::test_lean_refuses_an_item_it_cannot_word[item10-obligation]
+tests/test_words.py::test_lean_refuses_a_lexicon_of_another_environment
+tests/test_words.py::test_lean_refuses_a_lexicon_that_fails_the_vocabulary_policy
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[0]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[1]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[2]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[3]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[4]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[5]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[6]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[7]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[8]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[9]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[10]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[11]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[12]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[13]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[14]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[15]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[16]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[17]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[18]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[19]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[20]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[21]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[22]
+tests/test_words.py::test_lean_words_as_the_pre_q24_producers_did[23]
+tests/test_words.py::test_the_unsaid_description_is_leans
+tests/test_words.py::test_the_ab_evidence_has_no_difference
+
+=============================== warnings summary ===============================
+ve/english.py:1849
+  /home/runner/work/verifiable-english/verifiable-english/ve/english.py:1849: UnreviewedVocabularyWarning: English overlay 2bd979058edc0265e539a6ce38ca26192555d8aab371e6ee1d892a8ea99606da: unreviewed
+    english = render_english(document, env, **options)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+30751/30752 tests collected (1 deselected) in 28.06s
+[gate] Python suite: uv run --frozen --no-sync python -m pytest -p hypothesis.extra.pytestplugin -p xdist -n 4 -q -p tools.gate_pytest -o addopts=-ra -m not live tests/test_agent_policy_rerun.py tests/test_arith_uncharged_costs.py tests/test_assist_recovery_replay.py tests/test_b11b_report.py tests/test_b16f_senses_document.py tests/test_cedar_norms.py tests/test_defaults_english.py tests/test_definitions.py tests/test_discourse.py tests/test_discourse_constitution.py tests/test_english_e26_report.py tests/test_english_lean_adapter.py tests/test_english_lean_route.py tests/test_english_lean_s3.py tests/test_english_runner_root.py tests/test_fluent.py tests/test_gate_collection.py tests/test_gate_shards.py tests/test_gate_trust.py tests/test_gatekeeper_adapter.py tests/test_jt_e1r.py tests/test_judgments_exercised.py tests/test_lake_outputs.py tests/test_lean_authority_values.py tests/test_lean_first_b3b_report.py tests/test_lean_service.py tests/test_lean_service_audit.py tests/test_lean_service_schema.py tests/test_lf14a_long_parse.py tests/test_lineage_lint.py tests/test_merge_tooling_evidence.py tests/test_native_build_lock.py tests/test_oom_mutation_evidence.py tests/test_order_grammar.py tests/test_p1.py tests/test_packs_guard_mutants.py tests/test_premise_packs_stub.py tests/test_profiles.py tests/test_rd9_chain_relay.py tests/test_rd9_r14_candidates.py tests/test_readings_budget_zero.py tests/test_readings_companions_lean.py tests/test_readings_components_document.py tests/test_readings_defaults_rd6a.py tests/test_readings_defaults_rd6a_report.py tests/test_readings_route_relay.py tests/test_readings_s2_answer.py tests/test_readings_s2_python.py tests/test_rights_licence_relay.py tests/test_runner.py tests/test_select_tests.py tests/test_senses_document.py tests/test_senses_route.py tests/test_shape_binding_mutants.py tests/test_softnorms_public_contract.py tests/test_stage2_graph.py tests/test_testing_profile_doc.py tests/test_units_lean_w6a.py tests/test_w6a2_numeral_characters.py tests/test_w6a_citations.py tests/test_w6a_documents.py tests/test_w6a_limits.py tests/test_wire_contract_three_way.py tests/test_wire_gate_corpus.py
+bringing up nodes...
+bringing up nodes...
+
+........................................................................ [  2%]
+........................................................................ [  5%]
+........................................................................ [  8%]
+........................................................................ [ 11%]
+........................................................................ [ 14%]
+........................................................................ [ 17%]
+........................................................................ [ 19%]
+........................................................................ [ 22%]
+........................................................................ [ 25%]
+........................................................................ [ 28%]
+........................................................................ [ 31%]
+........................................................................ [ 34%]
+........................................................................ [ 36%]
+........................................................................ [ 39%]
+........................................................................ [ 42%]
+........................................................................ [ 45%]
+........................................................................ [ 48%]
+........................................................................ [ 51%]
+........................................................................ [ 53%]
+........................................................................ [ 56%]
+........................................................................ [ 59%]
+........................................................................ [ 62%]
+........................................................................ [ 65%]
+........................................................................ [ 68%]
+........................................................................ [ 70%]
+........................................................................ [ 73%]
+........................................................................ [ 76%]
+........................................................................ [ 79%]
+........................................................................ [ 82%]
+........................................................................ [ 85%]
+........................................................................ [ 88%]
+........................................................................ [ 90%]
+........................................................................ [ 93%]
+........................................................................ [ 96%]
+........................................................................ [ 99%]
+................                                                         [100%]
+ve: English comparator: {"records": 2633, "excluded": 0, "planted": 2, "classes": {"agree": 2631}} (/tmp/ve-gate-eawfc0gd/tmp/ve-english-comparator-9gnw8dwv)
+
+=============================== warnings summary ===============================
+tests/test_p1.py::test_vertex_native_usage_and_roles
+  /home/runner/work/verifiable-english/verifiable-english/.venv/lib/python3.14/site-packages/google/genai/types.py:42: DeprecationWarning: '_UnionGenericAlias' is deprecated and slated for removal in Python 3.17
+    VersionedUnionType = Union[builtin_types.UnionType, _UnionGenericAlias]
+
+tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results
+tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results
+tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results
+tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results
+  /home/runner/.local/share/uv/python/cpython-3.14.7-linux-x86_64-gnu/lib/python3.14/multiprocessing/popen_fork.py:76: DeprecationWarning: This process (pid=11432) is multi-threaded, use of fork() may lead to deadlocks in the child.
+    self.pid = os.fork()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+2536 passed, 5 warnings in 1015.79s (0:16:55)
+[gate] slowest:    722.8 s tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_test_input_of_every_unit
+[gate] slowest:    227.5 s tests/test_agent_policy_rerun.py::test_every_action_and_policy_query_equals_the_committed_results
+[gate] slowest:    192.4 s tests/test_fluent.py::test_random_inverse_injectivity_and_pairwise_consistency_all_five_views[env1]
+[gate] slowest:    190.8 s tests/test_fluent.py::test_random_inverse_injectivity_and_pairwise_consistency_all_five_views[env0]
+[gate] slowest:    157.1 s tests/test_wire_gate_corpus.py::test_gate_corpus_holds_every_source_of_the_soft_conformance_module
+[gate] slowest:    118.8 s tests/test_select_tests.py::test_every_test_file_is_reachable_from_a_source_path
+[gate] slowest:    117.0 s tests/test_lean_service_schema.py::test_mutated_genuine_responses_agree_with_lean_decoders
+[gate] slowest:     69.5 s tests/test_wire_gate_corpus.py::test_unit_gate_corpus_holds_every_source_of_its_conformance_scripts[norm-defaults@0]
+[gate] slowest:     61.3 s tests/test_select_tests.py::test_automatic_selection_without_a_map_runs_full_suite
+[gate] slowest:     56.1 s tests/test_p1.py::test_actual_offline_known_answer_gate
+[gate] slowest:     44.8 s tests/test_senses_document.py::test_every_front_matter_node_confused_raises_only_veerror[open fence with a reading set]
+[gate] slowest:     34.3 s tests/test_agent_policy_rerun.py::test_lean_replays_every_certificate_of_the_rerun
+[gate] slowest:     30.4 s tests/test_shape_binding_mutants.py::test_coordinated_mutants_are_generated_and_decided
+[gate] slowest:     26.3 s tests/test_shape_binding_mutants.py::test_the_generic_checker_gives_every_mutant_the_verdict_its_shape_decides[readings-route]
+[gate] slowest:     25.5 s tests/test_select_tests.py::test_an_added_or_deleted_file_selects_the_listers_of_every_directory_above_it
+[gate] slowest:     25.4 s tests/test_english_lean_route.py::test_pythons_renderings_read_back_in_lean_as_their_formulas
+[gate] slowest:     24.1 s tests/test_shape_binding_mutants.py::test_a_name_renamed_everywhere_is_refused_where_one_occurrence_is_bound
+[gate] slowest:     23.0 s tests/test_select_tests.py::test_what_the_history_list_names_only_adds_its_lint
+[gate] slowest:     22.1 s tests/test_readings_components_document.py::test_every_order_of_sentences_and_sets_gets_the_same_answer
+[gate] slowest:     22.0 s tests/test_select_tests.py::test_selector_mutants_fail_the_checks[only the nearest recorded directory's listers count]
+[gate] commit: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false rev-parse HEAD
+a1b670cee282f35de29e3fa94dd4e113c69903f3
+[gate] worktree status: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+
+[gate] worktree index: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false read-tree a1b670cee282f35de29e3fa94dd4e113c69903f3
+
+[gate] worktree content: git --no-optional-locks -c core.fsmonitor=false -c core.untrackedCache=false status --porcelain --untracked-files=all
+
+[gate] shard-passed: /home/runner/work/verifiable-english/verifiable-english/gate-result.json; 2536 passed, 0 skipped, 0 failures

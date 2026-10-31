@@ -1,0 +1,6 @@
+job=x86sh-val2-c470b627-t469864-s5 shard=5/8 nproc=4 arch=x86_64 host=runnervm48cm3 date=2026-10-31T18:05:24Z ulimit_s=16384
+Mem:              15           1           9           0           4          13
+/dev/root       145G   62G   83G  43% /
+ 18:05:24 up 2 min,  0 user,  load average: 0.94, 0.25, 0.08
+pilot/codex branches: 98
+pins: the committed lean/checkers.lock (x86_64 is the pins authority: not rewritten)
