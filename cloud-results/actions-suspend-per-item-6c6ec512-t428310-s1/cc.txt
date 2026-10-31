@@ -1,0 +1,6 @@
+job=actions-suspend-per-item-6c6ec512-t428310-s1 job_commit=60378e703e9d20f250ef8b9998a171786659dae2 session=cse_012rcAu4uT1dJP6SFZ3xo6fK nproc=4
+mem_total_mb=16091 mem_avail_mb=15575
+tmp_free=26G
+Lean (version 4.24.0, x86_64-unknown-linux-gnu, commit 797c613eb9b6d4ec95db23e3e00af9ac6657f24b, Release)
+uv 0.12.19 (x86_64-unknown-linux-gnu)
+job_rc=0 job_s=566
