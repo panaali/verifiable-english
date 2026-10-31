@@ -626,6 +626,7 @@ module VE.Service.Protocol
 module VE.Service.Readings
 module VE.Service.ReadingsChoices
 module VE.Service.Registry
+module VE.Service.RegistryExamples
 module VE.Service.ScopeAdmission
 module VE.Service.ScopeExamples
 module VE.Service.SoftSourceExamples

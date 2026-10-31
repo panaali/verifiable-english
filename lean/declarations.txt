@@ -20695,12 +20695,19 @@ module VE.Senses.Run 12ed6e66153866fdabb3e6729ffce83b14078dd6142337b7d3ed173848f
 309:0-335:113 def VE.Senses.Run.projectCase@VE.Senses.Run
 337:0-341:84 def VE.Senses.Run.projectCaseReported@VE.Senses.Run
 343:0-360:88 def VE.Senses.Run.main@VE.Senses.Run
-module VE.Senses.RunExamples 07ff1ec392e5db8a4c1bdf13952717a85ccfa456013e909b6449e09ba476d687
+module VE.Senses.RunExamples f8bf18c2a8dccb2afcb548c3603b5543d3019aed01d14d8ed66a0aa0e8d988a8
 11:0-11:113 def VE.Senses.RunExamples.caseJ@VE.Senses.RunExamples
 13:0-13:67 def VE.Senses.RunExamples.lineFunny2@VE.Senses.RunExamples
 15:0-19:31 def VE.Senses.RunExamples.LA@VE.Senses.RunExamples
 26:0-30:17 def VE.Senses.RunExamples.sameAs@VE.Senses.RunExamples
 47:0-53:11 def VE.Senses.RunExamples.idsOf@VE.Senses.RunExamples
+74:0-74:125 def VE.Senses.RunExamples.overlayJ@VE.Senses.RunExamples
+76:0-77:106 def VE.Senses.RunExamples.lexJ@VE.Senses.RunExamples
+79:0-81:65 def VE.Senses.RunExamples.req@VE.Senses.RunExamples
+83:0-83:74 def VE.Senses.RunExamples.pin@VE.Senses.RunExamples
+85:0-86:57 def VE.Senses.RunExamples.projectReq@VE.Senses.RunExamples
+88:0-88:55 def VE.Senses.RunExamples.src@VE.Senses.RunExamples
+90:0-92:107 def VE.Senses.RunExamples.fenced@VE.Senses.RunExamples
 module VE.Senses.Version 796cf56defedd3e6fef43b9bd5fc9b00f3e5036de2287ca81d6736629eb6bd2f
 3:0-5:33 def VE.Senses.sensesVersion@VE.Senses.Version
 module VE.Service.ActsExamples 2017573e19306f727acf24185959132038c98ddfc3244c91150ddc748722d23b
@@ -21543,6 +21550,7 @@ module VE.Service.Registry d49f017e9c9b032805c177a629e9574cb2d1634bff17dfed78bbb
 80:0-80:70 theorem VE.Service.modes_complete@VE.Service.Registry
 81:0-81:67 theorem VE.Service.registry_modes@VE.Service.Registry
 82:0-82:78 theorem VE.Service.registry_names_nodup@VE.Service.Registry
+module VE.Service.RegistryExamples 740814fddddb86fc7228ff6f2e93d60e91837af7428a34ba7189a8b0eb4c7324
 module VE.Service.ScopeAdmission 7d995216ba81ca5221f64b226edb345d31f78aea7c68962ba6e143c7e86aeffb
 16:0-31:78 theorem VE.Scope.mapM_some_mem@VE.Service.ScopeAdmission
 33:0-41:61 theorem VE.Scope.foldl_meet_mem@VE.Service.ScopeAdmission
@@ -24050,4 +24058,4 @@ module VE.Words.Situation 04a0781486d2ef00feb590ccf206ff7ba43f98dff6689995a7770e
 149:0-160:13 def VE.Words.bindings@VE.Words.Situation
 162:0-173:50 def VE.Words.pairSentence@VE.Words.Situation
 190:0-192:91 def VE.Words.nounsOnly@VE.Words.Situation
-module VE 63db9ce40b5f1e2aec75822f383e6892ca7602f96405d5181edcce3e998e1204
+module VE 212ad3105fb6154783063704214d8f64e26907a67144f5498b894a5ea59f9b89
