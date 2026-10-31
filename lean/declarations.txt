@@ -2119,7 +2119,7 @@ module VE.Acts.Readings 79fd348ca8e24b80173ee0772cccae06e59d24513c9c318b8608c2a0
 105:0-107:80 theorem VE.Acts.table_length@VE.Acts.Readings
 109:0-118:21 theorem VE.Acts.phraseReadings_length@VE.Acts.Readings
 120:0-122:25 theorem VE.Acts.analyse_one@VE.Acts.Readings
-module VE.Acts.ReadingsExamples c4fc594a9a387578ab060533b0ec3329e9955fb3f5a4fe88981fc766915b776d
+module VE.Acts.ReadingsExamples fa8ab4e8b283e73feb0ae87e2c4a3d1804075f5bb74ea13672f1a635ec44bf6a
 14:0-15:37 def VE.Acts.ReadingsExamples.pr@VE.Acts.ReadingsExamples
 16:0-18:71 def VE.Acts.ReadingsExamples.np@VE.Acts.ReadingsExamples
 20:0-20:110 def VE.Acts.ReadingsExamples.g9s@VE.Acts.ReadingsExamples
@@ -2129,6 +2129,7 @@ module VE.Acts.ReadingsExamples c4fc594a9a387578ab060533b0ec3329e9955fb3f5a4fe88
 25:0-25:88 def VE.Acts.ReadingsExamples.g12s@VE.Acts.ReadingsExamples
 29:0-30:67 def VE.Acts.ReadingsExamples.atoms@VE.Acts.ReadingsExamples
 79:0-81:75 def VE.Acts.ReadingsExamples.edgeSides@VE.Acts.ReadingsExamples
+95:0-96:51 def VE.Acts.ReadingsExamples.rsC@VE.Acts.ReadingsExamples
 module VE.Acts.RuleExamples 6e43fe41a28d5e0bad1c7e332b3d55fbebba0ad99b95efd492380886b20f1a7f
 18:0-23:20 def VE.Acts.RuleExamples.parsed@VE.Acts.RuleExamples
 24:0-24:120 def VE.Acts.RuleExamples.rawOf@VE.Acts.RuleExamples
