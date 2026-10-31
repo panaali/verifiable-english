@@ -57,8 +57,12 @@ All in lean/VE/Readings/Choice.lean, each planted, `lake build VE.Readings.Right
 | `copyScope` | a fixed limitation's scope keeps the author name | `#guard (sup F7r).1.limits…` |
 
 A first `aimedOwners` mutant (origins replaced by `[]`) broke a proof in `BarQuiet.lean` rather than a fixture and
-was replaced. The trust mutants of every new trusted definition: docs/composition/cmp-s2b/trust-mutants.json
-(`tools/trust_mutants.py`, 11 definitions, 248 mutants; see "Runs").
+was replaced. The trust mutants of every new and changed trusted definition: docs/composition/cmp-s2b/trust-mutants.json
+(`tools/trust_mutants.py`, 11 definitions, 248 mutants, head 6d778622: 145 KILLED, 78 INVALID, 25 ALLOWED, 0
+SURVIVOR, 0 UNKNOWN), with docs/composition/cmp-s2b/trust-mutants-allow.json: 20 ill-typed list cuts, the `owners`
+match whose cut fails the F21 guard but shares its matcher with `keyLabel`, and five equivalent cuts (the first
+interface name in `rightCopies`, the one limitation of a name in `limOwners`, the one name a limitation content
+declares in `qLim`), each row checked to be exactly the cut its reason names.
 
 ## Trust (R16)
 
@@ -69,14 +73,15 @@ R16; FOLLOW-UPS.md row "## cmp-s2b (2026-10-31)" asks for the ties pass.
 
 ## Size
 
-`git diff --numstat $(git merge-base HEAD main)` without generated files: +913 -67. Lean +536 -63: definitions
-`Choice.lean` +64 -12; S2a proofs adjusted +128 -50 (`SupSlot`, `Labels`, `Unspecified`, `Assertions`, `Shape`,
-`UpSlot`, `ChoiceFacts`, `Faithful`); `BarQuiet.lean` 104; fixtures and the DRI's counterexample
-`RightsFixtures.lean` 99 and `RightsExamples.lean` 133; `VE.lean` 3. Docs and evidence +335 (this report 125,
-mutants.json 76, trust-mutants-allow.json 44, the DRI question 59, DELTA 12, READINGS.md 17, the plan 2);
-`tools/trust-classes.json` +42. Over the ~600 line: at the first measurement (+615 -67 with the code complete)
-no further feature was started; what came after is the DRI's condition (a) (the counterexample), the fixture
-module the trust mutants needed, and the evidence and report.
+`git diff --numstat $(git merge-base HEAD main)` without generated files and the trust-mutant JSON: +998 -67.
+Lean +578 -63: definitions `Choice.lean` +64 -12; S2a proofs adjusted +128 -50 (`SupSlot`, `Labels`,
+`Unspecified`, `Assertions`, `Shape`, `UpSlot`, `ChoiceFacts`, `Faithful`); `BarQuiet.lean` 104; fixtures and the
+DRI's counterexample `RightsFixtures.lean` 141 and `RightsExamples.lean` 133; `VE.lean` 3. Docs and evidence +368
+(this report, mutants.json 76, trust-mutants-allow.json 69, the DRI question 59, DELTA 12, READINGS.md 17, the
+plan 2); `tools/trust-classes.json` +52. Over the ~600 line: at the first measurement (+615 -67 with the code
+complete) no further feature was started; what came after is the DRI's condition (a) (the counterexample), the
+fixtures the trust mutants needed (R16: every new trusted definition exercised by a check that can fail), and the
+evidence and report.
 
 ## Pilot bytes
 
@@ -95,8 +100,12 @@ until cmp-s2bb.
   exit 0. After the fixture split (d420445e) the tests that read the changed side files
   (`test_trust_budget`, `test_trust_ratchet`, `test_code_map`, `test_lean_default_build`, `test_frozen_sources`,
   `test_lean_statements_parts`, `test_lean_audit_record`, `test_repo_map`, `test_regen_generated`,
-  `test_lean_import_reader`; ve-mac-1): "268 passed in 124.68s", exit 0.
-- Trust mutants (`mac-pytest.sh --trustmut -- --max-mutants 1000 --json …`): TRUSTMUT_RESULT.
+  `test_lean_import_reader`; ve-mac-1): "268 passed in 124.68s", exit 0; again at 6d778622 after the two-entry
+  fixtures (VM): "268 passed in 375.44s", exit 0.
+- Trust mutants (`mac-pytest.sh --trustmut -- --max-mutants 1000 --allow … --json …`), three runs: the first
+  (VM, 1 job) was terminated after 7 h with no JSON and the second (VM, 7 jobs) exited 1 with 44 survivors, each
+  fixed by a fixture or an allowed equivalence above; the third, at 6d778622 (2 parts on Actions, 3 on the VM,
+  merged by tm-shard.sh): "G[V], trusted: 145 KILLED, 78 INVALID, 25 ALLOWED", exit 0.
 - Not run: the full gate (the chain runs it); no pilot or UDHR run (L70).
 
 ## Spec re-read
@@ -116,7 +125,7 @@ until cmp-s2bb.
 1. Typed and contained Lean answers: N.A., no relayed answer or schema changed (no route reaches the new code).
 2. Deliverables and rules: PASS, plan rows above; no Python copy of a Lean decision (`gateNorm` moved, its copy
    deleted); no new report test; no overlap with in-flight branches (checked at the start).
-3. Tests can fail: PASS, mutants.json (5 seeded bugs, each a named fixture) and trust-mutants.json.
+3. Tests can fail: PASS, mutants.json (5 seeded bugs, each a named fixture) and trust-mutants.json (0 survivors).
 4. Python, Lean, Rust agree: N.A., no Python or Rust change and no answer change (DELTA.md).
 5. R8 binding: N.A., no relayed field added.
 6. Gate evidence: the chain runs the gate on the final HEAD; selected tests as in "Runs".
