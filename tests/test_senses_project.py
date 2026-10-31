@@ -9,7 +9,8 @@ import pytest
 
 from test_senses_route import PACK, _paths, _retyped, pack_with, read_in, sense, world
 from ve.assurance import operation
-from ve.backends import senses as route
+from ve.backends import lean_service, senses as route
+from ve.backends.lean import ROUTE_TIMEOUT
 from ve.backends.service_schema import Invalid, check_row
 from ve.english_grammar import actions_version, grammar_id
 from ve.environment import Environment
@@ -93,6 +94,22 @@ def test_a_large_request_is_read_once_within_the_predicate_limit(joke):
     assert len(projection["environment"]["vocabulary"]["predicates"]) == 240
     assert project(joke, lines, words, big)["projection"] == {
         "status": "rejected", "code": "VocabularyLimit", "details": {"what": "predicates"}}
+
+
+def test_the_large_request_is_answered_within_half_its_deadline(joke, monkeypatch):
+    """The large request leaves its deadline a 2x margin: its pack of 260 senses costs the shared dictionary decode
+    and checks most of it, and under load the core modes' 6.4 s failed it (review F1)."""
+    monkeypatch.setitem(lean_service.DEADLINES, route.PROJECT,
+                        tuple(share / 2 for share in lean_service.DEADLINES[route.PROJECT]))
+    test_a_large_request_is_read_once_within_the_predicate_limit(joke)
+
+
+def test_a_projection_is_as_available_as_the_reading_it_serves():
+    """`senses.project` decodes the packs the reading decodes: its CPU deadline is the document mode's, which reads
+    senses, and never below `senses.read`'s route timeout, at any request size (review F1)."""
+    for size in (0, 46_000, 1 << 20, 8 << 20):
+        assert lean_service.deadline(route.PROJECT, size) == lean_service.deadline("document", size)
+        assert lean_service.deadline(route.PROJECT, size) >= ROUTE_TIMEOUT
 
 
 def _refused(env, row) -> bool:

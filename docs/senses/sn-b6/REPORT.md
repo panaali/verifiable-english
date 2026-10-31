@@ -57,6 +57,7 @@ row are added.
 | P1 | `ve/backends/senses.py` | reading `environment_id` binding disabled | `tests/test_senses_project.py::test_reading_identity_rebinding_is_refused` |
 | P2 | `ve/backends/senses.py` | projection `lexicon_id` binding disabled | `tests/test_senses_project.py::test_projection_answer_mutations_are_rejected` |
 | P3 | `ve/backends/senses.py` | used words not bound to the dictionary | `tests/test_senses_project.py::test_reading_identity_rebinding_is_refused` |
+| P4 | `ve/backends/lean_service.py` | `senses.project` back on `_CORE` (review F1) | `tests/test_senses_project.py::test_a_projection_is_as_available_as_the_reading_it_serves`, `::test_the_large_request_is_answered_within_half_its_deadline` |
 | L1 | `lean/VE/Senses/Run.lean` | candidates given the reading's own identities | `#guard` pins, `lean/VE/Senses/RunExamples.lean` (lake build fails) |
 | L2 | `lean/VE/Senses/Run.lean` | a non-preamble line accepted | `#guard`, `lean/VE/Senses/RunExamples.lean` |
 | L3 | `lean/VE/Senses/Run.lean` | projection status `BOGUS` | `ResponseShape.Encoders.SensesProject.projectCase_fits` |
@@ -115,6 +116,21 @@ None expected: no pilot document uses senses yet (B8 measures the use cases).
 - senses-PLAN.md:877-881 (B6 done-when): i7 and the manifest test pass; `ve check --senses` superseded by review
   Fable B1.
 - senses-PLAN.md:1069-1075 (i1 to i7): i1, i2, i6, i7 tested; i3 to i5 sn-b6b.
+
+## Review fix (sn-b6-review.final.md)
+
+F1 (B), the `senses.project` CPU deadline: the mode had the core modes' 5 s per case plus 30 s per MiB (6.4 s for
+the 46 KB large request), and its 260-sense pack costs 3.7 s to 6.5 s of CPU in the shared dictionary decode and
+checks, roughly the square of the pack's size. The class is a projection less available than the reading it
+serves. Fix: one constant, `_SENSES` (120 s plus 120 s per MiB) in `ve/backends/lean_service.py`, is the deadline
+of both the document mode, which reads senses, and `senses.project`; it is never below `senses.read`'s 120 s route
+timeout. It is not a DELTA row: the mode is new over the base. Regression tests:
+`tests/test_senses_project.py::test_a_projection_is_as_available_as_the_reading_it_serves` (equal to the
+document mode's and at least the route timeout at sizes 0 to 8 MiB) and
+`::test_the_large_request_is_answered_within_half_its_deadline` (the review's probe: the large request under half
+the deadline). The probe failed before the fix ("used more than its deadline of 3.18421 s of CPU", load 63) and
+passes after it; seeded bug P4. The quadratic cost of the pack decode itself is not changed here (it is shared
+with `senses.read` on main).
 
 ## Next
 
