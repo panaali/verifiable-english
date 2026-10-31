@@ -2,21 +2,77 @@
  "item": "eff-tm-partial",
  "note": "Seeded bugs planted one at a time, each shown to fail the named test, then restored (VE: git checkout of the file; coordination: a /tmp copy run through the harness's override, the live script untouched). Run 2026-10-31 by the builder.",
  "mutants": [
-  {"id": "S1", "file": "tools/trust_mutants.py", "behaviour": "the deadline stops new mutants",
-   "change": "Deadline.starts returns True", "test": "tests/test_trust_mutants.py::test_a_deadline_stops_new_mutants_and_lists_the_rest_unjudged", "result": "1 failed"},
-  {"id": "S2", "file": "tools/trust_mutants.py", "behaviour": "a same-HEAD --resume runs only the unjudged mutants",
-   "change": "todo no longer leaves out the kept mutants", "test": "tests/test_trust_mutants.py::test_a_resume_at_the_same_head_judges_only_the_unjudged_and_gives_the_one_runs_record", "result": "1 failed"},
-  {"id": "S3", "file": "tools/trust_mutants.py", "behaviour": "a record of another HEAD is ignored",
-   "change": "resumable skips the head/tree comparison", "test": "tests/test_trust_mutants.py::test_a_resume_of_another_heads_or_unbound_record_is_ignored[another-head]", "result": "1 failed"},
-  {"id": "S4", "file": "tools/trust_mutants.py", "behaviour": "--merge refuses a partial part as complete (DRI condition)",
-   "change": "merge's partial refusal removed", "test": "tests/test_trust_mutants.py::test_merge_refuses_a_partial_part_as_complete", "result": "1 failed"},
-  {"id": "S5", "file": "tools/trust_mutants.py", "behaviour": "a Lake run still going at the deadline is killed",
-   "change": "Scratch.lake never cuts at the deadline (cut = False)", "test": "tests/test_trust_mutants.py::test_a_lake_run_past_the_deadline_is_killed_or_never_started", "result": "1 failed"},
-  {"id": "S6", "file": "/home/seyran/code/manage-agents/tm-shard.sh", "behaviour": "tm-shard.sh state: a partial part is no result",
-   "change": "the partial status line replaced by pass", "test": "test-harness/tmshard/test-tmshard.zsh P8, P9, P10", "result": "77 passed, 3 failed"},
-  {"id": "S7", "file": "/home/seyran/code/manage-agents/mac-pytest.sh", "behaviour": "tmparts reruns a partial part with --resume",
-   "change": "tpartial never reports a partial record", "test": "test-harness/cloudplumb/test-tmoptout.zsh T12, T12, T13, T13b", "result": "17 passed, 4 failed"},
-  {"id": "S8", "file": "/home/seyran/code/manage-agents/cloud-tm-job.sh", "behaviour": "the job script turns --budget into --deadline <its start + S>",
-   "change": "--budget S passed through unchanged", "test": "test-harness/tmpartial/test-tmpartial.zsh J1", "result": "8 passed, 1 failed"}
+  {
+   "id": "S1",
+   "file": "tools/trust_mutants.py",
+   "behaviour": "the deadline stops new mutants",
+   "change": "Deadline.starts returns True",
+   "test": "tests/test_trust_mutants.py::test_a_deadline_stops_new_mutants_and_lists_the_rest_unjudged",
+   "result": "1 failed"
+  },
+  {
+   "id": "S2",
+   "file": "tools/trust_mutants.py",
+   "behaviour": "a same-HEAD --resume runs only the unjudged mutants",
+   "change": "todo no longer leaves out the kept mutants",
+   "test": "tests/test_trust_mutants.py::test_a_resume_at_the_same_head_judges_only_the_unjudged_and_gives_the_one_runs_record",
+   "result": "1 failed"
+  },
+  {
+   "id": "S3",
+   "file": "tools/trust_mutants.py",
+   "behaviour": "a record of another HEAD is ignored",
+   "change": "resumable skips the head/tree comparison",
+   "test": "tests/test_trust_mutants.py::test_a_resume_of_another_heads_or_unbound_record_is_ignored[another-head]",
+   "result": "1 failed"
+  },
+  {
+   "id": "S4",
+   "file": "tools/trust_mutants.py",
+   "behaviour": "--merge refuses a partial part as complete (DRI condition)",
+   "change": "merge's partial refusal removed",
+   "test": "tests/test_trust_mutants.py::test_merge_refuses_a_partial_part_as_complete",
+   "result": "1 failed"
+  },
+  {
+   "id": "S5",
+   "file": "tools/trust_mutants.py",
+   "behaviour": "a Lake run still going at the deadline is killed",
+   "change": "Scratch.lake never cuts at the deadline (cut = False)",
+   "test": "tests/test_trust_mutants.py::test_a_lake_run_past_the_deadline_is_killed_or_never_started",
+   "result": "1 failed"
+  },
+  {
+   "id": "S9",
+   "file": "tools/trust_mutants.py",
+   "behaviour": "a run's deadline ends with the run",
+   "change": "main no longer resets DEADLINE",
+   "test": "tests/test_trust_mutants.py::test_a_runs_deadline_ends_with_the_run",
+   "result": "1 failed"
+  },
+  {
+   "id": "S6",
+   "file": "/home/seyran/code/manage-agents/tm-shard.sh",
+   "behaviour": "tm-shard.sh state: a partial part is no result",
+   "change": "the partial status line replaced by pass",
+   "test": "test-harness/tmshard/test-tmshard.zsh P8, P9, P10",
+   "result": "77 passed, 3 failed"
+  },
+  {
+   "id": "S7",
+   "file": "/home/seyran/code/manage-agents/mac-pytest.sh",
+   "behaviour": "tmparts reruns a partial part with --resume",
+   "change": "tpartial never reports a partial record",
+   "test": "test-harness/cloudplumb/test-tmoptout.zsh T12, T12, T13, T13b",
+   "result": "17 passed, 4 failed"
+  },
+  {
+   "id": "S8",
+   "file": "/home/seyran/code/manage-agents/cloud-tm-job.sh",
+   "behaviour": "the job script turns --budget into --deadline <its start + S>",
+   "change": "--budget S passed through unchanged",
+   "test": "test-harness/tmpartial/test-tmpartial.zsh J1",
+   "result": "8 passed, 1 failed"
+  }
  ]
 }
