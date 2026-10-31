@@ -123,6 +123,16 @@
    "tests": [
     "tools/test_layer_policy.py::LayerSelectionTests::test_lazy_facade_names_select_like_from_imports"
    ]
+  },
+  {
+   "id": "M13",
+   "file": "ve/argument.py",
+   "claim": "the checker build covers the English reader's surface record whatever was imported first (import ve no longer loads it)",
+   "find": "    from . import english  # noqa: F401 -- its natural_clause record is part of the build, as when `import ve`\n",
+   "replace": "",
+   "tests": [
+    "tests/test_package_facade.py::test_checker_build_does_not_depend_on_what_was_imported"
+   ]
   }
  ]
 }

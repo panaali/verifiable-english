@@ -81,11 +81,13 @@ def python_tree(root: Path, files: dict[str, str]) -> Path:
 
 
 def python_check(root: Path) -> tuple[int, str]:
-    """tools/check_python_layers.py --write on the tree at `root`, in a fresh interpreter (grimp and import-linter
-    must find root's `ve`, not this checkout's): its exit code and its output."""
+    """tools/check_python_layers.py on the tree at `root` with the contract generated for it, in a fresh interpreter
+    (grimp and import-linter must find root's `ve`, not this checkout's): its exit code and its output."""
     sys.path.insert(0, str(layer_policy.ROOT))
     from tests.subprocesses import HANG_TIMEOUT
-    result = subprocess.run([sys.executable, str(layer_policy.ROOT / "tools/check_python_layers.py"), "--write",
+    ledger = json.loads((root / check_python_layers.LEDGER).read_text())
+    (root / check_python_layers.CONTRACT).write_text(check_python_layers.contract_text(ledger, root))
+    result = subprocess.run([sys.executable, str(layer_policy.ROOT / "tools/check_python_layers.py"),
                              "--root", str(root)], capture_output=True, text=True, timeout=HANG_TIMEOUT,
                             check=False)
     return result.returncode, result.stdout + result.stderr

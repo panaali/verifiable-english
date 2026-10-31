@@ -60,3 +60,10 @@ def test_submodules_and_unknown_names():
     with pytest.raises(AttributeError, match="no attribute 'not_a_name'"):
         ve.not_a_name  # noqa: B018
     assert ve.__version__ == "0.1.0"
+
+
+def test_checker_build_does_not_depend_on_what_was_imported():
+    # The build fingerprint covers every surface record; the English reader's is there even when only
+    # ve.argument is imported, as it was when `import ve` loaded everything.
+    build = "from ve.argument import _checker_build; print(_checker_build())"
+    assert fresh(build) == fresh("import ve.english\n" + build)
