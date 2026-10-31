@@ -15629,42 +15629,6 @@
         "VE.Acts.ElaborateExamples.withActs"
       ]
     },
-    "VE/Acts/Wire.lean": {
-      "D[V]": [
-        "VE.Acts.Wire.checkAct",
-        "VE.Acts.Wire.joinedAct"
-      ]
-    },
-    "VE/Acts/Decode.lean": {
-      "D[V]": [
-        "VE.Acts.Decode.ElaboratedU",
-        "VE.Acts.Decode.actsOf",
-        "VE.Acts.Decode.decodeElaboratedU",
-        "VE.Acts.Decode.elaborateSource"
-      ]
-    },
-    "VE/Acts/DecodeExamples.lean": {
-      "T": [
-        "VE.Acts.DecodeExamples.U1",
-        "VE.Acts.DecodeExamples.a14",
-        "VE.Acts.DecodeExamples.a6",
-        "VE.Acts.DecodeExamples.a7",
-        "VE.Acts.DecodeExamples.big",
-        "VE.Acts.DecodeExamples.ck",
-        "VE.Acts.DecodeExamples.dec",
-        "VE.Acts.DecodeExamples.e14",
-        "VE.Acts.DecodeExamples.e15",
-        "VE.Acts.DecodeExamples.errText",
-        "VE.Acts.DecodeExamples.fx14",
-        "VE.Acts.DecodeExamples.jenv",
-        "VE.Acts.DecodeExamples.jrule",
-        "VE.Acts.DecodeExamples.lexical",
-        "VE.Acts.DecodeExamples.pair",
-        "VE.Acts.DecodeExamples.run",
-        "VE.Acts.DecodeExamples.two",
-        "VE.Acts.DecodeExamples.view"
-      ]
-    },
     "VE/Cardinality/Run.lean": {
       "D[V]": [
         "VE.Cardinality.CardCertificate",
@@ -15847,14 +15811,20 @@
         "VE.Scope.Examples.narrowG2",
         "VE.Scope.Examples.narrowNorm",
         "VE.Scope.Examples.notN",
+        "VE.Scope.Examples.optEq",
         "VE.Scope.Examples.perChoice",
+        "VE.Scope.Examples.preserved",
+        "VE.Scope.Examples.preservesOn",
         "VE.Scope.Examples.r9",
         "VE.Scope.Examples.reading",
         "VE.Scope.Examples.readingContents",
+        "VE.Scope.Examples.refusedOn",
         "VE.Scope.Examples.rset",
         "VE.Scope.Examples.s03",
         "VE.Scope.Examples.s03set",
         "VE.Scope.Examples.s05set",
+        "VE.Scope.Examples.sameBut",
+        "VE.Scope.Examples.setAt",
         "VE.Scope.Examples.setDoc",
         "VE.Scope.Examples.sets",
         "VE.Scope.Examples.twoSets",
@@ -15865,6 +15835,7 @@
       ]
     },
     "VE/Scope/ReadingsTheorems.lean": {},
+    "VE/Scope/ReadingsLemmas.lean": {},
     "VE/Acts/Meaning.lean": {
       "S": [
         "VE.Acts.Att",
@@ -16457,7 +16428,20 @@
         "VE.Cardinality.Document.Entries"
       ]
     },
-    "VE/Scope/EffectLemmas.lean": {},
+    "VE/Acts/ReadingsExamples.lean": {
+      "T": [
+        "VE.Acts.ReadingsExamples.atoms",
+        "VE.Acts.ReadingsExamples.edgeSides",
+        "VE.Acts.ReadingsExamples.fx9",
+        "VE.Acts.ReadingsExamples.g10s",
+        "VE.Acts.ReadingsExamples.g11s",
+        "VE.Acts.ReadingsExamples.g12s",
+        "VE.Acts.ReadingsExamples.g9s",
+        "VE.Acts.ReadingsExamples.np",
+        "VE.Acts.ReadingsExamples.pr",
+        "VE.Acts.ReadingsExamples.rsC"
+      ]
+    },
     "VE/Closure/CoreEquiv.lean": {
       "P": [
         "VE.Closure.CoreEquiv.embedAtom",
@@ -16473,18 +16457,41 @@
         "VE.Closure.CoreEquiv.embedTraces"
       ]
     },
-    "VE/Acts/ReadingsExamples.lean": {
+    "VE/Scope/EffectLemmas.lean": {},
+    "VE/Acts/Wire.lean": {
+      "D[V]": [
+        "VE.Acts.Wire.checkAct",
+        "VE.Acts.Wire.joinedAct"
+      ]
+    },
+    "VE/Acts/Decode.lean": {
+      "D[V]": [
+        "VE.Acts.Decode.ElaboratedU",
+        "VE.Acts.Decode.actsOf",
+        "VE.Acts.Decode.decodeElaboratedU",
+        "VE.Acts.Decode.elaborateSource"
+      ]
+    },
+    "VE/Acts/DecodeExamples.lean": {
       "T": [
-        "VE.Acts.ReadingsExamples.atoms",
-        "VE.Acts.ReadingsExamples.edgeSides",
-        "VE.Acts.ReadingsExamples.fx9",
-        "VE.Acts.ReadingsExamples.g10s",
-        "VE.Acts.ReadingsExamples.g11s",
-        "VE.Acts.ReadingsExamples.g12s",
-        "VE.Acts.ReadingsExamples.g9s",
-        "VE.Acts.ReadingsExamples.np",
-        "VE.Acts.ReadingsExamples.pr",
-        "VE.Acts.ReadingsExamples.rsC"
+        "VE.Acts.DecodeExamples.U1",
+        "VE.Acts.DecodeExamples.a14",
+        "VE.Acts.DecodeExamples.a6",
+        "VE.Acts.DecodeExamples.a7",
+        "VE.Acts.DecodeExamples.big",
+        "VE.Acts.DecodeExamples.ck",
+        "VE.Acts.DecodeExamples.dec",
+        "VE.Acts.DecodeExamples.e14",
+        "VE.Acts.DecodeExamples.e15",
+        "VE.Acts.DecodeExamples.errText",
+        "VE.Acts.DecodeExamples.fx14",
+        "VE.Acts.DecodeExamples.jenv",
+        "VE.Acts.DecodeExamples.jrule",
+        "VE.Acts.DecodeExamples.lexical",
+        "VE.Acts.DecodeExamples.pair",
+        "VE.Acts.DecodeExamples.run",
+        "VE.Acts.DecodeExamples.two",
+        "VE.Acts.DecodeExamples.view"
       ]
     }
   }
