@@ -11925,7 +11925,9 @@
         "VE.Readings.SoftSupExamples.m1",
         "VE.Readings.SoftSupExamples.mq",
         "VE.Readings.SoftSupExamples.sides",
-        "VE.Readings.SoftSupExamples.closeCert"
+        "VE.Readings.SoftSupExamples.closeCert",
+        "VE.Readings.SoftSupExamples.q4",
+        "VE.Readings.SoftSupExamples.NSDa"
       ]
     },
     "VE/NormDefaults/LayeredAdmission.lean": {
