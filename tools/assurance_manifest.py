@@ -5,10 +5,15 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT / "tools"))
 
+from lean_statements import inventory_path, write_inventory  # noqa: E402
+import regen_generated  # noqa: E402
 from ve.assurance import render_decoders_markdown, render_markdown  # noqa: E402
 
-DOC = ROOT / "docs/spec/assurance-manifest.md"
+# A train-only file (tools/regen_generated.py): the committed copy is the template of its hand-written parts; the
+# check reads the copy `inventory_path` gives, the write goes to `write_inventory`'s.
+DOC = regen_generated.entry_named("assurance-doc").paths[0]
 END = "<!-- END GENERATED -->"
 # Marker -> renderer, in document order.
 SECTIONS = {
@@ -23,7 +28,7 @@ def decoder_total_lines(manifest: dict) -> int:
 
 
 def document() -> str:
-    text = DOC.read_text()
+    text = (ROOT / DOC).read_text()
     for begin, render in SECTIONS.items():
         head, rest = text.split(begin, 1)
         _, tail = rest.split(END, 1)
@@ -38,14 +43,14 @@ def main(argv=None):
     action.add_argument("--check", action="store_true", help="exit 1 if the generated sections are stale")
     args = parser.parse_args(argv)
     if args.check:
-        if DOC.read_text() != document():
+        if inventory_path(DOC, ROOT).read_text() != document():
             print(f"{DOC} is stale; run python tools/assurance_manifest.py --write", file=sys.stderr)
             return 1
         return 0
     if not args.write:
         print("\n".join(render() for render in SECTIONS.values()), end="")
         return 0
-    DOC.write_text(document())
+    write_inventory(DOC, document(), ROOT)
     return 0
 
 

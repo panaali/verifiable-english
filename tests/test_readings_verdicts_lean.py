@@ -21,6 +21,7 @@ from ve.document import load_document
 from ve.errors import CheckerUnavailable, VEError
 from ve.readings_s2_wording import S2Wording, query_english, report_english
 from ve.readings_verdicts import context
+from tools.lean_statements import inventory_path  # noqa: E402
 
 LEAN = "ve_readings_route"
 ROOT = Path(__file__).resolve().parents[1]
@@ -366,7 +367,7 @@ def test_the_result_of_every_form_is_typed_and_bound(tmp_path):
                 continue
             relayed.add(f"{name}: {label}")
     assert relayed == set(LEAN_OWNED_RESULTS), "\n".join(sorted(relayed ^ set(LEAN_OWNED_RESULTS)))
-    statements = (ROOT / "lean/statements.txt").read_text()
+    statements = inventory_path("lean/statements.txt").read_text()
     for owner in set(LEAN_OWNED_RESULTS.values()):
         assert f"theorem VE.{owner}\n" in statements or owner == "Readings.Run.premisesResult", owner
 
@@ -666,8 +667,8 @@ def test_review_b_looprecheck2_conditions_are_lean_s(tmp_path):
     (the probe names nothing the request lacks) and relays Lean's English unchanged: every planned line is one
     sentence, in order, so the condition Lean plans is shown and none is added or dropped."""
     doc, route = loaded(tmp_path)
-    audit = (ROOT / "lean/VE/Audit.lean").read_text()
-    statements = (ROOT / "lean/statements.txt").read_text()
+    audit = inventory_path("lean/VE/Audit.lean").read_text()
+    statements = inventory_path("lean/statements.txt").read_text()
     for theorem in ("verdicts_conditions_conflict_free", "verdicts_conditions_all", "verdicts_conditions_some",
                     "verdicts_conditions_none", "mem_conditionsOf", "verdictsPlan_cites"):
         assert f"#print axioms VE.Readings.Run.{theorem}\n" in audit

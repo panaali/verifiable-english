@@ -10,6 +10,7 @@ import re
 from pathlib import Path
 
 from tests import lineage
+from tools.lean_statements import inventory_path  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 FOLDER = ROOT / "docs/readings-defaults/rd8"
@@ -68,8 +69,8 @@ def test_the_theorem_table_is_the_saved_list():
 
 def test_every_saved_theorem_is_audited():
     """The theorems are RD-8's own: each is in the audit record and the audit list."""
-    record = (ROOT / "lean/axioms.txt").read_text()
-    audit = (ROOT / "lean/VE/Audit.lean").read_text()
+    record = inventory_path("lean/axioms.txt").read_text()
+    audit = inventory_path("lean/VE/Audit.lean").read_text()
     for name in EVIDENCE["theorems"]:
         assert f"'{name}'" in record, name
         assert f"#print axioms {name}\n" in audit, name

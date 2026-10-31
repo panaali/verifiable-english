@@ -1,0 +1,61 @@
+{
+  "comment": "sc-2c seeded bugs, each planted alone on 63bf17240, built with `lake build <target>` and restored with git checkout. `stubbed`: proofs replaced by sorry for that run only, so the build reaches the fixtures behind them; the runs without stubs are listed too.",
+  "mutants": [
+    {
+      "id": "reguard_keeps_old_guard",
+      "file": "lean/VE/Scope/Govern.lean",
+      "change": "applyEffect .reguard: setObjVal! \"guard\" g instead of substOwn g depthLimit c",
+      "test": "VE.Scope.Examples F-raw-effect #guard (Examples.lean:1180); also F3/F4 (798, 810, 823)",
+      "stubbed": ["applyEffect_src"],
+      "result": "lake build VE.Scope.Examples: exit 1, Expression at 1180; unstubbed: Theorems.lean:1018 (applyEffect_src) fails first"
+    },
+    {
+      "id": "carve_out_prepends",
+      "file": "lean/VE/Scope/Govern.lean",
+      "change": "applyEffect .carveOut: #[substOwn g depthLimit c] ++ xs instead of xs.push",
+      "test": "VE.Scope.Examples F-raw-effect #guard (Examples.lean:1180); also 551, 578, 1099",
+      "stubbed": ["applyEffect_src"],
+      "result": "lake build VE.Scope.Examples: exit 1, Expression at 1180"
+    },
+    {
+      "id": "commutes_reguard_after_restrict",
+      "file": "lean/VE/Scope/Effects.lean",
+      "change": "Commutes .reguard .reguard: || instead of &&",
+      "test": "VE.Scope.Examples sc-2c order #guard (Examples.lean:1129) and Commutes #guard (1138); also F7 (547)",
+      "stubbed": ["commutes_symm"],
+      "result": "lake build VE.Scope.Examples: exit 1, Expression at 1129 and 1138; unstubbed: Theorems.lean:101 (commutes_symm) fails first"
+    },
+    {
+      "id": "order_check_skips_last_unit",
+      "file": "lean/VE/Scope/Govern.lean",
+      "change": "orderCheck: for u in (unitIds D.doc).dropLast",
+      "test": "VE.Scope.Theorems orderCheck_ok (Theorems.lean:2002), under order_refused; VE.Scope.Examples sc-2c order #guard on the last unit b (Examples.lean:1129)",
+      "stubbed": ["orderCheck_ok", "governBody_slow (fixture run only)"],
+      "result": "lake build VE.Scope.Theorems: exit 1 at 2002; with stubs, lake build VE.Scope.Examples: exit 1, Expression at 1129 (no earlier fixture puts the clash on the last unit)"
+    },
+    {
+      "id": "own_safe_forgets_exists",
+      "file": "lean/VE/Scope/Effects.lean",
+      "change": "ownSafe: the [.str \"exists\", _, a] case removed, so own under exists counts as safe",
+      "test": "VE.Scope.Theorems own_congr_le (Theorems.lean:1945), under own_congr; VE.Scope.Examples sc-2c own_congr #guard (Examples.lean:1147)",
+      "stubbed": ["own_congr_le (fixture run only)"],
+      "result": "lake build VE.Scope.Theorems: exit 1 at 1945; with the stub, lake build VE.Scope.Examples: exit 1, Expression at 1147"
+    },
+    {
+      "id": "own_congr_added_premise",
+      "file": "lean/VE/Scope/Theorems.lean",
+      "change": "own_congr's statement gains (hx : True), which the proof still accepts",
+      "test": "tests/test_scope_5_4_statements.py::test_the_proved_statements_are_spec_5_4s_text[own_congr]",
+      "stubbed": [],
+      "result": "lake build VE.Scope.Theorems: exit 0; pytest: 1 failed, 8 passed"
+    },
+    {
+      "id": "own_congr_dropped_premise",
+      "file": "lean/VE/Scope/Theorems.lean",
+      "change": "own_congr's statement loses (hs : ownSafe depthLimit c = true)",
+      "test": "VE.Scope.Theorems own_congr (Theorems.lean:1965)",
+      "stubbed": [],
+      "result": "lake build VE.Scope.Theorems: exit 1, Unknown identifier hs"
+    }
+  ]
+}

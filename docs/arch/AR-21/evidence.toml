@@ -1,0 +1,21 @@
+# AR-21, consolidation step 3a (theorem only): closure's replay is Core's on the embedding (architecture pass
+# 2026-10-30, plan 4.5). Checked with: uv run python tools/batch_evidence.py --check docs/arch/AR-21
+# The A/B is `python -m tools.evidence ab` over tools/lean_first_diff.py's recordings of all nine corpora (base
+# 0c4ea31d2, the merge base after the merge of main, from its own worktree; head from this checkout), kept out of
+# the tree (over 1 MB) with their SHA-256 in evidence/ab.json. The statements diff (statements.json) and the trust
+# measurement before and after (trust.json) are saved beside it and stated in REPORT.md.
+batch = "AR-21"
+
+[scope]
+file = "scope.json"
+
+[gate]
+file = "gate.json"
+
+[mutants]
+file = "mutants.json"
+min = 3
+
+[ab]
+file = "ab.json"
+corpora = ["probe", "conformance", "readings", "pilots", "discourse", "rights", "quantity", "norm_defaults", "document"]

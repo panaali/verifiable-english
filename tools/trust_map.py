@@ -110,12 +110,12 @@ LEAN = ROOT / "lean"
 TABLE = ROOT / "tools/trust-classes.json"
 LEDGER = ROOT / "tools/consolidation-ledger.json"
 BASELINE = ROOT / "docs/trust-baseline.json"
-STATEMENTS = LEAN / "statements.txt"
 
 sys.path.insert(0, str(LEAN))
 sys.path.insert(0, str(ROOT / "tools"))
-from audit import code_only  # noqa: E402
-from lean_statements import (DECLARATIONS, PREDICATES, Declared, declaration_list, module_name,  # noqa: E402
+from audit import MANIFESTS, code_only  # noqa: E402
+from lean_statements import (DECLARATIONS, PREDICATES, STATEMENTS, Declared, declaration_list,  # noqa: E402
+                             inventory_status, module_name,
                              parse as parse_statements, predicate_list, predicates as lean_predicates,
                              source_hash, sources, uses)
 
@@ -276,10 +276,18 @@ def load_table(path: Path = TABLE) -> dict[str, dict[str, object]]:
     return table
 
 
-def statements(path: Path = STATEMENTS) -> dict[str, set[tuple[str, str]] | None]:
+def inventory(name: str, root: Path = ROOT) -> Path:
+    """The copy of the train-only list `name` that describes the tree (`inventory_status`), or when none does the
+    committed copy: its entry's declaration list is then the same stale copy, and `scan_tree` fails on every module
+    it does not describe, so no measurement passes on it."""
+    return inventory_status(name, root)[0]
+
+
+def statements(path: Path | None = None) -> dict[str, set[tuple[str, str]] | None]:
     """The theorems of lean/statements.txt and the constants on each one's `-- uses` line as
     (defining module, full name) (None for an entry without that line, or one written before it
     carried modules)."""
+    path = inventory(STATEMENTS) if path is None else path
     if not path.is_file():
         return {}
     return {name: uses(body) for name, body in parse_statements(path.read_text()).items()}
@@ -375,9 +383,9 @@ def classify(module: str, decl: Decl, table: dict, proved: dict[str, set[Ident] 
     for theorem in entry["tied"]:
         used = proved.get(theorem)
         if theorem not in proved:
-            problems.append(f"{module}: {decl.name}: tying theorem {theorem} is not in {STATEMENTS.name}")
+            problems.append(f"{module}: {decl.name}: tying theorem {theorem} is not in {Path(STATEMENTS).name}")
         elif used is None:
-            problems.append(f"{module}: {decl.name}: {STATEMENTS.name} has no uses line with defining modules "
+            problems.append(f"{module}: {decl.name}: {Path(STATEMENTS).name} has no uses line with defining modules "
                             f"for {theorem}; rerun tools/lean_statements.py")
         elif me not in used:
             problems.append(f"{module}: {decl.name}: the statement of {theorem} does not mention {decl.name} "
@@ -438,7 +446,7 @@ def scan_tree(root: Path = ROOT, declarations_path: Path | None = None
     the list lacks) fails, and is scanned without any compiled declaration, so every line in it that
     reads as a declaration is trusted and unnamed. A `generated` constant (no source range, and its
     name extends no constant) fails: no line of its file is its own."""
-    path = root / DECLARATIONS.relative_to(ROOT) if declarations_path is None else declarations_path
+    path = inventory(DECLARATIONS, root) if declarations_path is None else declarations_path
     problems: list[str] = []
     declared: dict[str, list[Declared]] = {}
     hashes: dict[str, str] = {}
@@ -454,6 +462,8 @@ def scan_tree(root: Path = ROOT, declarations_path: Path | None = None
     for source in sources(root):
         module = module_key(source, root)
         name = module_name(module)
+        if module in MANIFESTS:  # an output of the list: its copy that describes the tree is hashed and scanned
+            source = inventory_status(f"lean/{module}", root)[0]
         if hashes.get(name) != source_hash(source):
             if readable:  # an unreadable list is one problem already
                 problems.append(f"{module}: {path.name} was not compiled from this source; rerun "
@@ -494,7 +504,7 @@ def place_tree(decls: list[tuple[str, Decl]], files: Iterable[str], predicates: 
             problems += issues
         out += [(module, decl) for decl in found]
     known = {module_name(module) for module in modules}
-    problems += [f"{PREDICATES.name}: the predicate {pred} is of module {pred_module}, which is not a file of the "
+    problems += [f"{Path(PREDICATES).name}: the predicate {pred} is of module {pred_module}, which is not a file of the "
                  "tree; rerun tools/lean_statements.py" for pred_module, pred in sorted(predicates) if pred_module not in known]
     return out, problems
 
@@ -535,7 +545,7 @@ def read_tree(root: Path = ROOT, predicates_path: Path | None = None
     problems. The predicate list must have read every file of the tree, and only those: a module
     it read that is no file would hold predicates no file accounts for. Every entry point (`walk`,
     `seed`) reads the tree here."""
-    predicates_path = root / PREDICATES.relative_to(ROOT) if predicates_path is None else predicates_path
+    predicates_path = inventory(PREDICATES, root) if predicates_path is None else predicates_path
     problems, predicates, scanned = [], set(), None
     if not predicates_path.is_file():
         problems.append(f"{predicates_path.name} is missing; run tools/lean_statements.py")
@@ -558,7 +568,7 @@ def read_tree(root: Path = ROOT, predicates_path: Path | None = None
     return decls, lines, predicates, unread, problems
 
 
-def walk(root: Path = ROOT, table_path: Path = TABLE, statements_path: Path = STATEMENTS,
+def walk(root: Path = ROOT, table_path: Path = TABLE, statements_path: Path | None = None,
          predicates_path: Path | None = None) -> tuple[list[Classified], dict[str, int], list[str]]:
     """Every declaration under `root` with its validated class, the line count of each file, and
     the problems found (unknown table entries, entries for theorems, unverified ties, predicates in
@@ -566,13 +576,13 @@ def walk(root: Path = ROOT, table_path: Path = TABLE, statements_path: Path = ST
     compiled from the tree, a generated constant). `measure` and `ledger` both read the tree
     through this one pass, so neither can report numbers whose classification failed validation."""
     table = load_table(table_path)
-    proved = statements(statements_path)
+    proved = statements(inventory(STATEMENTS, root) if statements_path is None else statements_path)
     decls, lines, predicates, unread, problems = read_tree(root, predicates_path)
     out, found = classify_tree(decls, table, proved, predicates, lines, unread)
     return out, lines, problems + found
 
 
-def measure(root: Path = ROOT, table_path: Path = TABLE, statements_path: Path = STATEMENTS,
+def measure(root: Path = ROOT, table_path: Path = TABLE, statements_path: Path | None = None,
             predicates_path: Path | None = None) -> tuple[dict[str, dict[str, int]], list[str]]:
     """Per-file counts and the problems `walk` found."""
     decls, lines, problems = walk(root, table_path, statements_path, predicates_path)
@@ -803,7 +813,7 @@ def extract_rev(rev: str, tree: Path, root: Path = ROOT) -> str | None:
 
 def rev_paths(tree: Path) -> tuple[Path, Path]:
     """The side table and statement list of a tree `extract_rev` wrote."""
-    return tree / TABLE.relative_to(ROOT), tree / STATEMENTS.relative_to(ROOT)
+    return tree / TABLE.relative_to(ROOT), tree / STATEMENTS
 
 
 def measure_rev(rev: str, root: Path = ROOT) -> tuple[dict[str, dict[str, int]], list[str], dict | None]:
@@ -1106,7 +1116,7 @@ def expand(pattern: str) -> list[str]:
 
 
 def ledger(root: Path = ROOT, path: Path = LEDGER, table_path: Path = TABLE,
-           statements_path: Path = STATEMENTS, predicates_path: Path | None = None) -> tuple[list[dict], list[str]]:
+           statements_path: Path | None = None, predicates_path: Path | None = None) -> tuple[list[dict], list[str]]:
     """Measured lines of each step of the ledger, and the problems found: every problem of `walk`
     (the same validation `measure` runs; a ledger over a table that fails it is not a measurement)
     and a selector that names no declaration. For each of `removed`, `tied` and `reclassified`: the
@@ -1205,7 +1215,7 @@ def main(argv: list[str]) -> int:
     root = args.root.resolve()
     table_path = root / TABLE.relative_to(ROOT)
     baseline_path = root / BASELINE.relative_to(ROOT)
-    statements_path = root / STATEMENTS.relative_to(ROOT)
+    statements_path = inventory(STATEMENTS, root)
     if args.ledger:
         rows, problems = ledger(root, root / LEDGER.relative_to(ROOT), table_path, statements_path)
         for problem in problems:

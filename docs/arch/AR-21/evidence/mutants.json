@@ -1,0 +1,116 @@
+{
+ "mutants": [
+  {
+   "id": "M1",
+   "file": "lean/VE/TableauExtendedChecker.lean",
+   "claim": "claim 1 (replay_embed, through next_embed): closure's expansion rule has Core's side conditions; seeded: closure's reach-unfolding step also refuses index 7 (its own soundness proof still builds), and the equality no longer builds",
+   "source_sha256": "cf2527a4c1290a6fbfabe2206fdff3e98b6930ac6ba90bf8d8da7b113c8e14cc",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && out=$(PATH=$HOME/.elan/bin:$PATH lake build VE.Closure.CoreEquiv 2>&1); rc=$?; printf '%s\\n' \"$out\" | grep -E 'error' | head -6; exit $rc"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 58.2,
+   "output_tail": "error: VE/Closure/CoreEquiv.lean:488:4: unsolved goals\nerror: Lean exited with code 1\nerror: build failed\n"
+  },
+  {
+   "id": "M2",
+   "file": "lean/VE/TableauExtendedRules.lean",
+   "claim": "claim 1 (replay_embed, through reachClosed_embed): closure's reach-closure rule applies to the same formulas as Core's; seeded: isReach no longer accepts a body reach, and the equality no longer builds",
+   "source_sha256": "f09b3ef6d3905c8df14ea195c97784cf313cea96b8724f6e9cd6aee767693e30",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && out=$(PATH=$HOME/.elan/bin:$PATH lake build VE.Closure.CoreEquiv 2>&1); rc=$?; printf '%s\\n' \"$out\" | grep -E 'error' | head -6; exit $rc"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 109.8,
+   "output_tail": "error: VE/Closure/CoreEquiv.lean:361:14: Tactic `rfl` failed: The left-hand side\nerror: Lean exited with code 1\nerror: build failed\n"
+  },
+  {
+   "id": "M3",
+   "file": "lean/VE/TableauExtendedChecker.lean",
+   "claim": "claim 1, both flags explicit: replay agrees for each value of the induction flag; seeded: closure's replay ignores its induction flag (closure soundness still builds), and replay_embed no longer builds",
+   "source_sha256": "cf2527a4c1290a6fbfabe2206fdff3e98b6930ac6ba90bf8d8da7b113c8e14cc",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && out=$(PATH=$HOME/.elan/bin:$PATH lake build VE.Closure.CoreEquiv 2>&1); rc=$?; printf '%s\\n' \"$out\" | grep -E 'error' | head -6; exit $rc"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 180.5,
+   "output_tail": "error: VE/Closure/CoreEquiv.lean:572:16: Tactic `rfl` failed: The left-hand side\nerror: VE/Closure/CoreEquiv.lean:573:16: unsolved goals\nerror: Lean exited with code 1\nerror: build failed\n"
+  },
+  {
+   "id": "M4",
+   "file": "lean/VE/CertificateWire.lean",
+   "claim": "claim 2 (steps_embed): Steps.closure counts what Steps.core counts on the embedding; seeded: an induction node counts 2, and steps_embed no longer builds",
+   "source_sha256": "d81be730d087e7908329df473c8e34f8b1f26afd87b8b81a294e131b6afb9add",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && out=$(PATH=$HOME/.elan/bin:$PATH lake build VE.Closure.CoreEquiv 2>&1); rc=$?; printf '%s\\n' \"$out\" | grep -E 'error' | head -6; exit $rc"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 68.4,
+   "output_tail": "error: VE/Closure/CoreEquiv.lean:601:24: unsolved goals\nerror: Lean exited with code 1\nerror: build failed\n"
+  },
+  {
+   "id": "M5",
+   "file": "lean/VE/TableauExtendedChecker.lean",
+   "claim": "claim 3 (checkCertificate_eq_core_replay and the per-version corollaries): closure's version gate is @0 or @1; seeded: the gate accepts @2 instead of @0, and the corollary no longer builds",
+   "source_sha256": "cf2527a4c1290a6fbfabe2206fdff3e98b6930ac6ba90bf8d8da7b113c8e14cc",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && out=$(PATH=$HOME/.elan/bin:$PATH lake build VE.Closure.CoreEquiv 2>&1); rc=$?; printf '%s\\n' \"$out\" | grep -E 'error' | head -6; exit $rc"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 55.5,
+   "output_tail": "error: VE/Closure/CoreEquiv.lean:625:34: unsolved goals\nerror: VE/Closure/CoreEquiv.lean:660:64: unsolved goals\nerror: Lean exited with code 1\nerror: build failed\n"
+  },
+  {
+   "id": "M6",
+   "file": "lean/VE/Closure/CoreEquiv.lean",
+   "claim": "claim 1 in the new module: the embedding keeps every trace field; seeded: embedTrace drops an expansion's parameter, and replay_embed no longer builds",
+   "source_sha256": "053d1d9273ae9fbb3cddb1549afac52829cb0cb93b0f46297d1553a39bfdc0b5",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && out=$(PATH=$HOME/.elan/bin:$PATH lake build VE.Closure.CoreEquiv 2>&1); rc=$?; printf '%s\\n' \"$out\" | grep -E 'error' | head -6; exit $rc"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 40.1,
+   "output_tail": "error: VE/Closure/CoreEquiv.lean:566:16: Tactic `rfl` failed: The left-hand side\nerror: VE/Closure/CoreEquiv.lean:567:16: unsolved goals\nerror: Lean exited with code 1\nerror: build failed\n"
+  },
+  {
+   "id": "M7",
+   "file": "lean/VE/Core/Bridge.lean",
+   "claim": "claim 2b (decodeTrace_ne_embed): the counterexample rests on Core's atom case; seeded: Core's formula decoder no longer reads an atom, the two decoders agree on the witness, and the kernel-checked counterexample no longer builds",
+   "source_sha256": "778e45637441b4fe9ffb727c0b73385c443531ac4dbca4403f5395bc5e1bfd12",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && out=$(PATH=$HOME/.elan/bin:$PATH lake build VE.Closure.CoreEquiv 2>&1); rc=$?; printf '%s\\n' \"$out\" | grep -E 'error' | head -6; exit $rc"
+   ],
+   "baseline_exit": 0,
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 14.6,
+   "output_tail": "error: VE/Closure/CoreEquiv.lean:674:2: Tactic `decide` proved that the proposition\nerror: Lean exited with code 1\nerror: build failed\n"
+  }
+ ]
+}

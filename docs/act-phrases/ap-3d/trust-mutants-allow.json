@@ -1,0 +1,104 @@
+{
+ "allow": [
+  {
+   "definition": "VE.Acts.Decode.ElaboratedU",
+   "operator": "eq-le",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, or of a non-list, or `\u2264` in place of a proposition's `=` (Invalid field notation, Invalid projection, Type mismatch, Unknown identifier, Function expected, failed to synthesize)"
+  },
+  {
+   "definition": "VE.Acts.Decode.ElaboratedU",
+   "operator": "eq-ne",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, or of a non-list, or `\u2264` in place of a proposition's `=` (Invalid field notation, Invalid projection, Type mismatch, Unknown identifier, Function expected, failed to synthesize)"
+  },
+  {
+   "definition": "VE.Acts.Decode.actsOf",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, or of a non-list, or `\u2264` in place of a proposition's `=` (Invalid field notation, Invalid projection, Type mismatch, Unknown identifier, Function expected, failed to synthesize)"
+  },
+  {
+   "definition": "VE.Acts.Decode.elaborateSource",
+   "operator": "list-drop-first",
+   "reason": "equivalent until ap-3db: the norms decoder's hook admits lexical acts only, so actsOf returns [] for every decoded acts@0 document (fixture `dec envA`) whether or not the profile list read keeps acts@0; `if true` is killed by the fixture without acts@0 (*nor*), and ap-3db's joined documents (E5j) kill these"
+  },
+  {
+   "definition": "VE.Acts.Decode.elaborateSource",
+   "operator": "list-drop-last",
+   "reason": "equivalent until ap-3db: the norms decoder's hook admits lexical acts only, so actsOf returns [] for every decoded acts@0 document (fixture `dec envA`) whether or not the profile list read keeps acts@0; `if true` is killed by the fixture without acts@0 (*nor*), and ap-3db's joined documents (E5j) kill these"
+  },
+  {
+   "definition": "VE.Acts.Decode.elaborateSource",
+   "operator": "list-empty",
+   "reason": "equivalent until ap-3db: the norms decoder's hook admits lexical acts only, so actsOf returns [] for every decoded acts@0 document (fixture `dec envA`) whether or not the profile list read keeps acts@0; `if true` is killed by the fixture without acts@0 (*nor*), and ap-3db's joined documents (E5j) kill these; also: does not elaborate: `[]` in place of a list whose element type only the context gives, or of a non-list, or `\u2264` in place of a proposition's `=` (Invalid field notation, Invalid projection, Type mismatch, Unknown identifier, Function expected, failed to synthesize)"
+  },
+  {
+   "definition": "VE.Acts.Decode.elaborateSource",
+   "operator": "list-first",
+   "reason": "equivalent until ap-3db: the norms decoder's hook admits lexical acts only, so actsOf returns [] for every decoded acts@0 document (fixture `dec envA`) whether or not the profile list read keeps acts@0; `if true` is killed by the fixture without acts@0 (*nor*), and ap-3db's joined documents (E5j) kill these"
+  },
+  {
+   "definition": "VE.Acts.Decode.elaborateSource",
+   "operator": "list-last",
+   "reason": "equivalent until ap-3db: the norms decoder's hook admits lexical acts only, so actsOf returns [] for every decoded acts@0 document (fixture `dec envA`) whether or not the profile list read keeps acts@0; `if true` is killed by the fixture without acts@0 (*nor*), and ap-3db's joined documents (E5j) kill these"
+  },
+  {
+   "definition": "VE.Acts.Wire.checkAct",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, or of a non-list, or `\u2264` in place of a proposition's `=` (Invalid field notation, Invalid projection, Type mismatch, Unknown identifier, Function expected, failed to synthesize)"
+  },
+  {
+   "definition": "VE.Acts.Wire.joinedAct",
+   "operator": "list-drop-first",
+   "reason": "equivalent: the first token of an act that passes 1.3 condition 1 is the slot {0} (`.slot 0`), never a word, so dropping it changes no slot-joined-to-a-word test; also does not elaborate: a list operator applied to the pattern `[A]` of a match (unsupported pattern in syntax match)"
+  },
+  {
+   "definition": "VE.Acts.Wire.joinedAct",
+   "operator": "list-drop-last",
+   "reason": "does not elaborate: a list operator applied to the pattern `[A]` of a match (unsupported pattern in syntax match)"
+  },
+  {
+   "definition": "VE.Acts.Wire.joinedAct",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, or of a non-list, or `\u2264` in place of a proposition's `=` (Invalid field notation, Invalid projection, Type mismatch, Unknown identifier, Function expected, failed to synthesize)"
+  },
+  {
+   "definition": "VE.Acts.declaredAfter",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, or of a non-list, or `\u2264` in place of a proposition's `=` (Invalid field notation, Invalid projection, Type mismatch, Unknown identifier, Function expected, failed to synthesize)"
+  },
+  {
+   "definition": "VE.Acts.elaborateMap",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, or of a non-list, or `\u2264` in place of a proposition's `=` (Invalid field notation, Invalid projection, Type mismatch, Unknown identifier, Function expected, failed to synthesize)"
+  },
+  {
+   "definition": "VE.Acts.namesOk",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, or of a non-list, or `\u2264` in place of a proposition's `=` (Invalid field notation, Invalid projection, Type mismatch, Unknown identifier, Function expected, failed to synthesize)"
+  },
+  {
+   "definition": "VE.Acts.partNamesIn",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, or of a non-list, or `\u2264` in place of a proposition's `=` (Invalid field notation, Invalid projection, Type mismatch, Unknown identifier, Function expected, failed to synthesize)"
+  },
+  {
+   "definition": "VE.Acts.partsDistinct",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, or of a non-list, or `\u2264` in place of a proposition's `=` (Invalid field notation, Invalid projection, Type mismatch, Unknown identifier, Function expected, failed to synthesize)"
+  },
+  {
+   "definition": "VE.Acts.splitMap",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, or of a non-list, or `\u2264` in place of a proposition's `=` (Invalid field notation, Invalid projection, Type mismatch, Unknown identifier, Function expected, failed to synthesize)"
+  },
+  {
+   "definition": "VE.Acts.splitReg",
+   "operator": "list-empty",
+   "reason": "equivalent kill the tool cannot certify: the whole body of splitReg cut to `[]` fails ElaborateExamples.lean:36's guard (E1's regulated list), as its detail shows; ap-3c's seeded bug split-reg-kept-dropped planted the same loss on this body, whose only change here is `partsOf sa`"
+  },
+  {
+   "definition": "VE.Acts.splitsOf",
+   "operator": "list-empty",
+   "reason": "does not elaborate: `[]` in place of a list whose element type only the context gives, or of a non-list, or `\u2264` in place of a proposition's `=` (Invalid field notation, Invalid projection, Type mismatch, Unknown identifier, Function expected, failed to synthesize)"
+  }
+ ]
+}

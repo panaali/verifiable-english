@@ -1,0 +1,225 @@
+{
+ "restored_build": 0,
+ "mutants": [
+  {
+   "id": "joined-slot-unchecked",
+   "file": "lean/VE/Acts/Wire.lean",
+   "definition": "joinedAct",
+   "claim": "D-18",
+   "status": "KILLED",
+   "tests": [
+    "VE/Acts/DecodeExamples.lean"
+   ]
+  },
+  {
+   "id": "joined-first-meaning-only",
+   "file": "lean/VE/Acts/Wire.lean",
+   "definition": "joinedAct",
+   "claim": "D-15 lists every meaning (G5d)",
+   "status": "KILLED",
+   "tests": [
+    "VE/Acts/DecodeExamples.lean"
+   ]
+  },
+  {
+   "id": "joined-limit-as-none",
+   "file": "lean/VE/Acts/Wire.lean",
+   "definition": "joinedAct",
+   "claim": "D-17 (L7)",
+   "status": "KILLED",
+   "tests": [
+    "VE/Acts/DecodeExamples.lean"
+   ]
+  },
+  {
+   "id": "check-act-joined-refused",
+   "file": "lean/VE/Acts/Wire.lean",
+   "definition": "checkAct",
+   "claim": "A6, A7, A14 read from their text",
+   "status": "KILLED",
+   "tests": [
+    "VE/Acts/DecodeExamples.lean"
+   ]
+  },
+  {
+   "id": "check-act-lexical-tree",
+   "file": "lean/VE/Acts/Wire.lean",
+   "definition": "checkAct",
+   "claim": "checkAct_lexical: a lexical act has no tree",
+   "status": "KILLED",
+   "tests": [
+    "VE/Acts/DecodeExamples.lean"
+   ]
+  },
+  {
+   "id": "check-with-comma-text",
+   "file": "lean/VE/Acts/Lexical.lean",
+   "definition": "checkWith",
+   "claim": "conditions 1 to 5 keep their texts",
+   "status": "KILLED",
+   "tests": [
+    "VE/Acts/DecodeExamples.lean"
+   ]
+  },
+  {
+   "id": "join-check-text",
+   "file": "lean/VE/Acts/Lexical.lean",
+   "definition": "joinCheck",
+   "claim": "condition 6 keeps D-4 on the norms route",
+   "status": "KILLED",
+   "tests": [
+    "VE/Acts/DecodeExamples.lean"
+   ]
+  },
+  {
+   "id": "meaning-texts-subject-kept",
+   "file": "lean/VE/Acts/Table.lean",
+   "definition": "meaningTexts",
+   "claim": "D-15's meanings without their subject (G5d)",
+   "status": "KILLED",
+   "tests": [
+    "VE/Acts/DecodeExamples.lean"
+   ]
+  },
+  {
+   "id": "atoms-of-one",
+   "file": "lean/VE/Acts/Elaborate.lean",
+   "definition": "atomsOf",
+   "claim": "A7 stays one obligation",
+   "status": "KILLED",
+   "tests": [
+    "VE/Acts/ElaborateExamples.lean"
+   ]
+  },
+  {
+   "id": "splits-of-none",
+   "file": "lean/VE/Acts/Elaborate.lean",
+   "definition": "splitsOf",
+   "claim": "A6 splits from step 1's readings",
+   "status": "KILLED",
+   "tests": [
+    "VE/Acts/ElaborateExamples.lean"
+   ]
+  },
+  {
+   "id": "part-names-in-kept-dropped",
+   "file": "lean/VE/Acts/Elaborate.lean",
+   "definition": "partNamesIn",
+   "claim": "E5: unsplit unspecified kept",
+   "status": "KILLED",
+   "tests": [
+    "VE/Acts/ElaborateExamples.lean"
+   ]
+  },
+  {
+   "id": "declared-after-no-parts",
+   "file": "lean/VE/Acts/Elaborate.lean",
+   "definition": "declaredAfter",
+   "claim": "E13: the parts counted",
+   "status": "KILLED",
+   "tests": [
+    "VE/Acts/DecodeExamples.lean"
+   ]
+  },
+  {
+   "id": "declared-after-sources-kept",
+   "file": "lean/VE/Acts/Elaborate.lean",
+   "definition": "declaredAfter",
+   "claim": "E13: the split sources not counted",
+   "status": "KILLED",
+   "tests": [
+    "VE/Acts/DecodeExamples.lean"
+   ]
+  },
+  {
+   "id": "elaborate-map-step6-skipped",
+   "file": "lean/VE/Acts/Elaborate.lean",
+   "definition": "elaborateMap",
+   "claim": "step 6 (E13 to E15)",
+   "status": "KILLED",
+   "tests": [
+    "VE/Acts/DecodeExamples.lean"
+   ]
+  },
+  {
+   "id": "elaborate-map-steps-56-swapped",
+   "file": "lean/VE/Acts/Elaborate.lean",
+   "definition": "elaborateMap",
+   "claim": "step 5 before step 6",
+   "status": "KILLED",
+   "tests": [
+    "VE/Acts/DecodeExamples.lean"
+   ]
+  },
+  {
+   "id": "author-limits-unspec-57",
+   "file": "lean/VE/NormDefaults/Wire.lean",
+   "definition": "authorLimits",
+   "claim": "E14",
+   "status": "KILLED",
+   "tests": [
+    "VE/Acts/DecodeExamples.lean"
+   ]
+  },
+  {
+   "id": "author-limits-rules-unspec",
+   "file": "lean/VE/NormDefaults/Wire.lean",
+   "definition": "authorLimits",
+   "claim": "E15",
+   "status": "KILLED",
+   "tests": [
+    "VE/Acts/DecodeExamples.lean"
+   ]
+  },
+  {
+   "id": "acts-of-dropped",
+   "file": "lean/VE/Acts/Decode.lean",
+   "definition": "actsOf",
+   "claim": "the trees reach elaborateMap",
+   "status": "KILLED",
+   "tests": [
+    "VE/Acts/DecodeExamples.lean"
+   ]
+  },
+  {
+   "id": "elaborate-source-acts-always",
+   "file": "lean/VE/Acts/Decode.lean",
+   "definition": "elaborateSource",
+   "claim": "without acts@0 no act is read",
+   "status": "KILLED",
+   "tests": [
+    "VE/Acts/DecodeExamples.lean"
+   ]
+  },
+  {
+   "id": "elaborate-source-declared-zero",
+   "file": "lean/VE/Acts/Decode.lean",
+   "definition": "elaborateSource",
+   "claim": "declared from the environment",
+   "status": "KILLED",
+   "tests": [
+    "VE/Acts/DecodeExamples.lean"
+   ]
+  },
+  {
+   "id": "elaborate-source-fixed-empty",
+   "file": "lean/VE/Acts/Decode.lean",
+   "definition": "elaborateSource",
+   "claim": "the block's fixed phrases",
+   "status": "KILLED",
+   "tests": [
+    "VE/Acts/DecodeExamples.lean"
+   ]
+  },
+  {
+   "id": "decode-norms-dropped",
+   "file": "lean/VE/Acts/Decode.lean",
+   "definition": "decodeElaboratedU",
+   "claim": "the source's rules are elaborated",
+   "status": "KILLED",
+   "tests": [
+    "VE/Acts/DecodeExamples.lean"
+   ]
+  }
+ ]
+}
