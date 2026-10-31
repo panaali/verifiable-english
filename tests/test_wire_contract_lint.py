@@ -183,7 +183,7 @@ def shipped_copy(tmp_path, monkeypatch):
     shipped = [str(path.relative_to(ROOT)) for pattern in ("docs/spec/*-wire-table.md",
                                                            "conformance/wire-contract/*-catalogue.json")
                for path in sorted(ROOT.glob(pattern))]
-    for relative in ("conformance/wire-contract/engine-golden.json", *shipped):
+    for relative in ("conformance/wire-contract/engine-golden.json", *shipped, *(t for t, _ in wire_tool.RUST.values())):
         (tmp_path / relative).parent.mkdir(parents=True, exist_ok=True)
         shutil.copy(ROOT / relative, tmp_path / relative)
     monkeypatch.setattr(wire_tool, "ROOT", tmp_path)
@@ -197,6 +197,19 @@ def test_l11_hand_edited_generated_module(shipped_copy):
     module.write_text(module.read_text().replace('"Inner: x is "', '"Inner: x was "'))
     findings = process(wire_tool.DATA)
     assert any("Tables/Corpus.lean: WC11: " in f for f in findings), findings
+
+
+def test_l11_swapped_rust_rows(shipped_copy):
+    """Two rows of a generated Rust table swapped, in the shipped module and in the corpus module (4)."""
+    for directory, (relative, _) in zip((wire_tool.DATA, shipped_copy / "conformance/wire-contract/contracts"),
+                                        wire_tool.RUST.values()):
+        assert process(directory) == []
+        module = shipped_copy / relative
+        lines = module.read_text().split("\n")
+        first = next(i for i, line in enumerate(lines) if line.startswith("    Entry::Check("))
+        lines[first], lines[first + 1] = lines[first + 1], lines[first]
+        module.write_text("\n".join(lines))
+        assert any(f"{relative}: WC11: " in f for f in process(directory)), relative
 
 
 def test_l12_clean_tree_prints_nothing():
