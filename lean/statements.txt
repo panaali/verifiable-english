@@ -44721,6 +44721,20 @@ theorem VE.Scope.Examples.unordered_join
             Option.some Bool.true
   -- uses VE.Scope.Examples.mergePartsText@VE.Scope.Examples VE.Scope.Examples.unordered@VE.Scope.Examples VE.Scope.mergeParts@VE.Scope.Effects
   -- expr 1307899726
+theorem VE.Scope.Run.explainWithin_effect
+  ∀ {limit : Nat} {D : VE.Scope.SDoc} {source : String} {rows : List VE.Scope.Row},
+    VE.Scope.Run.explainWithin limit D source = Except.ok rows →
+      ∀ (r : VE.Scope.Row), r ∈ rows → ∀ (x : VE.Scope.GovRow), x ∈ r.governors → x.effect ∈ VE.Scope.effectWords
+  -- uses VE.Scope.GovRow.effect@VE.Scope.Run VE.Scope.GovRow@VE.Scope.Run VE.Scope.Row.governors@VE.Scope.Run VE.Scope.Row@VE.Scope.Run VE.Scope.Run.explainWithin@VE.Scope.Run VE.Scope.SDoc@VE.Scope.Govern VE.Scope.effectWords@VE.Scope.Run
+  -- expr 2450938318
+theorem VE.Scope.Run.readSplit_scope
+  ∀ (j : Lean.Json),
+    VE.Scope.decodeScope j = do
+      let __do_lift ← VE.Bridge.stringField j "document"
+      let __do_lift ← VE.Service.Document.split __do_lift Bool.true
+      VE.Scope.Run.readSplit __do_lift
+  -- uses VE.Bridge.stringField@VE.Bridge VE.Discourse.Loader.Split@VE.Discourse.Loader VE.Scope.Run.readSplit@VE.Scope.Run VE.Scope.SDoc@VE.Scope.Govern VE.Scope.decodeScope@VE.Service.Document VE.Service.Document.split@VE.Service.Document
+  -- expr 3463571355
 theorem VE.Scope.addOver_nil
   ∀ (o : Lean.Json), VE.Scope.addOver [] o = o
   -- uses VE.Scope.addOver@VE.Scope.Govern
@@ -44763,6 +44777,11 @@ theorem VE.Scope.admit_governor
   -- uses VE.Scope.Governor.effect@VE.Scope.Govern VE.Scope.Governor.reach@VE.Scope.Govern VE.Scope.Governor.unit@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.Reach.frontier@VE.Scope.Govern VE.Scope.Reach@VE.Scope.Govern VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc.governors@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.admitBlock@VE.Scope.Govern VE.Scope.contentOf@VE.Scope.Govern VE.Scope.covered@VE.Scope.Govern VE.Scope.graph@VE.Scope.Govern VE.Scope.isFrame@VE.Scope.Govern VE.Scope.isNorm@VE.Scope.Govern VE.Scope.isPart@VE.Scope.Govern VE.Scope.setUnits@VE.Scope.Govern VE.Scope.unary@VE.Scope.Govern
   -- expr 3652577887
 theorem VE.Scope.admit_governor_unit
+  ∀ (D : VE.Scope.SDoc),
+    VE.Scope.admitBlock D = Except.ok () → ∀ (g : VE.Scope.Governor), g ∈ D.governors → g.unit ∈ VE.Scope.unitIds D.doc
+  -- uses VE.Scope.Governor.unit@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc.governors@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.admitBlock@VE.Scope.Govern VE.Scope.unitIds@VE.Scope.Govern
+  -- expr 606873540
+theorem VE.Scope.admit_unit
   ∀ (D : VE.Scope.SDoc),
     VE.Scope.admitBlock D = Except.ok () → ∀ (g : VE.Scope.Governor), g ∈ D.governors → g.unit ∈ VE.Scope.unitIds D.doc
   -- uses VE.Scope.Governor.unit@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc.governors@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.admitBlock@VE.Scope.Govern VE.Scope.unitIds@VE.Scope.Govern
@@ -45080,6 +45099,31 @@ theorem VE.Scope.edgesOf_name
     (w, n) ∈ VE.Scope.edgesOf D rule g → ∃ v M, rule v = Option.some M ∧ n = M.name
   -- uses VE.Norms.Node.name@VE.Norms.Tree VE.Scope.Governor@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.edgesOf@VE.Scope.Govern VE.SoftNorms.SoftNode.toNode@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree
   -- expr 667491140
+theorem VE.Scope.explainFast_eq
+  ∀ [inst : VE.Scope.Quotes] (D : VE.Scope.SDoc), VE.Scope.explainFast D = VE.Scope.explainRows D
+  -- uses VE.Scope.Quotes@VE.Scope.English VE.Scope.Row@VE.Scope.Run VE.Scope.SDoc@VE.Scope.Govern VE.Scope.explainFast@VE.Scope.Run VE.Scope.explainRows@VE.Scope.Run
+  -- expr 3036633156
+theorem VE.Scope.explainRows_effect
+  ∀ [inst : VE.Scope.Quotes] (D : VE.Scope.SDoc) (rows : List VE.Scope.Row),
+    VE.Scope.explainRows D = Except.ok rows →
+      ∀ (r : VE.Scope.Row), r ∈ rows → ∀ (x : VE.Scope.GovRow), x ∈ r.governors → x.effect ∈ VE.Scope.effectWords
+  -- uses VE.Scope.GovRow.effect@VE.Scope.Run VE.Scope.GovRow@VE.Scope.Run VE.Scope.Quotes@VE.Scope.English VE.Scope.Row.governors@VE.Scope.Run VE.Scope.Row@VE.Scope.Run VE.Scope.SDoc@VE.Scope.Govern VE.Scope.effectWords@VE.Scope.Run VE.Scope.explainRows@VE.Scope.Run
+  -- expr 2245486301
+theorem VE.Scope.explain_bound
+  ∀ [inst : VE.Scope.Quotes] (D : VE.Scope.SDoc) (rows : List VE.Scope.Row),
+    VE.Scope.explainRows D = Except.ok rows →
+      ∀ (r : VE.Scope.Row),
+        r ∈ rows →
+          r.unit ∈ VE.Scope.unitIds D.doc ∧
+            ∀ (x : VE.Scope.GovRow),
+              x ∈ r.governors → x.unit ∈ VE.Scope.unitIds D.doc ∧ ∃ g, g ∈ D.governors ∧ g.id = x.id
+  -- uses VE.Scope.GovRow.id@VE.Scope.Run VE.Scope.GovRow.unit@VE.Scope.Run VE.Scope.GovRow@VE.Scope.Run VE.Scope.Governor.id@VE.Scope.Govern VE.Scope.Governor@VE.Scope.Govern VE.Scope.Quotes@VE.Scope.English VE.Scope.Row.governors@VE.Scope.Run VE.Scope.Row.unit@VE.Scope.Run VE.Scope.Row@VE.Scope.Run VE.Scope.SDoc.doc@VE.Scope.Govern VE.Scope.SDoc.governors@VE.Scope.Govern VE.Scope.SDoc@VE.Scope.Govern VE.Scope.explainRows@VE.Scope.Run VE.Scope.unitIds@VE.Scope.Govern
+  -- expr 2900027915
+theorem VE.Scope.explain_rows_iff
+  ∀ [inst : VE.Scope.Quotes] (D : VE.Scope.SDoc) (rows : List VE.Scope.Row),
+    VE.Scope.explainRows D = Except.ok rows → ∀ (u : String), (∃ r, r ∈ rows ∧ r.unit = u) ↔ u ∈ VE.Scope.affected D
+  -- uses VE.Scope.Quotes@VE.Scope.English VE.Scope.Row.unit@VE.Scope.Run VE.Scope.Row@VE.Scope.Run VE.Scope.SDoc@VE.Scope.Govern VE.Scope.affected@VE.Scope.Govern VE.Scope.explainRows@VE.Scope.Run
+  -- expr 1812299850
 theorem VE.Scope.fastReads_eq
   ∀ (D : VE.Scope.SDoc),
     VE.Scope.fastReads D =
@@ -47599,6 +47643,10 @@ theorem VE.Service.runMode_route
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.route j = VE.Route.Run.runCaseReported j
   -- uses VE.Route.Run.runCaseReported@VE.Route.Run VE.Service.Mode.route@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 4097467530
+theorem VE.Service.runMode_scope
+  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.scope j = VE.Scope.Run.runCaseReported j
+  -- uses VE.Scope.Run.runCaseReported@VE.Scope.Run VE.Service.Mode.scope@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
+  -- expr 1153227998
 theorem VE.Service.runMode_searchBudget
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.searchBudget j = VE.SearchBudget.Run.runCaseReported j
   -- uses VE.SearchBudget.Run.runCaseReported@VE.SearchBudget.Run VE.Service.Mode.searchBudget@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol

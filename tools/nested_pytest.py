@@ -12,6 +12,11 @@ from collections.abc import Mapping, Sequence
 import re
 import sys
 
+if __package__:
+    from . import test_chunks
+else:
+    import test_chunks
+
 # The plugins every run loads, by module: the gate's suite and every nested run.
 PLUGINS = ("hypothesis.extra.pytestplugin",)
 # The xdist plugin, by its entry-point name; loaded for more than one worker, `auto` or `xdist=True`.
@@ -19,9 +24,10 @@ XDIST = "xdist"
 # The options only a plugin loaded here may add; callers pass `workers` and `dist` instead.
 PLUGIN_OPTIONS = ("-n", "--numprocesses", "--dist", "--maxprocesses", "-d")
 # Environment names a nested run never inherits: pytest's own settings and the xdist worker
-# identity of the outer run, and the outputs of the outer run's gate and profile plugins.
+# identity of the outer run, and the outputs of the outer run's gate and profile plugins, and the chunk an outer
+# process runs (tools/test_chunks.py): a nested run runs its own tests whole unless it is given a chunk itself.
 AMBIENT_PREFIXES = ("PYTEST_", "VE_GATE_PYTEST_")
-AMBIENT_NAMES = ("VE_TEST_PROFILE_DIR",)
+AMBIENT_NAMES = ("VE_TEST_PROFILE_DIR", test_chunks.VARIABLE)
 
 
 def command(arguments: Sequence[str], *, workers: int | str = 1, dist: str | None = None,

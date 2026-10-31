@@ -1,0 +1,51 @@
+{
+ "item": "burndown-exclude-exp",
+ "note": "tools-local is in manage-agents (not a git repository); each mutant ran on a scratch copy in /tmp via BURNDOWN_SCRIPT and was never written to the installed file; test file /home/seyran/code/manage-agents/tools-local/test_burndown.py",
+ "mutants": [
+  {
+   "name": "count all experiments",
+   "change": "sprint_scope: kind in (\"build\", \"exp\")",
+   "file": "/home/seyran/code/manage-agents/tools-local/burndown.py",
+   "test": "test_projection_ignores_outside_experiments",
+   "killed": true,
+   "result": "FAILED (failures=5)",
+   "language": "python"
+  },
+  {
+   "name": "drop the gating experiments",
+   "change": "EXP_IN_SPRINT = set()",
+   "file": "/home/seyran/code/manage-agents/tools-local/burndown.py",
+   "test": "test_scope_keeps_only_the_gating_experiments",
+   "killed": true,
+   "result": "FAILED (failures=5)",
+   "language": "python"
+  },
+  {
+   "name": "experiment merges in the rate",
+   "change": "fam_of without the out_ids check",
+   "file": "/home/seyran/code/manage-agents/tools-local/burndown.py",
+   "test": "test_outside_experiment_merges_are_not_sprint_merges",
+   "killed": true,
+   "result": "FAILED (failures=1)",
+   "language": "python"
+  },
+  {
+   "name": "separate line counts merged rows as left",
+   "change": "out_left = list(outside)",
+   "file": "/home/seyran/code/manage-agents/tools-local/burndown.py",
+   "test": "test_separate_line",
+   "killed": true,
+   "result": "FAILED (failures=3)",
+   "language": "python"
+  },
+  {
+   "name": "no separate line",
+   "change": "the Experiment rows line not appended",
+   "file": "/home/seyran/code/manage-agents/tools-local/burndown.py",
+   "test": "test_separate_line",
+   "killed": true,
+   "result": "FAILED (failures=2)",
+   "language": "python"
+  }
+ ]
+}
