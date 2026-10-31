@@ -1681,7 +1681,7 @@ module VE.Acts.Decode 81e58ab6df1a5aa9b458b8165a261916c84707c13ff849017489a879c6
 63:0-69:69 theorem VE.Acts.Decode.decodeElaboratedU_source@VE.Acts.Decode
 71:0-73:34 theorem VE.Acts.Decode.decodeElaboratedU_wellFormed@VE.Acts.Decode
 75:0-82:63 theorem VE.Acts.Decode.decodeElaboratedU_lexical@VE.Acts.Decode
-module VE.Acts.DecodeExamples 7d804223cd65b54bc21bd8c37acf517dd6180e6fd0669ee8e5a0b2bcc019edbf
+module VE.Acts.DecodeExamples bd88703b68fb98ca265c6fb37564dd978b281ee3fa1c88fe707c4f729e4dd344
 14:0-14:109 def VE.Acts.DecodeExamples.ck@VE.Acts.DecodeExamples
 15:0-15:101 def VE.Acts.DecodeExamples.errText@VE.Acts.DecodeExamples
 19:0-19:97 def VE.Acts.DecodeExamples.a6@VE.Acts.DecodeExamples
@@ -1696,7 +1696,7 @@ module VE.Acts.DecodeExamples 7d804223cd65b54bc21bd8c37acf517dd6180e6fd0669ee8e5
 95:0-96:70 def VE.Acts.DecodeExamples.e14@VE.Acts.DecodeExamples
 100:0-101:118 def VE.Acts.DecodeExamples.e15@VE.Acts.DecodeExamples
 112:0-114:60 def VE.Acts.DecodeExamples.big@VE.Acts.DecodeExamples
-123:0-125:49 def VE.Acts.DecodeExamples.dec@VE.Acts.DecodeExamples
+123:0-125:72 def VE.Acts.DecodeExamples.dec@VE.Acts.DecodeExamples
 module VE.Acts.Elaborate bbd965ab9388dac1c44f294c70beb088be7ad3430a116df3b58598a28fbf1110
 18:0-25:16 structure VE.Acts.ActsDoc@VE.Acts.Elaborate
 19:2-19:3 def VE.Acts.ActsDoc.U@VE.Acts.Elaborate

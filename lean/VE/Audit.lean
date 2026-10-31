@@ -545,6 +545,7 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.Lexical.words_intercalate
 #print axioms VE.Acts.Wire.checkAct_joined
 #print axioms VE.Acts.Wire.checkAct_lexical
+#print axioms VE.Acts.Wire.checkWith_lex
 #print axioms VE.Acts.Wire.joinedAct_read
 #print axioms VE.Acts.analyse_one
 #print axioms VE.Acts.build_wf
