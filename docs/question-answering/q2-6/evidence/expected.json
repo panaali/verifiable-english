@@ -1,0 +1,25 @@
+{
+  "spec": "docs/spec/question-answering.md",
+  "method": "written once by hand from the spec's Q2 column (7.2, 7.4, 7.5); `quote` is the spec cell's text that gives the lead, `line` its line at e68b0dd88; `delta` names the DELTA.md row that explains a lead Lean returned differently",
+  "delta_file": "docs/spec/question-answering-q2/DELTA.md",
+  "fixtures": [
+    {"id": "G1", "lead": "yes", "line": 1290, "quote": "**Yes.** C1 for sentences 1 and 2"},
+    {"id": "G2", "lead": "yes", "line": 1291, "quote": "as G1, after A0"},
+    {"id": "G3", "lead": "notNecessarily", "line": 1292, "quote": "**Not necessarily.**"},
+    {"id": "G4", "lead": "no", "line": 1293, "quote": "**No.** C1 for 1 and 2"},
+    {"id": "G10", "lead": "yes", "line": 1299, "quote": "**Yes.** C1 for 1 and 2."},
+    {"id": "U2", "lead": "yes", "line": 1370, "quote": "**Yes.** C1:"},
+    {"id": "U3", "lead": "by_reading", "line": 1371, "quote": "by sentence 10's reading"},
+    {"id": "U5", "lead": "by_reading", "line": 1373, "quote": "by sentence 1's reading"},
+    {"id": "U6", "lead": "yes", "line": 1374, "quote": "**Yes.** C1 for sentence 12"},
+    {"id": "U7", "lead": "notSettled", "line": 1375, "quote": "**The text does not settle this.**", "delta": "D6"},
+    {"id": "A1", "lead": "notSettled", "line": 1347, "quote": "**The text does not settle this.**"},
+    {"id": "A1d", "lead": "no", "line": 1348, "quote": "**No. The document rules this out.**", "delta": "D6"},
+    {"id": "A2", "lead": "yes", "line": 1349, "quote": "**Yes.** C2 for `permitted`", "delta": "D6"},
+    {"id": "A3", "lead": "no", "line": 1350, "quote": "**No. The document rules this out.**", "delta": "D6"},
+    {"id": "A4", "lead": "yes", "line": 1351, "quote": "**Yes.** C2 or C1 for rules 25 and 26", "delta": "D6"},
+    {"id": "A5", "lead": "unknown", "line": 1352, "quote": "**VE could not decide this.**"},
+    {"id": "A7", "lead": "notNecessarily", "line": 1354, "quote": "**Not necessarily.**", "delta": "D6"},
+    {"id": "A8", "lead": "notSettled", "line": 1355, "quote": "**The text does not settle this**"}
+  ]
+}
