@@ -4,7 +4,7 @@ Status: built, ready for review; no DRI signature needed. HEAD: the last commit 
 Changed: the `interface` field on every row of AR-10's table (synthesis round 2 edits 1 and 6), C1 to C3,
 `Compose/Stack.lean`, and `Compose/Contract.lean` (G2, scope's typed route evidence, `listed_evidence`), with
 fixtures F3.1, F3.1b and F3.4 to F3.7. No answer changes (DELTA has only the R16 trust row).
-Open: pc-3b (G1 with G4). G1b and F3.2 to F3.3 belong to PK-1's owner. Size: 848 hand-written lines, over the
+Open: pc-3b (G1 with G4). G1b and F3.2 to F3.3 belong to PK-1's owner. Size: 870 hand-written lines, over the
 ~600 line; the Lean is 425, and the rest is the evidence the checklists ask for (see Size).
 
 ## Inputs
@@ -59,8 +59,16 @@ Evaluators and runners: N.A. No service mode is added, and `checkDocSets` is unc
 
 ## Seeded bugs and mutants
 
-All are Lean; Lean is the only product language changed. `mutants.json` lists 13 hand seeds, each applied alone and
-restored. The plan's seed (`pipeline` skips the last rewriter) breaks G2 and `checkDocSets_pipeline`. A scratch copy
+`mutants.json` lists 16 hand seeds, each applied alone and restored. Ids 1-13 are Lean, the only product language
+changed. Ids 14-16 are in the two changed Python tool files:
+- 14, `tools/check_pc3_statements.py`: the LATER check skipped (`if found:` -> `if False:`). It fails
+  `tests/test_pc3_statements.py::test_a_changed_statement_or_a_later_declaration_fails`.
+- 15, `tools/check_pc3_statements.py`: theorems compared together with their proofs (the `:=` split dropped). It fails
+  `tests/test_pc3_statements.py::test_pc3_statements_equal_the_approved_text` (`refuseAll_runs: theorem differs`).
+- 16, `tools/layer_policy.py`: the Contract modules put at layer 2, not 4. `tools/check_lean_imports.py` (the
+  layer-ledgers check of `regen_generated.py --check`) then exits 1 on three new outward imports into `VE.Service`.
+
+The plan's seed (`pipeline` skips the last rewriter) breaks G2 and `checkDocSets_pipeline`. A scratch copy
 with those proofs replaced by `sorry` shows F3.1's answer and non-identity guards failing while `pipeline_off`'s
 example passes. Every other new definition has a seed that fails C1, C3, F3.4b, F3.6, `listed_evidence`,
 `pipelineOf_scope`, `checkDocSets_pipeline` or, for weakened propositions, the statement check.
@@ -110,13 +118,13 @@ ties pass.
 
 ## Size
 
-`git diff --numstat` against the merge base counts 848 hand-written lines. That excludes the verbatim plan and spec,
+`git diff --numstat` against the merge base counts 870 hand-written lines. That excludes the verbatim plan and spec,
 generated files and the tool's two trust-mutants JSON outputs. It breaks down as:
 - Lean: 425 (`Contract.lean` 192, `ContractExamples.lean` 133, `Dispatch.lean` +65 -37, `Stack.lean` 31, `VE.lean`
   3, `Gate.lean` 1);
 - the statement checker and its test: 115;
 - side tables: 41 (`trust-classes.json` 37, `layer_policy.py` 2, the assurance manifest 2);
-- docs and evidence: 267 (this report 158, `trust-mutants-allow.json` 49, `mutants.json` 46, DELTA 14).
+- docs and evidence: 289 (this report 168, `trust-mutants-allow.json` 49, `mutants.json` 58, DELTA 14).
 
 The Lean deliverables were 434 lines when measured before the second half (`git diff --numstat` after the Lean
 commits). The overage is evidence required by checklist 13a, checklist 17 and R16. No deliverable was grown, and
@@ -134,7 +142,7 @@ Next item: pc-3b, G1 with G4 (`composed_superpose_all` in `Contract.lean`, spec 
 1. Lean answers typed and contained: N.A. No relayed route, response field or schema changes.
 2. Deliverables built, no rule broken: PASS. See the plan-rows table. `git diff --stat e73ded834 -- ve/ rust/` is
    empty. The new test checks statements (checklist 17); it is not a report test.
-3. Tests can fail: PASS. `mutants.json` lists 13 seeds; `trust-mutants.json` exits 0; and
+3. Tests can fail: PASS. `mutants.json` lists 16 seeds (13 Lean, 3 Python); `trust-mutants.json` exits 0; and
    `test_pc3_statements.py::test_a_changed_statement_or_a_later_declaration_fails` shows the check failing.
 4. Python, Lean and Rust agree: N.A. No Python or Rust product code changed. `ve/profile_table.json` and the route
    cases are unchanged after the regen.
