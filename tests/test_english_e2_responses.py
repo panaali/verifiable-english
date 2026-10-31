@@ -326,6 +326,11 @@ def test_an_ill_typed_document_is_refused_with_leans_text_verbatim():
     reading = caught.value.lean_reading
     assert str(caught.value) == caught.value.message == reading.message() == reading.response["text"]
     assert caught.value.to_dict()["message"] == "Sentence 2 was read, and its formula does not pass the type check."
+    # Python's own checkers still write the code (`errors._CodeWorded`), and a refusal of another class is Lean's too.
+    assert TypeMismatch("x").message == "TypeMismatch: x"
+    with pytest.raises(VEError) as other:
+        EN.parse_english(Environment(fixtures.FA()), "Legacy is deployed.")
+    assert other.value.code == "SyntaxError" and other.value.message == other.value.lean_reading.message()
 
 
 def _saved(name: str):
@@ -340,7 +345,8 @@ def test_the_saved_delta_moved_only_the_dropped_code():
     assert len(delta["rows"]) == 24 and len(base) - len(delta["rows"]) == 181
 
 
-@pytest.mark.parametrize("planted", ["prefix kept", "span moved", "other record moved", "row missing"])
+@pytest.mark.parametrize("planted", ["prefix kept", "span moved", "true for 1", "other record moved", "row missing",
+                                     "head against head", "empty"])
 def test_the_delta_check_finds_a_planted_change(planted):
     base, head, delta = _saved("base.json"), copy.deepcopy(_saved("head.json")), copy.deepcopy(_saved("delta.json"))
     moved = next(i for i, r in enumerate(head) if r["id"] == delta["rows"][0]["id"])
@@ -348,6 +354,13 @@ def test_the_delta_check_finds_a_planted_change(planted):
         head[moved]["outcome"]["message"] = english_read_delta.PREFIX + head[moved]["outcome"]["message"]
     elif planted == "span moved":
         head[moved]["outcome"]["span"]["start"] += 1
+    elif planted == "true for 1":
+        assert head[moved]["outcome"]["span"]["column"] == 1
+        head[moved]["outcome"]["span"]["column"] = True
+    elif planted == "head against head":
+        base = head
+    elif planted == "empty":
+        base, head = [], []
     elif planted == "other record moved":
         head[next(i for i, r in enumerate(head) if r["outcome"]["class"] == "SyntaxError")]["outcome"]["message"] += "."
     else:
