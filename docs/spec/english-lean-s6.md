@@ -1,6 +1,8 @@
 # English in Lean, S6 first layer: authored W1 rule blocks (statement specification)
 
-> Status: statement specification, draft 1 (2026-10-31), branch `design/spec-el-s6` from `main` at `09fca5013`.
+> Status: statement specification, draft 2 (2026-10-31), branch `design/spec-el-s6` from `main` at `09fca5013`.
+> Draft 2 applies the FIX edits of the statement review of draft 1 (`manage-agents/debates/spec-el-s6`, round 2
+> of both seats, both Opus) and makes no other change.
 > Backlog row spec-el-s6 (DRI 2026-10-31 00:15Z, sprint lever E3). This file states the item-1 statements of the
 > **first S6 statement layer** of [english-lean-PLAN.md](english-lean-PLAN.md) (the **plan**): norm rule blocks and
 > precedence lines, the first row of the plan's table 1.4. It covers authored blocks only (authoring mode). Nothing
@@ -84,7 +86,8 @@ Python relay and no authority change. Those are the layer's later steps, each wi
   `sents.toList.map (·.toList)`, as `EnglishOneReading` does, not `sents.map`.
 - **R6. Regulated declarations come from the environment JSON.** The Lean `Env` keeps only a predicate's
   `modal` flag. The rows therefore read the regulated declarations as the norms route decodes them
-  (`regulatedOf`, 2.5).
+  (`regulatedOf`, 2.5). `Env.source`'s comment, 'read by `typedDocument` only' (`Lexicon.lean:356`), is then
+  no longer true. A one-line comment hunk in `Lexicon.lean` joins the shared files.
 
 ## 2. Definitions
 
@@ -131,15 +134,6 @@ inductive Polarity where
 def Polarity.sign : Polarity → Bool
   | .modal f => f.sign
   | .plain b => b
-
-/-- Whether a polarity is one that the role's consequence rows generate. -/
-def Polarity.fits : Polarity → VE.Norms.Role → Bool
-  | .modal .must, .obligation => true
-  | .modal .needNot, .obligation => true
-  | .modal .may, .permission => true
-  | .modal .mustNot, .permission => true
-  | .plain _, .plain => true
-  | _, _ => false
 
 /-- `strict` is W1; `default d` is a soft-norms default rule (EN-4; never produced here). -/
 inductive Mode where
@@ -205,7 +199,7 @@ def NormStatement.refs : NormStatement → List Nat
 def ruleCount (rs : List NormStatement) : Nat := (rs.filterMap NormStatement.number?).length
 ```
 
-### 2.3 Pieces and state (R1, R4)
+### 2.3 Pieces and state (R1, R4; `Norm/Value.lean`)
 
 ```lean
 /-- The value of one sentence of a block text. -/
@@ -265,6 +259,16 @@ Python's counterparts: `Expected Rule {index} with its own block`, `Expected a c
 ### 2.5 The grammar, actions and types (`Norm/Rules.lean`, new; generated `Fixed/Norms.lean`)
 
 ```lean
+/-- Whether a polarity is one that the role's consequence rows generate. It is here, not in `Value.lean`, so
+that `Value.lean` imports only `Syntax.lean`. -/
+def Polarity.fits : Polarity → VE.Norms.Role → Bool
+  | .modal .must, .obligation => true
+  | .modal .needNot, .obligation => true
+  | .modal .may, .permission => true
+  | .modal .mustNot, .permission => true
+  | .plain _, .plain => true
+  | _, _ => false
+
 /-- R6: the regulated declarations, as the norms route decodes them (`decodeSource`, `Wire.lean:371`). -/
 def regulatedOf (E : Env) : List VE.Norms.Regulated :=
   match VE.Norms.Wire.decodeNormsEnvironment E.source (acts := true) with
@@ -291,7 +295,8 @@ def normMeaning (G : VE.Grammar.Grammar Terminal) (acts : Array (VE.Grammar.Acti
 
 **One new semantic type.** `Ty` gains `norm`, with `Sem .norm = NState → Except Reject (Piece × Bool × NState)`.
 The start symbol has that type. Other new types are allowed if the rows need them. All new constructors of
-`Ty` and their `Sem` cases go in one hunk each of `Syntax.lean` and `Actions.lean` (en-e3-norm 2.2). No existing
+`Ty` and their `Sem` cases go in one hunk each of `Syntax.lean` and `Actions.lean` (en-e3-norm 2.2), plus one
+`import VE.EnglishGrammar.Norm.Value` line in `Actions.lean`. No existing
 constructor, case or statement changes. `normMeaning` mirrors `meaning`: `some ⟨.norm, f⟩ => f st`, and
 anything else is `.error .internal`.
 
@@ -318,15 +323,17 @@ whose predicate `p` has argument sorts `s1 … sk`, and each sign `b`, the wordi
   and no negative is selected, the wording is "For every <noun1>, for each <noun2>, …, it is not the case that
   <wording with the references>", with the first letter capitalised.
 
-The slots are filled with "Every <noun1>" and "each <nouni>" for i ≥ 2, where each noun is `L`'s noun for the
-sort. Variants are added as follows:
+The slots are filled with "Every <noun1>" and "each <nouni>" for i ≥ 2, where `<nouni>` is the i-th display of
+`_bindings` (:28-44): `L`'s noun, prefixed "first " or "second " when its sort occurs twice. Variants are added
+as follows:
 - when k = 2, the same wording with "each <noun2>" replaced by "any <noun2>";
 - for a permission with `b` false, "Every <noun1> must not " replaced once by "No <noun1> may ".
 
-Duplicate variants of one predicate and sign are removed. A predicate whose arguments have a sort three or more
-times gets no rows (Python raises `ResourceLimit` there, :41). Each variant is one rule over its words as
-`content` terminals: equal after case folding, as `_parse_consequence` compares with `casefold`. Quoted names
-are `exact`. Its value is the skeleton below, with the bindings `σ` of `_bindings`:
+Each variant is made from the base wording; the two are not combined. Duplicate variants of one predicate and
+sign are removed. A predicate with no argument gets no rows. A predicate whose arguments have a sort three or
+more times gets no rows (Python raises `ResourceLimit` there, :41). Each variant is one rule whose right side is
+`textSyms v contentTerminal` (`Rules.lean:122`): a word is `content` (equal after `fold`); every other token is
+`exact`, glued flags included. A variant for which `textSyms` is `none` gets no row. Its value is the skeleton below, with the bindings `σ` of `_bindings`:
 `{ bearer := .every s1, force, mode := .strict, pred := p, args := [], guard := .top, carveOuts := [], residuals := [] }`.
 The `force` is `.modal` of the modal word for obligation and permission, and `.plain b` for plain.
 
@@ -510,10 +517,16 @@ context, cycles and the `GuardOnOwnOutcome` advice. That stays with the existing
 - Every behaviour difference from Python is recorded at EN-2, in the delta report that the S6 gate reviews. The
   differences already known from the definitions above:
   - an empty text: Python accepts zero rules, Lean refuses with `lexical .emptyDocument`;
-  - blocks sharing a line (OPEN-1);
+  - layout: blocks sharing a line, a block over several lines, a blank or trailing line (:283). EN-1 has no
+    layout check; the DRI decides at EN-2's delta (plan section 5, row S6);
   - conditions out of the rendered order, or two `, if` parts, which Python's split may accept;
   - a predicate with a sort three times, which makes Python refuse every text in its environment;
-  - the casing of `Rule` and `except when`, which Python's Earley run and `re.I` match case-insensitively;
+  - a predicate with no argument;
+  - a consequence variant that does not lex as one sentence: Lean gives it no row, while Python's grammar has one;
+  - casing: Lean's `kw` accepts a sentence-initial lowercase `rule` or `except when`, which Python's
+    case-sensitive `_HEADER`, precedence match and `" Except when "` split refuse; Python's `re.I` carve-out match
+    accepts `, except When` and other mixed casings, which `kw` refuses (`Token.lean:74`);
+  - case folding outside ASCII (`fold` against Python's `casefold`);
   - spacing outside the lexer's rule.
 
 ## 6. Acceptance fixtures (`Norm/Examples.lean` `#guard`s, and `tests/test_english_statement_blocks.py`)
@@ -541,28 +554,25 @@ Sentence indices count from 0.
 | f15 | `Rule 1. Rule 2. Every act may be done.` | `misplaced (.noConsequence 0)` |
 | f16 | `Rule 1. Except when this holds in all cases.` | `misplaced (.strayCarveOut 1)` |
 | f17 | `Rule 1. Every act must be sung.` (undeclared act) | `stopped 1 .noDerivation` |
-| f18 | a consequence with `, if` and a condition taken from a two-derivation fixture of `tests/test_english_unambiguity.py` | `stopped 1 (.ambiguous t u)`, with `t ≠ u` |
+| f18 | environment `FD` (`ReadExamples.lean:77`) with `norms@0` and one permission predicate over `service`, named in `Norm/Examples.lean`; text `Rule 1. <its may wording>, if every deployed service is reviewed.` | `stopped 1 (.ambiguous t u)`, with `t ≠ u` (that formula is `many` at `ReadExamples.lean:253`). If EN-0's stub shows otherwise, f18 becomes an EN-0 computed fixture and the change is recorded |
 | f19 | the empty text | `lexical .emptyDocument` |
 | f20 | the RSP lines `rules.d1.ve:16`, `:22`, `:28`, `:40` named by en-e3-norm EN-1 (f6-maintain, f6-keep-past, f8-public, f10-in-line) | `ok`; nodes equal Python's |
 | f21 | the constitution unit u0125.s04.p2's block, `Rule 1. Every instance of Claude must not directly deny being Claude.` | `ok`; permission, sign false |
-| f22 | the pinned blocks (OPEN-3) | for each block, Python's recorded node, or `stopped 1 .noDerivation` for a block that `should` heads |
+| f22 | the 120 pinned blocks (RSP 76, FSF 44; en-e3-norm :159, :205) | Python's node for each block not headed by `should`; `stopped 1 .noDerivation` for each `should` block; a block that differs is listed for EN-2's delta and does not fail this item |
+| f23 | the text of `test_same_sort_binary_rule_round_trip_and_dangling_precedence` (`Rule 1. Every first act may help each second act.`), and its `any second act` variant | both `ok`, with the same statements |
+| f24 | `Rule 9 takes precedence over rule 1.` | `misplaced (.unknownRule 9)` |
 
 f1, f7, f8 and f11 also pass `toNodes`' output to `VE.Norms.Wire.decodeSource` (the "not claimed" line of
 section 4) and expect `ok`.
 
 **Seeded bugs.** Each is introduced, shown to fail, and restored.
-- Swap `needNot` and `mustNot` in `Force.sign`: f2 and f21 fail.
+- Map `.mustNot` to `true` in `Force.sign`: f1, f2 and f21 fail.
 - Drop the carve-out in the `, unless`/`, except when` action: f10 fails.
 - Skip the number check in `assemble`: f13 fails.
 - Evaluate an except-when condition with scope `[]`: f11 fails.
 
 ## 7. OPEN lines (for the DRI; not decided here)
 
-- **OPEN-1. Blocks sharing a line.** The lexer treats a newline as whitespace, so "Rule 1. … Rule 2. …" on one
-  line reads as two blocks in Lean. Python refuses it, because it splits blocks at `\n` (:283, :305). There are
-  two options. One is a layout check on the source string before `lex`, which is a new definition outside the
-  grammar. The other is to accept the difference as a delta row at EN-2. Neither plan decides. Until it is
-  decided, `readNorm` has no layout check.
 - **OPEN-2. Owner and remaining EN-0 work.** english-lean-PLAN section 11 schedules en-e3-norm as this S6 layer,
   and en-e3-norm's EN-0 names its own spec file, `docs/spec/en-e3-norm.md`. That plan's review has not run, and
   its pipeline has been held since 2026-10-29 19:12Z. This file states EN-1's statements only. The DRI decides
@@ -572,6 +582,5 @@ section 4) and expect `ok`.
   - who does the rest of EN-0: the stub elaboration under Lean 4.24.0, recording Python's nodes for the pinned
     blocks, and the `Catalogue.lean` question of en-e3-norm 2.2. This spec assumes they become the first step
     of the build row.
-- **OPEN-3. Which pinned blocks.** en-e3-norm counts 120 blocks: RSP 76 and FSF 44, of which 17 are "should"
-  blocks. `main` also has `usecases/openai-preparedness/rules.d1.ve`, with 86 lines matching `^Rule [0-9]`
-  (counted on `09fca5013`). The plan does not say whether f22 includes them.
+- **OPEN-3 (answered by the review).** The 120 blocks are RSP 76 and FSF 44 (en-e3-norm :159).
+  `usecases/openai-preparedness/rules.d1.ve` is not pinned.
