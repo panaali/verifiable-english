@@ -6,6 +6,7 @@
     uv run python tools/regen_generated.py --resolve           # finish a `git merge --no-commit` (below)
     python3 tools/regen_generated.py --merge-driver %O %A %B %P   # git's merge driver `ve-generated`
     python3 tools/regen_generated.py --install-driver              # configure that driver in this repository
+    uv run python tools/regen_generated.py --check --at-merge     # the entries refreshed on every merge (below)
 
 `GENERATED` is the one list of these files. Each entry names the files it owns (git attribute patterns),
 the command that rewrites them and the one that checks them, both owned by the file's own generator (this
@@ -21,6 +22,12 @@ script only runs them, in order), and how a merge combines two sides of the file
 `.gitattributes` is generated from the same list (`merge=ve-generated` for every owned pattern). With the
 driver installed, `git merge` resolves those files by their strategy and never stops on them. Without it,
 `--resolve` does the same from the index stages of each conflicted path.
+
+A clean merge is not a fresh tree: the driver keeps one side's copy of a `regenerate` file, so a file derived from
+sources both sides changed (a test list, an inventory of tests) is stale until its writer runs, and no conflict
+says so. `at_merge` marks the entries whose writer reads only the merged tree (no Lean build, no service, seconds):
+the merge train runs `--check --at-merge` on every merge candidate and, when one is stale, `--write --at-merge`,
+and gates the refreshed tree (R12). `--names` prints the selected entries' names, one per line, for that caller.
 
 Some writers and checks start the Lean service (`service` on their entry), which refuses a build that is not in
 `lean/checkers.lock`. Before the first of them, and again after the run changed a Lean file, `--write` and
@@ -60,7 +67,6 @@ ROOT = Path(__file__).resolve().parents[1]
 PY = sys.executable
 DRIVER = "ve-generated"
 ATTRIBUTES = ROOT / ".gitattributes"
-LOCK = ROOT / "lean/checkers.lock"
 
 
 @dataclass(frozen=True)
@@ -81,6 +87,12 @@ class Generated:
     # (`_Service`); every entry whose commands import the service client carries it (tests/test_regen_generated.py).
     service: str = ""
     advisory: bool = False            # --check warns on drift; the merge train still writes it
+    # "train": a function of the compiled tree that branches stop committing (docs/infra/gen-inv-design/DESIGN.md
+    # section 4): its readers go through `inventory_path` (tools/lean_statements.py); `train_only()` lists them.
+    writer: str = ""
+    # Refreshed on every merge candidate (`--at-merge`, module docstring): the writer reads only the merged tree,
+    # starts no Lean build or service and takes seconds (tests/test_regen_generated.py).
+    at_merge: bool = False
 
 
 # In dependency order: generated Lean before the build; the build before the statement dumps, the checker pins
@@ -93,7 +105,9 @@ GENERATED = (
     Generated("wire-contract",
               ("lean/VE/WireContract/Limits.lean", "lean/VE/WireContract/Names.lean",
                "lean/VE/WireContract/Tables/*.lean", "ve/wire_contract/contracts.lock",
-               "conformance/wire-contract/contracts/contracts.lock", "docs/spec/*-wire-table.md"),
+               "conformance/wire-contract/contracts/contracts.lock", "docs/spec/*-wire-table.md",
+               "rust/ve-kernel/src/contract_tables.rs", "rust/ve-kernel/tests/corpus_tables/mod.rs",
+               "rust/ve-kernel/tests/keys_table/mod.rs"),
               # Written without live validation: the examples go through the service, which is built and
               # pinned only later; the check (after every write) validates them live.
               ((PY, "-m", "tools.wire_contract", "--write", "--generated-only"),
@@ -139,10 +153,10 @@ GENERATED = (
               ((PY, "tools/lean_mode_deps.py", "--check"),),
               note="mode roots from the compiled runMode dispatch pins"),
     Generated("lean-statements", ("lean/statements.txt", "lean/predicates.txt", "lean/declarations.txt"),
-              ((PY, "tools/lean_statements.py"),), ((PY, "tools/lean_statements.py", "--check"),)),
+              ((PY, "tools/lean_statements.py"),), ((PY, "tools/lean_statements.py", "--check"),), writer="train"),
     Generated("lean-audit-manifests", ("lean/VE/Audit.lean", "lean/ResponseShapeAudit.lean", "lean/axioms.txt"),
               ((PY, "lean/audit.py", "--write"),), ((PY, "lean/audit.py", "--check"),),
-              note="generated from lean/declarations.txt, then the axiom audit record"),
+              note="generated from lean/declarations.txt, then the axiom audit record", writer="train"),
     Generated("frozen-inventory", ("lean/VE/Route/frozen-sources.sha256",),
               ((PY, "VE/Route/frozen.py", "--write"),), ((PY, "VE/Route/frozen.py"),), cwd="lean"),
     Generated("trust-tables", ("tools/trust-classes.json", "docs/trust-baseline.json"), None,
@@ -150,13 +164,14 @@ GENERATED = (
               note="ledgers: growth over the base needs `trust_map.py --allow --reason ... --signed ...` "
                    "(the DRI's signature); `--write` is the merge train's, on main"),
     Generated("checker-pins", ("lean/checkers.lock",), ("pin_checkers",), ("check_pins",), merge="json",
-              note="both sides' pins, plus the merged ve_service build and Rust release binary"),
+              note="both sides' pins, plus the merged ve_service build and Rust release binary", writer="train"),
     Generated("response-schemas", ("ve/backends/lean_service_schema/*.json",),
               ((PY, "tools/response_schemas.py", "--write"),), ((PY, "tools/response_schemas.py", "--check"),),
               fresh="tests/test_response_schemas.py::test_every_schema_file_is_the_lean_rendering"),
     Generated("binding-census", ("docs/test-architecture/binding-census.json", "docs/test-architecture/binding-census.md"),
               ((PY, "tools/binding_census.py", "--write"),), ((PY, "tools/binding_census.py", "--check"),),
-              note="from the response schemas and the recorded answers and probes (--record re-records those)"),
+              note="from the response schemas and the recorded answers and probes (--record re-records those)",
+              at_merge=True),
     Generated("codemap", ("docs/codemap/**",),
               ((PY, "tools/code_map.py", "--write"),), ((PY, "tools/code_map.py", "--check"),),
               note="regenerated on merge; branch staleness is advisory", advisory=True),
@@ -175,7 +190,8 @@ GENERATED = (
               merge="json", note="decoder pins are reviewed by hand; a merge keeps each side's pins",
               fresh="tests/test_assurance_manifest.py::test_decoder_files_are_pinned_whole"),
     Generated("assurance-doc", ("docs/spec/assurance-manifest.md",),
-              ((PY, "tools/assurance_manifest.py", "--write"),), ((PY, "tools/assurance_manifest.py", "--check"),)),
+              ((PY, "tools/assurance_manifest.py", "--write"),), ((PY, "tools/assurance_manifest.py", "--check"),),
+              writer="train"),
     Generated("layer-ledgers", ("tools/layer-exceptions.json", "tools/lean-layer-exceptions.json"), None,
               ((PY, "tools/check_lean_imports.py"),), merge="json"),
     Generated("import-contract", (".importlinter",), ((PY, "tools/check_python_layers.py", "--write"),),
@@ -190,15 +206,17 @@ GENERATED = (
     Generated("platform-contract", ("tests/platform-contract.json",),
               ((PY, "tools/platform_contract.py", "contract", "--write"),),
               ((PY, "tools/platform_contract.py", "contract", "--check"),),
-              note="after platform-divergences, which it reads"),
+              note="after platform-divergences, which it reads", at_merge=True),
     Generated("history-map", ("tests/history-map.json",), None, None, merge="json",
               note="saved from the coverage map by `tools/history_tests.py --save-map [--map ...]`; its shape is "
                    "checked by history-tests' check"),
     Generated("history-tests", ("tests/history-dependent.json",),
               ((PY, "tools/history_tests.py", "--write"),),
               ((PY, "tools/history_tests.py", "--check"),),
-              note="after history-map, which it reads with the test sources"),
+              note="after history-map, which it reads with the test sources", at_merge=True),
 )
+# The pin file, `inventory_path`'s name for it.
+PIN_FILE = next(entry for entry in GENERATED if entry.name == "checker-pins").paths[0]
 
 
 # Generated files that are deleted, each with the change that deleted it: `--resolve` settles a conflict on one
@@ -266,6 +284,12 @@ def owner(path: str) -> Generated | None:
     return None
 
 
+def train_only() -> tuple[str, ...]:
+    """The train-only files: every path of an entry with `writer="train"`, the one list of them (each a literal
+    path, never a pattern: `inventory_path` keeps one copy of each)."""
+    return tuple(path for entry in GENERATED if entry.writer == "train" for path in entry.paths)
+
+
 def owned_files(entry: Generated, root: Path = ROOT) -> list[Path]:
     return sorted({path for pattern in entry.paths for path in root.glob(pattern) if path.is_file()})
 
@@ -299,12 +323,20 @@ def check_attributes() -> int:
 # Checker pins
 
 
+def _lean_statements():
+    """tools/lean_statements.py, whose `inventory_path` every reader of a train-only file goes through."""
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import lean_statements
+    return lean_statements
+
+
 def _lock() -> dict:
-    return json.loads(LOCK.read_text())
+    return json.loads(_lean_statements().inventory_path(PIN_FILE, ROOT).read_text())
 
 
 def _write_lock(lock: dict) -> None:
-    LOCK.write_text(json.dumps({key: sorted(set(values)) for key, values in lock.items()}, indent=2) + "\n")
+    _lean_statements().write_inventory(
+        PIN_FILE, json.dumps({key: sorted(set(values)) for key, values in lock.items()}, indent=2) + "\n", ROOT)
 
 
 def _service_digest() -> str | None:
@@ -687,7 +719,7 @@ def _service_current() -> bool:
 def _lean_files(entry: Generated) -> dict[Path, bytes]:
     """The entry's files under lean/ that a build may read (all but the pins)."""
     return {path: path.read_bytes() for path in owned_files(entry)
-            if path.relative_to(ROOT).parts[0] == "lean" and path != LOCK}
+            if path.relative_to(ROOT).parts[0] == "lean" and path != ROOT / PIN_FILE}
 
 
 class _Service:
@@ -754,12 +786,13 @@ class _Service:
                   flush=True)
 
 
-def selected(only, skip) -> list[Generated]:
+def selected(only, skip, at_merge: bool = False) -> list[Generated]:
     names = {entry.name for entry in GENERATED}
     unknown = (set(only or ()) | set(skip or ())) - names
     if unknown:
         raise SystemExit(f"unknown entries: {sorted(unknown)} (see --list)")
-    return [entry for entry in GENERATED if (not only or entry.name in only) and entry.name not in (skip or ())]
+    return [entry for entry in GENERATED if (not only or entry.name in only) and entry.name not in (skip or ())
+            and (entry.at_merge or not at_merge)]
 
 
 def write(entries, log: RegenLog | None = None) -> list[str]:
@@ -887,6 +920,8 @@ def listing() -> str:
                     + (f"\n    service: its {'writer (and so its check)' if entry.service == 'write' else 'check'} "
                        "starts the Lean service" if entry.service else "")
                     + ("\n    check: advisory on branches" if entry.advisory else "")
+                    + ("\n    writer: the merge train (read through inventory_path)" if entry.writer == "train" else "")
+                    + ("\n    at merge: refreshed on every merge candidate (--at-merge)" if entry.at_merge else "")
                     + (f"\n    note: {entry.note}" if entry.note else ""))
     return "\n".join(rows)
 
@@ -901,8 +936,11 @@ def main(argv=None) -> int:
     action.add_argument("--merge-driver", nargs=4, metavar=("BASE", "OURS", "THEIRS", "PATH"))
     action.add_argument("--install-driver", action="store_true")
     action.add_argument("--owner", metavar="PATH", help="print the entry that owns PATH")
+    action.add_argument("--names", action="store_true", help="print the selected entries' names, one per line")
     parser.add_argument("--only", action="append", metavar="NAME")
     parser.add_argument("--skip", action="append", metavar="NAME")
+    parser.add_argument("--at-merge", action="store_true",
+                        help="select only the entries refreshed on every merge candidate (`at_merge`)")
     args = parser.parse_args(argv)
     if args.list:
         print(listing())
@@ -915,7 +953,10 @@ def main(argv=None) -> int:
         return merge_driver(*args.merge_driver)
     if args.install_driver:
         return install_driver()
-    entries = selected(args.only, args.skip)
+    entries = selected(args.only, args.skip, args.at_merge)
+    if args.names:
+        print("\n".join(entry.name for entry in entries))
+        return 0
     log = RegenLog("resolve" if args.resolve else "write" if args.write else "check")
     if args.resolve:
         return resolve(entries, log=log)

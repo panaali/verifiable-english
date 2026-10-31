@@ -1,0 +1,9 @@
+$ zsh /home/seyran/code/manage-agents/test-harness/comparators/test-comparators.zsh   (2026-10-31T06:32Z)
+== gha/gate-compare.py (ARM_GATE_SHADOW, ARM_LEG_MAC_OFFLINE): /home/seyran/code/manage-agents/gha/gate-compare.py with /home/seyran/code/manage-agents/gaterec.py
+== gaterec.py normalise (main-red-check signatures; train FAIL count of the trial-stack guard): /home/seyran/code/manage-agents/gaterec.py
+== cloud-tm-verify.py (ACTIONS_POOL, CODEX_CLOUD_POOL, CLAUDE_CLOUD_POOL, CLOUD_TRIAL): /home/seyran/code/manage-agents/cloud-tm-verify.py
+== cloud-verdict-compare.py (verdict-sample.sh: a difference removes the pool's flag): /home/seyran/code/manage-agents/cloud-verdict-compare.py
+== cloud-verdict-compare.py UNKNOWN vs decided (verdict-unknown-rule, jt-2c M010): /home/seyran/code/manage-agents/cloud-verdict-compare.py
+== actions-health.py (ACTIONS_SUSPENDED streak; findref): /home/seyran/code/manage-agents/actions-health.py
+comparators: 33 passed, 0 failed
+exit 0

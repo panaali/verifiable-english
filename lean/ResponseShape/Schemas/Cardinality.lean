@@ -4,14 +4,17 @@ import ResponseShape
 the `cardinality` mode's row (`VE.Cardinality.Run.runCaseReported`, docs/spec/quantities.md 4.1–4.2). An answer
 carries the cardinality and W6a identities under separate names, one statement per request premise
 (`x-length`), and, for an admission, the region table, each constant of a request's finite sort
-(`x-references`), and the regenerated erased problem with its W6a identities. -/
+(`x-references`), and the regenerated erased problem with its W6a identities; a countermodel, its verdict, the region
+table and each region's size. -/
 namespace ResponseShape.Schemas.Cardinality
 open Lean ResponseShape
 
 def kind : Def :=
   .group none [
     ("admission", kindIs "admission"),
-    ("certificate", kindIs "certificate")]
+    ("certificate", kindIs "certificate"),
+    ("countermodel", kindIs "countermodel"),
+    ("document", kindIs "document")]
 
 def error : Shape :=
   c
@@ -83,12 +86,15 @@ def erased : Shape :=
       ("core_meaning_id", ref "common.json#/$defs/hex64")]]
 
 /-- The members every `ok` answer has. -/
-def answer : List (String × Shape) := [
+def envIds : List (String × Shape) := [
   ("id", ref "common.json#/$defs/id_ok"),
   ("status", constS "ok"),
   ("environment_id", ref "common.json#/$defs/hex64"),
   ("w6_environment_id", ref "common.json#/$defs/hex64"),
-  ("w6_target_environment_id", ref "common.json#/$defs/hex64"),
+  ("w6_target_environment_id", ref "common.json#/$defs/hex64")]
+
+/-- The members of an admission or certificate answer. -/
+def answer : List (String × Shape) := envIds ++ [
   ("premises", n [arr, .items (ref "#/$defs/statement"), .length "/premises"]),
   ("conclusion", ref "#/$defs/statement")]
 
@@ -127,6 +133,40 @@ def certificate : Shape :=
     .required ("valid" :: answerFields),
     closed (("valid", .type ["boolean"]) :: answer)]
 
+def sizes : Shape :=
+  c "Cardinality.Run.sizesJson: each region constant with its size in the model, in the region table's order." [
+    arr, .maxItems 512, .items (n [
+      obj,
+      .required ["constant", "size"],
+      closed [
+        ("constant", n [str, .pattern (.seq (.lit "cardinality__") (.star (.cls [(' ', '~')])))]),
+        ("size", ref "common.json#/$defs/nat")]])]
+def countermodel : Shape :=
+  c "Cardinality.Run.runCase countermodel: W6a's countermodel verdict on the erased problem beside the statements, the region table and each region's size in the model." [
+    obj,
+    .references "/regions/constants" "sort" "/environment/cardinality/finite_sorts",
+    .required ("refutes" :: answerFields ++ ["regions", "sizes"]),
+    closed (("refutes", .type ["boolean"]) :: answer ++
+      [("regions", ref "#/$defs/regions"), ("sizes", ref "#/$defs/sizes")])]
+def claim : Shape :=
+  c "Cardinality.Run.claimJson: a node of the request's graph with its meaning id and canonical formula." [
+    obj,
+    .required ["name", "meaning_id", "formula"],
+    closed [("name", str), ("meaning_id", ref "common.json#/$defs/hex64"), ("formula", ref "#/$defs/formula")]]
+
+def document : Shape :=
+  c "Cardinality.Run.runCase document: the admitted graph's report, its root and the leaves it rests on, and the report's identity (Cardinality.Run.reportId: the ve-report digest of the three environment identities, the document as sent and the report)." [
+    obj,
+    .references "/report/leaves" "name" "/document/nodes/*/name",
+    .required (envIds.map (·.1) ++ ["report", "report_id"]),
+    closed (envIds ++ [("report", n [
+      obj,
+      .required ["root", "leaves"],
+      closed [
+        ("root", n [ref "#/$defs/claim", props [("name", .equals "/document/root")]]),
+        ("leaves", n [arr, .items (ref "#/$defs/claim")])]]),
+      ("report_id", ref "common.json#/$defs/hex64")])]
+
 def «row» : Shape :=
   .anyOf [
     ref "common.json#/$defs/case_error",
@@ -134,7 +174,9 @@ def «row» : Shape :=
     .select [
       (ref "common.json#/$defs/no_kind", ref "#/$defs/admission"),
       (ref "#/$defs/kind/admission", ref "#/$defs/admission"),
-      (ref "#/$defs/kind/certificate", ref "#/$defs/certificate")]]
+      (ref "#/$defs/kind/certificate", ref "#/$defs/certificate"),
+      (ref "#/$defs/kind/countermodel", ref "#/$defs/countermodel"),
+      (ref "#/$defs/kind/document", ref "#/$defs/document")]]
 
 def file : File where
   name := "cardinality.json"
@@ -153,6 +195,10 @@ def file : File where
     ("regions", .schema regions),
     ("problem", .schema problem),
     ("admission", .schema admission),
-    ("certificate", .schema certificate)]
+    ("certificate", .schema certificate),
+    ("sizes", .schema sizes),
+    ("countermodel", .schema countermodel),
+    ("claim", .schema claim),
+    ("document", .schema document)]
 
 end ResponseShape.Schemas.Cardinality

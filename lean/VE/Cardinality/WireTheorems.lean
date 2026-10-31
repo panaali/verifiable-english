@@ -196,4 +196,41 @@ theorem printed_eq (s : String) :
     printed s = (fun d => (d.significand, d.places)) <$> VE.Time.parseDecimal s := by
   simp only [printed]; cases VE.Time.parseDecimal s <;> rfl
 
+/-! ## The encoders' cases (review F4 of qt-a3d)
+
+`encode` and its parts write the answers' formulas (D[V]): each case's wire name and argument order, as spec 4.1
+spells them and the `elab*_cases` above read them, so a swapped name or argument fails here. -/
+
+theorem encBody_cases (p : String) (a b : Body) :
+    encBody (.atom p) = Json.arr #[.str "is", .str p] ∧ encBody .any = Json.arr #[.str "any"] ∧
+    encBody (.not a) = Json.arr #[.str "not", encBody a] ∧
+    encBody (.and a b) = Json.arr #[.str "and", encBody a, encBody b] ∧
+    encBody (.or a b) = Json.arr #[.str "or", encBody a, encBody b] := ⟨rfl, rfl, rfl, rfl, rfl⟩
+
+theorem encOperand_cases (t : VE.Time.QTerm) (s : String) (b : Body) :
+    encOperand (.quantity t) = Json.arr #[.str "quantity", VE.Time.Wire.encTerm t] ∧
+    encOperand (.count s b) = Json.arr #[.str "count", .str s, encBody b] := ⟨rfl, rfl⟩
+
+/-- A printed number is the decimal of its digits at its places (`Time.renderAmount`, which `printed` reads back). -/
+theorem encPrinted_eq (D : Int) (k : Nat) : encPrinted D k = .str (VE.Time.renderAmount k D) := rfl
+
+theorem encode_cases (q : VE.Time.QFormula) (c : CountAtom) (p : Proportion) (r : VE.Numbers.Rounding)
+    (x y : CTerm) (D : Int) (k : Nat) (a b : CFormula) :
+    encode (.quantity q) = Json.arr #[.str "quantity", VE.Time.Wire.encQ q] ∧
+    encode (.count c) = Json.arr #[.str "count", .str c.sort,
+      Json.arr (c.terms.map fun kb => Json.arr #[.str (toString kb.1), encBody kb.2]).toArray,
+      .str (nameOf relNames c.rel), .str (toString c.bound)] ∧
+    encode (.proportion p) = Json.arr #[.str "proportion", .str p.sort, encBody p.whole, encBody p.part,
+      .str (nameOf cmpNames p.cmp), .str (toString p.num), .str (toString p.den)] ∧
+    encode (.roundsTo r x y D k) = Json.arr #[.str "rounds_to", .str (nameOf ruleNames r), encOperand x,
+      encOperand y, encPrinted D k] ∧
+    encode (.percentOf x y D k) = Json.arr #[.str "percent_of", encOperand x, encOperand y, encPrinted D k] ∧
+    encode (.percentRoundsTo r x y D k) = Json.arr #[.str "percent_rounds_to", .str (nameOf ruleNames r),
+      encOperand x, encOperand y, encPrinted D k] ∧
+    encode (.not a) = Json.arr #[.str "not", encode a] ∧
+    encode (.and a b) = Json.arr #[.str "and", encode a, encode b] ∧
+    encode (.or a b) = Json.arr #[.str "or", encode a, encode b] ∧
+    encode (.implies a b) = Json.arr #[.str "implies", encode a, encode b] :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
 end VE.Cardinality.Wire

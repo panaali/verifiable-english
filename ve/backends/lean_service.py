@@ -71,6 +71,7 @@ alone, not on the handles one process happens to hold.
 from __future__ import annotations
 
 import hashlib
+import importlib
 import itertools
 import json
 from decimal import Decimal
@@ -94,7 +95,8 @@ from .service_schema import MODES, Invalid, check_handshake, check_response
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_EXECUTABLE = ROOT / "lean/.lake/build/bin/ve_service"
-BUILD_LOCK = ROOT / "lean/checkers.lock"
+# The pins a build must be in: None, the tree's `lean/checkers.lock` as `build_lock` reads it; a test's file otherwise.
+BUILD_LOCK: Path | None = None
 BATCH_CASES = 256
 BATCH_BYTES = 4 * 1024 * 1024
 STARTUP_TIMEOUT = 30.0
@@ -148,6 +150,8 @@ DEADLINES: dict[str, tuple[float, float]] = {
     "calc": (60.0, 60.0),
     # The `cardinality` mode (quantities QT-A3): W6a's `quantity` deadline, whose problems it erases into.
     "cardinality": (60.0, 60.0),
+    # The `scope` mode (scope SC-1c): the document mode's GOVERN step, without the chain after it.
+    "scope": (120.0, 120.0),
 }
 WALL_FACTOR = 10.0
 _MIB = 1 << 20
@@ -346,6 +350,20 @@ _hashes: dict[tuple, str] = {}
 _HEX64 = re.compile(r"[0-9a-f]{64}")
 
 
+def build_lock() -> Path:
+    """The pin file of the tree: `lean/checkers.lock` through `inventory_path` (tools/lean_statements.py), the
+    local overlay's copy when it is fresh, else the committed one (docs/infra/gen-inv-design/DESIGN.md 4). The
+    accessor is imported at run time: a static import would put the registry, which names every generator, in
+    the import graph of every test of the service (tools/select_tests.py); tests/test_inventory_path.py imports
+    both and checks this read."""
+    if BUILD_LOCK is not None:
+        return BUILD_LOCK
+    tools = str(ROOT / "tools")
+    if tools not in sys.path:
+        sys.path.append(tools)
+    return importlib.import_module("lean_statements").inventory_path("lean/checkers.lock", ROOT)
+
+
 def executable_sha256(path: Path) -> str:
     """SHA-256 of the executable file, cached while its filesystem identity (device, inode, size,
     modification and change times) is unchanged: in this process, and across processes in the sidecar
@@ -485,10 +503,12 @@ class LeanService:
             elif self.allow_unlisted_build:
                 allowed = None
             else:
+                lock = BUILD_LOCK or ROOT / "lean/checkers.lock"
                 try:
-                    allowed = set(json.loads(BUILD_LOCK.read_text())["ve_service"])
-                except (OSError, ValueError, KeyError, TypeError):
-                    raise CheckerUnavailable(f"CheckerUnavailable: invalid build lock {BUILD_LOCK}") from None
+                    lock = build_lock()
+                    allowed = set(json.loads(lock.read_text())["ve_service"])
+                except (ImportError, OSError, ValueError, KeyError, TypeError):
+                    raise CheckerUnavailable(f"CheckerUnavailable: invalid build lock {lock}") from None
             build = self.build
             if allowed is not None and build not in allowed:
                 raise CheckerUnavailable(f"CheckerUnavailable: {self.executable} has unlisted build {build}, "
