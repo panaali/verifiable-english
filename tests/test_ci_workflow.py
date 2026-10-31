@@ -18,7 +18,8 @@ actions-gate-x86: a sharded gate builds Lean once. A shard's `run` job may downl
 of exactly the run its job.json names (`lean_from`), with a second, read-only token (`actions: read`) that
 reaches that one download step only; the download never fails the run. Its check step hands the pack to
 job.sh only when it is one regular file named for the head's lean tree with the sha256 job.json names; any
-other case is said and the shard builds cold.
+other case is said and the shard builds cold. The build job's job.json says `"lean_publish": false`: its pack
+is checked as any other and its sha256 recorded (status `checked`), but nothing reaches gh.
 
 The files are read as text by a small reader of the YAML they use (PyYAML is not in the environment).
 It fails closed: tabs, anchors, aliases, tags, merge keys, quoted or duplicate keys and lines it cannot
@@ -355,7 +356,8 @@ def check_asset_step(publish: dict) -> None:
     named = [step for step in steps(publish) if step.get("name") == ASSET_STEP]
     assert len(named) == 1, f"publish has {len(named)} {ASSET_STEP!r} steps"
     step = named[0]
-    assert step.get("env") == {"GH_TOKEN": TOKEN}, f"github.token is not only the {ASSET_STEP} step's GH_TOKEN"
+    assert step.get("env") == {"GH_TOKEN": TOKEN, "LEAN_PUBLISH": "${{ needs.run.outputs.lean_publish }}"}, \
+        f"github.token is not only the {ASSET_STEP} step's GH_TOKEN"
     for other in steps(publish):
         if "lean-build" in str(other.get("with", {}).get("name", "")) or other is step:
             assert other.get("continue-on-error") == "true", f"{ASSET_STEP}: may fail the result (no continue-on-error)"
@@ -528,7 +530,7 @@ def good_members(tree: str) -> list[tuple[str, object]]:
             ("lake/build/lib/a.olean", b"olean" * 100), ("lake/build/bin/ve_service", b"\x7fELF" + b"0" * 64)]
 
 
-def run_asset_step(tmp_path: Path, members=None, *, name=None, extra=(), script=None, raw=None, **gh) -> dict:
+def run_asset_step(tmp_path: Path, members=None, *, name=None, extra=(), script=None, raw=None, publish="", **gh) -> dict:
     repo, tree = head_checkout(tmp_path)
     rt = tmp_path / "rt"
     (rt / "out").mkdir(parents=True)
@@ -547,7 +549,7 @@ def run_asset_step(tmp_path: Path, members=None, *, name=None, extra=(), script=
     log = tmp_path / "gh.log"
     env = {**{k: v for k, v in os.environ.items() if not k.startswith(("GH_", "GITHUB_", "FAKE_GH"))},
            "PATH": f"{fake}{os.pathsep}{os.environ['PATH']}", "RUNNER_TEMP": str(rt), "GH_TOKEN": "not-a-token",
-           "GITHUB_REPOSITORY": REPOSITORY, "FAKE_GH_LOG": str(log),
+           "GITHUB_REPOSITORY": REPOSITORY, "FAKE_GH_LOG": str(log), "LEAN_PUBLISH": publish,
            **{f"FAKE_GH_{k.upper()}": v for k, v in gh.items()}}
     done = subprocess.run(["bash", "-c", script or asset_script()], cwd=repo, env=env, capture_output=True, text=True,
                           timeout=HANG_TIMEOUT)
@@ -630,6 +632,22 @@ def test_a_bad_pack_is_refused_and_never_uploaded(tmp_path, case):
     assert record["status"] == "refused" and reason in record["reason"], record
     assert not record["calls"], f"a refused pack reached gh: {record['calls']}"
     assert "A1A1A1" not in json.dumps(record, default=str), "the record repeats the secret"
+
+
+def test_a_pack_not_to_publish_is_checked_and_never_reaches_gh(tmp_path):
+    record = run_asset_step(tmp_path / "a", publish="false")
+    assert record["status"] == "checked" and not record["calls"], record
+    assert record["sha256"] == hashlib.sha256(record["pack"].read_bytes()).hexdigest() and record["key"] == record["tree"]
+    refused = run_asset_step(tmp_path / "b", members=lambda t: replace_member(t, "pins.json", seal("f" * 40)), publish="false")
+    assert refused["status"] == "refused" and "this lean tree" in refused["reason"], refused
+
+
+def test_lean_publish_false_comes_only_from_job_json(tmp_path):
+    outputs, _ = run_job_commit_step(tmp_path / "a", {"lean_asset": True, "lean_publish": False})
+    assert outputs["lean_publish"] == "false", outputs
+    for value in ("false", 0, None):
+        outputs, _ = run_job_commit_step(tmp_path / f"b{value}", {"lean_asset": True, "lean_publish": value})
+        assert outputs["lean_publish"] == "", (value, outputs)
 
 
 def test_the_caps_the_refusal_tests_lower_are_the_real_ones():

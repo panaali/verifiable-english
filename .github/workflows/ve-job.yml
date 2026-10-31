@@ -24,6 +24,8 @@
 # job.sh as $VE_LEAN_FROM only when it is one regular file named lean-build-<HEAD:lean, 12>.tar.zst with that sha256.
 # Anything else (no lean_from, a malformed one, no artifact, another name or sha256) is said in lean-from.txt and the
 # shard builds cold; it never fails the run. job.sh checks the pack again (seal: this lean tree) before its lake build.
+# The build job's job.json also says "lean_publish": false: the publish job runs every check of its pack and records its
+# sha256 (status checked) but uploads nothing to lean-branch-cache (a gate's build is for its own shards only).
 # Never triggered by pull requests, forks, schedules or other branches. Uses no secrets. Actions are pinned by commit.
 name: ve-job
 on:
@@ -45,6 +47,7 @@ jobs:
       job: ${{ steps.job.outputs.job }}
       head: ${{ steps.job.outputs.head }}
       lean_asset: ${{ steps.pack.outputs.ready }}
+      lean_publish: ${{ steps.job.outputs.lean_publish }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4.3.1
         with:
@@ -59,6 +62,7 @@ jobs:
           head=$(python3 -I -c 'import json; print(json.load(open("ci-job/job.json"))["head"])')
           [ "$(python3 -I -c 'import json; print(json.load(open("ci-job/job.json"))["job"])')" = "$job" ] || { echo "job.json is not $job"; exit 1; }
           lean_asset=$(python3 -I -c 'import json; print("1" if json.load(open("ci-job/job.json")).get("lean_asset") is True else "")')
+          lean_publish=$(python3 -I -c 'import json; print("false" if json.load(open("ci-job/job.json")).get("lean_publish") is False else "")')
           lean_from=$(python3 -I -c 'import json, re; d = json.load(open("ci-job/job.json")).get("lean_from"); ok = isinstance(d, dict) and set(d) == {"run_id", "sha256"} and isinstance(d["run_id"], str) and isinstance(d["sha256"], str) and re.fullmatch("[0-9]{1,20}", d["run_id"]) and re.fullmatch("[0-9a-f]{64}", d["sha256"]); print(d["run_id"] + " " + d["sha256"] if ok else ("malformed" if d is not None else ""))')
           [ "$(git rev-parse HEAD~1)" = "$head" ] && [ -z "$(git rev-parse -q --verify HEAD^2 || true)" ] || { echo "the job commit's parent is not $head"; exit 1; }
           extra=$(git diff --name-only HEAD~1 HEAD | grep -v -x -E 'ci-job/job\.json|ci-job/job\.sh|\.github/workflows/ve-job\.yml' || true)
@@ -67,7 +71,7 @@ jobs:
           cp ci-job/job.json ci-job/job.sh "$RUNNER_TEMP/ci-job/"
           [ "$lean_from" != malformed ] || { echo "lean-from: job.json's lean_from is malformed: cold build" > "$RUNNER_TEMP/out/lean-from.txt"; lean_from=""; }
           git checkout -q --detach "$head"
-          echo "job=$job" >> "$GITHUB_OUTPUT"; echo "head=$head" >> "$GITHUB_OUTPUT"; echo "lean_asset=$lean_asset" >> "$GITHUB_OUTPUT"
+          echo "job=$job" >> "$GITHUB_OUTPUT"; echo "head=$head" >> "$GITHUB_OUTPUT"; echo "lean_asset=$lean_asset" >> "$GITHUB_OUTPUT"; echo "lean_publish=$lean_publish" >> "$GITHUB_OUTPUT"
           echo "lean_run=${lean_from% *}" >> "$GITHUB_OUTPUT"; echo "lean_sha=${lean_from#* }" >> "$GITHUB_OUTPUT"
       - name: tools
         run: |
@@ -174,6 +178,7 @@ jobs:
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
+          LEAN_PUBLISH: ${{ needs.run.outputs.lean_publish }}
         run: |
           set -uo pipefail
           O=$RUNNER_TEMP/out; A=$RUNNER_TEMP/lean-build; REL=lean-branch-cache; CAP=2000000000; UCAP=8000000000
@@ -242,6 +247,7 @@ jobs:
           ) || rec refused "$(printf %s "$out" | tail -n 1 | head -c 300)"
           read -r sum bytes <<< "$(tail -n 1 <<< "$out")"
           [[ $sum =~ ^[0-9a-f]{64}$ && $bytes =~ ^[0-9]+$ ]] || { sum=""; bytes=""; rec refused "the check printed no sha256 and size"; }
+          [ "${LEAN_PUBLISH:-}" != false ] || rec checked "checked, not published (job.json lean_publish: false)"
           assets=$(gh release view "$REL" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' 2>&1) || {
             grep -q -i 'not found' <<< "$assets" && rec no-release "no release $REL"; rec failed "cannot list $REL: $(tail -n 1 <<< "$assets" | head -c 200)"; }
           grep -q -x -F "$name" <<< "$assets" && rec exists "$name is already on $REL"
