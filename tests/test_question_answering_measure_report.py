@@ -186,3 +186,52 @@ def test_q2_f5_d15_budget_unknown_does_not_contradict_checked_yes(case, predicat
     assert row["older_reason"] == OLDER_BUDGET_REASON
     assert row["leads"] == ["yes"]
     assert row["status"] == "older budget exhausted"
+
+
+def test_q26_each_fixture_lead_against_the_spec_names_the_delta_row_that_explains_it(tmp_path, monkeypatch):
+    fixtures = json.loads((REPORT.EVIDENCE / "fixtures.json").read_text())["fixtures"]
+    rows = REPORT.expected_rows(fixtures)
+    # DELTA D6's list of the fixtures whose recorded leads differ from the spec's derived ones.
+    assert {row["id"] for row, got in rows if row["lead"] != got} == {"U7", "A1d", "A2", "A3", "A4", "A7"}
+    spec = (ROOT / "docs/spec/question-answering.md").read_text().splitlines()
+    rendered = REPORT.render()
+    for row, got in rows:
+        assert any(line.startswith(f"| {row['id']} |") and row["quote"] in line for line in spec), row
+        assert f"| {row['id']} | {row['lead']} | {row['line']} | {got} | {row.get('delta', '—')} |" in rendered
+    # The opposite direction: a differing lead with no row, an agreeing lead with one, a row that does not name it.
+    saved = json.loads((REPORT.Q26 / "expected.json").read_text())
+    monkeypatch.setattr(REPORT, "Q26", tmp_path)
+    for ident, delta in (("A3", None), ("G1", "D6"), ("A3", "D15")):
+        changed = json.loads(json.dumps(saved))
+        [row] = [r for r in changed["fixtures"] if r["id"] == ident]
+        row.pop("delta", None) if delta is None else row.update(delta=delta)
+        (tmp_path / "expected.json").write_text(json.dumps(changed))
+        with pytest.raises(ValueError, match=f"^{ident}: "):
+            REPORT.expected_rows(fixtures)
+
+
+def test_q26_wording_counts_cover_every_saved_answer_line():
+    from ve.backends.english_lean import STATUSES
+    answers = {e["id"]: e["result"] for e in (json.loads(p.read_text()) for p in
+                                              (ROOT / "tests/fixtures/ask").glob("[AGU]*.json")) if "result" in e}
+    wording = json.loads((REPORT.Q26 / "wording.json").read_text())
+    assert list(wording["frames"]) == ["S1", "S2", "S2p", "S3"]
+    shown = sorted((ident, i, line["frame"], line["text"]) for ident, result in answers.items()
+                   for i, line in enumerate(result["lines"]) if line["frame"] in wording["frames"])
+    assert shown == sorted((r["fixture"], r["line"], r["frame"], r["text"]) for r in wording["situation_lines"])
+    for row in wording["situation_lines"]:
+        assert "; ".join(c["clause"] for c in row["clauses"]) in row["text"] and row["clauses"]
+        assert all(c["status"] in {*STATUSES, "unavailable"} for c in row["clauses"])
+    fallback = {ident: [i for i, line in enumerate(result["lines"]) if 'classified as "' in line["text"]]
+                for ident, result in answers.items()}
+    assert {row["fixture"]: row["lines"] for row in wording["fallback"]} == fallback
+    rendered = REPORT.render()
+    showing = [ident for ident, lines in fallback.items() if lines]
+    assert (f"{len(showing)} of {len(answers)} answers" in rendered and
+            f"on {sum(map(len, fallback.values()))} lines." in rendered)
+    for frame in wording["frames"]:
+        clauses = [c for r in wording["situation_lines"] if r["frame"] == frame for c in r["clauses"]]
+        assert (f"| {frame} | {sum(s[2] == frame for s in shown)} | {len(clauses)} | "
+                f"{sum(c['status'] == 'one' for c in clauses)} |") in rendered
+    assert rendered.endswith("Reading and writing evaluation: sealed and bars registered "
+                             "(docs/question-answering/q2-6/readability/); not run, no model call.\n")

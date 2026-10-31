@@ -4,3 +4,4 @@
 - `docs/scope/sc-3a/evidence/spec_diff.py` — Compare SC-3a's built declarations with docs/spec/scope.md 4.1 and 5.5, ignoring whitespace and comments, and theorems up to `:=`.
 - `docs/scope/sc-3a/evidence/statements_unchanged.py` — Compare every theorem statement of lean/statements.txt at main with HEAD, ignoring the `-- uses` and `-- expr` metadata lines (the expression hash moves when a…
 - `docs/scope/sc-3ab/evidence/spec_diff.py` — sc-3ab's statement gate.
+- `docs/scope/sc-5rd/EveryChoiceCounterexample.lean` — sc-5rd: `governSets_every_choice`'s counterexample (every-choice-counterexample.md).

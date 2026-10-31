@@ -1,0 +1,109 @@
+{
+ "unavailable": [
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261010T1800Z:usecases/claude-constitution-pilot/run-20261010T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a and AR-20)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261012T1800Z:usecases/claude-constitution-pilot/run-20261012T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a and AR-20)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261013T0600Z:usecases/claude-constitution-pilot/run-20261013T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a and AR-20)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261014T1800Z:usecases/claude-constitution-pilot/run-20261014T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a and AR-20)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261015T0600Z:usecases/claude-constitution-pilot/run-20261015T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a and AR-20)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261016T0600Z:usecases/claude-constitution-pilot/run-20261016T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a and AR-20)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261017T0600Z:usecases/claude-constitution-pilot/run-20261017T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a and AR-20)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261017T1800Z:usecases/claude-constitution-pilot/run-20261017T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a and AR-20)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261018T1800Z:usecases/claude-constitution-pilot/run-20261018T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a and AR-20)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261019T0600Z:usecases/claude-constitution-pilot/run-20261019T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a and AR-20)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261019T1800Z:usecases/claude-constitution-pilot/run-20261019T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a and AR-20)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261021T0600Z:usecases/claude-constitution-pilot/run-20261021T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a and AR-20)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261021T1800Z:usecases/claude-constitution-pilot/run-20261021T1800Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a and AR-20)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261026T0600Z:usecases/claude-constitution-pilot/run-20261026T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a and AR-20)."
+  },
+  {
+   "authority": "default",
+   "case": "pilot/cc-20261028T0600Z:usecases/claude-constitution-pilot/run-20261028T0600Z/probes/companion/translation-companions-with_source_word.ve.md",
+   "corpus": "pilots",
+   "op": "document_check",
+   "reason": "The same pre-existing ReadingsConstruction CheckerUnavailable (Python cannot build the English of the document Lean admitted: KeyError) at base and head; identical outputs (listed by lf-18, AR-16a and AR-20)."
+  }
+ ]
+}

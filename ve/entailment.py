@@ -10,6 +10,8 @@ from dataclasses import dataclass, field
 from functools import lru_cache
 from typing import Any, Sequence
 
+from .backends.dispatch import owned
+from .backends.lean_runner import route_mode
 from .assurance import semantic_entry
 from .ast import (And, Atom, Binary, Bottom, Const, Document, Eq, Exists, Forall, Implies,
                    Not, Or, Top, Unary, Var, Reach, Named, check_document, _Checker)
@@ -710,7 +712,6 @@ def check_entailment_certificate(env: Any, premises: Sequence[Any], conclusion: 
     replays with labelled generated premises belong to the retained proof
     generator (rule 3: generator-internal, never reported) and stay Python's.
     """
-    from .backends.dispatch import owned
     if not _background or _generated_premises is not None or not lean_check_scope(env):
         return _check_certificate_python(env, premises, conclusion, certificate, max_steps=max_steps,
                                          _background=_background, _generated_premises=_generated_premises)
@@ -729,7 +730,6 @@ def lean_check_scope(env) -> bool:
 def _check_certificate_lean(env, premises, conclusion, certificate, max_steps) -> EntailmentCertificateCheck:
     """Send a certificate to Lean, which owns binding, replay and charging."""
     from .ast import _to_data
-    from .backends.lean_runner import route_mode
     from .backends.relay import decide
     if getattr(env, "alternatives", None) is not None:
         return EntailmentCertificateCheck(False, "InvalidCertificate", 0,

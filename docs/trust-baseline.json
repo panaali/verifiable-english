@@ -1573,6 +1573,55 @@
    "reason": "pc-3 (profile-composition PC-3, the composition contract): K +0, S +62, V +52, trusted +114 against e73ded834. S: VE/Compose/Contract.lean +55 (Rewriter, Rewriter.Laws, ScopeRunsOf, ScopeRuns, ScopeFaithful, ScopePreserves, ScopeSetsFaithful, RouteFacts: the approved statements of profile-composition 1.4-1.5, checked by tools/check_pc3_statements.py), VE/Compose/Dispatch.lean +7 (Interface, the interface field of ProfileRow). V (untied G[V]): VE/Compose/Contract.lean +27 (pipeline, pipelineOf, scopeRewriter, docRewriters), VE/Compose/Stack.lean +15 (rewriters, stackOf, listedStacks), VE/Compose/Dispatch.lean +10 (slotAgrees). New Lean-owned behaviour; no Python or Rust copy. FOLLOW-UP: a ties pass binding the G[V] lines.",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-3, 2026-10-31",
    "commit": "e73ded83483ad43164d596e1fe910e9bc60c2b2e"
+  },
+  {
+   "class": "V",
+   "lines": 104,
+   "reason": "ap-3d: K +0, S -2, V +104 (trusted +102): Decode.lean +35, Wire.lean +26, Lexical.lean +25 (check's body moved into checkWith and joinCheck, no longer tied through check_spec), Elaborate.lean +16",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-3d, 2026-10-31",
+   "commit": "d422a29ca771afd4903379dd694feeaa4a7926a0"
+  },
+  {
+   "class": "S",
+   "lines": 29,
+   "reason": "ap-2bb: VE/Acts/Meaning.lean S +22 (normalOk, Filler.parts, longEnd), VE/Acts/Linearize.lean S +7 (Atom.canon; Atom.normal reads canon's order); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-2bb, 2026-10-18",
+   "commit": "432763b06d8d4d50d06fdae218c5c53f2f267cec"
+  },
+  {
+   "class": "V",
+   "lines": 8,
+   "reason": "qt-a3cb: lean/VE/Cardinality/Run.lean +8 untied V (D[V] sizesJson 4; G[V] runCase +4, the countermodel kind; Run.countermodel is G[V] tied by countermodel_sound; regionSizes, sizeIndex, withSizes, Body.evalBy are C by withSizes_eq; regionCost G[R]); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3cb, 2026-10-30",
+   "commit": "96c5d418d98eb79a764b513f6f2d8f9b65125fcf"
+  },
+  {
+   "class": "S",
+   "lines": 31,
+   "reason": "ap-4a: lean/VE/Acts/Grammar.lean S +31 (Attach, Kind, the rule kind field and the edge kinds the table writes, attachOf, edgeLhs; modifier_edges); K +0; phraseReadings G[V] tied to phraseReadings_exact",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-4a, 2026-10-18",
+   "commit": "327bf922a1197c94af231d8d02f0c76718649aab"
+  },
+  {
+   "class": "V",
+   "lines": 2,
+   "reason": "scale-stage-timers: Serve.lean +2 untied V (main installs the env-gated stage-timer stderr stream, VE_READINGS_STAGE_TIMES); VE/Readings/Stage.lean and VE/Service/StageTimes.lean are G[R] diagnostics (stage_eq, part_eq: the value is the work's own); the five admission stages wrap their bodies on their own lines (+0); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), scale-stage-timers, 2026-10-31",
+   "commit": "fc70208186d5017304f4798636ae24282f9fc8fa"
+  },
+  {
+   "class": "V",
+   "lines": 23,
+   "reason": "jt-2c: VE/Compose/Dispatch.lean +12 (decidingEnvironment, documentLayersApart), VE/NormDefaults/Run.lean +4 (pendingDocumentLayer, the elaboration's deciding read), VE/Norms/Plain.lean +3, VE/Service/Standalone.lean +3 (check, model, metered), VE/EnglishGrammar/Run.lean +1; K +0, S +0, total +23",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-2c, 2026-10-18",
+   "commit": "1f28dddfb3ef480ba7680d6a7c51cb801e9cb876"
+  },
+  {
+   "class": "V",
+   "lines": 12,
+   "reason": "jt-2c F1: VE/Compose/Dispatch.lean +12 (layersApart, layerGate: the document layer's own requirement over the list as written in decidingEnvironment); cumulative jt-2c growth V +35, K +0, S +0; Compose/Examples #guards and tests/test_judgments_compose.py cover both definitions",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), jt-2c F1, 2026-10-30",
+   "commit": "432763b06d8d4d50d06fdae218c5c53f2f267cec"
   }
  ]
 }
