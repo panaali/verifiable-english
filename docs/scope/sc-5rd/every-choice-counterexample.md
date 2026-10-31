@@ -26,4 +26,4 @@ the reading's content `"x"`. With every unit an object (or with distinct unit id
 exclude it: `checkDocSets` reaches `governSets` after `decodeScope` (`decodeBlock` checks only `jsonWF?` and the
 block's parts).
 
-Mechanised: `lean/VE/Scope/ReadingsExamples.lean`, `-- sc-5rd: governSets_every_choice's counterexample` (`#guard`).
+Mechanised: `docs/scope/sc-5rd/EveryChoiceCounterexample.lean` (`#guard`s; run from `lean/` with `lake env lean`).
