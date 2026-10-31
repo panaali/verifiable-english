@@ -4386,6 +4386,37 @@
         "VE.EnglishGrammar.sensesRequest"
       ]
     },
+    "VE/EnglishGrammar/SourceWords.lean": {
+      "S": [
+        "VE.EnglishGrammar.SourceWordKind",
+        "VE.EnglishGrammar.SourceWordReading",
+        "VE.EnglishGrammar.SourceWordRow",
+        "VE.EnglishGrammar.SourceWordRow.key",
+        "VE.EnglishGrammar.SourceWordRow.validIdentity",
+        "VE.EnglishGrammar.SourceWordRow.validKind",
+        "VE.EnglishGrammar.sourceWords",
+        "VE.EnglishGrammar.sourceWordNormal",
+        "VE.EnglishGrammar.sourceWordsValid"
+      ],
+      "G[V]": [
+        "VE.EnglishGrammar.SourceWordKind.toJson",
+        "VE.EnglishGrammar.SourceWordRow.toJson",
+        "VE.EnglishGrammar.sourceWordsJson"
+      ]
+    },
+    "VE/EnglishGrammar/SourceWordsExamples.lean": {
+      "T": [
+        "VE.EnglishGrammar.SourceWordsExamples.a",
+        "VE.EnglishGrammar.SourceWordsExamples.b",
+        "VE.EnglishGrammar.SourceWordsExamples.base",
+        "VE.EnglishGrammar.SourceWordsExamples.kindFixedJson",
+        "VE.EnglishGrammar.SourceWordsExamples.kindReadingJson",
+        "VE.EnglishGrammar.SourceWordsExamples.kindRefuseJson",
+        "VE.EnglishGrammar.SourceWordsExamples.reading",
+        "VE.EnglishGrammar.SourceWordsExamples.refusal",
+        "VE.EnglishGrammar.SourceWordsExamples.rowJson"
+      ]
+    },
     "VE/EnglishGrammar/Syntax.lean": {
       "G[V]": [
         "VE.EnglishGrammar.DState",
@@ -12656,11 +12687,6 @@
         "relName"
       ]
     },
-    "VE/Numbers/Bits.lean": {
-      "C": [
-        "VE.Numbers.bits"
-      ]
-    },
     "VE/Acts/Syntax.lean": {
       "S": [
         "VE.Acts.Frame",
@@ -13531,11 +13557,18 @@
         "VE.Cardinality.CTerm.eraseBy",
         "VE.Cardinality.CFormula.eraseBy",
         "VE.Cardinality.nonnegOf",
-        "VE.Cardinality.bridgeBy"
+        "VE.Cardinality.bridgeBy",
+        "VE.Cardinality.Body.evalBy",
+        "VE.Cardinality.regionSizes",
+        "VE.Cardinality.sizeIndex",
+        "VE.Cardinality.withSizes"
       ],
       "P": [
         "VE.Cardinality.regionSize",
         "VE.Cardinality.withRegions"
+      ],
+      "G[R]": [
+        "VE.Cardinality.regionCost"
       ]
     },
     "VE/Cardinality/Theorems.lean": {
@@ -15625,7 +15658,8 @@
         },
         "VE.Cardinality.Run.statementJson",
         "VE.Cardinality.Run.claimJson",
-        "VE.Cardinality.Run.reportJson"
+        "VE.Cardinality.Run.reportJson",
+        "VE.Cardinality.Run.sizesJson"
       ],
       "D[I]": [
         "VE.Cardinality.Run.erasedIds",
@@ -15649,7 +15683,13 @@
       ],
       "G[V]": [
         "VE.Cardinality.Run.runCase",
-        "VE.Cardinality.Run.runCaseReported"
+        "VE.Cardinality.Run.runCaseReported",
+        {
+          "name": "VE.Cardinality.Run.countermodel",
+          "tied": [
+            "VE.Cardinality.countermodel_sound"
+          ]
+        }
       ],
       "C": [
         "VE.Cardinality.checkDeduction",
@@ -15718,7 +15758,20 @@
         "VE.Cardinality.RunExamples.fa1Report",
         "VE.Cardinality.RunExamples.fa1LeafRows",
         "VE.Cardinality.RunExamples.withLeaves",
-        "VE.Cardinality.RunExamples.closes"
+        "VE.Cardinality.RunExamples.closes",
+        "VE.Cardinality.RunExamples.model",
+        "VE.Cardinality.RunExamples.fa1bModel",
+        "VE.Cardinality.RunExamples.refute",
+        "VE.Cardinality.RunExamples.sizes",
+        "VE.Cardinality.RunExamples.refusal",
+        "VE.Cardinality.RunExamples.sized",
+        "VE.Cardinality.RunExamples.chainSorts",
+        "VE.Cardinality.RunExamples.chainPreds",
+        "VE.Cardinality.RunExamples.chainEnv",
+        "VE.Cardinality.RunExamples.chainPremise",
+        "VE.Cardinality.RunExamples.chainModel",
+        "VE.Cardinality.RunExamples.chain",
+        "VE.Cardinality.RunExamples.rel"
       ]
     },
     "VE/Cardinality/RunTheorems.lean": {},
@@ -15840,36 +15893,6 @@
         "VE.Acts.MeaningExamples.toks"
       ]
     },
-    "VE/Acts/RenderExamples.lean": {
-      "T": [
-        "VE.Acts.RenderExamples.V2s",
-        "VE.Acts.RenderExamples.Vk",
-        "VE.Acts.RenderExamples.Vo",
-        "VE.Acts.RenderExamples.Vs",
-        "VE.Acts.RenderExamples.atMod",
-        "VE.Acts.RenderExamples.back",
-        "VE.Acts.RenderExamples.c2",
-        "VE.Acts.RenderExamples.fr3",
-        "VE.Acts.RenderExamples.fr4",
-        "VE.Acts.RenderExamples.fr5",
-        "VE.Acts.RenderExamples.give",
-        "VE.Acts.RenderExamples.held2",
-        "VE.Acts.RenderExamples.heldBy1",
-        "VE.Acts.RenderExamples.help",
-        "VE.Acts.RenderExamples.joinedObj",
-        "VE.Acts.RenderExamples.mixed",
-        "VE.Acts.RenderExamples.n1",
-        "VE.Acts.RenderExamples.noTo",
-        "VE.Acts.RenderExamples.obj",
-        "VE.Acts.RenderExamples.ordered",
-        "VE.Acts.RenderExamples.participate",
-        "VE.Acts.RenderExamples.roundTrip",
-        "VE.Acts.RenderExamples.seek",
-        "VE.Acts.RenderExamples.send",
-        "VE.Acts.RenderExamples.text",
-        "VE.Acts.RenderExamples.toBoth"
-      ]
-    },
     "VE/Readings/DefaultVerdicts.lean": {
       "S": [
         "VE.Readings.choiceSoft",
@@ -15975,7 +15998,9 @@
         "ResponseShape.Schemas.Cardinality.statement",
         "ResponseShape.Schemas.Cardinality.envIds",
         "ResponseShape.Schemas.Cardinality.claim",
-        "ResponseShape.Schemas.Cardinality.document"
+        "ResponseShape.Schemas.Cardinality.document",
+        "ResponseShape.Schemas.Cardinality.sizes",
+        "ResponseShape.Schemas.Cardinality.countermodel"
       ]
     },
     "ResponseShape/Encoders/Cardinality.lean": {
@@ -16142,35 +16167,48 @@
         "VE.Events.WireExamples.softP"
       ]
     },
-    "VE/EnglishGrammar/SourceWords.lean": {
+    "VE/Cardinality/Document.lean": {
       "S": [
-        "VE.EnglishGrammar.SourceWordKind",
-        "VE.EnglishGrammar.SourceWordReading",
-        "VE.EnglishGrammar.SourceWordRow",
-        "VE.EnglishGrammar.SourceWordRow.key",
-        "VE.EnglishGrammar.SourceWordRow.validIdentity",
-        "VE.EnglishGrammar.SourceWordRow.validKind",
-        "VE.EnglishGrammar.sourceWords",
-        "VE.EnglishGrammar.sourceWordNormal",
-        "VE.EnglishGrammar.sourceWordsValid"
+        "VE.Cardinality.CardReport",
+        "VE.Cardinality.CardReport.Sound"
+      ],
+      "P": [
+        "VE.Cardinality.Document.Checks",
+        "VE.Cardinality.Document.Entry.Sound"
+      ],
+      "C": [
+        "VE.Cardinality.Document.lookup",
+        "VE.Cardinality.Document.union",
+        "VE.Cardinality.Document.checkGraph",
+        "VE.Cardinality.Document.admitGraph",
+        "VE.Cardinality.Document.Graph.leaves"
+      ],
+      "D[V]": [
+        {
+          "name": "VE.Cardinality.Document.decodeNode",
+          "tied": [
+            "VE.Cardinality.Document.decodeNode_statement"
+          ]
+        },
+        {
+          "name": "VE.Cardinality.Document.Graph.report",
+          "tied": [
+            "VE.Cardinality.Document.admitGraph_sound"
+          ]
+        }
+      ],
+      "G[R]": [
+        "VE.Cardinality.Document.maxGraphNodes",
+        "VE.Cardinality.Document.maxDeductionNodes",
+        "VE.Cardinality.Document.graphRejected",
+        "VE.Cardinality.Document.nodeLimit",
+        "VE.Cardinality.Document.deductionLimit"
       ],
       "G[V]": [
-        "VE.EnglishGrammar.SourceWordKind.toJson",
-        "VE.EnglishGrammar.SourceWordRow.toJson",
-        "VE.EnglishGrammar.sourceWordsJson"
-      ]
-    },
-    "VE/EnglishGrammar/SourceWordsExamples.lean": {
-      "T": [
-        "VE.EnglishGrammar.SourceWordsExamples.a",
-        "VE.EnglishGrammar.SourceWordsExamples.b",
-        "VE.EnglishGrammar.SourceWordsExamples.base",
-        "VE.EnglishGrammar.SourceWordsExamples.kindFixedJson",
-        "VE.EnglishGrammar.SourceWordsExamples.kindReadingJson",
-        "VE.EnglishGrammar.SourceWordsExamples.kindRefuseJson",
-        "VE.EnglishGrammar.SourceWordsExamples.reading",
-        "VE.EnglishGrammar.SourceWordsExamples.refusal",
-        "VE.EnglishGrammar.SourceWordsExamples.rowJson"
+        "VE.Cardinality.Document.CNode",
+        "VE.Cardinality.Document.Entry",
+        "VE.Cardinality.Document.Graph",
+        "VE.Cardinality.Document.Entries"
       ]
     },
     "VE/Service/SoftSourceExamples.lean": {
@@ -16200,6 +16238,41 @@
         "VE.Arith.Examples.exPrime",
         "VE.Arith.Examples.stops",
         "VE.Arith.Examples.vePrime"
+      ]
+    },
+    "VE/Numbers/Bits.lean": {
+      "C": [
+        "VE.Numbers.bits"
+      ]
+    },
+    "VE/Acts/RenderExamples.lean": {
+      "T": [
+        "VE.Acts.RenderExamples.V2s",
+        "VE.Acts.RenderExamples.Vk",
+        "VE.Acts.RenderExamples.Vo",
+        "VE.Acts.RenderExamples.Vs",
+        "VE.Acts.RenderExamples.atMod",
+        "VE.Acts.RenderExamples.back",
+        "VE.Acts.RenderExamples.c2",
+        "VE.Acts.RenderExamples.fr3",
+        "VE.Acts.RenderExamples.fr4",
+        "VE.Acts.RenderExamples.fr5",
+        "VE.Acts.RenderExamples.give",
+        "VE.Acts.RenderExamples.held2",
+        "VE.Acts.RenderExamples.heldBy1",
+        "VE.Acts.RenderExamples.help",
+        "VE.Acts.RenderExamples.joinedObj",
+        "VE.Acts.RenderExamples.mixed",
+        "VE.Acts.RenderExamples.n1",
+        "VE.Acts.RenderExamples.noTo",
+        "VE.Acts.RenderExamples.obj",
+        "VE.Acts.RenderExamples.ordered",
+        "VE.Acts.RenderExamples.participate",
+        "VE.Acts.RenderExamples.roundTrip",
+        "VE.Acts.RenderExamples.seek",
+        "VE.Acts.RenderExamples.send",
+        "VE.Acts.RenderExamples.text",
+        "VE.Acts.RenderExamples.toBoth"
       ]
     },
     "VE/Scope/English.lean": {
@@ -16317,50 +16390,6 @@
         "VE.Calc.WorkExamples.zero",
         "VE.Calc.WorkExamples.zs",
         "VE.Calc.WorkExamples.κz"
-      ]
-    },
-    "VE/Cardinality/Document.lean": {
-      "S": [
-        "VE.Cardinality.CardReport",
-        "VE.Cardinality.CardReport.Sound"
-      ],
-      "P": [
-        "VE.Cardinality.Document.Checks",
-        "VE.Cardinality.Document.Entry.Sound"
-      ],
-      "C": [
-        "VE.Cardinality.Document.lookup",
-        "VE.Cardinality.Document.union",
-        "VE.Cardinality.Document.checkGraph",
-        "VE.Cardinality.Document.admitGraph",
-        "VE.Cardinality.Document.Graph.leaves"
-      ],
-      "D[V]": [
-        {
-          "name": "VE.Cardinality.Document.decodeNode",
-          "tied": [
-            "VE.Cardinality.Document.decodeNode_statement"
-          ]
-        },
-        {
-          "name": "VE.Cardinality.Document.Graph.report",
-          "tied": [
-            "VE.Cardinality.Document.admitGraph_sound"
-          ]
-        }
-      ],
-      "G[R]": [
-        "VE.Cardinality.Document.maxGraphNodes",
-        "VE.Cardinality.Document.maxDeductionNodes",
-        "VE.Cardinality.Document.graphRejected",
-        "VE.Cardinality.Document.nodeLimit",
-        "VE.Cardinality.Document.deductionLimit"
-      ],
-      "G[V]": [
-        "VE.Cardinality.Document.CNode",
-        "VE.Cardinality.Document.Entry",
-        "VE.Cardinality.Document.Graph",
-        "VE.Cardinality.Document.Entries"
       ]
     },
     "VE/Closure/CoreEquiv.lean": {
