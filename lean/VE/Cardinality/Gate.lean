@@ -45,7 +45,7 @@ theorem gate_cardinality (ps : List String) (h : "cardinality@0" ∈ ps) (hj : "
   · intro hg
     obtain ⟨⟨hs, hk, hrows⟩, rfl⟩ := (gateOf_iff _ _ _).mp hg
     obtain ⟨hreq, href⟩ := hrows ⟨"cardinality@0", ["order@0", "relational-fol@0", "time@0"],
-      refusing "cardinality@0" cardinalityOthers, "layer"⟩ (by simp [profileTable, baseRows]) (.inl h)
+      refusing "cardinality@0" cardinalityOthers, "layer", .layer⟩ (by simp [profileTable, baseRows]) (.inl h)
     have hsub : ∀ x ∈ ps, x = "documents@1" ∨ x ∈ ["cardinality@0", "order@0", "relational-fol@0", "time@0"] := by
       intro x hx
       obtain ⟨row, hr, rfl⟩ := hk x hx
