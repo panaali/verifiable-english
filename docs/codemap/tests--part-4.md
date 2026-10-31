@@ -1,3 +1,4 @@
+- `tests/test_lean_statements_parts.py` — tools/lean_statements.py prints the statements in parts run at once (eff-20261027-1, PIPELINE-LIMITS L76).
 - `tests/test_legend.py` — Compact legends preserve judge context without JSON document overhead.
 - `tests/test_lexicon.py` — Pinned lexical data, advisory classification, and proposal provenance.
 - `tests/test_lf14a_long_parse.py` — A valid sugar expansion may exceed the public printer's output limit.
