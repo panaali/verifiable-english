@@ -1,0 +1,6 @@
+trust_mutants: 11 definitions, 248 mutants (62 to run), 4 jobs, base 9e33c741bef4
+SURVIVOR lean/VE/Readings/Choice.lean:484 VE.Readings.aimedOwners (G[V], trusted) list-first: VE.SoftNorms.dedup ((VE.Rights.linesOf (sup D).1).filterMap (fun RN => if VE.Rights.libertyKind R... -> ((VE.SoftNorms.dedup ((VE.Rights.linesOf (sup D).1).filterMap (fun RN => if VE.Rights.libertyKind... (the proofs it breaks: lean/VE/Readings/SupSlot.lean:176, lean/VE/Readings/BarQuiet.lean:24)
+SURVIVOR lean/VE/Readings/Choice.lean:450 VE.Readings.gateContent (G[V], trusted) list-first: R.lines.map (gateLine D m i) -> ((R.lines.map (gateLine D m i)).take 1) (the proofs it breaks: lean/VE/Readings/Shape.lean:48)
+SURVIVOR lean/VE/Readings/Choice.lean:415 VE.Readings.rightCopies (G[V], trusted) list-drop-last: (interfaceOf R) -> ((interfaceOf R).dropLast)
+SURVIVOR lean/VE/Readings/Choice.lean:427 VE.Readings.copyScope (G[V], trusted) list-first: (· -> (fun x_tm => (x_tm.take 1) (the proofs it breaks: lean/VE/Readings/SupSlot.lean:51)
+SURVIVOR lean/VE/Readings/Choice.lean:451 VE.Readings.gateContent (G[V], trusted) list-first: ls -> (ls.take 1) (the proofs it breaks: lean/VE/Readings/Shape.lean:48)
