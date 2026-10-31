@@ -1,0 +1,16 @@
+trust_mutants: 11 definitions, 179 mutants (44 to run), 4 jobs, base c66a6e25795a
+SURVIVOR lean/VE/Acts/Sources.lean:127 VE.Acts.SourceExact (S, trusted) not-drop: ¬ ->  (the proofs it breaks: lean/VE/Acts/Sources.lean:158)
+UNKNOWN lean/VE/Acts/Sources.lean:48 VE.Acts.ruleView (S, trusted) list-empty: r.act -> [] (lean/VE/Acts/Sources.lean:48: Type mismatch)
+UNKNOWN lean/VE/Acts/Sources.lean:74 VE.Acts.readingViews (S, trusted) list-empty: Rs -> [] (lean/VE/Acts/Sources.lean:74: Invalid field notation: Type of)
+UNKNOWN lean/VE/Acts/Sources.lean:124 VE.Acts.SourceExact (S, trusted) eq-le: = -> ≤ (lean/VE/Acts/Sources.lean:124: failed to synthesize)
+UNKNOWN lean/VE/Acts/Sources.lean:48 VE.Acts.ruleView (S, trusted) list-empty: r.act.map -> [] (lean/VE/Acts/Sources.lean:48: Function expected at)
+SURVIVOR lean/VE/Acts/Sources.lean:126 VE.Acts.SourceExact (S, trusted) list-empty: Rs -> [] (the proofs it breaks: lean/VE/Acts/Sources.lean:158)
+SURVIVOR lean/VE/Acts/Sources.lean:123 VE.Acts.SourceExact (S, trusted) eq-ne: = -> ≠ (the proofs it breaks: lean/VE/Acts/Sources.lean:158)
+SURVIVOR lean/VE/Acts/Situation.lean:17 VE.Acts.rulePreds (G[V], trusted) list-first: match (VE.Readings.candidate D s i).bind (·.content) with | some (.norm N) => [N.pred] | _ => [] -> ((match (VE.Readings.candidate D s i).bind (·.content) with | some (.norm N) => [N.pred] | _ => [...
+SURVIVOR lean/VE/Acts/Situation.lean:24 VE.Acts.atomSituation (G[V], trusted) list-first: (rulePreds D s j) -> ((rulePreds D s j).take 1)
+SURVIVOR lean/VE/Acts/Situation.lean:17 VE.Acts.rulePreds (G[V], trusted) list-last: match (VE.Readings.candidate D s i).bind (·.content) with | some (.norm N) => [N.pred] | _ => [] -> ((match (VE.Readings.candidate D s i).bind (·.content) with | some (.norm N) => [N.pred] | _ => [...
+SURVIVOR lean/VE/Acts/Situation.lean:24 VE.Acts.atomSituation (G[V], trusted) list-last: (rulePreds D s j) -> ((rulePreds D s j).reverse.take 1)
+trust_mutants: 29 KILLED, 7 SURVIVOR, 4 UNKNOWN, 4 INVALID, 0 ALLOWED, 0 NOT RUN, 135 OTHER SHARD in 977 s
+trust_mutants: G[V], trusted: 8 KILLED, 4 SURVIVOR, 24 OTHER SHARD
+trust_mutants: S, trusted: 21 KILLED, 3 SURVIVOR, 4 UNKNOWN, 4 INVALID, 111 OTHER SHARD
+trust_mutants: steps: wall plan 10 s, scratch 3.2 s, control_build 0.2 s, probe_install 1.4 s, control_probes 23.4 s, mutants 936.8 s, cleanup 2.5 s; lake control_build 0.2 s (1), probe_install 1.3 s (1), control_probes 23.1 s (1), mutant_builds 78.3 s (47), mutant_checks 2181 s (37), stage_controls 1.9 s (1), mutant_probes 1412.5 s (29)
