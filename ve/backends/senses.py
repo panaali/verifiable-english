@@ -407,7 +407,7 @@ def project(env, packs: list[bytes], lines: str, used: list[str], *, own: list[d
         raise VEError("Invalid senses request JSON") from exc
     # The manifest's binding of `senses.project` fixes the service mode; an answer out of its schema is
     # CheckerUnavailable there, and Lean's refusal raises its own diagnostic.
-    [row] = lean_backend.run(PROJECT, None, [case], runner="ve_service", mode=PROJECT)
+    [row] = lean_backend.run("senses.project", None, [case], runner="ve_service", mode="senses.project")
     problem = _projection_problem(row, case, env, _dictionary(packs, own)[0])
     if problem:
         raise CheckerUnavailable("CheckerUnavailable: malformed senses projection: " + problem)
