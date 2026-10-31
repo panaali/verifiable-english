@@ -1,4 +1,5 @@
-import VE.Acts.Meaning
+import VE.Acts.Syntax
+import VE.Acts.Tree
 import VE.Norms.Tree
 
 /-! The normal form and the text of a simple act (docs/spec/act-phrases.md 5.5).
@@ -7,8 +8,8 @@ The normal form of an atom is `{0}`, *to*, *be*, its adverbs, its head, its obje
 (marker words, then the filler; a joined filler as `A, B or C` after its marker once), then its prepositional
 modifiers. Its text separates the tokens by spaces, attaches a comma to the token before it, and writes a fixed
 phrase as declared (canonical). A part's act (`partAct`, used by the elaboration of 6.3) is that text, with *to*
-exactly when its predicate is plain. `Atom.canon` is the atom in the order its normal form reads back, and `normalOk`
-the atoms whose normal form is meant to read back as that (5.5; `read_normal`, 5.6).
+exactly when its predicate is plain. `Atom.canon` is the atom in the order its normal form reads back (5.5); the atoms
+whose normal form reads back as that are `normalOk`'s (`VE.Acts.Meaning`, beside `atomOk`; `read_normal`, 5.6).
 -/
 
 namespace VE.Acts
@@ -48,26 +49,6 @@ def Atom.normal (a : Atom) : List Tok :=
   a.mods.flatMap (fun md => match md with | .adv w => [Tok.word w] | _ => []) ++ a.head.map Tok.word ++
   a.canon.args.flatMap (fun x => (wordsOf x.1).map Tok.word ++ x.2.toks) ++
   a.mods.flatMap (fun md => match md with | .prep m p => (wordsOf m).map Tok.word ++ p.toks | _ => [])
-
-def Filler.parts : Filler → List Part
-  | .one p => [p]
-  | .joined _ ps => ps
-
-/-- An atom whose normal form reads back (5.5): it fits its frame (`atomOk`); every part of an argument or a modifier
-is a non-empty run of the frame's filler words, a slot other than the subject `{0}`, or a fixed phrase; no argument
-marker occurs twice; and every joined filler has two or more parts, does not sit under a split marker (the object's
-`""` included) and, by D9 (i), has no first or last part of two or more words (`longEnd`; DRI 2026-10-30, ap-2bb). -/
-def normalOk (V : Vocab) (a : Atom) : Bool :=
-  match V.frames.find? (·.head == a.head) with
-  | none => false
-  | some f =>
-    atomOk V a &&
-    (a.args.flatMap (·.2.parts) ++ a.mods.filterMap (fun | .prep _ p => some p | .adv _ => none)).all (fun
-      | .words ws => !ws.isEmpty && ws.all (fun w => !(fillExcl V f).contains w.toLower)
-      | .slot i => i != 0
-      | .fixed _ => true) &&
-    decide (a.args.map (·.1)).Nodup &&
-    a.args.all (fun | (m, .joined _ ps) => !f.split.contains m && 2 ≤ ps.length && !longEnd ps | (_, .one _) => true)
 
 def tokStr (fx : List String) : Tok → String
   | .word w => w
