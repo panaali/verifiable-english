@@ -2226,7 +2226,9 @@
       "lean/VE/Scope/Run.lean": "lean:runner-glue: the `scope` mode (SC-1c) reads the case's `id` and `document` (the document mode's `split` and scope's `decodeBlock`, unchanged) and writes its answer rows (govJson, rowJson, governedJson); no decoder of its own",
       "lean/VE/Closure/CoreEquiv.lean": "proof only: decodeTrace_ne_embed builds one JSON trace node with Json.mkObj, the kernel-checked counterexample to the closure and Core trace decoders' equality (AR-21); no decoder and no runner path",
       "lean/VE/Scope/EffectLemmas.lean": "statements about the base guard decoder (budgetFormula_val: its value does not depend on the node count or depth fuel) and about substOwn at scalar and term positions, for spec 5.4's own_congr; no runtime JSON handling",
-      "lean/VE/Acts/DecodeExamples.lean": "fixtures only: `#guard`s that build environment and norm JSON and decode it with decodeElaboratedU (act-phrases ap-3d); no admission path, service mode or record reads them"
+      "lean/VE/Acts/DecodeExamples.lean": "fixtures only: `#guard`s that build environment and norm JSON and decode it with decodeElaboratedU (act-phrases ap-3d); no admission path, service mode or record reads them",
+      "lean/VE/Scope/ReadingsLemmas.lean": "lemmas about the JSON trees `atChoiceOn` and `assemble` build (what a lookup reads back after setObjVal! on a well-formed tree; the parts of a successful `governSets`), for the statements of scope spec 11.3; no runtime JSON handling",
+      "lean/VE/Scope/ReadingsTheorems.lean": "statements about `governSets`' JSON answer (governSets_preserves, governSets_strings, governSets_readings_refused, scope spec 11.3); no runtime JSON handling"
     }
   },
   "plan_operations": {
