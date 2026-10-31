@@ -1,0 +1,14 @@
+trust_mutants: 10 definitions, 161 mutants (54 to run), 4 jobs, base c66a6e25795a
+SURVIVOR lean/VE/Acts/Sources.lean:72 VE.Acts.choiceViews (S, trusted) list-empty: (choicesOn D s.sets).map (fun c => (choiceRules D s c).map (ruleView D unspec)) -> [] (the proofs it breaks: lean/VE/Acts/Sources.lean:79)
+SURVIVOR lean/VE/Acts/Sources.lean:72 VE.Acts.choiceViews (S, trusted) list-empty: (choicesOn D s.sets) -> [] (the proofs it breaks: lean/VE/Acts/Sources.lean:79)
+SURVIVOR lean/VE/Acts/Sources.lean:72 VE.Acts.choiceViews (S, trusted) list-empty: (choiceRules D s c) -> [] (the proofs it breaks: lean/VE/Acts/Sources.lean:79)
+SURVIVOR lean/VE/Acts/Sources.lean:72 VE.Acts.choiceViews (S, trusted) list-first: (choicesOn D s.sets) -> ((choicesOn D s.sets).take 1) (the proofs it breaks: lean/VE/Acts/Sources.lean:79)
+SURVIVOR lean/VE/Acts/Sources.lean:72 VE.Acts.choiceViews (S, trusted) list-drop-last: (choiceRules D s c).map (ruleView D unspec) -> (((choiceRules D s c).map (ruleView D unspec)).dropLast) (the proofs it breaks: lean/VE/Acts/Sources.lean:79)
+SURVIVOR lean/VE/Acts/Sources.lean:72 VE.Acts.choiceViews (S, trusted) list-last: (choicesOn D s.sets).map (fun c => (choiceRules D s c).map (ruleView D unspec)) -> (((choicesOn D s.sets).map (fun c => (choiceRules D s c).map (ruleView D unspec))).reverse.take 1) (the proofs it breaks: lean/VE/Acts/Sources.lean:79)
+SURVIVOR lean/VE/Acts/Sources.lean:72 VE.Acts.choiceViews (S, trusted) list-drop-first: (choicesOn D s.sets) -> ((choicesOn D s.sets).drop 1) (the proofs it breaks: lean/VE/Acts/Sources.lean:79)
+SURVIVOR lean/VE/Acts/Sources.lean:72 VE.Acts.choiceViews (S, trusted) list-last: (choiceRules D s c) -> ((choiceRules D s c).reverse.take 1) (the proofs it breaks: lean/VE/Acts/Sources.lean:79)
+SURVIVOR lean/VE/Acts/Sources.lean:72 VE.Acts.choiceViews (S, trusted) list-drop-first: (choiceRules D s c) -> ((choiceRules D s c).drop 1) (the proofs it breaks: lean/VE/Acts/Sources.lean:79)
+trust_mutants: 26 KILLED, 9 SURVIVOR, 0 UNKNOWN, 6 INVALID, 13 ALLOWED, 0 NOT RUN, 107 OTHER SHARD in 1166 s
+trust_mutants: G[V], trusted: 4 KILLED, 14 OTHER SHARD
+trust_mutants: S, trusted: 22 KILLED, 9 SURVIVOR, 6 INVALID, 13 ALLOWED, 93 OTHER SHARD
+trust_mutants: steps: wall plan 9.8 s, scratch 3.1 s, control_build 0.2 s, probe_install 1.3 s, control_probes 25.1 s, mutants 1124 s, cleanup 2.3 s; lake control_build 0.2 s (1), probe_install 1.3 s (1), control_probes 24.7 s (1), mutant_builds 149.9 s (78), mutant_checks 2758.7 s (46), stage_controls 63.5 s (2), mutant_probes 1350.8 s (26)
