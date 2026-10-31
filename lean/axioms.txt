@@ -172,6 +172,7 @@
 'VE.Acts.ruleReading_ok' depends on axioms: [propext]
 'VE.Acts.schema_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.schema_ranked' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Acts.sourceCheck_choices_le' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.sourceCheck_exact' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.splitDoc_none' depends on axioms: [propext, Quot.sound]
 'VE.Acts.splits_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -191,6 +192,7 @@
 'VE.Acts.table_needNot' does not depend on any axioms
 'VE.Acts.table_one' does not depend on any axioms
 'VE.Acts.valueOf_eq_some' depends on axioms: [propext, Quot.sound]
+'VE.Acts.viewsOn_choices' depends on axioms: [propext]
 'VE.Alternatives.Admission.Admitted.sound' depends on axioms: [propext, Quot.sound]
 'VE.Alternatives.Admission.report_consequence' depends on axioms: [propext, Quot.sound]
 'VE.Alternatives.AltChain.A_in' depends on axioms: [propext, Classical.choice, Quot.sound]

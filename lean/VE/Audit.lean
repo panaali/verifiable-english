@@ -603,6 +603,7 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.ruleReading_ok
 #print axioms VE.Acts.schema_ok
 #print axioms VE.Acts.schema_ranked
+#print axioms VE.Acts.sourceCheck_choices_le
 #print axioms VE.Acts.sourceCheck_exact
 #print axioms VE.Acts.splitDoc_none
 #print axioms VE.Acts.splits_eq
@@ -622,6 +623,7 @@ import VE.WireContract.Engine
 #print axioms VE.Acts.table_needNot
 #print axioms VE.Acts.table_one
 #print axioms VE.Acts.valueOf_eq_some
+#print axioms VE.Acts.viewsOn_choices
 #print axioms VE.Alternatives.Admission.Admitted.sound
 #print axioms VE.Alternatives.Admission.report_consequence
 #print axioms VE.Alternatives.AltChain.A_in
