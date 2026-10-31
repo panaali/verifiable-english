@@ -2,23 +2,29 @@
 //! hash equals its lock entry, and every table's rows can be dumped for the comparison with the
 //! rows `tools/wire_contract.py` reads from the contract JSON (`tests/test_wire_contract_rust.py`).
 mod corpus_tables;
+mod keys_table;
 
 use serde_json::{Value as Json, json};
 use std::path::Path;
 use ve_kernel::contract::*;
-use ve_kernel::contract_tables;
+use ve_kernel::{contract_tables, digest, loads_json};
 
-fn modules() -> [(&'static [Source], &'static [&'static Table], &'static str); 2] {
+fn modules() -> [(&'static [Source], &'static [&'static Table], &'static str); 3] {
     [
         (contract_tables::SOURCES, contract_tables::TABLES, "ve/wire_contract/contracts.lock"),
         (corpus_tables::SOURCES, corpus_tables::TABLES, "conformance/wire-contract/contracts/contracts.lock"),
+        (keys_table::SOURCES, keys_table::TABLES, ""),
     ]
+}
+
+fn repository(relative: &str) -> std::path::PathBuf {
+    Path::new(env!("CARGO_MANIFEST_DIR")).join("../..").join(relative)
 }
 
 #[test]
 fn embedded_hashes_equal_their_lock_entries() {
-    for (sources, tables, lock) in modules() {
-        let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..").join(lock);
+    for (sources, tables, lock) in modules().into_iter().filter(|m| !m.2.is_empty()) {
+        let path = repository(lock);
         let lock: Json = serde_json::from_slice(&std::fs::read(&path).unwrap()).unwrap();
         for source in sources {
             let entry = &lock[source.file];
@@ -31,6 +37,15 @@ fn embedded_hashes_equal_their_lock_entries() {
             assert_eq!(source.revision, table.revision, "{file}");
         }
     }
+}
+
+/// `keys@0` has no lock (dri-decisions-20261031-wc-s4-2.md): its hash is the SHA-256 of its canonical JSON.
+#[test]
+fn the_keys_table_hash_equals_its_file() {
+    let bytes = std::fs::read(repository("rust/ve-kernel/tests/data/keys@0.json")).unwrap();
+    let value = loads_json(&bytes).unwrap();
+    assert_eq!(keys_table::SOURCES[0].sha256, digest("", &value).unwrap());
+    assert_eq!(value["revision"], keys_table::KEYS.revision);
 }
 
 fn kind_word(kind: &Kind) -> &'static str {

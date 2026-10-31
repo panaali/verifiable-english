@@ -26,6 +26,10 @@ DATA = ROOT / "ve/wire_contract"
 # kernel crate, the engine corpus with the kernel's integration tests. Each is written from its own lock.
 RUST = {"ve/wire_contract": ("rust/ve-kernel/src/contract_tables.rs", "crate"),
         "conformance/wire-contract/contracts": ("rust/ve-kernel/tests/corpus_tables/mod.rs", "ve_kernel")}
+# Generator-test data outside the engine corpus (dri-decisions-20261031-wc-s4-2.md): a contract whose key lists
+# put a key outside the BMP beside one above U+E000, written with the corpus module; its hash is checked by
+# recomputing it, not against a lock.
+KEYS = ("rust/ve-kernel/tests/data/keys@0.json", "rust/ve-kernel/tests/keys_table/mod.rs")
 # The engine corpus (wire-contract.md 8.1) and its Lean namespaces: the three contracts of 8.1, then `mid@0`
 # and `forms@0`, which cover the literal forms, the tuple type form and a view over a nested include.
 CORPUS = (("inner@0", "Corpus.Inner"), ("demo@0", "Corpus.Demo"), ("defer@0", "Corpus.Defer"),
@@ -153,8 +157,13 @@ def generated_rust(directory, contracts, limits, names, lock):
     units = [unit for unit in contracts if unit in UNITS] if relative == "ve/wire_contract" else list(contracts)
     files = ["limits.json", "names.json", *(f"{unit}.json" for unit in contracts)]
     sources = [(file, lock[file]["revision"], lock[file]["sha256"]) for file in files]
-    return {target: rust_module(relative + "/", use, sources, {unit: contracts[unit] for unit in units},
-                                contracts, limits, names)}
+    rendered = {target: rust_module(relative + "/", use, sources, {unit: contracts[unit] for unit in units},
+                                    contracts, limits, names)}
+    if relative == "conformance/wire-contract/contracts":
+        keys = loads_json((ROOT / KEYS[0]).read_bytes())
+        rendered[KEYS[1]] = rust_module(KEYS[0], use, [("keys@0.json", keys["revision"], _hash(keys))],
+                                        {"keys@0": keys}, {"keys@0": keys}, {}, {})
+    return rendered
 
 
 def table_rows(contract, known, limits):

@@ -104,7 +104,8 @@ GENERATED = (
               ("lean/VE/WireContract/Limits.lean", "lean/VE/WireContract/Names.lean",
                "lean/VE/WireContract/Tables/*.lean", "ve/wire_contract/contracts.lock",
                "conformance/wire-contract/contracts/contracts.lock", "docs/spec/*-wire-table.md",
-               "rust/ve-kernel/src/contract_tables.rs", "rust/ve-kernel/tests/corpus_tables/mod.rs"),
+               "rust/ve-kernel/src/contract_tables.rs", "rust/ve-kernel/tests/corpus_tables/mod.rs",
+               "rust/ve-kernel/tests/keys_table/mod.rs"),
               # Written without live validation: the examples go through the service, which is built and
               # pinned only later; the check (after every write) validates them live.
               ((PY, "-m", "tools.wire_contract", "--write", "--generated-only"),

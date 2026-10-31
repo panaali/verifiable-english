@@ -93,9 +93,12 @@ binary's hash moves, `lean/checkers.lock` is regenerated with the other generate
 The contracts of base spec 8.1 (`inner@0`, `demo@0`, `defer@0`, and `mid@0`, `forms@0` added since) are test
 data. Their tables go to `rust/ve-kernel/tests/corpus_tables/mod.rs`, a module of the kernel's integration
 tests, not to the product crate's source. They are emitted for every contract of
-`conformance/wire-contract/contracts/`; that directory also holds `keys@0`, a contract read by the generator
-tests only, whose key lists carry keys outside the BMP (U+1F600) beside keys above U+E000 (U+FF5A), where code
-point order and UTF-16 order differ.
+`conformance/wire-contract/contracts/`, which stays the engine corpus of base spec 8.1, unchanged. The generator
+tests also read `keys@0`, a contract whose key lists put a key outside the BMP (U+1F600) beside one above U+E000
+(U+FF5A), where code point order and UTF-16 order differ. It is generator-test data, not engine corpus, so it
+lives outside the 8.1 directory, at `rust/ve-kernel/tests/data/keys@0.json`, and its table goes to
+`rust/ve-kernel/tests/keys_table/mod.rs`. It has no lock: the cargo test recomputes the SHA-256 of its canonical
+JSON and compares it with the embedded one (DRI decision `reviews/dri-decisions-20261031-wc-s4-2.md`, item 1).
 
 ## 6. The `error` object
 
@@ -131,8 +134,8 @@ Lean, or reports the deferred record (base spec 2.8).
 |---|---|---|
 | F1 | `--check` fails (`WC11`) on a hand-edited `contract_tables.rs` and on the corpus tables | wc-s4-2 |
 | F2 | the cargo hash test fails when a contract and its lock move and the tables do not | wc-s4-2 |
-| F3 | the rows of every generated table (position, id, phase, kind, code, class, text, limit, keys, args) dumped by a cargo test equal the rows `tools/wire_contract.py` reads from the contract JSON, for the three units and every corpus contract, `keys@0` included | wc-s4-2 |
-| F4 | `tools/mutation_check.py` swaps two rows of `contract_tables.rs` and `--check` catches it | wc-s4-2b (moved at the size line) |
+| F3 | the rows of every generated table (position, id, phase, kind, code, class, text, limit, keys, args) dumped by a cargo test equal the rows `tools/wire_contract.py` reads from the contract JSON, for the three units, every corpus contract and `keys@0` | wc-s4-2 |
+| F4 | `tools/mutation_check.py` swaps two rows of `contract_tables.rs` and `--check` catches it | wc-s4-2 |
 | F5 | the engine corpus run in Rust gives records byte-identical to `engine-golden.json` | wc-s4-2b |
 | F6 | a large well-formed input ends within its stated limit (the DRI's rule of 2026-10-27) | wc-s4-2b |
 | F7 | `diagnostic` is absent from an error that has none, and typed by the jsonl schema where set | wc-s4-2b |
