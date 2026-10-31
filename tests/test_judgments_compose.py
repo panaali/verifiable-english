@@ -127,6 +127,54 @@ def test_the_layer_s_own_requirement_is_checked_by_every_composing_mode(service,
     assert row([p for p in WITHOUT_DOCUMENTS if p != "judgments@0"])["status"] == "ok"
 
 
+# The table's whole gate over the list as written (jt-2c review F5, `VE.Compose.decidingEnvironment`): a duplicate,
+# leading or trailing `judgments@0` is refused by every composing mode as the environment mode refuses it, while the
+# sorted list is answered.
+UNORDERED = {"duplicate": sorted(PROFILES + ["judgments@0"]), "leading": ["judgments@0"] + TWIN,
+             "trailing": TWIN + ["judgments@0"]}
+SORTED_AND_UNIQUE = "UnsupportedProfile: profiles must be sorted and unique"
+
+
+def written(profiles, extra):
+    """`profiles` with `extra` at its sorted place among the twin's profiles, `judgments@0` left where it is."""
+    out = list(profiles)
+    for p in extra:
+        out.insert(next(i for i, q in enumerate(out) if q != "judgments@0" and q > p), p)
+    return out
+
+
+@pytest.mark.parametrize("shape", UNORDERED)
+@pytest.mark.parametrize("mode, field, extra", COMPOSING,
+                         ids=[f"{m}-{f.get('kind', 'case')}" for m, f, _ in COMPOSING])
+def test_the_layer_out_of_order_is_refused_by_every_composing_mode(service, mode, field, extra, shape):
+    """PROBE F5: the check, metered, norms and norm-defaults modes answered `ok` over these lists, which the
+    environment and model modes refuse."""
+    profiles = written(UNORDERED[shape], extra)
+    assert profiles != sorted(set(profiles))
+    rows = [service.run(m, [{"id": "x", "environment": environment(profiles=profiles), **f}])[0]
+            for m, f in ((mode, field), ("environment", {}))]
+    assert rows[0] == rows[1] == {"id": "x", "status": "error", "error": SORTED_AND_UNIQUE}
+    sorted_row = service.run(mode, [{"id": "x", "environment": environment(profiles=written(PROFILES, extra)),
+                                     **field}])[0]
+    assert sorted_row["status"] == "ok", sorted_row
+
+
+@pytest.mark.parametrize("shape", UNORDERED)
+def test_the_english_route_refuses_the_layer_out_of_order(service, shape):
+    """The English reader's block branch over the same list orders as the environment mode (F5)."""
+    from test_acts_profile import seek_environment
+    from ve import english
+    from ve.backends import english_lean
+    from ve.environment import Environment
+    listed = ["acts@0", "documents@1", "judgments@0", "norm-defaults@0", "norms@0", "relational-fol@0"]
+    env = Environment(seek_environment(listed))
+    case = english_lean.request(env, "Alice may seek asylum.", english.EnglishVocabulary(env), {})
+    others = [p for p in listed if p != "judgments@0"]
+    case["environment"]["profiles"] = {"duplicate": sorted(listed + ["judgments@0"]),
+                                       "leading": ["judgments@0"] + others, "trailing": others + ["judgments@0"]}[shape]
+    assert service.run("english.read", [case])[0] == {"id": case["id"], "status": "error", "error": SORTED_AND_UNIQUE}
+
+
 def test_the_english_route_checks_the_layer_s_own_requirement(service):
     """The English reader's block branch (`EnglishGrammar.Run.environmentId` under `norm-defaults@0`) over a
     `judgments@0` environment Python builds: read with `documents@1`, refused without it by the environment mode's
