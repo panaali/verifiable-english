@@ -10513,6 +10513,7 @@
         "VE.SoftNorms.closureOf",
         "VE.SoftNorms.collidingPairs",
         "VE.SoftNorms.decisionNames",
+        "VE.SoftNorms.decisionRule",
         "VE.SoftNorms.decisions",
         "VE.SoftNorms.dedup",
         "VE.SoftNorms.directBelow",
@@ -10559,6 +10560,12 @@
             "VE.SoftNorms.keyedDecisions_names"
           ]
         }
+      ]
+    },
+    "VE/SoftNorms/TreeExamples.lean": {
+      "T": [
+        "VE.SoftNorms.TreeFixtures.layeredDocs",
+        "VE.SoftNorms.TreeFixtures.unsplitKeys"
       ]
     },
     "VE/SoftNorms/Wire.lean": {
