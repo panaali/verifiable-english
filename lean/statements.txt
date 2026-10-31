@@ -47622,6 +47622,10 @@ theorem VE.Service.runMode_searchBudget
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.searchBudget j = VE.SearchBudget.Run.runCaseReported j
   -- uses VE.SearchBudget.Run.runCaseReported@VE.SearchBudget.Run VE.Service.Mode.searchBudget@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
   -- expr 2782331337
+theorem VE.Service.runMode_sensesProject
+  ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.sensesProject j = VE.Senses.Run.projectCaseReported j
+  -- uses VE.Senses.Run.projectCaseReported@VE.Senses.Run VE.Service.Mode.sensesProject@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol
+  -- expr 701902091
 theorem VE.Service.runMode_softNorms
   ∀ (j : Lean.Json), VE.Service.runMode VE.Service.Mode.softNorms j = VE.SoftNorms.Run.runCaseReported j
   -- uses VE.Service.Mode.softNorms@VE.Service.Registry VE.Service.runMode@VE.Service.Protocol VE.SoftNorms.Run.runCaseReported@VE.SoftNorms.Run

@@ -6410,6 +6410,7 @@
 'VE.Service.runMode_route' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.runMode_scope' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.runMode_searchBudget' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Service.runMode_sensesProject' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.runMode_softNorms' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.runMode_speechActs' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Service.runMode_words' depends on axioms: [propext, Classical.choice, Quot.sound]
@@ -7521,6 +7522,12 @@
 'ResponseShape.Encoders.Scope.runCaseReported_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.SearchBudget.runCaseReported_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.SearchBudget.runCase_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.SensesProject.faultJson_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.SensesProject.projectCaseReported_fits' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'ResponseShape.Encoders.SensesProject.projectCase_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ResponseShape.Encoders.SensesProject.projectionIds_ok' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.SoftNorms.admission_fits' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.SoftNorms.admitDocument_kinds' depends on axioms: [propext, Classical.choice, Quot.sound]
 'ResponseShape.Encoders.SoftNorms.checkSource_ok' depends on axioms: [propext, Classical.choice, Quot.sound]

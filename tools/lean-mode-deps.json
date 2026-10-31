@@ -152,6 +152,10 @@
       "VE.SearchBudget.Run",
       "VE.Route.Run"
     ],
+    "senses.project": [
+      "VE.Senses.Run",
+      "VE.Route.Run"
+    ],
     "soft-norms": [
       "VE.SoftNorms.Run",
       "VE.Route.Run"
@@ -166,8 +170,8 @@
     ]
   },
   "sources": {
-    "lean/VE/Service/Protocol.lean": "4f87e51288c1e65581c8a04bda5ce7111c17cc5ca7785a4a17bedbb3ba1812b0",
-    "lean/VE/Service/Registry.lean": "c74d083176c693e65cf3db22500b295047812574454fb74edd312a151d5c548c",
+    "lean/VE/Service/Protocol.lean": "2b565653dbe81752c1f229355af16635b46b32f56041daba0100225e5fa87a7c",
+    "lean/VE/Service/Registry.lean": "d49f017e9c9b032805c177a629e9574cb2d1634bff17dfed78bbb702041b9794",
     "tools/lean_mode_deps.lean": "50dc1459ef617a9ca489fd9a5068a5b875a48c661f3cf6ac573f6a157950c8e7"
   }
 }

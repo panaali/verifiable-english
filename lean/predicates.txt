@@ -35,6 +35,7 @@ module ResponseShape.Encoders.RiskEval
 module ResponseShape.Encoders.Route
 module ResponseShape.Encoders.Scope
 module ResponseShape.Encoders.SearchBudget
+module ResponseShape.Encoders.SensesProject
 module ResponseShape.Encoders.SoftNorms
 module ResponseShape.Encoders.SpeechActs
 module ResponseShape.Encoders.Standalone
@@ -79,6 +80,7 @@ module ResponseShape.Schemas.RiskEval
 module ResponseShape.Schemas.Route
 module ResponseShape.Schemas.Scope
 module ResponseShape.Schemas.SearchBudget
+module ResponseShape.Schemas.SensesProject
 module ResponseShape.Schemas.SoftNorms
 module ResponseShape.Schemas.SpeechActs
 module ResponseShape.Schemas.Words
@@ -606,6 +608,8 @@ module VE.Senses.Project
 module VE.Senses.Read
 module VE.Senses.Request
 module VE.Senses.Run
+module VE.Senses.RunExamples
+module VE.Senses.Version
 module VE.Service.ActsExamples
 module VE.Service.Diagnose
 module VE.Service.Document
