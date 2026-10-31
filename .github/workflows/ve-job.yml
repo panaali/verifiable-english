@@ -1,3 +1,8 @@
+# VE aarch64 gate job on GitHub Actions (2026-10-28 dri-cloudcpu, reviews/cloud-cpu-20261028.md): ve-job.yml with the run job on
+# ubuntu-24.04-arm (Linux arm64, 4 vCPU / 16 GB, free for public repositories), the aarch64 toolchain (Lean v4.24.0
+# linux_aarch64, uv 0.12.19 aarch64, rustup if the image lacks it; sha256 pinned, digests checked against GitHub's release
+# API 2026-10-28) and a 330-min job timeout (GitHub's job limit is 6 h). Staged only: gha-arm-gate.sh puts it at
+# .github/workflows/ve-job.yml of its own job commits (shadow pilot of the train's aarch64 gate leg); VE main is unchanged.
 # VE compute job on GitHub Actions: a zero-token compute pool (manage-agents dri-gha, 2026-10-28).
 # A job is one push of branch ci-job/<job> by the VM dispatcher (gha-dispatch.sh, via github-push.sh only). Its tip is ONE
 # commit on top of the job's exported head that adds only ci-job/job.json, ci-job/job.sh and this file.
@@ -6,26 +11,6 @@
 #            bash job.sh run <checkout> <out dir> <job.json "argv"...>   (same contract as the cloud runner's cloud-tm-job.sh)
 #   publish: write token; commits ONLY cloud-results/<job>/ on top of the exported head and pushes ci-result/<job>
 #            (never --force, never another branch). The VM's cloud-pull.sh verifies it like any cloud result.
-# 2026-10-31 gha-wf2 (manage-agents reviews/gha-tests-20261028.md section 4): the branch's Lean build as a cross-branch
-# cache (actions/cache cannot share across ci-job/* branches). When job.json says "lean_asset": true (the VM dispatcher,
-# one shard, flag BRANCH_LEAN_CACHE), job.sh packs the build it made in $VE_LEAN_ASSET_DIR right after its lake build
-# (before any job command) and the run job sends it as the artifact lean-build. The publish job checks it (the name is
-# lean-build-<its own `git rev-parse HEAD:lean`, 12>.tar.zst; size cap; only regular files and directories under
-# pins.json and lake/build/; the seal names that lean tree, Linux-x86_64 and lean/lean-toolchain's version; a secret
-# pattern scan of every file) and uploads it to the existing release lean-branch-cache, the ONE new write target: it never
-# creates, edits or deletes a release or asset and never replaces one (--clobber). Its record, lean-build-asset.json
-# (status uploaded|exists|refused|no-release|failed, sha256, bytes), goes in the result; the VM lists uploaded assets for
-# its dispatcher's exact-tree pin and prunes the release to its newest N (lean-branch-cache.sh). Never fails the result.
-# 2026-10-31 actions-gate-x86 (manage-agents gha-arm-shard.sh --arch x86): the Lean build ONCE per sharded gate. The
-# dispatcher first runs one build job ("lean_asset": true, as above), then N gate shards whose job.json says
-# "lean_from": {"run_id": <that build job's run>, "sha256": <its pack's sha256, from the publish job's
-# lean-build-asset.json>}. A shard's run job downloads the artifact lean-build of exactly that run (the read-only
-# `actions: read` token, in that one step only; never the release, whose assets other branches built) and hands it to
-# job.sh as $VE_LEAN_FROM only when it is one regular file named lean-build-<HEAD:lean, 12>.tar.zst with that sha256.
-# Anything else (no lean_from, a malformed one, no artifact, another name or sha256) is said in lean-from.txt and the
-# shard builds cold; it never fails the run. job.sh checks the pack again (seal: this lean tree) before its lake build.
-# The build job's job.json also says "lean_publish": false: the publish job runs every check of its pack and records its
-# sha256 (status checked) but uploads nothing to lean-branch-cache (a gate's build is for its own shards only).
 # Never triggered by pull requests, forks, schedules or other branches. Uses no secrets. Actions are pinned by commit.
 name: ve-job
 on:
@@ -38,16 +23,13 @@ concurrency:
 jobs:
   run:
     if: github.repository == 'panaali/verifiable-english'
-    runs-on: ubuntu-24.04
-    timeout-minutes: 120
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 330
     permissions:
       contents: read
-      actions: read
     outputs:
       job: ${{ steps.job.outputs.job }}
       head: ${{ steps.job.outputs.head }}
-      lean_asset: ${{ steps.pack.outputs.ready }}
-      lean_publish: ${{ steps.job.outputs.lean_publish }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4.3.1
         with:
@@ -61,72 +43,38 @@ jobs:
           [[ $job =~ ^[A-Za-z0-9._-]+$ ]] || { echo "bad job name $job"; exit 1; }
           head=$(python3 -I -c 'import json; print(json.load(open("ci-job/job.json"))["head"])')
           [ "$(python3 -I -c 'import json; print(json.load(open("ci-job/job.json"))["job"])')" = "$job" ] || { echo "job.json is not $job"; exit 1; }
-          lean_asset=$(python3 -I -c 'import json; print("1" if json.load(open("ci-job/job.json")).get("lean_asset") is True else "")')
-          lean_publish=$(python3 -I -c 'import json; print("false" if json.load(open("ci-job/job.json")).get("lean_publish") is False else "")')
-          lean_from=$(python3 -I -c 'import json, re; d = json.load(open("ci-job/job.json")).get("lean_from"); ok = isinstance(d, dict) and set(d) == {"run_id", "sha256"} and isinstance(d["run_id"], str) and isinstance(d["sha256"], str) and re.fullmatch("[0-9]{1,20}", d["run_id"]) and re.fullmatch("[0-9a-f]{64}", d["sha256"]); print(d["run_id"] + " " + d["sha256"] if ok else ("malformed" if d is not None else ""))')
           [ "$(git rev-parse HEAD~1)" = "$head" ] && [ -z "$(git rev-parse -q --verify HEAD^2 || true)" ] || { echo "the job commit's parent is not $head"; exit 1; }
           extra=$(git diff --name-only HEAD~1 HEAD | grep -v -x -E 'ci-job/job\.json|ci-job/job\.sh|\.github/workflows/ve-job\.yml' || true)
           [ -z "$extra" ] || { echo "the job commit changes other files: $extra"; exit 1; }
           mkdir -p "$RUNNER_TEMP/ci-job" "$RUNNER_TEMP/out"
           cp ci-job/job.json ci-job/job.sh "$RUNNER_TEMP/ci-job/"
-          [ "$lean_from" != malformed ] || { echo "lean-from: job.json's lean_from is malformed: cold build" > "$RUNNER_TEMP/out/lean-from.txt"; lean_from=""; }
           git checkout -q --detach "$head"
-          echo "job=$job" >> "$GITHUB_OUTPUT"; echo "head=$head" >> "$GITHUB_OUTPUT"; echo "lean_asset=$lean_asset" >> "$GITHUB_OUTPUT"; echo "lean_publish=$lean_publish" >> "$GITHUB_OUTPUT"
-          echo "lean_run=${lean_from% *}" >> "$GITHUB_OUTPUT"; echo "lean_sha=${lean_from#* }" >> "$GITHUB_OUTPUT"
+          echo "job=$job" >> "$GITHUB_OUTPUT"; echo "head=$head" >> "$GITHUB_OUTPUT"
       - name: tools
         run: |
           set -euo pipefail
           t0=$(date +%s)
           cd "$RUNNER_TEMP"
-          curl -sSfL --retry 3 -o lean.tar.zst https://github.com/leanprover/lean4/releases/download/v4.24.0/lean-4.24.0-linux.tar.zst
-          echo "b14f5e5159219dd1a1956c3b806813319f5e94ccd5bdfd56f54520609a5bb5ec  lean.tar.zst" | sha256sum -c -
-          curl -sSfL --retry 3 -o uv.tgz https://github.com/astral-sh/uv/releases/download/0.12.19/uv-x86_64-unknown-linux-gnu.tar.gz
-          echo "23bf5552d220e0842b65c862097b2ebaeba0064b74eda5e565e77fd25969d8c8  uv.tgz" | sha256sum -c -
+          curl -sSfL --retry 3 -o lean.tar.zst https://github.com/leanprover/lean4/releases/download/v4.24.0/lean-4.24.0-linux_aarch64.tar.zst
+          echo "237f8ef43fb40d16681871fb04b2c56f023afc02a5a3877831d35dd493823c23  lean.tar.zst" | sha256sum -c -
+          curl -sSfL --retry 3 -o uv.tgz https://github.com/astral-sh/uv/releases/download/0.12.19/uv-aarch64-unknown-linux-gnu.tar.gz
+          echo "0804e9b164c64b6914182d5920c08551958a095986f10a3731056df701126436  uv.tgz" | sha256sum -c -
           command -v zstd > /dev/null || { sudo apt-get update -qq && sudo apt-get install -y -qq zstd; }
           sudo mkdir -p /opt/lean && sudo chown "$(id -u)" /opt/lean
           zstd -dc lean.tar.zst | tar -x -C /opt/lean --strip-components=1
           sudo tar -xzf uv.tgz -C /usr/local/bin --strip-components=1
           rm -f lean.tar.zst uv.tgz
           sudo ln -sf /opt/lean/bin/lean /usr/local/bin/lean; sudo ln -sf /opt/lean/bin/lake /usr/local/bin/lake
+          if ! command -v rustup > /dev/null; then
+            curl -sSfL --retry 3 -o rustup-init https://static.rust-lang.org/rustup/archive/1.28.2/aarch64-unknown-linux-gnu/rustup-init
+            echo "e3853c5a252fca15252d07cb23a1bdd9377a8c6f3efa01531109281ae47f841c  rustup-init" | sha256sum -c -
+            chmod +x rustup-init && ./rustup-init -y -q --profile minimal --default-toolchain none && rm -f rustup-init
+            echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"; fi
           printf 'step\trc\tseconds\ntools\t0\t%s\n' "$(( $(date +%s) - t0 ))" > "$RUNNER_TEMP/out/gha-setup.tsv"
-          { echo "run_id=$GITHUB_RUN_ID attempt=$GITHUB_RUN_ATTEMPT runner=$RUNNER_NAME image=${ImageOS:-?}-${ImageVersion:-?}"; lean --version; uv --version; df -h / | tail -1; } > "$RUNNER_TEMP/out/gha.txt"
-      - name: lean-from download
-        if: steps.job.outputs.lean_run != ''
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093  # v4.3.0
-        continue-on-error: true
-        with:
-          name: lean-build
-          path: ${{ runner.temp }}/lean-from
-          run-id: ${{ steps.job.outputs.lean_run }}
-          github-token: ${{ github.token }}
-      - id: leanfrom
-        name: lean-from check
-        if: steps.job.outputs.lean_run != ''
-        env:
-          LEAN_RUN: ${{ steps.job.outputs.lean_run }}
-          LEAN_SHA: ${{ steps.job.outputs.lean_sha }}
-        run: |
-          set -uo pipefail
-          O=$RUNNER_TEMP/out/lean-from.txt; tree=$(git rev-parse HEAD:lean); want=lean-build-${tree:0:12}.tar.zst
-          no(){ echo "lean-from: run $LEAN_RUN: $1: cold build" > "$O"; exit 0; }
-          [[ $tree =~ ^[0-9a-f]{40}$ ]] || no "no lean tree at HEAD"
-          shopt -s nullglob dotglob; files=("$RUNNER_TEMP"/lean-from/*)
-          [ ${#files[@]} = 1 ] || no "${#files[@]} files in the artifact lean-build, not 1"
-          f=${files[0]}
-          [ -f "$f" ] && [ ! -L "$f" ] || no "the artifact is not a regular file"
-          [ "$(basename "$f")" = "$want" ] || no "the artifact is $(basename "$f" | head -c 80), not $want"
-          got=$(sha256sum "$f" | cut -d' ' -f1)
-          [ "$got" = "$LEAN_SHA" ] || no "sha256 ${got:0:12} is not ${LEAN_SHA:0:12}"
-          echo "file=$f" >> "$GITHUB_OUTPUT"; echo "lean-from: run $LEAN_RUN: $want sha256 ${got:0:12} ok" > "$O"
+          { echo "run_id=$GITHUB_RUN_ID attempt=$GITHUB_RUN_ATTEMPT runner=$RUNNER_NAME image=${ImageOS:-?}-${ImageVersion:-?} arch=$(uname -m) nproc=$(nproc)"; lean --version; uv --version; (command -v rustup || echo "$HOME/.cargo/bin/rustup"); df -h / | tail -1; } > "$RUNNER_TEMP/out/gha.txt"
       - name: job
-        env:
-          LEAN_ASSET: ${{ steps.job.outputs.lean_asset }}
-          LEAN_FROM: ${{ steps.leanfrom.outputs.file }}
-          LEAN_SHA: ${{ steps.job.outputs.lean_sha }}
         run: |
           set -uo pipefail
-          [ "$LEAN_ASSET" != 1 ] || export VE_LEAN_ASSET_DIR="$RUNNER_TEMP/lean-build"
-          [ -z "$LEAN_FROM" ] || export VE_LEAN_FROM="$LEAN_FROM" VE_LEAN_FROM_SHA256="$LEAN_SHA"
           mapfile -t argv < <(python3 -I -c 'import json, sys; print("\n".join(json.load(open(sys.argv[1]))["argv"]))' "$RUNNER_TEMP/ci-job/job.json")
           bash "$RUNNER_TEMP/ci-job/job.sh" run "$GITHUB_WORKSPACE" "$RUNNER_TEMP/out" "${argv[@]}"
       - if: always() && steps.job.outputs.job != ''
@@ -135,21 +83,6 @@ jobs:
           name: out
           path: ${{ runner.temp }}/out
           retention-days: 3
-          if-no-files-found: error
-      - id: pack
-        name: lean-build pack
-        if: always() && steps.job.outputs.lean_asset == '1'
-        run: |
-          set -uo pipefail
-          packs=("$RUNNER_TEMP"/lean-build/*)
-          if [ ${#packs[@]} = 1 ] && [ -f "${packs[0]}" ]; then echo "ready=true" >> "$GITHUB_OUTPUT"; else echo "no single lean-build pack: none sent"; fi
-      - if: always() && steps.pack.outputs.ready == 'true'
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
-        with:
-          name: lean-build
-          path: ${{ runner.temp }}/lean-build
-          retention-days: 1
-          compression-level: 0
           if-no-files-found: error
   publish:
     needs: run
@@ -167,92 +100,6 @@ jobs:
         with:
           name: out
           path: ${{ runner.temp }}/out
-      - if: needs.run.outputs.lean_asset == 'true'
-        continue-on-error: true
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093  # v4.3.0
-        with:
-          name: lean-build
-          path: ${{ runner.temp }}/lean-build
-      - name: lean-build asset
-        if: needs.run.outputs.lean_asset == 'true'
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ github.token }}
-          LEAN_PUBLISH: ${{ needs.run.outputs.lean_publish }}
-        run: |
-          set -uo pipefail
-          O=$RUNNER_TEMP/out; A=$RUNNER_TEMP/lean-build; REL=lean-branch-cache; CAP=2000000000; UCAP=8000000000
-          tree=$(git rev-parse HEAD:lean); name=lean-build-${tree:0:12}.tar.zst; sum=""; bytes=""
-          rec(){ python3 -I -c 'import json, sys; json.dump(dict(zip(["status", "reason", "name", "key", "sha256", "bytes", "release"], sys.argv[2:])), open(sys.argv[1], "w"), indent=1)' \
-              "$O/lean-build-asset.json" "$1" "$2" "$name" "$tree" "$sum" "$bytes" "$REL"; echo "lean-build asset: $1: $2"; exit 0; }
-          [[ $tree =~ ^[0-9a-f]{40}$ ]] || rec refused "no lean tree at HEAD"
-          [ "$(ls -A "$A" 2> /dev/null)" = "$name" ] && [ -f "$A/$name" ] && [ ! -L "$A/$name" ] || rec refused "the artifact is not exactly one file $name"
-          # Size cap, sha256, then one pass over the tar stream (member names and types, the uncompressed cap, the seal
-          # pins.json) while grep scans the same stream for secrets (the patterns of the VM's cloud-secret-scan.py, plus
-          # the other GitHub token prefixes; 7 s for main's 2.7 GB build, Python's re took 28 s). Never prints a match.
-          out=$(python3 -I - "$A/$name" "$tree" "$(cat lean/lean-toolchain)" "$CAP" "$UCAP" 2>&1 <<'PY'
-          import hashlib, json, os, subprocess, sys, tarfile
-          f, tree, toolchain, cap, ucap = sys.argv[1], sys.argv[2], sys.argv[3].strip(), int(sys.argv[4]), int(sys.argv[5])
-          PAT = ('-----BEGIN [A-Z ]*PRIVATE KEY|gh[pousr]_[A-Za-z0-9]{30}|github_pat_[A-Za-z0-9_]{20}'
-                 '|sk-ant-[A-Za-z0-9_-]{20}|AKIA[0-9A-Z]{16}|"private_key":|xox[bp]-[0-9A-Za-z-]{10}')
-          def no(why):
-              sys.exit(why)
-          size = os.path.getsize(f)
-          if size > cap:
-              no(f"{size} bytes, over the cap {cap}")
-          h = hashlib.sha256()
-          with open(f, "rb") as fh:
-              for chunk in iter(lambda: fh.read(1 << 20), b""):
-                  h.update(chunk)
-          scan = subprocess.Popen(["sh", "-c", 'zstd -dcq -- "$1" | LC_ALL=C grep -a -c -E -e "$2"', "scan", f, PAT],
-                                  stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
-          p = subprocess.Popen(["zstd", "-dcq", "--", f], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
-          total, pins, build = 0, None, False
-          try:
-              with tarfile.open(fileobj=p.stdout, mode="r|") as t:
-                  for m in t:
-                      n = m.name.rstrip("/")
-                      if n.startswith("/") or ".." in n.split("/") or not (n in ("pins.json", "lake", "lake/build") or n.startswith("lake/build/")):
-                          no(f"member {n[:200]!r} is outside pins.json and lake/build/")
-                      if not (m.isreg() or m.isdir()):
-                          no(f"member {n[:200]!r} is not a regular file or directory")
-                      build = build or n.startswith("lake/build/")
-                      total += m.size
-                      if total > ucap:
-                          no(f"over {ucap} bytes uncompressed")
-                      if n == "pins.json" and m.isreg():
-                          pins = t.extractfile(m).read(1 << 26)
-          except (tarfile.TarError, OSError, EOFError, ValueError) as e:
-              no(f"not a readable tar.zst ({type(e).__name__})")
-          if p.wait() != 0:
-              no("zstd could not decompress it")
-          scan.communicate()
-          if scan.returncode != 1:
-              no("a file matches a secret pattern" if scan.returncode == 0 else "the secret scan failed")
-          if pins is None or not build:
-              no("no pins.json or nothing under lake/build/")
-          try:
-              k = json.loads(pins)["key"]
-          except (ValueError, KeyError, TypeError):
-              no("pins.json has no key")
-          want = "version " + toolchain.rpartition(":v")[2] + ","
-          if not isinstance(k, dict) or k.get("git_lean_tree") != tree:
-              no("the seal does not name this lean tree")
-          if k.get("platform") != {"system": "Linux", "machine": "x86_64"}:
-              no("the seal does not name Linux-x86_64")
-          if not isinstance(k.get("toolchain"), dict) or want not in str(k["toolchain"].get("lean")):
-              no(f"the seal's lean is not {toolchain}")
-          print(h.hexdigest(), size)
-          PY
-          ) || rec refused "$(printf %s "$out" | tail -n 1 | head -c 300)"
-          read -r sum bytes <<< "$(tail -n 1 <<< "$out")"
-          [[ $sum =~ ^[0-9a-f]{64}$ && $bytes =~ ^[0-9]+$ ]] || { sum=""; bytes=""; rec refused "the check printed no sha256 and size"; }
-          [ "${LEAN_PUBLISH:-}" != false ] || rec checked "checked, not published (job.json lean_publish: false)"
-          assets=$(gh release view "$REL" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' 2>&1) || {
-            grep -q -i 'not found' <<< "$assets" && rec no-release "no release $REL"; rec failed "cannot list $REL: $(tail -n 1 <<< "$assets" | head -c 200)"; }
-          grep -q -x -F "$name" <<< "$assets" && rec exists "$name is already on $REL"
-          up=$(gh release upload "$REL" "$A/$name" --repo "$GITHUB_REPOSITORY" 2>&1) || rec failed "upload failed: $(tail -n 1 <<< "$up" | head -c 200)"
-          rec uploaded "$name ($bytes bytes) on $REL"
       - name: push ci-result
         env:
           JOB: ${{ needs.run.outputs.job }}
