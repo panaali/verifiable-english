@@ -65,7 +65,12 @@ behaviour drifting again.
 
 ## Tests
 
-- Selected tests, run once on the finished code: see "Selected run" below.
+- Selected tests, run once on the finished code (b4565d4e2f tree, commit after 1c3898165):
+  `zsh mac-pytest.sh --select -- --base $(git merge-base HEAD main) --run`. It reported "149/508 test units" and four
+  shards, each "exit 0" (41, 38, 39 and 31 units passed). Summary: "selected tests ran on GitHub Actions (4 shards, run
+  fsf-r2-probes-stale-2929049d-t437267); exit=0". Selection deferred 35 slow files to the chain gate.
+- On Actions the fsf-r2 test skips, because the pinned source is missing there. The run that covers it is the local one
+  above: `uv run pytest -q tests/test_safety_framework.py -k fsf_r2`, `3 passed`.
 - Pre-existing: this test skips wherever the pinned source is missing (gate runners, Actions). The gate therefore does
   not cover it. That is the row's note, and this item does not change it.
 
