@@ -1,0 +1,172 @@
+shard 1/2: 254 units; commands: ['uv run --frozen --group dev python tools/check_python_layers.py', 'python3 tools/check_lean_imports.py', 'python3 tools/check_rust_deps.py', 'lake build', 'lake build ve_english_lean_bench ve_scope_bench', 'python3 lean/audit.py', 'uv run --frozen --group dev python tools/test_layer_policy.py']
++ uv run --frozen --group dev python tools/check_python_layers.py
+
+╔══╗─────────▶╔╗ ╔╗      ╔╗◀───┐
+╚╣╠╝◀─────┐  ╔╝╚╗║║────▶╔╝╚╗   │
+ ║║   ╔══╦══╦╩╗╔╝║║  ╔╦═╩╗╔╝╔═╦══╗
+ ║║╔══╣╔╗║╔╗║╔╣║ ║║ ╔╬╣╔╗║║ ║│║╔═╝
+╔╣╠╣║║║╚╝║╚╝║║║╚╗║╚═╝║║║║║╚╗║═╣║
+╚══╩╩╩╣╔═╩══╩╝╚═╝╚═══╩╩╝╚╩═╩╩═╩╝
+  └──▶║║                    ▲ 
+      ╚╝────────────────────┘
+
+
+---------
+Contracts
+---------
+
+Analyzed 185 files, 1046 dependencies.
+--------------------------------------
+
+... (10058 lines cut; full output in shard-full.txt)
+  Downloaded quote v1.0.47
+  Downloaded unicode-ident v1.0.26
+  Downloaded typenum v1.20.1
+  Downloaded num-bigint v0.4.8
+  Downloaded serde_json v1.0.151
+  Downloaded syn v3.0.6
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling typenum v1.20.1
+   Compiling unicode-ident v1.0.26
+   Compiling quote v1.0.47
+   Compiling generic-array v0.14.7
+   Compiling serde_core v1.0.229
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling serde_json v1.0.151
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling itoa v1.0.18
+   Compiling cfg-if v1.0.5
+   Compiling cpufeatures v0.2.17
+   Compiling memchr v2.8.3
+   Compiling sha2 v0.10.9
+   Compiling serde_derive v1.0.229
+   Compiling num-integer v0.1.47
+   Compiling num-bigint v0.4.8
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `release` profile [optimized] target(s) in 16.32s
+   Compiling version_check v0.9.5
+   Compiling proc-macro2 v1.0.107
+   Compiling typenum v1.20.1
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.26
+   Compiling serde_core v1.0.229
+   Compiling generic-array v0.14.7
+   Compiling autocfg v1.5.1
+   Compiling zmij v1.0.23
+   Compiling num-traits v0.2.19
+   Compiling serde_json v1.0.151
+   Compiling syn v3.0.6
+   Compiling serde v1.0.229
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling cfg-if v1.0.5
+   Compiling cpufeatures v0.2.17
+   Compiling memchr v2.8.3
+   Compiling itoa v1.0.18
+   Compiling num-integer v0.1.47
+   Compiling sha2 v0.10.9
+   Compiling num-bigint v0.4.8
+   Compiling serde_derive v1.0.229
+   Compiling ve-kernel v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-kernel)
+   Compiling ve-profile v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-profile)
+   Compiling ve-core v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve-core)
+   Compiling ve v0.1.0 (/home/runner/work/verifiable-english/verifiable-english/rust/ve)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 9.14s
+order: failed last time []; changed []; then the rest; --maxfail 5
+recording 254 units with 4 jobs in /tmp/ve-select-run-r5l145g1
+  tests/test_consolidation_tools.py: exit 1 in 331.3 s, 1199 functions
+  tests/test_trust_ratchet.py: exit 1 in 10.6 s, 358 functions
+  tests/test_trust_budget.py: exit 1 in 13.9 s, 288 functions
+stopping after 9 failed tests (--maxfail 5)
+FAILED tests/test_consolidation_tools.py (exit 1): tests/test_consolidation_tools.py::test_committed_ledger_names_real_declarations, tests/test_consolidation_tools.py::test_committed_trust_table_covers_every_declaration, tests/test_consolidation_tools.py::test_mutated_committed_ties_are_reported_or_rejected; log /tmp/ve-select-run-r5l145g1/tests__test_consolidation_tools.py.log
+  +     'file',
+  + ])
+FAILED tests/test_consolidation_tools.py::test_committed_ledger_names_real_declarations - AssertionError: assert ['trust-class...of that file'] == []
+  
+  Left contains one more item: 'trust-classes.json: ResponseShape/Schemas/SensesProject.lean: ResponseShape.Schemas.SensesProject.details is not a declaration of that file'
+  
+  Full diff:
+  - []
+  + [
+  +     'trust-classes.json: ResponseShape/Schemas/SensesProject.lean: '
+  +     'ResponseShape.Schemas.SensesProject.details is not a declaration of that '
+  +     'file',
+  + ]
+FAILED tests/test_consolidation_tools.py::test_committed_trust_table_covers_every_declaration - AssertionError: assert ['trust-class...of that file'] == []
+  
+  Left contains one more item: 'trust-classes.json: ResponseShape/Schemas/SensesProject.lean: ResponseShape.Schemas.SensesProject.details is not a declaration of that file'
+  
+  Full diff:
+  - []
+  + [
+  +     'trust-classes.json: ResponseShape/Schemas/SensesProject.lean: '
+  +     'ResponseShape.Schemas.SensesProject.details is not a declaration of that '
+  +     'file',
+  + ]
+3 failed, 285 passed in 330.52s (0:05:30)
+FAILED tests/test_trust_ratchet.py (exit 1): tests/test_trust_ratchet.py::test_committed_budget_passes_its_check; log /tmp/ve-select-run-r5l145g1/tests__test_trust_ratchet.py.log
+
+    def test_committed_budget_passes_its_check(tmp_path):
+        """The committed file is in the AR-4 format and the tree is within its base and the allowances
+        introduced since (the base is the merge base with `main`, or the first parent on main's tip).
+        The tree's per-file counts are what the gate record accepts."""
+        data = json.loads(trust_map.BASELINE.read_text())
+        assert trust_map.parse_baseline(data)[1] == []
+        assert list(data) == ["comment", "budget", "allowances"]
+>       assert trust_map.main(["--check", "--files", str(tmp_path / "trust-files.json")]) == 0
+E       AssertionError: assert 1 == 0
+E        +  where 1 = <function main at 0x7f2db1cbd640>(['--check', '--files', '/tmp/pytest-of-runner/pytest-67/test_committed_budget_passes_i0/trust-files.json'])
+E        +    where <function main at 0x7f2db1cbd640> = trust_map.main
+
+tests/test_trust_ratchet.py:433: AssertionError
+----------------------------- Captured stdout call -----------------------------
+class lines: K 994, S 12181, D 17158, G 34053, C 12255, P 94850, T 28098, o 17035
+D/G groups: D[V] 14896, D[R] 1514, D[I] 748, G[V] 30021, G[R] 3703, G[I] 329
+tied 1084, unclassified 6, trusted 57158 (K + S + untied [V] + unclassified), 216630 lines in 688 files
+----------------------------- Captured stderr call -----------------------------
+trust-classes.json: ResponseShape/Schemas/SensesProject.lean: ResponseShape.Schemas.SensesProject.details is not a declaration of that file
+=========================== short test summary info ============================
+FAILED tests/test_trust_ratchet.py::test_committed_budget_passes_its_check - AssertionError: assert 1 == 0
+ +  where 1 = <function main at 0x7f2db1cbd640>(['--check', '--files', '/tmp/pytest-of-runner/pytest-67/test_committed_budget_passes_i0/trust-files.json'])
+ +    where <function main at 0x7f2db1cbd640> = trust_map.main
+1 failed, 104 passed in 9.86s
+FAILED tests/test_trust_budget.py (exit 1): tests/test_trust_budget.py::test_arith_lookup_and_fixture_helpers_are_classified, tests/test_trust_budget.py::test_every_allowance_is_signed_or_inherited_from_before_ar4, tests/test_trust_budget.py::test_one_unsigned_trusted_line_fails_the_live_check[K], tests/test_trust_budget.py::test_one_unsigned_trusted_line_fails_the_live_check[S], tests/test_trust_budget.py::test_trust_map_check_passes_on_the_live_tree; log /tmp/ve-select-run-r5l145g1/tests__test_trust_budget.py.log
+  + [
+  +     'trust-classes.json: ResponseShape/Schemas/SensesProject.lean: '
+  +     'ResponseShape.Schemas.SensesProject.details is not a declaration of that '
+  +     'file',
+  + ]
+ERROR tests/test_trust_budget.py::test_one_unsigned_trusted_line_fails_the_live_check[S] - AssertionError: assert ['trust-class...of that file'] == []
+  
+  Left contains one more item: 'trust-classes.json: ResponseShape/Schemas/SensesProject.lean: ResponseShape.Schemas.SensesProject.details is not a declaration of that file'
+  
+  Full diff:
+  - []
+  + [
+  +     'trust-classes.json: ResponseShape/Schemas/SensesProject.lean: '
+  +     'ResponseShape.Schemas.SensesProject.details is not a declaration of that '
+  +     'file',
+  + ]
+FAILED tests/test_trust_budget.py::test_trust_map_check_passes_on_the_live_tree - AssertionError: class lines: K 994, S 12181, D 17158, G 34053, C 12255, P 94850, T 28098, o 17035
+  D/G groups: D[V] 14896, D[R] 1514, D[I] 748, G[V] 30021, G[R] 3703, G[I] 329
+  tied 1084, unclassified 6, trusted 57158 (K + S + untied [V] + unclassified), 216630 lines in 688 files
+  trust-classes.json: ResponseShape/Schemas/SensesProject.lean: ResponseShape.Schemas.SensesProject.details is not a declaration of that file
+  
+assert 1 == 0
+ +  where 1 = CompletedProcess(args=['/home/runner/work/verifiable-english/verifiable-english/.venv/bin/python', 'tools/trust_map.py...onseShape/Schemas/SensesProject.lean: ResponseShape.Schemas.SensesProject.details is not a declaration of that file\n').returncode
+!!!!!! stopping after 5 failed tests outside the quarantine (--maxfail 5) !!!!!!
+1 failed, 1 passed, 4 errors in 13.21s
+recorded 247 units for tree 0b6a37f71b; 7 others left to the static graph until they run; 3 failed
+STOPPED EARLY (--maxfail 5): 7 selected units did not run: tests/test_speech_polar_lean.py, tests/test_trust_mutants.py, tests/test_defaults_checks.py, tests/test_lean_dump_cache.py, tests/test_wire_contract_generator.py, tests/test_units_relay_w6a.py, tests/test_units_w6a.py
+SHARD 1/2: exit 1 in 3065.9 s; 254 units, 244 passed
