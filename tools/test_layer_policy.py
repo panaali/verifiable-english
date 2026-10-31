@@ -324,8 +324,11 @@ class LayerSelectionTests(unittest.TestCase):
         with TemporaryDirectory() as directory:
             root = python_tree(Path(directory), {"ve/backends/__init__.py": "from ve.backends import senses\n"})
             code, output = python_check(root)
-        self.assertEqual(code, 1, output)
-        self.assertIn("new outward import ve.backends -> ve.backends.senses", output)
+            self.assertEqual(code, 1, output)
+            self.assertIn("new outward import ve.backends -> ve.backends.senses", output)
+            (root / "ve/backends/__init__.py").write_text("from ve.backends import relay\n")
+            code, output = python_check(root)
+        self.assertEqual(code, 0, output)
 
     @unittest.skipIf(grimp.build_graph is None, "the Python layer check needs grimp and import-linter")
     def test_ledger_edges_must_exist_and_point_outward(self):
