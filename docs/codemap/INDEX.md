@@ -5,7 +5,7 @@ Regenerated on every merge to main; on a branch it may lag that branch's own cha
 
 - [bench/](bench.md) — 4 modules — -
 - [conformance/](conformance.md) — 63 modules — `evaluation.json` contains **701** valid environment/model/document cases (**4,912 formulas**).
-- [docs/act-phrases/](docs__act-phrases.md) — 25 modules — -
+- [docs/act-phrases/](docs__act-phrases.md) — 26 modules — -
 - [docs/arch/](docs__arch.md) — 26 modules — -
 - [docs/architecture/](docs__architecture.md) — 1 modules — -
 - [docs/defeasible/](docs__defeasible.md) — 10 modules — -

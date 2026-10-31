@@ -119,6 +119,7 @@
 'VE.Acts.Lexical.words_intercalate' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.Wire.checkAct_joined' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.Wire.checkAct_lexical' depends on axioms: [propext, Classical.choice, Quot.sound]
+'VE.Acts.Wire.checkWith_lex' depends on axioms: [propext, Quot.sound]
 'VE.Acts.Wire.joinedAct_read' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.analyse_one' depends on axioms: [propext, Classical.choice, Quot.sound]
 'VE.Acts.build_wf' depends on axioms: [propext, Quot.sound]
