@@ -37,7 +37,7 @@ BUGS = [
     (M, "two-parts-dropped", "normalOk", "a joined filler of fewer than two parts is accepted",
      "2 ≤ ps.length && !longEnd ps", "!longEnd ps"),
     (M, "two-parts-one", "normalOk", "a joined filler of one part is accepted",
-     "2 ≤ ps.length", "1 ≤ ps.length"),
+     "2 ≤ ps.length && !longEnd", "1 ≤ ps.length && !longEnd"),
     (M, "d9-dropped", "normalOk", "a joined filler with a long first or last part is accepted",
      "2 ≤ ps.length && !longEnd ps", "2 ≤ ps.length"),
     (M, "no-frame-accepted", "normalOk", "an atom whose head no frame declares is accepted",
