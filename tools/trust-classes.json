@@ -2058,7 +2058,8 @@
         "VE.Compose.stackHead",
         "VE.Compose.unsupported",
         "VE.Compose.wrapperHead",
-        "VE.Compose.wrapperProfiles"
+        "VE.Compose.wrapperProfiles",
+        "VE.Compose.Interface"
       ],
       "G[V]": [
         "VE.Compose.Route",
@@ -2102,7 +2103,8 @@
         "VE.Compose.wrapperRows",
         "VE.Compose.actsRefuses",
         "VE.Compose.cardinalityOthers",
-        "VE.Compose.modeProfiles"
+        "VE.Compose.modeProfiles",
+        "VE.Compose.slotAgrees"
       ],
       "G[R]": [
         "VE.Compose.pendingWithDefaults"
@@ -16327,6 +16329,37 @@
         "VE.Cardinality.Document.Entry",
         "VE.Cardinality.Document.Graph",
         "VE.Cardinality.Document.Entries"
+      ]
+    },
+    "VE/Compose/Stack.lean": {
+      "G[V]": [
+        "VE.Compose.rewriters",
+        "VE.Compose.stackOf",
+        "VE.Compose.Contract.listedStacks"
+      ]
+    },
+    "VE/Compose/Contract.lean": {
+      "S": [
+        "VE.Compose.Contract.Rewriter",
+        "VE.Compose.Contract.Rewriter.Laws",
+        "VE.Compose.Contract.ScopeRunsOf",
+        "VE.Compose.Contract.ScopeRuns",
+        "VE.Compose.Contract.ScopeFaithful",
+        "VE.Compose.Contract.ScopePreserves",
+        "VE.Compose.Contract.ScopeSetsFaithful",
+        "VE.Compose.Contract.RouteFacts"
+      ],
+      "G[V]": [
+        "VE.Compose.Contract.pipeline",
+        "VE.Compose.Contract.pipelineOf",
+        "VE.Compose.Contract.scopeRewriter",
+        "VE.Compose.Contract.docRewriters"
+      ]
+    },
+    "VE/Compose/ContractExamples.lean": {
+      "T": [
+        "VE.Compose.ContractExamples.plannedRows",
+        "VE.Compose.ContractExamples.ungoverned"
       ]
     }
   }
