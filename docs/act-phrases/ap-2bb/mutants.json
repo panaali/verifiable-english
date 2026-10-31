@@ -40,7 +40,7 @@
   {
    "id": "parts-joined-empty",
    "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
+   "file": "lean/VE/Acts/Meaning.lean",
    "definition": "VE.Acts.Filler.parts",
    "behaviour": "a joined filler's parts are not checked",
    "status": "KILLED",
@@ -49,7 +49,7 @@
   {
    "id": "nonempty-dropped",
    "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
+   "file": "lean/VE/Acts/Meaning.lean",
    "definition": "VE.Acts.normalOk",
    "behaviour": "an empty words part is accepted",
    "status": "KILLED",
@@ -58,7 +58,7 @@
   {
    "id": "filler-words-dropped",
    "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
+   "file": "lean/VE/Acts/Meaning.lean",
    "definition": "VE.Acts.normalOk",
    "behaviour": "any word is accepted in a words part",
    "status": "KILLED",
@@ -67,7 +67,7 @@
   {
    "id": "filler-words-case",
    "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
+   "file": "lean/VE/Acts/Meaning.lean",
    "definition": "VE.Acts.normalOk",
    "behaviour": "the filler words are compared without lower-casing",
    "status": "KILLED",
@@ -76,7 +76,7 @@
   {
    "id": "subject-slot-allowed",
    "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
+   "file": "lean/VE/Acts/Meaning.lean",
    "definition": "VE.Acts.normalOk",
    "behaviour": "the subject slot {0} is accepted as a part",
    "status": "KILLED",
@@ -85,7 +85,7 @@
   {
    "id": "nodup-dropped",
    "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
+   "file": "lean/VE/Acts/Meaning.lean",
    "definition": "VE.Acts.normalOk",
    "behaviour": "a repeated argument marker is accepted",
    "status": "KILLED",
@@ -94,7 +94,7 @@
   {
    "id": "split-joined-allowed",
    "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
+   "file": "lean/VE/Acts/Meaning.lean",
    "definition": "VE.Acts.normalOk",
    "behaviour": "a joined filler under a split marker is accepted",
    "status": "KILLED",
@@ -103,7 +103,7 @@
   {
    "id": "two-parts-dropped",
    "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
+   "file": "lean/VE/Acts/Meaning.lean",
    "definition": "VE.Acts.normalOk",
    "behaviour": "a joined filler of fewer than two parts is accepted",
    "status": "KILLED",
@@ -112,7 +112,7 @@
   {
    "id": "two-parts-one",
    "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
+   "file": "lean/VE/Acts/Meaning.lean",
    "definition": "VE.Acts.normalOk",
    "behaviour": "a joined filler of one part is accepted",
    "status": "KILLED",
@@ -121,7 +121,7 @@
   {
    "id": "d9-dropped",
    "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
+   "file": "lean/VE/Acts/Meaning.lean",
    "definition": "VE.Acts.normalOk",
    "behaviour": "a joined filler with a long first or last part is accepted",
    "status": "KILLED",
@@ -130,7 +130,7 @@
   {
    "id": "no-frame-accepted",
    "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
+   "file": "lean/VE/Acts/Meaning.lean",
    "definition": "VE.Acts.normalOk",
    "behaviour": "an atom whose head no frame declares is accepted",
    "status": "KILLED",
@@ -139,7 +139,7 @@
   {
    "id": "atomOk-dropped",
    "language": "Lean",
-   "file": "lean/VE/Acts/Linearize.lean",
+   "file": "lean/VE/Acts/Meaning.lean",
    "definition": "VE.Acts.normalOk",
    "behaviour": "an atom that does not fit its frame is accepted",
    "status": "KILLED",
