@@ -227,12 +227,14 @@ theorem faithful_sim {D : Doc} (hh : Hyps D) {c : Choice} (hc : Compatible D c) 
   fuelLe := choice_fuel_le hh c
 
 /-- 2.3 of the plan: where exactly c's atoms hold, the superposed document decides every act as c's document does on
-    the pulled structure. On these chains hq is not needed (an unchosen rule is not live); it is stated because S2b's
-    bar case needs it (F21), so that S2b removes only hch. -/
+    the pulled structure, at every well-sorted tuple. On these chains hq and ht are not needed (an unchosen rule is not
+    live); they are stated because S2b's bar case needs them (F21: quiescence empties aimed_m only on well-sorted
+    tuples, reviews/dri-decisions-20261031-cmp-s2b.md, counterexample `RightsExamples.f21_needs_typed`), so that S2b
+    removes only hch. -/
 theorem superpose_faithful (D : Doc) (h : WellFormedDoc D = true) (hch : D.chain ≠ .rights)
     (hs : superposable D = true) (c : Choice) (hc : Compatible D c) (S : VE.Structure.{u})
     (he : Encodes D c S) (hq : Sat S (choicePremises D)) (r : Regulated)
-    (hr : r ∈ (correlate (choiceDoc D c).1).T.regulated) (vs : List S.Carrier) :
+    (hr : r ∈ (correlate (choiceDoc D c).1).T.regulated) (vs : List S.Carrier) (ht : VE.TupleTyped S r.sorts vs) :
   ValueSoft (correlate (sup D).1) r S vs = ValueSoft (correlate (choiceDoc D c).1) r (pull D c S) vs := by
   have hh : Hyps D := ⟨h, hch, hs⟩
   rw [sup_correlate hh, choice_correlate hh c]
