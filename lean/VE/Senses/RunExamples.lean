@@ -144,4 +144,20 @@ def fenced (fs ids allowed : List String) (defaults : List (String × Nat) := []
 #guard pin (projectCaseReported ((projectReq lineFunny2 ["funny"]).setObjVal! "extra" (.bool true))) == "ac20cd6890a736700e2d9d59c13e92fcf06f0447570c76bf7f4eb1a82f4770b8"
 
 
+
+-- two unresolved words: choices of two senses
+#guard pin (runCaseReported (src "Both the riddle is funny and the riddle is odd.")) == "e565d1f43400e6eb38d41aae93def496e3ec2407091b3f1fe3c01747f762dcd3"
+-- two units
+#guard pin (runCaseReported (src "The riddle is funny. Alice tells the riddle.")) == "5c912995b88dbb1d0f5721645088cc0a87250eb4e9966e956698655569ca0a85"
+-- own senses whose kinds are the document's sorts
+#guard pin (projectCaseReported ((projectReq "" ["funny", "tells"]).setObjVal! "packs" (Json.arr #[]) |>.setObjVal! "own" (Json.arr #[sFunny1.toJson, sTells1.toJson]))) == "1cfd57a5f331dd8904065e1cc52c3249a8fe56c07581871cda0be5f8bd11e2ef"
+-- a second used word outside the dictionary
+#guard pin (projectCaseReported (projectReq lineFunny2 ["funny", "giggle"])) == "19bdf30a4256160b6f1b8a478a4d3f4b0c6a15c1ff99c0ff226bf234ffbb19e5"
+-- every word of the dictionary
+#guard pin (projectCaseReported (projectReq "" ["funny", "odd", "tells", "deployed", "reviewed", "access"])) == "2d0236e945451c2200e679e0ff76de13b9774885166f7f8642bcac8e2b6ebb65"
+-- a one-character line
+#guard pin (projectCaseReported (projectReq "x" ["funny"])) == "50c8b279ed22fc5d46e876ac027ba3d93f52cbdb0cfc8dbdc1fab42c05488de3"
+-- a lexicon english.read refuses
+#guard pin (projectCaseReported ((projectReq lineFunny2 ["funny"]).setObjVal! "lexicon" (lexiconJson ((VE.EnglishGrammar.Run.environmentId (displayJson EJ.source overlayJ)).toOption.getD "") { LJ with nouns := [("joke", "joke")] }))) == "97d9cdc7cda6f59b517a91ca091ccb4264362263ac3afec2b0efccc55a12015e"
+
 end VE.Senses.RunExamples

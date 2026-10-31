@@ -1,5 +1,84 @@
-{"allow": [
-  {"definition": "VE.Service.Mode", "operator": "ctor-drop", "reason": "dropping a constructor leaves its uses (Registry.lean Mode.name, Protocol.runMode) unknown: a compile failure outside any check, never a running service"},
-  {"definition": "ResponseShape.Schemas.files", "operator": "list-empty", "reason": "the schema list feeds skel% at compile time: an emptied list fails every Skeletons.lean skeleton's elaboration (unresolved $ref), never a running decoder"},
-  {"definition": "ResponseShape.Schemas.files", "operator": "list-drop-first", "reason": "dropping common.json or envelope.json fails Skeletons.lean's elaboration (unresolved $ref common.json#/$defs/case_error) at compile time, never a running decoder"}
-]}
+{
+ "allow": [
+  {
+   "definition": "VE.Service.Mode",
+   "operator": "ctor-drop",
+   "reason": "dropping a constructor leaves its uses (Registry.lean Mode.name, Protocol.runMode) unknown: a compile failure outside any check, never a running service"
+  },
+  {
+   "definition": "ResponseShape.Schemas.files",
+   "operator": "list-empty",
+   "reason": "the schema list feeds skel% at compile time: an emptied list fails every Skeletons.lean skeleton's elaboration (unresolved $ref), never a running decoder"
+  },
+  {
+   "definition": "ResponseShape.Schemas.files",
+   "operator": "list-drop-first",
+   "reason": "dropping common.json or envelope.json fails Skeletons.lean's elaboration (unresolved $ref common.json#/$defs/case_error) at compile time, never a running decoder"
+  },
+  {
+   "definition": "VE.Senses.Run.readCase",
+   "operator": "bool-flip",
+   "reason": "the flipped default of `identified` changes how each call site elaborates; RunExamples.lean's guard of the document mode's answer (no identities) is the call it changes"
+  },
+  {
+   "definition": "VE.Senses.Run.candidateJson",
+   "operator": "list-first",
+   "reason": "on Option.toList (at most one member) take 1 is the identity; the choice mutants on line 20 are killed by the two-word-choice guard"
+  },
+  {
+   "definition": "VE.Senses.Run.candidateJson",
+   "operator": "list-last",
+   "reason": "on Option.toList (at most one member) reverse.take 1 is the identity; the choice mutants on line 20 are killed by the two-word-choice guard"
+  },
+  {
+   "definition": "VE.Senses.Run.projectCase",
+   "operator": "list-first",
+   "reason": "[\"overlay\"].filter has at most one member, so take 1 is the identity; the used and sorts mutants are killed by their guards"
+  },
+  {
+   "definition": "VE.Senses.Run.projectCase",
+   "operator": "list-last",
+   "reason": "[\"overlay\"].filter has at most one member, so reverse.take 1 is the identity; the used and sorts mutants are killed by their guards"
+  },
+  {
+   "definition": "VE.Senses.Run.linesProjection",
+   "operator": "list-first",
+   "reason": "(lines.take 1).isEmpty is lines.isEmpty"
+  },
+  {
+   "definition": "VE.Senses.Run.linesProjection",
+   "operator": "list-empty",
+   "reason": "the mutant does not type-check (Lean's error in the mutated declaration, recorded in its detail): no build runs it"
+  },
+  {
+   "definition": "VE.Senses.Run.linesProjection",
+   "operator": "list-drop-last",
+   "reason": "the mutant does not type-check (Lean's error in the mutated declaration, recorded in its detail): no build runs it"
+  },
+  {
+   "definition": "VE.Senses.Run.linesProjection",
+   "operator": "list-last",
+   "reason": "the mutant does not type-check (Lean's error in the mutated declaration, recorded in its detail): no build runs it"
+  },
+  {
+   "definition": "VE.Senses.Run.outcomeJson",
+   "operator": "list-empty",
+   "reason": "the mutant does not type-check (Lean's error in the mutated declaration, recorded in its detail): no build runs it"
+  },
+  {
+   "definition": "VE.Senses.Run.lexiconJson",
+   "operator": "list-empty",
+   "reason": "the mutant does not type-check (Lean's error in the mutated declaration, recorded in its detail): no build runs it"
+  },
+  {
+   "definition": "VE.Senses.Run.candidateJson",
+   "operator": "list-empty",
+   "reason": "the mutant does not type-check (Lean's error in the mutated declaration, recorded in its detail): no build runs it"
+  },
+  {
+   "definition": "VE.Senses.Run.projectCase",
+   "operator": "list-empty",
+   "reason": "the mutant does not type-check (Lean's error in the mutated declaration, recorded in its detail): no build runs it"
+  }
+ ]
+}
