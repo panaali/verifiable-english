@@ -1,0 +1,19 @@
+trust_mutants: 11 definitions, 268 mutants (67 to run), 4 jobs, base 598358e43282
+UNKNOWN lean/VE/Senses/Run.lean:115 VE.Senses.Run.outcomeJson (G[V], trusted) list-empty: fences.map -> [] (lean/VE/Senses/Run.lean:115: Function expected at)
+UNKNOWN lean/VE/Senses/Run.lean:225 VE.Senses.Run.linesProjection (G[V], trusted) list-empty: sents -> [] (lean/VE/Senses/Run.lean:225: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Senses/Run.lean:322 VE.Senses.Run.projectCase (G[V], trusted) list-empty: used -> [] (lean/VE/Senses/Run.lean:322: typeclass instance problem is stuck, it is often due to metavariables)
+UNKNOWN lean/VE/Senses/Run.lean:325 VE.Senses.Run.projectCase (G[V], trusted) list-empty: c.E.sorts -> [] (lean/VE/Senses/Run.lean:325: Invalid field notation: Type of)
+SURVIVOR lean/VE/Senses/Run.lean:219 VE.Senses.Run.linesProjection (G[V], trusted) list-first: lines -> (lines.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:20 VE.Senses.Run.candidateJson (G[V], trusted) list-first: c.choice -> (c.choice.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:320 VE.Senses.Run.projectCase (G[V], trusted) list-first: used -> (used.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:21 VE.Senses.Run.candidateJson (G[V], trusted) list-first: (ids.map fun f => ("identities", f c.lines)).toList -> (((ids.map fun f => ("identities", f c.lines)).toList).take 1)
+SURVIVOR lean/VE/Senses/Run.lean:325 VE.Senses.Run.projectCase (G[V], trusted) list-drop-last: c.E.sorts.map (·.name) -> ((c.E.sorts.map (·.name)).dropLast)
+SURVIVOR lean/VE/Senses/Run.lean:314 VE.Senses.Run.projectCase (G[V], trusted) list-last: ["overlay"].filter (has j) -> ((["overlay"].filter (has j)).reverse.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:320 VE.Senses.Run.projectCase (G[V], trusted) list-last: used -> (used.reverse.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:21 VE.Senses.Run.candidateJson (G[V], trusted) list-last: (ids.map fun f => ("identities", f c.lines)).toList -> (((ids.map fun f => ("identities", f c.lines)).toList).reverse.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:325 VE.Senses.Run.projectCase (G[V], trusted) list-last: c.E.sorts -> (c.E.sorts.reverse.take 1)
+SURVIVOR lean/VE/Senses/Run.lean:325 VE.Senses.Run.projectCase (G[V], trusted) list-drop-first: c.E.sorts -> (c.E.sorts.drop 1)
+trust_mutants: 46 KILLED, 10 SURVIVOR, 4 UNKNOWN, 7 INVALID, 0 ALLOWED, 0 NOT RUN, 201 OTHER SHARD in 2441 s
+trust_mutants: D[V], trusted: 6 KILLED, 2 INVALID, 23 OTHER SHARD
+trust_mutants: G[V], trusted: 40 KILLED, 10 SURVIVOR, 4 UNKNOWN, 5 INVALID, 178 OTHER SHARD
+trust_mutants: steps: wall plan 9.3 s, scratch 3.2 s, control_build 0.3 s, probe_install 1.4 s, control_probes 139.4 s, mutants 2285.3 s, cleanup 2.5 s, reads 0.1 s; lake control_build 0.2 s (1), probe_install 1.3 s (1), control_probes 428.1 s (8), mutant_builds 174.1 s (70), mutant_checks 864 s (59), stage_controls 74.7 s (6), mutant_probes 7929.3 s (47)
