@@ -990,7 +990,8 @@
         "ResponseShape.Skeletons.diagnose",
         "ResponseShape.Skeletons.normDefaults",
         "ResponseShape.Skeletons.words",
-        "ResponseShape.Skeletons.cardinality"
+        "ResponseShape.Skeletons.cardinality",
+        "ResponseShape.Skeletons.scope"
       ],
       "G[I]": [
         "ResponseShape.Skeletons.identity"
@@ -12655,11 +12656,6 @@
         "relName"
       ]
     },
-    "VE/Numbers/Bits.lean": {
-      "C": [
-        "VE.Numbers.bits"
-      ]
-    },
     "VE/Acts/Syntax.lean": {
       "S": [
         "VE.Acts.Frame",
@@ -14430,57 +14426,6 @@
         "VE.Calc.Work.AtSpec"
       ]
     },
-    "VE/Calc/WorkExamples.lean": {
-      "T": [
-        "VE.Calc.WorkExamples.C",
-        "VE.Calc.WorkExamples.bad",
-        "VE.Calc.WorkExamples.balanced",
-        "VE.Calc.WorkExamples.beyond",
-        "VE.Calc.WorkExamples.big",
-        "VE.Calc.WorkExamples.cancels",
-        "VE.Calc.WorkExamples.decoderDecls",
-        "VE.Calc.WorkExamples.decoderSides",
-        "VE.Calc.WorkExamples.decoderTable",
-        "VE.Calc.WorkExamples.defd",
-        "VE.Calc.WorkExamples.dense",
-        "VE.Calc.WorkExamples.eqc",
-        "VE.Calc.WorkExamples.failing",
-        "VE.Calc.WorkExamples.fan",
-        "VE.Calc.WorkExamples.forms",
-        "VE.Calc.WorkExamples.hugeC",
-        "VE.Calc.WorkExamples.hugeCancel",
-        "VE.Calc.WorkExamples.instDecidableSound",
-        "VE.Calc.WorkExamples.isBeyond",
-        "VE.Calc.WorkExamples.judge",
-        "VE.Calc.WorkExamples.keep",
-        "VE.Calc.WorkExamples.limitValue",
-        "VE.Calc.WorkExamples.linearity",
-        "VE.Calc.WorkExamples.lowerName",
-        "VE.Calc.WorkExamples.lowered",
-        "VE.Calc.WorkExamples.mixed",
-        "VE.Calc.WorkExamples.n1Side",
-        "VE.Calc.WorkExamples.names",
-        "VE.Calc.WorkExamples.nestedSides",
-        "VE.Calc.WorkExamples.nines",
-        "VE.Calc.WorkExamples.one",
-        "VE.Calc.WorkExamples.open'",
-        "VE.Calc.WorkExamples.over",
-        "VE.Calc.WorkExamples.pairUp",
-        "VE.Calc.WorkExamples.powChain",
-        "VE.Calc.WorkExamples.probeFacts",
-        "VE.Calc.WorkExamples.shapes",
-        "VE.Calc.WorkExamples.sideA12",
-        "VE.Calc.WorkExamples.soundRows",
-        "VE.Calc.WorkExamples.stageY",
-        "VE.Calc.WorkExamples.tableUnits",
-        "VE.Calc.WorkExamples.tied",
-        "VE.Calc.WorkExamples.twice",
-        "VE.Calc.WorkExamples.xC",
-        "VE.Calc.WorkExamples.zero",
-        "VE.Calc.WorkExamples.zs",
-        "VE.Calc.WorkExamples.κz"
-      ]
-    },
     "VE/Calc/Run.lean": {
       "S": [
         "VE.Calc.Check.OutcomeMeans",
@@ -16216,6 +16161,128 @@
         "VE.Arith.Examples.exPrime",
         "VE.Arith.Examples.stops",
         "VE.Arith.Examples.vePrime"
+      ]
+    },
+    "VE/Scope/English.lean": {
+      "D[I]": [
+        "VE.Scope.Quotes",
+        "VE.Scope.quote",
+        "VE.Scope.leadOf",
+        "VE.Scope.whereOf",
+        "VE.Scope.coverOf",
+        "VE.Scope.sentence"
+      ]
+    },
+    "VE/Scope/Run.lean": {
+      "D[I]": [
+        "VE.Scope.GovRow",
+        "VE.Scope.Row",
+        "VE.Scope.effectWord",
+        "VE.Scope.effectWords",
+        "VE.Scope.contributors",
+        "VE.Scope.contributorsF",
+        "VE.Scope.explainRows",
+        "VE.Scope.rowsF",
+        "VE.Scope.explainFast",
+        "VE.Scope.Run.quotesOf",
+        "VE.Scope.Run.govJson",
+        "VE.Scope.Run.rowJson",
+        "VE.Scope.Run.governedJson"
+      ],
+      "D[V]": [
+        {
+          "name": "VE.Scope.Run.readSplit",
+          "tied": [
+            "VE.Scope.Run.readSplit_scope"
+          ]
+        }
+      ],
+      "G[R]": [
+        "VE.Scope.Run.cellLimit",
+        "VE.Scope.Run.cellBound",
+        "VE.Scope.Run.explainWithin"
+      ],
+      "G[I]": [
+        "VE.Scope.Run.explainCase",
+        "VE.Scope.Run.runCaseReported"
+      ]
+    },
+    "VE/Scope/RunExamples.lean": {
+      "T": [
+        "VE.Scope.RunExamples.source",
+        "VE.Scope.RunExamples.sd",
+        "VE.Scope.RunExamples.rowsOf",
+        "VE.Scope.RunExamples.gP",
+        "VE.Scope.RunExamples.gY",
+        "VE.Scope.RunExamples.fr",
+        "VE.Scope.RunExamples.g2s",
+        "VE.Scope.RunExamples.item2",
+        "VE.Scope.RunExamples.shown"
+      ]
+    },
+    "ResponseShape/Schemas/Scope.lean": {
+      "G[R]": [
+        "ResponseShape.Schemas.Scope.governor",
+        "ResponseShape.Schemas.Scope.unitRow",
+        "ResponseShape.Schemas.Scope.governed",
+        "ResponseShape.Schemas.Scope.row",
+        "ResponseShape.Schemas.Scope.file"
+      ]
+    },
+    "VE/Numbers/Bits.lean": {
+      "C": [
+        "VE.Numbers.bits"
+      ]
+    },
+    "VE/Calc/WorkExamples.lean": {
+      "T": [
+        "VE.Calc.WorkExamples.C",
+        "VE.Calc.WorkExamples.bad",
+        "VE.Calc.WorkExamples.balanced",
+        "VE.Calc.WorkExamples.beyond",
+        "VE.Calc.WorkExamples.big",
+        "VE.Calc.WorkExamples.cancels",
+        "VE.Calc.WorkExamples.decoderDecls",
+        "VE.Calc.WorkExamples.decoderSides",
+        "VE.Calc.WorkExamples.decoderTable",
+        "VE.Calc.WorkExamples.defd",
+        "VE.Calc.WorkExamples.dense",
+        "VE.Calc.WorkExamples.eqc",
+        "VE.Calc.WorkExamples.failing",
+        "VE.Calc.WorkExamples.fan",
+        "VE.Calc.WorkExamples.forms",
+        "VE.Calc.WorkExamples.hugeC",
+        "VE.Calc.WorkExamples.hugeCancel",
+        "VE.Calc.WorkExamples.instDecidableSound",
+        "VE.Calc.WorkExamples.isBeyond",
+        "VE.Calc.WorkExamples.judge",
+        "VE.Calc.WorkExamples.keep",
+        "VE.Calc.WorkExamples.limitValue",
+        "VE.Calc.WorkExamples.linearity",
+        "VE.Calc.WorkExamples.lowerName",
+        "VE.Calc.WorkExamples.lowered",
+        "VE.Calc.WorkExamples.mixed",
+        "VE.Calc.WorkExamples.n1Side",
+        "VE.Calc.WorkExamples.names",
+        "VE.Calc.WorkExamples.nestedSides",
+        "VE.Calc.WorkExamples.nines",
+        "VE.Calc.WorkExamples.one",
+        "VE.Calc.WorkExamples.open'",
+        "VE.Calc.WorkExamples.over",
+        "VE.Calc.WorkExamples.pairUp",
+        "VE.Calc.WorkExamples.powChain",
+        "VE.Calc.WorkExamples.probeFacts",
+        "VE.Calc.WorkExamples.shapes",
+        "VE.Calc.WorkExamples.sideA12",
+        "VE.Calc.WorkExamples.soundRows",
+        "VE.Calc.WorkExamples.stageY",
+        "VE.Calc.WorkExamples.tableUnits",
+        "VE.Calc.WorkExamples.tied",
+        "VE.Calc.WorkExamples.twice",
+        "VE.Calc.WorkExamples.xC",
+        "VE.Calc.WorkExamples.zero",
+        "VE.Calc.WorkExamples.zs",
+        "VE.Calc.WorkExamples.κz"
       ]
     },
     "VE/Cardinality/Document.lean": {

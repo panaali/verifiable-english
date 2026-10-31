@@ -1345,17 +1345,17 @@
   },
   {
    "class": "S",
-   "lines": 12,
-   "reason": "df-3: S +12 (VE/Readings/DefaultVerdicts.lean: choiceSoft, dSem), V +126 (VE/Readings/DefaultVerdicts.lean +80: dBasis, DVerdicts.hasDefaults, dEnglish, runVerdictsD, verdictWord, dChoiceJson, DLine, DLine.json, defaultJson; ResponseShape/Schemas/ReadingsRoute.lean +43: verdicts_default_choice, verdicts_default_line, verdicts_default; VE/Defaults/Wire.lean +3: collisionFields), K +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-3, 2026-10-18",
-   "commit": "0df9256dfe7d86d3d4ebf009a9a9026006256447"
+   "lines": 54,
+   "reason": "me-4: VE/Calc/Table.lean +67 (S +54: Cell, Table, Table.cell, Filter, Filter.Selects, Table.numbers, mean?, Agg, Agg.run; D[V] +13: ColType, readCell), VE/Calc/Csv.lean +34 (D[V] CSV decoder), VE/Calc/Jsonl.lean +34 (D[V] JSON-lines decoder), VE/Calc/Data.lean +13 (D[V] Format, DataDecl, decodeTable); K +0; runCounted tied to counted_bound/counted_exhausted",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-4, 2026-10-18",
+   "commit": "379130067eac5519bca086a1ff06b1775ed61dd4"
   },
   {
    "class": "V",
-   "lines": 126,
-   "reason": "df-3: S +12 (VE/Readings/DefaultVerdicts.lean: choiceSoft, dSem), V +126 (VE/Readings/DefaultVerdicts.lean +80: dBasis, DVerdicts.hasDefaults, dEnglish, runVerdictsD, verdictWord, dChoiceJson, DLine, DLine.json, defaultJson; ResponseShape/Schemas/ReadingsRoute.lean +43: verdicts_default_choice, verdicts_default_line, verdicts_default; VE/Defaults/Wire.lean +3: collisionFields), K +0",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-3, 2026-10-18",
-   "commit": "0df9256dfe7d86d3d4ebf009a9a9026006256447"
+   "lines": 94,
+   "reason": "me-4: VE/Calc/Table.lean +67 (S +54: Cell, Table, Table.cell, Filter, Filter.Selects, Table.numbers, mean?, Agg, Agg.run; D[V] +13: ColType, readCell), VE/Calc/Csv.lean +34 (D[V] CSV decoder), VE/Calc/Jsonl.lean +34 (D[V] JSON-lines decoder), VE/Calc/Data.lean +13 (D[V] Format, DataDecl, decodeTable); K +0; runCounted tied to counted_bound/counted_exhausted",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-4, 2026-10-18",
+   "commit": "379130067eac5519bca086a1ff06b1775ed61dd4"
   },
   {
    "class": "V",
@@ -1363,6 +1363,13 @@
    "reason": "me-2d: VE/Calc/Render.lean +6 (G[V] English.leadingPhrase, reservedIn), VE/Calc/Wire.lean +2 (D[V] the calls in value and decode); checkWords and checkVerbalisations are D[R] (+16), RunExamples helpers T (V +8, K +0, S +0)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-2d, 2026-10-18",
    "commit": "de7cb402237e826966f45fe7f495e69de61ce494"
+  },
+  {
+   "class": "V",
+   "lines": 2,
+   "reason": "me-4 review F2: shared tableDimensions enforces the spec section 14 row and column caps in CSV and JSONL; total me-4 trusted growth is K +0, S +54, V +96 = 150 over the merge base, with the original R16 allowance covering S +54 and V +94",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-4 review fix, 2026-10-28",
+   "commit": "d25bc343be0f41a29a65c6a8766f18f2b1694e8d"
   },
   {
    "class": "V",
@@ -1379,25 +1386,32 @@
    "commit": "b8eac74553124f72a8650211b9df8228c621fdfe"
   },
   {
+   "class": "V",
+   "lines": 143,
+   "reason": "scale-lean-memo: Run.lean +75 (bounded admission memo and service runner), Protocol.lean +63 (memo request dispatch), Serve.lean +5 (process state and stats); K +0, S +0, V +143; tests/test_readings_memo.py covers every new definition",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), scale-lean-memo, 2026-10-29",
+   "commit": "b0dce1ea4c96241925fa2ee505e756ca1ee8a54f"
+  },
+  {
+   "class": "V",
+   "lines": 3,
+   "reason": "scale-lean-memo check fix: Protocol.memoLineTooLong +2, Serve.readingsMemoStatsEnabled +1; K +0, S +0, V +3; MemoExamples and Serve guards exercise both",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), scale-lean-memo, 2026-10-29",
+   "commit": "b0dce1ea4c96241925fa2ee505e756ca1ee8a54f"
+  },
+  {
    "class": "S",
-   "lines": 54,
-   "reason": "me-4: VE/Calc/Table.lean +67 (S +54: Cell, Table, Table.cell, Filter, Filter.Selects, Table.numbers, mean?, Agg, Agg.run; D[V] +13: ColType, readCell), VE/Calc/Csv.lean +34 (D[V] CSV decoder), VE/Calc/Jsonl.lean +34 (D[V] JSON-lines decoder), VE/Calc/Data.lean +13 (D[V] Format, DataDecl, decodeTable); K +0; runCounted tied to counted_bound/counted_exhausted",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-4, 2026-10-18",
-   "commit": "379130067eac5519bca086a1ff06b1775ed61dd4"
+   "lines": 12,
+   "reason": "df-3: S +12 (VE/Readings/DefaultVerdicts.lean: choiceSoft, dSem), V +126 (VE/Readings/DefaultVerdicts.lean +80: dBasis, DVerdicts.hasDefaults, dEnglish, runVerdictsD, verdictWord, dChoiceJson, DLine, DLine.json, defaultJson; ResponseShape/Schemas/ReadingsRoute.lean +43: verdicts_default_choice, verdicts_default_line, verdicts_default; VE/Defaults/Wire.lean +3: collisionFields), K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-3, 2026-10-18",
+   "commit": "0df9256dfe7d86d3d4ebf009a9a9026006256447"
   },
   {
    "class": "V",
-   "lines": 94,
-   "reason": "me-4: VE/Calc/Table.lean +67 (S +54: Cell, Table, Table.cell, Filter, Filter.Selects, Table.numbers, mean?, Agg, Agg.run; D[V] +13: ColType, readCell), VE/Calc/Csv.lean +34 (D[V] CSV decoder), VE/Calc/Jsonl.lean +34 (D[V] JSON-lines decoder), VE/Calc/Data.lean +13 (D[V] Format, DataDecl, decodeTable); K +0; runCounted tied to counted_bound/counted_exhausted",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-4, 2026-10-18",
-   "commit": "379130067eac5519bca086a1ff06b1775ed61dd4"
-  },
-  {
-   "class": "V",
-   "lines": 2,
-   "reason": "me-4 review F2: shared tableDimensions enforces the spec section 14 row and column caps in CSV and JSONL; total me-4 trusted growth is K +0, S +54, V +96 = 150 over the merge base, with the original R16 allowance covering S +54 and V +94",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-4 review fix, 2026-10-28",
-   "commit": "d25bc343be0f41a29a65c6a8766f18f2b1694e8d"
+   "lines": 126,
+   "reason": "df-3: S +12 (VE/Readings/DefaultVerdicts.lean: choiceSoft, dSem), V +126 (VE/Readings/DefaultVerdicts.lean +80: dBasis, DVerdicts.hasDefaults, dEnglish, runVerdictsD, verdictWord, dChoiceJson, DLine, DLine.json, defaultJson; ResponseShape/Schemas/ReadingsRoute.lean +43: verdicts_default_choice, verdicts_default_line, verdicts_default; VE/Defaults/Wire.lean +3: collisionFields), K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-3, 2026-10-18",
+   "commit": "0df9256dfe7d86d3d4ebf009a9a9026006256447"
   },
   {
    "class": "V",
@@ -1412,6 +1426,13 @@
    "reason": "sc-1ae: lean/VE/Scope/Govern.lean S +27 (JsonWF 9, HasStr 5, payload 6, BlockBound 3 by their source ranges in lean/declarations.txt, and the 4 lines between them): spec 4.2's HasStr, payload, BlockBound and spec 11.3's JsonWF (the DRI's fix (a), 2026-10-27), the meaning of 5.1's statements; K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1ae, 2026-10-18",
    "commit": "c2a0ee9776ea790a0d54b05af000dfe39f36d984"
+  },
+  {
+   "class": "V",
+   "lines": 2,
+   "reason": "scale-lean-memo review fix (F1): Run.lean +2 (admitComponentsMemo takes the counted admission onMiss in place of the request's parts; runCaseReportedMemo builds it and keeps the memo state on a refusal); total scale-lean-memo trusted growth K +0, S +0, V +148 (Run.lean +77, Protocol.lean +65, Serve.lean +6) over the merge base, within R16's 150; tests/test_readings_memo.py and lean/VE/Service/MemoExamples.lean exercise both",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), scale-lean-memo review fix, 2026-10-30",
+   "commit": "314b23a42c211ffcd68bd6070fa7ba3770f3a5b0"
   },
   {
    "class": "S",
@@ -1443,13 +1464,6 @@
   },
   {
    "class": "V",
-   "lines": 1,
-   "reason": "sc-1af: VE/Scope/Wire.lean +1 (decodeBlock's boundary call; the check jsonWF?/listWF?/implWF?/balanced?/ascending is G[R] +31 in VE/Scope/Govern.lean and illFormed D[R] +10 in VE/Scope/Wire.lean, untrusted)",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1af, 2026-10-18",
-   "commit": "81b8371210db46ae992a2eff54f1a6d0039d2d0d"
-  },
-  {
-   "class": "V",
    "lines": 48,
    "reason": "sc-5rc: VE/Service/Document.lean +31 D[V]; ResponseShape/Schemas/Document.lean +17 G[V]; K +0",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-5rc, 2026-10-29",
@@ -1471,10 +1485,10 @@
   },
   {
    "class": "V",
-   "lines": 2,
-   "reason": "me-6cc: lean/VE/Calc/Units.lean V +2 (decodeFactor: the shape guard line and one doc line; 8 to 10 lines)",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-6cc, 2026-10-30",
-   "commit": "62d8329d4dd96a08301764a64405d8333aeb42af"
+   "lines": 1,
+   "reason": "sc-1af: VE/Scope/Wire.lean +1 (decodeBlock's boundary call; the check jsonWF?/listWF?/implWF?/balanced?/ascending is G[R] +31 in VE/Scope/Govern.lean and illFormed D[R] +10 in VE/Scope/Wire.lean, untrusted)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1af, 2026-10-18",
+   "commit": "81b8371210db46ae992a2eff54f1a6d0039d2d0d"
   },
   {
    "class": "S",
@@ -1493,30 +1507,9 @@
   {
    "class": "V",
    "lines": 2,
-   "reason": "q1-4bb: VE/Question/Run.lean V +2 (speechPrefixes gains F2's fronted words; replaces the Python literal \"Is \" in ve/speech_english.py, deleted in the same change)",
-   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md), q1-4bb, 2026-10-30",
-   "commit": "b9f2335ab2933b1e0c262f497c06af64e0bac079"
-  },
-  {
-   "class": "V",
-   "lines": 143,
-   "reason": "scale-lean-memo: Run.lean +75 (bounded admission memo and service runner), Protocol.lean +63 (memo request dispatch), Serve.lean +5 (process state and stats); K +0, S +0, V +143; tests/test_readings_memo.py covers every new definition",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), scale-lean-memo, 2026-10-29",
-   "commit": "b0dce1ea4c96241925fa2ee505e756ca1ee8a54f"
-  },
-  {
-   "class": "V",
-   "lines": 3,
-   "reason": "scale-lean-memo check fix: Protocol.memoLineTooLong +2, Serve.readingsMemoStatsEnabled +1; K +0, S +0, V +3; MemoExamples and Serve guards exercise both",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), scale-lean-memo, 2026-10-29",
-   "commit": "b0dce1ea4c96241925fa2ee505e756ca1ee8a54f"
-  },
-  {
-   "class": "V",
-   "lines": 2,
-   "reason": "scale-lean-memo review fix (F1): Run.lean +2 (admitComponentsMemo takes the counted admission onMiss in place of the request's parts; runCaseReportedMemo builds it and keeps the memo state on a refusal); total scale-lean-memo trusted growth K +0, S +0, V +148 (Run.lean +77, Protocol.lean +65, Serve.lean +6) over the merge base, within R16's 150; tests/test_readings_memo.py and lean/VE/Service/MemoExamples.lean exercise both",
-   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), scale-lean-memo review fix, 2026-10-30",
-   "commit": "314b23a42c211ffcd68bd6070fa7ba3770f3a5b0"
+   "reason": "me-6cc: lean/VE/Calc/Units.lean V +2 (decodeFactor: the shape guard line and one doc line; 8 to 10 lines)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), me-6cc, 2026-10-30",
+   "commit": "62d8329d4dd96a08301764a64405d8333aeb42af"
   },
   {
    "class": "V",
@@ -1524,6 +1517,20 @@
    "reason": "df-1bbb: VE/Defaults/Wire.lean +2, ResponseShape/Schemas/NormDefaults.lean +2",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), df-1bbb, 2026-10-18",
    "commit": "bf28108dc14e7534f037e578850cd5ae5df69ff0"
+  },
+  {
+   "class": "V",
+   "lines": 4,
+   "reason": "sc-1c: VE/Service/Registry.lean +1, VE/Service/Protocol.lean +1, ResponseShape/Skeletons.lean +1, ResponseShape/Schemas.lean +1 (the scope mode's registry line, dispatch, skeleton case and schema file entry)",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1c, 2026-10-18",
+   "commit": "5b0163e94aca67e948a4132676df03fcf3ed8933"
+  },
+  {
+   "class": "V",
+   "lines": 2,
+   "reason": "q1-4bb: VE/Question/Run.lean V +2 (speechPrefixes gains F2's fronted words; replaces the Python literal \"Is \" in ve/speech_english.py, deleted in the same change)",
+   "signature": "SIGNED by standing ruling R6 (DRI-RULINGS.md), q1-4bb, 2026-10-30",
+   "commit": "b9f2335ab2933b1e0c262f497c06af64e0bac079"
   },
   {
    "class": "S",
