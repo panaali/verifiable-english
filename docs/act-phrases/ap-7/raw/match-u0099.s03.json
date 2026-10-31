@@ -1,0 +1,110 @@
+{
+ "key": "match-u0099.s03",
+ "account": "claude-panaali2",
+ "prompt": "You match readings by paraphrase. Below are a SENTENCE, the DEMAND inside it, and three numbered lists of readings of the DEMAND: A and B (from two auditors) and L (from a parser). Two readings match when they require, forbid or permit the same acts, each on its own or together in the same way, with every modifier applying to the same acts; wording does not matter. Pair the A and B readings that match, each A and each B reading in at most one pair. For each pair name the L reading that matches it, or NONE; each L reading in at most one pair. Then name every L reading in which a modifier applies to some of the joined items but not to an item between them (a skipped middle). Use only the text below; do not use tools or outside knowledge. Answer with one line per pair, `PAIR A<i> B<j> L<k>` or `PAIR A<i> B<j> NONE`, then exactly one line `SKIPPED: NONE` or `SKIPPED: L<k>, L<m>, ...`, and nothing else.\n\nSENTENCE: We may publish some guidelines as amendments or appendices to this document, alongside examples of hard cases and exemplary behavior.\nDEMAND: We may publish some guidelines as amendments or appendices to this document, alongside examples of hard cases and exemplary behavior\nIn list L, {0} stands for we (Anthropic).\nA1. We are permitted to publish some guidelines as amendments to this document, as appendices to it, or both, as we choose, together with examples of hard cases and examples of exemplary behavior.\nA2. We are permitted to publish some guidelines as amendments or appendices to this document. Separately, we are permitted to publish examples of hard cases and of exemplary behavior. We may publish the guidelines without the examples.\nA3. We are permitted to publish some guidelines as amendments or appendices to this document only if they come with examples of hard cases and of exemplary behavior.\nA4. We are permitted to publish some guidelines, and examples of hard cases and of exemplary behavior, all as amendments or appendices to this document.\nA5. We are permitted to publish some guidelines as amendments or appendices to this document. We are also permitted to publish examples of hard cases and of exemplary behavior next to the document itself rather than inside it.\nA6. We are permitted to publish some guidelines as amendments or appendices to this document, together with examples of cases that are both hard and show exemplary behavior.\nB1. We are permitted to publish some guidelines as amendments or appendices to this document, choosing either form for each, and we are separately permitted to publish examples of hard cases and of exemplary behavior next to them.\nB2. We are permitted to publish some guidelines as amendments or appendices to this document only as a package that comes with examples of hard cases and exemplary behavior. Publishing the guidelines without the examples is not covered by this permission.\nB3. We are permitted to publish both the guidelines and the examples of hard cases and exemplary behavior as amendments or appendices to this document. Under this reading, \"as amendments or appendices\" applies to the examples as well as the guidelines.\nB4. We are permitted to publish some guidelines as amendments or appendices, and the examples may come with them. The examples may be published in any form, not necessarily as amendments or appendices to this document.\nB5. We are permitted to publish some guidelines both as amendments and as appendices to this document, together with the examples, rather than having to pick one form.\nL: (none: the parser lists no reading)\n",
+ "cli": {
+  "duration_api_ms": 9672,
+  "stop_reason": "end_turn",
+  "session_id": "7e1cdc47-0491-437a-9629-bf318db09407",
+  "total_cost_usd": 0.0566048,
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 4822,
+   "cache_read_input_tokens": 10704,
+   "output_tokens": 794,
+   "output_tokens_details": {
+    "thinking_tokens": 726
+   },
+   "server_tool_use": {
+    "web_search_requests": 0,
+    "web_fetch_requests": 0
+   },
+   "service_tier": "standard",
+   "cache_creation": {
+    "ephemeral_1h_input_tokens": 4822,
+    "ephemeral_5m_input_tokens": 0
+   },
+   "inference_geo": "global",
+   "iterations": [
+    {
+     "input_tokens": 2,
+     "output_tokens": 794,
+     "cache_read_input_tokens": 10704,
+     "cache_creation_input_tokens": 4822,
+     "cache_creation": {
+      "ephemeral_5m_input_tokens": 0,
+      "ephemeral_1h_input_tokens": 4822
+     },
+     "type": "message"
+    }
+   ],
+   "speed": "standard",
+   "fallback_credit": null
+  },
+  "modelUsage": {
+   "claude-opus-5-5": {
+    "inputTokens": 2,
+    "outputTokens": 794,
+    "cacheReadInputTokens": 10704,
+    "cacheCreationInputTokens": 4822,
+    "webSearchRequests": 0,
+    "costUSD": 0.0566048,
+    "contextWindow": 1000000,
+    "maxOutputTokens": 128000,
+    "thinkingTokens": 726,
+    "cacheCreationEphemeral5mInputTokens": 0,
+    "cacheCreationEphemeral1hInputTokens": 4822,
+    "canonicalModel": "claude-opus-5-5",
+    "provider": "firstParty",
+    "costBasis": "list"
+   }
+  },
+  "permission_denials": [],
+  "terminal_reason": "completed",
+  "fast_mode_state": "off",
+  "fast_mode_disabled_reason": "sdk_opt_in_required",
+  "subagent_stats": {
+   "spawned": 0,
+   "requested": {
+    "background": 0,
+    "foreground": 0,
+    "unset": 0
+   },
+   "started_in_background": 0,
+   "max_depth": 0,
+   "spawned_by_subagents": 0,
+   "completed": 0,
+   "failed": 0,
+   "killed": {
+    "parent": 0,
+    "user": 0,
+    "system": 0
+   },
+   "refused": {
+    "depth_limit": 0,
+    "concurrency_limit": 0,
+    "budget": 0
+   },
+   "by_type": {}
+  },
+  "safety_stops": 0,
+  "is_error": false,
+  "num_turns": 1,
+  "subtype": "success",
+  "api_error_status": null,
+  "result": "PAIR A2 B1 NONE\nPAIR A3 B2 NONE\nPAIR A4 B3 NONE\nPAIR A5 B4 NONE\nSKIPPED: NONE",
+  "ttft_ms": 9488,
+  "type": "result",
+  "duration_ms": 9933,
+  "uuid": "a33facfd-7dc7-41e0-8a00-f9ae47f3e78f",
+  "ttft_stream_ms": 1876,
+  "time_to_request_ms": 300,
+  "first_content_frame_ms": 1876,
+  "queued_turn_count": 0,
+  "result_index": 0
+ },
+ "stderr": "",
+ "exit_code": 0,
+ "charged_cw": 16322,
+ "answer": "PAIR A2 B1 NONE\nPAIR A3 B2 NONE\nPAIR A4 B3 NONE\nPAIR A5 B4 NONE\nSKIPPED: NONE"
+}

@@ -467,6 +467,8 @@ impl Environment {
                 "data@0",
                 "definitions@0",
                 "documents@1",
+                // a document layer (Lean's `VE.Compose.documentLayers`): its records are the document's, read by no model
+                "judgments@0",
                 "nary@0",
                 "norms@0",
                 "order@0",
