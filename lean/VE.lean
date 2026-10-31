@@ -94,6 +94,7 @@ import VE.Readings.CompanionsExamples
 import VE.Readings.ComponentsExamples
 import VE.Checks
 import VE.Closure.Checks
+import VE.Closure.CoreEquiv
 import VE.Order.Checks
 import VE.Order.TableauChecks
 import VE.Order.Surface
@@ -239,6 +240,7 @@ import VE.Layout.Discourse
 import VE.Layout.List
 import VE.Scope.Effects
 import VE.Scope.Govern
+import VE.Scope.EffectLemmas
 import VE.Scope.Theorems
 import VE.Scope.Examples
 import VE.Scope.Wire

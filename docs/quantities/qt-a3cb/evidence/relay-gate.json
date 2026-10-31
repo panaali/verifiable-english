@@ -1,0 +1,33 @@
+{
+ "failures": [],
+ "findings": [],
+ "inputs": {
+  "tests/data/relay-gate-cases.jsonl": "1634d809a5e3c7425099ce161b99afef22f7eb8873678a49b8b33adde6d86f38",
+  "tools/relay-gate-allow.json": "a9b90b1c75b503cc6b786291a63eb37aacecfc34351716988ea9aac65004afca"
+ },
+ "routes": {
+  "service:cardinality": {
+   "accepted": 64,
+   "allowed": 64,
+   "allowed:B0": 36,
+   "allowed:F4": 20,
+   "allowed:QTA3C-1": 8,
+   "fixtures": 13,
+   "mutants": 4807,
+   "ok_fixtures": 6,
+   "refused": 4743,
+   "seconds": 18.3
+  }
+ },
+ "totals": {
+  "accepted": 64,
+  "allowed": 64,
+  "allowed:B0": 36,
+  "allowed:F4": 20,
+  "allowed:QTA3C-1": 8,
+  "fixtures": 13,
+  "mutants": 4807,
+  "ok_fixtures": 6,
+  "refused": 4743
+ }
+}

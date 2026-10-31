@@ -66,7 +66,7 @@
     "ve/readings_verdicts/binding.py:relayed": "The one guard of every check of a Lean readings-verdicts answer and of the split's load-time answers: any failure of the check is CheckerUnavailable, a ResourceLimit stays one, and no verdict is returned; a Lean rejection is raised as VEError before the guard."
   },
   "lean_decoders": {
-    "total_lines": 40752,
+    "total_lines": 40778,
     "note": "Line ranges are inclusive; each listed declaration must start inside a range of its file. `lines` and `sha256` pin the whole file, so any edit to a decoder file (including code appended after a range) fails the test until the ranges are reviewed and the pins updated. The alternatives decoder, replay and admission files, speech-act decoder, the risk and norm-defaults decoders, and the rights decoder and admission files are conservatively pinned in full. Every other Lean file that handles JSON is classified under `other_json`.",
     "files": [
       {
@@ -2007,12 +2007,12 @@
       },
       {
         "file": "lean/VE/Cardinality/Run.lean",
-        "lines": 258,
-        "sha256": "7207cf54e9c632245b11702dda93d34fd541c6192e5d222680b5c23c8eee4a69",
+        "lines": 284,
+        "sha256": "7d3a8bdd8e91fb24449c5aa40371c8dea7ab496dfdc56bce43e4c0753cfae0ba",
         "ranges": [
           [
             1,
-            258
+            284
           ]
         ],
         "declarations": [
@@ -2024,9 +2024,11 @@
           "checkDeduction",
           "admitDocument",
           "reportJson",
-          "reportId"
+          "reportId",
+          "countermodel",
+          "sizesJson"
         ],
-        "reason": "cardinality certificate decoder, binding and replay, claimed region tables and erased problems, the document case's deduction check (checkDeduction), report and report identity (reportId), and the case runner; the full file is pinned conservatively"
+        "reason": "cardinality certificate decoder, binding and replay, claimed region tables and erased problems, the document case's deduction check (checkDeduction), report and report identity (reportId), the countermodel case (countermodel: W6a's model decoder in the original vocabulary, the region sizes' charge and W6a's budgeted check; sizesJson), and the case runner; the full file is pinned conservatively"
       },
       {
         "file": "lean/VE/Calc/Jsonl.lean",
@@ -2221,7 +2223,9 @@
       "lean/VE/EnglishGrammar/SourceWordsExamples.lean": "fixtures only: #guard checks of source-word row boundaries and JSON encoding; no runner path",
       "lean/ResponseShapeAudit.lean": "the dependency audit of the response-shape theorems (#print axioms only); JSON only in theorem names",
       "lean/VE/Service/SoftSourceExamples.lean": "fixtures only: rd9-docroute F7's #guard checks build small unit lists as request JSON and run the document mode's soft source (`softSourceNorms`) on them; no service mode reads this file",
-      "lean/VE/Acts/DecodeExamples.lean": "fixtures only: `#guard`s that build environment and norm JSON and decode it with decodeElaboratedU (act-phrases ap-3d); no admission path, service mode or record reads them"
+      "lean/VE/Acts/DecodeExamples.lean": "fixtures only: `#guard`s that build environment and norm JSON and decode it with decodeElaboratedU (act-phrases ap-3d); no admission path, service mode or record reads them",
+      "lean/VE/Scope/EffectLemmas.lean": "statements about the base guard decoder (budgetFormula_val: its value does not depend on the node count or depth fuel) and about substOwn at scalar and term positions, for spec 5.4's own_congr; no runtime JSON handling",
+      "lean/VE/Closure/CoreEquiv.lean": "proof only: decodeTrace_ne_embed builds one JSON trace node with Json.mkObj, the kernel-checked counterexample to the closure and Core trace decoders' equality (AR-21); no decoder and no runner path"
     }
   },
   "plan_operations": {

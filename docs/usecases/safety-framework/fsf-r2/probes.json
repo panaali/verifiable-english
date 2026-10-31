@@ -1,7 +1,7 @@
 {
  "DF-a": {
   "admitted": false,
-  "diagnostic": "VEError: --assume-no-exception applies to a soft-norms@0 document without open reading sets",
+  "diagnostic": "VEError: --assume-no-exception applies to readings on the enumerated route",
   "status": {
    "admitted": true,
    "units": {
