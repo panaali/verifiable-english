@@ -206,12 +206,16 @@ import VE.Acts.Table
 import VE.Acts.TableExamples
 import VE.Acts.Elaborate
 import VE.Acts.ElaborateExamples
+import VE.Acts.Wire
+import VE.Acts.Decode
+import VE.Acts.DecodeExamples
 import VE.Acts.GrammarExamples
 import VE.Acts.Grammar
 import VE.Acts.RuleExamples
 import VE.Acts.Meaning
 import VE.Acts.Readings
 import VE.Acts.MeaningExamples
+import VE.Acts.ReadingsExamples
 import VE.Acts.RenderExamples
 import VE.Acts.Compat
 import VE.Acts.LexicalExamples
@@ -237,6 +241,7 @@ import VE.Layout.Discourse
 import VE.Layout.List
 import VE.Scope.Effects
 import VE.Scope.Govern
+import VE.Scope.EffectLemmas
 import VE.Scope.Theorems
 import VE.Scope.Examples
 import VE.Scope.Wire

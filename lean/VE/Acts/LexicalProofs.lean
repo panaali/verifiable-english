@@ -679,7 +679,7 @@ def Accepts (fx : List String) (k : Nat) (raw : Lean.Json) (a : String) : Prop :
 /-- `check_spec` without its hypothesis on the fixed phrases: `check` refuses whatever `lex` refuses. -/
 theorem check_iff (fx : List String) (name : String) (k : Nat) (raw : Lean.Json) (a : String) :
     check fx name k raw = .ok a ↔ Accepts fx k raw a := by
-  unfold check Accepts
+  unfold check checkWith joinCheck Accepts
   generalize normal ((raw.getStr?).toOption.getD "") = act
   simp only [bind, Except.bind, pure, Except.pure]
   constructor

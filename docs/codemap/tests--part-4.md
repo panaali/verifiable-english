@@ -1,4 +1,3 @@
-- `tests/test_merge_tooling_evidence.py` — docs/merge-tooling.md against its saved evidence (docs/merge-tooling/*.json).
 - `tests/test_metered_answer.py` — The `metered` relay never shows a trace binding the request does not hold (lf-18 review F1; DRI-RULINGS R8 (b), FINDING-CLASSES 4 and 15).
 - `tests/test_metered_differential.py` — Batch 15a review fixes: Lean's metered route (`ve_metered`) against Python.
 - `tests/test_metered_handles.py` — The decoded environment the service keeps with each handle (lean-first batch 18, DRI note F7; the unbuilt half of LEAN-FIRST-PLAN F2).
@@ -48,6 +47,7 @@
 - `tests/test_p1_native_counter.py` — Offline native-counter tests: pinned templates, no downloads or providers.
 - `tests/test_p1_preflight.py` — (no module docstring)
 - `tests/test_p1_reconcile.py` — Append-only budget reconciliation and request reuse across schedule changes.
+- `tests/test_package_facade.py` — `ve/__init__.py` resolves its public names lazily: `import ve` loads no submodule, each name is its module's.
 - `tests/test_packs_guard_mutants.py` — The premise-pack fixtures can fail (pk-1 review F1, B; standing ruling R16 in DRI-RULINGS.md).
 - `tests/test_parser_renderer.py` — (no module docstring)
 - `tests/test_platform_contract.py` — `tools/platform_contract.py`: the x86 platform contract suite (test-architecture plan rank 2, section 3.3).
