@@ -1,0 +1,7 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+trust_mutants: --rescore ci-job/rescore.json: a full run, since its inputs differ (lean): lean/VE/Acts/Decode.lean is a selected declaration's file or in its import closure
+trust_mutants: 19 definitions, 260 mutants (260 to run), 4 jobs, base 5e56ca85b7ba
+trust_mutants: 162 KILLED, 0 SURVIVOR, 0 UNKNOWN, 54 INVALID, 44 ALLOWED, 0 NOT RUN in 1406 s
+trust_mutants: D[V], trusted: 17 KILLED, 18 INVALID, 20 ALLOWED
+trust_mutants: G[V], trusted: 126 KILLED, 36 INVALID, 23 ALLOWED
+trust_mutants: S, trusted: 19 KILLED, 1 ALLOWED
