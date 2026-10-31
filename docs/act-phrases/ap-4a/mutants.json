@@ -83,15 +83,6 @@
    "test": "lean/VE/Acts/Grammar.lean:349"
   },
   {
-   "id": "applyRule-own",
-   "language": "Lean",
-   "file": "lean/VE/Acts/Meaning.lean",
-   "definition": "VE.Acts.applyRule",
-   "behaviour": "the meaning ignores the kind: every element reads over its own item",
-   "status": "KILLED",
-   "test": "lean/VE/Acts/MeaningExamples.lean:33, lean/VE/Acts/MeaningExamples.lean:35, lean/VE/Acts/MeaningExamples.lean:44, lean/VE/Acts/MeaningExamples.lean:45, lean/VE/Acts/MeaningExamples.lean:48, lean/VE/Acts/MeaningExamples.lean:51, lean/VE/Acts/MeaningExamples.lean:55, lean/VE/Acts/MeaningExamples.lean:63, lean/VE/Acts/MeaningExamples.lean:64, lean/VE/Acts/MeaningExamples.lean:133"
-  },
-  {
    "id": "phrase-limit-65",
    "language": "Lean",
    "file": "lean/VE/Acts/Readings.lean",
@@ -135,6 +126,15 @@
    "behaviour": "the modal is ignored: every meaning reads as its atoms",
    "status": "KILLED",
    "test": "lean/VE/Acts/Readings.lean:91, lean/VE/Acts/Readings.lean:92"
+  },
+  {
+   "id": "applyRule-own",
+   "language": "Lean",
+   "file": "lean/VE/Acts/Meaning.lean",
+   "definition": "VE.Acts.applyRule",
+   "behaviour": "the meaning ignores the kind: every element reads over its own item",
+   "status": "KILLED",
+   "test": "lean/VE/Acts/MeaningExamples.lean:33, lean/VE/Acts/MeaningExamples.lean:35, lean/VE/Acts/MeaningExamples.lean:44, lean/VE/Acts/MeaningExamples.lean:45, lean/VE/Acts/MeaningExamples.lean:48, lean/VE/Acts/MeaningExamples.lean:51, lean/VE/Acts/MeaningExamples.lean:55, lean/VE/Acts/MeaningExamples.lean:63, lean/VE/Acts/MeaningExamples.lean:64, lean/VE/Acts/MeaningExamples.lean:133"
   }
  ]
 }

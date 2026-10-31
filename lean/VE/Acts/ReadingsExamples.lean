@@ -91,9 +91,10 @@ def edgeSides (V : Vocab) : List (NT × Attach) :=
   (fun x => [Attach.first, .last, .all].all (!edgeLhs x ·))
 #guard attachOf .shape == none && [Attach.first, .last, .all].all (fun a => attachOf (.edge a) == some a)
 -- `closed`, whose rules now carry a kind: one `X → never` per nonterminal of a right side that has no rule, in order of
--- first occurrence, wherever it stands (first, middle or last symbol; first or last rule), and none for one that has
+-- first occurrence, wherever it stands (first, middle or last symbol; first or last rule; the last one scanned), and
+-- none for one that has
 def rsC : List RuleS := [⟨.J, [.n .TOK, .n .ADVO], .shape⟩, ⟨.S, [.t .subj, .n .J, .n .FW], .shape⟩,
-  ⟨.ADVO, [.t .comma, .n .E1X, .n .J], .edge .all⟩]
+  ⟨.ADVO, [.t .comma, .n .J, .n .E1X], .edge .all⟩]
 #guard closed rsC == rsC ++ [⟨.TOK, [.t .never], .shape⟩, ⟨.FW, [.t .never], .shape⟩, ⟨.E1X, [.t .never], .shape⟩]
 
 end VE.Acts.ReadingsExamples
