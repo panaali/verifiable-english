@@ -1160,7 +1160,8 @@ def ownVal (c g : Json) (ρ : List String) : Option Bool :=
     `guard` (or `unless`) twice, once where lookup finds it and once later in traversal, meets every premise of
     `reguard_applies`, `restrict_applies` and `carveOut_applies`, and their first conjunct fails: `applyEffect` rewrites
     the member lookup finds, and the soft decoder keeps the last. The norms chain's decoder refuses the tree, and on the
-    well-formed rule both effects are as stated. `none`: a premise fails. -/
+    well-formed rule (one carve-out already, so the new one must come last) both effects are as stated. `none`: a
+    premise fails. -/
 def effectAsStated (re : VE.Readings.Wire.ReadingsEnvironment) (e : Effect) (o : Json) : Option Bool := do
   let o' ← (applyEffect "u" e o).toOption
   let N ← (VE.Readings.Wire.decodeNorm re o).toOption
@@ -1175,7 +1176,7 @@ def twiceG : Json := rawJ (nd "guard" (j "[\"top\"]") (nd "name" "r" (nd "over" 
 def twiceU : Json := rawJ (nd "unless" (.arr #[]) (nd "guard" (j "[\"top\"]") (nd "name" "r") (nd "over" (.arr #[])))
   (nd "sign" (.bool false) (nd "predicate" "p") (nd "unless" (.arr #[]))))
 def onceRule : Json := Json.mkObj [("name", "r"), ("predicate", "p"), ("sign", false), ("guard", j "[\"top\"]"),
-  ("unless", .arr #[]), ("over", .arr #[])]
+  ("unless", .arr #[j "[\"top\"]"]), ("over", .arr #[])]
 #guard let effects := [(Effect.reguard (j "[\"not\",\"own\"]"), twiceG), (.reguard (j "[\"and\",\"own\",[\"bottom\"]]"), twiceG),
     (.carveOut (j "[\"bottom\"]"), twiceU)]
   let on := fun (env : Json) (rule : Option Json) => (VE.Readings.Wire.decodeEnvironment env).toOption.map fun re =>
