@@ -1,4 +1,5 @@
 - `tools/bench/baseline.py` — Compare CPU-time measurements with stored baselines (tools/bench/baselines.json).
+- `tools/bench/chunk_probe.py` — Measure one chunk of a test file under a plain pytest run: its wall time and the process's peak RSS (eff-20261030-1).
 - `tools/bench/conftest.py` — CPU-time benchmarks against stored baselines: the speed checks kept out of the test suite.
 - `tools/bench/cpu_per_test.py` — pytest plugin: the CPU seconds each test spends, its own process and the children it reaped.
 - `tools/bench/scope_b1.py` — B1's input (docs/spec/scope-PLAN.md, benchmark B1): F1-doc's document over the full pinned constitution pilot.
