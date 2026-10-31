@@ -1587,6 +1587,20 @@
    "reason": "ap-4a: lean/VE/Acts/Grammar.lean S +31 (Attach, Kind, the rule kind field and the edge kinds the table writes, attachOf, edgeLhs; modifier_edges); K +0; phraseReadings G[V] tied to phraseReadings_exact",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-4a, 2026-10-18",
    "commit": "327bf922a1197c94af231d8d02f0c76718649aab"
+  },
+  {
+   "class": "S",
+   "lines": 70,
+   "reason": "ap-4b: VE/Acts/Sources.lean S +70 (Source, View, ruleView, expected, choicesOn, choiceRules, choiceViews, readingViews, opOfSource, SourceExact, List.Forall₂); VE/Acts/Situation.lean V +14 (atomSituation, rulePreds, untied); sourceCheck, compareViews, pick tied (+32); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-4b, 2026-10-18",
+   "commit": "09fca50130a0c1dfb328f180c777f255e7b7a6f2"
+  },
+  {
+   "class": "V",
+   "lines": 14,
+   "reason": "ap-4b: VE/Acts/Sources.lean S +70 (Source, View, ruleView, expected, choicesOn, choiceRules, choiceViews, readingViews, opOfSource, SourceExact, List.Forall₂); VE/Acts/Situation.lean V +14 (atomSituation, rulePreds, untied); sourceCheck, compareViews, pick tied (+32); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-4b, 2026-10-18",
+   "commit": "09fca50130a0c1dfb328f180c777f255e7b7a6f2"
   }
  ]
 }

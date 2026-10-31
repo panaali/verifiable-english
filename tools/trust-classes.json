@@ -16475,16 +16475,95 @@
     },
     "VE/Acts/ReadingsExamples.lean": {
       "T": [
+        "VE.Acts.ReadingsExamples.S1",
         "VE.Acts.ReadingsExamples.atoms",
+        "VE.Acts.ReadingsExamples.bAll",
+        "VE.Acts.ReadingsExamples.bFirst",
+        "VE.Acts.ReadingsExamples.cAll",
+        "VE.Acts.ReadingsExamples.cFirst",
+        "VE.Acts.ReadingsExamples.cand",
+        "VE.Acts.ReadingsExamples.cv",
+        "VE.Acts.ReadingsExamples.d105",
+        "VE.Acts.ReadingsExamples.dec",
+        "VE.Acts.ReadingsExamples.e055",
+        "VE.Acts.ReadingsExamples.e076",
+        "VE.Acts.ReadingsExamples.e105",
         "VE.Acts.ReadingsExamples.edgeSides",
+        "VE.Acts.ReadingsExamples.envJ",
         "VE.Acts.ReadingsExamples.fx9",
         "VE.Acts.ReadingsExamples.g10s",
         "VE.Acts.ReadingsExamples.g11s",
         "VE.Acts.ReadingsExamples.g12s",
         "VE.Acts.ReadingsExamples.g9s",
+        "VE.Acts.ReadingsExamples.k105",
+        "VE.Acts.ReadingsExamples.mkDoc",
+        "VE.Acts.ReadingsExamples.noChoice",
+        "VE.Acts.ReadingsExamples.notReading",
         "VE.Acts.ReadingsExamples.np",
         "VE.Acts.ReadingsExamples.pr",
-        "VE.Acts.ReadingsExamples.rsC"
+        "VE.Acts.ReadingsExamples.regJ",
+        "VE.Acts.ReadingsExamples.rl",
+        "VE.Acts.ReadingsExamples.rsC",
+        "VE.Acts.ReadingsExamples.s055",
+        "VE.Acts.ReadingsExamples.s055u",
+        "VE.Acts.ReadingsExamples.s076",
+        "VE.Acts.ReadingsExamples.s105",
+        "VE.Acts.ReadingsExamples.sc",
+        "VE.Acts.ReadingsExamples.sc0",
+        "VE.Acts.ReadingsExamples.sep",
+        "VE.Acts.ReadingsExamples.setB",
+        "VE.Acts.ReadingsExamples.setC",
+        "VE.Acts.ReadingsExamples.tmpl",
+        "VE.Acts.ReadingsExamples.u055",
+        "VE.Acts.ReadingsExamples.u105a",
+        "VE.Acts.ReadingsExamples.vw"
+      ]
+    },
+    "VE/Acts/Sources.lean": {
+      "S": [
+        "List.Forall₂",
+        "VE.Acts.Source",
+        "VE.Acts.SourceExact",
+        "VE.Acts.View",
+        "VE.Acts.choiceRules",
+        "VE.Acts.choiceViews",
+        "VE.Acts.choicesOn",
+        "VE.Acts.expected",
+        "VE.Acts.opOfSource",
+        "VE.Acts.readingViews",
+        "VE.Acts.ruleView"
+      ],
+      "G[V]": [
+        {
+          "name": "VE.Acts.compareViews",
+          "tied": [
+            "VE.Acts.compareViews_ok"
+          ]
+        },
+        {
+          "name": "VE.Acts.pick",
+          "tied": [
+            "VE.Acts.pick_forall₂"
+          ]
+        },
+        {
+          "name": "VE.Acts.sourceCheck",
+          "tied": [
+            "VE.Acts.sourceCheck_exact"
+          ]
+        }
+      ],
+      "G[R]": [
+        "VE.Acts.d29"
+      ],
+      "P": [
+        "VE.Acts.instDecidableEqView"
+      ]
+    },
+    "VE/Acts/Situation.lean": {
+      "G[V]": [
+        "VE.Acts.atomSituation",
+        "VE.Acts.rulePreds"
       ]
     }
   }
