@@ -179,7 +179,8 @@ def invention_audit():
     for set_id, (harness, choices) in B.READINGS.items():
         for choice, ids in choices.items():
             for block_id in ids:
-                block = next((b for b in T.rule_blocks() if b.id == block_id), None)
+                block = next((b for b in (*T.rule_blocks(), *T.read_blocks("facts.d1.ve"))
+                              if b.id == block_id), None)
                 if block is None or (block.when and (harness, choice) not in block.when):
                     choice_mismatches.append((set_id, choice, block_id))
     return {"untraced": untraced, "defaults_untraced": defaults, "permissions_untraced": [],
@@ -198,7 +199,7 @@ def source_probes(source):
     part = lambda ids, profiles=None: part_document(document, records, source, ids, profiles)
     coverage = json.loads((HERE / "coverage.json").read_text())
     return {"P1": {"input": "F2 High deployment rule with its open sufficiency judgment",
-                    **ve_check(part({by_rule["f2-deploy"]}))},
+                    **ve_check(part({by_set["rs3-deploy"]}))},
             "P2": {"input": "Table 1 misuse guideline, RS1 strict/default pending readings",
                     **ve_check(part({by_set["rs1-misuse-bio"]}))},
             "P5": {"total": sum(coverage["bytes_by_status"].values()), "units": len(records),
@@ -207,7 +208,7 @@ def source_probes(source):
                    "contiguous": records[0]["span"][0] == 0 and records[-1]["span"][1] == B.TEXT_BYTES
                    and all(a["span"][1] == b["span"][0] for a, b in zip(records, records[1:]))},
             "P8": {"input": "F2 with judgments@0 and documents@1 alongside D1 profiles",
-                   **lean_document(part({by_rule["f2-deploy"]}, sorted({*B.T.vocabulary.environment()["profiles"],
+                   **lean_document(part({by_set["rs3-deploy"]}, sorted({*B.T.vocabulary.environment()["profiles"],
                                                                          "documents@1", "judgments@0"})))}}
 
 

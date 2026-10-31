@@ -1,0 +1,184 @@
+{
+ "mutants": [
+  {
+   "id": "charge-dropped",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "the region sizes are charged against W6a's budget before they are computed (deliverable 2; the task's seeded bug: the region size left uncharged)",
+   "source_sha256": "7d3a8bdd8e91fb24449c5aa40371c8dea7ab496dfdc56bce43e4c0753cfae0ba",
+   "command": [
+    "bash",
+    "-c",
+    "L=$(mktemp) && cp lean/checkers.lock \"$L\" && trap 'cp \"$L\" lean/checkers.lock' EXIT && (cd lean && PATH=$HOME/.elan/bin:$PATH lake build ve_service >/dev/null) && uv run python tools/regen_generated.py --write --only checker-pins >/dev/null && uv run pytest -q -x -p no:cacheprovider tests/test_cardinality_service.py -k charged_before"
+   ],
+   "killed": true,
+   "mutant_exit": 3,
+   "seconds": 520.0,
+   "output_tail": "etArr?,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335t\u0335o\u0335L\u0335i\u0335s\u0335t\u0335_\u0335t\u0335o\u0335A\u0335r\u0335r\u0335a\u0335y\u0335]\nINTERNALERROR> \nINTERNALERROR> Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nINTERNALERROR> warning: ResponseShape/Encoders/ReadingsRoute.lean:1309:4: This simp argument is unused:\nINTERNALERROR>   List.toList_toArray\nINTERNALERROR> \nINTERNALERROR> Hint: Omit it from the simp argument list.\nINTERNALERROR>   simp only [getObjValD_set_eq wfe, getObjValD_of_ok hP, hPa, toJson_strings, Array.any_toList.symm,\u0335\nINTERNALERROR>   \u0335 \u0335 \u0335 \u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335t\u0335o\u0335L\u0335i\u0335s\u0335t\u0335_\u0335t\u0335o\u0335A\u0335r\u0335r\u0335a\u0335y\u0335]\nINTERNALERROR> \nINTERNALERROR> Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nINTERNALERROR> warning: ResponseShape/Encoders/ReadingsRoute.lean:1334:4: This simp argument is unused:\nINTERNALERROR>   hl\nINTERNALERROR> \nINTERNALERROR> Hint: Omit it from the simp argument list.\nINTERNALERROR>   simp only [getObjValD_set_eq wf, getObjValD_set_ne wf (show \"environment\" \u2260 \"kind\" by decide), he,\nINTERNALERROR>       getObjVal_set_ne wfe (show \"profiles\" \u2260 \"vocabulary\" by decide), getObjVal_set_eq wfe, hP,\u0335\nINTERNALERROR>   \u0335 \u0335 \u0335 \u0335 \u0335h\u0335l\u0335]\nINTERNALERROR> \nINTERNALERROR> Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nINTERNALERROR> \u2714 [1168/1169] Built ResponseShape.Encoders (1.0s)\nINTERNALERROR> Some required targets logged failures:\nINTERNALERROR> - VE.Cardinality.RunExamples\nINTERNALERROR> error: build failed\n    Finished `release` profile [optimized] target(s) in 0.12s\n"
+  },
+  {
+   "id": "charge-not-shared",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "W6a's countermodel check runs on the rest of the charged budget",
+   "source_sha256": "7d3a8bdd8e91fb24449c5aa40371c8dea7ab496dfdc56bce43e4c0753cfae0ba",
+   "command": [
+    "bash",
+    "-c",
+    "L=$(mktemp) && cp lean/checkers.lock \"$L\" && trap 'cp \"$L\" lean/checkers.lock' EXIT && (cd lean && PATH=$HOME/.elan/bin:$PATH lake build ve_service >/dev/null) && uv run python tools/regen_generated.py --write --only checker-pins >/dev/null && uv run pytest -q -x -p no:cacheprovider tests/test_cardinality_service.py -k share_one_budget"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 587.3,
+   "output_tail": "vice.LeanService object at 0x70f22251cc20>\n\n    def test_the_charge_and_the_check_share_one_budget(service):\n        \"\"\"W6a's countermodel check runs on the rest of the budget the region sizes were charged against (`refutesB` from\n        the charge): a premise over 400 x 400 users is evaluated after one charged sort of 1,000 objects, and exhausts the\n        budget after two.\"\"\"\n        users = {\"format\": \"ve-cardinality@1\", \"formula\": [\"quantity\", [\"forall\", \"user\", [\"forall\", \"user\", [\"top\"]]]]}\n        cases = [chain(k, 1000, 400, (users,)) for k in (1, 2)]\n        answers = [says(bound[\"result\"]) for bound in exchange(service, cases)[1][\"results\"]]\n>       assert answers == [\"ok refutes\", EXHAUSTED]\nE       AssertionError: assert ['ok refutes', 'ok refutes'] == ['ok refutes'...00 exhausted']\nE         \nE         At index 1 diff: 'ok refutes' != 'ResourceLimit: formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted'\nE         Use -v to get more diff\n\ntests/test_cardinality_service.py:325: AssertionError\n=========================== short test summary info ============================\nFAILED tests/test_cardinality_service.py::test_the_charge_and_the_check_share_one_budget\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 7 deselected in 1.29s\n    Finished `release` profile [optimized] target(s) in 0.06s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-imd1svym)\n"
+  },
+  {
+   "id": "premises-unread",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "a countermodel that does not refute is not accepted (the task's seeded bug): the premises are checked on the model",
+   "source_sha256": "7d3a8bdd8e91fb24449c5aa40371c8dea7ab496dfdc56bce43e4c0753cfae0ba",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 151.0,
+   "output_tail": "t: Omit it from the simp argument list.\n  simp only [Bool.and_eq_true, decide_eq_true_eq, List.length_append, List.length_s\u0335i\u0335n\u0335g\u0335l\u0335e\u0335t\u0335o\u0335n\u0335,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335l\u0335e\u0335n\u0335g\u0335t\u0335h\u0335_\u0335cons]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nwarning: VE/Readings/Strings.lean:245:32: This simp argument is unused:\n  pos_add_char\n\nHint: Omit it from the simp argument list.\n  simp [String.Pos.ext_iff, p\u0335o\u0335s\u0335_\u0335a\u0335d\u0335d\u0335_\u0335c\u0335h\u0335a\u0335r\u0335,\u0335 \u0335hA _ (List.getElem_mem hlt)]\n\nNote: This linter can be disabled with `set_option linter.unusedSimpArgs false`\n\u2714 [138/139] Built VE.Cardinality.Run (3.1s)\n\u2716 [139/139] Building VE.Cardinality.RunExamples (147s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3cb/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3cb/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3cb/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3cb/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3cb/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3cb/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:471:0: Expression\n  (refute fa1Premises fa1bModel).getObjValD \"refutes\" == Json.bool false\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "evalBy-not",
+   "file": "lean/VE/Cardinality/Erase.lean",
+   "claim": "Body.evalBy reads a negated body as its negation",
+   "source_sha256": "77b5d921391880c2e299d010884b5700440db6492ce9f16c68100761475a8d7f",
+   "command": [
+    "bash",
+    "-c",
+    "R=$PWD && T=$(mktemp) && cp \"$R/lean/VE/Cardinality/Theorems.lean\" \"$T\" && trap 'cp \"$T\" \"$R/lean/VE/Cardinality/Theorems.lean\"' EXIT && python3 -c \"import pathlib; p = pathlib.Path('lean/VE/Cardinality/Theorems.lean'); s = p.read_text(); i = s.index('/-! ## The region sizes computed once per model'); p.write_text(s[:i] + 'end VE.Cardinality\\n')\" && cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 208.1,
+   "output_tail": "ran/code/ve-qt-a3cb/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3cb/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3cb/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:461:0: Expression\n  (refute fa1Premises.dropLast fa1bModel).getObjValD \"refutes\" == Json.bool true\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:462:0: Expression\n  sizes (refute fa1Premises.dropLast fa1bModel) == sized [(\"00\", 1), (\"01\", 1), (\"10\", 15), (\"11\", 1)]\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:464:0: Expression\n  (refute fa1Premises.dropLast fa1bModel).compress ==\n    let a := answer (case \"admission\" env fa1Premises.dropLast fa1Conclusion);\n    (Json.mkObj\n        (List.map (fun k => (k, a.getObjValD k))\n            [\"id\", \"status\", \"environment_id\", \"w6_environment_id\", \"w6_target_environment_id\", \"premises\",\n              \"conclusion\", \"regions\"] ++\n          [(\"refutes\", Json.bool true), (\"sizes\", sized [(\"00\", 1), (\"01\", 1), (\"10\", 15), (\"11\", 1)])])).compress\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:473:0: Expression\n  sizes (refute fa1Premises.dropLast (model 18 (List.range' 1 16) [17, 18])) ==\n    sized [(\"00\", 0), (\"01\", 2), (\"10\", 16), (\"11\", 0)]\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "regionSizes-whole-sort",
+   "file": "lean/VE/Cardinality/Erase.lean",
+   "claim": "regionSizes counts the objects in each region, not the whole sort",
+   "source_sha256": "77b5d921391880c2e299d010884b5700440db6492ce9f16c68100761475a8d7f",
+   "command": [
+    "bash",
+    "-c",
+    "R=$PWD && T=$(mktemp) && cp \"$R/lean/VE/Cardinality/Theorems.lean\" \"$T\" && trap 'cp \"$T\" \"$R/lean/VE/Cardinality/Theorems.lean\"' EXIT && python3 -c \"import pathlib; p = pathlib.Path('lean/VE/Cardinality/Theorems.lean'); s = p.read_text(); i = s.index('/-! ## The region sizes computed once per model'); p.write_text(s[:i] + 'end VE.Cardinality\\n')\" && cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 251.2,
+   "output_tail": "ran/code/ve-qt-a3cb/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3cb/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3cb/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:461:0: Expression\n  (refute fa1Premises.dropLast fa1bModel).getObjValD \"refutes\" == Json.bool true\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:462:0: Expression\n  sizes (refute fa1Premises.dropLast fa1bModel) == sized [(\"00\", 1), (\"01\", 1), (\"10\", 15), (\"11\", 1)]\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:464:0: Expression\n  (refute fa1Premises.dropLast fa1bModel).compress ==\n    let a := answer (case \"admission\" env fa1Premises.dropLast fa1Conclusion);\n    (Json.mkObj\n        (List.map (fun k => (k, a.getObjValD k))\n            [\"id\", \"status\", \"environment_id\", \"w6_environment_id\", \"w6_target_environment_id\", \"premises\",\n              \"conclusion\", \"regions\"] ++\n          [(\"refutes\", Json.bool true), (\"sizes\", sized [(\"00\", 1), (\"01\", 1), (\"10\", 15), (\"11\", 1)])])).compress\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:473:0: Expression\n  sizes (refute fa1Premises.dropLast (model 18 (List.range' 1 16) [17, 18])) ==\n    sized [(\"00\", 0), (\"01\", 2), (\"10\", 16), (\"11\", 0)]\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "regionCost-predicates",
+   "file": "lean/VE/Cardinality/Erase.lean",
+   "claim": "regionCost charges each region's body by its predicates",
+   "source_sha256": "77b5d921391880c2e299d010884b5700440db6492ce9f16c68100761475a8d7f",
+   "command": [
+    "bash",
+    "-c",
+    "L=$(mktemp) && cp lean/checkers.lock \"$L\" && trap 'cp \"$L\" lean/checkers.lock' EXIT && (cd lean && PATH=$HOME/.elan/bin:$PATH lake build ve_service >/dev/null) && uv run python tools/regen_generated.py --write --only checker-pins >/dev/null && uv run pytest -q -x -p no:cacheprovider tests/test_cardinality_service.py -k charged_before"
+   ],
+   "killed": true,
+   "mutant_exit": 3,
+   "seconds": 634.3,
+   "output_tail": "etArr?,\u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335t\u0335o\u0335L\u0335i\u0335s\u0335t\u0335_\u0335t\u0335o\u0335A\u0335r\u0335r\u0335a\u0335y\u0335]\nINTERNALERROR> \nINTERNALERROR> Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nINTERNALERROR> warning: ResponseShape/Encoders/ReadingsRoute.lean:1309:4: This simp argument is unused:\nINTERNALERROR>   List.toList_toArray\nINTERNALERROR> \nINTERNALERROR> Hint: Omit it from the simp argument list.\nINTERNALERROR>   simp only [getObjValD_set_eq wfe, getObjValD_of_ok hP, hPa, toJson_strings, Array.any_toList.symm,\u0335\nINTERNALERROR>   \u0335 \u0335 \u0335 \u0335 \u0335L\u0335i\u0335s\u0335t\u0335.\u0335t\u0335o\u0335L\u0335i\u0335s\u0335t\u0335_\u0335t\u0335o\u0335A\u0335r\u0335r\u0335a\u0335y\u0335]\nINTERNALERROR> \nINTERNALERROR> Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nINTERNALERROR> warning: ResponseShape/Encoders/ReadingsRoute.lean:1334:4: This simp argument is unused:\nINTERNALERROR>   hl\nINTERNALERROR> \nINTERNALERROR> Hint: Omit it from the simp argument list.\nINTERNALERROR>   simp only [getObjValD_set_eq wf, getObjValD_set_ne wf (show \"environment\" \u2260 \"kind\" by decide), he,\nINTERNALERROR>       getObjVal_set_ne wfe (show \"profiles\" \u2260 \"vocabulary\" by decide), getObjVal_set_eq wfe, hP,\u0335\nINTERNALERROR>   \u0335 \u0335 \u0335 \u0335 \u0335h\u0335l\u0335]\nINTERNALERROR> \nINTERNALERROR> Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`\nINTERNALERROR> \u2714 [1168/1169] Built ResponseShape.Encoders (2.3s)\nINTERNALERROR> Some required targets logged failures:\nINTERNALERROR> - VE.Cardinality.RunExamples\nINTERNALERROR> error: build failed\n    Finished `release` profile [optimized] target(s) in 0.10s\n"
+  },
+  {
+   "id": "sizeIndex-zero",
+   "file": "lean/VE/Cardinality/Erase.lean",
+   "claim": "sizeIndex keeps each constant's size",
+   "source_sha256": "77b5d921391880c2e299d010884b5700440db6492ce9f16c68100761475a8d7f",
+   "command": [
+    "bash",
+    "-c",
+    "R=$PWD && T=$(mktemp) && cp \"$R/lean/VE/Cardinality/Theorems.lean\" \"$T\" && trap 'cp \"$T\" \"$R/lean/VE/Cardinality/Theorems.lean\"' EXIT && python3 -c \"import pathlib; p = pathlib.Path('lean/VE/Cardinality/Theorems.lean'); s = p.read_text(); i = s.index('/-! ## The region sizes computed once per model'); p.write_text(s[:i] + 'end VE.Cardinality\\n')\" && cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 225.9,
+   "output_tail": " Built VE.Cardinality.WireExamples (10s)\n\u2716 [139/139] Building VE.Cardinality.RunExamples (153s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3cb/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3cb/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3cb/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3cb/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3cb/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3cb/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:461:0: Expression\n  (refute fa1Premises.dropLast fa1bModel).getObjValD \"refutes\" == Json.bool true\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:464:0: Expression\n  (refute fa1Premises.dropLast fa1bModel).compress ==\n    let a := answer (case \"admission\" env fa1Premises.dropLast fa1Conclusion);\n    (Json.mkObj\n        (List.map (fun k => (k, a.getObjValD k))\n            [\"id\", \"status\", \"environment_id\", \"w6_environment_id\", \"w6_target_environment_id\", \"premises\",\n              \"conclusion\", \"regions\"] ++\n          [(\"refutes\", Json.bool true), (\"sizes\", sized [(\"00\", 1), (\"01\", 1), (\"10\", 15), (\"11\", 1)])])).compress\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "withSizes-off-by-one",
+   "file": "lean/VE/Cardinality/Erase.lean",
+   "claim": "withSizes reads a region constant as its size",
+   "source_sha256": "77b5d921391880c2e299d010884b5700440db6492ce9f16c68100761475a8d7f",
+   "command": [
+    "bash",
+    "-c",
+    "R=$PWD && T=$(mktemp) && cp \"$R/lean/VE/Cardinality/Theorems.lean\" \"$T\" && trap 'cp \"$T\" \"$R/lean/VE/Cardinality/Theorems.lean\"' EXIT && python3 -c \"import pathlib; p = pathlib.Path('lean/VE/Cardinality/Theorems.lean'); s = p.read_text(); i = s.index('/-! ## The region sizes computed once per model'); p.write_text(s[:i] + 'end VE.Cardinality\\n')\" && cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 219.1,
+   "output_tail": "Built VE.Cardinality.WireExamples (9.8s)\n\u2716 [139/139] Building VE.Cardinality.RunExamples (147s)\ntrace: .> LEAN_PATH=/home/seyran/code/ve-qt-a3cb/lean/.lake/build/lib/lean /home/seyran/.elan/toolchains/leanprover--lean4---v4.24.0/bin/lean /home/seyran/code/ve-qt-a3cb/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3cb/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3cb/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3cb/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3cb/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:461:0: Expression\n  (refute fa1Premises.dropLast fa1bModel).getObjValD \"refutes\" == Json.bool true\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:464:0: Expression\n  (refute fa1Premises.dropLast fa1bModel).compress ==\n    let a := answer (case \"admission\" env fa1Premises.dropLast fa1Conclusion);\n    (Json.mkObj\n        (List.map (fun k => (k, a.getObjValD k))\n            [\"id\", \"status\", \"environment_id\", \"w6_environment_id\", \"w6_target_environment_id\", \"premises\",\n              \"conclusion\", \"regions\"] ++\n          [(\"refutes\", Json.bool true), (\"sizes\", sized [(\"00\", 1), (\"01\", 1), (\"10\", 15), (\"11\", 1)])])).compress\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "sizesJson-size",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "sizesJson writes each constant's size",
+   "source_sha256": "7d3a8bdd8e91fb24449c5aa40371c8dea7ab496dfdc56bce43e4c0753cfae0ba",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 233.5,
+   "output_tail": "e/seyran/code/ve-qt-a3cb/lean/VE/Cardinality/RunExamples.lean -o /home/seyran/code/ve-qt-a3cb/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.olean -i /home/seyran/code/ve-qt-a3cb/lean/.lake/build/lib/lean/VE/Cardinality/RunExamples.ilean -c /home/seyran/code/ve-qt-a3cb/lean/.lake/build/ir/VE/Cardinality/RunExamples.c --setup /home/seyran/code/ve-qt-a3cb/lean/.lake/build/ir/VE/Cardinality/RunExamples.setup.json --json\nerror: VE/Cardinality/RunExamples.lean:462:0: Expression\n  sizes (refute fa1Premises.dropLast fa1bModel) == sized [(\"00\", 1), (\"01\", 1), (\"10\", 15), (\"11\", 1)]\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:464:0: Expression\n  (refute fa1Premises.dropLast fa1bModel).compress ==\n    let a := answer (case \"admission\" env fa1Premises.dropLast fa1Conclusion);\n    (Json.mkObj\n        (List.map (fun k => (k, a.getObjValD k))\n            [\"id\", \"status\", \"environment_id\", \"w6_environment_id\", \"w6_target_environment_id\", \"premises\",\n              \"conclusion\", \"regions\"] ++\n          [(\"refutes\", Json.bool true), (\"sizes\", sized [(\"00\", 1), (\"01\", 1), (\"10\", 15), (\"11\", 1)])])).compress\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:473:0: Expression\n  sizes (refute fa1Premises.dropLast (model 18 (List.range' 1 16) [17, 18])) ==\n    sized [(\"00\", 0), (\"01\", 2), (\"10\", 16), (\"11\", 0)]\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "runCase-countermodel-kind",
+   "file": "lean/VE/Cardinality/Run.lean",
+   "claim": "runCase answers the kind countermodel",
+   "source_sha256": "7d3a8bdd8e91fb24449c5aa40371c8dea7ab496dfdc56bce43e4c0753cfae0ba",
+   "command": [
+    "bash",
+    "-c",
+    "cd lean && PATH=$HOME/.elan/bin:$PATH lake build VE.Cardinality.RunExamples"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 251.8,
+   "output_tail": "rmodel\" env fa1Premises fa1Conclusion) == \"property not found: model\"\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:478:0: Expression\n  (refusal\n        (refute fa1Premises\n          (obj fa1bModel\n            [(\"constants\",\n                obj (fa1bModel.getObjValD \"constants\")\n                  [(\"cardinality__fomc_policymaker__00\", Json.str \"1\")])]))).startsWith\n    \"fields do not match\"\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:480:0: Expression\n  refusal (refute fa1Premises (Json.str \"x\")) == \"object expected\"\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:481:0: Expression\n  refusal (refute fa1Premises (Json.str \"x\") [(\"regions\", regions.setObjVal! \"constants\" (toJson []))]) ==\n    \"region table differs from the regenerated one\"\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:484:0: Expression\n  err\n      (case \"countermodel\" env [] (st \"[\\\"count\\\", \\\"user\\\", [[\\\"1\\\", [\\\"any\\\"]]], \\\"le\\\", \\\"2\\\"]\")\n        [(\"model\", Json.str \"x\")]) ==\n    \"CardinalityNotFinite(user)\"\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:526:0: Expression\n  err (chain 3 1000 0) == Time.Wire.budgetExhausted\ndid not evaluate to `true`\nerror: VE/Cardinality/RunExamples.lean:527:0: Expression\n  (answer (chain 3 10 0)).getObjValD \"refutes\" == Json.bool true\ndid not evaluate to `true`\nerror: Lean exited with code 1\nSome required targets logged failures:\n- VE.Cardinality.RunExamples\nerror: build failed\n"
+  },
+  {
+   "id": "schema-refutes-typed",
+   "file": "lean/ResponseShape/Schemas/Cardinality.lean",
+   "claim": "the countermodel row's verdict is a boolean",
+   "source_sha256": "afa1733900e2e2f575edbb9c4e387a9799e6980dba437a56a891f350bee9520c",
+   "command": [
+    "bash",
+    "-c",
+    "L=$(mktemp) && S=$(mktemp) && cp lean/checkers.lock \"$L\" && cp ve/backends/lean_service_schema/cardinality.json \"$S\" && trap 'cp \"$L\" lean/checkers.lock; cp \"$S\" ve/backends/lean_service_schema/cardinality.json' EXIT && (cd lean && PATH=$HOME/.elan/bin:$PATH lake build ve_response_decode ve_service >/dev/null) && uv run python tools/regen_generated.py --write --only response-schemas >/dev/null && uv run python tools/regen_generated.py --write --only checker-pins >/dev/null && uv run pytest -q -x -p no:cacheprovider tests/test_cardinality_service.py -k countermodel_rows"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 534.1,
+   "output_tail": "und(service):\n        \"\"\"qt-a3cb, R8: FA1b's countermodel answer is refused by the schema when a member is dropped, retyped or rebound;\n        each region constant's size is a natural number beside a region constant, and the region table's constants are\n        of a request finite sort.\"\"\"\n        case = next(case for case in route_cases() if case[\"id\"] == \"fa1b-countermodel\")\n        request, response = exchange(service, [case])\n        row = response[\"results\"][0][\"result\"]\n        assert row[\"refutes\"] is True and [size[\"size\"] for size in row[\"sizes\"]] == [1, 1, 15, 1]\n        assert [size[\"constant\"] for size in row[\"sizes\"]] == [c[\"constant\"] for c in row[\"regions\"][\"constants\"]]\n        labels = []\n        for label, mutant in _countermodel_mutants(row):\n            mutated = deepcopy(response)\n            mutated[\"results\"][0][\"result\"] = mutant\n>           with pytest.raises(Invalid):\n                 ^^^^^^^^^^^^^^^^^^^^^^\nE           Failed: DID NOT RAISE Invalid\n\ntests/test_cardinality_service.py:269: Failed\n=========================== short test summary info ============================\nFAILED tests/test_cardinality_service.py::test_countermodel_rows_are_typed_and_bound\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 7 deselected in 0.74s\n    Finished `release` profile [optimized] target(s) in 0.14s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-r0xt2stm)\n"
+  },
+  {
+   "id": "schema-sizes-typed",
+   "file": "lean/ResponseShape/Schemas/Cardinality.lean",
+   "claim": "a size is a natural number",
+   "source_sha256": "afa1733900e2e2f575edbb9c4e387a9799e6980dba437a56a891f350bee9520c",
+   "command": [
+    "bash",
+    "-c",
+    "L=$(mktemp) && S=$(mktemp) && cp lean/checkers.lock \"$L\" && cp ve/backends/lean_service_schema/cardinality.json \"$S\" && trap 'cp \"$L\" lean/checkers.lock; cp \"$S\" ve/backends/lean_service_schema/cardinality.json' EXIT && (cd lean && PATH=$HOME/.elan/bin:$PATH lake build ve_response_decode ve_service >/dev/null) && uv run python tools/regen_generated.py --write --only response-schemas >/dev/null && uv run python tools/regen_generated.py --write --only checker-pins >/dev/null && uv run pytest -q -x -p no:cacheprovider tests/test_cardinality_service.py -k countermodel_rows"
+   ],
+   "killed": true,
+   "mutant_exit": 1,
+   "seconds": 334.2,
+   "output_tail": "und(service):\n        \"\"\"qt-a3cb, R8: FA1b's countermodel answer is refused by the schema when a member is dropped, retyped or rebound;\n        each region constant's size is a natural number beside a region constant, and the region table's constants are\n        of a request finite sort.\"\"\"\n        case = next(case for case in route_cases() if case[\"id\"] == \"fa1b-countermodel\")\n        request, response = exchange(service, [case])\n        row = response[\"results\"][0][\"result\"]\n        assert row[\"refutes\"] is True and [size[\"size\"] for size in row[\"sizes\"]] == [1, 1, 15, 1]\n        assert [size[\"constant\"] for size in row[\"sizes\"]] == [c[\"constant\"] for c in row[\"regions\"][\"constants\"]]\n        labels = []\n        for label, mutant in _countermodel_mutants(row):\n            mutated = deepcopy(response)\n            mutated[\"results\"][0][\"result\"] = mutant\n>           with pytest.raises(Invalid):\n                 ^^^^^^^^^^^^^^^^^^^^^^\nE           Failed: DID NOT RAISE Invalid\n\ntests/test_cardinality_service.py:269: Failed\n=========================== short test summary info ============================\nFAILED tests/test_cardinality_service.py::test_countermodel_rows_are_typed_and_bound\n!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!\n1 failed, 7 deselected in 0.73s\n    Finished `release` profile [optimized] target(s) in 0.02s\n\nve: English comparator: {\"records\": 0, \"excluded\": 0, \"planted\": 0, \"classes\": {}} (/tmp/ve-english-comparator-cy1cx3ou)\n"
+  }
+ ]
+}

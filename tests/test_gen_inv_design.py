@@ -131,7 +131,7 @@ def test_the_candidate_prep_writes_every_pin_key():
     """PROBE F2: the prep ran on the probe or an unpinned `ve_service` only, so a Rust-only change was never pinned."""
     design = DESIGN.read_text()
     prep = design[design.index("| merge train: mkcand"):design.index("| x86 essentials |")]
-    for key in json.loads((ROOT / "lean/checkers.lock").read_text()):
+    for key in json.loads(lean_statements.inventory_path("lean/checkers.lock").read_text()):
         assert key in CHECKER, f"pin key {key}: the design's candidate prep must name its checker"
         assert CHECKER[key] in prep, key
 

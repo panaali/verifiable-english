@@ -34,18 +34,6 @@
         ],
         "description": "the model at {0} is covered by the Framework"
       },
-      "high_capability": {
-        "arguments": [
-          "situation"
-        ],
-        "description": "the model at {0} reaches a High capability threshold; SAG decides this"
-      },
-      "critical_capability": {
-        "arguments": [
-          "situation"
-        ],
-        "description": "the model at {0} reaches a Critical capability threshold; SAG decides this"
-      },
       "likely_to_cross": {
         "arguments": [
           "situation"
@@ -226,6 +214,114 @@
         ],
         "description": "Nuclear and Radiological capability is found at {0}"
       },
+      "further_development": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "{0} is further development of the model"
+      },
+      "internal_deployment": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "{0} is an internal deployment"
+      },
+      "forecast_critical": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "the model at {0} is forecasted to reach Critical capability; OpenAI decides this"
+      },
+      "existing_at_publication": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "the model at {0} is one OpenAI possessed at publication (2025-04-15)"
+      },
+      "threshold_determined": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "the SAG determines at {0} that a capability threshold has been crossed"
+      },
+      "safeguards_already_assessed": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "the corresponding safeguards at {0} have already been implemented and assessed"
+      },
+      "rapid_risk": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "a risk of severe harm rapidly develops at {0}"
+      },
+      "fast_track_requested": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "a fast track for the SAG is requested at {0}"
+      },
+      "immediate_reaction_needed": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "immediate reaction is needed to address the risk at {0}"
+      },
+      "deeper_testing_warranted": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "OpenAI deems that {0} warrants deeper testing of Tracked Categories"
+      },
+      "third_party_available": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "third-party evaluation is available and feasible at {0}"
+      },
+      "safeguards_report_compiled": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "{0} is the compilation of a Safeguards Report"
+      },
+      "employee_request": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "an employee requests a summary of the testing results and SAG recommendation at {0}"
+      },
+      "highly_sensitive": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "the summary requested at {0} involves highly sensitive information"
+      },
+      "persuasion_risk": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "{0} concerns risks related to persuasion"
+      },
+      "leadership_decision": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "{0} is a final decision of OpenAI Leadership"
+      },
+      "board_finds_necessary": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "the Board finds it necessary at {0} to reverse the decision"
+      },
+      "decided_without_sag": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "OpenAI Leadership makes the decision at {0} without the SAG's participation"
+      },
       "research_category_review": {
         "arguments": [
           "situation"
@@ -283,6 +379,50 @@
           "role": "permission",
           "default": "allow",
           "act": "{0} be tracked as a category"
+        }
+      },
+      "deployment_permitted": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "1: deployment of a model that reaches High",
+        "regulated": {
+          "role": "permission",
+          "default": "allow",
+          "act": "{0} be deployed"
+        }
+      },
+      "summary_access": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "5.1: internal transparency",
+        "regulated": {
+          "role": "permission",
+          "default": "allow",
+          "act": "{0} have an employee request as well as receive a summary of testing results"
+        }
+      },
+      "decision_reversal": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "Appendix B: final decisions and Board reversal",
+        "regulated": {
+          "role": "permission",
+          "default": "allow",
+          "act": "{0} have the decision reversed"
+        }
+      },
+      "process_change": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "Appendix B: final within the operational process",
+        "regulated": {
+          "role": "permission",
+          "default": "allow",
+          "act": "{0} have the decision changed within the operational process"
         }
       },
       "adjustment_permission": {
@@ -360,6 +500,17 @@
           "role": "obligation",
           "default": "deny",
           "act": "{0} have safeguards during development"
+        }
+      },
+      "development_security_controls": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "2.2: appropriate security controls as covered High systems are developed",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have appropriate security controls during its development"
         }
       },
       "security_practices": {
@@ -729,11 +880,110 @@
         "arguments": [
           "situation"
         ],
-        "description": "Table 2: Nuclear response; consultation remains open",
+        "description": "Table 2: Nuclear response; the further actions it may consider remain open",
         "regulated": {
           "role": "obligation",
           "default": "deny",
-          "act": "{0} heighten nuclear safeguards"
+          "act": "{0} heighten nuclear safeguards in consultation with US government actors"
+        }
+      },
+      "pandemic_policy_contribution": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "Table 1 BIO-C: policy contribution",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} contribute towards improved public policy as well as pandemic preparedness"
+        }
+      },
+      "cyberdefense_contribution": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "Table 1 CYB-H: cyberdefense contribution",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} contribute towards improved cyberdefense policies as well as tools"
+        }
+      },
+      "safeguards_recommended": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "3.3: the first next step the SAG's decision can include",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have the SAG recommend implementing as well as assessing the safeguards"
+        }
+      },
+      "chair_coordination": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "Appendix B: fast track",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have the SAG Chair coordinate with OpenAI Leadership on immediate reaction"
+        }
+      },
+      "third_party_evaluation": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "5.2: third-party evaluation of tracked model capabilities",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have third parties independently evaluate the model"
+        }
+      },
+      "residual_risk_assessment": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "4.2: Safeguards Report contents",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} include a residual risk assessment in the Safeguards Report"
+        }
+      },
+      "persuasion_handled_outside": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "change log item 4",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have persuasion risks handled outside the Preparedness Framework"
+        }
+      },
+      "sag_participation": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "Appendix B: decisions without the SAG",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have the SAG take part in the decision"
+        }
+      },
+      "access_limited": {
+        "arguments": [
+          "situation"
+        ],
+        "description": "C.3: access for all models",
+        "regulated": {
+          "role": "obligation",
+          "default": "deny",
+          "act": "{0} have model access strictly limited with strong multifactor authentication"
         }
       },
       "research_results_received": {

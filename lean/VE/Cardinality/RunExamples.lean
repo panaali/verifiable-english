@@ -78,8 +78,6 @@ def fa1Admission : Json := answer (case "admission" env fa1Premises fa1Conclusio
 #guard answer ((case "admission" env fa1Premises fa1Conclusion).setObjVal! "kind" (.str "admission")) ==
   answer (Json.mkObj [("id", .str "c"), ("environment", env), ("premises", Json.arr fa1Premises.toArray),
     ("conclusion", fa1Conclusion)])
-#guard answer (case "countermodel" env fa1Premises fa1Conclusion) ==
-  p r#"{"id": "c", "status": "error", "error": "unknown case kind countermodel"}"#
 
 /-- A trace as the order certificate wire spells it. -/
 def traceJson : VE.Order.Tableau.Trace → Json
@@ -317,5 +315,222 @@ def charged (ps : List Json) (c : Json) : Nat :=
 
 #guard err (case "admission" env [] (st r#"["count", "user", [["1", ["is", "curious"]]], "le", "2"]"#)) ==
   "CardinalityNotFinite(user)"
+
+/-! ## qt-a3d: the `document` case (the claim graph) -/
+
+def docCase (document : Json) (environment : Json := WireExamples.envDocs) : Json :=
+  Json.mkObj [("id", .str "d"), ("kind", .str "document"), ("environment", environment), ("document", document)]
+def leaf (name : String) (statement : Json) : Json := Json.mkObj [("name", .str name), ("statement", statement)]
+def deduce (name : String) (statement : Json) (premises : List String) (cert : Json) : Json :=
+  Json.mkObj [("name", .str name), ("statement", statement), ("premises", toJson premises), ("certificate", cert)]
+def graph (root : String) (nodes : List Json) : Json :=
+  Json.mkObj [("root", .str root), ("nodes", Json.arr nodes.toArray)]
+def report (j : Json) : Json := (answer j).getObjValD "report"
+def leafNames (j : Json) : List Json :=
+  (((report j).getObjValD "leaves").getArr?.toOption.getD #[]).toList.map (·.getObjValD "name")
+
+/-- FA1 in the documents environment: four leaves and the root deduced from them by FA1's certificate. -/
+def docAdmission : Json := answer (case "admission" WireExamples.envDocs fa1Premises fa1Conclusion)
+def docCert : Json := certificate docAdmission Examples.fa1Trace
+def names : List String := ["total", "increase", "stay", "exclusive"]
+def fa1Leaves : List Json := (names.zip fa1Premises).map fun (n, s) => leaf n s
+def fa1Doc (extra : List Json := []) (premises := names) (cert := docCert) : Json :=
+  graph "root" (fa1Leaves ++ extra ++ [deduce "root" fa1Conclusion premises cert])
+
+-- FA1 as a claim graph: the root's statement and meaning id, and its four leaves in submitted order.
+#guard (answer (docCase fa1Doc)).getObjValD "status" == .str "ok"
+#guard leafNames (docCase fa1Doc) == names.map Json.str
+#guard (report (docCase fa1Doc)).getObjValD "root" == Json.mkObj [("name", .str "root"),
+  ("meaning_id", (docAdmission.getObjValD "conclusion").getObjValD "meaning_id"),
+  ("formula", fa1Conclusion.getObjValD "formula")]
+#guard ids ((report (docCase fa1Doc)).getObjValD "leaves") "meaning_id" == ids (docAdmission.getObjValD "premises")
+  "meaning_id"
+/-- Spec 4.1's report identity, spelled out: the `ve-report` digest, in the identity version of the documents
+environment's profiles, of the three identities, the document as sent and `report`. -/
+def docReportId (document report : Json) : Json :=
+  .str ((VE.CertificateWire.digest "ve-report-v0.2:cardinality@0,documents@1,order@0,relational-fol@0,time@0\n"
+    (Json.mkObj [("environment_id", docAdmission.getObjValD "environment_id"),
+      ("w6_environment_id", docAdmission.getObjValD "w6_environment_id"),
+      ("w6_target_environment_id", docAdmission.getObjValD "w6_target_environment_id"),
+      ("document", document), ("report", report)])).toOption.getD "")
+def reportIdOf (j : Json) : Json := (answer j).getObjValD "report_id"
+#guard answer (docCase fa1Doc) == Json.mkObj [("id", .str "d"), ("status", .str "ok"),
+  ("environment_id", docAdmission.getObjValD "environment_id"),
+  ("w6_environment_id", docAdmission.getObjValD "w6_environment_id"),
+  ("w6_target_environment_id", docAdmission.getObjValD "w6_target_environment_id"), ("report", report (docCase fa1Doc)),
+  ("report_id", docReportId fa1Doc (report (docCase fa1Doc)))]
+-- The identity binds the report (review F1 of qt-a3d): a report with a leaf emptied, dropped, duplicated or
+-- reordered, its meaning ids swapped or a leaf as its root, has another identity; so does another document with the
+-- same report.
+def fa1Report : Json := report (docCase fa1Doc)
+def fa1LeafRows : Array Json := (fa1Report.getObjValD "leaves").getArr?.toOption.getD #[]
+def withLeaves (rows : Array Json) : Json := fa1Report.setObjVal! "leaves" (Json.arr rows)
+#guard fa1LeafRows.size == 4
+#guard [withLeaves #[], withLeaves fa1LeafRows.pop, withLeaves (fa1LeafRows.push fa1LeafRows[0]!),
+    withLeaves fa1LeafRows.reverse,
+    withLeaves (fa1LeafRows.set! 0 (fa1LeafRows[0]!.setObjVal! "meaning_id" (fa1LeafRows[1]!.getObjValD "meaning_id"))),
+    fa1Report.setObjVal! "root" fa1LeafRows[0]!].all
+  fun r => docReportId fa1Doc r != reportIdOf (docCase fa1Doc)
+#guard reportIdOf (docCase (fa1Doc [leaf "unused" top])) == docReportId (fa1Doc [leaf "unused" top]) fa1Report
+#guard reportIdOf (docCase (fa1Doc [leaf "unused" top])) != reportIdOf (docCase fa1Doc)
+-- A leaf the root does not rest on is not in the report; a root without a deduction rests on itself.
+#guard leafNames (docCase (fa1Doc [leaf "unused" top])) == names.map Json.str
+#guard leafNames (docCase (graph "total" fa1Leaves)) == [.str "total"]
+-- The report's root is the request's root by name, whatever its name (review F3 of qt-a3d).
+#guard ((report (docCase (graph "total" fa1Leaves))).getObjValD "root").getObjValD "name" == .str "total"
+-- Two levels, the middle node used twice (a trace that closes at once): the root rests on FA1's leaves, each once.
+def twoCert : Json :=
+  certificate (answer (case "admission" WireExamples.envDocs [fa1Conclusion, fa1Conclusion] fa1Conclusion)) .close
+def twoLevel (premises : List String) : Json :=
+  graph "root" (fa1Leaves ++ [deduce "mid" fa1Conclusion names docCert, deduce "root" fa1Conclusion premises twoCert])
+#guard leafNames (docCase (twoLevel ["mid", "mid"])) == names.map Json.str
+-- Review F2 of qt-a3d: leaves are positions, joined once per premise. "mid" reused 200 times, and two middle nodes
+-- over the same leaves (distinct children), each give FA1's leaves once, in submitted order.
+def closes (k : Nat) : Json :=
+  certificate (answer (case "admission" WireExamples.envDocs (List.replicate k fa1Conclusion) fa1Conclusion)) .close
+#guard leafNames (docCase (graph "root" (fa1Leaves ++ [deduce "mid" fa1Conclusion names docCert,
+  deduce "root" fa1Conclusion (List.replicate 200 "mid") (closes 200)]))) == names.map Json.str
+#guard leafNames (docCase (graph "root" (fa1Leaves ++ [deduce "mid" fa1Conclusion names docCert,
+  deduce "mid2" fa1Conclusion names docCert,
+  deduce "root" fa1Conclusion ["mid2", "mid", "mid2"] (closes 3)]))) == names.map Json.str
+-- Refused: a leaf dropped from the deduction, an unproved root (FA1b's certificate does not close), a dangling, later
+-- or duplicate name, a missing root, a premise list without a certificate, and no `documents@1`.
+#guard err (docCase (fa1Doc (premises := names.dropLast))) == stale
+#guard err (docCase (twoLevel ["mid"])) == stale
+def fa1bDocCert : Json :=
+  certificate (answer (case "admission" WireExamples.envDocs fa1Premises.dropLast fa1Conclusion)) Examples.fa1Trace
+#guard err (docCase (fa1Doc (premises := names.dropLast) (cert := fa1bDocCert))) == Document.graphRejected
+#guard err (docCase (fa1Doc (premises := names.dropLast ++ ["nope"]))) == Document.graphRejected
+#guard err (docCase (graph "root" (deduce "root" fa1Conclusion names docCert :: fa1Leaves))) == Document.graphRejected
+#guard err (docCase (fa1Doc [leaf "total" top])) == Document.graphRejected
+#guard err (docCase ((fa1Doc).setObjVal! "root" (.str "nope"))) == Document.graphRejected
+#guard err (docCase (graph "total" [(leaf "total" top).setObjVal! "premises" (toJson ["total"])])) ==
+  "premises and certificate come together"
+#guard err (docCase fa1Doc WireExamples.env) == "UnsupportedProfile: cardinality documents require documents@1"
+#guard err (docCase (graph "u" [leaf "u" (st r#"["count", "user", [["1", ["any"]]], "le", "2"]"#)])) ==
+  "CardinalityNotFinite(user)"
+#guard (err (docCase ((fa1Doc).setObjVal! "extra" .null))).startsWith "fields do not match"
+#guard (err (docCase (graph "t" [(leaf "t" top).setObjVal! "label" (.str "asserted")]))).startsWith "fields do not match"
+-- The node limit: 1,000 nodes are read, 1,001 refused before any is decoded.
+def tops (n : Nat) : Json := graph "n0" ((List.range n).map fun i => leaf s!"n{i}" top)
+#guard leafNames (docCase (tops 1000)) == [.str "n0"]
+#guard err (docCase (tops 1001)) == Document.nodeLimit
+-- The deductions' charge, over the whole graph: "mid" reads 27 statement nodes (7 + 4 + 4 + 4 + 8), then "big" its
+-- statement and `k` premises "t" of 2 nodes each. 50,000 are read (and P3 refuses the problem), 50,001 are not.
+#guard (fa1Conclusion :: fa1Premises).map (fun s => VE.Time.Wire.jsonNodes 300 (s.getObjValD "formula")) == [7, 4, 4, 4, 8]
+def charged2 (big : Json) (k : Nat) : Json := graph "big" (fa1Leaves ++
+  [deduce "mid" fa1Conclusion names docCert, leaf "t" top, deduce "big" big (List.replicate k "t") docCert])
+def top3 : Json := st r#"["quantity", ["not", ["top"]]]"#
+#guard err (docCase (charged2 top3 24985)) == VE.Time.Wire.aggregateLimit
+#guard err (docCase (charged2 top 24986)) == Document.deductionLimit
+#guard err (docCase (graph "big" [leaf "t" top, deduce "big" top (List.replicate 50001 "t") docCert])) ==
+  Document.deductionLimit
+-- The premise count is charged before any premise is looked up (review F3 of qt-a3d): 50,001 dangling premises are a
+-- ResourceLimit, 50,000 a dangling premise.
+#guard err (docCase (graph "big" [deduce "big" top (List.replicate 50001 "nope") docCert])) == Document.deductionLimit
+#guard err (docCase (graph "big" [deduce "big" top (List.replicate 50000 "nope") docCert])) == Document.graphRejected
+
+/-! ## Countermodels (spec 3.9): FA1b refuted, FA1 not; the region sizes computed once and charged -/
+
+/-- A complete model of `env`'s vocabulary: FOMC policymakers `p1`…`pn`, those of `inc` expect a further increase,
+those of `stay` expect rates to stay; no user, no advice, every constant 0. -/
+def model (n : Nat) (inc stay : List Nat) : Json :=
+  let pm := fun (i : Nat) => Json.str s!"p{i}"
+  let rows := fun (xs : List Nat) => toJson (xs.map fun i => Json.arr #[pm i])
+  Json.mkObj [("complete", .bool true),
+    ("domains", Json.mkObj [("fomc_policymaker", toJson ((List.range n).map (pm <| · + 1))),
+      ("user", toJson ([] : List Json))]),
+    ("constants", Json.mkObj (["d1", "d2", "june", "sept"].map (·, .str "0"))),
+    ("relations", Json.mkObj [("advises", toJson ([] : List Json)), ("curious", toJson ([] : List Json)),
+      ("expects_further_increase", rows inc), ("expects_rates_to_stay", rows stay)])]
+
+/-- FA1b's countermodel (neither, stay only, increase only, both) = (1, 1, 15, 1). -/
+def fa1bModel : Json := model 18 (List.range' 1 16) [16, 17]
+
+def refute (premises : List Json) (m : Json) (more : List (String × Json) := []) : Json :=
+  answer (case "countermodel" env premises fa1Conclusion ([("model", m)] ++ more))
+
+def sizes (a : Json) : Json := a.getObjValD "sizes"
+def refusal (a : Json) : String := (a.getObjValD "error").getStr?.toOption.getD ""
+def sized (xs : List (String × Nat)) : Json :=
+  toJson (xs.map fun e =>
+    Json.mkObj [("constant", .str s!"cardinality__fomc_policymaker__{e.1}"), ("size", toJson e.2)])
+
+-- FA1b is refuted by its countermodel; each region's size is Lean's, in the region table's order, beside the
+-- admission's region table.
+#guard (refute fa1Premises.dropLast fa1bModel).getObjValD "refutes" == .bool true
+#guard sizes (refute fa1Premises.dropLast fa1bModel) == sized [("00", 1), ("01", 1), ("10", 15), ("11", 1)]
+-- The whole answer: the verdict, the admission's identities, statements and region table, and the sizes.
+#guard (refute fa1Premises.dropLast fa1bModel).compress ==
+  let a := answer (case "admission" env fa1Premises.dropLast fa1Conclusion)
+  (Json.mkObj ((["id", "status", "environment_id", "w6_environment_id", "w6_target_environment_id", "premises",
+    "conclusion", "regions"].map fun k => (k, a.getObjValD k)) ++ [("refutes", .bool true),
+    ("sizes", sized [("00", 1), ("01", 1), ("10", 15), ("11", 1)])])).compress
+-- A countermodel that does not refute is not accepted: with FA1's exclusion premise the same model breaks a premise,
+-- and FA1's own model (2 stay, 16 increase, none both) satisfies the conclusion.
+#guard (refute fa1Premises fa1bModel).getObjValD "refutes" == .bool false
+#guard (refute fa1Premises.dropLast (model 18 (List.range' 1 16) [17, 18])).getObjValD "refutes" == .bool false
+#guard sizes (refute fa1Premises.dropLast (model 18 (List.range' 1 16) [17, 18])) ==
+  sized [("00", 0), ("01", 2), ("10", 16), ("11", 0)]
+-- The model is the original vocabulary's: a region constant in it is refused by W6a's model decoder, as is a missing
+-- model; the claims and the statements are read first.
+#guard err (case "countermodel" env fa1Premises fa1Conclusion) == "property not found: model"
+#guard (refusal (refute fa1Premises (obj fa1bModel [("constants", obj (fa1bModel.getObjValD "constants")
+  [("cardinality__fomc_policymaker__00", .str "1")])]))).startsWith "fields do not match"
+#guard refusal (refute fa1Premises (.str "x")) == "object expected"
+def rel (rows : String) : Json :=
+  obj fa1bModel [("relations", obj (fa1bModel.getObjValD "relations") [("expects_rates_to_stay", p rows)])]
+#guard refusal (refute fa1Premises.dropLast (rel r#"[["p16", "p17"]]"#)) == "wrong relation arity"
+#guard refusal (refute fa1Premises.dropLast (rel r#"[["p99"]]"#)) == "dangling or wrong-sort value"
+#guard refusal (refute fa1Premises.dropLast (rel r#"[["p16"], ["p16"]]"#)) == "duplicate relation tuple"
+-- A claimed region table equal to the regenerated one is read past.
+#guard (refute fa1Premises fa1bModel [("regions", regions)]).getObjValD "refutes" == .bool false
+#guard refusal (refute fa1Premises (.str "x")
+  [("regions", regions.setObjVal! "constants" (toJson ([] : List Json)))]) ==
+  "region table differs from the regenerated one"
+#guard err (case "countermodel" env [] (st r#"["count", "user", [["1", ["any"]]], "le", "2"]"#)
+  [("model", .str "x")]) == "CardinalityNotFinite(user)"
+
+/-! The growing chain: `k` counted sorts `c0`…, six predicates and `n` objects each; `u` users. The charge is
+2 ^ 6 × n × 7 per sort, so 448,000 for 1,000 objects: two sorts are counted, the third is refused before any size
+is computed. -/
+
+def chainSorts (k : Nat) : List String := (List.range k).map (s!"c{·}")
+def chainPreds (s : String) : List String := (List.range 6).map (s!"{s}_q{·}")
+
+def chainEnv (k : Nat) : Json :=
+  let unary := fun s => Json.mkObj [("arguments", toJson [s]), ("description", .str "q")]
+  let v := vocab.setObjVal! "sorts" (obj (vocab.getObjValD "sorts")
+    ((chainSorts k).map (·, p r#"{"description": "a sort"}"#)))
+  obj env [("vocabulary", v.setObjVal! "predicates" (obj (vocab.getObjValD "predicates")
+      ((chainSorts k).flatMap fun s => (chainPreds s).map (·, unary s)))),
+    ("cardinality", Json.mkObj [("finite_sorts", toJson (chainSorts k))])]
+
+/-- Each sort's objects in the region of all six predicates: at most `n`. -/
+def chainPremise (n : Nat) (s : String) : Json :=
+  let body := (chainPreds s).foldr (fun q b => Json.arr #[.str "and", Json.arr #[.str "is", .str q], b])
+    (Json.arr #[.str "any"])
+  st (Json.compress (Json.arr #[.str "count", .str s, Json.arr #[Json.arr #[.str "1", body]], .str "le",
+    .str (toString n)]))
+
+def chainModel (k n u : Nat) : Json :=
+  let none := toJson ([] : List Json)
+  let ids := fun (pre : String) (m : Nat) => toJson ((List.range m).map (s!"{pre}{·}"))
+  Json.mkObj [("complete", .bool true),
+    ("domains", Json.mkObj ([("fomc_policymaker", none), ("user", ids "u" u)] ++
+      (chainSorts k).map fun s => (s, ids s!"{s}e" n))),
+    ("constants", Json.mkObj (["d1", "d2", "june", "sept"].map (·, .str "0"))),
+    ("relations", Json.mkObj ((["advises", "curious", "expects_further_increase", "expects_rates_to_stay"] ++
+      (chainSorts k).flatMap chainPreds).map (·, none)))]
+
+/-- No `c0` object, refuted by the model; `extra` premises beside the chain's. -/
+def chain (k n u : Nat) (extra : List Json := []) : Json :=
+  case "countermodel" (chainEnv k) ((chainSorts k).map (chainPremise n) ++ extra)
+    (st r#"["count", "c0", [["1", ["any"]]], "lt", "0"]"#) [("model", chainModel k n u)]
+
+-- The region sizes are charged before they are computed (the service test runs the chain to two sorts of 1,000):
+-- three sorts of 1,000 objects are refused, UNKNOWN; small sorts are counted and refuted.
+#guard err (chain 3 1000 0) == VE.Time.Wire.budgetExhausted
+#guard (answer (chain 3 10 0)).getObjValD "refutes" == .bool true
 
 end VE.Cardinality.RunExamples

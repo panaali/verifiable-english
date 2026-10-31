@@ -1,0 +1,187 @@
+{
+ "base": "0c4ea31d21fb9e055e34a455dee6d3b3afb47947",
+ "changes": [
+  {
+   "added": 16,
+   "deleted": 2,
+   "path": "docs/arch/AR-21/DELTA.md"
+  },
+  {
+   "added": 255,
+   "deleted": 34,
+   "path": "docs/arch/AR-21/REPORT.md"
+  },
+  {
+   "added": 160,
+   "deleted": 0,
+   "path": "docs/arch/AR-21/STATEMENTS.md"
+  },
+  {
+   "added": 25,
+   "deleted": 4,
+   "path": "docs/arch/AR-21/evidence.toml"
+  },
+  {
+   "added": 130,
+   "deleted": 21,
+   "path": "docs/arch/AR-21/evidence/ab-delta.json"
+  },
+  {
+   "added": 543,
+   "deleted": 50,
+   "path": "docs/arch/AR-21/evidence/ab.json"
+  },
+  {
+   "added": 116,
+   "deleted": 0,
+   "path": "docs/arch/AR-21/evidence/mutants.json"
+  },
+  {
+   "added": 42062,
+   "deleted": 42062,
+   "path": "docs/arch/AR-21/evidence/pilot-rerun.json"
+  },
+  {
+   "added": 174,
+   "deleted": 0,
+   "path": "docs/arch/AR-21/evidence/scope.json"
+  },
+  {
+   "added": 100,
+   "deleted": 3,
+   "path": "docs/arch/AR-21/evidence/statements.json"
+  },
+  {
+   "added": 182,
+   "deleted": 19,
+   "path": "docs/arch/AR-21/evidence/trust.json"
+  },
+  {
+   "added": 88,
+   "deleted": 0,
+   "path": "docs/arch/AR-21/mutants.json"
+  },
+  {
+   "added": 9,
+   "deleted": 9,
+   "path": "docs/codemap/INDEX.md"
+  },
+  {
+   "added": 1,
+   "deleted": 0,
+   "path": "docs/codemap/lean__VE__Closure.md"
+  },
+  {
+   "added": 1,
+   "deleted": 2,
+   "path": "docs/codemap/tests--part-4.md"
+  },
+  {
+   "added": 3,
+   "deleted": 2,
+   "path": "docs/codemap/tests--part-5.md"
+  },
+  {
+   "added": 4,
+   "deleted": 4,
+   "path": "docs/codemap/tests--part-6.md"
+  },
+  {
+   "added": 2,
+   "deleted": 0,
+   "path": "docs/codemap/usecases.md"
+  },
+  {
+   "added": 1,
+   "deleted": 0,
+   "path": "lean/VE.lean"
+  },
+  {
+   "added": 73,
+   "deleted": 0,
+   "path": "lean/VE/Audit.lean"
+  },
+  {
+   "added": 676,
+   "deleted": 0,
+   "path": "lean/VE/Closure/CoreEquiv.lean"
+  },
+  {
+   "added": 72,
+   "deleted": 0,
+   "path": "lean/axioms.txt"
+  },
+  {
+   "added": 155,
+   "deleted": 40,
+   "path": "lean/declarations.txt"
+  },
+  {
+   "added": 2,
+   "deleted": 0,
+   "path": "lean/predicates.txt"
+  },
+  {
+   "added": 423,
+   "deleted": 0,
+   "path": "lean/statements.txt"
+  },
+  {
+   "added": 50,
+   "deleted": 35,
+   "path": "tools/trust-classes.json"
+  },
+  {
+   "added": 2,
+   "deleted": 1,
+   "path": "ve/assurance-manifest.json"
+  }
+ ],
+ "commits": [
+  {
+   "hash": "3b7120b22b364a5f7c8f3f83cca6cb68b142ff41",
+   "subject": "AR-21: keep main's key order in tools/trust-classes.json"
+  },
+  {
+   "hash": "2b3481e6daf7d615994bcb460b08e45339f6462f",
+   "subject": "AR-21: scope and A/B saved for 3786c98e"
+  },
+  {
+   "hash": "3786c98e163271c74c9a215641f85c1fa911150e",
+   "subject": "AR-21: evidence measured again against the new merge base 0c4ea31d2"
+  },
+  {
+   "hash": "95f464227c24f4e05e649194f82fe8feff227f0c",
+   "subject": "Regenerate the Lean inventories and code map after the merge of main (regen_generated.py --write)"
+  },
+  {
+   "hash": "a42471fd898a177b3a0a5a0ed21472dc65128aa8",
+   "subject": "AR-21: REPORT"
+  },
+  {
+   "hash": "1faafe1ac7fd3b1e8fbbab536372c00586dc1fa7",
+   "subject": "AR-21: classify VE/Closure/CoreEquiv.lean as other JSON in the assurance manifest"
+  },
+  {
+   "hash": "e447656c8f7b889707f0b52431b778839fe15037",
+   "subject": "AR-21: evidence: statements, trust, corpus A/B, DELTA"
+  },
+  {
+   "hash": "703f4156c082e8ff3d69b4b8e9ede36bd2c1f9a5",
+   "subject": "AR-21: seeded mutants, 7/7 killed, each failing in VE.Closure.CoreEquiv"
+  },
+  {
+   "hash": "d25737571eab87431e06a9c0497caac0a97d36c3",
+   "subject": "AR-21: regenerate the Lean inventories; classify the embedding as P"
+  },
+  {
+   "hash": "56917a0f406e81175cc6ed995cac09b15cbf3290",
+   "subject": "AR-21: closure's replay is Core's replay on the embedding (step 3a)"
+  },
+  {
+   "hash": "66e99e55b11c4b846eb037007e5ad4a8d1182774",
+   "subject": "AR-21: the Lean statements for review (consolidation step 3a)"
+  }
+ ],
+ "head": "3b7120b22b364a5f7c8f3f83cca6cb68b142ff41"
+}
