@@ -54,6 +54,15 @@
    "mutation": "a projection's status written BOGUS",
    "test": "ResponseShape.Encoders.SensesProject.projectCase_fits",
    "result": "lake build ResponseShape.Encoders.SensesProject: unsolved goals"
+  },
+  {
+   "id": "P4",
+   "language": "python",
+   "file": "ve/backends/lean_service.py",
+   "behaviour": "senses.project has the document mode's CPU deadline, never below senses.read's route timeout (review F1)",
+   "mutation": "\"senses.project\": _CORE (the 6.4 s the review found too tight)",
+   "test": "tests/test_senses_project.py::test_a_projection_is_as_available_as_the_reading_it_serves, ::test_the_large_request_is_answered_within_half_its_deadline",
+   "result": "FAILED: both; the second with CheckerUnavailable: the Lean service mode senses.project used more than its deadline of 3.18421 s of CPU"
   }
  ],
  "trust_mutants": {
