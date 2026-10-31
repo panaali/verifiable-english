@@ -26528,6 +26528,14 @@ theorem VE.Readings.Sim.soft
     {R' : String → List S.Carrier → Prop} {ρ : VE.Valuation S}, VE.Readings.Sim X Y f S R' ρ → X.soft = Y.soft
   -- uses VE.Readings.Sim@VE.Readings.Simulate VE.SoftNorms.SoftDoc.soft@VE.SoftNorms.Tree VE.SoftNorms.SoftDoc@VE.SoftNorms.Tree VE.SoftNorms.SoftEnv@VE.SoftNorms.Tree VE.SoftNorms.SoftNode@VE.SoftNorms.Tree VE.Structure.Carrier@VE.Semantics VE.Structure@VE.Semantics VE.Valuation@VE.Semantics
   -- expr 918564088
+theorem VE.Readings.Stage.part_eq
+  ∀ {α : Type u_1} (name : String) (work : Unit → Except String α), VE.Readings.Stage.part name work = work ()
+  -- uses VE.Readings.Stage.part@VE.Readings.Stage
+  -- expr 4108862945
+theorem VE.Readings.Stage.stage_eq
+  ∀ {α : Type u_1} (name : String) (work : Unit → Except String α), VE.Readings.Stage.stage name work = work ()
+  -- uses VE.Readings.Stage.stage@VE.Readings.Stage
+  -- expr 2034569856
 theorem VE.Readings.SupExtraExamples.bare_admissible
   VE.Readings.SupExtraExamples.X1Checks →
     VE.Compose.BaseAdmissibleP (VE.Rights.correlate (VE.Readings.choiceDoc VE.Readings.Examples.K1 [("rs1", 0)]).fst)

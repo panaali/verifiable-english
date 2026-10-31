@@ -1,4 +1,5 @@
 import VE.Readings.Route
+import VE.Readings.Stage
 
 /-! The wire of S2a (docs/spec/composition-s2.md 3, 4.1, 7, 8.5): the couplings and narrowings decoded with W2's and
 rights 3.3's texts, the admission of a superposed document, and the replays of a certificate and of a model on
@@ -160,7 +161,7 @@ def admitS2Rest (a : Admitted) (document : Json) : Except String Admitted2 := do
   pure ⟨a, ⟨a.D.chain, a.D.frame, a.D.items, cs, ns⟩, (wellFormedDoc_links a.D cs ns).trans a.wf, rfl⟩
 
 /-- S2a's admission (4.1): unit ids distinct, then S1's admission, then the couplings and narrowings. -/
-def admitS2 (environment document : Json) : Except String Admitted2 := do
+def admitS2 (environment document : Json) : Except String Admitted2 := Stage.stage "admitS2" fun _ => do
   let ids := unitIdsOf document
   unless decide ids.Nodup do throw "duplicate or invalid unit id"
   admitS2Rest (← admitReadings environment document) document
@@ -168,7 +169,7 @@ def admitS2 (environment document : Json) : Except String Admitted2 := do
 /-- S2a's admission of a case whose S1 admission `a` the caller already holds (readings-validate and
     readings-separate under the completion): the same checks as `admitS2` after `admitReadings`, so a document is
     admitted once per case. -/
-def admitS2Of (a : Admitted) (document : Json) : Except String Admitted2 := do
+def admitS2Of (a : Admitted) (document : Json) : Except String Admitted2 := Stage.stage "admitS2Of" fun _ => do
   let ids := unitIdsOf document
   unless decide ids.Nodup do throw "duplicate or invalid unit id"
   admitS2Rest a document

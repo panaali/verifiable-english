@@ -322,7 +322,7 @@ def validateResultBy (pairs : ReadingSet → SetJ → Except String (List Json))
   for R in sets do
     let some RJ := setJ a.doc R.id | throw invalidSet
     let cands ← (List.range R.candidates.length).mapM (candidateJson a R)
-    let pairs ← pairs R RJ
+    let pairs ← Stage.stage "distinguishingModels" fun _ => pairs R RJ
     rows := rows ++ [Json.mkObj [("set", .str R.id), ("version", toJson R.version),
       ("candidates", Json.arr cands.toArray), ("pairs", Json.arr pairs.toArray),
       ("findings", toJson (setFindings a R))]]
@@ -651,7 +651,7 @@ def admitChecked (kind : String) (environment document : Json) :
     (its checked part) and its admission. -/
 def admitComponents (kind : String) (parts : List (String × Json × Json)) :
     Except String (List (String × Json × Json × Json × ComponentAdmission)) :=
-  parts.mapM (fun p => do
+  parts.mapM (fun p => Stage.part p.1 fun _ => do
     let (d, a) ← if p.1 == "main" then admitChecked kind p.2.1 p.2.2 else pure (p.2.2, ← admitComponent kind p.2.1 p.2.2)
     pure (p.1, p.2.1, p.2.2, d, a))
 
@@ -720,7 +720,7 @@ def componentRowOf (kind name : String) (environment document checked answer : J
 def runAdmittedComponents (j : Json) (id kind : String)
     (parts : List (String × Json × Json × Json × ComponentAdmission)) : Except String Json := do
   let rows ← parts.mapM (fun p =>
-    do pure (componentRowOf kind p.1 p.2.1 p.2.2.1 p.2.2.2.1 (← runAdmitted j id kind p.2.2.2.2)))
+    do pure (componentRowOf kind p.1 p.2.1 p.2.2.1 p.2.2.2.1 (← Stage.part p.1 fun _ => runAdmitted j id kind p.2.2.2.2)))
   pure (VE.Route.Wire.ok id [("components", Json.arr rows.toArray)])
 
 /-- `readings-validate` or `readings-elaborate` per case of the split, `main` first (4.1 step 0): the first error
@@ -751,11 +751,11 @@ def runCase (j : Json) : Except String Json := do
       return ← runAdmittedComponents j id kind ready
     let c := named.getD "main"
     match ready.find? (·.1 == c) with
-    | some p => return ← runAdmitted j id kind p.2.2.2.2
+    | some p => return ← Stage.part c fun _ => runAdmitted j id kind p.2.2.2.2
     | none => throw (unknownComponent c)
   let c := named.getD "main"
   match parts.find? (·.1 == c) with
-  | some p => runOne j id kind p.2.1 p.2.2
+  | some p => Stage.part c fun _ => runOne j id kind p.2.1 p.2.2
   | none => throw (unknownComponent c)
 
 def runCaseReported (j : Json) : Json :=
@@ -788,7 +788,7 @@ def runCaseReportedMemo (memo : AdmissionMemo) (j : Json) : Json × AdmissionMem
       return ← runAdmittedComponents j id kind ready
     let c := named.getD "main"
     match ready.find? (·.1 == c) with
-    | some p => return ← runAdmitted j id kind p.2.2.2.2
+    | some p => return ← Stage.part c fun _ => runAdmitted j id kind p.2.2.2.2
     | none => throw (unknownComponent c)
   match run.run.run memo with
   | (.ok answer, next) => (answer, next)

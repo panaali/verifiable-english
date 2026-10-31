@@ -600,7 +600,7 @@ def runProduct (j : Json) (id : String) (cases : List (String × Json × Json)) 
   let question ← VE.Bridge.stringField j "question"
   unless verdictsQuestions.contains question do throw s!"InvalidInput: unknown readings-verdicts question {question}"
   let document ← j.getObjVal? "document"
-  let parts ← cases.mapM (fun c => admitPart c.1 c.2.1 c.2.2)
+  let parts ← cases.mapM (fun c => Stage.part c.1 fun _ => admitPart c.1 c.2.1 c.2.2)
   let A ← VE.Readings.Wire.decodeChoice (j.getObjValD "assumed")
   let k ← if question == "query" then queryPart document j parts else pure 0
   if question == "query" then
