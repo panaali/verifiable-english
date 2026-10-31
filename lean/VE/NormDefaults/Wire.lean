@@ -123,7 +123,7 @@ decision predicates, rights' generated ones; none on the norms route). -/
 def checkAuthorN (environment : Json) (generated : Nat) (U : UDoc) : Except String Unit :=
   reservedNamesOk environment U *> authorLimits ((declaredNames environment).length + generated) U
 
-theorem checkAuthorN_split (environment : Json) (g : Nat) (U : UDoc) :
+theorem checkAuthorN_split (environment : Lean.Json) (g : Nat) (U : VE.NormDefaults.UDoc) :
     checkAuthorN environment g U =
       (reservedNamesOk environment U *> authorLimits ((declaredNames environment).length + g) U) := rfl
 

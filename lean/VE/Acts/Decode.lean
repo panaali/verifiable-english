@@ -60,7 +60,7 @@ theorem elaborateSource_s {environment : Json} {s : VE.NormDefaults.Wire.SourceU
   repeat' split at h
   all_goals first | (cases h; done) | (simp only [pure, Except.pure, Except.ok.injEq] at h; subst h; rfl)
 
-theorem decodeElaboratedU_source {environment norms : Json} {e : ElaboratedU}
+theorem decodeElaboratedU_source {environment norms : Lean.Json} {e : ElaboratedU}
     (h : decodeElaboratedU environment norms = .ok e) :
     VE.NormDefaults.Wire.decodeSourceU environment norms = .ok e.s := by
   unfold decodeElaboratedU at h
@@ -68,13 +68,13 @@ theorem decodeElaboratedU_source {environment norms : Json} {e : ElaboratedU}
   | error err => rw [hs] at h; cases h
   | ok s => rw [hs] at h; exact congrArg _ (elaborateSource_s h).symm
 
-theorem decodeElaboratedU_wellFormed {environment norms : Json} {e : ElaboratedU}
-    (_h : decodeElaboratedU environment norms = .ok e) : VE.NormDefaults.WellFormedU e.U' = true :=
+theorem decodeElaboratedU_wellFormed {environment norms : Lean.Json} {e : ElaboratedU}
+    (h : decodeElaboratedU environment norms = .ok e) : VE.NormDefaults.WellFormedU e.U' = true :=
   (elaborateMap_ok e.hE).2.2.2.2.1
 
 /-- A document whose acts are all lexical elaborates to itself (AP-3's "byte-identical to AP-1" test). -/
-theorem decodeElaboratedU_lexical {environment norms : Json} {e : ElaboratedU}
-    (_h : decodeElaboratedU environment norms = .ok e) (hl : e.D.acts = []) : e.U' = e.s.U ∧ e.M = ⟨[], []⟩ := by
+theorem decodeElaboratedU_lexical {environment norms : Lean.Json} {e : ElaboratedU}
+    (h : decodeElaboratedU environment norms = .ok e) (hl : e.D.acts = []) : e.U' = e.s.U ∧ e.M = ⟨[], []⟩ := by
   have hs : splitAtoms e.D = fun _ => none := funext fun p => by simp [splitAtoms, hl]
   obtain ⟨_, _, hU, hM, _⟩ := elaborateMap_ok e.hE
   rw [hs, splitDoc_none] at hU
