@@ -1,0 +1,5 @@
+trust_mutants: 19 definitions, 260 mutants (29 to run), 4 jobs, base 5e56ca85b7ba
+trust_mutants: 58 KILLED, 0 SURVIVOR, 0 UNKNOWN, 12 INVALID, 17 ALLOWED, 0 NOT RUN, 173 OTHER SHARD in 544 s; 58 carried from aca5e510b877 (check-only change: lean/VE/Acts/DecodeExamples.lean, lean/declarations.txt)
+trust_mutants: D[V], trusted: 10 KILLED, 2 INVALID, 10 ALLOWED, 33 OTHER SHARD
+trust_mutants: G[V], trusted: 46 KILLED, 10 INVALID, 7 ALLOWED, 122 OTHER SHARD
+trust_mutants: S, trusted: 2 KILLED, 18 OTHER SHARD
