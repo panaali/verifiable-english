@@ -69,4 +69,25 @@ def plainEnv : Json := αEnv.setObjVal! "profiles" (toJson ["norm-defaults@0", "
 #guard holds dγ fun L => run (req αEnv γR "norm-defaults-elaborate") ==
   shown (VE.NormDefaults.Wire.layeredCase L "c" "norm-defaults-elaborate" (req αEnv γR "norm-defaults-elaborate"))
 
+/-! jt-2c: under a document layer only `norm-defaults-elaborate` of the route's own kinds is answered; the replay
+kinds and defeasible's are refused by name (jt-2d), and every other kind and list is not refused here. -/
+def layerCase (kind : String) (ps : List String) : Json :=
+  Json.mkObj [("id", "c"), ("kind", kind), ("environment", Json.mkObj [("profiles", toJson ps)])]
+
+#guard (["norm-defaults-gaps", "norm-defaults-conflict", "norm-defaults-report", "defaults-model"].all fun k =>
+  VE.NormDefaults.Run.pendingDocumentLayer (layerCase k ["judgments@0", "norm-defaults@0"]) ==
+    some s!"CheckerUnavailable: judgments@0 with {k} needs its composed Lean route")
+#guard ["norm-defaults-elaborate", "background", "countermodel"].all fun k =>
+  VE.NormDefaults.Run.pendingDocumentLayer (layerCase k ["judgments@0", "norm-defaults@0"]) == none
+#guard VE.NormDefaults.Run.pendingDocumentLayer (layerCase "norm-defaults-gaps" ["norm-defaults@0"]) == none
+
+/-! jt-2c: `Norms.Plain.layered`, a statement layer or a document layer anywhere in the list: the norms mode then
+decides without it. -/
+#guard ["reports@0", "soft-norms@0", "rights@0", "speech-acts@0", "judgments@0"].all fun p =>
+  [[p], ["a@0", p], [p, "z@0"], ["a@0", p, "z@0"]].all fun ps =>
+    VE.Norms.Plain.layered (Json.mkObj [("profiles", toJson ps)])
+#guard [[], ["relational-fol@0"], ["documents@1", "norms@0", "relational-fol@0"]].all fun ps =>
+  !VE.Norms.Plain.layered (Json.mkObj [("profiles", toJson ps)])
+#guard !VE.Norms.Plain.layered (Json.mkObj [("profiles", "judgments@0")])
+
 end VE.Defaults.RouteFixtures
