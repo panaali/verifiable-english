@@ -1,0 +1,26 @@
+shard 1/5: 116 units; commands: ['uv run --frozen --group dev python tools/check_python_layers.py', 'python3 tools/check_lean_imports.py', 'lake build', 'lake build ve_english_lean_bench ve_scope_bench', 'python3 lean/audit.py', 'uv run --frozen --group dev python tools/test_layer_policy.py']
++ uv run --frozen --group dev python tools/check_python_layers.py
+
+╔══╗─────────▶╔╗ ╔╗      ╔╗◀───┐
+╚╣╠╝◀─────┐  ╔╝╚╗║║────▶╔╝╚╗   │
+ ║║   ╔══╦══╦╩╗╔╝║║  ╔╦═╩╗╔╝╔═╦══╗
+ ║║╔══╣╔╗║╔╗║╔╣║ ║║ ╔╬╣╔╗║║ ║│║╔═╝
+╔╣╠╣║║║╚╝║╚╝║║║╚╗║╚═╝║║║║║╚╗║═╣║
+╚══╩╩╩╣╔═╩══╩╝╚═╝╚═══╩╩╝╚╩═╩╩═╩╝
+  └──▶║║                    ▲ 
+      ╚╝────────────────────┘
+
+
+---------
+Contracts
+---------
+
+Analyzed 185 files, 1046 dependencies.
+--------------------------------------
+
+VE inward-only imports (reviewed legacy edges) KEPT (42 ignored imports)
+
+Contracts: 1 kept, 0 broken.
++ python3 tools/check_lean_imports.py
+new outward Lean import: VE.Senses.RunExamples -> VE.Senses.Run
+SHARD 1/5: exit 1 in 12.4 s; 116 units, 0 passed
