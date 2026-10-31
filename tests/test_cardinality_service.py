@@ -23,7 +23,7 @@ EXPECTED = {
     "fa11-stale": STALE,
     "certificate-malformed": "Invalid cardinality certificate: fields do not match: expected [format, "
                              "environment_id, premise_meaning_ids, conclusion_meaning_id, w6], got []",
-    "kind-countermodel": "unknown case kind countermodel",
+    "fa1b-countermodel": "ok refutes", "fa1-countermodel": "ok does not refute",
     "e2-profiles": "UnsupportedProfile: cardinality@0 requires order@0, relational-fol@0 and time@0, optionally "
                    "with documents@1",
     "s1-format": "Unsupported cardinality format",
@@ -58,13 +58,16 @@ def exchange(service, cases):
 def says(result: dict) -> str:
     if result["status"] != "ok":
         return result["error"]
+    if "refutes" in result:
+        return "ok " + ("refutes" if result["refutes"] else "does not refute")
     return "ok" + {None: "", True: " valid", False: " invalid"}[result.get("valid")]
 
 
 def test_route_cases_answer_as_recorded(service):
     """FA1 and FA1b admitted and certified (FA1b's trace does not close its problem), forged claims and FA11's
-    stale certificate refused, and one case per diagnostic class of the hostile set, in spec 4.2's order; FA1 as a
-    claim graph, with a leaf dropped, unproved and without `documents@1`."""
+    stale certificate refused, FA1b's countermodel (one policymaker expects both, one neither) refuting FA1b and not
+    FA1, and one case per diagnostic class of the hostile set, in spec 4.2's order; FA1 as a claim graph, with a leaf
+    dropped, unproved and without `documents@1`."""
     cases = route_cases()
     assert "cardinality" in MODES and [case["id"] for case in cases] == list(EXPECTED)
     answers = [says(bound["result"]) for bound in exchange(service, cases)[1]["results"]]
@@ -225,3 +228,98 @@ def test_universals_are_bridged_once_in_first_use_order(service):
     assert len(first["erased"]["premises"]) == shared + 1 + len(distinct)
     assert len(second["erased"]["premises"]) == shared + 1 + 2 * len(distinct)
     assert second["erased"]["premises"][:shared] == first["erased"]["premises"][:shared]
+
+
+def _countermodel_mutants(row):
+    """(label, row) of FA1b's countermodel answer rebound or retyped, one fault each (qt-a3cb)."""
+    sizes = row["sizes"]
+    yield "a premise dropped", {**row, "premises": row["premises"][1:]}
+    yield "verdict dropped", {k: v for k, v in row.items() if k != "refutes"}
+    yield "sizes dropped", {k: v for k, v in row.items() if k != "sizes"}
+    yield "regions dropped", {k: v for k, v in row.items() if k != "regions"}
+    yield "a negative size", {**row, "sizes": [{**sizes[0], "size": -1}, *sizes[1:]]}
+    yield "a size not a region constant", {**row, "sizes": [{**sizes[0], "constant": "p1"}, *sizes[1:]]}
+    yield "a size with an extra member", {**row, "sizes": [{**sizes[0], "bits": "00"}, *sizes[1:]]}
+    yield "a constant of another sort", {**row, "regions": {**row["regions"], "constants": [
+        {**row["regions"]["constants"][0], "sort": "user"}, *row["regions"]["constants"][1:]]}}
+    yield "a certificate's valid", {**row, "valid": True}
+    yield "an admission's erased problem", {**row, "erased": {"premises": [], "conclusion": row["conclusion"]}}
+    for key in ("refutes", "sizes", "regions", "premises", "environment_id"):
+        # No sizes is well formed: a problem with no counted sort has no region constant (B0, as its region table).
+        for bad in (bad for bad in BAD if bad != row[key] and not (key == "sizes" and bad == [])):
+            yield f"{key} retyped as {bad!r}", {**row, key: bad}
+    for key in sizes[0]:
+        for bad in (bad for bad in BAD if not (key == "size" and bad == 7)):
+            yield f"size's {key} retyped as {bad!r}", {**row, "sizes": [{**sizes[0], key: bad}, *sizes[1:]]}
+
+
+def test_countermodel_rows_are_typed_and_bound(service):
+    """qt-a3cb, R8: FA1b's countermodel answer is refused by the schema when a member is dropped, retyped or rebound;
+    each region constant's size is a natural number beside a region constant, and the region table's constants are
+    of a request finite sort."""
+    case = next(case for case in route_cases() if case["id"] == "fa1b-countermodel")
+    request, response = exchange(service, [case])
+    row = response["results"][0]["result"]
+    assert row["refutes"] is True and [size["size"] for size in row["sizes"]] == [1, 1, 15, 1]
+    assert [size["constant"] for size in row["sizes"]] == [c["constant"] for c in row["regions"]["constants"]]
+    labels = []
+    for label, mutant in _countermodel_mutants(row):
+        mutated = deepcopy(response)
+        mutated["results"][0]["result"] = mutant
+        with pytest.raises(Invalid):
+            check_response("cardinality", mutated, request)
+        labels.append(label)
+    assert len(labels) > 40
+
+
+def chain(k: int, n: int, users: int = 0, extra: tuple = ()) -> dict:
+    """The growing chain of `RunExamples.lean`: `k` counted sorts `c0`, ... with six predicates and `n` objects each
+    (each sort's premise: at most `n` objects in the region of all six), no `c0` object as the conclusion, and a
+    model with `users` users; `extra` premises beside the chain's."""
+    base = next(case for case in route_cases() if case["id"] == "fa1b-countermodel")
+    env, model = deepcopy(base["environment"]), deepcopy(base["model"])
+    sorts = [f"c{i}" for i in range(k)]
+    preds = {s: [f"{s}_q{j}" for j in range(6)] for s in sorts}
+    env["cardinality"]["finite_sorts"] = sorts
+    vocabulary = env["vocabulary"]
+    for s in sorts:
+        vocabulary["sorts"][s] = {"description": "a sort"}
+        for q in preds[s]:
+            vocabulary["predicates"][q] = {"arguments": [s], "description": "q"}
+        model["domains"][s] = [f"{s}e{i}" for i in range(n)]
+        model["relations"].update({q: [] for q in preds[s]})
+    model["domains"]["fomc_policymaker"] = []
+    model["domains"]["user"] = [f"u{i}" for i in range(users)]
+    model["relations"].update({q: [] for q in ("expects_further_increase", "expects_rates_to_stay")})
+
+    def body(qs):
+        return ["any"] if not qs else ["and", ["is", qs[0]], body(qs[1:])]
+
+    def premise(s):
+        return {"format": "ve-cardinality@1", "formula": ["count", s, [["1", body(preds[s])]], "le", str(n)]}
+    return {**base, "id": f"chain-{k}-{n}-{users}", "environment": env, "model": model,
+            "premises": [premise(s) for s in sorts] + list(extra),
+            "conclusion": {"format": "ve-cardinality@1", "formula": ["count", "c0", [["1", ["any"]]], "lt", "0"]}}
+
+
+EXHAUSTED = "ResourceLimit: formula-node evaluation budget MAX_EVALUATIONS=1000000 exhausted"
+
+
+def test_region_sizes_are_charged_before_they_are_computed(service):
+    """The DRI's rule of 2026-10-27 (plan failure 8, qt-a3c review F1): each region's size is computed once per model
+    and its work, 2^6 x 1,000 x 7 = 448,000 evaluations per sort of 1,000 objects and six predicates, is charged
+    against W6a's evaluation budget of 1,000,000 before any size is computed. The growing chain is counted and
+    refuted at one and two sorts and ends at three in the refusal (UNKNOWN), within the deadline."""
+    answers = [says(bound["result"]) for bound in exchange(service, [chain(k, 1000) for k in (1, 2, 3)])[1]["results"]]
+    assert answers == ["ok refutes", "ok refutes", EXHAUSTED]
+
+
+
+def test_the_charge_and_the_check_share_one_budget(service):
+    """W6a's countermodel check runs on the rest of the budget the region sizes were charged against (`refutesB` from
+    the charge): a premise over 400 x 400 users is evaluated after one charged sort of 1,000 objects, and exhausts the
+    budget after two."""
+    users = {"format": "ve-cardinality@1", "formula": ["quantity", ["forall", "user", ["forall", "user", ["top"]]]]}
+    cases = [chain(k, 1000, 400, (users,)) for k in (1, 2)]
+    answers = [says(bound["result"]) for bound in exchange(service, cases)[1]["results"]]
+    assert answers == ["ok refutes", EXHAUSTED]

@@ -16,6 +16,8 @@
 - `rust/ve-core/tests/search.rs` — (no module docstring)
 - `rust/ve-core/tests/soft_norms.rs` — (no module docstring)
 - `rust/ve-kernel/src/ast.rs` — (no module docstring)
+- `rust/ve-kernel/src/contract.rs` — Wire contract tables (docs/spec/wire-contract-s4-2.md 3): one type per type of `lean/VE/WireContract/Table.lean`, same constructors, same fields, same order.
+- `rust/ve-kernel/src/contract_tables.rs` — (no module docstring)
 - `rust/ve-kernel/src/environment.rs` — (no module docstring)
 - `rust/ve-kernel/src/graph.rs` — The dependency-DAG order (kernel): `Environment` checks definition order with it and the `ve` binary answers `dependency-order` route cases with it.
 - `rust/ve-kernel/src/internal.rs` — Kernel items the profile and surface crates use but the public API does not offer: they were `pub(crate)` while the three groups shared one crate.
@@ -23,7 +25,10 @@
 - `rust/ve-kernel/src/model.rs` — (no module docstring)
 - `rust/ve-kernel/src/semantics.rs` — The evaluator core (kernel, like Lean `VE.Semantics`; Python's is `ve.evaluate._Evaluator`): `FiniteModel` decoding evaluates defined relations with it; profil…
 - `rust/ve-kernel/src/wire.rs` — (no module docstring)
+- `rust/ve-kernel/tests/contract_tables.rs` — The generated contract tables (docs/spec/wire-contract-s4-2.md 4 and 9): every embedded hash equals its lock entry, and every table's rows can be dumped for th…
+- `rust/ve-kernel/tests/corpus_tables/mod.rs` — (no module docstring)
 - `rust/ve-kernel/tests/environment_definition_order.rs` — (no module docstring)
+- `rust/ve-kernel/tests/keys_table/mod.rs` — (no module docstring)
 - `rust/ve-profile/src/eval.rs` — (no module docstring)
 - `rust/ve-profile/src/ground.rs` — premise-scale: the ground-fact candidate.
 - `rust/ve-profile/src/lib.rs` — VE profiles over the kernel: evaluation, countermodel search and order.

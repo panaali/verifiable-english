@@ -11,9 +11,10 @@ trusted definition."""
 from pathlib import Path
 
 from tools import trust_map
+from tools.lean_statements import inventory_path  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
-STATEMENTS = ROOT / "lean/statements.txt"
+STATEMENTS = inventory_path("lean/statements.txt")
 
 
 def scales_modules() -> list[str]:

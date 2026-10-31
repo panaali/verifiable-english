@@ -8,7 +8,8 @@ The normal form of an atom is `{0}`, *to*, *be*, its adverbs, its head, its obje
 (marker words, then the filler; a joined filler as `A, B or C` after its marker once), then its prepositional
 modifiers. Its text separates the tokens by spaces, attaches a comma to the token before it, and writes a fixed
 phrase as declared (canonical). A part's act (`partAct`, used by the elaboration of 6.3) is that text, with *to*
-exactly when its predicate is plain.
+exactly when its predicate is plain. `Atom.canon` is the atom in the order its normal form reads back (5.5); the atoms
+whose normal form reads back as that are `normalOk`'s (`VE.Acts.Meaning`, beside `atomOk`; `read_normal`, 5.6).
 -/
 
 namespace VE.Acts
@@ -35,11 +36,18 @@ def Filler.toks : Filler → List Tok
   | .one p => p.toks
   | .joined j ps => listToks j ps
 
+/-- The atom in its normal order (5.5): its object, then its other arguments in their order; its adverbs, then its
+prepositional modifiers. -/
+def Atom.canon (a : Atom) : Atom :=
+  { a with args := a.args.filter (·.1 == "") ++ a.args.filter (·.1 != ""),
+           mods := a.mods.filter (· matches .adv _) ++ a.mods.filter (!· matches .adv _) }
+
+/-- The normal form (5.5): `{0}`, *to*, *be*, the adverbs, the head, the arguments in `canon`'s order (each its
+marker's words, none for the object, then its filler), then the prepositional modifiers. -/
 def Atom.normal (a : Atom) : List Tok :=
   [Tok.slot 0] ++ (if a.toWord then [Tok.word "to"] else []) ++ (if a.beWord then [Tok.word "be"] else []) ++
   a.mods.flatMap (fun md => match md with | .adv w => [Tok.word w] | _ => []) ++ a.head.map Tok.word ++
-  (a.args.filter (fun x => x.1 == "")).flatMap (fun x => x.2.toks) ++
-  (a.args.filter (fun x => x.1 != "")).flatMap (fun x => (wordsOf x.1).map Tok.word ++ x.2.toks) ++
+  a.canon.args.flatMap (fun x => (wordsOf x.1).map Tok.word ++ x.2.toks) ++
   a.mods.flatMap (fun md => match md with | .prep m p => (wordsOf m).map Tok.word ++ p.toks | _ => [])
 
 def tokStr (fx : List String) : Tok → String

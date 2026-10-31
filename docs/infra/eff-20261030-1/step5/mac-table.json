@@ -1,0 +1,156 @@
+[
+ {
+  "file": "tests/test_acts_vocab_mutants.py",
+  "k": 2,
+  "nodes": 643,
+  "whole_wall": 258.54,
+  "whole_rss_mib": 116.6,
+  "whole_child_rss_mib": 461.6,
+  "chunk_walls": [
+   97.61,
+   101.83
+  ],
+  "chunked_wall": 101.83,
+  "chunk_sum": 199.4,
+  "chunk_rss_mib": [
+   87.1,
+   89.5
+  ],
+  "chunk_child_rss_mib": [
+   450.6,
+   456.9
+  ],
+  "outcomes": {
+   "PASSED": 643
+  },
+  "identical_outcomes": true
+ },
+ {
+  "file": "tests/test_english_evidence.py",
+  "k": 4,
+  "nodes": 77,
+  "whole_wall": 707.7,
+  "whole_rss_mib": 158.7,
+  "whole_child_rss_mib": 590.3,
+  "chunk_walls": [
+   183.54,
+   154.02,
+   163.77,
+   167.46
+  ],
+  "chunked_wall": 183.54,
+  "chunk_sum": 668.8,
+  "chunk_rss_mib": [
+   148.2,
+   146.1,
+   149.2,
+   145.9
+  ],
+  "chunk_child_rss_mib": [
+   585.9,
+   589.1,
+   588.9,
+   586.7
+  ],
+  "outcomes": {
+   "PASSED": 77
+  },
+  "identical_outcomes": true
+ },
+ {
+  "file": "tests/test_readings_rd6b_differential.py",
+  "k": 4,
+  "nodes": 16,
+  "whole_wall": 518.05,
+  "whole_rss_mib": 95.6,
+  "whole_child_rss_mib": 100.5,
+  "chunk_walls": [
+   155.48,
+   111.87,
+   104.93,
+   146.98
+  ],
+  "chunked_wall": 155.48,
+  "chunk_sum": 519.3,
+  "chunk_rss_mib": [
+   81.6,
+   83.5,
+   81.8,
+   82.8
+  ],
+  "chunk_child_rss_mib": [
+   99.1,
+   98.8,
+   99.2,
+   99.2
+  ],
+  "outcomes": {
+   "PASSED": 16
+  },
+  "identical_outcomes": true
+ },
+ {
+  "file": "tests/test_speech_polar_lean.py",
+  "k": 4,
+  "nodes": 9536,
+  "whole_wall": 662.17,
+  "whole_rss_mib": 1192.6,
+  "whole_child_rss_mib": 1192.6,
+  "chunk_walls": [
+   173.2,
+   165.33,
+   177.21,
+   207.25
+  ],
+  "chunked_wall": 207.25,
+  "chunk_sum": 723.0,
+  "chunk_rss_mib": [
+   1170.8,
+   1084.7,
+   1037.9,
+   1040.3
+  ],
+  "chunk_child_rss_mib": [
+   1170.8,
+   1083.9,
+   136.4,
+   1040.3
+  ],
+  "outcomes": {
+   "PASSED": 9536
+  },
+  "identical_outcomes": true
+ },
+ {
+  "file": "tests/test_trust_mutants.py",
+  "k": 4,
+  "nodes": 505,
+  "whole_wall": 855.61,
+  "whole_rss_mib": 77.5,
+  "whole_child_rss_mib": 1141.9,
+  "chunk_walls": [
+   224.05,
+   248.45,
+   413.94,
+   262.76
+  ],
+  "chunked_wall": 413.94,
+  "chunk_sum": 1149.2,
+  "chunk_rss_mib": [
+   62.9,
+   77.9,
+   63.3,
+   63.0
+  ],
+  "chunk_child_rss_mib": [
+   1138.6,
+   1136.9,
+   1141.1,
+   1141.3
+  ],
+  "outcomes": {
+   "PASSED": 505
+  },
+  "identical_outcomes": true
+ }
+]

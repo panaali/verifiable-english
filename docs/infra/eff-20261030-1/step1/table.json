@@ -1,0 +1,195 @@
+{
+ "run": "2026-10-30 step 1 on ve-mac-1 (aarch64), one serial pytest process per file (-n 0 -v --durations=0), snapshots b78334d5/80fefb2b",
+ "rows": [
+  {
+   "file": "tests/test_consolidation_tools.py",
+   "where": "ve-mac-1",
+   "nodes": 288,
+   "counts": "288 passed",
+   "wall_seconds": 357.7,
+   "node_seconds": 356.7,
+   "outside_seconds": 1.0,
+   "shared_setup_seconds": 6.9,
+   "setup_divisible": false,
+   "setup_seconds": 7.9,
+   "largest_node": "tests/test_consolidation_tools.py::test_mutated_committed_ties_are_reported_or_rejected",
+   "largest_node_seconds": 290.0,
+   "median_node_seconds": 0.08,
+   "best_wall": {
+    "2": 298.0,
+    "3": 298.0,
+    "4": 298.0
+   },
+   "best_k": 2,
+   "best_cut": 0.167,
+   "largest_over_half": true
+  },
+  {
+   "file": "tests/test_acts_vocab_mutants.py",
+   "where": "ve-mac-1",
+   "nodes": 643,
+   "counts": "643 passed",
+   "wall_seconds": 129.8,
+   "node_seconds": 129.3,
+   "outside_seconds": 0.5,
+   "shared_setup_seconds": 129.2,
+   "setup_divisible": true,
+   "setup_seconds": 0.5,
+   "largest_node": "tests/test_acts_vocab_mutants.py::test_the_generated_mutants_cover_every_list_of_the_check",
+   "largest_node_seconds": 0.2,
+   "median_node_seconds": 0.201,
+   "best_wall": {
+    "2": 65.2,
+    "3": 43.7,
+    "4": 32.9
+   },
+   "best_k": 4,
+   "best_cut": 0.746,
+   "largest_over_half": false
+  },
+  {
+   "file": "tests/test_readings_rd6b_differential.py",
+   "where": "ve-mac-1",
+   "nodes": 16,
+   "counts": "16 passed",
+   "wall_seconds": 344.1,
+   "node_seconds": 343.9,
+   "outside_seconds": 0.2,
+   "shared_setup_seconds": 0,
+   "setup_divisible": false,
+   "setup_seconds": 0.2,
+   "largest_node": "tests/test_readings_rd6b_differential.py::test_generated_documents_agree_on_both_routes[2]",
+   "largest_node_seconds": 43.7,
+   "median_node_seconds": 19.625,
+   "best_wall": {
+    "2": 178.0,
+    "3": 115.6,
+    "4": 89.0
+   },
+   "best_k": 4,
+   "best_cut": 0.741,
+   "largest_over_half": false
+  },
+  {
+   "file": "tests/test_english_evidence.py",
+   "where": "ve-mac-1",
+   "nodes": 77,
+   "counts": "77 passed, 1 warning",
+   "wall_seconds": 510.3,
+   "node_seconds": 509.7,
+   "outside_seconds": 0.5,
+   "shared_setup_seconds": 0,
+   "setup_divisible": false,
+   "setup_seconds": 0.5,
+   "largest_node": "tests/test_english_evidence.py::test_english_mixed_merge_smoke[news-article-reviewed-0]",
+   "largest_node_seconds": 26.7,
+   "median_node_seconds": 0.88,
+   "best_wall": {
+    "2": 255.4,
+    "3": 170.5,
+    "4": 128.0
+   },
+   "best_k": 4,
+   "best_cut": 0.749,
+   "largest_over_half": false
+  },
+  {
+   "file": "tests/test_trust_mutants.py",
+   "where": "ve-mac-1",
+   "nodes": 505,
+   "counts": "505 passed",
+   "wall_seconds": 515.9,
+   "node_seconds": 514.9,
+   "outside_seconds": 1.0,
+   "shared_setup_seconds": 177.4,
+   "setup_divisible": false,
+   "setup_seconds": 178.4,
+   "largest_node": "tests/test_trust_mutants.py::test_rescore_after_a_check_only_change_carries_the_kills_it_reads_the_same",
+   "largest_node_seconds": 23.9,
+   "median_node_seconds": 0.0,
+   "best_wall": {
+    "2": 347.2,
+    "3": 290.9,
+    "4": 262.8
+   },
+   "best_k": 4,
+   "best_cut": 0.491,
+   "largest_over_half": false
+  },
+  {
+   "file": "tests/test_defaults_checks.py",
+   "where": "ve-mac-1",
+   "nodes": 3,
+   "counts": "3 passed",
+   "wall_seconds": 99.2,
+   "node_seconds": 99.1,
+   "outside_seconds": 0.1,
+   "shared_setup_seconds": 0,
+   "setup_divisible": false,
+   "setup_seconds": 0.1,
+   "largest_node": "tests/test_defaults_checks.py::test_review_f1_every_check_is_needed_by_a_both_sides_test",
+   "largest_node_seconds": 98.1,
+   "median_node_seconds": 0.95,
+   "best_wall": {
+    "2": 98.3,
+    "3": 98.3,
+    "4": 98.3
+   },
+   "best_k": 2,
+   "best_cut": 0.009,
+   "largest_over_half": true
+  },
+  {
+   "file": "tests/test_speech_polar_lean.py",
+   "where": "ve-mac-1",
+   "nodes": 9536,
+   "counts": "9536 passed",
+   "wall_seconds": 608.1,
+   "node_seconds": 575.9,
+   "outside_seconds": 32.3,
+   "shared_setup_seconds": 0,
+   "setup_divisible": false,
+   "setup_seconds": 32.3,
+   "largest_node": "tests/test_speech_polar_lean.py::test_the_extended_delta_audits_every_verdict_as_signed",
+   "largest_node_seconds": 22.3,
+   "median_node_seconds": 0.02,
+   "best_wall": {
+    "2": 320.2,
+    "3": 224.2,
+    "4": 176.2
+   },
+   "best_k": 4,
+   "best_cut": 0.71,
+   "largest_over_half": false
+  },
+  {
+   "file": "tests/test_lean_conformance.py",
+   "where": "ve-mac-1",
+   "nodes": 87,
+   "counts": "87 passed",
+   "wall_seconds": 108.4,
+   "node_seconds": 108.0,
+   "outside_seconds": 0.4,
+   "shared_setup_seconds": 0,
+   "setup_divisible": false,
+   "setup_seconds": 0.4,
+   "largest_node": "tests/test_lean_conformance.py::test_lean_transitive_axiom_allowlist",
+   "largest_node_seconds": 91.6,
+   "median_node_seconds": 0.02,
+   "best_wall": {
+    "2": 92.0,
+    "3": 92.0,
+    "4": 92.0
+   },
+   "best_k": 2,
+   "best_cut": 0.151,
+   "largest_over_half": true
+  }
+ ],
+ "top4": {
+  "before": 1341.9,
+  "after": 547.9,
+  "cut": 0.592,
+  "stop": false
+ }
+}

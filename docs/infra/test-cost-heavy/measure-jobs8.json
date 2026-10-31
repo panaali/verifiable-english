@@ -1,0 +1,775 @@
+{
+ "inputs": {
+  "plans": "/home/seyran/code/manage-agents/reviews/nightly-tier-20261029/replay",
+  "seconds": "/home/seyran/code/manage-agents/reviews/nightly-tier-20261029/classified.json sel_med",
+  "threshold_s": 120.0,
+  "jobs": 8,
+  "runs_per_14d": 373
+ },
+ "plans": 179,
+ "non_full": 63,
+ "full": 38,
+ "full_replay_artefacts": 78,
+ "with_deferral": 31,
+ "deferred_by_unit": {
+  "tests/test_relay_mutation_gate.py": 19,
+  "tests/test_consolidation_tools.py": 18,
+  "tests/test_trust_mutants.py": 18,
+  "tests/test_difffuzz.py": 17,
+  "tests/test_english_evidence.py": 12,
+  "tests/test_lean_document_wrapper.py": 9,
+  "tests/test_assist_invariants.py": 7,
+  "tests/test_wire_gate_corpus.py": 7,
+  "tests/test_readings_rd6b_differential.py": 6,
+  "tests/test_soft_review_regressions.py": 6,
+  "tests/test_assist.py": 5,
+  "tests/test_acts_lexical_mutants.py": 4,
+  "tests/test_risk_margins.py": 4,
+  "tests/test_acts_vocab_mutants.py": 3,
+  "tests/test_enum_domains.py": 2
+ },
+ "mean_deferred_unit_s": 774.6,
+ "mean_wall_before_s": 946.0,
+ "mean_wall_saved_s": 118.8,
+ "median_wall_saved_s": 0.0,
+ "max_wall_saved_s": 714.5,
+ "est_saved_wall_h_per_14d": 12.3,
+ "est_saved_unit_h_per_14d": 80.3,
+ "rows": [
+  {
+   "plan": "02351b38d803",
+   "selected": 398,
+   "deferred": [],
+   "deferred_unit_s": 0,
+   "unit_s_before": 9743.4,
+   "wall_before": 1218.2,
+   "wall_after": 1218.2
+  },
+  {
+   "plan": "023a72abf141",
+   "selected": 463,
+   "deferred": [
+    "tests/test_assist.py",
+    "tests/test_assist_invariants.py",
+    "tests/test_lean_document_wrapper.py",
+    "tests/test_readings_rd6b_differential.py",
+    "tests/test_relay_mutation_gate.py",
+    "tests/test_risk_margins.py",
+    "tests/test_soft_review_regressions.py"
+   ],
+   "deferred_unit_s": 1974.9,
+   "unit_s_before": 9948.0,
+   "wall_before": 1243.7,
+   "wall_after": 1058.9
+  },
+  {
+   "plan": "0ca50f5d5096",
+   "selected": 347,
+   "deferred": [
+    "tests/test_assist.py",
+    "tests/test_assist_invariants.py",
+    "tests/test_lean_document_wrapper.py",
+    "tests/test_readings_rd6b_differential.py",
+    "tests/test_risk_margins.py",
+    "tests/test_soft_review_regressions.py"
+   ],
+   "deferred_unit_s": 1676.8,
+   "unit_s_before": 8566.6,
+   "wall_before": 1071.0,
+   "wall_after": 1058.9
+  },
+  {
+   "plan": "0df9256dfe7d",
+   "selected": 294,
+   "deferred": [
+    "tests/test_difffuzz.py",
+    "tests/test_lean_document_wrapper.py",
+    "tests/test_readings_rd6b_differential.py",
+    "tests/test_soft_review_regressions.py"
+   ],
+   "deferred_unit_s": 1124.3,
+   "unit_s_before": 6384.0,
+   "wall_before": 798.1,
+   "wall_after": 657.6
+  },
+  {
+   "plan": "0e7a813e8841",
+   "selected": 405,
+   "deferred": [],
+   "deferred_unit_s": 0,
+   "unit_s_before": 9770.7,
+   "wall_before": 1221.6,
+   "wall_after": 1221.6
+  },
+  {
+   "plan": "1a150439417e",
+   "selected": 495,
+   "deferred": [],
+   "deferred_unit_s": 0,
+   "unit_s_before": 10054.7,
+   "wall_before": 1256.9,
+   "wall_after": 1256.9
+  },
+  {
+   "plan": "2241fbe3608c",
+   "selected": 90,
+   "deferred": [],
+   "deferred_unit_s": 0,
+   "unit_s_before": 4698.3,
+   "wall_before": 1058.9,
+   "wall_after": 1058.9
+  },
+  {
+   "plan": "2b13707e7621",
+   "selected": 137,
+   "deferred": [
+    "tests/test_assist_invariants.py",
+    "tests/test_consolidation_tools.py",
+    "tests/test_difffuzz.py",
+    "tests/test_english_evidence.py",
+    "tests/test_relay_mutation_gate.py"
+   ],
+   "deferred_unit_s": 1721.1,
+   "unit_s_before": 4488.0,
+   "wall_before": 636.4,
+   "wall_after": 591.3
+  },
+  {
+   "plan": "2d84b832ca59",
+   "selected": 175,
+   "deferred": [],
+   "deferred_unit_s": 0,
+   "unit_s_before": 6017.3,
+   "wall_before": 1058.9,
+   "wall_after": 1058.9
+  },
+  {
+   "plan": "2fd65808d58a",
+   "selected": 106,
+   "deferred": [
+    "tests/test_consolidation_tools.py",
+    "tests/test_difffuzz.py",
+    "tests/test_relay_mutation_gate.py",
+    "tests/test_trust_mutants.py"
+   ],
+   "deferred_unit_s": 1349.9,
+   "unit_s_before": 2956.0,
+   "wall_before": 591.3,
+   "wall_after": 293.4
+  },
+  {
+   "plan": "314b23a42c21",
+   "selected": 102,
+   "deferred": [
+    "tests/test_consolidation_tools.py",
+    "tests/test_difffuzz.py",
+    "tests/test_relay_mutation_gate.py",
+    "tests/test_trust_mutants.py"
+   ],
+   "deferred_unit_s": 1349.9,
+   "unit_s_before": 2912.8,
+   "wall_before": 591.3,
+   "wall_after": 293.4
+  },
+  {
+   "plan": "32ffc3ec9bb1",
+   "selected": 407,
+   "deferred": [],
+   "deferred_unit_s": 0,
+   "unit_s_before": 9796.5,
+   "wall_before": 1224.8,
+   "wall_after": 1224.8
+  },
+  {
+   "plan": "379130067eac",
+   "selected": 60,
+   "deferred": [
+    "tests/test_consolidation_tools.py",
+    "tests/test_difffuzz.py",
+    "tests/test_english_evidence.py",
+    "tests/test_relay_mutation_gate.py"
+   ],
+   "deferred_unit_s": 1395.0,
+   "unit_s_before": 3170.7,
+   "wall_before": 636.4,
+   "wall_after": 591.3
+  },
+  {
+   "plan": "3c6646151813",
+   "selected": 52,
+   "deferred": [
+    "tests/test_trust_mutants.py"
+   ],
+   "deferred_unit_s": 591.3,
+   "unit_s_before": 1857.4,
+   "wall_before": 591.3,
+   "wall_after": 293.4
+  },
+  {
+   "plan": "45e886fee9ee",
+   "selected": 110,
+   "deferred": [
+    "tests/test_assist.py",
+    "tests/test_assist_invariants.py",
+    "tests/test_consolidation_tools.py",
+    "tests/test_english_evidence.py",
+    "tests/test_lean_document_wrapper.py",
+    "tests/test_relay_mutation_gate.py",
+    "tests/test_trust_mutants.py"
+   ],
+   "deferred_unit_s": 2636.1,
+   "unit_s_before": 4696.7,
+   "wall_before": 636.4,
+   "wall_after": 293.4
+  },
+  {
+   "plan": "471ccc7e4cb9",
+   "selected": 155,
+   "deferred": [
+    "tests/test_consolidation_tools.py",
+    "tests/test_difffuzz.py",
+    "tests/test_english_evidence.py",
+    "tests/test_relay_mutation_gate.py",
+    "tests/test_trust_mutants.py",
+    "tests/test_wire_gate_corpus.py"
+   ],
+   "deferred_unit_s": 2279.7,
+   "unit_s_before": 4318.3,
+   "wall_before": 636.4,
+   "wall_after": 255.1
+  },
+  {
+   "plan": "4a850162ca1c",
+   "selected": 92,
+   "deferred": [],
+   "deferred_unit_s": 0,
+   "unit_s_before": 4686.7,
+   "wall_before": 1058.9,
+   "wall_after": 1058.9
+  },
+  {
+   "plan": "54c7f635bf1f",
+   "selected": 87,
+   "deferred": [],
+   "deferred_unit_s": 0,
+   "unit_s_before": 4966.5,
+   "wall_before": 1058.9,
+   "wall_after": 1058.9
+  },
+  {
+   "plan": "5759be852670",
+   "selected": 218,
+   "deferred": [
+    "tests/test_acts_lexical_mutants.py",
+    "tests/test_acts_vocab_mutants.py",
+    "tests/test_assist.py",
+    "tests/test_assist_invariants.py",
+    "tests/test_consolidation_tools.py",
+    "tests/test_difffuzz.py",
+    "tests/test_lean_document_wrapper.py",
+    "tests/test_readings_rd6b_differential.py",
+    "tests/test_relay_mutation_gate.py",
+    "tests/test_trust_mutants.py"
+   ],
+   "deferred_unit_s": 3853.6,
+   "unit_s_before": 6607.2,
+   "wall_before": 1058.9,
+   "wall_after": 344.4
+  },
+  {
+   "plan": "63b7e4149587",
+   "selected": 45,
+   "deferred": [],
+   "deferred_unit_s": 0,
+   "unit_s_before": 1893.6,
+   "wall_before": 591.3,
+   "wall_after": 591.3
+  },
+  {
+   "plan": "676204601047",
+   "selected": 66,
+   "deferred": [
+    "tests/test_consolidation_tools.py",
+    "tests/test_difffuzz.py",
+    "tests/test_english_evidence.py",
+    "tests/test_trust_mutants.py"
+   ],
+   "deferred_unit_s": 1688.2,
+   "unit_s_before": 2900.4,
+   "wall_before": 636.4,
+   "wall_after": 293.4
+  },
+  {
+   "plan": "6b5d6cbb6916",
+   "selected": 495,
+   "deferred": [],
+   "deferred_unit_s": 0,
+   "unit_s_before": 10054.7,
+   "wall_before": 1257.1,
+   "wall_after": 1257.1
+  },
+  {
+   "plan": "6d0a10526996",
+   "selected": 30,
+   "deferred": [
+    "tests/test_wire_gate_corpus.py"
+   ],
+   "deferred_unit_s": 293.4,
+   "unit_s_before": 784.4,
+   "wall_before": 293.4,
+   "wall_after": 115.8
+  },
+  {
+   "plan": "6f59c66d6899",
+   "selected": 405,
+   "deferred": [],
+   "deferred_unit_s": 0,
+   "unit_s_before": 9790.5,
+   "wall_before": 1224.1,
+   "wall_after": 1224.1
+  },
+  {
+   "plan": "6fc85f4d5661",
+   "selected": 107,
+   "deferred": [
+    "tests/test_consolidation_tools.py",
+    "tests/test_difffuzz.py",
+    "tests/test_relay_mutation_gate.py",
+    "tests/test_trust_mutants.py"
+   ],
+   "deferred_unit_s": 1349.9,
+   "unit_s_before": 2964.4,
+   "wall_before": 591.3,
+   "wall_after": 293.4
+  },
+  {
+   "plan": "71b1d27ad3e8",
+   "selected": 162,
+   "deferred": [
+    "tests/test_assist_invariants.py",
+    "tests/test_consolidation_tools.py",
+    "tests/test_difffuzz.py",
+    "tests/test_english_evidence.py",
+    "tests/test_relay_mutation_gate.py"
+   ],
+   "deferred_unit_s": 1721.1,
+   "unit_s_before": 4561.3,
+   "wall_before": 636.4,
+   "wall_after": 591.3
+  },
+  {
+   "plan": "724bba419c63",
+   "selected": 399,
+   "deferred": [],
+   "deferred_unit_s": 0,
+   "unit_s_before": 9767.6,
+   "wall_before": 1221.2,
+   "wall_after": 1221.2
+  },
+  {
+   "plan": "72a241fbab69",
+   "selected": 320,
+   "deferred": [
+    "tests/test_assist.py",
+    "tests/test_assist_invariants.py",
+    "tests/test_lean_document_wrapper.py",
+    "tests/test_readings_rd6b_differential.py",
+    "tests/test_relay_mutation_gate.py",
+    "tests/test_soft_review_regressions.py"
+   ],
+   "deferred_unit_s": 1807.4,
+   "unit_s_before": 8835.2,
+   "wall_before": 1104.6,
+   "wall_after": 1058.9
+  },
+  {
+   "plan": "785927e109ec",
+   "selected": 103,
+   "deferred": [
+    "tests/test_consolidation_tools.py",
+    "tests/test_difffuzz.py",
+    "tests/test_relay_mutation_gate.py",
+    "tests/test_trust_mutants.py",
+    "tests/test_wire_gate_corpus.py"
+   ],
+   "deferred_unit_s": 1643.3,
+   "unit_s_before": 2912.4,
+   "wall_before": 591.3,
+   "wall_after": 158.9
+  },
+  {
+   "plan": "795e003bdb3b",
+   "selected": 403,
+   "deferred": [],
+   "deferred_unit_s": 0,
+   "unit_s_before": 9795.9,
+   "wall_before": 1224.6,
+   "wall_after": 1224.6
+  },
+  {
+   "plan": "79e3dd816975",
+   "selected": 149,
+   "deferred": [
+    "tests/test_consolidation_tools.py",
+    "tests/test_difffuzz.py",
+    "tests/test_english_evidence.py",
+    "tests/test_relay_mutation_gate.py",
+    "tests/test_trust_mutants.py",
+    "tests/test_wire_gate_corpus.py"
+   ],
+   "deferred_unit_s": 2279.7,
+   "unit_s_before": 4212.0,
+   "wall_before": 636.4,
+   "wall_after": 241.8
+  },
+  {
+   "plan": "895f2610afd2",
+   "selected": 446,
+   "deferred": [
+    "tests/test_acts_lexical_mutants.py",
+    "tests/test_acts_vocab_mutants.py",
+    "tests/test_consolidation_tools.py",
+    "tests/test_difffuzz.py",
+    "tests/test_english_evidence.py",
+    "tests/test_enum_domains.py",
+    "tests/test_risk_margins.py",
+    "tests/test_soft_review_regressions.py"
+   ],
+   "deferred_unit_s": 2837.9,
+   "unit_s_before": 9992.6,
+   "wall_before": 1249.2,
+   "wall_after": 894.5
+  },
+  {
+   "plan": "8a64ef81b46f",
+   "selected": 414,
+   "deferred": [],
+   "deferred_unit_s": 0,
+   "unit_s_before": 9849.0,
+   "wall_before": 1231.4,
+   "wall_after": 1231.4
+  },
+  {
+   "plan": "9b7e6e5c767f",
+   "selected": 118,
+   "deferred": [],
+   "deferred_unit_s": 0,
+   "unit_s_before": 5250.0,
+   "wall_before": 1058.9,
+   "wall_after": 1058.9
+  },
+  {
+   "plan": "9d646572fd84",
+   "selected": 405,
+   "deferred": [],
+   "deferred_unit_s": 0,
+   "unit_s_before": 9790.5,
+   "wall_before": 1224.1,
+   "wall_after": 1224.1
+  },
+  {
+   "plan": "9fde70698bf0",
+   "selected": 397,
+   "deferred": [],
+   "deferred_unit_s": 0,
+   "unit_s_before": 9763.0,
+   "wall_before": 1220.7,
+   "wall_after": 1220.7
+  },
+  {
+   "plan": "a274d9488993",
+   "selected": 99,
+   "deferred": [],
+   "deferred_unit_s": 0,
+   "unit_s_before": 4847.4,
+   "wall_before": 1058.9,
+   "wall_after": 1058.9
+  },
+  {
+   "plan": "a453f98897fd",
+   "selected": 431,
+   "deferred": [],
+   "deferred_unit_s": 0,
+   "unit_s_before": 9975.8,
+   "wall_before": 1247.2,
+   "wall_after": 1247.2
+  },
+  {
+   "plan": "a557ff887aa6",
+   "selected": 107,
+   "deferred": [],
+   "deferred_unit_s": 0,
+   "unit_s_before": 4938.7,
+   "wall_before": 1058.9,
+   "wall_after": 1058.9
+  },
+  {
+   "plan": "ab010c3f02bc",
+   "selected": 409,
+   "deferred": [],
+   "deferred_unit_s": 0,
+   "unit_s_before": 9803.5,
+   "wall_before": 1225.6,
+   "wall_after": 1225.6
+  },
+  {
+   "plan": "af22a22e33a1",
+   "selected": 85,
+   "deferred": [
+    "tests/test_trust_mutants.py"
+   ],
+   "deferred_unit_s": 591.3,
+   "unit_s_before": 3003.1,
+   "wall_before": 591.3,
+   "wall_after": 326.1
+  },
+  {
+   "plan": "b0dce1ea4c96",
+   "selected": 101,
+   "deferred": [],
+   "deferred_unit_s": 0,
+   "unit_s_before": 5039.9,
+   "wall_before": 1058.9,
+   "wall_after": 1058.9
+  },
+  {
+   "plan": "b31b8e4c180a",
+   "selected": 411,
+   "deferred": [],
+   "deferred_unit_s": 0,
+   "unit_s_before": 9826.5,
+   "wall_before": 1228.4,
+   "wall_after": 1228.4
+  },
+  {
+   "plan": "b7613541cbd3",
+   "selected": 108,
+   "deferred": [
+    "tests/test_acts_lexical_mutants.py",
+    "tests/test_trust_mutants.py"
+   ],
+   "deferred_unit_s": 721.2,
+   "unit_s_before": 4859.1,
+   "wall_before": 1058.9,
+   "wall_after": 1058.9
+  },
+  {
+   "plan": "b8eac7455312",
+   "selected": 100,
+   "deferred": [],
+   "deferred_unit_s": 0,
+   "unit_s_before": 4797.0,
+   "wall_before": 1058.9,
+   "wall_after": 1058.9
+  },
+  {
+   "plan": "c0a80d23a711",
+   "selected": 62,
+   "deferred": [
+    "tests/test_consolidation_tools.py",
+    "tests/test_difffuzz.py",
+    "tests/test_english_evidence.py",
+    "tests/test_trust_mutants.py",
+    "tests/test_wire_gate_corpus.py"
+   ],
+   "deferred_unit_s": 1981.6,
+   "unit_s_before": 2828.8,
+   "wall_before": 636.4,
+   "wall_after": 115.8
+  },
+  {
+   "plan": "c2a0ee9776ea",
+   "selected": 129,
+   "deferred": [],
+   "deferred_unit_s": 0,
+   "unit_s_before": 4639.6,
+   "wall_before": 591.3,
+   "wall_after": 591.3
+  },
+  {
+   "plan": "c86861a2a607",
+   "selected": 133,
+   "deferred": [
+    "tests/test_consolidation_tools.py",
+    "tests/test_english_evidence.py",
+    "tests/test_lean_document_wrapper.py",
+    "tests/test_relay_mutation_gate.py",
+    "tests/test_trust_mutants.py"
+   ],
+   "deferred_unit_s": 2074.1,
+   "unit_s_before": 4078.5,
+   "wall_before": 638.5,
+   "wall_after": 295.5
+  },
+  {
+   "plan": "c8b1f4f36fad",
+   "selected": 109,
+   "deferred": [
+    "tests/test_consolidation_tools.py",
+    "tests/test_difffuzz.py",
+    "tests/test_relay_mutation_gate.py",
+    "tests/test_trust_mutants.py"
+   ],
+   "deferred_unit_s": 1349.9,
+   "unit_s_before": 2965.8,
+   "wall_before": 591.3,
+   "wall_after": 293.4
+  },
+  {
+   "plan": "c952caae551c",
+   "selected": 204,
+   "deferred": [
+    "tests/test_consolidation_tools.py",
+    "tests/test_english_evidence.py",
+    "tests/test_lean_document_wrapper.py",
+    "tests/test_relay_mutation_gate.py",
+    "tests/test_trust_mutants.py"
+   ],
+   "deferred_unit_s": 2074.1,
+   "unit_s_before": 5104.1,
+   "wall_before": 638.3,
+   "wall_after": 379.0
+  },
+  {
+   "plan": "cf1dc75c5f49",
+   "selected": 96,
+   "deferred": [],
+   "deferred_unit_s": 0,
+   "unit_s_before": 4830.9,
+   "wall_before": 1058.9,
+   "wall_after": 1058.9
+  },
+  {
+   "plan": "d01bb29fbfa2",
+   "selected": 439,
+   "deferred": [],
+   "deferred_unit_s": 0,
+   "unit_s_before": 9987.2,
+   "wall_before": 1248.7,
+   "wall_after": 1248.7
+  },
+  {
+   "plan": "d25bc343be0f",
+   "selected": 225,
+   "deferred": [
+    "tests/test_difffuzz.py",
+    "tests/test_readings_rd6b_differential.py",
+    "tests/test_soft_review_regressions.py"
+   ],
+   "deferred_unit_s": 859.5,
+   "unit_s_before": 5622.1,
+   "wall_before": 703.0,
+   "wall_after": 595.6
+  },
+  {
+   "plan": "d8926dc1d1ef",
+   "selected": 152,
+   "deferred": [
+    "tests/test_relay_mutation_gate.py"
+   ],
+   "deferred_unit_s": 298.1,
+   "unit_s_before": 5582.9,
+   "wall_before": 1058.9,
+   "wall_after": 1058.9
+  },
+  {
+   "plan": "d92428f63833",
+   "selected": 411,
+   "deferred": [],
+   "deferred_unit_s": 0,
+   "unit_s_before": 9795.5,
+   "wall_before": 1224.6,
+   "wall_after": 1224.6
+  },
+  {
+   "plan": "d9cff5345ed2",
+   "selected": 39,
+   "deferred": [
+    "tests/test_wire_gate_corpus.py"
+   ],
+   "deferred_unit_s": 293.4,
+   "unit_s_before": 841.7,
+   "wall_before": 293.4,
+   "wall_after": 115.8
+  },
+  {
+   "plan": "daed1a8b94c8",
+   "selected": 151,
+   "deferred": [
+    "tests/test_consolidation_tools.py",
+    "tests/test_difffuzz.py",
+    "tests/test_english_evidence.py",
+    "tests/test_relay_mutation_gate.py",
+    "tests/test_trust_mutants.py",
+    "tests/test_wire_gate_corpus.py"
+   ],
+   "deferred_unit_s": 2279.7,
+   "unit_s_before": 4218.8,
+   "wall_before": 636.4,
+   "wall_after": 242.6
+  },
+  {
+   "plan": "dc887c22eebb",
+   "selected": 435,
+   "deferred": [
+    "tests/test_acts_lexical_mutants.py",
+    "tests/test_acts_vocab_mutants.py",
+    "tests/test_enum_domains.py",
+    "tests/test_risk_margins.py",
+    "tests/test_trust_mutants.py"
+   ],
+   "deferred_unit_s": 2137.9,
+   "unit_s_before": 9982.1,
+   "wall_before": 1247.8,
+   "wall_after": 980.8
+  },
+  {
+   "plan": "de7cb402237e",
+   "selected": 170,
+   "deferred": [
+    "tests/test_lean_document_wrapper.py",
+    "tests/test_relay_mutation_gate.py"
+   ],
+   "deferred_unit_s": 562.9,
+   "unit_s_before": 6015.1,
+   "wall_before": 1058.9,
+   "wall_after": 1058.9
+  },
+  {
+   "plan": "f019a821794e",
+   "selected": 40,
+   "deferred": [],
+   "deferred_unit_s": 0,
+   "unit_s_before": 2178.4,
+   "wall_before": 1058.9,
+   "wall_after": 1058.9
+  },
+  {
+   "plan": "f39c78ddeea8",
+   "selected": 412,
+   "deferred": [],
+   "deferred_unit_s": 0,
+   "unit_s_before": 9827.7,
+   "wall_before": 1228.8,
+   "wall_after": 1228.8
+  },
+  {
+   "plan": "fbcbc2bb6560",
+   "selected": 409,
+   "deferred": [],
+   "deferred_unit_s": 0,
+   "unit_s_before": 9797.3,
+   "wall_before": 1224.9,
+   "wall_after": 1224.9
+  },
+  {
+   "plan": "ffddf155ccb5",
+   "selected": 411,
+   "deferred": [],
+   "deferred_unit_s": 0,
+   "unit_s_before": 9826.5,
+   "wall_before": 1228.5,
+   "wall_after": 1228.5
+  }
+ ]
+}

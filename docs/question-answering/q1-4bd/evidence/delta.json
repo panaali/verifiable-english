@@ -1,0 +1,628 @@
+{
+ "rows": [
+  {
+   "id": "it1-F",
+   "env": "F",
+   "base": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "TypeMismatch: Sentence 1 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 0,
+     "end": 164,
+     "line": 1,
+     "column": 1
+    }
+   },
+   "head": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "Sentence 1 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 0,
+     "end": 164,
+     "line": 1,
+     "column": 1
+    }
+   }
+  },
+  {
+   "id": "it2-F",
+   "env": "F",
+   "base": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "TypeMismatch: Sentence 2 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 20,
+     "end": 184,
+     "line": 1,
+     "column": 21
+    }
+   },
+   "head": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "Sentence 2 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 20,
+     "end": 184,
+     "line": 1,
+     "column": 21
+    }
+   }
+  },
+  {
+   "id": "it3-F",
+   "env": "F",
+   "base": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "TypeMismatch: Sentence 2 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 20,
+     "end": 184,
+     "line": 2,
+     "column": 1
+    }
+   },
+   "head": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "Sentence 2 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 20,
+     "end": 184,
+     "line": 2,
+     "column": 1
+    }
+   }
+  },
+  {
+   "id": "it4-F",
+   "env": "F",
+   "base": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "TypeMismatch: Sentence 2 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 21,
+     "end": 185,
+     "line": 3,
+     "column": 1
+    }
+   },
+   "head": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "Sentence 2 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 21,
+     "end": 185,
+     "line": 3,
+     "column": 1
+    }
+   }
+  },
+  {
+   "id": "it5-F",
+   "env": "F",
+   "base": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "TypeMismatch: Sentence 1 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 0,
+     "end": 164,
+     "line": 1,
+     "column": 1
+    }
+   },
+   "head": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "Sentence 1 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 0,
+     "end": 164,
+     "line": 1,
+     "column": 1
+    }
+   }
+  },
+  {
+   "id": "it6-F",
+   "env": "F",
+   "base": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "TypeMismatch: Sentence 3 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 40,
+     "end": 204,
+     "line": 1,
+     "column": 41
+    }
+   },
+   "head": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "Sentence 3 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 40,
+     "end": 204,
+     "line": 1,
+     "column": 41
+    }
+   }
+  },
+  {
+   "id": "it1-FO",
+   "env": "FO",
+   "base": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "TypeMismatch: Sentence 1 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 0,
+     "end": 164,
+     "line": 1,
+     "column": 1
+    }
+   },
+   "head": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "Sentence 1 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 0,
+     "end": 164,
+     "line": 1,
+     "column": 1
+    }
+   }
+  },
+  {
+   "id": "it2-FO",
+   "env": "FO",
+   "base": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "TypeMismatch: Sentence 2 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 20,
+     "end": 184,
+     "line": 1,
+     "column": 21
+    }
+   },
+   "head": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "Sentence 2 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 20,
+     "end": 184,
+     "line": 1,
+     "column": 21
+    }
+   }
+  },
+  {
+   "id": "it3-FO",
+   "env": "FO",
+   "base": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "TypeMismatch: Sentence 2 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 20,
+     "end": 184,
+     "line": 2,
+     "column": 1
+    }
+   },
+   "head": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "Sentence 2 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 20,
+     "end": 184,
+     "line": 2,
+     "column": 1
+    }
+   }
+  },
+  {
+   "id": "it4-FO",
+   "env": "FO",
+   "base": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "TypeMismatch: Sentence 2 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 21,
+     "end": 185,
+     "line": 3,
+     "column": 1
+    }
+   },
+   "head": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "Sentence 2 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 21,
+     "end": 185,
+     "line": 3,
+     "column": 1
+    }
+   }
+  },
+  {
+   "id": "it5-FO",
+   "env": "FO",
+   "base": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "TypeMismatch: Sentence 1 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 0,
+     "end": 164,
+     "line": 1,
+     "column": 1
+    }
+   },
+   "head": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "Sentence 1 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 0,
+     "end": 164,
+     "line": 1,
+     "column": 1
+    }
+   }
+  },
+  {
+   "id": "it6-FO",
+   "env": "FO",
+   "base": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "TypeMismatch: Sentence 3 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 40,
+     "end": 204,
+     "line": 1,
+     "column": 41
+    }
+   },
+   "head": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "Sentence 3 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 40,
+     "end": 204,
+     "line": 1,
+     "column": 41
+    }
+   }
+  },
+  {
+   "id": "it1-FD",
+   "env": "FD",
+   "base": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "TypeMismatch: Sentence 1 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 0,
+     "end": 164,
+     "line": 1,
+     "column": 1
+    }
+   },
+   "head": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "Sentence 1 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 0,
+     "end": 164,
+     "line": 1,
+     "column": 1
+    }
+   }
+  },
+  {
+   "id": "it2-FD",
+   "env": "FD",
+   "base": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "TypeMismatch: Sentence 2 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 20,
+     "end": 184,
+     "line": 1,
+     "column": 21
+    }
+   },
+   "head": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "Sentence 2 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 20,
+     "end": 184,
+     "line": 1,
+     "column": 21
+    }
+   }
+  },
+  {
+   "id": "it3-FD",
+   "env": "FD",
+   "base": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "TypeMismatch: Sentence 2 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 20,
+     "end": 184,
+     "line": 2,
+     "column": 1
+    }
+   },
+   "head": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "Sentence 2 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 20,
+     "end": 184,
+     "line": 2,
+     "column": 1
+    }
+   }
+  },
+  {
+   "id": "it4-FD",
+   "env": "FD",
+   "base": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "TypeMismatch: Sentence 2 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 21,
+     "end": 185,
+     "line": 3,
+     "column": 1
+    }
+   },
+   "head": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "Sentence 2 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 21,
+     "end": 185,
+     "line": 3,
+     "column": 1
+    }
+   }
+  },
+  {
+   "id": "it5-FD",
+   "env": "FD",
+   "base": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "TypeMismatch: Sentence 1 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 0,
+     "end": 164,
+     "line": 1,
+     "column": 1
+    }
+   },
+   "head": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "Sentence 1 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 0,
+     "end": 164,
+     "line": 1,
+     "column": 1
+    }
+   }
+  },
+  {
+   "id": "it6-FD",
+   "env": "FD",
+   "base": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "TypeMismatch: Sentence 3 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 40,
+     "end": 204,
+     "line": 1,
+     "column": 41
+    }
+   },
+   "head": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "Sentence 3 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 40,
+     "end": 204,
+     "line": 1,
+     "column": 41
+    }
+   }
+  },
+  {
+   "id": "it1-FM",
+   "env": "FM",
+   "base": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "TypeMismatch: Sentence 1 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 0,
+     "end": 164,
+     "line": 1,
+     "column": 1
+    }
+   },
+   "head": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "Sentence 1 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 0,
+     "end": 164,
+     "line": 1,
+     "column": 1
+    }
+   }
+  },
+  {
+   "id": "it2-FM",
+   "env": "FM",
+   "base": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "TypeMismatch: Sentence 2 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 20,
+     "end": 184,
+     "line": 1,
+     "column": 21
+    }
+   },
+   "head": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "Sentence 2 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 20,
+     "end": 184,
+     "line": 1,
+     "column": 21
+    }
+   }
+  },
+  {
+   "id": "it3-FM",
+   "env": "FM",
+   "base": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "TypeMismatch: Sentence 2 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 20,
+     "end": 184,
+     "line": 2,
+     "column": 1
+    }
+   },
+   "head": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "Sentence 2 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 20,
+     "end": 184,
+     "line": 2,
+     "column": 1
+    }
+   }
+  },
+  {
+   "id": "it4-FM",
+   "env": "FM",
+   "base": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "TypeMismatch: Sentence 2 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 21,
+     "end": 185,
+     "line": 3,
+     "column": 1
+    }
+   },
+   "head": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "Sentence 2 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 21,
+     "end": 185,
+     "line": 3,
+     "column": 1
+    }
+   }
+  },
+  {
+   "id": "it5-FM",
+   "env": "FM",
+   "base": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "TypeMismatch: Sentence 1 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 0,
+     "end": 164,
+     "line": 1,
+     "column": 1
+    }
+   },
+   "head": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "Sentence 1 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 0,
+     "end": 164,
+     "line": 1,
+     "column": 1
+    }
+   }
+  },
+  {
+   "id": "it6-FM",
+   "env": "FM",
+   "base": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "TypeMismatch: Sentence 3 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 40,
+     "end": 204,
+     "line": 1,
+     "column": 41
+    }
+   },
+   "head": {
+    "class": "TypeMismatch",
+    "code": "TypeMismatch",
+    "message": "Sentence 3 was read, and its formula does not pass the type check.",
+    "span": {
+     "start": 40,
+     "end": 204,
+     "line": 1,
+     "column": 41
+    }
+   }
+  }
+ ]
+}

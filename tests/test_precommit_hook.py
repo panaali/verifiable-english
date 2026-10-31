@@ -252,7 +252,7 @@ def test_verdicts_do_not_depend_on_the_working_tree(staging, tmp_path):
     assert here.returncode == there.returncode == 1
     assert here.stderr == there.stderr
     for message in ("docs/probe.md:1: possible GitHub token",
-                    "ve/ast.py: new outward import ve.ast -> ve.surface (layer 1 -> 3)",
+                    "ve/ast.py: new outward import ve.ast -> ve.surface (layer 2 -> 3)",
                     "new outward Lean import VE.Core.Planted -> VE.Surface (layer 1 -> 3)"):
         assert message in here.stderr, here.stderr
 
@@ -261,7 +261,7 @@ def test_python_imports_resolve_against_the_staged_tree(staging):
     # Without its __init__.py, ve/surface is still importable as a namespace package.
     staging.stage("ve/surface/__init__.py", None)
     staging.stage("ve/ast.py", staging.head("ve/ast.py") + b"\nfrom ve import surface\n")
-    rejects(staging, "ve/ast.py: new outward import ve.ast -> ve.surface (layer 1 -> 3)")
+    rejects(staging, "ve/ast.py: new outward import ve.ast -> ve.surface (layer 2 -> 3)")
 
 
 def test_staged_policy_code_is_the_policy(staging):
@@ -303,7 +303,7 @@ def test_staged_lean_entry_modules_are_tool_layer(staging):
 def test_new_outward_python_import_is_rejected(staging):
     staging.stage("ve/ast.py", staging.head("ve/ast.py") + b"\nfrom ve import parser\n")
     rejects(staging, "layer imports check failed",
-            "ve/ast.py: new outward import ve.ast -> ve.parser (layer 1 -> 3)")
+            "ve/ast.py: new outward import ve.ast -> ve.parser (layer 2 -> 3)")
     staging.stage("ve/ast.py", staging.head("ve/ast.py"))
     staging.stage("ve/planted_module.py", "import ve.ast\n")
     rejects(staging, "unmapped Python module ve.planted_module")

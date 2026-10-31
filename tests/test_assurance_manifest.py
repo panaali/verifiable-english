@@ -25,6 +25,7 @@ from ve import assurance
 from ve.backends import lean as lean_backend
 from ve.backends import process_limits  # the one-shot runners wait through its subprocess
 from ve.errors import AuthorityViolation, CheckerUnavailable, ResourceLimit, VEError
+from tools.lean_statements import inventory_path  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = assurance.manifest()
@@ -370,7 +371,7 @@ def test_lean_only_operations_have_no_python_verdict_path():
 # --- executable bindings: Lean and Rust ---------------------------------------
 
 AUDITED = set(re.findall(r"^'([^']+)' (?:depends on axioms|does not depend on any axioms)",
-                         (ROOT / "lean/axioms.txt").read_text(), re.M))
+                         inventory_path("lean/axioms.txt").read_text(), re.M))
 
 
 def test_lean_theorems_are_audited_and_planned_ones_absent():
@@ -1241,7 +1242,7 @@ def test_argument_require_available():
 # --- documentation ------------------------------------------------------------
 
 def test_spec_tables_are_generated_from_the_manifest():
-    text = (ROOT / "docs/spec/assurance-manifest.md").read_text()
+    text = inventory_path("docs/spec/assurance-manifest.md").read_text()
     end = "<!-- END GENERATED -->"
     for begin, render in (
             ("<!-- BEGIN GENERATED DECODERS: python tools/assurance_manifest.py --write -->\n",

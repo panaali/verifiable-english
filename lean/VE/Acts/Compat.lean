@@ -127,7 +127,7 @@ theorem check_extends (fx : List String) (h : fixedOk fx = true) {name : String}
       · exact hn w hw hm
       · rw [hm] at hr; cases hr
   -- `check`'s steps
-  unfold check
+  unfold check checkWith joinCheck
   simp only [bind, Except.bind, pure, Except.pure]
   rw [hs, hnorm, hW]
   rw [if_pos, if_pos]

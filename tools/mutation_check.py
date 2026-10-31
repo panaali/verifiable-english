@@ -44,29 +44,43 @@ CASES = (
 FAILURE = re.compile(r"^(?:FAILED|ERROR) (tests/\S+)", re.MULTILINE)
 
 
+def _swap_lean(text: str) -> str:
+    first = text.index('.check { id := "1.1"')
+    second = text.index(', .check { id := "1.2"', first)
+    third = text.index(', .check { id := "1.3"', second)
+    return text[:first] + text[second + 2:third] + ", " + text[first:second] + text[third:]
+
+
+def _swap_rust(text: str) -> str:
+    """The soft-norms rows 1.1 and 1.2, one line each (wire-contract-s4-2.md 4)."""
+    start = text.index("pub static SOFT_NORMS")
+    first = text.index('    Entry::Check(Check { id: "1.1"', start)
+    second = text.index('    Entry::Check(Check { id: "1.2"', first)
+    third = text.index("\n", second) + 1
+    return text[:first] + text[second:third] + text[first:second] + text[third:]
+
+
 def wire_generated_table_mutation() -> int:
-    """A swapped pair of generated Lean checks must be caught by regeneration."""
-    target = ROOT / "lean/VE/WireContract/Tables/SoftNorms.lean"
-    original = target.read_text()
-    baseline = subprocess.run(["git", "show", "HEAD:lean/VE/WireContract/Tables/SoftNorms.lean"],
-                              cwd=ROOT, capture_output=True, text=True, check=True).stdout
-    if original != baseline:
-        raise RuntimeError("refusing to mutate an edited generated wire table")
-    first = original.index('.check { id := "1.1"')
-    second = original.index(', .check { id := "1.2"', first)
-    third = original.index(', .check { id := "1.3"', second)
-    row1 = original[first:second]
-    row2 = original[second + 2:third]
-    try:
-        target.write_text(original[:first] + row2 + ", " + row1 + original[third:])
-        checked = subprocess.run([sys.executable, "tools/wire_contract.py", "--check"],
-                                 cwd=ROOT, capture_output=True, text=True, timeout=60)
-        if checked.returncode != 1 or "WC11" not in checked.stdout:
-            print("wire generated table mutation escaped --check", file=sys.stderr)
-            return 1
-    finally:
-        target.write_text(original)
-    print("wire generated Lean row swap detected by --check")
+    """A swapped pair of generated checks, in the Lean table and in the Rust table, must be caught by
+    regeneration."""
+    for relative, swap in (("lean/VE/WireContract/Tables/SoftNorms.lean", _swap_lean),
+                           ("rust/ve-kernel/src/contract_tables.rs", _swap_rust)):
+        target = ROOT / relative
+        original = target.read_text()
+        baseline = subprocess.run(["git", "show", f"HEAD:{relative}"],
+                                  cwd=ROOT, capture_output=True, text=True, check=True).stdout
+        if original != baseline:
+            raise RuntimeError("refusing to mutate an edited generated wire table")
+        try:
+            target.write_text(swap(original))
+            checked = subprocess.run([sys.executable, "tools/wire_contract.py", "--check"],
+                                     cwd=ROOT, capture_output=True, text=True, timeout=60)
+            if checked.returncode != 1 or f"{relative}: WC11" not in checked.stdout:
+                print(f"wire generated table mutation escaped --check: {relative}", file=sys.stderr)
+                return 1
+        finally:
+            target.write_text(original)
+    print("wire generated Lean and Rust row swaps detected by --check")
     return 0
 
 

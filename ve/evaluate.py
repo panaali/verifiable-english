@@ -4,6 +4,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
+from .backends.dispatch import owned
+from .backends.lean_runner import (encoded_formula, encoded_model, metered_environment,
+                                      metered_evaluation)
 from .assurance import semantic_entry
 from .ast import (And, Atom, Binary, Bottom, Const, Document, Eq, Exists, Forall,
                   Implies, Not, Or, Top, Unary, Var, Reach, Named, Body, check_document, check_formula,
@@ -172,7 +175,6 @@ def _validate_model(env: Any, model: FiniteModel) -> FiniteModel:
         # Lean decides the model's validity, Background included, and whether
         # its claimed identities are the recomputed ones. The model's encoding is
         # the one its evaluation cases send (`encoded_model`: written once per model).
-        from .backends.lean_runner import encoded_model
         return FiniteModel.from_dict(env, encoded_model(model), _claimed={
             "environment_id": model.environment_id, "model_id": model.model_id})
     except VEError:
@@ -226,8 +228,6 @@ def evaluate(env: Any, value: Document | Any, model: FiniteModel, *, max_evaluat
         check_formula(env, value)
         formulas = (value,)
     model = _validate_model(env, model)
-    from .backends.dispatch import owned
-    from .backends.lean_runner import encoded_formula, encoded_model
 
     # The value, the count, the trace and `ResourceLimit` of a reported evaluation are Lean's metered
     # evaluator's (lean-first batches 15b and 18: Rust keeps search only, and Lean is the one authority).
@@ -284,7 +284,6 @@ def _explanation(rows, domains) -> Explanation:
 
 def _evaluate_lean(env: Any, case: dict) -> EvaluationResult:
     """One `evaluate-budgeted` case through the service's `metered` mode; Python only rebuilds its answer."""
-    from .backends.lean_runner import metered_environment, metered_evaluation
     return read_evaluation(metered_evaluation({**case, "environment": metered_environment(env)}), case)
 
 

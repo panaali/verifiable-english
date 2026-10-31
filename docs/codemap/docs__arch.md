@@ -1,4 +1,6 @@
 - `docs/arch/AR-1/measure.py` — AR-1's measured outcome, written to docs/arch/AR-1/evidence/manifests.json.
+- `docs/arch/AR-14/measure.py` — AR-14 counts of one checkout: layer exceptions, layer rows, import cycles, indented imports, `import ve`.
+- `docs/arch/AR-14/scc.py` — (no module docstring)
 - `docs/arch/AR-16a/cycles.py` — AR-16a evidence (not a test): the import cycles among the `ve/` modules, from an `ast` walk.
 - `docs/arch/AR-16a/pilot_rerun.py` — AR-16a evidence (not a test): re-record pilot documents one at a time, base then head, as `tools/lean_first_diff.py record --corpus pilots` records them (`pilo…
 - `docs/arch/AR-16a/rename_probe_sites.py` — AR-16a, run once: the binding census's recorded probes (`docs/test-architecture/binding-probes.jsonl.gz`, `tools/binding_census.py`) name each hand check by it…

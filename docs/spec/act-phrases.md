@@ -829,7 +829,9 @@ tokens separated by spaces, a comma attached to the token before it, a fixed phr
 the subject slot `{0}`** (in an argument, a joined filler or a modifier); **no argument marker occurs twice**
 (`(a.args.map (·.1)).Nodup`); and no joined filler sits under a split marker or as a split object (SR1: draft 1 admitted
 `seek` with the object `{0}`, whose normal form has no reading, since `TOK` accepts only `slot (i+1)`; and nothing
-excluded repeated markers).
+excluded repeated markers). Every joined filler has **two or more parts**, and, by D9 (i), **no first or last part of
+two or more words** (`longEnd`): the normal form writes its marker once, so such a filler has no meaning (DRI decision
+2026-10-30, ap-2bb, item 1; fixtures C1 to C4 of 11.2a).
 
 ```lean
 /-- `a` with *to* exactly when `inf = some true`, without it when `some false`, as read when `none`. -/
@@ -1635,7 +1637,9 @@ absence.
 
 Render round trip (`read_normal`): the two parts of G6 render as `{0} be subjected to torture` and `{0} be subjected to
 cruel, inhuman or degrading treatment or punishment` and each reads back as `one` of itself; G7's atom renders as
-`{0} be held by secret vote or equivalent free voting procedures` (the marker once) and reads back as itself. The
+`{0} be held by secret vote or equivalent free voting procedures` (the marker once), which by D9 (i) reads `none`, so
+G7's atom is `normalOk` false, and G7's source text, with the marker repeated, still reads `ok` G7 (DRI decision
+2026-10-30, ap-2bb, item 2). The
 renderings a modal uses read back too, each as `one` of its atom with `toWord` as rendered (SR2; *hand, not yet run*):
 
 | # | Vocabulary | Normal form | Reads back as |
@@ -1660,6 +1664,7 @@ that the other conditions are unchanged. *Hand, not yet run.*
 | FR5 | V8's `participate` atom with two arguments `in [the cultural life of the community]` and `in [scientific advancement and its benefits]` | `normalOk` true (nothing excluded repeated markers) | `normalOk` false (repeated argument marker) |
 | FR6 | frame `subjected: ["to"] / ["by"] / []` | `framesOk` false | `framesOk` false; 31i with `'by'` |
 | FR7 | the vocabularies V5 to V14 and VL of 11.2 | `framesOk` true | `framesOk` true (every marker is canonical) |
+| C1–C4 | G7's atom (C1); a joined object `[trade unions, {1}]` (C2); a joined filler of one part (C3) or none (C4) | `normalOk` true (draft 2 too); the normal form reads `none` (C3: `one` with a `.one` filler) | `normalOk` false (D9 (i) at an end; fewer than two parts); DRI decision 2026-10-30, ap-2bb |
 
 ### 11.2b The phase-1 corpus (measured with draft 1's stub)
 
