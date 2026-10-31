@@ -11,6 +11,10 @@ from collections import defaultdict
 import hashlib
 import json
 from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from layer_policy import python_exports  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 EXTERNAL = {"ve-webapp": Path.home() / "code/ve-webapp" / "ve_webapp",
@@ -29,16 +33,8 @@ def source_label(path: Path) -> str:
 
 
 def public_exports():
-    """Resolve ``from ve import x`` through the package's static reexports."""
-    tree = ast.parse((ROOT / "ve/__init__.py").read_text())
-    result = {}
-    for node in tree.body:
-        if not isinstance(node, ast.ImportFrom) or node.level != 1 or not node.module:
-            continue
-        provider = "ve." + node.module
-        for alias in node.names:
-            result[alias.asname or alias.name] = (provider, alias.name)
-    return result
+    """Resolve ``from ve import x`` through the package's public names (`layer_policy.python_exports`)."""
+    return {name: (module, name) for name, module in python_exports(ROOT).items()}
 
 
 EXPORTS = public_exports()
