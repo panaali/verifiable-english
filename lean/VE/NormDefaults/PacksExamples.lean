@@ -1,4 +1,6 @@
 import VE.NormDefaults.Packs
+import VE.Rights.Examples
+import VE.Defaults.Examples
 
 /-! The acceptance fixtures of premise packs on `Packs.lean` alone (docs/spec/premise-packs.md 4: A1–A9; 2.10's kind
 table). The fixtures over today's sources (F1, F1′, the kind table's legacy rows) are in `PacksLegacyExamples.lean`;
@@ -21,9 +23,9 @@ def P : List (String × String) := reservedPrefixes ++ fixturePrefixes
 def φ : VE.Formula := .top
 
 def soft : Pack := ⟨"soft", .constraint, [], [],
-  [("soft:exception:r1:sufficient:0", φ), ("soft:coherence:r1,r2", φ)], []⟩
-def rights : Pack := ⟨"rights", .constraint, [], [], [("rights:limitation:l1:act:necessary:c1", φ)], []⟩
-def weighing : Pack := ⟨"weighing", .constraint, [], [], [("weigh:strength:a:b:x_permitted", .bottom)], []⟩
+  [("soft:exception:r1:sufficient:0", φ), ("soft:coherence:r1,r2", φ)], [], []⟩
+def rights : Pack := ⟨"rights", .constraint, [], [], [("rights:limitation:l1:act:necessary:c1", φ)], [], []⟩
+def weighing : Pack := ⟨"weighing", .constraint, [], [], [("weigh:strength:a:b:x_permitted", .bottom)], [], []⟩
 
 def diag : Except String (List Pack) → String
   | .ok qs => "ok " ++ toString (qs.map (·.id)) ++ " " ++ toString ((labelledX qs).map (·.1))
@@ -47,8 +49,8 @@ def diag : Except String (List Pack) → String
 
 -- A4: a generated name that E declares (a predicate or a constant), that another pack declares, or that lacks its
 -- prefix.
-def att (n : String) : Pack := ⟨"attitudes", .vocabulary, [(n, ["person"])], [], [], [(n, ["environment"])]⟩
-def ev (n : String) : Pack := ⟨"events", .constraint, [], [(n, "person")], [], [(n, ["environment"])]⟩
+def att (n : String) : Pack := ⟨"attitudes", .vocabulary, [(n, ["person"])], [], [], [(n, ["environment"])], []⟩
+def ev (n : String) : Pack := ⟨"events", .constraint, [], [(n, "person")], [], [(n, ["environment"])], []⟩
 #guard diag (assembleIn P E 3 [att "attitudes__knows__1"]) ==
   "InvalidInput: generated name attitudes__knows__1 of pack attitudes is already declared"
 #guard diag (assembleIn P E 3 [att "helps"]) == "InvalidInput: generated name helps of pack attitudes is already declared"
@@ -127,5 +129,38 @@ def kindDiag : Except String (Option Lean.Json) → String
 #guard kindDiag (dispatch kinds ["weighing"] 7 "c1" "fails" .null) == "InvalidInput: refused by the row"
 #guard kindDiag (dispatch kinds ["weighing"] 7 "c1" "attitudes-elaborate" .null) == "none"
 #guard kindDiag (dispatch [] [] 7 "c1" "echo" .null) == "none"
+
+/-! ## `Pack.conditions` (profile-composition 1.9; DRI 2026-10-31 pc-9-prereqs item 2)
+
+Every pack built today states no decision condition: `softPack` and `rightsPack` export `[]`, and so does every pack
+the layered routes assemble, so `X` and every answer are today's. -/
+
+theorem softPack_conditions (U : UDoc) (D : VE.SoftNorms.SoftDoc) : (Wire.softPack U D).conditions = [] := rfl
+theorem rightsPack_conditions (R : VE.Rights.RightsDoc) : (Wire.rightsPack R).conditions = [] := rfl
+
+/-- Assembly keeps a pack list without conditions without conditions (it permutes its input, 2.5 (1)). -/
+theorem assemble_conditions {U : UDoc} {used : Nat} {ps qs : List Pack} (h : assemble U used ps = .ok qs)
+    (hp : ∀ p ∈ ps, p.conditions = []) : ∀ q ∈ qs, q.conditions = [] :=
+  fun q hq => hp q ((assemble_order h).2.1.subset hq)
+
+/-- Every pack a decoded layered source carries, on both routes, has empty `conditions`. -/
+theorem decodeLayered_conditions {j : Lean.Json} {L : Wire.LayeredU} (h : Wire.decodeLayered j = .ok L) :
+    ∀ p ∈ L.packs, p.conditions = [] := by
+  simp only [Wire.decodeLayered, Wire.decodeRightsU, Wire.decodeSoftU, bind, Except.bind, pure, Except.pure] at h
+  repeat' split at h
+  all_goals first
+    | (cases h; done)
+    | (injection h with h; subst h
+       exact assemble_conditions (by assumption) (by simp [softPack_conditions, rightsPack_conditions]))
+
+open VE.Rights.Examples (alpha gamma gamma7 rho epsilon) in
+#guard [alpha, gamma, gamma7, rho, epsilon].all fun R =>
+  let U : UDoc := ⟨VE.SoftNorms.soften (VE.Rights.correlate R), []⟩
+  (Wire.softPack U (VE.Rights.correlate R)).conditions.isEmpty && (Wire.rightsPack R).conditions.isEmpty
+open VE.Defaults.Fixtures (dα dβ dγ dγ' dδ dδs dδo dε dζ dζ0 dσ) in
+#guard [dα, dβ, dγ, dγ', dδ, dδs, dδo, dε, dζ, dζ0, dσ].all fun d =>
+  match d with
+  | .ok L => L.packs.map (·.id) == ["soft"] && L.packs.all (·.conditions.isEmpty)
+  | .error _ => false
 
 end VE.NormDefaults.Packs.Fixtures

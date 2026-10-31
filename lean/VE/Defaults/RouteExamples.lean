@@ -45,7 +45,7 @@ def βTwo (L : VE.NormDefaults.Wire.LayeredU) : Json :=
 #guard holds dα fun L => shown (VE.NormDefaults.Wire.layeredKindCase L "c" "defaults-elaborate"
   (req αEnv αR "defaults-elaborate")) == answer (req αEnv αR "defaults-elaborate")
 -- the soft pack is looked for among all the packs, in any order
-#guard holds dα fun L => let r : VE.NormDefaults.Packs.Pack := ⟨"rights", .constraint, [], [], [], []⟩
+#guard holds dα fun L => let r : VE.NormDefaults.Packs.Pack := ⟨"rights", .constraint, [], [], [], [], []⟩
   [L.packs ++ [r], r :: L.packs].all (fun ps => shown (VE.NormDefaults.Wire.layeredKindCase { L with packs := ps } "c"
     "defaults-elaborate" (req αEnv αR "defaults-elaborate")) == answer (req αEnv αR "defaults-elaborate")) &&
   shown (VE.NormDefaults.Wire.layeredKindCase { L with packs := [r] } "c" "defaults-elaborate"

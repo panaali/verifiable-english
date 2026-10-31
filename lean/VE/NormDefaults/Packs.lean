@@ -1,5 +1,6 @@
 import VE.NormDefaults.Explain
 import VE.Rights.Wire
+import VE.SoftNorms.Tree
 
 /-! Premise packs (docs/spec/premise-packs.md, PK-1). The layered norm-defaults route's extra base premises `X` are the
 premises of a list of packs, one per provider, in one fixed order (`packOrder`). `assemble` checks a decoded pack list
@@ -32,6 +33,8 @@ structure Pack where
   consts : List (String × String)
   labelled : List (String × VE.Formula)
   origins : List (String × RequestPath)
+  /-- Each stated sufficient condition and its decision (profile-composition 1.9; no reader yet). -/
+  conditions : List (VE.SoftNorms.DecisionKey × VE.Formula)
 
 /-- 2.2: the one order of `X`. -/
 def packOrder : List String := ["soft", "rights", "weighing", "attitudes", "scales", "events"]

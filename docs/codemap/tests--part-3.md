@@ -1,3 +1,5 @@
+- `tests/test_english_runner_root.py` — The one-shot English executable has a distinct root and preserves its wire bytes.
+- `tests/test_english_unambiguity.py` — (no module docstring)
 - `tests/test_entailment.py` — (no module docstring)
 - `tests/test_entailment_adversarial.py` — Adversarial checks for the small trusted tableau replayer.
 - `tests/test_entailment_properties.py` — Independent bounded semantic check of every generated positive certificate.
@@ -35,6 +37,8 @@
 - `tests/test_history_tests.py` — The inventory of tests that read git history (tests/history-dependent.json) and its lint.
 - `tests/test_identity_lint.py` — `tools/identity_lint.py` (architecture plan AR-6): no new Lean-owned identity preimage in Python.
 - `tests/test_inventory_lint.py` — The Gate 2 inventory lint (tools/inventory_lint.py).
+- `tests/test_inventory_path.py` — gi-2a: the train-only files and their one accessor (docs/infra/gen-inv-design/DESIGN.md section 4, steps 1-2).
+- `tests/test_jt_2c_delta.py` — jt-2c's saved delta (docs/judgment-terms/jt-2c/evidence, DELTA row 3, standing ruling R1): read from the saved records, never from a live service.
 - `tests/test_jt_crossplan_ties.py` — The ties pass of jt-crossplan-fixes: the statement it proposes for `PolicyCtx.of` is the one Lean checks.
 - `tests/test_jt_e1.py` — Local JT-E1 protocol checks; never makes a model call.
 - `tests/test_jt_e1r.py` — JT-E1r pre-call checks.
@@ -82,8 +86,3 @@
 - `tests/test_lean_statements_parts.py` — tools/lean_statements.py prints the statements in parts run at once (eff-20261027-1, PIPELINE-LIMITS L76).
 - `tests/test_legend.py` — Compact legends preserve judge context without JSON document overhead.
 - `tests/test_lexicon.py` — Pinned lexical data, advisory classification, and proposal provenance.
-- `tests/test_lf14a_long_parse.py` — A valid sugar expansion may exceed the public printer's output limit.
-- `tests/test_lf14a_response_shape.py` — Typed parse ASTs and source-bound diagnostics in the shared response schema.
-- `tests/test_lineage_lint.py` — Pinned Git reads in history-dependent tests must name content, not a VM commit.
-- `tests/test_llm.py` — (no module docstring)
-- `tests/test_me4_csv_mutants.py` — The saved mutation run must not waive CSV character regressions.

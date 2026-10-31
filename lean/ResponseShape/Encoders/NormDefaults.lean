@@ -79,7 +79,7 @@ further-pack list, and no further pack's id, so a further pack's entry needs its
       | _ => []
     | _ => []
   let further : List VE.NormDefaults.Packs.Pack :=
-    ["soft", "weighing", "events"].map (⟨·, .constraint, [], [], [], []⟩)
+    ["soft", "weighing", "events"].map (⟨·, .constraint, [], [], [], [], []⟩)
   ["soft", "rights", "base_environment"].all keys.contains &&
     (VE.NormDefaults.Packs.elaborateArrays further).all (keys.contains ·.1) &&
     !VE.NormDefaults.Packs.packOrder.any (fun i => i != "soft" && i != "rights" && keys.contains i)
