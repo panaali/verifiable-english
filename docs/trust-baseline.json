@@ -1559,6 +1559,20 @@
    "reason": "qt-a3d review F1, F2, F4: VE/Cardinality/Wire.lean +30 D[V] (encode, encBody, encOperand, encPrinted: formula encoders filed D[I], qt-a3a/b's, reclassified as the answers' formulas), VE/Cardinality/Run.lean +14 (statementJson, claimJson, reportJson D[I] to D[V]; runCase's report_id), VE/Cardinality/Document.lean +24 G[V] (CNode, Entry, Graph G[I] to G[V]; Entries); K +0, S +0 over the qt-a3d allowance; R16 ties pass in FOLLOW-UPS.md",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3d, 2026-10-30",
    "commit": "1f28dddfb3ef480ba7680d6a7c51cb801e9cb876"
+  },
+  {
+   "class": "S",
+   "lines": 62,
+   "reason": "pc-3 (profile-composition PC-3, the composition contract): K +0, S +62, V +52, trusted +114 against e73ded834. S: VE/Compose/Contract.lean +55 (Rewriter, Rewriter.Laws, ScopeRunsOf, ScopeRuns, ScopeFaithful, ScopePreserves, ScopeSetsFaithful, RouteFacts: the approved statements of profile-composition 1.4-1.5, checked by tools/check_pc3_statements.py), VE/Compose/Dispatch.lean +7 (Interface, the interface field of ProfileRow). V (untied G[V]): VE/Compose/Contract.lean +27 (pipeline, pipelineOf, scopeRewriter, docRewriters), VE/Compose/Stack.lean +15 (rewriters, stackOf, listedStacks), VE/Compose/Dispatch.lean +10 (slotAgrees). New Lean-owned behaviour; no Python or Rust copy. FOLLOW-UP: a ties pass binding the G[V] lines.",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-3, 2026-10-31",
+   "commit": "e73ded83483ad43164d596e1fe910e9bc60c2b2e"
+  },
+  {
+   "class": "V",
+   "lines": 52,
+   "reason": "pc-3 (profile-composition PC-3, the composition contract): K +0, S +62, V +52, trusted +114 against e73ded834. S: VE/Compose/Contract.lean +55 (Rewriter, Rewriter.Laws, ScopeRunsOf, ScopeRuns, ScopeFaithful, ScopePreserves, ScopeSetsFaithful, RouteFacts: the approved statements of profile-composition 1.4-1.5, checked by tools/check_pc3_statements.py), VE/Compose/Dispatch.lean +7 (Interface, the interface field of ProfileRow). V (untied G[V]): VE/Compose/Contract.lean +27 (pipeline, pipelineOf, scopeRewriter, docRewriters), VE/Compose/Stack.lean +15 (rewriters, stackOf, listedStacks), VE/Compose/Dispatch.lean +10 (slotAgrees). New Lean-owned behaviour; no Python or Rust copy. FOLLOW-UP: a ties pass binding the G[V] lines.",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), pc-3, 2026-10-31",
+   "commit": "e73ded83483ad43164d596e1fe910e9bc60c2b2e"
   }
  ]
 }
