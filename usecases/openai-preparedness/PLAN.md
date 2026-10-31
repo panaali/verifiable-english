@@ -477,6 +477,54 @@ safety-framework 9. Report, unscored, what changes without N1 and without N2.
    source-linked strict/default RS9 drafts record that modal alternative, while the example lists remain factors
    and are not a definitive checklist. The reading set stays OPEN, so no example is promoted to a requirement.
 
+**`usecase-pf-run` (2026-10-30): the key-answering round.**
+
+10. **The D1 readings the key needs were completed.** RS3 (F2 in 2.2, 4.2 and Appendix C, and section 1's "We do
+    not deploy models that reach a High capability threshold until …"), RS18 (4.4, with its "forecasted to reach"
+    branch as a rule of its own), RS4s (every Table 2 row), RS6, RS7, RS11, RS16 and RS17 have one source-linked
+    rule per choice; RS2 is a premise (`rs2-nest`) read under RS2 = nest; RS10 and RS14 select D3's 365-day bridge.
+    N1 is applied by the harness: every statement in `pf_translation.RS0_STATEMENTS` is a commitment, and the
+    unscored rerun without N1 reads them as predictions. N2 is the precedence of the RS7 clause over RS6 = req.
+11. **Fidelity fixes (translation-fidelity checklist).** The Table 1 SEC bullet, F3 (4.4) and F4 (C.3) had a
+    "covered" guard their sentences do not state (class 7): removed. F9's Safeguards Report had an opaque
+    `safeguard_selection` guard: it now has section 4's scope ("covered systems that reach a capability threshold").
+    2.2's second object, "appropriate security controls as they are developed", had been dropped (class 1): it is
+    `f2-security-developed`, with its own act (class 4). Table 2's nuclear response had lost "in consultation with
+    appropriate US government actors" (class 1): restored in the act. Every changed block carries its full source
+    sentence.
+12. **The case model.** A case's atoms are its levels (and, under RS2 = nest, the High level of each Critical
+    level's category), its activity (a large-scale internal deployment is an internal deployment), the open terms it
+    sets, and what its situation states (`run.SITUATIONS`; K7 and K8 name development, "safeguards during
+    development", "halting further development"). K9's "High capability in a Tracked Category" names no category: the
+    answer is asked for each High level and must be the same. VE evaluates every selected premise on the model. An
+    unset open term is false in the complete model, so a rule that tests one negatively makes the item undecided
+    unless the case states it (K2 "not already implemented and assessed", K16 "no highly sensitive information").
+13. **Severe-harm counts (S1 to S5).** Footnote 1's counts are words. Each lower bound is read two ways, the least
+    count the plural admits (1,000 or 2,000 people; 100 or 200 billion dollars; 1 or 2 million), and an answer is
+    scored only when both readings agree; they agree on every item. S3 and S4 state one harm: the other quantity is
+    none. This supersedes item 4's "remain QT gaps" for the answers; the coverage units stay QT.
+14. **Silence and probes.** G1 asks whether any rule on halting or deployment is selected for the further
+    development; G2 whether a Critical-specific rule (Table 1's Critical rows, 4.4) is selected; G5 the Table 1, F2,
+    F3 and F4 acts; G6 whether a persuasion case selects any rule a case without persuasion does not; G9 whether the
+    selected safeguard rules are exactly C.3's access rule. N2 asks a query-only persuasion-safeguard act on the full
+    D1 (the RSP G1 probe pattern). N3's witness for each F1 to F17 rule is a validated case model on which VE selected
+    it. W1 conflicts use D1's declared completion defaults; every selection query runs under both.
+15. **Key finding: six transcribed cells are truncated.** `answer-key.json` holds `"key": "SOME(N"` and
+    `"soft": "RS1=default"` for B-*L*/MREP (*L* ∈ BIO-H, BIO-C, CYB-H, CYB-C, AIS-H, AIS-C), where section 6.2 says
+    `SOME(N ∧ unscoped)` and no "soft". Source: Table 2, Long-range Autonomy, "If a model has High or Critical
+    capabilities in any of the Tracked Categories, require a "misalignment" safeguards report (see Section 4.2)."
+    VE's answer and `reference.py` both equal the section 6.2 cell. The transcription is pinned
+    (`test_transcription_is_pinned`) and was not edited: the six rows are scored as disagreements with cause
+    "key finding".
+16. **Two items stay undecided.** G7: footnote 5 ("these will be used as indicators for High and Critical
+    capabilities for the category") relates evaluations to capabilities, and D1 has no such relation (SC). N4: D1
+    has no closure premise that Table 1's six levels are all the levels there are, so a "low" or "medium" level is
+    not excluded by VE (SC). Neither is counted as correct.
+17. **Act phrases.** Lean admits an act phrase of at most 80 bytes without "and" or "for". Five acts are shortened
+    (the full wording stays in the predicate description): "public policy as well as pandemic preparedness",
+    "cyberdefense policies as well as tools", "request as well as receive a summary of testing results", "recommend
+    implementing as well as assessing the safeguards", "coordinate with OpenAI Leadership on immediate reaction".
+
 ## 13. Files for the implementation round (not this commit)
 
 `environment.d1.json`, `environment.d2.json`, `environment.d3.json`; `pf.d1.ve.md`, `pf.d2.ve.md`, `pf.d3.ve.md`
