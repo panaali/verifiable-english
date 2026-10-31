@@ -2950,3 +2950,11 @@ RESUMED_PARTS = [  # a part's `resumed` retyped or given a key too many or too f
 @pytest.mark.parametrize(("name", "change", "says"), RESUMED_PARTS, ids=[r[0] for r in RESUMED_PARTS])
 def test_merge_refuses_a_part_whose_tree_or_resume_is_not_written_by_this_tool(sharded, capsys, name, change, says):
     test_merge_refuses_parts_that_are_not_one_runs(sharded, capsys, name, change, says)
+
+
+def test_a_runs_deadline_ends_with_the_run(sharded, monkeypatch):
+    """`DEADLINE` is one run's: after main returns (or stops), no later Lake run in the process reads it."""
+    clocked(sharded, monkeypatch)
+    sharded("--json", sharded.tmp / "p.json", "--max-mutants", 6, "--deadline", START + 250)
+    assert sharded.tm.DEADLINE.at is None and sharded.tm.DEADLINE.left() is None
+    assert sharded("--shard", "0/3", "--deadline", START)[0] == 2 and sharded.tm.DEADLINE.at is None

@@ -1813,6 +1813,14 @@ def merge(out: Path, paths: list[Path]) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
+    try:
+        return sweep(argv)
+    finally:
+        DEADLINE.reset(None)  # a deadline is one run's: no later Lake run in this process reads it
+
+
+def sweep(argv: list[str] | None = None) -> int:
+    """The command line (`main`)."""
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--base", help="the commit compared with (default: the merge base of HEAD and main)")
     parser.add_argument("--root", type=Path, default=ROOT, help="the checkout (default: this one); only read")
@@ -2029,7 +2037,7 @@ def main(argv: list[str] | None = None) -> int:
         resumed.update(kept=len(kept), rerun=len(mine) - len(kept))
     counts = summary(found, shard is not None, seconds, rescore)
     left = [m.id for m in mine if m.status == "NOT RUN"]  # the mutants it owns that the deadline left unjudged
-    partial = {"deadline": int(DEADLINE.at), "unjudged": left} if left else None
+    partial = {"deadline": int(DEADLINE.at or 0), "unjudged": left} if left else None
     if partial:
         print(f"trust_mutants: PARTIAL: the deadline stopped the run with {len(left)} of its {len(mine)} mutants "
               f"unjudged (NOT RUN); a --resume of its --json at this HEAD judges only those", flush=True)
