@@ -350,8 +350,8 @@ def test_the_command_lines_use_the_cache(monkeypatch, capsys):
 
     def dump_all(root=lean_statements.ROOT, cache=False):
         asked.append(cache)
-        return tuple(path.read_text() for path in (lean_statements.OUTPUT, lean_statements.PREDICATES,
-                                                    lean_statements.DECLARATIONS))
+        return tuple(lean_statements.inventory_path(name).read_text() for name in (
+            lean_statements.STATEMENTS, lean_statements.PREDICATES, lean_statements.DECLARATIONS))
     monkeypatch.setattr(lean_statements, "dump_all", dump_all)
     assert lean_statements.main(["--check"]) == 0 and asked == [True]
     assert "PASS:" in capsys.readouterr().out
@@ -370,9 +370,8 @@ def audit_tree(tmp_path, monkeypatch):
     lean = tmp_path / "lean"
     shutil.copytree(ROOT / "lean", lean, ignore=shutil.ignore_patterns(".lake", "__pycache__"))
     monkeypatch.setattr(audit, "ROOT", lean)
-    monkeypatch.setattr(audit, "RECORD", lean / "axioms.txt")
     monkeypatch.setattr(C, "code_files", lambda code_root: list(C.CODE_STARTS))
-    record, runs = (ROOT / "lean/axioms.txt").read_text(), []
+    record, runs = lean_statements.inventory_path("lean/axioms.txt").read_text(), []
 
     def outputs(imports, texts, jobs=None):
         runs.append(len(texts))

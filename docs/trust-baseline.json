@@ -1573,6 +1573,13 @@
    "reason": "ap-4a: lean/VE/Acts/Grammar.lean S +31 (Attach, Kind, the rule kind field and the edge kinds the table writes, attachOf, edgeLhs; modifier_edges); K +0; phraseReadings G[V] tied to phraseReadings_exact",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-4a, 2026-10-18",
    "commit": "327bf922a1197c94af231d8d02f0c76718649aab"
+  },
+  {
+   "class": "V",
+   "lines": 8,
+   "reason": "qt-a3cb: lean/VE/Cardinality/Run.lean +8 untied V (D[V] sizesJson 4; G[V] runCase +4, the countermodel kind; Run.countermodel is G[V] tied by countermodel_sound; regionSizes, sizeIndex, withSizes, Body.evalBy are C by withSizes_eq; regionCost G[R]); K +0, S +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), qt-a3cb, 2026-10-30",
+   "commit": "96c5d418d98eb79a764b513f6f2d8f9b65125fcf"
   }
  ]
 }
