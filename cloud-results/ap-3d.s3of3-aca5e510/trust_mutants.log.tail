@@ -1,0 +1,23 @@
+trust_mutants: 19 definitions, 260 mutants (86 to run), 4 jobs, base 5e56ca85b7ba
+UNKNOWN lean/VE/Acts/Decode.lean:23 VE.Acts.Decode.ElaboratedU (D[V], trusted) eq-ne: = -> ≠ (lean/VE/Acts/Decode.lean:45: Application type mismatch: The argument)
+UNKNOWN lean/VE/Acts/Elaborate.lean:82 VE.Acts.splitMap (G[V], trusted) list-empty: D.U.D.T.regulated -> [] (lean/VE/Acts/Elaborate.lean:82: Invalid field notation: Type of)
+SURVIVOR lean/VE/Acts/Decode.lean:42 VE.Acts.Decode.elaborateSource (D[V], trusted) list-empty: s.src.ne.profiles -> []
+UNKNOWN lean/VE/Acts/Elaborate.lean:154 VE.Acts.declaredAfter (G[V], trusted) list-empty: (D.U.D.T.regulated.filter fun r => (sa r.name).isSome) -> [] (lean/VE/Acts/Elaborate.lean:154: don't know how to synthesize implicit argument `α`)
+UNKNOWN lean/VE/Acts/Wire.lean:22 VE.Acts.Wire.joinedAct (D[V], trusted) list-empty: ts -> [] (lean/VE/Acts/Wire.lean:22: Invalid dotted identifier notation: The expected type of `.word` could...)
+UNKNOWN lean/VE/Acts/Elaborate.lean:82 VE.Acts.splitMap (G[V], trusted) list-empty: D.U.D.T.regulated.flatMap -> [] (lean/VE/Acts/Elaborate.lean:82: Function expected at)
+UNKNOWN lean/VE/Acts/Decode.lean:26 VE.Acts.Decode.ElaboratedU (D[V], trusted) eq-ne: = -> ≠ (lean/VE/Acts/Decode.lean:45: Application type mismatch: The argument)
+UNKNOWN lean/VE/Acts/Elaborate.lean:158 VE.Acts.splitsOf (G[V], trusted) list-empty: (acts.zip Rs).map -> [] (lean/VE/Acts/Elaborate.lean:158: Function expected at)
+UNKNOWN lean/VE/Acts/Wire.lean:42 VE.Acts.Wire.checkAct (D[V], trusted) list-empty: (joinedAct fx V name ts).map -> [] (lean/VE/Acts/Wire.lean:42: Function expected at)
+UNKNOWN lean/VE/Acts/Elaborate.lean:87 VE.Acts.partNamesIn (G[V], trusted) list-empty: M.preds.filter (·.2.1 == p) -> [] (lean/VE/Acts/Elaborate.lean:89: Invalid projection: Type of)
+UNKNOWN lean/VE/Acts/Elaborate.lean:148 VE.Acts.partsDistinct (G[V], trusted) list-empty: (partsOf sa r.name).map (partAct D.fixed r.role ·.1) -> [] (lean/VE/Acts/Elaborate.lean:148: typeclass instance problem is stuck, it is often due to metavari...)
+UNKNOWN lean/VE/Acts/Wire.lean:25 VE.Acts.Wire.joinedAct (D[V], trusted) list-empty: [A] -> [] (lean/VE/Acts/Wire.lean:25: Unknown identifier `A`)
+UNKNOWN lean/VE/Acts/Elaborate.lean:83 VE.Acts.splitMap (G[V], trusted) list-empty: D.U.D.T.nodes -> [] (lean/VE/Acts/Elaborate.lean:83: Invalid field notation: Type of)
+UNKNOWN lean/VE/Acts/Elaborate.lean:96 VE.Acts.splitReg (G[V], trusted) list-empty: match partsOf sa r.name with | [] => [r] | xs => xs.map fun x => { r with name := partPred r.name... -> [] (lean/VE/Acts/ElaborateExamples.lean:36: Expression (VE.Acts.splitNode, which it reads, is not wha...)
+SURVIVOR lean/VE/Acts/Elaborate.lean:92 VE.Acts.partNames (S, trusted) list-first: partNamesIn (splitMap D (splitAtoms D)) p -> ((partNamesIn (splitMap D (splitAtoms D)) p).take 1) (the proofs it breaks: lean/VE/Acts/Elaborate.lean:319)
+SURVIVOR lean/VE/Acts/Elaborate.lean:92 VE.Acts.partNames (S, trusted) list-drop-last: partNamesIn (splitMap D (splitAtoms D)) p -> ((partNamesIn (splitMap D (splitAtoms D)) p).dropLast) (the proofs it breaks: lean/VE/Acts/Elaborate.lean:319)
+SURVIVOR lean/VE/Acts/Elaborate.lean:92 VE.Acts.partNames (S, trusted) list-last: partNamesIn (splitMap D (splitAtoms D)) p -> ((partNamesIn (splitMap D (splitAtoms D)) p).reverse.take 1) (the proofs it breaks: lean/VE/Acts/Elaborate.lean:319)
+SURVIVOR lean/VE/Acts/Elaborate.lean:92 VE.Acts.partNames (S, trusted) list-drop-first: partNamesIn (splitMap D (splitAtoms D)) p -> ((partNamesIn (splitMap D (splitAtoms D)) p).drop 1) (the proofs it breaks: lean/VE/Acts/Elaborate.lean:319)
+trust_mutants: 58 KILLED, 5 SURVIVOR, 13 UNKNOWN, 10 INVALID, 0 ALLOWED, 0 NOT RUN, 174 OTHER SHARD in 981 s
+trust_mutants: D[V], trusted: 5 KILLED, 1 SURVIVOR, 5 UNKNOWN, 6 INVALID, 38 OTHER SHARD
+trust_mutants: G[V], trusted: 45 KILLED, 8 UNKNOWN, 4 INVALID, 128 OTHER SHARD
+trust_mutants: S, trusted: 8 KILLED, 4 SURVIVOR, 8 OTHER SHARD
