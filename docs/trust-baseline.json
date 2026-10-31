@@ -1573,6 +1573,13 @@
    "reason": "sc-1c: VE/Service/Registry.lean +1, VE/Service/Protocol.lean +1, ResponseShape/Skeletons.lean +1, ResponseShape/Schemas.lean +1 (the scope mode's registry line, dispatch, skeleton case and schema file entry)",
    "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), sc-1c, 2026-10-18",
    "commit": "5b0163e94aca67e948a4132676df03fcf3ed8933"
+  },
+  {
+   "class": "S",
+   "lines": 29,
+   "reason": "ap-2bb: VE/Acts/Meaning.lean S +22 (normalOk, Filler.parts, longEnd), VE/Acts/Linearize.lean S +7 (Atom.canon; Atom.normal reads canon's order); K +0",
+   "signature": "SIGNED by standing ruling R16 (DRI-RULINGS.md), ap-2bb, 2026-10-18",
+   "commit": "432763b06d8d4d50d06fdae218c5c53f2f267cec"
   }
  ]
 }

@@ -37,8 +37,6 @@
 - `usecases/openai-preparedness/measure.py` — Map every PF byte outside CHECKED to the feature it awaits (PLAN 7, M3).
 - `usecases/openai-preparedness/pf_translation.py` — The PF D1 blocks use the same two-line format and VE parser as the RSP baseline.
 - `usecases/openai-preparedness/pf_vocabulary.py` — D1 vocabulary for the pinned Preparedness Framework v2 (PLAN 4 and 7).
-- `usecases/openai-preparedness/reference.py` — Independent, stdlib-only reading of PLAN 3 and 4 for families A, B, C and G.
-- `usecases/openai-preparedness/run.py` — Answer the frozen Preparedness questions with the translated VE documents.
 - `usecases/openai-preparedness/source/extract_text.py` — Extract the pinned Preparedness Framework v2 text that the span accounting partitions.
 - `usecases/openai-preparedness/stage0.py` — PF stage 0: source parts P1/P2/P5/P6/P8, routed probes P3/P4, lint P7 and audit M6.
 - `usecases/question-answering/agent-policy/build.py` — Build the four source-bound agent-policy question fixtures (plan §6.2).

@@ -15244,6 +15244,7 @@
     },
     "VE/Acts/Linearize.lean": {
       "S": [
+        "VE.Acts.Atom.canon",
         "VE.Acts.Atom.normal",
         "VE.Acts.Atom.text",
         "VE.Acts.Atom.withTo",
@@ -15786,6 +15787,7 @@
       "S": [
         "VE.Acts.Att",
         "VE.Acts.Elt",
+        "VE.Acts.Filler.parts",
         "VE.Acts.Piece",
         "VE.Acts.actOk",
         "VE.Acts.addPiece",
@@ -15793,7 +15795,9 @@
         "VE.Acts.atomOk",
         "VE.Acts.coordAct",
         "VE.Acts.joinAct",
+        "VE.Acts.longEnd",
         "VE.Acts.meaning",
+        "VE.Acts.normalOk",
         "VE.Acts.piecesOf",
         "VE.Acts.singleAct"
       ],
@@ -16336,6 +16340,36 @@
         "ResponseShape.Schemas.Scope.governed",
         "ResponseShape.Schemas.Scope.row",
         "ResponseShape.Schemas.Scope.file"
+      ]
+    },
+    "VE/Acts/RenderExamples.lean": {
+      "T": [
+        "VE.Acts.RenderExamples.V2s",
+        "VE.Acts.RenderExamples.Vk",
+        "VE.Acts.RenderExamples.Vo",
+        "VE.Acts.RenderExamples.Vs",
+        "VE.Acts.RenderExamples.atMod",
+        "VE.Acts.RenderExamples.back",
+        "VE.Acts.RenderExamples.c2",
+        "VE.Acts.RenderExamples.fr3",
+        "VE.Acts.RenderExamples.fr4",
+        "VE.Acts.RenderExamples.fr5",
+        "VE.Acts.RenderExamples.give",
+        "VE.Acts.RenderExamples.held2",
+        "VE.Acts.RenderExamples.heldBy1",
+        "VE.Acts.RenderExamples.help",
+        "VE.Acts.RenderExamples.joinedObj",
+        "VE.Acts.RenderExamples.mixed",
+        "VE.Acts.RenderExamples.n1",
+        "VE.Acts.RenderExamples.noTo",
+        "VE.Acts.RenderExamples.obj",
+        "VE.Acts.RenderExamples.ordered",
+        "VE.Acts.RenderExamples.participate",
+        "VE.Acts.RenderExamples.roundTrip",
+        "VE.Acts.RenderExamples.seek",
+        "VE.Acts.RenderExamples.send",
+        "VE.Acts.RenderExamples.text",
+        "VE.Acts.RenderExamples.toBoth"
       ]
     }
   }
